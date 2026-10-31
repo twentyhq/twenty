@@ -1,6 +1,4 @@
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { MetadataReadability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -41,16 +39,11 @@ describe('2-44 workspace command 1790607161319 - AddWorkflowRunToChatThreadsComm
     );
 
   const readState = async () => {
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
+    const { flatFieldMetadataMaps, flatIndexMaps } =
       await workspaceCacheService.getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
-        'flatObjectMetadataMaps',
         'flatFieldMetadataMaps',
         'flatIndexMaps',
       ]);
-    const threadObject =
-      flatObjectMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.agentChatThread.universalIdentifier
-      ];
 
     return {
       fieldCount: FIELD_UNIVERSAL_IDENTIFIERS.filter((universalIdentifier) =>
@@ -63,17 +56,12 @@ describe('2-44 workspace command 1790607161319 - AddWorkflowRunToChatThreadsComm
           LEGACY_CHAT_THREAD_WORKFLOW_RUN_INDEX_UNIVERSAL_IDENTIFIER
         ],
       ),
-      readability: threadObject?.readability,
-      readabilityParentFieldUniversalIdentifiers:
-        threadObject?.readabilityParentFieldUniversalIdentifiers,
     };
   };
 
   const UNLINKED_STATE = {
     fieldCount: 0,
     hasIndex: false,
-    readability: MetadataReadability.PRIVATE,
-    readabilityParentFieldUniversalIdentifiers: null,
   };
 
   beforeAll(() => {
@@ -98,7 +86,7 @@ describe('2-44 workspace command 1790607161319 - AddWorkflowRunToChatThreadsComm
     expect(await readState()).toEqual(UNLINKED_STATE);
   });
 
-  it('keeps threads PRIVATE on down', async () => {
+  it('keeps threads unlinked on down', async () => {
     await workspaceOrmManager.executeInWorkspaceContext(
       () => command.down(RUN_ON_WORKSPACE_ARGS),
       buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),

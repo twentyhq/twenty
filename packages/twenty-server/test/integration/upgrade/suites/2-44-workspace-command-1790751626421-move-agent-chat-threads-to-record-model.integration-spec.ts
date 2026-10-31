@@ -16,12 +16,13 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 const getAgentChatThreadService = () =>
   getAppProviderByClassName<AgentChatThreadService>('AgentChatThreadService');
 
-const RUN_ON_WORKSPACE_ARGS = {
+const getRunOnWorkspaceArgs = () => ({
   workspaceId: SEED_APPLE_WORKSPACE_ID,
+  dataSource: global.testDataSource,
   options: {},
   index: 0,
   total: 1,
-};
+});
 
 const CHAT_FIELDS = STANDARD_OBJECTS.agentChatThread.fields;
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
@@ -50,7 +51,7 @@ describe('2-44 workspace command 1790751626421 - MoveAgentChatThreadsToRecordMod
 
   const runCommand = (direction: 'up' | 'down') =>
     workspaceOrmManager.executeInWorkspaceContext(
-      () => command[direction](RUN_ON_WORKSPACE_ARGS),
+      () => command[direction](getRunOnWorkspaceArgs()),
       buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),
     );
 
@@ -75,10 +76,12 @@ describe('2-44 workspace command 1790751626421 - MoveAgentChatThreadsToRecordMod
         flatFieldMetadataMaps.byUniversalIdentifier[
           CHAT_FIELDS.title.universalIdentifier
         ]?.isUIEditable,
-      archivedAtWritability:
-        flatFieldMetadataMaps.byUniversalIdentifier[
-          CHAT_FIELDS.archivedAt.universalIdentifier
-        ]?.writability,
+      archivedAtWritability: (
+        await global.testDataSource.query(
+          `SELECT writability FROM core."fieldMetadata" WHERE "workspaceId" = $1 AND "universalIdentifier" = $2`,
+          [SEED_APPLE_WORKSPACE_ID, CHAT_FIELDS.archivedAt.universalIdentifier],
+        )
+      )[0]?.writability,
     };
   };
 

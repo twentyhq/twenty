@@ -5,7 +5,6 @@ import {
   type FieldMetadataDefaultValue,
   type FieldMetadataType,
   type FieldMetadataUniversalSettings,
-  type MetadataWritability,
   type RelationAndMorphRelationFieldMetadataType,
 } from '@/types';
 
@@ -23,7 +22,6 @@ type BaseRegularFieldManifest<
   options?: FieldManifestOptions<T>;
   universalSettings?: FieldMetadataUniversalSettings<T>;
   isUIEditable?: boolean;
-  writability?: MetadataWritability;
   disabledFieldPermissionActions?: FieldPermissionAction[];
   isUnique?: boolean;
   isLabelSyncedWithName?: boolean;

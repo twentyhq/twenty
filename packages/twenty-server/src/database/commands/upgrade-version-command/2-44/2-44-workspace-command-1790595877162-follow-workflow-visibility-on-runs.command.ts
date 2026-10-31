@@ -87,8 +87,6 @@ export class FollowWorkflowVisibilityOnRunsCommand extends ProvisionedWorkspaceC
     const flatObjectMetadatasToUpdate: FlatObjectMetadata[] = [
       {
         ...workflowRunObject,
-        readability: MetadataReadability.PRIVATE,
-        readabilityParentFieldUniversalIdentifiers: null,
       },
     ];
 

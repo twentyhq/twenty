@@ -2355,7 +2355,6 @@ type Field {
   type: FieldMetadataType!
   universalIdentifier: String!
   updatedAt: DateTime!
-  writability: MetadataWritability
 }
 
 type FieldConfiguration {
@@ -3158,14 +3157,6 @@ enum MetadataEventAction {
   UPDATED
 }
 
-enum MetadataReadability {
-  APPLICATION
-  INHERITED
-  OPEN
-  PRIVATE
-  SYSTEM
-}
-
 type MetadataTranslation {
   canonicalValue: String!
   locale: String!
@@ -3197,12 +3188,6 @@ input MetadataTranslationsInput {
   fieldMetadataId: UUID
   locale: String
   objectMetadataId: UUID
-}
-
-enum MetadataWritability {
-  APPLICATION
-  OPEN
-  SYSTEM
 }
 
 type MinimalMetadata {
@@ -3615,14 +3600,10 @@ type Object {
   namePlural: String!
   nameSingular: String!
   openRecordIn: ObjectOpenRecordIn!
-  readability: MetadataReadability!
-  readabilityParentFieldUniversalIdentifiers: [UUID!]
   searchFieldMetadataList: [SearchField!]!
-  sharingReach: ObjectSharingReach!
   shortcut: String
   universalIdentifier: String!
   updatedAt: DateTime!
-  writability: MetadataWritability!
 }
 
 type ObjectConnection {
@@ -3739,11 +3720,6 @@ enum ObjectRecordGroupByDateGranularity {
   QUARTER_OF_THE_YEAR
   WEEK
   YEAR
-}
-
-enum ObjectSharingReach {
-  ROLE_ACCESS
-  WORKSPACE
 }
 
 """Onboarding status"""
@@ -5174,8 +5150,6 @@ input UpdateObjectPayload {
   namePlural: String
   nameSingular: String
   openRecordIn: ObjectOpenRecordIn
-  readability: MetadataReadability
-  sharingReach: ObjectSharingReach
   shortcut: String
   translations: [MetadataTranslationOverrideInput!]
 }

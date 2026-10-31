@@ -1,6 +1,5 @@
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { MetadataReadability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -24,13 +23,12 @@ const CHAT_THREAD_WORKFLOW_RUN_INDEX_UNIVERSAL_IDENTIFIER =
   'cc9f8c37-a1ad-4d8d-8e27-894c2cf01a3b';
 
 // A conversation an agent step held now belongs to the member it was routed
-// to, as every other conversation does, rather than to its run, and threads
-// read only through their own grants again.
+// to, as every other conversation does, rather than to its run.
 @RegisteredWorkspaceCommand('2.46.0', 1791208395308)
 @Command({
   name: 'upgrade:2-46:drop-workflow-run-from-chat-threads',
   description:
-    'Stop linking chat threads to workflow runs: threads become PRIVATE and the run link is dropped',
+    'Stop linking chat threads to workflow runs by dropping the run link',
 })
 export class DropWorkflowRunFromChatThreadsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -85,15 +83,7 @@ export class DropWorkflowRunFromChatThreadsCommand extends ProvisionedWorkspaceC
           CHAT_THREAD_WORKFLOW_RUN_INDEX_UNIVERSAL_IDENTIFIER,
       }),
     ].filter(isDefined);
-    const isPrivate =
-      threadObject.readability === MetadataReadability.PRIVATE &&
-      !isDefined(threadObject.readabilityParentFieldUniversalIdentifiers);
-
-    if (
-      isPrivate &&
-      fieldsToDelete.length === 0 &&
-      indexesToDelete.length === 0
-    ) {
+    if (fieldsToDelete.length === 0 && indexesToDelete.length === 0) {
       this.logger.log(
         `Chat threads are not linked to workflow runs in workspace ${workspaceId}, skipping`,
       );
@@ -103,7 +93,7 @@ export class DropWorkflowRunFromChatThreadsCommand extends ProvisionedWorkspaceC
 
     if (options.dryRun ?? false) {
       this.logger.log(
-        `[DRY RUN] Would make chat threads PRIVATE and drop ${fieldsToDelete.length} field(s) and ${indexesToDelete.length} index(es) for workspace ${workspaceId}`,
+        `[DRY RUN] Would drop ${fieldsToDelete.length} field(s) and ${indexesToDelete.length} index(es) for workspace ${workspaceId}`,
       );
 
       return;
@@ -116,48 +106,25 @@ export class DropWorkflowRunFromChatThreadsCommand extends ProvisionedWorkspaceC
     const applicationUniversalIdentifier =
       twentyStandardFlatApplication.universalIdentifier;
 
-    // Readability names the parent field, so it lets go of it before the field goes
-    if (!isPrivate) {
-      await this.runMigration({
-        workspaceId,
-        applicationUniversalIdentifier,
-        allFlatEntityOperationByMetadataName: {
-          objectMetadata: {
-            flatEntityToCreate: [],
-            flatEntityToDelete: [],
-            flatEntityToUpdate: [
-              {
-                ...threadObject,
-                readability: MetadataReadability.PRIVATE,
-                readabilityParentFieldUniversalIdentifiers: null,
-              },
-            ],
-          },
+    await this.runMigration({
+      workspaceId,
+      applicationUniversalIdentifier,
+      allFlatEntityOperationByMetadataName: {
+        index: {
+          flatEntityToCreate: [],
+          flatEntityToDelete: indexesToDelete,
+          flatEntityToUpdate: [],
         },
-      });
-    }
-
-    if (fieldsToDelete.length + indexesToDelete.length > 0) {
-      await this.runMigration({
-        workspaceId,
-        applicationUniversalIdentifier,
-        allFlatEntityOperationByMetadataName: {
-          index: {
-            flatEntityToCreate: [],
-            flatEntityToDelete: indexesToDelete,
-            flatEntityToUpdate: [],
-          },
-          fieldMetadata: {
-            flatEntityToCreate: [],
-            flatEntityToDelete: fieldsToDelete,
-            flatEntityToUpdate: [],
-          },
+        fieldMetadata: {
+          flatEntityToCreate: [],
+          flatEntityToDelete: fieldsToDelete,
+          flatEntityToUpdate: [],
         },
-      });
-    }
+      },
+    });
 
     this.logger.log(
-      `Workspace ${workspaceId}: made chat threads PRIVATE and dropped their workflow run link`,
+      `Workspace ${workspaceId}: dropped the chat thread workflow run link`,
     );
   }
 

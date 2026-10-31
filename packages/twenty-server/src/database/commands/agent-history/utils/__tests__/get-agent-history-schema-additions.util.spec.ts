@@ -1,5 +1,4 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
 
 import { getAgentHistorySchemaAdditions } from 'src/database/commands/agent-history/utils/get-agent-history-schema-additions.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -47,20 +46,6 @@ describe('getAgentHistorySchemaAdditions', () => {
     expect(
       additions.objects.map((object) => object.universalIdentifier).sort(),
     ).toEqual([...HISTORY_IDENTIFIERS].sort());
-    expect(
-      additions.objects.every(
-        (object) =>
-          object.readability === MetadataReadability.SYSTEM &&
-          object.writability === MetadataWritability.SYSTEM,
-      ),
-    ).toBe(true);
-    expect(
-      additions.fields
-        .filter((field) =>
-          HISTORY_IDENTIFIERS.includes(field.objectMetadataUniversalIdentifier),
-        )
-        .every((field) => field.writability === MetadataWritability.SYSTEM),
-    ).toBe(true);
     expect(additions.fields.length).toBeGreaterThan(0);
     expect(additions.indexes.length).toBeGreaterThan(0);
     const historyIdentifiers = new Set<string>(HISTORY_IDENTIFIERS);
@@ -125,30 +110,6 @@ describe('getAgentHistorySchemaAdditions', () => {
     expect(additions.fields).toEqual([]);
     expect(additions.indexes.map((index) => index.universalIdentifier)).toEqual(
       [indexIdentifier],
-    );
-  });
-
-  it('keeps the attachment side of the chat thread target standard', () => {
-    const standard = createStandardMetadata();
-    const additions = getAgentHistorySchemaAdditions({
-      existing: {
-        flatObjectMetadataMaps: createExistingObjectsWithoutHistory(standard),
-        flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
-        flatIndexMaps: createEmptyFlatEntityMaps(),
-      },
-      standard,
-    });
-    const targetIdentifier =
-      STANDARD_OBJECTS.attachment.fields.targetAgentChatThread
-        .universalIdentifier;
-
-    expect(
-      additions.fields.find(
-        (field) => field.universalIdentifier === targetIdentifier,
-      )?.writability,
-    ).toBe(
-      standard.flatFieldMetadataMaps.byUniversalIdentifier[targetIdentifier]
-        ?.writability,
     );
   });
 
@@ -264,23 +225,6 @@ describe('getAgentHistorySchemaAdditions', () => {
     });
   });
 
-  it('accepts protected legacy history before the sharing upgrade', () => {
-    const standard = createStandardMetadata();
-    const existing = createStandardMetadata();
-    Object.assign(
-      existing.flatObjectMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.agentChatThread.universalIdentifier
-      ]!,
-      {
-        readability: MetadataReadability.SYSTEM,
-        writability: MetadataWritability.SYSTEM,
-      },
-    );
-    expect(
-      getAgentHistorySchemaAdditions({ existing, standard }).objects,
-    ).toEqual([]);
-  });
-
   it('repairs missing fields and indexes without recreating existing objects', () => {
     const standard = createStandardMetadata();
     const additions = getAgentHistorySchemaAdditions({
@@ -297,11 +241,6 @@ describe('getAgentHistorySchemaAdditions', () => {
   });
 
   it.each([
-    { readability: MetadataReadability.OPEN },
-    {
-      readability: MetadataReadability.SYSTEM,
-      writability: MetadataWritability.OPEN,
-    },
     { isSearchable: true },
     { isAuditLogged: true },
     { nameSingular: 'unexpectedName' },

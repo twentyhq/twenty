@@ -96,7 +96,6 @@ const buildManifest = (overrides: Partial<Manifest> = {}): Manifest =>
             name: 'name',
             label: 'Name',
             type: 'TEXT',
-            writability: 'OPEN',
           },
         ],
       },

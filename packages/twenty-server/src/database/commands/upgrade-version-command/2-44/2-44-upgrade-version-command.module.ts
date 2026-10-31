@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { RenameCallRecordingTabsToTranscriptCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790583246061-rename-call-recording-tabs-to-transcript.command';
-import { VerifyCommonRecordSharingCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790590808102-verify-common-record-sharing.command';
 import { DeleteFieldLessIndexMetadataCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790595494562-delete-field-less-index-metadata.command';
 import { FollowWorkflowVisibilityOnRunsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790595877162-follow-workflow-visibility-on-runs.command';
 import { SyncShortLinkObjectCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790615265538-sync-short-link-object.command';
@@ -13,7 +12,6 @@ import { LinkChatMessageSendersToWorkspaceMembersCommand } from 'src/database/co
 import { AddWorkflowRunToChatThreadsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607161319-add-workflow-run-to-chat-threads.command';
 import { SyncDeactivateWorkflowAvailabilityCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607920000-sync-deactivate-workflow-availability.command';
 import { RemoveAddNodeWorkflowCommandMenuItemCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790607921000-remove-add-node-workflow-command-menu-item.command';
-import { OpenAgentChatThreadArchivedAtWritabilityCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790672076234-open-agent-chat-thread-archived-at-writability.command';
 import { GateConversationsWidgetOnFeatureFlagCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790700866168-gate-conversations-widget-on-feature-flag.command';
 import { MoveAgentChatThreadsToRecordModelCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790751626421-move-agent-chat-threads-to-record-model.command';
 import { AddChatRecordPageCommandMenuItemsCommand } from 'src/database/commands/upgrade-version-command/2-44/2-44-workspace-command-1790751626422-add-chat-record-page-command-menu-items.command';
@@ -33,7 +31,6 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
   ],
   providers: [
     RenameCallRecordingTabsToTranscriptCommand,
-    VerifyCommonRecordSharingCommand,
     DeleteFieldLessIndexMetadataCommand,
     FollowWorkflowVisibilityOnRunsCommand,
     LinkChatMessageSendersToWorkspaceMembersCommand,
@@ -41,7 +38,6 @@ import { WorkspaceMigrationRunnerModule } from 'src/engine/workspace-manager/wor
     SyncDeactivateWorkflowAvailabilityCommand,
     RemoveAddNodeWorkflowCommandMenuItemCommand,
     SyncShortLinkObjectCommand,
-    OpenAgentChatThreadArchivedAtWritabilityCommand,
     GateConversationsWidgetOnFeatureFlagCommand,
     MoveAgentChatThreadsToRecordModelCommand,
     AddChatRecordPageCommandMenuItemsCommand,

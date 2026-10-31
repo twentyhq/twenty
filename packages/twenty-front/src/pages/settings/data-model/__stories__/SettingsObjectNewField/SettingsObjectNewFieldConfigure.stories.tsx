@@ -11,7 +11,6 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import {
   type CreateOneFieldMetadataItemMutation,
   type CreateOneFieldMetadataItemMutationVariables,
-  MetadataWritability,
 } from '~/generated-metadata/graphql';
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
@@ -70,7 +69,6 @@ const meta: Meta<PageDecoratorArgs> = {
                 __typename: 'Field',
                 id: '20202020-0000-4000-8000-000000000001',
                 applicationId: fieldMetadataItem.applicationId ?? '',
-                writability: MetadataWritability.OPEN,
                 object: {
                   __typename: 'Object',
                   id: variables.input.field.objectMetadataId,

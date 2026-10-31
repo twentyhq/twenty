@@ -44,7 +44,7 @@ export class MoveAgentChatThreadsToRecordModelCommand extends ProvisionedWorkspa
   }
 
   private async apply(
-    { workspaceId, options }: RunOnWorkspaceArgs,
+    { workspaceId, dataSource, options }: RunOnWorkspaceArgs,
     direction: 'up' | 'down',
   ): Promise<void> {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
@@ -76,20 +76,26 @@ export class MoveAgentChatThreadsToRecordModelCommand extends ProvisionedWorkspa
         now: new Date().toISOString(),
         direction,
       });
-    const archivedAtField =
-      flatFieldMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.agentChatThread.fields.archivedAt.universalIdentifier
-      ];
+    const [fromWritability, toWritability] =
+      direction === 'up'
+        ? [MetadataWritability.OPEN, MetadataWritability.SYSTEM]
+        : [MetadataWritability.SYSTEM, MetadataWritability.OPEN];
+    const archivedAtFieldFilter = `"workspaceId" = $1 AND "universalIdentifier" = $2`;
+    const archivedAtFieldParameters = [
+      workspaceId,
+      STANDARD_OBJECTS.agentChatThread.fields.archivedAt.universalIdentifier,
+    ];
+    const [archivedAtField] = isDefined(dataSource)
+      ? await dataSource.query<{ writability: MetadataWritability }[]>(
+          `SELECT writability FROM core."fieldMetadata" WHERE ${archivedAtFieldFilter}`,
+          archivedAtFieldParameters,
+        )
+      : [];
 
     // A chat this moved to the trash looks like one archived and deleted
-    // before the upgrade, so chats only move while archivedAt still has the
-    // writability this direction starts from, and before it changes
-    const shouldMoveChats =
-      isDefined(archivedAtField) &&
-      archivedAtField.writability ===
-        (direction === 'up'
-          ? MetadataWritability.OPEN
-          : MetadataWritability.SYSTEM);
+    // before the upgrade, so chats only move while the legacy archivedAt
+    // writability column still has the value this direction starts from
+    const shouldMoveChats = archivedAtField?.writability === fromWritability;
 
     if (options.dryRun) {
       this.logger.log(
@@ -106,6 +112,11 @@ export class MoveAgentChatThreadsToRecordModelCommand extends ProvisionedWorkspa
           workspaceId,
           direction,
         }),
+      );
+
+      await dataSource?.query(
+        `UPDATE core."fieldMetadata" SET writability = $3 WHERE ${archivedAtFieldFilter}`,
+        [...archivedAtFieldParameters, toWritability],
       );
 
       this.logger.log(
