@@ -250,6 +250,25 @@ export interface AiChatUserCreditsUsage {
 
 export type AiModelTier = 'balanced' | 'extraFast' | 'extraSmart' | 'fast' | 'smart'
 
+export interface AiRunEvent {
+    createdAt: Scalars['String']
+    error?: Scalars['String']
+    id: Scalars['String']
+    input?: Scalars['JSON']
+    isError?: Scalars['Boolean']
+    output?: Scalars['JSON']
+    role?: Scalars['String']
+    runId: Scalars['UUID']
+    text?: Scalars['String']
+    toolCallId?: Scalars['String']
+    toolName?: Scalars['String']
+    type: AiRunEventType
+    usage?: GenerateUsage
+    __typename: 'AiRunEvent'
+}
+
+export type AiRunEventType = 'INTERACTION' | 'MESSAGE' | 'RUN_COMPLETED' | 'RUN_FAILED' | 'RUN_STARTED' | 'TOOL_CALL' | 'TOOL_RESULT'
+
 export interface AiSystemPromptPreview {
     estimatedTokenCount: Scalars['Int']
     sections: AiSystemPromptSection[]
@@ -2990,6 +3009,7 @@ export interface Query {
     agentRuns: AgentRun[]
     aiChatUsage?: AiChatUsage
     aiChatUserCreditsUsage?: AiChatUserCreditsUsage
+    aiRunEvents: AiRunEvent[]
     apiKey?: ApiKey
     apiKeys: ApiKey[]
     appConnection: AppConnection
@@ -3335,6 +3355,7 @@ export type RunAgentMessageRole = 'assistant' | 'user'
 export interface RunAgentResult {
     error?: Scalars['String']
     result?: Scalars['JSON']
+    runId: Scalars['UUID']
     status: Scalars['String']
     success: Scalars['Boolean']
     threadId: Scalars['UUID']
@@ -3509,6 +3530,7 @@ export interface Subscription {
     exportRecords: RecordExport
     logicFunctionLogs: LogicFunctionLogs
     onAgentChatEvent: AgentChatEvent
+    onAiRunEvent: AiRunEvent
     onEventSubscription?: EventSubscription
     __typename: 'Subscription'
 }
@@ -4507,6 +4529,24 @@ export interface AiChatUserCreditsUsageGenqlSelection{
     consumedValue?: boolean | number
     limitValue?: boolean | number
     periodEnd?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface AiRunEventGenqlSelection{
+    createdAt?: boolean | number
+    error?: boolean | number
+    id?: boolean | number
+    input?: boolean | number
+    isError?: boolean | number
+    output?: boolean | number
+    role?: boolean | number
+    runId?: boolean | number
+    text?: boolean | number
+    toolCallId?: boolean | number
+    toolName?: boolean | number
+    type?: boolean | number
+    usage?: GenerateUsageGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7578,6 +7618,7 @@ export interface QueryGenqlSelection{
     agentRuns?: (AgentRunGenqlSelection & { __args: {agentId: Scalars['UUID'], limit: Scalars['Int']} })
     aiChatUsage?: AiChatUsageGenqlSelection
     aiChatUserCreditsUsage?: AiChatUserCreditsUsageGenqlSelection
+    aiRunEvents?: (AiRunEventGenqlSelection & { __args?: {after?: (Scalars['String'] | null), agentUniversalIdentifier?: (Scalars['UUID'] | null), runId?: (Scalars['UUID'] | null), threadKey?: (Scalars['String'] | null)} })
     apiKey?: (ApiKeyGenqlSelection & { __args: {input: GetApiKeyInput} })
     apiKeys?: ApiKeyGenqlSelection
     appConnection?: (AppConnectionGenqlSelection & { __args: {id: Scalars['ID']} })
@@ -7954,6 +7995,7 @@ export interface RunAgentMessageInput {attachments?: (RunAgentMessageAttachmentI
 export interface RunAgentResultGenqlSelection{
     error?: boolean | number
     result?: boolean | number
+    runId?: boolean | number
     status?: boolean | number
     success?: boolean | number
     threadId?: boolean | number
@@ -8169,6 +8211,7 @@ export interface SubscriptionGenqlSelection{
     exportRecords?: (RecordExportGenqlSelection & { __args: {input: CreateRecordExportInput} })
     logicFunctionLogs?: (LogicFunctionLogsGenqlSelection & { __args: {input: LogicFunctionLogsInput} })
     onAgentChatEvent?: (AgentChatEventGenqlSelection & { __args: {threadId: Scalars['UUID']} })
+    onAiRunEvent?: (AiRunEventGenqlSelection & { __args?: {after?: (Scalars['String'] | null), agentUniversalIdentifier?: (Scalars['UUID'] | null), runId?: (Scalars['UUID'] | null), threadKey?: (Scalars['String'] | null)} })
     onEventSubscription?: (EventSubscriptionGenqlSelection & { __args: {eventStreamId: Scalars['String']} })
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -9335,6 +9378,14 @@ export interface WorkspaceUrlsAndIdGenqlSelection{
     export const isAiChatUserCreditsUsage = (obj?: { __typename?: any } | null): obj is AiChatUserCreditsUsage => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAiChatUserCreditsUsage"')
       return AiChatUserCreditsUsage_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const AiRunEvent_possibleTypes: string[] = ['AiRunEvent']
+    export const isAiRunEvent = (obj?: { __typename?: any } | null): obj is AiRunEvent => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isAiRunEvent"')
+      return AiRunEvent_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -12092,6 +12143,16 @@ export const enumAiModelTier = {
    extraSmart: 'extraSmart' as const,
    fast: 'fast' as const,
    smart: 'smart' as const
+}
+
+export const enumAiRunEventType = {
+   INTERACTION: 'INTERACTION' as const,
+   MESSAGE: 'MESSAGE' as const,
+   RUN_COMPLETED: 'RUN_COMPLETED' as const,
+   RUN_FAILED: 'RUN_FAILED' as const,
+   RUN_STARTED: 'RUN_STARTED' as const,
+   TOOL_CALL: 'TOOL_CALL' as const,
+   TOOL_RESULT: 'TOOL_RESULT' as const
 }
 
 export const enumAllMetadataName = {

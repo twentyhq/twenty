@@ -314,6 +314,33 @@ export enum AiModelTier {
   smart = 'smart'
 }
 
+export type AiRunEvent = {
+  __typename?: 'AiRunEvent';
+  createdAt: Scalars['String']['output'];
+  error?: Maybe<Scalars['String']['output']>;
+  id: Scalars['String']['output'];
+  input?: Maybe<Scalars['JSON']['output']>;
+  isError?: Maybe<Scalars['Boolean']['output']>;
+  output?: Maybe<Scalars['JSON']['output']>;
+  role?: Maybe<Scalars['String']['output']>;
+  runId: Scalars['UUID']['output'];
+  text?: Maybe<Scalars['String']['output']>;
+  toolCallId?: Maybe<Scalars['String']['output']>;
+  toolName?: Maybe<Scalars['String']['output']>;
+  type: AiRunEventType;
+  usage?: Maybe<GenerateUsage>;
+};
+
+export enum AiRunEventType {
+  INTERACTION = 'INTERACTION',
+  MESSAGE = 'MESSAGE',
+  RUN_COMPLETED = 'RUN_COMPLETED',
+  RUN_FAILED = 'RUN_FAILED',
+  RUN_STARTED = 'RUN_STARTED',
+  TOOL_CALL = 'TOOL_CALL',
+  TOOL_RESULT = 'TOOL_RESULT'
+}
+
 export type AiSystemPromptPreview = {
   __typename?: 'AiSystemPromptPreview';
   estimatedTokenCount: Scalars['Int']['output'];
@@ -5799,6 +5826,7 @@ export type Query = {
   agentRuns: Array<AgentRun>;
   aiChatUsage?: Maybe<AiChatUsage>;
   aiChatUserCreditsUsage?: Maybe<AiChatUserCreditsUsage>;
+  aiRunEvents: Array<AiRunEvent>;
   apiKey?: Maybe<ApiKey>;
   apiKeys: Array<ApiKey>;
   appConnection: AppConnection;
@@ -5960,6 +5988,14 @@ export type QueryAgentChatChannelThreadIdsArgs = {
 export type QueryAgentRunsArgs = {
   agentId: Scalars['UUID']['input'];
   limit?: Scalars['Int']['input'];
+};
+
+
+export type QueryAiRunEventsArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  agentUniversalIdentifier?: InputMaybe<Scalars['UUID']['input']>;
+  runId?: InputMaybe<Scalars['UUID']['input']>;
+  threadKey?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -6790,6 +6826,7 @@ export type RunAgentResult = {
   __typename?: 'RunAgentResult';
   error?: Maybe<Scalars['String']['output']>;
   result?: Maybe<Scalars['JSON']['output']>;
+  runId: Scalars['UUID']['output'];
   status: Scalars['String']['output'];
   success: Scalars['Boolean']['output'];
   threadId: Scalars['UUID']['output'];
@@ -7058,6 +7095,7 @@ export type Subscription = {
   exportRecords: RecordExport;
   logicFunctionLogs: LogicFunctionLogs;
   onAgentChatEvent: AgentChatEvent;
+  onAiRunEvent: AiRunEvent;
   onEventSubscription?: Maybe<EventSubscription>;
 };
 
@@ -7080,6 +7118,14 @@ export type SubscriptionLogicFunctionLogsArgs = {
 
 export type SubscriptionOnAgentChatEventArgs = {
   threadId: Scalars['UUID']['input'];
+};
+
+
+export type SubscriptionOnAiRunEventArgs = {
+  after?: InputMaybe<Scalars['String']['input']>;
+  agentUniversalIdentifier?: InputMaybe<Scalars['UUID']['input']>;
+  runId?: InputMaybe<Scalars['UUID']['input']>;
+  threadKey?: InputMaybe<Scalars['String']['input']>;
 };
 
 

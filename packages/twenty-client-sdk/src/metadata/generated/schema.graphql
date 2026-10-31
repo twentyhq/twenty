@@ -280,6 +280,32 @@ enum AiModelTier {
   smart
 }
 
+type AiRunEvent {
+  createdAt: String!
+  error: String
+  id: String!
+  input: JSON
+  isError: Boolean
+  output: JSON
+  role: String
+  runId: UUID!
+  text: String
+  toolCallId: String
+  toolName: String
+  type: AiRunEventType!
+  usage: GenerateUsage
+}
+
+enum AiRunEventType {
+  INTERACTION
+  MESSAGE
+  RUN_COMPLETED
+  RUN_FAILED
+  RUN_STARTED
+  TOOL_CALL
+  TOOL_RESULT
+}
+
 type AiSystemPromptPreview {
   estimatedTokenCount: Int!
   sections: [AiSystemPromptSection!]!
@@ -4080,6 +4106,7 @@ type Query {
   agentRuns(agentId: UUID!, limit: Int! = 100): [AgentRun!]!
   aiChatUsage: AiChatUsage
   aiChatUserCreditsUsage: AiChatUserCreditsUsage
+  aiRunEvents(after: String, agentUniversalIdentifier: UUID, runId: UUID, threadKey: String): [AiRunEvent!]!
   apiKey(input: GetApiKeyInput!): ApiKey
   apiKeys: [ApiKey!]!
   appConnection(id: ID!): AppConnection!
@@ -4535,6 +4562,7 @@ enum RunAgentMessageRole {
 type RunAgentResult {
   error: String
   result: JSON
+  runId: UUID!
   status: String!
   success: Boolean!
   threadId: UUID!
@@ -4782,6 +4810,7 @@ type Subscription {
   exportRecords(input: CreateRecordExportInput!): RecordExport!
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
   onAgentChatEvent(threadId: UUID!): AgentChatEvent!
+  onAiRunEvent(after: String, agentUniversalIdentifier: UUID, runId: UUID, threadKey: String): AiRunEvent!
   onEventSubscription(eventStreamId: String!): EventSubscription
 }
 
