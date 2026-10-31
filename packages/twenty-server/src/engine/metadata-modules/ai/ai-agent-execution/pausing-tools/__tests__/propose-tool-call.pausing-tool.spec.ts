@@ -42,12 +42,13 @@ const buildFoundRecordOutput = (record: Record<string, unknown>) => ({
 });
 
 describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
-  it('saves the proposed component revision even when approval arguments target another draft', async () => {
+  it('keeps the proposed arguments when the tool disallows editing', async () => {
     const proposal = {
-      toolName: 'publish_front_component',
+      toolName: 'save_snapshot',
       toolLabel: 'Save component',
       summary: 'Save the reviewed component',
       template: 'generic' as const,
+      areArgumentsEditable: false,
       arguments: { draftId: RECORD_ID, checksum: 'reviewed-checksum' },
     };
     const call = PROPOSE_TOOL_CALL_PAUSING_TOOL.parseCall(proposal, {
@@ -68,7 +69,7 @@ describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
 
     expect(executeTool).toHaveBeenCalledTimes(1);
     expect(executeTool).toHaveBeenCalledWith({
-      toolName: 'publish_front_component',
+      toolName: 'save_snapshot',
       args: proposal.arguments,
     });
   });

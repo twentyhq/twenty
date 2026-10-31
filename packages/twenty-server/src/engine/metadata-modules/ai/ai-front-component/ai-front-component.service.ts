@@ -31,6 +31,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type FrontComponentQuery } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-query.type';
+import { PUBLISH_FRONT_COMPONENT_TOOL } from 'src/engine/metadata-modules/ai/ai-front-component/constants/publish-front-component-tool.constant';
 
 const DRAFT_TIME_TO_LIVE_IN_MILLISECONDS = 24 * 60 * 60 * 1000;
 
@@ -273,7 +274,7 @@ export class AiFrontComponentService {
 
         if (
           previous.isSuperseded ||
-          previous.publicationStarted ||
+          previous.isPublicationStarted ||
           previous.threadId !== threadId
         ) {
           throw new ApplicationException(
@@ -405,12 +406,20 @@ export class AiFrontComponentService {
   }: {
     draftId: string;
     checksum: string;
-    context: ToolProviderContext;
+    context: Pick<
+      ToolProviderContext,
+      | 'workspaceId'
+      | 'userWorkspaceId'
+      | 'authContext'
+      | 'approvedToolName'
+      | 'threadId'
+      | 'rolePermissionConfig'
+    >;
   }) {
     const { workspaceId, userWorkspaceId, authContext } = context;
 
     if (
-      context.approvedToolName !== 'publish_front_component' ||
+      context.approvedToolName !== PUBLISH_FRONT_COMPONENT_TOOL.name ||
       !isDefined(userWorkspaceId) ||
       !isDefined(authContext)
     ) {
@@ -482,18 +491,19 @@ export class AiFrontComponentService {
           );
         }
 
+        if (!isDefined(existing) && isDefined(draft.publishedComponentId)) {
+          throw new ApplicationException(
+            doNotTranslate(
+              'This saved component was deleted. Create a new draft.',
+            ),
+            ApplicationExceptionCode.INVALID_INPUT,
+            {
+              userFriendlyMessage: msg`This saved component was deleted. Create a new draft.`,
+            },
+          );
+        }
+
         if (!isDefined(existing)) {
-          if (isDefined(draft.publishedComponentId)) {
-            throw new ApplicationException(
-              doNotTranslate(
-                'This saved component was deleted. Create a new draft.',
-              ),
-              ApplicationExceptionCode.INVALID_INPUT,
-              {
-                userFriendlyMessage: msg`This saved component was deleted. Create a new draft.`,
-              },
-            );
-          }
           await this.getQueryObjectNamePluralOrThrow({
             query: draft.query,
             authContext,
@@ -501,7 +511,7 @@ export class AiFrontComponentService {
           });
           await this.saveDraft({
             workspaceId,
-            draft: { ...draft, publicationStarted: true },
+            draft: { ...draft, isPublicationStarted: true },
           });
 
           const files = [
@@ -563,7 +573,7 @@ export class AiFrontComponentService {
               }
               await this.saveDraft({
                 workspaceId,
-                draft: { ...draft, publicationStarted: false },
+                draft: { ...draft, isPublicationStarted: false },
               });
             }
             throw error;
@@ -574,7 +584,7 @@ export class AiFrontComponentService {
           workspaceId,
           draft: {
             ...draft,
-            publicationStarted: true,
+            isPublicationStarted: true,
             publishedComponentId: draftId,
           },
         });

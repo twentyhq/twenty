@@ -15,6 +15,6 @@ export type FrontComponentDraft = FrontComponentDraftInput & {
   dependencyRevision?: string;
   previewError?: string;
   isSuperseded?: boolean;
-  publicationStarted?: boolean;
+  isPublicationStarted?: boolean;
   publishedComponentId?: string;
 };
