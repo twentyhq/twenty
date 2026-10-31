@@ -13,6 +13,7 @@ import { RecordSharingInvitationRecipientPicker } from '@/object-record/record-s
 import { type useRecordSharing } from '@/object-record/record-sharing/hooks/useRecordSharing';
 import { type RecordSharingInvitationRecipient } from '@/object-record/record-sharing/types/RecordSharingInvitationRecipient';
 import { getRecordSharingRecipientGroups } from '@/object-record/record-sharing/utils/getRecordSharingRecipientGroups';
+import { getRecordSharingReadOnlyDescription } from '@/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription';
 import { SidePanelShareRecordGeneralAccessItem } from '@/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem';
 import { SidePanelShareRecordGroup } from '@/side-panel/pages/share-record/components/SidePanelShareRecordGroup';
 import { SidePanelShareRecordList } from '@/side-panel/pages/share-record/components/SidePanelShareRecordList';
@@ -22,7 +23,6 @@ import { SidePanelShareRecordSkeleton } from '@/side-panel/pages/share-record/co
 import { useSidePanelShareRecordInvitation } from '@/side-panel/pages/share-record/hooks/useSidePanelShareRecordInvitation';
 import { useSidePanelShareRecordSearch } from '@/side-panel/pages/share-record/hooks/useSidePanelShareRecordSearch';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
-import { RecordSharingMode } from '~/generated-metadata/graphql';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledContainer = styled.div`
@@ -68,7 +68,7 @@ export const SidePanelShareRecordContent = ({
     loading,
     error,
     saving,
-    setGeneralAccess,
+    setPrivate,
     setShare,
     removeShare,
     refetch,
@@ -77,7 +77,7 @@ export const SidePanelShareRecordContent = ({
     sharing,
     saving,
     setShare,
-    setGeneralAccess,
+    setPrivate,
     objectLabelPlural,
   });
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -169,16 +169,13 @@ export const SidePanelShareRecordContent = ({
                       heading={isInviting ? t`Have access` : t`Everyone`}
                     >
                       <SidePanelShareRecordGeneralAccessItem
-                        generalAccessLevel={sharing.generalAccessLevel}
-                        defaultGeneralAccessLevel={
-                          sharing.defaultGeneralAccessLevel
-                        }
+                        isPrivate={sharing.isPrivate}
                         hasManagedGeneralAccess={
                           sharing.hasManagedGeneralAccess
                         }
                         objectLabelPlural={objectLabelPlural}
                         isSaving={invitation.isSubmitting}
-                        setGeneralAccess={setGeneralAccess}
+                        setPrivate={setPrivate}
                       />
                     </SidePanelShareRecordGroup>
                   )}
@@ -237,11 +234,12 @@ export const SidePanelShareRecordContent = ({
                 </>
               ) : (
                 <StyledDescription>
-                  {sharing.sharingMode === RecordSharingMode.ROLE_ONLY
-                    ? t`Access to ${objectLabelPlural} is set by roles, not record by record.`
-                    : sharing.sharingMode === RecordSharingMode.OPEN_BY_DEFAULT
-                      ? t`Only the creator of this record, people with full access to it and admins can change who has access.`
-                      : t`Only the creator of this record and people with full access to it can change who has access.`}
+                  {t(
+                    getRecordSharingReadOnlyDescription({
+                      sharing,
+                      objectLabelPlural,
+                    }),
+                  )}
                 </StyledDescription>
               ))
             )}

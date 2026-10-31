@@ -4,7 +4,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { buildPrivateRecordCreatorExpression } from 'src/engine/permissions/private-record/utils/build-private-record-creator-expression.util';
 import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/utils/is-private-record-enabled.util';
-import { resolveObjectSharing } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
 import {
   type RowAccessExpression,
   type RowAccessPolicyContext,
@@ -20,12 +19,7 @@ export const buildPrivateRecordCreatorGrant = ({
   Pick<RowAccessPolicyTarget, 'tableAlias' | 'flatObjectMetadata'>):
   | RowAccessExpression
   | undefined => {
-  const { isShareRequired } = resolveObjectSharing({
-    flatObjectMetadata,
-    featureFlagsMap: environment.featureFlagsMap,
-  });
-
-  if (isShareRequired || !isPrivateRecordEnabled(environment.featureFlagsMap)) {
+  if (!isPrivateRecordEnabled(environment.featureFlagsMap)) {
     return undefined;
   }
 
