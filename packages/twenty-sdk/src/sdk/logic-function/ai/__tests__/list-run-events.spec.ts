@@ -53,7 +53,7 @@ describe('listRunEvents', () => {
     expect(events).toEqual(EVENTS);
 
     const [url, requestInit] = fetchSpy.mock.calls[0];
-    const sentBody = JSON.parse(requestInit?.body as string);
+    const sentBody = JSON.parse(String(requestInit?.body));
 
     expect(url).toBe('https://api.test/metadata');
     expect(sentBody.query).toContain('aiRunEvents(');
@@ -66,7 +66,7 @@ describe('listRunEvents', () => {
       threadKey: 'C123:1700000000.000100',
     });
 
-    const sentBody = JSON.parse(fetchSpy.mock.calls[0][1]?.body as string);
+    const sentBody = JSON.parse(String(fetchSpy.mock.calls[0][1]?.body));
 
     expect(sentBody.variables).toEqual({
       agentUniversalIdentifier: 'agent-uid',

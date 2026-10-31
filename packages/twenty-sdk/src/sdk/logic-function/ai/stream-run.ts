@@ -40,15 +40,14 @@ const parseServerSentEvent = (
   return data.length > 0 ? (JSON.parse(data) as SubscriptionResult) : null;
 };
 
-// Yields the events after `after`, then live ones. A run's stream ends with the run, a
-// conversation's when `signal` aborts or the loop breaks
+// a run's stream ends with the run; a conversation's when `signal` aborts or the loop breaks
 export async function* streamRun({
   signal,
   ...variables
 }: StreamRunInput): AsyncGenerator<AiRunEvent> {
   const { apiUrl, accessToken } = getApplicationApiConfigOrThrow('streamRun');
 
-  if (signal?.aborted === true) {
+  if (signal?.aborted) {
     return;
   }
 
@@ -63,7 +62,7 @@ export async function* streamRun({
     signal,
   });
 
-  if (!response.ok || response.body === null) {
+  if (!response.ok || !isDefined(response.body)) {
     throw new Error(
       `streamRun() failed: HTTP ${response.status} ${response.statusText}`,
     );
@@ -76,8 +75,11 @@ export async function* streamRun({
     while (true) {
       const { done, value } = await reader.read();
 
+      // the server completes every stream it ends, so this is a dropped connection
       if (done) {
-        return;
+        throw new Error(
+          'streamRun() failed: the stream closed early; pass the last event id as `after` to resume',
+        );
       }
 
       buffer += value.replace(/\r\n/g, '\n');

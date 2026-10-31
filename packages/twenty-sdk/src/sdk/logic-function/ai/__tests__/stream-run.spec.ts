@@ -26,8 +26,10 @@ const MESSAGE: AiRunEvent = {
   text: 'Done',
 };
 
-const toNextEvent = (result: unknown) =>
-  `event: next\ndata: ${JSON.stringify(result)}\n\n`;
+const toNextEvent = (result: {
+  data?: { onAiRunEvent: AiRunEvent };
+  errors?: { message: string }[];
+}) => `event: next\ndata: ${JSON.stringify(result)}\n\n`;
 
 const mockServerSentEvents = (chunks: string[]) =>
   new Response(
@@ -74,7 +76,6 @@ describe('streamRun', () => {
       mockServerSentEvents([
         ':\n\n',
         toNextEvent({ data: { onAiRunEvent: STARTED } }),
-        // an event can arrive split across reads
         message.slice(0, 20),
         message.slice(20),
         'event: complete\n\n',
@@ -86,7 +87,7 @@ describe('streamRun', () => {
     expect(events).toEqual([STARTED, MESSAGE]);
 
     const [url, requestInit] = fetchSpy.mock.calls[0];
-    const sentBody = JSON.parse(requestInit?.body as string);
+    const sentBody = JSON.parse(String(requestInit?.body));
 
     expect(url).toBe('https://api.test/metadata');
     expect(requestInit?.headers).toEqual(
@@ -108,6 +109,16 @@ describe('streamRun', () => {
 
     await expect(collect(streamRun({ runId: 'run-id' }))).rejects.toThrow(
       'streamRun() failed: Run run-id not found',
+    );
+  });
+
+  it('fails when the stream closes without completing, so the caller can resume', async () => {
+    fetchSpy.mockResolvedValue(
+      mockServerSentEvents([toNextEvent({ data: { onAiRunEvent: STARTED } })]),
+    );
+
+    await expect(collect(streamRun({ runId: 'run-id' }))).rejects.toThrow(
+      'the stream closed early',
     );
   });
 

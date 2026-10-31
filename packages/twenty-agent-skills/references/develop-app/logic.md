@@ -79,6 +79,7 @@ When adding AI behavior:
 - State when the agent should ask for missing workspace or record context.
 - Avoid exposing raw IDs, timestamps, or nested API output to end users when a readable answer is possible.
 - A `defineAgent` `roleUniversalIdentifier` must reference a role the app defines, and the application role (`defineApplicationRole` or `defaultRoleUniversalIdentifier`) must cover every permission that agent role grants. The build and `twenty app apply` fail otherwise, listing the excess grants.
+- `runAgent` (from `twenty-sdk/logic-function`) returns `{ threadId, runId, status, result, error, success }`. `runId` names the run, for `listRunEvents` and `streamRun` below.
 
 ## AI Generate
 
@@ -112,6 +113,29 @@ const { object } = await ai.generate({
 - The call runs as the caller (the member a user-scoped token belongs to, else the app, else the API key) and never exceeds the app's role. The app's default role needs the AI permission flag.
 - `modelId` is optional; the workspace default model is used when unset.
 - It returns `{ success, text, object, error, turnId, usage }`: `text` for a text response, `object` for a JSON one (the other is `null`), `error` when `success` is false, `turnId` for the recorded turn and `usage` as `{ inputTokens, outputTokens }` (`usage` itself is `null` when the run failed before any usage was recorded). A failed run comes back as `success: false` rather than a throw (invalid input still throws), so check `success`.
+
+### Following An AI Run
+
+`listRunEvents` lists what a run did and `streamRun` yields the same events live, both from `twenty-sdk/logic-function`. Pass `{ runId }` (from `runAgent`, or an `ai.generate` `turnId`), or `{ agentUniversalIdentifier, threadKey }` for every run of a conversation.
+
+```ts
+import { runAgent, streamRun } from 'twenty-sdk/logic-function';
+
+const { runId } = await runAgent({
+  agentUniversalIdentifier,
+  input: 'Enrich Acme',
+  waitForCompletion: false,
+});
+
+for await (const event of streamRun({ runId })) {
+  if (event.type === 'TOOL_CALL') console.log(event.toolName);
+}
+```
+
+- Events (`AiRunEvent`) have an `id`, `runId`, `createdAt` and a `type`: `RUN_STARTED`, `MESSAGE` (`role`, `text`), `TOOL_CALL` (`toolCallId`, `toolName`, `input`), `TOOL_RESULT` (`toolCallId`, `output`, `isError`), `INTERACTION` (the agent waits on a person or an event; the answer comes as its `TOOL_RESULT`), `RUN_COMPLETED` (`usage`), `RUN_FAILED` (`error`, `usage`).
+- A run's stream ends with the run; a conversation's stays open until you `break` or abort the `signal` you pass.
+- `streamRun` throws if the connection drops. Pass the last event `id` as `after` to resume: nothing is missed, but a `TOOL_RESULT` of the step you stopped in can come again, so skip ids already seen.
+- Both need an application token and reach only the app's own agents and runs.
 
 ## Inbox Messages
 

@@ -365,8 +365,10 @@ Every event has an `id`, the `runId` and a `createdAt`.
 - Pass `{ agentUniversalIdentifier, threadKey }` instead of `runId` to follow
   every run of a conversation. That stream stays open until you `break` or
   abort the `signal` you pass.
-- Pass an event's `id` as `after` to resume: both functions return only the
-  events after it, so a stream that reconnects misses and repeats nothing.
+- Pass an event's `id` as `after` to resume: both functions return the events
+  after it, so a stream that reconnects misses nothing. A `TOOL_RESULT` of the
+  step it stopped in can come again, so skip ids you have already seen.
+  `streamRun()` throws if its connection drops, so resume from there.
 - A run that waits and goes on later continues in a new run of its
   conversation; follow the conversation to see it through.
 - `ai.generate()` runs have no conversation: their `turnId` lists as
