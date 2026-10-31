@@ -55,6 +55,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           authContext: userAuthContext,
           apiKeyRoleMap,
           isShareRequired: true,
+          isPrivateByDefault: false,
           isPrivate: false,
         }),
       ).toEqual([
@@ -94,6 +95,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
             },
           ],
           isShareRequired: true,
+          isPrivateByDefault: false,
           isPrivate: false,
         }),
       ).toEqual([
@@ -130,6 +132,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
             { roleId: ROLE_ID, accessLevel: RecordShareAccessLevel.READ },
           ],
           isShareRequired: false,
+          isPrivateByDefault: false,
           isPrivate: false,
         }),
       ).toEqual([
@@ -154,6 +157,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           apiKeyRoleMap,
           shareWith: [],
           isShareRequired: false,
+          isPrivateByDefault: false,
           isPrivate: true,
         }),
       ).toEqual([]);
@@ -168,6 +172,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           apiKeyRoleMap,
           shareWith: [],
           isShareRequired: false,
+          isPrivateByDefault: false,
           isPrivate: true,
         }),
       ).toEqual([
@@ -194,6 +199,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
             { everyone: true, accessLevel: RecordShareAccessLevel.READ },
           ],
           isShareRequired: true,
+          isPrivateByDefault: false,
           isPrivate: false,
         }),
       ).toEqual([
@@ -229,6 +235,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
             { everyone: true, accessLevel: RecordShareAccessLevel.READ },
           ],
           isShareRequired: true,
+          isPrivateByDefault: false,
           isPrivate: false,
         }),
       ).toEqual([
@@ -250,6 +257,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
             { roleId: ROLE_ID, accessLevel: RecordShareAccessLevel.FULL },
           ],
           isShareRequired: true,
+          isPrivateByDefault: false,
           isPrivate: false,
         }),
       ).toEqual([
@@ -288,6 +296,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
             },
           ],
           isShareRequired: true,
+          isPrivateByDefault: false,
           isPrivate: false,
         }),
       ).toEqual([
@@ -317,6 +326,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
             { roleId: ROLE_ID, accessLevel: RecordShareAccessLevel.FULL },
           ],
           isShareRequired: true,
+          isPrivateByDefault: false,
           isPrivate: false,
         }),
       ).toEqual([expect.objectContaining({ principalId: ROLE_ID })]);
@@ -333,6 +343,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
             { everyone: true, accessLevel: RecordShareAccessLevel.READ },
           ],
           isShareRequired: true,
+          isPrivateByDefault: false,
           isPrivate: false,
         }),
       ).toEqual([
@@ -359,6 +370,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           apiKeyRoleMap,
           shareWith: null,
           isShareRequired: true,
+          isPrivateByDefault: false,
           isPrivate: false,
         }),
       ).toEqual([
@@ -377,6 +389,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           authContext: apiKeyAuthContext,
           apiKeyRoleMap,
           isShareRequired: true,
+          isPrivateByDefault: false,
           isPrivate: false,
         }),
       ).toEqual([
@@ -402,6 +415,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
           apiKeyRoleMap,
           shareWith: [],
           isShareRequired: true,
+          isPrivateByDefault: false,
           isPrivate: false,
         }),
       ).toEqual([]);
@@ -421,6 +435,7 @@ describe('buildRecordShareInputsForCreatedRecords', () => {
             },
           ],
           isShareRequired: true,
+          isPrivateByDefault: false,
           isPrivate: false,
         }),
       ).toEqual([

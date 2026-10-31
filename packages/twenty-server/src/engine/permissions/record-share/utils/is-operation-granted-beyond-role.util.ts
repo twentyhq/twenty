@@ -13,7 +13,7 @@ export const isOperationGrantedBeyondRole = ({
 }: {
   flatObjectMetadata: Pick<
     FlatObjectMetadata,
-    'readability' | 'isSystem' | 'disabledObjectPermissionActions'
+    'universalIdentifier' | 'isSystem' | 'disabledObjectPermissionActions'
   >;
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
   operationType: OperationType;

@@ -93,6 +93,7 @@ export class ShareWithService {
         apiKeyRoleMap,
         shareWith,
         isShareRequired: objectSharing.isShareRequired,
+        isPrivateByDefault: objectSharing.isPrivateByDefault,
         isPrivate,
       }),
       transactionScope,

@@ -36,23 +36,7 @@ describe('Object metadata readability update', () => {
   });
 
   it('should update the readability of a custom object', async () => {
-    const { data: privateData } = await updateOneObjectMetadata({
-      expectToFail: false,
-      input: {
-        idToUpdate: customObjectMetadataId,
-        updatePayload: { readability: MetadataReadability.PRIVATE },
-      },
-      gqlFields: `
-        id
-        readability
-      `,
-    });
-
-    expect(privateData.updateOneObject.readability).toBe(
-      MetadataReadability.PRIVATE,
-    );
-
-    const { data: openData } = await updateOneObjectMetadata({
+    const { data } = await updateOneObjectMetadata({
       expectToFail: false,
       input: {
         idToUpdate: customObjectMetadataId,
@@ -64,10 +48,11 @@ describe('Object metadata readability update', () => {
       `,
     });
 
-    expect(openData.updateOneObject.readability).toBe(MetadataReadability.OPEN);
+    expect(data.updateOneObject.readability).toBe(MetadataReadability.OPEN);
   });
 
   it.each([
+    MetadataReadability.PRIVATE,
     MetadataReadability.SYSTEM,
     MetadataReadability.APPLICATION,
     MetadataReadability.INHERITED,
@@ -135,7 +120,7 @@ describe('Object metadata readability update', () => {
       expectToFail: true,
       input: {
         idToUpdate: companyObject.id,
-        updatePayload: { readability: MetadataReadability.PRIVATE },
+        updatePayload: { readability: MetadataReadability.OPEN },
       },
     });
 

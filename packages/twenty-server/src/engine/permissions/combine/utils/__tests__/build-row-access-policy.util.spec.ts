@@ -1,8 +1,8 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
   FeatureFlagKey,
   FieldMetadataType,
-  MetadataReadability,
   RecordShareAccessLevel,
 } from 'twenty-shared/types';
 
@@ -41,7 +41,7 @@ const buildObject = ({ id }: { id: string }): FlatObjectMetadata =>
 const note = buildObject({ id: 'note' });
 const person: FlatObjectMetadata = {
   ...buildObject({ id: 'person' }),
-  readability: MetadataReadability.PRIVATE,
+  universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
 };
 
 const environment: RowAccessPolicyEnvironment &

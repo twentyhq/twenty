@@ -1,14 +1,12 @@
 /* @license Enterprise */
 
 import { type ObjectPermissionAction } from 'twenty-shared/application';
-import {
-  FeatureFlagKey,
-  MetadataReadability,
-  RecordShareAccessLevel,
-} from 'twenty-shared/types';
+import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
 
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
+import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/utils/is-private-record-enabled.util';
+import { isPrivateByDefaultObject } from 'src/engine/permissions/private-record/utils/is-private-by-default-object.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 
@@ -26,6 +24,7 @@ const OPERATIONS_GRANTABLE_BEYOND_ROLE: {
 export type ObjectSharing = {
   isShareable: boolean;
   isShareRequired: boolean;
+  isPrivateByDefault: boolean;
   defaultGeneralAccessLevel: RecordShareAccessLevel | null;
   canShareBeyondRole: boolean;
   operationTypesGrantedBeyondRole: OperationType[];
@@ -34,11 +33,12 @@ export type ObjectSharing = {
 const resolveDefaultGeneralAccessLevel = ({
   isShareable,
   isShareRequired,
+  isPrivateByDefault,
 }: Pick<
   ObjectSharing,
-  'isShareable' | 'isShareRequired'
+  'isShareable' | 'isShareRequired' | 'isPrivateByDefault'
 >): RecordShareAccessLevel | null => {
-  if (isShareRequired) {
+  if (isShareRequired || isPrivateByDefault) {
     return RecordShareAccessLevel.NONE;
   }
 
@@ -62,18 +62,18 @@ export const resolveObjectSharing = ({
 }: {
   flatObjectMetadata: Pick<
     FlatObjectMetadata,
-    'readability' | 'isSystem' | 'disabledObjectPermissionActions'
+    'universalIdentifier' | 'isSystem' | 'disabledObjectPermissionActions'
   >;
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
 }): ObjectSharing => {
   const isRecordSharingEnabled =
     featureFlagsMap[FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED] ?? false;
 
-  // Private records are only reached through their shares, whatever the flag
+  const isPrivateByDefault = isPrivateByDefaultObject(flatObjectMetadata);
   const isShareRequired =
-    flatObjectMetadata.readability === MetadataReadability.PRIVATE;
+    isPrivateByDefault && !isPrivateRecordEnabled(featureFlagsMap);
   const canBeShared = isRecordSharingEnabled && !flatObjectMetadata.isSystem;
-  const isShareable = isShareRequired || canBeShared;
+  const isShareable = isPrivateByDefault || canBeShared;
 
   const operationTypesGrantedBeyondRole = canBeShared
     ? resolveOperationTypesGrantableBeyondRole(flatObjectMetadata)
@@ -82,9 +82,11 @@ export const resolveObjectSharing = ({
   return {
     isShareable,
     isShareRequired,
+    isPrivateByDefault,
     defaultGeneralAccessLevel: resolveDefaultGeneralAccessLevel({
       isShareable,
       isShareRequired,
+      isPrivateByDefault,
     }),
     canShareBeyondRole: isNonEmptyArray(operationTypesGrantedBeyondRole),
     operationTypesGrantedBeyondRole,
