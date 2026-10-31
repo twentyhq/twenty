@@ -32,6 +32,7 @@ import {
   type ObjectSharing,
   resolveObjectSharing,
 } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
+import { isObjectSharingAlwaysPrivate } from 'src/engine/permissions/record-share/utils/is-object-sharing-always-private.util';
 import { resolveRecordSharePrincipalOrThrow } from 'src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util';
 import { resolveViewerRecordShareAccessLevel } from 'src/engine/permissions/record-share/utils/resolve-viewer-record-share-access-level.util';
 import { validateShareWithPrincipalsOrThrow } from 'src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util';
@@ -64,12 +65,6 @@ type RecordSharingChange = {
   sharingObject: RecordSharingObject;
   creatorWorkspaceMemberId: string | undefined;
 };
-
-const isAlwaysPrivate = ({
-  isShareRequired,
-  isPrivateByDefault,
-}: Pick<ObjectSharing, 'isShareRequired' | 'isPrivateByDefault'>): boolean =>
-  isShareRequired || isPrivateByDefault;
 
 @Injectable()
 export class RecordSharingService {
@@ -242,7 +237,7 @@ export class RecordSharingService {
       return {
         isShareable: sharingObject.isShareable,
         isPrivate: false,
-        isAlwaysPrivate: isAlwaysPrivate(sharingObject),
+        isAlwaysPrivate: isObjectSharingAlwaysPrivate(sharingObject),
         canManageSharing: false,
         permissions,
         hasManagedGeneralAccess: false,
@@ -266,7 +261,7 @@ export class RecordSharingService {
     const { isPrivate } = args;
 
     if (
-      isAlwaysPrivate({ isShareRequired, isPrivateByDefault }) &&
+      isObjectSharingAlwaysPrivate({ isShareRequired, isPrivateByDefault }) &&
       !isPrivate
     ) {
       throw new RecordShareException(
@@ -371,7 +366,7 @@ export class RecordSharingService {
     return {
       isShareable: sharingObject.isShareable,
       isPrivate,
-      isAlwaysPrivate: isAlwaysPrivate(sharingObject),
+      isAlwaysPrivate: isObjectSharingAlwaysPrivate(sharingObject),
       canManageSharing,
       permissions,
       hasManagedGeneralAccess: shares.some(
