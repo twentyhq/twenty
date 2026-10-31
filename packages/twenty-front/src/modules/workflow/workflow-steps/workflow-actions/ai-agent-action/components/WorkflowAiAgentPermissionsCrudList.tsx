@@ -1,6 +1,7 @@
 import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { t } from '@lingui/core/macro';
+import { type WorkflowAiAgentObjectPermissionChange } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentObjectPermissionChange';
 import { type ObjectPermission } from '~/generated-metadata/graphql';
 import { WorkflowAiAgentPermissionsPermissionRow } from './WorkflowAiAgentPermissionsPermissionRow';
 
@@ -11,10 +12,7 @@ type WorkflowAiAgentPermissionsCrudListProps = {
   }>;
   objectPermissions?: ObjectPermission;
   readonly: boolean;
-  onAddPermission: (
-    objectMetadataId: string,
-    permissionKey: SettingsRoleObjectPermissionKey,
-  ) => void;
+  onAddPermission: (change: WorkflowAiAgentObjectPermissionChange) => void;
   objectMetadataId: string;
 };
 
@@ -38,7 +36,12 @@ export const WorkflowAiAgentPermissionsCrudList = ({
             readonly={readonly}
             showDeleteButton={false}
             alwaysShowGranted={true}
-            onAdd={() => onAddPermission(objectMetadataId, permission.key)}
+            onAdd={() =>
+              onAddPermission({
+                objectMetadataId,
+                permissionKey: permission.key,
+              })
+            }
           />
         );
       })}

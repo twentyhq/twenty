@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
   agentResponseFormatSchema,
@@ -181,7 +182,7 @@ Pass stepId for a draft step that runs no agent (no settings.input.agentId): the
       const { workspaceId } = context;
       let agentId = parameters.agentId;
 
-      if (isDefined(stepId)) {
+      if (isNonEmptyString(stepId)) {
         const [draftStep] = await findDraftAiAgentSteps(deps, {
           workspaceId,
           isMatchingStep: (step) => step.id === stepId,
@@ -195,7 +196,7 @@ Pass stepId for a draft step that runs no agent (no settings.input.agentId): the
           };
         }
 
-        if (!isDefined(draftStep.step.settings.input.agentId)) {
+        if (!isNonEmptyString(draftStep.step.settings.input.agentId)) {
           await updateInlineAiAgentStep(deps, {
             workspaceId,
             userWorkspaceId: context.userWorkspaceId,
@@ -216,7 +217,7 @@ Pass stepId for a draft step that runs no agent (no settings.input.agentId): the
         agentId = draftStep.step.settings.input.agentId;
       }
 
-      if (!isDefined(agentId)) {
+      if (!isNonEmptyString(agentId)) {
         return {
           success: false,
           error: 'Missing stepId or agentId',

@@ -16,19 +16,20 @@ export const getWorkflowAiAgentObjectPermissionsFromScope = ({
         item.universalIdentifier === objectPermission.objectUniversalIdentifier,
     );
 
-    return isDefined(objectMetadataItem)
-      ? [
-          {
-            objectMetadataId: objectMetadataItem.id,
-            canReadObjectRecords:
-              objectPermission.canReadObjectRecords ?? false,
-            canUpdateObjectRecords:
-              objectPermission.canUpdateObjectRecords ?? false,
-            canSoftDeleteObjectRecords:
-              objectPermission.canSoftDeleteObjectRecords ?? false,
-            canDestroyObjectRecords:
-              objectPermission.canDestroyObjectRecords ?? false,
-          },
-        ]
-      : [];
+    if (!isDefined(objectMetadataItem)) {
+      return [];
+    }
+
+    return [
+      {
+        objectMetadataId: objectMetadataItem.id,
+        canReadObjectRecords: objectPermission.canReadObjectRecords ?? false,
+        canUpdateObjectRecords:
+          objectPermission.canUpdateObjectRecords ?? false,
+        canSoftDeleteObjectRecords:
+          objectPermission.canSoftDeleteObjectRecords ?? false,
+        canDestroyObjectRecords:
+          objectPermission.canDestroyObjectRecords ?? false,
+      },
+    ];
   });

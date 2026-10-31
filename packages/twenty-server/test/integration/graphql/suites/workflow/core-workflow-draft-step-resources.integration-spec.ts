@@ -5,17 +5,18 @@ import {
   createDraftFromCoreWorkflowVersion,
   deleteCoreWorkflows,
   findCoreWorkflowVersion,
+  updateCoreWorkflowVersionStep,
   updateCoreWorkflowVersionTrigger,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 
 type AiAgentStep = {
   id: string;
   type: string;
-  settings: { input: { agentId: string } };
+  settings: { input: Record<string, unknown> };
 };
 
 describe('Draft creation (e2e)', () => {
-  it('gives AI agent steps their own copy of the agent', async () => {
+  it('keeps the config of an AI agent step in the draft, with no agent to copy', async () => {
     const { coreWorkflowId, coreWorkflowVersionId } = await createCoreWorkflow({
       name: 'Draft Step Resources Test',
     });
@@ -31,9 +32,25 @@ describe('Draft creation (e2e)', () => {
       },
     });
 
-    const agentStep = await createCoreWorkflowVersionStep<AiAgentStep>({
+    const createdAgentStep = await createCoreWorkflowVersionStep<AiAgentStep>({
       coreWorkflowVersionId,
       stepType: 'AI_AGENT',
+    });
+    const agentStep = {
+      ...createdAgentStep,
+      settings: {
+        ...createdAgentStep.settings,
+        input: {
+          ...createdAgentStep.settings.input,
+          instructions: 'You qualify leads.',
+          prompt: 'Qualify the new lead.',
+        },
+      },
+    };
+
+    await updateCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      step: agentStep,
     });
 
     await activateCoreWorkflowVersion({ coreWorkflowVersionId });
@@ -47,11 +64,10 @@ describe('Draft creation (e2e)', () => {
       coreWorkflowVersionId: draft.id,
     });
 
-    const draftAgentId = steps?.find((step) => step.id === agentStep.id)
-      ?.settings.input.agentId;
+    const draftAgentStep = steps?.find((step) => step.id === agentStep.id);
 
-    expect(draftAgentId).toBeDefined();
-    expect(draftAgentId).not.toBe(agentStep.settings.input.agentId);
+    expect(draftAgentStep?.settings.input).toEqual(agentStep.settings.input);
+    expect(draftAgentStep?.settings.input).not.toHaveProperty('agentId');
 
     await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
   });

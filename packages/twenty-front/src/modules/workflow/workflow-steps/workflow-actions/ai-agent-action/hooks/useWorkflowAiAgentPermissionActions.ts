@@ -1,5 +1,4 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
-import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
 import { useActionRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig';
 import { useSettingsRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -9,6 +8,8 @@ import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workf
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
 import { workflowAiAgentPermissionsIsSystemObjectsListOpenState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsSystemObjectsListOpenState';
 import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdState';
+import { type WorkflowAiAgentObjectPermissionChange } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentObjectPermissionChange';
+import { getWorkflowAiAgentCrudObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentCrudObjectPermission';
 import { grantWorkflowAiAgentObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/grantWorkflowAiAgentObjectPermission';
 import { revokeWorkflowAiAgentObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/revokeWorkflowAiAgentObjectPermission';
 import { useMutation } from '@apollo/client/react';
@@ -26,22 +27,6 @@ import {
   UpsertObjectPermissionsDocument,
   UpsertPermissionFlagsDocument,
 } from '~/generated-metadata/graphql';
-
-const toCrudObjectPermission = (
-  objectPermission: ObjectPermission | undefined,
-) =>
-  isDefined(objectPermission)
-    ? {
-        canReadObjectRecords:
-          objectPermission.canReadObjectRecords ?? undefined,
-        canUpdateObjectRecords:
-          objectPermission.canUpdateObjectRecords ?? undefined,
-        canSoftDeleteObjectRecords:
-          objectPermission.canSoftDeleteObjectRecords ?? undefined,
-        canDestroyObjectRecords:
-          objectPermission.canDestroyObjectRecords ?? undefined,
-      }
-    : undefined;
 
 type UseWorkflowAiAgentPermissionActionsParams = {
   stepId: string;
@@ -168,10 +153,10 @@ export const useWorkflowAiAgentPermissionActions = ({
     return generatedRoleId;
   };
 
-  const handleAddPermission = async (
-    objectMetadataId: string,
-    permissionKey: SettingsRoleObjectPermissionKey,
-  ) => {
+  const handleAddPermission = async ({
+    objectMetadataId,
+    permissionKey,
+  }: WorkflowAiAgentObjectPermissionChange) => {
     const ensuredRoleId = await ensureRoleId();
 
     if (!ensuredRoleId) {
@@ -184,7 +169,8 @@ export const useWorkflowAiAgentPermissionActions = ({
 
     const updatedPermission = grantWorkflowAiAgentObjectPermission({
       objectMetadataId,
-      objectPermission: toCrudObjectPermission(objectPermission),
+      objectPermission:
+        getWorkflowAiAgentCrudObjectPermission(objectPermission),
       permissionKey,
     });
 
@@ -216,10 +202,10 @@ export const useWorkflowAiAgentPermissionActions = ({
     setWorkflowAiAgentPermissionsIsSystemObjectsListOpen(false);
   };
 
-  const handleDeletePermission = async (
-    objectMetadataId: string,
-    permissionKey: SettingsRoleObjectPermissionKey,
-  ) => {
+  const handleDeletePermission = async ({
+    objectMetadataId,
+    permissionKey,
+  }: WorkflowAiAgentObjectPermissionChange) => {
     if (!isDefined(roleId) || readonly) {
       return;
     }
@@ -242,7 +228,8 @@ export const useWorkflowAiAgentPermissionActions = ({
 
     const updatedPermission = revokeWorkflowAiAgentObjectPermission({
       objectMetadataId,
-      objectPermission: toCrudObjectPermission(objectPermission) ?? {},
+      objectPermission:
+        getWorkflowAiAgentCrudObjectPermission(objectPermission) ?? {},
       permissionKey,
     });
 

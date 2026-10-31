@@ -922,30 +922,32 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
-        const clonedStepId = v4();
+        const clonedStep = {
+          ...step,
+          id: v4(),
+          nextStepIds: [],
+          position: duplicatedStepPosition,
+        };
         const stepAgent = await this.findStepOwnedAgent({
           agentId: step.settings.input.agentId,
           workspaceId,
         });
-        const clonedAgent = isDefined(stepAgent)
-          ? await this.duplicateAgent({
-              agentId: stepAgent.id,
-              labelSuffix: clonedStepId.substring(0, 4),
-              workspaceId,
-            })
-          : null;
+
+        if (!isDefined(stepAgent)) {
+          return clonedStep;
+        }
+
+        const clonedAgent = await this.duplicateAgent({
+          agentId: stepAgent.id,
+          labelSuffix: clonedStep.id.substring(0, 4),
+          workspaceId,
+        });
 
         return {
-          ...step,
-          id: clonedStepId,
-          nextStepIds: [],
-          position: duplicatedStepPosition,
+          ...clonedStep,
           settings: {
             ...step.settings,
-            input: {
-              ...step.settings.input,
-              ...(isDefined(clonedAgent) ? { agentId: clonedAgent.id } : {}),
-            },
+            input: { ...step.settings.input, agentId: clonedAgent.id },
           },
         };
       }
@@ -1146,8 +1148,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     }
   }
 
-  // A step created before steps held their own config owns a hidden agent, copied and deleted with it.
-  // A reusable agent a step runs is never the step's to copy or delete
+  // only a legacy step's hidden agent is the step's to copy or delete, never a reusable agent it runs
   private async findStepOwnedAgent({
     agentId,
     workspaceId,
@@ -1172,7 +1173,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         throw error;
       });
 
-    return agent?.isSystem === true ? agent : null;
+    return isDefined(agent) && agent.isSystem ? agent : null;
   }
 
   private async duplicateAgent({

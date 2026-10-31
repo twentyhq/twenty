@@ -8,6 +8,7 @@ import { getWorkflowAiAgentPermissionFlagKeysFromScope } from '@/workflow/workfl
 import { grantWorkflowAiAgentObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/grantWorkflowAiAgentObjectPermission';
 import { revokeWorkflowAiAgentObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/revokeWorkflowAiAgentObjectPermission';
 import { setWorkflowAiAgentObjectPermissionInScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/setWorkflowAiAgentObjectPermissionInScope';
+import { revokeWorkflowAiAgentAllObjectsPermissionInScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/revokeWorkflowAiAgentAllObjectsPermissionInScope';
 import { setWorkflowAiAgentPermissionFlagKeysInScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/setWorkflowAiAgentPermissionFlagKeysInScope';
 
 const objectMetadataItems = [
@@ -121,5 +122,61 @@ describe('workflow AI agent scope', () => {
     expect(getWorkflowAiAgentPermissionFlagKeysFromScope(scope)).toEqual([
       PermissionFlagType.SEND_EMAIL_TOOL,
     ]);
+  });
+
+  it('keeps a denial while an all-objects grant would otherwise apply', () => {
+    expect(
+      setWorkflowAiAgentObjectPermissionInScope({
+        scope: {
+          canReadAllObjectRecords: true,
+          objectPermissions: [
+            { objectUniversalIdentifier: 'person', canReadObjectRecords: true },
+          ],
+        },
+        objectUniversalIdentifier: 'person',
+        objectPermission: {
+          objectMetadataId: 'person-id',
+          canReadObjectRecords: false,
+          canUpdateObjectRecords: false,
+          canSoftDeleteObjectRecords: false,
+          canDestroyObjectRecords: false,
+        },
+      }).objectPermissions,
+    ).toEqual([
+      {
+        objectUniversalIdentifier: 'person',
+        canReadObjectRecords: false,
+        canUpdateObjectRecords: false,
+        canSoftDeleteObjectRecords: false,
+        canDestroyObjectRecords: false,
+      },
+    ]);
+  });
+
+  it('revokes every all-objects action when reading all objects is revoked', () => {
+    expect(
+      revokeWorkflowAiAgentAllObjectsPermissionInScope({
+        scope: {
+          canReadAllObjectRecords: true,
+          canUpdateAllObjectRecords: true,
+        },
+        permissionKey: 'canReadObjectRecords',
+      }),
+    ).toMatchObject({
+      canReadAllObjectRecords: false,
+      canUpdateAllObjectRecords: false,
+    });
+    expect(
+      revokeWorkflowAiAgentAllObjectsPermissionInScope({
+        scope: {
+          canReadAllObjectRecords: true,
+          canUpdateAllObjectRecords: true,
+        },
+        permissionKey: 'canUpdateObjectRecords',
+      }),
+    ).toMatchObject({
+      canReadAllObjectRecords: true,
+      canUpdateAllObjectRecords: false,
+    });
   });
 });

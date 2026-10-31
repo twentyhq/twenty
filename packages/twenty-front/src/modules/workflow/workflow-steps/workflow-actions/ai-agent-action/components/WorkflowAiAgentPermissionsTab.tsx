@@ -7,6 +7,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useWorkflowAiAgentPermissionActions } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions';
 import { useWorkflowAiAgentScopePermissionActions } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentScopePermissionActions';
 import { getWorkflowAiAgentObjectPermissionsFromScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentObjectPermissionsFromScope';
+import { hasWorkflowAiAgentAllObjectsPermissionInScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/hasWorkflowAiAgentAllObjectsPermissionInScope';
 import { getWorkflowAiAgentPermissionFlagKeysFromScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentPermissionFlagKeysFromScope';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
@@ -30,6 +31,7 @@ import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritin
 import { WorkflowAiAgentPermissionList } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionList';
 import { CRUD_PERMISSIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { WorkflowAiAgentAllObjectsPermissionList } from './WorkflowAiAgentAllObjectsPermissionList';
 import { WorkflowAiAgentPermissionsCrudList } from './WorkflowAiAgentPermissionsCrudList';
 import { WorkflowAiAgentPermissionsFlagList } from './WorkflowAiAgentPermissionsFlagList';
 import { WorkflowAiAgentPermissionsObjectsList } from './WorkflowAiAgentPermissionsObjectsList';
@@ -139,9 +141,12 @@ export const WorkflowAiAgentPermissionsTab = ({
     ? (role?.permissionFlags?.map((permissionFlag) => permissionFlag.flag) ??
       [])
     : getWorkflowAiAgentPermissionFlagKeysFromScope(scope);
-  const hasPermissions =
-    (!isAgentBacked || isDefined(workflowAiAgentActionAgent?.roleId)) &&
-    (objectPermissions.length > 0 || permissionFlagKeys.length > 0);
+  const hasPermissions = isAgentBacked
+    ? isDefined(workflowAiAgentActionAgent?.roleId) &&
+      (objectPermissions.length > 0 || permissionFlagKeys.length > 0)
+    : objectPermissions.length > 0 ||
+      permissionFlagKeys.length > 0 ||
+      hasWorkflowAiAgentAllObjectsPermissionInScope(scope);
   const actionPermissionsConfig = useActionRolePermissionFlagConfig({
     assignmentCapabilities: { canBeAssignedToAgents: true },
   });
@@ -323,6 +328,16 @@ export const WorkflowAiAgentPermissionsTab = ({
 
         {shouldShowExistingPermissions && (
           <>
+            {!isAgentBacked && (
+              <WorkflowAiAgentAllObjectsPermissionList
+                scope={scope}
+                readonly={readonly}
+                searchQuery={searchQuery}
+                onDeletePermission={
+                  scopePermissionActions.handleDeleteAllObjectsPermission
+                }
+              />
+            )}
             <WorkflowAiAgentPermissionList
               readonly={readonly}
               objectPermissions={objectPermissions}

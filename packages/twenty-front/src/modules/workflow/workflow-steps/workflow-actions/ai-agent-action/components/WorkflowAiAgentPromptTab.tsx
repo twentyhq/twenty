@@ -34,7 +34,6 @@ import {
 
 type WorkflowAiAgentPromptTabProps = {
   action: WorkflowAiAgentAction;
-  // a step running an agent edits the agent's model; any other step edits its own config
   isAgentBacked: boolean;
   prompt: string;
   readonly: boolean;

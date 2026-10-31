@@ -124,7 +124,26 @@ describe('system agents and workflows (e2e)', () => {
     await deleteOneAgent({ expectToFail: false, input: { id: userAgentId } });
   });
 
-  it('flags the agent created by an AI agent step as system, not the ones members create', async () => {
+  it('creates an AI agent step without a hidden agent, and never flags member agents as system', async () => {
+    const findSystemAgentIds = async () => {
+      const { data } = await findAgents({
+        expectToFail: false,
+        input: undefined,
+        gqlFields: 'id isSystem',
+      });
+
+      return {
+        systemAgentIds: data.findManyAgents
+          .filter((agent) => agent.isSystem)
+          .map((agent) => agent.id),
+        isUserAgentSystem: data.findManyAgents.find(
+          (agent) => agent.id === userAgentId,
+        )?.isSystem,
+      };
+    };
+
+    const { systemAgentIds: systemAgentIdsBefore } = await findSystemAgentIds();
+
     const createStepResponse = await workflowGraphqlRequest(
       `
         mutation CreateCoreWorkflowVersionStep(
@@ -152,23 +171,14 @@ describe('system agents and workflows (e2e)', () => {
     );
 
     expect(versionResponse.body.errors).toBeUndefined();
+    expect(
+      versionResponse.body.data.coreWorkflowVersionById.steps[0].settings.input,
+    ).toEqual({ instructions: '', prompt: '' });
 
-    const workflowAgentId =
-      versionResponse.body.data.coreWorkflowVersionById.steps[0].settings.input
-        .agentId;
+    const { systemAgentIds, isUserAgentSystem } = await findSystemAgentIds();
 
-    const { data } = await findAgents({
-      expectToFail: false,
-      input: undefined,
-      gqlFields: 'id isSystem',
-    });
-
-    const isSystemByAgentId = new Map(
-      data.findManyAgents.map((agent) => [agent.id, agent.isSystem]),
-    );
-
-    expect(isSystemByAgentId.get(workflowAgentId)).toBe(true);
-    expect(isSystemByAgentId.get(userAgentId)).toBe(false);
+    expect(systemAgentIds).toEqual(systemAgentIdsBefore);
+    expect(isUserAgentSystem).toBe(false);
   });
 
   it('leaves system workflows out of the list when filtered on IS_SYSTEM', async () => {

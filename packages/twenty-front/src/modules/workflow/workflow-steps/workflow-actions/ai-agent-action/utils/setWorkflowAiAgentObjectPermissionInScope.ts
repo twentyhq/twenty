@@ -1,8 +1,8 @@
 import { type AiRunScope } from 'twenty-shared/ai';
 
 import { type WorkflowAiAgentCrudObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentCrudObjectPermission';
+import { hasWorkflowAiAgentAllObjectsPermissionInScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/hasWorkflowAiAgentAllObjectsPermissionInScope';
 
-// an object left with no action is dropped, so the scope only names what the step may do
 export const setWorkflowAiAgentObjectPermissionInScope = ({
   scope,
   objectUniversalIdentifier,
@@ -23,11 +23,14 @@ export const setWorkflowAiAgentObjectPermissionInScope = ({
     canSoftDeleteObjectRecords: objectPermission.canSoftDeleteObjectRecords,
     canDestroyObjectRecords: objectPermission.canDestroyObjectRecords,
   };
-  const hasAnyAction = Object.values(actions).some(Boolean);
+  // without its entry the object would fall back to an all-objects grant, so the denial is kept
+  const shouldKeepEntry =
+    Object.values(actions).some(Boolean) ||
+    hasWorkflowAiAgentAllObjectsPermissionInScope(scope);
 
   return {
     ...scope,
-    objectPermissions: hasAnyAction
+    objectPermissions: shouldKeepEntry
       ? [...otherObjectPermissions, { objectUniversalIdentifier, ...actions }]
       : otherObjectPermissions,
   };

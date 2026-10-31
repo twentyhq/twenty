@@ -251,4 +251,23 @@ describe('createUpdateWorkflowAgentTool', () => {
       coreWorkflowVersionMutationService.updateStep,
     ).not.toHaveBeenCalled();
   });
+
+  it('should configure a step whose agentId is empty on the step itself', async () => {
+    const step = buildAiAgentStep('', 'empty-agent-step');
+    const { tool, agentService, coreWorkflowVersionMutationService } =
+      buildTool({
+        draftCoreVersions: [{ id: 'core-version-1', steps: [step] }],
+      });
+
+    const result = (await tool.execute({
+      stepId: 'empty-agent-step',
+      prompt: 'You qualify leads.',
+    } as never)) as Record<string, unknown>;
+
+    expect(result.success).toBe(true);
+    expect(agentService.updateOneAgent).not.toHaveBeenCalled();
+    expect(coreWorkflowVersionMutationService.updateStep).toHaveBeenCalledTimes(
+      1,
+    );
+  });
 });
