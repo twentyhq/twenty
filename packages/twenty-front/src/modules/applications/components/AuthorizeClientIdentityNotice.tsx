@@ -1,6 +1,6 @@
 import { isBuiltInMcpClientAppName } from '@/applications/utils/isBuiltInMcpClientAppName';
 import { styled } from '@linaria/react';
-import { Trans, useLingui } from '@lingui/react/macro';
+import { Trans } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconAlertTriangle, IconCircleCheck } from 'twenty-ui/icon';
@@ -36,7 +36,6 @@ export const AuthorizeClientIdentityNotice = ({
   appName,
   wellKnownOAuthClient,
 }: AuthorizeClientIdentityNoticeProps) => {
-  const { t } = useLingui();
   const theme = useTheme();
 
   if (isDefined(wellKnownOAuthClient)) {
@@ -56,10 +55,16 @@ export const AuthorizeClientIdentityNotice = ({
 
   return (
     <StyledWarningContainer>
+      {/* A plain string child is cut to one line, and this warning must be read in full */}
       <InlineBanner
         status="warning"
         icon={<IconAlertTriangle aria-hidden="true" />}
-      >{t`This app calls itself ${appName}, but Twenty could not confirm it is. Only continue if you started this connection from ${appName}.`}</InlineBanner>
+      >
+        <Trans>
+          This app calls itself {appName}, but Twenty could not confirm it is.
+          Only continue if you started this connection from {appName}.
+        </Trans>
+      </InlineBanner>
     </StyledWarningContainer>
   );
 };
