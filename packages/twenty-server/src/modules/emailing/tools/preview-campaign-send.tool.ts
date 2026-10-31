@@ -1,5 +1,4 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
@@ -8,6 +7,7 @@ import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/def
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { MESSAGE_CAMPAIGN_READ_ACCESS_POLICY } from 'src/modules/emailing/constants/message-campaign-read-access-policy.constant';
 import { MessageCampaignService } from 'src/modules/emailing/services/message-campaign.service';
 
 const previewCampaignSendInputSchema = z.object({
@@ -24,7 +24,7 @@ const previewCampaignSendInputSchema = z.object({
 @DefineTool({
   name: 'preview_campaign_send',
   category: ToolCategory.ACTION,
-  requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+  accessPolicy: MESSAGE_CAMPAIGN_READ_ACCESS_POLICY,
   description:
     'Check whether an email campaign can be sent, without sending anything. ' +
     'Returns the audience: list members, how many are sendable, and how many are skipped and why (no email, duplicate email, suppressed, globally or topic unsubscribed, tracking refused). ' +

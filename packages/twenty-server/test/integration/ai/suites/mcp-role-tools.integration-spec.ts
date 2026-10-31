@@ -49,7 +49,7 @@ describe('MCP role tools (integration)', () => {
     const result = await callMcpTool({
       toolName: 'learn_tools',
       toolArguments: { toolNames: ROLE_TOOL_NAMES },
-      token: API_KEY_ACCESS_TOKEN,
+      token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     });
 
     expect(result.isError).toBe(false);
@@ -58,6 +58,19 @@ describe('MCP role tools (integration)', () => {
 
     expect(payload.notFound).toEqual([]);
     expect(payload.tools).toMatchSnapshot();
+  });
+
+  // updateWorkspaceMemberRole refuses API keys, and the tool follows its access policy
+  it('should not offer assign_role_to_workspace_member to an API key', async () => {
+    const result = await callMcpTool({
+      toolName: 'learn_tools',
+      toolArguments: { toolNames: ROLE_TOOL_NAMES },
+      token: API_KEY_ACCESS_TOKEN,
+    });
+
+    expect(JSON.parse(result.content[0].text).notFound).toEqual([
+      'assign_role_to_workspace_member',
+    ]);
   });
 
   it('should create, restrict, rename and delete a role', async () => {

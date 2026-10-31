@@ -6,6 +6,7 @@ import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/def
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { VIEW_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/view/constants/view-read-access-policy.constant';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewToolIdentifierService } from 'src/engine/metadata-modules/view/tools/services/view-tool-identifier.service';
 
@@ -28,7 +29,7 @@ const getViewsInputSchema = z.object({
 @DefineTool({
   name: 'get_views',
   category: ToolCategory.VIEW,
-  requiredPermissionFlags: [],
+  accessPolicy: VIEW_READ_ACCESS_POLICY,
   description:
     'List views in the workspace. Views define how records are displayed, filtered, and sorted.',
 })

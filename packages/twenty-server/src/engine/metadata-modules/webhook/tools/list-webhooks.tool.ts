@@ -1,11 +1,11 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { WEBHOOK_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/webhook/constants/webhook-read-access-policy.constant';
 import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';
 
 const listWebhooksInputSchema = z.object({});
@@ -13,7 +13,7 @@ const listWebhooksInputSchema = z.object({});
 @DefineTool({
   name: 'list_webhooks',
   category: ToolCategory.WEBHOOK,
-  requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
+  accessPolicy: WEBHOOK_READ_ACCESS_POLICY,
   description: `List every webhook registered in the workspace. Returns id, targetUrl, operations (e.g. ['person.created','company.updated']), description and timestamps.`,
 })
 export class ListWebhooksTool extends BaseTool<typeof listWebhooksInputSchema> {

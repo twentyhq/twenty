@@ -70,6 +70,7 @@ const generateDescriptors = async (
       workspaceId,
       rolePermissionConfig: { intersectionOf: { userWorkspaceRoleId: roleId } },
       authContext,
+      authPrincipalVariant: undefined,
       application,
     },
     { includeSchemas: false },

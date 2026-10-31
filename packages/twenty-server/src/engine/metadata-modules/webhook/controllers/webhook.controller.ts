@@ -11,7 +11,6 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { ApiPath } from 'twenty-shared/types';
 
 import { RestApiExceptionFilter } from 'src/engine/api/rest/rest-api-exception.filter';
@@ -20,11 +19,13 @@ import { paginateMetadataRestItems } from 'src/engine/api/rest/metadata/utils/pa
 import { type AuthenticatedRequest } from 'src/engine/api/rest/types/authenticated-request.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
-import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
+import { WEBHOOK_DELETE_ACCESS_POLICY } from 'src/engine/metadata-modules/webhook/constants/webhook-delete-access-policy.constant';
+import { WEBHOOK_READ_ACCESS_POLICY } from 'src/engine/metadata-modules/webhook/constants/webhook-read-access-policy.constant';
+import { WEBHOOK_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/webhook/constants/webhook-write-access-policy.constant';
 import { CreateWebhookInput } from 'src/engine/metadata-modules/webhook/dtos/create-webhook.input';
 import { UpdateWebhookInputUpdates } from 'src/engine/metadata-modules/webhook/dtos/update-webhook.input';
 import { type WebhookDTO } from 'src/engine/metadata-modules/webhook/dtos/webhook.dto';
@@ -33,21 +34,7 @@ import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/works
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 
 @Controller([`${ApiPath.Rest}/webhooks`, `${ApiPath.Rest}/metadata/webhooks`])
-@UseGuards(
-  JwtAuthGuard,
-  AuthPrincipalGuard({
-    userSession: {
-      standard: true,
-      impersonated: true,
-      playground: true,
-      workspaceAgnostic: false,
-    },
-    apiKey: true,
-    oauthClient: true,
-    application: true,
-  }),
-  SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
-)
+@UseGuards(JwtAuthGuard)
 @UseFilters(
   PermissionsRestApiExceptionFilter,
   RestApiExceptionFilter,
@@ -59,6 +46,7 @@ export class WebhookController {
   constructor(private readonly webhookService: WebhookService) {}
 
   @Get()
+  @UseGuards(AccessPolicyGuard(WEBHOOK_READ_ACCESS_POLICY))
   async findAll(
     @Req() request: AuthenticatedRequest,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -71,6 +59,7 @@ export class WebhookController {
   }
 
   @Get(':id')
+  @UseGuards(AccessPolicyGuard(WEBHOOK_READ_ACCESS_POLICY))
   async findOne(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -79,7 +68,7 @@ export class WebhookController {
   }
 
   @Post()
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.ROLES))
+  @UseGuards(AccessPolicyGuard(WEBHOOK_WRITE_ACCESS_POLICY))
   async create(
     @Body() createWebhookDto: CreateWebhookInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -91,7 +80,7 @@ export class WebhookController {
   }
 
   @Patch(':id')
-  @UseGuards(SettingsPermissionGuard(PermissionFlagType.ROLES))
+  @UseGuards(AccessPolicyGuard(WEBHOOK_WRITE_ACCESS_POLICY))
   async update(
     @Param('id') id: string,
     @Body() updateWebhookDto: UpdateWebhookInputUpdates,
@@ -104,6 +93,7 @@ export class WebhookController {
   }
 
   @Delete(':id')
+  @UseGuards(AccessPolicyGuard(WEBHOOK_DELETE_ACCESS_POLICY))
   async remove(
     @Param('id') id: string,
     @AuthWorkspace() workspace: WorkspaceEntity,

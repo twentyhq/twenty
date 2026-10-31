@@ -47,6 +47,7 @@ export class SystemPromptBuilderService {
           rolePermissionConfig: {
             intersectionOf: { userWorkspaceRoleId: roleId },
           },
+          authPrincipalVariant: { kind: 'userSession', variant: 'standard' },
           userId,
           userWorkspaceId,
           excludeTools: AI_CHAT_EXCLUDED_TOOL_NAMES,

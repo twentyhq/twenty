@@ -1,5 +1,4 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
@@ -8,6 +7,7 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { normalizeIconName } from 'src/engine/core-modules/tool-provider/utils/normalize-icon-name.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { OBJECT_METADATA_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/object-metadata/constants/object-metadata-write-access-policy.constant';
 import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { updateObjectMetadataInputSchema } from 'src/engine/metadata-modules/object-metadata/tools/schemas/update-object-metadata-input.schema';
 
@@ -22,7 +22,7 @@ const updateManyObjectMetadataInputSchema = z.object({
 @DefineTool({
   name: 'update_many_object_metadata',
   category: ToolCategory.METADATA,
-  requiredPermissionFlags: [PermissionFlagType.DATA_MODEL],
+  accessPolicy: OBJECT_METADATA_WRITE_ACCESS_POLICY,
   icon: 'IconSettings',
   description:
     'Update multiple objects at once. Batch version of update_object_metadata. Applies the whole batch in one migration, so a rename (nameSingular or namePlural) or a labelIdentifierFieldMetadataId change cannot share a batch with another object: send each of those as its own call.',
