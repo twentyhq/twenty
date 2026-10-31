@@ -1,4 +1,5 @@
 import { type WorkflowManifest } from 'twenty-shared/application';
+import { WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES } from 'twenty-shared/workflow';
 
 import { defineWorkflow } from '@/sdk/define/workflows/define-workflow';
 
@@ -195,7 +196,7 @@ describe('defineWorkflow', () => {
         }),
       ).errors,
     ).toEqual([
-      'version.steps.0.input.agentUniversalIdentifier: Human input instructions and a conversation need a step running an agent; a step generating from its own instructions runs once, without a conversation',
+      `version.steps.0.input.agentUniversalIdentifier: ${WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES.GENERATE_STEP_HAS_CONVERSATION_CONFIG}`,
     ]);
   });
 

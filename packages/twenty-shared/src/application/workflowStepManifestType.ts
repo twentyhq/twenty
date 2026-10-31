@@ -25,8 +25,8 @@ import { recordFilterGroupSchema } from '@/workflow/schemas/record-filter-group-
 import { recordFilterSchema } from '@/workflow/schemas/record-filter-schema';
 import { stepFilterSchema } from '@/workflow/schemas/step-filter-schema';
 import { workflowPickRecordStrategySchema } from '@/workflow/schemas/pick-record-action-settings-schema';
-import { hasWorkflowAiAgentConversationConfig } from '@/workflow/utils/hasWorkflowAiAgentConversationConfig';
-import { hasWorkflowAiAgentInlineConfig } from '@/workflow/utils/hasWorkflowAiAgentInlineConfig';
+import { WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES } from '@/workflow/constants/WorkflowAiAgentStepConfigIssueMessages';
+import { getWorkflowAiAgentStepConfigIssues } from '@/workflow/utils/getWorkflowAiAgentStepConfigIssues';
 
 export const workflowManifestPositionSchema = z.object({
   x: z.number(),
@@ -261,26 +261,14 @@ const workflowStepManifestOptions = [
       .extend({ agentUniversalIdentifier: z.uuid().optional() })
       .strict()
       .superRefine((input, context) => {
-        if (
-          isDefined(input.agentUniversalIdentifier) &&
-          hasWorkflowAiAgentInlineConfig(input)
-        ) {
+        for (const issueCode of getWorkflowAiAgentStepConfigIssues({
+          hasAgent: isDefined(input.agentUniversalIdentifier),
+          input,
+        })) {
           context.addIssue({
             code: 'custom',
             path: ['agentUniversalIdentifier'],
-            message:
-              'A step running an agent takes its instructions, model, model configuration and scope from the agent',
-          });
-        }
-        if (
-          !isDefined(input.agentUniversalIdentifier) &&
-          hasWorkflowAiAgentConversationConfig(input)
-        ) {
-          context.addIssue({
-            code: 'custom',
-            path: ['agentUniversalIdentifier'],
-            message:
-              'Human input instructions and a conversation need a step running an agent; a step generating from its own instructions runs once, without a conversation',
+            message: WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES[issueCode],
           });
         }
       }),

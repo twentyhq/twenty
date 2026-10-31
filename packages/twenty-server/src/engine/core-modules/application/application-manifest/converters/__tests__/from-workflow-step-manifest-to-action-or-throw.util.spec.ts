@@ -265,6 +265,58 @@ describe('application workflow actions', () => {
     });
   });
 
+  it.each([
+    {
+      case: 'an object that is not available',
+      scope: {
+        objectPermissions: [
+          { objectUniversalIdentifier: LOCAL_ID, canReadObjectRecords: true },
+        ],
+      },
+      error: 'missing object',
+    },
+    {
+      case: 'a field that is not available',
+      scope: {
+        fieldPermissions: [
+          {
+            objectUniversalIdentifier: REFERENCE_ID,
+            fieldUniversalIdentifier: LOCAL_ID,
+            canReadFieldValue: false,
+          },
+        ],
+      },
+      error: 'missing field',
+    },
+    {
+      case: 'a field of another object',
+      scope: {
+        fieldPermissions: [
+          {
+            objectUniversalIdentifier: LOCAL_ID,
+            fieldUniversalIdentifier: FIELD_ID,
+            canReadFieldValue: false,
+          },
+        ],
+      },
+      error: 'does not belong',
+    },
+  ])('rejects a step scope naming $case', ({ scope, error }) => {
+    expect(() =>
+      fromWorkflowStepManifestToActionOrThrow({
+        step: workflowStepManifestSchema.parse({
+          universalIdentifier: STEP_ID,
+          name: 'Qualify',
+          type: 'AI_AGENT',
+          input: { prompt: 'Qualify {{trigger.name}}', scope },
+          nextStepIds: [],
+        }),
+        index: 0,
+        references,
+      }),
+    ).toThrow(error);
+  });
+
   it('resolves functions, agents, objects and filter fields', () => {
     expect(convert(WorkflowActionType.LOGIC_FUNCTION).settings.input).toEqual({
       logicFunctionId: LOCAL_ID,

@@ -1,6 +1,7 @@
 /** @jest-environment node */
 
 import { isDefined } from '@/utils/validation/isDefined';
+import { WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES } from '@/workflow/constants/WorkflowAiAgentStepConfigIssueMessages';
 
 import {
   workflowManifestSchema,
@@ -217,7 +218,14 @@ describe('workflow manifest step types', () => {
       },
     });
 
-    expect(workflowManifestSchema.safeParse(definition).success).toBe(false);
+    const result = workflowManifestSchema.safeParse(definition);
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      expect(result.error.message).toContain(
+        WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES.AGENT_STEP_HAS_INLINE_CONFIG,
+      );
+    }
   });
 
   it.each([
@@ -239,7 +247,7 @@ describe('workflow manifest step types', () => {
     expect(result.success).toBe(false);
     if (!result.success) {
       expect(result.error.message).toContain(
-        'Human input instructions and a conversation need a step running an agent',
+        WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES.GENERATE_STEP_HAS_CONVERSATION_CONFIG,
       );
     }
   });

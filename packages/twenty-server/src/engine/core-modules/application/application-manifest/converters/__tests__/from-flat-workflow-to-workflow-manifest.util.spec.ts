@@ -14,6 +14,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import {
   type BaseOutputSchemaV2,
+  WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES,
   WorkflowActionType,
 } from 'twenty-shared/workflow';
 
@@ -693,7 +694,21 @@ describe('fromFlatWorkflowToWorkflowManifest', () => {
 
       expect(exportWorkflow(synced)).toEqual({
         reason:
-          'AI agent step with human input instructions or a conversation but no agent to run',
+          WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES.GENERATE_STEP_HAS_CONVERSATION_CONFIG,
+      });
+    });
+
+    it('reports a step on an agent that still stores its own config', () => {
+      const synced = syncWorkflow(
+        buildWorkflow({ steps: [buildStep({ type: 'AI_AGENT' })] }),
+      );
+      const [step] = synced.flatWorkflowVersion.steps ?? [];
+
+      Object.assign(step.settings.input, { instructions: 'Qualify the lead.' });
+
+      expect(exportWorkflow(synced)).toEqual({
+        reason:
+          WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES.AGENT_STEP_HAS_INLINE_CONFIG,
       });
     });
 

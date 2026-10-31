@@ -1,9 +1,10 @@
 import isEqual from 'lodash.isequal';
-import { type AiRunScope } from 'twenty-shared/ai';
 import { type WorkflowStepManifest } from 'twenty-shared/application';
 import { isDefined, isPlainObject, sortKeysDeeply } from 'twenty-shared/utils';
 import {
-  hasWorkflowAiAgentConversationConfig,
+  getWorkflowAiAgentStepConfigIssues,
+  isWorkflowAiAgentGenerateStep,
+  WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES,
   WorkflowActionType,
 } from 'twenty-shared/workflow';
 
@@ -172,30 +173,6 @@ const fromFormInput = ({
     };
   });
 
-// The scope already names objects and fields by universal identifier, but only exported ones can be applied
-const checkAiRunScopeReferences = ({
-  scope,
-  resolvers,
-}: {
-  scope: AiRunScope | null | undefined;
-  resolvers: Pick<
-    WorkflowManifestInverseReferenceResolvers,
-    'exportedObjectUniversalIdentifier' | 'exportedFieldUniversalIdentifier'
-  >;
-}): void => {
-  for (const { objectUniversalIdentifier } of scope?.objectPermissions ?? []) {
-    resolvers.exportedObjectUniversalIdentifier(objectUniversalIdentifier);
-  }
-
-  for (const {
-    objectUniversalIdentifier,
-    fieldUniversalIdentifier,
-  } of scope?.fieldPermissions ?? []) {
-    resolvers.exportedObjectUniversalIdentifier(objectUniversalIdentifier);
-    resolvers.exportedFieldUniversalIdentifier(fieldUniversalIdentifier);
-  }
-};
-
 const fromActionInput = ({
   action,
   resolvers,
@@ -210,28 +187,29 @@ const fromActionInput = ({
       return toRecord(input).logicFunctionInput;
     case WorkflowActionType.AI_AGENT: {
       const { agentId, ...rest } = toRecord(input);
+      const isGenerateStep = isWorkflowAiAgentGenerateStep(
+        action.settings.input,
+      );
 
-      checkAiRunScopeReferences({
-        scope: action.settings.input.scope,
-        resolvers,
-      });
-
-      if (
-        !isDefined(agentId) &&
-        hasWorkflowAiAgentConversationConfig(action.settings.input)
-      ) {
+      // defineWorkflow refuses these, so the export would not apply
+      for (const issueCode of getWorkflowAiAgentStepConfigIssues({
+        hasAgent: !isGenerateStep,
+        input: action.settings.input,
+      })) {
         resolvers.markUnsupported(
-          'AI agent step with human input instructions or a conversation but no agent to run',
+          WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES[issueCode],
         );
       }
 
-      return isDefined(agentId)
-        ? {
+      resolvers.checkAiRunScopeReferences(action.settings.input.scope);
+
+      return isGenerateStep
+        ? rest
+        : {
             ...rest,
             agentUniversalIdentifier:
               resolvers.agentUniversalIdentifier(agentId),
-          }
-        : rest;
+          };
     }
     case WorkflowActionType.CREATE_RECORD:
     case WorkflowActionType.UPDATE_RECORD:
