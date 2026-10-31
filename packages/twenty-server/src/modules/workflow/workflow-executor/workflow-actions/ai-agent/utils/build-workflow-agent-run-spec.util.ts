@@ -4,16 +4,16 @@ import { isDefined } from 'twenty-shared/utils';
 import { type AgentRunSpec } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-spec.type';
 import { WORKFLOW_BASE_SYSTEM_PROMPT } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/workflow-base-system-prompt.constant';
 import { type WorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { APPLICATION_BOUND_AGENT_EXCLUDED_TOOL_NAMES } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/application-bound-agent-excluded-tool-names.constant';
+import { MEMBER_ROLE_ONLY_TOOL_NAMES } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/member-role-only-tool-names.constant';
 import { WORKFLOW_AGENT_HUMAN_INPUT_PROMPT } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/workflow-agent-human-input-prompt.constant';
 
 // what the engine needs to run the step's agent, and to continue it after a pause
 export const buildWorkflowAgentRunSpec = ({
   step,
-  isApplicationBound,
+  isWorkspaceCustomApplicationRun,
 }: {
   step: WorkflowAiAgentAction;
-  isApplicationBound: boolean;
+  isWorkspaceCustomApplicationRun: boolean;
 }): AgentRunSpec => {
   const { agentId, humanInputInstructions, responseFormat } =
     step.settings.input;
@@ -31,12 +31,8 @@ export const buildWorkflowAgentRunSpec = ({
       canAskHumans,
     },
     ...(isDefined(responseFormat) ? { responseFormat } : {}),
-    ...(isApplicationBound
-      ? {
-          additionalExcludedToolNames: [
-            ...APPLICATION_BOUND_AGENT_EXCLUDED_TOOL_NAMES,
-          ],
-        }
-      : {}),
+    ...(isWorkspaceCustomApplicationRun
+      ? {}
+      : { additionalExcludedToolNames: [...MEMBER_ROLE_ONLY_TOOL_NAMES] }),
   };
 };

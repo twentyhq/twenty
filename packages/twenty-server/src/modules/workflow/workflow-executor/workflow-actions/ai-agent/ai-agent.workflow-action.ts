@@ -165,7 +165,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       }),
       spec: buildWorkflowAgentRunSpec({
         step,
-        isApplicationBound: !isWorkspaceCustomApplication({
+        isWorkspaceCustomApplicationRun: isWorkspaceCustomApplication({
           application: executionContext.application,
           workspaceCustomApplicationId:
             executionContext.authContext.workspace.workspaceCustomApplicationId,
