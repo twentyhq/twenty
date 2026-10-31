@@ -928,15 +928,16 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       }
       case WorkflowActionType.AI_AGENT: {
         const agentId = step.settings.input.agentId;
+        const clonedStepId = v4();
 
         if (!isDefined(agentId)) {
-          throw new WorkflowVersionStepException(
-            'Agent ID is required for cloning',
-            WorkflowVersionStepExceptionCode.AI_AGENT_STEP_FAILURE,
-          );
+          return {
+            ...step,
+            id: clonedStepId,
+            nextStepIds: [],
+            position: duplicatedStepPosition,
+          };
         }
-
-        const clonedStepId = v4();
 
         const clonedAgent = await this.duplicateAgent({
           agentId,
