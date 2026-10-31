@@ -52,6 +52,12 @@ export class AgentHistorySchemaService {
     const historyObjectUniversalIdentifiers = ACTIVE_AGENT_HISTORY_TABLES.map(
       ({ name }) => STANDARD_OBJECTS[name].universalIdentifier,
     );
+    if (!dryRun) {
+      await this.protectUnprotectedHistoryObjects({
+        workspaceId,
+        historyObjectUniversalIdentifiers,
+      });
+    }
     const legacyObjectAccesses = await this.coreDataSource.query<
       (LegacyObjectAccess & { universalIdentifier: string })[]
     >(
@@ -146,19 +152,38 @@ export class AgentHistorySchemaService {
     if (dryRun) {
       return;
     }
-    // Stays protected until the sharing upgrade, which reads these legacy columns
-    await this.coreDataSource.query(
-      `UPDATE core."objectMetadata" SET readability = 'SYSTEM', writability = 'SYSTEM'
-        WHERE "workspaceId" = $1 AND "universalIdentifier" = ANY($2)`,
-      [
-        workspaceId,
-        objects.map(({ universalIdentifier }) => universalIdentifier),
-      ],
-    );
+    await this.protectUnprotectedHistoryObjects({
+      workspaceId,
+      historyObjectUniversalIdentifiers,
+    });
     await this.coreDataSource.query(
       `UPDATE core."fieldMetadata" SET writability = 'SYSTEM'
         WHERE "workspaceId" = $1 AND "universalIdentifier" = ANY($2)`,
       [workspaceId, protectedFieldUniversalIdentifiers],
+    );
+  }
+
+  // Stays protected until the sharing upgrade, which reads these legacy columns. History objects still at
+  // the column defaults were just provisioned, so this also repairs a run interrupted before it stamped them
+  private async protectUnprotectedHistoryObjects({
+    workspaceId,
+    historyObjectUniversalIdentifiers,
+  }: {
+    workspaceId: string;
+    historyObjectUniversalIdentifiers: string[];
+  }): Promise<void> {
+    const protectedObjects: { id: string }[] = await this.coreDataSource.query(
+      `UPDATE core."objectMetadata" SET readability = 'SYSTEM', writability = 'SYSTEM'
+        WHERE "workspaceId" = $1 AND "universalIdentifier" = ANY($2)
+          AND readability = 'OPEN' AND writability = 'OPEN'
+        RETURNING id`,
+      [workspaceId, historyObjectUniversalIdentifiers],
+    );
+
+    await this.coreDataSource.query(
+      `UPDATE core."fieldMetadata" SET writability = 'SYSTEM'
+        WHERE "workspaceId" = $1 AND "objectMetadataId" = ANY($2::uuid[])`,
+      [workspaceId, protectedObjects.map(({ id }) => id)],
     );
   }
 }
