@@ -6,7 +6,10 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { WorkspaceSurfaceContext } from '@/ui/layout/contexts/WorkspaceSurfaceContext';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
 
 i18n.load({
@@ -15,15 +18,10 @@ i18n.load({
 i18n.activate(SOURCE_LOCALE);
 
 const useIsLoggedMock = jest.fn(() => true);
-const useHasPermissionFlagMock = jest.fn(() => false);
 const useIsFeatureEnabledMock = jest.fn(() => true);
 
 jest.mock('@/auth/hooks/useIsLogged', () => ({
   useIsLogged: () => useIsLoggedMock(),
-}));
-
-jest.mock('@/settings/roles/hooks/useHasPermissionFlag', () => ({
-  useHasPermissionFlag: () => useHasPermissionFlagMock(),
 }));
 
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
@@ -36,7 +34,16 @@ const CurrentPathname = () => {
   return <span data-testid="pathname">{location.pathname}</span>;
 };
 
-const renderProtectedRoute = (surface: 'main' | 'side-panel') =>
+const renderProtectedRoute = (
+  surface: 'main' | 'side-panel',
+  {
+    settingsPermission,
+    requiredFeatureFlag,
+  }: {
+    settingsPermission?: PermissionFlagType;
+    requiredFeatureFlag?: FeatureFlagKey;
+  } = { settingsPermission: PermissionFlagType.ROLES },
+) =>
   render(
     <WorkspaceSurfaceContext.Provider
       value={{
@@ -53,7 +60,8 @@ const renderProtectedRoute = (surface: 'main' | 'side-panel') =>
               path="/settings/roles"
               element={
                 <SettingsProtectedRouteWrapper
-                  settingsPermission={PermissionFlagType.ROLES}
+                  settingsPermission={settingsPermission}
+                  requiredFeatureFlag={requiredFeatureFlag}
                 >
                   <span>Protected settings</span>
                 </SettingsProtectedRouteWrapper>
@@ -70,7 +78,6 @@ describe('SettingsProtectedRouteWrapper', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     useIsLoggedMock.mockReturnValue(true);
-    useHasPermissionFlagMock.mockReturnValue(false);
     useIsFeatureEnabledMock.mockReturnValue(true);
   });
 
@@ -93,5 +100,27 @@ describe('SettingsProtectedRouteWrapper', () => {
       ),
     );
     expect(screen.getByText('Profile')).toBeInTheDocument();
+  });
+
+  it('opens a route that only requires a feature flag without any permission', () => {
+    renderProtectedRoute('main', {
+      requiredFeatureFlag: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
+    });
+
+    expect(screen.getByText('Protected settings')).toBeInTheDocument();
+  });
+
+  it('redirects a flag-only route when the feature flag is off', async () => {
+    useIsFeatureEnabledMock.mockReturnValue(false);
+
+    renderProtectedRoute('main', {
+      requiredFeatureFlag: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
+    });
+
+    await waitFor(() =>
+      expect(screen.getByTestId('pathname')).toHaveTextContent(
+        '/settings/profile',
+      ),
+    );
   });
 });
