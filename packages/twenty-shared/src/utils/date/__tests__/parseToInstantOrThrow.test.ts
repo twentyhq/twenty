@@ -13,14 +13,21 @@ describe('parseToInstantOrThrow', () => {
     ['01/15/2024', '2024-01-15T00:00:00Z'],
     ['01-15-2024', '2024-01-15T00:00:00Z'],
     ['January 15, 2024', '2024-01-15T00:00:00Z'],
+    ['1/5/2024', '2024-01-05T00:00:00Z'],
   ])('should parse %s to the instant %s', (input, expected) => {
     expect(parseToInstantOrThrow(input).toString()).toBe(expected);
   });
 
-  it.each([['2024'], ['2024-01'], ['not-a-date'], ['']])(
-    'should throw for the unparseable value %s',
-    (input) => {
-      expect(() => parseToInstantOrThrow(input)).toThrow();
-    },
-  );
+  it.each([
+    ['2024'],
+    ['2024-01'],
+    ['not-a-date'],
+    [''],
+    ['01/15/24'],
+    ['01-15-24'],
+    ['Jan 15, 24'],
+    ['15 January 24'],
+  ])('should throw for the unparseable value %s', (input) => {
+    expect(() => parseToInstantOrThrow(input)).toThrow();
+  });
 });
