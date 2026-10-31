@@ -38,6 +38,13 @@ export const GlobalFilePreviewModal = () => {
     downloadFile(filePreview.url, filePreview.label ?? 'file');
   };
 
+  const handleOpenInNewTab = () => {
+    if (!isDefined(filePreview) || !isNonEmptyString(filePreview.url)) {
+      return;
+    }
+    window.open(filePreview.url, '_blank', 'noopener,noreferrer');
+  };
+
   if (!isDefined(filePreview)) {
     return null;
   }
@@ -54,6 +61,7 @@ export const GlobalFilePreviewModal = () => {
         documentExtension={filePreview.extension ?? ''}
         onClose={handleClose}
         onDownload={handleDownload}
+        onOpenInNewTab={handleOpenInNewTab}
         downloadLabel={t`Download file`}
         loadingFallback={
           <StyledLoadingContainer>

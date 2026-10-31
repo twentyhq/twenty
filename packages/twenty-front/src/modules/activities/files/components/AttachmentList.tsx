@@ -120,6 +120,17 @@ export const AttachmentList = ({
     downloadFile(attachmentUrl, previewedAttachment.name);
   };
 
+  const handleOpenInNewTab = () => {
+    if (!isDefined(previewedAttachment)) {
+      return;
+    }
+    window.open(
+      getAttachmentUrl({ attachment: previewedAttachment }),
+      '_blank',
+      'noopener,noreferrer',
+    );
+  };
+
   return (
     <>
       {attachmentsWithFile.length > 0 && (
@@ -158,6 +169,9 @@ export const AttachmentList = ({
           documentUrl={getAttachmentUrl({ attachment: previewedAttachment })}
           onClose={handleClosePreview}
           onDownload={hasDownloadPermission ? handleDownload : undefined}
+          onOpenInNewTab={
+            hasDownloadPermission ? handleOpenInNewTab : undefined
+          }
           downloadLabel={t`Download attachment`}
           loadingFallback={
             <StyledLoadingContainer>

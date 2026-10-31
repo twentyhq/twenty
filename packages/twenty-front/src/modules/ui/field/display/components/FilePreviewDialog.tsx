@@ -5,7 +5,7 @@ import { t } from '@lingui/core/macro';
 import { lazy, Suspense, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { IconButton } from 'twenty-ui/components/input';
-import { IconDownload, IconX } from 'twenty-ui/icon';
+import { IconDownload, IconExternalLink, IconX } from 'twenty-ui/icon';
 import { Dialog } from 'twenty-ui/primitives/surfaces';
 
 const DocumentViewer = lazy(() =>
@@ -19,7 +19,7 @@ const StyledPreviewLayout = styled.div`
   flex-direction: column;
   gap: var(--t-spacing-2);
   min-height: 0;
-  padding: var(--t-spacing-2);
+  padding: var(--t-spacing-2) var(--t-spacing-3) var(--t-spacing-3);
 `;
 
 const StyledHeader = styled.div`
@@ -45,7 +45,11 @@ const StyledActions = styled.div`
   gap: var(--t-spacing-1);
 `;
 
+// Fills the popup's max height minus its header and paddings
 const StyledPreviewContent = styled.div`
+  --document-viewer-height: calc(
+    100dvh / var(--t-zoom, 1) - var(--t-spacing-24) - var(--t-spacing-2)
+  );
   display: flex;
   flex: 1 1 0%;
   flex-direction: column;
@@ -60,6 +64,7 @@ type FilePreviewDialogProps = {
   documentExtension?: string;
   onClose: () => void;
   onDownload?: () => void;
+  onOpenInNewTab?: () => void;
   downloadLabel: string;
   loadingFallback: ReactNode;
 };
@@ -73,6 +78,7 @@ export const FilePreviewDialog = ({
   documentExtension,
   onClose,
   onDownload,
+  onOpenInNewTab,
   downloadLabel,
   loadingFallback,
 }: FilePreviewDialogProps) => (
@@ -83,13 +89,22 @@ export const FilePreviewDialog = ({
     renderInDocumentBody
   >
     {({ onKeyDown }) => (
-      <Dialog.Popup onKeyDown={onKeyDown} size="lg">
+      <Dialog.Popup onKeyDown={onKeyDown} size="xl">
         <StyledPreviewLayout>
           <StyledHeader>
             <Dialog.Title size="md" render={<StyledTitle />}>
               {title}
             </Dialog.Title>
             <StyledActions>
+              {isDefined(onOpenInNewTab) && (
+                <IconButton
+                  aria-label={t`Open in new tab`}
+                  onClick={onOpenInNewTab}
+                  size="sm"
+                >
+                  <IconExternalLink />
+                </IconButton>
+              )}
               {isDefined(onDownload) && (
                 <IconButton
                   aria-label={downloadLabel}

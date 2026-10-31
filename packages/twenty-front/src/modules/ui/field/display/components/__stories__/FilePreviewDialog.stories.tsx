@@ -20,6 +20,7 @@ const meta: Meta<typeof FilePreviewDialog> = {
     loadingFallback: <Text>Loading document viewer...</Text>,
     onClose: fn(),
     onDownload: fn(),
+    onOpenInNewTab: fn(),
   },
   render: (args) => {
     const { openDialog, closeDialog } = useDialog();
@@ -49,7 +50,7 @@ export const Default: Story = {
     const trigger = canvas.getByRole('button', { name: 'Open preview' });
     await userEvent.click(trigger);
     const dialog = await body.findByRole('dialog', { name: 'Archive.zip' });
-    expect(dialog).toHaveAttribute('data-size', 'lg');
+    expect(dialog).toHaveAttribute('data-size', 'xl');
     expect(
       within(dialog).getByRole('heading', { name: 'Archive.zip' }),
     ).toHaveAttribute('data-size', 'md');
@@ -58,6 +59,10 @@ export const Default: Story = {
       {},
       { timeout: 10000 },
     );
+    await userEvent.click(
+      within(dialog).getByRole('button', { name: 'Open in new tab' }),
+    );
+    expect(args.onOpenInNewTab).toHaveBeenCalledOnce();
     await userEvent.click(
       within(dialog).getByRole('button', { name: 'Download attachment' }),
     );
@@ -70,7 +75,7 @@ export const Default: Story = {
 };
 
 export const WithoutDownloadAction: Story = {
-  args: { onDownload: undefined, onClose: fn() },
+  args: { onDownload: undefined, onOpenInNewTab: undefined, onClose: fn() },
   play: async ({ canvasElement, args }) => {
     const body = within(canvasElement.ownerDocument.body);
     await userEvent.click(
@@ -79,6 +84,9 @@ export const WithoutDownloadAction: Story = {
     const dialog = await body.findByRole('dialog', { name: 'Archive.zip' });
     expect(
       within(dialog).queryByRole('button', { name: 'Download attachment' }),
+    ).toBeNull();
+    expect(
+      within(dialog).queryByRole('button', { name: 'Open in new tab' }),
     ).toBeNull();
     await userEvent.click(
       within(dialog).getByRole('button', { name: 'Close preview' }),
