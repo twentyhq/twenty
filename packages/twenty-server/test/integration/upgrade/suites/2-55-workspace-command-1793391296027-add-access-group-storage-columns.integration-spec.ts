@@ -81,7 +81,7 @@ describe('2-55 workspace command - add access group storage columns (integration
     await runOnWorkspace();
   });
 
-  it('creates the columns and indexes with standard and custom objects', async () => {
+  it('creates the columns and indexes with standard and custom objects, not system ones', async () => {
     const columns = await findColumns();
 
     for (const tableName of RECORD_TABLE_NAMES) {
@@ -99,6 +99,9 @@ describe('2-55 workspace command - add access group storage columns (integration
       ]);
     }
 
+    expect(
+      columns.filter((column) => column.tableName === 'recordShare'),
+    ).toEqual([]);
     expect(
       columns.filter((column) => column.tableName === 'accessGroup'),
     ).toEqual([
@@ -152,6 +155,9 @@ describe('2-55 workspace command - add access group storage columns (integration
     expect(
       columns.find((column) => column.tableName === 'accessGroup'),
     ).toMatchObject({ columnName: 'compactId', isIdentity: 'YES' });
+    expect(columns.some((column) => column.tableName === 'recordShare')).toBe(
+      false,
+    );
     expect((await findIndexDefinitions()).length).toBeGreaterThan(
       indexDefinitionsAfterDrop.length,
     );
