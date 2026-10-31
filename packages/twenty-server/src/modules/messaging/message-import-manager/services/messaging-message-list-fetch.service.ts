@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, MoreThanOrEqual, Repository } from 'typeorm';
 
 import {
+  ConnectedAccountProvider,
   MessageChannelPendingGroupEmailsAction,
   MessageChannelSyncStage,
   MessageFolderPendingSyncAction,
@@ -34,6 +35,7 @@ import {
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { filterMessageExternalIdsToDelete } from 'src/modules/messaging/message-import-manager/utils/filter-message-external-ids-to-delete.util';
+import { filterMessageExternalIdsToImport } from 'src/modules/messaging/message-import-manager/utils/filter-message-external-ids-to-import.util';
 
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
 
@@ -168,19 +170,19 @@ export class MessagingMessageListFetchService {
                   messageChannelId: freshMessageChannel.id,
                   messageExternalId: In(messageExternalIdsChunk),
                 },
+                relations: {
+                  message:
+                    freshMessageChannel.connectedAccount.provider ===
+                    ConnectedAccountProvider.MICROSOFT,
+                },
               });
 
-            const existingMessageChannelMessageAssociationsExternalIds =
-              existingMessageChannelMessageAssociations.map(
-                (messageChannelMessageAssociation) =>
-                  messageChannelMessageAssociation.messageExternalId,
-              );
-
-            const messageExternalIdsToImport = messageExternalIdsChunk.filter(
-              (messageExternalId) =>
-                !existingMessageChannelMessageAssociationsExternalIds.includes(
-                  messageExternalId,
-                ),
+            const messageExternalIdsToImport = filterMessageExternalIdsToImport(
+              {
+                messageExternalIds: messageExternalIdsChunk,
+                existingAssociations: existingMessageChannelMessageAssociations,
+                provider: freshMessageChannel.connectedAccount.provider,
+              },
             );
 
             if (messageExternalIdsToImport.length) {
