@@ -1,13 +1,13 @@
 import { buildExplicitObjectPermissionByObjectId } from 'src/engine/core-modules/tool-provider/utils/build-explicit-object-permission-by-object-id.util';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 
 const buildFlatObjectMetadataMaps = (
-  objects: Pick<FlatObjectMetadata, 'id' | 'universalIdentifier'>[],
+  objects: { id: string; universalIdentifier: string }[],
 ) => ({
   byUniversalIdentifier: Object.fromEntries(
     objects.map((object) => [
       object.universalIdentifier,
-      object as FlatObjectMetadata,
+      getFlatObjectMetadataMock(object),
     ]),
   ),
 });

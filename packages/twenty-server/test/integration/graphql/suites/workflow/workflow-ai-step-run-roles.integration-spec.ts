@@ -20,14 +20,19 @@ import { upsertObjectPermissions } from 'test/integration/metadata/suites/object
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
+import { updateOneRole } from 'test/integration/metadata/suites/role/utils/update-one-role.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { upsertPermissionFlags } from 'test/integration/metadata/suites/role-permission-flag/utils/upsert-permission-flags.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { createScriptedLanguageModel } from 'test/utils/create-scripted-language-model.util';
+import { type AiRunScope } from 'twenty-shared/ai';
 import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
 import { WorkflowActionType } from 'twenty-shared/workflow';
-import { PermissionFlagType } from 'twenty-shared/constants';
+import {
+  PermissionFlagType,
+  SystemPermissionFlag,
+} from 'twenty-shared/constants';
 
 import {
   type AiModelRegistryService,
@@ -43,6 +48,7 @@ const schema = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 const OBJECT_NAME = 'aiStepRunRoleRecord';
 const OBJECT_PLURAL = 'aiStepRunRoleRecords';
 const FIND_TOOL_NAME = 'find_many_ai_step_run_role_records';
+const HTTP_REQUEST_TOOL_NAME = 'http_request';
 const VISIBLE_RECORD_NAME = 'Visible to the member';
 const HIDDEN_RECORD_NAME = 'Hidden from the member';
 
@@ -171,6 +177,15 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
       },
     });
 
+  const setMemberToolAccess = (canAccessAllTools: boolean) =>
+    updateOneRole({
+      expectToFail: false,
+      input: {
+        idToUpdate: memberRoleId,
+        updatePayload: { canAccessAllTools },
+      },
+    });
+
   const createAiStepWorkflow = async (
     stepInput: Partial<WorkflowAiAgentAction['settings']['input']> = {},
   ): Promise<string> => {
@@ -232,6 +247,13 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
 
     return coreWorkflowVersionId;
   };
+
+  const createScopedStepWorkflow = (scope: AiRunScope) =>
+    createAiStepWorkflow({
+      agentId: undefined,
+      modelId: TEST_AI_MODEL_ID,
+      scope,
+    });
 
   const runAsMemberUntilDone = async (coreWorkflowVersionId: string) => {
     const workflowRunId = await runCoreWorkflowVersion({
@@ -357,6 +379,7 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
     jest.restoreAllMocks();
     await setMemberRowRule([]);
     await setMemberObjectAccess(true);
+    await setMemberToolAccess(true);
   });
 
   afterAll(async () => {
@@ -418,6 +441,78 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
     expect(calls[0].offeredToolNames).toContain(FIND_TOOL_NAME);
     expect(calls[1].toolOutputs.join()).toContain(VISIBLE_RECORD_NAME);
     expect(calls[1].toolOutputs.join()).not.toContain(HIDDEN_RECORD_NAME);
+  });
+
+  it('withholds a tool its member may use when the step scope does not grant it', async () => {
+    const calls = mockModelCallingFindTool();
+
+    expect(
+      await runAsMemberUntilDone(
+        await createScopedStepWorkflow({ canReadAllObjectRecords: true }),
+      ),
+    ).toBe('COMPLETED');
+
+    expect(calls[0].offeredToolNames).toContain(FIND_TOOL_NAME);
+    expect(calls[0].offeredToolNames).not.toContain(HTTP_REQUEST_TOOL_NAME);
+  });
+
+  it('offers a tool both its member and the step scope grant', async () => {
+    const calls = mockModelCallingFindTool();
+
+    expect(
+      await runAsMemberUntilDone(
+        await createScopedStepWorkflow({
+          canReadAllObjectRecords: true,
+          permissionFlagUniversalIdentifiers: [
+            SystemPermissionFlag[PermissionFlagType.HTTP_REQUEST_TOOL],
+          ],
+        }),
+      ),
+    ).toBe('COMPLETED');
+
+    expect(calls[0].offeredToolNames).toContain(HTTP_REQUEST_TOOL_NAME);
+  });
+
+  it('withholds a tool the step scope grants but its member may not use', async () => {
+    await setMemberToolAccess(false);
+    const calls = mockModelCallingFindTool();
+
+    expect(
+      await runAsMemberUntilDone(
+        await createScopedStepWorkflow({
+          canReadAllObjectRecords: true,
+          permissionFlagUniversalIdentifiers: [
+            SystemPermissionFlag[PermissionFlagType.HTTP_REQUEST_TOOL],
+          ],
+        }),
+      ),
+    ).toBe('COMPLETED');
+
+    expect(calls[0].offeredToolNames).toContain(FIND_TOOL_NAME);
+    expect(calls[0].offeredToolNames).not.toContain(HTTP_REQUEST_TOOL_NAME);
+  });
+
+  it('gives the step nothing beyond its member when the scope grants everything', async () => {
+    await setMemberObjectAccess(false);
+    await setMemberToolAccess(false);
+    const calls = mockModelCallingFindTool();
+
+    expect(
+      await runAsMemberUntilDone(
+        await createScopedStepWorkflow({
+          canReadAllObjectRecords: true,
+          canUpdateAllObjectRecords: true,
+          canSoftDeleteAllObjectRecords: true,
+          canDestroyAllObjectRecords: true,
+          canUpdateAllSettings: true,
+          canAccessAllTools: true,
+        }),
+      ),
+    ).toBe('COMPLETED');
+
+    expect(calls[0].offeredToolNames).not.toContain(FIND_TOOL_NAME);
+    expect(calls[0].offeredToolNames).not.toContain(HTTP_REQUEST_TOOL_NAME);
+    expect(calls[1].toolOutputs.join()).not.toContain(VISIBLE_RECORD_NAME);
   });
 
   const findSavedReplyParts = (): Promise<
