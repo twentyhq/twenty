@@ -1,6 +1,6 @@
 import { type JSX, useEffect, useState } from 'react';
 
-import { IconsContext } from '@ui/icon/internal/IconsContext';
+import { IconsContext } from '@ui/icon/provider/internal/IconsContext';
 import { type IconComponent } from '@ui/icon/types/IconComponent';
 
 type IconsProviderProps = {

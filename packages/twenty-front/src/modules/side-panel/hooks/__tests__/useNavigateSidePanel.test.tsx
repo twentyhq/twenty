@@ -7,7 +7,8 @@ import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavi
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { SidePanelPages } from 'twenty-shared/types';
-import { Icon123, useIcons } from 'twenty-ui/icon';
+import { Icon123 } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { getJestMetadataAndApolloMocksAndCommandMenuWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksAndCommandMenuWrapper';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 

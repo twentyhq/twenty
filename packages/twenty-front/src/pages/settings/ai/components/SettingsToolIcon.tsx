@@ -10,9 +10,9 @@ import {
   IconSearch,
   IconTool,
   IconTrash,
-  useIcons,
   type IconComponent,
 } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { type SettingsAgentToolApplication } from '~/pages/settings/ai/types/SettingsAgentToolApplication';

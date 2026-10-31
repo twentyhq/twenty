@@ -54,7 +54,7 @@ Component styles and the reset use the `twenty-ui` cascade layer. Unlayered appl
 
 Primitives provide foundational controls, including compound controls such as Select, Popover, and Dialog. Shared components compose them into presets such as `MainButton`, `LightButton`, `Dropdown`, and `Toaster`. Both layers receive data, labels, and callbacks from the application.
 
-Prefer the matching public subpath for focused imports. The root entry point also re-exports primitives, shared components, icons, theme tokens, and utilities. Assets, testing helpers, and the optional code editor have separate entry points.
+Prefer the matching public subpath for focused imports. The root entry point also re-exports primitives, shared components, icons, theme tokens, and utilities. Assets, testing helpers, the optional code editor, and the icon provider have separate entry points.
 
 | Subpath                              | Contents                                                            |
 | ------------------------------------ | ------------------------------------------------------------------- |
@@ -67,7 +67,8 @@ Prefer the matching public subpath for focused imports. The root entry point als
 | `twenty-ui/components/navigation`    | Dropdowns, menu compositions, and tab actions                       |
 | `twenty-ui/components/settings`      | Settings rows with labeled controls                                 |
 | `twenty-ui/components/code-editor`   | Code editor, editor header, and editor theme helpers                |
-| `twenty-ui/icon`                     | Icon components and the icon provider                               |
+| `twenty-ui/icon`                     | Named icon components and icon types                                |
+| `twenty-ui/icon/provider`            | Icon provider, `useIcons`, and the by-name `Icon` component         |
 | `twenty-ui/primitives`               | All primitive families                                              |
 | `twenty-ui/primitives/accessibility` | Hidden elements and keyboard interaction helpers                    |
 | `twenty-ui/primitives/data-display`  | Avatars, badges, chips, tags, color samples, and status indicators  |
@@ -81,7 +82,7 @@ Prefer the matching public subpath for focused imports. The root entry point als
 | `twenty-ui/theme`                    | Theme provider, hooks, types, and tokens                            |
 | `twenty-ui/utilities`                | Hooks and shared utilities                                          |
 
-Import icons such as `IconCheck` from `twenty-ui/icon`. The dynamic icon provider includes the full catalog, so use it when icons need to be looked up at runtime.
+Import icons such as `IconCheck` from `twenty-ui/icon`. Import `IconsProvider`, `useIcons`, and `Icon` from `twenty-ui/icon/provider` only when icons need to be looked up by name at runtime: the provider loads the full catalog.
 
 ## Theming
 

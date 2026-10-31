@@ -19,7 +19,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { useTheme } from 'twenty-ui/theme';
 import { HeaderIdentifier } from '@/ui/layout/page/components/HeaderIdentifier';
 

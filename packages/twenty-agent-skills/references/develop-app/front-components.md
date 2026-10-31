@@ -54,7 +54,7 @@ Read theme tokens with the `useTheme()` hook from `twenty-ui/theme` inside the c
 
 Prefer Twenty UI icons from `twenty-ui/icon` when one exists. Use inline SVG only for app-specific marks or icons that are not available from `twenty-ui/icon`.
 
-Import individual icons, not `IconsProvider` or `useIcons`, which bundle the dynamic icon catalog. Use `themeCssVariables` only for CSS values inside render-time code. In front components, `useTheme()` also returns CSS reference strings by default, including for tokens typed as numbers. Do not perform arithmetic on those references or pass them to APIs requiring resolved numbers.
+Import individual icons, not `twenty-ui/icon/provider` (`IconsProvider`, `useIcons`, by-name `Icon`), which bundles the dynamic icon catalog. Use `themeCssVariables` only for CSS values inside render-time code. In front components, `useTheme()` also returns CSS reference strings by default, including for tokens typed as numbers. Do not perform arithmetic on those references or pass them to APIs requiring resolved numbers.
 
 ## Host UI And Runtime Constraints
 

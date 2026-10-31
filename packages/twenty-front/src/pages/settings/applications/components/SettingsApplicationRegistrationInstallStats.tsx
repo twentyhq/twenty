@@ -21,8 +21,8 @@ import {
   IconRefresh,
   type IconComponent,
   IconVersions,
-  useIcons,
 } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { FindAdminApplicationRegistrationStatsDocument } from '~/generated-admin/graphql';

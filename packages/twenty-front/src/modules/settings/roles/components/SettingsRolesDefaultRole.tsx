@@ -9,7 +9,8 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
-import { IconUserPin, useIcons } from 'twenty-ui/icon';
+import { IconUserPin } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { useMutation } from '@apollo/client/react';
 import {

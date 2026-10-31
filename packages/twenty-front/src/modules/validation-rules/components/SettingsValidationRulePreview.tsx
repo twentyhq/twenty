@@ -12,7 +12,8 @@ import {
 } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { IconChevronDown, IconChevronUp, useIcons } from 'twenty-ui/icon';
+import { IconChevronDown, IconChevronUp } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { Card, Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';

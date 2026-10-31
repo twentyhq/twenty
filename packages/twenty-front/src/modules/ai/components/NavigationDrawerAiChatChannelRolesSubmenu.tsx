@@ -2,7 +2,8 @@ import { useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { IconLock, useIcons } from 'twenty-ui/icon';
+import { IconLock } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 
 import { GetAgentChatChannelRolesDocument } from '~/generated-metadata/graphql';
 

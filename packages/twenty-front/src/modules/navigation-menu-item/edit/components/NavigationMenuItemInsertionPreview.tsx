@@ -9,7 +9,7 @@ import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/componen
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 type NavigationMenuItemInsertionPreviewProps = {

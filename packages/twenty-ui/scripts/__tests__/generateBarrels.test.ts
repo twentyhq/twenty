@@ -28,6 +28,7 @@ const createFixture = () => {
     'styles',
     'testing',
     'components/code-editor',
+    'icon/provider',
     'primitives/input',
     'utilities',
   ]) {

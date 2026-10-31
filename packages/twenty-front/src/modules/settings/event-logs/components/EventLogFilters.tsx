@@ -7,7 +7,8 @@ import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { IconBox, IconUser, useIcons } from 'twenty-ui/icon';
+import { IconBox, IconUser } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { EventLogTable } from '~/generated-metadata/graphql';

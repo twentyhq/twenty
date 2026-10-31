@@ -2,7 +2,8 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Fragment } from 'react';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { IconChevronRight, IconTrash, useIcons } from 'twenty-ui/icon';
+import { IconChevronRight, IconTrash } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 

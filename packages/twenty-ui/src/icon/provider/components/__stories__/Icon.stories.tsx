@@ -10,7 +10,7 @@ import { Button } from '@ui/primitives/input/Button/Button';
 import { Chip } from '@ui/primitives/data-display/Chip/Chip';
 import { Text } from '@ui/primitives/typography/Text/Text';
 
-import { IconsProvider } from '@ui/icon/providers/IconsProvider';
+import { IconsProvider } from '@ui/icon/provider/IconsProvider';
 import { ComponentDecorator } from '@ui/testing/decorators/ComponentDecorator';
 
 import { Icon } from '../Icon';

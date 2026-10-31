@@ -4,7 +4,7 @@ import { useCommandMenuItemClick } from '@/command-menu-item/hooks/useCommandMen
 import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
 import { COMMAND_MENU_DEFAULT_ICON } from '@/workflow/workflow-trigger/constants/CommandMenuDefaultIcon';
 import { useContext } from 'react';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 
 export const useCommandMenuItemDisplay = (item: CommandMenuItemDefinition) => {
   const { commandMenuContextApi } = useContext(CommandMenuContext);

@@ -12,7 +12,7 @@ import {
   isDefined,
 } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 
 type ChartGroupByFieldSelectionCompositeFieldViewProps = {
   pageId: string;
