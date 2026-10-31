@@ -1,6 +1,8 @@
 import { inlineStepAgent } from 'src/database/commands/upgrade-version-command/2-55/utils/inline-step-agent.util';
-import { type StepAgentInlineConfig } from 'src/database/commands/upgrade-version-command/2-55/utils/step-agent-inline-config.type';
-import { type AgentRunInlineConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-inline-config.type';
+import {
+  type PausedRunInlineConfig,
+  type StepAgentInlineConfig,
+} from 'src/database/commands/upgrade-version-command/2-55/utils/step-agent-inline-config.type';
 
 export type StoredRunSpec = {
   agentId?: unknown;
@@ -43,7 +45,7 @@ export const inlinePausedAgentRunSpec = ({
           scope: inlineConfig.scope,
           applicationId,
           promptCacheKey: `workflow-step:${stepId}`,
-        } satisfies AgentRunInlineConfig,
+        } satisfies PausedRunInlineConfig,
       },
     }),
   };

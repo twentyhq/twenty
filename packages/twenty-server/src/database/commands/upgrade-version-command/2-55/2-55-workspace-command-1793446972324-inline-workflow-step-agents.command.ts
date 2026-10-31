@@ -190,47 +190,58 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
         }),
     });
 
-    const workflowVersionCount = isDefined(workflowTables.workflowVersion)
-      ? await rewriteJsonbRowsWithCompareAndSet<StoredWorkflowStep[]>({
-          dataSource,
-          isDryRun,
-          tableName: workflowTables.workflowVersion,
-          columnName: 'steps',
-          whereClause: `steps @> '[{"type":"AI_AGENT"}]'`,
-          whereParameters: [],
-          mapRow: ({ id, value }) =>
-            inlineSteps({
-              sourceTable: 'workflowVersion',
-              rowId: id,
-              steps: value,
-            }),
-        })
-      : 0;
+    const rewriteWorkflowVersions = async (): Promise<number> => {
+      if (!isDefined(workflowTables.workflowVersion)) {
+        return 0;
+      }
 
-    const workflowRunCount = isDefined(workflowTables.workflowRun)
-      ? await rewriteJsonbRowsWithCompareAndSet<{
-          flow: { steps: StoredWorkflowStep[] };
-        }>({
-          dataSource,
-          isDryRun,
-          tableName: workflowTables.workflowRun,
-          columnName: 'state',
-          whereClause: `status::text = ANY($1::text[]) AND state -> 'flow' -> 'steps' @> '[{"type":"AI_AGENT"}]'`,
-          whereParameters: [WORKFLOW_RUN_STATUSES_THAT_CAN_RUN_A_STEP],
-          mapRow: ({ id, value: state }) => {
-            const { value: steps, hasChanged } = inlineSteps({
-              sourceTable: 'workflowRun',
-              rowId: id,
-              steps: state.flow.steps,
-            });
+      return rewriteJsonbRowsWithCompareAndSet<StoredWorkflowStep[]>({
+        dataSource,
+        isDryRun,
+        tableName: workflowTables.workflowVersion,
+        columnName: 'steps',
+        whereClause: `steps @> '[{"type":"AI_AGENT"}]'`,
+        whereParameters: [],
+        mapRow: ({ id, value }) =>
+          inlineSteps({
+            sourceTable: 'workflowVersion',
+            rowId: id,
+            steps: value,
+          }),
+      });
+    };
 
-            return {
-              value: { ...state, flow: { ...state.flow, steps } },
-              hasChanged,
-            };
-          },
-        })
-      : 0;
+    const rewriteWorkflowRuns = async (): Promise<number> => {
+      if (!isDefined(workflowTables.workflowRun)) {
+        return 0;
+      }
+
+      return rewriteJsonbRowsWithCompareAndSet<{
+        flow: { steps: StoredWorkflowStep[] };
+      }>({
+        dataSource,
+        isDryRun,
+        tableName: workflowTables.workflowRun,
+        columnName: 'state',
+        whereClause: `status::text = ANY($1::text[]) AND state -> 'flow' -> 'steps' @> '[{"type":"AI_AGENT"}]'`,
+        whereParameters: [WORKFLOW_RUN_STATUSES_THAT_CAN_RUN_A_STEP],
+        mapRow: ({ id, value: state }) => {
+          const { value: steps, hasChanged } = inlineSteps({
+            sourceTable: 'workflowRun',
+            rowId: id,
+            steps: state.flow.steps,
+          });
+
+          return {
+            value: { ...state, flow: { ...state.flow, steps } },
+            hasChanged,
+          };
+        },
+      });
+    };
+
+    const workflowVersionCount = await rewriteWorkflowVersions();
+    const workflowRunCount = await rewriteWorkflowRuns();
 
     const pendingWakeUpCount =
       await rewriteJsonbRowsWithCompareAndSet<StoredWakeUpPayload>({

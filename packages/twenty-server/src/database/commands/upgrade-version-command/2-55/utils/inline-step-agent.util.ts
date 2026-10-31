@@ -12,11 +12,11 @@ export const inlineStepAgent = ({
   inlinedFields: Record<string, unknown>;
 }): Record<string, unknown> => {
   const { agentId: _agentId, responseFormat, ...rest } = agentReference;
-  const inlinedResponseFormat = isDefined(responseFormat)
-    ? responseFormat
-    : agentResponseFormat?.type === 'json'
-      ? agentResponseFormat
-      : undefined;
+  const isAgentResponseFormatCarried =
+    !isDefined(responseFormat) && agentResponseFormat?.type === 'json';
+  const inlinedResponseFormat = isAgentResponseFormatCarried
+    ? agentResponseFormat
+    : responseFormat;
 
   return {
     ...rest,

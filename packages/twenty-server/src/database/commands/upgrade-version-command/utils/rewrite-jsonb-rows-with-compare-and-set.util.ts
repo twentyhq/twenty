@@ -47,7 +47,6 @@ export const rewriteJsonbRowsWithCompareAndSet = async <TValue>({
     if (isDryRun) {
       rewrittenRowCount += rewrites.length;
     } else if (rewrites.length > 0) {
-      // a row edited since it was read is left as is
       const [, updatedRowCount]: [unknown, number] = await dataSource.query(
         `UPDATE ${tableName} AS target SET ${columnName} = rewrite."to" FROM jsonb_to_recordset($1::jsonb) AS rewrite(id uuid, "from" jsonb, "to" jsonb) WHERE target.id = rewrite.id AND target.${columnName} = rewrite."from"`,
         [JSON.stringify(rewrites)],
