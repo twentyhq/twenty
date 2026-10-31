@@ -1,12 +1,14 @@
 import { AppChip } from '@/applications/components/AppChip';
+import { BUILT_IN_MCP_CLIENT_APPS } from '@/settings/app-preferences/constants/BuiltInMcpClientApps';
 import { type BuiltInApp } from '@/settings/app-preferences/types/BuiltInApp';
 import { getBuiltInAppLogoUrl } from '@/settings/app-preferences/utils/getBuiltInAppLogoUrl';
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
+import { SettingsBuiltInMcpClientAppWorkspaceConnectionsSection } from '@/settings/applications/components/SettingsBuiltInMcpClientAppWorkspaceConnectionsSection';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 
 type SettingsBuiltInAppDetailsProps = {
@@ -20,6 +22,9 @@ export const SettingsBuiltInAppDetails = ({
 
   const appName = t(builtInApp.name);
   const logoUrl = getBuiltInAppLogoUrl(builtInApp);
+  const builtInMcpClientApp = BUILT_IN_MCP_CLIENT_APPS.find(
+    ({ id }) => id === builtInApp.id,
+  );
 
   return (
     <SettingsPageLayout
@@ -53,6 +58,11 @@ export const SettingsBuiltInAppDetails = ({
             coverImageUrl={builtInApp.coverImage}
           />
         </Section.Root>
+        {isDefined(builtInMcpClientApp) && (
+          <SettingsBuiltInMcpClientAppWorkspaceConnectionsSection
+            builtInMcpClientApp={builtInMcpClientApp}
+          />
+        )}
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

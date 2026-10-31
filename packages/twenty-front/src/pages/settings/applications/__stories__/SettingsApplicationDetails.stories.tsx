@@ -11,11 +11,13 @@ import { mockedApolloClient } from '~/testing/mockedApolloClient';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   ApplicationRegistrationSourceType,
@@ -420,5 +422,116 @@ export const BuiltInAccountAppIsNotInstalledWhenDisabledOnServer: Story = {
         { timeout: 3000 },
       ),
     ).toBeVisible();
+  },
+};
+
+const buildOAuthOnlyApplication = ({
+  id,
+  name,
+  redirectUriHostnames,
+}: {
+  id: string;
+  name: string;
+  redirectUriHostnames: string[];
+}) => ({
+  __typename: 'Application',
+  id,
+  name,
+  description: `OAuth application registered as ${name}`,
+  logoUrl: null,
+  version: null,
+  universalIdentifier: `${id}-universal-identifier`,
+  applicationRegistrationId: `${id}-registration-id`,
+  applicationRegistration: {
+    __typename: 'ApplicationRegistrationSummary',
+    id: `${id}-registration-id`,
+    latestAvailableVersion: null,
+    sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+    redirectUriHostnames,
+  },
+  defaultRoleId: null,
+});
+
+const OAUTH_ONLY_APPLICATIONS = [
+  buildOAuthOnlyApplication({
+    id: 'claude-ai-application-id',
+    name: 'Claude',
+    redirectUriHostnames: ['claude.ai'],
+  }),
+  buildOAuthOnlyApplication({
+    id: 'claude-com-application-id',
+    name: 'Claude',
+    redirectUriHostnames: ['claude.com'],
+  }),
+  buildOAuthOnlyApplication({
+    id: 'chatgpt-application-id',
+    name: 'ChatGPT',
+    redirectUriHostnames: ['chatgpt.com'],
+  }),
+  buildOAuthOnlyApplication({
+    id: 'zapier-application-id',
+    name: 'Zapier',
+    redirectUriHostnames: ['zapier.com'],
+  }),
+];
+
+export const BuiltInMcpClientAppListsItsWorkspaceConnections: Story = {
+  args: {
+    routeParams: { ':applicationId': 'claude' },
+  },
+  decorators: [
+    (Story) => {
+      // The page's mocked metadata load resets the store after beforeEach
+      useEffect(() => {
+        jotaiStore.set(metadataStoreState.atomFamily('applications'), {
+          current: OAUTH_ONLY_APPLICATIONS.map(
+            ({ id, universalIdentifier, name, description, version }) => ({
+              id,
+              universalIdentifier,
+              name,
+              description,
+              version,
+            }),
+          ),
+          draft: [],
+          status: 'up-to-date',
+        });
+      }, []);
+
+      return <Story />;
+    },
+  ],
+  beforeEach: () =>
+    seedBuiltInAccountAppStory({ isAppPreferencesEnabled: true }),
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query('FindManyApplications', () =>
+          HttpResponse.json({
+            data: { findManyApplications: OAUTH_ONLY_APPLICATIONS },
+          }),
+        ),
+        ...buildApplicationHandlers({
+          settingsMenuItems: [USER_SETTINGS_MENU_ITEM],
+        }),
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText('Connections in this workspace', undefined, {
+        timeout: 3000,
+      }),
+    ).toBeVisible();
+    expect(
+      canvas
+        .getAllByRole('link', { name: /OAuth application registered as/ })
+        .map((link) => link.getAttribute('href')),
+    ).toEqual([
+      '/settings/applications/claude-ai-application-id',
+      '/settings/applications/claude-com-application-id',
+    ]);
   },
 };
