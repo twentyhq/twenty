@@ -1,32 +1,23 @@
-import { type AiRunScope } from 'twenty-shared/ai';
+import {
+  type AiRunScope,
+  type AiRunScopeFieldPermission,
+  type AiRunScopeObjectPermission,
+} from 'twenty-shared/ai';
+import { type RolePermissionGrants } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-export type StepAgentRoleObjectPermission = {
-  objectUniversalIdentifier: string;
-  canReadObjectRecords: boolean | null;
-  canUpdateObjectRecords: boolean | null;
-  canSoftDeleteObjectRecords: boolean | null;
-  canDestroyObjectRecords: boolean | null;
+// a permission column is null where a grant leaves its key out
+type StoredPermissionRow<TGrant> = {
+  [Key in keyof TGrant]-?: undefined extends TGrant[Key]
+    ? Exclude<TGrant[Key], undefined> | null
+    : TGrant[Key];
 };
 
-export type StepAgentRoleFieldPermission = {
-  objectUniversalIdentifier: string;
-  fieldUniversalIdentifier: string;
-  canReadFieldValue: boolean | null;
-  canUpdateFieldValue: boolean | null;
-};
+export type StoredObjectPermissionRow =
+  StoredPermissionRow<AiRunScopeObjectPermission>;
 
-export type StepAgentRole = {
-  canReadAllObjectRecords: boolean;
-  canUpdateAllObjectRecords: boolean;
-  canSoftDeleteAllObjectRecords: boolean;
-  canDestroyAllObjectRecords: boolean;
-  canUpdateAllSettings: boolean;
-  canAccessAllTools: boolean;
-  objectPermissions: StepAgentRoleObjectPermission[];
-  fieldPermissions: StepAgentRoleFieldPermission[];
-  permissionFlagUniversalIdentifiers: string[];
-};
+export type StoredFieldPermissionRow =
+  StoredPermissionRow<AiRunScopeFieldPermission>;
 
 const toScopeObjectPermission = ({
   objectUniversalIdentifier,
@@ -34,7 +25,7 @@ const toScopeObjectPermission = ({
   canUpdateObjectRecords,
   canSoftDeleteObjectRecords,
   canDestroyObjectRecords,
-}: StepAgentRoleObjectPermission) => ({
+}: StoredObjectPermissionRow): AiRunScopeObjectPermission => ({
   objectUniversalIdentifier,
   ...(isDefined(canReadObjectRecords) ? { canReadObjectRecords } : {}),
   ...(isDefined(canUpdateObjectRecords) ? { canUpdateObjectRecords } : {}),
@@ -49,7 +40,7 @@ const toScopeFieldPermission = ({
   fieldUniversalIdentifier,
   canReadFieldValue,
   canUpdateFieldValue,
-}: StepAgentRoleFieldPermission) => ({
+}: StoredFieldPermissionRow): AiRunScopeFieldPermission => ({
   objectUniversalIdentifier,
   fieldUniversalIdentifier,
   ...(isDefined(canReadFieldValue) ? { canReadFieldValue } : {}),
@@ -59,13 +50,14 @@ const toScopeFieldPermission = ({
 // all-records flags stay out: tools only reached the objects the role granted row by row
 export const buildAiRunScopeFromStepAgentRole = (
   role: Pick<
-    StepAgentRole,
+    RolePermissionGrants,
     | 'canUpdateAllSettings'
     | 'canAccessAllTools'
-    | 'objectPermissions'
-    | 'fieldPermissions'
     | 'permissionFlagUniversalIdentifiers'
-  >,
+  > & {
+    objectPermissions: StoredObjectPermissionRow[];
+    fieldPermissions: StoredFieldPermissionRow[];
+  },
 ): AiRunScope => {
   const objectPermissions = role.objectPermissions
     .map(toScopeObjectPermission)

@@ -29,24 +29,27 @@ describe('inlinePausedAgentRunSpec', () => {
         inlineConfig: INLINE_CONFIG,
         applicationId: 'custom-application-id',
         stepId: 'step-id',
-      }).runSpec,
+      }),
     ).toEqual({
-      title: 'Qualify',
-      baseSystemPrompt: 'You run inside a workflow.',
-      instructions: null,
-      capabilities: { canAskHumans: false },
-      agentId: null,
-      inlineConfig: {
-        instructions: 'Qualify the lead.',
-        modelId: 'model-id',
-        modelConfiguration: null,
-        scope: null,
-        applicationId: 'custom-application-id',
-        promptCacheKey: 'workflow-step:step-id',
-      },
-      responseFormat: {
-        type: 'json',
-        schema: { type: 'object', properties: {} },
+      isConversational: false,
+      runSpec: {
+        title: 'Qualify',
+        baseSystemPrompt: 'You run inside a workflow.',
+        instructions: null,
+        capabilities: { canAskHumans: false },
+        agentId: null,
+        inlineConfig: {
+          instructions: 'Qualify the lead.',
+          modelId: 'model-id',
+          modelConfiguration: null,
+          scope: null,
+          applicationId: 'custom-application-id',
+          promptCacheKey: 'workflow-step:step-id',
+        },
+        responseFormat: {
+          type: 'json',
+          schema: { type: 'object', properties: {} },
+        },
       },
     });
   });
@@ -60,7 +63,7 @@ describe('inlinePausedAgentRunSpec', () => {
         applicationId: 'custom-application-id',
         stepId: 'step-id',
       }),
-    ).toEqual({ runSpec: RUN_SPEC, hasChanged: false });
+    ).toEqual({ isConversational: true });
   });
 
   it('leaves a paused run that can ask humans on its agent', () => {
@@ -74,6 +77,6 @@ describe('inlinePausedAgentRunSpec', () => {
         applicationId: 'custom-application-id',
         stepId: 'step-id',
       }),
-    ).toEqual({ runSpec, hasChanged: false });
+    ).toEqual({ isConversational: true });
   });
 });

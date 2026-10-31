@@ -1,7 +1,8 @@
+import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { hasWorkflowAiAgentConversationConfig } from 'twenty-shared/workflow';
 
-import { inlineWorkflowStepAgentInput } from 'src/database/commands/upgrade-version-command/2-55/utils/inline-workflow-step-agent-input.util';
-import { isConversationalWorkflowStepInput } from 'src/database/commands/upgrade-version-command/2-55/utils/is-conversational-workflow-step-input.util';
+import { inlineStepAgent } from 'src/database/commands/upgrade-version-command/2-55/utils/inline-step-agent.util';
 import {
   type StepAgentInlineConfig,
   type StoredWorkflowStep,
@@ -35,21 +36,26 @@ export const inlineWorkflowStepAgents = ({
     const input = step.settings?.input;
     const agentId = input?.agentId;
 
-    if (
-      step.type !== 'AI_AGENT' ||
-      !isDefined(input) ||
-      typeof agentId !== 'string'
-    ) {
+    if (step.type !== 'AI_AGENT' || !isDefined(input) || !isString(agentId)) {
       return step;
     }
 
     const isStepAgent =
       inlineConfigByAgentId.has(agentId) || keptAgentIds.has(agentId);
 
-    if (isStepAgent && isConversationalWorkflowStepInput(input)) {
+    // human input or a conversation needs an agent, so the step keeps it
+    if (
+      isStepAgent &&
+      hasWorkflowAiAgentConversationConfig({
+        ...input,
+        humanInputInstructions: isString(input.humanInputInstructions)
+          ? input.humanInputInstructions
+          : undefined,
+      })
+    ) {
       conversationalSteps.push({
         stepId: String(step.id),
-        stepName: typeof step.name === 'string' ? step.name : null,
+        stepName: isString(step.name) ? step.name : null,
         agentId,
       });
 
@@ -74,7 +80,20 @@ export const inlineWorkflowStepAgents = ({
       ...step,
       settings: {
         ...step.settings,
-        input: inlineWorkflowStepAgentInput({ input, inlineConfig }),
+        input: inlineStepAgent({
+          agentReference: input,
+          agentResponseFormat: inlineConfig.responseFormat,
+          inlinedFields: {
+            instructions: inlineConfig.instructions,
+            modelId: inlineConfig.modelId,
+            ...(isDefined(inlineConfig.modelConfiguration)
+              ? { modelConfiguration: inlineConfig.modelConfiguration }
+              : {}),
+            ...(isDefined(inlineConfig.scope)
+              ? { scope: inlineConfig.scope }
+              : {}),
+          },
+        }),
       },
     };
   });

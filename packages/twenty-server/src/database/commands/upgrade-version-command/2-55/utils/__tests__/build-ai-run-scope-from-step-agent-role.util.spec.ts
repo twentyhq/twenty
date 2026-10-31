@@ -1,13 +1,6 @@
-import {
-  buildAiRunScopeFromStepAgentRole,
-  type StepAgentRole,
-} from 'src/database/commands/upgrade-version-command/2-55/utils/build-ai-run-scope-from-step-agent-role.util';
+import { buildAiRunScopeFromStepAgentRole } from 'src/database/commands/upgrade-version-command/2-55/utils/build-ai-run-scope-from-step-agent-role.util';
 
-const DENY_ALL_ROLE: StepAgentRole = {
-  canReadAllObjectRecords: false,
-  canUpdateAllObjectRecords: false,
-  canSoftDeleteAllObjectRecords: false,
-  canDestroyAllObjectRecords: false,
+const DENY_ALL_ROLE: Parameters<typeof buildAiRunScopeFromStepAgentRole>[0] = {
   canUpdateAllSettings: false,
   canAccessAllTools: false,
   objectPermissions: [],
@@ -69,18 +62,14 @@ describe('buildAiRunScopeFromStepAgentRole', () => {
     });
   });
 
-  it('leaves out all-records flags, which never reached objects without a row', () => {
-    const allRecordsRole: StepAgentRole = {
-      ...DENY_ALL_ROLE,
-      canReadAllObjectRecords: true,
-      canUpdateAllObjectRecords: true,
-      canSoftDeleteAllObjectRecords: true,
-      canDestroyAllObjectRecords: true,
-      canAccessAllTools: true,
-      canUpdateAllSettings: true,
-    };
-
-    expect(buildAiRunScopeFromStepAgentRole(allRecordsRole)).toEqual({
+  it('keeps the tools and settings grants of the role', () => {
+    expect(
+      buildAiRunScopeFromStepAgentRole({
+        ...DENY_ALL_ROLE,
+        canAccessAllTools: true,
+        canUpdateAllSettings: true,
+      }),
+    ).toEqual({
       canAccessAllTools: true,
       canUpdateAllSettings: true,
     });

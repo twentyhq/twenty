@@ -1,6 +1,11 @@
 import { isString } from '@sniptt/guards';
 import { Command } from 'nest-commander';
-import { type AgentResponseFormat, type AiRunScope } from 'twenty-shared/ai';
+import {
+  type AgentResponseFormat,
+  type AiRunScope,
+  type ModelConfiguration,
+} from 'twenty-shared/ai';
+import { type RolePermissionGrants } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
@@ -10,9 +15,8 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import {
   buildAiRunScopeFromStepAgentRole,
-  type StepAgentRole,
-  type StepAgentRoleFieldPermission,
-  type StepAgentRoleObjectPermission,
+  type StoredFieldPermissionRow,
+  type StoredObjectPermissionRow,
 } from 'src/database/commands/upgrade-version-command/2-55/utils/build-ai-run-scope-from-step-agent-role.util';
 import { buildConversationalStepAgentLabel } from 'src/database/commands/upgrade-version-command/2-55/utils/build-conversational-step-agent-label.util';
 import {
@@ -21,15 +25,12 @@ import {
 } from 'src/database/commands/upgrade-version-command/2-55/utils/inline-paused-agent-run-spec.util';
 import { inlineWorkflowStepAgents } from 'src/database/commands/upgrade-version-command/2-55/utils/inline-workflow-step-agents.util';
 import {
-  normalizeStepModelConfiguration,
-  type StoredModelConfiguration,
-} from 'src/database/commands/upgrade-version-command/2-55/utils/normalize-step-model-configuration.util';
-import { rewriteJsonbRowsWithCompareAndSet } from 'src/database/commands/upgrade-version-command/2-55/utils/rewrite-jsonb-rows-with-compare-and-set.util';
-import {
   type StepAgentInlineConfig,
   type StoredWorkflowStep,
 } from 'src/database/commands/upgrade-version-command/2-55/utils/step-agent-inline-config.type';
+import { rewriteJsonbRowsWithCompareAndSet } from 'src/database/commands/upgrade-version-command/utils/rewrite-jsonb-rows-with-compare-and-set.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -47,25 +48,22 @@ type StepAgentRow = {
   label: string;
   prompt: string;
   modelId: string;
-  modelConfiguration: StoredModelConfiguration;
+  modelConfiguration: ModelConfiguration | null;
   responseFormat: AgentResponseFormat | null;
-  applicationId: string;
   roleId: string | null;
 };
 
-type StepAgentRoleRow = Omit<
-  StepAgentRole,
-  | 'objectPermissions'
-  | 'fieldPermissions'
-  | 'permissionFlagUniversalIdentifiers'
+type StepAgentRoleRow = Required<
+  Pick<RolePermissionGrants, 'canUpdateAllSettings' | 'canAccessAllTools'>
 > & {
   id: string;
   hasRowLevelPermissionPredicates: boolean;
 };
 
 type StepAgents = {
+  // the application step agents belong to, which a step without an agent runs under
+  workspaceCustomApplicationId: string | null;
   inlineConfigByAgentId: Map<string, StepAgentInlineConfig>;
-  applicationIdByAgentId: Map<string, string>;
   labelByAgentId: Map<string, string>;
   // their role's row-level predicates have no scope equivalent, so their steps keep them
   keptAgentIds: Set<string>;
@@ -138,20 +136,14 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
     >();
     const conversationalRunStepKeys = new Set<string>();
     const inlineSteps = ({
-      tableName,
       sourceTable,
       rowId,
       steps,
     }: {
-      tableName: string;
       sourceTable: ConversationalStepAgentSource['table'];
       rowId: string;
       steps: StoredWorkflowStep[];
     }) => {
-      if (!Array.isArray(steps)) {
-        return { value: steps, hasChanged: false };
-      }
-
       const result = inlineWorkflowStepAgents({
         steps,
         inlineConfigByAgentId: stepAgents.inlineConfigByAgentId,
@@ -174,7 +166,7 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
 
       for (const keptStepId of result.keptStepIds) {
         this.logger.warn(
-          `Workspace ${workspaceId}: step ${keptStepId} of ${tableName} ${rowId} keeps its agent, whose role has row-level predicates a step scope cannot express`,
+          `Workspace ${workspaceId}: step ${keptStepId} of ${sourceTable} ${rowId} keeps its agent, whose role has row-level predicates a step scope cannot express`,
         );
       }
 
@@ -192,7 +184,6 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
       whereParameters: [workspaceId],
       mapRow: ({ id, value }) =>
         inlineSteps({
-          tableName: 'core workflow version',
           sourceTable: 'coreWorkflowVersion',
           rowId: id,
           steps: value,
@@ -209,7 +200,6 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
           whereParameters: [],
           mapRow: ({ id, value }) =>
             inlineSteps({
-              tableName: 'workflow version',
               sourceTable: 'workflowVersion',
               rowId: id,
               steps: value,
@@ -229,7 +219,6 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
           whereParameters: [WORKFLOW_RUN_STATUSES_THAT_CAN_RUN_A_STEP],
           mapRow: ({ id, value: state }) => {
             const { value: steps, hasChanged } = inlineSteps({
-              tableName: 'workflow run',
               sourceTable: 'workflowRun',
               rowId: id,
               steps: state.flow.steps,
@@ -255,28 +244,37 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
           [...stepAgents.inlineConfigByAgentId.keys()],
         ],
         mapRow: ({ value: payload }) => {
-          const agentId = payload.runSpec.agentId;
-          const inlineConfig = isString(agentId)
-            ? stepAgents.inlineConfigByAgentId.get(agentId)
-            : undefined;
+          const { agentId } = payload.runSpec;
 
-          if (!isString(agentId) || !isDefined(inlineConfig)) {
+          if (!isString(agentId)) {
+            return { value: payload, hasChanged: false };
+          }
+
+          const inlineConfig = stepAgents.inlineConfigByAgentId.get(agentId);
+
+          if (!isDefined(inlineConfig)) {
             return { value: payload, hasChanged: false };
           }
 
           const { workflowRunId, stepId } = payload.caller.ref;
-          const { runSpec, hasChanged } = inlinePausedAgentRunSpec({
+          const pausedRun = inlinePausedAgentRunSpec({
             runSpec: payload.runSpec,
             isOnConversationalStep: conversationalRunStepKeys.has(
               `${workflowRunId}:${stepId}`,
             ),
             inlineConfig,
-            applicationId:
-              stepAgents.applicationIdByAgentId.get(agentId) ?? null,
+            applicationId: stepAgents.workspaceCustomApplicationId,
             stepId,
           });
 
-          if (!hasChanged && !conversationalSourceByAgentId.has(agentId)) {
+          if (!pausedRun.isConversational) {
+            return {
+              value: { ...payload, runSpec: pausedRun.runSpec },
+              hasChanged: true,
+            };
+          }
+
+          if (!conversationalSourceByAgentId.has(agentId)) {
             conversationalSourceByAgentId.set(agentId, {
               stepName: isString(payload.runSpec.title)
                 ? payload.runSpec.title
@@ -286,7 +284,7 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
             });
           }
 
-          return { value: { ...payload, runSpec }, hasChanged };
+          return { value: payload, hasChanged: false };
         },
       });
 
@@ -323,18 +321,24 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
     dataSource: DataSource;
     workspaceId: string;
   }): Promise<StepAgents> {
+    const [{ workspaceCustomApplicationId }]: {
+      workspaceCustomApplicationId: string | null;
+    }[] = await dataSource.query(
+      `SELECT "workspaceCustomApplicationId" FROM core."workspace" WHERE id = $1`,
+      [workspaceId],
+    );
+
     // only builder steps create system agents in the custom application; an installed app's are its own
     const agentRows: StepAgentRow[] = await dataSource.query(
       `SELECT agent.id, agent.label, agent.prompt, agent."modelId", agent."modelConfiguration",
-         agent."responseFormat", agent."applicationId", target."roleId"
+         agent."responseFormat", target."roleId"
        FROM core."agent" agent
-       JOIN core."workspace" workspace ON workspace.id = agent."workspaceId"
        LEFT JOIN core."roleTarget" target ON target."agentId" = agent.id
        WHERE agent."workspaceId" = $1
          AND agent."isSystem" = true
-         AND agent."applicationId" = workspace."workspaceCustomApplicationId"
+         AND agent."applicationId" = $2
          AND COALESCE(jsonb_array_length(agent.triggers), 0) = 0`,
-      [workspaceId],
+      [workspaceId, workspaceCustomApplicationId],
     );
 
     const scopeByRoleId = await this.loadRoleScopes({
@@ -345,17 +349,13 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
     });
 
     const stepAgents: StepAgents = {
+      workspaceCustomApplicationId,
       inlineConfigByAgentId: new Map(),
-      applicationIdByAgentId: new Map(),
       labelByAgentId: new Map(),
       keptAgentIds: new Set(),
     };
 
     for (const agentRow of agentRows) {
-      stepAgents.applicationIdByAgentId.set(
-        agentRow.id,
-        agentRow.applicationId,
-      );
       stepAgents.labelByAgentId.set(agentRow.id, agentRow.label);
 
       const scope = isDefined(agentRow.roleId)
@@ -370,9 +370,7 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
       stepAgents.inlineConfigByAgentId.set(agentRow.id, {
         instructions: agentRow.prompt,
         modelId: agentRow.modelId,
-        modelConfiguration: normalizeStepModelConfiguration(
-          agentRow.modelConfiguration,
-        ),
+        modelConfiguration: agentRow.modelConfiguration,
         responseFormat: agentRow.responseFormat,
         scope,
       });
@@ -505,14 +503,12 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
 
     const [roleRows, objectPermissionRows, fieldPermissionRows, flagRows]: [
       StepAgentRoleRow[],
-      (StepAgentRoleObjectPermission & { roleId: string })[],
-      (StepAgentRoleFieldPermission & { roleId: string })[],
+      (StoredObjectPermissionRow & { roleId: string })[],
+      (StoredFieldPermissionRow & { roleId: string })[],
       { roleId: string; universalIdentifier: string }[],
     ] = await Promise.all([
       dataSource.query(
-        `SELECT role.id, role."canReadAllObjectRecords", role."canUpdateAllObjectRecords",
-           role."canSoftDeleteAllObjectRecords", role."canDestroyAllObjectRecords",
-           role."canUpdateAllSettings", role."canAccessAllTools",
+        `SELECT role.id, role."canUpdateAllSettings", role."canAccessAllTools",
            EXISTS (
              SELECT 1 FROM core."rowLevelPermissionPredicate" predicate
              WHERE predicate."roleId" = role.id AND predicate."deletedAt" IS NULL
@@ -595,7 +591,10 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
     }): Promise<string | null> => {
       if (
         !isDefined(
-          flatObjectMetadataMaps.byUniversalIdentifier[universalIdentifier],
+          findFlatEntityByUniversalIdentifier({
+            flatEntityMaps: flatObjectMetadataMaps,
+            universalIdentifier,
+          }),
         )
       ) {
         return null;
