@@ -16,7 +16,7 @@ import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/wo
 import { buildResolveMorphRelationPermissionFieldIds } from 'src/engine/metadata-modules/role/utils/build-resolve-morph-relation-permission-field-ids.util';
 import { computeObjectsPermissionsForRoleDefinition } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-role-definition.util';
 import { buildIsPermissionFlagGranted } from 'src/engine/permissions/role/utils/build-is-permission-flag-granted.util';
-import { type RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
+import { type PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
 import { type WorkspaceCacheRowsRequirement } from 'src/engine/workspace-cache/types/workspace-cache-rows-requirement.type';
@@ -90,11 +90,11 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
           rolePermissionFlags.byRoleId.get(role.id) ?? []
         ).map((rolePermissionFlagRow) =>
           this.getRolePermissionFlagUniversalIdentifier({
-            ...rolePermissionFlagRow,
+            flag: rolePermissionFlagRow.flag,
             permissionFlag: permissionFlagById.get(
               rolePermissionFlagRow.permissionFlagId,
             ),
-          } as RolePermissionFlagEntity),
+          }),
         ),
       });
 
@@ -122,13 +122,16 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
     return permissionsByRoleId;
   }
 
-  private getRolePermissionFlagUniversalIdentifier(
-    rolePermissionFlag: RolePermissionFlagEntity,
-  ): string {
+  private getRolePermissionFlagUniversalIdentifier({
+    flag,
+    permissionFlag,
+  }: {
+    flag: PermissionFlagType;
+    permissionFlag:
+      | Pick<PermissionFlagEntity, 'universalIdentifier'>
+      | undefined;
+  }): string {
     // The permissionFlag relation is stripped until the 2.6.0 upgrade cursor, so fall back to the legacy flag column
-    return (
-      rolePermissionFlag.permissionFlag?.universalIdentifier ??
-      SystemPermissionFlag[rolePermissionFlag.flag as PermissionFlagType]
-    );
+    return permissionFlag?.universalIdentifier ?? SystemPermissionFlag[flag];
   }
 }
