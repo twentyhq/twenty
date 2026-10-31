@@ -86,6 +86,7 @@ import { type CreditUsedItemDTO } from 'src/engine/core-modules/usage/dtos/credi
 import { UsageAnalyticsService } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
+import { getWellKnownOAuthClientOfRegistration } from 'src/engine/core-modules/application/well-known-oauth-client/utils/get-well-known-oauth-client-of-registration.util';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
 
 const BCRYPT_SALT_ROUNDS = 10;
@@ -247,7 +248,7 @@ export class ApplicationRegistrationService {
     }
   }
 
-  private async invalidateMarketplaceAppsCache(): Promise<void> {
+  async invalidateMarketplaceAppsCache(): Promise<void> {
     try {
       await this.coreEntityCacheService.invalidate(
         'marketplaceCatalog',
@@ -475,6 +476,9 @@ export class ApplicationRegistrationService {
         'latestAvailableVersion',
         'websiteUrl',
         'oAuthScopes',
+        'universalIdentifier',
+        'ownerWorkspaceId',
+        'oAuthRedirectUris',
       ],
     });
 
@@ -489,6 +493,8 @@ export class ApplicationRegistrationService {
         this.applicationRegistrationAssetUrlService.buildLogoUrl(registration),
       websiteUrl: registration.websiteUrl,
       oAuthScopes: registration.oAuthScopes,
+      wellKnownOAuthClient:
+        getWellKnownOAuthClientOfRegistration(registration)?.client ?? null,
     };
   }
 

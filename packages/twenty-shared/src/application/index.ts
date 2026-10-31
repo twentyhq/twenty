@@ -100,6 +100,7 @@ export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
 export { TWENTY_STANDARD_APPLICATION_NAME } from './constants/TwentyStandardApplicationName';
 export { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from './constants/TwentyStandardApplicationUniversalIdentifier';
+export { WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS } from './constants/WellKnownOAuthClientUniversalIdentifiers';
 export type {
   AuthorizeConnectionPayload,
   AuthorizeConnectionResult,

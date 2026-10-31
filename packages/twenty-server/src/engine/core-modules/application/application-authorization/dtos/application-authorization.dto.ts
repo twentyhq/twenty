@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { WellKnownOAuthClient } from 'src/engine/core-modules/application/well-known-oauth-client/enums/well-known-oauth-client.enum';
 
 @ObjectType('ApplicationAuthorization')
 export class ApplicationAuthorizationDTO {
@@ -27,6 +28,9 @@ export class ApplicationAuthorizationDTO {
   // Clients pick their own registration name, so the callback host is what identifies them
   @Field(() => [String])
   redirectUriHostnames: string[];
+
+  @Field(() => WellKnownOAuthClient, { nullable: true })
+  wellKnownOAuthClient: WellKnownOAuthClient | null;
 
   @Field(() => Date, { nullable: true })
   lastAuthorizedAt: Date | null;

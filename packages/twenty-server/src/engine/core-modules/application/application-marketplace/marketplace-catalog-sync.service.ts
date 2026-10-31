@@ -1,5 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { readFile } from 'fs/promises';
+import path from 'path';
+
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
@@ -14,6 +17,9 @@ import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/ap
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { WELL_KNOWN_OAUTH_CLIENT_ASSETS_PATH } from 'src/engine/core-modules/application/well-known-oauth-client/constants/well-known-oauth-client-assets-path.constant';
+import { WELL_KNOWN_OAUTH_CLIENTS } from 'src/engine/core-modules/application/well-known-oauth-client/constants/well-known-oauth-clients.constant';
+import { WellKnownOAuthClientRegistrationService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-registration.service';
 import { areRegistrationAssetsStored } from 'src/engine/core-modules/application/application-registration/utils/are-registration-assets-stored.util';
 
 @Injectable()
@@ -27,12 +33,40 @@ export class MarketplaceCatalogSyncService {
     private readonly applicationRegistrationVersionService: ApplicationRegistrationVersionService,
     private readonly marketplaceService: MarketplaceService,
     private readonly applicationPackageFetcherService: ApplicationPackageFetcherService,
+    private readonly wellKnownOAuthClientRegistrationService: WellKnownOAuthClientRegistrationService,
   ) {}
 
   async syncCatalog(): Promise<void> {
+    // Ahead of the registry so an unreachable registry cannot hold them back
+    await this.syncWellKnownOAuthClients();
     await this.syncRegistryApps();
 
     this.logger.log('Marketplace catalog sync completed');
+  }
+
+  private async syncWellKnownOAuthClients(): Promise<void> {
+    for (const wellKnownOAuthClient of WELL_KNOWN_OAUTH_CLIENTS) {
+      try {
+        const registration =
+          await this.wellKnownOAuthClientRegistrationService.syncRegistration(
+            wellKnownOAuthClient,
+          );
+
+        await this.applicationRegistrationAssetService.storeRegistrationAssets({
+          applicationRegistrationId: registration.id,
+          manifestApplication: { logo: wellKnownOAuthClient.logo },
+          readAsset: (assetPath) =>
+            readFile(path.join(WELL_KNOWN_OAUTH_CLIENT_ASSETS_PATH, assetPath)),
+          skipAlreadyStoredPaths: true,
+        });
+      } catch (error) {
+        this.logger.error(
+          `Failed to sync the ${wellKnownOAuthClient.name} application registration: ${error instanceof Error ? error.message : String(error)}`,
+        );
+      }
+    }
+
+    await this.applicationRegistrationService.invalidateMarketplaceAppsCache();
   }
 
   private async syncRegistryApps(): Promise<void> {
