@@ -108,7 +108,7 @@ export class SubscriptionService {
     return `${SubscriptionChannel.AGENT_CHAT_CHANNEL}:${workspaceId}:${threadId}`;
   }
 
-  async subscribeToAgentChat({
+  async subscribeToAgentChat<TPayload>({
     workspaceId,
     threadId,
   }: {
@@ -117,7 +117,7 @@ export class SubscriptionService {
   }) {
     const client = this.redisClient.getPubSubClient();
 
-    return client.asyncIterator(
+    return client.asyncIterator<TPayload>(
       this.getAgentChatChannel({ workspaceId, threadId }),
     );
   }

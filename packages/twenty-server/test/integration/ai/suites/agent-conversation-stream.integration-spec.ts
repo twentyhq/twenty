@@ -36,6 +36,15 @@ type ConversationVariables = {
   threadKey?: string;
 };
 
+const findAgentUniversalIdentifier = async (agentId: string) => {
+  const [agent] = await globalThis.testDataSource.query(
+    `SELECT "universalIdentifier" FROM core."agent" WHERE id = $1`,
+    [agentId],
+  );
+
+  return agent.universalIdentifier;
+};
+
 const conversationHistoryQuery = (variables: ConversationVariables) => ({
   query: gql`
     query ConversationHistory(
@@ -82,35 +91,29 @@ describe('Agent conversations read by their application (integration)', () => {
       name: 'Agent Conversation Probe',
     });
 
-    const [[agent], tokenPair, { data }] = await Promise.all([
-      globalThis.testDataSource.query(
-        `SELECT "universalIdentifier" FROM core."agent" WHERE id = $1`,
-        [application.agentId],
-      ),
-      generateApplicationTokenPair({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        applicationId: application.id,
-      }),
-      createOneAgent({
-        expectToFail: false,
-        input: {
-          label: 'Agent Of Another Application',
-          prompt: 'Answer questions',
-          modelId: TEST_AI_MODEL_ID,
-        },
-      }),
-    ]);
+    const [applicationAgentUniversalIdentifier, tokenPair, { data }] =
+      await Promise.all([
+        findAgentUniversalIdentifier(application.agentId),
+        generateApplicationTokenPair({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          applicationId: application.id,
+        }),
+        createOneAgent({
+          expectToFail: false,
+          input: {
+            label: 'Agent Of Another Application',
+            prompt: 'Answer questions',
+            modelId: TEST_AI_MODEL_ID,
+          },
+        }),
+      ]);
 
-    agentUniversalIdentifier = agent.universalIdentifier;
+    agentUniversalIdentifier = applicationAgentUniversalIdentifier;
     applicationToken = tokenPair.applicationAccessToken.token;
     otherApplicationAgentId = data.createOneAgent.id;
 
-    const [otherAgent] = await globalThis.testDataSource.query(
-      `SELECT "universalIdentifier" FROM core."agent" WHERE id = $1`,
-      [otherApplicationAgentId],
-    );
-
-    otherApplicationAgentUniversalIdentifier = otherAgent.universalIdentifier;
+    otherApplicationAgentUniversalIdentifier =
+      await findAgentUniversalIdentifier(otherApplicationAgentId);
   }, 120000);
 
   afterEach(() => jest.restoreAllMocks());
@@ -187,7 +190,10 @@ describe('Agent conversations read by their application (integration)', () => {
         threadId,
         turnId: runId,
         role: 'assistant',
-        parts: [{ type: 'text', textContent: 'Acme renews in May' }],
+        parts: [
+          { type: 'step-start', textContent: '' },
+          { type: 'text', textContent: 'Acme renews in May' },
+        ],
       },
     ]);
     expect(historyResponse.body.data.chatStreamCatchupChunks).toEqual({
@@ -218,7 +224,20 @@ describe('Agent conversations read by their application (integration)', () => {
       applicationToken,
     );
 
-    expect(response.body.errors[0].extensions.code).toBe('NOT_FOUND');
+    expect(response.body.errors[0].extensions.code).toBe('FORBIDDEN');
+  });
+
+  it('refuses a thread id together with a key', async () => {
+    const response = await makeMetadataApiRequest(
+      conversationHistoryQuery({
+        threadId: randomUUID(),
+        agentUniversalIdentifier,
+        threadKey: randomUUID(),
+      }),
+      applicationToken,
+    );
+
+    expect(response.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');
   });
 
   it('refuses a thread id from an application without a member', async () => {

@@ -33,8 +33,8 @@ describe('listConversationMessages', () => {
   let fetchSpy: MockInstance<typeof fetch>;
 
   beforeEach(() => {
-    process.env.TWENTY_API_URL = 'https://api.test';
-    process.env.TWENTY_APP_ACCESS_TOKEN = 'app-token';
+    vi.stubEnv('TWENTY_API_URL', 'https://api.test');
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'app-token');
     fetchSpy = vi.spyOn(globalThis, 'fetch');
     fetchSpy.mockResolvedValue(
       new Response(JSON.stringify({ data: HISTORY }), { status: 200 }),
@@ -42,8 +42,7 @@ describe('listConversationMessages', () => {
   });
 
   afterEach(() => {
-    delete process.env.TWENTY_API_URL;
-    delete process.env.TWENTY_APP_ACCESS_TOKEN;
+    vi.unstubAllEnvs();
     fetchSpy.mockRestore();
   });
 

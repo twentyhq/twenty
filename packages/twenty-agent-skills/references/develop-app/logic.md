@@ -98,7 +98,7 @@ for await (const event of streamConversation({ ...conversation, signal })) {
 - Events are the chat's `AgentChatSubscriptionEvent`s: `stream-chunk` (an AI SDK `UIMessageChunk` with a `seq`), notifications such as `message-persisted`, `queue-updated` and `stream-error`, and a periodic `keepalive`. Pipe chunks into `readUIMessageStream()` from `ai` to build messages as the chat does.
 - Messages come as the chat reads them, parts as stored. `streamCatchup` holds the chunks of a reply still streaming; skip live chunks whose `seq` is at most `streamCatchup.maxSeq`.
 - The stream stays open until `signal` aborts or the loop breaks, and throws if the connection drops; read the history and stream again to resume. It can start before the first run reaches the conversation.
-- Both need an application token and reach only the app's own conversations. Turns run as a member show only their text.
+- Both need an application token and reach only the app's own conversations. Turns run as a member show only their text, in the history and live, where their other chunks arrive as empty `message-metadata` chunks so `seq` stays gapless.
 
 ## AI Generate
 

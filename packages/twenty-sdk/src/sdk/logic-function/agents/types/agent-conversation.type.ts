@@ -4,7 +4,6 @@ export type AgentConversationInput = {
   threadKey: string;
 };
 
-// the fields the chat reads, as stored; parts map to AI SDK message parts as the chat maps them
 export type AgentConversationMessagePart = {
   id: string;
   messageId: string;

@@ -1,3 +1,4 @@
+import { isArray, isObject, isString } from '@sniptt/guards';
 import { type AgentChatSubscriptionEvent } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -16,19 +17,26 @@ export type StreamConversationInput = AgentConversationInput & {
   signal?: AbortSignal;
 };
 
-type SubscriptionResult = {
-  data?: { onAgentChatEvent: { event: AgentChatSubscriptionEvent } } | null;
-  errors?: { message: string }[];
-};
+type ServerSentEvent =
+  | { type: 'complete' }
+  | { type: 'errors'; messages: string[] }
+  | { type: 'event'; event: AgentChatSubscriptionEvent }
+  | null;
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  isObject(value);
+
+const isAgentChatSubscriptionEvent = (
+  value: unknown,
+): value is AgentChatSubscriptionEvent =>
+  isRecord(value) && isString(value.type);
 
 // GraphQL over server-sent events: one `next` event per result, then `complete`
-const parseServerSentEvent = (
-  block: string,
-): SubscriptionResult | 'complete' | null => {
+const parseServerSentEvent = (block: string): ServerSentEvent => {
   const lines = block.split('\n');
 
   if (lines.includes('event: complete')) {
-    return 'complete';
+    return { type: 'complete' };
   }
 
   const data = lines
@@ -36,45 +44,72 @@ const parseServerSentEvent = (
     .map((line) => line.slice('data:'.length).trimStart())
     .join('\n');
 
-  return data.length > 0 ? (JSON.parse(data) as SubscriptionResult) : null;
+  if (data.length === 0) {
+    return null;
+  }
+
+  const result: unknown = JSON.parse(data);
+
+  if (!isRecord(result)) {
+    return null;
+  }
+
+  // isNonEmptyArray would inline twenty-shared's utils chunk into every logic function
+  if (isArray(result.errors)) {
+    return {
+      type: 'errors',
+      messages: result.errors.map((error) =>
+        isRecord(error) && isString(error.message)
+          ? error.message
+          : 'Unknown error',
+      ),
+    };
+  }
+
+  const event =
+    isRecord(result.data) && isRecord(result.data.onAgentChatEvent)
+      ? result.data.onAgentChatEvent.event
+      : undefined;
+
+  return isAgentChatSubscriptionEvent(event) ? { type: 'event', event } : null;
 };
 
-// the chat's own live events; the stream stays open until `signal` aborts or the loop breaks
 export async function* streamConversation({
   signal,
   ...conversation
 }: StreamConversationInput): AsyncGenerator<AgentChatSubscriptionEvent> {
   const { apiUrl, accessToken } =
     getApplicationApiConfigOrThrow('streamConversation');
+  let reader: ReadableStreamDefaultReader<string> | undefined;
 
-  if (signal?.aborted) {
+  if (signal?.aborted === true) {
     return;
   }
 
-  const response = await fetch(`${apiUrl}/metadata`, {
-    method: 'POST',
-    headers: {
-      Accept: 'text/event-stream',
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: JSON.stringify({
-      query: ON_AGENT_CHAT_EVENT_SUBSCRIPTION,
-      variables: conversation,
-    }),
-    signal,
-  });
-
-  if (!response.ok || !isDefined(response.body)) {
-    throw new Error(
-      `streamConversation() failed: HTTP ${response.status} ${response.statusText}`,
-    );
-  }
-
-  const reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
-  let buffer = '';
-
   try {
+    const response = await fetch(`${apiUrl}/metadata`, {
+      method: 'POST',
+      headers: {
+        Accept: 'text/event-stream',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({
+        query: ON_AGENT_CHAT_EVENT_SUBSCRIPTION,
+        variables: conversation,
+      }),
+      signal,
+    });
+
+    if (!response.ok || !isDefined(response.body)) {
+      throw new Error(
+        `streamConversation() failed: HTTP ${response.status} ${response.statusText}`,
+      );
+    }
+
+    reader = response.body.pipeThrough(new TextDecoderStream()).getReader();
+    let buffer = '';
+
     while (true) {
       const { done, value } = await reader.read();
 
@@ -90,24 +125,23 @@ export async function* streamConversation({
       let boundary = buffer.indexOf('\n\n');
 
       while (boundary !== -1) {
-        const result = parseServerSentEvent(buffer.slice(0, boundary));
+        const serverSentEvent = parseServerSentEvent(buffer.slice(0, boundary));
 
         buffer = buffer.slice(boundary + 2);
         boundary = buffer.indexOf('\n\n');
 
-        if (result === 'complete') {
+        if (serverSentEvent?.type === 'complete') {
           return;
         }
 
-        // isNonEmptyArray would inline twenty-shared's utils chunk into every logic function
-        if (isDefined(result?.errors)) {
+        if (serverSentEvent?.type === 'errors') {
           throw new Error(
-            `streamConversation() failed: ${result.errors.map((error) => error.message).join(', ')}`,
+            `streamConversation() failed: ${serverSentEvent.messages.join(', ')}`,
           );
         }
 
-        if (isDefined(result?.data?.onAgentChatEvent)) {
-          yield result.data.onAgentChatEvent.event;
+        if (serverSentEvent?.type === 'event') {
+          yield serverSentEvent.event;
         }
       }
     }
@@ -118,6 +152,6 @@ export async function* streamConversation({
 
     throw error;
   } finally {
-    await reader.cancel().catch(() => {});
+    await reader?.cancel().catch(() => {});
   }
 }

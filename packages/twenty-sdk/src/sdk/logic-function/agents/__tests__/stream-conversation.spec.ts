@@ -58,14 +58,13 @@ describe('streamConversation', () => {
   let fetchSpy: MockInstance<typeof fetch>;
 
   beforeEach(() => {
-    process.env.TWENTY_API_URL = 'https://api.test';
-    process.env.TWENTY_APP_ACCESS_TOKEN = 'app-token';
+    vi.stubEnv('TWENTY_API_URL', 'https://api.test');
+    vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'app-token');
     fetchSpy = vi.spyOn(globalThis, 'fetch');
   });
 
   afterEach(() => {
-    delete process.env.TWENTY_API_URL;
-    delete process.env.TWENTY_APP_ACCESS_TOKEN;
+    vi.unstubAllEnvs();
     fetchSpy.mockRestore();
   });
 
@@ -121,6 +120,28 @@ describe('streamConversation', () => {
     await expect(collect(streamConversation(CONVERSATION))).rejects.toThrow(
       'the stream closed early',
     );
+  });
+
+  it('stops without failing when aborted while connecting', async () => {
+    const abortController = new AbortController();
+
+    fetchSpy.mockImplementation(
+      (_url, requestInit) =>
+        new Promise((_resolve, reject) => {
+          requestInit?.signal?.addEventListener('abort', () =>
+            reject(new DOMException('Aborted', 'AbortError')),
+          );
+        }),
+    );
+
+    const events = collect(
+      streamConversation({ ...CONVERSATION, signal: abortController.signal }),
+    );
+
+    await vi.waitFor(() => expect(fetchSpy).toHaveBeenCalled());
+    abortController.abort();
+
+    await expect(events).resolves.toEqual([]);
   });
 
   it('does not connect once its signal is aborted', async () => {

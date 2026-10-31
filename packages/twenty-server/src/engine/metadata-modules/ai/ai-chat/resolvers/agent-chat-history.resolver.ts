@@ -16,6 +16,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { AgentMessageDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/agent-message.dto';
 import { AgentChatConversationInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-conversation.input';
 import { ChatStreamCatchupChunksDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/chat-stream-catchup-chunks.dto';
+import { AgentChatConversationAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-conversation-access.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatMessageReactionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-message-reaction.service';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
@@ -24,10 +25,10 @@ import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-histor
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { maskStreamChunkOfTurnActedByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/mask-stream-chunk-of-turn-acted-by-others.util';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-// What the chat reads, which an application also reads for its own conversations, without a member
 @UseGuards(
   AuthPrincipalGuard({
     userSession: {
@@ -48,6 +49,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 export class AgentChatHistoryResolver {
   constructor(
     private readonly agentChatService: AgentChatService,
+    private readonly conversationAccessService: AgentChatConversationAccessService,
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly turnRecorderService: AgentTurnRecorderService,
@@ -66,9 +68,13 @@ export class AgentChatHistoryResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
   ) {
     const workspaceId = workspace.id;
-    const threadId = await this.agentChatService.resolveReadableThreadIdOrThrow(
-      { workspace, callerApplication, workspaceMemberId, conversation },
-    );
+    const threadId =
+      await this.conversationAccessService.resolveReadableThreadIdOrThrow({
+        workspace,
+        callerApplication,
+        workspaceMemberId,
+        conversation,
+      });
     const messages = await this.agentChatService.getMessagesVisibleTo({
       threadId,
       workspaceMemberId,
@@ -85,8 +91,7 @@ export class AgentChatHistoryResolver {
         }),
       ]);
 
-    // Fronts cached from the release before still name senders by their
-    // membership, which messages no longer store
+    // fronts cached from the release before still name senders by their membership
     return messages.map((message) => {
       const senderUserId = isDefined(message.senderWorkspaceMemberId)
         ? flatWorkspaceMemberMaps.byId[message.senderWorkspaceMemberId]?.userId
@@ -112,9 +117,13 @@ export class AgentChatHistoryResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
   ) {
     const workspaceId = workspace.id;
-    const threadId = await this.agentChatService.resolveReadableThreadIdOrThrow(
-      { workspace, callerApplication, workspaceMemberId, conversation },
-    );
+    const threadId =
+      await this.conversationAccessService.resolveReadableThreadIdOrThrow({
+        workspace,
+        callerApplication,
+        workspaceMemberId,
+        conversation,
+      });
     // an application's conversation has no thread until its first run starts
     const thread = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
@@ -125,8 +134,14 @@ export class AgentChatHistoryResolver {
       await this.streamRecoveryService.reapDeadStream({ thread, workspaceId });
     }
 
-    const { chunks, maxSeq } =
-      await this.eventPublisherService.getAccumulatedChunks(threadId);
+    const [{ chunks, maxSeq }, isStreamingTurnHidden] = await Promise.all([
+      this.eventPublisherService.getAccumulatedChunks(threadId),
+      this.conversationAccessService.isLatestTurnOpenedByOtherMember({
+        workspaceId,
+        threadId,
+        workspaceMemberId,
+      }),
+    ]);
 
     const turnError = await this.turnRecorderService.findLatestTurnError({
       workspaceId,
@@ -134,7 +149,9 @@ export class AgentChatHistoryResolver {
     });
 
     return {
-      chunks,
+      chunks: isStreamingTurnHidden
+        ? chunks.map(maskStreamChunkOfTurnActedByOthers)
+        : chunks,
       maxSeq,
       error: turnError
         ? { code: turnError.code, message: turnError.message }

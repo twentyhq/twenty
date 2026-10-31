@@ -28,15 +28,7 @@ import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/s
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
 import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
-import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
-import { type AgentChatConversationInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-conversation.input';
-import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
-import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
+import { isAgentTurnOpenedByOtherMember } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-turn-opened-by-other-member.util';
 
 type AddMessageArgs = {
   threadId: string;
@@ -62,7 +54,6 @@ export class AgentChatService {
     private readonly conversationWriterService: AgentConversationWriterService,
     private readonly threadService: AgentChatThreadService,
     private readonly participantService: AgentChatThreadParticipantService,
-    private readonly agentRunService: AgentRunService,
   ) {}
 
   private getMessageSenderValues({
@@ -268,55 +259,6 @@ export class AgentChatService {
     });
   }
 
-  // a member reads the threads shared with them; an application its own conversations, named by key
-  async resolveReadableThreadIdOrThrow({
-    workspace,
-    callerApplication,
-    workspaceMemberId,
-    conversation: { threadId, agentUniversalIdentifier, threadKey },
-  }: {
-    workspace: Pick<FlatWorkspace, 'id' | 'workspaceCustomApplicationId'>;
-    callerApplication: FlatApplication | undefined;
-    workspaceMemberId: string | undefined;
-    conversation: AgentChatConversationInput;
-  }): Promise<string> {
-    const isNamedByKey =
-      isDefined(agentUniversalIdentifier) || isDefined(threadKey);
-
-    if (isDefined(threadId) && !isNamedByKey) {
-      if (!isDefined(workspaceMemberId)) {
-        return throwAgentChatThreadNotFound();
-      }
-
-      await this.sharingService.getReadableThread({
-        workspaceId: workspace.id,
-        threadId,
-        workspaceMemberId,
-      });
-
-      return threadId;
-    }
-
-    if (
-      isDefined(threadId) ||
-      !isDefined(callerApplication) ||
-      !isNonEmptyString(agentUniversalIdentifier) ||
-      !isNonEmptyString(threadKey?.trim())
-    ) {
-      throw new AiException(
-        'Pass either threadId, or agentUniversalIdentifier and threadKey with an application access token',
-        AiExceptionCode.INVALID_AGENT_INPUT,
-      );
-    }
-
-    return this.agentRunService.resolveConversationThreadIdOrThrow({
-      workspace,
-      callerApplication,
-      agentUniversalIdentifier,
-      threadKey,
-    });
-  }
-
   async getMessagesForThread({
     threadId,
     workspaceMemberId,
@@ -339,7 +281,6 @@ export class AgentChatService {
     });
   }
 
-  // without a member, as for an application, every member's turn reads as another member's
   async getMessagesVisibleTo({
     threadId,
     workspaceMemberId,
@@ -364,10 +305,8 @@ export class AgentChatService {
     // the opener is stamped on the turn, so a run resumed in a new turn after a pause is still theirs
     const turnIdsOpenedByOtherMembers = new Set(
       turns
-        .filter(
-          ({ createdBy }) =>
-            isDefined(createdBy.workspaceMemberId) &&
-            createdBy.workspaceMemberId !== workspaceMemberId,
+        .filter(({ createdBy }) =>
+          isAgentTurnOpenedByOtherMember({ createdBy, workspaceMemberId }),
         )
         .map(({ id }) => id),
     );

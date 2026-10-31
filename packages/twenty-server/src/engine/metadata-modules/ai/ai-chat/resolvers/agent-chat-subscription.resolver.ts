@@ -1,12 +1,15 @@
 import { createSubscriptionAuthorization } from 'src/engine/subscriptions/utils/create-subscription-authorization';
 import { aiGraphqlApiExceptionHandler } from 'src/engine/metadata-modules/ai/utils/ai-graphql-api-exception-handler.util';
-import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentChatConversationAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-conversation-access.service';
+import { maskStreamChunkOfTurnActedByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/mask-stream-chunk-of-turn-acted-by-others.util';
+import { filterMapAsyncIterator } from 'src/engine/subscriptions/utils/filter-map-async-iterator';
 import { withAsyncIteratorAuthorization } from 'src/engine/subscriptions/utils/with-async-iterator-authorization';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Subscription } from '@nestjs/graphql';
 
+import { type AgentChatSubscriptionEvent } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -27,6 +30,10 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
+type AgentChatEventPayload = {
+  onAgentChatEvent: { threadId: string; event: AgentChatSubscriptionEvent };
+};
+
 @MetadataResolver()
 @UseGuards(
   AuthPrincipalGuard({
@@ -46,7 +53,7 @@ export class AgentChatSubscriptionResolver {
   constructor(
     private readonly subscriptionService: SubscriptionService,
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
-    private readonly agentChatService: AgentChatService,
+    private readonly conversationAccessService: AgentChatConversationAccessService,
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
   ) {}
@@ -65,7 +72,7 @@ export class AgentChatSubscriptionResolver {
     let threadId = '';
     const authorize = createSubscriptionAuthorization({
       check: async () => {
-        threadId = await this.agentChatService
+        threadId = await this.conversationAccessService
           .resolveReadableThreadIdOrThrow({
             workspace,
             callerApplication,
@@ -79,16 +86,46 @@ export class AgentChatSubscriptionResolver {
 
     await authorize();
 
-    const iterator = await this.subscriptionService.subscribeToAgentChat({
-      workspaceId: workspace.id,
-      threadId,
-    });
-
-    const keepalivePayload = {
-      onAgentChatEvent: {
+    const isLatestTurnOpenedByOtherMember = () =>
+      this.conversationAccessService.isLatestTurnOpenedByOtherMember({
+        workspaceId: workspace.id,
         threadId,
-        event: { type: 'keepalive' as const },
+        workspaceMemberId,
+      });
+    let isStreamingTurnHidden = await isLatestTurnOpenedByOtherMember();
+
+    const iterator = filterMapAsyncIterator(
+      await this.subscriptionService.subscribeToAgentChat<AgentChatEventPayload>(
+        { workspaceId: workspace.id, threadId },
+      ),
+      async (payload) => {
+        const { event } = payload.onAgentChatEvent;
+
+        if (event.type !== 'stream-chunk') {
+          return payload;
+        }
+
+        // every reply opens with a start chunk, so the turn it streams is known by then
+        if (event.chunk.type === 'start') {
+          isStreamingTurnHidden = await isLatestTurnOpenedByOtherMember();
+        }
+
+        return isStreamingTurnHidden
+          ? {
+              onAgentChatEvent: {
+                threadId,
+                event: {
+                  ...event,
+                  chunk: maskStreamChunkOfTurnActedByOthers(event.chunk),
+                },
+              },
+            }
+          : payload;
       },
+    );
+
+    const keepalivePayload: AgentChatEventPayload = {
+      onAgentChatEvent: { threadId, event: { type: 'keepalive' } },
     };
 
     let lastReapCheckAt = 0;

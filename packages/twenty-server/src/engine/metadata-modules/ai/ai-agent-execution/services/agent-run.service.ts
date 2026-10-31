@@ -170,38 +170,17 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       input.responseFormat,
     );
 
-    const agentRow = await this.agentRepository.findOne(workspace.id, {
-      where: {
-        universalIdentifier: input.agentUniversalIdentifier,
-      },
+    const agent = await this.findCallerAgentOrThrow({
+      workspace,
+      callerApplication,
+      agentUniversalIdentifier: input.agentUniversalIdentifier,
+      operation: 'trigger',
     });
-
-    if (!isDefined(agentRow)) {
-      throw new NotFoundException(
-        `Agent ${input.agentUniversalIdentifier} not found`,
-      );
-    }
-
-    const agent = resolveEffectiveAgent(agentRow);
 
     if (!agent.isActive) {
       throw new AiException(
         `Agent ${input.agentUniversalIdentifier} is archived`,
         AiExceptionCode.AGENT_IS_INACTIVE,
-      );
-    }
-
-    if (
-      !canCallerReachApplication({
-        callingApplication: callerApplication,
-        applicationId: agent.applicationId,
-        operation: 'trigger',
-        workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
-      })
-    ) {
-      throw new AiException(
-        `Agent ${input.agentUniversalIdentifier} belongs to another application`,
-        AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
       );
     }
 
@@ -225,10 +204,9 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       application,
     });
 
-    // keyed by the caller, so an application never continues another one's conversation with a shared agent
     const threadId = isDefined(thread)
-      ? buildAgentRunThreadId({
-          applicationId: callerApplication?.id ?? application.id,
+      ? this.buildCallerThreadIdOrThrow({
+          callerApplication,
           agentId: agent.id,
           threadKey: thread.key,
         })
@@ -336,7 +314,6 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     });
   }
 
-  // the id is keyed by the caller as run() keys it, so an application only ever names its own conversations
   async resolveConversationThreadIdOrThrow({
     workspace,
     callerApplication,
@@ -348,28 +325,81 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     agentUniversalIdentifier: string;
     threadKey: string;
   }): Promise<string> {
-    const agent = await this.agentRepository.findOne(workspace.id, {
+    const agent = await this.findCallerAgentOrThrow({
+      workspace,
+      callerApplication,
+      agentUniversalIdentifier,
+      operation: 'read',
+    });
+
+    return this.buildCallerThreadIdOrThrow({
+      callerApplication,
+      agentId: agent.id,
+      threadKey,
+    });
+  }
+
+  private async findCallerAgentOrThrow({
+    workspace,
+    callerApplication,
+    agentUniversalIdentifier,
+    operation,
+  }: {
+    workspace: Pick<FlatWorkspace, 'id' | 'workspaceCustomApplicationId'>;
+    callerApplication: FlatApplication | undefined;
+    agentUniversalIdentifier: string;
+    operation: 'read' | 'trigger';
+  }) {
+    const agentRow = await this.agentRepository.findOne(workspace.id, {
       where: { universalIdentifier: agentUniversalIdentifier },
     });
 
-    if (
-      !isDefined(agent) ||
-      !canCallerReachApplication({
-        callingApplication: callerApplication,
-        applicationId: agent.applicationId,
-        operation: 'read',
-        workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
-      })
-    ) {
+    if (!isDefined(agentRow)) {
       throw new AiException(
         `Agent ${agentUniversalIdentifier} not found`,
         AiExceptionCode.AGENT_NOT_FOUND,
       );
     }
 
+    const agent = resolveEffectiveAgent(agentRow);
+
+    if (
+      !canCallerReachApplication({
+        callingApplication: callerApplication,
+        applicationId: agent.applicationId,
+        operation,
+        workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
+      })
+    ) {
+      throw new AiException(
+        `Agent ${agentUniversalIdentifier} belongs to another application`,
+        AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
+      );
+    }
+
+    return agent;
+  }
+
+  // keyed by the caller, so an application never reaches another one's conversation with a shared agent
+  private buildCallerThreadIdOrThrow({
+    callerApplication,
+    agentId,
+    threadKey,
+  }: {
+    callerApplication: Pick<FlatApplication, 'id'> | undefined;
+    agentId: string;
+    threadKey: string;
+  }): string {
+    if (!isDefined(callerApplication)) {
+      throw new AiException(
+        'Continuing a conversation requires an application access token',
+        AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
+      );
+    }
+
     return buildAgentRunThreadId({
       applicationId: callerApplication.id,
-      agentId: agent.id,
+      agentId,
       threadKey,
     });
   }

@@ -375,7 +375,9 @@ for await (const event of streamConversation({
 - The stream stays open until you abort its `signal` or `break`, and throws if
   the connection drops: read the history and stream again to resume.
 - An app reads only its own conversations. Turns run as a member (see above)
-  show only their text, as they do to other members in the chat.
+  show only their text, as they do to other members in the chat: live, their
+  other chunks arrive as empty `message-metadata` chunks, so `seq` stays
+  gapless.
 
 </Accordion>
 <Accordion title="ai.generate" description="Call a model from a logic function, without an agent">
