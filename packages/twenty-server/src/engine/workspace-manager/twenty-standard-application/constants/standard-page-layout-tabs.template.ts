@@ -108,15 +108,7 @@ export const TAB_PROPS = {
       msg({ message: `Messages`, context: 'pageLayoutTab.title' }),
     ),
     position: 60,
-    icon: 'IconMessage',
-    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-  },
-  conversations: {
-    title: i18nLabel(
-      msg({ message: `Conversations`, context: 'pageLayoutTab.title' }),
-    ),
-    position: 65,
-    icon: 'IconMessage',
+    icon: 'IconMessages',
     layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
   },
   chat: {
@@ -209,14 +201,6 @@ export const WIDGET_PROPS = {
     ),
     type: WidgetType.EMAILS,
     position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
-  },
-  conversations: {
-    title: i18nLabel(
-      msg({ message: `Conversations`, context: 'pageLayoutWidget.title' }),
-    ),
-    type: WidgetType.CHAT_THREADS,
-    position: VERTICAL_LIST_LAYOUT_POSITIONS.FIRST,
-    conditionalAvailabilityExpression: 'featureFlags.IS_AI_CHAT_INBOX_ENABLED',
   },
   calendar: {
     title: i18nLabel(

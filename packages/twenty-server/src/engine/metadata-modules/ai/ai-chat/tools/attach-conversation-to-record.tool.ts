@@ -35,8 +35,8 @@ export const createAttachConversationToRecordTool = ({
   toolContext: ToolContext;
 }) => ({
   description:
-    "Attach this conversation to a record, so it is listed on the record's Conversations tab " +
-    'for anyone who can already see the conversation. Attach the records the conversation is ' +
+    'Attach this conversation to a record, linking them for anyone who can already see the ' +
+    'conversation. Attach the records the conversation is ' +
     'materially about: the one the user is working on, and those you create or change for ' +
     'them. Do not attach records you only read, search or list along the way. Attaching a ' +
     'record twice is harmless.',

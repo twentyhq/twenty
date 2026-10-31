@@ -15,3 +15,14 @@ export const MESSAGES_WIDGET_UNIVERSAL_IDENTIFIERS: string[] =
   RECORD_PAGES_WITH_MESSAGES_TAB.map(
     (recordPage) => recordPage.tabs.emails.widgets.emails.universalIdentifier,
   );
+
+export const CONVERSATIONS_TAB_UNIVERSAL_IDENTIFIERS: string[] =
+  RECORD_PAGES_WITH_MESSAGES_TAB.map(
+    (recordPage) => recordPage.tabs.conversations.universalIdentifier,
+  );
+
+export const CONVERSATIONS_WIDGET_UNIVERSAL_IDENTIFIERS: string[] =
+  RECORD_PAGES_WITH_MESSAGES_TAB.map(
+    (recordPage) =>
+      recordPage.tabs.conversations.widgets.conversations.universalIdentifier,
+  );
