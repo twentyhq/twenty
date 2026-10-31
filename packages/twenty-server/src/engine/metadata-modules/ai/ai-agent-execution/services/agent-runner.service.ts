@@ -69,9 +69,6 @@ type OpenedAgentRunTurn = {
   priorMessages: ExtendedUIMessage[];
 };
 
-// a run answered within its caller's request has no handler to call back, and never suspends
-const IN_REQUEST_CALLER: AgentRunCaller = { type: 'IN_REQUEST', ref: {} };
-
 @Injectable()
 export class AgentRunnerService {
   private readonly logger = new Logger(AgentRunnerService.name);
@@ -118,7 +115,7 @@ export class AgentRunnerService {
     const runInput: AgentRunnerRunInput = {
       ...input,
       conversation: null,
-      caller: IN_REQUEST_CALLER,
+      caller: null,
       persona,
     };
 
@@ -770,8 +767,8 @@ export class AgentRunnerService {
       return { status: 'COMPLETED', result: execution.result };
     }
 
-    // offered no way to pause, a run without a conversation stops early only when out of credits
-    if (!isDefined(stream)) {
+    // offered no way to pause, a run without a conversation or a caller stops early only when out of credits
+    if (!isDefined(stream) || !isDefined(caller)) {
       return { status: 'FAILED', error: AGENT_RUN_OUT_OF_CREDITS_ERROR };
     }
 
