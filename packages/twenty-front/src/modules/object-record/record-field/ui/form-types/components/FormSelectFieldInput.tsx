@@ -5,6 +5,7 @@ import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerCom
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { Select } from '@/ui/input/components/Select';
 import { type SelectCallToActionButton } from '@/ui/input/types/SelectCallToActionButton';
+import { type SelectOptionWithDescription } from '@/ui/input/types/SelectOptionWithDescription';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
@@ -25,7 +26,7 @@ type FormSelectFieldInputProps = {
   defaultValue: string | undefined;
   onChange: (value: string | null) => void;
   VariablePicker?: VariablePickerComponent;
-  options: SelectOption[];
+  options: SelectOptionWithDescription[];
   readonly?: boolean;
   isNullable?: boolean;
   callToActionButton?: SelectCallToActionButton;

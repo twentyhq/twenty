@@ -1,11 +1,11 @@
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { normalizeSearchText } from 'twenty-ui/utilities';
 
-export const filterSelectOptionsBySearch = ({
+export const filterSelectOptionsBySearch = <TOption extends SelectOption>({
   options,
   searchFilter,
 }: {
-  options: SelectOption[];
+  options: TOption[];
   searchFilter: string;
 }) => {
   const searchTerm = normalizeSearchText(searchFilter);

@@ -1,6 +1,7 @@
 import { type SelectValue } from '@/ui/input/components/internal/select/types';
 import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
 import { type SelectCallToActionButton } from '@/ui/input/types/SelectCallToActionButton';
+import { type SelectOptionWithDescription } from '@/ui/input/types/SelectOptionWithDescription';
 import { type SelectSizeVariant } from '@/ui/input/types/SelectSizeVariant';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 export type SelectProps<TValue extends SelectValue> = {
@@ -17,7 +18,7 @@ export type SelectProps<TValue extends SelectValue> = {
   description?: string;
   onChange?: (value: TValue) => void;
   onBlur?: () => void;
-  options: SelectOption<TValue>[];
+  options: SelectOptionWithDescription<TValue>[];
   value?: TValue;
   withSearchInput?: boolean;
   needIconCheck?: boolean;
