@@ -99,6 +99,7 @@ describe('inlineWorkflowStepAgents', () => {
       steps,
       hasChanged: false,
       keptStepIds: [],
+      conversationalSteps: [],
     });
   });
 
@@ -109,7 +110,87 @@ describe('inlineWorkflowStepAgents', () => {
       steps,
       hasChanged: false,
       keptStepIds: ['step-id'],
+      conversationalSteps: [],
     });
+  });
+
+  it('keeps the agent of a step with human input instructions', () => {
+    const steps = [
+      buildAgentStep({
+        agentId: 'agent-id',
+        prompt: 'Draft the email',
+        humanInputInstructions: 'Have every email reviewed.',
+      }),
+    ];
+
+    expect(inline({ steps })).toEqual({
+      steps,
+      hasChanged: false,
+      keptStepIds: [],
+      conversationalSteps: [
+        { stepId: 'step-id', stepName: 'Qualify', agentId: 'agent-id' },
+      ],
+    });
+  });
+
+  it('keeps the agent of a step with a conversation', () => {
+    const steps = [
+      buildAgentStep({
+        agentId: 'agent-id',
+        conversation: { scope: 'KEY', key: 'support' },
+      }),
+    ];
+
+    expect(inline({ steps })).toEqual({
+      steps,
+      hasChanged: false,
+      keptStepIds: [],
+      conversationalSteps: [
+        { stepId: 'step-id', stepName: 'Qualify', agentId: 'agent-id' },
+      ],
+    });
+  });
+
+  it('still inlines a plain step next to a conversational one', () => {
+    const conversationalStep = {
+      ...buildAgentStep({
+        agentId: 'conversational-agent-id',
+        conversation: { scope: 'RUN' },
+      }),
+      id: 'conversational-step-id',
+    };
+
+    const { steps, hasChanged } = inlineWorkflowStepAgents({
+      steps: [buildAgentStep({ agentId: 'agent-id' }), conversationalStep],
+      inlineConfigByAgentId: new Map([
+        ['agent-id', INLINE_CONFIG],
+        ['conversational-agent-id', INLINE_CONFIG],
+      ]),
+      keptAgentIds: new Set(),
+    });
+
+    expect(hasChanged).toBe(true);
+    expect(steps).toEqual([
+      buildAgentStep({
+        instructions: 'Qualify the lead.',
+        modelId: 'auto-select',
+        modelConfiguration: { webSearch: { enabled: true } },
+        scope: INLINE_CONFIG.scope,
+      }),
+      conversationalStep,
+    ]);
+  });
+
+  it('inlines a step whose human input instructions are blank', () => {
+    const { steps, hasChanged, conversationalSteps } = inline({
+      steps: [
+        buildAgentStep({ agentId: 'agent-id', humanInputInstructions: '  ' }),
+      ],
+    });
+
+    expect(hasChanged).toBe(true);
+    expect(conversationalSteps).toEqual([]);
+    expect(steps[0].settings?.input).not.toHaveProperty('agentId');
   });
 
   it('is a no-op on steps already inlined', () => {

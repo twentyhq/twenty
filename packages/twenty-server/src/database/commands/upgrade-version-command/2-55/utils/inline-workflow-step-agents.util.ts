@@ -1,10 +1,17 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { inlineWorkflowStepAgentInput } from 'src/database/commands/upgrade-version-command/2-55/utils/inline-workflow-step-agent-input.util';
+import { isConversationalWorkflowStepInput } from 'src/database/commands/upgrade-version-command/2-55/utils/is-conversational-workflow-step-input.util';
 import {
   type StepAgentInlineConfig,
   type StoredWorkflowStep,
 } from 'src/database/commands/upgrade-version-command/2-55/utils/step-agent-inline-config.type';
+
+export type ConversationalWorkflowStep = {
+  stepId: string;
+  stepName: string | null;
+  agentId: string;
+};
 
 export const inlineWorkflowStepAgents = ({
   steps,
@@ -18,9 +25,11 @@ export const inlineWorkflowStepAgents = ({
   steps: StoredWorkflowStep[];
   hasChanged: boolean;
   keptStepIds: string[];
+  conversationalSteps: ConversationalWorkflowStep[];
 } => {
   let hasChanged = false;
   const keptStepIds: string[] = [];
+  const conversationalSteps: ConversationalWorkflowStep[] = [];
 
   const rewrittenSteps = steps.map((step) => {
     const input = step.settings?.input;
@@ -31,6 +40,19 @@ export const inlineWorkflowStepAgents = ({
       !isDefined(input) ||
       typeof agentId !== 'string'
     ) {
+      return step;
+    }
+
+    const isStepAgent =
+      inlineConfigByAgentId.has(agentId) || keptAgentIds.has(agentId);
+
+    if (isStepAgent && isConversationalWorkflowStepInput(input)) {
+      conversationalSteps.push({
+        stepId: String(step.id),
+        stepName: typeof step.name === 'string' ? step.name : null,
+        agentId,
+      });
+
       return step;
     }
 
@@ -57,5 +79,10 @@ export const inlineWorkflowStepAgents = ({
     };
   });
 
-  return { steps: rewrittenSteps, hasChanged, keptStepIds };
+  return {
+    steps: rewrittenSteps,
+    hasChanged,
+    keptStepIds,
+    conversationalSteps,
+  };
 };
