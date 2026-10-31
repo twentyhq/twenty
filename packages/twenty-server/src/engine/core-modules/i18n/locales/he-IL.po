@@ -720,6 +720,11 @@ msgctxt "fieldMetadata.description"
 msgid "Actual recording start"
 msgstr "תחילת הקלטה בפועל"
 
+#. js-lingui-id: ihM2nS
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "Add {missingPackageNames} to the Workspace app package.json and yarn.lock before creating a component."
+msgstr ""
+
 #. js-lingui-id: Fk0T9q
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Add a sender to this campaign first."
@@ -776,6 +781,11 @@ msgstr "הוסף לרשימה"
 msgctxt "commandMenuItem.label"
 msgid "Add View to List"
 msgstr "הוסף תצוגה לרשימה"
+
+#. js-lingui-id: ScY5iZ
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "Add yarn.lock to the Workspace app before creating a component."
+msgstr ""
 
 #. js-lingui-id: EtSC0Y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -13279,6 +13289,16 @@ msgctxt "fieldMetadata.description"
 msgid "The company's total annual revenue"
 msgstr "סך כל ההכנסות השנתיות של החברה"
 
+#. js-lingui-id: ccHTwy
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "The component dependencies are too large. Reduce the Workspace app dependencies and try again."
+msgstr ""
+
+#. js-lingui-id: m3v5Oe
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "The component dependencies could not be verified. Try creating the component again."
+msgstr ""
+
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -13890,6 +13910,11 @@ msgstr "שם גרסת זרימת העבודה"
 msgctxt "fieldMetadata.description"
 msgid "The workflow version status"
 msgstr "סטטוס גרסת זרימת העבודה"
+
+#. js-lingui-id: VyvnL/
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "The Workspace app dependencies changed during the build. Try creating the component again."
+msgstr ""
 
 #. js-lingui-id: AiP86c
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
