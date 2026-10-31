@@ -67,6 +67,9 @@ export const SettingsApplicationDetailGeneralTab = ({
   isUninstalling,
   uninstallProgress,
 }: SettingsApplicationDetailGeneralTabProps) => {
+  const isOAuthOnlyApplication =
+    application.applicationRegistration?.sourceType ===
+    ApplicationRegistrationSourceType.OAUTH_ONLY;
   const navigateSettings = useNavigateSettings();
 
   const canManageApplications = useHasPermissionFlag(
@@ -134,6 +137,11 @@ export const SettingsApplicationDetailGeneralTab = ({
             onUninstall={onUninstall}
             isUninstalling={isUninstalling}
             uninstallProgress={uninstallProgress}
+            warning={
+              isOAuthOnlyApplication
+                ? t`Every member connected to ${displayName} will be disconnected.`
+                : undefined
+            }
             disabledReason={
               application.isUninstallBlockedByOtherWorkspaceInstallations
                 ? t`Other workspaces rely on this app's server route, which is served from this workspace. Transfer the app ownership to another workspace where it is installed, or uninstall it from all other workspaces, before uninstalling it here.`
@@ -170,8 +178,7 @@ export const SettingsApplicationDetailGeneralTab = ({
       <SettingsApplicationConnectionsSection applicationId={application.id} />
       {canManageApplications &&
         isAppPreferencesEnabled &&
-        application.applicationRegistration?.sourceType ===
-          ApplicationRegistrationSourceType.OAUTH_ONLY && (
+        isOAuthOnlyApplication && (
           <SettingsApplicationAuthorizedMembersSection
             applicationId={application.id}
             applicationName={displayName}
