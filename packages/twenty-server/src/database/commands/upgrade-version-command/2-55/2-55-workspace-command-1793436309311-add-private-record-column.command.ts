@@ -1,26 +1,20 @@
 import { Command } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
-import { type QueryRunner } from 'typeorm';
 
+import { createMissingIndexes } from 'src/database/commands/upgrade-version-command/2-55/utils/create-missing-indexes.util';
+import { findIndexValidityByName } from 'src/database/commands/upgrade-version-command/2-55/utils/find-index-validity-by-name.util';
+import { findWorkspaceTableStates } from 'src/database/commands/upgrade-version-command/2-55/utils/find-workspace-table-states.util';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
 import { enrichRecordTableSchemaWithIsPrivate } from 'src/engine/permissions/private-record/utils/enrich-record-table-schema-with-is-private.util';
-import { type WorkspaceSchemaIndexDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-index-definition.type';
 import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 
-// Below this, a plain index build takes milliseconds, so it skips the database-wide waits of CONCURRENTLY
-const CONCURRENT_INDEX_MIN_TABLE_SIZE_IN_BYTES = 8 * 1024 * 1024;
-
-type TableState = {
-  sizeInBytes: number;
-  hasColumn: boolean;
-};
 
 @RegisteredWorkspaceCommand('2.55.0', 1793436309311)
 @Command({
@@ -78,12 +72,13 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
       await queryRunner.connect();
       isQueryRunnerConnected = true;
 
-      const tableStates = await this.findTableStates({
+      const tableStates = await findWorkspaceTableStates({
         queryRunner,
         schemaName,
         tableNames: tableSchemas.map(({ tableName }) => tableName),
+        columnNames: [IS_PRIVATE_COLUMN_NAME],
       });
-      const indexValidityByName = await this.findIndexValidityByName({
+      const indexValidityByName = await findIndexValidityByName({
         queryRunner,
         schemaName,
         indexNames: tableSchemas.flatMap(({ indexDefinitions }) =>
@@ -102,9 +97,9 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
           continue;
         }
 
-        const missingColumnDefinitions = tableState.hasColumn
-          ? []
-          : columnDefinitions;
+        const missingColumnDefinitions = columnDefinitions.filter(
+          ({ name }) => !tableState.existingColumnNames.has(name),
+        );
         const missingIndexDefinitions = indexDefinitions.filter(
           ({ name }) => indexValidityByName.get(name) !== true,
         );
@@ -129,14 +124,14 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
           tableName,
           columnDefinitions: missingColumnDefinitions,
         });
-        await this.createIndexes({
+        await createMissingIndexes({
+          indexManager: this.workspaceSchemaManagerService.indexManager,
           queryRunner,
           schemaName,
           tableName,
+          tableSizeInBytes: tableState.sizeInBytes,
           indexDefinitions: missingIndexDefinitions,
           indexValidityByName,
-          concurrently:
-            tableState.sizeInBytes >= CONCURRENT_INDEX_MIN_TABLE_SIZE_IN_BYTES,
         });
       }
     } finally {
@@ -150,100 +145,5 @@ export class AddPrivateRecordColumnCommand extends ProvisionedWorkspaceCommandRu
         `[DRY RUN] Would update ${dryRunTableCount} table(s) for workspace ${workspaceId}`,
       );
     }
-  }
-
-  // An interrupted CREATE INDEX CONCURRENTLY leaves an invalid index that IF NOT EXISTS would keep
-  private async createIndexes({
-    queryRunner,
-    schemaName,
-    tableName,
-    indexDefinitions,
-    indexValidityByName,
-    concurrently,
-  }: {
-    queryRunner: QueryRunner;
-    schemaName: string;
-    tableName: string;
-    indexDefinitions: WorkspaceSchemaIndexDefinition[];
-    indexValidityByName: Map<string, boolean>;
-    concurrently: boolean;
-  }): Promise<void> {
-    for (const indexDefinition of indexDefinitions) {
-      if (indexValidityByName.get(indexDefinition.name) === false) {
-        await this.workspaceSchemaManagerService.indexManager.dropIndex({
-          queryRunner,
-          schemaName,
-          indexName: indexDefinition.name,
-          concurrently,
-        });
-      }
-
-      await this.workspaceSchemaManagerService.indexManager.createIndex({
-        queryRunner,
-        schemaName,
-        tableName,
-        index: indexDefinition,
-        concurrently,
-      });
-    }
-  }
-
-  // pg_catalog lookups by name stay on the catalog indexes, unlike information_schema scans per schema
-  private async findTableStates({
-    queryRunner,
-    schemaName,
-    tableNames,
-  }: {
-    queryRunner: QueryRunner;
-    schemaName: string;
-    tableNames: string[];
-  }): Promise<Map<string, TableState>> {
-    const tables: {
-      tableName: string;
-      sizeInBytes: string;
-      hasColumn: boolean;
-    }[] = await queryRunner.query(
-      `SELECT c.relname AS "tableName",
-              pg_relation_size(c.oid) AS "sizeInBytes",
-              EXISTS (
-                SELECT 1 FROM pg_attribute a
-                WHERE a.attrelid = c.oid AND a.attname = $3 AND NOT a.attisdropped
-              ) AS "hasColumn"
-       FROM pg_class c
-       JOIN pg_namespace n ON n.oid = c.relnamespace
-       WHERE n.nspname = $1 AND c.relname = ANY($2) AND c.relkind IN ('r', 'p')`,
-      [schemaName, tableNames, IS_PRIVATE_COLUMN_NAME],
-    );
-
-    return new Map(
-      tables.map(({ tableName, sizeInBytes, hasColumn }) => [
-        tableName,
-        { sizeInBytes: Number(sizeInBytes), hasColumn },
-      ]),
-    );
-  }
-
-  private async findIndexValidityByName({
-    queryRunner,
-    schemaName,
-    indexNames,
-  }: {
-    queryRunner: QueryRunner;
-    schemaName: string;
-    indexNames: string[];
-  }): Promise<Map<string, boolean>> {
-    const indexes: { indexName: string; isValid: boolean }[] =
-      await queryRunner.query(
-        `SELECT c.relname AS "indexName", i.indisvalid AS "isValid"
-         FROM pg_class c
-         JOIN pg_namespace n ON n.oid = c.relnamespace
-         JOIN pg_index i ON i.indexrelid = c.oid
-         WHERE n.nspname = $1 AND c.relname = ANY($2)`,
-        [schemaName, indexNames],
-      );
-
-    return new Map(
-      indexes.map(({ indexName, isValid }) => [indexName, isValid]),
-    );
   }
 }
