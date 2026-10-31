@@ -66,6 +66,7 @@ describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
       context: { executeTool },
     });
 
+    expect(executeTool).toHaveBeenCalledTimes(1);
     expect(executeTool).toHaveBeenCalledWith({
       toolName: 'publish_front_component',
       args: proposal.arguments,
