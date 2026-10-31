@@ -1,15 +1,17 @@
+import { type PackageJson } from 'type-fest';
 import { getWatchInputPlugins } from '@/app/dev/collect-watch-inputs';
 import { getBaseFrontComponentBuildOptions } from '@/app/bundles/front-component-build/utils/get-base-front-component-build-options';
 import { type OnFileBuiltCallback } from '@/app/bundles/types/on-file-built-callback.type';
 import {
   getSharedDependenciesEntrySource,
+  normalizeFrontComponentSharedDependencies,
   getSharedDependenciesBuildManifestPath,
   type SharedDependenciesBuildContext,
   type SharedDependenciesBuildManifest,
 } from 'twenty-shared/front-component-build';
 import { enumerateSharedDependenciesExportNames } from '@/app/bundles/front-component-build/shared-dependencies-build/utils/enumerate-shared-dependencies-export-names';
 import { getSharedDependenciesNamespaceCollisions } from '@/app/bundles/front-component-build/shared-dependencies-build/utils/get-shared-dependencies-namespace-collisions';
-import { ensureDir, pathExists } from '@/app/fs-utils';
+import { ensureDir, pathExists, readJson } from '@/app/fs-utils';
 import crypto from 'crypto';
 import * as esbuild from 'esbuild';
 import { readFile, writeFile } from 'node:fs/promises';
@@ -34,9 +36,18 @@ export const buildSharedDependenciesBundle = async ({
   sharedDependencies: FrontComponentSharedDependenciesManifest;
   onFileBuilt: OnFileBuiltCallback;
 }): Promise<SharedDependenciesBuildContext> => {
-  const namespaceCollisions = getSharedDependenciesNamespaceCollisions(
-    sharedDependencies.dependencies,
+  const packageJson = await readJson<PackageJson>(
+    join(appPath, 'package.json'),
   );
+  const dependencies = normalizeFrontComponentSharedDependencies({
+    dependencies: sharedDependencies.dependencies,
+    packageNames: Object.keys({
+      ...packageJson.dependencies,
+      ...packageJson.devDependencies,
+    }),
+  });
+  const namespaceCollisions =
+    getSharedDependenciesNamespaceCollisions(dependencies);
 
   if (isNonEmptyArray(namespaceCollisions)) {
     throw new Error(
@@ -48,7 +59,7 @@ export const buildSharedDependenciesBundle = async ({
 
   const exportNamesBySpecifier = new Map(
     await Promise.all(
-      sharedDependencies.dependencies.map(
+      dependencies.map(
         async (specifier) =>
           [
             specifier,

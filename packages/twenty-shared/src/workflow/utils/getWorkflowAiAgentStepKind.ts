@@ -7,13 +7,16 @@ import { isWorkflowAiAgentGenerateStep } from '@/workflow/utils/isWorkflowAiAgen
 import { isWorkflowStepOwnedAgent } from '@/workflow/utils/isWorkflowStepOwnedAgent';
 
 // an agent that cannot be found is treated as reusable, since only a loaded agent can tell it belongs to the step
-export const getWorkflowAiAgentStepKind = (
+export const getWorkflowAiAgentStepKind = ({
+  input,
+  agent,
+}: {
   input: Pick<
     z.infer<typeof workflowAiAgentActionSettingsSchema>['input'],
     'agentId'
-  >,
-  agent?: { isSystem: boolean } | null,
-): WorkflowAiAgentStepKind => {
+  >;
+  agent?: { isSystem: boolean } | null;
+}): WorkflowAiAgentStepKind => {
   if (isWorkflowAiAgentGenerateStep(input)) {
     return 'generate';
   }

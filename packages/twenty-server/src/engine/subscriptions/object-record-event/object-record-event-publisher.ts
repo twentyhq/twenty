@@ -50,7 +50,6 @@ import { buildRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/
 import { computePermissionIntersection } from 'src/engine/permissions/role/utils/compute-permission-intersection.util';
 import { type RowAccessPolicySubject } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/permissions/rls/utils/is-record-matching-rls-row-level-permission-predicate.util';
-import { canRolesAccessAllRecords } from 'src/engine/permissions/role/utils/can-roles-access-all-records.util';
 import { buildUserRoleIdsBySource } from 'src/engine/permissions/principal/utils/build-user-role-ids-by-source.util';
 import { getRoleIdsToIntersect } from 'src/engine/permissions/principal/utils/get-role-ids-to-intersect.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -64,7 +63,6 @@ type StreamPermissionsContext = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   userWorkspaceRoleMap: UserWorkspaceRoleMap;
   rolesPermissions: ObjectsPermissionsByRoleId;
-  roleIdsWithAllRecordsAccess: string[];
   flatApplicationMaps: FlatApplicationCacheMaps;
 };
 
@@ -509,11 +507,7 @@ export class ObjectRecordEventPublisher {
         subscriberAuthContext.workspaceMemberId,
         ...roleIds,
       ].filter(isDefined),
-      canAccessAllRecords: canRolesAccessAllRecords({
-        roleIds,
-        roleIdsWithAllRecordsAccess:
-          permissionsContext.roleIdsWithAllRecordsAccess,
-      }),
+      workspaceMemberId: subscriberAuthContext.workspaceMemberId ?? undefined,
       isOwningApplication: (objectMetadata) =>
         isDefined(objectMetadata.applicationId) &&
         subscriberAuthContext.applicationId === objectMetadata.applicationId,
@@ -636,7 +630,6 @@ export class ObjectRecordEventPublisher {
       flatObjectMetadataMaps,
       userWorkspaceRoleMap,
       rolesPermissions,
-      roleIdsWithAllRecordsAccess,
       flatApplicationMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatRowLevelPermissionPredicateMaps',
@@ -645,7 +638,6 @@ export class ObjectRecordEventPublisher {
       'flatObjectMetadataMaps',
       'userWorkspaceRoleMap',
       'rolesPermissions',
-      'roleIdsWithAllRecordsAccess',
       'flatApplicationMaps',
     ]);
 
@@ -656,7 +648,6 @@ export class ObjectRecordEventPublisher {
       flatObjectMetadataMaps,
       userWorkspaceRoleMap,
       rolesPermissions,
-      roleIdsWithAllRecordsAccess,
       flatApplicationMaps,
     };
   }

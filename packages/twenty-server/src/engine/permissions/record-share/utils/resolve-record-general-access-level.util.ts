@@ -1,30 +1,31 @@
 /* @license Enterprise */
 
 import {
-  type RecordShareAccessLevel,
+  RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type RecordSharingMode } from 'src/engine/permissions/record-share/enums/record-sharing-mode.enum';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
-import { resolveDefaultGeneralAccessLevel } from 'src/engine/permissions/record-share/utils/resolve-default-general-access-level.util';
 
 // Everyone rows written by a rule or an application are not part of the
 // general access people set on the record
 export const resolveRecordGeneralAccessLevel = ({
-  sharingMode,
+  defaultGeneralAccessLevel,
   recordShares,
+  isPrivate,
 }: {
-  sharingMode: RecordSharingMode;
+  defaultGeneralAccessLevel: RecordShareAccessLevel | null;
   recordShares: RecordShare[];
+  isPrivate: boolean;
 }): RecordShareAccessLevel | null => {
-  const defaultGeneralAccessLevel =
-    resolveDefaultGeneralAccessLevel(sharingMode);
-
   if (!isDefined(defaultGeneralAccessLevel)) {
     return null;
+  }
+
+  if (isPrivate) {
+    return RecordShareAccessLevel.NONE;
   }
 
   const everyoneManualShare = recordShares.find(

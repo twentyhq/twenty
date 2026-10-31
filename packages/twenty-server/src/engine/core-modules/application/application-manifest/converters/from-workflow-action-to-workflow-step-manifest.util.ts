@@ -187,7 +187,9 @@ const fromActionInput = ({
       return toRecord(input).logicFunctionInput;
     case WorkflowActionType.AI_AGENT: {
       const { agentId, ...rest } = toRecord(input);
-      const stepKind = getWorkflowAiAgentStepKind(action.settings.input);
+      const stepKind = getWorkflowAiAgentStepKind({
+        input: action.settings.input,
+      });
 
       // defineWorkflow refuses these, so the export would not apply
       for (const issueCode of getWorkflowAiAgentStepConfigIssues({

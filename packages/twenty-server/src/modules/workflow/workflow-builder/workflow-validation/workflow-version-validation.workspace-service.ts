@@ -77,7 +77,9 @@ export class WorkflowVersionValidationWorkspaceService {
         return [
           ...validateWorkflowAiAgentStep({
             step,
-            stepKind: getWorkflowAiAgentStepKind(step.settings?.input ?? {}),
+            stepKind: getWorkflowAiAgentStepKind({
+              input: step.settings?.input ?? {},
+            }),
           }),
           ...validateWorkflowConversationStep(step),
         ];
