@@ -122,7 +122,7 @@ describe('resolveObjectSharing', () => {
       isShareable: true,
       isShareRequired: false,
       isPrivateByDefault: true,
-      defaultGeneralAccessLevel: RecordShareAccessLevel.READ_WRITE,
+      defaultGeneralAccessLevel: RecordShareAccessLevel.NONE,
       canShareBeyondRole: false,
       operationTypesGrantedBeyondRole: [],
     });

@@ -33,11 +33,12 @@ export type ObjectSharing = {
 const resolveDefaultGeneralAccessLevel = ({
   isShareable,
   isShareRequired,
+  isPrivateByDefault,
 }: Pick<
   ObjectSharing,
-  'isShareable' | 'isShareRequired'
+  'isShareable' | 'isShareRequired' | 'isPrivateByDefault'
 >): RecordShareAccessLevel | null => {
-  if (isShareRequired) {
+  if (isShareRequired || isPrivateByDefault) {
     return RecordShareAccessLevel.NONE;
   }
 
@@ -85,6 +86,7 @@ export const resolveObjectSharing = ({
     defaultGeneralAccessLevel: resolveDefaultGeneralAccessLevel({
       isShareable,
       isShareRequired,
+      isPrivateByDefault,
     }),
     canShareBeyondRole: isNonEmptyArray(operationTypesGrantedBeyondRole),
     operationTypesGrantedBeyondRole,

@@ -294,7 +294,10 @@ export class RecordSharingService {
       return;
     }
 
-    if (args.accessLevel === RecordShareAccessLevel.READ) {
+    if (
+      args.accessLevel === RecordShareAccessLevel.READ ||
+      (isPrivateByDefault && args.accessLevel !== RecordShareAccessLevel.NONE)
+    ) {
       throw new RecordShareException(
         'A record is either private or follows the roles of its object',
         RecordShareExceptionCode.INVALID_SHARE_WITH,
@@ -314,19 +317,17 @@ export class RecordSharingService {
 
     // An owner row, unlike a share, survives the share removals of whoever made the record private
     if (!isPrivate) {
-      if (!isPrivateByDefault) {
-        await this.recordShareStorageService.deleteMatching({
-          workspaceId,
-          transactionScope,
-          criteria: [
-            {
-              objectMetadataId: args.objectMetadataId,
-              recordId: args.recordId,
-              rowCause: RecordShareRowCause.OWNER,
-            },
-          ],
-        });
-      }
+      await this.recordShareStorageService.deleteMatching({
+        workspaceId,
+        transactionScope,
+        criteria: [
+          {
+            objectMetadataId: args.objectMetadataId,
+            recordId: args.recordId,
+            rowCause: RecordShareRowCause.OWNER,
+          },
+        ],
+      });
 
       return;
     }
