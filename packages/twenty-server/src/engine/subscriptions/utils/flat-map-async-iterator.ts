@@ -36,7 +36,7 @@ export const flatMapAsyncIterator = async <TValue, TMappedValue>({
   return {
     next: async () => {
       while (pendingValues.length === 0) {
-        if (isDone?.() === true) {
+        if (isDone?.()) {
           return close();
         }
 
@@ -44,7 +44,7 @@ export const flatMapAsyncIterator = async <TValue, TMappedValue>({
 
         pendingRead = undefined;
 
-        if (result.done === true) {
+        if (result.done) {
           return { done: true, value: undefined };
         }
 

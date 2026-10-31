@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import { type AgentChatSubscriptionEvent } from 'twenty-shared/ai';
 import { type AiRunEvent } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
@@ -8,11 +8,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
+import { QueuedAgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/queued-agent-run.service';
 import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-thread-id.util';
 import { buildAiRunEvents } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-ai-run-events.util';
 import { createAiRunEventFeed } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/create-ai-run-event-feed.util';
 import { readStreamedAgentMessage } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/read-streamed-agent-message.util';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { AGENT_CHAT_KEEPALIVE_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-keepalive-interval-ms.constant';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -40,7 +42,6 @@ export type AiRunEventsScope =
   | { runId: string; threadId: string | null }
   | { runId: null; threadId: string };
 
-// what can change what a run has on record, or the reply it streams
 const RECORD_EVENT_TYPES = new Set<AgentChatSubscriptionEvent['type']>([
   'message-persisted',
   'message-added',
@@ -49,7 +50,7 @@ const RECORD_EVENT_TYPES = new Set<AgentChatSubscriptionEvent['type']>([
   'stream-error',
   'credits-exhausted',
 ]);
-const STEP_CHUNK_TYPES = new Set<unknown>([
+const STEP_CHUNK_TYPES = new Set<string>([
   'start',
   'text-end',
   'tool-input-available',
@@ -72,17 +73,20 @@ export class AiRunEventService {
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
     private readonly eventPublisherService: AgentChatEventPublisherService,
     private readonly subscriptionService: SubscriptionService,
+    private readonly queuedAgentRunService: QueuedAgentRunService,
   ) {}
 
-  // An application reaches the runs of its agents and the runs it made itself. A conversation is
-  // keyed by the caller, as runAgent keys it, so no other application reaches it
+  // a caller reaches the runs of agents it can reach, the runs it made, and only its own conversations
   async resolveScopeOrThrow({
     workspace,
     callerApplication,
     target: { runId, agentUniversalIdentifier, threadKey },
   }: {
-    workspace: FlatWorkspace;
-    callerApplication: FlatApplication;
+    workspace: Pick<FlatWorkspace, 'id' | 'workspaceCustomApplicationId'>;
+    callerApplication: Pick<
+      FlatApplication,
+      'id' | 'universalIdentifier' | 'sourceType'
+    >;
     target: AiRunEventsTarget;
   }): Promise<AiRunEventsScope> {
     const isReachable = (applicationId: string | null | undefined) =>
@@ -98,18 +102,28 @@ export class AiRunEventService {
       const turn = await this.turnRepository.findOne(workspace.id, {
         where: { id: runId },
       });
-      const agent = isDefined(turn?.agentId)
+      const queuedRun = isDefined(turn)
+        ? null
+        : await this.queuedAgentRunService.find({
+            workspaceId: workspace.id,
+            runId,
+          });
+      const agentId = turn?.agentId ?? queuedRun?.agentId;
+      const agent = isDefined(agentId)
         ? await this.agentRepository.findOne(workspace.id, {
-            where: { id: turn.agentId },
+            where: { id: agentId },
           })
         : null;
+      const threadId = isDefined(turn)
+        ? turn.threadId
+        : (queuedRun?.threadId ?? null);
 
       if (
-        !isDefined(turn) ||
+        (!isDefined(turn) && !isDefined(queuedRun)) ||
         !isReachable(
-          isDefined(turn.agentId)
+          isDefined(agentId)
             ? agent?.applicationId
-            : turn.createdBy.context?.applicationId,
+            : turn?.createdBy.context?.applicationId,
         )
       ) {
         throw new AiException(
@@ -118,7 +132,7 @@ export class AiRunEventService {
         );
       }
 
-      return { runId, threadId: turn.threadId };
+      return { runId, threadId };
     }
 
     if (
@@ -165,12 +179,11 @@ export class AiRunEventService {
     after?: string | null;
   }): Promise<AiRunEvent[]> {
     return createAiRunEventFeed({ after })(
-      await this.readEvents({ workspaceId, scope, actor }),
+      await this.readEventSteps({ workspaceId, scope, actor }),
     );
   }
 
-  // Replays the events after the cursor, then reads the run again on every change of its
-  // conversation. A run's stream ends with the run; a conversation's stays open
+  // a run's stream ends with the run; a conversation's stays open
   async streamEvents({
     workspaceId,
     scope,
@@ -186,13 +199,15 @@ export class AiRunEventService {
     const feed = createAiRunEventFeed({ after });
     let isRunOver = false;
     let hasReadSinceSubscribing = false;
+    let lastReadAt = 0;
 
     const read = async () => {
-      const events = await this.readEvents({ workspaceId, scope, actor });
+      lastReadAt = Date.now();
+      const steps = await this.readEventSteps({ workspaceId, scope, actor });
 
-      isRunOver = isDefined(scope.runId) && events.some(isRunEnd);
+      isRunOver = isDefined(scope.runId) && steps.flat().some(isRunEnd);
 
-      return feed(events);
+      return feed(steps);
     };
 
     // a run without a conversation publishes nothing as it goes, so it is only replayed
@@ -211,11 +226,17 @@ export class AiRunEventService {
       mapValue: async ({ onAgentChatEvent: { event } }) => {
         const isChange =
           event.type === 'stream-chunk'
-            ? STEP_CHUNK_TYPES.has(event.chunk.type)
+            ? isString(event.chunk.type) &&
+              STEP_CHUNK_TYPES.has(event.chunk.type)
             : RECORD_EVENT_TYPES.has(event.type);
+        // some ends of a run publish nothing, such as a closed question, so its stream checks on keepalives
+        const isRunCheck =
+          isDefined(scope.runId) &&
+          event.type === 'keepalive' &&
+          Date.now() - lastReadAt >= AGENT_CHAT_KEEPALIVE_INTERVAL_MS;
 
         // the first value, a keepalive at worst, catches up on what landed while subscribing
-        if (!isChange && hasReadSinceSubscribing) {
+        if (!isChange && !isRunCheck && hasReadSinceSubscribing) {
           return [];
         }
 
@@ -227,7 +248,7 @@ export class AiRunEventService {
     });
   }
 
-  private async readEvents({
+  private async readEventSteps({
     workspaceId,
     scope,
     actor,
@@ -235,14 +256,14 @@ export class AiRunEventService {
     workspaceId: string;
     scope: AiRunEventsScope;
     actor: AgentConversationActor;
-  }): Promise<AiRunEvent[]> {
+  }): Promise<AiRunEvent[][]> {
     const { runId, threadId } = scope;
-    const turns = await this.turnRepository.find(workspaceId, {
-      where: isDefined(scope.runId)
-        ? { id: scope.runId }
-        : { threadId: scope.threadId },
-      order: { createdAt: 'ASC', id: 'ASC' },
-    });
+    const findTurns = () =>
+      this.turnRepository.find(workspaceId, {
+        where: isDefined(runId) ? { id: runId } : { threadId: scope.threadId },
+        order: { createdAt: 'ASC', id: 'ASC' },
+      });
+    let turns = await findTurns();
 
     if (!isDefined(threadId)) {
       return buildAiRunEvents({
@@ -256,21 +277,26 @@ export class AiRunEventService {
     const isStreaming = turns.some(
       ({ status }) => status === AgentTurnStatus.RUNNING,
     );
-    const [messages, streamedMessage] = await Promise.all([
-      this.messageRepository.find(workspaceId, {
-        where: isDefined(runId) ? { turnId: runId } : { threadId },
-        order: {
-          processedAt: { order: 'ASC', nulls: 'NULLS LAST' },
-          createdAt: 'ASC',
-        },
-        relations: ['parts'],
-      }),
-      isStreaming
-        ? this.eventPublisherService
-            .getAccumulatedChunks(threadId)
-            .then(({ chunks }) => readStreamedAgentMessage(chunks))
-        : null,
-    ]);
+    const streamedMessage = isStreaming
+      ? await this.eventPublisherService
+          .getAccumulatedChunks(threadId)
+          .then(({ chunks }) => readStreamedAgentMessage(chunks))
+      : null;
+
+    // a reply is saved and its turn ended before its stream is cleared, so read after the stream they
+    // are never a checkpoint whose running tools show as interrupted
+    if (isStreaming && !isDefined(streamedMessage)) {
+      turns = await findTurns();
+    }
+
+    const messages = await this.messageRepository.find(workspaceId, {
+      where: isDefined(runId) ? { turnId: runId } : { threadId },
+      order: {
+        processedAt: { order: 'ASC', nulls: 'NULLS LAST' },
+        createdAt: 'ASC',
+      },
+      relations: ['parts'],
+    });
 
     return buildAiRunEvents({ turns, messages, streamedMessage, actor });
   }

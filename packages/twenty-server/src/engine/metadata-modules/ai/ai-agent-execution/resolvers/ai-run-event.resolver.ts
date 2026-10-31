@@ -31,7 +31,7 @@ const buildActor = ({
   callerApplication,
 }: {
   workspaceMemberId: string | undefined;
-  callerApplication: FlatApplication;
+  callerApplication: Pick<FlatApplication, 'id'>;
 }): AgentConversationActor =>
   isDefined(workspaceMemberId)
     ? { type: 'user', workspaceMemberId }

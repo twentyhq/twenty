@@ -56,6 +56,9 @@ const buildService = (overrides: Record<string, unknown>) => {
     }),
   };
   const agentRunnerService = { start: jest.fn().mockResolvedValue(undefined) };
+  const queuedAgentRunService = {
+    record: jest.fn().mockResolvedValue(undefined),
+  };
 
   const service = new AgentRunService(
     agentActorContextService as never,
@@ -72,9 +75,10 @@ const buildService = (overrides: Record<string, unknown>) => {
     {} as never,
     applicationLookupService as never,
     agentRepository as never,
+    queuedAgentRunService as never,
   );
 
-  return { service, agentRunnerService };
+  return { service, agentRunnerService, queuedAgentRunService };
 };
 
 const runAgent = (service: AgentRunService) =>
@@ -110,8 +114,9 @@ describe('AgentRunService', () => {
       );
     });
 
-    it('returns the id of the turn the run opens, so the caller can follow it', async () => {
-      const { service, agentRunnerService } = buildService({});
+    it('returns the id of the turn the run opens, followable before the worker opens it', async () => {
+      const { service, agentRunnerService, queuedAgentRunService } =
+        buildService({});
 
       const { runId } = await runAgent(service);
 
@@ -120,6 +125,14 @@ describe('AgentRunService', () => {
           prompt: expect.objectContaining({ turnId: runId }),
         }),
       );
+      expect(queuedAgentRunService.record).toHaveBeenCalledWith({
+        workspaceId: WORKSPACE_ID,
+        runId,
+        queuedRun: { agentId: AGENT_ID, threadId: expect.any(String) },
+      });
+      expect(
+        queuedAgentRunService.record.mock.invocationCallOrder[0],
+      ).toBeLessThan(agentRunnerService.start.mock.invocationCallOrder[0]);
     });
 
     it('rejects an overridden response format without output fields', async () => {

@@ -36,6 +36,7 @@ import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-module
 import { assertAgentResponseFormatHasOutputFieldsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util';
 import { RUN_AGENT_MAX_WAIT_MS } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/run-agent-max-wait-ms.const';
 import { AgentRunSettlementService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-settlement.service';
+import { QueuedAgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/queued-agent-run.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { resolveApplicationRoleId } from 'src/engine/permissions/principal/utils/resolve-application-role-id.util';
@@ -113,6 +114,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     private readonly applicationLookupService: ApplicationLookupService,
     @InjectWorkspaceScopedRepository(AgentEntity)
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
+    private readonly queuedAgentRunService: QueuedAgentRunService,
   ) {}
 
   onModuleInit(): void {
@@ -291,6 +293,13 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     }
 
     const runId = randomUUID();
+
+    // the caller can follow the run before the worker opens its turn
+    await this.queuedAgentRunService.record({
+      workspaceId: workspace.id,
+      runId,
+      queuedRun: { agentId: agent.id, threadId },
+    });
 
     await this.agentRunnerService.start({
       workspaceId: workspace.id,

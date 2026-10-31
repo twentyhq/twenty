@@ -212,6 +212,16 @@ export class AiGenerateService {
       (isDefined(callerApplication)
         ? buildCreatedByFromApplication({ application: callerApplication })
         : buildActorMetadataFromAuthContext(authContext));
+    // the application stays on the turn when a member made it, so it can read the run back
+    const turnCreatedBy = isDefined(callerApplication)
+      ? {
+          ...createdBy,
+          context: {
+            ...createdBy.context,
+            applicationId: callerApplication.id,
+          },
+        }
+      : createdBy;
     // a call through an application never exceeds that application
     const agentRunRoleIds: AgentRunRoleIds = {
       ...callerRoleIds,
@@ -224,16 +234,7 @@ export class AiGenerateService {
     return {
       authContext,
       actorContext,
-      // the application stays on the turn when a member made it, so it can read the run back
-      turnCreatedBy: isDefined(callerApplication)
-        ? {
-            ...createdBy,
-            context: {
-              ...createdBy.context,
-              applicationId: callerApplication.id,
-            },
-          }
-        : createdBy,
+      turnCreatedBy,
       userWorkspaceId: requestUserWorkspaceId,
       rolePermissionConfig: { intersectionOf: agentRunRoleIds },
       agentRunRoleIds,

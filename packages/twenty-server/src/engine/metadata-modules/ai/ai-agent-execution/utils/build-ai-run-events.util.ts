@@ -2,7 +2,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { getToolName, isToolUIPart } from 'ai';
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
 import { type AiRunEvent, type AiRunUsage } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { AGENT_WAIT_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/agent-wait-tool-names.constant';
 import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
@@ -54,12 +54,13 @@ const isInteractionToolName = (toolName: string): boolean =>
 const buildUsage = ({
   inputTokens,
   outputTokens,
-}: AiRunTurn): AiRunUsage | null =>
+}: Pick<AiRunTurn, 'inputTokens' | 'outputTokens'>): AiRunUsage | null =>
   isDefined(inputTokens) || isDefined(outputTokens)
     ? { inputTokens: inputTokens ?? 0, outputTokens: outputTokens ?? 0 }
     : null;
 
-const buildPartEvents = ({
+// one list per model step, since a step's tool results come in whatever order its tools finish
+const buildPartEventSteps = ({
   messageId,
   role,
   parts,
@@ -69,74 +70,71 @@ const buildPartEvents = ({
   role: 'user' | 'assistant';
   parts: ExtendedUIMessagePart[];
   source: AiRunEventSource;
-}): AiRunEvent[] => {
+}): AiRunEvent[][] => {
   let textIndex = -1;
+  const steps: AiRunEvent[][] = [[]];
 
-  return parts.flatMap((part): AiRunEvent[] => {
+  for (const part of parts) {
+    const step = steps[steps.length - 1];
+
+    if (part.type === 'step-start') {
+      steps.push([]);
+      continue;
+    }
+
     if (part.type === 'text') {
       textIndex += 1;
 
-      return isNonEmptyString(part.text) && part.state !== 'streaming'
-        ? [
-            {
-              ...source,
-              id: `${messageId}:text:${textIndex}`,
-              type: 'MESSAGE',
-              role,
-              text: part.text,
-            },
-          ]
-        : [];
+      if (isNonEmptyString(part.text) && part.state !== 'streaming') {
+        step.push({
+          ...source,
+          id: `${messageId}:text:${textIndex}`,
+          type: 'MESSAGE',
+          role,
+          text: part.text,
+        });
+      }
+
+      continue;
     }
 
     if (!isToolUIPart(part) || part.state === 'input-streaming') {
-      return [];
+      continue;
     }
 
     const toolName = getToolName(part);
-    const call: AiRunEvent = {
+    const result = {
+      ...source,
+      id: `${part.toolCallId}:result`,
+      type: 'TOOL_RESULT' as const,
+      toolCallId: part.toolCallId,
+    };
+
+    step.push({
       ...source,
       id: `${part.toolCallId}:call`,
       type: isInteractionToolName(toolName) ? 'INTERACTION' : 'TOOL_CALL',
       toolCallId: part.toolCallId,
       toolName,
       input: part.input,
-    };
-    const result = { ...source, id: `${part.toolCallId}:result` };
+    });
 
     if (part.state === 'output-error') {
-      return [
-        call,
-        {
-          ...result,
-          type: 'TOOL_RESULT',
-          toolCallId: part.toolCallId,
-          output: part.errorText,
-          isError: true,
-        },
-      ];
+      step.push({ ...result, output: part.errorText, isError: true });
+      continue;
     }
 
     // a pending interaction is answered later, in place
     if (
-      part.state !== 'output-available' ||
-      part.preliminary === true ||
-      isAwaitingPausingToolOutput(part.output)
+      part.state === 'output-available' &&
+      !part.preliminary &&
+      !isAwaitingPausingToolOutput(part.output)
     ) {
-      return [call];
+      step.push({ ...result, output: part.output, isError: false });
     }
+  }
 
-    return [
-      call,
-      {
-        ...result,
-        type: 'TOOL_RESULT',
-        toolCallId: part.toolCallId,
-        output: part.output,
-        isError: false,
-      },
-    ];
-  });
+  return steps.filter(isNonEmptyArray);
 };
 
 const buildEndEvent = (turn: AiRunTurn): AiRunEvent | null => {
@@ -170,8 +168,7 @@ const buildEndEvent = (turn: AiRunTurn): AiRunEvent | null => {
   }
 };
 
-// A run is a turn. The reply a running turn streams is read from its stream, since its checkpoint
-// finalizes the tool calls still running
+// a running turn's reply comes from its stream, since its checkpoint marks running tools interrupted
 export const buildAiRunEvents = ({
   turns,
   messages,
@@ -182,7 +179,7 @@ export const buildAiRunEvents = ({
   messages: AiRunMessage[];
   streamedMessage: { id: string; parts: ExtendedUIMessagePart[] } | null;
   actor: AgentConversationActor;
-}): AiRunEvent[] => {
+}): AiRunEvent[][] => {
   const sentMessages = messages.filter(
     ({ status }) => status !== AgentMessageStatus.QUEUED,
   );
@@ -192,7 +189,7 @@ export const buildAiRunEvents = ({
   });
 
   return turns.flatMap((turn) => {
-    const messageEvents = sentMessages
+    const messageSteps = sentMessages
       .filter(
         ({ turnId, role }) =>
           turnId === turn.id && role !== AgentMessageRole.SYSTEM,
@@ -204,10 +201,9 @@ export const buildAiRunEvents = ({
             ? streamedMessage.parts
             : mapDBPartsToUIMessageParts(message.parts ?? []);
 
-        return buildPartEvents({
+        return buildPartEventSteps({
           messageId: message.id,
           role: message.role === AgentMessageRole.USER ? 'user' : 'assistant',
-          // a member sees only the text of turns someone else acted in
           parts: turnIdsActedByOthers.has(turn.id)
             ? filterPartsOfTurnActedByOthers(parts)
             : parts,
@@ -221,14 +217,16 @@ export const buildAiRunEvents = ({
     const endEvent = buildEndEvent(turn);
 
     return [
-      {
-        id: `${turn.id}:started`,
-        runId: turn.id,
-        type: 'RUN_STARTED' as const,
-        createdAt: toIsoString(turn.startedAt ?? turn.createdAt),
-      },
-      ...messageEvents,
-      ...(isDefined(endEvent) ? [endEvent] : []),
+      [
+        {
+          id: `${turn.id}:started`,
+          runId: turn.id,
+          type: 'RUN_STARTED' as const,
+          createdAt: toIsoString(turn.startedAt ?? turn.createdAt),
+        },
+      ],
+      ...messageSteps,
+      ...(isDefined(endEvent) ? [[endEvent]] : []),
     ];
   });
 };

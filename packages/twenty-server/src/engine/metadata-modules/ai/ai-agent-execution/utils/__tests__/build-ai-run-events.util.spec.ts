@@ -98,7 +98,7 @@ describe('buildAiRunEvents', () => {
       ],
       streamedMessage: null,
       actor: APPLICATION_ACTOR,
-    });
+    }).flat();
 
     expect(
       events.map(({ id, type, runId, createdAt }) => ({
@@ -179,7 +179,7 @@ describe('buildAiRunEvents', () => {
         messages: [],
         streamedMessage: null,
         actor: APPLICATION_ACTOR,
-      }),
+      }).flat(),
     ).toEqual([
       {
         id: 'turn-id:started',
@@ -214,7 +214,6 @@ describe('buildAiRunEvents', () => {
       { type: 'text-start', id: 'text-2' },
       { type: 'text-delta', id: 'text-2', delta: 'Still typ' },
     ]);
-    // the checkpoint finalizes the running call as interrupted
     const checkpoint = buildMessage({
       id: 'reply-id',
       role: AgentMessageRole.ASSISTANT,
@@ -226,7 +225,7 @@ describe('buildAiRunEvents', () => {
       messages: [PROMPT, checkpoint],
       streamedMessage,
       actor: APPLICATION_ACTOR,
-    });
+    }).flat();
     const recordedEvents = buildAiRunEvents({
       turns: [buildTurn()],
       messages: [
@@ -239,7 +238,7 @@ describe('buildAiRunEvents', () => {
       ],
       streamedMessage: null,
       actor: APPLICATION_ACTOR,
-    });
+    }).flat();
 
     expect(liveEvents.map(({ id, type }) => `${type} ${id}`)).toEqual([
       'RUN_STARTED turn-id:started',
@@ -270,7 +269,9 @@ describe('buildAiRunEvents', () => {
         ],
         streamedMessage: null,
         actor: APPLICATION_ACTOR,
-      }).map(({ type }) => type);
+      })
+        .flat()
+        .map(({ type }) => type);
 
     expect(
       buildEvents({ success: true, result: { status: 'pending' } }),
@@ -298,7 +299,7 @@ describe('buildAiRunEvents', () => {
       ],
       streamedMessage: null,
       actor: { type: 'user', workspaceMemberId: 'member-id' },
-    });
+    }).flat();
 
     expect(events.map(({ type }) => type)).toEqual([
       'RUN_STARTED',
@@ -306,6 +307,46 @@ describe('buildAiRunEvents', () => {
       'MESSAGE',
       'MESSAGE',
       'RUN_COMPLETED',
+    ]);
+  });
+
+  it('groups events by model step, the unit in which tool results can come out of order', () => {
+    const steps = buildAiRunEvents({
+      turns: [buildTurn()],
+      messages: [
+        PROMPT,
+        buildMessage({
+          id: 'reply-id',
+          role: AgentMessageRole.ASSISTANT,
+          parts: [
+            { type: 'step-start' },
+            {
+              ...FIND_COMPANY_CALL,
+              toolCallId: 'call-a',
+              state: 'output-available',
+              output: { companies: [] },
+            },
+            {
+              ...FIND_COMPANY_CALL,
+              toolCallId: 'call-b',
+              state: 'output-available',
+              output: { companies: [] },
+            },
+            { type: 'step-start' },
+            { type: 'text', text: 'Nothing found.' },
+          ],
+        }),
+      ],
+      streamedMessage: null,
+      actor: APPLICATION_ACTOR,
+    });
+
+    expect(steps.map((step) => step.map(({ id }) => id))).toEqual([
+      ['turn-id:started'],
+      ['prompt-id:text:0'],
+      ['call-a:call', 'call-a:result', 'call-b:call', 'call-b:result'],
+      ['reply-id:text:0'],
+      ['turn-id:completed'],
     ]);
   });
 });

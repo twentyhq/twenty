@@ -1,4 +1,9 @@
-import { type AgentChatSubscriptionEvent } from 'twenty-shared/ai';
+import {
+  type AgentChatSubscriptionEvent,
+  type ExtendedUIMessagePart,
+} from 'twenty-shared/ai';
+
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 
 import { AiRunEventService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/ai-run-event.service';
 import { type AiRunMessage } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-ai-run-events.util';
@@ -6,6 +11,8 @@ import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enum
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
+import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ui-message-parts-to-db-parts.util';
+import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 
 const AT = '2026-10-31T10:00:00.000Z';
 const ACTOR = { type: 'application' as const, applicationId: 'application-id' };
@@ -32,8 +39,41 @@ const buildTextMessage = ({
   ] as AgentMessagePartWorkspaceEntity[],
 });
 
+const buildReplyMessage = (parts: ExtendedUIMessagePart[]): AiRunMessage => ({
+  id: 'reply-id',
+  turnId: 'turn-id',
+  role: AgentMessageRole.ASSISTANT,
+  status: AgentMessageStatus.SENT,
+  createdAt: AT,
+  senderWorkspaceMemberId: null,
+  senderApplicationId: null,
+  parts: mapUIMessagePartsToDBParts(
+    parts,
+    'reply-id',
+  ) as AgentMessagePartWorkspaceEntity[],
+});
+
+const FIND_COMPANY_CALL = {
+  type: 'tool-find_companies',
+  toolCallId: 'call-id',
+  input: { name: 'Acme' },
+} as const;
+
+type ChatEventValue = {
+  onAgentChatEvent: { threadId: string; event: AgentChatSubscriptionEvent };
+};
+
 const buildContext = () => {
-  const record = {
+  const record: {
+    status: AgentTurnStatus;
+    messages: AiRunMessage[];
+    turn: { agentId: string | null; threadId: string | null } | null;
+    queuedRun: { agentId: string; threadId: string } | null;
+    onReadStream: () => void;
+  } = {
+    turn: null,
+    queuedRun: null,
+    onReadStream: () => {},
     status: AgentTurnStatus.RUNNING,
     messages: [
       buildTextMessage({
@@ -43,12 +83,12 @@ const buildContext = () => {
       }),
     ],
   };
-  const published: ((value: IteratorResult<unknown>) => void)[] = [];
-  const queued: unknown[] = [];
+  const published: ((value: IteratorResult<ChatEventValue>) => void)[] = [];
+  const queued: ChatEventValue[] = [];
   const chatEvents = {
     next: jest.fn(
       () =>
-        new Promise<IteratorResult<unknown>>((resolve) => {
+        new Promise<IteratorResult<ChatEventValue>>((resolve) => {
           const value = queued.shift();
 
           if (value !== undefined) {
@@ -61,7 +101,9 @@ const buildContext = () => {
     return: jest.fn(async () => ({ done: true, value: undefined })),
   };
   const publish = (event: AgentChatSubscriptionEvent) => {
-    const value = { onAgentChatEvent: { threadId: 'thread-id', event } };
+    const value: ChatEventValue = {
+      onAgentChatEvent: { threadId: 'thread-id', event },
+    };
     const resolve = published.shift();
 
     if (resolve !== undefined) {
@@ -71,6 +113,7 @@ const buildContext = () => {
     }
   };
   const turnRepository = {
+    findOne: jest.fn(async () => record.turn),
     find: jest.fn(async () => [
       {
         id: 'turn-id',
@@ -88,11 +131,18 @@ const buildContext = () => {
   const service = new AiRunEventService(
     turnRepository as never,
     { find: jest.fn(async () => record.messages) } as never,
-    {} as never,
     {
-      getAccumulatedChunks: jest.fn(async () => ({ chunks: [], maxSeq: 0 })),
+      findOne: jest.fn(async () => ({ applicationId: 'application-id' })),
+    } as never,
+    {
+      getAccumulatedChunks: jest.fn(async () => {
+        record.onReadStream();
+
+        return { chunks: [], maxSeq: 0 };
+      }),
     } as never,
     { subscribeToAgentChat: jest.fn(async () => chatEvents) } as never,
+    { find: jest.fn(async () => record.queuedRun) } as never,
   );
 
   return { service, record, chatEvents, publish, turnRepository };
@@ -113,7 +163,6 @@ describe('AiRunEventService.streamEvents', () => {
 
     expect(await nextId(iterator)).toBe('prompt-id:text:0');
 
-    // a member writes while the run goes on: the message is read from the record
     record.messages.push(
       buildTextMessage({
         id: 'member-message-id',
@@ -153,5 +202,108 @@ describe('AiRunEventService.streamEvents', () => {
     expect(chatEvents.next.mock.invocationCallOrder[0]).toBeLessThan(
       turnRepository.find.mock.invocationCallOrder[0],
     );
+  });
+
+  it('reads a run again on keepalives, so a run that ends without publishing still ends its stream', async () => {
+    const { service, record, publish } = buildContext();
+    const now = jest.spyOn(Date, 'now').mockReturnValue(0);
+    const iterator = await service.streamEvents({
+      workspaceId: 'workspace-id',
+      scope: SCOPE,
+      actor: ACTOR,
+      after: 'prompt-id:text:0',
+    });
+
+    record.messages.push(
+      buildTextMessage({
+        id: 'member-message-id',
+        role: AgentMessageRole.USER,
+        text: 'Stop',
+      }),
+    );
+    publish({ type: 'message-added', messageId: 'member-message-id' });
+    expect(await nextId(iterator)).toBe('member-message-id:text:0');
+
+    record.status = AgentTurnStatus.CANCELLED;
+    now.mockReturnValue(60_000);
+    publish({ type: 'keepalive' });
+
+    expect(await nextId(iterator)).toBe('turn-id:failed');
+    expect(await iterator.next()).toEqual({ done: true, value: undefined });
+    now.mockRestore();
+  });
+});
+
+describe('AiRunEventService.listEvents', () => {
+  it('never takes the checkpoint of a reply whose stream was cleared as it ended', async () => {
+    const { service, record } = buildContext();
+
+    record.messages.push(
+      buildReplyMessage([{ ...FIND_COMPANY_CALL, state: 'input-available' }]),
+    );
+    record.onReadStream = () => {
+      record.status = AgentTurnStatus.COMPLETED;
+      record.messages = [
+        record.messages[0],
+        buildReplyMessage([
+          {
+            ...FIND_COMPANY_CALL,
+            state: 'output-available',
+            output: { companies: [] },
+          },
+        ]),
+      ];
+    };
+
+    const events = await service.listEvents({
+      workspaceId: 'workspace-id',
+      scope: SCOPE,
+      actor: ACTOR,
+    });
+
+    expect(events.find(({ type }) => type === 'TOOL_RESULT')).toMatchObject({
+      id: 'call-id:result',
+      isError: false,
+      output: { companies: [] },
+    });
+    expect(events[events.length - 1].type).toBe('RUN_COMPLETED');
+  });
+});
+
+describe('AiRunEventService.resolveScopeOrThrow', () => {
+  const WORKSPACE = {
+    id: 'workspace-id',
+    workspaceCustomApplicationId: 'workspace-custom-application-id',
+  };
+  const CALLER_APPLICATION = {
+    id: 'application-id',
+    universalIdentifier: 'application-universal-identifier',
+    sourceType: ApplicationRegistrationSourceType.LOCAL,
+  };
+
+  it('follows a run that runAgent queued before the worker opens its turn', async () => {
+    const { service, record } = buildContext();
+
+    record.queuedRun = { agentId: 'agent-id', threadId: 'thread-id' };
+
+    await expect(
+      service.resolveScopeOrThrow({
+        workspace: WORKSPACE,
+        callerApplication: CALLER_APPLICATION,
+        target: { runId: 'turn-id' },
+      }),
+    ).resolves.toEqual({ runId: 'turn-id', threadId: 'thread-id' });
+  });
+
+  it('refuses a run that is neither queued nor on record', async () => {
+    const { service } = buildContext();
+
+    await expect(
+      service.resolveScopeOrThrow({
+        workspace: WORKSPACE,
+        callerApplication: CALLER_APPLICATION,
+        target: { runId: 'turn-id' },
+      }),
+    ).rejects.toMatchObject({ code: AiExceptionCode.RECORD_NOT_FOUND });
   });
 });
