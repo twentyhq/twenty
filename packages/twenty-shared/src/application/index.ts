@@ -321,6 +321,7 @@ export {
   isReservedSettingsMenuItemTitle,
 } from './utils/isReservedSettingsMenuItemTitle';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
+export { resolveObjectPermissionValue } from './utils/resolveObjectPermissionValue';
 export type {
   ViewManifestFilterValue,
   ViewFieldManifest,

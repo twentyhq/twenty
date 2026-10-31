@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { z } from 'zod';
 
-import { aiRunScopeSchema } from '@/ai/schemas/ai-run-scope-schema';
+import { aiRunScopeSchema } from '@/ai/schemas/internal/ai-run-scope-schema';
 import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
 import { agentResponseFormatSchema } from '@/workflow/schemas/agent-response-format-schema';
 

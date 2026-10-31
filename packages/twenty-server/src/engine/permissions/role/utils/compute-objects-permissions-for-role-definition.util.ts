@@ -1,3 +1,4 @@
+import { resolveObjectPermissionValue } from 'twenty-shared/application';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
@@ -113,29 +114,25 @@ export const computeObjectsPermissionsForRoleDefinition = ({
             objectPermission.objectMetadataId === objectMetadataId,
         );
 
-        const getPermissionValue = ({
-          overrideValue,
-          defaultValue,
-        }: {
-          overrideValue: boolean | null | undefined;
-          defaultValue: boolean;
-        }) => overrideValue ?? (isSystem ? true : defaultValue);
-
-        canRead = getPermissionValue({
-          overrideValue: objectPermissionOverride?.canReadObjectRecords,
-          defaultValue: canRead,
+        canRead = resolveObjectPermissionValue({
+          objectValue: objectPermissionOverride?.canReadObjectRecords,
+          allObjectsValue: canRead,
+          isSystemObject: isSystem,
         });
-        canUpdate = getPermissionValue({
-          overrideValue: objectPermissionOverride?.canUpdateObjectRecords,
-          defaultValue: canUpdate,
+        canUpdate = resolveObjectPermissionValue({
+          objectValue: objectPermissionOverride?.canUpdateObjectRecords,
+          allObjectsValue: canUpdate,
+          isSystemObject: isSystem,
         });
-        canSoftDelete = getPermissionValue({
-          overrideValue: objectPermissionOverride?.canSoftDeleteObjectRecords,
-          defaultValue: canSoftDelete,
+        canSoftDelete = resolveObjectPermissionValue({
+          objectValue: objectPermissionOverride?.canSoftDeleteObjectRecords,
+          allObjectsValue: canSoftDelete,
+          isSystemObject: isSystem,
         });
-        canDestroy = getPermissionValue({
-          overrideValue: objectPermissionOverride?.canDestroyObjectRecords,
-          defaultValue: canDestroy,
+        canDestroy = resolveObjectPermissionValue({
+          objectValue: objectPermissionOverride?.canDestroyObjectRecords,
+          allObjectsValue: canDestroy,
+          isSystemObject: isSystem,
         });
       }
 

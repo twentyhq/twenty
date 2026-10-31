@@ -40,10 +40,6 @@ export { workflowAiAgentActionSchema } from './schemas/ai-agent-action-schema';
 export { workflowAiAgentActionSettingsSchema } from './schemas/ai-agent-action-settings-schema';
 export { workflowAiAgentConversationConfigSchema } from './schemas/ai-agent-conversation-config-schema';
 export { workflowAiAgentInlineConfigSchema } from './schemas/ai-agent-inline-config-schema';
-export {
-  aiRunScopeSchema,
-  modelConfigurationSchema,
-} from './schemas/ai-run-schemas';
 export { baseTriggerSchema } from './schemas/base-trigger-schema';
 export { baseWorkflowActionSchema } from './schemas/base-workflow-action-schema';
 export { baseWorkflowActionSettingsSchema } from './schemas/base-workflow-action-settings-schema';
@@ -146,6 +142,7 @@ export type {
 } from './types/InputSchema';
 export type { StepIfElseBranch } from './types/StepIfElseBranch';
 export { WorkflowActionType } from './types/WorkflowActionType';
+export type { WorkflowAiAgentStepKind } from './types/WorkflowAiAgentStepKind';
 export type { WorkflowAttachment } from './types/WorkflowAttachment';
 export type {
   WorkflowClassifyCriterion,
@@ -171,6 +168,7 @@ export { canObjectBeManagedByAutomation } from './utils/canObjectBeManagedByAuto
 export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts';
 export { getFunctionInputFromInputSchema } from './utils/getFunctionInputFromInputSchema';
 export { getWorkflowAiAgentStepConfigIssues } from './utils/getWorkflowAiAgentStepConfigIssues';
+export { getWorkflowAiAgentStepKind } from './utils/getWorkflowAiAgentStepKind';
 export { getWorkflowRunContext } from './utils/getWorkflowRunContext';
 export { hasWorkflowAiAgentConversationConfig } from './utils/hasWorkflowAiAgentConversationConfig';
 export { hasWorkflowAiAgentInlineConfig } from './utils/hasWorkflowAiAgentInlineConfig';
