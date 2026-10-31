@@ -17,8 +17,10 @@ import { findOneAgent } from 'test/integration/metadata/suites/agent/utils/find-
 type AiAgentStep = {
   id: string;
   type: string;
+  name?: string;
   settings: {
     input: { agentId?: string; instructions?: string; prompt?: string };
+    outputSchema?: Record<string, unknown>;
   };
 };
 
@@ -81,7 +83,7 @@ describe('Draft creation (e2e)', () => {
 });
 
 describe('AI agent step duplication and deletion (e2e)', () => {
-  it('copies the config of a duplicated step, and never copies or deletes a reusable agent it runs', async () => {
+  it('creates a step that runs a reusable agent, copies a duplicated step, and never copies or deletes the agent', async () => {
     const { coreWorkflowId, coreWorkflowVersionId } = await createCoreWorkflow({
       name: 'AI Step Duplication Test',
     });
@@ -91,6 +93,13 @@ describe('AI agent step duplication and deletion (e2e)', () => {
         label: 'Reusable Step Agent',
         prompt: 'You qualify leads.',
         modelId: TEST_AI_MODEL_ID,
+        responseFormat: {
+          type: 'json',
+          schema: {
+            type: 'object',
+            properties: { score: { type: 'number' } },
+          },
+        },
       },
     });
     const reusableAgentId = agentData.createOneAgent.id;
@@ -154,10 +163,20 @@ describe('AI agent step duplication and deletion (e2e)', () => {
       instructions: 'You qualify leads.',
       prompt: 'Qualify the new lead.',
     });
-    const reusableAgentStep = await createAiAgentStep({
-      agentId: reusableAgentId,
-      prompt: 'Qualify the new lead.',
+    const reusableAgentStep = await createCoreWorkflowVersionStep<AiAgentStep>({
+      coreWorkflowVersionId,
+      stepType: 'AI_AGENT',
+      defaultSettings: { input: { agentId: reusableAgentId } },
     });
+
+    expect(reusableAgentStep.name).toBe('Reusable Step Agent');
+    expect(reusableAgentStep.settings.input).toEqual({
+      agentId: reusableAgentId,
+      prompt: '',
+    });
+    expect(Object.keys(reusableAgentStep.settings.outputSchema ?? {})).toEqual([
+      'score',
+    ]);
 
     for (const step of [inlineStep, reusableAgentStep]) {
       const duplicatedStep = await duplicateStep(step.id);

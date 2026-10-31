@@ -59,7 +59,14 @@ export const SidePanelWorkflowEditStepTypeContent = () => {
     const stepUpdate = {
       ...existingStep,
       type: selection.type,
-      settings: selection.defaultSettings ?? existingStep.settings,
+      // a step kept on the same type is not rebuilt, so it keeps its error handling
+      settings: isDefined(selection.defaultSettings)
+        ? {
+            ...existingStep.settings,
+            outputSchema: {},
+            ...selection.defaultSettings,
+          }
+        : existingStep.settings,
     };
 
     const { updatedStep } = await updateStepNow(stepUpdate as WorkflowAction);

@@ -565,10 +565,36 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
+        const defaultAgentId = (
+          defaultSettings?.input as { agentId?: string } | undefined
+        )?.agentId;
+
+        if (isNonEmptyString(defaultAgentId)) {
+          const agent = await this.agentService.findOneAgentById({
+            id: defaultAgentId,
+            workspaceId,
+          });
+
+          return {
+            builtStep: {
+              ...baseStep,
+              name: agent.label,
+              type: WorkflowActionType.AI_AGENT,
+              settings: {
+                ...BASE_STEP_DEFINITION,
+                input: {
+                  agentId: agent.id,
+                  prompt: '',
+                },
+              },
+            },
+          };
+        }
+
         return {
           builtStep: {
             ...baseStep,
-            name: 'Agent',
+            name: 'Generate',
             type: WorkflowActionType.AI_AGENT,
             settings: {
               ...BASE_STEP_DEFINITION,

@@ -106,8 +106,13 @@ export const WORKFLOW_STEP_DEFAULT_NAMES: Array<{
   },
   {
     type: 'AI_AGENT',
-    name: 'Agent',
+    name: 'Generate',
     label: AI_AGENT_ACTION.defaultLabel,
+  },
+  {
+    type: 'AI_AGENT',
+    name: 'Agent',
+    label: msg`Agent`,
   },
   {
     type: 'CLASSIFY',

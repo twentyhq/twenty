@@ -19,7 +19,6 @@ type UseWorkflowAiAgentScopePermissionActionsParams = {
   onScopeChange: (scope: AiRunScope) => void;
 };
 
-// The permissions of a step that runs no agent live in the step's own scope
 export const useWorkflowAiAgentScopePermissionActions = ({
   scope,
   readonly,

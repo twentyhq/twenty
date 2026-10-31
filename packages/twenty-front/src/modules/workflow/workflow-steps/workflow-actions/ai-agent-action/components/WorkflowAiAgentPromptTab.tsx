@@ -12,6 +12,7 @@ import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUp
 import { type WorkflowAiAgentAction } from '@/workflow/types/Workflow';
 import { WorkflowConversationFields } from '@/workflow/workflow-steps/workflow-actions/components/WorkflowConversationFields';
 import { AgentOutputSchemaBuilder } from '@/ai/components/AgentOutputSchemaBuilder';
+import { WorkflowAiAgentStepAgentField } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentStepAgentField';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { useMutation } from '@apollo/client/react';
@@ -35,6 +36,8 @@ import {
 type WorkflowAiAgentPromptTabProps = {
   action: WorkflowAiAgentAction;
   isAgentBacked: boolean;
+  // an agent step leaves the instructions, model, permissions and output to its agent
+  isReusableAgentStep: boolean;
   prompt: string;
   readonly: boolean;
   onPromptChange: (value: string) => void;
@@ -56,6 +59,7 @@ type WorkflowAiAgentPromptTabProps = {
 export const WorkflowAiAgentPromptTab = ({
   action,
   isAgentBacked,
+  isReusableAgentStep,
   prompt,
   readonly,
   onPromptChange,
@@ -187,11 +191,15 @@ export const WorkflowAiAgentPromptTab = ({
 
   return (
     <>
-      <AiModelPicker
-        modelId={selectedModelId}
-        onModelIdChange={handleModelChange}
-        disabled={readonly}
-      />
+      {isReusableAgentStep && isDefined(workflowAiAgentActionAgent) ? (
+        <WorkflowAiAgentStepAgentField agent={workflowAiAgentActionAgent} />
+      ) : (
+        <AiModelPicker
+          modelId={selectedModelId}
+          onModelIdChange={handleModelChange}
+          disabled={readonly}
+        />
+      )}
 
       {!isAgentBacked && (
         <FormTextFieldInput
@@ -219,16 +227,18 @@ export const WorkflowAiAgentPromptTab = ({
         readonly={readonly}
       />
 
-      <FormTextFieldInput
-        multiline
-        label={t`Ask for human input`}
-        placeholder={t`When should the agent stop and ask you? E.g. before sending any email or changing a deal's amount. Leave empty to never stop.`}
-        defaultValue={humanInputInstructions}
-        onChange={onHumanInputInstructionsChange}
-        readonly={readonly}
-      />
+      {isAgentBacked && (
+        <FormTextFieldInput
+          multiline
+          label={t`Ask for human input`}
+          placeholder={t`When should the agent stop and ask you? E.g. before sending any email or changing a deal's amount. Leave empty to never stop.`}
+          defaultValue={humanInputInstructions}
+          onChange={onHumanInputInstructionsChange}
+          readonly={readonly}
+        />
+      )}
 
-      {isAiChatInboxEnabled && (
+      {isAgentBacked && isAiChatInboxEnabled && (
         <>
           <FormSingleRecordPicker
             label={t`Recipient`}
@@ -253,18 +263,22 @@ export const WorkflowAiAgentPromptTab = ({
         </>
       )}
 
-      <SettingsAgentModelCapabilities
-        selectedModelId={selectedModelId}
-        modelConfiguration={selectedModelConfiguration || {}}
-        onConfigurationChange={handleModelConfigurationChange}
-        disabled={readonly}
-      />
+      {!isReusableAgentStep && (
+        <>
+          <SettingsAgentModelCapabilities
+            selectedModelId={selectedModelId}
+            modelConfiguration={selectedModelConfiguration || {}}
+            onConfigurationChange={handleModelConfigurationChange}
+            disabled={readonly}
+          />
 
-      <AgentOutputSchemaBuilder
-        fields={outputSchemaFields}
-        onChange={handleOutputSchemaChange}
-        readonly={readonly}
-      />
+          <AgentOutputSchemaBuilder
+            fields={outputSchemaFields}
+            onChange={handleOutputSchemaChange}
+            readonly={readonly}
+          />
+        </>
+      )}
     </>
   );
 };

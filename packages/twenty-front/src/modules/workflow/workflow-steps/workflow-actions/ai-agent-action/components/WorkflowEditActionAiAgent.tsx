@@ -119,11 +119,12 @@ export const WorkflowEditActionAiAgent = ({
         input: {
           ...action.settings.input,
           prompt,
-          humanInputInstructions,
-          workspaceMemberId: recipientWorkspaceMemberId,
-          conversation,
           ...(isAgentBacked
-            ? {}
+            ? {
+                humanInputInstructions,
+                workspaceMemberId: recipientWorkspaceMemberId,
+                conversation,
+              }
             : { instructions, modelId, modelConfiguration, scope }),
           ...(isDefined(responseSchema)
             ? { responseFormat: { type: 'json', schema: responseSchema } }
@@ -185,31 +186,44 @@ export const WorkflowEditActionAiAgent = ({
     saveInput();
   };
 
+  const isCurrentAgentLoaded =
+    isDefined(workflowAiAgentActionAgent) &&
+    workflowAiAgentActionAgent.id === agentId;
+
+  // a legacy step's hidden agent is a system agent, edited from the step as before
+  const isReusableAgentStep =
+    isCurrentAgentLoaded && !workflowAiAgentActionAgent.isSystem;
+
   const tabs: SingleTabProps[] = [
     {
       id: WORKFLOW_AI_AGENT_TABS.PROMPT,
       title: t`Prompt`,
       Icon: IconSparkles,
     },
-    {
-      id: WORKFLOW_AI_AGENT_TABS.PERMISSIONS,
-      title: t`Permissions`,
-      Icon: IconLock,
-    },
+    ...(isReusableAgentStep
+      ? []
+      : [
+          {
+            id: WORKFLOW_AI_AGENT_TABS.PERMISSIONS,
+            title: t`Permissions`,
+            Icon: IconLock,
+          },
+        ]),
   ];
 
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     componentInstanceId,
   );
-  const currentTabId =
-    (activeTabId as WorkflowAiAgentTabId) ?? WORKFLOW_AI_AGENT_TABS.PROMPT;
+  const currentTabId = isReusableAgentStep
+    ? WORKFLOW_AI_AGENT_TABS.PROMPT
+    : ((activeTabId as WorkflowAiAgentTabId) ?? WORKFLOW_AI_AGENT_TABS.PROMPT);
 
   const navigateSettings = useNavigateSettings();
   const agentRoleId = workflowAiAgentActionAgent?.roleId;
   const { data: roleData } = useQuery(GetRoleDocument, {
     variables: { id: agentRoleId ?? '' },
-    skip: !isAgentBacked || !isDefined(agentRoleId),
+    skip: !isAgentBacked || isReusableAgentStep || !isDefined(agentRoleId),
   });
 
   const [
@@ -218,10 +232,6 @@ export const WorkflowEditActionAiAgent = ({
   ] = useAtomState(workflowAiAgentPermissionsIsAddingPermissionState);
 
   const role = roleData?.getRole;
-
-  const isCurrentAgentLoaded =
-    isDefined(workflowAiAgentActionAgent) &&
-    workflowAiAgentActionAgent.id === agentId;
 
   const handleViewRole = () => {
     if (isDefined(role?.id)) {
@@ -292,6 +302,7 @@ export const WorkflowEditActionAiAgent = ({
             <WorkflowAiAgentPromptTab
               action={action}
               isAgentBacked={isAgentBacked}
+              isReusableAgentStep={isReusableAgentStep}
               prompt={prompt}
               readonly={actionOptions.readonly === true}
               onPromptChange={handleAgentPromptChange}
