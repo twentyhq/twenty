@@ -1,8 +1,10 @@
 import { useInstalledApplications } from '@/applications/hooks/useInstalledApplications';
+import { BUILT_IN_MCP_CLIENT_APPS } from '@/settings/app-preferences/constants/BuiltInMcpClientApps';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationsTable } from '@/settings/applications/components/SettingsApplicationsTable';
 import { useInstalledBuiltInApps } from '@/settings/applications/hooks/useInstalledBuiltInApps';
 import { useWorkspaceApplicationStatusesById } from '@/settings/applications/hooks/useWorkspaceApplicationStatusesById';
+import { filterOutBuiltInMcpClientApplications } from '@/settings/applications/utils/filterOutBuiltInMcpClientApplications';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -21,16 +23,22 @@ export const SettingsApplicationsInstalledAppsSection = () => {
   const isAppPreferencesEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
   );
+  const displayedApplications = filterOutBuiltInMcpClientApplications({
+    applications: installedApplications,
+    builtInMcpClientApps: BUILT_IN_MCP_CLIENT_APPS.filter(({ id }) =>
+      installedBuiltInApps.some((builtInApp) => builtInApp.id === id),
+    ),
+  });
   const {
     statusesById,
     error: statusError,
     refetch: refetchStatuses,
   } = useWorkspaceApplicationStatusesById({
-    applications: installedApplications,
+    applications: displayedApplications,
     shouldSkip: !isAppPreferencesEnabled,
   });
 
-  if (installedApplications.length === 0) {
+  if (displayedApplications.length === 0) {
     return null;
   }
 
@@ -49,7 +57,7 @@ export const SettingsApplicationsInstalledAppsSection = () => {
           </StyledToolbar>
         ) : undefined
       }
-      applications={installedApplications}
+      applications={displayedApplications}
       builtInApps={installedBuiltInApps}
       linkTarget="applicationDetail"
       middleColumn={isAppPreferencesEnabled ? 'status' : 'type'}

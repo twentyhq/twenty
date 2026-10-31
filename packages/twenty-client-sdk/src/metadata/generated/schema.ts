@@ -618,6 +618,7 @@ export interface ApplicationRegistrationSummary {
     id: Scalars['UUID']
     latestAvailableVersion?: Scalars['String']
     logoUrl?: Scalars['String']
+    redirectUriHostnames: Scalars['String'][]
     sourceType: ApplicationRegistrationSourceType
     __typename: 'ApplicationRegistrationSummary'
 }
@@ -4890,6 +4891,7 @@ export interface ApplicationRegistrationSummaryGenqlSelection{
     id?: boolean | number
     latestAvailableVersion?: boolean | number
     logoUrl?: boolean | number
+    redirectUriHostnames?: boolean | number
     sourceType?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number

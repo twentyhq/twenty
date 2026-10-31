@@ -1605,6 +1605,9 @@ export default {
             "logoUrl": [
                 1
             ],
+            "redirectUriHostnames": [
+                1
+            ],
             "sourceType": [
                 73
             ],

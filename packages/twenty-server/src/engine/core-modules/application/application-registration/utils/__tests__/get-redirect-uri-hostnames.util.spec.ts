@@ -1,4 +1,4 @@
-import { getRedirectUriHostnames } from 'src/engine/core-modules/application/application-authorization/utils/get-redirect-uri-hostnames.util';
+import { getRedirectUriHostnames } from 'src/engine/core-modules/application/application-registration/utils/get-redirect-uri-hostnames.util';
 
 describe('getRedirectUriHostnames', () => {
   it('returns each hostname once', () => {

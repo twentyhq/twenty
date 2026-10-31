@@ -779,6 +779,7 @@ export type ApplicationRegistrationSummary = {
   id: Scalars['UUID']['output'];
   latestAvailableVersion?: Maybe<Scalars['String']['output']>;
   logoUrl?: Maybe<Scalars['String']['output']>;
+  redirectUriHostnames: Array<Scalars['String']['output']>;
   sourceType: ApplicationRegistrationSourceType;
 };
 

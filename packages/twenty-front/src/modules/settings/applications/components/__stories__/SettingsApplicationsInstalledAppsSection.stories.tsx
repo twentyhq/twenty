@@ -13,6 +13,7 @@ import {
   FeatureFlagKey,
 } from '~/generated-metadata/graphql';
 import { SettingsApplicationsInstalledAppsSection } from '@/settings/applications/components/SettingsApplicationsInstalledAppsSection';
+import { getSettingsApplicationsTableRowLinks } from '@/settings/applications/testing/getSettingsApplicationsTableRowLinks';
 import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
@@ -41,11 +42,15 @@ const buildApplication = ({
   name,
   description,
   latestAvailableVersion,
+  sourceType = ApplicationRegistrationSourceType.NPM,
+  redirectUriHostnames = [],
 }: {
   id: string;
   name: string;
   description: string;
   latestAvailableVersion: string;
+  sourceType?: ApplicationRegistrationSourceType;
+  redirectUriHostnames?: string[];
 }) => ({
   __typename: 'Application',
   id,
@@ -59,7 +64,8 @@ const buildApplication = ({
     __typename: 'ApplicationRegistrationSummary',
     id: `${id}-registration-id`,
     latestAvailableVersion,
-    sourceType: ApplicationRegistrationSourceType.NPM,
+    sourceType,
+    redirectUriHostnames,
   },
   defaultRoleId: null,
 });
@@ -85,10 +91,40 @@ const NOTES_APPLICATION = buildApplication({
   latestAvailableVersion: '1.0.0',
 });
 
+const CLAUDE_OAUTH_APPLICATION = buildApplication({
+  id: 'claude-oauth-application-id',
+  name: 'Claude',
+  description: 'OAuth application registered as Claude',
+  latestAvailableVersion: '1.0.0',
+  sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+  redirectUriHostnames: ['claude.ai'],
+});
+
+const ZAPIER_APPLICATION = buildApplication({
+  id: 'zapier-application-id',
+  name: 'Zapier',
+  description: 'OAuth application registered as Zapier',
+  latestAvailableVersion: '1.0.0',
+  sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+  redirectUriHostnames: ['zapier.com'],
+});
+
+const BRIDGE_APPLICATION = buildApplication({
+  id: 'bridge-application-id',
+  name: 'Bridge',
+  description: 'OAuth application registered as Bridge',
+  latestAvailableVersion: '1.0.0',
+  sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+  redirectUriHostnames: ['claude.ai', 'bridge.example'],
+});
+
 const APPLICATIONS = [
   RECORDER_APPLICATION,
   ACME_APPLICATION,
   NOTES_APPLICATION,
+  CLAUDE_OAUTH_APPLICATION,
+  ZAPIER_APPLICATION,
+  BRIDGE_APPLICATION,
 ];
 
 const APPLICATIONS_FOR_STATUS = [
@@ -237,6 +273,13 @@ export const ShowsTypeAndUpdateTagWithoutAppPreferences: Story = {
     expect(canvas.queryByText('Setup incomplete')).not.toBeInTheDocument();
     expect(canvas.queryByText('Gmail and Calendar')).not.toBeInTheDocument();
     expect(findManyApplicationsForStatus).not.toHaveBeenCalled();
+    expect(getSettingsApplicationsTableRowLinks(canvasElement)).toEqual(
+      expect.arrayContaining([
+        `/settings/applications/${CLAUDE_OAUTH_APPLICATION.id}`,
+        `/settings/applications/${ZAPIER_APPLICATION.id}`,
+        `/settings/applications/${BRIDGE_APPLICATION.id}`,
+      ]),
+    );
   },
 };
 
@@ -268,6 +311,30 @@ export const ShowsStatusWithAppPreferences: Story = {
 
     expect(gmailRow).not.toHaveTextContent('Built-in');
     expect(gmailRow).not.toHaveTextContent('Setup incomplete');
+  },
+};
+
+export const HidesClaudeOAuthAppsBehindTheBuiltInClaudeRow: Story = {
+  beforeEach: () => seedInstalledTabStory({ isAppPreferencesEnabled: true }),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const acmeRow = await canvas.findByRole('link', { name: /Acme Sync/ });
+
+    expect(await within(acmeRow).findByText('Update')).toBeVisible();
+
+    const rowLinks = getSettingsApplicationsTableRowLinks(canvasElement);
+
+    expect(rowLinks).toContain('/settings/applications/claude');
+    expect(rowLinks).not.toContain(
+      `/settings/applications/${CLAUDE_OAUTH_APPLICATION.id}`,
+    );
+    expect(rowLinks).toEqual(
+      expect.arrayContaining([
+        `/settings/applications/${ZAPIER_APPLICATION.id}`,
+        `/settings/applications/${BRIDGE_APPLICATION.id}`,
+      ]),
+    );
   },
 };
 

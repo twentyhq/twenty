@@ -22,4 +22,7 @@ export class ApplicationRegistrationSummaryDTO {
   @IsString()
   @Field(() => String, { nullable: true })
   logoUrl?: string | null;
+
+  @Field(() => [String])
+  redirectUriHostnames: string[];
 }

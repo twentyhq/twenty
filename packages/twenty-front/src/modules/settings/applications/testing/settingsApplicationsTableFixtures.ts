@@ -17,6 +17,7 @@ export const NPM_APPLICATION: SettingsApplicationsTableApplication = {
   applicationRegistration: {
     id: 'npm-registration-id',
     sourceType: ApplicationRegistrationSourceType.NPM,
+    redirectUriHostnames: [],
   },
 };
 
@@ -28,6 +29,7 @@ export const TARBALL_APPLICATION: SettingsApplicationsTableApplication = {
   applicationRegistration: {
     id: 'tarball-registration-id',
     sourceType: ApplicationRegistrationSourceType.TARBALL,
+    redirectUriHostnames: [],
   },
 };
 
@@ -38,5 +40,6 @@ export const OAUTH_ONLY_APPLICATION: SettingsApplicationsTableApplication = {
   applicationRegistration: {
     id: 'oauth-registration-id',
     sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+    redirectUriHostnames: ['zapier.com'],
   },
 };

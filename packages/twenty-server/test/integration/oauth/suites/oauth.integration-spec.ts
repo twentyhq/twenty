@@ -1123,6 +1123,7 @@ describe('OAuth (integration)', () => {
             applicationId
             applicationName
             scopes
+            redirectUriHostnames
           }
         }
       `,
@@ -1176,6 +1177,7 @@ describe('OAuth (integration)', () => {
       expect(authorization).toBeDefined();
       expect(authorization.applicationName).toBe(testRegistration.name);
       expect(authorization.scopes).toEqual(['read']);
+      expect(authorization.redirectUriHostnames).toEqual(['example.com']);
     });
 
     it('should stop the refresh token being redeemed when revoked from the list', async () => {

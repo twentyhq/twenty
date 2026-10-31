@@ -4,6 +4,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSummaryDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-summary.dto';
+import { getRedirectUriHostnames } from 'src/engine/core-modules/application/application-registration/utils/get-redirect-uri-hostnames.util';
 
 @MetadataResolver(() => ApplicationRegistrationSummaryDTO)
 export class ApplicationRegistrationSummaryResolver {
@@ -18,5 +19,13 @@ export class ApplicationRegistrationSummaryResolver {
     return this.applicationRegistrationAssetUrlService.buildLogoUrl(
       registration,
     );
+  }
+
+  @ResolveField(() => [String])
+  redirectUriHostnames(
+    @Parent()
+    registration: Pick<ApplicationRegistrationEntity, 'oAuthRedirectUris'>,
+  ): string[] {
+    return getRedirectUriHostnames(registration.oAuthRedirectUris);
   }
 }

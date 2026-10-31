@@ -709,6 +709,7 @@ type ApplicationRegistrationSummary {
   id: UUID!
   latestAvailableVersion: String
   logoUrl: String
+  redirectUriHostnames: [String!]!
   sourceType: ApplicationRegistrationSourceType!
 }
 

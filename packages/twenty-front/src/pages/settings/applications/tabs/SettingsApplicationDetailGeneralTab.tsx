@@ -11,6 +11,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/components/layout';
 import {
   type Application,
+  type ApplicationRegistrationSummary,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -28,9 +29,13 @@ type SettingsApplicationDetailGeneralTabProps = {
     | 'autoUpgrade'
     | 'canBeUninstalled'
     | 'isUninstallBlockedByOtherWorkspaceInstallations'
-    | 'applicationRegistration'
     | 'logicFunctions'
-  >;
+  > & {
+    applicationRegistration?: Pick<
+      ApplicationRegistrationSummary,
+      'sourceType'
+    > | null;
+  };
   displayName: string;
   description?: string;
   coverImageUrl?: string;
