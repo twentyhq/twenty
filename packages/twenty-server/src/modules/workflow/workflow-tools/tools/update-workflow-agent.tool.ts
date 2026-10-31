@@ -8,6 +8,7 @@ import { z } from 'zod';
 
 import { type AgentResponseFormat } from 'src/engine/metadata-modules/ai/ai-agent/types/agent-response-format.type';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
+import { findStepOwnedAgent } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/find-step-owned-agent.util';
 import { type WorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import {
   type WorkflowToolContext,
@@ -25,9 +26,7 @@ const updateAgentSchema = z.object({
     .string()
     .uuid()
     .optional()
-    .describe(
-      'The ID of the agent to update, for a step that runs an agent (its settings.input.agentId)',
-    ),
+    .describe('The ID of the agent a step runs (its settings.input.agentId)'),
   prompt: z
     .string()
     .optional()
@@ -164,7 +163,7 @@ export const createUpdateWorkflowAgentTool = (
   name: 'update_workflow_agent' as const,
   description: `Configure a workflow AI_AGENT step: its system prompt, the model it uses, and the format of its output.
 
-Pass stepId for a draft step that runs no agent (no settings.input.agentId): the step itself holds this config. Pass agentId for a step that runs an agent: the prompt and model go to that agent, the response format to the draft steps using it.
+Pass stepId for a draft step that runs no agent (no settings.input.agentId): the step itself holds this config. Pass agentId for a step that runs an agent: the response format goes to the draft steps using it. A reusable agent's prompt and model cannot be changed here; they are edited on the agent itself.
 
 - prompt: the system prompt (role, behavior and task).
 - modelId: optional model id; omit to keep the auto-selected model.
@@ -226,6 +225,26 @@ Pass stepId for a draft step that runs no agent (no settings.input.agentId): the
       }
 
       if (isDefined(prompt) || isDefined(modelId)) {
+        const stepOwnedAgent = await findStepOwnedAgent({
+          agentService: deps.agentService,
+          agentId,
+          workspaceId,
+        });
+
+        if (!isDefined(stepOwnedAgent)) {
+          const reusableAgent = await deps.agentService.findOneAgentById({
+            id: agentId,
+            workspaceId,
+          });
+
+          return {
+            success: false,
+            error: 'The step runs a reusable agent',
+            message: `The instructions and model belong to agent "${reusableAgent.label}", which other workflows may use. They must be edited on the agent, not on the step.`,
+            agentId,
+          };
+        }
+
         await deps.agentService.updateOneAgent({
           input: {
             id: agentId,

@@ -153,6 +153,7 @@ describe('SidePanelWorkflowSelectAction', () => {
     expect(onActionSelected).toHaveBeenCalledWith({
       type: 'AI_AGENT',
       defaultSettings: { input: { agentId: 'lead-scorer' } },
+      defaultName: 'Lead scorer',
     });
   });
 });

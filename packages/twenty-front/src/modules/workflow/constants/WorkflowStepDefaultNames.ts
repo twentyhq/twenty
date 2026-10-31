@@ -2,6 +2,7 @@ import {
   type WorkflowActionType,
   type WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
+import { WORKFLOW_AI_AGENT_GENERATE_STEP_DEFAULT_NAME } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentGenerateStepDefaultName';
 import { AI_AGENT_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/AiAgentAction';
 import { CODE_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/CodeAction';
 import { CREATE_CALENDAR_EVENT_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/CreateCalendarEventAction';
@@ -106,7 +107,7 @@ export const WORKFLOW_STEP_DEFAULT_NAMES: Array<{
   },
   {
     type: 'AI_AGENT',
-    name: 'Generate',
+    name: WORKFLOW_AI_AGENT_GENERATE_STEP_DEFAULT_NAME,
     label: AI_AGENT_ACTION.defaultLabel,
   },
   {

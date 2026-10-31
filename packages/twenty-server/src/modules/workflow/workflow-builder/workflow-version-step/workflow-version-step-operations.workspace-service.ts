@@ -8,7 +8,7 @@ import {
   StepLogicalOperator,
   ViewFilterOperand,
 } from 'twenty-shared/types';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { isDefined, isPlainObject, isValidUuid } from 'twenty-shared/utils';
 import {
   IF_ELSE_BRANCH_POSITION_OFFSETS,
   WORKFLOW_ACTION_FEATURE_FLAGS,
@@ -25,10 +25,6 @@ import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
-import {
-  AiException,
-  AiExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import {
   LogicFunctionException,
@@ -50,6 +46,7 @@ import {
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
+import { findStepOwnedAgent } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/find-step-owned-agent.util';
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
 import { type BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
@@ -127,7 +124,8 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         break;
       }
       case WorkflowActionType.AI_AGENT: {
-        const stepAgent = await this.findStepOwnedAgent({
+        const stepAgent = await findStepOwnedAgent({
+          agentService: this.agentService,
           agentId: step.settings.input.agentId,
           workspaceId,
         });
@@ -565,9 +563,10 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
-        const defaultAgentId = (
-          defaultSettings?.input as { agentId?: string } | undefined
-        )?.agentId;
+        const defaultAgentInput = defaultSettings?.input;
+        const defaultAgentId = isPlainObject(defaultAgentInput)
+          ? defaultAgentInput.agentId
+          : undefined;
 
         if (isNonEmptyString(defaultAgentId)) {
           const agent = await this.agentService.findOneAgentById({
@@ -954,7 +953,8 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           nextStepIds: [],
           position: duplicatedStepPosition,
         };
-        const stepAgent = await this.findStepOwnedAgent({
+        const stepAgent = await findStepOwnedAgent({
+          agentService: this.agentService,
           agentId: step.settings.input.agentId,
           workspaceId,
         });
@@ -1129,7 +1129,8 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
-        const stepAgent = await this.findStepOwnedAgent({
+        const stepAgent = await findStepOwnedAgent({
+          agentService: this.agentService,
           agentId: step.settings.input.agentId,
           workspaceId,
         });
@@ -1172,34 +1173,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         return step;
       }
     }
-  }
-
-  // only a legacy step's hidden agent is the step's to copy or delete, never a reusable agent it runs
-  private async findStepOwnedAgent({
-    agentId,
-    workspaceId,
-  }: {
-    agentId: string | undefined;
-    workspaceId: string;
-  }) {
-    if (!isNonEmptyString(agentId)) {
-      return null;
-    }
-
-    const agent = await this.agentService
-      .findOneAgentById({ id: agentId, workspaceId })
-      .catch((error) => {
-        if (
-          error instanceof AiException &&
-          error.code === AiExceptionCode.AGENT_NOT_FOUND
-        ) {
-          return null;
-        }
-
-        throw error;
-      });
-
-    return isDefined(agent) && agent.isSystem ? agent : null;
   }
 
   private async duplicateAgent({

@@ -215,9 +215,10 @@ export const WorkflowEditActionAiAgent = ({
     activeTabIdComponentState,
     componentInstanceId,
   );
-  const currentTabId = isReusableAgentStep
-    ? WORKFLOW_AI_AGENT_TABS.PROMPT
-    : ((activeTabId as WorkflowAiAgentTabId) ?? WORKFLOW_AI_AGENT_TABS.PROMPT);
+  const currentTabId: WorkflowAiAgentTabId =
+    !isReusableAgentStep && activeTabId === WORKFLOW_AI_AGENT_TABS.PERMISSIONS
+      ? WORKFLOW_AI_AGENT_TABS.PERMISSIONS
+      : WORKFLOW_AI_AGENT_TABS.PROMPT;
 
   const navigateSettings = useNavigateSettings();
   const agentRoleId = workflowAiAgentActionAgent?.roleId;

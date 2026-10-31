@@ -13,11 +13,18 @@ const buildAiAgentStep = (agentId: string, stepId = 'step-1') => ({
 
 const buildTool = ({
   draftCoreVersions = [],
+  isStepOwnedAgent = true,
 }: {
   draftCoreVersions?: { id: string; steps: unknown[] | null }[];
+  isStepOwnedAgent?: boolean;
 } = {}) => {
   const agentService = {
     updateOneAgent: jest.fn().mockResolvedValue({ id: AGENT_ID }),
+    findOneAgentById: jest.fn().mockResolvedValue({
+      id: AGENT_ID,
+      label: 'Lead qualifier',
+      isSystem: isStepOwnedAgent,
+    }),
   };
   const coreWorkflowVersionMutationService = {
     updateStep: jest.fn().mockResolvedValue(undefined),
@@ -220,7 +227,7 @@ describe('createUpdateWorkflowAgentTool', () => {
     });
   });
 
-  it("should update the agent of a step that runs one, found by the step's id", async () => {
+  it("should update the hidden agent of a legacy step, found by the step's id", async () => {
     const step = buildAiAgentStep(AGENT_ID, 'agent-step');
     const { tool, agentService } = buildTool({
       draftCoreVersions: [{ id: 'core-version-1', steps: [step] }],
@@ -236,6 +243,60 @@ describe('createUpdateWorkflowAgentTool', () => {
       input: { id: AGENT_ID, prompt: 'You qualify leads.' },
       workspaceId: WORKSPACE_ID,
     });
+  });
+
+  it('should refuse to change the prompt of a reusable agent run by a step', async () => {
+    const step = buildAiAgentStep(AGENT_ID, 'agent-step');
+    const { tool, agentService, coreWorkflowVersionMutationService } =
+      buildTool({
+        draftCoreVersions: [{ id: 'core-version-1', steps: [step] }],
+        isStepOwnedAgent: false,
+      });
+
+    const result = (await tool.execute({
+      stepId: 'agent-step',
+      prompt: 'You qualify leads.',
+      responseFormat: { type: 'text' },
+    } as never)) as Record<string, unknown>;
+
+    expect(result.success).toBe(false);
+    expect(result.message).toContain('agent "Lead qualifier"');
+    expect(agentService.updateOneAgent).not.toHaveBeenCalled();
+    expect(
+      coreWorkflowVersionMutationService.updateStep,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('should refuse to change the model of a reusable agent passed by id', async () => {
+    const { tool, agentService } = buildTool({ isStepOwnedAgent: false });
+
+    const result = (await tool.execute({
+      agentId: AGENT_ID,
+      modelId: 'model-id',
+    } as never)) as Record<string, unknown>;
+
+    expect(result.success).toBe(false);
+    expect(agentService.updateOneAgent).not.toHaveBeenCalled();
+  });
+
+  it('should still set the response format of steps running a reusable agent', async () => {
+    const step = buildAiAgentStep(AGENT_ID);
+    const { tool, agentService, coreWorkflowVersionMutationService } =
+      buildTool({
+        draftCoreVersions: [{ id: 'core-version-1', steps: [step] }],
+        isStepOwnedAgent: false,
+      });
+
+    const result = (await tool.execute({
+      agentId: AGENT_ID,
+      responseFormat: { type: 'text' },
+    } as never)) as Record<string, unknown>;
+
+    expect(result.success).toBe(true);
+    expect(agentService.updateOneAgent).not.toHaveBeenCalled();
+    expect(coreWorkflowVersionMutationService.updateStep).toHaveBeenCalledTimes(
+      1,
+    );
   });
 
   it('should report a step it cannot find', async () => {
