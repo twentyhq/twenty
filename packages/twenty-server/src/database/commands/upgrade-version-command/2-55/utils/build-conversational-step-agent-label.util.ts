@@ -1,4 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 // what the step builder named its hidden agents, with a suffix per clone
 const GENERATED_STEP_AGENT_LABEL_PATTERN = /^Workflow Agent( \S{4})*$/;
@@ -25,5 +26,5 @@ export const buildConversationalStepAgentLabel = ({
     (part): part is string => isNonEmptyString(part),
   );
 
-  return labelParts.length > 0 ? labelParts.join(' · ') : currentLabel;
+  return isNonEmptyArray(labelParts) ? labelParts.join(' · ') : currentLabel;
 };
