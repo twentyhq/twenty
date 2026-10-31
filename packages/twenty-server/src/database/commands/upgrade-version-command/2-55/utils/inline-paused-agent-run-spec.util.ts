@@ -7,7 +7,7 @@ import {
 export type StoredRunSpec = {
   agentId?: unknown;
   title?: unknown;
-  capabilities?: { canAskHumans?: unknown };
+  capabilities?: { canAskHumans?: boolean };
 } & Record<string, unknown>;
 
 // a paused step continues from its wake-up's run spec, not from its rewritten settings
@@ -27,7 +27,7 @@ export const inlinePausedAgentRunSpec = ({
   | { isConversational: true }
   | { isConversational: false; runSpec: StoredRunSpec } => {
   // only a step with human input can ask humans, so the spec alone marks it conversational
-  if (isOnConversationalStep || runSpec.capabilities?.canAskHumans === true) {
+  if (isOnConversationalStep || runSpec.capabilities?.canAskHumans) {
     return { isConversational: true };
   }
 
