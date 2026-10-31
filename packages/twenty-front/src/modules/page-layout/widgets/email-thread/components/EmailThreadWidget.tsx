@@ -34,9 +34,14 @@ export const EmailThreadWidget = ({
   const targetRecord = useTargetRecord();
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
 
-  const { thread, messages, fetchMoreMessages, threadLoading } = useEmailThread(
-    targetRecord.id,
-  );
+  const {
+    thread,
+    messages,
+    fetchMoreMessages,
+    refetchMessages,
+    threadLoading,
+    lastMessageChannelId,
+  } = useEmailThread(targetRecord.id);
 
   const replyContext = useReplyContext(targetRecord.id);
 
@@ -125,7 +130,14 @@ export const EmailThreadWidget = ({
   }
 
   if (isAppMessageHeaderMessageId(lastMessage.headerMessageId)) {
-    return <ChatThreadWidgetContent messages={messages} />;
+    return (
+      <ChatThreadWidgetContent
+        messageThreadId={thread.id}
+        messages={messages}
+        messageChannelId={lastMessageChannelId}
+        onMessageSent={refetchMessages}
+      />
+    );
   }
 
   return (

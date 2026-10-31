@@ -45,6 +45,7 @@ export const useEmailThread = (threadId: string | null) => {
     loading: messagesLoading,
     fetchMoreRecords,
     hasNextPage,
+    refetch: refetchMessages,
   } = useFindManyRecords<EmailThreadMessage>({
     limit: FETCH_ALL_MESSAGES_OPERATION_SIGNATURE.variables.limit,
     filter: FETCH_ALL_MESSAGES_OPERATION_SIGNATURE.variables.filter,
@@ -163,6 +164,8 @@ export const useEmailThread = (threadId: string | null) => {
     threadLoading: threadRecordLoading || messagesLoading,
     messageChannelLoading,
     lastMessageExternalId,
+    lastMessageChannelId,
     fetchMoreMessages,
+    refetchMessages,
   };
 };
