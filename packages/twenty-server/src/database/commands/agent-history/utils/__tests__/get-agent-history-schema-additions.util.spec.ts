@@ -1,4 +1,5 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
 
 import { getAgentHistorySchemaAdditions } from 'src/database/commands/agent-history/utils/get-agent-history-schema-additions.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -222,6 +223,7 @@ describe('getAgentHistorySchemaAdditions', () => {
       objects: [],
       fields: [],
       indexes: [],
+      protectedFieldUniversalIdentifiers: [],
     });
   });
 
@@ -238,6 +240,29 @@ describe('getAgentHistorySchemaAdditions', () => {
     expect(additions.objects).toEqual([]);
     expect(additions.fields.length).toBeGreaterThan(0);
     expect(additions.indexes.length).toBeGreaterThan(0);
+  });
+
+  it.each([
+    {
+      readability: MetadataReadability.OPEN,
+      writability: MetadataWritability.SYSTEM,
+    },
+    {
+      readability: MetadataReadability.SYSTEM,
+      writability: MetadataWritability.OPEN,
+    },
+  ])('rejects legacy protection drift: %o', (legacyObjectAccess) => {
+    const standard = createStandardMetadata();
+    expect(() =>
+      getAgentHistorySchemaAdditions({
+        existing: createStandardMetadata(),
+        standard,
+        legacyObjectAccessByUniversalIdentifier: {
+          [STANDARD_OBJECTS.agentChatThread.universalIdentifier]:
+            legacyObjectAccess,
+        },
+      }),
+    ).toThrow('protections have drifted');
   });
 
   it.each([

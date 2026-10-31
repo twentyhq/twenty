@@ -23,12 +23,13 @@ const CHAT_THREAD_WORKFLOW_RUN_INDEX_UNIVERSAL_IDENTIFIER =
   'cc9f8c37-a1ad-4d8d-8e27-894c2cf01a3b';
 
 // A conversation an agent step held now belongs to the member it was routed
-// to, as every other conversation does, rather than to its run.
+// to, as every other conversation does, rather than to its run, and threads
+// read only through their own grants again.
 @RegisteredWorkspaceCommand('2.46.0', 1791208395308)
 @Command({
   name: 'upgrade:2-46:drop-workflow-run-from-chat-threads',
   description:
-    'Stop linking chat threads to workflow runs by dropping the run link',
+    'Stop linking chat threads to workflow runs: threads become PRIVATE and the run link is dropped',
 })
 export class DropWorkflowRunFromChatThreadsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -44,7 +45,11 @@ export class DropWorkflowRunFromChatThreadsCommand extends ProvisionedWorkspaceC
     await this.up(args);
   }
 
-  async up({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
+  async up({
+    workspaceId,
+    dataSource,
+    options,
+  }: RunOnWorkspaceArgs): Promise<void> {
     const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
@@ -83,7 +88,29 @@ export class DropWorkflowRunFromChatThreadsCommand extends ProvisionedWorkspaceC
           CHAT_THREAD_WORKFLOW_RUN_INDEX_UNIVERSAL_IDENTIFIER,
       }),
     ].filter(isDefined);
-    if (fieldsToDelete.length === 0 && indexesToDelete.length === 0) {
+    // Legacy column, still read by later upgrades
+    const [legacyThreadAccess]: {
+      readability: string;
+      readabilityParentFieldUniversalIdentifiers: string[] | null;
+    }[] = isDefined(dataSource)
+      ? await dataSource.query(
+          `SELECT readability, "readabilityParentFieldUniversalIdentifiers" FROM core."objectMetadata"
+            WHERE "workspaceId" = $1 AND id = $2`,
+          [workspaceId, threadObject.id],
+        )
+      : [];
+    const isPrivate =
+      !isDefined(legacyThreadAccess) ||
+      (legacyThreadAccess.readability === 'PRIVATE' &&
+        !isDefined(
+          legacyThreadAccess.readabilityParentFieldUniversalIdentifiers,
+        ));
+
+    if (
+      isPrivate &&
+      fieldsToDelete.length === 0 &&
+      indexesToDelete.length === 0
+    ) {
       this.logger.log(
         `Chat threads are not linked to workflow runs in workspace ${workspaceId}, skipping`,
       );
@@ -93,7 +120,7 @@ export class DropWorkflowRunFromChatThreadsCommand extends ProvisionedWorkspaceC
 
     if (options.dryRun ?? false) {
       this.logger.log(
-        `[DRY RUN] Would drop ${fieldsToDelete.length} field(s) and ${indexesToDelete.length} index(es) for workspace ${workspaceId}`,
+        `[DRY RUN] Would make chat threads PRIVATE and drop ${fieldsToDelete.length} field(s) and ${indexesToDelete.length} index(es) for workspace ${workspaceId}`,
       );
 
       return;
@@ -106,25 +133,37 @@ export class DropWorkflowRunFromChatThreadsCommand extends ProvisionedWorkspaceC
     const applicationUniversalIdentifier =
       twentyStandardFlatApplication.universalIdentifier;
 
-    await this.runMigration({
-      workspaceId,
-      applicationUniversalIdentifier,
-      allFlatEntityOperationByMetadataName: {
-        index: {
-          flatEntityToCreate: [],
-          flatEntityToDelete: indexesToDelete,
-          flatEntityToUpdate: [],
+    // Readability names the parent field, so it lets go of it before the field goes
+    if (!isPrivate) {
+      await dataSource?.query(
+        `UPDATE core."objectMetadata"
+          SET readability = 'PRIVATE', "readabilityParentFieldUniversalIdentifiers" = NULL
+          WHERE "workspaceId" = $1 AND id = $2`,
+        [workspaceId, threadObject.id],
+      );
+    }
+
+    if (fieldsToDelete.length + indexesToDelete.length > 0) {
+      await this.runMigration({
+        workspaceId,
+        applicationUniversalIdentifier,
+        allFlatEntityOperationByMetadataName: {
+          index: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: indexesToDelete,
+            flatEntityToUpdate: [],
+          },
+          fieldMetadata: {
+            flatEntityToCreate: [],
+            flatEntityToDelete: fieldsToDelete,
+            flatEntityToUpdate: [],
+          },
         },
-        fieldMetadata: {
-          flatEntityToCreate: [],
-          flatEntityToDelete: fieldsToDelete,
-          flatEntityToUpdate: [],
-        },
-      },
-    });
+      });
+    }
 
     this.logger.log(
-      `Workspace ${workspaceId}: dropped the chat thread workflow run link`,
+      `Workspace ${workspaceId}: made chat threads PRIVATE and dropped their workflow run link`,
     );
   }
 

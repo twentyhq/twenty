@@ -1,6 +1,14 @@
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
-import { getAgentHistorySchemaAdditions } from 'src/database/commands/agent-history/utils/get-agent-history-schema-additions.util';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { DataSource } from 'typeorm';
+
+import { ACTIVE_AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
+import {
+  getAgentHistorySchemaAdditions,
+  type LegacyObjectAccess,
+} from 'src/database/commands/agent-history/utils/get-agent-history-schema-additions.util';
 import { getLegacyAgentHistoryFlatFieldMetadatas } from 'src/database/commands/agent-history/utils/get-legacy-agent-history-flat-field-metadatas.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
@@ -14,6 +22,8 @@ export class AgentHistorySchemaService {
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly migrations: WorkspaceMigrationValidateBuildAndRunService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {}
 
   async prepare(workspaceId: string, dryRun: boolean): Promise<void> {
@@ -39,22 +49,39 @@ export class AgentHistorySchemaService {
       workspaceId,
       twentyStandardApplicationId: twentyStandardFlatApplication.id,
     });
-    const { objects, fields, indexes } = getAgentHistorySchemaAdditions({
-      existing,
-      standard: {
-        ...standard,
-        flatFieldMetadataMaps: getLegacyAgentHistoryFlatFieldMetadatas({
-          standard,
-        }).reduce(
-          (maps, flatEntity) =>
-            addFlatEntityToFlatEntityMapsOrThrow({
-              flatEntityMaps: maps,
-              flatEntity,
-            }),
-          standard.flatFieldMetadataMaps,
+    const historyObjectUniversalIdentifiers = ACTIVE_AGENT_HISTORY_TABLES.map(
+      ({ name }) => STANDARD_OBJECTS[name].universalIdentifier,
+    );
+    const legacyObjectAccesses = await this.coreDataSource.query<
+      (LegacyObjectAccess & { universalIdentifier: string })[]
+    >(
+      `SELECT "universalIdentifier", readability, writability FROM core."objectMetadata"
+        WHERE "workspaceId" = $1 AND "universalIdentifier" = ANY($2)`,
+      [workspaceId, historyObjectUniversalIdentifiers],
+    );
+    const { objects, fields, indexes, protectedFieldUniversalIdentifiers } =
+      getAgentHistorySchemaAdditions({
+        existing,
+        legacyObjectAccessByUniversalIdentifier: Object.fromEntries(
+          legacyObjectAccesses.map(({ universalIdentifier, ...access }) => [
+            universalIdentifier,
+            access,
+          ]),
         ),
-      },
-    });
+        standard: {
+          ...standard,
+          flatFieldMetadataMaps: getLegacyAgentHistoryFlatFieldMetadatas({
+            standard,
+          }).reduce(
+            (maps, flatEntity) =>
+              addFlatEntityToFlatEntityMapsOrThrow({
+                flatEntityMaps: maps,
+                flatEntity,
+              }),
+            standard.flatFieldMetadataMaps,
+          ),
+        },
+      });
     if (objects.length + fields.length + indexes.length === 0) {
       return;
     }
@@ -116,5 +143,22 @@ export class AgentHistorySchemaService {
         `Agent history schema validation failed: ${JSON.stringify(result)}`,
       );
     }
+    if (dryRun) {
+      return;
+    }
+    // Stays protected until the sharing upgrade, which reads these legacy columns
+    await this.coreDataSource.query(
+      `UPDATE core."objectMetadata" SET readability = 'SYSTEM', writability = 'SYSTEM'
+        WHERE "workspaceId" = $1 AND "universalIdentifier" = ANY($2)`,
+      [
+        workspaceId,
+        objects.map(({ universalIdentifier }) => universalIdentifier),
+      ],
+    );
+    await this.coreDataSource.query(
+      `UPDATE core."fieldMetadata" SET writability = 'SYSTEM'
+        WHERE "workspaceId" = $1 AND "universalIdentifier" = ANY($2)`,
+      [workspaceId, protectedFieldUniversalIdentifiers],
+    );
   }
 }

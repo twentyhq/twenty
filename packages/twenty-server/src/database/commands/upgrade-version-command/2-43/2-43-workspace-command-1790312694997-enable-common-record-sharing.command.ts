@@ -38,7 +38,8 @@ export class EnableCommonRecordSharingCommand extends ProvisionedWorkspaceComman
   }
 
   async down(_args: RunOnWorkspaceArgs): Promise<void> {
-    // Ownership grants stay so a rollback cannot widen access to conversations.
+    // Restoring SYSTEM would reactivate legacy open access for private records.
+    // Compatible application rollbacks must retain the activated metadata.
   }
 
   async up({ workspaceId, options }: RunOnWorkspaceArgs): Promise<void> {
@@ -116,5 +117,17 @@ export class EnableCommonRecordSharingCommand extends ProvisionedWorkspaceComman
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'rolesPermissions',
     ]);
+    // Nothing reads these legacy columns at runtime, but later upgrades still
+    // turn SYSTEM into disabled actions, which would lock existing chats away
+    await this.dataSource.query(
+      `UPDATE core."objectMetadata" SET readability = 'PRIVATE', writability = 'OPEN'
+        WHERE "workspaceId" = $1 AND id = $2`,
+      [workspaceId, thread.id],
+    );
+    await this.dataSource.query(
+      `UPDATE core."fieldMetadata" SET writability = 'OPEN'
+        WHERE "workspaceId" = $1 AND id = $2`,
+      [workspaceId, title.id],
+    );
   }
 }

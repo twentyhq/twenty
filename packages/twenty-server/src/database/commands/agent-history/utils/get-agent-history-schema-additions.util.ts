@@ -1,4 +1,5 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { ACTIVE_AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
@@ -9,12 +10,37 @@ type AgentHistorySchemaMaps = Pick<
   'flatObjectMetadataMaps' | 'flatFieldMetadataMaps' | 'flatIndexMaps'
 >;
 
+export type LegacyObjectAccess = {
+  readability: MetadataReadability;
+  writability: MetadataWritability;
+};
+
+const hasValidLegacyProtection = ({
+  identifier,
+  legacyObjectAccess,
+}: {
+  identifier: string;
+  legacyObjectAccess: LegacyObjectAccess | undefined;
+}): boolean =>
+  !isDefined(legacyObjectAccess) ||
+  (legacyObjectAccess.readability === MetadataReadability.SYSTEM &&
+    legacyObjectAccess.writability === MetadataWritability.SYSTEM) ||
+  (identifier === STANDARD_OBJECTS.agentChatThread.universalIdentifier &&
+    // INHERITED once threads can belong to a workflow run; a thread without one reads through its own grants
+    (legacyObjectAccess.readability === MetadataReadability.PRIVATE ||
+      legacyObjectAccess.readability === MetadataReadability.INHERITED) &&
+    legacyObjectAccess.writability === MetadataWritability.OPEN);
+
 export const getAgentHistorySchemaAdditions = ({
   existing,
   standard,
+  legacyObjectAccessByUniversalIdentifier = {},
 }: {
   existing: AgentHistorySchemaMaps;
   standard: AgentHistorySchemaMaps;
+  legacyObjectAccessByUniversalIdentifier?: Partial<
+    Record<string, LegacyObjectAccess>
+  >;
 }) => {
   const objectIdentifiers = new Set<string>(
     ACTIVE_AGENT_HISTORY_TABLES.map(
@@ -29,6 +55,11 @@ export const getAgentHistorySchemaAdditions = ({
     if (
       isDefined(current) &&
       (current.nameSingular !== expected?.nameSingular ||
+        !hasValidLegacyProtection({
+          identifier,
+          legacyObjectAccess:
+            legacyObjectAccessByUniversalIdentifier[identifier],
+        }) ||
         current.isSearchable ||
         current.isAuditLogged)
     ) {
@@ -104,5 +135,10 @@ export const getAgentHistorySchemaAdditions = ({
           ],
         ),
     );
-  return { objects, fields, indexes };
+  const protectedFieldUniversalIdentifiers = fields
+    .filter((field) =>
+      objectIdentifiers.has(field.objectMetadataUniversalIdentifier),
+    )
+    .map(({ universalIdentifier }) => universalIdentifier);
+  return { objects, fields, indexes, protectedFieldUniversalIdentifiers };
 };
