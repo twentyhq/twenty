@@ -2,7 +2,7 @@ import {
   type AiRunEvent,
   type AiRunEventsInput,
 } from 'twenty-shared/application';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AI_RUN_EVENT_FIELDS } from '@/sdk/logic-function/ai/ai-run-event-fields.constant';
 import { getApplicationApiConfigOrThrow } from '@/sdk/logic-function/utils/get-application-api-config-or-throw.util';
@@ -94,7 +94,8 @@ export async function* streamRun({
           return;
         }
 
-        if (isNonEmptyArray(result?.errors)) {
+        // GraphQL omits errors when there are none; isNonEmptyArray would inline twenty-shared's utils chunk into every logic function
+        if (isDefined(result?.errors)) {
           throw new Error(
             `streamRun() failed: ${result.errors.map((error) => error.message).join(', ')}`,
           );
