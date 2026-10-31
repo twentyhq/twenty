@@ -273,7 +273,6 @@ describe('computeObjectsPermissionsForRolePermissionConfig', () => {
           objectsPermissions: isDefined(scopeObjectPermissions)
             ? { [INVOICE_ID]: scopeObjectPermissions }
             : {},
-          grantedPermissionFlags: [],
         },
         rolesPermissions: rolesPermissionsWithPredicate,
         flatObjectMetadataMaps,
