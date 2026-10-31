@@ -3,9 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString, isNumber } from '@sniptt/guards';
 import {
+  isReservedSettingsMenuItemSlug,
   isReservedSettingsMenuItemTitle,
   isSettingsMenuItemScope,
-  type SettingsMenuItemScope,
+  isValidSettingsMenuItemSlug,
+  SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH,
 } from 'twenty-shared/application';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
@@ -13,46 +15,92 @@ import { isDefined } from 'twenty-shared/utils';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { SettingsMenuItemExceptionCode } from 'src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
-import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
+import { type UniversalFlatSettingsMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-settings-menu-item.type';
+import {
+  type FailedFlatEntityValidation,
+  type FlatEntityValidationError,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityCreationValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-creation-validation-args.type';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
-type SettingsMenuItemPositionCollisionArgs = {
+type SiblingSettingsMenuItemCollisionArgs = {
   universalIdentifier: string;
   applicationUniversalIdentifier: string;
-  scope: SettingsMenuItemScope;
-  position: number;
-  flatSettingsMenuItemMapsToSearch: MetadataUniversalFlatEntityMaps<'settingsMenuItem'>[];
+  flatSettingsMenuItemMaps: MetadataUniversalFlatEntityMaps<'settingsMenuItem'>;
   universalIdentifiersToIgnore: string[];
+  isColliding: (
+    siblingSettingsMenuItem: UniversalFlatSettingsMenuItem,
+  ) => boolean;
 };
 
-// Two menu items of the same application sharing a position in the same scope would
-// render in an order the manifest does not determine, so the sync refuses it
-// rather than picking a winner.
-const hasSettingsMenuItemPositionCollision = ({
+const hasSiblingSettingsMenuItemCollision = ({
   universalIdentifier,
   applicationUniversalIdentifier,
-  scope,
-  position,
-  flatSettingsMenuItemMapsToSearch,
+  flatSettingsMenuItemMaps,
   universalIdentifiersToIgnore,
-}: SettingsMenuItemPositionCollisionArgs): boolean =>
-  flatSettingsMenuItemMapsToSearch.some((flatSettingsMenuItemMaps) =>
-    Object.values(flatSettingsMenuItemMaps.byUniversalIdentifier).some(
-      (existingSettingsMenuItem) =>
-        isDefined(existingSettingsMenuItem) &&
-        existingSettingsMenuItem.universalIdentifier !== universalIdentifier &&
-        !universalIdentifiersToIgnore.includes(
-          existingSettingsMenuItem.universalIdentifier,
-        ) &&
-        existingSettingsMenuItem.applicationUniversalIdentifier ===
-          applicationUniversalIdentifier &&
-        existingSettingsMenuItem.scope === scope &&
-        existingSettingsMenuItem.position === position,
-    ),
+  isColliding,
+}: SiblingSettingsMenuItemCollisionArgs): boolean =>
+  Object.values(flatSettingsMenuItemMaps.byUniversalIdentifier).some(
+    (existingSettingsMenuItem) =>
+      isDefined(existingSettingsMenuItem) &&
+      existingSettingsMenuItem.universalIdentifier !== universalIdentifier &&
+      !universalIdentifiersToIgnore.includes(
+        existingSettingsMenuItem.universalIdentifier,
+      ) &&
+      existingSettingsMenuItem.applicationUniversalIdentifier ===
+        applicationUniversalIdentifier &&
+      isColliding(existingSettingsMenuItem),
   );
+
+// The slug is the tab id in the URL hash, so it is unique per application across
+// scopes. Checked against the final state rather than by a unique index so two
+// items can swap slugs in one sync.
+const getSettingsMenuItemSlugErrors = ({
+  slug,
+  ...siblingCollisionArgs
+}: Omit<SiblingSettingsMenuItemCollisionArgs, 'isColliding'> & {
+  slug: string;
+}): FlatEntityValidationError[] => {
+  if (!isValidSettingsMenuItemSlug(slug)) {
+    return [
+      {
+        code: SettingsMenuItemExceptionCode.INVALID_SETTINGS_MENU_ITEM_SLUG,
+        message: t`Settings menu item slug "${slug}" must be lowercase kebab-case and at most ${SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH} characters`,
+        userFriendlyMessage: msg`This settings menu item slug is invalid or reserved.`,
+      },
+    ];
+  }
+
+  if (isReservedSettingsMenuItemSlug(slug)) {
+    return [
+      {
+        code: SettingsMenuItemExceptionCode.INVALID_SETTINGS_MENU_ITEM_SLUG,
+        message: t`Settings menu item slug "${slug}" is reserved`,
+        userFriendlyMessage: msg`This settings menu item slug is invalid or reserved.`,
+      },
+    ];
+  }
+
+  if (
+    hasSiblingSettingsMenuItemCollision({
+      ...siblingCollisionArgs,
+      isColliding: (siblingSettingsMenuItem) =>
+        siblingSettingsMenuItem.slug === slug,
+    })
+  ) {
+    return [
+      {
+        code: SettingsMenuItemExceptionCode.SETTINGS_MENU_ITEM_SLUG_ALREADY_TAKEN,
+        message: t`Another settings menu item already uses slug "${slug}"`,
+        userFriendlyMessage: msg`Another settings menu item of this application already uses this slug.`,
+      },
+    ];
+  }
+
+  return [];
+};
 
 const isUsableSettingsMenuItemPosition = (position: number): boolean =>
   isNumber(position) && Number.isFinite(position);
@@ -127,21 +175,29 @@ export class FlatSettingsMenuItemValidatorService {
       });
     }
 
+    // The final state already holds every item this manifest creates, so a shared
+    // position or slug would be reported on both of them. Ignoring the creations
+    // still queued leaves exactly one error, on the later item, while items merely
+    // changed by this migration are compared with the values they end on.
+    const siblingCollisionArgs = {
+      universalIdentifier: flatSettingsMenuItem.universalIdentifier,
+      applicationUniversalIdentifier:
+        flatSettingsMenuItem.applicationUniversalIdentifier,
+      flatSettingsMenuItemMaps: finalFlatEntityMaps,
+      universalIdentifiersToIgnore: Object.keys(
+        remainingFlatEntityMapsToValidate.byUniversalIdentifier,
+      ),
+    };
+
+    // Two menu items of the same application sharing a position in the same scope
+    // would render in an order the manifest does not determine, so the sync refuses
+    // it rather than picking a winner.
     if (
-      hasSettingsMenuItemPositionCollision({
-        universalIdentifier: flatSettingsMenuItem.universalIdentifier,
-        applicationUniversalIdentifier:
-          flatSettingsMenuItem.applicationUniversalIdentifier,
-        scope: flatSettingsMenuItem.scope,
-        position: flatSettingsMenuItem.position,
-        flatSettingsMenuItemMapsToSearch: [finalFlatEntityMaps],
-        // The final state already holds every item this manifest creates, so a shared
-        // position would be reported on both of them. Ignoring the creations still
-        // queued leaves exactly one error, on the later item, while items merely moved
-        // by this migration are compared at the position they end on.
-        universalIdentifiersToIgnore: Object.keys(
-          remainingFlatEntityMapsToValidate.byUniversalIdentifier,
-        ),
+      hasSiblingSettingsMenuItemCollision({
+        ...siblingCollisionArgs,
+        isColliding: (siblingSettingsMenuItem) =>
+          siblingSettingsMenuItem.scope === flatSettingsMenuItem.scope &&
+          siblingSettingsMenuItem.position === flatSettingsMenuItem.position,
       })
     ) {
       validationResult.errors.push({
@@ -149,6 +205,15 @@ export class FlatSettingsMenuItemValidatorService {
         message: t`Another settings menu item already uses position ${flatSettingsMenuItem.position}`,
         userFriendlyMessage: msg`Another settings menu item of this application already uses this position.`,
       });
+    }
+
+    if (isDefined(flatSettingsMenuItem.slug)) {
+      validationResult.errors.push(
+        ...getSettingsMenuItemSlugErrors({
+          ...siblingCollisionArgs,
+          slug: flatSettingsMenuItem.slug,
+        }),
+      );
     }
 
     return validationResult;
@@ -244,15 +309,20 @@ export class FlatSettingsMenuItemValidatorService {
       });
     }
 
+    const siblingCollisionArgs = {
+      universalIdentifier,
+      applicationUniversalIdentifier:
+        fromFlatSettingsMenuItem.applicationUniversalIdentifier,
+      flatSettingsMenuItemMaps: finalFlatEntityMaps,
+      universalIdentifiersToIgnore: [],
+    };
+
     if (
-      hasSettingsMenuItemPositionCollision({
-        universalIdentifier,
-        applicationUniversalIdentifier:
-          fromFlatSettingsMenuItem.applicationUniversalIdentifier,
-        scope: nextScope,
-        position: nextPosition,
-        flatSettingsMenuItemMapsToSearch: [finalFlatEntityMaps],
-        universalIdentifiersToIgnore: [],
+      hasSiblingSettingsMenuItemCollision({
+        ...siblingCollisionArgs,
+        isColliding: (siblingSettingsMenuItem) =>
+          siblingSettingsMenuItem.scope === nextScope &&
+          siblingSettingsMenuItem.position === nextPosition,
       })
     ) {
       validationResult.errors.push({
@@ -260,6 +330,17 @@ export class FlatSettingsMenuItemValidatorService {
         message: t`Another settings menu item already uses position ${nextPosition}`,
         userFriendlyMessage: msg`Another settings menu item of this application already uses this position.`,
       });
+    }
+
+    const updatedSlug = flatEntityUpdate.slug;
+
+    if (isDefined(updatedSlug)) {
+      validationResult.errors.push(
+        ...getSettingsMenuItemSlugErrors({
+          ...siblingCollisionArgs,
+          slug: updatedSlug,
+        }),
+      );
     }
 
     return validationResult;

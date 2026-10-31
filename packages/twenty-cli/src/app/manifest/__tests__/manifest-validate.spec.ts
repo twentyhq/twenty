@@ -1439,4 +1439,35 @@ describe('manifestValidate', () => {
       );
     });
   });
+
+  describe('settings menu item slug validation', () => {
+    const frontComponentUniversalIdentifier =
+      '7a777777-7777-4777-8777-777777777777';
+
+    it('rejects two settings menu items sharing a slug', () => {
+      const result = manifestValidate({
+        ...validManifest,
+        settingsMenuItems: [
+          {
+            universalIdentifier: '8a888888-8888-4888-8888-888888888881',
+            frontComponentUniversalIdentifier,
+            title: 'Sync',
+            slug: 'sync',
+          },
+          {
+            universalIdentifier: '8a888888-8888-4888-8888-888888888882',
+            frontComponentUniversalIdentifier,
+            title: 'My sync',
+            scope: 'USER',
+            slug: 'sync',
+          },
+        ],
+      });
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContain(
+        'Settings menu item slug "sync" is used more than once. Slugs must be unique within an application.',
+      );
+    });
+  });
 });

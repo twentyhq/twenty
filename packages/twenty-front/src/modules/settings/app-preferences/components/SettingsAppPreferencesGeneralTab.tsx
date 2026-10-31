@@ -9,12 +9,14 @@ type SettingsAppPreferencesGeneralTabProps = {
   application: ApplicationWithPreferences['application'];
   displayName: string;
   connectionProviders: ApplicationWithPreferences['connectionProviders'];
+  settingsMenuItems: ApplicationWithPreferences['settingsMenuItems'];
 };
 
 export const SettingsAppPreferencesGeneralTab = ({
   application,
   displayName,
   connectionProviders,
+  settingsMenuItems,
 }: SettingsAppPreferencesGeneralTabProps) => {
   const { description, coverImageUrl } = useApplicationOverview({
     application,
@@ -34,6 +36,7 @@ export const SettingsAppPreferencesGeneralTab = ({
         <SettingsAppPreferencesConnectionsTab
           applicationId={application.id}
           connectionProviders={connectionProviders}
+          settingsMenuItems={settingsMenuItems}
         />
       )}
     </>

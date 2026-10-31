@@ -138,6 +138,7 @@ export default defineSettingsMenuItem({
   title: 'Sync',
   icon: 'IconRefresh',
   position: 1,
+  slug: 'sync',
 });
 ```
 
@@ -157,8 +158,17 @@ Declare as many as you need. Twenty's own **General** item — auto-upgrade, App
 | `icon` _(optional)_                 | Icon name, resolved client-side; an unknown name falls back to a default |
 | `position` _(optional)_             | Sort order, ascending. Defaults to `0`                                   |
 | `scope` _(optional)_                | `WORKSPACE` (default) or `USER`                                          |
+| `slug` _(optional)_                 | The tab's id in the page URL, e.g. `#sync`. See [Tab URLs](#tab-urls)    |
 
 `position` is a decimal, so an item can be slotted between two existing ones without renumbering. Items sort by ascending `position`, ties broken on `universalIdentifier` so the order is the same in every workspace. Two items of one app cannot share a position in the same scope — the sync refuses it rather than letting install order decide which renders first.
+
+### Tab URLs
+
+Each item's tab is addressed by a hash in the page URL, so you can link to it directly, for example `/settings/applications/<applicationId>#sync` or `/settings/app-preferences/<applicationId>#sync`. Set `slug` to choose that hash; without one, the tab is addressed by the item's `universalIdentifier`. Adding a slug later keeps links that use the `universalIdentifier` working: they open the same tab.
+
+A slug is lowercase kebab-case (letters, digits and single hyphens, such as `sync` or `sync-settings`) and at most 64 characters. `general` and `variables` are reserved for the built-in tabs, and two items of one app cannot share a slug, even across scopes. The build and the sync both refuse a slug that breaks these rules.
+
+After a member connects or reconnects an account in **Settings > App preferences**, they land on the app's first `USER` item tab, in `position` order, or on **General** when the app declares none.
 
 ### Workspace and user scope
 

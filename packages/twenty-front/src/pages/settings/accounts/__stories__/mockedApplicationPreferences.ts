@@ -81,6 +81,7 @@ const buildSettingsMenuItem = ({
   icon: null,
   position,
   scope,
+  slug: null,
 });
 
 const savedValueByKey = new Map<string, string>();

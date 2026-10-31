@@ -81,6 +81,7 @@ export const APPLICATION_FRAGMENT = gql`
       icon
       position
       scope
+      slug
     }
     objects {
       ...ObjectMetadataFields

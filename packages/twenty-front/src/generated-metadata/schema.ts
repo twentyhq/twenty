@@ -6932,6 +6932,7 @@ export type SettingsMenuItem = {
   id: Scalars['UUID']['output'];
   position: Scalars['Float']['output'];
   scope: SettingsMenuItemScope;
+  slug?: Maybe<Scalars['String']['output']>;
   title: Scalars['String']['output'];
   universalIdentifier: Scalars['UUID']['output'];
   updatedAt: Scalars['DateTime']['output'];

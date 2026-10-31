@@ -24,6 +24,7 @@ export const fromSettingsMenuItemManifestToUniversalFlatSettingsMenuItem = ({
   position:
     settingsMenuItemManifest.position ?? DEFAULT_SETTINGS_MENU_ITEM_POSITION,
   scope: settingsMenuItemManifest.scope ?? DEFAULT_SETTINGS_MENU_ITEM_SCOPE,
+  slug: settingsMenuItemManifest.slug ?? null,
   createdAt: now,
   updatedAt: now,
 });
