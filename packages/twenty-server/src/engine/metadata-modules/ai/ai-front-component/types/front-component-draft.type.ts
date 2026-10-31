@@ -3,7 +3,6 @@ import { type FrontComponentDraftInput } from 'src/engine/metadata-modules/ai/ai
 export type FrontComponentDraft = FrontComponentDraftInput & {
   id: string;
   applicationId: string;
-  rootId: string;
   expiresAt: number;
   threadId: string;
   userWorkspaceId: string;
@@ -15,4 +14,5 @@ export type FrontComponentDraft = FrontComponentDraftInput & {
   checksum: string;
   dependencyRevision?: string;
   previewError?: string;
+  isSuperseded?: boolean;
 };

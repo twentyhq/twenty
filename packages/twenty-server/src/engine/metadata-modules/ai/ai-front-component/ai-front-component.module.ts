@@ -1,4 +1,5 @@
 import { Module } from '@nestjs/common';
+import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
@@ -13,6 +14,7 @@ import { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front
 
 @Module({
   imports: [
+    TypeORMModule,
     ApplicationModule,
     ApplicationPackageModule,
     CacheLockModule,
