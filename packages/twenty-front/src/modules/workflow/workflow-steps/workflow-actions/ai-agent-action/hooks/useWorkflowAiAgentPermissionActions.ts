@@ -9,6 +9,8 @@ import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workf
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
 import { workflowAiAgentPermissionsIsSystemObjectsListOpenState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsSystemObjectsListOpenState';
 import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdState';
+import { grantWorkflowAiAgentObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/grantWorkflowAiAgentObjectPermission';
+import { revokeWorkflowAiAgentObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/revokeWorkflowAiAgentObjectPermission';
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
@@ -24,6 +26,22 @@ import {
   UpsertObjectPermissionsDocument,
   UpsertPermissionFlagsDocument,
 } from '~/generated-metadata/graphql';
+
+const toCrudObjectPermission = (
+  objectPermission: ObjectPermission | undefined,
+) =>
+  isDefined(objectPermission)
+    ? {
+        canReadObjectRecords:
+          objectPermission.canReadObjectRecords ?? undefined,
+        canUpdateObjectRecords:
+          objectPermission.canUpdateObjectRecords ?? undefined,
+        canSoftDeleteObjectRecords:
+          objectPermission.canSoftDeleteObjectRecords ?? undefined,
+        canDestroyObjectRecords:
+          objectPermission.canDestroyObjectRecords ?? undefined,
+      }
+    : undefined;
 
 type UseWorkflowAiAgentPermissionActionsParams = {
   stepId: string;
@@ -164,30 +182,11 @@ export const useWorkflowAiAgentPermissionActions = ({
       (permission) => permission.objectMetadataId === objectMetadataId,
     );
 
-    const updatedPermission: ObjectPermission = {
+    const updatedPermission = grantWorkflowAiAgentObjectPermission({
       objectMetadataId,
-      canReadObjectRecords:
-        permissionKey === 'canReadObjectRecords'
-          ? true
-          : (objectPermission?.canReadObjectRecords ??
-            (permissionKey === 'canUpdateObjectRecords' ||
-            permissionKey === 'canSoftDeleteObjectRecords' ||
-            permissionKey === 'canDestroyObjectRecords'
-              ? true
-              : false)),
-      canUpdateObjectRecords:
-        permissionKey === 'canUpdateObjectRecords'
-          ? true
-          : (objectPermission?.canUpdateObjectRecords ?? false),
-      canSoftDeleteObjectRecords:
-        permissionKey === 'canSoftDeleteObjectRecords'
-          ? true
-          : (objectPermission?.canSoftDeleteObjectRecords ?? false),
-      canDestroyObjectRecords:
-        permissionKey === 'canDestroyObjectRecords'
-          ? true
-          : (objectPermission?.canDestroyObjectRecords ?? false),
-    };
+      objectPermission: toCrudObjectPermission(objectPermission),
+      permissionKey,
+    });
 
     const allObjectPermissions = objectPermissions
       .filter((permission) => permission.objectMetadataId !== objectMetadataId)
@@ -200,15 +199,7 @@ export const useWorkflowAiAgentPermissionActions = ({
         canDestroyObjectRecords: permission.canDestroyObjectRecords ?? false,
       }));
 
-    allObjectPermissions.push({
-      objectMetadataId: updatedPermission.objectMetadataId,
-      canReadObjectRecords: updatedPermission.canReadObjectRecords ?? false,
-      canUpdateObjectRecords: updatedPermission.canUpdateObjectRecords ?? false,
-      canSoftDeleteObjectRecords:
-        updatedPermission.canSoftDeleteObjectRecords ?? false,
-      canDestroyObjectRecords:
-        updatedPermission.canDestroyObjectRecords ?? false,
-    });
+    allObjectPermissions.push(updatedPermission);
 
     await upsertObjectPermissions({
       variables: {
@@ -249,31 +240,11 @@ export const useWorkflowAiAgentPermissionActions = ({
       return;
     }
 
-    const updatedPermission: ObjectPermission = {
+    const updatedPermission = revokeWorkflowAiAgentObjectPermission({
       objectMetadataId,
-      canReadObjectRecords:
-        permissionKey === 'canReadObjectRecords'
-          ? false
-          : (objectPermission.canReadObjectRecords ?? false),
-      canUpdateObjectRecords:
-        permissionKey === 'canUpdateObjectRecords'
-          ? false
-          : (objectPermission.canUpdateObjectRecords ?? false),
-      canSoftDeleteObjectRecords:
-        permissionKey === 'canSoftDeleteObjectRecords'
-          ? false
-          : (objectPermission.canSoftDeleteObjectRecords ?? false),
-      canDestroyObjectRecords:
-        permissionKey === 'canDestroyObjectRecords'
-          ? false
-          : (objectPermission.canDestroyObjectRecords ?? false),
-    };
-
-    if (permissionKey === 'canReadObjectRecords') {
-      updatedPermission.canUpdateObjectRecords = false;
-      updatedPermission.canSoftDeleteObjectRecords = false;
-      updatedPermission.canDestroyObjectRecords = false;
-    }
+      objectPermission: toCrudObjectPermission(objectPermission) ?? {},
+      permissionKey,
+    });
 
     const allObjectPermissions = objectPermissions
       .filter((permission) => permission.objectMetadataId !== objectMetadataId)
@@ -286,15 +257,7 @@ export const useWorkflowAiAgentPermissionActions = ({
         canDestroyObjectRecords: permission.canDestroyObjectRecords ?? false,
       }));
 
-    allObjectPermissions.push({
-      objectMetadataId: updatedPermission.objectMetadataId,
-      canReadObjectRecords: updatedPermission.canReadObjectRecords ?? false,
-      canUpdateObjectRecords: updatedPermission.canUpdateObjectRecords ?? false,
-      canSoftDeleteObjectRecords:
-        updatedPermission.canSoftDeleteObjectRecords ?? false,
-      canDestroyObjectRecords:
-        updatedPermission.canDestroyObjectRecords ?? false,
-    });
+    allObjectPermissions.push(updatedPermission);
 
     await upsertObjectPermissions({
       variables: {

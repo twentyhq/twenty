@@ -114,21 +114,31 @@ describe('createCreateCompleteWorkflowTool', () => {
     });
   });
 
-  it.each(['CODE', 'AI_AGENT'])(
-    'refuses %s steps without creating anything',
-    async (stepType) => {
-      const { tool, coreWorkflowMutationService } = buildTool();
+  it('refuses CODE steps without creating anything', async () => {
+    const { tool, coreWorkflowMutationService } = buildTool();
 
-      const result = await tool.execute(
-        buildInput({ steps: [buildStep(stepType)] }),
-      );
+    const result = await tool.execute(
+      buildInput({ steps: [buildStep('CODE')] }),
+    );
 
-      expect(result.success).toBe(false);
-      expect(
-        coreWorkflowMutationService.createWorkflowWithContent,
-      ).not.toHaveBeenCalled();
-    },
-  );
+    expect(result.success).toBe(false);
+    expect(
+      coreWorkflowMutationService.createWorkflowWithContent,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('creates AI_AGENT steps, which need no agent', async () => {
+    const { tool, coreWorkflowMutationService } = buildTool();
+
+    const result = await tool.execute(
+      buildInput({ steps: [buildStep('AI_AGENT')] }),
+    );
+
+    expect(result.success).toBe(true);
+    expect(
+      coreWorkflowMutationService.createWorkflowWithContent,
+    ).toHaveBeenCalled();
+  });
 
   it('activates the created version when asked to', async () => {
     const { tool, coreWorkflowLifecycleService } = buildTool();

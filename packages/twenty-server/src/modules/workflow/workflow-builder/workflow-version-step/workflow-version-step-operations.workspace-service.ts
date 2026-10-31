@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
+import { isNonEmptyString } from '@sniptt/guards';
 import { inputSchemaToOutputSchema } from 'twenty-shared/logic-function';
 import {
   FieldMetadataType,
@@ -25,6 +25,10 @@ import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import {
   LogicFunctionException,
@@ -123,7 +127,12 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         break;
       }
       case WorkflowActionType.AI_AGENT: {
-        if (!isDefined(step.settings.input.agentId)) {
+        const stepAgent = await this.findStepOwnedAgent({
+          agentId: step.settings.input.agentId,
+          workspaceId,
+        });
+
+        if (!isDefined(stepAgent)) {
           break;
         }
 
@@ -131,13 +140,13 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           workspaceId,
           {
             where: {
-              agentId: step.settings.input.agentId,
+              agentId: stepAgent.id,
             },
           },
         );
 
         await this.agentService.deleteManyAgents({
-          ids: [step.settings.input.agentId],
+          ids: [stepAgent.id],
           workspaceId,
         });
 
@@ -556,20 +565,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
-        const newAgent = await this.agentService.createOneAgent(
-          {
-            label: 'Workflow Agent ' + baseStep.id.substring(0, 4),
-            icon: 'IconLego',
-            description: '',
-            prompt:
-              'You are a helpful AI assistant. Complete the task based on the workflow context.',
-            modelId: AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
-            responseFormat: { type: 'text' },
-            isSystem: true,
-          },
-          workspaceId,
-        );
-
         return {
           builtStep: {
             ...baseStep,
@@ -578,7 +573,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             settings: {
               ...BASE_STEP_DEFINITION,
               input: {
-                agentId: newAgent.id,
+                instructions: '',
                 prompt: '',
               },
             },
@@ -927,22 +922,18 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
-        const agentId = step.settings.input.agentId;
-
-        if (!isDefined(agentId)) {
-          throw new WorkflowVersionStepException(
-            'Agent ID is required for cloning',
-            WorkflowVersionStepExceptionCode.AI_AGENT_STEP_FAILURE,
-          );
-        }
-
         const clonedStepId = v4();
-
-        const clonedAgent = await this.duplicateAgent({
-          agentId,
-          labelSuffix: clonedStepId.substring(0, 4),
+        const stepAgent = await this.findStepOwnedAgent({
+          agentId: step.settings.input.agentId,
           workspaceId,
         });
+        const clonedAgent = isDefined(stepAgent)
+          ? await this.duplicateAgent({
+              agentId: stepAgent.id,
+              labelSuffix: clonedStepId.substring(0, 4),
+              workspaceId,
+            })
+          : null;
 
         return {
           ...step,
@@ -953,7 +944,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             ...step.settings,
             input: {
               ...step.settings.input,
-              agentId: clonedAgent.id,
+              ...(isDefined(clonedAgent) ? { agentId: clonedAgent.id } : {}),
             },
           },
         };
@@ -1110,20 +1101,23 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         };
       }
       case WorkflowActionType.AI_AGENT: {
-        const agentId = step.settings.input.agentId;
+        const stepAgent = await this.findStepOwnedAgent({
+          agentId: step.settings.input.agentId,
+          workspaceId,
+        });
 
-        if (!isDefined(agentId)) {
+        if (!isDefined(stepAgent)) {
           return step;
         }
 
         const newAgent = await this.duplicateAgent({
-          agentId,
+          agentId: stepAgent.id,
           labelSuffix: v4().substring(0, 4),
           workspaceId,
         });
 
         const roleId = await this.aiAgentRoleService.findAgentRoleId({
-          agentId,
+          agentId: stepAgent.id,
           workspaceId,
         });
 
@@ -1150,6 +1144,35 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         return step;
       }
     }
+  }
+
+  // A step created before steps held their own config owns a hidden agent, copied and deleted with it.
+  // A reusable agent a step runs is never the step's to copy or delete
+  private async findStepOwnedAgent({
+    agentId,
+    workspaceId,
+  }: {
+    agentId: string | undefined;
+    workspaceId: string;
+  }) {
+    if (!isNonEmptyString(agentId)) {
+      return null;
+    }
+
+    const agent = await this.agentService
+      .findOneAgentById({ id: agentId, workspaceId })
+      .catch((error) => {
+        if (
+          error instanceof AiException &&
+          error.code === AiExceptionCode.AGENT_NOT_FOUND
+        ) {
+          return null;
+        }
+
+        throw error;
+      });
+
+    return agent?.isSystem === true ? agent : null;
   }
 
   private async duplicateAgent({

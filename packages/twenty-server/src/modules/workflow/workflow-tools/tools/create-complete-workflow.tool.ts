@@ -91,7 +91,7 @@ Common mistakes to avoid:
 - Missing the "objectRecord" field in CREATE_RECORD actions
 - Using "fieldsToUpdate" instead of "objectRecord" in CREATE_RECORD actions
 - Including CODE steps in this tool — this tool does NOT create the underlying logic function needed by CODE steps. Instead, create the workflow without CODE steps first, then add CODE steps individually using create_workflow_version_step (which properly creates the logic function), then call update_logic_function_source to define the code.
-- Including AI_AGENT steps in this tool — this tool does NOT create the underlying agent needed by AI_AGENT steps. Instead, create the workflow without AI_AGENT steps first, then add AI_AGENT steps individually using create_workflow_version_step (which properly creates the agent), then call update_workflow_agent to configure the agent.
+- Giving an AI_AGENT step an agentId it was not given: an AI_AGENT step carries its own settings.input.instructions (system prompt), prompt, modelId, responseFormat and scope (the objects it may read or change, same shape as a role manifest's permissions, with object universal identifiers). Set agentId only to run an existing agent, and then leave the instructions, model and scope to that agent.
 
 IMPORTANT: The tool schema provides comprehensive field descriptions, examples, and validation rules. Always refer to the schema for:
 - Field requirements and data types
@@ -229,13 +229,6 @@ const assertStepTypesAreSupported = (steps: WorkflowAction[]): void => {
   if (steps.some((step) => step.type === WorkflowActionType.CODE)) {
     throw new WorkflowVersionStepException(
       'CODE steps cannot be created via create_complete_workflow because it does not create the underlying logic function. Use create_workflow_version_step instead.',
-      WorkflowVersionStepExceptionCode.INVALID_REQUEST,
-    );
-  }
-
-  if (steps.some((step) => step.type === WorkflowActionType.AI_AGENT)) {
-    throw new WorkflowVersionStepException(
-      'AI_AGENT steps cannot be created via create_complete_workflow because it does not create the underlying agent. Use create_workflow_version_step instead, then call update_workflow_agent to configure the agent.',
       WorkflowVersionStepExceptionCode.INVALID_REQUEST,
     );
   }

@@ -20,7 +20,12 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
-import { type AgentResponseSchema } from 'twenty-shared/ai';
+import { isNonEmptyString } from '@sniptt/guards';
+import {
+  type AgentResponseSchema,
+  type AiRunScope,
+  type ModelConfiguration,
+} from 'twenty-shared/ai';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowConversation } from 'twenty-shared/workflow';
@@ -60,6 +65,7 @@ export const WorkflowEditActionAiAgent = ({
   const { t } = useLingui();
   const componentInstanceId = `${WORKFLOW_AI_AGENT_TAB_LIST_COMPONENT_ID}-${action.id}`;
   const agentId = action.settings.input.agentId;
+  const isAgentBacked = isNonEmptyString(agentId);
   const [workflowAiAgentActionAgent, setWorkflowAiAgentActionAgent] =
     useAtomState(workflowAiAgentActionAgentState);
   const {
@@ -79,6 +85,14 @@ export const WorkflowEditActionAiAgent = ({
   useResetWorkflowAiAgentPermissionsStateOnSidePanelClose();
 
   const [prompt, setPrompt] = useState(action.settings.input.prompt ?? '');
+  const [instructions, setInstructions] = useState(
+    action.settings.input.instructions ?? '',
+  );
+  const [modelId, setModelId] = useState(action.settings.input.modelId);
+  const [modelConfiguration, setModelConfiguration] = useState(
+    action.settings.input.modelConfiguration,
+  );
+  const [scope, setScope] = useState(action.settings.input.scope);
   const [humanInputInstructions, setHumanInputInstructions] = useState(
     action.settings.input.humanInputInstructions ?? '',
   );
@@ -108,6 +122,10 @@ export const WorkflowEditActionAiAgent = ({
           humanInputInstructions,
           workspaceMemberId: recipientWorkspaceMemberId,
           conversation,
+          // a step running an agent leaves its instructions, model and permissions to the agent
+          ...(isAgentBacked
+            ? {}
+            : { instructions, modelId, modelConfiguration, scope }),
           ...(isDefined(responseSchema)
             ? { responseFormat: { type: 'json', schema: responseSchema } }
             : {}),
@@ -121,6 +139,28 @@ export const WorkflowEditActionAiAgent = ({
 
   const handleAgentPromptChange = (newPrompt: string) => {
     setPrompt(newPrompt);
+    saveInput();
+  };
+
+  const handleInstructionsChange = (newInstructions: string) => {
+    setInstructions(newInstructions);
+    saveInput();
+  };
+
+  const handleModelIdChange = (newModelId: string) => {
+    setModelId(newModelId);
+    saveInput();
+  };
+
+  const handleModelConfigurationChange = (
+    newModelConfiguration: ModelConfiguration,
+  ) => {
+    setModelConfiguration(newModelConfiguration);
+    saveInput();
+  };
+
+  const handleScopeChange = (newScope: AiRunScope) => {
+    setScope(newScope);
     saveInput();
   };
 
@@ -170,7 +210,7 @@ export const WorkflowEditActionAiAgent = ({
   const agentRoleId = workflowAiAgentActionAgent?.roleId;
   const { data: roleData } = useQuery(GetRoleDocument, {
     variables: { id: agentRoleId ?? '' },
-    skip: !isDefined(agentRoleId),
+    skip: !isAgentBacked || !isDefined(agentRoleId),
   });
 
   const [
@@ -196,6 +236,10 @@ export const WorkflowEditActionAiAgent = ({
     }
 
     if (workflowAiAgentPermissionsIsAddingPermission) {
+      if (!isAgentBacked) {
+        return [];
+      }
+
       return [
         <WorkflowStepCmdEnterButton
           key="view-role"
@@ -219,7 +263,7 @@ export const WorkflowEditActionAiAgent = ({
     ];
   };
 
-  return agentLoading || !isCurrentAgentLoaded ? (
+  return isAgentBacked && (agentLoading || !isCurrentAgentLoaded) ? (
     <SidePanelSkeletonLoader />
   ) : (
     <TabListRoot componentInstanceId={componentInstanceId}>
@@ -237,6 +281,9 @@ export const WorkflowEditActionAiAgent = ({
             <WorkflowAiAgentPermissionsTab
               stepId={action.id}
               readonly={actionOptions.readonly === true}
+              isAgentBacked={isAgentBacked}
+              scope={scope}
+              onScopeChange={handleScopeChange}
               isAgentLoading={agentLoading}
               refetchAgent={refetchAgent}
             />
@@ -245,9 +292,16 @@ export const WorkflowEditActionAiAgent = ({
           <WorkflowStepBody>
             <WorkflowAiAgentPromptTab
               action={action}
+              isAgentBacked={isAgentBacked}
               prompt={prompt}
               readonly={actionOptions.readonly === true}
               onPromptChange={handleAgentPromptChange}
+              instructions={instructions}
+              onInstructionsChange={handleInstructionsChange}
+              modelId={modelId}
+              onModelIdChange={handleModelIdChange}
+              modelConfiguration={modelConfiguration}
+              onModelConfigurationChange={handleModelConfigurationChange}
               humanInputInstructions={humanInputInstructions}
               onHumanInputInstructionsChange={
                 handleHumanInputInstructionsChange

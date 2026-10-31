@@ -183,4 +183,72 @@ describe('createUpdateWorkflowAgentTool', () => {
     expect(result.success).toBe(false);
     expect(result.error).toBe('boom');
   });
+
+  it('should configure a step that runs no agent on the step itself', async () => {
+    const step = {
+      ...buildAiAgentStep(AGENT_ID, 'inline-step'),
+      settings: { input: { prompt: 'Qualify' }, outputSchema: {} },
+    };
+    const { tool, agentService, coreWorkflowVersionMutationService } =
+      buildTool({
+        draftCoreVersions: [{ id: 'core-version-1', steps: [step] }],
+      });
+
+    const result = (await tool.execute({
+      stepId: 'inline-step',
+      prompt: 'You qualify leads.',
+      modelId: 'model-id',
+    } as never)) as Record<string, unknown>;
+
+    expect(result.success).toBe(true);
+    expect(agentService.updateOneAgent).not.toHaveBeenCalled();
+    expect(coreWorkflowVersionMutationService.updateStep).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      userWorkspaceId: undefined,
+      coreWorkflowVersionId: 'core-version-1',
+      step: {
+        ...step,
+        settings: {
+          ...step.settings,
+          input: {
+            prompt: 'Qualify',
+            instructions: 'You qualify leads.',
+            modelId: 'model-id',
+          },
+        },
+      },
+    });
+  });
+
+  it("should update the agent of a step that runs one, found by the step's id", async () => {
+    const step = buildAiAgentStep(AGENT_ID, 'agent-step');
+    const { tool, agentService } = buildTool({
+      draftCoreVersions: [{ id: 'core-version-1', steps: [step] }],
+    });
+
+    const result = (await tool.execute({
+      stepId: 'agent-step',
+      prompt: 'You qualify leads.',
+    } as never)) as Record<string, unknown>;
+
+    expect(result.success).toBe(true);
+    expect(agentService.updateOneAgent).toHaveBeenCalledWith({
+      input: { id: AGENT_ID, prompt: 'You qualify leads.' },
+      workspaceId: WORKSPACE_ID,
+    });
+  });
+
+  it('should report a step it cannot find', async () => {
+    const { tool, coreWorkflowVersionMutationService } = buildTool();
+
+    const result = (await tool.execute({
+      stepId: 'missing-step',
+      prompt: 'You qualify leads.',
+    } as never)) as Record<string, unknown>;
+
+    expect(result.success).toBe(false);
+    expect(
+      coreWorkflowVersionMutationService.updateStep,
+    ).not.toHaveBeenCalled();
+  });
 });

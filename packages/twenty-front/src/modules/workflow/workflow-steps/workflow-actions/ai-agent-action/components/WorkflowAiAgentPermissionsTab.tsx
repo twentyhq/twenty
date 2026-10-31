@@ -5,6 +5,9 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useWorkflowAiAgentPermissionActions } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions';
+import { useWorkflowAiAgentScopePermissionActions } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentScopePermissionActions';
+import { getWorkflowAiAgentObjectPermissionsFromScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentObjectPermissionsFromScope';
+import { getWorkflowAiAgentPermissionFlagKeysFromScope } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentPermissionFlagKeysFromScope';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
 import { workflowAiAgentPermissionsIsSystemObjectsListOpenState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsSystemObjectsListOpenState';
@@ -13,9 +16,13 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
+import { type AiRunScope } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
-import { GetRoleDocument } from '~/generated-metadata/graphql';
+import {
+  GetRoleDocument,
+  type ObjectPermission,
+} from '~/generated-metadata/graphql';
 import { SidePanelSkeletonLoader } from '~/loading/components/SidePanelSkeletonLoader';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
@@ -63,6 +70,10 @@ const StyledGroupsContainer = styled.div`
 type WorkflowAiAgentPermissionsTabProps = {
   stepId: string;
   readonly: boolean;
+  // a legacy step runs a hidden agent whose role holds its permissions; any other step holds a scope
+  isAgentBacked: boolean;
+  scope: AiRunScope | undefined;
+  onScopeChange: (scope: AiRunScope) => void;
   isAgentLoading: boolean;
   refetchAgent: () => Promise<{ data?: { findOneAgent?: FlatAgent } }>;
 };
@@ -70,6 +81,9 @@ type WorkflowAiAgentPermissionsTabProps = {
 export const WorkflowAiAgentPermissionsTab = ({
   stepId,
   readonly,
+  isAgentBacked,
+  scope,
+  onScopeChange,
   isAgentLoading,
   refetchAgent,
 }: WorkflowAiAgentPermissionsTabProps) => {
@@ -108,16 +122,25 @@ export const WorkflowAiAgentPermissionsTab = ({
     refetch: refetchRole,
   } = useQuery(GetRoleDocument, {
     variables: { id: agentRoleId ?? '' },
-    skip: !isDefined(agentRoleId),
+    skip: !isAgentBacked || !isDefined(agentRoleId),
   });
 
   const [searchQuery, setSearchQuery] = useState('');
   const role = roleData?.getRole;
-  const objectPermissions = role?.objectPermissions || [];
-  const permissionFlagKeys =
-    role?.permissionFlags?.map((permissionFlag) => permissionFlag.flag) ?? [];
-  const hasRoleWithPermissions =
-    isDefined(workflowAiAgentActionAgent?.roleId) &&
+  const roleObjectPermissions = role?.objectPermissions || [];
+  const scopeObjectPermissions = getWorkflowAiAgentObjectPermissionsFromScope({
+    scope,
+    objectMetadataItems: allObjectMetadataItems,
+  });
+  const objectPermissions: ObjectPermission[] = isAgentBacked
+    ? roleObjectPermissions
+    : scopeObjectPermissions;
+  const permissionFlagKeys = isAgentBacked
+    ? (role?.permissionFlags?.map((permissionFlag) => permissionFlag.flag) ??
+      [])
+    : getWorkflowAiAgentPermissionFlagKeysFromScope(scope);
+  const hasPermissions =
+    (!isAgentBacked || isDefined(workflowAiAgentActionAgent?.roleId)) &&
     (objectPermissions.length > 0 || permissionFlagKeys.length > 0);
   const actionPermissionsConfig = useActionRolePermissionFlagConfig({
     assignmentCapabilities: { canBeAssignedToAgents: true },
@@ -157,24 +180,32 @@ export const WorkflowAiAgentPermissionsTab = ({
     return { refetchedAgent };
   };
 
+  const rolePermissionActions = useWorkflowAiAgentPermissionActions({
+    stepId,
+    readonly,
+    objectPermissions: roleObjectPermissions,
+    permissionFlagKeys,
+    refetchAgentAndRoles,
+  });
+  const scopePermissionActions = useWorkflowAiAgentScopePermissionActions({
+    scope,
+    readonly,
+    objectPermissions: scopeObjectPermissions,
+    permissionFlagKeys,
+    onScopeChange,
+  });
   const {
     handleAddPermission,
     handleDeletePermission,
     handleAddPermissionFlag,
     handleDeletePermissionFlag,
-  } = useWorkflowAiAgentPermissionActions({
-    stepId,
-    readonly,
-    objectPermissions,
-    permissionFlagKeys,
-    refetchAgentAndRoles,
-  });
+  } = isAgentBacked ? rolePermissionActions : scopePermissionActions;
 
-  if (isAgentLoading || roleLoading) {
+  if (isAgentBacked && (isAgentLoading || roleLoading)) {
     return <SidePanelSkeletonLoader />;
   }
 
-  if (!isDefined(workflowAiAgentActionAgent)) {
+  if (isAgentBacked && !isDefined(workflowAiAgentActionAgent)) {
     return null;
   }
 
@@ -214,10 +245,10 @@ export const WorkflowAiAgentPermissionsTab = ({
     workflowAiAgentPermissionsIsAddingPermission;
   const shouldShowCrudList = isDefined(selectedObject);
   const shouldShowSelectionLists =
-    (!hasRoleWithPermissions || workflowAiAgentPermissionsIsAddingPermission) &&
+    (!hasPermissions || workflowAiAgentPermissionsIsAddingPermission) &&
     !isDefined(selectedObject);
   const shouldShowExistingPermissions =
-    hasRoleWithPermissions && !workflowAiAgentPermissionsIsAddingPermission;
+    hasPermissions && !workflowAiAgentPermissionsIsAddingPermission;
 
   return (
     <StyledContainer>

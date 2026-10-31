@@ -18,6 +18,7 @@ import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import {
+  AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
   type AgentResponseSchema,
   type ModelConfiguration,
 } from 'twenty-shared/ai';
@@ -33,9 +34,17 @@ import {
 
 type WorkflowAiAgentPromptTabProps = {
   action: WorkflowAiAgentAction;
+  // a step running an agent edits the agent's model; any other step edits its own config
+  isAgentBacked: boolean;
   prompt: string;
   readonly: boolean;
   onPromptChange: (value: string) => void;
+  instructions: string;
+  onInstructionsChange: (value: string) => void;
+  modelId: string | undefined;
+  onModelIdChange: (modelId: string) => void;
+  modelConfiguration: ModelConfiguration | undefined;
+  onModelConfigurationChange: (configuration: ModelConfiguration) => void;
   humanInputInstructions: string;
   onHumanInputInstructionsChange: (value: string) => void;
   recipientWorkspaceMemberId: string | undefined;
@@ -47,9 +56,16 @@ type WorkflowAiAgentPromptTabProps = {
 
 export const WorkflowAiAgentPromptTab = ({
   action,
+  isAgentBacked,
   prompt,
   readonly,
   onPromptChange,
+  instructions,
+  onInstructionsChange,
+  modelId,
+  onModelIdChange,
+  modelConfiguration,
+  onModelConfigurationChange,
   humanInputInstructions,
   onHumanInputInstructionsChange,
   recipientWorkspaceMemberId,
@@ -73,7 +89,7 @@ export const WorkflowAiAgentPromptTab = ({
     // steps saved before the format moved to them still carry it on their agent
     const responseFormat =
       action.settings.input.responseFormat ??
-      workflowAiAgentActionAgent?.responseFormat;
+      (isAgentBacked ? workflowAiAgentActionAgent?.responseFormat : undefined);
     const schema: AgentResponseSchema = (responseFormat?.type === 'json'
       ? responseFormat.schema
       : undefined) || {
@@ -126,21 +142,39 @@ export const WorkflowAiAgentPromptTab = ({
     );
   };
 
-  if (!workflowAiAgentActionAgent) {
+  if (isAgentBacked && !isDefined(workflowAiAgentActionAgent)) {
     return null;
   }
 
-  const agent = workflowAiAgentActionAgent;
+  const selectedModelId = isAgentBacked
+    ? (workflowAiAgentActionAgent?.modelId ??
+      AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID)
+    : (modelId ?? AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID);
+  const selectedModelConfiguration = isAgentBacked
+    ? workflowAiAgentActionAgent?.modelConfiguration
+    : modelConfiguration;
 
-  const handleModelChange = async (modelId: string) => {
+  const handleModelChange = async (newModelId: string) => {
+    if (!isAgentBacked) {
+      onModelIdChange(newModelId);
+
+      return;
+    }
+
     await updateAgentField({
-      modelId,
+      modelId: newModelId,
     });
   };
 
   const handleModelConfigurationChange = async (
     configuration: ModelConfiguration,
   ) => {
+    if (!isAgentBacked) {
+      onModelConfigurationChange(configuration);
+
+      return;
+    }
+
     await updateAgentField({
       modelConfiguration: configuration,
     });
@@ -154,10 +188,21 @@ export const WorkflowAiAgentPromptTab = ({
   return (
     <>
       <AiModelPicker
-        modelId={agent.modelId}
+        modelId={selectedModelId}
         onModelIdChange={handleModelChange}
         disabled={readonly}
       />
+
+      {!isAgentBacked && (
+        <FormTextFieldInput
+          multiline
+          label={t`Instructions`}
+          placeholder={t`Describe the role of the AI and how it should do the task...`}
+          defaultValue={instructions}
+          onChange={onInstructionsChange}
+          readonly={readonly}
+        />
+      )}
 
       <FormTextFieldInput
         multiline
@@ -204,8 +249,8 @@ export const WorkflowAiAgentPromptTab = ({
       )}
 
       <SettingsAgentModelCapabilities
-        selectedModelId={agent.modelId}
-        modelConfiguration={agent.modelConfiguration || {}}
+        selectedModelId={selectedModelId}
+        modelConfiguration={selectedModelConfiguration || {}}
         onConfigurationChange={handleModelConfigurationChange}
         disabled={readonly}
       />
