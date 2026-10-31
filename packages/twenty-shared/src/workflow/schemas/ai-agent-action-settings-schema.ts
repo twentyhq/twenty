@@ -3,14 +3,8 @@ import { z } from 'zod';
 import { agentResponseFormatSchema } from './agent-response-format-schema';
 import { aiRunScopeSchema } from './ai-run-scope-schema';
 import { baseWorkflowActionSettingsSchema } from './base-workflow-action-settings-schema';
+import { modelConfigurationSchema } from './model-configuration-schema';
 import { workflowConversationSchema } from './workflow-conversation-schema';
-
-const nativeToolConfigurationSchema = z.object({ enabled: z.boolean() });
-
-const modelConfigurationSchema = z.object({
-  webSearch: nativeToolConfigurationSchema.optional(),
-  twitterSearch: nativeToolConfigurationSchema.optional(),
-});
 
 export const workflowAiAgentActionSettingsSchema =
   baseWorkflowActionSettingsSchema.extend({
