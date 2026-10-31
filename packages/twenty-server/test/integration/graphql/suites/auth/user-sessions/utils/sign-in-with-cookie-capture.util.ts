@@ -3,6 +3,8 @@ import { buildWorkspaceOriginForSubdomain } from 'test/integration/graphql/utils
 import { getAuthTokensFromLoginTokenQueryFactory } from 'test/integration/graphql/utils/get-auth-tokens-from-login-token.query-factory.util';
 import { getLoginTokenFromCredentialsQueryFactory } from 'test/integration/graphql/utils/get-login-token-from-credentials.query-factory.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
+import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
+
 import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
 import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-secure-cookie-name.constant';
 
@@ -21,7 +23,10 @@ export const postMetadataOperationWithHeaders = (
   { originHeader, cookieHeader }: RequestHeaders,
   expectedStatus = 200,
 ) => {
-  const graphqlRequest = makeMetadataApiRequest(graphqlOperation, null);
+  const graphqlRequest = makeMetadataApiRequest(graphqlOperation, null).set(
+    SESSION_COOKIE_OPT_IN_HEADER_NAME,
+    '1',
+  );
 
   if (originHeader !== undefined) {
     graphqlRequest.set('Origin', originHeader);
