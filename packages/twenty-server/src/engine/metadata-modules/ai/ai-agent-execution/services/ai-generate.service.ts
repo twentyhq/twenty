@@ -7,10 +7,10 @@ import {
 } from 'twenty-shared/application';
 import {
   AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
-  aiRunScopeSchema,
   type AiRunScope,
 } from 'twenty-shared/ai';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
+import { aiRunScopeSchema } from 'twenty-shared/workflow';
 
 import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';
 import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/utils/build-created-by-from-application.util';
