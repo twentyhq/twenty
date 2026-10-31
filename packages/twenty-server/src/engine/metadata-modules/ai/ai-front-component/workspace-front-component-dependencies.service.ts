@@ -1,3 +1,4 @@
+import { msg } from '@lingui/core/macro';
 import { Injectable } from '@nestjs/common';
 import { z } from 'zod';
 import {
@@ -102,13 +103,26 @@ export class WorkspaceFrontComponentDependenciesService {
         }
         if (
           createHash('sha256').update(result.builtCode).digest('hex') !==
-            result.checksum ||
-          Buffer.byteLength(result.builtCode) >
-            FRONT_COMPONENT_MAX_BUILD_OUTPUT_BYTES
+          result.checksum
         ) {
           throw new FrontComponentException(
             'Shared frontend component dependencies checksum mismatch.',
             FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED,
+            {
+              userFriendlyMessage: msg`The component dependencies could not be verified. Try creating the component again.`,
+            },
+          );
+        }
+        if (
+          Buffer.byteLength(result.builtCode) >
+          FRONT_COMPONENT_MAX_BUILD_OUTPUT_BYTES
+        ) {
+          throw new FrontComponentException(
+            'Shared frontend component dependencies exceed the build output size limit.',
+            FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED,
+            {
+              userFriendlyMessage: msg`The component dependencies are too large. Reduce the Workspace app dependencies and try again.`,
+            },
           );
         }
         const currentDependencies = await this.readOrThrow(workspaceId);
@@ -119,6 +133,9 @@ export class WorkspaceFrontComponentDependenciesService {
           throw new FrontComponentException(
             'The Workspace app dependencies changed during the build. Retry creating the component.',
             FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED,
+            {
+              userFriendlyMessage: msg`The Workspace app dependencies changed during the build. Try creating the component again.`,
+            },
           );
         }
         const manifest: SharedDependenciesBuildManifest = {
@@ -216,6 +233,9 @@ export class WorkspaceFrontComponentDependenciesService {
       throw new FrontComponentException(
         'Add yarn.lock to the Workspace app before creating a component.',
         FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        {
+          userFriendlyMessage: msg`Add yarn.lock to the Workspace app before creating a component.`,
+        },
       );
     }
     const { dependencies, devDependencies } = packageSchema.parse(
@@ -225,9 +245,14 @@ export class WorkspaceFrontComponentDependenciesService {
       (name) => !isDefined(dependencies?.[name] ?? devDependencies?.[name]),
     );
     if (missingPackages.length > 0) {
+      const missingPackageNames = missingPackages.join(', ');
+
       throw new FrontComponentException(
-        `Add ${missingPackages.join(', ')} to the Workspace app package.json and yarn.lock before creating a component.`,
+        `Add ${missingPackageNames} to the Workspace app package.json and yarn.lock before creating a component.`,
         FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        {
+          userFriendlyMessage: msg`Add ${missingPackageNames} to the Workspace app package.json and yarn.lock before creating a component.`,
+        },
       );
     }
     return {

@@ -39,13 +39,13 @@ export const buildSharedDependenciesBundle = async ({
   const packageJson = await readJson<PackageJson>(
     join(appPath, 'package.json'),
   );
-  const dependencies = normalizeFrontComponentSharedDependencies(
-    sharedDependencies.dependencies,
-    Object.keys({
+  const dependencies = normalizeFrontComponentSharedDependencies({
+    dependencies: sharedDependencies.dependencies,
+    packageNames: Object.keys({
       ...packageJson.dependencies,
       ...packageJson.devDependencies,
     }),
-  );
+  });
   const namespaceCollisions =
     getSharedDependenciesNamespaceCollisions(dependencies);
 
