@@ -1,4 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
+import { isWorkflowStepOwnedAgent } from 'twenty-shared/workflow';
 import { useQuery, useMutation } from '@apollo/client/react';
 import {
   FindOneAgentDocument,
@@ -16,7 +17,7 @@ export const useUpdateAgentLabel = (agentId: string | undefined) => {
   const agent = agentData?.findOneAgent;
 
   const updateAgentLabel = async (newLabel: string) => {
-    if (!isDefined(agent)) {
+    if (!isDefined(agent) || !isWorkflowStepOwnedAgent(agent)) {
       return;
     }
 

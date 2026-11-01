@@ -72,6 +72,8 @@ export { MUTATION_MAX_MERGE_RECORDS } from './MutationMaxMergeRecords';
 export { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from './ObjectsWithChannelVisibilityConstraints';
 export { PARTNER_PATTERN } from './PartnerPattern';
 export { PermissionFlagType } from './PermissionFlagType';
+export { PERMISSION_FLAG_TYPE_BY_UNIVERSAL_IDENTIFIER } from './PermissionFlagTypeByUniversalIdentifier';
+export { PERMISSION_FLAG_UNIVERSAL_IDENTIFIER_BY_TYPE } from './PermissionFlagUniversalIdentifierByType';
 export { PermissionsOnAllObjectRecords } from './PermissionsOnAllObjectRecords';
 export { POLLED_MESSAGE_CHANNEL_TYPES } from './PolledMessageChannelTypes';
 export { QUERY_DEFAULT_LIMIT_RECORDS } from './QueryDefaultLimitRecords';

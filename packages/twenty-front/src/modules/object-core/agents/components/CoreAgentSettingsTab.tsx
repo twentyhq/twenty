@@ -1,3 +1,4 @@
+import { getAgentIcon } from '@/object-core/agents/utils/getAgentIcon';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
@@ -78,7 +79,7 @@ export const CoreAgentSettingsTab = ({
       <StyledFormContainer>
         <StyledIconNameRow>
           <IconPicker
-            selectedIconKey={formValues.icon || 'IconLego'}
+            selectedIconKey={getAgentIcon(formValues.icon)}
             onChange={({ iconKey }) => {
               onFieldChange('icon', iconKey);
             }}

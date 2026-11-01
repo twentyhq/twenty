@@ -83,7 +83,7 @@ const enrichResultWithNextStep = ({
       return {
         ...result,
         nextStep:
-          'This AI_AGENT step was created with a default placeholder agent. You MUST now call update_workflow_agent with the agentId from this step\'s settings.input.agentId to set the agent\'s system prompt (and optionally its model and responseFormat). Use responseFormat { type: "json", schema: { ... } } when downstream steps need to reference structured fields via {{stepId.fieldName}}, otherwise the output is referenced as {{stepId.response}}. If the step needs a task-specific prompt, also set it via update_workflow_version_step on settings.input.prompt.',
+          'If this AI_AGENT step runs no agent (no settings.input.agentId), it was created without instructions: you MUST now call update_workflow_version_step to set settings.input.instructions (its system prompt) and settings.input.prompt (the message sent on each run), and optionally modelId and responseFormat. Use responseFormat { type: "json", schema: { ... } } when downstream steps need to reference structured fields via {{stepId.fieldName}}, otherwise the output is referenced as {{stepId.response}}. The step reads no records until settings.input.scope grants it objects (same shape as a role manifest\'s permissions, with object universal identifiers). If it runs an agent, set settings.input.prompt: the agent supplies the instructions, model and permissions, and its response format unless the step sets settings.input.responseFormat.',
       };
     default:
       return result;

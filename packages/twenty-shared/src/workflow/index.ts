@@ -18,6 +18,7 @@ export { WORKFLOW_ACTION_FEATURE_FLAGS } from './constants/WorkflowActionFeature
 export { WORKFLOW_AI_AGENT_GENERATE_STEP_DEFAULT_NAME } from './constants/WorkflowAiAgentGenerateStepDefaultName';
 export type { WorkflowAiAgentStepConfigIssueCode } from './constants/WorkflowAiAgentStepConfigIssueMessages';
 export { WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES } from './constants/WorkflowAiAgentStepConfigIssueMessages';
+export { WORKFLOW_AI_AGENT_STEP_OWNED_AGENT_STEP_DEFAULT_NAME } from './constants/WorkflowAiAgentStepOwnedAgentStepDefaultName';
 export { WORKFLOW_TRIGGER_DEFAULT_NAMES } from './constants/WorkflowTriggerDefaultNames';
 export { WORKFLOW_TRIGGER_METADATA_KEY } from './constants/WorkflowTriggerMetadataKey';
 export { WORKFLOW_TRIGGER_METADATA_LABEL } from './constants/WorkflowTriggerMetadataLabel';
