@@ -394,7 +394,7 @@ msgid "A required field is missing. Please provide all required values and try a
 msgstr "Een vereist veld ontbreekt. Geef alle vereiste waarden op en probeer het opnieuw."
 
 #. js-lingui-id: Q2De+v
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util.ts
 msgid "A role with this label already exists."
 msgstr "Er bestaat al een rol met dit label."
@@ -403,6 +403,11 @@ msgstr "Er bestaat al een rol met dit label."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util.ts
 msgid "A secret variable cannot have a default value."
 msgstr "Een geheime variabele kan geen standaardwaarde hebben."
+
+#. js-lingui-id: KQFDmH
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "A signed-in chat is required."
+msgstr "Een ingelogde chat is vereist."
 
 #. js-lingui-id: 0/nqSW
 #: src/engine/metadata-modules/flat-skill/utils/from-update-skill-input-to-flat-skill-to-update-or-throw.util.ts
@@ -720,6 +725,11 @@ msgctxt "fieldMetadata.description"
 msgid "Actual recording start"
 msgstr "Werkelijk begin van de opname"
 
+#. js-lingui-id: ihM2nS
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "Add {missingPackageNames} to the Workspace app package.json and yarn.lock before creating a component."
+msgstr "Voeg {missingPackageNames} toe aan package.json en yarn.lock van de Workspace-app voordat je een component maakt."
+
 #. js-lingui-id: Fk0T9q
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Add a sender to this campaign first."
@@ -777,6 +787,11 @@ msgctxt "commandMenuItem.label"
 msgid "Add View to List"
 msgstr "Weergave aan lijst toevoegen"
 
+#. js-lingui-id: ScY5iZ
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "Add yarn.lock to the Workspace app before creating a component."
+msgstr "Voeg yarn.lock toe aan de Workspace-app voordat je een component maakt."
+
 #. js-lingui-id: EtSC0Y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -796,7 +811,7 @@ msgid "Admin Panel"
 msgstr "Beheerpaneel"
 
 #. js-lingui-id: VmatbA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Admin role not found."
 msgstr "Beheerdersrol niet gevonden."
 
@@ -1015,6 +1030,11 @@ msgstr "AI-chatthreads toegewezen aan het werkruimtelid"
 msgctxt "fieldMetadata.description"
 msgid "AI chat threads owned by the workspace member"
 msgstr "AI-chatthreads die eigendom zijn van het werkruimtelid"
+
+#. js-lingui-id: 1ahMBt
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "AI component builder is disabled."
+msgstr "AI-componentbuilder is uitgeschakeld."
 
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
@@ -1282,7 +1302,7 @@ msgid "API key role configuration not found."
 msgstr "Configuratie van API-sleutelrol niet gevonden."
 
 #. js-lingui-id: tGfHmi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "API key role not found."
 msgstr "API-sleutelrol niet gevonden."
 
@@ -1717,7 +1737,7 @@ msgid "Authentication is not enabled with this provider."
 msgstr "Authenticatie is niet ingeschakeld bij deze provider."
 
 #. js-lingui-id: Tsx+z2
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "Authentication is required to access this feature. Please sign in and try again."
 msgstr "Authenticatie is vereist om toegang te krijgen tot deze functie. Log in en probeer het opnieuw."
 
@@ -1728,7 +1748,7 @@ msgstr "Authenticatie is vereist om deze actie uit te voeren"
 
 #. js-lingui-id: cgNV3G
 #: src/engine/core-modules/file/file.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Authentication is required."
 msgstr "Authenticatie is vereist."
 
@@ -2463,12 +2483,12 @@ msgid "Cannot activate non-draft or non-last-published version"
 msgstr "Kan geen niet-klad- of niet-laatst-gepubliceerde versie activeren."
 
 #. js-lingui-id: QYS2AB
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add field permissions on system objects."
 msgstr "Kan geen veldmachtigingen toevoegen aan systeemobjecten."
 
 #. js-lingui-id: FxFlC4
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add permissions on system objects."
 msgstr "Kan geen machtigingen toevoegen aan systeemobjecten."
 
@@ -2501,7 +2521,7 @@ msgid "Cannot delete standard skill"
 msgstr "Kan standaardvaardigheid niet verwijderen"
 
 #. js-lingui-id: /olFYI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot delete the last admin user."
 msgstr "Kan de laatste beheerder niet verwijderen."
 
@@ -2517,12 +2537,12 @@ msgid "Cannot delete, please update the label identifier field first"
 msgstr "Niet te verwijderen, werk eerst het label-identificatieveld bij."
 
 #. js-lingui-id: lDTqT7
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."
 msgstr "Kan geen schrijfmachtiging geven voor niet-leesbare objecten."
 
 #. js-lingui-id: r4uEo5
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission without read permission."
 msgstr "Kan geen schrijfmachtiging geven zonder leesmachtiging."
 
@@ -2597,7 +2617,7 @@ msgid "Cannot modify predicate to change its role from {existingRoleIdentifier} 
 msgstr "Predicaat kan niet worden gewijzigd om de rol ervan te wijzigen van {existingRoleIdentifier} naar {updatedRoleIdentifier}"
 
 #. js-lingui-id: Q0diyJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
 msgstr "Kan de laatste beheerder niet uit de werkruimte verwijderen."
 
@@ -2614,7 +2634,7 @@ msgid "Cannot target a role owned by another application"
 msgstr "Kan geen rol selecteren die eigendom is van een andere applicatie"
 
 #. js-lingui-id: 2ET75e
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
 msgid "Cannot target a role owned by another application."
 msgstr "Kan geen rol die eigendom is van een andere applicatie als doel selecteren."
@@ -2850,7 +2870,7 @@ msgid "Choose an existing timeline activity type to override"
 msgstr "Kies een bestaand tijdlijnactiviteitstype om te overschrijven."
 
 #. js-lingui-id: +eCqA7
-#: src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Kies één persoon of één rol om mee te delen."
 
@@ -3068,6 +3088,11 @@ msgstr "Het bouwen van de component heeft de tijdslimiet van {timeoutSeconds} se
 msgid "Component build exceeds the {maximumOutputMegabytes} MB output limit."
 msgstr "Het bouwen van de component overschrijdt de uitvoerlimiet van {maximumOutputMegabytes} MB."
 
+#. js-lingui-id: C1+ewF
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Component draft not found or expired."
+msgstr "Componentconcept niet gevonden of verlopen."
+
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -3087,7 +3112,7 @@ msgid "Compose Email"
 msgstr "E-mail opstellen"
 
 #. js-lingui-id: L1uQuF
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Composite type not found."
 msgstr "Samengesteld type niet gevonden."
 
@@ -3688,7 +3713,7 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "Aangemaakte veldmetadata, metadata bovenliggende object niet gevonden"
 
 #. js-lingui-id: tpPGe6
-#: src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "Creating a record of a private object requires the shareWith argument"
 msgstr "Voor het maken van een record van een privéobject is het argument shareWith vereist"
 
@@ -3854,8 +3879,8 @@ msgid "Custom object is missing a label identifier field."
 msgstr "Aangepast object mist een labelidentificatieveld."
 
 #. js-lingui-id: iHlVsm
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "Aangepaste rollen maken deel uit van het Organization Plan."
@@ -4178,7 +4203,7 @@ msgid "Default Person Layout"
 msgstr "Standaard persoonsindeling"
 
 #. js-lingui-id: cgV4xo
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Default role not found."
 msgstr "Standaardrol niet gevonden."
 
@@ -4600,7 +4625,7 @@ msgid "Each related record path field must belong to the object reached by the p
 msgstr "Elk veld in het pad voor gerelateerde records moet behoren tot het object dat via de vorige relatie wordt bereikt"
 
 #. js-lingui-id: nTBzmZ
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
 msgstr "Elke shareWith-vermelding moet precies één van workspaceMemberId, roleId of everyone als doel hebben"
 
@@ -4857,7 +4882,7 @@ msgid "Emoji the member reacted with"
 msgstr "Emoji waarmee het lid reageerde"
 
 #. js-lingui-id: aVGG1u
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Empty field permissions are not allowed."
 msgstr "Lege veldmachtigingen zijn niet toegestaan."
 
@@ -5291,7 +5316,7 @@ msgid "Failed to retry jobs. Please try again later."
 msgstr "Kon de taken niet opnieuw proberen. Probeer het later opnieuw."
 
 #. js-lingui-id: Cr+NSQ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Failed to update field permission."
 msgstr "Bijwerken van veldmachtiging mislukt."
 
@@ -5346,6 +5371,12 @@ msgstr "Veld \"{relationFieldName}\" is geen relatie"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
 msgstr "Veld \"{workspaceMemberFieldName}\" is geen veld van het workspaceMember-object; het predicaat zou nooit worden toegepast"
+
+#. js-lingui-id: CKPTLC
+#. placeholder {0}: query.objectName
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Field {0}.{fieldName} is unavailable. Select accessible top-level fields."
+msgstr "Veld {0}.{fieldName} is niet beschikbaar. Selecteer toegankelijke velden op hoofdniveau."
 
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -5410,8 +5441,8 @@ msgid "Field metadata not found"
 msgstr "Veldmetadata niet gevonden"
 
 #. js-lingui-id: JrAl/I
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 msgid "Field metadata not found."
@@ -5461,7 +5492,7 @@ msgid "Field permission not found"
 msgstr "Veldmachtiging niet gevonden"
 
 #. js-lingui-id: yqmAnC
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field permission not found."
 msgstr "Veldmachtiging niet gevonden."
 
@@ -5492,7 +5523,7 @@ msgid "Field referenced in index does not exist"
 msgstr "Veld dat in index wordt genoemd, bestaat niet"
 
 #. js-lingui-id: ylQono
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field restrictions only apply to readable objects."
 msgstr "Veldbeperkingen zijn alleen van toepassing op leesbare objecten."
 
@@ -6540,8 +6571,8 @@ msgid "Internal name of the campaign"
 msgstr "Interne naam van de campagne"
 
 #. js-lingui-id: Lztd7b
-#: src/engine/core-modules/record-share/services/record-sharing.service.ts
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid access level."
 msgstr "Ongeldig toegangsniveau."
 
@@ -6577,7 +6608,7 @@ msgid "Invalid application workflow definition."
 msgstr "Ongeldige definitie van applicatieworkflow."
 
 #. js-lingui-id: KNrRpL
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid argument provided."
 msgstr "Ongeldig argument opgegeven."
 
@@ -6620,6 +6651,11 @@ msgstr "Ongeldig classificatieverzoek."
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
 msgid "Invalid command menu item input."
 msgstr "Ongeldige invoer voor het opdrachtmenu-item."
+
+#. js-lingui-id: 5OY08H
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Invalid component draft input."
+msgstr "Ongeldige invoer voor componentconcept."
 
 #. js-lingui-id: wJMQQx
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
@@ -7080,7 +7116,7 @@ msgid "Invalid permission flag permission type."
 msgstr "Ongeldig machtigingstype voor de machtigingsvlag."
 
 #. js-lingui-id: Pt2vVA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid permission setting."
 msgstr "Ongeldige machtigingsinstelling."
 
@@ -7104,6 +7140,11 @@ msgstr "Ongeldige telefoonlandcode."
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
 msgid "Invalid phone number."
 msgstr "Ongeldig telefoonnummer."
+
+#. js-lingui-id: weTo0R
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.controller.ts
+msgid "Invalid preview error message."
+msgstr "Ongeldig foutbericht voor voorbeeld."
 
 #. js-lingui-id: r+9b/a
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -7244,8 +7285,8 @@ msgstr "Ongeldig URL-formaat."
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
-#: src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util.ts
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid UUID format."
 msgstr "Ongeldig UUID-formaat."
 
@@ -7545,7 +7586,7 @@ msgid "Job Title"
 msgstr "Functietitel"
 
 #. js-lingui-id: cCj4vg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Join column name is required."
 msgstr "Naam van join-kolom is vereist."
 
@@ -8110,6 +8151,11 @@ msgstr "Privé maken"
 msgctxt "commandMenuItem.label"
 msgid "Make Workflow Private"
 msgstr "Workflow privé maken"
+
+#. js-lingui-id: Ff72+G
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Managing applications is required."
+msgstr "Het beheren van applicaties is vereist."
 
 #. js-lingui-id: paJTob
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -9097,7 +9143,7 @@ msgid "No permissions are set for this role on the selected object. Please set o
 msgstr "Er zijn geen rechten ingesteld voor deze rol op het geselecteerde object. Stel eerst objectrechten in."
 
 #. js-lingui-id: D2A/H0
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No permissions found in datasource."
 msgstr "Geen machtigingen gevonden in gegevensbron."
 
@@ -9117,12 +9163,12 @@ msgid "No records were affected."
 msgstr "Er zijn geen records gewijzigd."
 
 #. js-lingui-id: iHQYLb
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role assigned to the application."
 msgstr "Er is geen rol aan de applicatie toegewezen."
 
 #. js-lingui-id: 5ZMHXg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role found for this user in the workspace."
 msgstr "Geen rol gevonden voor deze gebruiker in de werkruimte."
 
@@ -9152,7 +9198,7 @@ msgid "No trigger type provided"
 msgstr "Geen triggertype opgegeven."
 
 #. js-lingui-id: /BipSk
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "No valid authentication context found."
 msgstr "Geen geldige authenticatiecontext gevonden."
 
@@ -9466,9 +9512,9 @@ msgid "Object metadata not found"
 msgstr "Objectmetadata niet gevonden"
 
 #. js-lingui-id: rHce90
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 #: src/modules/workflow/common/exceptions/workflow-common.exception.ts
@@ -9508,7 +9554,7 @@ msgid "Object permission not found"
 msgstr "Objectmachtiging niet gevonden"
 
 #. js-lingui-id: Qy6mMO
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Object permission not found."
 msgstr "Objectmachtiging niet gevonden."
 
@@ -9653,7 +9699,7 @@ msgid "Only error"
 msgstr "De enige fout"
 
 #. js-lingui-id: eYgzEd
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "Alleen veldbeperkingen zijn toegestaan."
 
@@ -10345,7 +10391,7 @@ msgid "Permission flag to update not found"
 msgstr "Machtigingsvlag voor bijwerken niet gevonden"
 
 #. js-lingui-id: vcvSI3
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Permission not found."
 msgstr "Machtiging niet gevonden."
 
@@ -10638,6 +10684,11 @@ msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "Type principal"
 
+#. js-lingui-id: mQkeUR
+#: src/engine/permissions/private-record/utils/assert-private-record-enabled-or-throw.util.ts
+msgid "Private records are not available in this workspace yet."
+msgstr "Privérecords zijn nog niet beschikbaar in deze werkruimte."
+
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10805,7 +10856,7 @@ msgid "Rate limit reached. Please try again later."
 msgstr "Verzoeklimiet bereikt. Probeer het later opnieuw."
 
 #. js-lingui-id: 8G8dJM
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Raw SQL queries are not allowed."
 msgstr "Ruwe SQL-query's zijn niet toegestaan."
 
@@ -11111,6 +11162,11 @@ msgstr "Pad voor gerelateerde records niet gevonden."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path object not found"
 msgstr "Object in pad voor gerelateerde records niet gevonden"
+
+#. js-lingui-id: 0ppWJe
+#: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
+msgid "Related record paths require the Organization plan."
+msgstr "Gerelateerde recordpaden vereisen het Organization-abonnement."
 
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
@@ -11482,7 +11538,7 @@ msgid "Role is not editable"
 msgstr "Rol is niet bewerkbaar"
 
 #. js-lingui-id: zeffu9
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role must have at least one target."
 msgstr "Rol moet minstens één doel hebben."
 
@@ -11526,10 +11582,10 @@ msgstr ""
 
 #. js-lingui-id: /BTyf+
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role not found."
 msgstr "Rol niet gevonden."
 
@@ -11730,6 +11786,16 @@ msgstr "Uitvoeringen"
 msgctxt "view.name"
 msgid "Runs"
 msgstr "Uitvoeringen"
+
+#. js-lingui-id: y0kFMY
+#: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
+msgid "Sample records exceed 100 KB."
+msgstr "Voorbeeldrecords zijn groter dan 100 KB."
+
+#. js-lingui-id: 0ovywa
+#: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
+msgid "Sample records must only contain selected fields and id."
+msgstr "Voorbeeldrecords mogen alleen geselecteerde velden en id bevatten."
 
 #. js-lingui-id: +5kO8P
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -12248,17 +12314,17 @@ msgid "Shared record"
 msgstr "Gedeeld record"
 
 #. js-lingui-id: 4FadYd
-#: src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a role that does not belong to this workspace"
 msgstr "shareWith noemt een rol die niet bij deze werkruimte hoort"
 
 #. js-lingui-id: 4PQnEW
-#: src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a workspace member that does not belong to this workspace"
 msgstr "shareWith noemt een werkruimtelid dat niet bij deze werkruimte hoort"
 
 #. js-lingui-id: qTLqMS
-#: src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "shareWith names the same principal more than once"
 msgstr "shareWith noemt dezelfde principal meer dan eens"
 
@@ -12381,7 +12447,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Sommige van de door u geselecteerde rechten zijn niet geldig. Probeer het opnieuw met geldige rechtinstellingen."
 
 #. js-lingui-id: aPJopM
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Sommige lidmaatschappen van deze werkruimte konden niet worden gevonden. Mogelijk hebben de betreffende gebruikers geen toegang meer tot deze werkruimte."
 
@@ -13189,7 +13255,7 @@ msgid "The agent you are looking for could not be found. It may have been delete
 msgstr "De agent die u zoekt kon niet worden gevonden. Deze is mogelijk verwijderd of u hebt er geen toegang toe."
 
 #. js-lingui-id: eC8p5b
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "De API-sleutel heeft geen geldige rol toegewezen. Controleer uw API-sleutelconfiguratie."
 
@@ -13205,7 +13271,7 @@ msgid "The app source channel does not match the expected type."
 msgstr "Het bronkanaal van de app komt niet overeen met het verwachte type."
 
 #. js-lingui-id: IU78DA
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "Aan de applicatie is geen geldige rol toegewezen. Controleer uw applicatieconfiguratie."
 
@@ -13266,6 +13332,16 @@ msgstr "De URL van de bedrijfswebsite. We gebruiken deze URL om het bedrijfsicoo
 msgctxt "fieldMetadata.description"
 msgid "The company's total annual revenue"
 msgstr "De totale jaarlijkse omzet van het bedrijf"
+
+#. js-lingui-id: ccHTwy
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "The component dependencies are too large. Reduce the Workspace app dependencies and try again."
+msgstr "De afhankelijkheden van het component zijn te groot. Verminder de afhankelijkheden van de Workspace-app en probeer het opnieuw."
+
+#. js-lingui-id: m3v5Oe
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "The component dependencies could not be verified. Try creating the component again."
+msgstr "De afhankelijkheden van het onderdeel konden niet worden geverifieerd. Probeer het onderdeel opnieuw te maken."
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -13357,7 +13433,7 @@ msgid "The default role cannot be deleted as it is required for the workspace to
 msgstr "De standaardrol kan niet worden verwijderd omdat deze nodig is voor de functionaliteit van de werkruimte."
 
 #. js-lingui-id: 0biWRI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "The default role cannot be deleted."
 msgstr "De standaardrol kan niet worden verwijderd."
 
@@ -13547,7 +13623,7 @@ msgid "The MCP request parameters are invalid."
 msgstr "De aanvraagparameters van MCP zijn ongeldig."
 
 #. js-lingui-id: 9b5Rap
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
 msgid "The Member role cannot be deleted."
 msgstr "De rol Lid kan niet worden verwijderd."
@@ -13879,6 +13955,11 @@ msgctxt "fieldMetadata.description"
 msgid "The workflow version status"
 msgstr "De status van de workflowversie"
 
+#. js-lingui-id: VyvnL/
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "The Workspace app dependencies changed during the build. Try creating the component again."
+msgstr "De afhankelijkheden van de Workspace-app zijn gewijzigd tijdens het bouwen. Probeer het onderdeel opnieuw te maken."
+
 #. js-lingui-id: AiP86c
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
@@ -13916,12 +13997,12 @@ msgid "The workspace member who last updated the record"
 msgstr "Het werkruimtelid dat het record voor het laatst heeft bijgewerkt"
 
 #. js-lingui-id: lRojhv
-#: src/engine/core-modules/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "Hun rol heeft geen toegang tot deze records en dit object wordt alleen gedeeld met rollen die dat wel hebben."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/core-modules/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "Hun rol kan dit record niet zien en dit object wordt alleen gedeeld met personen die dat wel kunnen."
 
@@ -14204,6 +14285,16 @@ msgstr "Dit domein is al geregistreerd."
 msgid "This domain is already taken."
 msgstr "Dit domein is al in gebruik."
 
+#. js-lingui-id: Ukfndw
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This draft is being updated. Try again."
+msgstr "Dit concept wordt bijgewerkt. Probeer het opnieuw."
+
+#. js-lingui-id: HJFKCt
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This draft was superseded or belongs to another chat. Start a new draft."
+msgstr "Dit concept is vervangen of behoort tot een andere chat. Start een nieuw concept."
+
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts
 msgid "This email is already in use."
@@ -14382,7 +14473,7 @@ msgid "This message channel cannot send messages."
 msgstr "Dit berichtenkanaal kan geen berichten verzenden."
 
 #. js-lingui-id: 6Z/zIt
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This method is not allowed."
 msgstr "Deze methode is niet toegestaan."
 
@@ -14568,12 +14659,12 @@ msgid "This role cannot be assigned to API keys."
 msgstr "Deze rol kan niet aan API-sleutels worden toegewezen."
 
 #. js-lingui-id: c68K+k
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to users."
 msgstr "Deze rol kan niet aan gebruikers worden toegewezen."
 
 #. js-lingui-id: 2jnsqJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be edited."
 msgstr "Deze rol kan niet worden bewerkt."
 
@@ -15039,7 +15130,7 @@ msgid "To do"
 msgstr "Te doen"
 
 #. js-lingui-id: /ObxXq
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Too many admin candidates found."
 msgstr "Te veel beheerderskandidaten gevonden."
 
@@ -15376,12 +15467,12 @@ msgid "Unknown navigation menu item type {type}"
 msgstr "Onbekend type navigatiemenu-item {type}"
 
 #. js-lingui-id: tEncxN
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown operation."
 msgstr "Onbekende bewerking."
 
 #. js-lingui-id: BIxgma
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown permission required."
 msgstr "Onbekende machtiging vereist."
 
@@ -15518,7 +15609,7 @@ msgid "Update DateTime"
 msgstr "Bijwerkingsdatum en -tijd"
 
 #. js-lingui-id: lHCFXi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "Beperkingen voor updatevelden zijn alleen van toepassing op objecten die kunnen worden bijgewerkt."
 
@@ -15761,7 +15852,7 @@ msgid "User already exists"
 msgstr "Gebruiker bestaat al"
 
 #. js-lingui-id: 9QHVZ2
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User already has a role assigned."
 msgstr "Aan de gebruiker is al een rol toegewezen."
 
@@ -15776,7 +15867,7 @@ msgid "User does not have access to this workspace"
 msgstr "Gebruiker heeft geen toegang tot deze werkruimte"
 
 #. js-lingui-id: Sl1ElS
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "User does not have permission."
 msgstr "Gebruiker heeft geen toestemming."
 
@@ -15833,7 +15924,7 @@ msgstr "Gebruiker is niet aangemaakt met e-mail/wachtwoord"
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User workspace not found."
 msgstr "Gebruikerswerkruimte niet gevonden."
 
@@ -17098,7 +17189,7 @@ msgid "Workspace does not exist."
 msgstr "Werkruimte bestaat niet."
 
 #. js-lingui-id: oLh4c+
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace ID and role mismatch."
 msgstr "Werkruimte-ID en rol komen niet overeen."
 
@@ -17190,7 +17281,7 @@ msgstr "Naam van werkruimtelid"
 
 #. js-lingui-id: rnnLQA
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace member not found."
 msgstr "Werkruimtelid niet gevonden."
 
@@ -17437,12 +17528,12 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Je kunt geen herstelcode voor jezelf genereren. Stel in plaats daarvan tweefactorauthenticatie opnieuw in vanuit je profiel."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "En u kunt uw eigen rol niet veranderen. Vraag een andere beheerder om uw rol bij te werken."
 
 #. js-lingui-id: xqrB9X
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot delete a role you are assigned to. Ask another administrator to delete it."
 msgstr "Je kunt geen rol verwijderen waaraan je zelf bent toegewezen. Vraag een andere beheerder om deze te verwijderen."
 
@@ -17453,12 +17544,12 @@ msgid "You cannot grant edit permissions without also granting read permissions.
 msgstr "U kunt geen bewerkingsrechten verlenen zonder ook leesrechten toe te kennen. Schakel eerst leesrechten in."
 
 #. js-lingui-id: KcnT7Q
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot remove settings access from your own role. Ask another administrator to make this change."
 msgstr "Je kunt de toegang tot instellingen niet verwijderen uit je eigen rol. Vraag een andere beheerder om deze wijziging door te voeren."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "U kunt de beheerdersrol niet verwijderen van de laatste beheerder. Wijs eerst een andere beheerder toe."
 
@@ -17483,7 +17574,7 @@ msgid "You cannot set field permissions on system objects as they are managed by
 msgstr "U kunt geen veldrechten instellen voor systeemobjecten omdat deze door het platform worden beheerd."
 
 #. js-lingui-id: bAPURS
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot update your own role."
 msgstr "Je kunt je eigen rol niet bijwerken."
 
@@ -17572,7 +17663,7 @@ msgstr "Je hebt geen toestemming om de blokkeerlijst van de werkruimte te behere
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/guards/exceptions/auth-principal-refused.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You do not have permission to perform this action."
 msgstr "Je hebt geen toestemming om deze actie uit te voeren."
 
@@ -17700,8 +17791,8 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "Uw rol kan sommige van deze records niet verwijderen, dus ze kunnen niet worden samengevoegd."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/metadata-modules/permissions/permissions.service.ts
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Uw rol in deze werkruimte kon niet worden gevonden. Neem contact op met uw werkruimtebeheerder."
 

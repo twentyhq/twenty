@@ -394,7 +394,7 @@ msgid "A required field is missing. Please provide all required values and try a
 msgstr "Lipsește un câmp obligatoriu. Vă rugăm să furnizați toate valorile obligatorii și să încercați din nou."
 
 #. js-lingui-id: Q2De+v
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util.ts
 msgid "A role with this label already exists."
 msgstr "Un rol cu această etichetă deja există."
@@ -403,6 +403,11 @@ msgstr "Un rol cu această etichetă deja există."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util.ts
 msgid "A secret variable cannot have a default value."
 msgstr "O variabilă secretă nu poate avea o valoare implicită."
+
+#. js-lingui-id: KQFDmH
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "A signed-in chat is required."
+msgstr "Este necesar un chat autentificat."
 
 #. js-lingui-id: 0/nqSW
 #: src/engine/metadata-modules/flat-skill/utils/from-update-skill-input-to-flat-skill-to-update-or-throw.util.ts
@@ -720,6 +725,11 @@ msgctxt "fieldMetadata.description"
 msgid "Actual recording start"
 msgstr "Începutul efectiv al înregistrării"
 
+#. js-lingui-id: ihM2nS
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "Add {missingPackageNames} to the Workspace app package.json and yarn.lock before creating a component."
+msgstr "Adăugați {missingPackageNames} în package.json și yarn.lock ale aplicației Workspace înainte de a crea o componentă."
+
 #. js-lingui-id: Fk0T9q
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Add a sender to this campaign first."
@@ -777,6 +787,11 @@ msgctxt "commandMenuItem.label"
 msgid "Add View to List"
 msgstr "Adăugați vizualizarea la listă"
 
+#. js-lingui-id: ScY5iZ
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "Add yarn.lock to the Workspace app before creating a component."
+msgstr "Adăugați yarn.lock în aplicația Workspace înainte de a crea o componentă."
+
 #. js-lingui-id: EtSC0Y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -796,7 +811,7 @@ msgid "Admin Panel"
 msgstr "Panoul de administrare"
 
 #. js-lingui-id: VmatbA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Admin role not found."
 msgstr "Rolul de administrator nu a fost găsit."
 
@@ -1015,6 +1030,11 @@ msgstr "Conversații AI atribuite membrului spațiului de lucru"
 msgctxt "fieldMetadata.description"
 msgid "AI chat threads owned by the workspace member"
 msgstr "Fire de conversație AI deținute de membrul spațiului de lucru"
+
+#. js-lingui-id: 1ahMBt
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "AI component builder is disabled."
+msgstr "Generatorul de componente AI este dezactivat."
 
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
@@ -1282,7 +1302,7 @@ msgid "API key role configuration not found."
 msgstr "Configurația rolului pentru cheia API nu a fost găsită."
 
 #. js-lingui-id: tGfHmi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "API key role not found."
 msgstr "Rolul cheii API nu a fost găsit."
 
@@ -1717,7 +1737,7 @@ msgid "Authentication is not enabled with this provider."
 msgstr "Autentificarea nu este activată cu acest furnizor."
 
 #. js-lingui-id: Tsx+z2
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "Authentication is required to access this feature. Please sign in and try again."
 msgstr "Este necesară autentificarea pentru a accesa această funcție. Vă rugăm să vă conectați și să încercați din nou."
 
@@ -1728,7 +1748,7 @@ msgstr "Autentificarea este necesară pentru a efectua această acțiune"
 
 #. js-lingui-id: cgNV3G
 #: src/engine/core-modules/file/file.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Authentication is required."
 msgstr "Autentificarea este necesară."
 
@@ -2463,12 +2483,12 @@ msgid "Cannot activate non-draft or non-last-published version"
 msgstr "Nu se poate activa o versiune care nu este schiță sau ultima publicată"
 
 #. js-lingui-id: QYS2AB
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add field permissions on system objects."
 msgstr "Nu se pot adăuga permisiuni de câmp pe obiectele de sistem."
 
 #. js-lingui-id: FxFlC4
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add permissions on system objects."
 msgstr "Nu se pot adăuga permisiuni pe obiectele de sistem."
 
@@ -2501,7 +2521,7 @@ msgid "Cannot delete standard skill"
 msgstr "Nu se poate șterge abilitatea standard"
 
 #. js-lingui-id: /olFYI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot delete the last admin user."
 msgstr "Nu se poate șterge ultimul utilizator administrator."
 
@@ -2517,12 +2537,12 @@ msgid "Cannot delete, please update the label identifier field first"
 msgstr "Nu se poate șterge, vă rugăm actualizați mai întâi câmpul identificatorului etichetei"
 
 #. js-lingui-id: lDTqT7
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."
 msgstr "Nu se pot acorda permisiuni de scriere pentru obiecte care nu sunt lizibile."
 
 #. js-lingui-id: r4uEo5
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission without read permission."
 msgstr "Nu se pot acorda permisiuni de scriere fără permisiuni de citire."
 
@@ -2597,7 +2617,7 @@ msgid "Cannot modify predicate to change its role from {existingRoleIdentifier} 
 msgstr "Nu se poate modifica predicatul pentru a-i schimba rolul din {existingRoleIdentifier} în {updatedRoleIdentifier}"
 
 #. js-lingui-id: Q0diyJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
 msgstr "Nu se poate elimina ultimul administrator din spațiul de lucru."
 
@@ -2614,7 +2634,7 @@ msgid "Cannot target a role owned by another application"
 msgstr "Nu se poate viza un rol deținut de o altă aplicație"
 
 #. js-lingui-id: 2ET75e
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
 msgid "Cannot target a role owned by another application."
 msgstr "Nu se poate viza un rol deținut de o altă aplicație."
@@ -2850,7 +2870,7 @@ msgid "Choose an existing timeline activity type to override"
 msgstr "Alegeți un tip existent de activitate din cronologie pe care să îl suprascrieți."
 
 #. js-lingui-id: +eCqA7
-#: src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Alegeți o persoană sau un rol cu care să partajați."
 
@@ -3068,6 +3088,11 @@ msgstr "Compilarea componentei a depășit limita de timp de {timeoutSeconds} se
 msgid "Component build exceeds the {maximumOutputMegabytes} MB output limit."
 msgstr "Compilarea componentei depășește limita de ieșire de {maximumOutputMegabytes} MB."
 
+#. js-lingui-id: C1+ewF
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Component draft not found or expired."
+msgstr "Schița componentei nu a fost găsită sau a expirat."
+
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -3087,7 +3112,7 @@ msgid "Compose Email"
 msgstr "Compune e-mail"
 
 #. js-lingui-id: L1uQuF
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Composite type not found."
 msgstr "Tipul compus nu a fost găsit."
 
@@ -3688,7 +3713,7 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "Metadatele câmpului creat, metadatele obiectului părinte nu au fost găsite"
 
 #. js-lingui-id: tpPGe6
-#: src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "Creating a record of a private object requires the shareWith argument"
 msgstr "Crearea unei înregistrări a unui obiect privat necesită argumentul shareWith"
 
@@ -3854,8 +3879,8 @@ msgid "Custom object is missing a label identifier field."
 msgstr "Obiectului personalizat îi lipsește un câmp identificator de etichetă."
 
 #. js-lingui-id: iHlVsm
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "Rolurile personalizate fac parte din planul Organization."
@@ -4178,7 +4203,7 @@ msgid "Default Person Layout"
 msgstr "Aspect implicit pentru persoană"
 
 #. js-lingui-id: cgV4xo
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Default role not found."
 msgstr "Rolul implicit nu a fost găsit."
 
@@ -4600,7 +4625,7 @@ msgid "Each related record path field must belong to the object reached by the p
 msgstr "Fiecare câmp din calea înregistrării asociate trebuie să aparțină obiectului atins prin relația anterioară"
 
 #. js-lingui-id: nTBzmZ
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
 msgstr "Fiecare intrare shareWith trebuie să vizeze exact unul dintre workspaceMemberId, roleId sau everyone"
 
@@ -4857,7 +4882,7 @@ msgid "Emoji the member reacted with"
 msgstr "Emoji-ul cu care a reacționat membrul"
 
 #. js-lingui-id: aVGG1u
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Empty field permissions are not allowed."
 msgstr "Permisiunile de câmp goale nu sunt permise."
 
@@ -5291,7 +5316,7 @@ msgid "Failed to retry jobs. Please try again later."
 msgstr "Nu s-a reușit reîncercarea slujbelor. Vă rugăm să încercați din nou mai târziu."
 
 #. js-lingui-id: Cr+NSQ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Failed to update field permission."
 msgstr "Actualizarea permisiunii de câmp a eșuat."
 
@@ -5346,6 +5371,12 @@ msgstr "Câmpul \"{relationFieldName}\" nu este o relație"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
 msgstr "Câmpul \"{workspaceMemberFieldName}\" nu este un câmp al obiectului workspaceMember, predicatul nu s-ar aplica niciodată"
+
+#. js-lingui-id: CKPTLC
+#. placeholder {0}: query.objectName
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Field {0}.{fieldName} is unavailable. Select accessible top-level fields."
+msgstr "Câmpul {0}.{fieldName} nu este disponibil. Selectați câmpuri de nivel superior accesibile."
 
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -5410,8 +5441,8 @@ msgid "Field metadata not found"
 msgstr "Metadatele câmpului nu au fost găsite"
 
 #. js-lingui-id: JrAl/I
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 msgid "Field metadata not found."
@@ -5461,7 +5492,7 @@ msgid "Field permission not found"
 msgstr "Permisiunea pe câmp nu a fost găsită"
 
 #. js-lingui-id: yqmAnC
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field permission not found."
 msgstr "Permisiunea pe câmp nu a fost găsită."
 
@@ -5492,7 +5523,7 @@ msgid "Field referenced in index does not exist"
 msgstr "Câmpul referit în index nu există"
 
 #. js-lingui-id: ylQono
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field restrictions only apply to readable objects."
 msgstr "Restricțiile de câmp se aplică doar obiectelor lizibile."
 
@@ -6540,8 +6571,8 @@ msgid "Internal name of the campaign"
 msgstr "Nume intern al campaniei"
 
 #. js-lingui-id: Lztd7b
-#: src/engine/core-modules/record-share/services/record-sharing.service.ts
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid access level."
 msgstr "Nivel de acces nevalid."
 
@@ -6577,7 +6608,7 @@ msgid "Invalid application workflow definition."
 msgstr "Definiție nevalidă a fluxului de lucru al aplicației."
 
 #. js-lingui-id: KNrRpL
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid argument provided."
 msgstr "A fost furnizat un argument invalid."
 
@@ -6620,6 +6651,11 @@ msgstr "Solicitare de clasificare invalidă."
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
 msgid "Invalid command menu item input."
 msgstr "Intrare invalidă pentru elementul de meniu de comandă."
+
+#. js-lingui-id: 5OY08H
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Invalid component draft input."
+msgstr "Intrare nevalidă pentru schița componentei."
 
 #. js-lingui-id: wJMQQx
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
@@ -7080,7 +7116,7 @@ msgid "Invalid permission flag permission type."
 msgstr "Tip de permisiune invalid pentru indicatorul de permisiune."
 
 #. js-lingui-id: Pt2vVA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid permission setting."
 msgstr "Setare de permisiune invalidă."
 
@@ -7104,6 +7140,11 @@ msgstr "Cod de țară telefonic invalid."
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
 msgid "Invalid phone number."
 msgstr "Număr de telefon invalid."
+
+#. js-lingui-id: weTo0R
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.controller.ts
+msgid "Invalid preview error message."
+msgstr "Mesaj de eroare de previzualizare nevalid."
 
 #. js-lingui-id: r+9b/a
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -7244,8 +7285,8 @@ msgstr "Format de URL invalid."
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
-#: src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util.ts
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid UUID format."
 msgstr "Format de UUID invalid."
 
@@ -7545,7 +7586,7 @@ msgid "Job Title"
 msgstr "Funcție"
 
 #. js-lingui-id: cCj4vg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Join column name is required."
 msgstr "Numele coloanei de îmbinare este necesar."
 
@@ -8110,6 +8151,11 @@ msgstr "Faceți-l privat"
 msgctxt "commandMenuItem.label"
 msgid "Make Workflow Private"
 msgstr "Faceți fluxul de lucru privat"
+
+#. js-lingui-id: Ff72+G
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Managing applications is required."
+msgstr "Este necesară gestionarea aplicațiilor."
 
 #. js-lingui-id: paJTob
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -9097,7 +9143,7 @@ msgid "No permissions are set for this role on the selected object. Please set o
 msgstr "Nu sunt setate permisiuni pentru acest rol pe obiectul selectat. Vă rugăm să setați mai întâi permisiunile obiectului."
 
 #. js-lingui-id: D2A/H0
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No permissions found in datasource."
 msgstr "Nu au fost găsite permisiuni în sursa de date."
 
@@ -9117,12 +9163,12 @@ msgid "No records were affected."
 msgstr "Nu a fost afectată nicio înregistrare."
 
 #. js-lingui-id: iHQYLb
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role assigned to the application."
 msgstr "Niciun rol atribuit aplicației."
 
 #. js-lingui-id: 5ZMHXg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role found for this user in the workspace."
 msgstr "Nu a fost găsit niciun rol pentru acest utilizator în spațiul de lucru."
 
@@ -9152,7 +9198,7 @@ msgid "No trigger type provided"
 msgstr "Niciun tip de declanșator nu a fost furnizat"
 
 #. js-lingui-id: /BipSk
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "No valid authentication context found."
 msgstr "Nu este găsit un context de autentificare valid."
 
@@ -9466,9 +9512,9 @@ msgid "Object metadata not found"
 msgstr "Metadatele obiectului nu au fost găsite"
 
 #. js-lingui-id: rHce90
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 #: src/modules/workflow/common/exceptions/workflow-common.exception.ts
@@ -9508,7 +9554,7 @@ msgid "Object permission not found"
 msgstr "Permisiunea pe obiect nu a fost găsită"
 
 #. js-lingui-id: Qy6mMO
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Object permission not found."
 msgstr "Permisiunea pe obiect nu a fost găsită."
 
@@ -9653,7 +9699,7 @@ msgid "Only error"
 msgstr "Singura eroare"
 
 #. js-lingui-id: eYgzEd
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "Sunt permise doar restricțiile de câmp."
 
@@ -10345,7 +10391,7 @@ msgid "Permission flag to update not found"
 msgstr "Indicatorul de permisiune pentru actualizare nu a fost găsit"
 
 #. js-lingui-id: vcvSI3
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Permission not found."
 msgstr "Permisiunea nu a fost găsită."
 
@@ -10638,6 +10684,11 @@ msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "Tipul entității principale"
 
+#. js-lingui-id: mQkeUR
+#: src/engine/permissions/private-record/utils/assert-private-record-enabled-or-throw.util.ts
+msgid "Private records are not available in this workspace yet."
+msgstr "Înregistrările private nu sunt încă disponibile în acest spațiu de lucru."
+
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10805,7 +10856,7 @@ msgid "Rate limit reached. Please try again later."
 msgstr "Limita de rată a fost atinsă. Vă rugăm să încercați mai târziu."
 
 #. js-lingui-id: 8G8dJM
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Raw SQL queries are not allowed."
 msgstr "Interogările SQL brute nu sunt permise."
 
@@ -11111,6 +11162,11 @@ msgstr "Calea înregistrării asociate nu a fost găsită."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path object not found"
 msgstr "Obiectul din calea înregistrării asociate nu a fost găsit"
+
+#. js-lingui-id: 0ppWJe
+#: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
+msgid "Related record paths require the Organization plan."
+msgstr "Căile de înregistrări asociate necesită planul Organization."
 
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
@@ -11482,7 +11538,7 @@ msgid "Role is not editable"
 msgstr "Rolul nu poate fi editat"
 
 #. js-lingui-id: zeffu9
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role must have at least one target."
 msgstr "Rolul trebuie să aibă cel puțin o țintă."
 
@@ -11526,10 +11582,10 @@ msgstr ""
 
 #. js-lingui-id: /BTyf+
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role not found."
 msgstr "Rolul nu a fost găsit."
 
@@ -11730,6 +11786,16 @@ msgstr "Rulări"
 msgctxt "view.name"
 msgid "Runs"
 msgstr "Rulări"
+
+#. js-lingui-id: y0kFMY
+#: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
+msgid "Sample records exceed 100 KB."
+msgstr "Înregistrările eșantion depășesc 100 KB."
+
+#. js-lingui-id: 0ovywa
+#: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
+msgid "Sample records must only contain selected fields and id."
+msgstr "Înregistrările eșantion trebuie să conțină doar câmpurile selectate și id."
 
 #. js-lingui-id: +5kO8P
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -12248,17 +12314,17 @@ msgid "Shared record"
 msgstr "Înregistrare partajată"
 
 #. js-lingui-id: 4FadYd
-#: src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a role that does not belong to this workspace"
 msgstr "shareWith specifică un rol care nu aparține acestui spațiu de lucru"
 
 #. js-lingui-id: 4PQnEW
-#: src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a workspace member that does not belong to this workspace"
 msgstr "shareWith specifică un membru al spațiului de lucru care nu aparține acestui spațiu de lucru"
 
 #. js-lingui-id: qTLqMS
-#: src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "shareWith names the same principal more than once"
 msgstr "shareWith specifică același principal de mai multe ori"
 
@@ -12381,7 +12447,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr ""
 
 #. js-lingui-id: aPJopM
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Unele calități de membru în acest spațiu de lucru nu au putut fi găsite. Este posibil să nu mai aibă acces la acest spațiu de lucru."
 
@@ -13189,7 +13255,7 @@ msgid "The agent you are looking for could not be found. It may have been delete
 msgstr "Agentul pe care îl căutați nu a putut fi găsit. Este posibil să fi fost șters sau este posibil să nu aveți acces la el."
 
 #. js-lingui-id: eC8p5b
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "Cheia API nu are un rol valid alocat. Vă rugăm să verificați configurarea cheii API."
 
@@ -13205,7 +13271,7 @@ msgid "The app source channel does not match the expected type."
 msgstr "Canalul sursă al aplicației nu corespunde tipului așteptat."
 
 #. js-lingui-id: IU78DA
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "Aplicația nu are un rol valid alocat. Vă rugăm să verificați configurarea aplicației."
 
@@ -13266,6 +13332,16 @@ msgstr "URL-ul site-ului web al companiei. Folosim acest url pentru a prelua ico
 msgctxt "fieldMetadata.description"
 msgid "The company's total annual revenue"
 msgstr "Venitul anual total al companiei"
+
+#. js-lingui-id: ccHTwy
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "The component dependencies are too large. Reduce the Workspace app dependencies and try again."
+msgstr "Dependențele componentei sunt prea mari. Reduceți dependențele aplicației Workspace și încercați din nou."
+
+#. js-lingui-id: m3v5Oe
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "The component dependencies could not be verified. Try creating the component again."
+msgstr "Dependențele componentei nu au putut fi verificate. Încercați să creați din nou componenta."
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -13357,7 +13433,7 @@ msgid "The default role cannot be deleted as it is required for the workspace to
 msgstr "Rolul implicit nu poate fi șters deoarece este necesar pentru funcționarea corespunzătoare a spațiului de lucru."
 
 #. js-lingui-id: 0biWRI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "The default role cannot be deleted."
 msgstr "Rolul implicit nu poate fi șters."
 
@@ -13547,7 +13623,7 @@ msgid "The MCP request parameters are invalid."
 msgstr "Parametrii cererii MCP nu sunt valizi."
 
 #. js-lingui-id: 9b5Rap
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
 msgid "The Member role cannot be deleted."
 msgstr "Rolul Membru nu poate fi șters."
@@ -13879,6 +13955,11 @@ msgctxt "fieldMetadata.description"
 msgid "The workflow version status"
 msgstr "Starea versiunii fluxului de lucru"
 
+#. js-lingui-id: VyvnL/
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "The Workspace app dependencies changed during the build. Try creating the component again."
+msgstr "Dependențele aplicației Workspace s-au modificat în timpul compilării. Încercați să creați din nou componenta."
+
 #. js-lingui-id: AiP86c
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
@@ -13916,12 +13997,12 @@ msgid "The workspace member who last updated the record"
 msgstr "Membrul spațiului de lucru care a actualizat ultima dată înregistrarea"
 
 #. js-lingui-id: lRojhv
-#: src/engine/core-modules/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "Rolul lor nu poate accesa aceste înregistrări, iar acest obiect este partajat numai cu roluri care le pot accesa."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/core-modules/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "Rolul lor nu poate vedea această înregistrare, iar acest obiect este partajat numai cu persoane care o pot vedea."
 
@@ -14204,6 +14285,16 @@ msgstr "Acest domeniu este deja înregistrat."
 msgid "This domain is already taken."
 msgstr "Acest domeniu este deja luat."
 
+#. js-lingui-id: Ukfndw
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This draft is being updated. Try again."
+msgstr "Această schiță este în curs de actualizare. Încercați din nou."
+
+#. js-lingui-id: HJFKCt
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This draft was superseded or belongs to another chat. Start a new draft."
+msgstr "Această schiță a fost înlocuită sau aparține altui chat. Începeți o schiță nouă."
+
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts
 msgid "This email is already in use."
@@ -14382,7 +14473,7 @@ msgid "This message channel cannot send messages."
 msgstr "Acest canal de mesaje nu poate trimite mesaje."
 
 #. js-lingui-id: 6Z/zIt
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This method is not allowed."
 msgstr "Această metodă nu este permisă."
 
@@ -14568,12 +14659,12 @@ msgid "This role cannot be assigned to API keys."
 msgstr "Acest rol nu poate fi atribuit cheilor API."
 
 #. js-lingui-id: c68K+k
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to users."
 msgstr "Acest rol nu poate fi atribuit utilizatorilor."
 
 #. js-lingui-id: 2jnsqJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be edited."
 msgstr "Acest rol nu poate fi editat."
 
@@ -15039,7 +15130,7 @@ msgid "To do"
 msgstr "De făcut"
 
 #. js-lingui-id: /ObxXq
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Too many admin candidates found."
 msgstr "Au fost găsiți prea mulți candidați administratori."
 
@@ -15376,12 +15467,12 @@ msgid "Unknown navigation menu item type {type}"
 msgstr "Tip necunoscut pentru elementul de meniu de navigare {type}"
 
 #. js-lingui-id: tEncxN
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown operation."
 msgstr "Operațiune necunoscută."
 
 #. js-lingui-id: BIxgma
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown permission required."
 msgstr "Este necesară o permisiune necunoscută."
 
@@ -15518,7 +15609,7 @@ msgid "Update DateTime"
 msgstr "Data și ora actualizării"
 
 #. js-lingui-id: lHCFXi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "Restricțiile de actualizare a câmpurilor se aplică doar obiectelor actualizabile."
 
@@ -15761,7 +15852,7 @@ msgid "User already exists"
 msgstr "Utilizatorul deja există"
 
 #. js-lingui-id: 9QHVZ2
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User already has a role assigned."
 msgstr "Utilizatorului i-a fost deja atribuit un rol."
 
@@ -15776,7 +15867,7 @@ msgid "User does not have access to this workspace"
 msgstr "Utilizatorul nu are acces la acest spațiu de lucru"
 
 #. js-lingui-id: Sl1ElS
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "User does not have permission."
 msgstr "Utilizatorul nu are permisiune."
 
@@ -15833,7 +15924,7 @@ msgstr "Utilizatorul nu a fost creat cu email/parolă"
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User workspace not found."
 msgstr "Spațiul de lucru al utilizatorului nu a fost găsit."
 
@@ -17098,7 +17189,7 @@ msgid "Workspace does not exist."
 msgstr "Spațiul de lucru nu există."
 
 #. js-lingui-id: oLh4c+
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace ID and role mismatch."
 msgstr "Nepotrivire între ID-ul spațiului de lucru și rol."
 
@@ -17190,7 +17281,7 @@ msgstr "Numele membrului spațiului de lucru"
 
 #. js-lingui-id: rnnLQA
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace member not found."
 msgstr "Membrul spațiului de lucru nu a fost găsit."
 
@@ -17437,12 +17528,12 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Nu puteți genera un cod de recuperare pentru dvs. Resetați în schimb autentificarea cu doi factori din profilul dvs."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Nu vă puteți schimba propriul rol. Vă rugăm să cereți unui alt administrator să vă actualizeze rolul."
 
 #. js-lingui-id: xqrB9X
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot delete a role you are assigned to. Ask another administrator to delete it."
 msgstr "Nu poți șterge un rol care ți-a fost atribuit. Cere altui administrator să îl șteargă."
 
@@ -17453,12 +17544,12 @@ msgid "You cannot grant edit permissions without also granting read permissions.
 msgstr "Nu puteți acorda permisiuni de editare fără a acorda și permisiuni de citire. Vă rugăm să activați mai întâi accesul la citire."
 
 #. js-lingui-id: KcnT7Q
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot remove settings access from your own role. Ask another administrator to make this change."
 msgstr "Nu poți elimina accesul la setări pentru propriul tău rol. Cere altui administrator să facă această modificare."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Nu puteți elimina rolul de administrator de la ultimul administrator. Vă rugăm să alocați mai întâi un alt administrator."
 
@@ -17483,7 +17574,7 @@ msgid "You cannot set field permissions on system objects as they are managed by
 msgstr ""
 
 #. js-lingui-id: bAPURS
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot update your own role."
 msgstr "Nu vă puteți actualiza propriul rol."
 
@@ -17572,7 +17663,7 @@ msgstr "Nu aveți permisiunea de a gestiona lista de blocare a spațiului de luc
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/guards/exceptions/auth-principal-refused.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You do not have permission to perform this action."
 msgstr "Nu aveți permisiunea de a efectua această acțiune."
 
@@ -17700,8 +17791,8 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "Rolul tău nu poate șterge unele dintre aceste înregistrări, deci acestea nu pot fi fuzionate."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/metadata-modules/permissions/permissions.service.ts
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Rolul dvs. în acest spațiu de lucru nu a putut fi găsit. Vă rugăm să contactați administratorul spațiului de lucru."
 

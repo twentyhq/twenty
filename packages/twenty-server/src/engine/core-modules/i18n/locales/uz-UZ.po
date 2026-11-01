@@ -394,7 +394,7 @@ msgid "A required field is missing. Please provide all required values and try a
 msgstr "Majburiy maydon kiritilmagan. Iltimos, barcha majburiy qiymatlarni kiriting va qaytadan urinib ko‘ring."
 
 #. js-lingui-id: Q2De+v
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util.ts
 msgid "A role with this label already exists."
 msgstr "Bu yorliq bilan rol allaqachon mavjud."
@@ -403,6 +403,11 @@ msgstr "Bu yorliq bilan rol allaqachon mavjud."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util.ts
 msgid "A secret variable cannot have a default value."
 msgstr "Maxfiy o‘zgaruvchi standart qiymatga ega bo‘la olmaydi."
+
+#. js-lingui-id: KQFDmH
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "A signed-in chat is required."
+msgstr "Tizimga kirilgan chat talab qilinadi."
 
 #. js-lingui-id: 0/nqSW
 #: src/engine/metadata-modules/flat-skill/utils/from-update-skill-input-to-flat-skill-to-update-or-throw.util.ts
@@ -720,6 +725,11 @@ msgctxt "fieldMetadata.description"
 msgid "Actual recording start"
 msgstr "Yozuvning haqiqiy boshlanish vaqti"
 
+#. js-lingui-id: ihM2nS
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "Add {missingPackageNames} to the Workspace app package.json and yarn.lock before creating a component."
+msgstr "Komponent yaratishdan oldin {missingPackageNames} ni Workspace ilovasining package.json va yarn.lock fayllariga qo‘shing."
+
 #. js-lingui-id: Fk0T9q
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Add a sender to this campaign first."
@@ -777,6 +787,11 @@ msgctxt "commandMenuItem.label"
 msgid "Add View to List"
 msgstr "Ko‘rinishni ro‘yxatga qo‘shish"
 
+#. js-lingui-id: ScY5iZ
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "Add yarn.lock to the Workspace app before creating a component."
+msgstr "Komponent yaratishdan oldin yarn.lock faylini Workspace ilovasiga qo‘shing."
+
 #. js-lingui-id: EtSC0Y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -796,7 +811,7 @@ msgid "Admin Panel"
 msgstr "Administrator paneli"
 
 #. js-lingui-id: VmatbA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Admin role not found."
 msgstr "Administrator roli topilmadi."
 
@@ -1015,6 +1030,11 @@ msgstr "Ish maydoni a’zosiga biriktirilgan AI chat mavzulari"
 msgctxt "fieldMetadata.description"
 msgid "AI chat threads owned by the workspace member"
 msgstr "Ish maydoni aʼzosiga tegishli AI chat mavzulari"
+
+#. js-lingui-id: 1ahMBt
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "AI component builder is disabled."
+msgstr "AI komponent yaratuvchisi o‘chirilgan."
 
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
@@ -1282,7 +1302,7 @@ msgid "API key role configuration not found."
 msgstr "API kaliti roli konfiguratsiyasi topilmadi."
 
 #. js-lingui-id: tGfHmi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "API key role not found."
 msgstr "API kaliti roli topilmadi."
 
@@ -1717,7 +1737,7 @@ msgid "Authentication is not enabled with this provider."
 msgstr "Ushbu provayder bilan autentifikatsiya yoqilmagan."
 
 #. js-lingui-id: Tsx+z2
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "Authentication is required to access this feature. Please sign in and try again."
 msgstr "Ushbu funksiyaga kirish uchun autentifikatsiya talab qilinadi. Iltimos, tizimga kiring va qayta urinib ko‘ring."
 
@@ -1728,7 +1748,7 @@ msgstr "Bu amalni bajarish uchun autentifikatsiya talab qilinadi"
 
 #. js-lingui-id: cgNV3G
 #: src/engine/core-modules/file/file.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Authentication is required."
 msgstr "Autentifikatsiya talab qilinadi."
 
@@ -2463,12 +2483,12 @@ msgid "Cannot activate non-draft or non-last-published version"
 msgstr "Qoralama yoki oxirgi nashr etilgan versiyadan boshqasini faollashtirib bo‘lmaydi"
 
 #. js-lingui-id: QYS2AB
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add field permissions on system objects."
 msgstr "Tizim obyektlarida maydon ruxsatlarini qo‘shish mumkin emas."
 
 #. js-lingui-id: FxFlC4
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add permissions on system objects."
 msgstr "Tizim obyektlarida ruxsatlarni qo‘shish mumkin emas."
 
@@ -2501,7 +2521,7 @@ msgid "Cannot delete standard skill"
 msgstr "Standart ko‘nikmani oʻchirish mumkin emas."
 
 #. js-lingui-id: /olFYI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot delete the last admin user."
 msgstr "Oxirgi admin foydalanuvchini o‘chirib bo‘lmaydi."
 
@@ -2517,12 +2537,12 @@ msgid "Cannot delete, please update the label identifier field first"
 msgstr "O‘chirib bo‘lmaydi, iltimos, avval yorliq identifikatori maydonini yangilang"
 
 #. js-lingui-id: lDTqT7
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."
 msgstr "O‘qish mumkin bo‘lmagan obyektlarga yozish ruxsatini berib bo‘lmaydi."
 
 #. js-lingui-id: r4uEo5
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission without read permission."
 msgstr "O‘qish ruxsatisiz yozish ruxsatini berib bo‘lmaydi."
 
@@ -2597,7 +2617,7 @@ msgid "Cannot modify predicate to change its role from {existingRoleIdentifier} 
 msgstr "Predikat rolini {existingRoleIdentifier} dan {updatedRoleIdentifier} ga o‘zgartirish uchun uni tahrirlab bo‘lmaydi"
 
 #. js-lingui-id: Q0diyJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
 msgstr "Ish maydonidan oxirgi adminni olib tashlab bo‘lmaydi."
 
@@ -2614,7 +2634,7 @@ msgid "Cannot target a role owned by another application"
 msgstr "Boshqa ilovaga tegishli rolni ko‘rsatib bo‘lmaydi"
 
 #. js-lingui-id: 2ET75e
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
 msgid "Cannot target a role owned by another application."
 msgstr "Boshqa ilovaga tegishli rolni ko‘rsatib bo‘lmaydi."
@@ -2850,7 +2870,7 @@ msgid "Choose an existing timeline activity type to override"
 msgstr "Qayta belgilash uchun mavjud vaqt jadvali faoliyati turini tanlang"
 
 #. js-lingui-id: +eCqA7
-#: src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Ulashish uchun bitta shaxs yoki bitta rolni tanlang."
 
@@ -3068,6 +3088,11 @@ msgstr "Komponentni yaratish {timeoutSeconds} soniyalik vaqt cheklovidan oshib k
 msgid "Component build exceeds the {maximumOutputMegabytes} MB output limit."
 msgstr "Komponentni yaratish {maximumOutputMegabytes} MB chiqish cheklovidan oshib ketdi."
 
+#. js-lingui-id: C1+ewF
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Component draft not found or expired."
+msgstr "Komponent qoralamasi topilmadi yoki muddati tugagan."
+
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -3087,7 +3112,7 @@ msgid "Compose Email"
 msgstr "E-pochta tuzish"
 
 #. js-lingui-id: L1uQuF
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Composite type not found."
 msgstr "Kompozit turi topilmadi."
 
@@ -3688,7 +3713,7 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "Yaratilgan maydon metama’lumoti uchun ota obyekt metama’lumoti topilmadi"
 
 #. js-lingui-id: tpPGe6
-#: src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "Creating a record of a private object requires the shareWith argument"
 msgstr "Xususiy ob’ekt yozuvini yaratish uchun shareWith argumenti talab qilinadi"
 
@@ -3854,8 +3879,8 @@ msgid "Custom object is missing a label identifier field."
 msgstr "Maxsus (custom) obyekt uchun yorliq identifikatori maydoni yetishmaydi."
 
 #. js-lingui-id: iHlVsm
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "Maxsus rollar Tashkilot tarifining bir qismidir."
@@ -4178,7 +4203,7 @@ msgid "Default Person Layout"
 msgstr "Standart shaxs maketi"
 
 #. js-lingui-id: cgV4xo
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Default role not found."
 msgstr "Standart rol topilmadi."
 
@@ -4600,7 +4625,7 @@ msgid "Each related record path field must belong to the object reached by the p
 msgstr "Har bir bog‘liq yozuv yo‘li maydoni oldingi bog‘lanish orqali erishilgan obyektga tegishli bo‘lishi kerak"
 
 #. js-lingui-id: nTBzmZ
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
 msgstr "Har bir shareWith elementi aynan workspaceMemberId, roleId yoki everyone’dan birini ko‘rsatishi kerak"
 
@@ -4857,7 +4882,7 @@ msgid "Emoji the member reacted with"
 msgstr "A’zo reaksiya bildirgan emoji"
 
 #. js-lingui-id: aVGG1u
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Empty field permissions are not allowed."
 msgstr "Bo‘sh maydon ruxsatlari (permissions)ga yo‘l qo‘yilmaydi."
 
@@ -5291,7 +5316,7 @@ msgid "Failed to retry jobs. Please try again later."
 msgstr "Ishlarni qayta ishga tushirib bo‘lmadi. Iltimos, birozdan so‘ng qayta urinib ko‘ring."
 
 #. js-lingui-id: Cr+NSQ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Failed to update field permission."
 msgstr "Maydon ruxsatini (field permission) yangilash muvaffaqiyatsiz tugadi."
 
@@ -5346,6 +5371,12 @@ msgstr "\"{relationFieldName}\" maydoni bog‘lanish emas"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
 msgstr "\"{workspaceMemberFieldName}\" maydoni workspaceMember ob’ektining maydoni emas, predikat hech qachon qo‘llanilmaydi"
+
+#. js-lingui-id: CKPTLC
+#. placeholder {0}: query.objectName
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Field {0}.{fieldName} is unavailable. Select accessible top-level fields."
+msgstr "{0}.{fieldName} maydoni mavjud emas. Kirish mumkin bo‘lgan yuqori darajadagi maydonlarni tanlang."
 
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -5410,8 +5441,8 @@ msgid "Field metadata not found"
 msgstr "Maydon metadata-si topilmadi"
 
 #. js-lingui-id: JrAl/I
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 msgid "Field metadata not found."
@@ -5461,7 +5492,7 @@ msgid "Field permission not found"
 msgstr "Maydon ruxsati topilmadi"
 
 #. js-lingui-id: yqmAnC
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field permission not found."
 msgstr "Maydon ruxsati topilmadi."
 
@@ -5492,7 +5523,7 @@ msgid "Field referenced in index does not exist"
 msgstr "Indeksda keltirilgan maydon mavjud emas"
 
 #. js-lingui-id: ylQono
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field restrictions only apply to readable objects."
 msgstr "Maydon cheklovlari faqat o‘qish mumkin bo‘lgan obyektlarga qo‘llanadi."
 
@@ -6540,8 +6571,8 @@ msgid "Internal name of the campaign"
 msgstr "Kampaniyaning ichki nomi"
 
 #. js-lingui-id: Lztd7b
-#: src/engine/core-modules/record-share/services/record-sharing.service.ts
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid access level."
 msgstr "Noto‘g‘ri kirish darajasi."
 
@@ -6577,7 +6608,7 @@ msgid "Invalid application workflow definition."
 msgstr "Ilova ish oqimi ta’rifi yaroqsiz."
 
 #. js-lingui-id: KNrRpL
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid argument provided."
 msgstr "Noto‘g‘ri argument kiritilgan."
 
@@ -6620,6 +6651,11 @@ msgstr "Tasniflash so‘rovi yaroqsiz."
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
 msgid "Invalid command menu item input."
 msgstr "Buyruq menyusi elementi uchun kiritma yaroqsiz."
+
+#. js-lingui-id: 5OY08H
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Invalid component draft input."
+msgstr "Komponent qoralamasi kiritmasi noto‘g‘ri."
 
 #. js-lingui-id: wJMQQx
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
@@ -7080,7 +7116,7 @@ msgid "Invalid permission flag permission type."
 msgstr "Ruxsat flagi turi yaroqsiz."
 
 #. js-lingui-id: Pt2vVA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid permission setting."
 msgstr "Noto‘g‘ri ruxsat sozlamasi."
 
@@ -7104,6 +7140,11 @@ msgstr "Noto‘g‘ri telefon mamlakat kodi."
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
 msgid "Invalid phone number."
 msgstr "Noto‘g‘ri telefon raqami."
+
+#. js-lingui-id: weTo0R
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.controller.ts
+msgid "Invalid preview error message."
+msgstr "Oldindan ko‘rish xato xabari noto‘g‘ri."
 
 #. js-lingui-id: r+9b/a
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -7244,8 +7285,8 @@ msgstr "Noto‘g‘ri URL formati."
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
-#: src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util.ts
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid UUID format."
 msgstr "Yaroqsiz UUID formati."
 
@@ -7545,7 +7586,7 @@ msgid "Job Title"
 msgstr "Lavozim nomi"
 
 #. js-lingui-id: cCj4vg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Join column name is required."
 msgstr "Join ustun nomi majburiy."
 
@@ -8110,6 +8151,11 @@ msgstr "Shaxsiy qilish"
 msgctxt "commandMenuItem.label"
 msgid "Make Workflow Private"
 msgstr "Ish jarayonini shaxsiy qilish"
+
+#. js-lingui-id: Ff72+G
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Managing applications is required."
+msgstr "Ilovalarni boshqarish talab qilinadi."
 
 #. js-lingui-id: paJTob
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -9097,7 +9143,7 @@ msgid "No permissions are set for this role on the selected object. Please set o
 msgstr "Tanlangan obyekt bo‘yicha bu rol uchun hech qanday ruxsat o‘rnatilmagan. Iltimos, avval obyekt ruxsatlarini o‘rnating."
 
 #. js-lingui-id: D2A/H0
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No permissions found in datasource."
 msgstr "Ma’lumotlar manbaida (datasource) ruxsatlar topilmadi."
 
@@ -9117,12 +9163,12 @@ msgid "No records were affected."
 msgstr "Hech qanday yozuvga ta’sir ko‘rsatilmagan."
 
 #. js-lingui-id: iHQYLb
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role assigned to the application."
 msgstr "Ilovaga hech qanday rol biriktirilmagan."
 
 #. js-lingui-id: 5ZMHXg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role found for this user in the workspace."
 msgstr "Ushbu foydalanuvchi uchun ish maydonida birorta ham rol topilmadi."
 
@@ -9152,7 +9198,7 @@ msgid "No trigger type provided"
 msgstr "Trigger turi ko‘rsatilmagan"
 
 #. js-lingui-id: /BipSk
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "No valid authentication context found."
 msgstr "Yaroqli autentifikatsiya konteksti topilmadi."
 
@@ -9466,9 +9512,9 @@ msgid "Object metadata not found"
 msgstr "Obyekt metadata-si topilmadi"
 
 #. js-lingui-id: rHce90
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 #: src/modules/workflow/common/exceptions/workflow-common.exception.ts
@@ -9508,7 +9554,7 @@ msgid "Object permission not found"
 msgstr "Obyekt ruxsati topilmadi"
 
 #. js-lingui-id: Qy6mMO
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Object permission not found."
 msgstr "Obyekt ruxsati topilmadi."
 
@@ -9653,7 +9699,7 @@ msgid "Only error"
 msgstr "Yagona xato"
 
 #. js-lingui-id: eYgzEd
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "Faqat maydon cheklovlariga ruxsat beriladi."
 
@@ -10345,7 +10391,7 @@ msgid "Permission flag to update not found"
 msgstr "Yangilash uchun ruxsat flagi topilmadi"
 
 #. js-lingui-id: vcvSI3
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Permission not found."
 msgstr "Ruxsat (permission) topilmadi."
 
@@ -10638,6 +10684,11 @@ msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "Subyekt turi"
 
+#. js-lingui-id: mQkeUR
+#: src/engine/permissions/private-record/utils/assert-private-record-enabled-or-throw.util.ts
+msgid "Private records are not available in this workspace yet."
+msgstr "Shaxsiy yozuvlar ushbu ish maydonida hali mavjud emas."
+
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10805,7 +10856,7 @@ msgid "Rate limit reached. Please try again later."
 msgstr "So‘rovlar chegarasi oshib ketdi. Iltimos, keyinroq qayta urinib ko‘ring."
 
 #. js-lingui-id: 8G8dJM
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Raw SQL queries are not allowed."
 msgstr "Xom SQL so‘rovlarga ruxsat berilmaydi."
 
@@ -11111,6 +11162,11 @@ msgstr "Bog‘liq yozuv yo‘li topilmadi."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-related-record-path-validator.service.ts
 msgid "Related record path object not found"
 msgstr "Bog‘liq yozuv yo‘li obyekti topilmadi"
+
+#. js-lingui-id: 0ppWJe
+#: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
+msgid "Related record paths require the Organization plan."
+msgstr "Tegishli yozuv yoʻllari Organization rejasini talab qiladi."
 
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
@@ -11482,7 +11538,7 @@ msgid "Role is not editable"
 msgstr "Rolni tahrirlab bo‘lmaydi"
 
 #. js-lingui-id: zeffu9
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role must have at least one target."
 msgstr "Rol kamida bitta nishonga ega bo‘lishi kerak."
 
@@ -11526,10 +11582,10 @@ msgstr "Rol topilmadi"
 
 #. js-lingui-id: /BTyf+
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role not found."
 msgstr "Rol topilmadi."
 
@@ -11730,6 +11786,16 @@ msgstr "Ishga tushirishlar"
 msgctxt "view.name"
 msgid "Runs"
 msgstr "Ishga tushirishlar"
+
+#. js-lingui-id: y0kFMY
+#: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
+msgid "Sample records exceed 100 KB."
+msgstr "Namuna yozuvlar 100 KB dan oshadi."
+
+#. js-lingui-id: 0ovywa
+#: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
+msgid "Sample records must only contain selected fields and id."
+msgstr "Namuna yozuvlar faqat tanlangan maydonlar va id ni o‘z ichiga olishi kerak."
 
 #. js-lingui-id: +5kO8P
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -12248,17 +12314,17 @@ msgid "Shared record"
 msgstr "Ulashilgan yozuv"
 
 #. js-lingui-id: 4FadYd
-#: src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a role that does not belong to this workspace"
 msgstr "shareWith ushbu ish maydoniga tegishli bo‘lmagan rolni ko‘rsatadi"
 
 #. js-lingui-id: 4PQnEW
-#: src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a workspace member that does not belong to this workspace"
 msgstr "shareWith ushbu ish maydoniga tegishli bo‘lmagan ish maydoni a’zosini ko‘rsatadi"
 
 #. js-lingui-id: qTLqMS
-#: src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "shareWith names the same principal more than once"
 msgstr "shareWith bir xil subyektni bir necha marta ko‘rsatadi"
 
@@ -12381,7 +12447,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Siz tanlagan ruxsatlarning ayrimlari yaroqsiz. Iltimos, ruxsat sozlamalarini to‘g‘ri ko‘rinishda qayta tanlab ko‘ring."
 
 #. js-lingui-id: aPJopM
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Ba’zi ish maydoni a’zoliklari topilmadi. Ular endi bu ish maydoniga kirish huquqiga ega bo‘lmasligi mumkin."
 
@@ -13189,7 +13255,7 @@ msgid "The agent you are looking for could not be found. It may have been delete
 msgstr "Siz izlayotgan agent topilmadi. U o‘chirilgan bo‘lishi yoki sizda unga kirish huquqi bo‘lmasligi mumkin."
 
 #. js-lingui-id: eC8p5b
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "API kalitiga yaroqli rol biriktirilmagan. Iltimos, API kaliti konfiguratsiyasini tekshiring."
 
@@ -13205,7 +13271,7 @@ msgid "The app source channel does not match the expected type."
 msgstr "Ilova manba kanali kutilgan turga mos kelmaydi."
 
 #. js-lingui-id: IU78DA
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "Ilovaga yaroqli rol biriktirilmagan. Iltimos, ilova konfiguratsiyasini tekshiring."
 
@@ -13266,6 +13332,16 @@ msgstr "Kompaniya veb-saytining URL manzili. Biz ushbu URLdan kompaniya ikonkasi
 msgctxt "fieldMetadata.description"
 msgid "The company's total annual revenue"
 msgstr "Kompaniyaning umumiy yillik daromadi"
+
+#. js-lingui-id: ccHTwy
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "The component dependencies are too large. Reduce the Workspace app dependencies and try again."
+msgstr "Komponent bog‘liqliklari juda katta. Workspace ilovasining bog‘liqliklarini kamaytiring va qayta urinib ko‘ring."
+
+#. js-lingui-id: m3v5Oe
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "The component dependencies could not be verified. Try creating the component again."
+msgstr "Komponent bog‘liqliklarini tekshirib bo‘lmadi. Komponentni yana yaratib ko‘ring."
 
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
@@ -13357,7 +13433,7 @@ msgid "The default role cannot be deleted as it is required for the workspace to
 msgstr "Standart rolni o‘chirib bo‘lmaydi, chunki u ish maydonining to‘g‘ri ishlashi uchun talab qilinadi."
 
 #. js-lingui-id: 0biWRI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "The default role cannot be deleted."
 msgstr "Standart rolni o‘chirib bo‘lmaydi."
 
@@ -13547,7 +13623,7 @@ msgid "The MCP request parameters are invalid."
 msgstr "MCP so‘rov parametrlari noto‘g‘ri."
 
 #. js-lingui-id: 9b5Rap
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
 msgid "The Member role cannot be deleted."
 msgstr "A’zo rolini o‘chirib bo‘lmaydi."
@@ -13879,6 +13955,11 @@ msgctxt "fieldMetadata.description"
 msgid "The workflow version status"
 msgstr "Ish jarayoni versiyasi holati"
 
+#. js-lingui-id: VyvnL/
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "The Workspace app dependencies changed during the build. Try creating the component again."
+msgstr "Workspace ilovasi bog‘liqliklari yaratish jarayonida o‘zgardi. Komponentni yana yaratib ko‘ring."
+
 #. js-lingui-id: AiP86c
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
@@ -13916,12 +13997,12 @@ msgid "The workspace member who last updated the record"
 msgstr "Yozuvni oxirgi bo‘lib yangilagan ish maydoni aʼzosi"
 
 #. js-lingui-id: lRojhv
-#: src/engine/core-modules/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "Ularning roli ushbu yozuvlarga kira olmaydi va bu obyekt faqat kira oladigan rollar bilan ulashiladi."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/core-modules/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "Ularning roli ushbu yozuvni ko‘ra olmaydi va bu obyekt faqat ko‘ra oladigan odamlar bilan ulashiladi."
 
@@ -14204,6 +14285,16 @@ msgstr "Ushbu domen allaqachon ro‘yxatdan o‘tgan."
 msgid "This domain is already taken."
 msgstr "Ushbu domen allaqachon band qilingan."
 
+#. js-lingui-id: Ukfndw
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This draft is being updated. Try again."
+msgstr "Ushbu qoralama yangilanmoqda. Qayta urinib ko‘ring."
+
+#. js-lingui-id: HJFKCt
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This draft was superseded or belongs to another chat. Start a new draft."
+msgstr "Ushbu qoralama yangisi bilan almashtirilgan yoki boshqa chatga tegishli. Yangi qoralamani boshlang."
+
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts
 msgid "This email is already in use."
@@ -14382,7 +14473,7 @@ msgid "This message channel cannot send messages."
 msgstr "Bu xabar kanali xabar yubora olmaydi."
 
 #. js-lingui-id: 6Z/zIt
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This method is not allowed."
 msgstr "Ushbu metodga ruxsat berilmaydi."
 
@@ -14568,12 +14659,12 @@ msgid "This role cannot be assigned to API keys."
 msgstr "Ushbu rolni API kalitlariga biriktirib bo‘lmaydi."
 
 #. js-lingui-id: c68K+k
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to users."
 msgstr "Ushbu rolni foydalanuvchilarga biriktirib bo‘lmaydi."
 
 #. js-lingui-id: 2jnsqJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be edited."
 msgstr "Ushbu rolni tahrirlab bo‘lmaydi."
 
@@ -15039,7 +15130,7 @@ msgid "To do"
 msgstr "Bajarish kerak"
 
 #. js-lingui-id: /ObxXq
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Too many admin candidates found."
 msgstr "Juda ko‘p administrator nomzodlari topildi."
 
@@ -15376,12 +15467,12 @@ msgid "Unknown navigation menu item type {type}"
 msgstr "Noma’lum navigatsiya menyusi elementi turi {type}"
 
 #. js-lingui-id: tEncxN
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown operation."
 msgstr "Noma’lum operatsiya."
 
 #. js-lingui-id: BIxgma
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown permission required."
 msgstr "Noma’lum ruxsat talab etiladi."
 
@@ -15518,7 +15609,7 @@ msgid "Update DateTime"
 msgstr "Yangilanish sanasi va vaqti"
 
 #. js-lingui-id: lHCFXi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "Maydonni yangilash cheklovlari faqat yangilanishi mumkin bo‘lgan obyektlarga tegishli."
 
@@ -15761,7 +15852,7 @@ msgid "User already exists"
 msgstr "Foydalanuvchi allaqachon mavjud"
 
 #. js-lingui-id: 9QHVZ2
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User already has a role assigned."
 msgstr "Foydalanuvchiga allaqachon rol biriktirilgan."
 
@@ -15776,7 +15867,7 @@ msgid "User does not have access to this workspace"
 msgstr "Foydalanuvchining bu ish makoniga kirish huquqi yo‘q"
 
 #. js-lingui-id: Sl1ElS
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "User does not have permission."
 msgstr "Foydalanuvchida ruxsat yo‘q."
 
@@ -15833,7 +15924,7 @@ msgstr "Foydalanuvchi email/parol orqali yaratilmagan"
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User workspace not found."
 msgstr "Foydalanuvchi ish maydoni topilmadi."
 
@@ -17098,7 +17189,7 @@ msgid "Workspace does not exist."
 msgstr "Ish maydoni mavjud emas."
 
 #. js-lingui-id: oLh4c+
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace ID and role mismatch."
 msgstr "Ish maydoni ID si va roli mos kelmaydi."
 
@@ -17190,7 +17281,7 @@ msgstr "Ish maydoni a’zosi nomi"
 
 #. js-lingui-id: rnnLQA
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace member not found."
 msgstr "Ish maydoni a’zosi topilmadi."
 
@@ -17437,12 +17528,12 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "O‘zingiz uchun tiklash kodini yarata olmaysiz. Buning o‘rniga profilingizdan ikki faktorli autentifikatsiyani tiklang."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "O‘zingizning rolingizni o‘zgartira olmaysiz. Iltimos, boshqa administrator rolingizni yangilashini so‘rang."
 
 #. js-lingui-id: xqrB9X
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot delete a role you are assigned to. Ask another administrator to delete it."
 msgstr "Sizga tayinlangan rolni o‘chira olmaysiz. Uni o‘chirish uchun boshqa administratorga murojaat qiling."
 
@@ -17453,12 +17544,12 @@ msgid "You cannot grant edit permissions without also granting read permissions.
 msgstr "O‘qish ruxsatini bermasdan tahrirlash ruxsatini bera olmaysiz. Iltimos, avval o‘qish huquqini yoqing."
 
 #. js-lingui-id: KcnT7Q
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot remove settings access from your own role. Ask another administrator to make this change."
 msgstr "O‘z rolingizdan sozlamalarga kirish huquqini olib qo‘ya olmaysiz. Bu o‘zgarishni kiritish uchun boshqa administratorga murojaat qiling."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "So‘nggi administratordan admin rolini olib tashlab bo‘lmaydi. Iltimos, avval boshqa administrator tayinlang."
 
@@ -17483,7 +17574,7 @@ msgid "You cannot set field permissions on system objects as they are managed by
 msgstr "Tizim obyektlari bo‘yicha maydon ruxsatlarini o‘rnatolmaysiz, chunki ular platforma tomonidan boshqariladi."
 
 #. js-lingui-id: bAPURS
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot update your own role."
 msgstr "O‘zingizning rolingizni yangilay olmaysiz."
 
@@ -17572,7 +17663,7 @@ msgstr "Sizda ish maydoni blok ro‘yxatini boshqarish uchun ruxsat yo‘q."
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/guards/exceptions/auth-principal-refused.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You do not have permission to perform this action."
 msgstr "Bu amalni bajarish uchun sizda ruxsat yo‘q."
 
@@ -17700,8 +17791,8 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "Sizning rolingiz ushbu yozuvlarning ayrimlarini o‘chira olmaydi, shuning uchun ularni birlashtirib bo‘lmaydi."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/metadata-modules/permissions/permissions.service.ts
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Ushbu ish maydonida sizning rolingiz topilmadi. Iltimos, ish maydoni administratoriga murojaat qiling."
 
