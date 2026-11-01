@@ -688,7 +688,6 @@ describe('agent runs that wait (integration)', () => {
         ([jobName]) => jobName === RUN_AGENT_JOB_NAME,
       );
 
-      // as the worker left it: the turn running and the conversation held by its stream
       await global.testDataSource.query(
         `UPDATE "${schema}"."agentTurn" SET status = 'running', "endedAt" = NULL WHERE id = $1`,
         [runId],
@@ -738,7 +737,6 @@ describe('agent runs that wait (integration)', () => {
         ([jobName]) => jobName === RUN_AGENT_JOB_NAME,
       );
 
-      // as if the worker died before it told the caller
       await getAppProviderByClassName<RedisClientService>('RedisClientService')
         .getClient()
         .del(`agent-run-settled:${runId}`);

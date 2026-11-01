@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 
-import { AGENT_RUN_RESULT_LOST_ERROR } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-result-lost-error.const';
+import { AGENT_RUN_STOPPED_ERROR } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-stopped-error.constant';
+import { AGENT_RUN_RESULT_LOST_ERROR } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-result-lost-error.constant';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { type RunAgentJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-agent-job-data.type';
 import { AGENT_TURN_INTERRUPTED_ERROR } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-turn-interrupted-error.constant';
@@ -83,10 +84,13 @@ const buildRunner = (
   };
 };
 
-const expectFailureDeliveredOnce = (
-  deliverOutcome: jest.Mock,
-  error: string,
-) => {
+const expectFailureDeliveredOnce = ({
+  deliverOutcome,
+  error,
+}: {
+  deliverOutcome: jest.Mock;
+  error: string;
+}) => {
   expect(deliverOutcome).toHaveBeenCalledTimes(1);
   expect(deliverOutcome).toHaveBeenCalledWith({
     workspaceId: 'workspace-id',
@@ -122,10 +126,10 @@ describe('AgentRunnerService runStarted on a stalled job retried with its run id
       status: AgentTurnStatus.FAILED,
       error: AGENT_TURN_INTERRUPTED_ERROR,
     });
-    expectFailureDeliveredOnce(
-      agentRunSuspensionService.deliverOutcome,
-      AGENT_TURN_INTERRUPTED_ERROR.message,
-    );
+    expectFailureDeliveredOnce({
+      deliverOutcome: agentRunSuspensionService.deliverOutcome,
+      error: AGENT_TURN_INTERRUPTED_ERROR.message,
+    });
   });
 
   it('fails a run whose interrupted turn was already reaped with the error it was recorded with', async () => {
@@ -143,10 +147,10 @@ describe('AgentRunnerService runStarted on a stalled job retried with its run id
 
     expect(agentRunConversationService.openTurn).not.toHaveBeenCalled();
     expect(turnRecorderService.finish).not.toHaveBeenCalled();
-    expectFailureDeliveredOnce(
-      agentRunSuspensionService.deliverOutcome,
-      AGENT_TURN_INTERRUPTED_ERROR.message,
-    );
+    expectFailureDeliveredOnce({
+      deliverOutcome: agentRunSuspensionService.deliverOutcome,
+      error: AGENT_TURN_INTERRUPTED_ERROR.message,
+    });
   });
 
   it('fails a run whose turn a member stopped', async () => {
@@ -157,10 +161,10 @@ describe('AgentRunnerService runStarted on a stalled job retried with its run id
 
     await runner.runStarted(JOB_DATA);
 
-    expectFailureDeliveredOnce(
-      agentRunSuspensionService.deliverOutcome,
-      'The run was stopped',
-    );
+    expectFailureDeliveredOnce({
+      deliverOutcome: agentRunSuspensionService.deliverOutcome,
+      error: AGENT_RUN_STOPPED_ERROR,
+    });
   });
 
   it('completes a run whose turn completed with the text of its reply', async () => {
@@ -193,10 +197,10 @@ describe('AgentRunnerService runStarted on a stalled job retried with its run id
 
     await runner.runStarted(JOB_DATA);
 
-    expectFailureDeliveredOnce(
-      agentRunSuspensionService.deliverOutcome,
-      AGENT_RUN_RESULT_LOST_ERROR,
-    );
+    expectFailureDeliveredOnce({
+      deliverOutcome: agentRunSuspensionService.deliverOutcome,
+      error: AGENT_RUN_RESULT_LOST_ERROR,
+    });
   });
 
   it('leaves a run whose turn waits to its wake-up', async () => {

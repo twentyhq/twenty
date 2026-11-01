@@ -32,6 +32,7 @@ type ConversationViewer = {
   workspaceId: string;
   threadId: string;
   workspaceMemberId: string | undefined;
+  applicationId?: string;
 };
 
 @Injectable()
@@ -153,6 +154,7 @@ export class AgentChatConversationAccessService {
     workspaceId,
     threadId,
     workspaceMemberId,
+    applicationId,
   }: ConversationViewer): Promise<boolean> {
     const latestTurn = await this.turnRepository.findOne(workspaceId, {
       where: { threadId },
@@ -164,6 +166,7 @@ export class AgentChatConversationAccessService {
       isAgentTurnOpenedByOtherMember({
         createdBy: latestTurn.createdBy,
         workspaceMemberId,
+        applicationId,
       })
     );
   }

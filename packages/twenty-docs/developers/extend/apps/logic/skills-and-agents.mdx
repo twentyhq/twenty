@@ -359,7 +359,12 @@ for await (const event of streamConversation({
   const isReplySaved =
     event.type === 'message-persisted' && event.messageId === replyMessageId;
 
-  if (isReplySaved || event.type === 'stream-error') {
+  // a reply cut short by the credits ends as credits-exhausted instead
+  if (
+    isReplySaved ||
+    event.type === 'credits-exhausted' ||
+    event.type === 'stream-error'
+  ) {
     abortController.abort();
   }
 }
@@ -368,8 +373,9 @@ for await (const event of streamConversation({
 - Events are the chat's own: `stream-chunk` carries an AI SDK
   `UIMessageChunk` and a `seq`, and notifications such as `message-persisted`
   (a message was saved: a member's, or the reply whose `start` chunk carried
-  its `messageId`), `queue-updated` or `stream-error` say when to read the
-  history again. A `keepalive` comes once connected, then every few seconds;
+  its `messageId`), `credits-exhausted` (the reply stopped when the
+  workspace ran out of credits), `queue-updated` or `stream-error` say when
+  to read the history again. A `keepalive` comes once connected, then every few seconds;
   what happened before it is in the history.
 - To turn chunks into messages as the chat does, pipe them into
   `readUIMessageStream()` from the `ai` package.

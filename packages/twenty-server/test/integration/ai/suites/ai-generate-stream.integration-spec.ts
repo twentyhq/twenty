@@ -44,7 +44,9 @@ const waitForOrThrow = async (isDone: () => boolean, timeoutMs = 10_000) => {
 };
 
 const isRunEnd = ({ type }: Pick<AgentChatSubscriptionEvent, 'type'>) =>
-  type === 'message-persisted' || type === 'stream-error';
+  type === 'message-persisted' ||
+  type === 'credits-exhausted' ||
+  type === 'stream-error';
 
 describe('ai.generate runs followed by their application (integration)', () => {
   let application: ApplicationWithResources;
