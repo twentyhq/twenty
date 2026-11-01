@@ -29,6 +29,7 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type ViewWithRelations } from '@/views/types/ViewWithRelations';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import {
+  type FieldsConfiguration,
   PageLayoutTabLayoutMode,
   PageLayoutType,
   ViewType,
@@ -229,12 +230,13 @@ const setObjectsPermissions = (
 };
 
 const renderFieldsWidget = (allowHiddenFields = false) => {
+  const configuration: FieldsConfiguration = {
+    ...(pageLayoutWidget.configuration as FieldsConfiguration),
+    shouldAllowUserToSeeHiddenFields: allowHiddenFields,
+  };
   const widget: PageLayoutWidget = {
     ...pageLayoutWidget,
-    configuration: {
-      ...pageLayoutWidget.configuration,
-      shouldAllowUserToSeeHiddenFields: allowHiddenFields,
-    },
+    configuration,
   };
 
   setTestObjectMetadataItemsInMetadataStore(
