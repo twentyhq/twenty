@@ -73,6 +73,22 @@ describe('PendingWakeUpDatabaseEventListener', () => {
     });
   });
 
+  it('hands every matching event to a resolution, since a record the run cannot read keeps it waiting', async () => {
+    const { listener, pendingWakeUpService } = buildListener([
+      buildWakeUp({
+        condition: { type: 'EVENT', eventName: 'company.updated' },
+      }),
+    ]);
+
+    await listener.handleObjectRecordUpdateEvent(payload);
+
+    expect(
+      pendingWakeUpService.scheduleResolution.mock.calls.map(
+        ([{ event }]) => event.recordId,
+      ),
+    ).toEqual(['record-a', 'record-b']);
+  });
+
   it('leaves an expired wake-up to its timeout', async () => {
     const { listener, pendingWakeUpService } = buildListener([
       buildWakeUp({ resumeAt: new Date(Date.now() - 1000) }),
