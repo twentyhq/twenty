@@ -2,6 +2,9 @@
 
 Internal Twenty application for KATFIT BALANCE CRM operations.
 
+[Каталог фич](docs/features/README.md) — возможности приложения, правила,
+ограничения и подтверждённые статусы выпуска.
+
 ## Lead contour (implemented in code)
 
 ```text
@@ -81,3 +84,11 @@ Configurable group compensation for 1–4 actual attendees, published rate snaps
 Configuration and operator guide: [Оплата тренеров](docs/instructions/trainer-compensation.ru.md). Deployed and verified on stage on 2026-10-29; see [stage QA](docs/stage-trainer-compensation-qa-2026-10-29/report.ru.md). Actual staff, rates and workspace permissions still require configuration; synthetic QA trainers are inactive. Authenticated tariff publication and closing currently share the application access level.
 
 Trainer directory is available in application navigation with class, accrual and rate-assignment tabs. The schedule supports choosing one trainer at creation or editing; existing classes also have an audited assignment command. Payroll defaults to the assigned trainer, and its period report is available from the trainer card.
+
+## Client training activity
+
+Automatic `trainingActivity` on Person tracks recent attendance and future/current
+bookings independently of lifecycle and sales stages. Booking/session events
+recompute affected clients; daily reconciliation backfills existing clients and
+pauses former attendees after more than 14 days without attendance or upcoming
+bookings. See [Активность занятий](docs/training-activity.ru.md).
