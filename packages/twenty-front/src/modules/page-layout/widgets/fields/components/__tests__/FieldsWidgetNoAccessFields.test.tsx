@@ -184,10 +184,7 @@ const fieldsView: ViewWithRelations = {
 } as ViewWithRelations;
 
 const setObjectsPermissions = (
-  restrictedFields: Record<
-    string,
-    { canRead: boolean; canUpdate: boolean }
-  >,
+  restrictedFields: Record<string, { canRead: boolean; canUpdate: boolean }>,
 ) => {
   jotaiStore.set(currentUserWorkspaceState.atom, {
     permissionFlags: [],
@@ -235,46 +232,46 @@ const renderFieldsWidget = () => {
     <MemoryRouter>
       <I18nProvider i18n={i18n}>
         <FileUploadProvider>
-      <div style={{ width: '400px', padding: '20px' }}>
-        <JestMetadataAndApolloMocksWrapper>
-          <CoreClientProviderWrapper>
-            <PageLayoutTestWrapper store={jotaiStore}>
-              <LayoutRenderingProvider
-                value={{
-                  layoutType: PageLayoutType.RECORD_PAGE,
-                  targetRecordIdentifier: {
-                    id: TEST_RECORD_ID,
-                    targetObjectNameSingular:
-                      companyObjectMetadataItem.nameSingular,
-                  },
-                }}
-              >
-                <PageLayoutContentProvider
-                  value={{
-                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
-                    presentation: 'stack',
-                    tabId: TAB_ID_OVERVIEW,
-                  }}
-                >
-                  <WidgetComponentInstanceContext.Provider
-                    value={{ instanceId: pageLayoutWidget.id }}
+          <div style={{ width: '400px', padding: '20px' }}>
+            <JestMetadataAndApolloMocksWrapper>
+              <CoreClientProviderWrapper>
+                <PageLayoutTestWrapper store={jotaiStore}>
+                  <LayoutRenderingProvider
+                    value={{
+                      layoutType: PageLayoutType.RECORD_PAGE,
+                      targetRecordIdentifier: {
+                        id: TEST_RECORD_ID,
+                        targetObjectNameSingular:
+                          companyObjectMetadataItem.nameSingular,
+                      },
+                    }}
                   >
-                    <WorkspaceSurfaceContext.Provider
+                    <PageLayoutContentProvider
                       value={{
-                        type: 'main',
-                        instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-                        ownsRouteLocation: true,
+                        layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                        presentation: 'stack',
+                        tabId: TAB_ID_OVERVIEW,
                       }}
                     >
-                      <FieldsWidget widget={pageLayoutWidget} />
-                    </WorkspaceSurfaceContext.Provider>
-                  </WidgetComponentInstanceContext.Provider>
-                </PageLayoutContentProvider>
-              </LayoutRenderingProvider>
-            </PageLayoutTestWrapper>
-          </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
-      </div>
+                      <WidgetComponentInstanceContext.Provider
+                        value={{ instanceId: pageLayoutWidget.id }}
+                      >
+                        <WorkspaceSurfaceContext.Provider
+                          value={{
+                            type: 'main',
+                            instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+                            ownsRouteLocation: true,
+                          }}
+                        >
+                          <FieldsWidget widget={pageLayoutWidget} />
+                        </WorkspaceSurfaceContext.Provider>
+                      </WidgetComponentInstanceContext.Provider>
+                    </PageLayoutContentProvider>
+                  </LayoutRenderingProvider>
+                </PageLayoutTestWrapper>
+              </CoreClientProviderWrapper>
+            </JestMetadataAndApolloMocksWrapper>
+          </div>
         </FileUploadProvider>
       </I18nProvider>
     </MemoryRouter>,
