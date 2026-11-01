@@ -1,3 +1,4 @@
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 
 import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
@@ -71,6 +72,44 @@ describe('PendingWakeUpDatabaseEventListener', () => {
         updatedFields: ['name'],
       },
     });
+  });
+
+  it('hands every match of a wildcard wake-up to a single resolution', async () => {
+    const wakeUp = buildWakeUp({
+      condition: { type: 'EVENT', eventName: 'company.updated' },
+    });
+    const { listener, pendingWakeUpService } = buildListener([wakeUp]);
+
+    await listener.handleObjectRecordUpdateEvent(payload);
+
+    expect(pendingWakeUpService.scheduleResolution).toHaveBeenCalledTimes(1);
+    expect(pendingWakeUpService.scheduleResolution).toHaveBeenCalledWith({
+      wakeUp,
+      event: expect.objectContaining({ recordId: 'record-a' }),
+      nextEvents: [expect.objectContaining({ recordId: 'record-b' })],
+    });
+  });
+
+  it('caps the matches handed to a resolution at what one read returns', async () => {
+    const { listener, pendingWakeUpService } = buildListener([
+      buildWakeUp({
+        condition: { type: 'EVENT', eventName: 'company.updated' },
+      }),
+    ]);
+
+    await listener.handleObjectRecordUpdateEvent({
+      ...payload,
+      events: Array.from({ length: QUERY_MAX_RECORDS + 5 }, (_, index) =>
+        buildUpdateEvent(`record-${index}`),
+      ),
+    });
+
+    const [{ event, nextEvents }] =
+      pendingWakeUpService.scheduleResolution.mock.calls[0];
+
+    expect(event.recordId).toBe('record-0');
+    expect(nextEvents).toHaveLength(QUERY_MAX_RECORDS - 1);
+    expect(nextEvents.at(-1).recordId).toBe(`record-${QUERY_MAX_RECORDS - 1}`);
   });
 
   it('leaves an expired wake-up to its timeout', async () => {

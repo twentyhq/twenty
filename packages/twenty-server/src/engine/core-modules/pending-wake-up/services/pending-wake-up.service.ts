@@ -119,6 +119,7 @@ export class PendingWakeUpService {
   async scheduleResolution({
     wakeUp,
     event,
+    nextEvents,
     answer,
     attempt,
     recordReadAttempt,
@@ -126,7 +127,7 @@ export class PendingWakeUpService {
     deduplicationId,
   }: Pick<
     ResumePendingWakeUpJobData,
-    'event' | 'answer' | 'attempt' | 'recordReadAttempt'
+    'event' | 'nextEvents' | 'answer' | 'attempt' | 'recordReadAttempt'
   > & {
     wakeUp: ScheduledWakeUp;
     delayMs?: number;
@@ -138,6 +139,7 @@ export class PendingWakeUpService {
         workspaceId: wakeUp.workspaceId,
         wakeUpId: wakeUp.id,
         event,
+        nextEvents,
         answer,
         attempt,
         recordReadAttempt,
