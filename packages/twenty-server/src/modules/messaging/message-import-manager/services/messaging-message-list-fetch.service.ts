@@ -156,6 +156,10 @@ export class MessagingMessageListFetchService {
               { shouldBypassPermissionChecks: true },
             );
 
+          const messageExternalIdsRemovedFromAFolder = new Set(
+            messageExternalIdsToDelete,
+          );
+
           const messageExternalIdsChunks = chunk(messageExternalIds, 200);
 
           for (const [
@@ -180,7 +184,8 @@ export class MessagingMessageListFetchService {
               (messageExternalId) =>
                 !existingMessageChannelMessageAssociationsExternalIds.includes(
                   messageExternalId,
-                ),
+                ) ||
+                messageExternalIdsRemovedFromAFolder.has(messageExternalId),
             );
 
             if (messageExternalIdsToImport.length) {

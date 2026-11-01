@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import chunk from 'lodash.chunk';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 import { v4 } from 'uuid';
@@ -7,10 +9,17 @@ import { v4 } from 'uuid';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { type MessageChannelMessageAssociationMessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association-message-folder.workspace-entity';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
+import { type MessageParticipantWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-participant.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message.type';
+
+type MessageToRefresh = Pick<
+  MessageWorkspaceEntity,
+  'id' | 'subject' | 'receivedAt' | 'text' | 'isDraft'
+> & { messageChannelMessageAssociationId: string };
 
 type MessageAccumulator = {
   existingMessageInDB?: MessageWorkspaceEntity;
@@ -26,6 +35,7 @@ type MessageAccumulator = {
     | 'messageThreadId'
     | 'isDraft'
   >;
+  messageToRefresh?: MessageToRefresh;
   threadToCreate?: Pick<MessageThreadWorkspaceEntity, 'id' | 'subject'>;
   messageChannelMessageAssociationToCreate?: Pick<
     MessageChannelMessageAssociationWorkspaceEntity,
@@ -183,11 +193,24 @@ export class MessagingMessageService {
             newOrExistingMessageId = messageAccumulator.existingMessageInDB.id;
           }
 
+          const existingAssociation =
+            messageAccumulator.existingMessageChannelMessageAssociationInDB;
+
           if (
-            !isDefined(
-              messageAccumulator.existingMessageChannelMessageAssociationInDB,
-            )
+            isDefined(existingAssociation) &&
+            existingAssociation.messageExternalId === message.externalId
           ) {
+            messageAccumulator.messageToRefresh = {
+              id: newOrExistingMessageId,
+              subject: message.subject,
+              receivedAt: message.receivedAt,
+              text: message.text,
+              isDraft: message.isDraft,
+              messageChannelMessageAssociationId: existingAssociation.id,
+            };
+          }
+
+          if (!isDefined(existingAssociation)) {
             const associationToCreate = associationToCreateByMessageId.get(
               newOrExistingMessageId,
             ) ?? {
@@ -231,9 +254,14 @@ export class MessagingMessageService {
             continue;
           }
 
+          const hasRefreshedSubject =
+            isDefined(messageAccumulator.messageToRefresh) &&
+            messageAccumulator.existingMessageInDB?.subject !== message.subject;
+
           if (
             isDefined(messageAccumulator.existingThreadInDB) &&
-            isDefined(messageAccumulator.messageToCreate) &&
+            (isDefined(messageAccumulator.messageToCreate) ||
+              hasRefreshedSubject) &&
             isDefined(message.subject)
           ) {
             const threadId = messageAccumulator.existingThreadInDB.id;
@@ -267,6 +295,12 @@ export class MessagingMessageService {
           .filter(isDefined);
 
         await messageRepository.insert(messagesToCreate);
+
+        const messagesToRefresh = Array.from(messageAccumulatorMap.values())
+          .map((accumulator) => accumulator.messageToRefresh)
+          .filter(isDefined);
+
+        await this.refreshMessages(messagesToRefresh, transactionScope);
 
         const messageChannelMessageAssociationsToCreate = Array.from(
           associationToCreateByMessageId.values(),
@@ -334,6 +368,59 @@ export class MessagingMessageService {
       authContext,
       { lite: true },
     );
+  }
+
+  private async refreshMessages(
+    messagesToRefresh: MessageToRefresh[],
+    transactionScope: WorkspaceTransactionScope,
+  ) {
+    if (messagesToRefresh.length === 0) {
+      return;
+    }
+
+    const messageRepository =
+      transactionScope.getRepository<MessageWorkspaceEntity>('message', {
+        shouldBypassPermissionChecks: true,
+      });
+
+    const messageParticipantRepository =
+      transactionScope.getRepository<MessageParticipantWorkspaceEntity>(
+        'messageParticipant',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const messageFolderAssociationRepository =
+      transactionScope.getRepository<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
+        'messageChannelMessageAssociationMessageFolder',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    for (const messagesToRefreshChunk of chunk(
+      messagesToRefresh,
+      QUERY_MAX_RECORDS,
+    )) {
+      await messageRepository.updateMany(
+        messagesToRefreshChunk.map(
+          ({ id, subject, receivedAt, text, isDraft }) => ({
+            criteria: id,
+            partialEntity: { subject, receivedAt, text, isDraft },
+          }),
+        ),
+      );
+    }
+
+    await messageParticipantRepository.delete({
+      messageId: In(messagesToRefresh.map(({ id }) => id)),
+    });
+
+    await messageFolderAssociationRepository.delete({
+      messageChannelMessageAssociationId: In(
+        messagesToRefresh.map(
+          ({ messageChannelMessageAssociationId }) =>
+            messageChannelMessageAssociationId,
+        ),
+      ),
+    });
   }
 
   private async enrichMessageAccumulatorWithExistingMessages(
