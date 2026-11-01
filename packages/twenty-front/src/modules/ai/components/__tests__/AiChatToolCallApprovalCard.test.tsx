@@ -73,7 +73,13 @@ const PROPOSAL: ProposedToolCall = {
   template: 'generic',
 };
 
-const renderCard = (proposal: ProposedToolCall = PROPOSAL, isActive = true) =>
+const renderCard = ({
+  proposal = PROPOSAL,
+  isActive = true,
+}: {
+  proposal?: ProposedToolCall;
+  isActive?: boolean;
+} = {}) =>
   render(
     <I18nProvider i18n={i18n}>
       <Provider store={createStore()}>
@@ -175,12 +181,14 @@ describe('AiChatToolCallApprovalCard', () => {
     });
 
     renderCard({
-      toolName: 'create_one_person',
-      toolLabel: 'Create person',
-      summary: 'Add the new contact',
-      arguments: { name: { firstName: 'Ada', lastName: 'Lovelace' } },
-      template: 'recordCreate',
-      objectNameSingular: 'person',
+      proposal: {
+        toolName: 'create_one_person',
+        toolLabel: 'Create person',
+        summary: 'Add the new contact',
+        arguments: { name: { firstName: 'Ada', lastName: 'Lovelace' } },
+        template: 'recordCreate',
+        objectNameSingular: 'person',
+      },
     });
 
     await user.click(screen.getByRole('button', { name: 'Set first name' }));
@@ -262,12 +270,14 @@ describe('AiChatToolCallApprovalCard', () => {
         checksum: 'a'.repeat(64),
       };
       renderCard({
-        ...PROPOSAL,
-        toolName: PUBLISH_FRONT_COMPONENT_TOOL_NAME,
-        toolLabel: 'Save component',
-        summary: 'Save Renewals as a dashboard component',
-        arguments: argumentsToApprove,
-        template,
+        proposal: {
+          ...PROPOSAL,
+          toolName: PUBLISH_FRONT_COMPONENT_TOOL_NAME,
+          toolLabel: 'Save component',
+          summary: 'Save Renewals as a dashboard component',
+          arguments: argumentsToApprove,
+          template,
+        },
       });
 
       expect(
@@ -294,7 +304,9 @@ describe('AiChatToolCallApprovalCard', () => {
   );
 
   it('keeps ordinary tool arguments visible even when they contain a draft ID', () => {
-    renderCard({ ...PROPOSAL, arguments: { draftId: 'other-tool-draft' } });
+    renderCard({
+      proposal: { ...PROPOSAL, arguments: { draftId: 'other-tool-draft' } },
+    });
 
     expect(screen.queryByRole('region')).not.toBeInTheDocument();
     expect(screen.getByRole('textbox', { name: 'Arguments' })).toHaveValue(
@@ -306,9 +318,11 @@ describe('AiChatToolCallApprovalCard', () => {
     'does not load a preview for invalid draft ID %s',
     (draftId) => {
       renderCard({
-        ...PROPOSAL,
-        toolName: PUBLISH_FRONT_COMPONENT_TOOL_NAME,
-        arguments: { draftId },
+        proposal: {
+          ...PROPOSAL,
+          toolName: PUBLISH_FRONT_COMPONENT_TOOL_NAME,
+          arguments: { draftId },
+        },
       });
 
       expect(screen.queryByRole('region')).not.toBeInTheDocument();
@@ -332,9 +346,11 @@ describe('AiChatToolCallApprovalCard', () => {
     async ({ preview, error }) => {
       mockUsePreview.mockReturnValue({ preview, error });
       renderCard({
-        ...PROPOSAL,
-        template: 'frontComponent',
-        arguments: { draftId: 'current' },
+        proposal: {
+          ...PROPOSAL,
+          template: 'frontComponent',
+          arguments: { draftId: 'current' },
+        },
       });
 
       expect(screen.getByRole('button', { name: 'Approve' })).toBeDisabled();
@@ -347,9 +363,11 @@ describe('AiChatToolCallApprovalCard', () => {
   it('blocks approval and explains an unavailable feature', () => {
     mockIsFeatureEnabled.mockReturnValue(false);
     renderCard({
-      ...PROPOSAL,
-      template: 'frontComponent',
-      arguments: { draftId: 'current' },
+      proposal: {
+        ...PROPOSAL,
+        template: 'frontComponent',
+        arguments: { draftId: 'current' },
+      },
     });
 
     expect(screen.getByRole('alert')).toHaveTextContent(
@@ -361,14 +379,14 @@ describe('AiChatToolCallApprovalCard', () => {
   });
 
   it('does not mount the preview loader for an inactive approval', () => {
-    renderCard(
-      {
+    renderCard({
+      proposal: {
         ...PROPOSAL,
         template: 'frontComponent',
         arguments: { draftId: 'hidden' },
       },
-      false,
-    );
+      isActive: false,
+    });
 
     expect(mockUsePreview).not.toHaveBeenCalled();
     expect(screen.queryByRole('region')).not.toBeInTheDocument();
@@ -397,9 +415,11 @@ describe('AiChatToolCallApprovalCard', () => {
         }),
       );
       renderCard({
-        ...PROPOSAL,
-        toolName,
-        arguments: { draftId: 'current', checksum: 'a'.repeat(64) },
+        proposal: {
+          ...PROPOSAL,
+          toolName,
+          arguments: { draftId: 'current', checksum: 'a'.repeat(64) },
+        },
       });
       await user.click(screen.getByRole('button', { name: decision }));
       await act(async () => completeAnswer(isAnswered));

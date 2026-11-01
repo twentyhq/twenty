@@ -103,8 +103,18 @@ export const resolveProposedToolCall = async ({
   };
 
   switch (template) {
-    case 'frontComponent':
+    case 'frontComponent': {
+      const { draftId, checksum } = baseProposal.arguments;
+
+      if (!isNonEmptyString(draftId) || !isNonEmptyString(checksum)) {
+        return {
+          error:
+            'arguments.draftId and arguments.checksum must identify the component draft.',
+        };
+      }
+
       return { proposal: { ...baseProposal, template } };
+    }
     case 'email':
       return buildEmailProposal(baseProposal);
     case 'recordCreate':

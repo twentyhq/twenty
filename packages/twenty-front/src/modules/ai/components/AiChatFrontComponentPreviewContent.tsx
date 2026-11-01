@@ -27,12 +27,14 @@ const StyledContent = styled.div`
 
 type AiChatFrontComponentPreviewContentProps = {
   draftId: string;
-  previewState: ReturnType<typeof useAiChatFrontComponentPreview>;
-};
+} & ReturnType<typeof useAiChatFrontComponentPreview>;
 
 export const AiChatFrontComponentPreviewContent = ({
   draftId,
-  previewState: { preview, error, loadPreview, reportPreviewError },
+  preview,
+  error,
+  loadPreview,
+  reportPreviewError,
 }: AiChatFrontComponentPreviewContentProps) => {
   const { t } = useLingui();
   const colorScheme = useThemeColorScheme();

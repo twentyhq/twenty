@@ -24,12 +24,16 @@ type AiChatFrontComponentPreviewLoaderProps = AiChatFrontComponentPreviewProps;
 const AiChatFrontComponentPreviewLoader = ({
   draftId,
 }: AiChatFrontComponentPreviewLoaderProps) => {
-  const previewState = useAiChatFrontComponentPreview(draftId);
+  const { preview, error, loadPreview, reportPreviewError } =
+    useAiChatFrontComponentPreview(draftId);
 
   return (
     <AiChatFrontComponentPreviewContent
       draftId={draftId}
-      previewState={previewState}
+      preview={preview}
+      error={error}
+      loadPreview={loadPreview}
+      reportPreviewError={reportPreviewError}
     />
   );
 };
