@@ -2350,7 +2350,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     const outcome = resolvePermissionsRowAccessOutcome({
-      subject: this.resolveRowAccessPolicySubject(),
+      subject: {
+        ...this.resolveRowAccessPolicySubject(),
+        isSystemContext: false,
+      },
       environment: this.resolveRowAccessPolicyEnvironment(),
       flatObjectMetadata,
       operationType,
