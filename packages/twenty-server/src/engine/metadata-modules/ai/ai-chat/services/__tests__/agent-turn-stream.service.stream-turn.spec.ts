@@ -10,6 +10,7 @@ import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums
 import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
+import { STREAM_EXECUTION_FAILED_CODE } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 
 const buildService = async (finish: jest.Mock) => {
   const module = await Test.createTestingModule({
@@ -53,6 +54,19 @@ const streamTurnWithoutClaim = ({
     isBackgroundRun: true,
   });
 
+const expectFailureRecordedOnce = (finish: jest.Mock) => {
+  expect(finish).toHaveBeenCalledTimes(1);
+  expect(finish).toHaveBeenCalledWith({
+    workspaceId: 'workspace-id',
+    turnId: 'turn-id',
+    status: AgentTurnStatus.FAILED,
+    error: {
+      code: STREAM_EXECUTION_FAILED_CODE,
+      message: 'Provider unavailable',
+    },
+  });
+};
+
 describe('AgentTurnStreamService streamTurn without a claim', () => {
   it('records the turn as failed', async () => {
     const finish = jest.fn().mockResolvedValue(true);
@@ -65,22 +79,22 @@ describe('AgentTurnStreamService streamTurn without a claim', () => {
       }),
     ).rejects.toBe(turnError);
 
-    expect(finish).toHaveBeenCalledWith(
-      expect.objectContaining({
-        turnId: 'turn-id',
-        status: AgentTurnStatus.FAILED,
-      }),
-    );
+    expectFailureRecordedOnce(finish);
   });
 
   it('fails with the turn error when recording the failure fails', async () => {
+    const finish = jest
+      .fn()
+      .mockRejectedValue(new Error('Database unavailable'));
     const turnError = new Error('Provider unavailable');
-    const service = await buildService(
-      jest.fn().mockRejectedValue(new Error('Database unavailable')),
-    );
 
-    await expect(streamTurnWithoutClaim({ service, turnError })).rejects.toBe(
-      turnError,
-    );
+    await expect(
+      streamTurnWithoutClaim({
+        service: await buildService(finish),
+        turnError,
+      }),
+    ).rejects.toBe(turnError);
+
+    expectFailureRecordedOnce(finish);
   });
 });
