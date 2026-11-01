@@ -62,6 +62,20 @@ describe('ai.generate', () => {
     });
   });
 
+  it('acts as the person who triggered the run rather than the application', async () => {
+    process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN = 'application-token';
+
+    try {
+      await ai.generate({ input: 'Is Acme a good fit?' });
+
+      expect(
+        new Headers(fetchSpy.mock.calls[0][1]?.headers).get('Authorization'),
+      ).toBe('Bearer app-token');
+    } finally {
+      delete process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN;
+    }
+  });
+
   it('sends messages and the scope as given', async () => {
     const scope = {
       objectPermissions: [

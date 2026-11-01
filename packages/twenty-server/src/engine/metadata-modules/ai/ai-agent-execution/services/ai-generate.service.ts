@@ -58,7 +58,7 @@ export class AiGenerateService {
       !isDefined(callerApplication.defaultRoleId)
     ) {
       throw new AiException(
-        'ai.generate needs a default role on the application; set defaultRoleUniversalIdentifier in its manifest',
+        'ai.generate needs a default role on the application; declare one with defineApplicationRole()',
         AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
       );
     }

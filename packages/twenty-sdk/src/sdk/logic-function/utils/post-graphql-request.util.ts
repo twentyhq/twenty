@@ -4,12 +4,16 @@ export const postGraphqlRequest = async <TVariables, TData>({
   query,
   variables,
   caller,
+  isActingAsCaller = false,
 }: {
   query: string;
   variables: TVariables;
   caller: string;
+  isActingAsCaller?: boolean;
 }): Promise<TData> => {
-  const { apiUrl, accessToken } = getApplicationApiConfigOrThrow(caller);
+  const { apiUrl, accessToken } = getApplicationApiConfigOrThrow(caller, {
+    isActingAsCaller,
+  });
 
   const response = await fetch(`${apiUrl}/metadata`, {
     method: 'POST',
