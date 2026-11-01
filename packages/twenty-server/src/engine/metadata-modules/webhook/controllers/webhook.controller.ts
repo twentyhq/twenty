@@ -49,10 +49,10 @@ import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters
   SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
 )
 @UseFilters(
-  PermissionsRestApiExceptionFilter,
   RestApiExceptionFilter,
   FlatEntityMapsRestApiExceptionFilter,
   WorkspaceMigrationRunnerRestApiExceptionFilter,
+  PermissionsRestApiExceptionFilter,
   AuthRestApiExceptionFilter,
 )
 export class WebhookController {
