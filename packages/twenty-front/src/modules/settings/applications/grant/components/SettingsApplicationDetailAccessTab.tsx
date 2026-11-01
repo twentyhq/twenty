@@ -1,7 +1,11 @@
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SettingsApplicationGrantPermissionFlags } from '@/settings/applications/grant/components/SettingsApplicationGrantPermissionFlags';
+import { SettingsApplicationGrantRestrictionsBanner } from '@/settings/applications/grant/components/SettingsApplicationGrantRestrictionsBanner';
+import { hasGrantRestrictions } from '@/settings/applications/grant/utils/hasGrantRestrictions';
 import { SettingsApplicationGrantPendingCard } from '@/settings/applications/grant/components/SettingsApplicationGrantPendingCard';
 import { ApplicationGrantEditorContext } from '@/settings/applications/grant/contexts/ApplicationGrantEditorContext';
+import { getLockedActionsByObjectMetadataId } from '@/settings/applications/grant/utils/getLockedActionsByObjectMetadataId';
+import { buildApplicationAccessEditorContextValue } from '@/settings/applications/grant/utils/buildApplicationAccessEditorContextValue';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
@@ -19,8 +23,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { InlineBanner, useToast } from 'twenty-ui/components/feedback';
-import { IconAlertTriangle } from 'twenty-ui/icon';
+import { useToast } from 'twenty-ui/components/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import {
@@ -95,22 +98,18 @@ const SettingsApplicationGrantEditor = ({
       .length > 0;
 
   const hasRestrictions =
-    (settingsPersistedRole?.fieldPermissions ?? []).some(
-      (fieldPermission) =>
-        fieldPermission.canReadFieldValue === false ||
-        fieldPermission.canUpdateFieldValue === false,
-    ) || (settingsPersistedRole?.rowLevelPermissionPredicates ?? []).length > 0;
+    isDefined(settingsPersistedRole) &&
+    hasGrantRestrictions(settingsPersistedRole);
 
   const editorContextValue = useMemo(
-    () => ({
-      applicationId,
-      applicationName,
-      lockedObjectMetadataIds: new Set(
-        applicationGrant.lockedObjectPermissions.map(
-          (lockedObjectPermission) => lockedObjectPermission.objectMetadataId,
+    () =>
+      buildApplicationAccessEditorContextValue({
+        applicationId,
+        applicationName,
+        lockedActionsByObjectMetadataId: getLockedActionsByObjectMetadataId(
+          applicationGrant.lockedObjectPermissions,
         ),
-      ),
-    }),
+      }),
     [applicationId, applicationName, applicationGrant.lockedObjectPermissions],
   );
 
@@ -158,12 +157,7 @@ const SettingsApplicationGrantEditor = ({
           />
         </StyledActions>
       )}
-      {hasRestrictions && (
-        <InlineBanner
-          status="warning"
-          icon={<IconAlertTriangle aria-hidden="true" />}
-        >{t`Some fields or records are hidden from this app. Some of its features may stop working.`}</InlineBanner>
-      )}
+      {hasRestrictions && <SettingsApplicationGrantRestrictionsBanner />}
       <SettingsRolePermissionsObjectsSection roleId={grantRoleId} isEditable />
       <SettingsRolePermissionsObjectLevelSection
         roleId={grantRoleId}

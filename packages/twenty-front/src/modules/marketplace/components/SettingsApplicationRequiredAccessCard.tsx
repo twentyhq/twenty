@@ -22,6 +22,8 @@ type SettingsApplicationRequiredAccessCardProps = {
   appObjects?: { universalIdentifier: string }[];
   requestedCapabilities?: string[];
   billsCredits?: boolean;
+  // The install page shows record access in the role editor instead
+  showsRecordAccess?: boolean;
 };
 
 const StyledPermissionsCard = styled.div`
@@ -78,6 +80,7 @@ export const SettingsApplicationRequiredAccessCard = ({
   appObjects,
   requestedCapabilities = [],
   billsCredits = false,
+  showsRecordAccess = true,
 }: SettingsApplicationRequiredAccessCardProps) => {
   const { objectMetadataItems } = useObjectMetadataItems();
 
@@ -112,6 +115,9 @@ export const SettingsApplicationRequiredAccessCard = ({
             canUpdateAllObjectRecords: false,
             canSoftDeleteAllObjectRecords: false,
             canDestroyAllObjectRecords: false,
+            objectPermissions: showsRecordAccess
+              ? defaultRole.objectPermissions
+              : [],
           },
           { objectLabelsByUniversalIdentifier, appObjectUniversalIdentifiers },
         )
@@ -124,16 +130,18 @@ export const SettingsApplicationRequiredAccessCard = ({
       )
       .filter(isDefined);
 
-    const allObjectsRequestLabel = getRecordAccessLabel({
-      access: {
-        canRead: defaultRole?.canReadAllObjectRecords ?? false,
-        canWrite: defaultRole?.canUpdateAllObjectRecords ?? false,
-        canDelete:
-          (defaultRole?.canSoftDeleteAllObjectRecords ?? false) ||
-          (defaultRole?.canDestroyAllObjectRecords ?? false),
-      },
-      target: t`all objects, including future ones`,
-    });
+    const allObjectsRequestLabel = !showsRecordAccess
+      ? undefined
+      : getRecordAccessLabel({
+          access: {
+            canRead: defaultRole?.canReadAllObjectRecords ?? false,
+            canWrite: defaultRole?.canUpdateAllObjectRecords ?? false,
+            canDelete:
+              (defaultRole?.canSoftDeleteAllObjectRecords ?? false) ||
+              (defaultRole?.canDestroyAllObjectRecords ?? false),
+          },
+          target: t`all objects, including future ones`,
+        });
 
     return [
       ...(isDefined(allObjectsRequestLabel)
@@ -156,6 +164,7 @@ export const SettingsApplicationRequiredAccessCard = ({
       ...buildApplicationBillingSummary(billsCredits),
     ];
   }, [
+    showsRecordAccess,
     appObjects,
     requestedCapabilities,
     defaultRole,

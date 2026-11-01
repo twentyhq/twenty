@@ -7,12 +7,12 @@ import { isAbsolute, relative, resolve } from 'path';
 import {
   type ApplicationCapability,
   Manifest,
+  type RoleManifest,
 } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { type ApplicationGrantObjectScopeInput } from 'src/engine/core-modules/application/application-grant/dtos/application-grant-object-scope.input';
 import { buildApplicationFileList } from 'src/engine/core-modules/application/application-install/utils/build-application-file-list.util';
 import { toApplicationCapabilities } from 'src/engine/core-modules/application/utils/to-application-capabilities.util';
 import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
@@ -102,7 +102,7 @@ export class ApplicationInstallService {
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
     hasUserApprovedCapabilities?: boolean;
-    grantObjectScopes?: ApplicationGrantObjectScopeInput[];
+    grantRoleManifest?: RoleManifest;
     updateProgress?: MessageQueueJobProgressContext['updateProgress'];
     shouldDeferActions?: boolean;
   }): Promise<boolean> {
@@ -153,7 +153,7 @@ export class ApplicationInstallService {
             skipWorkspaceCompatibilityCheck:
               params.skipWorkspaceCompatibilityCheck,
             hasUserApprovedCapabilities: params.hasUserApprovedCapabilities,
-            grantObjectScopes: params.grantObjectScopes,
+            grantRoleManifest: params.grantRoleManifest,
             shouldDeferActions: params.shouldDeferActions,
           },
           progressReporter,
@@ -173,7 +173,7 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
-      grantObjectScopes?: ApplicationGrantObjectScopeInput[];
+      grantRoleManifest?: RoleManifest;
       shouldDeferActions?: boolean;
     },
     progressReporter: ApplicationLifecycleProgressReporter<ApplicationInstallStep>,
@@ -275,7 +275,7 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
-      grantObjectScopes?: ApplicationGrantObjectScopeInput[];
+      grantRoleManifest?: RoleManifest;
       shouldDeferActions?: boolean;
     };
     resolvedPackage: ResolvedPackage;
@@ -362,7 +362,7 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
-      grantObjectScopes?: ApplicationGrantObjectScopeInput[];
+      grantRoleManifest?: RoleManifest;
       shouldDeferActions?: boolean;
     };
     resolvedPackage: ResolvedPackage;
@@ -529,7 +529,7 @@ export class ApplicationInstallService {
           forceSdkClientGeneration: true,
           persistVersion: false,
           shouldDeferActions: params.shouldDeferActions,
-          grantObjectScopes: params.grantObjectScopes,
+          grantRoleManifest: params.grantRoleManifest,
           version: newVersion,
         });
 

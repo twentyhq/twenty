@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { type Manifest } from 'twenty-shared/application';
+import { type Manifest, type RoleManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationGrantService } from 'src/engine/core-modules/application/application-grant/services/application-grant.service';
-import { type ApplicationGrantObjectScopeInput } from 'src/engine/core-modules/application/application-grant/dtos/application-grant-object-scope.input';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -32,7 +31,7 @@ export class ApplicationManifestApplyService {
     inferDeletionFromMissingEntities = true,
     persistVersion,
     shouldDeferActions,
-    grantObjectScopes,
+    grantRoleManifest,
     version,
   }: {
     workspaceId: string;
@@ -49,7 +48,7 @@ export class ApplicationManifestApplyService {
     forceSdkClientGeneration?: boolean;
     persistVersion?: boolean;
     shouldDeferActions?: boolean;
-    grantObjectScopes?: ApplicationGrantObjectScopeInput[];
+    grantRoleManifest?: RoleManifest;
     // Version of the package being applied, labels the permissions it may leave pending
     version?: string;
   }): Promise<{
@@ -75,7 +74,7 @@ export class ApplicationManifestApplyService {
       workspaceId,
       applicationId: application.id,
       manifest,
-      objectScopeInputs: grantObjectScopes,
+      installGrantRoleManifest: grantRoleManifest,
       requestVersion: version,
     });
 

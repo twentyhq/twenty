@@ -286,12 +286,17 @@ export {
   deserializeApplicationVariableValue,
 } from './utils/applicationVariableValueSerialization';
 export { computeDependencyFileChecksum } from './utils/computeDependencyFileChecksum';
+export {
+  computeGrantLockedRequirement,
+  computeGrantMissingLockedPermissions,
+} from './utils/computeGrantLockedRequirement';
 export { computePackageJsonChecksum } from './utils/computePackageJsonChecksum';
 export type { EffectiveObjectPermissions } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
 export {
   ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
   getEffectiveObjectPermissionsFromRoleManifest,
 } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
+export { getOwnObjectPermissions } from './utils/getOwnObjectPermissions';
 export { getRoleManifestGrantsNotCoveredBy } from './utils/getRoleManifestGrantsNotCoveredBy';
 export { getRowLevelRestrictionSignature } from './utils/getRowLevelRestrictionSignature';
 export { isConnectionProviderScope } from './utils/isConnectionProviderScope';
@@ -301,6 +306,7 @@ export {
   isReservedSettingsMenuItemTitle,
 } from './utils/isReservedSettingsMenuItemTitle';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
+export { materializeRoleManifestObjectPermissions } from './utils/materializeRoleManifestObjectPermissions';
 export type {
   ViewManifestFilterValue,
   ViewFieldManifest,

@@ -1,7 +1,6 @@
 /* oxlint-disable twenty/no-navigate-prefer-link */
 import { isDefined } from 'twenty-shared/utils';
 import { ApplicationGrantEditorContext } from '@/settings/applications/grant/contexts/ApplicationGrantEditorContext';
-import { getApplicationAccessObjectPath } from '@/settings/applications/grant/utils/getApplicationAccessPath';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { SettingsCard } from '@/settings/components/SettingsCard';
@@ -74,12 +73,7 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
 
   const handleSelectObjectMetadata = (objectMetadataId: string) => {
     if (isDefined(applicationGrantEditor)) {
-      navigateToPath(
-        getApplicationAccessObjectPath({
-          applicationId: applicationGrantEditor.applicationId,
-          objectMetadataId,
-        }),
-      );
+      navigateToPath(applicationGrantEditor.getObjectPath(objectMetadataId));
       return;
     }
 

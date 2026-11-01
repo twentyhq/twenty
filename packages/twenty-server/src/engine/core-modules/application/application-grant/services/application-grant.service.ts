@@ -1,7 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import {
+  computeGrantLockedRequirement,
   type Manifest,
+  materializeRoleManifestObjectPermissions,
   OBJECT_PERMISSION_ACTIONS,
   ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
   type RoleManifest,
@@ -10,20 +12,16 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { ApplicationGrantRestrictionsService } from 'src/engine/core-modules/application/application-grant/services/application-grant-restrictions.service';
 import { fromRoleManifestGrantToApplicationGrantPermissionDto } from 'src/engine/core-modules/application/application-grant/utils/from-role-manifest-grant-to-application-grant-permission-dto.util';
 import { type ApplicationGrantDTO } from 'src/engine/core-modules/application/application-grant/dtos/application-grant.dto';
-import { type ApplicationGrantObjectScopeInput } from 'src/engine/core-modules/application/application-grant/dtos/application-grant-object-scope.input';
-import { type ApplicationGrantObjectScope } from 'src/engine/core-modules/application/application-grant/types/application-grant-object-scope.type';
 import {
   addRoleManifestGrants,
   removeRoleManifestGrants,
 } from 'src/engine/core-modules/application/application-grant/utils/apply-role-manifest-grants.util';
 import { buildGrantFlatEntityOperations } from 'src/engine/core-modules/application/application-grant/utils/build-grant-flat-entity-operations.util';
-import { buildInitialGrantRoleManifest } from 'src/engine/core-modules/application/application-grant/utils/build-initial-grant-role-manifest.util';
-import {
-  computeGrantLockedRequirement,
-  computeGrantMissingLockedPermissions,
-} from 'src/engine/core-modules/application/application-grant/utils/compute-grant-locked-requirement.util';
+import { assertGrantKeepsLockedRequirement } from 'src/engine/core-modules/application/application-grant/utils/assert-grant-keeps-locked-requirement.util';
+import { buildInstallGrantRoleManifest } from 'src/engine/core-modules/application/application-grant/utils/build-install-grant-role-manifest.util';
 import {
   computeGrantNarrowedPermissions,
   computeGrantPendingPermissions,
@@ -86,6 +84,7 @@ export class ApplicationGrantService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly applicationGrantRestrictionsService: ApplicationGrantRestrictionsService,
   ) {}
 
   async loadGrantState({
@@ -257,13 +256,13 @@ export class ApplicationGrantService {
     workspaceId,
     applicationId,
     manifest,
-    objectScopeInputs,
+    installGrantRoleManifest,
     requestVersion,
   }: {
     workspaceId: string;
     applicationId: string;
     manifest: Manifest;
-    objectScopeInputs?: ApplicationGrantObjectScopeInput[];
+    installGrantRoleManifest?: RoleManifest;
     requestVersion?: string;
   }): Promise<void> {
     if (isDefined(requestVersion)) {
@@ -293,20 +292,39 @@ export class ApplicationGrantService {
     });
 
     if (!isDefined(state.grantRoleManifest)) {
+      const customizedGrantRoleManifest = isLocal
+        ? undefined
+        : installGrantRoleManifest;
+
+      const desiredRoleManifest = isDefined(customizedGrantRoleManifest)
+        ? buildInstallGrantRoleManifest({
+            requestedRoleManifest: state.requestedRoleManifest,
+            customizedGrantRoleManifest,
+          })
+        : materializeRoleManifestObjectPermissions(state.requestedRoleManifest);
+
+      assertGrantKeepsLockedRequirement({
+        approvedRoleManifest: state.requestedRoleManifest,
+        grantRoleManifest: desiredRoleManifest,
+      });
+
       await this.writeGrant({
         state,
-        desiredRoleManifest: buildInitialGrantRoleManifest({
-          requestedRoleManifest: state.requestedRoleManifest,
-          objectScopes: isLocal
-            ? []
-            : this.toObjectScopes({
-                objectScopeInputs: objectScopeInputs ?? [],
-                flatObjectMetadataMaps: state.flatMaps.flatObjectMetadataMaps,
-              }),
-        }),
+        desiredRoleManifest,
         approvedRoleManifest: state.requestedRoleManifest,
         agentUniversalIdentifiers,
       });
+
+      if (isDefined(customizedGrantRoleManifest)) {
+        await this.applicationGrantRestrictionsService.writeInstallRestrictions({
+          workspaceId,
+          grantRoleId: await this.getGrantRoleIdOrThrow({
+            workspaceId,
+            applicationId,
+          }),
+          grantRoleManifest: customizedGrantRoleManifest,
+        });
+      }
 
       return;
     }
@@ -434,49 +452,16 @@ export class ApplicationGrantService {
       ),
     };
 
-    const missingLockedPermissions = computeGrantMissingLockedPermissions({
+    assertGrantKeepsLockedRequirement({
       approvedRoleManifest: state.approvedRoleManifest,
       grantRoleManifest: desiredRoleManifest,
     });
-
-    if (missingLockedPermissions.length > 0) {
-      throw new ApplicationException(
-        `The grant must keep what the application requires: ${missingLockedPermissions
-          .map((grant) => JSON.stringify(grant))
-          .join(', ')}`,
-        ApplicationExceptionCode.INVALID_INPUT,
-      );
-    }
 
     await this.writeGrant({
       state,
       desiredRoleManifest,
       approvedRoleManifest: state.approvedRoleManifest,
     });
-  }
-
-  private toObjectScopes({
-    objectScopeInputs,
-    flatObjectMetadataMaps,
-  }: {
-    objectScopeInputs: ApplicationGrantObjectScopeInput[];
-  } & Pick<
-    GrantFlatMaps,
-    'flatObjectMetadataMaps'
-  >): ApplicationGrantObjectScope[] {
-    return objectScopeInputs.map((objectScopeInput) => ({
-      action: objectScopeInput.action,
-      objectUniversalIdentifiers: objectScopeInput.allObjects
-        ? null
-        : (objectScopeInput.objectMetadataIds ?? [])
-            .map(
-              (objectMetadataId) =>
-                flatObjectMetadataMaps.universalIdentifierById[
-                  objectMetadataId
-                ],
-            )
-            .filter(isDefined),
-    }));
   }
 
   private getGrantRoleManifestOrThrow(state: ApplicationGrantState) {

@@ -66,7 +66,12 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
       },
     ];
 
-  const isApplicationGrant = useContext(ApplicationGrantEditorContext) !== null;
+  const applicationGrantEditor = useContext(ApplicationGrantEditorContext);
+  const isApplicationGrant = applicationGrantEditor !== null;
+  const lockedActions =
+    applicationGrantEditor?.lockedActionsByObjectMetadataId.get(
+      objectMetadataItem.id,
+    ) ?? [];
 
   return (
     <Section.Root>
@@ -85,7 +90,10 @@ export const SettingsRolePermissionsObjectLevelObjectFormObjectLevel = ({
             <SettingsRolePermissionsObjectLevelObjectFormObjectLevelTableRow
               key={permission.key}
               permission={permission}
-              isEditable={isRolePermissionsEditable(settingsDraftRole)}
+              isEditable={
+                isRolePermissionsEditable(settingsDraftRole) &&
+                !lockedActions.includes(permission.key)
+              }
               settingsDraftRoleObjectPermissions={
                 settingsDraftRoleObjectPermissions
               }

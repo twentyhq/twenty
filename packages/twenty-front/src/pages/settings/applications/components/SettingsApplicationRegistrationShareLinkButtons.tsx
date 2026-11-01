@@ -1,9 +1,7 @@
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { isNonEmptyString } from '@sniptt/guards';
-import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
 import { useCopyMarketplaceAppLink } from '@/marketplace/hooks/useCopyMarketplaceAppLink';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
-import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMarketplaceAppDefaultRoleManifest';
 import { formatQueueJobProgressLabel } from '@/queue-job/utils/formatQueueJobProgressLabel';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -44,13 +42,8 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
   const installable =
     isDefined(isInstalled) && isDefined(universalIdentifier) && !isInstalled;
 
-  const {
-    requestInstall,
-    install,
-    isInstalling,
-    installProgress,
-    modalInstanceId,
-  } = useInstallMarketplaceAppWithPermissionValidation({
+  const { requestInstall, isInstalling, installProgress } =
+    useInstallMarketplaceAppWithPermissionValidation({
     universalIdentifier,
   });
 
@@ -60,9 +53,6 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
   });
 
   const detail = detailData?.findMarketplaceAppDetail;
-  const displayName = detail?.name ?? '';
-
-  const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
 
   const displayedInstallProgress = formatQueueJobProgressLabel(
     installProgress ?? 0,
@@ -84,18 +74,6 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
               ? t`Installing ${displayedInstallProgress}`
               : t`Install`}
           </Button>
-          <SettingsApplicationInstallPermissionValidationModal
-            modalInstanceId={modalInstanceId}
-            appDisplayName={displayName}
-            appLogoUrl={detail?.logoUrl ?? undefined}
-            defaultRole={defaultRole}
-            appObjects={detail?.objects ?? undefined}
-            requestedCapabilities={detail?.requestedCapabilities}
-            billsCredits={detail?.billsCredits}
-            isListed={detail?.isListed}
-            onAuthorize={install}
-            isInstalling={isInstalling}
-          />
         </>
       )}
       {withCopyButton && (

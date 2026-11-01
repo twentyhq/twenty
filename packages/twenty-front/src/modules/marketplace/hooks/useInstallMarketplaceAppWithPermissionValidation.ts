@@ -1,30 +1,26 @@
-import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useInstallMarketplaceApp } from '@/marketplace/hooks/useInstallMarketplaceApp';
+import { getApplicationInstallPath } from '@/settings/applications/grant/utils/getApplicationInstallPath';
 import { useCallback } from 'react';
-
-const INSTALL_PERMISSION_VALIDATION_MODAL_ID =
-  'install-permission-validation-modal';
+import { useNavigate } from 'react-router-dom';
+import { isDefined } from 'twenty-shared/utils';
 
 type UseInstallMarketplaceAppWithPermissionValidationArgs = Parameters<
   typeof useInstallMarketplaceApp
 >[0];
 
+// Installing goes through the install page, where the admin reviews and may customize the grant
 export const useInstallMarketplaceAppWithPermissionValidation = (
   args?: UseInstallMarketplaceAppWithPermissionValidationArgs,
 ) => {
-  const { openDialog } = useDialog();
-  const { install, isInstalling, installProgress } =
-    useInstallMarketplaceApp(args);
+  const navigate = useNavigate();
+  const { isInstalling, installProgress } = useInstallMarketplaceApp(args);
+  const universalIdentifier = args?.universalIdentifier;
 
   const requestInstall = useCallback(() => {
-    openDialog(INSTALL_PERMISSION_VALIDATION_MODAL_ID);
-  }, [openDialog]);
+    if (isDefined(universalIdentifier)) {
+      navigate(getApplicationInstallPath(universalIdentifier));
+    }
+  }, [navigate, universalIdentifier]);
 
-  return {
-    requestInstall,
-    install,
-    isInstalling,
-    installProgress,
-    modalInstanceId: INSTALL_PERMISSION_VALIDATION_MODAL_ID,
-  };
+  return { requestInstall, isInstalling, installProgress };
 };

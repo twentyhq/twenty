@@ -658,12 +658,6 @@ export type ApplicationGrantObjectPermissionInput = {
   objectMetadataId: Scalars['UUID']['input'];
 };
 
-export type ApplicationGrantObjectScopeInput = {
-  action: Scalars['String']['input'];
-  allObjects: Scalars['Boolean']['input'];
-  objectMetadataIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
-};
-
 export type ApplicationGrantPermission = {
   __typename?: 'ApplicationGrantPermission';
   action?: Maybe<Scalars['String']['output']>;
@@ -7239,7 +7233,7 @@ export type TriggerAddPeopleToMessageListJobResult = {
 };
 
 export type TriggerInstallApplicationInput = {
-  grantObjectScopes?: InputMaybe<Array<ApplicationGrantObjectScopeInput>>;
+  grantRoleManifest?: InputMaybe<Scalars['JSON']['input']>;
   universalIdentifier: Scalars['String']['input'];
 };
 

@@ -1,11 +1,14 @@
-import { type RoleManifest } from 'twenty-shared/application';
+import {
+  computeGrantMissingLockedPermissions,
+  materializeRoleManifestObjectPermissions,
+  type RoleManifest,
+} from 'twenty-shared/application';
 
 import {
   addRoleManifestGrants,
   removeRoleManifestGrants,
 } from 'src/engine/core-modules/application/application-grant/utils/apply-role-manifest-grants.util';
-import { buildInitialGrantRoleManifest } from 'src/engine/core-modules/application/application-grant/utils/build-initial-grant-role-manifest.util';
-import { computeGrantMissingLockedPermissions } from 'src/engine/core-modules/application/application-grant/utils/compute-grant-locked-requirement.util';
+import { buildInstallGrantRoleManifest } from 'src/engine/core-modules/application/application-grant/utils/build-install-grant-role-manifest.util';
 import {
   computeGrantNarrowedPermissions,
   computeGrantPendingPermissions,
@@ -36,13 +39,8 @@ const buildRequest = (overrides: Partial<RoleManifest> = {}): RoleManifest => ({
 });
 
 describe('application grant role manifest', () => {
-  it('keeps the "all objects" switch when the admin picks all objects', () => {
-    const grant = buildInitialGrantRoleManifest({
-      requestedRoleManifest: buildRequest(),
-      objectScopes: [
-        { action: 'canReadObjectRecords', objectUniversalIdentifiers: null },
-      ],
-    });
+  it('installs exactly the request when the admin changes nothing', () => {
+    const grant = materializeRoleManifestObjectPermissions(buildRequest());
 
     expect(grant.canReadAllObjectRecords).toBe(true);
     expect(grant.permissionFlagUniversalIdentifiers).toEqual([
@@ -51,14 +49,16 @@ describe('application grant role manifest', () => {
   });
 
   it('narrows the "all objects" switch to the picked objects and keeps required rows', () => {
-    const grant = buildInitialGrantRoleManifest({
+    const grant = buildInstallGrantRoleManifest({
       requestedRoleManifest: buildRequest(),
-      objectScopes: [
-        {
-          action: 'canReadObjectRecords',
-          objectUniversalIdentifiers: [PERSON],
-        },
-      ],
+      customizedGrantRoleManifest: {
+        ...buildRequest(),
+        canReadAllObjectRecords: false,
+        objectPermissions: [
+          ...(buildRequest().objectPermissions ?? []),
+          { objectUniversalIdentifier: PERSON, canReadObjectRecords: true },
+        ],
+      },
     });
 
     expect(grant.canReadAllObjectRecords).toBe(false);
@@ -82,11 +82,24 @@ describe('application grant role manifest', () => {
     ).toEqual([]);
   });
 
-  it('rejects a grant that drops a required row', () => {
-    const grant = buildInitialGrantRoleManifest({
+  it('keeps the requested flags when a customized grant tries to change them', () => {
+    const grant = buildInstallGrantRoleManifest({
       requestedRoleManifest: buildRequest(),
-      objectScopes: [],
+      customizedGrantRoleManifest: {
+        ...buildRequest(),
+        canUpdateAllSettings: true,
+        permissionFlagUniversalIdentifiers: [],
+      },
     });
+
+    expect(grant.canUpdateAllSettings).toBeUndefined();
+    expect(grant.permissionFlagUniversalIdentifiers).toEqual([
+      'upload-file-flag',
+    ]);
+  });
+
+  it('rejects a grant that drops a required row', () => {
+    const grant = materializeRoleManifestObjectPermissions(buildRequest());
 
     expect(
       computeGrantMissingLockedPermissions({
@@ -109,10 +122,8 @@ describe('application grant role manifest', () => {
   it('reports as pending only what neither the approval nor the admin covers', () => {
     const approvedRoleManifest = buildRequest();
     const grantRoleManifest = addRoleManifestGrants({
-      roleManifest: buildInitialGrantRoleManifest({
-        requestedRoleManifest: approvedRoleManifest,
-        objectScopes: [],
-      }),
+      roleManifest:
+        materializeRoleManifestObjectPermissions(approvedRoleManifest),
       grants: [
         {
           type: 'OBJECT_RECORDS',
@@ -151,10 +162,8 @@ describe('application grant role manifest', () => {
   it('removes what a narrower request drops and keeps admin additions', () => {
     const approvedRoleManifest = buildRequest();
     const grantRoleManifest = addRoleManifestGrants({
-      roleManifest: buildInitialGrantRoleManifest({
-        requestedRoleManifest: approvedRoleManifest,
-        objectScopes: [],
-      }),
+      roleManifest:
+        materializeRoleManifestObjectPermissions(approvedRoleManifest),
       grants: [
         {
           type: 'OBJECT_RECORDS',

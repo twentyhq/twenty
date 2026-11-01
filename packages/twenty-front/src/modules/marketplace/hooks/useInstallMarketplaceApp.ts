@@ -1,4 +1,3 @@
-import { type GrantObjectScope } from '@/marketplace/types/GrantObjectScope';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useTrackedQueueJob } from '@/queue-job/hooks/useTrackedQueueJob';
 import { type TrackedJobStatus } from '@/queue-job/types/TrackedJobStatus';
@@ -8,6 +7,7 @@ import { useLazyQuery, useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
+import { type RoleManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import {
@@ -141,16 +141,17 @@ export const useInstallMarketplaceApp = ({
     fetchJobStatus: fetchInstallJobStatus,
   });
 
+  // Without a grant role manifest, the grant is exactly what the app requests
   const install = async (
-    grantObjectScopes?: GrantObjectScope[],
-  ): Promise<void> => {
+    grantRoleManifest?: RoleManifest,
+  ): Promise<boolean> => {
     if (!isDefined(universalIdentifier)) {
-      return;
+      return false;
     }
 
     try {
       const { data } = await triggerInstallApplication({
-        variables: { input: { universalIdentifier, grantObjectScopes } },
+        variables: { input: { universalIdentifier, grantRoleManifest } },
       });
 
       const jobId = data?.triggerInstallApplication.jobId;
@@ -158,6 +159,8 @@ export const useInstallMarketplaceApp = ({
       if (isDefined(jobId)) {
         trackJob({ jobId, context: universalIdentifier });
       }
+
+      return true;
     } catch (error) {
       const graphqlMessage = error instanceof Error ? error.message : undefined;
 
@@ -165,6 +168,8 @@ export const useInstallMarketplaceApp = ({
         status: 'error',
         children: graphqlMessage ?? t`Failed to install the application.`,
       });
+
+      return false;
     }
   };
 

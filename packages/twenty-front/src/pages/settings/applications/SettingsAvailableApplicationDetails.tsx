@@ -8,7 +8,6 @@ import { getStandardApplicationReadme } from '@/applications/utils/getStandardAp
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
 import { useCopyMarketplaceAppLink } from '@/marketplace/hooks/useCopyMarketplaceAppLink';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMarketplaceAppDefaultRoleManifest';
@@ -55,16 +54,11 @@ export const SettingsAvailableApplicationDetails = () => {
     },
     [navigateSettings],
   );
-  const {
-    requestInstall,
-    install,
-    isInstalling,
-    installProgress,
-    modalInstanceId,
-  } = useInstallMarketplaceAppWithPermissionValidation({
-    universalIdentifier: availableApplicationId,
-    onCompleted: handleInstallCompleted,
-  });
+  const { requestInstall, isInstalling, installProgress } =
+    useInstallMarketplaceAppWithPermissionValidation({
+      universalIdentifier: availableApplicationId,
+      onCompleted: handleInstallCompleted,
+    });
   const { copyMarketplaceAppLink } = useCopyMarketplaceAppLink();
 
   const canInstallMarketplaceApps = useHasPermissionFlag(
@@ -274,18 +268,6 @@ export const SettingsAvailableApplicationDetails = () => {
           {renderContent()}
         </SettingsPageContainer>
       </SettingsPageLayout>
-      <SettingsApplicationInstallPermissionValidationModal
-        modalInstanceId={modalInstanceId}
-        appDisplayName={displayName}
-        appLogoUrl={detail?.logoUrl ?? undefined}
-        defaultRole={defaultRole}
-        appObjects={detail?.objects ?? undefined}
-        requestedCapabilities={detail?.requestedCapabilities}
-        billsCredits={detail?.billsCredits}
-        isListed={detail?.isListed}
-        onAuthorize={install}
-        isInstalling={isInstalling}
-      />
     </CurrentApplicationContext.Provider>
   );
 };

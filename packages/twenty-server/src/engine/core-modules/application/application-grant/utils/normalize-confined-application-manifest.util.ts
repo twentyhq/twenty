@@ -1,6 +1,6 @@
 import {
+  getOwnObjectPermissions,
   type Manifest,
-  type ObjectPermissionManifest,
   type RoleManifest,
 } from 'twenty-shared/application';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -9,35 +9,6 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-
-const buildOwnObjectPermissions = ({
-  manifest,
-  requestedRole,
-}: {
-  manifest: Manifest;
-  requestedRole: RoleManifest;
-}): ObjectPermissionManifest[] => {
-  const declaredObjectUniversalIdentifiers = new Set(
-    (requestedRole.objectPermissions ?? []).map(
-      (objectPermission) => objectPermission.objectUniversalIdentifier,
-    ),
-  );
-
-  return manifest.objects
-    .filter(
-      (objectManifest) =>
-        !declaredObjectUniversalIdentifiers.has(
-          objectManifest.universalIdentifier,
-        ),
-    )
-    .map((objectManifest) => ({
-      objectUniversalIdentifier: objectManifest.universalIdentifier,
-      canReadObjectRecords: true,
-      canUpdateObjectRecords: true,
-      canSoftDeleteObjectRecords: true,
-      canDestroyObjectRecords: true,
-    }));
-};
 
 export const findRequestedRoleManifest = (
   manifest: Manifest,
@@ -76,7 +47,12 @@ export const normalizeConfinedApplicationManifest = (
     canBeAssignedToApiKeys: false,
     objectPermissions: [
       ...(requestedRole.objectPermissions ?? []),
-      ...buildOwnObjectPermissions({ manifest, requestedRole }),
+      ...getOwnObjectPermissions({
+        roleManifest: requestedRole,
+        ownObjectUniversalIdentifiers: manifest.objects.map(
+          (objectManifest) => objectManifest.universalIdentifier,
+        ),
+      }),
     ],
   };
 

@@ -1,7 +1,5 @@
-import {
-  getEffectiveObjectPermissionsFromRoleManifest,
-  type RoleManifest,
-} from 'twenty-shared/application';
+import { type RoleManifest } from '@/application/roleManifestType';
+import { getEffectiveObjectPermissionsFromRoleManifest } from '@/application/utils/getEffectiveObjectPermissionsFromRoleManifest';
 
 // Resolves each named object row against the role-level switches, so the row stands on its own
 export const materializeRoleManifestObjectPermissions = (

@@ -1,4 +1,5 @@
-import { type ApplicationGrantObjectScopeInput } from 'src/engine/core-modules/application/application-grant/dtos/application-grant-object-scope.input';
+import { type RoleManifest } from 'twenty-shared/application';
+
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { toApplicationLifecycleJobError } from 'src/engine/core-modules/application/application-install/utils/to-application-lifecycle-job-error.util';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
@@ -9,7 +10,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 export type TriggerInstallApplicationJobData = {
   applicationRegistrationId: string;
   workspaceId: string;
-  grantObjectScopes?: ApplicationGrantObjectScopeInput[];
+  grantRoleManifest?: RoleManifest;
 };
 
 @Processor(MessageQueue.workspaceQueue)
@@ -28,7 +29,7 @@ export class TriggerInstallApplicationJob {
         appRegistrationId: data.applicationRegistrationId,
         workspaceId: data.workspaceId,
         hasUserApprovedCapabilities: true,
-        grantObjectScopes: data.grantObjectScopes,
+        grantRoleManifest: data.grantRoleManifest,
         updateProgress,
       });
     } catch (error) {

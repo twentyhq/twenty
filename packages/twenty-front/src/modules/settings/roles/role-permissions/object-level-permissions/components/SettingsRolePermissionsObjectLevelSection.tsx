@@ -1,4 +1,3 @@
-import { getApplicationAccessAddObjectPath } from '@/settings/applications/grant/utils/getApplicationAccessPath';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { ApplicationGrantEditorContext } from '@/settings/applications/grant/contexts/ApplicationGrantEditorContext';
@@ -67,9 +66,7 @@ export const SettingsRolePermissionsObjectLevelSection = ({
 
   const handleAddRule = () => {
     if (isDefined(applicationGrantEditor)) {
-      navigate(
-        getApplicationAccessAddObjectPath(applicationGrantEditor.applicationId),
-      );
+      navigate(applicationGrantEditor.addObjectPath);
       return;
     }
 

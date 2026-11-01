@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ApplicationGrantRestrictionsService } from 'src/engine/core-modules/application/application-grant/services/application-grant-restrictions.service';
 import { ApplicationGrantService } from 'src/engine/core-modules/application/application-grant/services/application-grant.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
@@ -20,6 +21,8 @@ import { ApplicationTranslationModule } from 'src/engine/core-modules/applicatio
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
+import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permission/object-permission.module';
+import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-permission-predicate/row-level-permission.module';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -36,6 +39,8 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ApplicationRegistrationModule,
     ApplicationTranslationModule,
     ConnectedAccountMetadataModule,
+    ObjectPermissionModule,
+    RowLevelPermissionModule,
     SdkClientModule,
     WorkflowVersionCoreModule,
     WorkspaceCacheModule,
@@ -46,6 +51,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     provideWorkspaceScopedRepository(FrontComponentEntity),
     ApplicationManifestApplyService,
     ApplicationGrantService,
+    ApplicationGrantRestrictionsService,
     ApplicationManifestMigrationService,
     ApplicationSyncService,
     ApplicationUninstallService,

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
+import { type RoleManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -15,7 +16,12 @@ import {
   TriggerUninstallApplicationJob,
   type TriggerUninstallApplicationJobData,
 } from 'src/engine/core-modules/application/application-install/jobs/trigger-uninstall-application.job';
-import { type ApplicationGrantObjectScopeInput } from 'src/engine/core-modules/application/application-grant/dtos/application-grant-object-scope.input';
+import { assertGrantKeepsLockedRequirement } from 'src/engine/core-modules/application/application-grant/utils/assert-grant-keeps-locked-requirement.util';
+import { buildInstallGrantRoleManifest } from 'src/engine/core-modules/application/application-grant/utils/build-install-grant-role-manifest.util';
+import {
+  findRequestedRoleManifest,
+  normalizeConfinedApplicationManifest,
+} from 'src/engine/core-modules/application/application-grant/utils/normalize-confined-application-manifest.util';
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
 import {
   TriggerUpgradeApplicationJob,
@@ -89,14 +95,31 @@ export class ApplicationLifecycleJobService {
   async triggerInstallApplication({
     universalIdentifier,
     workspaceId,
-    grantObjectScopes,
+    grantRoleManifest,
   }: LifecycleJobTarget & {
-    grantObjectScopes?: ApplicationGrantObjectScopeInput[];
+    grantRoleManifest?: RoleManifest;
   }): Promise<{ jobId: string }> {
     const registration =
       await this.marketplaceQueryService.findRegistrationByUniversalIdentifier(
         universalIdentifier,
       );
+
+    const requestedRoleManifest = isDefined(registration.manifest)
+      ? findRequestedRoleManifest(
+          normalizeConfinedApplicationManifest(registration.manifest),
+        )
+      : undefined;
+
+    // Checked before the job runs, so a rejected grant installs nothing
+    if (isDefined(grantRoleManifest) && isDefined(requestedRoleManifest)) {
+      assertGrantKeepsLockedRequirement({
+        approvedRoleManifest: requestedRoleManifest,
+        grantRoleManifest: buildInstallGrantRoleManifest({
+          requestedRoleManifest,
+          customizedGrantRoleManifest: grantRoleManifest,
+        }),
+      });
+    }
 
     return this.triggerLifecycleJob<TriggerInstallApplicationJobData>({
       operation: 'install',
@@ -104,7 +127,7 @@ export class ApplicationLifecycleJobService {
       data: {
         applicationRegistrationId: registration.id,
         workspaceId,
-        grantObjectScopes,
+        grantRoleManifest,
       },
       universalIdentifier,
       workspaceId,

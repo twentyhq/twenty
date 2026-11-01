@@ -59,13 +59,6 @@ jest.mock('@/marketplace/hooks/useCopyMarketplaceAppLink', () => ({
   })),
 }));
 
-jest.mock(
-  '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal',
-  () => ({
-    SettingsApplicationInstallPermissionValidationModal: () => null,
-  }),
-);
-
 jest.mock('~/hooks/useNavigateSettings', () => ({
   useNavigateSettings: jest.fn(() => jest.fn()),
 }));

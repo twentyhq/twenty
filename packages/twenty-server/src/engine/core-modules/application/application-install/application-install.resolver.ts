@@ -9,6 +9,15 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { AuthApiKey } from 'src/engine/decorators/auth/auth-api-key.decorator';
+import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
@@ -73,6 +82,7 @@ export class ApplicationInstallResolver {
     private readonly marketplaceQueryService: MarketplaceQueryService,
     private readonly applicationLifecycleJobService: ApplicationLifecycleJobService,
     private readonly applicationUninstallRunnerService: ApplicationUninstallRunnerService,
+    private readonly permissionsService: PermissionsService,
   ) {}
 
   @Query(() => [ApplicationDTO])
@@ -208,13 +218,33 @@ export class ApplicationInstallResolver {
       idKey: 'universalIdentifier',
       requireApplicationRegistrationOwnership: false,
     })
-    { universalIdentifier, grantObjectScopes }: TriggerInstallApplicationInput,
+    { universalIdentifier, grantRoleManifest }: TriggerInstallApplicationInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId({ allowUndefined: true }) userWorkspaceId?: string,
+    @AuthApiKey() apiKey?: ApiKeyEntity,
   ): Promise<TriggerInstallApplicationResultDTO> {
+    // A customized grant edits a role, like every other grant edit
+    if (
+      isDefined(grantRoleManifest) &&
+      !(await this.permissionsService.userHasWorkspaceSettingPermission({
+        userWorkspaceId,
+        workspaceId: workspace.id,
+        setting: PermissionFlagType.ROLES,
+        apiKeyId: apiKey?.id,
+        applicationId: undefined,
+        agentId: undefined,
+      }))
+    ) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
     return this.applicationLifecycleJobService.triggerInstallApplication({
       universalIdentifier,
       workspaceId: workspace.id,
-      grantObjectScopes,
+      grantRoleManifest,
     });
   }
 

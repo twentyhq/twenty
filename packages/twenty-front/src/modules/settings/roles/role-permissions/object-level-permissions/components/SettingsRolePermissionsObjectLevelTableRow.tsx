@@ -1,4 +1,3 @@
-import { getApplicationAccessObjectPath } from '@/settings/applications/grant/utils/getApplicationAccessPath';
 import { IconLock } from 'twenty-ui/icon';
 import { t } from '@lingui/core/macro';
 import { ApplicationGrantEditorContext } from '@/settings/applications/grant/contexts/ApplicationGrantEditorContext';
@@ -47,16 +46,13 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
   const applicationGrantEditor = useContext(ApplicationGrantEditorContext);
 
   const navigationUrl = isDefined(applicationGrantEditor)
-    ? getApplicationAccessObjectPath({
-        applicationId: applicationGrantEditor.applicationId,
-        objectMetadataId: objectMetadataItem.id,
-      })
+    ? applicationGrantEditor.getObjectPath(objectMetadataItem.id)
     : fromAgentId
       ? `${navigationPath}?fromAgent=${fromAgentId}`
       : navigationPath;
 
   const isLocked =
-    applicationGrantEditor?.lockedObjectMetadataIds.has(
+    applicationGrantEditor?.lockedActionsByObjectMetadataId.has(
       objectMetadataItem.id,
     ) ?? false;
 

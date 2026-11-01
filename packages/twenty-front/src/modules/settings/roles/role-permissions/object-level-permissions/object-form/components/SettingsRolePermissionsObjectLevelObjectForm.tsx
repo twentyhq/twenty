@@ -1,8 +1,4 @@
 import { useContext } from 'react';
-import {
-  getApplicationAccessAddObjectPath,
-  getApplicationAccessTabPath,
-} from '@/settings/applications/grant/utils/getApplicationAccessPath';
 import { ApplicationGrantEditorContext } from '@/settings/applications/grant/contexts/ApplicationGrantEditorContext';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreAgentBreadcrumbLinks';
@@ -80,26 +76,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
 
   const breadcrumbLinks = isDefined(applicationGrantEditor)
     ? [
-        {
-          children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.General),
-        },
-        {
-          children: t`Apps`,
-          href: getSettingsPath(SettingsPath.Applications),
-        },
-        {
-          children: applicationGrantEditor.applicationName,
-          href: getSettingsPath(SettingsPath.ApplicationDetail, {
-            applicationId: applicationGrantEditor.applicationId,
-          }),
-        },
-        {
-          children: t`Access`,
-          href: getApplicationAccessTabPath(
-            applicationGrantEditor.applicationId,
-          ),
-        },
+        ...applicationGrantEditor.editorBreadcrumbLinks,
         { children: objectLabelPlural },
       ]
     : fromAgentId && isDefined(agent)
@@ -132,13 +109,13 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
         ];
 
   const finishButtonPath = isDefined(applicationGrantEditor)
-    ? getApplicationAccessTabPath(applicationGrantEditor.applicationId)
+    ? applicationGrantEditor.editorPath
     : fromAgentId && isDefined(agent)
       ? getCoreAgentLink(agent.id)
       : getSettingsPath(SettingsPath.RoleDetail, { roleId });
 
   const previousStepPath = isDefined(applicationGrantEditor)
-    ? getApplicationAccessAddObjectPath(applicationGrantEditor.applicationId)
+    ? applicationGrantEditor.addObjectPath
     : `${getSettingsPath(SettingsPath.RoleAddObjectLevel, {
         roleId,
       })}${fromAgentId ? `?fromAgent=${fromAgentId}` : ''}`;

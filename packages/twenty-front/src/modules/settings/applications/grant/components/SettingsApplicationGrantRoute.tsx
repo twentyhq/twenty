@@ -1,6 +1,8 @@
 import { useInstalledApplications } from '@/applications/hooks/useInstalledApplications';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { ApplicationGrantEditorContext } from '@/settings/applications/grant/contexts/ApplicationGrantEditorContext';
+import { getLockedActionsByObjectMetadataId } from '@/settings/applications/grant/utils/getLockedActionsByObjectMetadataId';
+import { buildApplicationAccessEditorContextValue } from '@/settings/applications/grant/utils/buildApplicationAccessEditorContextValue';
 import { SettingsRoleRouteGuard } from '@/settings/roles/components/SettingsRoleRouteGuard';
 import { SettingsRoleDraftSyncEffect } from '@/settings/roles/role/components/SettingsRoleDraftSyncEffect';
 import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
@@ -30,15 +32,14 @@ export const SettingsApplicationGrantRoute = ({
     installedApplications.find(({ id }) => id === applicationId)?.name ?? '';
 
   const editorContextValue = useMemo(
-    () => ({
-      applicationId,
-      applicationName,
-      lockedObjectMetadataIds: new Set(
-        (applicationGrant?.lockedObjectPermissions ?? []).map(
-          ({ objectMetadataId }) => objectMetadataId,
+    () =>
+      buildApplicationAccessEditorContextValue({
+        applicationId,
+        applicationName,
+        lockedActionsByObjectMetadataId: getLockedActionsByObjectMetadataId(
+          applicationGrant?.lockedObjectPermissions ?? [],
         ),
-      ),
-    }),
+      }),
     [applicationId, applicationName, applicationGrant],
   );
 

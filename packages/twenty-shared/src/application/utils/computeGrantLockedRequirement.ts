@@ -1,12 +1,9 @@
-import {
-  getRoleManifestGrantsNotCoveredBy,
-  OBJECT_PERMISSION_ACTIONS,
-  ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
-  type RoleManifest,
-  type RoleManifestGrant,
-} from 'twenty-shared/application';
-
-import { materializeRoleManifestObjectPermissions } from 'src/engine/core-modules/application/application-grant/utils/materialize-role-manifest-object-permissions.util';
+import { OBJECT_PERMISSION_ACTIONS } from '@/application/objectPermissionActionType';
+import { type RoleManifest } from '@/application/roleManifestType';
+import { ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION } from '@/application/utils/getEffectiveObjectPermissionsFromRoleManifest';
+import { type RoleManifestGrant } from '@/application/roleManifestGrantType';
+import { getRoleManifestGrantsNotCoveredBy } from '@/application/utils/getRoleManifestGrantsNotCoveredBy';
+import { materializeRoleManifestObjectPermissions } from '@/application/utils/materializeRoleManifestObjectPermissions';
 
 // The minimum a grant must keep: the approved request, minus the "all objects" switches whose scope the admin decides
 export const computeGrantLockedRequirement = (
