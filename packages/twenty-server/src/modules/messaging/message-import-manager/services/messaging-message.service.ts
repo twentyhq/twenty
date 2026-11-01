@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import chunk from 'lodash.chunk';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 import { v4 } from 'uuid';
@@ -26,6 +28,10 @@ type MessageAccumulator = {
     | 'messageThreadId'
     | 'isDraft'
   >;
+  messageToRefresh?: Pick<
+    MessageWorkspaceEntity,
+    'id' | 'subject' | 'receivedAt' | 'text' | 'isDraft'
+  >;
   threadToCreate?: Pick<MessageThreadWorkspaceEntity, 'id' | 'subject'>;
   messageChannelMessageAssociationToCreate?: Pick<
     MessageChannelMessageAssociationWorkspaceEntity,
@@ -50,6 +56,7 @@ export class MessagingMessageService {
     workspaceId: string,
   ): Promise<{
     createdMessages: Partial<MessageWorkspaceEntity>[];
+    refreshedMessageExternalIds: string[];
     messageExternalIdsAndIdsMap: Map<string, string>;
     messageExternalIdToMessageChannelMessageAssociationIdMap: Map<
       string,
@@ -184,6 +191,19 @@ export class MessagingMessageService {
           }
 
           if (
+            messageAccumulator.existingMessageChannelMessageAssociationInDB
+              ?.messageExternalId === message.externalId
+          ) {
+            messageAccumulator.messageToRefresh = {
+              id: newOrExistingMessageId,
+              subject: message.subject,
+              receivedAt: message.receivedAt,
+              text: message.text,
+              isDraft: message.isDraft,
+            };
+          }
+
+          if (
             !isDefined(
               messageAccumulator.existingMessageChannelMessageAssociationInDB,
             )
@@ -231,9 +251,14 @@ export class MessagingMessageService {
             continue;
           }
 
+          const hasRefreshedSubject =
+            isDefined(messageAccumulator.messageToRefresh) &&
+            messageAccumulator.existingMessageInDB?.subject !== message.subject;
+
           if (
             isDefined(messageAccumulator.existingThreadInDB) &&
-            isDefined(messageAccumulator.messageToCreate) &&
+            (isDefined(messageAccumulator.messageToCreate) ||
+              hasRefreshedSubject) &&
             isDefined(message.subject)
           ) {
             const threadId = messageAccumulator.existingThreadInDB.id;
@@ -267,6 +292,22 @@ export class MessagingMessageService {
           .filter(isDefined);
 
         await messageRepository.insert(messagesToCreate);
+
+        const messagesToRefresh = Array.from(messageAccumulatorMap.values())
+          .map((accumulator) => accumulator.messageToRefresh)
+          .filter(isDefined);
+
+        for (const messagesToRefreshChunk of chunk(
+          messagesToRefresh,
+          QUERY_MAX_RECORDS,
+        )) {
+          await messageRepository.updateMany(
+            messagesToRefreshChunk.map(({ id, ...partialEntity }) => ({
+              criteria: id,
+              partialEntity,
+            })),
+          );
+        }
 
         const messageChannelMessageAssociationsToCreate = Array.from(
           associationToCreateByMessageId.values(),
@@ -324,8 +365,15 @@ export class MessagingMessageService {
           }
         }
 
+        const refreshedMessageExternalIds = Array.from(
+          messageAccumulatorMap.entries(),
+        )
+          .filter(([, accumulator]) => isDefined(accumulator.messageToRefresh))
+          .map(([externalId]) => externalId);
+
         return {
           createdMessages: messagesToCreate,
+          refreshedMessageExternalIds,
           messageExternalIdsAndIdsMap,
           messageExternalIdToMessageChannelMessageAssociationIdMap,
           messageExternalIdToMessageThreadIdMap,

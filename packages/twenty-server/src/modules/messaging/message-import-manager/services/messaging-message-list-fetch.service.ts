@@ -34,6 +34,7 @@ import {
 import { MessagingProcessGroupEmailActionsService } from 'src/modules/messaging/message-import-manager/services/messaging-process-group-email-actions.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { filterMessageExternalIdsToDelete } from 'src/modules/messaging/message-import-manager/utils/filter-message-external-ids-to-delete.util';
+import { getMovedMessageExternalIds } from 'src/modules/messaging/message-import-manager/utils/get-moved-message-external-ids.util';
 
 const ONE_WEEK_IN_MILLISECONDS = 7 * 24 * 60 * 60 * 1000;
 
@@ -156,6 +157,11 @@ export class MessagingMessageListFetchService {
               { shouldBypassPermissionChecks: true },
             );
 
+          const movedMessageExternalIds = getMovedMessageExternalIds({
+            messageExternalIds,
+            messageExternalIdsToDelete,
+          });
+
           const messageExternalIdsChunks = chunk(messageExternalIds, 200);
 
           for (const [
@@ -180,7 +186,7 @@ export class MessagingMessageListFetchService {
               (messageExternalId) =>
                 !existingMessageChannelMessageAssociationsExternalIds.includes(
                   messageExternalId,
-                ),
+                ) || movedMessageExternalIds.has(messageExternalId),
             );
 
             if (messageExternalIdsToImport.length) {

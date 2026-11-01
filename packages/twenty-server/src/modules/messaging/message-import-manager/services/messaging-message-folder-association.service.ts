@@ -7,17 +7,24 @@ import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/work
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageChannelMessageAssociationMessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association-message-folder.workspace-entity';
 import { type MessageChannelMessageAssociationFolderAssociation } from 'src/modules/messaging/message-import-manager/types/message-channel-message-association-folder-association.type';
+import { buildMessageFolderAssociationIdsToDelete } from 'src/modules/messaging/message-import-manager/utils/build-message-folder-association-ids-to-delete.util';
 import { buildMessageFolderAssociationsToInsert } from 'src/modules/messaging/message-import-manager/utils/build-message-folder-associations-to-insert.util';
 
 @Injectable()
 export class MessagingMessageFolderAssociationService {
   constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
-  async saveMessageFolderAssociations(
-    associations: MessageChannelMessageAssociationFolderAssociation[],
-    workspaceId: string,
-    transactionScope: WorkspaceTransactionScope,
-  ): Promise<void> {
+  async saveMessageFolderAssociations({
+    associations,
+    workspaceId,
+    transactionScope,
+    refreshedMessageChannelMessageAssociationIds,
+  }: {
+    associations: MessageChannelMessageAssociationFolderAssociation[];
+    workspaceId: string;
+    transactionScope: WorkspaceTransactionScope;
+    refreshedMessageChannelMessageAssociationIds: string[];
+  }): Promise<void> {
     const associationIds = [
       ...new Set(
         associations
@@ -53,6 +60,16 @@ export class MessagingMessageFolderAssociationService {
 
         if (recordsToInsert.length > 0) {
           await repository.insert(recordsToInsert);
+        }
+
+        const recordIdsToDelete = buildMessageFolderAssociationIdsToDelete({
+          associations,
+          existingRecords,
+          refreshedMessageChannelMessageAssociationIds,
+        });
+
+        if (recordIdsToDelete.length > 0) {
+          await repository.delete({ id: In(recordIdsToDelete) });
         }
       },
       authContext,
