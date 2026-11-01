@@ -12,6 +12,7 @@ import {
   FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
 } from 'twenty-shared/application';
 import {
+  decodeFrontComponentTypeReferences,
   createSharedDependenciesShimPlugin,
   getSharedDependenciesShimSource,
   type SharedDependenciesBuildManifest,
@@ -35,12 +36,17 @@ it('ships the export map needed to compile another component against the uploade
       JSON.stringify({
         name: 'fixture-library',
         main: 'index.js',
+        types: 'index.d.ts',
         type: 'module',
       }),
     );
     await writeFile(
       join(packagePath, 'index.js'),
       'export const label = "Current app"; export default 42;',
+    );
+    await writeFile(
+      join(packagePath, 'index.d.ts'),
+      'export declare const label: string; export default 42;',
     );
     await writeFile(join(appPath, 'package.json'), packageJson);
     await writeFile(join(appPath, 'yarn.lock'), yarnLock);
@@ -60,7 +66,24 @@ it('ships the export map needed to compile another component against the uploade
     const manifest: SharedDependenciesBuildManifest = JSON.parse(
       await readFile(join(appPath, 'output', `${builtPath}.json`), 'utf8'),
     );
+    const typeReferences = await readFile(
+      join(appPath, 'output', `${builtPath}.types.json.gz`),
+    );
+    expect(
+      decodeFrontComponentTypeReferences(typeReferences)[
+        '/node_modules/fixture-library/index.d.ts'
+      ],
+    ).toContain('label: string');
+    expect(onFileBuilt).toHaveBeenCalledWith(
+      expect.objectContaining({
+        fileFolder: FileFolder.Dependencies,
+        builtPath: join('output', `${builtPath}.types.json.gz`),
+      }),
+    );
     expect(manifest).toEqual({
+      typeReferencesChecksum: createHash('sha256')
+        .update(typeReferences)
+        .digest('hex'),
       checksum: createHash('sha256').update(source).digest('hex'),
       packageJsonChecksum: computePackageJsonChecksum(packageJson),
       yarnLockChecksum: computeDependencyFileChecksum(yarnLock),

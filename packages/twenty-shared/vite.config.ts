@@ -53,6 +53,7 @@ export default defineConfig(() => {
           'typescript',
           'node:fs/promises',
           'node:path',
+          'node:zlib',
           // TODO: i18n now hashes with @noble/hashes, so this node:crypto external looks removable.
           'node:crypto',
         ],

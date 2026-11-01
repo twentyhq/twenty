@@ -6,6 +6,7 @@ import {
   FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH,
 } from 'twenty-shared/application';
 import {
+  getSharedDependenciesTypeReferencesPath,
   FRONT_COMPONENT_REQUIRED_SHARED_DEPENDENCIES,
   getSharedDependenciesBuildManifestPath,
   type SharedDependenciesBuildManifest,
@@ -72,6 +73,7 @@ export class WorkspaceFrontComponentDependenciesService {
 
         if (
           isDefined(existingManifest) &&
+          isDefined(existingManifest.typeReferencesChecksum) &&
           FRONT_COMPONENT_REQUIRED_SHARED_DEPENDENCIES.every((specifier) =>
             isDefined(existingManifest.exports[specifier]),
           ) &&
@@ -82,9 +84,34 @@ export class WorkspaceFrontComponentDependenciesService {
           (await this.fileStorageService.checkFileExists({
             ...location,
             resourcePath: builtPath,
+          })) &&
+          (await this.fileStorageService.checkFileExists({
+            ...location,
+            fileFolder: FileFolder.Dependencies,
+            resourcePath: getSharedDependenciesTypeReferencesPath(builtPath),
           }))
         ) {
+          const typeReferences = await streamToBuffer(
+            await this.fileStorageService.readFile({
+              ...location,
+              fileFolder: FileFolder.Dependencies,
+              resourcePath: getSharedDependenciesTypeReferencesPath(builtPath),
+            }),
+          );
+          if (
+            createHash('sha256').update(typeReferences).digest('hex') !==
+            existingManifest.typeReferencesChecksum
+          ) {
+            throw new FrontComponentException(
+              'Frontend component type references checksum mismatch.',
+              FrontComponentExceptionCode.FRONT_COMPONENT_CREATE_FAILED,
+            );
+          }
           return {
+            applicationId: dependencies.applicationId,
+            applicationUniversalIdentifier:
+              dependencies.applicationUniversalIdentifier,
+            typeReferences: typeReferences.toString('base64'),
             ...existingManifest,
             dependencyRevision: dependencies.revision,
           };
@@ -138,7 +165,11 @@ export class WorkspaceFrontComponentDependenciesService {
             },
           );
         }
+        const typeReferences = Buffer.from(result.typeReferences, 'base64');
         const manifest: SharedDependenciesBuildManifest = {
+          typeReferencesChecksum: createHash('sha256')
+            .update(typeReferences)
+            .digest('hex'),
           checksum: result.checksum,
           exports: result.exports,
           packageJsonChecksum: dependencies.packageJsonChecksum,
@@ -150,6 +181,14 @@ export class WorkspaceFrontComponentDependenciesService {
           applicationId: dependencies.applicationId,
           resourcePath: builtPath,
           sourceFile: result.builtCode,
+          settings: { isTemporaryFile: false, toDelete: false },
+        });
+        await this.fileStorageService.writeFile({
+          ...location,
+          applicationId: dependencies.applicationId,
+          fileFolder: FileFolder.Dependencies,
+          resourcePath: getSharedDependenciesTypeReferencesPath(builtPath),
+          sourceFile: typeReferences,
           settings: { isTemporaryFile: false, toDelete: false },
         });
         await this.fileStorageService.writeFile({
@@ -176,7 +215,14 @@ export class WorkspaceFrontComponentDependenciesService {
           );
         }
 
-        return { ...manifest, dependencyRevision: dependencies.revision };
+        return {
+          ...manifest,
+          applicationId: dependencies.applicationId,
+          applicationUniversalIdentifier:
+            dependencies.applicationUniversalIdentifier,
+          typeReferences: result.typeReferences,
+          dependencyRevision: dependencies.revision,
+        };
       },
       `front-component-dependencies:${workspaceId}`,
       {
@@ -194,6 +240,7 @@ export class WorkspaceFrontComponentDependenciesService {
       const stream = await this.fileStorageService.readFile(location);
       return frontComponentSharedDependenciesManifestSchema
         .extend({
+          typeReferencesChecksum: z.string().optional(),
           packageJsonChecksum: z.string(),
           yarnLockChecksum: z.string().nullable(),
         })

@@ -46190,6 +46190,7 @@ __metadata:
     "@types/pluralize": "npm:^0.0.33"
     "@types/psl": "npm:^1.1.3"
     "@types/react": "npm:^19.2.0"
+    "@types/react-dom": "npm:^19.2.0"
     "@types/sanitize-html": "npm:^2.16.0"
     "@types/supertest": "npm:^2.0.11"
     "@types/unzipper": "npm:^0"
