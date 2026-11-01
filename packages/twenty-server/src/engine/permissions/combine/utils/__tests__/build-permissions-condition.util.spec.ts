@@ -15,8 +15,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
-  type PermissionsEnvironment,
-  type RowAccessCompilationEnvironment,
+  type PermissionsMetadataMaps,
   type SqlCondition,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { buildPermissionsCondition } from 'src/engine/permissions/combine/utils/build-permissions-condition.util';
@@ -69,7 +68,7 @@ const fullAccessByObjectId = Object.fromEntries(
   ]),
 );
 
-const environment: PermissionsEnvironment & RowAccessCompilationEnvironment = {
+const metadataMaps: PermissionsMetadataMaps = {
   flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
   flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
   rolesPermissions: {
@@ -87,15 +86,25 @@ const environment: PermissionsEnvironment & RowAccessCompilationEnvironment = {
   },
   flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
   flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
-  recordShareTableExpression: '"workspace"."recordShare"',
   featureFlagsMap: {},
 };
-const privateRecordEnvironment = {
-  ...environment,
+const buildCondition = (
+  request: Omit<
+    Parameters<typeof buildPermissionsCondition>[0],
+    'recordShareTableExpression'
+  >,
+) =>
+  buildPermissionsCondition({
+    ...request,
+    recordShareTableExpression: '"workspace"."recordShare"',
+  });
+
+const privateRecordMetadataMaps = {
+  ...metadataMaps,
   featureFlagsMap: { [FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED]: true },
 };
-const sharingEnvironment = {
-  ...environment,
+const sharingMetadataMaps = {
+  ...metadataMaps,
   featureFlagsMap: {
     [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
     [FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED]: true,
@@ -103,9 +112,9 @@ const sharingEnvironment = {
 };
 
 const buildConditionOutcome = (
-  args: Parameters<typeof buildPermissionsCondition>[0],
+  args: Parameters<typeof buildCondition>[0],
 ): { kind: 'open' | 'denied' } | { kind: 'gated'; condition: SqlCondition } => {
-  const condition = buildPermissionsCondition(args);
+  const condition = buildCondition(args);
 
   if (typeof condition === 'boolean') {
     return { kind: condition ? 'open' : 'denied' };
@@ -133,15 +142,15 @@ const withoutObjectPermission: PermissionsPrincipal = {
 const build = ({
   principal,
   flatObjectMetadata,
-  policyEnvironment = environment,
+  policyMetadataMaps = metadataMaps,
 }: {
   principal: PermissionsPrincipal;
   flatObjectMetadata: FlatObjectMetadata;
-  policyEnvironment?: typeof environment;
+  policyMetadataMaps?: typeof metadataMaps;
 }) =>
   buildConditionOutcome({
     principal,
-    environment: policyEnvironment,
+    metadataMaps: policyMetadataMaps,
     tableAlias: flatObjectMetadata.nameSingular,
     flatObjectMetadata,
     operationType: 'select',
@@ -150,13 +159,13 @@ const build = ({
 const gatedSql = ({
   principal,
   flatObjectMetadata,
-  policyEnvironment = environment,
+  policyMetadataMaps = metadataMaps,
 }: {
   principal: PermissionsPrincipal;
   flatObjectMetadata: FlatObjectMetadata;
-  policyEnvironment?: typeof environment;
+  policyMetadataMaps?: typeof metadataMaps;
 }): string => {
-  const policy = build({ principal, flatObjectMetadata, policyEnvironment });
+  const policy = build({ principal, flatObjectMetadata, policyMetadataMaps });
 
   expect(policy.kind).toBe('gated');
 
@@ -200,7 +209,7 @@ describe('buildPermissionsCondition', () => {
     const company = buildObject({ id: 'company' });
     const policy = buildConditionOutcome({
       principal: readEverything,
-      environment: sharingEnvironment,
+      metadataMaps: sharingMetadataMaps,
       tableAlias: 'company',
       flatObjectMetadata: company,
       operationType: 'select',
@@ -220,8 +229,8 @@ describe('buildPermissionsCondition', () => {
     expect(
       buildConditionOutcome({
         principal: readEverything,
-        environment: {
-          ...environment,
+        metadataMaps: {
+          ...metadataMaps,
           featureFlagsMap: {
             [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
           },
@@ -238,7 +247,7 @@ describe('buildPermissionsCondition', () => {
       gatedSql({
         principal: readEverything,
         flatObjectMetadata: person,
-        policyEnvironment: privateRecordEnvironment,
+        policyMetadataMaps: privateRecordMetadataMaps,
       }),
     ).toContain('recordShare');
   });
@@ -247,7 +256,7 @@ describe('buildPermissionsCondition', () => {
     expect(
       buildConditionOutcome({
         principal: readEverything,
-        environment: sharingEnvironment,
+        metadataMaps: sharingMetadataMaps,
         tableAlias: 'note',
         flatObjectMetadata: { ...note, isSystem: true },
         operationType: 'select',
@@ -259,7 +268,7 @@ describe('buildPermissionsCondition', () => {
     expect(
       buildConditionOutcome({
         principal: readEverything,
-        environment: sharingEnvironment,
+        metadataMaps: sharingMetadataMaps,
         tableAlias: 'note',
         flatObjectMetadata: note,
         operationType: 'insert',
@@ -275,7 +284,7 @@ describe('buildPermissionsCondition', () => {
     ) =>
       buildConditionOutcome({
         principal,
-        environment: sharingEnvironment,
+        metadataMaps: sharingMetadataMaps,
         tableAlias: 'company',
         flatObjectMetadata: company,
         operationType,
@@ -381,15 +390,15 @@ describe('buildPermissionsCondition', () => {
       gatedSql({
         principal: readEverything,
         flatObjectMetadata: person,
-        policyEnvironment: privateRecordEnvironment,
+        policyMetadataMaps: privateRecordMetadataMaps,
       }),
     ).toContain('"person_recordShare"."recordId" = "person"."id"');
   });
 
   it('opens private records only to shares naming the member or their roles', () => {
-    const condition = buildPermissionsCondition({
+    const condition = buildCondition({
       principal: readEverything,
-      environment: privateRecordEnvironment,
+      metadataMaps: privateRecordMetadataMaps,
       flatObjectMetadata: person,
       operationType: 'select',
     });
@@ -413,7 +422,7 @@ describe('buildPermissionsCondition', () => {
     const sql = gatedSql({
       principal: readEverything,
       flatObjectMetadata: person,
-      policyEnvironment: privateRecordEnvironment,
+      policyMetadataMaps: privateRecordMetadataMaps,
     });
 
     expect(sql).toMatch(
@@ -424,7 +433,7 @@ describe('buildPermissionsCondition', () => {
   it('keeps private records gated regardless of the sharing UI flag', () => {
     const policy = buildConditionOutcome({
       principal: readEverything,
-      environment: privateRecordEnvironment,
+      metadataMaps: privateRecordMetadataMaps,
       tableAlias: 'person',
       flatObjectMetadata: person,
       operationType: 'select',
@@ -437,7 +446,7 @@ describe('buildPermissionsCondition', () => {
   describe('with a prospective named share', () => {
     const prospectiveShareArguments = {
       principal: readEverything,
-      environment: sharingEnvironment,
+      metadataMaps: sharingMetadataMaps,
       tableAlias: person.nameSingular,
       flatObjectMetadata: person,
       operationType: 'update',
@@ -462,7 +471,7 @@ describe('buildPermissionsCondition', () => {
       );
       const policy = buildConditionOutcome({
         ...prospectiveShareArguments,
-        environment,
+        metadataMaps,
       });
 
       expect(policy).toMatchObject({
@@ -522,7 +531,7 @@ describe('buildPermissionsCondition', () => {
       expect(
         buildConditionOutcome({
           ...prospectiveShareArguments,
-          environment,
+          metadataMaps,
           principal: withoutObjectPermission,
         }),
       ).toEqual({ kind: 'denied' });
@@ -548,8 +557,8 @@ describe('buildPermissionsCondition', () => {
     };
     const emptyFlatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> =
       createEmptyFlatEntityMaps();
-    const creatorEnvironment = {
-      ...sharingEnvironment,
+    const creatorMetadataMaps = {
+      ...sharingMetadataMaps,
       flatFieldMetadataMaps: addFlatEntityToFlatEntityMapsOrThrow({
         flatEntity: createdByField,
         flatEntityMaps: emptyFlatFieldMetadataMaps,
@@ -558,7 +567,7 @@ describe('buildPermissionsCondition', () => {
     const buildForCreator = (principal: PermissionsPrincipal) =>
       buildConditionOutcome({
         principal,
-        environment: creatorEnvironment,
+        metadataMaps: creatorMetadataMaps,
         tableAlias: 'company',
         flatObjectMetadata: company,
         operationType: 'select',

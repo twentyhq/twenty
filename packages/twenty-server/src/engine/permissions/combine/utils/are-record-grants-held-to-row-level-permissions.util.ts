@@ -4,12 +4,12 @@ import { type PermissionsRowAccessRequest } from 'src/engine/permissions/combine
 import { isOperationGrantedBeyondRole } from 'src/engine/permissions/record-share/utils/is-operation-granted-beyond-role.util';
 
 export const areRecordGrantsHeldToRowLevelPermissions = ({
-  environment,
+  metadataMaps,
   flatObjectMetadata,
   operationType,
 }: PermissionsRowAccessRequest): boolean =>
   !isOperationGrantedBeyondRole({
     flatObjectMetadata,
-    featureFlagsMap: environment.featureFlagsMap,
+    featureFlagsMap: metadataMaps.featureFlagsMap,
     operationType,
   });

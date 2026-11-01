@@ -10,7 +10,8 @@ import { isObjectOperationDisabled } from 'src/engine/permissions/role/utils/is-
 export const resolvePermissionsRowAccessOutcome = (
   request: PermissionsRowAccessRequest,
 ): boolean | undefined => {
-  const { principal, environment, flatObjectMetadata, operationType } = request;
+  const { principal, metadataMaps, flatObjectMetadata, operationType } =
+    request;
 
   if (
     isObjectOperationDisabled({
@@ -19,7 +20,7 @@ export const resolvePermissionsRowAccessOutcome = (
     }) &&
     !isPermissionsPrincipalOwningObject({
       principal,
-      flatApplicationMaps: environment.flatApplicationMaps,
+      flatApplicationMaps: metadataMaps.flatApplicationMaps,
       flatObjectMetadata,
     })
   ) {
@@ -33,7 +34,7 @@ export const resolvePermissionsRowAccessOutcome = (
   if (
     isOperationGrantedBeyondRole({
       flatObjectMetadata,
-      featureFlagsMap: environment.featureFlagsMap,
+      featureFlagsMap: metadataMaps.featureFlagsMap,
       operationType,
     }) &&
     hasHypotheticalRecordShare(request)

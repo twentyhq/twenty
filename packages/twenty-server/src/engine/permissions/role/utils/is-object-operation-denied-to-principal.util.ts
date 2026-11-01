@@ -7,12 +7,12 @@ import { isRolePermittingOperation } from 'src/engine/permissions/role/utils/is-
 export const isObjectOperationDeniedToPrincipal = (
   request: Pick<
     PermissionsRowAccessRequest,
-    'principal' | 'environment' | 'flatObjectMetadata' | 'operationType'
+    'principal' | 'metadataMaps' | 'flatObjectMetadata' | 'operationType'
   >,
 ): boolean =>
   !isRolePermittingOperation(request) &&
   !isOperationGrantedBeyondRole({
     flatObjectMetadata: request.flatObjectMetadata,
-    featureFlagsMap: request.environment.featureFlagsMap,
+    featureFlagsMap: request.metadataMaps.featureFlagsMap,
     operationType: request.operationType,
   });

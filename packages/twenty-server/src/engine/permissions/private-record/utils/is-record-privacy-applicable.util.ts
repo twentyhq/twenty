@@ -8,13 +8,13 @@ import { resolveRequiredRecordShareAccessLevels } from 'src/engine/permissions/r
 import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
 
 export const isRecordPrivacyApplicable = ({
-  environment,
+  metadataMaps,
   flatObjectMetadata,
   operationType,
 }: Pick<
   PermissionsRowAccessRequest,
-  'environment' | 'flatObjectMetadata' | 'operationType'
+  'metadataMaps' | 'flatObjectMetadata' | 'operationType'
 >): boolean =>
   isNonEmptyArray(resolveRequiredRecordShareAccessLevels(operationType)) &&
-  isPrivateRecordEnabled(environment.featureFlagsMap) &&
+  isPrivateRecordEnabled(metadataMaps.featureFlagsMap) &&
   !isPermissionStorageObject(flatObjectMetadata);

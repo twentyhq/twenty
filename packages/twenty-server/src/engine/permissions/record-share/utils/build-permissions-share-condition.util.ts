@@ -23,7 +23,7 @@ export const buildPermissionsShareCondition = (
   const { tableAlias } = request;
   const recordShareCondition = buildRecordShareCondition({
     tableAlias,
-    recordShareTableExpression: request.environment.recordShareTableExpression,
+    recordShareTableExpression: request.recordShareTableExpression,
     objectMetadataId: request.flatObjectMetadata.id,
     principalIds: shareGrant.principalIds,
     accessLevels: shareGrant.accessLevels,

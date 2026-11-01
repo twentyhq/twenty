@@ -9,9 +9,9 @@ import { PrivateRecordStorageService } from 'src/engine/permissions/private-reco
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { type EventRecordAccessGate } from 'src/engine/permissions/combine/types/event-record-access-gate.type';
+import { type PermissionsMetadataMaps } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
 import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
-import { loadPermissionsEnvironment } from 'src/engine/permissions/combine/utils/load-permissions-environment.util';
 import { resolveEventRecordSnapshots } from 'src/engine/permissions/combine/utils/resolve-event-record-snapshots.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -23,6 +23,38 @@ export class RecordAccessPolicyService {
     private readonly recordShareStorageService: RecordShareStorageService,
     private readonly privateRecordStorageService: PrivateRecordStorageService,
   ) {}
+
+  async loadPermissionsMetadataMaps(
+    workspaceId: string,
+  ): Promise<PermissionsMetadataMaps> {
+    const {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMapsOrm,
+      featureFlagsMap,
+      rolesPermissions,
+      flatApplicationMaps,
+      flatRowLevelPermissionPredicateMaps,
+      flatRowLevelPermissionPredicateGroupMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMapsOrm',
+      'featureFlagsMap',
+      'rolesPermissions',
+      'flatApplicationMaps',
+      'flatRowLevelPermissionPredicateMaps',
+      'flatRowLevelPermissionPredicateGroupMaps',
+    ]);
+
+    return {
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
+      featureFlagsMap,
+      rolesPermissions,
+      flatApplicationMaps,
+      flatRowLevelPermissionPredicateMaps,
+      flatRowLevelPermissionPredicateGroupMaps,
+    };
+  }
 
   // A principal receives the records a query would return it: the event
   // snapshots are run through the same row access policy as its queries.
@@ -104,10 +136,7 @@ export class RecordAccessPolicyService {
       resolveAdmittedRecordIds: async (principal) =>
         findPermissionsAdmittedRecordIds({
           principal,
-          environment: await loadPermissionsEnvironment({
-            workspaceCacheService: this.workspaceCacheService,
-            workspaceId,
-          }),
+          metadataMaps: await this.loadPermissionsMetadataMaps(workspaceId),
           flatObjectMetadata: objectMetadata,
           operationType: 'select',
           records: resolveEventRecordSnapshots(events),

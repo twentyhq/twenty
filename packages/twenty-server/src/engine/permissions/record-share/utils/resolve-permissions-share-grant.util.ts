@@ -24,7 +24,7 @@ export const resolvePermissionsShareGrant = (
   );
   const isGrantedBeyondRole = isOperationGrantedBeyondRole({
     flatObjectMetadata: request.flatObjectMetadata,
-    featureFlagsMap: request.environment.featureFlagsMap,
+    featureFlagsMap: request.metadataMaps.featureFlagsMap,
     operationType: request.operationType,
   });
 

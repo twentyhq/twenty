@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type PermissionsEnvironment } from 'src/engine/permissions/combine/types/row-access-policy.type';
+import { type PermissionsMetadataMaps } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
 import {
   TwentyOrmException,
@@ -18,18 +18,18 @@ type ValidateRLSPredicatesForRecordsArgs<T extends ObjectLiteral> = {
   records: T[];
   objectMetadata: FlatObjectMetadata;
   principal: PermissionsPrincipal;
-  environment: PermissionsEnvironment;
+  metadataMaps: PermissionsMetadataMaps;
 };
 
 export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
   records,
   objectMetadata,
   principal,
-  environment,
+  metadataMaps,
 }: ValidateRLSPredicatesForRecordsArgs<T>): void => {
   const recordFilter = resolveRowLevelPermissionRecordFilter({
     principal,
-    environment,
+    metadataMaps,
     flatObjectMetadata: objectMetadata,
   });
 
@@ -42,7 +42,7 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
       record: record as unknown as ObjectRecord,
       filter: recordFilter,
       flatObjectMetadata: objectMetadata,
-      flatFieldMetadataMaps: environment.flatFieldMetadataMaps,
+      flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
     });
 
     if (!matchesRLS) {

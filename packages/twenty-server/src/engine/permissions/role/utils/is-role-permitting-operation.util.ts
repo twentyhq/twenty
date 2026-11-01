@@ -6,18 +6,18 @@ import { isObjectOperationPermitted } from 'src/engine/permissions/role/utils/is
 
 export const isRolePermittingOperation = ({
   principal,
-  environment,
+  metadataMaps,
   flatObjectMetadata,
   operationType,
 }: Pick<
   PermissionsRowAccessRequest,
-  'principal' | 'environment' | 'flatObjectMetadata' | 'operationType'
+  'principal' | 'metadataMaps' | 'flatObjectMetadata' | 'operationType'
 >): boolean =>
   isObjectOperationPermitted({
     objectMetadata: flatObjectMetadata,
     operationType,
     objectsPermissions: getPermissionsPrincipalObjectsPermissions({
       principal,
-      environment,
+      metadataMaps,
     }),
   });

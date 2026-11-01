@@ -17,7 +17,7 @@ export const resolvePermissionsRowLevelPermissionFilter = ({
 }: PermissionsRowAccessRequest & { tableAlias: string }):
   | { recordFilter: RecordGqlOperationFilter; condition: SqlCondition }
   | undefined => {
-  const { principal, environment, flatObjectMetadata } = request;
+  const { principal, metadataMaps, flatObjectMetadata } = request;
 
   if (!isRolePermittingOperation(request)) {
     return undefined;
@@ -25,7 +25,7 @@ export const resolvePermissionsRowLevelPermissionFilter = ({
 
   const recordFilter = resolveRowLevelPermissionRecordFilter({
     principal,
-    environment,
+    metadataMaps,
     flatObjectMetadata,
   });
 
@@ -37,7 +37,7 @@ export const resolvePermissionsRowLevelPermissionFilter = ({
     recordFilter,
     tableAlias,
     objectMetadata: flatObjectMetadata,
-    flatFieldMetadataMaps: environment.flatFieldMetadataMaps,
+    flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
   });
 
   if (!isDefined(condition)) {

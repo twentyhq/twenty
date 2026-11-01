@@ -140,7 +140,7 @@ const findAdmitted = ({
 }) =>
   findPermissionsAdmittedRecordIds({
     principal,
-    environment: {
+    metadataMaps: {
       flatFieldMetadataMaps,
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
       rolesPermissions: {

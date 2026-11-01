@@ -2,7 +2,7 @@ import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type EventRecordAccessGate } from 'src/engine/permissions/combine/types/event-record-access-gate.type';
-import { type PermissionsEnvironment } from 'src/engine/permissions/combine/types/row-access-policy.type';
+import { type PermissionsMetadataMaps } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { isUpdateOfHiddenFieldsOnly } from 'src/engine/permissions/masking/utils/is-update-of-hidden-fields-only.util';
 import { omitRestrictedFieldsFromEvent } from 'src/engine/permissions/masking/utils/omit-restricted-fields-from-event.util';
 import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
@@ -15,14 +15,14 @@ export const resolveEventsReadableByRole = async <
   roleId,
   workspaceEventBatch,
   eventRecordAccessGate,
-  environment,
+  metadataMaps,
 }: {
   roleId: string | null;
   workspaceEventBatch: WorkspaceEventBatch<TEvent>;
   eventRecordAccessGate: EventRecordAccessGate;
-  environment: PermissionsEnvironment;
+  metadataMaps: PermissionsMetadataMaps;
 }): Promise<TEvent[]> => {
-  if (!isDefined(roleId) || !isDefined(environment.rolesPermissions[roleId])) {
+  if (!isDefined(roleId) || !isDefined(metadataMaps.rolesPermissions[roleId])) {
     return [];
   }
 
@@ -32,7 +32,7 @@ export const resolveEventsReadableByRole = async <
   };
   const objectsPermissions = getPermissionsPrincipalObjectsPermissions({
     principal,
-    environment,
+    metadataMaps,
   });
   const admittedRecordIds =
     await eventRecordAccessGate.resolveAdmittedRecordIds(principal);
@@ -44,8 +44,8 @@ export const resolveEventsReadableByRole = async <
         event,
         objectMetadata: workspaceEventBatch.objectMetadata,
         objectsPermissions,
-        flatObjectMetadataMaps: environment.flatObjectMetadataMaps,
-        flatFieldMetadataMaps: environment.flatFieldMetadataMaps,
+        flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
+        flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
       }),
     )
     .filter((event) => !isUpdateOfHiddenFieldsOnly(event));

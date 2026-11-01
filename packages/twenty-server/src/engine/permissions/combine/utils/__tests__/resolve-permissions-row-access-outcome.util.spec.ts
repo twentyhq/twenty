@@ -58,7 +58,7 @@ const resolveOutcome = ({
 }) =>
   resolvePermissionsRowAccessOutcome({
     principal,
-    environment: {
+    metadataMaps: {
       flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
       rolesPermissions: {

@@ -19,7 +19,7 @@ import { type OperationType } from 'src/engine/permissions/role/utils/validate-o
 
 export type SqlCondition = { sql: string; parameters: ObjectLiteral };
 
-export type PermissionsEnvironment = {
+export type PermissionsMetadataMaps = {
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   featureFlagsMap: Partial<Record<FeatureFlagKey, boolean>>;
@@ -29,13 +29,9 @@ export type PermissionsEnvironment = {
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
 };
 
-export type RowAccessCompilationEnvironment = {
-  recordShareTableExpression: string;
-};
-
 export type PermissionsRowAccessRequest = {
   principal: PermissionsPrincipal;
-  environment: PermissionsEnvironment;
+  metadataMaps: PermissionsMetadataMaps;
   flatObjectMetadata: FlatObjectMetadata;
   operationType: OperationType;
   hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
@@ -61,10 +57,7 @@ export type PermissionsRowAccessEvaluationRequest =
     context: RowAccessEvaluationContext;
   };
 
-export type PermissionsRowAccessSqlRequest = Omit<
-  PermissionsRowAccessRequest,
-  'environment'
-> & {
-  environment: PermissionsEnvironment & RowAccessCompilationEnvironment;
+export type PermissionsRowAccessSqlRequest = PermissionsRowAccessRequest & {
+  recordShareTableExpression: string;
   tableAlias: string;
 };

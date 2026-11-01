@@ -24,7 +24,6 @@ import {
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { loadPermissionsEnvironment } from 'src/engine/permissions/combine/utils/load-permissions-environment.util';
 import { resolveEventsReadableByRole } from 'src/engine/permissions/combine/utils/resolve-events-readable-by-role.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -82,10 +81,10 @@ export class CallDatabaseEventTriggerJobsJob {
       this.recordAccessPolicyService.buildEventRecordAccessGate(
         workspaceEventBatch,
       );
-    const environment = await loadPermissionsEnvironment({
-      workspaceCacheService: this.workspaceCacheService,
-      workspaceId: workspaceEventBatch.workspaceId,
-    });
+    const metadataMaps =
+      await this.recordAccessPolicyService.loadPermissionsMetadataMaps(
+        workspaceEventBatch.workspaceId,
+      );
 
     for (const [
       applicationId,
@@ -105,7 +104,7 @@ export class CallDatabaseEventTriggerJobsJob {
         roleId: application.defaultRoleId,
         workspaceEventBatch,
         eventRecordAccessGate,
-        environment,
+        metadataMaps,
       });
       const logicFunctionPayloads = transformEventBatchToEventPayloads({
         logicFunctions,

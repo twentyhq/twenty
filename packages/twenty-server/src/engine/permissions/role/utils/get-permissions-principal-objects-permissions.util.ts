@@ -2,33 +2,33 @@
 
 import { type ObjectsPermissions } from 'twenty-shared/types';
 
-import { type PermissionsEnvironment } from 'src/engine/permissions/combine/types/row-access-policy.type';
+import { type PermissionsMetadataMaps } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
 import { computeObjectsPermissionsForRolePermissionConfig } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-role-permission-config.util';
 
-const objectsPermissionsByEnvironmentByPrincipal = new WeakMap<
+const objectsPermissionsByMetadataMapsByPrincipal = new WeakMap<
   PermissionsPrincipal,
-  WeakMap<PermissionsEnvironment, ObjectsPermissions>
+  WeakMap<PermissionsMetadataMaps, ObjectsPermissions>
 >();
 
 export const getPermissionsPrincipalObjectsPermissions = ({
   principal,
-  environment,
+  metadataMaps,
 }: {
   principal: PermissionsPrincipal;
-  environment: PermissionsEnvironment;
+  metadataMaps: PermissionsMetadataMaps;
 }): ObjectsPermissions => {
-  const objectsPermissionsByEnvironment =
-    objectsPermissionsByEnvironmentByPrincipal.get(principal) ??
-    new WeakMap<PermissionsEnvironment, ObjectsPermissions>();
+  const objectsPermissionsByMetadataMaps =
+    objectsPermissionsByMetadataMapsByPrincipal.get(principal) ??
+    new WeakMap<PermissionsMetadataMaps, ObjectsPermissions>();
 
-  objectsPermissionsByEnvironmentByPrincipal.set(
+  objectsPermissionsByMetadataMapsByPrincipal.set(
     principal,
-    objectsPermissionsByEnvironment,
+    objectsPermissionsByMetadataMaps,
   );
 
   const cachedObjectsPermissions =
-    objectsPermissionsByEnvironment.get(environment);
+    objectsPermissionsByMetadataMaps.get(metadataMaps);
 
   if (cachedObjectsPermissions !== undefined) {
     return cachedObjectsPermissions;
@@ -36,13 +36,13 @@ export const getPermissionsPrincipalObjectsPermissions = ({
 
   const objectsPermissions = computeObjectsPermissionsForRolePermissionConfig({
     intersectionOf: principal.intersectionOf,
-    rolesPermissions: environment.rolesPermissions,
-    flatObjectMetadataMaps: environment.flatObjectMetadataMaps,
-    flatFieldMetadataMaps: environment.flatFieldMetadataMaps,
-    flatApplicationMaps: environment.flatApplicationMaps,
+    rolesPermissions: metadataMaps.rolesPermissions,
+    flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
+    flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
+    flatApplicationMaps: metadataMaps.flatApplicationMaps,
   });
 
-  objectsPermissionsByEnvironment.set(environment, objectsPermissions);
+  objectsPermissionsByMetadataMaps.set(metadataMaps, objectsPermissions);
 
   return objectsPermissions;
 };

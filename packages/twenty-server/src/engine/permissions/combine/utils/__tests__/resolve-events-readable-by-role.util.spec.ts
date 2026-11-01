@@ -82,7 +82,7 @@ const resolveForApplication = (applicationId: string) =>
     eventRecordAccessGate: {
       resolveAdmittedRecordIds: async () => new Set(['record-1']),
     },
-    environment: {
+    metadataMaps: {
       rolesPermissions: { [ROLE_ID]: { [OBJECT_METADATA_ID]: FULL_ACCESS } },
       flatApplicationMaps: {
         byId: {
