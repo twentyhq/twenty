@@ -19,6 +19,22 @@ export default defineObject({
     MEMBERSHIP_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [
     {
+      universalIdentifier: 'f3cafbac-4361-435a-821e-c16c31eb3a88',
+      type: FieldType.TEXT,
+      name: 'purchaseOperationReceipt',
+      label: 'Журнал оформления покупки',
+      isNullable: true,
+      icon: 'IconHistory',
+    },
+    {
+      universalIdentifier: 'ed94a469-540c-4375-9349-7f58100945df',
+      type: FieldType.TEXT,
+      name: 'mutationLock',
+      label: 'Владелец изменения пакета',
+      isNullable: true,
+      icon: 'IconLock',
+    },
+    {
       universalIdentifier: MEMBERSHIP_NAME_FIELD_UNIVERSAL_IDENTIFIER,
       type: FieldType.TEXT,
       name: 'name',

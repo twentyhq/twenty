@@ -19,14 +19,11 @@
       "env": {}
     },
     "twenty_prod": {
-      "url": "http://crm.lan/mcp_disable",
+      "url": "http://crm.lan/mcp",
       "type": "http",
-      "bearer_token_env_var": "TWENTY_PROD_MCP_TOKEN"
-    },
-    "twenty_stage": {
-      "url": "http://crm-stage.lan/mcp",
-      "type": "http",
-      "http_headers_helper": "/bin/zsh /Users/evgenijaleksandrov/Desktop/repo/repo/Kate/crm/crm-twenty/scripts/get-twenty-stage-mcp-headers.sh"
+      "headers": {
+        "Authorization": "Bearer eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ijk3NTk3OGEzLTE2YzYtNGJmNS1hZTJiLTI2YjQ5MDA1YTM3ZiJ9.eyJzdWIiOiIwNDU4ZmExZi01MDZhLTQ3YzgtYTUxYS00MTJiODg4ZmE4M2EiLCJ0eXBlIjoiQVBJX0tFWSIsIndvcmtzcGFjZUlkIjoiMDQ1OGZhMWYtNTA2YS00N2M4LWE1MWEtNDEyYjg4OGZhODNhIiwiaWF0IjoxNzkzNTEyMzM2LCJleHAiOjQ5NDY4NTMwODgsImp0aSI6IjdlMjQ5ZDYwLTlhZDEtNDczYi05YmFmLTljN2JhZGE4NjE0MSJ9.11_Xc45zq89NWVV0Q661To0kmwNU1w4IAP9QUCA_tzvDfqGFAf5QAwD4CAb6BwadVJc8uLkGgRm1pHn_wRwaJA"
+      }
     }
   }
 }

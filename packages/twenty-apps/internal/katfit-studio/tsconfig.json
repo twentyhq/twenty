@@ -2,6 +2,7 @@
   "compileOnSave": false,
   "compilerOptions": {
     "sourceMap": true,
+    "types": ["node", "react"],
     "declaration": true,
     "outDir": "./dist",
     "rootDir": ".",

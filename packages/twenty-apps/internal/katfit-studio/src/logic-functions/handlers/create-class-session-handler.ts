@@ -1,11 +1,28 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
+import {
+  attachSessionPayment,
+  readSessionPayment,
+  type PaidSessionParticipant,
+} from 'src/logic-functions/handlers/attach-session-payment-handler';
+
+import { coordinateSessionParticipants } from 'src/logic-functions/utils/coordinate-session-participants';
+import { isStudioRecordIdentifier } from 'src/logic-functions/utils/session-mutation-lock';
+
 import { SESSION_FORMAT_OPTIONS } from 'src/constants/select-options';
 import { createRegularBooking } from 'src/logic-functions/handlers/create-regular-booking-handler';
 import { recordPastAttendance } from 'src/logic-functions/handlers/record-past-attendance-handler';
 
+type SessionParticipant =
+  | { personId: string; membershipId: string }
+  | PaidSessionParticipant;
+const isPaymentParticipant = (
+  participant: SessionParticipant,
+): participant is PaidSessionParticipant => 'paymentId' in participant;
+
 export type CreateClassSessionInput = {
   name?: string;
+  trainerId?: string;
   sessionFormat: string;
   startsAt: string;
   durationMinutes: number;
@@ -13,7 +30,7 @@ export type CreateClassSessionInput = {
   status: 'PLANNED' | 'CONFIRMED' | 'COMPLETED';
   pastConfirmed?: boolean;
   idempotencyKey: string;
-  participants?: Array<{ personId: string; membershipId: string }>;
+  participants?: SessionParticipant[];
   attendanceReason?: string;
 };
 type Session = {
@@ -26,7 +43,7 @@ type Session = {
   status: string;
   creationRequest?: string | null;
 };
-type CreateClassSessionResult =
+export type CreateClassSessionResult =
   | { success: true; classSessionId: string; duplicate: boolean }
   | { success: false; code: string; message: string; status: number };
 const fail = (
@@ -49,6 +66,7 @@ export const createClassSession = async (
   raw: CreateClassSessionInput,
   client = new CoreApiClient(),
   now = new Date(),
+  options: { coordinateParticipants?: boolean } = {},
 ): Promise<CreateClassSessionResult> => {
   const input = {
     ...raw,
@@ -66,7 +84,13 @@ export const createClassSession = async (
     !Array.isArray(participants) ||
     participants.length > input.capacity ||
     participants.some(
-      (participant) => !participant?.personId || !participant.membershipId,
+      (participant) =>
+        !participant?.personId ||
+        (isPaymentParticipant(participant)
+          ? !participant.paymentId ||
+            !participant.productId ||
+            'membershipId' in participant
+          : !participant.membershipId || 'productId' in participant),
     ) ||
     new Set(participants.map((participant) => participant.personId)).size !==
       participants.length
@@ -74,6 +98,21 @@ export const createClassSession = async (
     return fail(
       'INVALID_PARTICIPANTS',
       'Проверьте участников: дубли и превышение вместимости недопустимы.',
+    );
+  if (
+    options.coordinateParticipants &&
+    participants.some(
+      (participant) =>
+        !isStudioRecordIdentifier(participant.personId) ||
+        !(isPaymentParticipant(participant)
+          ? isStudioRecordIdentifier(participant.paymentId) &&
+            isStudioRecordIdentifier(participant.productId)
+          : isStudioRecordIdentifier(participant.membershipId)),
+    )
+  )
+    return fail(
+      'INVALID_PARTICIPANTS',
+      'Проверьте идентификаторы клиентов и пакетов.',
     );
   if (
     input.sessionFormat === 'PERSONAL_EQUIPMENT' &&
@@ -142,6 +181,7 @@ export const createClassSession = async (
   const recordingKey = `session-create:${input.idempotencyKey}`;
   const creationRequest = JSON.stringify({
     status: input.status,
+    ...(input.trainerId ? { trainerId: input.trainerId } : {}),
     participants,
     attendanceReason: input.attendanceReason?.trim() ?? '',
   });
@@ -161,7 +201,7 @@ export const createClassSession = async (
       'Ключ создания уже связан с другими участниками или параметрами.',
       409,
     );
-  if (session && !session.creationRequest && participants.length)
+  if (session && !session.creationRequest && (participants.length || input.trainerId))
     return fail(
       'IDEMPOTENCY_CONFLICT',
       'Исходная тренировка создана без списка участников. Добавьте их через карточку.',
@@ -181,7 +221,33 @@ export const createClassSession = async (
       409,
     );
   if (!session) {
+    if (input.trainerId) {
+      const trainers = await client.query({ studioTrainers: { __args: { filter: { id: { eq: input.trainerId } }, first: 1 }, edges: { node: { id: true, active: true } } } } as never) as unknown as { studioTrainers?: { edges?: { node: { id: string; active: boolean } }[] } };
+      if (!trainers.studioTrainers?.edges?.[0]?.node.active) return fail('TRAINER_NOT_ACTIVE', 'Выберите активного тренера из каталога.', 409);
+    }
     for (const participant of participants) {
+      if (isPaymentParticipant(participant)) {
+        const payment =
+          input.status === 'CONFIRMED'
+            ? null
+            : await readSessionPayment(
+                participant,
+                {
+                  startsAt,
+                  durationMinutes: input.durationMinutes,
+                  sessionFormat: input.sessionFormat,
+                  status: input.status,
+                },
+                client,
+              );
+        if (!payment || payment.externalId?.startsWith('pay-as-you-go:'))
+          return fail(
+            'PARTICIPANT_PAYMENT_UNAVAILABLE',
+            'Оплата не соответствует клиенту, дате, длительности или формату тренировки.',
+            409,
+          );
+        continue;
+      }
       const result = (await client.query({
         studioMemberships: {
           __args: {
@@ -262,6 +328,7 @@ export const createClassSession = async (
         __args: {
           data: {
             name: input.name,
+            ...(input.trainerId ? { trainerId: input.trainerId } : {}),
             sessionFormat: input.sessionFormat,
             startsAt,
             endsAt,
@@ -349,6 +416,7 @@ export const createClassSession = async (
             occurredAt: new Date().toISOString(),
             details: JSON.stringify({
               name: input.name,
+              trainerId: input.trainerId ?? null,
               startsAt,
               endsAt,
               status: input.status,
@@ -366,59 +434,114 @@ export const createClassSession = async (
         'Журнал создания не подтверждён. Повторите с прежним ключом.',
       );
   }
-  const attendanceInputs = participants.map((participant) => ({
-    ...participant,
-    startsAt,
-    endsAt,
-    existingClassSessionId: session.id,
-    reason: input.attendanceReason?.trim() ?? '',
-    source: 'ADMIN' as const,
-    idempotencyKey: `${input.idempotencyKey}:participant:${participant.personId}`,
-  }));
-  if (input.status === 'COMPLETED') {
-    for (const attendance of attendanceInputs) {
-      const preview = await recordPastAttendance(
-        { ...attendance, previewOnly: true },
-        { userWorkspaceId: null },
-        client,
-      );
-      if (!preview.success)
-        return fail(
-          preview.code,
-          `Тренировка сохранена. ${preview.message} Повторите весь запрос с прежним ключом после проверки CRM.`,
-          preview.status,
+  const classSessionId = session.id;
+  const applyParticipants = async (
+    participantClient: CoreApiClient,
+  ): Promise<CreateClassSessionResult> => {
+    const packageParticipants = participants.filter(
+      (
+        participant,
+      ): participant is { personId: string; membershipId: string } =>
+        !isPaymentParticipant(participant),
+    );
+    const attendanceInputs = packageParticipants.map((participant) => ({
+      ...participant,
+      startsAt,
+      endsAt,
+      existingClassSessionId: classSessionId,
+      reason: input.attendanceReason?.trim() ?? '',
+      source: 'ADMIN' as const,
+      idempotencyKey: `${input.idempotencyKey}:participant:${participant.personId}`,
+    }));
+    if (input.status === 'COMPLETED') {
+      for (const attendance of attendanceInputs) {
+        const preview = await recordPastAttendance(
+          { ...attendance, previewOnly: true },
+          { userWorkspaceId: null },
+          participantClient,
         );
+        if (!preview.success)
+          return fail(
+            preview.code,
+            `Тренировка сохранена. ${preview.message} Проверьте журнал операции перед повтором.`,
+            preview.status,
+          );
+      }
     }
-  }
-  for (const [index, participant] of participants.entries()) {
-    if (input.status === 'PLANNED') {
-      const booking = await createRegularBooking(
+    for (const [index, participant] of packageParticipants.entries()) {
+      if (input.status === 'PLANNED') {
+        const booking = await createRegularBooking(
+          {
+            ...participant,
+            classSessionId,
+            idempotencyKey: attendanceInputs[index].idempotencyKey,
+          },
+          participantClient,
+        );
+        if (!booking.success)
+          return fail(
+            booking.code,
+            `Тренировка сохранена, добавление участников не завершено. ${booking.message} Проверьте журнал операции перед повтором.`,
+            booking.status,
+          );
+      } else {
+        const attendance = await recordPastAttendance(
+          attendanceInputs[index],
+          { userWorkspaceId: null },
+          participantClient,
+        );
+        if (!attendance.success || !('bookingId' in attendance))
+          return fail(
+            'ATTENDANCE_INCOMPLETE',
+            'Внесение посещений не завершено. Проверьте CRM и журнал операции перед повтором.',
+            409,
+          );
+      }
+    }
+    for (const participant of participants.filter(isPaymentParticipant)) {
+      if (input.status === 'CONFIRMED')
+        throw Error('PAYMENT_SESSION_STATUS_INVALID');
+      await attachSessionPayment(
+        participant,
         {
-          ...participant,
-          classSessionId: session.id,
-          idempotencyKey: attendanceInputs[index].idempotencyKey,
+          id: classSessionId,
+          startsAt,
+          durationMinutes: input.durationMinutes,
+          sessionFormat: input.sessionFormat,
+          status: input.status,
         },
-        client,
+        `${input.idempotencyKey}:participant:${participant.personId}`,
+        participantClient,
       );
-      if (!booking.success)
-        return fail(
-          booking.code,
-          `Тренировка сохранена, добавление участников не завершено. ${booking.message} Повторите прежний запрос.`,
-          booking.status,
-        );
-    } else {
-      const attendance = await recordPastAttendance(
-        attendanceInputs[index],
-        { userWorkspaceId: null },
-        client,
-      );
-      if (!attendance.success || !('bookingId' in attendance))
-        return fail(
-          'ATTENDANCE_INCOMPLETE',
-          'Внесение посещений не завершено. Проверьте CRM и повторите прежний запрос.',
-          409,
-        );
     }
+    return { success: true, classSessionId, duplicate: false };
+  };
+  if (options.coordinateParticipants && participants.length) {
+    if (input.status !== 'PLANNED' && input.status !== 'COMPLETED')
+      return fail(
+        'PARTICIPANTS_NOT_SUPPORTED',
+        'Участники недоступны для этого статуса.',
+      );
+    return coordinateSessionParticipants(
+      {
+        classSessionId,
+        idempotencyKey: input.idempotencyKey,
+        status: input.status,
+        creationRequest,
+        membershipIds: participants
+          .filter(
+            (
+              participant,
+            ): participant is { personId: string; membershipId: string } =>
+              !isPaymentParticipant(participant),
+          )
+          .map((participant) => participant.membershipId),
+      },
+      client,
+      applyParticipants,
+    );
   }
+  const applied = await applyParticipants(client);
+  if (!applied.success) return applied;
   return { success: true, classSessionId: session.id, duplicate };
 };

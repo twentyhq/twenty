@@ -1,4 +1,11 @@
-import { type CSSProperties, useCallback, useEffect, useMemo, useState } from 'react';
+import {
+  type CSSProperties,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { RestApiClient } from 'twenty-client-sdk/rest';
 import { defineFrontComponent } from 'twenty-sdk/define';
@@ -7,12 +14,16 @@ import { escapeForIlike } from 'twenty-shared/utils';
 
 import { SESSION_FORMAT_OPTIONS } from 'src/constants/select-options';
 
+import { createIdempotencyKey } from 'src/front-components/utils/create-idempotency-key';
+
 export const CLASS_SCHEDULE_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER =
   '67c2f57f-2d8d-4b61-8a06-93a7f9070d75';
 
 const GRID_START_HOUR = 6;
 const GRID_END_HOUR = 22;
 const HOUR_HEIGHT = 64;
+
+type TrainerOption = { id: string; name: string; active: boolean };
 
 type ClassSession = {
   id: string;
@@ -23,11 +34,16 @@ type ClassSession = {
   status: string;
   bookedCount: number;
   capacity: number;
+  trainer: TrainerOption | null;
 };
 
 type SessionForm = {
+  operationKey: string;
+  expected: Omit<ClassSession, 'id' | 'bookedCount' | 'trainer'> | null;
   id: string | null;
   productId: string;
+  trainerId: string;
+  trainerRequestKey: string;
   name: string;
   sessionFormat: string;
   startsAt: string;
@@ -61,9 +77,7 @@ type SplitPairOption = {
 };
 
 const getSplitPairLabel = (pair: SplitPairOption): string => {
-  const getName = (
-    person: SplitPairOption['firstPerson'],
-  ): string =>
+  const getName = (person: SplitPairOption['firstPerson']): string =>
     `${person?.name?.firstName ?? ''} ${person?.name?.lastName ?? ''}`.trim() ||
     'Клиент не указан';
 
@@ -83,7 +97,11 @@ type Participant = {
   status: string;
 };
 
-type PendingParticipant = { person: PersonOption; productId: string | null; paymentType: 'MEMBERSHIP' | 'PAY_AS_YOU_GO' };
+type PendingParticipant = {
+  person: PersonOption;
+  productId: string | null;
+  paymentType: 'MEMBERSHIP' | 'PAY_AS_YOU_GO';
+};
 
 type PersonOption = {
   id: string;
@@ -349,7 +367,10 @@ const toDateTimeLocalValue = (date: Date): string =>
     date.getMinutes(),
   ).padStart(2, '0')}`;
 
-const getEndsAt = (startsAtValue: string, durationMinutesValue: string): Date => {
+const getEndsAt = (
+  startsAtValue: string,
+  durationMinutesValue: string,
+): Date => {
   const endsAt = new Date(startsAtValue);
   endsAt.setMinutes(endsAt.getMinutes() + Number(durationMinutesValue));
   return endsAt;
@@ -361,7 +382,11 @@ const getNewSessionForm = (startsAt: Date): SessionForm => {
 
   return {
     id: null,
+    operationKey: createIdempotencyKey(),
+    expected: null,
     productId: '',
+    trainerId: '',
+    trainerRequestKey: crypto.randomUUID(),
     name: '',
     sessionFormat: SESSION_FORMAT_OPTIONS[0].value,
     startsAt: toDateTimeLocalValue(startsAt),
@@ -372,19 +397,34 @@ const getNewSessionForm = (startsAt: Date): SessionForm => {
 
 const getSessionForm = (session: ClassSession): SessionForm => ({
   id: session.id,
+  operationKey: createIdempotencyKey(),
+  expected: {
+    name: session.name,
+    startsAt: session.startsAt,
+    endsAt: session.endsAt,
+    sessionFormat: session.sessionFormat,
+    capacity: session.capacity,
+    status: session.status,
+  },
   productId: '',
+  trainerId: session.trainer?.id ?? '',
+  trainerRequestKey: crypto.randomUUID(),
   name: session.name,
   sessionFormat: session.sessionFormat,
   startsAt: toDateTimeLocalValue(new Date(session.startsAt)),
   durationMinutes: String(
-    (new Date(session.endsAt).getTime() - new Date(session.startsAt).getTime()) /
+    (new Date(session.endsAt).getTime() -
+      new Date(session.startsAt).getTime()) /
       60_000,
   ),
   capacity: String(session.capacity),
 });
 
-const getPersonLabel = (person: PersonOption | Participant['person']): string => {
-  const name = `${person?.name?.firstName ?? ''} ${person?.name?.lastName ?? ''}`.trim();
+const getPersonLabel = (
+  person: PersonOption | Participant['person'],
+): string => {
+  const name =
+    `${person?.name?.firstName ?? ''} ${person?.name?.lastName ?? ''}`.trim();
   return name || 'Без имени';
 };
 
@@ -414,7 +454,8 @@ const getMatchingMembership = (
           membership.visitsAvailable > 0 &&
           membership.activatedAt !== null &&
           membership.activatedAt <= sessionStartsAt.toISOString() &&
-          (membership.expiresOn === null || membership.expiresOn >= sessionDate) &&
+          (membership.expiresOn === null ||
+            membership.expiresOn >= sessionDate) &&
           (sessionForm.productId === '' ||
             membership.product?.id === sessionForm.productId) &&
           membership.product?.sessionFormat === sessionForm.sessionFormat,
@@ -425,12 +466,15 @@ const getMatchingMembership = (
 const getWeekDays = (selectedDate: Date, mode: 'day' | 'week'): Date[] =>
   mode === 'day'
     ? [startOfDay(selectedDate)]
-    : Array.from({ length: 7 }, (_, index) => addDays(startOfWeek(selectedDate), index));
+    : Array.from({ length: 7 }, (_, index) =>
+        addDays(startOfWeek(selectedDate), index),
+      );
 
 const ClassSchedule = () => {
   const [mode, setMode] = useState<'day' | 'week'>('day');
   const [selectedDate, setSelectedDate] = useState(() => new Date());
   const [sessions, setSessions] = useState<ClassSession[]>([]);
+  const [trainers, setTrainers] = useState<TrainerOption[]>([]);
   const [products, setProducts] = useState<ProductOption[]>([]);
   const [splitPairs, setSplitPairs] = useState<SplitPairOption[]>([]);
   const [selectedSplitPairId, setSelectedSplitPairId] = useState('');
@@ -438,13 +482,21 @@ const ClassSchedule = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [isCancelConfirmationOpen, setIsCancelConfirmationOpen] = useState(false);
+  const [isCancelConfirmationOpen, setIsCancelConfirmationOpen] =
+    useState(false);
+  const createdSessions = useRef(
+    new Map<string, { id: string; request: string }>(),
+  );
   const [sessionForm, setSessionForm] = useState<SessionForm | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [reloadVersion, setReloadVersion] = useState(0);
   const [participants, setParticipants] = useState<Participant[]>([]);
-  const [pendingParticipants, setPendingParticipants] = useState<PendingParticipant[]>([]);
-  const [bookingPaymentType, setBookingPaymentType] = useState<'MEMBERSHIP' | 'PAY_AS_YOU_GO'>('MEMBERSHIP');
+  const [pendingParticipants, setPendingParticipants] = useState<
+    PendingParticipant[]
+  >([]);
+  const [bookingPaymentType, setBookingPaymentType] = useState<
+    'MEMBERSHIP' | 'PAY_AS_YOU_GO'
+  >('MEMBERSHIP');
   const [payAsYouGoProductId, setPayAsYouGoProductId] = useState('');
   const [isPersonPickerOpen, setIsPersonPickerOpen] = useState(false);
   const [personSearch, setPersonSearch] = useState('');
@@ -453,7 +505,10 @@ const ClassSchedule = () => {
   const [isPersonSearchLoading, setIsPersonSearchLoading] = useState(false);
   const [isParticipantsLoading, setIsParticipantsLoading] = useState(false);
   const [participantVersion, setParticipantVersion] = useState(0);
-  const days = useMemo(() => getWeekDays(selectedDate, mode), [mode, selectedDate]);
+  const days = useMemo(
+    () => getWeekDays(selectedDate, mode),
+    [mode, selectedDate],
+  );
 
   useEffect(() => {
     const firstDay = days[0];
@@ -485,25 +540,42 @@ const ClassSchedule = () => {
                 status: true,
                 bookedCount: true,
                 capacity: true,
+                trainer: { id: true, name: true, active: true },
               },
             },
           },
+          studioTrainers: { __args: { first: 1000 }, edges: { node: { id: true, name: true, active: true } } },
           studioProducts: {
             __args: { filter: { isActive: { eq: true } }, first: 100 },
-            edges: { node: { id: true, name: true, category: true, sessionFormat: true, durationMinutes: true, defaultSessionCapacity: true } },
+            edges: {
+              node: {
+                id: true,
+                name: true,
+                category: true,
+                sessionFormat: true,
+                durationMinutes: true,
+                defaultSessionCapacity: true,
+              },
+            },
           },
         } as never)) as unknown as {
           classSessions?: { edges?: Array<{ node: ClassSession }> };
           studioProducts?: { edges?: Array<{ node: ProductOption }> };
+          studioTrainers?: { edges?: Array<{ node: TrainerOption }> };
         };
 
         if (isMounted) {
           setSessions(
             response.classSessions?.edges
               ?.map(({ node }) => node)
-              .filter((session) => session.status !== 'CANCELLED_BY_STUDIO') ?? [],
+              .filter((session) => session.status !== 'CANCELLED_BY_STUDIO') ??
+              [],
           );
-          setProducts(response.studioProducts?.edges?.map(({ node }) => node) ?? []);
+          if ((response.studioTrainers?.edges?.length ?? 0) >= 1000) throw new Error('Каталог тренеров слишком велик.');
+          setTrainers(response.studioTrainers?.edges?.map(({ node }) => node).filter(({ active }) => active) ?? []);
+          setProducts(
+            response.studioProducts?.edges?.map(({ node }) => node) ?? [],
+          );
         }
       } catch (loadError) {
         if (isMounted) {
@@ -550,17 +622,27 @@ const ClassSchedule = () => {
           !pendingParticipants.some(
             (pendingParticipant) => pendingParticipant.person.id === person.id,
           ) &&
-          (bookingPaymentType === 'PAY_AS_YOU_GO' ? payAsYouGoProductId !== '' : getMatchingMembership(person, sessionForm) !== null),
+          (bookingPaymentType === 'PAY_AS_YOU_GO'
+            ? payAsYouGoProductId !== ''
+            : getMatchingMembership(person, sessionForm) !== null),
       )
       .sort((firstPerson, secondPerson) =>
-        getPersonLabel(firstPerson).localeCompare(getPersonLabel(secondPerson), 'ru'),
+        getPersonLabel(firstPerson).localeCompare(
+          getPersonLabel(secondPerson),
+          'ru',
+        ),
       );
-  }, [activeParticipants, bookingPaymentType, payAsYouGoProductId, pendingParticipants, personResults, sessionForm]);
+  }, [
+    activeParticipants,
+    bookingPaymentType,
+    payAsYouGoProductId,
+    pendingParticipants,
+    personResults,
+    sessionForm,
+  ]);
   const isFutureSession =
-    sessionForm !== null && new Date(sessionForm.startsAt).getTime() > Date.now();
-  const splitBooking = activeParticipants.find(
-    (participant) => participant.bookingType === 'SPLIT',
-  );
+    sessionForm !== null &&
+    new Date(sessionForm.startsAt).getTime() > Date.now();
   const selectedSplitPair = splitPairs.find(
     (pair) => pair.id === selectedSplitPairId,
   );
@@ -575,7 +657,10 @@ const ClassSchedule = () => {
     try {
       const response = (await new CoreApiClient().query({
         studioBookings: {
-          __args: { filter: { classSessionId: { eq: classSessionId } }, first: 100 },
+          __args: {
+            filter: { classSessionId: { eq: classSessionId } },
+            first: 100,
+          },
           edges: {
             node: {
               id: true,
@@ -591,7 +676,9 @@ const ClassSchedule = () => {
       } as never)) as unknown as {
         studioBookings?: { edges?: Array<{ node: Participant }> };
       };
-      setParticipants(response.studioBookings?.edges?.map(({ node }) => node) ?? []);
+      setParticipants(
+        response.studioBookings?.edges?.map(({ node }) => node) ?? [],
+      );
     } catch (loadError) {
       await enqueueSnackbar({
         message:
@@ -615,7 +702,8 @@ const ClassSchedule = () => {
 
   useEffect(() => {
     if (
-      sessionForm === null || sessionForm.sessionFormat !== 'SPLIT_EQUIPMENT'
+      sessionForm === null ||
+      sessionForm.sessionFormat !== 'SPLIT_EQUIPMENT'
     ) {
       setSplitPairs([]);
       setSelectedSplitPairId('');
@@ -684,7 +772,11 @@ const ClassSchedule = () => {
                       { name: { firstName: { ilike: searchPattern } } },
                       { name: { lastName: { ilike: searchPattern } } },
                       { emails: { primaryEmail: { ilike: searchPattern } } },
-                      { phones: { primaryPhoneNumber: { ilike: searchPattern } } },
+                      {
+                        phones: {
+                          primaryPhoneNumber: { ilike: searchPattern },
+                        },
+                      },
                     ],
                   },
             first: 100,
@@ -767,26 +859,49 @@ const ClassSchedule = () => {
         personId: person.id,
       });
       if (!result.success) {
-        throw new Error(result.message ?? 'Не удалось зарезервировать посещение.');
+        throw new Error(
+          result.message ?? 'Не удалось зарезервировать посещение.',
+        );
       }
       return true;
     } catch (saveError) {
       void enqueueSnackbar({
         message:
-          saveError instanceof Error ? saveError.message : 'Не удалось добавить клиента.',
+          saveError instanceof Error
+            ? saveError.message
+            : 'Не удалось добавить клиента.',
         variant: 'error',
       });
       return false;
     }
   };
 
-  const createPayAsYouGoBooking = async (person: PersonOption, productId: string, classSessionId: string): Promise<boolean> => {
+  const createPayAsYouGoBooking = async (
+    person: PersonOption,
+    productId: string,
+    classSessionId: string,
+  ): Promise<boolean> => {
     try {
-      const result = await new RestApiClient().post<{ message?: string; success: boolean }>('/s/studio/bookings/create-pay-as-you-go', { classSessionId, idempotencyKey: `pay-as-you-go:${person.id}:${classSessionId}`, personId: person.id, productId });
-      if (!result.success) throw new Error(result.message ?? 'Не удалось добавить клиента.');
+      const result = await new RestApiClient().post<{
+        message?: string;
+        success: boolean;
+      }>('/s/studio/bookings/create-pay-as-you-go', {
+        classSessionId,
+        idempotencyKey: `pay-as-you-go:${person.id}:${classSessionId}`,
+        personId: person.id,
+        productId,
+      });
+      if (!result.success)
+        throw new Error(result.message ?? 'Не удалось добавить клиента.');
       return true;
     } catch (saveError) {
-      void enqueueSnackbar({ message: saveError instanceof Error ? saveError.message : 'Не удалось добавить клиента.', variant: 'error' });
+      void enqueueSnackbar({
+        message:
+          saveError instanceof Error
+            ? saveError.message
+            : 'Не удалось добавить клиента.',
+        variant: 'error',
+      });
       return false;
     }
   };
@@ -826,7 +941,15 @@ const ClassSchedule = () => {
     }
 
     if (sessionForm.id === null) {
-      setPendingParticipants((currentPeople) => [...currentPeople, ...selectedPeople.map((person) => ({ person, productId: bookingPaymentType === 'PAY_AS_YOU_GO' ? payAsYouGoProductId : null, paymentType: bookingPaymentType }))]);
+      setPendingParticipants((currentPeople) => [
+        ...currentPeople,
+        ...selectedPeople.map((person) => ({
+          person,
+          productId:
+            bookingPaymentType === 'PAY_AS_YOU_GO' ? payAsYouGoProductId : null,
+          paymentType: bookingPaymentType,
+        })),
+      ]);
       setSelectedPeople([]);
       setPersonSearch('');
       setPersonResults([]);
@@ -835,7 +958,14 @@ const ClassSchedule = () => {
     }
 
     for (const person of selectedPeople) {
-      const wasAdded = bookingPaymentType === 'PAY_AS_YOU_GO' ? await createPayAsYouGoBooking(person, payAsYouGoProductId, sessionForm.id) : await createRegularBooking(person, sessionForm.id);
+      const wasAdded =
+        bookingPaymentType === 'PAY_AS_YOU_GO'
+          ? await createPayAsYouGoBooking(
+              person,
+              payAsYouGoProductId,
+              sessionForm.id,
+            )
+          : await createRegularBooking(person, sessionForm.id);
       if (!wasAdded) return;
     }
 
@@ -843,8 +973,8 @@ const ClassSchedule = () => {
     setPersonSearch('');
     setPersonResults([]);
     setIsPersonPickerOpen(false);
-    setParticipantVersion((currentParticipantVersion) =>
-      currentParticipantVersion + 1,
+    setParticipantVersion(
+      (currentParticipantVersion) => currentParticipantVersion + 1,
     );
     setReloadVersion((currentReloadVersion) => currentReloadVersion + 1);
   };
@@ -852,7 +982,10 @@ const ClassSchedule = () => {
   const createSplitBooking = async (
     classSessionId: string,
   ): Promise<boolean> => {
-    if (selectedSplitPair === undefined || selectedSplitMembership === undefined) {
+    if (
+      selectedSplitPair === undefined ||
+      selectedSplitMembership === undefined
+    ) {
       return false;
     }
     try {
@@ -885,116 +1018,9 @@ const ClassSchedule = () => {
     }
   };
 
-  const cancelSplitBooking = async (): Promise<boolean> => {
-    if (
-      sessionForm?.id === null ||
-      sessionForm === null ||
-      splitBooking?.pair === null ||
-      splitBooking?.pair === undefined ||
-      splitBooking.membership === null
-    ) {
-      return false;
-    }
-    setIsSaving(true);
-    try {
-      const cancellationKey = `schedule-studio-cancel:${splitBooking.pair.id}:${sessionForm.id}`;
-      const client = new CoreApiClient();
-      const result = (await client.query({
-        studioMemberships: {
-          __args: { filter: { id: { eq: splitBooking.membership.id } }, first: 1 },
-          edges: {
-            node: {
-              id: true,
-              visitsAvailable: true,
-              visitsReserved: true,
-            },
-          },
-        },
-        membershipTransactions: {
-          __args: { filter: { idempotencyKey: { eq: cancellationKey } }, first: 1 },
-          edges: { node: { id: true } },
-        },
-      } as never)) as unknown as {
-        studioMemberships?: {
-          edges?: Array<{
-            node: {
-              id: string;
-              visitsAvailable: number;
-              visitsReserved: number;
-            };
-          }>;
-        };
-        membershipTransactions?: { edges?: Array<{ node: { id: string } }> };
-      };
-      const membership = result.studioMemberships?.edges?.[0]?.node;
-      if (membership === undefined) {
-        throw new Error('Общий сплит-блок не найден.');
-      }
-      if (result.membershipTransactions?.edges?.[0] === undefined) {
-        for (const participant of activeParticipants) {
-          await client.mutation({
-            updateStudioBooking: {
-              __args: {
-                id: participant.id,
-                data: {
-                  status: 'CANCELLED_BY_STUDIO',
-                  cancelledAt: new Date().toISOString(),
-                  consumesVisit: false,
-                },
-              },
-              id: true,
-            },
-          } as never);
-        }
-        await client.mutation({
-          createMembershipTransaction: {
-            __args: {
-              data: {
-                name: 'Освобождение резерва · отмена занятия',
-                transactionType: 'RELEASE',
-                visitDelta: 1,
-                daysDelta: 0,
-                occurredAt: new Date().toISOString(),
-                idempotencyKey: cancellationKey,
-                reason: 'Отмена занятия студией',
-                membershipId: membership.id,
-              },
-            },
-            id: true,
-          },
-        } as never);
-        await client.mutation({
-          updateStudioMembership: {
-            __args: {
-              id: membership.id,
-              data: {
-                visitsAvailable: membership.visitsAvailable + 1,
-                visitsReserved: Math.max(0, membership.visitsReserved - 1),
-              },
-            },
-            id: true,
-          },
-        } as never);
-      }
-      setParticipantVersion((version) => version + 1);
-      setReloadVersion((version) => version + 1);
-      void enqueueSnackbar({
-        message: 'Запись пары отменена, резерв обработан по правилам отмены.',
-        variant: 'success',
-      });
-      return true;
-    } catch (error) {
-      void enqueueSnackbar({
-        message:
-          error instanceof Error ? error.message : 'Не удалось отменить сплит.',
-        variant: 'error',
-      });
-      return false;
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
+  const cancellationRequests = useRef<
+    Record<string, { cancelledAt: string; idempotencyKey: string }>
+  >({});
   const cancelSession = async () => {
     if (sessionForm?.id === null || sessionForm === null || !isFutureSession) {
       return;
@@ -1002,35 +1028,22 @@ const ClassSchedule = () => {
     setSuccessMessage('Отменяем занятие…');
     setIsSaving(true);
     try {
-      if (splitBooking !== undefined) {
-        const isSplitCancelled = await cancelSplitBooking();
-        if (!isSplitCancelled) {
-          return;
-        }
-      } else {
-        for (const participant of participants) {
-          const result = await new RestApiClient().post<{
-            message?: string;
-            success: boolean;
-          }>(participant.paymentStatus === 'EXPECTED' ? '/s/studio/bookings/cancel-pay-as-you-go' : '/s/studio/bookings/cancel', {
-            bookingId: participant.id,
-            cancelledAt: new Date().toISOString(),
-            idempotencyKey: `schedule-studio-cancel:${participant.id}`,
-          });
-          if (!result.success) {
-            throw new Error(result.message ?? 'Не удалось освободить резерв клиента.');
-          }
-        }
-      }
-      await new CoreApiClient().mutation({
-        updateClassSession: {
-          __args: {
-            id: sessionForm.id,
-            data: { status: 'CANCELLED_BY_STUDIO', bookedCount: 0 },
-          },
-          id: true,
-        },
-      } as never);
+      const request = cancellationRequests.current[sessionForm.id] ?? {
+        cancelledAt: new Date().toISOString(),
+        idempotencyKey: `schedule-session-cancel:${createIdempotencyKey()}`,
+      };
+      cancellationRequests.current[sessionForm.id] = request;
+      const result = await new RestApiClient().post<{
+        success: boolean;
+        message?: string;
+      }>('/s/studio/sessions/cancel', {
+        classSessionId: sessionForm.id,
+        ...request,
+      });
+      if (!result.success)
+        throw new Error(
+          result.message ?? 'Не удалось подтвердить отмену занятия.',
+        );
       setSessionForm(null);
       setParticipantVersion((version) => version + 1);
       setReloadVersion((version) => version + 1);
@@ -1073,7 +1086,14 @@ const ClassSchedule = () => {
     const durationMinutes = Number(sessionForm.durationMinutes);
     const endsAt = getEndsAt(sessionForm.startsAt, sessionForm.durationMinutes);
     const capacity = Number(sessionForm.capacity);
-    if (Number.isNaN(startsAt.getTime()) || Number.isNaN(endsAt.getTime()) || !Number.isInteger(durationMinutes) || durationMinutes < 1 || !Number.isInteger(capacity) || capacity < 1) {
+    if (
+      Number.isNaN(startsAt.getTime()) ||
+      Number.isNaN(endsAt.getTime()) ||
+      !Number.isInteger(durationMinutes) ||
+      durationMinutes < 1 ||
+      !Number.isInteger(capacity) ||
+      capacity < 1
+    ) {
       await enqueueSnackbar({
         message: 'Укажите корректные длительность и вместимость.',
         variant: 'error',
@@ -1087,7 +1107,8 @@ const ClassSchedule = () => {
       sessionForm.id === null
         ? pendingParticipants.length
         : activeParticipants.length;
-    const requiredCapacity = currentParticipantCount + (shouldAssignSplit ? 2 : 0);
+    const requiredCapacity =
+      currentParticipantCount + (shouldAssignSplit ? 2 : 0);
     if (requiredCapacity > capacity) {
       await enqueueSnackbar({
         message: 'Вместимость не может быть меньше числа добавляемых клиентов.',
@@ -1114,7 +1135,9 @@ const ClassSchedule = () => {
       return;
     }
 
-    const name = sessionForm.name.trim() || getSessionFormatLabel(sessionForm.sessionFormat);
+    const name =
+      sessionForm.name.trim() ||
+      getSessionFormatLabel(sessionForm.sessionFormat);
     const data = {
       name,
       sessionFormat: sessionForm.sessionFormat,
@@ -1125,19 +1148,40 @@ const ClassSchedule = () => {
 
     setIsSaving(true);
     try {
-      const client = new CoreApiClient();
+      const rest = new RestApiClient();
       if (sessionForm.id === null) {
-        const response = (await client.mutation({
-          createClassSession: {
-            __args: { data: { ...data, status: 'PLANNED', bookedCount: 0 } },
-            id: true,
-          },
-        } as never)) as unknown as { createClassSession: { id: string } };
-        const classSessionId = response.createClassSession.id;
-        try {
-          await client.mutation({ createStudioEvent: { __args: { data: { name: 'Создание занятия', eventType: 'SESSION_CREATED', outcome: 'SUCCESS', occurredAt: new Date().toISOString(), classSessionId, details: name } }, id: true } } as never);
-        } catch {
-          // The event log must not prevent creating a schedule slot.
+        const creationRequest = JSON.stringify({ ...data, trainerId: sessionForm.trainerId });
+        const created = createdSessions.current.get(sessionForm.operationKey);
+        if (created && created.request !== creationRequest)
+          throw new Error(
+            'Занятие уже создано в предыдущей попытке. Обновите расписание и откройте его для редактирования.',
+          );
+        let classSessionId = created?.id;
+        if (!classSessionId) {
+          const response = await rest.post<{
+            success: boolean;
+            classSessionId?: string;
+            message?: string;
+          }>('/s/studio/sessions/create', {
+            name,
+            sessionFormat: data.sessionFormat,
+            startsAt: data.startsAt,
+            durationMinutes,
+            capacity,
+            status: 'PLANNED',
+            trainerId: sessionForm.trainerId || undefined,
+            idempotencyKey: sessionForm.operationKey,
+          });
+          if (!response.success || !response.classSessionId)
+            throw new Error(
+              response.message ??
+                'Создание занятия не подтверждено. Повторите с той же формой.',
+            );
+          classSessionId = response.classSessionId;
+          createdSessions.current.set(sessionForm.operationKey, {
+            id: classSessionId,
+            request: creationRequest,
+          });
         }
         if (shouldAssignSplit) {
           const isSplitAdded = await createSplitBooking(classSessionId);
@@ -1146,7 +1190,18 @@ const ClassSchedule = () => {
           }
         } else {
           for (const participant of pendingParticipants) {
-            const wasAdded = participant.paymentType === 'PAY_AS_YOU_GO' && participant.productId !== null ? await createPayAsYouGoBooking(participant.person, participant.productId, classSessionId) : await createRegularBooking(participant.person, classSessionId);
+            const wasAdded =
+              participant.paymentType === 'PAY_AS_YOU_GO' &&
+              participant.productId !== null
+                ? await createPayAsYouGoBooking(
+                    participant.person,
+                    participant.productId,
+                    classSessionId,
+                  )
+                : await createRegularBooking(
+                    participant.person,
+                    classSessionId,
+                  );
             if (!wasAdded) {
               return;
             }
@@ -1155,12 +1210,26 @@ const ClassSchedule = () => {
         setPendingParticipants([]);
         setSessionForm(null);
       } else {
-        await client.mutation({
-          updateClassSession: {
-            __args: { id: sessionForm.id, data },
-            id: true,
-          },
-        } as never);
+        const assignedTrainer = sessions.find((session) => session.id === sessionForm.id)?.trainer;
+        if (!sessionForm.trainerId && assignedTrainer) throw new Error('Выберите тренера на замену.');
+        if (sessionForm.trainerId && sessionForm.trainerId !== assignedTrainer?.id) {
+          const assignment = await rest.post<{ success: boolean; message?: string }>('/s/studio/sessions/assign-trainer', { classSessionId: sessionForm.id, trainerId: sessionForm.trainerId, requestKey: sessionForm.trainerRequestKey });
+          if (!assignment.success) throw new Error(assignment.message ?? 'Назначение тренера не подтверждено.');
+        }
+        const response = await rest.post<{
+          success: boolean;
+          message?: string;
+        }>('/s/studio/sessions/update', {
+          classSessionId: sessionForm.id,
+          idempotencyKey: sessionForm.operationKey,
+          expected: sessionForm.expected,
+          target: data,
+        });
+        if (!response.success)
+          throw new Error(
+            response.message ??
+              'Изменение занятия не подтверждено. Обновите расписание или проверьте журнал операции.',
+          );
         if (shouldAssignSplit) {
           const isSplitAdded = await createSplitBooking(sessionForm.id);
           if (!isSplitAdded) {
@@ -1184,7 +1253,9 @@ const ClassSchedule = () => {
     } catch (saveError) {
       await enqueueSnackbar({
         message:
-          saveError instanceof Error ? saveError.message : 'Не удалось сохранить занятие.',
+          saveError instanceof Error
+            ? saveError.message
+            : 'Не удалось сохранить занятие.',
         variant: 'error',
       });
     } finally {
@@ -1196,42 +1267,81 @@ const ClassSchedule = () => {
     <div style={styles.container}>
       <div style={styles.toolbar}>
         <div style={styles.title}>Расписание занятий</div>
-        <button style={styles.button} type="button" onClick={() => movePeriod(-1)}>
+        <button
+          style={styles.button}
+          type="button"
+          onClick={() => movePeriod(-1)}
+        >
           ←
         </button>
-        <button style={styles.button} type="button" onClick={() => setSelectedDate(new Date())}>
+        <button
+          style={styles.button}
+          type="button"
+          onClick={() => setSelectedDate(new Date())}
+        >
           Сегодня
         </button>
-        <button style={styles.button} type="button" onClick={() => movePeriod(1)}>
+        <button
+          style={styles.button}
+          type="button"
+          onClick={() => movePeriod(1)}
+        >
           →
         </button>
-        <button style={mode === 'day' ? styles.activeButton : styles.button} type="button" onClick={() => setMode('day')}>
+        <button
+          style={mode === 'day' ? styles.activeButton : styles.button}
+          type="button"
+          onClick={() => setMode('day')}
+        >
           День
         </button>
-        <button style={mode === 'week' ? styles.activeButton : styles.button} type="button" onClick={() => setMode('week')}>
+        <button
+          style={mode === 'week' ? styles.activeButton : styles.button}
+          type="button"
+          onClick={() => setMode('week')}
+        >
           Неделя
         </button>
       </div>
       <div style={styles.gridScroll}>
         {error ? <div style={styles.error}>{error}</div> : null}
-        <div style={{ ...styles.grid, gridTemplateColumns, gridTemplateRows: `40px ${gridHeight}px` }}>
+        <div
+          style={{
+            ...styles.grid,
+            gridTemplateColumns,
+            gridTemplateRows: `40px ${gridHeight}px`,
+          }}
+        >
           <div />
           {days.map((day) => (
             <div key={toDateKey(day)} style={styles.dayHeader}>
-              {day.toLocaleDateString('ru-RU', { weekday: 'short', day: 'numeric', month: 'short' })}
+              {day.toLocaleDateString('ru-RU', {
+                weekday: 'short',
+                day: 'numeric',
+                month: 'short',
+              })}
             </div>
           ))}
           <div style={{ ...styles.hourColumn, height: gridHeight }}>
-            {Array.from({ length: GRID_END_HOUR - GRID_START_HOUR + 1 }, (_, index) => (
-              <span key={index} style={{ ...styles.hour, top: index * HOUR_HEIGHT }}>
-                {String(GRID_START_HOUR + index).padStart(2, '0')}:00
-              </span>
-            ))}
+            {Array.from(
+              { length: GRID_END_HOUR - GRID_START_HOUR + 1 },
+              (_, index) => (
+                <span
+                  key={index}
+                  style={{ ...styles.hour, top: index * HOUR_HEIGHT }}
+                >
+                  {String(GRID_START_HOUR + index).padStart(2, '0')}:00
+                </span>
+              ),
+            )}
           </div>
           {days.map((day) => {
             const dayKey = toDateKey(day);
             return (
-              <div key={dayKey} style={{ ...styles.dayColumn, height: gridHeight }}>
+              <div
+                key={dayKey}
+                style={{ ...styles.dayColumn, height: gridHeight }}
+              >
                 {Array.from(
                   { length: GRID_END_HOUR - GRID_START_HOUR },
                   (_, index) => (
@@ -1244,34 +1354,64 @@ const ClassSchedule = () => {
                         top: index * HOUR_HEIGHT,
                       }}
                       type="button"
-                      onClick={() => openNewSessionForm(day, GRID_START_HOUR + index)}
+                      onClick={() =>
+                        openNewSessionForm(day, GRID_START_HOUR + index)
+                      }
                     />
                   ),
                 )}
-                {sessions.filter((session) => toDateKey(new Date(session.startsAt)) === dayKey).map((session) => {
-                  const startsAt = new Date(session.startsAt);
-                  const endsAt = new Date(session.endsAt);
-                  const top = Math.max(0, ((startsAt.getHours() + startsAt.getMinutes() / 60) - GRID_START_HOUR) * HOUR_HEIGHT);
-                  const height = Math.max(36, ((endsAt.getTime() - startsAt.getTime()) / 3_600_000) * HOUR_HEIGHT);
-                  const startsAtLabel = startsAt.toLocaleTimeString('ru-RU', {
-                    hour: '2-digit',
-                    minute: '2-digit',
-                  });
-                  const sessionFormatLabel = getSessionFormatLabel(
-                    session.sessionFormat,
-                  );
-                  return (
-                    <button key={session.id} type="button" onClick={(event) => { event.stopPropagation(); setSessionForm(getSessionForm(session)); }} style={{ ...styles.session, top, height }} data-tooltip={`${sessionFormatLabel} · ${startsAtLabel} · ${session.bookedCount}/${session.capacity}`}>
-                      <strong>{sessionFormatLabel}</strong><br />
-                      {startsAtLabel} · {session.bookedCount}/{session.capacity}
-                    </button>
-                  );
-                })}
+                {sessions
+                  .filter(
+                    (session) =>
+                      toDateKey(new Date(session.startsAt)) === dayKey,
+                  )
+                  .map((session) => {
+                    const startsAt = new Date(session.startsAt);
+                    const endsAt = new Date(session.endsAt);
+                    const top = Math.max(
+                      0,
+                      (startsAt.getHours() +
+                        startsAt.getMinutes() / 60 -
+                        GRID_START_HOUR) *
+                        HOUR_HEIGHT,
+                    );
+                    const height = Math.max(
+                      36,
+                      ((endsAt.getTime() - startsAt.getTime()) / 3_600_000) *
+                        HOUR_HEIGHT,
+                    );
+                    const startsAtLabel = startsAt.toLocaleTimeString('ru-RU', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    });
+                    const sessionFormatLabel = getSessionFormatLabel(
+                      session.sessionFormat,
+                    );
+                    return (
+                      <button
+                        key={session.id}
+                        type="button"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setSessionForm(getSessionForm(session));
+                        }}
+                        style={{ ...styles.session, top, height }}
+                        data-tooltip={`${sessionFormatLabel} · ${startsAtLabel} · ${session.bookedCount}/${session.capacity}`}
+                      >
+                        <strong>{sessionFormatLabel}</strong>
+                        <br />
+                        {startsAtLabel} · {session.bookedCount}/
+                        {session.capacity}
+                      </button>
+                    );
+                  })}
               </div>
             );
           })}
         </div>
-        {isLoading ? <div style={{ padding: 12 }}>Загрузка расписания…</div> : null}
+        {isLoading ? (
+          <div style={{ padding: 12 }}>Загрузка расписания…</div>
+        ) : null}
       </div>
       {successMessage !== null ? (
         <div role="status" style={styles.success}>
@@ -1280,11 +1420,31 @@ const ClassSchedule = () => {
       ) : null}
       {sessionForm !== null ? (
         <div style={styles.formBackdrop}>
-          <form style={styles.form} onSubmit={(event) => void saveSession(event)}>
-            <strong>{sessionForm.id === null ? 'Новое занятие' : 'Редактировать занятие'}</strong>
+          <form
+            style={styles.form}
+            onSubmit={(event) => void saveSession(event)}
+          >
+            <strong>
+              {sessionForm.id === null
+                ? 'Новое занятие'
+                : 'Редактировать занятие'}
+            </strong>
             <label style={styles.formLabel}>
               Название
-              <input style={styles.input} value={sessionForm.name} onChange={(event) => setSessionForm({ ...sessionForm, name: event.target.value })} />
+              <input
+                style={styles.input}
+                value={sessionForm.name}
+                onChange={(event) =>
+                  setSessionForm({ ...sessionForm, name: event.target.value })
+                }
+              />
+            </label>
+            <label style={styles.formLabel}>Тренер
+              <select style={styles.input} value={sessionForm.trainerId} onChange={(event) => setSessionForm({ ...sessionForm, trainerId: event.target.value, trainerRequestKey: crypto.randomUUID() })}>
+                <option value="">Выбрать перед закрытием занятия</option>
+                {sessionForm.trainerId && !trainers.some((trainer) => trainer.id === sessionForm.trainerId) && <option value={sessionForm.trainerId}>{sessions.find((session) => session.id === sessionForm.id)?.trainer?.name ?? 'Текущий тренер'} (неактивен)</option>}
+                {trainers.map((trainer) => <option key={trainer.id} value={trainer.id}>{trainer.name}</option>)}
+              </select>
             </label>
             {sessionForm.id === null ? (
               <label style={styles.formLabel}>
@@ -1293,14 +1453,21 @@ const ClassSchedule = () => {
                   style={styles.input}
                   value={sessionForm.productId}
                   onChange={(event) => {
-                    const product = products.find((item) => item.id === event.target.value);
+                    const product = products.find(
+                      (item) => item.id === event.target.value,
+                    );
                     setSessionForm({
                       ...sessionForm,
                       productId: event.target.value,
                       name: sessionForm.name || product?.name || '',
-                      sessionFormat: product?.sessionFormat || sessionForm.sessionFormat,
-                      durationMinutes: String(product?.durationMinutes || sessionForm.durationMinutes),
-                      capacity: String(product?.defaultSessionCapacity || sessionForm.capacity),
+                      sessionFormat:
+                        product?.sessionFormat || sessionForm.sessionFormat,
+                      durationMinutes: String(
+                        product?.durationMinutes || sessionForm.durationMinutes,
+                      ),
+                      capacity: String(
+                        product?.defaultSessionCapacity || sessionForm.capacity,
+                      ),
                     });
                   }}
                 >
@@ -1337,24 +1504,61 @@ const ClassSchedule = () => {
                 }}
               >
                 {SESSION_FORMAT_OPTIONS.map((sessionFormatOption) => (
-                  <option key={sessionFormatOption.value} value={sessionFormatOption.value}>{sessionFormatOption.label}</option>
+                  <option
+                    key={sessionFormatOption.value}
+                    value={sessionFormatOption.value}
+                  >
+                    {sessionFormatOption.label}
+                  </option>
                 ))}
               </select>
             </label>
             <label style={styles.formLabel}>
               Начало
-              <input style={styles.input} type="datetime-local" value={sessionForm.startsAt} onChange={(event) => setSessionForm({ ...sessionForm, startsAt: event.target.value })} required />
+              <input
+                style={styles.input}
+                type="datetime-local"
+                value={sessionForm.startsAt}
+                onChange={(event) =>
+                  setSessionForm({
+                    ...sessionForm,
+                    startsAt: event.target.value,
+                  })
+                }
+                required
+              />
             </label>
             <label style={styles.formLabel}>
               Длительность, мин.
-              <input style={styles.input} type="number" min="1" step="5" value={sessionForm.durationMinutes} onChange={(event) => setSessionForm({ ...sessionForm, durationMinutes: event.target.value })} required />
+              <input
+                style={styles.input}
+                type="number"
+                min="1"
+                step="5"
+                value={sessionForm.durationMinutes}
+                onChange={(event) =>
+                  setSessionForm({
+                    ...sessionForm,
+                    durationMinutes: event.target.value,
+                  })
+                }
+                required
+              />
             </label>
             <label style={styles.formLabel}>
               Окончание
               <span style={styles.readOnlyValue}>
-                {Number.isNaN(getEndsAt(sessionForm.startsAt, sessionForm.durationMinutes).getTime())
+                {Number.isNaN(
+                  getEndsAt(
+                    sessionForm.startsAt,
+                    sessionForm.durationMinutes,
+                  ).getTime(),
+                )
                   ? 'Укажите начало и длительность'
-                  : getEndsAt(sessionForm.startsAt, sessionForm.durationMinutes).toLocaleString('ru-RU', {
+                  : getEndsAt(
+                      sessionForm.startsAt,
+                      sessionForm.durationMinutes,
+                    ).toLocaleString('ru-RU', {
                       day: 'numeric',
                       hour: '2-digit',
                       minute: '2-digit',
@@ -1364,7 +1568,20 @@ const ClassSchedule = () => {
             </label>
             <label style={styles.formLabel}>
               Вместимость
-              <input style={styles.input} type="number" min="1" step="1" value={sessionForm.capacity} onChange={(event) => setSessionForm({ ...sessionForm, capacity: event.target.value })} required />
+              <input
+                style={styles.input}
+                type="number"
+                min="1"
+                step="1"
+                value={sessionForm.capacity}
+                onChange={(event) =>
+                  setSessionForm({
+                    ...sessionForm,
+                    capacity: event.target.value,
+                  })
+                }
+                required
+              />
             </label>
             <div style={styles.participants}>
               <strong>
@@ -1377,7 +1594,12 @@ const ClassSchedule = () => {
               {sessionForm.id === null
                 ? pendingParticipants.map((participant) => (
                     <div key={participant.person.id} style={styles.participant}>
-                      <span>{getPersonLabel(participant.person)}{participant.paymentType === 'PAY_AS_YOU_GO' ? ' · оплата ожидается' : ''}</span>
+                      <span>
+                        {getPersonLabel(participant.person)}
+                        {participant.paymentType === 'PAY_AS_YOU_GO'
+                          ? ' · оплата ожидается'
+                          : ''}
+                      </span>
                       <button
                         style={styles.smallButton}
                         type="button"
@@ -1385,7 +1607,8 @@ const ClassSchedule = () => {
                           setPendingParticipants((currentParticipants) =>
                             currentParticipants.filter(
                               (currentParticipant) =>
-                                currentParticipant.person.id !== participant.person.id,
+                                currentParticipant.person.id !==
+                                participant.person.id,
                             ),
                           )
                         }
@@ -1395,19 +1618,34 @@ const ClassSchedule = () => {
                     </div>
                   ))
                 : null}
-              {sessionForm.id !== null && isParticipantsLoading ? <span>Загрузка участников…</span> : null}
-              {sessionForm.id !== null && !isParticipantsLoading ? activeParticipants.map((participant) => (
-                <div key={participant.id} style={styles.participant}>
-                  <span>{getPersonLabel(participant.person)}{participant.paymentStatus === 'EXPECTED' ? ' · оплата ожидается' : ''}</span>
-                </div>
-              )) : null}
-              {sessionForm.id !== null && !isParticipantsLoading && activeParticipants.length === 0 ? <span>Участников пока нет.</span> : null}
+              {sessionForm.id !== null && isParticipantsLoading ? (
+                <span>Загрузка участников…</span>
+              ) : null}
+              {sessionForm.id !== null && !isParticipantsLoading
+                ? activeParticipants.map((participant) => (
+                    <div key={participant.id} style={styles.participant}>
+                      <span>
+                        {getPersonLabel(participant.person)}
+                        {participant.paymentStatus === 'EXPECTED'
+                          ? ' · оплата ожидается'
+                          : ''}
+                      </span>
+                    </div>
+                  ))
+                : null}
+              {sessionForm.id !== null &&
+              !isParticipantsLoading &&
+              activeParticipants.length === 0 ? (
+                <span>Участников пока нет.</span>
+              ) : null}
               {sessionForm.sessionFormat === 'SPLIT_EQUIPMENT' ? (
                 <>
                   <strong>Доступные сплиты</strong>
                   {isSplitPairLoading ? <span>Загрузка пар…</span> : null}
                   {!isSplitPairLoading && splitPairs.length === 0 ? (
-                    <span>Нет пар с активным сплит-блоком и доступным остатком.</span>
+                    <span>
+                      Нет пар с активным сплит-блоком и доступным остатком.
+                    </span>
                   ) : null}
                   {splitPairs.length > 0 ? (
                     <>
@@ -1436,17 +1674,21 @@ const ClassSchedule = () => {
                           );
                         })}
                       </select>
-                      {selectedSplitPair !== undefined && selectedSplitMembership === undefined ? (
+                      {selectedSplitPair !== undefined &&
+                      selectedSplitMembership === undefined ? (
                         <span>
-                          У выбранной пары нет активного общего блока с доступным
-                          остатком.
+                          У выбранной пары нет активного общего блока с
+                          доступным остатком.
                         </span>
                       ) : null}
                     </>
                   ) : null}
                 </>
               ) : null}
-              {sessionForm.sessionFormat !== 'SPLIT_EQUIPMENT' && (sessionForm.id === null ? pendingParticipants.length : activeParticipants.length) < Number(sessionForm.capacity) ? (
+              {sessionForm.sessionFormat !== 'SPLIT_EQUIPMENT' &&
+              (sessionForm.id === null
+                ? pendingParticipants.length
+                : activeParticipants.length) < Number(sessionForm.capacity) ? (
                 <button
                   style={styles.button}
                   type="button"
@@ -1509,8 +1751,25 @@ const ClassSchedule = () => {
                   {isSaving ? 'Отмена…' : 'Отменить занятие'}
                 </button>
               ) : null}
-              <button style={styles.button} type="button" onClick={() => setSessionForm(null)} disabled={isSaving}>Отмена</button>
-              <button style={styles.activeButton} type="submit" disabled={isSaving}>{isSaving ? 'Сохранение…' : sessionForm.id === null ? 'Создать занятие' : 'Сохранить'}</button>
+              <button
+                style={styles.button}
+                type="button"
+                onClick={() => setSessionForm(null)}
+                disabled={isSaving}
+              >
+                Отмена
+              </button>
+              <button
+                style={styles.activeButton}
+                type="submit"
+                disabled={isSaving}
+              >
+                {isSaving
+                  ? 'Сохранение…'
+                  : sessionForm.id === null
+                    ? 'Создать занятие'
+                    : 'Сохранить'}
+              </button>
             </div>
           </form>
         </div>
@@ -1521,7 +1780,15 @@ const ClassSchedule = () => {
             <strong>Добавить клиента</strong>
             <label style={styles.formLabel}>
               Способ записи
-              <select style={styles.input} value={bookingPaymentType} onChange={(event) => setBookingPaymentType(event.target.value as 'MEMBERSHIP' | 'PAY_AS_YOU_GO')}>
+              <select
+                style={styles.input}
+                value={bookingPaymentType}
+                onChange={(event) =>
+                  setBookingPaymentType(
+                    event.target.value as 'MEMBERSHIP' | 'PAY_AS_YOU_GO',
+                  )
+                }
+              >
                 <option value="MEMBERSHIP">По пакету</option>
                 <option value="PAY_AS_YOU_GO">Оплата по факту</option>
               </select>
@@ -1529,9 +1796,25 @@ const ClassSchedule = () => {
             {bookingPaymentType === 'PAY_AS_YOU_GO' ? (
               <label style={styles.formLabel}>
                 Услуга
-                <select style={styles.input} value={payAsYouGoProductId} onChange={(event) => setPayAsYouGoProductId(event.target.value)}>
+                <select
+                  style={styles.input}
+                  value={payAsYouGoProductId}
+                  onChange={(event) =>
+                    setPayAsYouGoProductId(event.target.value)
+                  }
+                >
                   <option value="">Выберите услугу</option>
-                  {products.filter((product) => ['SINGLE', 'PERSONAL'].includes(product.category) && product.sessionFormat === sessionForm.sessionFormat).map((product) => <option key={product.id} value={product.id}>{product.name}</option>)}
+                  {products
+                    .filter(
+                      (product) =>
+                        ['SINGLE', 'PERSONAL'].includes(product.category) &&
+                        product.sessionFormat === sessionForm.sessionFormat,
+                    )
+                    .map((product) => (
+                      <option key={product.id} value={product.id}>
+                        {product.name}
+                      </option>
+                    ))}
                 </select>
               </label>
             ) : null}
@@ -1546,30 +1829,42 @@ const ClassSchedule = () => {
               {isPersonSearchLoading ? <span>Загрузка клиентов…</span> : null}
               {!isPersonSearchLoading
                 ? availablePersonResults.map((person) => {
-                      const membership = getMatchingMembership(person, sessionForm);
-                      const isSelected = selectedPeople.some(
-                        (selectedPerson) => selectedPerson.id === person.id,
-                      );
+                    const membership = getMatchingMembership(
+                      person,
+                      sessionForm,
+                    );
+                    const isSelected = selectedPeople.some(
+                      (selectedPerson) => selectedPerson.id === person.id,
+                    );
 
-                      return (
-                        <label
-                          key={person.id}
-                          style={styles.searchResult}
-                        >
-                          <span>
-                            <input
-                              checked={isSelected}
-                              disabled={(!isSelected && selectedPeople.length >= availablePersonSlots) || (bookingPaymentType === 'PAY_AS_YOU_GO' && payAsYouGoProductId === '')}
-                              type="checkbox"
-                              onChange={() => toggleSelectedPerson(person)}
-                            />{' '}
-                            <strong>{getPersonLabel(person)}</strong>
-                          </span>
-                          <span style={styles.contact}>{getPersonContact(person)}</span>
-                          <span style={styles.membershipAvailable}>{bookingPaymentType === 'PAY_AS_YOU_GO' ? 'Оплата будет ожидаться после занятия' : `${membership?.product?.name} · доступно: ${membership?.visitsAvailable}`}</span>
-                        </label>
-                      );
-                    })
+                    return (
+                      <label key={person.id} style={styles.searchResult}>
+                        <span>
+                          <input
+                            checked={isSelected}
+                            disabled={
+                              (!isSelected &&
+                                selectedPeople.length >=
+                                  availablePersonSlots) ||
+                              (bookingPaymentType === 'PAY_AS_YOU_GO' &&
+                                payAsYouGoProductId === '')
+                            }
+                            type="checkbox"
+                            onChange={() => toggleSelectedPerson(person)}
+                          />{' '}
+                          <strong>{getPersonLabel(person)}</strong>
+                        </span>
+                        <span style={styles.contact}>
+                          {getPersonContact(person)}
+                        </span>
+                        <span style={styles.membershipAvailable}>
+                          {bookingPaymentType === 'PAY_AS_YOU_GO'
+                            ? 'Оплата будет ожидаться после занятия'
+                            : `${membership?.product?.name} · доступно: ${membership?.visitsAvailable}`}
+                        </span>
+                      </label>
+                    );
+                  })
                 : null}
               {!isPersonSearchLoading && availablePersonResults.length === 0 ? (
                 <span>Подходящие клиенты не найдены.</span>

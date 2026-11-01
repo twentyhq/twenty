@@ -1,7 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 
-import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { recordPastAttendance } from '../record-past-attendance-handler.ts';
 
 import {
@@ -9,140 +8,8 @@ import {
   type CreateClassSessionInput,
 } from '../create-class-session-handler.ts';
 
-type RecordData = Record<string, unknown>;
-type Filter = Record<string, unknown> & { or?: Filter[] };
-type Selection = Record<
-  string,
-  { __args: { filter?: Filter; data?: RecordData; id?: string } }
->;
-class FakeClient {
-  records: Record<string, RecordData[]> = {
-    classSessions: [],
-    studioBookings: [],
-    studioEvents: [],
-    studioMemberships: ['one', 'two'].map((id) => ({
-      id: 'membership-' + id,
-      personId: 'person-' + id,
-      productId: 'product',
-      status: 'ACTIVE',
-      activatedAt: '2020-01-01T00:00:00.000Z',
-      expiresOn: null,
-      purchaseIdempotencyKey: 'paid-' + id,
-      visitsGranted: 8,
-      visitsAvailable: 8,
-      visitsReserved: 0,
-      visitsConsumed: 0,
-    })),
-    membershipTransactions: ['one', 'two'].map((id) => ({
-      id: 'grant-' + id,
-      membershipId: 'membership-' + id,
-      transactionType: 'GRANT',
-      visitDelta: 8,
-      occurredAt: '2020-01-01T00:00:00.000Z',
-    })),
-  };
-  bookingAttempts = 0;
-  failSecondBooking = false;
-  failBookingEvent = false;
-  loseBookingEventResponse = false;
-  nextId = 1;
-  matches(record: RecordData, filter: Filter = {}): boolean {
-    if (filter.or) return filter.or.some((item) => this.matches(record, item));
-    return Object.entries(filter).every(
-      ([key, value]) => record[key] === (value as { eq: unknown }).eq,
-    );
-  }
-  node(record: RecordData): RecordData {
-    const result = { ...record };
-    for (const relation of [
-      'person',
-      'membership',
-      'product',
-      'classSession',
-      'booking',
-    ])
-      if (record[relation + 'Id'])
-        result[relation] = { id: record[relation + 'Id'] };
-    if (record.productId)
-      result.product = {
-        id: record.productId,
-        name: 'Пакет',
-        category: record.category ?? 'GROUP_PACKAGE',
-        sessionFormat: record.format ?? 'GROUP_REFORMER',
-        durationMinutes: 55,
-      };
-    return result;
-  }
-  async query(selection: Selection) {
-    return Object.fromEntries(
-      Object.entries(selection).map(([key, { __args: args }]) => [
-        key,
-        {
-          edges: this.records[key]
-            .filter((record) => this.matches(record, args.filter))
-            .map((record) => ({ node: this.node(record) })),
-        },
-      ]),
-    );
-  }
-  async mutation(selection: Selection) {
-    const [operation, { __args: args }] = Object.entries(selection)[0];
-    if (
-      operation === 'createStudioEvent' &&
-      args.data?.eventType === 'BOOKING_CREATED' &&
-      this.failBookingEvent
-    ) {
-      this.failBookingEvent = false;
-      throw new Error('Audit write failed');
-    }
-    if (
-      operation === 'createStudioBooking' &&
-      ++this.bookingAttempts === 2 &&
-      this.failSecondBooking
-    ) {
-      this.failSecondBooking = false;
-      throw new Error('Second booking failed');
-    }
-    const resources: Record<string, string> = {
-      createClassSession: 'classSessions',
-      createStudioBooking: 'studioBookings',
-      createStudioEvent: 'studioEvents',
-      createMembershipTransaction: 'membershipTransactions',
-      updateClassSession: 'classSessions',
-      updateStudioMembership: 'studioMemberships',
-    };
-    const records = this.records[resources[operation]];
-    if (operation.startsWith('update')) {
-      const record = records.find((item) => item.id === args.id);
-      assert.ok(record);
-      Object.assign(record, args.data);
-      return { [operation]: this.node(record) };
-    }
-    const data: RecordData = { id: 'generated-' + this.nextId++, ...args.data };
-    if (
-      records.some(
-        (record) =>
-          record.id === data.id ||
-          (data.idempotencyKey &&
-            record.idempotencyKey === data.idempotencyKey),
-      )
-    )
-      throw new Error('duplicate entry');
-    records.push(data);
-    if (
-      operation === 'createStudioEvent' &&
-      args.data?.eventType === 'BOOKING_CREATED' &&
-      this.loseBookingEventResponse
-    ) {
-      this.loseBookingEventResponse = false;
-      throw new Error('Audit response lost');
-    }
-    return { [operation]: this.node(data) };
-  }
-  asClient() {
-    return this as unknown as CoreApiClient;
-  }
-}
+import { SessionParticipantsClient as FakeClient } from './fixtures/session-participants-client.ts';
+
 const input: CreateClassSessionInput = {
   name: 'Группа',
   sessionFormat: 'GROUP_REFORMER',

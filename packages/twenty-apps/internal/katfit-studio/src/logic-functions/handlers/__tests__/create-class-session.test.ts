@@ -15,6 +15,8 @@ type Selection = Record<
 >;
 class FakeClient {
   records: Record<string, RecordData[]> = {
+    studioSessionLocks: [], trainerPayEntries: [],
+    studioTrainers: [{ id: 'trainer', active: true }],
     classSessions: [],
     studioEvents: [],
   };
@@ -35,6 +37,18 @@ class FakeClient {
     };
   }
   async mutation(selection: Selection) {
+    const lockOperation = Object.entries(selection)[0];
+    if (lockOperation[0] === 'createStudioSessionLock') {
+      const data = lockOperation[1].__args.data!;
+      if (this.records.studioSessionLocks.some((record) => record.name === data.name)) throw new Error('Session locked');
+      const record = { id: crypto.randomUUID(), ...data };
+      this.records.studioSessionLocks.push(record);
+      return { createStudioSessionLock: record };
+    }
+    if (lockOperation[0] === 'destroyStudioSessionLock') {
+      this.records.studioSessionLocks = this.records.studioSessionLocks.filter((record) => record.id !== lockOperation[1].__args.id);
+      return { destroyStudioSessionLock: { id: lockOperation[1].__args.id } };
+    }
     const [operation, { __args: args }] = Object.entries(selection)[0];
     if (this.failOn === operation) {
       this.failOn = undefined;
@@ -195,5 +209,22 @@ test('rejects invalid format, naive time and invalid duration/capacity without w
       false,
     );
   }
+  assert.equal(client.records.classSessions.length, 0);
+});
+
+test('creates a session with a catalog trainer and retains the trainer in the creation audit', async () => {
+  const client = new FakeClient();
+  const request = { ...input, trainerId: 'trainer' };
+  assert.ok((await createClassSession(request, client.asClient(), now)).success);
+  assert.equal(client.records.classSessions[0].trainerId, 'trainer');
+  assert.equal(JSON.parse(client.records.studioEvents[0].details as string).trainerId, 'trainer');
+  assert.ok((await createClassSession(request, client.asClient(), now)).success);
+  const changed = await createClassSession({ ...request, trainerId: 'other' }, client.asClient(), now);
+  assert.ok(!changed.success && changed.code === 'IDEMPOTENCY_CONFLICT');
+});
+test('does not create a class with an inactive catalog trainer', async () => {
+  const client = new FakeClient(); client.records.studioTrainers[0].active = false;
+  const result = await createClassSession({ ...input, trainerId: 'trainer' }, client.asClient(), now);
+  assert.ok(!result.success && result.code === 'TRAINER_NOT_ACTIVE');
   assert.equal(client.records.classSessions.length, 0);
 });

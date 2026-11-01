@@ -1,0 +1,11 @@
+{
+  "sourceBranch": "codex/trainer-compensation",
+  "sourceBaseCommit": "7e6b240d752c9bf54fcd72e2d8b140ffb5bb782a",
+  "includesTestedUncommittedAppChanges": true,
+  "sourceFileCount": 333,
+  "sourceSha256": "8155cae38abd853c2e79b96d3ea5ac193541d9557c1615b19fa09bf897038f23",
+  "stagePlan": "0 add / 2 widget null normalizations / 0 destroy",
+  "productionPlan": "377 add / 18 change / 0 destroy",
+  "unitTests": 298,
+  "snapshot": "/tmp/katfit-trainers-production-release-20261030"
+}

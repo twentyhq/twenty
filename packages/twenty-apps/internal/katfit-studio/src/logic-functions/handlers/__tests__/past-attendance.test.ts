@@ -96,3 +96,39 @@ test('API-key context does not bypass package ownership', async () => {
   assert.ok(!result.success && result.code === 'MEMBERSHIP_NOT_OWNED');
   assert.equal(client.records.studioBookings.length, 0);
 });
+
+test('coordinated historical creation stops after session preparation without booking or consuming', async () => {
+  const client = new FakeClient();
+  let preparedId: string | null = null;
+  const result = await recordPastAttendance(input, { userWorkspaceId: null }, client.asClient(), async (classSessionId) => {
+    preparedId = classSessionId;
+    assert.equal(client.records.classSessions.length, 1);
+    assert.equal(client.records.studioBookings.length, 0);
+    assert.equal(client.records.membershipTransactions.length, 1);
+    return { success: false, status: 409, code: 'SESSION_OPERATION_BUSY', message: 'Busy' };
+  });
+  assert.ok(preparedId);
+  assert.ok(!result.success && result.code === 'SESSION_OPERATION_BUSY');
+  assert.equal(client.records.studioBookings.length, 0);
+  assert.equal(client.records.membershipTransactions.length, 1);
+  assert.equal(client.records.studioEvents.length, 0);
+});
+
+test('coordinated preview never creates a historical session or invokes ownership callback', async () => {
+  const client = new FakeClient();
+  const result = await recordPastAttendance({ ...input, previewOnly: true }, { userWorkspaceId: null }, client.asClient(), async () => {
+    assert.fail('Preview must be readonly');
+  });
+  assert.ok(result.success && 'preview' in result);
+  assert.equal(client.records.classSessions.length, 0);
+});
+
+
+test('historical attendance cannot use a shorter declared interval than the product', async () => {
+  const client = new FakeClient();
+  const result = await recordPastAttendance({ ...input, endsAt: '2021-01-01T10:10:00.000Z' }, { userWorkspaceId: null }, client.asClient());
+  assert.ok(!result.success && result.code === 'ATTENDANCE_DURATION_MISMATCH');
+  assert.equal(client.records.classSessions.length, 0);
+  assert.equal(client.records.studioBookings.length, 0);
+  assert.equal(client.records.membershipTransactions.length, 1);
+});

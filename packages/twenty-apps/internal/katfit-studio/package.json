@@ -20,9 +20,10 @@
     "lint": "oxlint -c .oxlintrc.json .",
     "lint:fix": "oxlint --fix -c .oxlintrc.json .",
     "typecheck": "tsgo --noEmit -p tsconfig.json",
-    "test:unit": "node --experimental-strip-types --import ./scripts/register-test-hooks.mjs --test 'src/logic-functions/utils/__tests__/*.test.ts' 'src/logic-functions/handlers/__tests__/*.test.ts'"
+    "test:unit": "node --experimental-strip-types --import ./scripts/register-test-hooks.mjs --test 'src/front-components/utils/__tests__/*.test.ts' 'src/logic-functions/utils/__tests__/*.test.ts' 'src/logic-functions/handlers/__tests__/*.test.ts'"
   },
   "devDependencies": {
+    "@sniptt/guards": "^0.2.0",
     "@types/node": "^24.7.2",
     "@types/react": "^19.0.0",
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",

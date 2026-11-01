@@ -1,7 +1,7 @@
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { Response } from 'twenty-sdk/logic-function';
 
-import { createPayAsYouGoBooking } from 'src/logic-functions/handlers/create-pay-as-you-go-booking-handler';
+import { createGuardedPayAsYouGoBooking } from 'src/logic-functions/handlers/create-guarded-pay-as-you-go-booking-handler';
 import { recordStudioEvent } from 'src/logic-functions/utils/studio-event';
 
 type CreatePayAsYouGoBookingInput = { classSessionId: string; idempotencyKey: string; personId: string; productId: string };
@@ -15,7 +15,7 @@ export default defineLogicFunction({
     const input = (routePayload.body ?? {}) as CreatePayAsYouGoBookingInput;
 
     try {
-      const result = await createPayAsYouGoBooking(input);
+      const result = await createGuardedPayAsYouGoBooking(input);
 
       if (!result.success) {
         await recordStudioEvent({

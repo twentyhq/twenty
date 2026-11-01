@@ -1,3 +1,5 @@
+import { runAuditedStudioCommand } from 'src/logic-functions/utils/studio-command-audit';
+import { runWithStudioScheduleGuard } from 'src/logic-functions/utils/studio-schedule-guard';
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { Response } from 'twenty-sdk/logic-function';
 
@@ -11,26 +13,35 @@ export default defineLogicFunction({
   name: 'studio-create-class-session',
   description:
     'Create a future or historical session with optional package-backed participants and required audit events',
-  timeoutSeconds: 30,
-  handler: async (payload: RoutePayload<CreateClassSessionInput>) => {
-    try {
-      const result = await createClassSession(
-        (payload.body ?? {}) as CreateClassSessionInput,
-      );
-      return new Response(result, {
-        status: result.success ? 200 : result.status,
-      });
-    } catch {
-      return new Response(
-        {
-          success: false,
-          code: 'SESSION_CREATE_UNCONFIRMED',
-          message:
-          'Создание тренировки, добавление участников или журнал не подтверждены. Проверьте CRM и повторите с прежним ключом.',
-        },
-        { status: 500 },
-      );
-    }
+  timeoutSeconds: 60,
+  handler: async (
+    payload: RoutePayload<CreateClassSessionInput>,
+    context: { userWorkspaceId: string | null },
+  ) => {
+    const input = (payload.body ?? {}) as CreateClassSessionInput;
+    const end = Date.parse(input.startsAt) + input.durationMinutes * 60000;
+    const result = await runAuditedStudioCommand(
+      'studio-create-class-session',
+      input,
+      () =>
+        runWithStudioScheduleGuard(
+          {
+            kind: 'create',
+            recordingKey: `session-create:${String(input.idempotencyKey ?? '').trim()}`,
+            startsAt: input.startsAt,
+            endsAt: Number.isFinite(end) ? new Date(end).toISOString() : '',
+          },
+          () =>
+            createClassSession(input, undefined, new Date(), {
+              coordinateParticipants: true,
+            }),
+        ),
+      undefined,
+      context,
+    );
+    return new Response(result, {
+      status: result.success ? 200 : result.status,
+    });
   },
   httpRouteTriggerSettings: {
     path: '/studio/sessions/create',
