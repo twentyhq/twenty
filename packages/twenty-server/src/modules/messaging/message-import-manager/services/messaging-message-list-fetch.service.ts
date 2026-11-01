@@ -125,6 +125,7 @@ export class MessagingMessageListFetchService {
             `messages-to-import:${workspaceId}:${freshMessageChannel.id}`,
             `messages-to-import-total:${workspaceId}:${freshMessageChannel.id}`,
             `messages-imported:${workspaceId}:${freshMessageChannel.id}`,
+            `messages-to-refresh:${workspaceId}:${freshMessageChannel.id}`,
           ]);
 
           const messageExternalIds = [
@@ -156,6 +157,23 @@ export class MessagingMessageListFetchService {
               { shouldBypassPermissionChecks: true },
             );
 
+          const messageExternalIdsRemovedFromAFolder = new Set(
+            messageExternalIdsToDelete,
+          );
+
+          const movedMessageExternalIds = messageExternalIds.filter(
+            (messageExternalId) =>
+              messageExternalIdsRemovedFromAFolder.has(messageExternalId),
+          );
+
+          if (movedMessageExternalIds.length > 0) {
+            await this.cacheStorage.setAdd(
+              `messages-to-refresh:${workspaceId}:${freshMessageChannel.id}`,
+              movedMessageExternalIds,
+              ONE_WEEK_IN_MILLISECONDS,
+            );
+          }
+
           const messageExternalIdsChunks = chunk(messageExternalIds, 200);
 
           for (const [
@@ -180,7 +198,8 @@ export class MessagingMessageListFetchService {
               (messageExternalId) =>
                 !existingMessageChannelMessageAssociationsExternalIds.includes(
                   messageExternalId,
-                ),
+                ) ||
+                messageExternalIdsRemovedFromAFolder.has(messageExternalId),
             );
 
             if (messageExternalIdsToImport.length) {

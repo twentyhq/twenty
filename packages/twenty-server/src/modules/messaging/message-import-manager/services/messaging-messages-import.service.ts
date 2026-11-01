@@ -202,12 +202,18 @@ export class MessagingMessagesImportService {
           );
 
           if (messagesToSave.length > 0) {
+            const messageExternalIdsToRefresh =
+              await this.cacheStorage.setMembers(
+                `messages-to-refresh:${workspaceId}:${messageChannel.id}`,
+              );
+
             await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
               {
                 messagesToSave,
                 messageChannel,
                 connectedAccount,
                 workspaceId,
+                messageExternalIdsToRefresh,
               },
             );
           }
