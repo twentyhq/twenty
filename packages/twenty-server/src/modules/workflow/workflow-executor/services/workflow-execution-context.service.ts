@@ -130,7 +130,11 @@ export class WorkflowExecutionContextService {
       isDefined(workflowRun.createdBy.workspaceMemberId);
 
     const authContext = isActingOnBehalfOfUser
-      ? await this.buildMemberAuthContext(workflowRun, workspace, application)
+      ? await this.buildMemberAuthContext({
+          workflowRun,
+          workspace,
+          application,
+        })
       : buildApplicationAuthContext({
           workspace: fromWorkspaceEntityToFlat(workspace),
           application,
@@ -180,11 +184,15 @@ export class WorkflowExecutionContextService {
     return workflow.applicationId;
   }
 
-  private async buildMemberAuthContext(
-    workflowRun: WorkflowRunWorkspaceEntity,
-    workspace: WorkspaceEntity,
-    application: FlatApplication,
-  ): Promise<WorkspaceAuthContext> {
+  private async buildMemberAuthContext({
+    workflowRun,
+    workspace,
+    application,
+  }: {
+    workflowRun: WorkflowRunWorkspaceEntity;
+    workspace: WorkspaceEntity;
+    application: FlatApplication;
+  }): Promise<WorkspaceAuthContext> {
     const workspaceMember =
       await this.userWorkspaceService.getWorkspaceMemberOrThrow({
         workspaceMemberId: workflowRun.createdBy.workspaceMemberId!,
