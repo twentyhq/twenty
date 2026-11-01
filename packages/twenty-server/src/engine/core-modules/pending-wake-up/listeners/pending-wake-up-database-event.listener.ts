@@ -72,22 +72,20 @@ export class PendingWakeUpDatabaseEventListener {
         continue;
       }
 
-      // the resolution reads the record with the permissions of the run waiting on it
-      const matchingEvent = payload.events.find((event) =>
+      // the resolution skips a record the waiting run cannot read, so every match gets one
+      const matchingEvents = payload.events.filter((event) =>
         doesEventMatchPendingWakeUp({
           condition: eventWakeUp.condition,
           event,
         }),
       );
 
-      if (!isDefined(matchingEvent)) {
-        continue;
+      for (const matchingEvent of matchingEvents) {
+        await this.pendingWakeUpService.scheduleResolution({
+          wakeUp: eventWakeUp,
+          event: buildPendingWakeUpEvent({ eventName, event: matchingEvent }),
+        });
       }
-
-      await this.pendingWakeUpService.scheduleResolution({
-        wakeUp: eventWakeUp,
-        event: buildPendingWakeUpEvent({ eventName, event: matchingEvent }),
-      });
     }
   }
 }
