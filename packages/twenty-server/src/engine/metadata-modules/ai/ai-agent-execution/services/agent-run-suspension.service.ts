@@ -173,7 +173,7 @@ export class AgentRunSuspensionService {
 
     return this.agentRunJobScopeService.resolve({
       workspaceId,
-      agentId: suspension.runSpec.agentId,
+      spec: suspension.runSpec,
     });
   }
 

@@ -21,6 +21,7 @@ import { AgentRunResolver } from 'src/engine/metadata-modules/ai/ai-agent-execut
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentCallerConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-caller-conversation.service';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
+import { AgentRunPersonaService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service';
 import { AgentRunJobScopeService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-job-scope.service';
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { AgentRunPendingWakeUpHandlerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-pending-wake-up-handler.service';
@@ -41,6 +42,7 @@ import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/ag
 import { AgentChatThreadLifecycleModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread-lifecycle.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
+import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
 import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
@@ -66,6 +68,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     SkillModule,
     ToolProviderModule,
     WorkspaceCacheModule,
+    WorkspaceManyOrAllFlatEntityMapsCacheModule,
     TypeOrmModule.forFeature([
       AgentEntity,
       FileEntity,
@@ -79,6 +82,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AgentRunCallerHandlerRegistryService,
     AgentRunConversationService,
     AgentRunJobScopeService,
+    AgentRunPersonaService,
     AgentRunSuspensionService,
     AgentMessagePartResolver,
     AgentMessageResolver,
@@ -105,6 +109,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AgentCallerConversationService,
     AgentRunCallerHandlerRegistryService,
     AgentRunConversationService,
+    AgentRunPersonaService,
     AgentRunSuspensionService,
     AgentRunnerService,
     AgentTurnService,

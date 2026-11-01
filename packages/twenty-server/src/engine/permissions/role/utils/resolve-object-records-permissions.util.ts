@@ -45,6 +45,7 @@ export const resolveObjectRecordsPermissions = ({
   return {
     objectRecordsPermissions: computeObjectsPermissionsForRolePermissionConfig({
       intersectionOf: rolePermissionConfig.intersectionOf,
+      scope: rolePermissionConfig.scope,
       rolesPermissions: objectPermissionsByRoleId,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,

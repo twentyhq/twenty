@@ -523,7 +523,7 @@ export class ToolRegistryService {
 
     return {
       ...(await context.resolveExecutionContext()),
-      explicitObjectGrantsRoleId: context.explicitObjectGrantsRoleId,
+      explicitObjectGrants: context.explicitObjectGrants,
     };
   }
 

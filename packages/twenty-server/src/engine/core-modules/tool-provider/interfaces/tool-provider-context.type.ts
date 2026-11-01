@@ -3,6 +3,7 @@ import { type APP_LOCALES } from 'twenty-shared/translations';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type ExplicitObjectGrants } from 'src/engine/core-modules/tool-provider/interfaces/explicit-object-grants.type';
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/code-execution-stream-emitter.type';
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 
@@ -19,6 +20,5 @@ export type ToolProviderContext = {
   threadId?: string;
   locale?: keyof typeof APP_LOCALES;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;
-  // database tools then only cover the objects this role explicitly grants
-  explicitObjectGrantsRoleId?: string;
+  explicitObjectGrants?: ExplicitObjectGrants;
 };
