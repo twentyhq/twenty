@@ -2,10 +2,12 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { MessageChannelType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 import { v4 } from 'uuid';
 
+import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -55,7 +57,7 @@ export class MessagingMessageService {
 
   public async saveMessagesWithinTransaction(
     messages: MessageWithParticipants[],
-    messageChannelId: string,
+    messageChannel: Pick<MessageChannelEntity, 'id' | 'type'>,
     transactionScope: WorkspaceTransactionScope,
     workspaceId: string,
   ): Promise<{
@@ -68,6 +70,7 @@ export class MessagingMessageService {
     messageExternalIdToMessageThreadIdMap: Map<string, string>;
   }> {
     const authContext = buildSystemAuthContext(workspaceId);
+    const messageChannelId = messageChannel.id;
 
     return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
@@ -197,6 +200,7 @@ export class MessagingMessageService {
             messageAccumulator.existingMessageChannelMessageAssociationInDB;
 
           if (
+            messageChannel.type !== MessageChannelType.APP &&
             isDefined(existingAssociation) &&
             existingAssociation.messageExternalId === message.externalId
           ) {

@@ -78,7 +78,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                 messageExternalIdToMessageThreadIdMap,
               } = await this.messageService.saveMessagesWithinTransaction(
                 messagesToSave,
-                messageChannel.id,
+                messageChannel,
                 transactionScope,
                 workspaceId,
               );
