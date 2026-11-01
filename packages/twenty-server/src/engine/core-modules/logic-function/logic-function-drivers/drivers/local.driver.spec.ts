@@ -1,3 +1,5 @@
+import { encodeFrontComponentTypeReferences } from 'twenty-shared/front-component-build';
+import { getFrontComponentCompilerTypeReferences } from 'src/engine/metadata-modules/ai/ai-front-component/utils/get-front-component-compiler-type-references.util';
 import {
   access,
   copyFile,
@@ -124,6 +126,10 @@ const escapeUnsafeChars = (value: string): string =>
 
 jest.useRealTimers();
 
+const TYPE_REFERENCES = encodeFrontComponentTypeReferences(
+  getFrontComponentCompilerTypeReferences(),
+).toString('base64');
+
 const PACKAGE_JSON = `${JSON.stringify({
   name: 'local-build-fixture',
   private: true,
@@ -218,6 +224,7 @@ fs.symlinkSync(${JSON.stringify(dirname(dirname(require.resolve('react/package.j
     }
     const request: FrontComponentBuilderRequest = {
       action: 'transpile',
+      typeReferences: TYPE_REFERENCES,
       input: INPUT,
       manifest: { checksum: vendor.checksum, exports: vendor.exports },
     };
@@ -246,6 +253,7 @@ fs.symlinkSync(${JSON.stringify(dirname(dirname(require.resolve('react/package.j
   it('returns the same invalid-input diagnostics as Lambda', async () => {
     const request: FrontComponentBuilderRequest = {
       action: 'transpile',
+      typeReferences: TYPE_REFERENCES,
       input: { ...INPUT, source: 'export default () => <div />;' },
       manifest: { checksum: 'a'.repeat(64), exports: {} },
     };
@@ -279,7 +287,7 @@ fs.symlinkSync(${JSON.stringify(dirname(dirname(require.resolve('react/package.j
 const require = createRequire(import.meta.url);
 export const handler = () => {
   require('node:fs').writeFileSync(${JSON.stringify(workingDirectoryFile)}, process.cwd());
-  return { success: true, builtCode: 'x'.repeat(2 * 1024 * 1024), checksum: 'a'.repeat(64), exports: {} };
+  return { success: true, builtCode: 'x'.repeat(2 * 1024 * 1024), checksum: 'a'.repeat(64), exports: {}, typeReferences: '' };
 };`,
     );
     const result = frontComponentDependenciesBuildResultSchema.parse(
@@ -337,6 +345,7 @@ export const handler = () => {
           : {
               action,
               input: INPUT,
+              typeReferences: TYPE_REFERENCES,
               manifest: { checksum: 'a'.repeat(64), exports: {} },
             };
 

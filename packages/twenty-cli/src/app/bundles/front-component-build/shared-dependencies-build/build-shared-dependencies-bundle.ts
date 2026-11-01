@@ -3,6 +3,9 @@ import { getWatchInputPlugins } from '@/app/dev/collect-watch-inputs';
 import { getBaseFrontComponentBuildOptions } from '@/app/bundles/front-component-build/utils/get-base-front-component-build-options';
 import { type OnFileBuiltCallback } from '@/app/bundles/types/on-file-built-callback.type';
 import {
+  collectFrontComponentTypeReferences,
+  encodeFrontComponentTypeReferences,
+  getSharedDependenciesTypeReferencesPath,
   getSharedDependenciesEntrySource,
   normalizeFrontComponentSharedDependencies,
   getSharedDependenciesBuildManifestPath,
@@ -104,8 +107,27 @@ export const buildSharedDependenciesBundle = async ({
     checksum,
   });
 
+  const typeReferences = encodeFrontComponentTypeReferences(
+    collectFrontComponentTypeReferences({ directory: appPath, dependencies }),
+  );
+  const typeReferencesChecksum = crypto
+    .createHash('sha256')
+    .update(typeReferences)
+    .digest('hex');
+  await writeFile(
+    getSharedDependenciesTypeReferencesPath(absoluteBuiltPath),
+    typeReferences,
+  );
+  await onFileBuilt({
+    fileFolder: FileFolder.Dependencies,
+    builtPath: getSharedDependenciesTypeReferencesPath(builtPath),
+    sourcePath: 'package.json',
+    checksum: typeReferencesChecksum,
+  });
+
   const yarnLockPath = join(appPath, 'yarn.lock');
   const buildManifest: SharedDependenciesBuildManifest = {
+    typeReferencesChecksum,
     checksum,
     packageJsonChecksum: computePackageJsonChecksum(
       await readFile(join(appPath, 'package.json'), 'utf-8'),

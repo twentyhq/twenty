@@ -27,3 +27,8 @@ export type { SharedDependenciesBuildManifest } from './shared-dependencies-buil
 export type { SharedDependenciesExportNames } from './shared-dependencies-export-names.type';
 export { toSharedDependenciesNamespaceIdentifier } from './to-shared-dependencies-namespace-identifier';
 export { unwrapDefineFrontComponentToDirectExport } from './unwrap-define-front-component-to-direct-export';
+export * from './collect-front-component-type-references';
+export * from './encode-front-component-type-references';
+export * from './decode-front-component-type-references';
+export * from './get-shared-dependencies-type-references-path';
+export * from './get-front-component-type-diagnostics';

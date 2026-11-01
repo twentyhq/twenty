@@ -113,6 +113,31 @@ export class SdkClientArchiveService {
     return entry.buffer();
   }
 
+  async getClientTypeReferences(params: {
+    workspaceId: string;
+    applicationId: string;
+    applicationUniversalIdentifier: string;
+  }): Promise<Record<string, string>> {
+    const archiveBuffer = await this.downloadArchiveBufferOrGenerate(params);
+    const { default: unzipper } = await import('unzipper');
+    const directory = await unzipper.Open.buffer(archiveBuffer);
+    const files = await Promise.all(
+      directory.files
+        .filter(
+          (file) =>
+            /\.[cm]?ts$/.test(file.path) || file.path.endsWith('package.json'),
+        )
+        .map(
+          async (file) =>
+            [
+              `/node_modules/twenty-client-sdk/${file.path.replace(/^\.\//, '')}`,
+              (await file.buffer()).toString(),
+            ] as const,
+        ),
+    );
+    return Object.fromEntries(files);
+  }
+
   async markSdkLayerFresh({
     applicationId,
     workspaceId,

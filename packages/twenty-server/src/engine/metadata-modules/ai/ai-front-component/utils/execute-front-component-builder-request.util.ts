@@ -1,3 +1,4 @@
+import { validateFrontComponentTypesOrThrow } from 'src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-types-or-throw.util';
 import { installAndBuildFrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/utils/install-and-build-front-component-shared-dependencies.util';
 import { type FrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-request.type';
 import { FrontComponentBuildException } from 'src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception';
@@ -22,6 +23,7 @@ export const executeFrontComponentBuilderRequest = async ({
       return checkResponseSizeOrThrow({
         success: true as const,
         builtCode: dependencies.source,
+        typeReferences: dependencies.typeReferences,
         checksum: dependencies.checksum,
         exports: Object.fromEntries(dependencies.exportNamesBySpecifier),
       });
@@ -29,6 +31,10 @@ export const executeFrontComponentBuilderRequest = async ({
     const manifest = frontComponentSharedDependenciesManifestSchema.parse(
       input.manifest,
     );
+    validateFrontComponentTypesOrThrow({
+      source: input.input.source,
+      typeReferences: input.typeReferences,
+    });
     const built = await buildFrontComponent({
       input: input.input,
       sharedDependencies: {

@@ -9,6 +9,9 @@ import { executeFrontComponentBuilderRequest } from 'src/engine/metadata-modules
 import { installAndBuildFrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/utils/install-and-build-front-component-shared-dependencies.util';
 
 jest.mock(
+  'src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-types-or-throw.util',
+);
+jest.mock(
   'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component.util',
 );
 jest.mock(
@@ -17,6 +20,7 @@ jest.mock(
 
 const REQUEST: FrontComponentBuilderRequest = {
   action: 'transpile',
+  typeReferences: '',
   input: {
     componentId: 'component-id',
     name: 'Preview',
