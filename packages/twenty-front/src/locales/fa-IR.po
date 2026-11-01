@@ -4098,7 +4098,7 @@ msgstr "همان‌طور که در فضای کاری نمایش داده خوا
 #. js-lingui-id: pKkmLw
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
 msgid "As their role allows"
-msgstr ""
+msgstr "مطابق با نقشی که دارند"
 
 #. js-lingui-id: 54PdN4
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts

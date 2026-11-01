@@ -4098,7 +4098,7 @@ msgstr ""
 #. js-lingui-id: pKkmLw
 #: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
 msgid "As their role allows"
-msgstr ""
+msgstr "Rollerinin izin verdiği ölçüde"
 
 #. js-lingui-id: 54PdN4
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
