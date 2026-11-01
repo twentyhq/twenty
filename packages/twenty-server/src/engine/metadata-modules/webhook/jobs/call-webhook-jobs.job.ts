@@ -74,6 +74,7 @@ export class CallWebhookJobsJob {
         objectMetadata: flatObjectMetadata,
       });
     const webhookEvents: CallWebhookJobData[] = [];
+    const admittedRecordIdsByRoleId = new Map<string, Promise<Set<string>>>();
 
     for (const webhook of webhooks) {
       const webhookRoleId = findFlatRoleTargetFromForeignKey({
@@ -90,15 +91,20 @@ export class CallWebhookJobsJob {
         continue;
       }
 
+      const admittedRecordIds =
+        admittedRecordIdsByRoleId.get(webhookRoleId) ??
+        eventRecordAccessGate.resolveAdmittedRecordIds({
+          workspaceId: workspaceEventBatch.workspaceId,
+          intersectionOf: { webhookRoleId },
+        });
+
+      admittedRecordIdsByRoleId.set(webhookRoleId, admittedRecordIds);
+
       webhookEvents.push(
         ...transformEventBatchToWebhookEvents({
           workspaceEventBatch,
           webhooks: [webhook],
-          admittedRecordIds:
-            await eventRecordAccessGate.resolveAdmittedRecordIds({
-              workspaceId: workspaceEventBatch.workspaceId,
-              intersectionOf: { webhookRoleId },
-            }),
+          admittedRecordIds: await admittedRecordIds,
         }),
       );
     }

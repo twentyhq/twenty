@@ -10,14 +10,18 @@ export const getPermissionsPrincipalShareKeys = (
   principal: PermissionsPrincipal,
 ): string[] => {
   const { agentRoleId, ...otherRoleIdsBySource } = principal.intersectionOf;
-  const isAgentNarrowing = Object.values(otherRoleIdsBySource).some(isDefined);
+  const otherRoleIds = Object.values(otherRoleIdsBySource);
+  const isAgentNarrowing = otherRoleIds.some(isDefined);
 
   return [
     ...new Set(
       [
         principal.workspaceMember?.id,
         ...getPermissionsPrincipalRoleIds(principal).filter(
-          (roleId) => !isAgentNarrowing || roleId !== agentRoleId,
+          (roleId) =>
+            !isAgentNarrowing ||
+            roleId !== agentRoleId ||
+            otherRoleIds.includes(roleId),
         ),
       ].filter(isDefined),
     ),
