@@ -1,0 +1,22 @@
+Using remote: stage
+Planning application apply on stage...
+App path: /Users/evgenijaleksandrov/Desktop/repo/repo/Kate/crm/crm-twenty/packages/twenty-apps/internal/katfit-studio
+
+Checking server...
+Building manifest...
+Building application files...
+Running typecheck...
+Computing metadata plan (read-only, nothing will be applied)...
+
+Twenty will perform the following actions:
+
+  # pageLayoutWidget "236f5a84-ec9b-4f19-94e9-298b5d00fc69" will be updated in-place
+  ~ universalConfiguration = {"configurationType":"FIELDS","viewUniversalIdentifier":null} -> {"configurationType":"FIELDS"}
+
+  # pageLayoutWidget "5ec55299-3cd6-4481-86ae-138e90da4b48" will be updated in-place
+  ~ universalConfiguration = {"configurationType":"FIELDS","viewUniversalIdentifier":null} -> {"configurationType":"FIELDS"}
+
+Plan: 0 to add, 2 to change, 0 to destroy.
+
+
+✓ Plan complete for KATFIT Studio — no changes were applied

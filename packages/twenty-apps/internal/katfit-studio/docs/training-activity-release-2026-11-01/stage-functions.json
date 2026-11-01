@@ -1,0 +1,20 @@
+[
+  {
+    "id": "88449850-7d9f-40ea-acdd-6b8ea9e1c40b",
+    "name": "studio-session-training-activity",
+    "universalIdentifier": "05cd09e6-32e1-411a-b2c1-31bad84940e7",
+    "applicationId": "aa688889-2778-4590-91de-be2bc3bcc7ec"
+  },
+  {
+    "id": "894f8de1-1159-41f8-a542-91bbab60fa44",
+    "name": "studio-reconcile-training-activity",
+    "universalIdentifier": "6cc14512-c5ea-4894-8996-c6fc5653663b",
+    "applicationId": "aa688889-2778-4590-91de-be2bc3bcc7ec"
+  },
+  {
+    "id": "0c1a7686-ea96-40ce-a6e5-258cd4af41f0",
+    "name": "studio-booking-training-activity",
+    "universalIdentifier": "7b46e7c8-3703-4264-b6bb-92d53f1e7dbd",
+    "applicationId": "aa688889-2778-4590-91de-be2bc3bcc7ec"
+  }
+]

@@ -1,0 +1,26 @@
+{
+  "people": {
+    "count": 76,
+    "sha256": "2da73df9599f8af27c92f1f584f7b6eb2c40eb10872ebacce679b99e2f8365cf"
+  },
+  "opportunities": {
+    "count": 66,
+    "sha256": "86ffb2c4960c89c23517a28d817257ed65bf4b6b1fc6cf7e5301e9d74e4d78f9"
+  },
+  "studioMemberships": {
+    "count": 42,
+    "sha256": "847f9bfb6ab439cf513cd2e42f44dfc25e094fae0d456f4ebe02ed1681f65cbf"
+  },
+  "studioPayments": {
+    "count": 42,
+    "sha256": "5c0b309eb325dd89a0f29090cf0bcd2b0538a690dfe5609ab3cc9c3fead44863"
+  },
+  "membershipTransactions": {
+    "count": 104,
+    "sha256": "5732db8bdb2ae68323eab31e88a58aba45bf1b649d281639bdd1b1144aae20d0"
+  },
+  "trainerPayEntries": {
+    "count": 40,
+    "sha256": "a9892babfd0f6d7ad94c5202d6afe6fa17e4cb37db5d438e4aab7c9d4844db30"
+  }
+}

@@ -1,0 +1,36 @@
+Using remote: stage
+Applying application manifest on stage...
+App path: /Users/evgenijaleksandrov/Desktop/repo/repo/Kate/crm/crm-twenty/packages/twenty-apps/internal/katfit-studio
+
+Checking server...
+Building manifest...
+Building application files...
+Running typecheck...
+Computing metadata plan...
+
+Twenty will perform the following actions:
+
+  # logicFunction "studio-booking-training-activity" will be updated in-place
+  ~ checksum = "d41bb247d48240e5176c4aca6824d3e9" -> "40f6ab65d1d322b16f3d13eecaaceb3c"
+
+  # logicFunction "studio-reconcile-training-activity" will be updated in-place
+  ~ checksum = "6057b91dd9918be21b7b868388cac011" -> "cfea1b6fb63cd0887346de6c1e22470b"
+
+  # logicFunction "studio-session-training-activity" will be updated in-place
+  ~ checksum = "2297a84d9d1619a84479588bb7badae6" -> "ba4d957ed5fe9b46589739f8bf1a8841"
+
+  # pageLayoutWidget "236f5a84-ec9b-4f19-94e9-298b5d00fc69" will be updated in-place
+  ~ universalConfiguration = {"configurationType":"FIELDS","viewUniversalIdentifier":null} -> {"configurationType":"FIELDS"}
+
+  # pageLayoutWidget "5ec55299-3cd6-4481-86ae-138e90da4b48" will be updated in-place
+  ~ universalConfiguration = {"configurationType":"FIELDS","viewUniversalIdentifier":null} -> {"configurationType":"FIELDS"}
+
+Plan: 0 to add, 5 to change, 0 to destroy.
+
+Registering application...
+Uploading 102 files...
+Syncing manifest...
+Generating API client...
+
+✓ Synced KATFIT Studio (102 files)
+Output: /Users/evgenijaleksandrov/Desktop/repo/repo/Kate/crm/crm-twenty/packages/twenty-apps/internal/katfit-studio/.twenty/output

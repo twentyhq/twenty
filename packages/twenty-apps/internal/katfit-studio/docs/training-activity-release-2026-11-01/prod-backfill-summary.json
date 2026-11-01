@@ -1,0 +1,9 @@
+{
+  "remote": "prod",
+  "counts": {
+    "ACTIVE": 23,
+    "NOT_STARTED": 51,
+    "PAUSED": 2
+  },
+  "drift": 0
+}

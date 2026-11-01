@@ -1,0 +1,117 @@
+Using remote: prod
+Planning application apply on prod...
+App path: /Users/evgenijaleksandrov/Desktop/repo/repo/Kate/crm/crm-twenty/packages/twenty-apps/internal/katfit-studio
+
+Checking server...
+Building manifest...
+Building application files...
+Running typecheck...
+Computing metadata plan (read-only, nothing will be applied)...
+
+Twenty will perform the following actions:
+
+  # fieldMetadata "trainingActivity" will be created
+  + applicationUniversalIdentifier    = "e674aabf-638d-4ad0-af00-2018ac0fa7ce"
+  + defaultValue                      = "'NOT_STARTED'"
+  + description                       = "Рассчитывается автоматически по посещениям и записям на занятия"
+  + icon                              = "IconProgress"
+  + isActive                          = true
+  + isAuditLogged                     = true
+  + isLabelSyncedWithName             = false
+  + isNullable                        = true
+  + isSearchable                      = false
+  + isSystem                          = false
+  + isSystemSideEffect                = false
+  + isUIEditable                      = true
+  + isUnique                          = false
+  + label                             = "Активность занятий"
+  + name                              = "trainingActivity"
+  + objectMetadataUniversalIdentifier = "20202020-e674-48e5-a542-72570eee7213"
+  + options                           = [{"id":"66d50d57-293b-4204-abf9-676a886d8d37","value":"NOT_STARTED","label":"Ещ…
+  + type                              = "SELECT"
+  + writability                       = "OPEN"
+
+  # viewField "4a042550-236e-5b89-81e3-be4237af6c50" will be created
+  + applicationUniversalIdentifier   = "e674aabf-638d-4ad0-af00-2018ac0fa7ce"
+  + fieldMetadataUniversalIdentifier = "53b190d3-eebd-4fc5-b96e-86b4d46ed33f"
+  + isActive                         = true
+  + isSystemSideEffect               = true
+  + isVisible                        = true
+  + position                         = 45
+  + size                             = 180
+  + viewUniversalIdentifier          = "0cda0ad4-74da-5ccd-975c-a0e4db43a05a"
+
+  # viewField "f071f1a7-c214-5135-9c94-87e08e3f0e30" will be created
+  + applicationUniversalIdentifier    = "e674aabf-638d-4ad0-af00-2018ac0fa7ce"
+  + fieldMetadataUniversalIdentifier  = "53b190d3-eebd-4fc5-b96e-86b4d46ed33f"
+  + isActive                          = true
+  + isSystemSideEffect                = true
+  + isVisible                         = true
+  + position                          = 6
+  + size                              = 180
+  + viewFieldGroupUniversalIdentifier = "f80c3fd7-b618-53e9-9ee5-bb27a0fc0a47"
+  + viewUniversalIdentifier           = "7f34ab76-9b33-595a-bd22-d8d434147c8e"
+
+  # logicFunction "studio-booking-training-activity" will be created
+  + applicationUniversalIdentifier = "e674aabf-638d-4ad0-af00-2018ac0fa7ce"
+  + builtHandlerPath               = "src/logic-functions/studio-booking-training-activity.mjs"
+  + checksum                       = "40f6ab65d1d322b16f3d13eecaaceb3c"
+  + databaseEventTriggerSettings   = {"eventName":"studioBooking.*"}
+  + description                    = "Recompute client training activity after studioBooking changes"
+  + executionMode                  = "LIVE"
+  + handlerName                    = "default.config.handler"
+  + isBuildUpToDate                = true
+  + name                           = "studio-booking-training-activity"
+  + runtime                        = "nodejs22.x"
+  + sourceHandlerPath              = "src/logic-functions/studio-booking-training-activity.ts"
+  + timeoutSeconds                 = 300
+
+  # logicFunction "studio-reconcile-training-activity" will be created
+  + applicationUniversalIdentifier = "e674aabf-638d-4ad0-af00-2018ac0fa7ce"
+  + builtHandlerPath               = "src/logic-functions/studio-reconcile-training-activity.mjs"
+  + checksum                       = "cfea1b6fb63cd0887346de6c1e22470b"
+  + cronTriggerSettings            = {"pattern":"0 2 * * *"}
+  + description                    = "Daily reconciliation of client training activity, including existing clients"
+  + executionMode                  = "LIVE"
+  + handlerName                    = "default.config.handler"
+  + isBuildUpToDate                = true
+  + name                           = "studio-reconcile-training-activity"
+  + runtime                        = "nodejs22.x"
+  + sourceHandlerPath              = "src/logic-functions/studio-reconcile-training-activity.ts"
+  + timeoutSeconds                 = 300
+
+  # logicFunction "studio-session-training-activity" will be created
+  + applicationUniversalIdentifier = "e674aabf-638d-4ad0-af00-2018ac0fa7ce"
+  + builtHandlerPath               = "src/logic-functions/studio-session-training-activity.mjs"
+  + checksum                       = "ba4d957ed5fe9b46589739f8bf1a8841"
+  + databaseEventTriggerSettings   = {"eventName":"classSession.*"}
+  + description                    = "Recompute client training activity after classSession changes"
+  + executionMode                  = "LIVE"
+  + handlerName                    = "default.config.handler"
+  + isBuildUpToDate                = true
+  + name                           = "studio-session-training-activity"
+  + runtime                        = "nodejs22.x"
+  + sourceHandlerPath              = "src/logic-functions/studio-session-training-activity.ts"
+  + timeoutSeconds                 = 300
+
+  # pageLayoutWidget "b161224f-a121-5a32-9044-e0cbab660629" will be created
+  + applicationUniversalIdentifier    = "e674aabf-638d-4ad0-af00-2018ac0fa7ce"
+  + isActive                          = true
+  + isSystemSideEffect                = true
+  + objectMetadataUniversalIdentifier = "20202020-e674-48e5-a542-72570eee7213"
+  + pageLayoutTabUniversalIdentifier  = "ee49fb95-bef9-58ae-a10a-531c852a847e"
+  + position                          = {"layoutMode":"VERTICAL_LIST","index":35}
+  + title                             = ""
+  + type                              = "FORM_FIELD"
+  + universalConfiguration            = {"configurationType":"FORM_FIELD","fieldMetadataId":"53b190d3-eebd-4fc5-b96e-86…
+
+  # pageLayoutWidget "236f5a84-ec9b-4f19-94e9-298b5d00fc69" will be updated in-place
+  ~ universalConfiguration = {"configurationType":"FIELDS","viewUniversalIdentifier":null} -> {"configurationType":"FIELDS"}
+
+  # pageLayoutWidget "5ec55299-3cd6-4481-86ae-138e90da4b48" will be updated in-place
+  ~ universalConfiguration = {"configurationType":"FIELDS","viewUniversalIdentifier":null} -> {"configurationType":"FIELDS"}
+
+Plan: 7 to add, 2 to change, 0 to destroy.
+
+
+✓ Plan complete for KATFIT Studio — no changes were applied
