@@ -12,12 +12,14 @@ import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/Animat
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { StyledWidgetScrollContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
+import { useMemo } from 'react';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 
 import { themeCssVariables } from 'twenty-ui/theme';
+import { isDefined } from 'twenty-shared/utils';
 import { type FieldsConfiguration } from '~/generated-metadata/graphql';
 
 const StyledPropertyBox = styled.div`
@@ -71,14 +73,56 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
     objectNameSingular: targetRecord.targetObjectNameSingular,
   });
 
+  // Field-level permissions: fields the role has No Access to stay hidden
+  // on the record page, like in the table. Editor paths (layout settings)
+  // keep the unfiltered field list from useFieldsWidgetFields.
+  const readableFieldMetadataIds = useMemo(
+    () =>
+      isDefined(objectMetadataItem)
+        ? new Set(objectMetadataItem.readableFields.map((field) => field.id))
+        : null,
+    [objectMetadataItem],
+  );
+
+  const permittedGroups = useMemo(() => {
+    if (readableFieldMetadataIds === null) {
+      return groups;
+    }
+
+    let nextGlobalIndex = 0;
+
+    return groups
+      .map((group) => ({
+        ...group,
+        fields: group.fields
+          .filter((field) =>
+            readableFieldMetadataIds.has(field.fieldMetadataItem.id),
+          )
+          // Reindex so globalIndex matches the flattened list below;
+          // hover and edit portals resolve metadata by globalIndex.
+          .map((field) => ({ ...field, globalIndex: nextGlobalIndex++ })),
+      }))
+      .filter((group) => group.fields.length > 0);
+  }, [groups, readableFieldMetadataIds]);
+
+  const permittedHiddenFields = useMemo(() => {
+    if (readableFieldMetadataIds === null) {
+      return hiddenFields;
+    }
+
+    return hiddenFields.filter((field) =>
+      readableFieldMetadataIds.has(field.fieldMetadataItem.id),
+    );
+  }, [hiddenFields, readableFieldMetadataIds]);
+
   const shouldShowHiddenFields =
     fieldsConfiguration.shouldAllowUserToSeeHiddenFields === true &&
-    hiddenFields.length > 0;
+    permittedHiddenFields.length > 0;
 
-  const visibleFields = groups.flatMap((group) => group.fields);
+  const visibleFields = permittedGroups.flatMap((group) => group.fields);
 
   const hiddenFieldsWithOffsetGlobalIndex = shouldShowHiddenFields
-    ? hiddenFields.map((field) => ({
+    ? permittedHiddenFields.map((field) => ({
         ...field,
         globalIndex: field.globalIndex + visibleFields.length,
       }))
@@ -91,10 +135,11 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
     ),
   ];
 
-  const hasFieldsToDisplay = groups.length > 0;
+  const hasFieldsToDisplay =
+    permittedGroups.length > 0 || shouldShowHiddenFields;
 
   const shouldDisplayGroupHeaders =
-    displayMode === 'grouped' && groups.length > 1;
+    displayMode === 'grouped' && permittedGroups.length > 1;
 
   if (!hasFieldsToDisplay) {
     return (
@@ -123,7 +168,7 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
           }}
         >
           {shouldDisplayGroupHeaders ? (
-            groups.map((group) => (
+            permittedGroups.map((group) => (
               <FieldsWidgetGroupContainer key={group.id} title={group.name}>
                 <StyledPropertyBox>
                   <FieldsWidgetFieldList
