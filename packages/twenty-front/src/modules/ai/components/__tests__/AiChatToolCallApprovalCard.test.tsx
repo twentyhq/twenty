@@ -50,6 +50,12 @@ jest.mock('@/ai/components/internal/AiChatToolCallApprovalEmailCard', () => ({
   AiChatToolCallApprovalEmailCard: () => null,
 }));
 
+jest.mock('@/ai/components/AiChatFrontComponentPreview', () => ({
+  AiChatFrontComponentPreview: ({ draftId }: { draftId: string }) => (
+    <div role="region" aria-label={`Preview of ${draftId}`} />
+  ),
+}));
+
 const PROPOSAL: ProposedToolCall = {
   toolName: 'http_request',
   toolLabel: 'HTTP request',
@@ -241,7 +247,7 @@ describe('AiChatToolCallApprovalCard', () => {
       },
     });
   });
-  it('keeps the component revision read-only and refreshes after approval completes', async () => {
+  it('shows the proposed component preview and approves its unchanged revision', async () => {
     const user = userEvent.setup();
     let completeApproval: (answered: boolean) => void = () => {};
     answerAgentChatToolCall.mockReturnValue(
@@ -262,7 +268,15 @@ describe('AiChatToolCallApprovalCard', () => {
       areArgumentsEditable: false,
     });
 
-    expect(screen.getByRole('textbox', { name: 'Arguments' })).toBeDisabled();
+    expect(
+      screen.getByRole('region', { name: 'Preview of approved-draft' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('textbox', { name: 'Arguments' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(argumentsToApprove.checksum),
+    ).not.toBeInTheDocument();
     await user.click(screen.getByRole('button', { name: 'Approve' }));
     expect(answerAgentChatToolCall).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -275,6 +289,30 @@ describe('AiChatToolCallApprovalCard', () => {
       expect(refreshFrontComponents).toHaveBeenCalledTimes(1),
     );
   });
+
+  it('keeps ordinary tool arguments visible even when they contain a draft ID', () => {
+    renderCard({ ...PROPOSAL, arguments: { draftId: 'other-tool-draft' } });
+
+    expect(screen.queryByRole('region')).not.toBeInTheDocument();
+    expect(screen.getByRole('textbox', { name: 'Arguments' })).toHaveValue(
+      JSON.stringify({ draftId: 'other-tool-draft' }, null, 2),
+    );
+  });
+
+  it.each([undefined, '', 42])(
+    'does not load a preview for invalid draft ID %s',
+    (draftId) => {
+      renderCard({
+        ...PROPOSAL,
+        toolName: PUBLISH_FRONT_COMPONENT_TOOL_NAME,
+        arguments: { draftId },
+        areArgumentsEditable: false,
+      });
+
+      expect(screen.queryByRole('region')).not.toBeInTheDocument();
+      expect(screen.getByRole('textbox', { name: 'Arguments' })).toBeDisabled();
+    },
+  );
 
   it.each([
     {
