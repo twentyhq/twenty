@@ -29,6 +29,7 @@ export class PendingWakeUpResolverService {
     workspaceId,
     wakeUpId,
     event,
+    nextEvents,
     answer,
     attempt = 0,
     recordReadAttempt = 0,
@@ -52,6 +53,7 @@ export class PendingWakeUpResolverService {
       await this.pendingWakeUpService.scheduleResolution({
         wakeUp,
         event,
+        nextEvents,
         answer,
         attempt: attempt + 1,
         delayMs: computePendingWakeUpRetryDelayMs(attempt),
@@ -64,9 +66,10 @@ export class PendingWakeUpResolverService {
       ownerState.status === 'WAITING' && isDefined(event);
 
     const readableEvent = shouldReadEventRecord
-      ? await this.readEventRecord({
+      ? await this.readFirstReadableEvent({
           wakeUp,
           event,
+          nextEvents,
           recordReadAttempt,
           readPermissions: await handler.getReadPermissions({
             wakeUp,
@@ -75,7 +78,7 @@ export class PendingWakeUpResolverService {
         })
       : event;
 
-    // an event whose record the owner cannot read yet keeps it waiting
+    // an event batch with no record the owner can read keeps it waiting
     if (shouldReadEventRecord && !isDefined(readableEvent)) {
       return;
     }
@@ -91,32 +94,38 @@ export class PendingWakeUpResolverService {
     });
   }
 
-  // The event's record is read with its owner's permissions: a record the owner cannot read must not
-  // wake it up, so the wait goes on for another event. A failed read cannot tell a transient
+  // The candidates' records are read with the owner's permissions: a record the owner cannot read must not
+  // wake it up, so the next candidate is tried, then the wait goes on. A failed read cannot tell a transient
   // error from an object the owner cannot read, so it is retried a few times
-  private async readEventRecord({
+  private async readFirstReadableEvent({
     wakeUp,
     event,
+    nextEvents,
     recordReadAttempt,
     readPermissions,
   }: {
     wakeUp: PendingWakeUpEntity;
     event: PendingWakeUpEvent;
+    nextEvents?: PendingWakeUpEvent[];
     recordReadAttempt: number;
     readPermissions: Awaited<
       ReturnType<PendingWakeUpOwnerHandler['getReadPermissions']>
     >;
   }): Promise<PendingWakeUpEvent | undefined> {
+    const candidateEvents = [event, ...(nextEvents ?? [])];
     const [objectName, action] = event.eventName.split('.');
+    const recordIds = candidateEvents.map(
+      (candidateEvent) => candidateEvent.recordId,
+    );
 
     const { success, result, error } = await this.findRecordsService.execute({
       objectName,
       // a deleted record only reads when the filter asks for deleted records
       filter:
         action === 'deleted'
-          ? { id: { eq: event.recordId }, deletedAt: { is: 'NOT_NULL' } }
-          : { id: { eq: event.recordId } },
-      limit: 1,
+          ? { id: { in: recordIds }, deletedAt: { is: 'NOT_NULL' } }
+          : { id: { in: recordIds } },
+      limit: candidateEvents.length,
       ...readPermissions,
       shouldBuildEffectiveSelectFields: false,
     });
@@ -126,25 +135,36 @@ export class PendingWakeUpResolverService {
         await this.pendingWakeUpService.scheduleResolution({
           wakeUp,
           event,
+          nextEvents,
           recordReadAttempt: recordReadAttempt + 1,
           delayMs: computePendingWakeUpRetryDelayMs(recordReadAttempt),
         });
       } else {
         this.logger.warn(
-          `Wait ${wakeUp.id} of ${wakeUp.ownerType} owner ${wakeUp.ownerId} kept waiting after its ${event.eventName} record could not be read: ${error}`,
+          `Wait ${wakeUp.id} of ${wakeUp.ownerType} owner ${wakeUp.ownerId} kept waiting after its ${event.eventName} records could not be read: ${error}`,
         );
       }
 
       return undefined;
     }
 
-    const record = result?.records[0];
+    const readableRecordsById = new Map(
+      (result?.records ?? [])
+        .filter(isPlainObject)
+        .map((record) => [record.id, record]),
+    );
 
-    return isPlainObject(record)
-      ? restrictPendingWakeUpEventToReadableRecord({
-          event,
-          readableRecord: record,
-        })
-      : undefined;
+    for (const candidateEvent of candidateEvents) {
+      const readableRecord = readableRecordsById.get(candidateEvent.recordId);
+
+      if (isDefined(readableRecord)) {
+        return restrictPendingWakeUpEventToReadableRecord({
+          event: candidateEvent,
+          readableRecord,
+        });
+      }
+    }
+
+    return undefined;
   }
 }
