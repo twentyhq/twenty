@@ -2,11 +2,7 @@ import { type ObjectPermissionsWithObjectMetadataId } from '@/object-metadata/ty
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
 import { type FieldRelationMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
-import {
-  FieldMetadataType,
-  MetadataWritability,
-  RelationType,
-} from '~/generated-metadata/graphql';
+import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
 
 const OBJECT_METADATA_ID = 'object-metadata-id';
 const TARGET_OBJECT_METADATA_ID = 'target-object-metadata-id';
@@ -33,7 +29,6 @@ const baseParams = {
   fieldMetadataItem: {
     id: FIELD_METADATA_ID,
     isUIEditable: true,
-    writability: MetadataWritability.OPEN,
   },
   objectPermissionsByObjectMetadataId: {
     [OBJECT_METADATA_ID]: buildObjectPermissions(),
@@ -113,42 +108,6 @@ describe('isRecordFieldReadOnly', () => {
 
   it('should return false when all conditions allow editing', () => {
     expect(isRecordFieldReadOnly(baseParams)).toBe(false);
-  });
-
-  it('should return true when the field writability is SYSTEM', () => {
-    expect(
-      isRecordFieldReadOnly({
-        ...baseParams,
-        fieldMetadataItem: {
-          ...baseParams.fieldMetadataItem,
-          writability: MetadataWritability.SYSTEM,
-        },
-      }),
-    ).toBe(true);
-  });
-
-  it('should return true when the field writability is APPLICATION', () => {
-    expect(
-      isRecordFieldReadOnly({
-        ...baseParams,
-        fieldMetadataItem: {
-          ...baseParams.fieldMetadataItem,
-          writability: MetadataWritability.APPLICATION,
-        },
-      }),
-    ).toBe(true);
-  });
-
-  it('should treat a missing field writability as OPEN', () => {
-    expect(
-      isRecordFieldReadOnly({
-        ...baseParams,
-        fieldMetadataItem: {
-          ...baseParams.fieldMetadataItem,
-          writability: undefined,
-        },
-      }),
-    ).toBe(false);
   });
 
   it('should return true for a one-to-many relation whose target object cannot be updated', () => {

@@ -1,0 +1,213 @@
+---
+title: ResizeHandle
+description: Cambia el tamaño de un panel mediante arrastre con el puntero o controles de teclado.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ResizeHandleReference from '/snippets/ui/generated/layout/resize-handle.mdx';
+
+## Resumen
+
+`ResizeHandle` gestiona un tamaño numérico y expone un separador que puede recibir el foco. La aplicación aplica ese tamaño al panel; el controlador no cambia automáticamente el tamaño de otro elemento.
+
+<StoryEmbed storyId="ui-layout-resizehandle--display" title="Ejemplo de ResizeHandle" height={600} />
+
+## "Uso"
+
+Usa `edge` para un límite de panel, o `axis="y"` para el cambio de tamaño de altura en línea y `axis="x"` para el cambio de tamaño de anchura en línea. Asigna al controlador un nombre accesible específico y usa `aria-controls` para identificar el panel.
+
+```tsx
+import { useId, useState } from 'react';
+import { ResizeHandle } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ResizableNotes = () => {
+  const panelId = useId();
+  const [height, setHeight] = useState(150);
+
+  return (
+    <Card.Root style={{ width: 300, maxWidth: '100%' }}>
+      <Text
+        id={panelId}
+        style={{
+          height,
+          overflow: 'auto',
+          padding: 16,
+          boxSizing: 'border-box',
+        }}
+      >
+        <Text
+          style={{
+            color: 'var(--t-font-color-primary)',
+            fontWeight: 'var(--t-font-weight-medium)',
+          }}
+        >
+          Record notes
+        </Text>
+        <Text style={{ marginTop: 8, lineHeight: 1.5 }}>
+          Follow up with Morgan about the proposal. Share the revised timeline
+          before Friday.
+        </Text>
+      </Text>
+      <Text style={{ padding: 4 }}>
+        <ResizeHandle
+          axis="y"
+          defaultValue={150}
+          onValueChange={setHeight}
+          min={50}
+          max={500}
+          aria-label="Resize notes height"
+          aria-controls={panelId}
+        />
+      </Text>
+    </Card.Root>
+  );
+};
+```
+
+El controlador posee su valor. `onValueChange` copia el tamaño más reciente al diseño del panel sin controlar el controlador. `defaultValue` solo establece el tamaño inicial.
+
+## Estado controlado
+
+```tsx
+import { useId, useState } from 'react';
+import { ResizeHandle } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ResizableNotes = () => {
+  const panelId = useId();
+  const [height, setHeight] = useState(150);
+
+  return (
+    <Card.Root style={{ width: 300, maxWidth: '100%' }}>
+      <Text
+        id={panelId}
+        style={{
+          height,
+          overflow: 'auto',
+          padding: 16,
+          boxSizing: 'border-box',
+        }}
+      >
+        <Text
+          style={{
+            color: 'var(--t-font-color-primary)',
+            fontWeight: 'var(--t-font-weight-medium)',
+          }}
+        >
+          Record notes
+        </Text>
+        <Text style={{ marginTop: 8, lineHeight: 1.5 }}>
+          Follow up with Morgan about the proposal. Share the revised timeline
+          before Friday.
+        </Text>
+      </Text>
+      <Text style={{ padding: 4 }}>
+        <ResizeHandle
+          axis="y"
+          value={height}
+          onValueChange={setHeight}
+          min={50}
+          max={500}
+          aria-label="Resize notes height"
+          aria-controls={panelId}
+        />
+      </Text>
+    </Card.Root>
+  );
+};
+```
+
+La aplicación posee el valor y puede actualizarlo desde otros controles. Refleje los cambios en tiempo real en `value`; use `onValueCommitted` para guardar el tamaño final. Mantenga `value` y `defaultValue` separados y conserve el mismo modo de propiedad durante toda la vida útil del componente.
+
+## Bordes y espacios entre paneles
+
+`edge="left"`, `"right"`, `"top"` o `"bottom"` determina tanto el eje como la dirección física de aumento. El movimiento hacia la izquierda aumenta un borde izquierdo, el movimiento hacia arriba aumenta un borde superior, y lo contrario se aplica a los bordes derecho e inferior. Este comportamiento se mantiene igual en contenido de derecha a izquierda. Use `edge` o bien `axis` y `direction`.
+
+Con `edge`, la ubicación predeterminada es `"edge"`. Coloque el controlador dentro de un panel con `position: 'relative'` para situarlo a lo largo de ese límite. `placement="inline"` lo mantiene en el flujo normal. Use `placement="gap"` entre paneles hermanos y establezca su ancho o altura mediante `style` cuando el diseño necesite un espacio. Los controladores de espacio no tienen un agarre visible de forma predeterminada.
+
+```tsx
+import { useId, useState } from 'react';
+import { ResizeHandle } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ResizableDetails = ({
+  saveWidth,
+}: {
+  saveWidth: (value: number) => void;
+}) => {
+  const detailsId = useId();
+  const [width, setWidth] = useState(380);
+
+  return (
+    <div style={{ display: 'flex', height: 200 }}>
+      <Card.Root style={{ flex: 1 }}>
+        <Text>Activity</Text>
+      </Card.Root>
+      <ResizeHandle
+        edge="left"
+        placement="gap"
+        value={width}
+        onValueChange={setWidth}
+        onValueCommitted={saveWidth}
+        min={280}
+        max={800}
+        style={{ width: 12 }}
+        aria-label="Resize details"
+        aria-controls={detailsId}
+      />
+      <Card.Root id={detailsId} style={{ width }}>
+        <Text>Details</Text>
+      </Card.Root>
+    </div>
+  );
+};
+```
+
+<StoryEmbed storyId="ui-layout-resizehandle-panels--documentation" title="Ejemplo de borde de panel con ResizeHandle" height={250} />
+
+<StoryEmbed storyId="ui-layout-resizehandle-panels--gap" title="Ejemplo de espacio de panel de ResizeHandle" height={520} />
+
+La aplicación controla el diseño, el tamaño guardado, el estado contraído y el destino del foco cuando al contraer se elimina el controlador. Use `onActivate` para una acción opcional de contraer.
+
+## Teclado y límites
+
+Para `axis="y"`, Abajo aumenta el tamaño y Arriba lo disminuye. Para `axis="x"`, Derecha aumenta e Izquierda disminuye en contenido de izquierda a derecha; las direcciones se invierten con [DirectionProvider](/es/ui/primitives/layout/direction-provider) con `direction="rtl"`.
+
+Las teclas de flecha usan `step`, cuyo valor predeterminado es `10`. Inicio se mueve a `min` y Fin se mueve a `max`. Se ignoran las teclas pulsadas con Alt, Control o Meta. El arrastre con el puntero usa el movimiento en píxeles y no se ajusta a `step`. Ambas interacciones se mantienen dentro de los límites. Las pulsaciones del puntero no mueven el foco; los usuarios de teclado llegan al controlador con Tab. `disabled` impide cambiar el tamaño y elimina el controlador del orden de tabulación.
+
+La orientación del separador describe el borde divisorio: horizontal para cambiar el tamaño de la altura y vertical para cambiar el tamaño del ancho.
+
+## Direcciones físicas y zoom
+
+Establezca `direction="normal"` o `direction="reverse"` cuando el aumento de tamaño deba seguir una dirección física fija, independientemente de la dirección del texto. Normal aumenta con el movimiento hacia la derecha o hacia abajo. Inverso aumenta con el movimiento hacia la izquierda o hacia arriba. Omita `direction` para conservar el comportamiento de dirección del texto descrito anteriormente.
+
+`scale` acepta un factor de zoom positivo o una función que devuelva uno. El controlador lo toma al presionar el puntero y divide el movimiento del puntero por ese valor. Los pasos del teclado permanecen sin cambios.
+
+## Ciclo de vida del gesto
+
+`onValueChange` informa de valores en tiempo real. `onValueCommitted` informa del valor final después de un arrastre exitoso con el puntero o un cambio efectivo con el teclado. Las teclas Inicio, Fin y de flecha confirman inmediatamente cuando cambian el tamaño.
+
+`onResizeStart` recibe el primer candidato dentro de los límites después de que el puntero supera `dragThreshold`. El umbral predeterminado es `5` con `edge` y `0` en caso contrario, medido en píxeles físicos. `onResizeEnd` recibe `{ cancelled, value }` para un arrastre iniciado. Escape, la cancelación del puntero, la pérdida de captura del puntero y el desmontaje cancelan el gesto sin confirmar; deshabilitar el controlador lo cancela en su siguiente evento de puntero. La cancelación llama a `onValueChange` con el valor inicial, limitado a los límites actuales. `onResizeEnd` recibe ese valor restaurado.
+
+Proporcione `onActivate` para gestionar un clic sin arrastrar, Intro o Espacio. Superar el umbral evita que el siguiente clic del puntero se active, incluso cuando el puntero vuelve a su posición inicial.
+
+Los controladores nativos se ejecutan antes de la interacción del controlador. Llamar a `preventDefault()` en `onPointerDown` o `onKeyDown` omite esa interacción. Evitar `onPointerMove` omite solo esa actualización y mantiene activo el gesto. Evitar `onPointerUp` cancela el arrastre, restaura el valor limitado inicial y omite `onValueCommitted`. La cancelación del puntero y la pérdida de captura siguen finalizando el gesto.
+
+## Controlador personalizado
+
+`ref`, los atributos nativos, `className`, `style` y los controladores de eventos nativos se dirigen al elemento raíz del separador, un `div` de forma predeterminada. El `ref` no se dirige al panel redimensionado ni al tirador visible.
+
+`children` reemplaza el agarre visible y `children={null}` lo oculta; no reemplaza el comportamiento del separador. `render` puede reemplazar el elemento raíz y el `ref` se dirige entonces a ese reemplazo. Los contenedores personalizados deben [reenviar las props y la ref proporcionadas](/es/ui/primitives/overview#custom-components) para que el foco, la captura del puntero, los controladores de teclado y los atributos de accesibilidad lleguen al mismo elemento.
+
+## "Props"
+
+<ResizeHandleReference />
+
+<PageBanner illustration="layout" />

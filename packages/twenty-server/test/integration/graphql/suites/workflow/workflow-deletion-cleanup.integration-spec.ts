@@ -28,10 +28,8 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
@@ -311,7 +309,12 @@ describe('workflow deletion cleanup', () => {
           draftCodeLogicFunctionId,
         ]),
       ).toBe(0);
-      expect(await countTestWorkflowRuns([draftRunId])).toBe(0);
+      await expectEventually(
+        async () => {
+          expect(await countTestWorkflowRuns([draftRunId])).toBe(0);
+        },
+        { timeoutMs: 30_000 },
+      );
       expect(
         await countRows(`core."logicFunction" WHERE id = $1`, [
           codeLogicFunctionId,
@@ -322,7 +325,7 @@ describe('workflow deletion cleanup', () => {
       );
     }, 120000);
 
-    it('deletes the definition, triggers, CODE functions and runs of the deleted workflow only, before the deletion returns', async () => {
+    it('deletes the definition, triggers, CODE functions and runs of the deleted workflow only', async () => {
       expect(
         await countRows(
           `core."commandMenuItem" WHERE "coreWorkflowVersionId" = $1`,
@@ -366,8 +369,19 @@ describe('workflow deletion cleanup', () => {
         ]),
       ).toBe(0);
 
-      expect(await countTestWorkflowRuns([completedRunId, waitingRunId])).toBe(
-        0,
+      await expectEventually(
+        async () => {
+          expect(
+            await countTestWorkflowRuns([completedRunId, waitingRunId]),
+          ).toBe(0);
+          expect(
+            await countRows(
+              `core."deferredWorkspaceMigrationAction" WHERE "workspaceId" = $1 AND name = $2`,
+              [SEED_APPLE_WORKSPACE_ID, 'delete_workflowRuns'],
+            ),
+          ).toBe(0);
+        },
+        { timeoutMs: 30_000 },
       );
 
       expect(
@@ -417,87 +431,6 @@ describe('workflow deletion cleanup', () => {
           keptWorkflow.coreWorkflowVersionId,
         ]),
       ).toBe(1);
-    }, 120000);
-
-    it('deletes runs through the persisted cleanup when deferred migration actions are enabled', async () => {
-      const deferredWorkflow = await createWorkspaceWorkflow(
-        `${PREFIX} deferred cleanup`,
-      );
-      const deferredFormStep = await createCoreWorkflowVersionStep({
-        coreWorkflowVersionId: deferredWorkflow.coreWorkflowVersionId,
-        stepType: 'FORM',
-      });
-
-      await updateCoreWorkflowVersionStep({
-        coreWorkflowVersionId: deferredWorkflow.coreWorkflowVersionId,
-        step: {
-          ...deferredFormStep,
-          settings: {
-            ...deferredFormStep.settings,
-            input: [
-              {
-                id: randomUUID(),
-                name: 'note',
-                label: 'Note',
-                type: 'TEXT',
-              },
-            ],
-          },
-        },
-      });
-
-      const deferredRunId = await runWorkflowVersion(
-        deferredWorkflow.coreWorkflowVersionId,
-      );
-
-      await waitForTestWorkflowRun(
-        deferredRunId,
-        ({ state }) =>
-          state?.stepInfos?.[deferredFormStep.id]?.status === 'PENDING',
-      );
-
-      await updateFeatureFlag({
-        featureFlag:
-          FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED,
-        value: true,
-        expectToFail: false,
-      });
-
-      try {
-        await graphql(
-          `
-            mutation Delete($input: DeleteCoreWorkflowsInput!) {
-              deleteCoreWorkflows(input: $input) {
-                id
-              }
-            }
-          `,
-          { input: { coreWorkflowIds: [deferredWorkflow.coreWorkflowId] } },
-        );
-
-        await expectEventually(
-          async () => {
-            expect(await countTestWorkflowRuns([deferredRunId])).toBe(0);
-            expect(
-              await countRows(
-                `core."deferredWorkspaceMigrationAction" WHERE "workspaceId" = $1 AND name = $2`,
-                [SEED_APPLE_WORKSPACE_ID, 'delete_workflowRuns'],
-              ),
-            ).toBe(0);
-          },
-          { timeoutMs: 30_000 },
-        );
-      } finally {
-        await updateFeatureFlag({
-          featureFlag:
-            FeatureFlagKey.IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED,
-          value: false,
-          expectToFail: false,
-        });
-        await deleteCoreWorkflows({
-          coreWorkflowIds: [deferredWorkflow.coreWorkflowId],
-        });
-      }
     }, 120000);
   });
 
@@ -617,7 +550,7 @@ describe('workflow deletion cleanup', () => {
       });
     });
 
-    it('deletes the runs of its workflows when the uninstall succeeds, before it returns', async () => {
+    it('deletes the runs of its workflows when the uninstall succeeds', async () => {
       const formRunId = await runWorkflow(FORM_WORKFLOW);
       const otherAppRunId = await runWorkflow(OTHER_APP_WORKFLOW);
 
@@ -700,7 +633,12 @@ describe('workflow deletion cleanup', () => {
         expect(await countCoreWorkflows(FORM_WORKFLOW)).toBe(0);
         expect(await countCoreWorkflows(SLOW_WORKFLOW)).toBe(0);
 
-        expect(await countTestWorkflowRuns([formRunId, slowRunId])).toBe(0);
+        await expectEventually(
+          async () => {
+            expect(await countTestWorkflowRuns([formRunId, slowRunId])).toBe(0);
+          },
+          { timeoutMs: 30_000 },
+        );
 
         releaseFunction();
 

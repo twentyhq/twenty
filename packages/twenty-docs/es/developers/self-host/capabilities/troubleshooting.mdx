@@ -2,6 +2,8 @@
 title: Solución de problemas
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Solución de Problemas
 
 Si encuentra algún problema al configurar el entorno para el desarrollo, al actualizar su instancia o al autoalojar, aquí hay algunas soluciones para problemas comunes.
@@ -11,7 +13,7 @@ Si encuentra algún problema al configurar el entorno para el desarrollo, al act
 #### La primera instalación resulta en `fallo de autenticación de contraseña para el usuario "postgres"`
 
 🚨 **IMPORTANTE: Esta solución es SOLO para instalaciones nuevas** 🚨
-Si tiene una instancia de Twenty existente con datos de producción, **NO** siga estos pasos ya que borrarán permanentemente su base de datos.
+Si tiene una instancia de Twenty existente con datos de producción, **NO** siga estos pasos ya que borrarán permanentemente su base de datos!
 
 Al instalar Twenty por primera vez, es posible que desee cambiar la contraseña predeterminada de la base de datos.
 La contraseña que establezca durante la primera instalación se almacena permanentemente en el volumen de base de datos. Si más tarde intenta cambiar esta contraseña en su configuración sin eliminar el volumen anterior, obtendrá errores de autenticación porque la base de datos todavía está usando la contraseña original.
@@ -87,7 +89,7 @@ Reiniciar tu máquina ayuda a limpiar los procesos fantasma.
 
 #### Mientras ejecuta `npx nx start` hay [0] y [1] extraños en los registros
 
-Es esperado, ya que el comando `npx nx start` está ejecutando más comandos detrás de escena.
+Es esperado, ya que el comando `npx nx start` está ejecutando más comandos detrás de escena
 
 #### No se envían correos electrónicos
 
@@ -251,3 +253,5 @@ Si enfrenta problemas no cubiertos en esta guía:
 * Soporte Comunitario:
 
   Póngase en contacto con la [comunidad de Twenty](https://github.com/twentyhq/twenty/issues) o [los canales de soporte](https://discord.gg/cx5n4Jzs57) para obtener asistencia.
+
+<PageBanner illustration="card-page-bug-requests" />

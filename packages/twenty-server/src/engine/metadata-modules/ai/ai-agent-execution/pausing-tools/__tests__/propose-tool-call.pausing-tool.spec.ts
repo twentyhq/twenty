@@ -42,6 +42,38 @@ const buildFoundRecordOutput = (record: Record<string, unknown>) => ({
 });
 
 describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
+  it('keeps the proposed arguments when the tool disallows editing', async () => {
+    const proposal = {
+      toolName: 'save_snapshot',
+      toolLabel: 'Save component',
+      summary: 'Save the reviewed component',
+      template: 'generic' as const,
+      areArgumentsEditable: false,
+      arguments: { draftId: RECORD_ID, checksum: 'reviewed-checksum' },
+    };
+    const call = PROPOSE_TOOL_CALL_PAUSING_TOOL.parseCall(proposal, {
+      success: true,
+      result: { status: 'pending', proposal },
+    });
+    const executeTool = jest
+      .fn()
+      .mockResolvedValue({ success: true, message: 'Saved' });
+
+    await call!.complete({
+      output: {
+        decision: 'approve',
+        arguments: { draftId: 'another-draft', checksum: 'another-checksum' },
+      },
+      context: { executeTool },
+    });
+
+    expect(executeTool).toHaveBeenCalledTimes(1);
+    expect(executeTool).toHaveBeenCalledWith({
+      toolName: 'save_snapshot',
+      args: proposal.arguments,
+    });
+  });
+
   it.each([
     ['an unknown decision', { decision: 'maybe' }],
     [
@@ -326,110 +358,5 @@ describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
         args: EMAIL_INPUT.arguments,
       });
     });
-  });
-});
-
-describe('frontend component approval', () => {
-  const input = {
-    toolName: 'publish_front_component',
-    arguments: { draftId: 'approved-draft' },
-    summary: 'Save the preview to Sales',
-  };
-  const pending = {
-    success: true,
-    result: {
-      status: 'pending',
-      proposal: {
-        ...input,
-        toolLabel: 'Save component',
-        template: 'frontComponent',
-      },
-    },
-  };
-
-  it('publishes only the proposed revision even when response arguments are edited', async () => {
-    const call = PROPOSE_TOOL_CALL_PAUSING_TOOL.parseCall(input, pending);
-    const executeTool = jest
-      .fn()
-      .mockResolvedValue({ success: true, message: 'Saved' });
-
-    await call!.complete({
-      output: {
-        decision: 'approve',
-        arguments: { draftId: 'different-draft' },
-      },
-      context: { executeTool },
-    });
-
-    expect(executeTool).toHaveBeenCalledWith({
-      toolName: 'publish_front_component',
-      args: { draftId: 'approved-draft' },
-    });
-  });
-
-  it('never publishes a rejected preview', async () => {
-    const call = PROPOSE_TOOL_CALL_PAUSING_TOOL.parseCall(input, pending);
-    const executeTool = jest.fn();
-
-    await call!.complete({
-      output: { decision: 'reject' },
-      context: { executeTool },
-    });
-
-    expect(executeTool).not.toHaveBeenCalled();
-  });
-});
-
-describe('frontend component deletion approval', () => {
-  const input = {
-    toolName: 'delete_front_component',
-    arguments: { frontComponentId: 'approved-component', name: 'Renewals' },
-    summary: 'Delete Renewals from Workspace app',
-  };
-  const pending = {
-    success: true,
-    result: {
-      status: 'pending',
-      proposal: {
-        ...input,
-        toolLabel: 'Delete component',
-        template: 'frontComponentDelete',
-      },
-    },
-  };
-
-  it('deletes only the proposed component even when response arguments are edited', async () => {
-    const call = PROPOSE_TOOL_CALL_PAUSING_TOOL.parseCall(input, pending);
-    const executeTool = jest
-      .fn()
-      .mockResolvedValue({ success: true, message: 'Saved' });
-
-    await call!.complete({
-      output: {
-        decision: 'approve',
-        arguments: {
-          frontComponentId: 'different-component',
-          name: 'Different',
-        },
-      },
-      context: { executeTool },
-    });
-
-    expect(executeTool).toHaveBeenCalledWith({
-      toolName: 'delete_front_component',
-      args: { frontComponentId: 'approved-component', name: 'Renewals' },
-    });
-  });
-
-  it('never deletes a rejected component', async () => {
-    const call = PROPOSE_TOOL_CALL_PAUSING_TOOL.parseCall(input, pending);
-    const executeTool = jest.fn();
-
-    await call!.complete({
-      output: { decision: 'reject' },
-      context: { executeTool },
-    });
-
-    expect(executeTool).not.toHaveBeenCalled();
   });
 });

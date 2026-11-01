@@ -3,7 +3,10 @@ title: البدء السريع
 description: شغّل Twenty في أقل من 5 دقائق — على السحابة أو بالاستضافة الذاتية.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## التسجيل
 
@@ -56,17 +59,23 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## الخطوات التالية
 
-<CardGroup cols={2}>
-  <Card title="تعرّف على التخطيط" icon="layout-columns" href="/ar/getting-started/core-concepts/layout">
-    التنقّل، العروض، قائمة الأوامر، اللوحة الجانبية.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ar/getting-started/core-concepts/layout" img="/images/user-guide/halftone/layout-window-v1.svg">
+    <CardTitle>تعرّف على التخطيط</CardTitle>
+    الشريط الجانبي، طرق العرض، قائمة الأوامر، اللوحة الجانبية.
   </Card>
-  <Card title="إنشاء سير العمل" icon="bolt" href="/ar/user-guide/workflows/overview">
-    أتمِت عملياتك التجارية.
+  <Card href="/ar/user-guide/workflows/overview" img="/images/user-guide/halftone/workflows-belt-v1.svg">
+    <CardTitle>إنشاء عمليات سير العمل</CardTitle>
+    أتمتة عمليات أعمالك.
   </Card>
-  <Card title="إنشاء العروض" icon="table" href="/ar/user-guide/layout/overview">
+  <Card href="/ar/user-guide/views-pipelines/overview" img="/images/documentation/section-overview-icons-v1/views-pipelines.svg">
+    <CardTitle>إنشاء طرق العرض</CardTitle>
     جدول، كانبان، تقويم — قم بتصفية بياناتك وفرزها.
   </Card>
-  <Card title="استكشف واجهة برمجة التطبيقات (API)" icon="plug" href="/ar/developers/extend/api">
-    مخطط لكل مستأجر عبر REST و GraphQL.
+  <Card href="/ar/developers/extend/api" img="/images/documentation/banner-icons-v2/dev-api.svg">
+    <CardTitle>استكشف واجهة برمجة التطبيقات</CardTitle>
+    مخطط لكل مستأجر لـ REST وGraphQL.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="getting-started-quickstart" />

@@ -1,5 +1,7 @@
 import {
   BillingFieldRow,
+  IncludedBillingField,
+  type IncludedBillingFieldProps,
   ScheduledBillingChangeField,
   type ScheduledBillingChangeFieldProps,
 } from '@/settings/billing/components/internal/SettingsBillingCardField';
@@ -184,6 +186,7 @@ type SettingsBillingSubscriptionInfoCardProps = {
   currentIntervalLabel: string;
   displayedSubscriptionDate?: string;
   headerActions: ReactNode;
+  includedPerSeatItems: IncludedBillingFieldProps[];
   isSubscriptionActionDisabled: boolean;
   onSwitchToMonthly: () => void;
   onSwitchToYearly: () => void;
@@ -214,6 +217,7 @@ export const SettingsBillingSubscriptionInfoCard = ({
   currentIntervalLabel,
   displayedSubscriptionDate,
   headerActions,
+  includedPerSeatItems,
   isSubscriptionActionDisabled,
   onSwitchToMonthly,
   onSwitchToYearly,
@@ -232,6 +236,7 @@ export const SettingsBillingSubscriptionInfoCard = ({
 }: SettingsBillingSubscriptionInfoCardProps) => {
   const { t } = useLingui();
   const hasScheduledChange = scheduledChangeItems.length > 0;
+  const hasIncludedPerSeatItems = includedPerSeatItems.length > 0;
 
   return (
     <StyledSettingsBillingCard>
@@ -305,7 +310,7 @@ export const SettingsBillingSubscriptionInfoCard = ({
               <StyledSecondaryText>{seatsSubtotalDetails}</StyledSecondaryText>
             )}
           </BillingFieldRow>
-          <BillingFieldRow label={t`Credits`} Icon={IconCoins}>
+          <BillingFieldRow label={t`Credit pack`} Icon={IconCoins}>
             {creditsSubtotalValue}
             {creditsSubtotalDetails && (
               <StyledSecondaryText>
@@ -321,6 +326,25 @@ export const SettingsBillingSubscriptionInfoCard = ({
           </BillingFieldRow>
         </StyledBillingFieldListWithDivider>
       </StyledSettingsBillingCardGridBody>
+      {hasIncludedPerSeatItems && (
+        <>
+          <StyledScheduledChangeHeader>
+            <StyledScheduledChangeTitle>
+              {t`Included per seat`}
+            </StyledScheduledChangeTitle>
+          </StyledScheduledChangeHeader>
+          <StyledScheduledChangeGrid columns={includedPerSeatItems.length}>
+            {includedPerSeatItems.map((includedPerSeatItem) => (
+              <IncludedBillingField
+                Icon={includedPerSeatItem.Icon}
+                key={includedPerSeatItem.label}
+                label={includedPerSeatItem.label}
+                value={includedPerSeatItem.value}
+              />
+            ))}
+          </StyledScheduledChangeGrid>
+        </>
+      )}
       {hasScheduledChange && (
         <>
           <StyledScheduledChangeHeader>

@@ -1,0 +1,163 @@
+---
+title: إعداد نطاق إرسال
+description: تحقق من نطاقك حتى تتمكن من إرسال الحملات من عنوانك الخاص.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## نظرة عامة
+
+تأتي الحملات من عنوان على نطاقك، مثل `news@yourcompany.com`. قبل أن يتمكن Twenty من الإرسال منه، يحتاج Gmail وOutlook وغيرهما من المزوّدين إلى إثبات أنك تملك النطاق. أضف هذا الإثبات كسجلات DNS حيث تتم إدارة نطاقك.
+
+ستنشئ العنوان في Twenty، وتضيف سجلات DNS، ثم تتحقق منها.
+
+فقط الرد من علبة الوارد المشتركة، لا إرسال الحملات؟ يمكنك تخطي سجلات إلغاء الاشتراك. انظر [البريد الإلكتروني Channels](/ar/user-guide/calendar-emails/capabilities/email-channels).
+
+<Note>
+  تستخدم سجلات Twenty أسماء مضيف خاصة بها، مثل
+  `twenty-bounce.yourcompany.com` و`links.yourcompany.com`. لا تؤدي إلى
+  تغيير السجلات التي يعتمد عليها بريدك الإلكتروني اليومي، لذا يمكنك استخدام نطاقك
+  الرئيسي. الاستثناء الوحيد هو DMARC، الذي ينطبق على النطاق بأكمله.
+  لا يقترحه Twenty إلا إذا لم يكن لديك واحد بالفعل.
+</Note>
+
+## قبل أن تبدأ
+
+قبل أن تبدأ، تأكد من توفر ما يلي لديك:
+
+* **الوصول إلى مزود DNS**: الشركة التي تدير لديها سجلات نطاقك، مثل Cloudflare أو GoDaddy أو Namecheap. ليست هذه الشركة دائمًا هي الشركة التي اشتريت منها النطاق.
+* **إذن إعدادات مساحة العمل** في Twenty.
+
+## الجزء 1: إنشاء العنوان في Twenty
+
+يأتي نطاق الإرسال من قناة بريد إلكتروني. إذا كنت قد أعددت بالفعل صندوق وارد مشتركًا في Twenty، فالنطاق موجود بالفعل. انتقل إلى الجزء 2.
+
+1. انتقل إلى **الإعدادات → التواصل**.
+2. انقر على **إضافة قناة بريد إلكتروني**.
+
+<img src="/images/user-guide/email-campaigns/channels-list.png" style={{ width: '100%' }} />
+
+3. في **عنوان البريد الإلكتروني المصدر**، أدخل العنوان الذي تريد استخدامه، مثل `news@yourcompany.com`. يستخدم Twenty الجزء الذي يلي `@` كنطاق الإرسال.
+4. في **اسم العرض**، أدخل الاسم الذي يراه الأشخاص في صندوق واردهم، مثل `Acme Newsletter`.
+5. انقر على **حفظ**.
+
+<img src="/images/user-guide/email-campaigns/new-channel-form.png" style={{ width: '100%' }} />
+
+يفتح Twenty القناة. مرر إلى **نطاق الإرسال**. يسرد سجلات DNS التي تحتاج إليها، مع زر نسخ بجوار كل قيمة.
+
+<img src="/images/user-guide/email-campaigns/sending-domain-records.png" style={{ width: '100%' }} />
+
+<Note>
+  لا يمكن التحقق من النطاق إلا في مساحة عمل واحدة في Twenty. يخبرك Twenty إذا كان
+  مستخدمًا بالفعل في مكان آخر.
+</Note>
+
+## الجزء 2: فهم السجلات
+
+| مجموعة                  | السجلات                                                                                          | ماذا يفعل                                                                                                                        |
+| ----------------------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------- |
+| **مصادقة النطاق**       | ثلاثة سجلات `CNAME` تنتهي بـ `._domainkey`، بالإضافة إلى سجل `MX` وسجل `TXT` على `twenty-bounce` | يوضح أن Twenty يمكنه الإرسال نيابةً عن نطاقك (DKIM وSPF). ترسل سجلات `twenty-bounce` أيضًا تقارير الارتداد إلى Twenty.           |
+| **سياسة DMARC**         | سجل `TXT` واحد على `_dmarc`                                                                      | يخبر المزوّدين بما يجب فعله بالبريد الذي لا يجتاز عمليات التحقق. لا يسرده Twenty إلا إذا لم يكن لديك سجل DMARC.                  |
+| **رابط إلغاء الاشتراك** | سجلا `CNAME`، على `links` و`_acme-challenge.links`                                               | يستضيف صفحة إلغاء الاشتراك والروابط المتتبعة على نطاقك، مثل `links.yourcompany.com`. لا يمكنك إرسال حملات حتى يتم التحقق من ذلك. |
+
+أضف كل سجل يعرضه Twenty. يرفض Gmail وYahoo وOutlook البريد الإلكتروني الجماعي غير المُصادَق عليه.
+
+<Warning>
+  إذا كان نطاقك يحتوي بالفعل على سجل DMARC، فاحتفظ به. لا تضف سجلًا آخر:
+  يعامل المزوّدون سجلي DMARC كما لو لم يكن لديك أي سجل.
+</Warning>
+
+## الجزء 3: إضافة السجلات لدى مزود DNS
+
+لكل سجل، أضف إدخالًا جديدًا لدى مزود DNS وانسخ هذه القيم من Twenty:
+
+* **النوع**: `CNAME` أو `MX` أو `TXT`.
+* **الاسم**: يُسمى أحيانًا **المضيف**.
+* **القيمة**: تُسمى أحيانًا **الهدف** أو **يشير إلى** أو **المحتوى** أو **الإجابة**.
+
+بالنسبة إلى سجل `MX`، يعرض Twenty الأولوية قبل القيمة، مثل `10 feedback-smtp.eu-central-1.amazonses.com`. لدى معظم المزوّدين حقل **الأولوية** منفصل. ضع `10` فيه والباقي في القيمة.
+
+<Warning>
+  يضيف العديد من المزوّدين نطاقك تلقائيًا إلى نهاية **الاسم**. إذا كان مزودك
+  يفعل ذلك، فأدخل الجزء الذي يسبق نطاقك فقط. بالنسبة إلى
+  `twenty-bounce.yourcompany.com`، أدخل `twenty-bounce`. وإلا فسيصبح السجل
+  `twenty-bounce.yourcompany.com.yourcompany.com` ولن يتم التحقق منه.
+</Warning>
+
+اتبع تعليمات مزودك، باستخدام القيم من Twenty:
+
+| المزود              | دليلهم                                                                                                                                                         | تنبيه بشأن                                                                                                         |
+| ------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Amazon Route 53     | [العمل مع السجلات](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/rrsets-working-with.html)                                                         | ضع قيم `TXT` بين علامتي اقتباس مزدوجتين.                                                                           |
+| Azure DNS           | [إدارة سجلات DNS](https://learn.microsoft.com/en-us/azure/dns/dns-getstarted-portal)                                                                           | لا يعمل إلا إذا كان النطاق يستخدم خوادم الأسماء الخاصة بـ Azure.                                                   |
+| Bluehost            | [إضافة إدخالات DNS أو تعديلها أو حذفها](https://www.bluehost.com/help/article/dns-management-add-edit-or-delete-dns-entries)                                   | أدخل جزء المضيف فقط في **سجل المضيف**.                                                                             |
+| Cloudflare          | [إنشاء سجلات DNS](https://developers.cloudflare.com/dns/manage-dns-records/how-to/create-dns-records/)                                                         | عيّن كل `CNAME` إلى **DNS فقط** (السحابة الرمادية). لا يتم التحقق من السجل الذي يمر عبر الوكيل أبدًا.              |
+| DigitalOcean        | [إدارة سجلات DNS](https://docs.digitalocean.com/products/networking/dns/how-to/manage-records/)                                                                | لا يعمل إلا إذا كان النطاق يستخدم خوادم الأسماء الخاصة بـ DigitalOcean.                                            |
+| Gandi               | [سجلات DNS](https://docs.gandi.net/en/domain_names/common_operations/dns_records.html)                                                                         | أنه قيم `CNAME` بنقطة، كما في `abc.dkim.amazonses.com.`                                                            |
+| GoDaddy             | [إضافة سجل CNAME](https://www.godaddy.com/help/add-a-cname-record-19236)                                                                                       | أدخل جزء المضيف فقط في **الاسم**. يضيف GoDaddy نطاقك بنفسه.                                                        |
+| Google Cloud DNS    | [إدارة السجلات](https://cloud.google.com/dns/docs/records)                                                                                                     | لا يعمل إلا إذا كان النطاق يستخدم خوادم الأسماء الخاصة بـ Google Cloud.                                            |
+| Hostinger           | [إدارة سجلات DNS](https://www.hostinger.com/support/1583249-how-to-manage-dns-records-at-hostinger/)                                                           | لا يعمل إلا إذا كان النطاق يستخدم خوادم الأسماء الخاصة بـ Hostinger.                                               |
+| Hover               | [تعديل سجلات DNS](https://help.hover.com/hc/en-us/articles/217282457-how-to-edit-dns-records-a-aaaa-cname-mx-txt-srv-)                                         | أدخل جزء المضيف فقط في **اسم المضيف**.                                                                             |
+| IONOS               | [إدارة إعدادات DNS](https://www.ionos.com/help/domains/general-information-about-dns-settings/managing-dns-settings-in-control-center/)                        | أدخل جزء المضيف فقط في **اسم المضيف**.                                                                             |
+| Name.com            | [إضافة سجل CNAME](https://www.name.com/support/articles/115004895548-adding-a-cname-record)                                                                    | أدخل جزء المضيف فقط في **المضيف**.                                                                                 |
+| Namecheap           | [إضافة سجلات TXT وSPF وDKIM وDMARC](https://www.namecheap.com/support/knowledgebase/article.aspx/317/2237/how-do-i-add-txtspfdkimdmarc-records-for-my-domain/) | لا يعمل إلا إذا كان النطاق يستخدم Namecheap BasicDNS أو FreeDNS أو PremiumDNS. أدخل جزء المضيف فقط.                |
+| Netlify             | [سجلات DNS](https://docs.netlify.com/manage/domains/configure-domains/dns-records/)                                                                            | لا يعمل إلا إذا كان النطاق يستخدم خوادم الأسماء الخاصة بـ Netlify.                                                 |
+| Network Solutions   | [إدارة سجلات DNS المتقدمة](https://www.networksolutions.com/help/article/manage-dns-adns-records)                                                              | أدخل جزء المضيف فقط.                                                                                               |
+| OVHcloud            | [إنشاء سجل CNAME](https://docs.ovhcloud.com/en/guides/web-cloud/domains/dns-zone-cname-record-creation)                                                        | أدخل جزء المضيف فقط في **النطاق الفرعي**.                                                                          |
+| Porkbun             | [تعديل سجلات DNS](https://kb.porkbun.com/article/68-how-to-edit-dns-records)                                                                                   | أدخل جزء المضيف فقط في **المضيف**.                                                                                 |
+| Squarespace Domains | [تعديل سجلات DNS لنطاقك](https://support.squarespace.com/hc/en-us/articles/360002101888-Edit-your-domain-s-DNS-records)                                        | يحظر Squarespace سجلًا يتعارض مع سجل موجود بدلًا من استبداله.                                                      |
+| Vercel              | [إدارة سجلات DNS](https://vercel.com/docs/domains/managing-dns-records)                                                                                        | لا يعمل إلا إذا كان النطاق يستخدم خوادم الأسماء الخاصة بـ Vercel. بخلاف ذلك، أضف السجلات حيث تتم استضافة DNS لديك. |
+| Wix                 | [إدارة سجلات DNS](https://support.wix.com/en/article/managing-dns-records-in-your-wix-account)                                                                 | لا يعمل إلا إذا كان النطاق يستخدم خوادم الأسماء الخاصة بـ Wix. بخلاف ذلك، أضف السجلات حيث تتم استضافة DNS لديك.    |
+
+إذا لم يكن مزودك مدرجًا، فابحث عن **DNS** أو **سجلات DNS** أو **محرر المنطقة** أو **DNS المتقدم** في إعدادات نطاقك.
+
+## الجزء 4: التحقق
+
+يتحقق Twenty من سجلاتك كل ساعة. للتحقق الآن، انقر على **التحقق من التحقق** في **نطاق الإرسال**.
+
+تعمل تغييرات DNS عادةً خلال ساعة، لكن بعض المزوّدين يستغرقون ما يصل إلى 48 ساعة. ينتقل النطاق من **قيد الانتظار** إلى **تم التحقق** عندما يعثر Twenty على سجلات المصادقة. يجب أن يظهر **رابط إلغاء الاشتراك** أيضًا بالحالة **تم التحقق** قبل أن تتمكن من إرسال الحملات.
+
+<img src="/images/user-guide/email-campaigns/sending-domain-verified.png" style={{ width: '100%' }} />
+
+يعرض صف **سياسة DMARC** دائمًا **غير معيّن**. هذا متوقع: يقترح Twenty السجل ولكنه لا يتحقق منه.
+
+## استكشاف الأخطاء وإصلاحها
+
+<Accordion title="يبقى النطاق قيد الانتظار لساعات">
+  افتح مزود DNS وقارن كل **اسم** بالقيمة في Twenty.
+  المشكلة المعتادة هي أن المزوّد أضاف نطاقك مرة ثانية، كما
+  هو موضح في الجزء 3. تحقق أيضًا من أنك أضفت السجلات حيث تتم استضافة DNS
+  لديك بالفعل. لا تؤثر السجلات في لوحة جهة تسجيل النطاق لديك إذا كانت خوادم
+  الأسماء تشير إلى مكان آخر.
+</Accordion>
+
+<Accordion title="Cloudflare: السجلات موجودة ولكن لا يتم التحقق منها أبدًا">
+  عيّن كل `CNAME` إلى **DNS فقط**. عند تفعيل السحابة البرتقالية، يعيد Cloudflare
+  خوادمه الخاصة بدلًا من القيمة التي منحك إياها Twenty.
+</Accordion>
+
+<Accordion title="يعرض النطاق الحالة فشل">
+  يتوقف Twenty عن التحقق من نطاق فاشل. أصلح السجلات، ثم انقر على **التحقق
+  من التحقق**.
+</Accordion>
+
+<Accordion title="يعرض النطاق الحالة فشل مؤقت">
+  لم يستجب مزود DNS لديك عندما تحقّق Twenty. يواصل Twenty التحقق
+  كل ساعة، لذا يُحل هذا عادةً من تلقاء نفسه.
+</Accordion>
+
+<Accordion title="تم التحقق من المصادقة، لكن رابط إلغاء الاشتراك يبقى قيد الانتظار">
+  يتم التحقق من سجلي إلغاء الاشتراك بشكل منفصل وقد يستغرقان وقتًا أطول لأن
+  Twenty ينشئ أيضًا شهادة آمنة لهما. تحقق من وجود سجلي `CNAME`
+  كليهما، على `links` و`_acme-challenge.links`، ثم انتظر لمدة تصل
+  إلى ساعة.
+</Accordion>
+
+<Accordion title="مزودي يرفض سجل MX">
+  ضع `10` في **الأولوية** واسم المضيف فقط في القيمة، مثل
+  `feedback-smtp.eu-central-1.amazonses.com`. لا تضع `10` في القيمة.
+</Accordion>
+
+بعد ذلك، اقرأ [أفضل الممارسات](/ar/user-guide/email-campaigns/how-tos/email-campaign-best-practices)، ثم [أرسل حملتك الأولى](/ar/user-guide/email-campaigns/how-tos/send-your-first-campaign).
+
+<PageBanner illustration="card-page-sending-domain" />

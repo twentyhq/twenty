@@ -1,16 +1,17 @@
 import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 import { useQuery } from '@apollo/client/react';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { Dropdown } from 'twenty-ui/components/navigation';
+import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
 import {
-  type Agent,
   type ApiKeyForRole,
   FindManyAgentsDocument,
   GetApiKeysDocument,
 } from '~/generated-metadata/graphql';
 import { normalizeSearchText } from 'twenty-ui/utilities';
 
-type EntityData = Agent | ApiKeyForRole;
+type EntityData = FlatAgent | ApiKeyForRole;
 
 type SettingsRoleAssignmentEntityPickerDropdownProps = {
   entityType: 'agent' | 'apiKey';
@@ -25,6 +26,7 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
 }: SettingsRoleAssignmentEntityPickerDropdownProps) => {
   const [searchFilter, setSearchFilter] = useState('');
   const { t } = useLingui();
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
 
   const isAgent = entityType === 'agent';
   const shouldShowSystemAgents = searchFilter !== '';
@@ -48,7 +50,8 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
     return ((isAgent
       ? agentsData?.findManyAgents.filter(
           (agent) =>
-            agent.isCustom && (!agent.isSystem || shouldShowSystemAgents),
+            getIsMetadataItemCustom(agent) &&
+            (!agent.isSystem || shouldShowSystemAgents),
         )
       : apiKeysData?.apiKeys) || []) as EntityData[];
   }, [
@@ -56,6 +59,7 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
     agentsData?.findManyAgents,
     apiKeysData?.apiKeys,
     shouldShowSystemAgents,
+    getIsMetadataItemCustom,
   ]);
 
   const placeholder = isAgent ? t`Search agents` : t`Search API keys`;
@@ -80,7 +84,7 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
       }
 
       if (isAgent) {
-        const agent = entity as Agent;
+        const agent = entity as FlatAgent;
         return (
           normalizeSearchText(agent.name).includes(searchTerm) ||
           normalizeSearchText(agent.label).includes(searchTerm)
@@ -113,7 +117,7 @@ export const SettingsRoleAssignmentEntityPickerDropdown = ({
               key={entity.id}
               onClick={() => onSelect(entity)}
             >
-              {isAgent ? (entity as Agent).label : entity.name}
+              {isAgent ? (entity as FlatAgent).label : entity.name}
             </Dropdown.ActionItem>
           ))}
       </Dropdown.Section>

@@ -1,0 +1,47 @@
+---
+title: VisuallyHidden
+description: Mantieni il testo di supporto disponibile per la tecnologia assistiva senza visualizzarlo.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import VisuallyHiddenReference from '/snippets/ui/generated/accessibility/visually-hidden.mdx';
+
+## Panoramica
+
+`VisuallyHidden` esegue il rendering di uno `span` visivamente nascosto. Il suo contenuto rimane nell'albero di accessibilità e può fornire un nome accessibile. Accetta le props native di span, un ref di span e la composizione `render` di Base UI. Importa `VisuallyHiddenProps` dallo stesso punto di ingresso.
+
+<StoryEmbed storyId="ui-accessibility-visuallyhidden--display" title="Esempio visivamente nascosto" height={100} />
+
+## Utilizzo
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
+import { IconPlus } from 'twenty-ui/icon';
+
+type AddRecordActionProps = { onAdd: () => void };
+
+export const AddRecordAction = ({ onAdd }: AddRecordActionProps) => (
+  <Button onClick={onAdd}>
+    <IconPlus aria-hidden />
+    <VisuallyHidden>Add record</VisuallyHidden>
+  </Button>
+);
+```
+
+Usa un'etichetta visibile quando lo spazio lo consente. Per i controlli che accettano già `aria-label`, tale attributo è un altro modo per fornire un nome accessibile.
+
+## Contenuto nascosto
+
+Inserisci il testo di supporto all'interno del wrapper. Evita di inserire al suo interno controlli attivabili con lo stato attivo: il wrapper rimane visivamente nascosto quando i relativi elementi figlio ricevono lo stato attivo. Non aggiunge un'area live, non rimuove i contenuti dalla tecnologia assistiva e non nasconde dati riservati.
+
+Usa `id` per associare descrizioni nascoste a `aria-describedby`. Gli attributi nativi, `className`, `style` e `ref` si applicano allo span nascosto o all'elemento fornito tramite `render`. Consulta [accessibilità](/it/ui/accessibility) per i modelli di etichettatura e annuncio.
+
+## Props
+
+<VisuallyHiddenReference />
+
+<PageBanner illustration="page-cover-accessibility" />

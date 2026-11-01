@@ -175,6 +175,8 @@ export class MessageCampaignDeliveryService {
         }),
         retryLimit: CAMPAIGN_SEND_RETRY_LIMIT,
         backoff: CAMPAIGN_SEND_RETRY_BACKOFF,
+        workspaceId: data.workspaceId,
+        isWorkspaceJob: true,
       },
     );
   }

@@ -11,6 +11,7 @@ failure recovery. See the [README](../README.md) to build and start the CLI.
 - [Open](#open-the-workspace)
 - [Metadata](#inspect-the-data-model)
 - [Records](#read-records)
+- [Local development environment](#run-a-local-development-environment)
 - [App init](#create-an-app) and [add](#add-definitions-to-an-app)
 - [Build and typecheck](#build-and-check-an-app)
 - [Plan](#preview-app-changes), [apply](#apply-an-app) and [dev](#develop-an-app)
@@ -18,6 +19,68 @@ failure recovery. See the [README](../README.md) to build and start the CLI.
 - [Function execution](#execute-an-app-function) and [logs](#watch-app-logs)
 - [Expired browser sessions](#expired-browser-sessions)
 - [Output and exit codes](#output)
+
+## Run a local development environment
+
+```bash
+twenty local start
+twenty local status
+twenty auth login --url http://localhost:2020 --name local
+twenty local logs --no-follow
+twenty local stop
+```
+
+`local` runs the full Twenty development environment, including the web UI,
+API, worker and databases. Docker must be installed and running with a local
+socket context; remote Docker endpoints are rejected. These commands need
+neither an app directory nor a saved workspace connection. They do not sign in,
+change remotes or apply an app.
+
+`start [version]` creates an instance or starts the existing one, and waits up
+to five minutes for `/healthz`. For a new instance, version selection is:
+explicit version or image tag, the highest published version matching the nearest
+`package.json`'s `engines.twenty`, then `latest` when no range exists. A failed
+lookup or unmatched range is an error, never a fallback to another version.
+Versions such as `2.53` and `2.53.1` select `v2.53` and `v2.53.1`, respectively;
+`2.53` keeps the floating minor tag. Other image tags are used as given.
+New instances pull the selected image before creation, including when the tag
+is cached locally. Existing instances keep their image and port; use `upgrade` to change versions.
+Compatibility with `engines.twenty` uses the existing image's `APP_VERSION`.
+A missing, invalid or incompatible version warns without preventing startup.
+A readiness failure leaves the container and data in place for diagnosis.
+
+New instances bind to loopback on port `2020`. Use `--port <port>` when creating
+one. `--test` selects the separate test instance, default port `2021`; pass it
+to every command intended for that instance. Data and file storage use separate
+named volumes for each instance. Existing SDK development containers and their
+volumes are reused.
+
+```bash
+twenty local start 2.53.1 --test
+twenty local logs --test --lines 100 --no-follow
+twenty local upgrade 2.53.1 --test
+twenty local reset --test --yes
+```
+
+`status` reports `not-created`, `stopped`, `starting` or `healthy`; unavailable
+Docker is an error. `logs` follows by default; `--no-follow` prints recent logs
+and exits. It supports human or NDJSON output, with a terminal result or error;
+other local commands support human or JSON output. Ctrl+C cancels the CLI
+operation, without stopping the environment or deleting data.
+
+`stop` preserves the container and all data. `upgrade [version]` uses the same
+version selection as a new start. It pulls the image before stopping the old
+instance, then recreates it with the same ports, named volumes and user-provided
+environment overrides. The old container is kept until the replacement is created.
+If creation fails or is cancelled, the CLI restores the old container and its
+previous running state. If the image digest is unchanged, no restart occurs.
+Custom storage layouts are rejected. Data volumes survive a failed upgrade,
+but database migrations are not automatically rolled back.
+
+`reset` removes the selected container and its database, analytics and file
+volumes. It requires confirmation, or `--yes` in scripts. It does not affect
+other containers or saved remote credentials. Run `start` afterward for a fresh
+instance. This development environment is not a production deployment tool.
 
 ## Connections and authentication
 
@@ -310,27 +373,29 @@ and inspect the changes before applying an app with a different tooling version.
 
 ```bash
 twenty app plan --remote dev
-twenty app plan --path ./apps/billing --no-delete --json
+twenty app plan --path ./apps/billing --no-prune --json
+twenty app plan --prune
 ```
 
 `app plan` builds once with the CLI pipeline, releases the temporary snapshot, then requests the server's metadata preview with `dryRun: true`. It uses the usual connection selection and requires the server's `APPLICATIONS` permission. The server enforces authorization, ownership and manifest/version compatibility. No registration, installation, upload or metadata synchronization is performed, and planning never advances a pull base. The local build can generate app artifacts, just as `app build` does.
 
 JSON marks plans with `plan: true`. A plan is not a saved approval: remote changes can alter what a later apply does. A missing owned application registration returns `PLAN_UNAVAILABLE` (exit 1). Register the app with `twenty app apply --create`, then plan again.
 
-Entities missing from source are included as deletions by default. `--no-delete` passes `inferDeletionFromMissingEntities: false` to the preview. Human output lists every action, identifies object/field deletions that would remove stored data, and shows the opt-out hint. JSON includes action details and counts. Application-variable values, including previous values in updates, are redacted from all plan actions regardless of their `isSecret` setting. A plan exceeding 10,000 actions or the transport's 16 MiB response limit fails instead of displaying an incomplete plan.
+Entities missing from source are included as deletions by default, except for the workspace custom application, which keeps them unless you pass `--prune`. `--no-prune` passes `inferDeletionFromMissingEntities: false` to the preview and `--prune` passes `true`; without either the argument is omitted and the server decides. Servers released before `--prune` existed treat an omitted argument as `true`, so pass `--no-prune` to keep entities against them. The deprecated `--no-delete` still works as `--no-prune` with a `DEPRECATED_OPTION` warning; an explicit `--prune` or `--no-prune` takes precedence over it. Human output lists every action, identifies object/field deletions that would remove stored data, and shows the opt-out hint. JSON includes action details and counts. Application-variable values, including previous values in updates, are redacted from all plan actions regardless of their `isSecret` setting. A plan exceeding 10,000 actions or the transport's 16 MiB response limit fails instead of displaying an incomplete plan.
 
 ## Apply an app
 
 ```bash
 twenty app apply --remote dev
 twenty app apply --create --json
-twenty app apply --no-delete
+twenty app apply --no-prune
+twenty app apply --prune
 ```
 
 `app apply` builds the app once with the CLI pipeline and keeps that build's snapshot until it finishes, so the files it uploads are the ones it built. It then asks the workspace for a fresh plan, shows it, and applies it: it installs the development app if needed, uploads the snapshot files, synchronizes the manifest, and regenerates the app's typed API client. It needs the server's `APPLICATIONS` and `UPLOAD_FILE` permissions.
 
 - **New apps.** An app without a registration needs `--create`, or a yes at the prompt in an interactive terminal. The CLI then registers the app (the server also requires `API_KEYS_AND_WEBHOOKS` for this), installs it, and plans its changes before uploading anything. Without approval it stops with `CREATE_REQUIRED` (exit 2). The registration's client secret is never requested.
-- **Deletions.** Entities missing from source are deleted by default, as in `app plan`; `--no-delete` keeps them and is sent to both the plan and the sync. Object and field deletions permanently delete stored data, so they need `--yes` or a yes at the prompt. Otherwise the command stops with `CONFIRMATION_REQUIRED` (exit 2) before changing anything. `--yes` never changes which entities are deleted.
+- **Deletions.** Entities missing from source are deleted by default (except in the workspace custom application), as in `app plan`; `--no-prune` keeps them, `--prune` deletes them in every app, and the choice is sent to both the plan and the sync. JSON reports `inferDeletionFromMissingEntities: null` when neither flag is passed. Object and field deletions permanently delete stored data, so they need `--yes` or a yes at the prompt. Otherwise the command stops with `CONFIRMATION_REQUIRED` (exit 2) before changing anything. `--yes` never changes which entities are deleted.
 - **Uploads.** File bytes go straight to the upload URLs the server returns, without the CLI's credentials. Each file is checked against the build's size and SHA-256 before anything is uploaded.
 - **Pull baseline.** After an acknowledged sync, the CLI fetches the workspace ID and fresh application export, then atomically records `.twenty/cli/pull-base.json`. This baseline lets `app pull` distinguish workspace changes from local edits. It is bound to the normalized API URL, workspace UUID and app UUID. JSON reports `pullBase: "recorded"`, `"failed"` or `"unsupported"`; only a recorded base adds `pullBase` to `completedPhases`. Invalid exports or file-write errors preserve the prior base, warn with `PULL_BASE_NOT_RECORDED`, and allow client generation to continue. A server without the export API reports `"unsupported"` without a warning on every apply. The export is recorded as the server sent it; collections it lacks are read as empty by pull. Cancellation before the base is committed exits 130 with `outcome: "applied"` and `phase: "pullBase"`.
 - **Typed client.** After the sync, the CLI fetches the app's GraphQL schema from the workspace and calls the app's own `twenty-client-sdk/generate` to regenerate the client in the app's own `node_modules/twenty-client-sdk` (`clientGeneration: "generated"`). It is skipped with a `CLIENT_NOT_GENERATED` warning when the app has no `node_modules/twenty-client-sdk` of its own, as in a hoisted workspace. A symlinked client package is followed and its target rewritten, so don't apply two apps that share one client package at the same time.
@@ -342,8 +407,8 @@ Remote changes made between the plan and the sync can change what the sync does.
 
 ```bash
 twenty app dev --remote dev
-twenty app dev --create --no-delete
-twenty app dev --path ./apps/billing --format ndjson --no-delete
+twenty app dev --create --no-prune
+twenty app dev --path ./apps/billing --format ndjson --no-prune
 ```
 
 `app dev` builds and syncs once, then watches for edits. Each attempt uses the
@@ -368,7 +433,8 @@ snapshot was acknowledged by the workspace. This is eventual convergence after
 edits settle, not an atomic checkout of files being edited concurrently.
 
 Registration uses `--create` or a terminal confirmation. Deletion inference is
-on by default, with `--no-delete` to keep missing entities. Object and field
+on by default except for the workspace custom application, with `--no-prune`
+to keep missing entities and `--prune` to delete them in every app. Object and field
 deletions require a terminal confirmation or `--yes`. Every revision requests a
 fresh plan. An edit cancels a pending confirmation; approval for the
 old revision cannot authorize the new one. A remote failure is reported with the
@@ -413,12 +479,16 @@ The app must already be installed in the workspace; otherwise the command fails 
 ```bash
 twenty app pull --remote dev
 twenty app pull --path ./apps/billing --json
-twenty app pull --universal-identifier <uuid> --verbose
+twenty app pull --path ./workspace-app --yes --no-input
 ```
 
-`app pull` reads the app's definition and exports its workspace metadata into the existing project. It uses the selected connection and the server's `APPLICATIONS` permission; the server decides which apps this workspace can export. It does not register an app or change the workspace. When a project has no application definition, provide `--universal-identifier`. A project declaring a different app is refused before writing.
+Inside an app, `app pull` reads the identifier from the local application definition and pulls that application. Outside an app, it asks where to create a project for the selected workspace's custom application, then asks to create it, install its dependencies with Yarn, and pull. `--path` chooses an existing app or a new or empty destination; noninteractive creation requires both `--path` and `--yes`. It never overwrites an unrelated nonempty directory.
 
-The project must have `twenty-sdk` installed, version `>=1.23.0`, with its public `twenty-sdk/define` and `twenty-sdk/front-component` exports. Pull also checks that the SDK provides the authoring APIs required by the generated files. Missing APIs fail with `SDK_SOURCE_UNSUPPORTED`; install a compatible version (2.40.0 or later). Pull does not require a project TypeScript compiler. Run `twenty app typecheck` afterwards to check the generated definitions against your installed SDK.
+New projects reuse the bundled initializer's package and configuration files without demo entities. Pull writes the custom application's definition. An existing SDK project without an application definition also pulls the custom application. A missing custom application is an error. There is no `--universal-identifier` option.
+
+Pull uses the selected connection and the server's `APPLICATIONS` permission. Creating a project here creates local files only; it does not register an application or change the workspace. Existing projects do not install dependencies automatically. If a new project's installation fails, the scaffold is kept so you can run `yarn install` there and retry pull.
+
+The project must have `twenty-sdk` installed, version `>=1.23.0`, with its public `twenty-sdk/define` and `twenty-sdk/front-component` exports. Pull also checks that the SDK provides the authoring APIs required by the generated files. Missing APIs fail with `SDK_SOURCE_UNSUPPORTED`; install a compatible version (2.50.0 or later). Pull does not require a project TypeScript compiler. Run `twenty app typecheck` afterwards to check the generated definitions against your installed SDK.
 
 Pull compares workspace metadata and local definitions using a baseline saved
 by apply or a previous pull in `.twenty/cli/pull-base.json`. The baseline belongs
@@ -432,7 +502,7 @@ failures restore the previous files and baseline.
 
 Failures in reconciliation report `error.details.outcome`: `unchanged` after an acknowledged refusal, cancellation before writing or successful rollback; `unknown` if a worker stops without acknowledging completion or rollback fails; `pulled` if writes and baseline completed but temporary-file cleanup failed. An interrupted worker can leave files partially written; inspect the changes and retained `.twenty/cli/pull-backup-*` files before retrying. A failed rollback also reports `backupDirectory`. Ctrl+C exits 130 unless the worker acknowledges a completed commit, in which case pull returns its result.
 
-The current export contains metadata and translations, not application source assets or dependency files. Logic-function/front-component code and unsupported metadata are not regenerated. An export with nonempty `files` is refused before writing. Package files, dependency pins and the installed generated client are left alone; pull never installs dependencies. Each export response is limited to 16 MiB. See the [pull implementation](../src/app/pull/README.md) for reconciliation and compatibility details.
+The current export contains metadata, translations and stored dependency files. Public assets and application source files are not exported yet. Workflows are written as `defineWorkflow` files in `src/workflows`; a workflow changed in the workflow builder, or one using steps or references an application cannot declare, is reported as a coverage gap and its local file is kept. The workspace Custom application is published from the builder too, so its workflows are written from their active version, and apply publishes a changed definition as a new version. Skills and agents are written as `defineSkill` and `defineAgent` files in `src/skills` and `src/agents`; one the server cannot reproduce from a definition, such as an agent on more than one role, is reported as a coverage gap and its local file is kept. Logic-function/front-component code and unsupported metadata are not regenerated. Pull restores `package.json` and `yarn.lock` from the application’s `dependencies` folder. If the exported package omits `twenty-sdk`, as the workspace Custom application does, pull keeps your local SDK dependency. Other exported files are refused before writing. Dependency files unchanged on the workspace keep local edits; changed remote files replace them. Missing remote files leave local files untouched. The installed generated client is left alone; pull never installs dependencies. Run `yarn install` after pulling dependency changes. Each export response is limited to 16 MiB. See the [pull implementation](../src/app/pull/README.md) for reconciliation and compatibility details.
 
 ## Install a registered app
 
@@ -603,7 +673,7 @@ Builds and typechecks the app, packs that exact build, then publishes the packag
 
 Install npm and authenticate with the intended registry first. npm runs from the app directory, so its project/user configuration and environment credentials apply. `--tag` sets the npm dist-tag. GitHub Actions jobs with OIDC request provenance automatically; set `TWENTY_APP_PUBLISH_DISABLE_PROVENANCE=true` to opt out, for example when publishing from a private source repository.
 
-Packing and publishing skip npm lifecycle scripts because the CLI already built the app. npm's package-file selection still applies. If `package.json` has a `files` field, it must include `manifest.json` and the generated app files; the command rejects an incomplete package before publication. npm excludes the root `yarn.lock` from packages. Temporary packages and build snapshots are removed after completion or failure.
+Packing and publishing skip npm lifecycle scripts because the CLI already built the app. npm's package-file selection still applies. If `package.json` has a `files` field, it must include `manifest.json` and the generated app files; the command rejects an incomplete package before publication. npm excludes the root `yarn.lock` from packages, so the CLI also packs it as `dependencies/yarn.lock`, where Twenty reads it at install. Temporary packages and build snapshots are removed after completion or failure.
 
 Human mode displays npm output and supports interactive authentication when a terminal is available. JSON mode returns one CLI envelope and does not prompt; configure an automation token or npm’s `npm_config_otp` environment option before running it. Failed npm commands return `PUBLISH_FAILED` with the subprocess exit code and captured output. If publication is interrupted after sending the package, check the registry before retrying, since the version may already have been published.
 

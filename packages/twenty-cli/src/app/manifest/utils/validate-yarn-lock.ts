@@ -6,7 +6,9 @@ export const validateYarnLockFile = async (
   yarnLockPath: string,
 ): Promise<string[]> => {
   if (!(await pathExists(yarnLockPath))) {
-    return [];
+    return [
+      'yarn.lock not found. Run "yarn install" to generate it before building.',
+    ];
   }
 
   return (await stat(yarnLockPath)).size === 0

@@ -9,13 +9,15 @@ import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-ta
 import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout-widget/services/page-layout-widget.service';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { createAddDashboardTabTool } from 'src/modules/dashboard/tools/add-dashboard-tab.tool';
 import { createAddDashboardWidgetTool } from 'src/modules/dashboard/tools/add-dashboard-widget.tool';
 import { createCreateCompleteDashboardTool } from 'src/modules/dashboard/tools/create-complete-dashboard.tool';
 import { createDeleteDashboardWidgetTool } from 'src/modules/dashboard/tools/delete-dashboard-widget.tool';
 import { createGetDashboardTool } from 'src/modules/dashboard/tools/get-dashboard.tool';
 import { createListDashboardsTool } from 'src/modules/dashboard/tools/list-dashboards.tool';
+import { createListRecordPageLayoutsTool } from 'src/modules/dashboard/tools/list-record-page-layouts.tool';
+import { createPlaceFrontComponentTool } from 'src/modules/dashboard/tools/place-front-component.tool';
 import { type DashboardToolDependencies } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
 import { createUpdateDashboardWidgetTool } from 'src/modules/dashboard/tools/update-dashboard-widget.tool';
 
@@ -73,7 +75,18 @@ export class DashboardToolWorkspaceService {
       context,
     );
 
+    const placeFrontComponent = createPlaceFrontComponentTool(
+      this.deps,
+      context,
+    );
+    const listRecordPageLayouts = createListRecordPageLayoutsTool(
+      this.deps,
+      context,
+    );
+
     return {
+      [placeFrontComponent.name]: placeFrontComponent,
+      [listRecordPageLayouts.name]: listRecordPageLayouts,
       [createCompleteDashboard.name]: createCompleteDashboard,
       [listDashboards.name]: listDashboards,
       [getDashboard.name]: getDashboard,

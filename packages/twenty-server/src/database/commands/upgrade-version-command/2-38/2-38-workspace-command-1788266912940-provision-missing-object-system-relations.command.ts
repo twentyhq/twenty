@@ -215,6 +215,7 @@ export class ProvisionMissingObjectSystemRelationsCommand extends ProvisionedWor
       const result =
         await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
           {
+            shouldDeferActions: false,
             isSystemBuild: true,
             workspaceId,
             applicationUniversalIdentifier,

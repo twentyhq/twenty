@@ -3,6 +3,10 @@ title: خطافات التثبيت
 description: تشغيل المنطق أثناء دورة حياة التثبيت أو الترقية أو إلغاء التثبيت — مثل تعبئة البيانات الأوّلية، ونسخ السجلات احتياطيًا، والتحقق من الترقية، وتنظيف الموارد الخارجية.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## نظرة عامة
+
 خطافات التثبيت هي دوال منطقية خاصة تعمل أثناء دورة حياة التثبيت أو الترقية أو إلغاء التثبيت. تستخدم نفس وقت تشغيل المعالج مثل [دوال المنطق](/ar/developers/extend/apps/logic/logic-functions) العادية، ولكن يتم التصريح عنها بدوال تعريف خاصة بها وتعمل خارج نموذج المشغّل المعتاد (HTTP، وcron، وأحداث قاعدة البيانات). تتلقى خطافات التثبيت `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — تكون قيمة `previousVersion` هي `undefined` في حالة التثبيت الجديد)، بينما يتلقى خطاف إلغاء التثبيت `UninstallPayload` (`{ version?: string }` — الإصدار الذي تتم إزالته).
 
 يمكن لكل تطبيق تعريف **خطاف واحد كحد أقصى** من كل نوع (قبل التثبيت، بعد التثبيت، إلغاء التثبيت). سيُنتِج إنشاء ملف البيان خطأً إذا تم اكتشاف أكثر من خطاف واحد من أي نوع.
@@ -20,12 +24,12 @@ description: تشغيل المنطق أثناء دورة حياة التثبيت
 
 ## لمحة سريعة
 
-|                    | `definePreInstallLogicFunction`                                                            | `definePostInstallLogicFunction`                                                                                              |
-| ------------------ | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
-| عمليات التشغيل     | قبل ترحيل البيانات الوصفية — لا يزال المخطط والبيانات **السابقة** سليمين                   | بعد الترحيل وإنشاء الـ SDK — أصبح المخطط **الجديد** في مكانه                                                                  |
-| التنفيذ            | دائمًا متزامن؛ يحجب عملية التثبيت                                                          | غير متزامن بشكل افتراضي (يُوضَع في قائمة الانتظار، 3 محاولات إعادة)؛ تفعيل التزامن اختياري عبر `shouldRunSynchronously: true` |
-| عند الفشل          | يتم **إحباط** التثبيت قبل أي تغيير في المخطط                                               | غير متزامن: تُعاد المحاولة حتى 3 مرات. متزامن: يتلقى المستدعي `POST_INSTALL_ERROR` (لن يتم التراجع عن تغييرات المخطط).        |
-| الاستخدام النموذجي | انسخ البيانات احتياطيًا أو أصلح بيانات قد يفقدها الترحيل؛ ارفض ترقية خطِرة بإلقاء استثناء. | بذر بيانات افتراضية، تهيئة مساحة العمل، تسجيل موارد خارجية                                                                    |
+|                    | `definePreInstallLogicFunction`                                                           | `definePostInstallLogicFunction`                                                                                              |
+| ------------------ | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| عمليات التشغيل     | قبل ترحيل البيانات الوصفية — لا يزال المخطط والبيانات **السابقة** سليمين                  | بعد الترحيل وإنشاء الـ SDK — أصبح المخطط **الجديد** في مكانه                                                                  |
+| التنفيذ            | دائمًا متزامن؛ يحجب عملية التثبيت                                                         | غير متزامن بشكل افتراضي (يُوضَع في قائمة الانتظار، 3 محاولات إعادة)؛ تفعيل التزامن اختياري عبر `shouldRunSynchronously: true` |
+| عند الفشل          | يتم **إحباط** التثبيت قبل أي تغيير في المخطط                                              | غير متزامن: تُعاد المحاولة حتى 3 مرات. متزامن: يتلقى المستدعي `POST_INSTALL_ERROR` (لن يتم التراجع عن تغييرات المخطط)         |
+| الاستخدام النموذجي | انسخ البيانات احتياطيًا أو أصلح بيانات قد يفقدها الترحيل؛ ارفض ترقية خطِرة بإلقاء استثناء | بذر بيانات افتراضية، تهيئة مساحة العمل، تسجيل موارد خارجية                                                                    |
 
 **قاعدة عامة:** اجعل الافتراضي هو post-install. الجأ إلى ما قبل التثبيت فقط عندما يكون الترحيل نفسه هدّامًا وتحتاج إلى التقاط الحالة السابقة قبل أن تزول.
 
@@ -46,11 +50,11 @@ description: تشغيل المنطق أثناء دورة حياة التثبيت
 * يتم حقن بيئة دوال المنطق المعتادة (`APPLICATION_ID`، و`APP_ACCESS_TOKEN`، و`API_URL`)، لذا يمكنك استدعاء Twenty API باستخدام رمز التطبيق الخاص بك.
 * يُربَط الخطّاف تلقائيًا بملف بيان التطبيق وقت الإنشاء (`preInstallLogicFunction` / `postInstallLogicFunction`) — لا حاجة للإشارة إليه في [`defineApplication()`](/ar/developers/extend/apps/config/application).
 * القيمة الافتراضية لـ `timeoutSeconds` هي 300 للسماح بمهام إعداد أطول مثل بذر البيانات.
-* **غير منفَّذ في نمط التطوير**: يتخطى `yarn twenty dev` تدفق التثبيت ويزامن الملفات مباشرةً، لذا لا تعمل الخطافات هناك مطلقًا. بدلًا من ذلك، شغّلها يدويًا:
+* **غير منفَّذ في نمط التطوير**: يتخطى `twenty app dev` تدفق التثبيت ويزامن الملفات مباشرةً، لذا لا تعمل الخطافات هناك مطلقًا. بدلًا من ذلك، شغّلها يدويًا:
 
 ```bash filename="Terminal"
-yarn twenty dev:function:exec --postInstall
-yarn twenty dev:function:exec --preInstall
+twenty app exec --post-install
+twenty app exec --pre-install
 ```
 
 <AccordionGroup>
@@ -59,7 +63,10 @@ yarn twenty dev:function:exec --preInstall
 يعمل بعد انتهاء تثبيت تطبيقك: تمت مزامنة البيانات الوصفية، وتم إنشاء عميل SDK، وأصبح من الممكن الاستعلام عن المخطط الجديد. مثال — بذر سجل افتراضي في عمليات التثبيت الجديدة:
 
 ```ts src/logic-functions/post-install.ts
-import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import {
+  definePostInstallLogicFunction,
+  type InstallPayload,
+} from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
@@ -68,7 +75,9 @@ const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
   const client = new CoreApiClient();
   await client.mutation({
     createPostCard: {
-      __args: { data: { name: 'Welcome to Postcard', content: 'Your first card!' } },
+      __args: {
+        data: { name: 'Welcome to Postcard', content: 'Your first card!' },
+      },
       id: true,
     },
   });
@@ -100,10 +109,16 @@ export default definePostInstallLogicFunction({
 مثال — نسخ قيم حقل قديم قبل أن يُسقِطه الترحيل:
 
 ```ts src/logic-functions/pre-install.ts
-import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import {
+  definePreInstallLogicFunction,
+  type InstallPayload,
+} from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
+const handler = async ({
+  previousVersion,
+  newVersion,
+}: InstallPayload): Promise<void> => {
   // Only the 1.x → 2.x upgrade drops the legacy `notes` field.
   if (!previousVersion?.startsWith('1.') || !newVersion.startsWith('2.')) {
     return;
@@ -132,7 +147,8 @@ const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise
 export default definePreInstallLogicFunction({
   universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
   name: 'pre-install',
-  description: 'Backs up legacy notes into description before the v2 migration.',
+  description:
+    'Backs up legacy notes into description before the v2 migration.',
   timeoutSeconds: 300,
   shouldRunOnVersionUpgrade: true,
   handler,
@@ -155,11 +171,14 @@ export default definePreInstallLogicFunction({
 * ومثل خطافات التثبيت، **لا يتم تنفيذه في وضع التطوير (dev mode)** — بدلًا من ذلك، قم بتشغيله يدويًا:
 
 ```bash filename="Terminal"
-yarn twenty dev:function:exec --uninstall
+twenty app exec --uninstall-hook
 ```
 
 ```ts src/logic-functions/uninstall.ts
-import { defineUninstallLogicFunction, type UninstallPayload } from 'twenty-sdk/define';
+import {
+  defineUninstallLogicFunction,
+  type UninstallPayload,
+} from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (_payload: UninstallPayload): Promise<void> => {
@@ -185,3 +204,5 @@ export default defineUninstallLogicFunction({
   handler,
 });
 ```
+
+<PageBanner illustration="card-page-install-hooks" />

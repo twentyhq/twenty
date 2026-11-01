@@ -3,7 +3,7 @@ title: Импортируйте данные о товарах в Twenty
 description: Синхронизируйте данные каталога товаров из хранилища данных с вашей CRM по расписанию.
 ---
 
-Используйте этот шаблон, чтобы поддерживать синхронизацию Twenty с данными о товарах из вашего хранилища данных (например, Snowflake, BigQuery, PostgreSQL).
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Структура рабочего процесса
 
@@ -180,3 +180,5 @@ export const main = async (params: { deals: any }) => {
 * [Триггеры рабочего процесса](/ru/user-guide/workflows/capabilities/workflow-triggers)
 * [Действия рабочего процесса](/ru/user-guide/workflows/capabilities/workflow-actions)
 * [Обработка массивов в действиях Code](/ru/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+
+<PageBanner illustration="card-page-connections" />

@@ -1,0 +1,77 @@
+---
+title: Banner încorporat
+description: Feedback inline cu conținutul nodului, pictograme și acțiuni.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import InlineBannerReference from '/snippets/ui/generated/components/feedback/inline-banner.mdx';
+
+## Prezentare generală
+
+`InlineBanner` combină [Banner](/ro/ui/primitives/feedback/banner) cu un aspect inline cu colțuri rotunjite și o pictogramă decorativă de informații. Acesta partajează contractele independente ale Banner pentru `status`, `variant`, `color`, `icon` și `action`. Aspectul său implicit este `soft`, iar starea sa implicită este `info`.
+
+<StoryEmbed storyId="ui-feedback-inlinebanner--display" title="Banner inline cu o acțiune" height={130} />
+
+## Utilizare
+
+```tsx
+import { InlineBanner } from 'twenty-ui/components/feedback';
+
+export const ModelsBanner = ({ onConfigure }: { onConfigure: () => void }) => (
+  <InlineBanner
+    status="error"
+    action={
+      <InlineBanner.Action onClick={onConfigure}>
+        Configure models
+      </InlineBanner.Action>
+    }
+  >
+    No AI models are enabled.
+  </InlineBanner>
+);
+```
+
+Aspectul `standard` umple lățimea disponibilă. Elementele copil de tip șir simplu sunt trunchiate, iar focalizarea prin tastatură, trecerea indicatorului sau atingerea afișează șirul complet într-un indiciu. Elementele copil de tip nod bogat sunt randate direct, astfel încât linkurile și controalele încorporate își păstrează propria semantică. Definiți explicit tipografia atunci când conținutul bogat necesită trunchiere.
+
+Utilizați `layout="compact"` pentru conținut cu încadrare pe rânduri, spațiere mai mică și o lățime maximă a conținutului de 512px. Adăugați `fullWidth` pentru a elimina această limită și a umple lățimea disponibilă a părintelui, inclusiv spațierea interioară și marginile. Implicit este `false` și nu modifică aspectul standard, care deja își umple părintele. Nu are margine inferioară. Aspectul este independent de aspectul `solid` sau `soft`. `embedded` elimină marginea inferioară a aspectului standard.
+
+```tsx
+import { InlineBanner } from 'twenty-ui/components/feedback';
+import { IconInfoCircle } from 'twenty-ui/icon';
+
+export const ConnectionBanner = () => (
+  <InlineBanner
+    layout="compact"
+    status="warning"
+    color="blue"
+    icon={<IconInfoCircle aria-hidden="true" />}
+    action={
+      <InlineBanner.Action href="/settings/accounts">
+        Connection settings
+      </InlineBanner.Action>
+    }
+  >
+    Connect your account to sync contacts.
+  </InlineBanner>
+);
+```
+
+<StoryEmbed storyId="ui-feedback-inlinebanner--compact-link" title="Banner compact cu un link de destinație" height={120} />
+
+`InlineBanner.Action` oferă un buton mic conturat care moștenește culoarea afișată a bannerului, inclusiv suprascrierile explicite ale paletei și aspectele solide. Acceptă interacțiuni Button, linkuri, referințe și randare personalizată. Zona `action` acceptă și controale arbitrare.
+
+Ținta rădăcină este un `div`. Proprietățile native, `className`, `style` și `ref` vizează acea rădăcină; `render` din Base UI poate compune un alt element și primește starea Banner rezolvată. `action` acceptă orice ReactNode, inclusiv mai multe controale cu API-urile Button sau de link complete. `icon={null}` elimină pictograma implicită.
+
+Apelantul decide dacă bannerul este randat și dacă modificările trebuie anunțate. Furnizați `role="status"` și `aria-live="polite"` sau un înveliș adecvat pentru regiune live, atunci când este necesar. Status nu atribuie semantică de regiune live. Denumiți controalele de acțiune și marcați pictogramele personalizate decorative cu `aria-hidden`.
+
+## Migrare
+
+Înlocuiți `message` cu `children`, `LeftIcon={Icon}` cu `icon={<Icon />}` și configurația `button` cu un nod `action`. Utilizați `InlineBanner.Action` pentru a menține stilizarea acțiunii aliniată cu bannerul. Înlocuiți `variant="compact"` cu `layout="compact"`; standard este acum aspectul implicit. Utilizați `status="error"` pentru semnificația de eroare sau `color="red"` pentru o suprascriere a paletei.
+
+## Proprietăți
+
+<InlineBannerReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

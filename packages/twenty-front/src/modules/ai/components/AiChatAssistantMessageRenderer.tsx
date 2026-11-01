@@ -9,6 +9,8 @@ import { AiChatQuestionStatusRenderer } from '@/ai/components/AiChatQuestionStat
 import { AiChatToolCallApprovalStatusRenderer } from '@/ai/components/AiChatToolCallApprovalStatusRenderer';
 import { AiChatToolWidget } from '@/ai/components/AiChatToolWidget';
 import { LazyMarkdownContent } from '@/ai/components/LazyMarkdownRenderer';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useFrontComponentIdByToolName } from '@/ai/hooks/useFrontComponentIdByToolName';
 import { getEffectiveToolName } from '@/ai/utils/getEffectiveToolName';
 import { shouldToolPartRenderStandalone } from '@/ai/utils/shouldToolPartRenderStandalone';
@@ -23,6 +25,7 @@ import {
   type ExtendedUIMessagePart,
   isNoReplyToolPart,
   isSucceededCompleteWorkspaceSetupToolPart,
+  PREVIEW_FRONT_COMPONENT_TOOL_NAME,
   PROPOSE_TOOL_CALL_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
 } from 'twenty-shared/ai';
@@ -103,7 +106,7 @@ const MessagePartRenderer = ({
           );
         }
 
-        if (getEffectiveToolName(part) === 'preview_front_component') {
+        if (getEffectiveToolName(part) === PREVIEW_FRONT_COMPONENT_TOOL_NAME) {
           return (
             <AiChatFrontComponentToolPreview
               toolPart={part}
@@ -144,6 +147,9 @@ export const AiChatAssistantMessageRenderer = ({
   workDurationMs?: number | null;
 }) => {
   const frontComponentIdByToolName = useFrontComponentIdByToolName();
+  const isFrontComponentPreviewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_COMPONENT_BUILDER_ENABLED,
+  );
 
   const hasCodeExecutionData = messageParts.some(
     (part) => part.type === 'data-code-execution',
@@ -167,10 +173,13 @@ export const AiChatAssistantMessageRenderer = ({
     filteredParts,
     (part) =>
       isToolUIPart(part) &&
-      shouldToolPartRenderStandalone(
-        part,
-        frontComponentIdByToolName.get(getEffectiveToolName(part)),
-      ),
+      shouldToolPartRenderStandalone({
+        toolPart: part,
+        frontComponentId: frontComponentIdByToolName.get(
+          getEffectiveToolName(part),
+        ),
+        isFrontComponentPreviewEnabled,
+      }),
   );
   const renderItemsWithoutThinkingSteps = groupedRenderItems.filter(
     (renderItem) => renderItem.type !== 'thinking-steps',
@@ -207,14 +216,6 @@ export const AiChatAssistantMessageRenderer = ({
               key={index}
               parts={renderItem.parts}
               isLastMessageStreaming={isLastMessageStreaming}
-              hasAssistantTextResponseStarted={renderItems
-                .slice(index + 1)
-                .some(
-                  (nextRenderItem) =>
-                    nextRenderItem.type === 'part' &&
-                    nextRenderItem.part.type === 'text' &&
-                    nextRenderItem.part.text.trim().length > 0,
-                )}
               isTrailingWhileStreaming={
                 isLastMessageStreaming &&
                 !hasError &&

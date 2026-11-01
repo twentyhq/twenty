@@ -1,0 +1,90 @@
+---
+title: Выноска
+description: Обратная связь с содержимым узлов, действиями и закрытием, управляемым вызывающей стороной.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CalloutReference from '/snippets/ui/generated/components/feedback/callout.mdx';
+
+## Обзор
+
+`Callout` объединяет узлы заголовка, описания, значка и действия. Используйте `status` со значениями `neutral`, `info`, `success`, `warning` или `error`. По умолчанию используется `info`; также поддерживается оформление `soft`. Статус выбирает серую, синюю, зелёную, оранжевую или красную палитру; `color` переопределяет эту палитру, не изменяя значение.
+
+<StoryEmbed storyId="ui-feedback-callout--display" title="Пример выноски" height={230} />
+
+## Использование
+
+```tsx
+import { Callout } from 'twenty-ui/components/feedback';
+
+export const WorkflowNotice = () => (
+  <Callout
+    status="neutral"
+    title="This form will appear in workflow runs."
+    description="Because this workflow is not using a manual trigger, the form will not open on top of the interface. To fill it, open the corresponding workflow run and complete the form there."
+    action={<Callout.Action>Learn more</Callout.Action>}
+  />
+);
+```
+
+## Визуальные параметры
+
+Сравните семантические статусы, используя одинаковый контент. Выберите статус в соответствии со смыслом сообщения и изменяйте цвет, только если этого требует окружающий дизайн.
+
+<StoryEmbed storyId="ui-feedback-callout--catalog" title="Статусы обратной связи выноски" height={1010} />
+
+## Закрываемое уведомление
+
+```tsx
+import { useState } from 'react';
+import { Callout } from 'twenty-ui/components/feedback';
+import { IconAlertTriangle } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const ImportNotice = ({ onReview }: { onReview: () => void }) => {
+  const [isVisible, setIsVisible] = useState(true);
+
+  return (
+    <>
+      {isVisible && (
+        <Callout
+          status="warning"
+          title="Some records need attention"
+          description="Review the missing email addresses before importing."
+          icon={<IconAlertTriangle size={16} aria-hidden="true" />}
+          action={
+            <Callout.Action onClick={onReview}>Review records</Callout.Action>
+          }
+          onDismiss={() => setIsVisible(false)}
+          closeLabel="Dismiss import notice"
+        />
+      )}
+      <Button onClick={() => setIsVisible(true)}>Show notice</Button>
+    </>
+  );
+};
+```
+
+## Закрытие и подписи
+
+Передача `onDismiss` предоставляет доступную кнопку закрытия. Каждая активация указателем или клавиатурой вызывает её один раз. Выноска остаётся отрисованной, пока вызывающий код не скроет её. Не указывайте `onDismiss` для постоянного сообщения. По умолчанию для `closeLabel` используется `Close`.
+
+Ваше приложение отвечает за содержимое, действия, доступные имена и переводы. Используйте `Callout.Action` для небольшой кнопки-призрака с обычной насыщенностью шрифта. Он принимает свойства Button, включая атрибуты ссылок, состояние отключения, refs и пользовательскую отрисовку; размер и внешний вид фиксированы. Слот действия также принимает пользовательские кнопки, ссылки, отключённые элементы управления или несколько узлов. Значок справки по умолчанию является декоративным; передайте `icon={null}`, чтобы не отображать его, или укажите узел с подходящей доступной семантикой. Twenty не требует провайдера i18n.
+
+## Нативная интеграция
+
+Нативные атрибуты, `className`, `style` и `ref` применяются к корневому `div`. Используйте `render`, чтобы скомпоновать другой корневой элемент или функцию обратного вызова, получающую свойства корневого элемента и `{ status, variant, color }`. `title` и `description` — это слоты содержимого. `fullWidth` удаляет максимальную ширину по умолчанию в 512px.
+
+Компонент не добавляет роль живого региона и не делает объявлений. Указывайте нативные `role`, `aria-live` и другие доступные атрибуты, когда этого требует окружающий рабочий процесс.
+
+## Миграция
+
+Замените предыдущий семантический `variant` на `status`, а конструктор `Icon` — на узел `icon`. Замените объекты действий `{ label, onClick }` на `Callout.Action` или пользовательские элементы управления. Замените `isClosable` и `onClose` на `onDismiss` и условно отрисовывайте выноску в вызывающем коде, когда её следует скрывать при закрытии. Существующие переведённые содержимое и подписи действий остаются в приложении.
+
+## Свойства
+
+<CalloutReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

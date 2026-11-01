@@ -1,8 +1,11 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { canManageFeatureFlagsState } from '@/client-config/states/canManageFeatureFlagsState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminServerAdmins } from '@/settings/admin-panel/components/SettingsAdminServerAdmins';
 import { SettingsAdminVersionContainer } from '@/settings/admin-panel/components/SettingsAdminVersionContainer';
+import { getAdminPanelTopWorkspaceGroups } from '@/settings/admin-panel/utils/getAdminPanelTopWorkspaceGroups';
+import { getAdminWorkspaceLabel } from '@/settings/admin-panel/utils/getAdminWorkspaceLabel';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -11,6 +14,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -54,6 +58,7 @@ export const SettingsAdminGeneral = () => {
   const [debouncedWorkspaceSearchTerm] = useDebounce(workspaceSearchTerm, 300);
 
   const currentUser = useAtomStateValue(currentUserState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const canAccessFullAdminPanel = currentUser?.canAccessFullAdminPanel;
   const canImpersonate = currentUser?.canImpersonate;
   const canManageFeatureFlags = useAtomStateValue(canManageFeatureFlagsState);
@@ -77,7 +82,11 @@ export const SettingsAdminGeneral = () => {
   );
 
   const recentUsers = recentUsersData?.adminPanelRecentUsers ?? [];
-  const topWorkspaces = topWorkspacesData?.adminPanelTopWorkspaces ?? [];
+  const workspaceGroups = getAdminPanelTopWorkspaceGroups({
+    topWorkspaces: topWorkspacesData?.adminPanelTopWorkspaces ?? [],
+    currentWorkspace,
+    searchTerm: debouncedWorkspaceSearchTerm,
+  });
 
   return (
     <>
@@ -170,7 +179,9 @@ export const SettingsAdminGeneral = () => {
                           <Avatar
                             src={getAbsoluteImageUrl(user.workspaceLogo)}
                             name={user.workspaceName || ''}
-                            colorSeed={user.workspaceId}
+                            colorSeed={getWorkspaceAvatarColorSeed(
+                              user.workspaceName,
+                            )}
                             size="sm"
                           />
                           <OverflowingTextWithTooltip
@@ -213,7 +224,7 @@ export const SettingsAdminGeneral = () => {
           </StyledSearchInputContainer>
           {isLoadingWorkspaces ? (
             <SettingsSectionSkeletonLoader />
-          ) : topWorkspaces.length === 0 ? (
+          ) : workspaceGroups.length === 0 ? (
             <StyledEmptyState>
               {t`No workspaces found matching your search criteria.`}
             </StyledEmptyState>
@@ -226,44 +237,52 @@ export const SettingsAdminGeneral = () => {
                 <TableHeader align="right">{t`Users`}</TableHeader>
                 <TableHeader />
               </TableRow>
-              <TableBody>
-                {topWorkspaces.map((workspace) => (
-                  <TableRow
-                    key={workspace.id}
-                    gridTemplateColumns={TOP_WORKSPACES_GRID_TEMPLATE_COLUMNS}
-                    to={getSettingsPath(
-                      SettingsPath.AdminPanelWorkspaceDetail,
-                      { workspaceId: workspace.id },
-                    )}
-                  >
-                    <TableCell
-                      color={themeCssVariables.font.color.primary}
-                      gap={themeCssVariables.spacing[2]}
-                      overflow="hidden"
+              {workspaceGroups.map((workspaces, groupIndex) => (
+                <TableBody
+                  key={workspaces[0].id}
+                  padding={`${themeCssVariables.spacing[1]} 0`}
+                  hasTopBorder={groupIndex > 0}
+                >
+                  {workspaces.map((workspace) => (
+                    <TableRow
+                      key={workspace.id}
+                      gridTemplateColumns={TOP_WORKSPACES_GRID_TEMPLATE_COLUMNS}
+                      to={getSettingsPath(
+                        SettingsPath.AdminPanelWorkspaceDetail,
+                        { workspaceId: workspace.id },
+                      )}
                     >
-                      <Avatar
-                        src={getAbsoluteImageUrl(workspace.logoUrl)}
-                        name={workspace.name || ''}
-                        colorSeed={workspace.id}
-                        size="md"
-                      />
-                      <OverflowingTextWithTooltip
-                        text={workspace.name || '\u2014'}
-                      />
-                    </TableCell>
-                    <TableCell align="right">
-                      {formatNumber(workspace.totalUsers)}
-                    </TableCell>
-                    <TableCell align="center">
-                      <IconChevronRight
-                        size={theme.icon.size.md}
-                        stroke={theme.icon.stroke.sm}
-                        color={theme.font.color.tertiary}
-                      />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
+                      <TableCell
+                        color={themeCssVariables.font.color.primary}
+                        gap={themeCssVariables.spacing[2]}
+                        overflow="hidden"
+                      >
+                        <Avatar
+                          src={getAbsoluteImageUrl(workspace.logoUrl)}
+                          name={workspace.name || ''}
+                          colorSeed={getWorkspaceAvatarColorSeed(
+                            workspace.name,
+                          )}
+                          size="md"
+                        />
+                        <OverflowingTextWithTooltip
+                          text={getAdminWorkspaceLabel(workspace)}
+                        />
+                      </TableCell>
+                      <TableCell align="right">
+                        {formatNumber(workspace.totalUsers)}
+                      </TableCell>
+                      <TableCell align="center">
+                        <IconChevronRight
+                          size={theme.icon.size.md}
+                          stroke={theme.icon.stroke.sm}
+                          color={theme.font.color.tertiary}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              ))}
             </Table>
           )}
         </Section.Root>

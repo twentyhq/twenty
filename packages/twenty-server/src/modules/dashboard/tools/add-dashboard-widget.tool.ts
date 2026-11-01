@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
 import {
-  type PageLayoutWidgetGridPosition,
+  type PageLayoutWidgetPosition,
   type WidgetType,
 } from 'twenty-shared/types';
 import {
@@ -15,6 +15,7 @@ import {
   type DashboardToolDependencies,
 } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
 import { type WidgetConfigurationInput } from 'src/modules/dashboard/tools/types/widget-configuration-input.type';
+import { assertFrontComponentWidgetAvailableOnPageLayoutOrThrow } from 'src/modules/dashboard/tools/utils/assert-front-component-widget-available-on-page-layout-or-throw.util';
 import { computeDashboardIdentifierMaps } from 'src/modules/dashboard/tools/utils/compute-dashboard-identifier-maps.util';
 import { resolveWidgetFieldNamesToIds } from 'src/modules/dashboard/tools/utils/resolve-widget-field-names-to-metadata-ids.util';
 
@@ -39,10 +40,24 @@ const addDashboardWidgetSchema = z.object({
 });
 
 export const createAddDashboardWidgetTool = (
-  deps: Pick<
-    DashboardToolDependencies,
-    'pageLayoutWidgetService' | 'flatEntityMapsCacheService'
-  >,
+  deps: {
+    pageLayoutWidgetService: Pick<
+      DashboardToolDependencies['pageLayoutWidgetService'],
+      'create'
+    >;
+    flatEntityMapsCacheService: Pick<
+      DashboardToolDependencies['flatEntityMapsCacheService'],
+      'getOrRecomputeManyOrAllFlatEntityMaps'
+    >;
+    pageLayoutTabService: Pick<
+      DashboardToolDependencies['pageLayoutTabService'],
+      'findByIdOrThrow'
+    >;
+    pageLayoutService: Pick<
+      DashboardToolDependencies['pageLayoutService'],
+      'findByIdOrThrow'
+    >;
+  },
   context: DashboardToolContext,
 ) => ({
   name: 'add_dashboard_widget' as const,
@@ -55,18 +70,28 @@ Chart widgets (AGGREGATE_CHART, BAR_CHART, LINE_CHART, PIE_CHART) accept configu
 
 For RECORD_TABLE widgets: create a dedicated view first with upsert_complete_view (type TABLE, with its fields/filters/sorts in one call), then pass its viewId in configuration. Never reuse an existing record index view.
 
+For FRONT_COMPONENT widgets: pass configuration { configurationType: "FRONT_COMPONENT", frontComponentId } for an existing saved component that is available on dashboards (see list_front_components). This places the component without changing its source or registration. Only place it when the user asks for it on this dashboard.
+
 See create_complete_dashboard for full configuration examples.`,
   inputSchema: addDashboardWidgetSchema,
   execute: async (parameters: {
     pageLayoutTabId: string;
     title: string;
     type: WidgetType;
-    position: PageLayoutWidgetGridPosition;
+    position: PageLayoutWidgetPosition;
     objectMetadataId?: string;
     objectName?: string;
     configuration?: WidgetConfigurationInput;
   }) => {
     try {
+      await assertFrontComponentWidgetAvailableOnPageLayoutOrThrow({
+        configuration: parameters.configuration,
+        pageLayoutTabId: parameters.pageLayoutTabId,
+        position: parameters.position,
+        deps,
+        context,
+      });
+
       const identifierMaps = await computeDashboardIdentifierMaps(
         deps,
         context,

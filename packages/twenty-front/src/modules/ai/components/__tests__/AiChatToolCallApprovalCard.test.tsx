@@ -10,7 +10,10 @@ import {
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
-import { type ProposedToolCall } from 'twenty-shared/ai';
+import {
+  PUBLISH_FRONT_COMPONENT_TOOL_NAME,
+  type ProposedToolCall,
+} from 'twenty-shared/ai';
 
 import { AiChatToolCallApprovalCard } from '@/ai/components/AiChatToolCallApprovalCard';
 
@@ -19,13 +22,12 @@ type RecordFieldsStubProps = {
   onChange: (fieldName: string, value: unknown) => void;
 };
 
-const answerAgentChatToolCall = jest.fn();
 const refreshFrontComponents = jest.fn();
 jest.mock('@/ai/hooks/useRefreshFrontComponents', () => ({
-  useRefreshFrontComponents: () => ({
-    refreshFrontComponents,
-  }),
+  useRefreshFrontComponents: () => ({ refreshFrontComponents }),
 }));
+
+const answerAgentChatToolCall = jest.fn();
 jest.mock('@/ai/hooks/useAnswerAgentChatToolCall', () => ({
   useAnswerAgentChatToolCall: () => ({ answerAgentChatToolCall }),
 }));
@@ -46,22 +48,6 @@ jest.mock('@/ai/components/internal/AiChatToolCallApprovalRecord', () => ({
 }));
 jest.mock('@/ai/components/internal/AiChatToolCallApprovalEmailCard', () => ({
   AiChatToolCallApprovalEmailCard: () => null,
-}));
-
-jest.mock('@/ai/components/AiChatFrontComponentPreview', () => ({
-  AiChatFrontComponentPreview: ({
-    onReadyChange,
-  }: {
-    onReadyChange: (isReady: boolean) => void;
-  }) => (
-    <button
-      onClick={() => {
-        onReadyChange(true);
-      }}
-    >
-      Finish rendering preview
-    </button>
-  ),
 }));
 
 const PROPOSAL: ProposedToolCall = {
@@ -114,6 +100,23 @@ describe('AiChatToolCallApprovalCard', () => {
       optimisticToolOutput: undefined,
     });
     expect(screen.getByRole('button', { name: 'Reject' })).toBeDisabled();
+  });
+
+  it('keeps arguments read-only when the proposal disallows editing', async () => {
+    const user = userEvent.setup();
+    renderCard({ ...PROPOSAL, areArgumentsEditable: false });
+
+    const argumentsInput = screen.getByRole('textbox', { name: 'Arguments' });
+    expect(argumentsInput).toBeDisabled();
+    await user.type(argumentsInput, '{"method":"DELETE"}');
+    await user.click(screen.getByRole('button', { name: 'Approve' }));
+
+    expect(answerAgentChatToolCall).toHaveBeenCalledTimes(1);
+    expect(answerAgentChatToolCall).toHaveBeenCalledWith(
+      expect.objectContaining({
+        response: { decision: 'approve', arguments: PROPOSAL.arguments },
+      }),
+    );
   });
 
   it('cannot approve arguments that are not a JSON object', () => {
@@ -238,8 +241,7 @@ describe('AiChatToolCallApprovalCard', () => {
       },
     });
   });
-
-  it('requires a rendered component preview before saving the immutable draft', async () => {
+  it('keeps the component revision read-only and refreshes after approval completes', async () => {
     const user = userEvent.setup();
     let completeApproval: (answered: boolean) => void = () => {};
     answerAgentChatToolCall.mockReturnValue(
@@ -247,72 +249,60 @@ describe('AiChatToolCallApprovalCard', () => {
         completeApproval = resolve;
       }),
     );
+    const argumentsToApprove = {
+      draftId: 'approved-draft',
+      checksum: 'a'.repeat(64),
+    };
     renderCard({
-      toolName: 'publish_front_component',
+      ...PROPOSAL,
+      toolName: PUBLISH_FRONT_COMPONENT_TOOL_NAME,
       toolLabel: 'Save component',
-      summary: 'Save Renewals to Workspace app',
-      template: 'frontComponent',
-      arguments: { draftId: 'approved-draft' },
+      summary: 'Save Renewals as a dashboard component',
+      arguments: argumentsToApprove,
+      areArgumentsEditable: false,
     });
 
-    expect(
-      screen.getByRole('button', { name: 'Save to Workspace app' }),
-    ).toBeDisabled();
-    expect(
-      screen.queryByRole('textbox', { name: 'Arguments' }),
-    ).not.toBeInTheDocument();
-    await user.click(
-      screen.getByRole('button', { name: 'Finish rendering preview' }),
-    );
-    await user.click(
-      screen.getByRole('button', { name: 'Save to Workspace app' }),
-    );
-
-    expect(answerAgentChatToolCall).toHaveBeenCalledWith({
-      toolCallId: 'call-1',
-      response: {
-        decision: 'approve',
-        arguments: { draftId: 'approved-draft' },
-      },
-      optimisticToolOutput: undefined,
-    });
-    expect(refreshFrontComponents).not.toHaveBeenCalled();
-    await act(async () => completeApproval(true));
-    await waitFor(() => expect(refreshFrontComponents).toHaveBeenCalledWith());
-  });
-
-  it('shows an immutable deletion target and refreshes pickers only after approval', async () => {
-    const user = userEvent.setup();
-    let completeApproval: (answered: boolean) => void = () => {};
-    answerAgentChatToolCall.mockReturnValue(
-      new Promise<boolean>((resolve) => {
-        completeApproval = resolve;
+    expect(screen.getByRole('textbox', { name: 'Arguments' })).toBeDisabled();
+    await user.click(screen.getByRole('button', { name: 'Approve' }));
+    expect(answerAgentChatToolCall).toHaveBeenCalledWith(
+      expect.objectContaining({
+        response: { decision: 'approve', arguments: argumentsToApprove },
       }),
     );
-    renderCard({
-      toolName: 'delete_front_component',
-      toolLabel: 'Delete Front Component',
-      summary: 'Delete Renewals from Workspace app',
-      template: 'frontComponentDelete',
-      arguments: { frontComponentId: 'approved-component', name: 'Renewals' },
-    });
-    expect(screen.getByText('Renewals')).toBeInTheDocument();
-    expect(screen.getByText('approved-component')).toBeInTheDocument();
-    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
-    expect(
-      screen.queryByRole('button', { name: 'Finish rendering preview' }),
-    ).not.toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: 'Delete component' }));
-    expect(answerAgentChatToolCall).toHaveBeenCalledWith({
-      toolCallId: 'call-1',
-      response: {
-        decision: 'approve',
-        arguments: { frontComponentId: 'approved-component', name: 'Renewals' },
-      },
-      optimisticToolOutput: undefined,
-    });
     expect(refreshFrontComponents).not.toHaveBeenCalled();
     await act(async () => completeApproval(true));
-    await waitFor(() => expect(refreshFrontComponents).toHaveBeenCalledWith());
+    await waitFor(() =>
+      expect(refreshFrontComponents).toHaveBeenCalledTimes(1),
+    );
   });
+
+  it.each([
+    {
+      toolName: PUBLISH_FRONT_COMPONENT_TOOL_NAME,
+      decision: 'Reject',
+      isAnswered: true,
+    },
+    {
+      toolName: PUBLISH_FRONT_COMPONENT_TOOL_NAME,
+      decision: 'Approve',
+      isAnswered: false,
+    },
+    { toolName: 'http_request', decision: 'Approve', isAnswered: true },
+  ])(
+    'does not refresh for $toolName / $decision / $isAnswered',
+    async ({ toolName, decision, isAnswered }) => {
+      const user = userEvent.setup();
+      let completeAnswer: (answered: boolean) => void = () => {};
+      answerAgentChatToolCall.mockReturnValue(
+        new Promise<boolean>((resolve) => {
+          completeAnswer = resolve;
+        }),
+      );
+      renderCard({ ...PROPOSAL, toolName });
+      await user.click(screen.getByRole('button', { name: decision }));
+      await act(async () => completeAnswer(isAnswered));
+      expect(answerAgentChatToolCall).toHaveBeenCalledTimes(1);
+      expect(refreshFrontComponents).not.toHaveBeenCalled();
+    },
+  );
 });

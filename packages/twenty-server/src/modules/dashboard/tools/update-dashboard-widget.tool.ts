@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 import { z } from 'zod';
+import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 
 import {
   type PageLayoutWidgetGridPosition,
@@ -17,6 +18,7 @@ import {
   type DashboardToolDependencies,
 } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
 import { type WidgetConfigurationInput } from 'src/modules/dashboard/tools/types/widget-configuration-input.type';
+import { assertFrontComponentWidgetAvailableOnPageLayoutOrThrow } from 'src/modules/dashboard/tools/utils/assert-front-component-widget-available-on-page-layout-or-throw.util';
 import { computeDashboardIdentifierMaps } from 'src/modules/dashboard/tools/utils/compute-dashboard-identifier-maps.util';
 import {
   getObjectMetadataId,
@@ -46,7 +48,10 @@ const updateDashboardWidgetSchema = z.object({
 export const createUpdateDashboardWidgetTool = (
   deps: Pick<
     DashboardToolDependencies,
-    'pageLayoutWidgetService' | 'flatEntityMapsCacheService'
+    | 'pageLayoutWidgetService'
+    | 'flatEntityMapsCacheService'
+    | 'pageLayoutTabService'
+    | 'pageLayoutService'
   >,
   context: DashboardToolContext,
 ) => ({
@@ -78,6 +83,24 @@ Only provide fields you want to change - others remain unchanged.`,
 
       let resolvedObjectMetadataId = rest.objectMetadataId;
       let resolvedConfiguration: AllPageLayoutWidgetConfiguration | undefined;
+
+      if (
+        configuration?.configurationType ===
+        WidgetConfigurationType.FRONT_COMPONENT
+      ) {
+        const existingWidget =
+          await deps.pageLayoutWidgetService.findByIdOrThrow({
+            id: widgetId,
+            workspaceId: context.workspaceId,
+          });
+        await assertFrontComponentWidgetAvailableOnPageLayoutOrThrow({
+          configuration,
+          pageLayoutTabId: existingWidget.pageLayoutTabId,
+          position: parameters.position,
+          deps,
+          context,
+        });
+      }
 
       if (shouldResolveIdentifiers) {
         const identifierMaps = await computeDashboardIdentifierMaps(

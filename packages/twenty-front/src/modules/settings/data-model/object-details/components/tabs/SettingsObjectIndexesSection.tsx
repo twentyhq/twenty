@@ -1,3 +1,4 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useDeleteOneIndexMetadataItem } from '@/object-metadata/hooks/useDeleteOneIndexMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -5,6 +6,7 @@ import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdow
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
 import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
@@ -14,6 +16,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useMemo, useState } from 'react';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
+import { isWorkspaceCustomIndex } from 'twenty-shared/metadata';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -58,6 +61,8 @@ export const SettingsObjectIndexesSection = ({
   const { enqueueToast } = useToast();
   const { deleteOneIndexMetadataItem } = useDeleteOneIndexMetadataItem();
   const { objectMetadataItems } = useObjectMetadataItems();
+  const workspaceCustomApplicationId = useAtomStateValue(currentWorkspaceState)
+    ?.workspaceCustomApplication?.id;
 
   const [searchTerm, setSearchTerm] = useState('');
   const [hideSystemIndexes, setHideSystemIndexes] = useState(false);
@@ -90,7 +95,10 @@ export const SettingsObjectIndexesSection = ({
       id: indexMetadataItem.id,
       name: indexMetadataItem.name,
       isUnique: indexMetadataItem.isUnique,
-      isCustom: indexMetadataItem.isCustom ?? false,
+      isCustom: isWorkspaceCustomIndex({
+        indexMetadata: indexMetadataItem,
+        workspaceCustomApplicationId,
+      }),
       indexType: indexMetadataItem.indexType,
       indexWhereClause: indexMetadataItem.indexWhereClause,
       indexFields:
@@ -120,6 +128,7 @@ export const SettingsObjectIndexesSection = ({
     objectMetadataItem.indexMetadatas,
     objectMetadataItem.fields,
     objectMetadataItems,
+    workspaceCustomApplicationId,
   ]);
 
   const filteredItems = useMemo(() => {

@@ -4,6 +4,13 @@ import { AUTH_LOGIN_COMMAND_DEFINITION } from '@/commands/auth/login/auth-login.
 
 export const COMMAND_TOPICS: CommandTopicDefinition[] = [
   {
+    path: ['local'],
+    description: 'Run a local Twenty development environment',
+    helpGroup: HELP_GROUP.APP,
+    helpHint:
+      'Runs Twenty, including its web UI, worker and databases. Requires a local Docker installation. Sign in afterward with twenty auth login.',
+  },
+  {
     path: ['app'],
     description: 'Create, develop and manage applications',
     helpGroup: HELP_GROUP.APP,

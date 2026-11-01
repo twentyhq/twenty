@@ -21,22 +21,17 @@ import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPla
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   FindAdminApplicationRegistrationInstalledWorkspacesDocument,
   FindAdminApplicationRegistrationMonitoringDocument,
   FindOneAdminApplicationRegistrationDocument,
 } from '~/generated-admin/graphql';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const WORKSPACE_FILTER_LIMIT = 100;
 
 export const SettingsAdminApplicationRegistrationMonitoring = () => {
   const { t } = useLingui();
   const apolloAdminClient = useApolloAdminClient();
-  const isApplicationMonitoringEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_APPLICATION_MONITORING_ENABLED,
-  );
   const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
 
   const { applicationRegistrationId = '' } = useParams<{
@@ -57,9 +52,7 @@ export const SettingsAdminApplicationRegistrationMonitoring = () => {
     {
       client: apolloAdminClient,
       variables: { id: applicationRegistrationId },
-      skip:
-        !isApplicationMonitoringEnabled ||
-        !isNonEmptyString(applicationRegistrationId),
+      skip: !isNonEmptyString(applicationRegistrationId),
     },
   );
 
@@ -70,9 +63,7 @@ export const SettingsAdminApplicationRegistrationMonitoring = () => {
       variables: {
         input: { id: applicationRegistrationId, limit: WORKSPACE_FILTER_LIMIT },
       },
-      skip:
-        !isApplicationMonitoringEnabled ||
-        !isNonEmptyString(applicationRegistrationId),
+      skip: !isNonEmptyString(applicationRegistrationId),
     },
   );
 
@@ -87,9 +78,7 @@ export const SettingsAdminApplicationRegistrationMonitoring = () => {
         periodEnd: periodRange.periodEnd,
       },
       skip:
-        !isApplicationMonitoringEnabled ||
-        !isClickHouseConfigured ||
-        !isNonEmptyString(applicationRegistrationId),
+        !isClickHouseConfigured || !isNonEmptyString(applicationRegistrationId),
     },
   );
 
@@ -116,10 +105,6 @@ export const SettingsAdminApplicationRegistrationMonitoring = () => {
       href: APPLICATION_REGISTRATION_ADMIN_PATH,
     },
   ];
-
-  if (!isApplicationMonitoringEnabled) {
-    return null;
-  }
 
   if (!isDefined(registration)) {
     if (isRegistrationLoading) {

@@ -1,3 +1,4 @@
+import type { HalftoneMaterialTextureImage } from '../engine/material-texture-image';
 import type {
   HalftoneExportPose,
   HalftoneGeometrySpec,
@@ -13,6 +14,11 @@ export type ReactExportSettings = {
   includeStyledMount: boolean;
 };
 
+export type HalftoneMaterialExportImages = {
+  environment: string;
+  textures: Partial<Record<HalftoneMaterialTextureImage, string>>;
+};
+
 export type ReactExportOptions = {
   assetUrl?: string;
   background?: string;
@@ -20,6 +26,7 @@ export type ReactExportOptions = {
   imageFilename?: string;
   importedFile?: File;
   initialPose?: HalftoneExportPose;
+  materialImages?: HalftoneMaterialExportImages;
   modelFilenameOverride?: string;
   previewDistance?: number;
 };

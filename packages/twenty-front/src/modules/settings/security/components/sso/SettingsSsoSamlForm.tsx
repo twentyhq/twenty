@@ -1,3 +1,4 @@
+import { downloadFile } from '@/activities/files/utils/downloadFile';
 import { parseSamlMetadataFromXmlFile } from '@/settings/security/utils/parseSamlMetadataFromXmlFile';
 import { useBuildServerUrl } from '@/settings/security/hooks/useBuildServerUrl';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
@@ -99,26 +100,18 @@ export const SettingsSsoSamlForm = () => {
   };
 
   const downloadMetadata = async () => {
-    const response = await fetch(
-      `${REACT_APP_SERVER_BASE_URL}/auth/saml/metadata/${getValues('id')}`,
-    );
-    if (!response.ok) {
-      return enqueueToast({
+    try {
+      await downloadFile(
+        `${REACT_APP_SERVER_BASE_URL}/auth/saml/metadata/${getValues('id')}`,
+        'metadata.xml',
+      );
+    } catch {
+      enqueueToast({
         status: 'error',
         children: t`Metadata file generation failed`,
         duration: 2000,
       });
     }
-    const text = await response.text();
-    const blob = new Blob([text], { type: 'application/xml' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'metadata.xml';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
   };
   return (
     <>

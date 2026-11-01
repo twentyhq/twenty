@@ -1,4 +1,3 @@
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/primitives/data-display';
 
@@ -9,7 +8,6 @@ import { SettingsEmailingDomainAiSetup } from '@/settings/emailing-domains/compo
 import { getVerificationRecordGroupContent } from '@/settings/emailing-domains/utils/getVerificationRecordGroupContent';
 import { getVerificationRecordGroupKey } from '@/settings/emailing-domains/utils/getVerificationRecordGroupKey';
 import { getVerificationRecordGroupStatusDisplay } from '@/settings/emailing-domains/utils/getVerificationRecordGroupStatusDisplay';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
   type EmailingDomain,
   EmailingDomainStatus,
@@ -26,29 +24,21 @@ type SettingsEmailingDomainDnsRecordsProps = {
 export const SettingsEmailingDomainDnsRecords = ({
   emailingDomain,
 }: SettingsEmailingDomainDnsRecordsProps) => {
-  const isMessageCampaignEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-  );
-
-  const groups = VERIFICATION_RECORD_GROUP_DISPLAY_ORDER.filter(
-    (groupKey) => groupKey !== 'UNSUBSCRIBE' || isMessageCampaignEnabled,
-  )
-    .map((groupKey) => ({
-      id: groupKey,
-      records: (emailingDomain.verificationRecords ?? []).filter(
-        (record) =>
-          getVerificationRecordGroupKey({
-            recordName: record.key,
-            domain: emailingDomain.domain,
-          }) === groupKey,
-      ),
-      status: getVerificationRecordGroupStatusDisplay({
-        groupKey,
-        emailingDomain,
-      }),
-      ...getVerificationRecordGroupContent(groupKey),
-    }))
-    .filter(({ records }) => records.length > 0);
+  const groups = VERIFICATION_RECORD_GROUP_DISPLAY_ORDER.map((groupKey) => ({
+    id: groupKey,
+    records: (emailingDomain.verificationRecords ?? []).filter(
+      (record) =>
+        getVerificationRecordGroupKey({
+          recordName: record.key,
+          domain: emailingDomain.domain,
+        }) === groupKey,
+    ),
+    status: getVerificationRecordGroupStatusDisplay({
+      groupKey,
+      emailingDomain,
+    }),
+    ...getVerificationRecordGroupContent(groupKey),
+  })).filter(({ records }) => records.length > 0);
 
   if (groups.length === 0) {
     return null;

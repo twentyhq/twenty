@@ -1,3 +1,4 @@
+import { PREVIEW_FRONT_COMPONENT_TOOL_NAME } from 'twenty-shared/ai';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -94,7 +95,9 @@ export const buildSystemPromptSections = ({
       title: 'Tool Catalog',
       content: buildToolCatalogSection(toolCatalog, preloadedTools),
     },
-    toolCatalog.some((tool) => tool.name === 'preview_front_component') && {
+    toolCatalog.some(
+      (tool) => tool.name === PREVIEW_FRONT_COMPONENT_TOOL_NAME,
+    ) && {
       title: 'Component Builder',
       content: CHAT_SYSTEM_PROMPTS.COMPONENT_BUILDER,
     },

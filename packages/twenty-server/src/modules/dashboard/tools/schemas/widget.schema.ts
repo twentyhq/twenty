@@ -162,7 +162,8 @@ export const chartFilterSchema = z
   })
   .describe(
     'Filter restricting which records are included in this chart. All filtered fields must belong to the widget object.',
-  );
+  )
+  .meta({ id: 'chartFilter' });
 
 const displayDataLabelSchema = z.boolean().optional();
 const displayLegendSchema = z.boolean().optional();
@@ -293,6 +294,7 @@ export const widgetTypeSchema = z.enum([
   WidgetType.IFRAME,
   WidgetType.STANDALONE_RICH_TEXT,
   WidgetType.RECORD_TABLE,
+  WidgetType.FRONT_COMPONENT,
 ]);
 
 const aggregateChartConfigSchemaBase = z.object({
@@ -586,6 +588,13 @@ const iframeConfigSchema = z.object({
   url: z.string().url().optional().describe('URL to embed'),
 });
 
+const frontComponentConfigSchema = z.object({
+  configurationType: z.literal(WidgetConfigurationType.FRONT_COMPONENT),
+  frontComponentId: z
+    .uuid()
+    .describe('UUID of an existing registered frontend component'),
+});
+
 const richTextConfigSchema = z.object({
   configurationType: z.literal(WidgetConfigurationType.STANDALONE_RICH_TEXT),
   body: z
@@ -632,6 +641,7 @@ export const widgetConfigurationSchema = z
     iframeConfigSchema,
     richTextConfigSchema,
     recordTableConfigSchema,
+    frontComponentConfigSchema,
   ])
   .optional()
   .describe('Widget configuration - structure depends on widget type');
@@ -645,6 +655,7 @@ export const widgetConfigurationSchemaWithoutDefaults = z
     iframeConfigSchema,
     richTextConfigSchema,
     recordTableConfigSchema,
+    frontComponentConfigSchema,
   ])
   .optional()
   .describe('Widget configuration - structure depends on widget type');

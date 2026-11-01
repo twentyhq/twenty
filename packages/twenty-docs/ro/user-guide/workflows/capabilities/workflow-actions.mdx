@@ -3,6 +3,7 @@ title: Acțiuni Workflow
 description: Aflați despre acțiunile disponibile în fluxurile de lucru Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Despre acțiuni
@@ -104,6 +105,34 @@ Creează o înregistrare nouă sau actualizează una existentă pe baza criterii
 
 **Output**: Datele înregistrării create sau actualizate sunt disponibile pentru utilizare în pașii următori.
 
+### Selectare înregistrare.
+
+Selectează o singură înregistrare dintr-o listă de candidați, folosind o strategie de distribuire. Util pentru atribuirea unui client potențial primit unui reprezentant sau pentru distribuirea înregistrărilor între un set de proprietari.
+
+**Configurare**:
+
+* Selectați înregistrările candidate în câmpul **Selectează din**
+
+<Note>
+**Selectează din** acceptă numai un set static de înregistrări selectate manual; nu puteți transmite o variabilă, cum ar fi rezultatul unui pas `Search Records`.
+</Note>
+
+* Alegeți o strategie:
+
+| Strategie                   | Descriere                                                                                                                                                                       |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Aleatoriu**               | Selectează aleatoriu un candidat                                                                                                                                                |
+| **Round robin**             | Parcurge candidații în ordine, reținându-și poziția între rulări                                                                                                                |
+| **Distribuire echilibrată** | Selectează candidatul asociat în prezent cu cele mai puține înregistrări într-un câmp ales de dvs. (de ex., reprezentantul de vânzări cu cele mai puține oportunități asociate) |
+
+* Pentru **Distribuire echilibrată**, selectați obiectul și câmpul utilizate pentru a număra încărcarea existentă pentru fiecare candidat
+
+<Note>
+Distribuirea echilibrată numără fiecare înregistrare asociată din acel câmp, indiferent de stare, de exemplu toate oportunitățile asociate unui reprezentant, nu doar pe cele deschise.
+</Note>
+
+**Output**: Înregistrarea selectată este disponibilă pentru utilizare în pașii următori.
+
 ## Acțiuni de flux
 
 ### Iterator
@@ -173,7 +202,7 @@ Data programată nu poate fi în trecut. Dacă este utilizat un câmp de tip dat
 **Limitări și credite**:
 
 * **Fără limită maximă de durată** — puteți seta întârzieri de minute, zile, săptămâni sau mai mult
-* Se consumă **1 credit** la executarea nodului Delay, indiferent de durată
+* Se consumă **0.0001 credit ($0.0001)** la executarea nodului Delay, la fel ca pentru un pas standard al fluxului de lucru, indiferent de durată
 * **Nu se consumă credite** în timpul așteptării — o întârziere de 5 minute costă la fel ca o întârziere de 5 zile
 
 ## Acțiuni de comunicare
@@ -208,12 +237,36 @@ Pentru toți pașii următori, puteți face referire la variabile din pașii ant
 Adăugarea semnăturilor HTML nu este posibilă în acest moment.
 </Note>
 
+### Ciornă de email
+
+Creează un e-mail ciornă în loc să îl trimită. Aceeași configurare ca pentru Trimitere e-mail, dar mesajul este salvat în folderul Ciorne al căsuței poștale conectate pentru revizuire și trimitere manuală, în loc să fie trimis automat.
+
+**Configurare**: Aceleași câmpuri ca pentru [Trimitere e-mail](#send-email) — contul expeditorului, destinatarul, subiectul și conținutul.
+
+**Caz de utilizare**: e-mailuri generate de AI sau de fluxuri de lucru, pe care doriți ca o persoană să le revizuiască înainte de a fi trimise.
+
+### Creați eveniment în calendar
+
+Creează un eveniment într-un calendar conectat.
+
+**Configurare**:
+
+* Selectați contul de calendar conectat
+* Setați titlul, descrierea și locația evenimentului
+* Setați data/ora de început și de sfârșit sau marcați evenimentul ca fiind de o zi întreagă
+* Opțional, setați un fus orar
+* Adăugați participanți
+* Alegeți dacă să trimiteți invitații în calendar participanților
+* Alegeți dacă să adăugați un link de conferință la eveniment
+
+**Output**: Datele evenimentului creat sunt disponibile pentru utilizare în pașii următori.
+
 ### Formular
 
-Solicită un formular în timpul execuției fluxului de lucru pentru a colecta intrarea utilizatorului. Răspunsurile pot fi apoi folosite în pașii următori pentru a crea înregistrări, a trimite emailuri sau a executa orice altă acțiune pe baza datelor introduse.
+Deschide un formular pentru persoana care inițiază fluxul de lucru, pentru a colecta informații pe loc. Răspunsurile pot fi apoi folosite în pașii următori pentru a crea înregistrări, a trimite emailuri sau a executa orice altă acțiune pe baza datelor introduse.
 
 <Warning>
-**Formularele sunt concepute doar pentru declanșatoare manuale**. Pentru fluxurile de lucru cu alte declanșatoare (Înregistrare creată, actualizată, etc.), formularele sunt accesibile doar prin interfața de execuție a fluxului de lucru, ceea ce nu este experiența de utilizator așteptată. Un centru de notificare va fi lansat în 2026 pentru a sprijini în mod corespunzător formulare în fluxuri de lucru automate.
+**Formularele sunt concepute doar pentru declanșatoare manuale**. Un formular este completat imediat de persoana care rulează fluxul de lucru și nu ajunge în inboxul nimănui. Pentru fluxurile de lucru cu alte declanșatoare (Înregistrare creată, actualizată etc.), formularele sunt accesibile doar prin interfața de execuție a fluxului de lucru. Pentru a cere cuiva un răspuns sau o aprobare în inboxul său, utilizați în schimb pasul Trimite în inbox.
 </Warning>
 
 **Configurare**:
@@ -223,6 +276,7 @@ Solicită un formular în timpul execuției fluxului de lucru pentru a colecta i
   * o etichetă
   * o valoare implicită la `Placeholder` (opțional)
 * Editați titlul formularului
+* Adăugați instrucțiuni afișate deasupra câmpurilor (opțional). Acestea pot include variabile din pașii anteriori, de exemplu numele înregistrării la care se referă formularul.
 
 **Output**: Răspunsurile formularului sunt disponibile pentru utilizare în pașii următori.
 
@@ -301,9 +355,11 @@ Trimite o cerere la un API extern ca parte a fluxului dumneavoastră de lucru.
 * Adăugați anteturile și valorile necesare
 * Oferiți un exemplu de răspuns pentru previzualizarea structurii
 
+**Limite**: solicitarea eșuează dacă durează mai mult de 30 de secunde sau dacă corpul solicitării ori al răspunsului este mai mare de 10 MB.
+
 ## Acțiuni AI
 
-### Agent AI - În curând
+### Agent AI
 
 Rulează un agent AI în cadrul fluxului dvs. de lucru pentru a efectua sarcini inteligente.
 
@@ -330,3 +386,24 @@ Acțiunile agentului AI consumă credite ale fluxului de lucru în funcție de m
 <Note>
 Agenții AI respectă permisiunile bazate pe roluri. Puteți atribui roluri specifice agenților în **Settings → Members → Roles** pentru a controla la ce date pot avea acces. Consultați [Permisiuni](/ro/user-guide/permissions-access/capabilities/permissions) pentru detalii.
 </Note>
+
+### Clasificare
+
+Solicită unui model AI să răspundă la una sau mai multe întrebări structurate despre datele din pașii anteriori — de exemplu, pentru evaluarea unui client potențial sau categorizarea unui mesaj primit. Spre deosebire de AI Agent, Clasificare returnează întotdeauna o valoare în formatul definit de dvs., astfel încât este potrivită pentru dirijarea deterministă a ramificațiilor.
+
+<Note>
+**Cerință prealabilă**: Clasificare rulează pe modelul de evaluare al Twenty (Jev), pe care un administrator trebuie să îl activeze și să îl configureze cu o cheie API TypeSafe AI. Fără aceasta, rularea acestui pas eșuează.
+</Note>
+
+**Configurare**:
+
+* **Intrare**: Datele de clasificat (de ex., o înregistrare sau un text dintr-un pas anterior)
+* **Întrebări**: Adăugați una sau mai multe întrebări, fiecare cu:
+  * Un **nume** — utilizat pentru a citi răspunsul în aval (de ex., `{{stepId.answers.<name>}}`)
+  * Un **tip**: `boolean`, `choice` sau `score`
+  * **Instrucțiuni** pentru model
+  * **Criterii** — opțiunile posibile sau nivelurile de scor de la cel mai mic la cel mai mare (nu sunt necesare pentru `boolean`)
+
+**Output**: Răspunsul la fiecare întrebare, identificat prin numele său, plus modelul utilizat.
+
+<PageBanner illustration="workflows" />

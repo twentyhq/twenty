@@ -75,10 +75,12 @@ describe('2-44 workspace command 1790751626421 - MoveAgentChatThreadsToRecordMod
         flatFieldMetadataMaps.byUniversalIdentifier[
           CHAT_FIELDS.title.universalIdentifier
         ]?.isUIEditable,
-      archivedAtWritability:
-        flatFieldMetadataMaps.byUniversalIdentifier[
-          CHAT_FIELDS.archivedAt.universalIdentifier
-        ]?.writability,
+      archivedAtWritability: (
+        await global.testDataSource.query(
+          `SELECT writability FROM core."fieldMetadata" WHERE "workspaceId" = $1 AND "universalIdentifier" = $2`,
+          [SEED_APPLE_WORKSPACE_ID, CHAT_FIELDS.archivedAt.universalIdentifier],
+        )
+      )[0]?.writability,
     };
   };
 

@@ -175,12 +175,14 @@ export class ApplicationManifestMigrationService {
     ownerFlatApplication,
     dryRun = false,
     inferDeletionFromMissingEntities = true,
+    shouldDeferActions,
   }: {
     manifest: Manifest;
     workspaceId: string;
     ownerFlatApplication: FlatApplication;
     dryRun?: boolean;
     inferDeletionFromMissingEntities?: boolean;
+    shouldDeferActions?: boolean;
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
@@ -221,13 +223,28 @@ export class ApplicationManifestMigrationService {
       inferDeletionFromMissingEntities,
     });
 
-    const idByUniversalIdentifierByMetadataName =
-      (manifest.workflows ?? []).length > 0
-        ? preallocateWorkflowReferenceIds({
-            fromAllFlatEntityMaps,
-            toAllUniversalFlatEntityMaps,
-          })
-        : {};
+    const hasWorkflows = (manifest.workflows ?? []).length > 0;
+
+    const workspaceCustomFlatApplication = hasWorkflows
+      ? (
+          await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+            { workspaceId },
+          )
+        ).workspaceCustomFlatApplication
+      : undefined;
+
+    const idByUniversalIdentifierByMetadataName = hasWorkflows
+      ? preallocateWorkflowReferenceIds({
+          fromAllFlatEntityMaps,
+          toAllUniversalFlatEntityMaps,
+        })
+      : {};
+
+    const connectedAccounts = hasWorkflows
+      ? await this.connectedAccountMetadataService.findAllForWorkflowStepResolution(
+          { workspaceId },
+        )
+      : [];
 
     const applicationWorkflows = addWorkflowManifestsToFlatEntityMapsOrThrow({
       workflows: manifest.workflows ?? [],
@@ -236,6 +253,9 @@ export class ApplicationManifestMigrationService {
       toAllUniversalFlatEntityMaps,
       existingAllFlatEntityMaps,
       idByUniversalIdentifierByMetadataName,
+      isWorkspaceCustomApplication:
+        ownerFlatApplication.id === workspaceCustomFlatApplication?.id,
+      connectedAccounts,
       now,
     });
 
@@ -276,8 +296,11 @@ export class ApplicationManifestMigrationService {
         isSystemBuild: false,
         applicationUniversalIdentifier:
           ownerFlatApplication.universalIdentifier,
+        applicationDefaultRoleUniversalIdentifier:
+          manifest.application.defaultRoleUniversalIdentifier,
         idByUniversalIdentifierByMetadataName,
         dryRun: isDryRun,
+        shouldDeferActions,
       });
 
     const validateBuildRunStart = performance.now();

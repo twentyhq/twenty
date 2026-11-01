@@ -11,7 +11,8 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconKey, useIcons } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
-import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
+import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
+import { type ApiKeyForRole } from '~/generated-metadata/graphql';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 import { formatDateString } from '@/object-record/record-field/ui/utils/formatDateString';
@@ -38,7 +39,7 @@ const StyledNameContainer = styled.div`
 
 export type RoleTarget =
   | { type: 'member'; data: PartialWorkspaceMember }
-  | { type: 'agent'; data: Agent }
+  | { type: 'agent'; data: FlatAgent }
   | { type: 'apiKey'; data: ApiKeyForRole };
 
 type SettingsRoleAssignmentTableRowProps = {

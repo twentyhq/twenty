@@ -1,13 +1,8 @@
-import { styled } from '@linaria/react';
-import { Text } from 'twenty-ui/primitives/typography';
-import { themeCssVariables } from 'twenty-ui/theme';
-import { AiChatFrontComponentPreview } from '@/ai/components/AiChatFrontComponentPreview';
-import { isString } from '@sniptt/guards';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { type ProposedToolCall } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCheck, IconTrash, IconX } from 'twenty-ui/icon';
+import { IconCheck, IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { type JsonValue } from 'type-fest';
 
@@ -16,19 +11,6 @@ import { AiChatToolCallApprovalCardLayout } from '@/ai/components/internal/AiCha
 import { AiChatToolCallApprovalRecord } from '@/ai/components/internal/AiChatToolCallApprovalRecord';
 import { AiChatToolCallApprovalRecordFields } from '@/ai/components/internal/AiChatToolCallApprovalRecordFields';
 import { useAnswerToolCallApproval } from '@/ai/hooks/useAnswerToolCallApproval';
-import { useRefreshFrontComponents } from '@/ai/hooks/useRefreshFrontComponents';
-
-const StyledDeletionTarget = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const StyledTargetIdentifier = styled.div`
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.sm};
-  overflow-wrap: anywhere;
-`;
 
 type AiChatToolCallApprovalArgumentsCardProps = {
   toolCallId: string;
@@ -40,19 +22,7 @@ export const AiChatToolCallApprovalArgumentsCard = ({
   proposal,
 }: AiChatToolCallApprovalArgumentsCardProps) => {
   const { t } = useLingui();
-  const { refreshFrontComponents } = useRefreshFrontComponents();
-  const approval = useAnswerToolCallApproval({
-    toolCallId,
-    proposal,
-    onApproved: async () => {
-      if (
-        proposal.template === 'frontComponent' ||
-        proposal.template === 'frontComponentDelete'
-      ) {
-        await refreshFrontComponents();
-      }
-    },
-  });
+  const approval = useAnswerToolCallApproval({ toolCallId, proposal });
   const { pendingResponse, isAnswering, approve, reject } = approval;
 
   // null while the raw arguments do not parse, which blocks approving
@@ -62,7 +32,6 @@ export const AiChatToolCallApprovalArgumentsCard = ({
   > | null>(proposal.arguments);
 
   const { template, objectNameSingular, recordId } = proposal;
-  const [isPreviewReady, setIsPreviewReady] = useState(false);
 
   const handleRecordFieldChange = (fieldName: string, value: JsonValue) => {
     setToolArguments((previousArguments) => ({
@@ -79,7 +48,6 @@ export const AiChatToolCallApprovalArgumentsCard = ({
     <AiChatToolCallApprovalCardLayout
       label={proposal.toolLabel}
       summary={proposal.summary}
-      hideHeader={template === 'frontComponent'}
       approval={approval}
       actions={
         <>
@@ -96,19 +64,9 @@ export const AiChatToolCallApprovalArgumentsCard = ({
           <Button
             size="sm"
             variant="solid"
-            color={template === 'frontComponentDelete' ? 'danger' : 'accent'}
-            startIcon={
-              template === 'frontComponentDelete' ? (
-                <IconTrash />
-              ) : (
-                <IconCheck />
-              )
-            }
-            disabled={
-              isAnswering ||
-              !isDefined(toolArguments) ||
-              (template === 'frontComponent' && !isPreviewReady)
-            }
+            color="accent"
+            startIcon={<IconCheck />}
+            disabled={isAnswering || !isDefined(toolArguments)}
             loading={pendingResponse?.decision === 'approve'}
             onClick={() => {
               if (isDefined(toolArguments)) {
@@ -116,29 +74,11 @@ export const AiChatToolCallApprovalArgumentsCard = ({
               }
             }}
           >
-            {template === 'frontComponent'
-              ? t`Save to Workspace app`
-              : template === 'frontComponentDelete'
-                ? t`Delete component`
-                : t`Approve`}
+            {t`Approve`}
           </Button>
         </>
       }
     >
-      {template === 'frontComponentDelete' && (
-        <StyledDeletionTarget>
-          <Text>{t`Delete this component from the Workspace app?`}</Text>
-          {isString(proposal.arguments.name) && (
-            <strong>{proposal.arguments.name}</strong>
-          )}
-          {isString(proposal.arguments.frontComponentId) && (
-            <StyledTargetIdentifier>
-              {proposal.arguments.frontComponentId}
-            </StyledTargetIdentifier>
-          )}
-          <Text>{t`It will no longer appear in widget pickers. Components still in use cannot be deleted.`}</Text>
-        </StyledDeletionTarget>
-      )}
       {isDefined(objectNameSingular) && isDefined(recordId) && (
         <AiChatToolCallApprovalRecord
           objectNameSingular={objectNameSingular}
@@ -151,22 +91,14 @@ export const AiChatToolCallApprovalArgumentsCard = ({
           objectNameSingular={objectNameSingular}
           values={toolArguments ?? proposal.arguments}
           recordId={recordId}
-          readonly={isAnswering}
+          readonly={isAnswering || proposal.areArgumentsEditable === false}
           onChange={handleRecordFieldChange}
         />
       )}
-      {template === 'frontComponent' &&
-        isString(proposal.arguments.draftId) && (
-          <AiChatFrontComponentPreview
-            key={proposal.arguments.draftId}
-            draftId={proposal.arguments.draftId}
-            onReadyChange={setIsPreviewReady}
-          />
-        )}
       {template === 'generic' && (
         <AiChatToolCallApprovalArgumentsEditor
           defaultArguments={proposal.arguments}
-          readonly={isAnswering}
+          readonly={isAnswering || proposal.areArgumentsEditable === false}
           onChange={setToolArguments}
         />
       )}

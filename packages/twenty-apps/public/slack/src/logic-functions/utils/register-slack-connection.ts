@@ -4,6 +4,7 @@ import { getConnection, kv } from 'twenty-sdk/logic-function';
 
 import { autoLinkSlackInstaller } from 'src/logic-functions/utils/auto-link-slack-installer';
 import { cacheSlackBotUserId } from 'src/logic-functions/utils/cache-slack-bot-user-id';
+import { getConnectionAccessTokenOrThrow } from 'src/logic-functions/utils/get-connection-access-token-or-throw';
 import { getSlackTeamKvKey } from 'src/logic-functions/utils/get-slack-team-kv-key';
 import { matchSlackRosterByEmail } from 'src/logic-functions/utils/match-slack-roster-by-email';
 import { setSlackConnectedAccountTeam } from 'src/logic-functions/utils/set-slack-connected-account-team';
@@ -28,7 +29,7 @@ export const registerSlackConnection = async ({
   }
 
   const connection = await getConnection(connectedAccountId);
-  const client = new WebClient(connection.accessToken);
+  const client = new WebClient(getConnectionAccessTokenOrThrow(connection));
   const { team_id: teamId, user_id: botUserId } = await client.auth.test();
 
   if (!isNonEmptyString(teamId)) {

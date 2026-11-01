@@ -5,7 +5,7 @@ import { type FlatRolePermissionFlag } from 'src/engine/metadata-modules/flat-ro
 import {
   PermissionsException,
   PermissionsExceptionCode,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
+} from 'src/engine/permissions/permissions.exception';
 import { type RolePermissionFlagDTO } from 'src/engine/metadata-modules/role-permission-flag/dtos/role-permission-flag.dto';
 
 export const fromFlatRolePermissionFlagToRolePermissionFlagDto = (

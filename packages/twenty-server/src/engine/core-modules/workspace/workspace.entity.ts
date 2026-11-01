@@ -8,6 +8,7 @@ import {
   type AiModelTier,
 } from 'twenty-shared/ai';
 import { EVENT_LOG_RETENTION } from 'twenty-shared/constants';
+import { type IframeMediaPermission } from 'twenty-shared/types';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 import {
   Check,
@@ -27,6 +28,7 @@ import {
 
 import { ADD_WORKSPACE_DISCOVERABILITY_TO_WORKSPACE_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-workspace-discoverability-to-workspace-upgrade-command-name.constant';
 import { ADD_CAMPAIGN_TRACKING_FLAGS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-44/add-campaign-tracking-flags-upgrade-command-name.constant';
+import { ADD_WORKSPACE_CHAT_ASSISTANT_MODES_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-54/add-workspace-chat-assistant-modes-upgrade-command-name.constant';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
@@ -40,7 +42,10 @@ import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-v
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { WorkspaceSsoIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { IframeMediaPermissionDTO } from 'src/engine/core-modules/workspace/dtos/iframe-media-permission.dto';
+import { AiChatAssistantMode } from 'src/engine/core-modules/workspace/enums/ai-chat-assistant-mode.enum';
 import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { AiModelTier as AiModelTierEnum } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-tier.enum';
@@ -321,8 +326,23 @@ export class WorkspaceEntity {
     upgradeCommandName:
       '2.43.0_AddWorkspaceAllowedIframeOriginsFastInstanceCommand_1790232481570',
   })
+  @WasRenamedInUpgrade([
+    {
+      previousName: 'allowedIframeOrigins',
+      upgradeCommandName:
+        '2.55.0_RenameWorkspaceAllowedIframeOriginsToAllowedEmbeddingOriginsFastInstanceCommand_1793371022971',
+    },
+  ])
   @Column({ type: 'varchar', array: true, default: '{}' })
-  allowedIframeOrigins: string[];
+  allowedEmbeddingOrigins: string[];
+
+  @Field(() => [IframeMediaPermissionDTO], { nullable: true })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.55.0_AddWorkspaceIframeMediaPermissionsFastInstanceCommand_1793371022948',
+  })
+  @Column({ type: 'jsonb', default: [] })
+  iframeMediaPermissions: IframeMediaPermission[];
 
   @Field(() => [String], { nullable: true })
   @Column({
@@ -370,6 +390,26 @@ export class WorkspaceEntity {
   @Field(() => String, { nullable: true })
   @Column({ type: 'text', nullable: true })
   aiEvaluationModelId: string | null;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_WORKSPACE_CHAT_ASSISTANT_MODES_UPGRADE_COMMAND_NAME,
+  })
+  @Column({
+    type: 'varchar',
+    nullable: false,
+    default: AiChatAssistantMode.MENTION_ONLY,
+  })
+  aiChatDirectMessageAssistantMode: AiChatAssistantMode;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName: ADD_WORKSPACE_CHAT_ASSISTANT_MODES_UPGRADE_COMMAND_NAME,
+  })
+  @Column({
+    type: 'varchar',
+    nullable: false,
+    default: AiChatAssistantMode.AUTOMATIC,
+  })
+  aiChatInboxAssistantMode: AiChatAssistantMode;
 
   @Field(() => String, { nullable: true })
   @Column({ type: 'text', nullable: true })

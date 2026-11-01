@@ -11,8 +11,8 @@ const agent = {
   modelId: 'anthropic/claude-sonnet-5',
   responseFormat: { type: 'json', schema: {} },
   roleId: 'role-id',
-  isCustom: true,
   isSystem: false,
+  isActive: true,
   modelConfiguration: { webSearch: { enabled: true } },
   triggers: [
     {
@@ -38,7 +38,6 @@ describe('getCoreAgentInitialFormValues', () => {
       modelId: 'anthropic/claude-sonnet-5',
       role: 'role-id',
       prompt: 'You qualify leads.',
-      isCustom: true,
       modelConfiguration: { webSearch: { enabled: true } },
       triggers: [
         {

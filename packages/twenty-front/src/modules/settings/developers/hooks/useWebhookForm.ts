@@ -21,6 +21,7 @@ import { useToast } from 'twenty-ui/components/feedback';
 import {
   CreateWebhookDocument,
   DeleteWebhookDocument,
+  GetApiKeyRolesDocument,
   GetWebhookDocument,
   UpdateWebhookDocument,
 } from '~/generated-metadata/graphql';
@@ -37,6 +38,7 @@ const DEFAULT_FORM_VALUES: WebhookFormValues = {
   description: '',
   operations: addEmptyOperationIfNecessary([{ object: '*', action: '*' }]),
   secret: '',
+  roleId: '',
 };
 
 export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
@@ -66,6 +68,13 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
     },
   });
 
+  const {
+    data: rolesData,
+    loading: rolesLoading,
+    error: rolesError,
+  } = useQuery(GetApiKeyRolesDocument);
+  const roles = rolesData?.getApiKeyRoles ?? [];
+
   useEffect(() => {
     if (webhookData) {
       const webhook = webhookData.webhook;
@@ -81,6 +90,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         description: webhook.description || '',
         operations,
         secret: webhook.secret || '',
+        roleId: webhook.role?.id ?? '',
       });
     }
   }, [webhookData, formConfig]);
@@ -213,13 +223,14 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
 
   return {
     formConfig,
-    loading,
+    loading: loading || rolesLoading,
+    roles,
     canSave,
     handleSave,
     updateOperation,
     removeOperation,
     handleDelete,
     isCreationMode,
-    error,
+    error: error ?? rolesError,
   };
 };

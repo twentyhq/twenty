@@ -1,5 +1,7 @@
 import { z } from 'zod';
 
+import { isDefined } from '@/utils/validation/isDefined';
+
 import { validateWorkflowVariableReferences } from '@/workflow/validation/utils/validate-workflow-variable-references.util';
 
 import { workflowStepManifestSchema } from '@/application/workflowStepManifestType';
@@ -12,6 +14,7 @@ export const workflowManifestSchema = z
   .strictObject({
     universalIdentifier: z.uuid(),
     name: z.string().min(1),
+    isSystem: z.boolean().optional(),
     version: z.strictObject({
       trigger: workflowTriggerManifestSchema,
       steps: z.array(workflowStepManifestSchema).min(1),
@@ -23,7 +26,7 @@ export const workflowManifestSchema = z
       workflow.universalIdentifier,
       trigger.universalIdentifier,
       ...steps.map((step) => step.universalIdentifier),
-    ];
+    ].filter(isDefined);
 
     if (new Set(identities).size !== identities.length) {
       context.addIssue({

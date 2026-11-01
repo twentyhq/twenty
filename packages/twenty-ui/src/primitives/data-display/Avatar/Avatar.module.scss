@@ -119,8 +119,15 @@
 .fallback {
   font-weight: var(--t-font-weight-medium);
   display: flex;
-  & > svg {
+  &:has(> svg) {
     inline-size: calc(var(--t-icon-size-xl) * 1px);
     block-size: calc(var(--t-icon-size-xl) * 1px);
+    max-inline-size: 100%;
+    max-block-size: 100%;
+  }
+
+  & > svg {
+    inline-size: 100%;
+    block-size: 100%;
   }
 }

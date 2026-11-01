@@ -42,7 +42,6 @@ describe('defineField', () => {
         type: 'SELECT',
         name: 'churnRisk',
         label: 'Churn Risk',
-        writability: 'OPEN',
         options: [
           { value: 'low', label: 'Low', color: 'green', position: 0 },
           {
