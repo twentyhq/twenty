@@ -296,6 +296,85 @@ describe('ai.generate with onChunk', () => {
     }
   });
 
+  it('delivers every chunk to a slow onChunk, however long after the result', async () => {
+    const runChannel = mockRunChannel(fetchSpy);
+    const chunks: Record<string, unknown>[] = [];
+
+    const generation = ai.generate({
+      input: 'Hi',
+      onChunk: async (chunk) => {
+        await new Promise((resolve) => setTimeout(resolve, 2_000));
+        chunks.push(chunk);
+      },
+    });
+
+    await vi.waitFor(() => expect(runChannel.requests).toHaveLength(2));
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+
+    try {
+      for (const seq of [1, 2, 3, 4, 5]) {
+        runChannel.send({
+          type: 'stream-chunk',
+          chunk: { type: 'text-delta', id: 'text-1', delta: `${seq}` },
+          seq,
+        });
+      }
+      runChannel.answerMutation({ data: { generate: RESULT } });
+      runChannel.send({ type: 'message-persisted', messageId: 'message-id' });
+
+      await vi.advanceTimersByTimeAsync(10_000);
+
+      await expect(generation).resolves.toEqual(RESULT);
+      expect(chunks.map(({ delta }) => delta)).toEqual([
+        '1',
+        '2',
+        '3',
+        '4',
+        '5',
+      ]);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('delivers the chunks received before a lost end event once the grace is over', async () => {
+    const runChannel = mockRunChannel(fetchSpy);
+    const chunks: Record<string, unknown>[] = [];
+
+    const generation = ai.generate({
+      input: 'Hi',
+      onChunk: async (chunk) => {
+        await new Promise((resolve) => setTimeout(resolve, 2_000));
+        chunks.push(chunk);
+      },
+    });
+
+    await vi.waitFor(() => expect(runChannel.requests).toHaveLength(2));
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+
+    try {
+      for (const seq of [1, 2, 3, 4, 5]) {
+        runChannel.send({
+          type: 'stream-chunk',
+          chunk: { type: 'text-delta', id: 'text-1', delta: `${seq}` },
+          seq,
+        });
+      }
+      runChannel.answerMutation({ data: { generate: RESULT } });
+
+      await vi.advanceTimersByTimeAsync(5_000);
+
+      expect(fetchSpy.mock.calls[0][1]?.signal?.aborted).toBe(true);
+
+      await vi.advanceTimersByTimeAsync(5_000);
+
+      await expect(generation).resolves.toEqual(RESULT);
+      expect(chunks).toHaveLength(5);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('rejects at once when onChunk throws, without waiting for the result', async () => {
     const runChannel = mockRunChannel(fetchSpy);
 

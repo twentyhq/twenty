@@ -1,3 +1,4 @@
+import { type AgentChatSubscriptionEvent } from 'twenty-shared/ai';
 import {
   type GenerateInput,
   type GenerateResult,
@@ -60,7 +61,13 @@ const requestGenerate = async ({
   return result;
 };
 
-// starts the run once its channel is live (the first keepalive), and ends at the end event after its last chunk
+const isRunEnd = ({ type }: Pick<AgentChatSubscriptionEvent, 'type'>) =>
+  type === 'message-persisted' ||
+  type === 'credits-exhausted' ||
+  type === 'stream-error';
+
+// Starts the run once its channel is live (the first keepalive). Chunks are read off the network ahead of
+// a slow onChunk, so the grace after the result only waits for a lost end event, and every chunk read is delivered
 const generateWithChunks = async ({
   variables,
   onChunk,
@@ -90,29 +97,54 @@ const generateWithChunks = async ({
       throw new Error('ai.generate() failed: the stream ended before the run');
     }
 
-    const deliverChunks = async () => {
-      for await (const event of events) {
-        if (event.type === 'stream-chunk') {
-          await onChunk(event.chunk);
-        }
+    const receivedChunks: Record<string, unknown>[] = [];
+    let isReceiving = true;
+    let wakeDelivery = () => {};
 
-        if (
-          event.type === 'message-persisted' ||
-          event.type === 'credits-exhausted' ||
-          event.type === 'stream-error'
-        ) {
-          return;
+    const received = (async () => {
+      try {
+        for await (const event of events) {
+          if (event.type === 'stream-chunk') {
+            receivedChunks.push(event.chunk);
+            wakeDelivery();
+          }
+
+          if (isRunEnd(event)) {
+            return;
+          }
         }
+      } finally {
+        isReceiving = false;
+        wakeDelivery();
       }
-    };
+    })();
 
-    const delivered = deliverChunks();
+    const delivered = (async () => {
+      while (!signal?.aborted) {
+        const chunk = receivedChunks.shift();
+
+        if (isDefined(chunk)) {
+          await onChunk(chunk);
+          continue;
+        }
+
+        if (!isReceiving) {
+          return received;
+        }
+
+        await new Promise<void>((resolve) => {
+          wakeDelivery = resolve;
+        });
+      }
+    })();
+
+    void received.catch(() => undefined);
+    void delivered.catch(() => undefined);
+
     const generated = requestGenerate({
       variables: { input: { ...variables.input, runId } },
       signal: runSignal,
     });
-
-    void delivered.catch(() => undefined);
 
     // a failing onChunk rejects at once, while delivering every chunk still waits for the result
     const result = await Promise.race([
@@ -120,15 +152,18 @@ const generateWithChunks = async ({
       delivered.then(() => generated),
     ]);
 
-    // the result is final, so a lost end event only cuts the stream short instead of blocking forever
+    // the result is final, so a lost end event only stops the wait for more chunks
     let endEventGraceTimer: ReturnType<typeof setTimeout> | undefined;
 
     await Promise.race([
-      delivered,
+      received,
       new Promise((resolve) => {
         endEventGraceTimer = setTimeout(resolve, END_EVENT_GRACE_MS);
       }),
     ]).finally(() => clearTimeout(endEventGraceTimer));
+
+    stopFollowing.abort();
+    await delivered;
 
     // the reader ends quietly on abort, so an abort after the mutation returned would read as a full delivery
     signal?.throwIfAborted();
