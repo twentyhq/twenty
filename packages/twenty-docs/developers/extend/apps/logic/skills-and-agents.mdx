@@ -341,6 +341,7 @@ can start following it before the first run reaches it.
 import { streamConversation } from 'twenty-sdk/logic-function';
 
 const abortController = new AbortController();
+let replyMessageId: unknown;
 
 for await (const event of streamConversation({
   agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
@@ -349,10 +350,16 @@ for await (const event of streamConversation({
 })) {
   if (event.type === 'stream-chunk') {
     // an AI SDK UIMessageChunk, such as { type: 'text-delta', delta }
+    if (event.chunk.type === 'start') {
+      replyMessageId = event.chunk.messageId;
+    }
   }
 
-  // the reply was saved, or the run failed
-  if (event.type === 'message-persisted' || event.type === 'stream-error') {
+  // a member's message is saved too, so only the save of the streamed reply ends it
+  const isReplySaved =
+    event.type === 'message-persisted' && event.messageId === replyMessageId;
+
+  if (isReplySaved || event.type === 'stream-error') {
     abortController.abort();
   }
 }
@@ -360,7 +367,8 @@ for await (const event of streamConversation({
 
 - Events are the chat's own: `stream-chunk` carries an AI SDK
   `UIMessageChunk` and a `seq`, and notifications such as `message-persisted`
-  (a reply was saved), `queue-updated` or `stream-error` say when to read the
+  (a message was saved: a member's, or the reply whose `start` chunk carried
+  its `messageId`), `queue-updated` or `stream-error` say when to read the
   history again. A `keepalive` comes once connected, then every few seconds;
   what happened before it is in the history.
 - To turn chunks into messages as the chat does, pipe them into

@@ -39,4 +39,35 @@ describe('maskStreamChunkOfTurnActedByOthers', () => {
       EMPTY_CHUNK,
     ]);
   });
+
+  it('drops the usage the reply carries as metadata', () => {
+    expect(
+      [
+        {
+          type: 'start',
+          messageId: 'message-id',
+          messageMetadata: { startedAt: '2026-11-01T00:00:00.000Z' },
+        },
+        {
+          type: 'message-metadata',
+          messageMetadata: { usage: { inputCredits: 12 } },
+        },
+        {
+          type: 'finish',
+          finishReason: 'stop',
+          messageMetadata: {
+            usage: {
+              inputTokens: 120,
+              inputCredits: 12,
+              conversationSize: 120,
+            },
+          },
+        },
+      ].map(maskStreamChunkOfTurnActedByOthers),
+    ).toEqual([
+      { type: 'start', messageId: 'message-id' },
+      EMPTY_CHUNK,
+      { type: 'finish', finishReason: 'stop' },
+    ]);
+  });
 });

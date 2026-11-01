@@ -274,6 +274,8 @@ export class AgentRunnerService {
             caller,
             threadId: conversation?.threadId ?? null,
             turn: retriedTurn,
+            isJsonResponse:
+              (spec.responseFormat ?? persona.responseFormat)?.type === 'json',
           });
 
           return null;
@@ -327,18 +329,19 @@ export class AgentRunnerService {
     }
   }
 
-  // A stalled job comes back with the run id its turn was opened with, and its agent may already have
-  // acted, so the run is settled from that turn rather than run again
+  // a stalled job's retry settles the run from its turn, since its agent may already have acted
   private async settleRetriedRun({
     workspaceId,
     caller,
     threadId,
     turn,
+    isJsonResponse,
   }: {
     workspaceId: string;
     caller: AgentRunCaller;
     threadId: string | null;
     turn: Pick<AgentTurnWorkspaceEntity, 'id' | 'status' | 'error'>;
+    isJsonResponse: boolean;
   }): Promise<void> {
     if (turn.status === AgentTurnStatus.RUNNING) {
       await this.turnRecorderService.finish({
@@ -349,7 +352,17 @@ export class AgentRunnerService {
       });
     }
 
-    const outcome = buildRetriedAgentRunOutcome(turn);
+    // a text result is the reply's last step, while a structured one is kept nowhere
+    const completedResult =
+      turn.status === AgentTurnStatus.COMPLETED && !isJsonResponse
+        ? {
+            response: await this.conversationReaderService.findReplyText({
+              workspaceId,
+              turnId: turn.id,
+            }),
+          }
+        : null;
+    const outcome = buildRetriedAgentRunOutcome({ turn, completedResult });
 
     if (!isDefined(outcome)) {
       return;

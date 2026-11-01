@@ -1,5 +1,6 @@
 import { Logger } from '@nestjs/common';
 
+import { AGENT_RUN_RESULT_LOST_ERROR } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-result-lost-error.const';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { type RunAgentJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-agent-job-data.type';
 import { AGENT_TURN_INTERRUPTED_ERROR } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-turn-interrupted-error.constant';
@@ -20,6 +21,7 @@ const JOB_DATA = {
 
 const buildRunner = (
   recordedTurn: { status: AgentTurnStatus; error: unknown } | null,
+  { responseFormat = null }: { responseFormat?: object | null } = {},
 ) => {
   const handler = {
     getWaitingState: jest.fn().mockResolvedValue('WAITING'),
@@ -41,10 +43,14 @@ const buildRunner = (
     finish: jest.fn().mockResolvedValue(true),
   };
 
+  const conversationReaderService = {
+    findReplyText: jest.fn().mockResolvedValue('Followed up'),
+  };
+
   const runner = new AgentRunnerService(
     {} as never,
     agentRunConversationService as never,
-    {} as never,
+    conversationReaderService as never,
     {} as never,
     agentRunSuspensionService as never,
     { getHandlerOrThrow: () => handler } as never,
@@ -62,7 +68,9 @@ const buildRunner = (
     {} as never,
     {} as never,
     {
-      resolveOrThrow: jest.fn().mockResolvedValue({ agentId: 'agent-id' }),
+      resolveOrThrow: jest
+        .fn()
+        .mockResolvedValue({ agentId: 'agent-id', responseFormat }),
     } as never,
     turnRecorderService as never,
   );
@@ -155,23 +163,56 @@ describe('AgentRunnerService runStarted on a stalled job retried with its run id
     );
   });
 
-  it.each([AgentTurnStatus.COMPLETED, AgentTurnStatus.WAITING_FOR_INPUT])(
-    'leaves a run whose turn is %s as it is',
-    async (status) => {
-      const {
-        runner,
-        agentRunConversationService,
-        agentRunSuspensionService,
-        turnRecorderService,
-      } = buildRunner({ status, error: null });
+  it('completes a run whose turn completed with the text of its reply', async () => {
+    const {
+      runner,
+      agentRunConversationService,
+      agentRunSuspensionService,
+      turnRecorderService,
+    } = buildRunner({ status: AgentTurnStatus.COMPLETED, error: null });
 
-      await runner.runStarted(JOB_DATA);
+    await runner.runStarted(JOB_DATA);
 
-      expect(agentRunConversationService.openTurn).not.toHaveBeenCalled();
-      expect(turnRecorderService.finish).not.toHaveBeenCalled();
-      expect(agentRunSuspensionService.deliverOutcome).not.toHaveBeenCalled();
-    },
-  );
+    expect(agentRunConversationService.openTurn).not.toHaveBeenCalled();
+    expect(turnRecorderService.finish).not.toHaveBeenCalled();
+    expect(agentRunSuspensionService.deliverOutcome).toHaveBeenCalledTimes(1);
+    expect(agentRunSuspensionService.deliverOutcome).toHaveBeenCalledWith({
+      workspaceId: 'workspace-id',
+      caller: JOB_DATA.caller,
+      threadId: 'thread-id',
+      outcome: { status: 'COMPLETED', result: { response: 'Followed up' } },
+      summary: null,
+    });
+  });
+
+  it('fails a run whose completed turn had a structured result, which is kept nowhere', async () => {
+    const { runner, agentRunSuspensionService } = buildRunner(
+      { status: AgentTurnStatus.COMPLETED, error: null },
+      { responseFormat: { type: 'json', schema: {} } },
+    );
+
+    await runner.runStarted(JOB_DATA);
+
+    expectFailureDeliveredOnce(
+      agentRunSuspensionService.deliverOutcome,
+      AGENT_RUN_RESULT_LOST_ERROR,
+    );
+  });
+
+  it('leaves a run whose turn waits to its wake-up', async () => {
+    const {
+      runner,
+      agentRunConversationService,
+      agentRunSuspensionService,
+      turnRecorderService,
+    } = buildRunner({ status: AgentTurnStatus.WAITING_FOR_INPUT, error: null });
+
+    await runner.runStarted(JOB_DATA);
+
+    expect(agentRunConversationService.openTurn).not.toHaveBeenCalled();
+    expect(turnRecorderService.finish).not.toHaveBeenCalled();
+    expect(agentRunSuspensionService.deliverOutcome).not.toHaveBeenCalled();
+  });
 
   it('opens the turn of a run that has not started yet with its run id', async () => {
     const { runner, agentRunConversationService } = buildRunner(null);
