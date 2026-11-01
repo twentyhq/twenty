@@ -14,6 +14,7 @@ import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-his
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-db-parts-to-ui-message-parts.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
@@ -68,6 +69,30 @@ export class AgentConversationReaderService {
     return (
       parts.find((candidate) => candidate.messageId === message?.id) ?? null
     );
+  }
+
+  // what its run answered with, as the text of the reply's last step
+  async findReplyText({
+    workspaceId,
+    turnId,
+  }: {
+    workspaceId: string;
+    turnId: string;
+  }): Promise<string> {
+    const reply = await this.messageRepository.findOne(workspaceId, {
+      where: { turnId, role: AgentMessageRole.ASSISTANT },
+      order: { createdAt: 'DESC' },
+      relations: ['parts'],
+    });
+    const parts = mapDBPartsToUIMessageParts(reply?.parts ?? []);
+    const lastStepStart = parts
+      .map(({ type }) => type)
+      .lastIndexOf('step-start');
+
+    return parts
+      .slice(lastStepStart + 1)
+      .map((part) => (part.type === 'text' ? part.text : ''))
+      .join('');
   }
 
   async loadMessages({

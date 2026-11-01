@@ -122,6 +122,82 @@ describe('streamConversation', () => {
     );
   });
 
+  it('fails on a chat event that lacks the fields of its type', async () => {
+    fetchSpy.mockResolvedValue(
+      mockServerSentEvents([
+        `event: next\ndata: ${JSON.stringify({ data: { onAgentChatEvent: { event: { type: 'stream-chunk' } } } })}\n\n`,
+      ]),
+    );
+
+    await expect(collect(streamConversation(CONVERSATION))).rejects.toThrow(
+      'streamConversation() failed: unexpected result',
+    );
+  });
+
+  it('skips an event type it does not know yet', async () => {
+    fetchSpy.mockResolvedValue(
+      mockServerSentEvents([
+        `event: next\ndata: ${JSON.stringify({ data: { onAgentChatEvent: { event: { type: 'thread-renamed' } } } })}\n\n`,
+        toNextEvent(toEventData(KEEPALIVE)),
+        'event: complete\n\n',
+      ]),
+    );
+
+    expect(await collect(streamConversation(CONVERSATION))).toEqual([
+      KEEPALIVE,
+    ]);
+  });
+
+  it('reads events whose CRLF line endings are split across reads', async () => {
+    const keepalive = toNextEvent(toEventData(KEEPALIVE)).replace(
+      /\n/g,
+      '\r\n',
+    );
+
+    fetchSpy.mockResolvedValue(
+      mockServerSentEvents([
+        keepalive.slice(0, -1),
+        keepalive.slice(-1),
+        'event: complete\r',
+        '\n\r\n',
+      ]),
+    );
+
+    expect(await collect(streamConversation(CONVERSATION))).toEqual([
+      KEEPALIVE,
+    ]);
+  });
+
+  it('surfaces the GraphQL errors of a refused request', async () => {
+    fetchSpy.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          errors: [
+            {
+              message:
+                'Continuing a conversation requires an application access token',
+            },
+          ],
+        }),
+        { status: 400, statusText: 'Bad Request' },
+      ),
+    );
+
+    await expect(collect(streamConversation(CONVERSATION))).rejects.toThrow(
+      'streamConversation() failed: Continuing a conversation requires an application access token',
+    );
+  });
+
+  it('names the HTTP status of a refused request without GraphQL errors', async () => {
+    fetchSpy.mockResolvedValue(
+      new Response('Bad gateway', { status: 502, statusText: 'Bad Gateway' }),
+    );
+
+    await expect(collect(streamConversation(CONVERSATION))).rejects.toThrow(
+      'streamConversation() failed: HTTP 502 Bad Gateway',
+    );
+  });
+
   it('fails when the stream closes without completing, so the caller can resume', async () => {
     fetchSpy.mockResolvedValue(
       mockServerSentEvents([toNextEvent(toEventData(KEEPALIVE))]),
@@ -150,6 +226,28 @@ describe('streamConversation', () => {
 
     await vi.waitFor(() => expect(fetchSpy).toHaveBeenCalled());
     abortController.abort();
+
+    await expect(events).resolves.toEqual([]);
+  });
+
+  it('stops without failing when aborted with a reason of its own', async () => {
+    const abortController = new AbortController();
+
+    fetchSpy.mockImplementation(
+      (_url, requestInit) =>
+        new Promise((_resolve, reject) => {
+          requestInit?.signal?.addEventListener('abort', () =>
+            reject(requestInit.signal?.reason),
+          );
+        }),
+    );
+
+    const events = collect(
+      streamConversation({ ...CONVERSATION, signal: abortController.signal }),
+    );
+
+    await vi.waitFor(() => expect(fetchSpy).toHaveBeenCalled());
+    abortController.abort('done');
 
     await expect(events).resolves.toEqual([]);
   });

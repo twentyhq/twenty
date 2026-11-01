@@ -177,7 +177,9 @@ describe('runAgent', () => {
 
     await expect(
       runAgent({ agentUniversalIdentifier: 'a', prompt: 'p' }),
-    ).rejects.toThrow(/requires the app runtime env vars/);
+    ).rejects.toThrow(
+      'requires the app runtime env vars TWENTY_API_URL and TWENTY_APP_APPLICATION_ACCESS_TOKEN (or TWENTY_APP_ACCESS_TOKEN)',
+    );
 
     expect(fetchSpy).not.toHaveBeenCalled();
   });

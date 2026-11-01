@@ -719,6 +719,49 @@ describe('agent runs that wait (integration)', () => {
     }
   });
 
+  it('answers a run whose worker died after it completed with its reply when its job comes back', async () => {
+    const runTurn = mockAgent(replyingResult);
+    const aiQueue = global.app.get<MessageQueueService>(
+      getQueueToken(MessageQueue.aiQueue),
+    );
+    const enqueueRun = jest.spyOn(aiQueue, 'add');
+    const runOnThread = await buildRunOnThread({ waitForCompletion: false });
+
+    const { threadId, runId } = await runOnThread('Follow up tomorrow');
+
+    try {
+      await expectEventually(async () => {
+        expect(await findTurnStatuses(threadId)).toEqual(['completed']);
+      });
+
+      const [[, runJobData, runJobOptions]] = enqueueRun.mock.calls.filter(
+        ([jobName]) => jobName === RUN_AGENT_JOB_NAME,
+      );
+
+      // as if the worker died before it told the caller
+      await getAppProviderByClassName<RedisClientService>('RedisClientService')
+        .getClient()
+        .del(`agent-run-settled:${runId}`);
+
+      await aiQueue.add(RUN_AGENT_JOB_NAME, runJobData, runJobOptions);
+
+      await expectEventually(async () => {
+        expect(
+          await getAppProviderByClassName<AgentRunSettlementService>(
+            'AgentRunSettlementService',
+          ).waitFor({ runId, timeoutMs: 1000 }),
+        ).toMatchObject({
+          status: 'COMPLETED',
+          result: { response: 'Followed up' },
+        });
+      });
+      expect(await findTurnStatuses(threadId)).toEqual(['completed']);
+      expect(runTurn).toHaveBeenCalledTimes(1);
+    } finally {
+      await destroyAgentChatThread({ threadId });
+    }
+  });
+
   it('sends the messages a member queued before a run that started waiting after them', async () => {
     const runTurn = mockAgent(replyingResult);
     const threadKey = `lead:${randomUUID()}`;

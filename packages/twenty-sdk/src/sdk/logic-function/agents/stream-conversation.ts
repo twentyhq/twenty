@@ -1,4 +1,11 @@
-import { isArray, isNonEmptyString, isObject, isString } from '@sniptt/guards';
+import {
+  isArray,
+  isBoolean,
+  isNonEmptyString,
+  isNumber,
+  isObject,
+  isString,
+} from '@sniptt/guards';
 import { type AgentChatSubscriptionEvent } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -26,10 +33,42 @@ type ServerSentEvent =
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   isObject(value);
 
+const HAS_EVENT_FIELDS: Record<
+  AgentChatSubscriptionEvent['type'],
+  (event: Record<string, unknown>) => boolean
+> = {
+  'stream-chunk': ({ chunk, seq }) =>
+    isRecord(chunk) && (!isDefined(seq) || isNumber(seq)),
+  'message-persisted': ({ messageId }) => isString(messageId),
+  'message-added': ({ messageId }) => isString(messageId),
+  'queue-updated': () => true,
+  'tool-call-resolved': ({ toolCallId }) => isString(toolCallId),
+  'message-reactions-updated': ({ messageId, reactions, revision }) =>
+    isString(messageId) && isArray(reactions) && isNumber(revision),
+  'stream-error': ({ code, message }) => isString(code) && isString(message),
+  'credits-exhausted': () => true,
+  'user-credits-exhausted': ({
+    workspaceMemberId,
+    isFallingBackToWorkspaceCredits,
+    renewsAt,
+  }) =>
+    isString(workspaceMemberId) &&
+    isBoolean(isFallingBackToWorkspaceCredits) &&
+    isString(renewsAt),
+  keepalive: () => true,
+};
+
+const isKnownEventType = (
+  type: string,
+): type is AgentChatSubscriptionEvent['type'] =>
+  Object.prototype.hasOwnProperty.call(HAS_EVENT_FIELDS, type);
+
 const isAgentChatSubscriptionEvent = (
-  value: unknown,
-): value is AgentChatSubscriptionEvent =>
-  isRecord(value) && isString(value.type);
+  event: Record<string, unknown>,
+): event is AgentChatSubscriptionEvent =>
+  isString(event.type) &&
+  isKnownEventType(event.type) &&
+  HAS_EVENT_FIELDS[event.type](event);
 
 // GraphQL over server-sent events: one `next` event per result, then `complete`
 const parseServerSentEvent = (block: string): ServerSentEvent => {
@@ -66,15 +105,41 @@ const parseServerSentEvent = (block: string): ServerSentEvent => {
     };
   }
 
-  if (
-    !isRecord(result.data) ||
-    !isRecord(result.data.onAgentChatEvent) ||
-    !isAgentChatSubscriptionEvent(result.data.onAgentChatEvent.event)
-  ) {
+  const event =
+    isRecord(result.data) && isRecord(result.data.onAgentChatEvent)
+      ? result.data.onAgentChatEvent.event
+      : undefined;
+
+  if (!isRecord(event) || !isString(event.type)) {
     throw new Error(`streamConversation() failed: unexpected result ${data}`);
   }
 
-  return { type: 'event', event: result.data.onAgentChatEvent.event };
+  // an event a newer server added is skipped rather than failing the stream
+  if (!isKnownEventType(event.type)) {
+    return null;
+  }
+
+  if (!isAgentChatSubscriptionEvent(event)) {
+    throw new Error(`streamConversation() failed: unexpected result ${data}`);
+  }
+
+  return { type: 'event', event };
+};
+
+const readFailedResponseMessage = async (response: Response) => {
+  const body: unknown = await response.json().catch(() => undefined);
+
+  if (isRecord(body) && isArray(body.errors)) {
+    return body.errors
+      .map((error) =>
+        isRecord(error) && isString(error.message)
+          ? error.message
+          : JSON.stringify(error),
+      )
+      .join(', ');
+  }
+
+  return `HTTP ${response.status} ${response.statusText}`;
 };
 
 export async function* streamConversation({
@@ -106,7 +171,7 @@ export async function* streamConversation({
 
     if (!response.ok || !isDefined(response.body)) {
       throw new Error(
-        `streamConversation() failed: HTTP ${response.status} ${response.statusText}`,
+        `streamConversation() failed: ${await readFailedResponseMessage(response)}`,
       );
     }
 
@@ -123,7 +188,8 @@ export async function* streamConversation({
         );
       }
 
-      buffer += value.replace(/\r\n/g, '\n');
+      // a CRLF can be split across two reads
+      buffer = (buffer + value).replace(/\r\n/g, '\n');
 
       let boundary = buffer.indexOf('\n\n');
 
@@ -149,7 +215,8 @@ export async function* streamConversation({
       }
     }
   } catch (error) {
-    if (error instanceof Error && error.name === 'AbortError') {
+    // an abort rejects with the signal's reason, which is not always an AbortError
+    if (signal?.aborted) {
       return;
     }
 
