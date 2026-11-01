@@ -354,6 +354,7 @@ export class AiFrontComponentService {
     return {
       draftId: draft.id,
       name: draft.name,
+      pageLayoutType: draft.pageLayoutType,
       isCurrent: !draft.isSuperseded,
       publishedComponentId: draft.publishedComponentId,
       componentSource: draft.compiledSource,
