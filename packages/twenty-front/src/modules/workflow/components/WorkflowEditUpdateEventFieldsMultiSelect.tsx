@@ -7,7 +7,7 @@ import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actio
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { RelationType } from '~/generated-metadata/graphql';
 
 export const WorkflowFieldsMultiSelect = ({

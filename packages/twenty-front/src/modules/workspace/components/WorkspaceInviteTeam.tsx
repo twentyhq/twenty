@@ -19,9 +19,9 @@ import {
   IconLock,
   IconSend,
   IconUser,
-  useIcons,
   type IconComponent,
 } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Button } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 

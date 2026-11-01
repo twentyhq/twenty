@@ -36,7 +36,7 @@ describe('TwentyIconDictionary', () => {
 
   it('references icons available to string-based icon resolution', () => {
     const dynamicIconCatalog = readFileSync(
-      resolve(TEST_DIRECTORY, '../providers/internal/AllIcons.ts'),
+      resolve(TEST_DIRECTORY, '../provider/internal/AllIcons.ts'),
       'utf8',
     );
 

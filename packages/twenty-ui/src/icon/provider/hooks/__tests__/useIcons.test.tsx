@@ -6,8 +6,8 @@ import {
   IconBuildingSkyscraper,
   IconUser,
 } from '@ui/icon/components/TablerIcons';
-import { IconsContext } from '@ui/icon/internal/IconsContext';
-import { useIcons } from '@ui/icon/hooks/useIcons';
+import { IconsContext } from '@ui/icon/provider/internal/IconsContext';
+import { useIcons } from '@ui/icon/provider/hooks/useIcons';
 
 const mockedStateIcons = {
   IconUser,

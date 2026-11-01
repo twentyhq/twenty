@@ -2,7 +2,7 @@ import { i18n } from '@lingui/core';
 import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { JestObjectMetadataItemSetter } from '~/testing/jest/JestObjectMetadataItemSetter';
 
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
@@ -23,7 +23,7 @@ const Wrapper = ({ children }: { children: ReactNode }) => {
   );
 };
 
-jest.mock('twenty-ui/icon', () => ({
+jest.mock('twenty-ui/icon/provider', () => ({
   useIcons: jest.fn(),
 }));
 

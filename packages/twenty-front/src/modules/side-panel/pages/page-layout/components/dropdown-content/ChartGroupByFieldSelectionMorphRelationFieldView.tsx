@@ -7,7 +7,7 @@ import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { RelationType } from '~/generated-metadata/graphql';
 
 type ChartGroupByFieldSelectionMorphRelationFieldViewProps = {

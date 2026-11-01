@@ -26,8 +26,8 @@ import {
   IconDeviceFloppy,
   IconSettings,
   IconVariable,
-  useIcons,
 } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Button } from 'twenty-ui/primitives/input';
 import {
   ApplicationRegistrationSourceType,

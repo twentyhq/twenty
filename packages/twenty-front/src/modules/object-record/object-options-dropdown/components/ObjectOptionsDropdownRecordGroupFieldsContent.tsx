@@ -24,7 +24,8 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconChevronLeft, IconSettings, useIcons } from 'twenty-ui/icon';
+import { IconChevronLeft, IconSettings } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 

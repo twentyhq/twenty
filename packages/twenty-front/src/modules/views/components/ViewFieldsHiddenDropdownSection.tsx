@@ -10,7 +10,8 @@ import { ViewType } from '@/views/types/ViewType';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { IconEye, useIcons } from 'twenty-ui/icon';
+import { IconEye } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 
 export const ViewFieldsHiddenDropdownSection = () => {

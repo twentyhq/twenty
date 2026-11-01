@@ -1,5 +1,5 @@
 import { SuggestionListItem } from '@/ui/suggestion/components/SuggestionListItem';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 
 import { DEFAULT_SKILL_ICON } from '@/skill-suggestion/constants/DefaultSkillIcon';
 import type { SkillSuggestionItem } from '@/skill-suggestion/types/SkillSuggestionItem';

@@ -28,7 +28,7 @@ import {
   extractRawVariableNamePart,
   isStandaloneVariableString,
 } from 'twenty-shared/workflow';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 type WorkflowStepFilterFieldSelectProps = {

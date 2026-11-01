@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
 import { Icon123 } from '@ui/icon/components/TablerIcons';
-import { IconsContext } from '@ui/icon/internal/IconsContext';
+import { IconsContext } from '@ui/icon/provider/internal/IconsContext';
 
 export const useIcons = () => {
   const icons = useContext(IconsContext);
