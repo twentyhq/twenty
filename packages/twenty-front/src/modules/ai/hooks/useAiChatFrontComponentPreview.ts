@@ -5,7 +5,7 @@ import { fetchComponentSource } from 'twenty-front-component-renderer';
 import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { type PageLayoutType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { CustomError, isDefined } from 'twenty-shared/utils';
 
 import { REST_API_BASE_URL } from '@/apollo/constants/RestApiBaseUrl';
 import { getFingerprintedRestUrl } from '@/front-components/utils/getFingerprintedRestUrl';
@@ -35,10 +35,10 @@ export const useAiChatFrontComponentPreview = (draftId: string) => {
   const loadPreview = useCallback(
     async ({
       signal,
-      loadDependencies,
+      shouldLoadDependencies,
     }: {
       signal: AbortSignal;
-      loadDependencies: boolean;
+      shouldLoadDependencies: boolean;
     }) => {
       setLoadingError(undefined);
 
@@ -50,8 +50,9 @@ export const useAiChatFrontComponentPreview = (draftId: string) => {
         });
 
         if (!response.ok) {
-          throw new Error(
+          throw new CustomError(
             doNotTranslate(`Preview request failed: ${response.status}`),
+            'AI_FRONT_COMPONENT_PREVIEW_LOAD_FAILED',
           );
         }
         const result: FrontComponentPreview = await response.json();
@@ -60,33 +61,37 @@ export const useAiChatFrontComponentPreview = (draftId: string) => {
           return false;
         }
 
-        let loadedPreview: LoadedFrontComponentPreview | undefined;
+        setPreview((current) => {
+          if (!isDefined(current)) {
+            return current;
+          }
 
-        if (loadDependencies) {
-          const sharedDependenciesSource = await fetchComponentSource({
-            url: getFingerprintedRestUrl({
-              resource: 'front-component-shared-dependencies',
-              id: result.applicationId,
-              checksum: result.sharedDependenciesChecksum ?? undefined,
-            }),
-            credentials: 'include',
-            headers: SESSION_COOKIE_HEADERS,
-          });
-          loadedPreview = { ...result, sharedDependenciesSource };
+          return {
+            ...current,
+            isCurrent: result.isCurrent,
+            publishedComponentId: result.publishedComponentId,
+          };
+        });
+
+        if (!shouldLoadDependencies) {
+          return true;
         }
+
+        const sharedDependenciesSource = await fetchComponentSource({
+          url: getFingerprintedRestUrl({
+            resource: 'front-component-shared-dependencies',
+            id: result.applicationId,
+            checksum: result.sharedDependenciesChecksum ?? undefined,
+          }),
+          credentials: 'include',
+          headers: SESSION_COOKIE_HEADERS,
+        });
 
         if (signal.aborted) {
           return false;
         }
-        setPreview((current) =>
-          isDefined(current)
-            ? {
-                ...current,
-                isCurrent: result.isCurrent,
-                publishedComponentId: result.publishedComponentId,
-              }
-            : loadedPreview,
-        );
+        const loadedPreview = { ...result, sharedDependenciesSource };
+        setPreview((current) => current ?? loadedPreview);
         return true;
       } catch (failure) {
         if (!signal.aborted) {
@@ -122,8 +127,9 @@ export const useAiChatFrontComponentPreview = (draftId: string) => {
         });
 
         if (!response.ok) {
-          throw new Error(
+          throw new CustomError(
             doNotTranslate(`Preview error report failed: ${response.status}`),
+            'AI_FRONT_COMPONENT_PREVIEW_REPORT_FAILED',
           );
         }
       } catch (reportingError) {

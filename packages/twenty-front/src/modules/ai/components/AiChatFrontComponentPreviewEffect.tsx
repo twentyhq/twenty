@@ -20,7 +20,7 @@ export const AiChatFrontComponentPreviewEffect = ({
       controller = requestController;
       const loaded = await loadPreview({
         signal: requestController.signal,
-        loadDependencies: !hasPreview,
+        shouldLoadDependencies: !hasPreview,
       });
       if (!requestController.signal.aborted) {
         hasPreview = loaded || hasPreview;
