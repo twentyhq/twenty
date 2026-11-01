@@ -133,17 +133,14 @@ describe('system agents and workflows (e2e)', () => {
       });
 
       return {
-        systemAgentIds: data.findManyAgents
-          .filter((agent) => agent.isSystem)
-          .map((agent) => agent.id),
+        agentIds: data.findManyAgents.map((agent) => agent.id).sort(),
         isUserAgentSystem: data.findManyAgents.find(
           (agent) => agent.id === userAgentId,
         )?.isSystem,
       };
     };
 
-    const { systemAgentIds: systemAgentIdsBefore } =
-      await findAgentSystemFlags();
+    const { agentIds: agentIdsBefore } = await findAgentSystemFlags();
 
     const createStepResponse = await workflowGraphqlRequest(
       `
@@ -176,9 +173,9 @@ describe('system agents and workflows (e2e)', () => {
       versionResponse.body.data.coreWorkflowVersionById.steps[0].settings.input,
     ).toEqual({ instructions: '', prompt: '' });
 
-    const { systemAgentIds, isUserAgentSystem } = await findAgentSystemFlags();
+    const { agentIds, isUserAgentSystem } = await findAgentSystemFlags();
 
-    expect(systemAgentIds).toEqual(systemAgentIdsBefore);
+    expect(agentIds).toEqual(agentIdsBefore);
     expect(isUserAgentSystem).toBe(false);
   });
 

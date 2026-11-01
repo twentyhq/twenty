@@ -9,6 +9,7 @@ import { v4 } from 'uuid';
 import {
   AssignRoleToAgentDocument,
   CreateOneRoleDocument,
+  DeleteOneRoleDocument,
 } from '~/generated-metadata/graphql';
 
 // a step created before steps held their own permissions keeps them on its hidden agent's role until it is migrated
@@ -25,6 +26,7 @@ export const useCreateWorkflowStepOwnedAgentRole = ({
   );
   const [createRole] = useMutation(CreateOneRoleDocument);
   const [assignRoleToAgent] = useMutation(AssignRoleToAgentDocument);
+  const [deleteRole] = useMutation(DeleteOneRoleDocument);
 
   const createWorkflowStepOwnedAgentRole = async ({
     agentLabel,
@@ -68,10 +70,17 @@ export const useCreateWorkflowStepOwnedAgentRole = ({
       },
     });
 
-    await assignRoleToAgent({
-      variables: { agentId: updatableAgentId, roleId },
-      refetchQueries: ['FindOneAgent'],
-    });
+    // no mutation creates and assigns a role at once, so a role that could not be assigned is removed
+    try {
+      await assignRoleToAgent({
+        variables: { agentId: updatableAgentId, roleId },
+        refetchQueries: ['FindOneAgent'],
+      });
+    } catch (error) {
+      await deleteRole({ variables: { roleId } });
+
+      throw error;
+    }
 
     setWorkflowAiAgentActionAgent((currentAgent) =>
       currentAgent?.id === updatableAgentId

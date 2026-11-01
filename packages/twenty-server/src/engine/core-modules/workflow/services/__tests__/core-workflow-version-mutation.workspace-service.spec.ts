@@ -91,6 +91,7 @@ const buildService = async ({
 
   return {
     service: testingModule.get(CoreWorkflowVersionMutationWorkspaceService),
+    coreWorkflowVersionWriteService,
     workflowVersionStepOperationsWorkspaceService,
   };
 };
@@ -101,8 +102,11 @@ describe('CoreWorkflowVersionMutationWorkspaceService.updateStep', () => {
     const existingStep = buildAiAgentStep({
       input: { agentId: 'hidden-agent-id', prompt: 'Qualify' },
     });
-    const { service, workflowVersionStepOperationsWorkspaceService } =
-      await buildService({ existingStep });
+    const {
+      service,
+      coreWorkflowVersionWriteService,
+      workflowVersionStepOperationsWorkspaceService,
+    } = await buildService({ existingStep });
 
     const updatedStep = await service.updateStep({
       workspaceId: WORKSPACE_ID,
@@ -127,6 +131,13 @@ describe('CoreWorkflowVersionMutationWorkspaceService.updateStep', () => {
       nextStepIds: ['next-step-id'],
       settings: { input: { instructions: '', prompt: '' } },
     });
+    expect(coreWorkflowVersionWriteService.writeContent).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
+      expectedVersion: { id: CORE_WORKFLOW_VERSION_ID },
+      trigger: null,
+      steps: [updatedStep],
+    });
     expect(
       workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects,
     ).toHaveBeenCalledWith({ step: existingStep, workspaceId: WORKSPACE_ID });
@@ -136,8 +147,11 @@ describe('CoreWorkflowVersionMutationWorkspaceService.updateStep', () => {
     const existingStep = buildAiAgentStep({
       input: { agentId: 'agent-id', prompt: 'Qualify' },
     });
-    const { service, workflowVersionStepOperationsWorkspaceService } =
-      await buildService({ existingStep });
+    const {
+      service,
+      coreWorkflowVersionWriteService,
+      workflowVersionStepOperationsWorkspaceService,
+    } = await buildService({ existingStep });
     const step = buildAiAgentStep({
       input: { agentId: 'agent-id', prompt: 'Qualify the lead' },
     });
@@ -150,6 +164,13 @@ describe('CoreWorkflowVersionMutationWorkspaceService.updateStep', () => {
     });
 
     expect(updatedStep).toEqual(step);
+    expect(coreWorkflowVersionWriteService.writeContent).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE_ID,
+      coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
+      expectedVersion: { id: CORE_WORKFLOW_VERSION_ID },
+      trigger: null,
+      steps: [step],
+    });
     expect(
       workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep,
     ).not.toHaveBeenCalled();

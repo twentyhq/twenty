@@ -4,6 +4,7 @@ import {
 } from 'twenty-shared/constants';
 
 import { applyWorkflowAiAgentScopeObjectPermissionChange } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/applyWorkflowAiAgentScopeObjectPermissionChange';
+import { applyWorkflowAiAgentScopePermissionFlagChange } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/applyWorkflowAiAgentScopePermissionFlagChange';
 import { getWorkflowAiAgentScopePermissions } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions';
 
 const objectMetadataItems = [
@@ -127,5 +128,62 @@ describe('workflow AI agent scope', () => {
       canDestroyAllObjectRecords: false,
       permissionFlagUniversalIdentifiers: [],
     });
+  });
+
+  it('keeps an object denied when all objects are granted', () => {
+    const { objectPermissions } = getWorkflowAiAgentScopePermissions({
+      scope: {
+        canReadAllObjectRecords: true,
+        canUpdateAllObjectRecords: true,
+        objectPermissions: [
+          {
+            objectUniversalIdentifier: 'person',
+            canReadObjectRecords: false,
+            canUpdateObjectRecords: false,
+          },
+        ],
+      },
+      objectMetadataItems,
+    });
+
+    expect(
+      objectPermissions.find(
+        (objectPermission) => objectPermission.objectMetadataId === 'person-id',
+      ),
+    ).toMatchObject({
+      canReadObjectRecords: false,
+      canUpdateObjectRecords: false,
+    });
+  });
+
+  it('keeps the flags it does not know when a flag is granted or revoked', () => {
+    const scope = {
+      permissionFlagUniversalIdentifiers: [
+        'flag-from-a-newer-server',
+        SystemPermissionFlag.SEND_EMAIL_TOOL,
+      ],
+    };
+
+    const grantedScope = applyWorkflowAiAgentScopePermissionFlagChange({
+      scope,
+      permissionFlagKey: PermissionFlagType.HTTP_REQUEST_TOOL,
+      value: true,
+    });
+
+    expect(grantedScope.permissionFlagUniversalIdentifiers).toEqual([
+      'flag-from-a-newer-server',
+      SystemPermissionFlag.SEND_EMAIL_TOOL,
+      SystemPermissionFlag.HTTP_REQUEST_TOOL,
+    ]);
+    expect(
+      applyWorkflowAiAgentScopePermissionFlagChange({
+        scope: grantedScope,
+        permissionFlagKey: PermissionFlagType.SEND_EMAIL_TOOL,
+        value: false,
+      }).permissionFlagUniversalIdentifiers,
+    ).toEqual([
+      'flag-from-a-newer-server',
+      SystemPermissionFlag.HTTP_REQUEST_TOOL,
+    ]);
   });
 });

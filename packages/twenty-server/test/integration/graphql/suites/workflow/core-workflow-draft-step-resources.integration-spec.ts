@@ -220,7 +220,7 @@ describe('AI agent step duplication and deletion (e2e)', () => {
 });
 
 describe('AI agent step kind change (e2e)', () => {
-  it('keeps the name and error handling the author set when the step switches between Generate and an agent', async () => {
+  it('keeps the name, prompt and error handling the author set when the step switches between Generate and an agent', async () => {
     const { coreWorkflowId, coreWorkflowVersionId } = await createCoreWorkflow({
       name: 'AI Step Kind Change Test',
     });
@@ -238,6 +238,17 @@ describe('AI agent step kind change (e2e)', () => {
       retryOnFailure: { value: 3 },
     };
 
+    await updateCoreWorkflowVersionTrigger({
+      coreWorkflowVersionId,
+      trigger: {
+        name: 'Manual Trigger',
+        type: 'MANUAL',
+        settings: { outputSchema: {} },
+        nextStepIds: [],
+        position: { x: 0, y: 0 },
+      },
+    });
+
     const createdStep = await createCoreWorkflowVersionStep<AiAgentStep>({
       coreWorkflowVersionId,
       stepType: 'AI_AGENT',
@@ -245,7 +256,15 @@ describe('AI agent step kind change (e2e)', () => {
     const generateStep = {
       ...createdStep,
       name: 'Score the lead',
-      settings: { ...createdStep.settings, errorHandlingOptions },
+      settings: {
+        ...createdStep.settings,
+        input: {
+          ...createdStep.settings.input,
+          instructions: 'You qualify leads.',
+          prompt: 'Qualify the new lead.',
+        },
+        errorHandlingOptions,
+      },
     };
 
     await updateCoreWorkflowVersionStep({
@@ -274,7 +293,10 @@ describe('AI agent step kind change (e2e)', () => {
 
     const agentStep = await findStep();
 
-    expect(agentStep?.settings.input.agentId).toBe(reusableAgentId);
+    expect(agentStep?.settings.input).toEqual({
+      agentId: reusableAgentId,
+      prompt: 'Qualify the new lead.',
+    });
     expect(agentStep?.name).toBe('Score the lead');
     expect(agentStep?.settings.errorHandlingOptions).toEqual(
       errorHandlingOptions,
@@ -293,7 +315,10 @@ describe('AI agent step kind change (e2e)', () => {
 
     const switchedBackStep = await findStep();
 
-    expect(switchedBackStep?.settings.input).not.toHaveProperty('agentId');
+    expect(switchedBackStep?.settings.input).toEqual({
+      instructions: '',
+      prompt: 'Qualify the new lead.',
+    });
     expect(switchedBackStep?.name).toBe('Score the lead');
     expect(switchedBackStep?.settings.errorHandlingOptions).toEqual(
       errorHandlingOptions,

@@ -1,14 +1,25 @@
+import { type AgentResponseFormat } from 'twenty-shared/ai';
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { getWorkflowStepAfterRebuild } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/get-workflow-step-after-rebuild.util';
 import {
-  type WorkflowAction,
   type WorkflowAiAgentAction,
+  type WorkflowDelayAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 const DEFAULT_ERROR_HANDLING_OPTIONS = {
   continueOnFailure: { value: false },
   retryOnFailure: { value: 0 },
+};
+
+const RETRYING_ERROR_HANDLING_OPTIONS = {
+  continueOnFailure: { value: true },
+  retryOnFailure: { value: 3 },
+};
+
+const JSON_RESPONSE_FORMAT: AgentResponseFormat = {
+  type: 'json',
+  schema: { type: 'object', properties: { score: { type: 'number' } } },
 };
 
 const buildAiAgentStep = ({
@@ -27,12 +38,9 @@ const buildAiAgentStep = ({
   settings: { input, outputSchema: {}, errorHandlingOptions },
 });
 
-const builtGenerateStep = buildAiAgentStep({
-  name: 'Generate',
-  input: { instructions: '', prompt: '' },
-});
-
-const builtDelayStep = {
+const buildDelayStep = (
+  errorHandlingOptions: WorkflowDelayAction['settings']['errorHandlingOptions'],
+): WorkflowDelayAction => ({
   id: 'step-id',
   name: 'Delay',
   type: WorkflowActionType.DELAY,
@@ -40,14 +48,19 @@ const builtDelayStep = {
   settings: {
     input: { delayType: 'DURATION', duration: { minutes: 1 } },
     outputSchema: {},
-    errorHandlingOptions: DEFAULT_ERROR_HANDLING_OPTIONS,
+    errorHandlingOptions,
   },
-} as WorkflowAction;
+});
 
-const retryingErrorHandlingOptions = {
-  continueOnFailure: { value: true },
-  retryOnFailure: { value: 3 },
-};
+const builtGenerateStep = buildAiAgentStep({
+  name: 'Generate',
+  input: { instructions: '', prompt: '' },
+});
+
+const builtAgentStep = buildAiAgentStep({
+  name: 'Lead qualifier',
+  input: { agentId: 'agent-id', prompt: '' },
+});
 
 describe('getWorkflowStepAfterRebuild', () => {
   it.each([
@@ -59,7 +72,7 @@ describe('getWorkflowStepAfterRebuild', () => {
       getWorkflowStepAfterRebuild({
         existingStep: buildAiAgentStep({
           name,
-          input: { agentId: 'agent-id' },
+          input: { agentId: 'previous-agent-id' },
         }),
         builtStep: builtGenerateStep,
         previousAgentLabel: 'Lead qualifier',
@@ -72,7 +85,7 @@ describe('getWorkflowStepAfterRebuild', () => {
       getWorkflowStepAfterRebuild({
         existingStep: buildAiAgentStep({
           name: 'Score the lead',
-          input: { agentId: 'agent-id' },
+          input: { agentId: 'previous-agent-id' },
         }),
         builtStep: builtGenerateStep,
         previousAgentLabel: 'Lead qualifier',
@@ -81,14 +94,15 @@ describe('getWorkflowStepAfterRebuild', () => {
   });
 
   it.each([
-    ['from an agent to Generate', { agentId: 'agent-id' }, builtGenerateStep],
+    [
+      'from an agent to Generate',
+      { agentId: 'previous-agent-id' },
+      builtGenerateStep,
+    ],
     [
       'from Generate to an agent',
       { instructions: 'Qualify leads.' },
-      buildAiAgentStep({
-        name: 'Lead qualifier',
-        input: { agentId: 'agent-id', prompt: '' },
-      }),
+      builtAgentStep,
     ],
   ])(
     'keeps retries and continue on failure when an AI step switches %s',
@@ -98,26 +112,83 @@ describe('getWorkflowStepAfterRebuild', () => {
           existingStep: buildAiAgentStep({
             name: 'Score the lead',
             input,
-            errorHandlingOptions: retryingErrorHandlingOptions,
+            errorHandlingOptions: RETRYING_ERROR_HANDLING_OPTIONS,
           }),
           builtStep,
           previousAgentLabel: undefined,
         }).settings.errorHandlingOptions,
-      ).toEqual(retryingErrorHandlingOptions);
+      ).toEqual(RETRYING_ERROR_HANDLING_OPTIONS);
     },
   );
+
+  it('keeps the prompt and response format, and drops the Generate config, when Generate switches to an agent', () => {
+    expect(
+      getWorkflowStepAfterRebuild({
+        existingStep: buildAiAgentStep({
+          name: 'Score the lead',
+          input: {
+            instructions: 'You qualify leads.',
+            modelId: 'model-id',
+            scope: {},
+            prompt: 'Qualify {{trigger.name}}',
+            responseFormat: JSON_RESPONSE_FORMAT,
+          },
+        }),
+        builtStep: builtAgentStep,
+        previousAgentLabel: undefined,
+      }).settings.input,
+    ).toEqual({
+      agentId: 'agent-id',
+      prompt: 'Qualify {{trigger.name}}',
+      responseFormat: JSON_RESPONSE_FORMAT,
+    });
+  });
+
+  it('keeps the conversation settings when an agent step switches to another agent', () => {
+    const conversationInput = {
+      workspaceMemberId: 'workspace-member-id',
+      humanInputInstructions: 'Ask before emailing.',
+      conversation: { scope: 'RUN' as const },
+    };
+
+    expect(
+      getWorkflowStepAfterRebuild({
+        existingStep: buildAiAgentStep({
+          name: 'Score the lead',
+          input: {
+            agentId: 'previous-agent-id',
+            prompt: 'Qualify',
+            ...conversationInput,
+          },
+        }),
+        builtStep: builtAgentStep,
+        previousAgentLabel: undefined,
+      }).settings.input,
+    ).toEqual({ agentId: 'agent-id', prompt: 'Qualify', ...conversationInput });
+  });
+
+  it('drops the conversation settings when an agent step switches to Generate', () => {
+    expect(
+      getWorkflowStepAfterRebuild({
+        existingStep: buildAiAgentStep({
+          name: 'Score the lead',
+          input: {
+            agentId: 'previous-agent-id',
+            prompt: 'Qualify',
+            workspaceMemberId: 'workspace-member-id',
+            humanInputInstructions: 'Ask before emailing.',
+          },
+        }),
+        builtStep: builtGenerateStep,
+        previousAgentLabel: undefined,
+      }).settings.input,
+    ).toEqual({ instructions: '', prompt: 'Qualify' });
+  });
 
   it('builds a step of another type rebuilt into an AI step afresh', () => {
     expect(
       getWorkflowStepAfterRebuild({
-        existingStep: {
-          ...builtDelayStep,
-          name: 'Score the lead',
-          settings: {
-            ...builtDelayStep.settings,
-            errorHandlingOptions: retryingErrorHandlingOptions,
-          },
-        } as WorkflowAction,
+        existingStep: buildDelayStep(RETRYING_ERROR_HANDLING_OPTIONS),
         builtStep: builtGenerateStep,
         previousAgentLabel: undefined,
       }),
@@ -125,12 +196,14 @@ describe('getWorkflowStepAfterRebuild', () => {
   });
 
   it('builds an AI step rebuilt into another type afresh', () => {
+    const builtDelayStep = buildDelayStep(DEFAULT_ERROR_HANDLING_OPTIONS);
+
     expect(
       getWorkflowStepAfterRebuild({
         existingStep: buildAiAgentStep({
           name: 'Score the lead',
-          input: { agentId: 'agent-id' },
-          errorHandlingOptions: retryingErrorHandlingOptions,
+          input: { agentId: 'previous-agent-id', prompt: 'Qualify' },
+          errorHandlingOptions: RETRYING_ERROR_HANDLING_OPTIONS,
         }),
         builtStep: builtDelayStep,
         previousAgentLabel: 'Lead qualifier',

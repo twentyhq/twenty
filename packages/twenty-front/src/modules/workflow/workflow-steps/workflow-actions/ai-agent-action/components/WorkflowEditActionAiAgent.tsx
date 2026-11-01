@@ -35,6 +35,7 @@ import { useEffect, useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { getWorkflowAiAgentStepKind } from 'twenty-shared/workflow';
+import { useToast } from 'twenty-ui/components/feedback';
 import { IconAlertTriangle, IconLock, IconSparkles } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
@@ -44,6 +45,7 @@ import {
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { SidePanelSkeletonLoader } from '~/loading/components/SidePanelSkeletonLoader';
+import { logError } from '~/utils/logError';
 
 export type WorkflowAiAgentTabId =
   (typeof WORKFLOW_AI_AGENT_TABS)[keyof typeof WORKFLOW_AI_AGENT_TABS];
@@ -124,13 +126,16 @@ export const WorkflowEditActionAiAgent = ({
     }
 
     // a draft created by an earlier save gives the step its own agent, which the local input predates
-    const currentStep =
-      store
-        .get(flowState)
-        ?.steps?.find(
-          (step: WorkflowAction): step is WorkflowAiAgentAction =>
-            step.id === action.id && step.type === 'AI_AGENT',
-        ) ?? action;
+    const currentStep = store
+      .get(flowState)
+      ?.steps?.find(
+        (step: WorkflowAction): step is WorkflowAiAgentAction =>
+          step.id === action.id && step.type === 'AI_AGENT',
+      );
+
+    if (!isDefined(currentStep)) {
+      return;
+    }
 
     actionOptions.onActionUpdate({
       ...currentStep,
@@ -185,7 +190,7 @@ export const WorkflowEditActionAiAgent = ({
 
   const navigateSettings = useNavigateSettings();
   const agentRoleId = agent?.roleId;
-  const { data: roleData } = useQuery(GetRoleDocument, {
+  const { data: roleData, loading: roleLoading } = useQuery(GetRoleDocument, {
     variables: { id: agentRoleId ?? '' },
     skip: stepKind !== 'stepOwnedAgent' || !isDefined(agentRoleId),
   });
@@ -199,6 +204,7 @@ export const WorkflowEditActionAiAgent = ({
   const { createWorkflowStepOwnedAgentRole } =
     useCreateWorkflowStepOwnedAgentRole({ stepId: action.id });
   const [isCreatingRole, setIsCreatingRole] = useState(false);
+  const { enqueueToast } = useToast();
 
   const handleCreateRole = async () => {
     if (!isDefined(agent) || isCreatingRole) {
@@ -213,6 +219,12 @@ export const WorkflowEditActionAiAgent = ({
       });
 
       navigateSettings(SettingsPath.RoleDetail, { roleId: createdRoleId });
+    } catch (error) {
+      logError(error);
+      enqueueToast({
+        status: 'error',
+        children: t`The role could not be created. Try again.`,
+      });
     } finally {
       setIsCreatingRole(false);
     }
@@ -292,6 +304,10 @@ export const WorkflowEditActionAiAgent = ({
       );
     }
 
+    if (roleLoading) {
+      return <SidePanelSkeletonLoader />;
+    }
+
     return (
       <WorkflowAiAgentPermissionsTab
         readonly
@@ -358,6 +374,7 @@ export const WorkflowEditActionAiAgent = ({
         <WorkflowStepFooter
           additionalActions={getFooterActions()}
           stepId={action.id}
+          agent={agent}
         />
       )}
     </TabListRoot>

@@ -1,4 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
+import { WorkflowActionType } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
@@ -38,6 +39,10 @@ export const createUpdateWorkflowAgentTool = (
       WorkflowToolDependencies['workflowAiAgentStepAgentService'],
       'findStepOwnedAgent'
     >;
+    coreWorkflowVersionListService: Pick<
+      WorkflowToolDependencies['coreWorkflowVersionListService'],
+      'findDraftCoreWorkflowVersions'
+    >;
   },
   context: WorkflowToolContext,
 ) => ({
@@ -46,6 +51,8 @@ export const createUpdateWorkflowAgentTool = (
 
 - prompt: the agent's system prompt (its role, behavior and task).
 - modelId: optional model id; omit to keep the auto-selected model.
+
+Only the agent of a step in a DRAFT workflow version can be updated. For an active or past version, call create_draft_from_workflow_version first, then use the agentId of the same step in the new draft: the draft copies each such step onto a new agent.
 
 Any other AI_AGENT step is configured with update_workflow_version_step: a step without settings.input.agentId holds its own instructions, prompt, modelId and scope, and a step running a reusable agent takes those from the agent, which is edited on its own. Every AI_AGENT step sets its output format with update_workflow_version_step, on settings.input.responseFormat; a step running an agent without one outputs in the agent's format.`,
   inputSchema: updateAgentSchema,
@@ -69,6 +76,28 @@ Any other AI_AGENT step is configured with update_workflow_version_step: a step 
           success: false,
           error: 'Not the hidden agent of a workflow step',
           message: `Agent ${agentId} does not belong to a workflow step. Configure a step without an agent with update_workflow_version_step, and edit a reusable agent on its own.`,
+          agentId,
+        };
+      }
+
+      // a draft runs its own copy of each hidden agent, so editing one a draft step runs leaves live versions alone
+      const draftCoreVersions =
+        await deps.coreWorkflowVersionListService.findDraftCoreWorkflowVersions(
+          { workspaceId },
+        );
+      const isRunByDraftStep = draftCoreVersions.some((draftCoreVersion) =>
+        (draftCoreVersion.steps ?? []).some(
+          (step) =>
+            step.type === WorkflowActionType.AI_AGENT &&
+            step.settings.input.agentId === agentId,
+        ),
+      );
+
+      if (!isRunByDraftStep) {
+        return {
+          success: false,
+          error: 'Not the hidden agent of a draft workflow step',
+          message: `Agent ${agentId} is not run by a step of a draft workflow version. Create a draft with create_draft_from_workflow_version, then update the agent its step runs.`,
           agentId,
         };
       }

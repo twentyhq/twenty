@@ -5,20 +5,18 @@ import { workflowAiAgentPermissionsIsSystemObjectsListOpenState } from '@/workfl
 import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdState';
 import { type WorkflowAiAgentObjectPermissionChange } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentObjectPermissionChange';
 import { applyWorkflowAiAgentScopeObjectPermissionChange } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/applyWorkflowAiAgentScopeObjectPermissionChange';
+import { applyWorkflowAiAgentScopePermissionFlagChange } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/applyWorkflowAiAgentScopePermissionFlagChange';
 import { isUndefined } from '@sniptt/guards';
 import { type AiRunScope } from 'twenty-shared/ai';
-import { PERMISSION_FLAG_UNIVERSAL_IDENTIFIER_BY_TYPE } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 type UseWorkflowAiAgentScopePermissionActionsParams = {
   scope: AiRunScope | undefined;
-  permissionFlagKeys: string[];
   onScopeChange: (scope: AiRunScope) => void;
 };
 
 export const useWorkflowAiAgentScopePermissionActions = ({
   scope,
-  permissionFlagKeys,
   onScopeChange,
 }: UseWorkflowAiAgentScopePermissionActionsParams) => {
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
@@ -61,15 +59,14 @@ export const useWorkflowAiAgentScopePermissionActions = ({
     );
   };
 
-  const setPermissionFlagKeys = (nextPermissionFlagKeys: string[]) =>
-    onScopeChange({
-      ...scope,
-      permissionFlagUniversalIdentifiers: nextPermissionFlagKeys
-        .map((permissionFlagKey) =>
-          PERMISSION_FLAG_UNIVERSAL_IDENTIFIER_BY_TYPE.get(permissionFlagKey),
-        )
-        .filter(isDefined),
-    });
+  const changePermissionFlag = (permissionFlagKey: string, value: boolean) =>
+    onScopeChange(
+      applyWorkflowAiAgentScopePermissionFlagChange({
+        scope,
+        permissionFlagKey,
+        value,
+      }),
+    );
 
   return {
     onAddPermission: (change: WorkflowAiAgentObjectPermissionChange) => {
@@ -79,12 +76,10 @@ export const useWorkflowAiAgentScopePermissionActions = ({
     onDeletePermission: (change: WorkflowAiAgentObjectPermissionChange) =>
       changeObjectPermission(change, false),
     onAddPermissionFlag: (permissionFlagKey: string) => {
-      setPermissionFlagKeys([...permissionFlagKeys, permissionFlagKey]);
+      changePermissionFlag(permissionFlagKey, true);
       closeAddPermission();
     },
     onDeletePermissionFlag: (permissionFlagKey: string) =>
-      setPermissionFlagKeys(
-        permissionFlagKeys.filter((key) => key !== permissionFlagKey),
-      ),
+      changePermissionFlag(permissionFlagKey, false),
   };
 };

@@ -23,11 +23,7 @@ export const WorkflowAiAgentScopePermissionsTab = ({
     onDeletePermission,
     onAddPermissionFlag,
     onDeletePermissionFlag,
-  } = useWorkflowAiAgentScopePermissionActions({
-    scope,
-    permissionFlagKeys,
-    onScopeChange,
-  });
+  } = useWorkflowAiAgentScopePermissionActions({ scope, onScopeChange });
 
   return (
     <WorkflowAiAgentPermissionsTab

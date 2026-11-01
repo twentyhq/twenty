@@ -13,16 +13,20 @@ import { SettingsPath } from 'twenty-shared/types';
 import {
   AssignRoleToAgentDocument,
   CreateOneRoleDocument,
+  DeleteOneRoleDocument,
   FindOneAgentDocument,
 } from '~/generated-metadata/graphql';
 
 const PUBLISHED_AGENT_ID = 'published-agent-id';
 const DRAFT_AGENT_ID = 'draft-agent-id';
+const DELETED_AGENT_ID = 'deleted-agent-id';
 const STEP_ID = 'ai-step-id';
 const WORKFLOW_VISUALIZER_INSTANCE_ID = 'workflow-visualizer-instance-id';
 
 const mockCreateRole = jest.fn();
 const mockAssignRoleToAgent = jest.fn();
+const mockDeleteRole = jest.fn();
+const mockEnqueueToast = jest.fn();
 const mockNavigateSettings = jest.fn();
 const mockGetUpdatableWorkflowVersionStepOrThrow = jest.fn();
 let mockAgentRoleId: string | null = null;
@@ -30,6 +34,10 @@ let mockFindOneAgentResultsByAgentId: Record<string, unknown> = {};
 
 // a stable result per agent, as Apollo's cache gives, so the editor does not reload the agent on every render
 const mockFindOneAgentResult = (agentId: string) => {
+  if (agentId === DELETED_AGENT_ID) {
+    return { data: undefined, loading: false };
+  }
+
   mockFindOneAgentResultsByAgentId[agentId] ??= {
     data: {
       findOneAgent: {
@@ -54,6 +62,10 @@ jest.mock('@apollo/client/react', () => ({
   useMutation: (document: unknown) => {
     if (document === CreateOneRoleDocument) {
       return [mockCreateRole];
+    }
+
+    if (document === DeleteOneRoleDocument) {
+      return [mockDeleteRole];
     }
 
     return document === AssignRoleToAgentDocument
@@ -83,9 +95,16 @@ jest.mock(
 jest.mock('@/workflow/workflow-steps/components/WorkflowStepFooter', () => ({
   WorkflowStepFooter: ({
     additionalActions,
+    agent,
   }: {
     additionalActions?: React.ReactNode[];
-  }) => <>{additionalActions}</>,
+    agent?: { id: string };
+  }) => (
+    <>
+      {agent && <span>{`View agent ${agent.id}`}</span>}
+      {additionalActions}
+    </>
+  ),
 }));
 jest.mock(
   '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useResetWorkflowAiAgentPermissionsStateOnSidePanelClose',
@@ -99,12 +118,20 @@ jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow', () => ({
       mockGetUpdatableWorkflowVersionStepOrThrow,
   }),
 }));
+jest.mock('twenty-ui/components/feedback', () => ({
+  ...jest.requireActual('twenty-ui/components/feedback'),
+  useToast: () => ({ enqueueToast: mockEnqueueToast }),
+}));
+jest.mock('~/utils/logError', () => ({ logError: jest.fn() }));
 jest.mock('~/hooks/useNavigateSettings', () => ({
   useNavigateSettings: () => mockNavigateSettings,
 }));
 
-const buildLegacyStep = (agentId: string): WorkflowAiAgentAction => ({
-  id: STEP_ID,
+const buildLegacyStep = (
+  agentId: string,
+  stepId = STEP_ID,
+): WorkflowAiAgentAction => ({
+  id: stepId,
   name: 'Agent',
   type: 'AI_AGENT',
   valid: true,
@@ -250,5 +277,109 @@ describe('WorkflowEditActionAiAgent', () => {
 
     expect(await screen.findByText('View role')).toBeVisible();
     expect(screen.queryByText('Create role')).not.toBeInTheDocument();
+  });
+
+  it('does not save an edit to a step that left the flow before the save ran', async () => {
+    const onActionUpdate = jest.fn();
+    const step = buildLegacyStep(PUBLISHED_AGENT_ID);
+
+    setFlowStep(step);
+
+    render(
+      <WorkflowEditActionAiAgent
+        action={step}
+        actionOptions={{ onActionUpdate }}
+      />,
+      { wrapper: Wrapper },
+    );
+
+    await userEvent.type(
+      await screen.findByRole('textbox', { name: 'Prompt' }),
+      ' now',
+    );
+    jotaiStore.set(
+      flowComponentState.atomFamily({
+        instanceId: WORKFLOW_VISUALIZER_INSTANCE_ID,
+      }),
+      { workflowVersionId: 'workflow-version-id', trigger: null, steps: [] },
+    );
+
+    await new Promise((resolve) => setTimeout(resolve, 700));
+
+    expect(onActionUpdate).not.toHaveBeenCalled();
+  });
+
+  it('removes the role it created and tells the author when the role cannot be assigned to the agent', async () => {
+    const step = buildLegacyStep(PUBLISHED_AGENT_ID);
+
+    setFlowStep(step);
+    mockGetUpdatableWorkflowVersionStepOrThrow.mockResolvedValue(
+      buildLegacyStep(DRAFT_AGENT_ID),
+    );
+    mockAssignRoleToAgent.mockRejectedValue(new Error('Assignment failed'));
+
+    render(
+      <WorkflowEditActionAiAgent
+        action={step}
+        actionOptions={{ onActionUpdate: jest.fn() }}
+      />,
+      { wrapper: Wrapper },
+    );
+
+    await userEvent.click(
+      await screen.findByRole('tab', { name: 'Permissions' }),
+    );
+    await userEvent.click(await screen.findByText('Create role'));
+
+    await waitFor(() => expect(mockDeleteRole).toHaveBeenCalled());
+
+    expect(mockDeleteRole).toHaveBeenCalledWith({
+      variables: {
+        roleId: mockCreateRole.mock.calls[0][0].variables.createRoleInput.id,
+      },
+    });
+    expect(mockNavigateSettings).not.toHaveBeenCalled();
+    expect(mockEnqueueToast).toHaveBeenCalledWith(
+      expect.objectContaining({ status: 'error' }),
+    );
+  });
+
+  it('does not offer the agent of the previously opened step when its own agent is missing', async () => {
+    const previousStep = buildLegacyStep(
+      PUBLISHED_AGENT_ID,
+      'previous-step-id',
+    );
+    const step = buildLegacyStep(DELETED_AGENT_ID);
+
+    setFlowStep(previousStep);
+
+    const { rerender } = render(
+      <WorkflowEditActionAiAgent
+        key={previousStep.id}
+        action={previousStep}
+        actionOptions={{ onActionUpdate: jest.fn() }}
+      />,
+      { wrapper: Wrapper },
+    );
+
+    expect(
+      await screen.findByText(`View agent ${PUBLISHED_AGENT_ID}`),
+    ).toBeVisible();
+
+    setFlowStep(step);
+    rerender(
+      <WorkflowEditActionAiAgent
+        key={step.id}
+        action={step}
+        actionOptions={{ onActionUpdate: jest.fn() }}
+      />,
+    );
+
+    expect(
+      await screen.findByText(
+        'The agent this step runs could not be loaded. It may have been deleted.',
+      ),
+    ).toBeVisible();
+    expect(screen.queryByText(/View agent/)).not.toBeInTheDocument();
   });
 });
