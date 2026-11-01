@@ -1,3 +1,5 @@
+import { ToolCategory } from 'twenty-shared/ai';
+
 import { PUBLISH_FRONT_COMPONENT_TOOL } from 'src/engine/metadata-modules/ai/ai-front-component/constants/publish-front-component-tool.constant';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
@@ -37,7 +39,7 @@ const PUBLISH_TOOL_ENTRY: ToolIndexEntry = {
   ...PUBLISH_FRONT_COMPONENT_TOOL,
   label: 'Save component',
   description: '',
-  category: 'ACTION' as ToolIndexEntry['category'],
+  category: ToolCategory.ACTION,
   executionRef: {
     kind: 'static',
     toolId: PUBLISH_FRONT_COMPONENT_TOOL.name,

@@ -44,11 +44,18 @@ const buildFoundRecordOutput = (record: Record<string, unknown>) => ({
 });
 
 describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
-  it.each(['frontComponent', 'generic'] as const)(
-    'publishes the proposed revision even when a %s approval supplies another draft and checksum',
-    async (template) => {
+  it.each([
+    {
+      template: 'frontComponent',
+      toolName: PUBLISH_FRONT_COMPONENT_TOOL_NAME,
+    },
+    { template: 'frontComponent', toolName: 'save_snapshot' },
+    { template: 'generic', toolName: PUBLISH_FRONT_COMPONENT_TOOL_NAME },
+  ] as const)(
+    'keeps the proposed revision for $template/$toolName when approval supplies another draft and checksum',
+    async ({ template, toolName }) => {
       const proposal = {
-        toolName: PUBLISH_FRONT_COMPONENT_TOOL_NAME,
+        toolName,
         toolLabel: 'Save component',
         summary: 'Save the reviewed component',
         template,
@@ -72,7 +79,7 @@ describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
 
       expect(executeTool).toHaveBeenCalledTimes(1);
       expect(executeTool).toHaveBeenCalledWith({
-        toolName: PUBLISH_FRONT_COMPONENT_TOOL_NAME,
+        toolName,
         args: proposal.arguments,
       });
     },

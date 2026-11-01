@@ -133,7 +133,11 @@ const buildApprovedArguments = (
   proposal: ProposedToolCall,
   editedArguments: Record<string, unknown> | undefined,
 ): Record<string, unknown> => {
-  if (proposal.toolName === PUBLISH_FRONT_COMPONENT_TOOL_NAME) {
+  if (
+    proposal.template === 'frontComponent' ||
+    (proposal.template === 'generic' &&
+      proposal.toolName === PUBLISH_FRONT_COMPONENT_TOOL_NAME)
+  ) {
     return proposal.arguments;
   }
 
