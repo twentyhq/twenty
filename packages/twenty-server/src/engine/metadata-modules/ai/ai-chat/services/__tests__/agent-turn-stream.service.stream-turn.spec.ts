@@ -74,11 +74,13 @@ const REPLY_PARTS = [
   { type: 'finish', finishReason: 'stop', totalUsage: {} },
 ];
 
-const streamReplyWithoutClaim = ({
+const streamPartsWithoutClaim = ({
   service,
+  parts = REPLY_PARTS,
   streamChannelId,
 }: {
   service: AgentTurnStreamService;
+  parts?: Record<string, unknown>[];
   streamChannelId?: string;
 }) =>
   service.streamTurn({
@@ -88,10 +90,14 @@ const streamReplyWithoutClaim = ({
     turnId: 'turn-id',
     startTurn: async () => ({
       source: {
-        modelConfig: { contextWindowTokens: 1000 } as never,
+        modelConfig: {
+          contextWindowTokens: 1000,
+          inputCostPerMillionTokens: 1,
+          outputCostPerMillionTokens: 1,
+        } as never,
         parts: new ReadableStream({
           start(controller) {
-            REPLY_PARTS.forEach((part) => controller.enqueue(part as never));
+            parts.forEach((part) => controller.enqueue(part as never));
             controller.close();
           },
         }),
@@ -155,7 +161,7 @@ describe('AgentTurnStreamService streamTurn of a followed run', () => {
   it('publishes nothing when no one follows the run', async () => {
     const eventPublisherService = buildPublisher();
 
-    await streamReplyWithoutClaim({
+    await streamPartsWithoutClaim({
       service: await buildService({ finish: jest.fn(), eventPublisherService }),
     });
 
@@ -165,7 +171,7 @@ describe('AgentTurnStreamService streamTurn of a followed run', () => {
   it('publishes each UI chunk to the run channel, then the end of the reply', async () => {
     const eventPublisherService = buildPublisher();
 
-    const { streamed } = await streamReplyWithoutClaim({
+    const { streamed } = await streamPartsWithoutClaim({
       service: await buildService({ finish: jest.fn(), eventPublisherService }),
       streamChannelId: 'run-channel-id',
     });
@@ -216,6 +222,38 @@ describe('AgentTurnStreamService streamTurn of a followed run', () => {
         code: 'STREAM_EXECUTION_FAILED',
         message: 'Provider unavailable',
       },
+    });
+  });
+});
+
+describe('AgentTurnStreamService streamTurn usage', () => {
+  it('counts the usage a model reports with an error finish reason', async () => {
+    const { streamed } = await streamPartsWithoutClaim({
+      service: await buildService({
+        finish: jest.fn().mockResolvedValue(true),
+      }),
+      parts: [
+        { type: 'start' },
+        { type: 'start-step' },
+        {
+          type: 'finish-step',
+          finishReason: 'error',
+          usage: { inputTokens: 120, outputTokens: 8 },
+        },
+        { type: 'start-step' },
+        {
+          type: 'finish-step',
+          finishReason: 'error',
+          usage: { inputTokens: undefined, outputTokens: undefined },
+        },
+        { type: 'finish', finishReason: 'error', totalUsage: {} },
+      ],
+    });
+
+    expect(streamed.usage).toMatchObject({
+      inputTokens: 120,
+      outputTokens: 8,
+      conversationSize: 120,
     });
   });
 });

@@ -279,6 +279,22 @@ export class AgentTurnRecorderService {
     };
   }
 
+  async findTurn({
+    workspaceId,
+    turnId,
+  }: {
+    workspaceId: string;
+    turnId: string;
+  }): Promise<Pick<
+    AgentTurnWorkspaceEntity,
+    'id' | 'status' | 'error'
+  > | null> {
+    return this.turnRepository.findOne(workspaceId, {
+      where: { id: turnId },
+      select: ['id', 'status', 'error'],
+    });
+  }
+
   async findLatestTurn({
     workspaceId,
     threadId,
