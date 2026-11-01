@@ -44,8 +44,8 @@ export const SettingsApplicationRegistrationShareLinkButtons = ({
 
   const { requestInstall, isInstalling, installProgress } =
     useInstallMarketplaceAppWithPermissionValidation({
-    universalIdentifier,
-  });
+      universalIdentifier,
+    });
 
   const { data: detailData } = useQuery(FindMarketplaceAppDetailDocument, {
     variables: { universalIdentifier: universalIdentifier ?? '' },
