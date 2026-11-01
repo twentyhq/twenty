@@ -7,6 +7,10 @@ import { type ProposedToolCall } from 'twenty-shared/ai';
 
 import { AiChatToolCallApprovalCard } from '@/ai/components/AiChatToolCallApprovalCard';
 
+jest.mock('@/ai/hooks/useRefreshFrontComponents', () => ({
+  useRefreshFrontComponents: () => ({ refreshFrontComponents: jest.fn() }),
+}));
+
 const answerAgentChatToolCall = jest.fn();
 jest.mock('@/ai/hooks/useAnswerAgentChatToolCall', () => ({
   useAnswerAgentChatToolCall: () => ({ answerAgentChatToolCall }),

@@ -40,6 +40,7 @@ export { PREVIEW_FRONT_COMPONENT_TOOL_NAME } from './constants/preview-front-com
 export { PROPOSE_TOOL_CALL_TOOL_NAME } from './constants/propose-tool-call-tool-name.const';
 export { PROPOSE_TOOL_CALL_TOOL_STATUSES } from './constants/propose-tool-call-tool-statuses.const';
 export { PROPOSED_TOOL_CALL_TEMPLATES } from './constants/proposed-tool-call-templates.const';
+export { PUBLISH_FRONT_COMPONENT_TOOL_NAME } from './constants/publish-front-component-tool-name.const';
 export { REACT_TO_MESSAGE_TOOL_NAME } from './constants/react-to-message-tool-name.const';
 export { REQUEST_FORM_TOOL_NAME } from './constants/request-form-tool-name.const';
 export { ToolCategory } from './constants/tool-category.const';
@@ -127,4 +128,3 @@ export { isSucceededCompleteWorkspaceSetupToolPart } from './utils/is-succeeded-
 export { isValidAgentMessageReactionEmoji } from './utils/is-valid-agent-message-reaction-emoji.util';
 export { isValidAgentResponseSchemaPropertyKey } from './utils/is-valid-agent-response-schema-property-key.util';
 export { parseAiModelVariantId } from './utils/parse-ai-model-variant-id.util';
-export { PUBLISH_FRONT_COMPONENT_TOOL_NAME } from './constants/publish-front-component-tool-name.const';
