@@ -106,6 +106,7 @@ describe('ObjectFilterDropdownDateTimeInput timezone fallback', () => {
       );
     });
 
+    expect(mockApplyObjectFilterDropdownFilterValue).toHaveBeenCalledTimes(1);
     expect(mockApplyObjectFilterDropdownFilterValue).toHaveBeenCalledWith(
       '2026-01-14T22:30:00Z',
       '15 Jan, 2026 12:30',
@@ -123,6 +124,7 @@ describe('ObjectFilterDropdownDateTimeInput timezone fallback', () => {
       );
     });
 
+    expect(mockApplyObjectFilterDropdownFilterValue).toHaveBeenCalledTimes(1);
     expect(mockApplyObjectFilterDropdownFilterValue).toHaveBeenCalledWith(
       '2026-01-14T22:30:00Z',
       '14 Jan, 2026 17:30',
@@ -142,6 +144,7 @@ describe('ObjectFilterDropdownDateTimeInput timezone fallback', () => {
       });
     });
 
+    expect(mockApplyObjectFilterDropdownFilterValue).toHaveBeenCalledTimes(1);
     const [filterValue] =
       mockApplyObjectFilterDropdownFilterValue.mock.calls[0];
     expect(filterValue).toContain('PAST_3_DAY');
@@ -161,6 +164,7 @@ describe('ObjectFilterDropdownDateTimeInput timezone fallback', () => {
       });
     });
 
+    expect(mockApplyObjectFilterDropdownFilterValue).toHaveBeenCalledTimes(1);
     const [filterValue] =
       mockApplyObjectFilterDropdownFilterValue.mock.calls[0];
     expect(filterValue).toContain('PAST_3_DAY');
