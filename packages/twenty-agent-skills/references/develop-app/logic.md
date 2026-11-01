@@ -155,9 +155,11 @@ The hook runs before the app's metadata, data, and code are removed, so handlers
 
 Use `defineHealthCheck` to report whether the app is actually able to run. It covers what only the app can know: a key that is present but revoked, an account on the wrong plan, a webhook that was never registered. A required variable nobody filled in is already covered by `isRequired` and needs no code.
 
-Health check files live alongside other logic functions (typically `src/logic-functions/health-check.ts`). Only one health check is allowed per app; declaring more than one fails the build.
+Health check files live alongside other logic functions (typically `src/logic-functions/health-check.ts`). An app declares one function with `defineHealthCheck`; a second declaration fails the build. Omit `runOnUserPreferences` or set it to `false` for a workspace check. Set it to `true` for a member check on Apps preferences instead; the check then does not run on workspace app settings.
 
-The config takes `universalIdentifier` and `handler`. The handler takes no arguments and runs server-side, so it reads secret variables like any other logic function.
+`defineHealthCheck` takes `universalIdentifier` and `handler`. The handler runs server-side, so it reads secret variables like any other logic function. A workspace handler takes no arguments.
+
+A member check reports each member's own setup, such as their own connection. It runs when a member opens the app on their Apps preferences page, as that member, and only that member sees the banner. With `runOnUserPreferences: true`, the handler requires `{ userWorkspaceId: string }` from the authenticated session: `handler: async ({ userWorkspaceId }) => ...`. User-scoped variables hold that member's values. Pass `userWorkspaceId` to `listConnections({ scope: 'USER', userWorkspaceId })` so it returns that member's connections only; a connection whose token refresh fails is left out, so return a `WARNING` ("connect your account") when the list is empty. An action with no `location` lands on the app's General tab of that page. That page is not enabled in every workspace yet, so a member check does not run everywhere. Requires `"engines": { "twenty": ">=2.55.0" }`.
 
 The handler returns `ApplicationHealthCheckResult`, a discriminated union:
 
