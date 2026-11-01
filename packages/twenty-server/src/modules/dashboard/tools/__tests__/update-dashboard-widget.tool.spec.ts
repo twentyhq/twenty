@@ -77,7 +77,10 @@ const createTool = (deps: ReturnType<typeof buildDeps>) =>
   createUpdateDashboardWidgetTool(
     deps as unknown as Pick<
       DashboardToolDependencies,
-      'pageLayoutWidgetService' | 'flatEntityMapsCacheService'
+      | 'pageLayoutWidgetService'
+      | 'flatEntityMapsCacheService'
+      | 'pageLayoutTabService'
+      | 'pageLayoutService'
     >,
     { workspaceId: WORKSPACE_ID },
   );

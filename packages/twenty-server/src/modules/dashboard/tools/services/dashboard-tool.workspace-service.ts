@@ -16,6 +16,8 @@ import { createCreateCompleteDashboardTool } from 'src/modules/dashboard/tools/c
 import { createDeleteDashboardWidgetTool } from 'src/modules/dashboard/tools/delete-dashboard-widget.tool';
 import { createGetDashboardTool } from 'src/modules/dashboard/tools/get-dashboard.tool';
 import { createListDashboardsTool } from 'src/modules/dashboard/tools/list-dashboards.tool';
+import { createListRecordPageLayoutsTool } from 'src/modules/dashboard/tools/list-record-page-layouts.tool';
+import { createPlaceFrontComponentTool } from 'src/modules/dashboard/tools/place-front-component.tool';
 import { type DashboardToolDependencies } from 'src/modules/dashboard/tools/types/dashboard-tool-dependencies.type';
 import { createUpdateDashboardWidgetTool } from 'src/modules/dashboard/tools/update-dashboard-widget.tool';
 
@@ -73,7 +75,18 @@ export class DashboardToolWorkspaceService {
       context,
     );
 
+    const placeFrontComponent = createPlaceFrontComponentTool(
+      this.deps,
+      context,
+    );
+    const listRecordPageLayouts = createListRecordPageLayoutsTool(
+      this.deps,
+      context,
+    );
+
     return {
+      [placeFrontComponent.name]: placeFrontComponent,
+      [listRecordPageLayouts.name]: listRecordPageLayouts,
       [createCompleteDashboard.name]: createCompleteDashboard,
       [listDashboards.name]: listDashboards,
       [getDashboard.name]: getDashboard,

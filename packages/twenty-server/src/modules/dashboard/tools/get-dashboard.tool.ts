@@ -111,6 +111,7 @@ export const createGetDashboardTool = (
           id: tab.id,
           title: tab.title,
           position: tab.position,
+          layoutMode: tab.layoutMode,
           widgets:
             tab.widgets?.map((w) => {
               if (
