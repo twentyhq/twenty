@@ -395,7 +395,7 @@ describe('buildRowAccessPolicy', () => {
     });
   });
 
-  it('holds private shares and creators to the role filter without sharing beyond the role', () => {
+  it('holds private shares to the role filter without sharing beyond the role', () => {
     const sql = gatedSql({
       subject: {
         ...readEverything,

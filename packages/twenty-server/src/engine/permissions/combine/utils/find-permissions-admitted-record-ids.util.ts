@@ -68,23 +68,18 @@ export const findPermissionsAdmittedRecordIds = async <
   const privateRecordStates = isReadingPrivacy
     ? await context.findPrivateRecordStates({ objectMetadataId, recordIds })
     : new Map<string, PrivateRecordState>();
-  const findRowLevelPermissionAdmittedRecordIds = ({
-    isLimitedToPublicRecords,
-  }: {
-    isLimitedToPublicRecords: boolean;
-  }) =>
-    isDefined(rowLevelPermissionGrant)
-      ? findPermissionsRlsAdmittedRecordIds({
-          records,
-          recordFilter: rowLevelPermissionGrant.recordFilter,
-          flatObjectMetadata: grants.flatObjectMetadata,
-          flatFieldMetadataMaps: context.flatFieldMetadataMaps,
-          shouldIgnoreSoftDeleteDefaultFilter:
-            context.shouldIgnoreSoftDeleteDefaultFilter,
-          isLimitedToPublicRecords,
-          privateRecordStates,
-        })
-      : [];
+  const rowLevelPermissionMatchingRecordIds = isDefined(rowLevelPermissionGrant)
+    ? findPermissionsRlsAdmittedRecordIds({
+        records,
+        recordFilter: rowLevelPermissionGrant.recordFilter,
+        flatObjectMetadata: grants.flatObjectMetadata,
+        flatFieldMetadataMaps: context.flatFieldMetadataMaps,
+        shouldIgnoreSoftDeleteDefaultFilter:
+          context.shouldIgnoreSoftDeleteDefaultFilter,
+        isLimitedToPublicRecords: false,
+        privateRecordStates,
+      })
+    : [];
 
   const admittedRecordIds = new Set([
     ...(grants.isObjectGranted
@@ -94,15 +89,17 @@ export const findPermissionsAdmittedRecordIds = async <
           privateRecordStates,
         })
       : []),
-    ...findRowLevelPermissionAdmittedRecordIds({ isLimitedToPublicRecords }),
+    ...findPermissionsObjectAdmittedRecordIds({
+      recordIds: rowLevelPermissionMatchingRecordIds,
+      isLimitedToPublicRecords,
+      privateRecordStates,
+    }),
   ]);
 
   const recordGrantCandidateIds = new Set(
     grants.areRecordGrantsHeldToRowLevelPermissions &&
       isDefined(rowLevelPermissionGrant)
-      ? findRowLevelPermissionAdmittedRecordIds({
-          isLimitedToPublicRecords: false,
-        })
+      ? rowLevelPermissionMatchingRecordIds
       : recordIds,
   );
   const remainingRecordIds = recordIds.filter(
