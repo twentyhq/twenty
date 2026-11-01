@@ -1,4 +1,5 @@
 import { ToolCategory } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { executeToolFromToolSet } from 'src/engine/core-modules/tool-provider/utils/execute-tool-from-tool-set.util';
@@ -39,7 +40,7 @@ const listComponents = async ({
   const tool = createListFrontComponentsTool({
     frontComponentService,
     workspaceId: WORKSPACE_ID,
-    callingApplication: applicationId
+    callingApplication: isDefined(applicationId)
       ? {
           id: applicationId,
           universalIdentifier: applicationId,
