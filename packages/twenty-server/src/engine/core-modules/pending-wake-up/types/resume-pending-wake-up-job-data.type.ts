@@ -6,6 +6,8 @@ export type ResumePendingWakeUpJobData = {
   wakeUpId: string;
   // Absent when the wake-up's time came: a time condition elapsed or an event condition expired
   event?: PendingWakeUpEvent;
+  // The other matches of event's batch, tried in order when the owner cannot read event's record
+  nextEvents?: PendingWakeUpEvent[];
   // Present when an answer resolves an ANSWER wake-up
   answer?: PendingWakeUpAnswer;
   // How many times the owner put the resolution off because it was not ready yet
