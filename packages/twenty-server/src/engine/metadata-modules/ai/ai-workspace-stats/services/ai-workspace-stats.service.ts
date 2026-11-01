@@ -33,6 +33,7 @@ export class AiWorkspaceStatsService {
         rolePermissionConfig: {
           intersectionOf: { userWorkspaceRoleId: userRoleId },
         },
+        authPrincipalVariant: { kind: 'userSession', variant: 'standard' },
       }),
     ]);
 

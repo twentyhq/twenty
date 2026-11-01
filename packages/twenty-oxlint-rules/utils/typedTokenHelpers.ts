@@ -8,6 +8,11 @@ const AUTH_GUARD_NAMES = [
 
 const AUTH_PRINCIPAL_GUARD_NAME = 'AuthPrincipalGuard';
 
+const ACCESS_POLICY_GUARD_NAME = 'AccessPolicyGuard';
+
+// A named constant, so every entry point of an operation imports the same policy
+const ACCESS_POLICY_CONSTANT_NAME_PATTERN = /^[A-Z][A-Z0-9_]*_ACCESS_POLICY$/;
+
 // They put the principal on the request, which AuthPrincipalGuard then reads.
 export const AUTHENTICATING_GUARD_NAMES = ['JwtAuthGuard', 'McpAuthGuard'];
 
@@ -33,6 +38,21 @@ const isAuthPrincipalGuardCall = (node: any): boolean =>
   node.type === 'CallExpression' &&
   node.callee.type === 'Identifier' &&
   node.callee.name === AUTH_PRINCIPAL_GUARD_NAME;
+
+const isAccessPolicyGuardCall = (node: any): boolean =>
+  node.type === 'CallExpression' &&
+  node.callee.type === 'Identifier' &&
+  node.callee.name === ACCESS_POLICY_GUARD_NAME;
+
+const isAccessPolicyGuardWithPolicyConstant = (node: any): boolean =>
+  isAccessPolicyGuardCall(node) &&
+  node.arguments.length === 1 &&
+  node.arguments[0].type === 'Identifier' &&
+  ACCESS_POLICY_CONSTANT_NAME_PATTERN.test(node.arguments[0].name);
+
+// Both guards check the principal, so the guards after them only run once it is known
+const isPrincipalCheckingGuardCall = (node: any): boolean =>
+  isAuthPrincipalGuardCall(node) || isAccessPolicyGuardCall(node);
 
 const isBooleanLiteral = (node: any): boolean =>
   node.type === 'Literal' && typeof node.value === 'boolean';
@@ -144,8 +164,19 @@ export const typedTokenHelpers = {
     getUseGuardsArguments(node).some(
       (arg: any) =>
         (arg.type === 'Identifier' && AUTH_GUARD_NAMES.includes(arg.name)) ||
-        isAuthPrincipalGuardWithInlineConfig(arg),
+        isAuthPrincipalGuardWithInlineConfig(arg) ||
+        isAccessPolicyGuardWithPolicyConstant(arg),
     ),
+
+  getAccessPolicyGuardsWithoutPolicyConstant: (node: any): any[] =>
+    getUseGuardsArguments(node).filter(
+      (arg: any) =>
+        isAccessPolicyGuardCall(arg) &&
+        !isAccessPolicyGuardWithPolicyConstant(arg),
+    ),
+
+  getAccessPolicyGuards: (node: any): any[] =>
+    getUseGuardsArguments(node).filter(isAccessPolicyGuardCall),
 
   getAuthPrincipalGuardsWithoutInlineConfig: (node: any): any[] =>
     getUseGuardsArguments(node).filter(
@@ -158,7 +189,7 @@ export const typedTokenHelpers = {
     getUseGuardsArgumentLists(node).flatMap((guardArguments) =>
       guardArguments.filter(
         (arg: any, index: number) =>
-          isAuthPrincipalGuardCall(arg) &&
+          isPrincipalCheckingGuardCall(arg) &&
           !isPlacedFirst(guardArguments, index),
       ),
     ),
@@ -180,6 +211,9 @@ export const typedTokenHelpers = {
         decorator.expression.callee.name === 'UseGuards'
       ) {
         return decorator.expression.arguments.some((arg: any) => {
+          if (isAccessPolicyGuardWithPolicyConstant(arg)) {
+            return true;
+          }
           if (arg.type === 'CallExpression') {
             const callee = arg.callee;
             if (callee.type === 'Identifier') {

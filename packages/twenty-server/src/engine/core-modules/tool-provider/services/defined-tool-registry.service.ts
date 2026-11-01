@@ -21,6 +21,17 @@ import { isSnakeCaseToolName } from 'src/engine/core-modules/tool-provider/utils
 import { humanizeToolName } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principal-variant.type';
+import { findAccessPolicyRefusal } from 'src/engine/guards/utils/find-access-policy-refusal.util';
+
+// Tools are built for agents, and an agent's own role already narrows what its
+// caller is granted, so being an agent never closes a tool on its own
+const withoutAgent = (
+  authPrincipalVariant: AuthPrincipalVariant | undefined,
+): AuthPrincipalVariant | undefined =>
+  authPrincipalVariant?.kind === 'application'
+    ? { ...authPrincipalVariant, withAgent: false }
+    : authPrincipalVariant;
 
 @Injectable()
 export class DefinedToolRegistryService implements OnModuleInit {
@@ -148,7 +159,7 @@ export class DefinedToolRegistryService implements OnModuleInit {
 
   private async isToolAvailableToCaller({
     definedTool: {
-      options: { requiredPermissionFlags, requiredFeatureFlags = [] },
+      options: { accessPolicy },
     },
     context,
     featureFlagsMap,
@@ -159,16 +170,12 @@ export class DefinedToolRegistryService implements OnModuleInit {
     featureFlagsMap: FeatureFlagMap;
     grantedByPermissionFlag?: Map<PermissionFlagType, Promise<boolean>>;
   }): Promise<boolean> {
-    if (
-      !requiredFeatureFlags.every(
-        (featureFlag) => featureFlagsMap[featureFlag] === true,
-      )
-    ) {
-      return false;
-    }
-
-    const grants = await Promise.all(
-      requiredPermissionFlags.map((permissionFlag) => {
+    const refusal = await findAccessPolicyRefusal({
+      accessPolicy,
+      authPrincipalVariant: withoutAgent(context.authPrincipalVariant),
+      isFeatureFlagEnabled: (featureFlag) =>
+        featureFlagsMap[featureFlag] === true,
+      isPermissionFlagGranted: (permissionFlag) => {
         const cachedGrant = grantedByPermissionFlag.get(permissionFlag);
 
         if (isDefined(cachedGrant)) {
@@ -184,10 +191,10 @@ export class DefinedToolRegistryService implements OnModuleInit {
         grantedByPermissionFlag.set(permissionFlag, grant);
 
         return grant;
-      }),
-    );
+      },
+    });
 
-    return grants.every((isGranted) => isGranted);
+    return !isDefined(refusal);
   }
 
   private register(options: DefineToolOptions, instance: unknown): void {

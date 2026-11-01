@@ -11,6 +11,7 @@ import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/servi
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
+import { AuthPrincipal } from 'src/engine/decorators/auth/auth-principal.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
@@ -20,6 +21,7 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { buildUserRoleIdsBySource } from 'src/engine/permissions/principal/utils/build-user-role-ids-by-source.util';
+import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principal-variant.type';
 
 @ObjectType('ToolIndexEntry')
 export class ToolIndexEntryDTO {
@@ -80,6 +82,7 @@ export class ToolIndexResolver {
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
+    @AuthPrincipal() authPrincipalVariant: AuthPrincipalVariant | undefined,
   ): Promise<ToolIndexEntryDTO[]> {
     const { rolePermissionConfig } = await this.resolveCallerRoles({
       userWorkspaceId,
@@ -89,6 +92,7 @@ export class ToolIndexResolver {
 
     return this.toolRegistryService.buildToolIndex(workspace.id, {
       rolePermissionConfig,
+      authPrincipalVariant,
       userId: user?.id,
       userWorkspaceId,
       locale,
@@ -107,6 +111,7 @@ export class ToolIndexResolver {
     @AuthUserWorkspaceId() userWorkspaceId: string,
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
+    @AuthPrincipal() authPrincipalVariant: AuthPrincipalVariant | undefined,
   ): Promise<object | null> {
     const { rolePermissionConfig } = await this.resolveCallerRoles({
       userWorkspaceId,
@@ -119,6 +124,7 @@ export class ToolIndexResolver {
       context: {
         workspaceId: workspace.id,
         rolePermissionConfig,
+        authPrincipalVariant,
         userId: user?.id,
         userWorkspaceId,
         authContext: getWorkspaceAuthContext(),

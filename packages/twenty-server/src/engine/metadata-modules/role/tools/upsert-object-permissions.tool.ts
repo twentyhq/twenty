@@ -1,5 +1,4 @@
 import { ToolCategory } from 'twenty-shared/ai';
-import { PermissionFlagType } from 'twenty-shared/constants';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
@@ -7,6 +6,7 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
+import { ROLE_WRITE_ACCESS_POLICY } from 'src/engine/metadata-modules/role/constants/role-write-access-policy.constant';
 import { toObjectPermissionSummary } from 'src/engine/metadata-modules/role/tools/utils/to-role-summary.util';
 
 const upsertObjectPermissionsInputSchema = z.object({
@@ -44,7 +44,7 @@ const upsertObjectPermissionsInputSchema = z.object({
 @DefineTool({
   name: 'upsert_object_permissions',
   category: ToolCategory.ROLE,
-  requiredPermissionFlags: [PermissionFlagType.ROLES],
+  accessPolicy: ROLE_WRITE_ACCESS_POLICY,
   description: `Set per-object permission overrides on a role, e.g. make an object read-only for that role.
 
 IMPORTANT: this replaces the role's full override list. Include every override you want to keep; objects omitted from the list revert to the role's global permissions (canReadAllObjectRecords, ...). Use list_roles first to see current overrides.

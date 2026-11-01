@@ -1,12 +1,11 @@
 import { type ToolCategory } from 'twenty-shared/ai';
-import { type PermissionFlagType } from 'twenty-shared/constants';
-import { type FeatureFlagKey } from 'twenty-shared/types';
+
+import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 
 export type DefineToolOptions = {
   name: string;
   category: ToolCategory;
   description: string;
-  requiredPermissionFlags: PermissionFlagType[];
-  requiredFeatureFlags?: FeatureFlagKey[];
+  accessPolicy: AccessPolicy;
   icon?: string;
 };

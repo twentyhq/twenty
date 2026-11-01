@@ -212,6 +212,7 @@ describe('View tools', () => {
       workspaceId,
       userWorkspaceId,
       rolePermissionConfig: { shouldBypassPermissionChecks: true },
+      authPrincipalVariant: { kind: 'userSession', variant: 'standard' },
       actorContext: workspaceMemberId
         ? {
             source: FieldActorSource.MANUAL,
