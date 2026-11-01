@@ -10,7 +10,7 @@ export const buildAgentRunConversationActor = ({
   application,
 }: {
   authContext: WorkspaceAuthContext;
-  application: FlatApplication | undefined;
+  application: Pick<FlatApplication, 'id'> | undefined;
 }): AgentConversationActor | undefined => {
   if (isUserAuthContext(authContext)) {
     return { type: 'user', workspaceMemberId: authContext.workspaceMemberId };

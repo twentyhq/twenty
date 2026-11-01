@@ -362,7 +362,7 @@ export type OnAgentChatEventSubscriptionVariables = Exact<{
 }>;
 
 
-export type OnAgentChatEventSubscription = { onAgentChatEvent: { __typename: 'AgentChatEvent', threadId?: string | null, event: any } };
+export type OnAgentChatEventSubscription = { onAgentChatEvent: { __typename: 'AgentChatEvent', threadId: string | null, event: any } };
 
 export type TrackAnalyticsMutationVariables = Exact<{
   type: Types.AnalyticsType;

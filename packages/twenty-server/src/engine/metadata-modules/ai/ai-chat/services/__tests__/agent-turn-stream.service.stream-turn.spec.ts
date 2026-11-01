@@ -195,6 +195,33 @@ describe('AgentTurnStreamService streamTurn of a followed run', () => {
     });
   });
 
+  it('keeps a finished run completed when its end event cannot be sent', async () => {
+    const finish = jest.fn().mockResolvedValue(true);
+    const eventPublisherService = {
+      publish: jest.fn(async ({ event }: { event: { type: string } }) => {
+        if (event.type === 'message-persisted') {
+          throw new Error('Redis unavailable');
+        }
+      }),
+      resetStreamState: jest.fn().mockResolvedValue(undefined),
+    };
+
+    await expect(
+      streamPartsWithoutClaim({
+        service: await buildService({ finish, eventPublisherService }),
+        streamChannelId: 'run-channel-id',
+      }),
+    ).resolves.toMatchObject({ finish: { outcome: { kind: 'completed' } } });
+
+    expect(finish).toHaveBeenCalledTimes(1);
+    expect(finish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        turnId: 'turn-id',
+        status: AgentTurnStatus.COMPLETED,
+      }),
+    );
+  });
+
   it('ends the run channel with the error of a failed run', async () => {
     const eventPublisherService = buildPublisher();
     const finish = jest.fn().mockResolvedValue(true);
@@ -255,5 +282,57 @@ describe('AgentTurnStreamService streamTurn usage', () => {
       outputTokens: 8,
       conversationSize: 120,
     });
+  });
+});
+
+describe('AgentTurnStreamService streamTurn of a claimed turn', () => {
+  it('keeps a finished turn completed when its end event cannot be sent', async () => {
+    const finish = jest.fn().mockResolvedValue(true);
+    const publish = jest.fn(async ({ event }: { event: { type: string } }) => {
+      if (event.type === 'message-persisted') {
+        throw new Error('Redis unavailable');
+      }
+    });
+
+    const service = await buildService({
+      finish,
+      eventPublisherService: { publish },
+    });
+
+    await expect(
+      service.streamTurn({
+        workspaceId: 'workspace-id',
+        claim: {
+          workspaceId: 'workspace-id',
+          threadId: 'thread-id',
+          streamId: 'stream-id',
+        },
+        turnId: 'turn-id',
+        startTurn: async () => ({
+          source: {
+            modelConfig: { contextWindowTokens: 1000 } as never,
+            parts: new ReadableStream({
+              start(controller) {
+                [
+                  { type: 'start' },
+                  { type: 'finish', finishReason: 'stop', totalUsage: {} },
+                ].forEach((part) => controller.enqueue(part as never));
+                controller.close();
+              },
+            }),
+          },
+        }),
+        completeTurn: async () => ({ modelId: 'model-id', stopReason: null }),
+        isBackgroundRun: true,
+      }),
+    ).resolves.toMatchObject({ finish: { outcome: { kind: 'completed' } } });
+
+    expect(finish).toHaveBeenCalledTimes(1);
+    expect(finish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        turnId: 'turn-id',
+        status: AgentTurnStatus.COMPLETED,
+      }),
+    );
   });
 });
