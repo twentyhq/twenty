@@ -26,6 +26,10 @@ type MessageAccumulator = {
     | 'messageThreadId'
     | 'isDraft'
   >;
+  messageToRefresh?: Pick<
+    MessageWorkspaceEntity,
+    'id' | 'subject' | 'receivedAt' | 'text' | 'isDraft'
+  >;
   threadToCreate?: Pick<MessageThreadWorkspaceEntity, 'id' | 'subject'>;
   messageChannelMessageAssociationToCreate?: Pick<
     MessageChannelMessageAssociationWorkspaceEntity,
@@ -181,6 +185,19 @@ export class MessagingMessageService {
             messageAccumulator.messageToCreate = messageToCreate;
           } else {
             newOrExistingMessageId = messageAccumulator.existingMessageInDB.id;
+
+            if (
+              messageAccumulator.existingMessageChannelMessageAssociationInDB
+                ?.messageExternalId === message.externalId
+            ) {
+              messageAccumulator.messageToRefresh = {
+                id: newOrExistingMessageId,
+                subject: message.subject,
+                receivedAt: message.receivedAt,
+                text: message.text,
+                isDraft: message.isDraft,
+              };
+            }
           }
 
           if (
@@ -267,6 +284,14 @@ export class MessagingMessageService {
           .filter(isDefined);
 
         await messageRepository.insert(messagesToCreate);
+
+        const messagesToRefresh = Array.from(messageAccumulatorMap.values())
+          .map((accumulator) => accumulator.messageToRefresh)
+          .filter(isDefined);
+
+        for (const { id, ...messageToRefresh } of messagesToRefresh) {
+          await messageRepository.update({ id }, messageToRefresh);
+        }
 
         const messageChannelMessageAssociationsToCreate = Array.from(
           associationToCreateByMessageId.values(),
