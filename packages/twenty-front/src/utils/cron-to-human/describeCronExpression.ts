@@ -77,17 +77,21 @@ export const describeCronExpression = (
       localeCatalog,
     );
 
-    if (
+    const hasDayOfMonth =
       isDefined(dayOfMonthDesc) &&
       dayOfMonthDesc !== '' &&
-      parts.dayOfMonth !== '*'
-    ) {
-      descriptions.push(dayOfMonthDesc);
-    } else if (
+      parts.dayOfMonth !== '*';
+    const hasDayOfWeek =
       isDefined(dayOfWeekDesc) &&
       dayOfWeekDesc !== '' &&
-      parts.dayOfWeek !== '*'
-    ) {
+      parts.dayOfWeek !== '*';
+
+    // When both day fields are restricted, cron runs on days matching either one
+    if (hasDayOfMonth && hasDayOfWeek) {
+      descriptions.push(t`${dayOfMonthDesc} and ${dayOfWeekDesc}`);
+    } else if (hasDayOfMonth) {
+      descriptions.push(dayOfMonthDesc);
+    } else if (hasDayOfWeek) {
       descriptions.push(dayOfWeekDesc);
     }
     const monthsDesc = getMonthsDescription(
