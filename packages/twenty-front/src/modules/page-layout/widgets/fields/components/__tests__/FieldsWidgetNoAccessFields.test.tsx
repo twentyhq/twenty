@@ -59,6 +59,25 @@ const linkedinField = getMockFieldMetadataItemOrThrow({
   objectMetadataItem: companyObjectMetadataItem,
   fieldName: 'linkedinLink',
 });
+const nameField = getMockFieldMetadataItemOrThrow({
+  objectMetadataItem: companyObjectMetadataItem,
+  fieldName: 'name',
+});
+
+const makeViewField = (
+  fieldMetadataId: string,
+  position: number,
+  isVisible: boolean,
+) => ({
+  id: `view-field-${fieldMetadataId}`,
+  viewId: FIELDS_VIEW_ID,
+  fieldMetadataId,
+  position,
+  isActive: true,
+  isVisible,
+  size: 180,
+  aggregateOperation: null,
+});
 
 const TEST_RECORD_ID = 'test-fields-widget-record-no-access';
 const FIELDS_VIEW_ID = 'test-fields-view-no-access';
@@ -174,7 +193,12 @@ const fieldsView: ViewWithRelations = {
   shouldHideEmptyGroups: false,
   position: 0,
   isCompact: false,
-  viewFields: [],
+  viewFields: [
+    makeViewField(addressField.id, 0, true),
+    makeViewField(employeesField.id, 1, true),
+    makeViewField(linkedinField.id, 2, true),
+    makeViewField(nameField.id, 3, false),
+  ],
   viewGroups: [],
   viewFilters: [],
   viewSorts: [],
@@ -204,7 +228,15 @@ const setObjectsPermissions = (
   } as never);
 };
 
-const renderFieldsWidget = () => {
+const renderFieldsWidget = (allowHiddenFields = false) => {
+  const widget: PageLayoutWidget = {
+    ...pageLayoutWidget,
+    configuration: {
+      ...pageLayoutWidget.configuration,
+      shouldAllowUserToSeeHiddenFields: allowHiddenFields,
+    },
+  };
+
   setTestObjectMetadataItemsInMetadataStore(
     jotaiStore,
     getTestEnrichedObjectMetadataItemsMock(),
@@ -263,7 +295,7 @@ const renderFieldsWidget = () => {
                             ownsRouteLocation: true,
                           }}
                         >
-                          <FieldsWidget widget={pageLayoutWidget} />
+                          <FieldsWidget widget={widget} />
                         </WorkspaceSurfaceContext.Provider>
                       </WidgetComponentInstanceContext.Provider>
                     </PageLayoutContentProvider>
@@ -286,6 +318,18 @@ describe('FieldsWidget with field-level permissions', () => {
     expect(screen.getByText(addressField.label)).toBeInTheDocument();
     expect(screen.getByText(employeesField.label)).toBeInTheDocument();
     expect(screen.getByText(linkedinField.label)).toBeInTheDocument();
+  });
+
+  it('keeps readable hidden fields when every configured visible field is No Access', () => {
+    setObjectsPermissions({
+      [addressField.id]: { canRead: false, canUpdate: false },
+      [employeesField.id]: { canRead: false, canUpdate: false },
+      [linkedinField.id]: { canRead: false, canUpdate: false },
+    });
+    renderFieldsWidget(true);
+
+    expect(screen.queryByText('No fields to display')).not.toBeInTheDocument();
+    expect(screen.getByText(/More \(/)).toBeInTheDocument();
   });
 
   it('completely hides a field the role has No Access to', () => {

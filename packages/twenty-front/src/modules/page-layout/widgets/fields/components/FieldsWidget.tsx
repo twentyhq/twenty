@@ -89,12 +89,18 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
       return groups;
     }
 
+    let nextGlobalIndex = 0;
+
     return groups
       .map((group) => ({
         ...group,
-        fields: group.fields.filter((field) =>
-          readableFieldMetadataIds.has(field.fieldMetadataItem.id),
-        ),
+        fields: group.fields
+          .filter((field) =>
+            readableFieldMetadataIds.has(field.fieldMetadataItem.id),
+          )
+          // Reindex so globalIndex matches the flattened list below;
+          // hover and edit portals resolve metadata by globalIndex.
+          .map((field) => ({ ...field, globalIndex: nextGlobalIndex++ })),
       }))
       .filter((group) => group.fields.length > 0);
   }, [groups, readableFieldMetadataIds]);
@@ -129,7 +135,8 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
     ),
   ];
 
-  const hasFieldsToDisplay = permittedGroups.length > 0;
+  const hasFieldsToDisplay =
+    permittedGroups.length > 0 || shouldShowHiddenFields;
 
   const shouldDisplayGroupHeaders =
     displayMode === 'grouped' && permittedGroups.length > 1;
