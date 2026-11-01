@@ -1,7 +1,6 @@
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
 
-import { waitForSandboxRoundTrip } from '@/__stories__/shared/test-utils/waitForSandboxRoundTrip';
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
@@ -18,6 +17,9 @@ export const tooltipFirstHoverTest: TwentyUiGalleryPlayFunction = async ({
   const page = within(canvasElement.ownerDocument.body);
   await expectFrontComponentMounted(canvas);
   const trigger = canvas.getByRole('button', { name: PROJECT_HELP });
+  const hoverState = canvas.getByRole('status', {
+    name: 'Tooltip hover state',
+  });
   const icon = trigger.querySelector('svg');
 
   if (!isDefined(icon)) {
@@ -40,14 +42,22 @@ export const tooltipFirstHoverTest: TwentyUiGalleryPlayFunction = async ({
       timeout: INTERACTION_TIMEOUT,
     });
 
-  expect(page.queryByRole('tooltip')).not.toBeInTheDocument();
-  await waitForSandboxRoundTrip();
+  const expectHoverStateSettled = (closeCount: number) =>
+    waitFor(
+      () =>
+        expect(hoverState).toHaveTextContent(`Settled closes: ${closeCount}`),
+      { timeout: INTERACTION_TIMEOUT },
+    );
 
-  for (const hoverTarget of [trigger, icon, icon]) {
+  expect(page.queryByRole('tooltip')).not.toBeInTheDocument();
+  await expectHoverStateSettled(0);
+
+  for (const [hoverIndex, hoverTarget] of [trigger, icon, icon].entries()) {
     await user.hover(hoverTarget);
     await expectTooltipOpen();
     await user.unhover(hoverTarget);
     await expectTooltipClosed();
+    await expectHoverStateSettled(hoverIndex + 1);
   }
 
   expect(errorHandler).not.toHaveBeenCalled();

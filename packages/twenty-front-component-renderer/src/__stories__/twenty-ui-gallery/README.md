@@ -319,9 +319,9 @@ reopened popup to 10px in workers, so the fixture passes
 `alignItemWithTrigger={false}`.
 
 `TooltipFirstHover` uses a direct ghost icon Button and the default hover delay.
-Its play waits one sandbox round trip before the first hover to allow Base UI's
-native listener effects to finish. It checks visible, anchored content when
-hovering the button or its SVG icon, then leaving and re-entering the trigger.
+It checks visible, anchored content when hovering the button or its SVG icon,
+then leaving and re-entering the trigger. The play waits for the fixture's
+settled-close status before the first hover and before each re-entry.
 
 The CurrencyPicker fixtures cover shorthand and composed selection in React and
 Preact, disabled controls and options, exact no-results/name/symbol search,
