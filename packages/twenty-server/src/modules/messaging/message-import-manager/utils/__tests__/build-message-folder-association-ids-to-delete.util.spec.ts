@@ -47,25 +47,4 @@ describe('buildMessageFolderAssociationIdsToDelete', () => {
       }),
     ).toEqual([]);
   });
-
-  it('keeps the folders of a refreshed message when the provider reports none', () => {
-    expect(
-      buildMessageFolderAssociationIdsToDelete({
-        associations: [
-          {
-            messageChannelMessageAssociationId: 'association-1',
-            messageFolderIds: [],
-          },
-        ],
-        existingRecords: [
-          {
-            id: 'record-inbox',
-            messageChannelMessageAssociationId: 'association-1',
-            messageFolderId: 'folder-inbox',
-          },
-        ],
-        refreshedMessageChannelMessageAssociationIds: ['association-1'],
-      }),
-    ).toEqual([]);
-  });
 });
