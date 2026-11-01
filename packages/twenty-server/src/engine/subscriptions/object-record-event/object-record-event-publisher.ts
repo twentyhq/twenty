@@ -1,9 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import {
-  EVERYONE_PRINCIPAL_ID,
-  QUERY_MAX_RECORDS_FROM_RELATION,
-} from 'twenty-shared/constants';
+import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import {
   Nullable,
@@ -46,9 +43,7 @@ import {
   RolePermissionConfig,
   RoleIdsBySource,
 } from 'src/engine/permissions/principal/types/role-permission-config.type';
-import { buildRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/build-row-level-permission-record-filter.util';
 import { computePermissionIntersection } from 'src/engine/permissions/role/utils/compute-permission-intersection.util';
-import { type RowAccessPolicySubject } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/permissions/rls/utils/is-record-matching-rls-row-level-permission-predicate.util';
 import { buildUserRoleIdsBySource } from 'src/engine/permissions/principal/utils/build-user-role-ids-by-source.util';
 import { getRoleIdsToIntersect } from 'src/engine/permissions/principal/utils/get-role-ids-to-intersect.util';
@@ -210,15 +205,15 @@ export class ObjectRecordEventPublisher {
     };
 
     const admittedRecordIds =
-      await eventRecordAccessGate.resolveAdmittedRecordIds(
-        this.buildSubscriberRowAccessPolicySubject({
-          subscriberAuthContext,
-          roleIds,
-          objectsPermissions,
-          permissionsContext,
-          flatWorkspaceMemberMaps,
-        }),
-      );
+      await eventRecordAccessGate.resolveAdmittedRecordIds({
+        workspaceId: workspaceEventBatch.workspaceId,
+        intersectionOf: rolePermissionConfig.intersectionOf,
+        workspaceMember: isDefined(subscriberAuthContext.workspaceMemberId)
+          ? flatWorkspaceMemberMaps.byId[
+              subscriberAuthContext.workspaceMemberId
+            ]
+          : undefined,
+      });
 
     if (admittedRecordIds.size === 0) {
       return;
@@ -484,55 +479,6 @@ export class ObjectRecordEventPublisher {
     }
 
     return workspaceMemberIdByUserId.get(subscriberAuthContext.userId);
-  }
-
-  private buildSubscriberRowAccessPolicySubject({
-    subscriberAuthContext,
-    roleIds,
-    objectsPermissions,
-    permissionsContext,
-    flatWorkspaceMemberMaps,
-  }: {
-    subscriberAuthContext: SerializableAuthContext;
-    roleIds: string[];
-    objectsPermissions: ObjectsPermissions;
-    permissionsContext: StreamPermissionsContext;
-    flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
-  }): RowAccessPolicySubject {
-    return {
-      isSystemContext: false,
-      objectsPermissions,
-      principalIds: [
-        EVERYONE_PRINCIPAL_ID,
-        subscriberAuthContext.workspaceMemberId,
-        ...roleIds,
-      ].filter(isDefined),
-      workspaceMemberId: subscriberAuthContext.workspaceMemberId ?? undefined,
-      isOwningApplication: (objectMetadata) =>
-        isDefined(objectMetadata.applicationId) &&
-        subscriberAuthContext.applicationId === objectMetadata.applicationId,
-      resolveRowLevelPermissionRecordFilter: (objectMetadata) => {
-        const recordFilter = buildRowLevelPermissionRecordFilter({
-          flatRowLevelPermissionPredicateMaps:
-            permissionsContext.flatRowLevelPermissionPredicateMaps,
-          flatRowLevelPermissionPredicateGroupMaps:
-            permissionsContext.flatRowLevelPermissionPredicateGroupMaps,
-          flatFieldMetadataMaps: permissionsContext.flatFieldMetadataMaps,
-          flatObjectMetadataMaps: permissionsContext.flatObjectMetadataMaps,
-          objectMetadata,
-          roleIds,
-          workspaceMember: isDefined(subscriberAuthContext.workspaceMemberId)
-            ? flatWorkspaceMemberMaps.byId[
-                subscriberAuthContext.workspaceMemberId
-              ]
-            : undefined,
-        });
-
-        return isDefined(recordFilter) && Object.keys(recordFilter).length > 0
-          ? recordFilter
-          : null;
-      },
-    };
   }
 
   private getMatchingObjectRecordQueryIds({

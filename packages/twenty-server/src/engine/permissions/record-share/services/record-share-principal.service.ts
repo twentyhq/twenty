@@ -11,7 +11,6 @@ import {
   RecordShareExceptionCode,
 } from 'src/engine/permissions/record-share/record-share.exception';
 import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
-import { buildWorkspaceMemberRowAccessPolicySubject } from 'src/engine/permissions/principal/utils/build-workspace-member-row-access-policy-subject.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -105,19 +104,10 @@ export class RecordSharePrincipalService {
       workspaceId,
       principals: namedPrincipals,
     });
-    const {
-      rolesPermissions,
-      flatRowLevelPermissionPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps,
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-      'rolesPermissions',
-      'flatRowLevelPermissionPredicateMaps',
-      'flatRowLevelPermissionPredicateGroupMaps',
-      'flatFieldMetadataMaps',
-      'flatObjectMetadataMaps',
-    ]);
+    const { rolesPermissions } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'rolesPermissions',
+      ]);
     const repository = transactionScope.getRepository(
       flatObjectMetadata.nameSingular,
       { shouldBypassPermissionChecks: true },
@@ -159,29 +149,18 @@ export class RecordSharePrincipalService {
           shouldBypassPermissionChecks: true,
         })
         .findOne({ where: { id: principal.principalId } });
-      const reachableRecordIds =
-        await repository.findRecordIdsAdmittedForSubject({
-          recordIds,
-          subject: buildWorkspaceMemberRowAccessPolicySubject({
-            roleId,
-            owningApplicationId: undefined,
-            rolesPermissions,
-            flatRowLevelPermissionPredicateMaps,
-            flatRowLevelPermissionPredicateGroupMaps,
-            flatFieldMetadataMaps,
-            flatObjectMetadataMaps,
-            workspaceMemberId: principal.principalId,
-            workspaceMember: workspaceMember ?? undefined,
-          }),
-          operationType: 'select',
-        });
-      const unreachableRecordId = recordIds.find(
-        (recordId) => !reachableRecordIds.has(recordId),
-      );
+      const hasGrant = await repository.hasPrincipalGrantOnRecords({
+        principal: {
+          workspaceId,
+          intersectionOf: { userWorkspaceRoleId: roleId },
+          workspaceMember: workspaceMember ?? undefined,
+        },
+        recordIds,
+      });
 
-      if (isDefined(unreachableRecordId)) {
+      if (!hasGrant) {
         throw new RecordShareException(
-          `Principal ${principal.principalId} cannot see record ${unreachableRecordId} through its role`,
+          `Principal ${principal.principalId} cannot see these records through its role`,
           RecordShareExceptionCode.INVALID_SHARE_WITH,
           {
             userFriendlyMessage: msg`Their role cannot see this record, and this object is only shared with people who can.`,

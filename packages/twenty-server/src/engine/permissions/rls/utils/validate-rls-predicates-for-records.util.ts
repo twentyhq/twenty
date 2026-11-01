@@ -4,12 +4,9 @@ import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
-import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
-
-import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
+import { type PermissionsMetadataMaps } from 'src/engine/permissions/combine/types/row-access-policy.type';
+import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
@@ -20,29 +17,20 @@ import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rl
 type ValidateRLSPredicatesForRecordsArgs<T extends ObjectLiteral> = {
   records: T[];
   objectMetadata: FlatObjectMetadata;
-  internalContext: WorkspaceInternalContext;
-  authContext: WorkspaceAuthContext;
-  rolePermissionConfig: RolePermissionConfig;
-  shouldBypassPermissionChecks: boolean;
+  principal: PermissionsPrincipal;
+  metadataMaps: PermissionsMetadataMaps;
 };
 
 export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
   records,
   objectMetadata,
-  internalContext,
-  authContext,
-  rolePermissionConfig,
-  shouldBypassPermissionChecks,
+  principal,
+  metadataMaps,
 }: ValidateRLSPredicatesForRecordsArgs<T>): void => {
-  if (shouldBypassPermissionChecks || isSystemAuthContext(authContext)) {
-    return;
-  }
-
   const recordFilter = resolveRowLevelPermissionRecordFilter({
-    internalContext,
-    authContext,
-    rolePermissionConfig,
-    objectMetadata,
+    principal,
+    metadataMaps,
+    flatObjectMetadata: objectMetadata,
   });
 
   if (!isDefined(recordFilter)) {
@@ -54,7 +42,7 @@ export const validateRLSPredicatesForRecords = <T extends ObjectLiteral>({
       record: record as unknown as ObjectRecord,
       filter: recordFilter,
       flatObjectMetadata: objectMetadata,
-      flatFieldMetadataMaps: internalContext.flatFieldMetadataMaps,
+      flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,
     });
 
     if (!matchesRLS) {

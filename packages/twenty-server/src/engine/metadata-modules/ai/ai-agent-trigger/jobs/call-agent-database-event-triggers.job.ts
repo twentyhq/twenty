@@ -11,7 +11,6 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { buildRoleRowAccessPolicySubject } from 'src/engine/permissions/principal/utils/build-role-row-access-policy-subject.util';
 import { isUpdateOfHiddenFieldsOnly } from 'src/engine/permissions/masking/utils/is-update-of-hidden-fields-only.util';
 import { omitRestrictedFieldsFromEvent } from 'src/engine/permissions/masking/utils/omit-restricted-fields-from-event.util';
 import { AGENT_TRIGGER_RUN_LIMITS } from 'src/engine/metadata-modules/ai/ai-agent-trigger/constants/agent-trigger-run-limits.const';
@@ -48,16 +47,12 @@ export class CallAgentDatabaseEventTriggersJob {
       flatAgentMaps,
       flatRoleTargetByAgentIdMaps,
       rolesPermissions,
-      flatRowLevelPermissionPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatAgentMaps',
       'flatRoleTargetByAgentIdMaps',
       'rolesPermissions',
-      'flatRowLevelPermissionPredicateMaps',
-      'flatRowLevelPermissionPredicateGroupMaps',
       'flatFieldMetadataMaps',
       'flatObjectMetadataMaps',
     ]);
@@ -88,17 +83,10 @@ export class CallAgentDatabaseEventTriggersJob {
       }
 
       const admittedRecordIds =
-        await eventRecordAccessGate.resolveAdmittedRecordIds(
-          buildRoleRowAccessPolicySubject({
-            roleId: agentRoleId,
-            owningApplicationId: flatAgent.applicationId,
-            rolesPermissions,
-            flatRowLevelPermissionPredicateMaps,
-            flatRowLevelPermissionPredicateGroupMaps,
-            flatFieldMetadataMaps,
-            flatObjectMetadataMaps,
-          }),
-        );
+        await eventRecordAccessGate.resolveAdmittedRecordIds({
+          workspaceId: workspaceEventBatch.workspaceId,
+          intersectionOf: { agentRoleId },
+        });
       const admittedEvents = workspaceEventBatch.events
         .filter((event) => admittedRecordIds.has(event.recordId))
         .filter(

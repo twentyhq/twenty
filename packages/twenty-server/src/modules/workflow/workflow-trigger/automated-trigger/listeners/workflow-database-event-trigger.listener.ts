@@ -514,35 +514,22 @@ export class WorkflowDatabaseEventTriggerListener {
       );
     }
 
-    const {
-      flatApplicationMaps,
-      rolesPermissions,
-      flatRowLevelPermissionPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps,
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-    } = await this.workspaceCacheService.getOrRecompute(payload.workspaceId, [
-      'flatApplicationMaps',
-      'rolesPermissions',
-      'flatRowLevelPermissionPredicateMaps',
-      'flatRowLevelPermissionPredicateGroupMaps',
-      'flatFieldMetadataMaps',
-      'flatObjectMetadataMaps',
-    ]);
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(payload.workspaceId, [
+        'flatApplicationMaps',
+      ]);
 
     return resolveEventsReadableByRole({
       roleId:
         findActiveFlatApplicationById(flatApplicationMaps, applicationId)
           ?.defaultRoleId ?? null,
-      owningApplicationId: applicationId,
       workspaceEventBatch: payload,
       eventRecordAccessGate:
         this.recordAccessPolicyService.buildEventRecordAccessGate(payload),
-      rolesPermissions,
-      flatRowLevelPermissionPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps,
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
+      metadataMaps:
+        await this.recordAccessPolicyService.loadPermissionsMetadataMaps(
+          payload.workspaceId,
+        ),
     });
   }
 

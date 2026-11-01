@@ -15,14 +15,20 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
 import {
   type RowAccessEvaluationContext,
-  type RowAccessPolicySubject,
   type RowAccessRecord,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
+import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/permissions/record-share/types/record-share-grant.type';
 
+jest.mock(
+  'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util',
+);
+
 const MEMBER_ID = 'member-1';
+const MEMBER_ROLE_ID = 'member-role';
 
 const statusField = getFlatFieldMetadataMock({
   objectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
@@ -83,19 +89,35 @@ const privateRecordStates = new Map<string, PrivateRecordState>([
   ],
 ]);
 
-const roleSubject: RowAccessPolicySubject = {
-  isSystemContext: false,
-  objectsPermissions: undefined,
-  principalIds: [EVERYONE_PRINCIPAL_ID, MEMBER_ID],
-  workspaceMemberId: undefined,
-  isOwningApplication: () => false,
-  resolveRowLevelPermissionRecordFilter: () => null,
+const fullAccess = {
+  canReadObjectRecords: true,
+  canUpdateObjectRecords: true,
+  canSoftDeleteObjectRecords: true,
+  canDestroyObjectRecords: true,
+  restrictedFields: {},
+  rowLevelPermissionPredicates: [],
+  rowLevelPermissionPredicateGroups: [],
 };
 
-const withStatusFilter = (status: string): RowAccessPolicySubject => ({
-  ...roleSubject,
-  resolveRowLevelPermissionRecordFilter: () => ({ status: { eq: status } }),
-});
+const rolePrincipal: PermissionsPrincipal = {
+  workspaceId: 'workspace-id',
+  intersectionOf: { userWorkspaceRoleId: MEMBER_ROLE_ID },
+};
+
+const memberPrincipal: PermissionsPrincipal = {
+  ...rolePrincipal,
+  workspaceMember: { id: MEMBER_ID },
+};
+
+const deniedPrincipal: PermissionsPrincipal = {
+  ...memberPrincipal,
+  intersectionOf: { userWorkspaceRoleId: 'missing-role' },
+};
+
+const filterByStatus = (status: string) =>
+  jest
+    .mocked(resolveRowLevelPermissionRecordFilter)
+    .mockReturnValue({ status: { eq: status } });
 
 const buildContext = (): RowAccessEvaluationContext => ({
   shouldIgnoreSoftDeleteDefaultFilter: false,
@@ -108,19 +130,25 @@ const buildContext = (): RowAccessEvaluationContext => ({
 });
 
 const findAdmitted = ({
-  subject,
+  principal,
   featureFlagKeys = [FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED],
   context = buildContext(),
 }: {
-  subject: RowAccessPolicySubject;
+  principal: PermissionsPrincipal;
   featureFlagKeys?: FeatureFlagKey[];
   context?: RowAccessEvaluationContext;
 }) =>
   findPermissionsAdmittedRecordIds({
-    subject,
-    environment: {
+    principal,
+    metadataMaps: {
       flatFieldMetadataMaps,
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+      rolesPermissions: {
+        [MEMBER_ROLE_ID]: { [flatObjectMetadata.id]: fullAccess },
+      },
+      flatApplicationMaps: { byId: {} },
+      flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
+      flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
       featureFlagsMap: Object.fromEntries(
         featureFlagKeys.map((featureFlagKey) => [featureFlagKey, true]),
       ),
@@ -132,27 +160,26 @@ const findAdmitted = ({
   });
 
 describe('findPermissionsAdmittedRecordIds', () => {
-  it('admits every record to the system and none to a role without access', async () => {
-    expect(
-      await findAdmitted({
-        subject: { ...roleSubject, isSystemContext: true },
-      }),
-    ).toEqual(new Set(records.map((record) => record.id)));
-    expect(
-      await findAdmitted({
-        subject: { ...roleSubject, objectsPermissions: {} },
-      }),
-    ).toEqual(new Set());
+  beforeEach(() => {
+    jest.mocked(resolveRowLevelPermissionRecordFilter).mockReturnValue(null);
+  });
+
+  it('admits no record to a role without access', async () => {
+    expect(await findAdmitted({ principal: deniedPrincipal })).toEqual(
+      new Set(),
+    );
   });
 
   it('keeps the role to public records, treating a record it cannot find as public', async () => {
-    expect(await findAdmitted({ subject: roleSubject })).toEqual(
+    expect(await findAdmitted({ principal: rolePrincipal })).toEqual(
       new Set(['active-shared', 'archived-shared']),
     );
   });
 
   it('matches the role filter on public record values', async () => {
-    expect(await findAdmitted({ subject: withStatusFilter('active') })).toEqual(
+    filterByStatus('active');
+
+    expect(await findAdmitted({ principal: rolePrincipal })).toEqual(
       new Set(['active-shared']),
     );
   });
@@ -160,45 +187,34 @@ describe('findPermissionsAdmittedRecordIds', () => {
   it('admits records shared with the member beyond the role, ignoring shares with everyone', async () => {
     expect(
       await findAdmitted({
-        subject: { ...roleSubject, objectsPermissions: {} },
-        featureFlagKeys: [
-          FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED,
-          FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
-        ],
+        principal: deniedPrincipal,
+        featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
       }),
     ).toEqual(new Set(['active-shared', 'archived-shared']));
   });
 
   it('admits private records to their creator within the role filter', async () => {
-    expect(
-      await findAdmitted({
-        subject: {
-          ...roleSubject,
-          principalIds: [EVERYONE_PRINCIPAL_ID],
-          workspaceMemberId: MEMBER_ID,
-          resolveRowLevelPermissionRecordFilter: () => ({
-            status: { eq: 'none' },
-          }),
-        },
-      }),
-    ).toEqual(new Set());
-    expect(
-      await findAdmitted({
-        subject: {
-          ...withStatusFilter('active'),
-          principalIds: [EVERYONE_PRINCIPAL_ID],
-          workspaceMemberId: MEMBER_ID,
-        },
-      }),
-    ).toEqual(new Set(['active-shared', 'active-private']));
+    filterByStatus('none');
+
+    expect(await findAdmitted({ principal: memberPrincipal })).toEqual(
+      new Set(),
+    );
+
+    filterByStatus('active');
+
+    expect(await findAdmitted({ principal: memberPrincipal })).toEqual(
+      new Set(['active-shared', 'active-private']),
+    );
   });
 
   it('only asks shares about records the role did not admit', async () => {
     const context = buildContext();
 
+    filterByStatus('active');
+
     expect(
       await findAdmitted({
-        subject: withStatusFilter('active'),
+        principal: memberPrincipal,
         featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
         context,
       }),

@@ -129,6 +129,17 @@ const buildRepository = ({
         restrictedFields: {},
       },
     },
+    rolesPermissions: {
+      [ROLE_ID]: {
+        [OBJECT_METADATA_ID]: {
+          canReadObjectRecords: true,
+          canUpdateObjectRecords: true,
+          canSoftDeleteObjectRecords: true,
+          canDestroyObjectRecords: true,
+          restrictedFields: {},
+        },
+      },
+    },
     rolePermissionConfig: { intersectionOf: { apiKeyRoleId: ROLE_ID } },
     shouldBypassPermissionChecks,
     shouldSkipEventEmission,
