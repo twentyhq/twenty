@@ -7558,6 +7558,11 @@ msgstr "Could not open the API playground"
 msgid "Could not react with {emoji}"
 msgstr "Could not react with {emoji}"
 
+#. js-lingui-id: 6GjSMn
+#: src/modules/ai/hooks/useRefreshFrontComponents.ts
+msgid "Could not refresh components. Reload to see saved changes."
+msgstr "Could not refresh components. Reload to see saved changes."
+
 #. js-lingui-id: w1HkE9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Could not refresh validity token - reverted the instance type change."

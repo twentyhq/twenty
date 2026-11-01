@@ -7563,6 +7563,11 @@ msgstr "Nu s-a putut deschide playground-ul API"
 msgid "Could not react with {emoji}"
 msgstr "Nu s-a putut reacționa cu {emoji}"
 
+#. js-lingui-id: 6GjSMn
+#: src/modules/ai/hooks/useRefreshFrontComponents.ts
+msgid "Could not refresh components. Reload to see saved changes."
+msgstr ""
+
 #. js-lingui-id: w1HkE9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Could not refresh validity token - reverted the instance type change."

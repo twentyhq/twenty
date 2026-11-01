@@ -7563,6 +7563,11 @@ msgstr "无法打开 API 操作台"
 msgid "Could not react with {emoji}"
 msgstr "无法使用 {emoji} 添加反应"
 
+#. js-lingui-id: 6GjSMn
+#: src/modules/ai/hooks/useRefreshFrontComponents.ts
+msgid "Could not refresh components. Reload to see saved changes."
+msgstr ""
+
 #. js-lingui-id: w1HkE9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Could not refresh validity token - reverted the instance type change."
