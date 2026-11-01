@@ -1711,7 +1711,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     // Inserts skip the row access policy, so disabled actions are checked here
-    if (this.isOperationDisabled(operationType)) {
+    if (this.isOperationDisabled({ operationType })) {
       throw new PermissionsException(
         `${PermissionsExceptionMessage.PERMISSION_DENIED}: records of "${this.options.flatObjectMetadata.nameSingular}" are not writable through the API`,
         PermissionsExceptionCode.PERMISSION_DENIED,
@@ -2258,10 +2258,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     operationType: OperationType;
   }): void {
     if (
-      !isObjectOperationDisabled({
-        objectMetadata: flatObjectMetadata,
-        operationType,
-      }) &&
+      !this.isOperationDisabled({ operationType, flatObjectMetadata }) &&
       isObjectOperationDeniedToPrincipal({
         principal: this.resolvePermissionsPrincipal(),
         environment: this.resolvePermissionsEnvironment(),
@@ -2277,23 +2274,29 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   isReadDisabled(): boolean {
-    return this.isOperationDisabled('select');
+    return this.isOperationDisabled({ operationType: 'select' });
   }
 
-  private isOperationDisabled(operationType: OperationType): boolean {
+  private isOperationDisabled({
+    operationType,
+    flatObjectMetadata = this.options.flatObjectMetadata,
+  }: {
+    operationType: OperationType;
+    flatObjectMetadata?: FlatObjectMetadata;
+  }): boolean {
     if (this.options.shouldBypassPermissionChecks) {
       return false;
     }
 
     return (
       isObjectOperationDisabled({
-        objectMetadata: this.options.flatObjectMetadata,
+        objectMetadata: flatObjectMetadata,
         operationType,
       }) &&
       !isPermissionsPrincipalOwningObject({
         principal: this.resolvePermissionsPrincipal(),
         flatApplicationMaps: this.options.internalContext.flatApplicationMaps,
-        flatObjectMetadata: this.options.flatObjectMetadata,
+        flatObjectMetadata,
       })
     );
   }
