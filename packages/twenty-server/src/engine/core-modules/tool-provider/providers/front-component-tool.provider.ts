@@ -1,7 +1,7 @@
 import { Inject, Injectable, Optional } from '@nestjs/common';
 import { ToolCategory } from 'twenty-shared/ai';
 
-import { AI_FRONT_COMPONENT_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/ai-front-component-service.token';
+import { AI_FRONT_COMPONENT_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/ai-front-component-tool-service.token';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
@@ -11,7 +11,7 @@ import { executeToolFromToolSet } from 'src/engine/core-modules/tool-provider/ut
 import { toolSetToDescriptors } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { PUBLISH_FRONT_COMPONENT_TOOL } from 'src/engine/metadata-modules/ai/ai-front-component/constants/publish-front-component-tool.constant';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import type { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service';
+import type { AiFrontComponentToolService } from 'src/engine/metadata-modules/ai/ai-front-component/tools/services/ai-front-component-tool.service';
 
 @Injectable()
 export class FrontComponentToolProvider implements ToolProvider {
@@ -19,8 +19,8 @@ export class FrontComponentToolProvider implements ToolProvider {
 
   constructor(
     @Optional()
-    @Inject(AI_FRONT_COMPONENT_SERVICE_TOKEN)
-    private readonly aiFrontComponentService: AiFrontComponentService | null,
+    @Inject(AI_FRONT_COMPONENT_TOOL_SERVICE_TOKEN)
+    private readonly aiFrontComponentToolService: AiFrontComponentToolService | null,
   ) {}
 
   async isAvailable(context: ToolProviderContext): Promise<boolean> {
@@ -63,6 +63,8 @@ export class FrontComponentToolProvider implements ToolProvider {
   }
 
   private async buildToolSet(context: ToolProviderContext) {
-    return (await this.aiFrontComponentService?.generateTools(context)) ?? {};
+    return (
+      (await this.aiFrontComponentToolService?.generateTools(context)) ?? {}
+    );
   }
 }

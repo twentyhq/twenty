@@ -1,8 +1,3 @@
-import { tool, type ToolSet } from 'ai';
-import { z } from 'zod';
-import { PREVIEW_FRONT_COMPONENT_TOOL_NAME } from 'twenty-shared/ai';
-import { frontComponentDraftIdSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-draft-id.schema';
-import { FRONT_COMPONENT_UI_INSTRUCTIONS } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-ui-instructions.constant';
 import { PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
@@ -54,97 +49,6 @@ export class AiFrontComponentService {
     @InjectWorkspaceScopedRepository(FrontComponentEntity)
     private readonly frontComponentRepository: WorkspaceScopedRepository<FrontComponentEntity>,
   ) {}
-
-  async generateTools(context: ToolProviderContext): Promise<ToolSet> {
-    const { userWorkspaceId } = context;
-
-    if (
-      !isDefined(userWorkspaceId) ||
-      !(await this.isEnabled(context.workspaceId)) ||
-      !(await this.permissions.checkRolesPermissions(
-        context.rolePermissionConfig,
-        context.workspaceId,
-        PermissionFlagType.APPLICATIONS,
-      ))
-    ) {
-      return {};
-    }
-
-    return {
-      list_front_components: tool({
-        description:
-          'List saved frontend components and their supported widget surfaces. Saving a component and placing it on a dashboard are separate actions.',
-        inputSchema: z.object({}),
-        execute: async () => ({
-          success: true,
-          message: 'Frontend components retrieved.',
-          result: (
-            await this.frontComponentService.findAll(context.workspaceId)
-          ).map(
-            ({ id, name, applicationId, isHeadless, widgetAvailability }) => ({
-              id,
-              name,
-              applicationId,
-              isHeadless,
-              widgetAvailability,
-            }),
-          ),
-        }),
-      }),
-      [PREVIEW_FRONT_COMPONENT_TOOL_NAME]: tool({
-        description:
-          'Create or revise a frontend component preview with sample data. Inspect object metadata first. Choose one surface, DASHBOARD or RECORD_PAGE. Pass previousDraftId to revise a draft. Returns draftId and checksum for approval, without saving the component. Use inspect_front_component to read reported browser errors.' +
-          FRONT_COMPONENT_UI_INSTRUCTIONS,
-        inputSchema: frontComponentDraftSchema,
-        execute: async (draftInput) => ({
-          success: true,
-          message: 'Component preview built with sample data.',
-          result: await this.createDraft({ draftInput, context }),
-        }),
-      }),
-      inspect_front_component: tool({
-        description:
-          'Read a draft source, sample data, checksum, revision status and reported browser error to revise a preview. Drafts expire after 24 hours. No reported error does not prove rendering succeeded.',
-        inputSchema: frontComponentDraftIdSchema,
-        execute: async ({ draftId }) => {
-          const draft = await this.getDraftOrThrow({
-            workspaceId: context.workspaceId,
-            userWorkspaceId,
-            draftId,
-          });
-
-          return {
-            success: true,
-            message: 'Component draft retrieved.',
-            result: {
-              draftId: draft.id,
-              checksum: draft.checksum,
-              name: draft.name,
-              source: draft.source,
-              query: draft.query,
-              sampleRecords: draft.sampleRecords,
-              pageLayoutType: draft.pageLayoutType,
-              isCurrent: !draft.isSuperseded,
-              publishedComponentId: draft.publishedComponentId,
-              previewError: draft.previewError,
-            },
-          };
-        },
-      }),
-      [PUBLISH_FRONT_COMPONENT_TOOL.name]: tool({
-        description:
-          'Save the exact preview revision to the Workspace app. Use propose_tool_call with the draftId and checksum returned by the preview, and wait for explicit approval. Never call this tool directly. Saving makes the component available in the widget picker; it does not place a widget. Saved components use the normal app SDK and permissions.',
-        inputSchema: frontComponentDraftIdSchema.extend({
-          checksum: z.string().regex(/^[a-f0-9]{64}$/),
-        }),
-        execute: async ({ draftId, checksum }) => ({
-          success: true,
-          message: 'Component saved to the Workspace app.',
-          result: await this.publish({ draftId, checksum, context }),
-        }),
-      }),
-    };
-  }
 
   private isEnabled(workspaceId: string) {
     return this.featureFlags.isFeatureEnabled(

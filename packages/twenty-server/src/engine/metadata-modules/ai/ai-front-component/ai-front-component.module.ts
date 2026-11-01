@@ -2,7 +2,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { Global, Module } from '@nestjs/common';
-import { AI_FRONT_COMPONENT_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/ai-front-component-service.token';
+import { AI_FRONT_COMPONENT_TOOL_SERVICE_TOKEN } from 'src/engine/core-modules/tool-provider/constants/ai-front-component-tool-service.token';
 import { FrontComponentModule } from 'src/engine/metadata-modules/front-component/front-component.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 
@@ -16,6 +16,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
 import { AiFrontComponentController } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.controller';
 import { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service';
+import { AiFrontComponentToolService } from 'src/engine/metadata-modules/ai/ai-front-component/tools/services/ai-front-component-tool.service';
 
 @Global()
 @Module({
@@ -30,14 +31,15 @@ import { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front
     FeatureFlagModule,
     RecordCrudModule,
   ],
-  exports: [AI_FRONT_COMPONENT_SERVICE_TOKEN],
+  exports: [AI_FRONT_COMPONENT_TOOL_SERVICE_TOKEN],
   controllers: [AiFrontComponentController],
   providers: [
     provideWorkspaceScopedRepository(FrontComponentEntity),
     AiFrontComponentService,
+    AiFrontComponentToolService,
     {
-      provide: AI_FRONT_COMPONENT_SERVICE_TOKEN,
-      useExisting: AiFrontComponentService,
+      provide: AI_FRONT_COMPONENT_TOOL_SERVICE_TOKEN,
+      useExisting: AiFrontComponentToolService,
     },
     FrontComponentCompilerService,
     WorkspaceFrontComponentDependenciesService,

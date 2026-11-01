@@ -291,9 +291,16 @@ describe('AiChatToolCallApprovalCard', () => {
   ])(
     'does not refresh for $toolName / $decision / $isAnswered',
     async ({ toolName, decision, isAnswered }) => {
-      answerAgentChatToolCall.mockResolvedValue(isAnswered);
+      const user = userEvent.setup();
+      let completeAnswer: (answered: boolean) => void = () => {};
+      answerAgentChatToolCall.mockReturnValue(
+        new Promise<boolean>((resolve) => {
+          completeAnswer = resolve;
+        }),
+      );
       renderCard({ ...PROPOSAL, toolName });
-      await userEvent.click(screen.getByRole('button', { name: decision }));
+      await user.click(screen.getByRole('button', { name: decision }));
+      await act(async () => completeAnswer(isAnswered));
       expect(answerAgentChatToolCall).toHaveBeenCalledTimes(1);
       expect(refreshFrontComponents).not.toHaveBeenCalled();
     },
