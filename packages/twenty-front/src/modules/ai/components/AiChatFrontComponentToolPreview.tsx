@@ -1,4 +1,4 @@
-import { isString } from '@sniptt/guards';
+import { isNonEmptyString, isString } from '@sniptt/guards';
 import { type DynamicToolUIPart, type ToolUIPart } from 'ai';
 import { isPlainObject } from 'twenty-shared/utils';
 
@@ -25,7 +25,7 @@ export const AiChatFrontComponentToolPreview = ({
       ? output.result.draftId
       : undefined;
 
-  return draftId ? (
+  return isNonEmptyString(draftId) ? (
     <AiChatFrontComponentPreview key={draftId} draftId={draftId} />
   ) : (
     <ThinkingToolStepRow

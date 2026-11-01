@@ -10,6 +10,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { REST_API_BASE_URL } from '@/apollo/constants/RestApiBaseUrl';
 import { getFingerprintedRestUrl } from '@/front-components/utils/getFingerprintedRestUrl';
 
+const SESSION_COOKIE_HEADERS = { [SESSION_COOKIE_OPT_IN_HEADER_NAME]: '1' };
+
 type FrontComponentPreview = {
   pageLayoutType: PageLayoutType.DASHBOARD | PageLayoutType.RECORD_PAGE;
   isCurrent: boolean;
@@ -43,7 +45,7 @@ export const useAiChatFrontComponentPreview = (draftId: string) => {
       try {
         const response = await fetch(endpoint, {
           credentials: 'include',
-          headers: { [SESSION_COOKIE_OPT_IN_HEADER_NAME]: '1' },
+          headers: SESSION_COOKIE_HEADERS,
           signal,
         });
 
@@ -58,20 +60,20 @@ export const useAiChatFrontComponentPreview = (draftId: string) => {
           return false;
         }
 
-        const loadedPreview = loadDependencies
-          ? {
-              ...result,
-              sharedDependenciesSource: await fetchComponentSource({
-                url: getFingerprintedRestUrl({
-                  resource: 'front-component-shared-dependencies',
-                  id: result.applicationId,
-                  checksum: result.sharedDependenciesChecksum ?? undefined,
-                }),
-                credentials: 'include',
-                headers: { [SESSION_COOKIE_OPT_IN_HEADER_NAME]: '1' },
-              }),
-            }
-          : undefined;
+        let loadedPreview: LoadedFrontComponentPreview | undefined;
+
+        if (loadDependencies) {
+          const sharedDependenciesSource = await fetchComponentSource({
+            url: getFingerprintedRestUrl({
+              resource: 'front-component-shared-dependencies',
+              id: result.applicationId,
+              checksum: result.sharedDependenciesChecksum ?? undefined,
+            }),
+            credentials: 'include',
+            headers: SESSION_COOKIE_HEADERS,
+          });
+          loadedPreview = { ...result, sharedDependenciesSource };
+        }
 
         if (signal.aborted) {
           return false;
@@ -114,7 +116,7 @@ export const useAiChatFrontComponentPreview = (draftId: string) => {
           credentials: 'include',
           headers: {
             'Content-Type': 'application/json',
-            [SESSION_COOKIE_OPT_IN_HEADER_NAME]: '1',
+            ...SESSION_COOKIE_HEADERS,
           },
           body: JSON.stringify({ message }),
         });

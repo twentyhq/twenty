@@ -80,3 +80,16 @@ export const MalformedPreview: Story = {
   },
   play: FailedPreview.play,
 };
+
+export const EmptyDraftId: Story = {
+  args: {
+    toolPart: {
+      type: `tool-${PREVIEW_FRONT_COMPONENT_TOOL_NAME}`,
+      toolCallId: 'empty-draft-preview',
+      state: 'output-available',
+      input: {},
+      output: { success: true, result: { draftId: '' } },
+    },
+  },
+  play: FailedPreview.play,
+};

@@ -1,5 +1,6 @@
 import { graphql, http, HttpResponse } from 'msw';
 import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 import { PageLayoutType } from 'twenty-shared/types';
 
 import { REST_API_BASE_URL } from '@/apollo/constants/RestApiBaseUrl';
@@ -16,7 +17,32 @@ const COMPONENT_SOURCE = `export default function render(container) {
   container.appendChild(button);
 }`;
 
+const RUNTIME_ERRORS: Record<string, string> = {
+  'runtime-error': 'Component crashed.',
+  'blank-runtime-error': '   ',
+  'long-runtime-error': 'x'.repeat(2100),
+  'report-failure': 'Component crashed.',
+};
+
+export const frontComponentPreviewReports: unknown[] = [];
+
+export const getFrontComponentPreviewMock = (draftId = 'current') => ({
+  pageLayoutType:
+    draftId === 'record-page'
+      ? PageLayoutType.RECORD_PAGE
+      : PageLayoutType.DASHBOARD,
+  isCurrent: draftId !== 'superseded',
+  publishedComponentId: draftId === 'saved' ? 'saved-component' : undefined,
+  componentSource: isDefined(RUNTIME_ERRORS[draftId])
+    ? `export default function render() { throw new Error(${JSON.stringify(RUNTIME_ERRORS[draftId])}); }`
+    : COMPONENT_SOURCE,
+  applicationId: 'storybook-app',
+  sharedDependenciesChecksum: 'storybook-checksum',
+  mockQueryResult: {},
+});
+
 export const seedFrontComponentPreviewWorkspace = (isEnabled = true) => {
+  frontComponentPreviewReports.length = 0;
   const previous = jotaiStore.get(currentWorkspaceState.atom);
   jotaiStore.set(currentWorkspaceState.atom, {
     ...mockCurrentWorkspace,
@@ -43,22 +69,9 @@ export const frontComponentPreviewHandlers = [
       if (params.draftId === 'unavailable') {
         return new HttpResponse(null, { status: 404 });
       }
-      return HttpResponse.json({
-        pageLayoutType:
-          params.draftId === 'record-page'
-            ? PageLayoutType.RECORD_PAGE
-            : PageLayoutType.DASHBOARD,
-        isCurrent: params.draftId !== 'superseded',
-        publishedComponentId:
-          params.draftId === 'saved' ? 'saved-component' : undefined,
-        componentSource:
-          params.draftId === 'runtime-error'
-            ? 'export default function render() { throw new Error("Component crashed."); }'
-            : COMPONENT_SOURCE,
-        applicationId: 'storybook-app',
-        sharedDependenciesChecksum: 'storybook-checksum',
-        mockQueryResult: {},
-      });
+      return HttpResponse.json(
+        getFrontComponentPreviewMock(String(params.draftId)),
+      );
     },
   ),
   http.get(
@@ -72,12 +85,14 @@ export const frontComponentPreviewHandlers = [
   ),
   http.post(
     `${REST_API_BASE_URL}/ai-front-components/drafts/:draftId/preview-error`,
-    ({ request }) =>
-      new HttpResponse(null, {
-        status:
-          request.headers.get(SESSION_COOKIE_OPT_IN_HEADER_NAME) === '1'
-            ? 204
-            : 401,
-      }),
+    async ({ params, request }) => {
+      if (request.headers.get(SESSION_COOKIE_OPT_IN_HEADER_NAME) !== '1') {
+        return new HttpResponse(null, { status: 401 });
+      }
+      frontComponentPreviewReports.push(await request.json());
+      return new HttpResponse(null, {
+        status: params.draftId === 'report-failure' ? 500 : 204,
+      });
+    },
   ),
 ];
