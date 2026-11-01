@@ -49,7 +49,7 @@ import { buildPermissionsCondition } from 'src/engine/permissions/combine/utils/
 import { combineSqlConditions } from 'src/engine/permissions/combine/utils/combine-sql-conditions.util';
 import { type RecordShareGrant } from 'src/engine/permissions/record-share/types/record-share-grant.type';
 import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
-import { resolvePermissionsObjectAccessScope } from 'src/engine/permissions/combine/utils/resolve-permissions-object-access-scope.util';
+import { resolvePermissionsRowAccessOutcome } from 'src/engine/permissions/combine/utils/resolve-permissions-row-access-outcome.util';
 import { isObjectOperationDisabled } from 'src/engine/permissions/role/utils/is-object-operation-disabled.util';
 import { isObjectOperationPermitted } from 'src/engine/permissions/role/utils/is-object-operation-permitted.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
@@ -1940,12 +1940,17 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         flatEntityMaps: this.options.internalContext.flatObjectMetadataMaps,
       });
 
-      if (isDefined(flatObjectMetadata)) {
-        this.assertObjectOperationIsAccessibleOrThrow({
-          flatObjectMetadata,
-          operationType: 'select',
-        });
+      if (!isDefined(flatObjectMetadata)) {
+        throw new PermissionsException(
+          PermissionsExceptionMessage.PERMISSION_DENIED,
+          PermissionsExceptionCode.PERMISSION_DENIED,
+        );
       }
+
+      this.assertObjectOperationIsAccessibleOrThrow({
+        flatObjectMetadata,
+        operationType: 'select',
+      });
 
       validateOperationIsPermittedOrThrow({
         entityName: tableShape.nameSingular,
@@ -2335,14 +2340,23 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     flatObjectMetadata: FlatObjectMetadata;
     operationType: OperationType;
   }): void {
-    const scope = resolvePermissionsObjectAccessScope({
+    if (
+      isObjectOperationDisabled({
+        objectMetadata: flatObjectMetadata,
+        operationType,
+      })
+    ) {
+      return;
+    }
+
+    const outcome = resolvePermissionsRowAccessOutcome({
       subject: this.resolveRowAccessPolicySubject(),
       environment: this.resolveRowAccessPolicyEnvironment(),
       flatObjectMetadata,
       operationType,
     });
 
-    if (scope === 'none') {
+    if (outcome === false) {
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,

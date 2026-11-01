@@ -3,30 +3,20 @@
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
   FeatureFlagKey,
-  FieldMetadataType,
   type ObjectPermissions,
+  RecordShareAccessLevel,
 } from 'twenty-shared/types';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
-import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
-import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
-import { type RowAccessPolicySubject } from 'src/engine/permissions/combine/types/row-access-policy.type';
-import { resolvePermissionsObjectAccessScope } from 'src/engine/permissions/combine/utils/resolve-permissions-object-access-scope.util';
+import {
+  type PermissionsRowAccessRequest,
+  type RowAccessPolicySubject,
+} from 'src/engine/permissions/combine/types/row-access-policy.type';
+import { resolvePermissionsRowAccessOutcome } from 'src/engine/permissions/combine/utils/resolve-permissions-row-access-outcome.util';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 
-const statusField = getFlatFieldMetadataMock({
-  objectMetadataId: COMPANY_FLAT_OBJECT_MOCK.id,
-  type: FieldMetadataType.TEXT,
-  name: 'status',
-  universalIdentifier: 'company-status-field-universal-id',
-});
-
-const flatObjectMetadata = {
-  ...COMPANY_FLAT_OBJECT_MOCK,
-  isSystem: false,
-  fieldIds: [statusField.id],
-};
+const flatObjectMetadata = { ...COMPANY_FLAT_OBJECT_MOCK, isSystem: false };
 
 const readOnlyPermissions: ObjectPermissions = {
   canReadObjectRecords: true,
@@ -47,24 +37,23 @@ const readOnlySubject: RowAccessPolicySubject = {
   resolveRowLevelPermissionRecordFilter: () => null,
 };
 
-const resolveScope = ({
+const resolveOutcome = ({
   subject = readOnlySubject,
   operationType = 'select',
   featureFlagKeys = [],
   disabledObjectPermissionActions = [],
+  hypotheticalRecordShareAccessLevel,
 }: {
   subject?: RowAccessPolicySubject;
   operationType?: OperationType;
   featureFlagKeys?: FeatureFlagKey[];
   disabledObjectPermissionActions?: typeof flatObjectMetadata.disabledObjectPermissionActions;
+  hypotheticalRecordShareAccessLevel?: PermissionsRowAccessRequest['hypotheticalRecordShareAccessLevel'];
 }) =>
-  resolvePermissionsObjectAccessScope({
+  resolvePermissionsRowAccessOutcome({
     subject,
     environment: {
-      flatFieldMetadataMaps: addFlatEntityToFlatEntityMapsOrThrow({
-        flatEntity: statusField,
-        flatEntityMaps: createEmptyFlatEntityMaps(),
-      }),
+      flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
       featureFlagsMap: Object.fromEntries(
         featureFlagKeys.map((featureFlagKey) => [featureFlagKey, true]),
@@ -75,70 +64,65 @@ const resolveScope = ({
       disabledObjectPermissionActions,
     },
     operationType,
+    hypotheticalRecordShareAccessLevel,
   });
 
-describe('resolvePermissionsObjectAccessScope', () => {
-  it('opens every record to the system and to a role granting them all', () => {
+describe('resolvePermissionsRowAccessOutcome', () => {
+  it('opens every record to the system', () => {
     expect(
-      resolveScope({
+      resolveOutcome({
         subject: { ...readOnlySubject, isSystemContext: true },
         operationType: 'delete',
       }),
-    ).toBe('all');
-    expect(resolveScope({})).toBe('all');
+    ).toBe(true);
+  });
+
+  it('leaves a permitted operation to the grant paths', () => {
+    expect(resolveOutcome({})).toBeUndefined();
   });
 
   it('denies an operation the role lacks when no share can grant it', () => {
-    expect(resolveScope({ operationType: 'update' })).toBe('none');
+    expect(resolveOutcome({ operationType: 'update' })).toBe(false);
     expect(
-      resolveScope({ subject: { ...readOnlySubject, objectsPermissions: {} } }),
-    ).toBe('none');
+      resolveOutcome({
+        subject: { ...readOnlySubject, objectsPermissions: {} },
+      }),
+    ).toBe(false);
     expect(
-      resolveScope({
+      resolveOutcome({
         operationType: 'delete',
         featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
       }),
-    ).toBe('none');
+    ).toBe(false);
   });
 
   it('denies a disabled operation unless the subject owns the object', () => {
     expect(
-      resolveScope({
+      resolveOutcome({
         disabledObjectPermissionActions: ['canReadObjectRecords'],
       }),
-    ).toBe('none');
+    ).toBe(false);
     expect(
-      resolveScope({
+      resolveOutcome({
         subject: { ...readOnlySubject, isOwningApplication: () => true },
         disabledObjectPermissionActions: ['canReadObjectRecords'],
       }),
-    ).toBe('all');
+    ).toBeUndefined();
   });
 
-  it('gates an operation that shares can grant beyond the role', () => {
+  it('leaves an operation shares can grant beyond the role to the paths, and opens it for a hypothetical share', () => {
     expect(
-      resolveScope({
+      resolveOutcome({
         operationType: 'update',
         featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
       }),
-    ).toBe('gated');
-  });
-
-  it('gates a role limited by row level permissions or to public records', () => {
+    ).toBeUndefined();
     expect(
-      resolveScope({
-        subject: {
-          ...readOnlySubject,
-          resolveRowLevelPermissionRecordFilter: () => ({
-            status: { eq: 'active' },
-          }),
-        },
+      resolveOutcome({
+        operationType: 'update',
+        featureFlagKeys: [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED],
+        hypotheticalRecordShareAccessLevel: RecordShareAccessLevel.READ_WRITE,
       }),
-    ).toBe('gated');
-    expect(
-      resolveScope({
-        featureFlagKeys: [FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED],
-      }),
-    ).toBe('gated');
+    ).toBe(true);
   });
 });
