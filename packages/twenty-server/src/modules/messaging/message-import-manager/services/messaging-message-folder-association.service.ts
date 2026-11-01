@@ -14,14 +14,17 @@ import { buildMessageFolderAssociationsToInsert } from 'src/modules/messaging/me
 export class MessagingMessageFolderAssociationService {
   constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
-  async saveMessageFolderAssociations(
-    associations: MessageChannelMessageAssociationFolderAssociation[],
-    workspaceId: string,
-    transactionScope: WorkspaceTransactionScope,
-    {
-      refreshedMessageChannelMessageAssociationIds = [],
-    }: { refreshedMessageChannelMessageAssociationIds?: string[] } = {},
-  ): Promise<void> {
+  async saveMessageFolderAssociations({
+    associations,
+    workspaceId,
+    transactionScope,
+    refreshedMessageChannelMessageAssociationIds,
+  }: {
+    associations: MessageChannelMessageAssociationFolderAssociation[];
+    workspaceId: string;
+    transactionScope: WorkspaceTransactionScope;
+    refreshedMessageChannelMessageAssociationIds: string[];
+  }): Promise<void> {
     const associationIds = [
       ...new Set(
         associations

@@ -188,19 +188,19 @@ export class MessagingMessageService {
             messageAccumulator.messageToCreate = messageToCreate;
           } else {
             newOrExistingMessageId = messageAccumulator.existingMessageInDB.id;
+          }
 
-            if (
-              messageAccumulator.existingMessageChannelMessageAssociationInDB
-                ?.messageExternalId === message.externalId
-            ) {
-              messageAccumulator.messageToRefresh = {
-                id: newOrExistingMessageId,
-                subject: message.subject,
-                receivedAt: message.receivedAt,
-                text: message.text,
-                isDraft: message.isDraft,
-              };
-            }
+          if (
+            messageAccumulator.existingMessageChannelMessageAssociationInDB
+              ?.messageExternalId === message.externalId
+          ) {
+            messageAccumulator.messageToRefresh = {
+              id: newOrExistingMessageId,
+              subject: message.subject,
+              receivedAt: message.receivedAt,
+              text: message.text,
+              isDraft: message.isDraft,
+            };
           }
 
           if (

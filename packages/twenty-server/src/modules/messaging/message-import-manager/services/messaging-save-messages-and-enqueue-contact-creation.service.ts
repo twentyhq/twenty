@@ -189,10 +189,12 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                 });
 
               await this.messageFolderAssociationService.saveMessageFolderAssociations(
-                folderAssociations,
-                workspaceId,
-                transactionScope,
-                { refreshedMessageChannelMessageAssociationIds },
+                {
+                  associations: folderAssociations,
+                  workspaceId,
+                  transactionScope,
+                  refreshedMessageChannelMessageAssociationIds,
+                },
               );
 
               return {
