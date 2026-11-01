@@ -2,7 +2,8 @@ import { Injectable } from '@nestjs/common';
 
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -72,21 +73,27 @@ export class PendingWakeUpDatabaseEventListener {
         continue;
       }
 
-      // the resolution reads the record with the permissions of the run waiting on it
-      const matchingEvent = payload.events.find((event) =>
-        doesEventMatchPendingWakeUp({
-          condition: eventWakeUp.condition,
-          event,
-        }),
-      );
+      // the resolution reads the matches' records in one query, which returns at most QUERY_MAX_RECORDS
+      const [firstMatchingEvent, ...nextMatchingEvents] = payload.events
+        .filter((event) =>
+          doesEventMatchPendingWakeUp({
+            condition: eventWakeUp.condition,
+            event,
+          }),
+        )
+        .slice(0, QUERY_MAX_RECORDS)
+        .map((event) => buildPendingWakeUpEvent({ eventName, event }));
 
-      if (!isDefined(matchingEvent)) {
+      if (!isDefined(firstMatchingEvent)) {
         continue;
       }
 
       await this.pendingWakeUpService.scheduleResolution({
         wakeUp: eventWakeUp,
-        event: buildPendingWakeUpEvent({ eventName, event: matchingEvent }),
+        event: firstMatchingEvent,
+        ...(isNonEmptyArray(nextMatchingEvents)
+          ? { nextEvents: nextMatchingEvents }
+          : {}),
       });
     }
   }
