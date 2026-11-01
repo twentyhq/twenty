@@ -36,6 +36,7 @@ export { DEFAULT_AI_CHAT_MODEL_TIER } from './constants/default-ai-chat-model-ti
 export { JEV_MODEL_ID } from './constants/jev-model-id.const';
 export { NO_REPLY_TOOL_NAME } from './constants/no-reply-tool-name.const';
 export { PAUSING_TOOL_NAMES } from './constants/pausing-tool-names.const';
+export { PREVIEW_FRONT_COMPONENT_TOOL_NAME } from './constants/preview-front-component-tool-name.const';
 export { PROPOSE_TOOL_CALL_TOOL_NAME } from './constants/propose-tool-call-tool-name.const';
 export { PROPOSE_TOOL_CALL_TOOL_STATUSES } from './constants/propose-tool-call-tool-statuses.const';
 export { PROPOSED_TOOL_CALL_TEMPLATES } from './constants/proposed-tool-call-templates.const';
