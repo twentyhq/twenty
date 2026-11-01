@@ -30,10 +30,27 @@ const mockEnqueueToast = jest.fn();
 const mockNavigateSettings = jest.fn();
 const mockGetUpdatableWorkflowVersionStepOrThrow = jest.fn();
 let mockAgentRoleId: string | null = null;
-let mockFindOneAgentResultsByAgentId: Record<string, unknown> = {};
+const mockQueryAgent = jest.fn();
+
+type MockFindOneAgentResult = {
+  data:
+    | {
+        findOneAgent: {
+          id: string;
+          label: string;
+          isSystem: boolean;
+          roleId: string | null;
+        };
+      }
+    | undefined;
+  loading: boolean;
+};
+
+let mockFindOneAgentResultsByAgentId: Record<string, MockFindOneAgentResult> =
+  {};
 
 // a stable result per agent, as Apollo's cache gives, so the editor does not reload the agent on every render
-const mockFindOneAgentResult = (agentId: string) => {
+const mockFindOneAgentResult = (agentId: string): MockFindOneAgentResult => {
   if (agentId === DELETED_AGENT_ID) {
     return { data: undefined, loading: false };
   }
@@ -55,6 +72,7 @@ const mockFindOneAgentResult = (agentId: string) => {
 
 jest.mock('@apollo/client/react', () => ({
   ...jest.requireActual('@apollo/client/react'),
+  useApolloClient: () => ({ query: mockQueryAgent }),
   useQuery: (document: unknown, options: { variables: { id: string } }) =>
     document === FindOneAgentDocument
       ? mockFindOneAgentResult(options.variables.id)
@@ -127,10 +145,13 @@ jest.mock('~/hooks/useNavigateSettings', () => ({
   useNavigateSettings: () => mockNavigateSettings,
 }));
 
-const buildLegacyStep = (
-  agentId: string,
+const buildLegacyStep = ({
+  agentId,
   stepId = STEP_ID,
-): WorkflowAiAgentAction => ({
+}: {
+  agentId: string;
+  stepId?: string;
+}): WorkflowAiAgentAction => ({
   id: stepId,
   name: 'Agent',
   type: 'AI_AGENT',
@@ -179,8 +200,8 @@ describe('WorkflowEditActionAiAgent', () => {
 
   it('saves prompt edits to the agent of the draft its first edit created', async () => {
     const onActionUpdate = jest.fn();
-    const publishedStep = buildLegacyStep(PUBLISHED_AGENT_ID);
-    const draftStep = buildLegacyStep(DRAFT_AGENT_ID);
+    const publishedStep = buildLegacyStep({ agentId: PUBLISHED_AGENT_ID });
+    const draftStep = buildLegacyStep({ agentId: DRAFT_AGENT_ID });
 
     setFlowStep(publishedStep);
 
@@ -222,11 +243,11 @@ describe('WorkflowEditActionAiAgent', () => {
   });
 
   it('creates a role for the draft agent of a legacy step that has none, and opens it', async () => {
-    const step = buildLegacyStep(PUBLISHED_AGENT_ID);
+    const step = buildLegacyStep({ agentId: PUBLISHED_AGENT_ID });
 
     setFlowStep(step);
     mockGetUpdatableWorkflowVersionStepOrThrow.mockResolvedValue(
-      buildLegacyStep(DRAFT_AGENT_ID),
+      buildLegacyStep({ agentId: DRAFT_AGENT_ID }),
     );
 
     render(
@@ -259,7 +280,7 @@ describe('WorkflowEditActionAiAgent', () => {
 
   it('offers to view the role of a legacy step that has one', async () => {
     mockAgentRoleId = 'role-id';
-    const step = buildLegacyStep(PUBLISHED_AGENT_ID);
+    const step = buildLegacyStep({ agentId: PUBLISHED_AGENT_ID });
 
     setFlowStep(step);
 
@@ -281,7 +302,7 @@ describe('WorkflowEditActionAiAgent', () => {
 
   it('does not save an edit to a step that left the flow before the save ran', async () => {
     const onActionUpdate = jest.fn();
-    const step = buildLegacyStep(PUBLISHED_AGENT_ID);
+    const step = buildLegacyStep({ agentId: PUBLISHED_AGENT_ID });
 
     setFlowStep(step);
 
@@ -310,13 +331,16 @@ describe('WorkflowEditActionAiAgent', () => {
   });
 
   it('removes the role it created and tells the author when the role cannot be assigned to the agent', async () => {
-    const step = buildLegacyStep(PUBLISHED_AGENT_ID);
+    const step = buildLegacyStep({ agentId: PUBLISHED_AGENT_ID });
 
     setFlowStep(step);
     mockGetUpdatableWorkflowVersionStepOrThrow.mockResolvedValue(
-      buildLegacyStep(DRAFT_AGENT_ID),
+      buildLegacyStep({ agentId: DRAFT_AGENT_ID }),
     );
     mockAssignRoleToAgent.mockRejectedValue(new Error('Assignment failed'));
+    mockQueryAgent.mockResolvedValue({
+      data: { findOneAgent: { id: DRAFT_AGENT_ID, roleId: null } },
+    });
 
     render(
       <WorkflowEditActionAiAgent
@@ -344,12 +368,50 @@ describe('WorkflowEditActionAiAgent', () => {
     );
   });
 
-  it('does not offer the agent of the previously opened step when its own agent is missing', async () => {
-    const previousStep = buildLegacyStep(
-      PUBLISHED_AGENT_ID,
-      'previous-step-id',
+  it('keeps and opens the role when its assignment went through although the request failed', async () => {
+    const step = buildLegacyStep({ agentId: PUBLISHED_AGENT_ID });
+
+    setFlowStep(step);
+    mockGetUpdatableWorkflowVersionStepOrThrow.mockResolvedValue(
+      buildLegacyStep({ agentId: DRAFT_AGENT_ID }),
     );
-    const step = buildLegacyStep(DELETED_AGENT_ID);
+    mockAssignRoleToAgent.mockRejectedValue(new Error('Request timed out'));
+    mockQueryAgent.mockImplementation(async () => ({
+      data: {
+        findOneAgent: {
+          id: DRAFT_AGENT_ID,
+          roleId: mockCreateRole.mock.calls[0][0].variables.createRoleInput.id,
+        },
+      },
+    }));
+
+    render(
+      <WorkflowEditActionAiAgent
+        action={step}
+        actionOptions={{ onActionUpdate: jest.fn() }}
+      />,
+      { wrapper: Wrapper },
+    );
+
+    await userEvent.click(
+      await screen.findByRole('tab', { name: 'Permissions' }),
+    );
+    await userEvent.click(await screen.findByText('Create role'));
+
+    await waitFor(() => expect(mockNavigateSettings).toHaveBeenCalled());
+
+    expect(mockDeleteRole).not.toHaveBeenCalled();
+    expect(mockNavigateSettings).toHaveBeenCalledWith(SettingsPath.RoleDetail, {
+      roleId: mockCreateRole.mock.calls[0][0].variables.createRoleInput.id,
+    });
+  });
+
+  it('does not offer the agent of the previously opened step when its own agent is missing', async () => {
+    const previousStep = buildLegacyStep({
+      agentId: PUBLISHED_AGENT_ID,
+      stepId: 'previous-step-id',
+    });
+    const step = buildLegacyStep({ agentId: DELETED_AGENT_ID });
 
     setFlowStep(previousStep);
 

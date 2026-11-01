@@ -1,7 +1,7 @@
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useGetUpdatableWorkflowVersionOrThrow } from '@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow';
 import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
-import { useMutation } from '@apollo/client/react';
+import { useApolloClient, useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { CustomError, isDefined } from 'twenty-shared/utils';
@@ -10,6 +10,7 @@ import {
   AssignRoleToAgentDocument,
   CreateOneRoleDocument,
   DeleteOneRoleDocument,
+  FindOneAgentDocument,
 } from '~/generated-metadata/graphql';
 
 // a step created before steps held their own permissions keeps them on its hidden agent's role until it is migrated
@@ -27,6 +28,7 @@ export const useCreateWorkflowStepOwnedAgentRole = ({
   const [createRole] = useMutation(CreateOneRoleDocument);
   const [assignRoleToAgent] = useMutation(AssignRoleToAgentDocument);
   const [deleteRole] = useMutation(DeleteOneRoleDocument);
+  const apolloClient = useApolloClient();
 
   const createWorkflowStepOwnedAgentRole = async ({
     agentLabel,
@@ -70,16 +72,24 @@ export const useCreateWorkflowStepOwnedAgentRole = ({
       },
     });
 
-    // no mutation creates and assigns a role at once, so a role that could not be assigned is removed
     try {
       await assignRoleToAgent({
         variables: { agentId: updatableAgentId, roleId },
         refetchQueries: ['FindOneAgent'],
       });
-    } catch (error) {
-      await deleteRole({ variables: { roleId } });
+    } catch (assignmentError) {
+      // the assignment may have committed before the request failed, and deleting an assigned role moves its agent to the workspace default role
+      const { data } = await apolloClient.query({
+        query: FindOneAgentDocument,
+        variables: { id: updatableAgentId },
+        fetchPolicy: 'network-only',
+      });
 
-      throw error;
+      if (data?.findOneAgent.roleId !== roleId) {
+        await deleteRole({ variables: { roleId } });
+
+        throw assignmentError;
+      }
     }
 
     setWorkflowAiAgentActionAgent((currentAgent) =>

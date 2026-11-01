@@ -3,7 +3,6 @@ import { PERMISSION_FLAG_UNIVERSAL_IDENTIFIER_BY_TYPE } from 'twenty-shared/cons
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
-// changes only the edited flag, so a flag this front end does not know stays in the scope
 export const applyWorkflowAiAgentScopePermissionFlagChange = ({
   scope,
   permissionFlagKey,

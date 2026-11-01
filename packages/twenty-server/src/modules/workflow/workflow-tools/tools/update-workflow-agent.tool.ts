@@ -89,7 +89,7 @@ Any other AI_AGENT step is configured with update_workflow_version_step: a step 
         (draftCoreVersion.steps ?? []).some(
           (step) =>
             step.type === WorkflowActionType.AI_AGENT &&
-            step.settings.input.agentId === agentId,
+            step.settings?.input?.agentId === agentId,
         ),
       );
 
