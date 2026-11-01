@@ -33,6 +33,7 @@ describe('buildApplicationFileList', () => {
         resourcePath: 'yarn.lock',
         fileFolder: FileFolder.Dependencies,
         isRequired: false,
+        shouldDeleteStoredFileWhenMissing: true,
       },
       {
         relativePath: 'manifest.json',
@@ -75,6 +76,7 @@ describe('buildApplicationFileList', () => {
       resourcePath: 'yarn.lock',
       fileFolder: FileFolder.Dependencies,
       isRequired: false,
+      shouldDeleteStoredFileWhenMissing: true,
     });
   });
 
