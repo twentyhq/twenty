@@ -1,10 +1,19 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import {
+  act,
+  fireEvent,
+  render,
+  screen,
+  waitFor,
+} from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { createStore, Provider } from 'jotai';
 import { type ReactNode } from 'react';
-import { type ProposedToolCall } from 'twenty-shared/ai';
+import {
+  PUBLISH_FRONT_COMPONENT_TOOL_NAME,
+  type ProposedToolCall,
+} from 'twenty-shared/ai';
 
 import { AiChatToolCallApprovalCard } from '@/ai/components/AiChatToolCallApprovalCard';
 
@@ -12,6 +21,11 @@ type RecordFieldsStubProps = {
   values: Record<string, unknown>;
   onChange: (fieldName: string, value: unknown) => void;
 };
+
+const refreshFrontComponents = jest.fn();
+jest.mock('@/ai/hooks/useRefreshFrontComponents', () => ({
+  useRefreshFrontComponents: () => ({ refreshFrontComponents }),
+}));
 
 const answerAgentChatToolCall = jest.fn();
 jest.mock('@/ai/hooks/useAnswerAgentChatToolCall', () => ({
@@ -56,6 +70,7 @@ const renderCard = (proposal: ProposedToolCall = PROPOSAL) =>
 describe('AiChatToolCallApprovalCard', () => {
   beforeEach(() => {
     answerAgentChatToolCall.mockReset();
+    refreshFrontComponents.mockReset();
   });
 
   it('shows what the call does and which tool it runs', () => {
@@ -226,4 +241,68 @@ describe('AiChatToolCallApprovalCard', () => {
       },
     });
   });
+  it('keeps the component revision read-only and refreshes after approval completes', async () => {
+    const user = userEvent.setup();
+    let completeApproval: (answered: boolean) => void = () => {};
+    answerAgentChatToolCall.mockReturnValue(
+      new Promise<boolean>((resolve) => {
+        completeApproval = resolve;
+      }),
+    );
+    const argumentsToApprove = {
+      draftId: 'approved-draft',
+      checksum: 'a'.repeat(64),
+    };
+    renderCard({
+      ...PROPOSAL,
+      toolName: PUBLISH_FRONT_COMPONENT_TOOL_NAME,
+      toolLabel: 'Save component',
+      summary: 'Save Renewals as a dashboard component',
+      arguments: argumentsToApprove,
+      areArgumentsEditable: false,
+    });
+
+    expect(screen.getByRole('textbox', { name: 'Arguments' })).toBeDisabled();
+    await user.click(screen.getByRole('button', { name: 'Approve' }));
+    expect(answerAgentChatToolCall).toHaveBeenCalledWith(
+      expect.objectContaining({
+        response: { decision: 'approve', arguments: argumentsToApprove },
+      }),
+    );
+    expect(refreshFrontComponents).not.toHaveBeenCalled();
+    await act(async () => completeApproval(true));
+    await waitFor(() =>
+      expect(refreshFrontComponents).toHaveBeenCalledTimes(1),
+    );
+  });
+
+  it.each([
+    {
+      toolName: PUBLISH_FRONT_COMPONENT_TOOL_NAME,
+      decision: 'Reject',
+      isAnswered: true,
+    },
+    {
+      toolName: PUBLISH_FRONT_COMPONENT_TOOL_NAME,
+      decision: 'Approve',
+      isAnswered: false,
+    },
+    { toolName: 'http_request', decision: 'Approve', isAnswered: true },
+  ])(
+    'does not refresh for $toolName / $decision / $isAnswered',
+    async ({ toolName, decision, isAnswered }) => {
+      const user = userEvent.setup();
+      let completeAnswer: (answered: boolean) => void = () => {};
+      answerAgentChatToolCall.mockReturnValue(
+        new Promise<boolean>((resolve) => {
+          completeAnswer = resolve;
+        }),
+      );
+      renderCard({ ...PROPOSAL, toolName });
+      await user.click(screen.getByRole('button', { name: decision }));
+      await act(async () => completeAnswer(isAnswered));
+      expect(answerAgentChatToolCall).toHaveBeenCalledTimes(1);
+      expect(refreshFrontComponents).not.toHaveBeenCalled();
+    },
+  );
 });
