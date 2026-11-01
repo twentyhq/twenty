@@ -10,9 +10,8 @@ import { type PrivateRecordState } from 'src/engine/permissions/private-record/t
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { type EventRecordAccessGate } from 'src/engine/permissions/combine/types/event-record-access-gate.type';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
-import { evaluateRowAccessPolicy } from 'src/engine/permissions/combine/utils/evaluate-row-access-policy.util';
+import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
 import { resolveEventRecordSnapshots } from 'src/engine/permissions/combine/utils/resolve-event-record-snapshots.util';
-import { buildRowAccessPolicy } from 'src/engine/permissions/combine/utils/build-row-access-policy.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
@@ -111,21 +110,17 @@ export class RecordAccessPolicyService {
           'flatFieldMetadataMapsOrm',
           'featureFlagsMap',
         ]);
-        return evaluateRowAccessPolicy({
-          policy: buildRowAccessPolicy({
-            subject,
-            environment: {
-              flatObjectMetadataMaps,
-              flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
-              featureFlagsMap,
-            },
-            tableAlias: objectMetadata.nameSingular,
-            flatObjectMetadata: objectMetadata,
-            operationType: 'select',
-          }),
+        return findPermissionsAdmittedRecordIds({
+          subject,
+          environment: {
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
+            featureFlagsMap,
+          },
+          flatObjectMetadata: objectMetadata,
+          operationType: 'select',
           records: resolveEventRecordSnapshots(events),
           context: {
-            flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
             shouldIgnoreSoftDeleteDefaultFilter: true,
             fetchRecordShares,
             findPrivateRecordStates,

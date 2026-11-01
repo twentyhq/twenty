@@ -1,6 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { ThemeProvider } from 'twenty-ui/theme';
-import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
+import {
+  type ExtendedUIMessagePart,
+  PREVIEW_FRONT_COMPONENT_TOOL_NAME,
+} from 'twenty-shared/ai';
 
 import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
 
@@ -34,6 +37,15 @@ jest.mock('@/ai/components/AiChatToolWidget', () => ({
   AiChatToolWidget: ({ toolPart }: { toolPart: { type: string } }) => (
     <div data-testid="tool-widget">{toolPart.type}</div>
   ),
+}));
+
+jest.mock('@/ai/components/AiChatFrontComponentToolPreview', () => ({
+  AiChatFrontComponentToolPreview: () => <div>Component preview</div>,
+}));
+
+let mockIsFrontComponentPreviewEnabled = true;
+jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: () => mockIsFrontComponentPreviewEnabled,
 }));
 
 const APP_FRONT_COMPONENT_ID = '20202020-0000-4000-8000-000000000001';
@@ -71,7 +83,55 @@ const renderAssistantRenderer = (
 };
 
 describe('AiChatAssistantMessageRenderer', () => {
+  it.each([PREVIEW_FRONT_COMPONENT_TOOL_NAME, 'execute_tool'])(
+    'renders %s previews outside the thinking steps',
+    (toolName) => {
+      const messageParts: ExtendedUIMessagePart[] = [
+        {
+          type: `tool-${toolName}`,
+          toolCallId: 'preview-call',
+          state: 'output-available',
+          input:
+            toolName === 'execute_tool'
+              ? { toolName: PREVIEW_FRONT_COMPONENT_TOOL_NAME, arguments: {} }
+              : {},
+          output: { success: true, result: { draftId: 'draft' } },
+        },
+      ];
+      renderAssistantRenderer(messageParts);
+      expect(screen.getByText('Component preview')).toBeInTheDocument();
+      expect(
+        screen.queryByTestId('thinking-steps-display'),
+      ).not.toBeInTheDocument();
+    },
+  );
+
+  it.each([PREVIEW_FRONT_COMPONENT_TOOL_NAME, 'execute_tool'])(
+    'keeps completed %s calls visible when previews are disabled',
+    (toolName) => {
+      mockIsFrontComponentPreviewEnabled = false;
+      const messageParts: ExtendedUIMessagePart[] = [
+        {
+          type: `tool-${toolName}`,
+          toolCallId: 'preview-call',
+          state: 'output-available',
+          input:
+            toolName === 'execute_tool'
+              ? { toolName: PREVIEW_FRONT_COMPONENT_TOOL_NAME, arguments: {} }
+              : {},
+          output: { success: true, result: { draftId: 'draft' } },
+        },
+      ];
+      renderAssistantRenderer(messageParts);
+      expect(screen.queryByText('Component preview')).not.toBeInTheDocument();
+      expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
+        'thinking-1',
+      );
+    },
+  );
+
   beforeEach(() => {
+    mockIsFrontComponentPreviewEnabled = true;
     mockUseFrontComponentIdByToolName.mockReturnValue(new Map());
   });
 
