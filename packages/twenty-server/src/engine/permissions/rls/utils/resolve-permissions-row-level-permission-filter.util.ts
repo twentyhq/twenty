@@ -37,7 +37,7 @@ export const resolvePermissionsRowLevelPermissionFilter = ({
   });
 
   // A filter whose predicates all cancel out restricts nothing
-  if (condition === null) {
+  if (!isDefined(condition)) {
     return undefined;
   }
 
