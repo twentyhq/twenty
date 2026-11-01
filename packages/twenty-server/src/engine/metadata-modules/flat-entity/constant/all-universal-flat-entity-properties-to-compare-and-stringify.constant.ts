@@ -53,18 +53,17 @@ const computeUniversalFlatEntityPropertiesToCompareAndStringify = <
   };
 
   for (const [property, configuration] of entries) {
-    if (!configuration.toCompare) {
-      continue;
+    const universalProperty = configuration.universalProperty ?? property;
+
+    if (configuration.toCompare) {
+      accumulator.propertiesToCompare.push(
+        universalProperty as MetadataUniversalFlatEntityPropertiesToCompare<T>,
+      );
     }
 
-    const comparedProperty = configuration.universalProperty ?? property;
-
-    accumulator.propertiesToCompare.push(
-      comparedProperty as MetadataUniversalFlatEntityPropertiesToCompare<T>,
-    );
     if (configuration.toStringify === true) {
       accumulator.propertiesToStringify.push(
-        comparedProperty as MetadataUniversalFlatEntityPropertiesToStringify<T>,
+        universalProperty as MetadataUniversalFlatEntityPropertiesToStringify<T>,
       );
     }
   }
@@ -80,6 +79,8 @@ export const ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY =
         computeUniversalFlatEntityPropertiesToCompareAndStringify(metadataName),
     }),
     {} as {
-      [P in AllMetadataName]: UniversalFlatEntityPropertiesToCompareAndStringify<P>;
+      [
+        P in AllMetadataName
+      ]: UniversalFlatEntityPropertiesToCompareAndStringify<P>;
     },
   );

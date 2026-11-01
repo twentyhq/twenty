@@ -82,7 +82,6 @@ export const SettingsAdminUpgradeStatusListCard = ({
   return (
     <SettingsListCard<UpgradeStatusRow>
       items={items}
-      rounded={true}
       RowIconFn={(item) => ROW_ICON_BY_KIND[item.kind]}
       getItemLabel={(item) => item.label}
       RowRightComponent={SettingsAdminUpgradeStatusRightContainer}

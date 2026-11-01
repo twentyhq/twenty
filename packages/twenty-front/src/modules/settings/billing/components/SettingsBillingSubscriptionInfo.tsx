@@ -5,6 +5,7 @@ import { SettingsBillingSubscriptionInfoCard } from '@/settings/billing/componen
 import { SettingsBillingSubscriptionInfoCardHeaderActions } from '@/settings/billing/components/internal/SettingsBillingSubscriptionInfoCardHeaderActions';
 import { SettingsBillingSubscriptionInfoModals } from '@/settings/billing/components/internal/SettingsBillingSubscriptionInfoModals';
 import { BILLING_MODAL_IDS } from '@/settings/billing/constants/BillingModalIds';
+import { SETTINGS_BILLING_PERSONAL_AI_USAGE_COMPARISON_ROW } from '@/settings/billing/constants/SettingsBillingPersonalAiUsageComparisonRow';
 import { useApplyBillingSubscriptionChange } from '@/settings/billing/hooks/useApplyBillingSubscriptionChange';
 import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
 import { useBillingSubscriptionChangeWording } from '@/settings/billing/hooks/useBillingSubscriptionChangeWording';
@@ -20,6 +21,7 @@ import { useNextInterval } from '@/settings/billing/hooks/useNextInterval';
 import { useNextPlan } from '@/settings/billing/hooks/useNextPlan';
 import { useSplitPhaseItemsInPrices } from '@/settings/billing/hooks/useSplitPhaseItemsInPrices';
 import { billingHasPaymentMethodSelector } from '@/settings/billing/states/billingHasPaymentMethodSelector';
+import { isSendInvoiceBillingSubscription } from '@/settings/billing/utils/isSendInvoiceBillingSubscription';
 import { isSubscriptionPaymentOverdue } from '@/settings/billing/utils/isSubscriptionPaymentOverdue';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
@@ -27,14 +29,19 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { useMutation } from '@apollo/client/react';
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
-import { IconClockPlay, IconCoins, IconTag } from 'twenty-ui/icon';
 import {
-  BillingPlanKey,
+  IconClockPlay,
+  IconCoins,
+  IconSparkles,
+  IconTag,
+} from 'twenty-ui/icon';
+import {
   CancelSwitchResourceCreditPriceDocument,
   PermissionFlagType,
   SubscriptionInterval,
@@ -59,7 +66,7 @@ export const SettingsBillingSubscriptionInfo = ({
   onUpdatePayment: () => void;
   isUpdatePaymentDisabled: boolean;
 }) => {
-  const { t } = useLingui();
+  const { i18n, t } = useLingui();
   const { formatNumber } = useNumberFormat();
 
   const { openDialog } = useDialog();
@@ -68,13 +75,16 @@ export const SettingsBillingSubscriptionInfo = ({
 
   const { applyCurrentWorkspaceBillingUpdate } =
     useApplyCurrentWorkspaceBillingUpdate();
-  const { refetchResourceCreditUsage } = useGetResourceCreditUsage();
+  const {
+    refetchResourceCreditUsage,
+    isGetResourceCreditUsageQueryLoaded,
+    getResourceCreditUsage,
+  } = useGetResourceCreditUsage();
 
   const { currentResourceCreditBillingPrice } = useCurrentResourceCredit();
 
   const { currentPlan } = useCurrentPlan();
-  const { isEnterprisePlan, isYearlyPlan, isMonthlyPlan, isProPlan } =
-    useCurrentBillingFlags();
+  const { isYearlyPlan, isMonthlyPlan } = useCurrentBillingFlags();
   const { splitedPhaseItemsInPrices } = useSplitPhaseItemsInPrices();
 
   const { nextBillingPhase } = useNextBillingPhase();
@@ -183,26 +193,28 @@ export const SettingsBillingSubscriptionInfo = ({
     ? t`End date`
     : t`Renewal date`;
 
+  const isSendInvoice = isSendInvoiceBillingSubscription(
+    currentBillingSubscription.collectionMethod,
+  );
+
   const subscriptionDescription =
     isCancellationScheduled && isDefined(scheduledCancellationDateLabel)
       ? t`Your subscription is scheduled to end on ${scheduledCancellationDateLabel}. You will keep access until then`
       : isDefined(totalRenewDate)
-        ? t`Next charge ${totalRenewDate}. Invoice amount may vary if you add members or credits between periods`
+        ? isSendInvoice
+          ? t`Next invoice ${totalRenewDate}. Invoice amount may vary if you add members or credits between periods`
+          : t`Next charge ${totalRenewDate}. Invoice amount may vary if you add members or credits between periods`
         : t`Invoice amount may vary if you add members or credits between periods`;
 
-  const planLabel =
-    currentPlan.planKey === BillingPlanKey.PRO
-      ? t`Pro plan`
-      : t`Organization plan`;
-  const planName =
-    currentPlan.planKey === BillingPlanKey.PRO
-      ? t`pro plan`
-      : t`organization plan`;
+  const billingPlanLabel = getBillingPlanLabel(currentPlan.planKey);
+  const planLabel = t`${billingPlanLabel} plan`;
   const intervalUnit =
     currentInterval === SubscriptionInterval.Month ? t`month` : t`year`;
-  const startSubscriptionSubtitle = isDefined(perSeatPriceDisplay)
-    ? t`We will activate your $${perSeatPriceDisplay}/user/${intervalUnit} ${planName}. Do you want to proceed?`
-    : t`We will activate your ${planName}. Do you want to proceed?`;
+  const startSubscriptionSubtitle = isSendInvoice
+    ? t`We will activate your ${planLabel} and email your invoice now. Do you want to proceed?`
+    : isDefined(perSeatPriceDisplay)
+      ? t`We will activate your $${perSeatPriceDisplay}/user/${intervalUnit} ${planLabel}. Do you want to proceed?`
+      : t`We will activate your ${planLabel}. Do you want to proceed?`;
 
   const statusDescriptor = (() => {
     if (isCancellationScheduled) {
@@ -250,8 +262,13 @@ export const SettingsBillingSubscriptionInfo = ({
   const creditsSubtotalValue = isDefined(creditsSubtotalDisplay)
     ? `$${creditsSubtotalDisplay}`
     : '-';
-  const creditsSubtotalDetails = isDefined(currentCreditsByPeriod)
-    ? t`(${formatNumber(currentCreditsByPeriod, { decimals: 2 })} credits)`
+  const currentCreditsByPeriodDisplay = isDefined(currentCreditsByPeriod)
+    ? formatNumber(currentCreditsByPeriod, { decimals: 2 })
+    : undefined;
+  const creditsSubtotalDetails = isDefined(currentCreditsByPeriodDisplay)
+    ? currentInterval === SubscriptionInterval.Month
+      ? t`(${currentCreditsByPeriodDisplay} credits/month)`
+      : t`(${currentCreditsByPeriodDisplay} credits/year)`
     : undefined;
   const totalValue = isDefined(totalDisplay) ? `$${totalDisplay}` : '-';
   const totalIntervalSubtitle = isDefined(totalDisplay)
@@ -273,9 +290,11 @@ export const SettingsBillingSubscriptionInfo = ({
     !shouldUpdatePayment &&
     isYearlyPlan &&
     (!nextInterval || currentInterval === nextInterval);
+  const hasPlanUpgrade = isNonEmptyArray(currentPlan.upgradePlanKeys);
+  const hasPlanSwitch =
+    hasPlanUpgrade || isNonEmptyArray(currentPlan.downgradePlanKeys);
   const canComparePlans =
-    (isProPlan || isEnterprisePlan) &&
-    (!nextPlan || currentPlan.planKey === nextPlan.planKey);
+    hasPlanSwitch && (!nextPlan || currentPlan.planKey === nextPlan.planKey);
   const canCancelIntervalSwitch =
     isDefined(nextInterval) && currentInterval !== nextInterval;
   const canStartSubscription = isTrialPeriod && hasPermissionToEndTrialPeriod;
@@ -316,6 +335,52 @@ export const SettingsBillingSubscriptionInfo = ({
         ]
       : []),
   ];
+
+  const personalAiUsageCell =
+    SETTINGS_BILLING_PERSONAL_AI_USAGE_COMPARISON_ROW.plans[
+      currentPlan.planKey
+    ];
+
+  const resourceCreditUsage = isGetResourceCreditUsageQueryLoaded
+    ? getResourceCreditUsage()
+    : undefined;
+  const workspaceCreditsPerSeatPerMonth =
+    isDefined(resourceCreditUsage) &&
+    resourceCreditUsage.workspaceCreditsSeats > 0
+      ? resourceCreditUsage.workspaceCreditsGrantedForSeats /
+        resourceCreditUsage.workspaceCreditsSeats /
+        (currentInterval === SubscriptionInterval.Year ? 12 : 1)
+      : 0;
+  const workspaceCreditsPerSeatPerMonthDisplay = formatNumber(
+    workspaceCreditsPerSeatPerMonth,
+    { decimals: 2 },
+  );
+
+  const includedPerSeatItems = [
+    ...(currentBillingSubscription.hasUserCredits &&
+    personalAiUsageCell.kind === 'text'
+      ? [
+          {
+            Icon: IconSparkles,
+            label: t`Personal AI usage`,
+            value: i18n._(personalAiUsageCell.text),
+          },
+        ]
+      : []),
+    ...(workspaceCreditsPerSeatPerMonth > 0
+      ? [
+          {
+            Icon: IconCoins,
+            label: t`Workspace credits`,
+            value: plural(workspaceCreditsPerSeatPerMonth, {
+              one: `${workspaceCreditsPerSeatPerMonthDisplay} credit/month`,
+              other: `${workspaceCreditsPerSeatPerMonthDisplay} credits/month`,
+            }),
+          },
+        ]
+      : []),
+  ];
+
   const [isCancellingMeteredSwitch, setIsCancellingMeteredSwitch] =
     useState(false);
 
@@ -354,9 +419,9 @@ export const SettingsBillingSubscriptionInfo = ({
     try {
       await action();
 
-      enqueueToast({ variant: 'success', children: getSuccessMessage() });
+      enqueueToast({ status: 'success', children: getSuccessMessage() });
     } catch (error) {
-      enqueueToast({ variant: 'error', children: getErrorMessage() });
+      enqueueToast({ status: 'error', children: getErrorMessage() });
 
       if (!CombinedGraphQLErrors.is(error)) {
         throw error;
@@ -405,7 +470,7 @@ export const SettingsBillingSubscriptionInfo = ({
             canCancelPlanSwitch={canCancelPlanSwitch}
             canComparePlans={canComparePlans}
             canStartSubscription={canStartSubscription}
-            isComparePlansActionPrimary={isProPlan && !isTrialPeriod}
+            isComparePlansActionPrimary={hasPlanUpgrade && !isTrialPeriod}
             isCancellationScheduled={isCancellationScheduled}
             isEndTrialPeriodDisabled={
               isEndTrialPeriodLoading || isAnyActionLoading
@@ -427,6 +492,7 @@ export const SettingsBillingSubscriptionInfo = ({
             shouldUpdatePayment={shouldUpdatePayment}
           />
         }
+        includedPerSeatItems={includedPerSeatItems}
         isSubscriptionActionDisabled={isSubscriptionActionDisabled}
         onSwitchToMonthly={() =>
           openDialog(BILLING_MODAL_IDS.switchBillingIntervalToMonthly)

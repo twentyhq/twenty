@@ -184,7 +184,7 @@ export const useSaveLayoutCustomization = () => {
 
       if (hasAnyFailure) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Some layout changes could not be saved`,
         });
         return;
@@ -194,7 +194,7 @@ export const useSaveLayoutCustomization = () => {
     } catch (error) {
       logError(error);
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to save layout customization`,
       });
     } finally {

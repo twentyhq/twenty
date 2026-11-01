@@ -80,6 +80,7 @@ export const useToggleRecordSelection = (recordIndexId?: string) => {
 
         store.set(recordSelectionRange, {
           anchorRecordId: range.anchorRecordId,
+          headRecordId: recordId,
           addedRecordIds,
         });
 
@@ -91,7 +92,13 @@ export const useToggleRecordSelection = (recordIndexId?: string) => {
       store.set(isRecordSelectedFamilyState(recordId), isSelected);
       store.set(
         recordSelectionRange,
-        isSelected ? { anchorRecordId: recordId, addedRecordIds: [] } : null,
+        isSelected
+          ? {
+              anchorRecordId: recordId,
+              headRecordId: recordId,
+              addedRecordIds: [],
+            }
+          : null,
       );
     },
     [

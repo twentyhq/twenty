@@ -69,7 +69,7 @@ export const ObjectAndLoadBalanceSelection: Story = {
 
     await userEvent.click(canvas.getByRole('button', { name: 'Random' }));
     await userEvent.click(
-      await screen.findByRole('button', { name: 'Load balanced' }),
+      await screen.findByRole('option', { name: 'Load balanced' }),
     );
 
     expect(await canvas.findByText('Balance by')).toBeVisible();

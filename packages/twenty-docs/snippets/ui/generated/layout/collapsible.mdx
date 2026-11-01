@@ -11,26 +11,94 @@
  *   npx nx generate:ui twenty-docs
  */}
 
-<ParamField body="animationDurations" type="AnimationDurations" default="default">
-  Default theme timing or separate opacity and size durations in seconds.
+### Collapsible.Root
+
+<ParamField body="Root.className" type="string | ((state: CollapsibleRootState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
 </ParamField>
 
-<ParamField body="children" type="ReactNode" required>
-  Content inside the expanding panel.
+<ParamField body="Root.defaultOpen" type="boolean" default="false">
+  Initial uncontrolled expansion state.
 </ParamField>
 
-<ParamField body="containAnimation" type="boolean" default="true">
+<ParamField body="Root.disabled" type="boolean" default="false">
+  Default disabled state inherited by the triggers in this root.
+</ParamField>
+
+<ParamField body="Root.onOpenChange" type="((open: boolean, eventDetails: CollapsibleRootChangeEventDetails) =&gt; void)">
+  Called with the requested open state and cancelable Base UI event details.
+</ParamField>
+
+<ParamField body="Root.open" type="boolean">
+  Controlled expansion state. Use defaultOpen for uncontrolled state.
+</ParamField>
+
+<ParamField body="Root.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, CollapsibleRootState&gt;">
+  Replaces the root div. Forward the supplied props and ref.
+</ParamField>
+
+<ParamField body="Root.style" type="CSSProperties | ((state: CollapsibleRootState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
+</ParamField>
+
+### Collapsible.Trigger
+
+<ParamField body="Trigger.className" type="string | ((state: CollapsibleTriggerState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
+</ParamField>
+
+<ParamField body="Trigger.disabled" type="boolean">
+  Disables this trigger.
+</ParamField>
+
+<ParamField body="Trigger.nativeButton" type="boolean" default="true">
+  Set to false when render replaces the native button with another element.
+</ParamField>
+
+<ParamField body="Trigger.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, CollapsibleTriggerState&gt;">
+  Replaces the linked trigger button. Forward the supplied props and ref.
+</ParamField>
+
+<ParamField body="Trigger.style" type="CSSProperties | ((state: CollapsibleTriggerState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
+</ParamField>
+
+### Collapsible.Panel
+
+<ParamField body="Panel.className" type="string | ((state: CollapsiblePanelState) =&gt; string | undefined)">
+  CSS class applied to the element, or a function that
+  returns a class based on the component's state.
+</ParamField>
+
+<ParamField body="Panel.containAnimation" type="boolean" default="true">
   Clips overflowing content during expansion and uses a column layout.
 </ParamField>
 
-<ParamField body="dimension" type="&quot;height&quot; | &quot;width&quot;" default="height">
+<ParamField body="Panel.dimension" type="&quot;height&quot; | &quot;width&quot;" default="height">
   Dimension animated when the panel opens and closes.
 </ParamField>
 
-<ParamField body="duration" type="&quot;fast&quot; | &quot;instant&quot; | &quot;normal&quot; | &quot;slow&quot;">
-  Theme timing preset for both opacity and size. Explicit `animationDurations` take precedence.
+<ParamField body="Panel.duration" type="&quot;fast&quot; | &quot;instant&quot; | &quot;normal&quot; | &quot;slow&quot;" default="normal">
+  Theme timing preset for both size and opacity. Native style can customize transition timing.
 </ParamField>
 
-<ParamField body="isExpanded" type="boolean" required>
-  Controlled visibility of the panel. The application owns the trigger and state.
+<ParamField body="Panel.hiddenUntilFound" type="boolean" default="false">
+  Uses hidden until-found so browser page search can reveal the contents. Overrides keepMounted.
+</ParamField>
+
+<ParamField body="Panel.keepMounted" type="boolean" default="false">
+  Keeps the closed panel mounted and hidden, preserving local content state.
+</ParamField>
+
+<ParamField body="Panel.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, CollapsiblePanelState&gt;">
+  Replaces the animated panel div. Forward the supplied props and ref.
+</ParamField>
+
+<ParamField body="Panel.style" type="CSSProperties | ((state: CollapsiblePanelState) =&gt; CSSProperties | undefined)">
+  Style applied to the element, or a function that
+  returns a style object based on the component's state.
 </ParamField>

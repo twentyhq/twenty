@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { type ValidationRuleBindings } from 'twenty-shared/types';
 import {
   Column,

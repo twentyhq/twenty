@@ -1,8 +1,10 @@
+import { type CalendarEventChannelRole } from 'src/modules/calendar/calendar-event-import-manager/types/calendar-event-channel-role.type';
 import { buildCalendarEventParticipantSaveOperations } from 'src/modules/calendar/calendar-event-participant-manager/utils/build-calendar-event-participant-save-operations.util';
 import { type CalendarEventParticipantWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event-participant.workspace-entity';
 import { type FetchedParticipantWithCalendarEventId } from 'src/modules/calendar/common/types/fetched-participant-with-calendar-event-id.type';
 
 const CALENDAR_EVENT_ID = 'calendar-event-id';
+const CHANNEL_HANDLE = 'owner@example.com';
 
 const buildFetchedParticipant = (
   overrides: Partial<FetchedParticipantWithCalendarEventId> = {},
@@ -30,12 +32,27 @@ const buildExistingParticipant = (
     ...overrides,
   }) as CalendarEventParticipantWorkspaceEntity;
 
+const buildOperations = ({
+  fetchedParticipants,
+  existingParticipants,
+  channelRole = 'ONLY_CHANNEL',
+}: {
+  fetchedParticipants: FetchedParticipantWithCalendarEventId[];
+  existingParticipants: CalendarEventParticipantWorkspaceEntity[];
+  channelRole?: CalendarEventChannelRole;
+}) =>
+  buildCalendarEventParticipantSaveOperations({
+    fetchedParticipants,
+    existingParticipants,
+    channelRoleByCalendarEventId: new Map([[CALENDAR_EVENT_ID, channelRole]]),
+    channelHandles: [CHANNEL_HANDLE],
+  });
+
 describe('buildCalendarEventParticipantSaveOperations', () => {
   it('skips existing participants whose fields did not change', () => {
-    const operations = buildCalendarEventParticipantSaveOperations({
+    const operations = buildOperations({
       fetchedParticipants: [buildFetchedParticipant()],
       existingParticipants: [buildExistingParticipant()],
-      shouldSkipUnchangedParticipants: true,
     });
 
     expect(operations).toEqual({
@@ -45,26 +62,10 @@ describe('buildCalendarEventParticipantSaveOperations', () => {
     });
   });
 
-  it('updates unchanged participants when skipping is disabled', () => {
-    const operations = buildCalendarEventParticipantSaveOperations({
-      fetchedParticipants: [buildFetchedParticipant()],
-      existingParticipants: [buildExistingParticipant()],
-      shouldSkipUnchangedParticipants: false,
-    });
-
-    expect(operations.participantsToUpdate).toEqual([
-      {
-        criteria: 'existing-participant-id',
-        partialEntity: buildFetchedParticipant(),
-      },
-    ]);
-  });
-
   it('treats a null persisted display name as equal to an empty fetched one', () => {
-    const operations = buildCalendarEventParticipantSaveOperations({
+    const operations = buildOperations({
       fetchedParticipants: [buildFetchedParticipant({ displayName: '' })],
       existingParticipants: [buildExistingParticipant({ displayName: null })],
-      shouldSkipUnchangedParticipants: true,
     });
 
     expect(operations.participantsToUpdate).toEqual([]);
@@ -77,10 +78,9 @@ describe('buildCalendarEventParticipantSaveOperations', () => {
   ])('updates the participant when %s changed', (_, fetchedOverrides) => {
     const fetchedParticipant = buildFetchedParticipant(fetchedOverrides);
 
-    const operations = buildCalendarEventParticipantSaveOperations({
+    const operations = buildOperations({
       fetchedParticipants: [fetchedParticipant],
       existingParticipants: [buildExistingParticipant()],
-      shouldSkipUnchangedParticipants: true,
     });
 
     expect(operations.participantsToUpdate).toEqual([
@@ -93,15 +93,14 @@ describe('buildCalendarEventParticipantSaveOperations', () => {
     expect(operations.participantIdsToDelete).toEqual([]);
   });
 
-  it('inserts new participants and deletes missing ones', () => {
+  it('inserts new participants and deletes missing ones when the event is only in this channel', () => {
     const newParticipant = buildFetchedParticipant({
       handle: 'jane@example.com',
     });
 
-    const operations = buildCalendarEventParticipantSaveOperations({
+    const operations = buildOperations({
       fetchedParticipants: [newParticipant],
       existingParticipants: [buildExistingParticipant()],
-      shouldSkipUnchangedParticipants: true,
     });
 
     expect(operations.participantsToInsert).toEqual([
@@ -112,4 +111,61 @@ describe('buildCalendarEventParticipantSaveOperations', () => {
       'existing-participant-id',
     ]);
   });
+
+  it.each<CalendarEventChannelRole>([
+    'ORGANIZER_CHANNEL',
+    'ATTENDEE_CHANNEL',
+    'ATTENDEE_CHANNEL_WITH_ORGANIZER_SYNCING',
+  ])(
+    'never deletes the attendees a shared event lists elsewhere as %s',
+    (channelRole) => {
+      const operations = buildOperations({
+        fetchedParticipants: [
+          buildFetchedParticipant({ handle: 'jane@example.com' }),
+        ],
+        existingParticipants: [buildExistingParticipant()],
+        channelRole,
+      });
+
+      expect(operations.participantsToInsert).toEqual([
+        expect.objectContaining({ handle: 'jane@example.com' }),
+      ]);
+      expect(operations.participantIdsToDelete).toEqual([]);
+    },
+  );
+
+  it.each<CalendarEventChannelRole>([
+    'ATTENDEE_CHANNEL',
+    'ATTENDEE_CHANNEL_WITH_ORGANIZER_SYNCING',
+  ])(
+    'lets an %s update only the answer of its own attendee, even back to no answer',
+    (channelRole) => {
+      const operations = buildOperations({
+        fetchedParticipants: [
+          buildFetchedParticipant({ responseStatus: 'DECLINED' }),
+          buildFetchedParticipant({
+            handle: CHANNEL_HANDLE,
+            responseStatus: 'NEEDS_ACTION',
+          }),
+        ],
+        existingParticipants: [
+          buildExistingParticipant(),
+          buildExistingParticipant({
+            id: 'channel-owner-participant-id',
+            handle: CHANNEL_HANDLE,
+          }),
+        ],
+        channelRole,
+      });
+
+      expect(operations.participantsToUpdate).toEqual([
+        {
+          criteria: 'channel-owner-participant-id',
+          partialEntity: expect.objectContaining({
+            responseStatus: 'NEEDS_ACTION',
+          }),
+        },
+      ]);
+    },
+  );
 });

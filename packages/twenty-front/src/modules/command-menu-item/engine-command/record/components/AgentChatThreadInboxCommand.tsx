@@ -1,59 +1,27 @@
-import { useAgentChatThreadParticipants } from '@/ai/hooks/useAgentChatThreadParticipants';
+import { useExecuteAgentChatThreadInboxAction } from '@/ai/hooks/useExecuteAgentChatThreadInboxAction';
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
-import { useOpenSnoozeAiChatInSidePanel } from '@/side-panel/hooks/useOpenSnoozeAiChatInSidePanel';
+import { type AgentChatInboxAction } from '~/generated-metadata/graphql';
 
 type AgentChatThreadInboxCommandProps = {
-  action:
-    | 'read'
-    | 'unread'
-    | 'done'
-    | 'reopen'
-    | 'snooze'
-    | 'subscribe'
-    | 'unsubscribe';
+  action: AgentChatInboxAction | 'assign';
 };
 
 export const AgentChatThreadInboxCommand = ({
   action,
 }: AgentChatThreadInboxCommandProps) => {
   const { selectedRecords } = useHeadlessCommandContextApi();
-  const {
-    markAgentChatThreadAsRead,
-    markAgentChatThreadAsUnread,
-    archiveAgentChatThread,
-    moveAgentChatThreadToInbox,
-    subscribeToAgentChatThread,
-    unsubscribeFromAgentChatThread,
-  } = useAgentChatThreadParticipants();
-  const { openSnoozeAiChatInSidePanel } = useOpenSnoozeAiChatInSidePanel();
+  const { executeAgentChatThreadInboxAction } =
+    useExecuteAgentChatThreadInboxAction();
 
-  const handleExecute = async () => {
-    const threadIds = selectedRecords.map(({ id }) => id);
-
-    if (threadIds.length === 0) {
-      return;
-    }
-
-    if (action === 'snooze') {
-      return openSnoozeAiChatInSidePanel(threadIds);
-    }
-
-    const updateThread = {
-      read: markAgentChatThreadAsRead,
-      unread: markAgentChatThreadAsUnread,
-      done: archiveAgentChatThread,
-      reopen: moveAgentChatThreadToInbox,
-      subscribe: subscribeToAgentChatThread,
-      unsubscribe: unsubscribeFromAgentChatThread,
-    }[action];
-
-    // One at a time: a failed update reloads every chat's state, which would
-    // undo the optimistic change of an update still on its way
-    for (const threadId of threadIds) {
-      await updateThread(threadId);
-    }
-  };
+  const handleExecute = () =>
+    executeAgentChatThreadInboxAction({
+      threadIds: selectedRecords.map(({ id }) => id),
+      action,
+      isInChannel: selectedRecords.every(
+        (record) => record.inboxStatus?.isChannelCopy ?? false,
+      ),
+    });
 
   return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;
 };

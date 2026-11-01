@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type ImportedRow } from '@/spreadsheet-import/types';
@@ -46,7 +47,7 @@ export const UserTableColumn = ({
     <StyledContainer>
       <StyledValue>{header}</StyledValue>
       {firstDefinedValue && (
-        <StyledExample>{`ex: ${firstDefinedValue}`}</StyledExample>
+        <StyledExample>{t`ex: ${firstDefinedValue}`}</StyledExample>
       )}
     </StyledContainer>
   );

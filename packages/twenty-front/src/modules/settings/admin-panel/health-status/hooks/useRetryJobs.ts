@@ -41,20 +41,20 @@ export const useRetryJobs = ({
 
         if (retriedCount === -1) {
           enqueueToast({
-            variant: 'success',
+            status: 'success',
             children: t`All failed jobs have been retried`,
           });
         } else if (retriedCount > 0) {
           if (failedResults.length > 0) {
             enqueueToast({
-              variant: 'success',
+              status: 'success',
               children: plural(retriedCount, {
                 one: `Successfully retried ${retriedCount} job`,
                 other: `Successfully retried ${retriedCount} jobs`,
               }),
             });
             enqueueToast({
-              variant: 'error',
+              status: 'error',
               children: plural(failedResults.length, {
                 one: `# job could not be retried`,
                 other: `# jobs could not be retried`,
@@ -62,7 +62,7 @@ export const useRetryJobs = ({
             });
           } else {
             enqueueToast({
-              variant: 'success',
+              status: 'success',
               children: plural(retriedCount, {
                 one: `Successfully retried ${retriedCount} job`,
                 other: `Successfully retried ${retriedCount} jobs`,
@@ -77,7 +77,7 @@ export const useRetryJobs = ({
             errorMessages.length > 0 ? `: ${errorMessages[0]}` : '';
 
           enqueueToast({
-            variant: 'error',
+            status: 'error',
             children: t`No jobs were retried${errorDetails}`,
           });
         }
@@ -86,7 +86,7 @@ export const useRetryJobs = ({
       }
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: CombinedGraphQLErrors.is(error)
           ? getErrorMessageFromApolloError(error)
           : t`Failed to retry jobs. Please try again later.`,

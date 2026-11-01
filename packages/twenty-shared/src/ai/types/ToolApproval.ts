@@ -5,4 +5,5 @@ import { type ProposedToolCallTemplate } from '@/ai/types/ProposedToolCallTempla
 export type ToolApproval = {
   template: ProposedToolCallTemplate;
   alternativeToolNames?: string[];
+  areArgumentsEditable?: boolean;
 };

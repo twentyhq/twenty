@@ -1,6 +1,7 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { getFieldMetadataItemGqlFieldName } from '@/object-metadata/utils/getFieldMetadataItemGqlFieldName';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -57,7 +58,7 @@ export const useProcessRecordGroupDrop = () => {
         !isDefined(destinationRecordGroup) ||
         !isDefined(recordIndexGroupFieldMetadataItem)
       ) {
-        throw new Error('Record group is not defined');
+        throw new Error(doNotTranslate('Record group is not defined'));
       }
 
       const updatedRecords = computeDroppedRecordPositions({

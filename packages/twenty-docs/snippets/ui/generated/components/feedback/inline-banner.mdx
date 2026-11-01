@@ -31,6 +31,10 @@
   Removes the standard bottom margin. Compact layouts have no bottom margin.
 </ParamField>
 
+<ParamField body="fullWidth" type="boolean" default="false">
+  Fills the available parent width, including padding and borders, and removes the compact layout's 512px maximum. Defaults to false; standard layout already fills its parent.
+</ParamField>
+
 <ParamField body="icon" type="ReactNode" default="decorative information icon">
   Leading ReactNode. Defaults to a decorative information icon. Pass null to omit it.
 </ParamField>
@@ -83,7 +87,7 @@
 </ParamField>
 
 <ParamField body="Action.href" type="string">
-  Destination URL. Enables native link semantics instead of button semantics.
+  Destination URL. Renders a native anchor when `render` is omitted unless `nativeButton` is explicitly true. Custom renderers retain their own element contract.
 </ParamField>
 
 <ParamField body="Action.loading" type="boolean">
@@ -94,8 +98,16 @@
   Where the loading indicator appears. `center` hides the content while preserving its layout space; `start` and `end` keep children and the opposite icon visible and replace the corresponding icon with the spinner.
 </ParamField>
 
+<ParamField body="Action.nativeButton" type="boolean" default="true">
+  Whether the rendered root is a native button. Defaults to true for custom renderers. The built-in `href` anchor defaults to false; an explicit value takes precedence.
+</ParamField>
+
 <ParamField body="Action.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, ButtonState&gt;">
-  Caller-supplied root element or renderer. Preserve a native button, or an anchor when `href` is set. Router integration belongs to the caller.
+  Caller-supplied root element or renderer. Native attributes, handlers, event details, and refs reach the rendered root. Use `nativeButton={false}` and `role="link"` for a custom navigation anchor. Router integration belongs to the caller.
+</ParamField>
+
+<ParamField body="Action.role" type="AriaRole">
+  Role of the root element. Use `link` for custom navigation renderers.
 </ParamField>
 
 <ParamField body="Action.shortcut" type="ShortcutDefinition">

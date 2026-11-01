@@ -37,5 +37,8 @@ const getTokenText = (token: Token): string => {
   return 'text' in token ? token.text : '';
 };
 
+export const getPlainTextFromMarkdownTokens = (tokens: Token[]): string =>
+  getTokensText(tokens).replace(/\s+/g, ' ').trim();
+
 export const getPlainTextFromMarkdown = (markdown: string): string =>
-  getTokensText(marked.lexer(markdown)).replace(/\s+/g, ' ').trim();
+  getPlainTextFromMarkdownTokens(marked.lexer(markdown));

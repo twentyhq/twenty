@@ -186,7 +186,9 @@ export class WorkflowVersionStepOperationsWorkspaceService {
 
     switch (type) {
       case WorkflowActionType.CODE: {
-        const logicFunctionId = id ?? v4();
+        // Step ids are shared across versions of a workflow and kept on a type
+        // change, so a logic function keyed on the step id could collide
+        const logicFunctionId = v4();
 
         const newLogicFunction =
           await this.codeStepBuildService.createCodeStepLogicFunction({
@@ -214,15 +216,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             type: WorkflowActionType.CODE,
             settings: {
               ...BASE_STEP_DEFINITION,
-              outputSchema: {
-                link: {
-                  isLeaf: true,
-                  icon: 'IconVariable',
-                  tab: 'test',
-                  label: 'Generate Function Output',
-                },
-                _outputSchemaType: 'LINK',
-              },
+              outputSchema: {},
               expectedOutputSchema: {},
               input: {
                 logicFunctionId: newLogicFunction.id,
@@ -277,15 +271,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           declaredOutputSchema,
         )
           ? inputSchemaToOutputSchema(declaredOutputSchema)
-          : {
-              link: {
-                isLeaf: true,
-                icon: 'IconVariable',
-                tab: 'test',
-                label: 'Generate Function Output',
-              },
-              _outputSchemaType: 'LINK',
-            };
+          : {};
 
         return {
           builtStep: {
@@ -950,26 +936,13 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           );
         }
 
-        const existingAgent = await this.agentService.findOneAgentById({
-          id: agentId,
-          workspaceId,
-        });
-
         const clonedStepId = v4();
 
-        const clonedAgent = await this.agentService.createOneAgent(
-          {
-            label: existingAgent.label + ' ' + clonedStepId.substring(0, 4),
-            icon: existingAgent.icon ?? undefined,
-            description: existingAgent.description ?? undefined,
-            prompt: existingAgent.prompt,
-            modelId: existingAgent.modelId,
-            responseFormat: existingAgent.responseFormat ?? undefined,
-            modelConfiguration: existingAgent.modelConfiguration ?? undefined,
-            isSystem: true,
-          },
+        const clonedAgent = await this.duplicateAgent({
+          agentId,
+          labelSuffix: clonedStepId.substring(0, 4),
           workspaceId,
-        );
+        });
 
         return {
           ...step,
@@ -1136,9 +1109,75 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           },
         };
       }
+      case WorkflowActionType.AI_AGENT: {
+        const agentId = step.settings.input.agentId;
+
+        if (!isDefined(agentId)) {
+          return step;
+        }
+
+        const newAgent = await this.duplicateAgent({
+          agentId,
+          labelSuffix: v4().substring(0, 4),
+          workspaceId,
+        });
+
+        const roleId = await this.aiAgentRoleService.findAgentRoleId({
+          agentId,
+          workspaceId,
+        });
+
+        if (isDefined(roleId)) {
+          await this.aiAgentRoleService.assignRoleToAgent({
+            agentId: newAgent.id,
+            roleId,
+            workspaceId,
+          });
+        }
+
+        return {
+          ...step,
+          settings: {
+            ...step.settings,
+            input: {
+              ...step.settings.input,
+              agentId: newAgent.id,
+            },
+          },
+        };
+      }
       default: {
         return step;
       }
     }
+  }
+
+  private async duplicateAgent({
+    agentId,
+    labelSuffix,
+    workspaceId,
+  }: {
+    agentId: string;
+    labelSuffix: string;
+    workspaceId: string;
+  }) {
+    const existingAgent = await this.agentService.findOneAgentById({
+      id: agentId,
+      workspaceId,
+    });
+
+    return this.agentService.createOneAgent(
+      {
+        label: existingAgent.label + ' ' + labelSuffix,
+        icon: existingAgent.icon ?? undefined,
+        description: existingAgent.description ?? undefined,
+        prompt: existingAgent.prompt,
+        modelId: existingAgent.modelId,
+        responseFormat: existingAgent.responseFormat ?? undefined,
+        modelConfiguration: existingAgent.modelConfiguration ?? undefined,
+        isSystem: true,
+      },
+      workspaceId,
+    );
   }
 }

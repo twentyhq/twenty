@@ -6,19 +6,9 @@ const INITIAL_VIEW = { id: 'initial-view-id', key: null };
 const USER_VIEW = { id: 'user-view-id', key: null };
 
 describe('computeViewPickerVisibleViews', () => {
-  it('keeps every view while the flag is off', () => {
-    const result = computeViewPickerVisibleViews({
-      views: [INDEX_VIEW, USER_VIEW],
-      isInitialObjectViewEnabled: false,
-    });
-
-    expect(result).toEqual([INDEX_VIEW, USER_VIEW]);
-  });
-
-  it('hides the index view once the flag is on', () => {
+  it('hides the index view', () => {
     const result = computeViewPickerVisibleViews({
       views: [INDEX_VIEW, INITIAL_VIEW, USER_VIEW],
-      isInitialObjectViewEnabled: true,
     });
 
     expect(result).toEqual([INITIAL_VIEW, USER_VIEW]);
@@ -28,7 +18,6 @@ describe('computeViewPickerVisibleViews', () => {
     const result = computeViewPickerVisibleViews({
       views: [INDEX_VIEW, INITIAL_VIEW],
       currentViewId: INDEX_VIEW.id,
-      isInitialObjectViewEnabled: true,
     });
 
     expect(result).toEqual([INDEX_VIEW, INITIAL_VIEW]);
@@ -37,7 +26,6 @@ describe('computeViewPickerVisibleViews', () => {
   it('keeps the index view when hiding it would leave no view at all', () => {
     const result = computeViewPickerVisibleViews({
       views: [INDEX_VIEW],
-      isInitialObjectViewEnabled: true,
     });
 
     expect(result).toEqual([INDEX_VIEW]);

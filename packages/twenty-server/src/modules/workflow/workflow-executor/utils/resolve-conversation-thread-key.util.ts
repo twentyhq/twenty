@@ -10,7 +10,7 @@ import {
   WorkflowStepExecutorExceptionCode,
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 
-// The thread key picks the conversation with the recipient. A custom key is
+// The thread key picks the conversation, shared by every recipient. A custom key is
 // prefixed so it never names the conversation of a run whose id it happens to equal.
 export const resolveConversationThreadKey = ({
   conversation,

@@ -43,6 +43,7 @@ describe('requestTeamsConnector', () => {
       {
         method: 'DELETE',
         headers: { authorization: `Bearer ${ACCESS_TOKEN}` },
+        signal: expect.any(AbortSignal),
       },
     );
   });
@@ -63,6 +64,7 @@ describe('requestTeamsConnector', () => {
         'content-type': 'application/json',
       },
       body: JSON.stringify({ type: 'message', text: 'Hello' }),
+      signal: expect.any(AbortSignal),
     });
   });
 

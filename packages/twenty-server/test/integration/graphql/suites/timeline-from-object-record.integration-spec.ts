@@ -60,8 +60,7 @@ const buildLegacyQuery = (
   queryName: string,
   idArgName: string,
   selection: string,
-): DocumentNode =>
-  gql`
+): DocumentNode => gql`
     query ${queryName}($id: UUID!, $page: Int!, $pageSize: Int!) {
       ${queryName}(${idArgName}: $id, page: $page, pageSize: $pageSize) {
         ${selection}

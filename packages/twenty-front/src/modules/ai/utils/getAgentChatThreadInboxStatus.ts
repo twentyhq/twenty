@@ -1,4 +1,5 @@
 import { isAfter } from 'date-fns';
+import { isAgentChatMentionUnresolved } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AgentChatThreadInboxStatus } from '@/ai/types/AgentChatThreadInboxStatus';
@@ -9,22 +10,38 @@ import { type AgentChatThreadParticipantFieldsFragment } from '~/generated-metad
 // thread back whichever write committed last. Snooze is an archive with a
 // wake-up time; the server unarchives the thread when it passes and keeps the
 // snooze as what brought it back. A member who unsubscribed keeps the thread
-// under done whatever happens in it.
+// under done whatever happens in it. A chat the member can open but does not
+// follow stays out of their inbox until they take part in it or file it, and
+// only has unread messages once they have opened it.
 export const getAgentChatThreadInboxStatus = ({
   lastActivityAt,
   participant,
 }: {
   lastActivityAt: string | null | undefined;
   participant: AgentChatThreadParticipantFieldsFragment | undefined;
-}): AgentChatThreadInboxStatus => {
+}): Omit<AgentChatThreadInboxStatus, 'isAssignedToMe' | 'isChannelCopy'> => {
   const isUnread =
     isDefined(lastActivityAt) &&
-    (!isDefined(participant?.lastReadAt) ||
+    isDefined(participant) &&
+    (!isDefined(participant.lastReadAt) ||
       isAfter(lastActivityAt, participant.lastReadAt));
-  const isSubscribed = participant?.isSubscribed ?? true;
-  const isMentioned = isDefined(participant?.lastMentionedAt);
+  const isSubscribed = participant?.isSubscribed ?? false;
+  const isMentioned = isAgentChatMentionUnresolved({
+    lastMentionedAt: participant?.lastMentionedAt,
+    mentionsResolvedAt: participant?.mentionsResolvedAt,
+  });
   const archivedAt = participant?.archivedAt;
   const snoozedUntil = participant?.snoozedUntil;
+
+  if (!isSubscribed && !isDefined(archivedAt)) {
+    return {
+      scope: 'NONE',
+      isUnread,
+      isSubscribed,
+      isMentioned,
+      event: null,
+    };
+  }
 
   if (!isSubscribed) {
     return {

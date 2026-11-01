@@ -14,7 +14,12 @@ import { sendSlackMessage } from 'src/logic-functions/utils/send-slack-message';
 export const slackDeliverMessageHandler = async (
   payload: SlackDeliverMessagePayload,
 ): Promise<SlackDeliverMessageResult> => {
-  const { attempt = 1, slackAssistantRequestId, ...message } = payload;
+  const {
+    attempt = 1,
+    slackAssistantRequestId,
+    agentChatThreadId,
+    ...message
+  } = payload;
 
   const result = await sendSlackMessage(message, {
     waitOutRateLimit: false,
@@ -25,6 +30,7 @@ export const slackDeliverMessageHandler = async (
       ? await markSlackAssistantRequestDone({
           requestId: slackAssistantRequestId,
           responseText: message.messageText,
+          agentChatThreadId,
         })
       : true;
 
@@ -55,6 +61,8 @@ export const slackDeliverMessageHandler = async (
       slackChannelId: message.slackChannelId,
       parentMessageTimestamp: message.parentMessageTimestamp,
       errorMessage: failureMessage,
+      responseText: message.messageText,
+      agentChatThreadId,
     });
   }
 

@@ -4,6 +4,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 export const fromFlatApplicationToApplicationDto = ({
   canBeUninstalled,
   autoUpgrade,
+  createdAt,
   description,
   id,
   logo,
@@ -21,6 +22,7 @@ export const fromFlatApplicationToApplicationDto = ({
   return {
     canBeUninstalled,
     autoUpgrade,
+    createdAt: new Date(createdAt),
     description: description ?? undefined,
     id,
     logo: logo ?? undefined,

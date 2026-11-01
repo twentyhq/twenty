@@ -1,13 +1,12 @@
 .trigger {
-  @include focus-ring;
-
   align-items: center;
   background: none;
   block-size: var(--t-spacing-8);
+  max-block-size: 100%;
   border: 0;
-  border-end-start-radius: var(--t-border-radius-xs);
+  border-end-start-radius: inherit;
   border-inline-end: 1px solid var(--t-border-color-medium);
-  border-start-start-radius: var(--t-border-radius-xs);
+  border-start-start-radius: inherit;
   color: var(--t-font-color-tertiary);
   cursor: pointer;
   display: inline-flex;
@@ -16,6 +15,12 @@
   padding-block: 0;
   padding-inline: var(--t-spacing-2) var(--t-spacing-1);
   user-select: none;
+
+  @include focus-ring;
+
+  &:focus-visible {
+    outline-offset: -2px;
+  }
 
   &:disabled,
   &[aria-disabled='true'] {
@@ -64,4 +69,14 @@
   overflow: hidden;
   position: absolute;
   white-space: nowrap;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 0;
+}
+
+.emptyStatus:empty {
+  display: none;
 }

@@ -20,6 +20,11 @@ const MUTATION_OBSERVER_OPTIONS: MutationObserverInit = {
   characterData: true,
 };
 
+const ROOT_ANCESTOR_MUTATION_OBSERVER_OPTIONS: MutationObserverInit = {
+  attributes: true,
+  attributeFilter: ['class', 'style', 'hidden'],
+};
+
 export const createGeometryWakeSources = (
   onWake: () => void,
 ): GeometryWakeSources => {
@@ -30,8 +35,10 @@ export const createGeometryWakeSources = (
     createInputMediaFeatureChangeObserver(onWake);
 
   let rootContainer: Element | null = null;
+  let portalLayer: Element | null = null;
   let resizeObserver: ResizeObserver | null = null;
   let mutationObserver: MutationObserver | null = null;
+  let rootAncestorMutationObserver: MutationObserver | null = null;
   let documentStyleObserver: MutationObserver | null = null;
   let areViewportSourcesAttached = false;
   let areElementSourcesAttached = false;
@@ -45,7 +52,11 @@ export const createGeometryWakeSources = (
       return false;
     }
 
-    return rootContainer.contains(target) || target.contains(rootContainer);
+    return (
+      rootContainer.contains(target) ||
+      target.contains(rootContainer) ||
+      (isDefined(portalLayer) && portalLayer.contains(target))
+    );
   };
 
   const handleAnimationEvent = (event: Event): void => {
@@ -67,6 +78,15 @@ export const createGeometryWakeSources = (
     onWake();
   };
 
+  const syncScrollListener = (): void => {
+    if (areElementSourcesAttached || isDefined(portalLayer)) {
+      document.addEventListener('scroll', handleScroll, true);
+      return;
+    }
+
+    document.removeEventListener('scroll', handleScroll, true);
+  };
+
   const resolveResizeObserver = (): ResizeObserver | null => {
     if (isDefined(resizeObserver) || typeof ResizeObserver !== 'function') {
       return resizeObserver;
@@ -84,6 +104,30 @@ export const createGeometryWakeSources = (
 
     mutationObserver = new MutationObserver(onWake);
     mutationObserver.observe(node, MUTATION_OBSERVER_OPTIONS);
+  };
+
+  const observeRootAncestorMutations = (node: Element): void => {
+    if (typeof MutationObserver !== 'function') {
+      return;
+    }
+
+    rootAncestorMutationObserver = new MutationObserver(onWake);
+
+    for (
+      let ancestor = node.parentElement;
+      isDefined(ancestor);
+      ancestor = ancestor.parentElement
+    ) {
+      rootAncestorMutationObserver.observe(
+        ancestor,
+        ROOT_ANCESTOR_MUTATION_OBSERVER_OPTIONS,
+      );
+    }
+  };
+
+  const disconnectRootAncestorMutations = (): void => {
+    rootAncestorMutationObserver?.disconnect();
+    rootAncestorMutationObserver = null;
   };
 
   const startObservingNode = (node: Element): void => {
@@ -148,8 +192,7 @@ export const createGeometryWakeSources = (
     }
 
     areElementSourcesAttached = true;
-
-    document.addEventListener('scroll', handleScroll, true);
+    syncScrollListener();
 
     for (const eventType of ANIMATION_EVENT_TYPES) {
       document.addEventListener(eventType, handleAnimationEvent, true);
@@ -166,8 +209,7 @@ export const createGeometryWakeSources = (
     }
 
     areElementSourcesAttached = false;
-
-    document.removeEventListener('scroll', handleScroll, true);
+    syncScrollListener();
 
     for (const eventType of ANIMATION_EVENT_TYPES) {
       document.removeEventListener(eventType, handleAnimationEvent, true);
@@ -180,6 +222,32 @@ export const createGeometryWakeSources = (
       resizeObserver?.unobserve(node);
     }
     resizeObservedNodes.clear();
+  };
+
+  const attachPortalLayerSources = (nextPortalLayer: Element): void => {
+    const wasPortalLayerAttached = isDefined(portalLayer);
+
+    portalLayer = nextPortalLayer;
+
+    if (wasPortalLayerAttached) {
+      return;
+    }
+
+    syncScrollListener();
+
+    if (isDefined(rootContainer)) {
+      observeRootAncestorMutations(rootContainer);
+    }
+  };
+
+  const detachPortalLayerSources = (): void => {
+    if (!isDefined(portalLayer)) {
+      return;
+    }
+
+    portalLayer = null;
+    syncScrollListener();
+    disconnectRootAncestorMutations();
   };
 
   const detachAllSources = (): void => {
@@ -205,6 +273,7 @@ export const createGeometryWakeSources = (
 
     mutationObserver?.disconnect();
     mutationObserver = null;
+    disconnectRootAncestorMutations();
 
     rootContainer = node;
 
@@ -219,12 +288,18 @@ export const createGeometryWakeSources = (
     if (areElementSourcesAttached) {
       observeRootMutations(node);
     }
+
+    if (isDefined(portalLayer)) {
+      observeRootAncestorMutations(node);
+    }
   };
 
   return {
     attachViewportSources,
     attachElementSources,
     detachElementSources,
+    attachPortalLayerSources,
+    detachPortalLayerSources,
     detachAllSources,
     setRoot,
     startObservingNode,

@@ -1,5 +1,6 @@
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -29,6 +30,7 @@ const createFlatLogicFunction = (
 const generateDescriptors = async (
   logicFunctions: FlatLogicFunction[],
   application?: FlatApplication,
+  authContext?: WorkspaceAuthContext,
 ) => {
   const flatLogicFunctionMaps =
     createEmptyFlatEntityMaps() as FlatEntityMaps<FlatLogicFunction>;
@@ -66,8 +68,8 @@ const generateDescriptors = async (
   return (await provider.generateDescriptors(
     {
       workspaceId,
-      roleId,
-      rolePermissionConfig: { unionOf: [roleId] },
+      rolePermissionConfig: { intersectionOf: { userWorkspaceRoleId: roleId } },
+      authContext,
       application,
     },
     { includeSchemas: false },
@@ -169,6 +171,36 @@ describe('LogicFunctionToolProvider', () => {
     expect(descriptors.map(({ name }) => name)).toEqual([
       'app_first_tool',
       'app_second_tool',
+    ]);
+  });
+
+  it('should expose every application tool to the workspace custom application', async () => {
+    const descriptors = await generateDescriptors(
+      [
+        createFlatLogicFunction({
+          name: 'own-tool',
+          applicationId: 'workspace-custom-application-id',
+        }),
+        createFlatLogicFunction({
+          name: 'installed-tool',
+          applicationId: 'installed-application-id',
+        }),
+      ],
+      {
+        id: 'workspace-custom-application-id',
+        universalIdentifier: 'workspace-custom-application-id',
+        sourceType: ApplicationRegistrationSourceType.LOCAL,
+      } as FlatApplication,
+      {
+        workspace: {
+          workspaceCustomApplicationId: 'workspace-custom-application-id',
+        },
+      } as WorkspaceAuthContext,
+    );
+
+    expect(descriptors.map(({ name }) => name)).toEqual([
+      'app_own_tool',
+      'app_installed_tool',
     ]);
   });
 });

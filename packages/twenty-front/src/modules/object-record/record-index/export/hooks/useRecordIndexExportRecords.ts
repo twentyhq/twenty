@@ -1,122 +1,20 @@
-import { json2csv } from 'json-2-csv';
-import { useMemo } from 'react';
+import { useCallback } from 'react';
 
-import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
+import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
+import { useStore } from 'jotai';
 import { EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE } from '@/object-record/object-options-dropdown/constants/ExportTableDataDefaultPageSize';
-import { useExportProcessRecordsForCSV } from '@/object-record/object-options-dropdown/hooks/useExportProcessRecordsForCSV';
-import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import {
   useRecordIndexLazyFetchRecords,
   type UseRecordDataOptions,
 } from '@/object-record/record-index/export/hooks/useRecordIndexLazyFetchRecords';
-import { type ColumnDefinition } from '@/object-record/record-table/types/ColumnDefinition';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { csvDownloader } from '@/object-record/record-index/export/utils/csvDownloader';
 import { t } from '@lingui/core/macro';
-import { saveAs } from 'file-saver';
-import { COMPOSITE_FIELD_SUB_FIELD_LABELS } from 'twenty-shared/constants';
-import {
-  formatValueForCSV,
-  isDefined,
-  sanitizeValueForCSVExport,
-} from 'twenty-shared/utils';
-import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
-
-type GenerateExportOptions = {
-  columns: Pick<
-    ColumnDefinition<FieldMetadata>,
-    'label' | 'type' | 'metadata'
-  >[];
-  rows: Record<string, any>[];
-};
-
-type GenerateExport = (data: GenerateExportOptions) => string;
+import { isDefined } from 'twenty-shared/utils';
 
 type ExportProgress = {
   exportedRecordCount?: number;
   totalRecordCount?: number;
   displayType: 'percentage' | 'number';
-};
-
-export const generateCsv: GenerateExport = ({
-  columns,
-  rows,
-}: GenerateExportOptions): string => {
-  const columnsToExport = columns.filter(
-    (col) =>
-      !('relationType' in col.metadata && col.metadata.relationType) ||
-      col.metadata.relationType === RelationType.MANY_TO_ONE,
-  );
-
-  const objectIdColumn: ColumnDefinition<FieldMetadata> = {
-    fieldMetadataId: '',
-    type: FieldMetadataType.UUID,
-    iconName: '',
-    label: `Id`,
-    metadata: {
-      fieldName: 'id',
-    },
-    position: 0,
-    size: 0,
-  };
-
-  const columnsToExportWithIdColumn = [objectIdColumn, ...columnsToExport];
-
-  const keys = columnsToExportWithIdColumn.flatMap((col) => {
-    const headerLabel = `${col.label}${col.type === 'RELATION' ? ' Id' : ''}`;
-    const column = {
-      field: `${col.metadata.fieldName}${col.type === 'RELATION' ? 'Id' : ''}`,
-      title: formatValueForCSV(sanitizeValueForCSVExport(headerLabel)),
-    };
-
-    const columnType = col.type;
-    if (!isCompositeFieldType(columnType)) return [column];
-
-    const nestedFieldsWithoutTypename = Object.keys(rows[0][column.field])
-      .filter((key) => key !== '__typename')
-      .map((key) => {
-        const subFieldLabel = COMPOSITE_FIELD_SUB_FIELD_LABELS[columnType][key];
-        return {
-          field: `${column.field}.${key}`,
-          title: formatValueForCSV(
-            sanitizeValueForCSVExport(`${column.title} / ${subFieldLabel}`),
-          ),
-        };
-      });
-
-    return nestedFieldsWithoutTypename;
-  });
-
-  const sanitizedRows = rows.map((row) => {
-    const sanitizedRow: Record<string, any> = {};
-
-    for (const [key, value] of Object.entries(row)) {
-      if (typeof value === 'string') {
-        sanitizedRow[key] = sanitizeValueForCSVExport(value);
-      } else if (isDefined(value) && typeof value === 'object') {
-        sanitizedRow[key] = {};
-        for (const [nestedKey, nestedValue] of Object.entries(value)) {
-          if (typeof nestedValue === 'string') {
-            sanitizedRow[key][nestedKey] =
-              sanitizeValueForCSVExport(nestedValue);
-          } else {
-            sanitizedRow[key][nestedKey] = nestedValue;
-          }
-        }
-      } else {
-        sanitizedRow[key] = value;
-      }
-    }
-
-    return sanitizedRow;
-  });
-
-  return json2csv(sanitizedRows, {
-    keys,
-    emptyFieldValue: '',
-    excelBOM: true,
-    // Note: We handle CSV injection prevention manually with ZWJ approach above
-    // This preserves original which the csvSecurity option does not do
-  });
 };
 
 const percentage = (part: number, whole: number): number => {
@@ -143,15 +41,6 @@ export const displayedExportProgress = (progress?: ExportProgress): string => {
   return t`Export (${exportedCount})`;
 };
 
-const downloader = (mimeType: string, generator: GenerateExport) => {
-  return (filename: string, data: GenerateExportOptions) => {
-    const blob = new Blob([generator(data)], { type: mimeType });
-    saveAs(blob, filename);
-  };
-};
-
-export const csvDownloader = downloader('text/csv', generateCsv);
-
 type UseExportTableDataOptions = Omit<UseRecordDataOptions, 'callback'> & {
   filename: string;
 };
@@ -164,25 +53,19 @@ export const useRecordIndexExportRecords = ({
   pageSize = EXPORT_TABLE_DATA_DEFAULT_PAGE_SIZE,
   recordIndexId,
   viewType,
+  onMoreRecords,
+  abortSignal,
 }: UseExportTableDataOptions) => {
-  const { processRecordsForCSVExport } = useExportProcessRecordsForCSV(
-    objectMetadataItem.nameSingular,
-  );
+  const store = useStore();
 
-  const downloadCsv = useMemo(
-    () =>
-      (
-        records: ObjectRecord[],
-        columns: Pick<
-          ColumnDefinition<FieldMetadata>,
-          'label' | 'type' | 'metadata'
-        >[],
-      ) => {
-        const recordsProcessedForExport = processRecordsForCSVExport(records);
-
-        csvDownloader(filename, { rows: recordsProcessedForExport, columns });
-      },
-    [filename, processRecordsForCSVExport],
+  const downloadCsv = useCallback<UseRecordDataOptions['callback']>(
+    ({ rows, columns }) => {
+      const objectMetadataItems = store.get(
+        objectMetadataItemsWithFieldsSelector.atom,
+      );
+      csvDownloader({ filename, rows, columns, objectMetadataItems });
+    },
+    [filename, store],
   );
 
   const { getTableData: download, progress } = useRecordIndexLazyFetchRecords({
@@ -193,6 +76,8 @@ export const useRecordIndexExportRecords = ({
     recordIndexId,
     callback: downloadCsv,
     viewType,
+    onMoreRecords,
+    abortSignal,
   });
 
   return { progress, download };

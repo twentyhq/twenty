@@ -1,4 +1,4 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { AppMenuItemIcon } from '@/applications/components/AppMenuItemIcon';
 import { useApplicationChipData } from '@/applications/hooks/useApplicationChipData';
 import { type ReactNode } from 'react';
@@ -25,7 +25,7 @@ export const AppMenuItem = ({
   });
 
   return (
-    <ListItem
+    <ListItemButton
       startIcon={<AppMenuItemIcon applicationId={applicationId} />}
       description={applicationChipData.name}
       onClick={onClick}
@@ -34,6 +34,6 @@ export const AppMenuItem = ({
       endIcon={RightComponent}
     >
       {text}
-    </ListItem>
+    </ListItemButton>
   );
 };

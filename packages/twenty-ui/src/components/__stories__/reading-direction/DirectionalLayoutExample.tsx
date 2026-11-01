@@ -1,12 +1,9 @@
+import { type CSSProperties } from 'react';
+
 import { AvatarGroup, Callout, JsonTree } from '@ui/components';
-import { Avatar, Pill } from '@ui/primitives/data-display';
-import {
-  Button,
-  ButtonGroup,
-  Radio,
-  RadioGroup,
-  SegmentedControl,
-} from '@ui/primitives/input';
+import { SegmentedControl } from '@ui/components/input/SegmentedControl/SegmentedControl';
+import { Avatar, Badge } from '@ui/primitives/data-display';
+import { Button, ButtonGroup, Radio, RadioGroup } from '@ui/primitives/input';
 import { ListItem } from '@ui/primitives/navigation';
 import { Text } from '@ui/primitives/typography';
 
@@ -14,8 +11,10 @@ import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/Direc
 
 export const DirectionalLayoutExample = ({
   direction,
+  style,
 }: {
   direction: 'ltr' | 'rtl';
+  style?: CSSProperties;
 }) => {
   return (
     <DirectionProvider direction={direction}>
@@ -29,11 +28,12 @@ export const DirectionalLayoutExample = ({
           padding: 20,
           background: 'var(--t-background-primary)',
           color: 'var(--t-font-color-primary)',
+          ...style,
         }}
       >
         <Text>{direction.toUpperCase()}</Text>
         <Callout
-          variant="info"
+          status="info"
           title="Account details"
           description="Review the information before continuing."
         />
@@ -63,7 +63,7 @@ export const DirectionalLayoutExample = ({
             }}
           >
             Upcoming action
-            <Pill label="Soon" />
+            <Badge>Soon</Badge>
           </Text>
         </Button>
         <SegmentedControl
@@ -85,7 +85,7 @@ export const DirectionalLayoutExample = ({
               avatars={['Ada', 'Bea', 'Cam'].map((name) => (
                 <Avatar key={name} name={name} size="lg" />
               ))}
-              overflowCount={2}
+              total={5}
             />
           </div>
         ))}

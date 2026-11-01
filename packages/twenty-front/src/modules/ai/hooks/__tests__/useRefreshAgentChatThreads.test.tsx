@@ -6,9 +6,8 @@ import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThread
 import { agentChatThreadListState } from '@/ai/states/agentChatThreadListState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
 import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
-import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
 import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
-import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
+import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
 import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -150,9 +149,11 @@ describe('useRefreshAgentChatThreads', () => {
       snoozedUntil: null,
       isSubscribed: true,
       lastMentionedAt: null,
+      mentionsResolvedAt: null,
       updatedAt,
     });
     const streamedParticipant = {
+      __typename: 'AgentChatThreadParticipant' as const,
       id: 'thread-2-member-id',
       threadId: 'thread-2',
       lastReadAt: null,
@@ -160,6 +161,7 @@ describe('useRefreshAgentChatThreads', () => {
       snoozedUntil: null,
       isSubscribed: true,
       lastMentionedAt: null,
+      mentionsResolvedAt: null,
       updatedAt: '2026-10-01T10:05:00.000Z',
     };
     store.set(agentChatThreadStreamedParticipantsState.atom, {
@@ -212,6 +214,7 @@ describe('useRefreshAgentChatThreads', () => {
 
     expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({
       'thread-1': {
+        __typename: 'AgentChatThreadParticipant' as const,
         id: 'thread-1-member-id',
         threadId: 'thread-1',
         lastReadAt: '2026-10-01T10:00:00.000Z',
@@ -219,37 +222,13 @@ describe('useRefreshAgentChatThreads', () => {
         snoozedUntil: null,
         isSubscribed: true,
         lastMentionedAt: null,
+        mentionsResolvedAt: null,
         updatedAt: '2026-10-01T10:00:00.000Z',
       },
       'thread-2': streamedParticipant,
     });
     expect(store.get(agentChatThreadsSelector.atom)[0]).not.toHaveProperty(
       'participants',
-    );
-  });
-
-  it('orders by last change on a workspace the 2.46 upgrade has not reached', async () => {
-    const store = buildStore();
-    store.set(chatObjectMetadataItemAtom, {
-      id: 'chat-object',
-      nameSingular: 'agentChatThread',
-      namePlural: 'agentChatThreads',
-      fields: [{ name: 'title' }],
-      readableFields: [{ name: 'title' }],
-    });
-    queryMock.mockResolvedValue(buildPage([buildThread('thread-1', 'Chat')]));
-    const result = renderRefresh(store);
-
-    await act(async () => {
-      await result.current.refreshAgentChatThreads();
-    });
-
-    expect(queryMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        variables: expect.objectContaining({
-          orderBy: [{ updatedAt: 'DescNullsLast' }],
-        }),
-      }),
     );
   });
 
@@ -489,10 +468,7 @@ describe('useRefreshAgentChatThreads', () => {
 
     expect(
       store.get(
-        agentChatUsageComponentFamilyState.atomFamily({
-          instanceId: AGENT_CHAT_INSTANCE_ID,
-          familyKey: { threadId: 'old-thread' },
-        }),
+        agentChatUsageFamilyState.atomFamily({ threadId: 'old-thread' }),
       ),
     ).toMatchObject({ inputTokens: 42 });
   });

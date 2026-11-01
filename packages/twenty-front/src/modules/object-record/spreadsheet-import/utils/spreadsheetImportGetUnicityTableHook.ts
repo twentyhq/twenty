@@ -10,6 +10,7 @@ import {
   type SpreadsheetImportTableHook,
 } from '@/spreadsheet-import/types';
 import { isNonEmptyString } from '@sniptt/guards';
+import { t } from '@lingui/core/macro';
 import { type FieldLinksVariant, FieldMetadataType } from 'twenty-shared/types';
 import {
   getUniqueConstraintsFields,
@@ -86,7 +87,7 @@ export const spreadsheetImportGetUnicityTableHook = (
       duplicateIndices.forEach((duplicateIndex) => {
         uniqueConstraint.forEach(({ columnName }) => {
           addError(duplicateIndex, columnName, {
-            message: `This ${columnName} value already exists in your import data`,
+            message: t`This ${columnName} value already exists in your import data`,
             level: 'error',
           });
         });

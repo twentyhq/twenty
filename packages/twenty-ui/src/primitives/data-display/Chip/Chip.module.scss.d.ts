@@ -1,7 +1,6 @@
 declare const classNames: {
   readonly chip: 'chip';
-  readonly content: 'content';
-  readonly emptyLabel: 'emptyLabel';
+  readonly label: 'label';
   readonly endElementDivider: 'endElementDivider';
 };
 export default classNames;

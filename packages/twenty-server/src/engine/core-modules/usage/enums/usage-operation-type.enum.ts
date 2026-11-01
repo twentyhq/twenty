@@ -9,9 +9,12 @@ export enum UsageOperationType {
   WORKFLOW_EXECUTION = 'WORKFLOW_EXECUTION',
   CODE_EXECUTION = 'CODE_EXECUTION',
   WEB_SEARCH = 'WEB_SEARCH',
+  AI_WORKFLOW_WEB_SEARCH = 'AI_WORKFLOW_WEB_SEARCH',
   CALL_RECORDING = 'CALL_RECORDING',
   EMAIL_SEND = 'EMAIL_SEND',
   MESSAGE_CAMPAIGN_SEND = 'MESSAGE_CAMPAIGN_SEND',
+  // Charged by apps through chargeCredits when they name no platform category
+  APP_OPERATION = 'APP_OPERATION',
   // Out of twenty-shared's USAGE_OPERATION_TYPES: the API rate limit reads it, so an app billing under it would spend the request budget.
   API_REQUEST = 'API_REQUEST',
   WEBHOOK_CALL = 'WEBHOOK_CALL',

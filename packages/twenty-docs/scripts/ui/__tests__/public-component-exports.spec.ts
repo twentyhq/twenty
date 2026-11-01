@@ -69,6 +69,28 @@ describe('public component documentation coverage', () => {
     ).toEqual(['Action', 'Menu']);
   });
 
+  it('finds a preserved upstream component namespace through public re-exports', () => {
+    const { checker, getEntryPoint } = createFixtureProgram({
+      'upstream-parts.d.ts': `
+        export declare const Root: (props: { value: number | null }) => null;
+        export declare const Indicator: () => null;
+        export type Status = 'progressing' | 'complete' | 'indeterminate';
+      `,
+      'upstream.d.ts': "export * as Progress from './upstream-parts';",
+      'Progress.tsx': "export { Progress } from './upstream';",
+      'index.ts': "export { Progress } from './Progress';",
+    });
+
+    expect(
+      getPublicComponentExports({
+        checker,
+        entryPoints: [
+          getEntryPoint('twenty-ui/primitives/feedback', 'index.ts'),
+        ],
+      }).map(({ name }) => name),
+    ).toEqual(['Progress']);
+  });
+
   it('keeps every entry point exporting a component whatever their order', () => {
     const { checker, getEntryPoint } = createFixtureProgram({
       'IconCheck.tsx': 'export const IconCheck = () => null;',

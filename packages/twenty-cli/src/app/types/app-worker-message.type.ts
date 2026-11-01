@@ -5,6 +5,7 @@ export type AppWorkerRequest =
   | { type: 'generateSourceClient'; appPath: string; schema: string }
   | { type: 'readSourceIdentity'; appPath: string }
   | { type: 'buildManifest'; appPath: string }
+  | { type: 'extractTranslations'; appPath: string; locale?: string }
   | { type: 'typecheckSource'; appPath: string }
   | {
       type: 'bundleSnapshot';

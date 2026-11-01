@@ -43,9 +43,9 @@ export const SearchPreservesCurrencyCallback: Story = {
     expect(await body.findByText('No results')).toBeVisible();
     await userEvent.clear(search);
     await userEvent.type(search, 'euro');
-    const euro = await body.findByRole('button', { name: 'Euro (EUR)' });
+    const euro = await body.findByRole('option', { name: 'Euro (EUR)' });
     expect(
-      body.queryByRole('button', { pressed: true }),
+      body.queryByRole('option', { selected: true }),
     ).not.toBeInTheDocument();
     await waitFor(() => expect(euro).toHaveAttribute('data-highlighted'));
     await userEvent.keyboard('{Enter}');
@@ -64,8 +64,8 @@ export const SearchPreservesCurrencyCallback: Story = {
       '',
     );
     expect(
-      await body.findByRole('button', { name: 'Euro (EUR)' }),
-    ).toHaveAttribute('aria-pressed', 'true');
+      await body.findByRole('option', { name: 'Euro (EUR)' }),
+    ).toHaveAttribute('aria-selected', 'true');
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(trigger).toHaveFocus());
   },
@@ -118,14 +118,14 @@ export const IndependentInstances: Story = {
       '',
     );
     expect(
-      await body.findByRole('button', { name: 'Euro (EUR)' }),
-    ).toHaveAttribute('aria-pressed', 'true');
+      await body.findByRole('option', { name: 'Euro (EUR)' }),
+    ).toHaveAttribute('aria-selected', 'true');
     await userEvent.type(
       body.getByRole('searchbox', { name: 'Search' }),
       'gbp',
     );
     await userEvent.click(
-      await body.findByRole('button', { name: /\(GBP\)$/ }),
+      await body.findByRole('option', { name: /\(GBP\)$/ }),
     );
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
@@ -148,7 +148,7 @@ export const UnknownCurrencyUsesDisplayFallback: Story = {
     const dialog = await body.findByRole('dialog', { name: 'Currency' });
     await waitFor(() => expect(dialog).toBeVisible());
     expect(
-      body.queryByRole('button', { pressed: true }),
+      body.queryByRole('option', { selected: true }),
     ).not.toBeInTheDocument();
     const search = await body.findByRole('searchbox', { name: 'Search' });
 
@@ -160,7 +160,7 @@ export const UnknownCurrencyUsesDisplayFallback: Story = {
 
     await userEvent.type(search, 'usd');
     await userEvent.click(
-      await body.findByRole('button', { name: /\(USD\)$/ }),
+      await body.findByRole('option', { name: /\(USD\)$/ }),
     );
     await waitFor(() =>
       expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
@@ -169,9 +169,52 @@ export const UnknownCurrencyUsesDisplayFallback: Story = {
     expect(onCurrencyChange).toHaveBeenCalledWith('USD');
     await userEvent.click(trigger);
     expect(
-      await body.findByRole('button', { name: /\(USD\)$/ }),
-    ).toHaveAttribute('aria-pressed', 'true');
+      await body.findByRole('option', { name: /\(USD\)$/ }),
+    ).toHaveAttribute('aria-selected', 'true');
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(trigger).toHaveFocus());
+  },
+};
+
+export const ExternalValueUpdates: Story = {
+  render: ({ onChange }) => (
+    <CurrencyPickerDropdownButtonExample
+      selectedCurrencyCode="USD"
+      onChange={onChange}
+      showExternalUpdates
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = canvas.getByRole('button', { name: 'Currency: USD' });
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Use EUR' }));
+    expect(trigger).toHaveAccessibleName('Currency: EUR');
+    await userEvent.click(trigger);
+    expect(
+      await body.findByRole('option', { name: 'Euro (EUR)' }),
+    ).toHaveAttribute('aria-selected', 'true');
+    await userEvent.keyboard('{Escape}');
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Clear currency' }),
+    );
+    expect(trigger).toHaveAccessibleName('Currency: USD');
+    expect(canvas.getByRole('status')).toHaveTextContent(
+      'Stored currency: empty',
+    );
+    await userEvent.click(trigger);
+    expect(body.queryByRole('option', { selected: true })).toBeNull();
+    await userEvent.keyboard('{Escape}');
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Use unknown currency' }),
+    );
+    expect(trigger).toHaveAccessibleName('Currency: USD');
+    expect(canvas.getByRole('status')).toHaveTextContent(
+      'Stored currency: UNKNOWN',
+    );
+    expect(onCurrencyChange).not.toHaveBeenCalled();
   },
 };

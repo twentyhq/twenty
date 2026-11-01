@@ -1,4 +1,5 @@
-import { playgroundApiKeyState } from '@/settings/mcp-and-apis/states/playgroundApiKeyState';
+import { getMockedDateWithOffset } from '~/testing/utils/getMockedDateWithOffset';
+import { playgroundApiKeyState } from '@/settings/developers/states/playgroundApiKeyState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { action } from 'storybook/actions';
@@ -20,7 +21,7 @@ const meta: Meta<typeof SettingsGraphQLPlayground> = {
     (Story) => {
       jotaiStore.set(playgroundApiKeyState.atom, {
         token: 'test-api-key',
-        expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+        expiresAt: getMockedDateWithOffset({ hours: 1 }),
       });
       return <Story />;
     },

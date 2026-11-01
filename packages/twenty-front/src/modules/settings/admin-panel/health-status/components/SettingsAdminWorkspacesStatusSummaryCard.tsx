@@ -13,8 +13,8 @@ import {
   IconStatusChange,
   IconX,
 } from 'twenty-ui/icon';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
-import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
+import { formatDateTimeString } from '@/object-record/record-field/ui/utils/formatDateTimeString';
 
 type SettingsAdminWorkspacesStatusSummaryCardProps = {
   behindCount: number;

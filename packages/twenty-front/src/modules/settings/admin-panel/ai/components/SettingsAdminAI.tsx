@@ -1,4 +1,3 @@
-import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { useMemo, useState } from 'react';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
@@ -8,7 +7,6 @@ import { t } from '@lingui/core/macro';
 import { AI_MODEL_TIERS, type AiModelTier } from 'twenty-shared/ai';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { IconMessage } from 'twenty-ui/icon';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -26,7 +24,7 @@ import { useCustomAiProviderAccess } from '@/settings/admin-panel/ai/hooks/useCu
 import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
 import { parseProviderItems } from '@/settings/admin-panel/ai/utils/parseProviderItems';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
-import { AiModelPinSelect } from '@/settings/ai/components/AiModelPinSelect';
+import { AiModelPinSelect } from '@/ai/components/AiModelPinSelect';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { StyledSettingsSelectGroup } from '@/settings/components/SettingsOptions/StyledSettingsSelectGroup';
@@ -47,7 +45,7 @@ import {
   type AdminAiModelTierDefault,
   AiModelTier as GraphqlAiModelTier,
 } from '~/generated-admin/graphql';
-import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
+import { OrganizationAdornment } from '@/settings/enterprise/components/OrganizationAdornment';
 
 const USAGE_TABLE_GRID_TEMPLATE_COLUMNS = '1fr 120px';
 
@@ -153,7 +151,7 @@ export const SettingsAdminAI = () => {
       await refetchClientConfig();
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to update default model`,
       });
     }
@@ -177,7 +175,7 @@ export const SettingsAdminAI = () => {
         <Section.Header
           title={t`Custom Providers`}
           description={t`Add custom endpoints, private gateways, or additional regions.`}
-          adornment={
+          actions={
             <OrganizationAdornment
               tooltipContent={customAiProviderTooltipContent}
             />
@@ -205,7 +203,7 @@ export const SettingsAdminAI = () => {
             description={t`The model behind each mode for every workspace. Workspaces can pin their own.`}
           />
 
-          <Card.Root rounded>
+          <Card.Root>
             <StyledSettingsSelectGroup controlWidth={260}>
               {AI_MODEL_TIERS.map((tier, index) => (
                 <SettingsOptionCardContentSelect
@@ -238,22 +236,9 @@ export const SettingsAdminAI = () => {
 
       <Section.Root>
         <Section.Header
-          title={t`Chats`}
-          description={t`Browse AI chat threads across all workspaces, including onboarding chats`}
-        />
-        <NavigationButton
-          to={getSettingsPath(SettingsPath.AdminPanelChats)}
-          startIcon={<IconMessage />}
-          size="sm"
-          variant="outline"
-        >{t`View all chats`}</NavigationButton>
-      </Section.Root>
-
-      <Section.Root>
-        <Section.Header
           title={t`AI Usage by Workspace`}
           description={t`AI consumption across all workspaces.`}
-          adornment={
+          actions={
             hasEnterpriseAccess ? (
               <Select
                 dropdownId="admin-ai-usage-period"
@@ -293,7 +278,7 @@ export const SettingsAdminAI = () => {
               ))}
             </Table>
           ) : (
-            <Card.Root rounded>
+            <Card.Root>
               <TableRow gridTemplateColumns="1fr">
                 <TableCell
                   color={themeCssVariables.font.color.tertiary}

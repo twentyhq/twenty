@@ -53,8 +53,10 @@ const resolveNode = (
   }
 
   if (node.type === TIPTAP_NODE_TYPES.TEXT && typeof node.text === 'string') {
-    const resolvedNode = transformEmailDocumentStrings(node, (value, context) =>
-      context === 'text' ? value : resolve(value, context),
+    const resolvedNode = transformEmailDocumentStrings(
+      node,
+      (value, context) =>
+        context === 'text' ? value : resolve(value, context),
     );
 
     return textToInlineNodes(resolve(node.text, 'text'), resolvedNode.marks);

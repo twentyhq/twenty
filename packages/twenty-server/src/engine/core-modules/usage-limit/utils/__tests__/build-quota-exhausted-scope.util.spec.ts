@@ -1,5 +1,6 @@
-import { type AllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/allowance-quota-counter.type';
+import { type WorkspaceAllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/workspace-allowance-quota-counter.type';
 import { type LimitQuotaCounter } from 'src/engine/core-modules/usage-limit/types/limit-quota-counter.type';
+import { type UserAllowanceQuotaCounter } from 'src/engine/core-modules/usage-limit/types/user-allowance-quota-counter.type';
 import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-quota-exhausted-scope.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
@@ -23,16 +24,34 @@ const buildLimitCounter = (
   periodEnd: PERIOD_END,
   spenderType: 'userWorkspace',
   spenderId: 'user-1',
-  operationType: UsageOperationType.AI_CHAT_TOKEN,
+  operationTypes: [UsageOperationType.AI_CHAT_TOKEN],
   ...overrides,
 });
 
-const allowanceCounter: AllowanceQuotaCounter = {
-  kind: 'allowance',
+const workspaceAllowanceCounter: WorkspaceAllowanceQuotaCounter = {
+  kind: 'workspaceAllowance',
   key: 'allowance-key',
+  limitValue: 2_000_000,
   unit: UsageUnit.CREDIT,
   periodStart: PERIOD_START,
   periodEnd: PERIOD_END,
+};
+
+const USER_ALLOWANCE_PERIOD_END = new Date('2026-08-25T00:00:00.000Z');
+
+const userAllowanceCounter: UserAllowanceQuotaCounter = {
+  kind: 'userAllowance',
+  key: 'user-allowance-key',
+  limitValue: 3_000_000,
+  unit: UsageUnit.USER_CREDIT,
+  resourceType: UsageResourceType.AI,
+  operationTypes: [UsageOperationType.ALL],
+  periodUnit: 'week',
+  isDefault: true,
+  spenderType: 'userWorkspace',
+  spenderId: 'user-workspace-1',
+  periodStart: new Date('2026-07-25T00:00:00.000Z'),
+  periodEnd: USER_ALLOWANCE_PERIOD_END,
 };
 
 describe('buildQuotaExhaustedScope', () => {
@@ -48,8 +67,8 @@ describe('buildQuotaExhaustedScope', () => {
     expect(
       buildQuotaExhaustedScope({
         resourceType: UsageResourceType.AI,
+        operationType: UsageOperationType.AI_CHAT_TOKEN,
         counter: buildLimitCounter(),
-        allowance: null,
       }),
     ).toEqual({
       resourceType: UsageResourceType.AI,
@@ -68,12 +87,30 @@ describe('buildQuotaExhaustedScope', () => {
     });
   });
 
+  it('names every resource when the exhausted limit spans them all', () => {
+    expect(
+      buildQuotaExhaustedScope({
+        resourceType: UsageResourceType.AI,
+        operationType: UsageOperationType.AI_CHAT_TOKEN,
+        counter: buildLimitCounter({
+          resourceType: UsageResourceType.ALL,
+          operationTypes: [UsageOperationType.ALL],
+          spenderType: 'application',
+          spenderId: 'application-1',
+        }),
+      }),
+    ).toMatchObject({
+      resourceType: UsageResourceType.ALL,
+      operationType: UsageOperationType.ALL,
+    });
+  });
+
   it('marks a scope built from a default counter', () => {
     expect(
       buildQuotaExhaustedScope({
         resourceType: UsageResourceType.AI,
+        operationType: UsageOperationType.AI_CHAT_TOKEN,
         counter: buildLimitCounter({ isDefault: true }),
-        allowance: null,
       }),
     ).toMatchObject({ exhaustedKind: 'limit', isDefault: true });
   });
@@ -82,18 +119,13 @@ describe('buildQuotaExhaustedScope', () => {
     expect(
       buildQuotaExhaustedScope({
         resourceType: UsageResourceType.AI,
-        counter: allowanceCounter,
-        allowance: {
-          periodStart: PERIOD_START,
-          periodEnd: PERIOD_END,
-          allowanceMicro: 2_000_000,
-          validUntil: PERIOD_END,
-        },
+        operationType: UsageOperationType.AI_CHAT_TOKEN,
+        counter: workspaceAllowanceCounter,
       }),
     ).toEqual({
       resourceType: UsageResourceType.AI,
       limitKind: 'quota',
-      exhaustedKind: 'allowance',
+      exhaustedKind: 'workspaceAllowance',
       spenderType: 'workspace',
       spenderId: null,
       operationType: UsageOperationType.ALL,
@@ -106,25 +138,54 @@ describe('buildQuotaExhaustedScope', () => {
     });
   });
 
-  it('reports a zero allowance when it is gone since the counter was read', () => {
+  it('scopes an exhausted user allowance counter to the member until the week ends', () => {
     expect(
       buildQuotaExhaustedScope({
         resourceType: UsageResourceType.AI,
-        counter: allowanceCounter,
-        allowance: null,
+        operationType: UsageOperationType.AI_CHAT_TOKEN,
+        counter: userAllowanceCounter,
       }),
-    ).toMatchObject({ exhaustedKind: 'allowance', limitValue: 0 });
+    ).toEqual({
+      resourceType: UsageResourceType.AI,
+      limitKind: 'quota',
+      exhaustedKind: 'userAllowance',
+      spenderType: 'userWorkspace',
+      spenderId: 'user-workspace-1',
+      operationType: UsageOperationType.ALL,
+      unit: UsageUnit.USER_CREDIT,
+      limitValue: 3_000_000,
+      remaining: 0,
+      periodCount: 1,
+      periodUnit: 'week',
+      retryAfterMs: USER_ALLOWANCE_PERIOD_END.getTime() - NOW.getTime(),
+      isDefault: true,
+    });
   });
 
   it('clamps the retry delay to zero once the period has ended', () => {
     expect(
       buildQuotaExhaustedScope({
         resourceType: UsageResourceType.AI,
+        operationType: UsageOperationType.AI_CHAT_TOKEN,
         counter: buildLimitCounter({
           periodEnd: new Date('2026-08-10T00:00:00.000Z'),
         }),
-        allowance: null,
       }),
     ).toMatchObject({ retryAfterMs: 0 });
+  });
+
+  it('reports the charge operation for a counter over several operations', () => {
+    expect(
+      buildQuotaExhaustedScope({
+        resourceType: UsageResourceType.AI,
+        operationType: UsageOperationType.WEB_SEARCH,
+        counter: buildLimitCounter({
+          operationTypes: [
+            UsageOperationType.AI_CHAT_TOKEN,
+            UsageOperationType.WEB_SEARCH,
+          ],
+        }),
+      }),
+    ).toMatchObject({ operationType: UsageOperationType.WEB_SEARCH });
   });
 });

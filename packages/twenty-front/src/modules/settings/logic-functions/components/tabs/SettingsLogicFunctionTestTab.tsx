@@ -96,7 +96,11 @@ export const SettingsLogicFunctionTestTab = ({
     triggerButtons.push({ kind: 'tool', label: t`AI tool`, Icon: IconTool });
   }
 
-  const onChange = (value: string) => {
+  const onChange = (value: string | undefined) => {
+    if (!isDefined(value)) {
+      return;
+    }
+
     try {
       updateLogicFunctionInput(JSON.parse(value));
     } catch {

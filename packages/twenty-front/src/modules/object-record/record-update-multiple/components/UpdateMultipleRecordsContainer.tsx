@@ -1,3 +1,6 @@
+import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { recordFieldInputIsFieldInErrorComponentState } from '@/object-record/record-field/ui/states/recordFieldInputIsFieldInErrorComponentState';
+import { getRecordFormFieldInputInstanceId } from '@/object-record/record-form/utils/getRecordFormFieldInputInstanceId';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
 import { UpdateMultipleRecordsFooter } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter';
 import { UpdateMultipleRecordsForm } from '@/object-record/record-update-multiple/components/UpdateMultipleRecordsForm';
@@ -10,7 +13,8 @@ import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelCont
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useStore } from 'jotai';
+import { useId, useState } from 'react';
 import { useToast } from 'twenty-ui/components/feedback';
 import { themeCssVariables } from 'twenty-ui/theme';
 
@@ -55,6 +59,13 @@ export const UpdateMultipleRecordsContainer = ({
 
   const hasSelectedRecords = contextStoreNumberOfSelectedRecords > 0;
 
+  const { objectMetadataItem } = useObjectMetadataItem({
+    objectNameSingular,
+  });
+  const store = useStore();
+  const formInstanceId = useId();
+  const contentId = useId();
+
   const { t } = useLingui();
   const { enqueueToast } = useToast();
   const { openDialog } = useDialog();
@@ -65,6 +76,26 @@ export const UpdateMultipleRecordsContainer = ({
   );
 
   const handleUpdateClick = () => {
+    const isAnyFieldInputInError = objectMetadataItem.fields.some(
+      (fieldMetadataItem) =>
+        store.get(
+          recordFieldInputIsFieldInErrorComponentState.atomFamily({
+            instanceId: getRecordFormFieldInputInstanceId({
+              formInstanceId,
+              fieldMetadataId: fieldMetadataItem.id,
+            }),
+          }),
+        ),
+    );
+
+    if (isAnyFieldInputInError) {
+      document
+        .getElementById(contentId)
+        ?.querySelector('[role="alert"]')
+        ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return;
+    }
+
     openDialog(UPDATE_MULTIPLE_RECORDS_CONFIRMATION_MODAL_ID);
   };
 
@@ -74,7 +105,7 @@ export const UpdateMultipleRecordsContainer = ({
       closeSidePanelMenu();
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           error instanceof Error
             ? error.message
@@ -103,8 +134,9 @@ export const UpdateMultipleRecordsContainer = ({
     <SidePanelProvider value={{ isInSidePanel: true }}>
       <ShowPageContainer>
         <StyledShowPageRightContainer>
-          <StyledContentContainer>
+          <StyledContentContainer id={contentId}>
             <UpdateMultipleRecordsForm
+              formInstanceId={formInstanceId}
               disabled={isUpdating}
               values={fieldUpdates}
               onChange={handleFieldChange}

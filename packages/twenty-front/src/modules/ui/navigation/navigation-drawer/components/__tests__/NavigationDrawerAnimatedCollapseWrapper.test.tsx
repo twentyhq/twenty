@@ -1,8 +1,10 @@
-import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
+import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { render, screen, waitFor } from '@testing-library/react';
 
-jest.mock('@/navigation/hooks/useIsNavigationDrawerContentExpanded');
+jest.mock(
+  '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded',
+);
 
 const NavigationModes = () => (
   <NavigationDrawerAnimatedCollapseWrapper>

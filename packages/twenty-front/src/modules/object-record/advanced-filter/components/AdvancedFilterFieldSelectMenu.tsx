@@ -113,9 +113,9 @@ export const AdvancedFilterFieldSelectMenu = ({
         aria-label={t`Search fields`}
         onValueChange={onSearchInputChange}
       />
-      {sections.map((section, index) => (
+      {sections.map((section) => (
         <Fragment key={section.id}>
-          {index > 0 && <Dropdown.Separator />}
+          <Dropdown.Separator />
           <Dropdown.Section label={section.label}>
             {section.fields.map((fieldMetadataItem) => (
               <Dropdown.OptionItem

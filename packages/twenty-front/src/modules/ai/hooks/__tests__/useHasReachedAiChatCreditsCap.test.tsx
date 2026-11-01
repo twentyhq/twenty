@@ -3,10 +3,9 @@ import { renderHook } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 
-import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { useHasReachedAiChatCreditsCap } from '@/ai/hooks/useHasReachedAiChatCreditsCap';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
+import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
 import { AiChatErrorCode } from '@/ai/utils/aiChatErrorCode';
 import { createAiChatCodedError } from '@/ai/utils/createAiChatCodedError';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -16,25 +15,15 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
-const INSTANCE_ID = 'useHasReachedAiChatCreditsCapTest';
 const THREAD_ID = 'thread-1';
 
 const Wrapper = ({ children }: { children: ReactNode }) => (
-  <JotaiProvider store={jotaiStore}>
-    <AgentChatComponentInstanceContext.Provider
-      value={{ instanceId: INSTANCE_ID }}
-    >
-      {children}
-    </AgentChatComponentInstanceContext.Provider>
-  </JotaiProvider>
+  <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
 );
 
 const setThreadError = (error: Error | CombinedGraphQLErrors) => {
   jotaiStore.set(
-    agentChatErrorComponentFamilyState.atomFamily({
-      instanceId: INSTANCE_ID,
-      familyKey: { threadId: THREAD_ID },
-    }),
+    agentChatErrorFamilyState.atomFamily({ threadId: THREAD_ID }),
     error,
   );
 };

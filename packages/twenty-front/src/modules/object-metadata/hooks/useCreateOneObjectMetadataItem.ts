@@ -140,7 +140,7 @@ export const useCreateOneObjectMetadataItem = () => {
           operationType: CrudOperationType.CREATE,
         });
       } else {
-        enqueueToast({ variant: 'error', children: t`An error occurred.` });
+        enqueueToast({ status: 'error', children: t`An error occurred.` });
       }
 
       return {

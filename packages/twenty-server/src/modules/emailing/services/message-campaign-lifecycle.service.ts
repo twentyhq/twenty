@@ -12,7 +12,7 @@ import {
   EmailingDomainException,
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageCampaignStatisticsService } from 'src/modules/emailing/services/message-campaign-statistics.service';
@@ -20,6 +20,7 @@ import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-ob
 import { computeCampaignTerminalStatus } from 'src/modules/emailing/utils/compute-campaign-terminal-status.util';
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { buildEmailingRolePermissionConfig } from 'src/modules/emailing/utils/build-emailing-role-permission-config.util';
 
 type CampaignStatusTransition = {
   workspaceId: string;
@@ -68,7 +69,7 @@ export class MessageCampaignLifecycleService {
         const campaignRepository = this.workspaceOrmManager.getRepository(
           MessageCampaignWorkspaceEntity,
           isDefined(roleId)
-            ? { unionOf: [roleId] }
+            ? buildEmailingRolePermissionConfig(roleId)
             : { shouldBypassPermissionChecks: true },
         );
 

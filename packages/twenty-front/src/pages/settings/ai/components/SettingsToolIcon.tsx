@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { isDefined } from 'twenty-shared/utils';
-import { getIconTileColorShades } from 'twenty-ui/components/data-display';
+import { TintedIconTile } from 'twenty-ui/components/data-display';
 import {
   IconEdit,
   IconPlus,
@@ -43,30 +43,12 @@ const getOperationIcon = (toolName: string): IconComponent | null => {
 
 const StyledCompositeContainer = styled.div`
   align-items: center;
-  border-radius: ${themeCssVariables.border.radius.sm};
-  box-sizing: border-box;
   display: flex;
   flex-shrink: 0;
   height: 16px;
   justify-content: center;
   position: relative;
   width: 16px;
-`;
-
-const StyledMainIconWrapper = styled.div<{
-  $backgroundColor: string;
-  $borderColor?: string;
-}>`
-  align-items: center;
-  background-color: ${({ $backgroundColor }) => $backgroundColor};
-  border: ${({ $borderColor }) =>
-    $borderColor ? `1px solid ${$borderColor}` : 'none'};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  box-sizing: border-box;
-  display: flex;
-  inset: 0;
-  justify-content: center;
-  position: absolute;
 `;
 
 const StyledOperationOverlay = styled.div`
@@ -123,23 +105,27 @@ export const SettingsToolIcon = ({
     ? objectMetadataItems.find((item) => item.nameSingular === objectName)
     : undefined;
 
-  const objectStyle = isDefined(objectMetadata)
-    ? getIconTileColorShades(getObjectColorWithFallback(objectMetadata))
+  const objectColor = isDefined(objectMetadata)
+    ? getObjectColorWithFallback(objectMetadata)
     : null;
+
+  const objectIconTile = isDefined(objectColor) ? (
+    <TintedIconTile
+      color={objectColor}
+      icon={<MainIcon size="14px" stroke={theme.icon.stroke.md} />}
+    />
+  ) : null;
 
   if (isDefined(OperationIcon)) {
     return (
       <StyledCompositeContainer>
-        <StyledMainIconWrapper
-          $backgroundColor={objectStyle?.backgroundColor ?? 'transparent'}
-          $borderColor={objectStyle?.borderColor}
-        >
+        {objectIconTile ?? (
           <MainIcon
             size="14px"
             stroke={theme.icon.stroke.md}
-            color={objectStyle?.iconColor ?? theme.font.color.secondary}
+            color={theme.font.color.secondary}
           />
-        </StyledMainIconWrapper>
+        )}
         <StyledOperationOverlay>
           <OperationIcon
             size="12px"
@@ -151,21 +137,8 @@ export const SettingsToolIcon = ({
     );
   }
 
-  if (isDefined(objectStyle)) {
-    return (
-      <StyledCompositeContainer>
-        <StyledMainIconWrapper
-          $backgroundColor={objectStyle.backgroundColor}
-          $borderColor={objectStyle.borderColor}
-        >
-          <MainIcon
-            size="14px"
-            stroke={theme.icon.stroke.md}
-            color={objectStyle.iconColor}
-          />
-        </StyledMainIconWrapper>
-      </StyledCompositeContainer>
-    );
+  if (isDefined(objectIconTile)) {
+    return objectIconTile;
   }
 
   return (

@@ -3,10 +3,12 @@ import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/driv
 import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
 import { type PendingWakeUpOutcome } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-outcome.type';
 import { type PendingWakeUpOwnerState } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner-state.type';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 
 export type PendingWakeUpOwnerHandler<TOwner = unknown> = {
-  buildResumeJobOptions(ownerId: string): QueueJobOptions;
+  buildResumeJobOptions?(
+    wakeUp: Pick<PendingWakeUpEntity, 'ownerId' | 'workspaceId'>,
+  ): Promise<QueueJobOptions>;
 
   getOwnerState(
     wakeUp: PendingWakeUpEntity,
@@ -20,10 +22,10 @@ export type PendingWakeUpOwnerHandler<TOwner = unknown> = {
     rolePermissionConfig: RolePermissionConfig;
   }>;
 
+  // the handler claims the wake-up once it takes the outcome, so the outcome is taken once
   resolve(input: {
-    claimedWakeUp: PendingWakeUpEntity;
+    wakeUp: PendingWakeUpEntity;
     outcome: PendingWakeUpOutcome;
-    owner: TOwner | null;
     isOwnerGone: boolean;
   }): Promise<void>;
 };

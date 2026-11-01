@@ -31,7 +31,7 @@ export const SettingsLogicFunctionTriggerSection = ({
       <Section.Header
         title={title}
         description={description}
-        adornment={
+        actions={
           readonly ? undefined : (
             <Switch
               aria-label={title}

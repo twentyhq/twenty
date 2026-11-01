@@ -1,22 +1,24 @@
-import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useWorkflowEditorMutationErrorHandler } from '@/workflow/hooks/useWorkflowEditorMutationErrorHandler';
+import { useSavePendingWorkflowFlow } from '@/workflow/hooks/useSavePendingWorkflowFlow';
 import { invalidateCoreWorkflowVersions } from '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
-import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
-import { CREATE_WORKFLOW_VERSION_EDGE } from '@/workflow/graphql/mutations/createWorkflowVersionEdge';
 import { useApplyWorkflowVersionStepChanges } from '@/workflow/workflow-steps/hooks/useApplyWorkflowVersionStepChanges';
 import { useMutation } from '@apollo/client/react';
-import { useToast } from 'twenty-ui/components/feedback';
 import {
   CreateCoreWorkflowVersionEdgeDocument,
-  type CreateWorkflowVersionEdgeInput,
-  type CreateWorkflowVersionEdgeMutation,
-  type CreateWorkflowVersionEdgeMutationVariables,
+  type CreateCoreWorkflowVersionEdgeInput,
 } from '~/generated/graphql';
 
+export type WorkflowVersionEdgeInput = Omit<
+  CreateCoreWorkflowVersionEdgeInput,
+  'coreWorkflowVersionId'
+> & {
+  workflowVersionId: string;
+};
+
 export const useCreateWorkflowVersionEdge = () => {
+  const { savePendingWorkflowFlow } = useSavePendingWorkflowFlow();
   const apolloCoreClient = useApolloCoreClient();
-  const isCore = useIsWorkflowCoreEnabled();
   const handleCoreMutationError = useWorkflowEditorMutationErrorHandler();
   const [mutateCore] = useMutation(CreateCoreWorkflowVersionEdgeDocument, {
     client: apolloCoreClient,
@@ -25,40 +27,25 @@ export const useCreateWorkflowVersionEdge = () => {
 
   const { applyWorkflowVersionStepChanges } =
     useApplyWorkflowVersionStepChanges();
-  const { enqueueToast } = useToast();
 
-  const [mutate] = useMutation<
-    CreateWorkflowVersionEdgeMutation,
-    CreateWorkflowVersionEdgeMutationVariables
-  >(CREATE_WORKFLOW_VERSION_EDGE, { client: apolloCoreClient });
+  const createWorkflowVersionEdge = async (input: WorkflowVersionEdgeInput) => {
+    const { workflowVersionId, ...edgeInput } = input;
+    await savePendingWorkflowFlow();
 
-  const createWorkflowVersionEdge = async (
-    input: CreateWorkflowVersionEdgeInput,
-  ) => {
-    const { workflowVersionId, ...stepInput } = input;
-    const result = isCore
-      ? await mutateCore({
-          variables: {
-            input: { ...stepInput, coreWorkflowVersionId: workflowVersionId },
-          },
-        })
-      : await mutate({
-          variables: { input },
-          onError: (error) => {
-            enqueueToast(getToastOptionsFromError({ error }));
-          },
-        });
+    const result = await mutateCore({
+      variables: {
+        input: { ...edgeInput, coreWorkflowVersionId: workflowVersionId },
+      },
+    });
 
     const workflowVersionStepChanges = result?.data?.createWorkflowVersionEdge;
 
     applyWorkflowVersionStepChanges({
       workflowVersionStepChanges,
-      workflowVersionId: input.workflowVersionId,
+      workflowVersionId,
     });
 
-    if (isCore) {
-      await invalidateCoreWorkflowVersions(apolloCoreClient);
-    }
+    await invalidateCoreWorkflowVersions(apolloCoreClient);
 
     return result;
   };

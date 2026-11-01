@@ -1,8 +1,10 @@
-import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { SpreadsheetImportStepBody } from '@/spreadsheet-import/components/SpreadsheetImportStepBody';
 import { SpreadsheetImportTable } from '@/spreadsheet-import/components/SpreadsheetImportTable';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { useHideStepBar } from '@/spreadsheet-import/hooks/useHideStepBar';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
+import { spreadsheetImportCreatedRecordsProgressState } from '@/spreadsheet-import/states/spreadsheetImportCreatedRecordsProgressState';
+import { spreadsheetImportDialogState } from '@/spreadsheet-import/states/spreadsheetImportDialogState';
 import { type SpreadsheetImportStep } from '@/spreadsheet-import/steps/types/SpreadsheetImportStep';
 import { SpreadsheetImportStepType } from '@/spreadsheet-import/steps/types/SpreadsheetImportStepType';
 import {
@@ -14,6 +16,7 @@ import { SpreadsheetColumnType } from '@/spreadsheet-import/types/SpreadsheetCol
 import { addErrorsAndRunHooks } from '@/spreadsheet-import/utils/dataMutations';
 import { useDialogManager } from '@/ui/feedback/dialog-manager/hooks/useDialogManager';
 import { styled } from '@linaria/react';
+import { useStore } from 'jotai';
 import { Trans, useLingui } from '@lingui/react/macro';
 import {
   type Dispatch,
@@ -53,12 +56,6 @@ const StyledToolbar = styled.div`
   transform: translateX(-50%);
   width: 400px;
   z-index: 1;
-`;
-
-const StyledButtonContainer = styled.div`
-  button {
-    height: 24px;
-  }
 `;
 
 const StyledErrorSwitch = styled.div`
@@ -112,6 +109,7 @@ export const ValidationStep = ({
   setCurrentStepState,
   onBack,
 }: ValidationStepProps) => {
+  const store = useStore();
   const hideStepBar = useHideStepBar();
   const { enqueueDialog } = useDialogManager();
   const {
@@ -255,8 +253,36 @@ export const ValidationStep = ({
     });
     hideStepBar();
 
-    await onSubmit(calculatedData, file);
-    onClose();
+    try {
+      await onSubmit(calculatedData, file);
+      onClose();
+    } catch {
+      const importedRecordsCount = store.get(
+        spreadsheetImportCreatedRecordsProgressState.atom,
+      );
+      const importedRows = new Set(
+        data
+          .filter(
+            (row) =>
+              !Object.values(row.__errors ?? {}).some(
+                (rowError) => rowError.level === 'error',
+              ),
+          )
+          .slice(0, importedRecordsCount),
+      );
+      const remainingRows = data.filter((row) => !importedRows.has(row));
+
+      updateData(remainingRows);
+      setCurrentStepState({
+        type: SpreadsheetImportStepType.validateData,
+        data: remainingRows,
+        importedColumns,
+      });
+      store.set(spreadsheetImportDialogState.atom, (state) => ({
+        ...state,
+        isStepBarVisible: true,
+      }));
+    }
   };
   const onContinue = () => {
     const invalidData = data.find((value) => {
@@ -288,14 +314,7 @@ export const ValidationStep = ({
 
   return (
     <>
-      <Dialog.Body
-        style={{
-          display: 'flex',
-          flex: '1 1 0%',
-          flexDirection: 'column',
-          padding: 0,
-        }}
-      >
+      <SpreadsheetImportStepBody>
         <StyledContentWrapper>
           {filterByErrors && tableData.length === 0 ? (
             <StyledNoRowsWithErrorsContainer>
@@ -335,16 +354,15 @@ export const ValidationStep = ({
                 <Trans>Show only rows with errors</Trans>
               </StyledErrorSwitchDescription>
             </StyledErrorSwitch>
-            <StyledButtonContainer>
-              <Button
-                startIcon={<IconTrash />}
-                onClick={deleteSelectedRows}
-                disabled={selectedRows.size === 0}
-              >{t`Remove`}</Button>
-            </StyledButtonContainer>
+            <Button
+              startIcon={<IconTrash />}
+              size="sm"
+              onClick={deleteSelectedRows}
+              disabled={selectedRows.size === 0}
+            >{t`Remove`}</Button>
           </StyledToolbar>
         </StyledContentWrapper>
-      </Dialog.Body>
+      </SpreadsheetImportStepBody>
       <StepNavigationButton
         onContinue={onContinue}
         onBack={onBack}

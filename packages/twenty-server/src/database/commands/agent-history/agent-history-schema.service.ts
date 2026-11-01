@@ -1,6 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 
-import { getAgentHistorySchemaAdditions } from 'src/database/commands/agent-history/utils/get-agent-history-schema-additions.util';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { DataSource } from 'typeorm';
+
+import { ACTIVE_AGENT_HISTORY_TABLES } from 'src/database/commands/agent-history/agent-history-tables.constant';
+import {
+  getAgentHistorySchemaAdditions,
+  type LegacyObjectAccess,
+} from 'src/database/commands/agent-history/utils/get-agent-history-schema-additions.util';
+import { getLegacyAgentHistoryFlatFieldMetadatas } from 'src/database/commands/agent-history/utils/get-legacy-agent-history-flat-field-metadatas.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -13,6 +22,8 @@ export class AgentHistorySchemaService {
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly migrations: WorkspaceMigrationValidateBuildAndRunService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {}
 
   async prepare(workspaceId: string, dryRun: boolean): Promise<void> {
@@ -23,6 +34,7 @@ export class AgentHistorySchemaService {
         'flatFieldMetadataMaps',
         'flatIndexMaps',
         'featureFlagsMap',
+        'billingEntitlements',
       ]),
     );
     const { twentyStandardFlatApplication } =
@@ -37,16 +49,52 @@ export class AgentHistorySchemaService {
       workspaceId,
       twentyStandardApplicationId: twentyStandardFlatApplication.id,
     });
-    const { objects, fields, indexes } = getAgentHistorySchemaAdditions({
-      existing,
-      standard,
-    });
+    const historyObjectUniversalIdentifiers = ACTIVE_AGENT_HISTORY_TABLES.map(
+      ({ name }) => STANDARD_OBJECTS[name].universalIdentifier,
+    );
+    if (!dryRun) {
+      await this.protectUnprotectedHistoryObjects({
+        workspaceId,
+        historyObjectUniversalIdentifiers,
+      });
+    }
+    const legacyObjectAccesses = await this.coreDataSource.query<
+      (LegacyObjectAccess & { universalIdentifier: string })[]
+    >(
+      `SELECT "universalIdentifier", readability, writability FROM core."objectMetadata"
+        WHERE "workspaceId" = $1 AND "universalIdentifier" = ANY($2)`,
+      [workspaceId, historyObjectUniversalIdentifiers],
+    );
+    const { objects, fields, indexes, protectedFieldUniversalIdentifiers } =
+      getAgentHistorySchemaAdditions({
+        existing,
+        legacyObjectAccessByUniversalIdentifier: Object.fromEntries(
+          legacyObjectAccesses.map(({ universalIdentifier, ...access }) => [
+            universalIdentifier,
+            access,
+          ]),
+        ),
+        standard: {
+          ...standard,
+          flatFieldMetadataMaps: getLegacyAgentHistoryFlatFieldMetadatas({
+            standard,
+          }).reduce(
+            (maps, flatEntity) =>
+              addFlatEntityToFlatEntityMapsOrThrow({
+                flatEntityMaps: maps,
+                flatEntity,
+              }),
+            standard.flatFieldMetadataMaps,
+          ),
+        },
+      });
     if (objects.length + fields.length + indexes.length === 0) {
       return;
     }
     // Same from/to path as standard application sync; custom-object side effects must not expand this schema
     const result =
       await this.migrations.validateBuildAndRunWorkspaceMigrationFromTo({
+        shouldDeferActions: false,
         workspaceId,
         dryRun,
         buildOptions: {
@@ -55,7 +103,10 @@ export class AgentHistorySchemaService {
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,
         },
-        additionalCacheDataMaps: { featureFlagsMap: existing.featureFlagsMap },
+        additionalCacheDataMaps: {
+          featureFlagsMap: existing.featureFlagsMap,
+          billingEntitlements: existing.billingEntitlements,
+        },
         idByUniversalIdentifierByMetadataName,
         fromToAllFlatEntityMaps: {
           flatObjectMetadataMaps: {
@@ -98,5 +149,43 @@ export class AgentHistorySchemaService {
         `Agent history schema validation failed: ${JSON.stringify(result)}`,
       );
     }
+    if (dryRun) {
+      return;
+    }
+    await this.protectUnprotectedHistoryObjects({
+      workspaceId,
+      historyObjectUniversalIdentifiers,
+    });
+    await this.coreDataSource.query(
+      `UPDATE core."fieldMetadata" SET writability = 'SYSTEM'
+        WHERE "workspaceId" = $1 AND "universalIdentifier" = ANY($2)`,
+      [workspaceId, protectedFieldUniversalIdentifiers],
+    );
+  }
+
+  // Objects still at the column defaults were just provisioned, so this also repairs an interrupted run
+  private async protectUnprotectedHistoryObjects({
+    workspaceId,
+    historyObjectUniversalIdentifiers,
+  }: {
+    workspaceId: string;
+    historyObjectUniversalIdentifiers: string[];
+  }): Promise<void> {
+    await this.coreDataSource.transaction(async (manager) => {
+      const [protectedObjects]: [{ id: string }[], number] =
+        await manager.query(
+          `UPDATE core."objectMetadata" SET readability = 'SYSTEM', writability = 'SYSTEM'
+            WHERE "workspaceId" = $1 AND "universalIdentifier" = ANY($2)
+              AND readability = 'OPEN' AND writability = 'OPEN'
+            RETURNING id`,
+          [workspaceId, historyObjectUniversalIdentifiers],
+        );
+
+      await manager.query(
+        `UPDATE core."fieldMetadata" SET writability = 'SYSTEM'
+          WHERE "workspaceId" = $1 AND "objectMetadataId" = ANY($2::uuid[])`,
+        [workspaceId, protectedObjects.map(({ id }) => id)],
+      );
+    });
   }
 }

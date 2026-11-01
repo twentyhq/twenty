@@ -9,16 +9,11 @@ import { type PendingWakeUpEvent } from 'src/engine/core-modules/pending-wake-up
 import { type PendingWakeUpOwnerHandler } from 'src/engine/core-modules/pending-wake-up/types/pending-wake-up-owner-handler.type';
 import { type ResumePendingWakeUpJobData } from 'src/engine/core-modules/pending-wake-up/types/resume-pending-wake-up-job-data.type';
 import { buildPendingWakeUpOutcome } from 'src/engine/core-modules/pending-wake-up/utils/build-pending-wake-up-outcome.util';
+import { computePendingWakeUpRetryDelayMs } from 'src/engine/core-modules/pending-wake-up/utils/compute-pending-wake-up-retry-delay-ms.util';
 import { restrictPendingWakeUpEventToReadableRecord } from 'src/engine/core-modules/pending-wake-up/utils/restrict-pending-wake-up-event-to-readable-record.util';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 
 const RECORD_READ_MAX_ATTEMPTS = 8;
-
-const RETRY_BASE_DELAY_MS = 2_000;
-const RETRY_MAX_DELAY_MS = 60_000;
-
-const computeRetryDelayMs = (attempt: number): number =>
-  Math.min(RETRY_BASE_DELAY_MS * 2 ** attempt, RETRY_MAX_DELAY_MS);
 
 @Injectable()
 export class PendingWakeUpResolverService {
@@ -34,6 +29,7 @@ export class PendingWakeUpResolverService {
     workspaceId,
     wakeUpId,
     event,
+    answer,
     attempt = 0,
     recordReadAttempt = 0,
   }: ResumePendingWakeUpJobData): Promise<void> {
@@ -56,8 +52,9 @@ export class PendingWakeUpResolverService {
       await this.pendingWakeUpService.scheduleResolution({
         wakeUp,
         event,
+        answer,
         attempt: attempt + 1,
-        delayMs: computeRetryDelayMs(attempt),
+        delayMs: computePendingWakeUpRetryDelayMs(attempt),
       });
 
       return;
@@ -83,22 +80,13 @@ export class PendingWakeUpResolverService {
       return;
     }
 
-    const claimedWakeUp = await this.pendingWakeUpService.claim({
-      workspaceId,
-      wakeUpId,
-    });
-
-    if (!isDefined(claimedWakeUp)) {
-      return;
-    }
-
     await handler.resolve({
-      claimedWakeUp,
+      wakeUp,
       outcome: buildPendingWakeUpOutcome({
-        condition: claimedWakeUp.condition,
+        condition: wakeUp.condition,
         event: readableEvent,
+        answer,
       }),
-      owner: ownerState.owner,
       isOwnerGone: ownerState.status === 'GONE',
     });
   }
@@ -139,7 +127,7 @@ export class PendingWakeUpResolverService {
           wakeUp,
           event,
           recordReadAttempt: recordReadAttempt + 1,
-          delayMs: computeRetryDelayMs(recordReadAttempt),
+          delayMs: computePendingWakeUpRetryDelayMs(recordReadAttempt),
         });
       } else {
         this.logger.warn(

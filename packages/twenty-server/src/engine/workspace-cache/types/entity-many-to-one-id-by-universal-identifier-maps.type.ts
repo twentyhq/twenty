@@ -5,10 +5,9 @@ import { type MetadataManyToOneRelatedMetadataNames } from 'src/engine/metadata-
 export type EntityManyToOneIdByUniversalIdentifierMaps<
   T extends AllMetadataName,
 > = {
-  [P in MetadataManyToOneRelatedMetadataNames<T> as `${P}IdToUniversalIdentifierMap`]: Map<
-    string,
-    string
-  >;
+  [
+    P in MetadataManyToOneRelatedMetadataNames<T> as `${P}IdToUniversalIdentifierMap`
+  ]: Map<string, string>;
 } & {
   applicationIdToUniversalIdentifierMap: Map<string, string>;
 };

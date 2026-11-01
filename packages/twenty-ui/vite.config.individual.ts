@@ -4,6 +4,7 @@ import * as path from 'path';
 import { defineConfig } from 'vite';
 import svgr from 'vite-plugin-svgr';
 
+import { wrapInTwentyUiCascadeLayer } from './build-tools/wrapInTwentyUiCascadeLayer';
 import packageJson from './package.json';
 
 const depNames = Object.keys({
@@ -33,6 +34,13 @@ export default defineConfig(() => {
     css: {
       modules: {
         localsConvention: 'camelCaseOnly',
+      },
+      postcss: {
+        plugins: [
+          wrapInTwentyUiCascadeLayer({
+            sourceDirectory: path.resolve(__dirname, 'src'),
+          }),
+        ],
       },
       lightningcss: {
         exclude: Features.DirSelector,

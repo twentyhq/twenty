@@ -1,15 +1,16 @@
-import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
-import { useToast } from 'twenty-ui/components/feedback';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { RecordCreationFormCancellationEffect } from '@/object-record/record-form/components/RecordCreationFormCancellationEffect';
 import {
   RecordCreationFormContextProvider,
   type RecordCreationFormContextValue,
 } from '@/object-record/record-form/contexts/RecordCreationFormContext';
+import { type RecordCreationRequest } from '@/object-record/record-form/types/RecordCreationRequest';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
+import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
+import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
@@ -20,7 +21,7 @@ import { v4 } from 'uuid';
 
 type PendingRecordCreation = {
   requestId: string;
-  createRecord: (draftRecord: Partial<ObjectRecord>) => Promise<ObjectRecord>;
+  createRecord: RecordCreationRequest['createRecord'];
   resolve: (createdRecord: ObjectRecord | null) => void;
   isSettling: boolean;
 };
@@ -33,9 +34,9 @@ export const RecordCreationFormProvider = ({
   children,
 }: RecordCreationFormProviderProps) => {
   const store = useStore();
-  const { enqueueToast } = useToast();
   const { removePageFromSidePanelHistory } = useSidePanelHistory();
   const { navigateSidePanelMenu } = useSidePanelMenu();
+  const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
 
   const [pendingRecordCreations, setPendingRecordCreations] = useState<
     PendingRecordCreation[]
@@ -45,9 +46,11 @@ export const RecordCreationFormProvider = ({
     async ({
       requestId,
       draftRecord,
+      shouldKeepOpen = false,
     }: {
       requestId: string;
       draftRecord: Partial<ObjectRecord> | null;
+      shouldKeepOpen?: boolean;
     }) => {
       const pendingRecordCreation = pendingRecordCreations.find(
         (candidate) => candidate.requestId === requestId,
@@ -57,7 +60,7 @@ export const RecordCreationFormProvider = ({
         !isDefined(pendingRecordCreation) ||
         pendingRecordCreation.isSettling
       ) {
-        return;
+        return {};
       }
 
       if (draftRecord === null) {
@@ -69,7 +72,7 @@ export const RecordCreationFormProvider = ({
           ),
         );
 
-        return;
+        return {};
       }
 
       setPendingRecordCreations((previousPendingRecordCreations) =>
@@ -80,11 +83,26 @@ export const RecordCreationFormProvider = ({
         ),
       );
 
-      let createdRecord: ObjectRecord;
-
       try {
-        createdRecord = await pendingRecordCreation.createRecord(draftRecord);
+        const createdRecord =
+          await pendingRecordCreation.createRecord(draftRecord);
+
+        if (!shouldKeepOpen) {
+          removePageFromSidePanelHistory(requestId);
+
+          pendingRecordCreation.resolve(createdRecord);
+
+          setPendingRecordCreations((previousPendingRecordCreations) =>
+            previousPendingRecordCreations.filter(
+              (candidate) => candidate.requestId !== requestId,
+            ),
+          );
+        }
+
+        return {};
       } catch (error) {
+        return { error };
+      } finally {
         setPendingRecordCreations((previousPendingRecordCreations) =>
           previousPendingRecordCreations.map((candidate) =>
             candidate.requestId === requestId
@@ -92,38 +110,36 @@ export const RecordCreationFormProvider = ({
               : candidate,
           ),
         );
-
-        enqueueToast(getToastOptionsFromError({ error }));
-
-        return;
       }
-
-      removePageFromSidePanelHistory(requestId);
-
-      pendingRecordCreation.resolve(createdRecord);
-
-      setPendingRecordCreations((previousPendingRecordCreations) =>
-        previousPendingRecordCreations.filter(
-          (candidate) => candidate.requestId !== requestId,
-        ),
-      );
     },
-    [enqueueToast, pendingRecordCreations, removePageFromSidePanelHistory],
+    [pendingRecordCreations, removePageFromSidePanelHistory],
   );
 
   const requestRecordCreation = useCallback(
     ({
       objectMetadataItem,
       initialDraftRecord,
+      canCreateAnother = true,
       createRecord,
-    }: {
-      objectMetadataItem: EnrichedObjectMetadataItem;
-      initialDraftRecord?: Partial<ObjectRecord>;
-      createRecord: (
-        draftRecord: Partial<ObjectRecord>,
-      ) => Promise<ObjectRecord>;
-    }) => {
+    }: RecordCreationRequest) => {
+      const topSidePanelPage = store.get(isSidePanelOpenedState.atom)
+        ? store.get(sidePanelNavigationStackState.atom).at(-1)
+        : undefined;
+
+      if (
+        topSidePanelPage?.page === SidePanelPages.RecordCreationForm &&
+        store.get(
+          recordCreationFormRequestComponentState.atomFamily({
+            instanceId: topSidePanelPage.pageId,
+          }),
+        )?.objectMetadataId === objectMetadataItem.id
+      ) {
+        return Promise.resolve(null);
+      }
+
       const requestId = v4();
+
+      closeAnyOpenDropdown();
 
       store.set(
         recordCreationFormRequestComponentState.atomFamily({
@@ -133,6 +149,7 @@ export const RecordCreationFormProvider = ({
           requestId,
           objectMetadataId: objectMetadataItem.id,
           initialDraftRecord: initialDraftRecord ?? {},
+          canCreateAnother,
         },
       );
 
@@ -155,7 +172,7 @@ export const RecordCreationFormProvider = ({
         });
       });
     },
-    [navigateSidePanelMenu, store],
+    [closeAnyOpenDropdown, navigateSidePanelMenu, store],
   );
 
   const cancelPendingRecordCreation = useCallback(

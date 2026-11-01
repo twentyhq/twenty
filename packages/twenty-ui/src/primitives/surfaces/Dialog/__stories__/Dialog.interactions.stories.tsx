@@ -106,23 +106,32 @@ const ControlledDialog = () => {
       <Text>{saved ? 'Account saved' : 'Record available'}</Text>
       <Dialog.Root open={open} onOpenChange={setOpen}>
         <Dialog.Trigger render={<Button>Edit account</Button>} />
-        <Dialog.Popup>
-          <Dialog.Header>
-            <Dialog.Title>Edit account</Dialog.Title>
-            <Dialog.Description>Update the account details.</Dialog.Description>
-          </Dialog.Header>
-          <Dialog.Footer>
-            <Dialog.Close render={<Button variant="outline">Close</Button>} />
-            <Button
-              onClick={() => {
-                setSaved(true);
-                setOpen(false);
-              }}
-            >
-              Save changes
-            </Button>
-          </Dialog.Footer>
-        </Dialog.Popup>
+        <Dialog.Portal>
+          <Dialog.Backdrop />
+          <Dialog.Viewport>
+            <Dialog.Popup>
+              <Dialog.Header>
+                <Dialog.Title>Edit account</Dialog.Title>
+                <Dialog.Description>
+                  Update the account details.
+                </Dialog.Description>
+              </Dialog.Header>
+              <Dialog.Footer>
+                <Dialog.Close
+                  render={<Button variant="outline">Close</Button>}
+                />
+                <Button
+                  onClick={() => {
+                    setSaved(true);
+                    setOpen(false);
+                  }}
+                >
+                  Save changes
+                </Button>
+              </Dialog.Footer>
+            </Dialog.Popup>
+          </Dialog.Viewport>
+        </Dialog.Portal>
       </Dialog.Root>
     </>
   );
@@ -163,7 +172,7 @@ export const DisabledTrigger: Story = {
 export const KeepMounted: Story = {
   decorators: [ComponentDecorator],
   args: {
-    popupProps: { keepMounted: true },
+    portalProps: { keepMounted: true },
     content: <Input aria-label="Reason" />,
   },
   play: async ({ canvasElement }) => {
@@ -315,7 +324,7 @@ export const FocusTrapWithoutScrollLock: Story = {
   args: {
     defaultOpen: true,
     modal: 'trap-focus',
-    popupProps: { backdrop: false },
+    backdrop: false,
   },
   play: async ({ canvasElement }) => {
     const dialog = await waitForDialog(canvasElement);
@@ -337,7 +346,8 @@ export const ExternalStateAndFocus: Story = {
     open: true,
     modal: false,
     disablePointerDismissal: true,
-    popupProps: { initialFocus: false, finalFocus: false, backdrop: false },
+    popupProps: { initialFocus: false, finalFocus: false },
+    backdrop: false,
   },
   play: async ({ canvasElement }) => {
     const dialog = await waitForDialog(canvasElement);
@@ -364,7 +374,7 @@ const NonModalDialog = () => {
         Page action
       </Button>
       <Text role="status">Page actions: {pageActionCount}</Text>
-      <DialogExample open modal={false} popupProps={{ backdrop: false }} />
+      <DialogExample open modal={false} backdrop={false} />
     </>
   );
 };

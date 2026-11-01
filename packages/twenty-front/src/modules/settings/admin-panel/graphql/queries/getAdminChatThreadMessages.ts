@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const GET_ADMIN_CHAT_THREAD_MESSAGES = gql`
-  query GetAdminChatThreadMessages($threadId: UUID!) {
-    getAdminChatThreadMessages(threadId: $threadId) {
+  query GetAdminChatThreadMessages($workspaceId: UUID!, $threadId: UUID!) {
+    getAdminChatThreadMessages(workspaceId: $workspaceId, threadId: $threadId) {
       thread {
         id
         title
@@ -16,7 +16,6 @@ export const GET_ADMIN_CHAT_THREAD_MESSAGES = gql`
       messages {
         id
         role
-        isHidden
         parts {
           type
           orderIndex

@@ -1,4 +1,3 @@
-import { t } from '@lingui/core/macro';
 import { type ReactNode, useCallback, useContext } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -21,11 +20,10 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components/input';
-import { IconForbid, IconPencil } from 'twenty-ui/icon';
+import { IconForbid } from 'twenty-ui/icon';
 
 type RecordDetailMorphRelationSectionDropdownManyToOneProps = {
-  dropdownTriggerClickableComponent?: ReactNode;
+  dropdownTriggerClickableComponent: ReactNode;
 };
 
 export const RecordDetailMorphRelationSectionDropdownManyToOne = ({
@@ -124,17 +122,7 @@ export const RecordDetailMorphRelationSectionDropdownManyToOne = ({
       dropdownPlacement="left-start"
       onClose={handleCloseRelationPickerDropdown}
       onOpen={handleOpenRelationPickerDropdown}
-      clickableComponent={
-        dropdownTriggerClickableComponent ?? (
-          <LightIconButton
-            className="displayOnHover"
-            emphasis="subtle"
-            aria-label={t`Edit relation`}
-          >
-            <IconPencil />
-          </LightIconButton>
-        )
-      }
+      clickableComponent={dropdownTriggerClickableComponent}
       dropdownComponents={
         <SingleRecordPicker
           focusId={dropdownId}

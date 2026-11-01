@@ -5,6 +5,6 @@ export type RecordFormField<
   TFieldMetadataItem extends Pick<FieldMetadataItem, 'id'> = FieldMetadataItem,
 > = {
   fieldMetadataItem: TFieldMetadataItem;
-  widgets: Pick<PageLayoutWidget, 'id' | 'isActive'>[];
+  widgets: Pick<PageLayoutWidget, 'id' | 'isActive' | 'position'>[];
   isVisible: boolean;
 };

@@ -16,6 +16,9 @@ const HostApiSnackbarFrontComponent = () => {
       await enqueueSnackbar({
         message: 'Test notification',
         variant: 'success',
+        duration: 3000,
+        detailedMessage: 'Changes are available to the team',
+        dedupeKey: 'notification-example',
       });
       setStatus('snackbar:success');
     } catch (error) {

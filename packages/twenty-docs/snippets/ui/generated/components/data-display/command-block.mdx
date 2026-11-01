@@ -11,10 +11,17 @@
  *   npx nx generate:ui twenty-docs
  */}
 
-<ParamField body="button" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt;">
-  Optional action element beside the command lines, such as a copy button.
+<ParamField body="actions" type="ReactNode">
+  Content beside the command lines, such as a copy button, link or status.
 </ParamField>
 
-<ParamField body="commands" type="string[]" required>
+<ParamField body="commands" type="readonly string[]" required>
   Command lines to display. The component prefixes each line with > and does not execute commands.
+</ParamField>
+
+<ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
+  Allows you to replace the component's HTML element
+  with a different tag, or compose it with another component.
+
+  Accepts a `ReactElement` or a function that returns the element to render.
 </ParamField>

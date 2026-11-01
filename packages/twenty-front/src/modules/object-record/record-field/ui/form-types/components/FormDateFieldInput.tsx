@@ -27,6 +27,7 @@ import { useId, useRef, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type Nullable } from 'twenty-shared/types';
 
@@ -125,7 +126,7 @@ export const FormDateFieldInput = ({
 
   useListenClickOutside({
     refs: [datePickerWrapperRef],
-    listenerId: `FormDateFieldInputBase-${instanceId}`,
+    listenerId: doNotTranslate(`FormDateFieldInputBase-${instanceId}`),
     callback: (event) => {
       if (isDatePickerDropdownOpen(instanceId)) {
         return;
@@ -237,7 +238,8 @@ export const FormDateFieldInput = ({
     defaultValue === '' ||
     defaultValue === 'null'
       ? null
-      : defaultValue.includes('T')
+      : // Date and time syntax must stay stable across locales.
+        defaultValue.includes(doNotTranslate('T'))
         ? Temporal.Instant.from(defaultValue)
             .toZonedDateTimeISO(userTimezone)
             .toPlainDate()

@@ -1,9 +1,9 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
+import { type RecordGqlFields, FieldMetadataType } from 'twenty-shared/types';
 import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
+import { getPermittedJunctionTargetFields } from '@/object-record/record-field/ui/utils/junction/getPermittedJunctionTargetFields';
 import { type JunctionObjectMetadataItem } from '@/object-record/record-field/ui/utils/junction/types/JunctionObjectMetadataItem';
 import { type ValidJunctionConfig } from '@/object-record/record-field/ui/utils/junction/types/ValidJunctionConfig';
-import { FieldMetadataType } from 'twenty-shared/types';
 import {
   computeMorphRelationGqlFieldName,
   isDefined,
@@ -86,7 +86,12 @@ export const generateJunctionRelationGqlFields = ({
 }: GenerateJunctionRelationGqlFieldsArgs): RecordGqlFields => {
   const { junctionObjectMetadata, targetFields } = junctionConfig;
 
-  const junctionTargetFields = targetFields.reduce<RecordGqlFields>(
+  const readableTargetFields = getPermittedJunctionTargetFields({
+    targetFields,
+    permittedFields: junctionObjectMetadata.readableFields,
+  });
+
+  const junctionTargetFields = readableTargetFields.reduce<RecordGqlFields>(
     (acc, targetField) => ({
       ...acc,
       ...buildTargetFieldGqlFields(targetField, objectMetadataItems),

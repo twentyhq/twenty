@@ -29,18 +29,6 @@ export const RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR =
 export const RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR =
   '--record-table-first-column-left';
 
-const MAX_COLUMNS = 100;
-
-const columnFieldWidthRules = Array.from(
-  { length: MAX_COLUMNS },
-  (_, i) =>
-    `div.${getRecordTableColumnFieldWidthClassName(i)} {
-    width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)});
-    min-width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)});
-    max-width: var(${getRecordTableColumnFieldWidthCSSVariableName(i)});
-  }`,
-).join('\n');
-
 export const getRecordTableColumnWidthInlineStyles = ({
   visibleRecordFields,
   isDragColumnHidden,
@@ -110,14 +98,14 @@ const StyledTable = styled.div<{
 
   div.header-cell.${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME} {
     background-color: ${themeCssVariables.background.primary};
-    left: 0px;
+    inset-inline-start: 0px;
     position: sticky;
     z-index: ${TABLE_Z_INDEX.headerColumns.headerColumnsSticky};
   }
 
   div.header-cell.${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME} {
     background-color: ${themeCssVariables.background.primary};
-    left: var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR});
+    inset-inline-start: var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR});
     position: sticky;
     top: 0;
     z-index: ${TABLE_Z_INDEX.headerColumns.headerColumnsSticky};
@@ -125,35 +113,35 @@ const StyledTable = styled.div<{
 
   div.header-cell.${getRecordTableColumnFieldWidthClassName(0)} {
     background-color: ${themeCssVariables.background.primary};
-    left: var(${RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR});
+    inset-inline-start: var(${RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR});
     position: sticky;
-    right: 0;
+    inset-inline-end: 0;
     z-index: ${TABLE_Z_INDEX.headerColumns.headerColumnsSticky};
 
     ${HorizontalScrollBoxShadowCSS}
   }
 
   div.table-cell.${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME} {
-    left: 0px;
+    inset-inline-start: 0px;
     position: sticky;
     z-index: ${TABLE_Z_INDEX.cell.sticky};
   }
 
   div.table-cell.${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME} {
-    left: var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR});
+    inset-inline-start: var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR});
     position: sticky;
     z-index: ${TABLE_Z_INDEX.cell.sticky};
   }
 
   div.table-cell-0-0 {
-    left: var(${RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR});
+    inset-inline-start: var(${RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR});
     position: sticky;
 
     ${HorizontalScrollBoxShadowCSS}
   }
 
   div.table-cell.${getRecordTableColumnFieldWidthClassName(0)} {
-    left: var(${RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR});
+    inset-inline-start: var(${RECORD_TABLE_FIRST_COLUMN_LEFT_CSS_VAR});
     position: sticky;
     z-index: ${TABLE_Z_INDEX.cell.sticky};
 
@@ -177,8 +165,6 @@ const StyledTable = styled.div<{
     min-width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
     width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
   }
-
-  ${columnFieldWidthRules}
 
   div.${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME} {
     max-width: var(
@@ -206,20 +192,20 @@ const StyledTable = styled.div<{
     // clip, not hidden: hidden makes the cell a scroll container the sticky anchor would stick to.
     // The clip margin keeps the scroll shadow, which paints outside the box.
     div.header-cell.${getRecordTableColumnFieldWidthClassName(0)},
-      div.table-cell.${getRecordTableColumnFieldWidthClassName(0)},
-      div.footer-cell.${getRecordTableColumnFieldWidthClassName(0)},
-      div.table-cell-0-0 {
+    div.table-cell.${getRecordTableColumnFieldWidthClassName(0)},
+    div.footer-cell.${getRecordTableColumnFieldWidthClassName(0)},
+    div.table-cell-0-0 {
       overflow: clip;
       overflow-clip-margin: 4px;
     }
 
-    // Pins the content at the table's left edge so the name holds still and truncates from the right.
+    // Pins the content at the table's start edge so the name holds still and truncates at its end.
     // Must stay zero-width, or sticky's containing-block constraint drags it along with the cell.
     div.table-cell.${getRecordTableColumnFieldWidthClassName(0)}
-      > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME},
-      div.table-cell-0-0
-      > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME} {
-      left: calc(
+    > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME},
+    div.table-cell-0-0
+    > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME} {
+      inset-inline-start: calc(
         var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) +
           var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR})
       );
@@ -230,28 +216,28 @@ const StyledTable = styled.div<{
 
     // Absolute so the chip gets its full width without widening the anchor.
     div.table-cell.${getRecordTableColumnFieldWidthClassName(0)}
-      > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME}
-      > .${RECORD_TABLE_CELL_DISPLAY_CLASS_NAME},
-      div.table-cell-0-0
-      > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME}
-      > .${RECORD_TABLE_CELL_DISPLAY_CLASS_NAME} {
+    > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME}
+    > .${RECORD_TABLE_CELL_DISPLAY_CLASS_NAME},
+    div.table-cell-0-0
+    > .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME}
+    > .${RECORD_TABLE_CELL_DISPLAY_CLASS_NAME} {
       height: 100%;
-      left: 0;
+      inset-inline-start: 0;
       position: absolute;
       top: 0;
       width: calc(
-        var(${getRecordTableColumnFieldWidthCSSVariableName(0)}) - var(
-            ${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}
-          ) - var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR})
+        var(${getRecordTableColumnFieldWidthCSSVariableName(0)}) -
+          var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) -
+          var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR})
       );
     }
 
     // Shrink-wrapped: at full column width sticky's containing-block constraint would drag these off with the cell.
     div.header-cell.${getRecordTableColumnFieldWidthClassName(0)}
-      .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME},
-      div.footer-cell.${getRecordTableColumnFieldWidthClassName(0)}
-      .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME} {
-      left: calc(
+    .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME},
+    div.footer-cell.${getRecordTableColumnFieldWidthClassName(0)}
+    .${RECORD_TABLE_CELL_CONTENT_CLASS_NAME} {
+      inset-inline-start: calc(
         var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) +
           var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR})
       );

@@ -1,6 +1,8 @@
+import { useApolloClient } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 
+import { PREVIEW_MESSAGE_CAMPAIGN_SEND } from '@/activities/emails/graphql/metadata-queries/previewMessageCampaignSend';
 import { type MessageCampaign } from '@/activities/emails/types/MessageCampaign';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useRecordSeededDraft } from '@/object-record/record-seeded-draft/hooks/useRecordSeededDraft';
@@ -21,6 +23,7 @@ export const usePersistedCampaignDraft = <TDraft extends object>({
 }: UsePersistedCampaignDraftArgs<TDraft>) => {
   const { updateOneRecord } = useUpdateOneRecord();
   const { enqueueToast } = useToast();
+  const apolloClient = useApolloClient();
 
   const { draft, updateDraft, flush, draftResyncKey } = useRecordSeededDraft({
     upstreamDraft: initialDraft(),
@@ -29,11 +32,18 @@ export const usePersistedCampaignDraft = <TDraft extends object>({
         objectNameSingular: CoreObjectNameSingular.MessageCampaign,
         idToUpdate: campaignId,
         updateOneRecordInput: toUpdateOneRecordInput(nextDraft),
-      }).catch(() =>
-        enqueueToast({
-          variant: 'error',
-          children: t`Failed to save the campaign`,
-        }),
+      }).then(
+        () =>
+          apolloClient
+            .refetchQueries({
+              include: [PREVIEW_MESSAGE_CAMPAIGN_SEND],
+            })
+            .catch(() => undefined),
+        () =>
+          enqueueToast({
+            status: 'error',
+            children: t`Failed to save the campaign`,
+          }),
       );
     },
   });

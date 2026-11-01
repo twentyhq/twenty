@@ -1,4 +1,4 @@
-import { makeAdminPanelApiRequestWithGuestRole } from 'test/integration/graphql/suites/admin-panel/utils/make-admin-panel-api-request-with-guest-role.util';
+import { makeAdminPanelApiRequestAsNonServerAdmin } from 'test/integration/graphql/suites/admin-panel/utils/make-admin-panel-api-request-as-non-server-admin.util';
 import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
@@ -8,6 +8,7 @@ import { gql } from 'graphql-tag';
 import { type Repository } from 'typeorm';
 
 import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
@@ -86,6 +87,11 @@ const STORAGE_STOCK_PAYLOAD = {
 };
 
 describe('Workspace usage limits from the admin panel', () => {
+  const twentyConfigService = getAppProviderByClassName<TwentyConfigService>(
+    'TwentyConfigService',
+  );
+  const readConfig = twentyConfigService.get.bind(twentyConfigService);
+
   let usageLimitRepository: Repository<UsageLimitEntity>;
 
   const findWorkspaceUsageLimits = async () => {
@@ -100,6 +106,16 @@ describe('Workspace usage limits from the admin panel', () => {
   beforeAll(() => {
     usageLimitRepository =
       getCoreRepository<UsageLimitEntity>(UsageLimitEntity);
+
+    jest
+      .spyOn(twentyConfigService, 'get')
+      .mockImplementation((key) =>
+        key === 'WORKSPACE_STORAGE_LIMIT_BYTES' ? 10_000_000 : readConfig(key),
+      );
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
   });
 
   afterEach(async () => {
@@ -248,8 +264,8 @@ describe('Workspace usage limits from the admin panel', () => {
     });
   });
 
-  it('refuses a user without the security permission', async () => {
-    const response = await makeAdminPanelApiRequestWithGuestRole({
+  it('refuses a user without server admin access', async () => {
+    const response = await makeAdminPanelApiRequestAsNonServerAdmin({
       query: WORKSPACE_USAGE_LIMITS,
       variables: { workspaceId: SEED_APPLE_WORKSPACE_ID },
     });

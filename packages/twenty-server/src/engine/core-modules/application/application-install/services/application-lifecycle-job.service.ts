@@ -17,6 +17,10 @@ import {
 } from 'src/engine/core-modules/application/application-install/jobs/trigger-uninstall-application.job';
 import { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
 import {
+  TriggerUpgradeApplicationJob,
+  type TriggerUpgradeApplicationJobData,
+} from 'src/engine/core-modules/application/application-upgrade/jobs/trigger-upgrade-application.job';
+import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
@@ -35,12 +39,40 @@ type LifecycleJobTarget = {
   workspaceId: string;
 };
 
-const CONFLICTING_OPERATION: Record<
+type LifecycleJobStatusTarget = LifecycleJobTarget & {
+  jobId?: string;
+};
+
+const CONFLICTING_OPERATIONS: Record<
   ApplicationLifecycleOperation,
-  ApplicationLifecycleOperation
+  ApplicationLifecycleOperation[]
 > = {
-  install: 'uninstall',
-  uninstall: 'install',
+  install: ['uninstall', 'upgrade'],
+  uninstall: ['install', 'upgrade'],
+  upgrade: ['uninstall', 'install'],
+};
+
+const getConflictingOperationUserFriendlyMessage = ({
+  operation,
+  conflictingOperation,
+}: {
+  operation: ApplicationLifecycleOperation;
+  conflictingOperation: ApplicationLifecycleOperation;
+}) => {
+  switch (operation) {
+    case 'install':
+      return conflictingOperation === 'upgrade'
+        ? msg`This application is being upgraded. Please wait for it to finish before installing it.`
+        : msg`This application is being uninstalled. Please wait for it to finish before installing it again.`;
+    case 'uninstall':
+      return conflictingOperation === 'upgrade'
+        ? msg`This application is being upgraded. Please wait for it to finish before uninstalling it.`
+        : msg`This application is being installed. Please wait for it to finish before uninstalling it.`;
+    case 'upgrade':
+      return conflictingOperation === 'install'
+        ? msg`This application is being installed. Please wait for it to finish before upgrading it.`
+        : msg`This application is being uninstalled. Please wait for it to finish before upgrading it.`;
+  }
 };
 
 @Injectable()
@@ -53,7 +85,7 @@ export class ApplicationLifecycleJobService {
     private readonly workspaceQueueService: MessageQueueService,
   ) {}
 
-  async triggerInstallApplicationJob({
+  async triggerInstallApplication({
     universalIdentifier,
     workspaceId,
   }: LifecycleJobTarget): Promise<{ jobId: string }> {
@@ -71,14 +103,19 @@ export class ApplicationLifecycleJobService {
     });
   }
 
-  async triggerUninstallApplicationJob({
+  async triggerUninstallApplication({
     universalIdentifier,
     workspaceId,
   }: LifecycleJobTarget): Promise<{ jobId: string }> {
-    await this.applicationService.findOneApplicationWithRelationsOrThrow({
-      universalIdentifier,
-      workspaceId,
-    });
+    const application =
+      await this.applicationService.findOneApplicationWithRelationsOrThrow({
+        universalIdentifier,
+        workspaceId,
+      });
+
+    await this.applicationService.assertUninstallIsNotBlockedByOtherWorkspaceInstallationsOrThrow(
+      { application, workspaceId },
+    );
 
     return this.triggerLifecycleJob<TriggerUninstallApplicationJobData>({
       operation: 'uninstall',
@@ -89,16 +126,52 @@ export class ApplicationLifecycleJobService {
     });
   }
 
+  async triggerUpgradeApplication({
+    universalIdentifier,
+    targetVersion,
+    workspaceId,
+  }: LifecycleJobTarget & { targetVersion: string }): Promise<{
+    jobId: string;
+  }> {
+    await this.applicationService.findOneApplicationWithRelationsOrThrow({
+      universalIdentifier,
+      workspaceId,
+    });
+
+    const registration =
+      await this.marketplaceQueryService.findRegistrationByUniversalIdentifier(
+        universalIdentifier,
+      );
+
+    return this.triggerLifecycleJob<TriggerUpgradeApplicationJobData>({
+      operation: 'upgrade',
+      jobName: TriggerUpgradeApplicationJob.name,
+      data: {
+        applicationRegistrationId: registration.id,
+        targetVersion,
+        workspaceId,
+      },
+      universalIdentifier,
+      workspaceId,
+    });
+  }
+
   findInstallApplicationJobStatus(
-    target: LifecycleJobTarget,
+    target: LifecycleJobStatusTarget,
   ): Promise<JobStatusDTO | null> {
     return this.findLifecycleJobStatus({ operation: 'install', ...target });
   }
 
   findUninstallApplicationJobStatus(
-    target: LifecycleJobTarget,
+    target: LifecycleJobStatusTarget,
   ): Promise<JobStatusDTO | null> {
     return this.findLifecycleJobStatus({ operation: 'uninstall', ...target });
+  }
+
+  findUpgradeApplicationJobStatus(
+    target: LifecycleJobStatusTarget,
+  ): Promise<JobStatusDTO | null> {
+    return this.findLifecycleJobStatus({ operation: 'upgrade', ...target });
   }
 
   private triggerLifecycleJob<TData extends MessageQueueJobData>({
@@ -136,26 +209,33 @@ export class ApplicationLifecycleJobService {
     jobName: string;
     data: TData;
   }): Promise<{ jobId: string }> {
-    const conflictingOperation = CONFLICTING_OPERATION[operation];
-    const conflictingJobId = await this.findInFlightJobId(
-      buildApplicationLifecycleJobId({
-        operation: conflictingOperation,
-        workspaceId,
-        universalIdentifier,
-      }),
-    );
-
-    if (isDefined(conflictingJobId)) {
-      throw new ApplicationException(
-        `Cannot ${operation} application ${universalIdentifier} while its ${conflictingOperation} is in progress`,
-        ApplicationExceptionCode.INVALID_INPUT,
-        {
-          userFriendlyMessage:
-            operation === 'install'
-              ? msg`This application is being uninstalled. Please wait for it to finish before installing it again.`
-              : msg`This application is being installed. Please wait for it to finish before uninstalling it.`,
-        },
+    const inFlightJobIds = await this.findInFlightJobIds();
+    const findInFlightJobIdWithPrefix = (jobIdPrefix: string) =>
+      inFlightJobIds.find(
+        (jobId) => getQueueJobIdPrefix(jobId) === jobIdPrefix,
       );
+
+    for (const conflictingOperation of CONFLICTING_OPERATIONS[operation]) {
+      const conflictingJobId = findInFlightJobIdWithPrefix(
+        buildApplicationLifecycleJobId({
+          operation: conflictingOperation,
+          workspaceId,
+          universalIdentifier,
+        }),
+      );
+
+      if (isDefined(conflictingJobId)) {
+        throw new ApplicationException(
+          `Cannot ${operation} application ${universalIdentifier} while its ${conflictingOperation} is in progress`,
+          ApplicationExceptionCode.INVALID_INPUT,
+          {
+            userFriendlyMessage: getConflictingOperationUserFriendlyMessage({
+              operation,
+              conflictingOperation,
+            }),
+          },
+        );
+      }
     }
 
     const jobIdPrefix = buildApplicationLifecycleJobId({
@@ -164,10 +244,20 @@ export class ApplicationLifecycleJobService {
       universalIdentifier,
     });
 
+    // The queue only deduplicates waiting jobs, so a request made while the
+    // same operation is already running would otherwise enqueue a duplicate.
+    const inFlightJobId = findInFlightJobIdWithPrefix(jobIdPrefix);
+
+    if (isDefined(inFlightJobId)) {
+      return { jobId: inFlightJobId };
+    }
+
     const jobId =
       (await this.workspaceQueueService.add<TData>(jobName, data, {
         id: jobIdPrefix,
         broadcastTo: { workspaceId },
+        workspaceId,
+        applicationUniversalIdentifier: universalIdentifier,
       })) ?? (await this.findInFlightJobId(jobIdPrefix));
 
     if (!isDefined(jobId)) {
@@ -184,16 +274,24 @@ export class ApplicationLifecycleJobService {
     operation,
     universalIdentifier,
     workspaceId,
-  }: LifecycleJobTarget & {
+    jobId: requestedJobId,
+  }: LifecycleJobStatusTarget & {
     operation: ApplicationLifecycleOperation;
   }): Promise<JobStatusDTO | null> {
-    const jobId = await this.findInFlightJobId(
-      buildApplicationLifecycleJobId({
-        operation,
-        workspaceId,
-        universalIdentifier,
-      }),
-    );
+    const jobIdPrefix = buildApplicationLifecycleJobId({
+      operation,
+      workspaceId,
+      universalIdentifier,
+    });
+
+    if (
+      isDefined(requestedJobId) &&
+      getQueueJobIdPrefix(requestedJobId) !== jobIdPrefix
+    ) {
+      return null;
+    }
+
+    const jobId = requestedJobId ?? (await this.findInFlightJobId(jobIdPrefix));
 
     if (!isDefined(jobId)) {
       return null;
@@ -207,11 +305,16 @@ export class ApplicationLifecycleJobService {
   private async findInFlightJobId(
     jobIdPrefix: string,
   ): Promise<string | undefined> {
+    const inFlightJobIds = await this.findInFlightJobIds();
+
+    return inFlightJobIds.find(
+      (jobId) => getQueueJobIdPrefix(jobId) === jobIdPrefix,
+    );
+  }
+
+  private async findInFlightJobIds(): Promise<string[]> {
     const inFlightJobs = await this.workspaceQueueService.getInFlightJobs();
 
-    return inFlightJobs
-      .map((job) => job.id)
-      .filter(isDefined)
-      .find((jobId) => getQueueJobIdPrefix(jobId) === jobIdPrefix);
+    return inFlightJobs.map((job) => job.id).filter(isDefined);
   }
 }

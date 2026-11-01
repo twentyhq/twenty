@@ -6,10 +6,11 @@ export const GET_CHAT_MESSAGES = gql`
       id
       threadId
       turnId
-      senderUserWorkspaceId
+      senderWorkspaceMemberId
       role
       status
       createdAt
+      processedAt
       parts {
         id
         messageId
@@ -37,6 +38,12 @@ export const GET_CHAT_MESSAGES = gql`
         fileId
         providerMetadata
         createdAt
+      }
+      reactions {
+        emoji
+        workspaceMemberIds
+        agentIds
+        hasAssistantReacted
       }
     }
     chatStreamCatchupChunks(threadId: $threadId) {

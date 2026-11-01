@@ -1,0 +1,150 @@
+name: Sensitive Paths Approval
+
+# Requires an approval from a maintainer when a PR touches CI, supply-chain or
+# agent configuration. Approvals survive pushes unless dismissed or replaced
+# by a changes-requested review. Reports the
+# "Sensitive paths approval" commit status, which the main ruleset requires.
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, ready_for_review]
+  workflow_run:
+    workflows: ['PR Review Relay']
+    types: [completed]
+  merge_group:
+  # Backfills the status on every open PR, e.g. right after the ruleset starts requiring it.
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: read
+  statuses: write
+
+concurrency:
+  group: sensitive-paths-approval-${{ github.event.pull_request.head.sha || github.event.workflow_run.head_sha || github.event.merge_group.head_sha || github.run_id }}
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        with:
+          script: |
+            const STATUS_CONTEXT = 'Sensitive paths approval';
+            const SENSITIVE_PATH_PREFIXES = ['.github/', '.claude/'];
+            const SENSITIVE_FILES = ['.yarnrc.yml', '.mcp.json', 'CLAUDE.md'];
+            const APPROVERS = [
+              'charlesBochet',
+              'Weiko',
+              'prastoin',
+              'bosiraphael',
+              'etiennejouan',
+              'ijreilly',
+              'martmull',
+              'thomtrp',
+            ].map((login) => login.toLowerCase());
+
+            const { owner, repo } = context.repo;
+
+            const setStatus = (sha, state, description) =>
+              github.rest.repos.createCommitStatus({
+                owner,
+                repo,
+                sha,
+                state,
+                context: STATUS_CONTEXT,
+                description,
+                target_url: `${context.serverUrl}/${owner}/${repo}/actions/runs/${context.runId}`,
+              });
+
+            const isSensitive = (path) =>
+              SENSITIVE_FILES.includes(path) ||
+              SENSITIVE_PATH_PREFIXES.some((prefix) => path.startsWith(prefix));
+
+            const sensitivePathsIn = (files) =>
+              files
+                .flatMap((file) => [file.filename, file.previous_filename])
+                .filter((path) => path && isSensitive(path));
+
+            const evaluate = async (pullNumber) => {
+              const { data: pull } = await github.rest.pulls.get({ owner, repo, pull_number: pullNumber });
+              const headSha = pull.head.sha;
+
+              const files = await github.paginate(github.rest.pulls.listFiles, {
+                owner,
+                repo,
+                pull_number: pullNumber,
+                per_page: 100,
+              });
+              const sensitivePaths = sensitivePathsIn(files);
+
+              if (sensitivePaths.length === 0) {
+                await setStatus(headSha, 'success', 'No sensitive paths changed');
+                return;
+              }
+
+              core.info(`#${pullNumber} sensitive paths changed:\n${[...new Set(sensitivePaths)].join('\n')}`);
+
+              const reviews = await github.paginate(github.rest.pulls.listReviews, {
+                owner,
+                repo,
+                pull_number: pullNumber,
+                per_page: 100,
+              });
+
+              const latestReviewByApprover = new Map();
+              for (const review of reviews) {
+                const login = review.user?.login;
+                if (!login || !APPROVERS.includes(login.toLowerCase())) continue;
+                if (review.state === 'COMMENTED' || review.state === 'PENDING') continue;
+                latestReviewByApprover.set(login, review);
+              }
+
+              for (const [login, review] of latestReviewByApprover) {
+                if (review.state !== 'APPROVED') continue;
+                await setStatus(headSha, 'success', `Approved by ${login}`);
+                return;
+              }
+
+              await setStatus(headSha, 'failure', 'Sensitive paths changed: needs a maintainer approval');
+            };
+
+            // A PR only enters the queue once its own status is green.
+            if (context.eventName === 'merge_group') {
+              await setStatus(context.payload.merge_group.head_sha, 'success', 'Checked on the pull request');
+              return;
+            }
+
+            if (context.eventName === 'workflow_dispatch') {
+              const pulls = await github.paginate(github.rest.pulls.list, { owner, repo, state: 'open', per_page: 100 });
+              for (const pull of pulls) {
+                await evaluate(pull.number);
+              }
+              return;
+            }
+
+            let pullNumber = context.payload.pull_request?.number;
+
+            if (context.eventName === 'workflow_run') {
+              const run = context.payload.workflow_run;
+              pullNumber = run.pull_requests?.[0]?.number;
+
+              // pull_requests is empty for fork PRs
+              if (!pullNumber) {
+                const { data: pulls } = await github.rest.pulls.list({
+                  owner,
+                  repo,
+                  state: 'open',
+                  head: `${run.head_repository.owner.login}:${run.head_branch}`,
+                  per_page: 1,
+                });
+                pullNumber = pulls[0]?.number;
+              }
+            }
+
+            if (!pullNumber) {
+              core.info('No open pull request found for this event');
+              return;
+            }
+
+            await evaluate(pullNumber);

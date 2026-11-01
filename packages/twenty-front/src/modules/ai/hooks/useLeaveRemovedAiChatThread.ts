@@ -1,11 +1,11 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { useProjectAiChatThreadToUrl } from '@/ai/hooks/useProjectAiChatThreadToUrl';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
-import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
 import { agentChatVisibleThreadsSelector } from '@/ai/states/selectors/agentChatVisibleThreadsSelector';
 import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
@@ -13,16 +13,19 @@ import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/should
 
 export const useLeaveRemovedAiChatThread = () => {
   const store = useStore();
-  const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl();
+  const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl({
+    shouldPreserveClosedInbox: true,
+  });
   const { loadAgentChatThread } = useRefreshAgentChatThreads();
 
   const leaveRemovedAiChatThread = useCallback(async () => {
     const currentThreadId = store.get(currentAiChatThreadState.atom);
+    const newAiChatThreadId = store.get(newAiChatThreadIdState.atom);
     const threads = store.get(agentChatThreadsSelector.atom);
 
     if (
       !isDefined(currentThreadId) ||
-      !isValidUuid(currentThreadId) ||
+      currentThreadId === newAiChatThreadId ||
       threads.some(({ id }) => id === currentThreadId)
     ) {
       return;
@@ -41,7 +44,7 @@ export const useLeaveRemovedAiChatThread = () => {
     const nextThreadId =
       sortChatThreadsByLastActivityDesc(
         store.get(agentChatVisibleThreadsSelector.atom),
-      )[0]?.id ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
+      )[0]?.id ?? newAiChatThreadId;
     store.set(currentAiChatThreadState.atom, nextThreadId);
     projectAiChatThreadToUrl(nextThreadId);
   }, [store, projectAiChatThreadToUrl, loadAgentChatThread]);

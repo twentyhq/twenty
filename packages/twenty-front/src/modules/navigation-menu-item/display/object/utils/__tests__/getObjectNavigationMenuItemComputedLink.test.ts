@@ -83,40 +83,17 @@ describe('getObjectNavigationMenuItemComputedLink', () => {
     expect(result).toBe('');
   });
 
-  it('should keep linking to the index view when the initial object view flag is off', () => {
+  it('should link to the initial view instead of the index view', () => {
     const result = getObjectNavigationMenuItemComputedLink({
       item: { targetObjectMetadataId: 'metadata-1' },
       objectMetadataItems: mockObjectMetadataItems,
       views: mockViewsWithInitialView,
-      isInitialObjectViewEnabled: false,
-    });
-
-    expect(result).toBe('/objects/people?viewId=view-index');
-  });
-
-  it('should link to the initial view instead of the index view when the flag is on', () => {
-    const result = getObjectNavigationMenuItemComputedLink({
-      item: { targetObjectMetadataId: 'metadata-1' },
-      objectMetadataItems: mockObjectMetadataItems,
-      views: mockViewsWithInitialView,
-      isInitialObjectViewEnabled: true,
     });
 
     expect(result).toBe('/objects/people?viewId=view-initial');
   });
 
-  it('should fall back to the index view when the flag is on and no initial view exists', () => {
-    const result = getObjectNavigationMenuItemComputedLink({
-      item: { targetObjectMetadataId: 'metadata-1' },
-      objectMetadataItems: mockObjectMetadataItems,
-      views: mockViews,
-      isInitialObjectViewEnabled: true,
-    });
-
-    expect(result).toBe('/objects/people?viewId=view-index');
-  });
-
-  it('should never target a fields widget view when the flag is on', () => {
+  it('should never target a fields widget view', () => {
     const result = getObjectNavigationMenuItemComputedLink({
       item: { targetObjectMetadataId: 'metadata-1' },
       objectMetadataItems: mockObjectMetadataItems,
@@ -130,46 +107,31 @@ describe('getObjectNavigationMenuItemComputedLink', () => {
           position: 2,
         },
       ],
-      isInitialObjectViewEnabled: true,
     });
 
     expect(result).toBe('/objects/people?viewId=view-index');
   });
 
-  it('should ignore a last visited view pointing at the index view when the flag is on', () => {
+  it('should ignore a last visited view pointing at the index view', () => {
     const result = getObjectNavigationMenuItemComputedLink({
       item: { targetObjectMetadataId: 'metadata-1' },
       objectMetadataItems: mockObjectMetadataItems,
       views: mockViewsWithInitialView,
       lastVisitedViewId: 'view-index',
-      isInitialObjectViewEnabled: true,
     });
 
     expect(result).toBe('/objects/people?viewId=view-initial');
   });
 
-  it('should still honour a last visited view that is not the index view when the flag is on', () => {
+  it('should still honour a last visited view that is not the index view', () => {
     const result = getObjectNavigationMenuItemComputedLink({
       item: { targetObjectMetadataId: 'metadata-1' },
       objectMetadataItems: mockObjectMetadataItems,
       views: mockViewsWithInitialView,
       lastVisitedViewId: 'view-42',
-      isInitialObjectViewEnabled: true,
     });
 
     expect(result).toBe('/objects/people?viewId=view-42');
-  });
-
-  it('should still honour a last visited index view when the flag is off', () => {
-    const result = getObjectNavigationMenuItemComputedLink({
-      item: { targetObjectMetadataId: 'metadata-1' },
-      objectMetadataItems: mockObjectMetadataItems,
-      views: mockViewsWithInitialView,
-      lastVisitedViewId: 'view-index',
-      isInitialObjectViewEnabled: false,
-    });
-
-    expect(result).toBe('/objects/people?viewId=view-index');
   });
 
   it('should target the lowest-positioned non-index view regardless of array order', () => {
@@ -186,7 +148,6 @@ describe('getObjectNavigationMenuItemComputedLink', () => {
         },
         ...mockViewsWithInitialView,
       ],
-      isInitialObjectViewEnabled: true,
     });
 
     expect(result).toBe('/objects/people?viewId=view-initial');

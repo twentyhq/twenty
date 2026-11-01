@@ -1,12 +1,22 @@
+import { WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME } from 'src/engine/core-modules/application/application-package/constants/workspace-custom-application-dependencies-directory-name';
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
+import { msg } from '@lingui/core/macro';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { type DataSource, type QueryRunner, type Repository } from 'typeorm';
+import {
+  type DataSource,
+  IsNull,
+  Not,
+  type QueryRunner,
+  type Repository,
+} from 'typeorm';
 import { v4 } from 'uuid';
 
+import { computeApplicationPackageChecksums } from 'src/engine/core-modules/application/application-package/utils/compute-application-package-checksums.util';
 import { getDefaultApplicationPackageFields } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields.util';
+import { getDefaultApplicationPackageFieldsForApplication } from 'src/engine/core-modules/application/application-package/utils/get-default-application-package-fields-for-application.util';
 import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/application-package/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -26,7 +36,6 @@ import { CommandMenuItemEntity } from 'src/engine/metadata-modules/command-menu-
 import { ALL_FLAT_ENTITY_MAPS_PROPERTIES } from 'src/engine/metadata-modules/flat-entity/constant/all-flat-entity-maps-properties.constant';
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { logicFunctionCreateHash } from 'src/engine/metadata-modules/logic-function/utils/logic-function-create-hash.utils';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { SettingsMenuItemEntity } from 'src/engine/metadata-modules/settings-menu-item/entities/settings-menu-item.entity';
 import { serializeApplicationForBroadcast } from 'src/engine/core-modules/application/utils/serialize-application-for-broadcast.util';
@@ -97,7 +106,7 @@ export class ApplicationService {
         workspace?: never;
       }
     | {
-        workspace: WorkspaceEntity;
+        workspace: Pick<WorkspaceEntity, 'id' | 'workspaceCustomApplicationId'>;
         workspaceId?: never;
       }) {
     const workspace = isDefined(workspaceInput)
@@ -177,7 +186,7 @@ export class ApplicationService {
     );
   }
 
-  async findOneApplicationWithRelations({
+  async findOneApplication({
     id,
     universalIdentifier,
     workspaceId,
@@ -193,9 +202,50 @@ export class ApplicationService {
       );
     }
 
-    const application = await this.applicationRepository.findOne(workspaceId, {
+    return this.applicationRepository.findOne(workspaceId, {
       where: isDefined(id) ? { id } : { universalIdentifier },
-      relations: ['packageJsonFile', 'yarnLockFile', 'applicationRegistration'],
+      relations: ['applicationRegistration'],
+    });
+  }
+
+  async findOneApplicationOrThrow({
+    id,
+    universalIdentifier,
+    workspaceId,
+  }: {
+    id?: string;
+    universalIdentifier?: string;
+    workspaceId: string;
+  }): Promise<ApplicationEntity> {
+    const application = await this.findOneApplication({
+      id,
+      universalIdentifier,
+      workspaceId,
+    });
+
+    if (!isDefined(application)) {
+      throw new ApplicationException(
+        `Application with id ${id} or universalIdentifier ${universalIdentifier} not found`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    return application;
+  }
+
+  async findOneApplicationWithRelations({
+    id,
+    universalIdentifier,
+    workspaceId,
+  }: {
+    id?: string;
+    universalIdentifier?: string;
+    workspaceId: string;
+  }): Promise<ApplicationEntity | null> {
+    const application = await this.findOneApplication({
+      id,
+      universalIdentifier,
+      workspaceId,
     });
 
     if (!isDefined(application)) {
@@ -297,6 +347,81 @@ export class ApplicationService {
       .andWhere('application.deletedAt IS NULL')
       .andWhere('workspace.deletedAt IS NULL')
       .getCount();
+  }
+
+  async isUninstallBlockedByOtherWorkspaceInstallations({
+    applicationId,
+    applicationRegistrationId,
+    workspaceId,
+  }: {
+    applicationId: string;
+    applicationRegistrationId?: string | null;
+    workspaceId: string;
+  }): Promise<boolean> {
+    if (!isDefined(applicationRegistrationId)) {
+      return false;
+    }
+
+    const isOwnedByWorkspace =
+      await this.applicationRegistrationRepository.existsBy({
+        id: applicationRegistrationId,
+        ownerWorkspaceId: workspaceId,
+      });
+
+    if (!isOwnedByWorkspace) {
+      return false;
+    }
+
+    const hasServerRouteLogicFunction =
+      await this.logicFunctionRepository.exists(workspaceId, {
+        where: { applicationId, serverRouteTriggerSettings: Not(IsNull()) },
+      });
+
+    if (!hasServerRouteLogicFunction) {
+      return false;
+    }
+
+    return this.applicationRepository
+      .createQueryBuilder('application')
+      .innerJoin('application.workspace', 'workspace')
+      .where(
+        'application.applicationRegistrationId = :applicationRegistrationId',
+        {
+          applicationRegistrationId,
+        },
+      )
+      .andWhere('application.workspaceId != :workspaceId', { workspaceId })
+      .andWhere('application.deletedAt IS NULL')
+      .andWhere('workspace.deletedAt IS NULL')
+      .getExists();
+  }
+
+  async assertUninstallIsNotBlockedByOtherWorkspaceInstallationsOrThrow({
+    application,
+    workspaceId,
+  }: {
+    application: Pick<
+      ApplicationEntity,
+      'id' | 'universalIdentifier' | 'applicationRegistrationId'
+    >;
+    workspaceId: string;
+  }): Promise<void> {
+    const isUninstallBlocked =
+      await this.isUninstallBlockedByOtherWorkspaceInstallations({
+        applicationId: application.id,
+        applicationRegistrationId: application.applicationRegistrationId,
+        workspaceId,
+      });
+
+    if (isUninstallBlocked) {
+      throw new ApplicationException(
+        `Application ${application.universalIdentifier} exposes a server route and is installed in other workspaces, it cannot be uninstalled from its owner workspace ${workspaceId}`,
+        ApplicationExceptionCode.FORBIDDEN,
+        {
+          userFriendlyMessage: msg`Other workspaces rely on this app's server route, which is served from this workspace. Transfer the app ownership to another workspace where it is installed, or uninstall it from all other workspaces, before uninstalling it here.`,
+        },
+      );
+    }
   }
 
   // Number of workspaces each external (non-LOCAL) application is installed in,
@@ -442,7 +567,9 @@ export class ApplicationService {
     },
     queryRunner?: QueryRunner,
   ) {
-    const defaultPackageFields = await getDefaultApplicationPackageFields();
+    const defaultPackageFields = await getDefaultApplicationPackageFields({
+      directory: WORKSPACE_CUSTOM_APPLICATION_DEPENDENCIES_DIRECTORY_NAME,
+    });
 
     const applicationRegistration =
       await this.createWorkspaceCustomApplicationRegistration(
@@ -475,10 +602,12 @@ export class ApplicationService {
       queryRunner,
     );
 
-    await this.uploadDefaultPackageFilesAndSetFileIds(
-      workspaceCustomApplication,
+    await this.uploadPackageFilesAndSetFileIds({
+      application: workspaceCustomApplication,
+      packageJsonContent: defaultPackageFields.packageJsonContent,
+      yarnLockContent: defaultPackageFields.yarnLockContent,
       queryRunner,
-    );
+    });
 
     return workspaceCustomApplication;
   }
@@ -523,21 +652,53 @@ export class ApplicationService {
     >,
     queryRunner?: QueryRunner,
   ): Promise<void> {
-    const defaultPackageFields = await getDefaultApplicationPackageFields();
+    const workspaceRepository =
+      queryRunner?.manager.getRepository(WorkspaceEntity) ??
+      this.workspaceRepository;
+    const workspace = await workspaceRepository.findOne({
+      where: { id: application.workspaceId },
+      select: ['workspaceCustomApplicationId'],
+    });
+    const { packageJsonContent, yarnLockContent } =
+      await getDefaultApplicationPackageFieldsForApplication({
+        applicationId: application.id,
+        workspaceCustomApplicationId: workspace?.workspaceCustomApplicationId,
+      });
 
-    const packageJsonChecksum = logicFunctionCreateHash(
-      JSON.stringify(JSON.parse(defaultPackageFields.packageJsonContent)),
-    );
-    const yarnLockChecksum = logicFunctionCreateHash(
-      defaultPackageFields.yarnLockContent,
-    );
+    await this.uploadPackageFilesAndSetFileIds({
+      application,
+      packageJsonContent,
+      yarnLockContent,
+      queryRunner,
+    });
+  }
+
+  async uploadPackageFilesAndSetFileIds({
+    application,
+    packageJsonContent,
+    yarnLockContent,
+    queryRunner,
+  }: {
+    application: Pick<
+      ApplicationEntity,
+      'id' | 'universalIdentifier' | 'workspaceId'
+    >;
+    packageJsonContent: string;
+    yarnLockContent: string;
+    queryRunner?: QueryRunner;
+  }): Promise<void> {
+    const { packageJsonChecksum, yarnLockChecksum } =
+      computeApplicationPackageChecksums({
+        packageJsonContent,
+        yarnLockContent,
+      });
     const availablePackages = parseAvailablePackagesFromPackageJsonAndYarnLock(
-      defaultPackageFields.packageJsonContent,
-      defaultPackageFields.yarnLockContent,
+      packageJsonContent,
+      yarnLockContent,
     );
 
     const packageJsonFile = await this.fileStorageService.writeFile({
-      sourceFile: defaultPackageFields.packageJsonContent,
+      sourceFile: packageJsonContent,
       fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: application.universalIdentifier,
       applicationId: application.id,
@@ -548,7 +709,7 @@ export class ApplicationService {
     });
 
     const yarnLockFile = await this.fileStorageService.writeFile({
-      sourceFile: defaultPackageFields.yarnLockContent,
+      sourceFile: yarnLockContent,
       fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: application.universalIdentifier,
       applicationId: application.id,
@@ -642,6 +803,44 @@ export class ApplicationService {
     });
 
     return savedApplication;
+  }
+
+  async broadcastFrontComponentSharedDependenciesChecksumUpdates({
+    workspaceId,
+    applicationId,
+    frontComponentSharedDependenciesChecksum,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    frontComponentSharedDependenciesChecksum: string | null;
+  }): Promise<void> {
+    try {
+      const frontComponents = await this.frontComponentRepository.find(
+        workspaceId,
+        { select: ['id'], where: { applicationId } },
+      );
+
+      await this.workspaceEventBroadcaster.broadcast({
+        workspaceId,
+        events: frontComponents.map((frontComponent) => ({
+          type: 'updated',
+          entityName: 'frontComponent',
+          recordId: frontComponent.id,
+          properties: {
+            updatedFields: ['frontComponentSharedDependenciesChecksum'],
+            after: {
+              id: frontComponent.id,
+              frontComponentSharedDependenciesChecksum,
+            },
+          },
+        })),
+      });
+    } catch (error) {
+      this.logger.warn(
+        `Failed to broadcast the shared dependencies checksum update for application ${applicationId} in workspace ${workspaceId}`,
+        error,
+      );
+    }
   }
 
   async update(

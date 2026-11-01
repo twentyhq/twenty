@@ -22,11 +22,13 @@ export const NavigationDrawerOpenedSection = () => {
   }
 
   return (
-    <Collapsible isExpanded>
-      <NavigationDrawerSectionForObjectMetadataItems
-        sectionTitle={t`Opened`}
-        objectMetadataItems={[objectMetadataItem]}
-      />
-    </Collapsible>
+    <Collapsible.Root open>
+      <Collapsible.Panel>
+        <NavigationDrawerSectionForObjectMetadataItems
+          sectionTitle={t`Opened`}
+          objectMetadataItems={[objectMetadataItem]}
+        />
+      </Collapsible.Panel>
+    </Collapsible.Root>
   );
 };

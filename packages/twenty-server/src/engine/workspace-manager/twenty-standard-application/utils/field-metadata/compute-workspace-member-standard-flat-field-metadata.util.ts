@@ -944,6 +944,72 @@ export const buildWorkspaceMemberStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  agentMessageReactions: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'agentMessageReactions',
+      label: i18nLabel(
+        msg({
+          message: `Chat message reactions`,
+          context: 'fieldMetadata.label',
+        }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `Emoji reactions of the workspace member to AI chat messages`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconMoodSmile',
+      isNullable: true,
+      isUIEditable: false,
+      targetObjectName: 'agentMessageReaction',
+      targetFieldName: 'workspaceMember',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  assignedAgentChatThreads: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'assignedAgentChatThreads',
+      label: i18nLabel(
+        msg({
+          message: `Assigned chat threads`,
+          context: 'fieldMetadata.label',
+        }),
+      ),
+      description: i18nLabel(
+        msg({
+          message: `AI chat threads assigned to the workspace member`,
+          context: 'fieldMetadata.description',
+        }),
+      ),
+      icon: 'IconMessage',
+      isNullable: true,
+      isUIEditable: false,
+      targetObjectName: 'agentChatThread',
+      targetFieldName: 'assignee',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   ownedOpportunities: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

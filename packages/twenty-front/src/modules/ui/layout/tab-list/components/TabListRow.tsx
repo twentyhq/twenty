@@ -12,10 +12,6 @@ const StyledContainer = styled.div<{ isScrollable: boolean }>`
   overflow-x: ${({ isScrollable }) => (isScrollable ? 'auto' : 'hidden')};
   position: relative;
   ${SCROLLABLE_TAB_ROW_CSS}
-
-  &&::after {
-    display: none;
-  }
 `;
 
 type TabListRowProps = {
@@ -49,6 +45,7 @@ export const TabListRow = ({
       render={<StyledContainer isScrollable={isScrollable} />}
     >
       {children}
+      <Tabs.Indicator />
     </Tabs.List>
   );
 };

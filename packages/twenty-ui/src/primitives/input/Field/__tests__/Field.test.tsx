@@ -18,6 +18,21 @@ runComponentConformance({
 });
 
 runComponentConformance({
+  name: 'Field.Item',
+  element: <Field.Item />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: FieldRootWrapper,
+});
+
+runComponentConformance({
+  name: 'Field.Control',
+  element: <Field.Control />,
+  refInstanceOf: HTMLInputElement,
+  wrapper: FieldRootWrapper,
+  renderPropTagName: 'input',
+});
+
+runComponentConformance({
   name: 'Field.Label',
   element: <Field.Label>Label</Field.Label>,
   refInstanceOf: HTMLLabelElement,

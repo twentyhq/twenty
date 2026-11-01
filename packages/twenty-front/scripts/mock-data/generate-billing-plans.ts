@@ -5,6 +5,9 @@ const LIST_PLANS_QUERY = `
   query listPlans {
     listPlans {
       planKey
+      isSellable
+      upgradePlanKeys
+      downgradePlanKeys
       licensedProducts {
         name
         description

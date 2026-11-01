@@ -4,6 +4,8 @@ import {
   isDefined,
   parseCanonicalEmailDocument,
   parseJson,
+  replaceTemplateVariables,
+  type TemplateVariableWithFallback,
 } from 'twenty-shared/utils';
 
 import { compileOutboundEmailContent } from 'src/engine/core-modules/email/utils/compile-outbound-email-content.util';
@@ -13,7 +15,6 @@ import {
   EmailingDomainExceptionCode,
 } from 'src/engine/core-modules/emailing-domain/exceptions/emailing-domain.exception';
 import { type EmailingDomainEmailTemplate } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-template.type';
-import { CAMPAIGN_VARIABLE_PATTERN } from 'src/modules/emailing/constants/campaign-variable-pattern.constant';
 
 const CAMPAIGN_BATCH_TAG_PREFIXES = {
   htmlEscaped: 'v_h',
@@ -30,12 +31,14 @@ type CampaignBatchTagFamilyByContext = Record<
 
 const HTML_BODY_TAG_FAMILY_BY_CONTEXT: CampaignBatchTagFamilyByContext = {
   html: 'htmlEscaped',
+  rawHtml: 'htmlEscaped',
   text: 'htmlEscaped',
   url: 'urlEncoded',
 };
 
 const PLAIN_TEXT_BODY_TAG_FAMILY_BY_CONTEXT: CampaignBatchTagFamilyByContext = {
   html: 'htmlEscaped',
+  rawHtml: 'htmlEscaped',
   text: 'raw',
   url: 'urlEncoded',
 };
@@ -49,25 +52,31 @@ export const compileCampaignBatchTemplate = async ({
 }): Promise<{
   template: EmailingDomainEmailTemplate;
   plainTextSourceHtml: string;
-  variableNames: string[];
+  campaignVariables: TemplateVariableWithFallback[];
 }> => {
-  const variableNames: string[] = [];
+  const campaignVariables: TemplateVariableWithFallback[] = [];
 
-  const indexOfVariable = (variableName: string): number => {
-    const existingIndex = variableNames.indexOf(variableName);
+  const indexOfVariable = (
+    campaignVariable: TemplateVariableWithFallback,
+  ): number => {
+    const existingIndex = campaignVariables.findIndex(
+      ({ name, fallback }) =>
+        name === campaignVariable.name &&
+        fallback === campaignVariable.fallback,
+    );
 
     if (existingIndex !== -1) {
       return existingIndex;
     }
 
-    return variableNames.push(variableName) - 1;
+    return campaignVariables.push(campaignVariable) - 1;
   };
 
   const toTags = (value: string, tagFamily: CampaignBatchTagFamily): string =>
-    value.replace(
-      CAMPAIGN_VARIABLE_PATTERN,
-      (_match, variableName) =>
-        `{{${CAMPAIGN_BATCH_TAG_PREFIXES[tagFamily]}_${indexOfVariable(variableName)}}}`,
+    replaceTemplateVariables(
+      value,
+      (campaignVariable) =>
+        `{{${CAMPAIGN_BATCH_TAG_PREFIXES[tagFamily]}_${indexOfVariable(campaignVariable)}}}`,
     );
 
   const subject = toTags(subjectTemplate, 'raw');
@@ -76,7 +85,7 @@ export const compileCampaignBatchTemplate = async ({
     return {
       template: { subject, text: '', html: '' },
       plainTextSourceHtml: '',
-      variableNames,
+      campaignVariables,
     };
   }
 
@@ -113,6 +122,6 @@ export const compileCampaignBatchTemplate = async ({
     plainTextSourceHtml: isDefined(plainTextSourceHtml)
       ? plainTextSourceHtml
       : '',
-    variableNames,
+    campaignVariables,
   };
 };

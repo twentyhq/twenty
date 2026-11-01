@@ -13,9 +13,11 @@ import { ListOrphanedWorkspaceEntitiesCommand } from 'src/database/commands/list
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
 import { RebuildApplicationDefaultDepsCommand } from 'src/database/commands/rebuild-application-default-deps.command';
 import { RunInstanceCommandsCommand } from 'src/database/commands/run-instance-commands.command';
+import { UpdateFeatureFlagCommand } from 'src/database/commands/update-feature-flag.command';
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
 import { WorkspaceExportModule } from 'src/database/commands/workspace-export/workspace-export.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
+import { WorkspaceDataExportModule } from 'src/engine/core-modules/workspace-data-export/workspace-data-export.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
@@ -61,7 +63,6 @@ import { EmailingModule } from 'src/modules/emailing/emailing.module';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 import { WorkflowRunQueueModule } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workflow-run-queue.module';
 import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/automated-trigger/automated-trigger.module';
-import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-core-consistency/workflow-core-consistency.module';
 
 @Module({
   imports: [
@@ -76,7 +77,6 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
     EmailingModule,
     AutomatedTriggerModule,
     PendingWakeUpModule,
-    WorkflowCoreConsistencyModule,
     FileModule,
     WorkspaceModule,
     WorkflowRunQueueModule,
@@ -103,6 +103,7 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
     ApplicationInstallModule,
     ApplicationUpgradeModule,
     StaleRegistrationCleanupModule,
+    WorkspaceDataExportModule,
     PreInstalledAppsModule,
     WorkspaceIteratorModule,
     ApplicationModule,
@@ -126,6 +127,7 @@ import { WorkflowCoreConsistencyModule } from 'src/modules/workflow/workflow-cor
     UpgradeStatusCommand,
     RebuildApplicationDefaultDepsCommand,
     InstallPreInstalledAppsCommand,
+    UpdateFeatureFlagCommand,
     provideWorkspaceScopedRepository(RoleEntity),
   ],
 })

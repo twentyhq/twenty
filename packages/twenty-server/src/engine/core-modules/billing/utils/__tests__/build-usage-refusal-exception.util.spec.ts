@@ -35,7 +35,10 @@ const buildExhaustedScope = (
 const EXHAUSTED_SCOPE_BY_EXHAUSTED_KIND: Record<ExhaustedKind, ExhaustedScope> =
   {
     limit: buildExhaustedScope({ exhaustedKind: 'limit' }),
-    allowance: buildExhaustedScope({ exhaustedKind: 'allowance' }),
+    workspaceAllowance: buildExhaustedScope({
+      exhaustedKind: 'workspaceAllowance',
+    }),
+    userAllowance: buildExhaustedScope({ exhaustedKind: 'userAllowance' }),
   };
 
 const USAGE_REFUSALS_BY_KIND: Record<UsageRefusal['kind'], UsageRefusal[]> = {

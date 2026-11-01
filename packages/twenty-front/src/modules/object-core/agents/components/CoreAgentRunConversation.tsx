@@ -12,7 +12,7 @@ import { handleCoreAgentRunToggleKeyDown } from '@/object-core/agents/utils/hand
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
-import { formatNumber } from '~/utils/format/formatNumber';
+import { formatNumber } from '@/localization/utils/formatNumber';
 
 type CoreAgentRunConversationProps = {
   title: string | null;

@@ -133,4 +133,18 @@ describe('formatGoogleCalendarEvents', () => {
 
     expect(result[0].iCalUid).toBe(context.expected);
   });
+
+  it.each([
+    [undefined, false],
+    ['default', false],
+    ['public', false],
+    ['private', true],
+    ['confidential', true],
+  ])('should map visibility %s to isPrivate %s', (visibility, isPrivate) => {
+    const [formattedEvent] = formatGoogleCalendarEvents([
+      { ...mockGoogleEvent, visibility },
+    ]);
+
+    expect(formattedEvent.isPrivate).toBe(isPrivate);
+  });
 });

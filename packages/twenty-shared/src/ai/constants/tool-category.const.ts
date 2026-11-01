@@ -9,4 +9,5 @@ export enum ToolCategory {
   WEBHOOK = 'WEBHOOK',
   LOGIC_FUNCTION = 'LOGIC_FUNCTION',
   ROLE = 'ROLE',
+  AGENT = 'AGENT',
 }

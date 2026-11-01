@@ -190,7 +190,7 @@ export const useInviteTeam = () => {
           isNonEmptyArray(invitationErrors)
         ) {
           enqueueToast({
-            variant: 'error',
+            status: 'error',
             children: invitationErrors.join(', '),
             duration: 5000,
           });
@@ -198,7 +198,7 @@ export const useInviteTeam = () => {
 
         if (sentInvitationsCount > 0) {
           enqueueToast({
-            variant: 'success',
+            status: 'success',
             children: t`Invite link sent to email addresses`,
             duration: 2000,
           });

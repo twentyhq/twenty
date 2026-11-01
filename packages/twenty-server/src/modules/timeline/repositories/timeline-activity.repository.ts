@@ -125,7 +125,7 @@ export class TimelineActivityRepository {
       );
 
     const timelineActivities = await timelineActivityRepository.find({
-      select: ['id', 'linkedRecordId'],
+      select: ['id', 'linkedRecordId', 'happensAt'],
       where: {
         linkedRecordId: In([...happensAtByLinkedRecordId.keys()]),
         timelineActivityTypeId: In(timelineActivityTypeIds),
@@ -137,9 +137,14 @@ export class TimelineActivityRepository {
         timelineActivity.linkedRecordId,
       );
 
-      return isDefined(happensAt)
-        ? [{ criteria: timelineActivity.id, partialEntity: { happensAt } }]
-        : [];
+      if (
+        !isDefined(happensAt) ||
+        new Date(timelineActivity.happensAt).getTime() === happensAt.getTime()
+      ) {
+        return [];
+      }
+
+      return [{ criteria: timelineActivity.id, partialEntity: { happensAt } }];
     });
 
     for (const updateInputsChunk of chunk(updateInputs, QUERY_MAX_RECORDS)) {
@@ -232,8 +237,8 @@ export class TimelineActivityRepository {
                 )
                 .find(
                   (timelineActivity) =>
-                    !isDefined(payload.linkedRecordId) ||
-                    timelineActivity.linkedRecordId === payload.linkedRecordId,
+                    (timelineActivity.linkedRecordId ?? null) ===
+                    (payload.linkedRecordId ?? null),
                 );
 
             if (isDefined(recentTimelineActivity)) {
@@ -334,6 +339,7 @@ export class TimelineActivityRepository {
             payload.recordId,
             payload.workspaceMemberId ?? null,
             payload.timelineActivityTypeId,
+            payload.linkedRecordId ?? null,
           ]),
         ),
       ),
@@ -368,6 +374,12 @@ export class TimelineActivityRepository {
       ),
       createdAt: MoreThan(tenMinutesAgo),
     };
+
+    const linkedRecordIds = payloads.map((payload) => payload.linkedRecordId);
+
+    if (linkedRecordIds.every(isDefined)) {
+      whereConditions.linkedRecordId = In(linkedRecordIds);
+    }
 
     // Every candidate is needed: a single row would let only one payload of a multi-record batch merge
     return await timelineActivityRepository.find({

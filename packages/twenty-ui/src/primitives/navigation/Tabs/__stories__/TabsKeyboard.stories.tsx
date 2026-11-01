@@ -1,6 +1,8 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
+import { Button } from '@ui/primitives/input/Button/Button';
+
 import { ComponentDecorator } from '@ui/testing';
 
 import { Tabs } from '../Tabs';
@@ -28,6 +30,7 @@ const TabsKeyboardExample = ({
       <Tabs.Tab value="last" disabled>
         Last
       </Tabs.Tab>
+      <Tabs.Indicator />
     </Tabs.List>
     <Tabs.Panel value="overview">Overview content</Tabs.Panel>
     <Tabs.Panel value="activity">Activity content</Tabs.Panel>
@@ -135,6 +138,7 @@ export const DisabledPolymorphicTab: Story = {
         >
           Activity
         </Tabs.Tab>
+        <Tabs.Indicator />
       </Tabs.List>
       <Tabs.Panel value="overview">Overview content</Tabs.Panel>
       <Tabs.Panel value="activity">Activity content</Tabs.Panel>
@@ -155,7 +159,7 @@ export const AllDisabled: Story = {
   decorators: [ComponentDecorator],
   render: (args) => (
     <>
-      <button type="button">Before tabs</button>
+      <Button>Before tabs</Button>
       <Tabs.Root value="overview" onValueChange={args.onValueChange}>
         <Tabs.List aria-label="Details">
           <Tabs.Tab value="overview" disabled>
@@ -164,6 +168,7 @@ export const AllDisabled: Story = {
           <Tabs.Tab value="activity" disabled>
             Activity
           </Tabs.Tab>
+          <Tabs.Indicator />
         </Tabs.List>
         <Tabs.Panel value="overview">Overview content</Tabs.Panel>
       </Tabs.Root>
@@ -185,12 +190,14 @@ export const NestedTabs: Story = {
     <Tabs.Root defaultValue="outer" onKeyDown={args.onKeyDown}>
       <Tabs.List aria-label="Outer">
         <Tabs.Tab value="outer">Outer</Tabs.Tab>
+        <Tabs.Indicator />
       </Tabs.List>
       <Tabs.Panel value="outer">
         <Tabs.Root defaultValue="inner">
           <Tabs.List aria-label="Inner" activateOnFocus>
             <Tabs.Tab value="inner">Inner</Tabs.Tab>
             <Tabs.Tab value="next">Next</Tabs.Tab>
+            <Tabs.Indicator />
           </Tabs.List>
           <Tabs.Panel value="inner">Inner content</Tabs.Panel>
           <Tabs.Panel value="next">Next content</Tabs.Panel>
@@ -207,6 +214,6 @@ export const NestedTabs: Story = {
       'aria-selected',
       'true',
     );
-    await expect(args.onKeyDown).toHaveBeenCalledTimes(1);
+    await expect(args.onKeyDown).not.toHaveBeenCalled();
   },
 };

@@ -1,14 +1,12 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type FieldMetadataItemRelation } from '@/object-metadata/types/FieldMetadataItemRelation';
 import { type RecordFormField } from '@/object-record/record-form/types/RecordFormField';
+import { isFieldMetadataItemEligibleForRecordForm } from '@/object-record/record-form/utils/isFieldMetadataItemEligibleForRecordForm';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import groupBy from 'lodash.groupby';
 import uniqBy from 'lodash.uniqby';
-import {
-  isDefined,
-  isFieldMetadataEligibleForRecordForm,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import {
   PageLayoutTabLayoutMode,
   WidgetConfigurationType,
@@ -55,18 +53,6 @@ const getFormFieldMetadataId = (
     ? configuration.fieldMetadataId
     : undefined;
 };
-
-const isFieldMetadataItemEligibleForRecordForm = (
-  fieldMetadataItem: RecordFormFieldMetadataItem,
-): boolean =>
-  isFieldMetadataEligibleForRecordForm({
-    fieldName: fieldMetadataItem.name,
-    fieldType: fieldMetadataItem.type,
-    isActive: fieldMetadataItem.isActive === true,
-    isSystem: fieldMetadataItem.isSystem === true,
-    isUIEditable: fieldMetadataItem.isUIEditable !== false,
-    relationType: fieldMetadataItem.settings?.relationType,
-  });
 
 export const computeRecordFormFields = <
   TFieldMetadataItem extends RecordFormFieldMetadataItem,
@@ -129,27 +115,21 @@ export const computeRecordFormFields = <
     ({ fieldMetadataItem }) => fieldMetadataItem.id,
   );
 
-  const visibleFieldMetadataIds = new Set(
-    formFieldWidgetEntries
-      .filter(({ pageLayoutWidget }) => pageLayoutWidget.isActive)
-      .map(({ fieldMetadataItem }) => fieldMetadataItem.id),
-  );
-
   return uniqBy(
-    formFieldWidgetEntries.filter(
-      ({ pageLayoutWidget, fieldMetadataItem }) =>
-        pageLayoutWidget.isActive ||
-        !visibleFieldMetadataIds.has(fieldMetadataItem.id),
-    ),
+    formFieldWidgetEntries,
     ({ fieldMetadataItem }) => fieldMetadataItem.id,
   )
-    .map(({ pageLayoutWidget, fieldMetadataItem }) => ({
-      fieldMetadataItem,
-      widgets: formFieldWidgetEntriesByFieldMetadataId[
+    .map(({ fieldMetadataItem }) => {
+      const widgets = formFieldWidgetEntriesByFieldMetadataId[
         fieldMetadataItem.id
-      ].map((formFieldWidgetEntry) => formFieldWidgetEntry.pageLayoutWidget),
-      isVisible: pageLayoutWidget.isActive,
-    }))
+      ].map((formFieldWidgetEntry) => formFieldWidgetEntry.pageLayoutWidget);
+
+      return {
+        fieldMetadataItem,
+        widgets,
+        isVisible: widgets.every((widget) => widget.isActive),
+      };
+    })
     .filter(
       ({ fieldMetadataItem, isVisible }) =>
         isVisible ||

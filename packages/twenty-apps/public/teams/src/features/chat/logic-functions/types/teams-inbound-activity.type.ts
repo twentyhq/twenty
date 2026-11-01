@@ -5,11 +5,16 @@ export type TeamsInboundActivity = {
   type?: string;
   id?: string;
   text?: string;
+  serviceUrl?: string;
   from?: TeamsChannelAccount;
   recipient?: TeamsChannelAccount;
   conversation?: {
     id?: string;
     conversationType?: string;
+    tenantId?: string;
+  };
+  channelData?: {
+    tenant?: { id?: string };
   };
   entities?: TeamsActivityEntity[];
 };

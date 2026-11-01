@@ -1,6 +1,6 @@
 import { lstat } from 'node:fs/promises';
-import { join } from 'node:path';
 
+import { getClientSdkPackagePath } from '@/app/get-client-sdk-package-path';
 import { hasErrorCode } from '@/utils/has-error-code';
 
 export const getClientGenerationSkipReason = async ({
@@ -9,7 +9,7 @@ export const getClientGenerationSkipReason = async ({
   appPath: string;
 }) => {
   const isClientPackageMissing = await lstat(
-    join(appPath, 'node_modules', 'twenty-client-sdk'),
+    getClientSdkPackagePath({ appPath }),
   ).then(
     () => false,
     (error: unknown) => hasErrorCode(error, 'ENOENT'),

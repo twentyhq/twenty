@@ -87,6 +87,23 @@ describe('AiChatToolCallApprovalCard', () => {
     expect(screen.getByRole('button', { name: 'Reject' })).toBeDisabled();
   });
 
+  it('keeps arguments read-only when the proposal disallows editing', async () => {
+    const user = userEvent.setup();
+    renderCard({ ...PROPOSAL, areArgumentsEditable: false });
+
+    const argumentsInput = screen.getByRole('textbox', { name: 'Arguments' });
+    expect(argumentsInput).toBeDisabled();
+    await user.type(argumentsInput, '{"method":"DELETE"}');
+    await user.click(screen.getByRole('button', { name: 'Approve' }));
+
+    expect(answerAgentChatToolCall).toHaveBeenCalledTimes(1);
+    expect(answerAgentChatToolCall).toHaveBeenCalledWith(
+      expect.objectContaining({
+        response: { decision: 'approve', arguments: PROPOSAL.arguments },
+      }),
+    );
+  });
+
   it('cannot approve arguments that are not a JSON object', () => {
     renderCard();
 

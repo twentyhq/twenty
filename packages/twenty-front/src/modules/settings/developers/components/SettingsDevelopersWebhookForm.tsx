@@ -5,6 +5,8 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { type WebhookFormMode } from '@/settings/developers/constants/WebhookFormMode';
+import { SettingsDevelopersRoleSelector } from '@/settings/developers/components/SettingsDevelopersRoleSelector';
+import { SettingsDevelopersWebhookDefaultRoleEffect } from '@/settings/developers/components/SettingsDevelopersWebhookDefaultRoleEffect';
 import { useWebhookForm } from '@/settings/developers/hooks/useWebhookForm';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { TextArea } from '@/ui/input/components/TextArea';
@@ -23,7 +25,7 @@ import { Section } from 'twenty-ui/components/layout';
 import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/api-webhooks/constants/SettingsApiWebhooksTabs';
+import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
 import { SettingsDatabaseEventsForm } from '@/settings/components/SettingsDatabaseEventsForm';
 
 const DELETE_WEBHOOK_MODAL_ID = 'delete-webhook-modal';
@@ -49,6 +51,7 @@ export const SettingsDevelopersWebhookForm = ({
     removeOperation,
     handleDelete,
     isCreationMode,
+    roles,
     error,
   } = useWebhookForm({ webhookId, mode });
 
@@ -63,7 +66,7 @@ export const SettingsDevelopersWebhookForm = ({
     }
   };
 
-  if ((loading && !isCreationMode) || isDefined(error)) {
+  if (loading || isDefined(error)) {
     return (
       <>
         <ToastOnQueryErrorEffect
@@ -82,6 +85,9 @@ export const SettingsDevelopersWebhookForm = ({
   return (
     // oxlint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formConfig}>
+      <SettingsDevelopersWebhookDefaultRoleEffect
+        defaultRoleId={roles[0]?.id}
+      />
       <SettingsPageLayout
         title={getTitle()}
         links={[
@@ -90,12 +96,12 @@ export const SettingsDevelopersWebhookForm = ({
             href: getSettingsPath(SettingsPath.General),
           },
           {
-            children: t`MCP & APIs`,
+            children: t`Developers`,
             href: getSettingsPath(
-              SettingsPath.ApiWebhooks,
+              SettingsPath.Developers,
               undefined,
               undefined,
-              SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS,
+              SETTINGS_DEVELOPERS_TABS.TABS_IDS.WEBHOOKS,
             ),
           },
           { children: isCreationMode ? t`New` : getTitle() },
@@ -106,11 +112,11 @@ export const SettingsDevelopersWebhookForm = ({
             isCancelDisabled={formConfig.formState.isSubmitting}
             onCancel={() =>
               navigate(
-                SettingsPath.ApiWebhooks,
+                SettingsPath.Developers,
                 undefined,
                 undefined,
                 undefined,
-                SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS,
+                SETTINGS_DEVELOPERS_TABS.TABS_IDS.WEBHOOKS,
               )
             }
             onSave={formConfig.handleSubmit(handleSave)}
@@ -177,6 +183,23 @@ export const SettingsDevelopersWebhookForm = ({
                   events={value}
                   updateOperation={updateOperation}
                   removeOperation={removeOperation}
+                />
+              )}
+            />
+          </Section.Root>
+          <Section.Root>
+            <Section.Header
+              title={t`Role`}
+              description={t`The role attached to this webhook.`}
+            />
+            <Controller
+              name="roleId"
+              control={formConfig.control}
+              render={({ field: { onChange, value } }) => (
+                <SettingsDevelopersRoleSelector
+                  value={value}
+                  onChange={onChange}
+                  roles={roles}
                 />
               )}
             />

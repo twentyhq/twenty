@@ -6,6 +6,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { t } from '@lingui/core/macro';
 import { DOCUMENTATION_PATHS } from 'twenty-shared/constants';
 import { IconExternalLink } from 'twenty-ui/icon';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 export const AiChatApiKeyNotConfiguredMessage = () => {
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
@@ -15,7 +16,7 @@ export const AiChatApiKeyNotConfiguredMessage = () => {
       locale: currentWorkspaceMember?.locale,
       path: DOCUMENTATION_PATHS.DEVELOPERS_SELF_HOST_CAPABILITIES_SETUP,
     });
-    window.open(docsUrl, '_blank', 'noopener,noreferrer');
+    openUrlInNewTab(docsUrl);
   };
 
   return (

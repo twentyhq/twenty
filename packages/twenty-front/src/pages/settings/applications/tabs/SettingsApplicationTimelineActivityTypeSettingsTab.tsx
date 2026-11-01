@@ -116,7 +116,7 @@ export const SettingsApplicationTimelineActivityTypeSettingsTab = ({
           title={t`Activity visibility`}
           description={t`Choose whether this activity type appears in record timelines`}
         />
-        <Card.Root rounded fullWidth>
+        <Card.Root fullWidth>
           <SettingsOptionCardContentSwitch
             Icon={IconTimelineEvent}
             title={t`Active`}

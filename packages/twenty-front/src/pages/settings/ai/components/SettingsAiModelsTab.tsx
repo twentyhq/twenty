@@ -11,8 +11,8 @@ import { useWorkspaceAiModelTiers } from '@/ai/hooks/useWorkspaceAiModelTiers';
 import { getAiModelTierLabel } from '@/ai/utils/getAiModelTierLabel';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { AiModelPinSelect } from '@/settings/ai/components/AiModelPinSelect';
-import { getAiModelModeDescription } from '@/settings/ai/utils/getAiModelModeDescription';
+import { AiModelPinSelect } from '@/ai/components/AiModelPinSelect';
+import { getAiModelModeDescription } from '@/ai/utils/getAiModelModeDescription';
 import { NestedSettingsRow } from '@/settings/components/SettingsOptions/NestedSettingsRow';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { SettingsOptionCardContentSwitch } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSwitch';
@@ -21,6 +21,8 @@ import { Select } from '@/ui/input/components/Select';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsAiModelTiersPreview } from '~/pages/settings/ai/components/SettingsAiModelTiersPreview';
+import { SettingsAiSystemPromptsSection } from '~/pages/settings/ai/components/SettingsAiSystemPromptsSection';
+import { SettingsAiWorkspaceInstructionsSection } from '~/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection';
 import { useSettingsAiModelsActions } from '~/pages/settings/ai/hooks/useSettingsAiModelsActions';
 
 export const SettingsAiModelsTab = () => {
@@ -53,10 +55,7 @@ export const SettingsAiModelsTab = () => {
           title={t`Models`}
           description={t`Choose the default modes for people and agents`}
         />
-        <Card.Root
-          rounded
-          backgroundColor={themeCssVariables.background.secondary}
-        >
+        <Card.Root backgroundColor={themeCssVariables.background.secondary}>
           <StyledSettingsSelectGroup controlWidth={160}>
             <SettingsOptionCardContentSelect
               Icon={IconMessage}
@@ -127,6 +126,8 @@ export const SettingsAiModelsTab = () => {
       </Section.Root>
 
       <SettingsAiModelTiersPreview />
+      <SettingsAiWorkspaceInstructionsSection />
+      <SettingsAiSystemPromptsSection />
     </>
   );
 };

@@ -10,13 +10,11 @@ export const getObjectNavigationMenuItemComputedLink = ({
   objectMetadataItems,
   views,
   lastVisitedViewId,
-  isInitialObjectViewEnabled = false,
 }: {
   item: Pick<NavigationMenuItem, 'targetObjectMetadataId'>;
   objectMetadataItems: Pick<EnrichedObjectMetadataItem, 'id' | 'namePlural'>[];
   views: Pick<View, 'id' | 'objectMetadataId' | 'key' | 'type' | 'position'>[];
   lastVisitedViewId?: string;
-  isInitialObjectViewEnabled?: boolean;
 }): string => {
   const objectMetadataItem = objectMetadataItems.find(
     (meta) => meta.id === item.targetObjectMetadataId,
@@ -28,13 +26,10 @@ export const getObjectNavigationMenuItemComputedLink = ({
   const { firstSelectableViewId, indexViewId } = computeObjectViewTargetIds({
     views,
     objectMetadataId: objectMetadataItem.id,
-    isInitialObjectViewEnabled,
   });
 
   const applicableLastVisitedViewId =
-    isInitialObjectViewEnabled && lastVisitedViewId === indexViewId
-      ? undefined
-      : lastVisitedViewId;
+    lastVisitedViewId === indexViewId ? undefined : lastVisitedViewId;
 
   const targetViewId =
     applicableLastVisitedViewId ?? firstSelectableViewId ?? indexViewId;

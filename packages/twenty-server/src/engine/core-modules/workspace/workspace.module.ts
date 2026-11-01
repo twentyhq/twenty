@@ -6,6 +6,7 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { ApplicationManifestModule } from 'src/engine/core-modules/application/application-manifest/application-manifest.module';
 import { PreInstalledAppsModule } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { EventLogRetentionModule } from 'src/engine/core-modules/event-logs/retention/event-log-retention.module';
 import { CompanyEnrichmentModule } from 'src/engine/core-modules/company-enrichment/company-enrichment.module';
 import { DnsManagerModule } from 'src/engine/core-modules/dns-manager/dns-manager.module';
 import { CustomDomainManagerModule } from 'src/engine/core-modules/domain/custom-domain-manager/custom-domain-manager.module';
@@ -31,8 +32,9 @@ import { WorkspaceResolver } from 'src/engine/core-modules/workspace/workspace.r
 import { BillingDisabledGuard } from 'src/engine/guards/billing-disabled.guard';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
+import { RoleAssignmentValidationModule } from 'src/engine/permissions/role-assignment/role-assignment-validation.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
@@ -51,6 +53,7 @@ import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/stand
     MetricsModule,
     StandardObjectsPrefillModule,
     BillingModule,
+    EventLogRetentionModule,
     FileModule,
     UserWorkspaceModule,
     WorkspaceManagerModule,
@@ -59,6 +62,7 @@ import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/stand
     PermissionsModule,
     WorkspaceCacheStorageModule,
     RoleModule,
+    RoleAssignmentValidationModule,
     AiAgentModule,
     DnsManagerModule,
     WorkspaceDomainsModule,

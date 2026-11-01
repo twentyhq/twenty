@@ -7,6 +7,7 @@ import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
+import { getFormFieldDisplayText } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getFormFieldDisplayText';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import camelCase from 'lodash.camelcase';
@@ -80,7 +81,10 @@ export const WorkflowFormFieldSettingsRecordPicker = ({
             });
           }}
           defaultValue={field.label}
-          placeholder={getDefaultFormFieldSettings('RECORD').label}
+          placeholder={getFormFieldDisplayText({
+            type: 'RECORD',
+            text: getDefaultFormFieldSettings('RECORD').label,
+          })}
         />
       </FormFieldInputContainer>
     </StyledContainer>

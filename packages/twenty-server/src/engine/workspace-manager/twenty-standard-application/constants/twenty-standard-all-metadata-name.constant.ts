@@ -20,4 +20,6 @@ export const TWENTY_STANDARD_ALL_METADATA_NAME = [
   'pageLayoutWidget',
   'commandMenuItem',
   'timelineActivityType',
+  'agentChatChannel',
+  'relatedRecordPath',
 ] as const satisfies AllMetadataName[];

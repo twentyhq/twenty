@@ -1,19 +1,10 @@
-import { isDefined } from 'twenty-shared/utils';
-
-import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useIsOnNewAiChatSlot = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
-  const threadIdCreatedFromDraft = useAtomStateValue(
-    threadIdCreatedFromDraftState,
-  );
+  const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
 
-  return (
-    currentAiChatThread === AGENT_CHAT_NEW_THREAD_DRAFT_KEY ||
-    (isDefined(threadIdCreatedFromDraft) &&
-      currentAiChatThread === threadIdCreatedFromDraft)
-  );
+  return currentAiChatThread === newAiChatThreadId;
 };

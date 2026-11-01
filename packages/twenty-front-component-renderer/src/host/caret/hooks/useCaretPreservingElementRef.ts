@@ -4,6 +4,7 @@ import { type CaretPreservingElement } from '@/host/caret/types/CaretPreservingE
 import { applyNewInputSelectionCommands } from '@/host/caret/utils/applyNewInputSelectionCommands';
 import { createInputSelectionListenerRef } from '@/host/caret/utils/createInputSelectionListenerRef';
 import { createInputSelectionPublisher } from '@/host/caret/utils/createInputSelectionPublisher';
+import { isOlderThanLatestNativeEdit } from '@/host/caret/utils/isOlderThanLatestNativeEdit';
 import { syncValuePreservingCaret } from '@/host/caret/utils/syncValuePreservingCaret';
 import { type ElementRefCallback } from '@/host/elements/types/ElementRefCallback';
 
@@ -12,11 +13,13 @@ export const useCaretPreservingElementRef = ({
   value,
   selectionCommands,
   onSelectionUpdate,
+  acknowledgedNativeEditSequence,
 }: {
   composedElementRef: ElementRefCallback;
   value: unknown;
   selectionCommands?: unknown;
   onSelectionUpdate?: unknown;
+  acknowledgedNativeEditSequence?: unknown;
 }): ElementRefCallback => {
   const latestComposedElementRefRef = useRef(composedElementRef);
   latestComposedElementRefRef.current = composedElementRef;
@@ -49,10 +52,17 @@ export const useCaretPreservingElementRef = ({
   useLayoutEffect(() => {
     const attachedElement = attachedElementRef.current;
 
-    const didWriteValue = syncValuePreservingCaret({
-      element: attachedElement,
-      remoteValue: value,
+    const isRemoteValueOlderThanLatestNativeEdit = isOlderThanLatestNativeEdit({
+      hostElement: attachedElement,
+      nativeEditSequence: acknowledgedNativeEditSequence,
     });
+
+    const didWriteValue =
+      !isRemoteValueOlderThanLatestNativeEdit &&
+      syncValuePreservingCaret({
+        element: attachedElement,
+        remoteValue: value,
+      });
 
     applyNewInputSelectionCommands({
       element: attachedElement,

@@ -6,10 +6,9 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext } from 'react';
-import { Temporal } from 'temporal-polyfill';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
-import { formatDateTimeString } from '~/utils/string/formatDateTimeString';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
+import { formatDateTimeString } from '@/object-record/record-field/ui/utils/formatDateTimeString';
 
 const StyledTimeZoneSpacer = styled.span`
   min-width: ${themeCssVariables.spacing[1]};
@@ -43,7 +42,7 @@ export const DateTimeDisplay = ({
       {isNonEmptyString(value) && (
         <>
           <StyledTimeZoneSpacer />
-          <TimeZoneAbbreviation instant={Temporal.Instant.from(value)} />
+          <TimeZoneAbbreviation instant={value} />
         </>
       )}
     </EllipsisDisplay>

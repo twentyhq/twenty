@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-
 import { isNonEmptyString } from '@sniptt/guards';
+import isEqual from 'lodash.isequal';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
@@ -171,9 +171,13 @@ export class UsageLimitService {
       { where: { id: usageLimit.id } },
     );
 
-    // counters are keyed by scope and value, so an edit leaves two of them behind
-    await this.dropCounter(usageLimit);
-    await this.dropCounter(updatedUsageLimit);
+    if (
+      usageLimit.isInstanceOverride !== isOperator ||
+      !isEqual(authorizedScope, scope)
+    ) {
+      await this.dropCounter(usageLimit);
+      await this.dropCounter(updatedUsageLimit);
+    }
 
     return updatedUsageLimit;
   }
@@ -295,18 +299,16 @@ export class UsageLimitService {
 
   private async dropCounter(usageLimit: UsageLimitEntity): Promise<void> {
     if (isStockLimit(usageLimit)) {
-      return this.usageLimitStockService.dropStockCounters({
+      return this.usageLimitStockService.dropLimitCounter({
         workspaceId: usageLimit.workspaceId,
-        resourceType: usageLimit.resourceType,
-        operationType: usageLimit.operationType,
-        spenderType: usageLimit.spenderType,
-        spenderId: usageLimit.spenderId,
-        unit: usageLimit.unit,
-        limitValue: usageLimit.limitValue,
+        usageLimit,
       });
     }
 
-    return this.usageLimitQuotaService.dropLimitCounter(usageLimit);
+    return this.usageLimitQuotaService.dropLimitCounter({
+      workspaceId: usageLimit.workspaceId,
+      usageLimit,
+    });
   }
 
   private async validateSpenderBelongsToWorkspace({

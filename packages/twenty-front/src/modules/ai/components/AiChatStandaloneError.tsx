@@ -3,14 +3,13 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
-import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
-import { agentChatHasMessageComponentSelector } from '@/ai/states/selectors/agentChatHasMessageComponentSelector';
+import { agentChatErrorFamilyState } from '@/ai/states/agentChatErrorFamilyState';
+import { agentChatHasMessageSelector } from '@/ai/states/selectors/agentChatHasMessageSelector';
 import { agentChatIsLoadingSelector } from '@/ai/states/selectors/agentChatIsLoadingSelector';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
-import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 const StyledErrorContainer = styled(StyledAiChatContentContainer)`
   display: flex;
@@ -25,17 +24,14 @@ export const AiChatStandaloneError = () => {
   const agentChatDisplayedThread = useAtomStateValue(
     agentChatDisplayedThreadState,
   );
-  const agentChatError = useAtomComponentFamilyStateValue(
-    agentChatErrorComponentFamilyState,
-    { threadId: agentChatDisplayedThread },
-  );
+  const agentChatError = useAtomFamilyStateValue(agentChatErrorFamilyState, {
+    threadId: agentChatDisplayedThread,
+  });
 
-  const hasMessages = useAtomComponentSelectorValue(
-    agentChatHasMessageComponentSelector,
-  );
+  const agentChatHasMessage = useAtomStateValue(agentChatHasMessageSelector);
 
   const shouldRender =
-    !hasMessages && isDefined(agentChatError) && !agentChatIsLoading;
+    !agentChatHasMessage && isDefined(agentChatError) && !agentChatIsLoading;
 
   if (!shouldRender) {
     return null;

@@ -557,6 +557,47 @@ describe('shouldExecuteChildStep', () => {
     expect(result).toBe(false);
   });
 
+  it('should not execute a not-taken branch target also listed in the if/else nextStepIds', () => {
+    const ifElseParent = {
+      id: 'if-else',
+      type: WorkflowActionType.IF_ELSE,
+      nextStepIds: ['if-child', 'else-child'],
+      settings: {
+        input: {
+          branches: [
+            { id: 'if-branch', filterGroupId: 'fg', nextStepIds: ['if-child'] },
+            { id: 'else-branch', nextStepIds: ['else-child'] },
+          ],
+          stepFilterGroups: [],
+          stepFilters: [],
+        },
+      },
+    } as unknown as WorkflowAction;
+
+    const stepInfos = {
+      'if-else': {
+        status: StepStatus.SUCCESS,
+        result: { matchingBranchId: 'if-branch' },
+      },
+    };
+
+    expect(
+      shouldExecuteChildStep({
+        childStepId: 'else-child',
+        parentSteps: [ifElseParent],
+        stepInfos,
+      }),
+    ).toBe(false);
+
+    expect(
+      shouldExecuteChildStep({
+        childStepId: 'if-child',
+        parentSteps: [ifElseParent],
+        stepInfos,
+      }),
+    ).toBe(true);
+  });
+
   it('should return true when the only parent failed and continues on failure', () => {
     const continuingParent = createMockCodeStep(
       'continuing-parent',

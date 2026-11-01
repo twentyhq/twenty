@@ -28,7 +28,7 @@ const meta: Meta<typeof InlineBanner> = {
 export default meta;
 type Story = StoryObj<typeof InlineBanner>;
 
-export const Default: Story = {
+export const Display: Story = {
   args: {
     status: 'error',
     children: NO_AI_MODELS_MESSAGE,
@@ -41,7 +41,7 @@ export const Default: Story = {
 };
 
 export const KeyboardAction: Story = {
-  args: Default.args,
+  args: Display.args,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const button = await canvas.findByRole('button', {
@@ -115,6 +115,15 @@ export const Narrow: Story = {
     ),
   },
   parameters: { container: { width: 320 } },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(canvasElement.querySelector('svg')).toHaveStyle({
+      width: '16px',
+      height: '16px',
+    });
+    await expect(canvas.getByText(NO_AI_MODELS_MESSAGE)).toBeVisible();
+  },
 };
 
 export const Embedded: Story = {
@@ -205,6 +214,39 @@ export const CompactLink: Story = {
   },
 };
 
+export const FullWidth: Story = {
+  args: {
+    ...CompactLink.args,
+    fullWidth: true,
+    role: 'status',
+    'aria-label': 'Full-width connection notice',
+  },
+  play: async ({ canvasElement }) => {
+    const banner = within(canvasElement).getByRole('status', {
+      name: 'Full-width connection notice',
+    });
+
+    await expect(getComputedStyle(banner).maxWidth).toBe('none');
+    await expect(getComputedStyle(banner).boxSizing).toBe('border-box');
+    await expect(banner.getBoundingClientRect().width).toBeGreaterThan(512);
+    await expect(banner.scrollWidth).toBeLessThanOrEqual(banner.clientWidth);
+    await expect(banner).not.toHaveAttribute('fullWidth');
+  },
+};
+
+export const FullWidthNarrow: Story = {
+  ...FullWidth,
+  parameters: { container: { width: 240 } },
+  play: async ({ canvasElement }) => {
+    const banner = within(canvasElement).getByRole('status', {
+      name: 'Full-width connection notice',
+    });
+
+    await expect(banner.getBoundingClientRect().width).toBeLessThanOrEqual(240);
+    await expect(banner.scrollWidth).toBeLessThanOrEqual(banner.clientWidth);
+  },
+};
+
 export const CompactDanger: Story = {
   args: {
     layout: 'compact',
@@ -250,6 +292,8 @@ export const CustomLink: Story = {
     ...CompactLink.args,
     action: (
       <InlineBanner.Action
+        nativeButton={false}
+        role="link"
         href={'https://twenty.com'}
         target={'_blank'}
         rel={'noopener noreferrer'}
@@ -266,6 +310,7 @@ export const CustomLink: Story = {
     const canvas = within(canvasElement);
     const link = canvas.getByRole('link', { name: 'Open connection settings' });
 
+    await expect(link).not.toHaveAttribute('type');
     await expect(link).toHaveAttribute('href', 'https://twenty.com');
     await expect(link).toHaveAttribute('target', '_blank');
     await expect(link).toHaveAttribute('rel', 'noopener noreferrer');
@@ -309,7 +354,7 @@ export const CompactAction: Story = {
 
 export const HiddenAction: Story = {
   args: {
-    ...Default.args,
+    ...Display.args,
     action: null,
   },
   play: async ({ canvasElement }) => {

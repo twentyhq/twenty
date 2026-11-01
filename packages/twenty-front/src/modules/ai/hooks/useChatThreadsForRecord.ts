@@ -1,25 +1,34 @@
-import uniqBy from 'lodash.uniqby';
 import { useCallback, useMemo } from 'react';
 import {
   CoreObjectNameSingular,
+  type RecordGqlFields,
   type RecordGqlOperationOrderBy,
 } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { getActivityTargetsFilter } from '@/activities/utils/getActivityTargetsFilter';
 import { type AgentChatThreadTargetRecord } from '@/ai/types/AgentChatThreadTargetRecord';
-import { getAgentChatThreadLastActivityFieldName } from '@/ai/utils/getAgentChatThreadLastActivityFieldName';
-import { sortChatThreadsByLastActivityDesc } from '@/ai/utils/sortChatThreadsByLastActivityDesc';
+import { fetchAllChatThreadLinkIds } from '@/ai/utils/fetchAllChatThreadLinkIds';
+import { getChatThreadsForRecordPage } from '@/ai/utils/getChatThreadsForRecordPage';
 import { useListenToObjectRecordOperationBrowserEvent } from '@/browser-event/hooks/useListenToObjectRecordOperationBrowserEvent';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { useFindManyRecordsQuery } from '@/object-record/hooks/useFindManyRecordsQuery';
+import { useObjectPermissionsForObject } from '@/object-record/hooks/useObjectPermissionsForObject';
 import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
+import { isFetchingMoreRecordsFamilyState } from '@/object-record/states/isFetchingMoreRecordsFamilyState';
 import { type ObjectRecordOperation } from '@/object-record/types/ObjectRecordOperation';
 import { useListenToEventsForQuery } from '@/sse-db-event/hooks/useListenToEventsForQuery';
 import { type TargetRecordIdentifier } from '@/ui/layout/contexts/TargetRecordIdentifier';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
-// A card of recent conversations, never paged further.
 const CHAT_THREADS_FOR_RECORD_PAGE_SIZE = 20;
+
+const CHAT_THREAD_LINK_GQL_FIELDS = {
+  id: true,
+  threadId: true,
+} satisfies RecordGqlFields;
 
 const CHAT_THREADS_FOR_RECORD_GQL_FIELDS = {
   id: true,
@@ -28,7 +37,9 @@ const CHAT_THREADS_FOR_RECORD_GQL_FIELDS = {
     id: true,
     title: true,
     deletedAt: true,
+    createdAt: true,
     updatedAt: true,
+    channelId: true,
     lastActivityAt: true,
     lastMessageText: true,
     lastMessageSenderWorkspaceMemberId: true,
@@ -36,7 +47,7 @@ const CHAT_THREADS_FOR_RECORD_GQL_FIELDS = {
     workspaceMemberId: true,
     pendingQuestionMessageId: true,
   },
-};
+} satisfies RecordGqlFields;
 
 // Link events carry no conversation, so new links are read back.
 const LINK_OPERATION_TYPES: ObjectRecordOperation['type'][] = [
@@ -58,6 +69,7 @@ export const useChatThreadsForRecord = ({
   id,
   targetObjectNameSingular,
 }: TargetRecordIdentifier) => {
+  const apolloCoreClient = useApolloCoreClient();
   const { objectMetadataItems } = useObjectMetadataItems();
   const junctionConfig = useObjectMorphJunctionConfig({
     objectNameSingular: CoreObjectNameSingular.AgentChatThread,
@@ -86,21 +98,54 @@ export const useChatThreadsForRecord = ({
     loading,
     error,
     refetch,
+    fetchMoreRecords,
+    hasNextPage,
+    queryIdentifier,
   } = useFindManyRecords<AgentChatThreadTargetRecord>({
     objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
     skip: !isRecordLinkable,
     filter,
     orderBy: [
       {
-        thread: {
-          [getAgentChatThreadLastActivityFieldName(chatObjectMetadataItem)]:
-            'DescNullsLast',
-        },
+        thread: { lastActivityAt: 'DescNullsLast' },
       },
     ] satisfies RecordGqlOperationOrderBy,
     recordGqlFields: CHAT_THREADS_FOR_RECORD_GQL_FIELDS,
     limit: CHAT_THREADS_FOR_RECORD_PAGE_SIZE,
   });
+
+  const { findManyRecordsQuery: findThreadLinksQuery } =
+    useFindManyRecordsQuery({
+      objectNameSingular: CoreObjectNameSingular.AgentChatThreadTarget,
+      recordGqlFields: CHAT_THREAD_LINK_GQL_FIELDS,
+    });
+  const { canReadObjectRecords } = useObjectPermissionsForObject(
+    junctionConfig?.junctionObjectMetadata.id ?? '',
+  );
+
+  const { threads, refetchLimit } = getChatThreadsForRecordPage({
+    links,
+    pageSize: CHAT_THREADS_FOR_RECORD_PAGE_SIZE,
+  });
+
+  const isFetchingMoreRecords = useAtomFamilyStateValue(
+    isFetchingMoreRecordsFamilyState,
+    queryIdentifier,
+  );
+
+  const fetchMoreThreads = useCallback(() => {
+    if (!isRecordLinkable || !hasNextPage || loading || isFetchingMoreRecords) {
+      return;
+    }
+
+    return fetchMoreRecords();
+  }, [
+    fetchMoreRecords,
+    hasNextPage,
+    isFetchingMoreRecords,
+    isRecordLinkable,
+    loading,
+  ]);
 
   const operationSignature = useMemo(
     () => ({
@@ -116,9 +161,18 @@ export const useChatThreadsForRecord = ({
     skip: !isRecordLinkable,
   });
 
+  const refetchThreads = useCallback(
+    () =>
+      refetch({
+        limit: refetchLimit,
+        lastCursor: undefined,
+      }),
+    [refetchLimit, refetch],
+  );
+
   const refetchLinks = useCallback(() => {
-    void refetch();
-  }, [refetch]);
+    void refetchThreads();
+  }, [refetchThreads]);
 
   useListenToObjectRecordOperationBrowserEvent({
     onObjectRecordOperationBrowserEvent: refetchLinks,
@@ -127,17 +181,28 @@ export const useChatThreadsForRecord = ({
     enabled: isRecordLinkable,
   });
 
-  // Custom legs allow duplicate links; sorted since an update doesn't reorder the fetched page.
-  const threads = useMemo(
-    () =>
-      sortChatThreadsByLastActivityDesc(
-        uniqBy(links.map(({ thread }) => thread).filter(isDefined), 'id'),
-      ),
-    [links],
-  );
+  const getAllLinkIdsToThread = async (threadId: string) => {
+    if (
+      !isRecordLinkable ||
+      !canReadObjectRecords ||
+      !isDefined(junctionConfig) ||
+      !isDefined(filter)
+    ) {
+      return [];
+    }
 
-  const getLinkIdsToThread = (threadId: string) =>
-    links.filter((link) => link.threadId === threadId).map(({ id }) => id);
+    return fetchAllChatThreadLinkIds({
+      apolloCoreClient,
+      query: findThreadLinksQuery,
+      filter: {
+        and: [
+          filter,
+          { [junctionConfig.sourceJoinColumnName]: { eq: threadId } },
+        ],
+      },
+      objectNamePlural: junctionConfig.junctionObjectMetadata.namePlural,
+    });
+  };
 
   useListenToObjectRecordOperationBrowserEvent({
     onObjectRecordOperationBrowserEvent: refetchLinks,
@@ -146,5 +211,14 @@ export const useChatThreadsForRecord = ({
     enabled: isRecordLinkable && isDefined(chatObjectMetadataItem),
   });
 
-  return { threads, getLinkIdsToThread, loading, error, refetch };
+  return {
+    threads,
+    getAllLinkIdsToThread,
+    loading,
+    error,
+    refetch: refetchThreads,
+    fetchMoreThreads,
+    hasNextPage,
+    isFetchingMoreThreads: isFetchingMoreRecords,
+  };
 };

@@ -1,7 +1,5 @@
 import { gql } from 'graphql-tag';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -43,22 +41,6 @@ const MESSAGE_SUPPRESSIONS = gql`
 
 describe('messageSuppressionResolver (integration)', () => {
   const createdSuppressionIds: string[] = [];
-
-  beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-  });
-
-  afterAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
-  });
 
   afterEach(async () => {
     for (const id of createdSuppressionIds) {

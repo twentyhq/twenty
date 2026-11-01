@@ -21,9 +21,17 @@ export const openFathomMediaDownload = async ({
   fileName: string;
   downloadFile: Pick<RecordingDownloadFile, 'url'>;
 }): Promise<OpenFathomMediaDownloadResult> => {
+  const headersAbortController = new AbortController();
+  const headersTimeout = setTimeout(
+    () =>
+      headersAbortController.abort(
+        new DOMException('media download headers timed out', 'TimeoutError'),
+      ),
+    FATHOM_MEDIA_DOWNLOAD_TIMEOUT_MILLISECONDS,
+  );
   const response = await fetch(downloadFile.url, {
-    signal: AbortSignal.timeout(FATHOM_MEDIA_DOWNLOAD_TIMEOUT_MILLISECONDS),
-  });
+    signal: headersAbortController.signal,
+  }).finally(() => clearTimeout(headersTimeout));
   const contentLengthBytes = parseContentLengthBytes(
     response.headers.get('content-length'),
   );

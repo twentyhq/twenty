@@ -4,8 +4,7 @@ import { AI_CHAT_SURFACE } from '@/ai/constants/AiChatSurface';
 import { shouldOpenAiChatAfterOnboardingState } from '@/onboarding/states/shouldOpenAiChatAfterOnboardingState';
 import { useIsWorkspaceSetupChat } from '@/ai/hooks/useIsWorkspaceSetupChat';
 import { useReturnFromExpandedAiChat } from '@/ai/hooks/useReturnFromExpandedAiChat';
-import { processedWorkspaceSetupCompletionIdsComponentState } from '@/ai/states/processedWorkspaceSetupCompletionIdsComponentState';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { processedWorkspaceSetupCompletionIdsState } from '@/ai/states/processedWorkspaceSetupCompletionIdsState';
 import { extractCompletedWorkspaceSetupToolParts } from '@/ai/utils/extractCompletedWorkspaceSetupToolParts';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { isSettingsPath } from '~/utils/isSettingsPath';
@@ -22,16 +21,14 @@ export const useProcessWorkspaceSetupCompletion = () => {
     destinationPath: defaultHomePagePath,
   });
 
-  const processedCompletionIdsState = useAtomComponentStateCallbackState(
-    processedWorkspaceSetupCompletionIdsComponentState,
-  );
-
   const store = useStore();
 
   const processWorkspaceSetupCompletion = (
     message: Pick<ExtendedUIMessage, 'parts'>,
   ) => {
-    const processedCompletionIds = store.get(processedCompletionIdsState);
+    const processedCompletionIds = store.get(
+      processedWorkspaceSetupCompletionIdsState.atom,
+    );
     const completionIds = new Set([
       ...processedCompletionIds,
       ...extractCompletedWorkspaceSetupToolParts(message.parts).map(
@@ -43,7 +40,9 @@ export const useProcessWorkspaceSetupCompletion = () => {
       return;
     }
 
-    store.set(processedCompletionIdsState, [...completionIds]);
+    store.set(processedWorkspaceSetupCompletionIdsState.atom, [
+      ...completionIds,
+    ]);
 
     if (!isWorkspaceSetupChat) {
       return;

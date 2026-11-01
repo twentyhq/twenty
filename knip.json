@@ -28,6 +28,8 @@
         "src/database/clickhouse/migrations/run-migrations.ts",
         "src/database/clickhouse/seeds/run-seeds.ts",
         "src/instrument.ts",
+        "src/engine/metadata-modules/ai/ai-front-component/utils/execute-front-component-builder-request.util.ts",
+        "src/engine/metadata-modules/ai/ai-front-component/front-component-compiler.service.ts",
         "lingui.config.ts",
         "scripts/**/*.ts",
         "**/*.spec.ts",
@@ -52,7 +54,7 @@
         "src/engine/metadata-modules/*/constants/standard-*-names.ts",
         "src/engine/metadata-modules/*/constants/standard-*-titles.ts"
       ],
-      "ignoreDependencies": ["@types/psl"]
+      "ignoreDependencies": ["@types/psl", "twenty-ui"]
     },
     "packages/twenty-front": {
       "entry": [
@@ -72,16 +74,22 @@
       "ignore": ["src/locales/generated/**", ".eloqnt/config.ts"],
       "ignoreDependencies": [
         "@babel/preset-typescript",
+        "@storybook/addon-coverage",
         "buffer",
+        "emojibase-data",
         "esbuild",
         "playwright",
         "rollup-plugin-node-polyfills"
       ]
     },
+    "packages/twenty-oxlint-rules": {
+      "entry": ["scripts/**/*.mjs"],
+      "ignoreDependencies": ["eslint", "eslint-plugin-lingui", "oxlint"]
+    },
     "packages/twenty-ui": {
       "entry": ["scripts/**/*.ts", "docs/**/*.ts"],
       "ignore": ["src/styles/abstracts/**"],
-      "ignoreDependencies": ["@swc/core"]
+      "ignoreDependencies": ["@storybook/addon-coverage", "@swc/core"]
     }
   }
 }

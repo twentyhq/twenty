@@ -1,0 +1,88 @@
+import { type AgentChatInboxAction } from '@/ai/types/AgentChatInboxAction';
+import { type AgentChatInboxState } from '@/ai/types/AgentChatInboxState';
+import { getAgentChatMentionsResolvedAt } from '@/ai/utils/get-agent-chat-mentions-resolved-at.util';
+import { isDefined } from '@/utils/validation/isDefined';
+
+// What a chat without the member's row reads as: one they can open but do
+// not follow, since only taking part in it or filing it follows a chat
+const DEFAULT_AGENT_CHAT_INBOX_STATE: AgentChatInboxState = {
+  lastReadAt: null,
+  archivedAt: null,
+  snoozedUntil: null,
+  isSubscribed: false,
+  lastMentionedAt: null,
+  mentionsResolvedAt: null,
+};
+
+// Optimistic copy of AgentChatThreadParticipantService's write
+export const applyAgentChatInboxAction = ({
+  participant,
+  action,
+  now,
+  threadLastActivityAt = null,
+  snoozedUntil = null,
+}: {
+  participant: Partial<AgentChatInboxState> | null | undefined;
+  action: AgentChatInboxAction;
+  now: Date;
+  threadLastActivityAt?: string | null;
+  snoozedUntil?: string | null;
+}): AgentChatInboxState => {
+  const state = { ...DEFAULT_AGENT_CHAT_INBOX_STATE, ...participant };
+
+  switch (action) {
+    // Read up to what the thread holds now, never back
+    case 'READ':
+      return {
+        ...state,
+        lastReadAt:
+          isDefined(state.lastReadAt) &&
+          (!isDefined(threadLastActivityAt) ||
+            new Date(state.lastReadAt) > new Date(threadLastActivityAt))
+            ? state.lastReadAt
+            : threadLastActivityAt,
+        mentionsResolvedAt: getAgentChatMentionsResolvedAt(state),
+      };
+    case 'UNREAD':
+      return { ...state, lastReadAt: null };
+    // Filing a chat follows it, so new activity brings it back
+    case 'ARCHIVE':
+      return {
+        ...state,
+        mentionsResolvedAt: getAgentChatMentionsResolvedAt(state),
+        archivedAt: now.toISOString(),
+        snoozedUntil: null,
+        isSubscribed: true,
+      };
+    // A snooze already due is saved as ended, and a snoozed chat is followed
+    // again since it is meant to come back
+    case 'SNOOZE':
+      return {
+        ...state,
+        archivedAt:
+          isDefined(snoozedUntil) && new Date(snoozedUntil) > now
+            ? now.toISOString()
+            : null,
+        snoozedUntil,
+        isSubscribed: true,
+      };
+    case 'MOVE_TO_INBOX':
+      return {
+        ...state,
+        archivedAt: null,
+        snoozedUntil: null,
+        isSubscribed: true,
+      };
+    case 'SUBSCRIBE':
+      return { ...state, isSubscribed: true };
+    // Files the chat under done until the member is mentioned or writes in it
+    case 'UNSUBSCRIBE':
+      return {
+        ...state,
+        mentionsResolvedAt: getAgentChatMentionsResolvedAt(state),
+        isSubscribed: false,
+        archivedAt: now.toISOString(),
+        snoozedUntil: null,
+      };
+  }
+};

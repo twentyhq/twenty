@@ -16,7 +16,7 @@ const meta: Meta<PageDecoratorArgs> = {
   args: { routePath: '/settings/experience' },
   parameters: {
     msw: graphqlMocks,
-    date: new Date(2021, 1, 1),
+    date: new Date('2021-02-01T00:00:00.000Z'),
   },
 };
 

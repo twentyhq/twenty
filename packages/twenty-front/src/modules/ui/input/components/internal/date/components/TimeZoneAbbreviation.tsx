@@ -1,8 +1,8 @@
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { getTimezoneAbbreviationForZonedDateTime } from '@/ui/input/components/internal/date/utils/getTimeZoneAbbreviationForZonedDateTime';
 import { styled } from '@linaria/react';
-import { isNonEmptyString } from '@sniptt/guards';
-import { type Temporal } from 'temporal-polyfill';
+import { isNonEmptyString, isString } from '@sniptt/guards';
+import { Temporal } from 'temporal-polyfill';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledTimezoneAbbreviation = styled.span<{ hasError?: boolean }>`
@@ -19,12 +19,10 @@ export const TimeZoneAbbreviation = ({
   instant,
   timeZone,
 }: {
-  instant: Temporal.Instant;
+  instant: Temporal.Instant | string;
   timeZone?: string;
 }) => {
   const { isSystemTimezone, userTimezone, systemTimeZone } = useUserTimezone();
-
-  const zonedDate = instant.toZonedDateTimeISO(timeZone ?? userTimezone);
 
   const shouldUseParamsTimeZone =
     isNonEmptyString(timeZone) && systemTimeZone !== timeZone;
@@ -32,15 +30,17 @@ export const TimeZoneAbbreviation = ({
   const shouldShowTimezoneAbbreviation =
     !isSystemTimezone || shouldUseParamsTimeZone;
 
-  const timezoneSuffix = shouldShowTimezoneAbbreviation
-    ? ` ${getTimezoneAbbreviationForZonedDateTime(zonedDate)}`
-    : '';
-
   if (!shouldShowTimezoneAbbreviation) {
     return <></>;
   }
 
+  const zonedDate = (
+    isString(instant) ? Temporal.Instant.from(instant) : instant
+  ).toZonedDateTimeISO(timeZone ?? userTimezone);
+
   return (
-    <StyledTimezoneAbbreviation>{timezoneSuffix}</StyledTimezoneAbbreviation>
+    <StyledTimezoneAbbreviation>
+      {` ${getTimezoneAbbreviationForZonedDateTime(zonedDate)}`}
+    </StyledTimezoneAbbreviation>
   );
 };

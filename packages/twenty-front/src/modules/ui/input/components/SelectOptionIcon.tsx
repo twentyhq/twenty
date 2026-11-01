@@ -20,7 +20,6 @@ export const SelectOptionIcon = ({ Icon, color }: SelectOptionIconProps) => {
       <TintedIconTile
         icon={<Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />}
         color={color}
-        style={{ width: theme.icon.size.md, height: theme.icon.size.md }}
       />
     );
   }

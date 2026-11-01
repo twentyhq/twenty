@@ -34,6 +34,7 @@ import { UserSessionCookieService } from 'src/engine/core-modules/user-session/s
 import { type CachedUserSession } from 'src/engine/core-modules/user-session/types/cached-user-session.type';
 import { type CreateUserSessionInput } from 'src/engine/core-modules/user-session/types/create-user-session-input.type';
 import { type UserSessionCreationOrigin } from 'src/engine/core-modules/user-session/types/user-session-creation-origin.type';
+import { extractCloudflareGeolocationFromRequest } from 'src/engine/core-modules/user-session/utils/extract-cloudflare-geolocation-from-request.util';
 import { isRequestOriginAllowed } from 'src/engine/core-modules/user-session/utils/is-request-origin-allowed.util';
 import { generateUserSessionToken } from 'src/engine/core-modules/user-session/utils/generate-user-session-token.util';
 import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils/hash-user-session-token.util';
@@ -48,6 +49,16 @@ const buildInvalidSessionException = () =>
     'Session is invalid or has expired.',
     AuthExceptionCode.UNAUTHENTICATED,
   );
+
+const buildRevokedSessionException = (
+  revokedReason: UserSessionRevokedReason | null | undefined,
+) =>
+  revokedReason === UserSessionRevokedReason.Superseded
+    ? new AuthException(
+        'Session was replaced by a newer sign-in.',
+        AuthExceptionCode.SESSION_SUPERSEDED,
+      )
+    : buildInvalidSessionException();
 
 @Injectable()
 export class UserSessionService {
@@ -124,7 +135,8 @@ export class UserSessionService {
         } catch (error) {
           if (
             !(error instanceof AuthException) ||
-            error.code !== AuthExceptionCode.UNAUTHENTICATED
+            (error.code !== AuthExceptionCode.UNAUTHENTICATED &&
+              error.code !== AuthExceptionCode.SESSION_SUPERSEDED)
           ) {
             throw error;
           }
@@ -236,6 +248,9 @@ export class UserSessionService {
     const requestMetadata = {
       userAgent: request.headers['user-agent'] ?? null,
       ipAddress: request.ip ?? null,
+      ...(this.twentyConfigService.get('IS_CLOUDFLARE_GEOLOCATION_ENABLED')
+        ? extractCloudflareGeolocationFromRequest(request)
+        : {}),
     };
 
     if (payload.type === JwtTokenTypeEnum.ACCESS) {
@@ -320,6 +335,9 @@ export class UserSessionService {
             : null,
         userAgent: input.userAgent ?? null,
         ipAddress: input.ipAddress ?? null,
+        country: input.country ?? null,
+        region: input.region ?? null,
+        city: input.city ?? null,
         expiresAt: addMilliseconds(now, ms(lifetime)),
         lastActiveAt: now,
       }),
@@ -357,7 +375,7 @@ export class UserSessionService {
     const session = await this.userSessionRepository.findOneBy({ tokenHash });
 
     if (!isDefined(session) || !this.isSessionActive(session)) {
-      throw buildInvalidSessionException();
+      throw buildRevokedSessionException(session?.revokedReason);
     }
 
     const refreshedCachedSession = this.toCachedSession(session);
@@ -398,13 +416,13 @@ export class UserSessionService {
   ): Promise<void> {
     const session = await this.userSessionRepository.findOne({
       where: { id: sessionId },
-      select: { id: true, revokedAt: true },
+      select: { id: true, revokedAt: true, revokedReason: true },
     });
 
     if (!isDefined(session) || isDefined(session.revokedAt)) {
       await this.cacheStorageService.del(tokenHash);
 
-      throw buildInvalidSessionException();
+      throw buildRevokedSessionException(session?.revokedReason);
     }
   }
 
@@ -677,7 +695,12 @@ export class UserSessionService {
     if (affected === 0) {
       await this.cacheStorageService.del(tokenHash);
 
-      throw buildInvalidSessionException();
+      const revokedSession = await this.userSessionRepository.findOne({
+        where: { id: cachedSession.sessionId },
+        select: { id: true, revokedReason: true },
+      });
+
+      throw buildRevokedSessionException(revokedSession?.revokedReason);
     }
 
     cachedSession.lastActiveAt = now.toISOString();

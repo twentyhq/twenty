@@ -28,10 +28,10 @@ export const SettingsDeviceSessionRowDropdownMenu = ({
   const handleRevokeSession = async () => {
     try {
       await revokeUserSession({ variables: { userSessionId } });
-      enqueueToast({ variant: 'success', children: t`Device logged out` });
+      enqueueToast({ status: 'success', children: t`Device logged out` });
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to log out this device`,
       });
     }

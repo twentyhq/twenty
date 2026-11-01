@@ -1,5 +1,8 @@
 import { useState } from 'react';
 
+import { Button } from '@ui/primitives/input/Button/Button';
+import { Text } from '@ui/primitives/typography/Text/Text';
+
 import { useToast } from '@ui/components/feedback/Toast/hooks/useToast';
 import { type ToastOptions } from '@ui/components/feedback/Toast/types/ToastOptions';
 
@@ -8,7 +11,7 @@ type ToastControlsProps = {
 };
 
 export const ToastControls = ({ onClose }: ToastControlsProps) => {
-  const { enqueueToast, closeToast } = useToast();
+  const { enqueueToast, closeToast, updateToast } = useToast();
   const [count, setCount] = useState(1);
   const [toastId, setToastId] = useState('');
 
@@ -22,8 +25,16 @@ export const ToastControls = ({ onClose }: ToastControlsProps) => {
   };
 
   return (
-    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-      <button
+    <div
+      style={{
+        display: 'flex',
+        gap: 8,
+        flexWrap: 'wrap',
+        backgroundColor: 'var(--t-background-primary)',
+        color: 'var(--t-font-color-primary)',
+      }}
+    >
+      <Button
         type="button"
         onClick={() => {
           enqueueExampleToast({ children: `Notification ${count}` });
@@ -31,16 +42,16 @@ export const ToastControls = ({ onClose }: ToastControlsProps) => {
         }}
       >
         Add notification
-      </button>
-      <button
+      </Button>
+      <Button
         type="button"
         onClick={() =>
           enqueueExampleToast({ children: 'Already saved', dedupeKey: 'saved' })
         }
       >
         Add duplicate
-      </button>
-      <button
+      </Button>
+      <Button
         type="button"
         onClick={() =>
           enqueueExampleToast({
@@ -51,14 +62,24 @@ export const ToastControls = ({ onClose }: ToastControlsProps) => {
         }
       >
         Add timed notification
-      </button>
-      <button type="button" onClick={() => closeToast(toastId)}>
+      </Button>
+      <Button type="button" onClick={() => closeToast(toastId)}>
         Close last notification
-      </button>
-      <button type="button" onClick={() => closeToast()}>
+      </Button>
+      <Button type="button" onClick={() => closeToast()}>
         Close all notifications
-      </button>
-      <span aria-label="Last notification ID">{toastId}</span>
+      </Button>
+      <Button
+        type="button"
+        onClick={() =>
+          updateToast({ id: toastId, children: 'Updated notification' })
+        }
+      >
+        Update last notification
+      </Button>
+      <Text role="note" aria-label="Last notification ID">
+        {toastId}
+      </Text>
     </div>
   );
 };

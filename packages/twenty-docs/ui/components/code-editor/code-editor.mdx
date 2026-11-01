@@ -3,17 +3,43 @@ title: CodeEditor
 description: Edit and display code in a Monaco editor styled with the Twenty theme.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import CodeEditorReference from '/snippets/ui/generated/components/code-editor/code-editor.mdx';
 import CodeEditorHeaderReference from '/snippets/ui/generated/components/code-editor/code-editor-header.mdx';
 
+## Overview
+
 `CodeEditor` renders a [Monaco](https://microsoft.github.io/monaco-editor/) editor that follows the Twenty theme in light and dark mode. `CodeEditorHeader` adds a bar above it for a title, tabs, or actions. Both come from `twenty-ui/components/code-editor`, a separate entry point, so the rest of Twenty UI works without Monaco.
 
 <StoryEmbed
-  storyId="ui-components-codeeditor--documentation"
+  storyId="ui-components-codeeditor--display"
   title="Code editor example"
   height={280}
 />
+
+## Usage
+
+```tsx
+import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
+
+export const WorkspaceEditor = () => (
+  <>
+    <CodeEditorHeader title="workspace.json" />
+    <CodeEditor
+      variant="with-header"
+      language="json"
+      defaultValue={JSON.stringify(
+        { name: 'Acme', plan: 'Pro', seats: 12 },
+        null,
+        2,
+      )}
+      height={160}
+    />
+  </>
+);
+```
 
 ## Setup
 
@@ -27,10 +53,11 @@ The editor loads your installed `monaco-editor` package rather than a copy from 
 
 The code editor does not run inside [front components](/developers/extend/apps/layout/front-components) yet.
 
-## Usage
+## Controlled content
 
 ```tsx
 import { useState } from 'react';
+import { isDefined } from 'twenty-ui/utilities';
 import { CodeEditor } from 'twenty-ui/components/code-editor';
 
 export const PayloadEditor = () => {
@@ -40,14 +67,67 @@ export const PayloadEditor = () => {
     <CodeEditor
       language="json"
       value={payload}
-      onChange={setPayload}
+      onChange={(value) => {
+        if (isDefined(value)) {
+          setPayload(value);
+        }
+      }}
       height={200}
     />
   );
 };
 ```
 
-`onChange` receives the full content on every change. A loader shows until Monaco has loaded. Set `isLoading` to keep showing it while your own data loads.
+`CodeEditorProps` includes the installed Monaco React editor contract. `onChange(value, event)` receives the content (`string | undefined`) and the original `IModelContentChangedEvent`, including changed ranges, version and undo/redo details. Guard an undefined value at the boundary where your application requires a string.
+
+`beforeMount(monaco)` runs after the Twenty theme is defined and before editor creation. `onMount(editor, monaco)` receives the editor instance after the selected theme is applied. `onValidate(markers)` receives Monaco diagnostics unchanged. `overrideServices` passes through to editor creation.
+
+A Twenty `Loader` shows until Monaco loads. Pass `loading` to customize that content, or set `isLoading` to keep it visible while your own data loads. `isLoading` unmounts an existing editor and follows Monaco React's model disposal rules.
+
+## Models and values
+
+Use `defaultValue`, `defaultLanguage` and `defaultPath` to initialize an uncontrolled model, or `value`, `language` and `path` for updates. These props retain Monaco React's behavior, including its rules for choosing initial values and reusing an existing model URI. Changing `defaultValue` does not overwrite a model that already exists.
+
+Changing `path` selects or creates a model. `saveViewState` defaults to true and restores the model's cursor and scroll state when switching back. `line` reveals a line when the editor mounts or the prop changes. `keepCurrentModel` defaults to false; when true, the caller owns disposal of the retained model.
+
+```tsx
+import { CodeEditor } from 'twenty-ui/components/code-editor';
+
+export const FileEditor = () => (
+  <CodeEditor
+    defaultPath="file:///workspace/settings.json"
+    defaultLanguage="json"
+    defaultValue={'{\n  "name": "Acme"\n}'}
+    saveViewState
+  />
+);
+```
+
+## Native integration
+
+`ref` points to the outer Twenty group div, which uses `display: contents` by default. This keeps the Monaco section in the parent's sizing and flex layout. The outer div has no measurable layout box.
+
+Use `containerProps` for the outer div's native attributes, event handlers, class and style. Background, border, padding and dimensions require overriding its `display`. Prefer Monaco React's `wrapperProps` section for layout styles and a measurable native ref. `className` targets the editor-container div inside that section; use `onMount` for the Monaco editor instance.
+
+The Monaco React section contains its own loading content until the editor is ready. During initial bundled Monaco configuration or `isLoading`, Twenty renders a separate loader without `wrapperProps` or `className`. The outer `containerProps` and `ref` remain available in these states.
+
+```tsx
+import { useRef } from 'react';
+import { CodeEditor } from 'twenty-ui/components/code-editor';
+
+export const NamedEditor = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  return (
+    <CodeEditor
+      ref={containerRef}
+      containerProps={{ id: 'payload-editor' }}
+      wrapperProps={{ 'data-editor-surface': 'payload' }}
+      options={{ ariaLabel: 'Payload code' }}
+    />
+  );
+};
+```
 
 ## Add a header
 
@@ -81,15 +161,25 @@ The header accepts node content in `title`, `startElement`, and `endElement`. Us
 
 ## Size and appearance
 
-The editor is 450px tall by default. Set `height` to a number of pixels or a CSS length. `autoHeight` grows the editor with its content, and `resizable` adds a handle below it to drag the height. When both are set, `resizable` applies.
+The editor is 450px tall and 100% wide by default. `width` and `height` accept pixels or a CSS length.
+
+Sizing follows this order:
+
+1. `resizable` starts from the rendered height, including CSS lengths, within the resize handle's 50px to 500px bounds. It adds a handle after Monaco mounts. Dragging or keyboard input then sets a pixel height. Changing `height` resets it within the same bounds.
+2. Otherwise, `autoHeight` uses Monaco's content height. The explicit or default height is used until content is measured.
+3. Otherwise, the explicit or default `height` applies.
+
+Monaco React enables `automaticLayout` by default. If you disable it in `options`, your application must call `editor.layout()` when the container changes size. Native `wrapperProps.style` is passed unchanged and can override the section's width or height.
 
 Pass a localized `resizeLabel` to name the resize handle for screen readers.
 
-`contentPadding="comfortable"` widens the gap between line numbers and code. `transparentBackground` lets the surrounding surface show through.
+Twenty supplies font, formatting, scrollbar, minimap and padding defaults. `contentPadding="comfortable"` also widens the gap between line numbers and code. Caller `options` replace the corresponding defaults, including the whole `padding` object and `lineDecorationsWidth`.
+
+An explicit `theme` takes precedence over `options.theme`; otherwise the editor follows Twenty's light or dark theme. Define custom Monaco themes in `beforeMount`. Monaco themes are global, so changing one affects other Monaco editors on the same page. `transparentBackground` controls the Twenty wrapper appearance independently.
 
 ## Validation
 
-Monaco reports its own diagnostics, such as JSON syntax errors, through `onValidate`. To add your own, return marker data from `setMarkers`. It runs when the editor mounts and after every change, and replaces the markers it set before.
+Monaco reports its own diagnostics, such as JSON syntax errors, through `onValidate`. To add your own, return marker data from `setMarkers`. It runs on mount, model selection and every model content change, including controlled value updates, and replaces the custom markers for the current model.
 
 ## Keyboard
 
@@ -104,3 +194,5 @@ While the editor has focus, it stops keyboard events from propagating. React key
 ### CodeEditorHeader
 
 <CodeEditorHeaderReference />
+
+<PageBanner illustration="dev-api" />

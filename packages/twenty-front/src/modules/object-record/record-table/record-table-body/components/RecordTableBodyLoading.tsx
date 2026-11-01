@@ -1,4 +1,3 @@
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableRowDraggableContextProvider } from '@/object-record/record-table/contexts/RecordTableRowDraggableContext';
 import { RecordTableBody } from '@/object-record/record-table/record-table-body/components/RecordTableBody';
@@ -7,14 +6,12 @@ import { RecordTableCellDragAndDrop } from '@/object-record/record-table/record-
 import { useIsRecordTableCheckboxColumnHidden } from '@/object-record/record-table/hooks/useIsRecordTableCheckboxColumnHidden';
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { RecordTableCellLoading } from '@/object-record/record-table/record-table-cell/components/RecordTableCellLoading';
+import { RecordTableFieldsCellsLoading } from '@/object-record/record-table/record-table-row/components/RecordTableFieldsCellsLoading';
 import { RecordTableLastEmptyCell } from '@/object-record/record-table/record-table-cell/components/RecordTableLastEmptyCell';
 import { RecordTablePlusButtonCellPlaceholder } from '@/object-record/record-table/record-table-cell/components/RecordTablePlusButtonCellPlaceholder';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
 
 export const RecordTableBodyLoading = () => {
-  const { visibleRecordFields } = useRecordTableContextOrThrow();
-
   const isRecordTableDragColumnHidden = useAtomComponentStateValue(
     isRecordTableDragColumnHiddenComponentState,
   );
@@ -31,8 +28,8 @@ export const RecordTableBodyLoading = () => {
             pathToShowPage: '',
             objectNameSingular: '',
             recordId: `${rowIndex}`,
-            rowIndex,
             isSelected: false,
+            restrictedFieldNames: [],
           }}
         >
           <RecordTableRowDraggableContextProvider
@@ -42,7 +39,6 @@ export const RecordTableBodyLoading = () => {
           >
             <RecordTableTr
               recordId={`${rowIndex}`}
-              focusIndex={0}
               isDragging={false}
               data-testid={`row-id-${rowIndex}`}
               data-selectable-id={`row-id-${rowIndex}`}
@@ -51,12 +47,7 @@ export const RecordTableBodyLoading = () => {
               {!isRecordTableCheckboxColumnHidden && (
                 <RecordTableCellCheckbox />
               )}
-              {visibleRecordFields.map((recordField, index) => (
-                <RecordTableCellLoading
-                  key={recordField.fieldMetadataItemId}
-                  recordFieldIndex={index}
-                />
-              ))}
+              <RecordTableFieldsCellsLoading />
               <RecordTablePlusButtonCellPlaceholder />
               <RecordTableLastEmptyCell />
             </RecordTableTr>

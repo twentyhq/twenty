@@ -3,6 +3,7 @@ import { useAtomValue } from 'jotai';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { globalComponentInstanceContextMap } from '@/ui/utilities/state/component-state/utils/globalComponentInstanceContextMap';
 import { type ComponentFamilySelector } from '@/ui/utilities/state/jotai/types/ComponentFamilySelector';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useAtomComponentFamilySelectorValue = <StateType, FamilyKey>(
   componentFamilySelector: ComponentFamilySelector<StateType, FamilyKey>,
@@ -15,7 +16,9 @@ export const useAtomComponentFamilySelectorValue = <StateType, FamilyKey>(
 
   if (!componentInstanceContext) {
     throw new Error(
-      `Instance context for key "${componentFamilySelector.key}" is not defined`,
+      doNotTranslate(
+        `Instance context for key "${componentFamilySelector.key}" is not defined`,
+      ),
     );
   }
 

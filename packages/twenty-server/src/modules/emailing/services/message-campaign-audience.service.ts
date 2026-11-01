@@ -9,11 +9,12 @@ import { resolveCampaignAudience } from 'src/engine/core-modules/emailing-domain
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
 import { HARD_SUPPRESSION_REASONS } from 'src/engine/core-modules/emailing-domain/constants/hard-suppression-reasons.constant';
 import { type RawCampaignRecipient } from 'src/engine/core-modules/emailing-domain/types/raw-campaign-recipient.type';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { MessageSuppressionService } from 'src/modules/emailing/services/message-suppression.service';
 import { MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
+import { buildEmailingRolePermissionConfig } from 'src/modules/emailing/utils/build-emailing-role-permission-config.util';
 
 @Injectable()
 export class MessageCampaignAudienceService {
@@ -147,7 +148,7 @@ export class MessageCampaignAudienceService {
   }> {
     const listMemberRepository = this.workspaceOrmManager.getRepository(
       MessageListMemberWorkspaceEntity,
-      { unionOf: [roleId] },
+      buildEmailingRolePermissionConfig(roleId),
     );
 
     const members = await listMemberRepository.find({ where: { listId } });
@@ -159,7 +160,7 @@ export class MessageCampaignAudienceService {
 
     const personRepository = this.workspaceOrmManager.getRepository(
       PersonWorkspaceEntity,
-      { unionOf: [roleId] },
+      buildEmailingRolePermissionConfig(roleId),
     );
 
     const people = await personRepository.find({

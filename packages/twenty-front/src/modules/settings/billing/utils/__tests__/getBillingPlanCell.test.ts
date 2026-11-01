@@ -6,7 +6,7 @@ import {
   SubscriptionInterval,
 } from '~/generated-metadata/graphql';
 
-const { PRO, ENTERPRISE } = BillingPlanKey;
+const { PRO, ENTERPRISE, PRO_V2, ORGANIZATION_V2 } = BillingPlanKey;
 const { Month, Year } = SubscriptionInterval;
 
 const current = { kind: 'current' } as const;
@@ -27,7 +27,11 @@ const cancelIntervalSwitch = {
   change: { type: 'CANCEL_INTERVAL_SWITCH' },
 } as const;
 
-const getGrid = (subscription: {
+const getGrid = ({
+  planKeys = [PRO, ENTERPRISE],
+  ...subscription
+}: {
+  planKeys?: BillingPlanKey[];
   currentPlanKey: BillingPlanKey;
   currentInterval: SettingsBillingPlanInterval;
   upcomingPlanKey: BillingPlanKey;
@@ -37,7 +41,7 @@ const getGrid = (subscription: {
     Record<BillingPlanKey, Record<SettingsBillingPlanInterval, unknown>>
   > = {};
 
-  for (const planKey of [PRO, ENTERPRISE]) {
+  for (const planKey of planKeys) {
     grid[planKey] = {
       [Month]: getBillingPlanCell({
         ...subscription,
@@ -86,7 +90,7 @@ describe('getBillingPlanCell', () => {
     });
   });
 
-  it('cancels a scheduled interval switch from the current interval column', () => {
+  it('keeps offering plan switches on other plans while an interval switch is scheduled', () => {
     expect(
       getGrid({
         currentPlanKey: PRO,
@@ -98,7 +102,7 @@ describe('getBillingPlanCell', () => {
       [PRO]: { [Month]: scheduled, [Year]: current },
       [ENTERPRISE]: {
         [Month]: switchPlan(ENTERPRISE),
-        [Year]: cancelIntervalSwitch,
+        [Year]: switchPlan(ENTERPRISE),
       },
     });
   });
@@ -114,6 +118,24 @@ describe('getBillingPlanCell', () => {
     ).toEqual({
       [PRO]: { [Month]: scheduled, [Year]: cancelIntervalSwitch },
       [ENTERPRISE]: { [Month]: cancelPlanSwitch, [Year]: current },
+    });
+  });
+
+  it('offers plan switches outside the upcoming plan column when the current plan is not a column', () => {
+    expect(
+      getGrid({
+        planKeys: [PRO_V2, ORGANIZATION_V2],
+        currentPlanKey: ENTERPRISE,
+        currentInterval: Month,
+        upcomingPlanKey: PRO_V2,
+        upcomingInterval: Month,
+      }),
+    ).toEqual({
+      [PRO_V2]: { [Month]: scheduled, [Year]: switchInterval(Year) },
+      [ORGANIZATION_V2]: {
+        [Month]: switchPlan(ORGANIZATION_V2),
+        [Year]: switchPlan(ORGANIZATION_V2),
+      },
     });
   });
 });

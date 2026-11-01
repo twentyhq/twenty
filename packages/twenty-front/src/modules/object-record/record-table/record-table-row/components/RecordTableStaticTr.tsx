@@ -5,28 +5,21 @@ import { RecordTableTr } from '@/object-record/record-table/record-table-row/com
 
 type RecordTableStaticTrProps = {
   recordId: string;
-  focusIndex: number;
   children: ReactNode;
 };
 
 export const RecordTableStaticTr = ({
   recordId,
-  focusIndex,
   children,
 }: RecordTableStaticTrProps) => {
   return (
     <RecordTableTr
       recordId={recordId}
-      focusIndex={focusIndex}
       isDragging={false}
       data-testid={`row-id-${recordId}`}
       data-selectable-id={recordId}
     >
-      <RecordTableRowDraggableContextProvider
-        value={{
-          isDragging: false,
-        }}
-      >
+      <RecordTableRowDraggableContextProvider value={{ isDragging: false }}>
         {children}
       </RecordTableRowDraggableContextProvider>
     </RecordTableTr>

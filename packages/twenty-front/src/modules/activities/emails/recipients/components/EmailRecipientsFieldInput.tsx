@@ -7,9 +7,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { atom, useStore } from 'jotai';
 import {
   type ClipboardEvent,
-  type KeyboardEvent,
   type MouseEvent,
   type ReactNode,
+  type RefObject,
   useContext,
   useId,
   useMemo,
@@ -18,7 +18,10 @@ import {
 } from 'react';
 import { flushSync } from 'react-dom';
 import { isDefined } from 'twenty-shared/utils';
-import { Autocomplete } from 'twenty-ui/primitives/input';
+import {
+  type AutocompleteInputProps,
+  Autocomplete,
+} from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
 
@@ -47,6 +50,7 @@ import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePush
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
+import { isKeyboardEventComposing } from '@/ui/utilities/hotkey/utils/isKeyboardEventComposing';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 const SUGGESTIONS_SEARCH_DEBOUNCE_MS = 300;
@@ -90,6 +94,11 @@ const StyledInput = styled.input`
   outline: none;
   padding: 0;
 
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: 1px;
+  }
+
   &::placeholder {
     ${FORM_FIELD_PLACEHOLDER_STYLES}
   }
@@ -97,6 +106,7 @@ const StyledInput = styled.input`
 
 type EmailRecipientsFieldInputProps = {
   fieldId: EmailRecipientsFieldId;
+  inputRef?: RefObject<HTMLInputElement | null>;
   // null when the drag started in another field.
   draggedSourceIndices: number[] | null;
   label: string;
@@ -109,6 +119,7 @@ type EmailRecipientsFieldInputProps = {
 
 export const EmailRecipientsFieldInput = ({
   fieldId,
+  inputRef: providedInputRef,
   draggedSourceIndices,
   label,
   recipients,
@@ -121,7 +132,8 @@ export const EmailRecipientsFieldInput = ({
   const focusId = `email-recipients-field-${instanceId}`;
   const suggestionsDropdownId = `${focusId}-suggestions`;
 
-  const inputRef = useRef<HTMLInputElement>(null);
+  const localInputRef = useRef<HTMLInputElement>(null);
+  const inputRef = providedInputRef ?? localInputRef;
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
@@ -420,8 +432,12 @@ export const EmailRecipientsFieldInput = ({
     dependencies: [handleSubmitHotkey],
   });
 
-  const handleInputKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-    if (event.ctrlKey || event.metaKey) {
+  const handleInputKeyDown: AutocompleteInputProps['onKeyDown'] = (event) => {
+    if (
+      isKeyboardEventComposing(event.nativeEvent) ||
+      event.ctrlKey ||
+      event.metaKey
+    ) {
       return;
     }
 
@@ -433,6 +449,7 @@ export const EmailRecipientsFieldInput = ({
     switch (event.key) {
       case 'Enter': {
         event.preventDefault();
+        event.preventBaseUIHandler();
 
         if (!isEditing && isDropdownOpen && suggestions.length > 0) {
           const highlightedSuggestionId = store.get(
@@ -471,6 +488,7 @@ export const EmailRecipientsFieldInput = ({
       case ',':
       case ';': {
         event.preventDefault();
+        event.preventBaseUIHandler();
 
         if (!bufferIsEmpty) {
           commitInputAndCloseSuggestions();
@@ -480,6 +498,7 @@ export const EmailRecipientsFieldInput = ({
       case ' ': {
         if (isValidEmailRecipientAddress(inputValue.trim())) {
           event.preventDefault();
+          event.preventBaseUIHandler();
           commitInputAndCloseSuggestions();
         }
         return;
@@ -490,6 +509,7 @@ export const EmailRecipientsFieldInput = ({
         }
 
         event.preventDefault();
+        event.preventBaseUIHandler();
 
         if (selectedChipIndices.length > 0) {
           removeSelectedRecipients();
@@ -502,6 +522,7 @@ export const EmailRecipientsFieldInput = ({
       case 'Delete': {
         if (bufferIsEmpty && selectedChipIndices.length > 0) {
           event.preventDefault();
+          event.preventBaseUIHandler();
           removeSelectedRecipients();
         }
         return;
@@ -509,6 +530,7 @@ export const EmailRecipientsFieldInput = ({
       case 'ArrowDown': {
         if (!isEditing && !isDropdownOpen && suggestions.length > 0) {
           event.preventDefault();
+          event.preventBaseUIHandler();
           openSuggestions();
         }
         return;
@@ -519,6 +541,7 @@ export const EmailRecipientsFieldInput = ({
         }
 
         event.preventDefault();
+        event.preventBaseUIHandler();
         scrollChipIntoView(
           event.shiftKey ? extendChipSelection(-1) : moveChipSelection(-1),
         );
@@ -530,6 +553,7 @@ export const EmailRecipientsFieldInput = ({
         }
 
         event.preventDefault();
+        event.preventBaseUIHandler();
         scrollChipIntoView(
           event.shiftKey ? extendChipSelection(1) : moveChipSelection(1),
         );
@@ -538,6 +562,7 @@ export const EmailRecipientsFieldInput = ({
       case 'Escape': {
         if (isDropdownOpen) {
           event.preventDefault();
+          event.preventBaseUIHandler();
           event.stopPropagation();
           closeSuggestions();
           return;
@@ -545,12 +570,14 @@ export const EmailRecipientsFieldInput = ({
 
         if (isEditing) {
           event.preventDefault();
+          event.preventBaseUIHandler();
           cancelEditing();
           return;
         }
 
         if (selectedChipIndices.length > 0) {
           event.preventDefault();
+          event.preventBaseUIHandler();
           clearChipSelection();
         }
         return;
@@ -563,10 +590,7 @@ export const EmailRecipientsFieldInput = ({
   const recipientsInput = (
     <Autocomplete.Input
       key="email-recipients-input"
-      render={(inputProps) => (
-        // oxlint-disable-next-line react/jsx-props-no-spreading
-        <StyledInput {...inputProps} className={undefined} />
-      )}
+      render={<StyledInput />}
       ref={inputRef}
       type="text"
       autoComplete="off"

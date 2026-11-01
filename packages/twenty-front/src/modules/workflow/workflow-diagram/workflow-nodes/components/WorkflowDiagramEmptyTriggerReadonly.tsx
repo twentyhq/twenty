@@ -17,6 +17,7 @@ import { WorkflowNodeTitle } from '@/workflow/workflow-diagram/workflow-nodes/co
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 import { useIcons } from 'twenty-ui/icon';
 
@@ -52,7 +53,9 @@ export const WorkflowDiagramEmptyTriggerReadonly = ({ id }: { id: string }) => {
       !isDefined(workflowVisualizerWorkflowVersionId)
     ) {
       throw new Error(
-        'Workflow ID and Version ID must be defined to open the command menu.',
+        doNotTranslate(
+          'Workflow ID and Version ID must be defined to open the command menu.',
+        ),
       );
     }
 

@@ -3,6 +3,7 @@ import { Inject, Injectable, Optional } from '@nestjs/common';
 import { type ToolSet } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 
+import { getReachableApplications } from 'src/engine/core-modules/application/utils/get-reachable-applications.util';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
@@ -17,7 +18,7 @@ import { resolveObjectIcon } from 'src/engine/core-modules/tool-provider/utils/r
 import { toolSetToDescriptors } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import type { WorkflowToolWorkspaceService } from 'src/modules/workflow/workflow-tools/services/workflow-tool.workspace-service';
 
 @Injectable()
@@ -33,7 +34,15 @@ export class WorkflowToolProvider implements ToolProvider {
   ) {}
 
   async isAvailable(context: ToolProviderContext): Promise<boolean> {
-    if (!this.workflowToolService) {
+    // Workspace workflows can call any application, so only callers reaching them all get these tools
+    const reachableApplications = getReachableApplications({
+      callingApplication: context.application,
+      operation: 'trigger',
+      workspaceCustomApplicationId:
+        context.authContext?.workspace.workspaceCustomApplicationId,
+    });
+
+    if (!this.workflowToolService || reachableApplications.type !== 'all') {
       return false;
     }
 
@@ -97,7 +106,6 @@ export class WorkflowToolProvider implements ToolProvider {
     return this.workflowToolService.generateWorkflowTools({
       workspaceId: context.workspaceId,
       rolePermissionConfig: context.rolePermissionConfig,
-      actorContext: context.actorContext,
       userWorkspaceId: context.userWorkspaceId,
     });
   }

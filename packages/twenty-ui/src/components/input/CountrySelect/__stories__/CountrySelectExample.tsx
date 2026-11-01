@@ -5,7 +5,7 @@ import { type CountrySelectProps } from '../types/CountrySelectProps';
 import { COUNTRY_CHOICES } from './COUNTRY_CHOICES';
 
 const StatefulCountrySelectExample = ({
-  value: initialValue = 'France',
+  value: initialValue = 'FR',
   onValueChange,
   ...props
 }: Partial<CountrySelectProps>) => {
@@ -20,14 +20,16 @@ const StatefulCountrySelectExample = ({
       noResultsLabel="No countries found"
       {...props}
       value={value}
-      onValueChange={(nextValue) => {
-        setValue(nextValue);
-        onValueChange?.(nextValue);
+      onValueChange={(nextValue, eventDetails) => {
+        onValueChange?.(nextValue, eventDetails);
+        if (!eventDetails.isCanceled) {
+          setValue(nextValue);
+        }
       }}
     />
   );
 };
 
 export const CountrySelectExample = (props: Partial<CountrySelectProps>) => (
-  <StatefulCountrySelectExample key={props.value} {...props} />
+  <StatefulCountrySelectExample key={props.value ?? 'empty'} {...props} />
 );

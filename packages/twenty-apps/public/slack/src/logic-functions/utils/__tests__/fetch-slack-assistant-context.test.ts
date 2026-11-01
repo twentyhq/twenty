@@ -101,7 +101,7 @@ describe('fetchSlackAssistantContext', () => {
     const context = await contextPromise;
 
     expect(context.threadMessages).toEqual([]);
-    expect(context.conversationMessages).toEqual([]);
+    expect(context.conversationThreadMessages).toEqual([]);
     expect(context.requesterName).toBeUndefined();
     expect(context.isDirectMessage).toBe(false);
     expect(context.slackClient).toBe(SLACK_CLIENT);

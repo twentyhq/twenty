@@ -3,19 +3,30 @@ import { type Request } from 'express';
 import { DocumentNode, parse } from 'graphql';
 import { type Plugin } from 'graphql-yoga';
 
+import { msg } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
-import { type DirectExecutionService } from 'src/engine/api/graphql/direct-execution/direct-execution.service';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  type DirectExecutionResult,
+  type DirectExecutionService,
+} from 'src/engine/api/graphql/direct-execution/direct-execution.service';
 import { classifyTopLevelFields } from 'src/engine/api/graphql/direct-execution/utils/classify-top-level-fields.util';
 import { captureExecutedRootResolvers } from 'src/engine/api/graphql/utils/capture-executed-root-resolvers.util';
 import { extractTopLevelFieldsSafely } from 'src/engine/api/graphql/utils/extract-top-level-fields-safely.util';
 import { findOperationDefinition } from 'src/engine/api/graphql/direct-execution/utils/find-operation-definition.util';
+import { isDevelopmentToolingRequest } from 'src/engine/api/graphql/direct-execution/utils/is-development-tooling-request.util';
 import { isSubscriptionOperation } from 'src/engine/api/graphql/direct-execution/utils/is-subscription-operation.util';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
-import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
+import { AuthExceptionCode } from 'src/engine/core-modules/auth/auth.exception';
+import {
+  AuthenticationError,
+  UserInputError,
+} from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
 export type DirectExecutionPluginConfig = {
   directExecutionService: DirectExecutionService;
   featureFlagService: FeatureFlagService;
+  isProductionEnvironment: boolean;
 };
 
 export function useDirectExecution(
@@ -25,7 +36,29 @@ export function useDirectExecution(
     onRequest: async ({ endResponse, serverContext }) => {
       const req = (serverContext as unknown as { req: Request }).req;
 
-      if (!req.workspace?.id || !req.body?.query) {
+      if (!isDefined(req.workspace)) {
+        if (
+          !config.isProductionEnvironment &&
+          isDevelopmentToolingRequest(req)
+        ) {
+          return;
+        }
+
+        const result: DirectExecutionResult = {
+          errors: [
+            new AuthenticationError('Authentication required', {
+              subCode: AuthExceptionCode.UNAUTHENTICATED,
+              userFriendlyMessage: msg`You must be authenticated to perform this action.`,
+            }).toJSON(),
+          ],
+        };
+
+        config.directExecutionService.recordOperationMetrics(result);
+
+        return endResponse(Response.json(result));
+      }
+
+      if (!req.body?.query) {
         return;
       }
 

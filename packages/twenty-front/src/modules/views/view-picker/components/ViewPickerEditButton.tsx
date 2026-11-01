@@ -12,10 +12,8 @@ import { useViewPickerMode } from '@/views/view-picker/hooks/useViewPickerMode';
 import { viewPickerIsPersistingComponentState } from '@/views/view-picker/states/viewPickerIsPersistingComponentState';
 import { viewPickerMainGroupByFieldMetadataIdComponentState } from '@/views/view-picker/states/viewPickerMainGroupByFieldMetadataIdComponentState';
 import { viewPickerTypeComponentState } from '@/views/view-picker/states/viewPickerTypeComponentState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { Button } from 'twenty-ui/primitives/input';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const ViewPickerEditButton = () => {
   const { availableFieldsForGrouping, navigateToSelectSettings } =
@@ -30,14 +28,9 @@ export const ViewPickerEditButton = () => {
 
   const { currentView } = useGetCurrentViewOnly();
 
-  const isInitialObjectViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
-  );
-
   const visibleViews = computeViewPickerVisibleViews({
     views: viewsOnCurrentObject,
     currentViewId: currentView?.id,
-    isInitialObjectViewEnabled,
   });
 
   const isLastView = visibleViews.length <= 1;

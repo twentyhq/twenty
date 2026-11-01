@@ -9,16 +9,15 @@ import { AI_CHAT_EDITOR_PROFILE } from '@/ai/constants/AiChatEditorProfile';
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { AI_CHAT_INPUT_ID } from '@/ai/constants/AiChatInputId';
 import { useAiChatFileUpload } from '@/ai/hooks/useAiChatFileUpload';
-import {
-  AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
-  agentChatDraftsByThreadIdState,
-} from '@/ai/states/agentChatDraftsByThreadIdState';
+import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { AGENT_CHAT_ENSURE_THREAD_FOR_DRAFT_EVENT_NAME } from '@/ai/constants/AgentChatEnsureThreadForDraftEventName';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
+import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { MENTION_SUGGESTION_PLUGIN_KEY } from '@/mention/constants/MentionSuggestionPluginKey';
 import { useMentionSearch } from '@/mention/hooks/useMentionSearch';
+import { getAgentChatAssistantMentionSearchResults } from '@/ai/utils/getAgentChatAssistantMentionSearchResults';
 import { useWorkspaceMemberMentionSearch } from '@/mention/hooks/useWorkspaceMemberMentionSearch';
 import { SKILL_SUGGESTION_PLUGIN_KEY } from '@/skill-suggestion/constants/SkillSuggestionPluginKey';
 import { useSkillSuggestionSearch } from '@/skill-suggestion/hooks/useSkillSuggestionSearch';
@@ -28,25 +27,32 @@ import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 
 export const useAiChatEditor = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
+  const aiModels = useAtomStateValue(aiModelsState);
+  const newAiChatThreadId = useAtomStateValue(newAiChatThreadIdState);
   const [agentChatDraftsByThreadId, setAgentChatDraftsByThreadId] =
     useAtomState(agentChatDraftsByThreadIdState);
   const { searchMentionRecords } = useMentionSearch();
   const { searchWorkspaceMembers } = useWorkspaceMemberMentionSearch();
+  const isAiChatInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
   const { searchSkills } = useSkillSuggestionSearch();
   const { uploadFiles } = useAiChatFileUpload();
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
     useRemoveFocusItemFromFocusStackById();
 
-  const draftKey = currentAiChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
+  const draftKey = currentAiChatThread ?? newAiChatThreadId;
   const initialDraft = agentChatDraftsByThreadId[draftKey] ?? '';
   const editor = useAdvancedTextEditor({
     profile: AI_CHAT_EDITOR_PROFILE,
-    placeholder: t`Ask anything, @ a teammate or record, / a skill...`,
+    placeholder: t`Ask, search or make anything...`,
     readonly: false,
     defaultValue: initialDraft,
     editorProps: {
@@ -64,9 +70,6 @@ export const useAiChatEditor = () => {
 
           event.preventDefault();
           dispatchBrowserEvent(AGENT_CHAT_SEND_MESSAGE_EVENT_NAME);
-
-          const { state } = view;
-          view.dispatch(state.tr.delete(0, state.doc.content.size));
           return true;
         }
         return false;
@@ -102,9 +105,6 @@ export const useAiChatEditor = () => {
         ...prev,
         [draftKey]: serializedDraft,
       }));
-      if (draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY && text.trim() !== '') {
-        dispatchBrowserEvent(AGENT_CHAT_ENSURE_THREAD_FOR_DRAFT_EVENT_NAME);
-      }
     },
     onFocus: () => {
       pushFocusItemToFocusStack({
@@ -134,7 +134,18 @@ export const useAiChatEditor = () => {
       searchWorkspaceMembers: typeof searchWorkspaceMembers;
     };
     mentionStorage.searchMentionRecords = searchMentionRecords;
-    mentionStorage.searchWorkspaceMembers = searchWorkspaceMembers;
+    mentionStorage.searchWorkspaceMembers = isAiChatInboxEnabled
+      ? (query) => [
+          ...(aiModels.length > 0
+            ? getAgentChatAssistantMentionSearchResults({
+                query,
+                objectLabelSingular: t`Assistant`,
+                objectLabelPlural: t`Teammates`,
+              })
+            : []),
+          ...searchWorkspaceMembers(query),
+        ]
+      : () => [];
 
     const skillStorage = storage['skill-suggestion'] as {
       searchSkills: typeof searchSkills;
@@ -160,10 +171,5 @@ export const useAiChatEditor = () => {
     onBrowserEvent: handleRestoreEditorContent,
   });
 
-  const handleSendAndClear = () => {
-    dispatchBrowserEvent(AGENT_CHAT_SEND_MESSAGE_EVENT_NAME);
-    editor?.commands.clearContent();
-  };
-
-  return { editor, handleSendAndClear };
+  return { editor };
 };

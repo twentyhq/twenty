@@ -66,7 +66,7 @@ export const UsageDailyChartSection = ({
       label: chartLabel,
       data: timeSeries.map((point) => ({
         x: formatDate(point.date, 'MMM d'),
-        y: point.creditsUsed,
+        y: point.workspaceCreditsUsed,
       })),
     },
   ];
@@ -76,7 +76,7 @@ export const UsageDailyChartSection = ({
       <Section.Header
         title={title}
         description={description}
-        adornment={
+        actions={
           <Select
             dropdownId={`${chartId}-period`}
             value={period}

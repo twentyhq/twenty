@@ -1,10 +1,10 @@
+import { MockedProvider } from '@apollo/client/testing/react';
 import { act, render } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 import { AgentChatThreadParticipantOperationsEffect } from '@/ai/components/AgentChatThreadParticipantOperationsEffect';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { agentChatThreadRecordUpdateCountState } from '@/ai/states/agentChatThreadRecordUpdateCountState';
 import { agentChatThreadStreamedParticipantsState } from '@/ai/states/agentChatThreadStreamedParticipantsState';
 import { mergeAgentChatThreadParticipants } from '@/ai/utils/mergeAgentChatThreadParticipants';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
@@ -42,7 +42,9 @@ const READ_PARTICIPANT: AgentChatThreadParticipantFieldsFragment = {
   snoozedUntil: null,
   isSubscribed: true,
   lastMentionedAt: null,
+  mentionsResolvedAt: null,
   updatedAt: '2026-10-01T10:00:00.000Z',
+  __typename: 'AgentChatThreadParticipant',
 };
 
 const renderEffect = (
@@ -57,7 +59,9 @@ const renderEffect = (
 
   render(
     <JotaiProvider store={store}>
-      <AgentChatThreadParticipantOperationsEffect />
+      <MockedProvider>
+        <AgentChatThreadParticipantOperationsEffect />
+      </MockedProvider>
     </JotaiProvider>,
   );
 
@@ -82,8 +86,7 @@ const receiveCreatedParticipant = (
   );
 
 const receiveParticipantUpdate = (
-  recordId: string,
-  updatedFields: Partial<AgentChatThreadParticipantFieldsFragment>,
+  participant: AgentChatThreadParticipantFieldsFragment,
 ) =>
   act(() =>
     dispatchObjectRecordOperationBrowserEvent({
@@ -92,10 +95,12 @@ const receiveParticipantUpdate = (
         type: 'update-one',
         result: {
           updateInput: {
-            recordId,
-            updatedFields: Object.entries(updatedFields).map(
-              ([fieldName, value]) => ({ [fieldName]: value }),
-            ),
+            recordId: participant.id,
+            updatedFields: [{ updatedAt: participant.updatedAt }],
+            updatedRecord: {
+              ...participant,
+              workspaceMemberId: 'workspace-member-id',
+            },
           },
         },
       },
@@ -121,7 +126,7 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
       updatedAt: '2026-10-01T10:05:00.000Z',
     };
 
-    receiveParticipantUpdate(PARTICIPANT_ID, change);
+    receiveParticipantUpdate({ ...READ_PARTICIPANT, ...change });
 
     expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({
       [THREAD_ID]: { ...READ_PARTICIPANT, ...change },
@@ -143,7 +148,7 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
       updatedAt: '2026-10-02T09:00:00.000Z',
     };
 
-    receiveParticipantUpdate(PARTICIPANT_ID, change);
+    receiveParticipantUpdate({ ...snoozedParticipant, ...change });
 
     expect(
       store.get(agentChatThreadParticipantsState.atom)?.[THREAD_ID],
@@ -164,7 +169,8 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
       updatedAt: '2026-10-01T10:01:00.000Z',
     };
 
-    receiveParticipantUpdate(PARTICIPANT_ID, {
+    receiveParticipantUpdate({
+      ...READ_PARTICIPANT,
       archivedAt: null,
       updatedAt: '2026-10-01T10:02:00.000Z',
     });
@@ -185,7 +191,8 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
   it('ignores a change older than the version it has', () => {
     const { store } = renderEffect({ [THREAD_ID]: READ_PARTICIPANT });
 
-    receiveParticipantUpdate(PARTICIPANT_ID, {
+    receiveParticipantUpdate({
+      ...READ_PARTICIPANT,
       archivedAt: '2026-10-01T09:58:00.000Z',
       updatedAt: '2026-10-01T09:59:00.000Z',
     });
@@ -195,22 +202,22 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
     });
   });
 
-  it('leaves a change for a row it does not have to the page of its thread', () => {
-    const { store } = renderEffect({ [THREAD_ID]: READ_PARTICIPANT });
+  it('applies a change to a row it has not loaded', () => {
+    const { store } = renderEffect({});
 
-    receiveParticipantUpdate('another-participant-id', { lastReadAt: null });
+    receiveParticipantUpdate(READ_PARTICIPANT);
 
     expect(store.get(agentChatThreadParticipantsState.atom)).toEqual({
       [THREAD_ID]: READ_PARTICIPANT,
     });
-    expect(store.get(agentChatThreadRecordUpdateCountState.atom)).toBe(1);
   });
 
   it('applies a change to a row that arrived before the first page', () => {
     const { store } = renderEffect(null);
 
     receiveCreatedParticipant(READ_PARTICIPANT);
-    receiveParticipantUpdate(PARTICIPANT_ID, {
+    receiveParticipantUpdate({
+      ...READ_PARTICIPANT,
       lastReadAt: null,
       updatedAt: '2026-10-01T10:05:00.000Z',
     });
@@ -222,7 +229,6 @@ describe('AgentChatThreadParticipantOperationsEffect', () => {
         updatedAt: '2026-10-01T10:05:00.000Z',
       },
     });
-    expect(store.get(agentChatThreadRecordUpdateCountState.atom)).toBe(0);
   });
 
   it('ignores a copy older than the one it has', () => {

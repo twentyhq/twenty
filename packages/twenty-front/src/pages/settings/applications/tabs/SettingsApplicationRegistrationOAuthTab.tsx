@@ -72,11 +72,11 @@ export const SettingsApplicationRegistrationOAuthTab = ({
           },
         },
       });
-      enqueueToast({ variant: 'success', children: t`Redirect URIs updated` });
+      enqueueToast({ status: 'success', children: t`Redirect URIs updated` });
       setFormRedirectUris(newFormRedirectUris);
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Error updating redirect URIs`,
       });
     } finally {
@@ -96,13 +96,13 @@ export const SettingsApplicationRegistrationOAuthTab = ({
       if (isNonEmptyString(secret)) {
         setRotatedSecret(secret);
         enqueueToast({
-          variant: 'success',
+          status: 'success',
           children: t`Client secret rotated. Copy it now — it won't be shown again.`,
         });
       }
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Error rotating client secret`,
       });
     } finally {
@@ -134,11 +134,7 @@ export const SettingsApplicationRegistrationOAuthTab = ({
           title={t`OAuth`}
           description={t`Credentials and scopes for OAuth authorization flows`}
         />
-        <SettingsTableCard
-          rounded
-          items={credentialItems}
-          gridAutoColumns="3fr 8fr"
-        />
+        <SettingsTableCard items={credentialItems} gridAutoColumns="3fr 8fr" />
         <StyledRotateContainer>
           <Button
             startIcon={<IconRefresh />}

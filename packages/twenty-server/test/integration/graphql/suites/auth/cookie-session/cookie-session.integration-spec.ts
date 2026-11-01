@@ -1,4 +1,5 @@
 import request from 'supertest';
+import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
 
 import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
 
@@ -22,9 +23,10 @@ const asWorkspaceRequest = (
 ): request.Test => {
   const host = new URL(origin).host;
 
-  return originOverride === undefined
-    ? agent.set('Host', host).set('Origin', origin)
-    : agent.set('Host', host).set('Origin', originOverride);
+  return agent
+    .set('Host', host)
+    .set('Origin', originOverride ?? origin)
+    .set(SESSION_COOKIE_OPT_IN_HEADER_NAME, '1');
 };
 
 const CURRENT_USER_QUERY = `
@@ -175,11 +177,34 @@ describe('Cookie sessions (integration)', () => {
     const response = await request(SERVER_URL)
       .post('/metadata')
       .set('Host', new URL(origin).host)
+      .set(SESSION_COOKIE_OPT_IN_HEADER_NAME, '1')
       .set('Cookie', sessionCookie)
       .send({ query: CURRENT_USER_QUERY });
 
     expect(response.status).toBe(403);
     expect(response.body.error).toBe('CSRF_ORIGIN_MISMATCH');
+  });
+
+  it('should ignore the session cookie on a request that does not opt in', async () => {
+    const response = await request(SERVER_URL)
+      .post('/metadata')
+      .set('Host', new URL(origin).host)
+      .set('Origin', origin)
+      .set('Cookie', sessionCookie)
+      .send({ query: CURRENT_USER_QUERY });
+
+    const codes = response.body.errors.map(
+      (graphQLError: { extensions?: { code?: string } }) =>
+        graphQLError.extensions?.code,
+    );
+
+    expect(response.body.data?.currentUser).toBeFalsy();
+    expect(codes.some((code: string) => AUTH_ERROR_CODES.includes(code))).toBe(
+      true,
+    );
+    expect(
+      extractSessionCookie(response.headers['set-cookie']),
+    ).toBeUndefined();
   });
 
   it('should stop authenticating the cookie once signed out', async () => {
@@ -241,5 +266,33 @@ describe('Cookie sessions (integration)', () => {
     expect(codes.some((code: string) => AUTH_ERROR_CODES.includes(code))).toBe(
       true,
     );
+  });
+
+  it('should answer a workspace query sent without credentials with an auth error rather than a schema error', async () => {
+    const response = await asWorkspaceRequest(
+      request(SERVER_URL).post('/graphql'),
+    ).send({ query: FIND_COMPANIES_QUERY });
+
+    expect(response.body.errors).toBeDefined();
+
+    const messages = response.body.errors.map(
+      (graphQLError: { message: string }) => graphQLError.message,
+    );
+    const codes = response.body.errors.map(
+      (graphQLError: { extensions?: { code?: string } }) =>
+        graphQLError.extensions?.code,
+    );
+
+    expect(messages.join(' ')).not.toContain('Cannot query field');
+    expect(codes).toContain('UNAUTHENTICATED');
+  });
+
+  it('should keep serving introspection without credentials outside production for schema codegen', async () => {
+    const response = await asWorkspaceRequest(
+      request(SERVER_URL).post('/graphql'),
+    ).send({ query: '{ __schema { queryType { name } } }' });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.__schema.queryType.name).toBe('Query');
   });
 });

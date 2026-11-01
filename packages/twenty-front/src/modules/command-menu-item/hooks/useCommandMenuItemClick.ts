@@ -1,4 +1,3 @@
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { type CommandMenuItemDefinition } from '@/command-menu-item/types/CommandMenuItemDefinition';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { useMountCommand } from '@/command-menu-item/engine-command/hooks/useMountCommand';
@@ -7,16 +6,19 @@ import { isEngineCommandMountedFamilySelector } from '@/command-menu-item/engine
 import { useCloseCommandMenu } from '@/command-menu-item/hooks/useCloseCommandMenu';
 import { commandMenuItemProgressFamilyState } from '@/command-menu-item/states/commandMenuItemProgressFamilyState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { computeContextStoreGraphqlFilterFromStore } from '@/context-store/utils/computeContextStoreGraphqlFilterFromStore';
 import { useOpenFrontComponentInSidePanel } from '@/side-panel/hooks/useOpenFrontComponentInSidePanel';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useStore } from 'jotai';
 import { isValidElement, useContext } from 'react';
 import { ENGINE_COMPONENT_KEY_COMPONENT_MAP } from '@/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap';
 import { ExportRecordsCommand } from '@/command-menu-item/engine-command/record/components/ExportRecordsCommand';
 import { isDefined } from 'twenty-shared/utils';
 import { type IconComponent } from 'twenty-ui/icon';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const useCommandMenuItemClick = ({
   item,
@@ -27,15 +29,17 @@ export const useCommandMenuItemClick = ({
   Icon: IconComponent;
   label: string;
 }) => {
-  const isAsyncCsvExportEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-  );
   const { commandMenuContextApi } = useContext(CommandMenuContext);
   const mountCommand = useMountCommand();
+  const store = useStore();
   const { openFrontComponentInSidePanel } = useOpenFrontComponentInSidePanel();
 
   const contextStoreInstanceId = useAvailableComponentInstanceIdOrThrow(
     ContextStoreComponentInstanceContext,
+  );
+  const contextStoreTargetedRecordsRule = useAtomComponentStateValue(
+    contextStoreTargetedRecordsRuleComponentState,
+    contextStoreInstanceId,
   );
 
   const isMounted = useAtomFamilySelectorValue(
@@ -84,7 +88,7 @@ export const useCommandMenuItemClick = ({
       const isExport =
         isValidElement(engineComponent) &&
         engineComponent.type === ExportRecordsCommand;
-      if (!isExport || !isAsyncCsvExportEnabled) {
+      if (!isExport) {
         closeCommandMenu();
       }
 
@@ -110,10 +114,7 @@ export const useCommandMenuItemClick = ({
     }
 
     if (isFrontComponent && isDefined(item.frontComponentId)) {
-      const { selectedRecords, objectMetadataItem } = commandMenuContextApi;
-
-      const recordId =
-        selectedRecords.length === 1 ? selectedRecords[0].id : undefined;
+      const { objectMetadataItem } = commandMenuContextApi;
 
       const objectNameSingular = objectMetadataItem.nameSingular as
         | string
@@ -126,7 +127,17 @@ export const useCommandMenuItemClick = ({
         pageTitle: label,
         pageIcon: Icon,
         recordContext: isDefined(objectNameSingular)
-          ? { objectNameSingular, recordId }
+          ? {
+              objectNameSingular,
+              selectedRecordIds:
+                contextStoreTargetedRecordsRule.mode === 'selection'
+                  ? contextStoreTargetedRecordsRule.selectedRecordIds
+                  : [],
+              selectedRecordsFilter: computeContextStoreGraphqlFilterFromStore({
+                store,
+                contextStoreInstanceId,
+              }),
+            }
           : undefined,
       });
     }

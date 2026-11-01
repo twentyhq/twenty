@@ -9,7 +9,6 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Collapsible } from 'twenty-ui/primitives/layout';
 
@@ -55,7 +54,6 @@ export const UnmatchColumn = ({
   onSubChange,
 }: UnmatchColumnProps) => {
   const { spreadsheetImportFields: fields } = useSpreadsheetImportInternal();
-  const [isExpanded, setIsExpanded] = useState(false);
   const column = columns[columnIndex];
   const isSelect = 'matchedOptions' in column;
   const { t } = useLingui();
@@ -65,14 +63,12 @@ export const UnmatchColumn = ({
   if (!isSelect) return null;
 
   return (
-    <StyledContainer>
+    <Collapsible.Root render={<StyledContainer />}>
       <UnmatchColumnBanner
         message={getExpandableContainerTitle(fields, column)}
-        buttonOnClick={() => setIsExpanded(!isExpanded)}
-        isExpanded={isExpanded}
         allMatched={allMatched}
       />
-      <Collapsible isExpanded={isExpanded} dimension="height" containAnimation>
+      <Collapsible.Panel dimension="height" containAnimation>
         <StyledContentWrapper>
           {column.matchedOptions?.map((option) => (
             <SubMatchingSelectRow
@@ -84,7 +80,7 @@ export const UnmatchColumn = ({
             />
           ))}
         </StyledContentWrapper>
-      </Collapsible>
-    </StyledContainer>
+      </Collapsible.Panel>
+    </Collapsible.Root>
   );
 };

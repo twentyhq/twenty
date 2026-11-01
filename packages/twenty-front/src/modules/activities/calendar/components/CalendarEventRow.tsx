@@ -16,6 +16,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useOpenCalendarEventInSidePanel } from '@/side-panel/hooks/useOpenCalendarEventInSidePanel';
 import { IconArrowRight } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type CalendarEventRowProps = {
   calendarEvent: TimelineCalendarEvent;
@@ -84,8 +85,10 @@ export const CalendarEventRow = ({
 
   const startTimeLabel = calendarEvent.isFullDay
     ? t`All day`
-    : format(startsAt, 'HH:mm');
-  const endTimeLabel = calendarEvent.isFullDay ? '' : format(endsAt, 'HH:mm');
+    : format(startsAt, doNotTranslate('HH:mm'));
+  const endTimeLabel = calendarEvent.isFullDay
+    ? ''
+    : format(endsAt, doNotTranslate('HH:mm'));
 
   const isCurrentWorkspaceMemberAttending = calendarEvent.participants?.some(
     ({ workspaceMemberId }) => workspaceMemberId === currentWorkspaceMember?.id,

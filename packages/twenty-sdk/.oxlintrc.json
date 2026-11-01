@@ -53,5 +53,29 @@
     "react/jsx-props-no-spreading": ["error", { "explicitSpread": "ignore" }],
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn"
-  }
+  },
+  "overrides": [
+    {
+      "files": [
+        "src/sdk/logic-function/**/*.ts",
+        "src/sdk/billing/**/*.ts",
+        "src/sdk/utils/**/*.ts",
+        "src/sdk/front-component/**/*.{ts,tsx}"
+      ],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "paths": [
+              {
+                "name": "twenty-shared/application",
+                "allowTypeImports": true,
+                "message": "This code ships inside every app bundle, and twenty-shared/application builds workflow schemas when it loads. Import runtime values from twenty-shared/application-runtime; type imports are fine."
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
 }

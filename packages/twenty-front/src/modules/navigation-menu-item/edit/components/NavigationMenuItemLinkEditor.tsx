@@ -5,10 +5,11 @@ import { Key } from 'ts-key-enum';
 import { type FieldDoubleText } from '@/object-record/record-field/ui/types/FieldDoubleText';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { ensureAbsoluteUrl, isDefined, isValidUrl } from 'twenty-shared/utils';
+import { isDefined, isSafeInternalPath, isValidUrl } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { DoubleTextInput } from '@/ui/field/input/components/DoubleTextInput';
+import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/common/utils/getLinkNavigationMenuItemComputedLink';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 
 const StyledError = styled.div`
@@ -44,8 +45,8 @@ export const NavigationMenuItemLinkEditor = ({
     firstValue: string;
     secondValue: string;
   }) => {
-    const link = ensureAbsoluteUrl(secondValue.trim());
-    if (!isValidUrl(link)) {
+    const link = getLinkNavigationMenuItemComputedLink({ link: secondValue });
+    if (!isValidUrl(link) && !isSafeInternalPath(link)) {
       setError(true);
       return;
     }

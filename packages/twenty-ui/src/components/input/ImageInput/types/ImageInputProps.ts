@@ -1,19 +1,34 @@
 import { type useRender } from '@base-ui/react/use-render';
+import { type ComponentPropsWithRef } from 'react';
 
 export type ImageInputProps = Omit<
-  useRender.ComponentProps<'div'>,
-  'children' | 'onAbort'
-> & {
-  src?: string | null;
-  onUpload?: (file: File) => void;
-  onRemove?: () => void;
-  onAbort?: () => void;
-  disabled?: boolean;
-  isUploading?: boolean;
-  helperText?: string;
-  errorMessage?: string | null;
-  uploadLabel?: string;
-  removeLabel?: string;
-  abortLabel?: string;
-  accept?: string;
-};
+  ComponentPropsWithRef<'input'>,
+  | 'children'
+  | 'dangerouslySetInnerHTML'
+  | 'type'
+  | 'multiple'
+  | 'value'
+  | 'defaultValue'
+  | 'hidden'
+  | 'onAbort'
+  | 'src'
+  | 'ref'
+  | 'className'
+  | 'style'
+> &
+  Pick<
+    useRender.ComponentProps<'div'>,
+    'ref' | 'render' | 'className' | 'style'
+  > & {
+    src?: string | null;
+    onFileSelect?: (file: File) => void;
+    onRemove?: () => void;
+    onAbort?: () => void;
+    isUploading?: boolean;
+    helperText?: string;
+    errorMessage?: string | null;
+    uploadLabel?: string;
+    removeLabel?: string;
+    abortLabel?: string;
+    inputRef?: ComponentPropsWithRef<'input'>['ref'];
+  };

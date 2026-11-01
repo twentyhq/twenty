@@ -1,6 +1,7 @@
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectPermissionsForObject } from '@/object-metadata/utils/getObjectPermissionsForObject';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { RecordTableComponentInstance } from '@/object-record/record-table/components/RecordTableComponentInstance';
@@ -14,6 +15,7 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { graphql, HttpResponse } from 'msw';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { mockedViews } from '~/testing/mock-data/generated/metadata/views/mock-views-data';
@@ -29,10 +31,29 @@ const view = mockedViews.find((item) => item.objectMetadataId === company.id)!;
 const viewField = view.viewFields.find(
   (item) => item.fieldMetadataId === field.id,
 )!;
+const timelineActivity = getTestEnrichedObjectMetadataItemsMock().find(
+  (object) => object.nameSingular === 'timelineActivity',
+)!;
+const morphRelationField = timelineActivity.fields.find(
+  (item) => item.type === FieldMetadataType.MORPH_RELATION,
+)!;
+const morphRelationViewField = mockedViews
+  .flatMap((item) => item.viewFields)
+  .find((item) => item.fieldMetadataId === morphRelationField.id)!;
 let completeUpdate: (() => void) | undefined;
 let lastAggregateOperation: unknown;
 
-const AggregateExample = () => {
+type AggregateExampleProps = {
+  objectMetadataItem: EnrichedObjectMetadataItem;
+  fieldMetadataId: string;
+  viewFieldId: string;
+};
+
+const AggregateExample = ({
+  objectMetadataItem,
+  fieldMetadataId,
+  viewFieldId,
+}: AggregateExampleProps) => {
   const { objectMetadataItems } = useObjectMetadataItems();
   return (
     <ContextStoreComponentInstanceContext.Provider
@@ -49,12 +70,12 @@ const AggregateExample = () => {
               value={{
                 recordTableId: INSTANCE_ID,
                 viewBarId: INSTANCE_ID,
-                objectNameSingular: 'company',
-                objectMetadataItem: company,
+                objectNameSingular: objectMetadataItem.nameSingular,
+                objectMetadataItem,
                 objectMetadataItems,
                 objectPermissions: getObjectPermissionsForObject(
                   {},
-                  company.id,
+                  objectMetadataItem.id,
                 ),
                 isObjectReadOnly: false,
                 visibleRecordFields: [],
@@ -62,7 +83,7 @@ const AggregateExample = () => {
               }}
             >
               <RecordTableColumnAggregateFooterCellContext.Provider
-                value={{ fieldMetadataId: field.id, viewFieldId: viewField.id }}
+                value={{ fieldMetadataId, viewFieldId }}
               >
                 <ScrollWrapper componentInstanceId={INSTANCE_ID} autoHeight>
                   <RecordTableColumnFooterWithDropdown isFirstCell />
@@ -83,7 +104,13 @@ const meta: Meta = {
     ToastDecorator,
     ComponentDecorator,
   ],
-  render: () => <AggregateExample />,
+  render: () => (
+    <AggregateExample
+      objectMetadataItem={company}
+      fieldMetadataId={field.id}
+      viewFieldId={viewField.id}
+    />
+  ),
   beforeEach: () => {
     completeUpdate = undefined;
     lastAggregateOperation = undefined;
@@ -159,5 +186,27 @@ export const NavigateSaveAndRestoreScroll: Story = {
     await userEvent.click(trigger);
     expect(await body.findByRole('button', { name: 'Percent' })).toBeVisible();
     await userEvent.keyboard('{Escape}');
+  },
+};
+
+export const MorphRelationOffersCountOnly: Story = {
+  render: () => (
+    <AggregateExample
+      objectMetadataItem={timelineActivity}
+      fieldMetadataId={morphRelationField.id}
+      viewFieldId={morphRelationViewField.id}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Calculate' }),
+    );
+    const popup = await body.findByRole('dialog');
+    expect(within(popup).getByRole('button', { name: 'Count' })).toBeVisible();
+    expect(
+      within(popup).queryByRole('button', { name: 'Percent' }),
+    ).not.toBeInTheDocument();
   },
 };

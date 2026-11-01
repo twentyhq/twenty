@@ -75,6 +75,7 @@ export const SettingsApplicationScreenshotLightbox = ({
 }: SettingsApplicationScreenshotLightboxProps) => {
   const screenshotCount = screenshots.length;
   const hasSeveralScreenshots = screenshotCount > 1;
+  const screenshotNumber = selectedIndex + 1;
 
   const showPrevious = () =>
     onSelectedIndexChange(
@@ -105,12 +106,11 @@ export const SettingsApplicationScreenshotLightbox = ({
       onClose={onClose}
       renderInDocumentBody
     >
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
           aria-label={displayName}
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          onKeyDown={onKeyDown}
           size="fullscreen"
-          style={{ padding: 0, background: 'transparent', boxShadow: 'none' }}
         >
           <StyledContainer>
             <StyledCloseButton>
@@ -137,7 +137,7 @@ export const SettingsApplicationScreenshotLightbox = ({
             )}
             <StyledImage
               src={screenshots[selectedIndex]}
-              alt={`${displayName} screenshot ${selectedIndex + 1}`}
+              alt={t`${displayName} screenshot ${screenshotNumber}`}
             />
             {hasSeveralScreenshots && (
               <>
@@ -151,8 +151,8 @@ export const SettingsApplicationScreenshotLightbox = ({
                     <IconChevronRight />
                   </IconButton>
                 </StyledNextButton>
-                <StyledCounter>
-                  {selectedIndex + 1} / {screenshotCount}
+                <StyledCounter aria-live="polite">
+                  {screenshotNumber} / {screenshotCount}
                 </StyledCounter>
               </>
             )}

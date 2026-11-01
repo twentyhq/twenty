@@ -1,7 +1,7 @@
 import { type CountryChoice } from '../types/CountryChoice';
 
 export const COUNTRY_CHOICES = [
-  { value: 'France', label: 'France', flag: '🇫🇷' },
-  { value: 'Brazil', label: 'Brésil', flag: '🇧🇷' },
-  { value: 'Japan', label: 'Japon', flag: '🇯🇵' },
+  { value: 'FR', label: 'France', flag: '🇫🇷' },
+  { value: 'BR', label: 'Brésil', flag: '🇧🇷' },
+  { value: 'JP', label: 'Japon', flag: '🇯🇵' },
 ] satisfies CountryChoice[];

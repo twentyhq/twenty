@@ -1,4 +1,7 @@
-import { type CoreWorkflowsSelection } from '@/object-core/workflows/states/coreWorkflowsSelectionState';
+import {
+  EMPTY_CORE_WORKFLOWS_SELECTION,
+  type CoreWorkflowsSelection,
+} from '@/object-core/workflows/states/coreWorkflowsSelectionState';
 import { type FilterSettings } from '@/workflow/workflow-steps/filters/types/FilterSettings';
 
 export const getSelectedCoreWorkflowRowIds = ({
@@ -8,4 +11,6 @@ export const getSelectedCoreWorkflowRowIds = ({
   selection: CoreWorkflowsSelection;
   currentFilterSettings: FilterSettings;
 }): string[] =>
-  selection.filterSettings === currentFilterSettings ? selection.rowIds : [];
+  selection.filterSettings === currentFilterSettings
+    ? selection.rowIds
+    : EMPTY_CORE_WORKFLOWS_SELECTION.rowIds;

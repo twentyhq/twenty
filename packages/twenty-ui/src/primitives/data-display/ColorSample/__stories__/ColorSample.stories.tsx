@@ -15,6 +15,16 @@ const meta: Meta<typeof ColorSample> = {
 export default meta;
 type Story = StoryObj<typeof ColorSample>;
 
+export const Display: Story = {
+  args: { colorName: 'red' },
+  render: (args) => (
+    <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+      <ColorSample {...args} render={<span />} aria-hidden="true" />
+      High priority
+    </Text>
+  ),
+};
+
 export const Default: Story = {
   args: { 'aria-hidden': true },
 };
@@ -28,15 +38,6 @@ export const Circle: Story = {
       borderRadius: '50%',
     });
   },
-};
-
-export const WithLabel: Story = {
-  render: (args) => (
-    <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-      <ColorSample {...args} render={<span />} aria-hidden="true" />
-      High priority
-    </Text>
-  ),
 };
 
 export const CustomColor: Story = {

@@ -1,6 +1,5 @@
 import {
   AggregateOperations,
-  FieldMetadataType,
   PageLayoutTabLayoutMode,
   ViewFilterOperand,
   WidgetType,
@@ -26,11 +25,6 @@ const buildMaps = (): DashboardIdentifierMaps => ({
       buildFieldByObjectIdAndNameKey(OBJECT_ID, 'createdAt'),
       CREATED_AT_FIELD_ID,
     ],
-  ]),
-  fieldById: new Map([
-    [AMOUNT_FIELD_ID, { type: FieldMetadataType.CURRENCY }],
-    [STAGE_FIELD_ID, { type: FieldMetadataType.SELECT }],
-    [CREATED_AT_FIELD_ID, { type: FieldMetadataType.DATE_TIME }],
   ]),
 });
 
@@ -103,7 +97,7 @@ describe('resolveWidgetFieldNamesToIds - chart filters', () => {
     ).not.toHaveProperty('fieldName');
   });
 
-  it('enriches the filter with a root group, type and displayValue for the UI', () => {
+  it('places the filter in a root group and references its field by id only', () => {
     const widget = buildAggregateWidget({
       recordFilters: [
         {
@@ -124,16 +118,14 @@ describe('resolveWidgetFieldNamesToIds - chart filters', () => {
     expect(rootGroup).toMatchObject({ logicalOperator: 'AND' });
     expect(rootGroup.parentRecordFilterGroupId).toBeUndefined();
 
-    expect(filter.recordFilters[0]).toMatchObject({
+    expect(filter.recordFilters[0]).toEqual({
+      id: expect.any(String),
       fieldMetadataId: STAGE_FIELD_ID,
       operand: ViewFilterOperand.IS_NOT,
       value: '["NEW"]',
-      displayValue: '["NEW"]',
-      type: 'SELECT',
       recordFilterGroupId: rootGroup.id,
       positionInRecordFilterGroup: 0,
     });
-    expect(filter.recordFilters[0].id).toEqual(expect.any(String));
   });
 
   it('preserves an explicit filter fieldMetadataId', () => {

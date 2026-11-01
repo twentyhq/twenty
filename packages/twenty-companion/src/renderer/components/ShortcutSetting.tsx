@@ -1,19 +1,20 @@
 import { DEFAULT_SETTINGS } from '../../shared/constants/DEFAULT_SETTINGS';
 import { shortcutFromKeyboardEvent } from '../utils/shortcutFromKeyboardEvent';
-import { formatShortcut } from '@ui/primitives/typography/Shortcut/formatShortcut';
+import { formatShortcut } from 'twenty-ui/primitives/typography';
 import { i18n } from '@lingui/core';
 import { SettingsCardContent } from './SettingsCardContent';
-import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
-import { IconButton } from '@ui/components/input/IconButton/IconButton';
+import { THEME_COMMON } from 'twenty-ui/theme';
+import { IconButton } from 'twenty-ui/components/input';
 import { useState } from 'react';
 import { IconCommand, IconRestore } from 'twenty-ui/icon';
-import { Button } from '@ui/primitives/input/Button/Button';
+import { Button } from 'twenty-ui/primitives/input';
 import { type ActionProps } from '../types/ActionProps';
 
 export const ShortcutSetting = ({ state, isPending, command }: ActionProps) => {
   const [capturing, setCapturing] = useState(false);
   return (
     <SettingsCardContent
+      hasDivider
       icon={
         <IconCommand
           size={THEME_COMMON.icon.size.md}

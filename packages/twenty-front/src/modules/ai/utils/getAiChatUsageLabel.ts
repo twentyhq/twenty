@@ -1,6 +1,6 @@
 import { plural, t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { formatNumber } from '~/utils/format/formatNumber';
+import { formatNumber } from '@/localization/utils/formatNumber';
 
 export const getAiChatUsageLabel = ({
   loading,

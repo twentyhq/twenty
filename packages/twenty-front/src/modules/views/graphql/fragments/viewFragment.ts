@@ -35,6 +35,7 @@ export const VIEW_FRAGMENT = gql`
     calendarLayout
     visibility
     createdByUserWorkspaceId
+    applicationId
     isActive
     viewFields {
       ...ViewFieldFragment

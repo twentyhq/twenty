@@ -14,21 +14,40 @@ const SelectTriggerWrapper = ({ children }: { children: ReactNode }) => (
   </Select.Root>
 );
 const OpenSelectWrapper = ({ children }: { children: ReactNode }) => (
-  <Select.Root open>{children}</Select.Root>
+  <Select.Root open defaultValue="first" modal={false}>
+    <Select.Trigger aria-label="Choose" />
+    {children}
+  </Select.Root>
+);
+const SelectPositionerWrapper = ({ children }: { children: ReactNode }) => (
+  <OpenSelectWrapper>
+    <Select.Positioner alignItemWithTrigger={false}>
+      {children}
+    </Select.Positioner>
+  </OpenSelectWrapper>
 );
 const SelectPopupWrapper = ({ children }: { children: ReactNode }) => (
-  <Select.Root open>
+  <SelectPositionerWrapper>
     <Select.Popup>{children}</Select.Popup>
-  </Select.Root>
+  </SelectPositionerWrapper>
 );
 const SelectGroupWrapper = ({ children }: { children: ReactNode }) => (
-  <Select.Root open>
-    <Select.Popup>
-      <Select.Group>{children}</Select.Group>
-    </Select.Popup>
-  </Select.Root>
+  <SelectPopupWrapper>
+    <Select.Group>{children}</Select.Group>
+  </SelectPopupWrapper>
+);
+const SelectItemWrapper = ({ children }: { children: ReactNode }) => (
+  <SelectPopupWrapper>
+    <Select.Item value="first">{children}</Select.Item>
+  </SelectPopupWrapper>
 );
 
+runComponentConformance({
+  name: 'Select.Label',
+  element: <Select.Label>Choose</Select.Label>,
+  refInstanceOf: HTMLDivElement,
+  wrapper: SelectRootWrapper,
+});
 runComponentConformance({
   name: 'Select.Trigger',
   element: <Select.Trigger>Choose</Select.Trigger>,
@@ -45,11 +64,43 @@ runComponentConformance({
   ownClassName: styles.value,
 });
 runComponentConformance({
+  name: 'Select.Icon',
+  element: <Select.Icon />,
+  refInstanceOf: HTMLSpanElement,
+  wrapper: SelectTriggerWrapper,
+  ownClassName: styles.icon,
+});
+runComponentConformance({
+  name: 'Select.Portal',
+  element: <Select.Portal />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: OpenSelectWrapper,
+});
+runComponentConformance({
+  name: 'Select.Backdrop',
+  element: <Select.Backdrop />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: OpenSelectWrapper,
+});
+runComponentConformance({
+  name: 'Select.Positioner',
+  element: <Select.Positioner alignItemWithTrigger={false} />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: OpenSelectWrapper,
+  ownClassName: styles.positioner,
+});
+runComponentConformance({
   name: 'Select.Popup',
   element: <Select.Popup />,
   refInstanceOf: HTMLDivElement,
-  wrapper: OpenSelectWrapper,
+  wrapper: SelectPositionerWrapper,
   ownClassName: styles.popup,
+});
+runComponentConformance({
+  name: 'Select.List',
+  element: <Select.List />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: SelectPopupWrapper,
 });
 runComponentConformance({
   name: 'Select.Item',
@@ -57,6 +108,37 @@ runComponentConformance({
   refInstanceOf: HTMLDivElement,
   wrapper: SelectPopupWrapper,
   ownClassName: styles.item,
+});
+runComponentConformance({
+  name: 'Select.ItemText',
+  element: <Select.ItemText>First</Select.ItemText>,
+  refInstanceOf: HTMLDivElement,
+  wrapper: SelectItemWrapper,
+});
+runComponentConformance({
+  name: 'Select.ItemIndicator',
+  element: <Select.ItemIndicator />,
+  refInstanceOf: HTMLSpanElement,
+  wrapper: SelectItemWrapper,
+  ownClassName: styles.indicator,
+});
+runComponentConformance({
+  name: 'Select.Arrow',
+  element: <Select.Arrow />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: SelectPopupWrapper,
+});
+runComponentConformance({
+  name: 'Select.ScrollUpArrow',
+  element: <Select.ScrollUpArrow keepMounted />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: SelectPopupWrapper,
+});
+runComponentConformance({
+  name: 'Select.ScrollDownArrow',
+  element: <Select.ScrollDownArrow keepMounted />,
+  refInstanceOf: HTMLDivElement,
+  wrapper: SelectPopupWrapper,
 });
 runComponentConformance({
   name: 'Select.Group',

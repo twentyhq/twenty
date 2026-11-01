@@ -117,7 +117,7 @@ describe('VerifyEmail', () => {
       expect(navigateMock).toHaveBeenCalledWith(AppPath.SignInUp);
     });
     expect(mockEnqueueToast).toHaveBeenCalledWith(
-      expect.objectContaining({ variant: 'success' }),
+      expect.objectContaining({ status: 'success' }),
     );
   });
 
@@ -130,7 +130,7 @@ describe('VerifyEmail', () => {
 
     await waitFor(() => {
       expect(mockEnqueueToast).toHaveBeenCalledWith(
-        expect.objectContaining({ variant: 'error' }),
+        expect.objectContaining({ status: 'error' }),
       );
     });
     expect(navigateMock).not.toHaveBeenCalledWith(AppPath.SignInUp);

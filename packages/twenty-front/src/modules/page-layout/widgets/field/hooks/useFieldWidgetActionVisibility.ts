@@ -11,7 +11,7 @@ import { useFieldWidgetFieldDefinition } from '@/page-layout/widgets/field/hooks
 import { isFieldWidget } from '@/page-layout/widgets/field/utils/isFieldWidget';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { isDefined } from 'twenty-shared/utils';
-import { RelationType } from '~/generated-metadata/graphql';
+import { FieldDisplayMode, RelationType } from '~/generated-metadata/graphql';
 
 type UseFieldWidgetActionVisibilityParams = {
   widget: PageLayoutWidget;
@@ -79,6 +79,7 @@ export const useFieldWidgetActionVisibility = ({
 
   const showEdit =
     !isPageLayoutInEditMode &&
+    widget.configuration.fieldDisplayMode !== FieldDisplayMode.EDITOR &&
     !isFieldReadOnly &&
     (!isDefined(junctionConfig) || isUsableJunctionConfig(junctionConfig));
 

@@ -1,4 +1,5 @@
 import { useStore } from 'jotai';
+import { getAgentChatMentionsResolvedAt } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_THREAD_PARTICIPANT_UNSAVED_UPDATED_AT } from '@/ai/constants/AgentChatThreadParticipantUnsavedUpdatedAt';
@@ -29,15 +30,9 @@ export const useOptimisticallyRestoreOnSend = () => {
     )?.[threadId];
     const previousVisit = store.get(agentChatThreadVisitState.atom);
 
-    // Workspaces not yet upgraded to 2.46 have no last activity and sort by
-    // the last change
-    const hasLastActivityAt = thread?.lastActivityAt !== undefined;
-
     applyAgentChatThreadUpdate({
       id: threadId,
-      ...(hasLastActivityAt
-        ? { lastActivityAt: optimisticUpdatedAt }
-        : { updatedAt: optimisticUpdatedAt }),
+      lastActivityAt: optimisticUpdatedAt,
       ...(isDefined(thread?.deletedAt) && {
         deletedAt: null,
         updatedAt: optimisticUpdatedAt,
@@ -51,6 +46,9 @@ export const useOptimisticallyRestoreOnSend = () => {
               ...participants[threadId],
               threadId,
               lastReadAt: optimisticUpdatedAt,
+              mentionsResolvedAt: getAgentChatMentionsResolvedAt(
+                previousParticipant ?? {},
+              ),
               archivedAt: null,
               snoozedUntil: null,
               isSubscribed: true,
@@ -66,16 +64,24 @@ export const useOptimisticallyRestoreOnSend = () => {
         ? { ...visit, isUnread: false, isKeptUnread: false }
         : visit,
     );
+    const optimisticParticipant = store.get(
+      agentChatThreadParticipantsState.atom,
+    )?.[threadId];
 
     return () => {
       applyAgentChatThreadUpdate({
         id: threadId,
-        ...(hasLastActivityAt && { lastActivityAt: thread.lastActivityAt }),
-        ...(isDefined(thread) && { updatedAt: thread.updatedAt }),
+        ...(isDefined(thread) && {
+          lastActivityAt: thread.lastActivityAt,
+          updatedAt: thread.updatedAt,
+        }),
         ...(isDefined(thread?.deletedAt) && { deletedAt: thread.deletedAt }),
       });
       store.set(agentChatThreadParticipantsState.atom, (participants) => {
-        if (!isDefined(participants)) {
+        if (
+          !isDefined(participants) ||
+          participants[threadId] !== optimisticParticipant
+        ) {
           return participants;
         }
 

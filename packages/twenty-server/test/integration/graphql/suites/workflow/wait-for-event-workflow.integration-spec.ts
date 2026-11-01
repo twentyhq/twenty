@@ -1,31 +1,32 @@
 import request from 'supertest';
 import {
+  activateCoreWorkflowVersion,
+  createCoreWorkflow,
+  createCoreWorkflowVersionStep,
+  deleteCoreWorkflows,
+  findCoreWorkflowVersion,
+  updateCoreWorkflowVersionStep,
+  updateCoreWorkflowVersionTrigger,
+} from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
+import {
   destroyWorkflowRun,
   getWorkflowRun,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
-import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
+import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { v4 } from 'uuid';
 
 import { type PendingWakeUpDatabaseEventListener } from 'src/engine/core-modules/pending-wake-up/listeners/pending-wake-up-database-event.listener';
 import { type PendingWakeUpResolverService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-resolver.service';
 import { type PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
-import { type WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { type WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
-import {
-  type WorkflowAction,
-  type WorkflowWaitForEventAction,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { type WorkflowStepWaitWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait.workspace-service';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
 const schema = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
-
-const MIRROR_POLL_ATTEMPTS = 20;
-const MIRROR_POLL_INTERVAL_MS = 250;
 
 const graphql = (query: string, variables?: object) =>
   client
@@ -55,61 +56,13 @@ const buildCompanyUpdatedBatch = async (companyId: string) => ({
 });
 
 describe('Wait for event workflow (e2e)', () => {
-  let createdWorkflowId: string | null = null;
-  let createdWorkflowVersionId: string | null = null;
+  let coreWorkflowId: string | null = null;
+  let coreWorkflowVersionId: string | null = null;
+  let workspaceWorkflowId: string | null = null;
   let createdWorkflowRunId: string | null = null;
   let waitStepId: string | null = null;
   let watchedCompanyId: string | null = null;
   let otherCompanyId: string | null = null;
-
-  const getSteps = async (): Promise<WorkflowAction[]> => {
-    const response = await graphql(
-      `
-        query GetWorkflowVersion($id: UUID!) {
-          workflowVersion(filter: { id: { eq: $id } }) {
-            steps
-          }
-        }
-      `,
-      { id: createdWorkflowVersionId },
-    );
-
-    expect(response.body.errors).toBeUndefined();
-
-    return response.body.data.workflowVersion.steps;
-  };
-
-  // the core mirror of a workflow and its version is linked asynchronously
-  const waitForCoreWorkflowMirror = async (): Promise<{
-    trigger: unknown;
-    coreWorkflowVersionId: string;
-    coreWorkflowId: string;
-  }> => {
-    for (let attempt = 0; attempt < MIRROR_POLL_ATTEMPTS; attempt++) {
-      const [version] = await global.testDataSource.query(
-        `SELECT trigger, "coreWorkflowVersionId" FROM "${schema}"."workflowVersion" WHERE id = $1`,
-        [createdWorkflowVersionId],
-      );
-      const [workflow] = await global.testDataSource.query(
-        `SELECT "coreWorkflowId" FROM "${schema}".workflow WHERE id = $1`,
-        [createdWorkflowId],
-      );
-
-      if (version?.coreWorkflowVersionId && workflow?.coreWorkflowId) {
-        return {
-          trigger: version.trigger,
-          coreWorkflowVersionId: version.coreWorkflowVersionId,
-          coreWorkflowId: workflow.coreWorkflowId,
-        };
-      }
-
-      await new Promise((resolve) =>
-        setTimeout(resolve, MIRROR_POLL_INTERVAL_MS),
-      );
-    }
-
-    throw new Error('The workflow core mirror was never linked');
-  };
 
   const createCompany = async (name: string): Promise<string> => {
     const response = await graphql(
@@ -132,40 +85,16 @@ describe('Wait for event workflow (e2e)', () => {
     watchedCompanyId = await createCompany('Wait For Event Watched Co');
     otherCompanyId = await createCompany('Wait For Event Other Co');
 
-    const createWorkflowResponse = await graphql(`
-      mutation CreateWorkflow {
-        createWorkflow(data: { name: "Wait For Event Workflow" }) {
-          id
-        }
-      }
-    `);
+    const coreWorkflow = await createCoreWorkflow({
+      name: 'Wait For Event Workflow',
+    });
 
-    expect(createWorkflowResponse.body.errors).toBeUndefined();
-    createdWorkflowId = createWorkflowResponse.body.data.createWorkflow.id;
+    coreWorkflowId = coreWorkflow.coreWorkflowId;
+    coreWorkflowVersionId = coreWorkflow.coreWorkflowVersionId;
+    workspaceWorkflowId = coreWorkflow.workspaceWorkflowId;
 
-    const getWorkflowResponse = await graphql(
-      `
-        query GetWorkflow($id: UUID!) {
-          workflow(filter: { id: { eq: $id } }) {
-            versions {
-              edges {
-                node {
-                  id
-                }
-              }
-            }
-          }
-        }
-      `,
-      { id: createdWorkflowId },
-    );
-
-    expect(getWorkflowResponse.body.errors).toBeUndefined();
-    createdWorkflowVersionId =
-      getWorkflowResponse.body.data.workflow.versions.edges[0].node.id;
-
-    const updateTriggerResponse = await updateWorkflowVersionTrigger({
-      workflowVersionId: createdWorkflowVersionId!,
+    await updateCoreWorkflowVersionTrigger({
+      coreWorkflowVersionId,
       trigger: {
         name: 'Manual Trigger',
         type: 'MANUAL',
@@ -175,78 +104,29 @@ describe('Wait for event workflow (e2e)', () => {
       },
     });
 
-    expect(updateTriggerResponse.body.errors).toBeUndefined();
+    const waitStep = await createCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      stepType: 'WAIT_FOR_EVENT',
+    });
 
-    const createStepResponse = await graphql(
-      `
-        mutation CreateWorkflowVersionStep(
-          $input: CreateWorkflowVersionStepInput!
-        ) {
-          createWorkflowVersionStep(input: $input) {
-            stepsDiff
-          }
-        }
-      `,
-      {
-        input: {
-          workflowVersionId: createdWorkflowVersionId,
-          stepType: 'WAIT_FOR_EVENT',
-          parentStepId: 'trigger',
-          position: { x: 200, y: 0 },
-        },
-      },
-    );
+    waitStepId = waitStep.id;
 
-    expect(createStepResponse.body.errors).toBeUndefined();
-
-    const waitStep = (await getSteps()).find(
-      (step): step is WorkflowWaitForEventAction =>
-        step.type === 'WAIT_FOR_EVENT',
-    );
-
-    expect(waitStep).toBeDefined();
-    waitStepId = waitStep!.id;
-
-    const updateStepResponse = await graphql(
-      `
-        mutation UpdateWorkflowVersionStep(
-          $input: UpdateWorkflowVersionStepInput!
-        ) {
-          updateWorkflowVersionStep(input: $input) {
-            id
-          }
-        }
-      `,
-      {
-        input: {
-          workflowVersionId: createdWorkflowVersionId,
-          step: {
-            ...waitStep!,
-            settings: {
-              ...waitStep!.settings,
-              input: {
-                eventName: 'company.updated',
-                recordId: watchedCompanyId,
-                timeout: null,
-              },
-            },
+    await updateCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      step: {
+        ...waitStep,
+        settings: {
+          ...waitStep.settings,
+          input: {
+            eventName: 'company.updated',
+            recordId: watchedCompanyId,
+            timeout: null,
           },
         },
       },
-    );
+    });
 
-    expect(updateStepResponse.body.errors).toBeUndefined();
-
-    const activateResponse = await graphql(
-      `
-        mutation ActivateWorkflowVersion($workflowVersionId: UUID!) {
-          activateWorkflowVersion(workflowVersionId: $workflowVersionId)
-        }
-      `,
-      { workflowVersionId: createdWorkflowVersionId },
-    );
-
-    expect(activateResponse.body.errors).toBeUndefined();
+    await activateCoreWorkflowVersion({ coreWorkflowVersionId });
   });
 
   afterAll(async () => {
@@ -254,17 +134,8 @@ describe('Wait for event workflow (e2e)', () => {
       await destroyWorkflowRun(createdWorkflowRunId);
     }
 
-    if (createdWorkflowId) {
-      await graphql(
-        `
-          mutation DestroyWorkflow($id: ID!) {
-            destroyWorkflow(id: $id) {
-              id
-            }
-          }
-        `,
-        { id: createdWorkflowId },
-      );
+    if (coreWorkflowId) {
+      await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
     }
 
     for (const companyId of [watchedCompanyId, otherCompanyId]) {
@@ -284,9 +155,10 @@ describe('Wait for event workflow (e2e)', () => {
   });
 
   it('pauses on the event and resumes with the record once it happens', async () => {
-    const steps = await getSteps();
-    const { trigger, coreWorkflowVersionId, coreWorkflowId } =
-      await waitForCoreWorkflowMirror();
+    const { trigger, steps, workspaceWorkflowVersionId } =
+      await findCoreWorkflowVersion({
+        coreWorkflowVersionId: coreWorkflowVersionId!,
+      });
 
     createdWorkflowRunId = v4();
 
@@ -295,7 +167,7 @@ describe('Wait for event workflow (e2e)', () => {
       stepInfos: {
         trigger: { status: 'NOT_STARTED', result: {} },
         ...Object.fromEntries(
-          steps.map((step) => [step.id, { status: 'NOT_STARTED' }]),
+          (steps ?? []).map((step) => [step.id, { status: 'NOT_STARTED' }]),
         ),
       },
     };
@@ -306,19 +178,13 @@ describe('Wait for event workflow (e2e)', () => {
        VALUES ($1, 'Wait for event run', $2, $3, $4, $5, 'ENQUEUED', $6, 0, now())`,
       [
         createdWorkflowRunId,
-        createdWorkflowId,
-        createdWorkflowVersionId,
+        workspaceWorkflowId,
+        workspaceWorkflowVersionId,
         coreWorkflowId,
         coreWorkflowVersionId,
         JSON.stringify(state),
       ],
     );
-    await getAppProviderByClassName<WorkflowRunRecordShareService>(
-      'WorkflowRunRecordShareService',
-    ).syncRuns({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      workflowRunIds: [createdWorkflowRunId],
-    });
 
     await (
       await global.workflowTestServices.runJob()
@@ -383,17 +249,15 @@ describe('Wait for event workflow (e2e)', () => {
       event,
     });
 
-    await (
-      await global.workflowTestServices.runJob()
-    ).handle({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      workflowRunId: createdWorkflowRunId,
-      lastExecutedStepId: waitStepId!,
+    // the step resumes through the run job its wake-up queued
+    await expectEventually(async () => {
+      expect((await getWorkflowRun(createdWorkflowRunId!))?.status).toBe(
+        'COMPLETED',
+      );
     });
 
     const completedRun = await getWorkflowRun(createdWorkflowRunId);
 
-    expect(completedRun?.status).toBe('COMPLETED');
     expect(completedRun?.state?.stepInfos?.[waitStepId!]).toMatchObject({
       status: 'SUCCESS',
       result: {

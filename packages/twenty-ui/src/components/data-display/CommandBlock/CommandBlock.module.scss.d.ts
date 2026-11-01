@@ -1,8 +1,7 @@
 declare const classNames: {
   readonly container: 'container';
-  readonly commandContain: 'commandContain';
-  readonly buttonContainer: 'buttonContainer';
-  readonly lineStartSpan: 'lineStartSpan';
-  readonly lineSpan: 'lineSpan';
+  readonly commands: 'commands';
+  readonly actions: 'actions';
+  readonly prompt: 'prompt';
 };
 export default classNames;

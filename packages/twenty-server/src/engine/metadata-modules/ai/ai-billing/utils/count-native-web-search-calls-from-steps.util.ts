@@ -1,15 +1,21 @@
-import { type StepResult, type ToolSet } from 'ai';
+import { NATIVE_MODEL_TOOLS_BY_SDK_PACKAGE } from 'src/engine/metadata-modules/ai/ai-models/constants/native-model-tools-by-sdk-package.const';
+import { type NativeModelTools } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tools.type';
 
-const WEB_SEARCH_TOOL_NAME = 'web_search';
+const NATIVE_SEARCH_TOOL_NAMES = new Set(
+  Object.values<NativeModelTools>(NATIVE_MODEL_TOOLS_BY_SDK_PACKAGE).flatMap(
+    (nativeTools) =>
+      Object.values(nativeTools).map((nativeTool) => nativeTool.directToolName),
+  ),
+);
 
 export const countNativeWebSearchCallsFromSteps = (
-  steps: StepResult<ToolSet>[],
+  steps: { toolCalls: { toolName: string }[] }[],
 ): number =>
   steps.reduce(
     (count, step) =>
       count +
-      step.toolCalls.filter(
-        (toolCall) => toolCall.toolName === WEB_SEARCH_TOOL_NAME,
+      step.toolCalls.filter((toolCall) =>
+        NATIVE_SEARCH_TOOL_NAMES.has(toolCall.toolName),
       ).length,
     0,
   );

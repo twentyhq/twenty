@@ -28,6 +28,11 @@ const ifElseStep = {
   },
 } as unknown as WorkflowAction;
 
+const ifElseStepWithBranchTargetsInNextStepIds = {
+  ...ifElseStep,
+  nextStepIds: ['ifChild', 'elseChild', 'afterIfElse'],
+} as unknown as WorkflowAction;
+
 describe('getEffectiveParentStatus', () => {
   it('should return the raw status for a non if/else parent', () => {
     const stepInfos: WorkflowRunStepInfos = {
@@ -106,6 +111,48 @@ describe('getEffectiveParentStatus', () => {
         stepInfos,
       }),
     ).toBe(StepStatus.FAILED_SAFELY);
+  });
+
+  it('should read as SKIPPED for a not-taken branch target also listed in the if/else nextStepIds', () => {
+    const stepInfos: WorkflowRunStepInfos = {
+      ifElse: {
+        status: StepStatus.SUCCESS,
+        result: { matchingBranchId: 'ifBranch' },
+      },
+    };
+
+    expect(
+      getEffectiveParentStatus({
+        parentStep: ifElseStepWithBranchTargetsInNextStepIds,
+        childStepId: 'elseChild',
+        stepInfos,
+      }),
+    ).toBe(StepStatus.SKIPPED);
+
+    expect(
+      getEffectiveParentStatus({
+        parentStep: ifElseStepWithBranchTargetsInNextStepIds,
+        childStepId: 'ifChild',
+        stepInfos,
+      }),
+    ).toBe(StepStatus.SUCCESS);
+  });
+
+  it('should return the raw status for an if/else nextStepIds child that is not a branch target', () => {
+    const stepInfos: WorkflowRunStepInfos = {
+      ifElse: {
+        status: StepStatus.SUCCESS,
+        result: { matchingBranchId: 'ifBranch' },
+      },
+    };
+
+    expect(
+      getEffectiveParentStatus({
+        parentStep: ifElseStepWithBranchTargetsInNextStepIds,
+        childStepId: 'afterIfElse',
+        stepInfos,
+      }),
+    ).toBe(StepStatus.SUCCESS);
   });
 
   it('should return undefined when the parent has no status yet', () => {

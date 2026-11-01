@@ -14,6 +14,7 @@ import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/Com
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { getFilterTypeFromFieldType, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type ApplyAdvancedFilterCompositeSubFieldParams = {
   sourceFieldMetadataItem: FieldMetadataItem;
@@ -73,7 +74,9 @@ export const useApplyAdvancedFilterCompositeSubField = () => {
 
     if (!isDefined(firstOperand)) {
       throw new Error(
-        `No valid operand found for filter type: ${filterType} and subFieldName: ${subFieldName}`,
+        doNotTranslate(
+          `No valid operand found for filter type: ${filterType} and subFieldName: ${subFieldName}`,
+        ),
       );
     }
 

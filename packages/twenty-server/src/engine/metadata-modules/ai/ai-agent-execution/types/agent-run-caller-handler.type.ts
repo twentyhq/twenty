@@ -1,34 +1,40 @@
 import { type AgentRunSummary } from 'twenty-shared/ai';
-import { type ActorMetadata } from 'twenty-shared/types';
 
-import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
 import { type AgentRunCallerInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-input.type';
 import { type AgentRunCallerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-outcome.type';
-import { type AgentRunCallerWaitingState } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-waiting-state.type';
+import { type OwnerWaitingState } from 'src/engine/core-modules/pending-wake-up/types/owner-waiting-state.type';
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
 
-export type AgentRunCallerHandler<
-  TCaller extends AgentRunCaller = AgentRunCaller,
-> = {
+export type AgentRunCallerHandler = {
   buildExecutionContext(
-    input: AgentRunCallerInput<TCaller>,
+    input: AgentRunCallerInput,
   ): Promise<AgentRunExecutionContext>;
 
-  resolveTurnAuthor(
-    input: AgentRunCallerInput<TCaller>,
-  ): Promise<ActorMetadata>;
+  getWaitingState(input: AgentRunCallerInput): Promise<OwnerWaitingState>;
 
-  getWaitingState(
-    input: AgentRunCallerInput<TCaller>,
-  ): Promise<AgentRunCallerWaitingState>;
+  // a run that paused goes on later; its caller can show where it waits meanwhile
+  onSuspended?(
+    input: AgentRunCallerInput & {
+      threadId: string;
+      summary: AgentRunSummary;
+    },
+  ): Promise<void>;
 
   // absent for a caller that only records the run, whose outcome is already in its conversation
   onOutcome?(
-    input: AgentRunCallerInput<TCaller> & {
+    input: AgentRunCallerInput & {
       threadId: string;
       outcome: AgentRunCallerOutcome;
-      // null for a call the caller posted itself, which no agent ran
+      // null when the run recorded none
       summary: AgentRunSummary | null;
+    },
+  ): Promise<void>;
+
+  // the caller can no longer take the outcome, but something may still wait on the run, such as a request
+  onCallerGone?(
+    input: AgentRunCallerInput & {
+      threadId: string;
+      outcome: AgentRunCallerOutcome;
     },
   ): Promise<void>;
 };

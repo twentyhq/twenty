@@ -1,10 +1,11 @@
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { objectMetadataItemsWithFieldsSelector } from '@/object-metadata/states/objectMetadataItemsWithFieldsSelector';
 import { useTriggerOptimisticEffectFromSseCreateEvents } from '@/sse-db-event/hooks/useTriggerOptimisticEffectFromSseCreateEvents';
 import { useTriggerOptimisticEffectFromSseDeleteEvents } from '@/sse-db-event/hooks/useTriggerOptimisticEffectFromSseDeleteEvents';
 import { useTriggerOptimisticEffectFromSseRestoreEvents } from '@/sse-db-event/hooks/useTriggerOptimisticEffectFromSseRestoreEvents';
 import { useTriggerOptimisticEffectFromSseUpdateEvents } from '@/sse-db-event/hooks/useTriggerOptimisticEffectFromSseUpdateEvents';
 import { groupObjectRecordSseEventsByEventType } from '@/sse-db-event/utils/groupObjectRecordSseEventsByEventType';
 import { groupObjectRecordSseEventsByObjectMetadataItemNameSingular } from '@/sse-db-event/utils/groupObjectRecordSseEventsByObjectMetadataItemNameSingular';
+import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -13,7 +14,7 @@ import {
 } from '~/generated-metadata/graphql';
 
 export const useTriggerOptimisticEffectFromSseEvents = () => {
-  const { objectMetadataItems } = useObjectMetadataItems();
+  const store = useStore();
 
   const { triggerOptimisticEffectFromSseUpdateEvents } =
     useTriggerOptimisticEffectFromSseUpdateEvents();
@@ -29,6 +30,10 @@ export const useTriggerOptimisticEffectFromSseEvents = () => {
 
   const triggerOptimisticEffectFromSseEvents = useCallback(
     ({ objectRecordEvents }: { objectRecordEvents: ObjectRecordEvent[] }) => {
+      const objectMetadataItems = store.get(
+        objectMetadataItemsWithFieldsSelector.atom,
+      );
+
       const objectRecordEventsByObjectMetadataItemNameSingular =
         groupObjectRecordSseEventsByObjectMetadataItemNameSingular({
           objectRecordEvents,
@@ -93,7 +98,7 @@ export const useTriggerOptimisticEffectFromSseEvents = () => {
       }
     },
     [
-      objectMetadataItems,
+      store,
       triggerOptimisticEffectFromSseUpdateEvents,
       triggerOptimisticEffectFromSseCreateEvents,
       triggerOptimisticEffectFromSseDeleteEvents,

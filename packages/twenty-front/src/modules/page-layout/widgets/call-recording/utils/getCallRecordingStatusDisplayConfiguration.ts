@@ -14,6 +14,32 @@ type CallRecordingStatusDisplayConfiguration = {
   subTitle: string;
 };
 
+const getCompletedCallRecordingSummaryDisplayConfiguration = (
+  transcript: WidgetCallRecordingCandidate['transcript'],
+): CallRecordingStatusDisplayConfiguration => {
+  if (
+    !isCallRecordingTranscriptStatusMarker(transcript) ||
+    transcript.status === 'PENDING'
+  ) {
+    return {
+      title: t`Summary Not Available`,
+      subTitle: t`A summary is not available for this call recording yet.`,
+    };
+  }
+
+  if (transcript.status === 'EMPTY' && !isDefined(transcript.subCode)) {
+    return {
+      title: t`No Speech Detected`,
+      subTitle: t`No speech was detected, so there is nothing to summarize.`,
+    };
+  }
+
+  return {
+    title: t`Summary Not Available`,
+    subTitle: t`A summary could not be generated because no transcript is available.`,
+  };
+};
+
 export const getCallRecordingStatusDisplayConfiguration = (
   callRecording: Pick<WidgetCallRecordingCandidate, 'status' | 'transcript'>,
   artifactType: CallRecordingArtifactType,
@@ -79,15 +105,16 @@ export const getCallRecordingStatusDisplayConfiguration = (
         subTitle: t`The call recording is being processed…`,
       };
     case CallRecordingStatus.COMPLETED:
-      return artifactType === 'summary'
-        ? {
-            title: t`Summary Not Available`,
-            subTitle: t`A summary is not available for this call recording yet.`,
-          }
-        : {
-            title: t`No Transcript`,
-            subTitle: t`No transcript is available for this call recording yet.`,
-          };
+      if (artifactType === 'transcript') {
+        return {
+          title: t`No Transcript`,
+          subTitle: t`No transcript is available for this call recording yet.`,
+        };
+      }
+
+      return getCompletedCallRecordingSummaryDisplayConfiguration(
+        callRecording.transcript,
+      );
     case CallRecordingStatus.FAILED:
       return {
         title: t`Recording Failed`,

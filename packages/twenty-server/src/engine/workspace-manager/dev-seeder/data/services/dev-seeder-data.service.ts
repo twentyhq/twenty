@@ -377,7 +377,6 @@ export class DevSeederDataService {
         await prefillWorkflows(
           entityManager,
           workspaceId,
-          schemaName,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
         );

@@ -19,6 +19,7 @@ import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorato
 
 const STORY_FORM_EDITOR_PROFILE = {
   chrome: 'field',
+  variant: 'app',
   minHeight: 340,
   enableFullScreen: true,
   buildExtensions: buildFullRichTextWithVariableTagExtensions,
@@ -206,17 +207,33 @@ export const Interactive: Story = {
     ...DEFAULT_PROPS,
     label: 'Interactive Field',
     placeholder: 'Start typing to see the editor in action...',
+    onEditorReady: fn(),
   },
-  play: async ({ canvasElement }) => {
+  play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
 
     expect(await canvas.findByText('Interactive Field')).toBeVisible();
 
     const editor = await canvas.findByRole('textbox');
     expect(editor).toBeVisible();
+    expect(args.onEditorReady).toHaveBeenCalledTimes(1);
 
     await userEvent.click(editor);
     await userEvent.type(editor, 'Hello World!');
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Expand to full screen' }),
+    );
+
+    const fullScreenEditor = await body.findByRole('textbox');
+
+    await expect(fullScreenEditor).toHaveTextContent('Hello World!');
+    await userEvent.type(fullScreenEditor, ' Still working.');
+    await userEvent.click(body.getByRole('button', { name: 'Close page' }));
+    await expect(await canvas.findByRole('textbox')).toHaveTextContent(
+      'Hello World! Still working.',
+    );
+    await expect(args.onEditorReady).toHaveBeenCalledTimes(1);
   },
 };
 

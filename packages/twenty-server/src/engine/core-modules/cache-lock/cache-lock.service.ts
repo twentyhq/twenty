@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   CacheLockException,
   CacheLockExceptionCode,
@@ -35,14 +37,36 @@ export class CacheLockService {
     const { ms = 100, maxRetries = 50, ttl = 5_500 } = options || {};
 
     for (let attempt = 0; attempt < maxRetries; attempt++) {
-      const acquired = await this.cacheStorageService.acquireLock(key, ttl);
+      const ownerToken = await this.cacheStorageService.acquireLock({
+        key,
+        ttl,
+      });
 
-      if (acquired) {
+      if (isDefined(ownerToken)) {
+        const lockExtensionInterval = setInterval(() => {
+          void this.cacheStorageService
+            .extendLock({ key, ownerToken, ttl })
+            .then((isExtended) => {
+              if (!isExtended) {
+                this.logger.warn(
+                  `Lost lock for key "${key}" before it was released`,
+                );
+              }
+            })
+            .catch((extendError) => {
+              this.logger.warn(
+                `Failed to extend lock for key "${key}": ${extendError}`,
+              );
+            });
+        }, ttl / 3);
+
         try {
           return await fn();
         } finally {
+          clearInterval(lockExtensionInterval);
+
           try {
-            await this.cacheStorageService.releaseLock(key);
+            await this.cacheStorageService.releaseLock({ key, ownerToken });
           } catch (releaseError) {
             this.logger.warn(
               `Failed to release lock for key "${key}": ${releaseError}`,

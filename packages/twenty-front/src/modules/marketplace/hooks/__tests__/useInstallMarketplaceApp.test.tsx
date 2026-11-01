@@ -6,11 +6,12 @@ import { type ReactNode } from 'react';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useInstallMarketplaceApp } from '@/marketplace/hooks/useInstallMarketplaceApp';
 import { QUEUE_JOB_BROWSER_EVENT_NAME } from '@/queue-job/constants/QueueJobBrowserEventName';
+import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
 import {
   FindInstallApplicationJobStatusDocument,
   JobState,
   type JobStatus,
-  TriggerInstallApplicationJobDocument,
+  TriggerInstallApplicationDocument,
 } from '~/generated-metadata/graphql';
 
 const UNIVERSAL_IDENTIFIER = 'application-universal-identifier';
@@ -25,20 +26,24 @@ jest.mock('twenty-ui/components/feedback', () => ({
 
 const triggerInstallMock = {
   request: {
-    query: TriggerInstallApplicationJobDocument,
+    query: TriggerInstallApplicationDocument,
     variables: { input: { universalIdentifier: UNIVERSAL_IDENTIFIER } },
   },
   result: {
-    data: { triggerInstallApplicationJob: { jobId: JOB_ID } },
+    data: { triggerInstallApplication: { jobId: JOB_ID } },
   },
 };
 
 const buildJobStatusMock = (
   findInstallApplicationJobStatus: Partial<JobStatus> | null,
+  jobId?: string,
 ) => ({
   request: {
     query: FindInstallApplicationJobStatusDocument,
-    variables: { universalIdentifier: UNIVERSAL_IDENTIFIER },
+    variables: {
+      universalIdentifier: UNIVERSAL_IDENTIFIER,
+      ...(jobId === undefined ? {} : { jobId }),
+    },
   },
   result: { data: { findInstallApplicationJobStatus } },
 });
@@ -96,7 +101,7 @@ describe('useInstallMarketplaceApp', () => {
 
     await waitFor(() => expect(result.current.isInstalling).toBe(false));
     expect(mockEnqueueToast).toHaveBeenCalledWith({
-      variant: 'error',
+      status: 'error',
       children: 'Manifest validation failed',
     });
   });
@@ -134,5 +139,46 @@ describe('useInstallMarketplaceApp', () => {
     });
 
     expect(result.current.installProgress).toBe(86);
+  });
+
+  it('settles an installation that ended while the event stream was down', async () => {
+    const { result } = renderHook(
+      () =>
+        useInstallMarketplaceApp({
+          universalIdentifier: UNIVERSAL_IDENTIFIER,
+        }),
+      {
+        wrapper: buildWrapper([
+          buildJobStatusMock(null),
+          triggerInstallMock,
+          buildJobStatusMock(
+            {
+              __typename: 'JobStatus',
+              jobId: JOB_ID,
+              state: JobState.FAILED,
+              failedReason: 'Manifest validation failed',
+              progress: 14,
+            },
+            JOB_ID,
+          ),
+        ]),
+      },
+    );
+
+    await act(async () => {
+      await result.current.install();
+    });
+
+    expect(result.current.isInstalling).toBe(true);
+
+    act(() => {
+      dispatchBrowserEvent(SSE_CLIENT_RECONNECTED_EVENT_NAME);
+    });
+
+    await waitFor(() => expect(result.current.isInstalling).toBe(false));
+    expect(mockEnqueueToast).toHaveBeenCalledWith({
+      status: 'error',
+      children: 'Manifest validation failed',
+    });
   });
 });

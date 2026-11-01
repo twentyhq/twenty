@@ -57,18 +57,16 @@ From `packages/twenty-cli`, after building the repository SDK, shared and UI
 packages:
 
 ```bash
-node ../../node_modules/vitest/vitest.mjs run --config vitest.config.ts --maxWorkers=1 src/app/manifest/__tests__/manifest-parity.spec.ts
+node ../../node_modules/vitest/vitest.mjs run --config vitest.config.ts --maxWorkers=1 src/app/manifest/__tests__/manifest-fixtures.spec.ts
 ```
 
-The suite bundles the SDK implementation as a test-only reference. It
-compares manifests, entity file paths, errors and warnings for every repository
-fixture and a freshly initialized app. It also exercises the production CLI
-worker using a copy of the real SDK's authoring entry points without `./build`,
-`./cli` or their implementation files.
+The suite compares manifests, entity file paths, errors and warnings against
+checked-in expectations for every repository fixture and a freshly initialized
+app. It exercises the production CLI worker using a copy of the real SDK's
+authoring entry points without `./build`, `./cli` or their implementation files.
 
-The SDK reference's discovery is sorted to match the CLI's deterministic input
-order. Comparisons remove only JSON-omitted `undefined` properties, matching the
-worker IPC boundary; arrays and diagnostics are not reordered. The invalid-app
-fixture throws `Invalid UUID` in both implementations. Additional cases cover
-duplicate identifiers, empty lockfiles, translations, source output and credential filtering.
-Unit tests cover individual validation and translation rules.
+Comparisons remove only JSON-omitted `undefined` properties, matching the worker
+IPC boundary; arrays and diagnostics are not reordered. Additional cases cover
+invalid and duplicate identifiers, empty lockfiles, translations, source output
+and credential filtering. Unit tests cover individual validation and translation
+rules.

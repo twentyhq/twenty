@@ -1,4 +1,5 @@
 import { type WorkflowVersionStatus } from '@/workflow/types/Workflow';
+import { t } from '@lingui/core/macro';
 import { type TagColor } from 'twenty-ui/primitives/data-display';
 
 export const getWorkflowVersionStatusTagProps = ({
@@ -9,26 +10,26 @@ export const getWorkflowVersionStatusTagProps = ({
   if (workflowVersionStatus === 'ARCHIVED') {
     return {
       color: 'gray',
-      text: 'Archived',
+      text: t`Archived`,
     };
   }
 
   if (workflowVersionStatus === 'DRAFT') {
     return {
       color: 'yellow',
-      text: 'Draft',
+      text: t`Draft`,
     };
   }
 
   if (workflowVersionStatus === 'ACTIVE') {
     return {
       color: 'green',
-      text: 'Active',
+      text: t`Active`,
     };
   }
 
   return {
     color: 'gray',
-    text: 'Deactivated',
+    text: t`Deactivated`,
   };
 };

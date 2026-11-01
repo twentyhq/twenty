@@ -1,5 +1,4 @@
 import { css } from '@linaria/core';
-import { Link } from 'react-router-dom';
 import { type LinkChipProps } from './types/LinkChipProps';
 
 import { LINK_CHIP_CLICK_OUTSIDE_ID } from '@/ui/navigation/link/constants/LinkChipClickOutsideId';
@@ -12,11 +11,6 @@ const styles = {
       display: inline-flex;
       min-width: 0;
       vertical-align: middle;
-    }
-    & > a {
-      max-width: 100%;
-      min-width: 0;
-      text-decoration: none;
     }
   `,
 };
@@ -35,25 +29,35 @@ export const LinkChip = ({
 
   return (
     <span className={styles.linkContainer}>
-      <Link
-        to={to}
-        ref={ref}
-        onClick={(event) => {
-          event.stopPropagation();
-          onClickHandler(event);
-        }}
-        onMouseDown={(event) => {
-          onMouseDown?.(event);
-          if (!event.defaultPrevented) {
-            onMouseDownHandler(event);
-          }
-        }}
-        data-click-outside-id={LINK_CHIP_CLICK_OUTSIDE_ID}
-        target={target}
-        rel={target === '_blank' ? 'noopener noreferrer' : undefined}
-      >
-        <Chip clickable {...props} />
-      </Link>
+      <Chip
+        clickable
+        {...props}
+        render={
+          <a
+            href={to}
+            ref={ref}
+            onClick={(event) => {
+              event.stopPropagation();
+              const isKeyboardClick = event.detail === 0;
+
+              if (isKeyboardClick && triggerEvent !== 'CLICK') {
+                onMouseDownHandler(event);
+              }
+
+              onClickHandler(event);
+            }}
+            onMouseDown={(event) => {
+              onMouseDown?.(event);
+              if (!event.defaultPrevented) {
+                onMouseDownHandler(event);
+              }
+            }}
+            data-click-outside-id={LINK_CHIP_CLICK_OUTSIDE_ID}
+            target={target}
+            rel={target === '_blank' ? 'noopener noreferrer' : undefined}
+          />
+        }
+      />
     </span>
   );
 };

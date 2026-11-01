@@ -1,3 +1,4 @@
+import { type QueryConfig, types } from 'pg';
 import {
   type FeatureFlagKey,
   type ObjectsPermissions,
@@ -50,10 +51,7 @@ import {
   type SelectStatementState,
   type WhereClause,
 } from 'src/engine/twenty-orm/sql/utils/build-select-statement.util';
-import {
-  type WorkspaceRelationShape,
-  type WorkspaceTableShape,
-} from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
+import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 let objectWhereParameterSequence = 0;
@@ -606,7 +604,17 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
     entities: T[];
     raw: Record<string, unknown>[];
   }> {
-    const rows = await this.executeSelect();
+    const rows = await this.executeSelect({
+      types: {
+        getTypeParser: (oid, format) =>
+          types.getTypeParser(
+            oid === types.builtins.TIMESTAMPTZ || oid === types.builtins.DATE
+              ? types.builtins.TEXT
+              : oid,
+            format,
+          ),
+      },
+    });
 
     return {
       raw: rows,
@@ -706,23 +714,6 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
         (existsFilterClause) => existsFilterClause.alias === alias,
       )?.targetTableShape
     );
-  }
-
-  getJoinParentRelationShape(
-    alias: string,
-  ): WorkspaceRelationShape | undefined {
-    const clause =
-      this.joinClauses.find((joinClause) => joinClause.alias === alias) ??
-      this.existsFilterClauses.find(
-        (existsFilterClause) => existsFilterClause.alias === alias,
-      );
-
-    if (!isDefined(clause)) {
-      return undefined;
-    }
-
-    return this.getTableShapeForAlias(clause.parentAlias)
-      ?.relationShapeByFieldName[clause.relationFieldName];
   }
 
   markRowLevelPermissionApplied(alias: string): boolean {
@@ -1216,13 +1207,17 @@ export class WorkspaceSelectQueryBuilder implements WhereExpressionLike {
 
   private async executeSelect(options?: {
     allowPlainToManyJoins?: boolean;
+    types?: QueryConfig['types'];
   }): Promise<Record<string, unknown>[]> {
     this.context.onBeforeExecute(this);
 
     const { sql, parameters } = this.buildSelectStatement(options);
     const compiled = compileNamedParameters(sql, parameters);
 
-    return this.context.executor.execute(compiled);
+    return this.context.executor.execute({
+      ...compiled,
+      types: options?.types,
+    });
   }
 
   private buildSelectStatement(options?: { allowPlainToManyJoins?: boolean }): {

@@ -9,6 +9,7 @@ import {
   CreateOidcIdentityProviderDocument,
   CreateSamlIdentityProviderDocument,
 } from '~/generated-metadata/graphql';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useCreateSsoIdentityProvider = () => {
   const [createOidcIdentityProviderMutation] = useMutation(
@@ -56,7 +57,7 @@ export const useCreateSsoIdentityProvider = () => {
         },
       });
     } else {
-      throw new Error('Invalid IdpType');
+      throw new Error(doNotTranslate('Invalid IdpType'));
     }
   };
 

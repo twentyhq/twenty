@@ -1,7 +1,9 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
 import { EmailComposerService } from 'src/engine/core-modules/tool/tools/email-tool/email-composer.service';
 import { type EmailToolInput } from 'src/engine/core-modules/tool/tools/email-tool/types/email-tool-input.type';
@@ -35,12 +37,17 @@ describe('DraftEmailTool', () => {
   let tool: DraftEmailTool;
   let mockComposeEmail: jest.Mock;
   let mockCreateDraft: jest.Mock;
+  let mockGetI18nInstance: jest.Mock;
 
   beforeEach(async () => {
     jest.clearAllMocks();
 
     mockComposeEmail = jest.fn();
     mockCreateDraft = jest.fn();
+    mockGetI18nInstance = jest.fn(() => ({
+      _: (descriptor: { id: string; message?: string }) =>
+        descriptor.message ?? descriptor.id,
+    }));
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -53,10 +60,36 @@ describe('DraftEmailTool', () => {
           provide: MessagingMessageOutboundService,
           useValue: { createDraft: mockCreateDraft },
         },
+        {
+          provide: I18nService,
+          useValue: { getI18nInstance: mockGetI18nInstance },
+        },
       ],
     }).compile();
 
     tool = module.get(DraftEmailTool);
+  });
+
+  it('returns the composition error in the source locale', async () => {
+    mockComposeEmail.mockResolvedValue({
+      success: false,
+      error: {
+        id: 'invalid-email-addresses',
+        message: 'Invalid email addresses: not-an-email',
+      },
+    });
+
+    const result = await tool.execute(baseInput, {
+      workspaceId: 'workspace-1',
+    });
+
+    expect(mockGetI18nInstance).toHaveBeenCalledWith(SOURCE_LOCALE);
+    expect(mockCreateDraft).not.toHaveBeenCalled();
+    expect(result).toEqual({
+      success: false,
+      message: 'Invalid email addresses: not-an-email',
+      error: 'Invalid email addresses: not-an-email',
+    });
   });
 
   it('fails without drafting when the resolved account lacks the compose scope', async () => {

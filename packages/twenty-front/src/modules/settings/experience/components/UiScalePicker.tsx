@@ -1,8 +1,8 @@
 import { UI_SCALE_MULTIPLIERS } from '@/ui/theme/constants/UiScaleMultipliers';
-import { useUiScale } from '@/ui/theme/hooks/useUiScale';
+import { useUiScale } from '@/workspace-member/hooks/useUiScale';
 import { Select } from '@/ui/input/components/Select';
-import { type UiScale } from '@/workspace-member/types/WorkspaceMember';
 import { useLingui } from '@lingui/react/macro';
+import { type UiScale } from '@/ui/theme/types/UiScale';
 
 export const UiScalePicker = () => {
   const { t } = useLingui();

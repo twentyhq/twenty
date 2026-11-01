@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { t } from '@lingui/core/macro';
 
 import { currencyCodeSchema } from '@/object-record/record-field/ui/validation-schemas/currencyCodeSchema';
 import { type CurrencyCode } from 'twenty-shared/constants';
@@ -11,7 +12,7 @@ export const currencyFieldDefaultValueSchema = z.object({
     (value): value is `'${CurrencyCode}'` =>
       currencyCodeSchema.safeParse(stripSimpleQuotesFromString(value)).success,
     {
-      error: 'String is not a valid currencyCode',
+      error: () => t`String is not a valid currencyCode`,
     },
   ),
 });

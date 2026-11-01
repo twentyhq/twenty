@@ -5,7 +5,7 @@ import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
 type SettingsImageInputProps = Pick<
   ImageInputProps,
-  | 'onUpload'
+  | 'onFileSelect'
   | 'onRemove'
   | 'onAbort'
   | 'isUploading'
@@ -17,7 +17,7 @@ type SettingsImageInputProps = Pick<
 
 export const SettingsImageInput = ({
   picture,
-  onUpload,
+  onFileSelect,
   onRemove,
   onAbort,
   isUploading,
@@ -28,7 +28,7 @@ export const SettingsImageInput = ({
 
   return (
     <ImageInput
-      onUpload={onUpload}
+      onFileSelect={onFileSelect}
       onRemove={onRemove}
       onAbort={onAbort}
       isUploading={isUploading}

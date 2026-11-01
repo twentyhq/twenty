@@ -1,3 +1,4 @@
+import { findFieldMetadataItemByFieldMetadataId } from '@/object-metadata/utils/findFieldMetadataItemByFieldMetadataId';
 import { getFieldLabelWithSubField } from '@/side-panel/pages/page-layout/utils/getFieldLabelWithSubField';
 import { getSortLabelSuffixForFieldType } from '@/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
@@ -5,7 +6,6 @@ import { getAggregateOperationLabel } from '@/object-record/record-board/record-
 import { type ExtendedAggregateOperations } from '@/object-record/record-table/types/ExtendedAggregateOperations';
 import { t } from '@lingui/core/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { type CompositeFieldSubFieldName } from 'twenty-shared/types';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { GraphOrderBy } from '~/generated-metadata/graphql';
 
@@ -29,13 +29,14 @@ export const useGraphXSortOptionLabels = ({
   }: {
     graphOrderBy: GraphOrderBy;
     groupByFieldMetadataIdX: string;
-    groupBySubFieldNameX?: CompositeFieldSubFieldName;
+    groupBySubFieldNameX?: string;
     aggregateFieldMetadataId?: string;
     aggregateOperation?: ExtendedAggregateOperations;
   }): string => {
-    const groupByField = objectMetadataItem?.fields.find(
-      (fieldMetadataItem) => fieldMetadataItem.id === groupByFieldMetadataIdX,
-    );
+    const groupByField = findFieldMetadataItemByFieldMetadataId({
+      fieldMetadataItems: objectMetadataItem?.fields,
+      fieldMetadataId: groupByFieldMetadataIdX,
+    });
 
     const fieldLabel = getFieldLabelWithSubField({
       field: groupByField,

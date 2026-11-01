@@ -1,25 +1,34 @@
 import { isNumber } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { fastDeepEqual, isDefined } from 'twenty-shared/utils';
 
 import { GEOMETRY_EPSILON_PIXELS } from '@/host/geometry/constants/GeometryEpsilonPixels';
 
+type SnapshotValue =
+  | number
+  | string
+  | null
+  | undefined
+  | Record<string, string>;
+
 export const isGeometrySnapshotEqualWithinEpsilon = <
-  TSnapshot extends Record<string, number | string | null>,
->(
-  previousSnapshot: TSnapshot | null | undefined,
-  nextSnapshot: TSnapshot,
-): boolean => {
+  TSnapshot extends Record<string, SnapshotValue>,
+>({
+  previousSnapshot,
+  nextSnapshot,
+}: {
+  previousSnapshot: TSnapshot | null | undefined;
+  nextSnapshot: TSnapshot;
+}): boolean => {
   if (!isDefined(previousSnapshot)) {
     return false;
   }
 
-  return Object.entries(nextSnapshot).every(([snapshotKey, nextValue]) => {
+  return Object.keys(nextSnapshot).every((snapshotKey) => {
     const previousValue = previousSnapshot[snapshotKey];
+    const nextValue = nextSnapshot[snapshotKey];
 
-    if (isNumber(nextValue) && isNumber(previousValue)) {
-      return Math.abs(previousValue - nextValue) < GEOMETRY_EPSILON_PIXELS;
-    }
-
-    return previousValue === nextValue;
+    return isNumber(previousValue) && isNumber(nextValue)
+      ? Math.abs(previousValue - nextValue) < GEOMETRY_EPSILON_PIXELS
+      : fastDeepEqual(previousValue, nextValue);
   });
 };

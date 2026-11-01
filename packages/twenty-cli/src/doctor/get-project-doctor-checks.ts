@@ -5,6 +5,7 @@ import { resolveSourceSdk } from '@/app/project/resolve-source-sdk';
 import { type AppProject } from '@/app/project/types/app-project.type';
 import { type DoctorCheck } from '@/doctor/types/doctor-check.type';
 import { CliError } from '@/output/cli-error';
+import { type CliWarning } from '@/output/types/cli-warning.type';
 
 export const getProjectDoctorChecks = async ({
   explicitPath,
@@ -53,16 +54,31 @@ export const getProjectDoctorChecks = async ({
   try {
     signal.throwIfAborted();
 
-    const sdk = await resolveSourceSdk({ appPath: project.path });
+    const warnings: CliWarning[] = [];
+    const sdk = await resolveSourceSdk({
+      appPath: project.path,
+      warn: (warning) => warnings.push(warning),
+    });
+    const [nodeWarning] = warnings;
+    const details = { version: sdk.version, path: sdk.packagePath };
 
     return [
       projectCheck,
-      {
-        id: 'sdk',
-        status: 'pass',
-        message: `twenty-sdk ${sdk.version} provides the authoring exports required by the CLI.`,
-        details: { version: sdk.version, path: sdk.packagePath },
-      },
+      isDefined(nodeWarning)
+        ? {
+            id: 'sdk',
+            status: 'warning',
+            code: nodeWarning.code,
+            message: nodeWarning.message,
+            hint: 'Builds continue. If one fails, switch to a Node version in that range.',
+            details,
+          }
+        : {
+            id: 'sdk',
+            status: 'pass',
+            message: `twenty-sdk ${sdk.version} provides the authoring exports required by the CLI.`,
+            details,
+          },
     ];
   } catch (error) {
     signal.throwIfAborted();

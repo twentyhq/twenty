@@ -1,40 +1,5 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`Agent update should fail should fail when attempting to update a standard agent 1`] = `
-{
-  "extensions": {
-    "code": "METADATA_VALIDATION_FAILED",
-    "errors": {
-      "agent": [
-        {
-          "errors": [
-            {
-              "code": "AGENT_IS_STANDARD",
-              "message": "Cannot update standard agent",
-              "userFriendlyMessage": "Cannot update standard agent",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "agent",
-          "status": "fail",
-          "type": "update",
-        },
-      ],
-    },
-    "message": "Validation failed for 1 agent",
-    "summary": {
-      "agent": 1,
-      "totalErrors": 1,
-    },
-    "userFriendlyMessage": "Cannot update standard agent",
-  },
-  "message": "Multiple validation errors occurred while updating agent",
-  "name": "GraphQLError",
-}
-`;
-
 exports[`Agent update should fail should fail when updating a non-existent agent 1`] = `
 {
   "extensions": {

@@ -1,15 +1,24 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import GraphQLJSON from 'graphql-type-json';
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import {
+  ArrayNotEmpty,
+  IsArray,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUUID,
+} from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @InputType('SendInboxMessageInput')
 export class SendInboxMessageInputDTO {
-  @IsUUID()
-  @Field(() => UUIDScalarType)
-  workspaceMemberId: string;
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsUUID(undefined, { each: true })
+  @Field(() => [UUIDScalarType])
+  workspaceMemberIds: string[];
 
   @IsString()
   @IsNotEmpty()

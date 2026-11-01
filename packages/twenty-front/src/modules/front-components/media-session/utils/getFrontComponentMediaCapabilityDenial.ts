@@ -1,4 +1,5 @@
 import { getMissingFrontComponentMediaCapabilities } from '@/front-components/media-session/utils/getMissingFrontComponentMediaCapabilities';
+import { t } from '@lingui/core/macro';
 import {
   type MediaSessionMediaType,
   type MediaSessionStartVeto,
@@ -23,6 +24,6 @@ export const getFrontComponentMediaCapabilityDenial = ({
 
   return {
     errorName: 'NotAllowedError',
-    errorMessage: `This application does not have ${missingCapability} access`,
+    errorMessage: t`This application does not have ${missingCapability} access`,
   };
 };

@@ -1,3 +1,4 @@
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
@@ -17,6 +18,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ChangeEvent, useState } from 'react';
 import { isDefined, parseJson } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { z } from 'zod';
 
 export const EMPTY_FILTER_VALUE = '[]';
@@ -73,7 +75,9 @@ export const ObjectFilterDropdownCountrySelect = () => {
 
     if (!isDefined(fieldMetadataItemUsedInFilterDropdown)) {
       throw new Error(
-        'Field metadata item used in filter dropdown should be defined',
+        doNotTranslate(
+          'Field metadata item used in filter dropdown should be defined',
+        ),
       );
     }
 
@@ -118,8 +122,7 @@ export const ObjectFilterDropdownCountrySelect = () => {
       <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
         {filteredSelectedItems?.map((item) => {
           return (
-            <ListItem
-              render={<button type="button" />}
+            <ListItemButton
               key={item.id}
               role="option"
               aria-selected={true}
@@ -131,13 +134,12 @@ export const ObjectFilterDropdownCountrySelect = () => {
               startIcon={getCountryFlagMenuItemAvatar(item.name, countries)}
             >
               {item.name}
-            </ListItem>
+            </ListItemButton>
           );
         })}
         {filteredSelectableItems?.map((item) => {
           return (
-            <ListItem
-              render={<button type="button" />}
+            <ListItemButton
               key={item.id}
               role="option"
               aria-selected={false}
@@ -149,7 +151,7 @@ export const ObjectFilterDropdownCountrySelect = () => {
               startIcon={getCountryFlagMenuItemAvatar(item.name, countries)}
             >
               {item.name}
-            </ListItem>
+            </ListItemButton>
           );
         })}
         {showNoResult && <ListItem disabled>{t`No results`}</ListItem>}

@@ -4,7 +4,7 @@ import { expect } from 'storybook/test';
 import { Skeleton } from '@ui/primitives/feedback';
 import { Text } from '@ui/primitives/typography';
 import { ComponentDecorator } from '@ui/testing';
-import { ThemeProvider } from '@ui/theme';
+import { ThemeProvider, themeCssVariables } from '@ui/theme';
 
 const meta: Meta<typeof Skeleton> = {
   title: 'UI/Feedback/Skeleton',
@@ -13,7 +13,6 @@ const meta: Meta<typeof Skeleton> = {
   args: {
     width: 240,
     height: 16,
-    borderRadius: 4,
   },
   render: (args) => <Skeleton {...args} data-testid="placeholder" />,
 };
@@ -24,6 +23,29 @@ type Story = StoryObj<typeof Skeleton>;
 
 const isMotionEnabled = () =>
   !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+export const Display: Story = {
+  parameters: {
+    controls: {
+      include: ['animated', 'borderRadius', 'baseColor', 'highlightColor'],
+    },
+  },
+  render: (args) => (
+    <Text
+      render={<div />}
+      style={{ display: 'flex', gap: 16, alignItems: 'center' }}
+    >
+      <Skeleton {...args} width={40} height={40} borderRadius="50%" />
+      <Text
+        render={<div />}
+        style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
+      >
+        <Skeleton {...args} width={180} height={16} />
+        <Skeleton {...args} width={120} height={13} />
+      </Text>
+    </Text>
+  ),
+};
 
 export const Default: Story = {
   play: async ({ canvas }) => {
@@ -58,22 +80,89 @@ export const Default: Story = {
   },
 };
 
-export const Shapes: Story = {
+export const Layouts: Story = {
+  args: { width: 400 },
+  render: (args) => (
+    <div style={{ width: 200 }}>
+      <Skeleton {...args} data-testid="block-placeholder" />
+      <Skeleton {...args} layout="inline" data-testid="inline-placeholder" />
+    </div>
+  ),
+  play: async ({ canvas }) => {
+    const blockPlaceholder = canvas.getByTestId('block-placeholder');
+    const inlinePlaceholder = canvas.getByTestId('inline-placeholder');
+
+    await expect(getComputedStyle(blockPlaceholder).display).toBe('block');
+    await expect(getComputedStyle(inlinePlaceholder).display).toBe(
+      'inline-flex',
+    );
+    await expect(blockPlaceholder.getBoundingClientRect().width).toBe(200);
+    await expect(inlinePlaceholder.getBoundingClientRect().width).toBe(200);
+  },
+};
+
+export const Corners: Story = {
   render: (args) => (
     <Text
       render={<div />}
-      style={{ display: 'flex', gap: 16, alignItems: 'center' }}
+      data-testid="surrounding-shape"
+      style={{ display: 'flex', alignItems: 'center', gap: 16 }}
     >
-      <Skeleton {...args} width={40} height={40} borderRadius="50%" />
-      <Text
-        render={<div />}
-        style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
-      >
-        <Skeleton {...args} width={180} height={16} />
-        <Skeleton {...args} width={120} height={13} />
-      </Text>
+      <Skeleton {...args} data-testid="default-corners" />
+      <Skeleton
+        {...args}
+        borderRadius={themeCssVariables.border.radius.mdRound}
+        data-testid="medium-corners"
+      />
+      <Skeleton {...args} borderRadius={12} data-testid="custom-corners" />
+      <Skeleton
+        {...args}
+        width={24}
+        height={84}
+        borderRadius={80}
+        data-testid="capsule-corners"
+      />
+      <Skeleton
+        {...args}
+        width={40}
+        height={40}
+        borderRadius="50%"
+        data-testid="circle-corners"
+      />
     </Text>
   ),
+  play: async ({ canvas }) => {
+    const radii = {
+      'default-corners': '4px',
+      'medium-corners': '8px',
+      'custom-corners': '12px',
+      'capsule-corners': '80px',
+      'circle-corners': '50%',
+    };
+
+    for (const [name, radius] of Object.entries(radii)) {
+      const placeholder = canvas.getByTestId(name);
+
+      await expect(placeholder).toBeVisible();
+      await expect(getComputedStyle(placeholder).borderRadius).toBe(radius);
+    }
+
+    if (CSS.supports('corner-shape', 'squircle')) {
+      await expect(
+        getComputedStyle(
+          canvas.getByTestId('surrounding-shape'),
+        ).getPropertyValue('corner-shape'),
+      ).toBe('superellipse(2.2)');
+
+      for (const name of Object.keys(radii)) {
+        await expect(
+          getComputedStyle(canvas.getByTestId(name)).getPropertyValue(
+            'corner-shape',
+          ),
+        ).toBe('round');
+      }
+    }
+  },
 };
 
 export const Static: Story = {

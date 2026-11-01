@@ -4,9 +4,9 @@ export type RecordTableRowContextValue = {
   pathToShowPage: string;
   objectNameSingular: string;
   recordId: string;
-  rowIndex: number;
   isSelected: boolean;
   isRecordReadOnly?: boolean;
+  restrictedFieldNames: string[];
 };
 
 export const [RecordTableRowContextProvider, useRecordTableRowContextOrThrow] =

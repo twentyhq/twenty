@@ -1,4 +1,4 @@
-import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 
 import { getRelationIdFieldNames } from '@/object-metadata/utils/getRelationIdFieldNames';
@@ -18,7 +18,7 @@ export const shouldFieldBeQueried = ({
     'name' | 'type' | 'settings' | 'morphRelations'
   >;
   objectRecord?: ObjectRecord;
-  recordGqlFields?: RecordGqlOperationGqlRecordFields;
+  recordGqlFields?: RecordGqlFields;
 }): any => {
   const isJoinColumn: boolean =
     (isFieldRelation(fieldMetadata) || isFieldMorphRelation(fieldMetadata)) &&
@@ -36,11 +36,7 @@ export const shouldFieldBeQueried = ({
     return true;
   }
 
-  if (
-    isDefined(recordGqlFields) &&
-    isDefined(recordGqlFields[gqlField]) &&
-    recordGqlFields[gqlField] !== false
-  ) {
+  if (isDefined(recordGqlFields?.[gqlField])) {
     return true;
   }
 

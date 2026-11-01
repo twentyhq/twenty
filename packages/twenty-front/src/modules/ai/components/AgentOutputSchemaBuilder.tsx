@@ -10,7 +10,7 @@ import { useState } from 'react';
 import { isValidAgentResponseSchemaPropertyKey } from 'twenty-shared/ai';
 import { IconPlus } from 'twenty-ui/icon';
 import { Collapsible } from 'twenty-ui/primitives/layout';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { AgentOutputFieldTypeSelector } from '@/ai/components/AgentOutputFieldTypeSelector';
 import { AgentOutputSchemaFieldHeader } from '@/ai/components/AgentOutputSchemaFieldHeader';
@@ -163,45 +163,47 @@ export const AgentOutputSchemaBuilder = ({
                       : undefined
                   }
                 />
-                <Collapsible isExpanded={isExpanded}>
-                  <StyledSettingsContent>
-                    <FormFieldInputContainer>
-                      <FormTextFieldInput
-                        label={t`Variable Name`}
-                        placeholder={t`e.g., summary, status, count`}
-                        defaultValue={field.name}
-                        error={getVariableNameError(field.name)}
-                        onChange={(value) =>
-                          updateField(field.id, { name: value.trim() })
-                        }
-                        readonly={readonly}
-                      />
-                    </FormFieldInputContainer>
+                <Collapsible.Root open={isExpanded}>
+                  <Collapsible.Panel>
+                    <StyledSettingsContent>
+                      <FormFieldInputContainer>
+                        <FormTextFieldInput
+                          label={t`Variable Name`}
+                          placeholder={t`e.g., summary, status, count`}
+                          defaultValue={field.name}
+                          error={getVariableNameError(field.name)}
+                          onChange={(value) =>
+                            updateField(field.id, { name: value.trim() })
+                          }
+                          readonly={readonly}
+                        />
+                      </FormFieldInputContainer>
 
-                    <FormFieldInputContainer>
-                      <AgentOutputFieldTypeSelector
-                        onChange={(value) =>
-                          updateField(field.id, { type: value })
-                        }
-                        value={field.type}
-                        disabled={readonly}
-                        dropdownId={`output-field-type-selector-${field.id}`}
-                      />
-                    </FormFieldInputContainer>
+                      <FormFieldInputContainer>
+                        <AgentOutputFieldTypeSelector
+                          onChange={(value) =>
+                            updateField(field.id, { type: value })
+                          }
+                          value={field.type}
+                          disabled={readonly}
+                          dropdownId={`output-field-type-selector-${field.id}`}
+                        />
+                      </FormFieldInputContainer>
 
-                    <FormFieldInputContainer>
-                      <FormTextFieldInput
-                        label={t`Instruction for AI`}
-                        placeholder={t`Brief explanation of this output field`}
-                        defaultValue={field.description}
-                        onChange={(value) =>
-                          updateField(field.id, { description: value })
-                        }
-                        readonly={readonly}
-                      />
-                    </FormFieldInputContainer>
-                  </StyledSettingsContent>
-                </Collapsible>
+                      <FormFieldInputContainer>
+                        <FormTextFieldInput
+                          label={t`Instruction for AI`}
+                          placeholder={t`Brief explanation of this output field`}
+                          defaultValue={field.description}
+                          onChange={(value) =>
+                            updateField(field.id, { description: value })
+                          }
+                          readonly={readonly}
+                        />
+                      </FormFieldInputContainer>
+                    </StyledSettingsContent>
+                  </Collapsible.Panel>
+                </Collapsible.Root>
               </StyledOutputSchemaFieldContainer>
             );
           })}
@@ -210,10 +212,10 @@ export const AgentOutputSchemaBuilder = ({
 
       {!readonly && (
         <StyledAddFieldButtonContainer>
-          <ListItem
+          <ListItemButton
             startIcon={<IconPlus />}
             onClick={addField}
-          >{t`Add Output Field`}</ListItem>
+          >{t`Add Output Field`}</ListItemButton>
         </StyledAddFieldButtonContainer>
       )}
     </StyledOutputSchemaContainer>

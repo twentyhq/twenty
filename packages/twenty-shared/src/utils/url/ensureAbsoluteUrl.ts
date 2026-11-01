@@ -1,12 +1,9 @@
+import { isAbsoluteUrl } from '@/utils';
+
 export const ensureAbsoluteUrl = (value: string): string => {
   const trimmedValue = value.trim();
 
-  if (
-    trimmedValue.startsWith('http://') ||
-    trimmedValue.startsWith('https://') ||
-    trimmedValue.startsWith('HTTPS://') ||
-    trimmedValue.startsWith('HTTP://')
-  ) {
+  if (isAbsoluteUrl(trimmedValue)) {
     return trimmedValue;
   }
 

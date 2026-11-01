@@ -37,9 +37,7 @@ export const SettingsAdminChatMessage = ({
   message,
 }: SettingsAdminChatMessageProps) => {
   const isUser = message.role === AgentMessageRole.USER;
-  // hidden user messages are contexts the 2.46 upgrade has not turned into system messages yet
-  const isContext =
-    message.role === AgentMessageRole.SYSTEM || message.isHidden;
+  const isContext = message.role === AgentMessageRole.SYSTEM;
 
   const renderableParts = message.parts
     .filter(isRenderableAdminChatMessagePart)

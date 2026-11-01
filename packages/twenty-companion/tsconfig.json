@@ -9,14 +9,7 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "noEmit": true,
-    "types": ["node", "vite/client"],
-    "paths": {
-      "twenty-ui/icon": ["../twenty-ui/src/icon/index.ts"],
-      "@ui/*": ["../twenty-ui/src/*"],
-      "@assets/*": ["../twenty-ui/src/assets/*"],
-      "@styles/*": ["../twenty-ui/src/styles/*"],
-      "@test-utilities/*": ["../twenty-ui/src/test-utilities/*"]
-    }
+    "types": ["node", "vite/client"]
   },
   "include": ["src", "vite.config.ts"]
 }

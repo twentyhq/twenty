@@ -1,4 +1,4 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { useObjectMetadataItemById } from '@/object-metadata/hooks/useObjectMetadataItemById';
 import { availableFieldMetadataItemsForFilterFamilySelector } from '@/object-metadata/states/availableFieldMetadataItemsForFilterFamilySelector';
 import { useUpsertRecordFilterGroup } from '@/object-record/record-filter-group/hooks/useUpsertRecordFilterGroup';
@@ -21,22 +21,14 @@ import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { getViewBarAdvancedFilterDropdownId } from '@/views/utils/getViewBarAdvancedFilterDropdownId';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { flushSync } from 'react-dom';
 import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconFilter } from 'twenty-ui/icon';
-import { Pill } from 'twenty-ui/primitives/data-display';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { Badge } from 'twenty-ui/primitives/data-display';
 import { v4 } from 'uuid';
-
-const StyledPillContainer = styled.span`
-  & > span {
-    background: ${themeCssVariables.color.blue3};
-    color: ${themeCssVariables.color.blue};
-  }
-`;
 
 export const ViewBarFilterDropdownAdvancedFilterButton = () => {
   const rootRecordFilterGroup = useAtomComponentSelectorValue(
@@ -72,7 +64,9 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
   const objectMetadataId = currentView?.objectMetadataId;
 
   if (!objectMetadataId) {
-    throw new Error('Object metadata id is missing from current view');
+    throw new Error(
+      doNotTranslate('Object metadata id is missing from current view'),
+    );
   }
 
   const { objectMetadataItem } = useObjectMetadataItemById({
@@ -98,7 +92,7 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
 
   const handleClick = () => {
     if (!isDefined(currentView)) {
-      throw new Error('Missing current view id');
+      throw new Error(doNotTranslate('Missing current view id'));
     }
 
     const alreadyHasAdvancedFilterGroup = currentRecordFilterGroups.length > 0;
@@ -112,7 +106,7 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
         ) ?? availableFieldMetadataItemsForFilter[0];
 
       if (!isDefined(defaultFieldMetadataItem)) {
-        throw new Error('Missing default filter definition');
+        throw new Error(doNotTranslate('Missing default filter definition'));
       }
 
       flushSync(() => {
@@ -149,18 +143,18 @@ export const ViewBarFilterDropdownAdvancedFilterButton = () => {
       itemId={VIEW_BAR_FILTER_BOTTOM_MENU_ITEM_IDS.ADVANCED_FILTER}
       onEnter={handleClick}
     >
-      <ListItem
+      <ListItemButton
         onClick={handleClick}
         startIcon={<IconFilter />}
         focused={isSelectedItemId}
         endIcon={
           advancedFilterQuerySubFilterCount > 0 ? (
-            <StyledPillContainer>
-              <Pill label={advancedFilterQuerySubFilterCount.toString()} />
-            </StyledPillContainer>
+            <Badge color="accent">
+              {advancedFilterQuerySubFilterCount.toString()}
+            </Badge>
           ) : undefined
         }
-      >{t`Advanced filter`}</ListItem>
+      >{t`Advanced filter`}</ListItemButton>
     </SelectableListItem>
   );
 };

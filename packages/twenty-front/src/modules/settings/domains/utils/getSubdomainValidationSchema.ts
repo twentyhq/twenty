@@ -8,11 +8,12 @@ import { z } from 'zod';
 export const getSubdomainValidationSchema = () =>
   z
     .string()
-    .min(1, { message: t`Subdomain cannot be empty` })
-    .max(30, { message: t`Subdomain cannot be longer than 30 characters` })
+    .min(1, { error: () => t`Subdomain cannot be empty` })
+    .max(30, { error: () => t`Subdomain cannot be longer than 30 characters` })
     .regex(SUBDOMAIN_PATTERN, {
-      message: t`Use letter, number and dash only. Start and finish with a letter or a number`,
+      error: () =>
+        t`Use letter, number and dash only. Start and finish with a letter or a number`,
     })
     .refine((value) => !RESERVED_SUBDOMAINS.includes(value.toLowerCase()), {
-      message: t`This subdomain is reserved`,
+      error: () => t`This subdomain is reserved`,
     });

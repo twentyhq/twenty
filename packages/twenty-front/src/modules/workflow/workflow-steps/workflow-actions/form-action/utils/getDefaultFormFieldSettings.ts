@@ -1,6 +1,7 @@
 import { CoreObjectNameSingular, FieldMetadataType } from 'twenty-shared/types';
 import { type WorkflowFormFieldType } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormFieldType';
 import { assertUnreachable } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 } from 'uuid';
 
 export const getDefaultFormFieldSettings = (type: WorkflowFormFieldType) => {
@@ -9,29 +10,29 @@ export const getDefaultFormFieldSettings = (type: WorkflowFormFieldType) => {
       return {
         id: v4(),
         name: 'text',
-        label: 'Text',
-        placeholder: 'Enter your text',
+        label: doNotTranslate('Text'),
+        placeholder: doNotTranslate('Enter your text'),
       };
     case FieldMetadataType.NUMBER:
       return {
         id: v4(),
         name: 'number',
-        label: 'Number',
+        label: doNotTranslate('Number'),
         placeholder: '1000',
       };
     case FieldMetadataType.DATE:
       return {
         id: v4(),
         name: 'date',
-        label: 'Date',
-        placeholder: 'mm/dd/yyyy',
+        label: doNotTranslate('Date'),
+        placeholder: doNotTranslate('mm/dd/yyyy'),
       };
     case 'RECORD':
       return {
         id: v4(),
         name: 'record',
-        label: 'Record',
-        placeholder: `Select a Company`,
+        label: doNotTranslate('Record'),
+        placeholder: doNotTranslate(`Select a Company`),
         settings: {
           objectName: CoreObjectNameSingular.Company,
         },
@@ -40,8 +41,8 @@ export const getDefaultFormFieldSettings = (type: WorkflowFormFieldType) => {
       return {
         id: v4(),
         name: 'select',
-        label: 'Select',
-        placeholder: 'Choose a value',
+        label: doNotTranslate('Select'),
+        placeholder: doNotTranslate('Choose a value'),
         settings: {
           selectType: 'EXISTING_FIELD',
           selectedFieldId: undefined,
@@ -51,8 +52,8 @@ export const getDefaultFormFieldSettings = (type: WorkflowFormFieldType) => {
       return {
         id: v4(),
         name: 'multiSelect',
-        label: 'Multi-Select',
-        placeholder: 'Choose values',
+        label: doNotTranslate('Multi-Select'),
+        placeholder: doNotTranslate('Choose values'),
         settings: {
           selectType: 'EXISTING_FIELD',
           selectedFieldId: undefined,

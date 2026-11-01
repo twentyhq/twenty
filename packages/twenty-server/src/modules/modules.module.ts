@@ -1,5 +1,14 @@
 import { Module } from '@nestjs/common';
 
+import { MessagingQueryHookModule } from 'src/modules/messaging/common/query-hooks/messaging-query-hook.module';
+import { CalendarQueryHookModule } from 'src/modules/calendar/common/query-hooks/calendar-query-hook.module';
+import { CallRecordingQueryHookModule } from 'src/modules/call-recording/query-hooks/call-recording-query-hook.module';
+import { DashboardQueryHookModule } from 'src/modules/dashboard/query-hooks/dashboard-query-hook.module';
+import { BlocklistQueryHookModule } from 'src/modules/blocklist/query-hooks/blocklist-query-hook.module';
+import { WorkspaceMemberQueryHookModule } from 'src/modules/workspace-member/query-hooks/workspace-member-query-hook.module';
+import { NoteQueryHookModule } from 'src/modules/note/query-hooks/note-query-hook.module';
+import { TaskQueryHookModule } from 'src/modules/task/query-hooks/task-query-hook.module';
+import { TimelineQueryHookModule } from 'src/modules/timeline/query-hooks/timeline-query-hook.module';
 import { EmailingModule } from 'src/modules/emailing/emailing.module';
 import { MessagingWebhooksModule } from 'src/modules/messaging-webhooks/messaging-webhooks.module';
 import { ConnectedAccountSyncWebhooksModule } from 'src/modules/connected-account-sync-webhooks/connected-account-sync-webhooks.module';
@@ -31,6 +40,15 @@ import { WorkspaceMemberModule } from 'src/modules/workspace-member/workspace-me
     CallRecordingModule,
     DashboardModule,
     SendEmailModule,
+    MessagingQueryHookModule,
+    CalendarQueryHookModule,
+    CallRecordingQueryHookModule,
+    DashboardQueryHookModule,
+    BlocklistQueryHookModule,
+    WorkspaceMemberQueryHookModule,
+    NoteQueryHookModule,
+    TaskQueryHookModule,
+    TimelineQueryHookModule,
   ],
 })
 export class ModulesModule {}

@@ -1,7 +1,3 @@
-import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
-import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
-import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
-import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { PageLayoutContentProvider } from '@/page-layout/contexts/PageLayoutContentContext';
@@ -23,6 +19,7 @@ import { createDefaultStandaloneRichTextWidget } from '@/page-layout/utils/creat
 import { RecordPageAddWidgetSection } from '@/page-layout/widgets/components/RecordPageAddWidgetSection';
 import { WidgetCardShell } from '@/page-layout/widgets/components/WidgetCardShell';
 import { useOpenWidgetSettingsInSidePanel } from '@/side-panel/hooks/useOpenWidgetSettingsInSidePanel';
+import { PageLayoutSidePanelTargetProvider } from '@/side-panel/pages/page-layout/components/PageLayoutSidePanelTargetProvider';
 import { SidePanelPageLayoutRecordPageWidgetTypeSelect } from '@/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
@@ -49,9 +46,16 @@ const NOTE_WIDGET = createDefaultStandaloneRichTextWidget({
   pageLayoutTabId: 'tab-1',
   title: 'Note',
   body: {
-    blocknote: JSON.stringify([
-      { id: 'instructions', type: 'paragraph', content: 'Shared instructions' },
-    ]),
+    tiptap: JSON.stringify({
+      type: 'doc',
+      attrs: { schemaVersion: 1 },
+      content: [
+        {
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'Shared instructions' }],
+        },
+      ],
+    }),
     markdown: null,
   },
   position: { layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index: 0 },
@@ -59,6 +63,10 @@ const NOTE_WIDGET = createDefaultStandaloneRichTextWidget({
 const DRAFT_ATOM = pageLayoutDraftComponentState.atomFamily({
   instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
 });
+const TARGET_RECORD_IDENTIFIER = {
+  id: 'company-record',
+  targetObjectNameSingular: 'company',
+};
 const EDITING_WIDGET_ATOM = pageLayoutEditingWidgetIdComponentState.atomFamily({
   instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
 });
@@ -186,18 +194,6 @@ const meta: Meta<typeof RecordPageNoteWidgetStory> = {
       }),
       'tab-1',
     );
-    jotaiStore.set(
-      contextStoreCurrentObjectMetadataItemIdComponentState.atomFamily({
-        instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-      }),
-      company.id,
-    );
-    jotaiStore.set(
-      contextStoreTargetedRecordsRuleComponentState.atomFamily({
-        instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
-      }),
-      { mode: 'selection', selectedRecordIds: ['company-record'] },
-    );
   },
   decorators: [
     ToastDecorator,
@@ -207,14 +203,12 @@ const meta: Meta<typeof RecordPageNoteWidgetStory> = {
           <LayoutRenderingProvider
             value={{
               layoutType: args.layoutType,
-              targetRecordIdentifier: {
-                id: 'company-record',
-                targetObjectNameSingular: 'company',
-              },
+              targetRecordIdentifier: TARGET_RECORD_IDENTIFIER,
             }}
           >
-            <ContextStoreComponentInstanceContext.Provider
-              value={{ instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID }}
+            <PageLayoutSidePanelTargetProvider
+              pageLayoutId={PAGE_LAYOUT_TEST_INSTANCE_ID}
+              targetRecordIdentifier={TARGET_RECORD_IDENTIFIER}
             >
               <PageLayoutContentProvider
                 value={{
@@ -227,7 +221,7 @@ const meta: Meta<typeof RecordPageNoteWidgetStory> = {
                   <Story />
                 </div>
               </PageLayoutContentProvider>
-            </ContextStoreComponentInstanceContext.Provider>
+            </PageLayoutSidePanelTargetProvider>
           </LayoutRenderingProvider>
         </PageLayoutTestWrapper>
       </MemoryRouter>
@@ -259,7 +253,6 @@ export const SelectAndFormatText: Story = {
     await userEvent.tripleClick(canvas.getByText('Shared instructions'));
     const bold = await body.findByRole('button', { name: /^Bold/ });
     await waitFor(() => expect(bold).toBeVisible());
-    await expect(canvasElement.contains(bold)).toBe(false);
     await expect(jotaiStore.get(isSidePanelOpenedState.atom)).toBe(false);
     await expect(jotaiStore.get(EDITING_WIDGET_ATOM)).toBe('other-widget');
     await userEvent.click(bold);
@@ -272,7 +265,7 @@ export const SelectAndFormatText: Story = {
       expect(
         jotaiStore.get(DRAFT_ATOM).tabs[0].widgets[0].configuration,
       ).toMatchObject({
-        body: { blocknote: expect.stringContaining('"bold":true') },
+        body: { tiptap: expect.stringContaining('"type":"bold"') },
       }),
     );
     if (args.layoutType === PageLayoutType.RECORD_PAGE) {
@@ -286,6 +279,90 @@ export const SelectAndFormatText: Story = {
 export const DashboardSelection: Story = {
   args: { layoutType: PageLayoutType.DASHBOARD },
   play: SelectAndFormatText.play,
+};
+
+export const ApplyColors: Story = {
+  args: { layoutType: PageLayoutType.DASHBOARD },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const editor = await canvas.findByRole('textbox');
+    await userEvent.click(canvas.getByText('Shared instructions'));
+    await waitFor(() => expect(editor).toHaveFocus());
+    await userEvent.tripleClick(canvas.getByText('Shared instructions'));
+    await userEvent.click(
+      await body.findByRole('button', { name: 'Text and background colors' }),
+    );
+    const popup = await body.findByRole('dialog', {
+      name: 'Text and background colors',
+    });
+    await expect(within(popup).getByText('Text Colors')).toBeVisible();
+    await expect(within(popup).getByText('Background Colors')).toBeVisible();
+    await expect(
+      within(popup).getAllByRole('button', { name: 'Default' })[0],
+    ).toHaveAttribute('aria-pressed', 'true');
+    await userEvent.click(
+      within(popup).getAllByRole('button', { name: 'Red' })[0],
+    );
+    await waitFor(() =>
+      expect(body.queryByRole('dialog')).not.toBeInTheDocument(),
+    );
+    await waitFor(() => expect(editor).toHaveFocus());
+    await expect(
+      editor.querySelector('[data-text-color="red"]'),
+    ).toHaveTextContent('Shared instructions');
+    await userEvent.click(
+      await body.findByRole('button', { name: 'Text and background colors' }),
+    );
+    const reopened = await body.findByRole('dialog');
+    await expect(
+      within(reopened).getAllByRole('button', { name: 'Red' })[0],
+    ).toHaveAttribute('aria-pressed', 'true');
+    await userEvent.click(
+      within(reopened).getAllByRole('button', { name: 'Blue' })[1],
+    );
+    await waitFor(() => expect(editor).toHaveFocus());
+    await expect(
+      editor.querySelector('[data-background-color="blue"]'),
+    ).toHaveTextContent('Shared instructions');
+    await waitFor(() =>
+      expect(
+        jotaiStore.get(DRAFT_ATOM).tabs[0].widgets[0].configuration,
+      ).toMatchObject({
+        body: {
+          tiptap: expect.stringContaining('"backgroundColor":"blue"'),
+        },
+      }),
+    );
+  },
+};
+
+export const AlignText: Story = {
+  args: { layoutType: PageLayoutType.DASHBOARD },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    await userEvent.tripleClick(canvas.getByText('Shared instructions'));
+    await expect(
+      await body.findByRole('button', { name: 'Align left' }),
+    ).toHaveAttribute('aria-pressed', 'true');
+    await userEvent.click(body.getByRole('button', { name: 'Align center' }));
+    await waitFor(() =>
+      expect(canvas.getByText('Shared instructions')).toHaveStyle({
+        textAlign: 'center',
+      }),
+    );
+    await expect(
+      body.getByRole('button', { name: 'Align center' }),
+    ).toHaveAttribute('aria-pressed', 'true');
+    await waitFor(() =>
+      expect(
+        jotaiStore.get(DRAFT_ATOM).tabs[0].widgets[0].configuration,
+      ).toMatchObject({
+        body: { tiptap: expect.stringContaining('"textAlign":"center"') },
+      }),
+    );
+  },
 };
 
 export const CancelPendingEdit: Story = {

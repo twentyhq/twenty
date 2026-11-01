@@ -6,9 +6,8 @@ import { getRecordCreationCommandType } from '@/command-menu-item/engine-command
 import { useCreateCoreWorkflow } from '@/object-core/workflows/hooks/useCreateCoreWorkflow';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const CreateNewRecordCommand = () => {
   const {
@@ -23,13 +22,12 @@ export const CreateNewRecordCommand = () => {
         (item) => item.id === creationTargetObjectMetadataId,
       )
     : contextObjectMetadataItem;
-  const isWorkflowCoreIndexPageEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_WORKFLOW_CORE_INDEX_PAGE_ENABLED,
-  );
   const { createCoreWorkflow } = useCreateCoreWorkflow();
 
   if (!isDefined(objectMetadataItem)) {
-    throw new Error('Object metadata item is required to create a record');
+    throw new Error(
+      doNotTranslate('Object metadata item is required to create a record'),
+    );
   }
 
   const commandType = getRecordCreationCommandType({
@@ -38,7 +36,6 @@ export const CreateNewRecordCommand = () => {
     recordIndexId,
     hasAnySoftDeleteFilterOnView,
     creationTargetObjectMetadataId,
-    isWorkflowCoreIndexPageEnabled,
   });
 
   if (commandType === 'workflow') {

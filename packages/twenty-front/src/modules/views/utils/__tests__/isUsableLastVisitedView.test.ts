@@ -6,43 +6,30 @@ describe('isUsableLastVisitedView', () => {
     expect(
       isUsableLastVisitedView({
         lastVisitedView: undefined,
-        isInitialObjectViewEnabled: true,
       }),
     ).toBe(false);
   });
 
-  it('should refuse a widget view whatever the flag', () => {
+  it('should refuse a widget view', () => {
     expect(
       isUsableLastVisitedView({
         lastVisitedView: { key: null, type: ViewType.TABLE_WIDGET },
-        isInitialObjectViewEnabled: false,
       }),
     ).toBe(false);
   });
 
-  it('should refuse the index view when the flag is on', () => {
+  it('should refuse the index view', () => {
     expect(
       isUsableLastVisitedView({
         lastVisitedView: { key: ViewKey.INDEX, type: ViewType.TABLE },
-        isInitialObjectViewEnabled: true,
       }),
     ).toBe(false);
   });
 
-  it('should accept the index view when the flag is off', () => {
-    expect(
-      isUsableLastVisitedView({
-        lastVisitedView: { key: ViewKey.INDEX, type: ViewType.TABLE },
-        isInitialObjectViewEnabled: false,
-      }),
-    ).toBe(true);
-  });
-
-  it('should accept a user owned view whatever the flag', () => {
+  it('should accept a user owned view', () => {
     expect(
       isUsableLastVisitedView({
         lastVisitedView: { key: null, type: ViewType.TABLE },
-        isInitialObjectViewEnabled: true,
       }),
     ).toBe(true);
   });

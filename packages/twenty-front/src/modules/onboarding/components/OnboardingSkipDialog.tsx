@@ -15,7 +15,6 @@ import { themeCssVariables } from 'twenty-ui/theme';
 const StyledHeader = styled(Dialog.Header)`
   align-items: center;
   position: relative;
-  text-align: center;
 `;
 
 const StyledCloseButton = styled.div`
@@ -58,9 +57,9 @@ export const OnboardingSkipDialog = ({
 
   return (
     <DialogInstance dialogId={dialogId} dismissible renderInDocumentBody>
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          onKeyDown={onKeyDown}
           size="compact"
           initialFocus={firstActionRef}
           finalFocus={finalFocus}

@@ -1,17 +1,20 @@
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
 import { SettingsBillingLimitForm } from '@/settings/billing/components/SettingsBillingLimitForm';
 import { EMPTY_USAGE_LIMIT_FORM_VALUES } from '@/settings/billing/constants/EmptyUsageLimitFormValues';
+import { USAGE_LIMIT_PRESET_QUERY_PARAM } from '@/settings/billing/constants/UsageLimitPresetQueryParam';
 import { useCreateUsageLimit } from '@/settings/billing/hooks/useCreateUsageLimit';
 import { useUsageQuotaDefinitions } from '@/settings/billing/hooks/useUsageQuotaDefinitions';
 import { useUsageQuotaScopeConsumption } from '@/settings/billing/hooks/useUsageQuotaScopeConsumption';
 import { type UsageLimitFormValues } from '@/settings/billing/types/UsageLimitFormValues';
 import { buildCreateUsageLimitInput } from '@/settings/billing/utils/buildCreateUsageLimitInput';
+import { buildUsageLimitFormValuesFromPreset } from '@/settings/billing/utils/buildUsageLimitFormValuesFromPreset';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
@@ -25,9 +28,20 @@ export const SettingsBillingNewLimit = () => {
     useUsageQuotaDefinitions();
   const { createUsageLimit, loading: isSaving } = useCreateUsageLimit();
 
-  const [values, setValues] = useState<UsageLimitFormValues>(
-    EMPTY_USAGE_LIMIT_FORM_VALUES,
+  const [searchParams] = useSearchParams();
+  const [editedValues, setEditedValues] = useState<UsageLimitFormValues | null>(
+    null,
   );
+
+  // Definitions load after mount, so the preset is resolved on read until the first edit.
+  const values =
+    editedValues ??
+    (isDefined(usageQuotaDefinitions)
+      ? buildUsageLimitFormValuesFromPreset({
+          definitions: usageQuotaDefinitions,
+          presetId: searchParams.get(USAGE_LIMIT_PRESET_QUERY_PARAM),
+        })
+      : EMPTY_USAGE_LIMIT_FORM_VALUES);
 
   const input = buildCreateUsageLimitInput(values);
   const { scopeConsumption } = useUsageQuotaScopeConsumption(values);
@@ -39,7 +53,7 @@ export const SettingsBillingNewLimit = () => {
 
     try {
       await createUsageLimit({ variables: { input } });
-      enqueueToast({ variant: 'success', children: t`Limit created.` });
+      enqueueToast({ status: 'success', children: t`Limit created.` });
       navigate(SettingsPath.BillingLimits);
     } catch (error) {
       const serverMessage =
@@ -48,7 +62,7 @@ export const SettingsBillingNewLimit = () => {
           : undefined;
 
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: serverMessage ?? t`Failed to create the limit.`,
       });
     }
@@ -87,7 +101,7 @@ export const SettingsBillingNewLimit = () => {
             definitions={usageQuotaDefinitions}
             values={values}
             scopeConsumption={scopeConsumption}
-            onChange={setValues}
+            onChange={setEditedValues}
           />
         )}
       </SettingsPageContainer>

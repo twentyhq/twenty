@@ -7,10 +7,14 @@ import { Popover } from '@ui/primitives/surfaces/Popover/Popover';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { type DropdownSubmenuTriggerProps } from '../types/DropdownSubmenuTriggerProps';
+import { DropdownItemOwner } from './DropdownItemOwner';
+import { getNativeDisabled } from './getNativeDisabled';
+import { getDropdownItemExplicitId } from './getDropdownItemExplicitId';
 import { getDropdownFocusTarget } from './getDropdownFocusTarget';
 import { useDropdownContext } from './useDropdownContext';
 import { useDropdownItemFocus } from './useDropdownItemFocus';
 import { useRegisterDropdownLabelElement } from './useRegisterDropdownLabelElement';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const DropdownSubmenuTrigger = ({
   color,
@@ -27,7 +31,6 @@ export const DropdownSubmenuTrigger = ({
   nativeButton = !isDefined(render),
   openOnHover = true,
   onKeyDown,
-  onFocus,
   id,
   ref,
   ...props
@@ -44,7 +47,7 @@ export const DropdownSubmenuTrigger = ({
   } = useDropdownContext();
   const triggerType = open ? type : rootType;
   const generatedId = useId();
-  const itemId = id ?? generatedId;
+  const itemId = getDropdownItemExplicitId({ id, render }) ?? generatedId;
   const itemFocus = useDropdownItemFocus({
     id: itemId,
     disabled,
@@ -65,10 +68,6 @@ export const DropdownSubmenuTrigger = ({
       role={parentType === 'menu' ? 'menuitem' : undefined}
       aria-haspopup={triggerType === 'menu' ? 'menu' : 'dialog'}
       tabIndex={itemFocus.tabIndex}
-      onFocus={(event) => {
-        itemFocus.activate();
-        onFocus?.(event);
-      }}
       data-dropdown-item=""
       onKeyDown={(event) => {
         onKeyDown?.(event);
@@ -78,7 +77,9 @@ export const DropdownSubmenuTrigger = ({
         }
 
         const isRightToLeft = direction === 'rtl';
-        const forwardKey = isRightToLeft ? 'ArrowLeft' : 'ArrowRight';
+        const forwardKey = doNotTranslate(
+          isRightToLeft ? 'ArrowLeft' : 'ArrowRight',
+        );
 
         if (event.key === forwardKey) {
           event.preventDefault();
@@ -97,23 +98,32 @@ export const DropdownSubmenuTrigger = ({
           setOpen(true);
         }
       }}
-      render={(renderProps) => (
-        <ListItem
-          {...renderProps}
-          render={render ?? <button type="button" />}
-          disabled={disabled}
-          color={color}
-          startIcon={startIcon}
-          endIcon={endIcon}
-          description={description}
-          descriptionPlacement={descriptionPlacement}
-          shortcut={shortcut}
-          shortcutJoinLabel={shortcutJoinLabel}
-          hasSubmenu={hasSubmenu}
-        >
-          {children}
-        </ListItem>
-      )}
+      render={(renderProps) => {
+        const nativeDisabled = getNativeDisabled({
+          nativeButton,
+          renderProps,
+        });
+
+        return (
+          <ListItem
+            {...renderProps}
+            render={
+              <DropdownItemOwner render={render} disabled={nativeDisabled} />
+            }
+            disabled={disabled}
+            color={color}
+            startIcon={startIcon}
+            endIcon={endIcon}
+            description={description}
+            descriptionPlacement={descriptionPlacement}
+            shortcut={shortcut}
+            shortcutJoinLabel={shortcutJoinLabel}
+            hasSubmenu={hasSubmenu}
+          >
+            {children}
+          </ListItem>
+        );
+      }}
     />
   );
 };

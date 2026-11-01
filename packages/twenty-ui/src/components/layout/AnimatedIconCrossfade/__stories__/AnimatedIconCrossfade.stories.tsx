@@ -23,9 +23,10 @@ export default meta;
 
 type Story = StoryObj<typeof meta>;
 
-export const AnimatedIcon: Story = {
+export const Display: Story = {
   decorators: [ComponentDecorator],
-  render: function Render() {
+  argTypes: { isActive: { control: false } },
+  render: function Render(args) {
     const [isEditing, setIsEditing] = useState(false);
 
     return (
@@ -33,24 +34,20 @@ export const AnimatedIcon: Story = {
         size="sm"
         aria-expanded={isEditing}
         onClick={() => setIsEditing(!isEditing)}
-        startIcon={
-          <AnimatedIconCrossfade
-            isActive={isEditing}
-            activeIcon={<IconX size={14} />}
-            inactiveIcon={<IconPencil size={14} />}
-          />
-        }
+        startIcon={<AnimatedIconCrossfade {...args} isActive={isEditing} />}
       >
         Edit actions
       </Button>
     );
   },
+};
+
+export const AnimatedIcon: Story = {
+  ...Display,
   play: async ({ canvasElement }) => {
     const button = within(canvasElement).getByRole('button', {
       name: 'Edit actions',
     });
-    await document.fonts.load('500 1em Inter');
-    await document.fonts.ready;
     const icons = button.querySelectorAll('svg');
     const pencil = icons[0]!;
     const cross = icons[1]!;
@@ -72,8 +69,4 @@ export const AnimatedIcon: Story = {
     await expect(button).toHaveAttribute('aria-expanded', 'false');
     await userEvent.tab();
   },
-};
-export const AnimatedIconDocumentation: Story = {
-  decorators: AnimatedIcon.decorators,
-  render: AnimatedIcon.render,
 };

@@ -7,8 +7,8 @@ import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/stat
 import { getIsSingleWidgetTab } from '@/page-layout/utils/getIsSingleWidgetTab';
 import { isViewportFillingWidget } from '@/page-layout/widgets/utils/isViewportFillingWidget';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
-import { useIsDashboardPageLayout } from '@/side-panel/pages/page-layout/hooks/useIsDashboardPageLayout';
 import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
+import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
@@ -17,6 +17,7 @@ import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   PageLayoutTabLayoutMode,
+  PageLayoutType,
   WidgetType,
 } from '~/generated-metadata/graphql';
 
@@ -28,7 +29,8 @@ export const useOpenWidgetSettingsInSidePanel = (
     pageLayoutIdFromProps,
   );
 
-  const isDashboardPageLayout = useIsDashboardPageLayout();
+  const { layoutType } = useLayoutRenderingContext();
+  const isDashboardPageLayout = layoutType === PageLayoutType.DASHBOARD;
 
   const setPageLayoutEditingWidgetId = useSetAtomComponentState(
     pageLayoutEditingWidgetIdComponentState,

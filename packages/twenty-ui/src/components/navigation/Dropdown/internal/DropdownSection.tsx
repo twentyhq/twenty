@@ -1,11 +1,11 @@
 import { isPositiveInteger } from '@sniptt/guards';
 import { clsx } from 'clsx';
 
-import { MenuGroup } from '@ui/primitives/surfaces/Menu/internal/MenuGroup';
-import { MenuGroupLabel } from '@ui/primitives/surfaces/Menu/internal/MenuGroupLabel';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from '../Dropdown.module.scss';
+import { DropdownGroup } from './DropdownGroup';
+import { DropdownGroupLabel } from './DropdownGroupLabel';
 import { type DropdownSectionProps } from '../types/DropdownSectionProps';
 
 export const DropdownSection = ({
@@ -20,7 +20,7 @@ export const DropdownSection = ({
   const gridColumns = isPositiveInteger(columns) ? columns : undefined;
 
   return (
-    <MenuGroup
+    <DropdownGroup
       {...props}
       data-scrollable={scrollable || undefined}
       data-dropdown-columns={gridColumns}
@@ -33,9 +33,11 @@ export const DropdownSection = ({
       className={clsx(styles.section, className)}
     >
       {isDefined(label) && (
-        <MenuGroupLabel data-dropdown-section-label="">{label}</MenuGroupLabel>
+        <DropdownGroupLabel data-dropdown-section-label="">
+          {label}
+        </DropdownGroupLabel>
       )}
       {children}
-    </MenuGroup>
+    </DropdownGroup>
   );
 };

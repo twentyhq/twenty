@@ -1,30 +1,17 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
-import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
-import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { type StockCounter } from 'src/engine/core-modules/usage-limit/types/stock-counter.type';
 
 const ABSENT = '-';
 
-// The counter holds `limitValue - used`, so it only means anything for the value
-// it was warmed against. Keying on that value retires the counter as soon as the
-// limit changes, instead of leaving a remaining that outlives its limit.
 export const buildStockCounterKey = ({
   workspaceId,
-  resourceType,
-  operationType,
-  spenderType,
-  spenderId,
-  unit,
-  limitValue,
+  counter,
 }: {
   workspaceId: string;
-  resourceType: UsageResourceType;
-  operationType: UsageOperationType;
-  spenderType: SpenderType;
-  spenderId?: string | null;
-  unit: UsageUnit;
-  limitValue: number;
+  counter: Pick<
+    StockCounter,
+    'resourceType' | 'operationType' | 'spenderType' | 'spenderId' | 'unit'
+  >;
 }): string =>
-  `{${workspaceId}}:stock:${resourceType}:${operationType}:${spenderType}:${isNonEmptyString(spenderId) ? spenderId : ABSENT}:${unit}:${limitValue}`;
+  `{${workspaceId}}:stock-held:${counter.resourceType}:${counter.operationType}:${counter.spenderType}:${isNonEmptyString(counter.spenderId) ? counter.spenderId : ABSENT}:${counter.unit}`;

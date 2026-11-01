@@ -54,17 +54,13 @@ export const RecordTableWidgetJunctionAddNewRow = ({
   const handleTargetRecordSelected = (targetRecordId: string) => {
     createJunctionRecord(targetRecordId).catch((error) => {
       logError(error);
-      enqueueToast({ variant: 'error', children: t`Failed to add record` });
+      enqueueToast({ status: 'error', children: t`Failed to add record` });
     });
   };
 
   return (
     <DropdownRoot dropdownId={dropdownId} type="picker">
-      <Dropdown.Trigger
-        render={<div />}
-        nativeButton={false}
-        style={{ width: '100%' }}
-      >
+      <Dropdown.Trigger render={<div />} nativeButton={false}>
         <RecordTableActionRow LeftIcon={IconPlus} text={t`Add New`} />
       </Dropdown.Trigger>
       <DropdownContent align="start" width={GenericDropdownContentWidth.Medium}>

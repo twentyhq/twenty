@@ -121,8 +121,8 @@ describe('Connected account deletion runs the on-disconnect hook', () => {
 
     await globalThis.testDataSource.query(
       `INSERT INTO core."connectedAccount"
-         (id, handle, provider, visibility, "workspaceId", "userWorkspaceId", "applicationId", "connectionProviderId")
-       VALUES ($1, $2, $3, 'workspace', $4, $5, $6, $7)`,
+         (id, handle, provider, scope, "workspaceId", "userWorkspaceId", "applicationId", "connectionProviderId")
+       VALUES ($1, $2, $3, 'WORKSPACE', $4, $5, $6, $7)`,
       [
         connectedAccountId,
         'fathom-user@apple.dev',

@@ -2,11 +2,9 @@ import { isSelectedItemIdComponentFamilyState } from '@/ui/layout/selectable-lis
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  SettingsRow,
-  type SettingsRowProps,
-} from 'twenty-ui/components/settings';
+import { SettingsRow } from 'twenty-ui/components/settings';
 import { type IconComponent } from 'twenty-ui/icon';
+import { type SwitchProps } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 type CommandMenuItemSwitchProps = {
@@ -14,10 +12,9 @@ type CommandMenuItemSwitchProps = {
   LeftIcon?: IconComponent;
   text: string;
   checked: boolean;
-  onCheckedChange?: SettingsRowProps['onCheckedChange'];
-  size?: SettingsRowProps['size'];
+  onCheckedChange?: SwitchProps['onCheckedChange'];
+  size?: SwitchProps['size'];
   disabled?: boolean;
-  className?: string;
 };
 
 const StyledIconContainer = styled.span`
@@ -28,9 +25,9 @@ const StyledIconContainer = styled.span`
   padding: ${themeCssVariables.spacing[1]};
 
   svg {
-    height: ${themeCssVariables.icon.size.md}px;
+    height: calc(${themeCssVariables.icon.size.md} * 1px);
     stroke-width: ${themeCssVariables.icon.stroke.sm};
-    width: ${themeCssVariables.icon.size.md}px;
+    width: calc(${themeCssVariables.icon.size.md} * 1px);
   }
 `;
 
@@ -42,7 +39,6 @@ export const CommandMenuItemSwitch = ({
   onCheckedChange,
   size = 'md',
   disabled = false,
-  className,
 }: CommandMenuItemSwitchProps) => {
   const isSelectedItemId = useAtomComponentFamilyStateValue(
     isSelectedItemIdComponentFamilyState,
@@ -51,16 +47,15 @@ export const CommandMenuItemSwitch = ({
 
   return (
     <SettingsRow
-      className={className}
       focused={isSelectedItemId}
-      disabled={disabled}
-      startIcon={
+      startElement={
         isDefined(LeftIcon) && (
           <StyledIconContainer>
             <LeftIcon />
           </StyledIconContainer>
         )
       }
+      disabled={disabled}
       checked={checked}
       onCheckedChange={onCheckedChange}
       size={size}

@@ -24,12 +24,41 @@ jest.mock('@/settings/roles/components/SettingsRolesQueryEffect', () => ({
   SettingsRolesQueryEffect: () => null,
 }));
 
-jest.mock('@/app/routing/components/WorkspaceRouteUnavailable', () => ({
+jest.mock('@/ui/layout/page/components/WorkspaceRouteUnavailable', () => ({
   WorkspaceRouteUnavailable: () => <div>Role unavailable</div>,
 }));
 
 jest.mock('@/settings/roles/role/hooks/useSaveDraftRoleToDB', () => ({
   useSaveDraftRoleToDB: () => ({ saveDraftRoleToDB: mockSaveDraftRoleToDB }),
+}));
+
+jest.mock(
+  '@/settings/roles/role-permissions/agent-chat-channels/hooks/useIsRoleAgentChatChannelAccessDirty',
+  () => ({
+    useIsRoleAgentChatChannelAccessDirty: () => false,
+  }),
+);
+
+jest.mock(
+  '@/settings/roles/role-permissions/agent-chat-channels/hooks/useSaveRoleAgentChatChannelAccess',
+  () => ({
+    useSaveRoleAgentChatChannelAccess: () => ({
+      saveRoleAgentChatChannelAccess: jest.fn(),
+    }),
+  }),
+);
+
+jest.mock(
+  '@/settings/roles/role-permissions/agent-chat-channels/hooks/useResetRoleAgentChatChannelAccess',
+  () => ({
+    useResetRoleAgentChatChannelAccess: () => ({
+      resetRoleAgentChatChannelAccess: jest.fn(),
+    }),
+  }),
+);
+
+jest.mock('@/ai/hooks/useRefreshAgentChatChannels', () => ({
+  useRefreshAgentChatChannels: () => ({ refreshAgentChatChannels: jest.fn() }),
 }));
 
 jest.mock('@/users/hooks/useLoadCurrentUser', () => ({
@@ -96,6 +125,7 @@ const PERSISTED_ROLE: RoleWithPartialMembers = {
   icon: 'IconUser',
   canUpdateAllSettings: false,
   canAccessAllTools: false,
+  canAccessAllAgentChatChannels: false,
   canReadAllObjectRecords: true,
   canUpdateAllObjectRecords: true,
   canSoftDeleteAllObjectRecords: true,
@@ -103,6 +133,7 @@ const PERSISTED_ROLE: RoleWithPartialMembers = {
   canBeAssignedToUsers: true,
   canBeAssignedToAgents: true,
   canBeAssignedToApiKeys: true,
+  applicationId: 'application-id',
   isEditable: true,
   workspaceMembers: [],
   agents: [],
@@ -212,7 +243,7 @@ describe('SettingsRole', () => {
 
     expect(mockEnqueueToast).toHaveBeenCalledWith(
       expect.objectContaining({
-        variant: 'error',
+        status: 'error',
         children: 'Role name cannot be empty',
       }),
     );
@@ -265,7 +296,7 @@ describe('SettingsRole', () => {
       expect(mockEnqueueToast).toHaveBeenCalledTimes(1);
     });
     expect(mockEnqueueToast).toHaveBeenCalledWith(
-      expect.objectContaining({ variant: 'error' }),
+      expect.objectContaining({ status: 'error' }),
     );
     expect(mockLoadCurrentUser).not.toHaveBeenCalled();
     expect(saveButton).not.toHaveAttribute('aria-busy', 'true');

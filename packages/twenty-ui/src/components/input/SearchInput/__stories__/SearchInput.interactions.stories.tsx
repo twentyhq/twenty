@@ -2,7 +2,9 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useRef, useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
+import { IconButton } from '@ui/components/input/IconButton/IconButton';
 import { Dropdown } from '@ui/components/navigation/Dropdown/Dropdown';
+import { IconFilter } from '@ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { Field } from '@ui/primitives/input/Field/Field';
 import { Input } from '@ui/primitives/input/Input/Input';
@@ -78,11 +80,14 @@ const FilterPanelExample = ({
         value={search}
         onValueChange={setSearch}
         disabled={searchDisabled}
-        filterButtonAriaLabel="Filter people"
-        filterDropdown={(filterButton) => (
+        actions={
           <Dropdown.Root type="panel" open={open} onOpenChange={setOpen}>
             <Dropdown.Trigger
-              render={filterButton}
+              render={
+                <IconButton aria-label="Filter people">
+                  <IconFilter />
+                </IconButton>
+              }
               ref={triggerRef}
               onClick={onTriggerClick}
               disabled={filterDisabled}
@@ -98,7 +103,7 @@ const FilterPanelExample = ({
               </Dropdown.Section>
             </Dropdown.Content>
           </Dropdown.Root>
-        )}
+        }
       />
       <Button onClick={() => triggerRef.current?.focus()}>Focus filters</Button>
     </form>
@@ -148,6 +153,9 @@ export const NativeInput: Story = {
     );
     expect(onSubmit).toHaveBeenCalledWith('Ada');
     expect(onBlur).toHaveBeenCalledOnce();
+
+    await userEvent.clear(input);
+    expect(input).toHaveValue('');
   },
 };
 

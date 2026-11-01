@@ -29,6 +29,10 @@ export const downloadMeetingTranscriptContent = async ({
       throw error;
     }
 
+    console.warn(
+      `[teams] Microsoft withheld speaker names for transcript ${transcriptId} of meeting ${meetingId}: turn on Include speaker attribution in Teams admin center > Meetings > Meeting settings > Transcript API access > Configure.`,
+    );
+
     return fetchGraphText({
       accessToken,
       url: transcriptContentUrl,

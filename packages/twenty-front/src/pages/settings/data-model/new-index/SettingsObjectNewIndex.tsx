@@ -1,4 +1,5 @@
-import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
+import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useCreateOneIndexMetadataItem } from '@/object-metadata/hooks/useCreateOneIndexMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
@@ -17,18 +18,20 @@ import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
+import { isWorkspaceCustomIndex } from 'twenty-shared/metadata';
 import { AppPath, RelationType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Callout, useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconAlertTriangle } from 'twenty-ui/icon';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { IndexType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import {
   settingsObjectNewIndexFormSchema,
   type SettingsObjectNewIndexFormValues,
-} from '~/pages/settings/data-model/new-index/SettingsObjectNewIndexFormValues';
+} from '@/settings/data-model/indexes/forms/validation-schemas/settingsObjectNewIndexFormSchema';
 
 const isFieldIndexable = (field: FieldMetadataItem): boolean => {
   if (field.name === SEARCH_VECTOR_FIELD_NAME) return false;
@@ -80,6 +83,7 @@ export const SettingsObjectNewIndex = () => {
   }, [activeObjectMetadataItem, navigateApp, workspaceSurface.type]);
 
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const indexableFields = useMemo(
     () =>
@@ -96,7 +100,12 @@ export const SettingsObjectNewIndex = () => {
   }
 
   const customIndexCount = activeObjectMetadataItem.indexMetadatas.filter(
-    (indexMetadata) => indexMetadata.isCustom,
+    (indexMetadata) =>
+      isWorkspaceCustomIndex({
+        indexMetadata,
+        workspaceCustomApplicationId:
+          currentWorkspace?.workspaceCustomApplication?.id,
+      }),
   ).length;
   const reachedCap = customIndexCount >= MAX_CUSTOM_INDEXES_PER_OBJECT;
 
@@ -114,8 +123,8 @@ export const SettingsObjectNewIndex = () => {
     });
 
     if (result.status === 'successful') {
-      enqueueToast({ variant: 'success', children: t`Index created` });
-      navigate(SettingsPath.ObjectDetail, { objectNamePlural });
+      enqueueToast({ status: 'success', children: t`Index created` });
+      navigate(SettingsPath.ObjectIndexes, { objectNamePlural });
     }
   };
 
@@ -140,6 +149,12 @@ export const SettingsObjectNewIndex = () => {
               objectNamePlural,
             }),
           },
+          {
+            children: t`Indexes`,
+            href: getSettingsPath(SettingsPath.ObjectIndexes, {
+              objectNamePlural,
+            }),
+          },
           { children: t`New Index` },
         ]}
         actionButton={
@@ -148,7 +163,7 @@ export const SettingsObjectNewIndex = () => {
             isSaveDisabled={!canSave}
             isCancelDisabled={isSubmitting}
             onCancel={() =>
-              navigate(SettingsPath.ObjectDetail, { objectNamePlural })
+              navigate(SettingsPath.ObjectIndexes, { objectNamePlural })
             }
             onSave={formConfig.handleSubmit(handleSave)}
           />
@@ -157,8 +172,13 @@ export const SettingsObjectNewIndex = () => {
         <SettingsPageContainer>
           <Section.Root>
             <Callout
-              variant="warning"
-              Icon={IconAlertTriangle}
+              status="warning"
+              icon={
+                <IconAlertTriangle
+                  size={themeCssVariables.icon.size.md}
+                  aria-hidden="true"
+                />
+              }
               title={t`Use indexes sparingly`}
               description={t`Each index speeds up reads on the fields it covers, but slows down every insert and update, and uses disk space. Only add an index when you know which queries it serves.`}
             />

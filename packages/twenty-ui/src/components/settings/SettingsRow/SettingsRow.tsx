@@ -3,60 +3,55 @@ import { useId } from 'react';
 import { Switch } from '@ui/primitives/input/Switch/Switch';
 import { ListItem } from '@ui/primitives/navigation/ListItem/ListItem';
 import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
+import { SettingsRowLabel } from './internal/SettingsRowLabel';
 import { type SettingsRowProps } from './types/SettingsRowProps';
 
 export const SettingsRow = ({
   children,
-  startIcon,
+  startElement,
   description,
   focused = false,
-  checked,
-  defaultChecked,
-  onCheckedChange,
-  disabled = false,
-  readOnly = false,
-  size = 'sm',
-  name,
-  value,
-  required,
-  className,
-  style,
-  ref,
-  ...labelProps
+  labelRender,
+  labelRef,
+  ...controlProps
 }: SettingsRowProps) => {
-  const switchId = useId();
-  const labelId = `${switchId}-label`;
-  const descriptionId = `${switchId}-description`;
+  const generatedSwitchId = useId();
+  const { id: switchId = generatedSwitchId, size = 'sm' } = controlProps;
+  const labelId = `${generatedSwitchId}-label`;
+  const descriptionId = `${generatedSwitchId}-description`;
   const hasDescription = isRenderableSlot(description);
+  const hasControlLabel = isDefined(controlProps['aria-label']);
 
   return (
     <ListItem
-      className={className}
-      style={style}
-      startIcon={startIcon}
+      startIcon={startElement}
       focused={focused}
-      disabled={disabled}
+      data-disabled={controlProps.disabled || undefined}
       description={
         hasDescription && <span id={descriptionId}>{description}</span>
       }
       render={(renderProps) => (
-        <label {...labelProps} {...renderProps} htmlFor={switchId} ref={ref} />
+        <SettingsRowLabel
+          {...renderProps}
+          htmlFor={switchId}
+          render={labelRender}
+          ref={labelRef}
+        />
       )}
       endIcon={
         <Switch
+          {...controlProps}
+          aria-labelledby={
+            controlProps['aria-labelledby'] ?? (hasControlLabel ? '' : labelId)
+          }
+          aria-describedby={
+            controlProps['aria-describedby'] ??
+            (hasDescription ? descriptionId : undefined)
+          }
           id={switchId}
-          aria-labelledby={labelId}
-          aria-describedby={hasDescription ? descriptionId : undefined}
-          checked={checked}
-          defaultChecked={defaultChecked}
-          onCheckedChange={onCheckedChange}
-          disabled={disabled}
-          readOnly={readOnly}
           size={size}
-          name={name}
-          value={value}
-          required={required}
         />
       }
     >

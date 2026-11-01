@@ -29,7 +29,7 @@ export const SettingsApplicationAutoUpdateSection = ({
       });
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to update auto-upgrade setting.`,
       });
     }
@@ -38,7 +38,7 @@ export const SettingsApplicationAutoUpdateSection = ({
   return (
     <Section.Root>
       <Section.Header title={t`Auto update`} />
-      <Card.Root rounded fullWidth>
+      <Card.Root fullWidth>
         <SettingsOptionCardContentSwitch
           Icon={IconRefresh}
           title={t`Auto-upgrade`}

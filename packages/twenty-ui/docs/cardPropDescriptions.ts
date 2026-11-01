@@ -1,12 +1,15 @@
-import { type ComponentProps } from 'react';
-
-import { type Card } from '../src/primitives/surfaces/Card/Card';
+import { type CardRootProps } from '../src/primitives/surfaces/Card/types/CardRootProps';
 
 export const CARD_PROP_DESCRIPTIONS = {
   children: 'Card sections or other content.',
   fullWidth: 'Sets the card width to 100% of its container.',
-  rounded:
-    'Compatibility styling flag. Cards already use the same rounded corners when omitted.',
+  variant:
+    'default keeps the standard section appearance. compact uses secondary section backgrounds, 8px header and footer padding, 8px horizontal content padding without vertical padding, and no header divider.',
   backgroundColor:
     'CSS background color of the outer card. Child sections have their own backgrounds.',
-} satisfies Partial<Record<keyof ComponentProps<typeof Card.Root>, string>>;
+  className: 'CSS class merged with the part class.',
+  style: 'Native styles applied to the rendered part.',
+  ref: 'Ref to the default div, or the element supplied through render.',
+  render:
+    'Element or render callback composed through Base UI useRender. Supply native button or link attributes on the rendered owner.',
+} satisfies Partial<Record<keyof CardRootProps, string>>;

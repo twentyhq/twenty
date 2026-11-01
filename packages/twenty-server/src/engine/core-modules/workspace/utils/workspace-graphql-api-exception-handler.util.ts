@@ -25,8 +25,11 @@ export const workspaceGraphqlApiExceptionHandler = (error: Error) => {
         throw new ConflictError(error);
       case WorkspaceExceptionCode.ENVIRONMENT_VAR_NOT_ENABLED:
       case WorkspaceExceptionCode.WORKSPACE_CUSTOM_DOMAIN_DISABLED:
+      case WorkspaceExceptionCode.EVENT_LOG_RETENTION_DISABLED:
         throw new ForbiddenError(error);
       case WorkspaceExceptionCode.IFRAME_ORIGIN_LIMIT_EXCEEDED:
+      case WorkspaceExceptionCode.IFRAME_MEDIA_PERMISSION_ORIGIN_NOT_VALID:
+      case WorkspaceExceptionCode.IFRAME_MEDIA_PERMISSIONS_POLICY_TOO_LARGE:
       case WorkspaceExceptionCode.AI_MODEL_PIN_NOT_VALID:
         throw new UserInputError(error);
       default: {

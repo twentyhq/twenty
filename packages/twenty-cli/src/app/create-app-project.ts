@@ -21,6 +21,7 @@ import { EXIT_CODE } from '@/output/constants/exit-code.constant';
 import { hasErrorCode } from '@/utils/has-error-code';
 
 const TEMPLATE_PLACEHOLDER = 'TO-BE-GENERATED';
+const LOCKFILE_REWRITTEN_BY_INSTALL = 'yarn.lock';
 
 const createAppPathUnavailableError = ({
   appDirectory,
@@ -78,12 +79,14 @@ const findUnrenderedFiles = async (directory: string) => {
 
   for (const entry of entries) {
     const filePath = join(entry.parentPath, entry.name);
+    const relativePath = relative(directory, filePath);
 
     if (
       entry.isFile() &&
+      relativePath !== LOCKFILE_REWRITTEN_BY_INSTALL &&
       (await readFile(filePath, 'utf8')).includes(TEMPLATE_PLACEHOLDER)
     ) {
-      unrenderedFiles.push(relative(directory, filePath));
+      unrenderedFiles.push(relativePath);
     }
   }
 
@@ -136,12 +139,14 @@ export const createAppProject = async ({
   appName,
   appDisplayName,
   appDescription,
+  shouldIncludeExample = true,
   signal,
 }: {
   appDirectory: string;
   appName: string;
   appDisplayName: string;
   appDescription: string;
+  shouldIncludeExample?: boolean;
   signal: AbortSignal;
 }) => {
   await readAvailableAppDirectory(appDirectory);
@@ -159,6 +164,7 @@ export const createAppProject = async ({
       appName,
       appDisplayName,
       appDescription,
+      shouldIncludeExample,
       appDirectory: stagingDirectory,
     });
     signal.throwIfAborted();

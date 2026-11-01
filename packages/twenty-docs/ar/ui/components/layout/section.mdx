@@ -1,0 +1,75 @@
+---
+title: قسم
+description: جمّع المحتوى مع عنوان ووصف داعم وإجراء اختياري.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SectionReference from '/snippets/ui/generated/components/layout/section.mdx';
+
+## نظرة عامة
+
+`Section.Root` يجمع المحتوى ذي الصلة. يجمع `Section.Header` بين [العنوان](/ar/ui/primitives/typography/heading) ووصف ومحتوى `actions` اختياري. الأوصاف هي نص عادي مرتبط بالعنوان، لذا لا تضيف مستويات إلى مخطط المستند.
+
+<StoryEmbed storyId="ui-components-section--display" title="مثال على القسم" height={150} />
+
+## استخدام
+
+```tsx
+import { Section } from 'twenty-ui/components/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const WorkspaceSection = () => (
+  <Section.Root>
+    <Section.Header
+      title="Workspace settings"
+      description="Manage your workspace name and preferences."
+    />
+    <Text>Workspace preferences appear here.</Text>
+  </Section.Root>
+);
+```
+
+## أضف وصفًا وإجراءً
+
+```tsx
+import { Section } from 'twenty-ui/components/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const WorkspaceSection = () => (
+  <Section.Root>
+    <Section.Header
+      title="Workspace settings"
+      description="Manage your workspace name and preferences."
+      actions={<Button>Edit workspace</Button>}
+    />
+    <Text>Workspace preferences appear here.</Text>
+  </Section.Root>
+);
+```
+
+يكون `Section.Root` افتراضيًا عنصر `div` بعرض كامل مع محاذاة إلى اليسار ولون النص الأساسي. استخدم `align` و`color` و`fullWidth` لضبط حاوية المحتوى.
+
+يمكن أيضًا استخدام `Section.Header` بمفرده. تضبط قيم `level` و`size` و`color` العنوان، وتكون افتراضيًا `2` و`md` و`primary`. يحتوي الرأس على هامش واحد بمسافة 4 بعده. استخدم `style` أو `className` الأصلي لضبط تلك المسافة.
+
+## تجاوز سعة الوصف
+
+تعرض أوصاف السلاسل النصية ما يصل إلى خمسة أسطر. عيّن `descriptionLineClamp` إلى عدد صحيح موجب لاختيار حد آخر، أو إلى `false` لعرض الوصف الكامل دون تلميح أداة للفيض. يكشف التمرير فوقه النص الفائض. لا تضيف الأوصاف نقطة توقف Tab افتراضيا؛ عيّن `isDescriptionFocusable` لتمكين الوصول عبر التركيز إلى تلميح الأداة. يؤدي Escape إلى إخفاء تلميح الأداة.
+
+يقبل العنوان محتوى عقدة. اختر `level` للمخطط التفصيلي للمستند بشكل مستقل عن `size` و`color` المرئيين. أنشئ الروابط والمحتوى المنسق الآخر صراحةً في وصف العقدة.
+
+مرّر عقدة React للحصول على محتوى داعم أكثر ثراءً. تُعرض الأوصاف الغنية كما تم توفيرها، من دون اقتطاع تلقائي أو تلميحات.
+
+## التركيب
+
+يمرّر كلا الجزأين السمات الأصلية والمراجع وأسماء الفئات والأنماط و`render` إلى عنصرهما الخارجي. على سبيل المثال، يوفّر `Section.Root render={<section aria-label="Workspace settings" />}` قسمًا مسمّى، ويستخدم `Section.Header render={<header />}` حاوية رأس.
+
+عند الترحيل، استبدل `adornment` بـ `actions`. فعّل تركيز الوصف باستخدام `isDescriptionFocusable` عند الحاجة. يتم تصدير `SectionRootProps` و`SectionHeaderProps` من `twenty-ui/components/layout`.
+
+## الإزاحة
+
+<SectionReference />
+
+<PageBanner illustration="layout" />

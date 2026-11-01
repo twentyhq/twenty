@@ -24,7 +24,7 @@
 </ParamField>
 
 <ParamField body="borderRadius" type="BorderRadius&lt;string | number&gt;">
-  Corner radius in pixels or a CSS length. Defaults to 0.25rem and inherits the surrounding corner shape.
+  Round corner radius in pixels or a CSS length. Defaults to the 4px smRound theme token. Use mdRound for 8px corners or a custom radius for circles and capsules.
 </ParamField>
 
 <ParamField body="className" type="string">
@@ -37,6 +37,10 @@
 
 <ParamField body="highlightColor" type="BackgroundColor">
   Animated highlight color. Defaults to the theme lighter transparent background.
+</ParamField>
+
+<ParamField body="layout" type="&quot;block&quot; | &quot;inline&quot;" default="block">
+  `block` renders a block without a text node. `inline` sizes and aligns the placeholder like a line of text.
 </ParamField>
 
 <ParamField body="ref" type="Ref&lt;HTMLSpanElement&gt;">
@@ -52,5 +56,5 @@
 </ParamField>
 
 <ParamField body="width" type="Width&lt;string | number&gt;">
-  Placeholder width in pixels or a CSS length. Defaults to the available width.
+  Placeholder width in pixels or a CSS length. Defaults to the available width and never exceeds the container.
 </ParamField>

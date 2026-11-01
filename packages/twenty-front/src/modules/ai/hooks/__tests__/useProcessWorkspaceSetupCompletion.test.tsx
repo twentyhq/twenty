@@ -6,9 +6,8 @@ import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { useProcessWorkspaceSetupCompletion } from '@/ai/hooks/useProcessWorkspaceSetupCompletion';
-import { processedWorkspaceSetupCompletionIdsComponentState } from '@/ai/states/processedWorkspaceSetupCompletionIdsComponentState';
+import { processedWorkspaceSetupCompletionIdsState } from '@/ai/states/processedWorkspaceSetupCompletionIdsState';
 import { shouldContinueAiChatInSidePanelState } from '@/ai/states/shouldContinueAiChatInSidePanelState';
 import {
   jotaiStore,
@@ -40,17 +39,11 @@ jest.mock('@/ai/hooks/useIsWorkspaceSetupChat', () => ({
   useIsWorkspaceSetupChat: () => isWorkspaceSetupChat,
 }));
 
-const INSTANCE_ID = 'processWorkspaceSetupCompletionTest';
-
 const Wrapper = ({ children }: { children: ReactNode }) => (
   <JotaiProvider store={jotaiStore}>
-    <AgentChatComponentInstanceContext.Provider
-      value={{ instanceId: INSTANCE_ID }}
-    >
-      <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.PAGE}>
-        {children}
-      </AiChatSurfaceContext.Provider>
-    </AgentChatComponentInstanceContext.Provider>
+    <AiChatSurfaceContext.Provider value={AI_CHAT_SURFACE.PAGE}>
+      {children}
+    </AiChatSurfaceContext.Provider>
   </JotaiProvider>
 );
 
@@ -70,11 +63,7 @@ const buildCompletionMessage = (toolCallId: string) =>
   ]);
 
 const getProcessedToolCallIds = () =>
-  jotaiStore.get(
-    processedWorkspaceSetupCompletionIdsComponentState.atomFamily({
-      instanceId: INSTANCE_ID,
-    }),
-  );
+  jotaiStore.get(processedWorkspaceSetupCompletionIdsState.atom);
 
 describe('useProcessWorkspaceSetupCompletion', () => {
   beforeEach(() => {

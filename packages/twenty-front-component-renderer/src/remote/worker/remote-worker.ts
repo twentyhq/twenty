@@ -3,6 +3,7 @@ import '@remote-dom/react/polyfill';
 
 import {
   HtmlInputElement,
+  HtmlImgElement,
   HtmlTextareaElement,
 } from '../generated/remote-elements';
 
@@ -14,6 +15,7 @@ import { frontComponentHostCommunicationApi } from '@/remote/worker/thread/state
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToCustomElementTag';
 import { installClipboardPolyfill } from '@/polyfills/clipboard/utils/installClipboardPolyfill';
 import { installImageLoadingPolyfill } from '@/polyfills/image/utils/installImageLoadingPolyfill';
+import { installImageObjectUrlPolyfill } from '@/polyfills/image/utils/installImageObjectUrlPolyfill';
 import { workerActiveElementStore } from '@/polyfills/dom/states/workerActiveElementStore';
 import { installTextTreeWalkerPolyfill } from '@/polyfills/dom/utils/installTextTreeWalkerPolyfill';
 import { installInputSelectionPolyfill } from '@/polyfills/input-selection/utils/installInputSelectionPolyfill';
@@ -36,12 +38,19 @@ import { installLocalStyleOnBaseElements } from '@/polyfills/dom/utils/installLo
 import { installMutationObserver } from '@/polyfills/dom/utils/installMutationObserver';
 import { installNodeContainsPolyfill } from '@/polyfills/dom/utils/installNodeContainsPolyfill';
 import { resolvePolyfillHooks } from '@/polyfills/dom/utils/resolvePolyfillHooks';
+import { installPointerCapturePolyfill } from '@/polyfills/events/utils/installPointerCapturePolyfill';
 import { installEventConstructorPolyfills } from '@/polyfills/events/utils/installEventConstructorPolyfills';
 import { installHostEventRetargetingPolyfill } from '@/polyfills/events/utils/installHostEventRetargetingPolyfill';
+import { installOutsidePressObservation } from '@/polyfills/events/utils/installOutsidePressObservation';
 import { installSelectorMethodsPolyfill } from '@/polyfills/selectors/utils/installSelectorMethodsPolyfill';
 import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryStore';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
+import { installVisualViewportPolyfill } from '@/polyfills/geometry/utils/installVisualViewportPolyfill';
+import { installResizeObserverPolyfill } from '@/polyfills/geometry/utils/installResizeObserverPolyfill';
 import { installWindowGeometryPolyfill } from '@/polyfills/geometry/utils/installWindowGeometryPolyfill';
+import { workerScrollStore } from '@/polyfills/scroll/states/workerScrollStore';
+import { installElementScrollPolyfill } from '@/polyfills/scroll/utils/installElementScrollPolyfill';
+import { installWindowScrollPolyfill } from '@/polyfills/scroll/utils/installWindowScrollPolyfill';
 import { mediaQueryEnvironmentSource } from '@/polyfills/media-query/states/mediaQueryEnvironmentSource';
 import { workerMediaBridge } from '@/polyfills/media/states/workerMediaBridge';
 import { installMediaCapturePolyfills } from '@/polyfills/media/utils/installMediaCapturePolyfills';
@@ -55,6 +64,8 @@ import { exposeGlobals } from '@/utils/exposeGlobals';
 import { installAriaBooleanPropertyAccessors } from '@/remote/elements/utils/installAriaBooleanPropertyAccessors';
 import { installStylePropertyOnRemoteElements } from '@/remote/elements/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementAttributes } from '@/remote/elements/utils/patchRemoteElementAttributes';
+import { dispatchOutsidePressEvent } from '@/remote/elements/utils/dispatchOutsidePressEvent';
+import { dispatchOwnedPressEvent } from '@/remote/elements/utils/dispatchOwnedPressEvent';
 import { resolveRemoteElementPrototypes } from '@/remote/elements/utils/resolveRemoteElementPrototypes';
 import { buildFrontComponentHostCommunicationApiFromThreadImports } from '@/remote/worker/thread/utils/buildFrontComponentHostCommunicationApiFromThreadImports';
 import { handleCommandConfirmationModalResult } from '@/remote/worker/thread/utils/handleCommandConfirmationModalResult';
@@ -65,6 +76,11 @@ import { type FrontComponentHostThread } from '@/types/FrontComponentHostThread'
 import { type FrontComponentHostThreadExports } from '@/types/FrontComponentHostThreadExports';
 import { type WorkerExports } from '@/types/WorkerExports';
 import { createClonableErrorThreadSerialization } from '@/utils/clonable-error/createClonableErrorThreadSerialization';
+
+installImageObjectUrlPolyfill({
+  urlConstructor: URL,
+  imageElementPrototype: HtmlImgElement.prototype,
+});
 
 installStylePropertyOnRemoteElements();
 patchRemoteElementAttributes();
@@ -115,21 +131,35 @@ installDocumentActiveElementPolyfill({
   documentTarget: document,
   activeElementStore: workerActiveElementStore,
 });
+const workerPointerCapture = installPointerCapturePolyfill({
+  elementPrototype: HTMLElement.prototype,
+  documentTarget: document,
+});
+const polyfillHooks = resolvePolyfillHooks(
+  resolveGlobalScopeInstallTargets(toGlobalScopeRecord(globalThis)),
+);
 installActiveElementDetachmentHook({
-  hooks: resolvePolyfillHooks(
-    resolveGlobalScopeInstallTargets(toGlobalScopeRecord(globalThis)),
-  ),
+  hooks: polyfillHooks,
   activeElementStore: workerActiveElementStore,
   onRemoveSubtree: (node) => {
     workerFocusTransport.blurFocusedElementWithinSubtree(node);
     workerInputSelectionStore.scheduleDetachedElementSweep();
+    workerScrollStore.scheduleDetachedElementSweep();
+    workerPointerCapture.scheduleDetachedCaptureSweep();
   },
+});
+const workerOutsidePressObservation = installOutsidePressObservation({
+  hooks: polyfillHooks,
+  documentTarget: document,
 });
 installHostEventRetargetingPolyfill(HTMLElement.prototype);
 installElementClickMethodPolyfill(HTMLElement.prototype);
 installInputClickActivationPolyfill(HtmlInputElement.prototype);
 
-installGetComputedStyle(toGlobalScopeRecord(globalThis));
+installGetComputedStyle({
+  globalScope: toGlobalScopeRecord(globalThis),
+  geometryStore: workerGeometryStore,
+});
 
 installMutationObserver({
   globalScope: toGlobalScopeRecord(globalThis),
@@ -141,7 +171,26 @@ installElementGeometryPolyfill({
   geometryStore: workerGeometryStore,
 });
 
+installElementScrollPolyfill({
+  elementPrototype: Element.prototype,
+  scrollStore: workerScrollStore,
+});
+
 installWindowGeometryPolyfill({
+  globalScope: toGlobalScopeRecord(globalThis),
+  geometryStore: workerGeometryStore,
+});
+
+installWindowScrollPolyfill({
+  globalScope: toGlobalScopeRecord(globalThis),
+});
+
+installVisualViewportPolyfill({
+  globalScope: toGlobalScopeRecord(globalThis),
+  geometryStore: workerGeometryStore,
+});
+
+installResizeObserverPolyfill({
   globalScope: toGlobalScopeRecord(globalThis),
   geometryStore: workerGeometryStore,
 });
@@ -249,6 +298,15 @@ const workerExports: WorkerExports = {
       isFocusVisible,
     });
   },
+  pushCapturedPointerEvent: async (update) => {
+    workerPointerCapture.dispatchCapturedPointerEvent(update);
+  },
+  pushOutsidePressEvent: async (eventData) => {
+    dispatchOutsidePressEvent({ documentTarget: document, eventData });
+  },
+  pushOwnedPressEvent: async (eventData) => {
+    dispatchOwnedPressEvent({ documentTarget: document, eventData });
+  },
   pushMediaSessionEvents: async (batch) => {
     workerMediaBridge.dispatchEvents(batch);
   },
@@ -272,6 +330,7 @@ self.addEventListener('message', (event) => {
 
   workerGeometryStore.connectTransport(nextHostThread.imports);
   workerMediaBridge.connectTransport(nextHostThread.imports);
+  workerOutsidePressObservation.connectTransport(nextHostThread.imports);
 
   transferredPort.start();
 });

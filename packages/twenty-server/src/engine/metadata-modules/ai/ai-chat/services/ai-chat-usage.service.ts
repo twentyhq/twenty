@@ -36,11 +36,13 @@ export class AiChatUsageService {
       });
 
     if (enforcedLimits.length === 0) {
-      const allowanceUsage =
-        await this.usageLimitQuotaService.getAllowanceUsage(workspaceId);
+      const workspaceAllowanceUsage =
+        await this.usageLimitQuotaService.getWorkspaceAllowanceUsage(
+          workspaceId,
+        );
 
-      return isDefined(allowanceUsage)
-        ? { ...allowanceUsage, kind: 'allowance' }
+      return isDefined(workspaceAllowanceUsage)
+        ? { ...workspaceAllowanceUsage, kind: 'workspaceAllowance' }
         : null;
     }
 

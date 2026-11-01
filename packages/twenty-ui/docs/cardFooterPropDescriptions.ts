@@ -1,8 +1,11 @@
-import { type ComponentProps } from 'react';
-
-import { type Card } from '../src/primitives/surfaces/Card/Card';
+import { type CardFooterProps } from '../src/primitives/surfaces/Card/types/CardFooterProps';
 
 export const CARD_FOOTER_PROP_DESCRIPTIONS = {
   children: 'Footer content, such as actions or supporting text.',
   divider: 'Shows the top border unless explicitly set to false.',
-} satisfies Partial<Record<keyof ComponentProps<typeof Card.Footer>, string>>;
+  className: 'CSS class merged with the part class.',
+  style: 'Native styles applied to the rendered part.',
+  ref: 'Ref to the default div, or the element supplied through render.',
+  render:
+    'Element or render callback composed through Base UI useRender. Supply native button or link attributes on the rendered owner.',
+} satisfies Partial<Record<keyof CardFooterProps, string>>;

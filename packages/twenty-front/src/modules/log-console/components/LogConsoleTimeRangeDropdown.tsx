@@ -1,22 +1,21 @@
-import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { typedObjectEntries } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   IconCalendarEvent,
   IconChevronDown,
   IconChevronLeft,
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { LOG_CONSOLE_TIME_RANGE_PRESETS } from '@/log-console/constants/LogConsoleTimeRangePresets';
 import { useLogConsoleRetention } from '@/log-console/hooks/useLogConsoleRetention';
 import { logConsoleTimeZoneState } from '@/log-console/states/logConsoleTimeZoneState';
-import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
 import { type LogConsoleTimeRange } from '@/log-console/types/LogConsoleTimeRange';
 import { isLogConsoleTimeRangeWithinRetention } from '@/log-console/utils/isLogConsoleTimeRangeWithinRetention';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
@@ -33,20 +32,22 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 const LOG_CONSOLE_TIME_RANGE_DROPDOWN_ID = 'log-console-time-range';
 
 type LogConsoleTimeRangeDropdownProps = {
-  source: LogConsoleSource;
   timeRange: LogConsoleTimeRange;
   onTimeRangeChange: (timeRange: LogConsoleTimeRange) => void;
 };
 
 export const LogConsoleTimeRangeDropdown = ({
-  source,
   timeRange,
   onTimeRangeChange,
 }: LogConsoleTimeRangeDropdownProps) => {
   const { t } = useLingui();
   const { timeZone: memberTimeZone } = useDateTimeFormat();
-  const { retentionInDays, retentionDescription } =
-    useLogConsoleRetention(source);
+  const {
+    retentionInHours,
+    retentionLabel,
+    retentionDescription,
+    isRetentionConfigurable,
+  } = useLogConsoleRetention();
   const [logConsoleTimeZone, setLogConsoleTimeZone] = useAtomState(
     logConsoleTimeZoneState,
   );
@@ -56,11 +57,11 @@ export const LogConsoleTimeRangeDropdown = ({
 
   const timeZoneOptions = [
     { value: 'member', label: memberTimeZone },
-    { value: 'utc', label: 'UTC' },
+    { value: 'utc', label: doNotTranslate('UTC') },
   ] as const;
 
   const selectedTimeZoneLabel =
-    logConsoleTimeZone === 'utc' ? 'UTC' : memberTimeZone;
+    logConsoleTimeZone === 'utc' ? doNotTranslate('UTC') : memberTimeZone;
 
   const getTimeRangeLabel = (labeledTimeRange: LogConsoleTimeRange) => {
     if (labeledTimeRange === 'today') {
@@ -87,7 +88,7 @@ export const LogConsoleTimeRangeDropdown = ({
   const renderTimeRangeItem = (itemTimeRange: LogConsoleTimeRange) => {
     const isWithinRetention = isLogConsoleTimeRangeWithinRetention({
       timeRange: itemTimeRange,
-      retentionInDays,
+      retentionInHours,
     });
 
     return (
@@ -97,7 +98,7 @@ export const LogConsoleTimeRangeDropdown = ({
         disabled={isWithinRetention}
         side="right"
       >
-        <ListItem
+        <ListItemButton
           role="option"
           aria-selected={itemTimeRange === timeRange}
           selected={itemTimeRange === timeRange}
@@ -106,7 +107,7 @@ export const LogConsoleTimeRangeDropdown = ({
           onClick={() => selectTimeRange(itemTimeRange)}
         >
           {getTimeRangeLabel(itemTimeRange)}
-        </ListItem>
+        </ListItemButton>
       </Tooltip>
     );
   };
@@ -139,7 +140,7 @@ export const LogConsoleTimeRangeDropdown = ({
             </DropdownMenuHeader>
             <DropdownMenuItemsContainer scrollable={false}>
               {timeZoneOptions.map((timeZoneOption) => (
-                <ListItem
+                <ListItemButton
                   key={timeZoneOption.value}
                   role="option"
                   aria-selected={timeZoneOption.value === logConsoleTimeZone}
@@ -148,7 +149,7 @@ export const LogConsoleTimeRangeDropdown = ({
                   onClick={() => setLogConsoleTimeZone(timeZoneOption.value)}
                 >
                   {timeZoneOption.label}
-                </ListItem>
+                </ListItemButton>
               ))}
             </DropdownMenuItemsContainer>
           </LegacyDropdownContent>
@@ -166,25 +167,22 @@ export const LogConsoleTimeRangeDropdown = ({
             </DropdownMenuItemsContainer>
             <DropdownMenuSeparator />
             <DropdownMenuItemsContainer scrollable={false}>
-              <ListItem
-                description={plural(retentionInDays, {
-                  one: '# day',
-                  other: '# days',
-                })}
+              <ListItemButton
+                description={retentionLabel}
                 descriptionPlacement="end"
-                disabled={!source.requiresAuditLogs}
+                disabled={!isRetentionConfigurable}
                 onClick={openRetentionSettings}
               >
                 {t`Retention`}
-              </ListItem>
-              <ListItem
+              </ListItemButton>
+              <ListItemButton
                 description={selectedTimeZoneLabel}
                 descriptionPlacement="end"
                 hasSubmenu
                 onClick={() => setIsTimeZoneMenuOpen(true)}
               >
                 {t`Time zone`}
-              </ListItem>
+              </ListItemButton>
             </DropdownMenuItemsContainer>
           </LegacyDropdownContent>
         )

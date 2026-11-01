@@ -27,11 +27,11 @@ describe('runAgent', () => {
 
   it('POSTs the runAgent mutation to /metadata and returns the result', async () => {
     const payload = {
+      threadId: 'thread-id',
+      status: 'COMPLETED',
       result: { response: 'done' },
       error: null,
       success: true,
-      isWaiting: false,
-      threadId: null,
     };
 
     fetchSpy.mockResolvedValue(
@@ -76,11 +76,11 @@ describe('runAgent', () => {
         JSON.stringify({
           data: {
             runAgent: {
+              threadId: 'thread-id',
+              status: 'COMPLETED',
               result: { response: 'done' },
               error: null,
               success: true,
-              isWaiting: false,
-              threadId: 'thread-id',
             },
           },
         }),
@@ -111,10 +111,11 @@ describe('runAgent', () => {
 
   it('POSTs messages when provided instead of prompt', async () => {
     const payload = {
+      threadId: 'thread-id',
+      status: 'COMPLETED',
       result: { response: 'done' },
       error: null,
       success: true,
-      isWaiting: false,
     };
 
     fetchSpy.mockResolvedValue(

@@ -4,6 +4,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { setupGoogleMock } from 'test/integration/google/mocks/setup-google-mock.util';
 import { runWorkflowActionStep } from 'test/integration/graphql/suites/workflow/utils/run-workflow-action-step.util';
+import { buildEmailDocument } from 'test/integration/utils/build-email-document.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
 import { setTestConnectedAccountHandleAliases } from 'test/integration/utils/set-test-connected-account-handle-aliases.util';
@@ -50,7 +51,7 @@ describe('SEND_EMAIL workflow action on Gmail (integration)', () => {
           bcc: '{{trigger.bcc}}',
         },
         subject: '{{trigger.subject}}',
-        body: '<p>Gmail workflow body</p>',
+        body: JSON.stringify(buildEmailDocument('Gmail workflow body')),
       },
       payload: { ...RECIPIENTS, subject },
     });
@@ -126,7 +127,7 @@ describe('SEND_EMAIL workflow action on Gmail (integration)', () => {
         fromHandle: ALIAS,
         recipients: { to: RECIPIENTS.to, cc: '', bcc: '' },
         subject,
-        body: '<p>Gmail workflow alias body</p>',
+        body: JSON.stringify(buildEmailDocument('Gmail workflow alias body')),
       },
     });
 
@@ -151,7 +152,9 @@ describe('SEND_EMAIL workflow action on Gmail (integration)', () => {
         fromHandle: 'not-my-alias@apple.dev',
         recipients: { to: RECIPIENTS.to, cc: '', bcc: '' },
         subject: `Gmail workflow rejected sender ${randomUUID()}`,
-        body: '<p>Gmail workflow rejected body</p>',
+        body: JSON.stringify(
+          buildEmailDocument('Gmail workflow rejected body'),
+        ),
       },
     });
 

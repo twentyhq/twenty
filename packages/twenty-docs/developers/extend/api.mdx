@@ -1,16 +1,17 @@
 ---
 title: APIs
-icon: "plug"
+sidebarTitle: Overview
 description: REST and GraphQL APIs generated from your workspace schema.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Schema-per-tenant APIs
 
 There is no static API reference for Twenty. Each workspace has its own schema — when you add a custom object (say `Invoice`), it immediately gets REST and GraphQL endpoints identical to built-in objects like `Company` or `Person`. The API is generated from the schema, so endpoints use your object and field names directly — no opaque IDs.
 
-Your workspace-specific API documentation is available under **Settings → API & Webhooks** after creating an API key. It includes an interactive playground where you can execute real calls against your data.
+Your workspace-specific API documentation is available under **Settings → Developers → API** after creating an API key. It includes an interactive playground where you can execute real calls against your data.
 
 ## Two APIs
 
@@ -37,7 +38,7 @@ Both are available as REST and GraphQL. GraphQL adds batch upserts and the abili
 Authorization: Bearer YOUR_API_KEY
 ```
 
-Create an API key in **Settings → API & Webhooks → + Create key**. Copy it immediately — it's shown once. Keys can be scoped to a specific role under **Settings → Members → Roles → Assignment tab** to limit what they can access.
+Create an API key in **Settings → Developers → API → + Create key**. Copy it immediately — it's shown once. Keys can be scoped to a specific role under **Settings → Members → Roles → Assignment tab** to limit what they can access.
 
 <VimeoEmbed videoId="928786722" title="Creating API key" />
 
@@ -68,3 +69,5 @@ When `fields` is omitted on an object with more than 200 readable fields, each r
 |-------|-------|
 | Requests | 100 per minute |
 | Batch size | 60 records per call |
+
+<PageBanner illustration="dev-api" />

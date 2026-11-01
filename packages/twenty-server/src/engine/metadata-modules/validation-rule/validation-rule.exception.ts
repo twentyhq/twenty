@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { assertUnreachable } from 'twenty-shared/utils';
@@ -8,6 +10,7 @@ export enum ValidationRuleExceptionCode {
   VALIDATION_RULE_NOT_FOUND = 'VALIDATION_RULE_NOT_FOUND',
   INVALID_VALIDATION_RULE_INPUT = 'INVALID_VALIDATION_RULE_INPUT',
   INVALID_VALIDATION_RULE_EXPRESSION = 'INVALID_VALIDATION_RULE_EXPRESSION',
+  VALIDATION_RULES_NOT_ENTITLED = 'VALIDATION_RULES_NOT_ENTITLED',
 }
 
 const getValidationRuleExceptionUserFriendlyMessage = (
@@ -20,6 +23,8 @@ const getValidationRuleExceptionUserFriendlyMessage = (
       return msg`Invalid validation rule input.`;
     case ValidationRuleExceptionCode.INVALID_VALIDATION_RULE_EXPRESSION:
       return msg`Invalid validation rule expression.`;
+    case ValidationRuleExceptionCode.VALIDATION_RULES_NOT_ENTITLED:
+      return msg`Validation rules require the Organization plan.`;
     default:
       assertUnreachable(code);
   }

@@ -7,6 +7,7 @@ import { TYPING_DELAY } from '@/__stories__/shared/test-utils/timeouts';
 import { AVATAR_IMAGE_FIXTURE } from '@/__stories__/twenty-ui-gallery/constants/AvatarImageFixture';
 import { type TwentyUiGalleryPlayFunction } from '@/__stories__/twenty-ui-gallery/types/TwentyUiGalleryPlayFunction';
 import { observeAvatarImageLoads } from '@/__stories__/twenty-ui-gallery/utils/observeAvatarImageLoads';
+import { expectAssertionToKeepFailing } from '@/__stories__/twenty-ui-gallery/utils/expectAssertionToKeepFailing';
 
 const IS_BROWSER_TEST = import.meta.env.MODE === 'test';
 
@@ -16,19 +17,23 @@ const expectLoadedAvatar = async ({
   width,
 }: {
   avatar: HTMLElement;
-  source: string;
+  source?: string;
   width: number;
 }) => {
   await waitFor(() => {
-    const image = within(avatar).getByRole('presentation');
+    const image = within(avatar).getByRole('img', { name: 'Portrait of Jane' });
 
     expect(avatar.style.getPropertyValue('--avatar-image-status')).toBe(
       'loaded',
     );
-    expect(image).toHaveAttribute('src', source);
+    if (isDefined(source)) {
+      expect(image).toHaveAttribute('src', source);
+    }
+    expect(image).toHaveAttribute('data-composed-image');
+    expect(image).toHaveAttribute('data-ref-tag', 'HTML-IMG');
     expect(image).toHaveProperty('naturalWidth', width);
     expect(image).toBeVisible();
-    expect(within(avatar).queryByText('I')).not.toBeInTheDocument();
+    expect(within(avatar).queryByText('IF')).not.toBeInTheDocument();
   });
 };
 
@@ -40,6 +45,8 @@ export const avatarImageTest: TwentyUiGalleryPlayFunction = async ({
 
   const avatar = canvas.getByRole('button', { name: 'Profile avatar' });
   const activations = canvas.getByLabelText('Avatar activations');
+  const loadingStatus = canvas.getByLabelText('Avatar image loading status');
+  const imageLoadEvents = canvas.getByLabelText('Avatar image load events');
   const pendingSources: string[] = [];
   const imageLoads = IS_BROWSER_TEST ? observeAvatarImageLoads() : undefined;
 
@@ -75,7 +82,7 @@ export const avatarImageTest: TwentyUiGalleryPlayFunction = async ({
 
       expect(requestStatus.pending).toBeGreaterThan(0);
     });
-    await expect(within(avatar).getByText('I')).toBeVisible();
+    await expect(within(avatar).getByText('IF')).toBeVisible();
 
     return source;
   };
@@ -86,6 +93,22 @@ export const avatarImageTest: TwentyUiGalleryPlayFunction = async ({
       source: AVATAR_IMAGE_FIXTURE.firstSource,
       width: 40,
     });
+    await waitFor(() => {
+      expect(loadingStatus).toHaveTextContent('loaded');
+      expect(imageLoadEvents).toHaveTextContent('1');
+    });
+    const initialImage = within(avatar).getByRole('img', {
+      name: 'Portrait of Jane',
+    });
+
+    for (const attribute of [
+      'sizes',
+      'loading',
+      'decoding',
+      'referrerpolicy',
+    ]) {
+      await expect(initialImage).not.toHaveAttribute(attribute);
+    }
     await userEvent.click(avatar);
     await waitFor(() => expect(activations).toHaveTextContent('1'));
     await userEvent.click(
@@ -95,6 +118,10 @@ export const avatarImageTest: TwentyUiGalleryPlayFunction = async ({
       avatar,
       source: AVATAR_IMAGE_FIXTURE.replacementSource,
       width: 64,
+    });
+    await waitFor(() => {
+      expect(loadingStatus).toHaveTextContent('loaded');
+      expect(imageLoadEvents).toHaveTextContent('2');
     });
 
     const replacedSource = IS_BROWSER_TEST
@@ -108,10 +135,13 @@ export const avatarImageTest: TwentyUiGalleryPlayFunction = async ({
       expect(avatar.style.getPropertyValue('--avatar-image-status')).toBe(
         'error',
       );
-      expect(
-        within(avatar).queryByRole('presentation'),
-      ).not.toBeInTheDocument();
-      expect(within(avatar).getByText('I')).toBeVisible();
+      expect(loadingStatus).toHaveTextContent('error');
+      expect(within(avatar).queryByRole('img')).not.toBeInTheDocument();
+      const fallback = within(avatar).getByText('IF');
+
+      expect(fallback).toBeVisible();
+      expect(fallback.tagName).toBe('STRONG');
+      expect(fallback).toHaveAttribute('data-ref-tag', 'HTML-STRONG');
     });
     if (isDefined(replacedSource)) {
       await releasePendingImage(replacedSource);
@@ -121,10 +151,8 @@ export const avatarImageTest: TwentyUiGalleryPlayFunction = async ({
     await expect(avatar.style.getPropertyValue('--avatar-image-status')).toBe(
       'error',
     );
-    await expect(within(avatar).getByText('I')).toBeVisible();
-    await expect(
-      within(avatar).queryByRole('presentation'),
-    ).not.toBeInTheDocument();
+    await expect(within(avatar).getByText('IF')).toBeVisible();
+    await expect(within(avatar).queryByRole('img')).not.toBeInTheDocument();
 
     const unmountedSource = IS_BROWSER_TEST
       ? await startPendingImage()
@@ -157,6 +185,58 @@ export const avatarImageTest: TwentyUiGalleryPlayFunction = async ({
     await userEvent.click(remountedAvatar);
     await userEvent.keyboard('{Enter}');
     await waitFor(() => expect(activations).toHaveTextContent('4'));
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Use avatar source set' }),
+    );
+    await waitFor(() => {
+      const image = within(remountedAvatar).getByRole('img', {
+        name: 'Portrait of Jane',
+      });
+
+      expect(loadingStatus).toHaveTextContent('loaded');
+      expect(image).not.toHaveAttribute('src');
+      expect(image).not.toHaveAttribute('srcset');
+      expect(image).toHaveProperty('naturalWidth', 0);
+      expect(within(remountedAvatar).queryByText('IF')).not.toBeInTheDocument();
+    });
+    await expectAssertionToKeepFailing(() =>
+      expect(within(remountedAvatar).getByRole('img')).toHaveProperty(
+        'naturalWidth',
+        48,
+      ),
+    );
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Use avatar source' }),
+    );
+    await expectLoadedAvatar({
+      avatar: remountedAvatar,
+      source: AVATAR_IMAGE_FIXTURE.firstSource,
+      width: 40,
+    });
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Load avatar image in place' }),
+    );
+    await waitFor(() => {
+      const image = within(remountedAvatar).getByAltText('Portrait of Jane');
+
+      expect(image).toHaveProperty('naturalWidth', 40);
+      expect(loadingStatus).toHaveTextContent('loading');
+      expect(image).toHaveAttribute('data-loading');
+      expect(image).toHaveAttribute('aria-hidden', 'true');
+      expect(image).not.toBeVisible();
+      expect(within(remountedAvatar).getByText('IF')).toBeVisible();
+    });
+    await expectAssertionToKeepFailing(() =>
+      expect(loadingStatus).toHaveTextContent('loaded'),
+    );
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Preload avatar image' }),
+    );
+    await expectLoadedAvatar({
+      avatar: remountedAvatar,
+      source: AVATAR_IMAGE_FIXTURE.firstSource,
+      width: 40,
+    });
     await expect(errorHandler).not.toHaveBeenCalled();
   } finally {
     imageLoads?.restore();

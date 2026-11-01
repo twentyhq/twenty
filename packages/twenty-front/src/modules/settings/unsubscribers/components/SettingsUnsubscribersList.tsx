@@ -110,7 +110,7 @@ export const SettingsUnsubscribersList = () => {
     unsubscribeTopicId,
   }: Pick<MessageSuppression, 'reason' | 'unsubscribeTopicId'>) => {
     if (reason === MessageSuppressionReason.TRACKING) {
-      return t`Clicks only`;
+      return t`Opens and clicks only`;
     }
 
     if (!isDefined(unsubscribeTopicId)) {
@@ -132,7 +132,7 @@ export const SettingsUnsubscribersList = () => {
     <StyledContainer>
       <SettingsTableListSection<MessageSuppression>
         title={t`Opt-outs`}
-        description={t`Email addresses that opted out of campaign emails, a topic, or click tracking`}
+        description={t`Email addresses that opted out of campaign emails, a topic, or open and click tracking`}
         toolbar={
           <StyledToolbar>
             <StyledSearch>

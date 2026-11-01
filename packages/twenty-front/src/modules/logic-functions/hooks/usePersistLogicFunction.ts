@@ -67,7 +67,7 @@ export const usePersistLogicFunction = () => {
             operationType: CrudOperationType.CREATE,
           });
         } else {
-          enqueueToast({ variant: 'error', children: t`An error occurred.` });
+          enqueueToast({ status: 'error', children: t`An error occurred.` });
         }
 
         return {
@@ -103,7 +103,7 @@ export const usePersistLogicFunction = () => {
             operationType: CrudOperationType.UPDATE,
           });
         } else {
-          enqueueToast({ variant: 'error', children: t`An error occurred.` });
+          enqueueToast({ status: 'error', children: t`An error occurred.` });
         }
 
         return {
@@ -143,7 +143,7 @@ export const usePersistLogicFunction = () => {
             operationType: CrudOperationType.DELETE,
           });
         } else {
-          enqueueToast({ variant: 'error', children: t`An error occurred.` });
+          enqueueToast({ status: 'error', children: t`An error occurred.` });
         }
 
         return {

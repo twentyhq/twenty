@@ -14,6 +14,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import semver from 'semver';
 import { isDefined } from 'twenty-shared/utils';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -22,7 +23,9 @@ import {
   parseSingleJsonLine,
   runCliForTest,
 } from '@/__tests__/utils/run-cli-for-test';
+import { createAppProject } from '@/app/create-app-project';
 import { getAppTemplateDirectory } from '@/app/get-app-template-directory';
+import { CLI_VERSION } from '@/constants/cli-version.constant';
 
 vi.mock('@/app/get-app-template-directory', () => ({
   getAppTemplateDirectory: vi.fn(),
@@ -80,6 +83,55 @@ describe('app init', () => {
     await rm(root, { recursive: true, force: true });
   });
 
+  it.each([false, true])(
+    'inherits shared template files and scripts with example=%s',
+    async (shouldIncludeExample) => {
+      const templateDirectory = join(root, 'template');
+      const appDirectory = join(workDirectory, 'my-app');
+
+      await cp(TEMPLATE_DIRECTORY, templateDirectory, { recursive: true });
+      await mkdir(join(templateDirectory, 'config'));
+      await writeFile(join(templateDirectory, 'config/shared.json'), '{}');
+      const templatePackageJson = await readPackageJson(templateDirectory);
+
+      templatePackageJson.scripts['check:shared'] = 'echo shared';
+      await writeFile(
+        join(templateDirectory, 'package.json'),
+        JSON.stringify(templatePackageJson),
+      );
+      vi.mocked(getAppTemplateDirectory).mockReturnValue(templateDirectory);
+
+      await createAppProject({
+        appDirectory,
+        appName: 'my-app',
+        appDisplayName: 'My app',
+        appDescription: '',
+        shouldIncludeExample,
+        signal: new AbortController().signal,
+      });
+
+      expect(
+        await readFile(join(appDirectory, 'config/shared.json'), 'utf8'),
+      ).toBe('{}');
+      expect((await readPackageJson(appDirectory)).scripts).toEqual({
+        ...templatePackageJson.scripts,
+        ...(shouldIncludeExample
+          ? JSON.parse(
+              await readFile(
+                join(templateDirectory, 'example/scripts.json'),
+                'utf8',
+              ),
+            )
+          : {}),
+      });
+      const appFiles = await readdir(appDirectory);
+
+      expect(appFiles.includes('src')).toBe(shouldIncludeExample);
+      expect(appFiles.includes('public')).toBe(shouldIncludeExample);
+      expect(appFiles).not.toContain('example');
+    },
+  );
+
   it('creates the app from the bundled template without installing or saving anything', async () => {
     const result = await run(['my-app']);
     const appDirectory = join(workDirectory, 'my-app');
@@ -96,15 +148,17 @@ describe('app init', () => {
         'package.json',
         'public',
         'src',
+        'yarn.lock',
       ]),
     );
+    expect(await readFile(join(appDirectory, 'yarn.lock'), 'utf8')).toBe('');
     expect(await readdir(appDirectory)).not.toContain('node_modules');
     expect(await readPackageJson(appDirectory)).toMatchObject({
       name: 'my-app',
       engines: {
-        node: '^24.5.0',
+        node: '^24.5.0 || ^26.5.1',
         npm: 'please-use-yarn',
-        twenty: `>=${APP_TEMPLATE_PACKAGE_VERSION}`,
+        twenty: `>=${semver.major(APP_TEMPLATE_PACKAGE_VERSION)}.${semver.minor(APP_TEMPLATE_PACKAGE_VERSION)}.0`,
         yarn: '>=4.0.2',
       },
       devDependencies: {
@@ -153,7 +207,14 @@ describe('app init', () => {
     expect(globalSetup).not.toContain('twenty-sdk/cli');
     expect(await readFile(join(testsDirectory, 'run-twenty.ts'), 'utf8')).toBe(
       await readFile(
-        join(TEMPLATE_DIRECTORY, 'src', '__tests__', 'run-twenty.ts'),
+        join(
+          TEMPLATE_DIRECTORY,
+          'example',
+          'files',
+          'src',
+          '__tests__',
+          'run-twenty.ts',
+        ),
         'utf8',
       ),
     );
@@ -163,6 +224,41 @@ describe('app init', () => {
       'run-twenty.ts',
       'schema.integration-test.ts',
     ]);
+  });
+
+  it('installs the generating CLI version in CI before running integration tests', async () => {
+    const result = await run(['my-app']);
+    const workflow = await readFile(
+      join(workDirectory, 'my-app', '.github', 'workflows', 'ci.yml'),
+      'utf8',
+    );
+    const installCommand = `run: npm install -g twenty@${CLI_VERSION}`;
+
+    expect(result.exitCode, result.stderr).toBe(0);
+    expect(workflow).toContain(installCommand);
+    expect(workflow).not.toContain('TO-BE-GENERATED');
+    expect(workflow.indexOf(installCommand)).toBeGreaterThan(
+      workflow.indexOf('uses: actions/setup-node@'),
+    );
+    expect(workflow.indexOf(installCommand)).toBeLessThan(
+      workflow.indexOf('run: yarn test\n'),
+    );
+  });
+
+  it('pins the generating CLI version in deployment and publishing workflows', async () => {
+    const result = await run(['my-app']);
+
+    expect(result.exitCode, result.stderr).toBe(0);
+
+    for (const workflowName of ['cd.yml', 'publish.yml']) {
+      const workflow = await readFile(
+        join(workDirectory, 'my-app', '.github', 'workflows', workflowName),
+        'utf8',
+      );
+
+      expect(workflow).toContain(CLI_VERSION);
+      expect(workflow).not.toContain('TO-BE-GENERATED');
+    }
   });
 
   it('returns the app, its pins and the next steps as JSON, without a login step when a workspace is set', async () => {
@@ -204,6 +300,27 @@ describe('app init', () => {
       ],
     });
     expect((await readPackageJson(appDirectory)).name).toBe('@acme/billing');
+  });
+
+  it('warns on Windows that building apps needs WSL 2', async () => {
+    const platform = process.platform;
+
+    Object.defineProperty(process, 'platform', { value: 'win32' });
+
+    try {
+      const result = await runJson(['my-app']);
+
+      expect(result.exitCode, result.stdout).toBe(0);
+      expect(result.envelope.warnings).toEqual([
+        {
+          code: 'PLATFORM_UNSUPPORTED',
+          message:
+            'Building apps is only supported on macOS and Linux. On Windows, work inside WSL 2.',
+        },
+      ]);
+    } finally {
+      Object.defineProperty(process, 'platform', { value: platform });
+    }
   });
 
   it('writes quotes and replacement patterns in the display name and description literally', async () => {
@@ -404,5 +521,22 @@ describe('app init', () => {
       details: { unrenderedFiles: ['OWNERS.md'] },
     });
     expect(await readdir(workDirectory)).toEqual([]);
+  });
+
+  it('copies the template lockfile and leaves its root entry for yarn install to rename', async () => {
+    const template = join(root, 'template');
+    const lockfile =
+      '"TO-BE-GENERATED@workspace:.":\n  version: 0.0.0-use.local\n  resolution: "TO-BE-GENERATED@workspace:."\n';
+
+    await cp(TEMPLATE_DIRECTORY, template, { recursive: true });
+    await writeFile(join(template, 'yarn.lock'), lockfile);
+    vi.mocked(getAppTemplateDirectory).mockReturnValue(template);
+
+    const result = await runJson(['my-app']);
+
+    expect(result.exitCode).toBe(0);
+    expect(
+      await readFile(join(workDirectory, 'my-app', 'yarn.lock'), 'utf8'),
+    ).toBe(lockfile);
   });
 });

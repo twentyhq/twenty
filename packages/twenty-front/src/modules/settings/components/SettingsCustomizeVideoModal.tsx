@@ -48,10 +48,6 @@ const StyledTitle = styled.div`
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
   padding-left: ${themeCssVariables.spacing[5]};
-
-  & > svg {
-    flex-shrink: 0;
-  }
 `;
 
 const StyledTitleText = styled.span`
@@ -123,12 +119,11 @@ export const SettingsCustomizeVideoModal = ({
       onClose={handleClose}
       renderInDocumentBody
     >
-      {({ container, backdrop, viewportProps, onKeyDown }) => (
+      {({ onKeyDown }) => (
         <Dialog.Popup
           aria-label={activeTab.title}
-          {...{ container, backdrop, viewportProps, onKeyDown }}
+          onKeyDown={onKeyDown}
           size="lg"
-          style={{ padding: 0 }}
         >
           <TabListRoot
             componentInstanceId={tabsInstanceId}

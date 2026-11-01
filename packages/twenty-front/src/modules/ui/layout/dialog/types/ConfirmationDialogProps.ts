@@ -8,7 +8,8 @@ export type ConfirmationDialogProps = {
   isConfirmButtonDisabled?: boolean;
   subtitle: ReactNode;
   onClose?: () => void;
-  onConfirmClick: () => void;
+  onConfirmClick: () => void | Promise<void>;
+  shouldWaitForConfirmBeforeClosing?: boolean;
   confirmButtonText?: string;
   confirmationPlaceholder?: string;
   confirmationValue?: string;

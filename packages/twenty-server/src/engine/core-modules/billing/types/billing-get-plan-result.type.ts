@@ -5,6 +5,10 @@ import { type BillingPlanKey } from 'src/engine/core-modules/billing/enums/billi
 
 export type BillingGetPlanResult = {
   planKey: BillingPlanKey;
+  isSellable: boolean;
+  isCheckoutDefault: boolean;
+  upgradePlanKeys: BillingPlanKey[];
+  downgradePlanKeys: BillingPlanKey[];
   meteredProducts: BillingProductEntity[];
   baseProducts: BillingProductEntity[];
   resourceCreditProducts: BillingProductEntity[];

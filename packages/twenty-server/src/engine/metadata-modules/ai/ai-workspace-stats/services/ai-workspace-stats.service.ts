@@ -20,7 +20,7 @@ export class AiWorkspaceStatsService {
 
   async computeStats(
     workspaceId: string,
-    roleId: string,
+    userRoleId: string,
   ): Promise<WorkspaceAiStatsDTO> {
     const [conversationsCount, flatMaps, toolIndex] = await Promise.all([
       this.threadRepository.count(workspaceId),
@@ -29,7 +29,11 @@ export class AiWorkspaceStatsService {
         flatMapsKeys: ['flatSkillMaps'],
       }),
       // the full role-scoped catalog, to match the Tools tab
-      this.toolRegistryService.buildToolIndex(workspaceId, roleId),
+      this.toolRegistryService.buildToolIndex(workspaceId, {
+        rolePermissionConfig: {
+          intersectionOf: { userWorkspaceRoleId: userRoleId },
+        },
+      }),
     ]);
 
     const skillsCount = Object.values(

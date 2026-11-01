@@ -4,9 +4,9 @@ import { type ReactNode } from 'react';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { workspaceMemberFormatPreferencesState } from '@/localization/states/workspaceMemberFormatPreferencesState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
-import { formatNumber as utilFormatNumber } from '~/utils/format/formatNumber';
+import { formatNumber as utilFormatNumber } from '@/localization/utils/formatNumber';
 
-jest.mock('~/utils/format/formatNumber');
+jest.mock('@/localization/utils/formatNumber');
 
 const mockUtilFormatNumber = utilFormatNumber as jest.MockedFunction<
   typeof utilFormatNumber

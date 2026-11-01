@@ -1,8 +1,11 @@
 import { z } from 'zod';
 
+import { isDefined } from '@/utils/validation/isDefined';
+
 import { validateWorkflowVariableReferences } from '@/workflow/validation/utils/validate-workflow-variable-references.util';
 
 import { workflowStepManifestSchema } from '@/application/workflowStepManifestType';
+import { workflowTriggerManifestSchema } from '@/application/workflowTriggerManifestType';
 import { buildWorkflowGraph } from '@/workflow/validation/utils/build-workflow-graph.util';
 import { validateWorkflowExecutionPaths } from '@/workflow/validation/utils/validate-workflow-execution-paths.util';
 import { validateWorkflowGraph } from '@/workflow/validation/utils/validate-workflow-graph.util';
@@ -11,12 +14,9 @@ export const workflowManifestSchema = z
   .strictObject({
     universalIdentifier: z.uuid(),
     name: z.string().min(1),
+    isSystem: z.boolean().optional(),
     version: z.strictObject({
-      trigger: z.strictObject({
-        universalIdentifier: z.uuid(),
-        type: z.literal('MANUAL'),
-        nextStepIds: z.array(z.uuid()).min(1),
-      }),
+      trigger: workflowTriggerManifestSchema,
       steps: z.array(workflowStepManifestSchema).min(1),
     }),
   })
@@ -26,7 +26,7 @@ export const workflowManifestSchema = z
       workflow.universalIdentifier,
       trigger.universalIdentifier,
       ...steps.map((step) => step.universalIdentifier),
-    ];
+    ].filter(isDefined);
 
     if (new Set(identities).size !== identities.length) {
       context.addIssue({
@@ -37,7 +37,7 @@ export const workflowManifestSchema = z
     }
 
     const validatableWorkflow = {
-      trigger,
+      trigger: { type: trigger.type, nextStepIds: trigger.nextStepIds },
       steps: steps.map((step) => ({
         ...step,
         id: step.universalIdentifier,

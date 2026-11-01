@@ -16,11 +16,11 @@
 </ParamField>
 
 <ParamField body="aria-labelledby" type="string">
-  ID of the visible label that names the measured operation.
+  ID of the visible label that names the operation.
 </ParamField>
 
 <ParamField body="aria-valuetext" type="string">
-  Human-readable progress value when a percentage alone is insufficient.
+  Human-readable progress value overriding the default formatted value.
 </ParamField>
 
 <ParamField body="barColor" type="string">
@@ -28,25 +28,49 @@
 </ParamField>
 
 <ParamField body="children" type="ReactNode">
-  Optional preformatted value displayed before the ring.
+  Optional preformatted value or Progress parts displayed before the ring.
 </ParamField>
 
-<ParamField body="className" type="string">
-  CSS class applied to the progress root.
+<ParamField body="className" type="string | ((state: ProgressRootState) =&gt; string | undefined)">
+  Class applied to the progress root, or a callback receiving its status.
 </ParamField>
 
-<ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
-  Replaces the root element while preserving progress semantics.
+<ParamField body="format" type="NumberFormatOptions">
+  Intl.NumberFormat options for the clamped numeric value. The default displays the normalized percentage.
+</ParamField>
+
+<ParamField body="getAriaValueText" type="((formattedValue: string, value: number | null) =&gt; string)">
+  Receives the formatted value and raw value, including null, and returns an accessible value description.
+</ParamField>
+
+<ParamField body="locale" type="LocalesArgument">
+  Locale or locale list used to format the value. Defaults to the runtime locale.
+</ParamField>
+
+<ParamField body="max" type="number" default="100">
+  Inclusive maximum. Defaults to 100.
+</ParamField>
+
+<ParamField body="min" type="number" default="0">
+  Inclusive minimum. Defaults to 0.
+</ParamField>
+
+<ParamField body="ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref to the root div, or the element composed through render.
+</ParamField>
+
+<ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, ProgressRootState&gt;">
+  Composes the root with an element or render callback. Forward the supplied props and ref to retain progress semantics.
 </ParamField>
 
 <ParamField body="size" type="&quot;md&quot; | &quot;sm&quot;" default="md">
   Ring diameter: sm (14px) or md (16px). Defaults to md.
 </ParamField>
 
-<ParamField body="style" type="CSSProperties">
-  Inline styles applied to the progress root.
+<ParamField body="style" type="CSSProperties | ((state: ProgressRootState) =&gt; CSSProperties | undefined)">
+  Inline styles applied to the progress root, or a callback receiving its status.
 </ParamField>
 
-<ParamField body="value" type="number" required>
-  Controlled progress from 0 to 100. Out-of-range values are bounded and NaN renders as zero.
+<ParamField body="value" type="number | null" required>
+  Controlled value in the min/max range. Use null for indeterminate progress.
 </ParamField>

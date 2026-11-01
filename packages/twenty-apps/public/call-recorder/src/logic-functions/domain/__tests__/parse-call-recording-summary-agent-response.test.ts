@@ -7,7 +7,6 @@ describe('parseCallRecordingSummaryAgentResponse', () => {
     expect(
       parseCallRecordingSummaryAgentResponse({
         success: true,
-        error: null,
         result: { response: '  ## Overview\nGreat call.  ' },
       }),
     ).toEqual({ outcome: 'summarized', markdown: '## Overview\nGreat call.' });
@@ -17,7 +16,6 @@ describe('parseCallRecordingSummaryAgentResponse', () => {
     expect(
       parseCallRecordingSummaryAgentResponse({
         success: false,
-        error: 'no more available credits',
         result: null,
       }),
     ).toBeUndefined();
@@ -27,14 +25,12 @@ describe('parseCallRecordingSummaryAgentResponse', () => {
     expect(
       parseCallRecordingSummaryAgentResponse({
         success: true,
-        error: null,
         result: { response: '   ' },
       }),
     ).toBeUndefined();
     expect(
       parseCallRecordingSummaryAgentResponse({
         success: true,
-        error: null,
         result: {},
       }),
     ).toBeUndefined();
@@ -44,7 +40,6 @@ describe('parseCallRecordingSummaryAgentResponse', () => {
     expect(
       parseCallRecordingSummaryAgentResponse({
         success: true,
-        error: null,
         result: {
           response:
             'SUMMARY_UNAVAILABLE: The transcript contains only greetings and audio checks.',
@@ -60,7 +55,6 @@ describe('parseCallRecordingSummaryAgentResponse', () => {
     expect(
       parseCallRecordingSummaryAgentResponse({
         success: true,
-        error: null,
         result: { response: 'SUMMARY_UNAVAILABLE:' },
       }),
     ).toBeUndefined();

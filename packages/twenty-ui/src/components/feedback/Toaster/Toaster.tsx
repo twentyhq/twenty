@@ -10,6 +10,7 @@ import styles from './Toaster.module.scss';
 import { ToasterItems } from './internal/ToasterItems';
 import { ToasterLifecycleEffect } from './internal/ToasterLifecycleEffect';
 import { type ToasterProps } from './types/ToasterProps';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const Toaster = ({
   container,
@@ -33,7 +34,7 @@ export const Toaster = ({
     props: {
       role: 'region',
       dir: direction,
-      'aria-label': 'Notifications',
+      'aria-label': doNotTranslate('Notifications'),
       ...props,
       className: clsx(styles.root, className),
       children: (

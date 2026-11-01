@@ -14,9 +14,8 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
-import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
-import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { CreateEventLogFromInternalEvent } from 'src/engine/core-modules/event-logs/ingest/create-event-log-from-internal-event';
+import { WorkspaceEventSinkService } from 'src/engine/core-modules/event-logs/ingest/workspace-event-sink.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -47,7 +46,7 @@ export class EntityEventsToDbListener {
     private readonly objectRecordEventPublisher: ObjectRecordEventPublisher,
     private readonly timelineActivityRoutingPlanService: TimelineActivityRoutingPlanService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly billingSubscriptionService: BillingSubscriptionService,
+    private readonly workspaceEventSinkService: WorkspaceEventSinkService,
   ) {}
 
   @OnDatabaseBatchEvent('*', DatabaseEventAction.CREATED)
@@ -136,36 +135,30 @@ export class EntityEventsToDbListener {
         >(
           UpsertTimelineActivityFromInternalEvent.name,
           batchEvent as WorkspaceEventBatch<ObjectRecordNonDestructiveEvent>,
-          { retryLimit: 1 },
+          {
+            retryLimit: 1,
+            workspaceId: batchEvent.workspaceId,
+            isWorkspaceJob: true,
+          },
         ),
       );
     }
 
-    if (isAuditLogBatchEvent) {
-      promises.push(this.enqueueEventLogIfEntitled(batchEvent));
+    if (isAuditLogBatchEvent && this.workspaceEventSinkService.isEnabled()) {
+      promises.push(
+        this.eventLogQueueService.add<WorkspaceEventBatch<T>>(
+          CreateEventLogFromInternalEvent.name,
+          batchEvent,
+          {
+            retryLimit: 1,
+            workspaceId: batchEvent.workspaceId,
+            isWorkspaceJob: true,
+          },
+        ),
+      );
     }
 
     await Promise.all(promises);
-  }
-
-  private async enqueueEventLogIfEntitled<T extends ObjectRecordEvent>(
-    batchEvent: WorkspaceEventBatch<T>,
-  ) {
-    const hasAuditLogsEntitlement =
-      await this.billingSubscriptionService.getWorkspaceEntitlementValue(
-        batchEvent.workspaceId,
-        BillingEntitlementKey.AUDIT_LOGS,
-      );
-
-    if (!hasAuditLogsEntitlement) {
-      return;
-    }
-
-    await this.eventLogQueueService.add<WorkspaceEventBatch<T>>(
-      CreateEventLogFromInternalEvent.name,
-      batchEvent,
-      { retryLimit: 1 },
-    );
   }
 
   private async enqueueWebhookJobsIfAnyWebhookMatches<
@@ -189,7 +182,11 @@ export class EntityEventsToDbListener {
     await this.webhookQueueService.add<WorkspaceEventBatchForWebhook<T>>(
       CallWebhookJobsJob.name,
       batchEventForWebhook,
-      { retryLimit: 3 },
+      {
+        retryLimit: 3,
+        workspaceId: batchEventForWebhook.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 
@@ -214,7 +211,11 @@ export class EntityEventsToDbListener {
     await this.triggerQueueService.add<WorkspaceEventBatch<T>>(
       CallDatabaseEventTriggerJobsJob.name,
       batchEvent,
-      { retryLimit: 3 },
+      {
+        retryLimit: 3,
+        workspaceId: batchEvent.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 
@@ -239,7 +240,11 @@ export class EntityEventsToDbListener {
     await this.triggerQueueService.add<WorkspaceEventBatch<T>>(
       CallAgentDatabaseEventTriggersJob.name,
       batchEvent,
-      { retryLimit: 3 },
+      {
+        retryLimit: 3,
+        workspaceId: batchEvent.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 }

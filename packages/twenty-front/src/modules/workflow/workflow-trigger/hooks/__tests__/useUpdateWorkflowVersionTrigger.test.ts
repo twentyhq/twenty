@@ -6,45 +6,22 @@ import { createElement, type ReactNode } from 'react';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
 
 const mockMutate = jest.fn();
-const mockGetUpdatableWorkflowVersion = jest.fn();
-const mockGetRecordFromCache = jest.fn();
 const mockMarkStepForRecomputation = jest.fn();
 
 jest.mock('@/object-metadata/hooks/useApolloCoreClient', () => ({
   useApolloCoreClient: () => ({ cache: {} }),
 }));
 
-jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
-  useObjectMetadataItems: () => ({ objectMetadataItems: [] }),
-}));
-
-jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
-  useObjectMetadataItem: () => ({ objectMetadataItem: {} }),
-}));
-
-jest.mock('@/object-record/hooks/useObjectPermissions', () => ({
-  useObjectPermissions: () => ({ objectPermissionsByObjectMetadataId: {} }),
-}));
+jest.mock(
+  '@/object-core/workflows/versions/utils/invalidateCoreWorkflowVersions',
+  () => ({ invalidateCoreWorkflowVersions: jest.fn() }),
+);
 
 const mockEnqueueToast = jest.fn();
 
 jest.mock('twenty-ui/components/feedback', () => ({
   ...jest.requireActual('twenty-ui/components/feedback'),
   useToast: () => ({ enqueueToast: mockEnqueueToast }),
-}));
-
-jest.mock('@/object-record/cache/hooks/useGetRecordFromCache', () => ({
-  useGetRecordFromCache: () => mockGetRecordFromCache,
-}));
-
-jest.mock('@/object-record/cache/utils/updateRecordFromCache', () => ({
-  updateRecordFromCache: jest.fn(),
-}));
-
-jest.mock('@/workflow/hooks/useGetUpdatableWorkflowVersionOrThrow', () => ({
-  useGetUpdatableWorkflowVersionOrThrow: jest.fn(() => ({
-    getUpdatableWorkflowVersion: mockGetUpdatableWorkflowVersion,
-  })),
 }));
 
 jest.mock('@/workflow/workflow-variables/hooks/useStepsOutputSchema', () => ({
@@ -80,26 +57,25 @@ describe('useUpdateWorkflowVersionTrigger', () => {
     mockMutate.mockResolvedValue({
       data: { updateWorkflowVersionTrigger: { trigger } },
     });
-    mockGetRecordFromCache.mockReturnValue(undefined);
   });
 
   it('updates the trigger via the dedicated mutation and marks it for recomputation', async () => {
-    mockGetUpdatableWorkflowVersion.mockResolvedValue('version-id');
-
     const { result } = renderHook(() => useUpdateWorkflowVersionTrigger(), {
       wrapper: Wrapper,
     });
 
     await act(async () => {
-      await result.current.updateTrigger(trigger);
+      await result.current.updateWorkflowVersionTrigger({
+        workflowVersionId: 'version-id',
+        trigger,
+      });
     });
 
-    expect(mockGetUpdatableWorkflowVersion).toHaveBeenCalled();
     expect(mockMutate).toHaveBeenCalledWith(
       expect.objectContaining({
         variables: {
           input: {
-            workflowVersionId: 'version-id',
+            coreWorkflowVersionId: 'version-id',
             trigger,
           },
         },
@@ -116,7 +92,6 @@ describe('useUpdateWorkflowVersionTrigger', () => {
 
     for (const triggerType of triggerTypes) {
       mockMarkStepForRecomputation.mockClear();
-      mockGetUpdatableWorkflowVersion.mockResolvedValue('version-id');
 
       const testTrigger = {
         name: `${triggerType} Trigger`,
@@ -132,7 +107,10 @@ describe('useUpdateWorkflowVersionTrigger', () => {
       });
 
       await act(async () => {
-        await result.current.updateTrigger(testTrigger);
+        await result.current.updateWorkflowVersionTrigger({
+          workflowVersionId: 'version-id',
+          trigger: testTrigger,
+        });
       });
 
       expect(mockMarkStepForRecomputation).toHaveBeenCalledWith({

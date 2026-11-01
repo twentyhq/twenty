@@ -201,13 +201,13 @@ const meta: Meta = {
                       objectNameSingular:
                         mockPerformance.entityValue.__typename.toLocaleLowerCase(),
                       recordId: mockPerformance.recordId,
-                      rowIndex: 0,
                       pathToShowPage:
                         getBasePathToShowPage({
                           objectNameSingular:
                             mockPerformance.entityValue.__typename.toLocaleLowerCase(),
                         }) + mockPerformance.recordId,
                       isSelected: false,
+                      restrictedFieldNames: [],
                     }}
                   >
                     <RecordTableRowDraggableContextProvider
@@ -217,7 +217,7 @@ const meta: Meta = {
                     >
                       <RecordTableCellContext.Provider
                         value={{
-                          cellPosition: { row: 0, column: 0 },
+                          columnIndex: 0,
                           recordField: {
                             fieldMetadataItemId:
                               mockPerformance.fieldDefinition.fieldMetadataId,

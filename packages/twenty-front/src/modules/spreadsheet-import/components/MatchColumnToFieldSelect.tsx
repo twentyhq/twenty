@@ -9,14 +9,12 @@ import { type SpreadsheetImportFieldOption } from '@/spreadsheet-import/types/Sp
 import { hasNestedFields } from '@/spreadsheet-import/utils/spreadsheetImportHasNestedFields';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { SelectControl } from '@/ui/input/components/SelectControl';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Dropdown, MenuItem } from 'twenty-ui/components/navigation';
-import { IconChevronDown } from 'twenty-ui/icon';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { type SelectOption } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 type MatchColumnToFieldSelectProps = {
   columnIndex: string;
@@ -26,14 +24,6 @@ type MatchColumnToFieldSelectProps = {
   suggestedOptions: readonly ReadonlyDeep<SelectOption>[];
   placeholder?: string;
 };
-
-const StyledMenuItemContainer = styled.div`
-  > div {
-    background-color: ${themeCssVariables.background.transparent.lighter};
-    border: 1px solid ${themeCssVariables.border.color.medium};
-    border-radius: ${themeCssVariables.border.radius.sm};
-  }
-`;
 
 export const MatchColumnToFieldSelect = ({
   onChange,
@@ -89,15 +79,14 @@ export const MatchColumnToFieldSelect = ({
         }
       }}
     >
-      <Dropdown.Trigger
-        render={<StyledMenuItemContainer />}
-        nativeButton={false}
-      >
-        <MenuItem
-          LeftIcon={value?.Icon}
-          text={value?.label ?? placeholder ?? ''}
-          accent={isDefined(value) ? 'default' : 'placeholder'}
-          RightIcon={IconChevronDown}
+      <Dropdown.Trigger render={<div />} nativeButton={false}>
+        <SelectControl
+          selectedOption={{
+            label: value?.label ?? placeholder ?? '',
+            value: value?.value ?? null,
+            Icon: value?.Icon,
+          }}
+          textAccent={isDefined(value) ? 'default' : 'placeholder'}
         />
       </Dropdown.Trigger>
       <DropdownContent

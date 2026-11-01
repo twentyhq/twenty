@@ -72,7 +72,15 @@ describe('McpCoreController', () => {
     const mockUser = { id: 'user-1' } as UserEntity;
     const mockUserWorkspaceId = 'user-workspace-1';
     const mockApiKey = { id: 'api-key-1' } as FlatApiKey;
-    const mockHttpRequest = {} as import('express').Request;
+    const mockHttpRequest = {
+      workspace: mockWorkspace,
+      apiKey: mockApiKey,
+    } as unknown as import('express').Request;
+    const mockAuthContext = {
+      type: 'apiKey',
+      workspace: mockWorkspace,
+      apiKey: mockApiKey,
+    };
 
     const mockRes = {
       status: jest.fn().mockReturnThis(),
@@ -122,6 +130,7 @@ describe('McpCoreController', () => {
       expect(mcpProtocolService.handleMCPCoreQuery).toHaveBeenCalledWith(
         mockRequest,
         {
+          authContext: mockAuthContext,
           workspace: mockWorkspace,
           userId: mockUser.id,
           userWorkspaceId: mockUserWorkspaceId,
@@ -176,6 +185,7 @@ describe('McpCoreController', () => {
       expect(mcpProtocolService.handleMCPCoreQuery).toHaveBeenCalledWith(
         mockRequest,
         {
+          authContext: mockAuthContext,
           workspace: mockWorkspace,
           userId: mockUser.id,
           userWorkspaceId: mockUserWorkspaceId,
@@ -225,6 +235,7 @@ describe('McpCoreController', () => {
       expect(mcpProtocolService.handleMCPCoreQuery).toHaveBeenCalledWith(
         mockRequest,
         {
+          authContext: mockAuthContext,
           workspace: mockWorkspace,
           userId: mockUser.id,
           userWorkspaceId: mockUserWorkspaceId,
@@ -294,6 +305,7 @@ describe('McpCoreController', () => {
       expect(mcpProtocolService.handleMCPCoreQuery).toHaveBeenCalledWith(
         mockRequest,
         {
+          authContext: mockAuthContext,
           workspace: mockWorkspace,
           userId: undefined,
           userWorkspaceId: undefined,
@@ -359,6 +371,7 @@ describe('McpCoreController', () => {
       expect(mcpProtocolService.handleMCPCoreQuery).toHaveBeenCalledWith(
         mockRequest,
         {
+          authContext: mockAuthContext,
           workspace: mockWorkspace,
           userId: mockUser.id,
           userWorkspaceId: mockUserWorkspaceId,

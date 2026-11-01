@@ -62,8 +62,11 @@ describe('resolveJunctionConfig', () => {
         field.name === 'caretakers' ? { ...field, settings: undefined } : field,
       ),
     };
-    const metadataWithoutLocalJunctionMarker = objectMetadataItems.map((item) =>
-      item.id === petMetadata.id ? petMetadataWithoutLocalJunctionMarker : item,
+    const metadataWithoutLocalJunctionMarker = objectMetadataItems.map(
+      (item) =>
+        item.id === petMetadata.id
+          ? petMetadataWithoutLocalJunctionMarker
+          : item,
     );
 
     expect(

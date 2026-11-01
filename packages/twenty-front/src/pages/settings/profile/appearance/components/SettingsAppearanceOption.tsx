@@ -1,11 +1,14 @@
 import { styled } from '@linaria/react';
 import { useId } from 'react';
 
-import { type ColorScheme } from '@/workspace-member/types/WorkspaceMember';
 import { IconCheck } from 'twenty-ui/icon';
 import { Radio } from 'twenty-ui/primitives/input';
 import { MOBILE_VIEWPORT, themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { SettingsAppearancePreview } from '~/pages/settings/profile/appearance/components/SettingsAppearancePreview';
+import { type ColorScheme } from '@/ui/theme/types/ColorScheme';
+// Salesfarce: remove with the theme
+import { SalesfarceBadge } from '@/salesfarce/components/SalesfarceBadge';
+import { SALESFARCE_APPEARANCE_VALUE } from '@/salesfarce/constants/SalesfarceAppearanceValue';
 
 const StyledChoice = styled.label`
   display: flex;
@@ -18,17 +21,25 @@ const StyledChoice = styled.label`
   }
 `;
 
-const StyledRadio = styled.div`
+const StyledTile = styled.div`
   border-radius: ${themeCssVariables.border.radius.md};
+  cursor: pointer;
+  display: block;
   position: relative;
+  width: 100%;
 
-  && {
-    display: block;
-    width: 100%;
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: 1px;
+  }
+
+  &[data-disabled] {
+    cursor: not-allowed;
+    opacity: 0.32;
   }
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    &&:focus-visible {
+    &:focus-visible {
       outline-offset: -2px;
     }
   }
@@ -53,7 +64,7 @@ const StyledCheckmark = styled.div`
   visibility: hidden;
   width: ${themeCssVariables.spacing[5]};
 
-  [data-checked] > & {
+  &[data-checked] {
     opacity: 1;
     transition:
       opacity 0.3s ease-in-out,
@@ -63,7 +74,7 @@ const StyledCheckmark = styled.div`
 
   @media (prefers-reduced-motion: reduce) {
     &,
-    [data-checked] > & {
+    &[data-checked] {
       transition: none;
     }
   }
@@ -77,7 +88,8 @@ const StyledLabel = styled.span`
 `;
 
 type SettingsAppearanceOptionProps = {
-  colorScheme: ColorScheme;
+  // Salesfarce: on removal, drop the Salesfarce union
+  colorScheme: ColorScheme | typeof SALESFARCE_APPEARANCE_VALUE;
   label: string;
 };
 
@@ -90,18 +102,18 @@ export const SettingsAppearanceOption = ({
 
   return (
     <StyledChoice>
-      <Radio
+      <Radio.Root
         value={colorScheme}
         aria-labelledby={labelId}
-        render={
-          <StyledRadio>
-            <SettingsAppearancePreview colorScheme={colorScheme} />
-            <StyledCheckmark aria-hidden>
-              <IconCheck size={theme.icon.size.sm} />
-            </StyledCheckmark>
-          </StyledRadio>
-        }
-      />
+        render={<StyledTile />}
+      >
+        <SettingsAppearancePreview colorScheme={colorScheme} />
+        {/* Salesfarce: remove with the theme */}
+        {colorScheme === SALESFARCE_APPEARANCE_VALUE && <SalesfarceBadge />}
+        <Radio.Indicator keepMounted aria-hidden render={<StyledCheckmark />}>
+          <IconCheck size={theme.icon.size.sm} />
+        </Radio.Indicator>
+      </Radio.Root>
       <StyledLabel id={labelId}>{label}</StyledLabel>
     </StyledChoice>
   );

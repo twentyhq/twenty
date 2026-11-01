@@ -1,5 +1,4 @@
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
-import { WorkflowRunRecordShareModule } from 'src/engine/core-modules/workflow/workflow-run-record-share.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -17,8 +16,8 @@ import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationModule } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.module';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
-import { RoleValidationModule } from 'src/engine/metadata-modules/role-validation/role-validation.module';
-import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { RoleAssignmentValidationModule } from 'src/engine/permissions/role-assignment/role-assignment-validation.module';
+import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
 
 @Module({
   imports: [
@@ -28,7 +27,7 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
       UserEntity,
       RoleTargetEntity,
     ]),
-    RoleValidationModule,
+    RoleAssignmentValidationModule,
     ApprovedAccessDomainModule,
     WorkspaceInvitationModule,
     WorkspaceDomainsModule,
@@ -37,7 +36,6 @@ import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.
     TokenModule,
     OnboardingModule,
     CoreEntityCacheModule,
-    WorkflowRunRecordShareModule,
   ],
   exports: [UserWorkspaceService, UserWorkspaceAuthContextService],
   providers: [

@@ -39,5 +39,6 @@ export type View = {
   anyFieldFilterValue?: string | null;
   visibility: ViewVisibility;
   createdByUserWorkspaceId?: string | null;
+  applicationId?: string;
   isActive: boolean;
 };

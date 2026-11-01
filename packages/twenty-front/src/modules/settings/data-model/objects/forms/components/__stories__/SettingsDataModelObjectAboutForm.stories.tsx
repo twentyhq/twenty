@@ -1,13 +1,11 @@
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, waitFor, within } from 'storybook/test';
+import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { FormProviderDecorator } from '~/testing/decorators/FormProviderDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 
 import { SettingsDataModelObjectAboutForm } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectAboutForm';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
@@ -38,15 +36,22 @@ const meta: Meta<typeof SettingsDataModelObjectAboutForm> = {
   parameters: {
     container: { width: 520 },
   },
-  beforeEach: () => {
-    jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+};
 
-    return () => {
-      jotaiStore.set(isAdvancedModeEnabledState.atom, false);
-    };
-  },
+export default meta;
+type Story = StoryObj<typeof SettingsDataModelObjectAboutForm>;
+
+export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+
+    const syncSwitch = await canvas.findByRole('switch', {
+      name: 'Synchronize Objects Labels and API Names',
+    });
+
+    expect(canvas.queryByText('API Name (Singular)')).not.toBeInTheDocument();
+
+    await userEvent.click(syncSwitch);
 
     await waitFor(() => {
       expect(canvas.getByText('API Name (Singular)')).toBeVisible();
@@ -54,11 +59,6 @@ const meta: Meta<typeof SettingsDataModelObjectAboutForm> = {
     });
   },
 };
-
-export default meta;
-type Story = StoryObj<typeof SettingsDataModelObjectAboutForm>;
-
-export const Default: Story = {};
 
 export const WithDefaultValues: Story = {
   args: {

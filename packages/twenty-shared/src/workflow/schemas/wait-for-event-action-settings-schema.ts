@@ -14,7 +14,7 @@ export const workflowWaitForEventActionSettingsSchema =
         .nullable()
         .optional()
         .describe(
-          'Only resume for this record. Usually a variable such as {{trigger.object.id}}. Leave empty to resume on any record.',
+          'Only resume for this record. Usually a variable such as {{trigger.properties.after.id}}. Leave empty to resume on any record.',
         ),
       updatedFields: z
         .array(z.string())

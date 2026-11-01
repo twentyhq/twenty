@@ -18,6 +18,7 @@ const translatedRow: MetadataTranslationRow = {
   canonicalValue: 'Companies',
   value: 'Entreprises',
   provenance: MetadataTranslationProvenance.WORKSPACE,
+  __typename: 'MetadataTranslation',
 };
 
 const inheritedRow: MetadataTranslationRow = {

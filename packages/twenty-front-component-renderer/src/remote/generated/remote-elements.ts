@@ -11,10 +11,13 @@ import { type SerializedEventData } from '@/types/SerializedEventData';
 export type HtmlCommonProperties = {
   id?: string;
   dir?: string;
+  lang?: string;
   className?: string;
   style?: string;
   title?: string;
   tabIndex?: number;
+  hidden?: boolean;
+  inert?: boolean;
   role?: string;
   'aria-label'?: string;
   'aria-hidden'?: boolean;
@@ -134,10 +137,13 @@ const HTML_COMMON_EVENTS_CONFIG = Object.fromEntries(
 const HTML_COMMON_PROPERTIES_CONFIG = {
   id: { type: String },
   dir: { type: String },
+  lang: { type: String },
   className: { type: String },
   style: { type: String },
   title: { type: String },
   tabIndex: { type: Number },
+  hidden: { type: Boolean },
+  inert: { type: Boolean },
   role: { type: String },
   'aria-label': { type: String },
   'aria-hidden': { type: Boolean },
@@ -389,8 +395,14 @@ export const HtmlBlockquoteElement = createRemoteElement<
 
 export type HtmlAProperties = HtmlCommonProperties & {
   href?: string;
+  hrefLang?: string;
+  media?: string;
+  type?: string;
   target?: string;
   rel?: string;
+  download?: string;
+  ping?: string;
+  referrerPolicy?: string;
 };
 
 export const HtmlAElement = createRemoteElement<
@@ -402,8 +414,14 @@ export const HtmlAElement = createRemoteElement<
   properties: {
     ...HTML_COMMON_PROPERTIES_CONFIG,
     href: { type: String },
+    hrefLang: { type: String },
+    media: { type: String },
+    type: { type: String },
     target: { type: String },
     rel: { type: String },
+    download: { type: String },
+    ping: { type: String },
+    referrerPolicy: { type: String },
   },
   events: {
     ...HTML_COMMON_EVENTS_CONFIG,
@@ -513,11 +531,15 @@ export const HtmlLabelElement = createRemoteElement<
 export type HtmlInputProperties = HtmlCommonProperties & {
   type?: string;
   name?: string;
+  min?: string;
+  max?: string;
+  step?: string;
   value?: string;
   placeholder?: string;
   disabled?: boolean;
   checked?: boolean;
   readOnly?: boolean;
+  required?: boolean;
   accept?: string;
   multiple?: boolean;
   capture?: string;
@@ -541,11 +563,15 @@ export const HtmlInputElement = createRemoteElement<
     ...HTML_COMMON_PROPERTIES_CONFIG,
     type: { type: String },
     name: { type: String },
+    min: { type: String },
+    max: { type: String },
+    step: { type: String },
     value: { type: String },
     placeholder: { type: String },
     disabled: { type: Boolean },
     checked: { type: Boolean },
     readOnly: { type: Boolean },
+    required: { type: Boolean },
     accept: { type: String },
     multiple: { type: Boolean },
     capture: { type: String },

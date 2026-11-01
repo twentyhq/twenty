@@ -30,6 +30,7 @@ describe('dev stream output', () => {
       },
     };
     const output = createDevOutput(context);
+    output.output.progress({ message: 'Uploading files…', percentage: 25 });
     for (let index = 0; index < 1000; index += 1)
       output.output.warn({ code: 'WARNING', message: `warning ${index}` });
     const first = output.emit(
@@ -45,7 +46,8 @@ describe('dev stream output', () => {
       'progress',
       expect.objectContaining({
         messages: expect.arrayContaining([
-          { message: '968 additional progress messages omitted.' },
+          { message: 'Uploading files…', percentage: 25 },
+          { message: '969 additional progress messages omitted.' },
         ]),
       }),
       context.signal,

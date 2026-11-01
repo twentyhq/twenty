@@ -20,8 +20,13 @@ import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavi
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { useQueryVariablesFromParentView } from '@/views/hooks/useQueryVariablesFromParentView';
-import { AppPath, SidePanelPages } from 'twenty-shared/types';
+import {
+  AppPath,
+  type RecordGqlFields,
+  SidePanelPages,
+} from 'twenty-shared/types';
 import { combineFilters, getAppPath, isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useRecordShowPagePagination = (
   propsObjectNameSingular: string,
@@ -52,7 +57,7 @@ export const useRecordShowPagePagination = (
   const objectRecordId = propsObjectRecordId || paramObjectRecordId;
 
   if (!objectNameSingular || !objectRecordId) {
-    throw new Error('Object name or Record id is not defined');
+    throw new Error(doNotTranslate('Object name or Record id is not defined'));
   }
 
   const { objectMetadataItem } = useObjectMetadataItem({
@@ -121,7 +126,7 @@ export const useRecordShowPagePagination = (
   const baseNeighborOptions = {
     skip: skipNeighborQueries,
     objectNameSingular,
-    recordGqlFields: { id: true },
+    recordGqlFields: { id: true } satisfies RecordGqlFields,
     withSoftDeleted,
     limit: 1,
   };

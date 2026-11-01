@@ -55,6 +55,7 @@ import { AuthProvider } from 'src/engine/decorators/auth/auth-provider.decorator
 import { AuthImpersonationContext } from 'src/engine/decorators/auth/auth-impersonation-context.decorator';
 import { canCredentialAutoLoginIntoWorkspaces } from 'src/engine/core-modules/auth/utils/can-credential-auto-login-into-workspaces.util';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { EmailVerificationExceptionFilter } from 'src/engine/core-modules/email-verification/email-verification-exception-filter.util';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthIsUserSession } from 'src/engine/decorators/auth/auth-is-user-session.decorator';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
@@ -70,12 +71,12 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { type UserWorkspacePermissions } from 'src/engine/metadata-modules/permissions/types/user-workspace-permissions.type';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+} from 'src/engine/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { type UserWorkspacePermissions } from 'src/engine/permissions/types/user-workspace-permissions.type';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import { fromUserWorkspacePermissionsToUserWorkspacePermissionsDto } from 'src/engine/metadata-modules/role/utils/fromUserWorkspacePermissionsToUserWorkspacePermissionsDto';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { AccountsToReconnectKeys } from 'src/modules/connected-account/types/accounts-to-reconnect-key-value.type';
@@ -483,6 +484,7 @@ export class UserResolver {
         setting: PermissionFlagType.WORKSPACE_MEMBERS,
         apiKeyId: apiKey?.id,
         applicationId: application?.id,
+        agentId: undefined,
       }));
 
     if (!canDeleteUserFromWorkspace) {
@@ -551,6 +553,7 @@ export class UserResolver {
         setting: PermissionFlagType.WORKSPACE_MEMBERS,
         apiKeyId: apiKey?.id,
         applicationId: application?.id,
+        agentId: undefined,
       }));
 
     if (!canUpdateWorkspaceMember) {
@@ -768,6 +771,7 @@ export class UserResolver {
     }),
     SettingsPermissionGuard(PermissionFlagType.PROFILE_INFORMATION),
   )
+  @UseFilters(EmailVerificationExceptionFilter)
   async updateUserEmail(
     @Args() { newEmail, verifyEmailRedirectPath }: UpdateUserEmailInput,
     @AuthUser() user: AuthContextUser,

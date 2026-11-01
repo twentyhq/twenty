@@ -23,6 +23,8 @@ export const FIND_ALL_APPLICATION_REGISTRATIONS = gql`
     ) {
       registrations {
         ...ApplicationRegistrationFragment
+        author
+        installCount
       }
       totalCount
       hasMore

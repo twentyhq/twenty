@@ -9,9 +9,9 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+} from 'src/engine/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -22,6 +22,7 @@ import {
 } from 'src/modules/emailing/exceptions/message-list.exception';
 import { type MessageListMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list-member.workspace-entity';
 import { type MessageListWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-list.workspace-entity';
+import { buildEmailingRolePermissionConfig } from 'src/modules/emailing/utils/build-emailing-role-permission-config.util';
 
 const DUPLICATED_OBJECT_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.messageList.universalIdentifier,
@@ -126,12 +127,12 @@ export class MessageListDuplicationService {
     const messageListRepository =
       transactionScope.getRepository<MessageListWorkspaceEntity>(
         'messageList',
-        { unionOf: [roleId] },
+        buildEmailingRolePermissionConfig(roleId),
       );
     const messageListMemberRepository =
       transactionScope.getRepository<MessageListMemberWorkspaceEntity>(
         'messageListMember',
-        { unionOf: [roleId] },
+        buildEmailingRolePermissionConfig(roleId),
       );
 
     const originalMessageList = await messageListRepository.findOne({

@@ -12,7 +12,7 @@
  */}
 
 <ParamField body="avatars" type="ReactNode[]" required>
-  Avatar elements in display order. Only the first maxVisible elements are shown.
+  Avatar elements in display order. Empty React nodes are ignored. Supply stable keys to preserve identity when reordering.
 </ParamField>
 
 <ParamField body="className" type="string">
@@ -20,15 +20,7 @@
 </ParamField>
 
 <ParamField body="maxVisible" type="number" default="4">
-  Maximum number of supplied avatars to show.
-</ParamField>
-
-<ParamField body="overflowAvatar" type="ReactNode">
-  Custom trailing element, used instead of the numeric overflow indicator.
-</ParamField>
-
-<ParamField body="overflowCount" type="number" default="0">
-  Number shown in the trailing +N indicator. Compute this in the application; it is not derived from avatars.
+  Maximum number of actual avatars to show, excluding the overflow indicator. Floored and clamped to zero; Infinity shows all avatars and NaN shows none.
 </ParamField>
 
 <ParamField body="overflowShape" type="&quot;circle&quot; | &quot;rounded-square&quot; | &quot;square&quot;" default="square">
@@ -41,4 +33,20 @@
 
 <ParamField body="overlapOffset" type="string" default="3px">
   CSS length of the overlap between avatars.
+</ParamField>
+
+<ParamField body="ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref to the rendered root element.
+</ParamField>
+
+<ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
+  Element or render function for the root. Forward the supplied props and ref; the default element is a div.
+</ParamField>
+
+<ParamField body="renderOverflow" type="((hiddenCount: number) =&gt; ReactNode)">
+  Called with the derived hidden count when it is positive. Return a custom indicator, or null to hide it.
+</ParamField>
+
+<ParamField body="total" type="number">
+  Total collection size for partially loaded avatars. Floored and never smaller than the supplied renderable count; nonfinite values use the supplied count.
 </ParamField>

@@ -51,7 +51,7 @@ export const DeleteTwoFactorAuthentication = () => {
       )
     ) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Invalid 2FA information.`,
         dedupeKey: '2fa-dedupe-key',
       });
@@ -68,7 +68,7 @@ export const DeleteTwoFactorAuthentication = () => {
     });
 
     enqueueToast({
-      variant: 'success',
+      status: 'success',
       children: t`2FA Method has been deleted successfully.`,
       dedupeKey: '2fa-dedupe-key',
     });

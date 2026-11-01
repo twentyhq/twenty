@@ -3,11 +3,8 @@ import { forwardRef } from 'react';
 
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 
+import { type FieldLabelProps } from '../types/FieldLabelProps';
 import styles from './FieldLabel.module.scss';
-
-type FieldLabelProps = React.ComponentPropsWithoutRef<
-  typeof FieldPrimitive.Label
->;
 
 export const FieldLabel = forwardRef<
   React.ElementRef<typeof FieldPrimitive.Label>,

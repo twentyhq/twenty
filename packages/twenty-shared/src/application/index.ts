@@ -72,27 +72,28 @@ export {
   DEFAULT_APPLICATION_VARIABLE_SCOPE,
 } from './applicationVariablesType';
 export type { AppMessageChannel } from './appMessageChannelType';
+export type { AppMessageFolder } from './appMessageFolderType';
 export type { AssetManifest } from './assetManifestType';
 export type {
   BillableOperationManifest,
   BillableOperations,
 } from './billableOperationsType';
 export type { ConnectionProviderManifest } from './connectionProviderManifestType';
+export type { ConnectionProviderScope } from './connectionProviderScopeType';
 export type { ConnectionProviderType } from './connectionProviderType';
 export { AGENT_TRIGGER_EVENT_NAME_PATTERN } from './constants/AgentTriggerEventNamePattern';
 export { AGENT_TRIGGER_LIMITS } from './constants/AgentTriggerLimits';
 export { AGENT_TRIGGER_TYPES } from './constants/AgentTriggerTypes';
 export { APPLICATION_FILE_UPLOAD_BATCH_SIZE } from './constants/ApplicationFileUploadBatchSize';
-export { APPLICATION_WORKFLOW_UNAVAILABLE_STEP_TYPES } from './constants/ApplicationWorkflowUnavailableStepTypes';
+export { APPLICATION_PACKAGE_YARN_LOCK_PATH } from './constants/ApplicationPackageYarnLockPath';
 export { ASSETS_DIR } from './constants/AssetDirectory';
-export { DEFAULT_API_KEY_NAME } from './constants/DefaultApiKeyName';
-export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';
-export { DEFAULT_APP_ACCESS_TOKEN_NAME } from './constants/DefaultAppAccessTokenName';
-export { DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME } from './constants/DefaultAppApplicationAccessTokenName';
-export { DEFAULT_FUNCTIONS_URL_NAME } from './constants/DefaultFunctionsUrlName';
+export { CONNECTION_PROVIDER_SCOPES } from './constants/ConnectionProviderScopes';
+export { DEFAULT_CONNECTION_PROVIDER_SCOPE } from './constants/DefaultConnectionProviderScope';
 export { DEFAULT_SETTINGS_MENU_ITEM_POSITION } from './constants/DefaultSettingsMenuItemPosition';
+export { EMPTY_YARN_LOCK_CONTENT } from './constants/EmptyYarnLockContent';
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH } from './constants/FrontComponentSharedDependenciesBuiltPath';
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from './constants/FrontComponentSharedDependenciesImportSpecifier';
+export { FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES } from './constants/FrontComponentWidgetPageLayoutTypes';
 export { GENERATED_DIR } from './constants/GeneratedDirectory';
 export { MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION } from './constants/MinimumUniversalIdentifierUuidVersion';
 export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
@@ -100,10 +101,13 @@ export { OUTPUT_DIR } from './constants/OutputDirectory';
 export { TWENTY_STANDARD_APPLICATION_NAME } from './constants/TwentyStandardApplicationName';
 export { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from './constants/TwentyStandardApplicationUniversalIdentifier';
 export type {
-  CreditUnavailableReason,
-  CreditAvailability,
-} from './creditAvailabilityType';
-export { CREDIT_UNAVAILABLE_REASONS } from './creditAvailabilityType';
+  AuthorizeConnectionPayload,
+  AuthorizeConnectionResult,
+  ConnectionCallbackPayload,
+  ConnectedAccountFromCallback,
+  ConnectionCallbackResult,
+} from './customConnectionFlowType';
+export type { CustomConnectionProviderConfig } from './customConnectionProviderConfigType';
 export { computeDeterministicUuid } from './deterministic-identifier/compute-deterministic-uuid.util';
 export type { DeterministicEntityNamespace } from './deterministic-identifier/deterministic-entity-namespace.type';
 export { getAgentUniversalIdentifier } from './deterministic-identifier/get-agent-universal-identifier.util';
@@ -126,6 +130,7 @@ export { getObjectPermissionUniversalIdentifier } from './deterministic-identifi
 export { getObjectUniversalIdentifier } from './deterministic-identifier/get-object-universal-identifier.util';
 export { getPageLayoutUniversalIdentifier } from './deterministic-identifier/get-page-layout-universal-identifier.util';
 export { getPermissionFlagUniversalIdentifier } from './deterministic-identifier/get-permission-flag-universal-identifier.util';
+export { getRelatedRecordPathUniversalIdentifier } from './deterministic-identifier/get-related-record-path-universal-identifier.util';
 export { getRolePermissionFlagUniversalIdentifier } from './deterministic-identifier/get-role-permission-flag-universal-identifier.util';
 export { getRoleTargetUniversalIdentifier } from './deterministic-identifier/get-role-target-universal-identifier.util';
 export { getRoleUniversalIdentifier } from './deterministic-identifier/get-role-universal-identifier.util';
@@ -151,6 +156,7 @@ export { getViewFilterUniversalIdentifier } from './deterministic-identifier/get
 export { getViewGroupUniversalIdentifier } from './deterministic-identifier/get-view-group-universal-identifier.util';
 export { getViewSortUniversalIdentifier } from './deterministic-identifier/get-view-sort-universal-identifier.util';
 export { getViewUniversalIdentifier } from './deterministic-identifier/get-view-universal-identifier.util';
+export { getWorkflowCommandMenuItemUniversalIdentifier } from './deterministic-identifier/get-workflow-command-menu-item-universal-identifier.util';
 export { getWorkflowVersionUniversalIdentifier } from './deterministic-identifier/get-workflow-version-universal-identifier.util';
 export type {
   EnqueueJobOptions,
@@ -169,12 +175,22 @@ export type {
   RelationFieldManifest,
   FieldManifest,
 } from './fieldManifestType';
+export type { FieldPermissionAction } from './fieldPermissionActionType';
+export { FIELD_PERMISSION_ACTIONS } from './fieldPermissionActionType';
 export type {
   CommandMenuItemManifest,
+  FrontComponentWidgetPageLayoutType,
+  FrontComponentWidgetAvailabilityManifest,
   FrontComponentManifest,
 } from './frontComponentManifestType';
 export type { FrontComponentSharedDependenciesManifest } from './frontComponentSharedDependenciesManifestType';
 export type { HealthCheckLogicFunctionApplicationManifest } from './healthCheckLogicFunctionApplicationType';
+export type {
+  IdentifyAccountPayload,
+  IdentifiedAccount,
+  IdentifyAccountResult,
+} from './identifyAccountType';
+export type { InboxThreadRecordInput } from './inboxThreadRecordInputType';
 export type { IndexFieldManifest } from './indexFieldManifestType';
 export type { IndexManifest } from './indexManifestType';
 export type {
@@ -184,6 +200,8 @@ export type {
   HttpRouteTriggerSettings,
 } from './logicFunctionManifestType';
 export type { TranslationsManifest, Manifest } from './manifestType';
+export type { McpServerManifest } from './mcpServerManifestType';
+export type { MessagingProviderManifest } from './messagingProviderManifestType';
 export type { NavigationMenuItemManifest } from './navigationMenuItemManifestType';
 export type {
   NormalizedPageLayoutWidgetManifest,
@@ -208,6 +226,7 @@ export type {
 } from './permissionFlagManifestType';
 export type { PostInstallLogicFunctionApplicationManifest } from './postInstallLogicFunctionApplicationType';
 export type { PreInstallLogicFunctionApplicationManifest } from './preInstallLogicFunctionApplicationType';
+export type { RelatedRecordPathManifest } from './relatedRecordPathManifestType';
 export type { RoleManifestGrant } from './roleManifestGrantType';
 export type {
   ObjectPermissionManifest,
@@ -224,6 +243,11 @@ export type {
   RunAgentInput,
   RunAgentResult,
 } from './runAgentType';
+export type {
+  SendAppMessageRecipient,
+  SendAppMessagePayload,
+  SendAppMessageResult,
+} from './sendAppMessageType';
 export type { SendInboxMessageInput } from './sendInboxMessageInputType';
 export type { SendInboxMessageResult } from './sendInboxMessageResultType';
 export type { SendInboxMessageToolCall } from './sendInboxMessageToolCallType';
@@ -241,6 +265,7 @@ export {
   DEFAULT_SETTINGS_MENU_ITEM_SCOPE,
 } from './settingsMenuItemManifestType';
 export type { SkillManifest } from './skillManifestType';
+export type { StoredCustomConnectionProviderConfig } from './storedCustomConnectionProviderConfigType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
 export type {
@@ -253,12 +278,15 @@ export type { UninstallLogicFunctionApplicationManifest } from './uninstallLogic
 export type { UsageOperationTypeValue } from './usageOperationTypesType';
 export {
   USAGE_OPERATION_TYPES,
+  DEFAULT_APP_USAGE_OPERATION_TYPE,
   isUsageOperationTypeValue,
 } from './usageOperationTypesType';
 export {
   serializeApplicationVariableValue,
   deserializeApplicationVariableValue,
 } from './utils/applicationVariableValueSerialization';
+export { computeDependencyFileChecksum } from './utils/computeDependencyFileChecksum';
+export { computePackageJsonChecksum } from './utils/computePackageJsonChecksum';
 export type { EffectiveObjectPermissions } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
 export {
   ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
@@ -266,6 +294,8 @@ export {
 } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
 export { getRoleManifestGrantsNotCoveredBy } from './utils/getRoleManifestGrantsNotCoveredBy';
 export { getRowLevelRestrictionSignature } from './utils/getRowLevelRestrictionSignature';
+export { isConnectionProviderScope } from './utils/isConnectionProviderScope';
+export { isFrontComponentWidgetPageLayoutType } from './utils/isFrontComponentWidgetPageLayoutType';
 export {
   RESERVED_SETTINGS_MENU_ITEM_TITLES,
   isReservedSettingsMenuItemTitle,
@@ -286,4 +316,13 @@ export type { WorkflowActionTriggerSettings } from './workflowActionTriggerSetti
 export type { WorkflowManifest } from './workflowManifestType';
 export { workflowManifestSchema } from './workflowManifestType';
 export type { WorkflowStepManifest } from './workflowStepManifestType';
-export { workflowStepManifestSchema } from './workflowStepManifestType';
+export {
+  workflowManifestPositionSchema,
+  workflowStepFilterManifestSchema,
+  workflowStepManifestSchema,
+} from './workflowStepManifestType';
+export type { WorkflowTriggerManifest } from './workflowTriggerManifestType';
+export {
+  APPLICATION_WORKFLOW_TRIGGER_TYPES,
+  workflowTriggerManifestSchema,
+} from './workflowTriggerManifestType';

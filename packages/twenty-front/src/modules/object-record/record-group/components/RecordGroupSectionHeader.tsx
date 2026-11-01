@@ -17,6 +17,11 @@ const StyledSectionToggle = styled.button`
   min-width: 0;
   overflow: hidden;
   padding: 0;
+
+  &:focus-visible {
+    outline: 2px solid ${themeCssVariables.color.blue};
+    outline-offset: -2px;
+  }
 `;
 
 const StyledChevronContainer = styled.div<{ isExpanded: boolean }>`

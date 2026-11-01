@@ -10,21 +10,24 @@ const StyledDataGridContainer = styled.div<{ headerRowHeight?: number }>`
   --rdg-background-color: ${themeCssVariables.background.primary};
   --rdg-border-color: ${themeCssVariables.border.color.medium};
   --rdg-color: ${themeCssVariables.font.color.primary};
-  --rdg-error-cell-background-color: ${themeCssVariables.color.transparent
-    .red5};
+  --rdg-error-cell-background-color: ${
+    themeCssVariables.color.transparent.red5
+  };
   --rdg-font-size: ${themeCssVariables.font.size.sm};
   --rdg-frozen-cell-box-shadow: none;
   --rdg-header-background-color: ${themeCssVariables.background.primary};
   --rdg-info-cell-background-color: ${themeCssVariables.color.blue};
   --rdg-row-hover-background-color: ${themeCssVariables.background.secondary};
   --rdg-row-selected-background-color: ${themeCssVariables.background.primary};
-  --rdg-row-selected-hover-background-color: ${themeCssVariables.background
-    .secondary};
+  --rdg-row-selected-hover-background-color: ${
+    themeCssVariables.background.secondary
+  };
   --rdg-selection-color: ${themeCssVariables.color.blue};
   --rdg-summary-border-color: ${themeCssVariables.border.color.medium};
   --rdg-warning-cell-background-color: ${themeCssVariables.color.orange};
-  --row-selected-hover-background-color: ${themeCssVariables.background
-    .secondary};
+  --row-selected-hover-background-color: ${
+    themeCssVariables.background.secondary
+  };
   flex: 1;
   min-height: 0;
 

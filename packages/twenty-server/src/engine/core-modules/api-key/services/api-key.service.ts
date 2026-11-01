@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
@@ -10,6 +11,8 @@ import {
   ApiKeyException,
   ApiKeyExceptionCode,
 } from 'src/engine/core-modules/api-key/exceptions/api-key.exception';
+import { isApiKeyActive } from 'src/engine/core-modules/api-key/utils/is-api-key-active.util';
+import { isApiKeyExpired } from 'src/engine/core-modules/api-key/utils/is-api-key-expired.util';
 import { type ApiKeyToken } from 'src/engine/core-modules/auth/dto/api-key-token.dto';
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
@@ -129,7 +132,7 @@ export class ApiKeyService {
       );
     }
 
-    if (apiKey.revokedAt) {
+    if (this.isRevoked(apiKey)) {
       throw new ApiKeyException(
         'This API Key is revoked',
         ApiKeyExceptionCode.API_KEY_REVOKED,
@@ -139,7 +142,7 @@ export class ApiKeyService {
       );
     }
 
-    if (new Date() > apiKey.expiresAt) {
+    if (this.isExpired(apiKey)) {
       throw new ApiKeyException(
         'This API Key has expired',
         ApiKeyExceptionCode.API_KEY_EXPIRED,
@@ -189,15 +192,15 @@ export class ApiKeyService {
   }
 
   isExpired(apiKey: ApiKeyEntity): boolean {
-    return new Date() > apiKey.expiresAt;
+    return isApiKeyExpired(apiKey);
   }
 
   isRevoked(apiKey: ApiKeyEntity): boolean {
-    return !!apiKey.revokedAt;
+    return isDefined(apiKey.revokedAt);
   }
 
   isActive(apiKey: ApiKeyEntity): boolean {
-    return !this.isRevoked(apiKey) && !this.isExpired(apiKey);
+    return isApiKeyActive(apiKey);
   }
 
   private async invalidateApiKeyCache(workspaceId: string): Promise<void> {

@@ -1,6 +1,7 @@
+import { BILLING_PLAN_LABELS } from '@/settings/billing/constants/BillingPlanLabels';
 import { useFormatPrices } from '@/settings/billing/hooks/useFormatPrices';
 import {
-  BillingPlanKey,
+  type BillingPlanKey,
   SubscriptionInterval,
 } from '~/generated-metadata/graphql';
 import {
@@ -8,6 +9,7 @@ import {
   capitalize,
   isDefined,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useLingui } from '@lingui/react/macro';
 import { beautifyExactDate } from '~/utils/date-utils';
@@ -43,7 +45,9 @@ export const useBillingWording = () => {
   const getBeautifiedRenewDate = () => {
     assertIsDefinedOrThrow(
       currentBillingSubscription.currentPeriodEnd,
-      new Error(`No renew date defined for current subscription.`),
+      new Error(
+        doNotTranslate(`No renew date defined for current subscription.`),
+      ),
     );
 
     return beautifyExactDate(
@@ -52,7 +56,7 @@ export const useBillingWording = () => {
   };
 
   const getBillingPlanLabel = (planKey: BillingPlanKey) =>
-    planKey === BillingPlanKey.ENTERPRISE ? t`Organization` : t`Pro`;
+    t(BILLING_PLAN_LABELS[planKey]);
 
   const getIntervalLabelAsAdjectiveCapitalize = (isMonthlyPlan: boolean) => {
     return capitalize(getIntervalLabel(isMonthlyPlan, true));

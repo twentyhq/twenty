@@ -14,6 +14,7 @@ const READ = {
   snoozedUntil: null,
   isSubscribed: true,
   lastMentionedAt: null,
+  mentionsResolvedAt: null,
   updatedAt: LAST_ACTIVITY_AT,
 };
 
@@ -28,12 +29,24 @@ const THREADS: {
     | Omit<AgentChatThreadParticipantFieldsFragment, 'id' | 'threadId'>
     | undefined;
 }[] = [
-  { id: 'read', deletedAt: null, participant: { ...READ, archivedAt: null } },
+  {
+    id: 'read',
+    deletedAt: null,
+    participant: {
+      ...READ,
+      archivedAt: null,
+      __typename: 'AgentChatThreadParticipant',
+    },
+  },
   {
     id: 'archived-then-active',
     deletedAt: null,
     lastActivityAt: ACTIVITY_AFTER_ARCHIVE_AT,
-    participant: { ...READ, archivedAt: '2026-10-01T11:00:00.000Z' },
+    participant: {
+      ...READ,
+      archivedAt: '2026-10-01T11:00:00.000Z',
+      __typename: 'AgentChatThreadParticipant',
+    },
   },
   {
     id: 'snoozed-then-active',
@@ -43,9 +56,30 @@ const THREADS: {
       ...READ,
       archivedAt: '2026-10-01T11:00:00.000Z',
       snoozedUntil: '2026-10-02T09:00:00.000Z',
+      __typename: 'AgentChatThreadParticipant',
     },
   },
-  { id: 'unread', deletedAt: null, participant: undefined },
+  {
+    id: 'unread',
+    deletedAt: null,
+    participant: {
+      ...READ,
+      lastReadAt: null,
+      archivedAt: null,
+      __typename: 'AgentChatThreadParticipant',
+    },
+  },
+  { id: 'not-followed', deletedAt: null, participant: undefined },
+  {
+    id: 'opened-not-followed',
+    deletedAt: null,
+    participant: {
+      ...READ,
+      archivedAt: null,
+      isSubscribed: false,
+      __typename: 'AgentChatThreadParticipant',
+    },
+  },
   {
     id: 'snoozed',
     deletedAt: null,
@@ -53,6 +87,7 @@ const THREADS: {
       ...READ,
       archivedAt: '2026-10-01T11:00:00.000Z',
       snoozedUntil: '2026-10-02T09:00:00.000Z',
+      __typename: 'AgentChatThreadParticipant',
     },
   },
   {
@@ -62,29 +97,46 @@ const THREADS: {
       ...READ,
       archivedAt: null,
       snoozedUntil: '2026-10-01T11:30:00.000Z',
+      __typename: 'AgentChatThreadParticipant',
     },
   },
   {
     id: 'archived',
     deletedAt: null,
-    participant: { ...READ, archivedAt: '2026-10-01T11:00:00.000Z' },
+    participant: {
+      ...READ,
+      archivedAt: '2026-10-01T11:00:00.000Z',
+      __typename: 'AgentChatThreadParticipant',
+    },
   },
   {
     id: 'deleted',
     deletedAt: '2026-10-01T11:00:00.000Z',
-    participant: { ...READ, archivedAt: null },
+    participant: {
+      ...READ,
+      archivedAt: null,
+      __typename: 'AgentChatThreadParticipant',
+    },
   },
   {
     id: 'needs-input',
     deletedAt: null,
     pendingQuestionMessageId: 'question',
-    participant: { ...READ, archivedAt: null },
+    participant: {
+      ...READ,
+      archivedAt: null,
+      __typename: 'AgentChatThreadParticipant',
+    },
   },
   {
     id: 'done-needs-input',
     deletedAt: null,
     pendingQuestionMessageId: 'question',
-    participant: { ...READ, archivedAt: '2026-10-01T11:00:00.000Z' },
+    participant: {
+      ...READ,
+      archivedAt: '2026-10-01T11:00:00.000Z',
+      __typename: 'AgentChatThreadParticipant',
+    },
   },
   {
     id: 'mentioned',
@@ -93,6 +145,8 @@ const THREADS: {
       ...READ,
       archivedAt: null,
       lastMentionedAt: '2026-10-01T09:00:00.000Z',
+      mentionsResolvedAt: null,
+      __typename: 'AgentChatThreadParticipant',
     },
   },
   {
@@ -103,6 +157,7 @@ const THREADS: {
       ...READ,
       archivedAt: '2026-10-01T11:00:00.000Z',
       isSubscribed: false,
+      __typename: 'AgentChatThreadParticipant',
     },
   },
 ];
@@ -113,17 +168,16 @@ const getVisibleThreadIds = (filterStatus: AgentChatThreadFilterStatus) => {
   setAgentChatThreadList(
     store,
     THREADS.map(
-      ({ id, deletedAt, lastActivityAt, pendingQuestionMessageId }) =>
-        ({
-          __typename: 'AgentChatThread',
-          id,
-          title: id,
-          deletedAt,
-          pendingQuestionMessageId: pendingQuestionMessageId ?? null,
-          createdAt: LAST_ACTIVITY_AT,
-          updatedAt: LAST_ACTIVITY_AT,
-          lastActivityAt: lastActivityAt ?? LAST_ACTIVITY_AT,
-        }) as never,
+      ({ id, deletedAt, lastActivityAt, pendingQuestionMessageId }) => ({
+        __typename: 'AgentChatThread',
+        id,
+        title: id,
+        deletedAt,
+        pendingQuestionMessageId: pendingQuestionMessageId ?? null,
+        createdAt: LAST_ACTIVITY_AT,
+        updatedAt: LAST_ACTIVITY_AT,
+        lastActivityAt: lastActivityAt ?? LAST_ACTIVITY_AT,
+      }),
     ),
   );
   store.set(

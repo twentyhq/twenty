@@ -1,23 +1,11 @@
-import { StyledHeaderDropdownButton } from '@/ui/layout/dropdown/components/StyledHeaderDropdownButton';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { styled } from '@linaria/react';
 import { type Nullable } from 'twenty-shared/types';
 import { Dropdown } from 'twenty-ui/components/navigation';
+import { LightButton } from 'twenty-ui/components/input';
 import { isDefined } from 'twenty-shared/utils';
-import { Tag } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-
-const StyledTagContainer = styled.div`
-  width: 100%;
-`;
-
-const StyledHeaderContainer = styled.div`
-  > * {
-    padding: 0;
-  }
-`;
 
 export const RecordGroupAggregateDropdownButton = ({
   dropdownId,
@@ -34,25 +22,16 @@ export const RecordGroupAggregateDropdownButton = ({
   );
 
   return (
-    <StyledHeaderContainer>
-      <Tooltip
-        content={tooltip ?? ''}
-        side="right"
-        positionMethod="fixed"
-        delay={TooltipDelay.mediumDelay}
-        disabled={isDropdownOpen}
-      >
-        <Dropdown.Trigger
-          id={dropdownId}
-          render={<StyledHeaderDropdownButton isUnfolded={isDropdownOpen} />}
-        >
-          <StyledTagContainer>
-            <Tag color="transparent" weight="regular">
-              {isDefined(value) ? value.toString() : '-'}
-            </Tag>
-          </StyledTagContainer>
-        </Dropdown.Trigger>
-      </Tooltip>
-    </StyledHeaderContainer>
+    <Tooltip
+      content={tooltip ?? ''}
+      side="right"
+      positionMethod="fixed"
+      delay={TooltipDelay.mediumDelay}
+      disabled={isDropdownOpen}
+    >
+      <Dropdown.Trigger id={dropdownId} render={<LightButton />}>
+        {isDefined(value) ? value.toString() : '-'}
+      </Dropdown.Trigger>
+    </Tooltip>
   );
 };

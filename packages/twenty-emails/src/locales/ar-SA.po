@@ -19,6 +19,11 @@ msgstr ""
 "X-Crowdin-File-ID: 27\n"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
+msgid "{actorName} generated a recovery code that lets you sign in to {workspaceDisplayName} without your authenticator app."
+msgstr "أنشأ {actorName} رمز استرداد يتيح لك تسجيل الدخول إلى {workspaceDisplayName} من دون تطبيق المصادقة الخاص بك."
+
+#. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
 msgid "{actorName} updated server administrator access for {targetName} ({targetEmail})."
 msgstr "قام {actorName} بتحديث صلاحية مسؤول الخادم لـ {targetName} ({targetEmail})."
@@ -37,6 +42,11 @@ msgstr "{senderName} (<0>{senderEmail}</0>): يرجى التحقق من هذا �
 #: src/emails/billing-trial-converting.email.tsx
 msgid "A heads up before your trial ends"
 msgstr "تنبيه قبل انتهاء الفترة التجريبية"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-reset.email.tsx
+msgid "A recovery code was used to sign in to {workspaceDisplayName}. Your authenticator for this workspace was removed and your other sessions there were signed out."
+msgstr "استُخدم رمز استرداد لتسجيل الدخول إلى {workspaceDisplayName}. أُزيلت أداة المصادقة الخاصة بك لمساحة العمل هذه، وسُجِّلت جلساتك الأخرى فيها للخروج."
 
 #. js-lingui-explicit-id
 #: src/emails/send-invite-link.email.tsx
@@ -128,9 +138,19 @@ msgid "Hi {userName},"
 msgstr "مرحبًا {userName},"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-reset.email.tsx
+msgid "If this was not you, contact your workspace administrator and change your password."
+msgstr "إذا لم تكن أنت من فعل ذلك، فتواصل مع مسؤول مساحة العمل وغيّر كلمة المرور الخاصة بك."
+
+#. js-lingui-explicit-id
 #: src/emails/billing-trial-converting.email.tsx
 msgid "If Twenty is working for you, you're all set — there's nothing to do. If it's not the right fit, you can cancel in one click before then and you won't be charged."
 msgstr "إذا كانت Twenty مناسبة لك، فأنت جاهز تمامًا — لا تحتاج لفعل أي شيء. وإذا لم تكن كذلك، يمكنك الإلغاء بنقرة واحدة قبل ذلك ولن تُحسَب عليك أي رسوم."
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
+msgid "If you did not ask for this, contact your workspace administrator and change your password."
+msgstr "إذا لم تطلب ذلك، فتواصل مع مسؤول مساحة العمل وغيّر كلمة المرور الخاصة بك."
 
 #. js-lingui-explicit-id
 #: src/emails/server-admin-access-changed.email.tsx
@@ -234,6 +254,11 @@ msgid "Set"
 msgstr "تعيين"
 
 #. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-reset.email.tsx
+msgid "Set up two-factor authentication again under Settings, Profile."
+msgstr "أعِد إعداد المصادقة الثنائية ضمن الإعدادات، الملف الشخصي."
+
+#. js-lingui-explicit-id
 #: src/emails/password-reset-link.email.tsx
 msgid "Set your password 🗝"
 msgstr "قم بتعيين كلمة مرورك 🗝"
@@ -247,6 +272,16 @@ msgstr "بدء مساحة عمل جديدة"
 #: src/emails/test.email.tsx
 msgid "Test email"
 msgstr "بريد تجريبي"
+
+#. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "Thanks for registering for an account on Twenty! Before we get started, we just need to confirm that this is you. Click below to verify your email address."
+msgstr "شكراً لتسجيلك لحساب على Twenty! قبل أن نبدأ، نحتاج فقط إلى التأكد من أن هذا أنت. انقر أسفل للتحقق من عنوان بريدك الإلكتروني."
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
+msgid "The code can be used once and expires on {formattedExpiresAt}. Using it removes your current authenticator for this workspace and signs you out of your other sessions there."
+msgstr "يمكن استخدام الرمز مرة واحدة وتنتهي صلاحيته في {formattedExpiresAt}. يؤدي استخدامه إلى إزالة المُصادِق الحالي لمساحة العمل هذه وتسجيل خروجك من جلساتك الأخرى فيها."
 
 #. js-lingui-explicit-id
 #: src/emails/password-update-notify.email.tsx
@@ -264,9 +299,29 @@ msgid "To keep your workspace and everything you've built, add a payment method 
 msgstr "للاحتفاظ بمساحة عملك وكل ما أنشأته، أضِف طريقة دفع واختر خطة."
 
 #. js-lingui-explicit-id
+#: src/components/BaseHead.tsx
+msgid "Twenty email"
+msgstr "بريد Twenty الإلكتروني"
+
+#. js-lingui-explicit-id
+#: src/components/Logo.tsx
+msgid "Twenty logo"
+msgstr "شعار Twenty"
+
+#. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Twenty.com, Public Benefit Corporation"
-msgstr "Twenty.com، مؤسسة لنشر الفائدة العامة"
+msgstr "Twenty.com, شركة ذات منفعة عامة"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-recovery-code-issued.email.tsx
+msgid "Two-factor authentication recovery code issued"
+msgstr "تم إصدار رمز استرداد المصادقة الثنائية"
+
+#. js-lingui-explicit-id
+#: src/emails/two-factor-authentication-reset.email.tsx
+msgid "Two-factor authentication reset"
+msgstr "إعادة تعيين المصادقة الثنائية"
 
 #. js-lingui-explicit-id
 #: src/components/Footer.tsx
@@ -305,6 +360,11 @@ msgid "We don't like surprise charges, so here's a friendly heads up."
 msgstr "لا نحب الرسوم المفاجِئة، لذا نرسل لك هذا التنبيه الودّي."
 
 #. js-lingui-explicit-id
+#: src/emails/send-email-verification-link.email.tsx
+msgid "We received a request to change the email address associated with your Twenty account. Click below to confirm this change."
+msgstr "تلقينا طلبًا لتغيير عنوان البريد الإلكتروني المرتبط بحسابك على Twenty. انقر أدناه لتأكيد هذا التغيير."
+
+#. js-lingui-explicit-id
 #: src/components/Footer.tsx
 msgid "Website"
 msgstr "الموقع الإلكتروني"
@@ -313,6 +373,12 @@ msgstr "الموقع الإلكتروني"
 #: src/components/WhatIsTwenty.tsx
 msgid "What is Twenty?"
 msgstr "ما هو Twenty؟"
+
+#. js-lingui-explicit-id
+#: src/emails/send-invite-link.email.tsx
+#: src/emails/validate-approved-access-domain.email.tsx
+msgid "Workspace logo"
+msgstr "شعار مساحة العمل"
 
 #. js-lingui-explicit-id
 #: src/emails/billing-subscription-renewing.email.tsx

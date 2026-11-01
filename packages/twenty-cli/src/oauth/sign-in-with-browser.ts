@@ -39,15 +39,18 @@ export const signInWithBrowser = async ({
     );
     authorizationUrl.searchParams.set('state', state);
 
-    output.progress(
-      `Opening your browser to sign in to ${new URL(apiUrl).host}…`,
-    );
+    output.progress({
+      message: `Opening your browser to sign in to ${new URL(apiUrl).host}…`,
+    });
 
     openBrowser(authorizationUrl.href);
-    output.progress(`If nothing opens, visit: ${authorizationUrl.href}`);
-    output.progress(
-      'Waiting for you to approve in the browser. Press Ctrl+C to cancel.',
-    );
+    output.progress({
+      message: `If nothing opens, visit: ${authorizationUrl.href}`,
+    });
+    output.progress({
+      message:
+        'Waiting for you to approve in the browser. Press Ctrl+C to cancel.',
+    });
 
     const code = await callbackServer.waitForCode();
     const tokens = await requestOAuthTokens({
@@ -63,7 +66,12 @@ export const signInWithBrowser = async ({
       signal,
     });
 
+    await callbackServer.complete(true);
+
     return { ...tokens, clientId: oauthServer.clientId };
+  } catch (error) {
+    await callbackServer.complete(false);
+    throw error;
   } finally {
     callbackServer.close();
   }

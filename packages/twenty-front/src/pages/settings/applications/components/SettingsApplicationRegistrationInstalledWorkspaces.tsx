@@ -1,9 +1,8 @@
 import { useQuery } from '@apollo/client/react';
-import styled from '@emotion/styled';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { Section } from 'twenty-ui/components/layout';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { IconChevronDown, IconDotsVertical } from 'twenty-ui/icon';
 import { Avatar } from 'twenty-ui/primitives/data-display';
@@ -20,6 +19,8 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { getAdminWorkspaceLabel } from '@/settings/admin-panel/utils/getAdminWorkspaceLabel';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { SettingsPath } from 'twenty-shared/types';
 import { FindAdminApplicationRegistrationInstalledWorkspacesDocument } from '~/generated-admin/graphql';
 import { type ApplicationRegistration } from '~/generated-metadata/graphql';
@@ -29,7 +30,7 @@ const INITIAL_VISIBLE_WORKSPACES = 3;
 const SHOW_MORE_PAGE_SIZE = 20;
 const INSTALLED_WORKSPACES_GRID_TEMPLATE_COLUMNS = '1fr 120px';
 
-const StyledSection = styled(Section.Root)`
+const StyledSection = styled.div`
   margin-top: ${themeCssVariables.spacing[5]};
 `;
 
@@ -171,12 +172,17 @@ export const SettingsApplicationRegistrationInstalledWorkspaces = ({
                 >
                   <Avatar
                     src={getAbsoluteImageUrl(workspace.logo ?? undefined)}
-                    name={workspace.displayName ?? '—'}
-                    colorSeed={workspace.id}
+                    name={workspace.displayName ?? ''}
+                    colorSeed={getWorkspaceAvatarColorSeed(
+                      workspace.displayName,
+                    )}
                     size="md"
                   />
                   <OverflowingTextWithTooltip
-                    text={workspace.displayName ?? '—'}
+                    text={getAdminWorkspaceLabel({
+                      id: workspace.id,
+                      name: workspace.displayName,
+                    })}
                   />
                 </TableCell>
                 <TableCell

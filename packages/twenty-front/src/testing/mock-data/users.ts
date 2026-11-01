@@ -1,3 +1,4 @@
+import { getMockedDateWithOffset } from '~/testing/utils/getMockedDateWithOffset';
 import { type CurrentUserWorkspace } from '@/auth/states/currentUserWorkspaceState';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
@@ -72,10 +73,12 @@ export const mockCurrentWorkspace = {
   activationStatus: WorkspaceActivationStatus.ACTIVE,
   hasValidSignedEnterpriseKey: false,
   hasValidEnterpriseValidityToken: false,
+  isTrialAvailable: true,
   isGoogleAuthEnabled: true,
   isPasswordAuthEnabled: true,
   isMicrosoftAuthEnabled: false,
   isCustomDomainEnabled: false,
+  iframeMediaPermissions: [],
   isPasswordAuthBypassEnabled: false,
   isGoogleAuthBypassEnabled: false,
   isMicrosoftAuthBypassEnabled: false,
@@ -98,7 +101,7 @@ export const mockCurrentWorkspace = {
     id: '7efbc3f7-6e5e-4128-957e-8d86808cdf6a',
     interval: SubscriptionInterval.Month,
     status: SubscriptionStatus.Active,
-    currentPeriodEnd: new Date().toString(),
+    currentPeriodEnd: getMockedDateWithOffset({ months: 1 }),
     metadata: {
       plan: PRO_PLAN.planKey,
     },

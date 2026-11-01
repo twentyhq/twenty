@@ -37,6 +37,8 @@ const buildWorkspaceMember = ({
   agentMessages: [],
   agentChatThreads: [],
   agentChatThreadParticipants: [],
+  agentMessageReactions: [],
+  assignedAgentChatThreads: [],
   ownedOpportunities: [],
 });
 

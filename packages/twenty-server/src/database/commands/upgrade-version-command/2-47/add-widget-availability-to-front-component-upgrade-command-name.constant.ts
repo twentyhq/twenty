@@ -1,0 +1,2 @@
+export const ADD_WIDGET_AVAILABILITY_TO_FRONT_COMPONENT_UPGRADE_COMMAND_NAME =
+  '2.47.0_AddWidgetAvailabilityToFrontComponentFastInstanceCommand_1791898075681';

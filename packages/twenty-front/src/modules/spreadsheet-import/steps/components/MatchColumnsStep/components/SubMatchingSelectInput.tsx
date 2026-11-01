@@ -51,8 +51,6 @@ export const SubMatchingSelectInput = ({
           >
             <Tag
               color={(option.color as TagColor) ?? 'transparent'}
-              borderStyle="dashed"
-              variant="soft"
               startIcon={
                 isDefined(option.Icon) ? createElement(option.Icon) : undefined
               }

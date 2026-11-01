@@ -21,10 +21,10 @@ type MessageParticipantNode = Participant & {
   message?: { receivedAt: string | null } | null;
 };
 
-export const collectMessageInteractions = async (
+const collectSenderAndTeamMemberParticipants = async (
   client: CoreApiClient,
   messageIds: string[],
-): Promise<Map<string, MessageInteraction>> => {
+): Promise<Map<string, MessageParticipantNode[]>> => {
   const participantsByMessageId = new Map<string, MessageParticipantNode[]>();
 
   for (const ids of chunk(messageIds, PAGE_SIZE)) {
@@ -35,7 +35,17 @@ export const collectMessageInteractions = async (
         client.query({
           messageParticipants: {
             __args: {
-              filter: { messageId: { in: ids } },
+              filter: {
+                and: [
+                  { messageId: { in: ids } },
+                  {
+                    or: [
+                      { role: { eq: 'FROM' } },
+                      { workspaceMemberId: { is: 'NOT_NULL' } },
+                    ],
+                  },
+                ],
+              },
               first: PAGE_SIZE,
               after,
             },
@@ -74,6 +84,45 @@ export const collectMessageInteractions = async (
     } while (after);
   }
 
+  return participantsByMessageId;
+};
+
+const collectReceivedAtByMessageId = async (
+  client: CoreApiClient,
+  messageIds: string[],
+): Promise<Map<string, string>> => {
+  const receivedAtByMessageId = new Map<string, string>();
+
+  for (const ids of chunk(messageIds, PAGE_SIZE)) {
+    const { messages } = await executeWithRetry(() =>
+      client.query({
+        messages: {
+          __args: { filter: { id: { in: ids } }, first: PAGE_SIZE },
+          edges: { node: { id: true, receivedAt: true } },
+        },
+      }),
+    );
+
+    for (const edge of messages?.edges ?? []) {
+      const { id, receivedAt } = edge.node;
+
+      if (id && receivedAt) {
+        receivedAtByMessageId.set(id, receivedAt);
+      }
+    }
+  }
+
+  return receivedAtByMessageId;
+};
+
+export const collectMessageInteractions = async (
+  client: CoreApiClient,
+  messageIds: string[],
+): Promise<Map<string, MessageInteraction>> => {
+  const participantsByMessageId = await collectSenderAndTeamMemberParticipants(
+    client,
+    messageIds,
+  );
   const interactionByMessageId = new Map<string, MessageInteraction>();
 
   for (const [messageId, participants] of participantsByMessageId) {
@@ -93,6 +142,27 @@ export const collectMessageInteractions = async (
         role: 'FROM',
       }),
       direction: fromParticipant?.workspaceMemberId ? 'outbound' : 'inbound',
+    });
+  }
+
+  const messageIdsWithoutSenderOrTeamMember = messageIds.filter(
+    (messageId) => !participantsByMessageId.has(messageId),
+  );
+
+  if (messageIdsWithoutSenderOrTeamMember.length === 0) {
+    return interactionByMessageId;
+  }
+
+  const receivedAtByMessageId = await collectReceivedAtByMessageId(
+    client,
+    messageIdsWithoutSenderOrTeamMember,
+  );
+
+  for (const [messageId, receivedAt] of receivedAtByMessageId) {
+    interactionByMessageId.set(messageId, {
+      receivedAt,
+      workspaceMemberId: null,
+      direction: 'inbound',
     });
   }
 

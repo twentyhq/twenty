@@ -9,34 +9,32 @@ type SettingsItemTypeTagProps = {
     isRemote?: boolean;
     applicationId?: string | null;
   };
-  className?: string;
 };
 
 export const SettingsItemTypeTag = ({
-  className,
   item: { isRemote, applicationId },
 }: SettingsItemTypeTagProps) => {
   if (isDefined(applicationId)) {
-    return <AppChip applicationId={applicationId} className={className} />;
-  } else if (isRemote === true) {
-    return (
-      <Chip
-        className={className}
-        variant="ghost"
-        color="primary"
-        startElement={
-          <Avatar
-            shape="square"
-            variant="outline"
-            size="sm"
-            name="Remote"
-            colorSeed="Remote"
-          />
-        }
-        style={{ paddingInlineStart: 0 }}
-      >{t`Remote`}</Chip>
-    );
-  } else {
+    return <AppChip applicationId={applicationId} />;
+  }
+
+  if (!isRemote) {
     return null;
   }
+
+  return (
+    <Chip
+      variant="plain"
+      color="primary"
+      startElement={
+        <Avatar
+          shape="square"
+          variant="outline"
+          size="sm"
+          name={t`Remote`}
+          colorSeed="Remote"
+        />
+      }
+    >{t`Remote`}</Chip>
+  );
 };

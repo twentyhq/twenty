@@ -17,6 +17,27 @@ type GetChartValueFormatOptionsParams = {
   numberFormat: ChartNumberFormat | null | undefined;
 };
 
+const getAggregateFieldDecimals = (
+  aggregateFieldMetadataItem: FieldMetadataItem | undefined,
+): number | undefined => {
+  switch (aggregateFieldMetadataItem?.type) {
+    case FieldMetadataType.CURRENCY:
+      return 2;
+    case FieldMetadataType.RATING:
+      return 1;
+    case FieldMetadataType.NUMBER: {
+      const aggregateFieldSettings = aggregateFieldMetadataItem.settings;
+
+      return isDefined(aggregateFieldSettings) &&
+        'decimals' in aggregateFieldSettings
+        ? aggregateFieldSettings.decimals
+        : undefined;
+    }
+    default:
+      return undefined;
+  }
+};
+
 export const getChartValueFormatOptions = ({
   aggregateOperation,
   aggregateFieldMetadataId,
@@ -27,28 +48,13 @@ export const getChartValueFormatOptions = ({
     findById(aggregateFieldMetadataId),
   );
 
-  const aggregateFieldSettings =
-    aggregateFieldMetadataItem?.type === FieldMetadataType.NUMBER
-      ? aggregateFieldMetadataItem.settings
-      : undefined;
-
-  const aggregateNumberFieldDecimals =
-    isDefined(aggregateFieldSettings) && 'decimals' in aggregateFieldSettings
-      ? aggregateFieldSettings.decimals
-      : undefined;
-
-  const aggregateFieldDecimals =
-    aggregateFieldMetadataItem?.type === FieldMetadataType.CURRENCY
-      ? 2
-      : aggregateNumberFieldDecimals;
-
   const shouldUseAggregateFieldDecimals =
     NON_STANDARD_AGGREGATE_OPERATION_OPTIONS.includes(
       aggregateOperation as AggregateOperations,
     );
 
   const decimals = shouldUseAggregateFieldDecimals
-    ? aggregateFieldDecimals
+    ? getAggregateFieldDecimals(aggregateFieldMetadataItem)
     : undefined;
 
   return {

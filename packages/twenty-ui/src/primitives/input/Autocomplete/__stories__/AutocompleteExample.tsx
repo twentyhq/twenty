@@ -12,15 +12,19 @@ export const AutocompleteExample = (
     <Autocomplete.InputGroup>
       <Autocomplete.Input aria-label="Fruit" placeholder="Search fruits" />
     </Autocomplete.InputGroup>
-    <Autocomplete.Popup>
-      <Autocomplete.Empty>No fruits found</Autocomplete.Empty>
-      <Autocomplete.List>
-        {(fruit: string) => (
-          <Autocomplete.Item key={fruit} value={fruit}>
-            {fruit}
-          </Autocomplete.Item>
-        )}
-      </Autocomplete.List>
-    </Autocomplete.Popup>
+    <Autocomplete.Portal>
+      <Autocomplete.Positioner>
+        <Autocomplete.Popup>
+          <Autocomplete.Empty>No fruits found</Autocomplete.Empty>
+          <Autocomplete.List aria-label="Fruit suggestions">
+            {(fruit: string) => (
+              <Autocomplete.Item key={fruit} value={fruit}>
+                {fruit}
+              </Autocomplete.Item>
+            )}
+          </Autocomplete.List>
+        </Autocomplete.Popup>
+      </Autocomplete.Positioner>
+    </Autocomplete.Portal>
   </Autocomplete.Root>
 );

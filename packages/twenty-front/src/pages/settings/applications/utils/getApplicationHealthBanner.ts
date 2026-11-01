@@ -1,6 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
-import { isSafeInternalPath } from '@/ui/navigation/utils/isSafeInternalPath';
+import { isDefined, isSafeInternalPath } from 'twenty-shared/utils';
 import { type RunApplicationHealthCheckMutation } from '~/generated-metadata/graphql';
 
 type ApplicationHealthCheckResult = NonNullable<

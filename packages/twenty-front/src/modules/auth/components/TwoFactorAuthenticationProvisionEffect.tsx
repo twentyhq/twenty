@@ -40,7 +40,7 @@ export const TwoFactorAuthenticationSetupEffect = () => {
       try {
         if (!loginToken) {
           enqueueToast({
-            variant: 'error',
+            status: 'error',
             children: t`Login token missing. Two Factor Authentication setup can not be initiated.`,
             dedupeKey: 'invalid-session-dedupe-key',
           });

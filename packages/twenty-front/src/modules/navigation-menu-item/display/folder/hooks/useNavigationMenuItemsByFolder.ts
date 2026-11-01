@@ -1,10 +1,10 @@
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { filterAndSortNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterAndSortNavigationMenuItems';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { useNavigationObjectMetadataItems } from '@/navigation-menu-item/common/hooks/useNavigationObjectMetadataItems';
-import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
@@ -26,7 +26,6 @@ type NavigationMenuItemFolderEntry = Pick<
 export const useNavigationMenuItemsByFolder = () => {
   const views = useAtomStateValue(viewsSelector);
   const objectMetadataItems = useNavigationObjectMetadataItems();
-  const isWorkflowCoreEnabled = useIsWorkflowCoreEnabled();
 
   const { navigationMenuItems, workspaceNavigationMenuItems } =
     useNavigationMenuItemsData();
@@ -46,7 +45,7 @@ export const useNavigationMenuItemsByFolder = () => {
         if (isNavigationMenuItemFolder(item)) {
           const folderEntry: NavigationMenuItemFolderEntry = {
             id: item.id,
-            folderName: item.name || 'Folder',
+            folderName: item.name || t`Folder`,
             icon: item.icon ?? undefined,
             color: item.color ?? undefined,
           };
@@ -89,7 +88,6 @@ export const useNavigationMenuItemsByFolder = () => {
         itemsInFolder,
         views,
         objectMetadataItems,
-        isWorkflowCoreEnabled,
       );
 
       acc.push({

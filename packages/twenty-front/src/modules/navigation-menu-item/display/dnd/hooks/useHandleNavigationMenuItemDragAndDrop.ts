@@ -1,6 +1,7 @@
 import { useStore } from 'jotai';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import type { NavigationMenuItemDropResult } from '@/navigation-menu-item/common/types/NavigationMenuItemDropResult';
 
@@ -154,7 +155,7 @@ export const useHandleNavigationMenuItemDragAndDrop = (
 
     if (destination.droppableId.startsWith(config.folderHeaderPrefix)) {
       if (destinationFolderId === null) {
-        throw new Error('Invalid folder header ID');
+        throw new Error(doNotTranslate('Invalid folder header ID'));
       }
 
       const folderList = getSortedItems().filter((item) =>

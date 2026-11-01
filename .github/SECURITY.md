@@ -5,7 +5,7 @@
 Reporting any potential vulnerabilities is strongly encouraged.
 
 If you suspect a vulnerability, please take the following steps:
-- Contact the team at `security at twenty.com`.
+- Contact the team at security@twenty.com.
 - Include a comprehensive description of the potential vulnerability and steps to reproduce the issue, if possible. The more information you can provide, the quicker Twenty can address the problem.
 
 You can expect a response to your initial report within one business day.

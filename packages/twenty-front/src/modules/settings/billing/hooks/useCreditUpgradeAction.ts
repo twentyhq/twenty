@@ -45,7 +45,7 @@ export const useCreditUpgradeAction = () => {
     }
 
     try {
-      enqueueToast({ variant: 'info', children: t`Upgrading subscription...` });
+      enqueueToast({ status: 'info', children: t`Upgrading subscription...` });
 
       const { data } = await setResourceCreditSubscriptionPrice({
         variables: { priceId: nextPrice.stripePriceId },
@@ -69,10 +69,10 @@ export const useCreditUpgradeAction = () => {
         },
       );
 
-      enqueueToast({ variant: 'success', children: t`Credit plan upgraded.` });
+      enqueueToast({ status: 'success', children: t`Credit plan upgraded.` });
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to upgrade credit plan.`,
       });
 

@@ -3,13 +3,21 @@
   --skeleton-highlight-color: var(--t-background-transparent-lighter);
 
   background-color: var(--skeleton-base-color);
-  border-radius: 0.25rem;
-  display: inline-flex;
-  line-height: 1;
+  border-radius: var(--t-border-radius-sm-round);
+  corner-shape: round;
+  display: block;
+  height: 1em;
+  max-inline-size: 100%;
   overflow: hidden;
   position: relative;
   user-select: none;
   width: 100%;
+
+  &[data-layout='inline'] {
+    display: inline-flex;
+    height: auto;
+    line-height: 1;
+  }
 
   &[data-animated]::after {
     animation: skeletonShimmer 1.5s ease-in-out infinite;

@@ -48,7 +48,7 @@ describe('useCopyToClipboard', () => {
       expect(mockWriteText).toHaveBeenCalledWith('hello clipboard');
       expect(mockEnqueueToast).toHaveBeenCalledWith(
         expect.objectContaining({
-          variant: 'success',
+          status: 'success',
           children: 'Copied to clipboard',
         }),
       );
@@ -63,7 +63,7 @@ describe('useCopyToClipboard', () => {
 
       expect(mockEnqueueToast).toHaveBeenCalledWith(
         expect.objectContaining({
-          variant: 'success',
+          status: 'success',
           children: 'Email copied',
         }),
       );
@@ -95,7 +95,7 @@ describe('useCopyToClipboard', () => {
 
       expect(mockEnqueueToast).toHaveBeenCalledWith(
         expect.objectContaining({
-          variant: 'error',
+          status: 'error',
           children: "Couldn't copy to clipboard",
         }),
       );
@@ -112,7 +112,7 @@ describe('useCopyToClipboard', () => {
 
       expect(mockWriteText).not.toHaveBeenCalled();
       expect(mockEnqueueToast).toHaveBeenCalledWith(
-        expect.objectContaining({ variant: 'error' }),
+        expect.objectContaining({ status: 'error' }),
       );
     });
   });

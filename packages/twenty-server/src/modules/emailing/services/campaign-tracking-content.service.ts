@@ -7,12 +7,18 @@ import { Repository } from 'typeorm';
 import { isNonEmptyString } from '@sniptt/guards';
 import { toPlainText } from 'twenty-emails';
 import { ApiPath } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import {
+  formatTemplateVariableWithFallback,
+  isDefined,
+  type TemplateVariableWithFallback,
+} from 'twenty-shared/utils';
 
 import { buildLogDriverUnsubscribeBaseUrl } from 'src/engine/core-modules/emailing-domain/drivers/log/utils/build-log-driver-unsubscribe-base-url.util';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { type EmailingDomainEmailTemplate } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-email-template.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import { appendHtmlFooter } from 'src/engine/core-modules/emailing-domain/utils/append-html-footer.util';
+import { encodeCampaignOpenTrackingToken } from 'src/engine/core-modules/emailing-domain/utils/encode-campaign-open-tracking-token.util';
 import { encodeCampaignTrackingToken } from 'src/engine/core-modules/emailing-domain/utils/encode-campaign-tracking-token.util';
 import { applyReplacementTags } from 'src/engine/core-modules/emailing-domain/utils/apply-replacement-tags.util';
 import { escapeHtml } from 'src/engine/core-modules/emailing-domain/utils/escape-html.util';
@@ -30,6 +36,8 @@ import { MessageSuppressionService } from 'src/modules/emailing/services/message
 import { collectTrackableLinkUrls } from 'src/modules/emailing/utils/collect-trackable-link-urls.util';
 import { normalizeCampaignRecipientEmailAddress } from 'src/modules/emailing/utils/normalize-campaign-recipient-email-address.util';
 import { replaceTrackableLinkUrls } from 'src/modules/emailing/utils/replace-trackable-link-urls.util';
+
+const OPEN_PIXEL_TAG = 'o_h';
 
 type CampaignMessagePart =
   keyof typeof CAMPAIGN_TRACKING_TAG_PREFIX_BY_MESSAGE_PART;
@@ -50,7 +58,7 @@ type PrepareBatchArgs = {
   emailingDomainId: string;
   template: EmailingDomainEmailTemplate;
   plainTextSourceHtml: string;
-  variableNames: string[];
+  campaignVariables: TemplateVariableWithFallback[];
   recipients: TrackingRecipient[];
 };
 
@@ -72,7 +80,7 @@ export class CampaignTrackingContentService {
     emailingDomainId,
     template,
     plainTextSourceHtml,
-    variableNames,
+    campaignVariables,
     recipients,
   }: PrepareBatchArgs): Promise<TrackedCampaignBatch> {
     const untracked = {
@@ -95,14 +103,25 @@ export class CampaignTrackingContentService {
       return untracked;
     }
 
-    const urlTemplates = collectTrackableLinkUrls(html);
+    const workspace = await this.workspaceRepository.findOneBy({
+      id: workspaceId,
+    });
 
-    if (urlTemplates.length === 0) {
+    if (!isDefined(workspace)) {
+      return untracked;
+    }
+
+    const isOpenTrackingEnabled = workspace.isCampaignOpenTrackingEnabled;
+    const urlTemplates = workspace.isCampaignClickTrackingEnabled
+      ? collectTrackableLinkUrls(html)
+      : [];
+
+    if (urlTemplates.length === 0 && !isOpenTrackingEnabled) {
       return untracked;
     }
 
     const baseUrl = await this.findTrackingBaseUrl({
-      workspaceId,
+      workspace,
       emailingDomainId,
     });
 
@@ -123,7 +142,7 @@ export class CampaignTrackingContentService {
     const shortLinkIdByIdentity = await this.registerShortLinks({
       workspaceId,
       urlTemplates,
-      variableNames,
+      campaignVariables,
       recipients: recipients.filter(isTracked),
     });
 
@@ -132,6 +151,7 @@ export class CampaignTrackingContentService {
         template,
         plainTextSourceHtml,
         urlTemplates,
+        isOpenTrackingEnabled,
       }),
       replacementsByDeliveryId: new Map(
         recipients.map((recipient) => [
@@ -144,10 +164,15 @@ export class CampaignTrackingContentService {
                   baseUrl,
                   recipient,
                   urlTemplates,
-                  variableNames,
+                  campaignVariables,
                   shortLinkIdByIdentity,
+                  isOpenTrackingEnabled,
                 })
-              : this.buildUntrackedReplacements({ recipient, urlTemplates })),
+              : this.buildUntrackedReplacements({
+                  recipient,
+                  urlTemplates,
+                  isOpenTrackingEnabled,
+                })),
           },
         ]),
       ),
@@ -158,10 +183,12 @@ export class CampaignTrackingContentService {
     template,
     plainTextSourceHtml,
     urlTemplates,
+    isOpenTrackingEnabled,
   }: {
     template: EmailingDomainEmailTemplate;
     plainTextSourceHtml: string;
     urlTemplates: string[];
+    isOpenTrackingEnabled: boolean;
   }): EmailingDomainEmailTemplate {
     const tagByUrl = (messagePart: CampaignMessagePart) =>
       new Map(
@@ -171,12 +198,16 @@ export class CampaignTrackingContentService {
         ]),
       );
 
+    const html = replaceTrackableLinkUrls({
+      html: template.html ?? '',
+      trackedUrlByUrl: tagByUrl('HTML'),
+    });
+
     return {
       ...template,
-      html: replaceTrackableLinkUrls({
-        html: template.html ?? '',
-        trackedUrlByUrl: tagByUrl('HTML'),
-      }),
+      html: isOpenTrackingEnabled
+        ? appendHtmlFooter(html, `{{${OPEN_PIXEL_TAG}}}`)
+        : html,
       text: toPlainText(
         replaceTrackableLinkUrls({
           html: plainTextSourceHtml,
@@ -189,12 +220,12 @@ export class CampaignTrackingContentService {
   private async registerShortLinks({
     workspaceId,
     urlTemplates,
-    variableNames,
+    campaignVariables,
     recipients,
   }: {
     workspaceId: string;
     urlTemplates: string[];
-    variableNames: string[];
+    campaignVariables: TemplateVariableWithFallback[];
     recipients: TrackingRecipient[];
   }): Promise<Map<string, string>> {
     const linkByIdentity = new Map<
@@ -205,7 +236,7 @@ export class CampaignTrackingContentService {
     for (const urlTemplate of urlTemplates) {
       const authoredTemplateUrl = this.restoreAuthoredUrl({
         urlTemplate,
-        variableNames,
+        campaignVariables,
       });
 
       for (const recipient of recipients) {
@@ -240,22 +271,33 @@ export class CampaignTrackingContentService {
     baseUrl,
     recipient,
     urlTemplates,
-    variableNames,
+    campaignVariables,
     shortLinkIdByIdentity,
+    isOpenTrackingEnabled,
   }: {
     workspaceId: string;
     baseUrl: string;
     recipient: TrackingRecipient;
     urlTemplates: string[];
-    variableNames: string[];
+    campaignVariables: TemplateVariableWithFallback[];
     shortLinkIdByIdentity: Map<string, string>;
+    isOpenTrackingEnabled: boolean;
   }): Record<string, string> {
     const replacements: Record<string, string> = {};
+
+    if (isOpenTrackingEnabled) {
+      const pixelUrl = `${baseUrl}/${ApiPath.Emailing}/o/${encodeCampaignOpenTrackingToken(
+        { workspaceId, deliveryId: recipient.deliveryId },
+      )}`;
+
+      replacements[OPEN_PIXEL_TAG] =
+        `<img src="${escapeHtml(pixelUrl)}" width="1" height="1" alt="" style="display:block;width:1px;height:1px;border:0;" />`;
+    }
 
     urlTemplates.forEach((urlTemplate, index) => {
       const authoredTemplateUrl = this.restoreAuthoredUrl({
         urlTemplate,
-        variableNames,
+        campaignVariables,
       });
       const { url } = this.resolveLinkUrl({
         urlTemplate,
@@ -283,11 +325,17 @@ export class CampaignTrackingContentService {
   private buildUntrackedReplacements({
     recipient,
     urlTemplates,
+    isOpenTrackingEnabled,
   }: {
     recipient: TrackingRecipient;
     urlTemplates: string[];
+    isOpenTrackingEnabled: boolean;
   }): Record<string, string> {
     const replacements: Record<string, string> = {};
+
+    if (isOpenTrackingEnabled) {
+      replacements[OPEN_PIXEL_TAG] = '';
+    }
 
     urlTemplates.forEach((urlTemplate, index) => {
       const { url } = this.resolveLinkUrl({
@@ -330,36 +378,30 @@ export class CampaignTrackingContentService {
 
   private restoreAuthoredUrl({
     urlTemplate,
-    variableNames,
+    campaignVariables,
   }: {
     urlTemplate: string;
-    variableNames: string[];
+    campaignVariables: TemplateVariableWithFallback[];
   }): string {
     return urlTemplate.replace(
       CAMPAIGN_BATCH_VARIABLE_TAG_PATTERN,
       (tag: string, variableIndex: string) => {
-        const variableName = variableNames[Number(variableIndex)];
+        const campaignVariable = campaignVariables[Number(variableIndex)];
 
-        return isDefined(variableName) ? `{{${variableName}}}` : tag;
+        return isDefined(campaignVariable)
+          ? formatTemplateVariableWithFallback(campaignVariable)
+          : tag;
       },
     );
   }
 
   private async findTrackingBaseUrl({
-    workspaceId,
+    workspace,
     emailingDomainId,
   }: {
-    workspaceId: string;
+    workspace: WorkspaceEntity;
     emailingDomainId: string;
   }): Promise<string | undefined> {
-    const workspace = await this.workspaceRepository.findOneBy({
-      id: workspaceId,
-    });
-
-    if (!workspace?.isCampaignClickTrackingEnabled) {
-      return undefined;
-    }
-
     if (
       this.twentyConfigService.get('EMAILING_DOMAIN_DRIVER') ===
       EmailingDomainDriver.LOG
@@ -378,7 +420,7 @@ export class CampaignTrackingContentService {
     }
 
     const emailingDomain = await this.emailingDomainRepository.findOne(
-      workspaceId,
+      workspace.id,
       { where: { id: emailingDomainId } },
     );
     const unsubscribeHostname = emailingDomain?.unsubscribeHostname;

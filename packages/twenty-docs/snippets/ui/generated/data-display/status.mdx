@@ -15,24 +15,16 @@
   Theme color used for the status background, text, and loader.
 </ParamField>
 
-<ParamField body="disabled" type="boolean" default="false">
-  Applies disabled styling and disables activation when `onClick` is supplied.
-</ParamField>
-
 <ParamField body="loading" type="boolean" default="false">
-  Shows a loader after the label. Does not disable the control or announce a status change by itself.
+  Shows a decorative loader after the label and defaults aria-busy to true. The caller owns announcements and disabled interaction.
 </ParamField>
 
-<ParamField body="nativeButton" type="boolean" default="true">
-  Set to `false` when using `render` with an element other than a native button.
+<ParamField body="onClick" type="MouseEventHandler&lt;HTMLSpanElement&gt;">
+  Native click handler. Does not change the default span or add keyboard activation.
 </ParamField>
 
-<ParamField body="onClick" type="MouseEventHandler&lt;HTMLButtonElement&gt; | MouseEventHandler&lt;HTMLElement&gt;">
-  Handles activation and renders a native button by default. Without it, the default element is a span.
-</ParamField>
-
-<ParamField body="render" type="NonNullable&lt;ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt; | undefined&gt;">
-  Replaces the default element. Required when `nativeButton` is `false`.
+<ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, StatusState&gt;">
+  Replaces the default span. Compose a button or link to provide explicit interaction semantics.
 </ParamField>
 
 <ParamField body="weight" type="&quot;medium&quot; | &quot;regular&quot;" default="regular">

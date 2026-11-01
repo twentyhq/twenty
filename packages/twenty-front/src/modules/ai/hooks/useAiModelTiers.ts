@@ -9,7 +9,7 @@ import { hasCostPerTaskForEveryModel } from '@/ai/utils/hasCostPerTaskForEveryMo
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { aiModelTiersState } from '@/client-config/states/aiModelTiersState';
 import { aiModelsState } from '@/client-config/states/aiModelsState';
-import { getAiModelBlendedCostPerMillionTokens } from '@/settings/ai/utils/getAiModelBlendedCostPerMillionTokens';
+import { getAiModelBlendedCostPerMillionTokens } from '@/ai/utils/getAiModelBlendedCostPerMillionTokens';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ClientAiModelConfig } from '~/generated-metadata/graphql';
 

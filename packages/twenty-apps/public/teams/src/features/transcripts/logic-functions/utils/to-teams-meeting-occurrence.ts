@@ -17,11 +17,19 @@ export const toTeamsMeetingOccurrence = (
     event.isCancelled ||
     event.onlineMeetingProvider !== 'teamsForBusiness' ||
     !isNonEmptyString(joinWebUrl) ||
+    !isNonEmptyString(event.id) ||
     !isDefined(startDateTime) ||
     !isDefined(endDateTime)
   ) {
     return undefined;
   }
 
-  return { joinWebUrl, startDateTime, endDateTime };
+  const calendarReference = isNonEmptyString(event.seriesMasterId)
+    ? { eventExternalId: event.seriesMasterId }
+    : {
+        eventExternalId: event.id,
+        ...(isNonEmptyString(event.iCalUId) ? { iCalUId: event.iCalUId } : {}),
+      };
+
+  return { joinWebUrl, startDateTime, endDateTime, calendarReference };
 };

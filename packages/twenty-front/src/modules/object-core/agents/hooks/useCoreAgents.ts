@@ -3,11 +3,12 @@ import { useMemo } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CORE_AGENT_TABLE_COLUMNS } from '@/object-core/agents/constants/CoreAgentTableColumns';
+import { coreAgentsFilterSettingsState } from '@/object-core/agents/states/coreAgentsFilterSettingsState';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
+import { isCoreAgentMatchingFilterSettings } from '@/object-core/agents/utils/isCoreAgentMatchingFilterSettings';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableFieldMetadata } from '@/ui/layout/table/types/TableFieldMetadata';
 import { type TableSortValue } from '@/ui/layout/table/types/TableSortValue';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { FindManyAgentsDocument } from '~/generated-metadata/graphql';
 
@@ -28,7 +29,9 @@ export const useCoreAgents = ({
 }: {
   tableId?: string;
 } = {}) => {
-  const isAdvancedModeEnabled = useAtomStateValue(isAdvancedModeEnabledState);
+  const coreAgentsFilterSettings = useAtomStateValue(
+    coreAgentsFilterSettingsState,
+  );
 
   // Workflow steps and the agent page create and delete agents without touching this query's cache
   const { data, loading, error } = useQuery(FindManyAgentsDocument, {
@@ -37,10 +40,13 @@ export const useCoreAgents = ({
 
   const listedAgents = useMemo(
     () =>
-      (data?.findManyAgents ?? []).filter(
-        (agent) => !agent.isSystem || isAdvancedModeEnabled,
+      (data?.findManyAgents ?? []).filter((agent) =>
+        isCoreAgentMatchingFilterSettings({
+          agent,
+          filterSettings: coreAgentsFilterSettings,
+        }),
       ),
-    [data?.findManyAgents, isAdvancedModeEnabled],
+    [data?.findManyAgents, coreAgentsFilterSettings],
   );
 
   const tableMetadata = useMemo(

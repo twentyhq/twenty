@@ -1,3 +1,4 @@
+import { Badge } from 'twenty-ui/primitives/data-display';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isValidElement, type ReactNode, useId } from 'react';
@@ -87,20 +88,6 @@ const StyledNote = styled.span`
   line-height: 1.4;
 `;
 
-const StyledBadge = styled.span`
-  align-items: center;
-  background-color: ${themeCssVariables.grayScale.gray3};
-  border-radius: ${themeCssVariables.border.radius.pill};
-  box-sizing: border-box;
-  color: ${themeCssVariables.font.color.tertiary};
-  corner-shape: round;
-  display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  font-weight: ${themeCssVariables.font.weight.medium};
-  height: ${themeCssVariables.spacing[5]};
-  padding: 0 ${themeCssVariables.spacing[2]};
-`;
-
 const StyledRadioContainer = styled.div`
   align-items: center;
   display: flex;
@@ -163,7 +150,7 @@ export const OnboardingPlanCard = ({
               )}
             </StyledTitleText>
             {hasTags && <StyledTags id={tagsId}>{tags}</StyledTags>}
-            {isDefined(badge) && <StyledBadge>{badge}</StyledBadge>}
+            {isDefined(badge) && <Badge size="md">{badge}</Badge>}
           </StyledTitleContent>
           <StyledRadioContainer>
             <Radio

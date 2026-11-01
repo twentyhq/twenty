@@ -84,6 +84,8 @@ export const Default: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    expect(await canvas.findByText('No Time zone')).toBeVisible();
+
     await userEvent.click(await canvas.findByText('No Account'));
 
     const dropdown = within(canvasElement.ownerDocument.body);

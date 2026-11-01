@@ -26,6 +26,7 @@ export interface UserWorkspaceAuthContext extends BaseWorkspaceAuthContext {
   workspaceMember: NonNullable<RawAuthContext['workspaceMember']>;
   application?: NonNullable<RawAuthContext['application']>;
   viaApplication?: NonNullable<RawAuthContext['application']>;
+  agentId?: string;
 }
 
 export interface ApplicationWorkspaceAuthContext extends BaseWorkspaceAuthContext {
@@ -33,6 +34,8 @@ export interface ApplicationWorkspaceAuthContext extends BaseWorkspaceAuthContex
   application: NonNullable<RawAuthContext['application']>;
   // Set when one of the application's agents runs on its own, so its writes are attributed to it
   actingAgent?: ActingAgent;
+  // The agent named in the token only narrows its roles; unlike actingAgent, writes are not attributed to it
+  agentId?: string;
 }
 
 export interface SystemWorkspaceAuthContext extends BaseWorkspaceAuthContext {

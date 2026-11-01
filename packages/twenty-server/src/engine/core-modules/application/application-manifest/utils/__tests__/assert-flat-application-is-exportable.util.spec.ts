@@ -51,13 +51,13 @@ describe('assertFlatApplicationIsExportable', () => {
     );
   });
 
-  it('should point a packaged application at app:install', () => {
+  it('should point a packaged application at twenty app install', () => {
     expect(() =>
       assertFlatApplicationIsExportable(
         buildFlatApplication({
           sourceType: ApplicationRegistrationSourceType.NPM,
         }),
       ),
-    ).toThrow(/app:install/);
+    ).toThrow(/twenty app install/);
   });
 });

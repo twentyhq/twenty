@@ -1,5 +1,6 @@
 import { type CurrentWorkspaceMember } from '@/auth/states/currentWorkspaceMemberState';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
+import { getWorkspaceMemberNameOrEmail } from '@/workspace-member/utils/getWorkspaceMemberNameOrEmail';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -28,10 +29,7 @@ export const getRecordShareLabel = ({
   }
 
   if (isDefined(member)) {
-    return (
-      `${member.name.firstName} ${member.name.lastName}`.trim() ||
-      member.userEmail
-    );
+    return getWorkspaceMemberNameOrEmail(member);
   }
 
   return t`Deleted member`;

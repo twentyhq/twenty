@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { msg } from '@lingui/core/macro';
 import { type SecretOrKeyProvider, Strategy } from 'passport-jwt';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { isApiKeyExpired } from 'src/engine/core-modules/api-key/utils/is-api-key-expired.util';
 import {
   AuthException,
   AuthExceptionCode,
@@ -94,7 +95,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
-    if (new Date(apiKey.expiresAt) < new Date()) {
+    if (isApiKeyExpired(apiKey)) {
       throw new AuthException(
         'This API Key is expired',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
@@ -356,6 +357,10 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     }
 
     const context: RawAuthContext = { application, workspace };
+
+    if (isDefined(payload.agentId)) {
+      context.agentId = payload.agentId;
+    }
 
     if (payload.userId && payload.userWorkspaceId) {
       const userContext = await this.resolveUserContext({

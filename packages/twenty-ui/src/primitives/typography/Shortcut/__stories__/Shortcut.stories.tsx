@@ -3,14 +3,19 @@ import { expect, within } from 'storybook/test';
 
 import { Button } from '@ui/primitives/input';
 import { ListItem } from '@ui/primitives/navigation';
-import { Shortcut, formatShortcut } from '@ui/primitives/typography';
-import { ComponentDecorator, overrideMediaQueryMatches } from '@ui/testing';
+import { Shortcut, Text, formatShortcut } from '@ui/primitives/typography';
+import {
+  A11Y_DEFER_COLOR_CONTRAST,
+  ComponentDecorator,
+  overrideMediaQueryMatches,
+} from '@ui/testing';
 import { MOBILE_MEDIA_QUERY } from '@ui/utilities';
 
 const meta: Meta<typeof Shortcut> = {
   title: 'UI/Typography/Shortcut',
   component: Shortcut,
   decorators: [ComponentDecorator],
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     shortcut: ['Mod', 'K'],
     platform: 'mac',
@@ -19,6 +24,8 @@ const meta: Meta<typeof Shortcut> = {
 
 export default meta;
 type Story = StoryObj<typeof Shortcut>;
+
+export const Display: Story = { args: { platform: undefined } };
 
 export const Combination: Story = {
   play: async ({ canvasElement, args }) => {
@@ -106,14 +113,20 @@ export const Mobile: Story = {
   },
 };
 
-export const Documentation: Story = {
+export const Catalog: Story = {
   render: () => (
-    <>
-      <Button shortcut={['Mod', 'Enter']}>Save record</Button>
-      <ListItem shortcut={[['G'], ['P']]} shortcutJoinLabel="next">
-        Open people
-      </ListItem>
-      <Shortcut shortcut={['Mod', 'K']} variant="text" />
-    </>
+    <Text style={{ display: 'grid', gap: 16 }}>
+      {(['keys', 'text', 'button'] as const).map((variant) => (
+        <Text
+          key={variant}
+          style={{ display: 'flex', alignItems: 'center', gap: 16 }}
+        >
+          <Text render={<span />} style={{ width: 48 }}>
+            {variant}
+          </Text>
+          <Shortcut shortcut={['Mod', 'K']} variant={variant} />
+        </Text>
+      ))}
+    </Text>
   ),
 };

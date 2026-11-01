@@ -11,7 +11,7 @@ import {
 } from '@/settings/developers/utils/createWebhookInput';
 import { parseOperationsFromStrings } from '@/settings/developers/utils/parseOperationsFromStrings';
 import {
-  webhookFormSchema,
+  getWebhookFormSchema,
   type WebhookFormValues,
 } from '@/settings/developers/validation-schemas/webhookFormSchema';
 import { useMutation, useQuery } from '@apollo/client/react';
@@ -21,11 +21,12 @@ import { useToast } from 'twenty-ui/components/feedback';
 import {
   CreateWebhookDocument,
   DeleteWebhookDocument,
+  GetApiKeyRolesDocument,
   GetWebhookDocument,
   UpdateWebhookDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/api-webhooks/constants/SettingsApiWebhooksTabs';
+import { SETTINGS_DEVELOPERS_TABS } from '@/settings/developers/constants/SettingsDevelopersTabs';
 
 type UseWebhookFormProps = {
   webhookId?: string;
@@ -37,6 +38,7 @@ const DEFAULT_FORM_VALUES: WebhookFormValues = {
   description: '',
   operations: addEmptyOperationIfNecessary([{ object: '*', action: '*' }]),
   secret: '',
+  roleId: '',
 };
 
 export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
@@ -51,7 +53,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
 
   const formConfig = useForm<WebhookFormValues>({
     mode: isCreationMode ? 'onSubmit' : 'onTouched',
-    resolver: zodResolver(webhookFormSchema),
+    resolver: zodResolver(getWebhookFormSchema()),
     defaultValues: DEFAULT_FORM_VALUES,
   });
 
@@ -65,6 +67,13 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
       id: webhookId || '',
     },
   });
+
+  const {
+    data: rolesData,
+    loading: rolesLoading,
+    error: rolesError,
+  } = useQuery(GetApiKeyRolesDocument);
+  const roles = rolesData?.getApiKeyRoles ?? [];
 
   useEffect(() => {
     if (webhookData) {
@@ -81,6 +90,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         description: webhook.description || '',
         operations,
         secret: webhook.secret || '',
+        roleId: webhook.role?.id ?? '',
       });
     }
   }, [webhookData, formConfig]);
@@ -101,18 +111,16 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         : '';
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Webhook ${targetUrl} created successfully`,
       });
 
       navigate(
-        createdWebhook ? SettingsPath.WebhookDetail : SettingsPath.ApiWebhooks,
+        createdWebhook ? SettingsPath.WebhookDetail : SettingsPath.Developers,
         createdWebhook ? { webhookId: createdWebhook.id } : undefined,
         undefined,
         undefined,
-        createdWebhook
-          ? undefined
-          : SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS,
+        createdWebhook ? undefined : SETTINGS_DEVELOPERS_TABS.TABS_IDS.WEBHOOKS,
       );
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
@@ -122,7 +130,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
   const handleUpdate = async (formValues: WebhookFormValues) => {
     if (!webhookId) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Webhook ID is required for updates`,
       });
       return;
@@ -142,7 +150,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         : '';
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Webhook ${targetUrl} updated successfully`,
       });
     } catch (error) {
@@ -186,7 +194,7 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
   const handleDelete = async () => {
     if (!webhookId) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Webhook ID is required for deletion`,
       });
       return;
@@ -197,16 +205,16 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
         variables: { id: webhookId },
       });
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Webhook deleted successfully`,
       });
 
       navigate(
-        SettingsPath.ApiWebhooks,
+        SettingsPath.Developers,
         undefined,
         undefined,
         undefined,
-        SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS,
+        SETTINGS_DEVELOPERS_TABS.TABS_IDS.WEBHOOKS,
       );
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
@@ -215,13 +223,14 @@ export const useWebhookForm = ({ webhookId, mode }: UseWebhookFormProps) => {
 
   return {
     formConfig,
-    loading,
+    loading: loading || rolesLoading,
+    roles,
     canSave,
     handleSave,
     updateOperation,
     removeOperation,
     handleDelete,
     isCreationMode,
-    error,
+    error: error ?? rolesError,
   };
 };

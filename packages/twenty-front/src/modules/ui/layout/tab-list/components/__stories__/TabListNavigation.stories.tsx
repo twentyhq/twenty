@@ -224,7 +224,21 @@ export const RouteLinks: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
     const activity = await canvas.findByRole('link', { name: 'activity' });
+    const overview = canvas.getByRole('link', { name: 'overview' });
     const disabled = canvas.getByRole('link', { name: 'disabled' });
+
+    expect(disabled).toHaveAttribute('aria-disabled', 'true');
+    expect(disabled).toHaveAttribute('tabindex', '-1');
+    expect(activity.tagName).toBe('A');
+    expect(activity).not.toHaveAttribute('type');
+    expect(activity).not.toHaveAttribute('aria-selected');
+    expect(activity).not.toHaveAttribute('aria-controls');
+    expect(overview).toHaveAttribute('aria-current', 'page');
+    overview.focus();
+    await userEvent.keyboard('{ArrowRight}');
+    expect(overview).toHaveFocus();
+    await userEvent.tab();
+    expect(activity).toHaveFocus();
 
     expect(canvas.queryByRole('tablist')).not.toBeInTheDocument();
     expect(canvas.queryByRole('tabpanel')).not.toBeInTheDocument();
@@ -235,6 +249,8 @@ export const RouteLinks: Story = {
     expect(canvas.getByText(args.sidePanel ? 'REPLACE' : 'PUSH')).toBeVisible();
     expect(canvas.getByText('tab-list')).toBeVisible();
     expect(activity).toHaveAttribute('aria-current', 'page');
+    expect(overview).not.toHaveAttribute('aria-current');
+    expect(canvas.queryByRole('tab')).not.toBeInTheDocument();
     await userEvent.click(disabled);
     expect(canvas.getByRole('status')).toHaveTextContent('activity: 2');
     expect(canvas.getByText('?filter=open#activity')).toBeVisible();

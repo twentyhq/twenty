@@ -4,7 +4,6 @@ import { type ReactNode } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import { type ExtendedUIMessage } from 'twenty-shared/ai';
 
-import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import { sleep } from '~/utils/sleep';
 
 import { useUpdateStreamingPartsWithDiff } from '@/ai/hooks/useUpdateStreamingPartsWithDiff';
@@ -45,13 +44,7 @@ const buildMessage = (
 
 const renderUpdateStreamingPartsWithDiff = () => {
   const Wrapper = ({ children }: { children: ReactNode }) => (
-    <JotaiProvider store={jotaiStore}>
-      <AgentChatComponentInstanceContext.Provider
-        value={{ instanceId: 'streaming-navigation-test' }}
-      >
-        {children}
-      </AgentChatComponentInstanceContext.Provider>
-    </JotaiProvider>
+    <JotaiProvider store={jotaiStore}>{children}</JotaiProvider>
   );
 
   return renderHook(() => useUpdateStreamingPartsWithDiff(), {
@@ -85,15 +78,6 @@ describe('useUpdateStreamingPartsWithDiff', () => {
     expect(processWorkspaceSetupCompletion).toHaveBeenLastCalledWith(
       nextStreamingMessage,
     );
-  });
-
-  it('does not process again a refetched message whose content did not change', () => {
-    const updateStreamingPartsWithDiff = renderUpdateStreamingPartsWithDiff();
-
-    updateStreamingPartsWithDiff([buildMessage('answer', 'Done')]);
-    updateStreamingPartsWithDiff([buildMessage('answer', 'Done')]);
-
-    expect(processWorkspaceSetupCompletion).toHaveBeenCalledTimes(1);
   });
 
   it('leaves messages written before this session alone', () => {

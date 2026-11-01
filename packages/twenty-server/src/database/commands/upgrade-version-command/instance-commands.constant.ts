@@ -230,6 +230,53 @@ import { CreatePendingWakeUpTableFastInstanceCommand } from 'src/database/comman
 import { CreateAgentRunSuspensionTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791301683545-create-agent-run-suspension-table';
 import { AddUserApplicationVariableValueFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791328043361-add-user-application-variable-value';
 import { AddTwoFactorAuthenticationRecoveryCodeIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791375726691-add-two-factor-authentication-recovery-code-index';
+import { DropAgentEvaluationInputsDeferredFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791401524803-drop-agent-evaluation-inputs';
+import { AddTwoFactorAuthenticationRecoveryCodeIndexConcurrentlySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-slow-1791401524804-add-two-factor-authentication-recovery-code-index-concurrently';
+import { AddUpgradeMigrationWorkspaceIdCreatedAtIndexConcurrentlySlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-slow-1791401524805-add-upgrade-migration-workspace-id-created-at-index-concurrently';
+import { AddPayloadToPendingWakeUpFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791438611736-add-payload-to-pending-wake-up';
+import { MoveAgentRunSuspensionsToPendingWakeUpsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-slow-1791438611737-move-agent-run-suspensions-to-pending-wake-ups';
+import { RestoreAgentEvaluationInputsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791464994704-restore-agent-evaluation-inputs';
+import { AddPurchaseToBillingCreditGrantTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791470452911-add-purchase-to-billing-credit-grant-type';
+import { RestoreUsageLimitMeterCompatibilityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-instance-command-fast-1791538680877-restore-usage-limit-meter-compatibility';
+import { DropUsageLimitMeterFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791720497488-drop-usage-limit-meter';
+import { SetWorkspaceEventLogRetentionDefaultFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791790299002-set-workspace-event-log-retention-default';
+import { AddWidgetAvailabilityToFrontComponentFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-47/2-47-instance-command-fast-1791898075681-add-widget-availability-to-front-component';
+import { AddIdentifyAccountLogicFunctionAndExternalAccountIdFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-instance-command-fast-1791975194413-add-identify-account-logic-function-and-external-account-id';
+import { AddApplicationRegistrationVersionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-instance-command-fast-1792077317736-add-application-registration-versions';
+import { BackfillApplicationRegistrationVersionsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-48/2-48-instance-command-slow-1792077361238-backfill-application-registration-versions';
+import { AddUserCreditsFallbackToBillingCustomerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792154197828-add-user-credits-fallback-to-billing-customer';
+import { AddConnectionProviderScopeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792162723868-add-connection-provider-scope';
+import { AddConnectedAccountScopeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792170228100-add-connected-account-scope';
+import { AddExcludePrivateEventsToCalendarChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-49/2-49-instance-command-fast-1792319637000-add-exclude-private-events-to-calendar-channel';
+import { AddPeriodMaxSeatsToBillingSubscriptionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-50/2-50-instance-command-fast-1792410699010-add-period-max-seats-to-billing-subscription';
+import { DropBillingMeterTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-50/2-50-instance-command-fast-1792480059403-drop-billing-meter-table';
+import { AddContentSha256ToFileFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-fast-1792581115000-add-content-sha256-to-file';
+import { RepairApplicationRegistrationVersionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-fast-1792655604265-repair-application-registration-versions';
+import { RepairBackfillApplicationRegistrationVersionsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-slow-1792655604266-repair-backfill-application-registration-versions';
+import { AddAgentChatChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-fast-1792686569823-add-agent-chat-channel';
+import { BackfillRoleAgentChatChannelAccessSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-slow-1792686689823-backfill-role-agent-chat-channel-access';
+import { AddAgentChatChannelNavigationMenuItemFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-51/2-51-instance-command-fast-1792686749823-add-agent-chat-channel-navigation-menu-item';
+import { AddParticipantHandleFieldToMessageChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1792907887530-add-participant-handle-field-to-message-channel';
+import { AddCustomConfigToConnectionProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1793032438836-add-custom-config-to-connection-provider';
+import { AddObjectMetadataDisabledObjectPermissionActionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793111477950-add-object-metadata-disabled-object-permission-actions';
+import { AddFieldMetadataDisabledFieldPermissionActionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793205123217-add-field-metadata-disabled-field-permission-actions';
+import { BackfillApplicationAutoUpgradeSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-slow-1793170402367-backfill-application-auto-upgrade';
+import { AddMessagingProviderFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-52/2-52-instance-command-fast-1793032438837-add-messaging-provider';
+import { AddMcpServerFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793150000000-add-mcp-server';
+import { AgentAndSkillOverridableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-53/2-53-instance-command-fast-1793203146887-agent-and-skill-overridable-entity';
+import { DropIsCustomFromAgentSkillViewIndexAndAgentChatChannelFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-fast-1793139794914-drop-is-custom-from-agent-skill-view-index-and-agent-chat-channel';
+import { UnlistUnreviewedApplicationRegistrationsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-slow-1793278636737-unlist-unreviewed-application-registrations';
+import { PurgeSoftDeletedAgentsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-slow-1793272266091-purge-soft-deleted-agents';
+import { AddGeolocationToUserSessionFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-fast-1793274494191-add-geolocation-to-user-session';
+import { AddWorkspaceChatAssistantModesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-fast-1793280483473-add-workspace-chat-assistant-modes';
+import { AddRelatedRecordPathTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-fast-1793291361887-add-related-record-path-table';
+import { AddAccessTokenExpiresAtToConnectedAccountFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-54/2-54-instance-command-fast-1793357800472-add-access-token-expires-at-to-connected-account';
+import { AddWebhookIdToRoleTargetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793369399690-add-webhook-id-to-role-target';
+import { AddWorkspaceIframeMediaPermissionsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793371022948-add-workspace-iframe-media-permissions';
+import { RenameWorkspaceAllowedIframeOriginsToAllowedEmbeddingOriginsFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793371022971-rename-workspace-allowed-iframe-origins-to-allowed-embedding-origins';
+import { AddRelatedRecordPathIsInherentFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793375358574-add-related-record-path-is-inherent';
+import { AddRelationFieldMetadataIdToRowLevelPermissionPredicateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793381326752-add-relation-field-metadata-id-to-row-level-permission-predicate';
+import { IndexTemporaryFileExpirationSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-slow-1793462047826-index-temporary-file-expiration';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -462,4 +509,51 @@ export const INSTANCE_COMMANDS = [
   CreateAgentRunSuspensionTableFastInstanceCommand,
   AddUserApplicationVariableValueFastInstanceCommand,
   AddTwoFactorAuthenticationRecoveryCodeIndexFastInstanceCommand,
+  DropAgentEvaluationInputsDeferredFastInstanceCommand,
+  AddTwoFactorAuthenticationRecoveryCodeIndexConcurrentlySlowInstanceCommand,
+  AddUpgradeMigrationWorkspaceIdCreatedAtIndexConcurrentlySlowInstanceCommand,
+  AddPayloadToPendingWakeUpFastInstanceCommand,
+  MoveAgentRunSuspensionsToPendingWakeUpsSlowInstanceCommand,
+  RestoreAgentEvaluationInputsFastInstanceCommand,
+  AddPurchaseToBillingCreditGrantTypeFastInstanceCommand,
+  RestoreUsageLimitMeterCompatibilityFastInstanceCommand,
+  DropUsageLimitMeterFastInstanceCommand,
+  SetWorkspaceEventLogRetentionDefaultFastInstanceCommand,
+  AddWidgetAvailabilityToFrontComponentFastInstanceCommand,
+  AddIdentifyAccountLogicFunctionAndExternalAccountIdFastInstanceCommand,
+  AddApplicationRegistrationVersionsFastInstanceCommand,
+  BackfillApplicationRegistrationVersionsSlowInstanceCommand,
+  AddUserCreditsFallbackToBillingCustomerFastInstanceCommand,
+  AddConnectionProviderScopeFastInstanceCommand,
+  AddConnectedAccountScopeFastInstanceCommand,
+  AddExcludePrivateEventsToCalendarChannelFastInstanceCommand,
+  AddPeriodMaxSeatsToBillingSubscriptionFastInstanceCommand,
+  DropBillingMeterTableFastInstanceCommand,
+  AddContentSha256ToFileFastInstanceCommand,
+  RepairApplicationRegistrationVersionsFastInstanceCommand,
+  RepairBackfillApplicationRegistrationVersionsSlowInstanceCommand,
+  AddAgentChatChannelFastInstanceCommand,
+  BackfillRoleAgentChatChannelAccessSlowInstanceCommand,
+  AddAgentChatChannelNavigationMenuItemFastInstanceCommand,
+  AddParticipantHandleFieldToMessageChannelFastInstanceCommand,
+  AddCustomConfigToConnectionProviderFastInstanceCommand,
+  AddMessagingProviderFastInstanceCommand,
+  AddMcpServerFastInstanceCommand,
+  AddObjectMetadataDisabledObjectPermissionActionsFastInstanceCommand,
+  BackfillApplicationAutoUpgradeSlowInstanceCommand,
+  AgentAndSkillOverridableEntityFastInstanceCommand,
+  DropIsCustomFromAgentSkillViewIndexAndAgentChatChannelFastInstanceCommand,
+  UnlistUnreviewedApplicationRegistrationsSlowInstanceCommand,
+  AddFieldMetadataDisabledFieldPermissionActionsFastInstanceCommand,
+  PurgeSoftDeletedAgentsSlowInstanceCommand,
+  AddGeolocationToUserSessionFastInstanceCommand,
+  AddWorkspaceChatAssistantModesFastInstanceCommand,
+  AddRelatedRecordPathTableFastInstanceCommand,
+  AddAccessTokenExpiresAtToConnectedAccountFastInstanceCommand,
+  AddWebhookIdToRoleTargetFastInstanceCommand,
+  AddWorkspaceIframeMediaPermissionsFastInstanceCommand,
+  RenameWorkspaceAllowedIframeOriginsToAllowedEmbeddingOriginsFastInstanceCommand,
+  AddRelatedRecordPathIsInherentFastInstanceCommand,
+  AddRelationFieldMetadataIdToRowLevelPermissionPredicateFastInstanceCommand,
+  IndexTemporaryFileExpirationSlowInstanceCommand,
 ];

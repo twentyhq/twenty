@@ -1,12 +1,15 @@
-import { type RecordGqlOperationOrderBy } from 'twenty-shared/types';
+import {
+  type RecordGqlFields,
+  type RecordGqlOperationOrderBy,
+} from 'twenty-shared/types';
 import { isPlainObject } from 'twenty-shared/utils';
 
 import { isOrderByDirection } from '@/object-record/graphql/utils/isOrderByDirection';
 
 export const extractOrderByFieldNames = (
   orderBy: RecordGqlOperationOrderBy,
-): Record<string, boolean | Record<string, boolean>> => {
-  const gqlFields: Record<string, boolean | Record<string, boolean>> = {
+): RecordGqlFields => {
+  const gqlFields: RecordGqlFields = {
     id: true,
   };
 
@@ -15,7 +18,7 @@ export const extractOrderByFieldNames = (
       if (isOrderByDirection(value)) {
         gqlFields[fieldName] = true;
       } else if (isPlainObject(value)) {
-        const subFields: Record<string, boolean> = {};
+        const subFields: RecordGqlFields = {};
 
         for (const [subFieldName, subValue] of Object.entries(
           value as Record<string, unknown>,

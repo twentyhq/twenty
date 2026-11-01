@@ -1,4 +1,4 @@
-import { makeAdminPanelApiRequestWithGuestRole } from 'test/integration/graphql/suites/admin-panel/utils/make-admin-panel-api-request-with-guest-role.util';
+import { makeAdminPanelApiRequestAsNonServerAdmin } from 'test/integration/graphql/suites/admin-panel/utils/make-admin-panel-api-request-as-non-server-admin.util';
 import {
   type UpdateAdminApplicationRegistrationFactoryInput,
   updateAdminApplicationRegistrationQueryFactory,
@@ -12,17 +12,17 @@ import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/appl
 
 type UpdateAdminApplicationRegistrationResult = Pick<
   ApplicationRegistrationEntity,
-  'id' | 'name' | 'isListed' | 'isPreInstalled' | 'isVetted'
+  'id' | 'name' | 'isListed' | 'isPreInstalled'
 >;
 
 export const updateAdminApplicationRegistration = async ({
   id,
   update,
   expectToFail = false,
-  withGuestRole = false,
+  asNonServerAdmin = false,
 }: UpdateAdminApplicationRegistrationFactoryInput & {
   expectToFail?: boolean;
-  withGuestRole?: boolean;
+  asNonServerAdmin?: boolean;
 }): CommonResponseBody<{
   updateAdminApplicationRegistration: UpdateAdminApplicationRegistrationResult;
 }> => {
@@ -31,8 +31,8 @@ export const updateAdminApplicationRegistration = async ({
     update,
   });
 
-  const response = withGuestRole
-    ? await makeAdminPanelApiRequestWithGuestRole(graphqlOperation)
+  const response = asNonServerAdmin
+    ? await makeAdminPanelApiRequestAsNonServerAdmin(graphqlOperation)
     : await makeAdminPanelApiRequest(graphqlOperation);
 
   if (expectToFail === true) {

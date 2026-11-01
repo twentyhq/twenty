@@ -17,6 +17,7 @@ type SettingsValidationRulePageLayoutProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
   breadcrumbLabel: string;
   stepLabel: string;
+  saveLabel: string;
   isSaveDisabled: boolean;
   onSave: () => void;
   children: ReactNode;
@@ -26,6 +27,7 @@ export const SettingsValidationRulePageLayout = ({
   objectMetadataItem,
   breadcrumbLabel,
   stepLabel,
+  saveLabel,
   isSaveDisabled,
   onSave,
   children,
@@ -71,7 +73,9 @@ export const SettingsValidationRulePageLayout = ({
               color="accent"
               disabled={isSaveDisabled}
               onClick={onSave}
-            >{t`Save`}</Button>
+            >
+              {saveLabel}
+            </Button>
           }
         />
       }

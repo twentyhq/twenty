@@ -1,14 +1,40 @@
 # Workflows
 
-Use when the app needs to ship a manual workflow on install, or when a logic function should be invocable from the workflow builder.
+Use when the app needs to ship a workflow, or when a logic function should be invocable from the workflow builder.
 
 See `logic.md` for post-install hooks. See `app-structure.md` for source layout.
 
 ## Mental Model
 
-Twenty workflows are workspace records, not app entities — no `define*` primitive. Ship them via `definePostInstallLogicFunction` and the workspace API.
+Declare app workflows with `defineWorkflow` from `twenty-sdk/define`: one call per workflow, holding a trigger and its steps. Install creates it active; installing a new app version updates it in place. Users can't edit an installed workflow — they duplicate it.
 
-A workflow is a `Workflow` plus at least one `WorkflowVersion`. Creating a `Workflow` auto-creates its draft `v1`; never create a `WorkflowVersion` directly.
+Workflows created at runtime through the workspace API are a `Workflow` plus at least one `WorkflowVersion`. Creating a `Workflow` auto-creates its draft `v1`; never create a `WorkflowVersion` directly.
+
+## defineWorkflow
+
+- The workflow and each step need a stable `universalIdentifier`. The trigger's is optional.
+- `nextStepIds` wires the graph: the trigger points to the first steps, each step to the steps after it.
+- Trigger types: `MANUAL`, `CRON`, `DATABASE_EVENT`, `WEBHOOK`. Step types exclude the builder's `CODE` — use `LOGIC_FUNCTION`.
+- Reference objects, fields, logic functions and agents by universal identifier, never by name or id.
+- Triggers take optional `name`, `position` and `outputSchema`; steps take optional `position` and `outputSchema`. They only shape the builder view. Omit them to get the derived defaults.
+- `position: null` means no position. `outputSchema: {}` means an empty schema; omit `outputSchema` to derive it.
+- `twenty app pull` on the workspace Custom application writes builder workflows in this form, keeping the builder's trigger name, positions and output schemas.
+
+## AI Agent Steps
+
+- `AI_AGENT` runs one of the app's agents, named with `agentUniversalIdentifier`, and takes the step's `prompt`, `responseFormat`, `humanInputInstructions`, `conversation` and `workspaceMemberId` (the member the agent's conversation is with).
+- A step can only name an agent the app exports: `twenty app pull` reports a workflow on any other agent as unsupported.
+
+## Email and Calendar Steps
+
+- `SEND_EMAIL`, `DRAFT_EMAIL` and `CREATE_CALENDAR_EVENT` name their account with exactly one of `connectedAccountId` or `connectedAccountHandle`.
+- Use `connectedAccountHandle` (the account's email address) in app code: ids only exist in one workspace. Apply resolves it to the oldest active account with that address that is shared with the workspace (`WORKSPACE` scope) and can run the step, and fails if none can. A member's private account can't be named by handle.
+- `twenty app pull` writes a shared account's id as its handle. Private account ids, variables and workspace member ids stay `connectedAccountId`.
+
+## Send to Inbox Steps
+
+- `SEND_CHAT_MESSAGE` posts `title` and `text` to the inbox of `workspaceMemberId`, optionally with a `toolCall` the member approves before the run goes on, and an optional `conversation`.
+- Member ids only exist in one workspace: in app code, pass a variable such as `{{trigger.properties.after.assigneeId}}`.
 
 ## Manual Record Trigger
 
@@ -16,9 +42,9 @@ A workflow is a `Workflow` plus at least one `WorkflowVersion`. Creating a `Work
 - The selected record is the trigger payload — no wrapping `record` field.
 - Reference fields with `{{trigger.<field>}}`. Do not use `{{trigger.record.<field>}}`.
 
-## Lifecycle
+## Lifecycle Through the Workspace API
 
-Always: create → configure draft → activate. Never publish a draft directly.
+Only for workflows created at runtime, e.g. from a post-install hook, instead of `defineWorkflow`. Always: create → configure draft → activate. Never publish a draft directly.
 
 1. Find or create the `Workflow` by stable name or slug. `createWorkflow` produces the draft `v1`.
 2. Set the trigger on the draft via `updateWorkflowVersion`.
@@ -41,7 +67,7 @@ Seeders need workflow settings permissions on the app role. Grant via `defineRol
 ## Invoking Locally
 
 ```bash
-yarn twenty dev:function:exec
+twenty app exec
 ```
 
-`yarn twenty apply` skips install hooks. Run it again after rebuilding to verify idempotency.
+`twenty app apply` skips install hooks. Run it again after rebuilding to verify idempotency.

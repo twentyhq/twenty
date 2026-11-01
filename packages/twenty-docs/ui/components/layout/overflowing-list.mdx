@@ -1,56 +1,147 @@
 ---
 title: OverflowingList
-description: Fit a row of items into the available space and reveal the complete list in a popup.
+description: Fit a row of items into the available space and show the complete list in a popup.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import OverflowingListReference from '/snippets/ui/generated/components/layout/overflowing-list.mdx';
 
-`OverflowingList` measures its available width, keeps the fitting items in a compact row, and offers a `+N` button for the remaining items. It updates when the container or item content changes.
+## Overview
 
-Supply the complete ordered list as keyed elements. Your application owns each item's content, actions, and data.
-
-```tsx
-import { OverflowingList } from 'twenty-ui/components/layout';
-import { Tag } from 'twenty-ui/primitives/data-display';
-
-const TEAMS = ['Design', 'Engineering', 'Support', 'Operations'];
-
-export const TeamList = () => (
-  <OverflowingList
-    style={{ width: 220 }}
-    showOverflowCount
-    overflowLabel="Show all teams"
-  >
-    {TEAMS.map((team) => (
-      <Tag key={team} color="blue">
-        {team}
-      </Tag>
-    ))}
-  </OverflowingList>
-);
-```
+`OverflowingList` measures its available width, keeps fitting items in a compact row, and offers a `+N` button that opens the complete list in a popup. The count updates when the container, item content or ordered list changes. Empty lists and lists that fit have no overflow button or exposed popup.
 
 <StoryEmbed
-  storyId="ui-components-overflowinglist--documentation"
+  storyId="ui-components-overflowinglist--display"
   title="Overflowing list example"
   height={280}
 />
 
+Supply the complete ordered list as keyed elements. Your application owns each item's content, actions and data. The compact row remains visible when the popup opens. The popup repeats the complete list, including the items that fit in the row.
+
+## Usage
+
+```tsx
+import { OverflowingList, Section } from 'twenty-ui/components/layout';
+import { Tag } from 'twenty-ui/primitives/data-display';
+
+const TAGS = ['Customer', 'Partner', 'Priority', 'Renewal'];
+
+export const CompanyTags = () => (
+  <Section.Root>
+    <Section.Header
+      title="Company tags"
+      description="Open the count to see all tags."
+    />
+    <OverflowingList
+      style={{ width: 180 }}
+      showOverflowCount
+      overflowLabel="Show all company tags"
+    >
+      {TAGS.map((label) => (
+        <Tag
+          key={label}
+          color="blue"
+          truncate={false}
+          style={{ width: 80, minWidth: 'fit-content' }}
+        >
+          {label}
+        </Tag>
+      ))}
+    </OverflowingList>
+  </Section.Root>
+);
+```
+
 ## Count visibility
 
-The overflow button appears on pointer hover or keyboard focus by default. Set `showOverflowCount` to `true` to keep it visible whenever items overflow. Set it to `false` only when the surrounding interface provides another way to access the complete list. A popup that is already open stays open until it is dismissed, even if `showOverflowCount` changes to `false`.
+| `showOverflowCount` | Behavior when items overflow                                                 |
+| ------------------- | ---------------------------------------------------------------------------- |
+| Omitted             | Shows the count on pointer hover, keyboard focus or while the popup is open. |
+| `true`              | Keeps the count visible.                                                     |
+| `false`             | Hides the count and clips the row. An open popup stays open until dismissed. |
 
-## Limit inline mounting
+The default mode keeps the current count visibility while an inline item is focused, so showing the count does not push that item out of the row. Focusing the count button makes the count visible.
 
-Use `maxInlineCount` when rendering a large collection or expensive item content. This caps only the compact row. The popup receives the complete list, including items beyond the cap. It does not fetch missing items or virtualize the popup.
+Use `false` when the surrounding interface provides another way to access the hidden items. Changing it to `false` hides the count without dismissing an already-open popup. `open` and `defaultOpen` can still expose the complete list when items overflow. Removing the overflow items or widening the list until everything fits closes the popup and removes the count button. The count always describes the items outside the compact row.
 
-## Popup behavior
+`maxInlineCount` caps the number of visible row items. Available width can reduce that number further. The popup still contains the complete list. It does not fetch missing items or virtualize the popup.
 
-Enter, Space, and pointer activation open a non-modal popup with the complete list. Escape closes it and restores focus to the overflow button. Assistive technologies announce the button by its visible count followed by `overflowLabel`, for example "+3 Show all teams". An outside interaction also closes it. The popup uses the surrounding theme and supports ordinary content, links, and buttons without turning them into menu items.
+## Popup state
 
-Overflow-trigger and popup interactions do not activate a clickable field host. Each list owns its measurement and popup state independently. Native `div` attributes, styles, class names, and refs apply to the compact row.
+The list owns its popup state when `open` is omitted. Use `defaultOpen` for its initial state. The default is `false`; an initially open popup still requires overflowing items.
+
+Pass `open` and update it in `onOpenChange` to own the popup state. The callback receives the requested boolean and the installed [Popover](/ui/primitives/surfaces/popover) event details, including `reason`, `event`, `trigger`, `cancel()` and `preventUnmountOnClose()`. Calling `cancel()` prevents the requested state change. In controlled use, update your state only for changes you accept.
+
+Pass `actionsRef` to receive the Popover `close()` and `unmount()` methods. `close()` requests closure through `onOpenChange` and respects cancellation. If your callback calls `preventUnmountOnClose()` to run a caller-owned exit, call `actionsRef.current?.unmount()` when that exit finishes. This releases the retained popup without removing the list and allows it to open again.
+
+```tsx
+import { useState } from 'react';
+import { OverflowingList } from 'twenty-ui/components/layout';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+
+const TEAMS = ['Design', 'Engineering', 'Support', 'Operations'];
+
+export const ControlledTeamList = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <OverflowingList
+      open={open}
+      onOpenChange={setOpen}
+      showOverflowCount
+      overflowLabel="Show all teams"
+      style={{ width: 220 }}
+      triggerProps={{ render: <Button variant="outline" size="sm" /> }}
+    >
+      {TEAMS.map((team) => (
+        <Tag key={team} color="blue">
+          {team}
+        </Tag>
+      ))}
+    </OverflowingList>
+  );
+};
+```
+
+<StoryEmbed
+  storyId="ui-components-overflowinglist--controlled"
+  title="Controlled state with a custom trigger"
+  height={280}
+/>
+
+## Native targets and composition
+
+Native `div` attributes, handlers, styles, class names and refs on `OverflowingList` target the compact row root. Use `triggerProps` for the count button and `popupProps` for the popup content div. Both retain their Popover part's native props, handlers, ref and element/function `render` composition.
+
+Customize the trigger with `triggerProps.render`, as in the controlled example, or supply `triggerProps.children` to replace `+N`. Custom components must [forward the supplied props and ref](/ui/primitives/overview#custom-components). Custom popup components must also render the supplied children; OverflowingList owns the item content. `overflowLabel` defaults to "Show all items". The default button's accessible name combines its count and that label, for example "+3 Show all teams". Override `triggerProps['aria-label']` or `popupProps['aria-label']` when their content needs a different name.
+
+`OverflowingList` stops `click`, `mousedown`, `pointerdown`, `keydown` and `keyup` propagation on the trigger and popup by default. This keeps opening the popup and interacting with its items from activating a surrounding field or picker. A handler supplied through `triggerProps` or `popupProps` replaces the default for that event. Call `event.stopPropagation()` in your handler to retain blocking, or omit it to allow that event to bubble. Other events keep their defaults. Handlers on a custom `render` element compose with the supplied props as usual.
+
+When a popup click override allows bubbling, the installed Base UI portal can dispatch that click to a surrounding React ancestor twice with the same native event. This also occurs with a plain `Popover`. OverflowingList preserves that upstream behavior; it does not guarantee one ancestor callback per native popup event when bubbling is enabled.
+
+## Keyboard and focus
+
+Enter, Space and pointer activation open a non-modal popup. Escape and outside interaction dismiss it. Ordinary dismissal restores focus to the count button. Focus already on a visible inline item or an outside control is preserved. The popup supports content, links and buttons with their native keyboard behavior; it does not turn them into menu items or add menu arrow navigation.
+
+Use `popupProps.initialFocus` and `popupProps.finalFocus` to customize opening and dismissal focus through the installed Popover contract.
+
+Each list owns its responsive measurements independently. Unmounting one list releases its observers and leaves other lists working.
+
+## Server rendering and hydration
+
+Server markup includes the first `maxInlineCount` items, or all items when the cap is omitted. Width measurement and popup content become available after client mounting.
+
+Hydration reuses the provisional row and applies responsive measurement after client mounting. Row and popup children are separate rendered instances. Keep state shared between those locations in the caller.
+
+## Migration
+
+The popup continues to show the complete list and uses "Show all items" by default. `showOverflowCount={false}` preserves the clipped row and hides the count. It does not dismiss an already-open popup. The trigger and popup retain their default blocking for click, mousedown, pointerdown, keydown and keyup. Override an individual handler through `triggerProps` or `popupProps` when the surrounding interface should receive that event.
 
 ## Props
 
 <OverflowingListReference />
+
+<PageBanner illustration="section-apps-data" />

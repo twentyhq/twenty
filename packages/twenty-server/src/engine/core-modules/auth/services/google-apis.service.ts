@@ -329,11 +329,12 @@ export class GoogleAPIsService {
         });
 
         if (!isMessagingAvailable && messageChannels.length > 0) {
-          await this.messagingChannelSyncStatusService.markAsFailed(
-            messageChannels.map((channel) => channel.id),
+          await this.messagingChannelSyncStatusService.markAsFailed({
+            messageChannelIds: messageChannels.map((channel) => channel.id),
             workspaceId,
-            MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
-          );
+            syncStatus:
+              MessageChannelSyncStatus.FAILED_INSUFFICIENT_PERMISSIONS,
+          });
         }
 
         if (isMessagingAvailable) {
@@ -349,6 +350,10 @@ export class GoogleAPIsService {
               await this.messageQueueService.add<MessagingMessageListFetchJobData>(
                 MessagingMessageListFetchJob.name,
                 { workspaceId, messageChannelId: messageChannel.id },
+                {
+                  workspaceId,
+                  isWorkspaceJob: true,
+                },
               );
               await this.enqueueWebhookSubscriptionCreation({
                 channelType: WebhookSubscriptionChannelType.MESSAGING,
@@ -395,6 +400,10 @@ export class GoogleAPIsService {
               await this.calendarQueueService.add<CalendarEventListFetchJobData>(
                 CalendarEventListFetchJob.name,
                 { workspaceId, calendarChannelId: calendarChannel.id },
+                {
+                  workspaceId,
+                  isWorkspaceJob: true,
+                },
               );
               await this.enqueueWebhookSubscriptionCreation({
                 channelType: WebhookSubscriptionChannelType.CALENDAR,
@@ -435,7 +444,11 @@ export class GoogleAPIsService {
       await this.webhookQueueService.add<CreateWebhookSubscriptionJobData>(
         CreateWebhookSubscriptionJob.name,
         { channelType, channelId, workspaceId },
-        { retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT },
+        {
+          retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT,
+          workspaceId,
+          isWorkspaceJob: true,
+        },
       );
     } catch (error) {
       this.logger.warn(

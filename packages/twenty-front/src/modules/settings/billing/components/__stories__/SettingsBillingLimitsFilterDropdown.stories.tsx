@@ -2,7 +2,6 @@ import { SettingsBillingLimitsFilterDropdown } from '@/settings/billing/componen
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { UsageResourceType } from '~/generated-metadata/graphql';
 
@@ -11,7 +10,6 @@ const FilterExample = () => {
   const [spender, setSpender] = useState<string | null>(null);
   return (
     <SettingsBillingLimitsFilterDropdown
-      filterButton={<Button>Filter limits</Button>}
       resourceTypes={[UsageResourceType.AI]}
       spenderTypes={['workspace', 'userWorkspace']}
       selectedResourceType={resource}

@@ -2,16 +2,19 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
+} from 'src/engine/permissions/permissions.exception';
+import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
+import { isValidationRuleEnforcementEnabled } from 'src/engine/twenty-orm/utils/is-validation-rule-enforcement-enabled.util';
 import { Injectable, type Type } from '@nestjs/common';
 
 import { type ObjectLiteral } from 'typeorm';
 
-import { FeatureFlagKey, type ObjectRecord } from 'twenty-shared/types';
+import { type ObjectRecord } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { ExecuteInWorkspaceContextOptions } from 'src/engine/twenty-orm/types/execute-in-workspace-context-options.type';
@@ -21,7 +24,7 @@ import {
   withWorkspaceContext,
   getWorkspaceContext,
 } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
-import type { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import type { RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -32,6 +35,8 @@ export class WorkspaceOrmManager {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceDataSourceService: WorkspaceDataSourceService,
+    private readonly enterprisePlanService: EnterprisePlanService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   getRepository<T extends ObjectLiteral = ObjectRecord>(
@@ -140,9 +145,10 @@ export class WorkspaceOrmManager {
       featureFlagsMap,
       billingEntitlements,
       rolesPermissions: permissionsPerRoleId,
-      roleIdsWithAllRecordsAccess,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
+      flatRoleTargetByAgentIdMaps,
+      flatApplicationMaps,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -152,9 +158,10 @@ export class WorkspaceOrmManager {
       'featureFlagsMap',
       'billingEntitlements',
       'rolesPermissions',
-      'roleIdsWithAllRecordsAccess',
       'userWorkspaceRoleMap',
       'apiKeyRoleMap',
+      'flatRoleTargetByAgentIdMaps',
+      'flatApplicationMaps',
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
     ]);
@@ -162,9 +169,12 @@ export class WorkspaceOrmManager {
     const { idByNameSingular: objectIdByNameSingular } =
       buildObjectIdByNameMaps(flatObjectMetadataMaps);
 
-    const flatValidationRuleMaps = featureFlagsMap[
-      FeatureFlagKey.IS_VALIDATION_RULES_ENABLED
-    ]
+    const flatValidationRuleMaps = isValidationRuleEnforcementEnabled({
+      featureFlagsMap,
+      billingEntitlements,
+      hasValidEnterprisePlan: this.enterprisePlanService.isValid(),
+      isBillingEnabled: this.twentyConfigService.get('IS_BILLING_ENABLED'),
+    })
       ? (
           await this.workspaceCacheService.getOrRecompute(workspaceId, [
             'flatValidationRuleMaps',
@@ -184,9 +194,10 @@ export class WorkspaceOrmManager {
       featureFlagsMap,
       billingEntitlements,
       permissionsPerRoleId,
-      roleIdsWithAllRecordsAccess,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
+      flatRoleTargetByAgentIdMaps,
+      flatApplicationMaps,
     };
   }
 
@@ -231,9 +242,10 @@ export class WorkspaceOrmManager {
       featureFlagsMap: {} as ORMWorkspaceContext['featureFlagsMap'],
       billingEntitlements,
       permissionsPerRoleId: {},
-      roleIdsWithAllRecordsAccess: [],
       userWorkspaceRoleMap: {},
       apiKeyRoleMap: {},
+      flatRoleTargetByAgentIdMaps: {},
+      flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
     };
   }
 }

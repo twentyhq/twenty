@@ -183,6 +183,7 @@ export type ThemeType = {
       md: string;
       smRound: string;
       mdRound: string;
+      lgRound: string;
       lg: string;
       xl: string;
       xxl: string;
@@ -207,6 +208,7 @@ export type ThemeType = {
       light: string;
       extraLight: string;
       inverted: string;
+      onAccent: string;
       danger: string;
     };
     size: {

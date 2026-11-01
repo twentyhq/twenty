@@ -9,7 +9,7 @@ import { Section } from 'twenty-ui/components/layout';
 import { IconSearch } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type MetadataTranslationsInput } from '~/generated-metadata/graphql';
-import { useLocaleOptions } from '~/localization/hooks/useLocaleOptions';
+import { useLocaleOptions } from '@/localization/hooks/useLocaleOptions';
 import { normalizeSearchText } from 'twenty-ui/utilities';
 
 const StyledSearchInputContainer = styled.div`

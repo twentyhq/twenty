@@ -11,6 +11,7 @@ import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/wo
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { validateConnectionProviderScope } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-connection-provider-scope.util';
 
 @Injectable()
 export class FlatConnectionProviderValidatorService {
@@ -47,6 +48,10 @@ export class FlatConnectionProviderValidatorService {
       });
     }
 
+    validationResult.errors.push(
+      ...validateConnectionProviderScope(flatConnectionProvider.scope),
+    );
+
     if (flatConnectionProvider.type === 'oauth') {
       const oauthConfig = flatConnectionProvider.oauthConfig;
 
@@ -76,6 +81,24 @@ export class FlatConnectionProviderValidatorService {
             });
           }
         }
+      }
+    }
+
+    if (flatConnectionProvider.type === 'custom') {
+      const customConfig = flatConnectionProvider.customConfig;
+
+      if (
+        !isDefined(customConfig) ||
+        !isNonEmptyString(
+          customConfig.authorizeLogicFunctionUniversalIdentifier,
+        ) ||
+        !isNonEmptyString(customConfig.callbackLogicFunctionUniversalIdentifier)
+      ) {
+        validationResult.errors.push({
+          code: ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
+          message: t`Connection provider with type 'custom' must reference an authorize and a callback logic function`,
+          userFriendlyMessage: msg`Custom connection provider is missing its authorize or callback logic function`,
+        });
       }
     }
 
@@ -139,6 +162,7 @@ export class FlatConnectionProviderValidatorService {
 
   public validateFlatConnectionProviderUpdate({
     universalIdentifier,
+    flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatConnectionProviderMaps: optimisticFlatConnectionProviderMaps,
     },
@@ -166,6 +190,28 @@ export class FlatConnectionProviderValidatorService {
       });
 
       return validationResult;
+    }
+
+    if (
+      isDefined(flatEntityUpdate.scope) &&
+      flatEntityUpdate.scope !== fromFlatConnectionProvider.scope
+    ) {
+      validationResult.errors.push({
+        code: ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
+        message: t`Connection provider scope cannot be changed after creation: declare a new connection provider with a new universalIdentifier`,
+        userFriendlyMessage: msg`Connection provider scope cannot be changed`,
+      });
+    }
+
+    if (
+      isDefined(flatEntityUpdate.type) &&
+      flatEntityUpdate.type !== fromFlatConnectionProvider.type
+    ) {
+      validationResult.errors.push({
+        code: ConnectionProviderExceptionCode.INVALID_CONNECTION_PROVIDER_INPUT,
+        message: t`Connection provider type cannot be changed after creation: declare a new connection provider with a new universalIdentifier`,
+        userFriendlyMessage: msg`Connection provider type cannot be changed`,
+      });
     }
 
     return validationResult;

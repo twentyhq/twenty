@@ -21,7 +21,7 @@ import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMeta
 import { getMockFieldMetadataItemOrThrow } from '~/testing/utils/getMockFieldMetadataItemOrThrow';
 import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
-jest.mock('~/hooks/usePageChangeEffectNavigateLocation', () => ({
+jest.mock('@/app/hooks/usePageChangeEffectNavigateLocation', () => ({
   usePageChangeEffectNavigateLocation: () => undefined,
 }));
 

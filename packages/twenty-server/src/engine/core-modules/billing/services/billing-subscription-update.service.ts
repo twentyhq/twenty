@@ -40,7 +40,10 @@ import { findSellableBaseProductPriceOrThrow } from 'src/engine/core-modules/bil
 import { findProductPriceForIntervalOrThrow } from 'src/engine/core-modules/billing/utils/find-product-price-for-interval-or-throw.util';
 import { isResourceCreditPriceForSubscription } from 'src/engine/core-modules/billing/utils/is-resource-credit-price-for-subscription.util';
 import { isSellableCatalogPrice } from 'src/engine/core-modules/billing/utils/is-sellable-catalog-price.util';
+import { isSendInvoiceSubscription } from 'src/engine/core-modules/billing/utils/is-send-invoice-subscription.util';
 import { getBaseProductSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-base-product-subscription-item-or-throw.util';
+import { getBillingPlanConfig } from 'src/engine/core-modules/billing/utils/get-billing-plan-config.util';
+import { getPlanSwitchOrThrow } from 'src/engine/core-modules/billing/utils/get-plan-switch-or-throw.util';
 import { getCurrentResourceCreditSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-resource-credit-subscription-item-or-throw.util';
 import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normalize-price-ref.utils';
 import { buildSchedulePhasesUpdate } from 'src/engine/core-modules/billing/utils/build-schedule-phases-update.util';
@@ -48,6 +51,7 @@ import { buildSubscriptionItemsUpdate } from 'src/engine/core-modules/billing/ut
 import { isSamePhaseSignature } from 'src/engine/core-modules/billing/utils/is-same-phase-signature.util';
 import { toPhaseUpdateParams } from 'src/engine/core-modules/billing/utils/to-phase-update-params.util';
 import { type SubscriptionStripePrices } from 'src/engine/core-modules/billing/types/subscription-stripe-prices.type';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -70,6 +74,7 @@ export class BillingSubscriptionUpdateService {
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async changeResourceCreditPrice(
@@ -192,22 +197,27 @@ export class BillingSubscriptionUpdateService {
     });
   }
 
-  async changePlan(workspaceId: string) {
+  async changePlan(workspaceId: string, targetPlanKey?: BillingPlanKey) {
     const billingSubscription =
       await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
         { workspaceId },
       );
 
-    const currentPlan =
+    const currentPlanKey =
       getBaseProductSubscriptionItemOrThrow(billingSubscription).billingProduct
         ?.metadata.planKey;
 
+    assertIsDefinedOrThrow(currentPlanKey);
+
+    const planSwitch = getPlanSwitchOrThrow({
+      currentPlanKey,
+      targetPlanKey,
+      plansConfig: this.twentyConfigService.get('BILLING_PLANS'),
+    });
+
     await this.updateSubscription(workspaceId, billingSubscription.id, {
       type: SubscriptionUpdateType.PLAN,
-      newPlan:
-        currentPlan === BillingPlanKey.ENTERPRISE
-          ? BillingPlanKey.PRO
-          : BillingPlanKey.ENTERPRISE,
+      newPlan: planSwitch.targetPlanKey,
     });
   }
 
@@ -408,15 +418,29 @@ export class BillingSubscriptionUpdateService {
     const diffInCents =
       Number(newPrice.unitAmount) - Number(currentPrice.unitAmount);
 
-    if (diffInCents > 0) {
-      await this.stripeInvoiceService.createImmediateUpgradeInvoice({
-        stripeCustomerId: subscription.stripeCustomerId,
-        stripeSubscriptionId: subscription.stripeSubscriptionId,
-        diffAmountInCents: diffInCents,
-        description: `Resource usage - Upgrade resource credit price from $${Number(currentPrice.unitAmount) / 100} to $${Number(newPrice.unitAmount) / 100}`,
-        currency: newPrice.currency,
-      });
+    if (diffInCents <= 0) {
+      return;
     }
+
+    const upgradeInvoiceItem = {
+      stripeCustomerId: subscription.stripeCustomerId,
+      stripeSubscriptionId: subscription.stripeSubscriptionId,
+      diffAmountInCents: diffInCents,
+      description: `Resource usage - Upgrade resource credit price from $${Number(currentPrice.unitAmount) / 100} to $${Number(newPrice.unitAmount) / 100}`,
+      currency: newPrice.currency,
+    };
+
+    if (isSendInvoiceSubscription(subscription)) {
+      await this.stripeInvoiceService.createPendingUpgradeInvoiceItem(
+        upgradeInvoiceItem,
+      );
+
+      return;
+    }
+
+    await this.stripeInvoiceService.createImmediateUpgradeInvoice(
+      upgradeInvoiceItem,
+    );
   }
 
   private async getProductKeyByPriceId(
@@ -510,6 +534,7 @@ export class BillingSubscriptionUpdateService {
       {
         currentSeats: currentPrices.seats,
         isTrialing: subscription.status === SubscriptionStatus.Trialing,
+        isSendInvoice: isSendInvoiceSubscription(subscription),
       },
     );
 
@@ -593,8 +618,11 @@ export class BillingSubscriptionUpdateService {
             ?.metadata.planKey;
 
         const isDowngrade =
-          currentPlan !== update.newPlan &&
-          update.newPlan === BillingPlanKey.PRO;
+          isDefined(currentPlan) &&
+          getBillingPlanConfig({
+            plansConfig: this.twentyConfigService.get('BILLING_PLANS'),
+            planKey: currentPlan,
+          }).downgradePlanKeys.includes(update.newPlan);
 
         return isDowngrade;
       }

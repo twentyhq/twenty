@@ -1,3 +1,4 @@
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { useCallback } from 'react';
 
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
@@ -80,7 +81,7 @@ export const useDeleteOneRecord = ({
         isDefined(cachedRecordNode);
 
       if (shouldHandleOptimisticCache) {
-        const recordGqlFields = {
+        const recordGqlFields: RecordGqlFields = {
           deletedAt: true,
         };
         updateRecordFromCache({
@@ -133,7 +134,7 @@ export const useDeleteOneRecord = ({
             throw error;
           }
 
-          const recordGqlFields = {
+          const recordGqlFields: RecordGqlFields = {
             deletedAt: true,
           };
           updateRecordFromCache({

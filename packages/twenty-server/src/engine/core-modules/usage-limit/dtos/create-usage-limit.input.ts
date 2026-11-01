@@ -59,7 +59,7 @@ export class CreateUsageLimitInput {
 
   @Field(() => GraphQLBigInt)
   @IsInt()
-  @Min(1)
+  @Min(0)
   limitValue: number;
 
   @Field(() => GraphQLBigInt, { nullable: true })

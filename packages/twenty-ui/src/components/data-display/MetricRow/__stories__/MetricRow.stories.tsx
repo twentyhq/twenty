@@ -35,7 +35,7 @@ export default meta;
 
 type Story = StoryObj<typeof MetricRow>;
 
-export const Default: Story = {};
+export const Display: Story = {};
 
 export const WithoutProgress: Story = {
   args: {

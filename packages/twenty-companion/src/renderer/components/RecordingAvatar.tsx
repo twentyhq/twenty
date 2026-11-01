@@ -1,4 +1,4 @@
-import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
+import { Avatar } from 'twenty-ui/primitives/data-display';
 import { type Recording } from '../../shared/types/Recording';
 
 export const RecordingAvatar = ({ recording }: { recording: Recording }) => {

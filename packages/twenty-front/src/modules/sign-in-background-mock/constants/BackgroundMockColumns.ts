@@ -1,44 +1,46 @@
 import { BACKGROUND_MOCK_COLUMN_WIDTHS } from '@/sign-in-background-mock/constants/BackgroundMockColumnWidths';
+import { type MessageDescriptor } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 
 export type BackgroundMockColumn = {
-  label: keyof typeof BACKGROUND_MOCK_COLUMN_WIDTHS;
+  label: MessageDescriptor;
   iconName: string;
   width: number;
 };
 
 export const BACKGROUND_MOCK_COLUMNS = [
   {
-    label: 'Name',
+    label: msg`Name`,
     iconName: 'IconBuildingSkyscraper',
     width: BACKGROUND_MOCK_COLUMN_WIDTHS.Name,
   },
   {
-    label: 'Domain',
+    label: msg`Domain`,
     iconName: 'IconLink',
     width: BACKGROUND_MOCK_COLUMN_WIDTHS.Domain,
   },
   {
-    label: 'Created by',
+    label: msg`Created by`,
     iconName: 'IconUserCircle',
     width: BACKGROUND_MOCK_COLUMN_WIDTHS['Created by'],
   },
   {
-    label: 'Account Owner',
+    label: msg`Account Owner`,
     iconName: 'IconUserCircle',
     width: BACKGROUND_MOCK_COLUMN_WIDTHS['Account Owner'],
   },
   {
-    label: 'Creation date',
+    label: msg`Creation date`,
     iconName: 'IconCalendar',
     width: BACKGROUND_MOCK_COLUMN_WIDTHS['Creation date'],
   },
   {
-    label: 'Employees',
+    label: msg`Employees`,
     iconName: 'IconUsers',
     width: BACKGROUND_MOCK_COLUMN_WIDTHS.Employees,
   },
   {
-    label: 'Address',
+    label: msg`Address`,
     iconName: 'IconMap',
     width: BACKGROUND_MOCK_COLUMN_WIDTHS.Address,
   },

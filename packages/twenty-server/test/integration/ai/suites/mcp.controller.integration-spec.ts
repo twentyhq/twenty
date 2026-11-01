@@ -58,6 +58,25 @@ describe('MCP Controller (integration)', () => {
       });
   });
 
+  it('should return method not found for an unsupported method', async () => {
+    await postMcp({
+      jsonrpc: '2.0',
+      method: 'sampling/createMessage',
+      id: 'unsupported-method',
+    })
+      .expect(200)
+      .expect((res) => {
+        expect(res.body).toEqual({
+          id: 'unsupported-method',
+          jsonrpc: '2.0',
+          error: {
+            code: -32601,
+            message: "Method 'sampling/createMessage' not found",
+          },
+        });
+      });
+  });
+
   it('should respond to initialize with spec-compliant InitializeResult', async () => {
     await postMcp({ jsonrpc: '2.0', method: 'initialize', id: 123 })
       .expect(200)

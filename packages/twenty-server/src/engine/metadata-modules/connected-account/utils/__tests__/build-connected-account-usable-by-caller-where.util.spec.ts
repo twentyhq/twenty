@@ -11,7 +11,7 @@ describe('buildConnectedAccountUsableByCallerWhere', () => {
         userWorkspaceId: USER_WORKSPACE_ID,
       }),
     ).toEqual([
-      { workspaceId: WORKSPACE_ID, visibility: 'workspace' },
+      { workspaceId: WORKSPACE_ID, scope: 'WORKSPACE' },
       { workspaceId: WORKSPACE_ID, userWorkspaceId: USER_WORKSPACE_ID },
     ]);
   });

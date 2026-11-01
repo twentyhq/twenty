@@ -59,6 +59,7 @@ export const FormCountrySelectInput = ({
       onChange={onCountryChange}
       options={options}
       defaultValue={selectedCountryName}
+      placeholder={t`Select a country`}
       readonly={readonly}
       VariablePicker={VariablePicker}
     />

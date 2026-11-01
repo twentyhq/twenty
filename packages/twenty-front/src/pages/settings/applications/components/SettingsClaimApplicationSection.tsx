@@ -3,6 +3,7 @@ import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMembe
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLazyQuery, useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
@@ -21,6 +22,7 @@ import { Callout, useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconBrandGithub, IconRefresh, IconSearch } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
 import {
   FindClaimableApplicationRegistrationDocument,
@@ -29,6 +31,7 @@ import {
   SyncMarketplaceCatalogDocument,
 } from '~/generated-metadata/graphql';
 import { getClaimErrorContent } from '~/pages/settings/applications/utils/getClaimErrorContent';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 export const CLAIM_ERROR_CODE_SEARCH_PARAM = 'claimErrorCode';
 
@@ -73,10 +76,6 @@ const StyledHint = styled.div`
 
 const StyledCalloutContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[3]};
-
-  & > div {
-    max-width: 100%;
-  }
 `;
 
 export const SettingsClaimApplicationSection = () => {
@@ -149,7 +148,7 @@ export const SettingsClaimApplicationSection = () => {
       }
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           error instanceof Error ? error.message : t`Could not run the lookup`,
       });
@@ -169,13 +168,13 @@ export const SettingsClaimApplicationSection = () => {
       const authorizationUrl = result.data?.githubClaimAuthorizationUrl;
 
       if (!isDefined(authorizationUrl)) {
-        throw new Error(result.error?.message ?? 'Missing authorization URL');
+        throw new Error(result.error?.message ?? t`Missing authorization URL`);
       }
 
       window.location.href = authorizationUrl;
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           error instanceof Error
             ? error.message
@@ -188,12 +187,12 @@ export const SettingsClaimApplicationSection = () => {
     try {
       await syncCatalog();
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Catalog sync started. Try your lookup again in a moment.`,
       });
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           error instanceof Error
             ? error.message
@@ -227,23 +226,25 @@ export const SettingsClaimApplicationSection = () => {
       {isDefined(claimError) && (
         <StyledCalloutContainer>
           <Callout
-            variant="error"
+            fullWidth
+            status="error"
             title={t`Could not claim this application`}
             description={i18n._(claimError.message)}
-            action={{
-              label: t`Read documentation`,
-              onClick: () =>
-                window.open(
-                  getDocumentationUrl({
-                    locale: currentWorkspaceMember?.locale,
-                    path: claimError.docPath,
-                  }),
-                  '_blank',
-                ),
-            }}
-            isClosable
+            action={
+              <Callout.Action
+                type="button"
+                onClick={() =>
+                  openUrlInNewTab(
+                    getDocumentationUrl({
+                      locale: currentWorkspaceMember?.locale,
+                      path: claimError.docPath,
+                    }),
+                  )
+                }
+              >{t`Read documentation`}</Callout.Action>
+            }
             closeLabel={t`Close`}
-            onClose={dismissClaimError}
+            onDismiss={dismissClaimError}
           />
         </StyledCalloutContainer>
       )}
@@ -258,19 +259,28 @@ export const SettingsClaimApplicationSection = () => {
             label={t`Package name or universal identifier`}
           />
         </StyledInputContainer>
+        {canSyncCatalog && (
+          <Tooltip
+            content={t`Sync catalog`}
+            delay={TooltipDelay.shortDelay}
+            side="top"
+          >
+            <span>
+              <Button
+                startIcon={<IconRefresh />}
+                aria-label={t`Sync catalog`}
+                onClick={handleSync}
+                disabled={isSyncing}
+                variant="outline"
+              />
+            </span>
+          </Tooltip>
+        )}
         <Button
           startIcon={<IconSearch />}
           onClick={handleLookup}
           disabled={isLookingUp || lookupValue.trim().length === 0}
         >{t`Look up`}</Button>
-        {canSyncCatalog && (
-          <Button
-            startIcon={<IconRefresh />}
-            onClick={handleSync}
-            disabled={isSyncing}
-            variant="outline"
-          >{t`Sync catalog`}</Button>
-        )}
       </StyledRow>
 
       {notFound && (

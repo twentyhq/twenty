@@ -85,7 +85,7 @@ describe('buildStockCounters', () => {
     });
 
     expect(counters.map((counter) => counter.isDefault)).toEqual([false, true]);
-    expect(new Set(counters.map((counter) => counter.key)).size).toBe(2);
+    expect(new Set(counters.map((counter) => counter.key)).size).toBe(1);
   });
 
   it.each([
@@ -114,22 +114,6 @@ describe('buildStockCounters', () => {
         stockLimitDefaults: [buildDefault()],
       }),
     ).toEqual([expect.objectContaining({ isDefault: true })]);
-  });
-
-  it('keys a stored limit by its value so an edited limit warms afresh', () => {
-    const [before] = build({ limits: [buildLimit({ limitValue: 500 })] });
-    const [after] = build({ limits: [buildLimit({ limitValue: 2_000 })] });
-
-    expect(before.key).not.toBe(after.key);
-  });
-
-  it('keys the default by its value so a changed setting warms afresh', () => {
-    const [before] = build({ stockLimitDefaults: [buildDefault()] });
-    const [after] = build({
-      stockLimitDefaults: [buildDefault({ limitValue: 2_000 })],
-    });
-
-    expect(before.key).not.toBe(after.key);
   });
 
   it('skips a default whose spender type the call does not carry', () => {

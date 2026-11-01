@@ -109,7 +109,7 @@ export const SettingsWorkspaceMember = () => {
         });
       } catch (error) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children:
             error instanceof Error
               ? error.message
@@ -127,14 +127,14 @@ export const SettingsWorkspaceMember = () => {
         variables: { workspaceMemberIdToDelete: member.id },
       });
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Member removed from workspace`,
       });
       closeDialog(DELETE_MEMBER_MODAL_ID);
       navigateSettings(SettingsPath.WorkspaceMembersPage);
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children:
           error instanceof Error
             ? error.message
@@ -146,7 +146,7 @@ export const SettingsWorkspaceMember = () => {
   const handleImpersonate = async () => {
     if (!member?.userId || !currentWorkspace?.id) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Cannot impersonate selected user`,
         duration: 2000,
       });
@@ -155,7 +155,7 @@ export const SettingsWorkspaceMember = () => {
 
     if (!isDefined(currentUser?.id) || member.userId === currentUser.id) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`You cannot impersonate your own account`,
         duration: 2000,
       });
@@ -175,7 +175,7 @@ export const SettingsWorkspaceMember = () => {
       },
       onError: () => {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Cannot impersonate selected user`,
           duration: 2000,
         });

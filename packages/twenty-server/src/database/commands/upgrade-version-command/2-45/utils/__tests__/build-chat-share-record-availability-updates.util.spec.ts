@@ -64,11 +64,7 @@ const isAvailable = (
   });
 
 describe('buildChatShareRecordAvailabilityUpdates', () => {
-  it('matches the standard application item', () => {
-    expect(standardShareRecord).toMatchObject({
-      conditionalAvailabilityExpression: CHAT_OR_RECORD_SHARING_FLAG_EXPRESSION,
-      isPinned: true,
-    });
+  it('finds the standard Share item for chats', () => {
     expect(standardShareRecord.availabilityObjectMetadataId).not.toBeNull();
   });
 
@@ -109,20 +105,11 @@ describe('buildChatShareRecordAvailabilityUpdates', () => {
       expect(isAvailable(shareAnyRecordExpression, {}, company)).toBe(false);
     });
 
-    it.each(['APPLICATION', 'SYSTEM'])(
-      'keeps the unpinned item off %s objects and off chats',
-      (readability) => {
-        expect(
-          isAvailable(shareAnyRecordExpression, recordSharing, {
-            ...company,
-            readability,
-          }),
-        ).toBe(false);
-        expect(isAvailable(shareAnyRecordExpression, recordSharing, chat)).toBe(
-          false,
-        );
-      },
-    );
+    it('keeps the unpinned item off chats', () => {
+      expect(isAvailable(shareAnyRecordExpression, recordSharing, chat)).toBe(
+        false,
+      );
+    });
 
     it.each<Record<string, boolean>>([
       { IS_AI_CHAT_SHARING_DROPDOWN_ENABLED: true },

@@ -3,10 +3,22 @@ title: AnimatedIconCrossfade
 description: Crossfade between two icons as application state changes.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import AnimatedIconCrossfadeReference from '/snippets/ui/generated/components/layout/animated-icon-crossfade.mdx';
 
+## Overview
+
 `AnimatedIconCrossfade` crossfades between `activeIcon` and `inactiveIcon` node content according to `isActive`. It does not own the action or state. Compose it inside a labeled [Button](/ui/primitives/input/button).
+
+<StoryEmbed
+  storyId="ui-components-layout-animatediconcrossfade--display"
+  title="AnimatedIconCrossfade example"
+  height={100}
+/>
+
+## Usage
 
 ```tsx
 import { useState } from 'react';
@@ -19,6 +31,8 @@ export const EditToggle = () => {
 
   return (
     <Button
+      size="sm"
+      aria-expanded={isEditing}
       onClick={() => setIsEditing(!isEditing)}
       startIcon={
         <AnimatedIconCrossfade
@@ -28,7 +42,7 @@ export const EditToggle = () => {
         />
       }
     >
-      {isEditing ? 'Finish editing' : 'Edit record'}
+      Edit actions
     </Button>
   );
 };
@@ -40,12 +54,8 @@ Native attributes, events, `className`, `style`, and `ref` target an inline span
 
 Replace `ActiveIcon` and `InactiveIcon` constructors with lowercase `activeIcon` and `inactiveIcon` nodes. Move the former `size` option to the node dimensions and root styles.
 
-<StoryEmbed
-  storyId="ui-components-layout-animatediconcrossfade--animated-icon-documentation"
-  title="AnimatedIconCrossfade example"
-  height={280}
-/>
-
 ## Props
 
 <AnimatedIconCrossfadeReference />
+
+<PageBanner illustration="card-page-sync-recovery" />

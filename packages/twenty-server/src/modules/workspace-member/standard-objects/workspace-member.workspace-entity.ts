@@ -7,6 +7,7 @@ import { type Relation } from 'typeorm';
 
 import { type AgentChatThreadParticipantWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread-participant.workspace-entity';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { type AgentMessageReactionWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-reaction.workspace-entity';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { type BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
@@ -81,9 +82,11 @@ export class WorkspaceMemberWorkspaceEntity extends BaseWorkspaceEntity {
   agentMessages: Relation<AgentMessageWorkspaceEntity[]>;
 
   agentChatThreads: Relation<AgentChatThreadWorkspaceEntity[]>;
+  assignedAgentChatThreads: Relation<AgentChatThreadWorkspaceEntity[]>;
   agentChatThreadParticipants: Relation<
     AgentChatThreadParticipantWorkspaceEntity[]
   >;
+  agentMessageReactions: Relation<AgentMessageReactionWorkspaceEntity[]>;
   ownedOpportunities: Relation<OpportunityWorkspaceEntity[]>;
   searchVector: string;
   numberFormat: string;

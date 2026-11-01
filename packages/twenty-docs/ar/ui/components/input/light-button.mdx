@@ -1,0 +1,73 @@
+---
+title: LightButton
+description: اعرض إجراءات خفيفة بتركيز قياسي أو خفي.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import LightButtonReference from '/snippets/ui/generated/components/input/light-button.mdx';
+
+## نظرة عامة
+
+استخدم المكوّن المشترك `LightButton` لإجراء خفيف. يُركّب
+[Button](/ar/ui/primitives/input/button) بسطح شفاف، وحجم صغير، ووزن خط
+عادي، ومن دون ارتفاع.
+
+<StoryEmbed storyId="ui-components-lightbutton--display" title="مثال LightButton" height={100} />
+
+## استخدام
+
+```tsx
+import { LightButton } from 'twenty-ui/components/input';
+
+export const FilterAction = () => <LightButton>Add filter</LightButton>;
+```
+
+## الخيارات المرئية
+
+قارن بين التأكيد القياسي والدقيق عبر حالات الإجراءات الشائعة.
+
+<StoryEmbed storyId="ui-components-lightbutton--catalog" title="تأكيد الزر الفاتح وحالاته" height={230} />
+
+## ملكية الحالة
+
+يستخدم `LightButton` نموذج حالة Button ولا يضيف أي حالة خاصة به. يوفر تطبيقك `loading` و`disabled`؛ لا يغيّر `emphasis` سوى المظهر. راجع [مثال ملكية حالة Button](/ar/ui/primitives/input/button#state-ownership) لإدارة إجراء غير متزامن. لا توجد أوضاع اختيار خاضعة للتحكم وغير خاضعة للتحكم.
+
+## التأكيد والأيقونات
+
+```tsx
+import { LightButton } from 'twenty-ui/components/input';
+import { IconPlus } from 'twenty-ui/icon';
+
+export const FilterActions = () => (
+  <LightButton emphasis="subtle" startIcon={<IconPlus />}>
+    Add filter
+  </LightButton>
+);
+```
+
+يستخدم الإعداد الافتراضي `emphasis="standard"` نصًا محايدًا ثانويًا.
+يستخدم `emphasis="subtle"` نصًا محايدًا ثالثيًا على الأسطح الشفافة والمحددة
+والناعمة. تحتفظ الألوان الدلالية والأسطح الصلبة بمعالجة التباين الخاصة بها.
+
+تجاوز `variant` أو `color` أو `size` أو `elevated` عند الحاجة.
+يمكن لـ [ButtonGroup](/ar/ui/primitives/input/button-group) تعيين حجم وواجهة
+ولون مشتركين. يكون لمظهر العنصر الفرعي المحدد أولوية على المجموعة، يليه
+الإعدادات الافتراضية للمكوّن. لا يحل التركيز الدقيق محل اللون الدلالي.
+
+## التفاعل
+
+يقبل `LightButton` سمات Button الأصلية، والمراجع، ومعالجات الأحداث، وفتحات
+الأيقونات، وحالات التحميل والتعطيل، وتركيب العرض. إعداده الافتراضي الأصلي
+هو `type="button"`. عيّن `type="submit"` للإرسال أو استخدم `href` لرابط.
+وفّر `render` لاختيار جذر مخصص، بما في ذلك رابط موجّه خاص بالتطبيق
+. عيّن `nativeButton={false}` و`role="link"` لعارض التنقل.
+تُبقي الأزرار الأصلية المخصصة `nativeButton` على true.
+
+## الخصائص
+
+<LightButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

@@ -1,0 +1,1 @@
+export const DEFAULT_TIMING_DURATION = 1400;

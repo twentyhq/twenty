@@ -256,7 +256,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
         fieldMetadataItemById,
       });
 
-      expect(result).toEqual({ not: { amount: { eq: 42 } } });
+      expect(result).toEqual({ amount: { neq: 42 } });
     });
 
     it('should handle GREATER_THAN_OR_EQUAL operand', () => {
@@ -626,7 +626,9 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
         fieldMetadataItemById,
       });
 
-      expect(result).toHaveProperty('companyId.in');
+      expect(result).toEqual({
+        companyId: { in: ['550e8400-e29b-41d4-a716-446655440000'] },
+      });
     });
 
     it('should handle IS_NOT operand', () => {
@@ -640,10 +642,83 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
         fieldMetadataItemById,
       });
 
-      expect(result).toHaveProperty('or');
+      expect(result).toEqual({
+        or: [
+          {
+            not: {
+              companyId: { in: ['550e8400-e29b-41d4-a716-446655440000'] },
+            },
+          },
+          { companyId: { is: 'NULL' } },
+        ],
+      });
     });
 
-    it('should resolve programmatic current-record morph relation-table filters to the matching join column', () => {
+    it('should match any morph target join column for IS operand', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-morph-relation',
+          RecordFilterOperand.IS,
+          '["550e8400-e29b-41d4-a716-446655440000"]',
+          'RELATION',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        or: [
+          { targetPersonId: { in: ['550e8400-e29b-41d4-a716-446655440000'] } },
+          {
+            targetCompanyId: { in: ['550e8400-e29b-41d4-a716-446655440000'] },
+          },
+        ],
+      });
+    });
+
+    it('should exclude the selected records from every morph target join column for IS_NOT operand', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-morph-relation',
+          RecordFilterOperand.IS_NOT,
+          '["550e8400-e29b-41d4-a716-446655440000"]',
+          'RELATION',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        and: [
+          {
+            or: [
+              {
+                not: {
+                  targetPersonId: {
+                    in: ['550e8400-e29b-41d4-a716-446655440000'],
+                  },
+                },
+              },
+              { targetPersonId: { is: 'NULL' } },
+            ],
+          },
+          {
+            or: [
+              {
+                not: {
+                  targetCompanyId: {
+                    in: ['550e8400-e29b-41d4-a716-446655440000'],
+                  },
+                },
+              },
+              { targetCompanyId: { is: 'NULL' } },
+            ],
+          },
+        ],
+      });
+    });
+
+    it('should resolve programmatic current-record morph relation-table filters to every target join column', () => {
       const result = turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies: {
           ...filterValueDependencies,
@@ -665,11 +740,16 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       });
 
       expect(result).toEqual({
-        targetPersonId: { in: ['11111111-1111-4111-8111-111111111111'] },
+        or: [
+          { targetPersonId: { in: ['11111111-1111-4111-8111-111111111111'] } },
+          {
+            targetCompanyId: { in: ['11111111-1111-4111-8111-111111111111'] },
+          },
+        ],
       });
     });
 
-    it('should omit programmatic current-record morph filters when morph relation metadata is missing', () => {
+    it('should use its own join column for a morph relation target without morph relations', () => {
       const fieldMetadataItemByIdWithoutMorphRelations = new Map(
         fieldMetadataItemById,
       );
@@ -701,7 +781,9 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
         fieldMetadataItemById: fieldMetadataItemByIdWithoutMorphRelations,
       });
 
-      expect(result).toBeUndefined();
+      expect(result).toEqual({
+        targetId: { in: ['11111111-1111-4111-8111-111111111111'] },
+      });
     });
   });
 
@@ -717,7 +799,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
         fieldMetadataItemById,
       });
 
-      expect(result).toEqual({ metadata: { like: '%test%' } });
+      expect(result).toEqual({ metadata: { ilike: '%test%' } });
     });
 
     it('should handle DOES_NOT_CONTAIN operand', () => {
@@ -731,7 +813,12 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
         fieldMetadataItemById,
       });
 
-      expect(result).toEqual({ not: { metadata: { like: '%test%' } } });
+      expect(result).toEqual({
+        or: [
+          { not: { metadata: { ilike: '%test%' } } },
+          { metadata: { is: 'NULL' } },
+        ],
+      });
     });
   });
 
@@ -747,7 +834,26 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
         fieldMetadataItemById,
       });
 
-      expect(result).toEqual({ attachments: { like: '%doc%' } });
+      expect(result).toEqual({ attachments: { ilike: '%doc%' } });
+    });
+
+    it('should handle DOES_NOT_CONTAIN operand', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-files',
+          RecordFilterOperand.DOES_NOT_CONTAIN,
+          'doc',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        or: [
+          { not: { attachments: { ilike: '%doc%' } } },
+          { attachments: { is: 'NULL' } },
+        ],
+      });
     });
   });
 
@@ -782,6 +888,95 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       });
 
       expect(result).toHaveProperty('revenue');
+    });
+
+    it('should handle IS_NOT on amountMicros', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-currency',
+          RecordFilterOperand.IS_NOT,
+          '1000',
+          'CURRENCY',
+          'amountMicros',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        revenue: { amountMicros: { neq: 1000000000 } },
+      });
+    });
+
+    it('should convert a decimal amount to integer micros for IS', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-currency',
+          RecordFilterOperand.IS,
+          '2.01',
+          'CURRENCY',
+          'amountMicros',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        revenue: { amountMicros: { eq: 2010000 } },
+      });
+    });
+
+    it('should convert a decimal amount to integer micros for IS_NOT', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-currency',
+          RecordFilterOperand.IS_NOT,
+          '4.03',
+          'CURRENCY',
+          'amountMicros',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        revenue: { amountMicros: { neq: 4030000 } },
+      });
+    });
+
+    it('should convert a decimal amount to integer micros for range operands', () => {
+      const lessThanOrEqualResult =
+        turnRecordFilterIntoRecordGqlOperationFilter({
+          filterValueDependencies,
+          recordFilter: makeFilter(
+            'f-currency',
+            RecordFilterOperand.LESS_THAN_OR_EQUAL,
+            '2.01',
+            'CURRENCY',
+            'amountMicros',
+          ),
+          fieldMetadataItemById,
+        });
+
+      const greaterThanOrEqualResult =
+        turnRecordFilterIntoRecordGqlOperationFilter({
+          filterValueDependencies,
+          recordFilter: makeFilter(
+            'f-currency',
+            RecordFilterOperand.GREATER_THAN_OR_EQUAL,
+            '4.03',
+            'CURRENCY',
+            'amountMicros',
+          ),
+          fieldMetadataItemById,
+        });
+
+      expect(lessThanOrEqualResult).toEqual({
+        revenue: { amountMicros: { lte: 2010000 } },
+      });
+      expect(greaterThanOrEqualResult).toEqual({
+        revenue: { amountMicros: { gte: 4030000 } },
+      });
     });
   });
 

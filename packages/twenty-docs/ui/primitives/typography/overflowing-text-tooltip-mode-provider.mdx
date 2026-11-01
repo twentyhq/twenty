@@ -1,0 +1,63 @@
+---
+title: OverflowingTextTooltipModeProvider
+description: Choose when OverflowingTextWithTooltip checks truncation for a subtree.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import OverflowingTextTooltipModeProviderReference from '/snippets/ui/generated/typography/overflowing-text-tooltip-mode-provider.mdx';
+
+## Overview
+
+`OverflowingTextTooltipModeProvider` sets how every [OverflowingTextWithTooltip](/ui/primitives/typography/overflowing-text-with-tooltip) inside it handles its tooltip. It renders no DOM element.
+
+<StoryEmbed
+  storyId="ui-typography-overflowingtexttooltipmodeprovider--display"
+  title="Overflowing text tooltip mode provider example"
+  height={180}
+/>
+
+## Usage
+
+```tsx
+import {
+  OverflowingTextTooltipModeProvider,
+  OverflowingTextWithTooltip,
+  Text,
+} from 'twenty-ui/primitives/typography';
+
+export const RecordCell = () => (
+  <OverflowingTextTooltipModeProvider mode="measure-on-hover">
+    <Text style={{ maxWidth: 220 }}>
+      <OverflowingTextWithTooltip
+        text="Quarterly account review and renewal preparation"
+        isFocusable
+      />
+    </Text>
+  </OverflowingTextTooltipModeProvider>
+);
+```
+
+Hover or focus the truncated label to read its full value. Change `mode` in the Storybook controls to compare when the tooltip is available.
+
+## Modes
+
+- `measure-on-hover`, the default without a provider, checks truncation on pointer entry and focus. A label that fits stays out of the way of a parent tooltip.
+- `measure-on-open` checks truncation when the tooltip tries to open. Use it for labels that mount under the pointer, such as a hover overlay, where no pointer entry happens.
+- `disabled` renders only the text, without any tooltip parts. Use it for many labels that a user cannot hover, such as content covered by an overlay.
+
+<StoryEmbed
+  storyId="ui-typography-overflowingtexttooltipmodeprovider--disabled"
+  title="Tooltip disabled for a subtree"
+  height={90}
+/>
+
+Nested providers override the mode for their subtree.
+
+## Props
+
+<OverflowingTextTooltipModeProviderReference />
+
+<PageBanner illustration="section-document-generator" />

@@ -1,4 +1,7 @@
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import {
+  CoreObjectNameSingular,
+  type RecordGqlFields,
+} from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 
@@ -13,7 +16,7 @@ import { useRefetchAggregateQueries } from '@/object-record/hooks/useRefetchAggr
 import { useObjectMorphJunctionConfig } from '@/object-record/record-field/ui/hooks/useObjectMorphJunctionConfig';
 import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junction/findTargetFieldInfo';
 
-const EXISTING_LINK_GQL_FIELDS = { id: true };
+const EXISTING_LINK_GQL_FIELDS = { id: true } satisfies RecordGqlFields;
 
 export const useAttachChatThreadToRecord = () => {
   const { enqueueToast } = useToast();

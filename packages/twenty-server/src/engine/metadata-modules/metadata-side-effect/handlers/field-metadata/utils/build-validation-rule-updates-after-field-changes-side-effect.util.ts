@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { isDefined } from 'twenty-shared/utils';
 
 import { type AllFlatEntityOperationRecordByMetadataName } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-operation-record-by-metadata-name.type';

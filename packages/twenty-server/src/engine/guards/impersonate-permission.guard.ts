@@ -14,8 +14,8 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+} from 'src/engine/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 
 @Injectable()
 export class ImpersonatePermissionGuard implements CanActivate {
@@ -47,6 +47,7 @@ export class ImpersonatePermissionGuard implements CanActivate {
         setting: PermissionFlagType.IMPERSONATE,
         workspaceId,
         applicationId: undefined,
+        agentId: request.agentId,
       });
 
     if (hasPermission === true) return true;

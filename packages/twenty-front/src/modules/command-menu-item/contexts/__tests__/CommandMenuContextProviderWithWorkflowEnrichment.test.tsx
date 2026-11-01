@@ -28,12 +28,6 @@ jest.mock(
     }),
   }),
 );
-jest.mock('@/workflow/hooks/useIsWorkflowCoreEnabled', () => ({
-  useIsWorkflowCoreEnabled: () => true,
-}));
-jest.mock('@/command-menu-item/hooks/useWorkflowsWithCurrentVersions', () => ({
-  useWorkflowsWithCurrentVersions: () => [],
-}));
 jest.mock('@/command-menu-item/hooks/useCoreWorkflowsWithCurrentVersions');
 jest.mock(
   '@/layout-customization/hooks/useIsLayoutCustomizationAllowedOnCurrentPage',

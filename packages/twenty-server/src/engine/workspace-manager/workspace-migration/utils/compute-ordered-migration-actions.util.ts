@@ -27,41 +27,48 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.viewFieldGroup.update,
     ...aggregatedOrchestratorActionsReport.viewField.create,
     ...aggregatedOrchestratorActionsReport.viewField.update,
-    ...aggregatedOrchestratorActionsReport.viewFilterGroup.delete,
     ...aggregatedOrchestratorActionsReport.viewFilterGroup.create,
     ...aggregatedOrchestratorActionsReport.viewFilterGroup.update,
     ...aggregatedOrchestratorActionsReport.viewFilter.delete,
     ...aggregatedOrchestratorActionsReport.viewFilter.create,
     ...aggregatedOrchestratorActionsReport.viewFilter.update,
+    // Filters and child groups CASCADE on their group, so one moved out of a dropped group must be repointed before that group goes
+    ...aggregatedOrchestratorActionsReport.viewFilterGroup.delete,
     ...aggregatedOrchestratorActionsReport.viewGroup.delete,
     ...aggregatedOrchestratorActionsReport.viewGroup.create,
     ...aggregatedOrchestratorActionsReport.viewGroup.update,
+    ...aggregatedOrchestratorActionsReport.viewSort.delete,
     ...aggregatedOrchestratorActionsReport.viewSort.create,
     ...aggregatedOrchestratorActionsReport.viewSort.update,
-    ...aggregatedOrchestratorActionsReport.viewSort.delete,
     ...aggregatedOrchestratorActionsReport.view.delete,
 
     ...aggregatedOrchestratorActionsReport.workflowVersion.delete,
     ...aggregatedOrchestratorActionsReport.workflow.delete,
     ...aggregatedOrchestratorActionsReport.workflow.create,
     ...aggregatedOrchestratorActionsReport.workflow.update,
-    ...aggregatedOrchestratorActionsReport.workflowVersion.create,
+    // At most one version per workflow is ACTIVE (unique index), so the published one is archived before its successor is created
     ...aggregatedOrchestratorActionsReport.workflowVersion.update,
+    ...aggregatedOrchestratorActionsReport.workflowVersion.create,
 
     ...aggregatedOrchestratorActionsReport.logicFunction.delete,
     ...aggregatedOrchestratorActionsReport.logicFunction.create,
     ...aggregatedOrchestratorActionsReport.logicFunction.update,
 
+    ...aggregatedOrchestratorActionsReport.agentChatChannelRole.delete,
     ...aggregatedOrchestratorActionsReport.role.delete,
     ...aggregatedOrchestratorActionsReport.role.create,
     ...aggregatedOrchestratorActionsReport.role.update,
 
-    // Role targets delete before agents (roleTarget may FK to agent)
+    // Role targets delete before agents and webhooks (roleTarget may FK to either)
     ...aggregatedOrchestratorActionsReport.roleTarget.delete,
 
     ...aggregatedOrchestratorActionsReport.agent.delete,
     ...aggregatedOrchestratorActionsReport.agent.create,
     ...aggregatedOrchestratorActionsReport.agent.update,
+
+    ...aggregatedOrchestratorActionsReport.webhook.delete,
+    ...aggregatedOrchestratorActionsReport.webhook.create,
+    ...aggregatedOrchestratorActionsReport.webhook.update,
 
     ...aggregatedOrchestratorActionsReport.roleTarget.create,
     ...aggregatedOrchestratorActionsReport.roleTarget.update,
@@ -85,6 +92,12 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.skill.create,
     ...aggregatedOrchestratorActionsReport.skill.update,
 
+    ...aggregatedOrchestratorActionsReport.agentChatChannel.delete,
+    ...aggregatedOrchestratorActionsReport.agentChatChannel.create,
+    ...aggregatedOrchestratorActionsReport.agentChatChannel.update,
+    ...aggregatedOrchestratorActionsReport.agentChatChannelRole.create,
+    ...aggregatedOrchestratorActionsReport.agentChatChannelRole.update,
+
     // Menu items CASCADE on frontComponentId, so a repointed item would be lost if its old component were deleted first:
     // dropped items go first, then new components, then item repoints, and unreferenced components last
     ...aggregatedOrchestratorActionsReport.commandMenuItem.delete,
@@ -92,6 +105,9 @@ export const computeOrderedMigrationActions = (
 
     ...aggregatedOrchestratorActionsReport.frontComponent.create,
     ...aggregatedOrchestratorActionsReport.frontComponent.update,
+
+    // commandMenuItem.pageLayoutId is a non-deferrable FK
+    ...aggregatedOrchestratorActionsReport.pageLayout.create,
 
     ...aggregatedOrchestratorActionsReport.commandMenuItem.create,
     ...aggregatedOrchestratorActionsReport.commandMenuItem.update,
@@ -101,10 +117,6 @@ export const computeOrderedMigrationActions = (
 
     ...aggregatedOrchestratorActionsReport.frontComponent.delete,
 
-    ...aggregatedOrchestratorActionsReport.pageLayout.delete,
-    ...aggregatedOrchestratorActionsReport.pageLayout.create,
-
-    ...aggregatedOrchestratorActionsReport.pageLayoutTab.delete,
     ...aggregatedOrchestratorActionsReport.pageLayoutTab.create,
     ...aggregatedOrchestratorActionsReport.pageLayoutTab.update,
 
@@ -114,12 +126,15 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.pageLayoutWidget.create,
     ...aggregatedOrchestratorActionsReport.pageLayoutWidget.update,
 
-    ...aggregatedOrchestratorActionsReport.navigationMenuItem.delete,
+    // Widgets CASCADE on their tab, and tabs on their layout, so a widget moved off a dropped tab must be repointed before that tab or layout goes
+    ...aggregatedOrchestratorActionsReport.pageLayoutTab.delete,
+    ...aggregatedOrchestratorActionsReport.pageLayout.delete,
+
     ...aggregatedOrchestratorActionsReport.navigationMenuItem.create,
     ...aggregatedOrchestratorActionsReport.navigationMenuItem.update,
+    // Items CASCADE on their folder, so one moved out of a dropped folder must be repointed before that folder goes
+    ...aggregatedOrchestratorActionsReport.navigationMenuItem.delete,
 
-    ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicateGroup
-      .delete,
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicateGroup
       .create,
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicateGroup
@@ -129,9 +144,11 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate.create,
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicate.update,
 
-    ...aggregatedOrchestratorActionsReport.webhook.delete,
-    ...aggregatedOrchestratorActionsReport.webhook.create,
-    ...aggregatedOrchestratorActionsReport.webhook.update,
+    // Predicates and child groups CASCADE on their group, so one moved out of a dropped group must be repointed before that group goes
+    ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicateGroup
+      .delete,
+
+    ...aggregatedOrchestratorActionsReport.mcpServer.delete,
 
     ...aggregatedOrchestratorActionsReport.applicationVariable.delete,
     ...aggregatedOrchestratorActionsReport.applicationVariable.create,
@@ -140,11 +157,19 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.connectionProvider.delete,
     ...aggregatedOrchestratorActionsReport.connectionProvider.create,
     ...aggregatedOrchestratorActionsReport.connectionProvider.update,
+    ...aggregatedOrchestratorActionsReport.messagingProvider.delete,
+    ...aggregatedOrchestratorActionsReport.messagingProvider.create,
+    ...aggregatedOrchestratorActionsReport.messagingProvider.update,
+    ...aggregatedOrchestratorActionsReport.mcpServer.create,
+    ...aggregatedOrchestratorActionsReport.mcpServer.update,
     ...aggregatedOrchestratorActionsReport.timelineActivityType.delete,
     ...aggregatedOrchestratorActionsReport.timelineActivityType.create,
     ...aggregatedOrchestratorActionsReport.timelineActivityType.update,
+    ...aggregatedOrchestratorActionsReport.relatedRecordPath.delete,
     ...aggregatedOrchestratorActionsReport.validationRule.delete,
+    ...aggregatedOrchestratorActionsReport.relatedRecordPath.create,
     ...aggregatedOrchestratorActionsReport.validationRule.create,
+    ...aggregatedOrchestratorActionsReport.relatedRecordPath.update,
     ...aggregatedOrchestratorActionsReport.validationRule.update,
   ];
 };

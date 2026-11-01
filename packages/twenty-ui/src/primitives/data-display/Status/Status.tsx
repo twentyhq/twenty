@@ -1,4 +1,3 @@
-import { Button as ButtonPrimitive } from '@base-ui/react/button';
 import { useRender } from '@base-ui/react/use-render';
 import { clsx } from 'clsx';
 import { type CSSProperties } from 'react';
@@ -6,7 +5,6 @@ import { type CSSProperties } from 'react';
 import { Loader } from '@ui/primitives/feedback/Loader/Loader';
 import { themeCssVariables } from '@ui/theme';
 import { parseThemeColor } from '@ui/utilities';
-import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import styles from './Status.module.scss';
 import { type StatusProps } from './types/StatusProps';
@@ -16,9 +14,6 @@ export const Status = ({
   color,
   loading = false,
   weight = 'regular',
-  disabled = false,
-  nativeButton = true,
-  onClick,
   className,
   style,
   render,
@@ -29,20 +24,12 @@ export const Status = ({
 
   return useRender({
     defaultTagName: 'span',
-    render: isDefined(onClick) ? (
-      <ButtonPrimitive
-        render={render}
-        disabled={disabled}
-        nativeButton={nativeButton}
-      />
-    ) : (
-      render
-    ),
+    render,
     ref,
-    state: { loading, weight, disabled, interactive: isDefined(onClick) },
+    state: { loading, weight },
     props: {
+      'aria-busy': loading || undefined,
       ...props,
-      onClick,
       className: clsx(styles.status, className),
       style: {
         '--tw-status-background': themeCssVariables.tag.background[parsedColor],
@@ -52,7 +39,9 @@ export const Status = ({
       children: (
         <>
           <span className={styles.content}>{children}</span>
-          {loading && <Loader color={color} />}
+          {loading && (
+            <Loader color={color} aria-hidden="true" render={<span />} />
+          )}
         </>
       ),
     },

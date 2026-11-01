@@ -5,6 +5,7 @@ import {
   type UsageApplicationBreakdownItem,
   type UsageBreakdownItem,
 } from 'src/engine/core-modules/usage/services/usage-analytics.service';
+import { findDeclaredBillingCharge } from 'src/engine/core-modules/usage/utils/find-declared-billing-charge.util';
 
 type ConsolidateUsageByApplicationParams = {
   items: UsageApplicationBreakdownItem[];
@@ -17,26 +18,36 @@ export const consolidateUsageByApplication = ({
   items,
   flatApplicationMaps,
 }: ConsolidateUsageByApplicationParams): UsageBreakdownItem[] => {
-  const creditsByKey = new Map<string, number>();
+  const itemsByKey = new Map<string, UsageBreakdownItem>();
 
   for (const item of items) {
     const application = flatApplicationMaps.byId[item.applicationId];
-    // Undefined until the upgrade that adds the column has run.
-    const declaredCharges = {
-      ...(application?.billing?.recurring ?? {}),
-      ...(application?.billing?.operations ?? {}),
-    };
-    const declaredCharge = declaredCharges[item.operation];
+    // Billing is undefined until the upgrade that adds the column has run.
+    const declaredChargeLabel = findDeclaredBillingCharge({
+      billing: application?.billing,
+      chargeName: item.operation,
+    })?.label;
     const applicationName = application?.name ?? item.applicationId;
 
-    const key = isDefined(declaredCharge)
-      ? `${applicationName} · ${declaredCharge.label}`
+    const key = isDefined(declaredChargeLabel)
+      ? `${applicationName} · ${declaredChargeLabel}`
       : applicationName;
 
-    creditsByKey.set(key, (creditsByKey.get(key) ?? 0) + item.creditsUsed);
+    const consolidatedItem = itemsByKey.get(key);
+
+    itemsByKey.set(key, {
+      key,
+      label: key,
+      creditsUsed: (consolidatedItem?.creditsUsed ?? 0) + item.creditsUsed,
+      userCreditsUsed:
+        (consolidatedItem?.userCreditsUsed ?? 0) + item.userCreditsUsed,
+      workspaceCreditsUsed:
+        (consolidatedItem?.workspaceCreditsUsed ?? 0) +
+        item.workspaceCreditsUsed,
+    });
   }
 
-  return [...creditsByKey.entries()]
-    .map(([key, creditsUsed]) => ({ key, label: key, creditsUsed }))
-    .sort((a, b) => b.creditsUsed - a.creditsUsed);
+  return [...itemsByKey.values()].sort(
+    (a, b) => b.workspaceCreditsUsed - a.workspaceCreditsUsed,
+  );
 };

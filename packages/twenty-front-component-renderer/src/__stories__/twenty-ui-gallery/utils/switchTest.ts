@@ -39,5 +39,16 @@ export const switchTest: TwentyUiGalleryPlayFunction = async ({
 
   await userEvent.click(uncontrolledSwitch);
   await waitFor(() => expect(uncontrolledSwitch).not.toBeChecked());
+  expect(canvas.getByRole('status')).toHaveTextContent(
+    /Composition: (click|change)\/true/,
+  );
+  expect(emailNotificationsSwitch).toHaveAttribute('data-active', 'true');
+  const customPart = emailNotificationsSwitch.querySelector('[data-active]');
+  expect(customPart).toHaveAttribute('data-active', 'true');
+  const readOnly = canvas.getByRole('switch', {
+    name: 'Read-only notifications',
+  });
+  await userEvent.click(readOnly);
+  expect(readOnly).toBeChecked();
   expect(errorHandler).not.toHaveBeenCalled();
 };

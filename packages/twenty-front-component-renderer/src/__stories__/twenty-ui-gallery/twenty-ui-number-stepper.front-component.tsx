@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Button, Field, NumberStepper } from 'twenty-ui/primitives/input';
+import { NumberStepper } from 'twenty-ui/components';
+import { Button, Field } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';

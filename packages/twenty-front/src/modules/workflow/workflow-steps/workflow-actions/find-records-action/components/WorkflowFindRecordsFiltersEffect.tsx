@@ -1,9 +1,15 @@
+import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useSetAdvancedFilterDropdownStates } from '@/object-record/advanced-filter/hooks/useSetAdvancedFilterDropdownAllRowsStates';
+import { attachUngroupedRecordFiltersToRootRecordFilterGroup } from '@/object-record/record-filter-group/utils/attachUngroupedRecordFiltersToRootRecordFilterGroup';
+import { removeEmptyRecordFilterGroups } from '@/object-record/record-filter-group/utils/removeEmptyRecordFilterGroups';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
+import { unresolvedRecordFiltersComponentState } from '@/object-record/record-filter/states/unresolvedRecordFiltersComponentState';
+import { hydrateRecordFiltersFromFieldMetadata } from '@/object-record/record-filter/utils/hydrateRecordFiltersFromFieldMetadata';
+import { pointRecordFiltersAtMorphRelationFields } from '@/object-record/record-filter/utils/pointRecordFiltersAtMorphRelationFields';
 import { useAtomComponentFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { hasInitializedCurrentRecordFilterGroupsComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFilterGroupsComponentFamilyState';
 import { hasInitializedCurrentRecordFiltersComponentFamilyState } from '@/views/states/hasInitializedCurrentRecordFiltersComponentFamilyState';
 import { type FindRecordsActionFilter } from '@/workflow/workflow-steps/workflow-actions/find-records-action/types/FindRecordsActionFilter';
 import { useEffect, useState } from 'react';
@@ -22,20 +28,20 @@ export const WorkflowFindRecordsFiltersEffect = ({
     {},
   );
 
-  const [
-    hasInitializedCurrentRecordFilterGroups,
-    setHasInitializedCurrentRecordFilterGroups,
-  ] = useAtomComponentFamilyState(
-    hasInitializedCurrentRecordFilterGroupsComponentFamilyState,
-    {},
-  );
-
   const setCurrentRecordFilters = useSetAtomComponentState(
     currentRecordFiltersComponentState,
   );
 
   const setCurrentRecordFilterGroups = useSetAtomComponentState(
     currentRecordFilterGroupsComponentState,
+  );
+
+  const setUnresolvedRecordFilters = useSetAtomComponentState(
+    unresolvedRecordFiltersComponentState,
+  );
+
+  const flattenedFieldMetadataItems = useAtomStateValue(
+    flattenedFieldMetadataItemsSelector,
   );
 
   const { setAdvancedFilterDropdownStates } =
@@ -47,35 +53,40 @@ export const WorkflowFindRecordsFiltersEffect = ({
   ] = useState(false);
 
   useEffect(() => {
-    if (
-      !hasInitializedCurrentRecordFilters &&
-      isDefined(defaultValue?.recordFilters)
-    ) {
-      setCurrentRecordFilters(defaultValue.recordFilters ?? []);
-      setShouldSetAdvancedFilterDropdownStates(true);
-      setHasInitializedCurrentRecordFilters(true);
+    if (hasInitializedCurrentRecordFilters || !isDefined(defaultValue)) {
+      return;
     }
-  }, [
-    setCurrentRecordFilters,
-    hasInitializedCurrentRecordFilters,
-    setHasInitializedCurrentRecordFilters,
-    defaultValue?.recordFilters,
-  ]);
 
-  useEffect(() => {
-    if (
-      !hasInitializedCurrentRecordFilterGroups &&
-      isDefined(defaultValue?.recordFilterGroups) &&
-      defaultValue.recordFilterGroups.length > 0
-    ) {
-      setCurrentRecordFilterGroups(defaultValue.recordFilterGroups ?? []);
-      setHasInitializedCurrentRecordFilterGroups(true);
-    }
+    const { recordFilters: persistedRecordFilters, recordFilterGroups } =
+      attachUngroupedRecordFiltersToRootRecordFilterGroup({
+        recordFilters: pointRecordFiltersAtMorphRelationFields({
+          recordFilters: defaultValue.recordFilters ?? [],
+          fieldMetadataItems: flattenedFieldMetadataItems,
+        }),
+        recordFilterGroups: defaultValue.recordFilterGroups ?? [],
+      });
+
+    const { recordFilters, unresolvedRecordFilters } =
+      hydrateRecordFiltersFromFieldMetadata({
+        persistedRecordFilters,
+        fieldMetadataItems: flattenedFieldMetadataItems,
+      });
+
+    setCurrentRecordFilters(recordFilters);
+    setUnresolvedRecordFilters(unresolvedRecordFilters);
+    setCurrentRecordFilterGroups(
+      removeEmptyRecordFilterGroups({ recordFilters, recordFilterGroups }),
+    );
+    setShouldSetAdvancedFilterDropdownStates(true);
+    setHasInitializedCurrentRecordFilters(true);
   }, [
+    defaultValue,
+    flattenedFieldMetadataItems,
+    hasInitializedCurrentRecordFilters,
     setCurrentRecordFilterGroups,
-    hasInitializedCurrentRecordFilterGroups,
-    setHasInitializedCurrentRecordFilterGroups,
-    defaultValue?.recordFilterGroups,
+    setCurrentRecordFilters,
+    setHasInitializedCurrentRecordFilters,
+    setUnresolvedRecordFilters,
   ]);
 
   useEffect(() => {

@@ -20,7 +20,10 @@ describe('isAiChatCreditsExhaustedError', () => {
 
     expect(
       isAiChatCreditsExhaustedError(
-        buildError({ code: 'QUOTA_EXHAUSTED', exhaustedKind: 'allowance' }),
+        buildError({
+          code: 'QUOTA_EXHAUSTED',
+          exhaustedKind: 'workspaceAllowance',
+        }),
       ),
     ).toBe(true);
   });

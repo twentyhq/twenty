@@ -9,6 +9,7 @@ import { WorkspaceRouteObjectsProvider } from '@/app/routing/components/Workspac
 import { createWorkspaceRouteObjects } from '@/app/routing/utils/createWorkspaceRouteObjects';
 import { getWorkspaceRouteObjectsForSurface } from '@/app/routing/utils/getWorkspaceRouteObjectsForSurface';
 import { VerifyEmail } from '@/auth/components/VerifyEmail';
+import { AppRouteErrorFallback } from '@/error-handler/components/AppRouteErrorFallback';
 import { MinimalMetadataGate } from '@/metadata-store/components/MinimalMetadataGate';
 import { OnboardingActivationOutlet } from '@/onboarding/components/OnboardingActivationOutlet';
 import { OnboardingPageLoader } from '@/onboarding/components/OnboardingPageLoader';
@@ -17,8 +18,8 @@ import { OnboardingStepPageLoader } from '@/onboarding/components/OnboardingStep
 import { OnboardingTransitionOutlet } from '@/onboarding/components/OnboardingTransitionOutlet';
 import { AuthFlowLayout } from '@/ui/layout/page/components/AuthFlowLayout';
 import { BlankLayout } from '@/ui/layout/page/components/BlankLayout';
-import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
-import { MainAppLayoutWithSidePanel } from '@/ui/layout/page/components/MainAppLayoutWithSidePanel';
+import { DefaultLayout } from '@/app/components/DefaultLayout';
+import { MainAppLayoutWithSidePanel } from '@/app/components/MainAppLayoutWithSidePanel';
 import { Verify } from '~/pages/onboarding/Verify';
 import { lazyWithPreload } from '~/utils/lazyWithPreload';
 
@@ -109,6 +110,7 @@ const createWorkspaceAppRouter = ({
       element: (
         <WorkspaceRouteObjectsProvider routeObjects={workspaceRouteObjects} />
       ),
+      errorElement: <AppRouteErrorFallback />,
       children: [
         {
           element: <WorkspaceAppProviders />,

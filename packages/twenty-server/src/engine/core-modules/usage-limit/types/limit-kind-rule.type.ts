@@ -5,4 +5,5 @@ export type LimitKindRule = {
   allowedPeriodUnits: readonly PeriodUnit[];
   requiredPeriodCount: number | null;
   isBurstValueAllowed: boolean;
+  isZeroLimitValueAllowed: boolean;
 };

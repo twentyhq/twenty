@@ -10,5 +10,10 @@ export const RawJsonFilterType = new GraphQLInputObjectType({
       type: GraphQLString,
       description: 'Pattern match with % wildcard (e.g. %value%)',
     },
+    ilike: {
+      type: GraphQLString,
+      description:
+        'Case-insensitive pattern match with % wildcard (e.g. %value%)',
+    },
   },
 });

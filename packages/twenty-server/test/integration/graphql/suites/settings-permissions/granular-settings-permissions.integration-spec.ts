@@ -1,6 +1,6 @@
 import request from 'supertest';
+import { deleteCoreWorkflows } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { deleteOneRoleOperationFactory } from 'test/integration/graphql/utils/delete-one-role-operation-factory.util';
-import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
@@ -11,7 +11,7 @@ import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsExceptionMessage } from 'src/engine/permissions/permissions.exception';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -26,7 +26,6 @@ describe('Granular settings permissions', () => {
 
     originalMemberRoleId = memberRole.id;
 
-    // canUpdateAllObjectRecords must be true to allow creating records like workflows
     const createRoleQuery = {
       query: `
         mutation CreateOneRole {
@@ -196,8 +195,8 @@ describe('Granular settings permissions', () => {
     it('should allow access to workflows operations when user has WORKFLOWS setting permission', async () => {
       const createWorkflowQuery = {
         query: `
-          mutation CreateWorkflow {
-            createWorkflow(data: {
+          mutation CreateCoreWorkflow {
+            createCoreWorkflow(input: {
               name: "Test Workflow"
             }) {
               id
@@ -214,21 +213,12 @@ describe('Granular settings permissions', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.errors).toBeUndefined();
-      expect(response.body.data.createWorkflow).toBeDefined();
-      expect(response.body.data.createWorkflow.name).toBe('Test Workflow');
+      expect(response.body.data.createCoreWorkflow).toBeDefined();
+      expect(response.body.data.createCoreWorkflow.name).toBe('Test Workflow');
 
-      const graphqlOperation = destroyOneOperationFactory({
-        objectMetadataSingularName: 'workflow',
-        gqlFields: `
-            id
-        `,
-        recordId: response.body.data.createWorkflow.id,
+      await deleteCoreWorkflows({
+        coreWorkflowIds: [response.body.data.createCoreWorkflow.id],
       });
-
-      await client
-        .post('/graphql')
-        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
-        .send(graphqlOperation);
     });
   });
 

@@ -1,5 +1,4 @@
 import { useIsOnNewAiChatSlot } from '@/ai/hooks/useIsOnNewAiChatSlot';
-import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatThreadPermissionsFamilySelector } from '@/ai/states/selectors/agentChatThreadPermissionsFamilySelector';
 import { getAiChatThreadAccess } from '@/ai/utils/getAiChatThreadAccess';
@@ -11,12 +10,12 @@ export const useCurrentAiChatThreadAccess = () => {
   const isOnNewAiChatSlot = useIsOnNewAiChatSlot();
   const permissions = useAtomFamilySelectorValue(
     agentChatThreadPermissionsFamilySelector,
-    currentAiChatThread ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
+    currentAiChatThread ?? '',
   );
 
+  // Before the chat list picks a chat, the composer writes to the new one
   return getAiChatThreadAccess({
-    currentAiChatThread,
-    isOnNewAiChatSlot,
+    isOnNewAiChatSlot: isOnNewAiChatSlot || currentAiChatThread === null,
     permissions,
   });
 };

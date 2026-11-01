@@ -1,8 +1,10 @@
+import { findChartGroupByFieldMetadataItem } from '@/page-layout/widgets/graph/utils/findChartGroupByFieldMetadataItem';
 import { type BuildChartDrilldownQueryParamsInput } from '@/page-layout/widgets/graph/types/BuildChartDrilldownQueryParamsInput';
 import { buildFilterFromChartBucket } from '@/page-layout/widgets/graph/utils/buildFilterFromChartBucket';
 import { buildFilterQueryParams } from '@/page-layout/widgets/graph/utils/buildFilterQueryParams';
 import { buildSortsFromChartConfig } from '@/page-layout/widgets/graph/utils/buildSortsFromChartConfig';
 import { normalizeChartConfigurationFields } from '@/page-layout/widgets/graph/utils/normalizeChartConfigurationFields';
+import { sanitizeChartRecordFilters } from '@/side-panel/pages/page-layout/utils/sanitizeChartRecordFilters';
 import { isDefined } from 'twenty-shared/utils';
 
 export const buildChartDrilldownQueryParams = ({
@@ -16,9 +18,14 @@ export const buildChartDrilldownQueryParams = ({
   const drilldownQueryParams = new URLSearchParams();
 
   if (isDefined(configuration.filter)) {
+    const { recordFilters, recordFilterGroups } = sanitizeChartRecordFilters({
+      chartFilters: configuration.filter,
+      fieldMetadataItems: objectMetadataItem.fields,
+    });
+
     const chartFilterParams = buildFilterQueryParams({
-      recordFilters: configuration.filter.recordFilters ?? [],
-      recordFilterGroups: configuration.filter.recordFilterGroups ?? [],
+      recordFilters,
+      recordFilterGroups,
       objectMetadataItem,
     });
 
@@ -31,9 +38,10 @@ export const buildChartDrilldownQueryParams = ({
     normalizeChartConfigurationFields(configuration);
 
   const primaryField = isDefined(groupByFieldMetadataId)
-    ? objectMetadataItem.fields.find(
-        (field) => field.id === groupByFieldMetadataId,
-      )
+    ? findChartGroupByFieldMetadataItem({
+        fieldMetadataItems: objectMetadataItem.fields,
+        groupByFieldMetadataId,
+      })
     : undefined;
 
   if (isDefined(primaryField)) {

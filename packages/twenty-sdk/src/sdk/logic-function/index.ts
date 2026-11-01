@@ -49,6 +49,17 @@ export { findConnectionForRequest } from '@/sdk/logic-function/connections/find-
 export { reportConnectionAuthFailure } from '@/sdk/logic-function/connections/report-connection-auth-failure';
 export { AppConnectionAuthFailedError } from '@/sdk/logic-function/connections/errors/app-connection-auth-failed.error';
 export type { AppConnection } from '@/sdk/logic-function/connections/types/app-connection.type';
+export type {
+  AuthorizeConnectionPayload,
+  AuthorizeConnectionResult,
+  ConnectionCallbackPayload,
+  ConnectionCallbackResult,
+  IdentifyAccountPayload,
+  IdentifyAccountResult,
+  SendAppMessagePayload,
+  SendAppMessageRecipient,
+  SendAppMessageResult,
+} from 'twenty-shared/application';
 
 export { createMessageChannel } from '@/sdk/logic-function/messaging/create-message-channel';
 export type { CreateMessageChannelInput } from '@/sdk/logic-function/messaging/create-message-channel';
@@ -64,13 +75,24 @@ export type {
   IngestMessageParticipant,
 } from '@/sdk/logic-function/messaging/types/ingest-message.type';
 export type { AppMessageChannel } from '@/sdk/logic-function/messaging/types/app-message-channel.type';
+export { listMessageFolders } from '@/sdk/logic-function/messaging/list-message-folders';
+export type { ListMessageFoldersFilter } from '@/sdk/logic-function/messaging/list-message-folders';
+export { syncMessageFolders } from '@/sdk/logic-function/messaging/sync-message-folders';
+export type { SyncMessageFoldersInput } from '@/sdk/logic-function/messaging/sync-message-folders';
+export type { AppMessageFolder } from '@/sdk/logic-function/messaging/types/app-message-folder.type';
 
 export { runAgent } from '@/sdk/logic-function/agents/run-agent';
 export type { RunAgentInput, RunAgentResult } from 'twenty-shared/application';
 
-export { sendInboxMessage } from '@/sdk/logic-function/inbox/send-inbox-message';
+export { sendInboxMessage } from '@/sdk/inbox/send-inbox-message';
+export { inboxMention } from '@/sdk/inbox/mentions/inbox-mention';
+export { inboxReferenceRecord } from '@/sdk/inbox/mentions/inbox-reference-record';
+export { INBOX_ASSISTANT_MENTION } from '@/sdk/inbox/mentions/inbox-assistant-mention';
+export { attachRecordToInboxThread } from '@/sdk/inbox/attach-record-to-inbox-thread';
+export { detachRecordFromInboxThread } from '@/sdk/inbox/detach-record-from-inbox-thread';
 export type { SendInboxMessageInput } from '@/sdk/define/common/types/loose-shared-types.type';
 export type { SendInboxMessageResult } from 'twenty-shared/application';
+export type { InboxThreadRecordInput } from 'twenty-shared/application';
 
 export { enqueueJob } from '@/sdk/logic-function/jobs/enqueue-job';
 export { enqueueJobs } from '@/sdk/logic-function/jobs/enqueue-jobs';

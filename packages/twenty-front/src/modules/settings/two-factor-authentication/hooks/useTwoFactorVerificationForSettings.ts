@@ -34,7 +34,7 @@ export const useTwoFactorVerificationForSettings = () => {
 
   const handleVerificationSuccess = async () => {
     enqueueToast({
-      variant: 'success',
+      status: 'success',
       children: t`Two-factor authentication setup completed successfully!`,
     });
 

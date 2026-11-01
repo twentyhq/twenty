@@ -4,21 +4,22 @@ import { useLingui } from '@lingui/react/macro';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { ClickTrackingSwitch } from '@/settings/workspace/components/ClickTrackingSwitch';
-import { SettingsWorkspaceBlocklistSection } from '@/settings/workspace/components/SettingsWorkspaceBlocklistSection';
+import { OpenTrackingSwitch } from '@/settings/workspace/components/OpenTrackingSwitch';
 import { SettingsWorkspaceEmailGroupSection } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupSection';
 import { SettingsWorkspaceEmailSyncSection } from '@/settings/workspace/components/SettingsWorkspaceEmailSyncSection';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
+import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import {
   IconBrandWhatsapp,
+  IconForbid,
   IconMail,
   IconMailX,
   IconPhone,
 } from 'twenty-ui/icon';
+import { Card } from 'twenty-ui/primitives/surfaces';
 import coverDark from '~/pages/settings/communications/assets/cover-dark.png';
 import coverLight from '~/pages/settings/communications/assets/cover-light.png';
 import { SettingsCard } from '@/settings/components/SettingsCard';
@@ -39,10 +40,6 @@ export const SettingsWorkspaceCommunications = () => {
   const { t } = useLingui();
 
   const navigateSettings = useNavigateSettings();
-
-  const isMessageCampaignFeatureEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-  );
 
   const tabs = [
     { id: 'emails', title: t`Emails`, Icon: IconMail },
@@ -90,37 +87,53 @@ export const SettingsWorkspaceCommunications = () => {
           />
         </Section.Root>
         <SettingsWorkspaceEmailGroupSection />
-        {isMessageCampaignFeatureEnabled && (
-          <Section.Root>
-            <Section.Header
-              title={t`Tracking`}
-              description={t`Measure engagement on the campaigns this workspace sends`}
-            />
-            <ClickTrackingSwitch />
-          </Section.Root>
-        )}
-        {isMessageCampaignFeatureEnabled && (
-          <Section.Root>
-            <Section.Header
-              title={t`Unsubscribe`}
-              description={t`Manage unsubscribers, opt-out topics, and the page recipients see`}
-            />
-            <StyledCardsColumn>
-              <SettingsCard
-                Icon={
-                  <IconMailX
-                    size={theme.icon.size.lg}
-                    stroke={theme.icon.stroke.md}
-                  />
-                }
-                title={t`Manage unsubscribe`}
-                onClick={() => navigateSettings(SettingsPath.Unsubscribe)}
-              />
-            </StyledCardsColumn>
-          </Section.Root>
-        )}
         <SettingsWorkspaceEmailSyncSection />
-        <SettingsWorkspaceBlocklistSection />
+        <Section.Root>
+          <Section.Header
+            title={t`Blocklist`}
+            description={t`Exclude the following people and domains from the email and calendar sync of every workspace member`}
+          />
+          <StyledCardsColumn>
+            <SettingsCard
+              Icon={
+                <IconForbid
+                  size={theme.icon.size.lg}
+                  stroke={theme.icon.stroke.md}
+                />
+              }
+              title={t`Manage blocklist`}
+              onClick={() => navigateSettings(SettingsPath.WorkspaceBlocklist)}
+            />
+          </StyledCardsColumn>
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
+            title={t`Tracking`}
+            description={t`Measure engagement on the campaigns this workspace sends`}
+          />
+          <Card.Root>
+            <OpenTrackingSwitch divider />
+            <ClickTrackingSwitch />
+          </Card.Root>
+        </Section.Root>
+        <Section.Root>
+          <Section.Header
+            title={t`Unsubscribe`}
+            description={t`Manage unsubscribers, opt-out topics, and the page recipients see`}
+          />
+          <StyledCardsColumn>
+            <SettingsCard
+              Icon={
+                <IconMailX
+                  size={theme.icon.size.lg}
+                  stroke={theme.icon.stroke.md}
+                />
+              }
+              title={t`Manage unsubscribe`}
+              onClick={() => navigateSettings(SettingsPath.Unsubscribe)}
+            />
+          </StyledCardsColumn>
+        </Section.Root>
       </SettingsPageContainer>
     </SettingsPageLayout>
   );

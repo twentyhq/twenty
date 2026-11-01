@@ -1,8 +1,10 @@
-import { type FieldManifest } from 'twenty-shared/application';
+import {
+  type FieldManifest,
+  type FieldPermissionAction,
+} from 'twenty-shared/application';
 import {
   type FieldMetadataDefaultActor,
   FieldMetadataType,
-  MetadataWritability,
 } from 'twenty-shared/types';
 
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-field-manifest-to-universal-flat-field-metadata.util';
@@ -156,27 +158,32 @@ describe('fromFieldManifestToUniversalFlatFieldMetadata', () => {
     });
   });
 
-  describe('writability', () => {
-    it('defaults to OPEN when omitted from the manifest', () => {
+  describe('disabledFieldPermissionActions', () => {
+    it.each<[FieldPermissionAction[]]>([[[]], [['canReadFieldValue']]])(
+      'keeps an explicit value %j',
+      (disabledFieldPermissionActions) => {
+        const result = fromFieldManifestToUniversalFlatFieldMetadata({
+          fieldManifest: buildFieldManifest({
+            disabledFieldPermissionActions,
+          }),
+          applicationUniversalIdentifier: APP_UID,
+          now: NOW,
+        });
+
+        expect(result.disabledFieldPermissionActions).toEqual(
+          disabledFieldPermissionActions,
+        );
+      },
+    );
+
+    it('is null when omitted', () => {
       const result = fromFieldManifestToUniversalFlatFieldMetadata({
         fieldManifest: buildFieldManifest({}),
         applicationUniversalIdentifier: APP_UID,
         now: NOW,
       });
 
-      expect(result.writability).toBe(MetadataWritability.OPEN);
-    });
-
-    it('carries the manifest value through', () => {
-      const result = fromFieldManifestToUniversalFlatFieldMetadata({
-        fieldManifest: buildFieldManifest({
-          writability: MetadataWritability.APPLICATION,
-        }),
-        applicationUniversalIdentifier: APP_UID,
-        now: NOW,
-      });
-
-      expect(result.writability).toBe(MetadataWritability.APPLICATION);
+      expect(result.disabledFieldPermissionActions).toBeNull();
     });
   });
 

@@ -8,11 +8,9 @@ Twenty's open-source React UI library provides foundational primitives, shared c
 
 Read the [twenty-ui documentation](https://docs.twenty.com/ui/getting-started) for setup, theming, and component guides.
 
-> **Alpha:** `twenty-ui` is still in alpha. Its version number follows the Twenty SDK release cycle. APIs and component behavior may change between releases.
-
 ## Installation
 
-For a standalone React application, install the library. React 19 is required.
+For an existing React application, install the library. React 19 is required.
 
 ```bash
 npm install twenty-ui
@@ -31,7 +29,7 @@ For Twenty apps, follow [Using Twenty UI components](https://docs.twenty.com/dev
 For a standalone React application, import the base styles once, pick a theme stylesheet, and wrap your app in `ThemeProvider`:
 
 ```tsx
-import { Button } from 'twenty-ui/primitives/input';
+import { Field, Input } from 'twenty-ui/primitives/input';
 import { ThemeProvider } from 'twenty-ui/theme';
 
 import 'twenty-ui/style.css';
@@ -39,43 +37,49 @@ import 'twenty-ui/theme-light.css';
 
 export const App = () => (
   <ThemeProvider colorScheme="light">
-    <Button>Click me</Button>
+    <Field.Root>
+      <Field.Label>Email</Field.Label>
+      <Input name="email" type="email" placeholder="you@example.com" />
+      <Field.Description>Use your work email address.</Field.Description>
+    </Field.Root>
   </ThemeProvider>
 );
 ```
 
 The component stylesheet includes a global reset. Load it once at your application entry point.
 
+Component styles and the reset use the `twenty-ui` cascade layer. Unlayered application styles override those layered rules. Put application resets in an earlier layer; see [style overrides](https://docs.twenty.com/ui/getting-started#override-styles) for the layer order and Tailwind setup.
+
 ## Entry points
 
-Primitives provide foundational controls, including compound controls such as Select, Menu, and Dialog. Shared components compose them into presets such as `MainButton`, `LightButton`, `Dropdown`, and `Toaster`. Both layers receive data, labels, and callbacks from the application.
+Primitives provide foundational controls, including compound controls such as Select, Popover, and Dialog. Shared components compose them into presets such as `MainButton`, `LightButton`, `Dropdown`, and `Toaster`. Both layers receive data, labels, and callbacks from the application.
 
 Prefer the matching public subpath for focused imports. The root entry point also re-exports primitives, shared components, icons, theme tokens, and utilities. Assets, testing helpers, and the optional code editor have separate entry points.
 
-| Subpath                              | Contents                                                              |
-| ------------------------------------ | --------------------------------------------------------------------- |
-| `twenty-ui/assets`                   | Logos and static assets                                               |
-| `twenty-ui/components`               | All shared component families except the optional editor              |
-| `twenty-ui/components/data-display`  | Avatar groups, JSON trees, metrics, counters, and icon tiles          |
-| `twenty-ui/components/feedback`      | Callouts, inline banners, and notifications                           |
-| `twenty-ui/components/input`         | Button presets, search and image inputs, and country/currency pickers |
-| `twenty-ui/components/layout`        | Sections, overflowing lists, and icon transitions                     |
-| `twenty-ui/components/navigation`    | Dropdowns, menu compositions, and tab actions                         |
-| `twenty-ui/components/settings`      | Settings rows and settings-specific compositions                      |
-| `twenty-ui/components/code-editor`   | Code editor, editor header, and editor theme helpers                  |
-| `twenty-ui/icon`                     | Icon components and the icon provider                                 |
-| `twenty-ui/primitives`               | All primitive families                                                |
-| `twenty-ui/primitives/accessibility` | Hidden elements and keyboard interaction helpers                      |
-| `twenty-ui/primitives/data-display`  | Avatars, chips, tags, color samples, and status indicators            |
-| `twenty-ui/primitives/feedback`      | Banners, progress bars, and loaders                                   |
-| `twenty-ui/primitives/input`         | Buttons and form controls                                             |
-| `twenty-ui/primitives/layout`        | Expansion, separators, direction, and resizing                        |
-| `twenty-ui/primitives/navigation`    | Action links, list items, and tabs                                    |
-| `twenty-ui/primitives/surfaces`      | Cards, dialogs, menus, popovers, and tooltips                         |
-| `twenty-ui/primitives/typography`    | Text and headings                                                     |
-| `twenty-ui/testing`                  | Storybook and test decorators and helpers                             |
-| `twenty-ui/theme`                    | Theme provider, hooks, types, and tokens                              |
-| `twenty-ui/utilities`                | Hooks and shared utilities                                            |
+| Subpath                              | Contents                                                            |
+| ------------------------------------ | ------------------------------------------------------------------- |
+| `twenty-ui/assets`                   | Logos and static assets                                             |
+| `twenty-ui/components`               | All shared component families except the optional editor            |
+| `twenty-ui/components/data-display`  | Avatar groups, command blocks, JSON trees, metrics, and icon tiles  |
+| `twenty-ui/components/feedback`      | Callouts, inline banners, and notifications                         |
+| `twenty-ui/components/input`         | Button presets, specialized inputs, pickers, and segmented controls |
+| `twenty-ui/components/layout`        | Sections, overflowing lists, and icon transitions                   |
+| `twenty-ui/components/navigation`    | Dropdowns, menu compositions, and tab actions                       |
+| `twenty-ui/components/settings`      | Settings rows with labeled controls                                 |
+| `twenty-ui/components/code-editor`   | Code editor, editor header, and editor theme helpers                |
+| `twenty-ui/icon`                     | Icon components and the icon provider                               |
+| `twenty-ui/primitives`               | All primitive families                                              |
+| `twenty-ui/primitives/accessibility` | Hidden elements and keyboard interaction helpers                    |
+| `twenty-ui/primitives/data-display`  | Avatars, badges, chips, tags, color samples, and status indicators  |
+| `twenty-ui/primitives/feedback`      | Banners, progress indicators, loaders, and skeletons                |
+| `twenty-ui/primitives/input`         | Buttons and form controls                                           |
+| `twenty-ui/primitives/layout`        | Expansion, separators, direction, and resizing                      |
+| `twenty-ui/primitives/navigation`    | Breadcrumbs, list items, and tabs                                   |
+| `twenty-ui/primitives/surfaces`      | Cards, dialogs, popovers, and tooltips                              |
+| `twenty-ui/primitives/typography`    | Text, headings, shortcuts, and overflowing text                     |
+| `twenty-ui/testing`                  | Storybook and test decorators and helpers                           |
+| `twenty-ui/theme`                    | Theme provider, hooks, types, and tokens                            |
+| `twenty-ui/utilities`                | Hooks and shared utilities                                          |
 
 Import icons such as `IconCheck` from `twenty-ui/icon`. The dynamic icon provider includes the full catalog, so use it when icons need to be looked up at runtime.
 
@@ -133,13 +137,38 @@ Record formatting, routing, product illustrations, and feature-specific animatio
 
 ### Documentation
 
-Primitive guides belong in `packages/twenty-docs/ui/primitives`. Shared component guides belong in `packages/twenty-docs/ui/components`. For each stateful API that supports both modes, include separate **Uncontrolled state** and **Controlled state** examples with the same scenario, labels, and initial state. Keep each example complete, with public imports and one exported example component.
+Primitive guides belong in `packages/twenty-docs/ui/primitives`. Shared component guides belong in `packages/twenty-docs/ui/components`.
+
+Every component guide starts with its purpose and a `Display` story, followed by **Usage** with complete code matching that preview. Use realistic content and the public API. Compound components share one complete display across their parts; providers and accessibility helpers demonstrate their effect in context. Keep useful Storybook controls available on the display.
+
+Make previews look like usable UI. Align controls with their labels, separate actions from supporting text, and give panels and cards enough padding. Constrain long text to a readable width, use theme colors for secondary content, and check that examples fit the documentation frame in both light and dark themes. Keep these layout choices in the example and its matching code snippet.
+
+Preserve the component's existing appearance in its Display story. Improve the surrounding layout without changing the control's shape, size, variant, or focus styling for decoration. Show alternative appearances in named stories or catalogs.
+
+Use these story roles consistently:
+
+| Story               | Purpose                               | When to include it                                |
+| ------------------- | ------------------------------------- | ------------------------------------------------- |
+| `Display`           | One representative, usable example    | Every component guide                             |
+| `Catalog`           | Labeled comparisons of visual options | When seeing options together helps readers choose |
+| Named examples      | A specific behavior or composition    | When the component supports distinct workflows    |
+| Interaction stories | Verify behavior with `play` functions | Keep these separate from embedded previews        |
+
+After Usage, document visual options, anatomy where relevant, behavior and composition, accessibility, and the generated API reference. Omit sections that add no useful information. Put migration guidance before the API reference.
+
+Catalogs should group variants, sizes, colors, and states separately. Use a matrix only when two dimensions need to be compared together. Avoid multiplying every prop combination. Use `GroupedCatalog` from `twenty-ui/testing` for a consistent grouped layout. Simple components can use a focused alternative example; interactive components usually need working workflow examples. Use the preview's light and dark tabs for theme comparison.
+
+Keep comprehensive visual checks in separate `VisualRegression` stories using `CatalogDecorator`, including the existing dark-theme and variant matrices. Tag them with `!autodocs` and do not embed them in the guides. Simplifying a documentation catalog must preserve its existing visual regression coverage.
+
+Embed stories with a descriptive `title` and a height that closely fits their content, including the preview's padding. Check wrapping at narrow documentation widths. Reserve additional height only for dropdowns, popups, validation messages, resizing, or other expanding content, and verify those states fit. Embedded stories can respond to the reader, but must not define or inherit a `play` function. Share a presentational example with its interaction story instead of copying automated interactions into the documentation.
+
+For each stateful API that supports both modes, include separate **Uncontrolled state** and **Controlled state** examples with the same scenario, labels, and initial state. Keep each example complete, with public imports and one exported example component.
 
 Explain state ownership before advanced behavior such as indeterminate selection or manual tab activation. Document independent states, such as selection and popup visibility, separately. For components that delegate state to a parent or group, explain that ownership and link to the relevant examples.
 
 For compound components, include an anatomy tree and identify required parts, optional parts, and elements supplied internally. Show supported composition with complete examples, use Twenty UI components for supporting controls, and explain how custom wrappers preserve props and refs. Use `text` fences for structural diagrams and `tsx` fences for runnable examples so the documentation checker validates the examples.
 
-Run `npx nx check:ui twenty-docs` to validate generated references and documentation examples.
+Run `npx nx generate:ui twenty-docs` after changing documented component props or theme tokens, then review the generated data in `packages/twenty-ui/generated` and snippets in `packages/twenty-docs/snippets/ui/generated`. Run `npx nx check:ui twenty-docs` to validate generated references and documentation examples. Run `npx nx check:ui-stories twenty-docs` to validate preview titles, story references, the required first `Display`, and the absence of automated interactions in embedded stories.
 
 ### Testing
 
@@ -150,7 +179,7 @@ npx vitest run --root packages/twenty-ui --project unit <file>
 npx vitest run --root packages/twenty-ui --project storybook <file>
 ```
 
-The unit project runs in jsdom. The Storybook project runs in headless Chromium through Playwright, including story interactions and accessibility checks.
+The unit project runs in jsdom. The Storybook project runs in headless Chromium through Playwright, including story interactions and accessibility checks. `npx nx storybook:test twenty-ui` also runs the `reduced-motion` browser project for reduced-motion checks.
 
 ## License
 

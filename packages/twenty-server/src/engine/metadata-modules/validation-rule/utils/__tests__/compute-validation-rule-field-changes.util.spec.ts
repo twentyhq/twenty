@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { computeValidationRuleFieldChanges } from 'src/engine/metadata-modules/validation-rule/utils/compute-validation-rule-field-changes.util';

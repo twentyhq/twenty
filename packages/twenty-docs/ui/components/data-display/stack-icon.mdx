@@ -1,0 +1,51 @@
+---
+title: StackIcon
+description: A 16px icon with a smaller item stacked on its bottom-right corner.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import StackIconReference from '/snippets/ui/generated/components/data-display/stack-icon.mdx';
+
+## Overview
+
+Pass the main icon through the `icon` node slot and the stacked item through `stackedIcon`. The container is 16px wide and tall; the stacked item is positioned absolutely at 8px from the left and 7px from the top so it overflows the bottom-right corner. A 12px square avatar is the intended size for an application logo. Both nodes are decorative, so keep a visible label beside the icon.
+
+Leave room for the stacked item's overflow when placing neighboring content. The example uses a 12px gap between the icon container and its label.
+
+<StoryEmbed
+  storyId="ui-components-data-display-stackicon--display"
+  title="Company icon with a stacked logo"
+  height={100}
+/>
+
+## Usage
+
+```tsx
+import { StackIcon } from 'twenty-ui/components/data-display';
+import { IconBuildingSkyscraper } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const CompanyFieldLabel = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <StackIcon
+      icon={<IconBuildingSkyscraper size={16} />}
+      stackedIcon={
+        <Avatar size="xs" shape="square" variant="outline" name="Stripe" />
+      }
+    />
+    <Text>Companies</Text>
+  </Text>
+);
+```
+
+Native attributes, events, `className`, `style`, and `ref` target the outer div. `render` replaces that target through Base UI composition while preserving both icon nodes.
+
+## Props
+
+<StackIconReference />
+
+<PageBanner illustration="section-ui-components" />

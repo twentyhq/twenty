@@ -14,10 +14,10 @@ import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
+import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type AgentChatSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-sender.type';
 import {
@@ -72,10 +72,22 @@ export class AgentChatActorService {
         AiExceptionCode.MESSAGE_NOT_FOUND,
       );
     }
-    // a turn the agent opens has no user message, and pre-attribution messages have no sender: both run as the
+    // Every member message has its sender since 2.43, so one without a sender
+    // nor an application was written by a member who has left since
+    if (
+      isDefined(message) &&
+      !isDefined(message.senderWorkspaceMemberId) &&
+      !isDefined(message.senderApplicationId)
+    ) {
+      throw new AiException(
+        'Message sender is no longer a workspace member',
+        AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_FOUND,
+      );
+    }
+    // a turn the agent opens has no user message, and an application's message has no member: both run as the
     // thread's member, never as the worker's caller or the participant whose turn drained the queue
-    let userWorkspaceId = message?.senderUserWorkspaceId;
-    if (!isDefined(userWorkspaceId)) {
+    let workspaceMemberId = message?.senderWorkspaceMemberId;
+    if (!isDefined(workspaceMemberId)) {
       const thread = await this.threads.findOneOrFail(workspaceId, {
         where: { id: threadId },
       });
@@ -85,13 +97,13 @@ export class AgentChatActorService {
           AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_FOUND,
         );
       }
-      userWorkspaceId = (
-        await this.userAuthContextService.resolveWorkspaceMember({
-          workspaceId,
-          workspaceMemberId: thread.workspaceMemberId,
-        })
-      ).userWorkspaceId;
+      workspaceMemberId = thread.workspaceMemberId;
     }
+    const { userWorkspaceId } =
+      await this.userAuthContextService.resolveWorkspaceMember({
+        workspaceId,
+        workspaceMemberId,
+      });
     const sender: AgentChatSender = {
       userWorkspaceId,
       applicationId: message?.senderApplicationId ?? null,
@@ -130,6 +142,7 @@ export class AgentChatActorService {
         workspaceId,
         userWorkspaceId: sender.userWorkspaceId,
         applicationId: sender.applicationId ?? undefined,
+        agentId: authContext.agentId,
         setting: PermissionFlagType.AI,
       }))
     ) {
@@ -140,7 +153,6 @@ export class AgentChatActorService {
     }
     const rolePermissions = await this.resolveRolePermissions({
       workspaceId,
-      userWorkspaceId: sender.userWorkspaceId,
       authContext,
     });
     if (!isDefined(rolePermissions)) {
@@ -155,15 +167,11 @@ export class AgentChatActorService {
   // the permissions a member acts with in the chat, also used to run the calls they approve
   async resolveRolePermissions({
     workspaceId,
-    userWorkspaceId,
     authContext,
   }: {
     workspaceId: string;
-    userWorkspaceId: string;
     authContext: WorkspaceAuthContext;
-  }): Promise<
-    { rolePermissionConfig: RolePermissionConfig; roleId: string } | undefined
-  > {
+  }): Promise<{ rolePermissionConfig: RolePermissionConfig } | undefined> {
     const { userWorkspaceRoleMap } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'userWorkspaceRoleMap',
@@ -172,11 +180,11 @@ export class AgentChatActorService {
       authContext,
       userWorkspaceRoleMap,
       apiKeyRoleMap: {},
+      flatRoleTargetByAgentIdMaps: {},
     });
-    const roleId = userWorkspaceRoleMap[userWorkspaceId];
 
-    return isDefined(rolePermissionConfig) && isDefined(roleId)
-      ? { rolePermissionConfig, roleId }
+    return isDefined(rolePermissionConfig)
+      ? { rolePermissionConfig }
       : undefined;
   }
 

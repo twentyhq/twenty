@@ -9,6 +9,8 @@ export const SEND_CHAT_MESSAGE = gql`
     $modelId: String
     $fileAttachments: [FileAttachmentInput!]
     $mentionedWorkspaceMemberIds: [UUID!]
+    $channelId: UUID
+    $shouldAssistantReply: Boolean
   ) {
     sendChatMessage(
       threadId: $threadId
@@ -18,6 +20,8 @@ export const SEND_CHAT_MESSAGE = gql`
       modelId: $modelId
       fileAttachments: $fileAttachments
       mentionedWorkspaceMemberIds: $mentionedWorkspaceMemberIds
+      channelId: $channelId
+      shouldAssistantReply: $shouldAssistantReply
     ) {
       messageId
       queued

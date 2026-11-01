@@ -36,7 +36,7 @@ export const SettingsAdminJobStateBadge = ({
     <StyledContainer>
       <Tag color={color}>{state}</Tag>
       {showAttempts && (
-        <Tag color="red" weight="medium" preventShrink>
+        <Tag color="red" weight="medium" truncate={false}>
           {plural(attemptsMade, {
             one: `${attemptsMade} attempt`,
             other: `${attemptsMade} attempts`,

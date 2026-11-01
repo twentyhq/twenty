@@ -1,8 +1,12 @@
 ---
 title: Prezentare generală
 description: Modelați datele pe care aplicația le adaugă într-un spațiu de lucru — obiecte, câmpuri și relații.
-icon: database
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Ce acoperă nivelul de date
 
 Stratul de **date** al unei aplicații Twenty reprezintă datele pe care aplicația le *adaugă* într-un spațiu de lucru — noile tipuri de înregistrări pe care le declară, coloanele pe care le adaugă la obiectele existente și modul în care aceste înregistrări se conectează între ele.
 
@@ -25,18 +29,22 @@ Stratul de **date** al unei aplicații Twenty reprezintă datele pe care aplica�
 
 ## În această secțiune
 
-<CardGroup cols={2}>
-  <Card title="Obiecte" icon="table" href="/ro/developers/extend/apps/data/objects">
-    `defineObject` — declarați noi tipuri de înregistrări cu propriile lor câmpuri.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ro/developers/extend/apps/data/objects" img="/images/user-guide/halftone/card-page-objects.svg">
+    <CardTitle>Obiectele</CardTitle>
+    `defineObject` - declara noi tipuri de înregistrări cu propriile lor câmpuri.
   </Card>
-  <Card title="Extinderea obiectelor" icon="wand-magic-sparkles" href="/ro/developers/extend/apps/data/extending-objects">
-    `defineField` — adăugați câmpuri la obiecte standard sau la obiectele altor aplicații.
+  <Card href="/ro/developers/extend/apps/data/extending-objects" img="/images/user-guide/halftone/card-page-extending-objects.svg">
+    <CardTitle>Extinderea obiectelor</CardTitle>
+    `defineField` - adaugă câmpuri la obiectele standard sau alte aplicații.
   </Card>
-  <Card title="Relații" icon="diagram-project" href="/ro/developers/extend/apps/data/relations">
-    Conexiuni bidirecționale `MANY_TO_ONE` / `ONE_TO_MANY` între obiecte.
+  <Card href="/ro/developers/extend/apps/data/relations" img="/images/user-guide/halftone/card-page-relations.svg">
+    <CardTitle>Relaţiile</CardTitle>
+    Conexiuni bidirecţionale `MANY_TO_ONE` / `ONE_TO_MANY` între obiecte.
   </Card>
-  <Card title="Tipuri de activități ale cronologiei" icon="clock-rotate-left" href="/ro/developers/extend/apps/data/timeline-activity-types">
-    Definiți evenimente de audit automate și evenimente explicite ale aplicației pentru cronologiile înregistrărilor.
+  <Card href="/ro/developers/extend/apps/data/timeline-activity-types" img="/images/user-guide/halftone/card-page-timeline.svg">
+    <CardTitle>Tipuri de activitate de cronologie</CardTitle>
+    Definiți evenimentele automate de audit și evenimentele aplicației explicite pentru cronologii înregistrate.
   </Card>
 </CardGroup>
 
@@ -48,9 +56,10 @@ Stratul de **date** al unei aplicații Twenty reprezintă datele pe care aplica�
 | **Câmp**                            | O coloană pe un obiect. Câmpurile independente pot extinde obiecte pe care nu le-ați creat (de ex. adăugați `loyaltyTier` la Company) | `defineField()`                         |
 | **Relație**                         | O legătură bidirecțională între două obiecte — ambele părți declarate ca câmpuri                                                      | `defineField()` cu `FieldType.RELATION` |
 | **Indice**                          | Un indice de bază de date pentru a accelera o interogare recurentă asupra unuia dintre obiectele tale                                 | `defineIndex()`                         |
-| **Tip de activitate a cronologiei** | Un eveniment automat de audit sau un eveniment explicit de domeniu afișat în cronologiile înregistrărilor.                            | `defineTimelineActivityType()`          |
+| **Tip de activitate a cronologiei** | Un eveniment automat de audit sau un eveniment explicit de domeniu afișat în cronologiile înregistrărilor                             | `defineTimelineActivityType()`          |
+| **Cale de înregistrări asociate**   | Un lanț de până la trei relații prin care accesul la o înregistrare se extinde la înregistrările sale asociate                        | `defineRelatedRecordPath()`             |
 
-SDK-ul detectează acestea prin analiza AST la momentul build-ului, astfel încât organizarea fișierelor ține de tine — convenția este `src/objects/`, `src/fields/`, `src/indexes/` și `src/timeline-activity-types/`. UUID-urile stabile `universalIdentifier` leagă totul în toate implementările.
+CLI-ul detectează acestea prin analiza AST la momentul build-ului, astfel încât organizarea fișierelor ține de tine — convenția este `src/objects/`, `src/fields/`, `src/indexes/`, `src/timeline-activity-types/` și `src/related-record-paths/`. UUID-urile stabile `universalIdentifier` leagă totul în toate implementările.
 
 ## Indici (opțional)
 
@@ -96,6 +105,38 @@ defineIndex({
 
 Ordonează array-ul `fields` în modul în care Postgres ar trebui să îl folosească — coloana din stânga prima, ca într-o agendă telefonică. Indicii nu sunt gratuiți: fiecare scriere în tabel îi actualizează. Adaugă unul doar atunci când ai o interogare care are nevoie de el.
 
+## Căi de înregistrări asociate (opțional)
+
+<Warning>
+  Căile către înregistrări asociate sunt în previzualizare: se sincronizează cu aplicația dvs., însă permisiunile pentru înregistrări nu le folosesc încă. După ce sunt aplicate, necesită
+  **planul Organization sau unul superior**, la fel ca
+  [securitatea la nivel de rând](/ro/developers/extend/apps/config/roles#row-level-security).
+</Warning>
+
+O cale către înregistrări asociate începe pe un obiect și urmează până la trei câmpuri de relație, fiecare pe obiectul la care a ajuns cel precedent. Permisiunile pentru înregistrări folosesc aceste căi pentru a extinde accesul de la o înregistrare la înregistrările sale asociate.
+
+* O cale **inerentă** (`isInherent: true`) se aplică ori de câte ori înregistrarea de început poate fi citită, indiferent de modul în care a fost acordat acel acces. Folosiți-o pentru înregistrările care aparțin părintelui lor, cum ar fi atașamentele unui card de postare.
+* O cale **obișnuită** se aplică numai atunci când accesul la înregistrarea de început provine direct dintr-un rol, astfel încât spațiile de lucru aleg pe care să se bazeze.
+
+```ts src/related-record-paths/post-card-attachments.related-record-path.ts
+import { defineRelatedRecordPath } from 'twenty-sdk/define';
+
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+import { ATTACHMENTS_ON_POST_CARD_UNIVERSAL_IDENTIFIER } from '../fields/attachments-on-post-card.field';
+
+export default defineRelatedRecordPath({
+  universalIdentifier: 'c1b8f0d2-7e4a-4b6c-9a1d-3f5e2b7c8d90',
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  firstFieldMetadataUniversalIdentifier:
+    ATTACHMENTS_ON_POST_CARD_UNIVERSAL_IDENTIFIER,
+  isInherent: true,
+});
+```
+
+Adăugați `secondFieldMetadataUniversalIdentifier` și `thirdFieldMetadataUniversalIdentifier` pentru căi mai lungi. Fiecare salt trebuie să fie o relație activă pe obiectul atins până în acel moment, o cale nu poate vizita același obiect de două ori, iar două căi nu pot folosi aceleași salturi.
+
 <Note>
 Căutați **Application Config** sau **Roles & Permissions**? Acestea descriu aplicația în sine, mai degrabă decât datele pe care le adaugă — se află la [Config](/ro/developers/extend/apps/config/overview). Căutați **Connections** (Linear, GitHub, Slack OAuth)? Acestea există pentru a fi apelate *din* funcții de logică și se află la [Logic](/ro/developers/extend/apps/logic/connections).
 </Note>
+
+<PageBanner illustration="section-apps-data" />

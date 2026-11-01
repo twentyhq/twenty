@@ -13,7 +13,7 @@ export const APP_UNINSTALL_COMMAND_DEFINITION: TargetCommandDefinition = {
     {
       flags: '--universal-identifier <id>',
       description:
-        'Uninstall the app with this universal identifier without building the project, for example when the build is broken',
+        'Uninstall the app with this universal identifier, works without a local project',
     },
     {
       flags: '--yes',

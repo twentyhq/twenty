@@ -648,6 +648,49 @@ describe('upsertViewWidget', () => {
       expect(childGroup.length).toBe(1);
       expect(childGroup[0].parentViewFilterGroupId).toBe(parentGroupId);
     });
+
+    it('should create new nested filter groups in a single call, children listed first', async () => {
+      const rootGroupId = uuidv4();
+      const firstChildGroupId = uuidv4();
+      const secondChildGroupId = uuidv4();
+
+      const { errors } = await upsertViewWidget({
+        expectToFail: false,
+        input: {
+          widgetId: testSetup.widgetId,
+          viewFilterGroups: [
+            {
+              id: firstChildGroupId,
+              logicalOperator: ViewFilterGroupLogicalOperator.AND,
+              parentViewFilterGroupId: rootGroupId,
+            },
+            {
+              id: rootGroupId,
+              logicalOperator: ViewFilterGroupLogicalOperator.OR,
+            },
+            {
+              id: secondChildGroupId,
+              logicalOperator: ViewFilterGroupLogicalOperator.AND,
+              parentViewFilterGroupId: rootGroupId,
+            },
+          ],
+        },
+      });
+
+      expect(errors).toBeUndefined();
+
+      const childGroups = await global.testDataSource.query(
+        `SELECT id, "parentViewFilterGroupId"
+         FROM core."viewFilterGroup"
+         WHERE id = ANY($1) AND "deletedAt" IS NULL`,
+        [[firstChildGroupId, secondChildGroupId]],
+      );
+
+      expect(childGroups.length).toBe(2);
+      childGroups.forEach((childGroup: { parentViewFilterGroupId: string }) =>
+        expect(childGroup.parentViewFilterGroupId).toBe(rootGroupId),
+      );
+    });
   });
 
   describe('view filters', () => {

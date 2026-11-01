@@ -1,4 +1,6 @@
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 const getSubstringCoordinate = (
   text: string,
   substring: string,
@@ -33,8 +35,8 @@ export const getWrongExportedFunctionMarkers = (value: string) => {
       const endColumn = invalidMatch[0].length + coordinates.column;
       markers.push({
         severity: 8, //MarkerSeverity.Error,
-        message: 'Exported arrow function should be named "main"',
-        code: 'export const main',
+        message: t`Exported arrow function should be named "main"`,
+        code: doNotTranslate('export const main'),
         startLineNumber: coordinates.line,
         startColumn: coordinates.column,
         endLineNumber: 1,
@@ -46,8 +48,8 @@ export const getWrongExportedFunctionMarkers = (value: string) => {
   if (!exportMatch) {
     markers.push({
       severity: 8, //MarkerSeverity.Error,
-      message: 'An exported "main" arrow function is required.',
-      code: 'export const main',
+      message: t`An exported "main" arrow function is required.`,
+      code: doNotTranslate('export const main'),
       startLineNumber: 1,
       startColumn: 1,
       endLineNumber: 1,

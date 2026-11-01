@@ -7,14 +7,15 @@ import { Shortcut } from '@ui/primitives/typography/Shortcut/Shortcut';
 import { ButtonGroupContext } from '@ui/primitives/input/ButtonGroup/internal/ButtonGroupContext';
 import { mergeClassNames } from '@ui/utilities/internal/mergeClassNames';
 import { isDefined } from '@ui/utilities/utils/isDefined';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 import styles from './Button.module.scss';
 import { type ButtonProps } from './types/ButtonProps';
 
 export const Button = ({
-  variant = 'outline',
-  color = 'neutral',
-  size = 'md',
+  variant,
+  color,
+  size,
   fullWidth = false,
   loading = false,
   loadingPosition = 'center',
@@ -26,16 +27,32 @@ export const Button = ({
   disabled = false,
   href,
   render,
+  nativeButton,
+  role,
   className,
   children,
   ...props
 }: ButtonProps) => {
   const buttonGroup = useContext(ButtonGroupContext);
-  const resolvedVariant = buttonGroup?.variant ?? variant;
-  const resolvedColor = buttonGroup?.color ?? color;
-  const resolvedSize = buttonGroup?.size ?? size;
-  const isLink = isDefined(href);
-  const linkProps = isLink ? { href } : undefined;
+  const resolvedVariant = variant ?? buttonGroup?.variant ?? 'outline';
+  const resolvedColor = color ?? buttonGroup?.color ?? 'neutral';
+
+  if (resolvedVariant === 'solid' && resolvedColor === 'inherit') {
+    throw new Error(
+      doNotTranslate(
+        'Button color="inherit" does not support variant="solid". Use outline, ghost, soft, or link.',
+      ),
+    );
+  }
+
+  const resolvedSize = size ?? buttonGroup?.size ?? 'md';
+  const isAutomaticLink =
+    isDefined(href) && !isDefined(render) && nativeButton !== true;
+  const linkProps = isDefined(href) ? { href } : undefined;
+  const resolvedRole = role ?? (isAutomaticLink ? 'link' : undefined);
+  const roleProps = isDefined(resolvedRole)
+    ? { role: resolvedRole }
+    : undefined;
   const isCenterLoading = loading && loadingPosition === 'center';
   const resolvedStartIcon =
     loading && loadingPosition === 'start' ? <Loader /> : startIcon;
@@ -55,9 +72,11 @@ export const Button = ({
       data-elevated={elevated || undefined}
       aria-busy={loading ? 'true' : props['aria-busy']}
       disabled={disabled || loading}
-      role={isLink ? 'link' : undefined}
-      nativeButton={!isLink}
-      render={render ?? (isLink ? <a href={href}>{children}</a> : undefined)}
+      {...roleProps}
+      nativeButton={nativeButton ?? !isAutomaticLink}
+      render={
+        render ?? (isAutomaticLink ? <a href={href}>{children}</a> : undefined)
+      }
     >
       <span className={clsx(styles.content, isCenterLoading && styles.hidden)}>
         {isDefined(resolvedStartIcon) && (

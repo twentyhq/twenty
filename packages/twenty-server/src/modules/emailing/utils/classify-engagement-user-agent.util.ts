@@ -2,17 +2,14 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { type CampaignEngagementActivityClass } from 'src/modules/emailing/types/campaign-engagement-activity-class.type';
 
-const PRIVACY_PROXY_PATTERNS = [
-  /GoogleImageProxy/i,
-  /YahooMailProxy/i,
-  /^Mozilla\/5\.0$/,
-];
+const PRIVACY_PROXY_PATTERNS = [/^Mozilla\/5\.0$/];
 
 const AUTOMATION_PATTERNS = [
   /mimecast/i,
   /proofpoint/i,
   /barracuda/i,
   /symantec|norton/i,
+  /Edge\/12\.246/,
   /Slackbot|Slack-ImgProxy/i,
   /Twitterbot|facebookexternalhit|LinkedInBot|WhatsApp|Discordbot|TelegramBot|Applebot/i,
   /curl|wget|python-requests|Go-http-client|okhttp|HeadlessChrome|PhantomJS|Java\//i,

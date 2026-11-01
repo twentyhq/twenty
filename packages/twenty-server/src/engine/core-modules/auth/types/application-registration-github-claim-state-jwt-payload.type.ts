@@ -7,5 +7,4 @@ export type ApplicationRegistrationGithubClaimStateJwtPayload =
     applicationRegistrationId: string;
     workspaceId: string;
     userId: string | null;
-    nonceHash: string;
   };

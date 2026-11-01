@@ -1,5 +1,12 @@
 // Source: https://github.com/epoberezkin/fast-deep-equal/blob/master/src/index.jst
 
+const hasCustomMethod = (
+  value: object,
+  methodName: 'valueOf' | 'toString',
+): boolean =>
+  typeof value[methodName] === 'function' &&
+  value[methodName] !== Object.prototype[methodName];
+
 export const fastDeepEqual = (
   firstValue: unknown,
   secondValue: unknown,
@@ -20,7 +27,7 @@ export const fastDeepEqual = (
 
       if (firstArray.length !== secondArray.length) return false;
 
-      for (let index = firstArray.length; index-- !== 0; ) {
+      for (let index = firstArray.length; index-- !== 0;) {
         if (!fastDeepEqual(firstArray[index], secondArray[index])) return false;
       }
 
@@ -57,7 +64,7 @@ export const fastDeepEqual = (
 
       if (firstView.length !== secondView.length) return false;
 
-      for (let index = firstView.length; index-- !== 0; ) {
+      for (let index = firstView.length; index-- !== 0;) {
         if (firstView[index] !== secondView[index]) return false;
       }
 
@@ -74,11 +81,17 @@ export const fastDeepEqual = (
       );
     }
 
-    if (firstValue.valueOf !== Object.prototype.valueOf) {
+    if (
+      hasCustomMethod(firstValue, 'valueOf') &&
+      hasCustomMethod(secondValue, 'valueOf')
+    ) {
       return firstValue.valueOf() === secondValue.valueOf();
     }
 
-    if (firstValue.toString !== Object.prototype.toString) {
+    if (
+      hasCustomMethod(firstValue, 'toString') &&
+      hasCustomMethod(secondValue, 'toString')
+    ) {
       return firstValue.toString() === secondValue.toString();
     }
 
@@ -87,11 +100,11 @@ export const fastDeepEqual = (
 
     if (firstKeys.length !== secondKeys.length) return false;
 
-    for (let index = firstKeys.length; index-- !== 0; ) {
+    for (let index = firstKeys.length; index-- !== 0;) {
       if (!(firstKeys[index]! in secondValue)) return false;
     }
 
-    for (let index = firstKeys.length; index-- !== 0; ) {
+    for (let index = firstKeys.length; index-- !== 0;) {
       const key = firstKeys[index]!;
 
       if (

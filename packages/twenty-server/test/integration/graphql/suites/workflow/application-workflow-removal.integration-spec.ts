@@ -19,9 +19,8 @@ import { submitFormStep } from 'test/integration/graphql/suites/workflow/utils/s
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { FeatureFlagKey } from 'twenty-shared/types';
+import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -108,11 +107,6 @@ describe('removing workflows from an application manifest', () => {
   let keptRunId: string;
 
   beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
     await setupApplicationForSync({
       applicationUniversalIdentifier: APP_ID,
       name: 'Application workflow removal',
@@ -168,11 +162,6 @@ describe('removing workflows from an application manifest', () => {
     );
     await cleanupApplicationAndAppRegistration({
       applicationUniversalIdentifier: APP_ID,
-    });
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_APPLICATION_WORKFLOWS_ENABLED,
-      value: false,
-      expectToFail: false,
     });
     jest.useFakeTimers();
   });
@@ -244,7 +233,14 @@ describe('removing workflows from an application manifest', () => {
       ).toBeUndefined();
     }
 
-    expect(await countTestWorkflowRuns([formRunId, secondFormRunId])).toBe(0);
+    await expectEventually(
+      async () => {
+        expect(await countTestWorkflowRuns([formRunId, secondFormRunId])).toBe(
+          0,
+        );
+      },
+      { timeoutMs: 30_000 },
+    );
     expect(await countTestWorkflowRuns([keptRunId])).toBe(1);
 
     const [{ count: applicationFunctionCount }] =

@@ -6,6 +6,7 @@ import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputCon
 import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
+import { getFormFieldDisplayText } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getFormFieldDisplayText';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import camelCase from 'lodash.camelcase';
@@ -77,7 +78,10 @@ export const WorkflowFormFieldSettingsSelect = ({
               });
             }}
             defaultValue={field.label}
-            placeholder={getDefaultFormFieldSettings(field.type).label}
+            placeholder={getFormFieldDisplayText({
+              type: field.type,
+              text: getDefaultFormFieldSettings(field.type).label,
+            })}
           />
         </FormFieldInputContainer>
         <FormFieldInputContainer>

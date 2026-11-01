@@ -6,24 +6,24 @@ export const GET_USAGE_ANALYTICS = gql`
       usageByUser {
         key
         label
-        creditsUsed
+        workspaceCreditsUsed
       }
       usageByOperationType {
         key
-        creditsUsed
+        workspaceCreditsUsed
       }
       usageByApplication {
         key
         label
-        creditsUsed
+        workspaceCreditsUsed
       }
       usageByModel {
         key
-        creditsUsed
+        workspaceCreditsUsed
       }
       timeSeries {
         date
-        creditsUsed
+        workspaceCreditsUsed
       }
       periodStart
       periodEnd
@@ -31,7 +31,7 @@ export const GET_USAGE_ANALYTICS = gql`
         userWorkspaceId
         dailyUsage {
           date
-          creditsUsed
+          workspaceCreditsUsed
         }
       }
     }

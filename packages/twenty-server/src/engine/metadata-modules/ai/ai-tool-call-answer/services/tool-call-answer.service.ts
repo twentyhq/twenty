@@ -5,8 +5,13 @@ import { generateId } from 'ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ToolCallAnswerRecorderService } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer-recorder.service';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
+import { type PendingWakeUpEntity } from 'src/engine/core-modules/pending-wake-up/entities/pending-wake-up.entity';
+import { PendingWakeUpOwnerHandlerRegistryService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-owner-handler-registry.service';
+import { PendingWakeUpResolverService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-resolver.service';
+import { PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -14,27 +19,29 @@ import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enum
 import { type PausingToolCompletionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/pausing-tool-completion-context.type';
 import { isAwaitingPausingToolOutput } from 'src/engine/metadata-modules/ai/ai-history/utils/is-awaiting-pausing-tool-output.util';
 import { parsePausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/parse-pausing-tool-call.util';
+import { readProposedToolCallAnswer } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/read-proposed-tool-call-answer.util';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import { AgentChatStreamRecoveryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentChatStreamingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-streaming.service';
+import { AgentChatThreadLifecycleService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-lifecycle.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentChatTurnPreflightService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-turn-preflight.service';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
+import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
-import { type AgentRunSuspensionEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-run-suspension.entity';
-import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
-import { isToolOutputAwaitedByCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/is-tool-output-awaited-by-caller.util';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { buildToolCallNotPendingException } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/utils/build-tool-call-not-pending-exception.util';
 
 type AnswerToolCallArgs = {
   threadId: string;
@@ -60,18 +67,25 @@ export class ToolCallAnswerService {
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly agentChatService: AgentChatService,
+    private readonly toolCallAnswerRecorderService: ToolCallAnswerRecorderService,
     private readonly agentChatStreamingService: AgentChatStreamingService,
     private readonly streamRecoveryService: AgentChatStreamRecoveryService,
     private readonly threadService: AgentChatThreadService,
     private readonly actorService: AgentChatActorService,
     private readonly eventPublisherService: AgentChatEventPublisherService,
-    private readonly agentRunSuspensionService: AgentRunSuspensionService,
+    private readonly pendingWakeUpService: PendingWakeUpService,
+    private readonly pendingWakeUpOwnerHandlerRegistry: PendingWakeUpOwnerHandlerRegistryService,
+    private readonly pendingWakeUpResolverService: PendingWakeUpResolverService,
     private readonly permissionsService: PermissionsService,
     private readonly turnPreflightService: AgentChatTurnPreflightService,
     private readonly agentActorContextService: AgentActorContextService,
     private readonly toolRegistryService: ToolRegistryService,
+    private readonly conversationReaderService: AgentConversationReaderService,
+    private readonly threadLifecycleService: AgentChatThreadLifecycleService,
   ) {}
 
+  // a run holds its conversation's stream until it has suspended, so an answer that comes sooner is
+  // turned away as busy rather than starting a chat turn
   async answer(args: AnswerToolCallArgs): Promise<AnswerToolCallOutcome> {
     const { threadId, toolCallId, userWorkspaceId, workspace } = args;
     const workspaceId = workspace.id;
@@ -81,7 +95,11 @@ export class ToolCallAnswerService {
         where: { id: threadId },
         select: ['id', 'activeStreamId', 'pendingQuestionMessageId'],
       }),
-      this.agentChatService.findToolPart({ threadId, toolCallId, workspaceId }),
+      this.conversationReaderService.findToolPart({
+        threadId,
+        toolCallId,
+        workspaceId,
+      }),
     ]);
     const pausingToolCall = parsePausingToolCall(toolPart);
 
@@ -96,9 +114,13 @@ export class ToolCallAnswerService {
       );
     }
 
-    // a caller such as a workflow step that waits on the call takes the answer instead of a chat turn.
-    // An answer replaces that output, so a call no longer pending starts nothing and is refused below
-    const isAwaitedByCaller = isToolOutputAwaitedByCaller(toolPart.toolOutput);
+    // a suspended run, or a caller such as a workflow step, that waits on the call takes the answer
+    // instead of a chat turn. A call no longer pending starts nothing and is refused below
+    const wakeUp = await this.pendingWakeUpService.findAnswerWakeUp({
+      workspaceId,
+      threadId,
+      toolCallId,
+    });
     const isToolCallPending =
       thread.pendingQuestionMessageId === toolPart.messageId &&
       isAwaitingPausingToolOutput(toolPart.toolOutput);
@@ -106,11 +128,11 @@ export class ToolCallAnswerService {
     await this.assertCanAnswerInChat({
       ...args,
       messageId: toolPart.messageId,
-      isStartingChatTurn: !isAwaitedByCaller && isToolCallPending,
+      isStartingChatTurn: !isDefined(wakeUp) && isToolCallPending,
     });
 
     if (!isToolCallPending) {
-      throw this.notPending();
+      throw buildToolCallNotPendingException();
     }
 
     const validation = pausingToolCall.validate(args.response);
@@ -129,13 +151,12 @@ export class ToolCallAnswerService {
 
     const streamId = generateId();
 
-    const hasClaimedStream =
-      await this.agentChatStreamingService.tryClaimStream({
-        threadId,
-        workspaceId,
-        streamId,
-        where: { pendingQuestionMessageId: toolPart.messageId },
-      });
+    const hasClaimedStream = await this.streamRecoveryService.tryClaimStream({
+      threadId,
+      workspaceId,
+      streamId,
+      where: { pendingQuestionMessageId: toolPart.messageId },
+    });
 
     if (!hasClaimedStream) {
       throw new AiException(
@@ -145,7 +166,6 @@ export class ToolCallAnswerService {
       );
     }
 
-    let awaitingSuspension: AgentRunSuspensionEntity | null = null;
     let isClaimedAsRunning = false;
     let isLastAnswer: boolean;
     let answerText: string;
@@ -153,23 +173,21 @@ export class ToolCallAnswerService {
 
     try {
       const awaitingToolParts =
-        await this.agentChatService.findAwaitingToolParts({
+        await this.toolCallAnswerRecorderService.findAwaitingToolParts({
           messageId: toolPart.messageId,
           workspaceId,
         });
 
       if (!awaitingToolParts.some((part) => part.id === toolPart.id)) {
-        throw this.notPending();
+        throw buildToolCallNotPendingException();
       }
 
-      if (isAwaitedByCaller) {
-        const waitingState =
-          await this.agentRunSuspensionService.findWaitingSuspension({
-            workspaceId,
-            threadId,
-          });
+      if (isDefined(wakeUp)) {
+        const { status } = await this.pendingWakeUpOwnerHandlerRegistry
+          .getHandlerOrThrow(wakeUp.ownerType)
+          .getOwnerState(wakeUp);
 
-        if (waitingState.status === 'NOT_READY') {
+        if (status === 'NOT_READY') {
           throw new AiException(
             'The run waiting on this call is not ready for an answer yet',
             AiExceptionCode.TOOL_CALL_NOT_PENDING,
@@ -179,22 +197,23 @@ export class ToolCallAnswerService {
           );
         }
 
-        if (waitingState.status === 'GONE') {
-          await this.agentChatService.closePendingToolCalls({
+        if (status === 'GONE') {
+          // what waited on the call was dropped, such as a workflow run that ended
+          await this.threadLifecycleService.closePendingQuestion({
+            workspaceId,
             threadId,
             messageId: toolPart.messageId,
-            workspaceId,
+            activeStreamId: streamId,
+            turnStatus: AgentTurnStatus.CANCELLED,
           });
 
-          await this.agentRunSuspensionService.release({
+          await this.pendingWakeUpResolverService.resolve({
             workspaceId,
-            suspension: waitingState.suspension,
+            wakeUpId: wakeUp.id,
           });
 
-          throw this.notPending();
+          throw buildToolCallNotPendingException();
         }
-
-        awaitingSuspension = waitingState.suspension;
       }
 
       const runningToolResult = pausingToolCall.toRunningToolResult?.(
@@ -202,15 +221,13 @@ export class ToolCallAnswerService {
       );
 
       if (isDefined(runningToolResult)) {
-        if (
-          !(await this.agentChatService.claimToolCallAnswer({
-            partId: toolPart.id,
-            toolOutput: runningToolResult,
-            workspaceId,
-          }))
-        ) {
-          throw this.notPending();
-        }
+        await this.toolCallAnswerRecorderService.claimToolCallAnswerOrThrow({
+          threadId,
+          partId: toolPart.id,
+          toolOutput: runningToolResult,
+          workspaceId,
+          workspaceMemberId: args.workspaceMemberId,
+        });
 
         isClaimedAsRunning = true;
       }
@@ -226,13 +243,16 @@ export class ToolCallAnswerService {
 
       isLastAnswer = awaitingToolParts.length === 1;
 
-      await this.agentChatService.recordToolCallAnswer({
+      await this.toolCallAnswerRecorderService.recordToolCallAnswer({
         threadId,
         messageId: toolPart.messageId,
         partId: toolPart.id,
         toolOutput: completion.toolResult,
         isLastAnswer,
         workspaceId,
+        resolveMentionForWorkspaceMemberId: isClaimedAsRunning
+          ? null
+          : args.workspaceMemberId,
       });
 
       answerText = completion.answerText;
@@ -241,12 +261,13 @@ export class ToolCallAnswerService {
       // a call claimed as running cannot be answered again, so it closes as interrupted and the
       // run or turn fails, instead of leaving the call waiting on an outcome
       if (isClaimedAsRunning) {
-        await this.agentChatService
-          .closePendingToolCalls({
+        await this.threadLifecycleService
+          .closePendingQuestion({
+            workspaceId,
             threadId,
             messageId: toolPart.messageId,
-            workspaceId,
-            where: { activeStreamId: streamId },
+            activeStreamId: streamId,
+            turnStatus: AgentTurnStatus.COMPLETED,
           })
           .catch((closeError: unknown) =>
             this.logger.warn(
@@ -258,14 +279,15 @@ export class ToolCallAnswerService {
           threadId,
           workspaceId,
           streamId,
-          awaitingSuspension,
+          wakeUp,
           error,
         });
       } else {
-        await this.streamRecoveryService.releaseStreamClaim({
+        await this.streamRecoveryService.release({
           threadId,
           workspaceId,
           streamId,
+          shouldFlush: true,
         });
       }
 
@@ -278,7 +300,7 @@ export class ToolCallAnswerService {
         threadId,
         userWorkspaceId,
         turnStatus:
-          isAwaitedByCaller || !isLastAnswer
+          isDefined(wakeUp) || !isLastAnswer
             ? AgentTurnStatus.COMPLETED
             : AgentTurnStatus.RUNNING,
         uiMessage: {
@@ -306,34 +328,44 @@ export class ToolCallAnswerService {
           ),
         );
 
-      // a suspended run continues in its own job, and only the last answer resumes a chat
-      if (isAwaitedByCaller || !isLastAnswer) {
-        await this.streamRecoveryService.releaseStreamClaim({
+      // a suspended run continues in its own job and takes the queue itself; a chat waits for its last answer
+      if (isDefined(wakeUp) || !isLastAnswer) {
+        await this.streamRecoveryService.release({
           threadId,
           workspaceId,
           streamId,
+          shouldFlush: false,
         });
 
-        if (isLastAnswer && isDefined(awaitingSuspension)) {
-          await this.agentRunSuspensionService.deliverAnswer({
+        if (isLastAnswer && isDefined(wakeUp)) {
+          const proposedAnswer = readProposedToolCallAnswer(toolResult);
+
+          // a posted call is answered with the decision on what it proposed
+          await this.pendingWakeUpResolverService.resolve({
             workspaceId,
-            suspension: awaitingSuspension,
-            toolResult,
+            wakeUpId: wakeUp.id,
+            answer: {
+              result: isDefined(proposedAnswer)
+                ? { threadId, ...proposedAnswer }
+                : toolResult,
+            },
           });
         }
 
         return { streamId: null, turnId: answerMessage.turnId };
       }
 
-      await this.agentChatStreamingService.enqueueResumeStream({
+      await this.agentChatStreamingService.enqueueStreamJob({
         threadId,
+        workspaceId,
         userWorkspaceId,
         workspaceMemberId: args.workspaceMemberId,
-        workspace,
         turnId: answerMessage.turnId,
         streamId,
         modelId: args.modelId,
         messageId: answerMessage.id,
+        // the answer resumes the turn rather than opens the thread, so it never titles it
+        lastUserMessageText: '',
       });
 
       return { streamId, turnId: answerMessage.turnId };
@@ -342,7 +374,7 @@ export class ToolCallAnswerService {
         threadId,
         workspaceId,
         streamId,
-        awaitingSuspension,
+        wakeUp,
         error,
       });
 
@@ -354,36 +386,37 @@ export class ToolCallAnswerService {
     threadId,
     workspaceId,
     streamId,
-    awaitingSuspension,
+    wakeUp,
     error,
   }: {
     threadId: string;
     workspaceId: string;
     streamId: string;
-    awaitingSuspension: AgentRunSuspensionEntity | null;
+    wakeUp: PendingWakeUpEntity | null;
     error: unknown;
   }): Promise<void> {
-    if (!isDefined(awaitingSuspension)) {
-      await this.streamRecoveryService.failStream({
+    if (!isDefined(wakeUp)) {
+      await this.streamRecoveryService.release({
         threadId,
         workspaceId,
         streamId,
-        error,
+        turnError: mapErrorToStreamError(error),
+        shouldFlush: true,
       });
 
       return;
     }
 
-    await this.streamRecoveryService.releaseStreamClaim({
+    await this.streamRecoveryService.release({
       threadId,
       workspaceId,
       streamId,
+      shouldFlush: false,
     });
-    await this.agentRunSuspensionService.settle({
+    await this.pendingWakeUpResolverService.resolve({
       workspaceId,
-      suspension: awaitingSuspension,
-      outcome: {
-        status: 'FAILED',
+      wakeUpId: wakeUp.id,
+      answer: {
         error: 'The run could not resume after its question was answered',
       },
     });
@@ -452,11 +485,10 @@ export class ToolCallAnswerService {
           threadId,
         });
 
-        return this.toolRegistryService.resolveAndExecute(
-          toolName,
-          args,
-          await toolContext,
-        );
+        return this.toolRegistryService.resolveAndExecute(toolName, args, {
+          ...(await toolContext),
+          approvedToolName: toolName,
+        });
       },
     };
   }
@@ -481,7 +513,6 @@ export class ToolCallAnswerService {
 
     const rolePermissions = await this.actorService.resolveRolePermissions({
       workspaceId,
-      userWorkspaceId,
       authContext,
     });
 
@@ -520,9 +551,9 @@ export class ToolCallAnswerService {
     workspaceId: string;
   }): Promise<void> {
     const requestAuthContext = workspaceAuthContextStorage.getStore();
-    const applicationId =
+    const requestUserAuthContext =
       isDefined(requestAuthContext) && isUserAuthContext(requestAuthContext)
-        ? requestAuthContext.application?.id
+        ? requestAuthContext
         : undefined;
 
     const hasPermission =
@@ -530,7 +561,8 @@ export class ToolCallAnswerService {
         userWorkspaceId,
         workspaceId,
         setting,
-        applicationId,
+        applicationId: requestUserAuthContext?.application?.id,
+        agentId: requestUserAuthContext?.agentId,
       });
 
     if (!hasPermission) {
@@ -539,13 +571,6 @@ export class ToolCallAnswerService {
         AiExceptionCode.TOOL_CALL_RESOLUTION_FORBIDDEN,
       );
     }
-  }
-
-  private notPending(): AiException {
-    return new AiException(
-      'This tool call is no longer waiting for an answer',
-      AiExceptionCode.TOOL_CALL_NOT_PENDING,
-    );
   }
 
   private async publishToolCallResolved({

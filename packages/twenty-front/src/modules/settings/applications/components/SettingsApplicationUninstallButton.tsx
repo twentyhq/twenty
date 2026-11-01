@@ -1,46 +1,66 @@
 import { formatQueueJobProgressLabel } from '@/queue-job/utils/formatQueueJobProgressLabel';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { TooltipDelay } from '@/ui/layout/tooltip/constants/TooltipDelay';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useId } from 'react';
 import { IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+
+const MINIMUM_DISPLAYED_UNINSTALL_PROGRESS = 10;
 
 type SettingsApplicationUninstallButtonProps = {
   onUninstall: () => void;
   isUninstalling?: boolean;
   uninstallProgress?: number;
+  disabledReason?: string;
 };
 
 export const SettingsApplicationUninstallButton = ({
   onUninstall,
   isUninstalling,
   uninstallProgress,
+  disabledReason,
 }: SettingsApplicationUninstallButtonProps) => {
   const { openDialog } = useDialog();
   const uninstallDialogId = useId();
 
   const confirmationValue = t`yes`;
   const displayedUninstallProgress = formatQueueJobProgressLabel(
-    uninstallProgress ?? 0,
+    Math.max(uninstallProgress ?? 0, MINIMUM_DISPLAYED_UNINSTALL_PROGRESS),
   );
+
+  const isDisabled = isNonEmptyString(disabledReason);
 
   return (
     <>
-      <Button
-        startIcon={<IconTrash />}
-        variant="outline"
-        color="danger"
-        size="sm"
-        onClick={() => openDialog(uninstallDialogId)}
-        loading={isUninstalling}
-        loadingPosition="end"
+      <Tooltip
+        content={disabledReason}
+        side="bottom"
+        positionMethod="fixed"
+        delay={TooltipDelay.shortDelay}
+        disabled={!isDisabled}
       >
-        {isUninstalling
-          ? t`Uninstalling ${displayedUninstallProgress}`
-          : t`Uninstall`}
-      </Button>
+        <span tabIndex={isDisabled ? 0 : undefined}>
+          <Button
+            startIcon={<IconTrash />}
+            variant="outline"
+            color="danger"
+            size="sm"
+            onClick={() => openDialog(uninstallDialogId)}
+            disabled={isDisabled}
+            loading={isUninstalling}
+            loadingPosition="end"
+          >
+            {isUninstalling
+              ? t`Uninstalling ${displayedUninstallProgress}`
+              : t`Uninstall`}
+          </Button>
+        </span>
+      </Tooltip>
       <ConfirmationDialog
         confirmationPlaceholder={confirmationValue}
         confirmationValue={confirmationValue}

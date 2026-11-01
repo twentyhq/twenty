@@ -6,7 +6,9 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
-import { Dropdown, MenuItemAvatar } from 'twenty-ui/components/navigation';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { IconCopy, IconPencil, IconTrash, IconUserPlus } from 'twenty-ui/icon';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
@@ -55,7 +57,7 @@ export const EmailRecipientChipMenuContent = ({
     });
 
     if (isDefined(createdPerson)) {
-      enqueueToast({ variant: 'success', children: t`Person created` });
+      enqueueToast({ status: 'success', children: t`Person created` });
     }
   };
 
@@ -72,41 +74,47 @@ export const EmailRecipientChipMenuContent = ({
         <>
           <Dropdown.Section>
             {isDefined(workspaceMember) ? (
-              <MenuItemAvatar
-                avatar={{
-                  src: getAbsoluteImageUrl(workspaceMember.avatarUrl),
-                  name: isNonEmptyString(workspaceMemberFullName)
-                    ? workspaceMemberFullName
-                    : recipient.address,
-                  colorSeed: workspaceMember.id,
-                  size: 'md',
-                  shape: 'circle',
-                }}
-                text={
-                  isNonEmptyString(workspaceMemberFullName)
-                    ? workspaceMemberFullName
-                    : recipient.address
+              <ListItem
+                startIcon={
+                  <Avatar
+                    src={getAbsoluteImageUrl(workspaceMember.avatarUrl)}
+                    name={
+                      isNonEmptyString(workspaceMemberFullName)
+                        ? workspaceMemberFullName
+                        : recipient.address
+                    }
+                    colorSeed={workspaceMember.id}
+                    size="md"
+                    shape="circle"
+                  />
                 }
-                contextualText={t`Team member`}
-              />
+                description={t`Team member`}
+              >
+                {isNonEmptyString(workspaceMemberFullName)
+                  ? workspaceMemberFullName
+                  : recipient.address}
+              </ListItem>
             ) : isDefined(person) ? (
-              <MenuItemAvatar
-                avatar={{
-                  src: getAbsoluteImageUrl(person.avatarUrl),
-                  name: isNonEmptyString(personFullName)
-                    ? personFullName
-                    : recipient.address,
-                  colorSeed: person.id,
-                  size: 'md',
-                  shape: 'circle',
-                }}
-                text={
-                  isNonEmptyString(personFullName)
-                    ? personFullName
-                    : recipient.address
+              <ListItem
+                startIcon={
+                  <Avatar
+                    src={getAbsoluteImageUrl(person.avatarUrl)}
+                    name={
+                      isNonEmptyString(personFullName)
+                        ? personFullName
+                        : recipient.address
+                    }
+                    colorSeed={person.id}
+                    size="md"
+                    shape="circle"
+                  />
                 }
-                contextualText={recipient.address}
-              />
+                description={recipient.address}
+              >
+                {isNonEmptyString(personFullName)
+                  ? personFullName
+                  : recipient.address}
+              </ListItem>
             ) : (
               <Dropdown.ActionItem
                 startIcon={<IconUserPlus />}

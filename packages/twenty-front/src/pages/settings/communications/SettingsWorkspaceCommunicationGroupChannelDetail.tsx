@@ -41,6 +41,7 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { NotFound } from '~/pages/not-found/NotFound';
 import channelSetupCoverDark from '~/pages/settings/communications/assets/channel-setup-cover-dark.png';
 import channelSetupCoverLight from '~/pages/settings/communications/assets/channel-setup-cover-light.png';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 const DELETE_EMAIL_GROUP_MODAL_ID = 'delete-email-group-channel-modal';
 
@@ -117,7 +118,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
       );
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to update sender name.`,
       });
     } finally {
@@ -131,7 +132,7 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
       navigateSettings(SettingsPath.WorkspaceCommunications);
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to delete email channel.`,
       });
     }
@@ -186,18 +187,17 @@ export const SettingsWorkspaceCommunicationGroupChannelDetail = () => {
               <SettingsDiscoveryHeroCardFooter
                 Icon={IconMail}
                 title={t`Set up forwarding and DNS`}
-                description={t`Follow the guide for your email provider.`}
+                description={t`See which parts you need and how to set each one up.`}
                 action={
                   <Button
                     size="sm"
                     endIcon={<IconArrowUpRight />}
                     onClick={() =>
-                      window.open(
+                      openUrlInNewTab(
                         getDocumentationUrl({
                           locale: currentWorkspaceMember?.locale,
-                          path: '/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-any-mail-provider',
+                          path: '/user-guide/calendar-emails/capabilities/email-channels',
                         }),
-                        '_blank',
                       )
                     }
                   >{t`Read documentation`}</Button>

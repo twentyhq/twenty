@@ -11,10 +11,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { IconArrowUpRight, IconPencil } from 'twenty-ui/icon';
 
 export const RecordTableCellEditButton = () => {
-  const { cellPosition } = useContext(RecordTableCellContext);
+  const { columnIndex } = useContext(RecordTableCellContext);
   const { openTableCell } = useOpenRecordTableCellFromCell();
   const isFieldInputOnly = useIsFieldInputOnly();
-  const isFirstColumn = cellPosition.column === 0;
+  const isFirstColumn = columnIndex === 0;
   const customButtonIcon = useGetButtonIcon();
 
   const secondaryButton = useGetSecondaryFieldButton();

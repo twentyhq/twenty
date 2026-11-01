@@ -34,7 +34,7 @@ export const SettingsSecuritySsoRowDropdownMenu = ({
     });
     if (isDefined(result.error)) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Error deleting SSO Identity Provider`,
         duration: 2000,
       });
@@ -53,7 +53,7 @@ export const SettingsSecuritySsoRowDropdownMenu = ({
     });
     if (isDefined(result.error)) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Error editing SSO Identity Provider`,
         duration: 2000,
       });

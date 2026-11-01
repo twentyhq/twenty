@@ -18,7 +18,6 @@ import { Section } from 'twenty-ui/components/layout';
 
 export const SettingsAccountsEmails = () => {
   const { t } = useLingui();
-
   const { channels: allMessageChannels, loading } = useMyMessageChannels();
 
   const messageChannels = useMemo(

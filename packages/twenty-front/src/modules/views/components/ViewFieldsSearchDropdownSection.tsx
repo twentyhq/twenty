@@ -1,10 +1,10 @@
+import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
 import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { useObjectOptionsForBoard } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsForBoard';
 import { ObjectOptionsDropdownContext } from '@/object-record/object-options-dropdown/states/contexts/ObjectOptionsDropdownContext';
 import { useChangeRecordFieldVisibility } from '@/object-record/record-field/hooks/useChangeRecordFieldVisibility';
 import { visibleRecordFieldsComponentSelector } from '@/object-record/record-field/states/visibleRecordFieldsComponentSelector';
-import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { ViewType } from '@/views/types/ViewType';
@@ -77,7 +77,10 @@ export const ViewFieldsSearchDropdownSection = ({
             <ListItem
               key={fieldMetadataItem.id}
               startIcon={
-                <SelectOptionIcon Icon={getIcon(fieldMetadataItem.icon)} />
+                <ApplicationStackIcon
+                  Icon={getIcon(fieldMetadataItem.icon)}
+                  applicationId={fieldMetadataItem.applicationId}
+                />
               }
               actions={
                 isLabelIdentifier ? undefined : (

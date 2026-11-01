@@ -12,10 +12,21 @@ import { type AutocompleteInputProps } from '../types/AutocompleteInputProps';
 export const AutocompleteInput = ({
   size,
   className,
-  onKeyDown,
+  render,
   ...props
 }: AutocompleteInputProps) => {
   const inputGroup = useContext(InputGroupContext);
+
+  if (isDefined(render)) {
+    return (
+      <AutocompletePrimitive.Input
+        {...props}
+        className={className}
+        render={render}
+      />
+    );
+  }
+
   const resolvedSize = size ?? inputGroup?.size ?? 'md';
 
   return (
@@ -26,13 +37,6 @@ export const AutocompleteInput = ({
         className,
       )}
       data-grouped={isDefined(inputGroup) || undefined}
-      onKeyDown={(event) => {
-        onKeyDown?.(event);
-
-        if (event.defaultPrevented) {
-          event.preventBaseUIHandler();
-        }
-      }}
     />
   );
 };

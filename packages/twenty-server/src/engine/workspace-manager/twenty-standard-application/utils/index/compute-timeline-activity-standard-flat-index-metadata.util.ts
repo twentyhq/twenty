@@ -160,4 +160,16 @@ export const buildTimelineActivityStandardFlatIndexMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  linkedRecordIdIndex: createStandardIndexFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      indexName: 'linkedRecordIdIndex',
+      relatedFieldNames: ['linkedRecordId'],
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
 });

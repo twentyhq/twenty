@@ -148,7 +148,7 @@ describe('usageLimitToRestApiExceptionHandler', () => {
       buildExhaustedScope({
         resourceType: UsageResourceType.AI,
         limitKind: 'quota',
-        exhaustedKind: 'allowance',
+        exhaustedKind: 'workspaceAllowance',
         spenderType: 'workspace',
         spenderId: null,
         operationType: UsageOperationType.ALL,
@@ -166,7 +166,7 @@ describe('usageLimitToRestApiExceptionHandler', () => {
       expect.objectContaining({
         statusCode: HttpStatus.PAYMENT_REQUIRED,
         error: 'QUOTA_EXHAUSTED',
-        exhaustedKind: 'allowance',
+        exhaustedKind: 'workspaceAllowance',
       }),
     );
     expect(error.getResponseHeaders()).toEqual({});

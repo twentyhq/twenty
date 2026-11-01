@@ -15,6 +15,9 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 import { type WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { FlatViewFieldValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-view-field-validator.service';
 
+const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
+  '7f1c2b9e-6a1d-4c55-9a2e-1a6f0d6c2b11';
+
 jest.mock(
   'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant',
 );
@@ -328,11 +331,14 @@ describe('SyncMessageRecordPageCommand', () => {
           remainingFlatEntityMapsToValidate: createEmptyFlatEntityMaps(),
           additionalCacheDataMaps: {
             featureFlagsMap: {} as Record<FeatureFlagKey, boolean>,
+            billingEntitlements: {},
           },
           buildOptions: {
             isSystemBuild: true,
             applicationUniversalIdentifier:
               STANDARD_APPLICATION.universalIdentifier,
+            workspaceCustomApplicationUniversalIdentifier:
+              WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
           },
           workspaceId: WORKSPACE_ID,
         });

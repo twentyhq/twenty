@@ -355,22 +355,20 @@ describe('generateWorkflowDiagram', () => {
         },
       },
     };
-    const targetSteps = ['first', 'second'].map(
-      (id): WorkflowStep => ({
-        id,
-        name: id,
-        type: 'HTTP_REQUEST',
-        valid: true,
-        settings: {
-          input: { method: 'GET', url: '', headers: {} },
-          outputSchema: {},
-          errorHandlingOptions: {
-            retryOnFailure: { value: 0 },
-            continueOnFailure: { value: false },
-          },
+    const targetSteps = ['first', 'second'].map((id): WorkflowStep => ({
+      id,
+      name: id,
+      type: 'HTTP_REQUEST',
+      valid: true,
+      settings: {
+        input: { method: 'GET', url: '', headers: {} },
+        outputSchema: {},
+        errorHandlingOptions: {
+          retryOnFailure: { value: 0 },
+          continueOnFailure: { value: false },
         },
-      }),
-    );
+      },
+    }));
     const generateBranchEdges = (
       workflowContext: 'workflow' | 'workflow-version',
     ) =>

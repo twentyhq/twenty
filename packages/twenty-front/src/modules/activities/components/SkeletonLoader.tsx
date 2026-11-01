@@ -26,10 +26,6 @@ const StyledSkeletonSubSectionContent = styled.div`
   justify-content: center;
 `;
 
-const StyledSkeletonColumn = styled(SkeletonLine)`
-  corner-shape: round;
-`;
-
 const SKELETON_COLUMN_HEIGHTS = {
   short: 84,
   tall: 120,
@@ -50,7 +46,7 @@ export const SkeletonLoader = ({
       {withSubSections &&
         skeletonItems.map(({ id }, index) => (
           <StyledSkeletonSubSection key={id}>
-            <StyledSkeletonColumn
+            <SkeletonLine
               width={24}
               borderRadius={80}
               height={

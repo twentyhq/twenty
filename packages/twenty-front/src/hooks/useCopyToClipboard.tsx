@@ -14,7 +14,7 @@ export const useCopyToClipboard = () => {
   ) => {
     if (!window.isSecureContext) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Clipboard requires a secure connection (HTTPS). Please access this app over HTTPS to enable copying.`,
         icon: <IconExclamationCircle size={16} color="red" />,
         duration: 6000,
@@ -31,14 +31,14 @@ export const useCopyToClipboard = () => {
       }
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: successMessage,
         icon: <IconCopy size={theme.icon.size.md} />,
         duration: 2000,
       });
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Couldn't copy to clipboard`,
         icon: <IconExclamationCircle size={16} color="red" />,
         duration: 2000,

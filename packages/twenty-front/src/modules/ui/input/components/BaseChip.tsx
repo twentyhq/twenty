@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import { type MouseEvent, type ReactNode } from 'react';
 import { IconX } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -73,7 +74,7 @@ const StyledLabel = styled.span<{ maxWidth?: number }>`
   text-overflow: ellipsis;
 `;
 
-const StyledDelete = styled.button<{ danger: boolean }>`
+const StyledDelete = styled.button`
   align-items: center;
   background: none;
   border: none;
@@ -91,11 +92,6 @@ const StyledDelete = styled.button<{ danger: boolean }>`
   padding: 0;
   user-select: none;
   width: 20px;
-
-  &:hover {
-    background-color: ${({ danger }) =>
-      danger ? themeCssVariables.color.red5 : themeCssVariables.color.blue5};
-  }
 `;
 
 type BaseChipProps = {
@@ -117,7 +113,7 @@ export const BaseChip = ({
   label,
   title,
   onRemove,
-  removeAriaLabel = 'Remove',
+  removeAriaLabel,
   danger = false,
   selected = false,
   isFlashing = false,
@@ -147,8 +143,7 @@ export const BaseChip = ({
         <StyledDelete
           type="button"
           onClick={onRemove}
-          aria-label={removeAriaLabel}
-          danger={danger}
+          aria-label={removeAriaLabel ?? t`Remove`}
         >
           <IconX size={theme.icon.size.sm} stroke={theme.icon.stroke.sm} />
         </StyledDelete>

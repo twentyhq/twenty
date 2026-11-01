@@ -6,7 +6,11 @@ export default defineConfig({
   catalogs: [
     {
       path: '<rootDir>/src/renderer/locales/{locale}',
-      include: ['<rootDir>/src/renderer'],
+      include: [
+        '<rootDir>/src/main',
+        '<rootDir>/src/renderer',
+        '<rootDir>/src/shared',
+      ],
       exclude: ['**/__tests__/**', '**/locales/**', '**/preview.ts'],
     },
   ],

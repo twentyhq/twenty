@@ -1,5 +1,6 @@
 import { useApplyCurrentWorkspaceBillingUpdate } from '@/settings/billing/hooks/useApplyCurrentWorkspaceBillingUpdate';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
+import { useCurrentPlan } from '@/settings/billing/hooks/useCurrentPlan';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
 import { type BillingSubscriptionChange } from '@/settings/billing/types/BillingSubscriptionChange';
 import { isBillingSubscriptionChangeImmediate } from '@/settings/billing/utils/isBillingSubscriptionChangeImmediate';
@@ -26,6 +27,7 @@ export const useApplyBillingSubscriptionChange = () => {
     useApplyCurrentWorkspaceBillingUpdate();
   const { refetchResourceCreditUsage } = useGetResourceCreditUsage();
   const { getBeautifiedRenewDate, getBillingPlanLabel } = useBillingWording();
+  const { currentPlan } = useCurrentPlan();
 
   const [switchBillingPlanMutation] = useMutation(SwitchBillingPlanDocument);
   const [switchSubscriptionIntervalMutation] = useMutation(
@@ -48,7 +50,9 @@ export const useApplyBillingSubscriptionChange = () => {
   ) => {
     switch (change.type) {
       case 'SWITCH_PLAN': {
-        const { data } = await switchBillingPlanMutation();
+        const { data } = await switchBillingPlanMutation({
+          variables: { plan: change.targetPlanKey },
+        });
 
         return data?.switchBillingPlan;
       }
@@ -75,12 +79,20 @@ export const useApplyBillingSubscriptionChange = () => {
   const getSuccessMessage = (change: BillingSubscriptionChange) => {
     const isImmediate = isBillingSubscriptionChangeImmediate({
       change,
+      currentPlan,
       subscriptionStatus,
     });
 
     switch (change.type) {
       case 'SWITCH_PLAN': {
         const planLabel = getBillingPlanLabel(change.targetPlanKey);
+
+        if (
+          isImmediate &&
+          planLabel === getBillingPlanLabel(currentPlan.planKey)
+        ) {
+          return t`Subscription has been moved to the new ${planLabel} plan.`;
+        }
 
         return isImmediate
           ? t`Subscription has been switched to ${planLabel} Plan.`
@@ -135,13 +147,13 @@ export const useApplyBillingSubscriptionChange = () => {
       );
 
       if (!isBillingUpdateApplied) {
-        enqueueToast({ variant: 'error', children: getErrorMessage(change) });
+        enqueueToast({ status: 'error', children: getErrorMessage(change) });
         return;
       }
 
-      enqueueToast({ variant: 'success', children: getSuccessMessage(change) });
+      enqueueToast({ status: 'success', children: getSuccessMessage(change) });
     } catch (error) {
-      enqueueToast({ variant: 'error', children: getErrorMessage(change) });
+      enqueueToast({ status: 'error', children: getErrorMessage(change) });
 
       if (!CombinedGraphQLErrors.is(error)) {
         throw error;

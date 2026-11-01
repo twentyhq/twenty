@@ -1,34 +1,18 @@
-import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
-
 import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/interfaces/workspace-query-hook.interface';
 import { type DestroyManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
-import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
+import {
+  WorkflowQueryValidationException,
+  WorkflowQueryValidationExceptionCode,
+} from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
 
-@WorkspaceQueryHook('workflow.destroyMany')
+@WorkspaceQueryHook(`workflow.destroyMany`)
 export class WorkflowDestroyManyPreQueryHook implements WorkspacePreQueryHookInstance {
-  constructor(
-    private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
-  ) {}
-
-  async execute(
-    authContext: WorkspaceAuthContext,
-    _objectName: string,
-    payload: DestroyManyResolverArgs<{ id: { in: string[] } }>,
-  ): Promise<DestroyManyResolverArgs<{ id: { in: string[] } }>> {
-    const workspace = authContext.workspace;
-
-    assertIsDefinedOrThrow(workspace, WorkspaceNotFoundDefaultError);
-
-    await this.workflowCommonWorkspaceService.handleWorkflowSubEntities({
-      workflowIds: payload.filter.id.in,
-      workspaceId: workspace.id,
-      operation: 'destroy',
-    });
-
-    return payload;
+  async execute(): Promise<DestroyManyResolverArgs> {
+    throw new WorkflowQueryValidationException(
+      'Method not allowed.',
+      WorkflowQueryValidationExceptionCode.FORBIDDEN,
+    );
   }
 }

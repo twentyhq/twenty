@@ -68,7 +68,7 @@ export const SettingsRolePermissionsToolSection = ({
       <Section.Header title={t`Logic`} description={t`Logic permissions`} />
       {shouldShowAllAccessToggle && (
         <StyledCardContainer>
-          <Card.Root rounded>
+          <Card.Root>
             <SettingsOptionCardContentSwitch
               Icon={IconTool}
               title={t`Logic All Access`}
@@ -85,35 +85,31 @@ export const SettingsRolePermissionsToolSection = ({
           </Card.Root>
         </StyledCardContainer>
       )}
-      <Collapsible
-        isExpanded={
+      <Collapsible.Root
+        open={
           !shouldShowAllAccessToggle || !settingsDraftRole.canAccessAllTools
         }
-        dimension="height"
-        animationDurations={{
-          opacity: 0.2,
-          size: 0.4,
-        }}
-        containAnimation={false}
       >
-        <StyledTable>
-          <SettingsRolePermissionsSettingsTableHeader
-            roleId={roleId}
-            settingsPermissionsConfig={toolPermissionsConfig}
-            isEditable={isEditable}
-          />
-          <StyledTableRows>
-            {toolPermissionsConfig.map((permission) => (
-              <SettingsRolePermissionsSettingsTableRow
-                key={permission.key}
-                roleId={roleId}
-                permission={permission}
-                isEditable={isEditable}
-              />
-            ))}
-          </StyledTableRows>
-        </StyledTable>
-      </Collapsible>
+        <Collapsible.Panel dimension="height" containAnimation={false}>
+          <StyledTable>
+            <SettingsRolePermissionsSettingsTableHeader
+              roleId={roleId}
+              settingsPermissionsConfig={toolPermissionsConfig}
+              isEditable={isEditable}
+            />
+            <StyledTableRows>
+              {toolPermissionsConfig.map((permission) => (
+                <SettingsRolePermissionsSettingsTableRow
+                  key={permission.key}
+                  roleId={roleId}
+                  permission={permission}
+                  isEditable={isEditable}
+                />
+              ))}
+            </StyledTableRows>
+          </StyledTable>
+        </Collapsible.Panel>
+      </Collapsible.Root>
     </Section.Root>
   );
 };

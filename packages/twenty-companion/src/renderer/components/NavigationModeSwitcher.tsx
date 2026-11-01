@@ -1,5 +1,5 @@
-import { type IconComponent } from '@ui/icon/types/IconComponent';
-import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
+import { type IconComponent } from 'twenty-ui/icon';
+import { THEME_COMMON } from 'twenty-ui/theme';
 import styles from './NavigationModeSwitcher.module.scss';
 
 type NavigationModeSwitcherProps = {

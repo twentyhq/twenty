@@ -10,7 +10,7 @@
     "build": "npx vite build"
   },
   "engines": {
-    "node": "^24.5.0",
+    "node": "^26.5.1",
     "npm": "please-use-yarn",
     "yarn": "^4.0.2"
   },
@@ -26,7 +26,7 @@
     "@types/jest": "^30.0.0",
     "@types/lodash.camelcase": "^4.3.7",
     "@types/lodash.escaperegexp": "^4.1.9",
-    "@types/qs": "6.9.16",
+    "@types/qs": "^6.15.1",
     "@types/uuid": "^9.0.2",
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "babel-plugin-module-resolver": "^5.0.2",
@@ -47,7 +47,10 @@
     "@sniptt/guards": "^0.2.0",
     "addressparser": "1.0.1",
     "ai": "7.0.126",
+    "cjs-module-lexer": "^2.2.0",
     "class-validator": "^0.14.0",
+    "entities": "^4.5.0",
+    "esbuild": "^0.28.1",
     "expr-eval-fork": "3.0.3",
     "libphonenumber-js": "^1.10.26",
     "lodash.camelcase": "^4.3.0",
@@ -58,7 +61,7 @@
     "temporal-polyfill": "^0.3.0",
     "transliteration": "^2.3.5",
     "uuid": "^11.1.1",
-    "zod": "^4.1.11"
+    "zod": "^4.6.6"
   },
   "exports": {
     ".": {
@@ -76,6 +79,11 @@
       "import": "./dist/application.mjs",
       "require": "./dist/application.cjs"
     },
+    "./application-runtime": {
+      "types": "./dist/application-runtime/index.d.ts",
+      "import": "./dist/application-runtime.mjs",
+      "require": "./dist/application-runtime.cjs"
+    },
     "./constants": {
       "types": "./dist/constants/index.d.ts",
       "import": "./dist/constants.mjs",
@@ -85,6 +93,11 @@
       "types": "./dist/database-events/index.d.ts",
       "import": "./dist/database-events.mjs",
       "require": "./dist/database-events.cjs"
+    },
+    "./front-component-build": {
+      "types": "./dist/front-component-build/index.d.ts",
+      "import": "./dist/front-component-build.mjs",
+      "require": "./dist/front-component-build.cjs"
     },
     "./i18n": {
       "types": "./dist/i18n/index.d.ts",
@@ -151,8 +164,10 @@
     "dist",
     "ai",
     "application",
+    "application-runtime",
     "constants",
     "database-events",
+    "front-component-build",
     "i18n",
     "logic-function",
     "metadata",
@@ -174,11 +189,17 @@
       "application": [
         "dist/application/index.d.ts"
       ],
+      "application-runtime": [
+        "dist/application-runtime/index.d.ts"
+      ],
       "constants": [
         "dist/constants/index.d.ts"
       ],
       "database-events": [
         "dist/database-events/index.d.ts"
+      ],
+      "front-component-build": [
+        "dist/front-component-build/index.d.ts"
       ],
       "i18n": [
         "dist/i18n/index.d.ts"

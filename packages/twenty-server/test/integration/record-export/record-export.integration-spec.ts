@@ -1,4 +1,17 @@
+import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { loginAsTwentyCli } from 'test/integration/metadata/suites/application/utils/login-as-twenty-cli.util';
+import { findOneApplication } from 'test/integration/metadata/suites/application/utils/find-one-application.util';
+import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
+import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
+import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
+import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+import { type ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { type ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
 import { type RecordExportDownloadTokenJwtPayload } from 'src/engine/core-modules/record-export/types/record-export-download-token-jwt-payload.type';
 import { type PendingFileCleanupCronJob } from 'src/engine/core-modules/file/file-upload/crons/jobs/pending-file-cleanup.cron.job';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -13,8 +26,6 @@ import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils
 import { isUserSessionToken } from 'src/engine/core-modules/user-session/utils/is-user-session-token.util';
 import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { createClient } from 'graphql-sse';
 import { setTimeout } from 'node:timers/promises';
 import { Readable } from 'node:stream';
@@ -31,11 +42,7 @@ import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/
 import { updateOneRole } from 'test/integration/metadata/suites/role/utils/update-one-role.util';
 import { updateWorkspaceMemberRole } from 'test/integration/metadata/suites/role/utils/update-workspace-member-role.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import {
-  FeatureFlagKey,
-  FileFolder,
-  OrderByDirection,
-} from 'twenty-shared/types';
+import { FileFolder, OrderByDirection } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -45,6 +52,7 @@ import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-q
 import { type FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { type CreateRecordExportInput } from 'src/engine/core-modules/record-export/dtos/create-record-export.input';
 import { type RecordExportDTO } from 'src/engine/core-modules/record-export/dtos/record-export.dto';
+import { type RecordExportQueryService } from 'src/engine/core-modules/record-export/services/record-export-query.service';
 import { type RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
 import { type RecordExport } from 'src/engine/core-modules/record-export/types/record-export.type';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -67,23 +75,58 @@ const waitUntil = async (condition: () => Promise<boolean>) => {
 };
 
 describe('record export lifecycle (integration)', () => {
+  let cliToken: string;
+  let cliApplicationId: string;
+  const applicationCache = () =>
+    getAppProviderByClassName<WorkspaceCacheService>('WorkspaceCacheService');
+  const setApplicationRole = async (applicationRoleId: string | null) => {
+    await globalThis.testDataSource.query(
+      'UPDATE core.application SET "defaultRoleId" = $1, "deletedAt" = NULL WHERE id = $2',
+      [applicationRoleId, cliApplicationId],
+    );
+    await applicationCache().invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
+      'flatApplicationMaps',
+    ]);
+  };
   let input: CreateRecordExportInput;
   let exports: RecordExportWorkspaceService;
   let cache: CacheStorageService;
   let storage: FileStorageService;
   let query: RecordExportWorkspaceService;
+  let reader: RecordExportQueryService;
   let originalRoleId: string;
   let roleId: string;
-  let wasAsyncCsvExportEnabled: boolean;
   const connections: ReturnType<typeof createClient>[] = [];
   const exportIds = new Set<string>();
   const downloadTokens = new Map<string, string>();
   const sessionTokens = new Set<string>();
+  const apiKeyIds = new Set<string>();
+  const apiKeys = () =>
+    getAppProviderByClassName<ApiKeyService>('ApiKeyService');
+  const createApiKey = async () => {
+    const apiKey = await apiKeys().create({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      name: `Record export ${v4()}`,
+      expiresAt: new Date(Date.now() + 60_000),
+      revokedAt: null,
+      roleId,
+    });
+    apiKeyIds.add(apiKey.id);
+    const credentials = await apiKeys().generateApiKeyToken(
+      SEED_APPLE_WORKSPACE_ID,
+      apiKey.id,
+    );
+    if (!isDefined(credentials)) {
+      throw new Error('API key token missing');
+    }
+    return { id: apiKey.id, token: credentials.token };
+  };
   const authenticationHeaders = (token: string): Record<string, string> =>
     isUserSessionToken(token)
       ? {
           Cookie: `${USER_SESSION_COOKIE_NAME}=${token}`,
           Origin: `http://localhost:${APP_PORT}`,
+          [SESSION_COOKIE_OPT_IN_HEADER_NAME]: '1',
         }
       : { Authorization: `Bearer ${token}` };
 
@@ -201,23 +244,13 @@ describe('record export lifecycle (integration)', () => {
   };
 
   beforeAll(async () => {
-    const featureFlagService =
-      getAppProviderByClassName<FeatureFlagService>('FeatureFlagService');
-    wasAsyncCsvExportEnabled = await featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-      SEED_APPLE_WORKSPACE_ID,
-    );
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
     exports = getAppProviderByClassName('RecordExportWorkspaceService');
     cache = global.app.get<CacheStorageService>(
       CacheStorageNamespace.EngineRecordExport,
     );
     storage = getAppProviderByClassName('FileStorageService');
     query = getAppProviderByClassName('RecordExportWorkspaceService');
+    reader = getAppProviderByClassName('RecordExportQueryService');
     const { objects } = await findManyObjectMetadata({
       input: { filter: {}, paging: { first: 1000 } },
       gqlFields: 'id nameSingular fieldsList { id name }',
@@ -250,11 +283,21 @@ describe('record export lifecycle (integration)', () => {
         canAccessAllTools: true,
         canReadAllObjectRecords: true,
         canBeAssignedToUsers: true,
+        canBeAssignedToApiKeys: true,
       },
       expectToFail: false,
     });
     expect(result.errors).toBeUndefined();
     roleId = result.data.createOneRole.id;
+    cliToken = await loginAsTwentyCli();
+    const applicationResult = await findOneApplication({
+      input: {
+        universalIdentifier:
+          TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
+      },
+      gqlFields: 'id',
+    });
+    cliApplicationId = applicationResult.data.findOneApplication.id;
     await updateWorkspaceMemberRole({
       input: { roleId, workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY },
     });
@@ -276,6 +319,13 @@ describe('record export lifecycle (integration)', () => {
       );
     }
     sessionTokens.clear();
+    for (const id of apiKeyIds) {
+      await apiKeys().revoke(id, SEED_APPLE_WORKSPACE_ID);
+    }
+    apiKeyIds.clear();
+    if (isDefined(cliApplicationId)) {
+      await setApplicationRole(null);
+    }
     if (isDefined(roleId)) {
       await upsertRowLevelPermissionPredicates({
         input: {
@@ -293,11 +343,13 @@ describe('record export lifecycle (integration)', () => {
   });
 
   afterAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-      value: wasAsyncCsvExportEnabled,
-      expectToFail: false,
-    });
+    if (isDefined(cliApplicationId)) {
+      await uninstallApplication({
+        universalIdentifier:
+          TWENTY_CLI_APPLICATION_REGISTRATION.universalIdentifier,
+        expectToFail: false,
+      });
+    }
     if (isDefined(originalRoleId)) {
       await updateWorkspaceMemberRole({
         input: {
@@ -325,28 +377,6 @@ describe('record export lifecycle (integration)', () => {
     }
   }, 60_000);
 
-  it('rejects new async exports when disabled and still downloads an already prepared file', async () => {
-    const ready = await exportToCompletion();
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
-    try {
-      const { events } = subscribe();
-      await expect(nextExport(events)).rejects.toThrow(
-        'Asynchronous CSV export is not enabled for this workspace',
-      );
-      await download(ready).expect(200);
-    } finally {
-      await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_ASYNC_CSV_EXPORT_ENABLED,
-        value: true,
-        expectToFail: false,
-      });
-    }
-  });
-
   it('exports every selected page in column and record order, then deletes the download', async () => {
     const recordExport = await exportToCompletion({
       ...input,
@@ -372,7 +402,7 @@ describe('record export lifecycle (integration)', () => {
       return rows.length === 0;
     });
     expect(response.headers['content-disposition']).toBe(
-      'attachment; filename="company.csv"',
+      'attachment; filename=company.csv',
     );
     expect(response.headers['cache-control']).toBe('private, no-store');
     expect(response.text.replace(/^\uFEFF/, '')).toBe(
@@ -387,6 +417,257 @@ describe('record export lifecycle (integration)', () => {
       'Export not found',
     );
     await download(recordExport).expect(404);
+  });
+
+  it('exports with API key row permissions and only allows the requesting key to download', async () => {
+    const requester = await createApiKey();
+    const otherKey = await createApiKey();
+    await upsertContainsRlsPredicate({
+      roleId,
+      objectNameSingular: 'company',
+      fieldName: 'name',
+      value: companies[0].name,
+    });
+    const ready = await exportToCompletion(input, requester.token);
+    expect(await authorization(ready)).toMatchObject({
+      apiKeyId: requester.id,
+    });
+    await download(ready, otherKey.token).expect(403);
+    await download(ready, APPLE_JANE_ADMIN_ACCESS_TOKEN).expect(403);
+    const response = await download(ready).expect(200);
+    expect(response.text.replace(/^\uFEFF/, '')).toBe(
+      `Id,Name\n${companies[0].id},${companies[0].name}\n`,
+    );
+  });
+
+  it('exports and downloads with the real CLI OAuth login', async () => {
+    const ready = await exportToCompletion(
+      {
+        ...input,
+        filter: { id: { eq: companies[0].id } },
+      },
+      cliToken,
+    );
+    const payload = await authorization(ready);
+    expect(payload).toMatchObject({ applicationId: cliApplicationId });
+    const requester = await exports.resolveRequester(payload);
+    expect(requester).toMatchObject({
+      type: 'user',
+      application: { id: cliApplicationId },
+    });
+    for (const applicationId of [undefined, v4()]) {
+      expect(() =>
+        exports.assertDownloader({
+          recordExport: payload,
+          request: {
+            workspaceId: payload.workspaceId,
+            userWorkspaceId: payload.userWorkspaceId,
+            workspaceMemberId: payload.workspaceMemberId,
+            applicationId,
+            requestTokenHash: payload.requestTokenHash,
+          },
+        }),
+      ).toThrow('This export belongs to another session');
+    }
+    await download(ready, APPLE_JANE_ADMIN_ACCESS_TOKEN).expect(403);
+    const response = await download(ready).expect(200);
+    expect(response.text.replace(/^\uFEFF/, '')).toBe(
+      `Id,Name\n${companies[0].id},${companies[0].name}\n`,
+    );
+  });
+
+  it('preserves application row permissions in the export worker', async () => {
+    await setApplicationRole(roleId);
+    await upsertContainsRlsPredicate({
+      roleId,
+      objectNameSingular: 'company',
+      fieldName: 'name',
+      value: companies[0].name,
+    });
+    const ready = await exportToCompletion(input, cliToken);
+    const response = await download(ready).expect(200);
+    expect(response.text.replace(/^\uFEFF/, '')).toBe(
+      `Id,Name\n${companies[0].id},${companies[0].name}\n`,
+    );
+  });
+
+  it('rejects an OAuth export when its application cannot read the object', async () => {
+    await setApplicationRole(roleId);
+    await changeRole({ canReadAllObjectRecords: false });
+    await expect(exportToCompletion(input, cliToken)).rejects.toThrow(
+      'The export failed. Please try again or export fewer records.',
+    );
+  });
+
+  it.each(['user', 'application'] as const)(
+    'rejects an OAuth export when the %s lacks export permission',
+    async (principal) => {
+      const { applicationAccessToken } = await generateApplicationTokenPair({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        applicationId: cliApplicationId,
+        userId: USER_DATA_SEED_IDS[principal === 'user' ? 'JONY' : 'JANE'],
+        userWorkspaceId:
+          USER_WORKSPACE_DATA_SEED_IDS[principal === 'user' ? 'JONY' : 'JANE'],
+      });
+      if (principal === 'application') {
+        await setApplicationRole(roleId);
+      }
+      await changeRole({ canAccessAllTools: false });
+      const { events } = subscribe(input, applicationAccessToken.token);
+      await expect(nextExport(events)).rejects.toThrow(/permission/i);
+    },
+  );
+
+  it('still rejects an application token without a user', async () => {
+    const { applicationAccessToken } = await generateApplicationTokenPair({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      applicationId: cliApplicationId,
+    });
+    const { events } = subscribe(input, applicationAccessToken.token);
+    await expect(nextExport(events)).rejects.toThrow();
+  });
+
+  it.each(['user', 'apiKey', 'oauth'] as const)(
+    'keeps a completed %s export after an application setting changes',
+    async (principal) => {
+      const token =
+        principal === 'oauth'
+          ? cliToken
+          : principal === 'apiKey'
+            ? (await createApiKey()).token
+            : APPLE_JANE_ADMIN_ACCESS_TOKEN;
+      const ready = await exportToCompletion(input, token);
+      const { flatApplicationMaps } = await applicationCache().getOrRecompute(
+        SEED_APPLE_WORKSPACE_ID,
+        ['flatApplicationMaps'],
+      );
+      const application = flatApplicationMaps.byId[cliApplicationId];
+      if (!isDefined(application)) {
+        throw new Error('CLI application not found');
+      }
+      const applications =
+        getAppProviderByClassName<ApplicationService>('ApplicationService');
+      await applications.update(cliApplicationId, {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        autoUpgrade: !application.autoUpgrade,
+      });
+      await download(ready).expect(200);
+    },
+  );
+
+  it('keeps an OAuth export after another application changes its role', async () => {
+    const { flatApplicationMaps } = await applicationCache().getOrRecompute(
+      SEED_APPLE_WORKSPACE_ID,
+      ['flatApplicationMaps'],
+    );
+    const otherApplication = Object.values(flatApplicationMaps.byId).find(
+      (application) =>
+        application?.universalIdentifier ===
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+    );
+    if (!isDefined(otherApplication)) {
+      throw new Error('Standard application not found');
+    }
+    const ready = await exportToCompletion(input, cliToken);
+    const applications =
+      getAppProviderByClassName<ApplicationService>('ApplicationService');
+    try {
+      await applications.update(otherApplication.id, {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        defaultRoleId: roleId,
+      });
+      await download(ready).expect(200);
+    } finally {
+      await applications.update(otherApplication.id, {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        defaultRoleId: otherApplication.defaultRoleId,
+      });
+    }
+  });
+
+  it('invalidates an OAuth export when its application role changes', async () => {
+    const ready = await exportToCompletion(input, cliToken);
+    await setApplicationRole(roleId);
+    await download(ready).expect(403);
+  });
+
+  it('rejects a deleted OAuth application when reconstructing the export requester', async () => {
+    const ready = await exportToCompletion(input, cliToken);
+    const payload = await authorization(ready);
+    await globalThis.testDataSource.query(
+      'UPDATE core.application SET "deletedAt" = NOW() WHERE id = $1',
+      [cliApplicationId],
+    );
+    await applicationCache().invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, [
+      'flatApplicationMaps',
+    ]);
+    await expect(exports.assertPermissionsUnchanged(payload)).rejects.toThrow(
+      'Access permissions have changed.',
+    );
+    await expect(exports.resolveRequester(payload)).rejects.toThrow(
+      /permission/i,
+    );
+    await download(ready).expect(403);
+  });
+
+  it('rejects an API key without export permission', async () => {
+    const requester = await createApiKey();
+    await changeRole({ canAccessAllTools: false });
+    const { events } = subscribe(input, requester.token);
+    await expect(nextExport(events)).rejects.toThrow(/permission/i);
+  });
+
+  it.each(['revoked', 'expired'])(
+    'rejects a completed export when its API key is %s',
+    async (state) => {
+      const requester = await createApiKey();
+      const ready = await exportToCompletion(input, requester.token);
+      const payload = await authorization(ready);
+      await apiKeys().update(
+        requester.id,
+        SEED_APPLE_WORKSPACE_ID,
+        state === 'revoked'
+          ? { revokedAt: new Date() }
+          : { expiresAt: new Date(Date.now() - 1000) },
+      );
+      await expect(exports.resolveRequester(payload)).rejects.toThrow(
+        /permission/i,
+      );
+      await download(ready).expect(403);
+    },
+  );
+
+  it('invalidates an API key export when its role permissions change', async () => {
+    const requester = await createApiKey();
+    const ready = await exportToCompletion(input, requester.token);
+    await changeRole({ canAccessAllTools: false });
+    await download(ready).expect(403);
+  });
+
+  it('invalidates an API key export when reassigned to a role that can still export', async () => {
+    const requester = await createApiKey();
+    const adminRole = await findOneRoleByLabel({ label: 'Admin' });
+    const ready = await exportToCompletion(input, requester.token);
+    const payload = await authorization(ready);
+    await expect(
+      exports.assertPermissionsUnchanged(payload),
+    ).resolves.toBeUndefined();
+
+    await getAppProviderByClassName<ApiKeyRoleService>(
+      'ApiKeyRoleService',
+    ).assignRoleToApiKey({
+      apiKeyId: requester.id,
+      roleId: adminRole.id,
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+    });
+
+    await expect(exports.resolveRequester(payload)).resolves.toMatchObject({
+      apiKey: { id: requester.id },
+    });
+    await expect(exports.assertPermissionsUnchanged(payload)).rejects.toThrow(
+      'Access permissions have changed.',
+    );
+    await download(ready).expect(403);
   });
 
   it('exports headers when the selection is empty', async () => {
@@ -416,12 +697,12 @@ describe('record export lifecycle (integration)', () => {
   });
 
   it('reports progress between pages and rejects a second active export', async () => {
-    const readPage = query.readPage.bind(query);
+    const readPage = reader.readPage.bind(reader);
     let releasePage = () => {};
     const pageGate = new Promise<void>((resolve) => {
       releasePage = resolve;
     });
-    jest.spyOn(query, 'readPage').mockImplementation(async (...args) => {
+    jest.spyOn(reader, 'readPage').mockImplementation(async (...args) => {
       if (isDefined(args[0].after)) {
         await pageGate;
       }
@@ -498,12 +779,12 @@ describe('record export lifecycle (integration)', () => {
       await enqueueGate;
       return enqueue(recordExport);
     });
-    const readPage = query.readPage.bind(query);
+    const readPage = reader.readPage.bind(reader);
     let releasePage = () => {};
     const pageGate = new Promise<void>((resolve) => {
       releasePage = resolve;
     });
-    jest.spyOn(query, 'readPage').mockImplementation(async (args) => {
+    jest.spyOn(reader, 'readPage').mockImplementation(async (args) => {
       await pageGate;
       return readPage(args);
     });
@@ -795,10 +1076,10 @@ describe('record export lifecycle (integration)', () => {
     }
   });
 
-  it.each(['export', 'row'])(
+  it.each(['export', 'row', 'application'])(
     'stops generation when %s permission changes between pages',
     async (permission) => {
-      const readPage = query.readPage.bind(query);
+      const readPage = reader.readPage.bind(reader);
       let releasePage = () => {};
       let notifyPage = () => {};
       const pageGate = new Promise<void>((resolve) => {
@@ -807,19 +1088,26 @@ describe('record export lifecycle (integration)', () => {
       const pageStarted = new Promise<void>((resolve) => {
         notifyPage = resolve;
       });
-      jest.spyOn(query, 'readPage').mockImplementation(async (...args) => {
+      jest.spyOn(reader, 'readPage').mockImplementation(async (...args) => {
         if (isDefined(args[0].after)) {
           notifyPage();
           await pageGate;
         }
         return readPage(...args);
       });
-      const { events } = subscribe(input, APPLE_JONY_MEMBER_ACCESS_TOKEN);
+      const { events } = subscribe(
+        input,
+        permission === 'application'
+          ? cliToken
+          : APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
       try {
         let recordExport = await nextExport(events);
         await pageStarted;
         if (permission === 'export') {
           await changeRole({ canAccessAllTools: false });
+        } else if (permission === 'application') {
+          await setApplicationRole(roleId);
         } else {
           await upsertContainsRlsPredicate({
             roleId,
@@ -875,8 +1163,8 @@ describe('record export lifecycle (integration)', () => {
         );
         return writeFileStream(resource);
       });
-    const readPage = query.readPage.bind(query);
-    jest.spyOn(query, 'readPage').mockImplementation(async (...args) => {
+    const readPage = reader.readPage.bind(reader);
+    jest.spyOn(reader, 'readPage').mockImplementation(async (...args) => {
       if (isDefined(args[0].after)) {
         throw new Error('Interrupted database read');
       }
@@ -923,6 +1211,9 @@ describe('record export lifecycle (integration)', () => {
     const requester = await query.resolveRequester(
       await authorization(recordExport),
     );
+    if (!isUserAuthContext(requester)) {
+      throw new Error('Expected user requester');
+    }
     const tokens =
       getAppProviderByClassName<AccessTokenService>('AccessTokenService');
     const otherToken = await tokens.generateAccessToken({
@@ -946,6 +1237,9 @@ describe('record export lifecycle (integration)', () => {
       const requester = await query.resolveRequester(
         await authorization(ready),
       );
+      if (!isUserAuthContext(requester)) {
+        throw new Error('Expected user requester');
+      }
       const sessions =
         getAppProviderByClassName<UserSessionService>('UserSessionService');
       const createSession = async () => {

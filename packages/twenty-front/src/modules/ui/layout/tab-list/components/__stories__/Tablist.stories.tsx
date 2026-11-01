@@ -37,7 +37,7 @@ const tabs = [
   {
     id: 'activity',
     title: 'Activity',
-    logo: 'https://twenty-front-screenshots.s3.eu-west-3.amazonaws.com/server-icon.png',
+    logo: AVATAR_URL_MOCK,
     disabled: true,
   },
   { id: 'favorites', title: 'Favorites', Icon: IconHeart },
@@ -120,22 +120,25 @@ export const Overflow: Story = {
     const canvas = within(canvasElement);
     const body = within(canvasElement.ownerDocument.body);
     const moreButton = await canvas.findByRole('button', { name: /More/ });
+    expect(moreButton.closest('[role="tablist"]')).toBeNull();
+    expect(moreButton).not.toHaveAttribute('aria-selected');
     await userEvent.click(moreButton);
     const popup = await body.findByRole('dialog', { name: /More/ });
     const sales = await body.findByRole('button', { name: 'Sales' });
-    expect(sales).toHaveAttribute('aria-disabled', 'true');
+    expect(sales).toBeDisabled();
     await userEvent.click(sales);
     expect(sales).toHaveAttribute('aria-pressed', 'false');
     expect(popup).toBeVisible();
     sales.focus();
-    await userEvent.keyboard('{Enter}[Space]');
+    expect(sales).not.toHaveFocus();
     expect(sales).toHaveAttribute('aria-pressed', 'false');
     expect(canvas.getByRole('tab', { name: 'General' })).toHaveAttribute(
       'aria-selected',
       'true',
     );
     expect(popup).toBeVisible();
-    await userEvent.click(body.getByRole('button', { name: 'Favorites' }));
+    body.getByRole('button', { name: 'Favorites' }).focus();
+    await userEvent.keyboard('{Enter}');
     await waitFor(() =>
       expect(
         body.queryByRole('dialog', { name: /More/ }),

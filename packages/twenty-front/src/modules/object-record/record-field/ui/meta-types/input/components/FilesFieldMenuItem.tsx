@@ -1,6 +1,7 @@
+import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { FileIcon } from '@/file/components/FileIcon';
 import { type FieldFilesValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { getFileCategoryFromExtension } from '@/object-record/record-field/ui/utils/getFileCategoryFromExtension';
+import { getFieldFilesValueCategory } from '@/object-record/record-field/ui/utils/getFieldFilesValueCategory';
 import { Chip } from 'twenty-ui/primitives/data-display';
 import { MultiItemFieldMenuItem } from './MultiItemFieldMenuItem';
 
@@ -30,17 +31,14 @@ export const FilesFieldMenuItem = ({
         <Chip
           startElement={
             <FileIcon
-              fileCategory={
-                file.fileCategory ??
-                getFileCategoryFromExtension(file.extension ?? '')
-              }
+              fileCategory={getFieldFilesValueCategory(file)}
               size="small"
               thumbnailUrl={file.url}
             />
           }
           variant="ghost"
         >
-          {value}
+          {getChipLabel(value).content}
         </Chip>
       )}
       showPrimaryIcon={false}

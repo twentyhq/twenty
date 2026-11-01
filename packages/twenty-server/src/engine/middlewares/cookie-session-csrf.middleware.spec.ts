@@ -1,6 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { type NextFunction, type Request, type Response } from 'express';
+import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
 
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -18,13 +19,17 @@ describe('CookieSessionCsrfMiddleware', () => {
 
   let mockConfig: Record<string, unknown> = { ...defaultConfig };
 
+  // Opted in like the Twenty app: the server ignores the cookie otherwise, so there is nothing to check.
   const buildRequest = (overrides: Partial<Request> = {}): Request =>
     ({
       method: 'POST',
       protocol: 'https',
-      headers: {},
       get: jest.fn().mockReturnValue('crm.example.com'),
       ...overrides,
+      headers: {
+        [SESSION_COOKIE_OPT_IN_HEADER_NAME]: '1',
+        ...overrides.headers,
+      },
     }) as unknown as Request;
 
   const buildResponse = (): Response => {
@@ -89,6 +94,20 @@ describe('CookieSessionCsrfMiddleware', () => {
         authorization: 'Bearer some-jwt',
         cookie: '__Host-twenty-session=sess_token',
         origin: 'https://evil.example.org',
+      },
+    });
+
+    middleware.use(request, buildResponse(), next);
+
+    expect(next).toHaveBeenCalled();
+  });
+
+  it('should skip cookie requests that do not opt in to the session cookie', () => {
+    const request = buildRequest({
+      headers: {
+        cookie: '__Host-twenty-session=sess_token',
+        origin: 'https://evil.example.org',
+        [SESSION_COOKIE_OPT_IN_HEADER_NAME]: undefined,
       },
     });
 

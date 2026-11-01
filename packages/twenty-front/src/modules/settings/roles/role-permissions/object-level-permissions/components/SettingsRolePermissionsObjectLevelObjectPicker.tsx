@@ -127,12 +127,7 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
           />
           <StyledContainer>
             {standardObjects.map((objectMetadataItem) => (
-              <StyledCardContainer
-                key={objectMetadataItem.id}
-                onClick={() =>
-                  handleSelectObjectMetadata(objectMetadataItem.id)
-                }
-              >
+              <StyledCardContainer key={objectMetadataItem.id}>
                 <SettingsCard
                   Icon={
                     <ObjectMetadataIcon
@@ -142,6 +137,9 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
                     />
                   }
                   title={objectMetadataItem.labelPlural}
+                  onClick={() =>
+                    handleSelectObjectMetadata(objectMetadataItem.id)
+                  }
                 />
               </StyledCardContainer>
             ))}
@@ -156,12 +154,7 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
           />
           <StyledContainer>
             {customObjects.map((objectMetadataItem) => (
-              <StyledCardContainer
-                key={objectMetadataItem.id}
-                onClick={() =>
-                  handleSelectObjectMetadata(objectMetadataItem.id)
-                }
-              >
+              <StyledCardContainer key={objectMetadataItem.id}>
                 <SettingsCard
                   Icon={
                     <ObjectMetadataIcon
@@ -171,6 +164,9 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
                     />
                   }
                   title={objectMetadataItem.labelPlural}
+                  onClick={() =>
+                    handleSelectObjectMetadata(objectMetadataItem.id)
+                  }
                 />
               </StyledCardContainer>
             ))}

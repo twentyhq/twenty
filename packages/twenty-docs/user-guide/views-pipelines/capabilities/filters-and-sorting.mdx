@@ -3,39 +3,71 @@ title: Filters & Sorting
 description: Filter and sort records to find exactly what you need.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Filtering Data
 
 Filters help you focus on specific records by showing only those that match your criteria.
 
 ### Adding a Filter
 
-1. Click the **Filter** button in the toolbar
+1. Click **Filter** in the toolbar
 2. Select the field to filter by
-3. Choose the operator (equals, contains, etc.)
-4. Enter the filter value
-5. Click **Apply**
+3. Choose an operator
+4. Enter or pick a value
+
+The filter applies as soon as you enter or pick a value. Operators like **Is empty** or **Is in past** apply right away.
 
 ### Filter Operators
 
-| Field Type | Available Operators |
-|------------|---------------------|
-| Text | Equals, Contains, Starts with, Ends with, Is empty |
-| Number | Equals, Greater than, Less than, Is empty |
-| Date | Equals, Before, After, Is empty |
-| Select | Equals, Is any of, Is empty |
-| Checkbox | Is true, Is false |
-| Relation | Equals, Is empty |
+| Field Type | Operators |
+|------------|-----------|
+| **Text**, **Emails**, **Phones**, **Links**, **Address**, **Full Name** | Contains, Doesn't contain, Is empty, Is not empty |
+| **Number**, **Currency**, **Rating** | Is, Is not, Greater than or equal, Less than or equal, Is empty, Is not empty |
+| **Date**, **Date and Time** | Is, Is relative, Is in past, Is in future, Is today, Is before, Is after or equal, Is empty, Is not empty |
+| **Select** | Is, Is not, Is empty, Is not empty |
+| **Multi-select** | Contains, Doesn't contain, Is empty, Is not empty |
+| **True/False** | Is |
+| **Relation** | Is, Is not, Is empty, Is not empty |
+| **Actor** (e.g., Created by) | Contains, Doesn't contain, Is empty, Is not empty |
+| **Array**, **JSON**, **Files** | Contains, Doesn't contain, Is empty, Is not empty |
 
-### Multiple Filters
+<Tip>
+**Contains** matches part of the text, whatever the case. Use it to find a value in a Text field, such as a city name.
+</Tip>
 
-Combine multiple filters to narrow down results:
-- All filters are applied with AND logic
-- Each additional filter further restricts results
+- **Select**, **Multi-select** and **Relation** filters accept several values and show records matching any of them
+- Relation filters work on fields that point to one record, such as a person's **Company**
+
+### Combining Filters
+
+Filters added from **Filter** combine with AND: records must match all of them. Selecting a field that already has a filter opens that filter for editing.
+
+### Advanced Filter
+
+Use the Advanced filter to show records that match one condition or another (OR logic):
+1. Click **Filter → Advanced filter**
+2. Set the first rule: a field, an operator and a value
+3. Click **Add filter rule → Add rule** and set the second rule
+4. On the second rule, switch **And** to **Or**
+
+**Example:** people based in Paris or London
+- **City** Contains "Paris"
+- **Or** **City** Contains "London"
+
+You can also:
+- Mix **And** and **Or** with **Add filter rule → Add rule group**. Each group has its own connector
+- Filter on a field of a related record, such as the **Name** of a person's **Company**
+- Filter on one part of a composite field, such as the city of an address
+
+The Advanced filter appears in the view bar as a chip, such as **2 advanced rules**. Click it to edit the rules. It combines with your other filters using AND.
 
 ### Removing Filters
 
-- Click the **X** on individual filter chips
-- Click **Clear all** to remove all filters
+- Click the **X** on a filter chip
+- Click the **X** on the advanced rules chip to remove the Advanced filter
+- To remove one rule, click the **⋮** menu at the end of its row and select **Remove rule** (or **Remove rule group**)
+- Click **Reset** to go back to the view's saved filters and sorts
 
 ## Sorting Data
 
@@ -43,10 +75,11 @@ Sorting determines the order records appear.
 
 ### Adding a Sort
 
-1. Click the **Sort** button in the toolbar
-2. Select the field to sort by
-3. Choose ascending (A-Z, 0-9) or descending (Z-A, 9-0)
-4. Click **Apply**
+1. Click **Sort** in the toolbar
+2. Choose **Ascending** or **Descending** at the top of the menu
+3. Select the field to sort by
+
+The sort applies as soon as you select the field.
 
 ### Multiple Sorts
 
@@ -54,22 +87,27 @@ Add multiple sort levels:
 - First sort is primary
 - Subsequent sorts apply within groups of equal values
 
-### Quick Column Sorting
+### Sorting from a Column Header
 
-Click any column header to sort:
-- First click: Ascending
-- Second click: Descending
-- Third click: Remove sort
+1. Click a column header
+2. Select **Sort**
+
+The first sort is ascending. Select **Sort** again to switch between ascending and descending.
+
+To remove a sort, click the **X** on its chip in the view bar.
 
 ## Saving Filter and Sort Settings
 
-Filters and sorts are saved with the view:
+Save your filters and sorts to a view:
 1. Configure your filters and sorts
-2. Click **Save** to update the current view
-3. Or click **Save as new view** to create a variant
+2. Click **Update view** to save them to the current view
+3. Or click the arrow next to **Update view** and select **Create view** to save them as a new view
+
+On default views, such as **All Companies**, click **Save as new view**.
 
 ## Related
 
 - [Table Views](/user-guide/views-pipelines/capabilities/table-views) — group by feature
 - [Views Overview](/user-guide/views-pipelines/overview) — building and managing views
 
+<PageBanner illustration="page-cover-filter" />

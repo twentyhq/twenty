@@ -1,11 +1,13 @@
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
+import { hasFullFormFieldBorder } from '@/ui/input/utils/hasFullFormFieldBorder';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types/components/FormFieldPlaceholder';
 import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type VariablePickerComponent } from '@/ui/input/types/VariablePickerComponent';
 import { ArrayFieldMenuItem } from '@/object-record/record-field/ui/meta-types/input/components/ArrayFieldMenuItem';
-import { MultiItemBaseInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemBaseInput';
+import { MultiItemFieldInputRow } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldInputRow';
+import { MultiItemFieldTextInput } from '@/object-record/record-field/ui/meta-types/input/components/MultiItemFieldTextInput';
 import { type FieldArrayValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { ArrayDisplay } from '@/ui/field/display/components/ArrayDisplay';
 import { StyledTextInput } from '@/ui/field/input/components/TextInput';
@@ -14,11 +16,9 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { isStandaloneVariableString } from 'twenty-shared/workflow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -26,6 +26,7 @@ import { isNonEmptyArray, isNonEmptyString } from '@sniptt/guards';
 import { type FocusEvent, type KeyboardEvent, useId, useState } from 'react';
 import { Key } from 'ts-key-enum';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { IconPlus } from 'twenty-ui/icon';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -52,7 +53,7 @@ const StyledDisplayModeReadonlyContainer = styled.div`
   width: 100%;
 `;
 
-const StyledDisplayModeContainer = styled.div`
+const StyledDisplayModeContainer = styled.div<{ hasOutline: boolean }>`
   align-items: center;
   background: transparent;
   border: none;
@@ -61,11 +62,12 @@ const StyledDisplayModeContainer = styled.div`
   display: flex;
   font-family: inherit;
   height: 30px;
+  outline: ${({ hasOutline }) => (hasOutline ? 'revert' : 'none')};
   padding-inline: ${themeCssVariables.spacing[2]};
   width: 100%;
 
   &:hover,
-  &[data-open='true'] {
+  &[data-popup-open] {
     background-color: ${themeCssVariables.background.transparent.lighter};
   }
 `;
@@ -129,10 +131,8 @@ export const FormArrayFieldInput = ({
   const isAddingNewItem = itemToEditIndex === -1;
 
   const dropdownId = `dropdown-${instanceId}`;
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    dropdownId,
-  );
+
+  const hasRightElement = isDefined(VariablePicker) && !readonly;
 
   const accessibleLabel = isNonEmptyString(label) ? label : t`Items`;
 
@@ -214,7 +214,9 @@ export const FormArrayFieldInput = ({
 
   const handleDeleteItem = (index: number) => {
     if (draftValue.type !== 'static') {
-      throw new Error('Cannot delete item when value is a variable.');
+      throw new Error(
+        doNotTranslate('Cannot delete item when value is a variable.'),
+      );
     }
 
     const updatedItems = toSpliced(draftValue.value, index, 1);
@@ -278,7 +280,9 @@ export const FormArrayFieldInput = ({
 
   const handleNewItemInputSubmit = () => {
     if (draftValue.type !== 'static') {
-      throw new Error('Cannot submit input when value is a variable.');
+      throw new Error(
+        doNotTranslate('Cannot submit input when value is a variable.'),
+      );
     }
 
     const sanitizedInput = inputValue.trim();
@@ -355,7 +359,8 @@ export const FormArrayFieldInput = ({
         <FormFieldInputInnerContainer
           formFieldInputInstanceId={formFieldInputInstanceId}
           preventFocusStackUpdate={preventContainerFocusStackUpdate}
-          hasRightElement={isDefined(VariablePicker) && !readonly}
+          hasRightElement={hasRightElement}
+          shouldHighlightOnTriggerFocus
         >
           {draftValue.type === 'static' ? (
             readonly ? (
@@ -384,7 +389,13 @@ export const FormArrayFieldInput = ({
               <DropdownRoot dropdownId={dropdownId} type="panel">
                 <Dropdown.Trigger
                   render={
-                    <StyledDisplayModeContainer data-open={isDropdownOpen} />
+                    <StyledDisplayModeContainer
+                      hasOutline={
+                        !hasFullFormFieldBorder({
+                          hasRightElement,
+                        })
+                      }
+                    />
                   }
                   nativeButton={false}
                   aria-label={accessibleLabel}
@@ -417,18 +428,18 @@ export const FormArrayFieldInput = ({
                   <Dropdown.Separator />
 
                   {isInputDisplayed ? (
-                    <MultiItemBaseInput
-                      instanceId={newItemInputInstanceId}
-                      autoFocus
-                      placeholder={placeholder}
-                      value={inputValue}
-                      onFocus={handleNewItemInputFocus}
-                      onBlur={handleNewItemInputBlur}
-                      onEscape={handleNewItemInputEscape}
-                      onChange={handleNewItemInputChange}
-                      onEnter={handleNewItemInputSubmit}
-                      hasItem
-                    />
+                    <MultiItemFieldInputRow hasPadding>
+                      <MultiItemFieldTextInput
+                        autoFocus
+                        placeholder={placeholder}
+                        value={inputValue}
+                        onFocus={handleNewItemInputFocus}
+                        onBlur={handleNewItemInputBlur}
+                        onEscape={handleNewItemInputEscape}
+                        onChange={handleNewItemInputChange}
+                        onEnter={handleNewItemInputSubmit}
+                      />
+                    </MultiItemFieldInputRow>
                   ) : !isLimitReached ? (
                     <Dropdown.Section>
                       <Dropdown.ActionItem

@@ -1,6 +1,6 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar, Pill } from 'twenty-ui/primitives/data-display';
+import { Avatar, Badge } from 'twenty-ui/primitives/data-display';
 
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 
@@ -8,6 +8,7 @@ export const getTabListItemContent = ({
   Icon,
   logo,
   title,
+  colorSeed,
   pill,
 }: SingleTabProps) => ({
   startIcon:
@@ -15,9 +16,15 @@ export const getTabListItemContent = ({
       <>
         {isDefined(Icon) && <Icon />}
         {isNonEmptyString(logo) && (
-          <Avatar src={logo} size="md" name={title} aria-hidden />
+          <Avatar
+            src={logo}
+            size="md"
+            name={title}
+            colorSeed={colorSeed}
+            aria-hidden
+          />
         )}
       </>
     ) : undefined,
-  badge: isString(pill) ? <Pill label={pill} /> : pill,
+  badge: isString(pill) ? <Badge>{pill}</Badge> : pill,
 });

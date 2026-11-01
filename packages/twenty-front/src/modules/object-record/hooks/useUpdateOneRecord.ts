@@ -9,7 +9,7 @@ import { getRecordFromCache } from '@/object-record/cache/utils/getRecordFromCac
 import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFromRecordNode';
 import { getRecordNodeFromRecord } from '@/object-record/cache/utils/getRecordNodeFromRecord';
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
-import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { generateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromObject';
 import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromRecord';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
@@ -23,6 +23,7 @@ import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { buildRecordFromKeysWithSameValue } from '~/utils/array/buildRecordFromKeysWithSameValue';
 
 type UpdateOneRecordArgs<UpdatedObjectRecord> = {
@@ -58,7 +59,9 @@ export const useUpdateOneRecord = () => {
 
     if (!objectMetadataItem) {
       throw new Error(
-        `Object metadata item not found for ${objectNameSingular}`,
+        doNotTranslate(
+          `Object metadata item not found for ${objectNameSingular}`,
+        ),
       );
     }
 
@@ -201,7 +204,7 @@ export const useUpdateOneRecord = () => {
           optimisticRecordInput,
         ).filter((diffKey) => !cachedRecordKeys.has(diffKey));
 
-        const recordGqlFields = {
+        const recordGqlFields: RecordGqlFields = {
           ...generateDepthRecordGqlFieldsFromRecord({
             objectMetadataItem,
             objectMetadataItems,

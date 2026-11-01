@@ -6,9 +6,10 @@ import styles from '../Dropdown.module.scss';
 import { type DropdownActionItemProps } from '../types/DropdownActionItemProps';
 import { DropdownActionItem } from './DropdownActionItem';
 import { useDropdownContext } from './useDropdownContext';
+import { doNotTranslate } from '@ui/utilities/internal/doNotTranslate';
 
 export const DropdownBack = ({
-  children = 'Back',
+  children = doNotTranslate('Back'),
   className,
   onClick,
   ...props

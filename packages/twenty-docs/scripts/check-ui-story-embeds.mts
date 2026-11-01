@@ -35,6 +35,11 @@ const storiesWithPlayFunctions = new Set(
     .filter((entry) => entry.tags?.includes('play-fn'))
     .map((entry) => entry.id),
 );
+const displayStoryIds = new Set(
+  Object.values(index.entries)
+    .filter((entry) => entry.type === 'story' && entry.exportName === 'Display')
+    .map((entry) => entry.id),
+);
 const documentationRoot = fileURLToPath(new URL('..', import.meta.url));
 const storyErrors = new Map<string, string[]>();
 const getPresentationErrors = (storyId: string): string[] => {
@@ -68,6 +73,11 @@ const errors = pages.flatMap((page) =>
     content: readFileSync(resolve(documentationRoot, page), 'utf8'),
     storyIds,
     storiesWithPlayFunctions,
+    displayStoryIds,
+    requireDisplay:
+      (page.startsWith('ui/primitives/') ||
+        page.startsWith('ui/components/')) &&
+      !page.endsWith('/overview.mdx'),
     getPresentationErrors,
   }).map((error) => `${page}: ${error}`),
 );

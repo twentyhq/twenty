@@ -12,7 +12,7 @@ export const computeAutomatedTriggerFromWorkflowVersion = ({
 }: {
   workflowVersion: Pick<
     WorkflowVersionEntity,
-    'id' | 'workflowId' | 'coreWorkflowId' | 'triggers'
+    'id' | 'workflowId' | 'coreWorkflowId' | 'applicationId' | 'triggers'
   >;
   workspaceWorkflowVersionId: string | null;
 }): CachedWorkflowAutomatedTrigger | null => {
@@ -27,6 +27,7 @@ export const computeAutomatedTriggerFromWorkflowVersion = ({
       return {
         workflowId: workflowVersion.coreWorkflowId,
         legacyWorkflowId: workflowVersion.workflowId ?? undefined,
+        applicationId: workflowVersion.applicationId,
         ...buildCoreDispatchIds({
           coreWorkflowVersionId: workflowVersion.id,
           workspaceWorkflowVersionId,
@@ -38,6 +39,7 @@ export const computeAutomatedTriggerFromWorkflowVersion = ({
       return {
         workflowId: workflowVersion.coreWorkflowId,
         legacyWorkflowId: workflowVersion.workflowId ?? undefined,
+        applicationId: workflowVersion.applicationId,
         ...buildCoreDispatchIds({
           coreWorkflowVersionId: workflowVersion.id,
           workspaceWorkflowVersionId,

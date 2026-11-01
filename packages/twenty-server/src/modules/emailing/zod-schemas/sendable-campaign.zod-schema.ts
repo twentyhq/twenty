@@ -10,12 +10,12 @@ export const sendableCampaignSchema = z.object({
     MessageCampaignStatus.DRAFT,
     MessageCampaignStatus.SCHEDULED,
   ]),
+  listId: z.string().min(1),
+  fromAddress: z.object({ primaryEmail: z.email() }),
   subject: z.string().min(1),
   bodyTemplate: z.string().min(1).refine(isSendableBodyTemplate, {
     message: 'bodyTemplate is not a valid email document',
   }),
   scheduledAt: z.coerce.date().nullish(),
-  fromAddress: z.object({ primaryEmail: z.email() }),
-  listId: z.string().min(1),
   unsubscribeTopicId: z.string().nullish(),
 });

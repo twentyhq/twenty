@@ -1,6 +1,5 @@
 import { useGlobalRecordCreationCommandMenuItems } from '@/command-menu-item/hooks/useGlobalRecordCreationCommandMenuItems';
 import { CommandMenuItemContainerType } from '@/command-menu-item/types/CommandMenuItemContainerType';
-import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
 import {
   CommandMenuContext,
   type CommandMenuContextType,
@@ -63,11 +62,9 @@ export const CommandMenuContextProviderContent = ({
   commandMenuContextApi,
   isInPreviewMode,
 }: CommandMenuContextProviderContentProps) => {
-  const isCore = useIsWorkflowCoreEnabled();
   const isCoreWorkflow =
-    isCore &&
     commandMenuContextApi.objectMetadataItem.nameSingular ===
-      CoreObjectNameSingular.Workflow;
+    CoreObjectNameSingular.Workflow;
   const isCoreWorkflowIndex =
     isCoreWorkflow &&
     commandMenuContextApi.pageType === ContextStorePageType.Index;
@@ -107,6 +104,12 @@ export const CommandMenuContextProviderContent = ({
       ? (commandMenuItemsDraft ?? commandMenuItems)
       : commandMenuItems;
 
+    const isAiChatInboxHeader =
+      containerType === CommandMenuItemContainerType.ShowPageHeader &&
+      commandMenuContextApi.objectMetadataItem.nameSingular ===
+        CoreObjectNameSingular.AgentChatThread &&
+      (commandMenuContextApi.featureFlags.IS_AI_CHAT_INBOX_ENABLED ?? false);
+
     const contextCommandMenuItems = commandMenuItemsToDisplay
       .filter(
         (item) =>
@@ -120,9 +123,8 @@ export const CommandMenuContextProviderContent = ({
       )
       .filter(
         (item) =>
-          !isCore ||
           item.engineComponentKey !==
-            EngineComponentKey.SEE_VERSION_WORKFLOW_RUN,
+          EngineComponentKey.SEE_VERSION_WORKFLOW_RUN,
       )
       .filter(
         (item) =>
@@ -144,7 +146,13 @@ export const CommandMenuContextProviderContent = ({
       )
       .map((item) =>
         resolveCommandMenuItemPinning(
-          item,
+          {
+            ...item,
+            isPinned:
+              item.isPinned ||
+              (isAiChatInboxHeader &&
+                item.engineComponentKey === EngineComponentKey.SHARE_RECORD),
+          },
           commandMenuContextApiForAvailability,
         ),
       );
@@ -158,11 +166,11 @@ export const CommandMenuContextProviderContent = ({
       shouldDisplayGlobalRecordCreationCommands,
     });
   }, [
+    containerType,
     commandMenuContextApi,
     commandMenuContextApiForAvailability,
     globalRecordCreationCommandMenuItems,
     shouldDisplayGlobalRecordCreationCommands,
-    isCore,
     isCoreWorkflow,
     commandMenuItems,
     commandMenuItemsDraft,

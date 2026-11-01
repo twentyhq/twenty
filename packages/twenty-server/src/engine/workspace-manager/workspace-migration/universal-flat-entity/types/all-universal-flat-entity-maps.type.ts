@@ -4,5 +4,7 @@ import { type MetadataToFlatEntityMapsKey } from 'src/engine/metadata-modules/fl
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 
 export type AllUniversalFlatEntityMaps = {
-  [P in AllMetadataName as MetadataToFlatEntityMapsKey<P>]: MetadataUniversalFlatEntityMaps<P>;
+  [
+    P in AllMetadataName as MetadataToFlatEntityMapsKey<P>
+  ]: MetadataUniversalFlatEntityMaps<P>;
 };

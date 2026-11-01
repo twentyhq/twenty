@@ -1,0 +1,78 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "jsPlugins": ["eslint-plugin-lingui"],
+  "categories": {
+    "correctness": "off"
+  },
+  "ignorePatterns": ["src/locales/**"],
+  "rules": {
+    "lingui/no-unlocalized-strings": [
+      "error",
+      {
+        "ignore": [
+          "^\\s*$",
+          "^\\d+(\\.\\d+)?(px|rem|em|%|vh|vw|s|ms)?$",
+          "^#[0-9a-fA-F]{3,8}$",
+          "^https?://",
+          "^Icon[A-Z]\\w*$",
+          "^Trebuchet MS$",
+          "^rgba\\(",
+          "^UTC$",
+          "^EmailRenderError$",
+          "^(John Doe|Jane Smith|John|Doe|Acme(?: Inc\\.)?|My Workspace|24 hours)$"
+        ],
+        "ignoreNames": [
+          "className",
+          "data-testid",
+          "testId",
+          "id",
+          "key",
+          "type",
+          "icon",
+          "iconName",
+          "src",
+          "href",
+          "path",
+          "target",
+          "rel",
+          "htmlFor",
+          "width",
+          "height",
+          "fill",
+          "stroke",
+          "viewBox",
+          "d",
+          "transform",
+          "color",
+          "variant",
+          "size",
+          "position",
+          "align",
+          "justify",
+          "direction",
+          "orientation",
+          "status",
+          "state",
+          "mode",
+          "css",
+          "query",
+          "mutation",
+          "fragment",
+          "padding",
+          "border",
+          "boxShadow",
+          "margin"
+        ],
+        "ignoreFunctions": [
+          "console.*",
+          "doNotTranslate",
+          "require",
+          "styled",
+          "css",
+          "keyframes",
+          "EmailRenderError"
+        ]
+      }
+    ]
+  }
+}

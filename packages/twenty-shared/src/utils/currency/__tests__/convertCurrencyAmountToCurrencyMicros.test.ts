@@ -1,0 +1,19 @@
+import { convertCurrencyAmountToCurrencyMicros } from '@/utils/currency/convertCurrencyAmountToCurrencyMicros';
+import { convertCurrencyMicrosToCurrencyAmount } from '@/utils/currency/convertCurrencyMicrosToCurrencyAmount';
+
+describe('convertCurrencyAmountToCurrencyMicros', () => {
+  it('should convert currencyAmount to micros', () => {
+    expect(convertCurrencyAmountToCurrencyMicros(1)).toBe(1000000);
+    expect(convertCurrencyAmountToCurrencyMicros(1.5)).toBe(1500000);
+  });
+
+  it('should return whole micros when floating point multiplication drifts', () => {
+    expect(convertCurrencyAmountToCurrencyMicros(8.2)).toBe(8200000);
+  });
+});
+
+describe('convertCurrencyMicrosToCurrencyAmount', () => {
+  it('should convert currency micros to currency', () => {
+    expect(convertCurrencyMicrosToCurrencyAmount(24000000)).toBe(24);
+  });
+});

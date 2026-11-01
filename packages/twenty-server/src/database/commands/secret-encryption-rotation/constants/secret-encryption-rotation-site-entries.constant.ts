@@ -27,9 +27,9 @@ type SecretEncryptionRotationRegistryShape<R> = {
     ? {
         entity: E;
         columnSiteNames: {
-          [K in ExtractEncryptedColumns<
-            InstanceType<E>
-          >]: ColumnRotationSiteMetadata<E>;
+          [
+            K in ExtractEncryptedColumns<InstanceType<E>>
+          ]: ColumnRotationSiteMetadata<E>;
         };
       }
     : never;
@@ -144,7 +144,9 @@ export const SECRET_ENCRYPTION_ROTATION_UNTYPED_SITE_ENTRIES = {
 >;
 
 type RegistryColumnMetadataUnion = {
-  [N in keyof typeof SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES]: (typeof SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES)[N]['columnSiteNames'][keyof (typeof SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES)[N]['columnSiteNames']];
+  [
+    N in keyof typeof SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES
+  ]: (typeof SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES)[N]['columnSiteNames'][keyof (typeof SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES)[N]['columnSiteNames']];
 }[keyof typeof SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES];
 
 type TypedSiteNameUnion = RegistryColumnMetadataUnion['siteName'];

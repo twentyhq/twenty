@@ -38,10 +38,13 @@ const convertColorToHex = (color: string): string => {
   return color;
 };
 
-export const getBaseCodeEditorTheme = (
-  theme: ThemeType,
-  colorScheme: 'light' | 'dark',
-): editor.IStandaloneThemeData => {
+export const getBaseCodeEditorTheme = ({
+  theme,
+  colorScheme,
+}: {
+  theme: ThemeType;
+  colorScheme: 'light' | 'dark';
+}): editor.IStandaloneThemeData => {
   return {
     base: colorScheme === 'dark' ? 'vs-dark' : 'vs',
     inherit: true,

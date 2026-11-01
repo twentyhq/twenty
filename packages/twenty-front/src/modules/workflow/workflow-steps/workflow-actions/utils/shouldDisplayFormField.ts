@@ -5,6 +5,7 @@ import {
   type WorkflowTriggerType,
 } from '@/workflow/types/Workflow';
 import { CustomError } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 const SUPPORTED_FORM_FIELD_TYPES = [
@@ -78,7 +79,7 @@ export const shouldDisplayFormField = ({
       );
     default:
       throw new CustomError(
-        `Action "${actionType}" is not supported`,
+        doNotTranslate(`Action "${actionType}" is not supported`),
         'UNSUPPORTED_ACTION_TYPE',
       );
   }

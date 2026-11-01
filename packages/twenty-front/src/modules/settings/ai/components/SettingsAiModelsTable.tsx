@@ -13,7 +13,7 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsAiModelHoverCard } from '@/settings/ai/components/SettingsAiModelHoverCard';
 import { type AiModelSummary } from '@/settings/ai/types/AiModelSummary';
-import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
+import { getModelIcon } from '@/ai/utils/getModelIcon';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
@@ -53,10 +53,10 @@ const StyledKindBadge = styled.span`
 `;
 
 const hoverCardTooltipClass = css`
-  border-radius: ${themeCssVariables.border.radius.rounded} !important;
+  border-radius: ${themeCssVariables.border.radius.rounded};
   corner-shape: round;
 
-  padding: 0 !important;
+  padding: 0;
 `;
 
 const sanitizeIdForSelector = (id: string): string =>
@@ -241,9 +241,8 @@ export const SettingsAiModelsTable = <TModel extends AiModelSummary>({
               side="top"
               align="end"
               sideOffset={8}
-              style={{ maxWidth: '320px' }}
             >
-              <Tooltip.Popup className={hoverCardTooltipClass}>
+              <Tooltip.Popup maxWidth={320} className={hoverCardTooltipClass}>
                 <SettingsAiModelHoverCard model={hoveredModel} />
               </Tooltip.Popup>
             </Tooltip.Positioner>

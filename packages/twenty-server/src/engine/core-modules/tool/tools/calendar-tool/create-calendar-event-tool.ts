@@ -1,7 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
+import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
+import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { CreateCalendarEventToolInputZodSchema } from 'src/engine/core-modules/tool/tools/calendar-tool/calendar-tool.schema';
 import { type CreateCalendarEventToolInput } from 'src/engine/core-modules/tool/tools/calendar-tool/types/create-calendar-event-tool-input.type';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
@@ -23,6 +25,7 @@ export class CreateCalendarEventTool implements Tool {
   constructor(
     private readonly calendarEventComposerService: CalendarEventComposerService,
     private readonly createCalendarEventService: CreateCalendarEventService,
+    private readonly i18nService: I18nService,
   ) {}
 
   async execute(
@@ -40,7 +43,9 @@ export class CreateCalendarEventTool implements Tool {
         return {
           success: false,
           message: 'Failed to create calendar event',
-          error: result.error,
+          error: this.i18nService
+            .getI18nInstance(SOURCE_LOCALE)
+            ._(result.error),
         };
       }
 

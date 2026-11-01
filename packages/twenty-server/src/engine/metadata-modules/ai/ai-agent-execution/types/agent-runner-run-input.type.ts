@@ -1,5 +1,4 @@
 import { type RunAgentMessage } from 'twenty-shared/application';
-import { type ActorMetadata } from 'twenty-shared/types';
 
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
 import { type AgentRunConversation } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-conversation.type';
@@ -14,7 +13,7 @@ export type AgentRunnerRunInput = {
   conversation: AgentRunConversation;
   caller: AgentRunCaller;
   spec: AgentRunSpec;
-  agent: AgentEntity | null;
+  agent: AgentEntity;
   // what the run is asked and who asked it; absent when the run continues its conversation without a new message
   prompt: {
     messages: RunAgentMessage[];
@@ -22,6 +21,4 @@ export type AgentRunnerRunInput = {
     senderApplicationId: string | null;
   } | null;
   executionContext: AgentRunExecutionContext;
-  // resolved while recording the turn, so a failed lookup does not stop the run
-  resolveCreatedBy: () => Promise<ActorMetadata>;
 };

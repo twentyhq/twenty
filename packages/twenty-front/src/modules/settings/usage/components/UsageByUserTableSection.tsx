@@ -80,7 +80,7 @@ export const UsageByUserTableSection = ({
       <Section.Header
         title={title}
         description={description}
-        adornment={
+        actions={
           <Select
             dropdownId={`${title.replace(/\s+/g, '-').toLowerCase()}-period`}
             value={period}
@@ -125,7 +125,7 @@ export const UsageByUserTableSection = ({
               {item.label ?? item.key}
             </TableCell>
             <TableCell align="right">
-              {formatUsageValue(item.creditsUsed)}
+              {formatUsageValue(item.workspaceCreditsUsed)}
             </TableCell>
             <TableCell align="center">
               <StyledIconChevronRightContainer>

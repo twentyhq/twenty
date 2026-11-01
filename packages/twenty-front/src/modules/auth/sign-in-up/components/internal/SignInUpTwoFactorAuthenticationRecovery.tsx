@@ -61,7 +61,7 @@ export const SignInUpTwoFactorAuthenticationRecovery = () => {
 
     if (!isCaptchaReady) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Captcha (anti-bot check) is still loading, try again`,
       });
       return;
@@ -88,7 +88,7 @@ export const SignInUpTwoFactorAuthenticationRecovery = () => {
       }
 
       enqueueToast({
-        variant: 'info',
+        status: 'info',
         children: t`Two-factor authentication was reset for this workspace. Set it up again from Settings, Profile.`,
       });
     } catch (error) {

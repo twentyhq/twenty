@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql';
 
 import {
   IsBoolean,
+  IsDateString,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -91,6 +92,10 @@ export class ApplicationDTO {
   @Field(() => Boolean)
   @IsBoolean()
   autoUpgrade: boolean;
+
+  @IsDateString()
+  @Field()
+  createdAt: Date;
 
   @IsOptional()
   @IsString()

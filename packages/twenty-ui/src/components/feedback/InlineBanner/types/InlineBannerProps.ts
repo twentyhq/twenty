@@ -2,7 +2,11 @@ import { type BannerProps } from '@ui/primitives/feedback/Banner/types/BannerPro
 
 import { type InlineBannerLayout } from './InlineBannerLayout';
 
-export type InlineBannerProps = BannerProps & {
+export type InlineBannerProps = Omit<
+  BannerProps,
+  'onDismiss' | 'closeLabel'
+> & {
   layout?: InlineBannerLayout;
   embedded?: boolean;
+  fullWidth?: boolean;
 };

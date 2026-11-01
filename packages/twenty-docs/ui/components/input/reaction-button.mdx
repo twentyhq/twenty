@@ -1,0 +1,111 @@
+---
+title: ReactionButton
+description: Toggle an emoji reaction with a count and controlled pressed state.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ReactionButtonReference from '/snippets/ui/generated/components/input/reaction-button.mdx';
+
+## Overview
+
+`ReactionButton` composes [Button](/ui/primitives/input/button) into a compact emoji reaction with a count. Your application supplies the pressed state, accessible name, and change handler.
+
+<StoryEmbed
+  storyId="ui-components-reactionbutton--display"
+  title="Controlled helpful reaction with a tooltip and reset action"
+  height={160}
+/>
+
+## Usage
+
+```tsx
+import { useState } from 'react';
+import {
+  ReactionButton,
+  type ReactionButtonProps,
+} from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+export const ReactionButtonExample = ({
+  emoji = '👍',
+  disabled,
+  loading,
+}: Partial<Pick<ReactionButtonProps, 'emoji' | 'disabled' | 'loading'>>) => {
+  const [pressed, setPressed] = useState(false);
+  const count = pressed ? 3 : 2;
+
+  return (
+    <Text
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: themeCssVariables.spacing[2],
+      }}
+    >
+      <Text>Was this helpful?</Text>
+      <Text
+        render={<span />}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: themeCssVariables.spacing[1],
+        }}
+      >
+        <Tooltip content={`${count} people found this helpful`}>
+          <ReactionButton
+            aria-label="Helpful"
+            emoji={emoji}
+            count={count}
+            pressed={pressed}
+            onPressedChange={setPressed}
+            disabled={disabled}
+            loading={loading}
+          />
+        </Tooltip>
+        <Button size="sm" variant="ghost" onClick={() => setPressed(false)}>
+          Reset
+        </Button>
+      </Text>
+    </Text>
+  );
+};
+```
+
+## Appearance
+
+The control is 24px tall, with rounded corners, a 16px emoji, and a small count. Pressed reactions use the theme's accent surface and text. Unpressed reactions use a transparent surface and secondary text.
+
+`count` accepts a number or a caller-formatted string. Your application owns number formatting, abbreviation, and whether to display a reaction with a zero count.
+
+<StoryEmbed
+  storyId="ui-components-reactionbutton--catalog"
+  title="Reaction selection, counts, and unavailable states"
+  height={300}
+/>
+
+## State ownership
+
+`pressed` is required and controlled by your application. Activation calls `onPressedChange` with the requested next value. The component keeps showing the supplied `pressed` and `count` until your application updates them.
+
+Set `loading` while a mutation is pending to show Button's loading indicator and prevent repeated activation. It preserves the supplied `pressed` value and marks the control busy. Use `disabled` when the reaction is unavailable. Selection, counts, permissions, persistence, and any optimistic updates stay in the application.
+
+Native `onClick` runs before the change request. Calling `event.preventDefault()` in that handler cancels the request. Other native button attributes, handlers, styles, class names, and refs pass through to the button. The control always uses `type="button"`.
+
+## Accessibility and tooltips
+
+Provide `aria-label` or `aria-labelledby` with a localized reaction name. Emoji and count are decorative and hidden from assistive technology, so include count or participant information in the supplied name or description when needed. Keep the reaction name stable as its state changes; `aria-pressed` communicates selection.
+
+The native button supports Tab focus and activation with Enter or Space. Both `disabled` and `loading` prevent activation. The ref points to the native button.
+
+Compose [Tooltip](/ui/primitives/surfaces/tooltip) for participant details on hover and keyboard focus, as shown above, or pass a native `title`. Tooltip content belongs to the caller and does not replace the accessible name. Long accessible labels do not enlarge the visible control.
+
+## Props
+
+<ReactionButtonReference />
+
+<PageBanner illustration="page-cover-emoji" />

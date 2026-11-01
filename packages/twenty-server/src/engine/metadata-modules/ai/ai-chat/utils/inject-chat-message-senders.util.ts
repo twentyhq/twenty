@@ -3,13 +3,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 export const injectChatMessageSenders = ({
   messages,
-  currentUserWorkspaceId,
+  currentWorkspaceMemberId,
 }: {
   messages: ExtendedUIMessage[];
-  currentUserWorkspaceId: string;
+  currentWorkspaceMemberId: string;
 }): ExtendedUIMessage[] =>
   messages.map((message) => {
-    const senderId = message.metadata?.senderUserWorkspaceId;
+    const senderId = message.metadata?.senderWorkspaceMemberId;
     if (message.role !== 'user') {
       return message;
     }
@@ -20,7 +20,7 @@ export const injectChatMessageSenders = ({
           ? [
               {
                 type: 'text' as const,
-                text: `<message_sender>${JSON.stringify({ userWorkspaceId: senderId, isCurrentSender: senderId === currentUserWorkspaceId })}</message_sender>`,
+                text: `<message_sender>${JSON.stringify({ workspaceMemberId: senderId, isCurrentSender: senderId === currentWorkspaceMemberId })}</message_sender>`,
               },
             ]
           : []),

@@ -14,8 +14,8 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+} from 'src/engine/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 
 @Injectable()
 export class UploadProfilePicturePermissionGuard implements CanActivate {
@@ -40,6 +40,7 @@ export class UploadProfilePicturePermissionGuard implements CanActivate {
     const workspaceActivationStatus = request.workspace.activationStatus;
     const apiKeyId = request.apiKey?.id;
     const applicationId = request.application?.id;
+    const agentId = request.agentId;
 
     if (
       [
@@ -57,6 +58,7 @@ export class UploadProfilePicturePermissionGuard implements CanActivate {
         setting: PermissionFlagType.WORKSPACE_MEMBERS,
         apiKeyId,
         applicationId,
+        agentId,
       });
 
     if (hasWorkspaceMembersPermission) {
@@ -70,6 +72,7 @@ export class UploadProfilePicturePermissionGuard implements CanActivate {
         setting: PermissionFlagType.PROFILE_INFORMATION,
         apiKeyId,
         applicationId,
+        agentId,
       });
 
     if (hasProfileInformationPermission) {

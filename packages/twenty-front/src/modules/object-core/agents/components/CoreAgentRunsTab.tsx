@@ -12,7 +12,6 @@ import { groupCoreAgentRunsByConversation } from '@/object-core/agents/utils/gro
 import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
-import { LEGACY_SKELETON_COLORS } from '@/ui/feedback/skeleton/constants/LEGACY_SKELETON_COLORS';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
@@ -79,13 +78,7 @@ export const CoreAgentRunsTab = ({ agentId }: CoreAgentRunsTabProps) => {
         <Table>
           {header}
           {Array.from({ length: 3 }).map((_, index) => (
-            <SkeletonLine
-              baseColor={LEGACY_SKELETON_COLORS.base}
-              highlightColor={LEGACY_SKELETON_COLORS.highlight}
-              height={32}
-              borderRadius={4}
-              key={index}
-            />
+            <SkeletonLine height={32} key={index} />
           ))}
         </Table>
       </StyledTableContainer>

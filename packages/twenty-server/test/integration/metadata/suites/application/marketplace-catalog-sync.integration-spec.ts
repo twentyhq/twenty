@@ -1,25 +1,27 @@
 import crypto from 'crypto';
-import { promises as fs } from 'fs';
-import { tmpdir } from 'os';
-import { join } from 'path';
 
 import { gql } from 'graphql-tag';
 import request from 'supertest';
-import * as tar from 'tar';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
+import { buildNpmRegistryPackage } from 'test/integration/metadata/suites/application/utils/build-npm-registry-package.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { createAppTarball } from 'test/integration/metadata/suites/application/utils/create-app-tarball.util';
 import { findApplicationRegistrationByUniversalIdentifier } from 'test/integration/metadata/suites/application/utils/find-application-registration-by-universal-identifier.util';
 import { insertCatalogApplicationRegistration } from 'test/integration/metadata/suites/application/utils/insert-catalog-application-registration.util';
+import { stubNpmRegistry } from 'test/integration/metadata/suites/application/utils/stub-npm-registry.util';
 import { syncMarketplaceCatalogFromRegistryPackage } from 'test/integration/metadata/suites/application/utils/sync-marketplace-catalog-from-registry-package.util';
 import { upsertApplicationRegistrationFromCatalog } from 'test/integration/metadata/suites/application/utils/upsert-application-registration-from-catalog.util';
 import { makeAdminPanelApiRequest } from 'test/integration/twenty-config/utils/make-admin-panel-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { type DataSource } from 'typeorm';
 
-import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
+import { MARKETPLACE_FEATURED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-featured-applications.constant';
+import { type ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
+import { type ApplicationPackageFetcherService } from 'src/engine/core-modules/application/application-package/application-package-fetcher.service';
 import { type ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { type ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const TEST_WORKSPACE_ID = SEED_APPLE_WORKSPACE_ID;
@@ -34,7 +36,16 @@ const MARKETPLACE_QUERY = `
       sourcePackage
       category
       logoUrl
-      isVetted
+      isListed
+    }
+  }
+`;
+
+const PUBLIC_MARKETPLACE_QUERY = `
+  query {
+    publicMarketplaceApps {
+      id
+      isListed
     }
   }
 `;
@@ -86,8 +97,13 @@ describe('Marketplace Catalog Sync (integration)', () => {
 
   describe('findManyMarketplaceApps', () => {
     const npmUid = crypto.randomUUID();
+    const unlistedNpmUid = crypto.randomUUID();
     const tarballUid = crypto.randomUUID();
     const curatedUid = 'a1b2c3d4-0000-0000-0000-000000000001';
+    const serverCompatibleUid = crypto.randomUUID();
+    const serverIncompatibleUid = crypto.randomUUID();
+    const blankServerRangeUid = crypto.randomUUID();
+    const nonStringServerRangeUid = crypto.randomUUID();
 
     // Insert all data before queries so the in-memory cache is populated once
     // with complete data rather than being stale for later tests.
@@ -96,6 +112,13 @@ describe('Marketplace Catalog Sync (integration)', () => {
         universalIdentifier: npmUid,
         name: 'Test Catalog App',
         sourcePackage: '@test/catalog-app',
+      });
+
+      await insertCatalogRegistration({
+        universalIdentifier: unlistedNpmUid,
+        name: 'Unlisted Catalog App',
+        sourcePackage: '@test/unlisted-catalog-app',
+        isListed: false,
       });
 
       const tarballId = crypto.randomUUID();
@@ -132,6 +155,42 @@ describe('Marketplace Catalog Sync (integration)', () => {
         },
         category: 'Data',
       });
+
+      await insertCatalogRegistration({
+        universalIdentifier: serverCompatibleUid,
+        name: 'Server Compatible App',
+        sourcePackage: '@test/server-compatible-app',
+        manifest: {
+          application: { requiredServerVersionRange: '>=1.0.0' },
+        },
+      });
+
+      await insertCatalogRegistration({
+        universalIdentifier: serverIncompatibleUid,
+        name: 'Server Incompatible App',
+        sourcePackage: '@test/server-incompatible-app',
+        manifest: {
+          application: { requiredServerVersionRange: '>=999.0.0' },
+        },
+      });
+
+      await insertCatalogRegistration({
+        universalIdentifier: blankServerRangeUid,
+        name: 'Blank Server Range App',
+        sourcePackage: '@test/blank-server-range-app',
+        manifest: {
+          application: { requiredServerVersionRange: ' ' },
+        },
+      });
+
+      await insertCatalogRegistration({
+        universalIdentifier: nonStringServerRangeUid,
+        name: 'Non String Server Range App',
+        sourcePackage: '@test/non-string-server-range-app',
+        manifest: {
+          application: { requiredServerVersionRange: 2 },
+        },
+      });
     });
 
     it('should return npm-sourced registrations from the database', async () => {
@@ -143,6 +202,31 @@ describe('Marketplace Catalog Sync (integration)', () => {
       expect(testApp).toBeDefined();
       expect(testApp.name).toBe('Test Catalog App');
       expect(testApp.sourcePackage).toBe('@test/catalog-app');
+    });
+
+    it('should return unlisted npm registrations flagged as unlisted', async () => {
+      const res = await gqlRequest(MARKETPLACE_QUERY).expect(200);
+      const apps = res.body.data.findManyMarketplaceApps;
+
+      expect(
+        apps.find((app: { id: string }) => app.id === npmUid),
+      ).toMatchObject({ isListed: true });
+      expect(
+        apps.find((app: { id: string }) => app.id === unlistedNpmUid),
+      ).toMatchObject({ isListed: false });
+    });
+
+    it('should only return listed registrations publicly', async () => {
+      const res = await request(baseUrl)
+        .post('/metadata')
+        .send({ query: PUBLIC_MARKETPLACE_QUERY })
+        .expect(200);
+      const appIds = res.body.data.publicMarketplaceApps.map(
+        (app: { id: string }) => app.id,
+      );
+
+      expect(appIds).toContain(npmUid);
+      expect(appIds).not.toContain(unlistedNpmUid);
     });
 
     it('should not return tarball-sourced registrations', async () => {
@@ -168,12 +252,33 @@ describe('Marketplace Catalog Sync (integration)', () => {
       expect(curatedApp.name).toBe('Data Enrichment');
       expect(curatedApp.category).toBe('Data');
     });
+
+    it('should not list apps whose required server version the server does not satisfy', async () => {
+      const res = await gqlRequest(MARKETPLACE_QUERY).expect(200);
+      const appIds = res.body.data.findManyMarketplaceApps.map(
+        (app: { id: string }) => app.id,
+      );
+
+      expect(appIds).toContain(serverCompatibleUid);
+      expect(appIds).not.toContain(serverIncompatibleUid);
+      expect(appIds).not.toContain(blankServerRangeUid);
+      expect(appIds).not.toContain(nonStringServerRangeUid);
+    });
+
+    it('should list apps that declare no required server version', async () => {
+      const res = await gqlRequest(MARKETPLACE_QUERY).expect(200);
+      const appIds = res.body.data.findManyMarketplaceApps.map(
+        (app: { id: string }) => app.id,
+      );
+
+      expect(appIds).toEqual(expect.arrayContaining([npmUid, curatedUid]));
+    });
   });
 
   describe('catalog sync', () => {
     it.each([true, false])(
-      'preserves the admin choice isVetted=%s',
-      async (isVetted) => {
+      'preserves the admin choice isListed=%s',
+      async (isListed) => {
         const applicationRegistrationService =
           getAppProviderByClassName<ApplicationRegistrationService>(
             'ApplicationRegistrationService',
@@ -182,16 +287,16 @@ describe('Marketplace Catalog Sync (integration)', () => {
           getAppProviderByClassName<ApplicationRegistrationLookupService>(
             'ApplicationRegistrationLookupService',
           );
-        const universalIdentifier = isVetted
+        const universalIdentifier = isListed
           ? crypto.randomUUID()
-          : MARKETPLACE_VETTED_APPLICATIONS[0].universalIdentifier;
+          : MARKETPLACE_FEATURED_APPLICATIONS[0].universalIdentifier;
         const catalogParams = {
           universalIdentifier,
-          name: 'Vetted catalog sync test',
+          name: 'Listing catalog sync test',
           sourceType: ApplicationRegistrationSourceType.NPM,
-          sourcePackage: isVetted
-            ? '@test/vetted-catalog-sync'
-            : MARKETPLACE_VETTED_APPLICATIONS[0].sourcePackage,
+          sourcePackage: isListed
+            ? '@test/listing-catalog-sync'
+            : MARKETPLACE_FEATURED_APPLICATIONS[0].sourcePackage,
           latestAvailableVersion: '1.0.0',
           manifest: buildBaseManifest({
             appId: universalIdentifier,
@@ -213,7 +318,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
               universalIdentifier,
             );
 
-          expect(registration).toMatchObject({ isVetted: !isVetted });
+          expect(registration).toMatchObject({ isListed: !isListed });
 
           const updateResponse = await makeAdminPanelApiRequest({
             query: gql`
@@ -222,19 +327,19 @@ describe('Marketplace Catalog Sync (integration)', () => {
               ) {
                 updateAdminApplicationRegistration(input: $input) {
                   id
-                  isVetted
+                  isListed
                 }
               }
             `,
             variables: {
-              input: { id: registration?.id, update: { isVetted } },
+              input: { id: registration?.id, update: { isListed } },
             },
           });
 
           expect(updateResponse.body.errors).toBeUndefined();
           expect(
             updateResponse.body.data.updateAdminApplicationRegistration,
-          ).toMatchObject({ isVetted });
+          ).toMatchObject({ isListed });
 
           await applicationRegistrationService.upsertFromCatalog(catalogParams);
 
@@ -243,7 +348,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
               query FindOneAdminApplicationRegistration($id: String!) {
                 findOneAdminApplicationRegistration(id: $id) {
                   id
-                  isVetted
+                  isListed
                 }
               }
             `,
@@ -253,7 +358,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
           expect(refreshedResponse.body.errors).toBeUndefined();
           expect(
             refreshedResponse.body.data.findOneAdminApplicationRegistration,
-          ).toMatchObject({ isVetted });
+          ).toMatchObject({ isListed });
         } finally {
           await ds.query(
             `DELETE FROM core."applicationRegistration" WHERE "universalIdentifier" = $1`,
@@ -265,7 +370,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
   });
 
   describe('catalog sync source package pinning', () => {
-    const OFFICIAL_APPLICATION = MARKETPLACE_VETTED_APPLICATIONS[0];
+    const OFFICIAL_APPLICATION = MARKETPLACE_FEATURED_APPLICATIONS[0];
 
     it('does not let another package overwrite an existing registration', async () => {
       const universalIdentifier = crypto.randomUUID();
@@ -523,7 +628,6 @@ describe('Marketplace Catalog Sync (integration)', () => {
 
   describe('catalog sync versions', () => {
     const SOURCE_PACKAGE = '@test/versioned-app';
-
     const buildCatalogParams = ({
       universalIdentifier,
       name,
@@ -634,6 +738,204 @@ describe('Marketplace Catalog Sync (integration)', () => {
       });
     });
 
+    it('records each catalog version once with the registry tarball URL', async () => {
+      const universalIdentifier = crypto.randomUUID();
+      const registrationId = await insertCatalogRegistration({
+        universalIdentifier,
+        name: 'Versioned App',
+        sourcePackage: SOURCE_PACKAGE,
+        latestAvailableVersion: '1.0.0',
+      });
+      const tarballUrl = `https://registry.example.com/${SOURCE_PACKAGE}/-/versioned-app-2.0.0.tgz`;
+      const syncVersionTwo = () =>
+        syncMarketplaceCatalogFromRegistryPackage({
+          packageName: SOURCE_PACKAGE,
+          version: '2.0.0',
+          manifest: buildBaseManifest({
+            appId: universalIdentifier,
+            roleId: crypto.randomUUID(),
+          }),
+          tarballUrl,
+        });
+      const findVersionRows = () =>
+        ds.query(
+          `SELECT version, "sourceType", "sourcePackage", "tarballUrl"
+           FROM core."applicationRegistrationVersion"
+           WHERE "applicationRegistrationId" = $1`,
+          [registrationId],
+        );
+
+      await syncVersionTwo();
+
+      const registryLookup = jest.spyOn(
+        getAppProviderByClassName<ApplicationPackageFetcherService>(
+          'ApplicationPackageFetcherService',
+        ),
+        'findRegistryTarballUrl',
+      );
+
+      try {
+        await syncMarketplaceCatalogFromRegistryPackage({
+          packageName: SOURCE_PACKAGE,
+          version: '2.0.0',
+          manifest: buildBaseManifest({
+            appId: universalIdentifier,
+            roleId: crypto.randomUUID(),
+          }),
+          shouldStubRegistryTarball: false,
+        });
+        expect(registryLookup).not.toHaveBeenCalled();
+      } finally {
+        registryLookup.mockRestore();
+      }
+
+      expect(await findVersionRows()).toEqual([
+        {
+          version: '2.0.0',
+          sourceType: 'npm',
+          sourcePackage: SOURCE_PACKAGE,
+          tarballUrl,
+        },
+      ]);
+    });
+
+    it('fills the registry details of a version recorded without them', async () => {
+      const universalIdentifier = crypto.randomUUID();
+      const registrationId = await insertCatalogRegistration({
+        universalIdentifier,
+        name: 'Versioned App',
+        sourcePackage: SOURCE_PACKAGE,
+        latestAvailableVersion: '1.0.0',
+      });
+
+      await ds.query(
+        `INSERT INTO core."applicationRegistrationVersion"
+          ("applicationRegistrationId", version, "sourceType", "sourcePackage")
+         VALUES ($1, '1.0.0', 'npm', $2)`,
+        [registrationId, SOURCE_PACKAGE],
+      );
+
+      const tarballUrl = `https://registry.example.com/${SOURCE_PACKAGE}/-/versioned-app-1.0.0.tgz`;
+
+      await syncMarketplaceCatalogFromRegistryPackage({
+        packageName: SOURCE_PACKAGE,
+        version: '1.0.0',
+        manifest: buildBaseManifest({
+          appId: universalIdentifier,
+          roleId: crypto.randomUUID(),
+        }),
+        tarballUrl,
+      });
+
+      expect(
+        await ds.query(
+          `SELECT version, "tarballUrl"
+           FROM core."applicationRegistrationVersion"
+           WHERE "applicationRegistrationId" = $1`,
+          [registrationId],
+        ),
+      ).toEqual([
+        {
+          version: '1.0.0',
+          tarballUrl,
+        },
+      ]);
+    });
+
+    it('leaves a version unrecorded until the registry provides its artifact', async () => {
+      const universalIdentifier = crypto.randomUUID();
+      const registrationId = await insertCatalogRegistration({
+        universalIdentifier,
+        name: 'Versioned App',
+        sourcePackage: SOURCE_PACKAGE,
+        latestAvailableVersion: '1.0.0',
+      });
+      const syncVersionTwo = (tarballUrl: string | null) =>
+        syncMarketplaceCatalogFromRegistryPackage({
+          packageName: SOURCE_PACKAGE,
+          version: '2.0.0',
+          manifest: buildBaseManifest({
+            appId: universalIdentifier,
+            roleId: crypto.randomUUID(),
+          }),
+          tarballUrl,
+        });
+      const countVersionRows = async (): Promise<number> => {
+        const [{ count }] = await ds.query(
+          `SELECT count(*)::int AS count FROM core."applicationRegistrationVersion"
+           WHERE "applicationRegistrationId" = $1`,
+          [registrationId],
+        );
+
+        return count;
+      };
+
+      await syncVersionTwo(null);
+
+      expect(await countVersionRows()).toBe(0);
+      expect(
+        await findApplicationRegistrationByUniversalIdentifier({
+          universalIdentifier,
+        }),
+      ).toMatchObject({ latestAvailableVersion: '2.0.0' });
+
+      await syncVersionTwo(
+        `https://registry.example.com/${SOURCE_PACKAGE}/-/versioned-app-2.0.0.tgz`,
+      );
+
+      expect(await countVersionRows()).toBe(1);
+    });
+
+    it('leaves a version unrecorded when the registry metadata describes another package', async () => {
+      const universalIdentifier = crypto.randomUUID();
+      const registrationId = await insertCatalogRegistration({
+        universalIdentifier,
+        name: 'Versioned App',
+        sourcePackage: SOURCE_PACKAGE,
+        latestAvailableVersion: '1.0.0',
+      });
+      const registryBaseUrl = getAppProviderByClassName<TwentyConfigService>(
+        'TwentyConfigService',
+      )
+        .get('APP_REGISTRY_URL')
+        .replace(/\/$/, '');
+      const manifest = buildBaseManifest({
+        appId: universalIdentifier,
+        roleId: crypto.randomUUID(),
+      });
+      const registryStub = stubNpmRegistry(
+        await buildNpmRegistryPackage({
+          registryBaseUrl,
+          packageName: SOURCE_PACKAGE,
+          version: '2.0.0',
+          manifestJson: JSON.stringify(manifest),
+          metadataName: '@test/substitute-app',
+        }),
+      );
+
+      try {
+        await syncMarketplaceCatalogFromRegistryPackage({
+          packageName: SOURCE_PACKAGE,
+          version: '2.0.0',
+          manifest,
+          shouldStubRegistryTarball: false,
+        });
+      } finally {
+        registryStub.restore();
+      }
+
+      expect(registryStub.requestedUrls).toEqual([
+        `${registryBaseUrl}/${encodeURIComponent(SOURCE_PACKAGE)}/2.0.0`,
+      ]);
+      expect(
+        await ds.query(
+          `SELECT id FROM core."applicationRegistrationVersion"
+           WHERE "applicationRegistrationId" = $1`,
+          [registrationId],
+        ),
+      ).toEqual([]);
+    });
+
     it('sets the version on a registration that has none', async () => {
       const universalIdentifier = crypto.randomUUID();
 
@@ -699,6 +1001,56 @@ describe('Marketplace Catalog Sync (integration)', () => {
           universalIdentifier,
         }),
       ).toMatchObject({ logoFileId: null });
+    });
+
+    it('stores assets and retries the version when version recording fails', async () => {
+      const universalIdentifier = crypto.randomUUID();
+      const registrationId = await insertCatalogRegistration({
+        universalIdentifier,
+        name: 'Pinned App',
+        sourcePackage: '@test/pinned-app',
+      });
+      const recordVersion = jest
+        .spyOn(
+          getAppProviderByClassName<ApplicationRegistrationVersionService>(
+            'ApplicationRegistrationVersionService',
+          ),
+          'createApplicationRegistrationVersion',
+        )
+        .mockRejectedValueOnce(new Error('version insert failed'));
+      const sync = () =>
+        syncMarketplaceCatalogFromRegistryPackage({
+          packageName: '@test/pinned-app',
+          version: '2.0.0',
+          manifest: buildManifestWithLogo(universalIdentifier),
+          asset: LOGO_PNG,
+          tarballUrl: 'https://registry.example.com/pinned-app-2.0.0.tgz',
+        });
+
+      try {
+        await sync();
+        expect(
+          await findApplicationRegistrationByUniversalIdentifier({
+            universalIdentifier,
+          }),
+        ).toMatchObject({ logoFileId: expect.any(String) });
+        expect(
+          await ds.query(
+            'SELECT id FROM core."applicationRegistrationVersion" WHERE "applicationRegistrationId" = $1',
+            [registrationId],
+          ),
+        ).toHaveLength(0);
+
+        await sync();
+        expect(
+          await ds.query(
+            'SELECT version FROM core."applicationRegistrationVersion" WHERE "applicationRegistrationId" = $1',
+            [registrationId],
+          ),
+        ).toEqual([{ version: '2.0.0' }]);
+      } finally {
+        recordVersion.mockRestore();
+      }
     });
 
     it('stores assets from the package the registration is bound to', async () => {
@@ -779,23 +1131,10 @@ describe('Marketplace Catalog Sync (integration)', () => {
         version: '1.0.0',
       });
 
-      const tempId = crypto.randomUUID();
-      const sourceDir = join(tmpdir(), `test-tarball-src-${tempId}`);
-      const tarballPath = join(tmpdir(), `test-tarball-${tempId}.tar.gz`);
-
-      await fs.mkdir(sourceDir, { recursive: true });
-      await fs.writeFile(join(sourceDir, 'manifest.json'), manifest);
-      await fs.writeFile(join(sourceDir, 'package.json'), packageJson);
-
-      await tar.create({ file: tarballPath, gzip: true, cwd: sourceDir }, [
-        'manifest.json',
-        'package.json',
-      ]);
-
-      const tarballBuffer = await fs.readFile(tarballPath);
-
-      await fs.rm(sourceDir, { recursive: true, force: true });
-      await fs.rm(tarballPath, { force: true });
+      const tarballBuffer = await createAppTarball({
+        'manifest.json': manifest,
+        'package.json': packageJson,
+      });
 
       const UPLOAD_MUTATION = `
         mutation UploadAppTarball($file: Upload!, $universalIdentifier: String) {

@@ -1,6 +1,8 @@
 import { useContext } from 'react';
 
+import { useCoreRecordReferenceField } from '@/object-record/record-field/ui/hooks/useCoreRecordReferenceField';
 import { ActorFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ActorFieldDisplay';
+import { CoreRecordReferenceFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/CoreRecordReferenceFieldDisplay';
 import { ArrayFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/ArrayFieldDisplay';
 import { BooleanFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/BooleanFieldDisplay';
 import { EmailsFieldDisplay } from '@/object-record/record-field/ui/meta-types/display/components/EmailsFieldDisplay';
@@ -68,8 +70,21 @@ export const FieldDisplay = () => {
     isLabelIdentifier,
   );
 
+  const coreRecordReferenceField = useCoreRecordReferenceField({
+    objectNameSingular: fieldDefinition.metadata.objectMetadataNameSingular,
+    fieldName: fieldDefinition.metadata.fieldName,
+  });
+
   if (isDefined(isForbidden) && isForbidden) {
     return <ForbiddenFieldDisplay />;
+  }
+
+  if (isDefined(coreRecordReferenceField)) {
+    return (
+      <CoreRecordReferenceFieldDisplay
+        coreRecordReferenceField={coreRecordReferenceField}
+      />
+    );
   }
 
   return isChipDisplay ? (

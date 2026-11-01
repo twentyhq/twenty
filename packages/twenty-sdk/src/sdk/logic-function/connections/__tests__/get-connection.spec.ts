@@ -3,6 +3,7 @@ import {
   beforeEach,
   describe,
   expect,
+  expectTypeOf,
   it,
   vi,
   type MockInstance,
@@ -11,17 +12,22 @@ import {
 import { AppConnectionAuthFailedError } from '@/sdk/logic-function/connections/errors/app-connection-auth-failed.error';
 import { getConnection } from '@/sdk/logic-function/connections/get-connection';
 import { type AppConnection } from '@/sdk/logic-function/connections/types/app-connection.type';
+import { type AppConnectionWithoutVisibility } from '@/sdk/logic-function/connections/utils/with-legacy-connection-visibility.util';
 
 const buildConnection = (
-  overrides: Partial<AppConnection> = {},
-): AppConnection => ({
+  overrides: Partial<
+    Omit<AppConnection, 'visibility' | 'providerType' | 'accessToken'>
+  > = {},
+): AppConnectionWithoutVisibility => ({
   id: 'c-1',
   providerName: 'linear',
   name: 'Linear #1',
   handle: 'octocat@example.com',
-  visibility: 'user',
+  externalAccountId: null,
+  scope: 'USER',
   userWorkspaceId: 'uws-me',
   workspaceMemberId: 'wm-me',
+  providerType: 'oauth',
   accessToken: 'fresh',
   scopes: ['read'],
   authFailedAt: null,
@@ -44,7 +50,37 @@ describe('getConnection', () => {
     fetchSpy.mockRestore();
   });
 
-  it('queries appConnection by id over GraphQL and returns the response', async () => {
+  it('narrows the token by provider type', async () => {
+    fetchSpy.mockResolvedValue(
+      new Response(
+        JSON.stringify({
+          data: {
+            appConnection: {
+              ...buildConnection(),
+              providerType: 'custom',
+              accessToken: null,
+            },
+          },
+        }),
+        { status: 200 },
+      ),
+    );
+
+    const connection = await getConnection('c-1');
+
+    if (connection.providerType === 'oauth') {
+      expectTypeOf(connection.accessToken).toEqualTypeOf<string>();
+    } else {
+      expectTypeOf(connection.accessToken).toEqualTypeOf<string | null>();
+    }
+
+    expect(connection).toMatchObject({
+      providerType: 'custom',
+      accessToken: null,
+    });
+  });
+
+  it('queries appConnection by id over GraphQL and derives the deprecated visibility', async () => {
     const connection = buildConnection({ id: 'persisted' });
 
     fetchSpy.mockResolvedValue(
@@ -55,7 +91,7 @@ describe('getConnection', () => {
 
     const result = await getConnection('persisted');
 
-    expect(result).toEqual(connection);
+    expect(result).toEqual({ ...connection, visibility: 'user' });
 
     const [url, requestInit] = fetchSpy.mock.calls[0];
 
@@ -72,6 +108,8 @@ describe('getConnection', () => {
     const sentBody = JSON.parse(requestInit?.body as string);
 
     expect(sentBody.query).toContain('appConnection(id: $id)');
+    expect(sentBody.query).toMatch(/\bscope\b/);
+    expect(sentBody.query).not.toContain('visibility');
     expect(sentBody.variables).toEqual({ id: 'persisted' });
   });
 

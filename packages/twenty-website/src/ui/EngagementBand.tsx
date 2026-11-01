@@ -15,6 +15,7 @@ import {
 import { Body } from './Body';
 import { Heading } from './Heading';
 import { SectionShell } from './SectionShell';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const Band = styled.div`
   ${buildSchemeDeclarations('light')}
@@ -100,6 +101,10 @@ const overlayImageClassName = css`
   object-position: right center;
 `;
 
+const OVERLAY_IMAGE_SIZES = doNotTranslate(
+  `(min-width: ${BREAKPOINT_PX.md}px) 308px, 50vw`,
+);
+
 type EngagementBandProps = {
   heading: string;
   body: string;
@@ -122,7 +127,7 @@ export function EngagementBand({
               alt=""
               className={overlayImageClassName}
               fill
-              sizes={`(min-width: ${BREAKPOINT_PX.md}px) 308px, 50vw`}
+              sizes={OVERLAY_IMAGE_SIZES}
               src="/images/pricing/engagement-band/halftone-on-white.webp"
             />
           </OverlayImageFrame>

@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { HttpException, HttpStatus } from '@nestjs/common';
 
 import { type HttpExceptionWithRestResponse } from 'src/engine/core-modules/exception-handler/types/http-exception-with-rest-response.type';

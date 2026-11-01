@@ -13,7 +13,9 @@
 
 <ParamField body="actionsRef" type="RefObject&lt;TooltipRootActions | null&gt;">
   A ref to imperative actions.
-  - `unmount`: Unmounts the tooltip popup.
+  - `unmount`: Ends the closing phase of the tooltip after an externally controlled closing animation finishes.
+  Call `preventUnmountOnClose()` in `onOpenChange` first, otherwise the tooltip completes closing on its own.
+  Whether it leaves the DOM is decided by `keepMounted` on the portal.
   - `close`: Closes the tooltip imperatively when called.
 </ParamField>
 
@@ -135,7 +137,7 @@
 </ParamField>
 
 <ParamField body="maxWidth" type="MaxWidth&lt;string | number&gt;">
-  Maximum popup width. Defaults to 300 pixels.
+  Maximum popup width. Defaults to 300 pixels and is capped by the space available beside the anchor.
 </ParamField>
 
 <ParamField body="onOpenChange" type="((open: boolean, eventDetails: TooltipRootChangeEventDetails) =&gt; void)">
@@ -155,7 +157,7 @@
 </ParamField>
 
 <ParamField body="positionerProps" type="TooltipPositionerProps">
-  Full Positioner props, including native props, ref and render. Overrides shorthand placement and width defaults.
+  Full Positioner props, including native props, ref and render. Overrides shorthand placement defaults.
 </ParamField>
 
 <ParamField body="positionMethod" type="&quot;absolute&quot; | &quot;fixed&quot;" default="absolute">
@@ -216,7 +218,9 @@
 
 <ParamField body="Root.actionsRef" type="RefObject&lt;TooltipRootActions | null&gt;">
   A ref to imperative actions.
-  - `unmount`: Unmounts the tooltip popup.
+  - `unmount`: Ends the closing phase of the tooltip after an externally controlled closing animation finishes.
+  Call `preventUnmountOnClose()` in `onOpenChange` first, otherwise the tooltip completes closing on its own.
+  Whether it leaves the DOM is decided by `keepMounted` on the portal.
   - `close`: Closes the tooltip imperatively when called.
 </ParamField>
 
@@ -300,7 +304,7 @@
   A payload to pass to the tooltip when it is opened.
 </ParamField>
 
-<ParamField body="Trigger.ref" type="((((instance: HTMLButtonElement | null) =&gt; void | (() =&gt; VoidOrUndefinedOnly)) | RefObject&lt;HTMLButtonElement | null&gt;) &amp; (RefObject&lt;...&gt; | ((instance: HTMLElement | null) =&gt; void | (() =&gt; VoidOrUndefinedOnly)))) | null">
+<ParamField body="Trigger.ref" type="((((instance: HTMLButtonElement | null) =&gt; void | (() =&gt; VoidOrUndefinedOnly)) | RefObject&lt;HTMLButtonElement | null&gt;) &amp; (((instance: HTMLElement | null) =&gt; void | (() =&gt; VoidOrUndefinedOnly)) | RefObject&lt;...&gt;)) | null">
   Ref to the rendered trigger element, a button by default.
 </ParamField>
 
@@ -462,6 +466,10 @@
   returns a class based on the component's state.
 </ParamField>
 
+<ParamField body="Popup.maxWidth" type="MaxWidth&lt;string | number&gt;">
+  Maximum popup width. Defaults to 300 pixels and is capped by the space available beside the anchor.
+</ParamField>
+
 <ParamField body="Popup.ref" type="Ref&lt;HTMLDivElement&gt;">
   Ref to the popup div. Native props, styles and render target this element.
 </ParamField>
@@ -480,6 +488,28 @@
 
 <ParamField body="Popup.withExitAnimation" type="boolean" default="false">
   Enables the optional Twenty exit transition.
+</ParamField>
+
+### Tooltip.Body
+
+<ParamField body="Body.children" type="ReactNode">
+  Optional title content, displayed with medium weight. Omit it for a description-only tooltip.
+</ParamField>
+
+<ParamField body="Body.description" type="ReactNode">
+  Optional secondary content. Preserves line breaks and wraps long text.
+</ParamField>
+
+<ParamField body="Body.ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref to the body div. Native props, styles and render target this element.
+</ParamField>
+
+<ParamField body="Body.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
+  Composes the body root through an element or render callback while preserving its layout and content.
+</ParamField>
+
+<ParamField body="Body.startIcon" type="ReactNode">
+  Optional decorative node before the title. Omitted when the title is empty.
 </ParamField>
 
 ### Tooltip.Arrow

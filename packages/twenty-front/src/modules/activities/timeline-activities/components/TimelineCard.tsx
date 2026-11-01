@@ -11,7 +11,6 @@ import { StyledWidgetScrollContainer } from '@/ui/layout/components/WidgetConten
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { t } from '@lingui/core/macro';
-
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledMainContainer = styled(StyledWidgetScrollContainer)`

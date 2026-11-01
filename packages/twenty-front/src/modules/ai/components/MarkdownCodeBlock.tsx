@@ -17,7 +17,7 @@ const StyledContainer = styled.div`
 
 const StyledCopyButtonContainer = styled.div`
   align-items: center;
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   opacity: 0;
   position: absolute;
@@ -26,7 +26,8 @@ const StyledCopyButtonContainer = styled.div`
   transition: opacity calc(${themeCssVariables.animation.duration.fast} * 1s)
     ease;
 
-  ${StyledContainer}:hover & {
+  ${StyledContainer}:hover &,
+  ${StyledContainer}:focus-within & {
     opacity: 1;
   }
 

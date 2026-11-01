@@ -1,5 +1,10 @@
+import { FeatureFlagKey } from 'twenty-shared/types';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { parse } from 'graphql';
 import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
+import { createOneOperationFactory } from 'test/integration/graphql/utils/create-one-operation-factory.util';
+import { destroyOneOperationFactory } from 'test/integration/graphql/utils/destroy-one-operation-factory.util';
+import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import {
   type ApplicationWithResources,
@@ -44,9 +49,20 @@ const QUESTION = {
 
 // The model is not called here: the resumed stream is only checked for being
 // queued.
+const setRecordSharingEnabled = (value: boolean) =>
+  updateFeatureFlag({
+    featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+    value,
+    expectToFail: false,
+  });
+
+beforeAll(() => setRecordSharingEnabled(true));
+
+afterAll(() => setRecordSharingEnabled(false));
+
 describe('Sending an inbox message as an application', () => {
   const input = {
-    workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+    workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
     threadKey: `inbox-thread-${uuidv4()}`,
     idempotencyKey: 'first-recording',
     title: 'Your first call recording is ready',
@@ -81,7 +97,7 @@ describe('Sending an inbox message as an application', () => {
 
   const readMessages = (id: string) =>
     global.testDataSource.query(
-      `SELECT id, role, "isHidden", "senderUserWorkspaceId", "senderApplicationId"
+      `SELECT id, role, "senderWorkspaceMemberId", "senderApplicationId"
        FROM "${schema}"."agentMessage" WHERE "threadId" = $1
        ORDER BY "processedAt" ASC, "createdAt" ASC`,
       [id],
@@ -190,13 +206,11 @@ describe('Sending an inbox message as an application', () => {
     expect(messages).toEqual([
       expect.objectContaining({
         role: 'system',
-        isHidden: false,
-        senderUserWorkspaceId: null,
+        senderWorkspaceMemberId: null,
         senderApplicationId: null,
       }),
       expect.objectContaining({
         role: 'assistant',
-        isHidden: false,
         senderApplicationId: application.id,
       }),
     ]);
@@ -235,6 +249,38 @@ describe('Sending an inbox message as an application', () => {
     expect(response.body.data.sendInboxMessage.threadId).toBe(threadId);
     expect(await readMessages(threadId)).toHaveLength(3);
     expect(await readPendingQuestionMessageId()).toBe(pendingQuestionMessageId);
+  });
+
+  it('adds the members a later send lists to the same conversation', async () => {
+    const response = await sendInboxMessage(applicationToken, {
+      workspaceMemberIds: [
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+      ],
+      idempotencyKey: 'shared-with-tim',
+      text: 'Tim joins the conversation.',
+      toolCall: null,
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(response.body.data.sendInboxMessage.threadId).toBe(threadId);
+    expect(
+      await global.testDataSource.query(
+        `SELECT "isSubscribed" FROM "${schema}"."agentChatThreadParticipant"
+         WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
+        [threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.TIM],
+      ),
+    ).toEqual([{ isSubscribed: true }]);
+  });
+
+  it('refuses a member who cannot have the conversation', async () => {
+    const response = await sendInboxMessage(applicationToken, {
+      workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE, uuidv4()],
+      idempotencyKey: 'shared-with-a-stranger',
+      toolCall: null,
+    });
+
+    expect(JSON.stringify(response.body.errors)).toContain('THREAD_NOT_FOUND');
   });
 
   it('keeps a single waiting question when two are sent at once', async () => {
@@ -319,7 +365,6 @@ describe('Sending an inbox message as an application', () => {
 
     const { threadId: failedThreadId } = buildInboxMessageIds({
       senderKey: `application:${application.id}`,
-      workspaceMemberId: input.workspaceMemberId,
       threadKey,
       idempotencyKey: input.idempotencyKey,
     });
@@ -373,6 +418,7 @@ describe('Sending an inbox message as an application', () => {
         threadId,
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
       }),
+      expect.anything(),
     );
   });
 });
@@ -381,8 +427,17 @@ describe('Proposing a record call as an application', () => {
   let application: ApplicationWithResources;
   let applicationToken: string;
   let threadId: string | undefined;
+  const opportunityId = uuidv4();
 
   beforeAll(async () => {
+    await makeGraphqlApiRequest(
+      createOneOperationFactory({
+        objectMetadataSingularName: 'opportunity',
+        gqlFields: 'id',
+        data: { id: opportunityId, name: 'Inbox proposal deal' },
+      }),
+    );
+
     application = await setupApplicationWithResources({
       name: 'Inbox Record Application',
       permissionFlagUniversalIdentifiers: [SystemPermissionFlag.AI],
@@ -399,6 +454,14 @@ describe('Proposing a record call as an application', () => {
   });
 
   afterAll(async () => {
+    await makeGraphqlApiRequest(
+      destroyOneOperationFactory({
+        objectMetadataSingularName: 'opportunity',
+        gqlFields: 'id',
+        recordId: opportunityId,
+      }),
+    );
+
     if (threadId !== undefined) {
       await destroyAgentChatThread({ threadId });
     }
@@ -414,7 +477,7 @@ describe('Proposing a record call as an application', () => {
         query: SEND_INBOX_MESSAGE,
         variables: {
           input: {
-            workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+            workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
             threadKey: `inbox-thread-${uuidv4()}`,
             idempotencyKey: 'record-proposal',
             title: 'A deal looks won',
@@ -423,7 +486,7 @@ describe('Proposing a record call as an application', () => {
               toolName: 'propose_tool_call',
               input: {
                 toolName: 'update_one_opportunity',
-                arguments: { id: OPPORTUNITY_DATA_SEED_IDS.ID_1, stage: 'WON' },
+                arguments: { id: opportunityId, stage: 'WON' },
                 summary: 'Mark the deal as won',
               },
             },
@@ -445,7 +508,7 @@ describe('Proposing a record call as an application', () => {
 
     const [opportunity] = await global.testDataSource.query(
       `SELECT stage FROM "${schema}"."opportunity" WHERE id = $1`,
-      [OPPORTUNITY_DATA_SEED_IDS.ID_1],
+      [opportunityId],
     );
 
     expect(part.toolOutput.result).toMatchObject({
@@ -454,7 +517,7 @@ describe('Proposing a record call as an application', () => {
         toolName: 'update_one_opportunity',
         template: 'recordUpdate',
         objectNameSingular: 'opportunity',
-        recordId: OPPORTUNITY_DATA_SEED_IDS.ID_1,
+        recordId: opportunityId,
         currentValues: { stage: opportunity.stage },
       },
     });

@@ -12,7 +12,7 @@ export const buildImapTlsOptions = (
     case EmailConnectionSecurity.SSL_TLS:
       return { secure: true };
     case EmailConnectionSecurity.STARTTLS:
-      return { secure: false };
+      return { secure: false, doSTARTTLS: true };
     case EmailConnectionSecurity.NONE:
       return { secure: false, doSTARTTLS: false };
   }

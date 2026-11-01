@@ -91,14 +91,14 @@ export const AiChatToolCallApprovalArgumentsCard = ({
           objectNameSingular={objectNameSingular}
           values={toolArguments ?? proposal.arguments}
           recordId={recordId}
-          readonly={isAnswering}
+          readonly={isAnswering || proposal.areArgumentsEditable === false}
           onChange={handleRecordFieldChange}
         />
       )}
       {template === 'generic' && (
         <AiChatToolCallApprovalArgumentsEditor
           defaultArguments={proposal.arguments}
-          readonly={isAnswering}
+          readonly={isAnswering || proposal.areArgumentsEditable === false}
           onChange={setToolArguments}
         />
       )}

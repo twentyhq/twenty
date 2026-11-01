@@ -37,7 +37,6 @@ export const SettingsAdminHealthStatusListCard = ({
   return (
     <SettingsListCard
       items={services}
-      rounded={true}
       RowIconFn={(row) => HealthStatusIcons[row.id]}
       RowIconColor={theme.font.color.tertiary}
       getItemLabel={(service) => service.label}

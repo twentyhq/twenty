@@ -7,6 +7,7 @@ import { billingState } from '@/client-config/states/billingState';
 import { supportChatState } from '@/client-config/states/supportChatState';
 import { permissionFlagMapSelector } from '@/settings/roles/states/permissionFlagMapSelector';
 import { getDocumentationUrl } from '@/support/utils/getDocumentationUrl';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { type NavigationDrawerItemModifier } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerItemModifier';
 import { type NavigationDrawerItemIndentationLevel } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerItemIndentationLevel';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -17,6 +18,7 @@ import {
   IconApps,
   IconAt,
   IconCalendarEvent,
+  IconCode,
   IconColorSwatch,
   type IconComponent,
   IconCreditCard,
@@ -26,19 +28,21 @@ import {
   IconMail,
   IconMessage,
   IconMessageCircle,
-  IconPlug,
   IconServer,
   IconSettings2,
   IconSparkles,
   IconUserCircle,
   IconUsers,
 } from 'twenty-ui/icon';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
+import { openUrlInNewTab } from '~/utils/openUrlInNewTab';
 
 export type SettingsNavigationSection = {
   label: string;
   items: SettingsNavigationItem[];
-  isAdvanced?: boolean;
 };
 
 export type SettingsNavigationItem = {
@@ -50,7 +54,6 @@ export type SettingsNavigationItem = {
   matchSubPages?: boolean;
   isHidden?: boolean;
   subItems?: SettingsNavigationItem[];
-  isAdvanced?: boolean;
   modifier?: NavigationDrawerItemModifier;
 };
 
@@ -70,6 +73,9 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
     isNonEmptyString(supportChat.supportFrontChatId);
 
   const permissionFlagMap = useAtomStateValue(permissionFlagMapSelector);
+  const isAppPreferencesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
+  );
 
   return [
     {
@@ -86,28 +92,32 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           Icon: IconColorSwatch,
         },
         {
-          label: t`Accounts`,
-          path: SettingsPath.Accounts,
-          Icon: IconAt,
+          label: isAppPreferencesEnabled ? t`Apps preferences` : t`Accounts`,
+          path: isAppPreferencesEnabled
+            ? SettingsPath.AppPreferences
+            : SettingsPath.Accounts,
+          Icon: isAppPreferencesEnabled ? IconApps : IconAt,
           isHidden: !permissionFlagMap[PermissionFlagType.CONNECTED_ACCOUNTS],
-          subItems: [
-            {
-              label: t`Emails`,
-              path: SettingsPath.AccountsEmails,
-              Icon: IconMail,
-              isHidden:
-                !permissionFlagMap[PermissionFlagType.CONNECTED_ACCOUNTS],
-              indentationLevel: 2,
-            },
-            {
-              label: t`Calendars`,
-              path: SettingsPath.AccountsCalendars,
-              Icon: IconCalendarEvent,
-              isHidden:
-                !permissionFlagMap[PermissionFlagType.CONNECTED_ACCOUNTS],
-              indentationLevel: 2,
-            },
-          ],
+          subItems: isAppPreferencesEnabled
+            ? undefined
+            : [
+                {
+                  label: t`Emails`,
+                  path: SettingsPath.AccountsEmails,
+                  Icon: IconMail,
+                  isHidden:
+                    !permissionFlagMap[PermissionFlagType.CONNECTED_ACCOUNTS],
+                  indentationLevel: 2,
+                },
+                {
+                  label: t`Calendars`,
+                  path: SettingsPath.AccountsCalendars,
+                  Icon: IconCalendarEvent,
+                  isHidden:
+                    !permissionFlagMap[PermissionFlagType.CONNECTED_ACCOUNTS],
+                  indentationLevel: 2,
+                },
+              ],
         },
       ],
     },
@@ -147,9 +157,9 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
             !permissionFlagMap[PermissionFlagType.WORKSPACE],
         },
         {
-          label: t`MCP & APIs`,
-          path: SettingsPath.ApiWebhooks,
-          Icon: IconPlug,
+          label: t`Developers`,
+          path: SettingsPath.Developers,
+          Icon: IconCode,
           isHidden:
             !permissionFlagMap[PermissionFlagType.API_KEYS_AND_WEBHOOKS],
         },
@@ -204,9 +214,8 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
         {
           label: t`Documentation`,
           onClick: () =>
-            window.open(
+            openUrlInNewTab(
               getDocumentationUrl({ locale: currentWorkspaceMember?.locale }),
-              '_blank',
             ),
           Icon: IconHelpCircle,
         },

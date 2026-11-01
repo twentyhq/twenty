@@ -8,15 +8,14 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { WorkspaceFlatRoleTargetMapCacheService } from 'src/engine/metadata-modules/flat-role-target/services/workspace-flat-role-target-map-cache.service';
 import { ObjectPermissionModule } from 'src/engine/metadata-modules/object-permission/object-permission.module';
 import { RolePermissionFlagModule } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.module';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { RoleResolver } from 'src/engine/metadata-modules/role/role.resolver';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { WorkspaceFlatRoleMapCacheService } from 'src/engine/metadata-modules/role/services/workspace-flat-role-map-cache.service';
-import { RoleToolWorkspaceService } from 'src/engine/metadata-modules/role/tools/services/role-tool.workspace-service';
 import { WorkspaceRoleIdsWithAllRecordsAccessCacheService } from 'src/engine/metadata-modules/role/services/workspace-role-ids-with-all-records-access-cache.service';
 import { WorkspaceRolesPermissionsCacheService } from 'src/engine/metadata-modules/role/services/workspace-roles-permissions-cache.service';
 import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-permission-predicate/row-level-permission.module';
-import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
@@ -37,12 +36,11 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   providers: [
     RoleService,
     RoleResolver,
-    RoleToolWorkspaceService,
     WorkspaceFlatRoleMapCacheService,
     WorkspaceFlatRoleTargetMapCacheService,
     WorkspaceRolesPermissionsCacheService,
     WorkspaceRoleIdsWithAllRecordsAccessCacheService,
   ],
-  exports: [RoleService, RoleToolWorkspaceService],
+  exports: [RoleService],
 })
 export class RoleModule {}

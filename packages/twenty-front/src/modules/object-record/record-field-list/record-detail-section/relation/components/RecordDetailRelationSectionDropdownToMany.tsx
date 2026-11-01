@@ -1,5 +1,4 @@
-import { t } from '@lingui/core/macro';
-import { type ReactNode, useCallback, useContext } from 'react';
+import { type ReactElement, useCallback, useContext } from 'react';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -18,23 +17,21 @@ import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-rec
 import { useMultipleRecordPickerOpen } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerOpen';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerPickableMorphItemsComponentState';
-import { multipleRecordPickerSearchFilterComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchFilterComponentState';
 import { multipleRecordPickerSearchableObjectMetadataItemsComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerSearchableObjectMetadataItemsComponentState';
 import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
 import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
-import { dropdownPlacementComponentState } from '@/ui/layout/dropdown/states/dropdownPlacementComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { CustomError, isDefined } from 'twenty-shared/utils';
-import { LightIconButton } from 'twenty-ui/components/input';
-import { IconPlus } from 'twenty-ui/icon';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type RecordDetailRelationSectionDropdownToManyProps = {
-  dropdownTriggerClickableComponent?: ReactNode;
+  dropdownTriggerClickableComponent: ReactElement;
 };
 
 export const RecordDetailRelationSectionDropdownToMany = ({
@@ -57,7 +54,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
 
   if (!isDefined(fieldMetadataItem) || !isDefined(objectMetadataItem)) {
     throw new CustomError(
-      'Field metadata item or object metadata item not found',
+      doNotTranslate('Field metadata item or object metadata item not found'),
       'FIELD_METADATA_ITEM_OR_OBJECT_METADATA_ITEM_NOT_FOUND',
     );
   }
@@ -86,7 +83,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
   );
   if (!relationFieldMetadataItem) {
     throw new CustomError(
-      'Relation field metadata item not found',
+      doNotTranslate('Relation field metadata item not found'),
       'RELATION_FIELD_METADATA_ITEM_NOT_FOUND',
     );
   }
@@ -98,23 +95,22 @@ export const RecordDetailRelationSectionDropdownToMany = ({
 
   const relationRecords: ObjectRecord[] = (fieldValue as ObjectRecord[]) ?? [];
 
-  const { pickableMorphItems, searchableObjectMetadataItems } = isDefined(
-    junctionConfig,
-  )
-    ? getJunctionRelationPickerData({
-        junctionRecords: relationRecords,
-        targetFields: junctionConfig.targetFields,
-        objectMetadataItems,
-      })
-    : {
-        pickableMorphItems: relationRecords.map(({ id: recordId }) => ({
-          recordId,
-          objectMetadataId: relationObjectMetadataItem.id,
-          isSelected: true,
-          isMatchingSearchFilter: true,
-        })),
-        searchableObjectMetadataItems: [relationObjectMetadataItem],
-      };
+  const { pickableMorphItems, searchableObjectMetadataItems } =
+    isJunctionRelation
+      ? getJunctionRelationPickerData({
+          junctionRecords: relationRecords,
+          junctionConfig,
+          objectMetadataItems,
+        })
+      : {
+          pickableMorphItems: relationRecords.map(({ id: recordId }) => ({
+            recordId,
+            objectMetadataId: relationObjectMetadataItem.id,
+            isSelected: true,
+            isMatchingSearchFilter: true,
+          })),
+          searchableObjectMetadataItems: [relationObjectMetadataItem],
+        };
 
   const dropdownId = getRecordFieldCardRelationPickerDropdownId({
     fieldDefinition,
@@ -123,16 +119,6 @@ export const RecordDetailRelationSectionDropdownToMany = ({
   });
 
   const { closeDropdown } = useCloseDropdown();
-
-  const dropdownPlacement = useAtomComponentStateValue(
-    dropdownPlacementComponentState,
-    dropdownId,
-  );
-
-  const setMultipleRecordPickerSearchFilter = useSetAtomComponentState(
-    multipleRecordPickerSearchFilterComponentState,
-    dropdownId,
-  );
 
   const setMultipleRecordPickerPickableMorphItems = useSetAtomComponentState(
     multipleRecordPickerPickableMorphItemsComponentState,
@@ -150,10 +136,6 @@ export const RecordDetailRelationSectionDropdownToMany = ({
 
   const { openMultipleRecordPicker } = useMultipleRecordPickerOpen();
 
-  const handleCloseRelationPickerDropdown = useCallback(() => {
-    setMultipleRecordPickerSearchFilter('');
-  }, [setMultipleRecordPickerSearchFilter]);
-
   const { updateRelation } = useUpdateRelationOneToManyFieldInput();
 
   const { createNewRecordAndOpenSidePanel } = useAddNewRecordAndOpenSidePanel({
@@ -167,7 +149,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
 
   const {
     createJunctionRecordWithNestedTarget,
-    loading: isCreatingJunctionRecord,
+    isCreatePending: isCreatingJunctionRecord,
   } = useCreateJunctionRecordWithNestedTarget({
     sourceRecordId: recordId,
     sourceFieldName: fieldName,
@@ -179,7 +161,6 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     setMultipleRecordPickerSearchableObjectMetadataItems(
       searchableObjectMetadataItems,
     );
-    setMultipleRecordPickerSearchFilter('');
     setMultipleRecordPickerPickableMorphItems(pickableMorphItems);
 
     openMultipleRecordPicker(dropdownId);
@@ -237,25 +218,23 @@ export const RecordDetailRelationSectionDropdownToMany = ({
   }
 
   return (
-    <Dropdown
+    <DropdownRoot
       dropdownId={dropdownId}
-      dropdownPlacement="left-start"
-      onClose={handleCloseRelationPickerDropdown}
-      onOpen={handleOpenRelationPickerDropdown}
-      clickableComponent={
-        dropdownTriggerClickableComponent ?? (
-          <LightIconButton
-            className="displayOnHover"
-            emphasis="subtle"
-            aria-label={t`Add relation`}
-          >
-            <IconPlus />
-          </LightIconButton>
-        )
-      }
-      dropdownComponents={
+      type="picker"
+      multiple
+      onOpenChange={(open) => {
+        if (open) {
+          handleOpenRelationPickerDropdown();
+        }
+      }}
+    >
+      <Dropdown.Trigger render={dropdownTriggerClickableComponent} />
+      <DropdownContent
+        side="left"
+        align="start"
+        aria-label={fieldDefinition.label}
+      >
         <MultipleRecordPicker
-          focusId={dropdownId}
           componentInstanceId={dropdownId}
           onCreate={
             isJunctionRelation || isDefined(createNewRecordAndOpenSidePanel)
@@ -264,19 +243,8 @@ export const RecordDetailRelationSectionDropdownToMany = ({
           }
           isCreatePending={isCreatingJunctionRecord}
           onChange={handleChange}
-          onSubmit={() => {
-            closeDropdown(dropdownId);
-          }}
-          onClickOutside={() => {
-            closeDropdown(dropdownId);
-          }}
-          layoutDirection={
-            dropdownPlacement?.includes('end')
-              ? 'search-bar-on-bottom'
-              : 'search-bar-on-top'
-          }
         />
-      }
-    />
+      </DropdownContent>
+    </DropdownRoot>
   );
 };

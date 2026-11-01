@@ -1,4 +1,4 @@
-import { ListItem } from 'twenty-ui/primitives/navigation';
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { ObjectOptionsDropdownMenuViewName } from '@/object-record/object-options-dropdown/components/ObjectOptionsDropdownMenuViewName';
 import { useObjectOptionsDropdown } from '@/object-record/object-options-dropdown/hooks/useObjectOptionsDropdown';
@@ -29,6 +29,7 @@ import { useDestroyViewFromCurrentState } from '@/views/view-picker/hooks/useDes
 import { viewPickerReferenceViewIdComponentState } from '@/views/view-picker/states/viewPickerReferenceViewIdComponentState';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   IconCalendar,
   IconCalendarWeek,
@@ -116,14 +117,16 @@ export const ObjectOptionsDropdownCustomView = ({
   };
 
   const selectableItemIdArray = [
-    'Layout',
-    'Visibility',
-    'Fields',
+    doNotTranslate('Layout'),
+    doNotTranslate('Visibility'),
+    doNotTranslate('Fields'),
     ...(customViewData?.type === ViewType.CALENDAR
       ? ['CalendarDateField', 'CalendarView']
       : []),
-    ...(customViewData?.type !== ViewType.CALENDAR ? ['Group'] : []),
-    'Delete view',
+    ...(customViewData?.type !== ViewType.CALENDAR
+      ? [doNotTranslate('Group')]
+      : []),
+    doNotTranslate('Delete view'),
   ];
 
   const selectedItemId = useAtomComponentStateValue(
@@ -149,7 +152,7 @@ export const ObjectOptionsDropdownCustomView = ({
             itemId="Layout"
             onEnter={() => onContentChange('layout')}
           >
-            <ListItem
+            <ListItemButton
               focused={selectedItemId === 'Layout'}
               onClick={() => onContentChange('layout')}
               startIcon={
@@ -162,13 +165,13 @@ export const ObjectOptionsDropdownCustomView = ({
               description={t(getViewTypeLabel(customViewData.type))}
               descriptionPlacement="end"
               hasSubmenu
-            >{t`Layout`}</ListItem>
+            >{t`Layout`}</ListItemButton>
           </SelectableListItem>
           <SelectableListItem
             itemId="Visibility"
             onEnter={() => onContentChange('visibility')}
           >
-            <ListItem
+            <ListItemButton
               focused={selectedItemId === 'Visibility'}
               onClick={() => onContentChange('visibility')}
               startIcon={<IconShare />}
@@ -179,7 +182,7 @@ export const ObjectOptionsDropdownCustomView = ({
               }
               descriptionPlacement="end"
               hasSubmenu
-            >{t`Visibility`}</ListItem>
+            >{t`Visibility`}</ListItemButton>
           </SelectableListItem>
         </DropdownMenuItemsContainer>
         <DropdownMenuSeparator />
@@ -189,9 +192,13 @@ export const ObjectOptionsDropdownCustomView = ({
               <div id="calendar-date-field-picker-menu-item">
                 <SelectableListItem
                   itemId="CalendarDateField"
-                  onEnter={() => onContentChange('calendarFields')}
+                  onEnter={
+                    isDefaultView
+                      ? undefined
+                      : () => onContentChange('calendarFields')
+                  }
                 >
-                  <ListItem
+                  <ListItemButton
                     focused={selectedItemId === 'CalendarDateField'}
                     onClick={() => onContentChange('calendarFields')}
                     startIcon={<IconCalendar />}
@@ -203,14 +210,14 @@ export const ObjectOptionsDropdownCustomView = ({
                     descriptionPlacement="end"
                     hasSubmenu
                     disabled={isDefaultView}
-                  >{t`Date field`}</ListItem>
+                  >{t`Date field`}</ListItemButton>
                 </SelectableListItem>
               </div>
               <SelectableListItem
                 itemId="CalendarView"
                 onEnter={() => onContentChange('calendarView')}
               >
-                <ListItem
+                <ListItemButton
                   focused={selectedItemId === 'CalendarView'}
                   onClick={() => onContentChange('calendarView')}
                   startIcon={<IconCalendarWeek />}
@@ -222,7 +229,7 @@ export const ObjectOptionsDropdownCustomView = ({
                         : t`Day`
                   }
                   descriptionPlacement="end"
-                >{t`Calendar view`}</ListItem>
+                >{t`Calendar view`}</ListItemButton>
               </SelectableListItem>
             </>
           )}
@@ -230,33 +237,35 @@ export const ObjectOptionsDropdownCustomView = ({
             itemId="Fields"
             onEnter={() => onContentChange('fields')}
           >
-            <ListItem
+            <ListItemButton
               focused={selectedItemId === 'Fields'}
               onClick={() => onContentChange('fields')}
               startIcon={<IconListDetails />}
               description={t`${visibleFieldsCount} selected`}
               descriptionPlacement="end"
               hasSubmenu
-            >{t`Fields`}</ListItem>
+            >{t`Fields`}</ListItemButton>
           </SelectableListItem>
           {customViewData?.type !== ViewType.CALENDAR && (
             <Tooltip
               content={t`Not available on Default View`}
               side="bottom"
-              maxWidth={'100%'}
               delay={TooltipDelay.mediumDelay}
               disabled={!isDefaultView}
             >
               <div id="group-by-menu-item">
                 <SelectableListItem
                   itemId="Group"
-                  onEnter={() =>
-                    isDefined(recordIndexGroupFieldMetadataItem)
-                      ? onContentChange('recordGroups')
-                      : onContentChange('recordGroupFields')
+                  onEnter={
+                    isDefaultView
+                      ? undefined
+                      : () =>
+                          isDefined(recordIndexGroupFieldMetadataItem)
+                            ? onContentChange('recordGroups')
+                            : onContentChange('recordGroupFields')
                   }
                 >
-                  <ListItem
+                  <ListItemButton
                     focused={selectedItemId === 'Group'}
                     onClick={() =>
                       isDefined(recordIndexGroupFieldMetadataItem)
@@ -272,7 +281,7 @@ export const ObjectOptionsDropdownCustomView = ({
                     descriptionPlacement="end"
                     hasSubmenu
                     disabled={isDefaultView}
-                  >{t`Group`}</ListItem>
+                  >{t`Group`}</ListItemButton>
                 </SelectableListItem>
               </div>
             </Tooltip>
@@ -288,21 +297,20 @@ export const ObjectOptionsDropdownCustomView = ({
                 : t`Cannot delete the only view`
             }
             side="bottom"
-            maxWidth={'100%'}
             disabled={!(isDefaultView || isLastView)}
           >
             <div id="delete-view-menu-item">
               <SelectableListItem
                 itemId="Delete view"
-                onEnter={() => handleDelete()}
+                onEnter={isDefaultView || isLastView ? undefined : handleDelete}
               >
-                <ListItem
+                <ListItemButton
                   focused={selectedItemId === 'Delete view'}
                   onClick={() => handleDelete()}
                   startIcon={<IconTrash />}
                   disabled={isDefaultView || isLastView}
                   color="danger"
-                >{t`Delete view`}</ListItem>
+                >{t`Delete view`}</ListItemButton>
               </SelectableListItem>
             </div>
           </Tooltip>

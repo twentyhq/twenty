@@ -15,6 +15,16 @@ const meta: Meta<typeof Separator> = {
 export default meta;
 type Story = StoryObj<typeof Separator>;
 
+export const Display: Story = {
+  render: (args) => (
+    <Text style={{ display: 'grid', gap: 'var(--t-spacing-3)' }}>
+      <Text>Import records from a CSV file.</Text>
+      <Separator {...args} />
+      <Text>Connect an external data source.</Text>
+    </Text>
+  ),
+};
+
 export const Default: Story = {
   args: { 'aria-label': 'Sections' },
   play: async ({ canvasElement }) => {
@@ -42,42 +52,5 @@ export const Vertical: Story = {
     await expect(getComputedStyle(separator).margin).toBe('0px');
   },
 };
-
-export const LabeledComposition: Story = {
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    expect(canvas.getAllByRole('separator')).toHaveLength(1);
-    expect(canvas.getByRole('separator', { name: 'New' })).toBeVisible();
-  },
-  render: () => (
-    <Text
-      role="separator"
-      aria-label="New"
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        width: '100%',
-        color: 'var(--t-tag-text-red)',
-      }}
-    >
-      <Separator
-        aria-hidden
-        style={{ flexGrow: 1, width: 'auto', backgroundColor: 'currentColor' }}
-      />
-      <Text
-        render={<span />}
-        style={{
-          marginInline: 'var(--t-spacing-2)',
-          fontSize: 11,
-          fontWeight: 'var(--t-font-weight-semi-bold)',
-        }}
-      >
-        New
-      </Text>
-    </Text>
-  ),
-};
-
-export const Documentation: Story = { args: Default.args };
 
 export const VerticalDocumentation: Story = { args: Vertical.args };

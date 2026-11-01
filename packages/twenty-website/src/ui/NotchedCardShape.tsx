@@ -6,6 +6,7 @@ import {
   type Scheme,
   semanticColor,
 } from '@/tokens';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const CAP_HEIGHT_PX = 20;
 
@@ -21,10 +22,12 @@ const NOTCH_MAX_WIDTH_PX = Math.round(
     (MAX_CONTENT_WIDTH_PX - LEFT_SLOPE_WIDTH_PX - RIGHT_SLOPE_WIDTH_PX),
 );
 
-const LEFT_SLOPE_PATH =
-  'M0 0 C4.197 0 8.369 0.66 12.361 1.958 L61.861 18.042 A40 40 0 0 0 74.222 20 L0 20 Z';
-const RIGHT_SLOPE_PATH =
-  'M0 20 A40 40 0 0 1 12.63 17.953 L60.418 2.047 A40 40 0 0 1 73.048 0 L73.048 20 Z';
+const LEFT_SLOPE_PATH = doNotTranslate(
+  'M0 0 C4.197 0 8.369 0.66 12.361 1.958 L61.861 18.042 A40 40 0 0 0 74.222 20 L0 20 Z',
+);
+const RIGHT_SLOPE_PATH = doNotTranslate(
+  'M0 20 A40 40 0 0 1 12.63 17.953 L60.418 2.047 A40 40 0 0 1 73.048 0 L73.048 20 Z',
+);
 
 const ShapeRow = styled.div`
   display: flex;

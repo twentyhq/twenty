@@ -2,7 +2,6 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isCloudflareIntegrationEnabledState } from '@/client-config/states/isCloudflareIntegrationEnabledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { SettingsCard } from '@/settings/components/SettingsCard';
-import { UndecoratedLink } from '@/ui/navigation/link/components/UndecoratedLink/UndecoratedLink';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -38,27 +37,25 @@ export const SettingsWorkspaceDomainCard = () => {
 
   return (
     <StyledContainer>
-      <UndecoratedLink to={getSettingsPath(SettingsPath.Subdomain)} fullWidth>
-        <SettingsCard title={t`Subdomain`} Icon={<IconWorldWww />} />
-      </UndecoratedLink>
+      <SettingsCard
+        title={t`Subdomain`}
+        Icon={<IconWorldWww />}
+        to={getSettingsPath(SettingsPath.Subdomain)}
+      />
       {isCloudflareIntegrationEnabled && (
-        <UndecoratedLink
+        <SettingsCard
           to={getSettingsPath(SettingsPath.CustomDomain)}
-          fullWidth
-        >
-          <SettingsCard
-            title={t`Custom Domain`}
-            Icon={<IconWorld />}
-            Status={
-              currentWorkspace?.customDomain &&
-              currentWorkspace?.isCustomDomainEnabled ? (
-                <Status color="turquoise">{t`Active`}</Status>
-              ) : currentWorkspace?.customDomain ? (
-                <Status color="orange">{t`Inactive`}</Status>
-              ) : undefined
-            }
-          />
-        </UndecoratedLink>
+          title={t`Custom Domain`}
+          Icon={<IconWorld />}
+          Status={
+            currentWorkspace?.customDomain &&
+            currentWorkspace?.isCustomDomainEnabled ? (
+              <Status color="turquoise">{t`Active`}</Status>
+            ) : currentWorkspace?.customDomain ? (
+              <Status color="orange">{t`Inactive`}</Status>
+            ) : undefined
+          }
+        />
       )}
     </StyledContainer>
   );

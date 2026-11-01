@@ -9,7 +9,7 @@ const meta: Meta<typeof SettingsImageInput> = {
   title: 'Modules/Settings/SettingsImageInput',
   component: SettingsImageInput,
   decorators: [ComponentDecorator],
-  args: { onUpload: fn(), onRemove: fn() },
+  args: { onFileSelect: fn(), onRemove: fn() },
 };
 
 export default meta;

@@ -15,6 +15,7 @@ import { useSettingsAgentToolsTable } from '~/pages/settings/ai/hooks/useSetting
 import { type SettingsAgentToolItem } from '~/pages/settings/ai/types/SettingsAgentToolItem';
 import { isOwnedByInstalledApplication } from '@/applications/utils/isOwnedByInstalledApplication';
 import { normalizeSearchText } from 'twenty-ui/utilities';
+import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';
 
 const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -84,12 +85,12 @@ export const SettingsAgentToolsTab = () => {
           placeholder={t`Search a tool...`}
           value={searchTerm}
           onValueChange={setSearchTerm}
-          filterDropdown={(filterButton) => (
+          actions={
             <DropdownRoot
               dropdownId="settings-tools-filter-dropdown"
               type="panel"
             >
-              <Dropdown.Trigger render={filterButton} />
+              <SettingsSearchFilterTrigger />
               <DropdownContent
                 side="bottom"
                 align="end"
@@ -98,24 +99,24 @@ export const SettingsAgentToolsTab = () => {
               >
                 <Dropdown.Section>
                   <SettingsRow
-                    startIcon={<IconTool />}
+                    startElement={<IconTool />}
                     onCheckedChange={setShowCustomTools}
                     checked={showCustomTools}
                   >{t`Custom`}</SettingsRow>
                   <SettingsRow
-                    startIcon={<IconLock />}
+                    startElement={<IconLock />}
                     onCheckedChange={setShowManagedTools}
                     checked={showManagedTools}
                   >{t`Managed`}</SettingsRow>
                   <SettingsRow
-                    startIcon={<IconPuzzle />}
+                    startElement={<IconPuzzle />}
                     onCheckedChange={setShowStandardTools}
                     checked={showStandardTools}
                   >{t`Standard`}</SettingsRow>
                 </Dropdown.Section>
               </DropdownContent>
             </DropdownRoot>
-          )}
+          }
         />
       </StyledSearchContainer>
       <SettingsAgentToolsTable

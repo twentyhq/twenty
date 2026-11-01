@@ -32,8 +32,9 @@ const mockedConnectedAccounts = [
     lastSignedInAt: null,
     userWorkspaceId: '20202020-0687-4c41-b707-ed1bfca972a7',
     connectionProviderId: null,
+    applicationId: null,
     name: 'Tim Apple',
-    visibility: 'SHARE_EVERYTHING',
+    scope: 'USER',
     lastCredentialsRefreshedAt: null,
     connectionParameters: null,
     createdAt: '2026-02-27T01:17:25.392Z',
@@ -398,7 +399,7 @@ export const DraftEmailMissingScopesWithoutPermission: Story = {
 
     expect(
       await canvas.findByText(
-        'Ask a workspace admin for the Sync Account permission to reconnect this account.',
+        'Ask a workspace admin for the User Apps permission to reconnect this account.',
       ),
     ).toBeVisible();
     expect(

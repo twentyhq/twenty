@@ -24,7 +24,7 @@ export const getTwoFactorAuthenticationErrorToastOptions = ({
 }): ToastOptions | undefined => {
   if (!CombinedGraphQLErrors.is(error)) {
     return {
-      variant: 'error',
+      status: 'error',
       children: fallbackMessage,
       dedupeKey,
     };

@@ -8,9 +8,14 @@ export const OverflowingListMutableTag = () => {
   return (
     <Tag
       color="blue"
-      preventShrink
-      aria-label="Toggle tag label"
-      onClick={() => setHasLongLabel(!hasLongLabel)}
+      truncate={false}
+      render={
+        <button
+          type="button"
+          aria-label="Toggle tag label"
+          onClick={() => setHasLongLabel(!hasLongLabel)}
+        />
+      }
     >
       {hasLongLabel ? 'Customer with a much longer description' : 'Customer'}
     </Tag>

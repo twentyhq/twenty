@@ -81,8 +81,6 @@ export const SelectInput = ({
           >
             <Tag
               color={option.color ?? 'transparent'}
-              borderStyle="dashed"
-              variant="soft"
               startIcon={
                 isDefined(option.Icon) ? createElement(option.Icon) : undefined
               }

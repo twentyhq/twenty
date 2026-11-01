@@ -8,12 +8,12 @@ export const METRIC_ROW_PROP_DESCRIPTIONS = {
   startIcon:
     'Decorative node content before the label. The caller controls icon geometry.',
   value:
-    'Preformatted value displayed at the end of the row. String values also supply the progress ring accessible value text.',
+    'Preformatted value displayed at the end of the row. Nonempty string values also supply the progress ring accessible value text.',
   progress:
     'Optional controlled progress from 0 to 100. Omitting it displays the value without a ring.',
   progressColor: 'CSS color of the filled arc when progress is provided.',
   progressValueText:
-    'Accessible value text for the progress ring. Overrides the string value fallback; supply it when formatted content needs more context than a percentage.',
+    'Accessible value text for the progress ring. Nonempty text overrides the string value fallback; an empty string uses the ring percentage. Supply it when formatted content needs more context than a percentage.',
   className: 'CSS class applied to the row root.',
   style: 'Inline styles applied to the row root.',
   render: 'Replaces the row root element while preserving its contents.',

@@ -10,12 +10,12 @@ const MEMBER_B = 'user-workspace-b';
 
 const buildTurn = ({
   turnId,
-  senderUserWorkspaceId,
+  senderWorkspaceMemberId,
   question,
   answer,
 }: {
   turnId: string;
-  senderUserWorkspaceId: string | null;
+  senderWorkspaceMemberId: string | null;
   question: string;
   answer: string;
 }) => [
@@ -23,7 +23,7 @@ const buildTurn = ({
     id: `${turnId}-user`,
     turnId,
     role: 'user',
-    senderUserWorkspaceId,
+    senderWorkspaceMemberId,
     senderApplicationId: APPLICATION_ID,
     parts: [{ type: 'text', textContent: question }],
   },
@@ -31,7 +31,7 @@ const buildTurn = ({
     id: `${turnId}-assistant`,
     turnId,
     role: 'assistant',
-    senderUserWorkspaceId: null,
+    senderWorkspaceMemberId: null,
     senderApplicationId: null,
     parts: [
       {
@@ -63,22 +63,23 @@ const buildService = (messages: unknown[], failedTurnIds: string[] = []) => {
     messageRepository as never,
     turnRepository as never,
     fileUrlService as never,
+    {} as never,
   );
 
-  return { service, messageRepository, fileUrlService };
+  return { service, messageRepository, turnRepository, fileUrlService };
 };
 
 const buildFileMessage = ({
   turnId,
-  senderUserWorkspaceId,
+  senderWorkspaceMemberId,
 }: {
   turnId: string;
-  senderUserWorkspaceId: string;
+  senderWorkspaceMemberId: string;
 }) => ({
   id: `${turnId}-user`,
   turnId,
   role: 'user',
-  senderUserWorkspaceId,
+  senderWorkspaceMemberId,
   senderApplicationId: APPLICATION_ID,
   parts: [
     { type: 'text', textContent: 'What does this deck say?' },
@@ -100,7 +101,7 @@ describe('AgentConversationReaderService', () => {
       [
         ...buildTurn({
           turnId: 'turn-1',
-          senderUserWorkspaceId: MEMBER_A,
+          senderWorkspaceMemberId: MEMBER_A,
           question: 'Who is our biggest customer?',
           answer: 'Private Co',
         }),
@@ -108,7 +109,7 @@ describe('AgentConversationReaderService', () => {
           id: 'turn-2-user',
           turnId: 'turn-2',
           role: 'user',
-          senderUserWorkspaceId: MEMBER_A,
+          senderWorkspaceMemberId: MEMBER_A,
           senderApplicationId: APPLICATION_ID,
           parts: [{ type: 'text', textContent: 'And the second one?' }],
         },
@@ -127,11 +128,41 @@ describe('AgentConversationReaderService', () => {
     ]);
   });
 
+  it('leaves reactions out of the conversation given to the model', async () => {
+    const [userMessage, assistantMessage] = buildTurn({
+      turnId: 'turn-1',
+      senderWorkspaceMemberId: MEMBER_A,
+      question: 'Who is our biggest customer?',
+      answer: 'Private Co',
+    });
+    const { service, messageRepository } = buildService([
+      userMessage,
+      {
+        ...assistantMessage,
+        reactions: [{ emoji: '👍', workspaceMemberId: MEMBER_B }],
+      },
+    ]);
+
+    const messages = await service.loadMessages({
+      workspaceId: WORKSPACE_ID,
+      threadId: THREAD_ID,
+    });
+
+    expect(messageRepository.find).toHaveBeenCalledWith(
+      WORKSPACE_ID,
+      expect.objectContaining({ relations: ['parts', 'parts.file'] }),
+    );
+    expect(messages.map((message) => Object.keys(message).sort())).toEqual([
+      ['id', 'parts', 'role'],
+      ['id', 'parts', 'role'],
+    ]);
+  });
+
   it('keeps every part when no actor is given', async () => {
     const { service } = buildService([
       ...buildTurn({
         turnId: 'turn-1',
-        senderUserWorkspaceId: MEMBER_A,
+        senderWorkspaceMemberId: MEMBER_A,
         question: 'Who is our biggest customer?',
         answer: 'Private Co',
       }),
@@ -149,13 +180,13 @@ describe('AgentConversationReaderService', () => {
     const { service } = buildService([
       ...buildTurn({
         turnId: 'turn-1',
-        senderUserWorkspaceId: MEMBER_A,
+        senderWorkspaceMemberId: MEMBER_A,
         question: 'Who is our biggest customer?',
         answer: 'Private Co',
       }),
       ...buildTurn({
         turnId: 'turn-2',
-        senderUserWorkspaceId: MEMBER_B,
+        senderWorkspaceMemberId: MEMBER_B,
         question: 'And the second one?',
         answer: 'Other Co',
       }),
@@ -164,7 +195,7 @@ describe('AgentConversationReaderService', () => {
     const messages = await service.loadMessages({
       workspaceId: WORKSPACE_ID,
       threadId: THREAD_ID,
-      actor: { type: 'user', userWorkspaceId: MEMBER_B },
+      actor: { type: 'user', workspaceMemberId: MEMBER_B },
     });
 
     expect(messages.map(getPartTypes)).toEqual([
@@ -179,13 +210,13 @@ describe('AgentConversationReaderService', () => {
     const { service } = buildService([
       ...buildTurn({
         turnId: 'turn-1',
-        senderUserWorkspaceId: MEMBER_A,
+        senderWorkspaceMemberId: MEMBER_A,
         question: 'Who is our biggest customer?',
         answer: 'Private Co',
       }),
       ...buildTurn({
         turnId: 'turn-2',
-        senderUserWorkspaceId: null,
+        senderWorkspaceMemberId: null,
         question: 'Summarize this thread',
         answer: 'Done',
       }),
@@ -207,13 +238,13 @@ describe('AgentConversationReaderService', () => {
 
   it('loads files with their type and signs them for the actor', async () => {
     const { service, messageRepository, fileUrlService } = buildService([
-      buildFileMessage({ turnId: 'turn-1', senderUserWorkspaceId: MEMBER_A }),
+      buildFileMessage({ turnId: 'turn-1', senderWorkspaceMemberId: MEMBER_A }),
     ]);
 
     const messages = await service.loadMessages({
       workspaceId: WORKSPACE_ID,
       threadId: THREAD_ID,
-      actor: { type: 'user', userWorkspaceId: MEMBER_A },
+      actor: { type: 'user', workspaceMemberId: MEMBER_A },
     });
 
     expect(messageRepository.find).toHaveBeenCalledWith(
@@ -236,16 +267,87 @@ describe('AgentConversationReaderService', () => {
 
   it('drops the files of turns sent by someone else without signing them', async () => {
     const { service, fileUrlService } = buildService([
-      buildFileMessage({ turnId: 'turn-1', senderUserWorkspaceId: MEMBER_A }),
+      buildFileMessage({ turnId: 'turn-1', senderWorkspaceMemberId: MEMBER_A }),
     ]);
 
     const messages = await service.loadMessages({
       workspaceId: WORKSPACE_ID,
       threadId: THREAD_ID,
-      actor: { type: 'user', userWorkspaceId: MEMBER_B },
+      actor: { type: 'user', workspaceMemberId: MEMBER_B },
     });
 
     expect(getPartTypes(messages[0])).toEqual(['text']);
     expect(fileUrlService.signFileByIdUrl).not.toHaveBeenCalled();
+  });
+});
+
+describe('AgentConversationReaderService.findToolPart', () => {
+  const buildToolPartService = ({
+    parts,
+    threadMessageId,
+  }: {
+    parts: { id: string; messageId: string }[];
+    threadMessageId: string | null;
+  }) => {
+    const messagePartRepository = { find: jest.fn().mockResolvedValue(parts) };
+    const messageRepository = {
+      findOne: jest
+        .fn()
+        .mockResolvedValue(
+          threadMessageId === null ? null : { id: threadMessageId },
+        ),
+    };
+
+    return new AgentConversationReaderService(
+      messageRepository as never,
+      {} as never,
+      {} as never,
+      messagePartRepository as never,
+    );
+  };
+
+  it('returns the part of the call made in the given thread', async () => {
+    const service = buildToolPartService({
+      parts: [
+        { id: 'other-thread-part', messageId: 'other-thread-message' },
+        { id: 'thread-part', messageId: 'thread-message' },
+      ],
+      threadMessageId: 'thread-message',
+    });
+
+    const part = await service.findToolPart({
+      workspaceId: WORKSPACE_ID,
+      threadId: THREAD_ID,
+      toolCallId: 'call-id',
+    });
+
+    expect(part?.id).toBe('thread-part');
+  });
+
+  it('returns null when the call was made in another thread only', async () => {
+    const service = buildToolPartService({
+      parts: [{ id: 'other-thread-part', messageId: 'other-thread-message' }],
+      threadMessageId: null,
+    });
+
+    const part = await service.findToolPart({
+      workspaceId: WORKSPACE_ID,
+      threadId: THREAD_ID,
+      toolCallId: 'call-id',
+    });
+
+    expect(part).toBeNull();
+  });
+
+  it('returns null when no part carries the call', async () => {
+    const service = buildToolPartService({ parts: [], threadMessageId: null });
+
+    const part = await service.findToolPart({
+      workspaceId: WORKSPACE_ID,
+      threadId: THREAD_ID,
+      toolCallId: 'call-id',
+    });
+
+    expect(part).toBeNull();
   });
 });

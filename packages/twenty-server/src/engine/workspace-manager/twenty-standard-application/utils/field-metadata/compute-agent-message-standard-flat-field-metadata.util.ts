@@ -2,7 +2,6 @@ import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/tw
 import { msg } from '@lingui/core/macro';
 import {
   FieldMetadataType,
-  MetadataWritability,
   RelationType,
   RelationOnDeleteAction,
 } from 'twenty-shared/types';
@@ -12,6 +11,7 @@ import {
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
+import { PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-disabled-field-permission-actions.constant';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 
 export const buildAgentMessageStandardFlatFieldMetadatas = (
@@ -39,7 +39,8 @@ export const buildAgentMessageStandardFlatFieldMetadatas = (
         defaultValue: 'uuid',
       },
     }),
-    writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   agentId: {
@@ -60,7 +61,8 @@ export const buildAgentMessageStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   senderWorkspaceMember: {
@@ -91,34 +93,8 @@ export const buildAgentMessageStandardFlatFieldMetadatas = (
         },
       },
     }),
-    writability: MetadataWritability.SYSTEM,
-    isAuditLogged: false,
-  },
-  senderUserWorkspaceId: {
-    ...createStandardFieldFlatMetadata({
-      ...args,
-      context: {
-        fieldName: 'senderUserWorkspaceId',
-        type: FieldMetadataType.UUID,
-        label: i18nLabel(
-          msg({
-            message: 'Sender workspace membership ID',
-            context: 'fieldMetadata.label',
-          }),
-        ),
-        description: i18nLabel(
-          msg({
-            message: 'Sender workspace membership ID',
-            context: 'fieldMetadata.description',
-          }),
-        ),
-        icon: 'IconUser',
-        isSystem: true,
-        isUIEditable: false,
-        isNullable: true,
-      },
-    }),
-    writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   senderApplicationId: {
@@ -145,7 +121,8 @@ export const buildAgentMessageStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   role: {
@@ -166,7 +143,8 @@ export const buildAgentMessageStandardFlatFieldMetadatas = (
         isNullable: false,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   status: {
@@ -188,30 +166,8 @@ export const buildAgentMessageStandardFlatFieldMetadatas = (
         defaultValue: "'sent'",
       },
     }),
-    writability: MetadataWritability.SYSTEM,
-    isAuditLogged: false,
-  },
-  // Only marks contexts the 2.46 upgrade has not turned into system messages yet; the 2.42 history move still copies it
-  isHidden: {
-    ...createStandardFieldFlatMetadata({
-      ...args,
-      context: {
-        fieldName: 'isHidden',
-        type: FieldMetadataType.BOOLEAN,
-        label: i18nLabel(
-          msg({ message: 'Is Hidden', context: 'fieldMetadata.label' }),
-        ),
-        description: i18nLabel(
-          msg({ message: 'Is Hidden', context: 'fieldMetadata.description' }),
-        ),
-        icon: 'IconToggleLeft',
-        isSystem: true,
-        isUIEditable: false,
-        isNullable: false,
-        defaultValue: false,
-      },
-    }),
-    writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   processedAt: {
@@ -235,7 +191,8 @@ export const buildAgentMessageStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   createdAt: {
@@ -257,7 +214,8 @@ export const buildAgentMessageStandardFlatFieldMetadatas = (
         defaultValue: 'now',
       },
     }),
-    writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   updatedAt: {
@@ -279,7 +237,8 @@ export const buildAgentMessageStandardFlatFieldMetadatas = (
         defaultValue: 'now',
       },
     }),
-    writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   deletedAt: {
@@ -300,7 +259,8 @@ export const buildAgentMessageStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   thread: {
@@ -328,7 +288,8 @@ export const buildAgentMessageStandardFlatFieldMetadatas = (
         },
       },
     }),
-    writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   turn: {
@@ -356,7 +317,8 @@ export const buildAgentMessageStandardFlatFieldMetadatas = (
         },
       },
     }),
-    writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
   parts: {
@@ -383,7 +345,39 @@ export const buildAgentMessageStandardFlatFieldMetadatas = (
         },
       },
     }),
-    writability: MetadataWritability.SYSTEM,
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+    isAuditLogged: false,
+  },
+  reactions: {
+    ...createStandardRelationFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'reactions',
+        type: FieldMetadataType.RELATION,
+        label: i18nLabel(
+          msg({ message: 'Reactions', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Emoji reactions of workspace members to this message',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconMoodSmile',
+        isUIEditable: false,
+        isNullable: true,
+        targetObjectName: 'agentMessageReaction',
+        targetFieldName: 'message',
+        morphId: null,
+        settings: {
+          relationType: RelationType.ONE_TO_MANY,
+          joinColumnName: null,
+        },
+      },
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
 });

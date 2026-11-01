@@ -3,6 +3,7 @@ import { StepStatus, type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 import { isWorkflowIfElseAction } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/guards/is-workflow-if-else-action.guard';
 import { type WorkflowIfElseResult } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/types/workflow-if-else-result.type';
+import { isIfElseBranchTarget } from 'src/modules/workflow/workflow-executor/workflow-actions/if-else/utils/is-if-else-branch-target.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 export const getEffectiveParentStatus = ({
@@ -16,10 +17,11 @@ export const getEffectiveParentStatus = ({
 }): StepStatus | undefined => {
   const parentStatus = stepInfos[parentStep.id]?.status;
 
-  if (
-    !isWorkflowIfElseAction(parentStep) ||
-    parentStep.nextStepIds?.includes(childStepId)
-  ) {
+  if (!isWorkflowIfElseAction(parentStep)) {
+    return parentStatus;
+  }
+
+  if (!isIfElseBranchTarget({ ifElseStep: parentStep, stepId: childStepId })) {
     return parentStatus;
   }
 

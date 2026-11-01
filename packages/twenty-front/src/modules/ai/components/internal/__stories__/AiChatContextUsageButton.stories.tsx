@@ -6,13 +6,18 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatContextUsageDetails } from '@/ai/components/internal/AiChatContextUsageDetails';
-import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
 import {
-  agentChatUsageComponentFamilyState,
+  agentChatUsageFamilyState,
   type AgentChatUsageState,
-} from '@/ai/states/agentChatUsageComponentFamilyState';
+} from '@/ai/states/agentChatUsageFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { GetAiChatUsageDocument } from '~/generated-metadata/graphql';
+import { type AiChatUserCreditsUsage } from '@/ai/types/AiChatUserCreditsUsage';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import {
+  GetAiChatUsageDocument,
+  UserCreditsFallback,
+} from '~/generated-metadata/graphql';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const USAGE: AgentChatUsageState = {
   conversationSize: 200000,
@@ -35,63 +40,70 @@ const UsageStory = ({
   usage = null,
   limit = 1000,
   consumed = 800,
+  kind = 'workspaceAllowance',
   error = false,
   loading = false,
+  userCreditsUsage = null,
+  userCreditsFallback = UserCreditsFallback.WORKSPACE_CREDITS,
   children,
 }: {
   usage?: AgentChatUsageState | null;
   limit?: number | null;
   consumed?: number | null;
+  kind?: string;
   error?: boolean;
   loading?: boolean;
+  userCreditsUsage?: AiChatUserCreditsUsage | null;
+  userCreditsFallback?: UserCreditsFallback;
   children?: ReactNode;
 }) => {
   const [store] = useState(() => {
     const storyStore = createStore();
     storyStore.set(currentAiChatThreadState.atom, 'story-thread');
+    storyStore.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      billingCustomer: { id: 'billing-customer', userCreditsFallback },
+    });
     storyStore.set(
-      agentChatUsageComponentFamilyState.atomFamily({
-        instanceId: 'usage-story',
-        familyKey: { threadId: 'story-thread' },
-      }),
+      agentChatUsageFamilyState.atomFamily({ threadId: 'story-thread' }),
       usage,
     );
     return storyStore;
   });
   return (
     <Provider store={store}>
-      <AgentChatComponentInstanceContext.Provider
-        value={{ instanceId: 'usage-story' }}
-      >
-        <MockedProvider
-          mocks={[
-            {
-              request: { query: GetAiChatUsageDocument },
-              maxUsageCount: Infinity,
-              delay: loading ? Infinity : 0,
-              ...(error
-                ? { error: new Error('Usage unavailable') }
-                : {
-                    result: {
-                      data: {
-                        aiChatUsage:
-                          limit === null
-                            ? null
-                            : {
-                                limitValue: limit,
-                                consumedValue: consumed,
-                                periodEnd: null,
-                                kind: 'allowance',
-                              },
+      <MockedProvider
+        mocks={[
+          {
+            request: { query: GetAiChatUsageDocument },
+            maxUsageCount: Infinity,
+            delay: loading ? Infinity : 0,
+            ...(error
+              ? { error: new Error('Usage unavailable') }
+              : {
+                  result: {
+                    data: {
+                      aiChatUsage:
+                        limit === null
+                          ? null
+                          : {
+                              limitValue: limit,
+                              consumedValue: consumed,
+                              periodEnd: null,
+                              kind,
+                            },
+                      aiChatUserCreditsUsage: userCreditsUsage && {
+                        __typename: 'AiChatUserCreditsUsage',
+                        ...userCreditsUsage,
                       },
                     },
-                  }),
-            },
-          ]}
-        >
-          {children ?? <AiChatContextUsageButton />}
-        </MockedProvider>
-      </AgentChatComponentInstanceContext.Provider>
+                  },
+                }),
+          },
+        ]}
+      >
+        {children ?? <AiChatContextUsageButton />}
+      </MockedProvider>
     </Provider>
   );
 };
@@ -152,6 +164,112 @@ export const Expanded: Story = {
 };
 export const ReopenedConversation: Story = {
   render: () => <UsageStory usage={{ ...USAGE, lastMessage: null }} />,
+};
+const USER_CREDITS_PERIOD_END = new Date(
+  Date.now() + 3 * 86400000,
+).toISOString();
+
+export const WithUserCredits: Story = {
+  render: () => (
+    <UsageStory
+      userCreditsUsage={{
+        limitValue: 4160000,
+        consumedValue: 1160000,
+        periodEnd: USER_CREDITS_PERIOD_END,
+      }}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole('button', { name: /^Context and usage/ }),
+    );
+    await waitFor(() => expect(page.getByText('Personal usage')).toBeVisible());
+    await expect(
+      page.getByRole('progressbar', { name: 'Personal usage' }),
+    ).toHaveAttribute('aria-valuetext', 'Reset in 3 days (28%)');
+    await expect(page.queryByText('Usage')).not.toBeInTheDocument();
+    await userEvent.hover(page.getByText('Personal usage'));
+    await waitFor(() =>
+      expect(
+        page.getByText(
+          'Your own AI usage, separate from the workspace credits',
+        ),
+      ).toBeVisible(),
+    );
+  },
+};
+export const WithUserCreditsAndLimit: Story = {
+  render: () => (
+    <UsageStory
+      kind="limit"
+      userCreditsUsage={{
+        limitValue: 4160000,
+        consumedValue: 1160000,
+        periodEnd: USER_CREDITS_PERIOD_END,
+      }}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole('button', { name: /^Context and usage/ }),
+    );
+    await waitFor(() => expect(page.getByText('Personal usage')).toBeVisible());
+    await expect(page.getByText('Usage')).toBeVisible();
+  },
+};
+export const UserCreditsSpentWithFallback: Story = {
+  render: () => (
+    <UsageStory
+      userCreditsUsage={{
+        limitValue: 4160000,
+        consumedValue: 4160000,
+        periodEnd: USER_CREDITS_PERIOD_END,
+      }}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole('button', { name: /^Context and usage/ }),
+    );
+    await waitFor(() =>
+      expect(page.getByRole('progressbar', { name: 'Usage' })).toHaveAttribute(
+        'aria-valuetext',
+        '80%',
+      ),
+    );
+    await expect(page.queryByText('Personal usage')).not.toBeInTheDocument();
+  },
+};
+export const UserCreditsSpentWithoutFallback: Story = {
+  render: () => (
+    <UsageStory
+      userCreditsUsage={{
+        limitValue: 4160000,
+        consumedValue: 4160000,
+        periodEnd: USER_CREDITS_PERIOD_END,
+      }}
+      userCreditsFallback={UserCreditsFallback.STOP}
+    />
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const page = within(canvasElement.ownerDocument.body);
+    await userEvent.click(
+      canvas.getByRole('button', { name: /^Context and usage/ }),
+    );
+    await waitFor(() =>
+      expect(
+        page.getByRole('progressbar', { name: 'Personal usage' }),
+      ).toHaveAttribute('aria-valuetext', 'Reset in 3 days (100%)'),
+    );
+    await expect(page.queryByText('Usage')).not.toBeInTheDocument();
+  },
 };
 export const NoLimit: Story = { render: () => <UsageStory limit={null} /> };
 export const UnknownConsumption: Story = {

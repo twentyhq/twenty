@@ -1,6 +1,8 @@
+import { Blockquote } from '@/advanced-text-editor/extensions/blockquote/Blockquote';
+import { EmptyBlockHint } from '@/advanced-text-editor/extensions/empty-block-hint/EmptyBlockHint';
 import { ResizableImage } from '@/advanced-text-editor/extensions/resizable-image/ResizableImage';
-import { UploadImageExtension } from '@/advanced-text-editor/extensions/resizable-image/UploadImageExtension';
 import { SlashCommand } from '@/advanced-text-editor/extensions/slash-command/SlashCommand';
+import { UploadExtension } from '@/advanced-text-editor/extensions/upload/UploadExtension';
 import { VariableTag } from '@/advanced-text-editor/extensions/variable-tag/VariableTag';
 import { type AdvancedTextEditorExtensionContext } from '@/advanced-text-editor/types/AdvancedTextEditorExtensionContext';
 import { type AnyExtension } from '@tiptap/core';
@@ -20,11 +22,16 @@ export const buildFullRichTextExtensions = (
   Strike,
   Underline,
   Heading.configure({ levels: [1, 2, 3] }),
-  ListKit,
+  ListKit.configure({ taskItem: false, taskList: false }),
+  Blockquote,
   Link.configure({ openOnClick: false }),
   ResizableImage,
-  UploadImageExtension.configure(context),
+  UploadExtension.configure({
+    onImageUpload: context.onImageUpload,
+    onImageUploadError: context.onImageUploadError,
+  }),
   SlashCommand,
+  EmptyBlockHint,
 ];
 
 export const buildFullRichTextWithVariableTagExtensions = (

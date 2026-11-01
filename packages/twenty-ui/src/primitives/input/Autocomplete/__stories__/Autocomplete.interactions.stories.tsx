@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { Button } from '@ui/primitives/input/Button/Button';
+import { Input } from '@ui/primitives/input/Input/Input';
+import { Text } from '@ui/primitives/typography/Text/Text';
 import { ComponentDecorator } from '@ui/testing';
 
 import { Autocomplete } from '../Autocomplete';
@@ -93,16 +95,20 @@ const ControlledResultsExample = () => {
           }
         }}
       >
-        <Autocomplete.Input render={<input aria-label="Location" />} />
-        <Autocomplete.Popup width={200} style={{ maxInlineSize: 180 }}>
-          <Autocomplete.List>
-            {(item: string) => (
-              <Autocomplete.Item key={item} value={item}>
-                {item}
-              </Autocomplete.Item>
-            )}
-          </Autocomplete.List>
-        </Autocomplete.Popup>
+        <Autocomplete.Input render={<Input aria-label="Location" />} />
+        <Autocomplete.Portal>
+          <Autocomplete.Positioner>
+            <Autocomplete.Popup width={200} style={{ maxInlineSize: 180 }}>
+              <Autocomplete.List>
+                {(item: string) => (
+                  <Autocomplete.Item key={item} value={item}>
+                    {item}
+                  </Autocomplete.Item>
+                )}
+              </Autocomplete.List>
+            </Autocomplete.Popup>
+          </Autocomplete.Positioner>
+        </Autocomplete.Portal>
       </Autocomplete.Root>
       <Button
         onMouseDown={(event) => event.preventDefault()}
@@ -116,7 +122,7 @@ const ControlledResultsExample = () => {
       <Button onClick={() => setOutsideClickCount((count) => count + 1)}>
         Outside
       </Button>
-      <span>{`Outside clicks: ${outsideClickCount}`}</span>
+      <Text>{`Outside clicks: ${outsideClickCount}`}</Text>
     </>
   );
 };
@@ -156,14 +162,14 @@ export const ControlledResults: Story = {
       expect(input).toHaveAttribute('aria-expanded', 'false'),
     );
     await expect(input).toHaveValue('Paris');
-    await expect(canvas.getByText('Outside clicks: 0')).toBeVisible();
-    await userEvent.click(outsideButton);
     await expect(canvas.getByText('Outside clicks: 1')).toBeVisible();
   },
 };
 
 const PreventedEnterExample = () => {
   const [enterCount, setEnterCount] = useState(0);
+  const [shouldPreventBaseUIHandler, setShouldPreventBaseUIHandler] =
+    useState(true);
 
   return (
     <>
@@ -171,23 +177,37 @@ const PreventedEnterExample = () => {
         <Autocomplete.Input
           aria-label="Fruit"
           onKeyDown={(event) => {
-            if (event.key === 'Enter') {
-              event.preventDefault();
-              setEnterCount((count) => count + 1);
+            if (event.key !== 'Enter') {
+              return;
             }
+
+            event.preventDefault();
+
+            if (shouldPreventBaseUIHandler) {
+              event.preventBaseUIHandler();
+            }
+
+            setEnterCount((count) => count + 1);
           }}
         />
-        <Autocomplete.Popup>
-          <Autocomplete.List>
-            {(fruit: string) => (
-              <Autocomplete.Item key={fruit} value={fruit}>
-                {fruit}
-              </Autocomplete.Item>
-            )}
-          </Autocomplete.List>
-        </Autocomplete.Popup>
+        <Autocomplete.Portal>
+          <Autocomplete.Positioner>
+            <Autocomplete.Popup>
+              <Autocomplete.List aria-label="Fruit suggestions">
+                {(fruit: string) => (
+                  <Autocomplete.Item key={fruit} value={fruit}>
+                    {fruit}
+                  </Autocomplete.Item>
+                )}
+              </Autocomplete.List>
+            </Autocomplete.Popup>
+          </Autocomplete.Positioner>
+        </Autocomplete.Portal>
       </Autocomplete.Root>
-      <span>{`Enter count: ${enterCount}`}</span>
+      <Text>{`Enter count: ${enterCount}`}</Text>
+      <Button onClick={() => setShouldPreventBaseUIHandler(false)}>
+        Allow Base UI selection
+      </Button>
     </>
   );
 };
@@ -207,5 +227,24 @@ export const PreventedKeyDown: Story = {
     await expect(canvas.getByText('Enter count: 1')).toBeVisible();
     await expect(input).toHaveValue('a');
     await expect(input).toHaveAttribute('aria-expanded', 'true');
+    await userEvent.keyboard('{Escape}');
+    await waitFor(() =>
+      expect(body.queryByRole('listbox', { hidden: true })).toBeNull(),
+    );
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Allow Base UI selection' }),
+    );
+    await userEvent.type(input, 'p');
+    const reopenedApple = await body.findByRole('option', { name: 'Apple' });
+    await waitFor(() =>
+      expect(input).toHaveAttribute('aria-activedescendant', reopenedApple.id),
+    );
+    await userEvent.keyboard('{Enter}');
+    await expect(canvas.getByText('Enter count: 2')).toBeVisible();
+    await expect(input).toHaveValue('Apple');
+    await expect(input).toHaveAttribute('aria-expanded', 'false');
+    await waitFor(() =>
+      expect(body.queryByRole('listbox', { hidden: true })).toBeNull(),
+    );
   },
 };

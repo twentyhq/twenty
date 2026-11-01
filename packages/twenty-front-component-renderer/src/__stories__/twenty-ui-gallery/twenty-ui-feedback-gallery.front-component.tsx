@@ -1,6 +1,6 @@
 import { createElement } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Callout, InlineBanner } from 'twenty-ui/components/feedback';
+import { InlineBanner } from 'twenty-ui/components/feedback';
 import {
   Banner,
   Loader,
@@ -9,12 +9,13 @@ import {
 } from 'twenty-ui/primitives/feedback';
 import { isDefined } from 'twenty-shared/utils';
 import 'twenty-ui/style.css';
-import { ThemeProvider } from 'twenty-ui/theme';
+import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme';
 
 import {
   ComponentGallery,
   type GalleryEntry,
 } from '../shared/front-components/component-gallery';
+import { CalloutGalleryExample } from './callout-gallery-example';
 
 const FEEDBACK_ENTRIES: GalleryEntry[] = [
   {
@@ -40,9 +41,7 @@ const FEEDBACK_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'Callout',
-    node: (
-      <Callout variant="info" title="Info" description="A short description." />
-    ),
+    node: <CalloutGalleryExample />,
   },
   {
     name: 'InlineBanner compact link',
@@ -89,16 +88,44 @@ const FEEDBACK_ENTRIES: GalleryEntry[] = [
   },
   {
     name: 'ProgressBar',
-    node: <ProgressBar value={50} ariaLabel="Progress" />,
+    node: <ProgressBar value={50} aria-label="Progress" />,
   },
   {
     name: 'Skeleton',
-    node: <Skeleton width={180} height={16} />,
+    node: <Skeleton width={180} height={16} data-testid="round-skeleton" />,
+  },
+  {
+    name: 'MediumRoundSkeleton',
+    node: (
+      <Skeleton
+        width={180}
+        height={16}
+        borderRadius={themeCssVariables.border.radius.mdRound}
+        data-testid="medium-round-skeleton"
+      />
+    ),
+  },
+  {
+    name: 'CapsuleSkeleton',
+    node: (
+      <Skeleton
+        width={24}
+        height={84}
+        borderRadius={80}
+        data-testid="capsule-skeleton"
+      />
+    ),
   },
   {
     name: 'StaticSkeleton',
     node: (
-      <Skeleton width={40} height={40} borderRadius="50%" animated={false} />
+      <Skeleton
+        width={40}
+        height={40}
+        borderRadius="50%"
+        animated={false}
+        data-testid="circle-skeleton"
+      />
     ),
   },
 ];

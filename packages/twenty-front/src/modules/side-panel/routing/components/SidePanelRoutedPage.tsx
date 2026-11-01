@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Trans } from '@lingui/react/macro';
 
 import { WorkspaceRoutes } from '@/app/routing/components/WorkspaceRoutes';
-import { WorkspaceRouteUnavailable } from '@/app/routing/components/WorkspaceRouteUnavailable';
+import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { AppErrorBoundary } from '@/error-handler/components/AppErrorBoundary';
 import { SidePanelRouteNavigatorProvider } from '@/side-panel/routing/components/SidePanelRouteNavigatorProvider';

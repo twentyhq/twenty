@@ -1,3 +1,4 @@
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { triggerUpdateRecordOptimisticEffect } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffect';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -106,7 +107,7 @@ export const useRestoreManyRecords = ({
             isDefined(optimisticRecordWithConnection) &&
             isDefined(cachedRecordWithConnection)
           ) {
-            const recordGqlFields = {
+            const recordGqlFields: RecordGqlFields = {
               deletedAt: true,
             };
             updateRecordFromCache({
@@ -167,7 +168,7 @@ export const useRestoreManyRecords = ({
               isDefined(optimisticRecordWithConnection) &&
               isDefined(cachedRecordWithConnection)
             ) {
-              const recordGqlFields = {
+              const recordGqlFields: RecordGqlFields = {
                 deletedAt: true,
               };
               updateRecordFromCache({

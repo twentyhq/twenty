@@ -1,5 +1,5 @@
 export type AppUninstallPhase =
-  | 'build'
+  | 'identity'
   | 'check'
   | 'confirmation'
   | 'uninstall';

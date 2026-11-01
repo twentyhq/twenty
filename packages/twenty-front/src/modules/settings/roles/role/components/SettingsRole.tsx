@@ -5,6 +5,9 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { DEFAULT_SETTINGS_DRAFT_ROLE } from '@/settings/roles/constants/DefaultSettingsDraftRole';
 import { SettingsRoleAssignment } from '@/settings/roles/role-assignment/components/SettingsRoleAssignment';
+import { useIsRoleAgentChatChannelAccessDirty } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useIsRoleAgentChatChannelAccessDirty';
+import { useResetRoleAgentChatChannelAccess } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useResetRoleAgentChatChannelAccess';
+import { useSaveRoleAgentChatChannelAccess } from '@/settings/roles/role-permissions/agent-chat-channels/hooks/useSaveRoleAgentChatChannelAccess';
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
 import { SettingsRoleSettings } from '@/settings/roles/role-settings/components/SettingsRoleSettings';
 import { SettingsRoleLabelContainer } from '@/settings/roles/role/components/SettingsRoleLabelContainer';
@@ -18,6 +21,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
+import { useRefreshAgentChatChannels } from '@/ai/hooks/useRefreshAgentChatChannels';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
@@ -62,6 +66,13 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   );
 
   const { loadCurrentUser } = useLoadCurrentUser();
+  const { refreshAgentChatChannels } = useRefreshAgentChatChannels();
+  const isRoleAgentChatChannelAccessDirty =
+    useIsRoleAgentChatChannelAccessDirty(roleId);
+  const { saveRoleAgentChatChannelAccess } =
+    useSaveRoleAgentChatChannelAccess(roleId);
+  const { resetRoleAgentChatChannelAccess } =
+    useResetRoleAgentChatChannelAccess(roleId);
 
   const { enqueueToast } = useToast();
 
@@ -99,9 +110,12 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     settingsDraftRole,
     settingsPersistedRole,
   );
-  const isDirty = Object.keys(dirtyFields).length > 0;
+  const isRoleDirty = Object.keys(dirtyFields).length > 0;
+  const isDirty = isRoleDirty || isRoleAgentChatChannelAccessDirty;
 
   const handleCancel = () => {
+    resetRoleAgentChatChannelAccess();
+
     if (isCreateMode) {
       setSettingsDraftRole(DEFAULT_SETTINGS_DRAFT_ROLE);
       navigateSettings(SettingsPath.Roles);
@@ -116,7 +130,7 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
   const handleSave = async () => {
     if (isDefined(dirtyFields.label) && dirtyFields.label === '') {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Role name cannot be empty`,
       });
       return;
@@ -125,8 +139,15 @@ export const SettingsRole = ({ roleId, isCreateMode }: SettingsRoleProps) => {
     setIsSaving(true);
 
     try {
-      await saveDraftRoleToDB();
-      await loadCurrentUser();
+      if (isCreateMode || isRoleDirty) {
+        await saveDraftRoleToDB();
+        await loadCurrentUser();
+      }
+      if (isRoleAgentChatChannelAccessDirty) {
+        await saveRoleAgentChatChannelAccess();
+      } else if (isDefined(dirtyFields.canAccessAllAgentChatChannels)) {
+        await refreshAgentChatChannels();
+      }
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
     } finally {

@@ -15,9 +15,9 @@ import {
 import { MultipleRecordPicker } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPicker';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
-import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
-import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
@@ -25,6 +25,7 @@ import { useId, useState } from 'react';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
+import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconChevronDown } from 'twenty-ui/icon';
 import { Field } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
@@ -54,7 +55,7 @@ const StyledVariablePickerContainer = styled.div`
   flex-shrink: 0;
 `;
 
-export type FormMultiRecordPickerProps = {
+type FormMultiRecordPickerProps = {
   label?: string;
   defaultValue?: Array<RecordId | Variable> | Variable | string | null;
   onChange: (value: Array<RecordId | Variable> | Variable) => void;
@@ -83,7 +84,6 @@ export const FormMultiRecordPicker = ({
   const dropdownId = `form-multi-record-picker-${componentId}`;
   const variablesDropdownId = `form-multi-record-picker-${componentId}-variables`;
 
-  const { closeDropdown } = useCloseDropdown();
   const { enqueueToast } = useToast();
   const { openFormMultiRecordPicker } = useOpenFormMultiRecordPicker({
     objectNameSingular,
@@ -139,7 +139,7 @@ export const FormMultiRecordPicker = ({
 
       if (selectedRecordCount >= QUERY_MAX_RECORDS) {
         enqueueToast({
-          variant: 'warning',
+          status: 'warning',
           children: t`You can select at most ${QUERY_MAX_RECORDS} records.`,
         });
 
@@ -202,43 +202,52 @@ export const FormMultiRecordPicker = ({
           </StyledFormSelectContainerWrapper>
         ) : (
           <StyledDropdownContainer>
-            <Dropdown
+            <DropdownRoot
               dropdownId={dropdownId}
-              dropdownPlacement="bottom-start"
-              clickableComponentWidth="100%"
-              onOpen={handleOpenDropdown}
-              dropdownOffset={{
-                y: parseInt(theme.spacing[1], 10),
+              type="picker"
+              multiple
+              onOpenChange={(open) => {
+                if (open) {
+                  handleOpenDropdown();
+                }
               }}
-              clickableComponent={
-                <StyledFormSelectContainerWrapper>
-                  <FormFieldInputInnerContainer
-                    formFieldInputInstanceId={componentId}
-                    hasRightElement={isDefined(VariablePicker) && !readonly}
-                    hoverable
-                    preventFocusStackUpdate={true}
-                  >
-                    {chips}
-                    <StyledIconButton>
-                      <IconChevronDown
-                        size={theme.icon.size.md}
-                        color={theme.font.color.light}
-                      />
-                    </StyledIconButton>
-                  </FormFieldInputInnerContainer>
-                </StyledFormSelectContainerWrapper>
-              }
-              dropdownComponents={
+            >
+              <Dropdown.Trigger
+                nativeButton={false}
+                aria-label={label ?? t`Select records`}
+                render={
+                  <StyledFormSelectContainerWrapper>
+                    <FormFieldInputInnerContainer
+                      formFieldInputInstanceId={componentId}
+                      hasRightElement={isDefined(VariablePicker) && !readonly}
+                      hoverable
+                      preventFocusStackUpdate={true}
+                    >
+                      {chips}
+                      <StyledIconButton>
+                        <IconChevronDown
+                          size={theme.icon.size.md}
+                          color={theme.font.color.light}
+                        />
+                      </StyledIconButton>
+                    </FormFieldInputInnerContainer>
+                  </StyledFormSelectContainerWrapper>
+                }
+              />
+              <DropdownContent
+                side="bottom"
+                align="start"
+                sideOffset={parseInt(theme.spacing[1], 10)}
+                width={GenericDropdownContentWidth.ExtraLarge}
+                aria-label={label ?? t`Select records`}
+              >
                 <MultipleRecordPicker
                   componentInstanceId={dropdownId}
-                  focusId={dropdownId}
                   onChange={handleMorphItemChange}
-                  onSubmit={() => closeDropdown(dropdownId)}
-                  onClickOutside={() => closeDropdown(dropdownId)}
-                  dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
+                  layoutDirection="search-bar-on-bottom"
                 />
-              }
-            />
+              </DropdownContent>
+            </DropdownRoot>
           </StyledDropdownContainer>
         )}
         {isDefined(VariablePicker) && !readonly && (

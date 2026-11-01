@@ -1,7 +1,7 @@
 import { clsx } from 'clsx';
 import { type ComponentPropsWithRef } from 'react';
 
-import { MenuSeparator } from '@ui/primitives/surfaces/Menu/internal/MenuSeparator';
+import { Menu as MenuPrimitive } from '@base-ui/react/menu';
 
 import styles from '../Dropdown.module.scss';
 
@@ -9,7 +9,7 @@ export const DropdownSeparator = ({
   className,
   ...props
 }: ComponentPropsWithRef<'div'>) => (
-  <MenuSeparator
+  <MenuPrimitive.Separator
     {...props}
     role="separator"
     data-dropdown-separator=""

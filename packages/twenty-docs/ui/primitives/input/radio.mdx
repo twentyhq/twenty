@@ -3,19 +3,22 @@ title: Radio
 description: Render one option in a mutually exclusive radio group.
 ---
 
-import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import RadioReference from '/snippets/ui/generated/input/radio.mdx';
+
+## Overview
 
 `Radio` represents one option inside [RadioGroup](/ui/primitives/input/radio-group). Give each option a distinct `value` and a visible label. The group owns the selected value.
 
 <StoryEmbed
-  storyId="ui-input-radio--documentation"
+  storyId="ui-input-radio--display"
   title="Radio example"
-  height={240}
+  height={140}
 />
 
-## Labeled options
+## Usage
 
 ```tsx
 import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
@@ -26,36 +29,80 @@ export const ContactMethod = () => (
     defaultValue="email"
     aria-label="Preferred contact method"
   >
-    <label>
-      <Radio value="email" />
-      Email
-    </label>
-    <label>
-      <Radio value="phone" />
-      Phone
-    </label>
-    <label>
-      <Radio value="post" disabled />
+    <Radio value="email">Email</Radio>
+    <Radio value="phone">Phone</Radio>
+    <Radio value="post" disabled>
       Postal mail (unavailable)
-    </label>
+    </Radio>
   </RadioGroup>
 );
 ```
 
 The `size` prop accepts `sm` or `md` and defaults to `sm`. Use the same size for options in a group.
 
+## Visual choices
+
+Compare selected and disabled states, sizes, and the default and card appearances. Use a labeled group of options for an actual choice.
+
+<StoryEmbed
+  storyId="ui-input-radio--catalog"
+  title="Visual choices for radio"
+  height={380}
+/>
+
+## Complete parts
+
+`Radio.Root` and `Radio.Indicator` expose the installed Base UI parts without the styled assembly. Compose them when you need custom content or indicator placement. The callable `Radio` supplies Twenty's radio appearance and indicator for common options.
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const StorageChoice = () => (
+  <RadioGroup aria-label="Storage" defaultValue="ssd">
+    <Radio.Root value="ssd">
+      <Radio.Indicator keepMounted render={<span />}>
+        ✓
+      </Radio.Indicator>
+      SSD
+    </Radio.Root>
+    <Radio.Root value="hdd">HDD</Radio.Root>
+  </RadioGroup>
+);
+```
+
+Standard radios and `Radio.Root` render a span with radio semantics and an adjacent hidden native input. Card radios render a div. `ref` targets the rendered root; `inputRef` targets the input. `Radio.Indicator` renders a span and its ref targets that element. `render`, state-based `className` and `style`, native attributes and event handlers retain their upstream contracts. The public types include `RadioProps`, `RadioRootProps`, `RadioRootState`, `RadioIndicatorProps` and `RadioIndicatorState`.
+
 ## Card options
 
-Use `variant="card"` for full-width options with an inset radio indicator. Card options render a div with radio semantics and accept the same size, disabled, and native props as standard radios. Keep interactive controls outside the card content.
+Use `variant="card"` for full-width options with an inset radio indicator. Card radios keep their div root by default. Use `render` to choose another element explicitly. When that element is a native button, also set `nativeButton`. Keep interactive controls outside the card content.
+
+Give the group enough width for its content and leave space for the indicator at the top right. A title, icon, and short description help explain each choice.
 
 <StoryEmbed
   storyId="ui-input-radio--cards-documentation"
   title="Radio card options"
-  height={280}
+  height={290}
 />
 
 ```tsx
+import { IconLayoutKanban, IconTable } from 'twenty-ui/icon';
 import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+const VIEWS = [
+  {
+    value: 'table',
+    title: 'Table view',
+    description: 'Browse records in rows.',
+    Icon: IconTable,
+  },
+  {
+    value: 'board',
+    title: 'Board view',
+    description: 'Track progress across columns.',
+    Icon: IconLayoutKanban,
+  },
+];
 
 export const ViewChoice = () => (
   <RadioGroup
@@ -63,24 +110,70 @@ export const ViewChoice = () => (
     defaultValue="table"
     style={{ width: 280 }}
   >
-    <Radio variant="card" value="table">
-      Table view
+    {VIEWS.map(({ value, title, description, Icon }) => (
+      <Radio key={value} variant="card" value={value}>
+        <span style={{ display: 'grid', gap: 8, paddingInlineEnd: 24 }}>
+          <Icon size={20} aria-hidden />
+          <Text
+            render={<span />}
+            style={{ fontWeight: 'var(--t-font-weight-medium)' }}
+          >
+            {title}
+          </Text>
+          <Text
+            render={<span />}
+            style={{ color: 'var(--t-font-color-secondary)', lineHeight: 1.5 }}
+          >
+            {description}
+          </Text>
+        </span>
+      </Radio>
+    ))}
+  </RadioGroup>
+);
+```
+
+## Explicit native composition
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const BillingChoice = () => (
+  <RadioGroup aria-label="Billing interval" defaultValue="monthly">
+    <Radio
+      variant="card"
+      value="monthly"
+      nativeButton
+      render={<button type="button" />}
+    >
+      Monthly
     </Radio>
-    <Radio variant="card" value="board">
-      Board view
+    <Radio
+      variant="card"
+      value="yearly"
+      nativeButton
+      render={<button type="button" />}
+    >
+      Yearly
     </Radio>
   </RadioGroup>
 );
 ```
 
+The ref targets the composed button. For custom non-button roots, leave `nativeButton` false and forward the supplied render props and ref to the actual element.
+
 ## Keyboard and selection
 
-Tab enters or leaves the group. Arrow keys move between enabled options and select the focused option. Space selects the focused radio. Selection and change handlers belong on `RadioGroup`; see its [uncontrolled example](/ui/primitives/input/radio-group#uncontrolled-state) and [controlled example](/ui/primitives/input/radio-group#controlled-state).
+Tab enters or leaves the group. Arrow keys move between enabled options and select the focused option. Space selects the focused radio. The installed Base UI radio suppresses Enter selection for both default roots and composed native buttons. Selection and change handlers belong on `RadioGroup`; see its [uncontrolled example](/ui/primitives/input/radio-group#uncontrolled-state) and [controlled example](/ui/primitives/input/radio-group#controlled-state).
 
-`Radio` is generic over the value type. Keep that type consistent with its group. Native attributes such as `aria-describedby` can associate an option with additional help text.
+Radio arrows change selection as they move focus. [Dropdown.SelectionGroup](/ui/components/navigation/dropdown) moves focus with arrows and commits a choice with Enter or Space.
+
+`Radio` and `Radio.Root` are generic over the value type. Keep that type consistent with its group. Native attributes such as `aria-describedby` can associate an option with additional help text.
 
 ## Props
 
 The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
 
 <RadioReference />
+
+<PageBanner illustration="page-cover-switch" />

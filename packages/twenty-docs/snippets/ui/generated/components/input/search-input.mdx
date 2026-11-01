@@ -11,6 +11,10 @@
  *   npx nx generate:ui twenty-docs
  */}
 
+<ParamField body="actions" type="ReactNode">
+  Controls rendered after the search field, such as a filter Dropdown. Set their size and accessible names on the controls.
+</ParamField>
+
 <ParamField body="aria-label" type="string">
   Accessible name when aria-labelledby is absent.
 </ParamField>
@@ -32,15 +36,11 @@
 </ParamField>
 
 <ParamField body="disabled" type="boolean">
-  Disables the text input. Configure filter popup controls separately.
+  Disables the text input. Controls in actions keep their own state.
 </ParamField>
 
-<ParamField body="filterButtonAriaLabel" type="string" default="Filter">
-  Accessible label for the optional filter button.
-</ParamField>
-
-<ParamField body="filterDropdown" type="((filterButton: ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt;) =&gt; ReactNode)">
-  Renders a filter popup around the supplied filter button.
+<ParamField body="hasFocusRing" type="boolean" default="false">
+  Shows the group focus border. Defaults to false for all search inputs. Set true to opt in. Error styling remains visible.
 </ParamField>
 
 <ParamField body="id" type="string">
@@ -71,12 +71,16 @@
 </ParamField>
 
 <ParamField body="size" type="&quot;md&quot; | &quot;sm&quot;" default="md">
-  Visual size of the input group and optional filter button.
+  Visual size of the input group.
 </ParamField>
 
 <ParamField body="style" type="CSSProperties | ((state: InputState) =&gt; CSSProperties | undefined)">
   Style applied to the element, or a function that
   returns a style object based on the component's state.
+</ParamField>
+
+<ParamField body="textAlign" type="&quot;end&quot; | &quot;start&quot;">
+  Aligns text to the logical start or end of the input. Follows the text direction.
 </ParamField>
 
 <ParamField body="value" type="string | number | readonly string[]">

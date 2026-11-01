@@ -1,3 +1,4 @@
+import { type I18n } from '@lingui/core';
 import { isNumber } from '@sniptt/guards';
 import { CalendarStartDay } from 'twenty-shared/constants';
 import { FirstDayOfTheWeek } from 'twenty-shared/types';
@@ -19,7 +20,7 @@ import { RelationLabelResolution } from 'src/modules/dashboard/chart-data/types/
 import { applyCumulativeToTwoDimensionalBarData } from 'src/modules/dashboard/chart-data/utils/apply-cumulative-to-two-dimensional-bar-data.util';
 import { applyGapFilling } from 'src/modules/dashboard/chart-data/utils/apply-gap-filling.util';
 import { buildFormattedToRawLookupDto } from 'src/modules/dashboard/chart-data/utils/build-formatted-to-raw-lookup-dto.util';
-import { getAggregateOperationLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-operation-label.util';
+import { getAggregateValueLabel } from 'src/modules/dashboard/chart-data/utils/get-aggregate-value-label.util';
 import { getSelectOptions } from 'src/modules/dashboard/chart-data/utils/get-select-options.util';
 import { processTwoDimensionalResults } from 'src/modules/dashboard/chart-data/utils/process-two-dimensional-results.util';
 import { sortChartDataIfNeeded } from 'src/modules/dashboard/chart-data/utils/sort-chart-data-if-needed.util';
@@ -35,6 +36,7 @@ export const transformToTwoDimensionalBarChartData = ({
   firstDayOfTheWeek,
   primaryRelationLabelResolution,
   secondaryRelationLabelResolution,
+  i18n,
 }: {
   filteredRawResults: GroupByRawResult[];
   primaryAxisGroupByField: FlatFieldMetadata;
@@ -45,6 +47,7 @@ export const transformToTwoDimensionalBarChartData = ({
   firstDayOfTheWeek: CalendarStartDay;
   primaryRelationLabelResolution: RelationLabelResolution | undefined;
   secondaryRelationLabelResolution: RelationLabelResolution | undefined;
+  i18n: I18n;
 }): BarChartDataDTO => {
   const layout = configuration.layout ?? BarChartLayout.VERTICAL;
   const isHorizontal = layout === BarChartLayout.HORIZONTAL;
@@ -194,7 +197,11 @@ export const transformToTwoDimensionalBarChartData = ({
   }));
 
   const categoryLabel = primaryAxisGroupByField.label;
-  const valueLabel = `${getAggregateOperationLabel(configuration.aggregateOperation)} of ${aggregateField.label}`;
+  const valueLabel = getAggregateValueLabel({
+    aggregateOperation: configuration.aggregateOperation,
+    aggregateFieldLabel: aggregateField.label,
+    i18n,
+  });
 
   const xAxisLabel = isHorizontal ? valueLabel : categoryLabel;
   const yAxisLabel = isHorizontal ? categoryLabel : valueLabel;

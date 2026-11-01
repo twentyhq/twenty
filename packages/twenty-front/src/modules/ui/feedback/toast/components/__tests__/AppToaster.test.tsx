@@ -36,7 +36,7 @@ describe('AppToaster', () => {
 
     act(() => {
       result.current.enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: 'Record saved',
         description: 'Your changes are available',
         action: (
@@ -127,7 +127,7 @@ describe('AppToaster', () => {
 
     act(() => {
       result.current.enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: 'Record saved',
         onClose,
         onCancel,

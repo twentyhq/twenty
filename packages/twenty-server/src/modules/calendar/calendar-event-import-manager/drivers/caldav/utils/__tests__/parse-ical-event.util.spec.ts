@@ -308,4 +308,25 @@ describe('parseICalEvents', () => {
 
     expect(events.map((event) => event.iCalUid)).toEqual(['healthy']);
   });
+
+  it.each([
+    [[], false],
+    [['CLASS:PUBLIC'], false],
+    [['CLASS:PRIVATE'], true],
+    [['CLASS:CONFIDENTIAL'], true],
+    [['CLASS:private'], true],
+    [['CLASS:X-SECRET'], true],
+  ])('maps %j to isPrivate %s', (classLines, isPrivate) => {
+    const ics = buildVEvent([
+      'UID:abc',
+      'SUMMARY:Doctor',
+      'DTSTART:20260601T100000Z',
+      'DTEND:20260601T110000Z',
+      ...classLines,
+    ]);
+
+    const [event] = parseICalEvents(ics, HREF);
+
+    expect(event.isPrivate).toBe(isPrivate);
+  });
 });

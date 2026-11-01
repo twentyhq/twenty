@@ -15,6 +15,7 @@ import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/h
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { v4 as uuidv4 } from 'uuid';
 import {
   PageLayoutTabLayoutMode,
@@ -72,7 +73,9 @@ export const useCreatePageLayoutWidget = ({
 
       if (!isDefined(activeTabId)) {
         throw new Error(
-          `A tab must be selected to create a new ${type} widget`,
+          doNotTranslate(
+            `A tab must be selected to create a new ${type} widget`,
+          ),
         );
       }
 

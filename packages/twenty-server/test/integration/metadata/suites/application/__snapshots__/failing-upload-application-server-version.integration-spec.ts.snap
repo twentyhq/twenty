@@ -1,5 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Publish application is gated by the instance server version rejects publishing when the app declares a blank engines.twenty 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_APP_ENGINE_REQUIREMENT",
+    "userFriendlyMessage": "The app manifest declares an invalid server version requirement.",
+  },
+  "message": "App manifest declares invalid engines.twenty value "  ". Must be a valid semver range.",
+  "name": "UserInputError",
+}
+`;
+
 exports[`Publish application is gated by the instance server version rejects publishing when the app requires a server version the instance does not satisfy 1`] = `
 {
   "extensions": {

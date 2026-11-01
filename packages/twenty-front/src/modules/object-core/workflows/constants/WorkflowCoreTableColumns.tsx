@@ -1,4 +1,10 @@
 import { msg } from '@lingui/core/macro';
+import {
+  IconCalendarTime,
+  IconShare,
+  IconStatusChange,
+  IconTextSize,
+} from 'twenty-ui/icon';
 
 import { CoreWorkflowNameCell } from '@/object-core/workflows/components/CoreWorkflowNameCell';
 import { CoreWorkflowStatusesCell } from '@/object-core/workflows/components/CoreWorkflowStatusesCell';
@@ -12,6 +18,7 @@ export const WORKFLOW_CORE_TABLE_COLUMNS: CoreObjectTableColumn<CoreWorkflow>[] 
     {
       fieldName: 'name',
       fieldLabel: msg`Name`,
+      FieldIcon: IconTextSize,
       fieldType: 'string',
       align: 'left',
       gridTrack: 'minmax(200px, 1fr)',
@@ -22,6 +29,7 @@ export const WORKFLOW_CORE_TABLE_COLUMNS: CoreObjectTableColumn<CoreWorkflow>[] 
     {
       fieldName: 'statuses',
       fieldLabel: msg`Statuses`,
+      FieldIcon: IconStatusChange,
       align: 'left',
       gridTrack: '160px',
       renderCell: (workflow) => (
@@ -31,6 +39,7 @@ export const WORKFLOW_CORE_TABLE_COLUMNS: CoreObjectTableColumn<CoreWorkflow>[] 
     {
       fieldName: 'visibility',
       fieldLabel: msg`Visibility`,
+      FieldIcon: IconShare,
       align: 'left',
       gridTrack: '120px',
       renderCell: (workflow) => (
@@ -40,6 +49,7 @@ export const WORKFLOW_CORE_TABLE_COLUMNS: CoreObjectTableColumn<CoreWorkflow>[] 
     {
       fieldName: 'updatedAt',
       fieldLabel: msg`Last update`,
+      FieldIcon: IconCalendarTime,
       fieldType: 'string',
       align: 'left',
       gridTrack: '150px',

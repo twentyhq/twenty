@@ -26,9 +26,11 @@ type ManyToOneRelationConfiguration<
 
 type ManyToOneMetadataRelationsProperties = {
   [TSourceMetadataName in AllMetadataName]: {
-    [TRelationProperty in ExtractEntityManyToOneEntityRelationProperties<
-      MetadataEntity<TSourceMetadataName>
-    >]: ManyToOneRelationConfiguration<TSourceMetadataName, TRelationProperty>;
+    [
+      TRelationProperty in ExtractEntityManyToOneEntityRelationProperties<
+        MetadataEntity<TSourceMetadataName>
+      >
+    ]: ManyToOneRelationConfiguration<TSourceMetadataName, TRelationProperty>;
   };
 };
 
@@ -72,6 +74,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     },
     pageLayout: {
       foreignKey: 'pageLayoutId',
+    },
+    agentChatChannel: {
+      foreignKey: 'agentChatChannelId',
     },
   },
   fieldMetadata: {
@@ -177,6 +182,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
       foreignKey: 'agentId',
     },
     apiKey: null,
+    webhook: {
+      foreignKey: 'webhookId',
+    },
     workspace: null,
     application: null,
   },
@@ -252,6 +260,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     fieldMetadata: {
       foreignKey: 'fieldMetadataId',
     },
+    relationFieldMetadata: {
+      foreignKey: 'relationFieldMetadataId',
+    },
     workspaceMemberFieldMetadata: {
       foreignKey: 'workspaceMemberFieldMetadataId',
     },
@@ -294,6 +305,13 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     workspace: null,
     application: null,
   },
+  mcpServer: {
+    workspace: null,
+    application: null,
+    connectionProvider: {
+      foreignKey: 'connectionProviderId',
+    },
+  },
   applicationVariable: {
     workspace: null,
     application: null,
@@ -309,6 +327,10 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     },
   },
   connectionProvider: {
+    workspace: null,
+    application: null,
+  },
+  messagingProvider: {
     workspace: null,
     application: null,
   },
@@ -336,6 +358,22 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
       foreignKey: 'tsVectorFieldMetadataId',
     },
   },
+  relatedRecordPath: {
+    workspace: null,
+    application: null,
+    objectMetadata: {
+      foreignKey: 'objectMetadataId',
+    },
+    firstFieldMetadata: {
+      foreignKey: 'firstFieldMetadataId',
+    },
+    secondFieldMetadata: {
+      foreignKey: 'secondFieldMetadataId',
+    },
+    thirdFieldMetadata: {
+      foreignKey: 'thirdFieldMetadataId',
+    },
+  },
   validationRule: {
     workspace: null,
     application: null,
@@ -354,6 +392,20 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
   workflowVersion: {
     workspace: null,
     application: null,
+  },
+  agentChatChannel: {
+    workspace: null,
+    application: null,
+  },
+  agentChatChannelRole: {
+    workspace: null,
+    application: null,
+    channel: {
+      foreignKey: 'channelId',
+    },
+    role: {
+      foreignKey: 'roleId',
+    },
   },
 } as const satisfies ManyToOneMetadataRelationsProperties;
 

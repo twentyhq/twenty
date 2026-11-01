@@ -17,8 +17,8 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+} from 'src/engine/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 
 const buildPermissionDeniedException = () =>
   new PermissionsException(
@@ -67,6 +67,7 @@ export class CreateFileUploadPermissionGuard implements CanActivate {
           setting: permissionFlag,
           apiKeyId: request.apiKey?.id,
           applicationId: request.application?.id,
+          agentId: request.agentId,
         });
 
       if (hasPermission) {

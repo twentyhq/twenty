@@ -16,10 +16,7 @@ import {
 } from 'graphql';
 
 import { appendCoreWorkflowAppOperationsToSdl } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/utils/append-core-workflow-app-operations-to-sdl.util';
-import {
-  CORE_WORKFLOW_APP_MUTATION_NAMES,
-  CORE_WORKFLOW_APP_QUERY_NAMES,
-} from 'src/engine/api/graphql/workspace-graphql-schema-sdl/utils/build-core-workflow-app-operations-sdl.util';
+import { CORE_WORKFLOW_APP_QUERY_NAMES } from 'src/engine/api/graphql/workspace-graphql-schema-sdl/utils/build-core-workflow-app-operations-sdl.util';
 import { CoreWorkflowVersionMutationResolver } from 'src/engine/core-modules/workflow/resolvers/core-workflow-version-mutation.resolver';
 import { CoreWorkflowResolver } from 'src/engine/core-modules/workflow/resolvers/core-workflow.resolver';
 
@@ -86,10 +83,7 @@ describe('appendCoreWorkflowAppOperationsToSdl', () => {
     );
   });
 
-  it.each([
-    ...CORE_WORKFLOW_APP_QUERY_NAMES,
-    ...CORE_WORKFLOW_APP_MUTATION_NAMES,
-  ])(
+  it.each(CORE_WORKFLOW_APP_QUERY_NAMES)(
     'exposes %s with the signature the core schema declares',
     (operationName) => {
       const coreField = describeField(coreSchema, operationName);
@@ -98,6 +92,12 @@ describe('appendCoreWorkflowAppOperationsToSdl', () => {
       expect(describeField(mergedSchema, operationName)).toEqual(coreField);
     },
   );
+
+  it('exposes no core workflow mutation', () => {
+    expect(
+      Object.keys(mergedSchema.getMutationType()?.getFields() ?? {}),
+    ).toEqual(['createCompany']);
+  });
 
   it('carries every referenced type over unchanged', () => {
     const coreTypeNames = Object.values(coreSchema.getTypeMap())

@@ -14,7 +14,6 @@ import { Section } from 'twenty-ui/components/layout';
 
 export const SettingsAccountsCalendars = () => {
   const { t } = useLingui();
-
   const { channels: allCalendarChannels, loading } = useMyCalendarChannels();
 
   const calendarChannels = useMemo(

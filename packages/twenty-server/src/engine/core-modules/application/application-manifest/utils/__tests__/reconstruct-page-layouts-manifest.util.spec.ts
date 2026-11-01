@@ -174,6 +174,7 @@ const frontComponent: FlatFrontComponent = {
   id: `${FRONT_COMPONENT_UID}-id`,
   workspaceId: WORKSPACE_ID,
   applicationId: APP_ID,
+  widgetAvailability: [],
 };
 
 const buildFlatPageLayout = ({

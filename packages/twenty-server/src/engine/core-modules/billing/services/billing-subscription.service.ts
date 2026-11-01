@@ -29,11 +29,11 @@ import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/bil
 import { WORKSPACE_ACTIVATING_SUBSCRIPTION_STATUSES } from 'src/engine/core-modules/billing/constants/workspace-activating-subscription-statuses.constant';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
-import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { isEntitlementActive } from 'src/engine/core-modules/billing/utils/is-entitlement-active.util';
+import { isSendInvoiceSubscription } from 'src/engine/core-modules/billing/utils/is-send-invoice-subscription.util';
 import { resolveBillingPeriodBoundaryUpdate } from 'src/engine/core-modules/billing/utils/resolve-billing-period-boundary-update.util';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -67,7 +67,6 @@ export class BillingSubscriptionService {
     private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
     private readonly enterprisePlanService: EnterprisePlanService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
 
   async getBillingSubscriptions(workspaceId: string) {
@@ -239,6 +238,7 @@ export class BillingSubscriptionService {
     return Object.values(BillingEntitlementKey).map((key) => ({
       key,
       value: isEntitlementActive({
+        key,
         hasValidEnterprisePlan,
         isBillingEnabled,
         stripeEntitlementValue: billingEntitlements[key] ?? false,
@@ -271,6 +271,7 @@ export class BillingSubscriptionService {
         : false;
 
     return isEntitlementActive({
+      key,
       hasValidEnterprisePlan,
       isBillingEnabled,
       stripeEntitlementValue,
@@ -289,21 +290,24 @@ export class BillingSubscriptionService {
       );
     }
 
-    const hasPaymentMethod = await this.stripeCustomerService.hasPaymentMethod(
-      billingSubscription.stripeCustomerId,
-    );
+    if (!isSendInvoiceSubscription(billingSubscription)) {
+      const hasPaymentMethod =
+        await this.stripeCustomerService.hasPaymentMethod(
+          billingSubscription.stripeCustomerId,
+        );
 
-    if (!hasPaymentMethod) {
-      return {
-        hasPaymentMethod: false,
-        status: undefined,
-        stripeCustomerId: billingSubscription.stripeCustomerId,
-      };
+      if (!hasPaymentMethod) {
+        return {
+          hasPaymentMethod: false,
+          status: undefined,
+          stripeCustomerId: billingSubscription.stripeCustomerId,
+        };
+      }
+
+      await this.stripeCustomerService.ensureDefaultPaymentMethod(
+        billingSubscription.stripeCustomerId,
+      );
     }
-
-    await this.stripeCustomerService.ensureDefaultPaymentMethod(
-      billingSubscription.stripeCustomerId,
-    );
 
     const updatedSubscription =
       await this.stripeSubscriptionService.updateSubscription(
@@ -318,12 +322,6 @@ export class BillingSubscriptionService {
       billingSubscription.workspaceId,
       updatedSubscription.id,
     );
-
-    await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
-      'currentBillingSubscription',
-    ]);
-
-    await this.usageLimitQuotaService.dropAllowanceCounter(workspace.id);
 
     return {
       status: getSubscriptionStatus(updatedSubscription.status),
@@ -367,7 +365,12 @@ export class BillingSubscriptionService {
           id: true,
           currentPeriodStart: true,
           currentPeriodEnd: true,
+          currentPeriodMaxSeats: true,
         },
+        relations: [
+          'billingSubscriptionItems',
+          'billingSubscriptionItems.billingProduct',
+        ],
       },
     );
 
@@ -466,6 +469,10 @@ export class BillingSubscriptionService {
         );
       }
     }
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'currentBillingSubscription',
+    ]);
 
     return currentBillingSubscription;
   }

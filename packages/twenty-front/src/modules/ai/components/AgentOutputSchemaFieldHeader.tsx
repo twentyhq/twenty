@@ -56,10 +56,6 @@ const StyledTitle = styled.span`
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   min-width: 0;
-
-  & > svg {
-    flex-shrink: 0;
-  }
 `;
 
 const StyledName = styled.span`

@@ -19,6 +19,7 @@ export enum CoreObjectNameSingular {
   MessageCampaign = 'messageCampaign',
   MessageChannel = 'messageChannel',
   MessageList = 'messageList',
+  MessageListMember = 'messageListMember',
   MessageParticipant = 'messageParticipant',
   MessageFolder = 'messageFolder',
   MessageThread = 'messageThread',

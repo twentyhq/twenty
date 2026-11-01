@@ -1,5 +1,5 @@
 import { DeleteCoreWorkflowsCommand } from '@/object-core/workflows/components/DeleteCoreWorkflowsCommand';
-import { useIsWorkflowCoreEnabled } from '@/workflow/hooks/useIsWorkflowCoreEnabled';
+import { t } from '@lingui/core/macro';
 import {
   CoreObjectNameSingular,
   type RecordGqlOperationFilter,
@@ -15,13 +15,16 @@ import { PLACEHOLDER_RECORD_INDEX_ID } from '@/object-record/record-index/consta
 import { useResetRecordSelection } from '@/object-record/record-selection/hooks/useResetRecordSelection';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const DeleteWorkspaceRecordsCommand = () => {
   const { recordIndexId, objectMetadataItem, selectedRecords, graphqlFilter } =
     useHeadlessCommandContextApi();
 
   if (!isDefined(objectMetadataItem)) {
-    throw new Error('Object metadata is required to delete records');
+    throw new Error(
+      doNotTranslate('Object metadata is required to delete records'),
+    );
   }
 
   const recordId = selectedRecords[0]?.id;
@@ -71,7 +74,7 @@ const DeleteWorkspaceRecordsCommand = () => {
     }
 
     if (!isDefined(graphqlFilter)) {
-      throw new Error('Cannot delete records without a valid filter');
+      throw new Error(t`Cannot delete records without a valid filter`);
     }
 
     await incrementalDeleteManyRecords();
@@ -81,10 +84,9 @@ const DeleteWorkspaceRecordsCommand = () => {
 };
 
 export const DeleteRecordsCommand = () => {
-  const isCore = useIsWorkflowCoreEnabled();
   const { objectMetadataItem } = useHeadlessCommandContextApi();
-  return isCore &&
-    objectMetadataItem?.nameSingular === CoreObjectNameSingular.Workflow ? (
+  return objectMetadataItem?.nameSingular ===
+    CoreObjectNameSingular.Workflow ? (
     <DeleteCoreWorkflowsCommand />
   ) : (
     <DeleteWorkspaceRecordsCommand />

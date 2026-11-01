@@ -1,8 +1,9 @@
 import { type FlatEntityFrom } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-from.type';
+import { type UnusedObjectMetadataColumnName } from 'src/engine/metadata-modules/object-metadata/types/unused-object-metadata-column-name.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 
 type BaseFlatObjectMetadata = FlatEntityFrom<
-  Omit<ObjectMetadataEntity, 'dataSourceId'>
+  Omit<ObjectMetadataEntity, 'dataSourceId' | UnusedObjectMetadataColumnName>
 >;
 export type FlatObjectMetadata = BaseFlatObjectMetadata & {
   // NOTE: below fields are not reflected on the final UniversalFlatEntity either they should we should define a common source

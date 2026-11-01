@@ -1,38 +1,36 @@
 import { styled } from '@linaria/react';
+import { useLingui } from '@lingui/react/macro';
+import { useRef } from 'react';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { ColorSample } from 'twenty-ui/primitives/data-display';
+import { Field } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
-import { StyledEmailFieldLabel } from '@/side-panel/pages/email-block-settings/components/StyledEmailFieldLabel';
+import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { TextInput } from '@/ui/input/components/TextInput';
 
 const StyledRow = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
-
-  & > :last-child {
-    flex: 1;
-  }
 `;
 
-const StyledColorSwatchInput = styled.input`
-  background: none;
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  box-sizing: border-box;
-  cursor: pointer;
+const StyledColorTrigger = styled.div`
+  display: flex;
   flex-shrink: 0;
-  height: 32px;
-  padding: 2px;
-  width: 32px;
+  position: relative;
+`;
 
-  &::-webkit-color-swatch-wrapper {
-    padding: 0;
-  }
-
-  &::-webkit-color-swatch {
-    border: none;
-    border-radius: ${themeCssVariables.border.radius.xs};
-  }
+const StyledNativeColorInput = styled.input`
+  border: 0;
+  height: 100%;
+  left: 0;
+  opacity: 0;
+  padding: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  width: 100%;
 `;
 
 const HEX_COLOR_PATTERN = /^#[0-9a-fA-F]{6}$/;
@@ -53,15 +51,38 @@ export const EmailColorInput = ({
   onChange,
   placeholder,
 }: EmailColorInputProps) => {
+  const { t } = useLingui();
+  const nativeColorInputRef = useRef<HTMLInputElement>(null);
+
+  const swatchColor = HEX_COLOR_PATTERN.test(value)
+    ? value
+    : COLOR_SWATCH_FALLBACK;
+
   return (
-    <div>
-      <StyledEmailFieldLabel>{label}</StyledEmailFieldLabel>
+    <FormFieldInputContainer>
+      <Field.Label>{label}</Field.Label>
       <StyledRow>
-        <StyledColorSwatchInput
-          type="color"
-          value={HEX_COLOR_PATTERN.test(value) ? value : COLOR_SWATCH_FALLBACK}
-          onChange={(event) => onChange(event.target.value)}
-        />
+        <StyledColorTrigger>
+          <LightIconButton
+            size="md"
+            aria-label={t`Pick a color`}
+            onClick={() => nativeColorInputRef.current?.click()}
+          >
+            <ColorSample
+              colorName="gray"
+              color={swatchColor}
+              variant="circle"
+            />
+          </LightIconButton>
+          <StyledNativeColorInput
+            ref={nativeColorInputRef}
+            type="color"
+            tabIndex={-1}
+            aria-hidden="true"
+            value={swatchColor}
+            onChange={(event) => onChange(event.target.value)}
+          />
+        </StyledColorTrigger>
         <TextInput
           value={value}
           onChange={onChange}
@@ -69,6 +90,6 @@ export const EmailColorInput = ({
           fullWidth
         />
       </StyledRow>
-    </div>
+    </FormFieldInputContainer>
   );
 };

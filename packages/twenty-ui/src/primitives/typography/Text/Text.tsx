@@ -4,30 +4,15 @@ import { type CSSProperties } from 'react';
 
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
+import { type TextProps } from './types/TextProps';
+
 import styles from './Text.module.scss';
-
-type TextTruncationProps =
-  | {
-      /**
-       * Truncates overflowing text on one line with an ellipsis. Cannot be
-       * combined with `lineClamp`.
-       */
-      truncate?: boolean;
-      lineClamp?: never;
-    }
-  | {
-      truncate?: never;
-      /**
-       * Maximum number of lines before the text is truncated with an ellipsis.
-       * Cannot be combined with `truncate`.
-       */
-      lineClamp?: number;
-    };
-
-type TextProps = useRender.ComponentProps<'div'> & TextTruncationProps;
 
 export const Text = ({
   render,
+  size,
+  weight,
+  color,
   truncate,
   lineClamp,
   className,
@@ -43,7 +28,11 @@ export const Text = ({
     ref,
     props: {
       ...props,
+      'data-size': size,
+      'data-weight': weight,
+      'data-color': color,
       className: clsx(
+        styles.typography,
         truncate && styles.truncate,
         shouldClamp && styles.lineClamp,
         className,

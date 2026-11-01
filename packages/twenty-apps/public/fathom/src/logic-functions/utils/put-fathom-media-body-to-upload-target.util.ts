@@ -4,7 +4,7 @@ import { Readable } from 'node:stream';
 import { finished, pipeline } from 'node:stream/promises';
 
 import { FATHOM_MEDIA_UPLOAD_TIMEOUT_MILLISECONDS } from 'src/constants/fathom.constant';
-import { cancelFathomMediaDownloadBody } from 'src/logic-functions/utils/cancel-fathom-media-download-body.util';
+import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 type MediaUploadTarget = {
   uploadUrl: string;
@@ -27,32 +27,36 @@ export const putFathomMediaBodyToUploadTarget = async ({
   sizeBytes: number;
   uploadTarget: MediaUploadTarget;
 }): Promise<void> => {
+  const mediaDownloadReader = mediaDownloadBody.getReader();
   const mediaDownloadReadable = Readable.from(
-    readMediaDownloadBody({ mediaDownloadBody }),
+    readMediaDownloadBody({ reader: mediaDownloadReader }),
   );
+  const cancelMediaDownload = async () => {
+    await mediaDownloadReader.cancel().catch((error: unknown) => {
+      console.warn(
+        `[fathom] media download body cancellation failed callRecordingId=${callRecordingId} fileName=${fileName}: ${toErrorMessage(error)}`,
+      );
+    });
+  };
 
   await streamMediaDownloadReadableToUploadTarget({
+    cancelMediaDownload,
     fileName,
     mediaDownloadReadable,
     sizeBytes,
     uploadTarget,
   }).catch(async (error: unknown) => {
-    await cancelFathomMediaDownloadBody({
-      body: mediaDownloadBody,
-      callRecordingId,
-      fileName,
-    });
+    await cancelMediaDownload();
 
     throw error;
   });
 };
 
 const readMediaDownloadBody = async function* ({
-  mediaDownloadBody,
+  reader,
 }: {
-  mediaDownloadBody: ReadableStream<Uint8Array>;
+  reader: ReadableStreamDefaultReader<Uint8Array>;
 }) {
-  const reader = mediaDownloadBody.getReader();
   let isComplete = false;
 
   try {
@@ -76,11 +80,13 @@ const readMediaDownloadBody = async function* ({
 };
 
 const streamMediaDownloadReadableToUploadTarget = async ({
+  cancelMediaDownload,
   fileName,
   mediaDownloadReadable,
   sizeBytes,
   uploadTarget,
 }: {
+  cancelMediaDownload: () => Promise<void>;
   fileName: string;
   mediaDownloadReadable: Readable;
   sizeBytes: number;
@@ -112,6 +118,7 @@ const streamMediaDownloadReadableToUploadTarget = async ({
   ]).catch(async (error: unknown) => {
     mediaDownloadReadable.destroy();
     uploadRequest.destroy();
+    await cancelMediaDownload();
     await uploadPipelinePromise.catch(() => undefined);
 
     throw error;
@@ -132,6 +139,7 @@ const streamMediaDownloadReadableToUploadTarget = async ({
 
     mediaDownloadReadable.destroy(uploadError);
     uploadRequest.destroy(uploadError);
+    await cancelMediaDownload();
 
     await Promise.allSettled([
       uploadPipelinePromise,

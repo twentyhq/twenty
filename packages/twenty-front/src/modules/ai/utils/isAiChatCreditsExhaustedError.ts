@@ -4,4 +4,4 @@ import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 export const isAiChatCreditsExhaustedError = (error: unknown): boolean =>
   isGraphqlErrorOfType(error, AiChatErrorCode.CREDITS_EXHAUSTED) ||
-  getAiChatQuotaExhaustedKind(error) === 'allowance';
+  getAiChatQuotaExhaustedKind(error) === 'workspaceAllowance';

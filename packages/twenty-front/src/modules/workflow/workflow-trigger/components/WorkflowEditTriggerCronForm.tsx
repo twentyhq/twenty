@@ -17,7 +17,7 @@ import { isNumber } from '@sniptt/guards';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
 type WorkflowEditTriggerCronFormProps = {
   trigger: WorkflowCronTrigger;
@@ -66,7 +66,10 @@ export const WorkflowEditTriggerCronForm = ({
           label={t`Trigger interval`}
           hint={t`Cron will be triggered at UTC time`}
           defaultValue={trigger.settings.type}
-          options={CRON_TRIGGER_INTERVAL_OPTIONS}
+          options={CRON_TRIGGER_INTERVAL_OPTIONS.map((option) => ({
+            ...option,
+            label: t(option.label),
+          }))}
           readonly={triggerOptions.readonly}
           onChange={(newTriggerType) => {
             if (triggerOptions.readonly === true) {

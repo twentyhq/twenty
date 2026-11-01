@@ -1,12 +1,12 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, fireEvent, render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
 import { Provider as JotaiProvider } from 'jotai';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { SidePanelSnoozeAiChatPage } from '@/side-panel/pages/snooze-ai-chat/components/SidePanelSnoozeAiChatPage';
+import { isSnoozeAiChatForChannelComponentState } from '@/side-panel/pages/snooze-ai-chat/states/isSnoozeAiChatForChannelComponentState';
 import { snoozeAiChatThreadIdsComponentState } from '@/side-panel/pages/snooze-ai-chat/states/snoozeAiChatThreadIdsComponentState';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
 import {
@@ -14,11 +14,20 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
-const snoozeAgentChatThreads = jest.fn();
+const updateAgentChatThreadInboxState = jest.fn();
+const snoozeAgentChatThreadsInChannel = jest.fn();
 const closeSidePanelMenu = jest.fn();
 
-jest.mock('@/ai/hooks/useAgentChatThreadParticipants', () => ({
-  useAgentChatThreadParticipants: () => ({ snoozeAgentChatThreads }),
+jest.mock('@/ai/hooks/useUpdateAgentChatThreadInboxState', () => ({
+  useUpdateAgentChatThreadInboxState: () => ({
+    updateAgentChatThreadInboxState,
+  }),
+}));
+
+jest.mock('@/ai/hooks/useSnoozeAgentChatThreadsInChannel', () => ({
+  useSnoozeAgentChatThreadsInChannel: () => ({
+    snoozeAgentChatThreadsInChannel,
+  }),
 }));
 
 jest.mock('@/side-panel/hooks/useSidePanelMenu', () => ({
@@ -61,7 +70,27 @@ describe('SidePanelSnoozeAiChatPage', () => {
     fireEvent.click(screen.getByText('This evening'));
 
     expect(closeSidePanelMenu).toHaveBeenCalled();
-    expect(snoozeAgentChatThreads).toHaveBeenCalledWith({
+    expect(updateAgentChatThreadInboxState).toHaveBeenCalledWith({
+      threadIds: ['thread-1', 'thread-2'],
+      action: 'SNOOZE',
+      snoozedUntil: new Date(2026, 9, 1, 18, 0),
+    });
+  });
+
+  it('snoozes the chats for their channel from a channel view', () => {
+    jotaiStore.set(
+      isSnoozeAiChatForChannelComponentState.atomFamily({
+        instanceId: PAGE_ID,
+      }),
+      true,
+    );
+
+    render(<SidePanelSnoozeAiChatPage />, { wrapper: Wrapper });
+
+    fireEvent.click(screen.getByText('This evening'));
+
+    expect(updateAgentChatThreadInboxState).not.toHaveBeenCalled();
+    expect(snoozeAgentChatThreadsInChannel).toHaveBeenCalledWith({
       threadIds: ['thread-1', 'thread-2'],
       snoozedUntil: new Date(2026, 9, 1, 18, 0),
     });
@@ -73,22 +102,6 @@ describe('SidePanelSnoozeAiChatPage', () => {
     expect(screen.getByText('Today, 6:00 PM')).toBeInTheDocument();
   });
 
-  it('opens the day and time picker for the chat in a dropdown', async () => {
-    const user = userEvent.setup({ advanceTimers: jest.advanceTimersByTime });
-
-    render(<SidePanelSnoozeAiChatPage />, { wrapper: Wrapper });
-
-    await user.click(screen.getByText('Day & Time'));
-
-    expect(
-      await screen.findByRole('button', { name: /^Snooze until/ }),
-    ).toBeInTheDocument();
-    expect(snoozeAgentChatThreads).not.toHaveBeenCalled();
-    expect(
-      screen.getByText('Day & Time').closest('[data-focused]'),
-    ).toHaveAttribute('data-focused', 'true');
-  });
-
   it('refreshes the options instead of snoozing into the past', () => {
     render(<SidePanelSnoozeAiChatPage />, { wrapper: Wrapper });
 
@@ -97,7 +110,7 @@ describe('SidePanelSnoozeAiChatPage', () => {
     });
     fireEvent.click(screen.getByText('This evening'));
 
-    expect(snoozeAgentChatThreads).not.toHaveBeenCalled();
+    expect(updateAgentChatThreadInboxState).not.toHaveBeenCalled();
     expect(screen.queryByText('This evening')).not.toBeInTheDocument();
     expect(screen.getByText('Tomorrow')).toBeInTheDocument();
   });

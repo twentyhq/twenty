@@ -1,7 +1,7 @@
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isSafeInternalPath } from 'twenty-shared/utils';
 import { IconDotsVertical } from 'twenty-ui/icon';
 import { v4 } from 'uuid';
 
@@ -11,7 +11,6 @@ import { isWorkspaceLocationAvailableOnSurface } from '@/app/routing/utils/isWor
 import { toSidePanelLocation } from '@/side-panel/routing/utils/toSidePanelLocation';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { releaseRemovedRoutedFlowStateScopes } from '@/side-panel/routing/utils/releaseRemovedRoutedFlowStateScopes';
-import { isSafeInternalPath } from '@/ui/navigation/utils/isSafeInternalPath';
 
 export const useOpenRoutedPageInSidePanel = () => {
   const store = useStore();

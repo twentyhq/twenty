@@ -1,4 +1,4 @@
-import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/link/utils/getLinkNavigationMenuItemComputedLink';
+import { getLinkNavigationMenuItemComputedLink } from '@/navigation-menu-item/common/utils/getLinkNavigationMenuItemComputedLink';
 import { getObjectNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemComputedLink';
 import { getPageLayoutNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/page-layout/utils/getPageLayoutNavigationMenuItemComputedLink';
 import { getRecordNavigationMenuItemComputedLink } from '@/navigation-menu-item/display/record/utils/getRecordNavigationMenuItemComputedLink';
@@ -14,13 +14,11 @@ export const getNavigationMenuItemComputedLink = ({
   objectMetadataItems,
   views,
   lastVisitedViewPerObjectMetadataItem,
-  isInitialObjectViewEnabled = false,
 }: {
   item: NavigationMenuItem;
   objectMetadataItems: EnrichedObjectMetadataItem[];
   views: Pick<View, 'id' | 'objectMetadataId' | 'key' | 'type' | 'position'>[];
   lastVisitedViewPerObjectMetadataItem?: Record<string, string> | null;
-  isInitialObjectViewEnabled?: boolean;
 }): string => {
   switch (item.type) {
     case NavigationMenuItemType.OBJECT: {
@@ -33,7 +31,6 @@ export const getNavigationMenuItemComputedLink = ({
         objectMetadataItems,
         views,
         lastVisitedViewId,
-        isInitialObjectViewEnabled,
       });
     }
     case NavigationMenuItemType.VIEW:

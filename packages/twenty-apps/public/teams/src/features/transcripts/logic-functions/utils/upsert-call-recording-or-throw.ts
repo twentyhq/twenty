@@ -2,6 +2,7 @@ import { type CoreApiClient } from 'twenty-client-sdk/core';
 import { isDefined } from 'twenty-sdk/utils';
 
 import { type CallRecordingSyncFields } from 'src/features/transcripts/logic-functions/types/call-recording-sync-fields.type';
+import { toCallRecordingData } from 'src/features/transcripts/logic-functions/utils/to-call-recording-data';
 
 const doesCallRecordingMatchOrThrow = async ({
   coreApiClient,
@@ -22,17 +23,6 @@ const doesCallRecordingMatchOrThrow = async ({
 
   return isDefined(queryResult.callRecordings?.edges?.[0]?.node);
 };
-
-const toCallRecordingData = ({
-  transcript,
-  ...fields
-}: CallRecordingSyncFields) =>
-  isDefined(transcript)
-    ? {
-        ...fields,
-        transcript: transcript as unknown as Record<string, unknown>,
-      }
-    : fields;
 
 const updateCallRecordingOrThrow = async ({
   coreApiClient,

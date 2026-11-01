@@ -63,7 +63,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
         },
         onCompleted: () => {
           enqueueToast({
-            variant: 'success',
+            status: 'success',
             children: t`Please check your email for a verification link.`,
           });
           navigate(SettingsPath.WorkspaceMembersPage);

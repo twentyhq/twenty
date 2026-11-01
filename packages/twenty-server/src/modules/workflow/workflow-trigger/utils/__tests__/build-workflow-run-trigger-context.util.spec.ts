@@ -19,18 +19,4 @@ describe('buildWorkflowRunTriggerContext', () => {
       context: {},
     });
   });
-
-  it('records the application a member starts a run through', () => {
-    expect(
-      buildWorkflowRunTriggerContext({
-        workspaceMember: WORKSPACE_MEMBER,
-        startingApplicationId: 'installed-app-id',
-      }).createdBy,
-    ).toEqual({
-      source: FieldActorSource.MANUAL,
-      workspaceMemberId: 'member-id',
-      name: 'Jane Austen',
-      context: { applicationId: 'installed-app-id' },
-    });
-  });
 });

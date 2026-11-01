@@ -22,13 +22,12 @@ export const computeDashboardIdentifierMaps = async (
     flatObjectMetadataMaps,
   );
 
-  const { fieldIdByObjectIdAndName, fieldById } = buildFieldIdByNameMaps(
+  const { fieldIdByObjectIdAndName } = buildFieldIdByNameMaps(
     flatFieldMetadataMaps,
   );
 
   return {
     objectIdByName: { ...idByNamePlural, ...idByNameSingular },
     fieldIdByObjectIdAndName,
-    fieldById,
   };
 };

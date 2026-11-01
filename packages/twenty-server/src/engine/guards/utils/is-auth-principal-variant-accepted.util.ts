@@ -25,11 +25,20 @@ export const isAuthPrincipalVariantAccepted = ({
     case 'apiKey':
       return authPrincipalGuardConfig.apiKey;
     case 'oauthClient':
-    case 'application':
       return isVariantAccepted(
-        authPrincipalGuardConfig[authPrincipalVariant.kind],
+        authPrincipalGuardConfig.oauthClient,
         authPrincipalVariant.variant,
       );
+    case 'application': {
+      const applicationConfig = authPrincipalGuardConfig.application;
+
+      return (
+        isVariantAccepted(applicationConfig, authPrincipalVariant.variant) &&
+        (!authPrincipalVariant.withAgent ||
+          (!isBoolean(applicationConfig) &&
+            applicationConfig.withAgent === true))
+      );
+    }
     default:
       return assertUnreachable(authPrincipalVariant);
   }

@@ -1,4 +1,4 @@
-import { Separator } from '@/settings/components/Separator';
+import { SettingsCardSeparator } from '@/settings/components/SettingsCardSeparator';
 import { Controller, useFormContext } from 'react-hook-form';
 
 import { addressFieldSettingsSchema } from '@/object-record/record-field/ui/validation-schemas/addressFieldSettingsSchema';
@@ -97,7 +97,7 @@ export const SettingsDataModelFieldAddressForm = ({
           );
         }}
       />
-      <Separator />
+      <SettingsCardSeparator />
       <Controller
         name="settings.subFields"
         defaultValue={initialDisplaySubFields}

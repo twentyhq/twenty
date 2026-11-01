@@ -1,5 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
+import { measureComputedLayoutStyle } from '@/host/geometry/utils/measureComputedLayoutStyle';
 import { readInputMediaFeatures } from '@/host/geometry/utils/readInputMediaFeatures';
 import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot';
 
@@ -23,5 +24,8 @@ export const measureViewportGeometry = (
     rootContainerClientWidth: rootContainer?.clientWidth ?? 0,
     rootContainerClientHeight: rootContainer?.clientHeight ?? 0,
     ...readInputMediaFeatures(),
+    computedStyle: isDefined(rootContainer)
+      ? measureComputedLayoutStyle(rootContainer)
+      : {},
   };
 };

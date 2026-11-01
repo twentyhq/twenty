@@ -20,11 +20,14 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { type QueueJobScope } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { isApplicationInstallPending } from 'src/engine/core-modules/application/utils/is-application-install-pending.util';
 import { isCachedCronTrigger } from 'src/engine/core-modules/workflow/utils/cached-workflow-automated-trigger.util';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { buildCoreDispatchIds } from 'src/engine/core-modules/workflow/utils/build-core-dispatch-ids.util';
+import { buildApplicationQueueJobScope } from 'src/engine/core-modules/application/utils/build-application-queue-job-scope.util';
 import { type QueuedWorkflowTriggerDispatchIds } from 'src/modules/workflow/workflow-trigger/utils/resolve-workflow-trigger-dispatch-mode.util';
 import { WORKFLOW_CRON_TRIGGER_CACHE_KEY } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-key.constant';
 import { WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS } from 'src/modules/workflow/workflow-trigger/automated-trigger/crons/constants/workflow-cron-trigger-cache-ttl.constant';
@@ -84,13 +87,18 @@ export class WorkflowCronTriggerCronJob {
   private async getAndRunTriggersFromCache(cachedValues: string[], now: Date) {
     for (const serialized of cachedValues) {
       try {
-        const trigger = await this.normalizeCachedTrigger(
+        const normalizedTrigger = await this.normalizeCachedTrigger(
           JSON.parse(serialized) as CachedCronTrigger,
         );
 
-        if (!isDefined(trigger)) {
+        if (
+          !isDefined(normalizedTrigger) ||
+          !normalizedTrigger.isApplicationInstalled
+        ) {
           continue;
         }
+
+        const { trigger, jobScope } = normalizedTrigger;
 
         const shouldDispatch = await this.shouldDispatch({ trigger, now });
 
@@ -110,7 +118,7 @@ export class WorkflowCronTriggerCronJob {
             ...buildCoreDispatchIds(trigger),
             payload: {},
           },
-          { retryLimit: 3 },
+          { retryLimit: 3, ...jobScope },
         );
       } catch (error) {
         this.logger.error(`Error processing cached trigger: ${error}`);
@@ -179,7 +187,7 @@ export class WorkflowCronTriggerCronJob {
           continue;
         }
 
-        const cachedTrigger = await this.normalizeCachedTrigger({
+        const normalizedTrigger = await this.normalizeCachedTrigger({
           workspaceId,
           workflowId,
           legacyWorkflowId: cronTrigger.legacyWorkflowId,
@@ -187,11 +195,21 @@ export class WorkflowCronTriggerCronJob {
           pattern,
         });
 
-        if (!isDefined(cachedTrigger)) {
+        if (!isDefined(normalizedTrigger)) {
           continue;
         }
 
+        const {
+          trigger: cachedTrigger,
+          isApplicationInstalled,
+          jobScope,
+        } = normalizedTrigger;
+
         triggersToCache.push(cachedTrigger);
+
+        if (!isApplicationInstalled) {
+          continue;
+        }
 
         const shouldDispatch = await this.shouldDispatch({
           trigger: cachedTrigger,
@@ -212,7 +230,7 @@ export class WorkflowCronTriggerCronJob {
               ...buildCoreDispatchIds(cachedTrigger),
               payload: {},
             },
-            { retryLimit: 3 },
+            { retryLimit: 3, ...jobScope },
           );
         }
       }
@@ -252,9 +270,11 @@ export class WorkflowCronTriggerCronJob {
       }));
   }
 
-  private async normalizeCachedTrigger(
-    trigger: CachedCronTrigger,
-  ): Promise<CachedCronTrigger | null> {
+  private async normalizeCachedTrigger(trigger: CachedCronTrigger): Promise<{
+    trigger: CachedCronTrigger;
+    isApplicationInstalled: boolean;
+    jobScope: QueueJobScope;
+  } | null> {
     const workflow =
       await this.workflowCoreSyncService.findCoreWorkflowByIdOrWorkspaceWorkflowId(
         trigger.workspaceId,
@@ -264,6 +284,11 @@ export class WorkflowCronTriggerCronJob {
     if (!isDefined(workflow?.lastPublishedCoreWorkflowVersionId)) {
       return null;
     }
+
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(trigger.workspaceId, [
+        'flatApplicationMaps',
+      ]);
 
     const version =
       await this.workflowVersionCoreSyncService.findCoreVersionById(
@@ -282,14 +307,25 @@ export class WorkflowCronTriggerCronJob {
     }
 
     return {
-      workspaceId: trigger.workspaceId,
-      workflowId: workflow.id,
-      legacyWorkflowId: workflow.workspaceWorkflowId ?? undefined,
-      ...buildCoreDispatchIds({
-        coreWorkflowVersionId: version.id,
-        workspaceWorkflowVersionId: version.workspaceWorkflowVersionId,
+      trigger: {
+        workspaceId: trigger.workspaceId,
+        workflowId: workflow.id,
+        legacyWorkflowId: workflow.workspaceWorkflowId ?? undefined,
+        ...buildCoreDispatchIds({
+          coreWorkflowVersionId: version.id,
+          workspaceWorkflowVersionId: version.workspaceWorkflowVersionId,
+        }),
+        pattern: computeCronPatternFromSchedule(definition),
+      },
+      isApplicationInstalled: !isApplicationInstallPending(
+        flatApplicationMaps,
+        workflow.applicationId,
+      ),
+      jobScope: buildApplicationQueueJobScope({
+        workspaceId: trigger.workspaceId,
+        applicationId: workflow.applicationId,
+        flatApplicationMaps,
       }),
-      pattern: computeCronPatternFromSchedule(definition),
     };
   }
 

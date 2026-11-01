@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
-import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { type UsageRefusal } from 'src/engine/core-modules/billing/types/usage-refusal.type';
 import { UsageLimitQuotaService } from 'src/engine/core-modules/usage-limit/services/usage-limit-quota.service';
+import { UsageQuotaAdmissionService } from 'src/engine/core-modules/usage-limit/services/usage-quota-admission.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
@@ -20,7 +20,7 @@ type EmailSendScope = EmailUsageScope & { emailCount?: number };
 @Injectable()
 export class EmailBillingService {
   constructor(
-    private readonly billingUsageService: BillingUsageService,
+    private readonly usageQuotaAdmissionService: UsageQuotaAdmissionService,
     private readonly usageLimitQuotaService: UsageLimitQuotaService,
   ) {}
 
@@ -29,7 +29,7 @@ export class EmailBillingService {
     spenders,
     emailCount,
   }: EmailSendScope): Promise<void> {
-    await this.billingUsageService.assertUsageAllowed({
+    await this.usageQuotaAdmissionService.assertUsageAllowed({
       workspaceId,
       resourceType: UsageResourceType.EMAIL,
       operationType: UsageOperationType.EMAIL_SEND,
@@ -43,7 +43,7 @@ export class EmailBillingService {
     spenders,
     emailCount,
   }: EmailSendScope): Promise<UsageRefusal | null> {
-    return this.billingUsageService.findUsageRefusal({
+    return this.usageQuotaAdmissionService.findUsageRefusal({
       workspaceId,
       resourceType: UsageResourceType.EMAIL,
       operationType: UsageOperationType.EMAIL_SEND,

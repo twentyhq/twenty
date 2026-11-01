@@ -20,7 +20,7 @@ export const useUploadFilesFieldFile = () => {
 
       const fileName = file.name;
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`File "${fileName}" uploaded successfully`,
       });
 
@@ -34,7 +34,7 @@ export const useUploadFilesFieldFile = () => {
       const fileNameForError = file.name;
       const errorMessage = String(error);
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to upload "${fileNameForError}"`,
       });
 

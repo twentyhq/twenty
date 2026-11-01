@@ -45,6 +45,9 @@ import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/works
 
 registerEnumType(SubscriptionStatus, { name: 'SubscriptionStatus' });
 registerEnumType(SubscriptionInterval, { name: 'SubscriptionInterval' });
+registerEnumType(BillingSubscriptionCollectionMethod, {
+  name: 'BillingSubscriptionCollectionMethod',
+});
 
 @Entity({ name: 'billingSubscription', schema: 'core' })
 @Index('IDX_BILLING_SUBSCRIPTION_WORKSPACE_ID_UNIQUE', ['workspaceId'], {
@@ -136,6 +139,12 @@ export class BillingSubscriptionEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'timestamptz' })
   previousPeriodStart: Date | null;
 
+  @Column({ nullable: true, type: 'integer' })
+  currentPeriodMaxSeats: number | null;
+
+  @Column({ nullable: true, type: 'integer' })
+  previousPeriodMaxSeats: number | null;
+
   @Field(() => graphqlTypeJson)
   @Column({ nullable: false, type: 'jsonb', default: {} })
   metadata: Stripe.Metadata;
@@ -160,6 +169,7 @@ export class BillingSubscriptionEntity extends WorkspaceRelatedEntity {
   @Column({ nullable: true, type: 'jsonb' })
   cancellationDetails: CancellationDetailsJson | null;
 
+  @Field(() => BillingSubscriptionCollectionMethod, { nullable: true })
   @Column({
     nullable: false,
     type: 'enum',

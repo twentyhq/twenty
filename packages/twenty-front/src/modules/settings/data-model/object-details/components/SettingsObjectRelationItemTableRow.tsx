@@ -122,7 +122,7 @@ export const SettingsObjectRelationItemTableRow = ({
 
   const relationTypeLabel = (() => {
     if (isDefined(displayRelationType) === true) {
-      return RELATION_TYPES[displayRelationType].label;
+      return t(RELATION_TYPES[displayRelationType].label);
     }
     return '';
   })();

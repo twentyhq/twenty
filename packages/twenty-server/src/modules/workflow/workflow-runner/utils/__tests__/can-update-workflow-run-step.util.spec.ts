@@ -48,13 +48,12 @@ const RECORD_STEP: WorkflowCreateRecordAction = {
   },
 };
 
-const buildWorkflowRun = (applicationId?: string) => ({
-  createdBy: { context: { applicationId } },
+const WORKFLOW_RUN = {
   state: { flow: { steps: [FORM_STEP, RECORD_STEP] } },
-});
+};
 
 describe('canUpdateWorkflowRunStep', () => {
-  it('keeps the steps of a run no application bounds editable', () => {
+  it('refuses replacing a record step with another action', () => {
     const deleteStep: WorkflowDeleteRecordAction = {
       ...RECORD_STEP,
       type: WorkflowActionType.DELETE_RECORD,
@@ -66,16 +65,16 @@ describe('canUpdateWorkflowRunStep', () => {
 
     expect(
       canUpdateWorkflowRunStep({
-        workflowRun: buildWorkflowRun(),
+        workflowRun: WORKFLOW_RUN,
         step: deleteStep,
       }),
-    ).toBe(true);
+    ).toBe(false);
   });
 
-  it('lets the values of a form step of an application-bound run be filled', () => {
+  it('lets the values of a form step be filled', () => {
     expect(
       canUpdateWorkflowRunStep({
-        workflowRun: buildWorkflowRun('installed-app-id'),
+        workflowRun: WORKFLOW_RUN,
         step: {
           ...FORM_STEP,
           settings: {
@@ -87,7 +86,33 @@ describe('canUpdateWorkflowRunStep', () => {
     ).toBe(true);
   });
 
-  it('refuses a change to the fields of a form step of an application-bound run', () => {
+  it('lets the values of a form step be filled when the stored step still carries a legacy retry flag', () => {
+    const legacyFormStep = {
+      ...FORM_STEP,
+      settings: {
+        ...FORM_STEP.settings,
+        errorHandlingOptions: {
+          ...ERROR_HANDLING_OPTIONS,
+          retryOnFailure: { value: false },
+        },
+      },
+    } as unknown as WorkflowFormAction;
+
+    expect(
+      canUpdateWorkflowRunStep({
+        workflowRun: { state: { flow: { steps: [legacyFormStep] } } },
+        step: {
+          ...FORM_STEP,
+          settings: {
+            ...FORM_STEP.settings,
+            input: [{ ...FORM_STEP.settings.input[0], value: 'Acme' }],
+          },
+        },
+      }),
+    ).toBe(true);
+  });
+
+  it('refuses a change to the fields of a form step', () => {
     const textFieldTurnedIntoRecordPicker: WorkflowFormAction = {
       ...FORM_STEP,
       settings: {
@@ -105,7 +130,7 @@ describe('canUpdateWorkflowRunStep', () => {
 
     expect(
       canUpdateWorkflowRunStep({
-        workflowRun: buildWorkflowRun('installed-app-id'),
+        workflowRun: WORKFLOW_RUN,
         step: textFieldTurnedIntoRecordPicker,
       }),
     ).toBe(false);
@@ -127,6 +152,10 @@ describe('canUpdateWorkflowRunStep', () => {
     ...FORM_STEP,
     nextStepIds: [],
   };
+  const renamedFormStep: WorkflowFormAction = {
+    ...FORM_STEP,
+    name: 'Renamed',
+  };
 
   it.each<{ change: string; step: WorkflowAction }>([
     { change: 'a code step replacing the form', step: codeStepReplacingForm },
@@ -135,10 +164,11 @@ describe('canUpdateWorkflowRunStep', () => {
       step: formStepReplacingRecord,
     },
     { change: 'a rerouted form step', step: reroutedFormStep },
-  ])('refuses $change on an application-bound run', ({ step }) => {
+    { change: 'a renamed form step', step: renamedFormStep },
+  ])('refuses $change', ({ step }) => {
     expect(
       canUpdateWorkflowRunStep({
-        workflowRun: buildWorkflowRun('installed-app-id'),
+        workflowRun: WORKFLOW_RUN,
         step,
       }),
     ).toBe(false);

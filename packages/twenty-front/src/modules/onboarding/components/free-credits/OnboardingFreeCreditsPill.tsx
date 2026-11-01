@@ -14,7 +14,6 @@ import { currentFocusedItemSelector } from '@/ui/utilities/focus/states/currentF
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { TooltipTextContent } from '@/ui/layout/tooltip/components/TooltipTextContent';
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
@@ -37,15 +36,10 @@ const StyledPillAnchor = styled.div`
 
 const StyledTrigger = styled.button`
   align-items: center;
-  background: none;
-  border: none;
   border-radius: ${themeCssVariables.border.radius.pill};
   color: ${themeCssVariables.font.color.tertiary};
   corner-shape: round;
-  cursor: pointer;
   display: flex;
-  font-family: inherit;
-  padding: 0;
 
   &:hover > span,
   &[data-popup-open] > span {
@@ -104,6 +98,10 @@ const StyledInfoPart = styled(StyledTriggerPart)`
   &:not([data-highlighted='earned']) {
     border-left-color: ${themeCssVariables.border.color.transparentStrong};
   }
+`;
+
+const StyledPopup = styled(Popover.Popup)`
+  width: 300px;
 `;
 
 const StyledTooltipContents = styled.div`
@@ -248,12 +246,16 @@ export const OnboardingFreeCreditsPill = ({
               <IconInfoCircle size={theme.icon.size.md} color="currentColor" />
             </StyledInfoPart>
           </Popover.Trigger>
-          <Popover.Popup side="bottom" align="end" aria-label={t`Free credits`}>
-            <OnboardingFreeCreditsPopoverContent
-              earnedCredits={earnedCredits}
-              earnedCreditsByStep={earnedCreditsByStep}
-            />
-          </Popover.Popup>
+          <Popover.Portal>
+            <Popover.Positioner side="bottom" align="end">
+              <StyledPopup aria-label={t`Free credits`}>
+                <OnboardingFreeCreditsPopoverContent
+                  earnedCredits={earnedCredits}
+                  earnedCreditsByStep={earnedCreditsByStep}
+                />
+              </StyledPopup>
+            </Popover.Positioner>
+          </Popover.Portal>
         </Popover.Root>
       </StyledPillAnchor>
       <Tooltip.Root
@@ -265,7 +267,6 @@ export const OnboardingFreeCreditsPill = ({
             side="bottom"
             align="end"
             sideOffset={10}
-            style={{ maxWidth: '300px' }}
           >
             <Tooltip.Popup withExitAnimation>
               <StyledTooltipContents>
@@ -278,11 +279,9 @@ export const OnboardingFreeCreditsPill = ({
                       exit={{ opacity: 0, y: -tooltipSlideOffset }}
                       transition={{ duration: theme.animation.duration.normal }}
                     >
-                      <TooltipTextContent
-                        description={tooltipContent.description}
-                      >
+                      <Tooltip.Body description={tooltipContent.description}>
                         {tooltipContent.title}
-                      </TooltipTextContent>
+                      </Tooltip.Body>
                     </StyledTooltipContent>
                   )}
                 </AnimatePresence>

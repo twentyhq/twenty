@@ -14,23 +14,22 @@ import { BillingSyncPlansDataCommand } from 'src/engine/core-modules/billing/com
 import { BillingUpdateSubscriptionPriceCommand } from 'src/engine/core-modules/billing/commands/billing-update-subscription-price.command';
 import { BillingCreditGrantEntity } from 'src/engine/core-modules/billing/entities/billing-credit-grant.entity';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
-import { BillingMeterEntity } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingRestApiExceptionFilter } from 'src/engine/core-modules/billing/filters/billing-api-exception.filter';
 import { BillingWorkspaceMemberListener } from 'src/engine/core-modules/billing/listeners/billing-workspace-member.listener';
+import { BillingCreditAllowanceService } from 'src/engine/core-modules/billing/services/billing-credit-allowance.service';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
+import { BillingCreditOneTimeTopUpService } from 'src/engine/core-modules/billing/services/billing-credit-one-time-top-up.service';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { BillingSubscriptionItemService } from 'src/engine/core-modules/billing/services/billing-subscription-item.service';
-import { BillingCreditAllowanceProvider } from 'src/engine/core-modules/billing/services/billing-credit-allowance-provider.service';
-import { BillingUsageLimitEntitlementProvider } from 'src/engine/core-modules/billing/services/billing-usage-limit-entitlement-provider.service';
 import { BillingSubscriptionUpdateService } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
@@ -44,9 +43,8 @@ import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
-import { UsageLimitModule } from 'src/engine/core-modules/usage-limit/usage-limit.module';
 import { UsageAnalyticsModule } from 'src/engine/core-modules/usage/usage-analytics.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -65,7 +63,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       BillingCustomerEntity,
       BillingProductEntity,
       BillingPriceEntity,
-      BillingMeterEntity,
       BillingCreditGrantEntity,
       WorkspaceEntity,
       UserWorkspaceEntity,
@@ -73,7 +70,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     MetricsModule,
     EnterpriseModule,
     UsageAnalyticsModule,
-    UsageLimitModule,
     WorkspaceIteratorModule,
   ],
   providers: [
@@ -92,12 +88,12 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingUpdateSubscriptionPriceCommand,
     BillingSyncPlansDataCommand,
     BillingUsageService,
-    BillingCreditAllowanceProvider,
-    BillingUsageLimitEntitlementProvider,
+    BillingCreditAllowanceService,
     BillingPriceService,
     BillingCreditRolloverService,
     BillingCreditGrantService,
     BillingCreditService,
+    BillingCreditOneTimeTopUpService,
     ResourceCreditService,
     BillingGaugeService,
     WorkspaceCurrentBillingSubscriptionCacheService,
@@ -106,13 +102,16 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     provideWorkspaceScopedRepository(BillingSubscriptionEntity),
   ],
   exports: [
+    BillingPortalWorkspaceService,
     BillingSubscriptionService,
+    BillingCreditAllowanceService,
     BillingSubscriptionUpdateService,
     BillingService,
     BillingUsageService,
     BillingCreditRolloverService,
     BillingCreditGrantService,
     BillingCreditService,
+    BillingCreditOneTimeTopUpService,
     ResourceCreditService,
   ],
 })

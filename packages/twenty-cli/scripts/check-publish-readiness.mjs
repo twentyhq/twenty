@@ -310,7 +310,7 @@ const checkPinsArePublished = async ({ registryUrl, pins }) => {
   if (missing.length > 0) {
     fail(
       `app init would pin versions that are not on npm: ${missing.map(({ name, version }) => `${name}@${version}`).join(', ')}. ` +
-        'Publish the matching SDK release first, and tag this CLI release on the same commit as its sdk/v* tag.',
+        'Publish the matching SDK release first, then tag the prepared CLI release commit based on that SDK release.',
     );
   }
 

@@ -1,0 +1,119 @@
+---
+title: Progresie
+description: Compuneți un indicator de progres accesibil cu semantici partajate pentru interval, etichetare și valoare.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ProgressReference from '/snippets/ui/generated/feedback/progress.mdx';
+
+## Prezentare generală
+
+`Progress` expune părțile Base UI instalate: `Root`, `Track`, `Indicator`, `Label` și `Value`. Importați-le din `twenty-ui/primitives/feedback`. Utilizați [ProgressBar](/ro/ui/primitives/feedback/progress-bar) sau [ProgressRing](/ro/ui/primitives/feedback/progress-ring) pentru un aspect convenabil cu același contract semantic.
+
+<StoryEmbed storyId="ui-feedback-progress--display" title="Exemplu de progres compus" height={100} />
+
+## Utilizare
+
+`Root` gestionează valoarea controlată și semantica accesibilă a barei de progres. `Label` furnizează numele său accesibil. `Value` afișează valoarea formatată. `Track` și `Indicator` descriu umplerea vizuală; lățimea indicatorului provine din intervalul normalizat al rădăcinii. Părțile nu impun un aspect.
+
+```tsx
+import { Progress } from 'twenty-ui/primitives/feedback';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportProgress = () => (
+  <Progress.Root
+    value={70}
+    min={20}
+    max={120}
+    style={{
+      display: 'grid',
+      gridTemplateColumns: '1fr auto',
+      alignItems: 'center',
+      gap: 8,
+      width: 320,
+      maxWidth: '100%',
+    }}
+  >
+    <Progress.Label render={<Text />}>Importing records</Progress.Label>
+    <Progress.Value render={<Text />} />
+    <Progress.Track
+      style={{
+        gridColumn: '1 / -1',
+        height: 8,
+        background: 'var(--t-background-tertiary)',
+      }}
+    >
+      <Progress.Indicator
+        style={{
+          height: '100%',
+          background: 'var(--t-font-color-primary)',
+        }}
+      />
+    </Progress.Track>
+  </Progress.Root>
+);
+```
+
+Acest interval afișează `50%`, în timp ce `aria-valuenow` este `70`, `aria-valuemin` este `20`, iar `aria-valuemax` este `120`. Aplicația gestionează cererile, sincronizarea și actualizările de progres. Nu există `defaultValue` sau avansare automată.
+
+## Valori, intervale și progres nedeterminat
+
+Valoarea implicită pentru `min` este `0`, iar cea pentru `max` este `100`. Furnizați limite finite cu `min \< max`. Valorile finite din afara intervalului sunt limitate pentru valoarea semantică, valoarea formatată și umplerea vizuală. Finalizarea are loc la valoarea maximă. Modificarea intervalului recalculează procentajul fără a modifica valoarea brută furnizată de aplicație.
+
+Transmiteți `value={null}` atunci când cantitatea de progres este necunoscută. Rădăcina are apoi starea nedeterminată, omite `aria-valuenow` și utilizează `indeterminate progress` ca text implicit al valorii accesibile. Valorile nefinite rămân, de asemenea, nedeterminate; nu sunt convertite la zero. `Indicator` brut nu are o lățime procentuală calculată în acea stare, astfel încât compoziția îi alege aspectul nedeterminat.
+
+```tsx
+import { ProgressBar } from 'twenty-ui/primitives/feedback';
+
+export const PendingImport = () => (
+  <ProgressBar value={null} aria-label="Preparing the import" />
+);
+```
+
+## Etichete și formatare
+
+Compuneți `Progress.Label` în `Root` sau setați `aria-label` ori `aria-labelledby` nativ. Utilizați `aria-valuetext` pentru o alternativă ușor de înțeles atunci când un procentaj este insuficient.
+
+ფორმatorul implicit afișează procentajul normalizat. `locale` și `format` păstrează contractul instalat al `Intl.NumberFormat`; un `format` explicit formatează valoarea numerică limitată. `getAriaValueText(formattedValue, value)` primește acel text formatat și valoarea brută a aplicației, inclusiv `null`. Acesta modifică textul valorii accesibile fără a modifica umplerea.
+
+```tsx
+import { Progress } from 'twenty-ui/primitives/feedback';
+
+export const RecordCount = () => (
+  <Progress.Root
+    value={600}
+    max={1000}
+    format={{ style: 'decimal' }}
+    getAriaValueText={(formattedValue) => `${formattedValue} of 1,000 records`}
+  >
+    <Progress.Label>Importing records</Progress.Label>
+    <Progress.Value>
+      {(formattedValue) => `${formattedValue} / 1,000`}
+    </Progress.Value>
+  </Progress.Root>
+);
+```
+
+`Progress.Value` primește atât valoarea formatată, cât și valoarea brută prin callbackul său opțional pentru copil. Pentru progresul nedeterminat, callbackul primește `indeterminate` ca text formatat; fără un callback, partea de valoare nu afișează conținut. Conținutul afișat nu devine automat numele accesibil sau textul valorii accesibile.
+
+## Props native, referințe și compoziție
+
+| Parte       | DOM implicit și ținta referinței             |
+| ----------- | -------------------------------------------- |
+| `Root`      | `div` extern cu semantică de bară de progres |
+| `Track`     | `div` pentru pistă                           |
+| `Indicator` | `div` pentru umplere                         |
+| `Label`     | `span` pentru etichetă                       |
+| `Valoare`   | `span` pentru valoare                        |
+
+Fiecare parte păstrează props native, referințe și contractul de compoziție `render` instalat. Redirecționați props și referința furnizate atunci când înlocuiți un element. Callbackurile `className`, `style` și `render` primesc starea publică cu `status`: `progressing`, `complete` sau `indeterminate`. Atributele de stare pun aceeași stare la dispoziția stilurilor.
+
+Punctul de intrare exportă `ProgressStatus` și tipurile `Props` și `State` pentru fiecare parte, inclusiv `ProgressRootProps`, `ProgressRootState`, `ProgressIndicatorProps` și `ProgressIndicatorState`. Fiecare parte redirecționează gestionarii nativi de evenimente. Aplicațiile gestionează coregrafia funcționalităților și callbackurile de finalizare.
+
+## Proprietăți
+
+<ProgressReference />
+
+<PageBanner illustration="card-page-usage-limits" />

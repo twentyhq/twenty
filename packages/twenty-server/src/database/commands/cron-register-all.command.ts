@@ -11,6 +11,7 @@ import { CheckEmailingDomainVerificationCronCommand } from 'src/engine/core-modu
 import { EnterpriseKeyValidationCronCommand } from 'src/engine/core-modules/enterprise/cron/command/organization-key-validation.cron.command';
 import { EventLogCleanupCronCommand } from 'src/engine/core-modules/event-logs/cleanup/commands/event-log-cleanup.cron.command';
 import { PendingFileCleanupCronCommand } from 'src/engine/core-modules/file/file-upload/crons/commands/pending-file-cleanup.cron.command';
+import { WorkspaceDataExportCleanupCronCommand } from 'src/engine/core-modules/workspace-data-export/crons/commands/workspace-data-export-cleanup.cron.command';
 import { RotateSigningKeysCronCommand } from 'src/engine/core-modules/jwt/crons/commands/rotate-signing-keys.cron.command';
 import { CronTriggerCronCommand } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/cron/cron-trigger.cron.command';
 import { PendingWakeUpSweepCronCommand } from 'src/engine/core-modules/pending-wake-up/crons/commands/pending-wake-up-sweep.cron.command';
@@ -34,7 +35,6 @@ import { MessagingMessageListFetchCronCommand } from 'src/modules/messaging/mess
 import { MessagingMessagesImportCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-messages-import.cron.command';
 import { MessagingOngoingStaleCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-ongoing-stale.cron.command';
 import { MessagingRelaunchFailedMessageChannelsCronCommand } from 'src/modules/messaging/message-import-manager/crons/commands/messaging-relaunch-failed-message-channels.cron.command';
-import { WorkflowCoreConsistencyCronCommand } from 'src/modules/workflow/workflow-core-consistency/crons/commands/workflow-core-consistency-cron.command';
 import { WorkflowCleanWorkflowRunsCronCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-clean-workflow-runs.cron.command';
 import { WorkflowHandleStaledRunsCronCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-handle-staled-runs.cron.command';
 import { WorkflowRunEnqueueCronCommand } from 'src/modules/workflow/workflow-runner/workflow-run-queue/cron/command/workflow-run-enqueue.cron.command';
@@ -67,7 +67,6 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly workflowRunEnqueueCronCommand: WorkflowRunEnqueueCronCommand,
     private readonly workflowHandleStaledRunsCronCommand: WorkflowHandleStaledRunsCronCommand,
     private readonly workflowCleanWorkflowRunsCronCommand: WorkflowCleanWorkflowRunsCronCommand,
-    private readonly workflowCoreConsistencyCronCommand: WorkflowCoreConsistencyCronCommand,
     private readonly pendingWakeUpSweepCronCommand: PendingWakeUpSweepCronCommand,
 
     private readonly checkCustomDomainValidRecordsCronCommand: CheckCustomDomainValidRecordsCronCommand,
@@ -84,6 +83,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly marketplaceCatalogSyncCronCommand: MarketplaceCatalogSyncCronCommand,
     private readonly staleRegistrationCleanupCronCommand: StaleRegistrationCleanupCronCommand,
     private readonly pendingFileCleanupCronCommand: PendingFileCleanupCronCommand,
+    private readonly workspaceDataExportCleanupCronCommand: WorkspaceDataExportCleanupCronCommand,
     private readonly deferredWorkspaceMigrationActionRecoveryCronCommand: DeferredWorkspaceMigrationActionRecoveryCronCommand,
     private readonly billingReminderCronCommand: BillingReminderCronCommand,
     private readonly applicationRecurringChargeCronCommand: ApplicationRecurringChargeCronCommand,
@@ -180,10 +180,6 @@ export class CronRegisterAllCommand extends CommandRunner {
         command: this.workflowCleanWorkflowRunsCronCommand,
       },
       {
-        name: 'WorkflowCoreConsistency',
-        command: this.workflowCoreConsistencyCronCommand,
-      },
-      {
         name: 'PendingWakeUpSweep',
         command: this.pendingWakeUpSweepCronCommand,
       },
@@ -232,6 +228,10 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'PendingFileCleanup',
         command: this.pendingFileCleanupCronCommand,
+      },
+      {
+        name: 'WorkspaceDataExportCleanup',
+        command: this.workspaceDataExportCleanupCronCommand,
       },
       {
         name: 'DeferredWorkspaceMigrationActionRecovery',

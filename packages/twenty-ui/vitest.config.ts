@@ -24,6 +24,7 @@ export default defineConfig({
           include: [
             'src/**/*.{test,spec}.{ts,tsx}',
             'design-tokens/**/*.{test,spec}.{ts,tsx}',
+            'build-tools/**/*.{test,spec}.{ts,tsx}',
           ],
           exclude: ['src/**/*.reduced-motion.test.tsx'],
           setupFiles: ['./setupTests.ts'],
@@ -52,7 +53,10 @@ export default defineConfig({
             configDir: path.join(dirname, '.storybook'),
             ...(process.env.STORYBOOK_URL
               ? { storybookUrl: process.env.STORYBOOK_URL }
-              : { storybookScript: 'yarn storybook --no-open --port 6008' }),
+              : {
+                  storybookScript: 'npx storybook dev -p 6008 --no-open',
+                  storybookUrl: 'http://localhost:6008',
+                }),
           }),
           argosVitestPlugin({
             uploadToArgos: !!process.env.ARGOS_TOKEN,

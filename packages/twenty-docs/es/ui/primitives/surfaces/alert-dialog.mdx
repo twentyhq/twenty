@@ -1,0 +1,215 @@
+---
+title: AlertDialog
+description: Solicita confirmación antes de una acción que requiere una decisión explícita.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import AlertDialogReference from '/snippets/ui/generated/surfaces/alert-dialog.mdx';
+
+## Resumen
+
+Usa `AlertDialog` para una decisión que interrumpe el flujo de trabajo actual, como confirmar una eliminación. Proporciona semántica de `alertdialog`, gestión del foco y confirmación o cancelación explícitas.
+
+Esta primitiva es para interfaces independientes de Twenty UI y controladas por el host. Los componentes Front deben solicitar una confirmación mediante la [API de diálogo del host de SDK](/es/developers/extend/apps/layout/front-components#host-communication-api). Los `Dialog`, `AlertDialog` y cuadros de diálogo nativos del navegador directos están prohibidos dentro del renderizador de componentes frontales.
+
+<StoryEmbed storyId="ui-surfaces-alertdialog--display" title="Ejemplo de AlertDialog" height={440} />
+
+## Uso
+
+### Estado no controlado.
+
+Usa `defaultOpen` para establecer la visibilidad inicial. El cuadro de diálogo gestiona los cambios posteriores de su activador, controles de cierre e interacciones de descarte.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { AlertDialog } from 'twenty-ui/primitives/surfaces';
+
+type DeleteConfirmationProps = { onDelete: () => void };
+
+export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => (
+  <AlertDialog.Root defaultOpen={false}>
+    <AlertDialog.Trigger
+      render={<Button variant="solid">Delete record</Button>}
+    />
+    <AlertDialog.Portal>
+      <AlertDialog.Backdrop />
+      <AlertDialog.Viewport>
+        <AlertDialog.Popup>
+          <AlertDialog.Header>
+            <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+            <AlertDialog.Description>
+              This record will be permanently deleted. This action cannot be
+              undone.
+            </AlertDialog.Description>
+          </AlertDialog.Header>
+          <AlertDialog.Footer>
+            <AlertDialog.Close render={<Button>Cancel</Button>} />
+            <AlertDialog.Close
+              onClick={onDelete}
+              render={<Button color="danger">Delete</Button>}
+            />
+          </AlertDialog.Footer>
+        </AlertDialog.Popup>
+      </AlertDialog.Viewport>
+    </AlertDialog.Portal>
+  </AlertDialog.Root>
+);
+```
+
+`defaultOpen` tiene como valor predeterminado `false`, por lo que se puede omitir. Este ejemplo utiliza una devolución de llamada de confirmación síncrona y se cierra después de que se ejecuta la acción.
+
+## Anatomía
+
+Mantenga las partes relacionadas dentro de `AlertDialog.Root` o conecte los activadores separados mediante un identificador. Componga el portal, el fondo, el área de visualización y la ventana emergente por separado.
+
+```text
+AlertDialog.Root
+├── AlertDialog.Trigger
+└── AlertDialog.Portal
+    ├── AlertDialog.Backdrop
+    └── AlertDialog.Viewport
+        └── AlertDialog.Popup
+            ├── AlertDialog.Header
+            │   ├── AlertDialog.Title
+            │   └── AlertDialog.Description
+            ├── AlertDialog.Body
+            └── AlertDialog.Footer
+                ├── AlertDialog.Close
+                └── Confirmation action
+```
+
+| Parte                      | Requisito                                                        | Propósito                                                                            |
+| -------------------------- | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `Root`                     | Obligatorio                                                      | Coordina el estado abierto y el comportamiento modal.                                |
+| `Disparador`               | Opcional para un cuadro de diálogo abierto mediante programación | Abre el cuadro de diálogo y proporciona un destino para devolver el foco.            |
+| `Portal`                   | Recomendado                                                      | Mueve la superposición a su contenedor y controla el montaje.                        |
+| `Backdrop`                 | Opcional                                                         | Separa visualmente la alerta de la página circundante.                               |
+| `Viewport`                 | Recomendado                                                      | Posiciona la ventana emergente y proporciona su área circundante desplazable.        |
+| `Popup`                    | Obligatorio                                                      | Renderiza el contenido de la alerta con gestión del foco.                            |
+| `Título`                   | Recomendado                                                      | Proporciona el nombre visible de la alerta. Siempre se requiere un nombre accesible. |
+| `Description`              | Recomendado para una confirmación                                | Explica la decisión y sus consecuencias.                                             |
+| `Header`, `Body`, `Footer` | Partes opcionales de la estructura                               | Organizan encabezados, contenido adicional y acciones.                               |
+| `Cerrar`                   | Recomendado para la cancelación                                  | Proporciona una acción de cierre explícita.                                          |
+
+Establezca `container` y `keepMounted` en `Portal`, atributos de fondo en `Backdrop`, atributos de diseño en `Viewport`, y las props `size` y de foco en `Popup`. Cada parte del elemento acepta sus propios atributos nativos, controladores, ref y composición `render`. `Popup.ref` apunta al elemento de contenido de la alerta. `Title` y `Description` establecen las relaciones accesibles; proporcione `aria-label` en `Popup` cuando omita un título.
+
+La acción de confirmación es contenido de la aplicación, no una parte exportada. Usa `Close` con un controlador síncrono o un `Button` con estado abierto controlado para la confirmación asíncrona.
+
+## Estado controlado
+
+Pasa `open` y actualízalo con `onOpenChange` para gestionar la visibilidad del mismo cuadro de diálogo en el estado de React. La devolución de llamada recibe el valor booleano solicitado y los detalles del evento ascendente, incluidos `reason`, `event` y `cancel()`. Llame a `eventDetails.cancel()` para rechazar un cambio solicitado. `onOpenChangeComplete` se ejecuta después de que finalicen las transiciones de apertura o cierre.
+
+```tsx
+import { useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { AlertDialog } from 'twenty-ui/primitives/surfaces';
+
+type DeleteConfirmationProps = { onDelete: () => void };
+
+export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <AlertDialog.Root open={open} onOpenChange={setOpen}>
+      <AlertDialog.Trigger
+        render={<Button variant="solid">Delete record</Button>}
+      />
+      <AlertDialog.Portal>
+        <AlertDialog.Backdrop />
+        <AlertDialog.Viewport>
+          <AlertDialog.Popup>
+            <AlertDialog.Header>
+              <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+              <AlertDialog.Description>
+                This record will be permanently deleted. This action cannot be
+                undone.
+              </AlertDialog.Description>
+            </AlertDialog.Header>
+            <AlertDialog.Footer>
+              <AlertDialog.Close render={<Button>Cancel</Button>} />
+              <AlertDialog.Close
+                onClick={onDelete}
+                render={<Button color="danger">Delete</Button>}
+              />
+            </AlertDialog.Footer>
+          </AlertDialog.Popup>
+        </AlertDialog.Viewport>
+      </AlertDialog.Portal>
+    </AlertDialog.Root>
+  );
+};
+```
+
+Para la confirmación asíncrona, usa un `Button` con tu controlador de acciones en lugar de `AlertDialog.Close`. Mantén `open` en true mientras la acción está pendiente, llama a `setOpen(false)` después de que tenga éxito y muestra un error dentro del cuadro de diálogo si falla.
+
+## Componer con botones
+
+Usa `render` para dar a los controles de activación y cierre el estilo de botón de Twenty UI. Las partes del cuadro de diálogo proporcionan sus controladores de interacción y referencias a los botones.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { AlertDialog } from 'twenty-ui/primitives/surfaces';
+
+type DeleteConfirmationProps = { onDelete: () => void };
+
+export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => (
+  <AlertDialog.Root>
+    <AlertDialog.Trigger
+      render={<Button variant="solid">Delete record</Button>}
+    />
+    <AlertDialog.Portal>
+      <AlertDialog.Backdrop />
+      <AlertDialog.Viewport>
+        <AlertDialog.Popup>
+          <AlertDialog.Header>
+            <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+            <AlertDialog.Description>
+              This record will be permanently deleted. This action cannot be
+              undone.
+            </AlertDialog.Description>
+          </AlertDialog.Header>
+          <AlertDialog.Footer>
+            <AlertDialog.Close render={<Button>Cancel</Button>} />
+            <AlertDialog.Close
+              onClick={onDelete}
+              render={<Button color="danger">Delete</Button>}
+            />
+          </AlertDialog.Footer>
+        </AlertDialog.Popup>
+      </AlertDialog.Viewport>
+    </AlertDialog.Portal>
+  </AlertDialog.Root>
+);
+```
+
+Mantén cada acción como un único control interactivo. Si encapsulas `Button` en tu propio componente, [reenvía las propiedades y la referencia proporcionadas](/es/ui/primitives/overview#custom-components).
+
+## Activadores separados y acciones imperativas
+
+Cree un identificador una vez con `AlertDialog.createHandle\<Payload>()` y páselo a `handle` en `Root` y en cada `Trigger` separado. El `payload` tipado de un activador está disponible para la función de renderizado secundaria de la raíz. Un identificador también admite `open(triggerId)`, `openWithPayload(payload)`, `close()` y el getter `isOpen` mientras su raíz está montada. Pase un ID de activador coincidente a `open`, o `null` para abrir sin un activador. Llame a métodos imperativos desde controladores de eventos o efectos.
+
+`Root.actionsRef` expone `close()` y `unmount()`. Para una animación de cierre controlada externamente, llame a `eventDetails.preventUnmountOnClose()` en `onOpenChange` y, a continuación, llame a `actionsRef.current?.unmount()` después de que finalice la animación. Las partes con estilo normales gestionan sus propias transiciones sin estas acciones imperativas.
+
+## Tamaños y portales
+
+`Popup.size` acepta `sm`, `md`, `lg`, `xl` y `fullscreen`, y el valor predeterminado es `md`. El tamaño y la apariencia pertenecen a la superficie de AlertDialog y no tienen que coincidir con los preajustes de Dialog.
+
+`Portal.container` toma de forma predeterminada el contenedor del portal del tema más cercano. Sin uno, Base UI usa su destino de portal predeterminado, normalmente `document.body`. Un elemento explícito, una raíz sombreada o una ref anula ese destino. Un `null` explícito aplaza el montaje hasta que haya un contenedor disponible. Base UI resuelve una ref cuyo `current` es `null` mediante su destino predeterminado; use `container={null}` cuando el montaje deba esperar.
+
+El contenido portalizado conserva el contexto del tema. `Portal` y `Viewport` heredan la dirección de texto proporcionada, a menos que establezca `dir` explícitamente. Establezca `Portal.keepMounted` para conservar el contenido montado y el estado del formulario mientras está cerrado.
+
+## Foco y cierre
+
+La alerta atrapa el foco, bloquea la interacción externa y bloquea el desplazamiento de la página mientras está abierta. Escape solicita el cierre; hacer clic fuera no. Para evitar el descarte con Escape, cancele el cambio `escape-key` en `onOpenChange`. Proporciona siempre una acción visible de Cancelar o Cerrar.
+
+De forma predeterminada, el foco se mueve al primer control que permite tabulación o a la ventana emergente en una apertura táctil. Coloque primero la acción menos destructiva o use `Popup.initialFocus` para seleccionarla. El foco vuelve al activador o al elemento que tenía el foco anteriormente cuando se cierra la alerta. Use `Popup.finalFocus` cuando una acción correcta elimine ese destino. Ambas props de foco aceptan un booleano, una ref de elemento o una devolución de llamada de tipo de interacción según el contrato ascendente.
+
+## "Props"
+
+La referencia se genera a partir de los tipos de componentes públicos. Los atributos nativos, incluidos los nombres accesibles y los controladores de eventos, también se aceptan en las partes que renderizan elementos.
+
+<AlertDialogReference />
+
+<PageBanner illustration="card-page-billing-faq" />

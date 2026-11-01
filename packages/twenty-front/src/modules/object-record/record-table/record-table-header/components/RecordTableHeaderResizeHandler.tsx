@@ -11,12 +11,12 @@ export const RecordTableHeaderResizeHandler = ({
   position,
 }: {
   recordFieldIndex: number;
-  position: 'left' | 'right';
+  position: 'start' | 'end';
 }) => {
   const { visibleRecordFields } = useRecordTableContextOrThrow();
 
   const recordField: RecordField | undefined =
-    position === 'left'
+    position === 'start'
       ? visibleRecordFields[recordFieldIndex - 1]
       : visibleRecordFields[recordFieldIndex];
 

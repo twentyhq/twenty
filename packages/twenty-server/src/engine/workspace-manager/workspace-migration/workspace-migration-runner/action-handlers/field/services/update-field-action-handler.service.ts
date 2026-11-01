@@ -5,7 +5,7 @@ import {
   FieldMetadataType,
   RelationType,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isMorphRelationHead } from 'twenty-shared/utils';
 import { ColumnType, type QueryRunner } from 'typeorm';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
@@ -31,12 +31,12 @@ import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target
 import { isMorphOrRelationFieldMetadataType } from 'src/engine/utils/is-morph-or-relation-field-metadata-type.util';
 import { UniversalFlatEntityUpdate } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-update.type';
 import { resolveUniversalUpdateRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-update-relation-identifiers-to-ids.util';
-import { convertOnDeleteActionToOnDelete } from 'src/engine/workspace-manager/workspace-migration/utils/convert-on-delete-action-to-on-delete.util';
 import {
   FlatUpdateFieldAction,
   UniversalUpdateFieldAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/field/types/workspace-migration-field-action.type';
 import { serializeDefaultValue } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/utils/serialize-default-value.util';
+import { computeForeignKeyOnDelete } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/compute-foreign-key-on-delete.util';
 import { fromUniversalSettingsToFlatFieldMetadataSettings } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/from-universal-settings-to-flat-field-metadata-settings.util';
 import {
   WorkspaceMigrationActionExecutionException,
@@ -193,6 +193,10 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
       flatEntityMaps: flatFieldMetadataMaps,
     });
 
+    if (isMorphRelationHead(currentFlatFieldMetadata)) {
+      return;
+    }
+
     const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityMaps: flatObjectMetadataMaps,
       flatEntityId: currentFlatFieldMetadata.objectMetadataId,
@@ -285,12 +289,14 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
           optimisticFlatFieldMetadata.settings?.relationType ===
           RelationType.MANY_TO_ONE;
 
-        if (
-          isManyToOne &&
-          isDefined(fromSettings?.onDelete) &&
-          isDefined(toSettings?.onDelete) &&
-          toSettings.onDelete !== fromSettings.onDelete
-        ) {
+        const fromForeignKeyOnDelete = computeForeignKeyOnDelete({
+          onDelete: fromSettings?.onDelete,
+        });
+        const toForeignKeyOnDelete = computeForeignKeyOnDelete({
+          onDelete: toSettings?.onDelete,
+        });
+
+        if (isManyToOne && toForeignKeyOnDelete !== fromForeignKeyOnDelete) {
           const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
             name: optimisticFlatFieldMetadata.name,
           });
@@ -340,9 +346,7 @@ export class UpdateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
                 columnName: joinColumnName,
                 referencedTableName,
                 referencedColumnName: 'id',
-                onDelete:
-                  convertOnDeleteActionToOnDelete(toSettings.onDelete) ??
-                  'CASCADE',
+                onDelete: toForeignKeyOnDelete,
               },
             },
           );

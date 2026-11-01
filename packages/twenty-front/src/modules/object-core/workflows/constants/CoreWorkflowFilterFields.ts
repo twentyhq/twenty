@@ -1,33 +1,16 @@
-import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import {
   IconCalendarTime,
+  IconSettings,
   IconStatusChange,
   IconTextSize,
-  type IconComponent,
 } from 'twenty-ui/icon';
-import { type ThemeColor } from 'twenty-ui/theme';
 
+import { type CoreObjectFilterField } from '@/object-core/filters/types/CoreObjectFilterField';
 import { CORE_WORKFLOW_STATUS_FILTER_OPTIONS } from '@/object-core/workflows/constants/CoreWorkflowStatusFilterOptions';
 import { CoreWorkflowFilterFieldKey } from '~/generated/graphql';
 
-export type CoreWorkflowFilterFieldType = 'TEXT' | 'MULTI_SELECT' | 'DATE_TIME';
-
-export type CoreWorkflowFilterFieldOption = {
-  value: string;
-  label: MessageDescriptor;
-  color: ThemeColor;
-};
-
-export type CoreWorkflowFilterFieldDefinition = {
-  key: CoreWorkflowFilterFieldKey;
-  label: MessageDescriptor;
-  filterType: CoreWorkflowFilterFieldType;
-  Icon: IconComponent;
-  options?: CoreWorkflowFilterFieldOption[];
-};
-
-export const CORE_WORKFLOW_FILTER_FIELDS: CoreWorkflowFilterFieldDefinition[] =
+export const CORE_WORKFLOW_FILTER_FIELDS: CoreObjectFilterField<CoreWorkflowFilterFieldKey>[] =
   [
     {
       key: CoreWorkflowFilterFieldKey.NAME,
@@ -47,5 +30,11 @@ export const CORE_WORKFLOW_FILTER_FIELDS: CoreWorkflowFilterFieldDefinition[] =
       label: msg`Last update`,
       filterType: 'DATE_TIME',
       Icon: IconCalendarTime,
+    },
+    {
+      key: CoreWorkflowFilterFieldKey.IS_SYSTEM,
+      label: msg`System`,
+      filterType: 'BOOLEAN',
+      Icon: IconSettings,
     },
   ];

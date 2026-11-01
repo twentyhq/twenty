@@ -9,7 +9,7 @@ import { TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS } from 'src/engine/core-modules
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
 import { UpgradeStatusCacheService } from 'src/engine/core-modules/upgrade/services/upgrade-status-cache.service';
-import { advanceThroughVersionsWithoutInstanceCommands } from 'src/engine/core-modules/upgrade/utils/advance-through-versions-without-instance-commands.util';
+import { advanceThroughVersionsWithoutCommands } from 'src/engine/core-modules/upgrade/utils/advance-through-versions-without-commands.util';
 import { extractVersionFromCommandNameOrThrow } from 'src/engine/core-modules/upgrade/utils/extract-version-from-command-name-or-throw.util';
 import {
   resolveCompletedVersionFromCursor,
@@ -171,17 +171,17 @@ export class UpgradeStatusService {
       return null;
     }
 
-    return resolveCompletedVersionFromCursor({
-      stepNames: this.upgradeSequenceReaderService.getUpgradeStepNames(),
+    return this.resolveCompletedVersion(
       cursor,
-    });
+      this.upgradeSequenceReaderService.getUpgradeStepNames(),
+    );
   }
 
   async getInstanceAndWorkspaceCountsStatus(): Promise<InstanceAndWorkspaceCountsUpgradeStatus | null> {
-    const hasRefreshLock =
+    const refreshLockOwnerToken =
       await this.upgradeStatusCacheService.tryAcquireRefreshLock();
 
-    if (hasRefreshLock) {
+    if (isDefined(refreshLockOwnerToken)) {
       try {
         const refreshedStatus =
           await this.refreshInstanceAndAllWorkspacesStatus();
@@ -196,7 +196,9 @@ export class UpgradeStatusService {
       } catch (error) {
         this.logger.error('Failed to refresh upgrade status', error);
 
-        await this.upgradeStatusCacheService.releaseRefreshLock();
+        await this.upgradeStatusCacheService.releaseRefreshLock(
+          refreshLockOwnerToken,
+        );
       }
     }
 
@@ -331,6 +333,13 @@ export class UpgradeStatusService {
       'slow-instance': true,
     });
 
+    return this.resolveCompletedVersion(cursor, stepNames);
+  }
+
+  private resolveCompletedVersion(
+    cursor: UpgradeCursor,
+    stepNames: string[],
+  ): string | null {
     const completedVersion = resolveCompletedVersionFromCursor({
       stepNames,
       cursor,
@@ -340,10 +349,10 @@ export class UpgradeStatusService {
       return null;
     }
 
-    return advanceThroughVersionsWithoutInstanceCommands({
+    return advanceThroughVersionsWithoutCommands({
       completedVersion,
       supportedVersions: TWENTY_CROSS_UPGRADE_SUPPORTED_VERSIONS,
-      versionsWithInstanceCommands: new Set(
+      versionsWithCommands: new Set(
         stepNames.map(extractVersionFromCommandNameOrThrow),
       ),
     });

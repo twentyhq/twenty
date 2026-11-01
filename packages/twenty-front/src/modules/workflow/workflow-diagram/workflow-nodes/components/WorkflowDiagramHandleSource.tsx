@@ -6,6 +6,7 @@ import { styled } from '@linaria/react';
 import { Handle, Position, type HandleProps } from '@xyflow/react';
 import { useMemo, type CSSProperties } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const HANDLE_SCALE_ON_HOVER = 1.5;
 
@@ -73,8 +74,9 @@ export const WorkflowDiagramHandleSource = ({
   const dynamicStyles = useMemo(() => {
     const isRight = position === Position.Right;
     const transform = isRight ? 'translate(50%, -50%)' : 'translate(-50%, 50%)';
-    // oxlint-disable-next-line lingui/no-unlocalized-strings
-    const transformOrigin = isRight ? 'top right' : 'bottom left';
+    const transformOrigin = doNotTranslate(
+      isRight ? 'top right' : 'bottom left',
+    );
 
     let bg: string;
     let borderColor: string;

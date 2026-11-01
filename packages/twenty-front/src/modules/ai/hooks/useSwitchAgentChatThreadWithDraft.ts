@@ -1,9 +1,7 @@
-import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
-import { agentChatUsageComponentFamilyState } from '@/ai/states/agentChatUsageComponentFamilyState';
+import { agentChatUsageFamilyState } from '@/ai/states/agentChatUsageFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { getAgentChatUsageFromThread } from '@/ai/utils/getAgentChatUsageFromThread';
-import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -14,10 +12,6 @@ export const useSwitchAgentChatThreadWithDraft = () => {
     currentAiChatThreadState,
   );
   const store = useStore();
-  const usageFamilyCallback = useAtomComponentFamilyStateCallbackState(
-    agentChatUsageComponentFamilyState,
-    AGENT_CHAT_INSTANCE_ID,
-  );
 
   const switchThreadWithDraft = useCallback(
     (toThreadId: string) => {
@@ -31,12 +25,12 @@ export const useSwitchAgentChatThreadWithDraft = () => {
         );
 
         store.set(
-          usageFamilyCallback({ threadId: toThreadId }),
+          agentChatUsageFamilyState.atomFamily({ threadId: toThreadId }),
           isDefined(thread) ? getAgentChatUsageFromThread(thread) : null,
         );
       }
     },
-    [currentAiChatThread, setCurrentAiChatThread, store, usageFamilyCallback],
+    [currentAiChatThread, setCurrentAiChatThread, store],
   );
 
   return { switchThreadWithDraft };

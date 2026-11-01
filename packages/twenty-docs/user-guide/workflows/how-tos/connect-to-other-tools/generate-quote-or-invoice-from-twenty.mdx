@@ -3,7 +3,7 @@ title: Generate a Quote or Invoice from Twenty
 description: Automatically create invoices in external tools when deals close.
 ---
 
-Automatically send deal data to your invoicing system (Stripe, QuickBooks, Xero, etc.) when an opportunity is won.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Workflow Structure
 
@@ -40,7 +40,7 @@ The Opportunity record may not include all Company fields you need for the invoi
 | Setting | Value |
 |---------|-------|
 | **Object** | Company |
-| **Match by** | ID equals `{{trigger.object.companyId}}` |
+| **Match by** | ID equals `{{trigger.properties.after.companyId}}` |
 
 This retrieves the full Company record with billing address, tax ID, etc.
 
@@ -143,3 +143,4 @@ Body: {{code.invoice}}
 - [Workflow Actions](/user-guide/workflows/capabilities/workflow-actions)
 - [Closed Won Automations](/user-guide/workflows/how-tos/crm-automations/closed-won-automations)
 
+<PageBanner illustration="section-document-generator" />

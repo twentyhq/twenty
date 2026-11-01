@@ -2,6 +2,7 @@ import { type AggregateOperations } from '@/object-record/record-table/constants
 import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
 import { RecordTableColumnAggregateFooterDropdownContext } from '@/object-record/record-table/record-table-footer/components/RecordTableColumnAggregateFooterDropdownContext';
 import { NON_STANDARD_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/NonStandardAggregateOperationsOptions';
+import { PERCENT_AGGREGATE_OPERATION_OPTIONS } from '@/object-record/record-table/record-table-footer/constants/PercentAggregateOperationOptions';
 import { useViewFieldAggregateOperation } from '@/object-record/record-table/record-table-footer/hooks/useViewFieldAggregateOperation';
 import { getAvailableAggregateOperationsForFieldMetadataType } from '@/object-record/record-table/record-table-footer/utils/getAvailableAggregateOperationsForFieldMetadataType';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -9,7 +10,6 @@ import { t } from '@lingui/core/macro';
 import { useContext, useMemo } from 'react';
 import { isDefined, isFieldMetadataDateKind } from 'twenty-shared/utils';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { FieldMetadataType } from '~/generated-metadata/graphql';
 
 export const RecordTableColumnAggregateFooterMenuContent = () => {
   const { fieldMetadataId, dropdownId, fieldMetadataType } = useContext(
@@ -37,9 +37,10 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
       ),
     );
 
-  const fieldIsRelation =
-    objectMetadataItem.fields.find((field) => field.id === fieldMetadataId)
-      ?.type === FieldMetadataType.RELATION;
+  const hasPercentAggregateOperation = PERCENT_AGGREGATE_OPERATION_OPTIONS.some(
+    (percentAggregateOperation) =>
+      availableAggregateOperation.includes(percentAggregateOperation),
+  );
 
   const {
     updateViewFieldAggregateOperation,
@@ -53,7 +54,7 @@ export const RecordTableColumnAggregateFooterMenuContent = () => {
           page="countAggregateOperationsOptions"
           hasSubmenu
         >{t`Count`}</Dropdown.ActionItem>
-        {!fieldIsRelation && (
+        {hasPercentAggregateOperation && (
           <Dropdown.ActionItem
             page="percentAggregateOperationsOptions"
             hasSubmenu

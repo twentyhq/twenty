@@ -1,19 +1,17 @@
 import { type useRender } from '@base-ui/react/use-render';
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
 
-import { type ToastVariant } from './ToastVariant';
+import { type ToastStatus } from './ToastStatus';
 
-export type ToastProps = ComponentPropsWithRef<'div'> & {
+export type ToastProps = Omit<ComponentPropsWithRef<'div'>, 'color'> & {
   /**
    * Replaces the rendered element or composes it with another component.
    * Accepts a React element or a function that returns the element to render.
    */
   render?: useRender.RenderProp;
-  /** Visual variant that selects the icon and colors. */
-  variant?: ToastVariant;
+  status?: ToastStatus;
   /** Supporting content rendered below the message. */
   description?: ReactNode;
-  /** Replaces the variant's icon. */
   icon?: ReactNode;
   /**
    * Accessible name of the default icon. Without it, the icon is hidden from
@@ -43,7 +41,7 @@ export type ToastProps = ComponentPropsWithRef<'div'> & {
    */
   onClose?: () => void;
   /** Label of the cancel button. */
-  cancelLabel?: string;
+  cancelLabel?: ReactNode;
   /** Accessible name of the close button. */
   closeLabel?: string;
 };

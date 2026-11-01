@@ -2,10 +2,12 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { useRef, useState } from 'react';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
+import { Button } from '@ui/primitives/input/Button/Button';
 import { DirectionProvider } from '@ui/primitives/layout/DirectionProvider/DirectionProvider';
 import { ComponentDecorator } from '@ui/testing';
 import { ThemeProvider } from '@ui/theme/ThemeProvider';
 
+import { AlertDialog } from '../AlertDialog';
 import { AlertDialogExample } from './AlertDialogExample';
 import { waitForAlertDialog } from './waitForAlertDialog';
 
@@ -58,7 +60,7 @@ const ExplicitContainerAlertDialog = () => {
     <>
       <div ref={setContainer} data-testid="portal-container" />
       <ThemeProvider colorScheme="dark" applyToRoot={false}>
-        <AlertDialogExample defaultOpen popupProps={{ container }} />
+        <AlertDialogExample defaultOpen portalProps={{ container }} />
       </ThemeProvider>
     </>
   );
@@ -83,10 +85,10 @@ const DeferredContainerAlertDialog = () => {
   return (
     <ThemeProvider colorScheme="light" applyToRoot={false}>
       <div ref={containerRef} data-testid="deferred-container" />
-      <button type="button" onClick={() => setContainer(containerRef.current)}>
+      <Button onClick={() => setContainer(containerRef.current)}>
         Attach container
-      </button>
-      <AlertDialogExample defaultOpen popupProps={{ container }} />
+      </Button>
+      <AlertDialogExample defaultOpen portalProps={{ container }} />
     </ThemeProvider>
   );
 };
@@ -112,7 +114,7 @@ const RefContainerAlertDialog = () => {
   return (
     <>
       <div ref={container} data-testid="ref-container" />
-      <AlertDialogExample defaultOpen popupProps={{ container }} />
+      <AlertDialogExample defaultOpen portalProps={{ container }} />
     </>
   );
 };
@@ -156,5 +158,70 @@ export const RenderComposition: Story = {
       within(dialog).getByRole('button', { name: 'Cancel' }),
     );
     await waitFor(() => expect(dialog).not.toBeInTheDocument());
+  },
+};
+
+export const ExplicitDirection: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <DirectionProvider direction="rtl">
+      <AlertDialog.Root defaultOpen>
+        <AlertDialog.Portal dir="ltr" data-testid="explicit-direction-portal">
+          <AlertDialog.Backdrop />
+          <AlertDialog.Viewport
+            dir="ltr"
+            data-testid="explicit-direction-viewport"
+          >
+            <AlertDialog.Popup>
+              <AlertDialog.Header>
+                <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+                <AlertDialog.Description>
+                  This action cannot be undone.
+                </AlertDialog.Description>
+              </AlertDialog.Header>
+              <AlertDialog.Footer>
+                <AlertDialog.Close render={<Button>Cancel</Button>} />
+              </AlertDialog.Footer>
+            </AlertDialog.Popup>
+          </AlertDialog.Viewport>
+        </AlertDialog.Portal>
+      </AlertDialog.Root>
+    </DirectionProvider>
+  ),
+  play: async ({ canvasElement }) => {
+    const dialog = await waitForAlertDialog(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    expect(body.getByTestId('explicit-direction-portal')).toHaveAttribute(
+      'dir',
+      'ltr',
+    );
+    expect(body.getByTestId('explicit-direction-viewport')).toHaveAttribute(
+      'dir',
+      'ltr',
+    );
+    expect(getComputedStyle(dialog).direction).toBe('ltr');
+  },
+};
+
+const NullRefContainerAlertDialog = () => {
+  const container = useRef<HTMLDivElement>(null);
+
+  return (
+    <DirectionProvider direction="rtl">
+      <ThemeProvider colorScheme="dark" applyToRoot={false}>
+        <AlertDialogExample defaultOpen portalProps={{ container }} />
+      </ThemeProvider>
+    </DirectionProvider>
+  );
+};
+
+export const NullRefContainer: Story = {
+  decorators: [ComponentDecorator],
+  render: () => <NullRefContainerAlertDialog />,
+  play: async ({ canvasElement }) => {
+    const dialog = await waitForAlertDialog(canvasElement);
+    expect(canvasElement).not.toContainElement(dialog);
+    expect(dialog.closest('.dark')).toBeNull();
+    expect(getComputedStyle(dialog).direction).toBe('rtl');
   },
 };

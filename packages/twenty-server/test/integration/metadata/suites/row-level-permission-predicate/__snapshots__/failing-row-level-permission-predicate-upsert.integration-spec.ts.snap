@@ -1,5 +1,75 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Row Level Permission Predicate upsert should fail when adding a predicate group to a non-editable role 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "rowLevelPermissionPredicateGroup": [
+        {
+          "errors": [
+            {
+              "code": "ROLE_NOT_EDITABLE",
+              "message": "Role is not editable",
+              "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionPredicateGroup",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 rowLevelPermissionPredicateGroup",
+    "summary": {
+      "rowLevelPermissionPredicateGroup": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+  },
+  "message": "Validation errors occurred while upserting row level permission predicates",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert should fail when adding a predicate to a non-editable role 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "rowLevelPermissionPredicate": [
+        {
+          "errors": [
+            {
+              "code": "ROLE_NOT_EDITABLE",
+              "message": "Role is not editable",
+              "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionPredicate",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 rowLevelPermissionPredicate",
+    "summary": {
+      "rowLevelPermissionPredicate": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+  },
+  "message": "Validation errors occurred while upserting row level permission predicates",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`Row Level Permission Predicate upsert should fail when fieldMetadataId in predicate does not exist 1`] = `
 {
   "extensions": {
@@ -81,6 +151,41 @@ exports[`Row Level Permission Predicate upsert should fail when parentRowLevelPe
 }
 `;
 
+exports[`Row Level Permission Predicate upsert should fail when relation hops are not enabled for the workspace 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "rowLevelPermissionPredicate": [
+        {
+          "errors": [
+            {
+              "code": "ROW_LEVEL_PERMISSION_FEATURE_DISABLED",
+              "message": "Predicates reaching a field through a relation are not enabled for this workspace",
+              "userFriendlyMessage": "Rules through a relation are not enabled for this workspace",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionPredicate",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 rowLevelPermissionPredicate",
+    "summary": {
+      "rowLevelPermissionPredicate": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Rules through a relation are not enabled for this workspace",
+  },
+  "message": "Validation errors occurred while upserting row level permission predicates",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`Row Level Permission Predicate upsert should fail when roleId is not a valid UUID 1`] = `
 {
   "extensions": {
@@ -104,6 +209,100 @@ exports[`Row Level Permission Predicate upsert should fail when rowLevelPermissi
     "userFriendlyMessage": "Invalid row level permission predicate data.",
   },
   "message": "Referenced predicate group is not a group of this role and object. Reference a group declared in predicateGroups or an existing group of this role and object.",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert should fail when the operand is not supported for the field type 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "rowLevelPermissionPredicate": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
+              "message": "Operand IS is not supported for field type TEXT",
+              "userFriendlyMessage": "This operand is not supported for this field",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionPredicate",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 rowLevelPermissionPredicate",
+    "summary": {
+      "rowLevelPermissionPredicate": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "This operand is not supported for this field",
+  },
+  "message": "Validation errors occurred while upserting row level permission predicates",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert should fail when the relation hop does not belong to the restricted object 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "rowLevelPermissionPredicate": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
+              "message": "Relation field "company" does not belong to the object the predicate restricts",
+              "userFriendlyMessage": "This relation field does not belong to the restricted object",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rowLevelPermissionPredicate",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 rowLevelPermissionPredicate",
+    "summary": {
+      "rowLevelPermissionPredicate": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "This relation field does not belong to the restricted object",
+  },
+  "message": "Validation errors occurred while upserting row level permission predicates",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert should fail when the relation hop does not exist 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
+    "userFriendlyMessage": "Invalid row level permission predicate data.",
+  },
+  "message": "relationFieldMetadataId does not point to a relation field. A rule can only reach another object through a relation.",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Row Level Permission Predicate upsert should fail when the relation hop is not a relation field 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA",
+    "userFriendlyMessage": "Invalid row level permission predicate data.",
+  },
+  "message": "relationFieldMetadataId does not point to a relation field. A rule can only reach another object through a relation.",
   "name": "UserInputError",
 }
 `;

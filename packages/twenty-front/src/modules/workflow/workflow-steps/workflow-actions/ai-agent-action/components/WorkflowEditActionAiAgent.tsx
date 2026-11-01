@@ -1,3 +1,4 @@
+import { agentResponseSchemaToOutputSchema } from '@/ai/utils/agentResponseSchemaToOutputSchema';
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { WorkflowStepTabPanel } from '@/workflow/workflow-steps/components/WorkflowStepTabPanel';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
@@ -19,6 +20,7 @@ import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
+import { type AgentResponseSchema } from 'twenty-shared/ai';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowConversation } from 'twenty-shared/workflow';
@@ -86,6 +88,9 @@ export const WorkflowEditActionAiAgent = ({
   const [conversation, setConversation] = useState(
     action.settings.input.conversation,
   );
+  const [responseSchema, setResponseSchema] = useState<
+    AgentResponseSchema | undefined
+  >(undefined);
 
   // saves every field from the latest render, so editing one does not drop a pending edit of another
   const saveInput = useDebouncedCallback(() => {
@@ -103,7 +108,13 @@ export const WorkflowEditActionAiAgent = ({
           humanInputInstructions,
           workspaceMemberId: recipientWorkspaceMemberId,
           conversation,
+          ...(isDefined(responseSchema)
+            ? { responseFormat: { type: 'json', schema: responseSchema } }
+            : {}),
         },
+        ...(isDefined(responseSchema)
+          ? { outputSchema: agentResponseSchemaToOutputSchema(responseSchema) }
+          : {}),
       },
     });
   }, 500);
@@ -125,6 +136,13 @@ export const WorkflowEditActionAiAgent = ({
 
   const handleConversationChange = (nextConversation: WorkflowConversation) => {
     setConversation(nextConversation);
+    saveInput();
+  };
+
+  const handleResponseSchemaChange = (
+    nextResponseSchema: AgentResponseSchema,
+  ) => {
+    setResponseSchema(nextResponseSchema);
     saveInput();
   };
 
@@ -217,7 +235,7 @@ export const WorkflowEditActionAiAgent = ({
         {currentTabId === WORKFLOW_AI_AGENT_TABS.PERMISSIONS ? (
           <WorkflowStepBody paddingBlock="0" paddingInline="0">
             <WorkflowAiAgentPermissionsTab
-              action={action}
+              stepId={action.id}
               readonly={actionOptions.readonly === true}
               isAgentLoading={agentLoading}
               refetchAgent={refetchAgent}
@@ -238,11 +256,7 @@ export const WorkflowEditActionAiAgent = ({
               onRecipientChange={handleRecipientChange}
               conversation={conversation}
               onConversationChange={handleConversationChange}
-              onActionUpdate={
-                actionOptions.readonly === true
-                  ? undefined
-                  : actionOptions.onActionUpdate
-              }
+              onResponseSchemaChange={handleResponseSchemaChange}
             />
           </WorkflowStepBody>
         )}

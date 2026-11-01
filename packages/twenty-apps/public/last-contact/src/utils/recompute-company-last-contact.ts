@@ -1,7 +1,8 @@
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
-import { collectExistingRecordIds } from 'src/utils/collect-existing-record-ids';
+import { collectRecordsById } from 'src/utils/collect-records-by-id';
 import { executeWithRetry } from 'src/utils/execute-with-retry';
+import { hasLastContactChanged } from 'src/utils/has-last-contact-changed';
 import {
   type RecordUpsert,
   upsertRecordsInBatches,
@@ -132,21 +133,40 @@ export const recomputeCompaniesLastContact = async (
     return;
   }
 
-  const [topPersonByCompanyId, existingCompanyIds] = await Promise.all([
-    collectTopPersonByCompanyId(client, companyIds),
-    collectExistingRecordIds(client, 'companies', companyIds),
-  ]);
+  // Read companies before their people: a company already up to date is then
+  // skipped rather than lowered if a live job raises it during the recompute.
+  const currentCompanyById = await collectRecordsById(
+    client,
+    'companies',
+    companyIds,
+    Object.keys(EMPTY_LAST_CONTACT),
+  );
+  const existingCompanyIds = companyIds.filter((companyId) =>
+    currentCompanyById.has(companyId),
+  );
 
-  const upserts: RecordUpsert[] = companyIds
-    .filter((companyId) => existingCompanyIds.has(companyId))
-    .map((companyId) => {
-      const topPerson = topPersonByCompanyId.get(companyId);
+  if (existingCompanyIds.length === 0) {
+    return;
+  }
 
-      return {
-        id: companyId,
-        ...(topPerson ? buildLastContactData(topPerson) : EMPTY_LAST_CONTACT),
-      };
-    });
+  const topPersonByCompanyId = await collectTopPersonByCompanyId(
+    client,
+    existingCompanyIds,
+  );
+
+  const upserts: RecordUpsert[] = [];
+
+  for (const companyId of existingCompanyIds) {
+    const topPerson = topPersonByCompanyId.get(companyId);
+    const data = topPerson
+      ? buildLastContactData(topPerson)
+      : EMPTY_LAST_CONTACT;
+    const currentCompany = currentCompanyById.get(companyId);
+
+    if (currentCompany && hasLastContactChanged(currentCompany, data)) {
+      upserts.push({ id: companyId, ...data });
+    }
+  }
 
   await upsertRecordsInBatches(client, 'createCompanies', upserts);
 };

@@ -18,29 +18,10 @@ import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 i18n.load({ [SOURCE_LOCALE]: messages });
 i18n.activate(SOURCE_LOCALE);
 
-const mockIsCoreEnabled = jest.fn();
 const mockHasPermission = jest.fn();
-const mockCanSoftDeleteWorkflow = jest.fn();
 
-jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
-  useIsFeatureEnabled: () => mockIsCoreEnabled(),
-}));
 jest.mock('@/settings/roles/hooks/useHasPermissionFlag', () => ({
   useHasPermissionFlag: () => mockHasPermission(),
-}));
-jest.mock('@/object-metadata/hooks/useObjectMetadataItem', () => ({
-  useObjectMetadataItem: () => ({
-    objectMetadataItem: {
-      id: '20202020-9e2b-4f2b-8f47-61b41565859a',
-      labelSingular: 'Workflow',
-      labelPlural: 'Workflows',
-    },
-  }),
-}));
-jest.mock('@/object-record/hooks/useObjectPermissionsForObject', () => ({
-  useObjectPermissionsForObject: () => ({
-    canSoftDeleteObjectRecords: mockCanSoftDeleteWorkflow(),
-  }),
 }));
 
 const Wrapper = ({ children }: { children: React.ReactNode }) => (
@@ -81,9 +62,7 @@ const renderCommands = () => {
 
 describe('useCoreObjectsCommands', () => {
   beforeEach(() => {
-    mockIsCoreEnabled.mockReturnValue(true);
     mockHasPermission.mockReturnValue(true);
-    mockCanSoftDeleteWorkflow.mockReturnValue(true);
     jotaiStore.set(coreWorkflowsFilterSettingsState.atom, {});
   });
 
@@ -104,19 +83,5 @@ describe('useCoreObjectsCommands', () => {
     mockHasPermission.mockReturnValue(false);
     const { result } = renderCommands();
     expect(result.current.shouldDisplayCoreWorkflowsDeleteCommand).toBe(false);
-  });
-
-  it('does not expose core deletion without object delete permission', () => {
-    mockCanSoftDeleteWorkflow.mockReturnValue(false);
-    const { result } = renderCommands();
-    expect(result.current.shouldDisplayCoreWorkflowsDeleteCommand).toBe(false);
-  });
-
-  it('keeps core commands hidden with the flag off', () => {
-    mockIsCoreEnabled.mockReturnValue(false);
-    const { result } = renderCommands();
-    expect(result.current.coreObjectCommandIds).toEqual([]);
-    expect(result.current.coreSelectionCommandIds).toEqual([]);
-    expect(result.current.coreSelectionSectionContext).toBeUndefined();
   });
 });

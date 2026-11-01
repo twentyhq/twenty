@@ -2,9 +2,11 @@ import { useStore } from 'jotai';
 import { type RefObject, useCallback } from 'react';
 
 import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
+import { recordSelectionRangeComponentState } from '@/object-record/record-selection/states/recordSelectionRangeComponentState';
 import { DragSelect } from '@/ui/utilities/drag-select/components/DragSelect';
 import { RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS } from '@/ui/utilities/drag-select/constants/RecordIndexDragSelectBoundaryClass';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
+import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 
 type RecordSelectionDragSelectProps = {
   selectableItemsContainerRef: RefObject<HTMLElement | null>;
@@ -21,6 +23,14 @@ export const RecordSelectionDragSelect = ({
   const isRecordSelectedFamilyState = useAtomComponentFamilyStateCallbackState(
     isRecordSelectedComponentFamilyState,
   );
+  const recordSelectionRange = useAtomComponentStateCallbackState(
+    recordSelectionRangeComponentState,
+  );
+
+  const handleDragSelectionStart = () => {
+    store.set(recordSelectionRange, null);
+    onDragSelectionStart?.();
+  };
 
   const handleDragSelectionChange = useCallback(
     (recordId: string, isSelected: boolean) => {
@@ -62,7 +72,7 @@ export const RecordSelectionDragSelect = ({
   return (
     <DragSelect
       selectableItemsContainerRef={selectableItemsContainerRef}
-      onDragSelectionStart={onDragSelectionStart}
+      onDragSelectionStart={handleDragSelectionStart}
       onDragSelectionChange={handleDragSelectionChange}
       onDragSelectionEnd={handleDragSelectionEnd}
       selectionBoundaryClass={RECORD_INDEX_DRAG_SELECT_BOUNDARY_CLASS}

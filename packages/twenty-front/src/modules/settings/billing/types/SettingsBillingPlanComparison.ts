@@ -8,6 +8,8 @@ export type SettingsBillingPlanInterval =
   | SubscriptionInterval.Month
   | SubscriptionInterval.Year;
 
+export type SettingsBillingComparedPlanKeys = [BillingPlanKey, BillingPlanKey];
+
 export type SettingsBillingPlanPrices = Record<
   BillingPlanKey,
   Record<SettingsBillingPlanInterval, number>
@@ -16,7 +18,7 @@ export type SettingsBillingPlanPrices = Record<
 export type SettingsBillingPlanComparisonCell =
   | { kind: 'excluded' }
   | { kind: 'included' }
-  | { kind: 'text'; text: MessageDescriptor };
+  | { detail?: MessageDescriptor; kind: 'text'; text: MessageDescriptor };
 
 export type SettingsBillingPlanComparisonCategoryRow = {
   title: MessageDescriptor;

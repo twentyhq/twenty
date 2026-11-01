@@ -15,13 +15,6 @@ import {
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 
-jest.mock(
-  '@/ui/navigation/navigation-drawer/components/NavigationDrawerHeader',
-  () => ({
-    NavigationDrawerHeader: () => null,
-  }),
-);
-
 const PageHeaderExpandButton = () => {
   const isNavigationDrawerExpanded = useAtomStateValue(
     isNavigationDrawerExpandedState,

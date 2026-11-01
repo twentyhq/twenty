@@ -2,8 +2,10 @@ import crypto from 'crypto';
 
 import gql from 'graphql-tag';
 import { type ApplicationRegistrationAssetService } from 'src/engine/core-modules/application/application-registration/application-registration-asset.service';
+import { type ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
 import { type ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { completeAppTarballUpload } from 'test/integration/metadata/suites/application/utils/complete-app-tarball-upload.util';
+import { uploadAppTarball } from 'test/integration/metadata/suites/application/utils/upload-app-tarball.util';
 import { createAppTarball } from 'test/integration/metadata/suites/application/utils/create-app-tarball.util';
 import {
   type AppTarballUploadTarget,
@@ -133,6 +135,15 @@ describe('Direct app tarball upload', () => {
     return row ?? null;
   };
 
+  const findVersionRows = async (registrationId: string) =>
+    ds.query(
+      `SELECT version, "sourceType", "tarballFileId"
+       FROM core."applicationRegistrationVersion"
+       WHERE "applicationRegistrationId" = $1
+       ORDER BY version`,
+      [registrationId],
+    );
+
   beforeAll(() => {
     jest.useRealTimers();
     ds = global.testDataSource;
@@ -187,6 +198,14 @@ describe('Direct app tarball upload', () => {
     expect(file.mimeType).toBe('application/gzip');
     expect(file.path).toBe(`app-tarball/${uploadTarget.fileId}.gz`);
     expect(Number(file.size)).toBe(tarball.length);
+
+    expect(await findVersionRows(data!.completeAppTarballUpload.id)).toEqual([
+      {
+        version: '1.0.0',
+        sourceType: 'tarball',
+        tarballFileId: uploadTarget.fileId,
+      },
+    ]);
   });
 
   it('answers a repeated completion with the same registration', async () => {
@@ -208,7 +227,7 @@ describe('Direct app tarball upload', () => {
     );
   });
 
-  it('replaces the previous tarball on a new version and drops it', async () => {
+  it('points the registration at the new tarball and keeps the previous version artifact', async () => {
     const universalIdentifier = crypto.randomUUID();
 
     const first = await deployTarball(
@@ -226,17 +245,123 @@ describe('Direct app tarball upload', () => {
       first.completion.data?.completeAppTarballUpload.id,
     );
 
-    const registration = await findRegistrationRow(
-      first.completion.data!.completeAppTarballUpload.id,
-    );
+    const registrationId = first.completion.data!.completeAppTarballUpload.id;
+    const registration = await findRegistrationRow(registrationId);
 
     expect(registration.tarballFileId).toBe(second.uploadTarget.fileId);
     expect(registration.latestAvailableVersion).toBe('1.1.0');
 
-    expect(await findFileRow(first.uploadTarget.fileId)).toBeNull();
+    expect((await findFileRow(first.uploadTarget.fileId)).status).toBe(
+      'UPLOADED',
+    );
     expect((await findFileRow(second.uploadTarget.fileId)).status).toBe(
       'UPLOADED',
     );
+
+    expect(await findVersionRows(registrationId)).toMatchObject([
+      { version: '1.0.0', tarballFileId: first.uploadTarget.fileId },
+      { version: '1.1.0', tarballFileId: second.uploadTarget.fileId },
+    ]);
+  });
+
+  it('keeps an earlier version artifact when its completion is replayed after a newer version', async () => {
+    const universalIdentifier = crypto.randomUUID();
+
+    const first = await deployTarball(
+      await buildValidTarball({ universalIdentifier, version: '1.0.0' }),
+    );
+    const second = await deployTarball(
+      await buildValidTarball({ universalIdentifier, version: '1.1.0' }),
+    );
+
+    expect(first.completion.errors).toBeUndefined();
+    expect(second.completion.errors).toBeUndefined();
+
+    const { errors } = await completeAppTarballUpload({
+      fileId: first.uploadTarget.fileId,
+      expectToFail: true,
+    });
+
+    expect(
+      errors?.some((error: { message: string }) =>
+        error.message.includes(
+          'version must be higher than the currently deployed version',
+        ),
+      ),
+    ).toBe(true);
+
+    expect((await findFileRow(first.uploadTarget.fileId)).status).toBe(
+      'UPLOADED',
+    );
+    expect(
+      await findVersionRows(first.completion.data!.completeAppTarballUpload.id),
+    ).toMatchObject([
+      { version: '1.0.0', tarballFileId: first.uploadTarget.fileId },
+      { version: '1.1.0', tarballFileId: second.uploadTarget.fileId },
+    ]);
+  });
+
+  it('refuses to publish a recorded version again after an unversioned upload', async () => {
+    const universalIdentifier = crypto.randomUUID();
+
+    const first = await deployTarball(
+      await buildValidTarball({ universalIdentifier, version: '1.0.0' }),
+    );
+
+    expect(first.completion.errors).toBeUndefined();
+
+    const unversioned = await deployTarball(
+      await createAppTarball({
+        'manifest.json': buildManifest(universalIdentifier),
+        'package.json': JSON.stringify({ name: 'direct-tarball-app' }),
+      }),
+    );
+
+    expect(unversioned.completion.errors).toBeUndefined();
+
+    const registrationId = first.completion.data!.completeAppTarballUpload.id;
+
+    expect(
+      (await findRegistrationRow(registrationId)).latestAvailableVersion,
+    ).toBeNull();
+
+    const republished = await deployTarball(
+      await buildValidTarball({ universalIdentifier, version: '1.0.0' }),
+      { expectToFail: true },
+    );
+
+    expect(
+      republished.completion.errors?.some((error: { message: string }) =>
+        error.message.includes('already published'),
+      ),
+    ).toBe(true);
+
+    expect(await findFileRow(republished.uploadTarget.fileId)).toBeNull();
+    expect(await findVersionRows(registrationId)).toMatchObject([
+      { version: '1.0.0', tarballFileId: first.uploadTarget.fileId },
+    ]);
+  });
+
+  it('refuses a first upload whose version is not semver and drops the promoted file', async () => {
+    const universalIdentifier = crypto.randomUUID();
+
+    const { uploadTarget, completion } = await deployTarball(
+      await buildValidTarball({ universalIdentifier, version: 'banana' }),
+      { expectToFail: true },
+    );
+
+    expect(
+      completion.errors?.some((error: { message: string }) =>
+        error.message.includes('Must be a valid semver version'),
+      ),
+    ).toBe(true);
+    expect(await findFileRow(uploadTarget.fileId)).toBeNull();
+    expect(
+      await ds.query(
+        `SELECT id FROM core."applicationRegistration" WHERE "universalIdentifier" = $1`,
+        [universalIdentifier],
+      ),
+    ).toEqual([]);
   });
 
   it('refuses a version that does not progress and drops the promoted file', async () => {
@@ -263,11 +388,13 @@ describe('Direct app tarball upload', () => {
 
     expect(await findFileRow(second.uploadTarget.fileId)).toBeNull();
 
-    const registration = await findRegistrationRow(
-      first.completion.data!.completeAppTarballUpload.id,
-    );
+    const registrationId = first.completion.data!.completeAppTarballUpload.id;
+    const registration = await findRegistrationRow(registrationId);
 
     expect(registration.tarballFileId).toBe(first.uploadTarget.fileId);
+    expect(await findVersionRows(registrationId)).toMatchObject([
+      { version: '1.0.0', tarballFileId: first.uploadTarget.fileId },
+    ]);
   });
 
   it('registers a promoted upload whose registration was lost', async () => {
@@ -395,6 +522,125 @@ describe('Direct app tarball upload', () => {
       enqueueAutoUpgradeSpy.mockRestore();
     }
   });
+
+  it('rolls back a publish when version recording fails and accepts a fresh upload of the same version', async () => {
+    const universalIdentifier = crypto.randomUUID();
+
+    const first = await deployTarball(
+      await buildValidTarball({ universalIdentifier, version: '1.0.0' }),
+    );
+
+    expect(first.completion.errors).toBeUndefined();
+
+    const createApplicationRegistrationVersionSpy = jest
+      .spyOn(
+        getAppProviderByClassName<ApplicationRegistrationVersionService>(
+          'ApplicationRegistrationVersionService',
+        ),
+        'createApplicationRegistrationVersion',
+      )
+      .mockRejectedValueOnce(new Error('Database unavailable'));
+
+    try {
+      const second = await deployTarball(
+        await buildValidTarball({ universalIdentifier, version: '1.1.0' }),
+        { expectToFail: true },
+      );
+
+      expect(second.completion.errors).toBeDefined();
+
+      const registrationId = first.completion.data!.completeAppTarballUpload.id;
+
+      expect((await findRegistrationRow(registrationId)).tarballFileId).toBe(
+        first.uploadTarget.fileId,
+      );
+      expect(
+        (await findRegistrationRow(registrationId)).latestAvailableVersion,
+      ).toBe('1.0.0');
+      expect(await findFileRow(second.uploadTarget.fileId)).toBeNull();
+      expect(await findVersionRows(registrationId)).toMatchObject([
+        { version: '1.0.0' },
+      ]);
+
+      const retry = await deployTarball(
+        await buildValidTarball({ universalIdentifier, version: '1.1.0' }),
+      );
+
+      expect(retry.completion.errors).toBeUndefined();
+      expect(retry.completion.data?.completeAppTarballUpload.id).toBe(
+        registrationId,
+      );
+      expect(await findVersionRows(registrationId)).toMatchObject([
+        { version: '1.0.0', tarballFileId: first.uploadTarget.fileId },
+        { version: '1.1.0', tarballFileId: retry.uploadTarget.fileId },
+      ]);
+    } finally {
+      createApplicationRegistrationVersionSpy.mockRestore();
+    }
+  });
+
+  it.each(['registration update', 'version insert'])(
+    'cleans up a direct upload after a failed %s and allows the same version to be retried',
+    async (failurePoint) => {
+      const universalIdentifier = crypto.randomUUID();
+      const tarball = await buildValidTarball({
+        universalIdentifier,
+        version: '1.0.0',
+      });
+      const failure =
+        failurePoint === 'registration update'
+          ? jest
+              .spyOn(
+                getAppProviderByClassName<ApplicationRegistrationService>(
+                  'ApplicationRegistrationService',
+                ),
+                'updateFromManifest',
+              )
+              .mockRejectedValueOnce(new Error('Registration update failed'))
+          : jest
+              .spyOn(
+                getAppProviderByClassName<ApplicationRegistrationVersionService>(
+                  'ApplicationRegistrationVersionService',
+                ),
+                'createApplicationRegistrationVersion',
+              )
+              .mockRejectedValueOnce(new Error('Version insert failed'));
+
+      try {
+        const failed = await uploadAppTarball({
+          tarballBuffer: tarball,
+          expectToFail: true,
+        });
+        expect(failed.errors).toBeDefined();
+        const [registration] = await ds.query(
+          'SELECT id, "latestAvailableVersion", "tarballFileId" FROM core."applicationRegistration" WHERE "universalIdentifier" = $1',
+          [universalIdentifier],
+        );
+        createdRegistrationIds.push(registration.id);
+        expect(registration).toMatchObject({
+          latestAvailableVersion: null,
+          tarballFileId: null,
+        });
+        expect(await findVersionRows(registration.id)).toEqual([]);
+        expect(
+          await ds.query('SELECT id FROM core.file WHERE path LIKE $1', [
+            `%${registration.id}/%`,
+          ]),
+        ).toEqual([]);
+
+        const retry = await uploadAppTarball({ tarballBuffer: tarball });
+        expect(retry.errors).toBeUndefined();
+        expect(retry.data.uploadAppTarball.id).toBe(registration.id);
+        const stored = await findRegistrationRow(registration.id);
+        createdFileIds.push(stored.tarballFileId);
+        expect(await findVersionRows(registration.id)).toMatchObject([
+          { version: '1.0.0', tarballFileId: stored.tarballFileId },
+        ]);
+      } finally {
+        failure.mockRestore();
+      }
+    },
+  );
 
   it('refuses a completion that overlaps another completion of the same upload', async () => {
     const uploadTarget = await sendToStorage(

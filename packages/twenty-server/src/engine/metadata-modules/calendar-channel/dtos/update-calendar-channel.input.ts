@@ -36,6 +36,11 @@ export class UpdateCalendarChannelInputUpdates {
   @IsOptional()
   @IsBoolean()
   @Field({ nullable: true })
+  excludePrivateEvents?: boolean;
+
+  @IsOptional()
+  @IsBoolean()
+  @Field({ nullable: true })
   isSyncEnabled?: boolean;
 }
 

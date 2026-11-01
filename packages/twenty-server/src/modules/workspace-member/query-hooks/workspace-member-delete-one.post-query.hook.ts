@@ -7,11 +7,12 @@ import { type WorkspacePostQueryHookInstance } from 'src/engine/api/graphql/work
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { WorkspaceQueryHookType } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/types/workspace-query-hook.type';
-import { RecordShareOwnershipTransferService } from 'src/engine/core-modules/record-share/services/record-share-ownership-transfer.service';
+import { RecordShareOwnershipTransferService } from 'src/engine/permissions/record-share/services/record-share-ownership-transfer.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
+import { detachAgentChatChannelThreadsFromWorkspaceMember } from 'src/engine/metadata-modules/ai/ai-chat/utils/detach-agent-chat-channel-threads-from-workspace-member.util';
 import { ConnectedAccountOwnershipTransferService } from 'src/engine/metadata-modules/connected-account/services/connected-account-ownership-transfer.service';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -19,7 +20,7 @@ import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-
 import {
   PermissionsException,
   PermissionsExceptionCode,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
+} from 'src/engine/permissions/permissions.exception';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -123,6 +124,18 @@ export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQuery
     await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
       'flatWorkspaceMemberMaps',
     ]);
+
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    await detachAgentChatChannelThreadsFromWorkspaceMember({
+      threadRepository: this.agentChatThreadRepository,
+      flatFieldMetadataMaps,
+      workspaceId: workspace.id,
+      workspaceMemberId: workspaceMember.id,
+    });
 
     // After the membership is gone, so a failed removal keeps the history and racing threads are cleaned too
     await this.agentChatThreadRepository.delete(workspace.id, {

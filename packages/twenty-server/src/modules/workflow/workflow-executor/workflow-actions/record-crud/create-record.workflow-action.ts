@@ -13,7 +13,8 @@ import { buildWorkflowActorMetadata } from 'src/modules/workflow/workflow-execut
 import { filterValidFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/filter-valid-fields-in-record.util';
 import { formatWorkflowRecordRelationFields } from 'src/modules/workflow/workflow-executor/utils/format-workflow-record-relation-fields.util';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
-import { resolveRichTextFieldsInRecord } from 'src/modules/workflow/workflow-executor/utils/resolve-rich-text-fields-in-record.util';
+import { convertStepObjectRecordTipTapToMarkdown } from 'src/modules/workflow/workflow-executor/utils/convert-step-object-record-tiptap-to-markdown.util';
+import { resolveRichTextMarkdownVariables } from 'src/modules/workflow/workflow-executor/utils/resolve-rich-text-markdown-variables.util';
 import { type WorkflowCreateRecordActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/record-crud/types/workflow-record-crud-action-input.type';
 
 @Injectable()
@@ -45,17 +46,20 @@ export class CreateRecordWorkflowAction implements WorkflowAction {
         workspaceId,
       );
 
-    const inputWithResolvedRichText = {
+    const inputWithRichText = {
       ...rawInput,
-      objectRecord: resolveRichTextFieldsInRecord(
-        rawInput.objectRecord,
+      objectRecord: resolveRichTextMarkdownVariables(
+        convertStepObjectRecordTipTapToMarkdown(
+          rawInput.objectRecord,
+          objectMetadataInfo,
+        ),
         objectMetadataInfo,
         context,
       ),
     };
 
     const workflowActionInput = resolveInput(
-      inputWithResolvedRichText,
+      inputWithRichText,
       context,
     ) as WorkflowCreateRecordActionInput;
 

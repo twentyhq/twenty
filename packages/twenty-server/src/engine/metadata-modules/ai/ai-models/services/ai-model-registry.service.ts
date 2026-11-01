@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { msg } from '@lingui/core/macro';
 import { type LanguageModel, type TranscriptionModel } from 'ai';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
@@ -702,6 +703,9 @@ export class AiModelRegistryService {
       throw new AiException(
         'The selected model has been disabled by the administrator.',
         AiExceptionCode.AGENT_EXECUTION_FAILED,
+        {
+          userFriendlyMessage: msg`The selected model has been disabled by the administrator.`,
+        },
       );
     }
 

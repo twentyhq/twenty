@@ -1,5 +1,5 @@
+import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
-import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Chip } from 'twenty-ui/primitives/data-display';
@@ -22,25 +22,20 @@ export const ChatReferenceChip = ({ reference }: ChatReferenceChipProps) => {
 
   if (!isDefined(target.to) || !isNavigationEnabled) {
     return (
-      <Chip
-        emptyLabel={t`Untitled`}
-        variant="soft"
-        startElement={target.leftComponent}
-      >
-        {reference.displayName}
+      <Chip variant="soft" startElement={target.leftComponent}>
+        {getChipLabel(reference.displayName).content}
       </Chip>
     );
   }
 
   return (
     <LinkChip
-      emptyLabel={t`Untitled`}
       to={target.to}
       onClick={target.onClick}
       variant="soft"
       startElement={target.leftComponent}
     >
-      {reference.displayName}
+      {getChipLabel(reference.displayName).content}
     </LinkChip>
   );
 };

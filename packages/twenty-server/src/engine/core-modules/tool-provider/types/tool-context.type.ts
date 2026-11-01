@@ -5,18 +5,19 @@ import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-pr
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 
 export type ToolContext = {
   resolveExecutionContext?: () => Promise<ToolContext>;
   workspaceId: string;
-  roleId: string;
-  rolePermissionConfig?: RolePermissionConfig;
+  approvedToolName?: string;
+  rolePermissionConfig: RolePermissionConfig;
   authContext?: WorkspaceAuthContext;
   application?: FlatApplication;
   actorContext?: ActorMetadata;
   userId?: string;
   userWorkspaceId?: string;
+  agentId?: string;
   threadId?: string;
   locale?: keyof typeof APP_LOCALES;
   onCodeExecutionUpdate?: CodeExecutionStreamEmitter;

@@ -21,7 +21,9 @@ export type ExtractUniversalForeignKeyAggregatorForMetadataName<
 >;
 
 type UniversalFlatEntityForeignKeyAggregatorProperties = {
-  [P in AllMetadataName]: ExtractUniversalForeignKeyAggregatorForMetadataName<P>[];
+  [
+    P in AllMetadataName
+  ]: ExtractUniversalForeignKeyAggregatorForMetadataName<P>[];
 };
 
 const computeForeignKeyAggregatorProperties = <T extends AllMetadataName>(

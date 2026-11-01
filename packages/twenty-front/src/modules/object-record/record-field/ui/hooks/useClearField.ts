@@ -8,6 +8,7 @@ import { generateEmptyFieldValue } from '@/object-record/utils/generateEmptyFiel
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { getForeignKeyNameFromRelationFieldName } from '@/object-record/utils/getForeignKeyNameFromRelationFieldName';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useClearField = () => {
   const store = useStore();
@@ -33,7 +34,7 @@ export const useClearField = () => {
     );
 
     if (!foundObjectMetadataItem || !foundFieldMetadataItem) {
-      throw new Error('Field metadata item cannot be found');
+      throw new Error(doNotTranslate('Field metadata item cannot be found'));
     }
 
     const isRelation =

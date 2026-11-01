@@ -1,47 +1,34 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { FieldDescriptionTooltipProvider } from '@/object-record/record-field/ui/components/FieldDescriptionTooltipProvider';
-import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { formatFieldMetadataItemAsColumnDefinition } from '@/object-metadata/utils/formatFieldMetadataItemAsColumnDefinition';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useIsRecordReadOnly } from '@/object-record/read-only/hooks/useIsRecordReadOnly';
 import { isRecordFieldReadOnly } from '@/object-record/read-only/utils/isRecordFieldReadOnly';
+import { useRecordRestrictedFieldNames } from '@/object-record/record-store/hooks/useRecordRestrictedFieldNames';
 import { RecordFieldListCellEditModePortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellEditModePortal';
 import { RecordFieldListCellHoveredPortal } from '@/object-record/record-field-list/anchored-portal/components/RecordFieldListCellHoveredPortal';
-import { useFieldListFieldMetadataItems } from '@/object-record/record-field-list/hooks/useFieldListFieldMetadataItems';
-import { RecordDetailDuplicatesSection } from '@/object-record/record-field-list/record-detail-section/duplicate/components/RecordDetailDuplicatesSection';
-import { RecordDetailMorphRelationSection } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationSection';
-import { RecordDetailRelationSection } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSection';
+import { useRecordFieldListNonRelationFieldMetadataItems } from '@/object-record/record-field-list/hooks/useRecordFieldListNonRelationFieldMetadataItems';
 import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
 import { recordFieldListHoverPositionComponentState } from '@/object-record/record-field-list/states/recordFieldListHoverPositionComponentState';
 import { FieldContext } from '@/object-record/record-field/ui/contexts/FieldContext';
 import { RecordFieldComponentInstanceContext } from '@/object-record/record-field/ui/states/contexts/RecordFieldComponentInstanceContext';
-import { isJunctionRelationForbidden } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationForbidden';
 import { RecordInlineCell } from '@/object-record/record-inline-cell/components/RecordInlineCell';
 import { PropertyBox } from '@/object-record/record-inline-cell/property-box/components/PropertyBox';
 import { useRecordShowContainerActions } from '@/object-record/record-show/hooks/useRecordShowContainerActions';
 import { useRecordShowContainerData } from '@/object-record/record-show/hooks/useRecordShowContainerData';
 import { getRecordFieldInputInstanceId } from '@/object-record/utils/getRecordFieldInputId';
 import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
-import { FieldMetadataType } from 'twenty-shared/types';
 
 type RecordFieldListProps = {
   instanceId: string;
   objectNameSingular: string;
   objectRecordId: string;
-  showDuplicatesSection?: boolean;
-  showRelationSections?: boolean;
-  excludeFieldMetadataIds?: string[];
-  excludeCreatedAtAndUpdatedAt?: boolean;
 };
 
 export const RecordFieldList = ({
   instanceId,
   objectNameSingular,
   objectRecordId,
-  showDuplicatesSection = true,
-  showRelationSections = true,
-  excludeFieldMetadataIds = [],
-  excludeCreatedAtAndUpdatedAt = true,
 }: RecordFieldListProps) => {
   const { recordLoading } = useRecordShowContainerData({
     objectRecordId,
@@ -52,7 +39,6 @@ export const RecordFieldList = ({
   });
 
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
-  const { objectMetadataItems } = useObjectMetadataItems();
 
   const { useUpdateOneObjectRecordMutation } = useRecordShowContainerActions({
     objectNameSingular,
@@ -72,13 +58,10 @@ export const RecordFieldList = ({
     setRecordFieldListHoverPosition(index);
   };
 
-  const { inlineFieldMetadataItems, boxedRelationFieldMetadataItems } =
-    useFieldListFieldMetadataItems({
-      objectNameSingular,
-      excludeFieldMetadataIds,
-      showRelationSections,
-      excludeCreatedAtAndUpdatedAt,
-    });
+  const fieldMetadataItems =
+    useRecordFieldListNonRelationFieldMetadataItems(objectNameSingular);
+
+  const restrictedFieldNames = useRecordRestrictedFieldNames(objectRecordId);
 
   return (
     <FieldDescriptionTooltipProvider>
@@ -88,7 +71,7 @@ export const RecordFieldList = ({
         }}
       >
         <PropertyBox dataTestId="record-fields-list-container">
-          {inlineFieldMetadataItems?.map((fieldMetadataItem, index) => {
+          {fieldMetadataItems.map((fieldMetadataItem, index) => {
             const fieldDefinition = formatFieldMetadataItemAsColumnDefinition({
               field: fieldMetadataItem,
               position: index,
@@ -96,6 +79,10 @@ export const RecordFieldList = ({
               showLabel: true,
               labelWidth: 90,
             });
+
+            const isFieldRestricted = restrictedFieldNames.includes(
+              fieldMetadataItem.name,
+            );
 
             return (
               <FieldContext.Provider
@@ -107,25 +94,22 @@ export const RecordFieldList = ({
                   fieldDefinition,
                   useUpdateRecord: useUpdateOneObjectRecordMutation,
                   isDisplayModeFixHeight: true,
-                  isRecordFieldReadOnly: isRecordFieldReadOnly({
-                    isRecordReadOnly,
-                    objectMetadataId: objectMetadataItem.id,
-                    fieldMetadataItem,
-                    fieldDefinition,
-                    objectPermissionsByObjectMetadataId,
-                  }),
+                  isForbidden: isFieldRestricted,
+                  isRecordFieldReadOnly:
+                    isFieldRestricted ||
+                    isRecordFieldReadOnly({
+                      isRecordReadOnly,
+                      objectMetadataId: objectMetadataItem.id,
+                      fieldMetadataItem,
+                      fieldDefinition,
+                      objectPermissionsByObjectMetadataId,
+                    }),
                   onMouseEnter: () => handleMouseEnter(index),
                   anchorId: `${getRecordFieldInputInstanceId({
                     recordId: objectRecordId,
                     fieldName: fieldMetadataItem.name,
                     prefix: instanceId,
                   })}`,
-                  isForbidden: isJunctionRelationForbidden({
-                    fieldMetadataItem,
-                    sourceObjectMetadataId: objectMetadataItem.id,
-                    objectMetadataItems,
-                    objectPermissionsByObjectMetadataId,
-                  }),
                 }}
               >
                 <RecordFieldComponentInstanceContext.Provider
@@ -146,52 +130,6 @@ export const RecordFieldList = ({
             );
           })}
         </PropertyBox>
-        {showDuplicatesSection && (
-          <RecordDetailDuplicatesSection
-            objectRecordId={objectRecordId}
-            objectNameSingular={objectNameSingular}
-          />
-        )}
-        {boxedRelationFieldMetadataItems
-          .filter(
-            (fieldMetadataItem) =>
-              fieldMetadataItem.type === FieldMetadataType.RELATION ||
-              fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION,
-          )
-          .map((fieldMetadataItem, index) => {
-            const fieldDefinition = formatFieldMetadataItemAsColumnDefinition({
-              field: fieldMetadataItem,
-              position: index,
-              objectMetadataItem,
-            });
-
-            return (
-              <FieldContext.Provider
-                key={objectRecordId + fieldMetadataItem.id}
-                value={{
-                  recordId: objectRecordId,
-                  isLabelIdentifier: false,
-                  fieldDefinition,
-                  useUpdateRecord: useUpdateOneObjectRecordMutation,
-                  isDisplayModeFixHeight: true,
-                  isRecordFieldReadOnly: isRecordFieldReadOnly({
-                    isRecordReadOnly,
-                    objectMetadataId: objectMetadataItem.id,
-                    fieldMetadataItem,
-                    fieldDefinition,
-                    objectPermissionsByObjectMetadataId,
-                  }),
-                }}
-              >
-                {fieldMetadataItem.type === FieldMetadataType.MORPH_RELATION ? (
-                  <RecordDetailMorphRelationSection loading={recordLoading} />
-                ) : (
-                  <RecordDetailRelationSection loading={recordLoading} />
-                )}
-              </FieldContext.Provider>
-            );
-          })}
-
         <RecordFieldListCellHoveredPortal
           objectMetadataItem={objectMetadataItem}
           recordId={objectRecordId}

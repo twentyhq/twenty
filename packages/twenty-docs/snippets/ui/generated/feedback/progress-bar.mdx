@@ -11,8 +11,16 @@
  *   npx nx generate:ui twenty-docs
  */}
 
-<ParamField body="ariaLabel" type="string">
-  Accessible name describing the operation being measured.
+<ParamField body="aria-label" type="string">
+  Accessible name identifying the measured operation.
+</ParamField>
+
+<ParamField body="aria-labelledby" type="string">
+  ID of the visible label that names the operation.
+</ParamField>
+
+<ParamField body="aria-valuetext" type="string">
+  Human-readable progress value overriding the default formatted value.
 </ParamField>
 
 <ParamField body="backgroundColor" type="string" default="none">
@@ -23,38 +31,58 @@
   CSS color of the filled bar. Defaults to the primary text color.
 </ParamField>
 
-<ParamField body="className" type="string">
-  CSS class applied to the progress root.
+<ParamField body="children" type="ReactNode">
+  Additional Progress parts or supporting content inside the root.
 </ParamField>
 
-<ParamField body="onGrowInComplete" type="(() =&gt; void)">
-  Called when the grow-in animation ends.
+<ParamField body="className" type="string | ((state: ProgressRootState) =&gt; string | undefined)">
+  Class applied to the progress root, or a callback receiving its status.
+</ParamField>
+
+<ParamField body="format" type="NumberFormatOptions">
+  Intl.NumberFormat options for the clamped numeric value. The default displays the normalized percentage.
+</ParamField>
+
+<ParamField body="getAriaValueText" type="((formattedValue: string, value: number | null) =&gt; string)">
+  Receives the formatted value and raw value, including null, and returns an accessible value description.
+</ParamField>
+
+<ParamField body="locale" type="LocalesArgument">
+  Locale or locale list used to format the value. Defaults to the runtime locale.
+</ParamField>
+
+<ParamField body="max" type="number" default="100">
+  Inclusive maximum. Defaults to 100.
+</ParamField>
+
+<ParamField body="min" type="number" default="0">
+  Inclusive minimum. Defaults to 0.
+</ParamField>
+
+<ParamField body="ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref to the root div, or the element composed through render.
+</ParamField>
+
+<ParamField body="render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, ProgressRootState&gt;">
+  Composes the root with an element or render callback. Forward the supplied props and ref to retain progress semantics.
 </ParamField>
 
 <ParamField body="size" type="&quot;md&quot; | &quot;sm&quot;" default="md">
-  Bar height: `sm` (6px) or `md` (8px).
+  Bar height: sm (6px) or md (8px).
 </ParamField>
 
-<ParamField body="value" type="number" required>
-  Current progress from 0 to 100.
+<ParamField body="style" type="CSSProperties | ((state: ProgressRootState) =&gt; CSSProperties | undefined)">
+  Inline styles applied to the progress root, or a callback receiving its status.
+</ParamField>
+
+<ParamField body="value" type="number | null" required>
+  Controlled value in the min/max range. Use null for indeterminate progress.
 </ParamField>
 
 <ParamField body="withBorderRadius" type="boolean" default="false">
   Rounds the track and indicator corners.
 </ParamField>
 
-<ParamField body="withGlint" type="boolean" default="false">
-  Sweeps a highlight across the filled bar each time the value changes.
-</ParamField>
-
-<ParamField body="withGrowIn" type="boolean" default="false">
-  Grows the bar in from zero width when it mounts.
-</ParamField>
-
 <ParamField body="withMinimumFillWidth" type="boolean" default="true">
-  Keeps a small visible fill for any value above zero.
-</ParamField>
-
-<ParamField body="withSpringFill" type="boolean" default="false">
-  Animates value changes with a spring that slightly overshoots the target.
+  Applies a cosmetic minimum of up to 12px, capped at half the track width, only above the minimum and below completion.
 </ParamField>

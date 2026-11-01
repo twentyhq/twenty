@@ -420,6 +420,13 @@
     "isNumber": false
   },
   {
+    "path": "border.radius.lgRound",
+    "cssVariable": "--t-border-radius-lg-round",
+    "light": "12px",
+    "dark": "12px",
+    "isNumber": false
+  },
+  {
     "path": "border.radius.md",
     "cssVariable": "--t-border-radius-md",
     "light": "8px",
@@ -5828,6 +5835,13 @@
     "cssVariable": "--t-font-color-light",
     "light": "color(display-p3 0.702 0.702 0.702)",
     "dark": "color(display-p3 0.4 0.4 0.4)",
+    "isNumber": false
+  },
+  {
+    "path": "font.color.onAccent",
+    "cssVariable": "--t-font-color-on-accent",
+    "light": "color(display-p3 1 1 1)",
+    "dark": "color(display-p3 1 1 1)",
     "isNumber": false
   },
   {

@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
 import { isString } from '@sniptt/guards';
-import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined, isPlainObject, isValidUuid } from 'twenty-shared/utils';
 import { StepStatus } from 'twenty-shared/workflow';
 import { msg } from '@lingui/core/macro';
@@ -34,9 +33,8 @@ import { buildRetryStepInfos } from 'src/modules/workflow/workflow-runner/utils/
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { getRunnableStepIds } from 'src/modules/workflow/workflow-runner/utils/get-runnable-step-ids.util';
 import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
+import { WorkflowRunJobScopeWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-job-scope.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
-import { CoreWorkflowRunnerService } from 'src/modules/workflow/workflow-runner/services/core-workflow-runner.service';
-import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 
 @Injectable()
 export class WorkflowRunnerWorkspaceService {
@@ -46,45 +44,9 @@ export class WorkflowRunnerWorkspaceService {
     private readonly messageQueueService: MessageQueueService,
     private readonly workflowVersionStepOperationsWorkspaceService: WorkflowVersionStepOperationsWorkspaceService,
     private readonly workflowThrottlingWorkspaceService: WorkflowThrottlingWorkspaceService,
-    private readonly coreWorkflowRunnerService: CoreWorkflowRunnerService,
-    private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
+    private readonly workflowRunJobScopeWorkspaceService: WorkflowRunJobScopeWorkspaceService,
   ) {}
-
-  async run({
-    workspaceId,
-    workflowVersionId,
-    payload,
-    source,
-    workflowRunId: initialWorkflowRunId,
-  }: {
-    workspaceId: string;
-    workflowVersionId: string;
-    payload: object;
-    source: ActorMetadata;
-    workflowRunId?: string;
-  }) {
-    const coreWorkflowVersion =
-      await this.workflowVersionCoreSyncService.findCoreVersionByWorkspaceVersionId(
-        workspaceId,
-        workflowVersionId,
-      );
-
-    if (!isDefined(coreWorkflowVersion)) {
-      throw new WorkflowRunException(
-        'Workspace workflow version has no core execution mapping',
-        WorkflowRunExceptionCode.WORKFLOW_RUN_INVALID,
-      );
-    }
-
-    return this.coreWorkflowRunnerService.run({
-      workspaceId,
-      coreWorkflowVersionId: coreWorkflowVersion.id,
-      workflowRunId: initialWorkflowRunId,
-      payload,
-      source,
-    });
-  }
 
   async resume({
     workspaceId,
@@ -102,7 +64,14 @@ export class WorkflowRunnerWorkspaceService {
         workflowRunId,
         lastExecutedStepId,
       },
-      buildRunWorkflowJobOptions(workflowRunId),
+      buildRunWorkflowJobOptions({
+        workflowRunId,
+        scope:
+          await this.workflowRunJobScopeWorkspaceService.resolveForWorkflowRun({
+            workspaceId,
+            workflowRunId,
+          }),
+      }),
     );
   }
 
@@ -375,6 +344,12 @@ export class WorkflowRunnerWorkspaceService {
       };
     }
 
+    const jobScope =
+      await this.workflowRunJobScopeWorkspaceService.resolveForCoreWorkflow({
+        workspaceId,
+        coreWorkflowId: workflowRun.coreWorkflowId,
+      });
+
     await this.workflowRunWorkspaceService.updateWorkflowRun({
       workflowRunId,
       workspaceId,
@@ -397,7 +372,7 @@ export class WorkflowRunnerWorkspaceService {
           workflowRunId,
           stepIdsToRetry: stepIdsToRun,
         },
-        buildRunWorkflowJobOptions(workflowRunId),
+        buildRunWorkflowJobOptions({ workflowRunId, scope: jobScope }),
       );
     } catch (error) {
       // Revert so the run isn't left RUNNING without a worker job

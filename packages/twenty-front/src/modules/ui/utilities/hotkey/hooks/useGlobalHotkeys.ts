@@ -17,12 +17,14 @@ export const useGlobalHotkeys = ({
   keys,
   callback,
   containsModifier,
+  enableOnSettingsPage,
   dependencies,
   options,
 }: {
   keys: Keys;
   callback: HotkeyCallback;
   containsModifier: boolean;
+  enableOnSettingsPage?: boolean;
   dependencies?: unknown[];
   options?: UseHotkeysOptionsWithoutBuggyOptions;
 }) => {
@@ -70,6 +72,7 @@ export const useGlobalHotkeys = ({
         },
         preventDefault,
         containsModifier,
+        enableOnSettingsPage,
       });
     },
     {

@@ -1,17 +1,21 @@
 ---
 title: ProgressBar
-description: Show measured progress with a horizontal bar.
+description: Show measured or indeterminate progress with a horizontal bar.
 ---
 
-import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import ProgressBarReference from '/snippets/ui/generated/feedback/progress-bar.mdx';
 
-`ProgressBar` displays a value from 0 to 100 and exposes progressbar semantics. Give it an `ariaLabel` that identifies the operation, and show a text status when users need the numeric value.
+## Overview
+
+`ProgressBar` supplies a horizontal appearance for [Progress](/ui/primitives/feedback/progress). It preserves the complete root contract, including native attributes, refs, render composition, formatting, custom ranges, and indeterminate progress. Give it an `aria-label` that identifies the operation.
 
 <StoryEmbed
-  storyId="ui-feedback-progressbar-progressbar--default"
+  storyId="ui-feedback-progressbar-progressbar--display"
   title="ProgressBar example"
+  height={100}
 />
 
 ## Usage
@@ -20,30 +24,50 @@ import ProgressBarReference from '/snippets/ui/generated/feedback/progress-bar.m
 import { ProgressBar } from 'twenty-ui/primitives/feedback';
 import { Text } from 'twenty-ui/primitives/typography';
 
-type ImportProgressProps = { percentage: number };
+type ImportProgressProps = { importedRecords: number | null };
 
-export const ImportProgress = ({ percentage }: ImportProgressProps) => (
-  <>
-    <Text>Importing records: {percentage}%</Text>
+export const ImportProgress = ({ importedRecords }: ImportProgressProps) => (
+  <Text style={{ display: 'grid', gap: 8, width: 300 }}>
+    <Text>Importing records: {importedRecords ?? 'preparing'}</Text>
     <ProgressBar
-      value={percentage}
-      ariaLabel="Importing records"
-      withBorderRadius
+      value={importedRecords}
+      max={1000}
+      aria-label="Importing records"
     />
-  </>
+  </Text>
 );
 ```
 
-## State ownership
+## State ownership and ranges
 
-`value` is required and controlled by the application. There is no `defaultValue` mode. The component does not start a request or advance numeric progress by itself. Use [Loader](/ui/primitives/feedback/loader) when progress is unknown.
+`value` is required and controlled by the application. There is no `defaultValue` mode. The component does not start a request or advance progress by itself. Pass `null` when progress is unknown. Non-finite values also remain indeterminate.
+
+`min` defaults to `0`, and `max` defaults to `100`. Finite values are clamped to the range for the semantic value and normalized fill. A value of `70` in the range `20` to `120` fills half the bar and reports `50%`, while `aria-valuenow` stays `70`.
+
+<StoryEmbed
+  storyId="ui-feedback-progressbar-progressbar--custom-range"
+  title="A nonzero minimum and custom maximum"
+  height={80}
+/>
+
+Use `aria-valuetext`, `getAriaValueText`, `locale`, and `format` as described in [Progress](/ui/primitives/feedback/progress). Use composed Progress parts when labels and values need their own visible layout.
 
 Use [Toast](/ui/components/feedback/toast) for notifications with a dismiss countdown and hover pause.
 
-## Appearance
+## Appearance and composition
 
-`barColor` and `backgroundColor` accept CSS colors, including theme variables. `withBorderRadius` rounds the track and indicator. `className` styles the root; other native attributes are not forwarded.
+`size` selects a 6px or 8px track. `barColor` and `backgroundColor` accept CSS colors, including theme variables. `withBorderRadius` rounds the track and indicator. `withMinimumFillWidth` keeps a small cosmetic fill only between the minimum and completion. This minimum is at most 12px and half the track width, so a narrow track still distinguishes incomplete progress from completion. It does not fill an empty bar or change semantic values.
+
+Native attributes, `className`, `style`, and `ref` target the root. `className` and `style` can receive the progress state. `render` can replace the root while preserving its semantics. Indeterminate progress has its own appearance without reporting a numeric percentage. Reduced-motion preferences disable fill transitions and indeterminate motion.
+
+Compose [Progress parts](/ui/primitives/feedback/progress) for custom layouts or feature animation. Feature timing, grow-in, glints, springs, and completion callbacks belong to the application composition.
+
+## Migration
+
+Replace `ariaLabel` with native `aria-label`. The `withGrowIn`, `withGlint`, `withSpringFill`, and `onGrowInComplete` props are removed. Implement their appearance, timing, and completion callbacks in an application composition using [Progress parts](/ui/primitives/feedback/progress). Native `onAnimationEnd` remains available on the root.
 
 ## Props
 
 <ProgressBarReference />
+
+<PageBanner illustration="card-page-usage-limits" />

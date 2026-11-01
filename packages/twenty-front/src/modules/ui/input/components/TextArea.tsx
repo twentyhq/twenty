@@ -1,96 +1,18 @@
 import { styled } from '@linaria/react';
-import { type FocusEventHandler, useId } from 'react';
-import TextareaAutosize from 'react-textarea-autosize';
+import { type FocusEventHandler } from 'react';
 
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-import { type FormFieldInputVariant } from '@/ui/input/types/FormFieldInputVariant';
+import { type TextAreaProps } from '@/ui/input/types/TextAreaProps';
 import { isDefined } from 'twenty-shared/utils';
+import { Field, Textarea } from 'twenty-ui/primitives/input';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
-import { themeCssVariables } from 'twenty-ui/theme';
-
-export type TextAreaProps = {
-  textAreaId: string;
-  label?: string;
-  disabled?: boolean;
-  height?: number;
-  minRows?: number;
-  maxRows?: number;
-  onChange?: (value: string) => void;
-  placeholder?: string;
-  value?: string;
-  className?: string;
-  onFocus?: () => void;
-  onBlur?: () => void;
-  readOnly?: boolean;
-  variant?: FormFieldInputVariant;
-};
 
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-`;
-
-const StyledLabel = styled.label`
-  color: ${themeCssVariables.font.color.light};
-  display: block;
-  font-size: ${themeCssVariables.font.size.xs};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  margin-bottom: ${themeCssVariables.spacing[1]};
-`;
-
-const StyledTextAreaContainer = styled.div<{
-  variant: FormFieldInputVariant;
-}>`
-  > textarea {
-    background-color: ${({ variant }) =>
-      variant === 'transparent'
-        ? 'transparent'
-        : themeCssVariables.background.transparent.lighter};
-    border: ${({ variant }) =>
-      variant === 'transparent'
-        ? 'none'
-        : `1px solid ${themeCssVariables.border.color.medium}`};
-    border-radius: ${({ variant }) =>
-      variant === 'transparent' ? '0' : themeCssVariables.border.radius.md};
-    box-sizing: border-box;
-    color: ${themeCssVariables.font.color.primary};
-    display: block;
-    font-family: inherit;
-    font-size: ${themeCssVariables.font.size.md};
-    font-weight: ${themeCssVariables.font.weight.regular};
-    line-height: ${({ variant }) =>
-      variant === 'transparent' ? 'inherit' : '16px'};
-    overflow: ${({ variant }) =>
-      variant === 'transparent' ? 'hidden' : 'auto'};
-    padding: ${({ variant }) =>
-      variant === 'transparent' ? '0' : themeCssVariables.spacing[2]};
-    resize: none;
-    width: 100%;
-
-    &:focus {
-      outline: none;
-      box-shadow: ${({ variant }) =>
-        variant === 'transparent'
-          ? 'none'
-          : `0px 0px 0px 3px ${themeCssVariables.color.transparent.blue2}`};
-      border-color: ${({ variant }) =>
-        variant === 'transparent'
-          ? 'transparent'
-          : themeCssVariables.color.blue};
-    }
-
-    &::placeholder {
-      color: ${themeCssVariables.font.color.light};
-      font-weight: ${themeCssVariables.font.weight.regular};
-    }
-
-    &:disabled {
-      color: ${themeCssVariables.font.color.tertiary};
-    }
-  }
 `;
 
 export const TextArea = ({
@@ -112,8 +34,7 @@ export const TextArea = ({
   const computedMinRows = isDefined(maxRows)
     ? Math.min(minRows, maxRows)
     : minRows;
-
-  const instanceId = useId();
+  const isTransparent = variant === 'transparent';
 
   const { pushFocusItemToFocusStack } = usePushFocusItemToFocusStack();
   const { removeFocusItemFromFocusStackById } =
@@ -140,27 +61,27 @@ export const TextArea = ({
   };
 
   return (
-    <StyledContainer>
-      {label && <StyledLabel htmlFor={instanceId}>{label}</StyledLabel>}
-
-      <StyledTextAreaContainer variant={variant}>
-        <TextareaAutosize
-          id={instanceId}
-          placeholder={placeholder}
-          maxRows={maxRows}
-          minRows={computedMinRows}
-          value={value}
-          onChange={(event) =>
-            onChange?.(turnIntoEmptyStringIfWhitespacesOnly(event.target.value))
-          }
-          onFocus={handleFocus}
-          onBlur={handleBlur}
-          disabled={disabled}
-          className={className}
-          readOnly={readOnly}
-          style={isDefined(height) ? { height } : undefined}
-        />
-      </StyledTextAreaContainer>
-    </StyledContainer>
+    <Field.Root render={<StyledContainer />}>
+      {label && <Field.Label>{label}</Field.Label>}
+      <Textarea
+        autoResize
+        rows={computedMinRows}
+        maxRows={maxRows}
+        variant={isTransparent ? 'plain' : 'default'}
+        placeholder={placeholder}
+        value={value}
+        onChange={(event) =>
+          onChange?.(turnIntoEmptyStringIfWhitespacesOnly(event.target.value))
+        }
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        disabled={disabled}
+        readOnly={readOnly}
+        className={className}
+        style={{
+          height,
+        }}
+      />
+    </Field.Root>
   );
 };

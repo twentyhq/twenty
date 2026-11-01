@@ -5,6 +5,10 @@
   opacity: 1;
   transition: opacity var(--collapsible-opacity-duration) ease-in-out;
 
+  &[hidden]:not([hidden='until-found']) {
+    display: none;
+  }
+
   &[data-dimension='height'] {
     height: var(--collapsible-panel-height);
     transition:
@@ -49,5 +53,11 @@
   .panel[data-duration='#{$duration}'] {
     --collapsible-opacity-duration: #{duration($duration)};
     --collapsible-size-duration: #{duration($duration)};
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panel {
+    transition-duration: 0s !important;
   }
 }

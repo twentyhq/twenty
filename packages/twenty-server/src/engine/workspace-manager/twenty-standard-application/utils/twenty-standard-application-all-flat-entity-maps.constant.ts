@@ -4,6 +4,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { TWENTY_STANDARD_ALL_METADATA_NAME } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-all-metadata-name.constant';
 import { type TwentyStandardAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/types/twenty-standard-all-flat-entity-maps.type';
+import { buildStandardFlatAgentChatChannelMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/agent-chat-channel/build-standard-flat-agent-chat-channel-maps.util';
 import { buildStandardFlatAgentMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/agent-metadata/build-standard-flat-agent-metadata-maps.util';
 import { buildStandardFlatFieldMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-flat-field-metadata-maps.util';
 import { getStandardObjectMetadataRelatedEntityIds } from 'src/engine/workspace-manager/twenty-standard-application/utils/get-standard-object-metadata-related-entity-ids.util';
@@ -18,6 +19,7 @@ import { buildStandardFlatPageLayoutWidgetMetadataMaps } from 'src/engine/worksp
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { computeStandardRecordFormFlatEntities } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout/compute-standard-record-form-flat-entities.util';
 import { buildStandardFlatPageLayoutMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/page-layout/build-standard-flat-page-layout-metadata-maps.util';
+import { buildStandardFlatRelatedRecordPathMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/related-record-path/build-standard-flat-related-record-path-maps.util';
 import { buildStandardFlatPermissionFlagMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/permission-flag/build-standard-flat-permission-flag-metadata-maps.util';
 import { buildStandardFlatRoleMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/role-metadata/build-standard-flat-role-metadata-maps.util';
 import { buildStandardFlatSearchFieldMetadataMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/search-field-metadata/build-standard-flat-search-field-metadata-maps.util';
@@ -270,6 +272,22 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
       twentyStandardApplicationId,
     });
 
+  const flatAgentChatChannelMaps = buildStandardFlatAgentChatChannelMaps({
+    now,
+    workspaceId,
+    twentyStandardApplicationId,
+  });
+
+  const flatRelatedRecordPathMaps = buildStandardFlatRelatedRecordPathMaps({
+    now,
+    workspaceId,
+    twentyStandardApplicationId,
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps: {
+      flatFieldMetadataMaps,
+    },
+  });
+
   const allFlatEntityMaps: TwentyStandardAllFlatEntityMaps = {
     flatViewFieldMaps,
     flatViewFieldGroupMaps,
@@ -290,6 +308,8 @@ export const computeTwentyStandardApplicationAllFlatEntityMaps = ({
     flatPageLayoutWidgetMaps: flatPageLayoutWidgetMapsWithRecordForms,
     flatCommandMenuItemMaps,
     flatTimelineActivityTypeMaps,
+    flatAgentChatChannelMaps,
+    flatRelatedRecordPathMaps,
   };
 
   const idByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName =

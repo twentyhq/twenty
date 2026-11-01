@@ -13,6 +13,7 @@ export { AggregateOperations } from './AggregateOperations';
 export type { AllowedFullNameSortSubField } from './AllowedFullNameSortSubField';
 export { ApiPath } from './ApiPath';
 export { AppBasePath } from './AppBasePath';
+export type { ApplicationLogSource } from './ApplicationLogSource';
 export { AppPath } from './AppPath';
 export type { Arrayable } from './Arrayable';
 export type { ArraySortDirection } from './ArraySortDirection';
@@ -149,6 +150,7 @@ export { FirstDayOfTheWeek } from './FirstDayOfTheWeek';
 export type { FormatRecordSerializedRelationProperties } from './FormatRecordSerializedRelationProperties';
 export type { FromTo } from './FromToType';
 export { HTTPMethod } from './HttpMethod';
+export type { IframeMediaPermission } from './IframeMediaPermission';
 export type { IndexOf } from './IndexOf';
 export { IndexType } from './IndexType';
 export type { IsEmptyObject } from './IsEmptyObject';
@@ -257,9 +259,10 @@ export { WidgetType } from './page-layout/WidgetType';
 export type { PartialFieldMetadataItem } from './PartialFieldMetadataItem';
 export type { PartialFieldMetadataItemOption } from './PartialFieldMetadataOption';
 export type { QueryCursorDirection } from './QueryCursorDirection';
+export type { RecordExportColumn } from './RecordExportColumn';
 export { RecordFilterGroupLogicalOperator } from './RecordFilterGroupLogicalOperator';
 export type { RecordFilterValueDependencies } from './RecordFilterValueDependencies';
-export type { RecordGqlFieldsDeprecated } from './RecordGqlFieldsDeprecated';
+export type { RecordGqlFields } from './RecordGqlFields';
 export type {
   UUIDFilterValue,
   IsFilter,
@@ -271,6 +274,8 @@ export type {
   FloatFilter,
   DateFilter,
   DateTimeFilter,
+  FieldReferenceFilterOperator,
+  FieldReferenceFilter,
   CurrencyFilter,
   UrlFilter,
   FullNameFilter,
@@ -294,7 +299,6 @@ export type {
   LeafObjectRecordFilter,
   RecordGqlOperationFilter,
 } from './RecordGqlOperationFilter';
-export type { RecordGqlOperationGqlRecordFields } from './RecordGqlOperationGqlRecordFields';
 export type { RecordGqlOperationOrderBy } from './RecordGqlOperationOrderBy';
 export type { RecordGqlOperationSignature } from './RecordGqlOperationSignature';
 export type { RecordGqlOperationVariables } from './RecordGqlOperationVariables';
@@ -335,6 +339,8 @@ export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrate
 export { UpgradeHealthEnum } from './UpgradeHealthEnum';
 export type { ValidationRuleBindings } from './ValidationRuleBindings';
 export type { ValidationRuleCompilationResult } from './ValidationRuleCompilationResult';
+export type { ValidationRuleErrorCode } from './ValidationRuleErrorCode';
+export type { ValidationRuleErrorParams } from './ValidationRuleErrorParams';
 export type { ValidationRuleEvaluationResult } from './ValidationRuleEvaluationResult';
 export type { ValidationRuleExpressionToken } from './ValidationRuleExpressionToken';
 export type { ValidationRuleFieldDescriptor } from './ValidationRuleFieldDescriptor';

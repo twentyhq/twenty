@@ -46,6 +46,7 @@ export const runComponentConformance = ({
   refInstanceOf,
   wrapper: Wrapper,
   ownClassName,
+  renderPropKeepsOwnClassName = true,
   renderPropTagName = 'span',
   skip = [],
 }: ComponentConformanceOptions) => {
@@ -194,7 +195,9 @@ export const runComponentConformance = ({
       expect(ref.current).toBe(rootNode);
 
       if (isDefined(ownClassName)) {
-        expect(rootNode).toHaveClass(ownClassName);
+        expect(rootNode.classList.contains(ownClassName)).toBe(
+          renderPropKeepsOwnClassName,
+        );
       }
     });
 

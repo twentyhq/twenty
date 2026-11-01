@@ -173,10 +173,14 @@ const buildWorkspaceMember = (id: string, firstName: string) => ({
 
 const renderDetails = async ({
   permissions = EDITABLE_PERMISSIONS,
-  isConversationsTabEnabled = true,
+  isAiChatInboxEnabled = true,
+  shouldOpenDetails = true,
+  deletedAt = null,
 }: {
   permissions?: typeof EDITABLE_PERMISSIONS;
-  isConversationsTabEnabled?: boolean;
+  isAiChatInboxEnabled?: boolean;
+  shouldOpenDetails?: boolean;
+  deletedAt?: string | null;
 } = {}) => {
   const MetadataAndApolloMocksWrapper = getJestMetadataAndApolloMocksWrapper({
     objectMetadataItems: [
@@ -188,8 +192,8 @@ const renderDetails = async ({
         ...mockCurrentWorkspace,
         featureFlags: [
           {
-            key: FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED,
-            value: isConversationsTabEnabled,
+            key: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+            value: isAiChatInboxEnabled,
           },
         ],
       });
@@ -198,7 +202,7 @@ const renderDetails = async ({
         __typename: 'AgentChatThread',
         id: THREAD_ID,
         title: 'Pricing questions',
-        deletedAt: null,
+        deletedAt,
         workspaceMemberId: OWNER_ID,
         writerWorkspaceMemberIds: [WRITER_ID, OWNER_ID],
       });
@@ -223,6 +227,10 @@ const renderDetails = async ({
     wrapper: Wrapper,
   });
 
+  if (!shouldOpenDetails) {
+    return;
+  }
+
   await userEvent.click(
     await screen.findByRole('button', { name: 'Chat details' }),
   );
@@ -234,11 +242,12 @@ describe('AiChatThreadDetailsDropdown', () => {
     mockThread.current = buildThread();
   });
 
-  it('shows the members following the chat', async () => {
+  it('does not present the creator and writers as followers', async () => {
     await renderDetails();
 
-    expect(await screen.findByText('Owner Member')).toBeVisible();
-    expect(screen.getByText('Writer Member')).toBeVisible();
+    expect(screen.queryByText('Following')).not.toBeInTheDocument();
+    expect(screen.queryByText('Owner Member')).not.toBeInTheDocument();
+    expect(screen.queryByText('Writer Member')).not.toBeInTheDocument();
   });
 
   it('opens the record picker on the linked records, searching the objects a conversation can be linked to', async () => {
@@ -357,6 +366,32 @@ describe('AiChatThreadDetailsDropdown', () => {
     ).not.toBeInTheDocument();
   });
 
+  it('offers to change the assignee to a conversation editor', async () => {
+    await renderDetails();
+
+    expect(
+      await screen.findByRole('button', { name: 'Change assignee' }),
+    ).toBeVisible();
+  });
+
+  it.each([
+    [
+      'a shared viewer',
+      { permissions: { ...EDITABLE_PERMISSIONS, canUpdate: false } },
+    ],
+    ['a deleted conversation', { deletedAt: '2026-01-01T00:00:00.000Z' }],
+  ])(
+    'does not offer to change the assignee for %s',
+    async (_description, options) => {
+      await renderDetails(options);
+
+      expect(await screen.findByText('Assignee')).toBeVisible();
+      expect(
+        screen.queryByRole('button', { name: 'Change assignee' }),
+      ).not.toBeInTheDocument();
+    },
+  );
+
   it('reads the links again when one is written elsewhere', async () => {
     await renderDetails();
 
@@ -373,9 +408,14 @@ describe('AiChatThreadDetailsDropdown', () => {
     expect(refetchThread).toHaveBeenCalledTimes(1);
   });
 
-  it('leaves out the linked records until the conversations tab is enabled', async () => {
-    await renderDetails({ isConversationsTabEnabled: false });
+  it('hides the chat details while the inbox feature flag is off', async () => {
+    await renderDetails({
+      isAiChatInboxEnabled: false,
+      shouldOpenDetails: false,
+    });
 
-    expect(screen.queryByText('Acme')).not.toBeInTheDocument();
+    expect(
+      screen.queryByRole('button', { name: 'Chat details' }),
+    ).not.toBeInTheDocument();
   });
 });

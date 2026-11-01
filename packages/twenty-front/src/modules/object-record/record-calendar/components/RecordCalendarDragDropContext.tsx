@@ -46,7 +46,7 @@ export const RecordCalendarDragDropContext = ({
         void processCalendarCardDrop(result).catch((error) => {
           logError(error);
           enqueueToast({
-            variant: 'error',
+            status: 'error',
             children: t`Failed to move record`,
           });
         });

@@ -87,7 +87,7 @@ export const useBatchCreateManyRecords = <
       ) {
         const formattedCreatedRecordsCount = formatNumber(createdRecordsCount);
         enqueueToast({
-          variant: 'warning',
+          status: 'warning',
           children: t`Record creation stopped. ${formattedCreatedRecordsCount} records created.`,
           duration: 5000,
         });

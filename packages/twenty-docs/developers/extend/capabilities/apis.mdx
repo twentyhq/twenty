@@ -3,11 +3,13 @@ title: APIs
 description: Query and modify your CRM data programmatically using REST or GraphQL.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-Twenty was built to be developer-friendly, offering powerful APIs that adapt to your custom data model. We provide four distinct API types to meet different integration needs.
-
 ## Developer-First Approach
+
+Twenty was built to be developer-friendly, offering powerful APIs that adapt to your custom data model. We provide four distinct API types to meet different integration needs.
 
 Twenty generates APIs specifically for your data model:
 - **No long IDs required**: Use your object and field names directly in endpoints
@@ -16,7 +18,7 @@ Twenty generates APIs specifically for your data model:
 - **Custom documentation**: Generated specifically for your workspace's data model
 
 <Note>
-Your personalized API documentation is available under **Settings → API & Webhooks** after creating an API key. Since Twenty generates APIs that match your custom data model, the documentation is unique to your workspace.
+Your personalized API documentation is available under **Settings → Developers → API** after creating an API key. Since Twenty generates APIs that match your custom data model, the documentation is unique to your workspace.
 </Note>
 
 ## The Two API Types
@@ -65,7 +67,7 @@ Authorization: Bearer YOUR_API_KEY
 
 ### Create an API Key
 
-1. Go to **Settings → APIs & Webhooks**
+1. Go to **Settings → Developers → API**
 2. Click **+ Create key**
 3. Configure:
    - **Name**: Descriptive name for the key
@@ -93,9 +95,9 @@ The key will inherit that role's permissions. See [Permissions](/user-guide/perm
 
 ### Manage API Keys
 
-**Regenerate**: Settings → APIs & Webhooks → Click key → **Regenerate**
+**Regenerate**: Settings → Developers → API → Click key → **Regenerate**
 
-**Delete**: Settings → APIs & Webhooks → Click key → **Delete**
+**Delete**: Settings → Developers → API → Click key → **Delete**
 
 ## API Playground
 
@@ -103,7 +105,7 @@ Test your APIs directly in the browser with our built-in playground — availabl
 
 ### Access the Playground
 
-1. Go to **Settings → APIs & Webhooks**
+1. Go to **Settings → Developers → API**
 2. Create an API key (required)
 3. Click on **REST API** or **GraphQL API** to open the playground
 
@@ -139,3 +141,4 @@ API requests are throttled to ensure platform stability:
 Use batch operations to maximize throughput — process up to 60 records in a single API call instead of making individual requests.
 </Tip>
 
+<PageBanner illustration="dev-api" />

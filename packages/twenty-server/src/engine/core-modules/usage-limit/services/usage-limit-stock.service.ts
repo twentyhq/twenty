@@ -1,52 +1,46 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import uniqBy from 'lodash.uniqby';
 import { isDefined } from 'twenty-shared/utils';
 
-import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
-import {
-  CacheLockException,
-  CacheLockExceptionCode,
-} from 'src/engine/core-modules/cache-lock/exceptions/cache-lock.exception';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
-import { type CacheScript } from 'src/engine/core-modules/cache-storage/types/cache-script.type';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { CONSUME_QUOTA_COUNTERS_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/consume-quota-counters-script.constant';
-import { RELEASE_STOCK_COUNTERS_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/release-stock-counters-script.constant';
+import { WARM_AND_CONSUME_COUNTERS_SCRIPT } from 'src/engine/core-modules/usage-limit/constants/warm-and-consume-counters-script.constant';
 import {
   UsageLimitException,
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
+import { UsageLimitDefaultValueService } from 'src/engine/core-modules/usage-limit/services/usage-limit-default-value.service';
 import { UsageLimitEntitlementService } from 'src/engine/core-modules/usage-limit/services/usage-limit-entitlement.service';
 import { type ComputeUsedStock } from 'src/engine/core-modules/usage-limit/types/compute-used-stock.type';
-import { type SpenderType } from 'src/engine/core-modules/usage-limit/types/spender-type.type';
+import { type FlatUsageLimit } from 'src/engine/core-modules/usage-limit/types/flat-usage-limit.type';
 import { type StockCost } from 'src/engine/core-modules/usage-limit/types/stock-cost.type';
 import { type StockCounter } from 'src/engine/core-modules/usage-limit/types/stock-counter.type';
 import { type StockLimitDefault } from 'src/engine/core-modules/usage-limit/types/stock-limit-default.type';
 import { type StockResourceType } from 'src/engine/core-modules/usage-limit/types/stock-resource-type.type';
-import { buildStockCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-stock-counter-key.util';
+import { buildConsumeScriptArguments } from 'src/engine/core-modules/usage-limit/utils/build-consume-script-arguments.util';
+import { buildIntraWorkspaceStockCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-intra-workspace-stock-counter-keys.util';
+import { buildReleaseScriptArguments } from 'src/engine/core-modules/usage-limit/utils/build-release-script-arguments.util';
+import { buildStockCounter } from 'src/engine/core-modules/usage-limit/utils/build-stock-counter.util';
 import { buildStockCounters } from 'src/engine/core-modules/usage-limit/utils/build-stock-counters.util';
-import { buildStockDefaultCounterKey } from 'src/engine/core-modules/usage-limit/utils/build-stock-default-counter-key.util';
 import { buildStockExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-stock-exhausted-scope.util';
-import { buildStockWarmedEntries } from 'src/engine/core-modules/usage-limit/utils/build-stock-warmed-entries.util';
 import { buildStockScopeKey } from 'src/engine/core-modules/usage-limit/utils/build-stock-scope-key.util';
-import { buildStockWarmLockKey } from 'src/engine/core-modules/usage-limit/utils/build-stock-warm-lock-key.util';
-import { findExhaustedStockCounter } from 'src/engine/core-modules/usage-limit/utils/find-exhausted-stock-counter.util';
+import { findSuppressedUsageLimitDefaults } from 'src/engine/core-modules/usage-limit/utils/find-suppressed-usage-limit-defaults.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
 import { getStockExhaustedUserFriendlyMessage } from 'src/engine/core-modules/usage-limit/utils/get-stock-exhausted-user-friendly-message.util';
+import { isLimitExhausted } from 'src/engine/core-modules/usage-limit/utils/is-limit-exhausted.util';
 import { isStockLimit } from 'src/engine/core-modules/usage-limit/utils/is-stock-limit.util';
 import { isStockResourceType } from 'src/engine/core-modules/usage-limit/utils/is-stock-resource-type.util';
 import { type UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
-import { type UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const STOCK_COUNTER_TTL_MS = 60 * 60 * 1000;
-const STOCK_WARM_LOCK_OPTIONS = { ms: 50, maxRetries: 20, ttl: 10_000 };
 
 type StockArgs = {
   workspaceId: string;
@@ -63,8 +57,8 @@ export class UsageLimitStockService {
     @InjectCacheStorage(CacheStorageNamespace.EngineUsageLimit)
     private readonly cacheStorage: CacheStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly cacheLockService: CacheLockService,
     private readonly usageLimitEntitlementService: UsageLimitEntitlementService,
+    private readonly usageLimitDefaultValueService: UsageLimitDefaultValueService,
     private readonly metricsService: MetricsService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
@@ -78,35 +72,39 @@ export class UsageLimitStockService {
     computeUsedStock: ComputeUsedStock;
   }): Promise<void> {
     try {
-      const counters = await this.buildCounters(args);
+      const counters = await this.buildChargedCounters({ ...args, cost });
 
       if (counters.length === 0) {
         return;
       }
 
-      const remainings = await this.readRemainings({
-        workspaceId: args.workspaceId,
+      const heldValueByKey = await this.warmHeldValues({
         counters,
         computeUsedStock,
       });
 
-      const exhausted = findExhaustedStockCounter({
-        counters,
-        remainings,
-        cost,
-      });
+      for (const counter of counters) {
+        const held = heldValueByKey.get(counter.key);
 
-      if (isDefined(exhausted)) {
-        throw new UsageLimitException(
-          `${exhausted.counter.resourceType} limit reached for this workspace`,
-          UsageLimitExceptionCode.STOCK_EXHAUSTED,
-          {
-            userFriendlyMessage: getStockExhaustedUserFriendlyMessage(
-              exhausted.counter.resourceType,
-            ),
-            exhaustedScope: buildStockExhaustedScope(exhausted),
-          },
-        );
+        if (
+          isDefined(held) &&
+          isLimitExhausted({
+            consumed: held,
+            cost: cost[counter.unit] ?? 0,
+            limitValue: counter.limitValue,
+          })
+        ) {
+          throw new UsageLimitException(
+            `${counter.resourceType} limit reached for this workspace`,
+            UsageLimitExceptionCode.STOCK_EXHAUSTED,
+            {
+              userFriendlyMessage: getStockExhaustedUserFriendlyMessage(
+                counter.resourceType,
+              ),
+              exhaustedScope: buildStockExhaustedScope({ counter, held }),
+            },
+          );
+        }
       }
     } catch (error) {
       this.admitOnFailure({ error, workspaceId: args.workspaceId });
@@ -120,10 +118,10 @@ export class UsageLimitStockService {
     await this.applyStockDelta({
       ...args,
       cost,
-      script: CONSUME_QUOTA_COUNTERS_SCRIPT,
-      buildArgs: (counters) => [
-        JSON.stringify(counters.map((counter) => cost[counter.unit] ?? 0)),
-      ],
+      buildArguments: (amounts) =>
+        buildConsumeScriptArguments({
+          entries: amounts.map((amount) => ({ amount, warm: null })),
+        }),
     });
   }
 
@@ -134,139 +132,93 @@ export class UsageLimitStockService {
     await this.applyStockDelta({
       ...args,
       cost,
-      script: RELEASE_STOCK_COUNTERS_SCRIPT,
-      buildArgs: (counters) => [
-        JSON.stringify(counters.map((counter) => cost[counter.unit] ?? 0)),
-        JSON.stringify(counters.map((counter) => counter.limitValue)),
-      ],
+      buildArguments: buildReleaseScriptArguments,
     });
   }
 
-  async dropStockCounters({
+  async dropLimitCounter({
     workspaceId,
-    resourceType,
-    operationType,
-    spenderType,
-    spenderId,
-    unit,
-    limitValue,
+    usageLimit,
   }: {
     workspaceId: string;
-    resourceType: UsageResourceType;
-    operationType: UsageOperationType;
-    spenderType: SpenderType;
-    spenderId: string | null;
-    unit: UsageUnit;
-    limitValue: number;
-  }) {
-    const keys = [
-      buildStockCounterKey({
-        workspaceId,
-        resourceType,
-        operationType,
-        spenderType,
-        spenderId,
-        unit,
-        limitValue,
-      }),
-    ];
-
-    if (isStockResourceType(resourceType)) {
-      keys.push(
-        ...this.buildStockLimitDefaults({ resourceType, operationType })
-          .filter(
-            (stockLimitDefault) =>
-              stockLimitDefault.spenderType === spenderType,
-          )
-          .map((stockLimitDefault) =>
-            buildStockDefaultCounterKey({
-              workspaceId,
-              resourceType,
-              operationType,
-              spenderType,
-              unit: stockLimitDefault.unit,
-              limitValue: stockLimitDefault.limitValue,
-            }),
+    usageLimit: FlatUsageLimit;
+  }): Promise<void> {
+    if (
+      !isStockLimit(usageLimit) ||
+      findSuppressedUsageLimitDefaults(usageLimit).some((usageLimitDefault) =>
+        isDefined(
+          this.twentyConfigService.get(
+            usageLimitDefault.limitValueConfigVariable,
           ),
-      );
+        ),
+      )
+    ) {
+      return;
     }
 
-    await this.dropCounterKeys({ workspaceId, keys });
+    await this.cacheStorage.del(
+      buildStockCounter({ workspaceId, limit: usageLimit }).key,
+    );
+  }
+
+  async dropIntraWorkspaceLimitCounters(workspaceId: string): Promise<void> {
+    const { usageLimits } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['usageLimits'],
+    );
+
+    await this.cacheStorage.mdel(
+      buildIntraWorkspaceStockCounterKeys({
+        workspaceId,
+        limits: Object.values(usageLimits.byResourceType).flatMap(
+          (limits) => limits ?? [],
+        ),
+      }),
+    );
   }
 
   async invalidateStock(args: StockArgs): Promise<void> {
     try {
       const counters = await this.buildCounters(args);
 
-      if (counters.length === 0) {
-        return;
-      }
-
-      await this.dropCounterKeys({
-        workspaceId: args.workspaceId,
-        keys: counters.map((counter) => counter.key),
-      });
+      await this.cacheStorage.mdel(counters.map((counter) => counter.key));
     } catch (error) {
       this.recordDegradation({ error, workspaceId: args.workspaceId });
-    }
-  }
-
-  private async dropCounterKeys({
-    workspaceId,
-    keys,
-  }: {
-    workspaceId: string;
-    keys: string[];
-  }): Promise<void> {
-    try {
-      await this.cacheLockService.withLock(
-        () => this.cacheStorage.mdel(keys),
-        buildStockWarmLockKey(workspaceId),
-        STOCK_WARM_LOCK_OPTIONS,
-      );
-    } catch (error) {
-      if (
-        !(error instanceof CacheLockException) ||
-        error.code !== CacheLockExceptionCode.LOCK_ACQUISITION_TIMEOUT
-      ) {
-        throw error;
-      }
-
-      this.logger.warn(
-        `Dropping stock counters ${keys.join(', ')} without the warm lock: ${error.message}`,
-      );
-
-      await this.cacheStorage.mdel(keys);
     }
   }
 
   private async applyStockDelta({
     cost,
-    script,
-    buildArgs,
+    buildArguments,
     ...args
   }: StockArgs & {
     cost: StockCost;
-    script: CacheScript;
-    buildArgs: (counters: StockCounter[]) => string[];
+    buildArguments: (amounts: number[]) => string[];
   }): Promise<void> {
     try {
-      const counters = (await this.buildCounters(args)).filter(
-        (counter) => (cost[counter.unit] ?? 0) > 0,
+      const counters = uniqBy(
+        await this.buildChargedCounters({ ...args, cost }),
+        (counter) => counter.key,
       );
 
-      if (counters.length === 0) {
-        return;
-      }
-
-      await this.cacheStorage.runScript({
-        script,
-        keys: counters.map((counter) => counter.key),
-        args: buildArgs(counters),
+      await this.runWarmAndConsumeScript({
+        counters,
+        args: buildArguments(
+          counters.map((counter) => cost[counter.unit] ?? 0),
+        ),
       });
     } catch (error) {
       this.recordDegradation({ error, workspaceId: args.workspaceId });
     }
+  }
+
+  private async buildChargedCounters({
+    cost,
+    ...args
+  }: StockArgs & { cost: StockCost }): Promise<StockCounter[]> {
+    return (await this.buildCounters(args)).filter(
+      (counter) => (cost[counter.unit] ?? 0) > 0,
+    );
   }
 
   private async buildCounters({
@@ -298,126 +250,153 @@ export class UsageLimitStockService {
       operationType,
       spenders,
       limits: enforceableLimits,
-      stockLimitDefaults: this.buildStockLimitDefaults({
+      stockLimitDefaults: await this.buildStockLimitDefaults({
+        workspaceId,
         resourceType,
         operationType,
       }),
     });
   }
 
-  private buildStockLimitDefaults({
+  private async buildStockLimitDefaults({
+    workspaceId,
     resourceType,
     operationType,
   }: {
+    workspaceId: string;
     resourceType: StockResourceType;
     operationType: UsageOperationType;
-  }): StockLimitDefault[] {
+  }): Promise<StockLimitDefault[]> {
     const definition = findUsageLimitDefinition({
       resourceType,
       limitKind: 'stock',
     });
 
-    return (definition?.defaults ?? [])
-      .filter(
-        (stockLimitDefaultDefinition) =>
-          stockLimitDefaultDefinition.operationType === operationType,
-      )
-      .map((stockLimitDefaultDefinition) => ({
-        spenderType: stockLimitDefaultDefinition.spenderType,
-        unit: stockLimitDefaultDefinition.unit,
-        isOverridable: stockLimitDefaultDefinition.isOverridable,
-        limitValue: this.twentyConfigService.get(
-          stockLimitDefaultDefinition.limitValueConfigVariable,
-        ),
-      }));
-  }
+    const stockLimitDefaults = await Promise.all(
+      (definition?.defaults ?? [])
+        .filter(
+          (stockLimitDefaultDefinition) =>
+            stockLimitDefaultDefinition.operationType === operationType,
+        )
+        .map(async (stockLimitDefaultDefinition) => {
+          const limitValue =
+            await this.usageLimitDefaultValueService.findDefaultLimitValue({
+              workspaceId,
+              limitValueConfigVariable:
+                stockLimitDefaultDefinition.limitValueConfigVariable,
+            });
 
-  private async readRemainings({
-    workspaceId,
-    counters,
-    computeUsedStock,
-  }: {
-    workspaceId: string;
-    counters: StockCounter[];
-    computeUsedStock: ComputeUsedStock;
-  }): Promise<(number | null)[]> {
-    const remainings = await this.cacheStorage.mget<number>(
-      counters.map((counter) => counter.key),
+          return isDefined(limitValue)
+            ? [
+                {
+                  spenderType: stockLimitDefaultDefinition.spenderType,
+                  unit: stockLimitDefaultDefinition.unit,
+                  isOverridable: stockLimitDefaultDefinition.isOverridable,
+                  limitValue,
+                },
+              ]
+            : [];
+        }),
     );
 
-    if (remainings.every(isDefined)) {
-      return remainings;
-    }
-
-    return this.warmColdCounters({ workspaceId, counters, computeUsedStock });
+    return stockLimitDefaults.flat();
   }
 
-  private async warmColdCounters({
-    workspaceId,
+  private async warmHeldValues({
     counters,
     computeUsedStock,
   }: {
-    workspaceId: string;
     counters: StockCounter[];
     computeUsedStock: ComputeUsedStock;
+  }): Promise<Map<string, number | null>> {
+    const uniqueCounters = uniqBy(counters, (counter) => counter.key);
+
+    const storedValues = await this.cacheStorage.mget<number>(
+      uniqueCounters.map((counter) => counter.key),
+    );
+
+    const coldCounters = uniqueCounters.filter(
+      (_, index) => !isDefined(storedValues[index]),
+    );
+
+    const warmValues = await this.fetchWarmValues({
+      counters: coldCounters,
+      computeUsedStock,
+    });
+
+    const warmedValues = await this.runWarmAndConsumeScript({
+      counters: coldCounters,
+      args: buildConsumeScriptArguments({
+        entries: warmValues.map((warmValue) => ({
+          amount: 0,
+          warm: isDefined(warmValue)
+            ? { value: warmValue, ttl: STOCK_COUNTER_TTL_MS }
+            : null,
+        })),
+      }),
+    });
+
+    const warmedValueByKey = new Map(
+      coldCounters.map((counter, index) => [counter.key, warmedValues[index]]),
+    );
+
+    return new Map(
+      uniqueCounters.map((counter, index) => [
+        counter.key,
+        storedValues[index] ?? warmedValueByKey.get(counter.key) ?? null,
+      ]),
+    );
+  }
+
+  private async fetchWarmValues({
+    counters,
+    computeUsedStock,
+  }: {
+    counters: StockCounter[];
+    computeUsedStock: ComputeUsedStock;
+  }): Promise<(number | undefined)[]> {
+    const usedStockReadsByScope = new Map<
+      string,
+      ReturnType<ComputeUsedStock>
+    >();
+
+    return Promise.all(
+      counters.map(async (counter) => {
+        const scopeKey = buildStockScopeKey(counter);
+
+        const usedStockRead =
+          usedStockReadsByScope.get(scopeKey) ??
+          computeUsedStock({
+            spenderType: counter.spenderType,
+            spenderId: counter.spenderId,
+          });
+
+        usedStockReadsByScope.set(scopeKey, usedStockRead);
+
+        return (await usedStockRead)[counter.unit];
+      }),
+    );
+  }
+
+  private async runWarmAndConsumeScript({
+    counters,
+    args,
+  }: {
+    counters: StockCounter[];
+    args: string[];
   }): Promise<(number | null)[]> {
-    return this.cacheLockService.withLock(
-      async () => {
-        const remainings = await this.cacheStorage.mget<number>(
-          counters.map((counter) => counter.key),
-        );
+    if (counters.length === 0) {
+      return [];
+    }
 
-        if (remainings.every(isDefined)) {
-          return remainings;
-        }
+    const results = await this.cacheStorage.runScript<unknown[]>({
+      script: WARM_AND_CONSUME_COUNTERS_SCRIPT,
+      keys: counters.map((counter) => counter.key),
+      args,
+    });
 
-        const coldCounters = counters.filter(
-          (_, index) => !isDefined(remainings[index]),
-        );
-
-        const scopeKeys = [
-          ...new Map(
-            coldCounters.map((counter) => [
-              buildStockScopeKey(counter),
-              counter,
-            ]),
-          ).entries(),
-        ];
-
-        const usedByScope = new Map(
-          await Promise.all(
-            scopeKeys.map(
-              async ([scopeKey, counter]) =>
-                [
-                  scopeKey,
-                  await computeUsedStock({
-                    spenderType: counter.spenderType,
-                    spenderId: counter.spenderId,
-                  }),
-                ] as const,
-            ),
-          ),
-        );
-
-        const warmedEntries = buildStockWarmedEntries({
-          coldCounters,
-          usedByScope,
-          ttl: STOCK_COUNTER_TTL_MS,
-        });
-
-        await this.cacheStorage.mset(warmedEntries);
-
-        const warmedValueByKey = new Map(
-          warmedEntries.map((entry) => [entry.key, entry.value]),
-        );
-
-        return counters.map(
-          (counter, index) =>
-            remainings[index] ?? warmedValueByKey.get(counter.key) ?? null,
-        );
-      },
-      buildStockWarmLockKey(workspaceId),
-      STOCK_WARM_LOCK_OPTIONS,
+    return results.map((result) =>
+      typeof result === 'number' ? result : null,
     );
   }
 

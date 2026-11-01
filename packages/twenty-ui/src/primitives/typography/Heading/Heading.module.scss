@@ -21,6 +21,14 @@
     font-size: var(--t-font-size-lg);
   }
 
+  &:where([data-size='xl']) {
+    font-size: var(--t-font-size-xl);
+  }
+
+  &:where([data-size='xxl']) {
+    font-size: var(--t-font-size-xxl);
+  }
+
   &:where([data-color='primary']) {
     color: var(--t-font-color-primary);
   }

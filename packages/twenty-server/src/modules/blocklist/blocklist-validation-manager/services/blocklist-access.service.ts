@@ -8,8 +8,8 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+} from 'src/engine/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { BlocklistWorkspaceEntity } from 'src/modules/blocklist/standard-objects/blocklist.workspace-entity';
 import { type BlocklistItem } from 'src/modules/blocklist/types/blocklist-item.type';
 import { type BlocklistMutationContext } from 'src/modules/blocklist/types/blocklist-mutation-context.type';
@@ -68,6 +68,7 @@ export class BlocklistAccessService {
       setting: PermissionFlagType.WORKSPACE,
       workspaceId: context.workspaceId,
       applicationId: context.applicationId,
+      agentId: context.agentId,
     });
   }
 

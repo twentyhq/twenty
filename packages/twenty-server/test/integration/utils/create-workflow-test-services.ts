@@ -4,7 +4,6 @@ import { type DataSource } from 'typeorm';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type INestApplication } from '@nestjs/common';
 
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
@@ -24,7 +23,6 @@ export const createWorkflowTestServices = (app: INestApplication) => ({
   workspace: app.get(WorkspaceService),
   application: app.get(ApplicationService),
   userWorkspace: app.get(UserWorkspaceService),
-  flags: app.get(FeatureFlagService),
   workspaceCache: app.get(WorkspaceCacheService),
   upgradeState: UpgradeAwareRepositoryState.getInstance(),
   backfill: app.get(BackfillWorkflowExecutionCoreIdsCommand),

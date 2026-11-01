@@ -5,6 +5,7 @@ import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { extractFieldMetadataIdsFromWidget } from '@/page-layout/utils/extractFieldMetadataIdsFromWidget';
 import { type WidgetAccessDenialInfo } from '@/page-layout/widgets/types/WidgetAccessDenialInfo';
+import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
 export type UseWidgetPermissionsReturn = {
@@ -61,7 +62,9 @@ export const useWidgetPermissions = (
         const fieldMetadataItem = objectMetadata?.fields?.find(
           (field) => field.id === fieldMetadataId,
         );
-        return fieldMetadataItem?.label || fieldMetadataItem?.name || 'Unknown';
+        return (
+          fieldMetadataItem?.label || fieldMetadataItem?.name || t`Unknown`
+        );
       },
     );
 

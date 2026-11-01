@@ -26,38 +26,52 @@ export default meta;
 
 type Story = StoryObj<typeof FrontComponentRenderer>;
 
+const playSnackbar: NonNullable<Story['play']> = async ({
+  canvasElement,
+  args,
+}) => {
+  const canvas = within(canvasElement);
+  const api = args.frontComponentHostCommunicationApi;
+
+  if (!isDefined(api)) {
+    throw new Error('frontComponentHostCommunicationApi is required');
+  }
+
+  await expectFrontComponentMounted(canvas);
+
+  const subject = await canvas.findByTestId('subject');
+
+  await userEvent.click(subject);
+
+  await waitFor(
+    () => {
+      expect(api.enqueueSnackbar).toHaveBeenCalledWith({
+        message: 'Test notification',
+        variant: 'success',
+        duration: 3000,
+        detailedMessage: 'Changes are available to the team',
+        dedupeKey: 'notification-example',
+      });
+    },
+    { timeout: HOST_API_TIMEOUT },
+  );
+
+  expect(
+    await canvas.findByText(
+      'snackbar:success',
+      {},
+      { timeout: INTERACTION_TIMEOUT },
+    ),
+  ).toBeVisible();
+};
+
 export const Snackbar: Story = runFrontComponentStory({
   frontComponentBundleName: 'host-api-snackbar',
-  play: async ({ canvasElement, args }) => {
-    const canvas = within(canvasElement);
-    const api = args.frontComponentHostCommunicationApi;
+  play: playSnackbar,
+});
 
-    if (!isDefined(api)) {
-      throw new Error('frontComponentHostCommunicationApi is required');
-    }
-
-    await expectFrontComponentMounted(canvas);
-
-    const subject = await canvas.findByTestId('subject');
-
-    await userEvent.click(subject);
-
-    await waitFor(
-      () => {
-        expect(api.enqueueSnackbar).toHaveBeenCalledWith({
-          message: 'Test notification',
-          variant: 'success',
-        });
-      },
-      { timeout: HOST_API_TIMEOUT },
-    );
-
-    expect(
-      await canvas.findByText(
-        'snackbar:success',
-        {},
-        { timeout: INTERACTION_TIMEOUT },
-      ),
-    ).toBeVisible();
-  },
+export const SnackbarPreact: Story = runFrontComponentStory({
+  frontComponentBundleName: 'host-api-snackbar',
+  runtime: 'preact',
+  play: playSnackbar,
 });

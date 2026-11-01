@@ -1,3 +1,4 @@
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { triggerUpdateRecordOptimisticEffectByBatch } from '@/apollo/optimistic-effect/utils/triggerUpdateRecordOptimisticEffectByBatch';
 import { apiConfigState } from '@/client-config/states/apiConfigState';
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
@@ -26,7 +27,7 @@ import { sleep } from '~/utils/sleep';
 
 type UseUpdateManyRecordsProps = {
   objectNameSingular: string;
-  recordGqlFields?: Record<string, any>;
+  recordGqlFields?: RecordGqlFields;
 };
 
 export type UpdateManyRecordsProps<T extends ObjectRecord = ObjectRecord> = {

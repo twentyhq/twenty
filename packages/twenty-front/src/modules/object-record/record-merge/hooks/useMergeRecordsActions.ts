@@ -1,5 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 
+import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { useMergeManyRecords } from '@/object-record/hooks/useMergeManyRecords';
 import { useMergeRecordsSelectedRecords } from '@/object-record/record-merge/hooks/useMergeRecordsSelectedRecords';
 import { isMergeInProgressState } from '@/object-record/record-merge/states/mergeInProgressState';
@@ -43,13 +44,13 @@ export const useMergeRecordsActions = ({
       });
 
       if (!mergedRecord) {
-        throw new Error('Failed to merge records');
+        throw new Error(t`Failed to merge records`);
       }
 
       const recordCount = selectedRecords.length;
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Successfully merged ${recordCount} records`,
       });
       closeSidePanelMenu();
@@ -59,13 +60,7 @@ export const useMergeRecordsActions = ({
         objectRecordId: mergedRecord.id,
       });
     } catch (error) {
-      enqueueToast({
-        variant: 'error',
-        children:
-          error instanceof Error
-            ? error.message
-            : t`Failed to merge records. Please try again.`,
-      });
+      enqueueToast(getToastOptionsFromError({ error }));
     } finally {
       setIsMergeInProgress(false);
     }

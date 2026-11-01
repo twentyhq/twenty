@@ -53,7 +53,7 @@ export const useWorkspaceFromInviteHash = () => {
       const workspaceDisplayName = inviteWorkspace.displayName;
       initiallyLoggedIn &&
         enqueueToast({
-          variant: 'info',
+          status: 'info',
           children: workspaceDisplayName
             ? t`You already belong to the workspace ${workspaceDisplayName}`
             : t`You already belong to this workspace`,

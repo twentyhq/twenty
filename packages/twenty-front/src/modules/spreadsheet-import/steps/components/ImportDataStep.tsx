@@ -1,4 +1,4 @@
-import { Dialog } from 'twenty-ui/primitives/surfaces';
+import { SpreadsheetImportStepBody } from '@/spreadsheet-import/components/SpreadsheetImportStepBody';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { StepNavigationButton } from '@/spreadsheet-import/components/StepNavigationButton';
 import { useSpreadsheetImportInternal } from '@/spreadsheet-import/hooks/useSpreadsheetImportInternal';
@@ -43,20 +43,11 @@ export const ImportDataStep = ({
 
   return (
     <>
-      <Dialog.Body
-        style={{
-          display: 'flex',
-          flex: '1 1 0%',
-          flexDirection: 'column',
-          padding: 0,
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
+      <SpreadsheetImportStepBody isCenteredHorizontally isCenteredVertically>
         <StyledHeader>{t`Importing Data ...`}</StyledHeader>
         <StyledDescription>{t`${formattedCreatedRecordsProgress} out of ${formattedRecordsToImportCount} records imported.`}</StyledDescription>
         <Loader />
-      </Dialog.Body>
+      </SpreadsheetImportStepBody>
       <StepNavigationButton onBack={onClose} backTitle={t`Cancel`} />
     </>
   );

@@ -30,6 +30,8 @@ const SHARED_FILTER_NAME_BY_FIELD_TYPE: Partial<
   [FieldMetadataType.EMAILS]: 'EmailsFilter',
   [FieldMetadataType.PHONES]: 'PhonesFilter',
   [FieldMetadataType.LINKS]: 'LinksFilter',
+  [FieldMetadataType.RAW_JSON]: 'RawJsonFilter',
+  [FieldMetadataType.FILES]: 'RawJsonFilter',
 };
 
 const referenceSharedFilter = ({
@@ -60,7 +62,7 @@ const buildOptionsFilter = ({
     return {
       type: 'object',
       properties: {
-        in: {
+        containsAny: {
           description: 'Contains any of these values',
           type: 'array',
           items: option,

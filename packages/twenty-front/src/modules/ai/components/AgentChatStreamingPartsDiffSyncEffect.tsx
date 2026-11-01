@@ -1,15 +1,15 @@
 import { useUpdateStreamingPartsWithDiff } from '@/ai/hooks/useUpdateStreamingPartsWithDiff';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
+import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect } from 'react';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 export const AgentChatStreamingPartsDiffSyncEffect = () => {
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
 
-  const agentChatMessages = useAtomComponentFamilyStateValue(
-    agentChatMessagesComponentFamilyState,
+  const agentChatMessages = useAtomFamilyStateValue(
+    agentChatMessagesFamilyState,
     { threadId: currentAiChatThread },
   );
 

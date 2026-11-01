@@ -9,6 +9,7 @@ import { getAiChatContextStoreInstanceId } from '@/ai/utils/getAiChatContextStor
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { isCurrentPathAiChatPage } from '~/utils/isCurrentPathAiChatPage';
+import { isSettingsPath } from '~/utils/isSettingsPath';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
@@ -26,6 +27,12 @@ export const useGetBrowsingContext = () => {
   const store = useStore();
 
   const getBrowsingContext = useCallback((): BrowsingContext | null => {
+    const { pathname } = window.location;
+
+    if (isSettingsPath(pathname)) {
+      return { type: 'settingsPage', path: pathname };
+    }
+
     const isSidePanelOpened = store.get(isSidePanelOpenedState.atom);
     const currentSidePanelPage = store
       .get(sidePanelNavigationStackState.atom)

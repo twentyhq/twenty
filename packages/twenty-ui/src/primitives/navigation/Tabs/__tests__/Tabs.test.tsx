@@ -15,6 +15,13 @@ const ListWrapper = ({ children }: { children: ReactNode }) => (
   </RootWrapper>
 );
 
+const IndicatorWrapper = ({ children }: { children: ReactNode }) => (
+  <ListWrapper>
+    <Tabs.Tab value="overview">Overview</Tabs.Tab>
+    {children}
+  </ListWrapper>
+);
+
 runComponentConformance({
   name: 'Tabs.Root',
   element: <Tabs.Root />,
@@ -34,7 +41,11 @@ runComponentConformance({
 
 runComponentConformance({
   name: 'Tabs.Tab',
-  element: <Tabs.Tab value="overview">Overview</Tabs.Tab>,
+  element: (
+    <Tabs.Tab value="overview" size="compact">
+      Overview
+    </Tabs.Tab>
+  ),
   refInstanceOf: HTMLButtonElement,
   ownClassName: styles.tab,
   renderPropTagName: 'button',
@@ -48,4 +59,13 @@ runComponentConformance({
   ownClassName: styles.panel,
   renderPropTagName: 'div',
   wrapper: RootWrapper,
+});
+
+runComponentConformance({
+  name: 'Tabs.Indicator',
+  element: <Tabs.Indicator />,
+  refInstanceOf: HTMLSpanElement,
+  ownClassName: styles.indicator,
+  renderPropTagName: 'span',
+  wrapper: IndicatorWrapper,
 });

@@ -1,0 +1,403 @@
+---
+title: ListItem
+description: أنشئ صفوفًا متسقة باستخدام الأيقونات والأوصاف والمؤشرات والإجراءات.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ListItemReference from '/snippets/ui/generated/navigation/list-item.mdx';
+
+## نظرة عامة
+
+يوفر `ListItem` التخطيط المرئي المشترك بين صفوف القوائم والقوائم المنسدلة. يعرض عنصر `div` افتراضيًا للمحتوى غير التفاعلي. استخدم [ListItemButton](/ar/ui/components/navigation/list-item-button) لصفوف الإجراءات العادية. كوّن `ListItem` باستخدام رابط للتنقل أو باستخدام عنصر دلالي مخصص عند الحاجة. استخدم [Dropdown](/ar/ui/components/navigation/dropdown) أو [Select](/ar/ui/primitives/input/select) عندما تحتاج إلى مالك كامل للنافذة المنبثقة أو التحديد.
+
+<StoryEmbed storyId="ui-navigation-listitem--display" title="مثال ListItem" height={100} />
+
+## استخدام
+
+```tsx
+import { IconBell } from 'twenty-ui/icon';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const NotificationRow = () => (
+  <ListItem startIcon={<IconBell />}>Notifications</ListItem>
+);
+```
+
+## البنية التشريحية
+
+يكشف `ListItem` عن فتحات محتوى عبر الخصائص. ترتب هذه الفتحات المحتوى داخل صف واحد؛ وهي ليست مكونات مُصدَّرة بشكل منفصل.
+
+```text
+ListItem
+├── startIcon
+├── children
+├── description
+├── actions
+└── endIcon
+```
+
+| الفتحة                                | المتطلبة              | الغرض                                                                              |
+| ------------------------------------- | --------------------- | ---------------------------------------------------------------------------------- |
+| `children`                            | مطلوب لتسمية صف مرئية | يوفر النص الرئيسي.                                                                 |
+| `startIcon`, `endIcon`                | اختياري               | أضف أيقونات أو صورًا رمزية أو بيانات وصفية أو عناصر تحكم مستقلة عند أي من الطرفين. |
+| `description`                         | اختياري               | يضيف محتوى داعمًا بشكل مضمن أو أسفل التسمية أو في النهاية.                         |
+| `الإجراءات`                           | اختياري               | يضيف محتوى لاحقًا، مثل إجراء قابل للتركيز بشكل منفصل.                              |
+| `indicator`، `shortcut`، `hasSubmenu` | اختياري               | اضبط علامات التحديد المضمنة وتلميحات الاختصارات ومؤشر القائمة الفرعية.             |
+
+يوفر الصف التخطيط. يقبل `render` عنصراً أو دالة استدعاء تتلقى الخصائص الأصلية والحالة المرئية. انشر تلك الخصائص على الجذر الفعلي عند استخدام دالة استدعاء. تصل السمات الأصلية، ومعالجات الأحداث، و`className`، و`style`، و`ref` إلى ذلك الجذر. بالنسبة إلى صف يحتوي على أزرار إجراءات مستقلة، أبقِ الصف نفسه غير تفاعلي لكي تظل تلك الأزرار عناصر تحكم منفصلة.
+
+## صفوف متعددة الأسطر
+
+عيّن `descriptionPlacement="below"` لوضع المحتوى الداعم أسفل التسمية. يحتفظ العنوان بسلوك الاقتطاع الحالي، ويلتف المحتوى الداعم وفقًا للعرض المتاح. يحتفظ الموضع الافتراضي `inline` وموضع `end` بمظهرهما الحالي.
+
+<StoryEmbed storyId="ui-navigation-listitem-multiline--display" title="مثال على ListItem متعدد الأسطر" height={150} />
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const PlanningRow = () => (
+  <ListItem
+    descriptionPlacement="below"
+    startIcon={<Avatar name="Alex Morgan" size="md" imageProps={{ alt: '' }} />}
+    description="Review the proposed timeline and confirm the next steps with the team."
+    endIcon={
+      <Text render={<span />} size="sm" color="secondary">
+        09:48
+      </Text>
+    }
+  >
+    Quarterly planning
+  </ListItem>
+);
+```
+
+للحصول على معاينات أقصر، مرّر مكوّن [نص](/ar/ui/primitives/typography/text) مع `truncate` أو `lineClamp` بوصفه `description`. يتحكم المحتوى المخصص في تخطيطه وتسمياته المتاحة بنفسه.
+
+### حالات مرئية مستقلة
+
+تعود جميع الحالات المرئية إلى المستدعي. يحدد `active` الصف المفتوح أو الحالي من دون تحديده. يمثل `selected` التحديد، ويمثل `focused` تمييز التنقل بلوحة المفاتيح من دون نقل تركيز DOM. يطبق `active` خلفية الصف الحالي. عيّن `selectionAppearance="accent"` للحصول على تعبئة بارزة في الصفوف المحددة، بشكل مستقل عن موضع الوصف. يحافظ المظهر الافتراضي على تنسيق التحديد الحالي المعتمد على المؤشر. يطبق `focused` الخلفية المميزة المشتركة، بما في ذلك عندما يستخدمها مالك للتمييز بالمؤشر. يتبع مخطط التركيز المرئي تركيز لوحة المفاتيح الفعلي على الجذر أو عناصر التحكم التابعة له.
+
+لا تضيف هذه الخصائص حالات متاحة. زوّد المالك الدلالي المناسب بحالة `aria-current` أو `aria-selected` أو `checked` الخاصة بعنصر تحكم. يحتفظ التركيز الفعلي للوحة المفاتيح أيضًا بمخطط التركيز المرئي الأصلي.
+
+### عناصر تحكم مستقلة
+
+احتفظ بجذر `div` الافتراضي عندما يحتوي الصف على مربع اختيار حقيقي أو أزرار إجراءات مستقلة. استخدم `startIcon` لمربع الاختيار و`actions` للأزرار. لا حاجة إلى `indicator` الزخرفي عندما يعرض مربع اختيار حقيقي التحديد بالفعل.
+
+```tsx
+import { useState } from 'react';
+import { Button, Checkbox } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+type SelectablePlanningRowProps = {
+  active?: boolean;
+  disabled?: boolean;
+  onOpen: () => void;
+};
+
+export const SelectablePlanningRow = ({
+  active = false,
+  disabled = false,
+  onOpen,
+}: SelectablePlanningRowProps) => {
+  const [selected, setSelected] = useState(false);
+
+  return (
+    <ListItem
+      active={active}
+      selected={selected}
+      selectionAppearance="accent"
+      disabled={disabled}
+      descriptionPlacement="below"
+      description="Review the proposed timeline and confirm the next steps with the team."
+      startIcon={
+        <Checkbox
+          aria-label="Select quarterly planning"
+          checked={selected}
+          onCheckedChange={setSelected}
+          disabled={disabled}
+        />
+      }
+      actions={
+        <Button variant="ghost" size="sm" onClick={onOpen} disabled={disabled}>
+          Open
+        </Button>
+      }
+    >
+      Quarterly planning
+    </ListItem>
+  );
+};
+```
+
+التحديد والفتح تفاعلان منفصلان. يمتلك التطبيق انتشار الأحداث وأي تنشيط للصف أو سياسة للوحة المفاتيح. يغير `ListItem.disabled` المظهر فقط؛ مرّر `disabled` إلى كل عنصر تحكم حقيقي لمنع تنشيطه.
+
+ينطبق سلوك رؤية الإجراءات الحالي على الصفوف متعددة الأسطر: يكشف `actionsVisibility="hover"` عن الإجراءات عند التمرير أو التركيز داخل الصف، ويبقيها مرئية على أجهزة اللمس. عيّنه إلى `always` للإجراءات المستمرة، بما في ذلك أثناء فتح نافذة منبثقة يملكها المستدعي. عند عرض صف يبلغ 480px أو أقل، تنتقل الإجراءات متعددة الأسطر إلى سطر خاص بها وتلتف حسب الحاجة.
+
+## صف الإجراء
+
+استخدم [ListItemButton](/ar/ui/components/navigation/list-item-button) لدمج تنسيق الصف مع تفاعل الزر الأصلي. مرّر `disabled` مرة واحدة للتحكم في كل من المظهر والتفعيل.
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { IconCopy } from 'twenty-ui/icon';
+
+type DuplicateActionProps = {
+  onDuplicate: () => void;
+  disabled?: boolean;
+};
+
+export const DuplicateAction = ({
+  onDuplicate,
+  disabled = false,
+}: DuplicateActionProps) => (
+  <ListItemButton
+    disabled={disabled}
+    startIcon={<IconCopy />}
+    description="Create a copy"
+    onClick={onDuplicate}
+  >
+    Duplicate
+  </ListItemButton>
+);
+```
+
+لا يزال بإمكان مالك زر مخصص تكوين `ListItem` عبر `render`. يوفر ذلك المالك التركيز الأصلي، والتفعيل بمفتاحي Enter وSpace، وسلوك التعطيل. يوفر `ListItem.disabled` النمط المرئي المطابق فقط. يعرض `shortcut` التلميحات؛ ويسجل تطبيقك الاختصارات.
+
+<StoryEmbed storyId="ui-navigation-listitem--button-owner" title="تكوين زر مخصص" height={100} />
+
+## التنقل والروابط الصريحة
+
+مرّر رابط ارتساء عبر `render` عندما ينتقل الصف بأكمله. ضع سمات رابط الارتساء، بما في ذلك `href` و`target` و`rel`، على ذلك العنصر.
+
+```tsx
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const DocumentationLink = () => (
+  <ListItem render={<a href="https://twenty.com/developers" />}>
+    Typography documentation
+  </ListItem>
+);
+```
+
+<StoryEmbed storyId="ui-navigation-listitem--link-owner" title="صف الرابط" height={100} />
+
+تظل تسميات السلاسل النصية نصاً، بما في ذلك السلاسل التي تبدو كعناوين URL. لا ينشئ ListItem روابط. لربط جزء من صف غير تفاعلي، وفّر رابط ارتساء كمحتوى يملكه المستدعي. أبقِ ذلك الصف كـ `div` لتجنب الروابط أو الأزرار المتداخلة. تحتفظ تسميات السلاسل النصية باقتطاعها وتلميح الأدوات عند التجاوز؛ ويمكن للمحتوى المخصص استخدام [OverflowingTextWithTooltip](/ar/ui/primitives/typography/overflowing-text-with-tooltip) مع رابط ارتساء معروض صراحةً.
+
+لا تحتوي الروابط على سمة `disabled` أصلية. إذا كانت الوجهة غير متاحة، فيجب على مالك الرابط توفير الدلالات المناسبة وترتيب التنقل بالضغط على Tab وسياسة التنقل. لا يمنع تنسيقه باستخدام `ListItem.disabled` وحده التنقل.
+
+## مالك عنصر النافذة المنبثقة
+
+استخدم `Dropdown.ActionItem` أو `Dropdown.OptionItem` داخل مالك النافذة المنبثقة الخاص بهما. تكوّن هذه الأجزاء بالفعل تخطيط ListItem وتكشف فتحاته المرئية. يوفر مالك النافذة المنبثقة الأدوار والتركيز والتنقل بلوحة المفاتيح والتفعيل وسلوك التعطيل.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+
+type RecordActionsProps = { onDuplicate: () => void };
+
+export const RecordActions = ({ onDuplicate }: RecordActionsProps) => (
+  <Dropdown.Root type="menu">
+    <Dropdown.Trigger render={<Button>Record actions</Button>} />
+    <Dropdown.Content>
+      <Dropdown.ActionItem onClick={onDuplicate}>
+        Duplicate record
+      </Dropdown.ActionItem>
+      <Dropdown.ActionItem disabled>Unavailable action</Dropdown.ActionItem>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+<StoryEmbed storyId="ui-components-dropdown--display" title="مالك عنصر Dropdown" height={420} />
+
+## سياسة الأحداث الأصلية
+
+يمرر ListItem كائنات الأحداث الأصلية ومعالجاتها. تنتشر النقرات بشكل طبيعي، بما في ذلك النقرات على عناصر تحكم الإجراءات اللاحقة. ضع أي حد مقصود على المالك التفاعلي أو معالج المستدعي.
+
+```tsx
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+type OpenRecordProps = { onOpen: () => void };
+
+export const OpenRecord = ({ onOpen }: OpenRecordProps) => (
+  <ListItem
+    render={<button type="button" />}
+    onClick={(event) => {
+      event.stopPropagation();
+      onOpen();
+    }}
+  >
+    Open record
+  </ListItem>
+);
+```
+
+يمتلك المستدعي أيضاً أي سياسة لـ `preventDefault()`، مثل منع تنقل الرابط. تمرير `onClick` لا يضيف دوراً، ولا يجعل `div` قابلاً للتشغيل بلوحة المفاتيح، ولا يغير الانتشار.
+
+## السحب والتنقل في المحرر المملوكان للتطبيق
+
+أنشئ صفوفًا قابلة لإعادة الترتيب باستخدام `ListItem` داخل مضيف السحب في تطبيقك. ضع سمات السحب ومستمعيه الخاصة بالمضيف على مقبضه، ومرر المقبض أو أداة الإمساك عبر `startIcon`. احتفظ بعناصر تحكم مستقلة للرؤية والتحرير والحذف في `actions`. يتولى مضيف السحب إعادة الترتيب بالمؤشر ولوحة المفاتيح، وتعطيل السحب، وتسميات المقابض المتاحة.
+
+بالنسبة إلى اقتراحات المحرر، احتفظ بمربع القائمة الحالي للمحرر ومالك الخيار النشط. اعرض كل `ListItem` باستخدام `role="option"` و`aria-selected`، واستخدم `focused` لمظهر الصف النشط. يتولى المحرر التنقل بالأسهم والتفعيل باستخدام Enter بينما يبقى التركيز في سطح التحرير. امنع تغييرات التركيز عند الضغط بالمؤشر عندما يتطلبها المحرر، وتعامل مع تحديد المؤشر في معالج الصف الخاص بالتطبيق.
+
+بالنسبة إلى الاقتراحات في صفحة Dropdown، استخدم `Dropdown.OptionItem` أو `Dropdown.ActionItem` لكي تتولى تلك الصفحة التنقل والتفعيل. لا تضف معالجًا ثانيًا لـ Enter أو Space إلى مالك يتم تفعيله بالفعل من لوحة المفاتيح.
+
+## صف الإعدادات
+
+استخدم [SettingsRow](/ar/ui/components/settings/settings-row) لصف مفتاح تبديل مُسمّى. يُنشئ تركيبًا من `ListItem` و`Switch`، ويدير ارتباطهما المتاح، ويستخدم حالة التعطيل الخاصة بالمفتاح لمظهر الصف.
+
+## مؤشر التحديد
+
+```tsx
+import { useState } from 'react';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const ShowArchivedToggle = () => {
+  const [selected, setSelected] = useState(false);
+
+  return (
+    <ListItem
+      render={<button type="button" aria-pressed={selected} />}
+      selected={selected}
+      indicator="check"
+      onClick={() => setSelected(!selected)}
+    >
+      Show archived records
+    </ListItem>
+  );
+};
+```
+
+يتحكم كل من `active` و`selected` و`focused` و`disabled` بشكل مستقل في تنسيق الصف. لا تسجل إجراءات، ولا تنقل تركيز DOM، ولا تضيف أدواراً أو حالات يمكن الوصول إليها، ولا تمنع الأحداث. مؤشرا `check` و`checkbox` زخرفيان؛ استخدم [Checkbox](/ar/ui/primitives/input/checkbox) حقيقياً لعنصر تحكم في نموذج. عيّن `aria-pressed` أو `aria-selected` أو دلالات حالة أخرى على المالك الذي يحتاج إليها.
+
+## صفوف المنتقي
+
+التحديد تابع للعنصر الأصل. لا يحتوي `ListItem` على حالة تحديد غير مضبوطة: مرّر `selected` وحدّثه من `onClick`. استخدم `indicator="check"` لخيار واحد و`indicator="checkbox"` لخيارات متعددة. كلا المؤشرين زخرفي؛ ويتولى المالك التفاعلي التفعيل.
+
+في مربع قائمة موجود، مرّر `role="option"` و`aria-selected`، وأبقِ التركيز ومعالجة مفاتيح الأسهم في مربع القائمة. للحصول على عنصر واجهة اختيار كامل، استخدم [Select](/ar/ui/primitives/input/select). يمكن لأزرار الاختيار المستقلة استخدام `aria-pressed`، كما في هذه الأمثلة.
+
+### اختيار واحد
+
+ضع [Avatar](/ar/ui/primitives/data-display/avatar) في `startIcon` لتعريف سجل. استخدم `description` للنص الداعم، و`descriptionPlacement="end"` لقيمة لاحقة.
+
+<StoryEmbed storyId="ui-navigation-listitem-picker--single-selection" title="صفوف اختيار واحد" height={170} />
+
+```tsx
+import { useState } from 'react';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const AssigneeButtons = () => {
+  const [assignee, setAssignee] = useState<string | null>(null);
+
+  return (
+    <div role="group" aria-label="Assignee">
+      {['Alex Morgan', 'Sam Taylor'].map((name) => (
+        <ListItem
+          key={name}
+          render={<button type="button" />}
+          aria-pressed={assignee === name}
+          selected={assignee === name}
+          indicator="check"
+          startIcon={<Avatar name={name} size="md" imageProps={{ alt: '' }} />}
+          onClick={() => setAssignee(name)}
+        >
+          {name}
+        </ListItem>
+      ))}
+    </div>
+  );
+};
+```
+
+### اختيار متعدد
+
+استخدم [Tag](/ar/ui/primitives/data-display/tag) كمحتوى الصف للقيم ذات العلامات، أو ضع [ColorSample](/ar/ui/primitives/data-display/color-sample) في `startIcon` لاختيار لون. يمكن أن يحتوي الصف أيضاً على نص عادي أو صورة رمزية.
+
+<StoryEmbed storyId="ui-navigation-listitem-picker--multiple-selection" title="صفوف اختيار متعدد" height={170} />
+
+```tsx
+import { useState } from 'react';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const TeammateButtons = () => {
+  const [teammates, setTeammates] = useState<string[]>([]);
+
+  const toggleTeammate = (name: string) => {
+    setTeammates((current) =>
+      current.includes(name)
+        ? current.filter((teammate) => teammate !== name)
+        : [...current, name],
+    );
+  };
+
+  return (
+    <div role="group" aria-label="Teammates">
+      {['Alex Morgan', 'Sam Taylor'].map((name) => (
+        <ListItem
+          key={name}
+          render={<button type="button" />}
+          aria-pressed={teammates.includes(name)}
+          selected={teammates.includes(name)}
+          indicator="checkbox"
+          onClick={() => toggleTeammate(name)}
+        >
+          <Tag color="blue">{name}</Tag>
+        </ListItem>
+      ))}
+    </div>
+  );
+};
+```
+
+مؤشر مربع الاختيار ليس عنصر تحكم في نموذج ولا يرسل قيمة. استخدم [Checkbox](/ar/ui/primitives/input/checkbox) عندما تحتاج إلى المشاركة في نموذج. عيّن `disabled` الأصلي على الزر المعروض لمنع التفعيل وإزالته من ترتيب التنقل بالضغط على Tab. مرّر أيضاً `ListItem.disabled` لمظهره المرئي.
+
+## فتحات
+
+استخدم `startIcon` و`endIcon` للأيقونات أو المحتوى الذي يملكه المستدعي، و`description` للنص الداعم، و`actions` للمحتوى اللاحق، و`hasSubmenu` لمؤشر قائمة فرعية. يقبل `descriptionPlacement` القيم `inline` أو `end` أو `below`. ينسق `color="danger"` إجراءً إتلافيًا. تجنب تداخل عناصر التحكم التفاعلية داخل صف معروض كزر.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+type ContactRowProps = { onOpen: () => void };
+
+export const ContactRow = ({ onOpen }: ContactRowProps) => (
+  <ListItem
+    description="Account owner"
+    actions={
+      <Button
+        type="button"
+        aria-label="Open Alex Morgan's profile"
+        variant="ghost"
+        size="sm"
+        onClick={onOpen}
+      >
+        Open
+      </Button>
+    }
+  >
+    Alex Morgan
+  </ListItem>
+);
+```
+
+## التسميات العربية
+
+استخدم `shortcutJoinLabel` لتخصيص النص بين خطوات الاختصار المتسلسلة. تكون قيمته الافتراضية `then`؛ وتزيل السلسلة الفارغة نص الربط. تتوفر الخاصية نفسها في أجزاء عنصر `Dropdown`.
+
+## الإزاحة
+
+يُنشأ المرجع من الأنواع العامة للمكوّنات. تُقبل سمات ومعالجات `div` الأصلية، بما في ذلك الأسماء القابلة للوصول والأحداث الأصلية. ضع السمات الخاصة بالزر أو رابط الارتساء على العنصر الموفّر عبر `render`. يستهدف كل من `ref` ومرجع العنصر المعروض الجذر الفعلي لـ DOM.
+
+<ListItemReference />
+
+مرر `shortcut={['Mod', 'Enter']}` للمفاتيح المتزامنة أو `shortcut={[['G'], ['P']]}` للضغطات المتتالية. راجع [Shortcut](/ar/ui/primitives/typography/shortcut) للتعرف على التركيبات المتداخلة ومنسق السلاسل المشترك.
+
+<PageBanner illustration="section-apps-data" />

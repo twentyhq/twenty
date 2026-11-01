@@ -23,8 +23,9 @@ export const SkillSuggestionMenu = forwardRef<
       editor={editor}
       range={range}
       getItemKey={getItemKey}
-      renderItem={(item, isSelected) => (
+      renderItem={({ item, isSelected, id }) => (
         <SkillSuggestionMenuItem
+          id={id}
           item={item}
           isSelected={isSelected}
           onSelect={onSelect}

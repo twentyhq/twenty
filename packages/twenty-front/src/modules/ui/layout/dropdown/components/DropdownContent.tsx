@@ -15,9 +15,9 @@ type DropdownContentProps = Pick<
   | 'collisionPadding'
   | 'width'
   | 'onKeyDown'
+  | 'onClick'
   | 'initialFocus'
   | 'finalFocus'
-  | 'className'
   | 'aria-label'
   | 'ref'
 >;
@@ -32,9 +32,9 @@ export const DropdownContent = ({
   collisionPadding,
   width,
   onKeyDown,
+  onClick,
   initialFocus,
   finalFocus,
-  className,
   'aria-label': ariaLabel,
   ref,
 }: DropdownContentProps) => {
@@ -52,9 +52,9 @@ export const DropdownContent = ({
       collisionPadding={collisionPadding}
       width={width}
       onKeyDown={onKeyDown}
+      onClick={onClick}
       initialFocus={initialFocus}
       finalFocus={finalFocus}
-      className={className}
       aria-label={ariaLabel}
     >
       <DropdownClickOutsideListenerExclusion>

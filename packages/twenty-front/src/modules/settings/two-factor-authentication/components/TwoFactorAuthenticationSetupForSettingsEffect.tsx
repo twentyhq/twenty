@@ -7,6 +7,7 @@ import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
 import { InitiateOtpProvisioningForAuthenticatedUserDocument } from '~/generated-metadata/graphql';
 
@@ -35,7 +36,9 @@ export const TwoFactorAuthenticationSetupForSettingsEffect = () => {
           !initiateOTPProvisioningResult.data
             ?.initiateOTPProvisioningForAuthenticatedUser.uri
         ) {
-          throw new Error('No URI returned from OTP provisioning');
+          throw new Error(
+            doNotTranslate('No URI returned from OTP provisioning'),
+          );
         }
 
         setQrCode(

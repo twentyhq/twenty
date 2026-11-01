@@ -1,4 +1,3 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 import {
   type InputJsonSchema,
@@ -8,8 +7,12 @@ import {
 import { isDefined } from 'src/utils/is-defined';
 
 import { FATHOM_SYNC_CALL_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { computeCallRecordingIdForFathomMeeting } from 'src/logic-functions/utils/compute-call-recording-id-for-fathom-meeting.util';
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
+import { createFathomCoreApiClient } from 'src/logic-functions/utils/create-fathom-core-api-client.util';
+import { getConnectionAccessTokenOrThrow } from 'src/logic-functions/utils/get-connection-access-token-or-throw.util';
 import { hydrateFathomMeeting } from 'src/logic-functions/utils/hydrate-fathom-meeting.util';
+import { listDeletedCallRecordingIds } from 'src/logic-functions/utils/list-deleted-call-recording-ids.util';
 import { listFathomConnectionsForRequest } from 'src/logic-functions/utils/list-fathom-connections-for-request.util';
 import { listFathomMeetings } from 'src/logic-functions/utils/list-fathom-meetings.util';
 import { serializeFathomMeeting } from 'src/logic-functions/utils/serialize-fathom-meeting.util';
@@ -37,6 +40,13 @@ type FathomSyncCallResult =
       calendarEventId?: string;
       created: boolean;
     }
+  | {
+      success: true;
+      recordingId: number;
+      callRecordingId: string;
+      skipped: true;
+      reason: string;
+    }
   | { success: false; error: string };
 
 export const fathomSyncCallHandler = async (
@@ -60,7 +70,9 @@ export const fathomSyncCallHandler = async (
   }
 
   for (const connection of connections) {
-    const fathomClient = createFathomClient(connection.accessToken);
+    const fathomClient = createFathomClient(
+      getConnectionAccessTokenOrThrow(connection),
+    );
     const meetings = await listFathomMeetings({
       fathomClient,
       stopWhen: (listedMeetings) =>
@@ -74,8 +86,25 @@ export const fathomSyncCallHandler = async (
       continue;
     }
 
+    const coreApiClient = createFathomCoreApiClient();
+    const callRecordingId = computeCallRecordingIdForFathomMeeting(recordingId);
+    const deletedCallRecordingIds = await listDeletedCallRecordingIds({
+      coreApiClient,
+      callRecordingIds: [callRecordingId],
+    });
+
+    if (deletedCallRecordingIds.has(callRecordingId)) {
+      return {
+        success: true,
+        recordingId,
+        callRecordingId,
+        skipped: true,
+        reason: 'The call recording has been deleted',
+      };
+    }
+
     const syncResult = await syncFathomMeetingToCallRecording({
-      coreApiClient: new CoreApiClient({ runAs: 'application' }),
+      coreApiClient,
       meeting: await hydrateFathomMeeting({
         fathomClient,
         serializedMeeting: serializeFathomMeeting(meeting),
@@ -98,7 +127,7 @@ export default defineLogicFunction({
   name: 'fathom-sync-call',
   description:
     'Sync one Fathom recording into a CallRecording on demand: fetches its transcript, summary and action items and upserts them onto the record linked to the matching CalendarEvent. Useful to recover a missed webhook or to sync from a workflow.',
-  timeoutSeconds: 60,
+  timeoutSeconds: 300,
   handler: fathomSyncCallHandler,
   toolTriggerSettings: { inputSchema: fathomSyncCallInputSchema },
   workflowActionTriggerSettings: {
@@ -114,6 +143,8 @@ export default defineLogicFunction({
           callRecordingId: { type: 'string' },
           calendarEventId: { type: 'string' },
           created: { type: 'boolean' },
+          skipped: { type: 'boolean' },
+          reason: { type: 'string' },
         },
       },
     ],

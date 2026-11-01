@@ -104,7 +104,7 @@ describe('TwoFactorAuthenticationSetupEffect', () => {
     );
     expect(mockEnqueueToast).toHaveBeenCalledWith(
       expect.objectContaining({
-        variant: 'error',
+        status: 'error',
         children:
           'Ask a workspace admin for a new recovery code to finish setting up two-factor authentication.',
       }),

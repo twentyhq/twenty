@@ -1,0 +1,2 @@
+export const TEAMS_TRANSCRIPTS_WEBHOOK_CONNECTION_QUERY_PARAMETER =
+  'connectedAccountId';

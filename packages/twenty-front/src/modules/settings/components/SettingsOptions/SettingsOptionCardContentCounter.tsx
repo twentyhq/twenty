@@ -40,7 +40,7 @@ export const SettingsOptionCardContentCounter = ({
   const hasDescription = isNonEmptyString(description);
 
   return (
-    <StyledSettingsCardContent disabled={disabled}>
+    <StyledSettingsCardContent>
       {Icon && (
         <StyledSettingsCardIcon>
           <SettingsOptionIconCustomizer Icon={Icon} />

@@ -1,18 +1,21 @@
+import { useRender } from '@base-ui/react/use-render';
 import { clsx } from 'clsx';
-import { type ComponentPropsWithoutRef } from 'react';
+
+import { type CardHeaderProps } from '../types/CardHeaderProps';
 
 import styles from '../CardHeader.module.scss';
 
-type CardHeaderProps = ComponentPropsWithoutRef<'div'>;
-
 export const CardHeader = ({
-  children,
   className,
-  ...rest
-}: CardHeaderProps) => {
-  return (
-    <div className={clsx(styles.cardHeader, className)} {...rest}>
-      {children}
-    </div>
-  );
-};
+  render,
+  ref,
+  ...props
+}: CardHeaderProps) =>
+  useRender({
+    render,
+    ref,
+    props: {
+      ...props,
+      className: clsx(styles.cardHeader, className),
+    },
+  });

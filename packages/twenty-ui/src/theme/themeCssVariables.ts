@@ -184,6 +184,7 @@ export const themeCssVariables = {
       md: 'var(--t-border-radius-md)',
       smRound: 'var(--t-border-radius-sm-round)',
       mdRound: 'var(--t-border-radius-md-round)',
+      lgRound: 'var(--t-border-radius-lg-round)',
       lg: 'var(--t-border-radius-lg)',
       xl: 'var(--t-border-radius-xl)',
       xxl: 'var(--t-border-radius-xxl)',
@@ -208,6 +209,7 @@ export const themeCssVariables = {
       light: 'var(--t-font-color-light)',
       extraLight: 'var(--t-font-color-extra-light)',
       inverted: 'var(--t-font-color-inverted)',
+      onAccent: 'var(--t-font-color-on-accent)',
       danger: 'var(--t-font-color-danger)',
     },
     size: {

@@ -1,0 +1,1 @@
+export const MAXIMUM_DROPDOWN_TRIGGER_GAP = 16;

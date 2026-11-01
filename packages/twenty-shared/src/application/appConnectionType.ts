@@ -5,7 +5,7 @@
 // `getConnection`) and the server controller / DTO — pick from one source
 // of truth. Adding a field on either side without updating this type will
 // fail typecheck.
-export type AppConnection = {
+type AppConnectionBase = {
   id: string;
   // The app-developer-facing provider name (e.g. "linear"), as declared on
   // `defineConnectionProvider({ name })`. Useful when listing across providers
@@ -18,21 +18,16 @@ export type AppConnection = {
   // OAuth-derived identifier (typically email or login). Stays stable across
   // reconnects of the same upstream account.
   handle: string;
-  // Connection-row visibility:
-  //   'user'      = visible only to the user who created it.
-  //   'workspace' = visible to every user in the workspace.
-  // Named `visibility` (not `scope`) to disambiguate from the `scopes`
-  // array below, which is the unrelated set of OAuth permissions granted
-  // by the upstream provider.
+  // Upstream account id from identifyAccountLogicFunction; not unique, apps dedupe on it themselves.
+  externalAccountId: string | null;
+  scope: 'USER' | 'WORKSPACE';
+  /** @deprecated Use `scope` instead. */
   visibility: 'user' | 'workspace';
-  // The userWorkspace that originally created the credential (also the owner
-  // for `visibility: 'user'` credentials). Match against `event.userWorkspaceId`
-  // to resolve the request user's connection.
+  // Match against `event.userWorkspaceId` to find the request user's connection
   userWorkspaceId: string;
   // The workspace member who created the credential. null when the creating
   // user is no longer a member of the workspace.
   workspaceMemberId: string | null;
-  accessToken: string;
   // OAuth scopes actually granted by the upstream provider on the most recent
   // token issuance (may be a subset of what the app requested).
   scopes: string[];
@@ -44,3 +39,9 @@ export type AppConnection = {
   // Human-readable explanation for `authFailedAt`, when the reporter gave one.
   authFailedReason: string | null;
 };
+
+export type AppConnection = AppConnectionBase &
+  (
+    | { providerType: 'oauth'; accessToken: string }
+    | { providerType: 'custom'; accessToken: string | null }
+  );

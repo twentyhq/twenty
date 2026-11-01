@@ -70,16 +70,6 @@ describe('getInvalidSelectFilterOptionValues', () => {
     ).toEqual(['NOPE']);
   });
 
-  it('treats a non-JSON plain string as a single option value', () => {
-    expect(
-      getInvalidSelectFilterOptionValues({
-        fieldMetadata: selectField,
-        operand: ViewFilterOperand.IS,
-        value: 'WON',
-      }),
-    ).toEqual([]);
-  });
-
   it('ignores value-less operands like IS_EMPTY', () => {
     expect(
       getInvalidSelectFilterOptionValues({

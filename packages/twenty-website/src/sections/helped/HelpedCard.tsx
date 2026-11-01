@@ -66,10 +66,7 @@ const WordmarkRow = styled.div`
 // styled text is the same render without the asset.
 const Wordmark = styled.span`
   color: ${semanticColor.ink};
-  font-family:
-    system-ui,
-    -apple-system,
-    sans-serif;
+  font-family: system-ui, -apple-system, sans-serif;
   font-size: 15px;
   font-weight: 600;
   letter-spacing: -0.02em;

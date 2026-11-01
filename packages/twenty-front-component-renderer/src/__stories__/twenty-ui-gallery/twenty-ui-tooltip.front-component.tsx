@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import { Button } from 'twenty-ui/primitives/input';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { Text } from 'twenty-ui/primitives/typography';
 import { ThemeProvider } from 'twenty-ui/theme';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
@@ -34,14 +33,13 @@ const TooltipExample = () => {
             <Button>Export details</Button>
           </Tooltip.Trigger>
           <Tooltip.Portal>
-            <Tooltip.Positioner sideOffset={10} style={{ maxWidth: '300px' }}>
+            <Tooltip.Positioner sideOffset={10}>
               <Tooltip.Popup>
                 <Tooltip.Arrow />
                 <Tooltip.Viewport>
-                  <Text style={{ fontWeight: 500 }}>
+                  <Tooltip.Body description="Your current filters are applied.">
                     Export visible records
-                  </Text>
-                  <Text>Your current filters are applied.</Text>
+                  </Tooltip.Body>
                 </Tooltip.Viewport>
               </Tooltip.Popup>
             </Tooltip.Positioner>

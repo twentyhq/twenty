@@ -1,8 +1,6 @@
-import {
-  AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
-  agentChatDraftsByThreadIdState,
-} from '@/ai/states/agentChatDraftsByThreadIdState';
+import { agentChatDraftsByThreadIdState } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { createAtomSelector } from '@/ui/utilities/state/jotai/utils/createAtomSelector';
 import { isNonEmptyString } from '@sniptt/guards';
 
@@ -11,7 +9,7 @@ export const agentChatInputIsEmptySelector = createAtomSelector<boolean>({
   key: 'agentChatInputIsEmptySelector',
   get: ({ get }) => {
     const draftKey =
-      get(currentAiChatThreadState) ?? AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
+      get(currentAiChatThreadState) ?? get(newAiChatThreadIdState);
 
     return !isNonEmptyString(get(agentChatDraftsByThreadIdState)[draftKey]);
   },

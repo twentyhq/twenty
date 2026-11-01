@@ -1,5 +1,8 @@
+import { msg } from '@lingui/core/macro';
+
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
 import { type AllStandardSkillName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-skill-name.type';
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import {
   type CreateStandardSkillArgs,
   createStandardSkillFlatMetadata,
@@ -12,9 +15,15 @@ export const STANDARD_FLAT_SKILL_METADATA_BUILDERS_BY_SKILL_NAME = {
       context: {
         skillName: 'workflow-building',
         name: 'workflow-building',
-        label: 'Workflow Building',
-        description:
-          'Use when the user wants something to happen automatically: creating, changing, debugging or deleting a workflow, or phrasing a rule as when X happens do Y',
+        label: i18nLabel(
+          msg({ message: `Workflow Building`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use when the user wants something to happen automatically: creating, changing, debugging or deleting a workflow, or phrasing a rule as when X happens do Y`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconSettingsAutomation',
         content: `# Workflow Building Skill
 
@@ -107,7 +116,7 @@ PICK_RECORD selects one record from a candidate pool (settings.input.recordIds) 
 CLASSIFY asks an AI model one or more typed questions about a single piece of text and returns a typed answer for each, so later steps can branch on the result. Reach for it when the user describes sorting, routing, triaging, tagging or rating something written — "route support emails to the right team", "flag angry replies", "rate how urgent this is". Prefer it over a CODE step for those: it needs no code and no logic function.
 
 settings.input takes:
-- **state** — the text every question is asked about. Usually a variable, e.g. "{{trigger.record.bodyV2.markdown}}".
+- **state** — the text every question is asked about. Usually a variable, e.g. "{{trigger.properties.after.bodyV2.markdown}}".
 - **questions** — an array. Each needs id (a UUID), name, type, instructions and criteria.
 - **modelId** — optional. Omit it to use the workspace's classification model, which is almost always what you want.
 
@@ -145,7 +154,6 @@ Do NOT call \`validate_workflow\` after every change. Call it exactly ONCE at th
 - Ensure workflow logic remains coherent
 
 Prioritize user understanding and workflow effectiveness.`,
-        isCustom: false,
         isSystem: true,
       },
     }),
@@ -156,9 +164,15 @@ Prioritize user understanding and workflow effectiveness.`,
       context: {
         skillName: 'data-manipulation',
         name: 'data-manipulation',
-        label: 'Data Manipulation',
-        description:
-          'Use when finding, filtering, creating, updating or importing records, and whenever a request needs sorting or touches more than a handful of rows',
+        label: i18nLabel(
+          msg({ message: `Data Manipulation`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use when finding, filtering, creating, updating or importing records, and whenever a request needs sorting or touches more than a handful of rows`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconDatabase',
         content: `# Data Manipulation Skill
 
@@ -275,7 +289,6 @@ This is free — it runs before the sandbox and does not add a code_interpreter 
 Every tool round-trip re-sends the ENTIRE conversation (system prompt, loaded skills, and all prior tool inputs/outputs) as new input tokens, so a long thread makes every later step progressively more expensive. When the user finishes an import and moves on to a distinct objective (e.g. field configuration, segmentation, dashboards, or a second unrelated import), suggest starting a NEW thread for it rather than continuing in the same one, which resets the context and keeps cost low. Keep a single import (inspect, confirm, validate, write, report) within one thread.
 
 Prioritize data integrity and provide clear feedback on operations performed.`,
-        isCustom: false,
         isSystem: true,
       },
     }),
@@ -286,9 +299,15 @@ Prioritize data integrity and provide clear feedback on operations performed.`,
       context: {
         skillName: 'workspace-demo-seeding',
         name: 'workspace-demo-seeding',
-        label: 'Workspace Demo Seeding',
-        description:
-          'Use only when explicitly asked to fill a workspace with demonstration data for a given industry',
+        label: i18nLabel(
+          msg({ message: `Workspace Demo Seeding`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use only when explicitly asked to fill a workspace with demonstration data for a given industry`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconDatabase',
         content: `# Workspace Demo Seeding Skill
 You will transform the existing standard workspace into a fully custom demo tailored to the user's business type.
@@ -397,7 +416,6 @@ Share links to the configured objects and views so the user can open them when r
 
 Loop STEP 6 for all the custom objects
 `,
-        isCustom: false,
         isSystem: true,
       },
     }),
@@ -408,9 +426,15 @@ Loop STEP 6 for all the custom objects
       context: {
         skillName: 'dashboard-building',
         name: 'dashboard-building',
-        label: 'Dashboard Building',
-        description:
-          'Use when the user asks for a dashboard, a chart, a metric tile or a report page, or wants to change one that exists',
+        label: i18nLabel(
+          msg({ message: `Dashboard Building`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use when the user asks for a dashboard, a chart, a metric tile or a report page, or wants to change one that exists`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconLayoutDashboard',
         content: `# Dashboard Building Skill
 
@@ -530,7 +554,7 @@ Step 1 — upsert_complete_view: {
   "fields": [{ "fieldName": "name" }, { "fieldName": "status" }, { "fieldName": "amount" }],
   "filters": [{ "fieldName": "status", "operand": "IS_NOT", "value": ["DONE"] }],
   "sorts": [{ "fieldName": "createdAt", "direction": "DESC" }]
-} → { "id": "<view-uuid>" }
+} → { "success": true, "message": "...", "result": { "id": "<view-uuid>", ... } }
 Step 2 — add_dashboard_widget: { "type": "RECORD_TABLE", "objectMetadataId": "<repair-object-uuid>", "configuration": { "configurationType": "RECORD_TABLE", "viewId": "<view-uuid>" }, "position": { "layoutMode": "GRID", "row": 0, "column": 0, "rowSpan": 8, "columnSpan": 12 } }
 
 ## Tabs
@@ -555,7 +579,6 @@ After creating a tab, use its returned tabId as pageLayoutTabId when calling add
 - Start simple, add complexity as needed
 - When modifying a chart, confirm whether the user wants to change settings or change chart type
 - Use RECORD_TABLE widgets to give users direct access to filtered record lists without leaving the dashboard`,
-        isCustom: false,
         isSystem: true,
       },
     }),
@@ -566,9 +589,15 @@ After creating a tab, use its returned tabId as pageLayoutTabId when calling add
       context: {
         skillName: 'metadata-building',
         name: 'metadata-building',
-        label: 'Metadata Building',
-        description:
-          'Use when the data model itself changes: adding or editing objects, fields, relations or select options',
+        label: i18nLabel(
+          msg({ message: `Metadata Building`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use when the data model itself changes: adding or editing objects, fields, relations or select options`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconBuildingSkyscraper',
         content: `# Metadata Building Skill
 
@@ -591,8 +620,8 @@ You help users manage their workspace data model by creating, updating, and orga
 
 ## Tool Output Format
 
-- **get_object_metadata** returns an array of objects. System objects (attachment, message, etc.) are returned as compact \`{id, nameSingular, namePlural}\`, which is enough to locate an object and read its id. Only pass \`includeFullSystemObjects: true\` when you specifically need a system object's full configuration (e.g. when creating relations to workspaceMember).
-- **get_field_metadata** returns an array of fields. System fields are returned as compact \`{id, name, type}\`, which is enough to know which fields exist and their types. Only pass \`includeFullSystemFields: true\` when you specifically need a system field's full configuration (settings, defaultValue, relation targets). Internal fields (searchVector, position, updatedBy) are always excluded. Null properties are omitted from non-system fields.
+- **get_object_metadata** returns its objects as an array under \`result.objects\`. System objects (attachment, message, etc.) are returned as compact \`{id, nameSingular, namePlural}\`, which is enough to locate an object and read its id. Only pass \`includeFullSystemObjects: true\` when you specifically need a system object's full configuration (e.g. when creating relations to workspaceMember).
+- **get_field_metadata** returns its fields as an array under \`result.fields\`. System fields are returned as compact \`{id, name, type}\`, which is enough to know which fields exist and their types. Only pass \`includeFullSystemFields: true\` when you specifically need a system field's full configuration (settings, defaultValue, relation targets). Internal fields (searchVector, position, updatedBy) are always excluded. Null properties are omitted from non-system fields.
 ## Field Types Available
 
 - **TEXT**: Simple text fields
@@ -636,7 +665,6 @@ You help users manage their workspace data model by creating, updating, and orga
 - Provide clear feedback on operations performed
 
 Prioritize data model integrity and user understanding.`,
-        isCustom: false,
         isSystem: true,
       },
     }),
@@ -647,9 +675,15 @@ Prioritize data model integrity and user understanding.`,
       context: {
         skillName: 'code-interpreter',
         name: 'code-interpreter',
-        label: 'Code Interpreter',
-        description:
-          'Use for Python over data the record tools cannot express: statistics, chart images, parsing an uploaded file. Do not use it for ordinary record reads and writes',
+        label: i18nLabel(
+          msg({ message: `Code Interpreter`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use for Python over data the record tools cannot express: statistics, chart images, parsing an uploaded file. Do not use it for ordinary record reads and writes`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconCode',
         content: `# Code Interpreter Skill
 
@@ -802,7 +836,6 @@ company_ids = twenty.lookup_by('companies', 'name', ['Acme', 'Globex'])
 \`\`\`
 
 For importing CSV/Excel/spreadsheet data, load the \`data-manipulation\` skill for the full recipe.`,
-        isCustom: false,
         isSystem: true,
       },
     }),
@@ -813,9 +846,15 @@ For importing CSV/Excel/spreadsheet data, load the \`data-manipulation\` skill f
       context: {
         skillName: 'xlsx',
         name: 'xlsx',
-        label: 'Excel & Spreadsheets',
-        description:
-          'Use whenever a spreadsheet is the input or the output, including formulas, formatting, charts and CSV conversion',
+        label: i18nLabel(
+          msg({ message: `Excel & Spreadsheets`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use whenever a spreadsheet is the input or the output, including formulas, formatting, charts and CSV conversion`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconFileSpreadsheet',
         content: `# Excel Processing Skill
 
@@ -940,7 +979,6 @@ If errors found, fix them and recalculate again.
 | Create Excel | openpyxl | \`Workbook()\` |
 | Add formula | openpyxl | \`sheet['B2'] = '=SUM(A1:A10)'\` |
 | Recalculate | script | \`python /home/user/scripts/xlsx/recalc.py file.xlsx\` |`,
-        isCustom: false,
         isSystem: true,
       },
     }),
@@ -951,9 +989,15 @@ If errors found, fix them and recalculate again.
       context: {
         skillName: 'pdf',
         name: 'pdf',
-        label: 'PDF Processing',
-        description:
-          'Use whenever a PDF is involved: reading text or tables, filling a form, creating, merging or splitting one',
+        label: i18nLabel(
+          msg({ message: `PDF Processing`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use whenever a PDF is involved: reading text or tables, filling a form, creating, merging or splitting one`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconFileTypePdf',
         content: `# PDF Processing Skill
 
@@ -1078,7 +1122,6 @@ writer.write('/home/user/output/page1.pdf')
 | Validate fill | script | \`python create_validation_image.py filled.pdf\` |
 | Create PDF | reportlab | \`canvas.Canvas('out.pdf')\` |
 | Merge PDFs | PyPDF2 | \`PdfMerger()\` |`,
-        isCustom: false,
         isSystem: true,
       },
     }),
@@ -1089,9 +1132,15 @@ writer.write('/home/user/output/page1.pdf')
       context: {
         skillName: 'docx',
         name: 'docx',
-        label: 'Word Documents',
-        description:
-          'Use whenever a Word document is the input or the output, including templates, styles and tracked changes',
+        label: i18nLabel(
+          msg({ message: `Word Documents`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use whenever a Word document is the input or the output, including templates, styles and tracked changes`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconFileTypeDocx',
         content: `# Word Document Processing Skill
 
@@ -1237,7 +1286,6 @@ para.paragraph_format.space_after = Pt(12)
 | Unpack for editing | script | \`python unpack.py doc.docx ./out/\` |
 | Repack | script | \`python pack.py ./out/ doc.docx\` |
 | Validate | script | \`python validate.py doc.docx\` |`,
-        isCustom: false,
         isSystem: true,
       },
     }),
@@ -1248,9 +1296,15 @@ para.paragraph_format.space_after = Pt(12)
       context: {
         skillName: 'view-building',
         name: 'view-building',
-        label: 'View Building',
-        description:
-          'Use when creating or changing a view of any type, table, kanban or calendar, including the columns, filters, sorts and grouping on it',
+        label: i18nLabel(
+          msg({ message: `View Building`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use when creating or changing a view of any type, table, kanban or calendar, including the columns, filters, sorts and grouping on it`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconLayoutBoard',
         content: `# View Building Skill
 
@@ -1374,7 +1428,6 @@ Some fields carry sub-fields you filter on directly:
 - Suggest the most relevant view type based on the object's fields
 - After creating a view, configure useful view fields and share a clickable view reference
 - Explain what each view type does so users can make informed choices`,
-        isCustom: false,
         isSystem: true,
       },
     }),
@@ -1385,9 +1438,15 @@ Some fields carry sub-fields you filter on directly:
       context: {
         skillName: 'pptx',
         name: 'pptx',
-        label: 'PowerPoint',
-        description:
-          'Use whenever a PowerPoint deck is the input or the output, including slides, templates, tables and charts',
+        label: i18nLabel(
+          msg({ message: `PowerPoint`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use whenever a PowerPoint deck is the input or the output, including slides, templates, tables and charts`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconPresentation',
         content: `# PowerPoint Processing Skill
 
@@ -1551,7 +1610,6 @@ python /home/user/scripts/pptx/replace.py input.pptx '{"{{company}}": "Acme Corp
 | Get slide inventory | script | \`python inventory.py pres.pptx\` |
 | Reorder slides | script | \`python rearrange.py pres.pptx '[2,1,3]' out.pptx\` |
 | Find/replace | script | \`python replace.py pres.pptx '{...}' out.pptx\` |`,
-        isCustom: false,
         isSystem: true,
       },
     }),
@@ -1562,9 +1620,13 @@ python /home/user/scripts/pptx/replace.py input.pptx '{"{{company}}": "Acme Corp
       context: {
         skillName: 'roles',
         name: 'roles',
-        label: 'Roles',
-        description:
-          'Use when the user asks who can see or change what: creating a role, editing permissions, or assigning a role to someone',
+        label: i18nLabel(msg({ message: `Roles`, context: 'skill.label' })),
+        description: i18nLabel(
+          msg({
+            message: `Use when the user asks who can see or change what: creating a role, editing permissions, or assigning a role to someone`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconLockAccess',
         content: `# Roles Skill
 
@@ -1652,7 +1714,6 @@ When the user names a person, resolve them to a workspace member first and resta
 ## After mutating
 
 Report what changed in plain terms: which role, what it can now do, and who is affected. If you changed overrides, restate the objects that are still overridden so the user can see nothing was dropped.`,
-        isCustom: false,
         isSystem: true,
       },
     }),
@@ -1663,9 +1724,15 @@ Report what changed in plain terms: which role, what it can now do, and who is a
       context: {
         skillName: 'meeting-prep',
         name: 'meeting-prep',
-        label: 'Meeting Prep',
-        description:
-          'Use before a call or a meeting, and whenever the user asks who am I talking to, brief me on this account, or what do I need to know before this conversation',
+        label: i18nLabel(
+          msg({ message: `Meeting Prep`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use before a call or a meeting, and whenever the user asks who am I talking to, brief me on this account, or what do I need to know before this conversation`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconCalendarEvent',
         content: `# Meeting Prep Skill
 
@@ -1700,7 +1767,6 @@ Reference every record you name so the user can click through to it.
 - This skill only reads. Do not create or update anything.
 - If the user has not said who the meeting is with, ask before gathering.
 - Keep it short. A brief nobody finishes is a brief nobody uses.`,
-        isCustom: false,
         isSystem: false,
       },
     }),
@@ -1711,9 +1777,15 @@ Reference every record you name so the user can click through to it.
       context: {
         skillName: 'deal-review',
         name: 'deal-review',
-        label: 'Deal Review',
-        description:
-          'Use when the user asks how a deal is doing, which deals are at risk, what is stuck or going quiet, or asks for a pipeline review',
+        label: i18nLabel(
+          msg({ message: `Deal Review`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use when the user asks how a deal is doing, which deals are at risk, what is stuck or going quiet, or asks for a pipeline review`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconTargetArrow',
         content: `# Deal Review Skill
 
@@ -1746,7 +1818,6 @@ Say which signals you could not evaluate and why. A review that hides its gaps i
 - This skill only reads. Propose the next step and let the user ask you to create the task.
 - Never call a deal at risk without naming the signal that says so.
 - Never guess at an amount or a date that is missing. Report it as missing.`,
-        isCustom: false,
         isSystem: false,
       },
     }),
@@ -1757,9 +1828,15 @@ Say which signals you could not evaluate and why. A review that hides its gaps i
       context: {
         skillName: 'crm-hygiene',
         name: 'crm-hygiene',
-        label: 'CRM Hygiene',
-        description:
-          'Use when the user asks to clean up the CRM, find duplicates, fill in missing fields, or asks why the data is messy or which records are stale',
+        label: i18nLabel(
+          msg({ message: `CRM Hygiene`, context: 'skill.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: `Use when the user asks to clean up the CRM, find duplicates, fill in missing fields, or asks why the data is messy or which records are stale`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconListCheck',
         content: `# CRM Hygiene Skill
 
@@ -1784,17 +1861,17 @@ Lead with counts, so the user sees the shape of the problem before the detail. T
 
 Always confirm before writing. Show what you will change and wait.
 
-- You cannot merge records. There is no merge tool; merging happens in the UI, where the user selects the records and uses the Merge action. Report each duplicate pair with both records referenced and leave the merge to them.
+- Merge duplicates with merge_many_* (merge_many_companies, merge_many_people, and so on), one call per group. Call it with dryRun: true first and show the user the merged record. When the records disagree, ask which one to keep and pass its position in ids as conflictPriorityIndex. The other records are permanently deleted, so merge only the groups the user approved.
+- If there is no merge_many_* tool for the object, the user's role cannot merge it. Report each group with its records referenced and leave the merge to someone who can.
 - Fill missing fields only from data already in the workspace, never from a guess.
 - Apply approved changes in one call rather than one record at a time. These tools carry the object's plural name: update_many_people, upsert_many_companies, and so on. Use update_many_* when every matched record gets the same value, upsert_many_* when each record needs its own.
 - Report what changed afterwards, and say what you deliberately left alone.
 
 ## Rules
 
-- Never delete a record in this skill, and never fake a merge by copying fields across and deleting the loser.
+- Never delete a record in this skill except through merge_many_*, and never fake a merge by copying fields across and deleting the loser: that loses every record linked to it.
 - Never confirm on the user's behalf, and never read a general yes as approval for a second batch.
 - If there is nothing wrong, say so. A clean workspace is a valid result.`,
-        isCustom: false,
         isSystem: false,
       },
     }),
@@ -1805,9 +1882,13 @@ Always confirm before writing. Show what you will change and wait.
       context: {
         skillName: 'enrich',
         name: 'enrich',
-        label: 'Enrich',
-        description:
-          'Use when the user asks to research or enrich a company or a person, fill in what the CRM does not know about them, or find out what a company actually does',
+        label: i18nLabel(msg({ message: `Enrich`, context: 'skill.label' })),
+        description: i18nLabel(
+          msg({
+            message: `Use when the user asks to research or enrich a company or a person, fill in what the CRM does not know about them, or find out what a company actually does`,
+            context: 'skill.description',
+          }),
+        ),
         icon: 'IconSearch',
         content: `# Enrich Skill
 
@@ -1842,7 +1923,6 @@ Anything you found that has no field to live in belongs in a note on the record,
 - Never invent a value to fill a gap. An empty field beats a wrong one.
 - Confidence matters: if the search returned a different person who shares the name, say so and stop.
 - Do not enrich a large set of records unless the user asked for exactly that, and confirm the scope before you start.`,
-        isCustom: false,
         isSystem: false,
       },
     }),

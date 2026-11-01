@@ -1,3 +1,4 @@
+import { AiChatFrontComponentToolPreview } from '@/ai/components/AiChatFrontComponentToolPreview';
 import { AiChatCompactionIndicator } from '@/ai/components/AiChatCompactionIndicator';
 import { AiChatInitialLoadingIndicator } from '@/ai/components/AiChatInitialLoadingIndicator';
 import { CodeExecutionDisplay } from '@/ai/components/CodeExecutionDisplay';
@@ -8,6 +9,8 @@ import { AiChatQuestionStatusRenderer } from '@/ai/components/AiChatQuestionStat
 import { AiChatToolCallApprovalStatusRenderer } from '@/ai/components/AiChatToolCallApprovalStatusRenderer';
 import { AiChatToolWidget } from '@/ai/components/AiChatToolWidget';
 import { LazyMarkdownContent } from '@/ai/components/LazyMarkdownRenderer';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useFrontComponentIdByToolName } from '@/ai/hooks/useFrontComponentIdByToolName';
 import { getEffectiveToolName } from '@/ai/utils/getEffectiveToolName';
 import { shouldToolPartRenderStandalone } from '@/ai/utils/shouldToolPartRenderStandalone';
@@ -20,7 +23,9 @@ import {
   ASK_QUESTION_TOOL_NAME,
   ASK_QUESTIONS_TOOL_NAME,
   type ExtendedUIMessagePart,
+  isNoReplyToolPart,
   isSucceededCompleteWorkspaceSetupToolPart,
+  PREVIEW_FRONT_COMPONENT_TOOL_NAME,
   PROPOSE_TOOL_CALL_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
 } from 'twenty-shared/ai';
@@ -37,14 +42,23 @@ const MessagePartRenderer = ({
   part,
   frontComponentIdByToolName,
   isStreaming,
+  isUserMessage,
 }: {
   part: ExtendedUIMessagePart;
   frontComponentIdByToolName: Map<string, string>;
   isStreaming: boolean;
+  isUserMessage?: boolean;
 }) => {
+  const displayMode = isUserMessage ? 'bubble' : 'chat';
+
   switch (part.type) {
     case 'text':
-      return <LazyMarkdownContent text={part.text} />;
+      return (
+        <LazyMarkdownContent
+          text={part.text}
+          displayMode={isDefined(isUserMessage) ? displayMode : 'default'}
+        />
+      );
     case 'data-compaction':
       return <AiChatCompactionIndicator />;
     case 'data-code-execution':
@@ -92,6 +106,15 @@ const MessagePartRenderer = ({
           );
         }
 
+        if (getEffectiveToolName(part) === PREVIEW_FRONT_COMPONENT_TOOL_NAME) {
+          return (
+            <AiChatFrontComponentToolPreview
+              toolPart={part}
+              isStreaming={isStreaming}
+            />
+          );
+        }
+
         const frontComponentId = frontComponentIdByToolName.get(
           getEffectiveToolName(part),
         );
@@ -111,15 +134,22 @@ const MessagePartRenderer = ({
 export const AiChatAssistantMessageRenderer = ({
   messageParts,
   isLastMessageStreaming,
+  isUserMessage,
   hasError,
   shouldHideThinkingSteps = false,
+  workDurationMs,
 }: {
   messageParts: ExtendedUIMessagePart[];
   isLastMessageStreaming: boolean;
+  isUserMessage?: boolean;
   hasError?: boolean;
   shouldHideThinkingSteps?: boolean;
+  workDurationMs?: number | null;
 }) => {
   const frontComponentIdByToolName = useFrontComponentIdByToolName();
+  const isFrontComponentPreviewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_COMPONENT_BUILDER_ENABLED,
+  );
 
   const hasCodeExecutionData = messageParts.some(
     (part) => part.type === 'data-code-execution',
@@ -132,6 +162,7 @@ export const AiChatAssistantMessageRenderer = ({
       part.type !== 'data-thread-title' &&
       !isEmptyReasoningPart(part) &&
       !isHiddenCompleteWorkspaceSetupToolPart(part) &&
+      !isNoReplyToolPart(part) &&
       !(
         hasCodeExecutionData &&
         isToolUIPart(part) &&
@@ -142,10 +173,13 @@ export const AiChatAssistantMessageRenderer = ({
     filteredParts,
     (part) =>
       isToolUIPart(part) &&
-      shouldToolPartRenderStandalone(
-        part,
-        frontComponentIdByToolName.get(getEffectiveToolName(part)),
-      ),
+      shouldToolPartRenderStandalone({
+        toolPart: part,
+        frontComponentId: frontComponentIdByToolName.get(
+          getEffectiveToolName(part),
+        ),
+        isFrontComponentPreviewEnabled,
+      }),
   );
   const renderItemsWithoutThinkingSteps = groupedRenderItems.filter(
     (renderItem) => renderItem.type !== 'thinking-steps',
@@ -158,6 +192,10 @@ export const AiChatAssistantMessageRenderer = ({
       : groupedRenderItems;
 
   const lastRenderItemIndex = renderItems.length - 1;
+  // the duration covers the whole message, so only the steps right before the final answer carry it
+  const lastThinkingStepsRenderItemIndex = renderItems.findLastIndex(
+    (renderItem) => renderItem.type === 'thinking-steps',
+  );
 
   if (!renderItems.length && !hasError) {
     const hasOnlyHiddenReasoning =
@@ -178,18 +216,15 @@ export const AiChatAssistantMessageRenderer = ({
               key={index}
               parts={renderItem.parts}
               isLastMessageStreaming={isLastMessageStreaming}
-              hasAssistantTextResponseStarted={renderItems
-                .slice(index + 1)
-                .some(
-                  (nextRenderItem) =>
-                    nextRenderItem.type === 'part' &&
-                    nextRenderItem.part.type === 'text' &&
-                    nextRenderItem.part.text.trim().length > 0,
-                )}
               isTrailingWhileStreaming={
                 isLastMessageStreaming &&
                 !hasError &&
                 index === lastRenderItemIndex
+              }
+              workDurationMs={
+                index === lastThinkingStepsRenderItemIndex
+                  ? workDurationMs
+                  : null
               }
             />
           ) : (
@@ -198,6 +233,7 @@ export const AiChatAssistantMessageRenderer = ({
               part={renderItem.part}
               frontComponentIdByToolName={frontComponentIdByToolName}
               isStreaming={isLastMessageStreaming}
+              isUserMessage={isUserMessage}
             />
           ),
         )}

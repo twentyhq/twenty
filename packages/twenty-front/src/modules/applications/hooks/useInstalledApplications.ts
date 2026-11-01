@@ -4,7 +4,7 @@ import { applicationsSelector } from '@/applications/states/applicationsSelector
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { FindManyApplicationsDocument } from '~/generated-metadata/graphql';
-import { type ApplicationWithoutRelation } from '~/pages/settings/applications/types/ApplicationWithoutRelation';
+import { type ApplicationWithoutRelation } from '@/applications/types/ApplicationWithoutRelation';
 
 export const useInstalledApplications = (): ApplicationWithoutRelation[] => {
   const { data, refetch } = useQuery(FindManyApplicationsDocument);
@@ -28,6 +28,7 @@ export const useInstalledApplications = (): ApplicationWithoutRelation[] => {
       ...application,
       logoUrl: queriedApplication?.logoUrl,
       applicationRegistration: queriedApplication?.applicationRegistration,
+      defaultRoleId: queriedApplication?.defaultRoleId,
     };
   });
 };

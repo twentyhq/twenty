@@ -21,6 +21,7 @@ import { SettingsApplicationRegistrationConfigTab } from '~/pages/settings/appli
 import { SettingsApplicationRegistrationOAuthTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab';
 import { SettingsApplicationRegistrationDistributionTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab';
 import { SettingsApplicationRegistrationGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab';
+import { SettingsAdminApplicationRegistrationConfigurationIssues } from '~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigurationIssues';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 
@@ -40,18 +41,15 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
     applicationRegistrationId: string;
   }>();
 
-  const { data, loading } = useQuery(
-    FindOneAdminApplicationRegistrationDocument,
-    {
-      client: apolloAdminClient,
-      variables: { id: applicationRegistrationId },
-      skip: !applicationRegistrationId,
-    },
-  );
+  const { data } = useQuery(FindOneAdminApplicationRegistrationDocument, {
+    client: apolloAdminClient,
+    variables: { id: applicationRegistrationId },
+    skip: !applicationRegistrationId,
+  });
 
   const registration = data?.findOneAdminApplicationRegistration;
 
-  if (loading || !isDefined(registration)) {
+  if (!isDefined(registration)) {
     return null;
   }
 
@@ -68,7 +66,7 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
         return (
           <SettingsApplicationRegistrationConfigTab
             registration={registration}
-            fromAdmin
+            isAdminView
           />
         );
       case 'oauth':
@@ -81,16 +79,21 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
         return (
           <SettingsApplicationRegistrationDistributionTab
             registration={registration}
-            fromAdmin
+            isAdminView
           />
         );
       case 'general':
       default:
         return (
-          <SettingsApplicationRegistrationGeneralTab
-            registration={registration}
-            fromAdmin
-          />
+          <>
+            <SettingsAdminApplicationRegistrationConfigurationIssues
+              registration={registration}
+            />
+            <SettingsApplicationRegistrationGeneralTab
+              registration={registration}
+              isAdminView
+            />
+          </>
         );
     }
   };

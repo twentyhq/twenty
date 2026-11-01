@@ -132,6 +132,7 @@ export class NavigationMenuItemResolver {
       authUserWorkspaceId: userWorkspaceId,
       authApiKeyId: apiKey?.id,
       authApplicationId: context.req.application?.id,
+      authAgentId: undefined,
     });
   }
 
@@ -151,6 +152,7 @@ export class NavigationMenuItemResolver {
       authUserWorkspaceId: userWorkspaceId,
       authApiKeyId: apiKey?.id,
       authApplicationId: context.req.application?.id,
+      authAgentId: undefined,
     });
   }
 
@@ -171,6 +173,7 @@ export class NavigationMenuItemResolver {
       authUserWorkspaceId: userWorkspaceId,
       authApiKeyId: apiKey?.id,
       authApplicationId: context.req.application?.id,
+      authAgentId: undefined,
     });
   }
 
@@ -190,6 +193,7 @@ export class NavigationMenuItemResolver {
       authUserWorkspaceId: userWorkspaceId,
       authApiKeyId: apiKey?.id,
       authApplicationId: context.req.application?.id,
+      authAgentId: undefined,
     });
   }
 
@@ -209,6 +213,7 @@ export class NavigationMenuItemResolver {
       authUserWorkspaceId: userWorkspaceId,
       authApiKeyId: apiKey?.id,
       authApplicationId: context.req.application?.id,
+      authAgentId: undefined,
     });
   }
 
@@ -228,6 +233,7 @@ export class NavigationMenuItemResolver {
       authUserWorkspaceId: userWorkspaceId,
       authApiKeyId: apiKey?.id,
       authApplicationId: context.req.application?.id,
+      authAgentId: undefined,
     });
   }
 

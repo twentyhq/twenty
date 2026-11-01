@@ -14,6 +14,7 @@ export type RawAuthContext = {
   workspaceMember?: WorkspaceMemberWorkspaceEntity;
   workspace?: FlatWorkspace;
   application?: FlatApplication | null | undefined;
+  agentId?: string;
   userWorkspaceId?: string;
   userWorkspace?: FlatUserWorkspace;
   authProvider?: AuthProviderEnum;

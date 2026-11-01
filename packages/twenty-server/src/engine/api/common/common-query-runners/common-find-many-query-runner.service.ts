@@ -22,6 +22,7 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { computeMaxFieldCountPerRecord } from 'src/engine/api/common/common-query-runners/utils/compute-max-field-count-per-record.util';
 import { CommonBaseQueryRunnerContext } from 'src/engine/api/common/types/common-base-query-runner-context.type';
 import { CommonExtendedQueryRunnerContext } from 'src/engine/api/common/types/common-extended-query-runner-context.type';
 import { CommonFindManyOutput } from 'src/engine/api/common/types/common-find-many-output.type';
@@ -41,7 +42,7 @@ import { buildColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runne
 import { buildOrderByColumnsToSelect } from 'src/engine/api/graphql/graphql-query-runner/utils/build-order-by-columns-to-select';
 import { getCursor } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
 import { buildOrderByValuesByRecordId } from 'src/engine/api/utils/build-order-by-values-by-record-id.util';
-import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.utils';
+import { computeCursorArgFilter } from 'src/engine/api/utils/compute-cursor-arg-filter.util';
 import {
   buildOrderByFromLeaves,
   resolveOrderByLeaves,
@@ -285,6 +286,10 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     };
   }
 
+  protected getResultRecords(results: CommonFindManyOutput): ObjectRecord[] {
+    return results.records;
+  }
+
   async processQueryResult(
     queryResult: CommonFindManyOutput,
     flatObjectMetadata: FlatObjectMetadata,
@@ -375,5 +380,28 @@ export class CommonFindManyQueryRunnerService extends CommonBaseQueryRunnerServi
     }).filter((leaf) => leaf.kind === 'relation').length;
 
     return baseComplexity + orderByRelationCount;
+  }
+
+  protected override computeQueryComplexityV2(
+    selectedFieldsResult: CommonSelectedFieldsResult,
+    args: CommonExtendedInput<FindManyQueryArgs>,
+    queryRunnerContext: CommonBaseQueryRunnerContext,
+  ): number {
+    const {
+      flatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } = queryRunnerContext;
+
+    return (
+      (args.first ?? args.last ?? QUERY_MAX_RECORDS) *
+      computeMaxFieldCountPerRecord({
+        selectedFieldsResult,
+        flatObjectMetadata,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        recordLimitPerOneToManyRelation: QUERY_MAX_RECORDS_FROM_RELATION,
+      })
+    );
   }
 }

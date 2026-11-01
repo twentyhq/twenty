@@ -28,7 +28,9 @@ describe('createListDashboardsTool', () => {
 
     const tool = createListDashboardsTool(deps, {
       workspaceId: WORKSPACE_ID,
-      rolePermissionConfig: { intersectionOf: [ROLE_ID] },
+      rolePermissionConfig: {
+        intersectionOf: { userWorkspaceRoleId: ROLE_ID },
+      },
     });
 
     const result = await tool.execute({});
@@ -36,7 +38,7 @@ describe('createListDashboardsTool', () => {
     expect(result.success).toBe(true);
     expect(getRepository).toHaveBeenCalledTimes(1);
     expect(getRepository).toHaveBeenCalledWith('dashboard', {
-      intersectionOf: [ROLE_ID],
+      intersectionOf: { userWorkspaceRoleId: ROLE_ID },
     });
   });
 });

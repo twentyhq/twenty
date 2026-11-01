@@ -35,7 +35,7 @@ export const useSendMessageCampaignTest = () => {
 
       if (!result.data?.sendMessageCampaignTest) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Failed to send test email`,
         });
 
@@ -43,7 +43,7 @@ export const useSendMessageCampaignTest = () => {
       }
 
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`Test email sent to ${params.toAddress}`,
       });
 

@@ -3,7 +3,7 @@ import { type TextInputSize } from '@/ui/input/types/TextInputSize';
 import { useRef, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-import { useRegisterInputEvents } from '@/object-record/record-field/ui/meta-types/input/hooks/useRegisterInputEvents';
+import { useRegisterInputEvents } from '@/ui/input/hooks/useRegisterInputEvents';
 import { TitleInputAutoOpenEffect } from '@/ui/input/components/TitleInputAutoOpenEffect';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';

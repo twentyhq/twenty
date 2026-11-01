@@ -1,22 +1,16 @@
-import { styled } from '@linaria/react';
 import { type MouseEvent } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
 
+import { AiChatThreadListGroup } from '@/ai/components/AiChatThreadListGroup';
 import { AiChatThreadListItem } from '@/ai/components/AiChatThreadListItem';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
 import { groupThreadsByDate } from '@/ai/utils/groupThreadsByDate';
-
-const StyledGroupTitle = styled.div`
-  color: ${themeCssVariables.font.color.light};
-  font-size: ${themeCssVariables.font.size.xs};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]}
-    ${themeCssVariables.spacing[1]};
-`;
+import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 
 type AiChatThreadListProps = {
   threads: AgentChatThreadRecord[];
+  variant?: AiChatThreadListVariant;
   selectedThreadIds?: string[];
   checkedThreadIds?: string[];
   onThreadClick: (
@@ -36,6 +30,7 @@ type AiChatThreadListProps = {
 
 export const AiChatThreadList = ({
   threads,
+  variant = 'default',
   selectedThreadIds = [],
   checkedThreadIds = [],
   onThreadClick,
@@ -43,6 +38,7 @@ export const AiChatThreadList = ({
   onThreadContextMenu,
   onDetachThread,
 }: AiChatThreadListProps) => {
+  const { calendarStartDay } = useDateTimeFormat();
   const selectedThreadIdSet = new Set(selectedThreadIds);
   const checkedThreadIdSet = new Set(checkedThreadIds);
 
@@ -50,6 +46,7 @@ export const AiChatThreadList = ({
     <AiChatThreadListItem
       key={thread.id}
       thread={thread}
+      variant={variant}
       isSelected={selectedThreadIdSet.has(thread.id)}
       isChecked={checkedThreadIdSet.has(thread.id)}
       onClick={onThreadClick}
@@ -63,12 +60,17 @@ export const AiChatThreadList = ({
 
   return (
     <>
-      {groupThreadsByDate(threads).map((dateGroup) => (
-        <div key={dateGroup.id}>
-          <StyledGroupTitle>{dateGroup.title}</StyledGroupTitle>
-          {dateGroup.threads.map(renderThread)}
-        </div>
-      ))}
+      {groupThreadsByDate({ threads, variant, calendarStartDay }).map(
+        (dateGroup) => (
+          <AiChatThreadListGroup
+            key={dateGroup.id}
+            title={dateGroup.title}
+            variant={variant}
+          >
+            {dateGroup.threads.map(renderThread)}
+          </AiChatThreadListGroup>
+        ),
+      )}
     </>
   );
 };

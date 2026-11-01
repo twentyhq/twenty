@@ -1,6 +1,7 @@
 import { type WorkflowConnection } from '@/workflow/workflow-diagram/types/WorkflowDiagram';
 import { type Connection } from '@xyflow/react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 type AssertWorkflowConnectionOrThrow = (
   connection: Connection,
@@ -13,7 +14,9 @@ export const assertWorkflowConnectionOrThrow: AssertWorkflowConnectionOrThrow =
       !isDefined(connection.targetHandle)
     ) {
       throw new Error(
-        'WorkflowConnection must have defined sourceHandle and targetHandle.',
+        doNotTranslate(
+          'WorkflowConnection must have defined sourceHandle and targetHandle.',
+        ),
       );
     }
   };

@@ -1,0 +1,106 @@
+---
+title: Тег
+description: Добавьте к категории или атрибуту метку с цветом темы и необязательным значком.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import TagReference from '/snippets/ui/generated/data-display/tag.mdx';
+
+## Обзор
+
+Используйте `Tag` для категорий, приоритетов и других кратких атрибутов. Сохраняйте текстовую метку, чтобы значение не зависело от цвета. Используйте [Статус](/ru/ui/primitives/data-display/status), если нужен индикатор состояния и обратная связь о загрузке.
+
+<StoryEmbed storyId="ui-data-display-tag--display" title="Пример тега" height={90} />
+
+## Использование
+
+```tsx
+import { Tag } from 'twenty-ui/primitives/data-display';
+
+export const PriorityTag = () => <Tag color="red">Urgent</Tag>;
+```
+
+`color` обязателен и принимает цвет темы или `transparent`. Элемент по умолчанию всегда является `span`, в том числе при наличии нативного обработчика клика. Добавьте декоративный значок с помощью `startIcon`; метка обеспечивает его доступное значение.
+
+## Варианты
+
+<StoryEmbed storyId="ui-data-display-tag--catalog" title="Варианты тега" height={140} />
+
+```tsx
+import { Tag } from 'twenty-ui/primitives/data-display';
+
+export const CategoryTags = () => (
+  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+    <Tag color="blue" variant="soft">
+      Customer
+    </Tag>
+    <Tag color="green" variant="solid">
+      Partner
+    </Tag>
+    <Tag color="orange" variant="outline">
+      Prospect
+    </Tag>
+    <Tag color="transparent" variant="outline" borderStyle="dashed">
+      Unassigned
+    </Tag>
+  </div>
+);
+```
+
+`soft` — вариант оформления по умолчанию. `solid` выделяет метку, `outline` добавляет границу, а `ghost` убирает фон. Используйте `borderStyle="dashed"` с `outline` и `weight="medium"` для более заметной метки.
+
+## Цвета
+
+<StoryEmbed storyId="ui-data-display-tag--colors" title="Цвета темы тега" height={240} />
+
+Сделайте метку понятной, не полагаясь на ее цвет. В каталоге сравнивается мягкое оформление по умолчанию; та же палитра доступна для других вариантов.
+
+## Фильтр по тегу
+
+```tsx
+import { Tag } from 'twenty-ui/primitives/data-display';
+
+type CategoryFilterProps = {
+  selected: boolean;
+  onToggle: () => void;
+};
+
+export const CategoryFilter = ({ selected, onToggle }: CategoryFilterProps) => (
+  <Tag
+    color="blue"
+    variant={selected ? 'solid' : 'outline'}
+    render={<button type="button" aria-pressed={selected} onClick={onToggle} />}
+  >
+    Customer
+  </Tag>
+);
+```
+
+Создайте интерактивный владеющий элемент с помощью `render`. Разместите его обработчик клика, нативные атрибуты, ref и состояние отключения на этом владеющем элементе. Настоящая кнопка обеспечивает фокус, активацию клавишами Enter и Space. Состояние выбора определяется вашим приложением; используйте `aria-pressed` для переключателя и видимое оформление для выбранного состояния. Для навигации отрисовывайте ссылку с указанием целевого адреса, например `<a href="/records" />`. Нативные владельцы сохраняют внешний вид Tag.
+
+## Длинные метки
+
+По умолчанию `truncate={true}` обрезает текстовые метки с ограниченной шириной и показывает их полный текст во всплывающей подсказке при наведении. Установите `truncate={false}`, чтобы сохранить полную метку в ее естественной ширине без всплывающей подсказки, даже если ее родительский элемент уже. Родительский макет управляет переносом, прокруткой и обрезкой.
+
+```tsx
+import { Tag } from 'twenty-ui/primitives/data-display';
+
+export const FullCategoryLabel = () => (
+  <Tag color="green" truncate={false}>
+    Enterprise customer
+  </Tag>
+);
+```
+
+Дочерние элементы Node остаются контентом, принадлежащим вызывающей стороне, поэтому компонуйте их текст, переводы и намеренно добавленные ссылки напрямую.
+
+## Свойства
+
+Типы и значения по умолчанию генерируются из публичных типов компонента. Также поддерживаются нативные атрибуты и обработчики событий.
+
+<TagReference />
+
+<PageBanner illustration="page-cover-checkbox" />

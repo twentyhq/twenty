@@ -21,6 +21,11 @@ const meta: Meta<typeof LightIconButton> = {
 export default meta;
 type Story = StoryObj<typeof LightIconButton>;
 
+export const Display: Story = {
+  decorators: [ComponentDecorator],
+  args: { onClick: fn() },
+};
+
 export const Default: Story = {
   decorators: [ComponentDecorator],
   args: { onClick: fn() },
@@ -32,11 +37,6 @@ export const Default: Story = {
     await userEvent.click(button);
     await expect(args.onClick).toHaveBeenCalledOnce();
   },
-};
-
-export const Documentation: Story = {
-  decorators: Default.decorators,
-  args: Default.args,
 };
 
 export const Appearance: Story = {
@@ -58,11 +58,33 @@ export const Appearance: Story = {
       <LightIconButton aria-label="Disabled" disabled>
         <IconSearch />
       </LightIconButton>
-      <ButtonGroup color="danger" size="md" variant="solid">
+      <ButtonGroup
+        aria-label="Shared appearance"
+        color="danger"
+        size="md"
+        variant="solid"
+      >
         <LightIconButton aria-label="Group action" emphasis="subtle">
           <IconSearch />
         </LightIconButton>
         <IconButton aria-label="Reference">
+          <IconSearch />
+        </IconButton>
+        <LightIconButton
+          aria-label="Explicit group action"
+          emphasis="subtle"
+          color="accent"
+          variant="ghost"
+          size="xs"
+        >
+          <IconSearch />
+        </LightIconButton>
+        <IconButton
+          aria-label="Explicit reference"
+          color="accent"
+          variant="ghost"
+          size="xs"
+        >
           <IconSearch />
         </IconButton>
       </ButtonGroup>
@@ -93,7 +115,26 @@ export const Appearance: Story = {
     await expect(getComputedStyle(grouped).color).toBe(
       getComputedStyle(reference).color,
     );
+    await expect(grouped).toHaveAttribute('data-variant', 'solid');
     await expect(grouped.getBoundingClientRect().width).toBe(32);
+    await expect(grouped.getBoundingClientRect().height).toBe(32);
+    const explicit = canvas.getByRole('button', {
+      name: 'Explicit group action',
+    });
+    const explicitReference = canvas.getByRole('button', {
+      name: 'Explicit reference',
+    });
+
+    await expect(getComputedStyle(explicit).color).toBe(
+      getComputedStyle(explicitReference).color,
+    );
+    await expect(getComputedStyle(explicit).backgroundColor).toBe(
+      getComputedStyle(explicitReference).backgroundColor,
+    );
+    await expect(explicit).toHaveAttribute('data-color', 'accent');
+    await expect(explicit).toHaveAttribute('data-variant', 'ghost');
+    await expect(explicit.getBoundingClientRect().width).toBe(20);
+    await expect(explicit.getBoundingClientRect().height).toBe(20);
     await expect(
       canvas.getByRole('button', { name: 'Disabled' }),
     ).toBeDisabled();
@@ -144,6 +185,10 @@ export const Catalog: CatalogStory<Story, typeof LightIconButton> = {
       ],
     },
   },
+};
+
+export const CatalogInteractions: Story = {
+  ...Catalog,
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const buttons = canvas.getAllByRole('button', { name: 'Search' });

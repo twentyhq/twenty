@@ -4,13 +4,15 @@ import { type FieldMetadataConnectionLoaderPayload } from 'src/engine/dataloader
 import { type IndexMetadataConnectionLoaderPayload } from 'src/engine/dataloaders/factories/index-metadata-connection-loader.factory';
 import {
   type AgentsByRoleIdLoaderPayload,
+  type FlatEntitiesByApplicationIdLoaderPayload,
   type ApiKeysByRoleIdLoaderPayload,
+  type ApplicationRegistrationConfigurationIssuesLoaderPayload,
+  type ApplicationRegistrationInstallCountLoaderPayload,
   type ApplicationTranslationCatalogLoaderPayload,
   type FieldMetadataLoaderPayload,
   type IndexFieldMetadataLoaderPayload,
   type IndexMetadataLoaderPayload,
   type SearchFieldMetadataLoaderPayload,
-  type IsConfiguredLoaderPayload,
   type MorphRelationLoaderPayload,
   type ApplicationAuthorIdentifiersLoaderPayload,
   type ObjectMetadataLoaderPayload,
@@ -25,7 +27,13 @@ import {
   type ViewSortsByViewIdLoaderPayload,
   type WorkspaceMembersByRoleIdLoaderPayload,
 } from 'src/engine/dataloaders/dataloader.service';
+import { type ApplicationRegistrationConfigurationIssue } from 'src/engine/core-modules/application/application-registration/enums/application-registration-configuration-issue.enum';
 import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
+import { type CommandMenuItemDTO } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item.dto';
+import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
+import { type FrontComponentDTO } from 'src/engine/metadata-modules/front-component/dtos/front-component.dto';
+import { type LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
+import { type SettingsMenuItemDTO } from 'src/engine/metadata-modules/settings-menu-item/dtos/settings-menu-item.dto';
 import { type AgentDTO } from 'src/engine/metadata-modules/ai/ai-agent/dtos/agent.dto';
 import { type ApplicationAuthorIdentifiers } from 'src/engine/metadata-modules/application-translation-catalog/types/application-author-identifiers.type';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
@@ -124,7 +132,50 @@ export interface IDataloaders {
     ViewFilterGroupDTO[]
   >;
 
-  isConfiguredLoader: DataLoader<IsConfiguredLoaderPayload, boolean>;
+  agentsByApplicationIdLoader: DataLoader<
+    FlatEntitiesByApplicationIdLoaderPayload,
+    AgentDTO[]
+  >;
+
+  frontComponentsByApplicationIdLoader: DataLoader<
+    FlatEntitiesByApplicationIdLoaderPayload,
+    FrontComponentDTO[]
+  >;
+
+  commandMenuItemsByApplicationIdLoader: DataLoader<
+    FlatEntitiesByApplicationIdLoaderPayload,
+    CommandMenuItemDTO[]
+  >;
+
+  settingsMenuItemsByApplicationIdLoader: DataLoader<
+    FlatEntitiesByApplicationIdLoaderPayload,
+    SettingsMenuItemDTO[]
+  >;
+
+  logicFunctionsByApplicationIdLoader: DataLoader<
+    FlatEntitiesByApplicationIdLoaderPayload,
+    LogicFunctionDTO[]
+  >;
+
+  objectMetadataByApplicationIdLoader: DataLoader<
+    FlatEntitiesByApplicationIdLoaderPayload,
+    ObjectMetadataDTO[]
+  >;
+
+  applicationVariablesByApplicationIdLoader: DataLoader<
+    FlatEntitiesByApplicationIdLoaderPayload,
+    FlatApplicationVariable[]
+  >;
+
+  applicationRegistrationConfigurationIssuesLoader: DataLoader<
+    ApplicationRegistrationConfigurationIssuesLoaderPayload,
+    ApplicationRegistrationConfigurationIssue[]
+  >;
+
+  applicationRegistrationInstallCountLoader: DataLoader<
+    ApplicationRegistrationInstallCountLoaderPayload,
+    number
+  >;
 
   applicationAuthorIdentifiersLoader: DataLoader<
     ApplicationAuthorIdentifiersLoaderPayload,

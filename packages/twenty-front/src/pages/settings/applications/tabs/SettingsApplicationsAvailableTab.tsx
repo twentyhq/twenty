@@ -1,18 +1,25 @@
+import { Button } from 'twenty-ui/primitives/input';
+import { useMarketplaceApps } from '@/marketplace/hooks/useMarketplaceApps';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
-import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { styled } from '@linaria/react';
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { SearchInput } from 'twenty-ui/components/input';
 import { Section } from 'twenty-ui/components/layout';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { SettingsRow } from 'twenty-ui/components/settings';
-import { IconSparkles } from 'twenty-ui/icon';
+import { IconEyeOff } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { useMarketplaceApps } from '@/marketplace/hooks/useMarketplaceApps';
+import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
+import { filterMarketplaceApps } from '~/pages/settings/applications/utils/filterMarketplaceApps';
+import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';
 
 const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -24,7 +31,7 @@ const StyledContentContainer = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledNotVettedContainer = styled.div`
+const StyledUnlistedContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[3]};
 `;
 
@@ -38,57 +45,83 @@ const StyledCardsGrid = styled.div`
   }
 `;
 
-const StyledHintLink = styled.button`
-  background: none;
-  border: none;
-  color: ${themeCssVariables.color.blue};
-  cursor: pointer;
-  font-size: inherit;
-  padding: 0;
-  text-decoration: underline;
+const StyledEmptyState = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsApplicationsAvailableTab = () => {
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
-  const [showVettedOnly, setShowVettedOnly] = useState(true);
+  const [showUnlisted, setShowUnlisted] = useState(false);
 
-  const { data: marketplaceApps, isLoading } = useMarketplaceApps();
+  const {
+    data: marketplaceApps,
+    isLoading,
+    error,
+    refetch,
+  } = useMarketplaceApps();
 
-  const textFilteredApplications = searchTerm
-    ? marketplaceApps.filter((application) => {
-        const lowerSearch = searchTerm.toLowerCase();
+  const hasSearchTerm = searchTerm.trim().length > 0;
 
-        return (
-          application.name.toLowerCase().includes(lowerSearch) ||
-          application.description.toLowerCase().includes(lowerSearch) ||
-          application.author.toLowerCase().includes(lowerSearch)
-        );
-      })
-    : marketplaceApps;
+  const textFilteredApplications = filterMarketplaceApps({
+    marketplaceApps,
+    searchTerm,
+  });
 
-  const vettedApplications = textFilteredApplications.filter(
-    (application) => application.isVetted,
+  const listedApplications = textFilteredApplications.filter(
+    (application) => application.isListed,
   );
 
-  const nonVettedApplications = textFilteredApplications.filter(
-    (application) => !application.isVetted,
+  const unlistedApplications = textFilteredApplications.filter(
+    (application) => !application.isListed,
   );
 
   if (isLoading) {
     return (
       <Section.Root>
-        <SettingsEmptyPlaceholder padding="4">{t`Loading applications...`}</SettingsEmptyPlaceholder>
+        <SettingsSectionSkeletonLoader />
       </Section.Root>
     );
   }
 
-  const showNonVettedHint =
-    showVettedOnly &&
-    vettedApplications.length === 0 &&
-    nonVettedApplications.length > 0;
+  if (isDefined(error)) {
+    return (
+      <Section.Root>
+        <SettingsApplicationLoadErrorBanner
+          message={t`The marketplace could not be loaded. Check your connection and try again.`}
+          onRetry={() => refetch().catch(() => undefined)}
+        />
+      </Section.Root>
+    );
+  }
+
+  const showUnlistedHint =
+    !showUnlisted &&
+    listedApplications.length === 0 &&
+    unlistedApplications.length > 0;
 
   const hasNoApplications = textFilteredApplications.length === 0;
+
+  const unlistedCount = unlistedApplications.length;
+
+  const getEmptyStateMessage = () => {
+    if (showUnlistedHint) {
+      return plural(unlistedCount, {
+        one: 'No listed application matches. # unlisted application is available.',
+        other:
+          'No listed application matches. # unlisted applications are available.',
+      });
+    }
+
+    if (hasSearchTerm) {
+      return t`No application matches your search`;
+    }
+
+    return t`No applications available yet`;
+  };
 
   return (
     <Section.Root>
@@ -97,9 +130,9 @@ export const SettingsApplicationsAvailableTab = () => {
           placeholder={t`Search an application`}
           value={searchTerm}
           onValueChange={setSearchTerm}
-          filterDropdown={(filterButton) => (
+          actions={
             <DropdownRoot dropdownId="marketplace-filter-dropdown" type="panel">
-              <Dropdown.Trigger render={filterButton} />
+              <SettingsSearchFilterTrigger ariaLabel={t`Filter applications`} />
               <DropdownContent
                 side="bottom"
                 align="end"
@@ -108,34 +141,40 @@ export const SettingsApplicationsAvailableTab = () => {
               >
                 <Dropdown.Section>
                   <SettingsRow
-                    startIcon={<IconSparkles />}
-                    onCheckedChange={() => setShowVettedOnly(!showVettedOnly)}
-                    checked={showVettedOnly}
-                  >{t`Vetted only`}</SettingsRow>
+                    startElement={<IconEyeOff />}
+                    onCheckedChange={() => setShowUnlisted(!showUnlisted)}
+                    checked={showUnlisted}
+                  >{t`Show unlisted apps`}</SettingsRow>
                 </Dropdown.Section>
               </DropdownContent>
             </DropdownRoot>
-          )}
+          }
         />
       </StyledSearchInputContainer>
 
       {hasNoApplications ||
-      (showVettedOnly && vettedApplications.length === 0) ? (
+      (!showUnlisted && listedApplications.length === 0) ? (
         <SettingsEmptyPlaceholder padding="4">
-          {showNonVettedHint
-            ? t`No vetted applications found. ${nonVettedApplications.length} non-vetted result(s) available — `
-            : t`No applications available`}
-          {showNonVettedHint && (
-            <StyledHintLink onClick={() => setShowVettedOnly(false)}>
-              {t`show all`}
-            </StyledHintLink>
-          )}
+          <StyledEmptyState role="status">
+            {getEmptyStateMessage()}
+            {showUnlistedHint && (
+              <Button
+                variant="link"
+                color="accent"
+                size="sm"
+                type="button"
+                onClick={() => setShowUnlisted(true)}
+              >
+                {t`Show all applications`}
+              </Button>
+            )}
+          </StyledEmptyState>
         </SettingsEmptyPlaceholder>
       ) : (
         <StyledContentContainer>
-          {vettedApplications.length > 0 && (
+          {listedApplications.length > 0 && (
             <StyledCardsGrid>
-              {vettedApplications.map((application) => (
+              {listedApplications.map((application) => (
                 <SettingsAvailableApplicationCard
                   key={application.id}
                   application={application}
@@ -144,18 +183,18 @@ export const SettingsApplicationsAvailableTab = () => {
             </StyledCardsGrid>
           )}
 
-          {!showVettedOnly && nonVettedApplications.length > 0 && (
-            <StyledNotVettedContainer>
-              <InlineBanner status="warning">{t`Applications below are not vetted. Use at your own risk.`}</InlineBanner>
+          {showUnlisted && unlistedApplications.length > 0 && (
+            <StyledUnlistedContainer>
+              <InlineBanner status="warning">{t`Applications below have not been reviewed by Twenty. Use at your own risk.`}</InlineBanner>
               <StyledCardsGrid>
-                {nonVettedApplications.map((application) => (
+                {unlistedApplications.map((application) => (
                   <SettingsAvailableApplicationCard
                     key={application.id}
                     application={application}
                   />
                 ))}
               </StyledCardsGrid>
-            </StyledNotVettedContainer>
+            </StyledUnlistedContainer>
           )}
         </StyledContentContainer>
       )}

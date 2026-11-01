@@ -4,11 +4,12 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { WorkflowVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { In } from 'typeorm';
+import { In, Not } from 'typeorm';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { getReachableApplications } from 'src/engine/core-modules/application/utils/get-reachable-applications.util';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
-import { canApplicationStartCoreWorkflow } from 'src/engine/core-modules/workflow/utils/can-application-start-core-workflow.util';
 import { canChangeCoreWorkflowVisibility } from 'src/engine/core-modules/workflow/utils/can-change-core-workflow-visibility.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -66,15 +67,23 @@ export class CoreWorkflowAccessService {
 
   async assertCoreWorkflowVersionsAreStartableByApplicationOrThrow({
     workspaceId,
-    callerApplicationId,
+    workspaceCustomApplicationId,
+    callerApplication,
     coreWorkflowVersionIds,
   }: {
     workspaceId: string;
-    callerApplicationId: string | undefined;
+    workspaceCustomApplicationId: string;
+    callerApplication: FlatApplication | undefined;
     coreWorkflowVersionIds: string[];
   }): Promise<void> {
+    const reachableApplications = getReachableApplications({
+      callingApplication: callerApplication,
+      operation: 'trigger',
+      workspaceCustomApplicationId,
+    });
+
     if (
-      !isDefined(callerApplicationId) ||
+      reachableApplications.type === 'all' ||
       coreWorkflowVersionIds.length === 0
     ) {
       return;
@@ -100,70 +109,23 @@ export class CoreWorkflowAccessService {
       return;
     }
 
-    const [
-      workflows,
-      { workspaceCustomFlatApplication, twentyStandardFlatApplication },
-    ] = await Promise.all([
-      this.coreWorkflowRepository.find(workspaceId, {
-        where: { id: In(coreWorkflowIds) },
-        select: { id: true, applicationId: true },
-      }),
-      this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      ),
-    ]);
+    const hasWorkflowOfAnotherApplication =
+      await this.coreWorkflowRepository.exists(workspaceId, {
+        where: {
+          id: In(coreWorkflowIds),
+          applicationId: Not(reachableApplications.applicationId),
+        },
+      });
 
-    const isStartable = workflows.every((workflow) =>
-      canApplicationStartCoreWorkflow({
-        callerApplicationId,
-        workflowApplicationId: workflow.applicationId,
-        workspaceOwnedApplicationIds: [
-          workspaceCustomFlatApplication.id,
-          twentyStandardFlatApplication.id,
-        ],
-      }),
-    );
-
-    if (!isStartable) {
+    if (hasWorkflowOfAnotherApplication) {
       throw new WorkflowQueryValidationException(
-        `Application '${callerApplicationId}' cannot start a workflow owned by another application`,
+        `Application '${reachableApplications.applicationId}' cannot start a workflow owned by another application`,
         WorkflowQueryValidationExceptionCode.FORBIDDEN,
         {
           userFriendlyMessage: msg`An application can only start its own workflows.`,
         },
       );
     }
-  }
-
-  async assertWorkspaceWorkflowVersionsAreStartableByApplicationOrThrow({
-    workspaceId,
-    callerApplicationId,
-    workspaceWorkflowVersionIds,
-  }: {
-    workspaceId: string;
-    callerApplicationId: string | undefined;
-    workspaceWorkflowVersionIds: string[];
-  }): Promise<void> {
-    if (
-      !isDefined(callerApplicationId) ||
-      workspaceWorkflowVersionIds.length === 0
-    ) {
-      return;
-    }
-
-    const coreWorkflowVersions = await this.coreWorkflowVersionRepository.find(
-      workspaceId,
-      {
-        where: { workspaceWorkflowVersionId: In(workspaceWorkflowVersionIds) },
-        select: { id: true },
-      },
-    );
-
-    await this.assertCoreWorkflowVersionsAreStartableByApplicationOrThrow({
-      workspaceId,
-      callerApplicationId,
-      coreWorkflowVersionIds: coreWorkflowVersions.map(({ id }) => id),
-    });
   }
 
   async assertCoreWorkflowsAreAccessibleOrThrow({
@@ -230,66 +192,6 @@ export class CoreWorkflowAccessService {
       workspaceId,
       userWorkspaceId,
       coreWorkflowIds,
-    });
-  }
-
-  // Legacy resolvers use the workspace mirror's ids, so the same rule is reached from that side.
-  async assertWorkspaceWorkflowVersionsAreAccessibleOrThrow({
-    workspaceId,
-    userWorkspaceId,
-    workspaceWorkflowVersionIds,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string | undefined;
-    workspaceWorkflowVersionIds: string[];
-  }): Promise<void> {
-    if (workspaceWorkflowVersionIds.length === 0) {
-      return;
-    }
-
-    const coreWorkflowVersions = await this.coreWorkflowVersionRepository.find(
-      workspaceId,
-      {
-        where: { workspaceWorkflowVersionId: In(workspaceWorkflowVersionIds) },
-        select: { id: true, coreWorkflowId: true },
-      },
-    );
-
-    await this.assertCoreWorkflowsAreAccessibleOrThrow({
-      workspaceId,
-      userWorkspaceId,
-      coreWorkflowIds: [
-        ...new Set(
-          coreWorkflowVersions
-            .map(({ coreWorkflowId }) => coreWorkflowId)
-            .filter(isDefined),
-        ),
-      ],
-    });
-  }
-
-  async assertWorkspaceWorkflowsAreAccessibleOrThrow({
-    workspaceId,
-    userWorkspaceId,
-    workspaceWorkflowIds,
-  }: {
-    workspaceId: string;
-    userWorkspaceId: string | undefined;
-    workspaceWorkflowIds: string[];
-  }): Promise<void> {
-    if (workspaceWorkflowIds.length === 0) {
-      return;
-    }
-
-    const coreWorkflows = await this.coreWorkflowRepository.find(workspaceId, {
-      where: { workspaceWorkflowId: In(workspaceWorkflowIds) },
-      select: { id: true },
-    });
-
-    await this.assertCoreWorkflowsAreAccessibleOrThrow({
-      workspaceId,
-      userWorkspaceId,
-      coreWorkflowIds: coreWorkflows.map(({ id }) => id),
     });
   }
 

@@ -5,6 +5,7 @@ import { PageLayoutRendererContent } from '@/page-layout/components/PageLayoutRe
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { RecordTableWidgetViewDraftsInitializationEffect } from '@/page-layout/widgets/record-table/components/RecordTableWidgetViewDraftsInitializationEffect';
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
+import { PageLayoutSidePanelTargetProvider } from '@/side-panel/pages/page-layout/components/PageLayoutSidePanelTargetProvider';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
@@ -42,15 +43,20 @@ export const PageLayoutRenderer = ({
           instanceId: tabListInstanceId,
         }}
       >
-        <PageLayoutEditModeProvider
-          layoutType={layoutType}
-          pageLayoutId={pageLayoutId}
+        <PageLayoutSidePanelTargetProvider
+          pageLayoutId={pageLayoutComponentInstanceId}
+          targetRecordIdentifier={targetRecordIdentifier}
         >
-          <PageLayoutInitializationQueryEffect pageLayoutId={pageLayoutId} />
-          <PageLayoutRecordPageCustomizationSessionRegistrationEffect />
-          <RecordTableWidgetViewDraftsInitializationEffect />
-          <PageLayoutRendererContent />
-        </PageLayoutEditModeProvider>
+          <PageLayoutEditModeProvider
+            layoutType={layoutType}
+            pageLayoutId={pageLayoutId}
+          >
+            <PageLayoutInitializationQueryEffect pageLayoutId={pageLayoutId} />
+            <PageLayoutRecordPageCustomizationSessionRegistrationEffect />
+            <RecordTableWidgetViewDraftsInitializationEffect />
+            <PageLayoutRendererContent />
+          </PageLayoutEditModeProvider>
+        </PageLayoutSidePanelTargetProvider>
       </TabListComponentInstanceContext.Provider>
     </PageLayoutComponentInstanceContext.Provider>
   );

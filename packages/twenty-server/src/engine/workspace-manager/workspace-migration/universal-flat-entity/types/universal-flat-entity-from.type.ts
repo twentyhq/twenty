@@ -33,11 +33,11 @@ export type UniversalFlatEntityExtraProperties<
   > & {
     applicationUniversalIdentifier: string;
   } & {
-    [P in AllJsonbPropertiesWithSerializedPropertiesForMetadataName<TMetadataName> &
-      keyof TEntity &
-      string as `universal${Capitalize<P>}`]: FormatRecordSerializedRelationProperties<
-      TEntity[P]
-    >;
+    [
+      P in AllJsonbPropertiesWithSerializedPropertiesForMetadataName<TMetadataName> &
+        keyof TEntity &
+        string as `universal${Capitalize<P>}`
+    ]: FormatRecordSerializedRelationProperties<TEntity[P]>;
   };
 
 export type UniversalFlatEntityFrom<

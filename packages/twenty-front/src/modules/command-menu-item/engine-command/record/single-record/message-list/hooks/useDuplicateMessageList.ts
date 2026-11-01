@@ -45,7 +45,7 @@ export const useDuplicateMessageList = () => {
         });
       } else {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Failed to duplicate list`,
         });
       }

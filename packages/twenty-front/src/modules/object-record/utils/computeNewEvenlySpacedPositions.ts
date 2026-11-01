@@ -1,3 +1,5 @@
+import { doNotTranslate } from 'twenty-shared/i18n';
+
 export const computeNewEvenlySpacedPositions = ({
   startingPosition,
   endingPosition,
@@ -18,7 +20,9 @@ export const computeNewEvenlySpacedPositions = ({
 
   if (positionGapSize < 0) {
     throw new Error(
-      `Cannot compute positions because starting position (${startingPosition}) is after ending position (${endingPosition})`,
+      doNotTranslate(
+        `Cannot compute positions because starting position (${startingPosition}) is after ending position (${endingPosition})`,
+      ),
     );
   }
 

@@ -8,7 +8,7 @@ import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetada
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { type SettingsDataModelFieldSelectFormValues } from '@/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm';
 import { normalizeSelectOptions } from '@/settings/data-model/fields/forms/select/utils/normalizeSelectOptions';
-import { computeOptionValueFromLabel } from '~/pages/settings/data-model/utils/computeOptionValueFromLabel';
+import { computeOptionValueFromLabel } from '@/object-metadata/utils/computeOptionValueFromLabel';
 
 const getDefaultOption = (): FieldMetadataItemOption => {
   const label = t`Option 1`;

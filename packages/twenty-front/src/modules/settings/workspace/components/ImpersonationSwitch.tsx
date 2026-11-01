@@ -10,6 +10,7 @@ import { Card } from 'twenty-ui/primitives/surfaces';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 import { useToast } from 'twenty-ui/components/feedback';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const ImpersonationSwitch = () => {
   const { enqueueToast } = useToast();
@@ -23,7 +24,7 @@ export const ImpersonationSwitch = () => {
   const handleChange = async (value: boolean) => {
     try {
       if (!currentWorkspace?.id) {
-        throw new Error('User is not logged in');
+        throw new Error(doNotTranslate('User is not logged in'));
       }
       await updateWorkspace({
         variables: {
@@ -42,14 +43,13 @@ export const ImpersonationSwitch = () => {
   };
 
   return (
-    <Card.Root rounded>
+    <Card.Root>
       <SettingsOptionCardContentSwitch
         Icon={IconLifebuoy}
         title={t`Allow Support Team Access`}
         description={t`Grant access to your workspace so we can troubleshoot problems.`}
         checked={currentWorkspace?.allowImpersonation ?? false}
         onChange={handleChange}
-        advancedMode
       />
     </Card.Root>
   );

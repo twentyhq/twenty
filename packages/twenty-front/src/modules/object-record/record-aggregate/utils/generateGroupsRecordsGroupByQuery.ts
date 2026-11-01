@@ -5,7 +5,7 @@ import { mapObjectMetadataToGraphQLQuery } from '@/object-metadata/utils/mapObje
 import { getGroupByQueryResultGqlFieldName } from '@/page-layout/utils/getGroupByQueryResultGqlFieldName';
 import {
   type ObjectPermissions,
-  type RecordGqlOperationGqlRecordFields,
+  type RecordGqlFields,
 } from 'twenty-shared/types';
 import { capitalize } from 'twenty-shared/utils';
 
@@ -18,7 +18,7 @@ export const generateGroupsRecordsGroupByQuery = ({
 }: {
   objectMetadataItems: EnrichedObjectMetadataItem[];
   objectMetadataItem: EnrichedObjectMetadataItem;
-  recordGqlFields: RecordGqlOperationGqlRecordFields;
+  recordGqlFields: RecordGqlFields;
   computeReferences?: boolean;
   objectPermissionsByObjectMetadataId: Record<
     string,

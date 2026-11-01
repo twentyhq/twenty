@@ -32,13 +32,6 @@ const StyledTrendIconContainer = styled.div`
   justify-content: center;
 `;
 
-const StyledHeadingWrapper = styled.div`
-  > h2 {
-    font-size: ${themeCssVariables.font.size.xxl};
-    margin: 0;
-  }
-`;
-
 export const GraphWidgetAggregateChart = ({
   value,
   trendPercentage,
@@ -55,11 +48,9 @@ export const GraphWidgetAggregateChart = ({
 
   return (
     <StyledContainer>
-      <StyledHeadingWrapper>
-        <Heading level={2} size="lg">
-          {displayValue}
-        </Heading>
-      </StyledHeadingWrapper>
+      <Heading level={2} size="xxl">
+        {displayValue}
+      </Heading>
       {isDefined(trendPercentage) && (
         <StyledTrendIconContainer>
           <StyledTrendPercentageValue>

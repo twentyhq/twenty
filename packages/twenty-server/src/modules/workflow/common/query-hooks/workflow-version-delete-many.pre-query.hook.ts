@@ -6,13 +6,10 @@ import {
   WorkflowQueryValidationException,
   WorkflowQueryValidationExceptionCode,
 } from 'src/modules/workflow/common/exceptions/workflow-query-validation.exception';
-import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 
 @WorkspaceQueryHook(`workflowVersion.deleteMany`)
 export class WorkflowVersionDeleteManyPreQueryHook implements WorkspacePreQueryHookInstance {
-  async execute(): Promise<
-    DeleteManyResolverArgs<WorkflowVersionWorkspaceEntity>
-  > {
+  async execute(): Promise<DeleteManyResolverArgs> {
     throw new WorkflowQueryValidationException(
       'Method not allowed.',
       WorkflowQueryValidationExceptionCode.FORBIDDEN,

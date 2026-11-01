@@ -12,21 +12,18 @@ import { isUsableLastVisitedView } from '@/views/utils/isUsableLastVisitedView';
 import { matchRoutes, useLocation, useSearchParams } from 'react-router-dom';
 import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { FeatureFlagKey, ViewType } from '~/generated-metadata/graphql';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { ViewType } from '~/generated-metadata/graphql';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 const getViewId = ({
   viewIdFromQueryParams,
   indexViewId,
   lastVisitedViewId,
-  firstAvailableViewId,
   firstSelectableViewId,
 }: {
   viewIdFromQueryParams: string | null;
   indexViewId?: string;
   lastVisitedViewId?: string;
-  firstAvailableViewId?: string;
   firstSelectableViewId?: string;
 }) => {
   if (isDefined(viewIdFromQueryParams)) {
@@ -43,10 +40,6 @@ const getViewId = ({
 
   if (isDefined(indexViewId)) {
     return indexViewId;
-  }
-
-  if (isDefined(firstAvailableViewId)) {
-    return firstAvailableViewId;
   }
 
   return undefined;
@@ -118,29 +111,21 @@ export const RouteContextStoreProvider = () => {
     (view) => view.id === lastVisitedViewIdRaw,
   );
 
-  const isInitialObjectViewEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_INITIAL_OBJECT_VIEW_ENABLED,
-  );
-
   const lastVisitedViewId = isUsableLastVisitedView({
     lastVisitedView,
-    isInitialObjectViewEnabled,
   })
     ? lastVisitedViewIdRaw
     : undefined;
 
-  const { firstSelectableViewId, indexViewId, firstAvailableViewId } =
-    computeObjectViewTargetIds({
-      views,
-      objectMetadataId: objectMetadataItem?.id,
-      isInitialObjectViewEnabled,
-    });
+  const { firstSelectableViewId, indexViewId } = computeObjectViewTargetIds({
+    views,
+    objectMetadataId: objectMetadataItem?.id,
+  });
 
   const viewId = getViewId({
     viewIdFromQueryParams: viewIdQueryParam,
     indexViewId,
     lastVisitedViewId,
-    firstAvailableViewId,
     firstSelectableViewId,
   });
 

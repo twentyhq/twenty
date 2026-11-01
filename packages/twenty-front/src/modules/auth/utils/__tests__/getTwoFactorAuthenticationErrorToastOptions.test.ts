@@ -23,7 +23,7 @@ describe('getTwoFactorAuthenticationErrorToastOptions', () => {
       }),
     ).toEqual(
       expect.objectContaining({
-        variant: 'error',
+        status: 'error',
         children: 'Rate limit reached. Please try again later.',
         dedupeKey: 'invalid-otp-dedupe-key-LIMIT_REACHED',
       }),
@@ -36,7 +36,7 @@ describe('getTwoFactorAuthenticationErrorToastOptions', () => {
         error: new Error('Network error'),
       }),
     ).toEqual({
-      variant: 'error',
+      status: 'error',
       children: 'Invalid verification code. Please try again.',
       dedupeKey: undefined,
     });

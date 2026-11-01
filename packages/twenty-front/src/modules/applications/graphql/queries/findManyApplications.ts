@@ -15,6 +15,7 @@ export const FIND_MANY_APPLICATIONS = gql`
         latestAvailableVersion
         sourceType
       }
+      defaultRoleId
     }
   }
 `;

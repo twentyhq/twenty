@@ -31,6 +31,7 @@ export const useSubmitFormStep = ({
         status: true,
         startedAt: true,
         endedAt: true,
+        updatedAt: true,
       },
     },
   );

@@ -1,6 +1,6 @@
+import { isSafeInternalPath } from 'twenty-shared/utils';
 import { ONBOARDING_PATHS } from '@/auth/constants/OnboardingPaths';
 import { ONGOING_USER_CREATION_PATHS } from '@/auth/constants/OngoingUserCreationPaths';
-import { isSafeInternalPath } from '@/ui/navigation/utils/isSafeInternalPath';
 import { AppPath } from 'twenty-shared/types';
 
 const extractPathPrefix = (appPath: string): string => appPath.split('/:')[0];

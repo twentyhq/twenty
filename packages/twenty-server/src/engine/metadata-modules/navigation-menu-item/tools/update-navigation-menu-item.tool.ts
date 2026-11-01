@@ -1,10 +1,14 @@
+import { ToolCategory } from 'twenty-shared/ai';
 import { z } from 'zod';
 
+import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
+import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
+import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type UpdateNavigationMenuItemInput } from 'src/engine/metadata-modules/navigation-menu-item/dtos/update-navigation-menu-item.input';
-import { type NavigationMenuItemToolContext } from 'src/engine/metadata-modules/navigation-menu-item/tools/types/navigation-menu-item-tool-context.type';
-import { type NavigationMenuItemToolDependencies } from 'src/engine/metadata-modules/navigation-menu-item/tools/types/navigation-menu-item-tool-dependencies.type';
+import { NavigationMenuItemService } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.service';
 
-const updateNavigationMenuItemSchema = z.object({
+const updateNavigationMenuItemInputSchema = z.object({
   id: z.uuid().describe('Id of the navigation menu item to update'),
   name: z
     .string()
@@ -35,36 +39,47 @@ const updateNavigationMenuItemSchema = z.object({
     .describe('New page layout id (only meaningful for PAGE_LAYOUT items)'),
 });
 
-type UpdateNavigationMenuItemParams = z.infer<
-  typeof updateNavigationMenuItemSchema
->;
-
-export const createUpdateNavigationMenuItemTool = (
-  deps: Pick<NavigationMenuItemToolDependencies, 'navigationMenuItemService'>,
-  context: NavigationMenuItemToolContext,
-) => ({
-  name: 'update_navigation_menu_item' as const,
+@DefineTool({
+  name: 'update_navigation_menu_item',
+  category: ToolCategory.NAVIGATION_MENU_ITEM,
+  requiredPermissionFlags: [],
   description: `Update a navigation menu item (rename, recolor, move between folders, reorder). Type and target ids are immutable — delete and recreate to convert one variant into another.`,
-  inputSchema: updateNavigationMenuItemSchema,
-  execute: async (parameters: UpdateNavigationMenuItemParams) => {
+})
+export class UpdateNavigationMenuItemTool extends BaseTool<
+  typeof updateNavigationMenuItemInputSchema
+> {
+  readonly inputSchema = updateNavigationMenuItemInputSchema;
+
+  constructor(
+    private readonly navigationMenuItemService: NavigationMenuItemService,
+  ) {
+    super();
+  }
+
+  async execute({
+    input,
+    context: { workspaceId, userWorkspaceId, application, agentId },
+  }: ToolExecuteArgs<
+    typeof updateNavigationMenuItemInputSchema
+  >): Promise<ToolOutput> {
     try {
       const update: Partial<UpdateNavigationMenuItemInput> = {};
 
-      if (parameters.name !== undefined) update.name = parameters.name;
-      if (parameters.icon !== undefined) update.icon = parameters.icon;
-      if (parameters.color !== undefined) update.color = parameters.color;
-      if (parameters.position !== undefined)
-        update.position = parameters.position;
-      if (parameters.folderId !== undefined)
-        update.folderId = parameters.folderId;
-      if (parameters.link !== undefined) update.link = parameters.link;
-      if (parameters.pageLayoutId !== undefined)
-        update.pageLayoutId = parameters.pageLayoutId;
+      if (input.name !== undefined) update.name = input.name;
+      if (input.icon !== undefined) update.icon = input.icon;
+      if (input.color !== undefined) update.color = input.color;
+      if (input.position !== undefined) update.position = input.position;
+      if (input.folderId !== undefined) update.folderId = input.folderId;
+      if (input.link !== undefined) update.link = input.link;
+      if (input.pageLayoutId !== undefined)
+        update.pageLayoutId = input.pageLayoutId;
 
-      const updated = await deps.navigationMenuItemService.update({
-        input: { id: parameters.id, ...update },
-        workspaceId: context.workspaceId,
-        authUserWorkspaceId: context.userWorkspaceId,
+      const updated = await this.navigationMenuItemService.update({
+        input: { id: input.id, ...update },
+        workspaceId,
+        authUserWorkspaceId: userWorkspaceId,
+        authApplicationId: application?.id,
+        authAgentId: agentId,
       });
 
       return {
@@ -87,5 +102,5 @@ export const createUpdateNavigationMenuItemTool = (
         error: message,
       };
     }
-  },
-});
+  }
+}

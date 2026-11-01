@@ -1,12 +1,13 @@
 import { styled } from '@linaria/react';
-import { Fragment } from 'react';
+import { Fragment, type ReactNode } from 'react';
 import { type IconComponent } from 'twenty-ui/icon';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 export type SettingsStatRow = {
   Icon: IconComponent;
   label: string;
-  value: string;
+  value: ReactNode;
+  hasSeparatorAfter?: boolean;
 };
 
 type SettingsStatsGridProps = {
@@ -43,6 +44,11 @@ const StyledRow = styled.div`
   height: ${themeCssVariables.spacing[6]};
 `;
 
+const StyledRowSeparator = styled.div`
+  background: ${themeCssVariables.border.color.light};
+  height: 1px;
+`;
+
 const StyledLabel = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   flex: 1 1 0;
@@ -54,6 +60,8 @@ const StyledLabel = styled.div`
 
 const StyledValue = styled.div`
   color: ${themeCssVariables.font.color.primary};
+  max-width: 50%;
+  min-width: 0;
   padding: 0 ${themeCssVariables.spacing[1]};
 `;
 
@@ -76,13 +84,11 @@ export const SettingsStatsGrid = ({ columns }: SettingsStatsGridProps) => (
       <Fragment key={index}>
         {index > 0 && <StyledDivider />}
         <StyledColumn>
-          {column.map((stat) => (
-            <StatRow
-              key={stat.label}
-              Icon={stat.Icon}
-              label={stat.label}
-              value={stat.value}
-            />
+          {column.map((stat, rowIndex) => (
+            <Fragment key={`${rowIndex}-${stat.label}`}>
+              <StatRow Icon={stat.Icon} label={stat.label} value={stat.value} />
+              {stat.hasSeparatorAfter && <StyledRowSeparator />}
+            </Fragment>
           ))}
         </StyledColumn>
       </Fragment>

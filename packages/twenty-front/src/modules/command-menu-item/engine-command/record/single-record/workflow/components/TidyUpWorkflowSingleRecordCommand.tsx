@@ -6,6 +6,7 @@ import { workflowDiagramComponentState } from '@/workflow/workflow-diagram/state
 import { useTidyUpWorkflowVersion } from '@/workflow/workflow-version/hooks/useTidyUpWorkflowVersion';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const TidyUpWorkflowSingleRecordCommand = () => {
   const store = useStore();
@@ -20,7 +21,9 @@ export const TidyUpWorkflowSingleRecordCommand = () => {
     useGetUpdatableWorkflowVersionOrThrow(instanceId);
 
   if (!isDefined(recordId)) {
-    throw new Error('Record ID is required to tidy up workflow');
+    throw new Error(
+      doNotTranslate('Record ID is required to tidy up workflow'),
+    );
   }
 
   const handleExecute = async () => {

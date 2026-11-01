@@ -1,17 +1,21 @@
 import { CACHE_MANAGER, Cache } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 
-import { type Milliseconds } from 'cache-manager';
-import { type RedisCache } from 'cache-manager-redis-yet';
+import KeyvRedis from '@keyv/redis';
+import { type RedisClientType } from 'redis';
+import { v4 } from 'uuid';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { UPDATE_OWNED_KEY_LEASE_SCRIPT } from 'src/engine/core-modules/cache-storage/constants/update-owned-key-lease-script.constant';
 import {
   CacheStorageException,
   CacheStorageExceptionCode,
 } from 'src/engine/core-modules/cache-storage/exceptions/cache-storage.exception';
 import { type CacheScript } from 'src/engine/core-modules/cache-storage/types/cache-script.type';
-import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { type CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
+import { escapeRedisGlob } from 'src/engine/core-modules/cache-storage/utils/escape-redis-glob.util';
+import { getCacheStorageKey } from 'src/engine/core-modules/cache-storage/utils/get-cache-storage-key.util';
 
 @Injectable()
 export class CacheStorageService {
@@ -19,6 +23,7 @@ export class CacheStorageService {
     @Inject(CACHE_MANAGER)
     private readonly cache: Cache,
     private readonly namespace: CacheStorageNamespace,
+    private readonly keyPrefix: string = '',
   ) {}
 
   async get<T>(key: string): Promise<T | undefined> {
@@ -27,17 +32,15 @@ export class CacheStorageService {
     return value;
   }
 
-  async set<T>(key: string, value: T, ttl?: Milliseconds) {
-    return this.cache.set(this.getKey(key), value, ttl);
+  async set<T>(key: string, value: T, ttl?: number): Promise<void> {
+    await this.cache.set(this.getKey(key), value, ttl);
   }
 
-  async setIfAbsent<T>(
-    key: string,
-    value: T,
-    ttl: Milliseconds,
-  ): Promise<boolean> {
-    if (this.isRedisCache(this.cache)) {
-      const result = await this.cache.store.client.set(
+  async setIfAbsent<T>(key: string, value: T, ttl: number): Promise<boolean> {
+    const redisClient = this.getRedisClient();
+
+    if (isDefined(redisClient)) {
+      const result = await redisClient.set(
         this.getKey(key),
         JSON.stringify(value),
         ttl > 0 ? { NX: true, PX: ttl } : { NX: true },
@@ -66,10 +69,12 @@ export class CacheStorageService {
       return;
     }
 
-    if (this.isRedisCache(this.cache)) {
+    const redisClient = this.getRedisClient();
+
+    if (isDefined(redisClient)) {
       const prefixedKeys = keys.map((k) => this.getKey(k));
 
-      await this.cache.store.client.del(prefixedKeys);
+      await redisClient.del(prefixedKeys);
 
       return;
     }
@@ -78,9 +83,11 @@ export class CacheStorageService {
   }
 
   async mget<T = unknown>(keys: string[]): Promise<(T | undefined)[]> {
-    if (this.isRedisCache(this.cache)) {
+    const redisClient = this.getRedisClient();
+
+    if (isDefined(redisClient)) {
       const prefixedKeys = keys.map((k) => this.getKey(k));
-      const values = await this.cache.store.client.mGet(prefixedKeys);
+      const values = await redisClient.mGet(prefixedKeys);
 
       return values.map((v) => {
         if (v === null || v === undefined) return undefined;
@@ -96,52 +103,38 @@ export class CacheStorageService {
   }
 
   async mset<T = unknown>(
-    entries: Array<{ key: string; value: T; ttl?: Milliseconds }>,
+    entries: Array<{ key: string; value: T; ttl?: number }>,
   ): Promise<void> {
     if (entries.length === 0) {
       return;
     }
 
-    if (this.isRedisCache(this.cache)) {
-      const redisStore = this.cache.store;
-      const entriesByTtl = new Map<Milliseconds | undefined, [string, T][]>();
-
-      for (const { key, value, ttl } of entries) {
-        const ttlGroup = entriesByTtl.get(ttl) ?? [];
-
-        ttlGroup.push([this.getKey(key), value]);
-        entriesByTtl.set(ttl, ttlGroup);
-      }
-
-      await Promise.all(
-        [...entriesByTtl.entries()].map(([ttl, ttlGroupEntries]) =>
-          redisStore.mset(ttlGroupEntries, ttl),
-        ),
-      );
-
-      return;
-    }
-
-    for (const { key, value, ttl } of entries) {
-      await this.set(key, value, ttl);
-    }
+    await this.cache.mset(
+      entries.map(({ key, value, ttl }) => ({
+        key: this.getKey(key),
+        value,
+        ttl,
+      })),
+    );
   }
 
   async msetAndMdel<T = unknown>({
     entries,
     keysToDelete,
   }: {
-    entries: Array<{ key: string; value: T; ttl?: Milliseconds }>;
+    entries: Array<{ key: string; value: T; ttl?: number }>;
     keysToDelete: string[];
   }): Promise<void> {
-    if (!this.isRedisCache(this.cache)) {
+    const redisClient = this.getRedisClient();
+
+    if (!isDefined(redisClient)) {
       throw new CacheStorageException(
         'msetAndMdel is only supported with Redis cache',
         CacheStorageExceptionCode.REDIS_CACHE_REQUIRED,
       );
     }
 
-    const transaction = this.cache.store.client.multi();
+    const transaction = redisClient.multi();
 
     for (const { key, value, ttl } of entries) {
       transaction.set(
@@ -158,16 +151,18 @@ export class CacheStorageService {
     await transaction.exec();
   }
 
-  async setAdd(key: string, value: string[], ttl?: Milliseconds) {
+  async setAdd(key: string, value: string[], ttl?: number) {
     if (value.length === 0) {
       return;
     }
 
-    if (this.isRedisCache(this.cache)) {
-      await this.cache.store.client.sAdd(this.getKey(key), value);
+    const redisClient = this.getRedisClient();
+
+    if (isDefined(redisClient)) {
+      await redisClient.sAdd(this.getKey(key), value);
 
       if (ttl) {
-        await this.cache.store.client.expire(this.getKey(key), ttl / 1000);
+        await redisClient.expire(this.getKey(key), ttl / 1000);
       }
 
       return;
@@ -187,8 +182,10 @@ export class CacheStorageService {
       return 0;
     }
 
-    if (this.isRedisCache(this.cache)) {
-      return this.cache.store.client.sRem(this.getKey(key), values);
+    const redisClient = this.getRedisClient();
+
+    if (isDefined(redisClient)) {
+      return redisClient.sRem(this.getKey(key), values);
     }
 
     const existing = await this.get<string[]>(key);
@@ -212,8 +209,10 @@ export class CacheStorageService {
   }
 
   async setPop(key: string, size = 1) {
-    if (this.isRedisCache(this.cache)) {
-      return this.cache.store.client.sPop(this.getKey(key), size);
+    const redisClient = this.getRedisClient();
+
+    if (isDefined(redisClient)) {
+      return redisClient.sPop(this.getKey(key), size);
     }
 
     const res = await this.get<string[]>(key);
@@ -228,8 +227,10 @@ export class CacheStorageService {
   }
 
   async getSetLength(key: string) {
-    if (this.isRedisCache(this.cache)) {
-      return await this.cache.store.client.sCard(this.getKey(key));
+    const redisClient = this.getRedisClient();
+
+    if (isDefined(redisClient)) {
+      return await redisClient.sCard(this.getKey(key));
     }
 
     const res = await this.get<string[]>(key);
@@ -238,29 +239,40 @@ export class CacheStorageService {
   }
 
   async setMembers(key: string): Promise<string[]> {
-    if (this.isRedisCache(this.cache)) {
-      return this.cache.store.client.sMembers(this.getKey(key));
+    const redisClient = this.getRedisClient();
+
+    if (isDefined(redisClient)) {
+      return redisClient.sMembers(this.getKey(key));
     }
 
     return (await this.get<string[]>(key)) ?? [];
   }
 
   async flush() {
-    return this.cache.reset();
+    const redisClient = this.getRedisClient();
+
+    if (isDefined(redisClient)) {
+      await redisClient.flushDb();
+
+      return;
+    }
+
+    await this.cache.clear();
   }
 
   async flushByPattern(scanPattern: string): Promise<void> {
-    if (!this.isRedisCache(this.cache)) {
+    const redisClient = this.getRedisClient();
+
+    if (!isDefined(redisClient)) {
       throw new Error('flushByPattern is only supported with Redis cache');
     }
 
-    const redisClient = this.cache.store.client;
+    const scanKeyPrefix = escapeRedisGlob(this.getKey(''));
     let cursor = 0;
 
     do {
       const result = await redisClient.scan(cursor, {
-        // Through getKey: under NODE_ENV=test keys carry an extra prefix, so a raw namespace match flushes nothing.
-        MATCH: this.getKey(scanPattern),
+        MATCH: `${scanKeyPrefix}${scanPattern}`,
         COUNT: 100,
       });
 
@@ -283,11 +295,13 @@ export class CacheStorageService {
       return 0;
     }
 
-    if (!this.isRedisCache(this.cache)) {
+    const redisClient = this.getRedisClient();
+
+    if (!isDefined(redisClient)) {
       throw new Error('sortedSetAdd is only supported with Redis cache');
     }
 
-    return this.cache.store.client.zAdd(this.getKey(key), entries);
+    return redisClient.zAdd(this.getKey(key), entries);
   }
 
   async sortedSetRemove(key: string, values: string[]): Promise<number> {
@@ -295,11 +309,13 @@ export class CacheStorageService {
       return 0;
     }
 
-    if (!this.isRedisCache(this.cache)) {
+    const redisClient = this.getRedisClient();
+
+    if (!isDefined(redisClient)) {
       throw new Error('sortedSetRemove is only supported with Redis cache');
     }
 
-    return this.cache.store.client.zRem(this.getKey(key), values);
+    return redisClient.zRem(this.getKey(key), values);
   }
 
   async sortedSetRemoveByScoreAndCount(
@@ -307,14 +323,16 @@ export class CacheStorageService {
     minScore: number,
     maxScore: number,
   ): Promise<number> {
-    if (!this.isRedisCache(this.cache)) {
+    const redisClient = this.getRedisClient();
+
+    if (!isDefined(redisClient)) {
       throw new Error(
         'sortedSetRemoveByScoreAndCount is only supported with Redis cache',
       );
     }
 
     const prefixedKey = this.getKey(key);
-    const [, count] = await this.cache.store.client
+    const [, count] = await redisClient
       .multi()
       .zRemRangeByScore(prefixedKey, minScore, maxScore)
       .zCard(prefixedKey)
@@ -327,32 +345,66 @@ export class CacheStorageService {
     return count as number;
   }
 
-  async acquireLock(key: string, ttl = 1000): Promise<boolean> {
-    if (!this.isRedisCache(this.cache)) {
+  async acquireLock({
+    key,
+    ttl = 1000,
+  }: {
+    key: string;
+    ttl?: number;
+  }): Promise<string | null> {
+    const redisClient = this.getRedisClient();
+
+    if (!isDefined(redisClient)) {
       throw new Error('acquireLock is only supported with Redis cache');
     }
 
-    const redisClient = this.cache.store.client;
+    const ownerToken = v4();
 
-    const result = await redisClient.set(this.getKey(key), 'lock', {
+    const result = await redisClient.set(this.getKey(key), ownerToken, {
       NX: true,
       PX: ttl,
     });
 
-    return result === 'OK';
+    return result === 'OK' ? ownerToken : null;
   }
 
-  async releaseLock(key: string): Promise<void> {
-    if (!this.isRedisCache(this.cache)) {
-      throw new Error('releaseLock is only supported with Redis cache');
-    }
+  async extendLock({
+    key,
+    ownerToken,
+    ttl,
+  }: {
+    key: string;
+    ownerToken: string;
+    ttl: number;
+  }): Promise<boolean> {
+    const extended = await this.runScript<number>({
+      script: UPDATE_OWNED_KEY_LEASE_SCRIPT,
+      keys: [key],
+      args: [ownerToken, String(ttl)],
+    });
 
-    await this.del(key);
+    return extended === 1;
+  }
+
+  async releaseLock({
+    key,
+    ownerToken,
+  }: {
+    key: string;
+    ownerToken: string;
+  }): Promise<void> {
+    await this.runScript<number>({
+      script: UPDATE_OWNED_KEY_LEASE_SCRIPT,
+      keys: [key],
+      args: [ownerToken, '0'],
+    });
   }
 
   async incrBy(key: string, increment: number): Promise<number> {
-    if (this.isRedisCache(this.cache)) {
-      return this.cache.store.client.incrBy(this.getKey(key), increment);
+    const redisClient = this.getRedisClient();
+
+    if (isDefined(redisClient)) {
+      return redisClient.incrBy(this.getKey(key), increment);
     }
 
     const current = (await this.get<number>(key)) ?? 0;
@@ -364,11 +416,11 @@ export class CacheStorageService {
   }
 
   async hashGetValues(key: string): Promise<string[]> {
-    if (!this.isRedisCache(this.cache)) {
+    const redisClient = this.getRedisClient();
+
+    if (!isDefined(redisClient)) {
       throw new Error('hashGetValues is only supported with Redis cache');
     }
-
-    const redisClient = this.cache.store.client;
 
     return redisClient.hVals(this.getKey(key));
   }
@@ -382,11 +434,11 @@ export class CacheStorageService {
     field: string;
     value: string;
   }): Promise<number> {
-    if (!this.isRedisCache(this.cache)) {
+    const redisClient = this.getRedisClient();
+
+    if (!isDefined(redisClient)) {
       throw new Error('hashSet is only supported with Redis cache');
     }
-
-    const redisClient = this.cache.store.client;
 
     return redisClient.hSet(this.getKey(key), field, value);
   }
@@ -400,11 +452,11 @@ export class CacheStorageService {
     field: string;
     value: string;
   }): Promise<number> {
-    if (!this.isRedisCache(this.cache)) {
+    const redisClient = this.getRedisClient();
+
+    if (!isDefined(redisClient)) {
       throw new Error('hashSetIfExists is only supported with Redis cache');
     }
-
-    const redisClient = this.cache.store.client;
 
     const script = `
 if redis.call('EXISTS', KEYS[1]) == 1 then
@@ -428,7 +480,9 @@ end`;
     keys: string[];
     args: string[];
   }): Promise<TResult> {
-    if (!this.isRedisCache(this.cache)) {
+    const redisClient = this.getRedisClient();
+
+    if (!isDefined(redisClient)) {
       throw new CacheStorageException(
         'runScript is only supported with Redis cache',
         CacheStorageExceptionCode.REDIS_CACHE_REQUIRED,
@@ -436,7 +490,7 @@ end`;
     }
 
     try {
-      return (await this.cache.store.client.eval(script.source, {
+      return (await redisClient.eval(script.source, {
         keys: keys.map((key) => this.getKey(key)),
         arguments: args,
       })) as TResult;
@@ -457,13 +511,14 @@ end`;
     key: string;
     field: string;
     value: string;
-    ttlMs: Milliseconds;
+    ttlMs: number;
   }): Promise<void> {
-    if (!this.isRedisCache(this.cache)) {
+    const redisClient = this.getRedisClient();
+
+    if (!isDefined(redisClient)) {
       throw new Error('hashSetWithExpire is only supported with Redis cache');
     }
 
-    const redisClient = this.cache.store.client;
     const prefixedKey = this.getKey(key);
 
     await redisClient
@@ -480,18 +535,20 @@ end`;
     key: string;
     field: string;
   }): Promise<number> {
-    if (!this.isRedisCache(this.cache)) {
+    const redisClient = this.getRedisClient();
+
+    if (!isDefined(redisClient)) {
       throw new Error('hashDelete is only supported with Redis cache');
     }
-
-    const redisClient = this.cache.store.client;
 
     return redisClient.hDel(this.getKey(key), field);
   }
 
-  async expire(key: string, ttlMs: Milliseconds): Promise<boolean> {
-    if (this.isRedisCache(this.cache)) {
-      return this.cache.store.client.expire(this.getKey(key), ttlMs / 1000);
+  async expire(key: string, ttlMs: number): Promise<boolean> {
+    const redisClient = this.getRedisClient();
+
+    if (isDefined(redisClient)) {
+      return redisClient.expire(this.getKey(key), ttlMs / 1000);
     }
 
     const existing = await this.get(key);
@@ -505,18 +562,20 @@ end`;
     return false;
   }
 
-  private isRedisCache(cache: Cache): cache is RedisCache {
-    // oxlint-disable-next-line typescript/no-explicit-any
-    return (cache.store as any)?.name === 'redis';
+  private getRedisClient(): RedisClientType | undefined {
+    const store = this.cache.stores[0]?.store;
+
+    return store instanceof KeyvRedis
+      ? (store.client as RedisClientType)
+      : undefined;
   }
 
   private getKey(key: string) {
-    const formattedKey = `${this.namespace}:${key}`;
-
-    if (process.env.NODE_ENV === 'test') {
-      return `${CacheStorageNamespace.IntegrationTests}:${formattedKey}`;
-    }
-
-    return formattedKey;
+    return getCacheStorageKey({
+      key,
+      namespace: this.namespace,
+      keyPrefix: this.keyPrefix,
+      isTestEnvironment: process.env.NODE_ENV === 'test',
+    });
   }
 }

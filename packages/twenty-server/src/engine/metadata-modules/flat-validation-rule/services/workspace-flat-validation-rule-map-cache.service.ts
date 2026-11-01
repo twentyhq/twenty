@@ -1,3 +1,5 @@
+/* @license Enterprise */
+
 import { Injectable } from '@nestjs/common';
 
 import { MetadataFlatEntityMapsCacheProvider } from 'src/engine/workspace-cache/interfaces/metadata-flat-entity-maps-cache-provider.service';

@@ -1,20 +1,65 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { Field, Input, InputGroup, Textarea } from 'twenty-ui/primitives/input';
+import {
+  Button,
+  Field,
+  Input,
+  InputGroup,
+  Radio,
+  RadioGroup,
+  Textarea,
+  type InputVariant,
+} from 'twenty-ui/primitives/input';
 
 import { TwentyUiGalleryCard } from '@/__stories__/shared/front-components/twenty-ui-gallery-card';
 
 const FieldControls = () => {
+  const inputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const [nativeTarget, setNativeTarget] = useState('');
+  const [controlValues, setControlValues] = useState('');
   const [email, setEmail] = useState('');
   const [notes, setNotes] = useState('');
+  const [inlineSubject, setInlineSubject] = useState('');
+  const [notesVariant, setNotesVariant] = useState<InputVariant>('default');
+  const [notesWidth, setNotesWidth] = useState('100%');
   const [reportedValues, setReportedValues] = useState('');
 
   return (
     <TwentyUiGalleryCard title="Field and text controls">
+      <Field.Root name="notifications">
+        <Field.Label>Notifications</Field.Label>
+        <RadioGroup defaultValue="important">
+          <Field.Item>
+            <Field.Label>Important updates</Field.Label>
+            <Radio value="important" />
+            <Field.Description>Only urgent messages</Field.Description>
+          </Field.Item>
+          <Field.Item>
+            <Field.Label>All updates</Field.Label>
+            <Radio value="all" />
+            <Field.Description>Every record change</Field.Description>
+          </Field.Item>
+          <Field.Item disabled>
+            <Field.Label>Daily digest</Field.Label>
+            <Radio value="digest" />
+          </Field.Item>
+        </RadioGroup>
+      </Field.Root>
       <Field.Root>
         <Field.Label>Email</Field.Label>
-        <InputGroup startElement="@" endElement=".com">
-          <Input value={email} onValueChange={setEmail} />
+        <InputGroup
+          size="sm"
+          startElement="@"
+          endElement=".com"
+          aria-label="Email layout"
+        >
+          <Input
+            ref={inputRef}
+            size="md"
+            value={email}
+            onValueChange={setEmail}
+          />
         </InputGroup>
         <Field.Description>Use your work email</Field.Description>
       </Field.Root>
@@ -23,9 +68,30 @@ const FieldControls = () => {
         <Field.Control defaultValue="" />
         <Field.Error match>Name is required</Field.Error>
       </Field.Root>
-      <Field.Root>
+      <Field.Root invalid>
         <Field.Label>Notes</Field.Label>
-        <Textarea value={notes} onValueChange={setNotes} rows={2} />
+        <p id="notes-help">Additional guidance</p>
+        <Textarea
+          ref={textareaRef}
+          variant={notesVariant}
+          aria-describedby="notes-help"
+          value={notes}
+          onValueChange={setNotes}
+          onChange={(event) => setNativeTarget(event.currentTarget.tagName)}
+          rows={1}
+          style={{ width: notesWidth }}
+          autoResize
+          maxRows={6}
+          render={(props, state) => (
+            <textarea
+              // oxlint-disable-next-line react/jsx-props-no-spreading
+              {...props}
+              data-filled={state.filled || undefined}
+            />
+          )}
+        />
+        <Field.Description>Team context</Field.Description>
+        <Field.Error match>Notes need review</Field.Error>
       </Field.Root>
       <Field.Root invalid>
         <Field.Label>Reference</Field.Label>
@@ -33,15 +99,58 @@ const FieldControls = () => {
         <Field.Description>Keep this reference</Field.Description>
         <Field.Error match>Reference cannot be changed</Field.Error>
       </Field.Root>
+      <Field.Root>
+        <Field.Label>Inline subject</Field.Label>
+        <Input
+          variant="plain"
+          value={inlineSubject}
+          onValueChange={setInlineSubject}
+        />
+        <Field.Description>Subject without a field frame</Field.Description>
+      </Field.Root>
       <Input aria-label="Disabled input" disabled value="Locked" />
+      <p role="status">Inline subject: {inlineSubject}</p>
+      <Button type="button" onClick={() => setNotesVariant('plain')}>
+        Use plain notes
+      </Button>
       <p role="status">
         Email: {email}; Notes: {notes}
       </p>
-      <button
-        onClick={() => setReportedValues(`Email: ${email}; Notes: ${notes}`)}
+      <Button type="button" onClick={() => setNotes('First\nSecond\nThird')}>
+        Apply notes
+      </Button>
+      <Button type="button" onClick={() => setNotes('')}>
+        Clear notes
+      </Button>
+      <Button
+        type="button"
+        onClick={() =>
+          setNotes(
+            'Keep the team informed about the next meeting and share all follow up actions before the end of the week.',
+          )
+        }
+      >
+        Apply wrapping notes
+      </Button>
+      <Button type="button" onClick={() => setNotesWidth('140px')}>
+        Narrow notes
+      </Button>
+      <Button type="button" onClick={() => setNotesWidth('100%')}>
+        Widen notes
+      </Button>
+      <p data-testid="native-target">{nativeTarget}</p>
+      <p data-testid="control-values">{controlValues}</p>
+      <Button
+        type="button"
+        onClick={() => {
+          setReportedValues(`Email: ${email}; Notes: ${notes}`);
+          setControlValues(
+            `${inputRef.current?.value}/${textareaRef.current?.value}`,
+          );
+        }}
       >
         Read values
-      </button>
+      </Button>
       <p data-testid="reported-values">{reportedValues}</p>
     </TwentyUiGalleryCard>
   );

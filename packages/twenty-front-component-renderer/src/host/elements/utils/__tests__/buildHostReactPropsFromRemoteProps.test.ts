@@ -198,6 +198,32 @@ describe('buildHostReactPropsFromRemoteProps', () => {
     expect(result.href).toBe('https://twenty.com');
   });
 
+  it.each(['form', 'Form', 'FORM'])(
+    'should block %s attributes from assigning host form ownership',
+    (formAttributeName) => {
+      for (const htmlTag of [
+        'input',
+        'button',
+        'select',
+        'textarea',
+        'fieldset',
+        'output',
+        'div',
+      ]) {
+        const result = buildHostReactPropsFromRemoteProps({
+          remoteProps: {
+            [formAttributeName]: 'host-preferences',
+            name: 'guest-choice',
+            required: true,
+          },
+          htmlTag,
+        });
+
+        expect(result).toEqual({ name: 'guest-choice', required: true });
+      }
+    },
+  );
+
   it('should forward arbitrary aria-* and data-* attributes', () => {
     const result = buildHostReactPropsFromRemoteProps({
       remoteProps: {
@@ -238,5 +264,35 @@ describe('buildHostReactPropsFromRemoteProps', () => {
 
     expect('onClick' in result).toBe(false);
     expect(result['data-state']).toBe('open');
+  });
+
+  it('should route any casing of sandbox to the sandbox key', () => {
+    const result = buildHostReactPropsFromRemoteProps({
+      remoteProps: { sandbox: 'allow-forms', SANDBOX: 'allow-same-origin' },
+      htmlTag: 'iframe',
+    });
+
+    expect(result).toEqual({ sandbox: 'allow-same-origin' });
+  });
+
+  it('should parse a differently cased style string', () => {
+    const result = buildHostReactPropsFromRemoteProps({
+      remoteProps: { STYLE: 'color: red' },
+      htmlTag: 'div',
+    });
+
+    expect(result).toEqual({ style: { color: 'red' } });
+  });
+
+  it('should drop dangerouslySetInnerHTML', () => {
+    const result = buildHostReactPropsFromRemoteProps({
+      remoteProps: {
+        dangerouslySetInnerHTML: { __html: '<b>x</b>' },
+        id: 'keep',
+      },
+      htmlTag: 'div',
+    });
+
+    expect(result).toEqual({ id: 'keep' });
   });
 });

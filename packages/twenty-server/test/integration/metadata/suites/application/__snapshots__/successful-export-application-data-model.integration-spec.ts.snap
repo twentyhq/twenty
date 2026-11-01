@@ -829,7 +829,7 @@ exports[`Application export - data model exports the whole application as a stab
     "defaultRoleUniversalIdentifier": "<TEST_ROLE>",
     "description": "Test application",
     "displayName": "Test Application",
-    "packageJsonChecksum": null,
+    "packageJsonChecksum": "683017432d86b305dd3ee551aa9c54eb",
     "universalIdentifier": "<TEST_APP>",
     "yarnLockChecksum": null,
   },
@@ -850,7 +850,6 @@ exports[`Application export - data model exports the whole application as a stab
       "type": "TEXT",
       "universalIdentifier": "<COMPANY_TAGLINE_FIELD>",
       "universalSettings": null,
-      "writability": "OPEN",
     },
   ],
   "frontComponents": [],
@@ -913,7 +912,6 @@ exports[`Application export - data model exports the whole application as a stab
           "type": "TEXT",
           "universalIdentifier": "<TICKET_TITLE_FIELD>",
           "universalSettings": null,
-          "writability": "OPEN",
         },
         {
           "defaultValue": null,
@@ -935,7 +933,6 @@ exports[`Application export - data model exports the whole application as a stab
             "onDelete": "SET_NULL",
             "relationType": "MANY_TO_ONE",
           },
-          "writability": "OPEN",
         },
       ],
       "icon": "IconTicket",
@@ -950,11 +947,7 @@ exports[`Application export - data model exports the whole application as a stab
       "namePlural": "exportTickets",
       "nameSingular": "exportTicket",
       "openRecordIn": "USER_CHOICE",
-      "readability": "OPEN",
-      "readabilityParentFieldUniversalIdentifiers": null,
-      "sharingReach": "WORKSPACE",
       "universalIdentifier": "<TICKET_OBJECT>",
-      "writability": "OPEN",
     },
     {
       "color": null,
@@ -978,7 +971,6 @@ exports[`Application export - data model exports the whole application as a stab
           "universalSettings": {
             "relationType": "ONE_TO_MANY",
           },
-          "writability": "OPEN",
         },
       ],
       "icon": "IconTicket",
@@ -993,11 +985,7 @@ exports[`Application export - data model exports the whole application as a stab
       "namePlural": "exportProjects",
       "nameSingular": "exportProject",
       "openRecordIn": "USER_CHOICE",
-      "readability": "OPEN",
-      "readabilityParentFieldUniversalIdentifiers": null,
-      "sharingReach": "WORKSPACE",
       "universalIdentifier": "<PROJECT_OBJECT>",
-      "writability": "OPEN",
     },
   ],
   "pageLayoutTabs": [
@@ -1114,8 +1102,10 @@ exports[`Application export - data model exports the whole application as a stab
     },
   ],
   "publicAssets": [],
+  "relatedRecordPaths": [],
   "roles": [
     {
+      "canAccessAllAgentChatChannels": false,
       "canAccessAllTools": false,
       "canBeAssignedToAgents": true,
       "canBeAssignedToApiKeys": false,
@@ -1267,5 +1257,6 @@ exports[`Application export - data model exports the whole application as a stab
       "visibility": "WORKSPACE",
     },
   ],
+  "workflows": [],
 }
 `;

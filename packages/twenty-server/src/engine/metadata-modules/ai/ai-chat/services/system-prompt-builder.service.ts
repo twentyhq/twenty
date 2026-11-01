@@ -43,14 +43,17 @@ export class SystemPromptBuilderService {
 
     const [toolCatalog, skillCatalog, canAttachConversationToRecords] =
       await Promise.all([
-        this.toolRegistry.buildToolIndex(workspaceId, roleId, {
+        this.toolRegistry.buildToolIndex(workspaceId, {
+          rolePermissionConfig: {
+            intersectionOf: { userWorkspaceRoleId: roleId },
+          },
           userId,
           userWorkspaceId,
           excludeTools: AI_CHAT_EXCLUDED_TOOL_NAMES,
         }),
         this.skillService.findAllFlatSkills(workspaceId),
         this.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IS_CONVERSATIONS_TAB_ENABLED,
+          FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
           workspaceId,
         ),
       ]);

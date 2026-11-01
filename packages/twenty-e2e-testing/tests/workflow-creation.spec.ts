@@ -1,10 +1,7 @@
 import { expect, test } from '../lib/fixtures/screenshot';
-import { deleteWorkflow } from '../lib/requests/delete-workflow';
-import { destroyWorkflow } from '../lib/requests/destroy-workflow';
+import { deleteCoreWorkflows } from '../lib/requests/delete-core-workflows';
 
 test('Create workflow', async ({ page }) => {
-  const NEW_WORKFLOW_NAME = 'Test Workflow';
-
   await page.goto(process.env.LINK);
 
   const workflowsFolder = page.getByRole('button', { name: 'Workflows' });
@@ -12,13 +9,6 @@ test('Create workflow', async ({ page }) => {
 
   const workflowsLink = page.getByRole('link', { name: 'Workflows' });
   await workflowsLink.click();
-
-  await page.getByRole('button', { name: 'Create Workflow' }).click();
-
-  const recordCreationForm = page.getByRole('complementary');
-  await recordCreationForm
-    .getByRole('textbox', { name: 'Name' })
-    .fill(NEW_WORKFLOW_NAME);
 
   const [createWorkflowResponse] = await Promise.all([
     page.waitForResponse(async (response) => {
@@ -28,33 +18,22 @@ test('Create workflow', async ({ page }) => {
 
       const requestBody = response.request().postDataJSON();
 
-      return requestBody.operationName === 'CreateOneWorkflow';
+      return requestBody.operationName === 'CreateCoreWorkflow';
     }),
 
-    recordCreationForm.getByRole('button', { name: 'Create' }).click(),
+    page.getByText('New Workflow').click(),
   ]);
 
   const body = await createWorkflowResponse.json();
   expect(body.errors).toBeUndefined();
-  const newWorkflowId = body.data.createWorkflow.id;
+  const newCoreWorkflowId = body.data.createCoreWorkflow.id;
 
   try {
-    const workflowName = page
-      .getByTestId('top-bar-title')
-      .getByText(NEW_WORKFLOW_NAME);
-
-    await workflowName.waitFor({ state: 'visible' });
-    await expect(workflowName).toBeVisible();
-
-    await expect(page).toHaveURL(`/object/workflow/${newWorkflowId}`);
+    await expect(page).toHaveURL(`/workflow/${newCoreWorkflowId}`);
   } finally {
-    await deleteWorkflow({
+    await deleteCoreWorkflows({
       page,
-      workflowId: newWorkflowId,
-    });
-    await destroyWorkflow({
-      page,
-      workflowId: newWorkflowId,
+      coreWorkflowIds: [newCoreWorkflowId],
     });
   }
 });

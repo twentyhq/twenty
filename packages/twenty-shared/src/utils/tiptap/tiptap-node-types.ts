@@ -10,6 +10,7 @@ export const TIPTAP_NODE_TYPES = {
   BULLET_LIST: 'bulletList',
   ORDERED_LIST: 'orderedList',
   LIST_ITEM: 'listItem',
+  BLOCKQUOTE: 'blockquote',
   TASK_LIST: 'taskList',
   TASK_ITEM: 'taskItem',
   HARD_BREAK: 'hardBreak',
@@ -19,6 +20,14 @@ export const TIPTAP_NODE_TYPES = {
   BUTTON: 'button',
   DIVIDER: 'divider',
   HTML: 'html',
+  HTML_DOCUMENT: 'htmlDocument',
+  CODE_BLOCK: 'codeBlock',
+  TABLE: 'table',
+  TABLE_ROW: 'tableRow',
+  TABLE_HEADER: 'tableHeader',
+  TABLE_CELL: 'tableCell',
+  FILE: 'file',
+  TOGGLE: 'toggle',
 } as const;
 
 export type TipTapNodeType =

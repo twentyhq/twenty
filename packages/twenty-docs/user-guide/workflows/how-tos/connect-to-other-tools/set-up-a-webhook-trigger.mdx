@@ -3,7 +3,7 @@ title: Set Up a Webhook Trigger
 description: Receive data from external services to trigger workflows.
 ---
 
-Webhook triggers allow external services to start your workflows by sending data to a unique URL. Use them to connect forms, third-party apps, and custom integrations.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## When to Use Webhooks
 
@@ -63,10 +63,10 @@ Now add actions that use the webhook data:
 
 | Field | Value |
 |-------|-------|
-| First Name | `{{trigger.body.firstName}}` |
-| Last Name | `{{trigger.body.lastName}}` |
-| Email | `{{trigger.body.email}}` |
-| Company | Search or create based on `{{trigger.body.company}}` |
+| First Name | `{{trigger.firstName}}` |
+| Last Name | `{{trigger.lastName}}` |
+| Email | `{{trigger.email}}` |
+| Company | Search or create based on `{{trigger.company}}` |
 
 ### Step 5: Test the Webhook
 
@@ -104,7 +104,7 @@ If your webhook sends nested data:
 }
 ```
 
-Reference with: `{{trigger.body.contact.email}}`
+Reference with: `{{trigger.contact.email}}`
 
 ### Arrays
 
@@ -166,3 +166,4 @@ For more details on handling arrays, see [Handle Arrays in Code Actions](/user-g
 - [Workflow Triggers](/user-guide/workflows/capabilities/workflow-triggers)
 - [Workflow Actions](/user-guide/workflows/capabilities/workflow-actions)
 
+<PageBanner illustration="card-page-webhooks" />

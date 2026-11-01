@@ -1,9 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { MenuItem } from 'twenty-ui/components/navigation';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { useIcons } from 'twenty-ui/icon';
-import { Shortcut } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { SettingsValidationRuleHelperDetails } from '@/validation-rules/components/SettingsValidationRuleHelperDetails';
@@ -40,7 +39,7 @@ const getItemKey = (item: ValidationRuleHelperItem) =>
 type SettingsValidationRuleHelperPanelProps = {
   items: ValidationRuleHelperItem[];
   highlightedIndex: number;
-  isEnterHintVisible: boolean;
+  isFocused: boolean;
   editorFields: ValidationRuleEditorField[];
   onHighlight: (index: number) => void;
   onSelect: (item: ValidationRuleHelperItem) => void;
@@ -49,7 +48,7 @@ type SettingsValidationRuleHelperPanelProps = {
 export const SettingsValidationRuleHelperPanel = ({
   items,
   highlightedIndex,
-  isEnterHintVisible,
+  isFocused,
   editorFields,
   onHighlight,
   onSelect,
@@ -58,6 +57,7 @@ export const SettingsValidationRuleHelperPanel = ({
   const { getIcon } = useIcons();
 
   const highlightedItem = items[highlightedIndex];
+  const EnterHintIcon = getIcon('IconArrowBack');
 
   return (
     <StyledPanel>
@@ -67,38 +67,29 @@ export const SettingsValidationRuleHelperPanel = ({
         )}
         {items.map((item, index) => {
           const isHighlighted = index === highlightedIndex;
+          const isFocusedItem = isFocused && isHighlighted;
+          const ItemIcon = getValidationRuleHelperItemIcon({ item, getIcon });
 
           return (
-            <div
+            <ListItem
               key={getItemKey(item)}
               role="option"
-              aria-selected={isHighlighted}
+              aria-selected={isFocusedItem}
               ref={
                 isHighlighted
-                  ? (element: HTMLDivElement | null) =>
+                  ? (element: HTMLElement | null) =>
                       element?.scrollIntoView({ block: 'nearest' })
                   : undefined
               }
               onMouseDown={(event) => event.preventDefault()}
+              startIcon={<ItemIcon />}
+              endIcon={isFocusedItem ? <EnterHintIcon /> : undefined}
+              focused={isFocusedItem}
+              onMouseEnter={() => onHighlight(index)}
+              onClick={() => onSelect(item)}
             >
-              <MenuItem
-                LeftIcon={getValidationRuleHelperItemIcon({ item, getIcon })}
-                text={
-                  item.kind === 'field'
-                    ? item.field.label
-                    : item.definition.name
-                }
-                RightComponent={
-                  isHighlighted &&
-                  isEnterHintVisible && (
-                    <Shortcut shortcut={['Enter']} variant="text" />
-                  )
-                }
-                focused={isHighlighted}
-                onMouseEnter={() => onHighlight(index)}
-                onClick={() => onSelect(item)}
-              />
-            </div>
+              {item.kind === 'field' ? item.field.label : item.definition.name}
+            </ListItem>
           );
         })}
       </StyledList>

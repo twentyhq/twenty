@@ -43,13 +43,4 @@ export const buildAgentMessageStandardFlatIndexMetadatas = (
       indexWhereClause: null,
     },
   }),
-  hiddenKickoffIndex: createStandardIndexFlatMetadata({
-    ...args,
-    context: {
-      indexName: 'hiddenKickoffIndex',
-      relatedFieldNames: ['thread'],
-      isUnique: true,
-      indexWhereClause: '"isHidden" = true AND "deletedAt" IS NULL',
-    },
-  }),
 });

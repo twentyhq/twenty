@@ -6,7 +6,7 @@ import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai
 
 type AgentMessageSender = Pick<
   AgentMessageWorkspaceEntity,
-  'turnId' | 'role' | 'senderUserWorkspaceId' | 'senderApplicationId'
+  'turnId' | 'role' | 'senderWorkspaceMemberId' | 'senderApplicationId'
 >;
 
 const isSentByActor = (
@@ -14,9 +14,9 @@ const isSentByActor = (
   actor: AgentConversationActor,
 ): boolean =>
   actor.type === 'user'
-    ? message.senderUserWorkspaceId === actor.userWorkspaceId
+    ? message.senderWorkspaceMemberId === actor.workspaceMemberId
     : message.senderApplicationId === actor.applicationId &&
-      !isDefined(message.senderUserWorkspaceId);
+      !isDefined(message.senderWorkspaceMemberId);
 
 export const findTurnIdsActedByOthers = ({
   messages,

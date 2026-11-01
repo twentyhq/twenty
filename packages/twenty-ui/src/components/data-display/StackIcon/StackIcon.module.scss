@@ -1,0 +1,19 @@
+.root {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  height: var(--t-spacing-4);
+  justify-content: center;
+  position: relative;
+  width: var(--t-spacing-4);
+
+  & > span {
+    display: flex;
+  }
+}
+
+.stackedIcon {
+  left: var(--t-spacing-2);
+  position: absolute;
+  top: 7px;
+}

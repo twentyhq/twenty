@@ -21,12 +21,76 @@
   Card sections or other content.
 </ParamField>
 
+<ParamField body="Root.className" type="string">
+  CSS class merged with the part class.
+</ParamField>
+
 <ParamField body="Root.fullWidth" type="boolean">
   Sets the card width to 100% of its container.
 </ParamField>
 
-<ParamField body="Root.rounded" type="boolean">
-  Compatibility styling flag. Cards already use the same rounded corners when omitted.
+<ParamField body="Root.ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref to the default div, or the element supplied through render.
+</ParamField>
+
+<ParamField body="Root.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
+  Element or render callback composed through Base UI useRender. Supply native button or link attributes on the rendered owner.
+</ParamField>
+
+<ParamField body="Root.style" type="CSSProperties">
+  Native styles applied to the rendered part.
+</ParamField>
+
+<ParamField body="Root.variant" type="&quot;compact&quot; | &quot;default&quot;" default="default">
+  default keeps the standard section appearance. compact uses secondary section backgrounds, 8px header and footer padding, 8px horizontal content padding without vertical padding, and no header divider.
+</ParamField>
+
+### Card.Action
+
+<ParamField body="Action.children" type="ReactNode">
+  Optional content inside the stretched action. Supply an accessible name for empty actions.
+</ParamField>
+
+<ParamField body="Action.className" type="string">
+  CSS class merged with the action class.
+</ParamField>
+
+<ParamField body="Action.disabled" type="boolean" default="false">
+  Disables native button owners and suppresses the action hover treatment. Links and associated controls remain responsible for their own disabled behavior.
+</ParamField>
+
+<ParamField body="Action.ref" type="Ref&lt;HTMLButtonElement&gt;">
+  Ref to the default button, or the element supplied through render.
+</ParamField>
+
+<ParamField body="Action.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
+  Native element or render callback composed through Base UI useRender. Links retain native navigation and labels activate their associated controls without an additional keyboard target.
+</ParamField>
+
+<ParamField body="Action.style" type="CSSProperties">
+  Native styles applied to the rendered action.
+</ParamField>
+
+### Card.Control
+
+<ParamField body="Control.children" type="ReactNode">
+  Independent controls or tooltip targets lifted above a sibling Card.Action.
+</ParamField>
+
+<ParamField body="Control.className" type="string">
+  CSS class merged with the control class.
+</ParamField>
+
+<ParamField body="Control.ref" type="Ref&lt;HTMLSpanElement&gt;">
+  Ref to the default span, or the element supplied through render.
+</ParamField>
+
+<ParamField body="Control.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
+  Element or render callback composed through Base UI useRender. The supplied control retains its native attributes, events and semantics.
+</ParamField>
+
+<ParamField body="Control.style" type="CSSProperties">
+  Native styles applied to the rendered control wrapper.
 </ParamField>
 
 ### Card.Header
@@ -36,7 +100,19 @@
 </ParamField>
 
 <ParamField body="Header.className" type="string">
-  CSS class applied to the header.
+  CSS class merged with the part class.
+</ParamField>
+
+<ParamField body="Header.ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref to the default div, or the element supplied through render.
+</ParamField>
+
+<ParamField body="Header.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
+  Element or render callback composed through Base UI useRender. Supply native button or link attributes on the rendered owner.
+</ParamField>
+
+<ParamField body="Header.style" type="CSSProperties">
+  Native styles applied to the rendered part.
 </ParamField>
 
 ### Card.Content
@@ -46,19 +122,23 @@
 </ParamField>
 
 <ParamField body="Content.className" type="string">
-  CSS class applied to the body.
+  CSS class merged with the part class.
 </ParamField>
 
 <ParamField body="Content.divider" type="boolean">
   Adds a bottom border.
 </ParamField>
 
-<ParamField body="Content.hasHoverHighlight" type="boolean">
-  Changes the background on hover. Does not add an action.
+<ParamField body="Content.ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref to the default div, or the element supplied through render.
 </ParamField>
 
-<ParamField body="Content.isClickable" type="boolean">
-  Shows a pointer cursor. Does not add button semantics or keyboard interaction.
+<ParamField body="Content.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
+  Element or render callback composed through Base UI useRender. Supply native button or link attributes on the rendered owner.
+</ParamField>
+
+<ParamField body="Content.style" type="CSSProperties">
+  Native styles applied to the rendered part.
 </ParamField>
 
 ### Card.Footer
@@ -67,6 +147,22 @@
   Footer content, such as actions or supporting text.
 </ParamField>
 
+<ParamField body="Footer.className" type="string">
+  CSS class merged with the part class.
+</ParamField>
+
 <ParamField body="Footer.divider" type="boolean" default="true">
   Shows the top border unless explicitly set to false.
+</ParamField>
+
+<ParamField body="Footer.ref" type="Ref&lt;HTMLDivElement&gt;">
+  Ref to the default div, or the element supplied through render.
+</ParamField>
+
+<ParamField body="Footer.render" type="ReactElement&lt;unknown, string | JSXElementConstructor&lt;any&gt;&gt; | ComponentRenderFn&lt;HTMLProps, {}&gt;">
+  Element or render callback composed through Base UI useRender. Supply native button or link attributes on the rendered owner.
+</ParamField>
+
+<ParamField body="Footer.style" type="CSSProperties">
+  Native styles applied to the rendered part.
 </ParamField>

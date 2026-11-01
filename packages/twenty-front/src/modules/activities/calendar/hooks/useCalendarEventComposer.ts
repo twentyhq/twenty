@@ -27,6 +27,7 @@ import { Temporal } from 'temporal-polyfill';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 
@@ -53,7 +54,9 @@ export const useCalendarEventComposer = ({
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [location, setLocation] = useState('');
-  const [timeZone, setTimeZone] = useState(initialValues?.timeZone ?? 'UTC');
+  const [timeZone, setTimeZone] = useState(
+    initialValues?.timeZone ?? doNotTranslate('UTC'),
+  );
   const [isFullDay, setIsFullDay] = useState(false);
   const [attendees, setAttendees] = useState<EmailRecipient[]>(() =>
     parseEmailRecipients(initialValues?.defaultAttendees ?? '').map(
@@ -74,7 +77,7 @@ export const useCalendarEventComposer = ({
   const [dates, setDates] = useState(() =>
     getCalendarEventComposerDefaultDates({
       now: Temporal.Now.instant(),
-      timeZone: initialValues?.timeZone ?? 'UTC',
+      timeZone: initialValues?.timeZone ?? doNotTranslate('UTC'),
     }),
   );
 
@@ -274,7 +277,7 @@ export const useCalendarEventComposer = ({
           await refetchTimelineCalendarEvents();
         } else {
           enqueueToast({
-            variant: 'error',
+            status: 'error',
             children: t`Failed to link the related records to this event`,
           });
         }

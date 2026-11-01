@@ -10,9 +10,10 @@ import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { useCreateWorkspaceInvitation } from '@/workspace-invitation/hooks/useCreateWorkspaceInvitation';
 import { sanitizeEmailList } from '@/workspace/utils/sanitizeEmailList';
 import { i18n } from '@lingui/core';
-import { msg } from '@lingui/core/macro';
+import { msg, t } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { useToast } from 'twenty-ui/components/feedback';
 import {
   IconLock,
@@ -81,8 +82,8 @@ const validationSchema = z.object({
         code: 'custom',
         message:
           invalidEmails.length > 1
-            ? `Invalid emails: ${invalidEmailsList}`
-            : `Invalid email: ${invalidEmailsList}`,
+            ? t`Invalid emails: ${invalidEmailsList}`
+            : t`Invalid email: ${invalidEmailsList}`,
       });
     }
   }),
@@ -148,7 +149,7 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
     if (data.sendInvitations.result.length > 0) {
       const invitationCount = data.sendInvitations.result.length;
       enqueueToast({
-        variant: 'success',
+        status: 'success',
         children: t`${invitationCount} invitations sent`,
         duration: 2000,
       });
@@ -158,7 +159,7 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
 
     if (!data.sendInvitations.success) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: data.sendInvitations.errors.join(', '),
         duration: 5000,
       });
@@ -184,8 +185,9 @@ export const WorkspaceInviteTeam = ({ roles }: WorkspaceInviteTeamProps) => {
               return (
                 <SettingsTextInput
                   instanceId="workspace-invite-team-emails"
-                  // oxlint-disable-next-line lingui/no-unlocalized-strings
-                  placeholder="tim@apple.com, jony.ive@apple.dev"
+                  placeholder={doNotTranslate(
+                    'tim@apple.com, jony.ive@apple.dev',
+                  )}
                   value={value}
                   onChange={onChange}
                   error={error?.message}

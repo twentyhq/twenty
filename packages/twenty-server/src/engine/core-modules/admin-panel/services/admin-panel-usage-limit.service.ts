@@ -4,7 +4,7 @@ import {
   type AdminPanelUsageLimitDefaultDTO,
   type AdminPanelWorkspaceUsageLimitsDTO,
 } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-usage-limits.dto';
-import { type NumericConfigVariableKey } from 'src/engine/core-modules/twenty-config/types/numeric-config-variable-key.type';
+import { type OptionalNumericConfigVariableKey } from 'src/engine/core-modules/twenty-config/types/optional-numeric-config-variable-key.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
 import { type UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
@@ -34,15 +34,19 @@ export class AdminPanelUsageLimitService {
   private buildDefaults(
     usageLimits: UsageLimitEntity[],
   ): AdminPanelUsageLimitDefaultDTO[] {
-    const getConfigValue = (key: NumericConfigVariableKey) =>
-      this.twentyConfigService.get(key);
+    const getConfigValue = <TKey extends OptionalNumericConfigVariableKey>(
+      key: TKey,
+    ) => this.twentyConfigService.get(key);
 
     return buildUsageLimitDefaultScopes({ getConfigValue }).map(
       (usageLimitDefault) => {
         const overridingUsageLimit = usageLimits.find((usageLimit) =>
           doesUsageLimitRowSuppressDefault({
             scope: buildUsageLimitScope(usageLimit),
-            usageLimitDefault,
+            usageLimitDefault: {
+              ...usageLimitDefault,
+              operationTypes: [usageLimitDefault.operationType],
+            },
           }),
         );
 

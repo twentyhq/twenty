@@ -22,10 +22,19 @@ const EMAIL_AND_CALENDAR_PROVIDERS: ReadonlySet<ConnectedAccountProvider> =
 // providers (OIDC, SAML) and app-managed OAuth (APP) also live in
 // connectedAccount, but they're surfaced elsewhere — keep them off this
 // page by filtering to the email/calendar provider set.
-export const useMyConnectedAccounts = () => {
+export const useMyConnectedAccounts = ({
+  providers = EMAIL_AND_CALENDAR_PROVIDERS,
+}: {
+  providers?: ReadonlySet<ConnectedAccountProvider>;
+} = {}) => {
   const apolloClient = useApolloClient();
 
-  const { data, loading: accountsLoading } = useQuery<{
+  const {
+    data,
+    loading: accountsLoading,
+    error,
+    refetch,
+  } = useQuery<{
     myConnectedAccounts: CoreConnectedAccount[];
   }>(GET_MY_CONNECTED_ACCOUNTS, {
     client: apolloClient,
@@ -42,7 +51,7 @@ export const useMyConnectedAccounts = () => {
     }
 
     return data.myConnectedAccounts
-      .filter((account) => EMAIL_AND_CALENDAR_PROVIDERS.has(account.provider))
+      .filter((account) => providers.has(account.provider))
       .map((account) => ({
         ...account,
         messageChannels: messageChannels.filter(
@@ -52,11 +61,13 @@ export const useMyConnectedAccounts = () => {
           (channel) => channel.connectedAccountId === account.id,
         ),
       }));
-  }, [data, messageChannels, calendarChannels]);
+  }, [data, messageChannels, calendarChannels, providers]);
 
   return {
     accounts,
     loading:
       accountsLoading || messageChannelsLoading || calendarChannelsLoading,
+    error,
+    refetch,
   };
 };

@@ -34,14 +34,14 @@ import {
 } from 'src/engine/core-modules/file/guards/file-by-id.guard';
 import { PUBLIC_ASSET_CACHE_CONTROL } from 'src/engine/core-modules/file/interfaces/file-folder.interface';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-file-response-headers.utils';
+import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-file-response-headers.util';
 import { RecordExportWorkspaceService } from 'src/engine/core-modules/record-export/services/record-export.workspace-service';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
+import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/permissions-rest-api-exception.filter';
 
 // workspaceId is bound onto the request by FileByIdGuard.
 type FileByIdRequest = Request & { workspaceId: string };
@@ -204,7 +204,7 @@ export class FileController {
         playground: true,
         workspaceAgnostic: false,
       },
-      apiKey: false,
+      apiKey: true,
       oauthClient: { withUser: true, withoutUser: false },
       application: { withUser: true, withoutUser: false },
     }),

@@ -1,0 +1,63 @@
+/* @license Enterprise */
+
+import { Injectable } from '@nestjs/common';
+
+import { getEventLogRetentionInHours } from 'twenty-shared/utils';
+
+import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
+import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
+import {
+  WorkspaceException,
+  WorkspaceExceptionCode,
+} from 'src/engine/core-modules/workspace/workspace.exception';
+
+@Injectable()
+export class EventLogRetentionService {
+  constructor(
+    private readonly billingSubscriptionService: BillingSubscriptionService,
+  ) {}
+
+  async getRetentionInHours({
+    workspaceId,
+    workspaceRetentionInDays,
+  }: {
+    workspaceId: string;
+    workspaceRetentionInDays: number;
+  }): Promise<number> {
+    return getEventLogRetentionInHours({
+      workspaceRetentionInDays,
+      hasAuditLogsEntitlement: await this.hasAuditLogsEntitlement(workspaceId),
+    });
+  }
+
+  async getRetentionStartDate({
+    workspaceId,
+    workspaceRetentionInDays,
+  }: {
+    workspaceId: string;
+    workspaceRetentionInDays: number;
+  }): Promise<Date> {
+    const retentionInHours = await this.getRetentionInHours({
+      workspaceId,
+      workspaceRetentionInDays,
+    });
+
+    return new Date(Date.now() - retentionInHours * 60 * 60 * 1000);
+  }
+
+  async validateRetentionUpdateOrThrow(workspaceId: string): Promise<void> {
+    if (!(await this.hasAuditLogsEntitlement(workspaceId))) {
+      throw new WorkspaceException(
+        'Changing the event log retention requires the audit logs entitlement',
+        WorkspaceExceptionCode.EVENT_LOG_RETENTION_DISABLED,
+      );
+    }
+  }
+
+  async hasAuditLogsEntitlement(workspaceId: string): Promise<boolean> {
+    return this.billingSubscriptionService.getWorkspaceEntitlementValue(
+      workspaceId,
+      BillingEntitlementKey.AUDIT_LOGS,
+    );
+  }
+}

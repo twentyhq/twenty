@@ -16,7 +16,7 @@ describe('getToastOptionsFromError', () => {
         onClose,
       }),
     ).toEqual({
-      variant: 'error',
+      status: 'error',
       children: 'Try again later',
       description: 'Your changes are still here',
       action,

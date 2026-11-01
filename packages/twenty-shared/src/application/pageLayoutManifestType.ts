@@ -38,5 +38,6 @@ export type PageLayoutManifest = SyncableEntityOptions & {
   type: PageLayoutType;
   objectUniversalIdentifier?: string;
   defaultTabToFocusOnMobileAndSidePanelUniversalIdentifier?: string;
+  isFirstTabPinned?: boolean;
   tabs?: PageLayoutTabManifest[];
 };

@@ -8,7 +8,7 @@ import { Trans } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useId } from 'react';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import {
   beautifyExactDateTime,
   beautifyPastDateRelativeToNow,

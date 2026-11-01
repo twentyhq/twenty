@@ -1,14 +1,13 @@
 import { readFile } from 'fs/promises';
 import path from 'path';
 
-import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/application-package/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
-import { SEED_DEPENDENCIES_DIRNAME } from 'src/engine/core-modules/application/application-package/constants/seed-dependencies-dirname';
+import {
+  computeDependencyFileChecksum,
+  computePackageJsonChecksum,
+} from 'twenty-shared/application';
 
-// To regenerate: use logicFunctionCreateHash from logic-function-create-hash.utils.
-// package.json: hash(JSON.stringify(JSON.parse(content))). yarn.lock: hash(content).
-// Both use first 32 chars of SHA512 hex digest.
-const DEFAULT_PACKAGE_JSON_CHECKSUM = '7354e423181450e0e6de0961cafee367';
-const DEFAULT_YARN_LOCK_CHECKSUM = '3e1f09a5f0ab63a751f5d31a0b517f24';
+import { parseAvailablePackagesFromPackageJsonAndYarnLock } from 'src/engine/core-modules/application/application-package/utils/parse-available-packages-from-package-json-and-yarn-lock.util';
+import { STANDARD_APPLICATION_DEPENDENCIES_DIRECTORY_NAME } from 'src/engine/core-modules/application/application-package/constants/standard-application-dependencies-directory-name';
 
 export type DefaultApplicationPackageFields = {
   packageJsonChecksum: string;
@@ -18,23 +17,24 @@ export type DefaultApplicationPackageFields = {
   yarnLockContent: string;
 };
 
-export const getDefaultApplicationPackageFields =
-  async (): Promise<DefaultApplicationPackageFields> => {
-    const [packageJsonContent, yarnLockContent] = await Promise.all([
-      readFile(path.join(SEED_DEPENDENCIES_DIRNAME, 'package.json'), 'utf8'),
-      readFile(path.join(SEED_DEPENDENCIES_DIRNAME, 'yarn.lock'), 'utf8'),
-    ]);
+export const getDefaultApplicationPackageFields = async ({
+  directory = STANDARD_APPLICATION_DEPENDENCIES_DIRECTORY_NAME,
+}: { directory?: string } = {}): Promise<DefaultApplicationPackageFields> => {
+  const [packageJsonContent, yarnLockContent] = await Promise.all([
+    readFile(path.join(directory, 'package.json'), 'utf8'),
+    readFile(path.join(directory, 'yarn.lock'), 'utf8'),
+  ]);
 
-    const availablePackages = parseAvailablePackagesFromPackageJsonAndYarnLock(
-      packageJsonContent,
-      yarnLockContent,
-    );
+  const availablePackages = parseAvailablePackagesFromPackageJsonAndYarnLock(
+    packageJsonContent,
+    yarnLockContent,
+  );
 
-    return {
-      packageJsonChecksum: DEFAULT_PACKAGE_JSON_CHECKSUM,
-      yarnLockChecksum: DEFAULT_YARN_LOCK_CHECKSUM,
-      availablePackages,
-      packageJsonContent,
-      yarnLockContent,
-    };
+  return {
+    packageJsonChecksum: computePackageJsonChecksum(packageJsonContent),
+    yarnLockChecksum: computeDependencyFileChecksum(yarnLockContent),
+    availablePackages,
+    packageJsonContent,
+    yarnLockContent,
   };
+};

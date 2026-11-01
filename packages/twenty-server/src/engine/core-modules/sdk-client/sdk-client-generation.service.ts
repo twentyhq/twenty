@@ -99,6 +99,8 @@ export class SdkClientGenerationService {
       {
         id: `sdk-client:${workspaceId}:${applicationId}`,
         retryLimit: SDK_CLIENT_GENERATION_RETRY_LIMIT,
+        workspaceId,
+        applicationUniversalIdentifier,
       },
     );
   }

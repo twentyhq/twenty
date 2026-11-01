@@ -1,8 +1,13 @@
-import { mkdtemp, rm } from 'node:fs/promises';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
+import {
+  createProgram,
+  flattenDiagnosticMessageText,
+  getPreEmitDiagnostics,
+} from 'typescript';
 import { afterAll, beforeAll, describe, expect, it, vi } from 'vitest';
 
 import { generateCoreClientFromSchema } from '../generate-core-client';
@@ -13,6 +18,8 @@ import { generateCoreClientFromSchema } from '../generate-core-client';
 // client-wrapper-auth.test.ts, which stubs createClient and so never runs the
 // vendored runtime's query-building path.
 const SCHEMA = `
+scalar JSON
+
 type Query {
   hello: String
   person(id: ID!): Person
@@ -20,6 +27,12 @@ type Query {
 
 type Mutation {
   createPerson(name: String!): Person
+  echoJson(value: JSON): JSON
+  createCallRecording(data: CallRecordingCreateInput!): String
+}
+
+input CallRecordingCreateInput {
+  transcript: JSON
 }
 
 type Person {
@@ -72,6 +85,37 @@ describe('Generated client queries the API (vendored genql runtime)', () => {
     }
   });
 
+  it('accepts arrays and primitive JSON values in generated mutation inputs', async () => {
+    const fixturePath = join(temporaryDir, 'json-input.ts');
+
+    await writeFile(
+      fixturePath,
+      `import { type CallRecordingCreateInput } from './client/schema';
+
+const inputs = [
+  { transcript: [{ speaker: 'Ada', text: 'Hello' }] },
+  { transcript: { text: 'Hello' } },
+  { transcript: 'Hello' },
+  { transcript: 42 },
+  { transcript: true },
+  { transcript: null },
+] satisfies CallRecordingCreateInput[];
+`,
+    );
+
+    const program = createProgram([fixturePath], {
+      noEmit: true,
+      strict: true,
+      skipLibCheck: true,
+      types: [],
+    });
+    const diagnostics = getPreEmitDiagnostics(program).map((diagnostic) =>
+      flattenDiagnosticMessageText(diagnostic.messageText, '\n'),
+    );
+
+    expect(diagnostics).toEqual([]);
+  });
+
   it('builds a GraphQL query from a selection and returns parsed data', async () => {
     const fetchMock = vi.fn(async (_url: string, _init?: RequestInit) =>
       jsonResponse({ data: { person: { id: '1', name: 'Ada' } } }),
@@ -119,6 +163,24 @@ describe('Generated client queries the API (vendored genql runtime)', () => {
     const body = JSON.parse(String(fetchMock.mock.calls[0][1]?.body));
     expect(body.query).toMatch(/mutation/);
     expect(body.query).toMatch(/createPerson/);
+  });
+
+  it('preserves JSON array payloads', async () => {
+    const transcript = [
+      { participant: { name: 'Ada' }, words: [{ text: 'Hello' }] },
+    ];
+    const fetchMock = vi.fn<typeof globalThis.fetch>(async () =>
+      jsonResponse({ data: { echoJson: transcript } }),
+    );
+    const client = createClient({
+      url: 'https://example.test/graphql',
+      fetch: fetchMock,
+    });
+    expect(
+      await client.mutation({ echoJson: { __args: { value: transcript } } }),
+    ).toEqual({ echoJson: transcript });
+    const body = JSON.parse(String(fetchMock.mock.calls[0][1]?.body));
+    expect(Object.values(body.variables)).toContainEqual(transcript);
   });
 
   it('throws when the API responds with GraphQL errors', async () => {

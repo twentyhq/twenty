@@ -4,4 +4,5 @@ export type CountryChoice = {
   value: string;
   label: string;
   flag?: ReactNode;
+  disabled?: boolean;
 };

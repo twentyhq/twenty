@@ -14,6 +14,7 @@ import { workspaceMemberFormatPreferencesState } from '@/localization/states/wor
 import { LogConsole } from '@/log-console/components/LogConsole';
 import { LOG_CONSOLE_TAB_LIST_INSTANCE_ID } from '@/log-console/constants/LogConsoleTabListInstanceId';
 import { isLogConsoleFullScreenState } from '@/log-console/states/isLogConsoleFullScreenState';
+import { logConsoleActiveSourceIdState } from '@/log-console/states/logConsoleActiveSourceIdState';
 import { logConsoleDisplayModeState } from '@/log-console/states/logConsoleDisplayModeState';
 import { logConsoleFiltersState } from '@/log-console/states/logConsoleFiltersState';
 import { logConsoleHeightState } from '@/log-console/states/logConsoleHeightState';
@@ -27,18 +28,16 @@ import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleBu
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { PageCardHeader } from '@/ui/layout/page/components/PageCardHeader';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { isLogConsoleEnabledState } from '@/log-console/states/isLogConsoleEnabledState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
   BillingEntitlementKey,
   EventLogFilterOperand,
-  type EventLogRecord,
   type EventLogsLiveSubscription,
   type EventLogsQuery,
   type EventLogsQueryVariables,
   EventLogTable,
-  FeatureFlagKey,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { SettingsObjects } from '~/pages/settings/data-model/SettingsObjects';
@@ -50,6 +49,7 @@ import { graphqlMocks, metadataGraphql } from '~/testing/graphqlMocks';
 import { mockedClientConfig } from '~/testing/mock-data/config';
 import {
   mockedEventLogApplications,
+  mockedEventLogInstalledApplications,
   mockedEventLogLiveApplicationLogs,
   mockedEventLogLogicFunctions,
   mockedEventLogRecordsByTable,
@@ -65,8 +65,9 @@ import { sleep } from '~/utils/sleep';
 
 const WORKSPACE_WITH_LOGS_CONSOLE = {
   ...mockCurrentWorkspace,
-  featureFlags: [
-    { key: FeatureFlagKey.IS_LOGS_SETTINGS_SECTION_ENABLED, value: true },
+  installedApplications: [
+    ...mockCurrentWorkspace.installedApplications,
+    ...mockedEventLogInstalledApplications,
   ],
   billingEntitlements: [{ key: BillingEntitlementKey.AUDIT_LOGS, value: true }],
 };
@@ -92,7 +93,9 @@ const fakeSseClient = {
   },
 };
 
-const emitEventLogsLive = (records: EventLogRecord[]) =>
+const emitEventLogsLive = (
+  records: EventLogsLiveSubscription['eventLogsLive'],
+) =>
   eventLogsLiveSubscriptions.forEach((_variables, sink) =>
     sink.next({ data: { eventLogsLive: records } }),
   );
@@ -168,10 +171,11 @@ const meta: Meta<PageDecoratorArgs> = {
         timeFormat: TimeFormat.HOUR_24,
       }),
     );
-    jotaiStore.set(isAdvancedModeEnabledState.atom, true);
+    jotaiStore.set(isLogConsoleEnabledState.atom, true);
     jotaiStore.set(logConsoleDisplayModeState.atom, 'collapsed');
     jotaiStore.set(logConsoleHeightState.atom, null);
     jotaiStore.set(isLogConsoleFullScreenState.atom, false);
+    jotaiStore.set(logConsoleActiveSourceIdState.atom, null);
   },
   parameters: {
     layout: 'fullscreen',
@@ -193,7 +197,7 @@ const meta: Meta<PageDecoratorArgs> = {
               (variables.input.filters?.fieldFilters ?? []).every(
                 ({ field, operand, values }) =>
                   values.includes(
-                    record[field as keyof EventLogRecord] ??
+                    record[field as keyof typeof record] ??
                       record.properties?.[field],
                   ) ===
                   (operand === EventLogFilterOperand.IS),
@@ -302,6 +306,7 @@ export const AppLogsOpen: Story = {
         "TypeError: Cannot read properties of undefined (reading 'amount_due')",
       ),
     ).toHaveLength(2);
+    expect(await canvas.findByText('Lead Scoring')).toBeVisible();
   },
 };
 
@@ -558,19 +563,22 @@ export const UsageOpen: Story = {
 
 export const TimeRangeMenu: Story = {
   beforeEach: () => {
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...WORKSPACE_WITH_LOGS_CONSOLE,
+      eventLogRetentionDays: 30,
+    });
     jotaiStore.set(logConsoleDisplayModeState.atom, 'open');
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     await userEvent.click(
-      await canvas.findByRole('tab', { name: 'App logs' }, { timeout: 5000 }),
+      await canvas.findByText('Last 24 hours', {}, { timeout: 5000 }),
     );
-    await userEvent.click(await canvas.findByText('Last 24 hours'));
 
     expect(
       await screen.findByRole('option', { name: 'Last 90 days' }),
-    ).toHaveAttribute('aria-disabled', 'true');
+    ).toBeDisabled();
   },
 };
 
@@ -748,11 +756,14 @@ export const FullScreen: Story = {
     const canvas = within(canvasElement);
 
     await canvas.findByRole('button', { name: 'Command Menu' });
-    const closeButton = await canvas.findByRole('button', { name: 'Close' });
-    const { x, y, width, height } = closeButton.getBoundingClientRect();
+    const exitFullScreenButton = await canvas.findByRole('button', {
+      name: 'Exit full screen',
+    });
+    const { x, y, width, height } =
+      exitFullScreenButton.getBoundingClientRect();
 
     expect(
-      closeButton.contains(
+      exitFullScreenButton.contains(
         document.elementFromPoint(x + width / 2, y + height / 2),
       ),
     ).toBe(true);

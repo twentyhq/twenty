@@ -1,5 +1,7 @@
 import { z } from 'zod';
 import { baseWorkflowActionSettingsSchema } from './base-workflow-action-settings-schema';
+import { recordFilterGroupSchema } from './record-filter-group-schema';
+import { recordFilterSchema } from './record-filter-schema';
 import { workflowVariableReferenceSchema } from './workflow-variable-reference-schema';
 
 export const workflowFindRecordsActionSettingsSchema =
@@ -15,8 +17,8 @@ export const workflowFindRecordsActionSettingsSchema =
         .optional(),
       filter: z
         .object({
-          recordFilterGroups: z.array(z.any()).optional(),
-          recordFilters: z.array(z.any()).optional(),
+          recordFilterGroups: z.array(recordFilterGroupSchema).optional(),
+          recordFilters: z.array(recordFilterSchema).optional(),
         })
         .optional(),
       orderBy: z

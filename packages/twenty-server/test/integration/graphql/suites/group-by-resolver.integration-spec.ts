@@ -35,7 +35,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type FieldMetadataDTO } from 'src/engine/metadata-modules/field-metadata/dtos/field-metadata.dto';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
-import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsExceptionMessage } from 'src/engine/permissions/permissions.exception';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -970,6 +970,51 @@ describe('group-by resolver (integration)', () => {
         expect.not.arrayContaining([
           expect.objectContaining({ groupByDimensionValues: [cityB] }),
         ]),
+      );
+    });
+
+    it('rejects a view filter using an operator not allowed for the field type', async () => {
+      const searchVectorFieldMetadataId = personObject?.fieldsList?.find(
+        (f: FieldMetadataDTO) => f.name === 'searchVector',
+      )?.id;
+
+      jestExpectToBeDefined(searchVectorFieldMetadataId);
+
+      const { data: createViewData } = await createOneView({
+        input: {
+          name: 'People View Vector Filter',
+          objectMetadataId: personObjectMetadataId,
+          icon: 'Icon123',
+        },
+        expectToFail: false,
+      });
+
+      viewId = createViewData.createView.id;
+
+      await createOneViewFilter({
+        input: {
+          viewId,
+          fieldMetadataId: searchVectorFieldMetadataId,
+          operand: ViewFilterOperand.VECTOR_SEARCH,
+          value: 'anything',
+          positionInViewFilterGroup: 0,
+        },
+        expectToFail: false,
+      });
+
+      const response = await makeGraphqlApiRequest(
+        groupByOperationFactory({
+          objectMetadataSingularName: 'person',
+          objectMetadataPluralName: 'people',
+          groupBy: [{ jobTitle: true }],
+          viewId,
+        }),
+      );
+
+      expect(response.body.errors).toBeDefined();
+      expect(response.body.errors[0].message).toContain('searchVector');
+      expect(response.body.errors[0].extensions.code).toBe(
+        ErrorCode.BAD_USER_INPUT,
       );
     });
   });

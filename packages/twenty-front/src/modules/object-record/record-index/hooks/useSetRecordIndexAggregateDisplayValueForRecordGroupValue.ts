@@ -9,7 +9,7 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { useStore } from 'jotai';
 import { useCallback, useContext } from 'react';
 import { type Nullable } from 'twenty-shared/types';
-import { dateLocaleState } from '~/localization/states/dateLocaleState';
+import { dateLocaleState } from '@/localization/states/dateLocaleState';
 
 export const useSetRecordIndexAggregateDisplayValueForRecordGroupValue = () => {
   const { dateFormat, timeFormat, timeZone } = useContext(UserContext);

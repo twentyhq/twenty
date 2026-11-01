@@ -60,7 +60,20 @@ describe('useCallRecordingForWidget', () => {
     },
   );
 
-  it('does not request media for the summary widget', () => {
+  it('requests the transcript but not media for the summary widget', () => {
+    renderHook(() => useCallRecordingForWidget({ kind: 'summary' }));
+
+    expect(getRequestedFields()).toEqual({
+      id: true,
+      status: true,
+      summary: true,
+      transcript: true,
+    });
+  });
+
+  it('omits the transcript for the summary widget when it is restricted', () => {
+    restrictedFields = new Set(['transcript']);
+
     renderHook(() => useCallRecordingForWidget({ kind: 'summary' }));
 
     expect(getRequestedFields()).toEqual({

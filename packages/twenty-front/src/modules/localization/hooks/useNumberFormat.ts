@@ -5,7 +5,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import {
   formatNumber as utilFormatNumber,
   type FormatNumberOptions,
-} from '~/utils/format/formatNumber';
+} from '@/localization/utils/formatNumber';
 
 export const useNumberFormat = () => {
   const workspaceMemberFormatPreferences = useAtomStateValue(

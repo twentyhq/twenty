@@ -47,7 +47,7 @@ export const useRestoreCoreWorkflowVersionAsDraft = ({
 
       if (!isDefined(draftWorkflowVersionId)) {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Could not restore this version as draft.`,
         });
 
@@ -58,7 +58,7 @@ export const useRestoreCoreWorkflowVersionAsDraft = ({
       navigate(AppPath.WorkflowCoreShowPage, { coreWorkflowId: workflowId });
     } catch {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Could not restore this version as draft.`,
       });
     } finally {

@@ -74,20 +74,20 @@ export const Default: Story = {
     const dropdown = within(
       await screen.findByRole('dialog', { name: 'Object' }),
     );
-    const options = dropdown.getAllByRole('button');
+    const options = dropdown.getAllByRole('option');
 
     expect(
-      options.indexOf(dropdown.getByRole('button', { name: 'People' })),
+      options.indexOf(dropdown.getByRole('option', { name: 'People' })),
     ).toBeLessThan(
       options.indexOf(
-        dropdown.getByRole('button', { name: 'Calendar events' }),
+        dropdown.getByRole('option', { name: 'Calendar events' }),
       ),
     );
 
     await userEvent.type(dropdown.getByRole('searchbox'), 'Person');
-    expect(dropdown.getByRole('button', { name: 'People' })).toBeVisible();
+    expect(dropdown.getByRole('option', { name: 'People' })).toBeVisible();
     expect(
-      dropdown.queryByRole('button', { name: 'Companies' }),
+      dropdown.queryByRole('option', { name: 'Companies' }),
     ).not.toBeInTheDocument();
 
     await userEvent.keyboard('{Enter}');
@@ -104,7 +104,7 @@ export const Default: Story = {
       await screen.findByRole('searchbox', { name: 'Search' }),
     ).toHaveValue('');
     expect(
-      await screen.findByRole('button', { name: 'Companies' }),
+      await screen.findByRole('option', { name: 'Companies' }),
     ).toBeVisible();
 
     await userEvent.keyboard('{Escape}');

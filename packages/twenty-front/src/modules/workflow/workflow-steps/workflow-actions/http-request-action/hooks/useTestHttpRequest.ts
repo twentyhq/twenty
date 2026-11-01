@@ -102,7 +102,7 @@ export const useTestHttpRequest = (actionId: string) => {
       const response = result?.data?.testHttpRequest;
 
       if (!response) {
-        throw new Error('No response from server');
+        throw new Error(t`No response from server`);
       }
 
       if (response.success === true) {
@@ -116,7 +116,7 @@ export const useTestHttpRequest = (actionId: string) => {
           output: {
             data: resultData,
             status: response.status ?? 200,
-            statusText: response.statusText ?? 'OK',
+            statusText: response.statusText ?? t`OK`,
             headers: response.headers ?? {},
             duration,
             error: undefined,

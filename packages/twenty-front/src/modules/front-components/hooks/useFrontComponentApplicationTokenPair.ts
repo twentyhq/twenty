@@ -4,6 +4,7 @@ import { type GraphQLFormattedError } from 'graphql';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 import { frontComponentApplicationTokenPairFamilyState } from '@/front-components/states/frontComponentApplicationTokenPairFamilyState';
 import { pendingFrontComponentApplicationTokenPairPromiseFamilyState } from '@/front-components/states/pendingFrontComponentApplicationTokenPairPromiseFamilyState';
@@ -62,7 +63,9 @@ export const useFrontComponentApplicationTokenPair = () => {
 
       if (!isDefined(generatedApplicationTokenPair)) {
         throw new Error(
-          'Failed to generate front component application token pair',
+          doNotTranslate(
+            'Failed to generate front component application token pair',
+          ),
         );
       }
 
@@ -91,7 +94,7 @@ export const useFrontComponentApplicationTokenPair = () => {
         const renewedApplicationTokenPair = result.data?.renewApplicationToken;
 
         if (!isDefined(renewedApplicationTokenPair)) {
-          throw new Error('Failed to renew application token');
+          throw new Error(doNotTranslate('Failed to renew application token'));
         }
 
         return { ...renewedApplicationTokenPair, obtainedAt: Date.now() };

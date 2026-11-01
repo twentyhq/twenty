@@ -42,14 +42,14 @@ export const useDeleteJobs = ({
         if (deletedCount > 0) {
           if (failedResults.length > 0) {
             enqueueToast({
-              variant: 'success',
+              status: 'success',
               children: plural(deletedCount, {
                 one: `Successfully deleted ${deletedCount} job`,
                 other: `Successfully deleted ${deletedCount} jobs`,
               }),
             });
             enqueueToast({
-              variant: 'error',
+              status: 'error',
               children: plural(failedResults.length, {
                 one: `# job could not be deleted`,
                 other: `# jobs could not be deleted`,
@@ -57,7 +57,7 @@ export const useDeleteJobs = ({
             });
           } else {
             enqueueToast({
-              variant: 'success',
+              status: 'success',
               children: plural(deletedCount, {
                 one: `Successfully deleted ${deletedCount} job`,
                 other: `Successfully deleted ${deletedCount} jobs`,
@@ -74,14 +74,14 @@ export const useDeleteJobs = ({
             errorMessages.length > 0 ? `: ${errorMessages[0]}` : '';
 
           enqueueToast({
-            variant: 'error',
+            status: 'error',
             children: t`No jobs were deleted${errorDetails}`,
           });
         }
       }
     } catch (error) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: CombinedGraphQLErrors.is(error)
           ? getErrorMessageFromApolloError(error)
           : t`Failed to delete jobs. Please try again later.`,

@@ -13,7 +13,6 @@ import {
   MEETING_SLOT_REACHED_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import onCalendarInteraction from 'src/logic-functions/on-calendar-interaction';
-import onCompanyCreated from 'src/logic-functions/on-company-created';
 import onMeetingHorizonReached from 'src/logic-functions/on-meeting-horizon-reached';
 import onMeetingSlotReached from 'src/logic-functions/on-meeting-slot-reached';
 import onEmailInteraction from 'src/logic-functions/on-email-interaction';
@@ -38,9 +37,6 @@ const opportunityCreatedHandler = onOpportunityCreated.config.handler as (
   batch: unknown,
 ) => Promise<void>;
 const opportunityUpdatedHandler = onOpportunityUpdated.config.handler as (
-  batch: unknown,
-) => Promise<void>;
-const companyCreatedHandler = onCompanyCreated.config.handler as (
   batch: unknown,
 ) => Promise<void>;
 const personUpdatedHandler = onPersonUpdated.config.handler as (
@@ -1279,21 +1275,5 @@ describe('last contact handlers', () => {
     expect(companyContact.lastContactAt).toBeNull();
     expect(companyContact.lastContactItemMessageId).toBeNull();
     expect(companyContact.lastContactItemCalendarEventId).toBeNull();
-  });
-
-  it('leaves the company last contact empty when the company has no contacted people on creation', async () => {
-    const companyId = await createCompany(client);
-    createdCompanyIds.push(companyId);
-
-    await companyCreatedHandler(
-      buildBatch('company.created', companyId, { after: { id: companyId } }),
-    );
-
-    const companyContact = await getRelatedLastContact(
-      client,
-      'company',
-      companyId,
-    );
-    expect(companyContact.lastContactAt).toBeNull();
   });
 });

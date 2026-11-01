@@ -6,6 +6,7 @@ import { type APP_LOCALES } from 'twenty-shared/translations';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -16,8 +17,9 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { resolveRoleIdsForUser } from 'src/engine/twenty-orm/utils/resolve-role-ids-for-user.util';
+import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
+import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
+import { buildUserRoleIdsBySource } from 'src/engine/permissions/principal/utils/build-user-role-ids-by-source.util';
 
 @ObjectType('ToolIndexEntry')
 export class ToolIndexEntryDTO {
@@ -79,17 +81,18 @@ export class ToolIndexResolver {
     application: FlatApplication | undefined,
     @RequestLocale() locale: keyof typeof APP_LOCALES | undefined,
   ): Promise<ToolIndexEntryDTO[]> {
-    const { userRoleId, roleIds } = await this.resolveCallerRoles({
+    const { rolePermissionConfig } = await this.resolveCallerRoles({
       userWorkspaceId,
       workspaceId: workspace.id,
       application,
     });
 
-    return this.toolRegistryService.buildToolIndex(workspace.id, userRoleId, {
-      rolePermissionConfig: { intersectionOf: roleIds },
+    return this.toolRegistryService.buildToolIndex(workspace.id, {
+      rolePermissionConfig,
       userId: user?.id,
       userWorkspaceId,
       locale,
+      authContext: getWorkspaceAuthContext(),
       application,
     });
   }
@@ -105,7 +108,7 @@ export class ToolIndexResolver {
     @AuthApplication({ allowUndefined: true })
     application: FlatApplication | undefined,
   ): Promise<object | null> {
-    const { userRoleId, roleIds } = await this.resolveCallerRoles({
+    const { rolePermissionConfig } = await this.resolveCallerRoles({
       userWorkspaceId,
       workspaceId: workspace.id,
       application,
@@ -115,10 +118,10 @@ export class ToolIndexResolver {
       toolNames: [toolName],
       context: {
         workspaceId: workspace.id,
-        roleId: userRoleId,
-        rolePermissionConfig: { intersectionOf: roleIds },
+        rolePermissionConfig,
         userId: user?.id,
         userWorkspaceId,
+        authContext: getWorkspaceAuthContext(),
         application,
       },
     });
@@ -134,18 +137,19 @@ export class ToolIndexResolver {
     userWorkspaceId: string;
     workspaceId: string;
     application: FlatApplication | undefined;
-  }): Promise<{ userRoleId: string; roleIds: string[] }> {
+  }): Promise<{ rolePermissionConfig: RolePermissionConfig }> {
     const userRoleId = await this.userRoleService.getRoleIdForUserWorkspace({
       userWorkspaceId,
       workspaceId,
     });
 
     return {
-      userRoleId,
-      roleIds: resolveRoleIdsForUser({
-        userRoleId,
-        applicationRoleId: application?.defaultRoleId,
-      }),
+      rolePermissionConfig: {
+        intersectionOf: buildUserRoleIdsBySource({
+          userRoleId,
+          application,
+        }),
+      },
     };
   }
 }

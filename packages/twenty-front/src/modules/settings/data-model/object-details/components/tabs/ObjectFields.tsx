@@ -13,7 +13,7 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { IconPlus } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { SettingsObjectFieldTable } from '~/pages/settings/data-model/SettingsObjectFieldTable';
+import { SettingsObjectFieldTable } from '@/settings/data-model/object-details/components/SettingsObjectFieldTable';
 
 const StyledButtonContainer = styled.div`
   display: flex;

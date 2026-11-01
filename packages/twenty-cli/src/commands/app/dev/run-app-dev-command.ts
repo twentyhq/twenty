@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { applyAppBuild } from '@/app/deployment/apply-app-build';
 import { createPostSyncFailure } from '@/app/deployment/create-post-sync-failure';
+import { readInferDeletionOption } from '@/app/deployment/read-infer-deletion-option';
 import {
   buildDevSnapshot,
   type BuiltDevSnapshot,
@@ -26,6 +27,7 @@ import { toCliError } from '@/output/to-cli-error';
 export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
   context,
 ) => {
+  const inferDeletionFromMissingEntities = readInferDeletionOption(context);
   const project = await resolveAppProject({
     explicitPath: readStringOption(context.options, 'path'),
     workingDirectory: process.cwd(),
@@ -33,6 +35,7 @@ export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
   const { output, emit } = createDevOutput(context);
   const generateClient = createDevClientGenerator({ appPath: project.path });
   let watcher: Awaited<ReturnType<typeof watchAppInputs>>;
+  let hasWarnedAboutNode = false;
 
   await runDevLoop<BuiltDevSnapshot>({
     signal: context.signal,
@@ -75,6 +78,12 @@ export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
           appPath: project.path,
           signal,
           updateWatchInputs: watcher.update,
+          warn: (warning) => {
+            if (!hasWarnedAboutNode) {
+              hasWarnedAboutNode = true;
+              output.warn(warning);
+            }
+          },
         });
 
         try {
@@ -125,7 +134,7 @@ export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
 
         if (context.outputMode === 'human' && Array.isArray(diagnostics)) {
           for (const diagnostic of diagnostics.filter(isToolingDiagnostic)) {
-            output.progress(formatToolingDiagnostic(diagnostic));
+            output.progress({ message: formatToolingDiagnostic(diagnostic) });
           }
         }
 
@@ -168,7 +177,7 @@ export const runAppDevCommand: CommandRun<TargetCommandContext> = async (
           build: snapshot.build,
           appPath: project.path,
           context: currentContext,
-          inferDeletionFromMissingEntities: context.options.delete !== false,
+          inferDeletionFromMissingEntities,
           isCreationApproved: readBooleanOption(context.options, 'create'),
           isDeletionApproved: readBooleanOption(context.options, 'yes'),
           approvalSignal: controls.revisionSignal,

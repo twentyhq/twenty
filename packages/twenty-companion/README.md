@@ -74,24 +74,27 @@ Use Node 24 and the repository's Yarn version. Desktop is the `@twentyhq/compani
 
 ```sh
 yarn install --immutable
+yarn nx build twenty-ui
 yarn workspace @twentyhq/companion dev
 ```
+
+Desktop consumes Twenty UI's built workspace package, including its stylesheets and types. Build Twenty UI before running `dev`, `preview`, or other direct workspace commands. After editing Twenty UI, rebuild it or run `yarn workspace twenty-ui build --watch` in a separate terminal while developing desktop.
 
 `dev` shares the production Electron build configuration and watches main/preload dependencies. A successful rebuild requests a graceful Electron restart; capture startup, active or paused recording, and stopping defer it until idle. Repeated rebuilds use the latest successful output. Failed compilations leave the running app untouched. Renderer edits continue to use Vite. Quitting Electron closes the watcher and Vite server.
 
 `yarn workspace @twentyhq/companion preview` serves the renderer at `http://127.0.0.1:4317`. Use `?preview` for an interactive sample Home, `?preview=welcome` for the full setup, `?preview=permissions` for permission setup, `?preview=denied` for denial, or `?preview=recording` for active capture controls. The native menu is available only in the desktop app. Preview actions simulate state transitions; no audio is captured, no workspace writes or external calls are made. This mode is excluded from production. Stop the preview before running the desktop `dev` command, which uses the same port.
 
-From the repository root:
+From the repository root, use Nx to build Twenty UI before checks, builds, and packaging:
 
 ```sh
-yarn workspace @twentyhq/companion typecheck
-yarn workspace @twentyhq/companion test
-yarn workspace @twentyhq/companion build
-yarn workspace @twentyhq/companion package
+yarn nx typecheck twenty-companion
+yarn nx test twenty-companion
+yarn nx build twenty-companion
+yarn nx package twenty-companion
 "packages/twenty-companion/release/Twenty-darwin-arm64/Twenty.app/Contents/MacOS/Twenty" --smoke
 ```
 
-The equivalent Nx project targets are `twenty-companion:build`, `:typecheck`, and `:test`. Native packaging targets are uncached and run only when requested. Desktop imports the current Twenty UI workspace source through Vite aliases; its explicit workspace dependency provides the shared dependency graph.
+Native packaging targets `twenty-companion:package` and `twenty-companion:package:archive` are uncached and run only when requested.
 
 Root installs keep native install scripts disabled. `dev`, `start`, `package`, and `package:archive` run `native:setup`, which downloads missing Electron and Recall binaries on Apple Silicon macOS. Typecheck, unit tests, renderer preview, and JavaScript builds do not require these downloads.
 
@@ -105,7 +108,7 @@ The package command verifies Recall's executable is outside the ASAR archive. Th
 
 The backend is [Desktop Recorder](../twenty-apps/public/companion/README.md), an independently installable Twenty application. It owns `/companion/desktop`, the `companionSession` ownership field, import/recovery functions, its summarizer agent, and Recall credentials. Follow its [setup instructions](../twenty-apps/public/companion/SETUP.md). Call Recorder is optional.
 
-The desktop reuses the CLI OAuth client and browser sign-in flow used by `twenty remote:add`, with PKCE and a local callback. Tokens stay in the desktop's secure store. After sign-in, the desktop checks the backend and offers installation if it is missing. An administrator installs the integration in each target workspace. Existing completed desktop recordings can be transferred using the integration's one-time migration script without replacing their media or record IDs.
+The desktop reuses the CLI OAuth client and browser sign-in flow used by `twenty auth login`, with PKCE and a local callback. Tokens stay in the desktop's secure store. After sign-in, the desktop checks the backend and offers installation if it is missing. An administrator installs the integration in each target workspace. Existing completed desktop recordings can be transferred using the integration's one-time migration script without replacing their media or record IDs.
 
 ## Code structure
 
@@ -140,7 +143,7 @@ Google or Microsoft calendar connection.
 From `packages/twenty-apps/public/companion`:
 
 ```sh
-yarn twenty -r companion-local apply
+twenty app apply --remote companion-local
 ```
 
 The `companion-local` remote targets port 2021. It is separate from the normal

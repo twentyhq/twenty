@@ -8,6 +8,7 @@ export enum EmailingDomainExceptionCode {
   EMAILING_DOMAIN_ALREADY_REGISTERED = 'EMAILING_DOMAIN_ALREADY_REGISTERED',
   EMAILING_DOMAIN_NOT_VERIFIED = 'EMAILING_DOMAIN_NOT_VERIFIED',
   EMAILING_DOMAIN_UNSUBSCRIBE_NOT_READY = 'EMAILING_DOMAIN_UNSUBSCRIBE_NOT_READY',
+  EMAILING_DOMAIN_CAMPAIGN_SENDING = 'EMAILING_DOMAIN_CAMPAIGN_SENDING',
   MESSAGE_SUPPRESSION_NOT_FOUND = 'MESSAGE_SUPPRESSION_NOT_FOUND',
   MESSAGE_SUPPRESSION_NOT_REMOVABLE = 'MESSAGE_SUPPRESSION_NOT_REMOVABLE',
   MESSAGE_CAMPAIGN_NOT_FOUND = 'MESSAGE_CAMPAIGN_NOT_FOUND',
@@ -18,6 +19,7 @@ export enum EmailingDomainExceptionCode {
   MESSAGE_CAMPAIGN_REQUIRES_PAID_PLAN = 'MESSAGE_CAMPAIGN_REQUIRES_PAID_PLAN',
   MESSAGE_CAMPAIGN_NOT_CANCELABLE = 'MESSAGE_CAMPAIGN_NOT_CANCELABLE',
   MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE = 'MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE',
+  MESSAGE_CAMPAIGN_RECOVERY_FAILED = 'MESSAGE_CAMPAIGN_RECOVERY_FAILED',
 }
 
 const getEmailingDomainExceptionUserFriendlyMessage = (
@@ -30,6 +32,8 @@ const getEmailingDomainExceptionUserFriendlyMessage = (
       return msg`No verified sending domain matches this from address.`;
     case EmailingDomainExceptionCode.EMAILING_DOMAIN_UNSUBSCRIBE_NOT_READY:
       return msg`Marketing sending is on hold until the unsubscribe domain is verified.`;
+    case EmailingDomainExceptionCode.EMAILING_DOMAIN_CAMPAIGN_SENDING:
+      return msg`A campaign is still sending. Wait for it to finish or cancel it before removing this sender.`;
     case EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_FOUND:
       return msg`This suppressed address no longer exists.`;
     case EmailingDomainExceptionCode.MESSAGE_SUPPRESSION_NOT_REMOVABLE:
@@ -50,6 +54,8 @@ const getEmailingDomainExceptionUserFriendlyMessage = (
       return msg`Only a scheduled or sending campaign can be canceled.`;
     case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_SCHEDULE_NOT_IN_FUTURE:
       return msg`Pick a send time in the future.`;
+    case EmailingDomainExceptionCode.MESSAGE_CAMPAIGN_RECOVERY_FAILED:
+      return msg`Some campaigns could not be recovered.`;
     default:
       assertUnreachable(code);
   }

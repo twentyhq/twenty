@@ -121,7 +121,7 @@ export const imageInputTest: TwentyUiGalleryPlayFunction = async ({
     throw new Error('ImageInput must render a native file input');
   }
 
-  await expect(fileInput).toHaveAttribute('accept', 'image/*');
+  await expect(fileInput).toHaveAttribute('accept', 'image/png, image/jpeg');
   await expect(fileInput).not.toBeVisible();
   await userEvent.upload(
     fileInput,
@@ -131,4 +131,14 @@ export const imageInputTest: TwentyUiGalleryPlayFunction = async ({
   await expect(canvas.getByLabelText('Selected image')).toHaveTextContent(
     'profile.png; image/png; 5 bytes',
   );
+  await waitFor(() => {
+    expect(canvas.getByLabelText('File contents')).toHaveTextContent(
+      '"isFile":true',
+    );
+    expect(canvas.getByLabelText('File contents')).toHaveTextContent(
+      '"text":"image","bytes":[105,109,97,103,101]',
+    );
+    expect(fileInput.value).toBe('');
+    expect(fileInput.files).toHaveLength(0);
+  });
 };

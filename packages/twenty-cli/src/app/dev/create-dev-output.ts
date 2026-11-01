@@ -1,17 +1,34 @@
 import { once } from 'node:events';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { type TargetCommandContext } from '@/catalog/types/target-command-context.type';
+import { formatProgressLine } from '@/output/format-progress-line';
 import { formatWarningLine } from '@/output/style';
 import { type Output } from '@/output/types/output.type';
 
+type DevOutputMessage = { message: string; code?: string; percentage?: number };
+
+const formatDevOutputMessage = ({
+  message,
+  code,
+  percentage,
+}: DevOutputMessage) => {
+  if (isNonEmptyString(code)) {
+    return formatWarningLine(message);
+  }
+
+  return formatProgressLine({ message, percentage });
+};
+
 export const createDevOutput = (context: TargetCommandContext) => {
-  const messages: { message: string; code?: string }[] = [];
+  const messages: DevOutputMessage[] = [];
   let delivery = Promise.resolve();
   let omittedMessages = 0;
   const output: Output = {
     ...context.output,
-    progress: (message) => {
-      if (messages.length < 32) messages.push({ message });
+    progress: (progress) => {
+      if (messages.length < 32) messages.push(progress);
       else omittedMessages += 1;
     },
     warn: (warning) => {
@@ -41,9 +58,7 @@ export const createDevOutput = (context: TargetCommandContext) => {
         );
       } else {
         const text = [
-          ...pendingMessages.map((message) =>
-            message.code ? formatWarningLine(message.message) : message.message,
-          ),
+          ...pendingMessages.map(formatDevOutputMessage),
           event.message,
         ]
           .filter((message) => message.length > 0)

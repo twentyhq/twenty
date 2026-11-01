@@ -1,3 +1,4 @@
+import { ListItemButton } from 'twenty-ui/components/navigation';
 import { fieldMetadataItemByIdSelector } from '@/object-metadata/states/fieldMetadataItemByIdSelector';
 import { type FieldMetadataItemOption } from '@/object-metadata/types/FieldMetadataItem';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
@@ -176,10 +177,8 @@ export const ObjectFilterDropdownOptionSelect = ({
           <ListItem disabled>{t`No results`}</ListItem>
         ) : (
           optionsInDropdown?.map((option) => (
-            <ListItem
-              render={<button type="button" />}
+            <ListItemButton
               key={option.id}
-              className=""
               focused={option.id === selectedItemId}
               role="option"
               aria-selected={option.isSelected}
@@ -194,7 +193,7 @@ export const ObjectFilterDropdownOptionSelect = ({
               ) : (
                 <OverflowingTextWithTooltip text={option.label} />
               )}
-            </ListItem>
+            </ListItemButton>
           ))
         )}
       </DropdownMenuItemsContainer>

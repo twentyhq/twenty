@@ -1,8 +1,20 @@
-import { Field, ObjectType } from '@nestjs/graphql';
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql';
 
-import { type ConnectionProviderType } from 'twenty-shared/application';
+import {
+  type ConnectionProviderScope,
+  type ConnectionProviderType,
+} from 'twenty-shared/application';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+
+const ConnectionProviderScopeEnum = {
+  WORKSPACE: 'WORKSPACE',
+  USER: 'USER',
+} as const satisfies { [P in ConnectionProviderScope]: P };
+
+registerEnumType(ConnectionProviderScopeEnum, {
+  name: 'ConnectionProviderScope',
+});
 
 @ObjectType('ApplicationConnectionProviderOAuthConfig')
 export class ApplicationConnectionProviderOAuthConfigDTO {
@@ -34,6 +46,9 @@ export class ApplicationConnectionProviderDTO {
 
   @Field()
   displayName: string;
+
+  @Field(() => ConnectionProviderScopeEnum)
+  scope: ConnectionProviderScope;
 
   logo: string | null;
 

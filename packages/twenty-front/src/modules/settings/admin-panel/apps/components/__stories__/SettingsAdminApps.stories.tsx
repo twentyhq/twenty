@@ -49,10 +49,11 @@ const meta: Meta<typeof SettingsAdminApps> = {
                     sourcePackage: 'acme-app',
                     latestAvailableVersion: '1.0.0',
                     isListed: true,
-                    isVetted: true,
                     isPreInstalled: false,
                     isConfigured: true,
                     ownerWorkspaceId: null,
+                    author: 'Acme Corp',
+                    installCount: 3,
                     createdAt: '2026-01-01T00:00:00.000Z',
                     updatedAt: '2026-01-01T00:00:00.000Z',
                   },
@@ -131,5 +132,32 @@ export const FilterPanelTogglesStayOpen: Story = {
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(popup).not.toBeInTheDocument());
     await waitFor(() => expect(trigger).toHaveFocus());
+  },
+};
+
+export const DisplaysAuthorAndInstallCount: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const applicationName = await canvas.findByText('Acme app');
+    const applicationNameStyle = getComputedStyle(applicationName);
+    const rootFontSizeInPixels = Number.parseFloat(
+      getComputedStyle(applicationName.ownerDocument.documentElement).fontSize,
+    );
+    const mediumFontSizeInPixels =
+      Number.parseFloat(
+        applicationNameStyle.getPropertyValue('--t-font-size-md'),
+      ) * rootFontSizeInPixels;
+
+    expect(applicationName).toBeVisible();
+    expect(applicationName).toHaveStyle({
+      color: applicationNameStyle.getPropertyValue('--t-font-color-primary'),
+      fontSize: `${mediumFontSizeInPixels}px`,
+    });
+    expect(applicationName.parentElement).toHaveStyle({
+      gap: applicationNameStyle.getPropertyValue('--t-spacing-2'),
+    });
+    expect(canvas.getByText('Acme Corp')).toBeVisible();
+    expect(canvas.getByText('3')).toBeVisible();
   },
 };

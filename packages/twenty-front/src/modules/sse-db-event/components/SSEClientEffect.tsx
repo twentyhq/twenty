@@ -1,16 +1,17 @@
 import { useIsLogged } from '@/auth/hooks/useIsLogged';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
-import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { useResyncMetadataStore } from '@/metadata-store/hooks/useResyncMetadataStore';
 import { SSE_CLIENT_RECONNECTED_EVENT_NAME } from '@/sse-db-event/constants/SseClientReconnectedEventName';
 import { SSE_RESYNC_DEBOUNCE_TIME_IN_MS } from '@/sse-db-event/constants/SseResyncDebounceTimeInMs';
 import { useHandleSseClientConnectionRetry } from '@/sse-db-event/hooks/useHandleSseClientConnectionRetry';
 import { activeQueryListenersState } from '@/sse-db-event/states/activeQueryListenersState';
+import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isNonEmptyArray } from '@sniptt/guards';
 import { createClient } from 'graphql-sse';
 import { useCallback, useEffect } from 'react';
+import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { useDebouncedCallback } from 'use-debounce';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
@@ -35,16 +36,18 @@ export const SSEClientEffect = () => {
 
   const handleSSEClientConnected = useCallback(
     (reconnected: boolean) => {
+      if (reconnected) {
+        store.set(shouldDestroyEventStreamState.atom, true);
+
+        return;
+      }
+
       const currentActiveQueryListeners = store.get(
         activeQueryListenersState.atom,
       );
 
       if (isNonEmptyArray(currentActiveQueryListeners)) {
         store.set(activeQueryListenersState.atom, []);
-      }
-
-      if (reconnected) {
-        dispatchBrowserEvent(SSE_CLIENT_RECONNECTED_EVENT_NAME);
       }
     },
     [store],
@@ -58,6 +61,7 @@ export const SSEClientEffect = () => {
       const newSseClient = createClient({
         url: `${REACT_APP_SERVER_BASE_URL}/metadata`,
         credentials: 'include',
+        headers: { [SESSION_COOKIE_OPT_IN_HEADER_NAME]: '1' },
         on: {
           connected: handleSSEClientConnected,
         },

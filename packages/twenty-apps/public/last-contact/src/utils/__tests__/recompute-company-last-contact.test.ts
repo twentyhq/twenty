@@ -9,6 +9,12 @@ const MESSAGE_ID = '55555555-5555-5555-5555-555555555555';
 const OCCURRED_AT = '2026-06-10T09:00:00.000Z';
 const OLDER_OCCURRED_AT = '2026-06-01T09:00:00.000Z';
 
+const STALE_LAST_CONTACT = {
+  lastContactAt: '2026-01-01T09:00:00.000Z',
+  lastContactItemMessageId: '66666666-6666-6666-6666-666666666666',
+  lastContactItemCalendarEventId: null,
+};
+
 const EMPTY_LAST_CONTACT = {
   lastContactAt: null,
   lastContactItemMessageId: null,
@@ -31,10 +37,13 @@ const buildPage = (
 
 const buildClient = ({
   peoplePages = [buildPage([])],
-  existingCompanyIds = [COMPANY_ID, OTHER_COMPANY_ID],
+  currentCompanies = [
+    { id: COMPANY_ID, ...STALE_LAST_CONTACT },
+    { id: OTHER_COMPANY_ID, ...STALE_LAST_CONTACT },
+  ],
 }: {
   peoplePages?: ReturnType<typeof buildPage>[];
-  existingCompanyIds?: string[];
+  currentCompanies?: Record<string, unknown>[];
 }): Client => {
   let peopleCallIndex = 0;
 
@@ -42,7 +51,7 @@ const buildClient = ({
     query: vi.fn().mockImplementation((query) => {
       if (query.companies) {
         return Promise.resolve({
-          companies: buildPage(existingCompanyIds.map((id) => ({ id }))),
+          companies: buildPage(currentCompanies),
         });
       }
 
@@ -81,7 +90,7 @@ describe('recomputeCompaniesLastContact', () => {
           },
         ]),
       ],
-      existingCompanyIds: [COMPANY_ID],
+      currentCompanies: [{ id: COMPANY_ID, ...STALE_LAST_CONTACT }],
     });
 
     await recomputeCompaniesLastContact(client as never, [COMPANY_ID]);
@@ -114,7 +123,7 @@ describe('recomputeCompaniesLastContact', () => {
           },
         ]),
       ],
-      existingCompanyIds: [COMPANY_ID],
+      currentCompanies: [{ id: COMPANY_ID, ...STALE_LAST_CONTACT }],
     });
 
     await recomputeCompaniesLastContact(client as never, [COMPANY_ID]);
@@ -130,7 +139,9 @@ describe('recomputeCompaniesLastContact', () => {
   });
 
   it('clears the company last contact when no person has a contact', async () => {
-    client = buildClient({ existingCompanyIds: [COMPANY_ID] });
+    client = buildClient({
+      currentCompanies: [{ id: COMPANY_ID, ...STALE_LAST_CONTACT }],
+    });
 
     await recomputeCompaniesLastContact(client as never, [COMPANY_ID]);
 
@@ -264,10 +275,65 @@ describe('recomputeCompaniesLastContact', () => {
   });
 
   it('leaves out a company that no longer exists rather than upserting it back', async () => {
-    client = buildClient({ existingCompanyIds: [] });
+    client = buildClient({ currentCompanies: [] });
 
     await recomputeCompaniesLastContact(client as never, [COMPANY_ID]);
 
+    expect(peopleQueries()).toHaveLength(0);
     expect(client.mutation).not.toHaveBeenCalled();
+  });
+
+  it('only scans and writes the companies that still exist', async () => {
+    client = buildClient({
+      currentCompanies: [{ id: COMPANY_ID, ...STALE_LAST_CONTACT }],
+    });
+
+    await recomputeCompaniesLastContact(client as never, [
+      COMPANY_ID,
+      OTHER_COMPANY_ID,
+    ]);
+
+    expect(peopleQueries()[0][0].people.__args.filter.companyId).toEqual({
+      in: [COMPANY_ID],
+    });
+    expect(upsertData()).toEqual([{ id: COMPANY_ID, ...EMPTY_LAST_CONTACT }]);
+  });
+
+  it('leaves out a company whose last contact already matches', async () => {
+    client = buildClient({
+      peoplePages: [
+        buildPage([
+          {
+            companyId: COMPANY_ID,
+            lastContactAt: OCCURRED_AT,
+            lastContactItemMessage: { id: MESSAGE_ID },
+            lastContactItemCalendarEvent: null,
+          },
+        ]),
+      ],
+      currentCompanies: [
+        {
+          id: COMPANY_ID,
+          lastContactAt: '2026-06-10T09:00:00Z',
+          lastContactItemMessageId: MESSAGE_ID,
+          lastContactItemCalendarEventId: null,
+        },
+        { id: OTHER_COMPANY_ID, ...EMPTY_LAST_CONTACT },
+      ],
+    });
+
+    await recomputeCompaniesLastContact(client as never, [
+      COMPANY_ID,
+      OTHER_COMPANY_ID,
+    ]);
+
+    expect(client.mutation).not.toHaveBeenCalled();
+  });
+
+  it('reads the companies before their people', async () => {
+    await recomputeCompaniesLastContact(client as never, [COMPANY_ID]);
+
+    expect(Object.keys(client.query.mock.calls[0][0])).toEqual(['companies']);
+    expect(Object.keys(client.query.mock.calls[1][0])).toEqual(['people']);
   });
 });

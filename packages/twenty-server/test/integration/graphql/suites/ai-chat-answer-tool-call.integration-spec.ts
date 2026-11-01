@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 
 import { parse } from 'graphql';
+import { buildFallbackProposedToolCall } from 'twenty-shared/ai';
 import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
@@ -8,10 +9,14 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
+import { buildProposeToolCallPendingOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-tool-call.pausing-tool';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -31,6 +36,12 @@ const QUESTION = {
   header: 'Plan',
   question: 'Which plan should I quote?',
   options: [{ label: 'Pro' }, { label: 'Team' }],
+};
+
+const PROPOSAL_INPUT = {
+  toolName: 'create_company',
+  arguments: { name: 'Acme' },
+  summary: 'Create Acme',
 };
 
 describe('Answering a chat tool call', () => {
@@ -55,7 +66,9 @@ describe('Answering a chat tool call', () => {
       isWorkspaceSetupThread: false,
     }).execute(QUESTION);
 
-    await chat.upsertAssistantMessage({
+    await getAppProviderByClassName<AgentConversationWriterService>(
+      'AgentConversationWriterService',
+    ).upsertAssistantMessage({
       id: assistantMessageId,
       threadId,
       turnId: userMessage.turnId,
@@ -75,6 +88,25 @@ describe('Answering a chat tool call', () => {
     );
 
     return { assistantMessageId };
+  };
+
+  const pauseOnProposal = async (toolCallId: string) => {
+    await pauseOnQuestions(toolCallId);
+    await global.testDataSource.query(
+      `UPDATE "${schema}"."agentMessagePart"
+       SET "toolName" = 'propose_tool_call', "toolInput" = $2::jsonb,
+         "toolOutput" = $3::jsonb
+       WHERE "toolCallId" = $1`,
+      [
+        toolCallId,
+        JSON.stringify(PROPOSAL_INPUT),
+        JSON.stringify(
+          buildProposeToolCallPendingOutput(
+            buildFallbackProposedToolCall(PROPOSAL_INPUT),
+          ),
+        ),
+      ],
+    );
   };
 
   const answerQuestions = (toolCallId: string) =>
@@ -98,6 +130,30 @@ describe('Answering a chat tool call', () => {
         [toolCallId],
       )
     )[0]?.toolOutput?.result?.status;
+
+  const markAsMentioned = () =>
+    getAppProviderByClassName<AgentChatThreadParticipantService>(
+      'AgentChatThreadParticipantService',
+    ).markAsMentioned({ workspaceId, workspaceMemberId, threadId });
+
+  const readMentionState = async (memberId = workspaceMemberId) => {
+    const [participant]: {
+      lastMentionedAt: Date | null;
+      mentionsResolvedAt: Date | null;
+    }[] = await global.testDataSource.query(
+      `SELECT "lastMentionedAt", "mentionsResolvedAt" FROM "${schema}"."agentChatThreadParticipant"
+       WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
+      [threadId, memberId],
+    );
+
+    return participant;
+  };
+
+  const expectMentionResolved = async () => {
+    const participant = await readMentionState();
+
+    expect(participant.mentionsResolvedAt).toEqual(participant.lastMentionedAt);
+  };
 
   const stopStream = () =>
     makeMetadataApiRequest({
@@ -170,6 +226,7 @@ describe('Answering a chat tool call', () => {
         streamId: response.body.data.answerToolCall.streamId,
         userWorkspaceId,
       }),
+      expect.anything(),
     );
 
     await stopStream();
@@ -206,6 +263,74 @@ describe('Answering a chat tool call', () => {
         threadId,
         streamId: last.body.data.answerToolCall.streamId,
       }),
+      expect.anything(),
+    );
+  });
+
+  it('resolves only the answering member while another request remains pending', async () => {
+    await pauseOnQuestions('mention-first-answer', 'mention-pending-answer');
+    await getAgentChatThreadService().mentionParticipants({
+      workspaceId,
+      workspaceMemberId,
+      threadId,
+      participantWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    });
+    await markAsMentioned();
+
+    const otherMemberBefore = await readMentionState(
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    );
+    const response = await answerQuestions('mention-first-answer');
+
+    expect(response.body.errors).toBeUndefined();
+
+    await expectMentionResolved();
+    expect(await readMentionState(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY)).toEqual(
+      otherMemberBefore,
+    );
+    expect(await readToolCallStatus('mention-pending-answer')).toBe('pending');
+    expect(await readPendingQuestionMessageId()).not.toBeNull();
+  });
+
+  it('preserves a new mention arriving while an accepted approval executes', async () => {
+    const toolCallId = 'mention-during-approved-execution';
+
+    await pauseOnProposal(toolCallId);
+    await markAsMentioned();
+
+    const acceptedMention = await readMentionState();
+    const toolRegistry = getAppProviderByClassName<ToolRegistryService>(
+      'ToolRegistryService',
+    );
+    const executeTool = jest
+      .spyOn(toolRegistry, 'resolveAndExecute')
+      .mockImplementationOnce(async () => {
+        await expectMentionResolved();
+        expect(await readToolCallStatus(toolCallId)).toBe('running');
+
+        await markAsMentioned();
+
+        return { success: true, message: 'Company created', result: {} };
+      });
+
+    spies.push(executeTool);
+
+    const response = await answerToolCall({
+      toolCall: { threadId, toolCallId },
+      response: { decision: 'approve' },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+    expect(executeTool).toHaveBeenCalledTimes(1);
+    expect(await readToolCallStatus(toolCallId)).toBe('approved');
+
+    const participant = await readMentionState();
+
+    expect(participant.mentionsResolvedAt).toEqual(
+      acceptedMention.lastMentionedAt,
+    );
+    expect(participant.lastMentionedAt!.getTime()).toBeGreaterThan(
+      participant.mentionsResolvedAt!.getTime(),
     );
   });
 

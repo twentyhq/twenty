@@ -8,7 +8,11 @@
  */
 
 export { Callout } from './Callout/Callout';
+export type { CalloutActionProps } from './Callout/types/CalloutActionProps';
+export type { CalloutColor } from './Callout/types/CalloutColor';
 export type { CalloutProps } from './Callout/types/CalloutProps';
+export type { CalloutState } from './Callout/types/CalloutState';
+export type { CalloutStatus } from './Callout/types/CalloutStatus';
 export type { CalloutVariant } from './Callout/types/CalloutVariant';
 export { InlineBanner } from './InlineBanner/InlineBanner';
 export type { InlineBannerLayout } from './InlineBanner/types/InlineBannerLayout';
@@ -20,6 +24,7 @@ export type { ToastNotification } from './Toast/types/ToastNotification';
 export type { ToastOptions } from './Toast/types/ToastOptions';
 export type { ToastProps } from './Toast/types/ToastProps';
 export type { ToastProviderProps } from './Toast/types/ToastProviderProps';
-export type { ToastVariant } from './Toast/types/ToastVariant';
+export type { ToastStatus } from './Toast/types/ToastStatus';
+export type { ToastUpdate } from './Toast/types/ToastUpdate';
 export { Toaster } from './Toaster/Toaster';
 export type { ToasterProps } from './Toaster/types/ToasterProps';

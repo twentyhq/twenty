@@ -11,8 +11,8 @@ const agent = {
   modelId: 'anthropic/claude-sonnet-5',
   responseFormat: { type: 'json', schema: {} },
   roleId: 'role-id',
-  isCustom: true,
   isSystem: false,
+  isActive: true,
   modelConfiguration: { webSearch: { enabled: true } },
   triggers: [
     {
@@ -38,9 +38,7 @@ describe('getCoreAgentInitialFormValues', () => {
       modelId: 'anthropic/claude-sonnet-5',
       role: 'role-id',
       prompt: 'You qualify leads.',
-      isCustom: true,
       modelConfiguration: { webSearch: { enabled: true } },
-      responseFormat: { type: 'json', schema: {} },
       triggers: [
         {
           id: '6f1b5a3e-3c3f-4f4a-9a43-0a7f5d6c2b11',
@@ -53,16 +51,14 @@ describe('getCoreAgentInitialFormValues', () => {
     });
   });
 
-  it('falls back to the default icon, empty configuration and text format when the agent has none', () => {
+  it('falls back to the default icon and an empty configuration when the agent has none', () => {
     const formValues = getCoreAgentInitialFormValues({
       ...agent,
       icon: null,
       modelConfiguration: null,
-      responseFormat: null,
     });
 
     expect(formValues.icon).toBe('IconLego');
     expect(formValues.modelConfiguration).toEqual({});
-    expect(formValues.responseFormat).toEqual({ type: 'text' });
   });
 });

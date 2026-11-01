@@ -289,7 +289,7 @@ jobs:
           PGPASSWORD: postgres
         run: |
           set -euo pipefail
-          npm install -g @anthropic-ai/claude-code@2.1.247
+          npm install -g @anthropic-ai/claude-code@2.1.296
           # stream-json teed into the artifact tree, ahead of the scrub,
           # keeps per-turn detail and permission denials so allowlist tuning
           # reads real data. stderr and the exit code are kept too: a run that
@@ -429,22 +429,6 @@ jobs:
       - name: Fail job if any needs failed
         if: contains(needs.*.result, 'failure') || contains(needs.*.result, 'cancelled')
         run: exit 1
-
-  notify-main-ci-failure:
-    if: always() && github.event_name == 'push' && contains(needs.*.result, 'failure')
-    timeout-minutes: 5
-    runs-on: ubuntu-latest
-    needs: [e2e-test]
-    steps:
-      - name: Ping engineering on main CI failure
-        run: |
-          curl -fsS -X POST https://engineering.twenty.com/s/main-ci-failing \
-            -H 'Content-Type: application/json' \
-            -d '{
-              "commit": "${{ github.sha }}",
-              "actor": "${{ github.actor }}",
-              "run_url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-            }'
 
   # Posts the QA Scout verdict as a comment on the merged PR. Separate job so
   # pull-requests:write never coexists with the agent step: the agent reads

@@ -9,7 +9,7 @@ describe('isConnectedAccountUsableByCaller', () => {
       isConnectedAccountUsableByCaller({
         connectedAccount: {
           userWorkspaceId: USER_WORKSPACE_ID,
-          visibility: 'user',
+          scope: 'USER',
         },
         userWorkspaceId: USER_WORKSPACE_ID,
       }),
@@ -21,7 +21,7 @@ describe('isConnectedAccountUsableByCaller', () => {
       isConnectedAccountUsableByCaller({
         connectedAccount: {
           userWorkspaceId: OTHER_USER_WORKSPACE_ID,
-          visibility: 'workspace',
+          scope: 'WORKSPACE',
         },
         userWorkspaceId: USER_WORKSPACE_ID,
       }),
@@ -33,7 +33,7 @@ describe('isConnectedAccountUsableByCaller', () => {
       isConnectedAccountUsableByCaller({
         connectedAccount: {
           userWorkspaceId: OTHER_USER_WORKSPACE_ID,
-          visibility: 'user',
+          scope: 'USER',
         },
         userWorkspaceId: USER_WORKSPACE_ID,
       }),

@@ -1,6 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { TEAMS_CONNECTOR_REQUEST_TIMEOUT_MS } from 'src/features/chat/logic-functions/constants/teams-connector-request-timeout-ms';
 import { type TeamsActivity } from 'src/features/chat/logic-functions/types/teams-activity.type';
 import { isTeamsConnectorServiceUrl } from 'src/features/chat/logic-functions/utils/is-teams-connector-service-url';
 import { normalizeTeamsServiceUrl } from 'src/features/chat/logic-functions/utils/normalize-teams-service-url';
@@ -33,6 +34,7 @@ export const requestTeamsConnector = async ({
       ...(isDefined(body) ? { 'content-type': 'application/json' } : {}),
     },
     ...(isDefined(body) ? { body: JSON.stringify(body) } : {}),
+    signal: AbortSignal.timeout(TEAMS_CONNECTOR_REQUEST_TIMEOUT_MS),
   });
 
   const responseBody = await response.text();

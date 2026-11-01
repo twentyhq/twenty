@@ -9,21 +9,16 @@ export const buildStockCounter = ({
 }: {
   workspaceId: string;
   limit: FlatStockLimit;
-}): StockCounter => ({
-  key: buildStockCounterKey({
-    workspaceId,
+}): StockCounter => {
+  const counter: Omit<StockCounter, 'key'> = {
+    isDefault: false,
+    limitValue: limit.limitValue,
+    unit: limit.unit,
     resourceType: limit.resourceType,
     operationType: limit.operationType,
     spenderType: limit.spenderType,
-    spenderId: limit.spenderId,
-    unit: limit.unit,
-    limitValue: limit.limitValue,
-  }),
-  isDefault: false,
-  limitValue: limit.limitValue,
-  unit: limit.unit,
-  resourceType: limit.resourceType,
-  operationType: limit.operationType,
-  spenderType: limit.spenderType,
-  spenderId: normalizeSpenderId(limit.spenderId),
-});
+    spenderId: normalizeSpenderId(limit.spenderId),
+  };
+
+  return { ...counter, key: buildStockCounterKey({ workspaceId, counter }) };
+};

@@ -25,9 +25,11 @@ type OneToManyRelationValue<
 
 type OneToManyMetadataRelationsProperties = {
   [TSourceMetadataName in AllMetadataName]: {
-    [TRelationProperty in ExtractEntityOneToManyEntityRelationProperties<
-      MetadataEntity<TSourceMetadataName>
-    >]: OneToManyRelationValue<TSourceMetadataName, TRelationProperty>;
+    [
+      TRelationProperty in ExtractEntityOneToManyEntityRelationProperties<
+        MetadataEntity<TSourceMetadataName>
+      >
+    ]: OneToManyRelationValue<TSourceMetadataName, TRelationProperty>;
   };
 };
 
@@ -233,6 +235,12 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
       universalFlatEntityForeignKeyAggregator:
         'rowLevelPermissionPredicateGroupUniversalIdentifiers',
     },
+    agentChatChannelRoles: {
+      metadataName: 'agentChatChannelRole',
+      flatEntityForeignKeyAggregator: 'agentChatChannelRoleIds',
+      universalFlatEntityForeignKeyAggregator:
+        'agentChatChannelRoleUniversalIdentifiers',
+    },
   },
   roleTarget: {},
   rolePermissionFlag: {},
@@ -298,15 +306,33 @@ export const ALL_ONE_TO_MANY_METADATA_RELATIONS = {
   },
   frontComponent: {},
   webhook: {},
+  mcpServer: {},
   applicationVariable: {},
   viewSort: {},
   connectionProvider: {},
+  messagingProvider: {},
   searchFieldMetadata: {},
   timelineActivityType: {},
   settingsMenuItem: {},
+  relatedRecordPath: {},
   validationRule: {},
   workflow: {},
   workflowVersion: {},
+  agentChatChannel: {
+    channelRoles: {
+      metadataName: 'agentChatChannelRole',
+      flatEntityForeignKeyAggregator: 'channelRoleIds',
+      universalFlatEntityForeignKeyAggregator:
+        'channelRoleUniversalIdentifiers',
+    },
+    navigationMenuItems: {
+      metadataName: 'navigationMenuItem',
+      flatEntityForeignKeyAggregator: 'navigationMenuItemIds',
+      universalFlatEntityForeignKeyAggregator:
+        'navigationMenuItemUniversalIdentifiers',
+    },
+  },
+  agentChatChannelRole: {},
 } as const satisfies OneToManyMetadataRelationsProperties;
 
 // satisfies with complex mapped types involving nested generics doesn't always catch missing required keys

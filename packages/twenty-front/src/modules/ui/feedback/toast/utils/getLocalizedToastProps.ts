@@ -1,16 +1,16 @@
 import { type I18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { isString } from '@sniptt/guards';
+import { isString, isUndefined } from '@sniptt/guards';
 import {
   type ToastProps,
-  type ToastVariant,
+  type ToastStatus,
 } from 'twenty-ui/components/feedback';
 
-const DEFAULT_ARIA_LABEL_BY_VARIANT: Record<
-  ToastVariant,
+const DEFAULT_ARIA_LABEL_BY_STATUS: Record<
+  ToastStatus,
   ReturnType<typeof msg>
 > = {
-  default: msg`Alert`,
+  neutral: msg`Alert`,
   error: msg`Error`,
   info: msg`Info`,
   success: msg`Success`,
@@ -26,13 +26,15 @@ export const getLocalizedToastProps = ({
 }) => {
   const iconLabel =
     toast.iconLabel ??
-    i18n._(DEFAULT_ARIA_LABEL_BY_VARIANT[toast.variant ?? 'default']);
+    i18n._(DEFAULT_ARIA_LABEL_BY_STATUS[toast.status ?? 'neutral']);
 
   return {
     iconLabel,
     title:
       toast.title ?? (isString(toast.children) ? toast.children : iconLabel),
-    cancelLabel: toast.cancelLabel ?? i18n._(msg`Cancel`),
+    cancelLabel: isUndefined(toast.cancelLabel)
+      ? i18n._(msg`Cancel`)
+      : toast.cancelLabel,
     closeLabel: toast.closeLabel ?? i18n._(msg`Close`),
   };
 };

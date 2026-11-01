@@ -10,13 +10,16 @@ import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { t } from '@lingui/core/macro';
 import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const RestoreRecordsCommand = () => {
   const { recordIndexId, objectMetadataItem, selectedRecords, graphqlFilter } =
     useHeadlessCommandContextApi();
 
   if (!isDefined(objectMetadataItem)) {
-    throw new Error('Object metadata is required to restore records');
+    throw new Error(
+      doNotTranslate('Object metadata is required to restore records'),
+    );
   }
 
   const isSingleRecord = selectedRecords.length === 1;
@@ -59,7 +62,7 @@ export const RestoreRecordsCommand = () => {
     closeSidePanelMenu();
 
     if (!isDefined(graphqlFilter)) {
-      throw new Error('Cannot restore records without a valid filter');
+      throw new Error(t`Cannot restore records without a valid filter`);
     }
 
     const recordsToRestore = await fetchAllRecordIds();

@@ -11,6 +11,7 @@ import { useFieldsWidgetFields } from '@/page-layout/widgets/fields/hooks/useFie
 import { buildDefaultFieldsWidgetGroups } from '@/page-layout/widgets/fields/utils/buildDefaultFieldsWidgetGroups';
 import { filterDraftGroupsForDisplay } from '@/page-layout/widgets/fields/utils/filterDraftGroupsForDisplay';
 import { useViewById } from '@/views/hooks/useViewById';
+import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
@@ -37,6 +38,7 @@ export const useFieldsWidgetGroups = ({
     currentWorkspace?.workspaceCustomApplication?.id;
 
   const visibleFields = useFieldsWidgetFields(objectMetadataItem);
+  const { i18n } = useLingui();
 
   const { groups, displayMode } = useMemo<{
     groups: FieldsWidgetGroup[];
@@ -156,6 +158,8 @@ export const useFieldsWidgetGroups = ({
     view,
     viewId,
     workspaceCustomApplicationId,
+    // oxlint-disable-next-line react-hooks/exhaustive-deps
+    i18n.locale,
   ]);
 
   return {

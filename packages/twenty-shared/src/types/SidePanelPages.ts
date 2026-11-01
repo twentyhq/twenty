@@ -5,6 +5,7 @@ export enum SidePanelPages {
   // Deprecated: use AppPath.RecordIndexPage through the routed-page API.
   ViewRecords = 'view-records',
   MergeRecords = 'merge-records',
+  MergeWithRecord = 'merge-with-record',
   UpdateRecords = 'update-records',
   EditRichText = 'edit-rich-text',
   // Deprecated: use AskAI.
@@ -17,6 +18,7 @@ export enum SidePanelPages {
   WorkflowRunStepView = 'workflow-run-step-view',
   WorkflowStepSettings = 'workflow-step-settings',
   SearchRecords = 'search-records',
+  SearchAiChats = 'search-ai-chats',
   AskAI = 'ask-ai',
   PageLayoutDashboardWidgetTypeSelect = 'page-layout-dashboard-widget-type-select',
   PageLayoutTabSettings = 'page-layout-tab-settings',
@@ -32,9 +34,11 @@ export enum SidePanelPages {
   ComposeEmail = 'compose-email',
   ComposeCalendarEvent = 'compose-calendar-event',
   CreateRelatedRecord = 'create-related-record',
-  SendCampaign = 'send-campaign',
   RecordCreationForm = 'record-creation-form',
+  RecordCreationFormSettings = 'record-creation-form-settings',
+  SendCampaign = 'send-campaign',
   SendCampaignTest = 'send-campaign-test',
+  AddToMessageList = 'add-to-message-list',
   WorkflowVersions = 'workflow-versions',
   WorkflowVersion = 'workflow-version',
   EmailBlockSettings = 'email-block-settings',
@@ -43,6 +47,8 @@ export enum SidePanelPages {
   SettingsMetadataTranslations = 'settings-metadata-translations',
   RoutedPage = 'routed-page',
   WorkflowCoreFilters = 'workflow-core-filters',
+  AgentCoreFilters = 'agent-core-filters',
   ShareRecord = 'share-record',
   SnoozeAiChat = 'snooze-ai-chat',
+  AssignAiChat = 'assign-ai-chat',
 }

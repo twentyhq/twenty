@@ -4,44 +4,31 @@ import { isHiddenWorkspaceWorkflowRunRelationField } from '@/object-core/workflo
 
 describe('isHiddenWorkspaceWorkflowRunRelationField', () => {
   it.each(['workflow', 'workflowVersion'])(
-    'should hide the %s relation field on a workflow run when the flag is on',
+    'should hide the %s relation field on a workflow run',
     (fieldName) => {
       expect(
         isHiddenWorkspaceWorkflowRunRelationField({
           objectNameSingular: CoreObjectNameSingular.WorkflowRun,
           fieldName,
-          isWorkflowCoreIndexPageEnabled: true,
         }),
       ).toBe(true);
     },
   );
 
-  it('should keep the workspace relation fields when the flag is off', () => {
-    expect(
-      isHiddenWorkspaceWorkflowRunRelationField({
-        objectNameSingular: CoreObjectNameSingular.WorkflowRun,
-        fieldName: 'workflow',
-        isWorkflowCoreIndexPageEnabled: false,
-      }),
-    ).toBe(false);
-  });
-
-  it('should keep the other workflow run fields when the flag is on', () => {
+  it('should keep the other workflow run fields', () => {
     expect(
       isHiddenWorkspaceWorkflowRunRelationField({
         objectNameSingular: CoreObjectNameSingular.WorkflowRun,
         fieldName: 'status',
-        isWorkflowCoreIndexPageEnabled: true,
       }),
     ).toBe(false);
   });
 
-  it('should keep the workflow relation of other objects when the flag is on', () => {
+  it('should keep the workflow relation of other objects', () => {
     expect(
       isHiddenWorkspaceWorkflowRunRelationField({
         objectNameSingular: CoreObjectNameSingular.WorkflowVersion,
         fieldName: 'workflow',
-        isWorkflowCoreIndexPageEnabled: true,
       }),
     ).toBe(false);
   });
@@ -51,7 +38,6 @@ describe('isHiddenWorkspaceWorkflowRunRelationField', () => {
       isHiddenWorkspaceWorkflowRunRelationField({
         objectNameSingular: undefined,
         fieldName: 'workflow',
-        isWorkflowCoreIndexPageEnabled: true,
       }),
     ).toBe(false);
   });

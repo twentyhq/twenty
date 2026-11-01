@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { Fragment, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -28,6 +29,7 @@ import { useCurrentWidget } from '@/page-layout/widgets/hooks/useCurrentWidget';
 import { StyledWidgetContentContainer } from '@/ui/layout/components/WidgetContentContainer';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { SidePanelProvider } from '@/ui/layout/side-panel/contexts/SidePanelContext';
+import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledShowMoreButtonContainer = styled.div`
@@ -39,6 +41,8 @@ type FieldWidgetRelationRecordsCardProps = {
     FieldRelationMetadata | FieldMorphRelationMetadata
   >;
   relationRecords: FieldWidgetRelationCardRecord[];
+  relationRecordsTotalCount?: number;
+  seeAllHref?: string;
   isInSidePanel: boolean;
   isReadOnly?: boolean;
 };
@@ -46,10 +50,13 @@ type FieldWidgetRelationRecordsCardProps = {
 export const FieldWidgetRelationRecordsCard = ({
   fieldDefinition,
   relationRecords,
+  relationRecordsTotalCount,
+  seeAllHref,
   isInSidePanel,
   isReadOnly = false,
 }: FieldWidgetRelationRecordsCardProps) => {
   const widget = useCurrentWidget();
+  const navigate = useNavigate();
 
   const [expandedItem, setExpandedItem] = useState('');
   const [visibleItemsCount, setVisibleItemsCount] = useState(
@@ -67,7 +74,14 @@ export const FieldWidgetRelationRecordsCard = ({
   const handleItemClick = (recordId: string) =>
     setExpandedItem(recordId === expandedItem ? '' : recordId);
 
+  const hasHiddenLoadedRecords = relationRecords.length > visibleItemsCount;
+
   const handleShowMore = () => {
+    if (!hasHiddenLoadedRecords && isDefined(seeAllHref)) {
+      navigate(seeAllHref);
+      return;
+    }
+
     setVisibleItemsCount(
       (prevCount) => prevCount + FIELD_WIDGET_RELATION_CARD_LOAD_MORE_INCREMENT,
     );
@@ -123,8 +137,14 @@ export const FieldWidgetRelationRecordsCard = ({
   }
 
   const visibleRelationRecords = relationRecords.slice(0, visibleItemsCount);
-  const remainingCount = relationRecords.length - visibleItemsCount;
-  const hasMoreRecords = remainingCount > 0;
+  // Nested relations are capped server-side, so the loaded records can undercount.
+  const totalRecordsCount = Math.max(
+    relationRecordsTotalCount ?? 0,
+    relationRecords.length,
+  );
+  const remainingCount = totalRecordsCount - visibleRelationRecords.length;
+  const hasMoreRecords =
+    hasHiddenLoadedRecords || (remainingCount > 0 && isDefined(seeAllHref));
 
   return (
     <SidePanelProvider value={{ isInSidePanel }}>

@@ -1,21 +1,69 @@
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
+import { PROVIDER_NAME_PATTERN } from '@/sdk/define/common/constants/provider-name-pattern.constant';
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import { isValidPostgresUuid } from '@/sdk/define/common/utils/is-valid-postgres-uuid';
-import { type ConnectionProviderManifest } from 'twenty-shared/application';
+import {
+  CONNECTION_PROVIDER_SCOPES,
+  type ConnectionProviderManifest,
+  type CustomConnectionProviderConfig,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
-const PROVIDER_NAME_PATTERN = /^[a-z][a-z0-9-]*$/;
-const SUPPORTED_TYPES = ['oauth'] as const;
+const SUPPORTED_TYPES = ['oauth', 'custom'] as const;
 
-type ConnectionProviderLifecycleHookKey = Extract<
+type ConnectionProviderLogicFunctionKey = Extract<
   keyof ConnectionProviderManifest,
-  `on${string}LogicFunction`
+  `${string}LogicFunction`
 >;
 
-const LIFECYCLE_HOOK_KEYS = [
+const LOGIC_FUNCTION_KEYS = [
+  'identifyAccountLogicFunction',
   'onConnectLogicFunction',
   'onDisconnectLogicFunction',
-] as const satisfies readonly ConnectionProviderLifecycleHookKey[];
+] as const satisfies readonly ConnectionProviderLogicFunctionKey[];
+
+const CUSTOM_LOGIC_FUNCTION_KEYS = [
+  'authorizeLogicFunction',
+  'callbackLogicFunction',
+] as const;
+
+const getInvalidLogicFunctionReferenceError = ({
+  path,
+  universalIdentifier,
+}: {
+  path: string;
+  universalIdentifier: string;
+}): string | null =>
+  isValidPostgresUuid(universalIdentifier)
+    ? null
+    : `Connection provider ${path}.universalIdentifier "${universalIdentifier}" must be the UUID universalIdentifier of a logic function in this app.`;
+
+const getCustomConfigErrors = (
+  custom: CustomConnectionProviderConfig | undefined,
+): string[] => {
+  if (!isDefined(custom)) {
+    return [
+      "Connection provider with type 'custom' must declare a `custom` config block",
+    ];
+  }
+
+  return CUSTOM_LOGIC_FUNCTION_KEYS.flatMap((logicFunctionKey) => {
+    const logicFunction = custom[logicFunctionKey];
+
+    if (!isDefined(logicFunction)) {
+      return [
+        `Custom connection provider must declare custom.${logicFunctionKey}`,
+      ];
+    }
+
+    const referenceError = getInvalidLogicFunctionReferenceError({
+      path: `custom.${logicFunctionKey}`,
+      universalIdentifier: logicFunction.universalIdentifier,
+    });
+
+    return isDefined(referenceError) ? [referenceError] : [];
+  });
+};
 
 export const defineConnectionProvider: DefineEntity<
   ConnectionProviderManifest
@@ -42,13 +90,17 @@ export const defineConnectionProvider: DefineEntity<
     errors.push('Connection provider must have a displayName');
   }
 
-  for (const hookKey of LIFECYCLE_HOOK_KEYS) {
-    const hook = config[hookKey];
+  for (const logicFunctionKey of LOGIC_FUNCTION_KEYS) {
+    const logicFunction = config[logicFunctionKey];
+    const referenceError = isDefined(logicFunction)
+      ? getInvalidLogicFunctionReferenceError({
+          path: logicFunctionKey,
+          universalIdentifier: logicFunction.universalIdentifier,
+        })
+      : null;
 
-    if (isDefined(hook) && !isValidPostgresUuid(hook.universalIdentifier)) {
-      errors.push(
-        `Connection provider ${hookKey}.universalIdentifier "${hook.universalIdentifier}" must be the UUID universalIdentifier of a logic function in this app.`,
-      );
+    if (isDefined(referenceError)) {
+      errors.push(referenceError);
     }
   }
 
@@ -57,6 +109,15 @@ export const defineConnectionProvider: DefineEntity<
   } else if (!(SUPPORTED_TYPES as readonly string[]).includes(config.type)) {
     errors.push(
       `Connection provider type "${config.type}" is not supported. Supported types: ${SUPPORTED_TYPES.join(', ')}.`,
+    );
+  }
+
+  if (
+    isDefined(config.scope) &&
+    !CONNECTION_PROVIDER_SCOPES.includes(config.scope)
+  ) {
+    errors.push(
+      `Connection provider scope must be one of ${CONNECTION_PROVIDER_SCOPES.join(', ')}`,
     );
   }
 
@@ -90,6 +151,10 @@ export const defineConnectionProvider: DefineEntity<
         errors.push('OAuth connection provider must declare a scopes array');
       }
     }
+  }
+
+  if (config.type === 'custom') {
+    errors.push(...getCustomConfigErrors(config.custom));
   }
 
   return createValidationResult({ config, errors });

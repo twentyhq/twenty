@@ -3,7 +3,7 @@ import { getEmptyPageInfo } from '@/object-record/cache/utils/getEmptyPageInfo';
 import { getRecordEdgeFromRecord } from '@/object-record/cache/utils/getRecordEdgeFromRecord';
 import { type RecordGqlConnectionEdgesRequired } from '@/object-record/graphql/types/RecordGqlConnectionEdgesRequired';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { type RecordGqlOperationGqlRecordFields } from 'twenty-shared/types';
+import { type RecordGqlFields } from 'twenty-shared/types';
 import { getConnectionTypename } from 'twenty-shared/utils';
 
 export const getRecordConnectionFromRecords = <T extends ObjectRecord>({
@@ -21,7 +21,7 @@ export const getRecordConnectionFromRecords = <T extends ObjectRecord>({
     'fields' | 'namePlural' | 'nameSingular'
   >;
   records: T[];
-  recordGqlFields?: RecordGqlOperationGqlRecordFields;
+  recordGqlFields?: RecordGqlFields;
   withPageInfo?: boolean;
   isRootLevel?: boolean;
   computeReferences?: boolean;

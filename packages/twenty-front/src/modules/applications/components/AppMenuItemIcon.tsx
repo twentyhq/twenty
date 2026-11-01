@@ -1,5 +1,8 @@
 import { AppChip } from '@/applications/components/AppChip';
+import { ApplicationStackIcon } from '@/applications/components/ApplicationStackIcon';
 import { styled } from '@linaria/react';
+import { isDefined } from 'twenty-shared/utils';
+import { type IconComponent } from 'twenty-ui/icon';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledAppIconContainer = styled.span`
@@ -11,10 +14,18 @@ const StyledAppIconContainer = styled.span`
 
 type AppMenuItemIconProps = {
   applicationId?: string | null;
+  Icon?: IconComponent;
 };
 
-export const AppMenuItemIcon = ({ applicationId }: AppMenuItemIconProps) => (
+export const AppMenuItemIcon = ({
+  applicationId,
+  Icon,
+}: AppMenuItemIconProps) => (
   <StyledAppIconContainer>
-    <AppChip applicationId={applicationId} size="md" chipOnly />
+    {isDefined(Icon) ? (
+      <ApplicationStackIcon Icon={Icon} applicationId={applicationId} />
+    ) : (
+      <AppChip applicationId={applicationId} size="md" chipOnly />
+    )}
   </StyledAppIconContainer>
 );

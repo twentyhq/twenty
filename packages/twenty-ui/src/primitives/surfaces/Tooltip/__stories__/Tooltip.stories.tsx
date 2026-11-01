@@ -1,23 +1,18 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { useRef, useState } from 'react';
-import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { type ComponentProps, useRef, useState } from 'react';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import { IconInfoCircle } from '@ui/icon';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { Text } from '@ui/primitives/typography/Text/Text';
 import { ComponentDecorator } from '@ui/testing';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { Tooltip } from '../Tooltip';
-
-const findTooltip = async (canvasElement: HTMLElement) => {
-  const tooltip = await within(canvasElement.ownerDocument.body).findByRole(
-    'tooltip',
-  );
-
-  await waitFor(() => expect(tooltip).toBeVisible());
-
-  return tooltip;
-};
+import { type TooltipRootActions } from '../types/TooltipRootActions';
+import { type TooltipRootProps } from '../types/TooltipRootProps';
+import { findTooltip } from './findTooltip';
+import styles from './Tooltip.stories.module.scss';
 
 const meta: Meta<typeof Tooltip> = {
   title: 'UI/Surfaces/Tooltip',
@@ -38,6 +33,16 @@ const meta: Meta<typeof Tooltip> = {
 export default meta;
 type Story = StoryObj<typeof Tooltip>;
 
+export const Display: Story = {
+  args: {
+    content: 'Download the visible records as a CSV file',
+    side: 'top',
+    delay: 600,
+  },
+  parameters: { container: { width: 320 } },
+  render: (args) => <TooltipDisplayExample {...args} />,
+};
+
 export const Default: Story = {
   play: async ({ canvasElement }) => {
     await userEvent.hover(within(canvasElement).getByRole('button'));
@@ -46,7 +51,13 @@ export const Default: Story = {
   },
 };
 
-export const Documentation: Story = {};
+const TooltipDisplayExample = (props: ComponentProps<typeof Tooltip>) => (
+  <Tooltip {...props}>
+    <Text render={<span />}>
+      <Button>Export records</Button>
+    </Text>
+  </Tooltip>
+);
 
 export const WithArrow: Story = {
   ...Default,
@@ -106,6 +117,19 @@ const ControlledExample = () => {
 export const Controlled: Story = {
   ...Default,
   render: () => <ControlledExample />,
+  play: async (context) => {
+    await Default.play?.(context);
+
+    await userEvent.keyboard('{Escape}');
+
+    await waitFor(() =>
+      expect(
+        within(context.canvasElement.ownerDocument.body).queryByRole('tooltip'),
+      ).not.toBeInTheDocument(),
+    );
+    await userEvent.unhover(within(context.canvasElement).getByRole('button'));
+    await KeyboardFocus.play?.(context);
+  },
 };
 
 export const DisabledButton: Story = {
@@ -164,8 +188,15 @@ export const SharedPopup: Story = {
             <Button>Second field</Button>
           </Tooltip.Trigger>
           <Tooltip.Portal>
-            <Tooltip.Positioner sideOffset={10} style={{ maxWidth: '300px' }}>
-              <Tooltip.Popup>{payload}</Tooltip.Popup>
+            <Tooltip.Positioner sideOffset={10}>
+              <Tooltip.Popup>
+                <Tooltip.Body
+                  description="Values use the workspace currency."
+                  startIcon={<IconInfoCircle />}
+                >
+                  {payload}
+                </Tooltip.Body>
+              </Tooltip.Popup>
             </Tooltip.Positioner>
           </Tooltip.Portal>
         </>
@@ -175,7 +206,14 @@ export const SharedPopup: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.hover(canvas.getByRole('button', { name: 'First field' }));
-    expect(await findTooltip(canvasElement)).toHaveTextContent('First amount');
+    const firstTooltip = await findTooltip(canvasElement);
+    expect(firstTooltip).toHaveTextContent('First amount');
+    expect(firstTooltip).toHaveTextContent(
+      'Values use the workspace currency.',
+    );
+    expect(
+      within(firstTooltip).getByText('First amount').parentElement,
+    ).toHaveStyle({ fontWeight: '500' });
 
     await userEvent.hover(canvas.getByRole('button', { name: 'Second field' }));
 
@@ -184,17 +222,75 @@ export const SharedPopup: Story = {
         within(canvasElement.ownerDocument.body).getByRole('tooltip'),
       ).toHaveTextContent('Second amount'),
     );
+    expect(
+      within(canvasElement.ownerDocument.body).getAllByRole('tooltip'),
+    ).toHaveLength(1);
   },
 };
 
-export const Hidden: Story = {
-  args: { disabled: true, open: true },
-  play: async ({ canvasElement }) => {
-    await userEvent.hover(within(canvasElement).getByRole('button'));
+const HiddenTooltipExample = ({
+  onClick,
+}: Pick<ComponentProps<typeof Button>, 'onClick'>) => (
+  <Tooltip content="Amount" disabled open>
+    <Button onClick={onClick}>Show details</Button>
+  </Tooltip>
+);
+
+export const Hidden: StoryObj<typeof HiddenTooltipExample> = {
+  args: { onClick: fn() },
+  render: (args) => <HiddenTooltipExample {...args} />,
+  play: async ({ args, canvasElement }) => {
+    const trigger = within(canvasElement).getByRole('button');
+    await userEvent.hover(trigger);
 
     expect(
       within(canvasElement.ownerDocument.body).queryByRole('tooltip'),
     ).not.toBeInTheDocument();
+
+    await userEvent.click(trigger);
+
+    expect(args.onClick).toHaveBeenCalledOnce();
+    expect(
+      within(canvasElement.ownerDocument.body).queryByRole('tooltip'),
+    ).not.toBeInTheDocument();
+  },
+};
+
+const ACTIVITY_LOG_ENTRIES = Array.from(
+  { length: 12 },
+  (_, index) => `Activity entry ${index + 1}`,
+);
+
+export const AnchorScrolledOut: Story = {
+  args: { open: true },
+  render: (args) => (
+    <div
+      role="region"
+      aria-label="Activity log"
+      tabIndex={0}
+      className={styles.scrollArea}
+    >
+      <Tooltip {...args}>
+        <Button>Show details</Button>
+      </Tooltip>
+      {ACTIVITY_LOG_ENTRIES.map((entry) => (
+        <p key={entry}>{entry}</p>
+      ))}
+    </div>
+  ),
+  play: async ({ canvasElement }) => {
+    const activityLog = within(canvasElement).getByRole('region', {
+      name: 'Activity log',
+    });
+    const tooltip = await findTooltip(canvasElement);
+
+    activityLog.scrollTop = activityLog.scrollHeight;
+
+    await waitFor(() => expect(tooltip).not.toBeVisible());
+
+    activityLog.scrollTop = 0;
+
+    await waitFor(() => expect(tooltip).toBeVisible());
   },
 };
 
@@ -284,8 +380,12 @@ export const PartsAndProvider: Story = {
   },
 };
 
-const ShorthandHandleExample = () => {
+const ShorthandHandleExample = ({
+  onOpenChange,
+}: Pick<TooltipRootProps, 'onOpenChange'>) => {
   const [handle] = useState(() => Tooltip.createHandle<string>());
+  const actionsRef = useRef<TooltipRootActions>(null);
+
   return (
     <>
       <Tooltip.Trigger
@@ -295,18 +395,34 @@ const ShorthandHandleExample = () => {
       />
       <Tooltip<string>
         handle={handle}
+        actionsRef={actionsRef}
+        onOpenChange={onOpenChange}
         content={({ payload }) => payload}
         triggerProps={{ payload: 'Local amount' }}
       >
-        <Button>Local details</Button>
+        <Button
+          aria-keyshortcuts="F2"
+          onKeyDown={(event) => {
+            if (event.key !== 'F2') {
+              return;
+            }
+
+            actionsRef.current?.close();
+          }}
+        >
+          Local details
+        </Button>
       </Tooltip>
     </>
   );
 };
 
 export const ShorthandHandle: Story = {
-  render: () => <ShorthandHandleExample />,
-  play: async ({ canvasElement }) => {
+  args: { onOpenChange: fn() },
+  render: ({ onOpenChange }) => (
+    <ShorthandHandleExample onOpenChange={onOpenChange} />
+  ),
+  play: async ({ args, canvasElement }) => {
     const canvas = within(canvasElement);
     await userEvent.tab();
     expect(
@@ -321,6 +437,22 @@ export const ShorthandHandle: Story = {
       expect(
         within(canvasElement.ownerDocument.body).getByRole('tooltip'),
       ).toHaveTextContent('Local amount'),
+    );
+    expect(
+      within(canvasElement.ownerDocument.body).getAllByRole('tooltip'),
+    ).toHaveLength(1);
+
+    await userEvent.keyboard('{F2}');
+
+    expect(canvas.getByRole('button', { name: 'Local details' })).toHaveFocus();
+    expect(args.onOpenChange).toHaveBeenLastCalledWith(
+      false,
+      expect.objectContaining({ reason: 'imperative-action' }),
+    );
+    await waitFor(() =>
+      expect(
+        within(canvasElement.ownerDocument.body).queryByRole('tooltip'),
+      ).not.toBeInTheDocument(),
     );
   },
 };
@@ -475,5 +607,110 @@ export const ProviderDelays: Story = {
     await waitFor(() =>
       expect(page.queryByRole('tooltip')).not.toBeInTheDocument(),
     );
+  },
+};
+
+const WIDTH_EXAMPLES = [
+  { name: 'Shorthand default', compound: false, expectedWidth: 300 },
+  { name: 'Compound default', compound: true, expectedWidth: 300 },
+  {
+    name: 'Shorthand narrow number',
+    compound: false,
+    maxWidth: 180,
+    expectedWidth: 180,
+  },
+  {
+    name: 'Compound narrow string',
+    compound: true,
+    maxWidth: '200px',
+    expectedWidth: 200,
+  },
+  {
+    name: 'Shorthand wider string',
+    compound: false,
+    maxWidth: '360px',
+    expectedWidth: 360,
+  },
+  {
+    name: 'Compound wider number',
+    compound: true,
+    maxWidth: 420,
+    expectedWidth: 420,
+  },
+  { name: 'Viewport clamp', compound: true, maxWidth: 10000 },
+];
+const WIDTH_EXAMPLE_CONTENT =
+  'Export all visible records with their related companies and current workspace filters. '.repeat(
+    12,
+  );
+
+export const SharedWidth: Story = {
+  tags: ['!autodocs'],
+  render: () => (
+    <Text
+      render={<div />}
+      style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}
+    >
+      {WIDTH_EXAMPLES.map(({ name, compound, maxWidth }) =>
+        compound ? (
+          <Tooltip.Root key={name}>
+            <Tooltip.Trigger render={<Button>{name}</Button>} delay={0} />
+            <Tooltip.Portal>
+              <Tooltip.Positioner side="bottom" sideOffset={10}>
+                <Tooltip.Popup maxWidth={maxWidth}>
+                  {WIDTH_EXAMPLE_CONTENT}
+                </Tooltip.Popup>
+              </Tooltip.Positioner>
+            </Tooltip.Portal>
+          </Tooltip.Root>
+        ) : (
+          <Tooltip
+            key={name}
+            content={WIDTH_EXAMPLE_CONTENT}
+            maxWidth={maxWidth}
+            delay={0}
+            side="bottom"
+          >
+            <Button>{name}</Button>
+          </Tooltip>
+        ),
+      )}
+    </Text>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const ownerDocument = canvasElement.ownerDocument;
+
+    for (const { name, expectedWidth } of WIDTH_EXAMPLES) {
+      await userEvent.hover(canvas.getByRole('button', { name }));
+      const tooltip = await findTooltip(canvasElement);
+
+      await waitFor(() => {
+        const popupBounds = tooltip.getBoundingClientRect();
+        const viewportWidth = ownerDocument.documentElement.clientWidth;
+
+        if (isDefined(expectedWidth)) {
+          expect(popupBounds.width).toBeCloseTo(expectedWidth, 0);
+        }
+
+        if (!isDefined(expectedWidth)) {
+          expect(popupBounds.width).toBeGreaterThan(420);
+        }
+
+        expect(popupBounds.left).toBeGreaterThanOrEqual(0);
+        expect(popupBounds.right).toBeLessThanOrEqual(viewportWidth);
+        expect(popupBounds.width).toBeLessThanOrEqual(viewportWidth);
+        expect(
+          tooltip.parentElement?.getBoundingClientRect().width,
+        ).toBeCloseTo(popupBounds.width, 0);
+      });
+
+      await userEvent.keyboard('{Escape}');
+      await waitFor(() =>
+        expect(
+          within(ownerDocument.body).queryByRole('tooltip'),
+        ).not.toBeInTheDocument(),
+      );
+    }
   },
 };

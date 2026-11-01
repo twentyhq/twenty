@@ -3,6 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type UsageLimitFormValues } from '@/settings/billing/types/UsageLimitFormValues';
 import { buildUsageQuotaScopeInput } from '@/settings/billing/utils/buildUsageQuotaScopeInput';
 import { getUsageLimitInputScale } from '@/settings/billing/utils/getUsageLimitInputScale';
+import { hasUsageLimitValue } from '@/settings/billing/utils/hasUsageLimitValue';
 import { type CreateUsageLimitInput } from '~/generated-metadata/graphql';
 
 export const buildCreateUsageLimitInput = (
@@ -10,15 +11,20 @@ export const buildCreateUsageLimitInput = (
 ): CreateUsageLimitInput | null => {
   const scope = buildUsageQuotaScopeInput(values);
 
-  if (!isDefined(scope)) {
+  if (!isDefined(scope) || !hasUsageLimitValue(values)) {
     return null;
   }
 
+  const inputValue = Number(values.limitValue);
   const limitValue = Math.round(
-    Number(values.limitValue) * getUsageLimitInputScale(scope.unit),
+    inputValue * getUsageLimitInputScale(scope.unit),
   );
 
-  if (!Number.isSafeInteger(limitValue) || limitValue < 1) {
+  if (
+    !Number.isSafeInteger(limitValue) ||
+    limitValue < 0 ||
+    (limitValue === 0 && inputValue !== 0)
+  ) {
     return null;
   }
 

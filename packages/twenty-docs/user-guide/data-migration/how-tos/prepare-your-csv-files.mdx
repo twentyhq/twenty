@@ -3,6 +3,8 @@ title: Prepare Your CSV Files
 description: Complete step-by-step guide to format your data for import into Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Overview
 
 This guide walks you through preparing your CSV file for a successful import. Follow these steps in order to avoid errors.
@@ -119,7 +121,7 @@ Use the **API name** of the option, not the display label.
 **How to find API names:**
 1. Go to **Settings → Data Model**
 2. Select the object and field
-3. Enable **Advanced mode** (toggle at bottom right)
+3. Open the **⋮** menu next to **Options** and choose **Show API values**
 4. Copy the API name (e.g., `OPTION_1`, not "Option 1")
 
 <Note>New select options are not created automatically. Add them in **Settings → Data Model** before importing.</Note>
@@ -235,3 +237,5 @@ Your file is ready! Now:
 - [Import Companies](/user-guide/data-migration/how-tos/import-companies-via-csv) (import these first)
 - [Import Contacts](/user-guide/data-migration/how-tos/import-contacts-via-csv)
 - [Fix any import errors](/user-guide/data-migration/how-tos/fix-import-errors)
+
+<PageBanner illustration="section-document-generator" />

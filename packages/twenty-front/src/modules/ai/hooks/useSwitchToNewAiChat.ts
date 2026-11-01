@@ -2,12 +2,11 @@ import { useStore } from 'jotai';
 
 import { useNavigateToAiChatPage } from '@/ai/hooks/useNavigateToAiChatPage';
 import { useSelectAiChatThread } from '@/ai/hooks/useSelectAiChatThread';
-import { AGENT_CHAT_NEW_THREAD_DRAFT_KEY } from '@/ai/states/agentChatDraftsByThreadIdState';
+import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
+import { newAiChatThreadIdState } from '@/ai/states/newAiChatThreadIdState';
 import { shouldFocusChatEditorState } from '@/ai/states/shouldFocusChatEditorState';
-import { hasTriggeredCreateForDraftState } from '@/ai/states/hasTriggeredCreateForDraftState';
-import { threadIdCreatedFromDraftState } from '@/ai/states/threadIdCreatedFromDraftState';
 import { useOpenAskAiPageInSidePanel } from '@/side-panel/hooks/useOpenAskAiPageInSidePanel';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
 
 type UseSwitchToNewAiChatParams = {
   shouldOpenInFullPage?: boolean;
@@ -16,22 +15,27 @@ type UseSwitchToNewAiChatParams = {
 export const useSwitchToNewAiChat = ({
   shouldOpenInFullPage = false,
 }: UseSwitchToNewAiChatParams = {}) => {
-  const setThreadIdCreatedFromDraft = useSetAtomState(
-    threadIdCreatedFromDraftState,
-  );
   const { selectAiChatThread } = useSelectAiChatThread();
   const store = useStore();
   const { openAskAiPage } = useOpenAskAiPageInSidePanel();
   const { navigateToAiChatPage } = useNavigateToAiChatPage();
 
   const switchToNewChat = () => {
-    setThreadIdCreatedFromDraft(null);
-    store.set(hasTriggeredCreateForDraftState.atom, false);
-    selectAiChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
+    const isOnInboxPage = isAiChatInboxPath(window.location.pathname);
 
-    if (shouldOpenInFullPage) {
+    if (!isOnInboxPage) {
+      store.set(agentChatNewThreadChannelIdState.atom, null);
+    }
+
+    selectAiChatThread(store.get(newAiChatThreadIdState.atom));
+
+    const shouldNavigateToChatPage = shouldOpenInFullPage && !isOnInboxPage;
+
+    if (shouldNavigateToChatPage) {
       navigateToAiChatPage();
-    } else {
+    }
+
+    if (!shouldOpenInFullPage && !isOnInboxPage) {
       openAskAiPage();
     }
 

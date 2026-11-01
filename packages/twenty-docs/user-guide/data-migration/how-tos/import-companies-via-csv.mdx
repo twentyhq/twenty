@@ -3,6 +3,8 @@ title: Import Companies via CSV
 description: Complete step-by-step guide to importing companies into Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Overview
 
 This guide walks you through importing your companies into Twenty. **Companies should be imported first** because People and Opportunities link to Companies.
@@ -115,7 +117,7 @@ If you have Select or Multi-Select fields:
 3. Or create new options if needed
 
 <Note>
-Select options use **API names**, not display labels. Check **Settings → Data Model** → Enable **Advanced mode** to see API names.
+Select options use **API names**, not display labels. To see them, open the field in **Settings → Data Model**, then choose **Show API values** from the **⋮** menu next to **Options**.
 </Note>
 
 ## Step 6: Review and Fix Errors
@@ -190,3 +192,5 @@ Having issues? Check:
 - [How to Fix Import Errors](/user-guide/data-migration/how-tos/fix-import-errors)
 - [Field Mapping Reference](/user-guide/data-migration/capabilities/field-mapping)
 - [Uniqueness Constraints](/user-guide/data-migration/capabilities/uniqueness-constraints)
+
+<PageBanner illustration="data-migration" />

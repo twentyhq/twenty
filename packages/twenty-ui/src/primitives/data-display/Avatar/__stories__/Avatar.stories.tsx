@@ -1,6 +1,13 @@
-import { useState } from 'react';
+import {
+  Fragment,
+  type MouseEvent,
+  type MouseEventHandler,
+  useState,
+} from 'react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+
+import illustrationUserUrl from '@assets/icons/illustration-user.svg?url';
 
 import {
   AVATAR_URL_MOCK,
@@ -11,8 +18,27 @@ import {
 } from '@ui/testing';
 
 import { Avatar } from '@ui/primitives/data-display/Avatar/Avatar';
+import { type AvatarProps } from '@ui/primitives/data-display/Avatar/types/AvatarProps';
+import { type AvatarRootProps } from '@ui/primitives/data-display/Avatar/types/AvatarRootProps';
 import { type AvatarShape } from '@ui/primitives/data-display/Avatar/types/AvatarShape';
-import { IconUser } from '@ui/icon';
+import { type AvatarSize } from '@ui/primitives/data-display/Avatar/types/AvatarSize';
+import { Button } from '@ui/primitives/input/Button/Button';
+import { IconGitBranch, IconUser, IconUserCircle, IconUserOff } from '@ui/icon';
+import { themeCssVariables } from '@ui/theme';
+
+const VALID_IMAGE = illustrationUserUrl;
+const INVALID_IMAGE = 'data:image/png;base64,invalid';
+const UPLOAD_AVATAR_ICON_SIZE = 16;
+const AVATAR_SIZE_CASES = [
+  { size: 'xs', dimension: 12 },
+  { size: 'sm', dimension: 14 },
+  { size: 'md', dimension: 16 },
+  { size: 'lg', dimension: 24 },
+  { size: 'xl', dimension: 32 },
+  { size: 'xxl', dimension: 40 },
+] as const;
+
+const CustomFallbackIcon = () => <IconUserOff size={48} />;
 
 const meta: Meta<typeof Avatar> = {
   title: 'UI/Data Display/Avatar',
@@ -27,12 +53,105 @@ const meta: Meta<typeof Avatar> = {
 
 export default meta;
 type Story = StoryObj<typeof Avatar>;
+type RootInteractionStory = StoryObj<AvatarRootProps>;
+type ButtonInteractionStory = StoryObj<
+  AvatarProps & { onActivate?: MouseEventHandler<HTMLButtonElement> }
+>;
+type LinkInteractionStory = StoryObj<
+  AvatarProps & { onNavigate?: MouseEventHandler<HTMLAnchorElement> }
+>;
+
+export const Display: Story = {
+  decorators: [ComponentDecorator],
+  args: {
+    shape: 'square',
+    variant: 'outline',
+    size: 'md',
+    src: undefined,
+    name: 'Acme',
+    colorSeed: 'acme-app',
+  },
+};
 
 export const Rounded: Story = { decorators: [ComponentDecorator] };
 
 export const Squared: Story = {
   decorators: [ComponentDecorator],
   args: { shape: 'square' },
+};
+
+export const ExtraLargeSizes: Story = {
+  decorators: [ComponentDecorator],
+  render: () => (
+    <>
+      <Avatar name="Acme" size="xl" role="img" aria-label="32px avatar" />
+      <Avatar name="Acme" size="xxl" role="img" aria-label="40px avatar" />
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    for (const size of [32, 40]) {
+      const avatar = canvas.getByRole('img', { name: `${size}px avatar` });
+
+      await expect(avatar).toHaveStyle({
+        width: `${size}px`,
+        height: `${size}px`,
+        fontSize: '16px',
+      });
+    }
+  },
+};
+
+export const UploadButtonComposition: ButtonInteractionStory = {
+  decorators: [ComponentDecorator],
+  args: { onActivate: fn() },
+  render: ({ onActivate }) => (
+    <Avatar.Root
+      size="xl"
+      shape="circle"
+      variant="outline"
+      color={themeCssVariables.font.color.light}
+      backgroundColor={themeCssVariables.background.transparent.lighter}
+      borderColor={themeCssVariables.border.color.medium}
+      render={
+        <button
+          type="button"
+          aria-label="Upload profile picture"
+          onClick={onActivate}
+        />
+      }
+    >
+      <Avatar.Image alt="" />
+      <Avatar.Fallback
+        aria-hidden
+        render={<IconUserCircle size={UPLOAD_AVATAR_ICON_SIZE} />}
+      />
+    </Avatar.Root>
+  ),
+  play: async ({ canvasElement, args }) => {
+    const avatar = within(canvasElement).getByRole('button', {
+      name: 'Upload profile picture',
+    });
+    const fallbackIcon = avatar.querySelector('svg');
+
+    await expect(avatar).toHaveAttribute('type', 'button');
+    await expect(avatar).toHaveStyle({
+      width: '32px',
+      height: '32px',
+      borderWidth: '1px',
+      borderRadius: '50%',
+    });
+    await expect(fallbackIcon).toHaveAttribute('aria-hidden', 'true');
+    await expect(fallbackIcon).toHaveStyle({
+      width: `${UPLOAD_AVATAR_ICON_SIZE}px`,
+      height: `${UPLOAD_AVATAR_ICON_SIZE}px`,
+    });
+    avatar.focus();
+    await expect(avatar).toHaveFocus();
+    await userEvent.keyboard('{Enter} ');
+    await expect(args.onActivate).toHaveBeenCalledTimes(2);
+  },
 };
 
 export const IconTile: Story = {
@@ -44,6 +163,10 @@ export const IconTile: Story = {
     role: 'img',
     'aria-label': 'Workspace icon',
   },
+};
+
+export const IconTileInteraction: Story = {
+  ...IconTile,
   play: async ({ canvasElement }) => {
     const iconTile = within(canvasElement).getByRole('img', {
       name: 'Workspace icon',
@@ -55,6 +178,75 @@ export const IconTile: Story = {
       computedStyle.getPropertyValue('--t-border-radius-sm').trim(),
     );
   },
+};
+
+export const FallbackIconSizes: Story = {
+  decorators: [ComponentDecorator],
+  render: ({ variant }) => (
+    <>
+      {AVATAR_SIZE_CASES.map(({ size }) => (
+        <Fragment key={size}>
+          <Avatar
+            size={size}
+            variant={variant}
+            name="Branch"
+            icon={<IconGitBranch />}
+            role="img"
+            aria-label={`Native ${size}`}
+          />
+          <Avatar
+            size={size}
+            variant={variant}
+            name="Unavailable user"
+            icon={<CustomFallbackIcon />}
+            role="img"
+            aria-label={`Custom ${size}`}
+          />
+          <Avatar.Root
+            size={size}
+            variant={variant}
+            name="User"
+            role="img"
+            aria-label={`Composed ${size}`}
+          >
+            <Avatar.Fallback aria-hidden>
+              <IconUser />
+            </Avatar.Fallback>
+          </Avatar.Root>
+        </Fragment>
+      ))}
+    </>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    for (const { size, dimension } of AVATAR_SIZE_CASES) {
+      for (const label of ['Native', 'Custom', 'Composed']) {
+        const avatar = canvas.getByRole('img', { name: `${label} ${size}` });
+        const avatarBounds = avatar.getBoundingClientRect();
+        const iconBounds = avatar.querySelector('svg')?.getBoundingClientRect();
+        const expectedIconSize = Math.min(24, avatar.clientWidth);
+
+        await expect(avatarBounds.width).toBe(dimension);
+        await expect(avatarBounds.height).toBe(dimension);
+        await expect(iconBounds?.width).toBe(expectedIconSize);
+        await expect(iconBounds?.height).toBe(expectedIconSize);
+        await expect(iconBounds?.left).toBeGreaterThanOrEqual(
+          avatarBounds.left,
+        );
+        await expect(iconBounds?.top).toBeGreaterThanOrEqual(avatarBounds.top);
+        await expect(iconBounds?.right).toBeLessThanOrEqual(avatarBounds.right);
+        await expect(iconBounds?.bottom).toBeLessThanOrEqual(
+          avatarBounds.bottom,
+        );
+      }
+    }
+  },
+};
+
+export const OutlinedFallbackIconSizes: Story = {
+  ...FallbackIconSizes,
+  args: { variant: 'outline' },
 };
 
 export const NoAvatarPictureRounded: Story = {
@@ -70,85 +262,312 @@ export const NoAvatarPictureSquared: Story = {
   },
 };
 
-export const App: Story = {
+export const Parts: Story = {
   decorators: [ComponentDecorator],
-  args: {
-    shape: 'square',
-    variant: 'outline',
-    src: '',
-    name: 'Acme',
-    colorSeed: 'acme-app',
+  render: () => (
+    <Avatar.Root name="Jane Doe" shape="circle" size="xxl">
+      <Avatar.Image src={VALID_IMAGE} alt="Jane Doe" decoding="async" />
+      <Avatar.Fallback role="img" aria-label="Jane Doe">
+        JD
+      </Avatar.Fallback>
+    </Avatar.Root>
+  ),
+};
+
+export const PartsInteraction: Story = {
+  ...Parts,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const image = await canvas.findByAltText('Jane Doe');
+
+    await expect(image).toBeVisible();
+    await expect(image).toHaveAttribute('decoding', 'async');
+    await expect(canvas.queryByText('JD')).not.toBeInTheDocument();
   },
 };
 
 export const ImageFailingToLoadFallsBackToPlaceholder: Story = {
   decorators: [ComponentDecorator],
   args: {
-    src: 'data:image/png;base64,not-a-valid-image',
+    src: INVALID_IMAGE,
     name: 'Eldritch',
+    imageProps: { alt: 'Eldritch' },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const fallback = await canvas.findByRole('img', { name: 'Eldritch' });
 
-    const placeholderChar = await canvas.findByText('E');
-
-    await expect(placeholderChar).toBeVisible();
+    await expect(fallback).toHaveTextContent('E');
+    await expect(fallback).toBeVisible();
+    await expect(canvas.queryByAltText('Eldritch')).not.toBeInTheDocument();
   },
 };
 
-export const NotClickable: Story = {
+export const OnClickKeepsPresentationalRoot: RootInteractionStory = {
   decorators: [ComponentDecorator],
-  play: async ({ canvasElement }) => {
+  args: {
+    name: 'Jane',
+    onClick: fn(),
+    ref: fn(),
+  },
+  render: ({ name, onClick, ref, size, shape }) => (
+    <Avatar.Root
+      name={name}
+      onClick={onClick}
+      ref={ref}
+      size={size}
+      shape={shape}
+    >
+      <Avatar.Fallback aria-hidden>J</Avatar.Fallback>
+    </Avatar.Root>
+  ),
+  play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
+    const fallback = canvas.getByText('J');
+    const root = fallback.parentElement;
 
+    await expect(root?.tagName).toBe('SPAN');
+    await expect(root).not.toHaveAttribute('tabindex');
     await expect(canvas.queryByRole('button')).not.toBeInTheDocument();
+    await expect(args.ref).toHaveBeenCalledWith(root);
+    await userEvent.click(fallback);
+    await expect(args.onClick).toHaveBeenCalledOnce();
   },
 };
 
-const clickFromEnterKey = fn();
-
-export const ClickableActivatesOnEnter: Story = {
+export const ButtonComposition: Story = {
   decorators: [ComponentDecorator],
-  args: { name: 'Eldritch', onClick: clickFromEnterKey },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
+  args: {
+    src: undefined,
+    name: 'Jane',
+    size: 'xxl',
+    imageProps: { alt: '' },
+    render: <button type="button" />,
+    'aria-label': "Open Jane's profile",
+  },
+};
 
-    const avatar = await canvas.findByRole('button', { name: 'Eldritch' });
+export const ButtonKeyboardInteraction: ButtonInteractionStory = {
+  ...ButtonComposition,
+  args: { ...ButtonComposition.args, onActivate: fn(), ref: fn() },
+  render: ({ onActivate, ...args }) => (
+    <Avatar {...args} render={<button type="button" onClick={onActivate} />} />
+  ),
+  play: async ({ canvasElement, args }) => {
+    const avatar = within(canvasElement).getByRole('button', {
+      name: "Open Jane's profile",
+    });
+
     await expect(avatar.tagName).toBe('BUTTON');
-
+    await expect(args.ref).toHaveBeenCalledWith(avatar);
     avatar.focus();
+    await expect(avatar).toHaveFocus();
+    await userEvent.keyboard('{Enter} ');
+    await expect(args.onActivate).toHaveBeenCalledTimes(2);
+  },
+};
+
+export const DisabledButtonInteraction: ButtonInteractionStory = {
+  ...ButtonComposition,
+  args: {
+    ...ButtonComposition.args,
+    render: <button type="button" disabled />,
+    onActivate: fn(),
+  },
+  render: ({ onActivate, ...args }) => (
+    <Avatar
+      {...args}
+      render={<button type="button" disabled onClick={onActivate} />}
+    />
+  ),
+  play: async ({ canvasElement, args }) => {
+    const avatar = within(canvasElement).getByRole('button', {
+      name: "Open Jane's profile",
+    });
+
+    await expect(avatar).toBeDisabled();
+    await userEvent.click(avatar);
+    avatar.focus();
+    await expect(avatar).not.toHaveFocus();
+    await userEvent.keyboard('{Enter} ');
+    await expect(args.onActivate).not.toHaveBeenCalled();
+  },
+};
+
+export const LinkComposition: Story = {
+  ...ButtonComposition,
+  args: {
+    ...ButtonComposition.args,
+    render: <a href="#avatar-profile" aria-label="Open Jane's profile" />,
+  },
+};
+
+export const LinkKeyboardInteraction: LinkInteractionStory = {
+  ...LinkComposition,
+  args: {
+    ...LinkComposition.args,
+    onNavigate: fn((event: MouseEvent<HTMLAnchorElement>) =>
+      event.preventDefault(),
+    ),
+    ref: fn(),
+  },
+  render: ({ onNavigate, ...args }) => (
+    <Avatar
+      {...args}
+      render={
+        <a
+          href="#avatar-profile"
+          aria-label="Open Jane's profile"
+          onClick={onNavigate}
+        />
+      }
+    />
+  ),
+  play: async ({ canvasElement, args }) => {
+    const avatar = within(canvasElement).getByRole('link', {
+      name: "Open Jane's profile",
+    });
+
+    await expect(avatar.tagName).toBe('A');
+    await expect(avatar).toHaveAttribute('href', '#avatar-profile');
+    await expect(args.ref).toHaveBeenCalledWith(avatar);
+    avatar.focus();
+    await expect(avatar).toHaveFocus();
     await userEvent.keyboard('{Enter}');
-
-    await expect(clickFromEnterKey).toHaveBeenCalledTimes(1);
-  },
-};
-
-const clickFromSpaceKey = fn();
-
-export const ClickableActivatesOnSpace: Story = {
-  decorators: [ComponentDecorator],
-  args: { name: 'Eldritch', onClick: clickFromSpaceKey },
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    const avatar = await canvas.findByRole('button', { name: 'Eldritch' });
-
-    avatar.focus();
+    await expect(args.onNavigate).toHaveBeenCalledOnce();
     await userEvent.keyboard(' ');
-
-    await expect(clickFromSpaceKey).toHaveBeenCalledTimes(1);
+    await expect(args.onNavigate).toHaveBeenCalledOnce();
   },
 };
 
-export const ClickableWithoutPlaceholderIsStillLabelled: Story = {
+export const DecorativeImageInteraction: Story = {
   decorators: [ComponentDecorator],
-  args: { name: '', onClick: fn() },
+  args: { src: VALID_IMAGE, name: 'Jane' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
+    await expect(await canvas.findByRole('presentation')).toBeVisible();
+    await expect(canvas.queryByRole('img')).not.toBeInTheDocument();
+  },
+};
+
+const ImageChangesExample = (props: AvatarProps) => {
+  const [src, setSrc] = useState<string | undefined>(VALID_IMAGE);
+
+  return (
+    <>
+      <Avatar
+        {...props}
+        src={src}
+        name="Jane"
+        size="xxl"
+        render={<a href="#jane" aria-label="Jane" />}
+        aria-label="Jane"
+        imageProps={{ ...props.imageProps, alt: '' }}
+      />
+      <Button onClick={() => setSrc(INVALID_IMAGE)}>Break image</Button>
+      <Button onClick={() => setSrc(VALID_IMAGE)}>Restore image</Button>
+      <Button onClick={() => setSrc(undefined)}>Remove image</Button>
+    </>
+  );
+};
+
+export const ImageChanges: Story = {
+  decorators: [ComponentDecorator],
+  args: {
+    ref: fn(),
+    imageProps: { onLoadingStatusChange: fn(), ref: fn() },
+    fallbackProps: { children: 'JD', ref: fn() },
+  },
+  render: (args) => <ImageChangesExample {...args} />,
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const image = await canvas.findByRole('presentation');
+    const recordLink = canvas.getByRole('link', { name: 'Jane' });
+
+    await expect(image).toBeVisible();
+    await expect((image as HTMLImageElement).naturalWidth).toBeGreaterThan(0);
+    await expect(args.imageProps?.ref).toHaveBeenCalledWith(image);
+    await expect(args.imageProps?.onLoadingStatusChange).toHaveBeenCalledWith(
+      'loaded',
+    );
+    await expect(args.ref).toHaveBeenCalledWith(recordLink);
+    await userEvent.click(canvas.getByRole('button', { name: 'Break image' }));
+    const fallback = await canvas.findByText('JD');
+    await expect(fallback).toBeVisible();
+    await expect(args.fallbackProps?.ref).toHaveBeenCalledWith(fallback);
+    await expect(recordLink).toHaveAccessibleName('Jane');
+    await expect(args.imageProps?.onLoadingStatusChange).toHaveBeenCalledWith(
+      'error',
+    );
+    await waitFor(() =>
+      expect(canvas.queryByRole('presentation')).not.toBeInTheDocument(),
+    );
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Restore image' }),
+    );
+    const restoredImage = await canvas.findByRole('presentation');
+    await expect(restoredImage).toBeVisible();
     await expect(
-      await canvas.findByRole('button', { name: 'Avatar' }),
-    ).toBeVisible();
+      (restoredImage as HTMLImageElement).naturalWidth,
+    ).toBeGreaterThan(0);
+    await expect(canvas.queryByText('JD')).not.toBeInTheDocument();
+    await expect(recordLink).toHaveAccessibleName('Jane');
+    await userEvent.click(canvas.getByRole('button', { name: 'Remove image' }));
+    await expect(await canvas.findByText('JD')).toBeVisible();
+    await expect(recordLink).toHaveAccessibleName('Jane');
+  },
+};
+
+export const MountedImageChanges: Story = {
+  ...ImageChanges,
+  args: {
+    ...ImageChanges.args,
+    imageProps: {
+      keepMounted: true,
+      loading: 'lazy',
+      onLoadingStatusChange: fn(),
+      ref: fn(),
+    },
+    fallbackProps: { children: 'JD', ref: fn() },
+    ref: fn(),
+  },
+};
+
+const FallbackDelayExample = () => {
+  const [isVisible, setIsVisible] = useState(false);
+
+  return (
+    <>
+      <Button onClick={() => setIsVisible(true)}>Show avatar</Button>
+      {isVisible && (
+        <Avatar.Root name="Jane Doe" size="xxl">
+          <Avatar.Fallback
+            delay={300}
+            render={<strong />}
+            role="img"
+            aria-label="Jane Doe"
+          >
+            JD
+          </Avatar.Fallback>
+        </Avatar.Root>
+      )}
+    </>
+  );
+};
+
+export const FallbackDelayInteraction: Story = {
+  decorators: [ComponentDecorator],
+  render: () => <FallbackDelayExample />,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Show avatar' }));
+    await expect(canvas.queryByText('JD')).not.toBeInTheDocument();
+    const fallback = await canvas.findByRole('img', { name: 'Jane Doe' });
+    await expect(fallback).toBeVisible();
+    await expect(fallback).toHaveTextContent('JD');
+    await expect(fallback.tagName).toBe('STRONG');
   },
 };
 
@@ -161,8 +580,38 @@ export const Catalog: CatalogStory<Story, typeof Avatar> = {
       dimensions: [
         {
           name: 'size',
-          values: ['xs', 'sm', 'md', 'lg', 'xl'],
-          props: (size: 'xs' | 'sm' | 'md' | 'lg' | 'xl') => ({ size }),
+          values: ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'],
+          props: (size: AvatarSize) => ({ size }),
+        },
+        {
+          name: 'shape',
+          values: ['square', 'rounded-square', 'circle'],
+          props: (shape: AvatarShape) => ({ shape }),
+        },
+      ],
+      options: { elementContainer: { style: { width: 48 } } },
+    },
+  },
+};
+
+export const CatalogDark: typeof Catalog = {
+  ...Catalog,
+  tags: ['!autodocs'],
+  globals: { colorScheme: 'dark' },
+};
+
+export const VisualRegression: CatalogStory<Story, typeof Avatar> = {
+  tags: ['!autodocs'],
+  args: { src: undefined, name: 'Jane' },
+  decorators: [CatalogDecorator],
+  parameters: {
+    a11y: A11Y_DEFER_COLOR_CONTRAST,
+    catalog: {
+      dimensions: [
+        {
+          name: 'size',
+          values: ['xs', 'sm', 'md', 'lg', 'xl', 'xxl'],
+          props: (size: AvatarSize) => ({ size }),
         },
         {
           name: 'shape',
@@ -180,75 +629,7 @@ export const Catalog: CatalogStory<Story, typeof Avatar> = {
   },
 };
 
-export const CatalogDark: typeof Catalog = {
-  ...Catalog,
-  tags: ['!autodocs'],
+export const VisualRegressionDark: typeof VisualRegression = {
+  ...VisualRegression,
   globals: { colorScheme: 'dark' },
-};
-
-const VALID_IMAGE =
-  'data:image/svg+xml,' +
-  encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40"><rect width="40" height="40" fill="blue"/></svg>',
-  );
-const INVALID_IMAGE = 'data:image/png;base64,invalid';
-
-const ImageChangesExample = () => {
-  const [src, setSrc] = useState<string | undefined>(VALID_IMAGE);
-  return (
-    <>
-      <a href="#jane">
-        <Avatar src={src} name="Jane" size="xl" />
-        Jane
-      </a>
-      <button type="button" onClick={() => setSrc(INVALID_IMAGE)}>
-        Break image
-      </button>
-      <button type="button" onClick={() => setSrc(VALID_IMAGE)}>
-        Restore image
-      </button>
-      <button type="button" onClick={() => setSrc(undefined)}>
-        Remove image
-      </button>
-    </>
-  );
-};
-
-export const ImageChanges: Story = {
-  decorators: [ComponentDecorator],
-  render: () => <ImageChangesExample />,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-    await expect(await canvas.findByRole('presentation')).toBeVisible();
-    const recordLink = canvas.getByRole('link', { name: 'Jane' });
-    await expect(recordLink).toHaveAccessibleName('Jane');
-    await userEvent.click(canvas.getByRole('button', { name: 'Break image' }));
-    await expect(await canvas.findByText('J')).toBeVisible();
-    await expect(recordLink).toHaveAccessibleName('Jane');
-    await waitFor(() =>
-      expect(canvas.queryByRole('presentation')).not.toBeInTheDocument(),
-    );
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Restore image' }),
-    );
-    await expect(await canvas.findByRole('presentation')).toBeVisible();
-    await expect(recordLink).toHaveAccessibleName('Jane');
-    await userEvent.click(canvas.getByRole('button', { name: 'Remove image' }));
-    await expect(await canvas.findByText('J')).toBeVisible();
-    await expect(recordLink).toHaveAccessibleName('Jane');
-  },
-};
-
-export const Disabled: Story = {
-  decorators: [ComponentDecorator],
-  args: { name: 'Jane', src: undefined, disabled: true, onClick: fn() },
-  play: async ({ canvasElement, args }) => {
-    const avatar = within(canvasElement).getByRole('button', { name: 'Jane' });
-    await expect(avatar).toBeDisabled();
-    await userEvent.hover(avatar);
-    await expect(getComputedStyle(avatar).cursor).not.toBe('pointer');
-    await expect(getComputedStyle(avatar).boxShadow).toBe('none');
-    await userEvent.click(avatar);
-    await expect(args.onClick).not.toHaveBeenCalled();
-  },
 };

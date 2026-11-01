@@ -49,6 +49,10 @@ describe('2-46 workspace command - turn hidden agent messages into system messag
       'WorkspaceOrmManager',
     );
 
+    // 2.47 dropped the column the 2.46 commands still read
+    await global.testDataSource.query(
+      `ALTER TABLE ${SCHEMA}."agentMessage" ADD COLUMN IF NOT EXISTS "isHidden" boolean NOT NULL DEFAULT false`,
+    );
     await global.testDataSource.query(
       `INSERT INTO ${SCHEMA}."agentChatThread" (id, title, "workspaceMemberId")
        VALUES ($1, 'Hidden message move', $2)`,
@@ -79,6 +83,9 @@ describe('2-46 workspace command - turn hidden agent messages into system messag
     await global.testDataSource.query(
       `DELETE FROM ${SCHEMA}."agentChatThread" WHERE id = $1`,
       [threadId],
+    );
+    await global.testDataSource.query(
+      `ALTER TABLE ${SCHEMA}."agentMessage" DROP COLUMN IF EXISTS "isHidden"`,
     );
   });
 

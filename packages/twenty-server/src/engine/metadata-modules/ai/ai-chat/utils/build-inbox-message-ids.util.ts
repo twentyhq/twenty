@@ -13,20 +13,14 @@ type InboxMessageIds = {
 
 export const buildInboxMessageIds = ({
   senderKey,
-  workspaceMemberId,
   threadKey,
   idempotencyKey,
 }: {
   senderKey: string;
-  workspaceMemberId: string;
   threadKey: string;
   idempotencyKey: string;
 }): InboxMessageIds => {
-  const threadId = buildInboxThreadId({
-    senderKey,
-    workspaceMemberId,
-    threadKey,
-  });
+  const threadId = buildInboxThreadId({ senderKey, threadKey });
   const messageId = v5(
     `${threadId}:message:${idempotencyKey}`,
     INBOX_MESSAGE_ID_NAMESPACE,

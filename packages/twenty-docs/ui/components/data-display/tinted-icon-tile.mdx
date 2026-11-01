@@ -3,9 +3,23 @@ title: TintedIconTile
 description: An icon on a tinted background derived from a theme color.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
 import TintedIconTileReference from '/snippets/ui/generated/components/data-display/tinted-icon-tile.mdx';
 
+## Overview
+
 Pass icon content through the lowercase `icon` node slot. The tile derives its background and inherited foreground color from the theme palette. Icon content is decorative. Keep a visible label beside it, or give the root `role="img"` and an accessible name for a standalone labeled image.
+
+<StoryEmbed
+  storyId="ui-components-data-display-tintedicontile--display"
+  title="Company icon on a tinted tile"
+  height={100}
+/>
+
+## Usage
 
 ```tsx
 import { TintedIconTile } from 'twenty-ui/components/data-display';
@@ -13,10 +27,10 @@ import { IconBuildingSkyscraper } from 'twenty-ui/icon';
 import { Text } from 'twenty-ui/primitives/typography';
 
 export const CompanyLabel = () => (
-  <>
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
     <TintedIconTile icon={<IconBuildingSkyscraper size={16} />} color="blue" />
     <Text>Companies</Text>
-  </>
+  </Text>
 );
 ```
 
@@ -50,3 +64,5 @@ Replace `Icon={CompanyIcon}` with `icon={<CompanyIcon size={16} />}`. Move the f
 ## Props
 
 <TintedIconTileReference />
+
+<PageBanner illustration="page-cover-palette" />

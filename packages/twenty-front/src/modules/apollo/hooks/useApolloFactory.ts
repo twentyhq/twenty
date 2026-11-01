@@ -89,14 +89,14 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
       },
       onAppVersionMismatch: (message) => {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: message,
           dedupeKey: 'app-version-mismatch',
         });
       },
       onPayloadTooLarge: (message) => {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: message,
           dedupeKey: 'payload-too-large',
         });

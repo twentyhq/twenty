@@ -40,7 +40,7 @@ export const useDuplicateDashboard = () => {
         });
       } else {
         enqueueToast({
-          variant: 'error',
+          status: 'error',
           children: t`Failed to duplicate dashboard`,
         });
       }

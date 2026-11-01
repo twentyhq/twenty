@@ -151,6 +151,7 @@ export const THEME_LIGHT = {
       md: '8px',
       smRound: '4px',
       mdRound: '8px',
+      lgRound: '12px',
       lg: '16px',
       xl: '20px',
       xxl: '40px',
@@ -178,6 +179,7 @@ export const THEME_LIGHT = {
       light: 'color(display-p3 0.702 0.702 0.702)',
       extraLight: 'color(display-p3 0.8 0.8 0.8)',
       inverted: 'color(display-p3 1 1 1)',
+      onAccent: 'color(display-p3 1 1 1)',
       danger: 'color(display-p3 0.83 0.329 0.324)',
     },
     size: {

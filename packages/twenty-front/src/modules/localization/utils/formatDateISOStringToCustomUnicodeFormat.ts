@@ -1,4 +1,5 @@
 import { formatPlainDateISOString } from '@/localization/utils/formatPlainDateISOString';
+import { t } from '@lingui/core/macro';
 import { type Locale } from 'date-fns';
 import { formatInTimeZone } from 'date-fns-tz';
 import { isDateWithoutTime } from 'twenty-shared/utils';
@@ -23,6 +24,6 @@ export const formatDateISOStringToCustomUnicodeFormat = ({
       locale: localeCatalog,
     });
   } catch {
-    return 'Invalid format string';
+    return t`Invalid format string`;
   }
 };

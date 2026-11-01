@@ -308,6 +308,20 @@ describe('doctor', () => {
     );
   });
 
+  it('warns when this Node is newer than the SDK declares', async () => {
+    const { appPath } = await createApp({ engines: { node: '^1.0.0' } });
+    const result = await runJson(['--offline', '--path', appPath]);
+
+    expect(result.exitCode).toBe(0);
+    expect(result.checks).toContainEqual(
+      expect.objectContaining({
+        id: 'sdk',
+        status: 'warning',
+        code: 'NODE_VERSION_UNTESTED',
+      }),
+    );
+  });
+
   it('still checks the workspace when an explicit app path is invalid', async () => {
     const server = await startWorkspace();
 

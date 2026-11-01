@@ -11,7 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   NumberStepper,
   type NumberStepperProps,
-} from 'twenty-ui/primitives/input';
+} from 'twenty-ui/components/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const SETTINGS_COUNTER_CARET_NAVIGATION_KEYS: string[] = [Key.Home, Key.End];

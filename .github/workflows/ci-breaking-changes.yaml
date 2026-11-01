@@ -27,6 +27,7 @@ jobs:
         packages/twenty-emails/**
         packages/twenty-shared/**
         .github/workflows/ci-breaking-changes.yaml
+        packages/twenty-utils/graphql-breaking-change-rules.cjs
 
   api-breaking-changes:
     needs: changed-files-check
@@ -251,6 +252,7 @@ jobs:
           # Both servers must be introspected with the same query, and checking
           # out main would otherwise swap in main's copy of it
           cp packages/twenty-utils/graphql-introspection-query.graphql /tmp/graphql-introspection-query.graphql
+          cp packages/twenty-utils/graphql-breaking-change-rules.cjs /tmp/graphql-breaking-change-rules.cjs
 
           echo "Preserved current branch files for later restoration"
 
@@ -466,45 +468,57 @@ jobs:
         if: steps.validate-schemas.outputs.valid == 'true'
         run: |
           echo "=== INSTALLING GRAPHQL INSPECTOR CLI ==="
-          npm install -g @graphql-inspector/cli
+          npm install -g @graphql-inspector/cli@7.0.0
+
+          # Removing a field or enum value that was deprecated first is the
+          # intended path, so it is reported as dangerous instead of breaking
+          inspect_schema_diff() {
+            graphql-inspector diff "$1" "$2" \
+              --rule suppressRemovalOfDeprecatedField \
+              --rule /tmp/graphql-breaking-change-rules.cjs
+          }
 
           echo "=== GENERATING GRAPHQL DIFF REPORTS ==="
 
-          # Check if GraphQL schema has changes
-          echo "Checking GraphQL schema for changes..."
-          if graphql-inspector diff main-schema-introspection.json current-schema-introspection.json >/dev/null 2>&1; then
-            echo "✅ No changes in GraphQL schema"
+          echo "Checking GraphQL schema for breaking changes..."
+          if inspect_schema_diff main-schema-introspection.json current-schema-introspection.json > graphql-schema-diff.log 2>&1; then
+            echo "✅ No breaking changes in GraphQL schema"
+          elif ! grep -qE 'Detected [0-9]+ breaking change' graphql-schema-diff.log; then
+            cat graphql-schema-diff.log
+            echo "::error::graphql-inspector could not compare the GraphQL schema"
+            exit 1
           else
-            echo "⚠️ Changes detected in GraphQL schema, generating report..."
+            echo "⚠️ Breaking changes detected in GraphQL schema, generating report..."
             echo "core_breaking=true" >> $GITHUB_OUTPUT
-            echo "# GraphQL Schema Changes" > graphql-schema-diff.md
-            echo "" >> graphql-schema-diff.md
-            graphql-inspector diff main-schema-introspection.json current-schema-introspection.json >> graphql-schema-diff.md 2>&1 || {
-              echo "⚠️ **Breaking changes or errors detected in GraphQL schema**" >> graphql-schema-diff.md
-              echo "" >> graphql-schema-diff.md
-              echo "\`\`\`" >> graphql-schema-diff.md
-              graphql-inspector diff main-schema-introspection.json current-schema-introspection.json 2>&1 >> graphql-schema-diff.md || echo "Error generating diff" >> graphql-schema-diff.md
-              echo "\`\`\`" >> graphql-schema-diff.md
-            }
+            {
+              echo "# GraphQL Schema Changes"
+              echo ""
+              echo "\`\`\`"
+              cat graphql-schema-diff.log
+              echo "\`\`\`"
+            } > graphql-schema-diff.md
           fi
 
-          # Check if GraphQL metadata schema has changes
-          echo "Checking GraphQL metadata schema for changes..."
-          if graphql-inspector diff main-metadata-schema-introspection.json current-metadata-schema-introspection.json >/dev/null 2>&1; then
-            echo "✅ No changes in GraphQL metadata schema"
+          echo "Checking GraphQL metadata schema for breaking changes..."
+          if inspect_schema_diff main-metadata-schema-introspection.json current-metadata-schema-introspection.json > graphql-metadata-diff.log 2>&1; then
+            echo "✅ No breaking changes in GraphQL metadata schema"
+          elif ! grep -qE 'Detected [0-9]+ breaking change' graphql-metadata-diff.log; then
+            cat graphql-metadata-diff.log
+            echo "::error::graphql-inspector could not compare the GraphQL metadata schema"
+            exit 1
           else
-            echo "⚠️ Changes detected in GraphQL metadata schema, generating report..."
+            echo "⚠️ Breaking changes detected in GraphQL metadata schema, generating report..."
             echo "metadata_breaking=true" >> $GITHUB_OUTPUT
-            echo "# GraphQL Metadata Schema Changes" > graphql-metadata-diff.md
-            echo "" >> graphql-metadata-diff.md
-            graphql-inspector diff main-metadata-schema-introspection.json current-metadata-schema-introspection.json >> graphql-metadata-diff.md 2>&1 || {
-              echo "⚠️ **Breaking changes or errors detected in GraphQL metadata schema**" >> graphql-metadata-diff.md
-              echo "" >> graphql-metadata-diff.md
-              echo "\`\`\`" >> graphql-metadata-diff.md
-              graphql-inspector diff main-metadata-schema-introspection.json current-metadata-schema-introspection.json 2>&1 >> graphql-metadata-diff.md || echo "Error generating diff" >> graphql-metadata-diff.md
-              echo "\`\`\`" >> graphql-metadata-diff.md
-            }
+            {
+              echo "# GraphQL Metadata Schema Changes"
+              echo ""
+              echo "\`\`\`"
+              cat graphql-metadata-diff.log
+              echo "\`\`\`"
+            } > graphql-metadata-diff.md
           fi
+
+          cat graphql-schema-diff.log graphql-metadata-diff.log
 
           # Show summary
           echo "Generated diff files:"
@@ -653,6 +667,8 @@ jobs:
 
       - name: Fail on breaking changes
         if: steps.validate-schemas.outputs.valid == 'true'
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
           breaking=false
 
@@ -716,8 +732,13 @@ jobs:
 
           if [ "$breaking" = "true" ]; then
             echo ""
+            if echo "$PR_TITLE" | grep -qiE '\[breaking[ _-]?change\]'; then
+              echo "::warning::Breaking API changes accepted: the PR title is tagged [BREAKING_CHANGE]."
+              exit 0
+            fi
             echo "This PR introduces breaking changes to the public API."
-            echo "If intentional, deprecate the old endpoint and introduce a new one."
+            echo "If intentional, deprecate the old endpoint and introduce a new one,"
+            echo "or tag the PR title with [BREAKING_CHANGE] to accept them."
             echo "See the breaking changes report artifact and PR comment for details."
             exit 1
           fi

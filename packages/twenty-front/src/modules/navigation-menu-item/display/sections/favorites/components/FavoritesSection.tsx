@@ -24,6 +24,7 @@ import { NavigationMenuItemSection } from '@/navigation-menu-item/display/sectio
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const StyledList = styled.div`
   display: flex;
@@ -50,10 +51,10 @@ export const FavoritesSection = () => {
   const { t } = useLingui();
 
   const { toggleNavigationSection, openNavigationSection } =
-    useNavigationSection('Favorites');
+    useNavigationSection(doNotTranslate('Favorites'));
   const isNavigationSectionOpen = useAtomFamilyStateValue(
     isNavigationSectionOpenFamilyState,
-    'Favorites',
+    doNotTranslate('Favorites'),
   );
 
   const allTopLevelItems = useMemo(

@@ -1,7 +1,9 @@
 import { SettingsBillingPlanComparisonTable } from '@/settings/billing/components/internal/SettingsBillingPlanComparisonTable';
 import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
 import { type SettingsBillingPlanAction } from '@/settings/billing/types/SettingsBillingPlanAction';
+import { type SettingsBillingComparedPlan } from '@/settings/billing/types/SettingsBillingComparedPlan';
 import {
+  type SettingsBillingComparedPlanKeys,
   type SettingsBillingPlanInterval,
   type SettingsBillingPlanPrices,
 } from '@/settings/billing/types/SettingsBillingPlanComparison';
@@ -9,10 +11,10 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { BillingPlanKey } from '~/generated-metadata/graphql';
 
 type SettingsBillingPlansWithoutSubscriptionProps = {
   billingInterval: SettingsBillingPlanInterval;
+  comparedPlanKeys: SettingsBillingComparedPlanKeys;
   onBillingIntervalChange: (
     billingInterval: SettingsBillingPlanInterval,
   ) => void;
@@ -21,25 +23,27 @@ type SettingsBillingPlansWithoutSubscriptionProps = {
 
 export const SettingsBillingPlansWithoutSubscription = ({
   billingInterval,
+  comparedPlanKeys,
   onBillingIntervalChange,
   planPrices,
 }: SettingsBillingPlansWithoutSubscriptionProps) => {
   const { t } = useLingui();
+  const [firstPlanKey, secondPlanKey] = comparedPlanKeys;
   const {
-    handleCheckoutSession: handleProCheckoutSession,
-    isSubmitting: isProCheckoutSessionSubmitting,
+    handleCheckoutSession: handleFirstPlanCheckoutSession,
+    isSubmitting: isFirstPlanCheckoutSessionSubmitting,
   } = useHandleCheckoutSession({
     recurringInterval: billingInterval,
-    plan: BillingPlanKey.PRO,
+    plan: firstPlanKey,
     requirePaymentMethod: true,
     successUrlPath: getSettingsPath(SettingsPath.Billing),
   });
   const {
-    handleCheckoutSession: handleEnterpriseCheckoutSession,
-    isSubmitting: isEnterpriseCheckoutSessionSubmitting,
+    handleCheckoutSession: handleSecondPlanCheckoutSession,
+    isSubmitting: isSecondPlanCheckoutSessionSubmitting,
   } = useHandleCheckoutSession({
     recurringInterval: billingInterval,
-    plan: BillingPlanKey.ENTERPRISE,
+    plan: secondPlanKey,
     requirePaymentMethod: true,
     successUrlPath: getSettingsPath(SettingsPath.Billing),
   });
@@ -62,27 +66,34 @@ export const SettingsBillingPlansWithoutSubscription = ({
   });
 
   const isAnyCheckoutSessionSubmitting =
-    isProCheckoutSessionSubmitting || isEnterpriseCheckoutSessionSubmitting;
+    isFirstPlanCheckoutSessionSubmitting ||
+    isSecondPlanCheckoutSessionSubmitting;
 
-  const planActions: Record<BillingPlanKey, SettingsBillingPlanAction> = {
-    [BillingPlanKey.PRO]: createChoosePlanAction({
-      handleCheckoutSession: handleProCheckoutSession,
-      isDisabled: isAnyCheckoutSessionSubmitting,
-      isLoading: isProCheckoutSessionSubmitting,
-    }),
-    [BillingPlanKey.ENTERPRISE]: createChoosePlanAction({
-      handleCheckoutSession: handleEnterpriseCheckoutSession,
-      isDisabled: isAnyCheckoutSessionSubmitting,
-      isLoading: isEnterpriseCheckoutSessionSubmitting,
-    }),
-  };
+  const comparedPlans: SettingsBillingComparedPlan[] = [
+    {
+      planKey: firstPlanKey,
+      action: createChoosePlanAction({
+        handleCheckoutSession: handleFirstPlanCheckoutSession,
+        isDisabled: isAnyCheckoutSessionSubmitting,
+        isLoading: isFirstPlanCheckoutSessionSubmitting,
+      }),
+    },
+    {
+      planKey: secondPlanKey,
+      action: createChoosePlanAction({
+        handleCheckoutSession: handleSecondPlanCheckoutSession,
+        isDisabled: isAnyCheckoutSessionSubmitting,
+        isLoading: isSecondPlanCheckoutSessionSubmitting,
+      }),
+    },
+  ];
 
   return (
     <SettingsPageContainer overflow="visible">
       <SettingsBillingPlanComparisonTable
         billingInterval={billingInterval}
+        comparedPlans={comparedPlans}
         onBillingIntervalChange={onBillingIntervalChange}
-        planActions={planActions}
         planPrices={planPrices}
       />
     </SettingsPageContainer>

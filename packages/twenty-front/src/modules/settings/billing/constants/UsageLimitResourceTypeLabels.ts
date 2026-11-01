@@ -7,6 +7,7 @@ export const USAGE_LIMIT_RESOURCE_TYPE_LABELS: Record<
   UsageResourceType,
   MessageDescriptor
 > = {
+  [UsageResourceType.ALL]: msg`All usage`,
   [UsageResourceType.AI]: msg`AI`,
   [UsageResourceType.API]: msg`API`,
   [UsageResourceType.APP]: msg`Apps`,

@@ -1,33 +1,23 @@
+import { useRender } from '@base-ui/react/use-render';
 import { clsx } from 'clsx';
-import { type ComponentPropsWithoutRef, type ReactNode } from 'react';
+
+import { type CardContentProps } from '../types/CardContentProps';
 
 import styles from '../CardContent.module.scss';
 
-type CardContentProps = {
-  children?: ReactNode;
-  className?: string;
-  divider?: boolean;
-  isClickable?: boolean;
-  hasHoverHighlight?: boolean;
-} & ComponentPropsWithoutRef<'div'>;
-
 export const CardContent = ({
-  children,
   className,
   divider,
-  isClickable,
-  hasHoverHighlight,
-  ...rest
-}: CardContentProps) => {
-  return (
-    <div
-      className={clsx(styles.cardContent, className)}
-      data-divider={divider || undefined}
-      data-clickable={isClickable || undefined}
-      data-hover-highlight={hasHoverHighlight || undefined}
-      {...rest}
-    >
-      {children}
-    </div>
-  );
-};
+  render,
+  ref,
+  ...props
+}: CardContentProps) =>
+  useRender({
+    render,
+    ref,
+    props: {
+      ...props,
+      className: clsx(styles.cardContent, className),
+      'data-divider': divider || undefined,
+    },
+  });

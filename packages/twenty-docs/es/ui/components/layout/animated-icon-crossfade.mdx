@@ -1,0 +1,57 @@
+---
+title: AnimatedIconCrossfade
+description: Fundido cruzado entre dos iconos a medida que cambia el estado de la aplicación.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import AnimatedIconCrossfadeReference from '/snippets/ui/generated/components/layout/animated-icon-crossfade.mdx';
+
+## Resumen
+
+`AnimatedIconCrossfade` realiza una transición cruzada entre el contenido de los nodos `activeIcon` e `inactiveIcon` según `isActive`. No posee la acción ni el estado. Compóngalo dentro de un [Botón](/es/ui/primitives/input/button) con etiqueta.
+
+<StoryEmbed storyId="ui-components-layout-animatediconcrossfade--display" title="Ejemplo de AnimatedIconCrossfade" height={100} />
+
+## "Uso"
+
+```tsx
+import { useState } from 'react';
+import { AnimatedIconCrossfade } from 'twenty-ui/components/layout';
+import { IconPencil, IconX } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const EditToggle = () => {
+  const [isEditing, setIsEditing] = useState(false);
+
+  return (
+    <Button
+      size="sm"
+      aria-expanded={isEditing}
+      onClick={() => setIsEditing(!isEditing)}
+      startIcon={
+        <AnimatedIconCrossfade
+          isActive={isEditing}
+          activeIcon={<IconX size={14} />}
+          inactiveIcon={<IconPencil size={14} />}
+        />
+      }
+    >
+      Edit actions
+    </Button>
+  );
+};
+```
+
+Ambos nodos permanecen montados mientras cambia `isActive`, conservando su estado local. Las capas animan la opacidad y la escala, y desactivan las transiciones cuando se reduce el movimiento. Ambas capas son decorativas; mantén el nombre de acción accesible en el control circundante. Para una imagen independiente con etiqueta, establece `role="img"` y `aria-label` en la raíz.
+
+Los atributos nativos, eventos, `className`, `style` y `ref` se aplican a un span en línea, que puede estar dentro de un botón. `render` reemplaza ese destino mediante la composición de Base UI. Las dimensiones de la raíz usan de forma predeterminada el token de tema de icono pequeño. Define explícitamente el tamaño de cada nodo de icono y usa estilos de ancho y alto en la raíz para gráficos más grandes.
+
+Reemplaza los constructores `ActiveIcon` e `InactiveIcon` por los nodos en minúscula `activeIcon` e `inactiveIcon`. Mueve la opción anterior `size` a las dimensiones del nodo y los estilos de la raíz.
+
+## "Props"
+
+<AnimatedIconCrossfadeReference />
+
+<PageBanner illustration="card-page-sync-recovery" />

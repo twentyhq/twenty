@@ -1,5 +1,6 @@
 import { type WorkflowTrigger } from '@/workflow/types/Workflow';
 import { assertUnreachable } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const getTestPayloadFromTrigger = (
   trigger: WorkflowTrigger,
@@ -18,7 +19,9 @@ export const getTestPayloadFromTrigger = (
     }
     case 'DATABASE_EVENT': {
       throw new Error(
-        'Test workflow is not supported for database event triggers',
+        doNotTranslate(
+          'Test workflow is not supported for database event triggers',
+        ),
       );
     }
     default: {

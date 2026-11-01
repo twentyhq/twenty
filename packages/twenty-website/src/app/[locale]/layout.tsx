@@ -8,6 +8,7 @@ import {
   type LocaleRouteParams,
 } from '@/platform/i18n/get-route-i18n';
 import { ContactCalModalRoot } from '@/contact-cal';
+import { PartnerAttributionEffect } from '@/partner-attribution';
 import { I18nProvider } from '@/platform/i18n/I18nProvider';
 import { resolveLocaleParam } from '@/platform/i18n/resolve-locale-param';
 import { WEBSITE_LOCALE_LIST } from '@/platform/i18n/website-locale-list';
@@ -116,6 +117,7 @@ const LocaleLayout = async ({
       <body
         className={`${tokenCssVariables} ${globalStyles} ${hostGrotesk.variable} ${aleo.variable} ${azeretMono.variable} ${vt323.variable} ${inter.variable}`}
       >
+        <PartnerAttributionEffect />
         <I18nProvider locale={locale} messages={MESSAGES_BY_LOCALE[locale]}>
           <ContactCalModalRoot>{children}</ContactCalModalRoot>
         </I18nProvider>

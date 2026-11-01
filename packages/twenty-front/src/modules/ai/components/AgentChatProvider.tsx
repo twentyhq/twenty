@@ -1,11 +1,11 @@
 import { type ReactNode, Suspense } from 'react';
 
+import { AgentChatChannelsEffect } from '@/ai/components/AgentChatChannelsEffect';
 import { AgentChatRuntimeEffects } from '@/ai/components/AgentChatRuntimeEffects';
 import { AgentChatThreadInitializationEffect } from '@/ai/components/AgentChatThreadInitializationEffect';
 import { AgentChatThreadParticipantOperationsEffect } from '@/ai/components/AgentChatThreadParticipantOperationsEffect';
 import { AgentChatThreadRecordOperationsEffect } from '@/ai/components/AgentChatThreadRecordOperationsEffect';
-import { AGENT_CHAT_INSTANCE_ID } from '@/ai/constants/AgentChatInstanceId';
-import { AgentChatComponentInstanceContext } from '@/ai/contexts/AgentChatComponentInstanceContext';
+import { AgentChatToolIndexInvalidationEffect } from '@/ai/components/AgentChatToolIndexInvalidationEffect';
 
 type AgentChatProviderProps = {
   children: ReactNode;
@@ -13,14 +13,12 @@ type AgentChatProviderProps = {
 
 export const AgentChatProvider = ({ children }: AgentChatProviderProps) => (
   <Suspense fallback={null}>
-    <AgentChatComponentInstanceContext.Provider
-      value={{ instanceId: AGENT_CHAT_INSTANCE_ID }}
-    >
-      <AgentChatThreadInitializationEffect />
-      <AgentChatThreadRecordOperationsEffect />
-      <AgentChatThreadParticipantOperationsEffect />
-      <AgentChatRuntimeEffects />
-      {children}
-    </AgentChatComponentInstanceContext.Provider>
+    <AgentChatThreadInitializationEffect />
+    <AgentChatThreadRecordOperationsEffect />
+    <AgentChatThreadParticipantOperationsEffect />
+    <AgentChatChannelsEffect />
+    <AgentChatRuntimeEffects />
+    <AgentChatToolIndexInvalidationEffect />
+    {children}
   </Suspense>
 );

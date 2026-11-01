@@ -31,4 +31,24 @@ describe('buildCreateNavigationMenuItemInput', () => {
       position: 0,
     });
   });
+
+  it.each([
+    ['/workflows', '/workflows'],
+    ['twenty.com', 'https://twenty.com'],
+  ])('saves the link %s as %s', (link, expectedLink) => {
+    const input = buildCreateNavigationMenuItemInput(
+      {
+        id: 'navigation-item',
+        type: NavigationMenuItemType.LINK,
+        name: 'Link',
+        link,
+        position: 0,
+        createdAt: '',
+        updatedAt: '',
+      },
+      () => 'saved-folder',
+    );
+
+    expect(input.link).toBe(expectedLink);
+  });
 });

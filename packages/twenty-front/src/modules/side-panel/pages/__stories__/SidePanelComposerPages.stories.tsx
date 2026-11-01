@@ -40,8 +40,9 @@ const storyConnectedAccounts = [
     lastSignedInAt: '2026-08-24T08:00:00.000Z',
     userWorkspaceId: '20202020-0687-4c41-b707-ed1bfca972a7',
     connectionProviderId: null,
+    applicationId: null,
     name: 'Tim Apple',
-    visibility: 'SHARE_EVERYTHING',
+    scope: 'USER',
     lastCredentialsRefreshedAt: '2026-08-24T08:00:00.000Z',
     connectionParameters: null,
     createdAt: '2026-02-27T01:17:25.392Z',
@@ -59,8 +60,9 @@ const storyConnectedAccounts = [
     lastSignedInAt: '2026-08-23T08:00:00.000Z',
     userWorkspaceId: '20202020-0687-4c41-b707-ed1bfca972a7',
     connectionProviderId: null,
+    applicationId: null,
     name: 'Tim Apple',
-    visibility: 'SHARE_EVERYTHING',
+    scope: 'USER',
     lastCredentialsRefreshedAt: '2026-08-23T08:00:00.000Z',
     connectionParameters: null,
     createdAt: '2026-03-12T01:17:25.392Z',
@@ -75,6 +77,7 @@ const storyCalendarChannels = storyConnectedAccounts.map((account, index) => ({
   visibility: 'SHARE_EVERYTHING',
   isContactAutoCreationEnabled: false,
   contactAutoCreationPolicy: 'AS_PARTICIPANT_AND_ORGANIZER',
+  excludePrivateEvents: false,
   isSyncEnabled: true,
   syncStatus: 'ACTIVE',
   syncStage: 'CALENDAR_EVENTS_IMPORT_ONGOING',
@@ -322,7 +325,7 @@ export const CalendarEventWithoutAccountPermission: Story = {
 
     expect(
       await canvas.findByText(
-        'Ask a workspace admin for the Sync Account permission to connect a calendar account.',
+        'Ask a workspace admin for the User Apps permission to connect a calendar account.',
       ),
     ).toBeVisible();
     expect(

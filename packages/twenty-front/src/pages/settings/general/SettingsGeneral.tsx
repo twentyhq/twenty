@@ -1,12 +1,14 @@
 import { useLingui } from '@lingui/react/macro';
 
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
+import { useIsLogConsoleAllowed } from '@/log-console/hooks/useIsLogConsoleAllowed';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { SettingsWorkspaceDomainCard } from '@/settings/domains/components/SettingsWorkspaceDomainCard';
 import { SettingsLogs } from '@/settings/event-logs/components/SettingsLogs';
+import { SettingsOpenLogConsoleCard } from '@/settings/event-logs/components/SettingsOpenLogConsoleCard';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsSecuritySettings } from '@/settings/security/components/SettingsSecuritySettings';
@@ -34,6 +36,8 @@ export const SettingsGeneral = () => {
     PermissionFlagType.SECURITY,
   );
 
+  const isLogConsoleAllowed = useIsLogConsoleAllowed();
+
   const tabs = [
     {
       id: GENERAL_TAB_GENERAL,
@@ -56,6 +60,14 @@ export const SettingsGeneral = () => {
   const renderActiveTabContent = () => {
     if (activeTabId === GENERAL_TAB_SECURITY) {
       return <SettingsSecuritySettings />;
+    }
+
+    if (activeTabId === GENERAL_TAB_LOGS) {
+      return (
+        <Section.Root>
+          <SettingsOpenLogConsoleCard />
+        </Section.Root>
+      );
     }
 
     return (
@@ -101,7 +113,7 @@ export const SettingsGeneral = () => {
       }
       links={[{ children: t`Workspace` }, { children: t`General` }]}
     >
-      {activeTabId === GENERAL_TAB_LOGS ? (
+      {activeTabId === GENERAL_TAB_LOGS && !isLogConsoleAllowed ? (
         <SettingsLogs />
       ) : (
         <SettingsPageContainer>

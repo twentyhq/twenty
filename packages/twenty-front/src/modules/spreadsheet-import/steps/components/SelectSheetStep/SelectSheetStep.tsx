@@ -1,5 +1,4 @@
-import { Dialog } from 'twenty-ui/primitives/surfaces';
-import { styled } from '@linaria/react';
+import { SpreadsheetImportStepBody } from '@/spreadsheet-import/components/SpreadsheetImportStepBody';
 import { useCallback, useState } from 'react';
 
 import { Heading } from '@/spreadsheet-import/components/Heading';
@@ -12,17 +11,7 @@ import { mapWorkbook } from '@/spreadsheet-import/utils/mapWorkbook';
 
 import { useLingui } from '@lingui/react/macro';
 import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
-import { themeCssVariables } from 'twenty-ui/theme';
 import { type WorkBook } from 'xlsx-ugnis';
-
-const StyledRadioContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const StyledRadioItemContainer = styled.div`
-  margin-bottom: ${themeCssVariables.spacing[6]};
-`;
 
 type SelectSheetStepProps = {
   sheetNames: string[];
@@ -99,31 +88,25 @@ export const SelectSheetStep = ({
 
   return (
     <>
-      <Dialog.Body
-        style={{
-          display: 'flex',
-          flex: '1 1 0%',
-          flexDirection: 'column',
-          padding: 'var(--t-spacing-10)',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 'var(--t-spacing-8)',
-        }}
+      <SpreadsheetImportStepBody
+        padding="large"
+        isCenteredHorizontally
+        isCenteredVertically
+        hasLargeGap
       >
         <Heading title={t`Select the sheet to use`} />
         <RadioGroup
-          render={<StyledRadioContainer />}
           aria-label={t`Select the sheet to use`}
           value={value}
           onValueChange={setValue}
         >
           {sheetNames.map((sheetName) => (
-            <StyledRadioItemContainer key={sheetName}>
-              <Radio value={sheetName}>{sheetName}</Radio>
-            </StyledRadioItemContainer>
+            <Radio key={sheetName} value={sheetName}>
+              {sheetName}
+            </Radio>
           ))}
         </RadioGroup>
-      </Dialog.Body>
+      </SpreadsheetImportStepBody>
       <StepNavigationButton
         onContinue={() => handleOnContinue(value)}
         onBack={onBack}

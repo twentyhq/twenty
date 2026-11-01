@@ -1,28 +1,31 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { Text } from 'twenty-ui/primitives/typography';
 
+import { useIsAgentChatThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThreadShownAsUnread';
 import { useFormatAgentChatThreadDate } from '@/ai/hooks/useFormatAgentChatThreadDate';
 import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
 import { getAgentChatThreadLastActivityAt } from '@/ai/utils/getAgentChatThreadLastActivityAt';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
 
 const StyledActivityTime = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
   flex-shrink: 0;
-  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 type AiChatThreadActivityTimeProps = {
   thread: AgentChatThreadRecord;
+  variant?: AiChatThreadListVariant;
 };
 
 export const AiChatThreadActivityTime = ({
   thread,
+  variant = 'default',
 }: AiChatThreadActivityTimeProps) => {
   const { t } = useLingui();
+  const isUnread = useIsAgentChatThreadShownAsUnread(thread);
   const { event } = useAtomFamilySelectorValue(
     agentChatThreadInboxStatusFamilySelector,
     thread.id,
@@ -55,5 +58,16 @@ export const AiChatThreadActivityTime = ({
     }
   };
 
-  return <StyledActivityTime>{getActivityTimeLabel()}</StyledActivityTime>;
+  const readActivityTimeColor =
+    variant === 'compact' ? 'secondary' : 'tertiary';
+
+  return (
+    <Text
+      render={<StyledActivityTime />}
+      size={variant === 'compact' ? 'md' : 'sm'}
+      color={isUnread ? 'primary' : readActivityTimeColor}
+    >
+      {getActivityTimeLabel()}
+    </Text>
+  );
 };

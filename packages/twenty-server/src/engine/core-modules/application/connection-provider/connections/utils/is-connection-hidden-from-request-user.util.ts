@@ -7,9 +7,9 @@ export const isConnectionHiddenFromRequestUser = ({
   account,
   requestUserWorkspaceId,
 }: {
-  account: Pick<ConnectedAccountEntity, 'visibility' | 'userWorkspaceId'>;
+  account: Pick<ConnectedAccountEntity, 'scope' | 'userWorkspaceId'>;
   requestUserWorkspaceId: string | null;
 }): boolean =>
   isDefined(requestUserWorkspaceId) &&
-  account.visibility === 'user' &&
+  account.scope === 'USER' &&
   account.userWorkspaceId !== requestUserWorkspaceId;

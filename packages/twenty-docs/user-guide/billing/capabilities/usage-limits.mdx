@@ -3,6 +3,10 @@ title: Usage Limits
 description: Cap what your workspace, members, API keys and apps can spend.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
+
 Set caps on AI, workflows, logic functions and email under **Settings → Billing → Limits**. [Credits](/user-guide/billing/capabilities/credits) define how much your workspace can spend in total; a limit defines how much of that a given scope can spend, and how often it resets.
 
 Viewing and changing limits requires the **Workspace** settings permission.
@@ -15,10 +19,13 @@ Viewing and changing limits requires the **Workspace** settings permission.
 | **Workflows** | Workflow Execution | Credits or runs | Workspace, app |
 | **Logic functions** | Code Execution | Credits or runs | Workspace, app, logic function |
 | **Email** | Email Send | Credits or emails | Workspace, member |
+| **All usage** | Everything above, plus app charges | Credits | App |
 
 <Note>
 **All operations** caps everything the usage spends, whichever operation it came from. It is available wherever the usage can be measured in credits.
 </Note>
+
+**All usage** puts one cap on everything an app spends: its logic functions, workflows, agents, AI calls and the credits it charges directly. It is the way to cap what an app costs you in total. It is not offered for the whole workspace, whose total is already capped by its credits.
 
 ## Meters and Periods
 
@@ -73,3 +80,5 @@ The **Limits** table shows what each limit has used in the current period. Overa
 - [Credits](/user-guide/billing/capabilities/credits)
 - [Pricing Plans](/user-guide/billing/capabilities/pricing-plans)
 - [Billing FAQ](/user-guide/billing/how-tos/billing-faq)
+
+<PageBanner illustration="card-page-usage-limits" />

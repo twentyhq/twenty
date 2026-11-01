@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { APPLICATION_WORKFLOW_TRIGGER_TYPES } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import {
   buildWorkflowGraph,
@@ -27,9 +28,11 @@ export const validateApplicationWorkflowVersion = ({
   if (
     !isDefined(trigger) ||
     version.triggers?.length !== 1 ||
-    trigger.type !== 'MANUAL'
+    !APPLICATION_WORKFLOW_TRIGGER_TYPES.includes(trigger.type)
   ) {
-    messages.push('Application workflows require one manual trigger');
+    messages.push(
+      `Application workflows require one trigger of type ${APPLICATION_WORKFLOW_TRIGGER_TYPES.join(', ')}`,
+    );
   } else {
     const identities = [
       version.universalIdentifier,

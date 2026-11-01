@@ -15,6 +15,7 @@ import {
   isDefined,
   isFieldMetadataDateKind,
 } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 const GRAPH_DEFAULT_DATE_GRANULARITY = ObjectRecordGroupByDateGranularity.DAY;
 
@@ -46,7 +47,7 @@ export const buildGroupByFieldObject = ({
 
   if (isRelation) {
     if (!isDefined(subFieldName)) {
-      return { [`${field.name}Id`]: true };
+      return { [doNotTranslate(`${field.name}Id`)]: true };
     }
 
     const parts = subFieldName.split('.');
@@ -66,7 +67,9 @@ export const buildGroupByFieldObject = ({
 
       if (shouldHaveTimeZone) {
         if (timeZoneIsNotProvided) {
-          throw new Error(`Date order by should have a time zone.`);
+          throw new Error(
+            doNotTranslate(`Date order by should have a time zone.`),
+          );
         } else {
           return {
             [field.name]: {
@@ -108,7 +111,9 @@ export const buildGroupByFieldObject = ({
   if (isComposite) {
     if (!isDefined(subFieldName)) {
       throw new Error(
-        `Composite field ${field.name} requires a subfield to be specified`,
+        doNotTranslate(
+          `Composite field ${field.name} requires a subfield to be specified`,
+        ),
       );
     }
 
@@ -134,7 +139,9 @@ export const buildGroupByFieldObject = ({
 
     if (shouldHaveTimeZone) {
       if (timeZoneIsNotProvided) {
-        throw new Error(`Date order by should have a time zone.`);
+        throw new Error(
+          doNotTranslate(`Date order by should have a time zone.`),
+        );
       } else {
         result.timeZone = timeZone;
       }

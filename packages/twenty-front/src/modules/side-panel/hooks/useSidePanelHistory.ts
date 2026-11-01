@@ -11,6 +11,7 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { isNonEmptyArray } from '@sniptt/guards';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 
 export const useSidePanelHistory = () => {
   const store = useStore();
@@ -157,7 +158,9 @@ export const useSidePanelHistory = () => {
 
       if (!isDefined(newNavigationStackItem)) {
         throw new Error(
-          `No side panel navigation stack item found for index ${pageIndex}`,
+          doNotTranslate(
+            `No side panel navigation stack item found for index ${pageIndex}`,
+          ),
         );
       }
 

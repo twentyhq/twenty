@@ -1,7 +1,6 @@
-import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { AvatarGroup } from 'twenty-ui/components/data-display';
 import { Avatar } from 'twenty-ui/primitives/data-display';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -24,32 +23,28 @@ type WorkspaceMemberAvatarStackProps = {
   workspaceMembers: WorkspaceMemberAvatarStackMember[];
 };
 
-const StyledAvatarStackContainer = styled.div`
-  align-items: center;
-  display: flex;
-  min-width: 0;
-`;
-
-const StyledAvatarContainer = styled.div`
-  border: 1px solid ${themeCssVariables.background.secondary};
-  border-radius: 50%;
-  corner-shape: round;
-  display: flex;
-`;
-
-const getWorkspaceMemberDisplayName = (
-  workspaceMember: WorkspaceMemberAvatarStackMember,
-  defaultAvatarName: string,
-) => {
+const getWorkspaceMemberDisplayName = ({
+  workspaceMember,
+  defaultAvatarName,
+}: {
+  workspaceMember: WorkspaceMemberAvatarStackMember;
+  defaultAvatarName: string;
+}) => {
   const fullName = [
     workspaceMember.name?.firstName,
     workspaceMember.name?.lastName,
   ]
-    .filter(Boolean)
+    .filter(isNonEmptyString)
     .join(' ')
     .trim();
 
-  return fullName || workspaceMember.userEmail || defaultAvatarName;
+  if (isNonEmptyString(fullName)) {
+    return fullName;
+  }
+
+  return isNonEmptyString(workspaceMember.userEmail)
+    ? workspaceMember.userEmail
+    : defaultAvatarName;
 };
 
 export const WorkspaceMemberAvatarStack = ({
@@ -58,45 +53,32 @@ export const WorkspaceMemberAvatarStack = ({
   totalWorkspaceMembersCount,
   workspaceMembers,
 }: WorkspaceMemberAvatarStackProps) => {
-  const visibleWorkspaceMembers = workspaceMembers.slice(0, maxVisible);
-  const visibleWorkspaceMembersCount = visibleWorkspaceMembers.length;
-  const hiddenWorkspaceMembersCount = Math.max(
-    0,
-    (totalWorkspaceMembersCount ?? workspaceMembers.length) -
-      visibleWorkspaceMembersCount,
-  );
-
-  if (visibleWorkspaceMembersCount === 0 && hiddenWorkspaceMembersCount === 0) {
-    return null;
-  }
-
   return (
-    <StyledAvatarStackContainer>
-      <AvatarGroup
-        avatars={visibleWorkspaceMembers.map((workspaceMember) => {
-          const displayName = getWorkspaceMemberDisplayName(
-            workspaceMember,
-            defaultAvatarName,
-          );
+    <AvatarGroup
+      avatars={workspaceMembers.map((workspaceMember) => {
+        const displayName = getWorkspaceMemberDisplayName({
+          workspaceMember,
+          defaultAvatarName,
+        });
 
-          return (
-            <StyledAvatarContainer key={workspaceMember.id}>
-              <Avatar
-                src={getAbsoluteImageUrl(workspaceMember.avatarUrl)}
-                name={displayName}
-                colorSeed={workspaceMember.id}
-                size="md"
-                shape="circle"
-              />
-            </StyledAvatarContainer>
-          );
-        })}
-        maxVisible={maxVisible}
-        overflowCount={hiddenWorkspaceMembersCount}
-        overflowShape="circle"
-        overlap="left"
-        overlapOffset="4px"
-      />
-    </StyledAvatarStackContainer>
+        return (
+          <Avatar
+            key={workspaceMember.id}
+            src={getAbsoluteImageUrl(workspaceMember.avatarUrl)}
+            name={displayName}
+            imageProps={{ alt: displayName }}
+            colorSeed={workspaceMember.id}
+            size="md"
+            shape="circle"
+            ring
+          />
+        );
+      })}
+      maxVisible={maxVisible}
+      total={totalWorkspaceMembersCount ?? undefined}
+      overflowShape="circle"
+      overlap="left"
+      overlapOffset="4px"
+    />
   );
 };

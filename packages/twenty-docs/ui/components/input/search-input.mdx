@@ -1,19 +1,60 @@
 ---
 title: SearchInput
-description: Controlled search text with an optional filter popup.
+description: Controlled search text with optional actions, such as a filter popup.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import SearchInputReference from '/snippets/ui/generated/components/input/search-input.mdx';
 
+## Overview
+
 `SearchInput` supplies a search icon and text input. `onValueChange` receives the new string; `onChange` receives the native React change event. Filtering, fetching, and debouncing belong to your application.
+
+<StoryEmbed
+  storyId="ui-input-searchinput--display"
+  title="SearchInput example"
+  height={110}
+/>
+
+## Usage
 
 ```tsx
 import { useState } from 'react';
 import { SearchInput } from 'twenty-ui/components/input';
 
-export const PeopleSearch = () => {
+export const RecordSearch = () => {
+  const [value, setValue] = useState('');
+
+  return (
+    <SearchInput
+      value={value}
+      onValueChange={setValue}
+      placeholder="Search..."
+    />
+  );
+};
+```
+
+Use `aria-label` or `aria-labelledby` for an accessible name.
+
+Native input props, `className`, `style`, and `ref` apply to the input itself. The shared `InputGroup` owns the search adornment and focus treatment. The wrapper that lays out the field and its actions takes no props; place `SearchInput` in your own container to size or position it. Use `size="sm"` for a compact search field.
+
+## Actions
+
+`actions` renders controls after the search field. Compose a filter popup with a [Dropdown](/ui/components/navigation/dropdown) whose trigger is an `IconButton`, and give that button an accessible name.
+
+```tsx
+import { useState } from 'react';
+import { IconButton, SearchInput } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { SettingsRow } from 'twenty-ui/components/settings';
+import { IconFilter } from 'twenty-ui/icon';
+
+export const FilteredPeopleSearch = () => {
   const [search, setSearch] = useState('');
+  const [includeInactive, setIncludeInactive] = useState(false);
 
   return (
     <SearchInput
@@ -21,21 +62,42 @@ export const PeopleSearch = () => {
       placeholder="Name or email"
       value={search}
       onValueChange={setSearch}
+      actions={
+        <Dropdown.Root type="panel">
+          <Dropdown.Trigger
+            render={
+              <IconButton aria-label="Filter people">
+                <IconFilter />
+              </IconButton>
+            }
+          />
+          <Dropdown.Content align="end">
+            <Dropdown.Section>
+              <SettingsRow
+                checked={includeInactive}
+                onCheckedChange={setIncludeInactive}
+              >
+                Include inactive people
+              </SettingsRow>
+            </Dropdown.Section>
+          </Dropdown.Content>
+        </Dropdown.Root>
+      }
     />
   );
 };
 ```
 
-Use `aria-label` or `aria-labelledby` for an accessible name. `filterDropdown` receives a filter button that you can compose with a [Dropdown](/ui/components/navigation/dropdown) trigger using `render`. Supply `filterButtonAriaLabel` to name that action. `disabled` disables the text input; configure the optional filter controls separately.
+`disabled` disables only the text input; disable action controls separately. With `size="sm"`, pass `size="sm"` to the action controls as well.
 
 <StoryEmbed
-  storyId="ui-input-searchinput--default"
-  title="SearchInput example"
-  height={280}
+  storyId="ui-input-searchinput--with-filter"
+  title="SearchInput with a filter popup"
+  height={320}
 />
-
-Native input props, `className`, `style`, and `ref` apply to the input itself. The shared `InputGroup` owns the search adornment and focus treatment. Use `size="sm"` for a compact search field.
 
 ## Props
 
 <SearchInputReference />
+
+<PageBanner illustration="page-cover-search" />

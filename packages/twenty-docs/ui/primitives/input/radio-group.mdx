@@ -3,21 +3,75 @@ title: RadioGroup
 description: Manage a single selection across a set of radio options.
 ---
 
-import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import RadioGroupReference from '/snippets/ui/generated/input/radio-group.mdx';
+
+## Overview
 
 `RadioGroup` coordinates the value, keyboard navigation, and form submission of its [Radio](/ui/primitives/input/radio) children.
 
 <StoryEmbed
-  storyId="ui-input-radiogroup--default"
+  storyId="ui-input-radiogroup--display"
   title="RadioGroup example"
-  height={240}
+  height={110}
 />
+
+## Usage
+
+### Uncontrolled state
+
+Use `defaultValue` to set the initial billing frequency. The group owns subsequent changes.
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const BillingFrequency = () => (
+  <RadioGroup
+    name="billingFrequency"
+    defaultValue="monthly"
+    aria-label="Billing frequency"
+  >
+    <Radio value="monthly">Monthly</Radio>
+    <Radio value="yearly">Yearly</Radio>
+  </RadioGroup>
+);
+```
+
+The group's `name` identifies the selected value in form submission. Give the group an accessible name as well as labeling each radio.
+
+### Horizontal layout
+
+Groups use a vertical column by default. Set `orientation="horizontal"` for a row. The prop controls visual layout through `data-orientation`; it does not set `aria-orientation` or change keyboard navigation. Both horizontal and vertical arrow keys retain the existing Base UI behavior, including right-to-left navigation through [DirectionProvider](/ui/primitives/layout/direction-provider).
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const HorizontalBillingFrequency = () => (
+  <RadioGroup
+    orientation="horizontal"
+    name="billingFrequency"
+    defaultValue="monthly"
+    aria-label="Billing frequency"
+  >
+    <Radio value="monthly">Monthly</Radio>
+    <Radio value="yearly">Yearly</Radio>
+  </RadioGroup>
+);
+```
+
+<StoryEmbed
+  storyId="ui-input-radiogroup--horizontal"
+  title="Horizontal RadioGroup"
+  height={80}
+/>
+
+The default gap stays the same in either direction.
 
 ## Anatomy
 
-Put each `Radio` inside the group and associate it with a label. `RadioGroup` and `Radio` are separate exports.
+Put each `Radio` or `Radio.Root` inside the group and associate it with a label. Use `Radio.Indicator` to compose a custom indicator. `RadioGroup` and `Radio` are separate exports.
 
 ```text
 fieldset
@@ -37,41 +91,6 @@ fieldset
 | `fieldset`, `legend` | Optional grouping           | Groups related controls under a visible heading.           |
 
 Give the group its own accessible name using `aria-label` or `aria-labelledby`. In the examples below, `aria-labelledby` connects the group to the legend. Each radio also needs its own name. Put selection props on `RadioGroup` and option values on `Radio`.
-
-## Uncontrolled state
-
-Use `defaultValue` to set the initial billing frequency. The group owns subsequent changes.
-
-```tsx
-import { useId } from 'react';
-import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
-
-export const BillingFrequency = () => {
-  const labelId = useId();
-
-  return (
-    <fieldset>
-      <legend id={labelId}>Billing frequency</legend>
-      <RadioGroup
-        name="billingFrequency"
-        defaultValue="monthly"
-        aria-labelledby={labelId}
-      >
-        <label>
-          <Radio value="monthly" />
-          Monthly
-        </label>
-        <label>
-          <Radio value="yearly" />
-          Yearly
-        </label>
-      </RadioGroup>
-    </fieldset>
-  );
-};
-```
-
-The group's `name` identifies the selected value in form submission. Give the group an accessible name as well as labeling each radio.
 
 ## Controlled state
 
@@ -108,10 +127,24 @@ export const BillingFrequency = () => {
 };
 ```
 
-`onValueChange` receives the next value and event details. The generic value type is inferred from the props. Use `disabled` on the group to disable every option, or on an individual radio to disable one choice. Arrow keys navigate the enabled options; Tab moves out of the group.
+`onValueChange` receives the next value and event details. The generic value type is inferred from the props. Use `disabled` on the group to disable every option, or on an individual radio to disable one choice. Arrow keys navigate and select enabled options; Tab moves out of the group. The installed Base UI version supports both horizontal and vertical arrow keys. RadioGroup adds the visual-only `orientation` prop without changing that keyboard contract.
+
+## Native integration and event details
+
+`RadioGroup` renders a div by default. Native props and `ref` target that element; `render` composes another element and changes the actual ref target. `inputRef` targets the representative hidden input of a child radio, using the selected enabled option or an enabled fallback. The public types include generic `RadioGroupProps`, `RadioGroupState`, `RadioGroupChangeEventReason` and `RadioGroupChangeEventDetails`.
+
+The callback receives the original event details, including the native `event`, `reason`, `cancel()` and `allowPropagation()`. Cancel a proposed change before updating controlled state when the choice should be rejected.
+
+Keep `name`, `form`, `required`, `disabled` and `readOnly` on the group for the existing Base UI form contract. The selected value is submitted under `name`; disabled groups are excluded and read-only groups keep their selection. `form` supports a group outside its owning form. The installed version does not restore group state automatically on native form reset. Reset controlled state from the form's `onReset` handler when your workflow requires it.
+
+In sandboxed front components, put the group inside its owning form. The renderer forwards `required` validation and blocks explicit `form` references, which otherwise resolve across the host document.
+
+[SegmentedControl](/ui/components/input/segmented-control) is a convenience preset assembled from these primitives for a short exclusive choice. It uses radio semantics and requires an accessible group name. Tabs and tab-panel navigation are separate controls.
 
 ## Props
 
 The reference is generated from the public component types. Native attributes, including accessible names and event handlers, are also accepted on parts that render elements.
 
 <RadioGroupReference />
+
+<PageBanner illustration="page-cover-switch" />

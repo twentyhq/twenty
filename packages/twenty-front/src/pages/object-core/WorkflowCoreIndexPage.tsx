@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
-import { AppPath, CoreObjectNameSingular } from 'twenty-shared/types';
+import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
+import { IconSettingsAutomation } from 'twenty-ui/icon';
 
 import { CommandMenuContextProvider } from '@/command-menu-item/contexts/CommandMenuContextProvider';
 import { getCommandMenuIdFromRecordIndexId } from '@/command-menu-item/utils/getCommandMenuIdFromRecordIndexId';
@@ -14,9 +15,12 @@ import { useCoreWorkflowsSelection } from '@/object-core/workflows/hooks/useCore
 import { useListenToCoreWorkflowEvents } from '@/object-core/workflows/hooks/useListenToCoreWorkflowEvents';
 import { useCreateCoreWorkflow } from '@/object-core/workflows/hooks/useCreateCoreWorkflow';
 import { coreWorkflowsFilterSettingsState } from '@/object-core/workflows/states/coreWorkflowsFilterSettingsState';
-import { isUsableCoreWorkflowFilterRule } from '@/object-core/workflows/utils/isUsableCoreWorkflowFilterRule';
+import { hasAppliedCoreObjectFilters } from '@/object-core/filters/utils/hasAppliedCoreObjectFilters';
+import { CORE_WORKFLOW_FILTER_FIELDS } from '@/object-core/workflows/constants/CoreWorkflowFilterFields';
+import { CORE_WORKFLOWS_DEFAULT_FILTER_SETTINGS } from '@/object-core/workflows/constants/CoreWorkflowsDefaultFilterSettings';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { CoreWorkflowsFilterBar } from '@/object-core/workflows/components/CoreWorkflowsFilterBar';
+import { CoreWorkflowsFilterButton } from '@/object-core/workflows/components/CoreWorkflowsFilterButton';
+import { CoreWorkflowsSelectionToContextStoreEffect } from '@/object-core/workflows/components/CoreWorkflowsSelectionToContextStoreEffect';
 import { WORKFLOW_CORE_TABLE_COLUMNS } from '@/object-core/workflows/constants/WorkflowCoreTableColumns';
 import {
   CORE_WORKFLOWS_INITIAL_SORT,
@@ -24,22 +28,18 @@ import {
   useCoreWorkflows,
 } from '@/object-core/workflows/hooks/useCoreWorkflows';
 import { type CoreWorkflow } from '@/object-core/workflows/types/CoreWorkflow';
-import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
-import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { CoreWorkflowsPermissionGate } from '@/object-core/workflows/components/CoreWorkflowsPermissionGate';
 import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
+import { ColoredIcon } from '@/ui/icon/components/ColoredIcon';
 import { useWorkspaceSurfaceScopedComponentInstanceId } from '@/ui/layout/hooks/useWorkspaceSurfaceScopedComponentInstanceId';
 
 const getCoreWorkflowLink = (workflow: CoreWorkflow) =>
   getAppPath(AppPath.WorkflowCoreShowPage, { coreWorkflowId: workflow.id });
 
-export const WorkflowCoreIndexPage = () => {
+const WorkflowCoreIndexContent = () => {
   const tableId = useWorkspaceSurfaceScopedComponentInstanceId(
     CORE_WORKFLOWS_TABLE_ID,
   );
-
-  const { objectMetadataItem } = useObjectMetadataItem({
-    objectNameSingular: CoreObjectNameSingular.Workflow,
-  });
 
   const {
     coreWorkflows,
@@ -57,6 +57,7 @@ export const WorkflowCoreIndexPage = () => {
   const {
     displayedCoreWorkflows,
     selectedRowIds,
+    selectedCoreWorkflows,
     selectedRowCount,
     toggleRow,
     selectRows,
@@ -68,9 +69,11 @@ export const WorkflowCoreIndexPage = () => {
     coreWorkflowsFilterSettingsState,
   );
 
-  const hasAppliedFilters = (
-    coreWorkflowsFilterSettings.stepFilters ?? []
-  ).some(isUsableCoreWorkflowFilterRule);
+  const hasAppliedFilters = hasAppliedCoreObjectFilters({
+    filterSettings: coreWorkflowsFilterSettings,
+    defaultFilterSettings: CORE_WORKFLOWS_DEFAULT_FILTER_SETTINGS,
+    filterFields: CORE_WORKFLOW_FILTER_FIELDS,
+  });
 
   const hasError = isDefined(error);
 
@@ -82,8 +85,8 @@ export const WorkflowCoreIndexPage = () => {
 
   return (
     <CoreObjectIndexPageLayout
-      labelPlural={objectMetadataItem.labelPlural}
-      icon={<ObjectMetadataIcon objectMetadataItem={objectMetadataItem} />}
+      labelPlural={t`Workflows`}
+      icon={<ColoredIcon Icon={IconSettingsAutomation} color="gray" />}
       numberOfSelectedRecords={selectedRowCount}
       actionButton={
         <>
@@ -99,7 +102,7 @@ export const WorkflowCoreIndexPage = () => {
               <PinnedCommandMenuItemButtons />
             </CommandMenuContextProvider>
           </CommandMenuComponentInstanceContext.Provider>
-          <CoreWorkflowsFilterBar />
+          <CoreWorkflowsFilterButton isFilterActive={hasAppliedFilters} />
           <SidePanelToggleButton />
         </>
       }
@@ -109,18 +112,21 @@ export const WorkflowCoreIndexPage = () => {
       emptyState={{
         hasAppliedFilters,
         title: hasAppliedFilters
-          ? t`No ${objectMetadataItem.labelPlural} found`
-          : t`Add your first ${objectMetadataItem.labelSingular}`,
+          ? t`No Workflows found`
+          : t`Add your first Workflow`,
         subTitle: hasAppliedFilters
-          ? t`No ${objectMetadataItem.labelPlural} match your filters. Try removing some of them.`
-          : t`Create a ${objectMetadataItem.labelSingular} to automate your work.`,
-        buttonTitle: t`Add a ${objectMetadataItem.labelSingular}`,
+          ? t`No Workflows match your filters. Try removing some of them.`
+          : t`Create a Workflow to automate your work.`,
+        buttonTitle: t`Add a Workflow`,
         onButtonClick: canCreateCoreWorkflow ? createCoreWorkflow : undefined,
       }}
       hasNextPage={hasNextPage}
       isFetchingNextPage={loading}
       onFetchNextPage={fetchNextPage}
     >
+      <CoreWorkflowsSelectionToContextStoreEffect
+        selectedCoreWorkflows={selectedCoreWorkflows}
+      />
       <CoreObjectTable
         tableId={tableId}
         columns={WORKFLOW_CORE_TABLE_COLUMNS}
@@ -136,11 +142,18 @@ export const WorkflowCoreIndexPage = () => {
       />
       {canCreateCoreWorkflow && (
         <CoreObjectTableAddNewRow
-          label={t`New ${objectMetadataItem.labelSingular}`}
+          label={t`New Workflow`}
           onClick={createCoreWorkflow}
           disabled={isCreatingCoreWorkflow}
+          hasCheckboxColumn
         />
       )}
     </CoreObjectIndexPageLayout>
   );
 };
+
+export const WorkflowCoreIndexPage = () => (
+  <CoreWorkflowsPermissionGate>
+    <WorkflowCoreIndexContent />
+  </CoreWorkflowsPermissionGate>
+);

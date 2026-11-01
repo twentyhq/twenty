@@ -46,9 +46,7 @@ export class InsertFieldData {
       '//span[contains(., "COUNTRY")]/../div[last()]/div',
     );
     this.arrayValueInput = page.locator("//input[@placeholder='Enter value']");
-    this.arrayAddValueButton = page.locator(
-      "//div[@data-testid='tooltip' and contains(.,'Add item')]",
-    );
+    this.arrayAddValueButton = page.getByText('Add item', { exact: true });
     this.currencySelect = page.locator(
       '//body/div[last()]/div/div/div[first()]/div/div',
     );
@@ -57,24 +55,14 @@ export class InsertFieldData {
     this.yearSelect;
     this.previousMonthButton;
     this.nextMonthButton;
-    this.clearDateButton = page.locator(
-      "//div[@data-testid='tooltip' and contains(., 'Clear')]",
-    );
+    this.clearDateButton = page.getByText('Clear', { exact: true });
     this.dateInput = page.locator("//input[@placeholder='Type date and time']");
     this.firstNameInput = page.locator("//input[@placeholder='First name']"); // may fail if placeholder is `F&zwnj;&zwnj;irst name` instead of `First name`
     this.lastNameInput = page.locator("//input[@placeholder='Last name']"); // may fail if placeholder is `L&zwnj;&zwnj;ast name` instead of `Last name`
-    this.addUrlButton = page.locator(
-      "//div[@data-testid='tooltip' and contains(., 'Add URL')]",
-    );
-    this.setAsPrimaryButton = page.locator(
-      "//div[@data-testid='tooltip' and contains(., 'Set as primary')]",
-    );
-    this.addPhoneButton = page.locator(
-      "//div[@data-testid='tooltip' and contains(., 'Add Phone')]",
-    );
-    this.addMailButton = page.locator(
-      "//div[@data-testid='tooltip' and contains(., 'Add Email')]",
-    );
+    this.addUrlButton = page.getByText('Add URL', { exact: true });
+    this.setAsPrimaryButton = page.getByText('Set as primary', { exact: true });
+    this.addPhoneButton = page.getByText('Add Phone', { exact: true });
+    this.addMailButton = page.getByText('Add Email', { exact: true });
   }
 
   async typeAddress1(value: string) {
@@ -99,9 +87,7 @@ export class InsertFieldData {
 
   async selectCountry(value: string) {
     await this.countrySelect.click();
-    await this.page
-      .locator(`//div[@data-testid='tooltip' and contains(., '${value}')]`)
-      .click();
+    await this.page.getByText(value).click();
   }
 
   async typeArrayValue(value: string) {
@@ -114,9 +100,7 @@ export class InsertFieldData {
 
   async selectCurrency(value: string) {
     await this.currencySelect.click();
-    await this.page
-      .locator(`//div[@data-testid='tooltip' and contains(., '${value}')]`)
-      .click();
+    await this.page.getByText(value).click();
   }
 
   async typeCurrencyAmount(value: string) {
@@ -129,16 +113,12 @@ export class InsertFieldData {
 
   async selectMonth(value: string) {
     await this.monthSelect.click();
-    await this.page
-      .locator(`//div[@data-testid='tooltip' and contains(., '${value}')]`)
-      .click();
+    await this.page.getByText(value).click();
   }
 
   async selectYear(value: string) {
     await this.yearSelect.click();
-    await this.page
-      .locator(`//div[@data-testid='tooltip' and contains(., '${value}')]`)
-      .click();
+    await this.page.getByText(value).click();
   }
 
   async clickPreviousMonthButton() {
@@ -190,9 +170,7 @@ export class InsertFieldData {
   }
 
   async selectValue(value: string) {
-    await this.page
-      .locator(`//div[@data-testid='tooltip' and contains(., '${value}')]`)
-      .click();
+    await this.page.getByText(value).click();
   }
 
   async typeNumber(placeholder: string, value: string) {
@@ -202,11 +180,7 @@ export class InsertFieldData {
   }
 
   async selectCountryPhoneCode(countryCode: string) {
-    await this.page
-      .locator(
-        `//div[@data-testid='tooltip' and contains(., '${countryCode}')]`,
-      )
-      .click();
+    await this.page.getByText(countryCode).click();
   }
 
   async typePhoneNumber(value: string) {
@@ -237,14 +211,10 @@ export class InsertFieldData {
   }
 
   async clickEditButton() {
-    await this.page
-      .locator("//div[@data-testid='tooltip' and contains(., 'Edit')]")
-      .click();
+    await this.page.getByText('Edit', { exact: true }).click();
   }
 
   async clickDeleteButton() {
-    await this.page
-      .locator("//div[@data-testid='tooltip' and contains(., 'Delete')]")
-      .click();
+    await this.page.getByText('Delete', { exact: true }).click();
   }
 }

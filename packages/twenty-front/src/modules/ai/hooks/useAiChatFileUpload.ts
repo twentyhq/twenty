@@ -23,9 +23,20 @@ export const useAiChatFileUpload = () => {
   const store = useStore();
 
   const sendFile = async (file: File): Promise<AgentChatFileUIPart | null> => {
+    const abortController = new AbortController();
+    const unsubscribeFromSelectedFiles = store.sub(
+      agentChatSelectedFilesState.atom,
+      () => {
+        if (!store.get(agentChatSelectedFilesState.atom).includes(file)) {
+          abortController.abort();
+        }
+      },
+    );
+
     try {
       const uploadedFile = await directUploadFile(file, {
         fileFolder: FileFolder.AgentChat,
+        signal: abortController.signal,
       });
 
       if (!store.get(agentChatSelectedFilesState.atom).includes(file)) {
@@ -41,12 +52,17 @@ export const useAiChatFileUpload = () => {
       };
     } catch {
       const fileName = file.name;
-      enqueueToast({
-        variant: 'error',
-        children: t`Failed to upload file: ${fileName}`,
-      });
+
+      if (!abortController.signal.aborted) {
+        enqueueToast({
+          status: 'error',
+          children: t`Failed to upload file: ${fileName}`,
+        });
+      }
+
       return null;
     } finally {
+      unsubscribeFromSelectedFiles();
       setAgentChatSelectedFiles((previousSelectedFiles) =>
         previousSelectedFiles.filter((selectedFile) => selectedFile !== file),
       );

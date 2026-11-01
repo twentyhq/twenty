@@ -12,7 +12,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { RouterProvider, createMemoryRouter } from 'react-router-dom';
 
 import { UserMetadataProviderInitialEffect } from '@/metadata-store/effect-components/UserMetadataProviderInitialEffect';
-import { DefaultLayout } from '@/ui/layout/page/components/DefaultLayout';
+import { DefaultLayout } from '@/app/components/DefaultLayout';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { UserContextProvider } from '@/users/components/UserContextProvider';
 import { type JSX, useState } from 'react';
@@ -25,7 +25,6 @@ import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainCo
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
 import { PreComputedChipGeneratorsProvider } from '@/object-metadata/components/PreComputedChipGeneratorsProvider';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
-import { RecordCreationFormProvider } from '@/object-record/record-form/components/RecordCreationFormProvider';
 import { WorkspaceProviderEffect } from '@/workspace/components/WorkspaceProviderEffect';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
@@ -40,6 +39,7 @@ export type PageDecoratorArgs = {
   routeParams: RouteParams;
   additionalRoutes?: string[];
   searchParams?: RouteParams;
+  routeHash?: string;
 };
 
 export type RouteParams = {
@@ -54,11 +54,15 @@ export const isRouteParams = (obj: any): obj is RouteParams => {
   return Object.keys(obj).every((key) => typeof obj[key] === 'string');
 };
 
-export const computeLocation = (
-  routePath: string,
-  routeParams?: RouteParams,
-  searchParams?: RouteParams,
-) => {
+export const computeLocation = ({
+  routePath,
+  routeParams,
+  searchParams,
+  routeHash = '',
+}: Pick<PageDecoratorArgs, 'routePath'> &
+  Partial<
+    Pick<PageDecoratorArgs, 'routeParams' | 'searchParams' | 'routeHash'>
+  >) => {
   const search = searchParams
     ? `?${new URLSearchParams(searchParams).toString()}`
     : '';
@@ -69,6 +73,7 @@ export const computeLocation = (
       (paramName) => routeParams?.[paramName] ?? '',
     ),
     search,
+    hash: routeHash,
   };
 };
 
@@ -104,9 +109,7 @@ const Providers = () => {
                         <HelmetProvider>
                           <IconsProvider>
                             <RecordComponentInstanceContextsWrapper componentInstanceId="storybook-test-record">
-                              <RecordCreationFormProvider>
-                                <MinimalMetadataGate />
-                              </RecordCreationFormProvider>
+                              <MinimalMetadataGate />
                             </RecordComponentInstanceContextsWrapper>
                           </IconsProvider>
                         </HelmetProvider>
@@ -138,6 +141,8 @@ const createRouter = ({
   };
   initialEntries?: {
     pathname: string;
+    search?: string;
+    hash?: string;
   }[];
   initialIndex?: number;
 }) => {
@@ -170,12 +175,18 @@ export const PageDecorator: Decorator<{
   routeParams: RouteParams;
   additionalRoutes?: string[];
   searchParams?: RouteParams;
+  routeHash?: string;
 }> = (Story, { args }) => {
   const router = createRouter({
     Story,
     args,
     initialEntries: [
-      computeLocation(args.routePath, args.routeParams, args.searchParams),
+      computeLocation({
+        routePath: args.routePath,
+        routeParams: args.routeParams,
+        searchParams: args.searchParams,
+        routeHash: args.routeHash,
+      }),
     ],
   });
 

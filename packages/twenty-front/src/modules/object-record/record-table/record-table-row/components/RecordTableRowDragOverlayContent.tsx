@@ -31,43 +31,33 @@ import { RecordTablePlusButtonCellPlaceholder } from '@/object-record/record-tab
 import { RecordTableFieldsCells } from '@/object-record/record-table/record-table-row/components/RecordTableFieldsCells';
 import { RecordDragMultiDragCounterChip } from '@/object-record/record-drag/components/RecordDragMultiDragCounterChip';
 import { RecordTableTr } from '@/object-record/record-table/record-table-row/components/RecordTableTr';
-import { type RecordTableRowDragData } from '@/object-record/record-table/types/RecordTableRowDragData';
+import { type RecordDragData } from '@/object-record/record-drag/types/RecordDragData';
+import { RecordTableColumnVirtualizationItemsContextValueProvider } from '@/object-record/record-table/contexts/RecordTableColumnVirtualizationItemsContext';
+import { computeRecordTableColumnRange } from '@/object-record/record-table/virtualization/utils/computeRecordTableColumnRange';
+import { computeRecordTableColumnVirtualizationItems } from '@/object-record/record-table/virtualization/utils/computeRecordTableColumnVirtualizationItems';
+import { RecordTableColumnWidthStyle } from '@/object-record/record-table/components/RecordTableColumnWidthStyle';
+import { getRecordTableHtmlId } from '@/object-record/record-table/utils/getRecordTableHtmlId';
 import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-table/utils/getRecordTableColumnFieldWidthClassName';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
-
-const MAX_COLUMNS = 100;
-
-const cloneColumnFieldWidthRules = Array.from(
-  { length: MAX_COLUMNS },
-  (_, i) => {
-    const className = getRecordTableColumnFieldWidthClassName(i);
-    const cssVar = `var(--record-table-column-field-${i})`;
-    return `div.${className} {
-    width: ${cssVar};
-    min-width: ${cssVar};
-    max-width: ${cssVar};
-  }`;
-  },
-).join('\n');
 
 // The overlay portals outside the table, so its column width variables and sticky rules are redeclared.
 const StyledRowDragOverlayCSSBridge = styled.div`
   position: relative;
 
   div.table-cell.${RECORD_TABLE_COLUMN_DRAG_AND_DROP_WIDTH_CLASS_NAME} {
-    left: 0px;
+    inset-inline-start: 0px;
     position: sticky;
     z-index: ${TABLE_Z_INDEX.cell.sticky};
   }
 
   div.table-cell.${RECORD_TABLE_COLUMN_CHECKBOX_WIDTH_CLASS_NAME} {
-    left: var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR});
+    inset-inline-start: var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR});
     position: sticky;
     z-index: ${TABLE_Z_INDEX.cell.sticky};
   }
 
   div.table-cell-0-0 {
-    left: calc(
+    inset-inline-start: calc(
       var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) +
         var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR})
     );
@@ -77,7 +67,7 @@ const StyledRowDragOverlayCSSBridge = styled.div`
   }
 
   div.table-cell.${getRecordTableColumnFieldWidthClassName(0)} {
-    left: calc(
+    inset-inline-start: calc(
       var(${RECORD_TABLE_DRAG_DROP_WIDTH_CSS_VAR}) +
         var(${RECORD_TABLE_CHECKBOX_WIDTH_CSS_VAR})
     );
@@ -105,8 +95,6 @@ const StyledRowDragOverlayCSSBridge = styled.div`
     width: ${RECORD_TABLE_COLUMN_ADD_COLUMN_BUTTON_WIDTH}px;
   }
 
-  ${cloneColumnFieldWidthRules}
-
   div.${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_CLASS_NAME} {
     max-width: var(
       ${RECORD_TABLE_COLUMN_LAST_EMPTY_COLUMN_WIDTH_VARIABLE_NAME}
@@ -131,7 +119,9 @@ export const RecordTableRowDragOverlayContent = ({
 }) => {
   const { lastColumnWidth } = useRecordTableLastColumnWidthToFill();
 
-  const { visibleRecordFields } = useRecordTableContextOrThrow();
+  const { visibleRecordFields, recordTableId } = useRecordTableContextOrThrow();
+
+  const rowDragOverlayHtmlId = `${getRecordTableHtmlId(recordTableId)}-row-drag-overlay`;
 
   const isRecordTableDragColumnHidden = useAtomComponentStateValue(
     isRecordTableDragColumnHiddenComponentState,
@@ -164,7 +154,7 @@ export const RecordTableRowDragOverlayContent = ({
     isRecordTableCheckboxColumnHidden,
   ]);
 
-  const sourceData = source?.data as RecordTableRowDragData | undefined;
+  const sourceData = source?.data as RecordDragData | undefined;
 
   if (!isDefined(source) || !isDefined(sourceData)) {
     return null;
@@ -172,8 +162,24 @@ export const RecordTableRowDragOverlayContent = ({
 
   const recordId = sourceData.recordId;
 
+  const columnVirtualizationItems = computeRecordTableColumnVirtualizationItems(
+    {
+      visibleRecordFields,
+      renderedColumnRange: computeRecordTableColumnRange({
+        visibleRecordFields,
+        visibleStartPosition: 0,
+        visibleEndPosition: visibleTableWidth ?? window.innerWidth,
+      }),
+      columnIndexesRenderedOutsideRange: [],
+    },
+  );
+
   return (
-    <StyledRowDragOverlayCSSBridge style={columnWidthStyles}>
+    <StyledRowDragOverlayCSSBridge
+      id={rowDragOverlayHtmlId}
+      style={columnWidthStyles}
+    >
+      <RecordTableColumnWidthStyle scopeId={rowDragOverlayHtmlId} />
       <StyledRowClipContainer
         style={
           isDefined(visibleTableWidth)
@@ -183,7 +189,6 @@ export const RecordTableRowDragOverlayContent = ({
       >
         <RecordTableTr
           recordId={recordId}
-          focusIndex={sourceData.focusIndex}
           style={{
             background: themeCssVariables.background.secondary,
             borderColor: themeCssVariables.border.color.medium,
@@ -196,7 +201,11 @@ export const RecordTableRowDragOverlayContent = ({
           <RecordTableRowDraggableContextProvider value={{ isDragging: true }}>
             {!isRecordTableDragColumnHidden && <RecordTableCellDragAndDrop />}
             {!isRecordTableCheckboxColumnHidden && <RecordTableCellCheckbox />}
-            <RecordTableFieldsCells />
+            <RecordTableColumnVirtualizationItemsContextValueProvider
+              value={columnVirtualizationItems}
+            >
+              <RecordTableFieldsCells />
+            </RecordTableColumnVirtualizationItemsContextValueProvider>
             <RecordTablePlusButtonCellPlaceholder />
             <RecordTableLastEmptyCell />
           </RecordTableRowDraggableContextProvider>

@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 import { type FindOneSkillQuery } from '~/generated-metadata/graphql';
-import { computeMetadataNameFromLabel } from '~/pages/settings/data-model/utils/computeMetadataNameFromLabel';
+import { computeMetadataNameFromLabel } from '@/object-metadata/utils/computeMetadataNameFromLabel';
 import { type SettingsSkillFormValues } from '~/pages/settings/ai/types/SettingsSkillFormValues';
 
 export const getSettingsSkillInitialFormValues = (

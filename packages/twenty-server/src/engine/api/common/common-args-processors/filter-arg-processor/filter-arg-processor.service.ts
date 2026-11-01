@@ -6,13 +6,14 @@ import {
   FieldMetadataType,
   RelationType,
 } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldReferenceFilterOperator } from 'twenty-shared/utils';
 
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
 import { MAX_RELATION_FILTER_DEPTH } from 'src/engine/api/common/common-args-processors/filter-arg-processor/constants/max-relation-filter-depth.constant';
 import { validateAndTransformOperatorAndValue } from 'src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-and-transform-operator-and-value.util';
+import { validateFieldReferenceFilterValueOrThrow } from 'src/engine/api/common/common-args-processors/filter-arg-processor/utils/validate-field-reference-filter-value-or-throw.util';
 import {
   CommonQueryRunnerException,
   CommonQueryRunnerExceptionCode,
@@ -42,6 +43,36 @@ function throwUseJoinColumnInstead(key: string): never {
   );
 }
 
+const computeParentRelationHints = ({
+  parentRelationFieldMetadata,
+}: {
+  parentRelationFieldMetadata?: FlatFieldMetadata<
+    FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+  >;
+}): { relationContext: string; joinColumnHint: string } => {
+  if (!isDefined(parentRelationFieldMetadata)) {
+    return { relationContext: '', joinColumnHint: '' };
+  }
+
+  const relationContext = ` (filtering through relation "${parentRelationFieldMetadata.name}")`;
+
+  if (
+    parentRelationFieldMetadata.settings?.relationType !==
+    RelationType.MANY_TO_ONE
+  ) {
+    return { relationContext, joinColumnHint: '' };
+  }
+
+  const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
+    name: parentRelationFieldMetadata.name,
+  });
+
+  return {
+    relationContext,
+    joinColumnHint: ` To filter by the related record id instead, use "${joinColumnName}".`,
+  };
+};
+
 @Injectable()
 export class FilterArgProcessorService {
   process<T extends ObjectRecordFilter | undefined>({
@@ -65,55 +96,73 @@ export class FilterArgProcessorService {
         flatObjectMetadata,
       );
 
-    return this.validateAndTransformFilter(
-      filter,
+    return this.validateAndTransformFilter({
+      filterObject: filter,
       flatObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       fieldIdByName,
       fieldIdByJoinColumnName,
-      0,
-    ) as T;
+      depth: 0,
+    }) as T;
   }
 
-  private validateAndTransformFilter(
-    filterObject: ObjectRecordFilter,
-    flatObjectMetadata: FlatObjectMetadata,
-    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> | undefined,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    fieldIdByName: Record<string, string>,
-    fieldIdByJoinColumnName: Record<string, string>,
-    depth: number,
-  ): ObjectRecordFilter {
+  private validateAndTransformFilter({
+    filterObject,
+    flatObjectMetadata,
+    flatObjectMetadataMaps,
+    flatFieldMetadataMaps,
+    fieldIdByName,
+    fieldIdByJoinColumnName,
+    depth,
+    parentRelationFieldMetadata,
+    parentFlatObjectMetadata,
+  }: {
+    filterObject: ObjectRecordFilter;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> | undefined;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    fieldIdByName: Record<string, string>;
+    fieldIdByJoinColumnName: Record<string, string>;
+    depth: number;
+    parentRelationFieldMetadata?: FlatFieldMetadata<
+      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+    >;
+    parentFlatObjectMetadata?: FlatObjectMetadata;
+  }): ObjectRecordFilter {
     const transformedFilter: ObjectRecordFilter = {};
 
     for (const [key, value] of Object.entries(filterObject)) {
       if (key === 'and' || key === 'or') {
         transformedFilter[key] = (value as ObjectRecordFilter[]).map(
           (nestedFilter) =>
-            this.validateAndTransformFilter(
-              nestedFilter,
+            this.validateAndTransformFilter({
+              filterObject: nestedFilter,
               flatObjectMetadata,
               flatObjectMetadataMaps,
               flatFieldMetadataMaps,
               fieldIdByName,
               fieldIdByJoinColumnName,
               depth,
-            ),
+              parentRelationFieldMetadata,
+              parentFlatObjectMetadata,
+            }),
         );
         continue;
       }
 
       if (key === 'not') {
-        transformedFilter[key] = this.validateAndTransformFilter(
-          value as ObjectRecordFilter,
+        transformedFilter[key] = this.validateAndTransformFilter({
+          filterObject: value as ObjectRecordFilter,
           flatObjectMetadata,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
           fieldIdByName,
           fieldIdByJoinColumnName,
           depth,
-        );
+          parentRelationFieldMetadata,
+          parentFlatObjectMetadata,
+        });
         continue;
       }
 
@@ -129,6 +178,7 @@ export class FilterArgProcessorService {
           key,
           value,
           fieldMetadataForRelation,
+          flatObjectMetadata,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
           depth,
@@ -136,14 +186,16 @@ export class FilterArgProcessorService {
         continue;
       }
 
-      transformedFilter[key] = this.validateAndTransformFieldFilter(
+      transformedFilter[key] = this.validateAndTransformFieldFilter({
         key,
-        value,
+        filterValue: value,
         flatObjectMetadata,
         flatFieldMetadataMaps,
         fieldIdByName,
         fieldIdByJoinColumnName,
-      );
+        parentRelationFieldMetadata,
+        parentFlatObjectMetadata,
+      });
     }
 
     return transformedFilter;
@@ -196,6 +248,7 @@ export class FilterArgProcessorService {
     fieldMetadata: FlatFieldMetadata<
       FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
     >,
+    sourceFlatObjectMetadata: FlatObjectMetadata,
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> | undefined,
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
     depth: number,
@@ -256,32 +309,50 @@ export class FilterArgProcessorService {
       targetObjectMetadata,
     );
 
-    return this.validateAndTransformFilter(
-      filterValue,
-      targetObjectMetadata,
+    return this.validateAndTransformFilter({
+      filterObject: filterValue,
+      flatObjectMetadata: targetObjectMetadata,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      targetFieldIdByName,
-      targetFieldIdByJoinColumnName,
-      depth + 1,
-    );
+      fieldIdByName: targetFieldIdByName,
+      fieldIdByJoinColumnName: targetFieldIdByJoinColumnName,
+      depth: depth + 1,
+      parentRelationFieldMetadata: fieldMetadata,
+      parentFlatObjectMetadata: sourceFlatObjectMetadata,
+    });
   }
 
-  private validateAndTransformFieldFilter(
-    key: string,
-    filterValue: Record<string, unknown>,
-    flatObjectMetadata: FlatObjectMetadata,
-    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>,
-    fieldIdByName: Record<string, string>,
-    fieldIdByJoinColumnName: Record<string, string>,
-  ): Record<string, unknown> {
+  private validateAndTransformFieldFilter({
+    key,
+    filterValue,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+    fieldIdByName,
+    fieldIdByJoinColumnName,
+    parentRelationFieldMetadata,
+    parentFlatObjectMetadata,
+  }: {
+    key: string;
+    filterValue: Record<string, unknown>;
+    flatObjectMetadata: FlatObjectMetadata;
+    flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
+    fieldIdByName: Record<string, string>;
+    fieldIdByJoinColumnName: Record<string, string>;
+    parentRelationFieldMetadata?: FlatFieldMetadata<
+      FieldMetadataType.RELATION | FieldMetadataType.MORPH_RELATION
+    >;
+    parentFlatObjectMetadata?: FlatObjectMetadata;
+  }): Record<string, unknown> {
     const fieldMetadataId = fieldIdByName[key] ?? fieldIdByJoinColumnName[key];
 
     if (!isDefined(fieldMetadataId)) {
       const nameSingular = flatObjectMetadata.nameSingular;
+      const { relationContext, joinColumnHint } = computeParentRelationHints({
+        parentRelationFieldMetadata,
+      });
 
       throw new CommonQueryRunnerException(
-        `Object ${flatObjectMetadata.nameSingular} doesn't have any "${key}" field.`,
+        `Object ${nameSingular} doesn't have any "${key}" field${relationContext}. Filter keys must be field names or and/or/not, with operators nested under a field: { <fieldName>: { <operator>: <value> } }.${joinColumnHint}`,
         CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
         {
           userFriendlyMessage: msg`Invalid filter : ${nameSingular} object doesn't have any "${key}" field.`,
@@ -310,11 +381,30 @@ export class FilterArgProcessorService {
       );
     }
 
-    return validateAndTransformOperatorAndValue(
+    const transformedFilterValue = validateAndTransformOperatorAndValue(
       key,
       filterValue,
       fieldMetadata,
     );
+
+    const [[operator, value]] = Object.entries(transformedFilterValue);
+
+    if (!isFieldReferenceFilterOperator(operator)) {
+      return transformedFilterValue;
+    }
+
+    return {
+      [operator]: validateFieldReferenceFilterValueOrThrow({
+        operator,
+        value,
+        fieldMetadata,
+        fieldName: key,
+        flatObjectMetadata,
+        parentFlatObjectMetadata,
+        parentRelationFieldMetadata,
+        flatFieldMetadataMaps,
+      }),
+    };
   }
 
   private validateAndTransformCompositeFieldFilter(
@@ -341,14 +431,18 @@ export class FilterArgProcessorService {
       );
 
       if (!subFieldMetadata) {
+        const subFieldNames = compositeType.properties.map(
+          (property) => property.name,
+        );
+
         throw new CommonQueryRunnerException(
-          `Sub field "${subFieldKey}" not found for composite type: ${fieldMetadata.type}`,
+          `Sub field "${subFieldKey}" not found for composite type: ${fieldMetadata.type}. Available sub fields: ${subFieldNames.join(', ')}.`,
           CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
           { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
         );
       }
 
-      transformedFilter[subFieldKey] = validateAndTransformOperatorAndValue(
+      const transformedSubFieldFilter = validateAndTransformOperatorAndValue(
         `${fieldMetadata.name}.${subFieldKey}`,
         subFieldFilter as Record<string, unknown>,
         {
@@ -356,6 +450,22 @@ export class FilterArgProcessorService {
           type: subFieldMetadata.type as FieldMetadataType,
         },
       );
+
+      if (
+        Object.keys(transformedSubFieldFilter).some(
+          isFieldReferenceFilterOperator,
+        )
+      ) {
+        throw new CommonQueryRunnerException(
+          `Sub field "${subFieldKey}" of ${fieldMetadata.name} cannot be compared with another field`,
+          CommonQueryRunnerExceptionCode.INVALID_ARGS_FILTER,
+          {
+            userFriendlyMessage: msg`Invalid filter: composite fields cannot be compared with another field`,
+          },
+        );
+      }
+
+      transformedFilter[subFieldKey] = transformedSubFieldFilter;
     }
 
     return transformedFilter;

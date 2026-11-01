@@ -25,7 +25,7 @@ export const useBillingPortalSession = (returnUrlPath: string) => {
 
   const showBillingPortalSessionError = () => {
     enqueueToast({
-      variant: 'error',
+      status: 'error',
       children: t`Billing portal session error. Please retry or contact Twenty team`,
     });
   };

@@ -1,4 +1,6 @@
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { randomUUID } from 'node:crypto';
+import { EventEmitter, once } from 'node:events';
 
 import { parse } from 'graphql';
 import {
@@ -7,10 +9,12 @@ import {
 } from 'twenty-shared/database-events';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
+  FeatureFlagKey,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
 } from 'twenty-shared/types';
 
+import { waitForBlockedDatabaseQueryOrThrow } from 'test/integration/ai/utils/wait-for-blocked-database-query-or-throw.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
@@ -18,8 +22,14 @@ import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-cha
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { setManualRecordShare } from 'test/integration/utils/set-manual-record-share.util';
 
+import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-action.enum';
+import { type AgentChatQueueService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-queue.service';
 import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
+import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
+import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
@@ -28,35 +38,60 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 
 const SCHEMA = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 
+const buildJonyThreadAccess = (threadId: string) => ({
+  workspaceId: SEED_APPLE_WORKSPACE_ID,
+  workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+  threadId,
+});
+
 const PARTICIPANT_FIELDS =
-  'id threadId lastReadAt archivedAt snoozedUntil isSubscribed lastMentionedAt updatedAt';
+  'id threadId lastReadAt archivedAt snoozedUntil isSubscribed lastMentionedAt mentionsResolvedAt updatedAt';
 
-const buildThreadMutation = (name: string) =>
-  parse(
-    `mutation Run($threadId: UUID!) { ${name}(threadId: $threadId) { ${PARTICIPANT_FIELDS} } }`,
-  );
-
-const SNOOZE = parse(
-  `mutation Snooze($threadId: UUID!, $snoozedUntil: DateTime!) { snoozeAgentChatThread(threadId: $threadId, snoozedUntil: $snoozedUntil) { ${PARTICIPANT_FIELDS} } }`,
+const UPDATE_INBOX_STATE = parse(
+  `mutation UpdateInboxState($threadIds: [UUID!]!, $action: AgentChatInboxAction!, $snoozedUntil: DateTime) { updateAgentChatThreadInboxState(threadIds: $threadIds, action: $action, snoozedUntil: $snoozedUntil) { ${PARTICIPANT_FIELDS} } }`,
 );
 
 // Outlasts any test, yet within the delay the test queue fast-forwards
 const buildFutureSnoozedUntil = () =>
   new Date(Date.now() + 30_000).toISOString();
 
-const ADD_PARTICIPANTS = parse(
-  `mutation AddParticipants($threadId: UUID!, $workspaceMemberIds: [UUID!]!) { addAgentChatThreadParticipants(threadId: $threadId, workspaceMemberIds: $workspaceMemberIds) }`,
+const ASSIGN = parse(
+  `mutation Assign($threadId: UUID!, $assigneeWorkspaceMemberId: UUID) { assignAgentChatThread(threadId: $threadId, assigneeWorkspaceMemberId: $assigneeWorkspaceMemberId) }`,
 );
 
-const addParticipants = (
+const assign = (
   threadId: string,
-  workspaceMemberIds: string[],
+  assigneeWorkspaceMemberId: string | null,
   token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
 ) =>
   makeMetadataApiRequest(
-    { query: ADD_PARTICIPANTS, variables: { threadId, workspaceMemberIds } },
+    { query: ASSIGN, variables: { threadId, assigneeWorkspaceMemberId } },
     token,
   );
+
+const readAssigneeId = async (threadId: string): Promise<string | null> => {
+  const [{ assigneeId }]: { assigneeId: string | null }[] =
+    await global.testDataSource.query(
+      `SELECT "assigneeId" FROM ${SCHEMA}."agentChatThread" WHERE id = $1`,
+      [threadId],
+    );
+
+  return assigneeId;
+};
+
+const addParticipants = (
+  threadId: string,
+  participantWorkspaceMemberIds: string[],
+  workspaceMemberId: string = WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+) =>
+  getAppProviderByClassName<AgentChatThreadService>(
+    'AgentChatThreadService',
+  ).mentionParticipants({
+    workspaceId: SEED_APPLE_WORKSPACE_ID,
+    workspaceMemberId,
+    threadId,
+    participantWorkspaceMemberIds,
+  });
 
 type Participant = {
   id: string;
@@ -66,15 +101,48 @@ type Participant = {
   snoozedUntil: string | null;
   isSubscribed: boolean;
   lastMentionedAt: string | null;
+  mentionsResolvedAt: string | null;
 };
 
-const runThreadMutation = (
-  name: string,
-  threadId: string,
-  token: string = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+const OPEN_THREADS_SUMMARY = parse(
+  `query OpenThreadsSummary { agentChatOpenThreadsSummary { openThreadCount unreadOpenThreadCount needsInputThreadCount hasUnreadOpenThread hasUnreadMentionThread hasUnreadAssignedThread } }`,
+);
+
+type OpenThreadsSummary = {
+  openThreadCount: number;
+  unreadOpenThreadCount: number;
+  needsInputThreadCount: number;
+  hasUnreadOpenThread: boolean;
+  hasUnreadMentionThread: boolean;
+  hasUnreadAssignedThread: boolean;
+};
+
+const findOpenThreadsSummary = async (
+  token: string = APPLE_JONY_MEMBER_ACCESS_TOKEN,
+): Promise<OpenThreadsSummary> => {
+  const response = await makeMetadataApiRequest(
+    { query: OPEN_THREADS_SUMMARY },
+    token,
+  );
+
+  expect(response.body.errors).toBeUndefined();
+
+  return response.body.data.agentChatOpenThreadsSummary;
+};
+
+const runInboxAction = (
+  action: string,
+  threadIds: string | string[],
+  {
+    token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
+    snoozedUntil,
+  }: { token?: string; snoozedUntil?: string } = {},
 ) =>
   makeMetadataApiRequest(
-    { query: buildThreadMutation(name), variables: { threadId } },
+    {
+      query: UPDATE_INBOX_STATE,
+      variables: { threadIds: [threadIds].flat(), action, snoozedUntil },
+    },
     token,
   );
 
@@ -253,6 +321,17 @@ const setShareWithJony = (threadId: string, enabled: boolean) =>
     enabled,
   });
 
+const setRecordSharingEnabled = (value: boolean) =>
+  updateFeatureFlag({
+    featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+    value,
+    expectToFail: false,
+  });
+
+beforeAll(() => setRecordSharingEnabled(true));
+
+afterAll(() => setRecordSharingEnabled(false));
+
 describe('Chat thread participant state through the authenticated API', () => {
   const createdThreadIds: string[] = [];
 
@@ -293,16 +372,45 @@ describe('Chat thread participant state through the authenticated API', () => {
 
   it('refuses a member who cannot read the thread', async () => {
     const threadId = await createTestThread();
-    const response = await runThreadMutation(
-      'markAgentChatThreadAsRead',
-      threadId,
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
+    const response = await runInboxAction('READ', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
 
     expect(response.body.errors[0].extensions.code).toBe('NOT_FOUND');
     expect(
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
     ).toBeUndefined();
+  });
+
+  it('writes every selected thread in one call, or none when one cannot be read', async () => {
+    const threadIds = [await createTestThread(), await createTestThread()];
+
+    await setShareWithJony(threadIds[0], true);
+
+    const refused = await runInboxAction('ARCHIVE', threadIds, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(refused.body.errors[0].extensions.code).toBe('NOT_FOUND');
+    expect(
+      await findMyParticipant(threadIds[0], APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toBeUndefined();
+
+    await setShareWithJony(threadIds[1], true);
+
+    const archived = await runInboxAction('ARCHIVE', threadIds, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(archived.body.errors).toBeUndefined();
+    expect(archived.body.data.updateAgentChatThreadInboxState).toHaveLength(2);
+    expect(archived.body.data.updateAgentChatThreadInboxState).toEqual(
+      expect.arrayContaining(
+        threadIds.map((threadId) =>
+          expect.objectContaining({ threadId, archivedAt: expect.any(String) }),
+        ),
+      ),
+    );
   });
 
   it('keeps a shared member state apart from the owner state', async () => {
@@ -311,19 +419,19 @@ describe('Chat thread participant state through the authenticated API', () => {
     await setShareWithJony(threadId, true);
 
     // A thread shared with a member they never opened has no state yet,
-    // which reads as unread
+    // which reads as one they do not follow
     expect(
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
     ).toBeUndefined();
 
-    const archived = await runThreadMutation(
-      'archiveAgentChatThread',
-      threadId,
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
+    const archived = await runInboxAction('ARCHIVE', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
 
     expect(archived.body.errors).toBeUndefined();
-    expect(archived.body.data.archiveAgentChatThread.archivedAt).not.toBeNull();
+    expect(
+      archived.body.data.updateAgentChatThreadInboxState[0].archivedAt,
+    ).not.toBeNull();
     expect(await findMyParticipant(threadId)).toMatchObject({
       archivedAt: null,
     });
@@ -333,17 +441,18 @@ describe('Chat thread participant state through the authenticated API', () => {
     const threadId = await createTestThread();
     const lastActivityAt = await readLastActivityAt(threadId);
 
-    const unread = await runThreadMutation(
-      'markAgentChatThreadAsUnread',
-      threadId,
-    );
-
-    expect(unread.body.data.markAgentChatThreadAsUnread.lastReadAt).toBeNull();
-
-    const read = await runThreadMutation('markAgentChatThreadAsRead', threadId);
+    const unread = await runInboxAction('UNREAD', threadId);
 
     expect(
-      new Date(read.body.data.markAgentChatThreadAsRead.lastReadAt).getTime(),
+      unread.body.data.updateAgentChatThreadInboxState[0].lastReadAt,
+    ).toBeNull();
+
+    const read = await runInboxAction('READ', threadId);
+
+    expect(
+      new Date(
+        read.body.data.updateAgentChatThreadInboxState[0].lastReadAt,
+      ).getTime(),
     ).toBe(lastActivityAt.getTime());
 
     await global.testDataSource.query(
@@ -351,48 +460,39 @@ describe('Chat thread participant state through the authenticated API', () => {
       [threadId, new Date(lastActivityAt.getTime() - 60_000)],
     );
 
-    const readAgain = await runThreadMutation(
-      'markAgentChatThreadAsRead',
-      threadId,
-    );
+    const readAgain = await runInboxAction('READ', threadId);
 
     expect(
       new Date(
-        readAgain.body.data.markAgentChatThreadAsRead.lastReadAt,
+        readAgain.body.data.updateAgentChatThreadInboxState[0].lastReadAt,
       ).getTime(),
     ).toBe(lastActivityAt.getTime());
   });
 
   it('snoozes only into the future and moves the thread back to the inbox', async () => {
     const threadId = await createTestThread();
-    const pastSnooze = await makeMetadataApiRequest({
-      query: SNOOZE,
-      variables: {
-        threadId,
-        snoozedUntil: new Date(Date.now() - 60_000).toISOString(),
-      },
+    const pastSnooze = await runInboxAction('SNOOZE', threadId, {
+      snoozedUntil: new Date(Date.now() - 60_000).toISOString(),
     });
 
     expect(pastSnooze.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');
 
     const snoozedUntil = buildFutureSnoozedUntil();
-    const snoozed = await makeMetadataApiRequest({
-      query: SNOOZE,
-      variables: { threadId, snoozedUntil },
-    });
+    const snoozed = await runInboxAction('SNOOZE', threadId, { snoozedUntil });
 
     expect(snoozed.body.errors).toBeUndefined();
-    expect(snoozed.body.data.snoozeAgentChatThread.archivedAt).not.toBeNull();
     expect(
-      new Date(snoozed.body.data.snoozeAgentChatThread.snoozedUntil).getTime(),
+      snoozed.body.data.updateAgentChatThreadInboxState[0].archivedAt,
+    ).not.toBeNull();
+    expect(
+      new Date(
+        snoozed.body.data.updateAgentChatThreadInboxState[0].snoozedUntil,
+      ).getTime(),
     ).toBe(new Date(snoozedUntil).getTime());
 
-    const moved = await runThreadMutation(
-      'moveAgentChatThreadToInbox',
-      threadId,
-    );
+    const moved = await runInboxAction('MOVE_TO_INBOX', threadId);
 
-    expect(moved.body.data.moveAgentChatThreadToInbox).toMatchObject({
+    expect(moved.body.data.updateAgentChatThreadInboxState[0]).toMatchObject({
       archivedAt: null,
       snoozedUntil: null,
     });
@@ -402,9 +502,9 @@ describe('Chat thread participant state through the authenticated API', () => {
     const eventSpy = spyOnParticipantEvents();
     const threadId = await createTestThread();
 
-    await runThreadMutation('markAgentChatThreadAsUnread', threadId);
-    await runThreadMutation('markAgentChatThreadAsUnread', threadId);
-    await runThreadMutation('archiveAgentChatThread', threadId);
+    await runInboxAction('UNREAD', threadId);
+    await runInboxAction('UNREAD', threadId);
+    await runInboxAction('ARCHIVE', threadId);
 
     expect(findParticipantEvents(eventSpy, threadId)).toEqual([
       { action: 'created', updatedFields: [] },
@@ -417,11 +517,9 @@ describe('Chat thread participant state through the authenticated API', () => {
     const threadId = await createTestThread();
 
     await setShareWithJony(threadId, true);
-    await runThreadMutation(
-      'archiveAgentChatThread',
-      threadId,
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
+    await runInboxAction('ARCHIVE', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
 
     const janeParticipant = await findMyParticipant(threadId);
     const jonyParticipant = await findMyParticipant(
@@ -459,12 +557,8 @@ describe('Chat thread participant state through the authenticated API', () => {
   it('ends a snooze once its time passes by moving the chat back to the inbox', async () => {
     const threadId = await createTestThread();
 
-    await makeMetadataApiRequest({
-      query: SNOOZE,
-      variables: {
-        threadId,
-        snoozedUntil: buildFutureSnoozedUntil(),
-      },
+    await runInboxAction('SNOOZE', threadId, {
+      snoozedUntil: buildFutureSnoozedUntil(),
     });
 
     const snoozedUntil = new Date(Date.now() - 1000);
@@ -507,17 +601,16 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     // The snooze was accepted while its time was still ahead, and its
     // queued end already ran and found nothing to end
-    const participant =
+    const [participant] =
       await getAppProviderByClassName<AgentChatThreadParticipantService>(
         'AgentChatThreadParticipantService',
-      )['setArchive'](
-        {
-          workspaceId: SEED_APPLE_WORKSPACE_ID,
-          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-          threadId,
-        },
+      ).updateInboxState({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        threadIds: [threadId],
+        action: AgentChatInboxAction.SNOOZE,
         snoozedUntil,
-      );
+      });
 
     expect(participant.archivedAt).toBeNull();
     expect(new Date(participant.snoozedUntil!).getTime()).toBe(
@@ -529,10 +622,7 @@ describe('Chat thread participant state through the authenticated API', () => {
     const threadId = await createTestThread();
     const snoozedUntil = buildFutureSnoozedUntil();
 
-    await makeMetadataApiRequest({
-      query: SNOOZE,
-      variables: { threadId, snoozedUntil },
-    });
+    await runInboxAction('SNOOZE', threadId, { snoozedUntil });
 
     const eventSpy = spyOnParticipantEvents();
 
@@ -554,12 +644,8 @@ describe('Chat thread participant state through the authenticated API', () => {
   it('leaves alone a snooze the member replaced since', async () => {
     const threadId = await createTestThread();
 
-    await makeMetadataApiRequest({
-      query: SNOOZE,
-      variables: {
-        threadId,
-        snoozedUntil: buildFutureSnoozedUntil(),
-      },
+    await runInboxAction('SNOOZE', threadId, {
+      snoozedUntil: buildFutureSnoozedUntil(),
     });
 
     const eventSpy = spyOnParticipantEvents();
@@ -583,13 +669,11 @@ describe('Chat thread participant state through the authenticated API', () => {
     const threadId = await createTestThread();
 
     await setShareWithJony(threadId, true);
-    await runThreadMutation(
-      'archiveAgentChatThread',
-      threadId,
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
-    await runThreadMutation('archiveAgentChatThread', threadId);
-    await runThreadMutation('markAgentChatThreadAsUnread', threadId);
+    await runInboxAction('ARCHIVE', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+    await runInboxAction('ARCHIVE', threadId);
+    await runInboxAction('UNREAD', threadId);
 
     const { lastActivityAt } =
       await getAppProviderByClassName<AgentChatThreadParticipantService>(
@@ -629,13 +713,12 @@ describe('Chat thread participant state through the authenticated API', () => {
 
   it('brings a thread back for its members on activity no member wrote', async () => {
     const threadId = await createTestThread();
-    const archived = await runThreadMutation(
-      'archiveAgentChatThread',
-      threadId,
-    );
+    const archived = await runInboxAction('ARCHIVE', threadId);
 
     expect(archived.body.errors).toBeUndefined();
-    expect(archived.body.data.archiveAgentChatThread.archivedAt).not.toBeNull();
+    expect(
+      archived.body.data.updateAgentChatThreadInboxState[0].archivedAt,
+    ).not.toBeNull();
 
     await getAppProviderByClassName<AgentChatThreadService>(
       'AgentChatThreadService',
@@ -666,11 +749,9 @@ describe('Chat thread participant state through the authenticated API', () => {
     const threadId = await createTestThread();
 
     await setShareWithJony(threadId, true);
-    await runThreadMutation(
-      'archiveAgentChatThread',
-      threadId,
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
+    await runInboxAction('ARCHIVE', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
 
     const rows: { workspaceMemberId: string }[] =
       await global.testDataSource.query(
@@ -692,11 +773,9 @@ describe('Chat thread participant state through the authenticated API', () => {
     const threadId = await createTestThread();
 
     await setShareWithJony(threadId, true);
-    await runThreadMutation(
-      'archiveAgentChatThread',
-      threadId,
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
+    await runInboxAction('ARCHIVE', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
 
     expect(
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
@@ -716,15 +795,12 @@ describe('Chat thread participant state through the authenticated API', () => {
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
     ).toBeUndefined();
 
-    const response = await addParticipants(threadId, [
-      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-      WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-    ]);
-
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.addAgentChatThreadParticipants).toEqual([
-      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-    ]);
+    expect(
+      await addParticipants(threadId, [
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      ]),
+    ).toEqual([WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
     expect(
       await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
     ).toMatchObject({ lastReadAt: null, archivedAt: null, snoozedUntil: null });
@@ -733,16 +809,13 @@ describe('Chat thread participant state through the authenticated API', () => {
     ).toEqual([WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
 
     // Editors can mention others too; the owner keeps following as owner
-    const addedByJony = await addParticipants(
-      threadId,
-      [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
-
-    expect(addedByJony.body.errors).toBeUndefined();
-    expect(addedByJony.body.data.addAgentChatThreadParticipants).toEqual([
-      WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-    ]);
+    expect(
+      await addParticipants(
+        threadId,
+        [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      ),
+    ).toEqual([WORKSPACE_MEMBER_DATA_SEED_IDS.JANE]);
     expect(await findMyParticipant(threadId)).toMatchObject({
       lastReadAt: null,
     });
@@ -755,16 +828,12 @@ describe('Chat thread participant state through the authenticated API', () => {
     const threadId = await createTestThread();
 
     await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
-    await runThreadMutation(
-      'markAgentChatThreadAsRead',
-      threadId,
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
-    await runThreadMutation(
-      'archiveAgentChatThread',
-      threadId,
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
+    await runInboxAction('READ', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+    await runInboxAction('ARCHIVE', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
     await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
 
     expect(
@@ -780,13 +849,13 @@ describe('Chat thread participant state through the authenticated API', () => {
 
     await setShareWithJony(threadId, true);
 
-    const response = await addParticipants(
-      threadId,
-      [WORKSPACE_MEMBER_DATA_SEED_IDS.TIM],
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
-
-    expect(response.body.errors[0].extensions.code).toBe('NOT_FOUND');
+    await expect(
+      addParticipants(
+        threadId,
+        [WORKSPACE_MEMBER_DATA_SEED_IDS.TIM],
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      ),
+    ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_NOT_FOUND });
     expect(
       (await readThreadActivity(threadId)).writerWorkspaceMemberIds ?? [],
     ).toEqual([]);
@@ -808,14 +877,13 @@ describe('Chat thread participant state through the authenticated API', () => {
       enabled: true,
     });
 
-    const response = await addParticipants(
-      threadId,
-      [WORKSPACE_MEMBER_DATA_SEED_IDS.TIM],
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
-
-    expect(response.body.errors).toBeUndefined();
-    expect(response.body.data.addAgentChatThreadParticipants).toEqual([]);
+    expect(
+      await addParticipants(
+        threadId,
+        [WORKSPACE_MEMBER_DATA_SEED_IDS.TIM],
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      ),
+    ).toEqual([]);
     expect(
       (await readThreadActivity(threadId)).writerWorkspaceMemberIds ?? [],
     ).toEqual([]);
@@ -823,17 +891,14 @@ describe('Chat thread participant state through the authenticated API', () => {
 
   it('keeps an unsubscribed chat done through new activity', async () => {
     const threadId = await createTestThread();
-    const unsubscribed = await runThreadMutation(
-      'unsubscribeFromAgentChatThread',
-      threadId,
-    );
+    const unsubscribed = await runInboxAction('UNSUBSCRIBE', threadId);
 
     expect(unsubscribed.body.errors).toBeUndefined();
-    expect(unsubscribed.body.data.unsubscribeFromAgentChatThread).toMatchObject(
-      { isSubscribed: false, snoozedUntil: null },
-    );
     expect(
-      unsubscribed.body.data.unsubscribeFromAgentChatThread.archivedAt,
+      unsubscribed.body.data.updateAgentChatThreadInboxState[0],
+    ).toMatchObject({ isSubscribed: false, snoozedUntil: null });
+    expect(
+      unsubscribed.body.data.updateAgentChatThreadInboxState[0].archivedAt,
     ).not.toBeNull();
 
     await getAppProviderByClassName<AgentChatThreadService>(
@@ -849,44 +914,39 @@ describe('Chat thread participant state through the authenticated API', () => {
     });
 
     // Subscribing again leaves the chat where it is until something happens
-    const subscribed = await runThreadMutation(
-      'subscribeToAgentChatThread',
-      threadId,
-    );
+    const subscribed = await runInboxAction('SUBSCRIBE', threadId);
 
     expect(subscribed.body.errors).toBeUndefined();
-    expect(subscribed.body.data.subscribeToAgentChatThread).toMatchObject({
+    expect(
+      subscribed.body.data.updateAgentChatThreadInboxState[0],
+    ).toMatchObject({
       isSubscribed: true,
       archivedAt:
-        unsubscribed.body.data.unsubscribeFromAgentChatThread.archivedAt,
+        unsubscribed.body.data.updateAgentChatThreadInboxState[0].archivedAt,
     });
   });
 
   it('follows the chat again for a member who reopens, snoozes or writes in it', async () => {
     const threadId = await createTestThread();
 
-    await runThreadMutation('unsubscribeFromAgentChatThread', threadId);
-    await runThreadMutation('moveAgentChatThreadToInbox', threadId);
+    await runInboxAction('UNSUBSCRIBE', threadId);
+    await runInboxAction('MOVE_TO_INBOX', threadId);
 
     expect(await findMyParticipant(threadId)).toMatchObject({
       isSubscribed: true,
       archivedAt: null,
     });
 
-    await runThreadMutation('unsubscribeFromAgentChatThread', threadId);
-    await makeMetadataApiRequest(
-      {
-        query: SNOOZE,
-        variables: { threadId, snoozedUntil: buildFutureSnoozedUntil() },
-      },
-      APPLE_JANE_ADMIN_ACCESS_TOKEN,
-    );
+    await runInboxAction('UNSUBSCRIBE', threadId);
+    await runInboxAction('SNOOZE', threadId, {
+      snoozedUntil: buildFutureSnoozedUntil(),
+    });
 
     expect(await findMyParticipant(threadId)).toMatchObject({
       isSubscribed: true,
     });
 
-    await runThreadMutation('unsubscribeFromAgentChatThread', threadId);
+    await runInboxAction('UNSUBSCRIBE', threadId);
     await getAppProviderByClassName<AgentChatThreadParticipantService>(
       'AgentChatThreadParticipantService',
     ).recordMemberActivity({
@@ -915,11 +975,9 @@ describe('Chat thread participant state through the authenticated API', () => {
     expect(firstMention).toMatchObject({ isSubscribed: true });
     expect(firstMention!.lastMentionedAt).not.toBeNull();
 
-    await runThreadMutation(
-      'unsubscribeFromAgentChatThread',
-      threadId,
-      APPLE_JONY_MEMBER_ACCESS_TOKEN,
-    );
+    await runInboxAction('UNSUBSCRIBE', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
     await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
 
     const secondMention = await findMyParticipant(
@@ -939,12 +997,597 @@ describe('Chat thread participant state through the authenticated API', () => {
 
   it('refuses to change the subscription of a member who cannot read the chat', async () => {
     const threadId = await createTestThread();
-    const response = await runThreadMutation(
-      'unsubscribeFromAgentChatThread',
+    const response = await runInboxAction('UNSUBSCRIBE', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(response.body.errors[0].extensions.code).toBe('NOT_FOUND');
+  });
+
+  it('assigns a chat to a member who could not read it, who then finds it unread in their inbox', async () => {
+    const threadId = await createTestThread();
+    const response = await assign(
       threadId,
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+    expect(await readAssigneeId(threadId)).toBe(
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    );
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toMatchObject({
+      isSubscribed: true,
+      archivedAt: null,
+      lastReadAt: null,
+    });
+    expect(
+      (await readThreadActivity(threadId)).writerWorkspaceMemberIds,
+    ).toEqual([WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+  });
+
+  it('keeps a chat read for a member who assigns it to themselves', async () => {
+    const threadId = await createTestThread();
+
+    await runInboxAction('ARCHIVE', threadId);
+
+    const response = await assign(
+      threadId,
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+    );
+
+    expect(response.body.errors).toBeUndefined();
+
+    const participant = await findMyParticipant(threadId);
+
+    expect(participant).toMatchObject({ archivedAt: null, isSubscribed: true });
+    expect(participant!.lastReadAt).not.toBeNull();
+    expect(
+      (await readThreadActivity(threadId)).writerWorkspaceMemberIds ?? [],
+    ).toEqual([]);
+  });
+
+  it('keeps the former assignee following the chat once it is unassigned', async () => {
+    const threadId = await createTestThread();
+
+    await assign(threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JONY);
+
+    const response = await assign(threadId, null);
+
+    expect(response.body.errors).toBeUndefined();
+    expect(await readAssigneeId(threadId)).toBeNull();
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toMatchObject({ isSubscribed: true });
+  });
+
+  it('refuses to unsubscribe the assignee', async () => {
+    const threadId = await createTestThread();
+
+    await assign(threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JONY);
+
+    const response = await runInboxAction('UNSUBSCRIBE', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(response.body.errors[0].extensions.code).toBe('CONFLICT');
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toMatchObject({ isSubscribed: true });
+  });
+
+  it('refuses to assign a chat for a member who can only read it', async () => {
+    const threadId = await createTestThread();
+
+    await setShareWithJony(threadId, true);
+
+    const response = await assign(
+      threadId,
+      WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
     );
 
     expect(response.body.errors[0].extensions.code).toBe('NOT_FOUND');
+    expect(await readAssigneeId(threadId)).toBeNull();
+  });
+
+  it('refuses an assignee who cannot reply when the caller cannot share the chat', async () => {
+    const threadId = await createTestThread();
+
+    await setShareWithMember({
+      threadId,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      accessLevel: RecordShareAccessLevel.READ_WRITE,
+      enabled: true,
+    });
+
+    const response = await assign(
+      threadId,
+      WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(response.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');
+    expect(await readAssigneeId(threadId)).toBeNull();
+  });
+
+  // Other tests' chats may stay open for the member, so counts are compared
+  // with what they were before
+  it('summarizes the open chats the member follows, from their own rows', async () => {
+    const before = await findOpenThreadsSummary();
+    const threadId = await createTestThread();
+
+    expect(await findOpenThreadsSummary()).toEqual(before);
+
+    await setShareWithJony(threadId, true);
+    await global.testDataSource.query(
+      `UPDATE ${SCHEMA}."agentChatThread" SET "pendingQuestionMessageId" = $2 WHERE id = $1`,
+      [threadId, randomUUID()],
+    );
+
+    // Being able to open a chat, reading it or marking it unread does not
+    // follow it
+    expect(await findOpenThreadsSummary()).toEqual(before);
+
+    for (const action of ['UNREAD', 'READ'] as const) {
+      await runInboxAction(action, threadId, {
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
+
+      expect(await findOpenThreadsSummary()).toEqual(before);
+    }
+
+    await runInboxAction('SUBSCRIBE', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(await findOpenThreadsSummary()).toMatchObject({
+      openThreadCount: before.openThreadCount + 1,
+      unreadOpenThreadCount: before.unreadOpenThreadCount,
+      needsInputThreadCount: before.needsInputThreadCount + 1,
+      hasUnreadOpenThread: before.hasUnreadOpenThread,
+    });
+
+    await runInboxAction('UNREAD', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(await findOpenThreadsSummary()).toMatchObject({
+      openThreadCount: before.openThreadCount + 1,
+      unreadOpenThreadCount: before.unreadOpenThreadCount + 1,
+      hasUnreadOpenThread: true,
+    });
+
+    await runInboxAction('READ', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(await findOpenThreadsSummary()).toMatchObject({
+      openThreadCount: before.openThreadCount + 1,
+      unreadOpenThreadCount: before.unreadOpenThreadCount,
+      hasUnreadOpenThread: before.hasUnreadOpenThread,
+    });
+
+    await runInboxAction('UNREAD', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    await runInboxAction('ARCHIVE', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(await findOpenThreadsSummary()).toEqual(before);
+  });
+
+  it('follows a chat the member files as done, so new activity brings it back', async () => {
+    const threadId = await createTestThread();
+
+    await setShareWithJony(threadId, true);
+    await runInboxAction('READ', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toMatchObject({ isSubscribed: false, archivedAt: null });
+
+    await runInboxAction('ARCHIVE', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toMatchObject({ isSubscribed: true, archivedAt: expect.any(String) });
+  });
+
+  it('flags the open chats the member was mentioned in or assigned that are unread', async () => {
+    const initialSummary = await findOpenThreadsSummary();
+    const mentionedThreadId = await createTestThread();
+    const assignedThreadId = await createTestThread();
+
+    await addParticipants(mentionedThreadId, [
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    ]);
+    await assign(assignedThreadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JONY);
+
+    expect(await findOpenThreadsSummary()).toMatchObject({
+      unreadOpenThreadCount: initialSummary.unreadOpenThreadCount + 2,
+      hasUnreadMentionThread: true,
+      hasUnreadAssignedThread: true,
+    });
+
+    const unsubscribed = await runInboxAction(
+      'UNSUBSCRIBE',
+      mentionedThreadId,
+      { token: APPLE_JONY_MEMBER_ACCESS_TOKEN },
+    );
+
+    expect(unsubscribed.body.errors).toBeUndefined();
+
+    await runInboxAction('ARCHIVE', assignedThreadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    const before = await findOpenThreadsSummary();
+
+    expect(before.unreadOpenThreadCount).toBe(
+      initialSummary.unreadOpenThreadCount,
+    );
+
+    // Activity brings back a chat filed under done, but not one the member left
+    await global.testDataSource.query(
+      `UPDATE ${SCHEMA}."agentChatThread" SET "lastActivityAt" = clock_timestamp() WHERE id = ANY($1)`,
+      [[mentionedThreadId, assignedThreadId]],
+    );
+
+    expect(await findOpenThreadsSummary()).toMatchObject({
+      openThreadCount: before.openThreadCount + 1,
+      unreadOpenThreadCount: before.unreadOpenThreadCount + 1,
+    });
+  });
+
+  it('resolves the mention when the member reads the chat and keeps it when they mark it unread', async () => {
+    const threadId = await createTestThread();
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+    for (const action of ['READ', 'UNREAD']) {
+      const response = await runInboxAction(action, threadId, {
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
+      const participant = response.body.data.updateAgentChatThreadInboxState[0];
+
+      expect(response.body.errors).toBeUndefined();
+      expect(participant.mentionsResolvedAt).toBe(participant.lastMentionedAt);
+    }
+  });
+
+  it('preserves unresolved mentions while marking unread and snoozing', async () => {
+    const threadId = await createTestThread();
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+    for (const action of ['UNREAD', 'SNOOZE']) {
+      const response = await runInboxAction(action, threadId, {
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        snoozedUntil:
+          action === 'SNOOZE' ? buildFutureSnoozedUntil() : undefined,
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(
+        response.body.data.updateAgentChatThreadInboxState[0],
+      ).toMatchObject({
+        lastMentionedAt: expect.any(String),
+        mentionsResolvedAt: null,
+      });
+    }
+  });
+
+  it('resolves only the member who successfully sends a reply', async () => {
+    const threadId = await createTestThread();
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await addParticipants(
+      threadId,
+      [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
+      WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    );
+
+    await getAppProviderByClassName<AgentChatService>(
+      'AgentChatService',
+    ).addMessageAndResolveMention({
+      ...buildJonyThreadAccess(threadId),
+      userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+      uiMessage: {
+        role: AgentMessageRole.USER,
+        parts: [{ type: 'text', text: 'I have handled this.' }],
+      },
+    });
+
+    const repliedParticipant = await findMyParticipant(
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(repliedParticipant!.mentionsResolvedAt).toBe(
+      repliedParticipant!.lastMentionedAt,
+    );
+    expect(await findMyParticipant(threadId)).toMatchObject({
+      lastMentionedAt: expect.any(String),
+      mentionsResolvedAt: null,
+    });
+  });
+
+  it('keeps a mention resolved after Done until an explicit new mention arrives', async () => {
+    const threadId = await createTestThread();
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await runInboxAction('ARCHIVE', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    const doneParticipant = await findMyParticipant(
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(doneParticipant!.mentionsResolvedAt).toBe(
+      doneParticipant!.lastMentionedAt,
+    );
+
+    await getAppProviderByClassName<AgentChatThreadService>(
+      'AgentChatThreadService',
+    ).recordThreadActivity({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      threadId,
+      text: 'An unrelated update',
+    });
+    await runInboxAction('MOVE_TO_INBOX', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toMatchObject({
+      lastMentionedAt: doneParticipant!.lastMentionedAt,
+      mentionsResolvedAt: doneParticipant!.mentionsResolvedAt,
+    });
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+    const mentionedAgain = await findMyParticipant(
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(
+      new Date(mentionedAgain!.lastMentionedAt!).getTime(),
+    ).toBeGreaterThan(new Date(mentionedAgain!.mentionsResolvedAt!).getTime());
+  });
+
+  it('resolves a mention when the member unsubscribes', async () => {
+    const threadId = await createTestThread();
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await runInboxAction('UNSUBSCRIBE', threadId, {
+      token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    });
+
+    const unsubscribedParticipant = await findMyParticipant(
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(unsubscribedParticipant).toMatchObject({
+      isSubscribed: false,
+      mentionsResolvedAt: unsubscribedParticipant!.lastMentionedAt,
+    });
+  });
+
+  describe('queued replies to a mention', () => {
+    const queueReply = (threadId: string) =>
+      getAppProviderByClassName<AgentChatQueueService>(
+        'AgentChatQueueService',
+      ).queueMessage({
+        ...buildJonyThreadAccess(threadId),
+        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JONY,
+        text: 'On it',
+      });
+
+    const deleteQueuedReply = (messageId: string) =>
+      getAppProviderByClassName<AgentChatQueueService>(
+        'AgentChatQueueService',
+      ).deleteQueuedMessage({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        messageId,
+      });
+
+    it('resolves the mention when the member queues a reply and keeps it after the reply is deleted', async () => {
+      const threadId = await createTestThread();
+
+      await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+      const reply = await queueReply(threadId);
+      const repliedParticipant = await findMyParticipant(
+        threadId,
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(repliedParticipant!.mentionsResolvedAt).toBe(
+        repliedParticipant!.lastMentionedAt,
+      );
+
+      await deleteQueuedReply(reply.id);
+
+      expect(
+        await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+      ).toMatchObject({
+        mentionsResolvedAt: repliedParticipant!.lastMentionedAt,
+      });
+    });
+
+    it('queues a reply while another write of the member locks the chat', async () => {
+      const threadId = await createTestThread();
+
+      await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+      const writeEvents = new EventEmitter();
+      const writeStarted = once(writeEvents, 'started');
+      const writeResumed = once(writeEvents, 'resumed');
+      const write =
+        getAppProviderByClassName<AgentChatThreadParticipantService>(
+          'AgentChatThreadParticipantService',
+        ).resolveMention({
+          ...buildJonyThreadAccess(threadId),
+          writeResponse: async ({ manager, table }) => {
+            const [{ backendProcessId }] = await manager.query<
+              { backendProcessId: number }[]
+            >('SELECT pg_backend_pid() AS "backendProcessId"');
+
+            writeEvents.emit('started', backendProcessId);
+            await writeResumed;
+            await manager.query(
+              `SELECT id FROM ${table('agentChatThread')} WHERE id = $1 FOR UPDATE`,
+              [threadId],
+            );
+          },
+        });
+
+      const [blockingProcessId] = await writeStarted;
+      const reply = queueReply(threadId);
+
+      await waitForBlockedDatabaseQueryOrThrow(blockingProcessId);
+      writeEvents.emit('resumed');
+
+      await expect(Promise.all([write, reply])).resolves.toEqual([
+        undefined,
+        expect.objectContaining({ threadId }),
+      ]);
+    });
+  });
+
+  it('delivers app recipients without creating or clearing an explicit mention', async () => {
+    const threadId = await createTestThread();
+    const threadService = getAppProviderByClassName<AgentChatThreadService>(
+      'AgentChatThreadService',
+    );
+    const delivery = {
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      threadId,
+      participantWorkspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
+    };
+
+    await threadService.deliverToParticipants(delivery);
+
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toMatchObject({
+      isSubscribed: true,
+      lastReadAt: null,
+      lastMentionedAt: null,
+      mentionsResolvedAt: null,
+    });
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+    const mentionedParticipant = await findMyParticipant(
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    await threadService.deliverToParticipants(delivery);
+
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toMatchObject({
+      lastMentionedAt: mentionedParticipant!.lastMentionedAt,
+      mentionsResolvedAt: null,
+    });
+  });
+
+  it('rolls mention resolution back when a response cannot be recorded', async () => {
+    const threadId = await createTestThread();
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+    await expect(
+      getAppProviderByClassName<AgentChatThreadParticipantService>(
+        'AgentChatThreadParticipantService',
+      ).resolveMention({
+        ...buildJonyThreadAccess(threadId),
+        writeResponse: async () => {
+          throw new Error('The response is invalid');
+        },
+      }),
+    ).rejects.toThrow('The response is invalid');
+
+    expect(
+      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
+    ).toMatchObject({ mentionsResolvedAt: null });
+  });
+
+  it('preserves a newer mention when an older response finishes first', async () => {
+    const threadId = await createTestThread();
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+    const responseEvents = new EventEmitter();
+    const responseStarted = once(responseEvents, 'started');
+    const responseFinished = once(responseEvents, 'finished');
+    const participantService =
+      getAppProviderByClassName<AgentChatThreadParticipantService>(
+        'AgentChatThreadParticipantService',
+      );
+    const response = participantService.resolveMention({
+      ...buildJonyThreadAccess(threadId),
+      writeResponse: async () => {
+        responseEvents.emit('started');
+        await responseFinished;
+      },
+    });
+
+    await responseStarted;
+
+    const laterMention = participantService.markAsMentioned(
+      buildJonyThreadAccess(threadId),
+    );
+
+    responseEvents.emit('finished');
+    await Promise.all([response, laterMention]);
+
+    const participant = await findMyParticipant(
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(new Date(participant!.lastMentionedAt!).getTime()).toBeGreaterThan(
+      new Date(participant!.mentionsResolvedAt!).getTime(),
+    );
+  });
+
+  it('orders a new mention after the resolved cursor at millisecond precision', async () => {
+    const threadId = await createTestThread();
+    const resolvedAt = new Date(Date.now() + 60_000).toISOString();
+
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+    await global.testDataSource.query(
+      `UPDATE ${SCHEMA}."agentChatThreadParticipant"
+       SET "lastMentionedAt" = $3, "mentionsResolvedAt" = $3
+       WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
+      [threadId, WORKSPACE_MEMBER_DATA_SEED_IDS.JONY, resolvedAt],
+    );
+    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
+
+    const participant = await findMyParticipant(
+      threadId,
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(new Date(participant!.lastMentionedAt!).getTime()).toBe(
+      new Date(resolvedAt).getTime() + 1,
+    );
   });
 });

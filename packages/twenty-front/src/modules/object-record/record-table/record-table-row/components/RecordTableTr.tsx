@@ -4,18 +4,19 @@ import { useRecordTableContextOrThrow } from '@/object-record/record-table/conte
 import { RecordTableRowContextProvider } from '@/object-record/record-table/contexts/RecordTableRowContext';
 import { RecordTableRowDiv } from '@/object-record/record-table/record-table-row/components/RecordTableRowDiv';
 import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
-import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
 import { isRecordTableRowFocusActiveComponentState } from '@/object-record/record-table/states/isRecordTableRowFocusActiveComponentState';
-import { isRecordTableRowFocusedComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowFocusedComponentFamilyState';
+import { isRecordTableRowActiveByRecordIdComponentFamilySelector } from '@/object-record/record-table/states/selectors/isRecordTableRowActiveByRecordIdComponentFamilySelector';
+import { isRecordTableRowFocusedByRecordIdComponentFamilySelector } from '@/object-record/record-table/states/selectors/isRecordTableRowFocusedByRecordIdComponentFamilySelector';
+import { useRecordRestrictedFieldNames } from '@/object-record/record-store/hooks/useRecordRestrictedFieldNames';
+import { useAtomComponentFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilySelectorValue';
 
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { forwardRef, type ReactNode } from 'react';
+import { forwardRef, useMemo, type ReactNode } from 'react';
 
 type RecordTableTrProps = {
   children: ReactNode;
   recordId: string;
-  focusIndex: number;
   isDragging?: boolean;
 } & Omit<
   React.ComponentProps<typeof RecordTableRowDiv>,
@@ -23,7 +24,7 @@ type RecordTableTrProps = {
 >;
 
 export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
-  ({ children, recordId, focusIndex, isDragging = false, ...props }, ref) => {
+  ({ children, recordId, isDragging = false, ...props }, ref) => {
     const { objectMetadataItem, isObjectReadOnly } =
       useRecordTableContextOrThrow();
 
@@ -32,14 +33,14 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
       recordId,
     );
 
-    const isRecordTableRowActive = useAtomComponentFamilyStateValue(
-      isRecordTableRowActiveComponentFamilyState,
-      focusIndex,
+    const isRecordTableRowActive = useAtomComponentFamilySelectorValue(
+      isRecordTableRowActiveByRecordIdComponentFamilySelector,
+      recordId,
     );
 
-    const isRecordTableRowFocused = useAtomComponentFamilyStateValue(
-      isRecordTableRowFocusedComponentFamilyState,
-      focusIndex,
+    const isRecordTableRowFocused = useAtomComponentFamilySelectorValue(
+      isRecordTableRowFocusedByRecordIdComponentFamilySelector,
+      recordId,
     );
 
     const isRecordTableRowFocusActive = useAtomComponentStateValue(
@@ -48,20 +49,32 @@ export const RecordTableTr = forwardRef<HTMLDivElement, RecordTableTrProps>(
 
     const isRecordDeleted = useIsRecordDeleted({ recordId });
 
+    const restrictedFieldNames = useRecordRestrictedFieldNames(recordId);
+
+    const recordTableRowContextValue = useMemo(
+      () => ({
+        recordId,
+        pathToShowPage:
+          getBasePathToShowPage({
+            objectNameSingular: objectMetadataItem.nameSingular,
+          }) + recordId,
+        objectNameSingular: objectMetadataItem.nameSingular,
+        isSelected: isRecordSelected,
+        isRecordReadOnly: isObjectReadOnly || isRecordDeleted,
+        restrictedFieldNames,
+      }),
+      [
+        restrictedFieldNames,
+        isObjectReadOnly,
+        isRecordDeleted,
+        isRecordSelected,
+        objectMetadataItem.nameSingular,
+        recordId,
+      ],
+    );
+
     return (
-      <RecordTableRowContextProvider
-        value={{
-          recordId: recordId,
-          rowIndex: focusIndex,
-          pathToShowPage:
-            getBasePathToShowPage({
-              objectNameSingular: objectMetadataItem.nameSingular,
-            }) + recordId,
-          objectNameSingular: objectMetadataItem.nameSingular,
-          isSelected: isRecordSelected,
-          isRecordReadOnly: isObjectReadOnly || isRecordDeleted,
-        }}
-      >
+      <RecordTableRowContextProvider value={recordTableRowContextValue}>
         <RecordTableRowDiv
           className="table-row"
           isDragging={isDragging}

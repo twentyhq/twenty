@@ -7,6 +7,8 @@ import {
 import { HEALTH_CHECK_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
 const handler = async (): Promise<ApplicationHealthCheckResult> => {
+  console.log('health-check started');
+
   const { messageParticipants, calendarEventParticipants } =
     await new CoreApiClient().query({
       messageParticipants: {

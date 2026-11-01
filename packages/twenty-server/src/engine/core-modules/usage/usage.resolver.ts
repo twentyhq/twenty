@@ -18,6 +18,8 @@ import {
   type UsageBreakdownItem,
 } from 'src/engine/core-modules/usage/services/usage-analytics.service';
 import { consolidateUsageByApplication } from 'src/engine/core-modules/usage/utils/consolidate-usage-by-application.util';
+import { listDeclaredBillingChargeNames } from 'src/engine/core-modules/usage/utils/list-declared-billing-charge-names.util';
+import { fromUsageBreakdownItemToUsageBreakdownItemDTO } from 'src/engine/core-modules/usage/utils/from-usage-breakdown-item-to-usage-breakdown-item-dto.util';
 import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -81,10 +83,7 @@ export class UsageResolver {
       Object.entries(flatApplicationMaps.byId).map(
         ([applicationId, application]) => [
           applicationId,
-          [
-            ...Object.keys(application?.billing?.recurring ?? {}),
-            ...Object.keys(application?.billing?.operations ?? {}),
-          ],
+          listDeclaredBillingChargeNames({ billing: application?.billing }),
         ],
       ),
     );
@@ -121,25 +120,22 @@ export class UsageResolver {
     });
 
     const result: UsageAnalyticsDTO = {
-      usageByUser: resolvedUsageByUser.map((item) => ({
-        ...item,
-        creditsUsed: toDisplayCredits(item.creditsUsed),
-      })),
-      usageByOperationType: usageByOperationType.map((item) => ({
-        ...item,
-        creditsUsed: toDisplayCredits(item.creditsUsed),
-      })),
-      usageByApplication: resolvedUsageByApplication.map((item) => ({
-        ...item,
-        creditsUsed: toDisplayCredits(item.creditsUsed),
-      })),
-      usageByModel: usageByModel.map((item) => ({
-        ...item,
-        creditsUsed: toDisplayCredits(item.creditsUsed),
-      })),
+      usageByUser: resolvedUsageByUser.map(
+        fromUsageBreakdownItemToUsageBreakdownItemDTO,
+      ),
+      usageByOperationType: usageByOperationType.map(
+        fromUsageBreakdownItemToUsageBreakdownItemDTO,
+      ),
+      usageByApplication: resolvedUsageByApplication.map(
+        fromUsageBreakdownItemToUsageBreakdownItemDTO,
+      ),
+      usageByModel: usageByModel.map(
+        fromUsageBreakdownItemToUsageBreakdownItemDTO,
+      ),
       timeSeries: timeSeries.map((point) => ({
         ...point,
         creditsUsed: toDisplayCredits(point.creditsUsed),
+        workspaceCreditsUsed: toDisplayCredits(point.workspaceCreditsUsed),
       })),
       periodStart,
       periodEnd,
@@ -163,6 +159,7 @@ export class UsageResolver {
           dailyUsage: dailyUsage.map((point) => ({
             ...point,
             creditsUsed: toDisplayCredits(point.creditsUsed),
+            workspaceCreditsUsed: toDisplayCredits(point.workspaceCreditsUsed),
           })),
         };
       }

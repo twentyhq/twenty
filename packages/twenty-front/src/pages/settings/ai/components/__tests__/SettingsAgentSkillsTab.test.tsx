@@ -10,7 +10,6 @@ import {
 } from 'twenty-shared/application';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 import { messages as frMessages } from '~/locales/generated/fr-FR';
 import { FindManySkillsDocument } from '~/generated-metadata/graphql';
@@ -23,6 +22,7 @@ const STANDARD_APPLICATION = {
   name: TWENTY_STANDARD_APPLICATION_NAME,
   universalIdentifier: TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
   logoUrl: null,
+  createdAt: '2024-01-01T00:00:00.000Z',
 };
 
 const WORKSPACE_CUSTOM_APPLICATION = {
@@ -30,6 +30,7 @@ const WORKSPACE_CUSTOM_APPLICATION = {
   name: 'Custom',
   universalIdentifier: '20202020-9e8d-4c7b-8a6f-5d4c3b2a1e09',
   logoUrl: null,
+  createdAt: '2024-01-01T00:00:00.000Z',
 };
 
 const ACME_APPLICATION = {
@@ -37,6 +38,7 @@ const ACME_APPLICATION = {
   name: 'Acme',
   universalIdentifier: '20202020-5f0e-4a2b-9c3d-1e2f3a4b5c6d',
   logoUrl: null,
+  createdAt: '2024-01-01T00:00:00.000Z',
 };
 
 const buildSkill = ({
@@ -96,9 +98,7 @@ const CUSTOM_SKILL = buildSkill({
   applicationId: WORKSPACE_CUSTOM_APPLICATION.id,
 });
 
-const renderSkillsTab = ({
-  isAdvancedModeEnabled = false,
-}: { isAdvancedModeEnabled?: boolean } = {}) => {
+const renderSkillsTab = () => {
   const Wrapper = getJestMetadataAndApolloMocksWrapper({
     apolloMocks: [
       {
@@ -116,7 +116,6 @@ const renderSkillsTab = ({
       },
     ],
     onInitializeJotaiStore: (store) => {
-      store.set(isAdvancedModeEnabledState.atom, isAdvancedModeEnabled);
       store.set(currentWorkspaceState.atom, {
         ...mockCurrentWorkspace,
         workspaceCustomApplication: WORKSPACE_CUSTOM_APPLICATION,
@@ -191,12 +190,16 @@ describe('SettingsAgentSkillsTab', () => {
     expect(screen.queryByText('View Building')).not.toBeInTheDocument();
   });
 
-  it('shows system skills in advanced mode, and hides them again from the filter', async () => {
-    renderSkillsTab({ isAdvancedModeEnabled: true });
+  it('shows system skills from the filter, and hides them again', async () => {
+    renderSkillsTab();
+
+    await screen.findByText('Word Documents');
+
+    await userEvent.click(screen.getByRole('button', { name: 'Filter' }));
+    await userEvent.click(screen.getByText('System skills'));
 
     expect(await screen.findByText('View Building')).toBeInTheDocument();
 
-    await userEvent.click(screen.getByRole('button', { name: 'Filter' }));
     await userEvent.click(screen.getByText('System skills'));
 
     expect(screen.queryByText('View Building')).not.toBeInTheDocument();

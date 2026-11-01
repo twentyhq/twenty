@@ -3,6 +3,7 @@ import { styled } from '@linaria/react';
 import { ActivityRow } from '@/activities/components/ActivityRow';
 import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { getEmailParticipantAvatarColorSeed } from '@/activities/emails/utils/getEmailParticipantAvatarColorSeed';
+import { getTimelineThreadLabel } from '@/activities/emails/utils/getTimelineThreadLabel';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 
 import { t } from '@lingui/core/macro';
@@ -76,6 +77,7 @@ const StyledReceivedAt = styled.div`
 
 type EmailThreadPreviewProps = {
   thread: TimelineThread;
+  divider?: boolean;
 };
 
 type LastAvatar = {
@@ -85,7 +87,10 @@ type LastAvatar = {
   placeholderColorSeed: string | undefined;
 };
 
-export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
+export const EmailThreadPreview = ({
+  thread,
+  divider = false,
+}: EmailThreadPreviewProps) => {
   const theme = useTheme();
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
 
@@ -137,8 +142,18 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
   };
 
   const isDisabled = visibility !== MessageChannelVisibility.SHARE_EVERYTHING;
+  const label = getTimelineThreadLabel(thread);
+  const draftTag = thread.lastMessageIsDraft ? (
+    <Tag color="orange">{t`Draft`}</Tag>
+  ) : null;
+
   return (
-    <ActivityRow onClick={handleThreadClick} disabled={isDisabled}>
+    <ActivityRow
+      onClick={handleThreadClick}
+      disabled={isDisabled}
+      divider={divider}
+      label={label}
+    >
       <StyledHeading unread={!thread.read}>
         <StyledParticipantsContainer>
           <Avatar
@@ -185,17 +200,21 @@ export const EmailThreadPreview = ({ thread }: EmailThreadPreviewProps) => {
 
       <StyledSubjectAndBody>
         {visibility === MessageChannelVisibility.METADATA && (
-          <EmailThreadNotShared visibility={visibility} />
+          <>
+            {draftTag}
+            <EmailThreadNotShared visibility={visibility} />
+          </>
         )}
         {visibility === MessageChannelVisibility.SUBJECT && (
           <>
+            {draftTag}
             <StyledSubject>{thread.subject}</StyledSubject>
             <EmailThreadNotShared visibility={visibility} />
           </>
         )}
         {visibility === MessageChannelVisibility.SHARE_EVERYTHING && (
           <>
-            {thread.lastMessageIsDraft && <Tag color="orange">{t`Draft`}</Tag>}
+            {draftTag}
             <StyledSubject>{thread.subject}</StyledSubject>
             <StyledBody>{thread.lastMessageBody}</StyledBody>
           </>

@@ -26,12 +26,15 @@ export default defineConfig({
     projects: [
       {
         extends: './vite.config.ts',
+        optimizeDeps: {
+          include: ['storybook-addon-mock-date/preview'],
+        },
         plugins: [
           storybookTest({
             configDir: path.join(dirname, '.storybook'),
             ...(process.env.STORYBOOK_URL
               ? { storybookUrl: process.env.STORYBOOK_URL }
-              : { storybookScript: 'yarn storybook --no-open' }),
+              : { storybookScript: 'npx storybook dev -p 6006 --no-open' }),
           }),
           ...(shouldCaptureArgosScreenshots
             ? [

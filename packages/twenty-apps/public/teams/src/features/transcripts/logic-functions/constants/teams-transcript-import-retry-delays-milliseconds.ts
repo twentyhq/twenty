@@ -1,0 +1,5 @@
+export const TEAMS_TRANSCRIPT_IMPORT_RETRY_DELAYS_MILLISECONDS = [
+  5 * 60 * 1_000,
+  30 * 60 * 1_000,
+  2 * 60 * 60 * 1_000,
+];

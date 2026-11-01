@@ -1,3 +1,4 @@
+import { MOCKED_DATE } from '~/testing/constants/MockedDate';
 import { TabListRoot } from '@/ui/layout/tab-list/components/TabListRoot';
 import { Tabs } from 'twenty-ui/primitives/navigation';
 import { Text } from 'twenty-ui/primitives/typography';
@@ -12,7 +13,8 @@ import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/stat
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageInfoSelector } from '@/side-panel/states/sidePanelPageInfoSelector';
 import { SidePanelPageComponentInstanceContext } from '@/side-panel/states/contexts/SidePanelPageComponentInstanceContext';
-import { SidePanelPageLayoutInfoContent } from '@/side-panel/components/SidePanelPageLayoutInfoContent';
+import { SidePanelPageLayoutInfo } from '@/side-panel/components/SidePanelPageLayoutInfo';
+import { PageLayoutSidePanelTargetProvider } from '@/side-panel/pages/page-layout/components/PageLayoutSidePanelTargetProvider';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -65,8 +67,8 @@ const createInitialTabs = (): PageLayoutTab[] => [
     icon: 'IconPlus',
     pageLayoutId: 'test-layout',
     widgets: [],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: MOCKED_DATE,
+    updatedAt: MOCKED_DATE,
     deletedAt: null,
   },
   {
@@ -80,8 +82,8 @@ const createInitialTabs = (): PageLayoutTab[] => [
     position: 1,
     pageLayoutId: 'test-layout',
     widgets: [],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: MOCKED_DATE,
+    updatedAt: MOCKED_DATE,
     deletedAt: null,
   },
   {
@@ -95,8 +97,8 @@ const createInitialTabs = (): PageLayoutTab[] => [
     position: 2,
     pageLayoutId: 'test-layout',
     widgets: [],
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
+    createdAt: MOCKED_DATE,
+    updatedAt: MOCKED_DATE,
     deletedAt: null,
   },
 ];
@@ -155,8 +157,8 @@ const PageLayoutTabListPlayground = ({
             position: nextIndex,
             pageLayoutId: 'test-layout',
             widgets: [],
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
+            createdAt: MOCKED_DATE,
+            updatedAt: MOCKED_DATE,
             deletedAt: null,
           },
         ],
@@ -210,7 +212,7 @@ const PageLayoutTabListPlayground = ({
           <SidePanelPageComponentInstanceContext.Provider
             value={{ instanceId: sidePanelPageInfo.instanceId }}
           >
-            <SidePanelPageLayoutInfoContent pageLayoutId="instance-id" />
+            <SidePanelPageLayoutInfo pageLayoutId="instance-id" />
           </SidePanelPageComponentInstanceContext.Provider>
         )}
     </StyledContainer>
@@ -292,11 +294,22 @@ const meta: Meta<typeof PageLayoutTabListPlayground> = {
               targetRecordIdentifier: undefined,
             }}
           >
-            <TabListComponentInstanceContext.Provider
-              value={{ instanceId: 'page-layout-tab-list-story' }}
+            <PageLayoutSidePanelTargetProvider
+              pageLayoutId="instance-id"
+              targetRecordIdentifier={{
+                id: 'record-id',
+                targetObjectNameSingular:
+                  args.presentation === 'identifier-bar'
+                    ? 'company'
+                    : 'dashboard',
+              }}
             >
-              <Story />
-            </TabListComponentInstanceContext.Provider>
+              <TabListComponentInstanceContext.Provider
+                value={{ instanceId: 'page-layout-tab-list-story' }}
+              >
+                <Story />
+              </TabListComponentInstanceContext.Provider>
+            </PageLayoutSidePanelTargetProvider>
           </LayoutRenderingProvider>
         </PageLayoutComponentInstanceContext.Provider>
       </PageLayoutEditModeProviderContext>
@@ -316,7 +329,9 @@ export const Default: Story = {
     const canvas = within(canvasElement);
     const tabList = await canvas.findByRole('tablist');
 
-    expect(getComputedStyle(tabList, '::after').display).toBe('none');
+    expect(tabList.getBoundingClientRect().bottom).toBe(
+      tabList.parentElement!.getBoundingClientRect().bottom,
+    );
     expect(getComputedStyle(tabList.parentElement!, '::after').display).toBe(
       args.presentation === 'identifier-bar' ? 'none' : 'block',
     );
@@ -368,6 +383,13 @@ export const IdentifierBarNarrow: Story = {
     const body = within(canvasElement.ownerDocument.body);
 
     const [moreButton] = await canvas.findAllByRole('button', { name: /More/ });
+    const addButton = canvas.getByRole('button', { name: 'New Tab' });
+
+    expect(moreButton.closest('[role="tablist"]')).toBeNull();
+    expect(moreButton).not.toHaveAttribute('aria-selected');
+    expect(addButton.closest('[role="tablist"]')).toBeNull();
+    expect(addButton).not.toHaveAttribute('aria-selected');
+    expect(addButton).not.toHaveAttribute('aria-controls');
 
     await userEvent.click(moreButton);
     await userEvent.click(await body.findByRole('button', { name: 'Revenue' }));

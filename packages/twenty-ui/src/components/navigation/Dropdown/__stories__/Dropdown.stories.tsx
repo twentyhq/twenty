@@ -7,10 +7,12 @@ import { ComponentDecorator } from '@ui/testing';
 
 import { Dropdown } from '../Dropdown';
 import { DropdownContextMenuExample } from './DropdownContextMenuExample';
+import { DropdownIconGridExample } from './DropdownIconGridExample';
 import { DropdownNestedExample } from './DropdownNestedExample';
 import { DropdownPagesExample } from './DropdownPagesExample';
 import { DropdownPanelExample } from './DropdownPanelExample';
 import { DropdownPickerExample } from './DropdownPickerExample';
+import { DropdownSelectionGroupsExample } from './DropdownSelectionGroupsExample';
 import { DROPDOWN_STORY_A11Y_PARAMETERS } from './dropdownStoryA11yParameters';
 
 const DropdownMenuExample = () => (
@@ -65,7 +67,7 @@ export default meta;
 
 type Story = StoryObj<typeof DropdownMenuExample>;
 
-export const Documentation: Story = {};
+export const Display: Story = {};
 
 export const Menu: Story = {
   play: async ({ canvasElement }) => {
@@ -141,7 +143,7 @@ export const Picker: Story = {
     ).toHaveFocus();
     await userEvent.keyboard('{ArrowDown}');
     await expect(
-      body.getByRole('button', { name: 'Grace Hopper' }),
+      body.getByRole('option', { name: 'Grace Hopper' }),
     ).toHaveFocus();
     await userEvent.keyboard('{Enter}');
     await waitFor(() =>
@@ -163,16 +165,24 @@ export const MultipleSelection: Story = {
       within(canvasElement).getByRole('button', { name: 'Choose people' }),
     );
     await waitFor(() => expect(body.getByRole('dialog')).toBeVisible());
-    const ada = await body.findByRole('button', { name: 'Ada Lovelace' });
+    const ada = await body.findByRole('option', { name: 'Ada Lovelace' });
 
     await userEvent.click(ada);
-    await expect(ada).toHaveAttribute('aria-pressed', 'true');
+    await expect(ada).toHaveAttribute('aria-selected', 'true');
     await expect(body.getByRole('dialog')).toBeVisible();
   },
 };
 
 export const MultipleSelectionDocumentation: Story = {
   render: MultipleSelection.render,
+};
+
+export const SelectionGroupsDocumentation: Story = {
+  render: () => <DropdownSelectionGroupsExample />,
+};
+
+export const IconGridDocumentation: Story = {
+  render: () => <DropdownIconGridExample />,
 };
 
 export const MultipleSelectionDark: Story = {
@@ -266,16 +276,18 @@ export const Nested: Story = {
       await body.findByRole('button', { name: 'Ascending' }),
     );
     await userEvent.click(
-      await body.findByRole('button', { name: 'Descending' }),
+      await body.findByRole('option', { name: 'Descending' }),
     );
     await waitFor(() =>
       expect(
         body.queryByRole('dialog', { name: 'Sort direction' }),
       ).not.toBeInTheDocument(),
     );
-    await expect(body.getByRole('dialog', { name: 'Sort' })).toBeVisible();
+    await waitFor(() =>
+      expect(body.getByRole('dialog', { name: 'Sort' })).toBeVisible(),
+    );
     const direction = body.getByRole('button', { name: 'Descending' });
-    await expect(direction).toHaveFocus();
+    await waitFor(() => expect(direction).toHaveFocus());
     await userEvent.click(direction);
     await userEvent.keyboard('{Escape}');
     await waitFor(() => expect(direction).toHaveFocus());

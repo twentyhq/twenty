@@ -1,6 +1,6 @@
 import { type NavigationMenuItemMenuMode } from '@/navigation-menu-item/edit/types/NavigationMenuItemMenuMode';
 import { NavigationMenuItemObjectColorEditor } from '@/navigation-menu-item/edit/components/NavigationMenuItemObjectColorEditor';
-import { useIsNavigationDrawerContentExpanded } from '@/navigation/hooks/useIsNavigationDrawerContentExpanded';
+import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 // Aliased so both reads satisfy the matching-state-variable lint rule, which
 // requires the variable to be named after the state it reads.
 import {

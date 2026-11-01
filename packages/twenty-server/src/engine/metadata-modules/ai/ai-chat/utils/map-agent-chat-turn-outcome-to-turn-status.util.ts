@@ -2,6 +2,7 @@ import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type AgentChatTurnOutcome } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-turn-outcome.type';
 import { AGENT_TURN_CREDITS_EXHAUSTED_ERROR } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-turn-credits-exhausted-error.constant';
+import { AGENT_TURN_USER_CREDITS_EXHAUSTED_ERROR } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-turn-user-credits-exhausted-error.constant';
 import { type StreamErrorPayload } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 
@@ -17,6 +18,7 @@ const FAILURE_ERRORS: Record<
     message: 'The agent stopped without replying.',
   },
   credits_exhausted: AGENT_TURN_CREDITS_EXHAUSTED_ERROR,
+  user_credits_exhausted: AGENT_TURN_USER_CREDITS_EXHAUSTED_ERROR,
 };
 
 export const mapAgentChatTurnOutcomeToTurnStatus = (

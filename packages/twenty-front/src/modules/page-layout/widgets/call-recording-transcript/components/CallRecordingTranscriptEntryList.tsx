@@ -14,6 +14,7 @@ import {
 } from 'react';
 import { type CallRecordingParsedTranscriptEntry } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 const StyledTranscriptContainer = styled.div`
@@ -40,7 +41,7 @@ const StyledEntryList = styled.ul<{ hasPlaybackControls: boolean }>`
       : '0'};
 `;
 
-const MANUAL_SCROLL_KEYS = [
+const MANUAL_SCROLL_KEYS = doNotTranslate([
   'ArrowDown',
   'ArrowUp',
   'End',
@@ -48,7 +49,7 @@ const MANUAL_SCROLL_KEYS = [
   'PageDown',
   'PageUp',
   ' ',
-];
+]);
 
 type CallRecordingTranscriptEntryListProps = {
   entries: CallRecordingParsedTranscriptEntry[];

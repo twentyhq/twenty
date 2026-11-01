@@ -75,7 +75,7 @@ export const useDeleteSelectedCoreWorkflows = () => {
     } catch (error) {
       logError(error);
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`Failed to delete workflows`,
       });
 
@@ -84,7 +84,7 @@ export const useDeleteSelectedCoreWorkflows = () => {
 
     if (!isNonEmptyArray(deletedCoreWorkflows)) {
       enqueueToast({
-        variant: 'error',
+        status: 'error',
         children: t`No workflows were deleted`,
       });
 

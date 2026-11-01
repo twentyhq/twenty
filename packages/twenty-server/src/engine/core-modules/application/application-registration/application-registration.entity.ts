@@ -18,10 +18,12 @@ import {
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { type Manifest } from 'twenty-shared/application';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
+import { ApplicationRegistrationVersionEntity } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.entity';
 import { type ApplicationRegistrationGalleryImage } from 'src/engine/core-modules/application/application-registration/types/application-registration-gallery-image.type';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { type WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -120,7 +122,6 @@ export class ApplicationRegistrationEntity {
   @Column({ type: 'boolean', default: false })
   isListed: boolean;
 
-  @Field(() => Boolean)
   @Column({ name: 'isVetted', type: 'boolean', default: false })
   @WasRenamedInUpgrade([
     {
@@ -129,7 +130,7 @@ export class ApplicationRegistrationEntity {
         '2.20.0_RenameIsFeaturedToIsVettedOnApplicationRegistrationFastInstanceCommand_1783527064000',
     },
   ])
-  isVetted: boolean;
+  isVetted: WasRemovedInUpgrade<boolean>;
 
   // Auto-installed on new workspaces; existing ones are backfilled by the `install-pre-installed-apps` command
   @Field(() => Boolean)
@@ -234,6 +235,13 @@ export class ApplicationRegistrationEntity {
     { onDelete: 'CASCADE' },
   )
   variables: Relation<ApplicationRegistrationVariableEntity[]>;
+
+  @OneToMany(
+    () => ApplicationRegistrationVersionEntity,
+    (version) => version.applicationRegistration,
+    { onDelete: 'CASCADE' },
+  )
+  versions: Relation<ApplicationRegistrationVersionEntity[]>;
 
   @Column({ type: 'jsonb', nullable: true })
   @WasIntroducedInUpgrade({

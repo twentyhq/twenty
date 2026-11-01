@@ -5,6 +5,7 @@ import { useSetIsPageLayoutInEditMode } from '@/page-layout/hooks/useSetIsPageLa
 import { getTabListInstanceIdFromPageLayoutAndRecord } from '@/page-layout/utils/getTabListInstanceIdFromPageLayoutAndRecord';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { isDefined } from 'twenty-shared/utils';
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { PageLayoutType } from '~/generated-metadata/graphql';
 
 export const CancelDashboardSingleRecordCommand = () => {
@@ -12,7 +13,9 @@ export const CancelDashboardSingleRecordCommand = () => {
   const selectedRecord = selectedRecords[0];
 
   if (!isDefined(selectedRecord)) {
-    throw new Error('Selected record is required to cancel dashboard');
+    throw new Error(
+      doNotTranslate('Selected record is required to cancel dashboard'),
+    );
   }
 
   const pageLayoutId = selectedRecord.pageLayoutId;

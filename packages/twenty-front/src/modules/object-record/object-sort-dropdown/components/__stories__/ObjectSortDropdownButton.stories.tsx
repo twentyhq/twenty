@@ -37,7 +37,7 @@ export const SearchAndDirection: Story = {
     await expect(body.getByTestId('hidden-select-sort-0')).toBeVisible();
     await userEvent.click(body.getByRole('button', { name: 'Ascending' }));
     await userEvent.click(
-      await body.findByRole('button', { name: 'Descending' }),
+      await body.findByRole('option', { name: 'Descending' }),
     );
     await expect(body.getByRole('dialog', { name: 'Sort' })).toBeVisible();
     const direction = body.getByRole('button', { name: 'Descending' });

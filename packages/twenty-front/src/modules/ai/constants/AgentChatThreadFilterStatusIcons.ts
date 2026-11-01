@@ -1,10 +1,13 @@
 import {
   type IconComponent,
   IconAt,
+  IconCheck,
   IconCircleDashed,
-  IconClock,
   IconHandClick,
-  IconProgressCheck,
+  IconUserCircle,
+  IconUserOff,
+  IconUsers,
+  IconZzz,
 } from 'twenty-ui/icon';
 
 import { type AgentChatThreadFilterStatus } from '@/ai/types/AgentChatThreadFilterStatus';
@@ -16,6 +19,9 @@ export const AGENT_CHAT_THREAD_FILTER_STATUS_ICONS: Record<
   active: IconCircleDashed,
   needsInput: IconHandClick,
   mentions: IconAt,
-  snoozed: IconClock,
-  done: IconProgressCheck,
+  assigned: IconUserCircle,
+  assignedToAnyone: IconUsers,
+  unassigned: IconUserOff,
+  snoozed: IconZzz,
+  done: IconCheck,
 };

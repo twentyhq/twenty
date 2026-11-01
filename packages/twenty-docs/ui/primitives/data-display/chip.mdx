@@ -1,20 +1,25 @@
 ---
 title: Chip
-description: Show a compact record label with optional leading and trailing content.
+description: Show compact caller-owned content with optional leading and trailing slots.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 
 import ChipReference from '/snippets/ui/generated/data-display/chip.mdx';
 
+## Overview
+
 Use `Chip` for compact references to people, records, or files. Use [Tag](/ui/primitives/data-display/tag) for colored categories and [Status](/ui/primitives/data-display/status) for workflow states.
 
 <StoryEmbed
-  storyId="ui-data-display-chip--with-left-avatar"
+  storyId="ui-data-display-chip--display"
   title="Chip example"
+  height={90}
 />
 
-## Record label
+## Usage
 
 ```tsx
 import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
@@ -22,59 +27,101 @@ import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
 export const AssigneeChip = () => (
   <Chip
     variant="soft"
-    startElement={<Avatar name="Jane" size="sm" shape="circle" />}
+    startElement={
+      <Avatar name="Jane" size="sm" shape="circle" imageProps={{ alt: '' }} />
+    }
   >
     Jane
   </Chip>
 );
 ```
 
-Use `startElement` and `endElement` for avatars, icons, or other content. `endElementDivider` adds a separator before the trailing content. The default chip is a `div`; its slots can contain an action when the chip itself is not interactive.
+Children accept text or nodes. `startElement` and `endElement` accept avatars, icons, or other content. `endElementDivider` adds a separator before the trailing content. The default chip is a `div`; its slots can contain a separate action while the chip itself remains presentational.
 
-## Open a record
+Chip never inserts a label. Supply a translated fallback from your application when needed. Omit children for content made entirely from slots. An interactive chip with only an icon needs a caller-supplied accessible name.
+
+## Appearance
+
+<StoryEmbed
+  storyId="ui-data-display-chip--catalog"
+  title="Chip variants and sizes"
+  height={200}
+/>
+
+`size` accepts `sm` or `md`, with total heights of 20px and 24px. `variant` accepts `ghost`, `soft`, `solid`, `plain`, or `outline`; `ghost` is the default. Plain chips have no resting fill or leading padding. Outline chips have a strong 1px border, a lighter resting fill, and 8px inline padding on each side, with the same total height as other variants. Clickable plain and outline chips use the ghost hover and pressed backgrounds, pointer cursor, and focus ring. Use `shape="round"` for a pill, `weight="medium"` for emphasis, and `color="secondary"` for secondary text.
+
+## Buttons and links
 
 ```tsx
 import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
 
-type AssigneeActionProps = { onOpenAssignee: () => void };
+type AssigneeActionProps = {
+  onOpenAssignee: () => void;
+  disabled?: boolean;
+};
 
-export const AssigneeAction = ({ onOpenAssignee }: AssigneeActionProps) => (
+export const AssigneeAction = ({
+  onOpenAssignee,
+  disabled,
+}: AssigneeActionProps) => (
   <Chip
+    render={<button type="button" disabled={disabled} />}
     onClick={onOpenAssignee}
     aria-label="Open Jane's record"
-    startElement={<Avatar name="Jane" size="sm" shape="circle" />}
+    startElement={
+      <Avatar name="Jane" size="sm" shape="circle" imageProps={{ alt: '' }} />
+    }
   >
     Jane
   </Chip>
 );
 ```
 
-`onClick` renders a button with keyboard activation. `clickable` controls hover and pointer styling only; setting it alone does not create a button or add an action. `disabled` prevents activation of the button. Do not nest buttons or links inside an interactive chip.
+Supplying `onClick` keeps the default `div`. Use `render` to compose an explicit native button, anchor, router link, or another appropriate owner. Native attributes, handlers, styles and the root ref reach that owner. A native button supplies keyboard activation and disabled behavior. Chip recognizes native disabled state and `aria-disabled` for appearance; `aria-disabled` alone does not prevent activation.
 
-Use `render` to replace the root element. If an `onClick` chip renders a non-button element, set `nativeButton={false}`. When `isLabelHidden` hides the label, give an interactive chip an `aria-label`.
+`clickable` controls hover and pointer appearance and defaults to whether `onClick` is supplied. Set it explicitly for a link without a click handler. Do not nest buttons or links inside a chip that is itself interactive.
 
-## Width and empty labels
+```tsx
+import { Chip } from 'twenty-ui/primitives/data-display';
+
+export const DocumentationChip = () => (
+  <Chip
+    variant="outline"
+    shape="round"
+    render={<a href="https://twenty.com/developers" />}
+    clickable
+  >
+    Documentation
+  </Chip>
+);
+```
+
+URL text remains plain text. Intentional links belong in caller content or in the explicit root composition.
+
+## Truncation and tooltips
 
 ```tsx
 import { Chip } from 'twenty-ui/primitives/data-display';
 
 export const FileChip = () => (
-  <Chip variant="soft" maxWidth={180}>
+  <Chip variant="soft" maxWidth={180} tooltipPlace="top">
     Quarterly customer research.pdf
   </Chip>
 );
 ```
 
-`maxWidth` constrains the chip in pixels. String labels truncate and show their full text in a tooltip on hover. `tooltipLabel` changes the tooltip text; `alwaysShowTooltip` also enables it when the label fits. Keep essential information available without relying on hover.
+`maxWidth` constrains the rendered chip width in pixels, including padding and any outline border. The same limit applies to plain chips with asymmetric padding. Content truncates with an ellipsis by default; `truncate={false}` leaves it unconstrained by truncation. String children supply their own tooltip text. Set `tooltipContent` for custom text or node content, `tooltipDelay` for the opening delay, and `isTooltipMultiline` to preserve line breaks. `alwaysShowTooltip` also enables the tooltip when content fits. These options follow [OverflowingTextWithTooltip](/ui/primitives/typography/overflowing-text-with-tooltip). Keep essential information available without relying on hover.
 
-Missing, empty-string, or `false` children show `emptyLabel`, which defaults to `Untitled`. `forceEmptyText` suppresses that placeholder. `isLabelHidden` hides both the content label and the placeholder while preserving the slots.
+## Migration
 
-## Appearance
+Replace `emptyLabel` with caller-provided fallback children, and replace `forceEmptyText` or `isLabelHidden` with omitted children. Keep translated product fallbacks in the application. Replace `tooltipLabel` with `tooltipContent`. Move `disabled` to the explicit interactive owner and remove `nativeButton`. Add a native button or link through `render` wherever the chip previously relied on `onClick` to choose its element.
 
-`size` accepts `sm` or `md`. `variant` accepts `ghost`, `soft`, or `solid`; `ghost` is the default. Use `shape="round"` for a pill, `weight="medium"` for emphasis, and `color="secondary"` for secondary text.
+Replace leading-padding overrides with `variant="plain"`. Keep `clickable` enabled for native links and buttons that need hover and pressed feedback.
 
 ## Props
 
 Types and defaults are generated from the public component types. Native attributes and event handlers are also accepted.
 
 <ChipReference />
+
+<PageBanner illustration="page-cover-checkbox" />

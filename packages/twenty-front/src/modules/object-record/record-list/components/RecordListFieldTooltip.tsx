@@ -1,5 +1,4 @@
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { TooltipTextContent } from '@/ui/layout/tooltip/components/TooltipTextContent';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/icon';
@@ -34,14 +33,13 @@ export const RecordListFieldTooltip = ({
                 side="bottom"
                 positionMethod="fixed"
                 sideOffset={10}
-                style={{ maxWidth: '300px' }}
               >
                 <Tooltip.Popup>
-                  <TooltipTextContent
+                  <Tooltip.Body
                     startIcon={isDefined(FieldIcon) ? <FieldIcon /> : undefined}
                   >
                     {fieldDefinition?.label}
-                  </TooltipTextContent>
+                  </Tooltip.Body>
                 </Tooltip.Popup>
               </Tooltip.Positioner>
             </Tooltip.Portal>

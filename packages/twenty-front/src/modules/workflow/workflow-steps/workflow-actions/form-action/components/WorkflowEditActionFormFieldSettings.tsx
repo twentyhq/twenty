@@ -89,7 +89,10 @@ export const WorkflowEditActionFormFieldSettings = ({
         <FormFieldInputContainer>
           <InputLabel>{t`Type`}</InputLabel>
           <FormSelectFieldInput
-            options={FORM_SELECT_FIELD_TYPE_OPTIONS}
+            options={FORM_SELECT_FIELD_TYPE_OPTIONS.map((option) => ({
+              ...option,
+              label: t(option.label),
+            }))}
             onChange={(newType: string | null) => {
               if (newType === null) {
                 return;

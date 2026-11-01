@@ -1,9 +1,12 @@
+import { type RunAgentResult } from 'twenty-sdk/logic-function';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { SLACK_ASSISTANT_DEADLINE_ERROR } from 'src/logic-functions/constants/slack-assistant-deadline-error';
 import { raceSlackAssistantAgentDeadline } from 'src/logic-functions/utils/race-slack-assistant-agent-deadline';
 
-const AGENT_RESULT = {
+const AGENT_RESULT: RunAgentResult = {
+  threadId: '7e4b1d4a-2c3f-4a5b-9c8d-1e2f3a4b5c6d',
+  status: 'COMPLETED',
   result: { text: 'Acme has 3 open deals' },
   error: null,
   success: true,
@@ -36,6 +39,7 @@ describe('raceSlackAssistantAgentDeadline', () => {
     await vi.advanceTimersByTimeAsync(10_000);
 
     await expect(race).resolves.toEqual({
+      threadId: null,
       result: null,
       error: SLACK_ASSISTANT_DEADLINE_ERROR,
       success: false,
@@ -73,6 +77,7 @@ describe('raceSlackAssistantAgentDeadline', () => {
     await vi.advanceTimersByTimeAsync(0);
 
     await expect(race).resolves.toEqual({
+      threadId: null,
       result: null,
       error: SLACK_ASSISTANT_DEADLINE_ERROR,
       success: false,

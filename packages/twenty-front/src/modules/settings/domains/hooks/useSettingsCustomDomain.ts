@@ -65,7 +65,7 @@ export const useSettingsCustomDomain = () => {
           customDomain: domainValue,
         });
         enqueueToast({
-          variant: 'success',
+          status: 'success',
           children: t`Custom domain updated`,
         });
         setIsSubmitting(false);

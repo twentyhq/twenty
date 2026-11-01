@@ -1,0 +1,112 @@
+---
+title: Gestisci annullamenti dell’iscrizione e argomenti
+description: Scopri chi ha annullato l’iscrizione e consenti alle persone di scegliere quali aggiornamenti ricevere.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
+Ogni campagna include un link per annullare l’iscrizione. Twenty tiene traccia di chi lo utilizza. Gli argomenti offrono alle persone un po’ più di controllo: possono annullare l’iscrizione alla tua newsletter continuando a ricevere gli aggiornamenti sul prodotto.
+
+## Come funziona l’annullamento dell’iscrizione
+
+Ogni email della campagna include:
+
+* Una riga nel piè di pagina: "Non vuoi ricevere queste email? Annulla iscrizione."
+* Le intestazioni per l’annullamento dell’iscrizione con un clic che Gmail, Yahoo e altre app di posta elettronica usano per mostrare il proprio pulsante **Annulla iscrizione**.
+
+Il link apre una pagina per annullare l'iscrizione sul tuo dominio, ad esempio `links.yourcompany.com`:
+
+* **Nessun argomento pubblico**: le persone vedono un pulsante **Annulla iscrizione**.
+* **Argomenti pubblici**: le persone vedono una casella di controllo per ogni argomento. Possono deselezionare gli argomenti e fare clic su **Aggiorna**, oppure fare clic su **Annulla tutte le iscrizioni**.
+
+L’annullamento dell’iscrizione ha effetto immediato. Twenty esclude quella persona dalle campagne successive.
+
+<img src="/images/user-guide/email-campaigns/unsubscribe-page-preview.png" style={{ width: '100%' }} />
+
+<Note>
+  Il pulsante per annullare l’iscrizione in Gmail, Yahoo e altre app di posta elettronica rimuove una persona
+  da tutte le tue campagne, non solo dall’argomento nell’email che ha ricevuto.
+</Note>
+
+## Parte 1: crea argomenti
+
+Gli argomenti sono tipi di email, come **Newsletter**, **Aggiornamenti sul prodotto** o **Eventi**.
+
+1. Vai a **Impostazioni → Comunicazione**.
+2. In **Annulla iscrizione**, fai clic su **Gestisci annullamenti dell’iscrizione**.
+3. Apri la scheda **Argomenti** e fai clic su **Aggiungi argomento**.
+4. In **Nome**, inserisci il nome che le persone vedono, ad esempio `Newsletter`.
+5. In **Descrizione**, puoi spiegare le email al tuo team.
+6. Attiva **Elencato nella pagina di annullamento dell’iscrizione** per mostrare l’argomento ai destinatari.
+7. Fai clic su **Salva**.
+
+| Visibilità  | Comportamento                                                                                                                        |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| **Public**  | Le persone vedono l’argomento nella pagina di annullamento dell’iscrizione e possono annullare l’iscrizione solo a quello.           |
+| **Privato** | Le persone non lo vedono mai. Usalo per raggruppare le campagne per il tuo team. Rispetta comunque gli annullamenti dell’iscrizione. |
+
+I nuovi argomenti sono privati finché non attivi **Elencato nella pagina di annullamento dell’iscrizione**.
+
+<img src="/images/user-guide/email-campaigns/new-topic-form.png" style={{ width: '100%' }} />
+
+## Parte 2: usa un argomento in una campagna
+
+Nella scheda **Email** della campagna, scegli un argomento in **Argomento per l’annullamento dell’iscrizione**. Il campo viene visualizzato dopo aver creato il primo argomento.
+
+Quando la campagna viene inviata, Twenty esclude:
+
+* Le persone che hanno annullato l’iscrizione a questo argomento.
+* Le persone che hanno annullato l’iscrizione da tutto.
+
+Le persone che hanno annullato l’iscrizione solo a un altro argomento continuano a riceverla.
+
+## Parte 3: scopri chi ha annullato l’iscrizione
+
+1. Vai a **Impostazioni → Comunicazione**.
+2. In **Annulla iscrizione**, fai clic su **Gestisci annullamenti dell’iscrizione**.
+3. Apri la scheda **Iscrizioni annullate**.
+
+L’elenco mostra ogni indirizzo che non riceve più campagne:
+
+| Colonna             | Cosa mostra                                                                                                        |
+| ------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| **Indirizzo email** | L’indirizzo che Twenty esclude.                                                                                    |
+| **Scope**           | **Tutte le email**, oppure l’argomento da cui hanno annullato l’iscrizione.                                        |
+| **Motivo**          | **Iscrizione annullata**, **Rimbalzo** (l’indirizzo non esiste) o **Reclamo** (hanno segnalato l’email come spam). |
+| **Data**            | Quando è successo.                                                                                                 |
+
+Usa la ricerca e i filtri per trovare un indirizzo, un motivo o un argomento.
+
+<img src="/images/user-guide/email-campaigns/unsubscribers-tab.png" style={{ width: '100%' }} />
+
+<Warning>
+  I rimbalzi e i reclami per spam sono permanenti. Inviare di nuovo a questi indirizzi
+  può danneggiare la reputazione del tuo dominio, quindi Twenty non lo consente.
+</Warning>
+
+## Anteprima della pagina di annullamento dell’iscrizione
+
+La scheda **Pagina di annullamento dell’iscrizione** mostra ciò che le persone vedono con i tuoi attuali argomenti pubblici. Nell’anteprima non viene salvato nulla.
+
+## Risoluzione dei problemi
+
+<Accordion title="I destinatari vedono solo un pulsante Annulla iscrizione, non i miei argomenti">
+  Nella pagina di annullamento dell’iscrizione vengono visualizzati solo gli argomenti pubblici. Apri l’argomento e attiva
+  **Elencato nella pagina di annullamento dell’iscrizione**.
+</Accordion>
+
+<Accordion title="Qualcuno ha annullato l’iscrizione a un argomento ma ha smesso di ricevere tutto">
+  Potrebbe aver usato il pulsante per annullare l’iscrizione nella propria app di posta elettronica, che lo rimuove
+  da tutte le campagne. Solo il link nel piè di pagina dell’email consente di scegliere
+  argomenti specifici.
+</Accordion>
+
+<Accordion title="Una persona è stata esclusa ma vuole ricevere di nuovo le email">
+  Se hai argomenti pubblici, può aprire il link per annullare l’iscrizione in un’email
+  degli ultimi 30 giorni, selezionare gli argomenti desiderati e fare clic su **Aggiorna**.
+  I rimbalzi e i reclami per spam non possono essere annullati.
+</Accordion>
+
+<PageBanner illustration="section-email-campaigns" />

@@ -101,7 +101,7 @@ export const SettingsAdminWorkspaceCreditGrantsTable = ({
         variables: { workspaceId, creditGrantId },
       });
 
-      enqueueToast({ variant: 'success', children: t`Credit grant revoked.` });
+      enqueueToast({ status: 'success', children: t`Credit grant revoked.` });
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
     } finally {

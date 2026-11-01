@@ -1,6 +1,13 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
-import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import {
+  expect,
+  fireEvent,
+  fn,
+  userEvent,
+  waitFor,
+  within,
+} from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { StatefulEmailRecipientsFieldInput } from '@/activities/emails/recipients/components/__stories__/StatefulEmailRecipientsFieldInput';
@@ -125,6 +132,47 @@ export const CommitsBufferWhileSearchIsPending: Story = {
     expect(canvas.getByText('jeff@example.net')).toBeVisible();
     expect(canvas.queryByText('Jeffery Griffin')).not.toBeInTheDocument();
     expect(input).toHaveValue('');
+    expect(input).toHaveFocus();
+    await waitFor(() =>
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument(),
+    );
+  },
+};
+
+export const KeepsCompositionConfirmationInTheInput: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const screen = within(canvasElement.ownerDocument.body);
+    const input = await canvas.findByRole('combobox', { name: 'To' });
+
+    await userEvent.type(input, 'jeff');
+    await screen.findByRole('option', { name: /Jeffery Griffin/ });
+    fireEvent.compositionStart(input);
+    fireEvent.keyDown(input, {
+      key: 'Enter',
+      code: 'Enter',
+      keyCode: 229,
+      which: 229,
+      isComposing: true,
+    });
+
+    expect(input).toHaveValue('jeff');
+    expect(
+      within(canvas.getByRole('group', { name: 'to recipients' })).queryByText(
+        'Jeffery Griffin',
+      ),
+    ).not.toBeInTheDocument();
+    expect(screen.getByRole('listbox')).toBeVisible();
+
+    fireEvent.compositionEnd(input);
+    await userEvent.keyboard('{Enter}');
+
+    expect(canvas.getByText('Jeffery Griffin')).toBeVisible();
+    expect(input).toHaveValue('');
+    expect(input).toHaveFocus();
+    await waitFor(() =>
+      expect(screen.queryByRole('listbox')).not.toBeInTheDocument(),
+    );
   },
 };
 
@@ -160,7 +208,12 @@ export const PastesAndSelectsChipsWithTheKeyboard: Story = {
     const input = await canvas.findByRole('combobox', { name: 'To' });
     const ccInput = canvas.getByRole('combobox', { name: 'Cc' });
 
-    await userEvent.click(input);
+    await userEvent.tab();
+    expect(input).toHaveFocus();
+    expect(getComputedStyle(input).outlineStyle).not.toBe('none');
+    expect(
+      Number.parseFloat(getComputedStyle(input).outlineWidth),
+    ).toBeGreaterThan(0);
     await userEvent.paste('Ada <ada@example.net>; Grace <grace@example.net>');
 
     expect(canvas.getByText('Ada')).toBeVisible();

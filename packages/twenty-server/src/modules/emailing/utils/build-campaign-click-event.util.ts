@@ -11,7 +11,7 @@ export const buildCampaignClickEvent = ({
 }: {
   delivery: Pick<CampaignDeliveryWorkspaceEntity, 'id' | 'campaignId'>;
   workspace: Pick<WorkspaceEntity, 'isCampaignClickTrackingEnabled'> | null;
-  observation: CampaignEngagementObservation;
+  observation: Extract<CampaignEngagementObservation, { type: 'CLICK' }>;
 }):
   | Parameters<CampaignEngagementEventService['insertClickOrThrow']>[0]
   | null => {

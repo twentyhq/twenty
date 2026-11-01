@@ -1,4 +1,5 @@
 import { styled } from '@linaria/react';
+import { plural } from '@lingui/core/macro';
 import { type Node, type NodeProps } from '@xyflow/react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -168,7 +169,12 @@ export const SettingsDataModelOverviewObject = ({
               ) : (
                 <IconChevronDown size={theme.icon.size.md} />
               )}
-              <StyledCardRowText>{countNonRelation} fields</StyledCardRowText>
+              <StyledCardRowText>
+                {plural(countNonRelation, {
+                  one: '# field',
+                  other: '# fields',
+                })}
+              </StyledCardRowText>
             </StyledCardRowOther>
             {otherFieldsExpanded &&
               fields

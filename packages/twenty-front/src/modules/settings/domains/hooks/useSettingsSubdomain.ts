@@ -81,7 +81,7 @@ export const useSettingsSubdomain = () => {
         ).hostname.replace(currentWorkspace.subdomain, subdomain);
 
         setCurrentWorkspace({ ...currentWorkspace, subdomain });
-        enqueueToast({ variant: 'success', children: t`Subdomain updated` });
+        enqueueToast({ status: 'success', children: t`Subdomain updated` });
         setIsSubmitting(false);
 
         await redirectToWorkspaceDomain(currentUrl.toString());

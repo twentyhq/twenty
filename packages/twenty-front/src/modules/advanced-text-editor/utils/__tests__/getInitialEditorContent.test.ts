@@ -282,6 +282,18 @@ describe('getInitialEditorContent', () => {
 `);
   });
 
+  it('should keep a variable with a fallback in one tag', () => {
+    const variable = '{{jobTitle | default: "the \\"boss\\" | x"}}';
+
+    expect(
+      getInitialEditorContent(`For ${variable} only`).content?.[0]?.content,
+    ).toEqual([
+      { type: 'text', text: 'For ' },
+      { type: 'variableTag', attrs: { variable } },
+      { type: 'text', text: ' only' },
+    ]);
+  });
+
   it('should handle trailing newlines', () => {
     expect(getInitialEditorContent('Hello\n')).toMatchInlineSnapshot(`
 {

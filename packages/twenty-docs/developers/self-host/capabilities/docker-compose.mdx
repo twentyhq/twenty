@@ -1,14 +1,15 @@
 ---
 title: Docker Compose
-icon: "docker"
+description: Run Twenty in production with Docker Compose.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Overview
 
 <Warning>
 Docker containers are for production hosting or self-hosting. For contributing, please check the [Local Setup](/developers/contribute/capabilities/local-setup).
 </Warning>
-
-## Overview
 
 This guide provides step-by-step instructions to install and configure the Twenty application using Docker Compose. The aim is to make the process straightforward and prevent common pitfalls that could break your setup.
 
@@ -74,11 +75,19 @@ Follow these steps for a manual setup.
 
 4. **Set the Postgres Password**
 
-    Update the `PG_DATABASE_PASSWORD` value in the .env file with a strong password without special characters.
+    Update the `PG_DATABASE_PASSWORD` value in the .env file with a strong password without special characters. The password is inserted unencoded into the Postgres connection URL, so characters such as `@`, `/`, `#` or `%` break the connection string. Generate one with:
+
+    ```bash
+    openssl rand -hex 32
+    ```
 
     ```ini
     PG_DATABASE_PASSWORD=my_strong_password
     ```
+
+<Note>
+Variables that `docker-compose.yml` forwards without a `:-` default, such as `SERVER_URL` and the `STORAGE_S3_*` variables, reach the server as an empty string when they are blank or missing in `.env`, and the server treats an empty string as a configured value rather than as unset. Keep `SERVER_URL` set, and when `STORAGE_TYPE=S_3`, set every required `STORAGE_S3_*` variable: an empty `STORAGE_S3_NAME` breaks every upload. Variables with a default in `docker-compose.yml`, such as the `PG_DATABASE_*` parts and `REDIS_URL`, fall back to that default when blank or missing.
+</Note>
 
 ### Step 2: Obtain the Docker Compose File
 
@@ -125,6 +134,8 @@ SSL (HTTPS) is required for certain browser features to work properly. While the
 For example, the clipboard API might require a secure context - some features like copy buttons throughout the application might not work without HTTPS enabled.
 
 We strongly recommend setting up Twenty behind a reverse proxy with SSL termination for optimal security and functionality.
+
+<Tip>Before exposing Twenty to the internet, read [Securing your instance](/developers/self-host/capabilities/security). Most teams can keep the app private and open only a few paths.</Tip>
 
 #### Configuring `SERVER_URL`
 
@@ -253,3 +264,4 @@ If you encounter any problem, check [Troubleshooting](/developers/self-host/capa
   Prefer not to run and maintain Twenty yourself? [Find a certified Twenty hosting partner](https://twenty.com/partners/list?categories=HOSTING&ref=docs-docker-compose) to deploy, host, and manage your instance end-to-end. *(Or reach our team: [contact@twenty.com](mailto:contact@twenty.com).)*
 </Tip>
 
+<PageBanner illustration="dev-self-host" />

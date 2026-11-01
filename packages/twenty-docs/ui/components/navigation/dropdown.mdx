@@ -3,34 +3,83 @@ title: Dropdown
 description: Action menus, searchable pickers, and form panels with shared presentation and interaction.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
 import DropdownReference from '/snippets/ui/generated/components/navigation/dropdown.mdx';
 
-`Dropdown` combines a positioned popup, visual rows, keyboard navigation, focus, and dismissal. Your application owns data, filtering, fetching, pagination, and selected values. Import it from `twenty-ui/components`.
+## Overview
+
+`Dropdown` combines a positioned popup, visual rows, keyboard navigation, focus, and dismissal. Your application owns data, filtering, fetching and pagination. `SelectionGroup` owns independent selection values inside the popup. Import it from `twenty-ui/components`.
 
 <StoryEmbed
-  storyId="ui-components-dropdown--documentation"
+  storyId="ui-components-dropdown--display"
   title="Dropdown actions"
-  height={380}
+  height={420}
 />
 
 Dropdown.Content accepts numeric offsets or functions for `sideOffset` and `alignOffset`. Offset functions receive the anchor and popup dimensions, side, and alignment. Use them to preserve an anchored field picker’s overlap when the cell is scaled.
+
+## Usage
+
+```tsx
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { IconArchive, IconCopy, IconDownload } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const RecordActions = () => (
+  <Dropdown.Root type="menu">
+    <Dropdown.Trigger render={<Button>Record actions</Button>} />
+    <Dropdown.Content aria-label="Record actions" width={240}>
+      <Dropdown.Section>
+        <Dropdown.ActionItem startIcon={<IconCopy />}>
+          Duplicate
+        </Dropdown.ActionItem>
+        <Dropdown.Submenu>
+          <Dropdown.SubmenuTrigger startIcon={<IconDownload />}>
+            Export
+          </Dropdown.SubmenuTrigger>
+          <Dropdown.Content aria-label="Export formats">
+            <Dropdown.Section>
+              <Dropdown.ActionItem>CSV</Dropdown.ActionItem>
+              <Dropdown.ActionItem>Excel</Dropdown.ActionItem>
+            </Dropdown.Section>
+          </Dropdown.Content>
+        </Dropdown.Submenu>
+      </Dropdown.Section>
+      <Dropdown.Separator />
+      <Dropdown.Section>
+        <Dropdown.ActionItem startIcon={<IconArchive />}>
+          Archive
+        </Dropdown.ActionItem>
+        <Dropdown.ActionItem
+          render={
+            <a href="#dropdown-documentation" aria-label="Documentation" />
+          }
+        >
+          Documentation
+        </Dropdown.ActionItem>
+      </Dropdown.Section>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
 
 ## Choose an interaction type
 
 Set `type` on `Dropdown.Root` to match the popup's contents.
 
-| Type     | Content                                          | Interaction                                                                                        |
-| -------- | ------------------------------------------------ | -------------------------------------------------------------------------------------------------- |
-| `menu`   | Commands and navigation links                    | Menu semantics with arrow navigation and typeahead.                                                |
-| `picker` | Search, selectable values, and optional commands | A dialog containing a search field and selectable toggle buttons. Arrow keys navigate result rows. |
-| `panel`  | Inputs, forms, and supporting actions            | A dialog with native input behavior and Tab navigation.                                            |
+| Type     | Content                                          | Interaction                                                                                              |
+| -------- | ------------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
+| `menu`   | Commands and navigation links                    | Menu semantics with arrow navigation and typeahead.                                                      |
+| `picker` | Search, selectable values, and optional commands | A dialog containing search, selectable listboxes and optional commands. Arrow keys navigate result rows. |
+| `panel`  | Inputs, forms, and supporting actions            | A dialog with native input behavior and Tab navigation.                                                  |
 
-Pickers allow creation actions and selectable values in the same list, in any order. Options expose their selected state with `aria-pressed`; commands keep their button semantics. Omit `selected` on an option that navigates or applies without a selection state, so it exposes no pressed state. Give `Search` an accessible name.
+Pickers allow creation actions and independent selection groups in the same page, in any order. Each picker group is a listbox, and its options expose `aria-selected`. Menu groups use checked radio or checkbox menu items. Panel groups use buttons with `aria-pressed`. Commands retain their mode’s action semantics. Give each group and `Search` an accessible name. This custom picker is not a native Combobox.
 
 `Content` takes its accessible name from `Trigger`, or from `SubmenuTrigger` in a submenu. Pass `aria-label` on `Content` when the trigger shows a value, such as the selected option, or when the root has no trigger. An explicit `aria-label` or `aria-labelledby`, and a `Title` inside a `Header`, take precedence over the trigger name.
 
-The underlying [Menu](/ui/primitives/surfaces/menu), [Select](/ui/primitives/input/select), and [Popover](/ui/primitives/surfaces/popover) remain available for direct composition.
+[Select](/ui/primitives/input/select) and [Popover](/ui/primitives/surfaces/popover) remain available for direct composition.
 
 ## Anatomy
 
@@ -44,7 +93,8 @@ Dropdown.Root
     ├── Dropdown.Search
     └── Dropdown.Section
         ├── Dropdown.ActionItem
-        └── Dropdown.OptionItem
+        └── Dropdown.SelectionGroup
+            └── Dropdown.OptionItem
 ```
 
 `Content` includes the portal and positioner. Use `width`, `side`, `align`, `sideOffset`, and `alignOffset` to control placement, and `collisionPadding` to keep the popup further from the edges of the viewport before it shifts or flips (5 pixels by default). `Section` groups rows with shared spacing, and `Separator` divides sections. A `scrollable` Section caps its height and scrolls; nest labelled sections inside it to scroll them as one list. Rows use [ListItem](/ui/primitives/navigation/list-item) for their appearance.
@@ -90,6 +140,8 @@ Use `tabIndex={-1}` for a pointer-only secondary action that has a separate keyb
   height={420}
 />
 
+Wrap selectable options in `SelectionGroup` and give each option a stable `value` unique within the group. An uncontrolled group also needs an `id` unique within its dropdown tree, including submenus. Independently nested `Root` components keep their own selection store. Single selection uses a string or `null` for no selection. Multiple selection uses an array, including `[]` for no selection.
+
 ```tsx
 import { useState } from 'react';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -97,7 +149,7 @@ import { Button } from 'twenty-ui/primitives/input';
 
 export const PersonPicker = () => {
   const [search, setSearch] = useState('');
-  const [selectedPerson, setSelectedPerson] = useState('');
+  const [selectedPerson, setSelectedPerson] = useState<string | null>(null);
   const people = ['Ada Lovelace', 'Grace Hopper'].filter((person) =>
     person.toLowerCase().includes(search.toLowerCase()),
   );
@@ -111,26 +163,60 @@ export const PersonPicker = () => {
           value={search}
           onValueChange={setSearch}
         />
-        <Dropdown.Section>
+        <Dropdown.SelectionGroup
+          id="person"
+          aria-label="Person"
+          value={selectedPerson}
+          onValueChange={setSelectedPerson}
+        >
           {people.map((person) => (
-            <Dropdown.OptionItem
-              key={person}
-              selected={selectedPerson === person}
-              onSelect={() => setSelectedPerson(person)}
-            >
+            <Dropdown.OptionItem key={person} value={person}>
               {person}
             </Dropdown.OptionItem>
           ))}
-        </Dropdown.Section>
+        </Dropdown.SelectionGroup>
       </Dropdown.Content>
     </Dropdown.Root>
   );
 };
 ```
 
-While `Search` holds text, the first enabled `OptionItem` is highlighted and Enter activates it. Action rows are never picked this way. With an empty search, Enter does nothing; ArrowDown moves focus into the results. When rows are pinned above the matches, such as the current value or a "none" row, render them only when they match the search text, so Enter picks the first real match. The popup stays open when no option matches. Filtering remains caller-owned.
+Pass `value` and `onValueChange` for controlled selection. Omitting `value`, or passing `undefined`, leaves selection uncontrolled; `defaultValue` sets its initial value. An uncontrolled group defaults to `null`, or `[]` with `multiple`. Its stable `id` preserves selection across close and reopen and across page navigation. Removing or filtering an option does not clear its selected identifier or emit a change; the option is selected again when it returns. Use a controlled value when the application needs to clear unavailable choices.
 
-Actions and single selection close by default. Set `multiple` on the root to keep option selection open. The application still owns the selected values. `closeOnClick` on actions and `closeOnSelect` on options override those defaults, including repeated actions or asynchronous progress. Use `disabled` to prevent activation while retaining the row's appearance.
+Each group changes independently. An option commits to its nearest group, while the active page supplies one ordered collection for arrow navigation across groups and action rows. Repeated activation of a selected single option preserves its value without another change callback. Multiple activation toggles the option in the array.
+
+<StoryEmbed
+  storyId="ui-components-dropdown--selection-groups-documentation"
+  title="Independent owner and watcher selections"
+  height={440}
+/>
+
+Single selection closes by default; multiple selection stays open. `SelectionGroup.closeOnSelect` changes the group default, and `OptionItem.closeOnSelect` overrides it for one option. Action rows use `closeOnClick` independently. A cancelled change preserves the previous selection and does not automatically close the popup.
+
+`onValueChange` receives the next value and event details with `event`, `reason`, `trigger`, `cancel()` and `isCanceled`. The reason is `item-press`, and `event` is the original activation event. `OptionItem.onSelect` receives the same details before its owner commits. Call `cancel()` in either callback to prevent selection and automatic closing.
+
+```tsx
+import { Dropdown } from 'twenty-ui/components/navigation';
+
+<Dropdown.SelectionGroup
+  id="watchers"
+  aria-label="Watchers"
+  multiple
+  defaultValue={[]}
+  onValueChange={(value, eventDetails) => {
+    if (value.length > 3) {
+      eventDetails.cancel();
+    }
+  }}
+>
+  <Dropdown.OptionItem value="ada">Ada Lovelace</Dropdown.OptionItem>
+  <Dropdown.OptionItem value="grace">Grace Hopper</Dropdown.OptionItem>
+</Dropdown.SelectionGroup>;
+```
+
+Search receives focus when the picker opens. Without search, the first enabled selected option receives focus, or the first enabled row when no selected option is present. While `Search` has focus and a nonempty query, the first eligible `OptionItem` across selection groups is highlighted and Enter activates it. Action rows are never picked this way. ArrowDown moves focus to the first enabled row, including actions. Leaving search clears the preview and `aria-activedescendant`, even when the popup stays open. Returning to search restores the preview for the current query.
+
+Enter does nothing for an empty or whitespace-only query, or when no eligible option remains. Composing text with an input method does not activate an option or move focus with arrow keys. When rows are pinned above matches, such as the current value or a "none" row, render them only when they match the search text. The popup stays open when no option matches. Filtering remains caller-owned.
 
 <StoryEmbed
   storyId="ui-components-dropdown--multiple-selection-documentation"
@@ -138,49 +224,75 @@ Actions and single selection close by default. Set `multiple` on the root to kee
   height={420}
 />
 
+Standalone `OptionItem` still accepts `selected` and `onSelect` for callers that own selection themselves. Grouped options derive selection from the group value; do not duplicate that state on the option. Custom selection groups do not provide native form submission, reset, required validation, read-only behavior or Field integration. Use [Select](/ui/primitives/input/select) when those native form contracts are needed.
+
 ## Icon grids
+
+<StoryEmbed
+  storyId="ui-components-dropdown--icon-grid-documentation"
+  title="Icon grid with selected cell styling"
+  height={360}
+/>
 
 Set `columns` on `Section` to lay out items in equal-width grid columns. The same count drives keyboard navigation: Left and Right move within a row, while Up and Down move between rows. Navigation skips disabled options and follows the reading direction. When no enabled option is left in the column, Up and Down move to the nearest enabled option of the next row. Up from the first row returns to the search field when no earlier section exists. A short final row uses its last item when the requested column is missing. Inside a submenu, the backward arrow closes the submenu when no enabled option remains to its left.
 
-Render each icon as an `OptionItem` with an accessible label and an icon button through `render`. Use `indicator="none"` to show selection through the button background.
+Render each icon as an `OptionItem` with an accessible label and an icon button through `render`. Use `indicator="none"` to show selection through the button background. The `render` callback receives `{ selected, multiple, disabled }` state; use it to style a selected cell and forward the supplied props and ref.
 
 ```tsx
-import { useState } from 'react';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { IconCalendar } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 
-export const IconGrid = () => {
-  const [icon, setIcon] = useState('');
-
-  return (
-    <Dropdown.Root type="picker">
-      <Dropdown.Trigger render={<Button>Choose icon</Button>} />
-      <Dropdown.Content>
+export const IconGrid = () => (
+  <Dropdown.Root type="picker">
+    <Dropdown.Trigger render={<Button>Choose icon</Button>} />
+    <Dropdown.Content>
+      <Dropdown.SelectionGroup
+        id="icon"
+        aria-label="Icon"
+        defaultValue="calendar"
+      >
         <Dropdown.Section columns={5}>
           <Dropdown.OptionItem
+            value="calendar"
             aria-label="Calendar"
-            selected={icon === 'calendar'}
             indicator="none"
             nativeButton
-            render={
-              <LightIconButton size="md" aria-label="Calendar">
+            render={(props, state) => (
+              <LightIconButton
+                // oxlint-disable-next-line react/jsx-props-no-spreading
+                {...props}
+                size="md"
+                color={state.selected ? 'accent' : 'neutral'}
+                aria-label="Calendar"
+              >
                 <IconCalendar />
               </LightIconButton>
-            }
-            onSelect={() => setIcon('calendar')}
+            )}
           />
         </Dropdown.Section>
-      </Dropdown.Content>
-    </Dropdown.Root>
-  );
-};
+      </Dropdown.SelectionGroup>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
 ```
+
+## Keyboard focus
+
+In `menu` and `picker` pages, the rows form a single Tab stop. Arrow keys move focus across sections, actions and options, and Home and End move to the first and last enabled rows unless the search field has focus. Moving focus never selects an option; Enter or Space activates the focused row. Tabbing back to the rows returns to the last focused row, or to the first enabled row once that row is gone. Search, `Back` beside a search, header buttons and other controls inside the popup keep their own Tab stops.
+
+Tab and Shift+Tab close a `menu`, along with its parent menus when focus is in a submenu. In a `picker`, Tab moves through the popup's controls and closes the popup when focus leaves it. A `panel` keeps the native Tab order of its controls.
 
 ## Pages and submenus
 
-Use `Page` for navigation that replaces the contents of the same popup. Wrap the first page in `Page id="root"`, or choose another initial page with `defaultPage`. Set `page` on an action to navigate without closing. `Back` returns to the previous page and restores focus to its invoking row. Closing the dropdown resets its page history.
+Use `Page` for navigation that replaces the contents of the same popup. Wrap the first page in `Page id="root"`, or choose another initial page with `defaultPage`. Set `page` on an action to navigate without closing. `Back` returns to the previous page and restores focus to its invoking row.
+
+Pages mount when first visited and stay mounted for that open session. Returning to a page preserves its local search, form drafts and scrollable sections. Inactive pages are hidden and inert: they do not participate in keyboard navigation, focus or the accessibility tree, and their nested Dropdown popups are inactive.
+
+Reopening starts a new session at `defaultPage` with fresh content, including when `Content.keepMounted` is set or the popup reopens during its exit transition. Page history, local search and drafts reset. The closing page remains mounted during its exit transition.
+
+Uncontrolled `SelectionGroup` values stay stored in `Root` under each group's stable `id` and survive reopening. Caller-controlled values remain caller-owned. For example, a search value stored above `Content` stays unchanged until the caller updates it. Put temporary search or draft state in a component inside `Content` or `Page` when it should reset with the session; keep durable application state above `Content`.
 
 A page can override the root's `type`. For example, an action menu can open a searchable picker page or a form panel. Search receives focus when entering a searchable page; other pages focus their first row after `Back`.
 
@@ -206,8 +318,10 @@ export const FilterMenu = () => (
       <Dropdown.Page id="status" type="picker">
         <Dropdown.Back>Filters</Dropdown.Back>
         <Dropdown.Section>
-          <Dropdown.OptionItem selected={false}>Active</Dropdown.OptionItem>
-          <Dropdown.OptionItem selected={false}>Archived</Dropdown.OptionItem>
+          <Dropdown.SelectionGroup id="status" aria-label="Status">
+            <Dropdown.OptionItem value="active">Active</Dropdown.OptionItem>
+            <Dropdown.OptionItem value="archived">Archived</Dropdown.OptionItem>
+          </Dropdown.SelectionGroup>
         </Dropdown.Section>
       </Dropdown.Page>
     </Dropdown.Content>
@@ -215,7 +329,7 @@ export const FilterMenu = () => (
 );
 ```
 
-To navigate from code, call `useDropdownPage` in a component rendered inside the root. It returns the current `page`, `goToPage(page)`, `goBack()` and `canGoBack`. For example, an option can return to the previous page after a selection while the popup stays open:
+To navigate from code, call `useDropdownPage` in a component rendered inside the root. It returns the current `page`, `goToPage(page)`, `goBack()`, `canGoBack` and `isActive`. Inside a page, `isActive` is true only while that page is active and its dropdown is open. Use `isActive` to show a page's custom portaled popups so they disappear when the page becomes inactive or the dropdown closes. For example, an option can return to the previous page after a selection while the popup stays open:
 
 ```tsx
 import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
@@ -224,24 +338,29 @@ export const StatusOptions = ({
   status,
   onStatusChange,
 }: {
-  status: string;
-  onStatusChange: (status: string) => void;
+  status: string | null;
+  onStatusChange: (status: string | null) => void;
 }) => {
   const { goBack } = useDropdownPage();
 
-  return ['Active', 'Archived'].map((option) => (
-    <Dropdown.OptionItem
-      key={option}
-      selected={status === option}
+  return (
+    <Dropdown.SelectionGroup
+      id="status"
+      aria-label="Status"
+      value={status}
       closeOnSelect={false}
-      onSelect={() => {
-        onStatusChange(option);
+      onValueChange={(value) => {
+        onStatusChange(value);
         goBack();
       }}
     >
-      {option}
-    </Dropdown.OptionItem>
-  ));
+      {['Active', 'Archived'].map((option) => (
+        <Dropdown.OptionItem key={option} value={option}>
+          {option}
+        </Dropdown.OptionItem>
+      ))}
+    </Dropdown.SelectionGroup>
+  );
 };
 ```
 
@@ -272,7 +391,7 @@ Use `type="panel"` for form inputs. Input interaction keeps the panel open; a sa
 <StoryEmbed
   storyId="ui-components-dropdown--panel-documentation"
   title="Controlled form panel"
-  height={380}
+  height={420}
 />
 
 Escape dismisses the popup and restores focus to its trigger. Outside interaction also dismisses it, and the click that dismisses it doesn't activate what it lands on. Keys pressed inside the popup stay inside it, except Ctrl or Cmd shortcuts the dropdown doesn't handle, so page-level shortcuts keep working. `Content` accepts focus and portal options from Popover, including an explicit return-focus target for editor workflows.
@@ -309,7 +428,7 @@ A root can open without a `Trigger`, for example as a context menu. Control it w
 <StoryEmbed
   storyId="ui-components-dropdown--context-menu-documentation"
   title="Context menu anchored to the pointer"
-  height={300}
+  height={420}
 />
 
 ```tsx
@@ -348,6 +467,8 @@ export const RecordContextMenu = ({ recordName }: { recordName: string }) => {
 
 Right-clicking elsewhere while the menu is open moves it to the new point.
 
+Call `useDropdownPlacementOrThrow` inside `Dropdown.Content` to read its resolved `side` and `align`, including collision flips. Use the resolved side to place a picker's search and create controls beside its trigger. Keep the controls in their visual DOM order so keyboard navigation follows the layout. A search below the results receives focus from `ArrowDown` on the last result; `ArrowUp` from that search returns to the last result.
+
 ## Labels
 
 Each part owns its text: supply `Search.placeholder` and native accessible names, `Close` accessible attributes, and children for `Back`, `Loading`, and `Empty`. `Back` defaults to `Back`; loading and empty states have no built-in message. Item parts accept `shortcutJoinLabel` to replace the default `then` between sequential shortcut steps. Native `aria-labelledby` takes precedence over `aria-label`.
@@ -355,3 +476,5 @@ Each part owns its text: supply `Search.placeholder` and native accessible names
 ## Props
 
 <DropdownReference />
+
+<PageBanner illustration="page-cover-input" />

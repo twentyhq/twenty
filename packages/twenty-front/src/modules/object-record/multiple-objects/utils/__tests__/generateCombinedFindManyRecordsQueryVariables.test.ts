@@ -1,5 +1,7 @@
-import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
-import { type RecordGqlOperationSignature } from 'twenty-shared/types';
+import {
+  type RecordGqlFields,
+  type RecordGqlOperationSignature,
+} from 'twenty-shared/types';
 import { generateCombinedFindManyRecordsQueryVariables } from '@/object-record/multiple-objects/utils/generateCombinedFindManyRecordsQueryVariables';
 
 describe('useCombinedFindManyRecordsQueryVariables', () => {
@@ -45,7 +47,7 @@ describe('useCombinedFindManyRecordsQueryVariables', () => {
         fields: {
           id: true,
           name: true,
-        } as RecordGqlFields,
+        } satisfies RecordGqlFields,
         variables: {
           filter: { id: { eq: '123' } },
           orderBy: [{ createdAt: 'AscNullsLast' }],
@@ -77,7 +79,7 @@ describe('useCombinedFindManyRecordsQueryVariables', () => {
         fields: {
           id: true,
           name: true,
-        } as RecordGqlFields,
+        } satisfies RecordGqlFields,
         variables: {
           filter: { id: { eq: '123' } },
           orderBy: [{ createdAt: 'AscNullsLast' }],
@@ -103,7 +105,7 @@ describe('useCombinedFindManyRecordsQueryVariables', () => {
         objectNameSingular: 'person',
         fields: {
           id: true,
-        } as RecordGqlFields,
+        } satisfies RecordGqlFields,
         variables: {
           filter: { id: { eq: '123' } },
           limit: 10,
@@ -117,7 +119,7 @@ describe('useCombinedFindManyRecordsQueryVariables', () => {
         objectNameSingular: 'company',
         fields: {
           id: true,
-        } as RecordGqlFields,
+        } satisfies RecordGqlFields,
         variables: {
           filter: { name: { eq: 'Twenty' } },
           limit: 20,
@@ -152,7 +154,7 @@ describe('useCombinedFindManyRecordsQueryVariables', () => {
         objectNameSingular: 'person',
         fields: {
           id: true,
-        } as RecordGqlFields,
+        } satisfies RecordGqlFields,
         variables: {},
       },
     ];
@@ -170,7 +172,7 @@ describe('useCombinedFindManyRecordsQueryVariables', () => {
         objectNameSingular: 'person',
         fields: {
           id: true,
-        } as RecordGqlFields,
+        } satisfies RecordGqlFields,
         variables: {
           cursorFilter: {
             cursor: 'cursor123',

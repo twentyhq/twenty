@@ -1,43 +1,42 @@
-import { type ReactNode } from 'react';
+import { Button } from '@ui/primitives/input/Button/Button';
+import { isDefined } from '@ui/utilities/utils/isDefined';
 
 import { AlertDialog } from '../AlertDialog';
-import { type AlertDialogPopupProps } from '../types/AlertDialogPopupProps';
-import { type AlertDialogRootProps } from '../types/AlertDialogRootProps';
-
-import styles from './AlertDialog.stories.module.scss';
-
-export type AlertDialogExampleProps = AlertDialogRootProps & {
-  size?: AlertDialogPopupProps['size'];
-  popupProps?: AlertDialogPopupProps;
-  disabled?: boolean;
-  content?: ReactNode;
-};
+import { type AlertDialogExampleProps } from './AlertDialogExampleProps';
 
 export const AlertDialogExample = ({
   size,
   popupProps,
+  portalProps,
   disabled,
   content,
   ...props
 }: AlertDialogExampleProps) => (
   <AlertDialog.Root {...props}>
-    <AlertDialog.Trigger className={styles.button} disabled={disabled}>
-      Delete record
-    </AlertDialog.Trigger>
-    <AlertDialog.Popup size={size} {...popupProps}>
-      <AlertDialog.Header>
-        <AlertDialog.Title>Delete this record?</AlertDialog.Title>
-        <AlertDialog.Description>
-          This record will be permanently deleted. This action cannot be undone.
-        </AlertDialog.Description>
-      </AlertDialog.Header>
-      {content && <AlertDialog.Body>{content}</AlertDialog.Body>}
-      <AlertDialog.Footer>
-        <AlertDialog.Close className={styles.button}>Cancel</AlertDialog.Close>
-        <AlertDialog.Close className={styles.button} data-danger>
-          Delete
-        </AlertDialog.Close>
-      </AlertDialog.Footer>
-    </AlertDialog.Popup>
+    <AlertDialog.Trigger
+      disabled={disabled}
+      render={<Button variant="solid">Delete record</Button>}
+    />
+    <AlertDialog.Portal {...portalProps}>
+      <AlertDialog.Backdrop />
+      <AlertDialog.Viewport>
+        <AlertDialog.Popup size={size} {...popupProps}>
+          <AlertDialog.Header>
+            <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+            <AlertDialog.Description>
+              This record will be permanently deleted. This action cannot be
+              undone.
+            </AlertDialog.Description>
+          </AlertDialog.Header>
+          {isDefined(content) && <AlertDialog.Body>{content}</AlertDialog.Body>}
+          <AlertDialog.Footer>
+            <AlertDialog.Close render={<Button>Cancel</Button>} />
+            <AlertDialog.Close
+              render={<Button color="danger">Delete</Button>}
+            />
+          </AlertDialog.Footer>
+        </AlertDialog.Popup>
+      </AlertDialog.Viewport>
+    </AlertDialog.Portal>
   </AlertDialog.Root>
 );

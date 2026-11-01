@@ -1,7 +1,13 @@
 import request from 'supertest';
-import { updateWorkflowVersionTrigger } from 'test/integration/graphql/suites/workflow/utils/update-workflow-version-trigger.util';
-
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import {
+  createCoreWorkflow,
+  createCoreWorkflowVersionStep,
+  deleteCoreWorkflows,
+  findCoreWorkflowVersion,
+  findCoreWorkflowVersions,
+  updateCoreWorkflowVersionTrigger,
+} from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
+import { isDefined } from 'twenty-shared/utils';
 
 const client = request(`http://localhost:${APP_PORT}`);
 
@@ -11,45 +17,21 @@ const graphql = (query: string, variables?: object) =>
     .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
     .send({ query, variables });
 
-describe('duplicateWorkflow (e2e)', () => {
-  let sourceWorkflowId: string;
-  let sourceVersionId: string;
-  let duplicatedWorkflowId: string | undefined;
+describe('duplicateCoreWorkflow (e2e)', () => {
+  let sourceCoreWorkflowId: string;
+  let sourceCoreVersionId: string;
+  let duplicatedCoreWorkflowId: string | undefined;
 
   beforeAll(async () => {
-    const createResponse = await graphql(`
-      mutation {
-        createWorkflow(data: { name: "Duplicate Source" }) {
-          id
-        }
-      }
-    `);
+    const createdCoreWorkflow = await createCoreWorkflow({
+      name: 'Duplicate Source',
+    });
 
-    expect(createResponse.body.errors).toBeUndefined();
-    sourceWorkflowId = createResponse.body.data.createWorkflow.id;
+    sourceCoreWorkflowId = createdCoreWorkflow.coreWorkflowId;
+    sourceCoreVersionId = createdCoreWorkflow.coreWorkflowVersionId;
 
-    const getResponse = await graphql(
-      `
-        query GetWorkflow($id: UUID!) {
-          workflow(filter: { id: { eq: $id } }) {
-            id
-            versions {
-              edges {
-                node {
-                  id
-                }
-              }
-            }
-          }
-        }
-      `,
-      { id: sourceWorkflowId },
-    );
-
-    sourceVersionId = getResponse.body.data.workflow.versions.edges[0].node.id;
-
-    await updateWorkflowVersionTrigger({
-      workflowVersionId: sourceVersionId,
+    await updateCoreWorkflowVersionTrigger({
+      coreWorkflowVersionId: sourceCoreVersionId,
       trigger: {
         name: 'Manual Trigger',
         type: 'MANUAL',
@@ -59,91 +41,63 @@ describe('duplicateWorkflow (e2e)', () => {
       },
     });
 
-    const stepResponse = await graphql(
-      `
-        mutation CreateWorkflowVersionStep(
-          $input: CreateWorkflowVersionStepInput!
-        ) {
-          createWorkflowVersionStep(input: $input) {
-            stepsDiff
-          }
-        }
-      `,
-      {
-        input: {
-          workflowVersionId: sourceVersionId,
-          stepType: 'FIND_RECORDS',
-          parentStepId: 'trigger',
-          position: { x: 200, y: 0 },
-        },
-      },
-    );
-
-    expect(stepResponse.body.errors).toBeUndefined();
+    await createCoreWorkflowVersionStep({
+      coreWorkflowVersionId: sourceCoreVersionId,
+      stepType: 'FIND_RECORDS',
+    });
   });
 
   afterAll(async () => {
-    for (const id of [duplicatedWorkflowId, sourceWorkflowId]) {
-      if (id) {
-        await graphql(
-          `
-            mutation DestroyWorkflow($id: ID!) {
-              destroyWorkflow(id: $id) {
-                id
-              }
-            }
-          `,
-          { id },
-        );
-      }
+    const coreWorkflowIds = [
+      duplicatedCoreWorkflowId,
+      sourceCoreWorkflowId,
+    ].filter(isDefined);
+
+    if (coreWorkflowIds.length > 0) {
+      await deleteCoreWorkflows({ coreWorkflowIds });
     }
   });
 
-  it('duplicates the workflow and mirrors the new draft version to core', async () => {
+  it('duplicates the workflow into a new core draft version', async () => {
     const response = await graphql(
       `
-        mutation DuplicateWorkflow($input: DuplicateWorkflowInput!) {
-          duplicateWorkflow(input: $input) {
+        mutation DuplicateCoreWorkflow($input: DuplicateCoreWorkflowInput!) {
+          duplicateCoreWorkflow(input: $input) {
             id
-            workflowId
-            status
-            trigger
-            steps
+            workspaceWorkflowId
           }
         }
       `,
       {
         input: {
-          workflowIdToDuplicate: sourceWorkflowId,
-          workflowVersionIdToCopy: sourceVersionId,
+          coreWorkflowIdToDuplicate: sourceCoreWorkflowId,
+          coreWorkflowVersionIdToCopy: sourceCoreVersionId,
         },
       },
     );
 
     expect(response.body.errors).toBeUndefined();
 
-    const duplicated = response.body.data.duplicateWorkflow;
+    const duplicated = response.body.data.duplicateCoreWorkflow;
 
-    duplicatedWorkflowId = duplicated?.workflowId;
+    duplicatedCoreWorkflowId = duplicated?.id;
 
-    expect(duplicated.id).not.toBe(sourceVersionId);
-    expect(duplicated.workflowId).not.toBe(sourceWorkflowId);
-    expect(duplicated.status).toBe('DRAFT');
-    expect(duplicated.trigger?.type).toBe('MANUAL');
-    expect(Array.isArray(duplicated.steps)).toBe(true);
-    expect(duplicated.steps.length).toBeGreaterThan(0);
+    expect(duplicated.id).not.toBe(sourceCoreWorkflowId);
 
-    const coreRows = await global.testDataSource.query(
-      `SELECT "id", "steps", "triggers", "status" FROM core."workflowVersion"
-       WHERE "workspaceId" = $1 AND "workflowId" = $2`,
-      [SEED_APPLE_WORKSPACE_ID, duplicated.workflowId],
-    );
+    const duplicatedVersions = await findCoreWorkflowVersions({
+      coreWorkflowId: duplicated.id,
+    });
 
-    expect(coreRows).toHaveLength(1);
-    expect(coreRows[0].status).toBe('DRAFT');
-    expect(Array.isArray(coreRows[0].steps)).toBe(true);
-    expect(coreRows[0].steps.length).toBe(duplicated.steps.length);
-    expect(Array.isArray(coreRows[0].triggers)).toBe(true);
-    expect(coreRows[0].triggers[0].type).toBe('MANUAL');
+    expect(duplicatedVersions).toHaveLength(1);
+
+    const duplicatedVersion = await findCoreWorkflowVersion({
+      coreWorkflowVersionId: duplicatedVersions[0].id,
+    });
+
+    expect(duplicatedVersion.id).not.toBe(sourceCoreVersionId);
+    expect(duplicatedVersion.status).toBe('DRAFT');
+    expect(duplicatedVersion.trigger?.type).toBe('MANUAL');
+    expect(Array.isArray(duplicatedVersion.steps)).toBe(true);
+    expect(duplicatedVersion.steps?.length).toBeGreaterThan(0);
   });
 });

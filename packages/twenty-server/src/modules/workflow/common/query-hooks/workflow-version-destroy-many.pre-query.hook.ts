@@ -2,7 +2,6 @@ import { type WorkspacePreQueryHookInstance } from 'src/engine/api/graphql/works
 import { type DestroyManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import {
   WorkflowQueryValidationException,
   WorkflowQueryValidationExceptionCode,
@@ -10,11 +9,7 @@ import {
 
 @WorkspaceQueryHook(`workflowVersion.destroyMany`)
 export class WorkflowVersionDestroyManyPreQueryHook implements WorkspacePreQueryHookInstance {
-  async execute(
-    _authContext: WorkspaceAuthContext,
-    _objectName: string,
-    _payload: DestroyManyResolverArgs,
-  ): Promise<DestroyManyResolverArgs> {
+  async execute(): Promise<DestroyManyResolverArgs> {
     throw new WorkflowQueryValidationException(
       'Method not allowed.',
       WorkflowQueryValidationExceptionCode.FORBIDDEN,

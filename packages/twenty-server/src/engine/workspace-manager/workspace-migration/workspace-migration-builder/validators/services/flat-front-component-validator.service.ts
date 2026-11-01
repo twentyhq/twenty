@@ -8,6 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { validateFrontComponentUniversalWidgetAvailability } from 'src/engine/metadata-modules/flat-front-component/validators/utils/validate-front-component-universal-widget-availability.util';
 import { FrontComponentExceptionCode } from 'src/engine/metadata-modules/front-component/front-component.exception';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
@@ -18,6 +19,9 @@ import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-man
 export class FlatFrontComponentValidatorService {
   public validateFlatFrontComponentCreation({
     flatEntityToValidate: flatFrontComponent,
+    optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
+      flatObjectMetadataMaps,
+    },
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.frontComponent
   >): FailedFlatEntityValidation<'frontComponent', 'create'> {
@@ -68,6 +72,14 @@ export class FlatFrontComponentValidatorService {
       }
     }
 
+    validationResult.errors.push(
+      ...validateFrontComponentUniversalWidgetAvailability({
+        universalWidgetAvailability:
+          flatFrontComponent.universalWidgetAvailability,
+        flatObjectMetadataMaps,
+      }),
+    );
+
     return validationResult;
   }
 
@@ -111,6 +123,7 @@ export class FlatFrontComponentValidatorService {
     flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatFrontComponentMaps: optimisticFlatFrontComponentMaps,
+      flatObjectMetadataMaps,
     },
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.frontComponent
@@ -166,6 +179,16 @@ export class FlatFrontComponentValidatorService {
           userFriendlyMessage: msg`Source component path is invalid`,
         });
       }
+    }
+
+    if (isDefined(flatEntityUpdate.universalWidgetAvailability)) {
+      validationResult.errors.push(
+        ...validateFrontComponentUniversalWidgetAvailability({
+          universalWidgetAvailability:
+            flatEntityUpdate.universalWidgetAvailability,
+          flatObjectMetadataMaps,
+        }),
+      );
     }
 
     return validationResult;

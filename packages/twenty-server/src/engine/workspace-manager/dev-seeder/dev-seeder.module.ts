@@ -1,4 +1,6 @@
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
+import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
+import { AgentChatThreadModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -8,7 +10,7 @@ import { ApplicationRegistrationModule } from 'src/engine/core-modules/applicati
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
-import { RecordShareStorageModule } from 'src/engine/core-modules/record-share/record-share-storage.module';
+import { RecordShareStorageModule } from 'src/engine/permissions/record-share/record-share-storage.module';
 import { WorkflowVersionEntity } from 'src/engine/core-modules/workflow/entities/workflow-version.entity';
 import { WorkflowEntity } from 'src/engine/core-modules/workflow/entities/workflow.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -21,13 +23,14 @@ import { RolePermissionFlagModule } from 'src/engine/metadata-modules/role-permi
 import { RoleTargetModule } from 'src/engine/metadata-modules/role-target/role-target.module';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
-import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
 import { UpgradeModule } from 'src/engine/core-modules/upgrade/upgrade.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { DevSeederPermissionsService } from 'src/engine/workspace-manager/dev-seeder/core/services/dev-seeder-permissions.service';
+import { DevSeederAgentChatChannelWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-agent-chat-channel.workspace-service';
 import { DevSeederAgentChatPendingInputWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-agent-chat-pending-input.workspace-service';
 import { DevSeederDataService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-data.service';
 import { DevSeederWorkflowPendingInputWorkspaceService } from 'src/engine/workspace-manager/dev-seeder/data/services/dev-seeder-workflow-pending-input.workspace-service';
@@ -43,8 +46,10 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
 
 @Module({
   imports: [
+    AgentChatThreadModule,
     AgentHistoryModule,
     AiAgentExecutionModule,
+    AiAgentModule,
     TimelineActivityModule,
     ObjectMetadataModule,
     FieldMetadataModule,
@@ -85,6 +90,7 @@ import { WorkflowRunModule } from 'src/modules/workflow/workflow-runner/workflow
     TimelineActivitySeederService,
     DevSeederWorkflowPendingInputWorkspaceService,
     DevSeederAgentChatPendingInputWorkspaceService,
+    DevSeederAgentChatChannelWorkspaceService,
     provideWorkspaceScopedRepository(RoleEntity),
     provideWorkspaceScopedRepository(ObjectMetadataEntity),
     provideWorkspaceScopedRepository(WorkflowEntity),

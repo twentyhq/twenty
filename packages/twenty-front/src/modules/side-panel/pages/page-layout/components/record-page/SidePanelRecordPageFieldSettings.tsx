@@ -1,5 +1,5 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
-import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
+import { CommandMenuItemDropdownTrigger } from '@/command-menu/components/CommandMenuItemDropdownTrigger';
 import { CommandMenuItemSwitch } from '@/command-menu/components/CommandMenuItemSwitch';
 import { useFieldMetadataItemById } from '@/object-metadata/hooks/useFieldMetadataItemById';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
@@ -23,13 +23,15 @@ import { WidgetViewLayoutSettingsRows } from '@/side-panel/pages/page-layout/com
 import { WidgetSettingsManageSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsManageSection';
 import { WidgetSettingsPlacementSection } from '@/side-panel/pages/page-layout/components/WidgetSettingsPlacementSection';
 import { WIDGET_SETTINGS_SELECTABLE_ITEM_IDS } from '@/side-panel/pages/page-layout/constants/settings/WidgetSettingsSelectableItemIds';
-import { usePageLayoutIdFromContextStore } from '@/side-panel/pages/page-layout/hooks/usePageLayoutIdFromContextStore';
+import { usePageLayoutSidePanelTarget } from '@/side-panel/pages/page-layout/hooks/usePageLayoutSidePanelTarget';
 import { useUpdateCurrentWidgetConfig } from '@/side-panel/pages/page-layout/hooks/useUpdateCurrentWidgetConfig';
 import { useWidgetInEditMode } from '@/side-panel/pages/page-layout/hooks/useWidgetInEditMode';
 import { useWidgetSettingsPlacementSelectableItemIds } from '@/side-panel/pages/page-layout/hooks/useWidgetSettingsPlacementSelectableItemIds';
 import { getWidgetViewLayoutSettingsItemIds } from '@/side-panel/pages/page-layout/utils/getWidgetViewLayoutSettingsItemIds';
 import { SidePanelSubPages } from '@/side-panel/types/SidePanelSubPages';
-import { LegacyDropdownContent } from '@/ui/layout/dropdown/components/LegacyDropdownContent';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
+import { useOpenDropdown } from '@/ui/layout/dropdown/hooks/useOpenDropdown';
 import { SelectableListItem } from '@/ui/layout/selectable-list/components/SelectableListItem';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -56,7 +58,8 @@ const StyledSidePanelContainer = styled.div`
 
 export const SidePanelRecordPageFieldSettings = () => {
   const { t } = useLingui();
-  const { pageLayoutId } = usePageLayoutIdFromContextStore();
+  const { openDropdown } = useOpenDropdown();
+  const { pageLayoutId } = usePageLayoutSidePanelTarget();
 
   const { placementSelectableItemIds, widgetSettingsPlacement } =
     useWidgetSettingsPlacementSelectableItemIds(pageLayoutId);
@@ -205,37 +208,51 @@ export const SidePanelRecordPageFieldSettings = () => {
       <StyledSidePanelContainer>
         <SidePanelList selectableItemIds={selectableItemIds}>
           <SidePanelGroup heading={t`Data and display`}>
-            <SelectableListItem itemId="field">
-              <CommandMenuItemDropdown
-                id="field"
-                label={t`Field`}
-                Icon={IconListDetails}
-                dropdownId="field"
-                dropdownComponents={
-                  <LegacyDropdownContent>
-                    <FieldWidgetFieldDropdownContent />
-                  </LegacyDropdownContent>
-                }
-                dropdownPlacement="bottom-end"
-                description={fieldLabel}
-                contextualTextPosition="right"
-              />
+            <SelectableListItem
+              itemId="field"
+              onEnter={() =>
+                openDropdown({ dropdownComponentInstanceIdFromProps: 'field' })
+              }
+            >
+              <DropdownRoot dropdownId="field" type="picker">
+                <CommandMenuItemDropdownTrigger
+                  id="field"
+                  label={t`Field`}
+                  Icon={IconListDetails}
+                  description={fieldLabel}
+                  contextualTextPosition="right"
+                />
+                <DropdownContent
+                  side="bottom"
+                  align="end"
+                  collisionPadding={{ left: 0, right: 0 }}
+                >
+                  <FieldWidgetFieldDropdownContent />
+                </DropdownContent>
+              </DropdownRoot>
             </SelectableListItem>
-            <SelectableListItem itemId="layout">
-              <CommandMenuItemDropdown
-                id="layout"
-                label={t`Layout`}
-                Icon={layoutRowIcon}
-                dropdownId="layout"
-                dropdownComponents={
-                  <LegacyDropdownContent>
-                    <FieldWidgetLayoutDropdownContent />
-                  </LegacyDropdownContent>
-                }
-                dropdownPlacement="bottom-end"
-                description={layoutLabel}
-                contextualTextPosition="right"
-              />
+            <SelectableListItem
+              itemId="layout"
+              onEnter={() =>
+                openDropdown({ dropdownComponentInstanceIdFromProps: 'layout' })
+              }
+            >
+              <DropdownRoot dropdownId="layout" type="picker">
+                <CommandMenuItemDropdownTrigger
+                  id="layout"
+                  label={t`Layout`}
+                  Icon={layoutRowIcon}
+                  description={layoutLabel}
+                  contextualTextPosition="right"
+                />
+                <DropdownContent
+                  side="bottom"
+                  align="end"
+                  collisionPadding={{ left: 0, right: 0 }}
+                >
+                  <FieldWidgetLayoutDropdownContent />
+                </DropdownContent>
+              </DropdownRoot>
             </SelectableListItem>
             {isTableDisplayMode &&
               isDefined(targetObjectMetadataId) &&

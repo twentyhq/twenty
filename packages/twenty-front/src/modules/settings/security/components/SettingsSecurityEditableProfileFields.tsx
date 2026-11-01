@@ -80,7 +80,7 @@ export const SettingsSecurityEditableProfileFields = () => {
 
   const toggleField = (field: string) => {
     if (!currentWorkspace?.id) {
-      enqueueToast({ variant: 'error', children: t`User is not logged in` });
+      enqueueToast({ status: 'error', children: t`User is not logged in` });
       return;
     }
 
@@ -135,7 +135,6 @@ export const SettingsSecurityEditableProfileFields = () => {
             {profileFieldOptions.map((option) => (
               <Dropdown.OptionItem
                 key={option.value}
-                className="settings-security-editable-profile-fields-menu-item"
                 selected={selectedFields.includes(option.value)}
                 onSelect={() => toggleField(option.value)}
                 startIcon={<SelectOptionIcon Icon={option.Icon} />}

@@ -30,11 +30,13 @@ export const getFieldMetadataCreationInputs = (
   targetObjectMetadata2Id: string,
 ) => {
   const fieldInputsMap: {
-    [K in Exclude<
-      | FieldMetadataTypesToTestForCreateInputValidation
-      | FieldMetadataTypesToTestForFilterInputValidation,
-      'ACTOR' | 'POSITION'
-    >]: FieldMetadataCreationInput | FieldMetadataCreationInput[];
+    [
+      K in Exclude<
+        | FieldMetadataTypesToTestForCreateInputValidation
+        | FieldMetadataTypesToTestForFilterInputValidation,
+        'ACTOR' | 'POSITION'
+      >
+    ]: FieldMetadataCreationInput | FieldMetadataCreationInput[];
   } = {
     [FieldMetadataType.RICH_TEXT]: {
       name: 'richTextField',
