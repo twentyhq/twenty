@@ -4,7 +4,6 @@ import {
 } from '@/sdk/logic-function/agents/types/agent-conversation.type';
 import { postGraphqlRequest } from '@/sdk/logic-function/utils/post-graphql-request.util';
 
-// the chat's own history query, so an app reads its conversations as the chat does
 const CONVERSATION_MESSAGES_QUERY = `
   query ConversationMessages($agentUniversalIdentifier: UUID!, $threadKey: String!) {
     messages: chatMessages(agentUniversalIdentifier: $agentUniversalIdentifier, threadKey: $threadKey) {
