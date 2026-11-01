@@ -23,7 +23,9 @@ import { AgentRunJobScopeService } from 'src/engine/metadata-modules/ai/ai-agent
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
+import { AGENT_TURN_INTERRUPTED_ERROR } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-turn-interrupted-error.constant';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { addStepToAgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/add-step-to-agent-turn-usage.util';
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
@@ -35,6 +37,7 @@ import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-
 import { type AgentRunCallerHandler } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-handler.type';
 import { type RunAgentJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-agent-job-data.type';
 import { buildAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-summary.util';
+import { buildRetriedAgentRunOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-retried-agent-run-outcome.util';
 import { sumAgentRunSummaries } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/sum-agent-run-summaries.util';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import {
@@ -251,22 +254,45 @@ export class AgentRunnerService {
         handler.buildExecutionContext({ workspaceId, caller }),
         this.agentRunPersonaService.resolveOrThrow({ workspaceId, spec }),
       ]);
-      const run = (stream: AgentRunStream | null) =>
-        workspaceAuthContextStorage.run(executionContext.authContext, () =>
-          this.runTurn({
-            input: {
+      const run = async (
+        stream: AgentRunStream | null,
+      ): Promise<AgentRunnerResult | null> => {
+        const retriedTurn = isDefined(prompt?.turnId)
+          ? await this.turnRecorderService.findTurn({
               workspaceId,
-              conversation,
-              caller,
-              spec,
-              persona,
-              prompt,
-              executionContext,
-            },
-            suspension: null,
-            stream,
-          }),
+              turnId: prompt.turnId,
+            })
+          : null;
+
+        if (isDefined(retriedTurn)) {
+          await this.settleRetriedRun({
+            workspaceId,
+            caller,
+            threadId: conversation?.threadId ?? null,
+            turn: retriedTurn,
+          });
+
+          return null;
+        }
+
+        return workspaceAuthContextStorage.run(
+          executionContext.authContext,
+          () =>
+            this.runTurn({
+              input: {
+                workspaceId,
+                conversation,
+                caller,
+                spec,
+                persona,
+                prompt,
+                executionContext,
+              },
+              suspension: null,
+              stream,
+            }),
         );
+      };
 
       return isDefined(conversation)
         ? await this.withClaimedConversation({
@@ -295,6 +321,43 @@ export class AgentRunnerService {
 
       return null;
     }
+  }
+
+  // A stalled job comes back with the run id its turn was opened with, and its agent may already have
+  // acted, so the run is settled from that turn rather than run again
+  private async settleRetriedRun({
+    workspaceId,
+    caller,
+    threadId,
+    turn,
+  }: {
+    workspaceId: string;
+    caller: AgentRunCaller;
+    threadId: string | null;
+    turn: Pick<AgentTurnWorkspaceEntity, 'id' | 'status' | 'error'>;
+  }): Promise<void> {
+    if (turn.status === AgentTurnStatus.RUNNING) {
+      await this.turnRecorderService.finish({
+        workspaceId,
+        turnId: turn.id,
+        status: AgentTurnStatus.FAILED,
+        error: AGENT_TURN_INTERRUPTED_ERROR,
+      });
+    }
+
+    const outcome = buildRetriedAgentRunOutcome(turn);
+
+    if (!isDefined(outcome)) {
+      return;
+    }
+
+    await this.agentRunSuspensionService.deliverOutcome({
+      workspaceId,
+      caller,
+      threadId,
+      outcome,
+      summary: null,
+    });
   }
 
   // Picks a suspended run up where it paused once its wake-up resolved, holding its conversation.
