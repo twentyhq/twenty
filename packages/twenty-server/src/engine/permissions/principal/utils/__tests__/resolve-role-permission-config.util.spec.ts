@@ -41,11 +41,12 @@ const buildApiKeyContext = (apiKeyId: string): WorkspaceAuthContext =>
 
 const buildApplicationContext = (
   defaultRoleId: string | null,
+  sourceType?: ApplicationRegistrationSourceType,
 ): WorkspaceAuthContext =>
   ({
     type: 'application',
     workspace: { id: 'workspace-1' },
-    application: { defaultRoleId },
+    application: { defaultRoleId, sourceType },
   }) as unknown as WorkspaceAuthContext;
 
 const withAgent = (
@@ -167,6 +168,20 @@ describe('resolveRolePermissionConfig', () => {
 
   it('allows nothing for an application without a role', () => {
     expect(resolve(buildApplicationContext(null))).toBeNull();
+  });
+
+  it('allows nothing for an OAuth-only application without a role acting alone, even with an agent', () => {
+    expect(
+      resolve(
+        withAgent(
+          buildApplicationContext(
+            null,
+            ApplicationRegistrationSourceType.OAUTH_ONLY,
+          ),
+          AGENT_ID,
+        ),
+      ),
+    ).toBeNull();
   });
 
   it('narrows a user application token to the role of the agent it carries', () => {
