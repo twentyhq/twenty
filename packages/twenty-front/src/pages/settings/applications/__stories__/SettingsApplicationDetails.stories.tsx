@@ -1,5 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
+import { getWorker } from 'msw-storybook-addon';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 
 import {
@@ -11,6 +12,7 @@ import { mockedApolloClient } from '~/testing/mockedApolloClient';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { dispatchMetadataOperationBrowserEvent } from '@/browser-event/utils/dispatchMetadataOperationBrowserEvent';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
@@ -106,6 +108,10 @@ const USER_SETTINGS_MENU_ITEM = buildSettingsMenuItem({
   scope: 'USER',
 });
 
+const runApplicationHealthCheck = fn();
+
+const HEALTH_CHECK_LOGIC_FUNCTION_ID = '20202020-6a7b-4c3d-8e4f-000000000021';
+
 const MARKETPLACE_APP_DETAIL: FindMarketplaceAppDetailQuery['findMarketplaceAppDetail'] =
   {
     __typename: 'MarketplaceAppDetail',
@@ -137,9 +143,13 @@ const MARKETPLACE_APP_DETAIL: FindMarketplaceAppDetailQuery['findMarketplaceAppD
 
 const buildApplicationHandlers = ({
   settingsMenuItems,
+  healthCheckLogicFunctionId = null,
+  runOnUserPreferences = false,
   marketplaceAppDetail,
 }: {
   settingsMenuItems: ReturnType<typeof buildSettingsMenuItem>[];
+  healthCheckLogicFunctionId?: string | null;
+  runOnUserPreferences?: boolean;
   marketplaceAppDetail?: FindMarketplaceAppDetailQuery['findMarketplaceAppDetail'];
 }) => [
   graphql.query('FindOneApplication', () =>
@@ -160,7 +170,8 @@ const buildApplicationHandlers = ({
           autoUpgrade: false,
           defaultRoleId: null,
           settingsCustomTabFrontComponentId: null,
-          healthCheckLogicFunctionId: null,
+          healthCheckLogicFunctionId,
+          runOnUserPreferences,
           availablePackages: {},
           applicationVariables: [USER_VARIABLE, buildWorkspaceVariable()],
           agents: [],
@@ -195,6 +206,21 @@ const buildApplicationHandlers = ({
       data: { updateOneApplicationVariable: true },
     });
   }),
+  graphql.mutation('RunApplicationHealthCheck', ({ variables }) => {
+    runApplicationHealthCheck(variables);
+
+    return HttpResponse.json({
+      data: {
+        runApplicationHealthCheck: {
+          __typename: 'ApplicationHealthCheckResult',
+          status: 'WARNING',
+          title: 'Your recorder plan is almost used up',
+          description: null,
+          action: null,
+        },
+      },
+    });
+  }),
   ...graphqlMocks.handlers,
 ];
 
@@ -209,6 +235,7 @@ const meta: Meta<PageDecoratorArgs> = {
   beforeEach: async () => {
     savedValueByKey.clear();
     updateOneApplicationVariable.mockClear();
+    runApplicationHealthCheck.mockClear();
     await mockedApolloClient.clearStore();
   },
   parameters: {
@@ -340,6 +367,131 @@ export const VariablesTabSavesWorkspaceVariable: Story = {
     );
     await waitFor(() => expect(saveButton).toBeDisabled());
     expect(canvas.getByDisplayValue('https://new.example.com')).toBeVisible();
+  },
+};
+
+export const WorkspaceHealthCheckRunsOnOpenAndAfterSave: Story = {
+  parameters: {
+    msw: {
+      handlers: buildApplicationHandlers({
+        settingsMenuItems: [USER_SETTINGS_MENU_ITEM],
+        healthCheckLogicFunctionId: HEALTH_CHECK_LOGIC_FUNCTION_ID,
+      }),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'Your recorder plan is almost used up',
+        undefined,
+        {
+          timeout: 3000,
+        },
+      ),
+    ).toBeVisible();
+    expect(runApplicationHealthCheck.mock.calls).toEqual([
+      [{ applicationId: APPLICATION_ID }],
+    ]);
+
+    await userEvent.click(canvas.getByRole('link', { name: 'Variables' }));
+
+    const saveButton = await canvas.findByRole('button', {
+      name: 'Save settings',
+    });
+    const workspaceUrlInput = await canvas.findByDisplayValue(
+      'https://recorder.example.com',
+    );
+
+    await userEvent.clear(workspaceUrlInput);
+    await userEvent.type(workspaceUrlInput, 'https://new.example.com');
+    await waitFor(() => expect(saveButton).toBeEnabled());
+    await userEvent.click(saveButton);
+
+    await waitFor(() =>
+      expect(runApplicationHealthCheck).toHaveBeenCalledTimes(2),
+    );
+    await waitFor(() => expect(saveButton).toBeDisabled());
+
+    await userEvent.click(canvas.getByRole('link', { name: 'General' }));
+
+    expect(
+      await canvas.findByText('Your recorder plan is almost used up'),
+    ).toBeVisible();
+    expect(runApplicationHealthCheck.mock.calls).toEqual([
+      [{ applicationId: APPLICATION_ID }],
+      [{ applicationId: APPLICATION_ID }],
+    ]);
+  },
+};
+
+export const MemberHealthCheckDoesNotRunOnWorkspacePage: Story = {
+  parameters: {
+    msw: {
+      handlers: buildApplicationHandlers({
+        settingsMenuItems: [USER_SETTINGS_MENU_ITEM],
+        healthCheckLogicFunctionId: HEALTH_CHECK_LOGIC_FUNCTION_ID,
+        runOnUserPreferences: true,
+      }),
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('link', { name: 'Variables' }, { timeout: 3000 }),
+    );
+    expect(runApplicationHealthCheck).not.toHaveBeenCalled();
+
+    const saveButton = canvas.getByRole('button', { name: 'Save settings' });
+    const workspaceUrlInput = await canvas.findByDisplayValue(
+      'https://recorder.example.com',
+    );
+
+    await userEvent.clear(workspaceUrlInput);
+    await userEvent.type(workspaceUrlInput, 'https://new.example.com');
+    await waitFor(() => expect(saveButton).toBeEnabled());
+    await userEvent.click(saveButton);
+
+    await waitFor(() => expect(saveButton).toBeDisabled());
+    expect(updateOneApplicationVariable).toHaveBeenCalledTimes(1);
+    expect(canvas.getByDisplayValue('https://new.example.com')).toBeVisible();
+    expect(runApplicationHealthCheck).not.toHaveBeenCalled();
+    expect(
+      canvas.queryByText('Your recorder plan is almost used up'),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const WorkspaceHealthCheckRerunsWhenItsFunctionChanges: Story = {
+  ...WorkspaceHealthCheckRunsOnOpenAndAfterSave,
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText('Your recorder plan is almost used up'),
+    ).toBeVisible();
+    expect(runApplicationHealthCheck).toHaveBeenCalledTimes(1);
+
+    getWorker().use(
+      ...buildApplicationHandlers({
+        settingsMenuItems: [USER_SETTINGS_MENU_ITEM],
+        healthCheckLogicFunctionId: '20202020-6a7b-4c3d-8e4f-000000000022',
+      }),
+    );
+    dispatchMetadataOperationBrowserEvent({
+      metadataName: 'application',
+      operation: {
+        type: 'update',
+        updatedRecord: { id: APPLICATION_ID, version: '2.0.0' },
+        updatedFields: ['version'],
+      },
+    });
+
+    await waitFor(() =>
+      expect(runApplicationHealthCheck).toHaveBeenCalledTimes(2),
+    );
   },
 };
 

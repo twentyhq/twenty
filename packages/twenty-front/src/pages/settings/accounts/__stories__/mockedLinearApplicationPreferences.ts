@@ -52,6 +52,7 @@ const buildLinearConnectionProvider = () => ({
 export const buildLinearApplicationPreferences = () => ({
   __typename: 'ApplicationPreferences',
   applicationId: LINEAR_APPLICATION_ID,
+  hasUserHealthCheck: false,
   connectionProviders: [buildLinearConnectionProvider()],
   settingsMenuItems: [],
   variables: [],

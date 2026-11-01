@@ -112,6 +112,7 @@ describe('getApplicationsWithPreferences', () => {
           settingsMenuItems: [],
           variables: [buildVariable({ key: 'RECORD_MY_MEETINGS' })],
           connectionProviders: [],
+          hasUserHealthCheck: false,
           __typename: 'ApplicationPreferences',
         },
         {
@@ -119,6 +120,7 @@ describe('getApplicationsWithPreferences', () => {
           settingsMenuItems: [],
           variables: [buildVariable({ key: 'LANGUAGE', value: 'en' })],
           connectionProviders: [],
+          hasUserHealthCheck: false,
           __typename: 'ApplicationPreferences',
         },
       ],
@@ -152,6 +154,7 @@ describe('getApplicationsWithPreferences', () => {
           ],
           variables: [],
           connectionProviders: [],
+          hasUserHealthCheck: false,
           __typename: 'ApplicationPreferences',
         },
       ],
@@ -181,6 +184,7 @@ describe('getApplicationsWithPreferences', () => {
             }),
           ],
           connectionProviders: [],
+          hasUserHealthCheck: false,
           __typename: 'ApplicationPreferences',
         },
       ],
@@ -221,6 +225,7 @@ describe('getApplicationsWithPreferences', () => {
             }),
           ],
           connectionProviders: [],
+          hasUserHealthCheck: false,
           __typename: 'ApplicationPreferences',
         },
       ],
@@ -247,6 +252,7 @@ describe('getApplicationsWithPreferences', () => {
             }),
           ],
           connectionProviders: [],
+          hasUserHealthCheck: false,
           __typename: 'ApplicationPreferences',
         },
       ],
@@ -266,6 +272,7 @@ describe('getApplicationsWithPreferences', () => {
           settingsMenuItems: [],
           variables: [buildVariable({ key: 'OLD_FLAG', isDeprecated: true })],
           connectionProviders: [],
+          hasUserHealthCheck: false,
           __typename: 'ApplicationPreferences',
         },
       ],
@@ -288,6 +295,7 @@ describe('getApplicationsWithPreferences', () => {
               applicationId: RECORDER_APPLICATION_ID,
             }),
           ],
+          hasUserHealthCheck: false,
         },
       ],
       currentWorkspace: CURRENT_WORKSPACE,
@@ -299,6 +307,25 @@ describe('getApplicationsWithPreferences', () => {
     ]);
   });
 
+  it('should keep an application whose only preference is a USER health check', () => {
+    const [result] = getApplicationsWithPreferences({
+      applicationPreferences: [
+        {
+          __typename: 'ApplicationPreferences' as const,
+          applicationId: RECORDER_APPLICATION_ID,
+          settingsMenuItems: [],
+          variables: [],
+          connectionProviders: [],
+          hasUserHealthCheck: true,
+        },
+      ],
+      currentWorkspace: CURRENT_WORKSPACE,
+    });
+
+    expect(result.application.id).toBe(RECORDER_APPLICATION_ID);
+    expect(result.hasUserHealthCheck).toBe(true);
+  });
+
   it('should leave out an application that is not installed', () => {
     const result = getApplicationsWithPreferences({
       applicationPreferences: [
@@ -307,6 +334,7 @@ describe('getApplicationsWithPreferences', () => {
           settingsMenuItems: [],
           variables: [buildVariable({ key: 'LANGUAGE', value: 'en' })],
           connectionProviders: [],
+          hasUserHealthCheck: false,
           __typename: 'ApplicationPreferences',
         },
       ],

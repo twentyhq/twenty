@@ -1,5 +1,5 @@
 import { ApplicationHealthStatus } from '~/generated-metadata/graphql';
-import { getApplicationHealthBanner } from '~/pages/settings/applications/utils/getApplicationHealthBanner';
+import { getApplicationHealthBanner } from '@/settings/applications/utils/getApplicationHealthBanner';
 
 const FALLBACK_LOCATION = '/settings/applications/app-id#variables';
 
