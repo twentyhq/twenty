@@ -91,7 +91,7 @@ enum AgentChatChannelThreadStatus {
 
 type AgentChatEvent {
   event: JSON!
-  threadId: String!
+  threadId: String
 }
 
 enum AgentChatInboxAction {
@@ -2579,6 +2579,7 @@ input GenerateInput {
   instructions: String
   modelId: String
   responseFormat: JSON
+  runId: UUID
   scope: JSON
 }
 
@@ -4784,7 +4785,7 @@ type Subscription {
   eventLogsLive(fieldFilters: [EventLogFieldFilterInput!], table: EventLogTable!): [EventLogRecord!]
   exportRecords(input: CreateRecordExportInput!): RecordExport!
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
-  onAgentChatEvent(agentUniversalIdentifier: UUID, threadId: UUID, threadKey: String): AgentChatEvent!
+  onAgentChatEvent(agentUniversalIdentifier: UUID, runId: UUID, threadId: UUID, threadKey: String): AgentChatEvent!
   onEventSubscription(eventStreamId: String!): EventSubscription
 }
 

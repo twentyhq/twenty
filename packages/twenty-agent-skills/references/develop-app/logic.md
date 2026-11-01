@@ -132,6 +132,8 @@ const { object } = await ai.generate({
 - The call runs as the caller (the member a user-scoped token belongs to, else the app, else the API key) and never exceeds the app's role. From a logic function it follows the default clients: the person who triggered the run, within the app's role, or the app when nobody did. The app needs a default role with the AI permission flag.
 - `modelId` is optional; the workspace default model is used when unset.
 - It returns `{ success, text, object, error, runId, usage }`: `text` for a text response, `object` for a JSON one (the other is `null`), `error` when `success` is false, `runId` for the recorded run and `usage` as `{ inputTokens, outputTokens }`, which counts the steps that finished before a failure too. A run that fails comes back as `success: false` rather than a throw (a call that cannot start a run, such as invalid input, still throws), so check `success`.
+- To stream the reply, pass `onChunk` (and optionally `signal`): the SDK subscribes to the run first, waits until the subscription is live, then starts it, hands each AI SDK `UIMessageChunk` to `onChunk`, and resolves with the same result once the last chunk is delivered. If the stream's end never arrives, it stops reading 5 s after the result, then still delivers every chunk already received. Aborting `signal` rejects the call and closes the stream; the run itself goes on.
+- `runId` (optional, a UUID the caller picks) becomes the run's id, and a used one is refused. Naming a run is what makes it stream, so pass it only to follow the run; `onChunk` picks one when unset. An app follows only its own runs, so both need an app token. Requires `"engines": { "twenty": ">=2.55.0" }`.
 
 ## Inbox Messages
 

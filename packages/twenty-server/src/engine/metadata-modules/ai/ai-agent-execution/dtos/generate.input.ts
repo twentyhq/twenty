@@ -11,9 +11,11 @@ import {
   IsNotEmpty,
   IsOptional,
   IsString,
+  IsUUID,
   ValidateNested,
 } from 'class-validator';
 
+import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { RunAgentMessageInputDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/run-agent-message.input';
 
 // mirrors generateInputSchema, which the service parses the JSON fields with
@@ -46,4 +48,9 @@ export class GenerateInputDTO implements GenerateMutationInput {
   @IsOptional()
   @Field(() => GraphQLJSON, { nullable: true })
   scope?: AiRunScope | null;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  runId?: string | null;
 }

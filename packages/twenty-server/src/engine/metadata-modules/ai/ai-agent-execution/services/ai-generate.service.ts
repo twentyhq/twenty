@@ -12,21 +12,34 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AgentRunCallerContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-context.service';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
+import { buildAgentRunStreamChannelId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-stream-channel-id.util';
 import { assertAgentResponseFormatHasOutputFieldsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util';
 import { parseAgentInputOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/parse-agent-input-or-throw.util';
 import { readGeneratedOutputOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/read-generated-output-or-throw.util';
 import { resolveAgentRunCallerRefOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-agent-run-caller-ref-or-throw.util';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
+import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
+import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+
+const buildRunAlreadyExistsException = (runId: string) =>
+  new AiException(
+    `Run ${runId} already exists; pass a new runId`,
+    AiExceptionCode.INVALID_AGENT_INPUT,
+  );
 
 @Injectable()
 export class AiGenerateService {
   constructor(
     private readonly agentRunCallerContextService: AgentRunCallerContextService,
     private readonly agentRunnerService: AgentRunnerService,
+    @InjectAgentHistoryRepository('agentTurn')
+    private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>,
   ) {}
 
   async generate({
@@ -49,6 +62,7 @@ export class AiGenerateService {
       input,
     });
     const responseFormat = settings.responseFormat ?? undefined;
+    const requestedRunId = settings.runId ?? undefined;
 
     assertAgentResponseFormatHasOutputFieldsOrThrow(responseFormat);
 
@@ -62,6 +76,14 @@ export class AiGenerateService {
         AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
       );
     }
+
+    const streamChannelId = isDefined(requestedRunId)
+      ? await this.resolveStreamChannelIdOrThrow({
+          workspaceId: workspace.id,
+          callerApplication,
+          runId: requestedRunId,
+        })
+      : undefined;
 
     const executionContext =
       await this.agentRunCallerContextService.buildExecutionContext({
@@ -77,8 +99,8 @@ export class AiGenerateService {
         callerApplication,
       });
 
-    const { runId, outcome, usage } =
-      await this.agentRunnerService.runInRequest({
+    const { runId, outcome, usage } = await this.agentRunnerService
+      .runInRequest({
         workspaceId: workspace.id,
         executionContext,
         spec: {
@@ -102,7 +124,16 @@ export class AiGenerateService {
           messages,
           senderUserWorkspaceId: requestUserWorkspaceId,
           senderApplicationId: callerApplication?.id ?? null,
+          turnId: requestedRunId,
         },
+        streamChannelId,
+      })
+      .catch((error: unknown) => {
+        if (isDefined(requestedRunId) && isUniqueViolationError(error)) {
+          throw buildRunAlreadyExistsException(requestedRunId);
+        }
+
+        throw error;
       });
 
     const output = readGeneratedOutputOrThrow({
@@ -116,5 +147,37 @@ export class AiGenerateService {
       runId,
       usage,
     };
+  }
+
+  // keyed by the caller app so an app follows only its own runs; the turn's primary key backs the lookup in a race
+  private async resolveStreamChannelIdOrThrow({
+    workspaceId,
+    callerApplication,
+    runId,
+  }: {
+    workspaceId: string;
+    callerApplication: Pick<FlatApplication, 'id'> | undefined;
+    runId: string;
+  }): Promise<string> {
+    if (!isDefined(callerApplication)) {
+      throw new AiException(
+        'runId needs an application access token',
+        AiExceptionCode.INVALID_AGENT_INPUT,
+      );
+    }
+
+    const existingTurn = await this.turnRepository.findOne(workspaceId, {
+      where: { id: runId },
+      select: ['id'],
+    });
+
+    if (isDefined(existingTurn)) {
+      throw buildRunAlreadyExistsException(runId);
+    }
+
+    return buildAgentRunStreamChannelId({
+      applicationId: callerApplication.id,
+      runId,
+    });
   }
 }

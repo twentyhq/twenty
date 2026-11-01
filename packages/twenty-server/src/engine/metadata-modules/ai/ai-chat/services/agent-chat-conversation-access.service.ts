@@ -5,7 +5,10 @@ import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 import { type ApplicationCallerOperation } from 'src/engine/core-modules/application/types/application-caller-operation.type';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
+import { buildAgentRunStreamChannelId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-stream-channel-id.util';
 import { type AgentChatConversationInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-conversation.input';
+import { type AgentChatEventInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-event.input';
+import { type AgentChatChannel } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-channel.type';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { createAgentChatLiveEventFilter } from 'src/engine/metadata-modules/ai/ai-chat/utils/create-agent-chat-live-event-filter.util';
 import { isAgentTurnOpenedByOtherMember } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-turn-opened-by-other-member.util';
@@ -18,6 +21,12 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+
+type ConversationReader = {
+  workspace: Pick<FlatWorkspace, 'id' | 'workspaceCustomApplicationId'>;
+  callerApplication: ApplicationCallerOperation['callingApplication'];
+  workspaceMemberId: string | undefined;
+};
 
 type ConversationViewer = {
   workspaceId: string;
@@ -35,15 +44,50 @@ export class AgentChatConversationAccessService {
     private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>,
   ) {}
 
+  async resolveReadableChannelOrThrow({
+    source: { runId, ...conversation },
+    ...reader
+  }: ConversationReader & {
+    source: Pick<
+      AgentChatEventInput,
+      'threadId' | 'agentUniversalIdentifier' | 'threadKey' | 'runId'
+    >;
+  }): Promise<AgentChatChannel> {
+    if (!isDefined(runId)) {
+      return {
+        kind: 'thread',
+        channelId: await this.resolveReadableThreadIdOrThrow({
+          ...reader,
+          conversation,
+        }),
+      };
+    }
+
+    if (
+      !isDefined(reader.callerApplication) ||
+      Object.values(conversation).some(isDefined)
+    ) {
+      throw new AiException(
+        'Pass runId alone, with an application access token',
+        AiExceptionCode.INVALID_AGENT_INPUT,
+      );
+    }
+
+    return {
+      kind: 'run',
+      channelId: buildAgentRunStreamChannelId({
+        applicationId: reader.callerApplication.id,
+        runId,
+      }),
+    };
+  }
+
   async resolveReadableThreadIdOrThrow({
     workspace,
     callerApplication,
     workspaceMemberId,
     conversation: { threadId, agentUniversalIdentifier, threadKey },
-  }: {
-    workspace: Pick<FlatWorkspace, 'id' | 'workspaceCustomApplicationId'>;
-    callerApplication: ApplicationCallerOperation['callingApplication'];
-    workspaceMemberId: string | undefined;
+  }: ConversationReader & {
     conversation: Pick<
       AgentChatConversationInput,
       'threadId' | 'agentUniversalIdentifier' | 'threadKey'
