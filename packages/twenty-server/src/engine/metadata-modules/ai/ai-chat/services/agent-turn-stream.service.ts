@@ -725,9 +725,16 @@ export class AgentTurnStreamService {
     modelConfig: AiModelConfig;
     usage: AgentTurnStreamUsage;
   }) {
-    if (part.type === 'finish-step') {
+    // a step that failed before the model answered still ends with a finish-step, one without token counts;
+    // one whose model answered with an error finish reason reports real usage and is billed
+    if (
+      part.type === 'finish-step' &&
+      (isDefined(part.usage?.inputTokens) ||
+        isDefined(part.usage?.outputTokens))
+    ) {
       Object.assign(usage, addStepToAgentTurnUsage(modelConfig, usage, part));
-      usage.conversationSize = part.usage?.inputTokens ?? 0;
+      usage.conversationSize =
+        part.usage?.inputTokens ?? usage.conversationSize;
     }
 
     if (part.type === 'start') {

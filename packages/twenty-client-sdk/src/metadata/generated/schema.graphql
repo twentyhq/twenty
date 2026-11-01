@@ -280,6 +280,11 @@ enum AiModelTier {
   smart
 }
 
+type AiRunUsage {
+  inputTokens: Int!
+  outputTokens: Int!
+}
+
 type AiSystemPromptPreview {
   estimatedTokenCount: Int!
   sections: [AiSystemPromptSection!]!
@@ -2569,6 +2574,23 @@ type FullName {
   lastName: String!
 }
 
+input GenerateInput {
+  input: [RunAgentMessageInput!]!
+  instructions: String
+  modelId: String
+  responseFormat: JSON
+  scope: JSON
+}
+
+type GenerateResult {
+  error: String
+  object: JSON
+  runId: UUID!
+  success: Boolean!
+  text: String
+  usage: AiRunUsage!
+}
+
 input GetApiKeyInput {
   id: UUID!
 }
@@ -3377,6 +3399,7 @@ type Mutation {
   enqueueJobs(input: EnqueueJobsInput!): EnqueueJobsResult!
   enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult!
   executeOneLogicFunction(input: ExecuteOneLogicFunctionInput!): LogicFunctionExecutionResult!
+  generate(input: GenerateInput!): GenerateResult!
   generateApiKeyToken(apiKeyId: UUID!, expiresAt: String!): ApiKeyToken!
   generateFrontComponentApplicationTokenPair(applicationId: UUID!): ApplicationTokenPair!
   generatePlaygroundToken: AuthToken!

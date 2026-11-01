@@ -1,5 +1,6 @@
 import { type AgentResponseFormat } from 'twenty-shared/ai';
 
+import { AgentRunCallerContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-context.service';
 import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run.service';
 import {
   AiException,
@@ -63,7 +64,11 @@ const buildService = (overrides: Record<string, unknown>) => {
     {} as never,
     {} as never,
     {} as never,
-    {} as never,
+    new AgentRunCallerContextService(
+      agentActorContextService as never,
+      {} as never,
+      {} as never,
+    ),
     {} as never,
     applicationLookupService as never,
     agentRepository as never,

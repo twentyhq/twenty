@@ -29,6 +29,7 @@ import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-exe
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentRunnerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-outcome.type';
 import { type AgentRunnerRunInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-run-input.type';
+import { type InRequestAgentRun } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/in-request-agent-run.type';
 import { type AgentRunSuspension } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-suspension.type';
 import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/continue-agent-run-job-data.type';
 import { type AgentRunCallerHandler } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-handler.type';
@@ -45,6 +46,7 @@ import { AgentTurnStreamService } from 'src/engine/metadata-modules/ai/ai-chat/s
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
+import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
 
 const AGENT_RUN_MAX_CONTINUATIONS = 50;
@@ -60,6 +62,11 @@ type AgentRunnerResult = {
   outcome: AgentRunnerOutcome;
   // the run so far, across every segment of a continued run
   summary: AgentRunSummary;
+};
+
+type OpenedAgentRunTurn = {
+  turnId: string;
+  priorMessages: ExtendedUIMessage[];
 };
 
 @Injectable()
@@ -82,6 +89,7 @@ export class AgentRunnerService {
     @InjectMessageQueue(MessageQueue.aiQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly agentRunPersonaService: AgentRunPersonaService,
+    private readonly turnRecorderService: AgentTurnRecorderService,
   ) {}
 
   async start(input: RunAgentJobData): Promise<void> {
@@ -92,6 +100,61 @@ export class AgentRunnerService {
         workspaceId: input.workspaceId,
         spec: input.spec,
       }),
+    );
+  }
+
+  // a failure after the turn is recorded comes back as the outcome, so the caller still gets the run id
+  async runInRequest(
+    input: Omit<AgentRunnerRunInput, 'conversation' | 'caller' | 'persona'>,
+  ): Promise<InRequestAgentRun> {
+    const persona = await this.agentRunPersonaService.resolveOrThrow({
+      workspaceId: input.workspaceId,
+      spec: input.spec,
+    });
+    const runInput: AgentRunnerRunInput = {
+      ...input,
+      conversation: null,
+      caller: null,
+      persona,
+    };
+
+    return workspaceAuthContextStorage.run(
+      input.executionContext.authContext,
+      async () => {
+        const openedTurn = await this.openTurn({
+          input: runInput,
+          suspension: null,
+        });
+        const { turnId } = openedTurn;
+        const outcome = await this.runOpenedTurn({
+          input: runInput,
+          suspension: null,
+          stream: null,
+          openedTurn,
+        }).then(
+          (result): AgentRunnerOutcome => result.outcome,
+          (error: unknown): AgentRunnerOutcome => {
+            this.logger.error(
+              `Agent run ${turnId} of workspace ${input.workspaceId} failed`,
+              error instanceof Error ? error.stack : error,
+            );
+
+            return {
+              status: 'FAILED',
+              error: error instanceof Error ? error.message : String(error),
+            };
+          },
+        );
+
+        return {
+          runId: turnId,
+          outcome,
+          usage: await this.turnRecorderService.findUsageOrThrow({
+            workspaceId: input.workspaceId,
+            turnId,
+          }),
+        };
+      },
     );
   }
 
@@ -492,12 +555,27 @@ export class AgentRunnerService {
     // null for a run without a conversation, which streams to no one
     stream: AgentRunStream | null;
   }): Promise<AgentRunnerResult> {
-    const { workspaceId, spec, persona, prompt, executionContext } = input;
-    const abortSignal = stream?.abortSignal;
-    const { turnId, priorMessages } = await this.openTurn({
+    return this.runOpenedTurn({
       input,
       suspension,
+      stream,
+      openedTurn: await this.openTurn({ input, suspension }),
     });
+  }
+
+  private async runOpenedTurn({
+    input,
+    suspension,
+    stream,
+    openedTurn: { turnId, priorMessages },
+  }: {
+    input: AgentRunnerRunInput;
+    suspension: AgentRunSuspension | null;
+    stream: AgentRunStream | null;
+    openedTurn: OpenedAgentRunTurn;
+  }): Promise<AgentRunnerResult> {
+    const { workspaceId, spec, persona, prompt, executionContext } = input;
+    const abortSignal = stream?.abortSignal;
     const canPause = isDefined(stream);
 
     const startedAtMs = Date.now();
@@ -520,6 +598,7 @@ export class AgentRunnerService {
       executionContext,
       additionalExcludedToolNames: spec.additionalExcludedToolNames,
       toolLoadingStrategy: spec.toolLoadingStrategy,
+      structuredOutputStrategy: spec.structuredOutputStrategy,
       abortSignal,
     };
 
@@ -608,7 +687,7 @@ export class AgentRunnerService {
       'workspaceId' | 'conversation' | 'persona' | 'prompt' | 'executionContext'
     >;
     suspension: AgentRunSuspension | null;
-  }): Promise<{ turnId: string; priorMessages: ExtendedUIMessage[] }> {
+  }): Promise<OpenedAgentRunTurn> {
     if (!isDefined(conversation)) {
       return {
         turnId: await this.conversationWriterService.insertTurn({
@@ -687,8 +766,8 @@ export class AgentRunnerService {
       return { status: 'COMPLETED', result: execution.result };
     }
 
-    // offered no way to pause, a run without a conversation stops early only when out of credits
-    if (!isDefined(stream)) {
+    // offered no way to pause, a run without a conversation or a caller stops early only when out of credits
+    if (!isDefined(stream) || !isDefined(caller)) {
       return { status: 'FAILED', error: AGENT_RUN_OUT_OF_CREDITS_ERROR };
     }
 

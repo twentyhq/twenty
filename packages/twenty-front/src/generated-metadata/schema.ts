@@ -314,6 +314,12 @@ export enum AiModelTier {
   smart = 'smart'
 }
 
+export type AiRunUsage = {
+  __typename?: 'AiRunUsage';
+  inputTokens: Scalars['Int']['output'];
+  outputTokens: Scalars['Int']['output'];
+};
+
 export type AiSystemPromptPreview = {
   __typename?: 'AiSystemPromptPreview';
   estimatedTokenCount: Scalars['Int']['output'];
@@ -2718,6 +2724,24 @@ export type FullName = {
   lastName: Scalars['String']['output'];
 };
 
+export type GenerateInput = {
+  input: Array<RunAgentMessageInput>;
+  instructions?: InputMaybe<Scalars['String']['input']>;
+  modelId?: InputMaybe<Scalars['String']['input']>;
+  responseFormat?: InputMaybe<Scalars['JSON']['input']>;
+  scope?: InputMaybe<Scalars['JSON']['input']>;
+};
+
+export type GenerateResult = {
+  __typename?: 'GenerateResult';
+  error?: Maybe<Scalars['String']['output']>;
+  object?: Maybe<Scalars['JSON']['output']>;
+  runId: Scalars['UUID']['output'];
+  success: Scalars['Boolean']['output'];
+  text?: Maybe<Scalars['String']['output']>;
+  usage: AiRunUsage;
+};
+
 export type GetApiKeyInput = {
   id: Scalars['UUID']['input'];
 };
@@ -3557,6 +3581,7 @@ export type Mutation = {
   enqueueJobs: EnqueueJobsResult;
   enrichWorkspaceCompany: WorkspaceCompanyEnrichmentResult;
   executeOneLogicFunction: LogicFunctionExecutionResult;
+  generate: GenerateResult;
   generateApiKeyToken: ApiKeyToken;
   generateFrontComponentApplicationTokenPair: ApplicationTokenPair;
   generatePlaygroundToken: AuthToken;
@@ -4396,6 +4421,11 @@ export type MutationEnqueueJobsArgs = {
 
 export type MutationExecuteOneLogicFunctionArgs = {
   input: ExecuteOneLogicFunctionInput;
+};
+
+
+export type MutationGenerateArgs = {
+  input: GenerateInput;
 };
 
 

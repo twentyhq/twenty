@@ -63,6 +63,36 @@ const streamTurnWithoutClaim = ({
     isBackgroundRun: true,
   });
 
+const streamPartsWithoutClaim = ({
+  service,
+  parts,
+}: {
+  service: AgentTurnStreamService;
+  parts: Record<string, unknown>[];
+}) =>
+  service.streamTurn({
+    workspaceId: 'workspace-id',
+    claim: null,
+    turnId: 'turn-id',
+    startTurn: async () => ({
+      source: {
+        modelConfig: {
+          contextWindowTokens: 1000,
+          inputCostPerMillionTokens: 1,
+          outputCostPerMillionTokens: 1,
+        } as never,
+        parts: new ReadableStream({
+          start(controller) {
+            parts.forEach((part) => controller.enqueue(part as never));
+            controller.close();
+          },
+        }),
+      },
+    }),
+    completeTurn: async () => ({ modelId: 'model-id', stopReason: null }),
+    isBackgroundRun: true,
+  });
+
 const expectFailureRecordedOnce = (finish: jest.Mock) => {
   expect(finish).toHaveBeenCalledTimes(1);
   expect(finish).toHaveBeenCalledWith({
@@ -105,6 +135,38 @@ describe('AgentTurnStreamService streamTurn without a claim', () => {
     ).rejects.toBe(turnError);
 
     expectFailureRecordedOnce(finish);
+  });
+});
+
+describe('AgentTurnStreamService streamTurn usage', () => {
+  it('counts the usage a model reports with an error finish reason', async () => {
+    const { streamed } = await streamPartsWithoutClaim({
+      service: await buildService({
+        finish: jest.fn().mockResolvedValue(true),
+      }),
+      parts: [
+        { type: 'start' },
+        { type: 'start-step' },
+        {
+          type: 'finish-step',
+          finishReason: 'error',
+          usage: { inputTokens: 120, outputTokens: 8 },
+        },
+        { type: 'start-step' },
+        {
+          type: 'finish-step',
+          finishReason: 'error',
+          usage: { inputTokens: undefined, outputTokens: undefined },
+        },
+        { type: 'finish', finishReason: 'error', totalUsage: {} },
+      ],
+    });
+
+    expect(streamed.usage).toMatchObject({
+      inputTokens: 120,
+      outputTokens: 8,
+      conversationSize: 120,
+    });
   });
 });
 

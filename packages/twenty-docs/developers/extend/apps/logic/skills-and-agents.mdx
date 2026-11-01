@@ -330,6 +330,79 @@ name a member at all.
 </Warning>
 
 </Accordion>
+<Accordion title="ai.generate" description="Call a model from a logic function, without an agent">
+
+`ai.generate()` calls a model from a logic function. Unlike
+`runAgent()`, it needs no `defineAgent()`: the call carries its own
+instructions, and opens no conversation. Use it for one-shot work such as
+classifying, summarizing or extracting.
+
+```ts
+import { ai } from 'twenty-sdk/logic-function';
+
+const { success, text, error } = await ai.generate({
+  instructions: 'You qualify inbound leads for a B2B CRM.',
+  input: `Is ${companyName} a good fit? Answer in one sentence.`,
+});
+```
+
+- `input` is a string, or a list of `{ role, content }` messages.
+- `instructions` (optional) adds the caller's system instructions.
+- `modelId` (optional) picks the model. Without it, the call uses the
+  workspace's default model.
+- `responseFormat` (optional) works as in `runAgent()`. With
+  `{ type: 'json', schema }`, the schema goes on the model request itself, so
+  a JSON answer takes one request (plus tool steps when a `scope` grants
+  tools).
+- `scope` (optional) lets the call use the database, as described below.
+
+It resolves to `{ success, text, object, error, runId, usage }`:
+
+- `text` is the reply of a text response, and `null` for a JSON one.
+- `object` is the result of a JSON response, and `null` otherwise.
+- `error` explains a failed run, when `success` is `false`. A run that fails
+  resolves this way rather than throwing; a call that cannot start a run, such
+  as one with invalid input, throws.
+- `runId` identifies the recorded run, with its model, usage and credits.
+- `usage` is `{ inputTokens, outputTokens }`: what the run spent, including the
+  steps that finished before a failure.
+
+The call acts as whoever made it: the member a user-scoped token belongs to,
+otherwise your application, otherwise the API key. From a logic function it
+follows the default clients: it acts as the person who triggered the run, or as
+your application when nobody did. It never exceeds your application's role, and
+an application without a default role cannot call it.
+
+Without `scope`, the call reads and writes no records. To let it use the
+database, pass a `scope`, written like a role's permissions:
+
+```ts
+const { object } = await ai.generate({
+  input: `Find the open opportunities of ${companyName} and rate their risk.`,
+  responseFormat: {
+    type: 'json',
+    schema: {
+      type: 'object',
+      properties: { risk: { type: 'string' } },
+      required: ['risk'],
+    },
+  },
+  scope: {
+    objectPermissions: [
+      { objectUniversalIdentifier: OPPORTUNITY_UID, canReadObjectRecords: true },
+    ],
+  },
+});
+```
+
+A scope only narrows: it grants nothing the caller doesn't already have.
+
+<Note>
+  `ai.generate()` requires the AI permission flag on the app's default role,
+  like `runAgent()`.
+</Note>
+
+</Accordion>
 <Accordion title="sendInboxMessage" description="Start or continue a conversation in members' chats">
 
 `sendInboxMessage()` posts a message from your app in the chats of one or more

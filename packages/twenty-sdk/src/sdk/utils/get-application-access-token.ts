@@ -7,3 +7,8 @@ import {
 export const getApplicationAccessToken = (): string | undefined =>
   process.env[DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME] ??
   process.env[DEFAULT_APP_ACCESS_TOKEN_NAME];
+
+// what the default API clients send: the person who triggered the run, within the app's role, else the app
+export const getCallerAccessToken = (): string | undefined =>
+  process.env[DEFAULT_APP_ACCESS_TOKEN_NAME] ??
+  process.env[DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME];
