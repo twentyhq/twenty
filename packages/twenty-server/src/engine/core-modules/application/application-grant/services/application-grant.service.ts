@@ -316,14 +316,16 @@ export class ApplicationGrantService {
       });
 
       if (isDefined(customizedGrantRoleManifest)) {
-        await this.applicationGrantRestrictionsService.writeInstallRestrictions({
-          workspaceId,
-          grantRoleId: await this.getGrantRoleIdOrThrow({
+        await this.applicationGrantRestrictionsService.writeInstallRestrictions(
+          {
             workspaceId,
-            applicationId,
-          }),
-          grantRoleManifest: customizedGrantRoleManifest,
-        });
+            grantRoleId: await this.getGrantRoleIdOrThrow({
+              workspaceId,
+              applicationId,
+            }),
+            grantRoleManifest: customizedGrantRoleManifest,
+          },
+        );
       }
 
       return;

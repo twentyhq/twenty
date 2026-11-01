@@ -12,6 +12,7 @@ import { getApplicationInstallCustomizePath } from '@/settings/applications/gran
 import { hasGrantRestrictions } from '@/settings/applications/grant/utils/hasGrantRestrictions';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { NavigationButton } from '@/ui/input/components/NavigationButton';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsRolePermissionsObjectLevelSection } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection';
 import { SettingsRolePermissionsObjectsSection } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection';
@@ -138,16 +139,12 @@ const SettingsApplicationInstallContent = ({
                   >{t`Reset`}</Button>
                 )}
                 {canEditRoles && (
-                  <Button
+                  <NavigationButton
                     startIcon={<IconPencil />}
                     variant="outline"
                     size="sm"
-                    onClick={() =>
-                      navigate(
-                        getApplicationInstallCustomizePath(universalIdentifier),
-                      )
-                    }
-                  >{t`Customize`}</Button>
+                    to={getApplicationInstallCustomizePath(universalIdentifier)}
+                  >{t`Customize`}</NavigationButton>
                 )}
               </StyledAccessActions>
             }

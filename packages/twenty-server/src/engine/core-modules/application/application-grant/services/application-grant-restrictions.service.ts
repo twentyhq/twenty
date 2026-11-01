@@ -135,7 +135,9 @@ export class ApplicationGrantRestrictionsService {
                 workspaceMemberFieldMetadataId: isDefined(
                   predicate.workspaceMemberFieldUniversalIdentifier,
                 )
-                  ? findFieldId(predicate.workspaceMemberFieldUniversalIdentifier)
+                  ? findFieldId(
+                      predicate.workspaceMemberFieldUniversalIdentifier,
+                    )
                   : null,
                 workspaceMemberSubFieldName:
                   predicate.workspaceMemberSubFieldName,

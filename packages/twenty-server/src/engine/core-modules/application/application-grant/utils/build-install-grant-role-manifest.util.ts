@@ -21,9 +21,13 @@ export const buildInstallGrantRoleManifest = ({
     ...requestedRoleManifest,
     ...Object.fromEntries(
       OBJECT_PERMISSION_ACTIONS.map((action) => {
-        const roleLevelFlag = ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION[action];
+        const roleLevelFlag =
+          ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION[action];
 
-        return [roleLevelFlag, customizedGrantRoleManifest[roleLevelFlag] ?? false];
+        return [
+          roleLevelFlag,
+          customizedGrantRoleManifest[roleLevelFlag] ?? false,
+        ];
       }),
     ),
     objectPermissions,
