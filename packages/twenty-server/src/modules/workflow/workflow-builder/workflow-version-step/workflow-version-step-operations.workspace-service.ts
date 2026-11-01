@@ -48,7 +48,7 @@ import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/work
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import { WorkflowAiAgentStepAgentService } from 'src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service';
-import { getWorkflowStepNameAfterRebuild } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/get-workflow-step-name-after-rebuild.util';
+import { getWorkflowStepAfterRebuild } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/get-workflow-step-after-rebuild.util';
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
 import { type BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
@@ -163,7 +163,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     }
   }
 
-  async getRebuiltStepName({
+  async getStepAfterRebuild({
     existingStep,
     builtStep,
     workspaceId,
@@ -171,7 +171,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     existingStep: WorkflowAction;
     builtStep: WorkflowAction;
     workspaceId: string;
-  }): Promise<string> {
+  }): Promise<WorkflowAction> {
     const { agent: previousAgent } =
       existingStep.type === WorkflowActionType.AI_AGENT
         ? await this.workflowAiAgentStepAgentService.findStepAgent({
@@ -180,7 +180,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           })
         : { agent: null };
 
-    return getWorkflowStepNameAfterRebuild({
+    return getWorkflowStepAfterRebuild({
       existingStep,
       builtStep,
       previousAgentLabel: previousAgent?.label,

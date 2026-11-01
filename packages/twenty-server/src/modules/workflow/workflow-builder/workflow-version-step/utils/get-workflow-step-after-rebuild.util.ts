@@ -8,20 +8,21 @@ import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/work
 // the name AI steps were created with when each ran a hidden agent
 const STEP_OWNED_AGENT_STEP_DEFAULT_NAME = 'Agent';
 
-export const getWorkflowStepNameAfterRebuild = ({
+// switching an AI step between Generate and agents keeps what the author set on the step itself
+export const getWorkflowStepAfterRebuild = ({
   existingStep,
   builtStep,
   previousAgentLabel,
 }: {
-  existingStep: Pick<WorkflowAction, 'type' | 'name'>;
-  builtStep: Pick<WorkflowAction, 'type' | 'name'>;
+  existingStep: WorkflowAction;
+  builtStep: WorkflowAction;
   previousAgentLabel: string | undefined;
-}): string => {
+}): WorkflowAction => {
   if (
     existingStep.type !== WorkflowActionType.AI_AGENT ||
     builtStep.type !== WorkflowActionType.AI_AGENT
   ) {
-    return builtStep.name;
+    return builtStep;
   }
 
   const aiAgentStepDefaultNames = [
@@ -30,7 +31,14 @@ export const getWorkflowStepNameAfterRebuild = ({
     previousAgentLabel,
   ];
 
-  return aiAgentStepDefaultNames.includes(existingStep.name)
-    ? builtStep.name
-    : existingStep.name;
+  return {
+    ...builtStep,
+    name: aiAgentStepDefaultNames.includes(existingStep.name)
+      ? builtStep.name
+      : existingStep.name,
+    settings: {
+      ...builtStep.settings,
+      errorHandlingOptions: existingStep.settings.errorHandlingOptions,
+    },
+  };
 };

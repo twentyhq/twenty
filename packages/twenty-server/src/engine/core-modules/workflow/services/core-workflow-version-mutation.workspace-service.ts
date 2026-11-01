@@ -726,12 +726,14 @@ export class CoreWorkflowVersionMutationWorkspaceService {
         },
       );
 
+    const stepAfterRebuild =
+      await this.workflowVersionStepOperationsWorkspaceService.getStepAfterRebuild(
+        { existingStep, builtStep, workspaceId },
+      );
+
     return {
       updatedStep: {
-        ...builtStep,
-        name: await this.workflowVersionStepOperationsWorkspaceService.getRebuiltStepName(
-          { existingStep, builtStep, workspaceId },
-        ),
+        ...stepAfterRebuild,
         nextStepIds: getNextStepIdsForStepTypeChange({
           existingStep,
           builtStep,

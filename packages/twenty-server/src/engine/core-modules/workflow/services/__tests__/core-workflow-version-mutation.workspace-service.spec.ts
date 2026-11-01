@@ -61,9 +61,9 @@ const buildService = async ({
         name: 'Generate',
       }),
     }),
-    getRebuiltStepName: jest
+    getStepAfterRebuild: jest
       .fn()
-      .mockImplementation(async ({ builtStep }) => builtStep.name),
+      .mockImplementation(async ({ builtStep }) => builtStep),
     runWorkflowVersionStepDeletionSideEffects: jest.fn(),
   };
 

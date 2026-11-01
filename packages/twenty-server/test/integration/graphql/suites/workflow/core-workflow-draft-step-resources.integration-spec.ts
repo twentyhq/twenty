@@ -21,6 +21,10 @@ type AiAgentStep = {
   settings: {
     input: { agentId?: string; instructions?: string; prompt?: string };
     outputSchema?: Record<string, unknown>;
+    errorHandlingOptions?: {
+      continueOnFailure: { value: boolean };
+      retryOnFailure: { value: number };
+    };
   };
 };
 
@@ -206,6 +210,94 @@ describe('AI agent step duplication and deletion (e2e)', () => {
     });
 
     expect(foundAgentData.findOneAgent.id).toBe(reusableAgentId);
+
+    await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
+    await deleteOneAgent({
+      expectToFail: false,
+      input: { id: reusableAgentId },
+    });
+  });
+});
+
+describe('AI agent step kind change (e2e)', () => {
+  it('keeps the name and error handling the author set when the step switches between Generate and an agent', async () => {
+    const { coreWorkflowId, coreWorkflowVersionId } = await createCoreWorkflow({
+      name: 'AI Step Kind Change Test',
+    });
+    const { data: agentData } = await createOneAgent({
+      expectToFail: false,
+      input: {
+        label: 'Kind Change Agent',
+        prompt: 'You qualify leads.',
+        modelId: TEST_AI_MODEL_ID,
+      },
+    });
+    const reusableAgentId = agentData.createOneAgent.id;
+    const errorHandlingOptions = {
+      continueOnFailure: { value: true },
+      retryOnFailure: { value: 3 },
+    };
+
+    const createdStep = await createCoreWorkflowVersionStep<AiAgentStep>({
+      coreWorkflowVersionId,
+      stepType: 'AI_AGENT',
+    });
+    const generateStep = {
+      ...createdStep,
+      name: 'Score the lead',
+      settings: { ...createdStep.settings, errorHandlingOptions },
+    };
+
+    await updateCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      step: generateStep,
+    });
+
+    const findStep = async () => {
+      const { steps } = await findCoreWorkflowVersion<AiAgentStep>({
+        coreWorkflowVersionId,
+      });
+
+      return steps?.find((step) => step.id === createdStep.id);
+    };
+
+    await updateCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      step: {
+        ...generateStep,
+        settings: {
+          ...generateStep.settings,
+          input: { ...generateStep.settings.input, agentId: reusableAgentId },
+        },
+      },
+    });
+
+    const agentStep = await findStep();
+
+    expect(agentStep?.settings.input.agentId).toBe(reusableAgentId);
+    expect(agentStep?.name).toBe('Score the lead');
+    expect(agentStep?.settings.errorHandlingOptions).toEqual(
+      errorHandlingOptions,
+    );
+
+    await updateCoreWorkflowVersionStep({
+      coreWorkflowVersionId,
+      step: {
+        ...agentStep,
+        settings: {
+          ...agentStep?.settings,
+          input: { prompt: agentStep?.settings.input.prompt },
+        },
+      },
+    });
+
+    const switchedBackStep = await findStep();
+
+    expect(switchedBackStep?.settings.input).not.toHaveProperty('agentId');
+    expect(switchedBackStep?.name).toBe('Score the lead');
+    expect(switchedBackStep?.settings.errorHandlingOptions).toEqual(
+      errorHandlingOptions,
+    );
 
     await deleteCoreWorkflows({ coreWorkflowIds: [coreWorkflowId] });
     await deleteOneAgent({
