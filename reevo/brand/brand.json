@@ -1,0 +1,17 @@
+{
+  "_status": "placeholder",
+  "_note": "Working name until the brand is chosen (ReevoCrm vault, Open Questions Q6). Change values here only. A null value leaves the upstream text in place and is reported as pending.",
+  "name": "ReevoCrm",
+  "shortName": "ReevoCrm",
+  "description": "CRM for Malaysian and Singaporean SMEs",
+  "legalName": "ReevoCrm",
+  "locationLine": "Kuala Lumpur / Singapore",
+  "sourceUrl": "https://github.com/ReevoMY/twenty",
+  "websiteUrl": null,
+  "userGuideUrl": null,
+  "docsUrl": null,
+  "appUrl": null,
+  "emailLogoUrl": null,
+  "defaultWorkspaceLogoUrl": null,
+  "socialImageUrl": null
+}
