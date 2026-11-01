@@ -356,6 +356,7 @@ export interface Application {
     objects: Object[]
     packageJsonChecksum?: Scalars['String']
     packageJsonFileId?: Scalars['UUID']
+    runOnUserPreferences: Scalars['Boolean']
     settingsCustomTabFrontComponentId?: Scalars['UUID']
     settingsMenuItems?: SettingsMenuItem[]
     universalIdentifier: Scalars['String']
@@ -574,6 +575,7 @@ export interface ApplicationMonitoringVersion {
 export interface ApplicationPreferences {
     applicationId: Scalars['UUID']
     connectionProviders: ApplicationConnectionProvider[]
+    hasUserHealthCheck: Scalars['Boolean']
     settingsMenuItems: SettingsMenuItem[]
     variables: UserApplicationVariableValue[]
     __typename: 'ApplicationPreferences'
@@ -2419,6 +2421,7 @@ export interface Mutation {
     rotateApplicationRegistrationClientSecret: RotateClientSecret
     runAgent: RunAgentResult
     runApplicationHealthCheck?: ApplicationHealthCheckResult
+    runMyApplicationHealthCheck?: ApplicationHealthCheckResult
     saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess
     sendAppChannelMessage: SendAppChannelMessageOutput
     sendChatMessage: SendChatMessageResult
@@ -4602,6 +4605,7 @@ export interface ApplicationGenqlSelection{
     objects?: ObjectGenqlSelection
     packageJsonChecksum?: boolean | number
     packageJsonFileId?: boolean | number
+    runOnUserPreferences?: boolean | number
     settingsCustomTabFrontComponentId?: boolean | number
     settingsMenuItems?: SettingsMenuItemGenqlSelection
     universalIdentifier?: boolean | number
@@ -4840,6 +4844,7 @@ export interface ApplicationMonitoringVersionGenqlSelection{
 export interface ApplicationPreferencesGenqlSelection{
     applicationId?: boolean | number
     connectionProviders?: ApplicationConnectionProviderGenqlSelection
+    hasUserHealthCheck?: boolean | number
     settingsMenuItems?: SettingsMenuItemGenqlSelection
     variables?: UserApplicationVariableValueGenqlSelection
     __typename?: boolean | number
@@ -6943,6 +6948,7 @@ export interface MutationGenqlSelection{
     rotateApplicationRegistrationClientSecret?: (RotateClientSecretGenqlSelection & { __args: {id: Scalars['String']} })
     runAgent?: (RunAgentResultGenqlSelection & { __args: {input: RunAgentInput} })
     runApplicationHealthCheck?: (ApplicationHealthCheckResultGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
+    runMyApplicationHealthCheck?: (ApplicationHealthCheckResultGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     saveImapSmtpCaldavAccount?: (ImapSmtpCaldavConnectionSuccessGenqlSelection & { __args: {connectionParameters: EmailAccountConnectionParameters, handle: Scalars['String'], id?: (Scalars['UUID'] | null)} })
     sendAppChannelMessage?: (SendAppChannelMessageOutputGenqlSelection & { __args: {input: SendAppChannelMessageInput} })
     sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {browsingContext?: (Scalars['JSON'] | null), channelId?: (Scalars['UUID'] | null), fileAttachments?: (FileAttachmentInput[] | null), mentionedWorkspaceMemberIds?: (Scalars['UUID'][] | null), messageId: Scalars['UUID'], modelId?: (Scalars['String'] | null), shouldAssistantReply?: (Scalars['Boolean'] | null), text: Scalars['String'], threadId: Scalars['UUID']} })

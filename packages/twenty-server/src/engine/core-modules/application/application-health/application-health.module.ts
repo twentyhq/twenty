@@ -7,6 +7,7 @@ import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { ApplicationLookupModule } from 'src/engine/core-modules/application/application-lookup/application-lookup.module';
 import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
+import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 
 @Module({
   imports: [
@@ -14,8 +15,10 @@ import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/app
     ApplicationRegistrationLookupModule,
     ApplicationModule,
     PermissionsModule,
+    ThrottlerModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
   providers: [ApplicationHealthCheckService, ApplicationHealthResolver],
+  exports: [ApplicationHealthCheckService],
 })
 export class ApplicationHealthModule {}
