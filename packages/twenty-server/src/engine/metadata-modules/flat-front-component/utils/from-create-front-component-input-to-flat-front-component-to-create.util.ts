@@ -3,14 +3,14 @@ import { v4 } from 'uuid';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
-import { type CreateFrontComponentInput } from 'src/engine/metadata-modules/front-component/dtos/create-front-component.input';
+import { type CreateFrontComponentArgs } from 'src/engine/metadata-modules/front-component/types/create-front-component-args.type';
 
 export const fromCreateFrontComponentInputToFlatFrontComponentToCreate = ({
   createFrontComponentInput,
   workspaceId,
   flatApplication,
 }: {
-  createFrontComponentInput: CreateFrontComponentInput;
+  createFrontComponentInput: CreateFrontComponentArgs;
   workspaceId: string;
   flatApplication: FlatApplication;
 }): FlatFrontComponent => {
@@ -35,8 +35,9 @@ export const fromCreateFrontComponentInputToFlatFrontComponentToCreate = ({
     builtComponentChecksum: createFrontComponentInput.builtComponentChecksum,
     isHeadless: createFrontComponentInput.isHeadless ?? false,
     widgetAvailability: [],
-    universalWidgetAvailability: [],
-    usesSdkClient: false,
+    universalWidgetAvailability:
+      createFrontComponentInput.universalWidgetAvailability ?? [],
+    usesSdkClient: createFrontComponentInput.usesSdkClient ?? false,
     workspaceId,
     createdAt: now,
     updatedAt: now,

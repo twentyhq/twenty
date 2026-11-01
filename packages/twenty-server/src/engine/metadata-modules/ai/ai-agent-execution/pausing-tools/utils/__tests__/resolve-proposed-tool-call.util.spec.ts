@@ -1,3 +1,4 @@
+import { PUBLISH_FRONT_COMPONENT_TOOL } from 'src/engine/metadata-modules/ai/ai-front-component/constants/publish-front-component-tool.constant';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
 
@@ -63,6 +64,36 @@ const foundRecord = (record: Record<string, unknown>) =>
   });
 
 describe('resolveProposedToolCall', () => {
+  it('takes the component publication editing policy from the registered tool', async () => {
+    const tool: ToolIndexEntry = {
+      ...PUBLISH_FRONT_COMPONENT_TOOL,
+      label: 'Save component',
+      description: '',
+      category: 'ACTION' as ToolIndexEntry['category'],
+      executionRef: {
+        kind: 'static',
+        toolId: PUBLISH_FRONT_COMPONENT_TOOL.name,
+      },
+    };
+    const resolution = await resolveProposedToolCall({
+      input: {
+        toolName: tool.name,
+        arguments: { draftId: RECORD_ID, checksum: 'reviewed-checksum' },
+        summary: 'Save the reviewed component',
+      },
+      findTool: async () => tool,
+      executeTool: jest.fn(),
+    });
+
+    expect(resolution).toMatchObject({
+      proposal: {
+        toolName: tool.name,
+        areArgumentsEditable: false,
+        arguments: { draftId: RECORD_ID, checksum: 'reviewed-checksum' },
+      },
+    });
+  });
+
   it('refuses a tool the proposer cannot call', async () => {
     expect(
       await resolveProposedToolCall({

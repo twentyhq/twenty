@@ -1,4 +1,8 @@
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { Module } from '@nestjs/common';
+import { FrontComponentModule } from 'src/engine/metadata-modules/front-component/front-component.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -15,6 +19,8 @@ import { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front
 @Module({
   imports: [
     TypeORMModule,
+    TypeOrmModule.forFeature([FrontComponentEntity]),
+    FrontComponentModule,
     ApplicationModule,
     ApplicationPackageModule,
     CacheLockModule,
@@ -24,6 +30,7 @@ import { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front
   ],
   controllers: [AiFrontComponentController],
   providers: [
+    provideWorkspaceScopedRepository(FrontComponentEntity),
     AiFrontComponentService,
     FrontComponentCompilerService,
     WorkspaceFrontComponentDependenciesService,
