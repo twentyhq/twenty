@@ -238,9 +238,13 @@ export class AgentRunSuspensionService {
         return;
       }
     } catch (error) {
+      const threadLabel = isDefined(delivery.threadId)
+        ? ` in thread ${delivery.threadId}`
+        : '';
+
       // the run already ended, so a failed delivery is tried again rather than lost with the job
       this.logger.warn(
-        `Could not deliver the outcome of the run in thread ${delivery.threadId} of workspace ${workspaceId}: ${formatErrorWithCause(error)}`,
+        `Could not deliver the outcome of the run${threadLabel} of workspace ${workspaceId}: ${formatErrorWithCause(error)}`,
       );
     }
 
