@@ -1,16 +1,14 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useCallback, useEffect, useState } from 'react';
-import {
-  fetchComponentSource,
-  FrontComponentSourceRenderer,
-} from 'twenty-front-component-renderer';
+import { useCallback, useState } from 'react';
+import { FrontComponentSourceRenderer } from 'twenty-front-component-renderer';
+import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
 import { PageLayoutType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Badge } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables, useThemeColorScheme } from 'twenty-ui/theme';
 
-import { getFingerprintedRestUrl } from '@/front-components/utils/getFingerprintedRestUrl';
+import { useAiChatFrontComponentPreview } from '@/ai/hooks/useAiChatFrontComponentPreview';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { REST_API_BASE_URL } from '@/apollo/constants/RestApiBaseUrl';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
@@ -29,16 +27,6 @@ const StyledContent = styled.div`
   height: 360px;
   width: 100%;
 `;
-
-type FrontComponentPreview = {
-  pageLayoutType: PageLayoutType.DASHBOARD | PageLayoutType.RECORD_PAGE;
-  isCurrent: boolean;
-  publishedComponentId?: string;
-  componentSource: string;
-  applicationId: string;
-  sharedDependenciesChecksum?: string | null;
-  mockQueryResult: Record<string, unknown>;
-};
 
 type AiChatFrontComponentPreviewProps = {
   draftId: string;
@@ -63,10 +51,10 @@ const AiChatFrontComponentPreviewContent = ({
 }: AiChatFrontComponentPreviewContentProps) => {
   const { t } = useLingui();
   const colorScheme = useThemeColorScheme();
-  const [preview, setPreview] = useState<
-    FrontComponentPreview & { sharedDependenciesSource: string }
-  >();
-  const [error, setError] = useState<string>();
+  const { preview, error: loadingError } =
+    useAiChatFrontComponentPreview(draftId);
+  const [runtimeError, setRuntimeError] = useState<string>();
+  const error = runtimeError ?? loadingError;
   const [isReady, setIsReady] = useState(false);
   const endpoint = `${REST_API_BASE_URL}/ai-front-components/drafts/${encodeURIComponent(draftId)}`;
   const handleReady = useCallback(() => setIsReady(true), []);
@@ -77,58 +65,19 @@ const AiChatFrontComponentPreviewContent = ({
       }
       const message = failure.message.slice(0, 2000);
 
-      setError(message);
+      setRuntimeError(message);
       void fetch(`${endpoint}/preview-error`, {
         method: 'POST',
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          [SESSION_COOKIE_OPT_IN_HEADER_NAME]: '1',
+        },
         body: JSON.stringify({ message }),
       }).catch(() => undefined);
     },
     [endpoint],
   );
-
-  useEffect(() => {
-    const abortController = new AbortController();
-    const loadPreview = async () => {
-      const requestOptions: RequestInit = {
-        credentials: 'include',
-        signal: abortController.signal,
-      };
-      const response = await fetch(endpoint, requestOptions);
-
-      if (!response.ok) {
-        throw new Error(
-          t`Preview unavailable. It may have expired or you may no longer have access.`,
-        );
-      }
-      const result: FrontComponentPreview = await response.json();
-      const sharedDependenciesSource = await fetchComponentSource({
-        url: getFingerprintedRestUrl({
-          resource: 'front-component-shared-dependencies',
-          id: result.applicationId,
-          checksum: result.sharedDependenciesChecksum ?? undefined,
-        }),
-        credentials: 'include',
-      });
-
-      if (!abortController.signal.aborted) {
-        setPreview({ ...result, sharedDependenciesSource });
-      }
-    };
-
-    void loadPreview().catch((failure: unknown) => {
-      if (!abortController.signal.aborted) {
-        setError(
-          failure instanceof Error
-            ? failure.message
-            : t`Could not load preview.`,
-        );
-      }
-    });
-
-    return () => abortController.abort();
-  }, [endpoint, t]);
 
   return (
     <StyledPreview>
@@ -150,7 +99,10 @@ const AiChatFrontComponentPreviewContent = ({
           {isDefined(preview.publishedComponentId) && (
             <span>{t`Saved to Workspace app`}</span>
           )}
-          <StyledContent aria-label={t`Component preview with sample data`}>
+          <StyledContent
+            role="region"
+            aria-label={t`Component preview with sample data`}
+          >
             <FrontComponentSourceRenderer
               componentId={draftId}
               componentSource={preview.componentSource}

@@ -40,6 +40,11 @@ jest.mock('@/ai/components/AiChatFrontComponentToolPreview', () => ({
   AiChatFrontComponentToolPreview: () => <div>Component preview</div>,
 }));
 
+let mockIsFrontComponentPreviewEnabled = true;
+jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
+  useIsFeatureEnabled: () => mockIsFrontComponentPreviewEnabled,
+}));
+
 const APP_FRONT_COMPONENT_ID = '20202020-0000-4000-8000-000000000001';
 
 const mockUseFrontComponentIdByToolName = jest.fn(
@@ -98,7 +103,32 @@ describe('AiChatAssistantMessageRenderer', () => {
     },
   );
 
+  it.each(['preview_front_component', 'execute_tool'])(
+    'keeps completed %s calls visible when previews are disabled',
+    (toolName) => {
+      mockIsFrontComponentPreviewEnabled = false;
+      const messageParts: ExtendedUIMessagePart[] = [
+        {
+          type: `tool-${toolName}`,
+          toolCallId: 'preview-call',
+          state: 'output-available',
+          input:
+            toolName === 'execute_tool'
+              ? { toolName: 'preview_front_component', arguments: {} }
+              : {},
+          output: { success: true, result: { draftId: 'draft' } },
+        },
+      ];
+      renderAssistantRenderer(messageParts);
+      expect(screen.queryByText('Component preview')).not.toBeInTheDocument();
+      expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
+        'thinking-1',
+      );
+    },
+  );
+
   beforeEach(() => {
+    mockIsFrontComponentPreviewEnabled = true;
     mockUseFrontComponentIdByToolName.mockReturnValue(new Map());
   });
 

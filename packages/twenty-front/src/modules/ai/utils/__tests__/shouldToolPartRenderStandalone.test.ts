@@ -20,11 +20,12 @@ describe('shouldToolPartRenderStandalone', () => {
       state: 'input-streaming',
       input: {},
     };
-    expect(shouldToolPartRenderStandalone(part, undefined)).toBe(false);
+    expect(shouldToolPartRenderStandalone(part, undefined, true)).toBe(false);
     expect(
       shouldToolPartRenderStandalone(
         { ...part, state: 'input-available', input: {} },
         undefined,
+        true,
       ),
     ).toBe(true);
   });

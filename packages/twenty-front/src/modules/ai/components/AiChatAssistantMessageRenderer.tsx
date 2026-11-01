@@ -9,6 +9,8 @@ import { AiChatQuestionStatusRenderer } from '@/ai/components/AiChatQuestionStat
 import { AiChatToolCallApprovalStatusRenderer } from '@/ai/components/AiChatToolCallApprovalStatusRenderer';
 import { AiChatToolWidget } from '@/ai/components/AiChatToolWidget';
 import { LazyMarkdownContent } from '@/ai/components/LazyMarkdownRenderer';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { useFrontComponentIdByToolName } from '@/ai/hooks/useFrontComponentIdByToolName';
 import { getEffectiveToolName } from '@/ai/utils/getEffectiveToolName';
 import { shouldToolPartRenderStandalone } from '@/ai/utils/shouldToolPartRenderStandalone';
@@ -144,6 +146,9 @@ export const AiChatAssistantMessageRenderer = ({
   workDurationMs?: number | null;
 }) => {
   const frontComponentIdByToolName = useFrontComponentIdByToolName();
+  const isFrontComponentPreviewEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_COMPONENT_BUILDER_ENABLED,
+  );
 
   const hasCodeExecutionData = messageParts.some(
     (part) => part.type === 'data-code-execution',
@@ -170,6 +175,7 @@ export const AiChatAssistantMessageRenderer = ({
       shouldToolPartRenderStandalone(
         part,
         frontComponentIdByToolName.get(getEffectiveToolName(part)),
+        isFrontComponentPreviewEnabled,
       ),
   );
   const renderItemsWithoutThinkingSteps = groupedRenderItems.filter(

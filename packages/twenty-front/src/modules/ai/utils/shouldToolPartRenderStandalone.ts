@@ -7,7 +7,9 @@ import { isDefined } from 'twenty-shared/utils';
 export const shouldToolPartRenderStandalone = (
   toolPart: ToolUIPart | DynamicToolUIPart,
   frontComponentId: string | undefined,
+  isFrontComponentPreviewEnabled = false,
 ): boolean =>
   (isDefined(frontComponentId) ||
-    getEffectiveToolName(toolPart) === 'preview_front_component') &&
+    (isFrontComponentPreviewEnabled &&
+      getEffectiveToolName(toolPart) === 'preview_front_component')) &&
   toolPart.state !== 'input-streaming';

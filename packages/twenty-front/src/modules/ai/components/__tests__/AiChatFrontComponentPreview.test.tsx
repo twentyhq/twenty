@@ -3,8 +3,11 @@ import { I18nProvider } from '@lingui/react';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { type ComponentProps } from 'react';
 import { type FrontComponentSourceRenderer } from 'twenty-front-component-renderer';
+import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
 
 import { AiChatFrontComponentPreview } from '@/ai/components/AiChatFrontComponentPreview';
+import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
+import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 
 let mockIsEnabled = true;
 jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
@@ -59,6 +62,11 @@ describe('AI front component preview', () => {
     await screen.findByText('Rendered component draft');
     expect(screen.getByText('Sample data')).toBeInTheDocument();
     expect(screen.getByText('Dashboard widget')).toBeInTheDocument();
+    expect(
+      screen.getByRole('region', {
+        name: 'Component preview with sample data',
+      }),
+    ).toBeInTheDocument();
     expect(mockRendererProps).toMatchObject({
       componentSource: PREVIEW.componentSource,
       mockQueryResult: PREVIEW.mockQueryResult,
@@ -68,13 +76,17 @@ describe('AI front component preview', () => {
     expect(mockFetch).toHaveBeenNthCalledWith(
       1,
       expect.stringContaining('/ai-front-components/drafts/draft'),
-      expect.objectContaining({ credentials: 'include' }),
+      expect.objectContaining({
+        credentials: 'include',
+        headers: { [SESSION_COOKIE_OPT_IN_HEADER_NAME]: '1' },
+      }),
     );
     expect(mockFetchComponentSource).toHaveBeenCalledWith({
       url: expect.stringContaining(
         '/front-component-shared-dependencies/workspace-app/current-checksum.js',
       ),
       credentials: 'include',
+      headers: { [SESSION_COOKIE_OPT_IN_HEADER_NAME]: '1' },
     });
     act(() => mockRendererProps.onReady?.());
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
@@ -98,6 +110,106 @@ describe('AI front component preview', () => {
     expect(screen.getByText('Rendered component draft')).toBeInTheDocument();
   });
 
+  it.each([
+    [
+      { isCurrent: false },
+      'A newer revision exists. Open the latest preview to save.',
+    ],
+    [{ publishedComponentId: 'saved-component' }, 'Saved to Workspace app'],
+  ])(
+    'refreshes draft status without reloading the preview: %s',
+    async (status, label) => {
+      render(previewElement());
+      await screen.findByText('Rendered component draft');
+      act(() => mockRendererProps.onReady?.());
+      const initialRendererProps = mockRendererProps;
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({
+          ...PREVIEW,
+          ...status,
+          componentSource: 'changed source',
+          mockQueryResult: {},
+        }),
+      });
+
+      act(() => dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME));
+
+      expect(await screen.findByText(label)).toBeInTheDocument();
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+      expect(mockFetchComponentSource).toHaveBeenCalledTimes(1);
+      expect(mockRendererProps.componentSource).toBe(
+        initialRendererProps.componentSource,
+      );
+      expect(mockRendererProps.mockQueryResult).toBe(
+        initialRendererProps.mockQueryResult,
+      );
+      expect(mockRendererProps.sharedDependenciesSource).toBe(
+        initialRendererProps.sharedDependenciesSource,
+      );
+      expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    },
+  );
+
+  it('refreshes an update received while the preview is still loading', async () => {
+    let resolveDependencies: (source: string) => void = () => undefined;
+    mockFetchComponentSource.mockReturnValueOnce(
+      new Promise<string>((resolve) => {
+        resolveDependencies = resolve;
+      }),
+    );
+    render(previewElement());
+    await waitFor(() =>
+      expect(mockFetchComponentSource).toHaveBeenCalledTimes(1),
+    );
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        ...PREVIEW,
+        publishedComponentId: 'saved-component',
+      }),
+    });
+
+    act(() => dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME));
+    await act(async () => resolveDependencies(SHARED_DEPENDENCIES));
+
+    expect(
+      await screen.findByText('Saved to Workspace app'),
+    ).toBeInTheDocument();
+    expect(mockFetch).toHaveBeenCalledTimes(2);
+    expect(mockFetchComponentSource).toHaveBeenCalledTimes(1);
+  });
+
+  it('ignores an older status response after a later chat update', async () => {
+    render(previewElement());
+    await screen.findByText('Rendered component draft');
+    let resolveOldStatus: (
+      response: Pick<Response, 'ok' | 'json'>,
+    ) => void = () => undefined;
+    mockFetch.mockReturnValueOnce(
+      new Promise<Pick<Response, 'ok' | 'json'>>((resolve) => {
+        resolveOldStatus = resolve;
+      }),
+    );
+    act(() => dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME));
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        ...PREVIEW,
+        publishedComponentId: 'saved-component',
+      }),
+    });
+    act(() => dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME));
+    await screen.findByText('Saved to Workspace app');
+
+    await act(async () =>
+      resolveOldStatus({ ok: true, json: async () => PREVIEW }),
+    );
+
+    expect(screen.getByText('Saved to Workspace app')).toBeInTheDocument();
+    expect(mockFetchComponentSource).toHaveBeenCalledTimes(1);
+  });
+
   it('shows runtime errors and reports a bounded message for the next agent turn', async () => {
     render(previewElement());
     await screen.findByText('Rendered component draft');
@@ -111,6 +223,10 @@ describe('AI front component preview', () => {
       expect.objectContaining({
         method: 'POST',
         credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json',
+          [SESSION_COOKIE_OPT_IN_HEADER_NAME]: '1',
+        },
         body: JSON.stringify({ message: message.slice(0, 2000) }),
       }),
     );
