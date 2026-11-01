@@ -122,17 +122,29 @@ describe('streamConversation', () => {
     );
   });
 
-  it('fails on a chat event that lacks the fields of its type', async () => {
-    fetchSpy.mockResolvedValue(
-      mockServerSentEvents([
-        `event: next\ndata: ${JSON.stringify({ data: { onAgentChatEvent: { event: { type: 'stream-chunk' } } } })}\n\n`,
-      ]),
-    );
+  it.each([
+    { type: 'stream-chunk' },
+    { type: 'stream-chunk', chunk: { type: 'text-delta' }, seq: null },
+    {
+      type: 'message-reactions-updated',
+      messageId: 'message-id',
+      reactions: [{ emoji: '👍' }],
+      revision: 1,
+    },
+  ])(
+    'fails on a chat event that lacks the fields of its type: %j',
+    async (event) => {
+      fetchSpy.mockResolvedValue(
+        mockServerSentEvents([
+          `event: next\ndata: ${JSON.stringify({ data: { onAgentChatEvent: { event } } })}\n\n`,
+        ]),
+      );
 
-    await expect(collect(streamConversation(CONVERSATION))).rejects.toThrow(
-      'streamConversation() failed: unexpected result',
-    );
-  });
+      await expect(collect(streamConversation(CONVERSATION))).rejects.toThrow(
+        'streamConversation() failed: unexpected result',
+      );
+    },
+  );
 
   it('skips an event type it does not know yet', async () => {
     fetchSpy.mockResolvedValue(

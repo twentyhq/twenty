@@ -91,6 +91,7 @@ export class AgentChatSubscriptionResolver {
         workspaceId: workspace.id,
         threadId,
         workspaceMemberId,
+        applicationId: callerApplication?.id,
       });
 
     const iterator = filterMapAsyncIterator(

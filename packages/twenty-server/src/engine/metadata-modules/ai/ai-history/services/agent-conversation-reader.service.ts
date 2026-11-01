@@ -71,7 +71,7 @@ export class AgentConversationReaderService {
     );
   }
 
-  // what its run answered with, as the text of the reply's last step
+  // a run's text result is its last step's text, not the whole reply
   async findReplyText({
     workspaceId,
     turnId,

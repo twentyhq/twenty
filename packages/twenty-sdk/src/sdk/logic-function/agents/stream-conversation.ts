@@ -33,18 +33,37 @@ type ServerSentEvent =
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   isObject(value);
 
+const toErrorMessages = (errors: unknown[]): string[] =>
+  errors.map((error) =>
+    isRecord(error) && isString(error.message)
+      ? error.message
+      : JSON.stringify(error),
+  );
+
+const isReactionSummary = (reaction: unknown): boolean =>
+  isRecord(reaction) &&
+  isString(reaction.emoji) &&
+  isArray(reaction.workspaceMemberIds) &&
+  reaction.workspaceMemberIds.every(isString) &&
+  isArray(reaction.agentIds) &&
+  reaction.agentIds.every(isString) &&
+  isBoolean(reaction.hasAssistantReacted);
+
 const HAS_EVENT_FIELDS: Record<
   AgentChatSubscriptionEvent['type'],
   (event: Record<string, unknown>) => boolean
 > = {
   'stream-chunk': ({ chunk, seq }) =>
-    isRecord(chunk) && (!isDefined(seq) || isNumber(seq)),
+    isRecord(chunk) && (seq === undefined || isNumber(seq)),
   'message-persisted': ({ messageId }) => isString(messageId),
   'message-added': ({ messageId }) => isString(messageId),
   'queue-updated': () => true,
   'tool-call-resolved': ({ toolCallId }) => isString(toolCallId),
   'message-reactions-updated': ({ messageId, reactions, revision }) =>
-    isString(messageId) && isArray(reactions) && isNumber(revision),
+    isString(messageId) &&
+    isArray(reactions) &&
+    reactions.every(isReactionSummary) &&
+    isNumber(revision),
   'stream-error': ({ code, message }) => isString(code) && isString(message),
   'credits-exhausted': () => true,
   'user-credits-exhausted': ({
@@ -95,14 +114,7 @@ const parseServerSentEvent = (block: string): ServerSentEvent => {
 
   // isNonEmptyArray would inline twenty-shared's utils chunk into every logic function
   if (isArray(result.errors)) {
-    return {
-      type: 'errors',
-      messages: result.errors.map((error) =>
-        isRecord(error) && isString(error.message)
-          ? error.message
-          : JSON.stringify(error),
-      ),
-    };
+    return { type: 'errors', messages: toErrorMessages(result.errors) };
   }
 
   const event =
@@ -130,13 +142,7 @@ const readFailedResponseMessage = async (response: Response) => {
   const body: unknown = await response.json().catch(() => undefined);
 
   if (isRecord(body) && isArray(body.errors)) {
-    return body.errors
-      .map((error) =>
-        isRecord(error) && isString(error.message)
-          ? error.message
-          : JSON.stringify(error),
-      )
-      .join(', ');
+    return toErrorMessages(body.errors).join(', ');
   }
 
   return `HTTP ${response.status} ${response.statusText}`;

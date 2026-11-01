@@ -284,10 +284,12 @@ export class AgentChatService {
   async getMessagesVisibleTo({
     threadId,
     workspaceMemberId,
+    applicationId,
     workspaceId,
   }: {
     threadId: string;
     workspaceMemberId: string | undefined;
+    applicationId?: string;
     workspaceId: string;
   }) {
     // contexts are given to the model, never shown
@@ -306,7 +308,11 @@ export class AgentChatService {
     const turnIdsOpenedByOtherMembers = new Set(
       turns
         .filter(({ createdBy }) =>
-          isAgentTurnOpenedByOtherMember({ createdBy, workspaceMemberId }),
+          isAgentTurnOpenedByOtherMember({
+            createdBy,
+            workspaceMemberId,
+            applicationId,
+          }),
         )
         .map(({ id }) => id),
     );

@@ -77,6 +77,7 @@ export class AgentChatHistoryResolver {
     const messages = await this.agentChatService.getMessagesVisibleTo({
       threadId,
       workspaceMemberId,
+      applicationId: callerApplication?.id,
       workspaceId,
     });
     const [{ flatWorkspaceMemberMaps }, reactionsByMessageId] =
@@ -146,6 +147,7 @@ export class AgentChatHistoryResolver {
         workspaceId,
         threadId,
         workspaceMemberId,
+        applicationId: callerApplication?.id,
         chunks,
       }),
       maxSeq,
