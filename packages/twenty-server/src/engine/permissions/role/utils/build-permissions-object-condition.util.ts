@@ -3,7 +3,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  type PermissionsRowAccessSqlRequest,
+  type PermissionsRowAccessRequest,
   type SqlCondition,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { buildRecordPrivacyCondition } from 'src/engine/permissions/private-record/utils/build-record-privacy-condition.util';
@@ -12,7 +12,7 @@ import { isRolePermittingOperation } from 'src/engine/permissions/role/utils/is-
 import { resolvePermissionsRowLevelPermissionFilter } from 'src/engine/permissions/rls/utils/resolve-permissions-row-level-permission-filter.util';
 
 export const buildPermissionsObjectCondition = (
-  request: PermissionsRowAccessSqlRequest,
+  request: PermissionsRowAccessRequest & { tableAlias: string },
 ): SqlCondition | boolean => {
   if (
     !isRolePermittingOperation(request) ||

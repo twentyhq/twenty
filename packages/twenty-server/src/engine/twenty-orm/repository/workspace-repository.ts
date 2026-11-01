@@ -24,6 +24,7 @@ import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/ut
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isRecordStockTrackedObject } from 'src/engine/core-modules/usage-limit/utils/is-record-stock-tracked-object.util';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import {
   PermissionsException,
@@ -48,7 +49,7 @@ import { buildPermissionsCondition } from 'src/engine/permissions/combine/utils/
 import { combineSqlConditions } from 'src/engine/permissions/combine/utils/combine-sql-conditions.util';
 import { type RecordShareGrant } from 'src/engine/permissions/record-share/types/record-share-grant.type';
 import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
-import { isOperationGrantedBeyondRole } from 'src/engine/permissions/record-share/utils/is-operation-granted-beyond-role.util';
+import { resolvePermissionsObjectAccessScope } from 'src/engine/permissions/combine/utils/resolve-permissions-object-access-scope.util';
 import { isObjectOperationDisabled } from 'src/engine/permissions/role/utils/is-object-operation-disabled.util';
 import { isObjectOperationPermitted } from 'src/engine/permissions/role/utils/is-object-operation-permitted.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
@@ -1717,6 +1718,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       );
     }
 
+    this.assertObjectOperationIsAccessibleOrThrow({
+      flatObjectMetadata: this.options.flatObjectMetadata,
+      operationType,
+    });
+
     validateOperationIsPermittedOrThrow({
       entityName: this.options.tableShape.nameSingular,
       operationType,
@@ -1728,7 +1734,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         this.options.internalContext.objectIdByNameSingular,
       selectedColumns: columnsToReturn,
       updatedColumns,
-      featureFlagsMap: this.options.internalContext.featureFlagsMap,
     });
   }
 
@@ -1921,17 +1926,29 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     const columnNamesByAlias = queryBuilder.getReferencedColumnNamesByAlias();
 
     for (const [alias, columnNames] of Object.entries(columnNamesByAlias)) {
-      const nameSingular =
+      const tableShape =
         alias === queryBuilder.alias
-          ? this.options.tableShape.nameSingular
-          : queryBuilder.getJoinedTableShape(alias)?.nameSingular;
+          ? this.options.tableShape
+          : queryBuilder.getJoinedTableShape(alias);
 
-      if (!isDefined(nameSingular)) {
+      if (!isDefined(tableShape)) {
         continue;
       }
 
+      const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityId: tableShape.objectMetadataId,
+        flatEntityMaps: this.options.internalContext.flatObjectMetadataMaps,
+      });
+
+      if (isDefined(flatObjectMetadata)) {
+        this.assertObjectOperationIsAccessibleOrThrow({
+          flatObjectMetadata,
+          operationType: 'select',
+        });
+      }
+
       validateOperationIsPermittedOrThrow({
-        entityName: nameSingular,
+        entityName: tableShape.nameSingular,
         operationType: 'select',
         objectsPermissions: this.options.objectRecordsPermissions,
         flatObjectMetadataMaps:
@@ -1940,7 +1957,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
           this.options.internalContext.flatFieldMetadataMaps,
         objectIdByNameSingular:
           this.options.internalContext.objectIdByNameSingular,
-        featureFlagsMap: this.options.internalContext.featureFlagsMap,
         selectedColumns: columnNames,
         updatedColumns: [],
       });
@@ -2031,19 +2047,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     flatObjectMetadata: FlatObjectMetadata;
     operationType: OperationType;
   }): SqlCondition | boolean {
-    if (
-      isMainAlias &&
-      !this.isObjectOperationPermitted({ flatObjectMetadata, operationType }) &&
-      !isOperationGrantedBeyondRole({
+    if (isMainAlias) {
+      this.assertObjectOperationIsAccessibleOrThrow({
         flatObjectMetadata,
-        featureFlagsMap: this.options.internalContext.featureFlagsMap,
         operationType,
-      })
-    ) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-      );
+      });
     }
 
     return buildPermissionsCondition({
@@ -2318,6 +2326,28 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       operationType,
       objectsPermissions: this.options.objectRecordsPermissions,
     });
+  }
+
+  private assertObjectOperationIsAccessibleOrThrow({
+    flatObjectMetadata,
+    operationType,
+  }: {
+    flatObjectMetadata: FlatObjectMetadata;
+    operationType: OperationType;
+  }): void {
+    const scope = resolvePermissionsObjectAccessScope({
+      subject: this.resolveRowAccessPolicySubject(),
+      environment: this.resolveRowAccessPolicyEnvironment(),
+      flatObjectMetadata,
+      operationType,
+    });
+
+    if (scope === 'none') {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
   }
 
   isReadDisabled(): boolean {
