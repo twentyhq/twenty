@@ -5,10 +5,11 @@ import {
   getApplicationRuntimeRoleId,
   isApplicationGrantExempt,
 } from 'src/engine/core-modules/application/application-grant/utils/get-application-runtime-role-id.util';
+import { isOAuthOnlyApplication } from 'src/engine/core-modules/application/utils/is-oauth-only-application.util';
 import { type RoleIdsBySource } from 'src/engine/twenty-orm/types/role-permission-config.type';
 
-// Temporary: an exempt application (Twenty standard, workspace custom) without a role adds no
-// restriction when it acts with a member or an agent. A confined application without a grant has no access.
+// Temporary: an exempt application (Twenty standard, workspace custom) without a role and an OAuth client
+// add no restriction when they act with a member or an agent. A confined application without a grant has no access.
 export const resolveApplicationRoleId = ({
   application,
   isMissingApplicationRoleTolerated,
@@ -27,7 +28,8 @@ export const resolveApplicationRoleId = ({
   }
 
   return isMissingApplicationRoleTolerated &&
-    isApplicationGrantExempt(application)
+    (isApplicationGrantExempt(application) ||
+      isOAuthOnlyApplication(application))
     ? {}
     : { applicationRoleId: null };
 };

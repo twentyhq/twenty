@@ -1,3 +1,4 @@
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { resolveRoleIdsFromAuthContext } from 'src/engine/twenty-orm/utils/resolve-role-ids-from-auth-context.util';
 
@@ -9,6 +10,14 @@ const API_KEY_ROLE_ID = 'api-key-role-1';
 
 const userWorkspaceRoleMap = { [USER_WORKSPACE_ID]: USER_ROLE_ID };
 const apiKeyRoleMap = { [API_KEY_ID]: API_KEY_ROLE_ID };
+
+const OAUTH_CLIENT = {
+  sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+  defaultRoleId: null,
+  runtimeRoleId: null,
+  isGrantExempt: false,
+  approvedRoleRequest: null,
+};
 
 const buildUserContext = (application?: {
   defaultRoleId: string | null;
@@ -97,6 +106,20 @@ describe('resolveRoleIdsFromAuthContext', () => {
         type: 'application',
         workspace: { id: 'workspace-1' },
         application: { defaultRoleId: null },
+      } as unknown as WorkspaceAuthContext),
+    ).toEqual([]);
+  });
+
+  it('should resolve the user role alone for an OAuth client acting for a user', () => {
+    expect(resolve(buildUserContext(OAUTH_CLIENT))).toEqual([USER_ROLE_ID]);
+  });
+
+  it('should resolve nothing for an OAuth client acting alone', () => {
+    expect(
+      resolve({
+        type: 'application',
+        workspace: { id: 'workspace-1' },
+        application: OAUTH_CLIENT,
       } as unknown as WorkspaceAuthContext),
     ).toEqual([]);
   });

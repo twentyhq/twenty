@@ -9,6 +9,7 @@ import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/wo
 import { isApplicationExemptFromGrant } from 'src/engine/core-modules/application/application-grant/utils/is-application-exempt-from-grant.util';
 import { FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { fromApplicationEntityToFlatApplication } from 'src/engine/core-modules/application/utils/from-application-entity-to-flat-application.util';
+import { isOAuthOnlyApplication } from 'src/engine/core-modules/application/utils/is-oauth-only-application.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { type WorkspaceCacheProviderContext } from 'src/engine/workspace-cache/types/workspace-cache-provider-context.type';
@@ -65,9 +66,11 @@ export class WorkspaceFlatApplicationMapCacheService extends WorkspaceCacheProvi
         application: flatApplication,
         workspaceCustomApplicationId: workspace?.workspaceCustomApplicationId,
       });
-      flatApplication.runtimeRoleId = flatApplication.isGrantExempt
-        ? flatApplication.defaultRoleId
-        : (grantRoleIdByApplicationId.get(flatApplication.id) ?? null);
+      flatApplication.runtimeRoleId = isOAuthOnlyApplication(flatApplication)
+        ? null
+        : flatApplication.isGrantExempt
+          ? flatApplication.defaultRoleId
+          : (grantRoleIdByApplicationId.get(flatApplication.id) ?? null);
 
       flatApplicationMaps.byId[flatApplication.id] = flatApplication;
       flatApplicationMaps.idByUniversalIdentifier[

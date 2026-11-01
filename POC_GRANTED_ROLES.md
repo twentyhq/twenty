@@ -4,17 +4,6 @@ Proof of concept for the "requested role / granted role" design (core-team-issue
 
 Screenshots are in `poc-screenshots/`. Numbers `01` to `11` are referenced below.
 
-## Known regression: OAuth-only apps get no access
-
-`twenty auth login` (browser OAuth) now returns a token with no access. Every call fails with "Entity performing the request does not have permission", including `app publish` and `getRoles`.
-
-- The "Twenty CLI" application has `sourceType` oauth-only, `defaultRoleId` null and no `approvedRoleRequest`.
-- It is neither `twenty-standard` nor the workspace custom app, so `isApplicationExemptFromGrant` returns false, its runtime role is null, and the token gets no access.
-- On main, an app without a role adds no restriction, so the token keeps the user's permissions.
-- The same likely applies to any third-party OAuth-only app.
-
-This is not fixed in the POC on purpose: no ad-hoc exemption (for example by `sourceType`) was added. Which applications are "confined", and what an OAuth client acting for a user should run with, is an open design question (question 11 below). To work with the CLI meanwhile, log in with an API key (see "How to try it").
-
 ## What works
 
 Verified end to end on a fresh dev workspace (`tim@apple.dev`), mostly through the UI, with runtime checks through the example app's logic function.
@@ -29,9 +18,10 @@ Verified end to end on a fresh dev workspace (`tim@apple.dev`), mostly through t
   - Only the workspace custom app can create application targets, and only on roles it owns.
 - **Single runtime resolver**: `getApplicationRuntimeRoleId()` (`application-grant/utils/get-application-runtime-role-id.util.ts`).
   - The flat application cache computes `runtimeRoleId` and `isGrantExempt` for each app. Confined apps get their grant; `twenty-standard` and the workspace custom app get their own role.
+  - OAuth clients (OAuth-only registrations such as the Twenty CLI and dynamically registered MCP clients) are outside the request and grant model, as main already treats them as `oauthClient` callers (`isOAuthOnlyApplication`). They have no app-level role: acting for a user they run with that user's role alone, and acting alone they get no data access, both as on main.
   - Every runtime read of `application.defaultRoleId` listed in the brief now goes through the resolver: permissions service, auth-context role ids, member and agent runs, MCP, REST, user-workspace auth context, the logic-function database-event job, record share and record export, the workflow executor and trigger listener, and the agent inbox.
   - The role → application map that keeps owner rights on an app's own objects now maps the grant to the confined app.
-  - The "app without a role adds no restriction" tolerance only applies to the two exempt apps. A confined app without a grant has no access.
+  - The "app without a role adds no restriction" tolerance only applies to the two exempt apps and to OAuth clients. A confined app without a grant has no access.
 - **Sync of a confined app** (`normalizeConfinedApplicationManifest`)
   - Its own objects are requested with every action unless the manifest names them.
   - The requested role's assignment flags are forced off.
@@ -82,7 +72,7 @@ Tests:
 ## How to try it
 
 1. Run `bash packages/twenty-utils/setup-dev-env.sh`, then `npx nx database:reset twenty-server`. Start the server (`npx nx start twenty-server`), then the worker once the server is up: `cd packages/twenty-server && NODE_ENV=development node dist/queue-worker/queue-worker`. Start the front (`npx nx start twenty-front`). Starting the server and the worker together races on `rimraf dist`.
-2. Build the CLI: `npx nx build twenty-cli` (it also rebuilds `twenty-ui/dist`, so reload a running front afterwards). Browser sign-in does not work for now (see the known regression above), so log in with the seeded API key from the repo root, under a dedicated remote, without `--use` so your default remote stays as it is:
+2. Build the CLI: `npx nx build twenty-cli` (it also rebuilds `twenty-ui/dist`, so reload a running front afterwards). Browser sign-in (`twenty auth login --url http://localhost:3000 --name grant-demo-local`) works. Without a browser, log in with the seeded API key from the repo root. Either way, use a dedicated remote and no `--use`, so your default remote stays as it is:
    ```
    node -e 'process.stdout.write(require("./packages/twenty-server/test/integration/constants/test-tokens.json").API_KEY_ACCESS_TOKEN)' \
      | node packages/twenty-cli/dist/cli.cjs auth login --with-token --url http://localhost:3000 --name grant-demo-local
@@ -135,5 +125,5 @@ Tests:
 8. **Tarball upgrades in the UI.** There is no "update" button for private tarball apps; the POC relies on Auto-upgrade (General tab) to pick up a newly published version. Should admins be able to upgrade a tarball app manually, and should an upgrade that leaves permissions pending warn before or after it runs?
 9. **Agents without a role.** An agent that declares no role gets no target, and so no grant. Should every agent of a confined app run with the grant by default?
 10. **Narrowing is silent.** When a new version asks for less, the removed access is taken from the grant during the upgrade, and nothing tells the admin (in the example, v3 removes "update Companies" with no notice). Should the Access tab or the app's General tab show what the last upgrade removed?
-11. **Which apps are confined, and what OAuth clients run with.** Today only `twenty-standard` and the workspace custom app are exempt, which breaks OAuth-only clients such as the Twenty CLI (see the known regression above). An OAuth client acting for a user could run with the user's role, with a grant made at authorization time, or with the intersection of the two. This needs a decision before the regression can be fixed.
+11. **OAuth clients beyond v1.** Settled for v1 in the design doc: OAuth-only registrations stay outside the request and grant model (see "What works"). Whether a later version should give them a grant made at authorization time is still open.
 12. **Default install scope.** The dialog preselects "All objects (including future ones)" for each requested switch. It is the only grant that keeps growing without a new approval, so should the default be "Only these objects", with required objects locked? The cost is that an app that needs everything (sync, search) runs with less until the admin widens it. If the admin narrows at install, should the Access tab show what the app asked for but did not get, like the pending card does on upgrade?

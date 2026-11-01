@@ -1,3 +1,4 @@
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { resolveApplicationRoleId } from 'src/engine/twenty-orm/utils/resolve-application-role-id.util';
 
 const APPROVED_ROLE_REQUEST = {
@@ -12,6 +13,7 @@ describe('resolveApplicationRoleId', () => {
       expect(
         resolveApplicationRoleId({
           application: {
+            sourceType: ApplicationRegistrationSourceType.NPM,
             defaultRoleId: 'requested-role-id',
             runtimeRoleId: 'grant-role-id',
             isGrantExempt: false,
@@ -27,6 +29,7 @@ describe('resolveApplicationRoleId', () => {
     expect(
       resolveApplicationRoleId({
         application: {
+          sourceType: ApplicationRegistrationSourceType.NPM,
           defaultRoleId: 'requested-role-id',
           approvedRoleRequest: APPROVED_ROLE_REQUEST,
         },
@@ -39,6 +42,7 @@ describe('resolveApplicationRoleId', () => {
     expect(
       resolveApplicationRoleId({
         application: {
+          sourceType: ApplicationRegistrationSourceType.NPM,
           defaultRoleId: 'requested-role-id',
           runtimeRoleId: null,
           isGrantExempt: false,
@@ -53,6 +57,7 @@ describe('resolveApplicationRoleId', () => {
     expect(
       resolveApplicationRoleId({
         application: {
+          sourceType: ApplicationRegistrationSourceType.NPM,
           defaultRoleId: 'own-role-id',
           runtimeRoleId: 'own-role-id',
           isGrantExempt: true,
@@ -67,6 +72,7 @@ describe('resolveApplicationRoleId', () => {
     expect(
       resolveApplicationRoleId({
         application: {
+          sourceType: ApplicationRegistrationSourceType.NPM,
           defaultRoleId: null,
           runtimeRoleId: null,
           isGrantExempt: true,
@@ -81,8 +87,38 @@ describe('resolveApplicationRoleId', () => {
     expect(
       resolveApplicationRoleId({
         application: {
+          sourceType: ApplicationRegistrationSourceType.NPM,
           defaultRoleId: null,
           isGrantExempt: true,
+          approvedRoleRequest: null,
+        },
+        isMissingApplicationRoleTolerated: false,
+      }),
+    ).toEqual({ applicationRoleId: null });
+  });
+
+  it('adds no restriction for an OAuth client acting for a user', () => {
+    expect(
+      resolveApplicationRoleId({
+        application: {
+          sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+          defaultRoleId: null,
+          runtimeRoleId: null,
+          isGrantExempt: false,
+          approvedRoleRequest: null,
+        },
+        isMissingApplicationRoleTolerated: true,
+      }),
+    ).toEqual({});
+  });
+
+  it('denies an OAuth client acting alone', () => {
+    expect(
+      resolveApplicationRoleId({
+        application: {
+          sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+          defaultRoleId: null,
+          isGrantExempt: false,
           approvedRoleRequest: null,
         },
         isMissingApplicationRoleTolerated: false,

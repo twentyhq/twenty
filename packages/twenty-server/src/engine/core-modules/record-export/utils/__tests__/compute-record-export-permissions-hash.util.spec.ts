@@ -1,12 +1,16 @@
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { computeRecordExportPermissionsHash } from 'src/engine/core-modules/record-export/utils/compute-record-export-permissions-hash.util';
 
-const application: Pick<FlatApplication, 'id' | 'defaultRoleId' | 'deletedAt'> =
-  {
-    id: 'application-id',
-    defaultRoleId: 'role-id',
-    deletedAt: null,
-  };
+const application: Pick<
+  FlatApplication,
+  'id' | 'defaultRoleId' | 'deletedAt' | 'sourceType'
+> = {
+  id: 'application-id',
+  defaultRoleId: 'role-id',
+  deletedAt: null,
+  sourceType: ApplicationRegistrationSourceType.NPM,
+};
 const permissionsHash = 'workspace-permissions';
 
 const originalHash = computeRecordExportPermissionsHash({

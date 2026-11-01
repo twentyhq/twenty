@@ -1,5 +1,6 @@
 import { FieldMetadataType, type ObjectPermissions } from 'twenty-shared/types';
 
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
@@ -54,11 +55,13 @@ const flatApplicationMaps: ApplicationDefaultRoleMaps = {
       id: 'owning-application-id',
       defaultRoleId: 'owning-application-role-id',
       deletedAt: null,
+      sourceType: ApplicationRegistrationSourceType.NPM,
     },
     'other-application-id': {
       id: 'other-application-id',
       defaultRoleId: 'other-application-role-id',
       deletedAt: null,
+      sourceType: ApplicationRegistrationSourceType.NPM,
     },
   },
 };

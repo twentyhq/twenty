@@ -1,11 +1,12 @@
 import { FieldActorSource } from 'twenty-shared/types';
 
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { resolveWorkflowRunApplicationOrThrow } from 'src/modules/workflow/workflow-executor/utils/resolve-workflow-run-application-or-throw.util';
 
 type TestApplication = Pick<
   FlatApplication,
-  'id' | 'name' | 'deletedAt' | 'defaultRoleId'
+  'id' | 'name' | 'deletedAt' | 'defaultRoleId' | 'sourceType'
 >;
 
 const INSTALLED_APPLICATION_ID = 'installed-app-id';
@@ -15,6 +16,7 @@ const INSTALLED_APPLICATION: TestApplication = {
   name: 'Installed app',
   defaultRoleId: 'installed-app-role-id',
   deletedAt: null,
+  sourceType: ApplicationRegistrationSourceType.NPM,
 };
 
 const resolve = ({
