@@ -620,7 +620,7 @@ Check `context.workspaceMemberId` when a function behaves differently depending 
 
 </Note>
 
-The SDK helpers that reach your application's own resources always use its access and ignore `runAs`: the [key-value store](/developers/extend/apps/logic/key-value-store), [connections](/developers/extend/apps/logic/connections), [messaging channels](/developers/extend/apps/logic/messaging-channels), `runAgent`, `ai.generate`, `getPublicAssetUrl` and [credit charging](/developers/extend/apps/logic/credits).
+The SDK helpers that reach your application's own resources always use its access and ignore `runAs`: the [key-value store](/developers/extend/apps/logic/key-value-store), [connections](/developers/extend/apps/logic/connections), [messaging channels](/developers/extend/apps/logic/messaging-channels), `runAgent`, `getPublicAssetUrl` and [credit charging](/developers/extend/apps/logic/credits). `ai.generate` follows the default clients instead: it acts as the person who triggered the run, within your app's role, or as your app when nobody did.
 
 #### Exposing a function as an AI tool or workflow action
 
