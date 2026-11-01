@@ -15,13 +15,19 @@ export const buildAgentRunTurnCreatedBy = ({
   callerApplication: FlatApplication | undefined;
   authContext: WorkspaceAuthContext;
 }): ActorMetadata => {
-  if (isDefined(actorContext)) {
+  if (!isDefined(actorContext)) {
+    return isDefined(callerApplication)
+      ? buildCreatedByFromApplication({ application: callerApplication })
+      : buildActorMetadataFromAuthContext(authContext);
+  }
+
+  if (!isDefined(callerApplication)) {
     return actorContext;
   }
 
-  if (isDefined(callerApplication)) {
-    return buildCreatedByFromApplication({ application: callerApplication });
-  }
-
-  return buildActorMetadataFromAuthContext(authContext);
+  // the application is kept on a turn it runs as a member, so it can read that turn back
+  return {
+    ...actorContext,
+    context: { ...actorContext.context, applicationId: callerApplication.id },
+  };
 };

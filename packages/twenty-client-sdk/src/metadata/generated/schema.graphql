@@ -4098,8 +4098,8 @@ type Query {
   billingPlans: [BillingPlan!]!
   billingPortalSession(forPaymentMethodUpdate: Boolean, returnUrlPath: String): BillingSession!
   callRecordingIdForCalendarEvent(calendarEventId: UUID!): UUID
-  chatMessages(threadId: UUID!): [AgentMessage!]!
-  chatStreamCatchupChunks(threadId: UUID!): ChatStreamCatchupChunks!
+  chatMessages(agentUniversalIdentifier: UUID, threadId: UUID, threadKey: String): [AgentMessage!]!
+  chatStreamCatchupChunks(agentUniversalIdentifier: UUID, threadId: UUID, threadKey: String): ChatStreamCatchupChunks!
   chatThread(id: UUID!): AgentChatThread!
   checkUserExists(captchaToken: String, email: String!): CheckUserExist!
   checkWorkspaceInviteHashIsValid(inviteHash: String!): WorkspaceInviteHashValid!
@@ -4537,6 +4537,7 @@ enum RunAgentMessageRole {
 type RunAgentResult {
   error: String
   result: JSON
+  runId: UUID!
   status: String!
   success: Boolean!
   threadId: UUID!
@@ -4783,7 +4784,7 @@ type Subscription {
   eventLogsLive(fieldFilters: [EventLogFieldFilterInput!], table: EventLogTable!): [EventLogRecord!]
   exportRecords(input: CreateRecordExportInput!): RecordExport!
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
-  onAgentChatEvent(threadId: UUID!): AgentChatEvent!
+  onAgentChatEvent(agentUniversalIdentifier: UUID, threadId: UUID, threadKey: String): AgentChatEvent!
   onEventSubscription(eventStreamId: String!): EventSubscription
 }
 

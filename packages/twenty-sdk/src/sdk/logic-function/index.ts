@@ -83,6 +83,16 @@ export type { AppMessageFolder } from '@/sdk/logic-function/messaging/types/app-
 
 export { runAgent } from '@/sdk/logic-function/agents/run-agent';
 export type { RunAgentInput, RunAgentResult } from 'twenty-shared/application';
+export { listConversationMessages } from '@/sdk/logic-function/agents/list-conversation-messages';
+export { streamConversation } from '@/sdk/logic-function/agents/stream-conversation';
+export type { StreamConversationInput } from '@/sdk/logic-function/agents/stream-conversation';
+export type {
+  AgentConversationHistory,
+  AgentConversationInput,
+  AgentConversationMessage,
+  AgentConversationMessagePart,
+} from '@/sdk/logic-function/agents/types/agent-conversation.type';
+export type { AgentChatSubscriptionEvent } from 'twenty-shared/ai';
 
 export { ai } from '@/sdk/logic-function/ai/ai';
 export type { GenerateInput, GenerateResult } from 'twenty-shared/application';

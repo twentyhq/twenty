@@ -28,6 +28,7 @@ import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/s
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
 import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
+import { isAgentTurnOpenedByOtherMember } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-turn-opened-by-other-member.util';
 
 type AddMessageArgs = {
   threadId: string;
@@ -273,6 +274,24 @@ export class AgentChatService {
       workspaceId,
     });
 
+    return this.getMessagesVisibleTo({
+      threadId,
+      workspaceMemberId,
+      workspaceId,
+    });
+  }
+
+  async getMessagesVisibleTo({
+    threadId,
+    workspaceMemberId,
+    applicationId,
+    workspaceId,
+  }: {
+    threadId: string;
+    workspaceMemberId: string | undefined;
+    applicationId?: string;
+    workspaceId: string;
+  }) {
     // contexts are given to the model, never shown
     const [messages, turns] = await Promise.all([
       this.messageRepository.find(workspaceId, {
@@ -288,10 +307,12 @@ export class AgentChatService {
     // the opener is stamped on the turn, so a run resumed in a new turn after a pause is still theirs
     const turnIdsOpenedByOtherMembers = new Set(
       turns
-        .filter(
-          ({ createdBy }) =>
-            isDefined(createdBy.workspaceMemberId) &&
-            createdBy.workspaceMemberId !== workspaceMemberId,
+        .filter(({ createdBy }) =>
+          isAgentTurnOpenedByOtherMember({
+            createdBy,
+            workspaceMemberId,
+            applicationId,
+          }),
         )
         .map(({ id }) => id),
     );

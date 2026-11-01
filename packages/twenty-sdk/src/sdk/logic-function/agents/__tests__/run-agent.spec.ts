@@ -28,6 +28,7 @@ describe('runAgent', () => {
   it('POSTs the runAgent mutation to /metadata and returns the result', async () => {
     const payload = {
       threadId: 'thread-id',
+      runId: 'run-id',
       status: 'COMPLETED',
       result: { response: 'done' },
       error: null,
@@ -62,6 +63,7 @@ describe('runAgent', () => {
     const sentBody = JSON.parse(requestInit?.body as string);
 
     expect(sentBody.query).toContain('runAgent(input: $input)');
+    expect(sentBody.query).toContain('runId');
     expect(sentBody.variables).toEqual({
       input: {
         agentUniversalIdentifier: 'agent-uid',
@@ -175,7 +177,9 @@ describe('runAgent', () => {
 
     await expect(
       runAgent({ agentUniversalIdentifier: 'a', prompt: 'p' }),
-    ).rejects.toThrow(/requires the app runtime env vars/);
+    ).rejects.toThrow(
+      'requires the app runtime env vars TWENTY_API_URL and TWENTY_APP_APPLICATION_ACCESS_TOKEN (or TWENTY_APP_ACCESS_TOKEN)',
+    );
 
     expect(fetchSpy).not.toHaveBeenCalled();
   });

@@ -16,6 +16,7 @@ import { RUN_AGENT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-exec
 import { AGENT_WAIT_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/agent-wait-prompt.constant';
 import { createAgentWaitTools } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/create-agent-wait-tools.util';
 import { findAgentRunWait } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/find-agent-run-wait.util';
+import { AGENT_RUN_STOPPED_ERROR } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-stopped-error.constant';
 import { AGENT_RUN_OUT_OF_CREDITS_ERROR } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-out-of-credits-error.const';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
 import { AgentRunPersonaService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service';
@@ -23,7 +24,9 @@ import { AgentRunJobScopeService } from 'src/engine/metadata-modules/ai/ai-agent
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
+import { AGENT_TURN_INTERRUPTED_ERROR } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-turn-interrupted-error.constant';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { addStepToAgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/add-step-to-agent-turn-usage.util';
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
@@ -35,6 +38,7 @@ import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-
 import { type AgentRunCallerHandler } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-handler.type';
 import { type RunAgentJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-agent-job-data.type';
 import { buildAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-summary.util';
+import { buildRetriedAgentRunOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-retried-agent-run-outcome.util';
 import { sumAgentRunSummaries } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/sum-agent-run-summaries.util';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import {
@@ -251,22 +255,47 @@ export class AgentRunnerService {
         handler.buildExecutionContext({ workspaceId, caller }),
         this.agentRunPersonaService.resolveOrThrow({ workspaceId, spec }),
       ]);
-      const run = (stream: AgentRunStream | null) =>
-        workspaceAuthContextStorage.run(executionContext.authContext, () =>
-          this.runTurn({
-            input: {
+      const run = async (
+        stream: AgentRunStream | null,
+      ): Promise<AgentRunnerResult | null> => {
+        const retriedTurn = isDefined(prompt?.turnId)
+          ? await this.turnRecorderService.findTurn({
               workspaceId,
-              conversation,
-              caller,
-              spec,
-              persona,
-              prompt,
-              executionContext,
-            },
-            suspension: null,
-            stream,
-          }),
+              turnId: prompt.turnId,
+            })
+          : null;
+
+        if (isDefined(retriedTurn)) {
+          await this.settleRetriedRun({
+            workspaceId,
+            caller,
+            threadId: conversation?.threadId ?? null,
+            turn: retriedTurn,
+            isJsonResponse:
+              (spec.responseFormat ?? persona.responseFormat)?.type === 'json',
+          });
+
+          return null;
+        }
+
+        return workspaceAuthContextStorage.run(
+          executionContext.authContext,
+          () =>
+            this.runTurn({
+              input: {
+                workspaceId,
+                conversation,
+                caller,
+                spec,
+                persona,
+                prompt,
+                executionContext,
+              },
+              suspension: null,
+              stream,
+            }),
         );
+      };
 
       return isDefined(conversation)
         ? await this.withClaimedConversation({
@@ -295,6 +324,54 @@ export class AgentRunnerService {
 
       return null;
     }
+  }
+
+  // a stalled job's retry settles the run from its turn, since its agent may already have acted
+  private async settleRetriedRun({
+    workspaceId,
+    caller,
+    threadId,
+    turn,
+    isJsonResponse,
+  }: {
+    workspaceId: string;
+    caller: AgentRunCaller;
+    threadId: string | null;
+    turn: Pick<AgentTurnWorkspaceEntity, 'id' | 'status' | 'error'>;
+    isJsonResponse: boolean;
+  }): Promise<void> {
+    if (turn.status === AgentTurnStatus.RUNNING) {
+      await this.turnRecorderService.finish({
+        workspaceId,
+        turnId: turn.id,
+        status: AgentTurnStatus.FAILED,
+        error: AGENT_TURN_INTERRUPTED_ERROR,
+      });
+    }
+
+    // a text result is the reply's last step, while a structured one is kept nowhere
+    const completedResult =
+      turn.status === AgentTurnStatus.COMPLETED && !isJsonResponse
+        ? {
+            response: await this.conversationReaderService.findReplyText({
+              workspaceId,
+              turnId: turn.id,
+            }),
+          }
+        : null;
+    const outcome = buildRetriedAgentRunOutcome({ turn, completedResult });
+
+    if (!isDefined(outcome)) {
+      return;
+    }
+
+    await this.agentRunSuspensionService.deliverOutcome({
+      workspaceId,
+      caller,
+      threadId,
+      outcome,
+      summary: null,
+    });
   }
 
   // Picks a suspended run up where it paused once its wake-up resolved, holding its conversation.
@@ -665,7 +742,7 @@ export class AgentRunnerService {
       // a stop can also land while the structured output is asked for, after the stream ended
       outcome:
         streamed.isAborted || abortSignal?.aborted
-          ? { status: 'FAILED', error: 'The run was stopped' }
+          ? { status: 'FAILED', error: AGENT_RUN_STOPPED_ERROR }
           : await this.settleTurn({
               input,
               execution,
@@ -715,6 +792,7 @@ export class AgentRunnerService {
         workspaceId,
         threadId,
         agentId: persona.agentId,
+        turnId: prompt?.turnId,
         senderUserWorkspaceId: prompt?.senderUserWorkspaceId ?? null,
         senderApplicationId: prompt?.senderApplicationId ?? null,
         createdBy: executionContext.turnCreatedBy,

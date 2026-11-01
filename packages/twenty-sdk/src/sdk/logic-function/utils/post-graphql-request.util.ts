@@ -1,12 +1,4 @@
-import {
-  DEFAULT_API_URL_NAME,
-  DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME,
-} from 'twenty-shared/application-runtime';
-
-import {
-  getApplicationAccessToken,
-  getCallerAccessToken,
-} from '@/sdk/utils/get-application-access-token';
+import { getApplicationApiConfigOrThrow } from '@/sdk/logic-function/utils/get-application-api-config-or-throw.util';
 
 export const postGraphqlRequest = async <TVariables, TData>({
   query,
@@ -19,17 +11,9 @@ export const postGraphqlRequest = async <TVariables, TData>({
   caller: string;
   isActingAsCaller?: boolean;
 }): Promise<TData> => {
-  const apiUrl = process.env[DEFAULT_API_URL_NAME];
-  const accessToken = isActingAsCaller
-    ? getCallerAccessToken()
-    : getApplicationAccessToken();
-
-  if (!apiUrl || !accessToken) {
-    throw new Error(
-      `${caller}() requires the app runtime env vars ` +
-        `${DEFAULT_API_URL_NAME} and ${DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME}.`,
-    );
-  }
+  const { apiUrl, accessToken } = getApplicationApiConfigOrThrow(caller, {
+    isActingAsCaller,
+  });
 
   const response = await fetch(`${apiUrl}/metadata`, {
     method: 'POST',

@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 // closed subscription would keep its pub/sub listener until the next message.
 export const filterMapAsyncIterator = <TValue>(
   iterator: AsyncIterator<TValue>,
-  mapValue: (value: TValue) => TValue | undefined,
+  mapValue: (value: TValue) => TValue | undefined | Promise<TValue | undefined>,
 ): AsyncIterableIterator<TValue> => ({
   next: async () => {
     while (true) {
@@ -14,7 +14,7 @@ export const filterMapAsyncIterator = <TValue>(
         return result;
       }
 
-      const mappedValue = mapValue(result.value);
+      const mappedValue = await mapValue(result.value);
 
       if (isDefined(mappedValue)) {
         return { done: false, value: mappedValue };

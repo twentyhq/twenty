@@ -467,4 +467,48 @@ describe('Agent run conversation should be recorded for the caller', () => {
     ).toContain(WORKSPACE_MEMBER_DATA_SEED_IDS.JANE);
     expect(partTypes.filter((type) => type === 'tool-probe')).toHaveLength(2);
   });
+
+  it('should show the application the tool output of a turn it ran as a member, and another member only its text', async () => {
+    const threadKey = randomUUID();
+
+    await runAgent({
+      token: globalTestContext.applicationToken,
+      threadKey,
+      runAsWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      steps: TOOL_CALL_STEPS,
+    });
+
+    const readPartTypes = async (token: string) => {
+      const response = await makeMetadataApiRequest(
+        {
+          query: parse(
+            'query($agentUniversalIdentifier: UUID!, $threadKey: String!) { chatMessages(agentUniversalIdentifier: $agentUniversalIdentifier, threadKey: $threadKey) { parts { type } } }',
+          ),
+          variables: {
+            agentUniversalIdentifier:
+              globalTestContext.agentUniversalIdentifier,
+            threadKey,
+          },
+        },
+        token,
+      );
+
+      expect(response.body.errors).toBeUndefined();
+
+      return (
+        response.body.data.chatMessages as { parts: { type: string }[] }[]
+      ).flatMap(({ parts }) => parts.map(({ type }) => type));
+    };
+
+    expect(await readPartTypes(globalTestContext.applicationToken)).toContain(
+      'tool-probe',
+    );
+
+    const partTypesForJane = await readPartTypes(
+      globalTestContext.janeApplicationToken,
+    );
+
+    expect(partTypesForJane).toContain('text');
+    expect(partTypesForJane).not.toContain('tool-probe');
+  });
 });
