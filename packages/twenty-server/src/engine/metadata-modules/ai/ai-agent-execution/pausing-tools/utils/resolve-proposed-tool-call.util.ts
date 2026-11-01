@@ -107,6 +107,8 @@ export const resolveProposedToolCall = async ({
   };
 
   switch (template) {
+    case 'frontComponent':
+      return { proposal: { ...baseProposal, template } };
     case 'email':
       return buildEmailProposal(baseProposal);
     case 'recordCreate':

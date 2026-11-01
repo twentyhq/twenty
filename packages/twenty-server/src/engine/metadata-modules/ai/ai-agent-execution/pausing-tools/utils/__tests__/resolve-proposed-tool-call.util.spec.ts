@@ -64,7 +64,7 @@ const foundRecord = (record: Record<string, unknown>) =>
   });
 
 describe('resolveProposedToolCall', () => {
-  it('takes the component publication editing policy from the registered tool', async () => {
+  it('takes the component publication template and editing policy from the registered tool', async () => {
     const tool: ToolIndexEntry = {
       ...PUBLISH_FRONT_COMPONENT_TOOL,
       label: 'Save component',
@@ -88,6 +88,7 @@ describe('resolveProposedToolCall', () => {
     expect(resolution).toMatchObject({
       proposal: {
         toolName: tool.name,
+        template: 'frontComponent',
         areArgumentsEditable: false,
         arguments: { draftId: RECORD_ID, checksum: 'reviewed-checksum' },
       },

@@ -21,6 +21,10 @@ jest.mock(
   () => ({ AiChatToolCallApprovalArgumentsCard: () => null }),
 );
 jest.mock(
+  '@/ai/components/internal/AiChatToolCallApprovalFrontComponentCard',
+  () => ({ AiChatToolCallApprovalFrontComponentCard: () => null }),
+);
+jest.mock(
   '@/activities/emails/editor/constants/InlineEmailBodyEditorProfile',
   () => ({ INLINE_EMAIL_BODY_EDITOR_PROFILE: {} }),
 );
