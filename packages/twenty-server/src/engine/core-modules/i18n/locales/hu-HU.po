@@ -1439,7 +1439,7 @@ msgstr "Az alkalmazások nem frissíthetik ezeket a mezőket: {fieldsList}."
 #. js-lingui-id: agujn9
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Approve this draft in its original chat."
-msgstr ""
+msgstr "Hagyja jóvá ezt a piszkozatot az eredeti csevegésében."
 
 #. js-lingui-id: rczXz4
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
@@ -11827,7 +11827,7 @@ msgstr "Irányítópult mentése"
 #. js-lingui-id: YlXHmh
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Saving a component requires human approval."
-msgstr ""
+msgstr "Egy komponens mentéséhez emberi jóváhagyás szükséges."
 
 #. js-lingui-id: gqz/Jf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -13799,7 +13799,7 @@ msgstr "Ugyanaz az oszlop nem szerepelhet kétszer egy indexben."
 #. js-lingui-id: IoxxxC
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "The saved component differs from this draft."
-msgstr ""
+msgstr "A mentett komponens eltér ettől a piszkozattól."
 
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
@@ -14308,7 +14308,7 @@ msgstr "A piszkozat frissítése folyamatban van. Próbálja újra."
 #. js-lingui-id: EM4fuz
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This draft was superseded, saved or belongs to another chat. Start a new draft."
-msgstr ""
+msgstr "Ezt a piszkozatot felváltották, mentették, vagy egy másik csevegéshez tartozik. Kezdjen új piszkozatot."
 
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts
@@ -14595,7 +14595,7 @@ msgstr "Ez a csomag nem érhető el."
 #. js-lingui-id: GA6RMi
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This preview changed. Approve the latest revision."
-msgstr ""
+msgstr "Ez az előnézet megváltozott. Hagyja jóvá a legújabb módosítást."
 
 #. js-lingui-id: Y5C3uK
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
@@ -14705,7 +14705,7 @@ msgstr "Ez a szerepkör nem módosítható, mivel rendszerszerepkör. Csak egyé
 #. js-lingui-id: UjNNWw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This saved component was deleted. Create a new draft."
-msgstr ""
+msgstr "Ezt a mentett komponenst törölték. Hozzon létre új piszkozatot."
 
 #. js-lingui-id: DEJJoY
 #: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts

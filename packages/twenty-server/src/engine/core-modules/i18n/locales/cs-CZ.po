@@ -1439,7 +1439,7 @@ msgstr "Aplikace nemohou aktualizovat tato pole: {fieldsList}."
 #. js-lingui-id: agujn9
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Approve this draft in its original chat."
-msgstr ""
+msgstr "Schválit tento návrh v původním chatu."
 
 #. js-lingui-id: rczXz4
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
@@ -11827,7 +11827,7 @@ msgstr "Uložit panel"
 #. js-lingui-id: YlXHmh
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Saving a component requires human approval."
-msgstr ""
+msgstr "Uložení komponenty vyžaduje schválení člověkem."
 
 #. js-lingui-id: gqz/Jf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -13799,7 +13799,7 @@ msgstr "Stejný sloupec nemůže v indexu figurovat dvakrát."
 #. js-lingui-id: IoxxxC
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "The saved component differs from this draft."
-msgstr ""
+msgstr "Uložená komponenta se liší od tohoto návrhu."
 
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
@@ -14308,7 +14308,7 @@ msgstr "Tento koncept se aktualizuje. Zkuste to znovu."
 #. js-lingui-id: EM4fuz
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This draft was superseded, saved or belongs to another chat. Start a new draft."
-msgstr ""
+msgstr "Tento koncept byl nahrazen, uložen nebo patří do jiného chatu. Začněte nový koncept."
 
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts
@@ -14595,7 +14595,7 @@ msgstr "Tento plán není k dispozici."
 #. js-lingui-id: GA6RMi
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This preview changed. Approve the latest revision."
-msgstr ""
+msgstr "Tento náhled se změnil. Schvalte nejnovější revizi."
 
 #. js-lingui-id: Y5C3uK
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
@@ -14705,7 +14705,7 @@ msgstr "Tuto roli nelze upravit, protože jde o systémovou roli. Lze upravovat 
 #. js-lingui-id: UjNNWw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This saved component was deleted. Create a new draft."
-msgstr ""
+msgstr "Tato uložená komponenta byla smazána. Vytvořte nový koncept."
 
 #. js-lingui-id: DEJJoY
 #: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts

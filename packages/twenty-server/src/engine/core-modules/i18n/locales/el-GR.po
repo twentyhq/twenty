@@ -1439,7 +1439,7 @@ msgstr "Οι εφαρμογές δεν μπορούν να ενημερώσου�
 #. js-lingui-id: agujn9
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Approve this draft in its original chat."
-msgstr ""
+msgstr "Εγκρίνετε αυτό το προσχέδιο στην αρχική του συνομιλία."
 
 #. js-lingui-id: rczXz4
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
@@ -11827,7 +11827,7 @@ msgstr "Αποθήκευση πίνακα ελέγχου"
 #. js-lingui-id: YlXHmh
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Saving a component requires human approval."
-msgstr ""
+msgstr "Η αποθήκευση ενός στοιχείου απαιτεί ανθρώπινη έγκριση."
 
 #. js-lingui-id: gqz/Jf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -13799,7 +13799,7 @@ msgstr "Η ίδια στήλη δεν μπορεί να εμφανιστεί δ�
 #. js-lingui-id: IoxxxC
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "The saved component differs from this draft."
-msgstr ""
+msgstr "Το αποθηκευμένο στοιχείο διαφέρει από αυτό το προσχέδιο."
 
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
@@ -14308,7 +14308,7 @@ msgstr "Αυτό το προσχέδιο ενημερώνεται. Δοκιμά�
 #. js-lingui-id: EM4fuz
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This draft was superseded, saved or belongs to another chat. Start a new draft."
-msgstr ""
+msgstr "Αυτό το πρόχειρο αντικαταστάθηκε, αποθηκεύτηκε ή ανήκει σε άλλη συνομιλία. Ξεκινήστε νέο πρόχειρο."
 
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts
@@ -14595,7 +14595,7 @@ msgstr "Αυτό το πρόγραμμα δεν είναι διαθέσιμο."
 #. js-lingui-id: GA6RMi
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This preview changed. Approve the latest revision."
-msgstr ""
+msgstr "Αυτή η προεπισκόπηση άλλαξε. Εγκρίνετε την πιο πρόσφατη αναθεώρηση."
 
 #. js-lingui-id: Y5C3uK
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
@@ -14705,7 +14705,7 @@ msgstr "Αυτός ο ρόλος δεν μπορεί να τροποποιηθε
 #. js-lingui-id: UjNNWw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This saved component was deleted. Create a new draft."
-msgstr ""
+msgstr "Αυτό το αποθηκευμένο στοιχείο διαγράφηκε. Δημιουργήστε νέο πρόχειρο."
 
 #. js-lingui-id: DEJJoY
 #: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts

@@ -1439,7 +1439,7 @@ msgstr "Applicaties kunnen deze velden niet bijwerken: {fieldsList}."
 #. js-lingui-id: agujn9
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Approve this draft in its original chat."
-msgstr ""
+msgstr "Keur dit concept goed in de oorspronkelijke chat."
 
 #. js-lingui-id: rczXz4
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
@@ -11827,7 +11827,7 @@ msgstr "Dashboard opslaan"
 #. js-lingui-id: YlXHmh
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Saving a component requires human approval."
-msgstr ""
+msgstr "Voor het opslaan van een component is menselijke goedkeuring vereist."
 
 #. js-lingui-id: gqz/Jf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -13799,7 +13799,7 @@ msgstr "Dezelfde kolom kan niet twee keer in een index voorkomen."
 #. js-lingui-id: IoxxxC
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "The saved component differs from this draft."
-msgstr ""
+msgstr "De opgeslagen component verschilt van dit concept."
 
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
@@ -14308,7 +14308,7 @@ msgstr "Dit concept wordt bijgewerkt. Probeer het opnieuw."
 #. js-lingui-id: EM4fuz
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This draft was superseded, saved or belongs to another chat. Start a new draft."
-msgstr ""
+msgstr "Dit concept is vervangen, opgeslagen of behoort tot een andere chat. Start een nieuw concept."
 
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts
@@ -14595,7 +14595,7 @@ msgstr "Dit abonnement is niet beschikbaar."
 #. js-lingui-id: GA6RMi
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This preview changed. Approve the latest revision."
-msgstr ""
+msgstr "Deze voorvertoning is gewijzigd. Keur de nieuwste revisie goed."
 
 #. js-lingui-id: Y5C3uK
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
@@ -14705,7 +14705,7 @@ msgstr "Deze rol kan niet worden aangepast omdat het een systeemrol is. Alleen a
 #. js-lingui-id: UjNNWw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This saved component was deleted. Create a new draft."
-msgstr ""
+msgstr "Dit opgeslagen onderdeel is verwijderd. Maak een nieuw concept."
 
 #. js-lingui-id: DEJJoY
 #: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts

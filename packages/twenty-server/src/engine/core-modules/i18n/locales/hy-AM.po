@@ -1439,7 +1439,7 @@ msgstr "Հավելվածները չեն կարող թարմացնել այս դ�
 #. js-lingui-id: agujn9
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Approve this draft in its original chat."
-msgstr ""
+msgstr "Հաստատեք այս սևագիրն իր սկզբնական զրույցում։"
 
 #. js-lingui-id: rczXz4
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
@@ -11827,7 +11827,7 @@ msgstr "Պահպանել Վահանակը"
 #. js-lingui-id: YlXHmh
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "Saving a component requires human approval."
-msgstr ""
+msgstr "Բաղադրիչի պահպանումը պահանջում է մարդու հաստատում։"
 
 #. js-lingui-id: gqz/Jf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -13799,7 +13799,7 @@ msgstr "Նույն սյունակը չի կարող ինդեքսում հայտ�
 #. js-lingui-id: IoxxxC
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "The saved component differs from this draft."
-msgstr ""
+msgstr "Պահպանված բաղադրիչը տարբերվում է այս սևագրից։"
 
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
@@ -14308,7 +14308,7 @@ msgstr "Այս սևագիրը թարմացվում է։ Կրկին փորձեք�
 #. js-lingui-id: EM4fuz
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This draft was superseded, saved or belongs to another chat. Start a new draft."
-msgstr ""
+msgstr "Այս սևագիրը փոխարինվել է նորով, պահպանվել է կամ պատկանում է մեկ այլ չաթի։ Սկսեք նոր սևագիր։"
 
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts
@@ -14595,7 +14595,7 @@ msgstr "Այս պլանը հասանելի չէ։"
 #. js-lingui-id: GA6RMi
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This preview changed. Approve the latest revision."
-msgstr ""
+msgstr "Այս նախադիտումը փոխվել է։ Հաստատեք վերջին վերանայումը։"
 
 #. js-lingui-id: Y5C3uK
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
@@ -14705,7 +14705,7 @@ msgstr "Այս դերը չի կարող փոփոխվել, քանի որ այն �
 #. js-lingui-id: UjNNWw
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
 msgid "This saved component was deleted. Create a new draft."
-msgstr ""
+msgstr "Այս պահպանված բաղադրիչը ջնջվել է։ Ստեղծեք նոր սևագիր։"
 
 #. js-lingui-id: DEJJoY
 #: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
