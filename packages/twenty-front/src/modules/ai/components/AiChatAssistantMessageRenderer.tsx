@@ -25,6 +25,7 @@ import {
   type ExtendedUIMessagePart,
   isNoReplyToolPart,
   isSucceededCompleteWorkspaceSetupToolPart,
+  PREVIEW_FRONT_COMPONENT_TOOL_NAME,
   PROPOSE_TOOL_CALL_TOOL_NAME,
   REQUEST_FORM_TOOL_NAME,
 } from 'twenty-shared/ai';
@@ -105,7 +106,7 @@ const MessagePartRenderer = ({
           );
         }
 
-        if (getEffectiveToolName(part) === 'preview_front_component') {
+        if (getEffectiveToolName(part) === PREVIEW_FRONT_COMPONENT_TOOL_NAME) {
           return (
             <AiChatFrontComponentToolPreview
               toolPart={part}
@@ -172,11 +173,13 @@ export const AiChatAssistantMessageRenderer = ({
     filteredParts,
     (part) =>
       isToolUIPart(part) &&
-      shouldToolPartRenderStandalone(
-        part,
-        frontComponentIdByToolName.get(getEffectiveToolName(part)),
+      shouldToolPartRenderStandalone({
+        toolPart: part,
+        frontComponentId: frontComponentIdByToolName.get(
+          getEffectiveToolName(part),
+        ),
         isFrontComponentPreviewEnabled,
-      ),
+      }),
   );
   const renderItemsWithoutThinkingSteps = groupedRenderItems.filter(
     (renderItem) => renderItem.type !== 'thinking-steps',

@@ -2,15 +2,14 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useCallback, useState } from 'react';
 import { FrontComponentSourceRenderer } from 'twenty-front-component-renderer';
-import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
 import { PageLayoutType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Badge } from 'twenty-ui/primitives/data-display';
 import { themeCssVariables, useThemeColorScheme } from 'twenty-ui/theme';
 
+import { AiChatFrontComponentPreviewEffect } from '@/ai/components/AiChatFrontComponentPreviewEffect';
 import { useAiChatFrontComponentPreview } from '@/ai/hooks/useAiChatFrontComponentPreview';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { REST_API_BASE_URL } from '@/apollo/constants/RestApiBaseUrl';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledPreview = styled.div`
@@ -24,7 +23,7 @@ const StyledPreview = styled.div`
 `;
 
 const StyledContent = styled.div`
-  height: 360px;
+  height: calc(3 * ${themeCssVariables.spacing[30]});
   width: 100%;
 `;
 
@@ -51,36 +50,14 @@ const AiChatFrontComponentPreviewContent = ({
 }: AiChatFrontComponentPreviewContentProps) => {
   const { t } = useLingui();
   const colorScheme = useThemeColorScheme();
-  const { preview, error: loadingError } =
+  const { preview, error, loadPreview, reportPreviewError } =
     useAiChatFrontComponentPreview(draftId);
-  const [runtimeError, setRuntimeError] = useState<string>();
-  const error = runtimeError ?? loadingError;
   const [isReady, setIsReady] = useState(false);
-  const endpoint = `${REST_API_BASE_URL}/ai-front-components/drafts/${encodeURIComponent(draftId)}`;
   const handleReady = useCallback(() => setIsReady(true), []);
-  const handleError = useCallback(
-    (failure?: Error) => {
-      if (!isDefined(failure)) {
-        return;
-      }
-      const message = failure.message.slice(0, 2000);
-
-      setRuntimeError(message);
-      void fetch(`${endpoint}/preview-error`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-          [SESSION_COOKIE_OPT_IN_HEADER_NAME]: '1',
-        },
-        body: JSON.stringify({ message }),
-      }).catch(() => undefined);
-    },
-    [endpoint],
-  );
 
   return (
     <StyledPreview>
+      <AiChatFrontComponentPreviewEffect loadPreview={loadPreview} />
       <div>
         <Badge>{t`Sample data`}</Badge>
         {isDefined(preview) && (
@@ -110,7 +87,7 @@ const AiChatFrontComponentPreviewContent = ({
               mockQueryResult={preview.mockQueryResult}
               colorScheme={colorScheme}
               onReady={handleReady}
-              onError={handleError}
+              onError={reportPreviewError}
             />
           </StyledContent>
         </>

@@ -1,6 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { ThemeProvider } from 'twenty-ui/theme';
-import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
+import {
+  type ExtendedUIMessagePart,
+  PREVIEW_FRONT_COMPONENT_TOOL_NAME,
+} from 'twenty-shared/ai';
 
 import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
 
@@ -80,7 +83,7 @@ const renderAssistantRenderer = (
 };
 
 describe('AiChatAssistantMessageRenderer', () => {
-  it.each(['preview_front_component', 'execute_tool'])(
+  it.each([PREVIEW_FRONT_COMPONENT_TOOL_NAME, 'execute_tool'])(
     'renders %s previews outside the thinking steps',
     (toolName) => {
       const messageParts: ExtendedUIMessagePart[] = [
@@ -90,7 +93,7 @@ describe('AiChatAssistantMessageRenderer', () => {
           state: 'output-available',
           input:
             toolName === 'execute_tool'
-              ? { toolName: 'preview_front_component', arguments: {} }
+              ? { toolName: PREVIEW_FRONT_COMPONENT_TOOL_NAME, arguments: {} }
               : {},
           output: { success: true, result: { draftId: 'draft' } },
         },
@@ -103,7 +106,7 @@ describe('AiChatAssistantMessageRenderer', () => {
     },
   );
 
-  it.each(['preview_front_component', 'execute_tool'])(
+  it.each([PREVIEW_FRONT_COMPONENT_TOOL_NAME, 'execute_tool'])(
     'keeps completed %s calls visible when previews are disabled',
     (toolName) => {
       mockIsFrontComponentPreviewEnabled = false;
@@ -114,7 +117,7 @@ describe('AiChatAssistantMessageRenderer', () => {
           state: 'output-available',
           input:
             toolName === 'execute_tool'
-              ? { toolName: 'preview_front_component', arguments: {} }
+              ? { toolName: PREVIEW_FRONT_COMPONENT_TOOL_NAME, arguments: {} }
               : {},
           output: { success: true, result: { draftId: 'draft' } },
         },
