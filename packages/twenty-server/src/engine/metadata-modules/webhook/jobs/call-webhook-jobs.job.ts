@@ -83,6 +83,10 @@ export class CallWebhookJobsJob {
       })?.roleId;
 
       if (!isDefined(webhookRoleId)) {
+        this.logger.warn(
+          `Webhook ${webhook.id} has no role in workspace ${workspaceEventBatch.workspaceId}, skipping its events`,
+        );
+
         continue;
       }
 

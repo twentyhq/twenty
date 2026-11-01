@@ -328,40 +328,36 @@ export class AgentChatSharingService {
         shouldConsiderNewShares && canManageSharing
           ? RecordShareAccessLevel.READ_WRITE
           : undefined;
-      const admittedMemberIds = new Set<string>();
+      const admittedMemberIds = new Set(
+        (
+          await Promise.all(
+            members.map(async (member) => {
+              const roleId = roleIdByMemberId.get(member.id);
 
-      for (const member of members) {
-        const roleId = roleIdByMemberId.get(member.id);
+              if (!isDefined(roleId)) {
+                return undefined;
+              }
 
-        if (!isDefined(roleId)) {
-          continue;
-        }
+              const grants = await Promise.all(
+                AGENT_CHAT_REPLY_OPERATION_TYPES.map((operationType) =>
+                  repository.hasPrincipalGrantOnRecords({
+                    principal: {
+                      workspaceId,
+                      intersectionOf: { userWorkspaceRoleId: roleId },
+                      workspaceMember: member,
+                    },
+                    recordIds: [threadId],
+                    operationType,
+                    hypotheticalRecordShareAccessLevel,
+                  }),
+                ),
+              );
 
-        const principal = {
-          workspaceId,
-          intersectionOf: { userWorkspaceRoleId: roleId },
-          workspaceMember: member,
-        };
-        let hasGrantForEveryOperation = true;
-
-        for (const operationType of AGENT_CHAT_REPLY_OPERATION_TYPES) {
-          hasGrantForEveryOperation =
-            await repository.hasPrincipalGrantOnRecords({
-              principal,
-              recordIds: [threadId],
-              operationType,
-              hypotheticalRecordShareAccessLevel,
-            });
-
-          if (!hasGrantForEveryOperation) {
-            break;
-          }
-        }
-
-        if (hasGrantForEveryOperation) {
-          admittedMemberIds.add(member.id);
-        }
-      }
+              return grants.every(Boolean) ? member.id : undefined;
+            }),
+          )
+        ).filter(isDefined),
+      );
 
       return candidateMemberIds.filter((memberId) =>
         admittedMemberIds.has(memberId),

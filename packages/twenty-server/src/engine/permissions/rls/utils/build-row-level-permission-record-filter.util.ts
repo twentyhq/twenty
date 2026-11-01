@@ -16,7 +16,7 @@ import {
   type RecordFilterGroup,
 } from 'twenty-shared/utils';
 
-import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type PermissionsPrincipalWorkspaceMember } from 'src/engine/permissions/principal/types/permissions-principal.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -41,7 +41,7 @@ type BuildRecordFilterForRoleArgs = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   objectMetadata: FlatObjectMetadata;
   roleId: string;
-  workspaceMember?: UserWorkspaceAuthContext['workspaceMember'];
+  workspaceMember?: PermissionsPrincipalWorkspaceMember;
 };
 
 const resolveWorkspaceMemberBoundPredicateValue = ({
@@ -55,7 +55,7 @@ const resolveWorkspaceMemberBoundPredicateValue = ({
   workspaceMemberFieldMetadataId: string;
   targetFieldMetadata: OrmFlatFieldMetadata;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-  workspaceMember: UserWorkspaceAuthContext['workspaceMember'] | undefined;
+  workspaceMember: PermissionsPrincipalWorkspaceMember | undefined;
 }): RowLevelPermissionPredicateValue | null => {
   const workspaceMemberFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: workspaceMemberFieldMetadataId,

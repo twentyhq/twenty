@@ -1,6 +1,7 @@
 /* @license Enterprise */
 
 import { type ObjectsPermissions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
@@ -30,7 +31,7 @@ export const getPermissionsPrincipalObjectsPermissions = ({
   const cachedObjectsPermissions =
     objectsPermissionsByMetadataMaps.get(metadataMaps);
 
-  if (cachedObjectsPermissions !== undefined) {
+  if (isDefined(cachedObjectsPermissions)) {
     return cachedObjectsPermissions;
   }
 

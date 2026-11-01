@@ -48,7 +48,6 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { type RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { computeEventName } from 'src/engine/workspace-event-emitter/utils/compute-event-name';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 const getAgentChatThreadService = () =>
   getAppProviderByClassName<AgentChatThreadService>('AgentChatThreadService');
@@ -1002,7 +1001,7 @@ describe('Conversations through the record API', () => {
           intersectionOf: { userWorkspaceRoleId: roleId },
           workspaceMember: {
             id: workspaceMemberId,
-          } as WorkspaceMemberWorkspaceEntity,
+          },
         });
 
     return admittedRecordIds.has(threadId);

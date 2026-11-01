@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isObject } from '@sniptt/guards';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import {
   type ObjectRecord,
@@ -2213,12 +2213,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       .withDeleted()
       .select(['id']);
     const admittedRecords = await (
-      condition === true
-        ? queryBuilder
-        : queryBuilder.addRowAccessCondition(
+      isObject(condition)
+        ? queryBuilder.addRowAccessCondition(
             condition.sql,
             condition.parameters,
           )
+        : queryBuilder
     ).getMany<ObjectRecord>({ noFormatting: true });
 
     return admittedRecords.length === uniqueRecordIds.length;

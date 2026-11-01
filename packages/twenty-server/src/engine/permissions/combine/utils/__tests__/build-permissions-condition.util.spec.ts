@@ -126,7 +126,7 @@ const buildConditionOutcome = (
 const readEverything: PermissionsPrincipal = {
   workspaceId: 'workspace-id',
   intersectionOf: { userWorkspaceRoleId: FULL_ACCESS_ROLE_ID },
-  workspaceMember: { id: 'member-1' } as never,
+  workspaceMember: { id: 'member-1' },
 };
 
 const owningApplication: PermissionsPrincipal = {

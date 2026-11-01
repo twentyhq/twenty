@@ -106,7 +106,7 @@ const rolePrincipal: PermissionsPrincipal = {
 
 const memberPrincipal: PermissionsPrincipal = {
   ...rolePrincipal,
-  workspaceMember: { id: MEMBER_ID } as PermissionsPrincipal['workspaceMember'],
+  workspaceMember: { id: MEMBER_ID },
 };
 
 const deniedPrincipal: PermissionsPrincipal = {

@@ -56,8 +56,7 @@ export class RecordAccessPolicyService {
     };
   }
 
-  // A principal receives the records a query would return it: the event
-  // snapshots are run through the same row access policy as its queries.
+  // Event snapshots go through the same grant paths as the principal's queries
   buildEventRecordAccessGate({
     workspaceId,
     objectMetadata,
@@ -132,11 +131,14 @@ export class RecordAccessPolicyService {
         ),
       }));
 
+    let metadataMaps: Promise<PermissionsMetadataMaps> | undefined;
+
     return {
       resolveAdmittedRecordIds: async (principal) =>
         findPermissionsAdmittedRecordIds({
           principal,
-          metadataMaps: await this.loadPermissionsMetadataMaps(workspaceId),
+          metadataMaps: await (metadataMaps ??=
+            this.loadPermissionsMetadataMaps(workspaceId)),
           flatObjectMetadata: objectMetadata,
           operationType: 'select',
           records: resolveEventRecordSnapshots(events),
