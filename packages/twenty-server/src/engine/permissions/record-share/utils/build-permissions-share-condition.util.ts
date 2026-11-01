@@ -1,37 +1,36 @@
 /* @license Enterprise */
 
-import { type RecordShareAccessLevel } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
+import {
+  type PermissionsRowAccessSqlRequest,
+  type SqlCondition,
+} from 'src/engine/permissions/combine/types/row-access-policy.type';
+import { combineSqlConditions } from 'src/engine/permissions/combine/utils/combine-sql-conditions.util';
 import { buildRecordPrivacyCondition } from 'src/engine/permissions/private-record/utils/build-record-privacy-condition.util';
 import { buildRecordShareCondition } from 'src/engine/permissions/record-share/utils/build-record-share-condition.util';
-import { type SqlCondition } from 'src/engine/permissions/combine/types/row-access-policy.type';
-import { combineSqlConditions } from 'src/engine/permissions/combine/utils/combine-sql-conditions.util';
+import { resolvePermissionsShareGrant } from 'src/engine/permissions/record-share/utils/resolve-permissions-share-grant.util';
 
-export const buildPermissionsShareCondition = ({
-  tableAlias,
-  recordShareTableExpression,
-  objectMetadataId,
-  principalIds,
-  accessLevels,
-  isLimitedToPrivateRecords,
-}: {
-  tableAlias: string;
-  recordShareTableExpression: string;
-  objectMetadataId: string;
-  principalIds: string[];
-  accessLevels: RecordShareAccessLevel[];
-  isLimitedToPrivateRecords: boolean;
-}): SqlCondition => {
+export const buildPermissionsShareCondition = (
+  request: PermissionsRowAccessSqlRequest,
+): SqlCondition | undefined => {
+  const shareGrant = resolvePermissionsShareGrant(request);
+
+  if (!isDefined(shareGrant)) {
+    return undefined;
+  }
+
+  const { tableAlias } = request;
   const recordShareCondition = buildRecordShareCondition({
     tableAlias,
-    recordShareTableExpression,
-    objectMetadataId,
-    principalIds,
-    accessLevels,
-    isUncorrelated: !isLimitedToPrivateRecords,
+    recordShareTableExpression: request.environment.recordShareTableExpression,
+    objectMetadataId: request.flatObjectMetadata.id,
+    principalIds: shareGrant.principalIds,
+    accessLevels: shareGrant.accessLevels,
+    isUncorrelated: !shareGrant.isLimitedToPrivateRecords,
   });
 
-  return isLimitedToPrivateRecords
+  return shareGrant.isLimitedToPrivateRecords
     ? combineSqlConditions([
         buildRecordPrivacyCondition({ tableAlias, isPrivate: true }),
         recordShareCondition,

@@ -5,7 +5,7 @@ import {
   type ObjectRecordEvent,
 } from 'twenty-shared/database-events';
 
-import { type RowAccessRecord } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
+import { type RowAccessRecord } from 'src/engine/permissions/combine/types/row-access-policy.type';
 
 export const resolveEventRecordSnapshots = (
   events: ObjectRecordEvent[],

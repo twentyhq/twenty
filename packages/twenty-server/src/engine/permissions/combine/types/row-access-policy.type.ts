@@ -10,32 +10,11 @@ import {
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
+import { type RecordShareGrant } from 'src/engine/permissions/record-share/types/record-share-grant.type';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 
 export type SqlCondition = { sql: string; parameters: ObjectLiteral };
-
-export type PermissionsRowAccessGrants = {
-  tableAlias: string;
-  flatObjectMetadata: FlatObjectMetadata;
-  areRoleGrantsLimitedToPublicRecords: boolean;
-  areRecordGrantsHeldToRowLevelPermissions: boolean;
-  isObjectGranted: boolean;
-  rowLevelPermissionGrant?: {
-    recordFilter: RecordGqlOperationFilter;
-    condition: SqlCondition;
-  };
-  shareGrant?: {
-    principalIds: string[];
-    accessLevels: RecordShareAccessLevel[];
-    isLimitedToPrivateRecords: boolean;
-  };
-  creatorGrant?: { workspaceMemberId: string };
-};
-
-export type RowAccessPolicy =
-  | { kind: 'open' }
-  | { kind: 'denied' }
-  | { kind: 'gated'; grants: PermissionsRowAccessGrants };
 
 export type RowAccessPolicySubject = {
   isSystemContext: boolean;
@@ -58,13 +37,38 @@ export type RowAccessCompilationEnvironment = {
   recordShareTableExpression: string;
 };
 
-export type RowAccessPolicyContext = {
+export type PermissionsRowAccessRequest = {
   subject: RowAccessPolicySubject;
   environment: RowAccessPolicyEnvironment;
-};
-
-export type RowAccessPolicyTarget = {
-  tableAlias: string;
   flatObjectMetadata: FlatObjectMetadata;
   operationType: OperationType;
+  hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
+};
+
+export type RowAccessRecord = { id: string } & Record<string, unknown>;
+
+export type RowAccessEvaluationContext = {
+  shouldIgnoreSoftDeleteDefaultFilter: boolean;
+  fetchRecordShares: (args: {
+    objectMetadataId: string;
+    recordIds: string[];
+  }) => Promise<RecordShareGrant[]>;
+  findPrivateRecordStates: (args: {
+    objectMetadataId: string;
+    recordIds: string[];
+  }) => Promise<Map<string, PrivateRecordState>>;
+};
+
+export type PermissionsRowAccessEvaluationRequest =
+  PermissionsRowAccessRequest & {
+    records: RowAccessRecord[];
+    context: RowAccessEvaluationContext;
+  };
+
+export type PermissionsRowAccessSqlRequest = Omit<
+  PermissionsRowAccessRequest,
+  'environment'
+> & {
+  environment: RowAccessPolicyEnvironment & RowAccessCompilationEnvironment;
+  tableAlias: string;
 };

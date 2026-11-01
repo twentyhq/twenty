@@ -10,7 +10,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getObjectMetadataIdByName } from 'src/engine/metadata-modules/flat-object-metadata/utils/get-object-metadata-id-by-name.util';
-import { type RowAccessPolicy } from 'src/engine/permissions/combine/types/row-access-policy.type';
+import { type RowAccessPolicySubject } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -18,7 +18,7 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 
 const SUBJECTS_BEYOND_ONE_BATCH = 1_001;
 
-describe('WorkspaceRepository.findSubjectIdsAdmittedByRowAccessPolicies', () => {
+describe('WorkspaceRepository.findSubjectIdsAdmittedToRecord', () => {
   const recordId = randomUUID();
   const otherRecordId = randomUUID();
   let personObjectMetadata: FlatObjectMetadata;
@@ -72,35 +72,27 @@ describe('WorkspaceRepository.findSubjectIdsAdmittedByRowAccessPolicies', () => 
     }
   });
 
-  const buildIdPolicy = (personId: string): RowAccessPolicy => {
-    const parameterName = `personId_${randomUUID().replace(/-/g, '')}`;
-
-    return {
-      kind: 'gated',
-      grants: {
-        tableAlias: 'person',
-        flatObjectMetadata: personObjectMetadata,
-        areRoleGrantsLimitedToPublicRecords: false,
-        areRecordGrantsHeldToRowLevelPermissions: false,
-        isObjectGranted: false,
-        rowLevelPermissionGrant: {
-          recordFilter: { id: { eq: personId } },
-          condition: {
-            sql: `"person"."id" = :${parameterName}`,
-            parameters: { [parameterName]: personId },
-          },
-        },
-      },
-    };
+  const openSubject: RowAccessPolicySubject = {
+    isSystemContext: false,
+    objectsPermissions: undefined,
+    principalIds: undefined,
+    workspaceMemberId: undefined,
+    isOwningApplication: () => false,
+    resolveRowLevelPermissionRecordFilter: () => null,
   };
+
+  const buildIdSubject = (personId: string): RowAccessPolicySubject => ({
+    ...openSubject,
+    resolveRowLevelPermissionRecordFilter: () => ({ id: { eq: personId } }),
+  });
 
   // The app's Set comes from another realm, so it is compared as a list
   const findAdmittedSubjectIds = async ({
     recordId,
-    policiesBySubjectId,
+    subjectsById,
   }: {
     recordId: string;
-    policiesBySubjectId: Map<string, RowAccessPolicy[]>;
+    subjectsById: Map<string, RowAccessPolicySubject>;
   }): Promise<string[]> => {
     const workspaceOrmManager = getAppProviderByClassName<WorkspaceOrmManager>(
       'WorkspaceOrmManager',
@@ -110,9 +102,10 @@ describe('WorkspaceRepository.findSubjectIdsAdmittedByRowAccessPolicies', () => 
         () =>
           workspaceOrmManager
             .getRepository('person', { shouldBypassPermissionChecks: true })
-            .findSubjectIdsAdmittedByRowAccessPolicies({
+            .findSubjectIdsAdmittedToRecord({
               recordId,
-              policiesBySubjectId,
+              subjectsById,
+              operationTypes: ['select', 'update'],
             }),
         buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),
       );
@@ -120,7 +113,7 @@ describe('WorkspaceRepository.findSubjectIdsAdmittedByRowAccessPolicies', () => 
     return [...admittedSubjectIds].sort();
   };
 
-  it('admits a subject only when all its policies admit the record', async () => {
+  it('admits each subject the record is open to for every operation, in one pass', async () => {
     const openSubjectId = randomUUID();
     const deniedSubjectId = randomUUID();
     const admittedSubjectId = randomUUID();
@@ -129,14 +122,11 @@ describe('WorkspaceRepository.findSubjectIdsAdmittedByRowAccessPolicies', () => 
     expect(
       await findAdmittedSubjectIds({
         recordId,
-        policiesBySubjectId: new Map([
-          [openSubjectId, [{ kind: 'open' }]],
-          [deniedSubjectId, [{ kind: 'open' }, { kind: 'denied' }]],
-          [admittedSubjectId, [{ kind: 'open' }, buildIdPolicy(recordId)]],
-          [
-            refusedSubjectId,
-            [buildIdPolicy(recordId), buildIdPolicy(otherRecordId)],
-          ],
+        subjectsById: new Map([
+          [openSubjectId, openSubject],
+          [deniedSubjectId, { ...openSubject, objectsPermissions: {} }],
+          [admittedSubjectId, buildIdSubject(recordId)],
+          [refusedSubjectId, buildIdSubject(otherRecordId)],
         ]),
       }),
     ).toEqual([openSubjectId, admittedSubjectId].sort());
@@ -146,7 +136,7 @@ describe('WorkspaceRepository.findSubjectIdsAdmittedByRowAccessPolicies', () => 
     expect(
       await findAdmittedSubjectIds({
         recordId: randomUUID(),
-        policiesBySubjectId: new Map([[randomUUID(), [{ kind: 'open' }]]]),
+        subjectsById: new Map([[randomUUID(), openSubject]]),
       }),
     ).toEqual([]);
   });
@@ -159,8 +149,8 @@ describe('WorkspaceRepository.findSubjectIdsAdmittedByRowAccessPolicies', () => 
     expect(
       await findAdmittedSubjectIds({
         recordId,
-        policiesBySubjectId: new Map(
-          subjectIds.map((subjectId) => [subjectId, [buildIdPolicy(recordId)]]),
+        subjectsById: new Map(
+          subjectIds.map((subjectId) => [subjectId, buildIdSubject(recordId)]),
         ),
       }),
     ).toEqual([...subjectIds].sort());

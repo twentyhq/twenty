@@ -12,7 +12,6 @@ import { type EventRecordAccessGate } from 'src/engine/permissions/combine/types
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
 import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
 import { resolveEventRecordSnapshots } from 'src/engine/permissions/combine/utils/resolve-event-record-snapshots.util';
-import { buildRowAccessPolicy } from 'src/engine/permissions/combine/utils/build-row-access-policy.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
@@ -112,20 +111,16 @@ export class RecordAccessPolicyService {
           'featureFlagsMap',
         ]);
         return findPermissionsAdmittedRecordIds({
-          policy: buildRowAccessPolicy({
-            subject,
-            environment: {
-              flatObjectMetadataMaps,
-              flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
-              featureFlagsMap,
-            },
-            tableAlias: objectMetadata.nameSingular,
-            flatObjectMetadata: objectMetadata,
-            operationType: 'select',
-          }),
+          subject,
+          environment: {
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
+            featureFlagsMap,
+          },
+          flatObjectMetadata: objectMetadata,
+          operationType: 'select',
           records: resolveEventRecordSnapshots(events),
           context: {
-            flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
             shouldIgnoreSoftDeleteDefaultFilter: true,
             fetchRecordShares,
             findPrivateRecordStates,

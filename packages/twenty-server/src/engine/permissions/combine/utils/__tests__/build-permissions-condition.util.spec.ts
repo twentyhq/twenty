@@ -16,8 +16,8 @@ import {
   type RowAccessCompilationEnvironment,
   type RowAccessPolicyEnvironment,
   type RowAccessPolicySubject,
+  type SqlCondition,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
-import { buildRowAccessPolicy } from 'src/engine/permissions/combine/utils/build-row-access-policy.util';
 import { buildPermissionsCondition } from 'src/engine/permissions/combine/utils/build-permissions-condition.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/rls/utils/render-row-level-permission-filter-to-sql.util';
 
@@ -63,24 +63,16 @@ const sharingEnvironment = {
   },
 };
 
-const buildCompiledRowAccessPolicy = (
-  args: Parameters<typeof buildRowAccessPolicy>[0] & {
-    environment: typeof environment;
-  },
-) => {
-  const policy = buildRowAccessPolicy(args);
+const buildConditionOutcome = (
+  args: Parameters<typeof buildPermissionsCondition>[0],
+): { kind: 'open' | 'denied' } | { kind: 'gated'; condition: SqlCondition } => {
+  const condition = buildPermissionsCondition(args);
 
-  if (policy.kind !== 'gated') {
-    return policy;
+  if (typeof condition === 'boolean') {
+    return { kind: condition ? 'open' : 'denied' };
   }
 
-  return {
-    kind: policy.kind,
-    condition: buildPermissionsCondition({
-      grants: policy.grants,
-      environment: args.environment,
-    }),
-  };
+  return { kind: 'gated', condition };
 };
 
 const readEverything: RowAccessPolicySubject = {
@@ -101,7 +93,7 @@ const build = ({
   flatObjectMetadata: FlatObjectMetadata;
   policyEnvironment?: typeof environment;
 }) =>
-  buildCompiledRowAccessPolicy({
+  buildConditionOutcome({
     subject,
     environment: policyEnvironment,
     tableAlias: flatObjectMetadata.nameSingular,
@@ -125,7 +117,7 @@ const gatedSql = ({
   return policy.kind === 'gated' ? policy.condition.sql : '';
 };
 
-describe('buildRowAccessPolicy', () => {
+describe('buildPermissionsCondition', () => {
   beforeEach(() => {
     (renderRowLevelPermissionFilterToSql as jest.Mock).mockImplementation(
       ({ tableAlias }: { tableAlias: string }) => ({
@@ -138,7 +130,7 @@ describe('buildRowAccessPolicy', () => {
   it('allows trusted system reads and writes', () => {
     for (const operationType of ['select', 'update', 'delete'] as const) {
       expect(
-        buildCompiledRowAccessPolicy({
+        buildConditionOutcome({
           subject: {
             ...readEverything,
             isSystemContext: true,
@@ -177,7 +169,7 @@ describe('buildRowAccessPolicy', () => {
 
   it('keeps private records to their creator and shares once record sharing is enabled', () => {
     const company = buildObject({ id: 'company' });
-    const policy = buildCompiledRowAccessPolicy({
+    const policy = buildConditionOutcome({
       subject: readEverything,
       environment: sharingEnvironment,
       tableAlias: 'company',
@@ -197,7 +189,7 @@ describe('buildRowAccessPolicy', () => {
 
   it('leaves records open to their role until private records are enabled', () => {
     expect(
-      buildCompiledRowAccessPolicy({
+      buildConditionOutcome({
         subject: readEverything,
         environment: {
           ...environment,
@@ -224,7 +216,7 @@ describe('buildRowAccessPolicy', () => {
 
   it('gates a system object on private records too', () => {
     expect(
-      buildCompiledRowAccessPolicy({
+      buildConditionOutcome({
         subject: readEverything,
         environment: sharingEnvironment,
         tableAlias: 'note',
@@ -236,7 +228,7 @@ describe('buildRowAccessPolicy', () => {
 
   it('leaves an object open to inserts when record sharing is enabled', () => {
     expect(
-      buildCompiledRowAccessPolicy({
+      buildConditionOutcome({
         subject: readEverything,
         environment: sharingEnvironment,
         tableAlias: 'note',
@@ -252,7 +244,7 @@ describe('buildRowAccessPolicy', () => {
       subject: RowAccessPolicySubject,
       operationType: 'select' | 'update' | 'delete' = 'select',
     ) =>
-      buildCompiledRowAccessPolicy({
+      buildConditionOutcome({
         subject,
         environment: sharingEnvironment,
         tableAlias: 'company',
@@ -373,26 +365,26 @@ describe('buildRowAccessPolicy', () => {
   });
 
   it('opens private records only to shares naming the member or their roles', () => {
-    const policy = buildRowAccessPolicy({
+    const condition = buildPermissionsCondition({
       subject: {
         ...readEverything,
         principalIds: [EVERYONE_PRINCIPAL_ID, 'member-1', 'role-1'],
       },
       environment: privateRecordEnvironment,
-      tableAlias: 'person',
       flatObjectMetadata: person,
       operationType: 'select',
     });
 
-    expect(policy).toMatchObject({
-      kind: 'gated',
-      grants: {
-        shareGrant: {
-          principalIds: ['member-1', 'role-1'],
-          isLimitedToPrivateRecords: true,
-        },
-      },
-    });
+    if (typeof condition === 'boolean') {
+      throw new Error('Expected a share condition');
+    }
+    expect(condition.sql).toContain(
+      '("person"."_isPrivate" = TRUE) AND (EXISTS',
+    );
+    expect(Object.values(condition.parameters)).toContainEqual([
+      'member-1',
+      'role-1',
+    ]);
   });
 
   it('holds private shares to the role filter without sharing beyond the role', () => {
@@ -411,7 +403,7 @@ describe('buildRowAccessPolicy', () => {
   });
 
   it('keeps private records gated regardless of the sharing UI flag', () => {
-    const policy = buildCompiledRowAccessPolicy({
+    const policy = buildConditionOutcome({
       subject: readEverything,
       environment: privateRecordEnvironment,
       tableAlias: 'person',
@@ -431,13 +423,13 @@ describe('buildRowAccessPolicy', () => {
       flatObjectMetadata: person,
       operationType: 'update',
       hypotheticalRecordShareAccessLevel: RecordShareAccessLevel.READ_WRITE,
-    } satisfies Parameters<typeof buildCompiledRowAccessPolicy>[0];
+    } satisfies Parameters<typeof buildConditionOutcome>[0];
 
     it('requires an edit-level share to preview update access', () => {
-      expect(buildCompiledRowAccessPolicy(prospectiveShareArguments)).toEqual({
+      expect(buildConditionOutcome(prospectiveShareArguments)).toEqual({
         kind: 'open',
       });
-      const readOnly = buildCompiledRowAccessPolicy({
+      const readOnly = buildConditionOutcome({
         ...prospectiveShareArguments,
         hypotheticalRecordShareAccessLevel: RecordShareAccessLevel.READ,
       });
@@ -446,7 +438,7 @@ describe('buildRowAccessPolicy', () => {
     });
 
     it('preserves the member-bound row filter when sharing cannot reach beyond the role', () => {
-      const policy = buildCompiledRowAccessPolicy({
+      const policy = buildConditionOutcome({
         ...prospectiveShareArguments,
         environment,
         subject: {
@@ -468,7 +460,7 @@ describe('buildRowAccessPolicy', () => {
 
     it('preserves a disabled edit action', () => {
       expect(
-        buildCompiledRowAccessPolicy({
+        buildConditionOutcome({
           ...prospectiveShareArguments,
           flatObjectMetadata: {
             ...person,
@@ -482,7 +474,7 @@ describe('buildRowAccessPolicy', () => {
 
     it('honors ownership for an object that disables editing', () => {
       expect(
-        buildCompiledRowAccessPolicy({
+        buildConditionOutcome({
           ...prospectiveShareArguments,
           subject: { ...readEverything, isOwningApplication: () => true },
           flatObjectMetadata: {
@@ -497,7 +489,7 @@ describe('buildRowAccessPolicy', () => {
 
     it('does not use a prospective share to bypass a disabled read action', () => {
       expect(
-        buildCompiledRowAccessPolicy({
+        buildConditionOutcome({
           ...prospectiveShareArguments,
           operationType: 'select',
           flatObjectMetadata: {
@@ -515,14 +507,14 @@ describe('buildRowAccessPolicy', () => {
       };
 
       expect(
-        buildCompiledRowAccessPolicy({
+        buildConditionOutcome({
           ...prospectiveShareArguments,
           environment,
           subject: withoutObjectPermission,
         }),
       ).toEqual({ kind: 'denied' });
       expect(
-        buildCompiledRowAccessPolicy({
+        buildConditionOutcome({
           ...prospectiveShareArguments,
           subject: withoutObjectPermission,
         }),
@@ -554,7 +546,7 @@ describe('buildRowAccessPolicy', () => {
       }),
     };
     const buildForCreator = (subject: RowAccessPolicySubject) =>
-      buildCompiledRowAccessPolicy({
+      buildConditionOutcome({
         subject,
         environment: creatorEnvironment,
         tableAlias: 'company',
