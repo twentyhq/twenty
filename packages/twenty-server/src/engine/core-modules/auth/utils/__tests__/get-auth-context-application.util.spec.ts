@@ -53,6 +53,17 @@ describe('getAuthContextApplication', () => {
     ).toBe(standardApplication);
   });
 
+  it('should prefer application over viaApplication for a member', () => {
+    expect(
+      getAuthContextApplication({
+        type: 'user',
+        workspace,
+        application: installedApplication,
+        viaApplication: standardApplication,
+      } as WorkspaceAuthContext),
+    ).toBe(installedApplication);
+  });
+
   it('should return no application for a member acting directly', () => {
     expect(
       getAuthContextApplication({
