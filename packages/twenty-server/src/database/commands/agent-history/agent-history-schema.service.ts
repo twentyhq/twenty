@@ -163,8 +163,7 @@ export class AgentHistorySchemaService {
     );
   }
 
-  // Stays protected until the sharing upgrade, which reads these legacy columns. History objects still at
-  // the column defaults were just provisioned, so this also repairs a run interrupted before it stamped them
+  // Objects still at the column defaults were just provisioned, so this also repairs an interrupted run
   private async protectUnprotectedHistoryObjects({
     workspaceId,
     historyObjectUniversalIdentifiers,
