@@ -314,18 +314,25 @@ export class AgentTurnStreamService {
       return { streamed, completion, finish };
     }
 
-    // the end event follows every chunk, so a subscriber that sees it has the whole reply
-    await this.eventPublisherService.publish({
-      threadId: claim.threadId,
-      workspaceId,
-      event:
-        completion.stopReason === 'workspaceAllowance'
-          ? { type: 'credits-exhausted' }
-          : {
-              type: 'message-persisted',
-              messageId: streamed.assistantMessageId,
-            },
-    });
+    // the end event follows every chunk, so a subscriber that sees it has the whole reply. The turn is
+    // already finished, so an event that could not be sent leaves subscribers to read the history instead
+    await this.eventPublisherService
+      .publish({
+        threadId: claim.threadId,
+        workspaceId,
+        event:
+          completion.stopReason === 'workspaceAllowance'
+            ? { type: 'credits-exhausted' }
+            : {
+                type: 'message-persisted',
+                messageId: streamed.assistantMessageId,
+              },
+      })
+      .catch((error: unknown) =>
+        this.logger.warn(
+          `Could not publish the end of turn ${turnId} in thread ${claim.threadId}: ${formatErrorWithCause(error)}`,
+        ),
+      );
 
     return { streamed, completion, finish };
   }
