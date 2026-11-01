@@ -88,7 +88,9 @@ Trainer directory is available in application navigation with class, accrual and
 ## Client training activity
 
 Automatic `trainingActivity` on Person tracks recent attendance and future/current
-bookings independently of lifecycle and sales stages. Booking/session events
-recompute affected clients; daily reconciliation backfills existing clients and
-pauses former attendees after more than 14 days without attendance or upcoming
-bookings. See [Активность занятий](docs/training-activity.ru.md).
+bookings and synchronizes the primary lifecycle to `ACTIVE_CLIENT` or `PAUSED`.
+Booking/session events recompute affected clients; daily reconciliation backfills
+existing clients and pauses former attendees after more than 14 days without
+attendance or upcoming bookings. Without attendance or valid bookings, the current
+lifecycle is preserved; sales stages remain unchanged.
+See [Активность занятий](docs/training-activity.ru.md).

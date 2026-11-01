@@ -4,6 +4,8 @@ import {
   type ObjectRecordEvent,
 } from 'twenty-sdk/define';
 
+import { type CLIENT_LIFECYCLE_OPTIONS } from 'src/constants/select-options';
+
 export const TRAINING_INACTIVITY_DAYS = 14;
 const PAGE_SIZE = 100;
 
@@ -17,7 +19,12 @@ export type ActivityBooking = {
     endsAt: string;
   } | null;
 };
-type ActivityPerson = { id: string; trainingActivity: TrainingActivity | null };
+type ClientLifecycleStatus = (typeof CLIENT_LIFECYCLE_OPTIONS)[number]['value'];
+type ActivityPerson = {
+  id: string;
+  trainingActivity: TrainingActivity | null;
+  lifecycleStatus: ClientLifecycleStatus | null;
+};
 type ActivityConnection<TData> = {
   edges: { node: TData }[];
   pageInfo: { hasNextPage: boolean; endCursor: string | null };
@@ -105,7 +112,7 @@ export const recomputeTrainingActivity = async (
     client,
     'people',
     personIds ? { id: { in: personIds } } : {},
-    { id: true, trainingActivity: true },
+    { id: true, trainingActivity: true, lifecycleStatus: true },
   )) {
     if (people.length === 0) continue;
     const bookingsByPerson = new Map<string, ActivityBooking[]>();
@@ -131,17 +138,37 @@ export const recomputeTrainingActivity = async (
         bookingsByPerson.get(person.id) ?? [],
         now,
       );
-      if (person.trainingActivity === trainingActivity) continue;
+      const lifecycleStatus: ClientLifecycleStatus | undefined =
+        trainingActivity === 'ACTIVE'
+          ? 'ACTIVE_CLIENT'
+          : trainingActivity === 'PAUSED'
+            ? 'PAUSED'
+            : undefined;
+      if (
+        person.trainingActivity === trainingActivity &&
+        (lifecycleStatus === undefined ||
+          person.lifecycleStatus === lifecycleStatus)
+      )
+        continue;
       const result = (await client.mutation({
         updatePerson: {
-          __args: { id: person.id, data: { trainingActivity } },
+          __args: {
+            id: person.id,
+            data: {
+              trainingActivity,
+              ...(lifecycleStatus === undefined ? {} : { lifecycleStatus }),
+            },
+          },
           id: true,
           trainingActivity: true,
+          lifecycleStatus: true,
         },
       } as never)) as unknown as { updatePerson?: ActivityPerson };
       if (
         result.updatePerson?.id !== person.id ||
-        result.updatePerson.trainingActivity !== trainingActivity
+        result.updatePerson.trainingActivity !== trainingActivity ||
+        (lifecycleStatus !== undefined &&
+          result.updatePerson.lifecycleStatus !== lifecycleStatus)
       ) {
         throw new Error('Training activity update was not confirmed');
       }

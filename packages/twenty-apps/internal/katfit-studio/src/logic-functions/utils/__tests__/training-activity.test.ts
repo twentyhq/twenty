@@ -133,18 +133,30 @@ type Selection = Record<
       after?: string;
       filter?: Record<string, { in: string[] }>;
       id?: string;
-      data?: { trainingActivity: string };
+      data?: { trainingActivity: string; lifecycleStatus?: string };
     };
   }
 >;
 const fixture = () => {
-  const writes: { id?: string; data?: { trainingActivity: string } }[] = [];
+  const writes: {
+    id?: string;
+    data?: { trainingActivity: string; lifecycleStatus?: string };
+  }[] = [];
   const queries: Selection[] = [];
   let incomplete = false;
   let unconfirmed = false;
+  let unconfirmedLifecycle = false;
   const people = [
-    { id: 'client', trainingActivity: 'PAUSED' },
-    { id: 'new', trainingActivity: 'NOT_STARTED' },
+    {
+      id: 'client',
+      trainingActivity: 'PAUSED',
+      lifecycleStatus: 'CONTACTED' as string | null,
+    },
+    {
+      id: 'new',
+      trainingActivity: 'NOT_STARTED',
+      lifecycleStatus: 'LEAD' as string | null,
+    },
   ];
   let bookings = [
     booking('ATTENDED', '2020-01-01T00:00:00Z'),
@@ -182,15 +194,23 @@ const fixture = () => {
       writes.push(input);
       if (unconfirmed) return {};
       const person = people.find(({ id }) => id === input.id);
-      if (person && input.data)
-        person.trainingActivity = input.data.trainingActivity;
-      return { updatePerson: { id: input.id, ...input.data } };
+      if (person && input.data) Object.assign(person, input.data);
+      return {
+        updatePerson: {
+          ...person,
+          ...(unconfirmedLifecycle ? { lifecycleStatus: 'CONTACTED' } : {}),
+        },
+      };
     },
   } as unknown as CoreApiClient;
   return {
     client,
     writes,
     queries,
+    people,
+    setUnconfirmedLifecycle: () => {
+      unconfirmedLifecycle = true;
+    },
     setIncomplete: () => {
       incomplete = true;
     },
@@ -207,7 +227,10 @@ test('reconciles every people and booking page and writes only changes', async (
   const { client, writes, queries } = fixture();
   await recomputeTrainingActivity(client, undefined, NOW);
   assert.deepEqual(writes, [
-    { id: 'client', data: { trainingActivity: 'ACTIVE' } },
+    {
+      id: 'client',
+      data: { trainingActivity: 'ACTIVE', lifecycleStatus: 'ACTIVE_CLIENT' },
+    },
   ]);
   assert.equal(queries.filter((query) => query.people).length, 2);
   assert.equal(queries.filter((query) => query.studioBookings).length, 3);
@@ -224,8 +247,11 @@ test('cancellation of the last future booking pauses a former attendee', async (
   ]);
   await recomputeTrainingActivity(client, undefined, NOW);
   assert.deepEqual(
-    writes.map(({ data }) => data?.trainingActivity),
-    ['ACTIVE', 'PAUSED'],
+    writes.map(({ data }) => data),
+    [
+      { trainingActivity: 'ACTIVE', lifecycleStatus: 'ACTIVE_CLIENT' },
+      { trainingActivity: 'PAUSED', lifecycleStatus: 'PAUSED' },
+    ],
   );
 });
 
@@ -284,4 +310,82 @@ test('events without a client perform no reads or writes', async () => {
   await recomputeBookingTrainingActivity(client, event({ after: {} }));
   assert.equal(queries.length, 0);
   assert.equal(writes.length, 0);
+});
+
+test('first attended training fixes a forgotten contacted status even when activity is already active', async () => {
+  const { client, writes, people, setBookings } = fixture();
+  people[0].trainingActivity = 'ACTIVE';
+  setBookings([booking()]);
+  await recomputeTrainingActivity(client, ['client'], NOW);
+  assert.equal(people[0].lifecycleStatus, 'ACTIVE_CLIENT');
+  assert.deepEqual(writes, [
+    {
+      id: 'client',
+      data: { trainingActivity: 'ACTIVE', lifecycleStatus: 'ACTIVE_CLIENT' },
+    },
+  ]);
+  await recomputeTrainingActivity(client, ['client'], NOW);
+  assert.equal(writes.length, 1);
+});
+
+test('future and ongoing bookings reactivate a paused client without waiting for attendance or payment', async () => {
+  for (const startsAt of ['2026-11-02T09:00:00Z', '2026-11-01T08:30:00Z']) {
+    const { client, people, setBookings } = fixture();
+    people[0].lifecycleStatus = 'PAUSED';
+    setBookings([booking('BOOKED', startsAt, 'CONFIRMED')]);
+    await recomputeTrainingActivity(client, ['client'], NOW);
+    assert.equal(people[0].trainingActivity, 'ACTIVE');
+    assert.equal(people[0].lifecycleStatus, 'ACTIVE_CLIENT');
+  }
+});
+
+test('daily reconciliation fixes lifecycle drift for an already paused activity', async () => {
+  const { client, writes, people, setBookings } = fixture();
+  people[0].lifecycleStatus = 'ACTIVE_CLIENT';
+  setBookings([booking('ATTENDED', '2026-10-01T09:00:00Z')]);
+  await recomputeTrainingActivity(client, undefined, NOW);
+  assert.equal(people[0].lifecycleStatus, 'PAUSED');
+  assert.deepEqual(writes, [
+    {
+      id: 'client',
+      data: { trainingActivity: 'PAUSED', lifecycleStatus: 'PAUSED' },
+    },
+  ]);
+});
+
+test('no attendance or valid bookings preserves the existing lifecycle and never invents a former lead stage', async () => {
+  for (const lifecycleStatus of [
+    'WAITLIST',
+    'LEAD',
+    'CONTACTED',
+    'INTRO_BOOKED',
+    'INTRO_ATTENDED',
+    'ACTIVE_CLIENT',
+    'PAUSED',
+    'CHURNED',
+    'RE_ENGAGEMENT',
+    null,
+  ]) {
+    const { client, writes, people, setBookings } = fixture();
+    people[0].trainingActivity = 'ACTIVE';
+    people[0].lifecycleStatus = lifecycleStatus;
+    setBookings([
+      booking('CANCELLED_IN_TIME', '2026-11-02T09:00:00Z', 'CONFIRMED'),
+    ]);
+    await recomputeTrainingActivity(client, ['client'], NOW);
+    assert.equal(people[0].trainingActivity, 'NOT_STARTED');
+    assert.equal(people[0].lifecycleStatus, lifecycleStatus);
+    assert.deepEqual(writes, [
+      { id: 'client', data: { trainingActivity: 'NOT_STARTED' } },
+    ]);
+  }
+});
+
+test('a successful response must confirm the primary lifecycle update as well as training activity', async () => {
+  const { client, setUnconfirmedLifecycle } = fixture();
+  setUnconfirmedLifecycle();
+  await assert.rejects(
+    recomputeTrainingActivity(client, ['client'], NOW),
+    /not confirmed/,
+  );
 });
