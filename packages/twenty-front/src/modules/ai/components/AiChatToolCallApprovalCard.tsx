@@ -1,5 +1,5 @@
 import {
-  PUBLISH_FRONT_COMPONENT_TOOL_NAME,
+  isFrontComponentProposedToolCall,
   type ProposedToolCall,
 } from 'twenty-shared/ai';
 
@@ -18,12 +18,7 @@ export const AiChatToolCallApprovalCard = ({
   proposal,
   isActive = true,
 }: AiChatToolCallApprovalCardProps) => {
-  // Stored publication proposals may predate the frontComponent template.
-  if (
-    proposal.template === 'frontComponent' ||
-    (proposal.template === 'generic' &&
-      proposal.toolName === PUBLISH_FRONT_COMPONENT_TOOL_NAME)
-  ) {
+  if (isFrontComponentProposedToolCall(proposal)) {
     return (
       <AiChatToolCallApprovalFrontComponentCard
         toolCallId={toolCallId}

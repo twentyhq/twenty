@@ -27,7 +27,10 @@ const StyledContent = styled.div`
 
 type AiChatFrontComponentPreviewContentProps = {
   draftId: string;
-} & ReturnType<typeof useAiChatFrontComponentPreview>;
+} & Pick<
+  ReturnType<typeof useAiChatFrontComponentPreview>,
+  'preview' | 'error' | 'loadPreview' | 'reportPreviewError'
+>;
 
 export const AiChatFrontComponentPreviewContent = ({
   draftId,
