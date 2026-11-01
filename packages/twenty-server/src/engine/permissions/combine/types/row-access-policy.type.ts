@@ -14,15 +14,13 @@ import { type OperationType } from 'src/engine/permissions/role/utils/validate-o
 
 export type SqlCondition = { sql: string; parameters: ObjectLiteral };
 
-// The grant paths that admit records for one (object, operation); each is
-// compiled to SQL for queries and run in memory for writes and events
 export type PermissionsRowAccessGrants = {
   tableAlias: string;
   flatObjectMetadata: FlatObjectMetadata;
-  // Role-based grants never reach private records
   areRoleGrantsLimitedToPublicRecords: boolean;
-  objectGrant: boolean;
-  rlsGrant?: {
+  areRecordGrantsHeldToRowLevelPermissions: boolean;
+  isObjectGranted: boolean;
+  rowLevelPermissionGrant?: {
     recordFilter: RecordGqlOperationFilter;
     condition: SqlCondition;
   };

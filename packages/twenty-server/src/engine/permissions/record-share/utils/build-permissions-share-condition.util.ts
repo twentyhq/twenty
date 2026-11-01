@@ -28,7 +28,6 @@ export const buildPermissionsShareCondition = ({
     objectMetadataId,
     principalIds,
     accessLevels,
-    // Private records are few and indexed, so probing their shares is cheaper than reading every grant
     isUncorrelated: !isLimitedToPrivateRecords,
   });
 

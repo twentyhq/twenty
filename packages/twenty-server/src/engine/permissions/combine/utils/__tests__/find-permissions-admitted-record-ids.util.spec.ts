@@ -74,7 +74,8 @@ const noGrants: PermissionsRowAccessGrants = {
   tableAlias: 'company',
   flatObjectMetadata,
   areRoleGrantsLimitedToPublicRecords: true,
-  objectGrant: false,
+  areRecordGrantsHeldToRowLevelPermissions: false,
+  isObjectGranted: false,
 };
 
 const shareGrant: NonNullable<PermissionsRowAccessGrants['shareGrant']> = {
@@ -97,10 +98,19 @@ const buildContext = (): RowAccessEvaluationContext => ({
   findPrivateRecordStates: jest.fn(async () => privateRecordStates),
 });
 
-const findAdmitted = (
-  grants: Partial<PermissionsRowAccessGrants>,
+const activeFilterGrant: PermissionsRowAccessGrants['rowLevelPermissionGrant'] =
+  {
+    recordFilter: { status: { eq: 'active' } },
+    condition: { sql: 'TRUE', parameters: {} },
+  };
+
+const findAdmitted = ({
+  grants,
   context = buildContext(),
-) =>
+}: {
+  grants: Partial<PermissionsRowAccessGrants>;
+  context?: RowAccessEvaluationContext;
+}) =>
   findPermissionsAdmittedRecordIds({
     policy: { kind: 'gated', grants: { ...noGrants, ...grants } },
     records,
@@ -128,7 +138,7 @@ describe('findPermissionsAdmittedRecordIds', () => {
   });
 
   it('keeps the object grant to public records, treating a record it cannot find as public', async () => {
-    expect(await findAdmitted({ objectGrant: true })).toEqual(
+    expect(await findAdmitted({ grants: { isObjectGranted: true } })).toEqual(
       new Set(['active-shared', 'archived-shared']),
     );
   });
@@ -136,47 +146,65 @@ describe('findPermissionsAdmittedRecordIds', () => {
   it('matches the role filter on public record values', async () => {
     expect(
       await findAdmitted({
-        rlsGrant: {
-          recordFilter: { status: { eq: 'active' } },
-          condition: { sql: 'TRUE', parameters: {} },
-        },
+        grants: { rowLevelPermissionGrant: activeFilterGrant },
       }),
     ).toEqual(new Set(['active-shared']));
   });
 
   it('admits records shared with the named principals only', async () => {
-    expect(await findAdmitted({ shareGrant })).toEqual(
+    expect(await findAdmitted({ grants: { shareGrant } })).toEqual(
       new Set(['active-shared', 'archived-shared']),
     );
     expect(
       await findAdmitted({
-        shareGrant: { ...shareGrant, isLimitedToPrivateRecords: true },
+        grants: {
+          shareGrant: { ...shareGrant, isLimitedToPrivateRecords: true },
+        },
       }),
     ).toEqual(new Set());
   });
 
   it('admits private records to their creator', async () => {
     expect(
-      await findAdmitted({ creatorGrant: { workspaceMemberId: MEMBER_ID } }),
+      await findAdmitted({
+        grants: { creatorGrant: { workspaceMemberId: MEMBER_ID } },
+      }),
     ).toEqual(new Set(['active-private']));
   });
 
-  it('unions the paths and skips privacy lookups no path needs', async () => {
+  it('unions the paths and only asks shares about records the role did not admit', async () => {
     const context = buildContext();
 
     expect(
-      await findAdmitted(
-        {
+      await findAdmitted({
+        grants: {
           areRoleGrantsLimitedToPublicRecords: false,
-          rlsGrant: {
-            recordFilter: { status: { eq: 'active' } },
-            condition: { sql: 'TRUE', parameters: {} },
-          },
+          rowLevelPermissionGrant: activeFilterGrant,
           shareGrant,
         },
         context,
-      ),
-    ).toEqual(new Set(records.map((record) => record.id)));
+      }),
+    ).toEqual(new Set(['active-shared', 'active-private', 'archived-shared']));
     expect(context.findPrivateRecordStates).not.toHaveBeenCalled();
+    expect(context.fetchRecordShares).toHaveBeenCalledWith({
+      objectMetadataId: flatObjectMetadata.id,
+      recordIds: ['archived-shared'],
+    });
+  });
+
+  it('holds shares and creators to the role filter when they cannot reach beyond the role', async () => {
+    expect(
+      await findAdmitted({
+        grants: {
+          areRecordGrantsHeldToRowLevelPermissions: true,
+          rowLevelPermissionGrant: {
+            recordFilter: { status: { eq: 'archived' } },
+            condition: { sql: 'TRUE', parameters: {} },
+          },
+          shareGrant: { ...shareGrant, isLimitedToPrivateRecords: true },
+          creatorGrant: { workspaceMemberId: MEMBER_ID },
+        },
+      }),
+    ).toEqual(new Set(['archived-shared']));
   });
 });

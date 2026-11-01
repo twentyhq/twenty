@@ -70,15 +70,17 @@ const buildCompiledRowAccessPolicy = (
 ) => {
   const policy = buildRowAccessPolicy(args);
 
-  return policy.kind === 'gated'
-    ? {
-        kind: policy.kind,
-        condition: buildPermissionsCondition({
-          grants: policy.grants,
-          environment: args.environment,
-        }),
-      }
-    : policy;
+  if (policy.kind !== 'gated') {
+    return policy;
+  }
+
+  return {
+    kind: policy.kind,
+    condition: buildPermissionsCondition({
+      grants: policy.grants,
+      environment: args.environment,
+    }),
+  };
 };
 
 const readEverything: RowAccessPolicySubject = {
@@ -391,6 +393,21 @@ describe('buildRowAccessPolicy', () => {
         },
       },
     });
+  });
+
+  it('holds private shares and creators to the role filter without sharing beyond the role', () => {
+    const sql = gatedSql({
+      subject: {
+        ...readEverything,
+        resolveRowLevelPermissionRecordFilter: () => NOTE_FILTER,
+      },
+      flatObjectMetadata: person,
+      policyEnvironment: privateRecordEnvironment,
+    });
+
+    expect(sql).toMatch(
+      /^\(\(\("person"."title" = :restricted\) AND \("person"."_isPrivate" = FALSE\)\) OR \(\("person"."title" = :restricted\) AND \(\("person"."_isPrivate" = TRUE\) AND \(EXISTS/,
+    );
   });
 
   it('keeps private records gated regardless of the sharing UI flag', () => {

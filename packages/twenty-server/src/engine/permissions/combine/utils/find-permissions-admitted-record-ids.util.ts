@@ -27,8 +27,7 @@ export type RowAccessEvaluationContext = {
   }) => Promise<Map<string, PrivateRecordState>>;
 };
 
-// The in-memory counterpart of buildPermissionsCondition: both run the same
-// grant paths, so a record admitted by a query is admitted here and vice versa
+// Runs the same grant paths as buildPermissionsCondition, so queries and events agree
 export const findPermissionsAdmittedRecordIds = async <
   TRecord extends RowAccessRecord,
 >({
@@ -58,28 +57,25 @@ export const findPermissionsAdmittedRecordIds = async <
     return new Set();
   }
 
+  const { rowLevelPermissionGrant, shareGrant, creatorGrant } = grants;
   const objectMetadataId = grants.flatObjectMetadata.id;
   const isLimitedToPublicRecords = grants.areRoleGrantsLimitedToPublicRecords;
   const isReadingPrivacy =
     isLimitedToPublicRecords ||
-    grants.shareGrant?.isLimitedToPrivateRecords === true ||
-    isDefined(grants.creatorGrant);
+    (isDefined(shareGrant) && shareGrant.isLimitedToPrivateRecords) ||
+    isDefined(creatorGrant);
   const privateRecordStates = isReadingPrivacy
     ? await context.findPrivateRecordStates({ objectMetadataId, recordIds })
     : new Map<string, PrivateRecordState>();
-
-  const admittedRecordIds = [
-    ...(grants.objectGrant
-      ? findPermissionsObjectAdmittedRecordIds({
-          recordIds,
-          isLimitedToPublicRecords,
-          privateRecordStates,
-        })
-      : []),
-    ...(isDefined(grants.rlsGrant)
+  const findRowLevelPermissionAdmittedRecordIds = ({
+    isLimitedToPublicRecords,
+  }: {
+    isLimitedToPublicRecords: boolean;
+  }) =>
+    isDefined(rowLevelPermissionGrant)
       ? findPermissionsRlsAdmittedRecordIds({
           records,
-          recordFilter: grants.rlsGrant.recordFilter,
+          recordFilter: rowLevelPermissionGrant.recordFilter,
           flatObjectMetadata: grants.flatObjectMetadata,
           flatFieldMetadataMaps: context.flatFieldMetadataMaps,
           shouldIgnoreSoftDeleteDefaultFilter:
@@ -87,26 +83,56 @@ export const findPermissionsAdmittedRecordIds = async <
           isLimitedToPublicRecords,
           privateRecordStates,
         })
-      : []),
-    ...(isDefined(grants.shareGrant)
-      ? findPermissionsShareAdmittedRecordIds({
-          ...grants.shareGrant,
+      : [];
+
+  const admittedRecordIds = new Set([
+    ...(grants.isObjectGranted
+      ? findPermissionsObjectAdmittedRecordIds({
           recordIds,
+          isLimitedToPublicRecords,
+          privateRecordStates,
+        })
+      : []),
+    ...findRowLevelPermissionAdmittedRecordIds({ isLimitedToPublicRecords }),
+  ]);
+
+  const recordGrantCandidateIds = new Set(
+    grants.areRecordGrantsHeldToRowLevelPermissions &&
+      isDefined(rowLevelPermissionGrant)
+      ? findRowLevelPermissionAdmittedRecordIds({
+          isLimitedToPublicRecords: false,
+        })
+      : recordIds,
+  );
+  const remainingRecordIds = recordIds.filter(
+    (recordId) =>
+      !admittedRecordIds.has(recordId) && recordGrantCandidateIds.has(recordId),
+  );
+
+  if (remainingRecordIds.length === 0) {
+    return admittedRecordIds;
+  }
+
+  const recordGrantAdmittedRecordIds = [
+    ...(isDefined(shareGrant)
+      ? findPermissionsShareAdmittedRecordIds({
+          ...shareGrant,
+          recordIds: remainingRecordIds,
           recordShares: await context.fetchRecordShares({
             objectMetadataId,
-            recordIds,
+            recordIds: remainingRecordIds,
           }),
           privateRecordStates,
         })
       : []),
-    ...(isDefined(grants.creatorGrant)
+    ...(isDefined(creatorGrant)
       ? findPermissionsCreatorAdmittedRecordIds({
-          recordIds,
-          workspaceMemberId: grants.creatorGrant.workspaceMemberId,
+          recordIds: remainingRecordIds,
+          workspaceMemberId: creatorGrant.workspaceMemberId,
           privateRecordStates,
         })
       : []),
   ];
 
-  return new Set(admittedRecordIds);
+  return new Set([...admittedRecordIds, ...recordGrantAdmittedRecordIds]);
 };

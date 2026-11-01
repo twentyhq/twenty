@@ -68,21 +68,25 @@ export const buildRowAccessPolicy = ({
     return { kind: 'open' };
   }
 
-  // An insert has no record yet, so privacy cannot apply to it
   const hasPrivateRecords =
     isNonEmptyArray(accessLevels) &&
     isPrivateRecordEnabled(environment.featureFlagsMap) &&
     !isPermissionStorageObject(flatObjectMetadata) &&
     isDefined(subject.principalIds);
-  // A hypothetical share reaches the record whatever its privacy
   const areRoleGrantsLimitedToPublicRecords =
     hasPrivateRecords && !hasHypotheticalRecordShare;
-  const rlsGrant = isRolePermitting
-    ? buildRlsGrant({ subject, environment, tableAlias, flatObjectMetadata })
+  const rowLevelPermissionGrant = isRolePermitting
+    ? buildRowLevelPermissionGrant({
+        subject,
+        environment,
+        tableAlias,
+        flatObjectMetadata,
+      })
     : undefined;
-  const objectGrant = isRolePermitting && !isDefined(rlsGrant);
+  const isObjectGranted =
+    isRolePermitting && !isDefined(rowLevelPermissionGrant);
 
-  if (objectGrant && !areRoleGrantsLimitedToPublicRecords) {
+  if (isObjectGranted && !areRoleGrantsLimitedToPublicRecords) {
     return { kind: 'open' };
   }
 
@@ -103,13 +107,14 @@ export const buildRowAccessPolicy = ({
     tableAlias,
     flatObjectMetadata,
     areRoleGrantsLimitedToPublicRecords,
-    objectGrant,
-    rlsGrant,
+    // Without sharing beyond the role, shares and creators only open private records the role filter admits
+    areRecordGrantsHeldToRowLevelPermissions: !isGrantedBeyondRole,
+    isObjectGranted,
+    rowLevelPermissionGrant,
     shareGrant: isShareGranting
       ? {
           principalIds,
           accessLevels,
-          // Without sharing beyond the role, shares only open private records the role would otherwise see
           isLimitedToPrivateRecords: !isGrantedBeyondRole,
         }
       : undefined,
@@ -120,8 +125,8 @@ export const buildRowAccessPolicy = ({
   };
 
   if (
-    !grants.objectGrant &&
-    !isDefined(grants.rlsGrant) &&
+    !grants.isObjectGranted &&
+    !isDefined(grants.rowLevelPermissionGrant) &&
     !isDefined(grants.shareGrant) &&
     !isDefined(grants.creatorGrant)
   ) {
@@ -131,14 +136,14 @@ export const buildRowAccessPolicy = ({
   return { kind: 'gated', grants };
 };
 
-const buildRlsGrant = ({
+const buildRowLevelPermissionGrant = ({
   subject,
   environment,
   tableAlias,
   flatObjectMetadata,
-}: RowAccessPolicyContext &
+}: Pick<RowAccessPolicyContext, 'subject' | 'environment'> &
   Pick<RowAccessPolicyTarget, 'tableAlias' | 'flatObjectMetadata'>):
-  | PermissionsRowAccessGrants['rlsGrant']
+  | PermissionsRowAccessGrants['rowLevelPermissionGrant']
   | undefined => {
   const recordFilter =
     subject.resolveRowLevelPermissionRecordFilter(flatObjectMetadata);

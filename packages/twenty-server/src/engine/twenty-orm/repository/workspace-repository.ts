@@ -1756,7 +1756,10 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     // Without a role filter the policy reads nothing an update can change:
     // shares are keyed by id and parents are checked on their own
-    if (policy.kind !== 'gated' || !isDefined(policy.grants.rlsGrant)) {
+    if (
+      policy.kind !== 'gated' ||
+      !isDefined(policy.grants.rowLevelPermissionGrant)
+    ) {
       return;
     }
 
@@ -2215,7 +2218,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   // TODO(@charlesBochet): temporary, per-subject policy evaluation will be replaced
-  // A subject is admitted when every one of its policies admits the record
   async findSubjectIdsAdmittedByRowAccessPolicies({
     recordId,
     policiesBySubjectId,

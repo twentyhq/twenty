@@ -13,6 +13,11 @@ import {
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { combineSqlConditions } from 'src/engine/permissions/combine/utils/combine-sql-conditions.util';
 
+const combineWithOr = (conditions: SqlCondition[]): SqlCondition =>
+  conditions.length === 1
+    ? conditions[0]
+    : combineSqlConditions(conditions, 'OR');
+
 export const buildPermissionsCondition = ({
   grants,
   environment,
@@ -20,21 +25,27 @@ export const buildPermissionsCondition = ({
   grants: PermissionsRowAccessGrants;
   environment: RowAccessCompilationEnvironment;
 }): SqlCondition => {
-  const { tableAlias, areRoleGrantsLimitedToPublicRecords } = grants;
-  const conditions = [
-    grants.objectGrant
+  const {
+    tableAlias,
+    areRoleGrantsLimitedToPublicRecords,
+    rowLevelPermissionGrant,
+  } = grants;
+  const roleConditions = [
+    grants.isObjectGranted
       ? buildPermissionsObjectCondition({
           tableAlias,
           isLimitedToPublicRecords: areRoleGrantsLimitedToPublicRecords,
         })
       : undefined,
-    isDefined(grants.rlsGrant)
+    isDefined(rowLevelPermissionGrant)
       ? buildPermissionsRlsCondition({
           tableAlias,
-          rlsCondition: grants.rlsGrant.condition,
+          rlsCondition: rowLevelPermissionGrant.condition,
           isLimitedToPublicRecords: areRoleGrantsLimitedToPublicRecords,
         })
       : undefined,
+  ].filter(isDefined);
+  const recordConditions = [
     isDefined(grants.shareGrant)
       ? buildPermissionsShareCondition({
           ...grants.shareGrant,
@@ -51,7 +62,20 @@ export const buildPermissionsCondition = ({
       : undefined,
   ].filter(isDefined);
 
-  return conditions.length === 1
-    ? conditions[0]
-    : combineSqlConditions(conditions, 'OR');
+  const isRecordConditionHeldToRowLevelPermissions =
+    grants.areRecordGrantsHeldToRowLevelPermissions &&
+    isDefined(rowLevelPermissionGrant) &&
+    recordConditions.length > 0;
+
+  return combineWithOr(
+    isRecordConditionHeldToRowLevelPermissions
+      ? [
+          ...roleConditions,
+          combineSqlConditions([
+            rowLevelPermissionGrant.condition,
+            combineWithOr(recordConditions),
+          ]),
+        ]
+      : [...roleConditions, ...recordConditions],
+  );
 };

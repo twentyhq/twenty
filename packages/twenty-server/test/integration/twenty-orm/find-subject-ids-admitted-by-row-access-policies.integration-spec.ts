@@ -81,8 +81,9 @@ describe('WorkspaceRepository.findSubjectIdsAdmittedByRowAccessPolicies', () => 
         tableAlias: 'person',
         flatObjectMetadata: personObjectMetadata,
         areRoleGrantsLimitedToPublicRecords: false,
-        objectGrant: false,
-        rlsGrant: {
+        areRecordGrantsHeldToRowLevelPermissions: false,
+        isObjectGranted: false,
+        rowLevelPermissionGrant: {
           recordFilter: { id: { eq: personId } },
           condition: {
             sql: `"person"."id" = :${parameterName}`,
