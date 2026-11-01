@@ -7,6 +7,7 @@ import { type APP_LOCALES } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
@@ -27,7 +28,7 @@ import { buildToolExecutionFailure } from 'src/engine/core-modules/tool-provider
 import { findSimilarToolNames } from 'src/engine/core-modules/tool-provider/utils/find-similar-tool-names.util';
 import { ToolOutputSpillService } from 'src/engine/core-modules/tool/services/tool-output-spill.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 
 @Injectable()
 export class ToolRegistryService {
@@ -201,6 +202,7 @@ export class ToolRegistryService {
       rolePermissionConfig: RolePermissionConfig;
       categories?: ToolCategory[];
       excludeTools?: Set<string>;
+      authContext?: WorkspaceAuthContext;
       application?: FlatApplication;
     },
   ): Promise<ToolIndexEntry[]> {
@@ -210,6 +212,7 @@ export class ToolRegistryService {
       userId: options.userId,
       userWorkspaceId: options.userWorkspaceId,
       locale: options.locale,
+      authContext: options.authContext,
       application: options.application,
     });
 

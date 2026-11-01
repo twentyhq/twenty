@@ -38,7 +38,7 @@ import {
 } from 'src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception';
 import { PageLayoutTabRestApiExceptionFilter } from 'src/engine/metadata-modules/page-layout-tab/filters/page-layout-tab-rest-api-exception.filter';
 import { PageLayoutTabService } from 'src/engine/metadata-modules/page-layout-tab/services/page-layout-tab.service';
-import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
+import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/permissions-rest-api-exception.filter';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 

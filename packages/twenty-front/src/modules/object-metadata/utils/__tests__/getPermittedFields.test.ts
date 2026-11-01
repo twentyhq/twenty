@@ -34,4 +34,71 @@ describe('getPermittedFields', () => {
       updatableFields: [nameField, addressField],
     });
   });
+
+  describe('morph relation fields', () => {
+    const targetField = getMockFieldMetadataItemOrThrow({
+      objectMetadataItem: getMockObjectMetadataItemOrThrow('taskTarget'),
+      fieldName: 'target',
+    });
+    const headField: FieldMetadataItem = {
+      ...targetField,
+      id: '6f1c0e0a-5d3b-4c6e-9a51-3b8f6e2d7c40',
+    };
+    const morphRelations = headField.morphRelations ?? [];
+    const [firstMorphRelation] = morphRelations;
+
+    const getTargetNames = (field: FieldMetadataItem | undefined) =>
+      field?.morphRelations?.map(
+        (morphRelation) => morphRelation.targetObjectMetadata.nameSingular,
+      );
+
+    it('should drop only the targets the role cannot read or update', () => {
+      const { readableFields, updatableFields } = getPermittedFields({
+        fields: [headField],
+        objectPermissions: {
+          restrictedFields: {
+            [firstMorphRelation.sourceFieldMetadata.id]: {
+              canRead: false,
+              canUpdate: false,
+            },
+          },
+        },
+      });
+
+      const expectedTargetNames = getTargetNames(headField)?.slice(1);
+
+      expect(getTargetNames(readableFields[0])).toEqual(expectedTargetNames);
+      expect(getTargetNames(updatableFields[0])).toEqual(expectedTargetNames);
+    });
+
+    it('should drop the field when its head is restricted', () => {
+      expect(
+        getPermittedFields({
+          fields: [headField],
+          objectPermissions: {
+            restrictedFields: {
+              [headField.id]: { canRead: false, canUpdate: true },
+            },
+          },
+        }),
+      ).toEqual({ readableFields: [], updatableFields: [headField] });
+    });
+
+    it('should keep the field without targets when no target is readable', () => {
+      const { readableFields, updatableFields } = getPermittedFields({
+        fields: [headField],
+        objectPermissions: {
+          restrictedFields: Object.fromEntries(
+            morphRelations.map((morphRelation) => [
+              morphRelation.sourceFieldMetadata.id,
+              { canRead: false, canUpdate: true },
+            ]),
+          ),
+        },
+      });
+
+      expect(getTargetNames(readableFields[0])).toEqual([]);
+      expect(updatableFields).toEqual([headField]);
+    });
+  });
 });

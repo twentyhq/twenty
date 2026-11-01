@@ -119,34 +119,37 @@ export class SyncCampaignEngagementFieldsCommand extends ProvisionedWorkspaceCom
 
     // A workspace that never got the campaign views has no place for the
     // columns; the view backfill command owns those workspaces.
-    const viewFieldsToCreate = ENGAGEMENT_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.filter(
-      (universalIdentifier) =>
-        !isDefined(
-          flatViewFieldMaps.byUniversalIdentifier[universalIdentifier],
-        ),
-    ).flatMap((universalIdentifier) => {
-      const standardViewField =
-        findFlatEntityByUniversalIdentifier<FlatViewField>({
-          flatEntityMaps: standardAllFlatEntityMaps.flatViewFieldMaps,
-          universalIdentifier,
-        });
+    const viewFieldsToCreate =
+      ENGAGEMENT_VIEW_FIELD_UNIVERSAL_IDENTIFIERS.filter(
+        (universalIdentifier) =>
+          !isDefined(
+            flatViewFieldMaps.byUniversalIdentifier[universalIdentifier],
+          ),
+      ).flatMap((universalIdentifier) => {
+        const standardViewField =
+          findFlatEntityByUniversalIdentifier<FlatViewField>({
+            flatEntityMaps: standardAllFlatEntityMaps.flatViewFieldMaps,
+            universalIdentifier,
+          });
 
-      if (!isDefined(standardViewField)) {
-        throw new Error(
-          `Standard application is missing engagement view column ${universalIdentifier}`,
-        );
-      }
+        if (!isDefined(standardViewField)) {
+          throw new Error(
+            `Standard application is missing engagement view column ${universalIdentifier}`,
+          );
+        }
 
-      const viewUniversalIdentifier =
-        standardAllFlatEntityMaps.flatViewMaps.universalIdentifierById[
-          standardViewField.viewId
-        ];
-      const hasView =
-        isDefined(viewUniversalIdentifier) &&
-        isDefined(flatViewMaps.byUniversalIdentifier[viewUniversalIdentifier]);
+        const viewUniversalIdentifier =
+          standardAllFlatEntityMaps.flatViewMaps.universalIdentifierById[
+            standardViewField.viewId
+          ];
+        const hasView =
+          isDefined(viewUniversalIdentifier) &&
+          isDefined(
+            flatViewMaps.byUniversalIdentifier[viewUniversalIdentifier],
+          );
 
-      return hasView ? [standardViewField] : [];
-    });
+        return hasView ? [standardViewField] : [];
+      });
 
     if (fieldsToCreate.length === 0 && viewFieldsToCreate.length === 0) {
       return;
@@ -163,6 +166,7 @@ export class SyncCampaignEngagementFieldsCommand extends ProvisionedWorkspaceCom
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           workspaceId,
           applicationUniversalIdentifier:
@@ -233,6 +237,7 @@ export class SyncCampaignEngagementFieldsCommand extends ProvisionedWorkspaceCom
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           workspaceId,
           applicationUniversalIdentifier:

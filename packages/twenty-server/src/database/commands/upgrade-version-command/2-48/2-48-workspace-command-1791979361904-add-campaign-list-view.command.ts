@@ -145,6 +145,7 @@ export class AddCampaignListViewCommand extends ProvisionedWorkspaceCommandRunne
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           workspaceId,
           applicationUniversalIdentifier:
@@ -214,6 +215,7 @@ export class AddCampaignListViewCommand extends ProvisionedWorkspaceCommandRunne
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           workspaceId,
           applicationUniversalIdentifier:

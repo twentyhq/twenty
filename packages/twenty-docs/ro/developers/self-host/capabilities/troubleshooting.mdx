@@ -2,6 +2,8 @@
 title: Depanare
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Depanare
 
 Dacă întâmpinați orice problemă în timp ce configurați mediul pentru dezvoltare, actualizați instanța dvs. sau găzduiți pe cont propriu,
@@ -139,7 +141,7 @@ Acest lucru este așteptat deoarece utilizatorul nu este autorizat atunci când 
 
 #### Front-end nu reușește să pornească și returnează eroarea TS5042: Opțiunea 'proiect' nu poate fi amestecată cu fișierele sursă pe linia de comandă
 
-Comentează plugin-ul de verificator în `packes/twenty-ui/vite-config.ts`, așa cum se arată în exemplul de mai jos:
+Comentează plugin-ul de verificator în `packages/twenty-ui/vite-config.ts`, așa cum se arată în exemplul de mai jos:
 
 ```
 plugins: [
@@ -233,7 +235,7 @@ Dacă rulați Twenty în spatele unui proxy invers și întâmpinați probleme d
 
 Schimbarea proprietății folderului de date pe gazdă de la root la un alt utilizator și grup rezolvă această problemă.
 
-#### Eroare „Fișier negăsit” la testarea funcției Logic într-un flux de lucru.
+#### Eroare „Fișier negăsit” la testarea funcției Logic într-un flux de lucru
 
 Rulați comanda `yarn command:prod application:rebuild-default-deps` în containerul twenty-server pentru a remedia problema dependențelor lipsă.
 
@@ -252,3 +254,5 @@ Dacă întâmpinați probleme care nu sunt acoperite în acest ghid:
 * Suport Comunitar:
 
   Contactați [comunitatea Twenty](https://github.com/twentyhq/twenty/issues) sau [canalele de suport](https://discord.gg/cx5n4Jzs57) pentru asistență.
+
+<PageBanner illustration="card-page-bug-requests" />

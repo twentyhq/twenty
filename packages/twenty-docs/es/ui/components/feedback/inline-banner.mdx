@@ -1,0 +1,77 @@
+---
+title: Banner integrado
+description: Comentarios en línea con contenido de nodo, iconos y acciones.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import InlineBannerReference from '/snippets/ui/generated/components/feedback/inline-banner.mdx';
+
+## Resumen
+
+`InlineBanner` combina [Banner](/es/ui/primitives/feedback/banner) con un diseño en línea redondeado y un icono decorativo de información. Comparte los contratos independientes de Banner para `status`, `variant`, `color`, `icon` y `action`. Su apariencia predeterminada es `soft` y su estado predeterminado es `info`.
+
+<StoryEmbed storyId="ui-feedback-inlinebanner--display" title="Banner en línea con una acción" height={130} />
+
+## "Uso"
+
+```tsx
+import { InlineBanner } from 'twenty-ui/components/feedback';
+
+export const ModelsBanner = ({ onConfigure }: { onConfigure: () => void }) => (
+  <InlineBanner
+    status="error"
+    action={
+      <InlineBanner.Action onClick={onConfigure}>
+        Configure models
+      </InlineBanner.Action>
+    }
+  >
+    No AI models are enabled.
+  </InlineBanner>
+);
+```
+
+El diseño `standard` ocupa el ancho disponible. Los elementos secundarios de cadenas simples se truncan; el foco del teclado, al pasar el puntero o al tocar se muestra la cadena completa en una descripción emergente. Los elementos secundarios de nodos enriquecidos se representan directamente, por lo que los enlaces y controles insertados conservan su propia semántica. Componga una tipografía explícita cuando el contenido enriquecido necesite truncamiento.
+
+Use `layout="compact"` para contenido con ajuste de línea, espaciado más reducido y un ancho máximo de contenido de 512px. Agrega `fullWidth` para eliminar ese límite y ocupar el ancho disponible del elemento padre, incluidos el relleno y los bordes. De forma predeterminada, es `false` y no cambia el diseño estándar, que ya ocupa todo su elemento padre. No tiene margen inferior. El diseño es independiente de la apariencia `solid` o `soft`. `embedded` elimina el margen inferior del diseño estándar.
+
+```tsx
+import { InlineBanner } from 'twenty-ui/components/feedback';
+import { IconInfoCircle } from 'twenty-ui/icon';
+
+export const ConnectionBanner = () => (
+  <InlineBanner
+    layout="compact"
+    status="warning"
+    color="blue"
+    icon={<IconInfoCircle aria-hidden="true" />}
+    action={
+      <InlineBanner.Action href="/settings/accounts">
+        Connection settings
+      </InlineBanner.Action>
+    }
+  >
+    Connect your account to sync contacts.
+  </InlineBanner>
+);
+```
+
+<StoryEmbed storyId="ui-feedback-inlinebanner--compact-link" title="Banner compacto con un enlace de destino" height={120} />
+
+`InlineBanner.Action` proporciona un botón pequeño con contorno que hereda el color mostrado del banner, incluidas las anulaciones explícitas de la paleta y las apariencias sólidas. Admite interacciones de Button, enlaces, refs y representación personalizada. La ranura `action` también acepta controles arbitrarios.
+
+El destino raíz es un `div`. Las props nativas, `className`, `style` y `ref` se dirigen a esa raíz; `render` de Base UI puede componer otro elemento y recibe el estado resuelto de Banner. `action` acepta cualquier ReactNode, incluidos varios controles con sus API completas de Button o enlace. `icon={null}` elimina el icono predeterminado.
+
+Quien llama controla si se representa el banner y si se deben anunciar los cambios. Proporcione `role="status"` y `aria-live="polite"`, o un contenedor de región activa adecuado, cuando sea necesario. Status no asigna semántica de región activa. Asigne nombres a los controles de acción y marque los iconos personalizados decorativos con `aria-hidden`.
+
+## Migración
+
+Reemplace `message` por `children`, `LeftIcon={Icon}` por `icon={<Icon />}` y la configuración de `button` por un nodo `action`. Use `InlineBanner.Action` para mantener el estilo de la acción alineado con el banner. Reemplace `variant="compact"` por `layout="compact"`; estándar es ahora el diseño predeterminado. Use `status="error"` para indicar un error o `color="red"` para una anulación de la paleta.
+
+## "Props"
+
+<InlineBannerReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

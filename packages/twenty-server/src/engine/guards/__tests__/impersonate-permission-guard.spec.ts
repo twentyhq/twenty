@@ -2,7 +2,7 @@ import { type ExecutionContext } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 
 import { ImpersonatePermissionGuard } from 'src/engine/guards/impersonate-permission.guard';
-import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { type PermissionsService } from 'src/engine/permissions/permissions.service';
 
 describe('ImpersonateGuard', () => {
   let guard: ImpersonatePermissionGuard;

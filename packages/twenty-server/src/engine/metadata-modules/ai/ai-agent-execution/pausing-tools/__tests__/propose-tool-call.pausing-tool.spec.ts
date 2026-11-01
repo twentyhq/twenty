@@ -42,6 +42,38 @@ const buildFoundRecordOutput = (record: Record<string, unknown>) => ({
 });
 
 describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
+  it('keeps the proposed arguments when the tool disallows editing', async () => {
+    const proposal = {
+      toolName: 'save_snapshot',
+      toolLabel: 'Save component',
+      summary: 'Save the reviewed component',
+      template: 'generic' as const,
+      areArgumentsEditable: false,
+      arguments: { draftId: RECORD_ID, checksum: 'reviewed-checksum' },
+    };
+    const call = PROPOSE_TOOL_CALL_PAUSING_TOOL.parseCall(proposal, {
+      success: true,
+      result: { status: 'pending', proposal },
+    });
+    const executeTool = jest
+      .fn()
+      .mockResolvedValue({ success: true, message: 'Saved' });
+
+    await call!.complete({
+      output: {
+        decision: 'approve',
+        arguments: { draftId: 'another-draft', checksum: 'another-checksum' },
+      },
+      context: { executeTool },
+    });
+
+    expect(executeTool).toHaveBeenCalledTimes(1);
+    expect(executeTool).toHaveBeenCalledWith({
+      toolName: 'save_snapshot',
+      args: proposal.arguments,
+    });
+  });
+
   it.each([
     ['an unknown decision', { decision: 'maybe' }],
     [

@@ -3,7 +3,9 @@ title: 6. Publicare
 description: Adăugați metadate de bazar și publicați aplicația dvs.
 ---
 
-Aplicația dvs. funcționează. Ultimul pas este să îl descriem pentru piață și publicare.
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Adaugă metadate marketplace
 
@@ -30,8 +32,8 @@ export default defineApplication({
 ```
 
 <Tip>
-Rolul implicit este declarat cu `defineApplicationRole()` în propriul său fișier —
-nu mai pasa `defaultRoleUniversalIdentifier`.
+  Rolul implicit este declarat cu `defineApplicationRole()` în propriul său fișier —
+  nu mai aveți aici `defaultRoleUniversalIdentifier`.
 </Tip>
 
 Adăugați de asemenea cuvântul cheie `douăzeci și douăzeci de aplicații` în `package.json` astfel încât aplicația să poată fi descoperită:
@@ -59,8 +61,9 @@ export default defineApplication({
 ```
 
 <Tip>
-Plumb cu plata: fă prima captură de ecran rezultatul final (un document
-generat), apoi arată cum este declanșat și autentic. Utilizează capturi crisp, de înaltă rezoluție- ele sunt primul lucru pe care îl vede utilizatorul.
+  Începe cu rezultatul final: fă din prima captură de ecran rezultatul finalizat (un
+  document generat), apoi arată cum este declanșat și creat. Folosește crisp,
+  capturi de înaltă rezoluție — sunt primul lucru pe care îl vede utilizatorul.
 </Tip>
 
 Dă același tratament `README.md` — este prima pagină pe npm și GitHub.
@@ -75,7 +78,7 @@ Rulează aceleași porți CI face:
 yarn lint          # oxlint
 yarn typecheck     # tsgo
 yarn test:unit     # unit tests
-yarn twenty plan   # preview the metadata diff
+twenty app plan   # preview the metadata diff
 ```
 
 Planul afișează exact ce s-ar schimba pe server, fără a aplica modificările —
@@ -87,19 +90,15 @@ o bună verificare finală. Vezi
 
 ```bash filename="Terminal"
 # Public app → npm (default)
-yarn twenty app:publish
+twenty app publish
 
 # Or deploy privately to a specific server's registry
-yarn twenty app:publish --private -r <remote>
+twenty app publish --private -r <remote>
 ```
 
-`app:publish` construiește și publică în npm în mod implicit; `--private` încarcă în schimb o tarball
-către un registru privat de douăzeci de servere. Pentru a întinde o aplicație publicată
-într-o piață de instanță, activați o sincronizare de catalog:
-
-```bash filename="Terminal"
-yarn twenty dev:catalog-sync -r <remote>
-```
+`douăzeci de aplicații publish` construiește și publică în npm în mod implicit; `--private` încarcă în schimb o tarball
+într-un registru privat de douăzeci de servere. Pentru a întinde o aplicație publicată
+într-o piață de instanță, așteptați sincronizarea catalogului de piață al serverului.
 
 Detalii complete şi lista de verificare a versiunii:
 [Publishing](/ro/developers/extend/apps/operations/publishing).
@@ -115,21 +114,27 @@ Detalii complete şi lista de verificare a versiunii:
 * \*\*metadate Marketplace \*\* și fluxul de publicare
 
 Aplicația finalizată este la
-[`pachete/douăzeci de aplicații/exemple/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
 
 ## Unde să mergi mai departe
 
-<CardGroup cols={2}>
-  <Card title="Referință date" icon="database" href="/ro/developers/extend/apps/data/overview">
-    Fiecare tip de câmp, relatie si optiune indice.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ro/developers/extend/apps/data/overview" img="/images/documentation/section-overview-icons-v1/apps-data.svg">
+    <CardTitle>Referință date</CardTitle>
+    Fiecare tip, relație și opțiune index.
   </Card>
-  <Card title="Referință logică" icon="bolt" href="/ro/developers/extend/apps/logic/overview">
+  <Card href="/ro/developers/extend/apps/logic/overview" img="/images/documentation/section-overview-icons-v1/apps-logic.svg">
+    <CardTitle>Logic reference</CardTitle>
     Cron and database-event triggers, the key-value store, OAuth connections.
   </Card>
-  <Card title="Referință schemă" icon="layout-columns" href="/ro/developers/extend/apps/layout/overview">
-    Aspectele paginii, widget-urile tabloului de bord și mai multe suprafețe ale interfeței.
+  <Card href="/ro/developers/extend/apps/layout/overview" img="/images/user-guide/halftone/layout-window-v1.svg">
+    <CardTitle>Layout reference</CardTitle>
+    Page layouts, dashboard widget-uri și mai multe suprafețe UI.
   </Card>
-  <Card title="Operațiuni" icon="rocket" href="/ro/developers/extend/apps/operations/overview">
-    CLI, testare, îndepărtări și CI.
+  <Card href="/ro/developers/extend/apps/operations/overview" img="/images/documentation/section-overview-icons-v1/apps-operations.svg">
+    <CardTitle>Operații</CardTitle>
+    CLI, testare, telecomenzi și CI.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="card-page-tutorial-publishing" />

@@ -32,12 +32,15 @@ import { WorkspaceMigrationViewGroupActionsBuilderService } from 'src/engine/wor
 import { WorkspaceMigrationViewSortActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-sort/workspace-migration-view-sort-actions.builder.service';
 import { WorkspaceMigrationViewActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view/workspace-migration-view-actions-builder.service';
 import { WorkspaceMigrationApplicationVariableActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/application-variable/workspace-migration-application-variable-actions-builder.service';
+import { WorkspaceMigrationMcpServerActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/mcp-server/workspace-migration-mcp-server-actions-builder.service';
 import { WorkspaceMigrationWebhookActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/workspace-migration-webhook-actions-builder.service';
 import { WorkspaceMigrationConnectionProviderActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/connection-provider/workspace-migration-connection-provider-actions-builder.service';
+import { WorkspaceMigrationMessagingProviderActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/messaging-provider/workspace-migration-messaging-provider-actions-builder.service';
 import { WorkspaceMigrationTimelineActivityTypeActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/timeline-activity-type/workspace-migration-timeline-activity-type-actions-builder.service';
 import { WorkspaceMigrationAgentChatChannelActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent-chat-channel/workspace-migration-agent-chat-channel-actions-builder.service';
 import { WorkspaceMigrationAgentChatChannelRoleActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/agent-chat-channel-role/workspace-migration-agent-chat-channel-role-actions-builder.service';
 import { WorkspaceMigrationSettingsMenuItemActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/settings-menu-item/workspace-migration-settings-menu-item-actions-builder.service';
+import { WorkspaceMigrationRelatedRecordPathActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/related-record-path/workspace-migration-related-record-path-actions-builder.service';
 import { WorkspaceMigrationValidationRuleActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/validation-rule/workspace-migration-validation-rule-actions-builder.service';
 import { WorkspaceMigrationSearchFieldMetadataActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/search-field-metadata/workspace-migration-search-field-metadata-actions.builder.service';
 import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/workspace-migration-builder-validators.module';
@@ -76,12 +79,15 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService,
     WorkspaceMigrationFrontComponentActionsBuilderService,
     WorkspaceMigrationWebhookActionsBuilderService,
+    WorkspaceMigrationMcpServerActionsBuilderService,
     WorkspaceMigrationApplicationVariableActionsBuilderService,
     WorkspaceMigrationConnectionProviderActionsBuilderService,
+    WorkspaceMigrationMessagingProviderActionsBuilderService,
     WorkspaceMigrationTimelineActivityTypeActionsBuilderService,
     WorkspaceMigrationSettingsMenuItemActionsBuilderService,
     WorkspaceMigrationAgentChatChannelActionsBuilderService,
     WorkspaceMigrationAgentChatChannelRoleActionsBuilderService,
+    WorkspaceMigrationRelatedRecordPathActionsBuilderService,
     WorkspaceMigrationValidationRuleActionsBuilderService,
     WorkspaceMigrationSearchFieldMetadataActionsBuilderService,
   ],
@@ -116,12 +122,15 @@ import { WorkspaceMigrationBuilderValidatorsModule } from 'src/engine/workspace-
     WorkspaceMigrationRowLevelPermissionPredicateGroupActionsBuilderService,
     WorkspaceMigrationFrontComponentActionsBuilderService,
     WorkspaceMigrationWebhookActionsBuilderService,
+    WorkspaceMigrationMcpServerActionsBuilderService,
     WorkspaceMigrationApplicationVariableActionsBuilderService,
     WorkspaceMigrationConnectionProviderActionsBuilderService,
+    WorkspaceMigrationMessagingProviderActionsBuilderService,
     WorkspaceMigrationTimelineActivityTypeActionsBuilderService,
     WorkspaceMigrationSettingsMenuItemActionsBuilderService,
     WorkspaceMigrationAgentChatChannelActionsBuilderService,
     WorkspaceMigrationAgentChatChannelRoleActionsBuilderService,
+    WorkspaceMigrationRelatedRecordPathActionsBuilderService,
     WorkspaceMigrationValidationRuleActionsBuilderService,
     WorkspaceMigrationSearchFieldMetadataActionsBuilderService,
   ],

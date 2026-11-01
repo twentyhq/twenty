@@ -19,7 +19,6 @@ import { v4 } from 'uuid';
 import { type PendingWakeUpDatabaseEventListener } from 'src/engine/core-modules/pending-wake-up/listeners/pending-wake-up-database-event.listener';
 import { type PendingWakeUpResolverService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up-resolver.service';
 import { type PendingWakeUpService } from 'src/engine/core-modules/pending-wake-up/services/pending-wake-up.service';
-import { type WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { type WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -186,12 +185,6 @@ describe('Wait for event workflow (e2e)', () => {
         JSON.stringify(state),
       ],
     );
-    await getAppProviderByClassName<WorkflowRunRecordShareService>(
-      'WorkflowRunRecordShareService',
-    ).syncRuns({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      workflowRunIds: [createdWorkflowRunId],
-    });
 
     await (
       await global.workflowTestServices.runJob()

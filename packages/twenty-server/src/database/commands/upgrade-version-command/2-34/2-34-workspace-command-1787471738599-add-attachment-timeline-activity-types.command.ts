@@ -62,12 +62,11 @@ export class AddAttachmentTimelineActivityTypesCommand extends ProvisionedWorksp
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
       flatTimelineActivityTypeMaps,
-    } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-        'flatObjectMetadataMaps',
-        'flatTimelineActivityTypeMaps',
-      ]);
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'flatFieldMetadataMaps',
+      'flatObjectMetadataMaps',
+      'flatTimelineActivityTypeMaps',
+    ]);
 
     if (!hasTimelineActivityObjectMetadata(flatObjectMetadataMaps)) {
       this.logger.log(
@@ -112,8 +111,7 @@ export class AddAttachmentTimelineActivityTypesCommand extends ProvisionedWorksp
       )
         ? preferredAttachmentTargetRelationFieldMetadata
         : Object.values(flatFieldMetadataMaps.byUniversalIdentifier).find(
-            (fieldMetadata) =>
-              isAttachmentTargetMorphRelation(fieldMetadata),
+            (fieldMetadata) => isAttachmentTargetMorphRelation(fieldMetadata),
           );
 
     if (!isDefined(attachmentTargetRelationFieldMetadata)) {
@@ -165,6 +163,7 @@ export class AddAttachmentTimelineActivityTypesCommand extends ProvisionedWorksp
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           workspaceId,
           applicationUniversalIdentifier:

@@ -2,7 +2,6 @@ import { type FieldManifest } from 'twenty-shared/application';
 import { isDefined, isFieldMetadataSelectKind } from 'twenty-shared/utils';
 import {
   FieldMetadataType,
-  MetadataWritability,
   type RelationAndMorphRelationFieldMetadataType,
 } from 'twenty-shared/types';
 
@@ -132,7 +131,8 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     isSystem: false,
     isSystemSideEffect: false,
     isUIEditable: fieldManifest.isUIEditable ?? true,
-    writability: fieldManifest.writability ?? MetadataWritability.OPEN,
+    disabledFieldPermissionActions:
+      fieldManifest.disabledFieldPermissionActions ?? null,
     isNullable: fieldManifest.isNullable ?? true,
     isUnique: fieldManifest.isUnique ?? false,
     isSearchable: resolveManifestFieldIsSearchable({

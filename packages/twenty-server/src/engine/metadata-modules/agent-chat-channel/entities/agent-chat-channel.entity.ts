@@ -10,9 +10,11 @@ import {
 } from 'typeorm';
 
 import { ADD_AGENT_CHAT_CHANNEL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-51/add-agent-chat-channel-upgrade-command-name.constant';
+import { DROP_IS_CUSTOM_FROM_AGENT_SKILL_VIEW_INDEX_AND_AGENT_CHAT_CHANNEL_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-54/drop-is-custom-from-agent-skill-view-index-and-agent-chat-channel-upgrade-command-name.constant';
 import { NavigationMenuItemEntity } from 'src/engine/metadata-modules/navigation-menu-item/entities/navigation-menu-item.entity';
 import { AgentChatChannelRoleEntity } from 'src/engine/metadata-modules/agent-chat-channel/entities/agent-chat-channel-role.entity';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({ name: 'agentChatChannel', schema: 'core' })
@@ -49,8 +51,12 @@ export class AgentChatChannelEntity
   @Column({ nullable: false, type: 'float', default: 0 })
   position: number;
 
-  @Column({ nullable: false, default: false })
-  isCustom: boolean;
+  @WasRemovedInUpgrade({
+    upgradeCommandName:
+      DROP_IS_CUSTOM_FROM_AGENT_SKILL_VIEW_INDEX_AND_AGENT_CHAT_CHANNEL_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ nullable: false, default: false, type: 'boolean' })
+  isCustom: WasRemovedInUpgrade<boolean>;
 
   @OneToMany(
     () => AgentChatChannelRoleEntity,

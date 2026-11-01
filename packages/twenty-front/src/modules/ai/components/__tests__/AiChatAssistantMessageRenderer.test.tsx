@@ -6,18 +6,16 @@ import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantM
 
 jest.mock('@/ai/components/ThinkingStepsDisplay', () => ({
   ThinkingStepsDisplay: ({
-    hasAssistantTextResponseStarted,
     parts,
     isTrailingWhileStreaming,
     workDurationMs,
   }: {
     parts: unknown[];
-    hasAssistantTextResponseStarted: boolean;
     isTrailingWhileStreaming?: boolean;
     workDurationMs?: number | null;
   }) => (
     <div data-testid="thinking-steps-display">
-      {`thinking-${parts.length}-${hasAssistantTextResponseStarted ? 'answer-started' : 'answer-pending'}${isTrailingWhileStreaming ? '-trailing-while-streaming' : ''}${workDurationMs ? `-worked-${workDurationMs}` : ''}`}
+      {`thinking-${parts.length}${isTrailingWhileStreaming ? '-trailing-while-streaming' : ''}${workDurationMs ? `-worked-${workDurationMs}` : ''}`}
     </div>
   ),
 }));
@@ -36,6 +34,10 @@ jest.mock('@/ai/components/AiChatToolWidget', () => ({
   AiChatToolWidget: ({ toolPart }: { toolPart: { type: string } }) => (
     <div data-testid="tool-widget">{toolPart.type}</div>
   ),
+}));
+
+jest.mock('@/ai/components/AiChatFrontComponentToolPreview', () => ({
+  AiChatFrontComponentToolPreview: () => <div>Component preview</div>,
 }));
 
 const APP_FRONT_COMPONENT_ID = '20202020-0000-4000-8000-000000000001';
@@ -73,6 +75,29 @@ const renderAssistantRenderer = (
 };
 
 describe('AiChatAssistantMessageRenderer', () => {
+  it.each(['preview_front_component', 'execute_tool'])(
+    'renders %s previews outside the thinking steps',
+    (toolName) => {
+      const messageParts: ExtendedUIMessagePart[] = [
+        {
+          type: `tool-${toolName}`,
+          toolCallId: 'preview-call',
+          state: 'output-available',
+          input:
+            toolName === 'execute_tool'
+              ? { toolName: 'preview_front_component', arguments: {} }
+              : {},
+          output: { success: true, result: { draftId: 'draft' } },
+        },
+      ];
+      renderAssistantRenderer(messageParts);
+      expect(screen.getByText('Component preview')).toBeInTheDocument();
+      expect(
+        screen.queryByTestId('thinking-steps-display'),
+      ).not.toBeInTheDocument();
+    },
+  );
+
   beforeEach(() => {
     mockUseFrontComponentIdByToolName.mockReturnValue(new Map());
   });
@@ -100,7 +125,7 @@ describe('AiChatAssistantMessageRenderer', () => {
     renderAssistantRenderer(messageParts);
 
     expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
-      'thinking-2-answer-started',
+      'thinking-2',
     );
     expect(screen.getByTestId('markdown-renderer')).toHaveTextContent(
       'Final answer',
@@ -137,38 +162,9 @@ describe('AiChatAssistantMessageRenderer', () => {
       'thinking-steps-display',
     );
 
-    expect(thinkingStepsDisplays[0]).toHaveTextContent(
-      /^thinking-1-answer-started$/,
-    );
+    expect(thinkingStepsDisplays[0]).toHaveTextContent(/^thinking-1$/);
     expect(thinkingStepsDisplays[1]).toHaveTextContent(
-      'thinking-1-answer-started-worked-83000',
-    );
-  });
-
-  it('should keep answer-started false for thinking blocks with no following text', () => {
-    const messageParts = [
-      {
-        type: 'text',
-        text: 'Preamble',
-      },
-      {
-        type: 'reasoning',
-        text: 'Reasoning content',
-        state: 'done',
-      },
-      {
-        type: 'tool-web_search',
-        toolCallId: 'tool-1',
-        input: { query: 'crm software' },
-        output: { result: { ok: true } },
-        state: 'output-available',
-      },
-    ] as ExtendedUIMessagePart[];
-
-    renderAssistantRenderer(messageParts);
-
-    expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
-      'thinking-2-answer-pending',
+      'thinking-1-worked-83000',
     );
   });
 
@@ -220,7 +216,7 @@ describe('AiChatAssistantMessageRenderer', () => {
     renderAssistantRenderer(messageParts);
 
     expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
-      'thinking-1-answer-pending',
+      'thinking-1',
     );
   });
 
@@ -317,7 +313,7 @@ describe('AiChatAssistantMessageRenderer', () => {
     renderAssistantRenderer(messageParts);
 
     expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
-      'thinking-2-answer-started',
+      'thinking-2',
     );
   });
 
@@ -465,7 +461,7 @@ describe('AiChatAssistantMessageRenderer', () => {
     renderAssistantRenderer(messageParts);
 
     expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
-      'thinking-1-answer-started',
+      'thinking-1',
     );
   });
 
@@ -552,7 +548,7 @@ describe('AiChatAssistantMessageRenderer', () => {
     ] as ExtendedUIMessagePart[]);
 
     expect(screen.getByTestId('thinking-steps-display')).toHaveTextContent(
-      'thinking-1-answer-started',
+      'thinking-1',
     );
   });
 

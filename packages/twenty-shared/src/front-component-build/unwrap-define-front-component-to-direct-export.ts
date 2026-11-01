@@ -48,14 +48,32 @@ export const unwrapDefineFrontComponentToDirectExport = (
     transformedSource +
     `\nexport default function __renderFrontComponent(__container, __props = {}) {
       return new Promise((resolve, reject) => {
-        function Ready() {
-          __useEffect(() => { resolve(); }, []);
+        let hasSettled = false;
+        const timeout = setTimeout(() => {
+          settle(reject, new Error('Front component initial render timed out.'));
+        }, 30000);
+        function settle(callback, value) {
+          hasSettled = true;
+          clearTimeout(timeout);
+          callback(value);
+        }
+        function FrontComponentReadyEffect() {
+          __useEffect(() => {
+            settle(resolve);
+          }, []);
           return __frontComponentJsx(${FRONT_COMPONENT_DEFINITION_NAME}.component, __props);
         }
-        __createRoot(__container, { onUncaughtError(error) {
-          reject(error);
-          queueMicrotask(() => { throw error; });
-        } }).render(__frontComponentJsx(Ready, {}));
+        try {
+          __createRoot(__container, { onUncaughtError(error) {
+            if (hasSettled) {
+              queueMicrotask(() => { throw error; });
+              return;
+            }
+            settle(reject, error);
+          } }).render(__frontComponentJsx(FrontComponentReadyEffect, {}));
+        } catch (error) {
+          settle(reject, error);
+        }
       });
     }\n`
   );

@@ -1,0 +1,176 @@
+---
+title: شريط التمرير
+description: اختر قيمة رقمية أو نطاقًا باستخدام مقابض قابلة للسحب ويمكن الوصول إليها عبر لوحة المفاتيح.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SliderReference from '/snippets/ui/generated/input/slider.mdx';
+
+## نظرة عامة
+
+يدعم `Slider` رقمًا واحدًا أو مصفوفة من الأرقام لنطاق. أنشئ التسمية والمسار والمؤشر والمقابض داخله `Root`.
+
+<StoryEmbed storyId="ui-input-slider--display" title="مثال على شريط التمرير" height={120} />
+
+## استخدام
+
+### حالة غير متحكم بها
+
+استخدم `defaultValue` لتعيين مستوى الصوت الأولي. يتولى شريط التمرير التغييرات اللاحقة.
+
+```tsx
+import { Slider } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const VolumeSlider = () => (
+  <Slider.Root name="volume" defaultValue={40} min={0} max={100} step={1}>
+    <Text
+      render={<div />}
+      style={{ display: 'flex', justifyContent: 'space-between' }}
+    >
+      <Slider.Label>Volume</Slider.Label>
+      <Slider.Value />
+    </Text>
+    <Slider.Control>
+      <Slider.Track>
+        <Slider.Indicator />
+        <Slider.Thumb />
+      </Slider.Track>
+    </Slider.Control>
+  </Slider.Root>
+);
+```
+
+## خيارات مرئية
+
+قارن بين ألوان التمييز والنجاح عند القيم الدنيا والوسطى والقصوى وقيم التعطيل. تظل أشرطة التمرير المفعّلة تفاعلية.
+
+<StoryEmbed storyId="ui-input-slider--catalog" title="خيارات مرئية لشريط التمرير" height={340} />
+
+## البنية التشريحية العربية
+
+ضع المسار والمقابض داخل `Slider.Control`، الذي يتعامل مع تفاعل المؤشر. تُظهر هذه الشجرة شريط تمرير بمقبض واحد.
+
+```text
+Slider.Root
+├── Slider.Label
+├── Slider.Value
+└── Slider.Control
+    └── Slider.Track
+        ├── Slider.Indicator
+        └── Slider.Thumb
+```
+
+| الجزء       | المتطلبة                  | الغرض                                                      |
+| ----------- | ------------------------- | ---------------------------------------------------------- |
+| `Root`      | مطلوب                     | يملك القيمة والحدود والخطوة والاتجاه.                      |
+| `Control`   | مطلوب                     | يتعامل مع تفاعل المؤشر ويحدّد مواضع المقابض.               |
+| `Track`     | مطلوب للمسار المنسّق      | يعرض نطاق القيم الكامل.                                    |
+| `Thumb`     | واحد لكل قيمة قابلة للضبط | يوفّر مقبضًا قابلاً للتركيز مع تفاعل عبر لوحة المفاتيح.    |
+| `Label`     | مُوصى به                  | يوفّر تسمية مرئية؛ يحتاج كل مقبض إلى اسم يمكن الوصول إليه. |
+| `القيمة`    | اختياري                   | يعرض القيمة الرقمية الحالية.                               |
+| `Indicator` | اختياري                   | يعرض الجزء المحدد من المسار.                               |
+
+للنطاق، أضف مقبضًا لكل قيمة مع `index` المطابق لها واسم مميز يمكن الوصول إليه. تبقى التسميات والمخرجات الرقمية خارج `Control`، كي لا تصبح جزءًا من المنطقة القابلة للسحب.
+
+## حالة متحكم بها
+
+مرر `value` وحدّثه باستخدام `onValueChange` لتتولى التحكم في مستوى الصوت نفسه ضمن حالة React. تتلقى دالة الاستدعاء القيمة التالية وتفاصيل الحدث.
+
+```tsx
+import { useState } from 'react';
+import { Slider } from 'twenty-ui/primitives/input';
+
+export const VolumeSlider = () => {
+  const [volume, setVolume] = useState(40);
+
+  return (
+    <Slider.Root
+      name="volume"
+      value={volume}
+      onValueChange={setVolume}
+      min={0}
+      max={100}
+      step={1}
+    >
+      <Slider.Label>Volume</Slider.Label>
+      <Slider.Value />
+      <Slider.Control>
+        <Slider.Track>
+          <Slider.Indicator />
+          <Slider.Thumb />
+        </Slider.Track>
+      </Slider.Control>
+    </Slider.Root>
+  );
+};
+```
+
+استخدم `onValueChange` لإبقاء القيمة المتحكم بها محدّثة أثناء التفاعل. يتعامل `onValueCommitted` مع القيمة النهائية عند انتهاء التفاعل، لحفظها على سبيل المثال. تتوفر دالتا الاستدعاء أيضًا في الوضع غير المتحكم به دون تولي التحكم في القيمة.
+
+تتضمن تفاصيل التغيير `event` المصدر، و`reason` التفاعل، و`activeThumbIndex`، و`cancel()`. تستخدم تفاصيل الالتزام عقد الأحداث العام لـ Base UI ولا تتضمن إلغاء التغيير. لا يتم الالتزام بالتغيير المُلغى.
+
+## النطاق
+
+```tsx
+import { Slider } from 'twenty-ui/primitives/input';
+
+export const PriceRange = () => (
+  <Slider.Root
+    defaultValue={[25, 75]}
+    min={0}
+    max={100}
+    minStepsBetweenValues={10}
+  >
+    <Slider.Label>Price range</Slider.Label>
+    <Slider.Value />
+    <Slider.Control>
+      <Slider.Track>
+        <Slider.Indicator />
+        <Slider.Thumb index={0} aria-label="Minimum price" />
+        <Slider.Thumb index={1} aria-label="Maximum price" />
+      </Slider.Track>
+    </Slider.Control>
+  </Slider.Root>
+);
+```
+
+امنح مقابض النطاق أسماء مميزة يمكن الوصول إليها و`index` يتوافق مع قيمتها. يعيّن `minStepsBetweenValues` الحد الأدنى للفجوة بالخطوات. نوع القيمة العام للجذر هو رقم أو مصفوفة أرقام للقراءة فقط.
+
+للتحكم في نطاق، خزّن المصفوفة في حالة React ومررها عبر `value` و`onValueChange`، تمامًا كما في القيمة المفردة.
+
+## لوحة المفاتيح والمظهر
+
+تضبط مفاتيح الأسهم مقبضًا محددًا بخطوة واحدة. ينقل مفتاحا Home وEnd المقبض نحو الحدود مع مراعاة قيود النطاق. يغيّر `orientation="vertical"` التخطيط واتجاه لوحة المفاتيح. استخدم `disabled` على `Root` لمنع التغييرات.
+
+عيّن `color="success"` للوحة الألوان البديلة؛ والافتراضي هو `accent`.
+
+القيمة الافتراضية لـ `thumbAlignment` هي `edge`. مرر `center` أو `edge-client-only` لتجاوزها. تظل تركيبة `className` و`style` و`render` الأصلية متاحة في كل جزء، بما في ذلك دوال الحالة.
+
+<Note>
+  باستخدام محاذاة `edge` و`edge-client-only`، لا يعيد Base UI 1.8 و1.9 أبدًا
+  قياس مقبض بعد تغيير حجم `Slider.Control`، ويحتفظ شريط التمرير الذي يتم تحميله
+  أثناء إخفائه بمقابضه مخفيةً عند إظهاره
+  ([mui/base-ui#5995](https://github.com/mui/base-ui/issues/5995)). تواجه مكوّنات واجهة React
+  المشكلة نفسها عند تصييرها الأول. استخدم
+  `thumbAlignment="center"` إلى أن يتضمن إصدار من Base UI الإصلاح
+  ([mui/base-ui#6000](https://github.com/mui/base-ui/pull/6000)).
+</Note>
+
+## التكامل والأنواع الأصلية
+
+يستنتج `Slider.Root` رقماً أو مصفوفة أرقام للقراءة فقط من `value` أو `defaultValue`، مع الاحتفاظ بهذا النوع في كلا الاستدعاين. يقبل `SliderRootProps` كليهما افتراضياً؛ استخدم `SliderRootProps\<number>` للمساعدات ذات القيمة الواحدة أو `SliderRootProps\<readonly number[]>` للمساعدات الخاصة بالنطاق.
+
+لكل جزء نوع خصائص مُصدَّر في `twenty-ui/primitives/input`: `SliderRootProps` و`SliderControlProps` و`SliderTrackProps` و`SliderIndicatorProps` و`SliderThumbProps` و`SliderLabelProps` و`SliderValueProps`.
+
+تستهدف المراجع عناصر div لـ Root وControl وTrack وIndicator وThumb وLabel، وعنصر output لـ Value. يستهدف مرجع Thumb مقبضه المرئي؛ وينتمي اسمه المتاح وقيمة النموذج الأصلية الخاصة به إلى إدخال النطاق المتداخل. استخدم `name` و`form` على Root للإرسال الأصلي، مع إدخال واحد لكل قيمة نطاق.
+
+## الإزاحة
+
+يُنشأ المرجع من أنواع المكونات العامة. تُقبل أيضًا السمات الأصلية، بما في ذلك الأسماء التي يمكن الوصول إليها ومعالجات الأحداث، على الأجزاء التي تعرض عناصر.
+
+<SliderReference />
+
+<PageBanner illustration="section-apps-config" />

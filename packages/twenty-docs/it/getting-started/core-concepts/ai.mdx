@@ -3,9 +3,10 @@ title: AI
 description: Come Twenty utilizza l'IA per migliorare la tua esperienza CRM.
 ---
 
-import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-Twenty integra l'IA direttamente nel tuo CRM — non come un espediente, ma come uno strumento che funziona all'interno del tuo modello di dati e del tuo sistema di autorizzazioni.
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Chatbot con IA
 
@@ -28,6 +29,11 @@ Gli agenti lavorano all'interno dei tuoi workflow esistenti, così puoi combinar
 
 L'IA in Twenty rispetta il tuo modello di autorizzazioni. Gli agenti possono accedere solo a oggetti e campi che l'utente (o il ruolo) ha l'autorizzazione a visualizzare. I dati sensibili rimangono protetti anche quando è coinvolta l'IA.
 
-<Card title="Guida completa all'IA" icon="arrow-right" href="/it/user-guide/ai/overview">
-  Riferimento dettagliato sul chatbot, sugli agenti e sui controlli delle autorizzazioni.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/it/user-guide/ai/overview" img="/images/documentation/banner-icons-v2/ai.svg">
+  Guida <CardTitle>Full AI</CardTitle>
+  Riferimento dettagliato sul chatbot, agenti e controlli dei permessi.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="getting-started-ai" />

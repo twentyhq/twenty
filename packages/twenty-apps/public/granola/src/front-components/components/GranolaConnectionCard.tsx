@@ -1,6 +1,6 @@
 import { t } from 'twenty-sdk/front-component';
-import { Status } from 'twenty-ui/data-display';
-import { Info } from 'twenty-ui/feedback';
+import { Status } from 'twenty-ui/primitives/data-display';
+import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconKey } from 'twenty-ui/icon';
 import { type ThemeColor } from 'twenty-ui/theme';
 
@@ -82,46 +82,65 @@ export const GranolaConnectionCard = ({
         ) : (
           <Status
             color={STATUS_COLOR_BY_CONNECTION_STATE[connectionState]}
-            text={getStatusText(connectionState)}
-            isLoaderVisible={connectionState === 'CONNECTING'}
+            loading={connectionState === 'CONNECTING'}
             weight="medium"
-          />
+          >
+            {getStatusText(connectionState)}
+          </Status>
         )}
       </SettingsOptionCardContent>
     </StyledSettingsCard>
     {connectionState === 'INVALID_KEY' && (
-      <Info
-        accent="danger"
-        text={t('Granola rejected this API key.')}
-        buttonTitle={t('Use another key')}
-        onClick={onReplaceKey}
-      />
+      <InlineBanner
+        layout="compact"
+        status="error"
+        action={
+          <InlineBanner.Action onClick={onReplaceKey}>
+            {t('Use another key')}
+          </InlineBanner.Action>
+        }
+      >
+        {t('Granola rejected this API key.')}
+      </InlineBanner>
     )}
     {connectionState === 'UNREACHABLE' && (
-      <Info
-        accent="danger"
-        text={t('Could not reach Granola. Try again in a moment.')}
-        buttonTitle={t('Retry')}
-        onClick={onRetry}
-      />
+      <InlineBanner
+        layout="compact"
+        status="error"
+        action={
+          <InlineBanner.Action onClick={onRetry}>
+            {t('Retry')}
+          </InlineBanner.Action>
+        }
+      >
+        {t('Could not reach Granola. Try again in a moment.')}
+      </InlineBanner>
     )}
     {connectionState === 'SETUP_INCOMPLETE' && (
-      <Info
-        accent="danger"
-        text={t('Could not set up live sync with Granola.')}
-        buttonTitle={t('Retry')}
-        onClick={onRetry}
-      />
+      <InlineBanner
+        layout="compact"
+        status="error"
+        action={
+          <InlineBanner.Action onClick={onRetry}>
+            {t('Retry')}
+          </InlineBanner.Action>
+        }
+      >
+        {t('Could not set up live sync with Granola.')}
+      </InlineBanner>
     )}
     {connectionState === 'PAUSED' && (
-      <Info
-        accent="blue"
-        text={t(
-          'Live sync is paused in Granola, so new notes are not arriving.',
-        )}
-        buttonTitle={t('Resume')}
-        onClick={onRetry}
-      />
+      <InlineBanner
+        layout="compact"
+        status="info"
+        action={
+          <InlineBanner.Action onClick={onRetry}>
+            {t('Resume')}
+          </InlineBanner.Action>
+        }
+      >
+        {t('Live sync is paused in Granola, so new notes are not arriving.')}
+      </InlineBanner>
     )}
   </>
 );

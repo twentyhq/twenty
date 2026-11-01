@@ -19,7 +19,7 @@
     "archiver": "^7.0.1",
     "axios": "^1.16.1",
     "bcrypt": "^6.0.0",
-    "body-parser": "^1.20.5",
+    "body-parser": "^1.20.9",
     "deep-equal": "^2.2.3",
     "jsonwebtoken": "^9.0.2",
     "lodash.camelcase": "^4.3.0",
@@ -37,7 +37,7 @@
     "lodash.pickby": "^4.6.0",
     "lodash.snakecase": "^4.1.1",
     "lodash.upperfirst": "^4.3.1",
-    "nodemailer": "^10.0.12",
+    "nodemailer": "^10.1.4",
     "psl": "^1.15.0",
     "sharp": "^0.35.5",
     "uuid": "^11.1.1",
@@ -46,7 +46,7 @@
   "devDependencies": {
     "react": "19.2.0",
     "react-dom": "19.2.0",
-    "twenty-ui": "2.50.0"
+    "twenty-ui": "~2.53.0"
   },
   "frontComponentSharedDependencies": [
     "react",

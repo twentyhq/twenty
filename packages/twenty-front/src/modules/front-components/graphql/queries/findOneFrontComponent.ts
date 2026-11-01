@@ -9,7 +9,6 @@ export const FIND_ONE_FRONT_COMPONENT = gql`
       applicationName
       applicationGrantedCapabilities
       builtComponentChecksum
-      sourceComponentPath
       isHeadless
       usesSdkClient
       frontComponentSharedDependenciesChecksum

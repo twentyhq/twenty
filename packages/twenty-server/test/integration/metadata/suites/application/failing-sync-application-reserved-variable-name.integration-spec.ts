@@ -32,7 +32,7 @@ const BASELINE_APPLICATION_VARIABLES: ApplicationVariables = {
   },
 };
 
-// The logic function executor injects these into every run
+// Engine-injected names, plus an unused one under the reserved TWENTY_ prefix
 const RESERVED_NAMES = [
   'TWENTY_API_URL',
   'TWENTY_APP_ACCESS_TOKEN',
@@ -40,6 +40,7 @@ const RESERVED_NAMES = [
   'TWENTY_API_KEY',
   'TWENTY_FUNCTIONS_URL',
   'APPLICATION_ID',
+  'TWENTY_FUTURE_VARIABLE',
 ];
 
 type TestContext = {

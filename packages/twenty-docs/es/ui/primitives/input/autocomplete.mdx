@@ -1,0 +1,268 @@
+---
+title: Autocompletar
+description: Sugiere valores mientras el usuario escribe y mantiene el foco en el campo de entrada.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import AutocompleteReference from '/snippets/ui/generated/input/autocomplete.mdx';
+
+## Resumen
+
+Usa `Autocomplete` para sugerencias asociadas a un campo de entrada de texto. El campo de entrada mantiene el cursor y el foco del teclado mientras las teclas de flecha resaltan sugerencias. Usa [Select](/es/ui/primitives/input/select) cuando el usuario debe elegir un valor de una lista fija. [Dropdown](/es/ui/components/navigation/dropdown) sigue siendo el componente de nivel superior para menús y selectores.
+
+<StoryEmbed storyId="ui-input-autocomplete--display" title="Ejemplo de autocompletado" height={360} />
+
+## "Uso"
+
+Pase `items` a `Root` y represéntelos mediante `List` para que el filtrado actualice las sugerencias visibles. `autoHighlight="always"` resalta el primer resultado cada vez que se abre la lista.
+
+```tsx
+import { Autocomplete } from 'twenty-ui/primitives/input';
+
+const FRUITS = ['Apple', 'Banana', 'Cherry'];
+
+export const FruitInput = () => (
+  <Autocomplete.Root items={FRUITS} autoHighlight="always">
+    <Autocomplete.InputGroup>
+      <Autocomplete.Input aria-label="Fruit" placeholder="Search fruits" />
+    </Autocomplete.InputGroup>
+    <Autocomplete.Portal>
+      <Autocomplete.Positioner>
+        <Autocomplete.Popup>
+          <Autocomplete.Empty>No fruits found</Autocomplete.Empty>
+          <Autocomplete.List>
+            {(fruit: string) => (
+              <Autocomplete.Item key={fruit} value={fruit}>
+                {fruit}
+              </Autocomplete.Item>
+            )}
+          </Autocomplete.List>
+        </Autocomplete.Popup>
+      </Autocomplete.Positioner>
+    </Autocomplete.Portal>
+  </Autocomplete.Root>
+);
+```
+
+`value` y `onValueChange` controlan el texto de la entrada. Use `defaultValue` para un valor inicial no controlado. El estado de apertura es independiente: usa `open` y `onOpenChange`, o `defaultOpen`. `Item.onClick` gestiona tanto la selección mediante puntero como Intro desde la entrada.
+
+`mode="list"` filtra sin cambiar el texto de entrada al resaltar. `mode="both"` también proporciona completado en línea. `mode="inline"` conserva todos los elementos y proporciona completado en línea; `mode="none"` conserva todos los elementos sin completado en línea. `readOnly` evita que el completado en línea cambie la entrada.
+
+## Anatomía
+
+Mantén las partes relacionadas dentro de un `Autocomplete.Root` montado. Compón por separado el destino del portal, el contenedor de posicionamiento y el contenido. `InputGroup` agrupa opcionalmente el campo de entrada con controles adyacentes y ancla la ventana emergente a ese grupo.
+
+```text
+Autocomplete.Root
+├── Autocomplete.InputGroup (optional)
+│   ├── Autocomplete.Input
+│   ├── Autocomplete.Clear (optional)
+│   └── Autocomplete.Trigger (optional)
+│       └── Autocomplete.Icon (optional)
+├── Autocomplete.Portal
+│   ├── Autocomplete.Backdrop (optional)
+│   └── Autocomplete.Positioner
+│       └── Autocomplete.Popup
+│           ├── Autocomplete.Arrow (optional)
+│           ├── Autocomplete.Empty
+│           └── Autocomplete.List
+│               ├── Autocomplete.Item
+│               ├── Autocomplete.Group (optional)
+│               │   ├── Autocomplete.GroupLabel
+│               │   └── Autocomplete.Collection
+│               │       └── Autocomplete.Item
+│               ├── Autocomplete.Row (optional, with Root.grid)
+│               │   └── Autocomplete.Item
+│               └── Autocomplete.Separator (optional)
+├── Autocomplete.Status (optional)
+└── Autocomplete.Value (optional)
+```
+
+| Parte        | Propósito y destino nativo                                                                                                 |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------- |
+| `Root`       | Gestiona el valor de entrada, el filtrado, los elementos resaltados y el estado de apertura. No renderiza ningún elemento. |
+| `Valor`      | Lee el texto de entrada mediante elementos secundarios o una función de renderizado. No renderiza ningún elemento.         |
+| `InputGroup` | Agrupa el campo de entrada y los controles adyacentes. Tiene como destino un div.                                          |
+| `Entrada`    | Representa la entrada del cuadro combinado y conserva el foco del teclado. Tiene como destino un input.                    |
+| `Disparador` | Abre o cierra las sugerencias. Tiene como destino un botón.                                                                |
+| `Icon`       | Contiene un indicador de activación. Tiene como destino un span.                                                           |
+| `Limpiar`    | Borra el valor de entrada. Tiene como destino un botón.                                                                    |
+| `Portal`     | Elige el destino y la política de montaje. Tiene como destino su div de portal.                                            |
+| `Backdrop`   | Proporciona una superposición opcional debajo de la ventana emergente. Tiene como destino un div.                          |
+| `Positioner` | Gestiona el ancla, la alineación, los desplazamientos y la gestión de colisiones. Tiene como destino su div.               |
+| `Popup`      | Renderiza el contenido de las sugerencias y el comportamiento de enfoque opcional. Tiene como destino su div.              |
+| `Arrow`      | Proporciona una flecha posicionada opcional dentro de Popup. Tiene como destino un div.                                    |
+| `Lista`      | Renderiza los elementos filtrados. Tiene como destino un div con el rol de cuadro de lista o cuadrícula.                   |
+| `Item`       | Representa una sugerencia y gestiona la selección mediante puntero o teclado. Tiene como destino un div.                   |
+| `Grupo`      | Agrupa elementos relacionados. Tiene como destino un div.                                                                  |
+| `GroupLabel` | Etiqueta su grupo principal. Tiene como destino un div.                                                                    |
+| `Row`        | Agrupa una fila de elementos cuando `Root.grid` está habilitado. Tiene como destino un div.                                |
+| `Collection` | Renderiza elementos filtrados mediante una función secundaria. No renderiza ningún elemento.                               |
+| `Separator`  | Separa visualmente elementos o grupos. Tiene como destino un div.                                                          |
+| `Vacío`      | Anuncia cuando no hay elementos coincidentes disponibles. Tiene como destino un div.                                       |
+| `Estado`     | Anuncia cambios, como el estado de carga asíncrona. Tiene como destino un div.                                             |
+
+Las partes renderizadas conservan los atributos nativos, controladores, referencias, `className` y `style` basados en el estado, y la composición de `render` de elementos o funciones de la API de Base UI instalada. Las props nativas y las referencias tienen como destino el propio elemento de la parte. Los componentes personalizados deben reenviar las props y referencias proporcionadas. Las props de partes públicas y los tipos de estado se exportan desde `twenty-ui/primitives/input`, junto con las acciones de Root y los tipos de detalles de eventos de cambio/resaltado.
+
+`Autocomplete.useFilter()` proporciona coincidencias de `contains`, `startsWith` y `endsWith` adaptadas a la configuración regional. `Autocomplete.useFilteredItems\<TItem>()` lee la colección filtrada internamente en Root. Trata ese resultado como de solo lectura.
+
+## Objetos y elementos agrupados
+
+Los elementos pueden ser cadenas u objetos arbitrarios. Usa `itemToStringValue` para proporcionar el texto usado para el filtrado, el completado y el envío de formularios. Los objetos con la forma `{ value, label }` usan su etiqueta automáticamente. Renderiza el mismo valor de elemento proporcionado a través de Root; no se requiere ninguna forma de elemento específica de Twenty ni prop de igualdad de selección. Autocomplete gestiona la entrada de texto en lugar de un valor de objeto seleccionado independiente.
+
+Para datos agrupados, pasa grupos con un array `items`. Root conserva el tipo de elemento para `itemToStringValue` y `onItemHighlighted`. Renderiza los elementos secundarios filtrados de cada grupo mediante `Group` y `Collection`:
+
+```tsx
+import { Autocomplete } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type City = { id: number; name: string; country: string };
+type CityGroup = { label: string; items: City[] };
+
+const CITY_GROUPS: CityGroup[] = [
+  {
+    label: 'Europe',
+    items: [
+      { id: 1, name: 'Paris', country: 'France' },
+      { id: 2, name: 'Lisbon', country: 'Portugal' },
+    ],
+  },
+];
+
+export const GroupedCityInput = () => (
+  <Text
+    style={{ display: 'grid', alignContent: 'start', gap: 8, width: '100%' }}
+  >
+    <label htmlFor="grouped-city">
+      <Text render={<span />}>City</Text>
+    </label>
+    <Autocomplete.Root
+      items={CITY_GROUPS}
+      itemToStringValue={(city) => city.name}
+      autoHighlight="always"
+    >
+      <Autocomplete.Input id="grouped-city" placeholder="Search cities" />
+      <Autocomplete.Portal>
+        <Autocomplete.Positioner>
+          <Autocomplete.Popup>
+            <Autocomplete.Empty>No matching cities</Autocomplete.Empty>
+            <Autocomplete.List>
+              {(group: CityGroup) => (
+                <Autocomplete.Group key={group.label} items={group.items}>
+                  <Autocomplete.GroupLabel>
+                    {group.label}
+                  </Autocomplete.GroupLabel>
+                  <Autocomplete.Collection>
+                    {(city: City) => (
+                      <Autocomplete.Item
+                        key={city.id}
+                        value={city}
+                        description={city.country}
+                      >
+                        {city.name}
+                      </Autocomplete.Item>
+                    )}
+                  </Autocomplete.Collection>
+                </Autocomplete.Group>
+              )}
+            </Autocomplete.List>
+          </Autocomplete.Popup>
+        </Autocomplete.Positioner>
+      </Autocomplete.Portal>
+    </Autocomplete.Root>
+  </Text>
+);
+```
+
+<StoryEmbed storyId="ui-input-autocomplete-collections--grouped-objects" title="Sugerencias de objetos agrupados" height={440} />
+
+`Item.startIcon`, `Item.endIcon` y `Item.description` proporcionan contenido complementario. Compón `Trigger` y `Clear` con [Button](/es/ui/primitives/input/button) de Twenty UI mediante `render`. `Icon` puede contener un icono de `twenty-ui/icon`. Mantén `Status` y `Empty` montados mientras actualizas sus elementos secundarios para que los lectores de pantalla puedan anunciar los cambios.
+
+## Filtrado externo y sugerencias del servidor
+
+Usa `filteredItems` cuando tu aplicación gestione el filtrado. Debe conservar la estructura plana o agrupada de `items`. `filter` acepta una función de coincidencia personalizada; `filter={null}` desactiva el filtrado interno para los resultados ya filtrados por un servidor.
+
+```tsx
+import { useState } from 'react';
+import { Autocomplete } from 'twenty-ui/primitives/input';
+
+const CITIES = ['Paris', 'London', 'Lisbon'];
+
+export const CityPrefixInput = () => {
+  const [value, setValue] = useState('');
+  const { startsWith } = Autocomplete.useFilter();
+  const filteredItems = CITIES.filter((city) => startsWith(city, value));
+
+  return (
+    <Autocomplete.Root
+      items={CITIES}
+      filteredItems={filteredItems}
+      value={value}
+      onValueChange={setValue}
+      autoHighlight="always"
+    >
+      <Autocomplete.Input aria-label="City prefix" />
+      <Autocomplete.Portal>
+        <Autocomplete.Positioner>
+          <Autocomplete.Popup>
+            <Autocomplete.Empty>No matching cities</Autocomplete.Empty>
+            <Autocomplete.List>
+              {(city: string) => (
+                <Autocomplete.Item key={city} value={city}>
+                  {city}
+                </Autocomplete.Item>
+              )}
+            </Autocomplete.List>
+          </Autocomplete.Popup>
+        </Autocomplete.Positioner>
+      </Autocomplete.Portal>
+    </Autocomplete.Root>
+  );
+};
+```
+
+Mantén Root montado cuando los resultados lleguen de forma asíncrona. Controla `open` de forma independiente para que una respuesta pueda abrir sugerencias mientras el campo de entrada permanece enfocado. Un `Status` montado puede anunciar la carga; actualiza `Empty` cuando la respuesta completada no tenga resultados. El elemento principal gestiona el rebote, la cancelación de solicitudes y la protección contra respuestas obsoletas.
+
+`onValueChange` y `onOpenChange` reciben los detalles del evento ascendente, incluidos `reason`, `event` nativo, `trigger`, `cancel()` y `allowPropagation()`. Los llamadores controlados deciden qué actualizaciones solicitadas confirmar. Por ejemplo, ignora el cambio de valor `escape-key` para conservar una consulta del servidor, o ignora la apertura `input-change` hasta que lleguen los resultados. `onItemHighlighted` recibe el elemento original tipado y el motivo de su resaltado. La cancelación conserva la semántica de Base UI instalada; no reemplaza la política de estado controlado de la aplicación.
+
+## Composición de entrada y formularios nativos
+
+`Input` acepta `size="sm"` o `size="md"` y usa los mismos estilos que [Input](/es/ui/primitives/input/input). Compónlo con una entrada existente mediante `render`. El control compuesto controla entonces su apariencia: `Input` no añade estilos de Input e ignora `size`, pero sigue pasando tu `className`, atributos nativos, controladores, ref y atributos de estado. Reenvíalos al elemento input real. Renderiza `Input` de Twenty UI para mantener la apariencia estándar.
+
+`InputGroup` proporciona diseño y un ancla sin añadir bordes a la entrada. Puede contener chips o representar un contenedor existente. Usa [InputGroup](/es/ui/primitives/input/input-group) mediante su prop `render` cuando todo el grupo necesite el estilo de entrada, como ocurre con las sugerencias de objetos agrupados. Un `Input` sin `render` dentro de él elimina su propio borde. Asigne a la entrada una etiqueta accesible o compóngala con [Field](/es/ui/primitives/input/field).
+
+Root conserva el comportamiento ascendente de `name`, `form`, `disabled`, `readOnly` y de los formularios nativos. Los atributos nativos y la referencia de Input tienen como destino su entrada. `submitOnItemClick` permite el envío del formulario al seleccionar una sugerencia; el valor predeterminado no realiza el envío.
+
+Input conserva la gestión nativa de IME de Base UI, incluidos los eventos de composición y su protección de confirmación mediante teclado.
+
+La versión instalada de Base UI conserva una consulta no controlada al restablecer un formulario nativo. Para una consulta controlada, gestiona el `onReset` del formulario y restaura el valor inicial de la aplicación.
+
+## Ubicación, destino del portal y descarte
+
+`Positioner` usa de forma predeterminada `side="bottom"`, `align="start"` y `sideOffset={8}`. Conserva el contrato de anclaje y posicionamiento de Base UI instalado, incluidos anclajes de elemento/referencia/función/virtuales, desplazamientos funcionales, `positionMethod`, `collisionBoundary`, `collisionPadding`, `collisionAvoidance`, `arrowPadding`, `sticky` y `disableAnchorTracking`. Configúralos en Positioner. DirectionProvider controla la ubicación lógica y la dirección del DOM.
+
+`Popup` usa el ancho del ancla como ancho mínimo. Establece su `width` para proporcionar un ancho de contenido fijo. Sus props nativas, estilos, composición de renderizado y referencia tienen como destino el elemento de contenido de forma independiente de Positioner y Portal. `initialFocus` y `finalFocus` de Popup conservan las opciones de enfoque ascendentes. De forma predeterminada, las sugerencias mantienen el enfoque en el campo de entrada.
+
+Configura `container` y `keepMounted` en `Portal`. Al omitir el contenedor, se usa el destino ThemeProvider con ámbito más cercano y, después, el portal principal o el cuerpo del documento de Base UI. Un `null` explícito espera sin renderizar hasta que se proporcione un contenedor. Los destinos de Element, ShadowRoot y referencia se transfieren a Base UI. Una referencia sin resolver conserva la alternativa de portal principal/cuerpo de Base UI.
+
+El destino con ámbito predeterminado conserva sus tokens CSS y su esquema de color. Un destino explícito hereda CSS de su ámbito real del DOM, así que colócalo dentro del ámbito de tema previsto o proporciona esos estilos allí. El contexto y la dirección de React permanecen disponibles a través de los portales. Los destinos ShadowRoot necesitan el CSS y los estilos de tema de la biblioteca en ese árbol de sombra.
+
+Las teclas de flecha cambian el elemento resaltado mientras el campo de entrada mantiene el enfoque. Intro lo selecciona; Escape y la interacción externa solicitan el descarte mediante la semántica ascendente. Una pulsación externa puede activar el control de destino. Los selectores de nivel superior pueden gestionar una política de activación distinta en su adaptador. Llama a `event.preventBaseUIHandler()` en el `onKeyDown` de Input para omitir el controlador integrado de una tecla que gestiones tú mismo. Usa también `event.preventDefault()` al suprimir la acción nativa del navegador.
+
+`Root.inline` con `open` renderiza sugerencias sin el conjunto de la ventana emergente. Los elementos en línea conservan sus callbacks de selección `onClick`, pero el componente ascendente instalado rellena la entrada automáticamente solo cuando su Popup está presente. Gestiona `Item.onClick` cuando la selección en línea deba actualizar el texto controlado. `Root.grid` y `Row` admiten la navegación por cuadrícula. Estos modos conservan las API de colección y renderizado ascendentes.
+
+## Migración
+
+Envuelve Popup con `Autocomplete.Positioner` y `Autocomplete.Portal`. Positioner requiere el contexto de Portal; las sugerencias en línea omiten todo el conjunto de la ventana emergente. Mueve las props de ubicación, ancla y colisión de Popup a Positioner. Mueve la configuración de `container` y de montaje a Portal. Mantén el ancho, los estilos de contenido, las props nativas, los controladores y las referencias en Popup. Usa un elemento secundario `Arrow` explícito para una flecha.
+
+Dentro de los componentes frontales, conserva la política existente de portal con ámbito. Esta API no amplía los destinos de portal del renderizador ni las capacidades de geometría, desplazamiento y descarte; esas capacidades del renderizador tienen una gestión independiente. Los adaptadores de selectores de producción conservan sus flujos de trabajo de activación deliberados.
+
+## "Props"
+
+La referencia se genera a partir de los tipos de componentes públicos. Los atributos nativos, los nombres accesibles y los controladores de eventos también se aceptan en las partes renderizadas.
+
+<AutocompleteReference />
+
+<PageBanner illustration="page-cover-input" />

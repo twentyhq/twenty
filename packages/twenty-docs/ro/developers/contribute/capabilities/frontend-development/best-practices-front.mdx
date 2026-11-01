@@ -1,8 +1,9 @@
 ---
 title: Cele mai bune practici
+description: Cele mai bune practici care trebuie urmate atunci când se lucrează pe front.
 ---
 
-Acest document prezintă cele mai bune practici pe care ar trebui să le urmați atunci când lucrați la frontend.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Managementul stării
 
@@ -158,7 +159,7 @@ Instrucțiunile `console.log` sunt valoroase în timpul dezvoltării, oferind in
 
 4. **Profesionalism**: Utilizatorii finali sau clienții care verifică consola și văd o multitudine de instrucțiuni de log s-ar putea să pună la îndoială calitatea și finisajul codului.
 
-Asigurați-vă că eliminați toate `console.log`-urile înainte de a trimite codul în producție.
+Asigurați-vă că eliminați toate `console.logs`-urile înainte de a trimite codul în producție.
 
 ## Denumiri
 
@@ -326,3 +327,5 @@ type Form = z.infer<typeof validationSchema>;
 ## Schimbări Majore
 
 Efectuați întotdeauna teste manuale temeinice înainte de a continua pentru a garanta că modificările nu au cauzat întreruperi în altă parte, având în vedere că testele nu au fost încă integrate extensiv.
+
+<PageBanner illustration="card-page-campaign-practices" />

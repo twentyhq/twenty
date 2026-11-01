@@ -1,6 +1,9 @@
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { MetadataReadability } from 'twenty-shared/types';
+import {
+  MetadataReadability,
+  MetadataWritability,
+} from 'twenty-shared/types';
 import { preserveLegacyRecordAccess } from 'src/database/commands/upgrade-version-command/2-43/utils/preserve-legacy-record-access.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
@@ -10,16 +13,37 @@ const objects = [
     ...COMPANY_FLAT_OBJECT_MOCK,
     id: 'thread',
     universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
-    readability: MetadataReadability.SYSTEM,
   },
   {
     ...COMPANY_FLAT_OBJECT_MOCK,
     id: 'private',
+    universalIdentifier: 'private-object',
     nameSingular: 'privateRecord',
     isCustom: true,
-    readability: MetadataReadability.PRIVATE,
   },
 ] as FlatObjectMetadata[];
+const buildLegacyObjectAccess = ({
+  threadReadability = MetadataReadability.SYSTEM,
+  privateReadability = MetadataReadability.PRIVATE,
+}: {
+  threadReadability?: MetadataReadability;
+  privateReadability?: MetadataReadability;
+} = {}) => [
+  {
+    id: 'thread',
+    universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+    readability: threadReadability,
+    writability: MetadataWritability.SYSTEM,
+    readabilityParentFieldUniversalIdentifiers: null,
+  },
+  {
+    id: 'private',
+    universalIdentifier: 'private-object',
+    readability: privateReadability,
+    writability: MetadataWritability.OPEN,
+    readabilityParentFieldUniversalIdentifiers: null,
+  },
+];
 const args = {
   workspaceId: WORKSPACE_ID,
   objects,
@@ -30,24 +54,26 @@ it('keyset-batches managed compatibility grants and marks completion last', asyn
   const query = jest
     .fn()
     .mockResolvedValueOnce([])
+    .mockResolvedValueOnce(buildLegacyObjectAccess())
     .mockResolvedValueOnce([{ id: 'last' }])
     .mockResolvedValueOnce([{ lastId: 'batch-end', count: 10000 }])
     .mockResolvedValueOnce([{ lastId: 'last', count: 2 }])
     .mockResolvedValueOnce([]);
   await preserveLegacyRecordAccess({ ...args, manager: { query } as never });
-  expect(query).toHaveBeenCalledTimes(5);
-  expect(query.mock.calls[2][0]).toContain(
+  expect(query).toHaveBeenCalledTimes(6);
+  expect(query.mock.calls[3][0]).toContain(
     "'EVERYONE', 'FULL', 'APPLICATION', $1::uuid",
   );
-  expect(query.mock.calls[2][0]).toContain('LIMIT 10000');
-  expect(query.mock.calls[3][1][2]).toBe('batch-end');
-  expect(query.mock.calls[4][0]).toContain('INSERT INTO core."keyValuePair"');
+  expect(query.mock.calls[3][0]).toContain('LIMIT 10000');
+  expect(query.mock.calls[4][1][2]).toBe('batch-end');
+  expect(query.mock.calls[5][0]).toContain('INSERT INTO core."keyValuePair"');
 });
 
 it('does not mark a partially completed backfill', async () => {
   const query = jest
     .fn()
     .mockResolvedValueOnce([])
+    .mockResolvedValueOnce(buildLegacyObjectAccess())
     .mockResolvedValueOnce([{ id: 'last' }])
     .mockRejectedValueOnce(new Error('storage failed'));
   await expect(
@@ -66,23 +92,27 @@ it('never backfills records after an already-completed decision', async () => {
   expect(query).toHaveBeenCalledTimes(1);
 });
 
-it.each([true, false])(
-  'marks a no-op for previously enabled sharing or a fresh workspace (%s)',
-  async (enabled) => {
-    const query = jest.fn().mockResolvedValue([]);
+it.each([
+  { wasRecordSharingEnabled: true, threadReadability: undefined },
+  {
+    wasRecordSharingEnabled: false,
+    threadReadability: MetadataReadability.PRIVATE,
+  },
+])(
+  'marks a no-op for previously enabled sharing or an upgraded workspace (%o)',
+  async ({ wasRecordSharingEnabled, threadReadability }) => {
+    const query = jest
+      .fn()
+      .mockResolvedValueOnce([])
+      .mockResolvedValueOnce(buildLegacyObjectAccess({ threadReadability }))
+      .mockResolvedValueOnce([]);
     await preserveLegacyRecordAccess({
       ...args,
       manager: { query } as never,
-      wasRecordSharingEnabled: enabled,
-      objects: enabled
-        ? objects
-        : objects.map((object) => ({
-            ...object,
-            readability: MetadataReadability.PRIVATE,
-          })),
+      wasRecordSharingEnabled,
     });
-    expect(query).toHaveBeenCalledTimes(2);
-    expect(query.mock.calls[1][0]).toContain('INSERT INTO core."keyValuePair"');
+    expect(query).toHaveBeenCalledTimes(3);
+    expect(query.mock.calls[2][0]).toContain('INSERT INTO core."keyValuePair"');
   },
 );
 
@@ -90,6 +120,7 @@ it('backfills existing private objects even when chat metadata is absent', async
   const query = jest
     .fn()
     .mockResolvedValueOnce([])
+    .mockResolvedValueOnce(buildLegacyObjectAccess().slice(1))
     .mockResolvedValueOnce([{ id: 'last' }])
     .mockResolvedValueOnce([{ lastId: 'last', count: 1 }])
     .mockResolvedValueOnce([]);
@@ -98,6 +129,6 @@ it('backfills existing private objects even when chat metadata is absent', async
     objects: [objects[1]],
     manager: { query } as never,
   });
-  expect(query.mock.calls[2][0]).toContain("'EVERYONE', 'FULL', 'APPLICATION'");
-  expect(query.mock.calls[3][0]).toContain('INSERT INTO core."keyValuePair"');
+  expect(query.mock.calls[3][0]).toContain("'EVERYONE', 'FULL', 'APPLICATION'");
+  expect(query.mock.calls[4][0]).toContain('INSERT INTO core."keyValuePair"');
 });

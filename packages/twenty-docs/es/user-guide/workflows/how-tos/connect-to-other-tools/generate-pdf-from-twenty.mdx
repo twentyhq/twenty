@@ -3,9 +3,11 @@ title: Generar un PDF desde Twenty
 description: Cree un flujo de trabajo para generar y adjuntar un PDF (como una cotización) a un registro.
 ---
 
-Genere u obtenga automáticamente un PDF y adjúntelo a un registro en Twenty. Esto se usa comúnmente para crear cotizaciones, facturas o informes vinculados a Empresas, Oportunidades u otros objetos.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Resumen
+
+Genere u obtenga automáticamente un PDF y adjúntelo a un registro en Twenty. Esto se usa comúnmente para crear cotizaciones, facturas o informes vinculados a Empresas, Oportunidades u otros objetos.
 
 Este flujo de trabajo utiliza un **Activador manual** para que los usuarios puedan generar un PDF bajo demanda para cualquier registro seleccionado. Una **Función de lógica** se encarga de:
 
@@ -17,7 +19,7 @@ Este flujo de trabajo utiliza un **Activador manual** para que los usuarios pued
 
 Antes de configurar el flujo de trabajo:
 
-1. **Cree una clave de API**: Vaya a **Settings → APIs** y cree una nueva clave de API. Necesitarás este token para la función lógica.
+1. **Cree una clave de API**: Vaya a **Settings → Developers → API** y cree una nueva clave de API. Necesitarás este token para la función lógica.
 2. **Configure un servicio de generación de PDF** (opcional): Si desea generar PDFs dinámicamente (p. ej., cotizaciones), use un servicio como Carbone, PDFMonkey o DocuSeal para crear el PDF y obtener una URL de descarga.
 
 ## Configuración paso a paso
@@ -40,9 +42,9 @@ Con un disparador manual, los usuarios pueden ejecutar este flujo de trabajo usa
 
 #### Parámetros de entrada
 
-| Parámetro   | Valor                   |
-| ----------- | ----------------------- |
-| `companyId` | `{{trigger.object.id}}` |
+| Parámetro   | Valor                    |
+| ----------- | ------------------------ |
+| `companyId` | `{{trigger.payload.id}}` |
 
 <Note>
 Si va a adjuntar a un objeto diferente (Persona, Oportunidad, etc.), cambie el nombre del parámetro en consecuencia (p. ej., `personId`, `opportunityId`) y actualice la función de lógica.
@@ -62,7 +64,7 @@ export const main = async (
   const metadataGraphqlEndpoint = 'https://api.twenty.com/metadata';
   const dataGraphqlEndpoint = 'https://api.twenty.com/graphql';
 
-  // Replace with your API key from Settings → APIs
+  // Replace with your API key from Settings → Developers → API
   const authToken = 'YOUR_API_KEY';
 
   // Replace with your PDF URL
@@ -109,42 +111,99 @@ export const main = async (
   const result = await response.json();
   const uploadFileFieldMetadataId = result.data.objects.edges.find(object => object.node.nameSingular === 'attachment').node.fieldsList.find(field => field.name === 'file').id;
 
-  // Step 3: Upload the file via GraphQL multipart upload
-  const uploadMutation = `
-    mutation UploadFilesFieldFile($file: Upload!, $fieldMetadataId: String!) {
-      uploadFilesFieldFile(file: $file, fieldMetadataId: $fieldMetadataId) {
+  // Step 3: Request an upload URL for the file
+  const createFileUploadMutation = `
+    mutation CreateFileUpload($filename: String!, $size: Float!, $fileFolder: FileFolder!, $fieldMetadataId: String) {
+      createFileUpload(filename: $filename, size: $size, fileFolder: $fileFolder, fieldMetadataId: $fieldMetadataId) {
+        fileId
+        uploadUrl
+        contentType
+      }
+    }
+  `;
+
+  const createFileUploadResponse = await fetch(metadataGraphqlEndpoint, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: createFileUploadMutation,
+      variables: {
+        filename,
+        size: pdfFile.size,
+        fileFolder: 'FilesField',
+        fieldMetadataId: uploadFileFieldMetadataId,
+      },
+    }),
+  });
+
+  if (!createFileUploadResponse.ok) {
+    throw new Error(`Upload failed with status ${createFileUploadResponse.status}`);
+  }
+
+  const createFileUploadResult = await createFileUploadResponse.json();
+
+  if (createFileUploadResult.errors?.length) {
+    throw new Error(`Upload failed: ${createFileUploadResult.errors[0].message}`);
+  }
+
+  const uploadTarget = createFileUploadResult.data?.createFileUpload;
+
+  if (!uploadTarget) {
+    throw new Error('No upload target returned from createFileUpload');
+  }
+
+  const { fileId, uploadUrl, contentType } = uploadTarget;
+
+  // Step 4: Send the file bytes to the upload URL
+  const putResponse = await fetch(uploadUrl, {
+    method: 'PUT',
+    headers: { 'Content-Type': contentType },
+    body: pdfFile,
+  });
+
+  if (!putResponse.ok) {
+    throw new Error(`Upload failed with status ${putResponse.status}`);
+  }
+
+  // Step 5: Confirm the upload so the file becomes usable
+  const completeFileUploadMutation = `
+    mutation CompleteFileUpload($fileId: String!) {
+      completeFileUpload(fileId: $fileId) {
         id
       }
     }
   `;
 
-  const uploadForm = new FormData();
-  uploadForm.append('operations', JSON.stringify({
-    query: uploadMutation,
-    variables: { file: null, fieldMetadataId: uploadFileFieldMetadataId },
-  }));
-  uploadForm.append('map', JSON.stringify({ '0': ['variables.file'] }));
-  uploadForm.append('0', pdfFile);
-
-  const uploadResponse = await fetch(metadataGraphqlEndpoint, {
+  const completeFileUploadResponse = await fetch(metadataGraphqlEndpoint, {
     method: 'POST',
-    headers: { Authorization: `Bearer ${authToken}` },
-    body: uploadForm,
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      query: completeFileUploadMutation,
+      variables: { fileId },
+    }),
   });
 
-  const uploadResult = await uploadResponse.json();
-
-  if (uploadResult.errors?.length) {
-    throw new Error(`Upload failed: ${uploadResult.errors[0].message}`);
+  if (!completeFileUploadResponse.ok) {
+    throw new Error(`Upload failed with status ${completeFileUploadResponse.status}`);
   }
 
-  const fileId = uploadResult.data?.uploadFilesFieldFile?.id;
+  const completeFileUploadResult = await completeFileUploadResponse.json();
 
-  if (!fileId) {
-    throw new Error('No file id returned from upload');
+  if (completeFileUploadResult.errors?.length) {
+    throw new Error(`Upload failed: ${completeFileUploadResult.errors[0].message}`);
   }
 
-  // Step 4: Create the attachment linked to the company
+  if (!completeFileUploadResult.data?.completeFileUpload?.id) {
+    throw new Error('No file id returned from completeFileUpload');
+  }
+
+  // Step 6: Create the attachment linked to the company
   const attachmentMutation = `
     mutation CreateOneAttachment($data: AttachmentCreateInput!) {
       createAttachment(data: $data) {
@@ -261,3 +320,5 @@ Cada servicio proporciona una API que devuelve una URL PDF, la cual puede pasar 
 * [Disparadores de flujos de trabajo](/es/user-guide/workflows/capabilities/workflow-triggers)
 * [Funciones de lógica](/es/user-guide/workflows/capabilities/workflow-actions#code)
 * [Generar una cotización o factura desde Twenty](/es/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)
+
+<PageBanner illustration="card-page-tutorial-documents" />

@@ -46,8 +46,9 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.workflow.delete,
     ...aggregatedOrchestratorActionsReport.workflow.create,
     ...aggregatedOrchestratorActionsReport.workflow.update,
-    ...aggregatedOrchestratorActionsReport.workflowVersion.create,
+    // At most one version per workflow is ACTIVE (unique index), so the published one is archived before its successor is created
     ...aggregatedOrchestratorActionsReport.workflowVersion.update,
+    ...aggregatedOrchestratorActionsReport.workflowVersion.create,
 
     ...aggregatedOrchestratorActionsReport.logicFunction.delete,
     ...aggregatedOrchestratorActionsReport.logicFunction.create,
@@ -58,12 +59,16 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.role.create,
     ...aggregatedOrchestratorActionsReport.role.update,
 
-    // Role targets delete before agents (roleTarget may FK to agent)
+    // Role targets delete before agents and webhooks (roleTarget may FK to either)
     ...aggregatedOrchestratorActionsReport.roleTarget.delete,
 
     ...aggregatedOrchestratorActionsReport.agent.delete,
     ...aggregatedOrchestratorActionsReport.agent.create,
     ...aggregatedOrchestratorActionsReport.agent.update,
+
+    ...aggregatedOrchestratorActionsReport.webhook.delete,
+    ...aggregatedOrchestratorActionsReport.webhook.create,
+    ...aggregatedOrchestratorActionsReport.webhook.update,
 
     ...aggregatedOrchestratorActionsReport.roleTarget.create,
     ...aggregatedOrchestratorActionsReport.roleTarget.update,
@@ -143,9 +148,7 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.rowLevelPermissionPredicateGroup
       .delete,
 
-    ...aggregatedOrchestratorActionsReport.webhook.delete,
-    ...aggregatedOrchestratorActionsReport.webhook.create,
-    ...aggregatedOrchestratorActionsReport.webhook.update,
+    ...aggregatedOrchestratorActionsReport.mcpServer.delete,
 
     ...aggregatedOrchestratorActionsReport.applicationVariable.delete,
     ...aggregatedOrchestratorActionsReport.applicationVariable.create,
@@ -154,11 +157,19 @@ export const computeOrderedMigrationActions = (
     ...aggregatedOrchestratorActionsReport.connectionProvider.delete,
     ...aggregatedOrchestratorActionsReport.connectionProvider.create,
     ...aggregatedOrchestratorActionsReport.connectionProvider.update,
+    ...aggregatedOrchestratorActionsReport.messagingProvider.delete,
+    ...aggregatedOrchestratorActionsReport.messagingProvider.create,
+    ...aggregatedOrchestratorActionsReport.messagingProvider.update,
+    ...aggregatedOrchestratorActionsReport.mcpServer.create,
+    ...aggregatedOrchestratorActionsReport.mcpServer.update,
     ...aggregatedOrchestratorActionsReport.timelineActivityType.delete,
     ...aggregatedOrchestratorActionsReport.timelineActivityType.create,
     ...aggregatedOrchestratorActionsReport.timelineActivityType.update,
+    ...aggregatedOrchestratorActionsReport.relatedRecordPath.delete,
     ...aggregatedOrchestratorActionsReport.validationRule.delete,
+    ...aggregatedOrchestratorActionsReport.relatedRecordPath.create,
     ...aggregatedOrchestratorActionsReport.validationRule.create,
+    ...aggregatedOrchestratorActionsReport.relatedRecordPath.update,
     ...aggregatedOrchestratorActionsReport.validationRule.update,
   ];
 };

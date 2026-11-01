@@ -13,6 +13,22 @@ const buildToolPart = (state: string): ToolUIPart =>
 const APP_FRONT_COMPONENT_ID = '20202020-0000-4000-8000-000000000001';
 
 describe('shouldToolPartRenderStandalone', () => {
+  it('keeps a preview in the step group until its input is available', () => {
+    const part: ToolUIPart = {
+      type: 'tool-preview_front_component',
+      toolCallId: 'preview-call',
+      state: 'input-streaming',
+      input: {},
+    };
+    expect(shouldToolPartRenderStandalone(part, undefined)).toBe(false);
+    expect(
+      shouldToolPartRenderStandalone(
+        { ...part, state: 'input-available', input: {} },
+        undefined,
+      ),
+    ).toBe(true);
+  });
+
   it('leaves a call with no widget in the step group', () => {
     expect(
       shouldToolPartRenderStandalone(

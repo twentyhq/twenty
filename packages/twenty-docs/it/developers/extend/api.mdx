@@ -1,15 +1,17 @@
 ---
 title: API
+sidebarTitle: Panoramica
 description: API REST e GraphQL generate dallo schema del tuo spazio di lavoro.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## API con schema per tenant
 
 Non esiste un riferimento API statico per Twenty. Ogni spazio di lavoro ha il proprio schema — quando aggiungi un oggetto personalizzato (ad esempio `Invoice`), ottiene immediatamente endpoint REST e GraphQL identici a quelli degli oggetti integrati come `Company` o `Person`. L'API è generata dallo schema, quindi gli endpoint usano direttamente i nomi dei tuoi oggetti e campi — niente ID opachi.
 
-La documentazione delle API specifica del tuo spazio di lavoro è disponibile in **Impostazioni → API & Webhooks** dopo aver creato una chiave API. Include un playground interattivo in cui puoi eseguire chiamate reali sui tuoi dati.
+La documentazione delle API specifica del tuo spazio di lavoro è disponibile in **Impostazioni → Sviluppatori → API** dopo aver creato una chiave API. Include un playground interattivo in cui puoi eseguire chiamate reali sui tuoi dati.
 
 ## Due API
 
@@ -36,7 +38,7 @@ Entrambe sono disponibili in REST e GraphQL. GraphQL aggiunge upsert in batch e 
 Authorization: Bearer YOUR_API_KEY
 ```
 
-Crea una chiave API in **Impostazioni → API & Webhooks → + Crea chiave**. Copiala immediatamente — viene mostrata una sola volta. Le chiavi possono essere limitate a un ruolo specifico in **Impostazioni → Membri → Ruoli → scheda Assegnazione** per limitare ciò a cui possono accedere.
+Crea una chiave API in **Impostazioni → Sviluppatori → API → + Crea chiave**. Copiala immediatamente — viene mostrata una sola volta. Le chiavi possono essere limitate a un ruolo specifico in **Impostazioni → Membri → Ruoli → scheda Assegnazione** per limitare ciò a cui possono accedere.
 
 <VimeoEmbed videoId="928786722" title="Creazione della chiave API" />
 
@@ -46,9 +48,26 @@ Per l'accesso basato su OAuth (app esterne che agiscono per conto degli utenti),
 
 Sia REST che GraphQL supportano il batching fino a 60 record per richiesta — creazione, aggiornamento o eliminazione. GraphQL supporta anche l'upsert in batch (crea o aggiorna in una sola chiamata) usando nomi plurali come `CreateCompanies`.
 
+## Selezione dei campi (REST)
+
+Gli endpoint dei record REST accettano un parametro di query `fields` per restituire solo i campi necessari:
+
+```
+GET /rest/people?fields=id,name,emails,company
+```
+
+* `id` viene sempre restituito.
+* I campi compositi (come `emails` o `name`) vengono selezionati interamente in base al nome del campo.
+* Un campo di relazione molti-a-uno restituisce la relativa colonna di join (ad es. `companyId`) con `depth=0`. I campi di relazione uno-a-molti vengono restituiti solo con `depth=1`. Con `depth=1`, vengono espansi solo i campi di relazione elencati in `fields`.
+* I campi sconosciuti o i campi che il tuo ruolo non può leggere restituiscono un errore `400`.
+
+Quando `fields` viene omesso su un oggetto con più di 200 campi leggibili, ogni record restituisce un set predefinito di 200 campi: `id`, i campi dell'etichetta e dell'identificatore dell'immagine, `createdAt`, `updatedAt`, `deletedAt`, `position`, quindi i campi standard prima dei campi personalizzati, ordinati per nome. Passa esplicitamente `fields` per leggere qualsiasi campo oltre quel set predefinito.
+
 ## Limiti di frequenza delle API
 
 | Limite           | Valore                 |
 | ---------------- | ---------------------- |
 | Richieste        | 100 al minuto          |
 | Dimensione batch | 60 record per chiamata |
+
+<PageBanner illustration="dev-api" />

@@ -1,6 +1,8 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { act, render, screen, waitFor } from '@testing-library/react';
+import { type ComponentProps } from 'react';
+import { type FrontComponentSourceRenderer } from 'twenty-front-component-renderer';
 
 import { AiChatFrontComponentPreview } from '@/ai/components/AiChatFrontComponentPreview';
 
@@ -10,34 +12,32 @@ jest.mock('@/workspace/hooks/useIsFeatureEnabled', () => ({
 }));
 
 const PREVIEW = {
-  draftId: 'draft',
-  name: 'Renewals',
   pageLayoutType: 'DASHBOARD',
   componentSource: 'export default function render() {}',
-  sharedDependenciesSource: 'export const sharedDependency = true;',
-  data: { records: [{ name: 'Example company' }] },
+  applicationId: 'workspace-app',
+  sharedDependenciesChecksum: 'current-checksum',
+  mockQueryResult: {
+    companies: { edges: [{ node: { name: 'Example company' } }] },
+  },
   isCurrent: true,
-  published: false,
 };
+const SHARED_DEPENDENCIES = 'export const sharedDependency = true;';
 const mockFetch = jest.fn();
+const mockFetchComponentSource = jest.fn();
 const originalFetch = global.fetch;
-const renderPreview = (onReadyChange = jest.fn()) => {
-  render(
-    <I18nProvider i18n={i18n}>
-      <AiChatFrontComponentPreview
-        draftId="draft"
-        onReadyChange={onReadyChange}
-      />
-    </I18nProvider>,
-  );
-  return onReadyChange;
-};
+const previewElement = (draftId = 'draft') => (
+  <I18nProvider i18n={i18n}>
+    <AiChatFrontComponentPreview draftId={draftId} />
+  </I18nProvider>
+);
 
-let mockRendererProps: { onReady: () => void; onError: (error: Error) => void };
+let mockRendererProps: ComponentProps<typeof FrontComponentSourceRenderer>;
 jest.mock('twenty-front-component-renderer', () => ({
+  fetchComponentSource: (...args: unknown[]) =>
+    mockFetchComponentSource(...args),
   FrontComponentSourceRenderer: (props: typeof mockRendererProps) => {
     mockRendererProps = props;
-    return <div>Rendered component</div>;
+    return <div>Rendered component {props.componentId}</div>;
   },
 }));
 
@@ -47,95 +47,139 @@ describe('AI front component preview', () => {
     mockFetch
       .mockReset()
       .mockResolvedValue({ ok: true, json: async () => PREVIEW });
+    mockFetchComponentSource.mockReset().mockResolvedValue(SHARED_DEPENDENCIES);
     global.fetch = mockFetch;
   });
   afterAll(() => {
     global.fetch = originalFetch;
   });
 
-  it('shows the preview without explanatory copy and waits for server-confirmed readiness', async () => {
-    const onReadyChange = renderPreview();
-    await screen.findByText('Rendered component');
+  it('renders mocked records using the application dependency endpoint', async () => {
+    render(previewElement());
+    await screen.findByText('Rendered component draft');
     expect(screen.getByText('Sample data')).toBeInTheDocument();
     expect(screen.getByText('Dashboard widget')).toBeInTheDocument();
-    expect(mockRendererProps).toEqual(
-      expect.objectContaining({
-        componentSource: PREVIEW.componentSource,
-        sharedDependenciesSource: PREVIEW.sharedDependenciesSource,
-      }),
+    expect(mockRendererProps).toMatchObject({
+      componentSource: PREVIEW.componentSource,
+      mockQueryResult: PREVIEW.mockQueryResult,
+      sharedDependenciesSource: SHARED_DEPENDENCIES,
+    });
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+    expect(mockFetch).toHaveBeenNthCalledWith(
+      1,
+      expect.stringContaining('/ai-front-components/drafts/draft'),
+      expect.objectContaining({ credentials: 'include' }),
     );
-    expect(
-      screen.queryByText('Nothing is saved until you approve.'),
-    ).not.toBeInTheDocument();
-    expect(onReadyChange).not.toHaveBeenCalledWith(true);
-    act(() => mockRendererProps.onReady());
-    await waitFor(() => expect(onReadyChange).toHaveBeenCalledWith(true));
+    expect(mockFetchComponentSource).toHaveBeenCalledWith({
+      url: expect.stringContaining(
+        '/front-component-shared-dependencies/workspace-app/current-checksum.js',
+      ),
+      credentials: 'include',
+    });
+    act(() => mockRendererProps.onReady?.());
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it.each([
+    [{ pageLayoutType: 'RECORD_PAGE' }, 'Record page widget'],
+    [
+      { isCurrent: false },
+      'A newer revision exists. Open the latest preview to save.',
+    ],
+    [{ publishedComponentId: 'saved-component' }, 'Saved to Workspace app'],
+  ])('shows the draft status %s', async (status, label) => {
+    mockFetch.mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({ ...PREVIEW, ...status }),
+    });
+    render(previewElement());
+    expect(await screen.findByText(label)).toBeInTheDocument();
+    expect(screen.getByText('Rendered component draft')).toBeInTheDocument();
+  });
+
+  it('shows runtime errors and reports a bounded message for the next agent turn', async () => {
+    render(previewElement());
+    await screen.findByText('Rendered component draft');
+    const message = 'x'.repeat(2100);
+
+    act(() => mockRendererProps.onError(new Error(message)));
+    expect(screen.getByRole('alert')).toHaveTextContent(message.slice(0, 2000));
+    expect(mockFetch).toHaveBeenCalledTimes(2);
     expect(mockFetch).toHaveBeenLastCalledWith(
-      expect.stringContaining('/drafts/draft/diagnostic'),
+      expect.stringContaining('/drafts/draft/preview-error'),
       expect.objectContaining({
         method: 'POST',
         credentials: 'include',
-        body: JSON.stringify({ status: 'ready' }),
+        body: JSON.stringify({ message: message.slice(0, 2000) }),
       }),
     );
-  });
-
-  it('shows the selected record-page surface', async () => {
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({ ...PREVIEW, pageLayoutType: 'RECORD_PAGE' }),
-    });
-    renderPreview();
-    expect(await screen.findByText('Record page widget')).toBeInTheDocument();
-    expect(screen.queryByText('Dashboard widget')).not.toBeInTheDocument();
-  });
-
-  it('shows runtime errors and reports them for the next agent turn', async () => {
-    const onReadyChange = renderPreview();
-    await screen.findByText('Rendered component');
-
-    act(() =>
-      mockRendererProps.onError(new Error('Unsupported resource: connect-src')),
-    );
-    expect(await screen.findByRole('alert')).toHaveTextContent(
-      'Unsupported resource: connect-src',
-    );
-    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2));
-    expect(onReadyChange).not.toHaveBeenCalledWith(true);
-    act(() => mockRendererProps.onReady());
+    act(() => mockRendererProps.onError(undefined));
     expect(mockFetch).toHaveBeenCalledTimes(2);
   });
 
-  it('keeps superseded drafts visible but never enables saving them', async () => {
-    mockFetch.mockResolvedValue({
-      ok: true,
-      json: async () => ({ ...PREVIEW, isCurrent: false }),
-    });
-    const onReadyChange = renderPreview();
-    await screen.findByText('Rendered component');
-
-    expect(screen.getByText(/A newer revision exists/)).toBeInTheDocument();
-    act(() => mockRendererProps.onReady());
-    await waitFor(() => expect(mockFetch).toHaveBeenCalledTimes(2));
-    expect(onReadyChange).not.toHaveBeenCalledWith(true);
+  it('keeps the runtime error visible if reporting fails', async () => {
+    render(previewElement());
+    await screen.findByText('Rendered component draft');
+    mockFetch.mockRejectedValueOnce(new Error('Offline'));
+    await act(async () =>
+      mockRendererProps.onError(new Error('Render failed')),
+    );
+    expect(screen.getByRole('alert')).toHaveTextContent('Render failed');
   });
 
   it('shows expired or inaccessible previews as unavailable', async () => {
-    mockFetch.mockResolvedValue({ ok: false });
-    const onReadyChange = renderPreview();
-
+    mockFetch.mockResolvedValueOnce({ ok: false });
+    render(previewElement());
     expect(await screen.findByRole('alert')).toHaveTextContent(
       'Preview unavailable',
     );
-    expect(onReadyChange).not.toHaveBeenCalledWith(true);
+    expect(mockFetch).toHaveBeenCalledTimes(1);
+  });
+
+  it('does not render a component without its dependencies', async () => {
+    mockFetchComponentSource.mockRejectedValueOnce(
+      new Error('Dependencies unavailable'),
+    );
+    render(previewElement());
+    expect(await screen.findByRole('alert')).toHaveTextContent(
+      'Dependencies unavailable',
+    );
+    expect(
+      screen.queryByText('Rendered component draft'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('ignores an old response when the selected draft changes', async () => {
+    let resolveOldRequest: (
+      value: Pick<Response, 'ok' | 'json'>,
+    ) => void = () => undefined;
+    const oldRequest = new Promise<Pick<Response, 'ok' | 'json'>>((resolve) => {
+      resolveOldRequest = resolve;
+    });
+    mockFetch.mockReturnValueOnce(oldRequest);
+    const { rerender } = render(previewElement('old'));
+    rerender(previewElement('new'));
+    await screen.findByText('Rendered component new');
+    await act(async () =>
+      resolveOldRequest({
+        ok: true,
+        json: async () => ({ ...PREVIEW, componentSource: 'old source' }),
+      }),
+    );
+    await waitFor(() =>
+      expect(mockRendererProps.componentSource).toBe(PREVIEW.componentSource),
+    );
+    expect(
+      screen.queryByText('Rendered component old'),
+    ).not.toBeInTheDocument();
   });
 
   it('does not fetch or render when the workspace flag is off', () => {
     mockIsEnabled = false;
-    renderPreview();
-
+    render(previewElement());
     expect(screen.queryByText('Sample data')).not.toBeInTheDocument();
     expect(mockFetch).not.toHaveBeenCalled();
+    expect(mockFetchComponentSource).not.toHaveBeenCalled();
   });
 });

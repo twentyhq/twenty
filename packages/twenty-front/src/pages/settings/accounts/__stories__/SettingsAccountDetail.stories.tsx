@@ -20,9 +20,9 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsAccountDetail,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/accounts/detail/:connectedAccountId',
+    routePath: '/settings/app-preferences/accounts/:connectedAccountId',
     routeParams: { ':connectedAccountId': GOOGLE_ACCOUNT_ID },
-    additionalRoutes: ['/settings/accounts'],
+    additionalRoutes: ['/settings/app-preferences'],
   },
   beforeEach: seedAccountGroupsStory,
   parameters: {
@@ -43,7 +43,7 @@ export const EmailsAndCalendarTabs: Story = {
       await canvas.findByTestId('tab-emails', undefined, { timeout: 3000 }),
     );
 
-    expect(canvas.getByText('App preferences')).toBeVisible();
+    expect(canvas.getByText('Apps preferences')).toBeVisible();
     expect(await canvas.findByText('Visibility')).toBeVisible();
 
     await userEvent.click(canvas.getByTestId('tab-calendar'));
@@ -71,12 +71,12 @@ export const TitleStaysWhileLoading: Story = {
     );
     expect(canvas.queryByText('tim@apple.dev')).not.toBeInTheDocument();
     expect(
-      canvas.queryByText('Navigated to /settings/accounts'),
+      canvas.queryByText('Navigated to /settings/app-preferences'),
     ).not.toBeInTheDocument();
   },
 };
 
-export const AccountWithoutSettingsGoesBackToAccounts: Story = {
+export const AccountWithoutSettingsGoesBackToAppPreferences: Story = {
   args: {
     routeParams: { ':connectedAccountId': FATHOM_ONLY_ACCOUNT_ID },
   },
@@ -84,9 +84,13 @@ export const AccountWithoutSettingsGoesBackToAccounts: Story = {
     const canvas = within(canvasElement);
 
     expect(
-      await canvas.findByText('Navigated to /settings/accounts', undefined, {
-        timeout: 3000,
-      }),
+      await canvas.findByText(
+        'Navigated to /settings/app-preferences',
+        undefined,
+        {
+          timeout: 3000,
+        },
+      ),
     ).toBeVisible();
   },
 };

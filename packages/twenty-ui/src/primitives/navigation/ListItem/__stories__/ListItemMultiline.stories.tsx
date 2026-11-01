@@ -21,7 +21,7 @@ const onEndAction = fn();
 const meta: Meta<typeof ListItem> = {
   title: 'UI/Navigation/ListItem/Multiline',
   component: ListItem,
-  parameters: { container: { width: 560 } },
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST, container: { width: 560 } },
   args: {
     children: 'Quarterly planning',
     description:
@@ -305,7 +305,6 @@ export const VisualRegression: CatalogStory<Story, typeof ListItem> = {
     selectionAppearance: 'accent',
   },
   parameters: {
-    a11y: A11Y_DEFER_COLOR_CONTRAST,
     catalog: {
       dimensions: [
         { name: '', values: [''], props: () => ({}) },
@@ -341,7 +340,6 @@ export const SelectionAppearance: CatalogStory<Story, typeof ListItem> = {
     description: 'Team planning',
   },
   parameters: {
-    a11y: A11Y_DEFER_COLOR_CONTRAST,
     catalog: {
       dimensions: [
         {

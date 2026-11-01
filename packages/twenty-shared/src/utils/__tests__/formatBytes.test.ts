@@ -15,6 +15,16 @@ describe('formatBytes', () => {
     expect(formatBytes(bytes)).toBe(expected);
   });
 
+  it('promotes to the next unit when rounding reaches 1024', () => {
+    expect(formatBytes(1024 ** 2 - 1)).toBe('1 MB');
+    expect(formatBytes(1024 ** 3 - 1)).toBe('1 GB');
+    expect(formatBytes(1024 ** 4 - 1)).toBe('1 TB');
+  });
+
+  it('does not promote just below a rounding boundary', () => {
+    expect(formatBytes(1_048_524)).toBe('1023.9 KB');
+  });
+
   it('stays on terabytes past the largest unit', () => {
     expect(formatBytes(1024 ** 5)).toBe('1024 TB');
   });

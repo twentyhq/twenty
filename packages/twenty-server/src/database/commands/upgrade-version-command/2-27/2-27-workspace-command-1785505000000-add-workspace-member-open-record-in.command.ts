@@ -114,6 +114,7 @@ export class AddWorkspaceMemberOpenRecordInCommand extends ProvisionedWorkspaceC
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,

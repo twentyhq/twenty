@@ -8,6 +8,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
+import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { buildJobStatus } from 'src/engine/core-modules/message-queue/utils/build-job-status.util';
 import { ENQUEUE_JOB_DEFAULT_RETRY_LIMIT } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-default-retry-limit.constant';
 import { ENQUEUE_JOB_PRIORITY } from 'src/engine/core-modules/application/application-job/constants/enqueue-job-priority.constant';
@@ -87,15 +88,28 @@ export class ApplicationJobService {
 
     const jobItems = this.getJobItems(input);
 
-    const { flatLogicFunctionMaps } =
+    const { flatLogicFunctionMaps, flatApplicationMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatLogicFunctionMaps',
+        'flatApplicationMaps',
       ]);
 
     const flatLogicFunction = findFlatEntityByUniversalIdentifier({
       flatEntityMaps: flatLogicFunctionMaps,
       universalIdentifier: logicFunctionUniversalIdentifier,
     });
+
+    const application = findActiveFlatApplicationById(
+      flatApplicationMaps,
+      applicationId,
+    );
+
+    if (!isDefined(application)) {
+      throw new ApplicationException(
+        `Application ${applicationId} not found`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
 
     if (
       !isDefined(flatLogicFunction) ||
@@ -121,6 +135,8 @@ export class ApplicationJobService {
           ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
         },
         jobId: buildQueueJobId({ workspaceId, jobId: jobIds[index] }),
+        workspaceId,
+        applicationUniversalIdentifier: application.universalIdentifier,
       })),
       {
         retryLimit: input.retryLimit ?? ENQUEUE_JOB_DEFAULT_RETRY_LIMIT,

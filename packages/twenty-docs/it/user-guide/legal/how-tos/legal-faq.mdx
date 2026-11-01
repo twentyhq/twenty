@@ -3,6 +3,8 @@ title: FAQ Legali
 description: Domande legali più frequenti.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Residenza dei dati e trasferimenti internazionali
 
 <AccordionGroup>
@@ -26,14 +28,17 @@ Le Clausole contrattuali standard dell'UE, insieme all'Addendum UK e alle modifi
 <Accordion title="Dove possiamo trovare l'attuale Data Processing Agreement (DPA)?">
 Puoi generare il tuo DPA firmato all'indirizzo https://{your-domain}/settings/legal/dpa (ad es. https://getting-started.twenty.com/settings/legal/dpa).
 </Accordion>
+<Accordion title="Il DPA è disponibile in tutti i piani?">
+Sì. Il DPA standard è disponibile in ogni piano e può essere firmato con un clic da Impostazioni → Legale → DPA. Le modifiche ai termini standard, come un'entità contraente diversa o scadenze di notifica personalizzate, sono disponibili nel piano Enterprise.
+</Accordion>
 <Accordion title="Venti fungono da responsabili del trattamento dei dati per il commerciante e le informazioni di contatto memorizzate nel CRM, mentre la nostra azienda rimane il titolare del trattamento?">
 Secondo la nostra [Privacy Policy](https://twenty.com/privacy-policy), Venti agisce come il responsabile del trattamento dei dati per il commerciante e le informazioni di contatto memorizzate nel CRM, mentre la tua azienda rimane il titolare del trattamento.
 </Accordion>
 <Accordion title="Il contenuto di CRM è mai utilizzato per addestrare modelli di IA Venti o di terze parti?">
-I contenuti del CRM possono essere utilizzati per addestrare modelli di IA in base ai Termini e condizioni dei sub-responsabili del trattamento. Twenty non dispone di un proprio modello di IA: tutti i modelli di IA disponibili su Twenty Cloud sono forniti dai nostri sub-responsabili del trattamento.
+No. Twenty non dispone di un proprio modello di IA e non addestra alcun modello sui tuoi dati. I fornitori di IA utilizzati per impostazione predefinita su Twenty Cloud (Azure OpenAI, OpenAI, Anthropic e Mistral) non addestrano su di essi in base ai propri termini. Alcuni modelli facoltativi, come Google Gemini e TypeSafe (utilizzato dall'azione Classify del workflow), vengono utilizzati solo se un amministratore li abilita; i relativi termini sono elencati nel [nostro Trust Center](https://trust.twenty.com/?tab=subprocessors).
 </Accordion>
 <Accordion title="Se esiste un trattamento AI opzionale, può essere completamente disabilitato per il nostro spazio di lavoro?">
-L'IA può essere completamente disattivata disattivando tutti i modelli di IA in Impostazioni → AI → Modelli. Inoltre, nessun dato viene inviato all'IA a meno che tu non interagisca attivamente con la chat dell'IA o con un nodo di IA in un workflow.
+Nessun dato viene inviato a un fornitore di IA a meno che qualcuno nel tuo spazio di lavoro non esegua l'IA: la chat IA, un agente IA o un passaggio IA in un workflow. Per bloccare completamente l'IA, imposta un limite di utilizzo dell'IA per lo spazio di lavoro pari a 0 in Impostazioni → Fatturazione, che si applica a tutti i membri, amministratori inclusi. Puoi anche rimuovere l'autorizzazione Ask AI dai ruoli modificabili in Impostazioni → Ruoli; il ruolo Admin integrato la mantiene sempre.
 </Accordion>
 </AccordionGroup>
 
@@ -44,10 +49,16 @@ L'IA può essere completamente disattivata disattivando tutti i modelli di IA in
 Tutti i dati sono crittografati in transito e a riposo. I dati dei tenant sono isolati tramite una configurazione schema-per-tenant e le chiavi di crittografia vengono ruotate periodicamente.
 </Accordion>
 <Accordion title="A quali venti membri del personale o subprocessori possono accedere agli spazi di lavoro dei clienti, per quali scopi e come viene approvato l'accesso e registrato?">
-I team di ingegneria e supporto di Venti possono accedere ai workspace dei clienti per studiare e risolvere i problemi. I proprietari dello spazio di lavoro controllano questo: l'accesso al supporto può essere disabilitato in qualsiasi momento in Impostazioni → Generale → Sicurezza, e rimane spento fino a quando non si accende indietro.
+I team di ingegneria e supporto di Venti possono accedere ai workspace dei clienti per studiare e risolvere i problemi. I proprietari dello spazio di lavoro controllano questo: l'accesso al supporto può essere disabilitato in qualsiasi momento in Impostazioni → Generale → Sicurezza, e rimane spento fino a quando non si accende indietro. L'accesso al supporto richiede l'autenticazione a due fattori da parte di Twenty e, dal piano Organization in su, ogni sessione viene registrata nei tuoi registri di controllo. Mentre qualcuno di Twenty si sta spacciando per te, la sessione appare anche con l'etichetta Impersonation in Impostazioni → Profilo → Dispositivi.
+</Accordion>
+<Accordion title="I membri del nostro spazio di lavoro possono spacciarsi gli uni per gli altri?">
+I membri il cui ruolo dispone dell'autorizzazione Impersonate possono visualizzare lo spazio di lavoro come qualsiasi altro membro, inclusi gli amministratori dello spazio di lavoro, quindi concedila solo a ruoli di cui ti fidi. Puoi controllare chi dispone di questa autorizzazione in Impostazioni → Ruoli.
+</Accordion>
+<Accordion title="Per quanto tempo vengono conservati i registri di controllo?">
+I registri di controllo sono disponibili dal piano Organization in su. Puoi impostare per quanto tempo vengono conservati in Impostazioni → Generale → Sicurezza.
 </Accordion>
 <Accordion title="Qual è il processo di notifica degli incidenti e il calendario di notifica di destinazione a seguito di un incidente di sicurezza confermato che colpisce i nostri dati?">
-In caso di violazione confermata di dati personali che interessano i Suoi dati, vi informeremo senza indebito ritardo e in ogni caso entro 48 ore dalla presa di conoscenza. La nostra notifica includerà, nella misura conosciuta al tempo: la natura della violazione, le categorie e il volume approssimativo dei dati e degli individui interessati, le conseguenze probabili e le misure di risanamento e di mitigazione adottate o previste. Forniremo aggiornamenti man mano che l'indagine progredisce.
+In caso di violazione confermata dei dati personali che interessa i tuoi dati, ti informeremo senza indebito ritardo, con l'obiettivo di farlo entro e non oltre 72 ore dalla verifica dell'incidente, come indicato nella sezione 4.6 del nostro DPA. La nostra notifica includerà, nella misura conosciuta al tempo: la natura della violazione, le categorie e il volume approssimativo dei dati e degli individui interessati, le conseguenze probabili e le misure di risanamento e di mitigazione adottate o previste. Forniremo aggiornamenti man mano che l'indagine progredisce.
 </Accordion>
 </AccordionGroup>
 
@@ -86,9 +97,6 @@ I backup vengono creati in modo continuo con snapshot giornalieri e il periodo d
 <Accordion title="Qual è l'obiettivo del punto di recupero e l'obiettivo del periodo di recupero per Twenty Cloud?">
 RTO e RPO sono entrambe 6 ore (secondo il nostro DPA).
 </Accordion>
-<Accordion title="Qual è il processo per richiedere o eseguire un restauro?">
-Per richiedere un ripristino, contatta il nostro team tramite la chat di supporto o via email a [contact@twenty.com](mailto:contact@twenty.com).
-</Accordion>
 <Accordion title="I backup sono crittografati e memorizzati nella stessa regione dei dati primari dello spazio di lavoro?">
 Tutti i backup sono criptati e memorizzati in luoghi geograficamente separati all'interno della stessa giurisdizione (ad esempio all'interno dell'UE per i dati dell'UE).
 </Accordion>
@@ -120,6 +128,11 @@ No. Il tuo front-end è un tuo lavoro separato, e comunicare con Twenty tramite 
 <Accordion title="Se modifico il codice per aggiungere funzionalità per poi rivenderlo, devo pubblicare tali modifiche?">
 Sì, poiché stai modificando codice per distribuirlo ad altri, sei tenuto a pubblicare tali modifiche. Se non vuoi pubblicare le tue modifiche, puoi ottenere una licenza Organization.
 </Accordion>
+<Accordion title="Le applicazioni sviluppate su Twenty devono avere una licenza AGPL?">
+Le applicazioni che interagiscono con Twenty solo tramite le sue API/SDK pubblicate possono essere concesse in licenza secondo termini a tua scelta (consulta la “Twenty Application Exception” nel file LICENSE del repository). Twenty stesso è principalmente soggetto alla licenza AGPLv3 e alcuni pacchetti (incluso l'SDK di Twenty) sono soggetti alla licenza MIT.
+</Accordion>
 </AccordionGroup>
 
 Se hai altre domande, consulta i nostri [Termini e condizioni](https://twenty.com/terms), l'[Informativa sulla privacy](https://twenty.com/privacy-policy) e il [Trust Center](https://trust.twenty.com/). Se hai ancora domande senza risposta, inviale a [contact@twenty.com](mailto:contact@twenty.com) o tramite la chat di supporto.
+
+<PageBanner illustration="section-legal" />

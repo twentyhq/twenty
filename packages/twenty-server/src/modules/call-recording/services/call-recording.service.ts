@@ -3,13 +3,13 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { resolveObjectRecordsPermissions } from 'src/engine/twenty-orm/utils/resolve-object-records-permissions.util';
-import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
+import { resolveObjectRecordsPermissions } from 'src/engine/permissions/role/utils/resolve-object-records-permissions.util';
+import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
+} from 'src/engine/permissions/permissions.exception';
 import { CallRecordingStatus } from 'src/modules/call-recording/common/enums/call-recording-status.enum';
 import { type CallRecordingWorkspaceEntity } from 'src/modules/call-recording/standard-objects/call-recording.workspace-entity';
 
@@ -48,6 +48,9 @@ export class CallRecordingService {
         resolveObjectRecordsPermissions({
           rolePermissionConfig,
           objectPermissionsByRoleId: workspaceContext.permissionsPerRoleId,
+          flatObjectMetadataMaps: workspaceContext.flatObjectMetadataMaps,
+          flatFieldMetadataMaps: workspaceContext.flatFieldMetadataMaps,
+          flatApplicationMaps: workspaceContext.flatApplicationMaps,
         });
       const callRecordingObjectMetadataId =
         workspaceContext.objectIdByNameSingular.callRecording;

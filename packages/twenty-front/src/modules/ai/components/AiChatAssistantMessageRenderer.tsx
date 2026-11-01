@@ -207,14 +207,6 @@ export const AiChatAssistantMessageRenderer = ({
               key={index}
               parts={renderItem.parts}
               isLastMessageStreaming={isLastMessageStreaming}
-              hasAssistantTextResponseStarted={renderItems
-                .slice(index + 1)
-                .some(
-                  (nextRenderItem) =>
-                    nextRenderItem.type === 'part' &&
-                    nextRenderItem.part.type === 'text' &&
-                    nextRenderItem.part.text.trim().length > 0,
-                )}
               isTrailingWhileStreaming={
                 isLastMessageStreaming &&
                 !hasError &&
