@@ -91,7 +91,7 @@ enum AgentChatChannelThreadStatus {
 
 type AgentChatEvent {
   event: JSON!
-  threadId: String!
+  threadId: String
 }
 
 enum AgentChatInboxAction {

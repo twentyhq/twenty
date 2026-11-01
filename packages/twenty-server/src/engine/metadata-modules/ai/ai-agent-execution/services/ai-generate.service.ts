@@ -131,7 +131,7 @@ export class AiGenerateService {
     runId,
   }: {
     workspaceId: string;
-    callerApplication: FlatApplication | undefined;
+    callerApplication: Pick<FlatApplication, 'id'> | undefined;
     runId: string;
   }): Promise<string> {
     if (!isDefined(callerApplication)) {

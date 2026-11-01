@@ -88,7 +88,7 @@ export type AgentChatChannelThreadStatus = 'DONE' | 'OPEN' | 'SNOOZED'
 
 export interface AgentChatEvent {
     event: Scalars['JSON']
-    threadId: Scalars['String']
+    threadId?: Scalars['String']
     __typename: 'AgentChatEvent'
 }
 

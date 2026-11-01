@@ -8,6 +8,7 @@ import { AgentRunService } from 'src/engine/metadata-modules/ai/ai-agent-executi
 import { buildAgentRunStreamChannelId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-stream-channel-id.util';
 import { type AgentChatConversationInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-conversation.input';
 import { type AgentChatEventInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-event.input';
+import { type AgentChatChannel } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-channel.type';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { createAgentChatLiveEventFilter } from 'src/engine/metadata-modules/ai/ai-chat/utils/create-agent-chat-live-event-filter.util';
 import { isAgentTurnOpenedByOtherMember } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-turn-opened-by-other-member.util';
@@ -42,8 +43,7 @@ export class AgentChatConversationAccessService {
     private readonly turnRepository: AgentHistoryRepository<AgentTurnWorkspaceEntity>,
   ) {}
 
-  // a run's channel is derived from the caller's own application, so naming it is its access check
-  async resolveReadableChannelIdOrThrow({
+  async resolveReadableChannelOrThrow({
     source: { runId, ...conversation },
     ...reader
   }: ConversationReader & {
@@ -51,9 +51,15 @@ export class AgentChatConversationAccessService {
       AgentChatEventInput,
       'threadId' | 'agentUniversalIdentifier' | 'threadKey' | 'runId'
     >;
-  }): Promise<string> {
+  }): Promise<AgentChatChannel> {
     if (!isDefined(runId)) {
-      return this.resolveReadableThreadIdOrThrow({ ...reader, conversation });
+      return {
+        kind: 'thread',
+        channelId: await this.resolveReadableThreadIdOrThrow({
+          ...reader,
+          conversation,
+        }),
+      };
     }
 
     if (
@@ -66,10 +72,13 @@ export class AgentChatConversationAccessService {
       );
     }
 
-    return buildAgentRunStreamChannelId({
-      applicationId: reader.callerApplication.id,
-      runId,
-    });
+    return {
+      kind: 'run',
+      channelId: buildAgentRunStreamChannelId({
+        applicationId: reader.callerApplication.id,
+        runId,
+      }),
+    };
   }
 
   async resolveReadableThreadIdOrThrow({

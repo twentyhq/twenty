@@ -22,7 +22,10 @@ const APPLICATION = {
 };
 
 type AgentChatEventPayload = {
-  onAgentChatEvent: { threadId: string; event: AgentChatSubscriptionEvent };
+  onAgentChatEvent: {
+    threadId: string | null;
+    event: AgentChatSubscriptionEvent;
+  };
 };
 
 const payload: AgentChatEventPayload = {
@@ -64,7 +67,9 @@ const buildResolver = () => {
     },
   };
   const conversationAccessService = {
-    resolveReadableChannelIdOrThrow: jest.fn().mockResolvedValue(THREAD_ID),
+    resolveReadableChannelOrThrow: jest
+      .fn()
+      .mockResolvedValue({ kind: 'thread', channelId: THREAD_ID }),
     createLiveEventFilter: jest
       .fn()
       .mockResolvedValue(async (event: AgentChatSubscriptionEvent) => event),
@@ -95,7 +100,7 @@ describe('Shared conversation subscriptions', () => {
   it('refuses unauthorized subscriptions before opening a transport', async () => {
     const { resolver, conversationAccessService, subscriptionService } =
       buildResolver();
-    conversationAccessService.resolveReadableChannelIdOrThrow.mockRejectedValue(
+    conversationAccessService.resolveReadableChannelOrThrow.mockRejectedValue(
       denied(),
     );
     await expect(
@@ -122,7 +127,7 @@ describe('Shared conversation subscriptions', () => {
     context.deliver();
     await expect(pending).resolves.toEqual({ done: false, value: payload });
     expect(
-      context.conversationAccessService.resolveReadableChannelIdOrThrow,
+      context.conversationAccessService.resolveReadableChannelOrThrow,
     ).toHaveBeenLastCalledWith({
       workspace: WORKSPACE,
       callerApplication: undefined,
@@ -154,7 +159,7 @@ describe('Shared conversation subscriptions', () => {
       },
     });
     expect(
-      context.conversationAccessService.resolveReadableChannelIdOrThrow,
+      context.conversationAccessService.resolveReadableChannelOrThrow,
     ).toHaveBeenCalledWith(expect.objectContaining({ source: conversation }));
     expect(
       context.subscriptionService.subscribeToAgentChat,
@@ -211,7 +216,7 @@ describe('Shared conversation subscriptions', () => {
     );
     await subscription.next();
     const pending = subscription.next();
-    context.conversationAccessService.resolveReadableChannelIdOrThrow.mockRejectedValue(
+    context.conversationAccessService.resolveReadableChannelOrThrow.mockRejectedValue(
       denied(),
     );
     jest.setSystemTime(Date.now() + AGENT_CHAT_KEEPALIVE_INTERVAL_MS);
@@ -238,7 +243,7 @@ describe('Shared conversation subscriptions', () => {
       await pending;
     }
     expect(
-      context.conversationAccessService.resolveReadableChannelIdOrThrow,
+      context.conversationAccessService.resolveReadableChannelOrThrow,
     ).toHaveBeenCalledTimes(1);
     await subscription.return?.();
   });
@@ -256,7 +261,7 @@ describe('Shared conversation subscriptions', () => {
     const rejection = expect(pending).rejects.toMatchObject({
       extensions: { code: 'NOT_FOUND' },
     });
-    context.conversationAccessService.resolveReadableChannelIdOrThrow.mockRejectedValue(
+    context.conversationAccessService.resolveReadableChannelOrThrow.mockRejectedValue(
       denied(),
     );
     await jest.advanceTimersByTimeAsync(AGENT_CHAT_KEEPALIVE_INTERVAL_MS);
@@ -266,5 +271,61 @@ describe('Shared conversation subscriptions', () => {
     ).not.toHaveBeenCalled();
     expect(context.iterator.return).toHaveBeenCalledTimes(1);
     expect(jest.getTimerCount()).toBe(0);
+  });
+
+  it('streams a run channel as published, without a thread to filter or name', async () => {
+    const context = buildResolver();
+    const runChannelId = 'run-channel-id';
+
+    context.conversationAccessService.resolveReadableChannelOrThrow.mockResolvedValue(
+      { kind: 'run', channelId: runChannelId },
+    );
+
+    const subscription = await context.resolver.onAgentChatEvent(
+      { runId: 'run-id' },
+      WORKSPACE,
+      { id: 'application-id' } as never,
+      undefined,
+    );
+
+    await expect(subscription.next()).resolves.toEqual({
+      done: false,
+      value: {
+        onAgentChatEvent: { threadId: null, event: { type: 'keepalive' } },
+      },
+    });
+
+    const pending = subscription.next();
+
+    context.deliver({
+      onAgentChatEvent: {
+        threadId: runChannelId,
+        event: payload.onAgentChatEvent.event,
+      },
+    });
+
+    await expect(pending).resolves.toEqual({
+      done: false,
+      value: {
+        onAgentChatEvent: {
+          threadId: null,
+          event: payload.onAgentChatEvent.event,
+        },
+      },
+    });
+    expect(
+      context.subscriptionService.subscribeToAgentChat,
+    ).toHaveBeenCalledTimes(1);
+    expect(
+      context.subscriptionService.subscribeToAgentChat,
+    ).toHaveBeenCalledWith({
+      workspaceId: WORKSPACE.id,
+      threadId: runChannelId,
+    });
+    expect(
+      context.conversationAccessService.createLiveEventFilter,
+    ).not.toHaveBeenCalled();
+
+    await subscription.return?.();
   });
 });

@@ -31,37 +31,38 @@ const buildService = () => {
   };
 };
 
-describe('AgentChatConversationAccessService.resolveReadableChannelIdOrThrow', () => {
+describe('AgentChatConversationAccessService.resolveReadableChannelOrThrow', () => {
   it('names the channel of a run by the caller application and the run id', async () => {
     const { service } = buildService();
 
     await expect(
-      service.resolveReadableChannelIdOrThrow({
+      service.resolveReadableChannelOrThrow({
         workspace: WORKSPACE,
         callerApplication: buildApplication('application-a'),
         workspaceMemberId: undefined,
         source: { runId: RUN_ID },
       }),
-    ).resolves.toBe(
-      buildAgentRunStreamChannelId({
+    ).resolves.toEqual({
+      kind: 'run',
+      channelId: buildAgentRunStreamChannelId({
         applicationId: 'application-a',
         runId: RUN_ID,
       }),
-    );
+    });
   });
 
   it('gives another application naming the same run another channel', async () => {
     const { service } = buildService();
     const resolveFor = (applicationId: string) =>
-      service.resolveReadableChannelIdOrThrow({
+      service.resolveReadableChannelOrThrow({
         workspace: WORKSPACE,
         callerApplication: buildApplication(applicationId),
         workspaceMemberId: undefined,
         source: { runId: RUN_ID },
       });
 
-    expect(await resolveFor('application-b')).not.toBe(
-      await resolveFor('application-a'),
+    expect((await resolveFor('application-b')).channelId).not.toBe(
+      (await resolveFor('application-a')).channelId,
     );
   });
 
@@ -69,7 +70,7 @@ describe('AgentChatConversationAccessService.resolveReadableChannelIdOrThrow', (
     const { service } = buildService();
 
     await expect(
-      service.resolveReadableChannelIdOrThrow({
+      service.resolveReadableChannelOrThrow({
         workspace: WORKSPACE,
         callerApplication: undefined,
         workspaceMemberId: 'workspace-member-id',
@@ -82,7 +83,7 @@ describe('AgentChatConversationAccessService.resolveReadableChannelIdOrThrow', (
     const { service } = buildService();
 
     await expect(
-      service.resolveReadableChannelIdOrThrow({
+      service.resolveReadableChannelOrThrow({
         workspace: WORKSPACE,
         callerApplication: buildApplication('application-a'),
         workspaceMemberId: undefined,
@@ -100,7 +101,7 @@ describe('AgentChatConversationAccessService.resolveReadableChannelIdOrThrow', (
     const callerApplication = buildApplication('application-a');
 
     await expect(
-      service.resolveReadableChannelIdOrThrow({
+      service.resolveReadableChannelOrThrow({
         workspace: WORKSPACE,
         callerApplication,
         workspaceMemberId: undefined,
@@ -110,7 +111,7 @@ describe('AgentChatConversationAccessService.resolveReadableChannelIdOrThrow', (
           threadKey: 'deal-42',
         },
       }),
-    ).resolves.toBe('conversation-thread-id');
+    ).resolves.toEqual({ kind: 'thread', channelId: 'conversation-thread-id' });
     expect(
       agentRunService.resolveConversationThreadIdOrThrow,
     ).toHaveBeenCalledWith({

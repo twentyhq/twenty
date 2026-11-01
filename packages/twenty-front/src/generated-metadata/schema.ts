@@ -115,7 +115,7 @@ export enum AgentChatChannelThreadStatus {
 export type AgentChatEvent = {
   __typename?: 'AgentChatEvent';
   event: Scalars['JSON']['output'];
-  threadId: Scalars['String']['output'];
+  threadId?: Maybe<Scalars['String']['output']>;
 };
 
 export enum AgentChatInboxAction {

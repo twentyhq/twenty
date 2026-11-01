@@ -31,7 +31,7 @@ const setupApplicationWithToken = async (name: string) => {
   return { application, token: applicationAccessToken.token };
 };
 
-const waitFor = async (isDone: () => boolean, timeoutMs = 10_000) => {
+const waitForOrThrow = async (isDone: () => boolean, timeoutMs = 10_000) => {
   const startedAt = Date.now();
 
   while (!isDone()) {
@@ -43,7 +43,7 @@ const waitFor = async (isDone: () => boolean, timeoutMs = 10_000) => {
   }
 };
 
-const isRunEnd = ({ type }: AgentChatSubscriptionEvent) =>
+const isRunEnd = ({ type }: Pick<AgentChatSubscriptionEvent, 'type'>) =>
   type === 'message-persisted' || type === 'stream-error';
 
 describe('ai.generate runs followed by their application (integration)', () => {
@@ -95,7 +95,7 @@ describe('ai.generate runs followed by their application (integration)', () => {
 
       streams.push(otherStream);
 
-      await waitFor(
+      await waitForOrThrow(
         () => ownStream.events.length > 0 && otherStream.events.length > 0,
       );
       mockScriptedAiModel(() => answerWith('Acme looks like a fit'));
@@ -112,7 +112,7 @@ describe('ai.generate runs followed by their application (integration)', () => {
         runId,
       });
 
-      await waitFor(() => ownStream.events.some(isRunEnd));
+      await waitForOrThrow(() => ownStream.events.some(isRunEnd));
 
       const chunks = ownStream.events.flatMap((event) =>
         event.type === 'stream-chunk' ? [event.chunk] : [],
