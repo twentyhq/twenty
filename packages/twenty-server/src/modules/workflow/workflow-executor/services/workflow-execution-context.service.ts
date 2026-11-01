@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
@@ -11,9 +9,9 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
-import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
@@ -36,8 +34,7 @@ export class WorkflowExecutionContextService {
     private readonly workflowRunService: WorkflowRunService,
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   async getExecutionContext(
@@ -48,7 +45,7 @@ export class WorkflowExecutionContextService {
         workflowRunId: runInfo.workflowRunId,
         workspaceId: runInfo.workspaceId,
       }),
-      this.findWorkspaceOrFail(runInfo.workspaceId),
+      this.findWorkspaceOrThrow(runInfo.workspaceId),
     ]);
 
     return this.buildExecutionContext(workflowRun, workspace);
@@ -63,7 +60,7 @@ export class WorkflowExecutionContextService {
     workspaceId: string;
   }): Promise<WorkflowExecutionContext | null> {
     const [workspace, { flatWorkflowMaps }] = await Promise.all([
-      this.findWorkspaceOrFail(workspaceId),
+      this.findWorkspaceOrThrow(workspaceId),
       this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkflowMaps',
       ]),
@@ -111,7 +108,7 @@ export class WorkflowExecutionContextService {
 
   private async buildExecutionContext(
     workflowRun: WorkflowRunWorkspaceEntity,
-    workspace: WorkspaceEntity,
+    workspace: FlatWorkspace,
   ): Promise<WorkflowExecutionContext> {
     const { flatApplicationMaps, flatWorkflowMaps, userWorkspaceRoleMap } =
       await this.workspaceCacheService.getOrRecompute(workspace.id, [
@@ -135,10 +132,7 @@ export class WorkflowExecutionContextService {
           workspace,
           application,
         })
-      : buildApplicationAuthContext({
-          workspace: fromWorkspaceEntityToFlat(workspace),
-          application,
-        });
+      : buildApplicationAuthContext({ workspace, application });
 
     const rolePermissionConfig = resolveRolePermissionConfig({
       authContext,
@@ -190,7 +184,7 @@ export class WorkflowExecutionContextService {
     application,
   }: {
     workflowRun: WorkflowRunWorkspaceEntity;
-    workspace: WorkspaceEntity;
+    workspace: FlatWorkspace;
     application: FlatApplication;
   }): Promise<WorkspaceAuthContext> {
     const workspaceMember =
@@ -207,7 +201,7 @@ export class WorkflowExecutionContextService {
       });
 
     return buildUserAuthContext({
-      workspace: fromWorkspaceEntityToFlat(workspace),
+      workspace,
       userWorkspaceId: userWorkspace.id,
       user: fromUserEntityToFlat(userWorkspace.user),
       workspaceMemberId: workspaceMember.id,
@@ -216,9 +210,21 @@ export class WorkflowExecutionContextService {
     });
   }
 
-  private findWorkspaceOrFail(workspaceId: string): Promise<WorkspaceEntity> {
-    return this.workspaceRepository.findOneOrFail({
-      where: { id: workspaceId },
-    });
+  private async findWorkspaceOrThrow(
+    workspaceId: string,
+  ): Promise<FlatWorkspace> {
+    const workspace = await this.coreEntityCacheService.get(
+      'workspaceEntity',
+      workspaceId,
+    );
+
+    if (!isDefined(workspace)) {
+      throw new WorkflowStepExecutorException(
+        'Workspace not found',
+        WorkflowStepExecutorExceptionCode.SCOPED_WORKSPACE_NOT_FOUND,
+      );
+    }
+
+    return workspace;
   }
 }
