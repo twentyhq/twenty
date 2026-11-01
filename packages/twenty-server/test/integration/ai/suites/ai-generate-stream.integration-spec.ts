@@ -129,6 +129,14 @@ describe('ai.generate runs followed by their application (integration)', () => {
       expect(ownStream.events.find(isRunEnd)).toMatchObject({
         type: 'message-persisted',
       });
+
+      // one server connection receives both channels in publish order, so a keepalive the other
+      // stream gets after the run ended comes after anything the run published
+      const otherEventCountAtRunEnd = otherStream.events.length;
+
+      await waitForOrThrow(
+        () => otherStream.events.length > otherEventCountAtRunEnd,
+      );
     } finally {
       await Promise.all(streams.map((stream) => stream.close()));
     }

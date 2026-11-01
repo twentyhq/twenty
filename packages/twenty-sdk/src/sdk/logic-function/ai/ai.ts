@@ -1,3 +1,4 @@
+import { isString } from '@sniptt/guards';
 import { type AgentChatSubscriptionEvent } from 'twenty-shared/ai';
 import {
   type GenerateInput,
@@ -61,6 +62,13 @@ const requestGenerate = async ({
   return result;
 };
 
+type UIMessageChunk = Parameters<NonNullable<GenerateInput['onChunk']>>[0];
+
+// the run channel carries the AI SDK's own chunks, so one that names its type is taken as one
+const isUIMessageChunk = (
+  chunk: Record<string, unknown>,
+): chunk is UIMessageChunk => isString(chunk.type);
+
 const isRunEnd = ({ type }: Pick<AgentChatSubscriptionEvent, 'type'>) =>
   type === 'message-persisted' ||
   type === 'credits-exhausted' ||
@@ -82,6 +90,20 @@ const generateWithChunks = async ({
   const runSignal = isDefined(signal)
     ? AbortSignal.any([signal, stopFollowing.signal])
     : stopFollowing.signal;
+  let removeAbortListener = () => {};
+  const callerAborted = new Promise<never>((_resolve, reject) => {
+    if (!isDefined(signal)) {
+      return;
+    }
+
+    const rejectWithReason = () => reject(signal.reason);
+
+    signal.addEventListener('abort', rejectWithReason, { once: true });
+    removeAbortListener = () =>
+      signal.removeEventListener('abort', rejectWithReason);
+  });
+
+  void callerAborted.catch(() => undefined);
 
   try {
     const events = streamAgentChatEvents({
@@ -97,7 +119,7 @@ const generateWithChunks = async ({
       throw new Error('ai.generate() failed: the stream ended before the run');
     }
 
-    const receivedChunks: Record<string, unknown>[] = [];
+    const receivedChunks: UIMessageChunk[] = [];
     let isReceiving = true;
     let hasResult = false;
     let wakeDelivery = () => {};
@@ -105,7 +127,7 @@ const generateWithChunks = async ({
     const received = (async () => {
       try {
         for await (const event of events) {
-          if (event.type === 'stream-chunk') {
+          if (event.type === 'stream-chunk' && isUIMessageChunk(event.chunk)) {
             receivedChunks.push(event.chunk);
             wakeDelivery();
           }
@@ -168,13 +190,15 @@ const generateWithChunks = async ({
     ]).finally(() => clearTimeout(endEventGraceTimer));
 
     stopFollowing.abort();
-    await delivered;
+    // the caller's abort settles the call even while an onChunk is still running
+    await Promise.race([delivered, callerAborted]);
 
     // the reader ends quietly on abort, so an abort after the mutation returned would read as a full delivery
     signal?.throwIfAborted();
 
     return result;
   } finally {
+    removeAbortListener();
     stopFollowing.abort();
   }
 };

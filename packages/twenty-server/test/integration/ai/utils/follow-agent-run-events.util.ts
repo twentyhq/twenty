@@ -45,7 +45,7 @@ export const followAgentRunEvents = async ({
     signal: abortController.signal,
   }).finally(() => clearTimeout(connectTimeout));
 
-  if (!isDefined(response.body)) {
+  if (!response.ok || !isDefined(response.body)) {
     abortController.abort();
     throw new Error(`The subscription failed with HTTP ${response.status}`);
   }

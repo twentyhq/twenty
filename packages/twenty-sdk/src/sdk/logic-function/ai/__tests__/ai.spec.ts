@@ -299,6 +299,31 @@ describe('ai.generate with onChunk', () => {
     await expect(generation).rejects.toMatchObject({ name: 'AbortError' });
   });
 
+  it('rejects when aborted while onChunk is still running after the result', async () => {
+    const runChannel = mockRunChannel(fetchSpy);
+    const abortController = new AbortController();
+    let isOnChunkCalled = false;
+
+    const generation = ai.generate({
+      input: 'Hi',
+      onChunk: () => {
+        isOnChunkCalled = true;
+
+        return new Promise(() => {});
+      },
+      signal: abortController.signal,
+    });
+
+    await vi.waitFor(() => expect(runChannel.requests).toHaveLength(2));
+    runChannel.answerMutation({ data: { generate: RESULT } });
+    runChannel.send({ type: 'stream-chunk', chunk: { type: 'start' }, seq: 1 });
+    runChannel.send({ type: 'message-persisted', messageId: 'message-id' });
+    await vi.waitFor(() => expect(isOnChunkCalled).toBe(true));
+    abortController.abort();
+
+    await expect(generation).rejects.toMatchObject({ name: 'AbortError' });
+  });
+
   it('does not connect once its signal is aborted', async () => {
     await expect(
       ai.generate({

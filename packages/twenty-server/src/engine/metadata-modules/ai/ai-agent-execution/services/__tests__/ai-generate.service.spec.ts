@@ -87,8 +87,8 @@ describe('AiGenerateService', () => {
     expect(findOne).not.toHaveBeenCalled();
   });
 
-  it('refuses a run id that is already used', async () => {
-    const { service, runInRequest } = buildService({
+  it('refuses a run id that is already used in the workspace', async () => {
+    const { service, runInRequest, findOne } = buildService({
       existingTurn: { id: RUN_ID },
     });
 
@@ -99,6 +99,11 @@ describe('AiGenerateService', () => {
         callerApplication: APPLICATION,
       }),
     ).rejects.toMatchObject({ code: AiExceptionCode.INVALID_AGENT_INPUT });
+    expect(findOne).toHaveBeenCalledTimes(1);
+    expect(findOne).toHaveBeenCalledWith(WORKSPACE.id, {
+      where: { id: RUN_ID },
+      select: ['id'],
+    });
     expect(runInRequest).not.toHaveBeenCalled();
   });
 

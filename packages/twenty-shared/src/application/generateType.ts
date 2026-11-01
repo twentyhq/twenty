@@ -1,3 +1,4 @@
+import { type UIMessageChunk } from 'ai';
 import { type z } from 'zod';
 
 import { type AiRunUsage } from './aiRunUsageType';
@@ -9,8 +10,7 @@ export type GenerateMutationInput = z.infer<typeof generateInputSchema>;
 // a string input is sent as one user message
 export type GenerateInput = Omit<GenerateMutationInput, 'input'> & {
   input: string | RunAgentMessage[];
-  // each chunk of the reply as it streams, an AI SDK UIMessageChunk
-  onChunk?: (chunk: Record<string, unknown>) => void | Promise<void>;
+  onChunk?: (chunk: UIMessageChunk) => void | Promise<void>;
   signal?: AbortSignal;
 };
 
