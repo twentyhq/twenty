@@ -1571,6 +1571,11 @@ msgstr "啟動工作流程的人員會開啟表單，並當場填寫。使用此
 msgid "A new one each time the step runs"
 msgstr "每次執行步驟時建立新的項目"
 
+#. js-lingui-id: 3pDKsj
+#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+msgid "A newer revision exists. Open the latest preview to save."
+msgstr ""
+
 #. js-lingui-id: K3NJnJ
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "A payment method is needed to keep your workspace active."
@@ -6689,10 +6694,20 @@ msgstr "完成的工作保存 {completedDuration}，失敗的工作保存 {faile
 msgid "Complexity"
 msgstr "複雜度"
 
+#. js-lingui-id: ST17km
+#: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
+msgid "Component failed to render."
+msgstr ""
+
 #. js-lingui-id: 3pJ7V5
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 msgid "Component name"
 msgstr "元件名稱"
+
+#. js-lingui-id: WcUICq
+#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+msgid "Component preview with sample data"
+msgstr ""
 
 #. js-lingui-id: rYRNgS
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
@@ -7497,6 +7512,11 @@ msgstr "無法產生已簽署的 DPA。請再試一次。"
 #: src/modules/front-components/media-session/components/FrontComponentMediaPermissionModal.tsx
 msgid "Could not grant media access. Please try again."
 msgstr "無法授予媒體存取權。請再試一次。"
+
+#. js-lingui-id: Y5qCpF
+#: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
+msgid "Could not load preview."
+msgstr ""
 
 #. js-lingui-id: mrmGIf
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
@@ -8660,6 +8680,11 @@ msgstr "深色模式"
 #: src/modules/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
 msgid "Dashboard duplicated successfully"
 msgstr "儀表板複製成功"
+
+#. js-lingui-id: xLSe09
+#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+msgid "Dashboard widget"
+msgstr ""
 
 #. js-lingui-id: HKH+W+
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
@@ -16516,6 +16541,11 @@ msgstr "正在載入更多聊天……"
 msgid "Loading more..."
 msgstr "載入更多..."
 
+#. js-lingui-id: nSgEqx
+#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+msgid "Loading preview…"
+msgstr ""
+
 #. js-lingui-id: WepeNQ
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 msgid "Loading records"
@@ -22230,6 +22260,11 @@ msgstr "記錄標籤"
 msgid "Record page"
 msgstr "記錄頁面"
 
+#. js-lingui-id: J5b8Hz
+#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+msgid "Record page widget"
+msgstr ""
+
 #. js-lingui-id: fHTWNa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Record rules through relations"
@@ -22839,6 +22874,11 @@ msgstr "為所有語言重新命名"
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
 msgid "Rename group"
 msgstr "重新命名群組"
+
+#. js-lingui-id: cwObXL
+#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+msgid "Rendering preview…"
+msgstr ""
 
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -23611,6 +23651,11 @@ msgstr "每一側使用相同的數值"
 msgid "SAML/OIDC"
 msgstr "SAML/OIDC"
 
+#. js-lingui-id: b/zjTD
+#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+msgid "Sample data"
+msgstr ""
+
 #. js-lingui-id: 3hNFUc
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat.tsx
 msgid "Sample input"
@@ -23674,6 +23719,11 @@ msgstr "儲存設定"
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
 msgid "Save your changes first"
 msgstr "請先儲存您的變更"
+
+#. js-lingui-id: A0/0NU
+#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+msgid "Saved to Workspace app"
+msgstr ""
 
 #. js-lingui-id: w9O5DJ
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx

@@ -1571,6 +1571,11 @@ msgstr "ワークフローを開始した人のためにフォームが開き、
 msgid "A new one each time the step runs"
 msgstr "ステップの実行ごとに新規作成"
 
+#. js-lingui-id: 3pDKsj
+#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+msgid "A newer revision exists. Open the latest preview to save."
+msgstr ""
+
 #. js-lingui-id: K3NJnJ
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "A payment method is needed to keep your workspace active."
@@ -6689,10 +6694,20 @@ msgstr "完了したジョブの保持期間: {completedDuration}、失敗した
 msgid "Complexity"
 msgstr "複雑さ"
 
+#. js-lingui-id: ST17km
+#: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
+msgid "Component failed to render."
+msgstr ""
+
 #. js-lingui-id: 3pJ7V5
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 msgid "Component name"
 msgstr "コンポーネント名"
+
+#. js-lingui-id: WcUICq
+#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+msgid "Component preview with sample data"
+msgstr ""
 
 #. js-lingui-id: rYRNgS
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
@@ -7497,6 +7512,11 @@ msgstr "署名済み DPA を生成できませんでした。もう一度お試�
 #: src/modules/front-components/media-session/components/FrontComponentMediaPermissionModal.tsx
 msgid "Could not grant media access. Please try again."
 msgstr "メディアへのアクセスを許可できませんでした。もう一度お試しください。"
+
+#. js-lingui-id: Y5qCpF
+#: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
+msgid "Could not load preview."
+msgstr ""
 
 #. js-lingui-id: mrmGIf
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
@@ -8660,6 +8680,11 @@ msgstr "ダーク"
 #: src/modules/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
 msgid "Dashboard duplicated successfully"
 msgstr "ダッシュボードが正常に複製されました"
+
+#. js-lingui-id: xLSe09
+#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+msgid "Dashboard widget"
+msgstr ""
 
 #. js-lingui-id: HKH+W+
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
@@ -16516,6 +16541,11 @@ msgstr "さらにチャットを読み込み中…"
 msgid "Loading more..."
 msgstr "さらに読み込み中…"
 
+#. js-lingui-id: nSgEqx
+#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+msgid "Loading preview…"
+msgstr ""
+
 #. js-lingui-id: WepeNQ
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 msgid "Loading records"
@@ -22230,6 +22260,11 @@ msgstr "レコードラベル"
 msgid "Record page"
 msgstr "レコードページ"
 
+#. js-lingui-id: J5b8Hz
+#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+msgid "Record page widget"
+msgstr ""
+
 #. js-lingui-id: fHTWNa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Record rules through relations"
@@ -22839,6 +22874,11 @@ msgstr "すべての言語で名前を変更"
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
 msgid "Rename group"
 msgstr "グループ名を変更"
+
+#. js-lingui-id: cwObXL
+#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+msgid "Rendering preview…"
+msgstr ""
 
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -23611,6 +23651,11 @@ msgstr "すべての辺で同じ値を使用"
 msgid "SAML/OIDC"
 msgstr "SAML/OIDC 認証"
 
+#. js-lingui-id: b/zjTD
+#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+msgid "Sample data"
+msgstr ""
+
 #. js-lingui-id: 3hNFUc
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat.tsx
 msgid "Sample input"
@@ -23674,6 +23719,11 @@ msgstr "設定を保存"
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
 msgid "Save your changes first"
 msgstr "まず変更を保存してください"
+
+#. js-lingui-id: A0/0NU
+#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+msgid "Saved to Workspace app"
+msgstr ""
 
 #. js-lingui-id: w9O5DJ
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx

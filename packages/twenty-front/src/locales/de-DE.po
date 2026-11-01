@@ -1571,6 +1571,11 @@ msgstr "Ein Formular wird für die Person geöffnet, die den Workflow startet, u
 msgid "A new one each time the step runs"
 msgstr "Bei jeder Schrittausführung ein neues"
 
+#. js-lingui-id: 3pDKsj
+#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+msgid "A newer revision exists. Open the latest preview to save."
+msgstr ""
+
 #. js-lingui-id: K3NJnJ
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "A payment method is needed to keep your workspace active."
@@ -6689,10 +6694,20 @@ msgstr "Abgeschlossene Aufgaben werden für {completedDuration} aufbewahrt, fehl
 msgid "Complexity"
 msgstr "Komplexität"
 
+#. js-lingui-id: ST17km
+#: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
+msgid "Component failed to render."
+msgstr ""
+
 #. js-lingui-id: 3pJ7V5
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 msgid "Component name"
 msgstr "Komponentenname"
+
+#. js-lingui-id: WcUICq
+#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+msgid "Component preview with sample data"
+msgstr ""
 
 #. js-lingui-id: rYRNgS
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
@@ -7497,6 +7512,11 @@ msgstr "Der unterzeichnete AV-Vertrag konnte nicht generiert werden. Bitte versu
 #: src/modules/front-components/media-session/components/FrontComponentMediaPermissionModal.tsx
 msgid "Could not grant media access. Please try again."
 msgstr "Medienzugriff konnte nicht gewährt werden. Bitte versuchen Sie es erneut."
+
+#. js-lingui-id: Y5qCpF
+#: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
+msgid "Could not load preview."
+msgstr ""
 
 #. js-lingui-id: mrmGIf
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
@@ -8660,6 +8680,11 @@ msgstr "Dunkel"
 #: src/modules/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
 msgid "Dashboard duplicated successfully"
 msgstr "Dashboard erfolgreich dupliziert"
+
+#. js-lingui-id: xLSe09
+#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+msgid "Dashboard widget"
+msgstr ""
 
 #. js-lingui-id: HKH+W+
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
@@ -16516,6 +16541,11 @@ msgstr "Weitere Chats werden geladen..."
 msgid "Loading more..."
 msgstr "Mehr laden..."
 
+#. js-lingui-id: nSgEqx
+#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+msgid "Loading preview…"
+msgstr ""
+
 #. js-lingui-id: WepeNQ
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 msgid "Loading records"
@@ -22230,6 +22260,11 @@ msgstr "Bezeichnung aufzeichnen"
 msgid "Record page"
 msgstr "Datensatzseite"
 
+#. js-lingui-id: J5b8Hz
+#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+msgid "Record page widget"
+msgstr ""
+
 #. js-lingui-id: fHTWNa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Record rules through relations"
@@ -22839,6 +22874,11 @@ msgstr "Für alle Sprachen umbenennen"
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
 msgid "Rename group"
 msgstr "Gruppe umbenennen"
+
+#. js-lingui-id: cwObXL
+#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+msgid "Rendering preview…"
+msgstr ""
 
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -23611,6 +23651,11 @@ msgstr "Gleicher Wert auf jeder Seite"
 msgid "SAML/OIDC"
 msgstr "SAML/OIDC"
 
+#. js-lingui-id: b/zjTD
+#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+msgid "Sample data"
+msgstr ""
+
 #. js-lingui-id: 3hNFUc
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat.tsx
 msgid "Sample input"
@@ -23674,6 +23719,11 @@ msgstr "Einstellungen speichern"
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
 msgid "Save your changes first"
 msgstr "Speichern Sie zuerst Ihre Änderungen"
+
+#. js-lingui-id: A0/0NU
+#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+msgid "Saved to Workspace app"
+msgstr ""
 
 #. js-lingui-id: w9O5DJ
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
