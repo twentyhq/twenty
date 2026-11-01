@@ -99,6 +99,7 @@ const generateWithChunks = async ({
 
     const receivedChunks: Record<string, unknown>[] = [];
     let isReceiving = true;
+    let hasResult = false;
     let wakeDelivery = () => {};
 
     const received = (async () => {
@@ -128,8 +129,9 @@ const generateWithChunks = async ({
           continue;
         }
 
+        // once the result is in, a failing channel only ends the reading: the run is done and billed
         if (!isReceiving) {
-          return received;
+          return hasResult ? undefined : received;
         }
 
         await new Promise<void>((resolve) => {
@@ -152,11 +154,14 @@ const generateWithChunks = async ({
       delivered.then(() => generated),
     ]);
 
-    // the result is final, so a lost end event only stops the wait for more chunks
+    hasResult = true;
+
+    // the result is final, so a lost end event only stops the wait for more chunks; a failing onChunk still rejects at once
     let endEventGraceTimer: ReturnType<typeof setTimeout> | undefined;
 
     await Promise.race([
-      received,
+      received.catch(() => undefined),
+      delivered,
       new Promise((resolve) => {
         endEventGraceTimer = setTimeout(resolve, END_EVENT_GRACE_MS);
       }),

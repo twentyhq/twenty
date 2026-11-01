@@ -140,6 +140,7 @@ const mockRunChannel = (fetchSpy: MockInstance<typeof fetch>) => {
     send: (event: Record<string, unknown>) =>
       channel?.enqueue(toNextEvent(event)),
     answerMutation: (body: Record<string, unknown>) => answerMutation(body),
+    fail: () => channel?.error(new Error('Network down')),
     isChannelCancelled: () => isChannelCancelled,
   };
 };
@@ -373,6 +374,57 @@ describe('ai.generate with onChunk', () => {
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it('resolves with the result and the chunks it received when the channel fails after the result', async () => {
+    const runChannel = mockRunChannel(fetchSpy);
+    const chunks: Record<string, unknown>[] = [];
+
+    const generation = ai.generate({
+      input: 'Hi',
+      onChunk: (chunk) => {
+        chunks.push(chunk);
+      },
+    });
+
+    await vi.waitFor(() => expect(runChannel.requests).toHaveLength(2));
+    runChannel.send({ type: 'stream-chunk', chunk: { type: 'start' }, seq: 1 });
+    runChannel.answerMutation({ data: { generate: RESULT } });
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    runChannel.fail();
+
+    await expect(generation).resolves.toEqual(RESULT);
+    expect(chunks).toEqual([{ type: 'start' }]);
+  });
+
+  it('fails when the channel fails before the result', async () => {
+    const runChannel = mockRunChannel(fetchSpy);
+
+    const generation = ai.generate({ input: 'Hi', onChunk: () => {} });
+
+    await vi.waitFor(() => expect(runChannel.requests).toHaveLength(2));
+    runChannel.fail();
+
+    await expect(generation).rejects.toThrow('Network down');
+    expect(fetchSpy.mock.calls[1][1]?.signal?.aborted).toBe(true);
+  });
+
+  it('rejects when onChunk throws after the result', async () => {
+    const runChannel = mockRunChannel(fetchSpy);
+
+    const generation = ai.generate({
+      input: 'Hi',
+      onChunk: () => {
+        throw new Error('Could not render the chunk');
+      },
+    });
+
+    await vi.waitFor(() => expect(runChannel.requests).toHaveLength(2));
+    runChannel.answerMutation({ data: { generate: RESULT } });
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    runChannel.send({ type: 'stream-chunk', chunk: { type: 'start' }, seq: 1 });
+
+    await expect(generation).rejects.toThrow('Could not render the chunk');
   });
 
   it('rejects at once when onChunk throws, without waiting for the result', async () => {
