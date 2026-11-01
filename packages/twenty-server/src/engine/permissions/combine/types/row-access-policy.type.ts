@@ -14,49 +14,30 @@ import { type OperationType } from 'src/engine/permissions/role/utils/validate-o
 
 export type SqlCondition = { sql: string; parameters: ObjectLiteral };
 
-// One description of who may access which rows, compiled to SQL for queries
-// and evaluated on records in memory for writes and events, so both always
-// decide the same way
-export type RowAccessExpression =
-  | { kind: 'and'; operands: RowAccessExpression[] }
-  | { kind: 'or'; operands: RowAccessExpression[] }
-  | {
-      kind: 'roleFilter';
-      tableAlias: string;
-      flatObjectMetadata: FlatObjectMetadata;
-      recordFilter: RecordGqlOperationFilter;
-      condition: SqlCondition;
-    }
-  | ({
-      kind: 'recordShared';
-      // Compiled as a grant list read once, so it can be ORed with an indexed filter
-      isUncorrelated?: boolean;
-    } & RecordShareExpressionTarget)
-  | ({ kind: 'recordPrivacy'; isPrivate: boolean } & RecordExpressionTarget)
-  | ({
-      kind: 'recordCreatedBy';
-      workspaceMemberId: string;
-    } & RecordExpressionTarget);
-
-export type RecordExpressionTarget = {
+// The grant paths that admit records for one (object, operation); each is
+// compiled to SQL for queries and run in memory for writes and events
+export type PermissionsRowAccessGrants = {
   tableAlias: string;
-  objectMetadataId: string;
-};
-
-export type RecordShareExpressionTarget = RecordExpressionTarget & {
-  principalIds: string[];
-  accessLevels: RecordShareAccessLevel[];
+  flatObjectMetadata: FlatObjectMetadata;
+  // Role-based grants never reach private records
+  areRoleGrantsLimitedToPublicRecords: boolean;
+  objectGrant: boolean;
+  rlsGrant?: {
+    recordFilter: RecordGqlOperationFilter;
+    condition: SqlCondition;
+  };
+  shareGrant?: {
+    principalIds: string[];
+    accessLevels: RecordShareAccessLevel[];
+    isLimitedToPrivateRecords: boolean;
+  };
+  creatorGrant?: { workspaceMemberId: string };
 };
 
 export type RowAccessPolicy =
   | { kind: 'open' }
   | { kind: 'denied' }
-  | { kind: 'gated'; expression: RowAccessExpression };
-
-export type CompiledRowAccessPolicy =
-  | { kind: 'open' }
-  | { kind: 'denied' }
-  | { kind: 'gated'; condition: SqlCondition };
+  | { kind: 'gated'; grants: PermissionsRowAccessGrants };
 
 export type RowAccessPolicySubject = {
   isSystemContext: boolean;

@@ -10,7 +10,7 @@ import { type PrivateRecordState } from 'src/engine/permissions/private-record/t
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { type EventRecordAccessGate } from 'src/engine/permissions/combine/types/event-record-access-gate.type';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
-import { evaluateRowAccessPolicy } from 'src/engine/permissions/combine/utils/evaluate-row-access-policy.util';
+import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
 import { resolveEventRecordSnapshots } from 'src/engine/permissions/combine/utils/resolve-event-record-snapshots.util';
 import { buildRowAccessPolicy } from 'src/engine/permissions/combine/utils/build-row-access-policy.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -111,7 +111,7 @@ export class RecordAccessPolicyService {
           'flatFieldMetadataMapsOrm',
           'featureFlagsMap',
         ]);
-        return evaluateRowAccessPolicy({
+        return findPermissionsAdmittedRecordIds({
           policy: buildRowAccessPolicy({
             subject,
             environment: {

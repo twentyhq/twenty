@@ -349,7 +349,7 @@ export class AgentChatSharingService {
             return [];
           }
 
-          const policy = this.buildParticipantReplyPolicy({
+          const policies = this.buildParticipantReplyPolicies({
             repository,
             canManageSharing: shouldConsiderNewShares && canManageSharing,
             subject: buildWorkspaceMemberRowAccessPolicySubject({
@@ -361,7 +361,7 @@ export class AgentChatSharingService {
             }),
           });
 
-          return [[member.id, policy] as const];
+          return [[member.id, policies] as const];
         }),
       );
       const admittedMemberIds =
@@ -831,7 +831,7 @@ export class AgentChatSharingService {
     );
   }
 
-  private buildParticipantReplyPolicy({
+  private buildParticipantReplyPolicies({
     repository,
     subject,
     canManageSharing,
@@ -839,12 +839,12 @@ export class AgentChatSharingService {
     repository: WorkspaceRepository;
     subject: RowAccessPolicySubject;
     canManageSharing: boolean;
-  }): RowAccessPolicy {
+  }): RowAccessPolicy[] {
     if (!isDefined(subject.objectsPermissions)) {
-      return { kind: 'denied' };
+      return [{ kind: 'denied' }];
     }
 
-    const policies = AGENT_CHAT_REPLY_OPERATION_TYPES.map((operationType) =>
+    return AGENT_CHAT_REPLY_OPERATION_TYPES.map((operationType) =>
       repository.buildRowAccessPolicy({
         subject,
         operationType,
@@ -853,18 +853,6 @@ export class AgentChatSharingService {
           : undefined,
       }),
     );
-
-    if (policies.some(({ kind }) => kind === 'denied')) {
-      return { kind: 'denied' };
-    }
-
-    const operands = policies.flatMap((policy) =>
-      policy.kind === 'gated' ? [policy.expression] : [],
-    );
-
-    return isNonEmptyArray(operands)
-      ? { kind: 'gated', expression: { kind: 'and', operands } }
-      : { kind: 'open' };
   }
 
   private async canManageThreadSharing({

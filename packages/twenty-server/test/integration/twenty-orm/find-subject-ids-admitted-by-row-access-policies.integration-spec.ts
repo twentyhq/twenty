@@ -77,14 +77,17 @@ describe('WorkspaceRepository.findSubjectIdsAdmittedByRowAccessPolicies', () => 
 
     return {
       kind: 'gated',
-      expression: {
-        kind: 'roleFilter',
+      grants: {
         tableAlias: 'person',
         flatObjectMetadata: personObjectMetadata,
-        recordFilter: { id: { eq: personId } },
-        condition: {
-          sql: `"person"."id" = :${parameterName}`,
-          parameters: { [parameterName]: personId },
+        areRoleGrantsLimitedToPublicRecords: false,
+        objectGrant: false,
+        rlsGrant: {
+          recordFilter: { id: { eq: personId } },
+          condition: {
+            sql: `"person"."id" = :${parameterName}`,
+            parameters: { [parameterName]: personId },
+          },
         },
       },
     };
@@ -96,7 +99,7 @@ describe('WorkspaceRepository.findSubjectIdsAdmittedByRowAccessPolicies', () => 
     policiesBySubjectId,
   }: {
     recordId: string;
-    policiesBySubjectId: Map<string, RowAccessPolicy>;
+    policiesBySubjectId: Map<string, RowAccessPolicy[]>;
   }): Promise<string[]> => {
     const workspaceOrmManager = getAppProviderByClassName<WorkspaceOrmManager>(
       'WorkspaceOrmManager',
@@ -116,7 +119,7 @@ describe('WorkspaceRepository.findSubjectIdsAdmittedByRowAccessPolicies', () => 
     return [...admittedSubjectIds].sort();
   };
 
-  it('evaluates each subject against the record in one pass', async () => {
+  it('admits a subject only when all its policies admit the record', async () => {
     const openSubjectId = randomUUID();
     const deniedSubjectId = randomUUID();
     const admittedSubjectId = randomUUID();
@@ -126,10 +129,13 @@ describe('WorkspaceRepository.findSubjectIdsAdmittedByRowAccessPolicies', () => 
       await findAdmittedSubjectIds({
         recordId,
         policiesBySubjectId: new Map([
-          [openSubjectId, { kind: 'open' }],
-          [deniedSubjectId, { kind: 'denied' }],
-          [admittedSubjectId, buildIdPolicy(recordId)],
-          [refusedSubjectId, buildIdPolicy(otherRecordId)],
+          [openSubjectId, [{ kind: 'open' }]],
+          [deniedSubjectId, [{ kind: 'open' }, { kind: 'denied' }]],
+          [admittedSubjectId, [{ kind: 'open' }, buildIdPolicy(recordId)]],
+          [
+            refusedSubjectId,
+            [buildIdPolicy(recordId), buildIdPolicy(otherRecordId)],
+          ],
         ]),
       }),
     ).toEqual([openSubjectId, admittedSubjectId].sort());
@@ -139,7 +145,7 @@ describe('WorkspaceRepository.findSubjectIdsAdmittedByRowAccessPolicies', () => 
     expect(
       await findAdmittedSubjectIds({
         recordId: randomUUID(),
-        policiesBySubjectId: new Map([[randomUUID(), { kind: 'open' }]]),
+        policiesBySubjectId: new Map([[randomUUID(), [{ kind: 'open' }]]]),
       }),
     ).toEqual([]);
   });
@@ -153,7 +159,7 @@ describe('WorkspaceRepository.findSubjectIdsAdmittedByRowAccessPolicies', () => 
       await findAdmittedSubjectIds({
         recordId,
         policiesBySubjectId: new Map(
-          subjectIds.map((subjectId) => [subjectId, buildIdPolicy(recordId)]),
+          subjectIds.map((subjectId) => [subjectId, [buildIdPolicy(recordId)]]),
         ),
       }),
     ).toEqual([...subjectIds].sort());

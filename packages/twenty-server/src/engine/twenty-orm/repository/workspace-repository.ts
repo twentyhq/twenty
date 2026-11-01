@@ -37,22 +37,22 @@ import {
 } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
 import {
-  type RowAccessExpression,
+  type PermissionsRowAccessGrants,
   type RowAccessPolicy,
   type RowAccessCompilationEnvironment,
   type RowAccessPolicyEnvironment,
   type RowAccessPolicySubject,
   type SqlCondition,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
-import { compileRowAccessExpression } from 'src/engine/permissions/combine/utils/compile-row-access-policy.util';
+import { buildPermissionsCondition } from 'src/engine/permissions/combine/utils/build-permissions-condition.util';
+import { combineSqlConditions } from 'src/engine/permissions/combine/utils/combine-sql-conditions.util';
 import { buildRowAccessPolicy } from 'src/engine/permissions/combine/utils/build-row-access-policy.util';
 import { type RecordShareGrant } from 'src/engine/permissions/record-share/types/record-share-grant.type';
 import {
-  evaluateRowAccessPolicy,
+  findPermissionsAdmittedRecordIds,
   type RowAccessEvaluationContext,
   type RowAccessRecord,
-} from 'src/engine/permissions/combine/utils/evaluate-row-access-policy.util';
-import { isRowAccessExpressionReadingRoleFilter } from 'src/engine/permissions/combine/utils/is-row-access-expression-reading-role-filter.util';
+} from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
 import { isOperationGrantedBeyondRole } from 'src/engine/permissions/record-share/utils/is-operation-granted-beyond-role.util';
 import { isObjectOperationDisabled } from 'src/engine/permissions/role/utils/is-object-operation-disabled.util';
 import { isObjectOperationPermitted } from 'src/engine/permissions/role/utils/is-object-operation-permitted.util';
@@ -1756,10 +1756,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     // Without a role filter the policy reads nothing an update can change:
     // shares are keyed by id and parents are checked on their own
-    if (
-      policy.kind !== 'gated' ||
-      !isRowAccessExpressionReadingRoleFilter(policy.expression)
-    ) {
+    if (policy.kind !== 'gated' || !isDefined(policy.grants.rlsGrant)) {
       return;
     }
 
@@ -1767,7 +1764,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       updates.map(({ rawRecordBefore }) => String(rawRecordBefore.id)),
     );
     const evaluate = (records: ObjectRecord[]) =>
-      evaluateRowAccessPolicy({
+      findPermissionsAdmittedRecordIds({
         policy,
         records: this.formatResult<ObjectRecord[]>(records).filter(
           (record): record is RowAccessRecord => isNonEmptyString(record.id),
@@ -2023,7 +2020,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         this.addConditionForAlias({
           queryBuilder,
           alias,
-          ...this.compileRowAccessExpression(policy.expression),
+          ...this.buildPermissionsCondition(policy.grants),
         });
 
         return;
@@ -2170,7 +2167,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         case 'denied':
           return false;
         case 'gated':
-          return this.compileRowAccessExpression(policy.expression);
+          return this.buildPermissionsCondition(policy.grants);
         default:
           return assertUnreachable(policy);
       }
@@ -2204,7 +2201,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return new Set(recordIds);
     }
 
-    const condition = this.compileRowAccessExpression(policy.expression);
+    const condition = this.buildPermissionsCondition(policy.grants);
     const admittedRecords = await this.buildBypassingEventSelectQueryBuilder(
       tableAlias,
     )
@@ -2218,16 +2215,17 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   }
 
   // TODO(@charlesBochet): temporary, per-subject policy evaluation will be replaced
+  // A subject is admitted when every one of its policies admits the record
   async findSubjectIdsAdmittedByRowAccessPolicies({
     recordId,
     policiesBySubjectId,
   }: {
     recordId: string;
-    policiesBySubjectId: Map<string, RowAccessPolicy>;
+    policiesBySubjectId: Map<string, RowAccessPolicy[]>;
   }): Promise<Set<string>> {
     const admittedSubjectIds = new Set<string>();
 
-    for (const policies of chunk(
+    for (const subjectPolicies of chunk(
       [...policiesBySubjectId],
       ROW_ACCESS_POLICY_SUBJECT_BATCH_SIZE,
     )) {
@@ -2239,20 +2237,27 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         .withDeleted()
         .select([]);
 
-      for (const [subjectId, policy] of policies) {
-        if (policy.kind === 'denied') {
+      for (const [subjectId, policies] of subjectPolicies) {
+        if (policies.some((policy) => policy.kind === 'denied')) {
           continue;
         }
 
         subjectIds.push(subjectId);
 
-        if (policy.kind === 'open') {
+        const conditions = policies.flatMap((policy) =>
+          policy.kind === 'gated'
+            ? [this.buildPermissionsCondition(policy.grants)]
+            : [],
+        );
+
+        if (conditions.length === 0) {
           queryBuilder.addSelect(doNotTranslate('TRUE'), subjectId);
 
           continue;
         }
 
-        const condition = this.compileRowAccessExpression(policy.expression);
+        const condition = combineSqlConditions(conditions);
+
         queryBuilder
           .addSelect(
             doNotTranslate(
@@ -2281,11 +2286,11 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return admittedSubjectIds;
   }
 
-  private compileRowAccessExpression(
-    expression: RowAccessExpression,
+  private buildPermissionsCondition(
+    grants: PermissionsRowAccessGrants,
   ): SqlCondition {
-    return compileRowAccessExpression({
-      expression,
+    return buildPermissionsCondition({
+      grants,
       environment: this.resolveRowAccessPolicyEnvironment(),
     });
   }

@@ -18,7 +18,7 @@ import {
   type RowAccessPolicySubject,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { buildRowAccessPolicy } from 'src/engine/permissions/combine/utils/build-row-access-policy.util';
-import { compileRowAccessPolicy } from 'src/engine/permissions/combine/utils/compile-row-access-policy.util';
+import { buildPermissionsCondition } from 'src/engine/permissions/combine/utils/build-permissions-condition.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/rls/utils/render-row-level-permission-filter-to-sql.util';
 
 jest.mock(
@@ -67,11 +67,19 @@ const buildCompiledRowAccessPolicy = (
   args: Parameters<typeof buildRowAccessPolicy>[0] & {
     environment: typeof environment;
   },
-) =>
-  compileRowAccessPolicy({
-    policy: buildRowAccessPolicy(args),
-    environment: args.environment,
-  });
+) => {
+  const policy = buildRowAccessPolicy(args);
+
+  return policy.kind === 'gated'
+    ? {
+        kind: policy.kind,
+        condition: buildPermissionsCondition({
+          grants: policy.grants,
+          environment: args.environment,
+        }),
+      }
+    : policy;
+};
 
 const readEverything: RowAccessPolicySubject = {
   isSystemContext: false,
@@ -317,7 +325,7 @@ describe('buildRowAccessPolicy', () => {
 
       if (policy.kind !== 'gated') throw new Error('Expected a grant gate');
       expect(policy.condition.sql).toMatch(
-        /^\(\(\("company"."title" = :restricted\) AND \(\(\("company"."_isPrivate" = FALSE\) OR .*\)\)\) OR \("company"."id" = ANY\(ARRAY\(SELECT "company_recordShare"."recordId"/,
+        /^\(\(\("company"."title" = :restricted\) AND \("company"."_isPrivate" = FALSE\)\) OR \("company"."id" = ANY\(ARRAY\(SELECT "company_recordShare"."recordId"/,
       );
     });
   });
@@ -342,7 +350,7 @@ describe('buildRowAccessPolicy', () => {
       flatObjectMetadata: note,
     });
 
-    expect(sql).toBe('("note"."title" = :restricted)');
+    expect(sql).toBe('"note"."title" = :restricted');
   });
 
   it('gates records on their share rows and leaves them open without principals', () => {
@@ -360,6 +368,29 @@ describe('buildRowAccessPolicy', () => {
         policyEnvironment: privateRecordEnvironment,
       }),
     ).toEqual({ kind: 'open' });
+  });
+
+  it('opens private records only to shares naming the member or their roles', () => {
+    const policy = buildRowAccessPolicy({
+      subject: {
+        ...readEverything,
+        principalIds: [EVERYONE_PRINCIPAL_ID, 'member-1', 'role-1'],
+      },
+      environment: privateRecordEnvironment,
+      tableAlias: 'person',
+      flatObjectMetadata: person,
+      operationType: 'select',
+    });
+
+    expect(policy).toMatchObject({
+      kind: 'gated',
+      grants: {
+        shareGrant: {
+          principalIds: ['member-1', 'role-1'],
+          isLimitedToPrivateRecords: true,
+        },
+      },
+    });
   });
 
   it('keeps private records gated regardless of the sharing UI flag', () => {
@@ -514,14 +545,14 @@ describe('buildRowAccessPolicy', () => {
         operationType: 'select',
       });
 
-    it('admits a private record to its creator next to its shares', () => {
+    it('admits a private record to its creator next to its shares and the role', () => {
       const policy = buildForCreator(readEverything);
 
       if (policy.kind !== 'gated') {
         throw new Error('Expected a privacy gate');
       }
       expect(policy.condition.sql).toMatch(
-        /^\(\(\("company"."_isPrivate" = FALSE\) OR \("company"."createdByWorkspaceMemberId" = :recordCreatedByWorkspaceMemberId_[0-9a-f]{10}\) OR \(EXISTS/,
+        /^\(\("company"."_isPrivate" = FALSE\) OR \("company"."id" = ANY\(ARRAY\(.*\)\)\) OR \(\("company"."_isPrivate" = TRUE\) AND \("company"."createdByWorkspaceMemberId" = :recordCreatedByWorkspaceMemberId_[0-9a-f]{10}\)\)\)$/,
       );
       expect(Object.values(policy.condition.parameters)).toContain('member-1');
     });
