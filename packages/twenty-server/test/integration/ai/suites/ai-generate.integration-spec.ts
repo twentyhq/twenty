@@ -5,9 +5,20 @@ import {
   mockScriptedAiModel,
   SCRIPTED_MODEL_USAGE,
 } from 'test/integration/ai/utils/mock-scripted-ai-model.util';
+import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { type ScriptedModelResponse } from 'test/utils/scripted-model-response.type';
+import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import {
+  type ApplicationWithResources,
+  setupApplicationWithResources,
+} from 'test/integration/metadata/suites/application/utils/setup-application-with-resources.util';
+import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
 import { type GenerateMutationInput } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
+
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const DATA_TOOL_NAME_PATTERN =
   /^(find_many|find_one|group_by|create_one|create_many|update_one|update_many|delete_one|delete_many|upsert_many|merge_many)_/;
@@ -123,6 +134,59 @@ describe('generate mutation (integration)', () => {
       error: expect.stringContaining('Invalid request'),
       runId: expect.any(String),
       usage: { inputTokens: 12, outputTokens: 3 },
+    });
+  });
+});
+
+describe('generate mutation for an application without a default role (integration)', () => {
+  let application: ApplicationWithResources;
+  let memberBoundToken: string;
+
+  beforeAll(async () => {
+    application = await setupApplicationWithResources({
+      name: 'Generate Roleless Probe',
+    });
+
+    await globalThis.testDataSource.query(
+      'UPDATE core."application" SET "defaultRoleId" = NULL WHERE id = $1',
+      [application.id],
+    );
+    await getAppProviderByClassName<WorkspaceCacheService>(
+      'WorkspaceCacheService',
+    ).invalidateAndRecompute(SEED_APPLE_WORKSPACE_ID, ['flatApplicationMaps']);
+
+    memberBoundToken = (
+      await generateAppleAdminApplicationTokenPair({
+        applicationId: application.id,
+      })
+    ).applicationAccessToken.token;
+  }, 120000);
+
+  beforeEach(() => jest.useRealTimers());
+
+  afterEach(() => jest.restoreAllMocks());
+
+  afterAll(async () => {
+    if (isDefined(application)) {
+      await cleanupApplicationAndAppRegistration({
+        applicationUniversalIdentifier: application.universalIdentifier,
+      });
+    }
+  });
+
+  it('refuses a member-bound application rather than run with the member role alone', async () => {
+    mockScriptedAiModel(() => answerWith('Acme looks like a fit'));
+
+    const response = await makeMetadataApiRequest(
+      generateQueryFactory({
+        input: [{ role: 'user', content: 'Qualify Acme' }],
+      }),
+      memberBoundToken,
+    );
+
+    expect(response.body.errors?.[0]).toMatchObject({
+      message: expect.stringContaining('needs a default role'),
+      extensions: { code: 'FORBIDDEN' },
     });
   });
 });

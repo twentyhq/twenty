@@ -66,6 +66,17 @@ export class AiGenerateService {
 
     assertAgentResponseFormatHasOutputFieldsOrThrow(responseFormat);
 
+    // the application's role is the ceiling of what its generate may reach, so it cannot run without one
+    if (
+      isDefined(callerApplication) &&
+      !isDefined(callerApplication.defaultRoleId)
+    ) {
+      throw new AiException(
+        'ai.generate needs a default role on the application; set defaultRoleUniversalIdentifier in its manifest',
+        AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
+      );
+    }
+
     const streamChannelId = isDefined(requestedRunId)
       ? await this.resolveStreamChannelIdOrThrow({
           workspaceId: workspace.id,

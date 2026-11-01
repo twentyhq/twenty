@@ -370,6 +370,7 @@ export class AgentRunTurnService {
   }
 
   private async readSameRequestOutputOrThrow(turn: AgentTurn): Promise<object> {
+    let formatError: unknown;
     const output: unknown = await Promise.resolve(turn.stream.output).catch(
       (error: unknown) => {
         // only a reply that parses into no object is a format failure; anything else keeps its own cause
@@ -377,6 +378,8 @@ export class AgentRunTurnService {
           NoObjectGeneratedError.isInstance(error) ||
           NoOutputGeneratedError.isInstance(error)
         ) {
+          formatError = error;
+
           return undefined;
         }
 
@@ -385,9 +388,13 @@ export class AgentRunTurnService {
     );
 
     if (!isPlainObject(output)) {
-      throw new AiException(
-        'The model did not return an object matching the response format',
-        AiExceptionCode.AGENT_EXECUTION_FAILED,
+      // the generation error keeps the text the model returned, which a failed parse is diagnosed from
+      throw Object.assign(
+        new AiException(
+          'The model did not return an object matching the response format',
+          AiExceptionCode.AGENT_EXECUTION_FAILED,
+        ),
+        { cause: formatError },
       );
     }
 

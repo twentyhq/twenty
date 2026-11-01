@@ -7,15 +7,24 @@ import { agentResponseFormatSchema } from '@/workflow/schemas/agent-response-for
 
 import { type RunAgentMessage } from './runAgentType';
 
+// nullish like the GraphQL input it parses, whose optional fields can be sent as null
+const toUndefinedWhenNull = <TValue>(value: TValue | null | undefined) =>
+  value ?? undefined;
+
 const runAgentMessageSchema: z.ZodType<RunAgentMessage> = z.object({
   role: z.enum(['user', 'assistant']),
   content: z.string(),
   attachments: z
-    .array(z.object({ fileId: z.string(), filename: z.string().optional() }))
-    .optional(),
+    .array(
+      z.object({
+        fileId: z.string(),
+        filename: z.string().nullish().transform(toUndefinedWhenNull),
+      }),
+    )
+    .nullish()
+    .transform(toUndefinedWhenNull),
 });
 
-// nullish like the GraphQL input it parses, whose optional fields can be sent as null
 export const generateInputSchema = z.object({
   input: z
     .array(runAgentMessageSchema)
