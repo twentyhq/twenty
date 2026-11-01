@@ -1436,6 +1436,11 @@ msgstr "Το εύρος μεταβλητής εφαρμογής δεν μπορ�
 msgid "Applications cannot update these fields: {fieldsList}."
 msgstr "Οι εφαρμογές δεν μπορούν να ενημερώσουν αυτά τα πεδία: {fieldsList}."
 
+#. js-lingui-id: agujn9
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Approve this draft in its original chat."
+msgstr ""
+
 #. js-lingui-id: rczXz4
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 msgid "Approve your access domain"
@@ -11819,6 +11824,11 @@ msgctxt "commandMenuItem.label"
 msgid "Save Dashboard"
 msgstr "Αποθήκευση πίνακα ελέγχου"
 
+#. js-lingui-id: YlXHmh
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Saving a component requires human approval."
+msgstr ""
+
 #. js-lingui-id: gqz/Jf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -13786,6 +13796,11 @@ msgstr "Ο ρόλος που προσπαθείτε να τροποποιήσε�
 msgid "The same column cannot appear twice in an index."
 msgstr "Η ίδια στήλη δεν μπορεί να εμφανιστεί δύο φορές σε ένα ευρετήριο."
 
+#. js-lingui-id: IoxxxC
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "The saved component differs from this draft."
+msgstr ""
+
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
 msgid "The selected model has been disabled by the administrator."
@@ -14290,10 +14305,10 @@ msgstr "Αυτός ο τομέας είναι ήδη κατειλημμένος.
 msgid "This draft is being updated. Try again."
 msgstr "Αυτό το προσχέδιο ενημερώνεται. Δοκιμάστε ξανά."
 
-#. js-lingui-id: HJFKCt
+#. js-lingui-id: EM4fuz
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
-msgid "This draft was superseded or belongs to another chat. Start a new draft."
-msgstr "Αυτό το προσχέδιο αντικαταστάθηκε ή ανήκει σε άλλη συνομιλία. Ξεκινήστε νέο προσχέδιο."
+msgid "This draft was superseded, saved or belongs to another chat. Start a new draft."
+msgstr ""
 
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts
@@ -14577,6 +14592,11 @@ msgstr "Αυτό το δικαίωμα είναι απενεργοποιημέν
 msgid "This plan is not available."
 msgstr "Αυτό το πρόγραμμα δεν είναι διαθέσιμο."
 
+#. js-lingui-id: GA6RMi
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This preview changed. Approve the latest revision."
+msgstr ""
+
 #. js-lingui-id: Y5C3uK
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "This provider is not supported."
@@ -14681,6 +14701,11 @@ msgstr "Αυτός ο ρόλος δεν μπορεί να επεξεργαστε
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "Αυτός ο ρόλος δεν μπορεί να τροποποιηθεί επειδή είναι ρόλος συστήματος. Μόνο προσαρμοσμένοι ρόλοι μπορούν να επεξεργαστούν."
+
+#. js-lingui-id: UjNNWw
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This saved component was deleted. Create a new draft."
+msgstr ""
 
 #. js-lingui-id: DEJJoY
 #: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts

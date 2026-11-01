@@ -1436,6 +1436,11 @@ msgstr "생성 후에는 애플리케이션 변수 범위를 변경할 수 없�
 msgid "Applications cannot update these fields: {fieldsList}."
 msgstr "애플리케이션은 다음 필드를 업데이트할 수 없습니다: {fieldsList}."
 
+#. js-lingui-id: agujn9
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Approve this draft in its original chat."
+msgstr ""
+
 #. js-lingui-id: rczXz4
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 msgid "Approve your access domain"
@@ -11819,6 +11824,11 @@ msgctxt "commandMenuItem.label"
 msgid "Save Dashboard"
 msgstr "대시보드 저장"
 
+#. js-lingui-id: YlXHmh
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Saving a component requires human approval."
+msgstr ""
+
 #. js-lingui-id: gqz/Jf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -13786,6 +13796,11 @@ msgstr "수정하려는 역할을 찾을 수 없습니다."
 msgid "The same column cannot appear twice in an index."
 msgstr "동일한 열은 하나의 인덱스에 두 번 포함될 수 없습니다."
 
+#. js-lingui-id: IoxxxC
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "The saved component differs from this draft."
+msgstr ""
+
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
 msgid "The selected model has been disabled by the administrator."
@@ -14290,10 +14305,10 @@ msgstr "이 도메인은 이미 사용 중입니다."
 msgid "This draft is being updated. Try again."
 msgstr "이 초안은 업데이트 중입니다. 다시 시도하세요."
 
-#. js-lingui-id: HJFKCt
+#. js-lingui-id: EM4fuz
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
-msgid "This draft was superseded or belongs to another chat. Start a new draft."
-msgstr "이 초안은 대체되었거나 다른 채팅에 속해 있습니다. 새 초안을 시작하세요."
+msgid "This draft was superseded, saved or belongs to another chat. Start a new draft."
+msgstr ""
 
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts
@@ -14577,6 +14592,11 @@ msgstr "이 권한은 객체에서 비활성화되어 있어 부여할 수 없�
 msgid "This plan is not available."
 msgstr "이 플랜은 사용할 수 없습니다."
 
+#. js-lingui-id: GA6RMi
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This preview changed. Approve the latest revision."
+msgstr ""
+
 #. js-lingui-id: Y5C3uK
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "This provider is not supported."
@@ -14681,6 +14701,11 @@ msgstr "이 역할은 편집할 수 없습니다."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "이 역할은 시스템 역할이기 때문에 수정할 수 없습니다. 사용자 정의 역할만 편집할 수 있습니다."
+
+#. js-lingui-id: UjNNWw
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This saved component was deleted. Create a new draft."
+msgstr ""
 
 #. js-lingui-id: DEJJoY
 #: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
