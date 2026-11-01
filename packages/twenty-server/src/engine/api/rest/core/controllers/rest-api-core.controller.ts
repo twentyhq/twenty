@@ -22,6 +22,7 @@ import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
+import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/permissions-rest-api-exception.filter';
 
 @Controller(ApiPath.Rest)
 @UseGuards(
@@ -39,7 +40,11 @@ import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters
   }),
   CustomPermissionGuard,
 )
-@UseFilters(RestApiExceptionFilter, AuthRestApiExceptionFilter)
+@UseFilters(
+  PermissionsRestApiExceptionFilter,
+  RestApiExceptionFilter,
+  AuthRestApiExceptionFilter,
+)
 export class RestApiCoreController {
   private readonly logger = new Logger(RestApiCoreController.name);
   constructor(private readonly restApiCoreService: RestApiCoreService) {}
