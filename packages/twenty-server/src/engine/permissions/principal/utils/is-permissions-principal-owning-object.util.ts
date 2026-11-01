@@ -12,7 +12,7 @@ export const isPermissionsPrincipalOwningObject = ({
   flatApplicationMaps,
   flatObjectMetadata,
 }: {
-  principal: PermissionsPrincipal;
+  principal: Pick<PermissionsPrincipal, 'intersectionOf'>;
   flatApplicationMaps: ApplicationDefaultRoleMaps;
   flatObjectMetadata: Pick<FlatObjectMetadata, 'applicationId'>;
 }): boolean =>
