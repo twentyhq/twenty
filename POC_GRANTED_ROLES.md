@@ -52,9 +52,9 @@ Verified end to end on a fresh dev workspace (`tim@apple.dev`), mostly through t
   - `triggerInstallApplication(input: { grantObjectScopes })`.
   - `Role.canBeAssignedToApplications` and `Role.grantedToApplicationId`.
 - **Front**
-  - **Pre-install app page**: shows the same "requires" summary as the dialog, including the "all objects" request (`09`).
+  - **Pre-install app page**: shows the same "requires" summary as the dialog (`09`).
   - **Install dialog** (`01`):
-    - The required items are listed as before (own objects, named objects, flags, capabilities, billing). A single object is named ("Read Companies"); several show their names on hover.
+    - The "requires" card lists everything the app asks for: each "all objects" request with its full reach ("Read all objects, including future ones"), own objects, named objects, flags, capabilities and billing. A single object is named ("Read Companies"); several show their names on hover.
     - A new "Access to your data" section offers "All objects (including future ones)" or "Only these objects" for each requested switch, with an object checklist. Objects the app requires are checked, disabled and locked.
     - A hint points to the Access tab.
   - **Access tab** on the installed app page:
@@ -136,3 +136,4 @@ Tests:
 9. **Agents without a role.** An agent that declares no role gets no target, and so no grant. Should every agent of a confined app run with the grant by default?
 10. **Narrowing is silent.** When a new version asks for less, the removed access is taken from the grant during the upgrade, and nothing tells the admin (in the example, v3 removes "update Companies" with no notice). Should the Access tab or the app's General tab show what the last upgrade removed?
 11. **Which apps are confined, and what OAuth clients run with.** Today only `twenty-standard` and the workspace custom app are exempt, which breaks OAuth-only clients such as the Twenty CLI (see the known regression above). An OAuth client acting for a user could run with the user's role, with a grant made at authorization time, or with the intersection of the two. This needs a decision before the regression can be fixed.
+12. **Default install scope.** The dialog preselects "All objects (including future ones)" for each requested switch. It is the only grant that keeps growing without a new approval, so should the default be "Only these objects", with required objects locked? The cost is that an app that needs everything (sync, search) runs with less until the admin widens it. If the admin narrows at install, should the Access tab show what the app asked for but did not get, like the pending card does on upgrade?

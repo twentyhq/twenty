@@ -218,7 +218,6 @@ export const SettingsAvailableApplicationDetails = () => {
             appObjects={detail.objects ?? undefined}
             requestedCapabilities={detail.requestedCapabilities}
             billsCredits={detail.billsCredits}
-            showAllObjectsRequest
           />
         }
       />
