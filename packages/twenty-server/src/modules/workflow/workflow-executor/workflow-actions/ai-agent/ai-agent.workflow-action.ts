@@ -145,9 +145,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     const hasConversation =
       !(await this.conversationWriterService.canInsertTurnWithoutThread(
         workspaceId,
-      )) ||
-      (stepKind !== 'generate' &&
-        hasWorkflowAiAgentConversationConfig(step.settings.input));
+      )) || hasWorkflowAiAgentConversationConfig(step.settings.input);
     const conversation = hasConversation
       ? await this.workflowAgentConversationService.openConversation({
           runInfo,
