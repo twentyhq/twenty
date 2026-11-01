@@ -14,13 +14,10 @@ export const useFieldsWidgetFields = (
       objectMetadataItem?.nameSingular,
     );
 
-  // readableFields already excludes fields the current role has No Access
-  // to, so the record page keeps them completely hidden like the table
-  // does. Using fields here listed them as empty placeholders instead.
   return useMemo(
     () =>
       isDefined(objectMetadataItem)
-        ? objectMetadataItem.readableFields.filter(
+        ? objectMetadataItem.fields.filter(
             (field) => !hiddenFieldMetadataIdsOrNames.includes(field.name),
           )
         : [],
