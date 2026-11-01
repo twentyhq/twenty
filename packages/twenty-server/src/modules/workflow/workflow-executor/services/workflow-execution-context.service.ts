@@ -14,6 +14,9 @@ import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-us
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
@@ -59,10 +62,15 @@ export class WorkflowExecutionContextService {
     workflowRun: WorkflowRunWorkspaceEntity;
     workspaceId: string;
   }): Promise<WorkflowExecutionContext | null> {
-    const workspace = await this.findWorkspaceOrFail(workspaceId);
+    const [workspace, { flatWorkflowMaps }] = await Promise.all([
+      this.findWorkspaceOrFail(workspaceId),
+      this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkflowMaps',
+      ]),
+    ]);
 
     if (
-      this.getRunApplicationId(workflowRun, workspace) ===
+      this.getRunApplicationId(workflowRun, flatWorkflowMaps) ===
       workspace.workspaceCustomApplicationId
     ) {
       return null;
@@ -105,14 +113,15 @@ export class WorkflowExecutionContextService {
     workflowRun: WorkflowRunWorkspaceEntity,
     workspace: WorkspaceEntity,
   ): Promise<WorkflowExecutionContext> {
-    const { flatApplicationMaps, userWorkspaceRoleMap } =
+    const { flatApplicationMaps, flatWorkflowMaps, userWorkspaceRoleMap } =
       await this.workspaceCacheService.getOrRecompute(workspace.id, [
         'flatApplicationMaps',
+        'flatWorkflowMaps',
         'userWorkspaceRoleMap',
       ]);
 
     const application = resolveWorkflowRunApplicationOrThrow({
-      applicationId: this.getRunApplicationId(workflowRun, workspace),
+      applicationId: this.getRunApplicationId(workflowRun, flatWorkflowMaps),
       applicationsById: flatApplicationMaps.byId,
     });
 
@@ -150,15 +159,25 @@ export class WorkflowExecutionContextService {
     };
   }
 
-  // Runs created before workspace workflows bound theirs carry no application
   private getRunApplicationId(
-    workflowRun: WorkflowRunWorkspaceEntity,
-    workspace: Pick<WorkspaceEntity, 'workspaceCustomApplicationId'>,
+    workflowRun: Pick<WorkflowRunWorkspaceEntity, 'coreWorkflowId'>,
+    flatWorkflowMaps: FlatEntityMaps<FlatWorkflow>,
   ): string {
-    return (
-      workflowRun.createdBy.context?.applicationId ??
-      workspace.workspaceCustomApplicationId
-    );
+    const workflow = isDefined(workflowRun.coreWorkflowId)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: workflowRun.coreWorkflowId,
+          flatEntityMaps: flatWorkflowMaps,
+        })
+      : undefined;
+
+    if (!isDefined(workflow)) {
+      throw new WorkflowStepExecutorException(
+        'The workflow of this run no longer exists',
+        WorkflowStepExecutorExceptionCode.FORBIDDEN,
+      );
+    }
+
+    return workflow.applicationId;
   }
 
   private async buildMemberAuthContext(

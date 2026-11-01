@@ -46,19 +46,42 @@ const standardApplication = {
   deletedAt: null,
 } as FlatApplication;
 
-const buildWorkflowRun = (applicationId?: string) =>
+const INSTALLED_APPLICATION_WORKFLOW_ID = 'installed-app-workflow-id';
+const WORKSPACE_WORKFLOW_ID = 'workspace-workflow-id';
+
+const workflows = [
+  {
+    id: INSTALLED_APPLICATION_WORKFLOW_ID,
+    universalIdentifier: 'installed-app-workflow-universal-identifier',
+    applicationId: installedApplication.id,
+  },
+  {
+    id: WORKSPACE_WORKFLOW_ID,
+    universalIdentifier: 'workspace-workflow-universal-identifier',
+    applicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
+  },
+];
+
+const buildWorkflowRun = ({
+  coreWorkflowId,
+  stampedApplicationId,
+}: {
+  coreWorkflowId: string | null;
+  stampedApplicationId?: string;
+}) =>
   ({
     id: 'workflow-run-id',
+    coreWorkflowId,
     createdBy: {
       source: FieldActorSource.WORKFLOW,
       workspaceMemberId: null,
       name: 'Workflow',
-      context: { applicationId },
+      context: { applicationId: stampedApplicationId },
     },
   }) as WorkflowRunWorkspaceEntity;
 
 const buildService = ({
-  workflowRun = buildWorkflowRun(),
+  workflowRun = buildWorkflowRun({ coreWorkflowId: WORKSPACE_WORKFLOW_ID }),
   applications = [installedApplication, workspaceCustomApplication],
 }: {
   workflowRun?: WorkflowRunWorkspaceEntity;
@@ -74,6 +97,20 @@ const buildService = ({
         flatApplicationMaps: {
           byId: Object.fromEntries(
             applications.map((application) => [application.id, application]),
+          ),
+        },
+        flatWorkflowMaps: {
+          byUniversalIdentifier: Object.fromEntries(
+            workflows.map((workflow) => [
+              workflow.universalIdentifier,
+              workflow,
+            ]),
+          ),
+          universalIdentifierById: Object.fromEntries(
+            workflows.map((workflow) => [
+              workflow.id,
+              workflow.universalIdentifier,
+            ]),
           ),
         },
         userWorkspaceRoleMap: {},
@@ -95,7 +132,9 @@ describe('WorkflowExecutionContextService', () => {
   describe('getExecutionContext', () => {
     it('runs an automated run through the application owning its workflow, with its role', async () => {
       const executionContext = await buildService({
-        workflowRun: buildWorkflowRun(installedApplication.id),
+        workflowRun: buildWorkflowRun({
+          coreWorkflowId: INSTALLED_APPLICATION_WORKFLOW_ID,
+        }),
       }).getExecutionContext(runInfo);
 
       expect(executionContext.application).toBe(installedApplication);
@@ -108,21 +147,34 @@ describe('WorkflowExecutionContextService', () => {
       });
     });
 
-    it('runs a run created without an application through the workspace custom application', async () => {
+    it('takes the application from the workflow of the run, not from the one stamped on it', async () => {
       const executionContext = await buildService({
-        workflowRun: buildWorkflowRun(),
+        workflowRun: buildWorkflowRun({
+          coreWorkflowId: INSTALLED_APPLICATION_WORKFLOW_ID,
+          stampedApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
+        }),
       }).getExecutionContext(runInfo);
 
-      expect(executionContext.application).toBe(workspaceCustomApplication);
-      expect(executionContext.rolePermissionConfig).toEqual({
-        intersectionOf: { applicationRoleId: 'workspace-custom-app-role-id' },
-      });
+      expect(executionContext.application).toBe(installedApplication);
     });
+
+    it.each([null, 'deleted-workflow-id'])(
+      'refuses a run whose workflow no longer exists (workflow: %s)',
+      async (coreWorkflowId) => {
+        await expect(
+          buildService({
+            workflowRun: buildWorkflowRun({ coreWorkflowId }),
+          }).getExecutionContext(runInfo),
+        ).rejects.toThrow('The workflow of this run no longer exists');
+      },
+    );
 
     it('refuses a run whose application has no role instead of falling back to another one', async () => {
       await expect(
         buildService({
-          workflowRun: buildWorkflowRun(WORKSPACE_CUSTOM_APPLICATION_ID),
+          workflowRun: buildWorkflowRun({
+            coreWorkflowId: WORKSPACE_WORKFLOW_ID,
+          }),
           applications: [
             { ...workspaceCustomApplication, defaultRoleId: null },
           ],
@@ -132,22 +184,24 @@ describe('WorkflowExecutionContextService', () => {
   });
 
   describe('getFormRecordReadContext', () => {
-    it.each([undefined, WORKSPACE_CUSTOM_APPLICATION_ID])(
-      'returns none for a workspace workflow run, so its forms read as before (stamped application: %s)',
-      async (applicationId) => {
-        const workflowRun = buildWorkflowRun(applicationId);
+    it('returns none for a workspace workflow run, so its forms read as before', async () => {
+      const workflowRun = buildWorkflowRun({
+        coreWorkflowId: WORKSPACE_WORKFLOW_ID,
+      });
 
-        expect(
-          await buildService({ workflowRun }).getFormRecordReadContext({
-            workflowRun,
-            workspaceId: WORKSPACE_ID,
-          }),
-        ).toBeNull();
-      },
-    );
+      expect(
+        await buildService({ workflowRun }).getFormRecordReadContext({
+          workflowRun,
+          workspaceId: WORKSPACE_ID,
+        }),
+      ).toBeNull();
+    });
 
     it('reads with the permissions of an installed application run', async () => {
-      const workflowRun = buildWorkflowRun(installedApplication.id);
+      const workflowRun = buildWorkflowRun({
+        coreWorkflowId: INSTALLED_APPLICATION_WORKFLOW_ID,
+        stampedApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
+      });
 
       expect(
         await buildService({ workflowRun }).getFormRecordReadContext({
