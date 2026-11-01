@@ -391,12 +391,14 @@ export class MessagingMessageService {
       transactionScope.getRepository<MessageParticipantWorkspaceEntity>(
         'messageParticipant',
         { shouldBypassPermissionChecks: true },
+        { shouldSkipEventEmission: true },
       );
 
     const messageFolderAssociationRepository =
       transactionScope.getRepository<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
         'messageChannelMessageAssociationMessageFolder',
         { shouldBypassPermissionChecks: true },
+        { shouldSkipEventEmission: true },
       );
 
     for (const messagesToRefreshChunk of chunk(
