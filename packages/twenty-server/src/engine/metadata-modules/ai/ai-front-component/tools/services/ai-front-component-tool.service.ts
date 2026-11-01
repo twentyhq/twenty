@@ -46,7 +46,10 @@ export class AiFrontComponentToolService {
     return {
       list_front_components: createListFrontComponentsTool({
         frontComponentService: this.frontComponentService,
-        context,
+        workspaceId: context.workspaceId,
+        callingApplication: context.application,
+        workspaceCustomApplicationId:
+          context.authContext?.workspace.workspaceCustomApplicationId,
       }),
       [PREVIEW_FRONT_COMPONENT_TOOL_NAME]: createPreviewFrontComponentTool({
         aiFrontComponentService: this.aiFrontComponentService,

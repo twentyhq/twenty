@@ -1,8 +1,6 @@
 import { ToolCategory } from 'twenty-shared/ai';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { executeToolFromToolSet } from 'src/engine/core-modules/tool-provider/utils/execute-tool-from-tool-set.util';
 import { createListFrontComponentsTool } from 'src/engine/metadata-modules/ai/ai-front-component/tools/list-front-components.tool';
 
@@ -38,23 +36,17 @@ const listComponents = async ({
   sourceType?: ApplicationRegistrationSourceType;
   workspaceCustomApplicationId?: string | null;
 }) => {
-  const context = {
+  const tool = createListFrontComponentsTool({
+    frontComponentService,
     workspaceId: WORKSPACE_ID,
-    application: applicationId
-      ? ({
+    callingApplication: applicationId
+      ? {
           id: applicationId,
           universalIdentifier: applicationId,
           sourceType,
-        } as FlatApplication)
+        }
       : undefined,
-    authContext: {
-      type: 'system',
-      workspace: { id: WORKSPACE_ID, workspaceCustomApplicationId },
-    } as ToolProviderContext['authContext'],
-  };
-  const tool = createListFrontComponentsTool({
-    frontComponentService,
-    context,
+    workspaceCustomApplicationId: workspaceCustomApplicationId ?? undefined,
   });
 
   return executeToolFromToolSet(

@@ -2,18 +2,19 @@ import { tool } from 'ai';
 import { z } from 'zod';
 
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
-import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ApplicationCallerOperation } from 'src/engine/core-modules/application/types/application-caller-operation.type';
 import { type FrontComponentService } from 'src/engine/metadata-modules/front-component/front-component.service';
 
 export const createListFrontComponentsTool = ({
   frontComponentService,
-  context,
+  workspaceId,
+  callingApplication,
+  workspaceCustomApplicationId,
 }: {
   frontComponentService: Pick<FrontComponentService, 'findAll'>;
-  context: Pick<
-    ToolProviderContext,
-    'workspaceId' | 'application' | 'authContext'
-  >;
+  workspaceId: string;
+  callingApplication: ApplicationCallerOperation['callingApplication'];
+  workspaceCustomApplicationId: string | undefined;
 }) =>
   tool({
     description:
@@ -22,14 +23,13 @@ export const createListFrontComponentsTool = ({
     execute: async () => ({
       success: true,
       message: 'Frontend components retrieved.',
-      result: (await frontComponentService.findAll(context.workspaceId))
+      result: (await frontComponentService.findAll(workspaceId))
         .filter((frontComponent) =>
           canCallerReachApplication({
-            callingApplication: context.application,
+            callingApplication,
             applicationId: frontComponent.applicationId,
             operation: 'read',
-            workspaceCustomApplicationId:
-              context.authContext?.workspace.workspaceCustomApplicationId,
+            workspaceCustomApplicationId,
           }),
         )
         .map(({ id, name, applicationId, isHeadless, widgetAvailability }) => ({
