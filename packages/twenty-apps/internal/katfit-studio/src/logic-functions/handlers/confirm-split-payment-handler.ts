@@ -96,7 +96,9 @@ const grantVisits = async (client: CoreApiClient, membershipId: string, product:
   const result = (await client.query({
     membershipTransactions: { __args: { filter: { membershipId: { eq: membershipId } }, first: 1000 }, edges: { node: { id: true, transactionType: true, visitDelta: true, occurredAt: true } } },
   } as never)) as unknown as { membershipTransactions?: { edges?: Array<{ node: LedgerEntry }> } };
-  const balance = calculateLedgerBalance(edgesToNodes(result.membershipTransactions));
+  const entries = edgesToNodes(result.membershipTransactions);
+  if (entries.length === 1000) throw new Error('Журнал сплит-блока слишком велик для безопасной сверки.');
+  const balance = calculateLedgerBalance(entries);
   if (!balance.success) throw new Error('Журнал сплит-блока требует проверки владельцем.');
   await client.mutation({ updateStudioMembership: { __args: { id: membershipId, data: {
     status: balance.available === 0 ? 'EXHAUSTED' : 'ACTIVE', visitsGranted: balance.granted,
@@ -107,7 +109,7 @@ const grantVisits = async (client: CoreApiClient, membershipId: string, product:
 
 const failure = (status: number, code: string, message: string): ConfirmSplitPaymentResult => ({ success: false, status, code, message });
 
-export const confirmSplitPayment = async (rawInput: ConfirmSplitPaymentInput, client = new CoreApiClient()): Promise<ConfirmSplitPaymentResult> => {
+export const confirmSplitPayment = async (rawInput: ConfirmSplitPaymentInput, client = new CoreApiClient(), coordinate?: (membershipId: string, input: ConfirmSplitPaymentInput) => Promise<ConfirmSplitPaymentResult>): Promise<ConfirmSplitPaymentResult> => {
   const input: ConfirmSplitPaymentInput = {
     pairId: String(rawInput.pairId ?? '').trim(), productId: String(rawInput.productId ?? '').trim(),
     paidAt: String(rawInput.paidAt ?? '').trim(), payments: Array.isArray(rawInput.payments) ? rawInput.payments.map((part) => ({ ...part, personId: String(part.personId ?? '').trim(), amount: Number(part.amount) })) : [],
@@ -124,6 +126,7 @@ export const confirmSplitPayment = async (rawInput: ConfirmSplitPaymentInput, cl
   let membership = await findMembershipByKey(client, membershipKey);
   if (membership !== null && (membership.product?.id !== input.productId || membership.pair?.id !== input.pairId)) return failure(409, 'IDEMPOTENCY_CONFLICT', 'Ключ операции уже связан с другим блоком.');
   if (membership === null) membership = await createMembership(client, input, product, validation.paidAt);
+  if (coordinate) return coordinate(membership.id, input);
   const paymentIds: string[] = [];
   let duplicate = true;
   for (const [index, part] of input.payments.entries()) {

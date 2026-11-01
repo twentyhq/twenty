@@ -1,0 +1,55 @@
+{
+  "endpoint": "http://crm.lan/mcp",
+  "serverInfo": {
+    "name": "Twenty MCP Server",
+    "version": "0.1.0"
+  },
+  "protocolVersion": "2025-06-18",
+  "coreToolCount": 7,
+  "objectsVerified": [
+    "studio_trainers",
+    "trainer_pay_rates",
+    "trainer_rate_assignments",
+    "trainer_pay_entries",
+    "studio_session_locks"
+  ],
+  "readChecks": [
+    {
+      "tool": "find_many_studio_trainers",
+      "success": true,
+      "count": "1",
+      "hasNextPage": false,
+      "returned": 1
+    },
+    {
+      "tool": "find_many_trainer_pay_rates",
+      "success": true,
+      "count": "1",
+      "hasNextPage": false,
+      "returned": 1
+    },
+    {
+      "tool": "find_many_trainer_rate_assignments",
+      "success": true,
+      "count": "0",
+      "hasNextPage": false,
+      "returned": 0
+    },
+    {
+      "tool": "find_many_trainer_pay_entries",
+      "success": true,
+      "count": "0",
+      "hasNextPage": false,
+      "returned": 0
+    }
+  ],
+  "summary": {
+    "success": true,
+    "amountMicros": 0,
+    "sessionCount": 0,
+    "pendingSessionCount": 0
+  },
+  "domainRecordsModified": false,
+  "commandAudit": "Standard MCP command audit recorded by the application",
+  "nativeToolsInThisChat": "Only twenty_stage is exposed; twenty_prod checked directly using repository MCP configuration"
+}

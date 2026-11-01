@@ -1,7 +1,7 @@
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { Response } from 'twenty-sdk/logic-function';
 
-import { confirmPackagePayment } from 'src/logic-functions/handlers/confirm-package-payment-handler';
+import { confirmGuardedPackagePayment } from 'src/logic-functions/handlers/confirm-guarded-membership-payment-handler';
 import { type ConfirmPackagePaymentInput } from 'src/logic-functions/utils/package-payment';
 
 const handler = async (
@@ -9,7 +9,7 @@ const handler = async (
   context: { userWorkspaceId: string | null },
 ): Promise<Response> => {
   try {
-    const result = await confirmPackagePayment(
+    const result = await confirmGuardedPackagePayment(
       (routePayload.body ?? {}) as ConfirmPackagePaymentInput,
       context,
     );

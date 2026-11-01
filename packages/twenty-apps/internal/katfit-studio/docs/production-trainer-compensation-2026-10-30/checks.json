@@ -1,0 +1,37 @@
+[
+  {
+    "resource": "studioTrainers",
+    "status": 200,
+    "recordsInFirstPage": 0
+  },
+  {
+    "resource": "trainerPayRates",
+    "status": 200,
+    "recordsInFirstPage": 0
+  },
+  {
+    "resource": "trainerRateAssignments",
+    "status": 200,
+    "recordsInFirstPage": 0
+  },
+  {
+    "resource": "trainerPayEntries",
+    "status": 200,
+    "recordsInFirstPage": 0
+  },
+  {
+    "resource": "studioSessionLocks",
+    "status": 200,
+    "recordsInFirstPage": 0
+  },
+  {
+    "resource": "trainer-compensation-summary (read-only, nonexistent trainer)",
+    "status": 200,
+    "amountMicros": 0,
+    "sessionCount": 0
+  },
+  {
+    "resource": "healthz",
+    "status": 200
+  }
+]

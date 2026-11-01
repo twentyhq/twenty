@@ -73,3 +73,11 @@ Do not apply to production before reviewing the plan and backing up the workspac
 
 Contract: `docs/katfit-balance-crm-technical-spec.ru.md` (repo root `crm-twenty`).
 Manager guide: `docs/katfit-balance-crm-manager-guide.ru.md`.
+
+## Trainer compensation
+
+Configurable group compensation for 1–4 actual attendees, published rate snapshots and dated trainer assignments. Closing a class records one expense with the complete attendance/rate/consumption snapshot. Corrections append a reversal and replacement; a trainer report summarizes the latest completed revisions. Session write locks serialize closing with existing booking and attendance commands.
+
+Configuration and operator guide: [Оплата тренеров](docs/instructions/trainer-compensation.ru.md). Deployed and verified on stage on 2026-10-29; see [stage QA](docs/stage-trainer-compensation-qa-2026-10-29/report.ru.md). Actual staff, rates and workspace permissions still require configuration; synthetic QA trainers are inactive. Authenticated tariff publication and closing currently share the application access level.
+
+Trainer directory is available in application navigation with class, accrual and rate-assignment tabs. The schedule supports choosing one trainer at creation or editing; existing classes also have an audited assignment command. Payroll defaults to the assigned trainer, and its period report is available from the trainer card.

@@ -1,13 +1,13 @@
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { Response } from 'twenty-sdk/logic-function';
 
-import { createSplitBooking } from 'src/logic-functions/handlers/create-split-booking-handler';
+import { createGuardedSplitBooking } from 'src/logic-functions/handlers/create-guarded-split-booking-handler';
 import { type CreateSplitBookingInput } from 'src/logic-functions/utils/split-booking';
 
 const handler = async (
   routePayload: RoutePayload<CreateSplitBookingInput>,
 ): Promise<Response> => {
-  const result = await createSplitBooking(
+  const result = await createGuardedSplitBooking(
     (routePayload.body ?? {}) as CreateSplitBookingInput,
   );
 

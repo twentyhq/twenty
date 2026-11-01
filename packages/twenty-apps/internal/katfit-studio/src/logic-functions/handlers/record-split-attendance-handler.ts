@@ -30,6 +30,7 @@ export const recordSplitAttendance = async (rawInput: RecordSplitAttendanceInput
   if (!validation.success) return { ...validation, status: 409 };
   if (bookings.length !== 2) return fail(409, 'SPLIT_BOOKINGS_NOT_FOUND', 'Для проведения нужны две записи пары на этот слот.');
   if (result.membershipTransactions?.edges?.[0]) return { success: true, duplicate: true, bookingIds: bookings.map(({ id }) => id), visitsAvailable: membership.visitsAvailable };
+  if (!['PLANNED', 'CONFIRMED'].includes(session.status) || bookings.some((booking) => booking.status !== 'BOOKED')) return fail(409, 'ATTENDANCE_STATE_CONFLICT', 'Занятие или записи пары уже изменены.');
   if (membership.visitsReserved < 1) return fail(409, 'RESERVATION_NOT_FOUND', 'У записи пары нет резерва общего блока.');
   for (const booking of bookings) await client.mutation({ updateStudioBooking: { __args: { id: booking.id, data: { status: 'ATTENDED', consumesVisit: true, recordedAt: new Date().toISOString() } }, id: true } } as never);
   const occurredAt = new Date().toISOString();

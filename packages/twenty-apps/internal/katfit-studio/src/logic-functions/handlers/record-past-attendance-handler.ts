@@ -54,6 +54,7 @@ export const recordPastAttendance = async (
   rawInput: RecordPastAttendanceInput,
   context: { userWorkspaceId: string | null },
   client = new CoreApiClient(),
+  coordinate?: (classSessionId: string) => Promise<RecordPastAttendanceResult>,
 ): Promise<RecordPastAttendanceResult> => {
   const input: RecordPastAttendanceInput = {
     personId: String(rawInput.personId ?? '').trim(), membershipId: String(rawInput.membershipId ?? '').trim(),
@@ -80,6 +81,7 @@ export const recordPastAttendance = async (
   if (endsAt === null) {
     return failure(409, 'INVALID_PRODUCT_DURATION', 'У продукта должна быть указана положительная длительность занятия в минутах.');
   }
+  if (validation.endsAt !== endsAt) return failure(409, 'ATTENDANCE_DURATION_MISMATCH', 'Окончание должно совпадать с длительностью продукта выбранного пакета.');
   const bookingKey = `past-attendance:${input.idempotencyKey}`;
   const transactionKey = `past-attendance-consume:${input.idempotencyKey}`;
   const sessionKey = `past-attendance-session:${input.idempotencyKey}`;
@@ -125,6 +127,7 @@ export const recordPastAttendance = async (
   if (input.previewOnly) return { success: true, preview: true, visitsAvailable: balance.available, visitsAfter: balance.available - (transaction ? 0 : 1) };
 
   if (!session) session = await createSession(client, input, validation.startsAt, endsAt, membership.product, sessionKey);
+  if (coordinate) return coordinate(session.id);
   if (!booking) booking = await createBooking(client, input, membership.product, session.id, bookingKey, context.userWorkspaceId);
   if (!transaction) transaction = await createConsume(client, input, validation.startsAt, booking.id, transactionKey, balance.consumed + 1);
   ledger = await readLedger(client, membership.id);

@@ -13,6 +13,7 @@ export default defineObject({
   description: 'Конкретный групповой или персональный слот', icon: 'IconCalendarEvent',
   labelIdentifierFieldMetadataUniversalIdentifier: CLASS_SESSION_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [
+    { universalIdentifier: 'b40aa498-854e-4997-a6fd-e70730668149', type: FieldType.TEXT, name: 'mutationLock', label: 'Владелец изменения занятия', icon: 'IconLock', isNullable: true },
     { universalIdentifier: CLASS_SESSION_NAME_FIELD_UNIVERSAL_IDENTIFIER, type: FieldType.TEXT, name: 'name', label: 'Название', icon: 'IconAbc' },
     { universalIdentifier: 'e5c7e882-7c28-4f25-8cbc-cf00561b3937', type: FieldType.SELECT, name: 'sessionFormat', label: 'Формат', icon: 'IconYoga', options: [...SESSION_FORMAT_OPTIONS] },
     { universalIdentifier: '37033f49-d77e-4127-901c-20ff00e951c3', type: FieldType.DATE_TIME, name: 'startsAt', label: 'Начало', icon: 'IconCalendarClock' },

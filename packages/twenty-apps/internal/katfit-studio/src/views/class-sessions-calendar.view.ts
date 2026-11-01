@@ -1,3 +1,4 @@
+import { FIELD_UNIVERSAL_IDENTIFIER as TRAINER_FIELD_UNIVERSAL_IDENTIFIER } from 'src/fields/trainer-on-class-session.field';
 import {
   defineView,
   ViewCalendarLayout,
@@ -31,6 +32,7 @@ export default defineView({
     },
   ],
   fields: [
+    { universalIdentifier: 'cbf3a4a0-9468-4a5e-8a3f-588bba0a099b', fieldMetadataUniversalIdentifier: TRAINER_FIELD_UNIVERSAL_IDENTIFIER, position: 2, isVisible: true, size: 180 },
     {
       universalIdentifier: 'd3a808cf-44dc-4a5b-a821-cc8f4a3f7f58',
       fieldMetadataUniversalIdentifier:

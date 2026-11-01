@@ -1,7 +1,7 @@
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { Response } from 'twenty-sdk/logic-function';
 
-import { createRegularBooking } from 'src/logic-functions/handlers/create-regular-booking-handler';
+import { createGuardedRegularBooking } from 'src/logic-functions/handlers/create-guarded-regular-booking-handler';
 import { recordStudioEvent } from 'src/logic-functions/utils/studio-event';
 
 type CreateRegularBookingInput = {
@@ -19,7 +19,7 @@ export default defineLogicFunction({
   handler: async (routePayload: RoutePayload<CreateRegularBookingInput>) => {
     const input = (routePayload.body ?? {}) as CreateRegularBookingInput;
     try {
-      const result = await createRegularBooking(input);
+      const result = await createGuardedRegularBooking(input);
       if (!result.success) {
         await recordStudioEvent({ classSessionId: input.classSessionId, eventType: 'OPERATION_FAILED', idempotencyKey: input.idempotencyKey, membershipId: input.membershipId, outcome: 'FAILURE', details: result.message });
       }

@@ -1,3 +1,4 @@
+import { FIELD_UNIVERSAL_IDENTIFIER as TRAINER_PAY_ENTRIES_FIELD_UNIVERSAL_IDENTIFIER } from 'src/fields/trainer-pay-entries-on-class-session.field';
 import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
 
 import { BOOKINGS_ON_SESSION_FIELD_UNIVERSAL_IDENTIFIER } from 'src/fields/session-on-booking.field';
@@ -9,6 +10,7 @@ export default definePageLayout({
   type: 'RECORD_PAGE',
   objectUniversalIdentifier: CLASS_SESSION_OBJECT_UNIVERSAL_IDENTIFIER,
   tabs: [
+    { universalIdentifier: '5891080e-eebe-47cc-b0bb-43d4fea866d5', title: 'Начисления тренеру', position: 20, icon: 'IconCash', layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, widgets: [{ universalIdentifier: 'fbdd9c96-49ab-49b4-8de2-dfdc4eec4992', title: 'Начисления за занятие', type: 'FIELD', configuration: { configurationType: 'FIELD', fieldMetadataId: TRAINER_PAY_ENTRIES_FIELD_UNIVERSAL_IDENTIFIER, fieldDisplayMode: 'TABLE' } }] },
     {
       universalIdentifier: '7c7d4e06-6eb9-429d-bc93-daf6fe0776a0',
       title: 'Детали',

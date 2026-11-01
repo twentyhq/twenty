@@ -19,6 +19,14 @@ export default defineObject({
     PAYMENT_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [
     {
+      universalIdentifier: '5247e6f5-1259-41b4-ab6c-c5a1dd3d14fe',
+      type: FieldType.TEXT,
+      name: 'sessionPaymentContext',
+      label: 'Параметры разовой тренировки',
+      icon: 'IconCalendar',
+      isNullable: true,
+    },
+    {
       universalIdentifier: PAYMENT_NAME_FIELD_UNIVERSAL_IDENTIFIER,
       type: FieldType.TEXT,
       name: 'name',

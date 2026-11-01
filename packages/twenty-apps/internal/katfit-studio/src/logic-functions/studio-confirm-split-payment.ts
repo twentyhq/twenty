@@ -1,13 +1,13 @@
 import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
 import { Response } from 'twenty-sdk/logic-function';
 
-import { confirmSplitPayment } from 'src/logic-functions/handlers/confirm-split-payment-handler';
+import { confirmGuardedSplitPayment } from 'src/logic-functions/handlers/confirm-guarded-membership-payment-handler';
 import { type ConfirmSplitPaymentInput } from 'src/logic-functions/utils/split-payment';
 
 const handler = async (
   routePayload: RoutePayload<ConfirmSplitPaymentInput>,
 ): Promise<Response> => {
-  const result = await confirmSplitPayment(
+  const result = await confirmGuardedSplitPayment(
     (routePayload.body ?? {}) as ConfirmSplitPaymentInput,
   );
 

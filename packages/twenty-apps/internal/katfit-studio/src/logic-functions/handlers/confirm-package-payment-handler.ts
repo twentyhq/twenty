@@ -387,6 +387,7 @@ export const confirmPackagePayment = async (
   rawInput: ConfirmPackagePaymentInput,
   context: PackagePaymentExecutionContext,
   client = new CoreApiClient(),
+  coordinate?: (membershipId: string, input: ConfirmPackagePaymentInput) => Promise<ConfirmPackagePaymentResult>,
 ): Promise<ConfirmPackagePaymentResult> => {
   const input: ConfirmPackagePaymentInput = {
     ...rawInput,
@@ -477,6 +478,8 @@ export const confirmPackagePayment = async (
       validation.paidAt,
     );
   }
+
+  if (coordinate) return coordinate(membership.id, input);
 
   if (payment === null) {
     payment = await createPayment(client, input, product, membership.id);
