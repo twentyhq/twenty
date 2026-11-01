@@ -2489,7 +2489,6 @@ export type Field = {
   type: FieldMetadataType;
   universalIdentifier: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
-  writability?: Maybe<MetadataWritability>;
 };
 
 export type FieldConfiguration = {
@@ -3334,14 +3333,6 @@ export enum MetadataEventAction {
   UPDATED = 'UPDATED'
 }
 
-export enum MetadataReadability {
-  APPLICATION = 'APPLICATION',
-  INHERITED = 'INHERITED',
-  OPEN = 'OPEN',
-  PRIVATE = 'PRIVATE',
-  SYSTEM = 'SYSTEM'
-}
-
 export type MetadataTranslation = {
   __typename?: 'MetadataTranslation';
   canonicalValue: Scalars['String']['output'];
@@ -3373,12 +3364,6 @@ export type MetadataTranslationsInput = {
   locale?: InputMaybe<Scalars['String']['input']>;
   objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
 };
-
-export enum MetadataWritability {
-  APPLICATION = 'APPLICATION',
-  OPEN = 'OPEN',
-  SYSTEM = 'SYSTEM'
-}
 
 export type MinimalMetadata = {
   __typename?: 'MinimalMetadata';
@@ -5285,14 +5270,10 @@ export type Object = {
   namePlural: Scalars['String']['output'];
   nameSingular: Scalars['String']['output'];
   openRecordIn: ObjectOpenRecordIn;
-  readability: MetadataReadability;
-  readabilityParentFieldUniversalIdentifiers?: Maybe<Array<Scalars['UUID']['output']>>;
   searchFieldMetadataList: Array<SearchField>;
-  sharingReach: ObjectSharingReach;
   shortcut?: Maybe<Scalars['String']['output']>;
   universalIdentifier: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
-  writability: MetadataWritability;
 };
 
 
@@ -5426,11 +5407,6 @@ export enum ObjectRecordGroupByDateGranularity {
   QUARTER_OF_THE_YEAR = 'QUARTER_OF_THE_YEAR',
   WEEK = 'WEEK',
   YEAR = 'YEAR'
-}
-
-export enum ObjectSharingReach {
-  ROLE_ACCESS = 'ROLE_ACCESS',
-  WORKSPACE = 'WORKSPACE'
 }
 
 /** Onboarding status */
@@ -7487,8 +7463,6 @@ export type UpdateObjectPayload = {
   namePlural?: InputMaybe<Scalars['String']['input']>;
   nameSingular?: InputMaybe<Scalars['String']['input']>;
   openRecordIn?: InputMaybe<ObjectOpenRecordIn>;
-  readability?: InputMaybe<MetadataReadability>;
-  sharingReach?: InputMaybe<ObjectSharingReach>;
   shortcut?: InputMaybe<Scalars['String']['input']>;
   translations?: InputMaybe<Array<MetadataTranslationOverrideInput>>;
 };

@@ -2,7 +2,6 @@ import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/tw
 import { msg } from '@lingui/core/macro';
 import {
   FieldMetadataType,
-  MetadataWritability,
   RelationType,
   RelationOnDeleteAction,
 } from 'twenty-shared/types';
@@ -43,7 +42,6 @@ export const buildAgentChatThreadParticipantStandardFlatFieldMetadatas = (
         defaultValue: 'uuid',
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -67,7 +65,6 @@ export const buildAgentChatThreadParticipantStandardFlatFieldMetadatas = (
         defaultValue: 'now',
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -91,7 +88,6 @@ export const buildAgentChatThreadParticipantStandardFlatFieldMetadatas = (
         defaultValue: 'now',
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -114,7 +110,6 @@ export const buildAgentChatThreadParticipantStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -147,7 +142,6 @@ export const buildAgentChatThreadParticipantStandardFlatFieldMetadatas = (
         },
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -180,7 +174,6 @@ export const buildAgentChatThreadParticipantStandardFlatFieldMetadatas = (
         },
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -206,7 +199,6 @@ export const buildAgentChatThreadParticipantStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -232,7 +224,6 @@ export const buildAgentChatThreadParticipantStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -258,7 +249,6 @@ export const buildAgentChatThreadParticipantStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -285,7 +275,6 @@ export const buildAgentChatThreadParticipantStandardFlatFieldMetadatas = (
         defaultValue: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -311,7 +300,6 @@ export const buildAgentChatThreadParticipantStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -340,7 +328,6 @@ export const buildAgentChatThreadParticipantStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,

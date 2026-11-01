@@ -1,6 +1,8 @@
+import { InjectDataSource } from '@nestjs/typeorm';
+
 import { Command } from 'nest-commander';
+import { DataSource } from 'typeorm';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { MetadataReadability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -38,6 +40,8 @@ export class DropWorkflowRunFromChatThreadsCommand extends ProvisionedWorkspaceC
     private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {
     super(workspaceIteratorService);
   }
@@ -85,9 +89,18 @@ export class DropWorkflowRunFromChatThreadsCommand extends ProvisionedWorkspaceC
           CHAT_THREAD_WORKFLOW_RUN_INDEX_UNIVERSAL_IDENTIFIER,
       }),
     ].filter(isDefined);
+    // Legacy column, still read by later upgrades
+    const [legacyThreadAccess]: {
+      readability: string;
+      readabilityParentFieldUniversalIdentifiers: string[] | null;
+    }[] = await this.coreDataSource.query(
+      `SELECT readability, "readabilityParentFieldUniversalIdentifiers" FROM core."objectMetadata"
+        WHERE "workspaceId" = $1 AND id = $2`,
+      [workspaceId, threadObject.id],
+    );
     const isPrivate =
-      threadObject.readability === MetadataReadability.PRIVATE &&
-      !isDefined(threadObject.readabilityParentFieldUniversalIdentifiers);
+      legacyThreadAccess?.readability === 'PRIVATE' &&
+      !isDefined(legacyThreadAccess.readabilityParentFieldUniversalIdentifiers);
 
     if (
       isPrivate &&
@@ -118,23 +131,12 @@ export class DropWorkflowRunFromChatThreadsCommand extends ProvisionedWorkspaceC
 
     // Readability names the parent field, so it lets go of it before the field goes
     if (!isPrivate) {
-      await this.runMigration({
-        workspaceId,
-        applicationUniversalIdentifier,
-        allFlatEntityOperationByMetadataName: {
-          objectMetadata: {
-            flatEntityToCreate: [],
-            flatEntityToDelete: [],
-            flatEntityToUpdate: [
-              {
-                ...threadObject,
-                readability: MetadataReadability.PRIVATE,
-                readabilityParentFieldUniversalIdentifiers: null,
-              },
-            ],
-          },
-        },
-      });
+      await this.coreDataSource.query(
+        `UPDATE core."objectMetadata"
+          SET readability = 'PRIVATE', "readabilityParentFieldUniversalIdentifiers" = NULL
+          WHERE "workspaceId" = $1 AND id = $2`,
+        [workspaceId, threadObject.id],
+      );
     }
 
     if (fieldsToDelete.length + indexesToDelete.length > 0) {

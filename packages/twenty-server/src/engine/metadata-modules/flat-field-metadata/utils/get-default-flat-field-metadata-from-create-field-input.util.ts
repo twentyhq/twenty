@@ -1,4 +1,3 @@
-import { MetadataWritability } from 'twenty-shared/types';
 import {
   extractAndSanitizeObjectStringFields,
   isDefined,
@@ -70,7 +69,6 @@ export const getDefaultFlatFieldMetadata = ({
       (isDefined(createFieldInput.isUIReadOnly)
         ? !createFieldInput.isUIReadOnly
         : true),
-    writability: MetadataWritability.OPEN,
     disabledFieldPermissionActions: null,
     morphId: null,
     applicationUniversalIdentifier,

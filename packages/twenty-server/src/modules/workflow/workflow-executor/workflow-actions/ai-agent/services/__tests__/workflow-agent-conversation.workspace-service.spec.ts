@@ -24,22 +24,20 @@ const buildService = () => {
       isCreated: true,
     }),
   };
-  const workflowRunRecordShareService = {
+  const workflowRunInboxSenderService = {
+    findRunSenderOrThrow: jest.fn().mockResolvedValue(SENDER),
     findCreatorWorkspaceMemberId: jest.fn().mockResolvedValue('creator-id'),
   };
 
   const service = new WorkflowAgentConversationWorkspaceService(
     agentCallerConversationService as never,
-    {
-      findRunSenderOrThrow: jest.fn().mockResolvedValue(SENDER),
-    } as never,
-    workflowRunRecordShareService as never,
+    workflowRunInboxSenderService as never,
   );
 
   return {
     service,
     agentCallerConversationService,
-    workflowRunRecordShareService,
+    workflowRunInboxSenderService,
   };
 };
 
@@ -49,7 +47,7 @@ describe('WorkflowAgentConversationWorkspaceService', () => {
       const {
         service,
         agentCallerConversationService,
-        workflowRunRecordShareService,
+        workflowRunInboxSenderService,
       } = buildService();
 
       await expect(
@@ -71,7 +69,7 @@ describe('WorkflowAgentConversationWorkspaceService', () => {
         fallbackRecipientWorkspaceMemberId: null,
       });
       expect(
-        workflowRunRecordShareService.findCreatorWorkspaceMemberId,
+        workflowRunInboxSenderService.findCreatorWorkspaceMemberId,
       ).not.toHaveBeenCalled();
     });
 

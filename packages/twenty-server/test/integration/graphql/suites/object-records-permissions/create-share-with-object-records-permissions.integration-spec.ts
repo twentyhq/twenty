@@ -11,7 +11,6 @@ import { createOneFieldMetadata } from 'test/integration/metadata/suites/field-m
 import { deleteOneFieldMetadata } from 'test/integration/metadata/suites/field-metadata/utils/delete-one-field-metadata.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
-import { setObjectReadability } from 'test/integration/metadata/suites/object-metadata/utils/set-object-readability.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids';
@@ -20,7 +19,6 @@ import { getCoreRepository } from 'test/integration/utils/get-core-repository.ut
 import {
   FeatureFlagKey,
   FieldMetadataType,
-  MetadataReadability,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
@@ -148,7 +146,6 @@ describe('createShareWithObjectRecordsPermissions', () => {
       .map((recordShare) => recordShare.id);
 
     await deleteRecordsByIds('recordShare', recordShareIds);
-    await setObjectReadability(objectMetadataId, MetadataReadability.OPEN);
     await makeGraphqlApiRequest(
       destroyManyOperationFactory({
         objectMetadataSingularName: 'person',
@@ -173,11 +170,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
     });
   });
 
-  describe('OPEN readability', () => {
-    beforeAll(async () => {
-      await setObjectReadability(objectMetadataId, MetadataReadability.OPEN);
-    });
-
+  describe('without record-level sharing', () => {
     it('should ignore shareWith and write no row', async () => {
       const recordId = trackRecordId();
 
@@ -195,7 +188,7 @@ describe('createShareWithObjectRecordsPermissions', () => {
     });
   });
 
-  describe('OPEN readability with record-level sharing', () => {
+  describe('with record-level sharing', () => {
     const setRecordSharingEnabled = (value: boolean) =>
       updateFeatureFlag({
         featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
@@ -204,7 +197,6 @@ describe('createShareWithObjectRecordsPermissions', () => {
       });
 
     beforeAll(async () => {
-      await setObjectReadability(objectMetadataId, MetadataReadability.OPEN);
       await setRecordSharingEnabled(true);
     });
 

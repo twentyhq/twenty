@@ -5,7 +5,6 @@ import {
 import {
   type FieldMetadataDefaultActor,
   FieldMetadataType,
-  MetadataWritability,
 } from 'twenty-shared/types';
 
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-field-manifest-to-universal-flat-field-metadata.util';
@@ -159,52 +158,12 @@ describe('fromFieldManifestToUniversalFlatFieldMetadata', () => {
     });
   });
 
-  describe('writability', () => {
-    it('defaults to OPEN when omitted from the manifest', () => {
-      const result = fromFieldManifestToUniversalFlatFieldMetadata({
-        fieldManifest: buildFieldManifest({}),
-        applicationUniversalIdentifier: APP_UID,
-        now: NOW,
-      });
-
-      expect(result.writability).toBe(MetadataWritability.OPEN);
-    });
-
-    it('carries the manifest value through', () => {
-      const result = fromFieldManifestToUniversalFlatFieldMetadata({
-        fieldManifest: buildFieldManifest({
-          writability: MetadataWritability.APPLICATION,
-        }),
-        applicationUniversalIdentifier: APP_UID,
-        now: NOW,
-      });
-
-      expect(result.writability).toBe(MetadataWritability.APPLICATION);
-    });
-  });
-
   describe('disabledFieldPermissionActions', () => {
-    it.each([MetadataWritability.APPLICATION, MetadataWritability.SYSTEM])(
-      'disables updates when omitted and writability is %s',
-      (writability) => {
-        const result = fromFieldManifestToUniversalFlatFieldMetadata({
-          fieldManifest: buildFieldManifest({ writability }),
-          applicationUniversalIdentifier: APP_UID,
-          now: NOW,
-        });
-
-        expect(result.disabledFieldPermissionActions).toEqual([
-          'canUpdateFieldValue',
-        ]);
-      },
-    );
-
     it.each<[FieldPermissionAction[]]>([[[]], [['canReadFieldValue']]])(
-      'keeps an explicit value %j over the writability default',
+      'keeps an explicit value %j',
       (disabledFieldPermissionActions) => {
         const result = fromFieldManifestToUniversalFlatFieldMetadata({
           fieldManifest: buildFieldManifest({
-            writability: MetadataWritability.APPLICATION,
             disabledFieldPermissionActions,
           }),
           applicationUniversalIdentifier: APP_UID,
@@ -217,11 +176,9 @@ describe('fromFieldManifestToUniversalFlatFieldMetadata', () => {
       },
     );
 
-    it('is null when omitted and writability is OPEN', () => {
+    it('is null when omitted', () => {
       const result = fromFieldManifestToUniversalFlatFieldMetadata({
-        fieldManifest: buildFieldManifest({
-          writability: MetadataWritability.OPEN,
-        }),
+        fieldManifest: buildFieldManifest({}),
         applicationUniversalIdentifier: APP_UID,
         now: NOW,
       });

@@ -25,7 +25,6 @@ import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.s
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceInvitationService } from 'src/engine/core-modules/workspace-invitation/services/workspace-invitation.service';
 import { WorkspaceDiscoverability } from 'src/engine/core-modules/workspace/types/workspace-discoverability.type';
@@ -71,7 +70,6 @@ export class UserWorkspaceService {
     private readonly onboardingService: OnboardingService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly twentyConfigService: TwentyConfigService,
-    private readonly workflowRunRecordShareService: WorkflowRunRecordShareService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
@@ -363,24 +361,12 @@ export class UserWorkspaceService {
       // roleTarget has no deletedAt column, so its rows stay and access is gated by the soft-deleted userWorkspace.
       await this.userWorkspaceRepository.softDelete({ id: userWorkspaceId });
     } else {
-      // The delete nulls the creator of this member's workflows, making them workspace-visible, so their runs' grants must follow.
-      const createdCoreWorkflowIds =
-        await this.workflowRunRecordShareService.findCoreWorkflowIdsCreatedBy({
-          workspaceId,
-          userWorkspaceId,
-        });
-
       await this.roleTargetRepository.delete(workspaceId, { userWorkspaceId }); // TODO remove once userWorkspace foreign key is added on roleTarget
       await this.userWorkspaceRepository.delete({ id: userWorkspaceId });
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'flatRoleTargetMaps',
         'userApplicationVariableValueMaps',
       ]);
-
-      await this.workflowRunRecordShareService.syncRunsOfCoreWorkflows({
-        workspaceId,
-        coreWorkflowIds: createdCoreWorkflowIds,
-      });
     }
   }
 

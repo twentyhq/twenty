@@ -1,4 +1,7 @@
+import { InjectDataSource } from '@nestjs/typeorm';
+
 import { Command } from 'nest-commander';
+import { DataSource } from 'typeorm';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -21,6 +24,8 @@ export class DeleteSystemReadableObjectNavigationCommandMenuItemsCommand extends
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {
     super(workspaceIteratorService);
   }
@@ -29,18 +34,23 @@ export class DeleteSystemReadableObjectNavigationCommandMenuItemsCommand extends
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const { flatCommandMenuItemMaps, flatObjectMetadataMaps } =
+    const { flatCommandMenuItemMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatCommandMenuItemMaps',
-        'flatObjectMetadataMaps',
       ]);
+    const systemReadableObjects = await this.coreDataSource.query<{ id: string }[]>(
+      `SELECT id FROM core."objectMetadata" WHERE "workspaceId" = $1 AND readability = 'SYSTEM'`,
+      [workspaceId],
+    );
 
     const commandMenuItemsToDelete =
       findSystemReadableObjectNavigationCommandMenuItems({
         flatCommandMenuItems: Object.values(
           flatCommandMenuItemMaps.byUniversalIdentifier,
         ),
-        flatObjectMetadataMaps,
+        systemReadableObjectMetadataIds: new Set(
+          systemReadableObjects.map(({ id }) => id),
+        ),
       });
 
     if (commandMenuItemsToDelete.length === 0) {

@@ -1,10 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import {
-  MetadataReadability,
-  MetadataWritability,
-  ObjectOpenRecordIn,
-} from 'twenty-shared/types';
+import { ObjectOpenRecordIn } from 'twenty-shared/types';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
@@ -57,8 +53,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUIEditable: true,
         isUICreatable: false,
-        readability: MetadataReadability.PRIVATE,
-        writability: MetadataWritability.OPEN,
         labelIdentifierFieldMetadataName: 'title',
       },
     }),
@@ -102,8 +96,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isUICreatable: false,
         // Inherits from the thread, not the record, so a link stays as private as the conversation. It stays
         // writable because record merges re-point its legs under the caller, as for noteTarget
-        readability: MetadataReadability.INHERITED,
-        readabilityParentFieldMetadataNames: ['thread'],
         labelIdentifierFieldMetadataName: 'id',
       },
     }),
@@ -138,8 +130,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUIEditable: false,
         isUICreatable: false,
-        readability: MetadataReadability.SYSTEM,
-        writability: MetadataWritability.SYSTEM,
         disabledObjectPermissionActions:
           PLATFORM_MANAGED_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
@@ -182,8 +172,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUIEditable: false,
         isUICreatable: false,
-        readability: MetadataReadability.SYSTEM,
-        writability: MetadataWritability.SYSTEM,
         disabledObjectPermissionActions:
           PLATFORM_MANAGED_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
@@ -227,8 +215,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUIEditable: false,
         isUICreatable: false,
-        readability: MetadataReadability.SYSTEM,
-        writability: MetadataWritability.SYSTEM,
         disabledObjectPermissionActions:
           PLATFORM_MANAGED_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
@@ -274,8 +260,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isUICreatable: false,
         // Read and written only through the chat resolvers, which check the
         // member can read the message's thread
-        readability: MetadataReadability.SYSTEM,
-        writability: MetadataWritability.SYSTEM,
         disabledObjectPermissionActions:
           PLATFORM_MANAGED_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
@@ -321,8 +305,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isUICreatable: false,
         // Each row is one member's private inbox state, readable through its
         // owner grant and written only through the chat resolvers
-        readability: MetadataReadability.PRIVATE,
-        writability: MetadataWritability.SYSTEM,
         disabledObjectPermissionActions:
           PLATFORM_WRITTEN_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
@@ -366,8 +348,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUIEditable: false,
         isUICreatable: false,
-        readability: MetadataReadability.SYSTEM,
-        writability: MetadataWritability.SYSTEM,
         disabledObjectPermissionActions:
           PLATFORM_MANAGED_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
@@ -411,8 +391,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUIEditable: false,
         isUICreatable: false,
-        readability: MetadataReadability.SYSTEM,
-        writability: MetadataWritability.SYSTEM,
         disabledObjectPermissionActions:
           PLATFORM_MANAGED_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
@@ -454,8 +432,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconFileImport',
         isSystem: true,
         isUICreatable: false,
-        readability: MetadataReadability.INHERITED,
-        readabilityParentFieldMetadataNames: ['targetNote'],
         labelIdentifierFieldMetadataName: 'name',
       },
       workspaceId,
@@ -539,7 +515,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
-        writability: MetadataWritability.SYSTEM,
         disabledObjectPermissionActions:
           PLATFORM_WRITTEN_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
@@ -683,8 +658,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
-        readability: MetadataReadability.INHERITED,
-        readabilityParentFieldMetadataNames: ['calendarEvent'],
         labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
@@ -977,7 +950,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
-        writability: MetadataWritability.SYSTEM,
         disabledObjectPermissionActions:
           PLATFORM_WRITTEN_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
@@ -1028,7 +1000,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
-        writability: MetadataWritability.SYSTEM,
         disabledObjectPermissionActions:
           PLATFORM_WRITTEN_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
@@ -1171,8 +1142,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
-        readability: MetadataReadability.INHERITED,
-        readabilityParentFieldMetadataNames: ['messageThread'],
         labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
@@ -1240,8 +1209,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconNotes',
         isSearchable: true,
         shortcut: 'N',
-        readability: MetadataReadability.INHERITED,
-        readabilityParentFieldMetadataNames: ['noteTargets'],
         labelIdentifierFieldMetadataName: 'title',
       },
       workspaceId,
@@ -1284,8 +1251,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconCheckbox',
         isSystem: true,
         isUICreatable: false,
-        readability: MetadataReadability.INHERITED,
-        readabilityParentFieldMetadataNames: ['targetPerson'],
         labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
@@ -1412,8 +1377,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUIEditable: false,
         isUICreatable: false,
-        writability: MetadataWritability.SYSTEM,
-        readability: MetadataReadability.SYSTEM,
         disabledObjectPermissionActions:
           PLATFORM_MANAGED_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
@@ -1461,8 +1424,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUIEditable: false,
         isUICreatable: false,
-        writability: MetadataWritability.SYSTEM,
-        readability: MetadataReadability.SYSTEM,
         disabledObjectPermissionActions:
           PLATFORM_MANAGED_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
@@ -1510,8 +1471,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isAuditLogged: false,
         isUIEditable: false,
         isUICreatable: false,
-        writability: MetadataWritability.SYSTEM,
-        readability: MetadataReadability.SYSTEM,
         disabledObjectPermissionActions:
           PLATFORM_MANAGED_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'resolvedDestinationUrl',
@@ -1547,8 +1506,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconCheckbox',
         isSearchable: true,
         shortcut: 'T',
-        readability: MetadataReadability.INHERITED,
-        readabilityParentFieldMetadataNames: ['taskTargets'],
         labelIdentifierFieldMetadataName: 'title',
       },
       workspaceId,
@@ -1591,8 +1548,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconCheckbox',
         isSystem: true,
         isUICreatable: false,
-        readability: MetadataReadability.INHERITED,
-        readabilityParentFieldMetadataNames: ['targetPerson'],
         labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
@@ -1640,8 +1595,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
-        readability: MetadataReadability.INHERITED,
-        readabilityParentFieldMetadataNames: ['targetPerson'],
         labelIdentifierFieldMetadataName: 'linkedRecordCachedName',
       },
       workspaceId,
@@ -1722,7 +1675,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconSettingsAutomation',
         isSystem: true,
         isUICreatable: false,
-        writability: MetadataWritability.SYSTEM,
         disabledObjectPermissionActions:
           PLATFORM_WRITTEN_DISABLED_OBJECT_PERMISSION_ACTIONS,
         labelIdentifierFieldMetadataName: 'id',
@@ -1768,8 +1720,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSystem: true,
         isAuditLogged: false,
         isUICreatable: false,
-        // As private as its core workflow; WorkflowRunRecordShareService writes the grants
-        readability: MetadataReadability.PRIVATE,
         labelIdentifierFieldMetadataName: 'name',
       },
       workspaceId,
