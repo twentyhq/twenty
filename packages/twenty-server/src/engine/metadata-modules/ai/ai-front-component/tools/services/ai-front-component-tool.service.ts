@@ -44,22 +44,22 @@ export class AiFrontComponentToolService {
     }
 
     return {
-      list_front_components: createListFrontComponentsTool(
-        this.frontComponentService,
+      list_front_components: createListFrontComponentsTool({
+        frontComponentService: this.frontComponentService,
         context,
-      ),
-      [PREVIEW_FRONT_COMPONENT_TOOL_NAME]: createPreviewFrontComponentTool(
-        this.aiFrontComponentService,
+      }),
+      [PREVIEW_FRONT_COMPONENT_TOOL_NAME]: createPreviewFrontComponentTool({
+        aiFrontComponentService: this.aiFrontComponentService,
         context,
-      ),
-      inspect_front_component: createInspectFrontComponentTool(
-        this.aiFrontComponentService,
-        { ...context, userWorkspaceId },
-      ),
-      [PUBLISH_FRONT_COMPONENT_TOOL.name]: createPublishFrontComponentTool(
-        this.aiFrontComponentService,
+      }),
+      inspect_front_component: createInspectFrontComponentTool({
+        aiFrontComponentService: this.aiFrontComponentService,
+        context: { workspaceId: context.workspaceId, userWorkspaceId },
+      }),
+      [PUBLISH_FRONT_COMPONENT_TOOL.name]: createPublishFrontComponentTool({
+        aiFrontComponentService: this.aiFrontComponentService,
         context,
-      ),
+      }),
     };
   }
 }

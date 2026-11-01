@@ -4,10 +4,15 @@ import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/
 import { type AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service';
 import { frontComponentDraftIdSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-draft-id.schema';
 
-export const createInspectFrontComponentTool = (
-  aiFrontComponentService: AiFrontComponentService,
-  context: ToolProviderContext & { userWorkspaceId: string },
-) =>
+export const createInspectFrontComponentTool = ({
+  aiFrontComponentService,
+  context,
+}: {
+  aiFrontComponentService: Pick<AiFrontComponentService, 'getDraftOrThrow'>;
+  context: Pick<ToolProviderContext, 'workspaceId'> & {
+    userWorkspaceId: string;
+  };
+}) =>
   tool({
     description:
       'Read a draft source, sample data, checksum, revision status and reported browser error to revise a preview. Drafts expire after 24 hours. No reported error does not prove rendering succeeded.',
