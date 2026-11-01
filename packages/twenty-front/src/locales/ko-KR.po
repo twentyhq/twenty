@@ -7566,7 +7566,7 @@ msgstr "{emoji}로 반응할 수 없습니다"
 #. js-lingui-id: 6GjSMn
 #: src/modules/ai/hooks/useRefreshFrontComponents.ts
 msgid "Could not refresh components. Reload to see saved changes."
-msgstr ""
+msgstr "구성 요소를 새로 고칠 수 없습니다. 저장된 변경 사항을 보려면 다시 로드하세요."
 
 #. js-lingui-id: w1HkE9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx

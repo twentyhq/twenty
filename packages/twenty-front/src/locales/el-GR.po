@@ -7566,7 +7566,7 @@ msgstr "Δεν ήταν δυνατή η αντίδραση με {emoji}"
 #. js-lingui-id: 6GjSMn
 #: src/modules/ai/hooks/useRefreshFrontComponents.ts
 msgid "Could not refresh components. Reload to see saved changes."
-msgstr ""
+msgstr "Δεν ήταν δυνατή η ανανέωση των στοιχείων. Επαναφορτώστε για να δείτε τις αποθηκευμένες αλλαγές."
 
 #. js-lingui-id: w1HkE9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx

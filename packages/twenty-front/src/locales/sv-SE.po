@@ -7566,7 +7566,7 @@ msgstr "Kunde inte reagera med {emoji}"
 #. js-lingui-id: 6GjSMn
 #: src/modules/ai/hooks/useRefreshFrontComponents.ts
 msgid "Could not refresh components. Reload to see saved changes."
-msgstr ""
+msgstr "Kunde inte uppdatera komponenterna. Ladda om för att se sparade ändringar."
 
 #. js-lingui-id: w1HkE9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx

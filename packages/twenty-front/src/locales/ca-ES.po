@@ -7566,7 +7566,7 @@ msgstr "No s'ha pogut reaccionar amb {emoji}"
 #. js-lingui-id: 6GjSMn
 #: src/modules/ai/hooks/useRefreshFrontComponents.ts
 msgid "Could not refresh components. Reload to see saved changes."
-msgstr ""
+msgstr "No s'han pogut actualitzar els components. Torneu a carregar per veure els canvis desats."
 
 #. js-lingui-id: w1HkE9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx

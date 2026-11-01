@@ -7566,7 +7566,7 @@ msgstr "無法以 {emoji} 回應"
 #. js-lingui-id: 6GjSMn
 #: src/modules/ai/hooks/useRefreshFrontComponents.ts
 msgid "Could not refresh components. Reload to see saved changes."
-msgstr ""
+msgstr "無法重新整理元件。重新載入以查看已儲存的變更。"
 
 #. js-lingui-id: w1HkE9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx

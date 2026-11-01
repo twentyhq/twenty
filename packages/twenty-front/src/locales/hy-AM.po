@@ -7566,7 +7566,7 @@ msgstr "Չհաջողվեց արձագանքել {emoji}-ով"
 #. js-lingui-id: 6GjSMn
 #: src/modules/ai/hooks/useRefreshFrontComponents.ts
 msgid "Could not refresh components. Reload to see saved changes."
-msgstr ""
+msgstr "Չհաջողվեց թարմացնել բաղադրիչները: Վերաբեռնեք՝ պահպանված փոփոխությունները տեսնելու համար։"
 
 #. js-lingui-id: w1HkE9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx

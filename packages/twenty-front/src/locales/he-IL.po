@@ -7566,7 +7566,7 @@ msgstr "לא ניתן היה להגיב באמצעות {emoji}"
 #. js-lingui-id: 6GjSMn
 #: src/modules/ai/hooks/useRefreshFrontComponents.ts
 msgid "Could not refresh components. Reload to see saved changes."
-msgstr ""
+msgstr "לא ניתן היה לרענן רכיבים. טען מחדש כדי לראות שינויים שנשמרו."
 
 #. js-lingui-id: w1HkE9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx

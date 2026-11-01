@@ -7566,7 +7566,7 @@ msgstr "Nu s-a putut reacționa cu {emoji}"
 #. js-lingui-id: 6GjSMn
 #: src/modules/ai/hooks/useRefreshFrontComponents.ts
 msgid "Could not refresh components. Reload to see saved changes."
-msgstr ""
+msgstr "Nu s-au putut reîmprospăta componentele. Reîncărcați pentru a vedea modificările salvate."
 
 #. js-lingui-id: w1HkE9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx

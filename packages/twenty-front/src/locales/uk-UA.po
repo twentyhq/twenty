@@ -7566,7 +7566,7 @@ msgstr "Не вдалося відреагувати за допомогою {em
 #. js-lingui-id: 6GjSMn
 #: src/modules/ai/hooks/useRefreshFrontComponents.ts
 msgid "Could not refresh components. Reload to see saved changes."
-msgstr ""
+msgstr "Не вдалося оновити компоненти. Перезавантажте сторінку, щоб побачити збережені зміни."
 
 #. js-lingui-id: w1HkE9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx

@@ -7566,7 +7566,7 @@ msgstr "{emoji} でリアクションできませんでした"
 #. js-lingui-id: 6GjSMn
 #: src/modules/ai/hooks/useRefreshFrontComponents.ts
 msgid "Could not refresh components. Reload to see saved changes."
-msgstr ""
+msgstr "コンポーネントを更新できませんでした。保存された変更を確認するには、再読み込みしてください。"
 
 #. js-lingui-id: w1HkE9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx

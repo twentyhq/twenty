@@ -7566,7 +7566,7 @@ msgstr "Nepodařilo se reagovat pomocí {emoji}"
 #. js-lingui-id: 6GjSMn
 #: src/modules/ai/hooks/useRefreshFrontComponents.ts
 msgid "Could not refresh components. Reload to see saved changes."
-msgstr ""
+msgstr "Komponenty se nepodařilo obnovit. Načtěte stránku znovu, abyste viděli uložené změny."
 
 #. js-lingui-id: w1HkE9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
