@@ -21,6 +21,9 @@ import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import {
   TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_MAX,
@@ -56,6 +59,8 @@ export class TwoFactorAuthenticationService {
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly secretEncryptionService: SecretEncryptionService,
     private readonly throttlerService: ThrottlerService,
+    @InjectCacheStorage(CacheStorageNamespace.EngineAuthSession)
+    private readonly cacheStorageService: CacheStorageService,
   ) {}
 
   private async decryptStoredSecret({
@@ -240,6 +245,25 @@ export class TwoFactorAuthenticationService {
     if (!validationResult.isValid) {
       throw new TwoFactorAuthenticationException(
         'Invalid OTP',
+        TwoFactorAuthenticationExceptionCode.INVALID_OTP,
+      );
+    }
+
+    const replayCacheKey = `totp-replay:${workspaceId}:${userId}:${token}`;
+    const totpValidityWindowMs =
+      (2 * (TOTP_DEFAULT_CONFIGURATION.window ?? 1) + 1) *
+      (TOTP_DEFAULT_CONFIGURATION.step ?? 30) *
+      1000;
+
+    const isFirstUse = await this.cacheStorageService.setIfAbsent(
+      replayCacheKey,
+      true,
+      totpValidityWindowMs,
+    );
+
+    if (!isFirstUse) {
+      throw new TwoFactorAuthenticationException(
+        'OTP already used',
         TwoFactorAuthenticationExceptionCode.INVALID_OTP,
       );
     }
