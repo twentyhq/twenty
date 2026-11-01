@@ -27,7 +27,10 @@ export class MessagingMessageParticipantService {
     participants: ParticipantWithMessageId[],
     workspaceId: string,
     transactionScope: WorkspaceTransactionScope,
-    { shouldMatchOnDisplayName }: { shouldMatchOnDisplayName: boolean } = {
+    {
+      shouldMatchOnDisplayName,
+      refreshedMessageIds = [],
+    }: { shouldMatchOnDisplayName: boolean; refreshedMessageIds?: string[] } = {
       shouldMatchOnDisplayName: true,
     },
   ): Promise<MessageParticipantWorkspaceEntity[]> {
@@ -44,9 +47,10 @@ export class MessagingMessageParticipantService {
         const existingParticipantsBasedOnMessageIds =
           await messageParticipantRepository.find({
             where: {
-              messageId: In(
-                participants.map((participant) => participant.messageId),
-              ),
+              messageId: In([
+                ...participants.map((participant) => participant.messageId),
+                ...refreshedMessageIds,
+              ]),
             },
           });
 
@@ -70,6 +74,27 @@ export class MessagingMessageParticipantService {
           participant,
           existingParticipant: findExisting(participant),
         }));
+
+        const matchedParticipantIds = new Set(
+          participantsWithExisting
+            .map(({ existingParticipant }) => existingParticipant?.id)
+            .filter(isDefined),
+        );
+        const refreshedMessageIdSet = new Set(refreshedMessageIds);
+
+        const staleParticipantIds = existingParticipantsBasedOnMessageIds
+          .filter(
+            (existingParticipant) =>
+              refreshedMessageIdSet.has(existingParticipant.messageId) &&
+              !matchedParticipantIds.has(existingParticipant.id),
+          )
+          .map((existingParticipant) => existingParticipant.id);
+
+        if (staleParticipantIds.length > 0) {
+          await messageParticipantRepository.delete({
+            id: In(staleParticipantIds),
+          });
+        }
 
         const participantsToCreate: Pick<
           MessageParticipantWorkspaceEntity,

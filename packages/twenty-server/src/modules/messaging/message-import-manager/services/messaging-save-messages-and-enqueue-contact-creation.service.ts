@@ -73,6 +73,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
           return this.workspaceOrmManager.runInWorkspaceTransaction(
             async (transactionScope) => {
               const {
+                refreshedMessageExternalIds,
                 messageExternalIdsAndIdsMap,
                 messageExternalIdToMessageChannelMessageAssociationIdMap,
                 messageExternalIdToMessageThreadIdMap,
@@ -82,6 +83,21 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                 transactionScope,
                 workspaceId,
               );
+
+              const refreshedMessageIds = refreshedMessageExternalIds
+                .map((externalId) =>
+                  messageExternalIdsAndIdsMap.get(externalId),
+                )
+                .filter(isDefined);
+
+              const refreshedMessageChannelMessageAssociationIds =
+                refreshedMessageExternalIds
+                  .map((externalId) =>
+                    messageExternalIdToMessageChannelMessageAssociationIdMap.get(
+                      externalId,
+                    ),
+                  )
+                  .filter(isDefined);
 
               const participantsWithMessageId: (ParticipantWithMessageId & {
                 shouldCreateContact: boolean;
@@ -143,6 +159,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                   {
                     shouldMatchOnDisplayName:
                       messageChannel.type !== MessageChannelType.APP,
+                    refreshedMessageIds,
                   },
                 );
 
@@ -175,6 +192,7 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                 folderAssociations,
                 workspaceId,
                 transactionScope,
+                { refreshedMessageChannelMessageAssociationIds },
               );
 
               return {

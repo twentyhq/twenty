@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import chunk from 'lodash.chunk';
+import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 import { v4 } from 'uuid';
@@ -54,6 +56,7 @@ export class MessagingMessageService {
     workspaceId: string,
   ): Promise<{
     createdMessages: Partial<MessageWorkspaceEntity>[];
+    refreshedMessageExternalIds: string[];
     messageExternalIdsAndIdsMap: Map<string, string>;
     messageExternalIdToMessageChannelMessageAssociationIdMap: Map<
       string,
@@ -248,9 +251,14 @@ export class MessagingMessageService {
             continue;
           }
 
+          const hasRefreshedSubject =
+            isDefined(messageAccumulator.messageToRefresh) &&
+            messageAccumulator.existingMessageInDB?.subject !== message.subject;
+
           if (
             isDefined(messageAccumulator.existingThreadInDB) &&
-            isDefined(messageAccumulator.messageToCreate) &&
+            (isDefined(messageAccumulator.messageToCreate) ||
+              hasRefreshedSubject) &&
             isDefined(message.subject)
           ) {
             const threadId = messageAccumulator.existingThreadInDB.id;
@@ -289,8 +297,16 @@ export class MessagingMessageService {
           .map((accumulator) => accumulator.messageToRefresh)
           .filter(isDefined);
 
-        for (const { id, ...messageToRefresh } of messagesToRefresh) {
-          await messageRepository.update({ id }, messageToRefresh);
+        for (const messagesToRefreshChunk of chunk(
+          messagesToRefresh,
+          QUERY_MAX_RECORDS,
+        )) {
+          await messageRepository.updateMany(
+            messagesToRefreshChunk.map(({ id, ...partialEntity }) => ({
+              criteria: id,
+              partialEntity,
+            })),
+          );
         }
 
         const messageChannelMessageAssociationsToCreate = Array.from(
@@ -349,8 +365,15 @@ export class MessagingMessageService {
           }
         }
 
+        const refreshedMessageExternalIds = Array.from(
+          messageAccumulatorMap.entries(),
+        )
+          .filter(([, accumulator]) => isDefined(accumulator.messageToRefresh))
+          .map(([externalId]) => externalId);
+
         return {
           createdMessages: messagesToCreate,
+          refreshedMessageExternalIds,
           messageExternalIdsAndIdsMap,
           messageExternalIdToMessageChannelMessageAssociationIdMap,
           messageExternalIdToMessageThreadIdMap,
