@@ -4,6 +4,10 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { isOAuthOnlyApplication } from 'src/engine/core-modules/application/utils/is-oauth-only-application.util';
 import { type RoleIdsBySource } from 'src/engine/permissions/principal/types/role-permission-config.type';
 
+const NO_APPLICATION_RESTRICTION = {} as const;
+
+const APPLICATION_ALLOWS_NOTHING = { applicationRoleId: null } as const;
+
 // OAuth-only applications have no role, so they add no restriction to the member or agent they act with
 export const resolveApplicationRoleId = ({
   application,
@@ -13,12 +17,14 @@ export const resolveApplicationRoleId = ({
     | undefined;
 }): Pick<RoleIdsBySource, 'applicationRoleId'> => {
   if (!isDefined(application)) {
-    return {};
+    return NO_APPLICATION_RESTRICTION;
   }
 
   if (isDefined(application.defaultRoleId)) {
     return { applicationRoleId: application.defaultRoleId };
   }
 
-  return isOAuthOnlyApplication(application) ? {} : { applicationRoleId: null };
+  return isOAuthOnlyApplication(application)
+    ? NO_APPLICATION_RESTRICTION
+    : APPLICATION_ALLOWS_NOTHING;
 };
