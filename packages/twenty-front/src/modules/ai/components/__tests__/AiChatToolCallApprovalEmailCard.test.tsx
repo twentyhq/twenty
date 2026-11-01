@@ -145,26 +145,6 @@ describe('AiChatToolCallApprovalCard for an email', () => {
     expect(screen.getByRole('button', { name: 'Discard' })).toBeDisabled();
   });
 
-  it('keeps the subject unchanged when the proposal disallows editing', async () => {
-    const user = userEvent.setup();
-    renderCard({ ...PROPOSAL, areArgumentsEditable: false });
-
-    const subject = screen.getByRole('textbox', { name: 'Subject' });
-    expect(subject).toBeDisabled();
-    await user.type(subject, 'Changed subject');
-    await user.click(screen.getByRole('button', { name: 'Send' }));
-
-    expect(answerAgentChatToolCall).toHaveBeenCalledWith(
-      expect.objectContaining({
-        response: {
-          decision: 'approve',
-          toolName: 'send_email',
-          arguments: EMAIL_ARGUMENTS,
-        },
-      }),
-    );
-  });
-
   it('saves the email as a draft through the alternative tool', async () => {
     const user = userEvent.setup();
     answerAgentChatToolCall.mockResolvedValue(true);

@@ -92,17 +92,13 @@ export const resolveProposedToolCall = async ({
     };
   }
 
-  const {
-    template = 'generic',
-    alternativeToolNames,
-    areArgumentsEditable,
-  } = toolIndexEntry.approval ?? {};
+  const { template = 'generic', alternativeToolNames } =
+    toolIndexEntry.approval ?? {};
   const baseProposal = {
     toolName,
     toolLabel: toolIndexEntry.label,
     summary,
     arguments: input.arguments,
-    ...(isDefined(areArgumentsEditable) ? { areArgumentsEditable } : {}),
     ...(isNonEmptyArray(alternativeToolNames) ? { alternativeToolNames } : {}),
   };
 

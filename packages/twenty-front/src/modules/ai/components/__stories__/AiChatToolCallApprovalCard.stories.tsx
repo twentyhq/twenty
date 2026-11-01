@@ -33,7 +33,6 @@ const PROPOSAL: ProposedToolCall = {
   summary: 'Save this counter to the Workspace app',
   arguments: { draftId: 'current', checksum: 'a'.repeat(64) },
   template: 'frontComponent',
-  areArgumentsEditable: false,
 };
 
 const meta: Meta<typeof AiChatToolCallApprovalCard> = {
