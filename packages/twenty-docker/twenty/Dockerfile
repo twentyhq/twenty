@@ -51,6 +51,10 @@ RUN yarn workspaces focus twenty-monorepo twenty-server twenty-emails twenty-sha
 
 FROM server-deps AS twenty-server-build
 
+COPY ./packages/twenty-docs/ui /app/packages/twenty-docs/ui
+COPY ./packages/twenty-ui/generated/components.docs.json /app/packages/twenty-ui/generated/components.docs.json
+COPY ./packages/twenty-ui/package.json /app/packages/twenty-ui/package.json
+
 COPY ./packages/twenty-emails /app/packages/twenty-emails
 COPY ./packages/twenty-shared /app/packages/twenty-shared
 COPY ./packages/twenty-client-sdk /app/packages/twenty-client-sdk

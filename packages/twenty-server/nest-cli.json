@@ -80,6 +80,10 @@
       {
         "include": "engine/core-modules/application/application-package/constants/yarn-engine/*.cjs",
         "outDir": "dist"
+      },
+      {
+        "include": "engine/metadata-modules/ai/ai-front-component/constants/ui-documentation.generated.json",
+        "outDir": "dist/assets"
       }
     ]
   },

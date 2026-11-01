@@ -12,11 +12,19 @@
         "parallel": false,
         "commands": [
           "rimraf dist",
+          "node scripts/build-ui-documentation.mjs",
           "nest build --path ./tsconfig.build.json",
           "mkdir -p dist/assets/twenty-client-sdk && cp ../twenty-client-sdk/package.json dist/assets/twenty-client-sdk/ && cp -r ../twenty-client-sdk/dist dist/assets/twenty-client-sdk/dist"
         ]
       },
-      "dependsOn": ["^build"]
+      "dependsOn": ["^build"],
+      "inputs": [
+        "production",
+        "^production",
+        "{workspaceRoot}/packages/twenty-docs/ui/**/*.mdx",
+        "{workspaceRoot}/packages/twenty-ui/generated/components.docs.json",
+        "{workspaceRoot}/packages/twenty-ui/package.json"
+      ]
     },
     "test:integration:secure": {
       "executor": "nx:run-commands",
@@ -73,14 +81,14 @@
       "dependsOn": ["^build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "rimraf dist && NODE_ENV=development nest start --watch"
+        "command": "rimraf dist && node scripts/build-ui-documentation.mjs && NODE_ENV=development nest start --watch"
       }
     },
     "start:ci": {
       "executor": "nx:run-commands",
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "NODE_ENV=development nest start"
+        "command": "node scripts/build-ui-documentation.mjs && NODE_ENV=development nest start"
       }
     },
     "start:ci-if-needed": {
@@ -96,7 +104,7 @@
       "dependsOn": ["^build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "rimraf dist && NODE_ENV=development nest start --watch --debug"
+        "command": "rimraf dist && node scripts/build-ui-documentation.mjs && NODE_ENV=development nest start --watch --debug"
       }
     },
     "reset:env": {
@@ -139,7 +147,7 @@
       "dependsOn": ["^build"],
       "options": {
         "cwd": "packages/twenty-server",
-        "command": "NODE_ENV=development nest start --watch --entryFile queue-worker/queue-worker"
+        "command": "node scripts/build-ui-documentation.mjs && NODE_ENV=development nest start --watch --entryFile queue-worker/queue-worker"
       }
     },
     "ts-node": {
