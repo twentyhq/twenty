@@ -62,6 +62,20 @@ describe('ai.generate', () => {
     });
   });
 
+  it('acts as the person who triggered the run rather than the application', async () => {
+    process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN = 'application-token';
+
+    try {
+      await ai.generate({ input: 'Is Acme a good fit?' });
+
+      expect(
+        new Headers(fetchSpy.mock.calls[0][1]?.headers).get('Authorization'),
+      ).toBe('Bearer app-token');
+    } finally {
+      delete process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN;
+    }
+  });
+
   it('sends messages and the scope as given', async () => {
     const scope = {
       objectPermissions: [
@@ -238,6 +252,24 @@ describe('ai.generate with onChunk', () => {
     runChannel.send({ type: 'message-persisted', messageId: 'message-id' });
 
     await expect(generation).resolves.toEqual(RESULT);
+  });
+
+  it('follows the run and starts it with the same caller token', async () => {
+    vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', 'application-token');
+    const runChannel = mockRunChannel(fetchSpy);
+
+    const generation = ai.generate({ input: 'Hi', onChunk: () => {} });
+
+    await vi.waitFor(() => expect(runChannel.requests).toHaveLength(2));
+    runChannel.answerMutation({ data: { generate: RESULT } });
+    runChannel.send({ type: 'message-persisted', messageId: 'message-id' });
+
+    await expect(generation).resolves.toEqual(RESULT);
+    expect(
+      fetchSpy.mock.calls.map(([, requestInit]) =>
+        new Headers(requestInit?.headers).get('Authorization'),
+      ),
+    ).toEqual(['Bearer app-token', 'Bearer app-token']);
   });
 
   it('picks a run id when the caller does not', async () => {

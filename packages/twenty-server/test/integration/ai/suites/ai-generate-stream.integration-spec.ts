@@ -17,6 +17,8 @@ import { type AgentChatSubscriptionEvent } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
+import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 
 const INPUT = [{ role: 'user' as const, content: 'Qualify Acme' }];
 const GENERATE_TIMEOUT_MS = 30_000;
@@ -148,6 +150,49 @@ describe('ai.generate runs followed by their application (integration)', () => {
     expect(otherStream.events.every(({ type }) => type === 'keepalive')).toBe(
       true,
     );
+  });
+
+  it('streams a run started with a member-bound token of the application to the same channel', async () => {
+    const runId = randomUUID();
+    const { applicationAccessToken: memberBoundToken } =
+      await generateApplicationTokenPair({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        applicationId: application.id,
+        userId: USER_DATA_SEED_IDS.JANE,
+        userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      });
+    const stream = await followAgentRunEvents({
+      runId,
+      token: memberBoundToken.token,
+    });
+
+    try {
+      await waitForOrThrow(() => stream.events.length > 0);
+      mockScriptedAiModel(() => answerWith('Acme looks like a fit'));
+
+      const response = await makeMetadataApiRequest(
+        generateQueryFactory({ input: INPUT, runId }),
+        memberBoundToken.token,
+      ).timeout(GENERATE_TIMEOUT_MS);
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.generate).toMatchObject({
+        success: true,
+        runId,
+      });
+
+      await waitForOrThrow(() => stream.events.some(isRunEnd));
+    } finally {
+      await stream.close();
+    }
+
+    expect(stream.errors).toEqual([]);
+    expect(
+      stream.events.some(
+        (event) =>
+          event.type === 'stream-chunk' && event.chunk.type === 'text-delta',
+      ),
+    ).toBe(true);
   });
 
   it('refuses a run id that is already used', async () => {

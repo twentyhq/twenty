@@ -5,13 +5,19 @@ import {
   DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME,
 } from 'twenty-shared/application-runtime';
 
-import { getApplicationAccessToken } from '@/sdk/utils/get-application-access-token';
+import {
+  getApplicationAccessToken,
+  getCallerAccessToken,
+} from '@/sdk/utils/get-application-access-token';
 
 export const getApplicationApiConfigOrThrow = (
   caller: string,
+  { isActingAsCaller = false }: { isActingAsCaller?: boolean } = {},
 ): { apiUrl: string; accessToken: string } => {
   const apiUrl = process.env[DEFAULT_API_URL_NAME];
-  const accessToken = getApplicationAccessToken();
+  const accessToken = isActingAsCaller
+    ? getCallerAccessToken()
+    : getApplicationAccessToken();
 
   if (!isNonEmptyString(apiUrl) || !isNonEmptyString(accessToken)) {
     throw new Error(

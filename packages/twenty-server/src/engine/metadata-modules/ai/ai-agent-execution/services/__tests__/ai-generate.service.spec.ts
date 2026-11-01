@@ -6,7 +6,7 @@ import { buildAgentRunStreamChannelId } from 'src/engine/metadata-modules/ai/ai-
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 
 const WORKSPACE = { id: 'workspace-id' };
-const APPLICATION = { id: 'application-id' };
+const APPLICATION = { id: 'application-id', defaultRoleId: 'role-id' };
 const RUN_ID = '3f1c9a52-7b0e-4d6a-8c2f-9e4b5a6d7c81';
 const INPUT = [{ role: 'user', content: 'Qualify Acme' }];
 
@@ -37,7 +37,7 @@ const generate = ({
 }: {
   service: AiGenerateService;
   input: Record<string, unknown>;
-  callerApplication: typeof APPLICATION | undefined;
+  callerApplication: { id: string; defaultRoleId: string | null } | undefined;
 }) =>
   service.generate({
     workspace: WORKSPACE as never,
@@ -126,6 +126,19 @@ describe('AiGenerateService', () => {
       code: AiExceptionCode.INVALID_AGENT_INPUT,
       message: `Run ${RUN_ID} already exists; pass a new runId`,
     });
+  });
+
+  it('refuses an application without a default role', async () => {
+    const { service, runInRequest } = buildService({});
+
+    await expect(
+      generate({
+        service,
+        input: { input: INPUT },
+        callerApplication: { id: APPLICATION.id, defaultRoleId: null },
+      }),
+    ).rejects.toMatchObject({ code: AiExceptionCode.RUN_AGENT_NOT_ALLOWED });
+    expect(runInRequest).not.toHaveBeenCalled();
   });
 
   it('refuses a run id without an application token', async () => {

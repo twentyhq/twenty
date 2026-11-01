@@ -148,15 +148,19 @@ export async function* streamAgentChatEvents({
   caller,
   signal,
   closedEarlyAdvice = '',
+  isActingAsCaller = false,
 }: {
   query: string;
   variables: Record<string, unknown>;
   caller: string;
   signal?: AbortSignal;
+  isActingAsCaller?: boolean;
   // appended to the error a dropped connection throws, for callers that can resume
   closedEarlyAdvice?: string;
 }): AsyncGenerator<AgentChatSubscriptionEvent> {
-  const { apiUrl, accessToken } = getApplicationApiConfigOrThrow(caller);
+  const { apiUrl, accessToken } = getApplicationApiConfigOrThrow(caller, {
+    isActingAsCaller,
+  });
   let reader: ReadableStreamDefaultReader<string> | undefined;
 
   if (signal?.aborted) {
