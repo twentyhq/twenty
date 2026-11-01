@@ -1,0 +1,63 @@
+---
+title: DirectionProvider
+description: Coordonați interacțiunile direcționale ale tastaturii și indicatorului cu direcția documentului.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import DirectionProviderReference from '/snippets/ui/generated/layout/direction-provider.mdx';
+
+## Prezentare generală
+
+`DirectionProvider` furnizează direcția `ltr` sau `rtl` controalelor Twenty UI. Nu redă un element DOM și nu setează un atribut HTML `dir`. Setați atât direcția furnizorului, cât și direcția corespunzătoare a documentului.
+
+<StoryEmbed storyId="ui-layout-directionprovider--display" title="Exemplu DirectionProvider" height={160} />
+
+## Utilizare
+
+```tsx
+import { SegmentedControl } from 'twenty-ui/components/input';
+import { DirectionProvider } from 'twenty-ui/primitives/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type DirectionalChoicesProps = { direction: 'ltr' | 'rtl' };
+
+export const DirectionalChoices = ({ direction }: DirectionalChoicesProps) => (
+  <DirectionProvider direction={direction}>
+    <Text dir={direction}>
+      <SegmentedControl
+        aria-label="Billing period"
+        defaultValue="annual"
+        options={[
+          { label: 'Annual', value: 'annual' },
+          { label: 'Monthly', value: 'monthly' },
+        ]}
+      />
+    </Text>
+  </DirectionProvider>
+);
+```
+
+Aplicația gazdă furnizează etichete traduse și alege direcția. Contextul direcției afectează interacțiunile direcționale; atributul HTML gestionează textul și aspectul. De exemplu, [SegmentedControl](/ro/ui/components/input/segmented-control) inversează navigarea orizontală cu săgețile, iar [ResizeHandle](/ro/ui/primitives/layout/resize-handle) inversează redimensionarea orizontală.
+
+## Domeniu de aplicare și stare
+
+Plasați un furnizor în jurul controalelor care partajează aceeași direcție. Furnizorii imbricați pot suprascrie direcția pentru un subarbore; asociați fiecare suprascriere cu un atribut `dir` corespunzător. `direction` este gestionat de aplicație și are implicit valoarea `ltr`, la fel ca Base UI. Elementele copil sunt opționale. Importați `DirectionProviderProps` din același punct de intrare. Furnizorul nu are țintă DOM, proprietăți native sau ref. Furnizorul nu traduce conținutul și nu alege automat direcția în funcție de setările regionale.
+
+## Portaluri și aspect
+
+Portalurile Dropdown, Popover, Tooltip, Select, Dialog și Toast transmit direcția furnizorului chiar și atunci când containerul lor se află în afara elementului cu `dir`. Fără un furnizor, ele moștenesc direcția containerului lor. Mențineți consecvente direcția furnizorului și direcția HTML a declanșatorului. Un `ThemeProvider` cu domeniu de aplicare continuă să gestioneze containerul de portal implicit.
+
+Submeniurile se deschid spre `inline-end`. ArrowRight deschide un submeniu în LTR; ArrowLeft îl deschide în RTL. Tasta opusă revine la elementul părinte. Poziționarea explicită a ferestrei pop-up cu `left` și `right` se referă în continuare la laturi fizice. Gestionarea coliziunilor poate muta o fereastră pop-up atunci când spațiul este limitat.
+
+Textul, indentarea, colțurile butoanelor atașate și pictogramele direcționale de extindere urmează direcția de citire. Pictogramele furnizate își păstrează orientarea. `AvatarGroup.overlap` denumește în continuare o margine fizică; avatarul exterior nu se extinde dincolo de acea margine în nicio direcție.
+
+<StoryEmbed storyId="ui-layout-directionprovider--reading-directions" title="Aspecte de la stânga la dreapta și de la dreapta la stânga" height={1260} />
+
+## Proprietăți
+
+<DirectionProviderReference />
+
+<PageBanner illustration="card-page-tutorial-http" />

@@ -1,3 +1,4 @@
+import { PUBLISH_FRONT_COMPONENT_TOOL } from 'src/engine/metadata-modules/ai/ai-front-component/constants/publish-front-component-tool.constant';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { resolveProposedToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-proposed-tool-call.util';
 
@@ -63,6 +64,36 @@ const foundRecord = (record: Record<string, unknown>) =>
   });
 
 describe('resolveProposedToolCall', () => {
+  it('takes the component publication editing policy from the registered tool', async () => {
+    const tool: ToolIndexEntry = {
+      ...PUBLISH_FRONT_COMPONENT_TOOL,
+      label: 'Save component',
+      description: '',
+      category: 'ACTION' as ToolIndexEntry['category'],
+      executionRef: {
+        kind: 'static',
+        toolId: PUBLISH_FRONT_COMPONENT_TOOL.name,
+      },
+    };
+    const resolution = await resolveProposedToolCall({
+      input: {
+        toolName: tool.name,
+        arguments: { draftId: RECORD_ID, checksum: 'reviewed-checksum' },
+        summary: 'Save the reviewed component',
+      },
+      findTool: async () => tool,
+      executeTool: jest.fn(),
+    });
+
+    expect(resolution).toMatchObject({
+      proposal: {
+        toolName: tool.name,
+        areArgumentsEditable: false,
+        arguments: { draftId: RECORD_ID, checksum: 'reviewed-checksum' },
+      },
+    });
+  });
+
   it('refuses a tool the proposer cannot call', async () => {
     expect(
       await resolveProposedToolCall({
@@ -279,61 +310,3 @@ describe('resolveProposedToolCall', () => {
     },
   );
 });
-
-it.each([
-  [
-    'publish_front_component',
-    'frontComponent',
-    { draftId: '20202020-1111-4111-8111-111111111111' },
-  ],
-] as const)(
-  'keeps the approval template for %s',
-  async (toolName, template, toolArguments) => {
-    const result = await resolveProposedToolCall({
-      input: {
-        toolName,
-        arguments: toolArguments,
-        summary: 'Confirm component action',
-      },
-      findTool: async () => ({
-        name: toolName,
-        label: 'Component action',
-        description: '',
-        category: 'FRONT_COMPONENT' as ToolIndexEntry['category'],
-        executionRef: { kind: 'static', toolId: toolName },
-        approval: { template },
-      }),
-      executeTool: jest.fn(),
-    });
-    expect(result).toMatchObject({
-      proposal: { template, arguments: toolArguments },
-    });
-  },
-);
-
-it.each([{}, { draftId: 123 }, { draftId: 'not-a-draft-id' }])(
-  'rejects malformed component approval arguments %j before displaying the card',
-  async (toolArguments) => {
-    const result = await resolveProposedToolCall({
-      input: {
-        toolName: 'publish_front_component',
-        arguments: toolArguments,
-        summary: 'Save component',
-      },
-      findTool: async () => ({
-        name: 'publish_front_component',
-        label: 'Save component',
-        description: '',
-        category: 'FRONT_COMPONENT' as ToolIndexEntry['category'],
-        executionRef: { kind: 'static', toolId: 'publish_front_component' },
-        approval: { template: 'frontComponent' },
-      }),
-      executeTool: jest.fn(),
-    });
-
-    expect(result).toEqual({
-      error:
-        'arguments.draftId must be the draftId returned by preview_front_component.',
-    });
-  },
-);

@@ -15,60 +15,79 @@ export const renderAppTemplate = async ({
   appName,
   appDisplayName,
   appDescription,
+  shouldIncludeExample = true,
 }: {
   appDirectory: string;
   appName: string;
   appDisplayName: string;
   appDescription: string;
+  shouldIncludeExample?: boolean;
 }) => {
-  await cp(getAppTemplateDirectory(), appDirectory, { recursive: true });
+  const templateDirectory = getAppTemplateDirectory();
+  const exampleDirectory = join(templateDirectory, 'example');
+
+  await cp(templateDirectory, appDirectory, {
+    recursive: true,
+    filter: (source) => source !== exampleDirectory,
+  });
+
+  if (shouldIncludeExample) {
+    await cp(join(exampleDirectory, 'files'), appDirectory, {
+      recursive: true,
+    });
+  }
+
   await writeFile(join(appDirectory, 'yarn.lock'), '', { flag: 'a' });
 
   // npm excludes these dotfiles when packing the template.
   for (const [source, destination] of [
     ['gitignore', '.gitignore'],
-    ['github', '.github'],
     ['yarnrc.yml', '.yarnrc.yml'],
   ]) {
     await rename(join(appDirectory, source), join(appDirectory, destination));
   }
 
-  await cp(join(appDirectory, 'AGENTS.md'), join(appDirectory, 'CLAUDE.md'));
+  if (shouldIncludeExample) {
+    await rename(join(appDirectory, 'github'), join(appDirectory, '.github'));
 
-  for (const workflowName of ['ci.yml', 'cd.yml', 'publish.yml']) {
-    const workflowPath = join(
+    await cp(join(appDirectory, 'AGENTS.md'), join(appDirectory, 'CLAUDE.md'));
+
+    for (const workflowName of ['ci.yml', 'cd.yml', 'publish.yml']) {
+      const workflowPath = join(
+        appDirectory,
+        '.github',
+        'workflows',
+        workflowName,
+      );
+      const workflow = (await readFile(workflowPath, 'utf8')).replaceAll(
+        'CLI-VERSION-TO-BE-GENERATED',
+        CLI_VERSION,
+      );
+
+      await writeFile(workflowPath, workflow);
+    }
+
+    const identifiersPath = join(
       appDirectory,
-      '.github',
-      'workflows',
-      workflowName,
+      'src/constants/universal-identifiers.ts',
     );
-    const workflow = (await readFile(workflowPath, 'utf8')).replaceAll(
-      'CLI-VERSION-TO-BE-GENERATED',
-      CLI_VERSION,
-    );
+    const identifiers = (await readFile(identifiersPath, 'utf8'))
+      .replace(/'DISPLAY-NAME-TO-BE-GENERATED'/g, () =>
+        printTypescriptValue({ value: appDisplayName }),
+      )
+      .replace(/'DESCRIPTION-TO-BE-GENERATED'/g, () =>
+        printTypescriptValue({ value: appDescription }),
+      )
+      .replace(/UUID-TO-BE-GENERATED/g, () => randomUUID());
 
-    await writeFile(workflowPath, workflow);
+    await writeFile(identifiersPath, identifiers);
   }
-
-  const identifiersPath = join(
-    appDirectory,
-    'src/constants/universal-identifiers.ts',
-  );
-  const identifiers = (await readFile(identifiersPath, 'utf8'))
-    .replace(/'DISPLAY-NAME-TO-BE-GENERATED'/g, () =>
-      printTypescriptValue({ value: appDisplayName }),
-    )
-    .replace(/'DESCRIPTION-TO-BE-GENERATED'/g, () =>
-      printTypescriptValue({ value: appDescription }),
-    )
-    .replace(/UUID-TO-BE-GENERATED/g, () => randomUUID());
-
-  await writeFile(identifiersPath, identifiers);
 
   const packageJsonPath = join(appDirectory, 'package.json');
   const packageJson: {
     name: string;
     engines: Record<string, string>;
+    scripts: Record<string, string>;
     devDependencies: Record<string, string>;
   } = JSON.parse(await readFile(packageJsonPath, 'utf8'));
 
@@ -78,6 +97,14 @@ export const renderAppTemplate = async ({
 
   for (const packageName of APP_TEMPLATE_FIRST_PARTY_PACKAGES) {
     packageJson.devDependencies[packageName] = APP_TEMPLATE_PACKAGE_VERSION;
+  }
+
+  if (shouldIncludeExample) {
+    const exampleScripts: Record<string, string> = JSON.parse(
+      await readFile(join(exampleDirectory, 'scripts.json'), 'utf8'),
+    );
+
+    packageJson.scripts = { ...packageJson.scripts, ...exampleScripts };
   }
 
   await writeFile(packageJsonPath, JSON.stringify(packageJson, null, 2));

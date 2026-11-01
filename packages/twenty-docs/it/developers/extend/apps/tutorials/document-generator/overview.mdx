@@ -3,6 +3,11 @@ title: "Tutorial: Generatore di documenti"
 description: Crea una vera app Twenty che genera documenti personalizzati a partire dai dati del tuo CRM.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Cosa costruirai
+
 In questo tutorial creerai **Document Generator**, un'app che trasforma modelli riutilizzabili in documenti personalizzati usando i dati già presenti nel tuo CRM.
 
 Scrivi un modello una sola volta con `{{placeholders}}`, quindi genera un documento compilato per qualsiasi Persona o Azienda con un solo clic — dal menu dei comandi, da un agente IA o da un workflow.
@@ -27,20 +32,22 @@ Ogni capitolo aggiunge una funzionalità. Alla fine avrai esplorato gran parte d
 ## Prerequisiti
 
 Dovresti aver completato il [Quick Start](/it/developers/extend/apps/getting-started/quick-start):
-un server Twenty locale in esecuzione sulla porta `2020` e la CLI autenticata ad esso.
+un workspace Twenty (cloud o locale) e la CLI autenticata a esso.
 
-In caso contrario, esegui ora lo scaffold e avvialo:
+Se il server o l'autenticazione non sono pronti, completa prima il [Quick Start](/it/developers/extend/apps/getting-started/quick-start). Quindi crea e installa l'app del tutorial:
 
 ```bash filename="Terminal"
-npx create-twenty-app@latest document-generator
+twenty app init document-generator
 cd document-generator
-yarn twenty dev
+yarn install
+twenty app apply --create
+twenty app dev
 ```
 
 <Note>
-Preferisci leggere il codice finito? L’app completa si trova in
-[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
-Ogni snippet qui sotto è copiato da lì.
+  Preferisci leggere il codice finito? L’app completa si trova in
+  [`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+  Ogni snippet qui sotto è copiato da lì.
 </Note>
 
 ## Come è strutturata l’app
@@ -56,10 +63,15 @@ lo step del workflow, il link condivisibile — è solo un modo diverso di attiv
 
 ## Mantieni attivo questo ciclo
 
-Lascia `yarn twenty dev` in esecuzione in un terminale per l’intero tutorial. Ogni volta che
+Lascia `twenty app dev` in esecuzione in un terminale per l'intero tutorial. Ogni volta che
 aggiungi o modifichi un file sotto `src/`, viene nuovamente sincronizzato con il tuo server entro pochi
 secondi, così puoi vedere ogni funzionalità comparire nell’interfaccia utente mentre la costruisci.
 
-<Card title="Inizia a sviluppare →" icon="database" href="/it/developers/extend/apps/tutorials/document-generator/data-model">
-  Capitolo 1: modella documenti e modelli.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/it/developers/extend/apps/tutorials/document-generator/data-model" img="/images/documentation/banner-icons-v2/data-model.svg">
+  <CardTitle>Inizia a costruire →</CardTitle>
+  Capitolo 1: modelli di documenti e modelli.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="section-document-generator" />

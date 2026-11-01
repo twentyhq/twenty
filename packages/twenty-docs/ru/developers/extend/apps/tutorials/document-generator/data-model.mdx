@@ -3,6 +3,12 @@ title: 1. Модель данных
 description: Типовые документы и шаблоны с объектами, полями и отношениями.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Обзор
+
 Нашему приложению нужны два пользовательских объекта: **шаблоны документов** (что записывать) и
 **документы** (сгенерированный результат). Давайте определим их.
 
@@ -10,15 +16,15 @@ description: Типовые документы и шаблоны с объект
 для вас:
 
 ```bash filename="Terminal"
-yarn twenty dev:add object
+twenty app add object
 ```
 
 Ниже мы показываем готовые файлы.
 
 <Note>
-Каждый `*_UNIVERSAL_IDENTIFIER` живет в константе
-`src/constants/universal-identifiers.ts` и импортируется там, где используется. В приведенных ниже фрагментах
-эти импорты опущены для краткости — в своих файлах не удаляйте их.
+  Каждый `*_UNIVERSAL_IDENTIFIER` живет в константе
+  `src/constants/universal-identifiers.ts` и импортируется там, где используется. В приведенных ниже
+  фрагментах эти импорты опущены для краткости — сохраните их в своих файлах.
 </Note>
 
 ## Объект шаблона
@@ -40,28 +46,53 @@ export default defineObject({
   labelIdentifierFieldMetadataUniversalIdentifier:
     TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [
-    { universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.TEXT, name: 'name', label: 'Name', icon: 'IconAbc' },
-    { universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.RICH_TEXT, name: 'body', label: 'Body', icon: 'IconFileText',
-      description: 'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.' },
-    { universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.SELECT, name: 'target', label: 'Target', icon: 'IconTarget',
+    {
+      universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.TEXT,
+      name: 'name',
+      label: 'Name',
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.RICH_TEXT,
+      name: 'body',
+      label: 'Body',
+      icon: 'IconFileText',
+      description:
+        'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.',
+    },
+    {
+      universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.SELECT,
+      name: 'target',
+      label: 'Target',
+      icon: 'IconTarget',
       defaultValue: `'PERSON'`,
       options: [
-        { id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
-          value: 'PERSON', label: 'Person', color: 'blue', position: 0 },
-        { id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
-          value: 'COMPANY', label: 'Company', color: 'green', position: 1 },
-      ] },
+        {
+          id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
+          value: 'PERSON',
+          label: 'Person',
+          color: 'blue',
+          position: 0,
+        },
+        {
+          id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
+          value: 'COMPANY',
+          label: 'Company',
+          color: 'green',
+          position: 1,
+        },
+      ],
+    },
   ],
 });
 ```
 
 <Warning>
-Опция `SELECT` **values** должна быть `UPPER_CASE` (`PERSON`, не `person`), а опция
-`defaultValue` завернута в дополнительные кавычки: `` `'PERSON'` ``. `label` - это то, что видят
-пользователей.
+  **Значения** параметра `SELECT` должны быть в формате `UPPER_CASE` (`PERSON`, а не `person`), а `defaultValue` заключено в дополнительные кавычки: `` `'PERSON'` ``. `label` — это то,
+  что видят пользователи.
 </Warning>
 
 ## Объект документа
@@ -76,7 +107,12 @@ export default defineObject({
 **двусторонний** — вы определяете обе стороны в своём собственном файле полей.
 
 ```ts filename="src/fields/document-template-relation.field.ts"
-import { defineField, FieldType, OnDeleteAction, RelationType } from 'twenty-sdk/define';
+import {
+  defineField,
+  FieldType,
+  OnDeleteAction,
+  RelationType,
+} from 'twenty-sdk/define';
 
 // The "many" side: each document belongs to one template.
 export default defineField({
@@ -103,15 +139,14 @@ export default defineField({
 
 ## Смотрите в двадцать
 
-С запуском `yarn twenty dev` откройте **Settings → Data model**. Оба объекта
+Когда запущен `twenty app dev`, откройте **Настройки → Модель данных**. Оба объекта
 появляются, помеченные вашим приложением.
 
 <Frame caption="Оба пользовательских объекта, принадлежащие приложению Генератор документов.">
   <img src="/images/docs/developers/extends/apps/document-generator/01-data-model.png" alt="Настройки модели данных с отображением шаблонов документов и документов" />
 </Frame>
 
-Создайте один шаблон для тестирования — имя *Предложение продаж*, установите **цель** на
-*Персонал* и вставьте тело с несколькими заполнителями:
+Создайте шаблон для тестирования — назовите его *Коммерческое предложение*, установите для **Цели** значение *Person* и вставьте текст с несколькими заполнителями:
 
 ```text
 Dear {{name.firstName}} {{name.lastName}},
@@ -129,6 +164,11 @@ The Team
 **После этого шага:** у вас есть объекты `documentTemplate` и `document`, связанные
 отношением и одним шаблоном для генерации данных. Далее заполняется логика.
 
-<Card title="Далее: генерация документов →" icon="bolt" href="/ru/developers/extend/apps/tutorials/document-generator/generating-documents">
-  Напишите логическую функцию, которая заполняет шаблон.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ru/developers/extend/apps/tutorials/document-generator/generating-documents" img="/images/user-guide/halftone/card-page-tutorial-documents.svg">
+  <CardTitle>Далее: создание документов →</CardTitle>
+  Запишите логическую функцию, которая заполняет шаблон.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="card-page-tutorial-data" />

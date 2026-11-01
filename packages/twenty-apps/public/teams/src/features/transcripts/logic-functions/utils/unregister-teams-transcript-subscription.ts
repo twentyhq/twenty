@@ -5,6 +5,7 @@ import { type TeamsTranscriptSubscription } from 'src/features/transcripts/logic
 import { buildTeamsTranscriptSubscriptionKvKey } from 'src/features/transcripts/logic-functions/utils/build-teams-transcript-subscription-kv-key';
 import { buildTeamsTranscriptsConnectionKvKey } from 'src/features/transcripts/logic-functions/utils/build-teams-transcripts-connection-kv-key';
 import { deleteTeamsTranscriptSubscription } from 'src/features/transcripts/logic-functions/utils/delete-teams-transcript-subscription';
+import { getConnectionAccessTokenOrThrow } from 'src/utils/get-connection-access-token-or-throw';
 import { toErrorMessage } from 'src/utils/to-error-message';
 
 export const unregisterTeamsTranscriptSubscription = async ({
@@ -26,7 +27,9 @@ export const unregisterTeamsTranscriptSubscription = async ({
   }
 
   try {
-    const { accessToken } = await getConnection(connectedAccountId);
+    const accessToken = getConnectionAccessTokenOrThrow(
+      await getConnection(connectedAccountId),
+    );
 
     await deleteTeamsTranscriptSubscription({
       accessToken,

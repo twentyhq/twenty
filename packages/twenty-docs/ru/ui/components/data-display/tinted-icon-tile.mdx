@@ -1,0 +1,64 @@
+---
+title: Плитка значка с оттенком
+description: Значок на тонированном фоне, производном от цвета темы.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import TintedIconTileReference from '/snippets/ui/generated/components/data-display/tinted-icon-tile.mdx';
+
+## Обзор
+
+Передавайте содержимое значка через слот узла `icon` в нижнем регистре. Плитка получает цвет фона и наследуемый основной цвет из палитры темы. Содержимое значка является декоративным. Сохраните рядом с ним видимую метку или задайте для корневого элемента `role="img"` и доступное имя для отдельного изображения с меткой.
+
+<StoryEmbed storyId="ui-components-data-display-tintedicontile--display" title="Значок компании на тонированной плитке" height={100} />
+
+## Использование
+
+```tsx
+import { TintedIconTile } from 'twenty-ui/components/data-display';
+import { IconBuildingSkyscraper } from 'twenty-ui/icon';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const CompanyLabel = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <TintedIconTile icon={<IconBuildingSkyscraper size={16} />} color="blue" />
+    <Text>Companies</Text>
+  </Text>
+);
+```
+
+## Геометрия и нативная композиция
+
+По умолчанию размер плитки составляет 16px благодаря токену интервалов, а также используется малый токен радиуса границы. Задайте размеры и обводку значка непосредственно на самом узле. Корневые `style` или `className` управляют шириной, высотой, границей, формой и цветами плитки; явные стили переопределяют значения палитры по умолчанию. Пользовательская графика должна наследовать `currentColor`, когда использует основной цвет палитры.
+
+```tsx
+import { TintedIconTile } from 'twenty-ui/components/data-display';
+
+export const CustomCompanyTile = () => (
+  <TintedIconTile
+    icon={
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M2 2h16v16H2z" />
+      </svg>
+    }
+    color="blue"
+    role="img"
+    aria-label="Companies"
+    render={<span />}
+    style={{ width: 32, height: 32 }}
+  />
+);
+```
+
+Нативные атрибуты, события, `className`, `style` и `ref` применяются к внешнему div. `render` заменяет этот целевой элемент через композицию Base UI, сохраняя декоративное содержимое значка. При включении плитки в действие задайте имя окружающему элементу управления.
+
+Замените `Icon={CompanyIcon}` на `icon={<CompanyIcon size={16} />}`. Перенесите прежние параметры `size` и `stroke` в узел значка и используйте корневые стили для пользовательских размеров плитки.
+
+## Свойства
+
+<TintedIconTileReference />
+
+<PageBanner illustration="page-cover-palette" />

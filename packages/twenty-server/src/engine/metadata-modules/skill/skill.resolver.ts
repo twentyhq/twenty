@@ -29,6 +29,7 @@ import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/over
 import { CreateSkillInput } from 'src/engine/metadata-modules/skill/dtos/create-skill.input';
 import { SkillDTO } from 'src/engine/metadata-modules/skill/dtos/skill.dto';
 import { UpdateSkillInput } from 'src/engine/metadata-modules/skill/dtos/update-skill.input';
+import { IS_CUSTOM_DEPRECATION_REASON } from 'src/engine/metadata-modules/utils/constants/is-custom-deprecation-reason.constant';
 import { SkillGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/skill/interceptors/skill-graphql-api-exception.interceptor';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
@@ -94,6 +95,16 @@ export class SkillResolver {
     });
   }
 
+  @ResolveField(() => Boolean, {
+    deprecationReason: IS_CUSTOM_DEPRECATION_REASON,
+  })
+  isCustom(
+    @Parent() skill: SkillDTO,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): boolean {
+    return skill.applicationId === workspace.workspaceCustomApplicationId;
+  }
+
   @Query(() => [SkillDTO])
   async skills(
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -106,6 +117,8 @@ export class SkillResolver {
       canCallerReachApplication({
         callingApplication,
         applicationId: skill.applicationId,
+        operation: 'read',
+        workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
       }),
     );
   }

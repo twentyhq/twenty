@@ -6,6 +6,7 @@ import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState
 import { agentChatNewThreadChannelIdState } from '@/ai/states/agentChatNewThreadChannelIdState';
 import {
   AgentChatChannelAssignmentFilter,
+  AgentChatChannelThreadFilter,
   AgentChatChannelThreadStatus,
 } from '~/generated-metadata/graphql';
 
@@ -23,6 +24,7 @@ const renderEffect = (shownChannelId: string | null) => {
           channelId: shownChannelId,
           channelStatus: AgentChatChannelThreadStatus.OPEN,
           assignment: AgentChatChannelAssignmentFilter.ANY,
+          filter: AgentChatChannelThreadFilter.ANY,
         },
   );
 

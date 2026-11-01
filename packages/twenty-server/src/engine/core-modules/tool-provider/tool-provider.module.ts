@@ -1,3 +1,4 @@
+import { FrontComponentToolProvider } from 'src/engine/core-modules/tool-provider/providers/front-component-tool.provider';
 import { Module } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -8,7 +9,6 @@ import { FilesFieldModule } from 'src/engine/core-modules/file/files-field/files
 import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { ActionToolProvider } from 'src/engine/core-modules/tool-provider/providers/action-tool.provider';
-import { FrontComponentToolProvider } from 'src/engine/core-modules/tool-provider/providers/front-component-tool.provider';
 import { DashboardToolProvider } from 'src/engine/core-modules/tool-provider/providers/dashboard-tool.provider';
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
 import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
@@ -23,9 +23,9 @@ import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { NavigationMenuItemToolsModule } from 'src/engine/metadata-modules/navigation-menu-item/tools/navigation-menu-item-tools.module';
 import { MetadataToolsModule } from 'src/engine/metadata-modules/object-metadata/tools/metadata-tools.module';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { RoleToolsModule } from 'src/engine/metadata-modules/role/tools/role-tools.module';
-import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
 import { ViewToolsModule } from 'src/engine/metadata-modules/view/tools/view-tools.module';
 import { WebhookToolsModule } from 'src/engine/metadata-modules/webhook/tools/webhook-tools.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';

@@ -33,7 +33,11 @@ export class CampaignSendingWorkspaceService {
       await this.messageQueueService
         .bulkAdd<CampaignWorkspaceJobData>(
           jobName,
-          workspaceIdsBatch.map((workspaceId) => ({ data: { workspaceId } })),
+          workspaceIdsBatch.map((workspaceId) => ({
+            data: { workspaceId },
+            workspaceId,
+            isWorkspaceJob: true,
+          })),
           { retryLimit: CAMPAIGN_JOB_RETRY_LIMIT },
         )
         .catch((error) => {

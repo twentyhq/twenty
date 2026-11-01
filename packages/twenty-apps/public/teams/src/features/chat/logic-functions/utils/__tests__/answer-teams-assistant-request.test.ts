@@ -10,14 +10,16 @@ const {
   updateMock,
   resolveSenderMock,
   runAgentMock,
-  sendActivityMock,
+  startStatusMock,
+  finishMock,
   findHistoryMock,
 } = vi.hoisted(() => ({
   claimMock: vi.fn(),
   updateMock: vi.fn(),
   resolveSenderMock: vi.fn(),
   runAgentMock: vi.fn(),
-  sendActivityMock: vi.fn(),
+  startStatusMock: vi.fn(),
+  finishMock: vi.fn(),
   findHistoryMock: vi.fn(),
 }));
 
@@ -59,9 +61,10 @@ vi.mock(
   () => ({ runTeamsAssistantAgentOrThrow: runAgentMock }),
 );
 
-vi.mock('src/features/chat/logic-functions/utils/send-teams-activity', () => ({
-  sendTeamsActivity: sendActivityMock,
-}));
+vi.mock(
+  'src/features/chat/logic-functions/utils/start-teams-assistant-status',
+  () => ({ startTeamsAssistantStatus: startStatusMock }),
+);
 
 const REQUEST = {
   id: 'request-1',
@@ -81,18 +84,15 @@ const answer = () =>
     agentDeadlineAtMs: Date.now() + 60_000,
   });
 
-const sentMessageTexts = () =>
-  sendActivityMock.mock.calls
-    .map(([{ activity }]) => activity)
-    .filter((activity) => activity.type === 'message')
-    .map((activity) => activity.text);
+const finishedTexts = () => finishMock.mock.calls.map(([text]) => text);
 
 describe('answerTeamsAssistantRequest', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     claimMock.mockResolvedValue(true);
     updateMock.mockResolvedValue(undefined);
-    sendActivityMock.mockResolvedValue({ id: 'activity-1' });
+    startStatusMock.mockResolvedValue({ finish: finishMock });
+    finishMock.mockResolvedValue(undefined);
     resolveSenderMock.mockResolvedValue('workspace-member-1');
     runAgentMock.mockResolvedValue('Acme has 3 open deals.');
     findHistoryMock.mockResolvedValue([]);
@@ -101,6 +101,11 @@ describe('answerTeamsAssistantRequest', () => {
   it('should answer as the matched workspace member and mark the request done', async () => {
     await expect(answer()).resolves.toEqual({ status: 'answered' });
 
+    expect(startStatusMock).toHaveBeenCalledExactlyOnceWith({
+      serviceUrl: REQUEST.teamsServiceUrl,
+      conversationId: REQUEST.teamsConversationId,
+      conversationType: REQUEST.teamsConversationType,
+    });
     expect(runAgentMock).toHaveBeenCalledTimes(1);
     expect(runAgentMock).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -108,7 +113,7 @@ describe('answerTeamsAssistantRequest', () => {
         workspaceMemberId: 'workspace-member-1',
       }),
     );
-    expect(sentMessageTexts()).toEqual(['Acme has 3 open deals.']);
+    expect(finishedTexts()).toEqual(['Acme has 3 open deals.']);
     expect(updateMock).toHaveBeenLastCalledWith(
       expect.objectContaining({
         id: REQUEST.id,
@@ -158,14 +163,14 @@ describe('answerTeamsAssistantRequest', () => {
     });
 
     await expect(answer()).resolves.toEqual({ status: 'answered' });
-    expect(sentMessageTexts()).toEqual(['Acme has 3 open deals.']);
+    expect(finishedTexts()).toEqual(['Acme has 3 open deals.']);
   });
 
   it('should not answer a request another execution already claimed', async () => {
     claimMock.mockResolvedValue(false);
 
     await expect(answer()).resolves.toMatchObject({ status: 'skipped' });
-    expect(sendActivityMock).not.toHaveBeenCalled();
+    expect(startStatusMock).not.toHaveBeenCalled();
   });
 
   it('should decline a sender that matches no workspace member without running the agent', async () => {
@@ -173,7 +178,7 @@ describe('answerTeamsAssistantRequest', () => {
 
     await expect(answer()).resolves.toMatchObject({ status: 'declined' });
     expect(runAgentMock).not.toHaveBeenCalled();
-    expect(sentMessageTexts()).toEqual([TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT]);
+    expect(finishedTexts()).toEqual([TEAMS_ASSISTANT_UNMATCHED_SENDER_TEXT]);
   });
 
   it('should reply with a generic message and record the error when the agent fails', async () => {
@@ -183,7 +188,7 @@ describe('answerTeamsAssistantRequest', () => {
       status: 'failed',
       reason: 'Agent run failed',
     });
-    expect(sentMessageTexts()).toEqual([TEAMS_ASSISTANT_FAILURE_TEXT]);
+    expect(finishedTexts()).toEqual([TEAMS_ASSISTANT_FAILURE_TEXT]);
     expect(updateMock).toHaveBeenLastCalledWith(
       expect.objectContaining({
         status: TEAMS_ASSISTANT_REQUEST_STATUS.FAILED,

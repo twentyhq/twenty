@@ -19,6 +19,7 @@ import { createFathomClient } from 'src/logic-functions/utils/create-fathom-clie
 import { createFathomCoreApiClient } from 'src/logic-functions/utils/create-fathom-core-api-client.util';
 import { excludeDeletedFathomMeetings } from 'src/logic-functions/utils/exclude-deleted-fathom-meetings.util';
 import { enqueueFathomJobsOrThrow } from 'src/logic-functions/utils/enqueue-fathom-jobs-or-throw.util';
+import { getConnectionAccessTokenOrThrow } from 'src/logic-functions/utils/get-connection-access-token-or-throw.util';
 import { getFathomRequeueDelay } from 'src/logic-functions/utils/get-fathom-requeue-delay.util';
 import { listFathomMeetingPage } from 'src/logic-functions/utils/list-fathom-meeting-page.util';
 import { reserveFathomImportSlots } from 'src/logic-functions/utils/reserve-fathom-import-slots.util';
@@ -60,7 +61,9 @@ export const fathomBackfillWorkerHandler = async (
 
   try {
     meetingPage = await listFathomMeetingPage({
-      fathomClient: createFathomClient(connection.accessToken),
+      fathomClient: createFathomClient(
+        getConnectionAccessTokenOrThrow(connection),
+      ),
       createdAfter,
       cursor: payload.cursor,
     });

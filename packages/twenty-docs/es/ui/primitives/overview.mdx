@@ -1,0 +1,112 @@
+---
+title: Primitivos
+sidebarTitle: Resumen
+description: Controles fundamentales para crear interfaces con Twenty UI.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
+Los primitivos son los controles fundamentales de Twenty UI. Incluyen entradas, elementos de visualización, navegación y controles compuestos como Select, Popover y AlertDialog. Cada primitivo recibe datos y funciones de devolución de llamada de tu aplicación.
+
+Importa primitivos desde un punto de entrada de familia, como `twenty-ui/primitives/input`. La entrada agregada `twenty-ui/primitives` también exporta todas las familias de primitivas. Consulta [Primeros pasos](/es/ui/getting-started) para obtener información sobre la instalación y la configuración del tema.
+
+Los [componentes](/es/ui/components/overview) combinan estas primitivas en preajustes de diseño compartidos y bloques de creación de aplicaciones reutilizables.
+
+## Propiedad del estado
+
+Usa el estado no controlado cuando un componente pueda gestionar sus propias interacciones. Una prop predeterminada proporciona el estado inicial. Usa el estado controlado cuando la aplicación necesite coordinar ese estado con otros controles, la navegación o los datos de la aplicación.
+
+| Estado                                | Estado inicial no controlado | Estado controlado | Callback de cambio |
+| ------------------------------------- | ---------------------------- | ----------------- | ------------------ |
+| Entrada, selección o pestaña activa   | `defaultValue`               | `valor`           | `onValueChange`    |
+| Casilla de verificación o interruptor | `defaultChecked`             | `checked`         | `onCheckedChange`  |
+| Visibilidad de la ventana emergente   | `defaultOpen`                | `open`            | `onOpenChange`     |
+
+En el modo controlado, pasa el estado actual y actualízalo en el callback de cambio. En el modo no controlado, aún puedes escuchar los cambios sin asumir la propiedad del estado. Agregar solo un callback no hace que un componente sea controlado.
+
+Elige un modo para cada estado y mantenlo durante toda la vida útil del componente. Las props predeterminadas inicializan el estado; cambiarlas más adelante no reemplaza el estado actual. Evita pasar tanto la prop predeterminada como la controlada para el mismo estado.
+
+Algunos componentes tienen más de un estado independiente. Por ejemplo, [Select](/es/ui/primitives/input/select#open-state) puede tener un valor controlado y una visibilidad de ventana emergente no controlada.
+
+El estado pertenece a la parte que gestiona la interacción. Configura la selección de botones de opción en [RadioGroup](/es/ui/primitives/input/radio-group), no en cada Radio. Los componentes de visualización, como Text, no tienen un modo controlado ni no controlado. [Toast](/es/ui/components/feedback/toast) delega su visibilidad y eliminación a la aplicación.
+
+## Composición
+
+Los componentes primitivos compuestos exponen partes como `Select.Root`, `Select.Trigger` y `Select.Popup`. Mantenga las partes relacionadas bajo la misma raíz en el árbol de componentes para que compartan el estado y las relaciones de accesibilidad. La sección de anatomía de cada componente identifica las partes obligatorias y el contenido opcional.
+
+Los slots como `InputGroup.startElement` y `ListItem.actions` aceptan nodos de React como props. Añaden contenido dentro del diseño de un componente. Las partes y los slots son API diferentes; use los nombres indicados en la guía del componente.
+
+### Composición de ventanas emergentes
+
+Select, Popover y Autocomplete exponen partes independientes de `Portal`, `Positioner` y `Popup`:
+
+| Parte        | Responsabilidad                                                 |
+| ------------ | --------------------------------------------------------------- |
+| `Portal`     | Contenedor de destino y montaje                                 |
+| `Positioner` | Posicionamiento, ancla, desplazamientos y gestión de colisiones |
+| `Popup`      | Contenido, comportamiento del foco, atributos nativos y ref     |
+| `Arrow`      | Flecha opcional dentro de la ventana emergente                  |
+
+Anida Popup dentro de Positioner y Positioner dentro de Portal. Coloca el contenido dentro de Popup y añade Arrow explícitamente cuando sea necesario. El portal puede mover el DOM renderizado a otro contenedor mientras conserva la jerarquía y el contexto de los componentes. Consulte [la tematización](/es/ui/theming#scope-an-override) para los contenedores de portal con ámbito.
+
+Cada parte renderizada conserva sus propios atributos nativos, destino de ref y composición de renderizado. [Autocomplete](/es/ui/primitives/input/autocomplete) también conserva las partes de colección, agrupación, cuadrícula, filtrado y estado ascendentes instaladas.
+
+[Dialog](/es/ui/primitives/surfaces/dialog) y [AlertDialog](/es/ui/primitives/surfaces/alert-dialog) exponen partes independientes de `Portal`, `Backdrop`, `Viewport` y `Popup`. Configure el montaje y el destino en Portal, la apariencia de la superposición en Backdrop y Viewport, y el tamaño y el foco del contenido en Popup. Cada parte conserva sus propios atributos nativos, destino de ref y composición de renderizado. Estas API de diálogo son para la interfaz de usuario independiente y el host de Twenty. Los componentes Front usan la [API de diálogo del host de SDK](/es/developers/extend/apps/layout/front-components#host-communication-api).
+
+### Componentes personalizados
+
+Para las partes que admiten `render`, pase un elemento o componente compatible para reemplazar el elemento predeterminado. Por ejemplo, `Popover.Trigger` puede usar un `Button` de Twenty UI y conservar su comportamiento de activador.
+
+Un contenedor personalizado debe pasar los props y la ref proporcionados al elemento interactivo. Esto conserva los controladores de eventos, los atributos de accesibilidad, el posicionamiento y la restauración del foco. Este ejemplo los reenvía mediante `Button`, que los adjunta a su botón nativo.
+
+```tsx
+import { type ComponentPropsWithRef } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+type HelpButtonProps = ComponentPropsWithRef<typeof Button>;
+
+const HelpButton = ({ ref, ...props }: HelpButtonProps) => (
+  <Button {...props} ref={ref} variant="outline" />
+);
+
+export const ImportHelp = () => (
+  <Popover.Root>
+    <Popover.Trigger render={<HelpButton>Import help</HelpButton>} />
+    <Popover.Portal>
+      <Popover.Positioner>
+        <Popover.Popup>
+          <Popover.Title>Import a CSV file</Popover.Title>
+          <Popover.Description>
+            Use a header row to identify your columns.
+          </Popover.Description>
+          <Popover.Close render={<Button>Got it</Button>} />
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
+  </Popover.Root>
+);
+```
+
+Pase el botón mediante `render` y mantenga cada acción como un único control interactivo. Conserve los controladores y la ref proporcionados a su contenedor al añadir su propio comportamiento. La ref debe llegar al elemento que recibe el foco.
+
+Use un botón nativo para las partes similares a botones. En las partes que exponen `nativeButton`, establezca `nativeButton={false}` solo cuando el elemento renderizado no sea un botón nativo. Un componente personalizado que finalmente renderiza un botón, como `HelpButton`, conserva el comportamiento predeterminado del botón.
+
+## Explorar primitivas
+
+Cada página incluye ejemplos de uso, orientación sobre la interacción y una referencia de API generada.
+
+| Familia           | Primitivas                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Accesibilidad     | [Oculto visualmente](/es/ui/primitives/accessibility/visually-hidden)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| Datos en pantalla | [Avatar](/es/ui/primitives/data-display/avatar), [Ficha](/es/ui/primitives/data-display/chip), [Muestra de color](/es/ui/primitives/data-display/color-sample), [Insignia](/es/ui/primitives/data-display/badge), [Estado](/es/ui/primitives/data-display/status), [Etiqueta](/es/ui/primitives/data-display/tag)                                                                                                                                                                                                                                                                                                                                                                                                             |
+| Retroalimentación | [Banner](/es/ui/primitives/feedback/banner), [Cargador](/es/ui/primitives/feedback/loader), [Progreso](/es/ui/primitives/feedback/progress), [Barra de progreso](/es/ui/primitives/feedback/progress-bar), [Anillo de progreso](/es/ui/primitives/feedback/progress-ring), [Esqueleto](/es/ui/primitives/feedback/skeleton)                                                                                                                                                                                                                                                                                                                                                                                                   |
+| Formularios       | [Autocompletar](/es/ui/primitives/input/autocomplete), [Botón](/es/ui/primitives/input/button), [Grupo de botones](/es/ui/primitives/input/button-group), [Casilla de verificación](/es/ui/primitives/input/checkbox), [Campo](/es/ui/primitives/input/field), [Entrada](/es/ui/primitives/input/input), [Grupo de entradas](/es/ui/primitives/input/input-group), [Campo numérico](/es/ui/primitives/input/number-field), [Botón de opción](/es/ui/primitives/input/radio), [Grupo de botones de opción](/es/ui/primitives/input/radio-group), [Seleccionar](/es/ui/primitives/input/select), [Control deslizante](/es/ui/primitives/input/slider), [Interruptor](/es/ui/primitives/input/switch), [Área de texto](/es/ui/primitives/input/textarea) |
+| Diseño            | [Plegable](/es/ui/primitives/layout/collapsible), [Separador](/es/ui/primitives/layout/separator), [Controlador de redimensionamiento](/es/ui/primitives/layout/resize-handle), [Proveedor de dirección](/es/ui/primitives/layout/direction-provider)                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| Navegación        | [Migas de pan](/es/ui/primitives/navigation/breadcrumb), [Elemento de lista](/es/ui/primitives/navigation/list-item), [Pestañas](/es/ui/primitives/navigation/tabs)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| Superficies       | [Diálogo de alerta](/es/ui/primitives/surfaces/alert-dialog), [Tarjeta](/es/ui/primitives/surfaces/card), [Diálogo](/es/ui/primitives/surfaces/dialog), [Ventana emergente](/es/ui/primitives/surfaces/popover), [Información sobre herramientas](/es/ui/primitives/surfaces/tooltip)                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| Tipografía        | [Encabezado](/es/ui/primitives/typography/heading), [Texto desbordante con descripción emergente](/es/ui/primitives/typography/overflowing-text-with-tooltip), [Proveedor del modo de descripción emergente para texto desbordante](/es/ui/primitives/typography/overflowing-text-tooltip-mode-provider), [Atajo](/es/ui/primitives/typography/shortcut), [Texto](/es/ui/primitives/typography/text)                                                                                                                                                                                                                                                                                                                       |
+
+<PageBanner illustration="section-ui-primitives" />

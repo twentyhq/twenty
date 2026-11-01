@@ -6,6 +6,17 @@ import {
 } from '@aws-sdk/client-lambda';
 import { Logger } from '@nestjs/common';
 
+import { LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
+import { LambdaExecutorManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-executor-manager.service';
+import { LambdaLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-layer-manager.service';
+import { LambdaToolFunctionsService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service';
+import {
+  type LambdaDriverExecutorPayload,
+  type LambdaDriverOptions,
+  LambdaExecutionPhase,
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
+import { buildLogicFunctionTimeoutResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-logic-function-timeout-result.util';
+import { parseLambdaLogResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/parse-lambda-log-result.util';
 import {
   type LogicFunctionDriver,
   type LogicFunctionExecuteParams,
@@ -14,19 +25,14 @@ import {
   type LogicFunctionTranspileParams,
   type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
-
-import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import {
-  type LambdaDriverExecutorPayload,
-  type LambdaDriverOptions,
-  LambdaExecutionPhase,
-} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
-import { LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
-import { LambdaExecutorManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-executor-manager.service';
-import { LambdaLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-layer-manager.service';
-import { LambdaToolFunctionsService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service';
-import { buildLogicFunctionTimeoutResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/build-logic-function-timeout-result.util';
-import { parseLambdaLogResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/parse-lambda-log-result.util';
+  type BrowserTranspileParams,
+  type BrowserTranspileResult,
+  type BrowserDependenciesBuildParams,
+  type TranspileParams,
+  type TranspileResult,
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/types/transpile.type';
+import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -60,15 +66,17 @@ export class LambdaDriver implements LogicFunctionDriver {
     this.toolFunctions = new LambdaToolFunctionsService(
       options,
       this.awsClient,
+      options.cacheLockService,
     );
     this.layerManager = new LambdaLayerManagerService(
       options,
       this.awsClient,
       this.toolFunctions,
-      options.logicFunctionResourceService,
+      options.applicationDependencyFilesService,
       options.sdkClientArchiveService,
       options.cacheLockService,
       options.workspaceCacheService,
+      options.coreEntityCacheService,
     );
     this.executorManager = new LambdaExecutorManagerService(
       options,
@@ -80,18 +88,19 @@ export class LambdaDriver implements LogicFunctionDriver {
     );
   }
 
-  async transpile({
-    sourceCode,
-    sourceFileName,
-    builtFileName,
-  }: LogicFunctionTranspileParams): Promise<LogicFunctionTranspileResult> {
-    const { builtCode } = await this.toolFunctions.transpile({
-      sourceCode,
-      sourceFileName,
-      builtFileName,
-    });
+  async transpile(
+    params: LogicFunctionTranspileParams,
+  ): Promise<LogicFunctionTranspileResult>;
+  async transpile(
+    params: BrowserTranspileParams,
+  ): Promise<BrowserTranspileResult>;
+  async transpile(params: TranspileParams): Promise<TranspileResult>;
+  async transpile(params: TranspileParams): Promise<TranspileResult> {
+    return this.toolFunctions.transpile(params);
+  }
 
-    return { builtCode };
+  async buildDependencies(params: BrowserDependenciesBuildParams) {
+    return this.toolFunctions.buildDependencies(params);
   }
 
   async delete(flatLogicFunction: FlatLogicFunction): Promise<void> {
@@ -126,7 +135,6 @@ export class LambdaDriver implements LogicFunctionDriver {
   async execute({
     flatLogicFunction,
     flatApplication,
-    applicationUniversalIdentifier,
     payload,
     context,
     env,
@@ -155,7 +163,6 @@ export class LambdaDriver implements LogicFunctionDriver {
       await this.executorManager.buildExecutor({
         flatLogicFunction,
         flatApplication,
-        applicationUniversalIdentifier,
       });
       buildExecutorMs = Date.now() - buildStart;
 
@@ -182,7 +189,7 @@ export class LambdaDriver implements LogicFunctionDriver {
         executorPayload.code =
           await this.logicFunctionResourceService.getBuiltCode({
             workspaceId: flatLogicFunction.workspaceId,
-            applicationUniversalIdentifier,
+            applicationUniversalIdentifier: flatApplication.universalIdentifier,
             builtHandlerPath: flatLogicFunction.builtHandlerPath,
           });
         getBuiltCodeMs = Date.now() - fetchStart;

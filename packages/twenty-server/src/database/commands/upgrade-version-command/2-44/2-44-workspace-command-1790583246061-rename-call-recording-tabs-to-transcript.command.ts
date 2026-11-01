@@ -68,6 +68,7 @@ export class RenameCallRecordingTabsToTranscriptCommand extends ProvisionedWorks
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:

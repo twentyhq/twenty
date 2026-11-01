@@ -3,6 +3,12 @@ title: 4. Construirea interfeței
 description: Vizualizări, navigare bară laterală, o comandă și componente frontale.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Prezentare generală
+
 În acest moment, obiectele sunt accesibile doar prin Setări. Hai să oferim aplicației o prezență reală
 în UI: vizualizare listă, intrări sidebar, un singur click
 **Generează document** comandă, o filă de înregistrare a componentei frontale la **previzualizarea** un document
@@ -111,10 +117,13 @@ export default defineFrontComponent({
 ```
 
 <Warning>
-Stilul cu variabilele CSS înline (`var(--t-color-blue)`), nu valorile importate din
-`douăzeci enty-ui`. SDK se dublează că pachetul a fost construit, astfel încât importurile constantelor de temă
-la nivel de modul ar fi `nedefinită`. Vezi
-[componenta completă](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/front-components/generate-document-form.front-component.tsx).
+  Citiți `useTheme()` sau `themeCssVariables` din `twenty-ui/theme` în corpul
+  componentei atunci când stilizați folosind tokenurile Twenty. CLI-ul simulează `twenty-ui`
+  în timpul extragerii manifestului, astfel încât dereferențierea constantelor de temă importate la
+  nivel de modul poate face ca procesul de compilare să eșueze. Consultați Tematizarea și tokenurile de
+  temă
+  și componenta
+  completă.
 </Warning>
 
 ## O comandă pentru a o deschide
@@ -222,7 +231,10 @@ Montaţi cu un [aspect de pagină](/ro/developers/extend/apps/layout/page-layout
 `FRONT_COMPONENT` găzduiește componenta pe întreaga lățime:
 
 ```ts filename="src/page-layouts/document-record.page-layout.ts"
-import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import {
+  definePageLayout,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
 
 export default definePageLayout({
   universalIdentifier: DOCUMENT_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
@@ -239,6 +251,7 @@ export default definePageLayout({
       universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
       title: 'Document preview',
       type: 'FRONT_COMPONENT',
+      heightBehavior: 'TAB_VIEWPORT',
       configuration: {
         configurationType: 'FRONT_COMPONENT',
         frontComponentUniversalIdentifier: DOCUMENT_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
@@ -288,7 +301,7 @@ Un câmp `RICH_TEXT` stochează atât blocul editorului JSON cât și un proiec�
 . Conducta de generare citeşte că Markdown projection, deci
 placeholders, PDF, și pagina web partajabilă continuă să funcționeze neschimbat —
 vezi tot
-[`template-record. layout-ul vârstei`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/page-layouts/template-record.page-layout.ts).
+[`template-record.page-layout.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/page-layouts/template-record.page-layout.ts).
 Widgeturile `FIELD` acceptă și alte moduri de afișare și opțiuni, inclusiv
 listarea înregistrărilor unei relații imbricate aflate la două salturi distanță — consultă
 [referința pentru widgetul field](/ro/developers/extend/apps/layout/page-layouts#field-widgets).
@@ -301,6 +314,11 @@ Editorii scriu șabloane într-un adevărat editor de text bogat:
 **După acest pas:** documentele previzualizează frumos și șabloanele sunt editabile
 în aplicație. Apoi, lasă un agent AI să le genereze dintr-o conversație.
 
-<Card title="Următorul: un agent AI →" icon="robot" href="/ro/developers/extend/apps/tutorials/document-generator/ai-agent">
-  Adăugați un agent și o abilitate care vă sună unelta.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ro/developers/extend/apps/tutorials/document-generator/ai-agent" img="/images/user-guide/halftone/card-page-skills-agents.svg">
+  <CardTitle>În continuare: un agent AI →</CardTitle>
+  Adăugați un agent și o abilitate care vă apelează instrumentul.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="card-page-tutorial-ui" />

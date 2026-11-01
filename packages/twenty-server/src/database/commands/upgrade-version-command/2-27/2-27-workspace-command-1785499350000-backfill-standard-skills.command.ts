@@ -89,6 +89,7 @@ export class BackfillMissingStandardSkillsCommand extends ProvisionedWorkspaceCo
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             skill: {
               flatEntityToCreate: skillsToCreate,

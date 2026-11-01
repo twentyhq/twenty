@@ -2,5 +2,3 @@ dist/*
 .local-storage
 logs/**/*
 *.log
-
-src/engine/metadata-modules/ai/ai-front-component/generated/

@@ -11,13 +11,24 @@ export const APP_PLAN_COMMAND_DEFINITION: TargetCommandDefinition = {
         'App directory (default: the app containing the current folder)',
     },
     {
-      flags: '--no-delete',
+      flags: '--prune',
+      description:
+        'Delete remote entities missing from the app source (the default, except for the workspace custom application)',
+    },
+    {
+      flags: '--no-prune',
       description: 'Keep remote entities missing from the app source',
+    },
+    {
+      flags: '--no-delete',
+      description: 'Deprecated alias of --no-prune',
+      hidden: true,
     },
   ],
   examples: [
     'twenty app plan --remote dev',
-    'twenty app plan --path ./apps/billing --no-delete --json',
+    'twenty app plan --path ./apps/billing --no-prune --json',
+    'twenty app plan --prune',
   ],
   outputModes: ['human', 'json'],
   writes: false,

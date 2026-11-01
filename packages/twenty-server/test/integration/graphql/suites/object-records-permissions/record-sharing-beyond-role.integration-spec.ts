@@ -6,7 +6,6 @@ import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { isDefined } from 'twenty-shared/utils';
 import {
   FeatureFlagKey,
-  ObjectSharingReach,
   RecordShareAccessLevel,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
@@ -16,6 +15,7 @@ import { deleteOneOperationFactory } from 'test/integration/graphql/utils/delete
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { findManyOperationFactory } from 'test/integration/graphql/utils/find-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
+import { mergeManyOperationFactory } from 'test/integration/graphql/utils/merge-many-operation-factory.util';
 import { updateOneOperationFactory } from 'test/integration/graphql/utils/update-one-operation-factory.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
@@ -27,11 +27,11 @@ import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type RecordSharePrincipalInput } from 'src/engine/core-modules/record-share/dtos/record-sharing.dto';
-import { type RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
+import { type RecordSharePrincipalInput } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
+import { type RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
+import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
@@ -44,8 +44,8 @@ const JONY = { workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY };
 const SET_SHARE = parse(
   `mutation SetShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!, $accessLevel: RecordShareAccessLevel!) { setRecordShare(target: $target, principal: $principal, accessLevel: $accessLevel) { canManageSharing } }`,
 );
-const SET_GENERAL_ACCESS = parse(
-  `mutation SetGeneralAccess($target: RecordTargetInput!, $accessLevel: RecordShareAccessLevel!) { setRecordGeneralAccess(target: $target, accessLevel: $accessLevel) { canManageSharing } }`,
+const SET_PRIVATE = parse(
+  `mutation SetPrivate($target: RecordTargetInput!, $isPrivate: Boolean!) { setRecordPrivate(target: $target, isPrivate: $isPrivate) { canManageSharing } }`,
 );
 const READ_SHARING = parse(
   `query RecordSharing($target: RecordTargetInput!) { recordSharing(target: $target) { canManageSharing permissions { canRead canUpdate canDelete } shares { principalId } } }`,
@@ -85,14 +85,17 @@ describe('Records shared beyond the role that can access their object', () => {
       token,
     );
 
-  const setGeneralAccess = (
-    accessLevel: RecordShareAccessLevel,
+  const setPrivate = ({
+    isPrivate,
     token = APPLE_JANE_ADMIN_ACCESS_TOKEN,
-  ) =>
+  }: {
+    isPrivate: boolean;
+    token?: string;
+  }) =>
     makeMetadataApiRequest(
       {
-        query: SET_GENERAL_ACCESS,
-        variables: { target: target(), accessLevel },
+        query: SET_PRIVATE,
+        variables: { target: target(), isPrivate },
       },
       token,
     );
@@ -112,12 +115,6 @@ describe('Records shared beyond the role that can access their object', () => {
           },
         ],
       },
-    });
-
-  const setSharingReach = (sharingReach: ObjectSharingReach) =>
-    updateOneObjectMetadata({
-      expectToFail: false,
-      input: { idToUpdate: objectMetadataId, updatePayload: { sharingReach } },
     });
 
   const findIdsAsJony = async () => {
@@ -197,7 +194,6 @@ describe('Records shared beyond the role that can access their object', () => {
       recordIds: [SHARED_RECORD_ID, OTHER_RECORD_ID],
     });
     await setMemberObjectAccess(false);
-    await setSharingReach(ObjectSharingReach.WORKSPACE);
   });
 
   afterAll(async () => {
@@ -260,10 +256,10 @@ describe('Records shared beyond the role that can access their object', () => {
     expect(deleted.body.errors).toBeDefined();
     expect(
       (
-        await setGeneralAccess(
-          RecordShareAccessLevel.NONE,
-          APPLE_JONY_MEMBER_ACCESS_TOKEN,
-        )
+        await setPrivate({
+          isPrivate: true,
+          token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+        })
       ).body.errors,
     ).toBeDefined();
 
@@ -279,8 +275,8 @@ describe('Records shared beyond the role that can access their object', () => {
     });
   });
 
-  it('should not let general access reach beyond the role', async () => {
-    const share = await setGeneralAccess(RecordShareAccessLevel.READ_WRITE);
+  it('should not let a record that follows its roles reach beyond the role', async () => {
+    const share = await setPrivate({ isPrivate: false });
 
     expect(share.body.errors).toBeUndefined();
     expect(await findIdsAsJony()).toEqual({ errors: undefined, ids: [] });
@@ -295,19 +291,17 @@ describe('Records shared beyond the role that can access their object', () => {
   it('should tell owners what the role of each recipient grants on its own', async () => {
     await setShare({ principal: JONY });
     await setShare({ principal: { roleId: memberRoleId } });
-    await setGeneralAccess(RecordShareAccessLevel.READ);
+    await setPrivate({ isPrivate: true });
 
     const sharing = await makeMetadataApiRequest({
       query: parse(
-        `query RecordSharing($target: RecordTargetInput!) { recordSharing(target: $target) { generalAccessLevel shares { principalId principalRoleId } roles { id canRead canUpdate } } }`,
+        `query RecordSharing($target: RecordTargetInput!) { recordSharing(target: $target) { isPrivate shares { principalId principalRoleId } roles { id canRead canUpdate } } }`,
       ),
       variables: { target: target() },
     });
 
     expect(sharing.body.errors).toBeUndefined();
-    expect(sharing.body.data.recordSharing.generalAccessLevel).toBe(
-      RecordShareAccessLevel.READ,
-    );
+    expect(sharing.body.data.recordSharing.isPrivate).toBe(true);
     expect(sharing.body.data.recordSharing.shares).toEqual(
       expect.arrayContaining([
         {
@@ -327,83 +321,6 @@ describe('Records shared beyond the role that can access their object', () => {
         { id: memberRoleId, canRead: false, canUpdate: false },
       ]),
     );
-  });
-
-  it('should refuse to share with someone the object cannot reach', async () => {
-    await setSharingReach(ObjectSharingReach.ROLE_ACCESS);
-
-    const response = await setShare({ principal: JONY });
-
-    expect(response.body.errors?.[0]?.extensions?.subCode).toBe(
-      'INVALID_SHARE_WITH',
-    );
-
-    expect(
-      (await setShare({ principal: { roleId: memberRoleId } })).body.errors?.[0]
-        ?.extensions?.subCode,
-    ).toBe('INVALID_SHARE_WITH');
-
-    await setMemberObjectAccess(true);
-
-    expect((await setShare({ principal: JONY })).body.errors).toBeUndefined();
-    expect(
-      (await setShare({ principal: { roleId: memberRoleId } })).body.errors,
-    ).toBeUndefined();
-  });
-
-  it('should refuse a share the row filter of the recipient would hide, but let the role filter each member on read', async () => {
-    await setMemberObjectAccess(true);
-    await setSharingReach(ObjectSharingReach.ROLE_ACCESS);
-    await upsertRowLevelPermissionPredicates({
-      expectToFail: false,
-      input: {
-        roleId: memberRoleId,
-        objectMetadataId,
-        predicates: [
-          {
-            fieldMetadataId: nameFieldMetadataId,
-            operand: RowLevelPermissionPredicateOperand.CONTAINS,
-            value: 'Visible',
-          },
-        ],
-        predicateGroups: [],
-      },
-    });
-
-    try {
-      const response = await setShare({ principal: JONY });
-
-      expect(response.body.errors?.[0]?.extensions?.subCode).toBe(
-        'INVALID_SHARE_WITH',
-      );
-      expect(
-        await shares.findByRecordIds({
-          workspaceId,
-          objectMetadataId,
-          recordIds: [SHARED_RECORD_ID],
-        }),
-      ).toEqual([]);
-      expect(
-        (await setShare({ principal: { roleId: memberRoleId } })).body.errors,
-      ).toBeUndefined();
-    } finally {
-      await upsertRowLevelPermissionPredicates({
-        expectToFail: false,
-        input: {
-          roleId: memberRoleId,
-          objectMetadataId,
-          predicates: [],
-          predicateGroups: [],
-        },
-      });
-    }
-  });
-
-  it('should stay within the role when the object limits sharing to it', async () => {
-    await setShare({ principal: JONY });
-    await setSharingReach(ObjectSharingReach.ROLE_ACCESS);
-
-    expect((await findIdsAsJony()).errors).toBeDefined();
   });
 
   it('should let a named grant reach a record the row filter of the role hides', async () => {
@@ -438,10 +355,59 @@ describe('Records shared beyond the role that can access their object', () => {
       expect(
         (await renameAsJony('Edited under a row filter')).body.errors,
       ).toBeUndefined();
+    } finally {
+      await upsertRowLevelPermissionPredicates({
+        expectToFail: false,
+        input: {
+          roleId: memberRoleId,
+          objectMetadataId,
+          predicates: [],
+          predicateGroups: [],
+        },
+      });
+    }
+  });
 
-      await setSharingReach(ObjectSharingReach.ROLE_ACCESS);
+  it('should refuse a merge that would leave a shared record the role cannot delete', async () => {
+    await setMemberObjectAccess(true);
+    await upsertRowLevelPermissionPredicates({
+      expectToFail: false,
+      input: {
+        roleId: memberRoleId,
+        objectMetadataId,
+        predicates: [
+          {
+            fieldMetadataId: nameFieldMetadataId,
+            operand: RowLevelPermissionPredicateOperand.CONTAINS,
+            value: 'Visible',
+          },
+        ],
+        predicateGroups: [],
+      },
+    });
 
-      expect((await findIdsAsJony()).ids).toEqual([OTHER_RECORD_ID]);
+    try {
+      await setShare({
+        principal: JONY,
+        accessLevel: RecordShareAccessLevel.FULL,
+      });
+
+      const merged = await makeGraphqlApiRequest(
+        mergeManyOperationFactory({
+          objectMetadataPluralName: OBJECT_PLURAL,
+          gqlFields: 'id',
+          ids: [OTHER_RECORD_ID, SHARED_RECORD_ID],
+          conflictPriorityIndex: 0,
+        }),
+        APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      );
+
+      expect(merged.body.errors?.[0]?.extensions?.userFriendlyMessage).toBe(
+        'Your role cannot delete some of these records, so they cannot be merged.',
+      );
+      expect((await findIdsAsJony()).ids.sort()).toEqual(
+        [SHARED_RECORD_ID, OTHER_RECORD_ID].sort(),
+      );
     } finally {
       await upsertRowLevelPermissionPredicates({
         expectToFail: false,
@@ -493,7 +459,7 @@ describe('Records shared beyond the role that can access their object', () => {
             WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
             memberRoleId,
           ],
-          canAccessAllRecords: false,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
           isOwningApplication: () => false,
           resolveRowLevelPermissionRecordFilter: () => null,
         });
@@ -506,10 +472,6 @@ describe('Records shared beyond the role that can access their object', () => {
 
     expect((await findIdsAsJony()).ids).toEqual([SHARED_RECORD_ID]);
     expect([...(await resolveAdmittedRecordIds())]).toEqual([SHARED_RECORD_ID]);
-
-    await setSharingReach(ObjectSharingReach.ROLE_ACCESS);
-
-    expect([...(await resolveAdmittedRecordIds())]).toEqual([]);
   });
 
   it('should keep grants within the role while the flag is off', async () => {
@@ -520,45 +482,6 @@ describe('Records shared beyond the role that can access their object', () => {
       expect((await findIdsAsJony()).errors).toBeDefined();
     } finally {
       await setRecordSharingEnabled(true);
-    }
-  });
-
-  it('should let admins change the reach of a standard object', async () => {
-    const { data } = await makeMetadataApiRequest({
-      query: parse(
-        `query { objects(paging: { first: 1000 }) { edges { node { id nameSingular sharingReach } } } }`,
-      ),
-    }).then((response) => response.body);
-    const company = data.objects.edges
-      .map(({ node }: { node: { nameSingular: string } }) => node)
-      .find(
-        ({ nameSingular }: { nameSingular: string }) =>
-          nameSingular === 'company',
-      );
-
-    expect(company.sharingReach).toBe(ObjectSharingReach.WORKSPACE);
-
-    try {
-      const { data: updated } = await updateOneObjectMetadata({
-        expectToFail: false,
-        input: {
-          idToUpdate: company.id,
-          updatePayload: { sharingReach: ObjectSharingReach.ROLE_ACCESS },
-        },
-        gqlFields: 'sharingReach',
-      });
-
-      expect(updated.updateOneObject.sharingReach).toBe(
-        ObjectSharingReach.ROLE_ACCESS,
-      );
-    } finally {
-      await updateOneObjectMetadata({
-        expectToFail: false,
-        input: {
-          idToUpdate: company.id,
-          updatePayload: { sharingReach: ObjectSharingReach.WORKSPACE },
-        },
-      });
     }
   });
 });

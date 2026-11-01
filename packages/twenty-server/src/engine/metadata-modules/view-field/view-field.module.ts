@@ -5,7 +5,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { ViewFieldController } from 'src/engine/metadata-modules/view-field/controllers/view-field.controller';
 import { ViewFieldResolver } from 'src/engine/metadata-modules/view-field/resolvers/view-field.resolver';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
-import { ViewPermissionsModule } from 'src/engine/metadata-modules/view-permissions/view-permissions.module';
+import { ViewPermissionsModule } from 'src/engine/permissions/view/view-permissions.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({

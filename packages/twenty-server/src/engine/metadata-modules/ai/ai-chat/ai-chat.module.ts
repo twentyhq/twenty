@@ -1,3 +1,4 @@
+import { AiFrontComponentModule } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.module';
 import { AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { AgentChatStreamStateModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-stream-state.module';
 import { AgentChatThreadLifecycleModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread-lifecycle.module';
@@ -20,12 +21,11 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { DashboardToolsModule } from 'src/modules/dashboard/tools/dashboard-tools.module';
-import { AiFrontComponentModule } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.module';
 
 import { AgentInboxProposalService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox-proposal.service';
 import { FlushQueuedAgentChatMessagesJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/flush-queued-agent-chat-messages.job';
@@ -48,6 +48,8 @@ import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-c
 import { ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
+import { AgentInboxThreadResolver } from 'src/engine/metadata-modules/ai/ai-chat/resolvers/agent-inbox-thread.resolver';
+import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox-access.service';
 
 @Module({
   imports: [
@@ -98,6 +100,8 @@ import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-ch
     StreamAgentChatJob,
     SystemPromptBuilderService,
     provideWorkspaceScopedRepository(FileEntity),
+    AgentInboxThreadResolver,
+    AgentInboxAccessService,
   ],
   exports: [
     AgentChatThreadModule,

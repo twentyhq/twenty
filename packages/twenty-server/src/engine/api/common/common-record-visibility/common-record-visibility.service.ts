@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { type ObjectRecord } from 'twenty-shared/types';
+import {
+  type ObjectRecord,
+  type ObjectsPermissions,
+} from 'twenty-shared/types';
 
 import { type RecordVisibilityRestrictionHandler } from 'src/engine/api/common/common-record-visibility/types/record-visibility-restriction-handler.type';
 import { collectRecordsByObjectNameSingular } from 'src/engine/api/common/common-record-visibility/utils/collect-records-by-object-name-singular.util';
@@ -34,12 +37,14 @@ export class CommonRecordVisibilityService {
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     authContext,
+    objectsPermissions,
   }: {
     records: ObjectRecord[];
     flatObjectMetadata: FlatObjectMetadata;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     authContext: WorkspaceAuthContext;
+    objectsPermissions: ObjectsPermissions;
   }): Promise<void> {
     if (this.handlersByObjectNameSingular.size === 0 || records.length === 0) {
       return;
@@ -62,6 +67,9 @@ export class CommonRecordVisibilityService {
         ?.applyVisibilityRestrictions({
           records: collectedRecords,
           authContext,
+          objectsPermissions,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
         });
     }
   }

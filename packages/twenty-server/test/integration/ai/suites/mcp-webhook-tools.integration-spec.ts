@@ -1,5 +1,6 @@
 import { executeToolThroughMcp } from 'test/integration/ai/utils/execute-tool-through-mcp.util';
 import { listWebhookIdsThroughMcp } from 'test/integration/ai/utils/list-webhook-ids-through-mcp.util';
+import { findOneRoleByLabel } from 'test/integration/metadata/suites/role/utils/find-one-role-by-label.util';
 import { callMcpTool } from 'test/integration/graphql/suites/application-role-intersection/utils/call-mcp-tool.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
@@ -7,9 +8,11 @@ const TARGET_URL = 'https://example.com/twenty-webhook';
 
 describe('MCP webhook tools (integration)', () => {
   let webhookIdsBefore: string[];
+  let adminRoleId: string;
 
   beforeAll(async () => {
     webhookIdsBefore = await listWebhookIdsThroughMcp();
+    adminRoleId = (await findOneRoleByLabel({ label: 'Admin' })).id;
   });
 
   afterAll(async () => {
@@ -53,6 +56,7 @@ describe('MCP webhook tools (integration)', () => {
       toolArguments: {
         targetUrl: TARGET_URL,
         operations: [{ kind: 'record', object: 'person', event: 'created' }],
+        roleId: adminRoleId,
       },
     });
 

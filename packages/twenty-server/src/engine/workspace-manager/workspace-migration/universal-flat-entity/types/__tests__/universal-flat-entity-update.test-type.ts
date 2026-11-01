@@ -20,7 +20,7 @@ type Assertions = [
       | 'isAuditLogged'
       | 'isLabelSyncedWithName'
       | 'isUIEditable'
-      | 'writability'
+      | 'disabledFieldPermissionActions'
       | 'isNullable'
       | 'universalSettings'
     >
@@ -45,10 +45,7 @@ type Assertions = [
       | 'isSearchable'
       | 'isUIEditable'
       | 'isUICreatable'
-      | 'writability'
-      | 'readability'
-      | 'readabilityParentFieldUniversalIdentifiers'
-      | 'sharingReach'
+      | 'disabledObjectPermissionActions'
     >
   >,
 ];

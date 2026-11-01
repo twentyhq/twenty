@@ -1,0 +1,75 @@
+---
+title: قابل للطي.
+description: أنشئ مُشغِّلًا متاحًا ولوحة متحركة مع توسيع مضبوط أو غير مضبوط.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CollapsibleReference from '/snippets/ui/generated/layout/collapsible.mdx';
+
+## نظرة عامة
+
+يكشف `Collapsible` عن عقود Root وTrigger وPanel الخاصة بـ Base UI. يتولى Root حالة التوسيع، ويوفر Trigger التفعيل عبر لوحة المفاتيح وعلاقة اللوحة، بينما يتولى Panel الرسوم المتحركة ومدة بقاء المحتوى.
+
+<StoryEmbed storyId="ui-layout-collapsible--display" title="مثال على عنصر قابل للطي" height={160} />
+
+## استخدام
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Collapsible } from 'twenty-ui/primitives/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportDetails = () => (
+  <Collapsible.Root defaultOpen style={{ width: 360, maxWidth: '100%' }}>
+    <Collapsible.Trigger render={<Button />}>
+      Import details
+    </Collapsible.Trigger>
+    <Collapsible.Panel>
+      <Text
+        style={{
+          paddingTop: 12,
+          color: 'var(--t-font-color-secondary)',
+          lineHeight: 1.5,
+        }}
+      >
+        Match each CSV column to a record field before importing.
+      </Text>
+    </Collapsible.Panel>
+  </Collapsible.Root>
+);
+```
+
+استخدم `defaultOpen` للتوسيع غير المتحكَّم فيه. استخدم `open` و`onOpenChange` عندما يمتلك التطبيق الحالة. يتلقى رد النداء القيمة المنطقية المطلوبة وتفاصيل حدث Base UI، بما في ذلك `reason` و`event` و`cancel()`. يؤدي إلغاء تغيير إلى الحفاظ على الحالة الحالية. يمكن للوحة التي يتم التحكم فيها خارجيًا حذف Trigger عندما تأتي حالتها من عنصر تحكم آخر أو شرط في التطبيق.
+
+ترث المشغّلات حالة `disabled` الخاصة بـ Root ويمكنها تجاوزها باستخدام الخاصية `disabled` الخاصة بها. يدعم المشغّل الأصلي مفتاحَي Enter وSpace ويوفر `aria-expanded` و`aria-controls` تلقائيًا. امنح كل مشغّل اسمًا ذا معنى يسهل الوصول إليه.
+
+## البنية
+
+```text
+Collapsible.Root
+├── Collapsible.Trigger
+└── Collapsible.Panel
+    └── Content
+```
+
+## تخصيص أصلي
+
+يعرض Root وPanel عنصر `div`؛ ويعرض Trigger عنصر `button`. يقبل كل جزء السمات الأصلية والمعالجات و`className` و`style` والمراجع وتركيب `render` الخاص بـ Base UI. تتلقى دوال الاستدعاء الخاصة بالفئة والنمط حالة الجزء. مرّر جميع الخصائص المتوفرة والمرجع من مكوّنات العرض المخصصة. اضبط `nativeButton={false}` عندما يعرض Trigger عنصرًا ليس زرًا.
+
+تتضمن الأنواع العامة `CollapsibleRootProps` و`CollapsibleTriggerProps` و`CollapsiblePanelProps` وأنواع حالة الأجزاء الثلاثة، بالإضافة إلى `CollapsibleRootChangeEventDetails` و`CollapsibleRootChangeEventReason`.
+
+## الرسوم المتحركة وعمر المحتوى
+
+تكون القيمة الافتراضية لـ Panel هي `dimension="height"`. استخدم `dimension="width"` للتوسيع الأفقي وقيّد عرض المحتوى عند الحاجة. القيمة الافتراضية لـ `containAnimation` هي `true`، وهي تقص الفائض وتنسق المحتوى في عمود. اضبطها على `false` عندما يحتاج المحتوى إلى التجاوز أثناء الانتقال.
+
+تختار `duration` الخاصة بـ Panel إعدادًا مسبقًا للسمة (`instant` أو `fast` أو `normal` أو `slow`)، وتكون القيمة الافتراضية هي `normal`. تؤدي تفضيلات تقليل الحركة إلى تعطيل الانتقالات.
+
+يُزال Panel من التركيب بعد الإغلاق افتراضيًا. استخدم `keepMounted` للحفاظ على حالة المحتوى المحلية أثناء إخفاء اللوحة المغلقة. يتيح `hiddenUntilFound` لبحث الصفحة في المتصفح إظهار المحتوى المغلق، وله أولوية على `keepMounted`.
+
+## الإزاحة
+
+<CollapsibleReference />
+
+<PageBanner illustration="layout" />

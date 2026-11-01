@@ -12,6 +12,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import {
   ActivateSkillDocument,
   DeactivateSkillDocument,
@@ -30,7 +31,7 @@ const DELETE_SKILL_MODAL_ID = 'delete-skill-modal';
 type SettingsSkillDangerZoneProps = {
   skill: Pick<
     NonNullable<FindOneSkillQuery['skill']>,
-    'id' | 'isActive' | 'isCustom'
+    'id' | 'isActive' | 'applicationId'
   >;
 };
 
@@ -41,6 +42,7 @@ export const SettingsSkillDangerZone = ({
   const { enqueueToast } = useToast();
   const { openDialog, closeDialog } = useDialog();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
 
   const [deleteSkill] = useMutation(DeleteSkillDocument);
   const [activateSkill] = useMutation(ActivateSkillDocument);
@@ -85,7 +87,7 @@ export const SettingsSkillDangerZone = ({
         >
           {skill.isActive ? t`Deactivate` : t`Activate`}
         </Button>
-        {skill.isCustom && (
+        {getIsMetadataItemCustom(skill) && (
           <Button
             startIcon={<IconTrash />}
             size="sm"

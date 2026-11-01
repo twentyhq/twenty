@@ -167,7 +167,8 @@
       "Dropdown": "components/navigation/Dropdown/Dropdown",
       "ListItemButton": "components/navigation/ListItemButton/ListItemButton",
       "TabButton": "components/navigation/TabButton/TabButton",
-      "useDropdownPage": "components/navigation/Dropdown/hooks/useDropdownPage"
+      "useDropdownPage": "components/navigation/Dropdown/hooks/useDropdownPage",
+      "useDropdownPlacementOrThrow": "components/navigation/Dropdown/hooks/useDropdownPlacementOrThrow"
     },
     "types": {
       "ColorLabels": "components/navigation/MenuItem/types/ColorLabels",
@@ -305,6 +306,7 @@
       "IconChevronsRight": "icon/components/TablerIcons",
       "IconChevronUp": "icon/components/TablerIcons",
       "IconCircle": "icon/components/TablerIcons",
+      "IconCircleCheck": "icon/components/TablerIcons",
       "IconCircleDashed": "icon/components/TablerIcons",
       "IconCircleDot": "icon/components/TablerIcons",
       "IconCircleOff": "icon/components/TablerIcons",
@@ -1258,6 +1260,7 @@
   "utilities": {
     "reExports": [],
     "values": {
+      "getAvatarInitial": "utilities/utils/getAvatarInitial",
       "getMainColorNameFromPaletteColorName": "utilities/color/utils/getMainColorNameFromPaletteColorName",
       "getOsControlSymbol": "utilities/device/getOsControlSymbol",
       "getSafeUrl": "utilities/utils/getSafeUrl",

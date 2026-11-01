@@ -12,7 +12,8 @@ import { IconPlus } from 'twenty-ui/icon';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
+import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
+import { type ApiKeyForRole } from '~/generated-metadata/graphql';
 import {
   type PartialWorkspaceMember,
   type RoleWithPartialMembers,
@@ -32,7 +33,7 @@ type RoleAssignmentSectionProps = {
   settingsDraftRole: RoleWithPartialMembers;
   currentWorkspaceMember?: CurrentWorkspaceMember;
   onSelect: (
-    roleTarget: PartialWorkspaceMember | Agent | ApiKeyForRole,
+    roleTarget: PartialWorkspaceMember | FlatAgent | ApiKeyForRole,
     roleTargetType: keyof typeof ROLE_TARGET_CONFIG,
   ) => void;
   allWorkspaceMembersHaveThisRole?: boolean;
@@ -109,7 +110,7 @@ export const RoleAssignmentSection = ({
               <SettingsRoleAssignmentEntityPickerDropdown
                 entityType={roleTargetType}
                 excludedIds={excludedIds}
-                onSelect={(roleTarget: Agent | ApiKeyForRole) =>
+                onSelect={(roleTarget: FlatAgent | ApiKeyForRole) =>
                   onSelect(roleTarget, roleTargetType)
                 }
               />

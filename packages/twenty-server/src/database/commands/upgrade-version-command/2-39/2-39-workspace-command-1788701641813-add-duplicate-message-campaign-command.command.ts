@@ -13,7 +13,8 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @RegisteredWorkspaceCommand('2.39.0', 1788701641813)
 @Command({
   name: 'upgrade:2-39:add-duplicate-message-campaign-command',
-  description: 'Add the Duplicate Campaign command to workspaces that predate it',
+  description:
+    'Add the Duplicate Campaign command to workspaces that predate it',
 })
 export class AddDuplicateMessageCampaignCommandCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -34,16 +35,15 @@ export class AddDuplicateMessageCampaignCommandCommand extends ProvisionedWorksp
         'flatObjectMetadataMaps',
       ]);
 
-    const commandMenuItemsToCreate = buildMissingStandardCommandMenuItemsToCreate(
-      {
+    const commandMenuItemsToCreate =
+      buildMissingStandardCommandMenuItemsToCreate({
         commandMenuItemNames: ['duplicateMessageCampaign'],
         flatCommandMenuItemByUniversalIdentifier:
           flatCommandMenuItemMaps.byUniversalIdentifier,
         flatObjectMetadataMaps,
         workspaceId,
         now: new Date().toISOString(),
-      },
-    );
+      });
 
     if (commandMenuItemsToCreate.length === 0) {
       return;
@@ -60,6 +60,7 @@ export class AddDuplicateMessageCampaignCommandCommand extends ProvisionedWorksp
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {
               flatEntityToCreate: commandMenuItemsToCreate,

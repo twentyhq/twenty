@@ -9,6 +9,7 @@ import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { executeToolFromToolSet } from 'src/engine/core-modules/tool-provider/utils/execute-tool-from-tool-set.util';
 import { toolSetToDescriptors } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
+import { PUBLISH_FRONT_COMPONENT_TOOL } from 'src/engine/metadata-modules/ai/ai-front-component/constants/publish-front-component-tool.constant';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import type { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service';
 
@@ -19,7 +20,7 @@ export class FrontComponentToolProvider implements ToolProvider {
   constructor(
     @Optional()
     @Inject(AI_FRONT_COMPONENT_SERVICE_TOKEN)
-    private readonly components: AiFrontComponentService | null,
+    private readonly aiFrontComponentService: AiFrontComponentService | null,
   ) {}
 
   async isAvailable(context: ToolProviderContext): Promise<boolean> {
@@ -38,10 +39,10 @@ export class FrontComponentToolProvider implements ToolProvider {
         icon: 'IconLayoutGridAdd',
       },
     ).map((descriptor) => {
-      if (descriptor.name === 'publish_front_component') {
+      if (descriptor.name === PUBLISH_FRONT_COMPONENT_TOOL.name) {
         return {
           ...descriptor,
-          approval: { template: 'frontComponent' as const },
+          approval: PUBLISH_FRONT_COMPONENT_TOOL.approval,
         };
       }
       return descriptor;
@@ -62,6 +63,6 @@ export class FrontComponentToolProvider implements ToolProvider {
   }
 
   private async buildToolSet(context: ToolProviderContext) {
-    return (await this.components?.generateTools(context)) ?? {};
+    return (await this.aiFrontComponentService?.generateTools(context)) ?? {};
   }
 }

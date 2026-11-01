@@ -38,6 +38,10 @@ export class MessagingBlocklistListener {
     await this.messageQueueService.add<BlocklistItemDeleteMessagesJobData>(
       BlocklistItemDeleteMessagesJob.name,
       payload,
+      {
+        workspaceId: payload.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 
@@ -50,6 +54,10 @@ export class MessagingBlocklistListener {
     await this.messageQueueService.add<BlocklistReimportMessagesJobData>(
       BlocklistReimportMessagesJob.name,
       payload,
+      {
+        workspaceId: payload.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 
@@ -62,11 +70,19 @@ export class MessagingBlocklistListener {
     await this.messageQueueService.add<BlocklistItemDeleteMessagesJobData>(
       BlocklistItemDeleteMessagesJob.name,
       payload,
+      {
+        workspaceId: payload.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
 
     await this.messageQueueService.add<BlocklistReimportMessagesJobData>(
       BlocklistReimportMessagesJob.name,
       payload,
+      {
+        workspaceId: payload.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 }

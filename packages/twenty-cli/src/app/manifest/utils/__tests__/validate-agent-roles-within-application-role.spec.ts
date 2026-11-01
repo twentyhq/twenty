@@ -119,6 +119,31 @@ describe('validateAgentRolesWithinApplicationRole', () => {
     ]);
   });
 
+  it('names system flags as the app SDK does', () => {
+    const errors = validateAgentRolesWithinApplicationRole({
+      agents: [buildAgent()],
+      roles: [
+        applicationRole,
+        buildRole({
+          permissionFlagUniversalIdentifiers: [
+            SystemPermissionFlag.CONNECTED_ACCOUNTS,
+          ],
+        }),
+      ],
+      objects: [],
+      permissionFlags: [],
+      defaultRoleUniversalIdentifier: APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
+      systemPermissionFlag: {
+        USER_APPS: SystemPermissionFlag.CONNECTED_ACCOUNTS,
+        ...SystemPermissionFlag,
+      },
+    });
+
+    expect(errors).toEqual([
+      'Role "Agent role" used by agent "assistant" grants more than the application role "Application role": permission flag USER_APPS. The application role must cover every permission an agent role grants.',
+    ]);
+  });
+
   it('treats a custom permission flag without a permission type as a tool flag, like the server does', () => {
     const customToolFlagUniversalIdentifier = 'custom-tool-flag';
 
@@ -196,7 +221,24 @@ describe('validateAgentRolesWithinApplicationRole', () => {
     ]);
   });
 
-  it('reports a missing application role and still checks agent role references', () => {
+  it('accepts an external application role without a local definition', () => {
+    const errors = validateAgentRolesWithinApplicationRole({
+      agents: [
+        buildAgent({ roleUniversalIdentifier: undefined }),
+        buildAgent({
+          roleUniversalIdentifier: APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
+        }),
+      ],
+      roles: [],
+      objects: [],
+      permissionFlags: [],
+      defaultRoleUniversalIdentifier: APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
+    });
+
+    expect(errors).toEqual([]);
+  });
+
+  it('still checks agent role references with an external application role', () => {
     const errors = validateAgentRolesWithinApplicationRole({
       agents: [
         buildAgent(),
@@ -212,7 +254,6 @@ describe('validateAgentRolesWithinApplicationRole', () => {
     });
 
     expect(errors).toEqual([
-      'Application default role "application-role" is not defined by this application.',
       'Agent "lost-assistant" references role "missing-role", which is not defined by this application.',
     ]);
   });

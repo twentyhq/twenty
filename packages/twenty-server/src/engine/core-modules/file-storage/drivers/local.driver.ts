@@ -7,7 +7,7 @@ import {
 } from 'fs';
 import * as fs from 'fs/promises';
 import path, { dirname, join } from 'path';
-import { type Readable } from 'stream';
+import { Readable } from 'stream';
 import { pipeline } from 'stream/promises';
 
 import { Logger } from '@nestjs/common';
@@ -169,11 +169,11 @@ export class LocalDriver implements StorageDriver {
     sourceFile: Buffer | Uint8Array | string;
     mimeType: string | undefined;
   }): Promise<void> {
-    const realFilePath = await this.resolveWritableRealPathOrThrow(
-      params.filePath,
-    );
-
-    await fs.writeFile(realFilePath, params.sourceFile);
+    await this.writeFileStream({
+      filePath: params.filePath,
+      stream: Readable.from([params.sourceFile]),
+      mimeType: params.mimeType,
+    });
   }
 
   async writeFileStream(params: {
