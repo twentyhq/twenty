@@ -17,6 +17,10 @@ import { parseAgentInputOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-
 import { readGeneratedOutputOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/read-generated-output-or-throw.util';
 import { resolveAgentRunCallerRefOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-agent-run-caller-ref-or-throw.util';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 
 @Injectable()
 export class AiGenerateService {
@@ -47,6 +51,17 @@ export class AiGenerateService {
     const responseFormat = settings.responseFormat ?? undefined;
 
     assertAgentResponseFormatHasOutputFieldsOrThrow(responseFormat);
+
+    // the application's role is the ceiling of what its generate may reach, so it cannot run without one
+    if (
+      isDefined(callerApplication) &&
+      !isDefined(callerApplication.defaultRoleId)
+    ) {
+      throw new AiException(
+        'ai.generate needs a default role on the application; set defaultRoleUniversalIdentifier in its manifest',
+        AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
+      );
+    }
 
     const executionContext =
       await this.agentRunCallerContextService.buildExecutionContext({
