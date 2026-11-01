@@ -315,7 +315,8 @@ export class AgentTurnStreamService {
     }
 
     // the end event follows every chunk, so a subscriber that sees it has the whole reply. The turn is
-    // already finished, so an event that could not be sent leaves subscribers to read the history instead
+    // already finished, so a failed send keeps its outcome: live subscribers see the connection as lost,
+    // and the saved reply shows once the thread reloads
     await this.eventPublisherService
       .publish({
         threadId: claim.threadId,
