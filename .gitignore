@@ -71,3 +71,5 @@ screenshots/
 /.diag*.mjs
 /.compare*.mjs
 /.narrow*.mjs
+
+/packages/twenty-server/src/engine/metadata-modules/ai/ai-front-component/constants/ui-documentation.generated.json

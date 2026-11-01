@@ -9,6 +9,7 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service';
 import { PUBLISH_FRONT_COMPONENT_TOOL } from 'src/engine/metadata-modules/ai/ai-front-component/constants/publish-front-component-tool.constant';
+import { createGetFrontComponentUiDocsTool } from 'src/engine/metadata-modules/ai/ai-front-component/tools/get-front-component-ui-docs.tool';
 import { createInspectFrontComponentTool } from 'src/engine/metadata-modules/ai/ai-front-component/tools/inspect-front-component.tool';
 import { createListFrontComponentsTool } from 'src/engine/metadata-modules/ai/ai-front-component/tools/list-front-components.tool';
 import { createPreviewFrontComponentTool } from 'src/engine/metadata-modules/ai/ai-front-component/tools/preview-front-component.tool';
@@ -44,6 +45,7 @@ export class AiFrontComponentToolService {
     }
 
     return {
+      get_front_component_ui_docs: createGetFrontComponentUiDocsTool(),
       list_front_components: createListFrontComponentsTool({
         frontComponentService: this.frontComponentService,
         workspaceId: context.workspaceId,
