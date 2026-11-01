@@ -5,6 +5,7 @@ import { isDefined, isValidUuid, resolveInput } from 'twenty-shared/utils';
 import {
   getWorkflowAiAgentStepConfigIssues,
   getWorkflowAiAgentStepKind,
+  hasWorkflowAiAgentConversationConfig,
   WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES,
 } from 'twenty-shared/workflow';
 
@@ -16,6 +17,7 @@ import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-exec
 import { type AgentRunSpec } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-spec.type';
 import { type ResolvedAgentRunPersona } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/resolved-agent-run-persona.type';
 import { buildStartedAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-started-agent-run-summary.util';
+import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import {
   AiException,
   AiExceptionCode,
@@ -49,6 +51,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     private readonly workflowRunStepLogService: WorkflowRunStepLogWorkspaceService,
     private readonly workflowAgentConversationService: WorkflowAgentConversationWorkspaceService,
     private readonly agentRunPersonaService: AgentRunPersonaService,
+    private readonly conversationWriterService: AgentConversationWriterService,
   ) {}
 
   async execute({
@@ -97,8 +100,9 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       );
     }
 
+    const stepKind = getWorkflowAiAgentStepKind({ input: step.settings.input });
     const [configIssue] = getWorkflowAiAgentStepConfigIssues({
-      stepKind: getWorkflowAiAgentStepKind({ input: step.settings.input }),
+      stepKind,
       input: step.settings.input,
     });
 
@@ -137,35 +141,43 @@ export class AiAgentWorkflowAction implements WorkflowAction {
       },
     );
 
-    const conversation =
-      await this.workflowAgentConversationService.openConversation({
-        runInfo,
-        stepId: currentStepId,
-        title: step.name,
-        recipientWorkspaceMemberId: isNonEmptyString(recipientWorkspaceMemberId)
-          ? recipientWorkspaceMemberId
-          : null,
-        threadKey: resolveConversationThreadKey({
-          conversation: conversationSettings,
-          defaultScope: 'STEP',
-          workflowRunId: runInfo.workflowRunId,
-          stepExecutionKey: buildStepExecutionKey({
-            stepId: currentStepId,
-            steps,
-            context,
+    // only an agent step someone can take part in converses; any other step runs one-shot
+    const hasConversation =
+      !(await this.conversationWriterService.canInsertTurnWithoutThread(
+        workspaceId,
+      )) || hasWorkflowAiAgentConversationConfig(step.settings.input);
+    const conversation = hasConversation
+      ? await this.workflowAgentConversationService.openConversation({
+          runInfo,
+          stepId: currentStepId,
+          title: step.name,
+          recipientWorkspaceMemberId: isNonEmptyString(
+            recipientWorkspaceMemberId,
+          )
+            ? recipientWorkspaceMemberId
+            : null,
+          threadKey: resolveConversationThreadKey({
+            conversation: conversationSettings,
+            defaultScope: 'STEP',
+            workflowRunId: runInfo.workflowRunId,
+            stepExecutionKey: buildStepExecutionKey({
+              stepId: currentStepId,
+              steps,
+              context,
+            }),
           }),
-        }),
-      });
+        })
+      : null;
 
     const resolvedPrompt = resolveInput(prompt, context) as string | undefined;
 
-    // the conversation is linked from the start, so the run can be followed while it goes on
+    // a conversation is linked from the start, so the run can be followed while it goes on
     await this.workflowRunStepLogService.setAiAgentStepLog({
       workflowRunId: runInfo.workflowRunId,
       workspaceId,
       stepId: currentStepId,
       summary: buildStartedAgentRunSummary(persona.modelId),
-      threadId: conversation.threadId,
+      threadId: conversation?.threadId ?? null,
     });
 
     await this.agentRunnerService.start({

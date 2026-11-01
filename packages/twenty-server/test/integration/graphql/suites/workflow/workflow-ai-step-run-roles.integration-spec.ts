@@ -38,11 +38,11 @@ import {
   type AiModelRegistryService,
   type RegisteredAiModel,
 } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { type WorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { type WorkflowAiAgentActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/types/workflow-ai-agent-action-input.type';
 
 const schema = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 const OBJECT_NAME = 'aiStepRunRoleRecord';
@@ -69,8 +69,10 @@ type ModelCall = {
 
 // The model calls the find tool once, then answers, so the test sees the tools the step offers and what they return
 const mockModelCallingFindTool = ({
-  failsOnceMidAnswer = false,
-}: { failsOnceMidAnswer?: boolean } = {}): ModelCall[] => {
+  providerFailure,
+}: {
+  providerFailure?: 'ONCE_MID_ANSWER' | 'EVERY_ANSWER' | 'EVERY_CALL';
+} = {}): ModelCall[] => {
   const calls: ModelCall[] = [];
   const model = createScriptedLanguageModel((options) => {
     calls.push({
@@ -80,6 +82,25 @@ const mockModelCallingFindTool = ({
         .flatMap((message) => message.content)
         .map((part) => JSON.stringify(part)),
     });
+
+    const shouldFailThisCall =
+      providerFailure === 'EVERY_CALL' ||
+      (providerFailure === 'EVERY_ANSWER' && calls.length > 1) ||
+      (providerFailure === 'ONCE_MID_ANSWER' && calls.length === 2);
+
+    if (shouldFailThisCall) {
+      return {
+        content: [{ type: 'text', text: 'Do' }],
+        finishReason: { unified: 'error', raw: undefined },
+        usage: USAGE,
+        streamError: new APICallError({
+          message: 'Service unavailable',
+          url: 'https://provider.test',
+          requestBodyValues: {},
+          statusCode: 503,
+        }),
+      };
+    }
 
     if (calls.length === 1) {
       return {
@@ -94,20 +115,6 @@ const mockModelCallingFindTool = ({
         ],
         finishReason: { unified: 'tool-calls', raw: undefined },
         usage: USAGE,
-      };
-    }
-
-    if (failsOnceMidAnswer && calls.length === 2) {
-      return {
-        content: [{ type: 'text', text: 'Do' }],
-        finishReason: { unified: 'error', raw: undefined },
-        usage: USAGE,
-        streamError: new APICallError({
-          message: 'Service unavailable',
-          url: 'https://provider.test',
-          requestBodyValues: {},
-          statusCode: 503,
-        }),
       };
     }
 
@@ -180,7 +187,7 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
     });
 
   const createAiStepWorkflow = async (
-    input: WorkflowAiAgentActionInput,
+    stepInput: Partial<WorkflowAiAgentAction['settings']['input']> = {},
   ): Promise<string> => {
     const { coreWorkflowId, coreWorkflowVersionId, workspaceWorkflowId } =
       await createCoreWorkflow({ name: 'AI step run roles' });
@@ -194,7 +201,7 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
       valid: true,
       nextStepIds: [],
       settings: {
-        input,
+        input: { agentId, prompt: 'List the records', ...stepInput },
         outputSchema: {},
         errorHandlingOptions: {
           retryOnFailure: { value: 0 },
@@ -241,14 +248,11 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
     return coreWorkflowVersionId;
   };
 
-  const createAgentStepWorkflow = () =>
-    createAiStepWorkflow({ agentId, prompt: 'List the records' });
-
   const createScopedStepWorkflow = (scope: AiRunScope) =>
     createAiStepWorkflow({
+      agentId: undefined,
       modelId: TEST_AI_MODEL_ID,
       scope,
-      prompt: 'List the records',
     });
 
   const runAsMemberUntilDone = async (coreWorkflowVersionId: string) => {
@@ -417,7 +421,7 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
     await setMemberObjectAccess(false);
     const calls = mockModelCallingFindTool();
 
-    expect(await runAsMemberUntilDone(await createAgentStepWorkflow())).toBe(
+    expect(await runAsMemberUntilDone(await createAiStepWorkflow())).toBe(
       'COMPLETED',
     );
 
@@ -430,7 +434,7 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
     await setMemberRowRule([{ value: 'Visible' }]);
     const calls = mockModelCallingFindTool();
 
-    expect(await runAsMemberUntilDone(await createAgentStepWorkflow())).toBe(
+    expect(await runAsMemberUntilDone(await createAiStepWorkflow())).toBe(
       'COMPLETED',
     );
 
@@ -531,12 +535,112 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
        ORDER BY part."orderIndex"`,
     );
 
+  const findLatestAgentTurn = async (
+    turnAgentId: string | null = agentId,
+  ): Promise<{
+    id: string;
+    threadId: string | null;
+    status: AgentTurnStatus;
+    inputTokens: number | null;
+    outputTokens: number | null;
+  }> => {
+    const [turn] = await global.testDataSource.query(
+      `SELECT id, "threadId", status, "inputTokens"::float8 AS "inputTokens",
+         "outputTokens"::float8 AS "outputTokens"
+       FROM "${schema}"."agentTurn"
+       WHERE "agentId" IS NOT DISTINCT FROM $1 ORDER BY "createdAt" DESC LIMIT 1`,
+      [turnAgentId],
+    );
+
+    return turn;
+  };
+
+  it('records a step without a conversation as one turn, outside any thread', async () => {
+    mockModelCallingFindTool();
+
+    expect(await runAsMemberUntilDone(await createAiStepWorkflow())).toBe(
+      'COMPLETED',
+    );
+
+    const turn = await findLatestAgentTurn();
+
+    expect(turn).toMatchObject({
+      threadId: null,
+      status: AgentTurnStatus.COMPLETED,
+    });
+    expect(
+      await global.testDataSource.query(
+        `SELECT id FROM "${schema}"."agentMessage" WHERE "turnId" = $1`,
+        [turn.id],
+      ),
+    ).toEqual([]);
+  });
+
+  it('runs a Generate step one-shot, outside any thread', async () => {
+    mockModelCallingFindTool();
+
+    expect(
+      await runAsMemberUntilDone(
+        await createAiStepWorkflow({
+          agentId: undefined,
+          instructions: 'Read the records you are asked about',
+          modelId: TEST_AI_MODEL_ID,
+        }),
+      ),
+    ).toBe('COMPLETED');
+
+    const turn = await findLatestAgentTurn(null);
+
+    expect(turn).toMatchObject({
+      threadId: null,
+      status: AgentTurnStatus.COMPLETED,
+    });
+    expect(
+      await global.testDataSource.query(
+        `SELECT id FROM "${schema}"."agentMessage" WHERE "turnId" = $1`,
+        [turn.id],
+      ),
+    ).toEqual([]);
+  });
+
+  it('fails a step without a conversation when the provider keeps failing', async () => {
+    mockModelCallingFindTool({ providerFailure: 'EVERY_CALL' });
+
+    expect(await runAsMemberUntilDone(await createAiStepWorkflow())).toBe(
+      'FAILED',
+    );
+
+    expect(await findLatestAgentTurn()).toMatchObject({
+      threadId: null,
+      status: AgentTurnStatus.FAILED,
+    });
+  });
+
+  it('keeps the usage of the steps a failed run without a conversation spent', async () => {
+    mockModelCallingFindTool({ providerFailure: 'EVERY_ANSWER' });
+
+    expect(await runAsMemberUntilDone(await createAiStepWorkflow())).toBe(
+      'FAILED',
+    );
+
+    const turn = await findLatestAgentTurn();
+
+    expect(turn).toMatchObject({
+      threadId: null,
+      status: AgentTurnStatus.FAILED,
+    });
+    expect(turn.inputTokens).toBeGreaterThan(0);
+    expect(turn.outputTokens).toBeGreaterThan(0);
+  });
+
   it('saves the step reply in the parts chat saves', async () => {
     mockModelCallingFindTool();
 
-    expect(await runAsMemberUntilDone(await createAgentStepWorkflow())).toBe(
-      'COMPLETED',
-    );
+    expect(
+      await runAsMemberUntilDone(
+        await createAiStepWorkflow({ conversation: { scope: 'STEP' } }),
+      ),
+    ).toBe('COMPLETED');
 
     expect(await findSavedReplyParts()).toMatchObject([
       { type: 'step-start' },
@@ -552,11 +656,15 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
   });
 
   it('completes the step when the provider fails midway through an answer once', async () => {
-    const calls = mockModelCallingFindTool({ failsOnceMidAnswer: true });
+    const calls = mockModelCallingFindTool({
+      providerFailure: 'ONCE_MID_ANSWER',
+    });
 
-    expect(await runAsMemberUntilDone(await createAgentStepWorkflow())).toBe(
-      'COMPLETED',
-    );
+    expect(
+      await runAsMemberUntilDone(
+        await createAiStepWorkflow({ conversation: { scope: 'STEP' } }),
+      ),
+    ).toBe('COMPLETED');
 
     expect(calls).toHaveLength(3);
 
