@@ -1572,7 +1572,7 @@ msgid "A new one each time the step runs"
 msgstr "En ny hver gang steget kjøres"
 
 #. js-lingui-id: 3pDKsj
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "A newer revision exists. Open the latest preview to save."
 msgstr "En nyere revisjon finnes. Åpne den nyeste forhåndsvisningen for å lagre."
 
@@ -3898,6 +3898,7 @@ msgstr "Godkjenningsgjennomgang"
 
 #. js-lingui-id: Z7ZXbT
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Approve"
 msgstr "Godkjenn"
 
@@ -6705,7 +6706,7 @@ msgid "Component name"
 msgstr "Komponentnavn"
 
 #. js-lingui-id: WcUICq
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Component preview with sample data"
 msgstr "Forhåndsvisning av komponent med eksempeldata"
 
@@ -7514,6 +7515,7 @@ msgid "Could not grant media access. Please try again."
 msgstr "Kunne ikke gi medietilgang. Prøv igjen."
 
 #. js-lingui-id: Y5qCpF
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
 msgid "Could not load preview."
 msgstr "Kunne ikke laste inn forhåndsvisning."
@@ -8687,7 +8689,7 @@ msgid "Dashboard duplicated successfully"
 msgstr "Dashbordet ble duplisert"
 
 #. js-lingui-id: xLSe09
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Dashboard widget"
 msgstr "Dashbord-widget"
 
@@ -16547,7 +16549,7 @@ msgid "Loading more..."
 msgstr "Laster inn mer..."
 
 #. js-lingui-id: nSgEqx
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Loading preview…"
 msgstr "Laster inn forhåndsvisning …"
 
@@ -22266,7 +22268,7 @@ msgid "Record page"
 msgstr "Oppføringsside"
 
 #. js-lingui-id: J5b8Hz
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Record page widget"
 msgstr "Widget for oppføringsside"
 
@@ -22491,6 +22493,7 @@ msgstr "Registrert som en utviklingsinstans. Denne instansen vil ikke bli faktur
 
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Reject"
 msgstr "Avvis"
 
@@ -22881,7 +22884,7 @@ msgid "Rename group"
 msgstr "Gi gruppen nytt navn"
 
 #. js-lingui-id: cwObXL
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Rendering preview…"
 msgstr "Gjengir forhåndsvisning …"
 
@@ -23657,7 +23660,7 @@ msgid "SAML/OIDC"
 msgstr "SAML/OIDC"
 
 #. js-lingui-id: b/zjTD
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Sample data"
 msgstr "Eksempeldata"
 
@@ -23726,7 +23729,7 @@ msgid "Save your changes first"
 msgstr "Lagre endringene dine først"
 
 #. js-lingui-id: A0/0NU
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Saved to Workspace app"
 msgstr "Lagret i Workspace-appen"
 

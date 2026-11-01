@@ -1572,7 +1572,7 @@ msgid "A new one each time the step runs"
 msgstr "단계가 실행될 때마다 새로 만들기"
 
 #. js-lingui-id: 3pDKsj
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "A newer revision exists. Open the latest preview to save."
 msgstr "더 새로운 수정 버전이 있습니다. 저장하려면 최신 미리보기를 여세요."
 
@@ -3898,6 +3898,7 @@ msgstr "승인 검토"
 
 #. js-lingui-id: Z7ZXbT
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Approve"
 msgstr "승인"
 
@@ -6705,7 +6706,7 @@ msgid "Component name"
 msgstr "구성 요소 이름"
 
 #. js-lingui-id: WcUICq
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Component preview with sample data"
 msgstr "샘플 데이터가 포함된 컴포넌트 미리보기"
 
@@ -7514,6 +7515,7 @@ msgid "Could not grant media access. Please try again."
 msgstr "미디어 액세스를 허용할 수 없습니다. 다시 시도하세요."
 
 #. js-lingui-id: Y5qCpF
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
 msgid "Could not load preview."
 msgstr "미리 보기를 로드할 수 없습니다."
@@ -8687,7 +8689,7 @@ msgid "Dashboard duplicated successfully"
 msgstr "대시보드가 성공적으로 복제되었습니다"
 
 #. js-lingui-id: xLSe09
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Dashboard widget"
 msgstr "대시보드 위젯"
 
@@ -16547,7 +16549,7 @@ msgid "Loading more..."
 msgstr "더 로딩 중..."
 
 #. js-lingui-id: nSgEqx
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Loading preview…"
 msgstr "미리 보기 로드 중…"
 
@@ -22266,7 +22268,7 @@ msgid "Record page"
 msgstr "레코드 페이지"
 
 #. js-lingui-id: J5b8Hz
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Record page widget"
 msgstr "레코드 페이지 위젯"
 
@@ -22491,6 +22493,7 @@ msgstr "개발 인스턴스로 등록되었습니다. 이 인스턴스에는 청
 
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Reject"
 msgstr "거부"
 
@@ -22881,7 +22884,7 @@ msgid "Rename group"
 msgstr "그룹 이름 변경"
 
 #. js-lingui-id: cwObXL
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Rendering preview…"
 msgstr "미리 보기 렌더링 중…"
 
@@ -23657,7 +23660,7 @@ msgid "SAML/OIDC"
 msgstr "SAML/OIDC 지원"
 
 #. js-lingui-id: b/zjTD
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Sample data"
 msgstr "샘플 데이터"
 
@@ -23726,7 +23729,7 @@ msgid "Save your changes first"
 msgstr "먼저 변경 사항을 저장하세요"
 
 #. js-lingui-id: A0/0NU
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Saved to Workspace app"
 msgstr "Workspace 앱에 저장됨"
 

@@ -1572,7 +1572,7 @@ msgid "A new one each time the step runs"
 msgstr "Uno nuevo cada vez que se ejecuta el paso"
 
 #. js-lingui-id: 3pDKsj
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "A newer revision exists. Open the latest preview to save."
 msgstr "Existe una revisión más reciente. Abre la vista previa más reciente para guardar."
 
@@ -3898,6 +3898,7 @@ msgstr "Revisión de aprobación"
 
 #. js-lingui-id: Z7ZXbT
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Approve"
 msgstr "Aprobar"
 
@@ -6705,7 +6706,7 @@ msgid "Component name"
 msgstr "Nombre del componente"
 
 #. js-lingui-id: WcUICq
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Component preview with sample data"
 msgstr "Vista previa del componente con datos de ejemplo"
 
@@ -7514,6 +7515,7 @@ msgid "Could not grant media access. Please try again."
 msgstr "No se pudo conceder acceso a medios. Inténtalo de nuevo."
 
 #. js-lingui-id: Y5qCpF
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
 msgid "Could not load preview."
 msgstr "No se pudo cargar la vista previa."
@@ -8687,7 +8689,7 @@ msgid "Dashboard duplicated successfully"
 msgstr "Se duplicó el tablero con éxito"
 
 #. js-lingui-id: xLSe09
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Dashboard widget"
 msgstr "Widget del tablero"
 
@@ -16547,7 +16549,7 @@ msgid "Loading more..."
 msgstr "Cargando más..."
 
 #. js-lingui-id: nSgEqx
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Loading preview…"
 msgstr "Cargando vista previa…"
 
@@ -22266,7 +22268,7 @@ msgid "Record page"
 msgstr "Página de registro"
 
 #. js-lingui-id: J5b8Hz
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Record page widget"
 msgstr "Widget de página de registro"
 
@@ -22491,6 +22493,7 @@ msgstr "Registrada como instancia de desarrollo. Esta instancia no se facturará
 
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Reject"
 msgstr "Rechazar"
 
@@ -22881,7 +22884,7 @@ msgid "Rename group"
 msgstr "Cambiar nombre del grupo"
 
 #. js-lingui-id: cwObXL
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Rendering preview…"
 msgstr "Generando vista previa…"
 
@@ -23657,7 +23660,7 @@ msgid "SAML/OIDC"
 msgstr "SAML/OIDC"
 
 #. js-lingui-id: b/zjTD
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Sample data"
 msgstr "Datos de ejemplo"
 
@@ -23726,7 +23729,7 @@ msgid "Save your changes first"
 msgstr "Guarda primero los cambios"
 
 #. js-lingui-id: A0/0NU
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Saved to Workspace app"
 msgstr "Guardado en la aplicación Workspace"
 

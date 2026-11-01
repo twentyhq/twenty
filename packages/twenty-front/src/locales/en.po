@@ -1567,7 +1567,7 @@ msgid "A new one each time the step runs"
 msgstr "A new one each time the step runs"
 
 #. js-lingui-id: 3pDKsj
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "A newer revision exists. Open the latest preview to save."
 msgstr "A newer revision exists. Open the latest preview to save."
 
@@ -3893,6 +3893,7 @@ msgstr "Approval review"
 
 #. js-lingui-id: Z7ZXbT
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Approve"
 msgstr "Approve"
 
@@ -6700,7 +6701,7 @@ msgid "Component name"
 msgstr "Component name"
 
 #. js-lingui-id: WcUICq
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Component preview with sample data"
 msgstr "Component preview with sample data"
 
@@ -7509,6 +7510,7 @@ msgid "Could not grant media access. Please try again."
 msgstr "Could not grant media access. Please try again."
 
 #. js-lingui-id: Y5qCpF
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
 msgid "Could not load preview."
 msgstr "Could not load preview."
@@ -8682,7 +8684,7 @@ msgid "Dashboard duplicated successfully"
 msgstr "Dashboard duplicated successfully"
 
 #. js-lingui-id: xLSe09
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Dashboard widget"
 msgstr "Dashboard widget"
 
@@ -16542,7 +16544,7 @@ msgid "Loading more..."
 msgstr "Loading more..."
 
 #. js-lingui-id: nSgEqx
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Loading preview…"
 msgstr "Loading preview…"
 
@@ -22261,7 +22263,7 @@ msgid "Record page"
 msgstr "Record page"
 
 #. js-lingui-id: J5b8Hz
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Record page widget"
 msgstr "Record page widget"
 
@@ -22486,6 +22488,7 @@ msgstr "Registered as a development instance. This instance will not be billed."
 
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Reject"
 msgstr "Reject"
 
@@ -22876,7 +22879,7 @@ msgid "Rename group"
 msgstr "Rename group"
 
 #. js-lingui-id: cwObXL
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Rendering preview…"
 msgstr "Rendering preview…"
 
@@ -23652,7 +23655,7 @@ msgid "SAML/OIDC"
 msgstr "SAML/OIDC"
 
 #. js-lingui-id: b/zjTD
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Sample data"
 msgstr "Sample data"
 
@@ -23721,7 +23724,7 @@ msgid "Save your changes first"
 msgstr "Save your changes first"
 
 #. js-lingui-id: A0/0NU
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Saved to Workspace app"
 msgstr "Saved to Workspace app"
 

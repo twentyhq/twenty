@@ -1572,7 +1572,7 @@ msgid "A new one each time the step runs"
 msgstr "یک مورد جدید در هر بار اجرای مرحله"
 
 #. js-lingui-id: 3pDKsj
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "A newer revision exists. Open the latest preview to save."
 msgstr "نسخه جدیدتری وجود دارد. برای ذخیره، آخرین پیش‌نمایش را باز کنید."
 
@@ -3898,6 +3898,7 @@ msgstr "بازبینی تأیید"
 
 #. js-lingui-id: Z7ZXbT
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Approve"
 msgstr "تأیید"
 
@@ -6705,7 +6706,7 @@ msgid "Component name"
 msgstr "نام مؤلفه"
 
 #. js-lingui-id: WcUICq
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Component preview with sample data"
 msgstr "پیش‌نمایش مؤلفه با داده‌های نمونه"
 
@@ -7514,6 +7515,7 @@ msgid "Could not grant media access. Please try again."
 msgstr "امکان اعطای دسترسی به رسانه وجود نداشت. لطفاً دوباره تلاش کنید."
 
 #. js-lingui-id: Y5qCpF
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
 msgid "Could not load preview."
 msgstr "پیش‌نمایش بارگیری نشد."
@@ -8687,7 +8689,7 @@ msgid "Dashboard duplicated successfully"
 msgstr "داشبورد با موفقیت تکثیر شد"
 
 #. js-lingui-id: xLSe09
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Dashboard widget"
 msgstr "ابزارک داشبورد"
 
@@ -16547,7 +16549,7 @@ msgid "Loading more..."
 msgstr "بارگیری بیشتر..."
 
 #. js-lingui-id: nSgEqx
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Loading preview…"
 msgstr "در حال بارگیری پیش‌نمایش…"
 
@@ -22266,7 +22268,7 @@ msgid "Record page"
 msgstr "صفحه رکورد"
 
 #. js-lingui-id: J5b8Hz
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Record page widget"
 msgstr "ابزارک صفحه رکورد"
 
@@ -22491,6 +22493,7 @@ msgstr "به‌عنوان یک نمونه توسعه ثبت شد. برای ای�
 
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Reject"
 msgstr "رد کردن"
 
@@ -22881,7 +22884,7 @@ msgid "Rename group"
 msgstr "تغییر نام گروه"
 
 #. js-lingui-id: cwObXL
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Rendering preview…"
 msgstr "در حال رندر کردن پیش‌نمایش…"
 
@@ -23657,7 +23660,7 @@ msgid "SAML/OIDC"
 msgstr "سامانه یکپارچه‌سازی نشانه‌گذاری امنیتی/اتصال بازشناسی‌شده"
 
 #. js-lingui-id: b/zjTD
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Sample data"
 msgstr "داده‌های نمونه"
 
@@ -23726,7 +23729,7 @@ msgid "Save your changes first"
 msgstr "ابتدا تغییرات خود را ذخیره کنید"
 
 #. js-lingui-id: A0/0NU
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Saved to Workspace app"
 msgstr "در برنامه فضای کاری ذخیره شد"
 

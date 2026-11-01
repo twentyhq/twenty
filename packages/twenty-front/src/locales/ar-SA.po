@@ -1572,7 +1572,7 @@ msgid "A new one each time the step runs"
 msgstr "واحد جديد في كل مرة تُشغَّل فيها الخطوة"
 
 #. js-lingui-id: 3pDKsj
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "A newer revision exists. Open the latest preview to save."
 msgstr "يتوفر إصدار أحدث. افتح أحدث معاينة للحفظ."
 
@@ -3898,6 +3898,7 @@ msgstr "مراجعة الموافقة"
 
 #. js-lingui-id: Z7ZXbT
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Approve"
 msgstr "موافقة"
 
@@ -6705,7 +6706,7 @@ msgid "Component name"
 msgstr "اسم المكوّن"
 
 #. js-lingui-id: WcUICq
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Component preview with sample data"
 msgstr "معاينة المكوّن باستخدام بيانات نموذجية"
 
@@ -7514,6 +7515,7 @@ msgid "Could not grant media access. Please try again."
 msgstr "تعذر منح الوصول إلى الوسائط. يرجى المحاولة مرة أخرى."
 
 #. js-lingui-id: Y5qCpF
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
 msgid "Could not load preview."
 msgstr "تعذر تحميل المعاينة."
@@ -8687,7 +8689,7 @@ msgid "Dashboard duplicated successfully"
 msgstr "تم تكرار لوحة القيادة بنجاح"
 
 #. js-lingui-id: xLSe09
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Dashboard widget"
 msgstr "أداة لوحة التحكم"
 
@@ -16547,7 +16549,7 @@ msgid "Loading more..."
 msgstr "جاري تحميل المزيد..."
 
 #. js-lingui-id: nSgEqx
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Loading preview…"
 msgstr "جارٍ تحميل المعاينة…"
 
@@ -22266,7 +22268,7 @@ msgid "Record page"
 msgstr "صفحة السجل"
 
 #. js-lingui-id: J5b8Hz
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Record page widget"
 msgstr "أداة صفحة السجل"
 
@@ -22491,6 +22493,7 @@ msgstr "تم التسجيل كمثيل تطوير. لن تتم فوترة هذا
 
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Reject"
 msgstr "رفض"
 
@@ -22881,7 +22884,7 @@ msgid "Rename group"
 msgstr "إعادة تسمية المجموعة"
 
 #. js-lingui-id: cwObXL
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Rendering preview…"
 msgstr "جارٍ عرض المعاينة…"
 
@@ -23657,7 +23660,7 @@ msgid "SAML/OIDC"
 msgstr "مصادقة SAML/OIDC"
 
 #. js-lingui-id: b/zjTD
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Sample data"
 msgstr "بيانات نموذجية"
 
@@ -23726,7 +23729,7 @@ msgid "Save your changes first"
 msgstr "احفظ تغييراتك أولاً"
 
 #. js-lingui-id: A0/0NU
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Saved to Workspace app"
 msgstr "تم الحفظ في تطبيق مساحة العمل"
 

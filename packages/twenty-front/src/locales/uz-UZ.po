@@ -1572,7 +1572,7 @@ msgid "A new one each time the step runs"
 msgstr "Qadam har safar ishga tushganda yangisi"
 
 #. js-lingui-id: 3pDKsj
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "A newer revision exists. Open the latest preview to save."
 msgstr "Yangiroq tahrir mavjud. Saqlash uchun eng so‘nggi dastlabki ko‘rishni oching."
 
@@ -3898,6 +3898,7 @@ msgstr "Tasdiqlashni ko‘rib chiqish"
 
 #. js-lingui-id: Z7ZXbT
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Approve"
 msgstr "Tasdiqlash"
 
@@ -6705,7 +6706,7 @@ msgid "Component name"
 msgstr "Komponent nomi"
 
 #. js-lingui-id: WcUICq
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Component preview with sample data"
 msgstr "Namunaviy ma’lumotlar bilan komponentning dastlabki ko‘rinishi"
 
@@ -7514,6 +7515,7 @@ msgid "Could not grant media access. Please try again."
 msgstr "Media ruxsatini berib bo‘lmadi. Iltimos, qayta urinib ko‘ring."
 
 #. js-lingui-id: Y5qCpF
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
 msgid "Could not load preview."
 msgstr "Ko‘rib chiqishni yuklab bo‘lmadi."
@@ -8687,7 +8689,7 @@ msgid "Dashboard duplicated successfully"
 msgstr "Boshqaruv paneli muvaffaqiyatli nusxalandi"
 
 #. js-lingui-id: xLSe09
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Dashboard widget"
 msgstr "Boshqaruv paneli vidjeti"
 
@@ -16547,7 +16549,7 @@ msgid "Loading more..."
 msgstr "Yana yuklanmoqda..."
 
 #. js-lingui-id: nSgEqx
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Loading preview…"
 msgstr "Ko‘rib chiqish yuklanmoqda…"
 
@@ -22266,7 +22268,7 @@ msgid "Record page"
 msgstr "Yozuv sahifasi"
 
 #. js-lingui-id: J5b8Hz
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Record page widget"
 msgstr "Yozuv sahifasi vidjeti"
 
@@ -22491,6 +22493,7 @@ msgstr "Ishlab chiqish instansiyasi sifatida ro‘yxatdan o‘tkazildi. Ushbu in
 
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Reject"
 msgstr "Rad etish"
 
@@ -22881,7 +22884,7 @@ msgid "Rename group"
 msgstr "Guruh nomini o‘zgartirish"
 
 #. js-lingui-id: cwObXL
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Rendering preview…"
 msgstr "Ko‘rib chiqish render qilinmoqda…"
 
@@ -23657,7 +23660,7 @@ msgid "SAML/OIDC"
 msgstr "SAML/OIDC"
 
 #. js-lingui-id: b/zjTD
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Sample data"
 msgstr "Namuna ma’lumotlari"
 
@@ -23726,7 +23729,7 @@ msgid "Save your changes first"
 msgstr "Avval o‘zgarishlaringizni saqlang"
 
 #. js-lingui-id: A0/0NU
-#: src/modules/ai/components/AiChatFrontComponentPreview.tsx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
 msgid "Saved to Workspace app"
 msgstr "Workspace ilovasiga saqlandi"
 
