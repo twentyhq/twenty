@@ -664,6 +664,9 @@ export class AuthService {
       clientId: applicationRegistration.oAuthClientId,
       scope: requestedScopes.join(' '),
       ...(codeChallenge ? { codeChallenge } : {}),
+      ...(authorizeAppInput.resource
+        ? { resource: authorizeAppInput.resource }
+        : {}),
     };
 
     const token = this.appTokenRepository.create({

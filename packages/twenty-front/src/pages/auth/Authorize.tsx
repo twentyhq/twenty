@@ -1,7 +1,7 @@
 import { StyledAuthContent } from '@/auth/components/StyledAuthContent';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Key } from 'ts-key-enum';
 import { AppPath } from 'twenty-shared/types';
@@ -173,6 +173,8 @@ export const Authorize = () => {
     searchParam.get('redirect_uri') ?? searchParam.get('redirectUrl');
   const state = searchParam.get('state');
   const issuer = searchParam.get('iss');
+  const scope = searchParam.get('scope');
+  const resource = searchParam.get('resource');
 
   const {
     data,
@@ -223,6 +225,8 @@ export const Authorize = () => {
           redirectUrl,
           state: state ?? undefined,
           issuer: issuer ?? undefined,
+          scope: scope ?? undefined,
+          resource: resource ?? undefined,
         },
         onCompleted: (responseData) => {
           redirect(appendThemeToUrl(responseData.authorizeApp.redirectUrl));
@@ -258,11 +262,27 @@ export const Authorize = () => {
       applicationRegistration,
       clientId,
       redirectUrl,
+      scope,
+      resource,
     ],
     options: {
       preventDefault: false,
     },
   });
+
+  const requestedScopes: string[] = useMemo(() => {
+    const availableScopes = applicationRegistration?.oAuthScopes ?? [];
+
+    if (!isNonEmptyString(scope)) {
+      return availableScopes;
+    }
+
+    const parsedScopes = scope.split(' ').filter(Boolean);
+
+    return parsedScopes.filter((scopeItem) =>
+      availableScopes.includes(scopeItem),
+    );
+  }, [applicationRegistration?.oAuthScopes, scope]);
 
   if (isDefined(queryError)) {
     return (
@@ -289,7 +309,6 @@ export const Authorize = () => {
 
   const appName = applicationRegistration.name;
   const appLogoUrl = applicationRegistration.logoUrl;
-  const requestedScopes: string[] = applicationRegistration.oAuthScopes ?? [];
   const redirectHost = getUrlSafely(redirectUrl)?.host;
 
   return (

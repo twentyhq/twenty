@@ -6,7 +6,11 @@ import crypto from 'crypto';
 import { isNonEmptyString } from '@sniptt/guards';
 import ms from 'ms';
 import { IsNull, Repository } from 'typeorm';
-import { base64UrlEncode, isDefined } from 'twenty-shared/utils';
+import {
+  base64UrlEncode,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 import {
   AppTokenEntity,
@@ -56,6 +60,7 @@ export class OAuthService {
     clientSecret?: string;
     codeVerifier?: string;
     redirectUri: string;
+    resource?: string;
   }): Promise<OAuthTokenResponse | OAuthErrorResponse> {
     const {
       authorizationCode,
@@ -63,6 +68,7 @@ export class OAuthService {
       clientSecret,
       codeVerifier,
       redirectUri,
+      resource,
     } = params;
 
     if (!authorizationCode) {
@@ -164,6 +170,18 @@ export class OAuthService {
           'redirect_uri does not match the one used in the authorization request',
         );
       }
+    }
+
+    const storedResource = authCodeToken.context?.resource;
+
+    if (
+      (storedResource && resource && storedResource !== resource) ||
+      (!storedResource && isNonEmptyString(resource))
+    ) {
+      return this.errorResponse(
+        'invalid_target',
+        'Requested resource does not match the resource specified in authorization',
+      );
     }
 
     const storedCodeChallenge = authCodeToken.context?.codeChallenge;
@@ -566,12 +584,25 @@ export class OAuthService {
         return { active: false };
       }
 
+      const refreshTokenAuthorization = isDefined(decoded.userId)
+        ? await this.applicationAuthorizationService.findByUserAndApplication({
+            userId: decoded.userId,
+            applicationId: decoded.applicationId,
+          })
+        : null;
+
+      const refreshTokenScopes = isNonEmptyArray(
+        refreshTokenAuthorization?.scopes,
+      )
+        ? refreshTokenAuthorization.scopes.join(' ')
+        : clientValidation.oAuthScopes.join(' ');
+
       return {
         active: true,
         sub: decoded.sub,
         client_id: clientId,
         token_type: 'Bearer',
-        scope: clientValidation.oAuthScopes.join(' '),
+        scope: refreshTokenScopes,
         aud: decoded.workspaceId,
         iss: this.twentyConfigService.get('SERVER_URL'),
         exp: decoded.exp,
@@ -598,12 +629,27 @@ export class OAuthService {
           return { active: false };
         }
 
+        const accessTokenAuthorization = isDefined(payload.userId)
+          ? await this.applicationAuthorizationService.findByUserAndApplication(
+              {
+                userId: payload.userId,
+                applicationId: payload.applicationId,
+              },
+            )
+          : null;
+
+        const accessTokenScopes = isNonEmptyArray(
+          accessTokenAuthorization?.scopes,
+        )
+          ? accessTokenAuthorization.scopes.join(' ')
+          : clientValidation.oAuthScopes.join(' ');
+
         return {
           active: true,
           sub: payload.sub,
           client_id: clientId,
           token_type: 'Bearer',
-          scope: clientValidation.oAuthScopes.join(' '),
+          scope: accessTokenScopes,
           aud: payload.workspaceId,
           iss: this.twentyConfigService.get('SERVER_URL'),
         };

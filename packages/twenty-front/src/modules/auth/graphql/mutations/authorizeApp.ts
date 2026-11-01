@@ -7,6 +7,8 @@ export const AUTHORIZE_APP = gql`
     $redirectUrl: String!
     $state: String
     $issuer: String
+    $scope: String
+    $resource: String
   ) {
     authorizeApp(
       clientId: $clientId
@@ -14,6 +16,8 @@ export const AUTHORIZE_APP = gql`
       redirectUrl: $redirectUrl
       state: $state
       issuer: $issuer
+      scope: $scope
+      resource: $resource
     ) {
       redirectUrl
     }
