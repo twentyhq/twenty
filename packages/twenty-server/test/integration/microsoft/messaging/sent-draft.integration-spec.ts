@@ -4,10 +4,14 @@ import {
   ConnectedAccountProvider,
   MessageParticipantRole,
 } from 'twenty-shared/types';
+import { In } from 'typeorm';
+
+import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 
 import { setupMicrosoftMock } from 'test/integration/microsoft/mocks/setup-microsoft-mock.util';
 import { connectMessagingAccount } from 'test/integration/utils/connect-messaging-account.util';
 import { findRecordNodesByFilter } from 'test/integration/utils/find-records-by-filter.util';
+import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { runMessageChannelSync } from 'test/integration/utils/run-message-channel-sync.util';
 
 const HANDLE = 'microsoft-sent-draft@apple.dev';
@@ -54,7 +58,7 @@ type ImportedMessageState = {
   message: ImportedMessage;
   threadSubject: string;
   associations: { id: string; messageExternalId: string }[];
-  folderIds: string[];
+  folderExternalIds: (string | null)[];
   recipientHandles: string[];
 };
 
@@ -100,6 +104,16 @@ const findImportedMessageState = async (): Promise<ImportedMessageState> => {
     },
   );
 
+  const linkedFolders = await getCoreRepository<MessageFolderEntity>(
+    MessageFolderEntity,
+  ).findBy({
+    id: In(
+      folderAssociations.map(
+        (folderAssociation) => folderAssociation.messageFolderId,
+      ),
+    ),
+  });
+
   const recipients = await findRecordNodesByFilter<{
     handle: string;
     role: string;
@@ -111,9 +125,7 @@ const findImportedMessageState = async (): Promise<ImportedMessageState> => {
     message,
     threadSubject: thread.subject,
     associations,
-    folderIds: folderAssociations.map(
-      (folderAssociation) => folderAssociation.messageFolderId,
-    ),
+    folderExternalIds: linkedFolders.map((folder) => folder.externalId),
     recipientHandles: recipients
       .filter((recipient) => recipient.role === MessageParticipantRole.TO)
       .map((recipient) => recipient.handle)
@@ -169,7 +181,7 @@ describe('Microsoft draft sent from Outlook (integration)', () => {
       KEPT_RECIPIENT,
       REMOVED_RECIPIENT,
     ]);
-    expect(stateWhileScheduled.folderIds).toHaveLength(1);
+    expect(stateWhileScheduled.folderExternalIds).toEqual(['drafts']);
   });
 
   it('refreshes the same message record once Outlook sends it', () => {
@@ -193,7 +205,6 @@ describe('Microsoft draft sent from Outlook (integration)', () => {
   });
 
   it('links the message to Sent Items instead of Drafts', () => {
-    expect(stateAfterSend.folderIds).toHaveLength(1);
-    expect(stateAfterSend.folderIds).not.toEqual(stateWhileScheduled.folderIds);
+    expect(stateAfterSend.folderExternalIds).toEqual(['sentitems']);
   });
 });
