@@ -70,10 +70,9 @@ const updateEvent: ObjectRecordUpdateEvent = {
   },
 };
 
-const resolveForApplication = (owningApplicationId: string) =>
+const resolveForApplication = (applicationId: string) =>
   resolveEventsReadableByRole({
     roleId: ROLE_ID,
-    owningApplicationId,
     workspaceEventBatch: {
       name: 'invoice.updated',
       workspaceId: 'workspace-id',
@@ -83,11 +82,23 @@ const resolveForApplication = (owningApplicationId: string) =>
     eventRecordAccessGate: {
       resolveAdmittedRecordIds: async () => new Set(['record-1']),
     },
-    rolesPermissions: { [ROLE_ID]: { [OBJECT_METADATA_ID]: FULL_ACCESS } },
-    flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
-    flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
-    flatFieldMetadataMaps,
-    flatObjectMetadataMaps,
+    environment: {
+      rolesPermissions: { [ROLE_ID]: { [OBJECT_METADATA_ID]: FULL_ACCESS } },
+      flatApplicationMaps: {
+        byId: {
+          [applicationId]: {
+            id: applicationId,
+            defaultRoleId: ROLE_ID,
+            deletedAt: null,
+          },
+        },
+      },
+      flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
+      flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+      featureFlagsMap: {},
+    },
   });
 
 describe('resolveEventsReadableByRole', () => {

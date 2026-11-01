@@ -24,6 +24,7 @@ import {
   LogicFunctionTriggerJobData,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/jobs/logic-function-trigger.job';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { loadPermissionsEnvironment } from 'src/engine/permissions/combine/utils/load-permissions-environment.util';
 import { resolveEventsReadableByRole } from 'src/engine/permissions/combine/utils/resolve-events-readable-by-role.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -46,26 +47,11 @@ export class CallDatabaseEventTriggerJobsJob {
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
     { jobId }: MessageQueueJobContext,
   ) {
-    const {
-      flatLogicFunctionMaps,
-      flatApplicationMaps,
-      rolesPermissions,
-      flatRowLevelPermissionPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps,
-      flatFieldMetadataMaps,
-      flatObjectMetadataMaps,
-    } = await this.workspaceCacheService.getOrRecompute(
-      workspaceEventBatch.workspaceId,
-      [
-        'flatLogicFunctionMaps',
-        'flatApplicationMaps',
-        'rolesPermissions',
-        'flatRowLevelPermissionPredicateMaps',
-        'flatRowLevelPermissionPredicateGroupMaps',
-        'flatFieldMetadataMaps',
-        'flatObjectMetadataMaps',
-      ],
-    );
+    const { flatLogicFunctionMaps, flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(
+        workspaceEventBatch.workspaceId,
+        ['flatLogicFunctionMaps', 'flatApplicationMaps'],
+      );
 
     const logicFunctionsToTrigger = findLogicFunctionsTriggeredByEventName({
       flatLogicFunctionMaps,
@@ -96,6 +82,10 @@ export class CallDatabaseEventTriggerJobsJob {
       this.recordAccessPolicyService.buildEventRecordAccessGate(
         workspaceEventBatch,
       );
+    const environment = await loadPermissionsEnvironment({
+      workspaceCacheService: this.workspaceCacheService,
+      workspaceId: workspaceEventBatch.workspaceId,
+    });
 
     for (const [
       applicationId,
@@ -113,14 +103,9 @@ export class CallDatabaseEventTriggerJobsJob {
 
       const admittedEvents = await resolveEventsReadableByRole({
         roleId: application.defaultRoleId,
-        owningApplicationId: application.id,
         workspaceEventBatch,
         eventRecordAccessGate,
-        rolesPermissions,
-        flatRowLevelPermissionPredicateMaps,
-        flatRowLevelPermissionPredicateGroupMaps,
-        flatFieldMetadataMaps,
-        flatObjectMetadataMaps,
+        environment,
       });
       const logicFunctionPayloads = transformEventBatchToEventPayloads({
         logicFunctions,

@@ -10,6 +10,7 @@ const ROLE_SOURCES_IN_INTERSECTION_ORDER = Object.keys({
   userWorkspaceRoleId: true,
   apiKeyRoleId: true,
   applicationRoleId: true,
+  webhookRoleId: true,
 } satisfies Record<keyof RoleIdsBySource, true>) as (keyof RoleIdsBySource)[];
 
 // null when the config allows nothing

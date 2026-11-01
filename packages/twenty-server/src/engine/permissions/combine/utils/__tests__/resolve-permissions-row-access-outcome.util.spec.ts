@@ -1,6 +1,5 @@
 /* @license Enterprise */
 
-import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import {
   FeatureFlagKey,
   type ObjectPermissions,
@@ -9,14 +8,20 @@ import {
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
-import {
-  type PermissionsRowAccessRequest,
-  type RowAccessPolicySubject,
-} from 'src/engine/permissions/combine/types/row-access-policy.type';
+import { type PermissionsRowAccessRequest } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { resolvePermissionsRowAccessOutcome } from 'src/engine/permissions/combine/utils/resolve-permissions-row-access-outcome.util';
+import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 
-const flatObjectMetadata = { ...COMPANY_FLAT_OBJECT_MOCK, isSystem: false };
+const APPLICATION_ID = 'application-id';
+const APPLICATION_ROLE_ID = 'application-role';
+const READ_ONLY_ROLE_ID = 'read-only-role';
+
+const flatObjectMetadata = {
+  ...COMPANY_FLAT_OBJECT_MOCK,
+  isSystem: false,
+  applicationId: APPLICATION_ID,
+};
 
 const readOnlyPermissions: ObjectPermissions = {
   canReadObjectRecords: true,
@@ -28,33 +33,51 @@ const readOnlyPermissions: ObjectPermissions = {
   rowLevelPermissionPredicateGroups: [],
 };
 
-const readOnlySubject: RowAccessPolicySubject = {
-  isSystemContext: false,
-  objectsPermissions: { [flatObjectMetadata.id]: readOnlyPermissions },
-  principalIds: [EVERYONE_PRINCIPAL_ID, 'member-1'],
-  workspaceMemberId: 'member-1',
-  isOwningApplication: () => false,
-  resolveRowLevelPermissionRecordFilter: () => null,
+const readOnlyPrincipal: PermissionsPrincipal = {
+  workspaceId: 'workspace-id',
+  intersectionOf: { userWorkspaceRoleId: READ_ONLY_ROLE_ID },
+};
+
+const owningApplicationPrincipal: PermissionsPrincipal = {
+  workspaceId: 'workspace-id',
+  intersectionOf: { applicationRoleId: APPLICATION_ROLE_ID },
 };
 
 const resolveOutcome = ({
-  subject = readOnlySubject,
+  principal = readOnlyPrincipal,
   operationType = 'select',
   featureFlagKeys = [],
   disabledObjectPermissionActions = [],
   hypotheticalRecordShareAccessLevel,
 }: {
-  subject?: RowAccessPolicySubject;
+  principal?: PermissionsPrincipal;
   operationType?: OperationType;
   featureFlagKeys?: FeatureFlagKey[];
   disabledObjectPermissionActions?: typeof flatObjectMetadata.disabledObjectPermissionActions;
   hypotheticalRecordShareAccessLevel?: PermissionsRowAccessRequest['hypotheticalRecordShareAccessLevel'];
 }) =>
   resolvePermissionsRowAccessOutcome({
-    subject,
+    principal,
     environment: {
       flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
       flatObjectMetadataMaps: createEmptyFlatEntityMaps(),
+      rolesPermissions: {
+        [READ_ONLY_ROLE_ID]: { [flatObjectMetadata.id]: readOnlyPermissions },
+        [APPLICATION_ROLE_ID]: {
+          [flatObjectMetadata.id]: readOnlyPermissions,
+        },
+      },
+      flatApplicationMaps: {
+        byId: {
+          [APPLICATION_ID]: {
+            id: APPLICATION_ID,
+            defaultRoleId: APPLICATION_ROLE_ID,
+            deletedAt: null,
+          },
+        },
+      },
+      flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
+      flatRowLevelPermissionPredicateGroupMaps: createEmptyFlatEntityMaps(),
       featureFlagsMap: Object.fromEntries(
         featureFlagKeys.map((featureFlagKey) => [featureFlagKey, true]),
       ),
@@ -68,15 +91,6 @@ const resolveOutcome = ({
   });
 
 describe('resolvePermissionsRowAccessOutcome', () => {
-  it('opens every record to the system', () => {
-    expect(
-      resolveOutcome({
-        subject: { ...readOnlySubject, isSystemContext: true },
-        operationType: 'delete',
-      }),
-    ).toBe(true);
-  });
-
   it('leaves a permitted operation to the grant paths', () => {
     expect(resolveOutcome({})).toBeUndefined();
   });
@@ -85,7 +99,10 @@ describe('resolvePermissionsRowAccessOutcome', () => {
     expect(resolveOutcome({ operationType: 'update' })).toBe(false);
     expect(
       resolveOutcome({
-        subject: { ...readOnlySubject, objectsPermissions: {} },
+        principal: {
+          ...readOnlyPrincipal,
+          intersectionOf: { userWorkspaceRoleId: 'missing-role' },
+        },
       }),
     ).toBe(false);
     expect(
@@ -96,7 +113,7 @@ describe('resolvePermissionsRowAccessOutcome', () => {
     ).toBe(false);
   });
 
-  it('denies a disabled operation unless the subject owns the object', () => {
+  it('denies a disabled operation unless the principal owns the object', () => {
     expect(
       resolveOutcome({
         disabledObjectPermissionActions: ['canReadObjectRecords'],
@@ -104,7 +121,7 @@ describe('resolvePermissionsRowAccessOutcome', () => {
     ).toBe(false);
     expect(
       resolveOutcome({
-        subject: { ...readOnlySubject, isOwningApplication: () => true },
+        principal: owningApplicationPrincipal,
         disabledObjectPermissionActions: ['canReadObjectRecords'],
       }),
     ).toBeUndefined();

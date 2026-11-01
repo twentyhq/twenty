@@ -29,7 +29,6 @@ import { RecordShareException } from 'src/engine/permissions/record-share/record
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
 import { RecordSharingService } from 'src/engine/permissions/record-share/services/record-sharing.service';
-import { buildWorkspaceMemberRowAccessPolicySubject } from 'src/engine/permissions/principal/utils/build-workspace-member-row-access-policy-subject.util';
 import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/permissions/record-share/utils/resolve-record-ids-shared-with-principals.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/permissions/record-share/utils/resolve-required-record-share-access-levels.util';
 import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
@@ -315,17 +314,6 @@ export class AgentChatSharingService {
       threadId,
       authContext,
     });
-    const permissionMaps = await this.workspaceCacheService.getOrRecompute(
-      workspaceId,
-      [
-        'rolesPermissions',
-        'flatRowLevelPermissionPredicateMaps',
-        'flatRowLevelPermissionPredicateGroupMaps',
-        'flatFieldMetadataMaps',
-        'flatObjectMetadataMaps',
-      ],
-    );
-
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const members = await this.workspaceOrmManager
         .getRepository<WorkspaceMemberWorkspaceEntity>('workspaceMember', {
@@ -336,38 +324,44 @@ export class AgentChatSharingService {
         'agentChatThread',
         { shouldBypassPermissionChecks: true },
       );
-      const subjectsById = new Map(
-        members.flatMap((member) => {
-          const roleId = roleIdByMemberId.get(member.id);
+      const hypotheticalRecordShareAccessLevel =
+        shouldConsiderNewShares && canManageSharing
+          ? RecordShareAccessLevel.READ_WRITE
+          : undefined;
+      const admittedMemberIds = new Set<string>();
 
-          if (!isDefined(roleId)) {
-            return [];
+      for (const member of members) {
+        const roleId = roleIdByMemberId.get(member.id);
+
+        if (!isDefined(roleId)) {
+          continue;
+        }
+
+        const principal = {
+          workspaceId,
+          intersectionOf: { userWorkspaceRoleId: roleId },
+          workspaceMember: member,
+        };
+        let hasGrantForEveryOperation = true;
+
+        for (const operationType of AGENT_CHAT_REPLY_OPERATION_TYPES) {
+          hasGrantForEveryOperation =
+            await repository.hasPrincipalGrantOnRecords({
+              principal,
+              recordIds: [threadId],
+              operationType,
+              hypotheticalRecordShareAccessLevel,
+            });
+
+          if (!hasGrantForEveryOperation) {
+            break;
           }
+        }
 
-          const subject = buildWorkspaceMemberRowAccessPolicySubject({
-            ...permissionMaps,
-            roleId,
-            owningApplicationId: undefined,
-            workspaceMemberId: member.id,
-            workspaceMember: member,
-          });
-
-          return isDefined(subject.objectsPermissions)
-            ? [[member.id, subject] as const]
-            : [];
-        }),
-      );
-      const admittedMemberIds = await repository.findSubjectIdsAdmittedToRecord(
-        {
-          recordId: threadId,
-          subjectsById,
-          operationTypes: [...AGENT_CHAT_REPLY_OPERATION_TYPES],
-          hypotheticalRecordShareAccessLevel:
-            shouldConsiderNewShares && canManageSharing
-              ? RecordShareAccessLevel.READ_WRITE
-              : undefined,
-        },
-      );
+        if (hasGrantForEveryOperation) {
+          admittedMemberIds.add(member.id);
+        }
+      }
 
       return candidateMemberIds.filter((memberId) =>
         admittedMemberIds.has(memberId),

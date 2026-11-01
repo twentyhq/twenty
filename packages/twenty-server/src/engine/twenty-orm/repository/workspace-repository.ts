@@ -1,11 +1,10 @@
 import { msg } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
-import chunk from 'lodash.chunk';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import { doNotTranslate } from 'twenty-shared/i18n';
 import {
   type ObjectRecord,
   type ObjectsPermissions,
+  type ObjectsPermissionsByRoleId,
   type RecordShareAccessLevel,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -40,16 +39,14 @@ import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/
 import {
   type RowAccessCompilationEnvironment,
   type RowAccessEvaluationContext,
-  type RowAccessPolicyEnvironment,
-  type RowAccessPolicySubject,
+  type PermissionsEnvironment,
   type RowAccessRecord,
   type SqlCondition,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { buildPermissionsCondition } from 'src/engine/permissions/combine/utils/build-permissions-condition.util';
-import { combineSqlConditions } from 'src/engine/permissions/combine/utils/combine-sql-conditions.util';
 import { type RecordShareGrant } from 'src/engine/permissions/record-share/types/record-share-grant.type';
 import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
-import { resolvePermissionsRowAccessOutcome } from 'src/engine/permissions/combine/utils/resolve-permissions-row-access-outcome.util';
+import { isObjectOperationDeniedToPrincipal } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principal.util';
 import { isObjectOperationDisabled } from 'src/engine/permissions/role/utils/is-object-operation-disabled.util';
 import { isObjectOperationPermitted } from 'src/engine/permissions/role/utils/is-object-operation-permitted.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
@@ -59,8 +56,8 @@ import {
   getUpdateEventRecords,
   mergeRecordsWithUpdateValues,
 } from 'src/engine/twenty-orm/utils/merge-records-with-update-values.util';
-import { isOwningApplicationAuthContext } from 'src/engine/permissions/principal/utils/is-owning-application-auth-context.util';
-import { resolvePrincipalIdsFromAuthContext } from 'src/engine/permissions/principal/utils/resolve-principal-ids-from-auth-context.util';
+import { isPermissionsPrincipalOwningObject } from 'src/engine/permissions/principal/utils/is-permissions-principal-owning-object.util';
+import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
 import { validateRLSPredicatesForRecords } from 'src/engine/permissions/rls/utils/validate-rls-predicates-for-records.util';
@@ -135,6 +132,7 @@ type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
   authContext: WorkspaceAuthContext;
   executor: QueryExecutor;
   objectRecordsPermissions: ObjectsPermissions;
+  rolesPermissions: ObjectsPermissionsByRoleId;
   rolePermissionConfig: RolePermissionConfig;
   shouldBypassPermissionChecks: boolean;
   // Suppresses database events and their snapshot SELECT, for bulk system writes only: webhooks, workflow triggers
@@ -157,15 +155,17 @@ type WorkspaceRepositoryOptions<TEntity extends ObjectLiteral> = {
   ) => Promise<T>;
 };
 
-// One result column per subject, under Postgres's 1664-column limit
-const ROW_ACCESS_POLICY_SUBJECT_BATCH_SIZE = 1_000;
-
 export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
   readonly objectRecordsPermissions: ObjectsPermissions;
 
   private readonly options: WorkspaceRepositoryOptions<TEntity>;
 
   private _filesFieldSync?: FilesFieldSync;
+
+  private permissionsPrincipal?: PermissionsPrincipal;
+
+  private permissionsEnvironment?: PermissionsEnvironment &
+    RowAccessCompilationEnvironment;
 
   constructor(options: WorkspaceRepositoryOptions<TEntity>) {
     this.options = options;
@@ -1062,14 +1062,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       updatedColumns: insertedColumns,
     });
 
-    validateRLSPredicatesForRecords({
-      records: this.formatResult<ObjectRecord[]>(formattedRecords),
-      objectMetadata: this.options.flatObjectMetadata,
-      internalContext: this.options.internalContext,
-      authContext: this.options.authContext,
-      rolePermissionConfig: this.options.rolePermissionConfig,
-      shouldBypassPermissionChecks: this.options.shouldBypassPermissionChecks,
-    });
+    if (!this.options.shouldBypassPermissionChecks) {
+      validateRLSPredicatesForRecords({
+        records: this.formatResult<ObjectRecord[]>(formattedRecords),
+        objectMetadata: this.options.flatObjectMetadata,
+        principal: this.resolvePermissionsPrincipal(),
+        environment: this.resolvePermissionsEnvironment(),
+      });
+    }
 
     await this.assertRecordStockAvailable(recordsToInsert.length);
 
@@ -1749,13 +1749,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return;
     }
 
-    const subject = this.resolveRowAccessPolicySubject();
+    const principal = this.resolvePermissionsPrincipal();
+    const environment = this.resolvePermissionsEnvironment();
 
     if (
       !isDefined(
-        subject.resolveRowLevelPermissionRecordFilter(
-          this.options.flatObjectMetadata,
-        ),
+        resolveRowLevelPermissionRecordFilter({
+          principal,
+          environment,
+          flatObjectMetadata: this.options.flatObjectMetadata,
+        }),
       )
     ) {
       return;
@@ -1766,8 +1769,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     );
     const evaluate = (records: ObjectRecord[]) =>
       findPermissionsAdmittedRecordIds({
-        subject,
-        environment: this.resolveRowAccessPolicyEnvironment(),
+        principal,
+        environment,
         flatObjectMetadata: this.options.flatObjectMetadata,
         operationType: 'update',
         records: this.formatResult<ObjectRecord[]>(records).filter(
@@ -1866,7 +1869,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     return this.executeRaw<RecordShareGrant>(
-      `SELECT "recordId", "principalId", "accessLevel" FROM ${this.resolveRowAccessPolicyEnvironment().recordShareTableExpression} WHERE "objectMetadataId" = :objectMetadataId AND "recordId" = ANY(:recordIds) AND "deletedAt" IS NULL`,
+      `SELECT "recordId", "principalId", "accessLevel" FROM ${this.resolvePermissionsEnvironment().recordShareTableExpression} WHERE "objectMetadataId" = :objectMetadataId AND "recordId" = ANY(:recordIds) AND "deletedAt" IS NULL`,
       { objectMetadataId, recordIds },
     );
   }
@@ -2060,8 +2063,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
 
     return buildPermissionsCondition({
-      subject: this.resolveRowAccessPolicySubject(),
-      environment: this.resolveRowAccessPolicyEnvironment(),
+      principal: this.resolvePermissionsPrincipal(),
+      environment: this.resolvePermissionsEnvironment(),
       flatObjectMetadata,
       operationType,
       tableAlias: alias,
@@ -2175,136 +2178,50 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
   }
 
-  async findRecordIdsAdmittedForSubject({
+  async hasPrincipalGrantOnRecords({
+    principal,
     recordIds,
-    subject,
-    operationType,
+    operationType = 'select',
+    hypotheticalRecordShareAccessLevel,
   }: {
+    principal: PermissionsPrincipal;
     recordIds: string[];
-    subject: RowAccessPolicySubject;
-    operationType: OperationType;
-  }): Promise<Set<string>> {
-    const condition = this.buildPermissionsConditionForSubject({
-      subject,
-      operationType,
-    });
-
-    if (recordIds.length === 0 || condition === false) {
-      return new Set();
-    }
-
-    if (condition === true) {
-      return new Set(recordIds);
-    }
-
-    const admittedRecords = await this.buildBypassingEventSelectQueryBuilder(
-      this.options.tableShape.nameSingular,
-    )
-      .where({ id: In(recordIds) })
-      .withDeleted()
-      .select(['id'])
-      .addRowAccessCondition(condition.sql, condition.parameters)
-      .getMany<ObjectRecord>({ noFormatting: true });
-
-    return new Set(admittedRecords.map((record) => String(record.id)));
-  }
-
-  async findSubjectIdsAdmittedToRecord({
-    recordId,
-    subjectsById,
-    operationTypes,
-    hypotheticalRecordShareAccessLevel,
-  }: {
-    recordId: string;
-    subjectsById: Map<string, RowAccessPolicySubject>;
-    operationTypes: OperationType[];
+    operationType?: OperationType;
     hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
-  }): Promise<Set<string>> {
-    const admittedSubjectIds = new Set<string>();
-
-    for (const subjectBatch of chunk(
-      [...subjectsById],
-      ROW_ACCESS_POLICY_SUBJECT_BATCH_SIZE,
-    )) {
-      const subjectIds: string[] = [];
-      const queryBuilder = this.buildBypassingEventSelectQueryBuilder(
-        this.options.tableShape.nameSingular,
-      )
-        .where({ id: recordId })
-        .withDeleted()
-        .select([]);
-
-      for (const [subjectId, subject] of subjectBatch) {
-        const conditions = operationTypes.map((operationType) =>
-          this.buildPermissionsConditionForSubject({
-            subject,
-            operationType,
-            hypotheticalRecordShareAccessLevel,
-          }),
-        );
-
-        if (conditions.includes(false)) {
-          continue;
-        }
-
-        subjectIds.push(subjectId);
-
-        const sqlConditions = conditions.filter(
-          (condition): condition is SqlCondition => condition !== true,
-        );
-
-        if (sqlConditions.length === 0) {
-          queryBuilder.addSelect(doNotTranslate('TRUE'), subjectId);
-
-          continue;
-        }
-
-        const condition = combineSqlConditions(sqlConditions);
-
-        queryBuilder
-          .addSelect(
-            doNotTranslate(
-              `CASE WHEN ${condition.sql} THEN TRUE ELSE FALSE END`,
-            ),
-            subjectId,
-          )
-          .setParameters(condition.parameters);
-      }
-
-      if (subjectIds.length === 0) {
-        continue;
-      }
-
-      const [row] = await queryBuilder.getRawMany<Record<string, boolean>>();
-
-      for (const subjectId of subjectIds) {
-        if (!row?.[subjectId]) {
-          continue;
-        }
-
-        admittedSubjectIds.add(subjectId);
-      }
-    }
-
-    return admittedSubjectIds;
-  }
-
-  private buildPermissionsConditionForSubject({
-    subject,
-    operationType,
-    hypotheticalRecordShareAccessLevel,
-  }: {
-    subject: RowAccessPolicySubject;
-    operationType: OperationType;
-    hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
-  }): SqlCondition | boolean {
-    return buildPermissionsCondition({
-      subject,
-      environment: this.resolveRowAccessPolicyEnvironment(),
+  }): Promise<boolean> {
+    const uniqueRecordIds = [...new Set(recordIds)];
+    const condition = buildPermissionsCondition({
+      principal,
+      environment: this.resolvePermissionsEnvironment(),
       flatObjectMetadata: this.options.flatObjectMetadata,
       operationType,
       hypotheticalRecordShareAccessLevel,
     });
+
+    if (condition === false) {
+      return false;
+    }
+
+    if (uniqueRecordIds.length === 0) {
+      return true;
+    }
+
+    const queryBuilder = this.buildBypassingEventSelectQueryBuilder(
+      this.options.tableShape.nameSingular,
+    )
+      .where({ id: In(uniqueRecordIds) })
+      .withDeleted()
+      .select(['id']);
+    const admittedRecords = await (
+      condition === true
+        ? queryBuilder
+        : queryBuilder.addRowAccessCondition(
+            condition.sql,
+            condition.parameters,
+          )
+    ).getMany<ObjectRecord>({ noFormatting: true });
+
+    return admittedRecords.length === uniqueRecordIds.length;
   }
 
   // Whether the role alone permits the operation, regardless of any record
@@ -2341,25 +2258,17 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     operationType: OperationType;
   }): void {
     if (
-      isObjectOperationDisabled({
+      !isObjectOperationDisabled({
         objectMetadata: flatObjectMetadata,
+        operationType,
+      }) &&
+      isObjectOperationDeniedToPrincipal({
+        principal: this.resolvePermissionsPrincipal(),
+        environment: this.resolvePermissionsEnvironment(),
+        flatObjectMetadata,
         operationType,
       })
     ) {
-      return;
-    }
-
-    const outcome = resolvePermissionsRowAccessOutcome({
-      subject: {
-        ...this.resolveRowAccessPolicySubject(),
-        isSystemContext: false,
-      },
-      environment: this.resolveRowAccessPolicyEnvironment(),
-      flatObjectMetadata,
-      operationType,
-    });
-
-    if (outcome === false) {
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,
@@ -2376,58 +2285,49 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return false;
     }
 
-    const subject = this.resolveRowAccessPolicySubject();
-
     return (
-      !subject.isSystemContext &&
       isObjectOperationDisabled({
         objectMetadata: this.options.flatObjectMetadata,
         operationType,
       }) &&
-      !subject.isOwningApplication(this.options.flatObjectMetadata)
+      !isPermissionsPrincipalOwningObject({
+        principal: this.resolvePermissionsPrincipal(),
+        flatApplicationMaps: this.options.internalContext.flatApplicationMaps,
+        flatObjectMetadata: this.options.flatObjectMetadata,
+      })
     );
   }
 
-  private resolveRowAccessPolicySubject(): RowAccessPolicySubject {
-    const roleMaps = {
-      authContext: this.options.authContext,
-      userWorkspaceRoleMap: this.options.internalContext.userWorkspaceRoleMap,
-      apiKeyRoleMap: this.options.internalContext.apiKeyRoleMap,
-    };
-
-    return {
-      isSystemContext: this.options.authContext?.type === 'system',
-      objectsPermissions: this.options.objectRecordsPermissions,
-      principalIds: resolvePrincipalIdsFromAuthContext(roleMaps),
-      workspaceMemberId: isUserAuthContext(this.options.authContext)
-        ? this.options.authContext.workspaceMemberId
+  private resolvePermissionsPrincipal(): PermissionsPrincipal {
+    return (this.permissionsPrincipal ??= {
+      workspaceId: this.options.internalContext.workspaceId,
+      intersectionOf:
+        'intersectionOf' in this.options.rolePermissionConfig
+          ? this.options.rolePermissionConfig.intersectionOf
+          : {},
+      workspaceMember: isUserAuthContext(this.options.authContext)
+        ? this.options.authContext.workspaceMember
         : undefined,
-      isOwningApplication: (objectMetadata) =>
-        isOwningApplicationAuthContext({
-          authContext: this.options.authContext,
-          owningApplicationId: objectMetadata.applicationId,
-        }),
-      resolveRowLevelPermissionRecordFilter: (objectMetadata) =>
-        resolveRowLevelPermissionRecordFilter({
-          internalContext: this.options.internalContext,
-          authContext: this.options.authContext,
-          rolePermissionConfig: this.options.rolePermissionConfig,
-          objectMetadata,
-        }),
-    };
+    });
   }
 
-  private resolveRowAccessPolicyEnvironment(): RowAccessPolicyEnvironment &
+  private resolvePermissionsEnvironment(): PermissionsEnvironment &
     RowAccessCompilationEnvironment {
-    return {
+    return (this.permissionsEnvironment ??= {
       flatFieldMetadataMaps: this.options.internalContext.flatFieldMetadataMaps,
       flatObjectMetadataMaps:
         this.options.internalContext.flatObjectMetadataMaps,
+      featureFlagsMap: this.options.internalContext.featureFlagsMap,
+      rolesPermissions: this.options.rolesPermissions,
+      flatApplicationMaps: this.options.internalContext.flatApplicationMaps,
+      flatRowLevelPermissionPredicateMaps:
+        this.options.internalContext.flatRowLevelPermissionPredicateMaps,
+      flatRowLevelPermissionPredicateGroupMaps:
+        this.options.internalContext.flatRowLevelPermissionPredicateGroupMaps,
       recordShareTableExpression: this.getTableExpression(
         this.options.internalContext.objectIdByNameSingular.recordShare,
       ),
-      featureFlagsMap: this.options.internalContext.featureFlagsMap,
-    };
+    });
   }
 
   private getTableExpression(objectMetadataId: string): string {

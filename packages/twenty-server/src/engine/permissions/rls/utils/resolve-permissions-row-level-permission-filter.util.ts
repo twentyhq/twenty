@@ -8,6 +8,7 @@ import {
   type SqlCondition,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { isRolePermittingOperation } from 'src/engine/permissions/role/utils/is-role-permitting-operation.util';
+import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/rls/utils/render-row-level-permission-filter-to-sql.util';
 
 export const resolvePermissionsRowLevelPermissionFilter = ({
@@ -16,14 +17,17 @@ export const resolvePermissionsRowLevelPermissionFilter = ({
 }: PermissionsRowAccessRequest & { tableAlias: string }):
   | { recordFilter: RecordGqlOperationFilter; condition: SqlCondition }
   | undefined => {
-  const { subject, environment, flatObjectMetadata } = request;
+  const { principal, environment, flatObjectMetadata } = request;
 
   if (!isRolePermittingOperation(request)) {
     return undefined;
   }
 
-  const recordFilter =
-    subject.resolveRowLevelPermissionRecordFilter(flatObjectMetadata);
+  const recordFilter = resolveRowLevelPermissionRecordFilter({
+    principal,
+    environment,
+    flatObjectMetadata,
+  });
 
   if (!isDefined(recordFilter)) {
     return undefined;

@@ -34,6 +34,7 @@ import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/
 import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 const OBJECT_NAME = 'beyondRoleRecord';
 const OBJECT_PLURAL = 'beyondRoleRecords';
@@ -425,10 +426,9 @@ describe('Records shared beyond the role that can access their object', () => {
     const workspaceCacheService =
       getAppProviderByClassName<WorkspaceCacheService>('WorkspaceCacheService');
     const resolveAdmittedRecordIds = async () => {
-      const { flatObjectMetadataMaps, rolesPermissions } =
+      const { flatObjectMetadataMaps } =
         await workspaceCacheService.getOrRecompute(workspaceId, [
           'flatObjectMetadataMaps',
-          'rolesPermissions',
         ]);
       const objectMetadata = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: objectMetadataId,
@@ -452,16 +452,11 @@ describe('Records shared beyond the role that can access their object', () => {
           })) as ObjectRecordEvent[],
         })
         .resolveAdmittedRecordIds({
-          isSystemContext: false,
-          objectsPermissions: rolesPermissions[memberRoleId],
-          principalIds: [
-            EVERYONE_PRINCIPAL_ID,
-            WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-            memberRoleId,
-          ],
-          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-          isOwningApplication: () => false,
-          resolveRowLevelPermissionRecordFilter: () => null,
+          workspaceId: workspaceId,
+          intersectionOf: { userWorkspaceRoleId: memberRoleId },
+          workspaceMember: {
+            id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          } as WorkspaceMemberWorkspaceEntity,
         });
     };
 

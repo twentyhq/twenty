@@ -11,6 +11,7 @@ import { RecordShareStorageService } from 'src/engine/permissions/record-share/s
 import { type EventRecordAccessGate } from 'src/engine/permissions/combine/types/event-record-access-gate.type';
 import { type RecordShare } from 'src/engine/permissions/record-share/types/record-share.type';
 import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
+import { loadPermissionsEnvironment } from 'src/engine/permissions/combine/utils/load-permissions-environment.util';
 import { resolveEventRecordSnapshots } from 'src/engine/permissions/combine/utils/resolve-event-record-snapshots.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -23,7 +24,7 @@ export class RecordAccessPolicyService {
     private readonly privateRecordStorageService: PrivateRecordStorageService,
   ) {}
 
-  // A subject receives the records a query would return it: the event
+  // A principal receives the records a query would return it: the event
   // snapshots are run through the same row access policy as its queries.
   buildEventRecordAccessGate({
     workspaceId,
@@ -100,23 +101,13 @@ export class RecordAccessPolicyService {
       }));
 
     return {
-      resolveAdmittedRecordIds: async (subject) => {
-        const {
-          flatObjectMetadataMaps,
-          flatFieldMetadataMapsOrm,
-          featureFlagsMap,
-        } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'flatObjectMetadataMaps',
-          'flatFieldMetadataMapsOrm',
-          'featureFlagsMap',
-        ]);
-        return findPermissionsAdmittedRecordIds({
-          subject,
-          environment: {
-            flatObjectMetadataMaps,
-            flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
-            featureFlagsMap,
-          },
+      resolveAdmittedRecordIds: async (principal) =>
+        findPermissionsAdmittedRecordIds({
+          principal,
+          environment: await loadPermissionsEnvironment({
+            workspaceCacheService: this.workspaceCacheService,
+            workspaceId,
+          }),
           flatObjectMetadata: objectMetadata,
           operationType: 'select',
           records: resolveEventRecordSnapshots(events),
@@ -125,8 +116,7 @@ export class RecordAccessPolicyService {
             fetchRecordShares,
             findPrivateRecordStates,
           },
-        });
-      },
+        }),
     };
   }
 }
