@@ -6,7 +6,6 @@ import { isOperationGrantedBeyondRole } from 'src/engine/permissions/record-shar
 import { isObjectOperationDisabled } from 'src/engine/permissions/role/utils/is-object-operation-disabled.util';
 import { isRolePermittingOperation } from 'src/engine/permissions/role/utils/is-role-permitting-operation.util';
 
-// true admits every record, false none; undefined leaves it to the grant paths
 export const resolvePermissionsRowAccessOutcome = (
   request: PermissionsRowAccessRequest,
 ): boolean | undefined => {

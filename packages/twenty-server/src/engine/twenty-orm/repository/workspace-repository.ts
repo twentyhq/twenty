@@ -1746,8 +1746,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     const subject = this.resolveRowAccessPolicySubject();
 
-    // Without a role filter the grants read nothing an update can change:
-    // shares are keyed by id and parents are checked on their own
     if (
       !isDefined(
         subject.resolveRowLevelPermissionRecordFilter(
@@ -2164,7 +2162,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
   }
 
-  // Records already in hand, deleted ones included, that a subject may access
   async findRecordIdsAdmittedForSubject({
     recordIds,
     subject,
@@ -2199,7 +2196,6 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return new Set(admittedRecords.map((record) => String(record.id)));
   }
 
-  // TODO(@charlesBochet): temporary, per-subject evaluation will be replaced
   async findSubjectIdsAdmittedToRecord({
     recordId,
     subjectsById,

@@ -11,7 +11,6 @@ import { findPermissionsRlsAdmittedRecordIds } from 'src/engine/permissions/rls/
 import { findRowLevelPermissionMatchingRecordIds } from 'src/engine/permissions/rls/utils/find-row-level-permission-matching-record-ids.util';
 import { findPermissionsObjectAdmittedRecordIds } from 'src/engine/permissions/role/utils/find-permissions-object-admitted-record-ids.util';
 
-// Runs the same grant paths as buildPermissionsCondition, so queries and events agree
 export const findPermissionsAdmittedRecordIds = async (
   request: PermissionsRowAccessEvaluationRequest,
 ): Promise<Set<string>> => {

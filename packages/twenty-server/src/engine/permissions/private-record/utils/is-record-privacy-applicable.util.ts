@@ -7,7 +7,6 @@ import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/ut
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/permissions/record-share/utils/resolve-required-record-share-access-levels.util';
 import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
 
-// An insert has no record yet, so privacy cannot apply to it
 export const isRecordPrivacyApplicable = ({
   subject,
   environment,

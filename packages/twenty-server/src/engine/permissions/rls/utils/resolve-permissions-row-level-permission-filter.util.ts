@@ -36,7 +36,6 @@ export const resolvePermissionsRowLevelPermissionFilter = ({
     flatFieldMetadataMaps: environment.flatFieldMetadataMaps,
   });
 
-  // A filter whose predicates all cancel out restricts nothing
   if (!isDefined(condition)) {
     return undefined;
   }
