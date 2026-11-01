@@ -26,7 +26,7 @@ export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   },
   {
     filePath:
-      'packages/twenty-front/src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx',
+      'packages/twenty-front/src/modules/media-access/components/MediaAccessIndicator.tsx',
     reason: 'Popover.Popup sized and spaced for the recording sessions list',
   },
   {

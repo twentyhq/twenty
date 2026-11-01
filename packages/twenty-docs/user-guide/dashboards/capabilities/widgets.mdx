@@ -90,6 +90,12 @@ Display single key values prominently.
 ### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="frame" />iFrames</span>
 Embed external tools and content directly in your dashboard.
 
+For embedded phones or video tools, a member with permission to manage security can configure **Settings → General → Security → Embedded website media access**. Add the website's exact HTTPS origin, such as `https://workspace.aircall.io`, and enable **Microphone**, **Camera**, or both. Paths and wildcards are not accepted. Only approve websites you trust.
+
+Reload open Twenty tabs after changing these permissions. Reloading ends active calls and recordings. Each member then selects **Enable microphone**, **Enable camera**, or **Enable microphone and camera** on the embed and approves the browser permission when prompted.
+
+The header indicator shows **Media access enabled** while an embed has access, including when it is hidden. This does not mean the website is currently recording: Twenty cannot inspect microphone or camera activity inside another website. Select the indicator and choose **Disable** to unload the embed and reload it with media access blocked. Enabling access again requires another click.
+
 <Frame>
 <img src="/images/user-guide/dashboard/dashboard-widget-table.png" alt="Table chart"/>
 </Frame>
