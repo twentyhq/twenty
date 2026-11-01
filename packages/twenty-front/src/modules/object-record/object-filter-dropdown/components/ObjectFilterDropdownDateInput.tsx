@@ -9,6 +9,7 @@ import { getRelativeDateDisplayValue } from '@/object-record/object-filter-dropd
 import { DatePicker } from '@/ui/input/components/internal/date/components/DatePicker';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { UserContext } from '@/users/contexts/UserContext';
 import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 import { useContext } from 'react';
@@ -25,6 +26,10 @@ export const ObjectFilterDropdownDateInput = () => {
   const { dateFormat, timeZone } = useContext(UserContext);
   const dateLocale = useAtomStateValue(dateLocaleState);
   const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
+
+  const { userTimezone } = useUserTimezone();
+
+  const resolvedTimeZone = timeZone ?? userTimezone;
 
   const selectedOperandInDropdown = useAtomComponentStateValue(
     selectedOperandInDropdownComponentState,
@@ -48,7 +53,7 @@ export const ObjectFilterDropdownDateInput = () => {
     // TODO: remove this and use getDisplayValue instead
     const formattedDate = formatDateString({
       value: newPlainDate,
-      timeZone,
+      timeZone: resolvedTimeZone,
       dateFormat,
       localeCatalog: dateLocale.localeCatalog,
     });
@@ -76,7 +81,7 @@ export const ObjectFilterDropdownDateInput = () => {
     const newFilterValue = relativeDate
       ? stringifyRelativeDateFilter({
           ...relativeDate,
-          timezone: timeZone,
+          timezone: resolvedTimeZone,
           firstDayOfTheWeek: resolvedCalendarStartDay,
         })
       : '';
