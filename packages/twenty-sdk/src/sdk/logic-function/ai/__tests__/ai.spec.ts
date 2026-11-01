@@ -95,7 +95,10 @@ const toNextEvent = (event: Record<string, unknown>) =>
 const isStreamRequest = (requestInit: RequestInit | undefined) =>
   new Headers(requestInit?.headers).get('Accept') === 'text/event-stream';
 
-const mockRunChannel = (fetchSpy: MockInstance<typeof fetch>) => {
+const mockRunChannel = (
+  fetchSpy: MockInstance<typeof fetch>,
+  { isKeepaliveHeld = false }: { isKeepaliveHeld?: boolean } = {},
+) => {
   let channel: ReadableStreamDefaultController<Uint8Array> | undefined;
   let isChannelCancelled = false;
   let answerMutation: (body: Record<string, unknown>) => void = () => {};
@@ -110,7 +113,10 @@ const mockRunChannel = (fetchSpy: MockInstance<typeof fetch>) => {
       const body = new ReadableStream<Uint8Array>({
         start(controller) {
           channel = controller;
-          controller.enqueue(toNextEvent({ type: 'keepalive' }));
+
+          if (!isKeepaliveHeld) {
+            controller.enqueue(toNextEvent({ type: 'keepalive' }));
+          }
         },
         cancel() {
           isChannelCancelled = true;
@@ -141,6 +147,8 @@ const mockRunChannel = (fetchSpy: MockInstance<typeof fetch>) => {
       channel?.enqueue(toNextEvent(event)),
     answerMutation: (body: Record<string, unknown>) => answerMutation(body),
     fail: () => channel?.error(new Error('Network down')),
+    releaseKeepalive: () =>
+      channel?.enqueue(toNextEvent({ type: 'keepalive' })),
     isChannelCancelled: () => isChannelCancelled,
   };
 };
@@ -206,6 +214,30 @@ describe('ai.generate with onChunk', () => {
       { type: 'finish' },
     ]);
     expect(runChannel.isChannelCancelled()).toBe(true);
+  });
+
+  it('starts the run only once the subscription is live', async () => {
+    const runChannel = mockRunChannel(fetchSpy, { isKeepaliveHeld: true });
+
+    const generation = ai.generate({ input: 'Hi', onChunk: () => {} });
+
+    await vi.waitFor(() =>
+      expect(runChannel.requests).toEqual(['subscription']),
+    );
+    await new Promise((resolve) => setTimeout(resolve, 50));
+
+    expect(runChannel.requests).toEqual(['subscription']);
+
+    runChannel.releaseKeepalive();
+
+    await vi.waitFor(() =>
+      expect(runChannel.requests).toEqual(['subscription', 'mutation']),
+    );
+
+    runChannel.answerMutation({ data: { generate: RESULT } });
+    runChannel.send({ type: 'message-persisted', messageId: 'message-id' });
+
+    await expect(generation).resolves.toEqual(RESULT);
   });
 
   it('picks a run id when the caller does not', async () => {

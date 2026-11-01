@@ -466,6 +466,8 @@ stream's end never arrives, it stops waiting for more chunks 5 s after the
 result and still hands over every chunk received by then:
 
 ```ts
+const abortController = new AbortController();
+
 const { text } = await ai.generate({
   input: `Draft a follow-up email to ${companyName}.`,
   onChunk: (chunk) => {

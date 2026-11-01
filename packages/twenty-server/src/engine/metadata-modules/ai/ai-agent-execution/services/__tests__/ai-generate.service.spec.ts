@@ -1,3 +1,6 @@
+import { QueryFailedError } from 'typeorm';
+
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { AiGenerateService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/ai-generate.service';
 import { buildAgentRunStreamChannelId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-stream-channel-id.util';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
@@ -97,6 +100,27 @@ describe('AiGenerateService', () => {
       }),
     ).rejects.toMatchObject({ code: AiExceptionCode.INVALID_AGENT_INPUT });
     expect(runInRequest).not.toHaveBeenCalled();
+  });
+
+  it('refuses a run id another call took between the lookup and the turn', async () => {
+    const { service, runInRequest } = buildService({});
+    const uniqueViolation = new QueryFailedError('INSERT', [], new Error());
+
+    Object.assign(uniqueViolation, {
+      code: POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION,
+    });
+    runInRequest.mockRejectedValue(uniqueViolation);
+
+    await expect(
+      generate({
+        service,
+        input: { input: INPUT, runId: RUN_ID },
+        callerApplication: APPLICATION,
+      }),
+    ).rejects.toMatchObject({
+      code: AiExceptionCode.INVALID_AGENT_INPUT,
+      message: `Run ${RUN_ID} already exists; pass a new runId`,
+    });
   });
 
   it('refuses a run id without an application token', async () => {

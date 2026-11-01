@@ -55,13 +55,12 @@ describe('ai.generate runs followed by their application (integration)', () => {
   let otherToken: string;
 
   beforeAll(async () => {
-    [
-      { application, token },
-      { application: otherApplication, token: otherToken },
-    ] = await Promise.all([
-      setupApplicationWithToken('Generate Stream Probe'),
-      setupApplicationWithToken('Generate Stream Other Probe'),
-    ]);
+    // one after the other, since each setup switches Jest's process-wide timer mode
+    ({ application, token } = await setupApplicationWithToken(
+      'Generate Stream Probe',
+    ));
+    ({ application: otherApplication, token: otherToken } =
+      await setupApplicationWithToken('Generate Stream Other Probe'));
   }, 120000);
 
   // setupApplicationWithResources leaves fake timers on, which would freeze every wait below
@@ -163,6 +162,29 @@ describe('ai.generate runs followed by their application (integration)', () => {
     expect(secondResponse.body.errors[0].extensions.code).toBe(
       'BAD_USER_INPUT',
     );
+  });
+
+  it('runs only one of two concurrent calls with the same run id', async () => {
+    const runId = randomUUID();
+
+    mockScriptedAiModel(() => answerWith('Done'));
+
+    const responses = await Promise.all(
+      [1, 2].map(() =>
+        makeMetadataApiRequest(
+          generateQueryFactory({ input: INPUT, runId }),
+          token,
+        ),
+      ),
+    );
+
+    expect(
+      responses.map(({ body }) =>
+        isDefined(body.errors)
+          ? body.errors[0].extensions.code
+          : body.data.generate.runId,
+      ),
+    ).toEqual(expect.arrayContaining([runId, 'BAD_USER_INPUT']));
   });
 
   it('refuses a run id from a member session', async () => {

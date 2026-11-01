@@ -125,6 +125,7 @@ describe('streamConversation', () => {
   it.each([
     { type: 'stream-chunk' },
     { type: 'stream-chunk', chunk: { type: 'text-delta' }, seq: null },
+    { type: 'stream-chunk', chunk: [] },
     {
       type: 'message-reactions-updated',
       messageId: 'message-id',
@@ -216,7 +217,7 @@ describe('streamConversation', () => {
     );
 
     await expect(collect(streamConversation(CONVERSATION))).rejects.toThrow(
-      'the stream closed early',
+      'streamConversation() failed: the stream closed early; read the history and stream again to resume',
     );
   });
 

@@ -24,4 +24,5 @@ export const streamConversation = ({
     variables: conversation,
     caller: 'streamConversation',
     signal,
+    closedEarlyAdvice: '; read the history and stream again to resume',
   });

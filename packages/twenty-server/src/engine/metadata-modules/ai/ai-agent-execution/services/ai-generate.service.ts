@@ -21,10 +21,17 @@ import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
+import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+
+const buildRunAlreadyExistsException = (runId: string) =>
+  new AiException(
+    `Run ${runId} already exists; pass a new runId`,
+    AiExceptionCode.INVALID_AGENT_INPUT,
+  );
 
 @Injectable()
 export class AiGenerateService {
@@ -81,8 +88,8 @@ export class AiGenerateService {
         callerApplication,
       });
 
-    const { runId, outcome, usage } =
-      await this.agentRunnerService.runInRequest({
+    const { runId, outcome, usage } = await this.agentRunnerService
+      .runInRequest({
         workspaceId: workspace.id,
         executionContext,
         spec: {
@@ -109,6 +116,13 @@ export class AiGenerateService {
           turnId: requestedRunId,
         },
         streamChannelId,
+      })
+      .catch((error: unknown) => {
+        if (isDefined(requestedRunId) && isUniqueViolationError(error)) {
+          throw buildRunAlreadyExistsException(requestedRunId);
+        }
+
+        throw error;
       });
 
     const output = readGeneratedOutputOrThrow({
@@ -147,10 +161,7 @@ export class AiGenerateService {
     });
 
     if (isDefined(existingTurn)) {
-      throw new AiException(
-        `Run ${runId} already exists; pass a new runId`,
-        AiExceptionCode.INVALID_AGENT_INPUT,
-      );
+      throw buildRunAlreadyExistsException(runId);
     }
 
     return buildAgentRunStreamChannelId({

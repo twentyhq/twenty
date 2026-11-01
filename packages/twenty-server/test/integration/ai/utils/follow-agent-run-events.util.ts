@@ -106,10 +106,15 @@ export const followAgentRunEvents = async ({
     close: async () => {
       abortController.abort();
       body.destroy();
+
+      let closeTimeout: ReturnType<typeof setTimeout> | undefined;
+
       await Promise.race([
         reading,
-        new Promise((resolve) => setTimeout(resolve, CLOSE_TIMEOUT_MS)),
-      ]);
+        new Promise((resolve) => {
+          closeTimeout = setTimeout(resolve, CLOSE_TIMEOUT_MS);
+        }),
+      ]).finally(() => clearTimeout(closeTimeout));
     },
   };
 };

@@ -18,7 +18,7 @@ type ServerSentEvent =
   | null;
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
-  isObject(value);
+  isObject(value) && !isArray(value);
 
 const toErrorMessages = (errors: unknown[]): string[] =>
   errors.map((error) =>
@@ -147,11 +147,14 @@ export async function* streamAgentChatEvents({
   variables,
   caller,
   signal,
+  closedEarlyAdvice = '',
 }: {
   query: string;
   variables: Record<string, unknown>;
   caller: string;
   signal?: AbortSignal;
+  // appended to the error a dropped connection throws, for callers that can resume
+  closedEarlyAdvice?: string;
 }): AsyncGenerator<AgentChatSubscriptionEvent> {
   const { apiUrl, accessToken } = getApplicationApiConfigOrThrow(caller);
   let reader: ReadableStreamDefaultReader<string> | undefined;
@@ -186,7 +189,9 @@ export async function* streamAgentChatEvents({
 
       // the server completes every stream it ends, so this is a dropped connection
       if (done) {
-        throw new Error(`${caller}() failed: the stream closed early`);
+        throw new Error(
+          `${caller}() failed: the stream closed early${closedEarlyAdvice}`,
+        );
       }
 
       // a CRLF can be split across two reads
