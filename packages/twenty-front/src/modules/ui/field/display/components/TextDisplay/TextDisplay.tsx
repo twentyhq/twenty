@@ -12,6 +12,8 @@ const styles = {
       align-items: center;
       display: flex;
       height: auto;
+      max-width: 100%;
+      min-width: 0;
     }
   `,
   fixHeight: css`
