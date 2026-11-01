@@ -1,12 +1,11 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { FieldActorSource } from 'twenty-shared/types';
-import { type Repository } from 'typeorm';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-executor/services/workflow-execution-context.service';
@@ -117,13 +116,11 @@ const buildService = ({
       }),
     } as unknown as WorkspaceCacheService,
     {
-      findOneOrFail: jest.fn().mockResolvedValue({
+      get: jest.fn().mockResolvedValue({
         id: WORKSPACE_ID,
         workspaceCustomApplicationId: WORKSPACE_CUSTOM_APPLICATION_ID,
-        createdAt: new Date(),
-        updatedAt: new Date(),
       }),
-    } as unknown as Repository<WorkspaceEntity>,
+    } as unknown as CoreEntityCacheService,
   );
 
 const runInfo = { workflowRunId: 'workflow-run-id', workspaceId: WORKSPACE_ID };
