@@ -18,6 +18,13 @@ const PLATFORM_OWNED_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.recordShare.universalIdentifier,
   STANDARD_OBJECTS.shortLink.universalIdentifier,
   STANDARD_OBJECTS.workflowAutomatedTrigger.universalIdentifier,
+  STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier,
+  STANDARD_OBJECTS.agentMessage.universalIdentifier,
+  STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
+  STANDARD_OBJECTS.agentMessageReaction.universalIdentifier,
+  STANDARD_OBJECTS.agentTurn.universalIdentifier,
+  STANDARD_OBJECTS.campaignDelivery.universalIdentifier,
+  STANDARD_OBJECTS.messageSuppression.universalIdentifier,
 ];
 
 @RegisteredWorkspaceCommand('2.39.0', 1788616958245)

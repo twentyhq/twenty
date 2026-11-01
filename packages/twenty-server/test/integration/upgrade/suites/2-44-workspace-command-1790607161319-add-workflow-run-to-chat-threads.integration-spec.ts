@@ -1,4 +1,5 @@
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -56,15 +57,35 @@ describe('2-44 workspace command 1790607161319 - AddWorkflowRunToChatThreadsComm
           LEGACY_CHAT_THREAD_WORKFLOW_RUN_INDEX_UNIVERSAL_IDENTIFIER
         ],
       ),
+      readability: await readThreadReadability(),
     };
   };
 
-  const UNLINKED_STATE = {
-    fieldCount: 0,
-    hasIndex: false,
+  const readThreadReadability = async (): Promise<string | undefined> => {
+    const [thread]: { readability: string }[] =
+      await global.testDataSource.query(
+        `SELECT readability FROM core."objectMetadata" WHERE "workspaceId" = $1 AND "universalIdentifier" = $2`,
+        [
+          SEED_APPLE_WORKSPACE_ID,
+          STANDARD_OBJECTS.agentChatThread.universalIdentifier,
+        ],
+      );
+
+    return thread?.readability;
   };
 
-  beforeAll(() => {
+  let unlinkedState: {
+    fieldCount: number;
+    hasIndex: boolean;
+    readability: string | undefined;
+  };
+
+  beforeAll(async () => {
+    unlinkedState = {
+      fieldCount: 0,
+      hasIndex: false,
+      readability: await readThreadReadability(),
+    };
     command = getAppProviderByClassName<AddWorkflowRunToChatThreadsCommand>(
       'AddWorkflowRunToChatThreadsCommand',
     );
@@ -77,13 +98,13 @@ describe('2-44 workspace command 1790607161319 - AddWorkflowRunToChatThreadsComm
   });
 
   it('starts from a workspace without the run link', async () => {
-    expect(await readState()).toEqual(UNLINKED_STATE);
+    expect(await readState()).toEqual(unlinkedState);
   });
 
   it('no longer links threads to runs', async () => {
     await runCommand();
 
-    expect(await readState()).toEqual(UNLINKED_STATE);
+    expect(await readState()).toEqual(unlinkedState);
   });
 
   it('keeps threads unlinked on down', async () => {
@@ -92,6 +113,6 @@ describe('2-44 workspace command 1790607161319 - AddWorkflowRunToChatThreadsComm
       buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),
     );
 
-    expect(await readState()).toEqual(UNLINKED_STATE);
+    expect(await readState()).toEqual(unlinkedState);
   });
 });

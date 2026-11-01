@@ -20,12 +20,15 @@ type HasObjectInUnion<T> = T extends unknown
     : false
   : never;
 
+type UnusedMetadataColumnNameByMetadataName = {
+  objectMetadata: UnusedObjectMetadataColumnName;
+  fieldMetadata: UnusedFieldMetadataColumnName;
+};
+
 type UnusedMetadataColumnName<TMetadataName extends AllMetadataName> =
-  TMetadataName extends 'objectMetadata'
-    ? UnusedObjectMetadataColumnName
-    : TMetadataName extends 'fieldMetadata'
-      ? UnusedFieldMetadataColumnName
-      : never;
+  TMetadataName extends keyof UnusedMetadataColumnNameByMetadataName
+    ? UnusedMetadataColumnNameByMetadataName[TMetadataName]
+    : never;
 
 type MetadataEntityPropertyConfiguration<
   TMetadataName extends AllMetadataName,

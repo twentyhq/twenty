@@ -23,24 +23,29 @@ export const setLegacyInheritedReadability = async ({
   } of objects) {
     const filter = `"workspaceId" = $1 AND "universalIdentifier" = $2
       AND NOT (readability = 'INHERITED'
-        AND "readabilityParentFieldUniversalIdentifiers" @> $3::uuid[]
-        AND "readabilityParentFieldUniversalIdentifiers" <@ $3::uuid[])`;
+        AND COALESCE("readabilityParentFieldUniversalIdentifiers", '{}') @> $3::uuid[]
+        AND COALESCE("readabilityParentFieldUniversalIdentifiers", '{}') <@ $3::uuid[])`;
     const parameters = [
       workspaceId,
       universalIdentifier,
       readabilityParentFieldUniversalIdentifiers,
     ];
-    const rows: { id: string }[] = isDryRun
-      ? await coreDataSource.query(
-          `SELECT id FROM core."objectMetadata" WHERE ${filter}`,
-          parameters,
-        )
-      : await coreDataSource.query(
-          `UPDATE core."objectMetadata"
-            SET readability = 'INHERITED', "readabilityParentFieldUniversalIdentifiers" = $3::uuid[]
-            WHERE ${filter} RETURNING id`,
-          parameters,
-        );
+    if (isDryRun) {
+      const rows: { id: string }[] = await coreDataSource.query(
+        `SELECT id FROM core."objectMetadata" WHERE ${filter}`,
+        parameters,
+      );
+
+      updatedCount += rows.length;
+      continue;
+    }
+
+    const [rows]: [{ id: string }[], number] = await coreDataSource.query(
+      `UPDATE core."objectMetadata"
+        SET readability = 'INHERITED', "readabilityParentFieldUniversalIdentifiers" = $3::uuid[]
+        WHERE ${filter} RETURNING id`,
+      parameters,
+    );
 
     updatedCount += rows.length;
   }

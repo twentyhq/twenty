@@ -171,18 +171,21 @@ export class AgentHistorySchemaService {
     workspaceId: string;
     historyObjectUniversalIdentifiers: string[];
   }): Promise<void> {
-    const protectedObjects: { id: string }[] = await this.coreDataSource.query(
-      `UPDATE core."objectMetadata" SET readability = 'SYSTEM', writability = 'SYSTEM'
-        WHERE "workspaceId" = $1 AND "universalIdentifier" = ANY($2)
-          AND readability = 'OPEN' AND writability = 'OPEN'
-        RETURNING id`,
-      [workspaceId, historyObjectUniversalIdentifiers],
-    );
+    await this.coreDataSource.transaction(async (manager) => {
+      const [protectedObjects]: [{ id: string }[], number] =
+        await manager.query(
+          `UPDATE core."objectMetadata" SET readability = 'SYSTEM', writability = 'SYSTEM'
+            WHERE "workspaceId" = $1 AND "universalIdentifier" = ANY($2)
+              AND readability = 'OPEN' AND writability = 'OPEN'
+            RETURNING id`,
+          [workspaceId, historyObjectUniversalIdentifiers],
+        );
 
-    await this.coreDataSource.query(
-      `UPDATE core."fieldMetadata" SET writability = 'SYSTEM'
-        WHERE "workspaceId" = $1 AND "objectMetadataId" = ANY($2::uuid[])`,
-      [workspaceId, protectedObjects.map(({ id }) => id)],
-    );
+      await manager.query(
+        `UPDATE core."fieldMetadata" SET writability = 'SYSTEM'
+          WHERE "workspaceId" = $1 AND "objectMetadataId" = ANY($2::uuid[])`,
+        [workspaceId, protectedObjects.map(({ id }) => id)],
+      );
+    });
   }
 }
