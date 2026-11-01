@@ -4,6 +4,8 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { isOAuthOnlyApplication } from 'src/engine/core-modules/application/utils/is-oauth-only-application.util';
 import { type RoleIdsBySource } from 'src/engine/permissions/principal/types/role-permission-config.type';
 
+// RoleIdsBySource tells no restriction (undefined) apart from allows nothing (null);
+// we may want explicit literals for both instead of relying on that difference
 const NO_APPLICATION_RESTRICTION = {} as const;
 
 const APPLICATION_ALLOWS_NOTHING = { applicationRoleId: null } as const;
