@@ -1574,7 +1574,7 @@ msgstr "每次執行步驟時建立新的項目"
 #. js-lingui-id: 3pDKsj
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "A newer revision exists. Open the latest preview to save."
-msgstr ""
+msgstr "已有較新版本。開啟最新預覽以儲存。"
 
 #. js-lingui-id: K3NJnJ
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
@@ -6697,7 +6697,7 @@ msgstr "複雜度"
 #. js-lingui-id: ST17km
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
 msgid "Component failed to render."
-msgstr ""
+msgstr "元件無法轉譯。"
 
 #. js-lingui-id: 3pJ7V5
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
@@ -6707,7 +6707,7 @@ msgstr "元件名稱"
 #. js-lingui-id: WcUICq
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Component preview with sample data"
-msgstr ""
+msgstr "含範例資料的元件預覽"
 
 #. js-lingui-id: rYRNgS
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
@@ -7516,7 +7516,7 @@ msgstr "無法授予媒體存取權。請再試一次。"
 #. js-lingui-id: Y5qCpF
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
 msgid "Could not load preview."
-msgstr ""
+msgstr "無法載入預覽。"
 
 #. js-lingui-id: mrmGIf
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
@@ -8684,7 +8684,7 @@ msgstr "儀表板複製成功"
 #. js-lingui-id: xLSe09
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Dashboard widget"
-msgstr ""
+msgstr "儀表板小工具"
 
 #. js-lingui-id: HKH+W+
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
@@ -16544,7 +16544,7 @@ msgstr "載入更多..."
 #. js-lingui-id: nSgEqx
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Loading preview…"
-msgstr ""
+msgstr "正在載入預覽……"
 
 #. js-lingui-id: WepeNQ
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
@@ -22263,7 +22263,7 @@ msgstr "記錄頁面"
 #. js-lingui-id: J5b8Hz
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Record page widget"
-msgstr ""
+msgstr "記錄頁面小工具"
 
 #. js-lingui-id: fHTWNa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -22878,7 +22878,7 @@ msgstr "重新命名群組"
 #. js-lingui-id: cwObXL
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Rendering preview…"
-msgstr ""
+msgstr "正在呈現預覽……"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -23654,7 +23654,7 @@ msgstr "SAML/OIDC"
 #. js-lingui-id: b/zjTD
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Sample data"
-msgstr ""
+msgstr "範例資料"
 
 #. js-lingui-id: 3hNFUc
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat.tsx
@@ -23723,7 +23723,7 @@ msgstr "請先儲存您的變更"
 #. js-lingui-id: A0/0NU
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Saved to Workspace app"
-msgstr ""
+msgstr "已儲存至 Workspace 應用程式"
 
 #. js-lingui-id: w9O5DJ
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx

@@ -1574,7 +1574,7 @@ msgstr "Uno nuovo ogni volta che viene eseguito il passaggio"
 #. js-lingui-id: 3pDKsj
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "A newer revision exists. Open the latest preview to save."
-msgstr ""
+msgstr "È disponibile una revisione più recente. Apri l'ultima anteprima per salvare."
 
 #. js-lingui-id: K3NJnJ
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
@@ -6697,7 +6697,7 @@ msgstr "Complessità"
 #. js-lingui-id: ST17km
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
 msgid "Component failed to render."
-msgstr ""
+msgstr "Impossibile eseguire il rendering del componente."
 
 #. js-lingui-id: 3pJ7V5
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
@@ -6707,7 +6707,7 @@ msgstr "Nome del componente"
 #. js-lingui-id: WcUICq
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Component preview with sample data"
-msgstr ""
+msgstr "Anteprima del componente con dati di esempio"
 
 #. js-lingui-id: rYRNgS
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
@@ -7516,7 +7516,7 @@ msgstr "Impossibile concedere l'accesso ai contenuti multimediali. Riprova."
 #. js-lingui-id: Y5qCpF
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
 msgid "Could not load preview."
-msgstr ""
+msgstr "Impossibile caricare l'anteprima."
 
 #. js-lingui-id: mrmGIf
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
@@ -8684,7 +8684,7 @@ msgstr "Cruscotto duplicato con successo"
 #. js-lingui-id: xLSe09
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Dashboard widget"
-msgstr ""
+msgstr "Widget del cruscotto"
 
 #. js-lingui-id: HKH+W+
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
@@ -16544,7 +16544,7 @@ msgstr "Caricamento altro..."
 #. js-lingui-id: nSgEqx
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Loading preview…"
-msgstr ""
+msgstr "Caricamento dell'anteprima…"
 
 #. js-lingui-id: WepeNQ
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
@@ -22263,7 +22263,7 @@ msgstr "Pagina del record"
 #. js-lingui-id: J5b8Hz
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Record page widget"
-msgstr ""
+msgstr "Widget della pagina del record"
 
 #. js-lingui-id: fHTWNa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -22878,7 +22878,7 @@ msgstr "Rinomina gruppo"
 #. js-lingui-id: cwObXL
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Rendering preview…"
-msgstr ""
+msgstr "Rendering dell'anteprima…"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -23654,7 +23654,7 @@ msgstr "SAML/OIDC"
 #. js-lingui-id: b/zjTD
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Sample data"
-msgstr ""
+msgstr "Dati di esempio"
 
 #. js-lingui-id: 3hNFUc
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat.tsx
@@ -23723,7 +23723,7 @@ msgstr "Salva prima le modifiche"
 #. js-lingui-id: A0/0NU
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Saved to Workspace app"
-msgstr ""
+msgstr "Salvato nell'app Workspace"
 
 #. js-lingui-id: w9O5DJ
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx

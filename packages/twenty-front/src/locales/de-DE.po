@@ -1574,7 +1574,7 @@ msgstr "Bei jeder Schrittausführung ein neues"
 #. js-lingui-id: 3pDKsj
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "A newer revision exists. Open the latest preview to save."
-msgstr ""
+msgstr "Eine neuere Revision ist verfügbar. Öffnen Sie die neueste Vorschau zum Speichern."
 
 #. js-lingui-id: K3NJnJ
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
@@ -6697,7 +6697,7 @@ msgstr "Komplexität"
 #. js-lingui-id: ST17km
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
 msgid "Component failed to render."
-msgstr ""
+msgstr "Komponente konnte nicht gerendert werden."
 
 #. js-lingui-id: 3pJ7V5
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
@@ -6707,7 +6707,7 @@ msgstr "Komponentenname"
 #. js-lingui-id: WcUICq
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Component preview with sample data"
-msgstr ""
+msgstr "Komponentenvorschau mit Beispieldaten"
 
 #. js-lingui-id: rYRNgS
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
@@ -7516,7 +7516,7 @@ msgstr "Medienzugriff konnte nicht gewährt werden. Bitte versuchen Sie es erneu
 #. js-lingui-id: Y5qCpF
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
 msgid "Could not load preview."
-msgstr ""
+msgstr "Vorschau konnte nicht geladen werden."
 
 #. js-lingui-id: mrmGIf
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
@@ -8684,7 +8684,7 @@ msgstr "Dashboard erfolgreich dupliziert"
 #. js-lingui-id: xLSe09
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Dashboard widget"
-msgstr ""
+msgstr "Dashboard-Widget"
 
 #. js-lingui-id: HKH+W+
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
@@ -16544,7 +16544,7 @@ msgstr "Mehr laden..."
 #. js-lingui-id: nSgEqx
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Loading preview…"
-msgstr ""
+msgstr "Vorschau wird geladen…"
 
 #. js-lingui-id: WepeNQ
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
@@ -22263,7 +22263,7 @@ msgstr "Datensatzseite"
 #. js-lingui-id: J5b8Hz
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Record page widget"
-msgstr ""
+msgstr "Datensatzseiten-Widget"
 
 #. js-lingui-id: fHTWNa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -22878,7 +22878,7 @@ msgstr "Gruppe umbenennen"
 #. js-lingui-id: cwObXL
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Rendering preview…"
-msgstr ""
+msgstr "Vorschau wird gerendert…"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -23654,7 +23654,7 @@ msgstr "SAML/OIDC"
 #. js-lingui-id: b/zjTD
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Sample data"
-msgstr ""
+msgstr "Beispieldaten"
 
 #. js-lingui-id: 3hNFUc
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat.tsx
@@ -23723,7 +23723,7 @@ msgstr "Speichern Sie zuerst Ihre Änderungen"
 #. js-lingui-id: A0/0NU
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Saved to Workspace app"
-msgstr ""
+msgstr "In Workspace-App gespeichert"
 
 #. js-lingui-id: w9O5DJ
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx

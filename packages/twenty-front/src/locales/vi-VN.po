@@ -1574,7 +1574,7 @@ msgstr "Một mục mới mỗi khi bước chạy"
 #. js-lingui-id: 3pDKsj
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "A newer revision exists. Open the latest preview to save."
-msgstr ""
+msgstr "Đã có bản sửa đổi mới hơn. Mở bản xem trước mới nhất để lưu."
 
 #. js-lingui-id: K3NJnJ
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
@@ -6697,7 +6697,7 @@ msgstr "Độ phức tạp"
 #. js-lingui-id: ST17km
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
 msgid "Component failed to render."
-msgstr ""
+msgstr "Không thể kết xuất thành phần."
 
 #. js-lingui-id: 3pJ7V5
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
@@ -6707,7 +6707,7 @@ msgstr "Tên thành phần"
 #. js-lingui-id: WcUICq
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Component preview with sample data"
-msgstr ""
+msgstr "Bản xem trước thành phần với dữ liệu mẫu"
 
 #. js-lingui-id: rYRNgS
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
@@ -7516,7 +7516,7 @@ msgstr "Không thể cấp quyền truy cập phương tiện. Vui lòng thử l
 #. js-lingui-id: Y5qCpF
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
 msgid "Could not load preview."
-msgstr ""
+msgstr "Không thể tải bản xem trước."
 
 #. js-lingui-id: mrmGIf
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
@@ -8684,7 +8684,7 @@ msgstr "Nhân bản thành công bảng điều khiển"
 #. js-lingui-id: xLSe09
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Dashboard widget"
-msgstr ""
+msgstr "Tiện ích Bảng điều khiển"
 
 #. js-lingui-id: HKH+W+
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
@@ -16544,7 +16544,7 @@ msgstr "Đang tải thêm..."
 #. js-lingui-id: nSgEqx
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Loading preview…"
-msgstr ""
+msgstr "Đang tải bản xem trước…"
 
 #. js-lingui-id: WepeNQ
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
@@ -22263,7 +22263,7 @@ msgstr "Trang hồ sơ"
 #. js-lingui-id: J5b8Hz
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Record page widget"
-msgstr ""
+msgstr "Tiện ích trang hồ sơ"
 
 #. js-lingui-id: fHTWNa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -22878,7 +22878,7 @@ msgstr "Đổi tên nhóm"
 #. js-lingui-id: cwObXL
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Rendering preview…"
-msgstr ""
+msgstr "Đang hiển thị bản xem trước…"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -23654,7 +23654,7 @@ msgstr "SAML/OIDC"
 #. js-lingui-id: b/zjTD
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Sample data"
-msgstr ""
+msgstr "Dữ liệu mẫu"
 
 #. js-lingui-id: 3hNFUc
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat.tsx
@@ -23723,7 +23723,7 @@ msgstr "Trước tiên, hãy lưu các thay đổi của bạn"
 #. js-lingui-id: A0/0NU
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Saved to Workspace app"
-msgstr ""
+msgstr "Đã lưu vào ứng dụng Workspace"
 
 #. js-lingui-id: w9O5DJ
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx

@@ -1574,7 +1574,7 @@ msgstr "ステップの実行ごとに新規作成"
 #. js-lingui-id: 3pDKsj
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "A newer revision exists. Open the latest preview to save."
-msgstr ""
+msgstr "新しいリビジョンがあります。保存するには最新のプレビューを開いてください。"
 
 #. js-lingui-id: K3NJnJ
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
@@ -6697,7 +6697,7 @@ msgstr "複雑さ"
 #. js-lingui-id: ST17km
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
 msgid "Component failed to render."
-msgstr ""
+msgstr "コンポーネントのレンダリングに失敗しました。"
 
 #. js-lingui-id: 3pJ7V5
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
@@ -6707,7 +6707,7 @@ msgstr "コンポーネント名"
 #. js-lingui-id: WcUICq
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Component preview with sample data"
-msgstr ""
+msgstr "サンプルデータを使用したコンポーネントのプレビュー"
 
 #. js-lingui-id: rYRNgS
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
@@ -7516,7 +7516,7 @@ msgstr "メディアへのアクセスを許可できませんでした。もう
 #. js-lingui-id: Y5qCpF
 #: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
 msgid "Could not load preview."
-msgstr ""
+msgstr "プレビューを読み込めませんでした。"
 
 #. js-lingui-id: mrmGIf
 #: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
@@ -8684,7 +8684,7 @@ msgstr "ダッシュボードが正常に複製されました"
 #. js-lingui-id: xLSe09
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Dashboard widget"
-msgstr ""
+msgstr "ダッシュボードウィジェット"
 
 #. js-lingui-id: HKH+W+
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
@@ -16544,7 +16544,7 @@ msgstr "さらに読み込み中…"
 #. js-lingui-id: nSgEqx
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Loading preview…"
-msgstr ""
+msgstr "プレビューを読み込み中…"
 
 #. js-lingui-id: WepeNQ
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
@@ -22263,7 +22263,7 @@ msgstr "レコードページ"
 #. js-lingui-id: J5b8Hz
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Record page widget"
-msgstr ""
+msgstr "レコードページウィジェット"
 
 #. js-lingui-id: fHTWNa
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -22878,7 +22878,7 @@ msgstr "グループ名を変更"
 #. js-lingui-id: cwObXL
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Rendering preview…"
-msgstr ""
+msgstr "プレビューをレンダリング中…"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -23654,7 +23654,7 @@ msgstr "SAML/OIDC 認証"
 #. js-lingui-id: b/zjTD
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Sample data"
-msgstr ""
+msgstr "サンプルデータ"
 
 #. js-lingui-id: 3hNFUc
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat.tsx
@@ -23723,7 +23723,7 @@ msgstr "まず変更を保存してください"
 #. js-lingui-id: A0/0NU
 #: src/modules/ai/components/AiChatFrontComponentPreview.tsx
 msgid "Saved to Workspace app"
-msgstr ""
+msgstr "Workspaceアプリに保存しました"
 
 #. js-lingui-id: w9O5DJ
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
