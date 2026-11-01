@@ -152,7 +152,7 @@ export const AiChatToolCallApprovalEmailCard = ({
       <AiChatApprovalEmailReview
         draft={draft}
         onDraftChange={setDraft}
-        disabled={isAnswering || proposal.areArgumentsEditable === false}
+        disabled={isAnswering}
       />
     </AiChatToolCallApprovalCardLayout>
   );

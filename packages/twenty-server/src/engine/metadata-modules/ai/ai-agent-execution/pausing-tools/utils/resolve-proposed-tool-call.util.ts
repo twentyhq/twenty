@@ -92,21 +92,29 @@ export const resolveProposedToolCall = async ({
     };
   }
 
-  const {
-    template = 'generic',
-    alternativeToolNames,
-    areArgumentsEditable,
-  } = toolIndexEntry.approval ?? {};
+  const { template = 'generic', alternativeToolNames } =
+    toolIndexEntry.approval ?? {};
   const baseProposal = {
     toolName,
     toolLabel: toolIndexEntry.label,
     summary,
     arguments: input.arguments,
-    ...(isDefined(areArgumentsEditable) ? { areArgumentsEditable } : {}),
     ...(isNonEmptyArray(alternativeToolNames) ? { alternativeToolNames } : {}),
   };
 
   switch (template) {
+    case 'frontComponent': {
+      const { draftId, checksum } = baseProposal.arguments;
+
+      if (!isNonEmptyString(draftId) || !isNonEmptyString(checksum)) {
+        return {
+          error:
+            'arguments.draftId and arguments.checksum must identify the component draft.',
+        };
+      }
+
+      return { proposal: { ...baseProposal, template } };
+    }
     case 'email':
       return buildEmailProposal(baseProposal);
     case 'recordCreate':
