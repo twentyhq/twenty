@@ -120,6 +120,7 @@ export class UpgradePeopleDataLabsApplicationCommand extends ProvisionedWorkspac
         // marked as completing 2.23 and the compatibility check would reject
         // the install. The server is already on 2.23, so skip the check here.
         skipWorkspaceCompatibilityCheck: true,
+        shouldDeferActions: false,
       });
 
       this.logger.log(

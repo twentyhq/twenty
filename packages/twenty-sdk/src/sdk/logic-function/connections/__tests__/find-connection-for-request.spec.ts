@@ -5,7 +5,9 @@ import { type AppConnection } from '@/sdk/logic-function/connections/types/app-c
 import { withLegacyConnectionVisibility } from '@/sdk/logic-function/connections/utils/with-legacy-connection-visibility.util';
 
 const buildConnection = (
-  overrides: Partial<Omit<AppConnection, 'visibility'>> = {},
+  overrides: Partial<
+    Omit<AppConnection, 'visibility' | 'providerType' | 'accessToken'>
+  > = {},
 ): AppConnection =>
   withLegacyConnectionVisibility({
     id: 'c-1',
@@ -16,6 +18,7 @@ const buildConnection = (
     scope: 'USER',
     userWorkspaceId: 'uws-me',
     workspaceMemberId: 'wm-me',
+    providerType: 'oauth',
     accessToken: 'token-fresh',
     scopes: ['read'],
     authFailedAt: null,

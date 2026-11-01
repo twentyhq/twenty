@@ -1,5 +1,7 @@
-import { ToolCategory } from 'twenty-shared/ai';
-
+import {
+  PREVIEW_FRONT_COMPONENT_TOOL_NAME,
+  ToolCategory,
+} from 'twenty-shared/ai';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { WORKSPACE_SETUP_ALTERNATIVE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-alternative-system-prompt.constant';
 import { WORKSPACE_SETUP_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-chat/constants/workspace-setup-system-prompt.constant';
@@ -59,13 +61,16 @@ const REFERENCED_SKILL: ReferencedSkill = {
 };
 
 describe('buildFullSystemPrompt', () => {
-  it('should offer component preview and approval guidance only when the builder is available', () => {
+  it('only adds component authoring guidance when preview is available', () => {
     const previewTool: ToolIndexEntry = {
-      name: 'preview_front_component',
+      name: PREVIEW_FRONT_COMPONENT_TOOL_NAME,
       label: 'Preview frontend component',
       description: 'Build a sample preview',
       category: ToolCategory.FRONT_COMPONENT,
-      executionRef: { kind: 'static', toolId: 'preview_front_component' },
+      executionRef: {
+        kind: 'static',
+        toolId: PREVIEW_FRONT_COMPONENT_TOOL_NAME,
+      },
     };
     const prompt = buildFullSystemPrompt({
       toolCatalog: [previewTool],
@@ -77,6 +82,7 @@ describe('buildFullSystemPrompt', () => {
 
     expect(prompt).toContain('## Custom frontend components');
     expect(prompt).toContain('propose_tool_call for publish_front_component');
+    expect(prompt).toContain('that exact draftId and checksum');
     expect(buildPrompt(false)).not.toContain('## Custom frontend components');
   });
 

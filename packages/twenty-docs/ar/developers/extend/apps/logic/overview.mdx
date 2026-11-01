@@ -3,7 +3,12 @@ title: نظرة عامة
 description: TypeScript على جانب الخادم الذي يعمل داخل Twenty — يتم تشغيله بواسطة مسارات HTTP، وجداول كرون، وأحداث قاعدة البيانات، وأدوات الذكاء الاصطناعي، أو إجراءات سير العمل.
 ---
 
-**طبقة المنطق** في تطبيق Twenty هي الشيفرة التي *تعمل* — معالِجات TypeScript على جانب الخادم تستجيب لطلبات HTTP، وجداول كرون، وتغييرات السجلات؛ ومهارات ووكلاء الذكاء الاصطناعي التي تعمل داخل مساحة العمل؛ واتصالات OAuth التي تتيح لدوالّك العمل نيابةً عن المستخدم في الخدمات الخارجية.
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## ما تغطيه الطبقة المنطقية
+
+**طبقة المنطق** في تطبيق Twenty هي الشيفرة التي *تعمل* — معالِجات TypeScript على جانب الخادم تستجيب لطلبات HTTP، وجداول كرون، وتغييرات السجلات؛ ومهارات ووكلاء الذكاء الاصطناعي التي تعمل داخل مساحة العمل؛ والاتصالات (OAuth أو مسار تسجيل دخول مخصص) التي تتيح لدوالّك العمل نيابةً عن المستخدم في خدمات الجهات الخارجية؛ وقنوات المراسلة التي تجلب صندوق وارد خارجيًا إلى Twenty.
 
 ```text
             ┌─ HTTP route      ──┐
@@ -23,21 +28,42 @@ description: TypeScript على جانب الخادم الذي يعمل داخل 
 
 ## في هذا القسم
 
-<CardGroup cols={2}>
-  <Card title="الوظائف المنطقية" icon="bolt" href="/ar/developers/extend/apps/logic/logic-functions">
-    لبنة البناء الأساسية — أنواع المشغلات، والحمولات، وعميل واجهة برمجة التطبيقات ذو الأنواع.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ar/developers/extend/apps/logic/logic-functions" img="/images/user-guide/halftone/card-page-logic-functions.svg">
+    <CardTitle>الوظائف المنطقية</CardTitle>
+    كتلة البناء الأساسية - الأنواع المشغلة والحمولات وعميل API المكتوب.
   </Card>
-  <Card title="المهارات والوكلاء" icon="robot" href="/ar/developers/extend/apps/logic/skills-and-agents">
-    تعليمات قابلة لإعادة الاستخدام لوكلاء الذكاء الاصطناعي ومساعدين مع مطالبات نظام مخصّصة.
+  <Card href="/ar/developers/extend/apps/logic/skills-and-agents" img="/images/user-guide/halftone/card-page-skills-agents.svg">
+    <CardTitle>المهارات والوكلاء</CardTitle>
+    تعليمات وكيل AI المعاد استخدامها ومساعدين مع طلبات النظام المخصص.
   </Card>
-  <Card title="الاتصالات" icon="plug" href="/ar/developers/extend/apps/logic/connections">
-    بيانات اعتماد OAuth التي يحتفظ بها تطبيقك للخدمات الخارجية — مثل Linear وGitHub وSlack وغيرها.
+  <Card href="/ar/developers/extend/apps/logic/workflows" img="/images/user-guide/halftone/workflows-belt-v1.svg">
+    <CardTitle>سير العمل</CardTitle>
+    تم تثبيت سير العمل جاهز مع التطبيق الخاص بك: المشغلات والخطوات وكيفية تشغيلها.
   </Card>
-  <Card title="مخزن المفاتيح-القيم" icon="database" href="/ar/developers/extend/apps/logic/key-value-store">
-    الاحتفاظ بالحالة بين تشغيلات دالة المنطق — ذاكرات التخزين المؤقت، والمؤشرات، والمطالبات عبر مساحات العمل.
+  <Card href="/ar/developers/extend/apps/logic/connections" img="/images/user-guide/halftone/card-page-connections.svg">
+    <CardTitle>اتصالات</CardTitle>
+    OAuth يعتمد تطبيقك على خدمات الطرف الثالث - Linear، GitHub، Slack، وأكثر من ذلك.
   </Card>
-  <Card title="المهام الخلفية" icon="stack-2" href="/ar/developers/extend/apps/logic/background-jobs">
-    ضع في قائمة الانتظار تشغيل دالة منطقية على العمال لتجاوز مهلة كل تشغيل.
+  <Card href="/ar/developers/extend/apps/logic/messaging-channels" img="/images/user-guide/halftone/card-page-messaging-channels.svg">
+    <CardTitle>قنوات المراسلة</CardTitle>
+    جلب المحادثات من أي موفر إلى سجلات رسائل ورسائل 20 - بما في ذلك التلاعب وعدم التكرار.
+  </Card>
+  <Card href="/ar/developers/extend/apps/logic/inbox" img="/images/user-guide/halftone/card-page-messaging-channels.svg">
+    <CardTitle>البريد الوارد</CardTitle>
+    انشر الرسائل في البريد الوارد للأعضاء من دوال المنطق والمكونات الأمامية.
+  </Card>
+  <Card href="/ar/developers/extend/apps/logic/key-value-store" img="/images/user-guide/halftone/card-page-key-value-store.svg">
+    <CardTitle>متجر القيمة الرئيسية</CardTitle>
+    حالة ثابتة بين الدالة المنطقية تعمل - المخبآت، والمؤشرات، ومطالبات المساحة المشتركة للعمل.
+  </Card>
+  <Card href="/ar/developers/extend/apps/logic/background-jobs" img="/images/user-guide/halftone/card-page-background-jobs.svg">
+    <CardTitle>المهام الخلفية</CardTitle>
+    أضف إلى قائمة الانتظار دالة منطقية تُشغَّل على العمال لتجاوز المهلة الزمنية لكل تشغيل.
+  </Card>
+  <Card href="/ar/developers/extend/apps/logic/credits" img="/images/user-guide/halftone/card-page-charging-credits.svg">
+    <CardTitle>رصيد الشحن</CardTitle>
+    إعلان ما فواتير التطبيق الخاص بك من أرصدة مساحة العمل الخاصة بك.
   </Card>
 </CardGroup>
 
@@ -57,4 +83,8 @@ description: TypeScript على جانب الخادم الذي يعمل داخل 
 
 <Note>
 **خطافات وقت التثبيت** — الشيفرة التي تعمل قبل التثبيت أو بعده — تشارك بيئة التشغيل هذه ولكنها تستخدم دوال تعريف خاصة بها وتوجد ضمن [Config → Install Hooks](/ar/developers/extend/apps/config/install-hooks).
+
+تشاركه [**عملية التحقق من الحالة**](/ar/developers/extend/apps/logic/logic-functions#health-check) أيضًا. لا يعلن عن أي مشغّل: يستدعيه Twenty عند الطلب عند فتح صفحة إعدادات التطبيق.
 </Note>
+
+<PageBanner illustration="section-apps-logic" />

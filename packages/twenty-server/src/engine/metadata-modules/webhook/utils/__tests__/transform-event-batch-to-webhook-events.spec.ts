@@ -1,5 +1,3 @@
-import { MetadataReadability } from 'twenty-shared/types';
-
 import type { ObjectRecordEvent } from 'twenty-shared/database-events';
 
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
@@ -253,7 +251,6 @@ describe('transformEventBatchToWebhookEvents', () => {
       workspaceId: 'workspaceId',
       objectMetadata: {
         ...mockObjectMetadata,
-        readability: MetadataReadability.PRIVATE,
       },
       name: 'objectNameSingular.created',
       events: [

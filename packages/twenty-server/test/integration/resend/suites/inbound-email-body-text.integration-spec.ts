@@ -11,6 +11,7 @@ import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standa
 import { type InboundEmailImportService } from 'src/modules/messaging/message-import-manager/drivers/inbound-email/services/inbound-email-import.service';
 
 import { updateConfigVariable } from 'test/integration/twenty-config/utils/update-config-variable.util';
+import { deleteMessageChannel } from 'test/integration/utils/delete-message-channel.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 import { setupHttpMock } from 'test/integration/utils/http-mock.util';
@@ -128,9 +129,7 @@ describe('Inbound email body text (integration)', () => {
   }, 60000);
 
   afterAll(async () => {
-    await messageChannelRepository
-      .delete({ id: groupChannelId })
-      .catch(() => undefined);
+    await deleteMessageChannel(groupChannelId).catch(() => undefined);
   });
 
   it('stores the text of an email that only has an HTML body', async () => {

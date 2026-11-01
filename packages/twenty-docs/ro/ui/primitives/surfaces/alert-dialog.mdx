@@ -1,0 +1,215 @@
+---
+title: AlertDialog
+description: Solicitați confirmarea înaintea unei acțiuni care necesită o decizie explicită.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import AlertDialogReference from '/snippets/ui/generated/surfaces/alert-dialog.mdx';
+
+## Prezentare generală
+
+Utilizați `AlertDialog` pentru o decizie care întrerupe fluxul de lucru curent, cum ar fi confirmarea ștergerii. Oferă semantica `alertdialog`, gestionarea focalizării și confirmare sau anulare explicită.
+
+Această componentă primitivă este destinată interfețelor Twenty UI autonome și interfețelor deținute de gazdă. Componentele Front trebuie să solicite o confirmare prin intermediul [API-ului de dialog al gazdei SDK](/ro/developers/extend/apps/layout/front-components#host-communication-api). `Dialog`, `AlertDialog` directe și dialogurile native ale browserului sunt interzise în cadrul randatorului de componente frontale.
+
+<StoryEmbed storyId="ui-surfaces-alertdialog--display" title="Exemplu AlertDialog" height={440} />
+
+## Utilizare
+
+### Stare necontrolată
+
+Utilizați `defaultOpen` pentru a seta vizibilitatea inițială. Dialogul gestionează modificările ulterioare prin declanșatorul său, controalele de închidere și interacțiunile de anulare.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { AlertDialog } from 'twenty-ui/primitives/surfaces';
+
+type DeleteConfirmationProps = { onDelete: () => void };
+
+export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => (
+  <AlertDialog.Root defaultOpen={false}>
+    <AlertDialog.Trigger
+      render={<Button variant="solid">Delete record</Button>}
+    />
+    <AlertDialog.Portal>
+      <AlertDialog.Backdrop />
+      <AlertDialog.Viewport>
+        <AlertDialog.Popup>
+          <AlertDialog.Header>
+            <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+            <AlertDialog.Description>
+              This record will be permanently deleted. This action cannot be
+              undone.
+            </AlertDialog.Description>
+          </AlertDialog.Header>
+          <AlertDialog.Footer>
+            <AlertDialog.Close render={<Button>Cancel</Button>} />
+            <AlertDialog.Close
+              onClick={onDelete}
+              render={<Button color="danger">Delete</Button>}
+            />
+          </AlertDialog.Footer>
+        </AlertDialog.Popup>
+      </AlertDialog.Viewport>
+    </AlertDialog.Portal>
+  </AlertDialog.Root>
+);
+```
+
+`defaultOpen` are implicit valoarea `false`, deci poate fi omis. Acest exemplu utilizează un callback de confirmare sincron și se închide după rularea acțiunii.
+
+## Anatomie
+
+Păstrați părțile asociate în `AlertDialog.Root` sau conectați declanșatoarele detașate printr-un handle. Compuneți separat portalul, fundalul, viewportul și fereastra pop-up.
+
+```text
+AlertDialog.Root
+├── AlertDialog.Trigger
+└── AlertDialog.Portal
+    ├── AlertDialog.Backdrop
+    └── AlertDialog.Viewport
+        └── AlertDialog.Popup
+            ├── AlertDialog.Header
+            │   ├── AlertDialog.Title
+            │   └── AlertDialog.Description
+            ├── AlertDialog.Body
+            └── AlertDialog.Footer
+                ├── AlertDialog.Close
+                └── Confirmation action
+```
+
+| Parte                      | Cerință                                                 | Scop                                                                                   |
+| -------------------------- | ------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `Root`                     | Obligatoriu                                             | Coordonează starea de deschidere și comportamentul modal.                              |
+| `Declanșator`              | Opțional pentru o casetă de dialog deschisă programatic | Deschide caseta de dialog și oferă o țintă pentru revenirea focalizării.               |
+| `Portal`                   | Recomandat                                              | Mută suprapunerea în containerul său și controlează montarea.                          |
+| `Backdrop`                 | Opțional                                                | Separă vizual alerta de pagina înconjurătoare.                                         |
+| `Viewport`                 | Recomandat                                              | Poziționează fereastra pop-up și furnizează zona înconjurătoare derulabilă a acesteia. |
+| `Popup`                    | Obligatoriu                                             | Redă conținutul alertei cu gestionarea focalizării.                                    |
+| `Titlu`                    | Recomandat                                              | Furnizează numele vizibil al alertei. Este întotdeauna necesar un nume accesibil.      |
+| `Description`              | Recomandat pentru o confirmare                          | Explică decizia și consecințele acesteia.                                              |
+| `Header`, `Body`, `Footer` | Părți opționale ale structurii                          | Aranjează titlurile, conținutul suplimentar și acțiunile.                              |
+| `Închide`                  | Recomandat pentru anulare                               | Furnizează o acțiune explicită de închidere.                                           |
+
+Setați `container` și `keepMounted` pe `Portal`, atributele de fundal pe `Backdrop`, atributele de aspect pe `Viewport`, precum și proprietățile `size` și de focalizare pe `Popup`. Fiecare parte a elementului acceptă propriile atribute native, handlere, ref și compunerea `render`. `Popup.ref` indică elementul de conținut al alertei. `Title` și `Description` stabilesc relațiile de accesibilitate; furnizați `aria-label` pe `Popup` când omiteți un titlu.
+
+Acțiunea de confirmare este conținut al aplicației, nu o parte exportată. Utilizați `Close` cu un gestionar sincron sau un `Button` cu stare de deschidere controlată pentru confirmarea asincronă.
+
+## Stare controlată
+
+Transmiteți `open` și actualizați-l cu `onOpenChange` pentru a gestiona vizibilitatea aceluiași dialog în starea React. Callbackul primește valoarea booleană solicitată și detaliile evenimentului upstream, inclusiv `reason`, `event` și `cancel()`. Apelați `eventDetails.cancel()` pentru a respinge o modificare solicitată. `onOpenChangeComplete` se execută după finalizarea tranzițiilor de deschidere sau închidere.
+
+```tsx
+import { useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { AlertDialog } from 'twenty-ui/primitives/surfaces';
+
+type DeleteConfirmationProps = { onDelete: () => void };
+
+export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <AlertDialog.Root open={open} onOpenChange={setOpen}>
+      <AlertDialog.Trigger
+        render={<Button variant="solid">Delete record</Button>}
+      />
+      <AlertDialog.Portal>
+        <AlertDialog.Backdrop />
+        <AlertDialog.Viewport>
+          <AlertDialog.Popup>
+            <AlertDialog.Header>
+              <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+              <AlertDialog.Description>
+                This record will be permanently deleted. This action cannot be
+                undone.
+              </AlertDialog.Description>
+            </AlertDialog.Header>
+            <AlertDialog.Footer>
+              <AlertDialog.Close render={<Button>Cancel</Button>} />
+              <AlertDialog.Close
+                onClick={onDelete}
+                render={<Button color="danger">Delete</Button>}
+              />
+            </AlertDialog.Footer>
+          </AlertDialog.Popup>
+        </AlertDialog.Viewport>
+      </AlertDialog.Portal>
+    </AlertDialog.Root>
+  );
+};
+```
+
+Pentru confirmarea asincronă, utilizați un `Button` cu handlerul acțiunii în loc de `AlertDialog.Close`. Mențineți `open` la valoarea true cât timp acțiunea este în așteptare, apelați `setOpen(false)` după ce reușește și afișați o eroare în dialog dacă eșuează.
+
+## Compuneți cu butoane
+
+Utilizați `render` pentru a oferi declanșatorului și controalelor de închidere stilul de buton Twenty UI. Părțile casetei de dialog furnizează butoanelor gestionarele de interacțiune și referințele lor.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { AlertDialog } from 'twenty-ui/primitives/surfaces';
+
+type DeleteConfirmationProps = { onDelete: () => void };
+
+export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => (
+  <AlertDialog.Root>
+    <AlertDialog.Trigger
+      render={<Button variant="solid">Delete record</Button>}
+    />
+    <AlertDialog.Portal>
+      <AlertDialog.Backdrop />
+      <AlertDialog.Viewport>
+        <AlertDialog.Popup>
+          <AlertDialog.Header>
+            <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+            <AlertDialog.Description>
+              This record will be permanently deleted. This action cannot be
+              undone.
+            </AlertDialog.Description>
+          </AlertDialog.Header>
+          <AlertDialog.Footer>
+            <AlertDialog.Close render={<Button>Cancel</Button>} />
+            <AlertDialog.Close
+              onClick={onDelete}
+              render={<Button color="danger">Delete</Button>}
+            />
+          </AlertDialog.Footer>
+        </AlertDialog.Popup>
+      </AlertDialog.Viewport>
+    </AlertDialog.Portal>
+  </AlertDialog.Root>
+);
+```
+
+Păstrați fiecare acțiune ca un singur control interactiv. Dacă încapsulați `Button` în propriul component, [transmiteți mai departe proprietățile și referința furnizate](/ro/ui/primitives/overview#custom-components).
+
+## Declanșatoare detașate și acțiuni imperative
+
+Creați o dată un handle cu `AlertDialog.createHandle\<Payload>()` și transmiteți-l către `handle` pe `Root` și pe fiecare `Trigger` detașat. `payload` tipizat al unui declanșator este disponibil pentru funcția de randare copil a rădăcinii. Un handle acceptă și `open(triggerId)`, `openWithPayload(payload)`, `close()` și getterul `isOpen` cât timp rădăcina sa este montată. Transmiteți un ID de declanșator corespunzător către `open` sau `null` pentru a deschide fără un declanșator. Apelați metode imperative din handlere de evenimente sau efecte.
+
+`Root.actionsRef` expune `close()` și `unmount()`. Pentru o animație de închidere controlată extern, apelați `eventDetails.preventUnmountOnClose()` în `onOpenChange`, apoi apelați `actionsRef.current?.unmount()` după finalizarea animației. Părțile stilizate obișnuite își gestionează propriile tranziții fără aceste acțiuni imperative.
+
+## Dimensionare și portaluri
+
+`Popup.size` acceptă `sm`, `md`, `lg`, `xl` și `fullscreen` și are implicit valoarea `md`. Dimensiunea și aspectul aparțin suprafeței AlertDialog și nu trebuie să corespundă presetărilor Dialog.
+
+`Portal.container` are implicit containerul portalului din cea mai apropiată temă. Fără unul, Base UI utilizează destinația implicită a portalului, în mod normal `document.body`. Un element explicit, o rădăcină shadow sau un ref înlocuiește acea destinație. Un `null` explicit amână montarea până când este disponibil un container. Base UI rezolvă un ref al cărui `current` este `null` folosind destinația sa implicită; utilizați `container={null}` când montarea trebuie să aștepte.
+
+Conținutul portalizat păstrează contextul temei. `Portal` și `Viewport` moștenesc direcția de text furnizată, cu excepția cazului în care setați explicit `dir`. Setați `Portal.keepMounted` pentru a păstra conținutul montat și starea formularului cât timp este închis.
+
+## Focalizare și închidere
+
+Alerta reține focalizarea, blochează interacțiunea din exterior și blochează derularea paginii cât timp este deschisă. Escape solicită închiderea; clicul în exterior nu o solicită. Pentru a preveni închiderea prin Escape, anulați modificarea `escape-key` în `onOpenChange`. Oferiți întotdeauna o acțiune vizibilă Anulare sau Închidere.
+
+Implicit, focalizarea se mută la primul control accesibil cu Tab sau la fereastra pop-up pentru o deschidere prin atingere. Puneți prima acțiunea cea mai puțin distructivă sau utilizați `Popup.initialFocus` pentru a o selecta. Focalizarea revine la declanșator sau la elementul focalizat anterior când alerta se închide. Utilizați `Popup.finalFocus` când o acțiune reușită elimină acea țintă. Ambele proprietăți de focalizare acceptă o valoare booleană, un ref de element sau un callback pentru tipul de interacțiune, conform contractului upstream.
+
+## Proprietăți
+
+Referința este generată din tipurile publice ale componentei. Atributele native, inclusiv numele accesibile și gestionarii de evenimente, sunt acceptate și pentru părțile care redau elemente.
+
+<AlertDialogReference />
+
+<PageBanner illustration="card-page-billing-faq" />

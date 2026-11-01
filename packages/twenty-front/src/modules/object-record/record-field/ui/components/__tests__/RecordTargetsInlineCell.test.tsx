@@ -6,6 +6,7 @@ import { MemoryRouter } from 'react-router-dom';
 
 import { FileUploadProvider } from '@/file-upload/components/FileUploadProvider';
 import { RecordTargetsInlineCell } from '@/object-record/record-field/ui/components/RecordTargetsInlineCell';
+import { RecordCreationFormProvider } from '@/object-record/record-form/components/RecordCreationFormProvider';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { getJestMetadataAndApolloMocksWrapper } from '~/testing/jest/getJestMetadataAndApolloMocksWrapper';
 
@@ -36,12 +37,14 @@ const renderCell = (objectNameSingular: string) => {
     <I18nProvider i18n={i18n}>
       <MemoryRouter>
         <FileUploadProvider>
-          <RecordTargetsInlineCell
-            objectNameSingular={objectNameSingular}
-            recordId={NOTE_ID}
-            instanceIdPrefix="test-relations"
-            showLabel
-          />
+          <RecordCreationFormProvider>
+            <RecordTargetsInlineCell
+              objectNameSingular={objectNameSingular}
+              recordId={NOTE_ID}
+              instanceIdPrefix="test-relations"
+              showLabel
+            />
+          </RecordCreationFormProvider>
         </FileUploadProvider>
       </MemoryRouter>
     </I18nProvider>,

@@ -113,6 +113,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         userWorkspaceRoleMap: {},
         apiKeyRoleMap: {},
         flatRoleTargetByAgentIdMaps: {},
+        flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
         roleIdsWithAllRecordsAccess: [],
         eventEmitterService: { emitDatabaseBatchEvent },
         recordStock: {
@@ -238,16 +239,17 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         chatRecordEvents as never,
         conversationWriter,
         chatThreadService,
+        { resolveMentionInTransaction: jest.fn() } as never,
       );
 
     const createQueueService = (messageRepository: typeof messages) =>
       new AgentChatQueueService(
         turns,
         messageRepository,
-        messageParts,
         {} as never,
         conversationWriter,
         chatThreadService,
+        { resolveMentionInTransaction: jest.fn() } as never,
       );
 
     const createActorService = (messageRepository: typeof messages) =>
@@ -810,7 +812,8 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       const openingTurn = await turns.insertAndReturnOne(WORKSPACE_ID, {
         threadId: thread.id,
       });
-      const message = await chat.addMessage({
+      const message = await chat.addMessageAndResolveMention({
+        workspaceMemberId: MEMBER_ID,
         workspaceId: WORKSPACE_ID,
         userWorkspaceId: OWNER_ID,
         threadId: thread.id,

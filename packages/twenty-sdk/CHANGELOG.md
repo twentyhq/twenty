@@ -32,6 +32,40 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 ### Added
 
+- **`sendInboxMessage` in `twenty-sdk/front-component`.** A front component can post in members' inbox without a logic function in between. The message is still from your app; the call carries the component's token, so the member looking at the page needs the AI permission too, and an expired token is refreshed once before the call is retried. Open the conversation with `navigate`:
+
+  ```tsx
+  import {
+    AppPath,
+    navigate,
+    sendInboxMessage,
+  } from 'twenty-sdk/front-component';
+
+  const { threadId } = await sendInboxMessage(message);
+
+  await navigate(AppPath.AiChatInbox, { threadId });
+  ```
+
+- **Inbox mention helpers in `twenty-sdk/logic-function` and `twenty-sdk/front-component`.** `inboxMention({ workspaceMemberId })` and `inboxReferenceRecord({ objectNameSingular, recordId })` write the tokens the inbox renders as chips, labeled like the composer labels them: the member's full name, or the record's label identifier. `INBOX_ASSISTANT_MENTION` is the composer's mention of the assistant.
+
+  ```ts
+  import { inboxMention } from 'twenty-sdk/logic-function';
+
+  const text = `${await inboxMention({ workspaceMemberId })}, the report is ready.`;
+  ```
+
+- **`attachRecordToInboxThread` and `detachRecordFromInboxThread` in `twenty-sdk/logic-function` and `twenty-sdk/front-component`.** Link a conversation to a person, company, opportunity or custom object record, or remove the link. Both are idempotent and run like the default API clients: a member must be able to edit the conversation, and your application can act on a conversation it wrote in or one its default role was granted. The record must be readable with the same access.
+
+  ```ts
+  import { attachRecordToInboxThread } from 'twenty-sdk/logic-function';
+
+  await attachRecordToInboxThread({
+    threadId,
+    objectNameSingular: 'company',
+    recordId: company.id,
+  });
+  ```
+
 - **`useSelectedRecordsFilter` in `twenty-sdk/front-component`.** Returns a record filter matching exactly the records the user selected, or `null` when there is no selection context. Under Select all, `useSelectedRecordIds()` is empty because the selection is defined by the view's filters, search and unticked rows; query the records with this filter, or pass it to a logic function. Twenty servers that predate it return `null`.
 
   ```tsx
@@ -59,12 +93,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   const objectMetadata = useSelectedObjectMetadata();
   ```
 
+- **`SystemPermissionFlag.USER_APPS` and `SystemPermissionFlag.WORKSPACE_APPS` in `twenty-sdk/define`.** The SDK names of the User Apps and Workspace Apps permission flags, with the same universal identifiers as `CONNECTED_ACCOUNTS` and `APPLICATIONS`. They are left out of `Object.keys`, `Object.values` and `Object.entries`, which list the same 26 names as before, so code that enumerates or filters the flags behaves as before. Only the SDK names change: the API keeps reporting these flags as `CONNECTED_ACCOUNTS` and `APPLICATIONS`, for example in `currentUserWorkspace.permissionFlags` and in command menu expressions.
+
 ### Deprecated
 
 - **`enqueueJob` in `twenty-sdk/logic-function`.** Use `enqueueJobs` with a one-element `payloads` list instead. `enqueueJob` keeps working for now and will be removed in a future major version.
 
+- **`SystemPermissionFlag.CONNECTED_ACCOUNTS` and `SystemPermissionFlag.APPLICATIONS` in `twenty-sdk/define`.** Use `USER_APPS` and `WORKSPACE_APPS` instead. The old names keep working and stay the ones `Object.keys` and `Object.entries` return. In logic functions and front components the new names resolve only when bundled with the `twenty` CLI 2.54 or later.
+
 ### Changed
 
+- **`sendInboxMessage` runs like the default API clients.** It now sends through `MetadataApiClient`, so in a logic function it acts as the person who triggered the run, who then needs the AI permission, and as your application only when nobody did; it used to always use the application's access. A GraphQL error now rejects with the server's message instead of `sendInboxMessage() failed: ...`. Its input and result are unchanged.
 - **`twenty app deploy` sends the tarball straight to file storage.** The CLI reserves an upload with `createFileUpload`, PUTs the archive to storage and registers it with `completeAppTarballUpload`, so the tarball no longer transits through the API process. Deploying to a server that predates these mutations fails instead of falling back to the multipart `uploadAppTarball` mutation.
 - **`twenty-client-sdk` should now be a dev dependency too.** Although app code imports it (`CoreApiClient`, `MetadataApiClient`, `RestApiClient`), Twenty provides it at runtime — logic functions get it from a generated SDK layer and front components resolve it from server-served modules — so the installed copy is only needed for typechecking and the deploy-time build. Newly scaffolded apps now place it under `devDependencies`. Moving it is recommended (not required: the server already strips it from the deployed runtime), and keeps the installed app leaner:
 
@@ -78,6 +117,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   ```
 
   `twenty build` now also emits a warning when `twenty-client-sdk` is still listed under `dependencies`.
+
+- **`defineRole` and `defineApplicationRole` keep each permission flag once in `permissionFlagUniversalIdentifiers`.** A flag listed twice, for example under its deprecated and new `SystemPermissionFlag` names, is sent once. Syncing a role with a repeated flag used to fail on the server.
+
+- **`twenty app pull` names permission flags after the app's installed `twenty-sdk`.** Role files get `SystemPermissionFlag.USER_APPS` and `SystemPermissionFlag.WORKSPACE_APPS` with `twenty-sdk` 2.54 or later, and `CONNECTED_ACCOUNTS` and `APPLICATIONS` with earlier versions. A flag the installed `SystemPermissionFlag` lacks is written as its universal identifier string.
+
+- **`twenty app build` and `twenty app dev` keep non-enumerable `twenty-sdk/define` constants in logic function and front component bundles,** so `SystemPermissionFlag.USER_APPS` and `WORKSPACE_APPS` resolve at runtime. Agent role errors also name system permission flags after the app's installed `twenty-sdk`.
 
 ## [2.8.0]
 

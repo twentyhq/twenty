@@ -82,7 +82,9 @@ export class ReconcileStandardSkillCatalogCommand extends ProvisionedWorkspaceCo
       existingSkills
         .filter(
           (existingSkill) =>
-            !universalIdentifiersToDelete.has(existingSkill.universalIdentifier),
+            !universalIdentifiersToDelete.has(
+              existingSkill.universalIdentifier,
+            ),
         )
         .map((existingSkill) => existingSkill.name),
     );
@@ -170,6 +172,7 @@ export class ReconcileStandardSkillCatalogCommand extends ProvisionedWorkspaceCo
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:

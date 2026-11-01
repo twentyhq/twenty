@@ -66,7 +66,10 @@ export class ProvisionMissingObjectNavigationCommandMenuItemsCommand extends Pro
 
     const totalCount = [
       ...flatCommandMenuItemsToCreateByApplication.values(),
-    ].reduce((count, flatCommandMenuItems) => count + flatCommandMenuItems.length, 0);
+    ].reduce(
+      (count, flatCommandMenuItems) => count + flatCommandMenuItems.length,
+      0,
+    );
 
     this.logger.log(
       `${isDryRun ? '[DRY RUN] ' : ''}Provisioning ${totalCount} missing object navigation command menu item(s) across ${flatCommandMenuItemsToCreateByApplication.size} application(s) for workspace ${workspaceId}`,
@@ -83,6 +86,7 @@ export class ProvisionMissingObjectNavigationCommandMenuItemsCommand extends Pro
       const result =
         await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
           {
+            shouldDeferActions: false,
             isSystemBuild: true,
             workspaceId,
             applicationUniversalIdentifier,
@@ -155,7 +159,9 @@ export class ProvisionMissingObjectNavigationCommandMenuItemsCommand extends Pro
         flatObjectMetadata.commandMenuItemUniversalIdentifiers.some(
           (universalIdentifier) =>
             isDefined(
-              flatCommandMenuItemMaps.byUniversalIdentifier[universalIdentifier],
+              flatCommandMenuItemMaps.byUniversalIdentifier[
+                universalIdentifier
+              ],
             ),
         );
 

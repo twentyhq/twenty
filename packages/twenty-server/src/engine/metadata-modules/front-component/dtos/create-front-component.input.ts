@@ -9,14 +9,9 @@ import {
 } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { type UniversalFrontComponentWidgetAvailability } from 'src/engine/metadata-modules/flat-front-component/types/universal-front-component-widget-availability.type';
 
 @InputType()
 export class CreateFrontComponentInput {
-  @IsOptional()
-  @HideField()
-  universalWidgetAvailability?: UniversalFrontComponentWidgetAvailability[];
-
   @IsUUID()
   @IsOptional()
   @Field(() => UUIDScalarType, { nullable: true })

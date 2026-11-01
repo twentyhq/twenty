@@ -27,17 +27,25 @@ const replaceProcessEnvReferences = (code: string): string =>
 const escapeClosingScriptTags = (code: string): string =>
   code.replace(/<\/script/gi, '<\\/script');
 
+const sourceDirectory = path.resolve(projectRoot, 'src');
+
 const buildSandboxDocument = async (): Promise<void> => {
   const buildResult = await build({
     configFile: false,
     root: projectRoot,
     resolve: {
       alias: {
-        '@/': path.resolve(projectRoot, 'src') + '/',
+        '@/': sourceDirectory + '/',
       },
     },
     worker: {
       plugins: () => [createDomutilsStubPlugin()],
+      // Since vite 8.1 the worker bundle no longer resolves every import through resolve.alias
+      rolldownOptions: {
+        resolve: {
+          alias: { '@': sourceDirectory },
+        },
+      },
     },
     define: {
       'process.env.NODE_ENV': JSON.stringify('production'),

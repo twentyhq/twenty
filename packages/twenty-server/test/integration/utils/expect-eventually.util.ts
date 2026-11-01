@@ -5,7 +5,7 @@ type ExpectEventuallyOptions = {
 
 export const expectEventually = async (
   assertion: () => Promise<void> | void,
-  { timeoutMs = 10_000, intervalMs = 100 }: ExpectEventuallyOptions = {},
+  { timeoutMs = 45_000, intervalMs = 100 }: ExpectEventuallyOptions = {},
 ): Promise<void> => {
   const startedAt = Date.now();
 

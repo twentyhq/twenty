@@ -28,10 +28,11 @@ import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
-import { type RecordSharePrincipalInput } from 'src/engine/core-modules/record-share/dtos/record-sharing.dto';
-import { type RecordShareOwnershipTransferService } from 'src/engine/core-modules/record-share/services/record-share-ownership-transfer.service';
-import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
+import { type RecordSharePrincipalInput } from 'src/engine/permissions/record-share/dtos/record-sharing.dto';
+import { type RecordShareOwnershipTransferService } from 'src/engine/permissions/record-share/services/record-share-ownership-transfer.service';
+import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
@@ -42,15 +43,15 @@ const RESTRICTED_RECORD_ID = randomUUID();
 const SHARED_RECORD_ID = randomUUID();
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const fields =
-  'canManageSharing generalAccessLevel shares { principalId rowCause accessLevel }';
+  'canManageSharing isPrivate shares { principalId rowCause accessLevel }';
 const READ_SHARING = parse(
   `query RecordSharing($target: RecordTargetInput!) { recordSharing(target: $target) { ${fields} } }`,
 );
 const SET_SHARE = parse(
   `mutation SetShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!, $accessLevel: RecordShareAccessLevel!) { setRecordShare(target: $target, principal: $principal, accessLevel: $accessLevel) { ${fields} } }`,
 );
-const SET_GENERAL_ACCESS = parse(
-  `mutation SetGeneralAccess($target: RecordTargetInput!, $accessLevel: RecordShareAccessLevel!) { setRecordGeneralAccess(target: $target, accessLevel: $accessLevel) { ${fields} } }`,
+const SET_PRIVATE = parse(
+  `mutation SetPrivate($target: RecordTargetInput!, $isPrivate: Boolean!) { setRecordPrivate(target: $target, isPrivate: $isPrivate) { ${fields} } }`,
 );
 
 describe('Access to all records and ownership transfer', () => {
@@ -154,7 +155,13 @@ describe('Access to all records and ownership transfer', () => {
     await setRecordSharingEnabled(true);
   });
 
+  const makeRecordsPublic = () =>
+    global.testDataSource.query(
+      `UPDATE "${getWorkspaceSchemaName(workspaceId)}"."_${OBJECT_NAME}" SET "_isPrivate" = false`,
+    );
+
   beforeEach(async () => {
+    await makeRecordsPublic();
     await shares.deleteByRecordIds({
       workspaceId,
       objectMetadataId,
@@ -183,10 +190,10 @@ describe('Access to all records and ownership transfer', () => {
 
       const restricted = await makeMetadataApiRequest(
         {
-          query: SET_GENERAL_ACCESS,
+          query: SET_PRIVATE,
           variables: {
             target: target(recordId),
-            accessLevel: RecordShareAccessLevel.NONE,
+            isPrivate: true,
           },
         },
         APPLE_JONY_MEMBER_ACCESS_TOKEN,
@@ -197,6 +204,7 @@ describe('Access to all records and ownership transfer', () => {
   });
 
   afterAll(async () => {
+    await makeRecordsPublic();
     await setRecordSharingEnabled(false);
     await shares.deleteByRecordIds({
       workspaceId,
@@ -213,14 +221,15 @@ describe('Access to all records and ownership transfer', () => {
     await deleteOneObjectMetadata({ input: { idToDelete: objectMetadataId } });
   });
 
-  it('should show restricted records to admins and no one else', async () => {
-    expect(await findRecordIds(APPLE_JANE_ADMIN_ACCESS_TOKEN)).toEqual(
+  it('should show private records to their creator only, admins included', async () => {
+    expect(await findRecordIds(APPLE_JONY_MEMBER_ACCESS_TOKEN)).toEqual(
       [RESTRICTED_RECORD_ID, SHARED_RECORD_ID].sort(),
     );
+    expect(await findRecordIds(APPLE_JANE_ADMIN_ACCESS_TOKEN)).toEqual([]);
     expect(await findRecordIds(APPLE_PHIL_GUEST_ACCESS_TOKEN)).toEqual([]);
   });
 
-  it('should let admins manage access to restricted records', async () => {
+  it('should keep the sharing of private records out of reach of admins', async () => {
     const sharing = await makeMetadataApiRequest(
       {
         query: READ_SHARING,
@@ -229,8 +238,7 @@ describe('Access to all records and ownership transfer', () => {
       APPLE_JANE_ADMIN_ACCESS_TOKEN,
     );
 
-    expect(sharing.body.errors).toBeUndefined();
-    expect(sharing.body.data.recordSharing.canManageSharing).toBe(true);
+    expect(sharing.body.errors).toBeDefined();
 
     const shared = await setShare({
       recordId: RESTRICTED_RECORD_ID,
@@ -238,13 +246,11 @@ describe('Access to all records and ownership transfer', () => {
       token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
     });
 
-    expect(shared.body.errors).toBeUndefined();
-    expect(await findRecordIds(APPLE_PHIL_GUEST_ACCESS_TOKEN)).toEqual([
-      RESTRICTED_RECORD_ID,
-    ]);
+    expect(shared.body.errors).toBeDefined();
+    expect(await findRecordIds(APPLE_PHIL_GUEST_ACCESS_TOKEN)).toEqual([]);
   });
 
-  it('should show restricted records to any role that can update all settings', async () => {
+  it('should keep private records hidden from roles that can update all settings', async () => {
     const guestRoleId = (await findOneRoleByLabel({ label: 'Guest' })).id;
     const { data } = await createOneRole({
       expectToFail: false,
@@ -270,8 +276,6 @@ describe('Access to all records and ownership transfer', () => {
 
     try {
       await assignRoleToPhil(auditorRoleId);
-      expect(await findRecordIds(APPLE_PHIL_GUEST_ACCESS_TOKEN)).toEqual([]);
-
       await updateOneRole({
         expectToFail: false,
         input: {
@@ -279,9 +283,7 @@ describe('Access to all records and ownership transfer', () => {
           updatePayload: { canUpdateAllSettings: true },
         },
       });
-      expect(await findRecordIds(APPLE_PHIL_GUEST_ACCESS_TOKEN)).toEqual(
-        [RESTRICTED_RECORD_ID, SHARED_RECORD_ID].sort(),
-      );
+      expect(await findRecordIds(APPLE_PHIL_GUEST_ACCESS_TOKEN)).toEqual([]);
     } finally {
       try {
         await assignRoleToPhil(guestRoleId);
@@ -294,12 +296,12 @@ describe('Access to all records and ownership transfer', () => {
     }
   });
 
-  it('should lift restrictions for everyone while record sharing is off', async () => {
+  it('should keep private records private while record sharing is off', async () => {
     await setRecordSharingEnabled(false);
 
     try {
-      expect(await findRecordIds(APPLE_PHIL_GUEST_ACCESS_TOKEN)).toEqual(
-        [RESTRICTED_RECORD_ID, SHARED_RECORD_ID].sort(),
+      expect(await findRecordIds(APPLE_PHIL_GUEST_ACCESS_TOKEN)).not.toContain(
+        RESTRICTED_RECORD_ID,
       );
     } finally {
       await setRecordSharingEnabled(true);
@@ -374,15 +376,7 @@ describe('Access to all records and ownership transfer', () => {
       ]);
       expect(
         await findMemberGrants(WORKSPACE_MEMBER_DATA_SEED_IDS.JONY),
-      ).toEqual(
-        expect.arrayContaining([
-          {
-            recordId: RESTRICTED_RECORD_ID,
-            accessLevel: RecordShareAccessLevel.FULL,
-            rowCause: RecordShareRowCause.OWNER,
-          },
-        ]),
-      );
+      ).toEqual([]);
 
       const chatThreadShares = await shares.findByRecordIds({
         workspaceId,
@@ -393,6 +387,20 @@ describe('Access to all records and ownership transfer', () => {
       expect(chatThreadShares.map(({ principalId }) => principalId)).toEqual([
         WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
       ]);
+
+      await getAppProviderByClassName<RecordShareOwnershipTransferService>(
+        'RecordShareOwnershipTransferService',
+      ).transferRecordSharesToCustodian({
+        removedUserWorkspace: await getCoreRepository<UserWorkspaceEntity>(
+          UserWorkspaceEntity,
+        ).findOneByOrFail({ id: USER_WORKSPACE_DATA_SEED_IDS.JONY }),
+        removedWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        actingUserWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
+      });
+
+      expect(await findRecordIds(APPLE_JANE_ADMIN_ACCESS_TOKEN)).toEqual(
+        [RESTRICTED_RECORD_ID, SHARED_RECORD_ID].sort(),
+      );
     } finally {
       await shares.deleteByRecordIds({
         workspaceId,

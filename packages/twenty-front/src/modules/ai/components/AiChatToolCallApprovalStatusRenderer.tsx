@@ -71,14 +71,11 @@ export const AiChatToolCallApprovalStatusRenderer = ({
         !hasFailedToPropose
       }
     >
-      {isNonEmptyString(detail) &&
-        !(
-          status === 'pending' && result?.proposal.template === 'frontComponent'
-        ) && (
-          <StyledAiChatAskStatusDetail>
-            <TextWithChatReferences text={detail} />
-          </StyledAiChatAskStatusDetail>
-        )}
+      {isNonEmptyString(detail) && (
+        <StyledAiChatAskStatusDetail>
+          <TextWithChatReferences text={detail} />
+        </StyledAiChatAskStatusDetail>
+      )}
     </AiChatAskStatusRow>
   );
 };

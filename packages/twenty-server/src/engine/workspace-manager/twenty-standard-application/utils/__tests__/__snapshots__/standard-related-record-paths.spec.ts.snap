@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Standard related record paths declares the standard paths and their inherent flag 1`] = `
+[
+  "agentChatThread.attachments inherent",
+  "company.attachments inherent",
+  "company.noteTargets.note regular",
+  "company.taskTargets.task regular",
+  "company.timelineActivities inherent",
+  "dashboard.attachments inherent",
+  "dashboard.timelineActivities inherent",
+  "messageCampaign.timelineActivities inherent",
+  "messageList.timelineActivities inherent",
+  "note.attachments inherent",
+  "note.timelineActivities inherent",
+  "opportunity.attachments inherent",
+  "opportunity.noteTargets.note regular",
+  "opportunity.taskTargets.task regular",
+  "opportunity.timelineActivities inherent",
+  "person.attachments inherent",
+  "person.noteTargets.note regular",
+  "person.taskTargets.task regular",
+  "person.timelineActivities inherent",
+  "task.attachments inherent",
+  "task.timelineActivities inherent",
+  "workflow.attachments inherent",
+  "workflow.timelineActivities inherent",
+  "workflowRun.timelineActivities inherent",
+  "workflowVersion.timelineActivities inherent",
+]
+`;

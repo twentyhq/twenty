@@ -1,10 +1,8 @@
 import { isObjectReadOnly } from '@/object-record/read-only/utils/isObjectReadOnly';
-import { MetadataWritability } from '~/generated-metadata/graphql';
 
 const editableObjectMetadataItem = {
   isUIEditable: true,
   isRemote: false,
-  writability: MetadataWritability.OPEN,
 };
 
 describe('isObjectReadOnly', () => {

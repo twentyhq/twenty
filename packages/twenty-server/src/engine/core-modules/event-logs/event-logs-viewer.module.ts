@@ -11,7 +11,7 @@ import { EventLogLiveModule } from 'src/engine/core-modules/event-logs/live/even
 import { EventLogRetentionModule } from 'src/engine/core-modules/event-logs/retention/event-log-retention.module';
 import { ClickHouseModule } from 'src/database/clickhouse/clickhouse.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 
 import { EventLogsLiveResolver } from './event-logs-live.resolver';
 import { EventLogsResolver } from './event-logs.resolver';

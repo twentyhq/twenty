@@ -43,7 +43,7 @@ export const runCommand = async ({
   const abortOnInterrupt = () => abortController.abort();
   let target: ResolvedTarget | undefined;
 
-  process.once('SIGINT', abortOnInterrupt);
+  process.on('SIGINT', abortOnInterrupt);
 
   try {
     assertOutputModeSupported(definition, outputMode);

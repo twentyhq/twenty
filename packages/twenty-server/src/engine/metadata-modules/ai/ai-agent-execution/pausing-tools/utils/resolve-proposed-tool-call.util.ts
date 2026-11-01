@@ -1,5 +1,3 @@
-import { frontComponentDeleteSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-delete.schema';
-import { frontComponentDraftIdSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-draft-id.schema';
 import { isNonEmptyString } from '@sniptt/guards';
 import {
   type ProposeToolCallToolInput,
@@ -94,37 +92,21 @@ export const resolveProposedToolCall = async ({
     };
   }
 
-  const { template = 'generic', alternativeToolNames } =
-    toolIndexEntry.approval ?? {};
+  const {
+    template = 'generic',
+    alternativeToolNames,
+    areArgumentsEditable,
+  } = toolIndexEntry.approval ?? {};
   const baseProposal = {
     toolName,
     toolLabel: toolIndexEntry.label,
     summary,
     arguments: input.arguments,
+    ...(isDefined(areArgumentsEditable) ? { areArgumentsEditable } : {}),
     ...(isNonEmptyArray(alternativeToolNames) ? { alternativeToolNames } : {}),
   };
 
   switch (template) {
-    case 'frontComponent':
-      if (
-        !frontComponentDraftIdSchema.safeParse(baseProposal.arguments).success
-      ) {
-        return {
-          error:
-            'arguments.draftId must be the draftId returned by preview_front_component.',
-        };
-      }
-      return { proposal: { ...baseProposal, template } };
-    case 'frontComponentDelete':
-      if (
-        !frontComponentDeleteSchema.safeParse(baseProposal.arguments).success
-      ) {
-        return {
-          error:
-            'arguments.frontComponentId and arguments.name must identify the saved component to delete.',
-        };
-      }
-      return { proposal: { ...baseProposal, template } };
     case 'email':
       return buildEmailProposal(baseProposal);
     case 'recordCreate':

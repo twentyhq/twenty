@@ -1,3 +1,4 @@
+import { FRONT_COMPONENT_CORE_API_CLIENT_IMPORT_SPECIFIER } from 'src/engine/metadata-modules/ai/ai-front-component/constants/front-component-core-api-client-import-specifier.constant';
 import * as typescript from 'typescript';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -31,10 +32,11 @@ export const validateFrontComponentSourceOrThrow = (source: string): void => {
         ));
 
     if (isDefaultExport) {
-      throw new FrontComponentBuildException(
-        'Export a named Component without a default export. Twenty adds the SDK registration.',
-        'INVALID_INPUT',
-      );
+      throw new FrontComponentBuildException({
+        message:
+          'Export a named Component without a default export. Twenty adds the SDK registration.',
+        code: 'INVALID_INPUT',
+      });
     }
 
     if (
@@ -61,17 +63,47 @@ export const validateFrontComponentSourceOrThrow = (source: string): void => {
       typescript.isStringLiteral(statement.moduleSpecifier) &&
       !FRONT_COMPONENT_ALLOWED_IMPORTS.includes(statement.moduleSpecifier.text)
     ) {
-      throw new FrontComponentBuildException(
-        `Unsupported import: ${statement.moduleSpecifier.text}. Use React and the supported twenty-ui imports.`,
-        'INVALID_INPUT',
-      );
+      throw new FrontComponentBuildException({
+        message: `Unsupported import: ${statement.moduleSpecifier.text}. Use React, ${FRONT_COMPONENT_CORE_API_CLIENT_IMPORT_SPECIFIER} and the supported twenty-ui imports.`,
+        code: 'INVALID_INPUT',
+      });
     }
   }
 
+  const validateModuleCalls = (node: typescript.Node): void => {
+    if (
+      typescript.isCallExpression(node) &&
+      (node.expression.kind === typescript.SyntaxKind.ImportKeyword ||
+        (typescript.isIdentifier(node.expression) &&
+          node.expression.text === 'require'))
+    ) {
+      const specifier = node.arguments[0];
+
+      if (!isDefined(specifier) || !typescript.isStringLiteralLike(specifier)) {
+        throw new FrontComponentBuildException({
+          message: 'Use a string literal for import() and require().',
+          code: 'INVALID_INPUT',
+        });
+      }
+      if (
+        specifier.text === FRONT_COMPONENT_CORE_API_CLIENT_IMPORT_SPECIFIER ||
+        !FRONT_COMPONENT_ALLOWED_IMPORTS.includes(specifier.text)
+      ) {
+        throw new FrontComponentBuildException({
+          message: `Unsupported import: ${specifier.text}. Use a static import for ${FRONT_COMPONENT_CORE_API_CLIENT_IMPORT_SPECIFIER}, or supported React and twenty-ui imports.`,
+          code: 'INVALID_INPUT',
+        });
+      }
+    }
+    typescript.forEachChild(node, validateModuleCalls);
+  };
+
+  validateModuleCalls(sourceFile);
+
   if (!hasComponent) {
-    throw new FrontComponentBuildException(
-      'Export a named Component function or const.',
-      'INVALID_INPUT',
-    );
+    throw new FrontComponentBuildException({
+      message: 'Export a named Component function or const.',
+      code: 'INVALID_INPUT',
+    });
   }
 };

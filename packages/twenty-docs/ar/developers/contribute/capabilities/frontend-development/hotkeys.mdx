@@ -2,6 +2,8 @@
 title: مفاتيح الاختصار
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## مقدمة
 
 عندما تحتاج إلى الاستماع إلى مفتاح اختصار، فإنه عادةً ما تستخدم مستمع الحدث `onKeyDown`.
@@ -176,3 +178,5 @@ export const currentHotkeyScopeState = createState<HotkeyScope>({
 قمنا بإنشاء غلاف رقيق فوق [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) والذي يجعله أكثر كفاءة ويتجنب عمليات إعادة التقديم غير الضرورية.
 
 ونقوم أيضًا بإنشاء ذرة Jotai للتعامل مع حالة نطاق مفاتيح الاختصار وجعلها متاحة في جميع أنحاء التطبيق.
+
+<PageBanner illustration="card-page-command-menu" />

@@ -1,3 +1,4 @@
+import { type UnusedObjectMetadataColumnName } from 'src/engine/metadata-modules/object-metadata/types/unused-object-metadata-column-name.type';
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type UniversalFlatEntityFrom } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
 
@@ -7,6 +8,7 @@ export type UniversalFlatObjectMetadata = UniversalFlatEntityFrom<
     | 'dataSourceId'
     | 'labelIdentifierFieldMetadataId'
     | 'imageIdentifierFieldMetadataId'
+    | UnusedObjectMetadataColumnName
   >,
   'objectMetadata'
 > & {

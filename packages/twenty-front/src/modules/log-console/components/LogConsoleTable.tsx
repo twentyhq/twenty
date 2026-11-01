@@ -1,19 +1,23 @@
 import { SkeletonLine } from '@/ui/feedback/skeleton/components/SkeletonLine';
 import { styled } from '@linaria/react';
-import { useLingui } from '@lingui/react/macro';
 import { Fragment } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
 
+import { LogConsoleTableHeaderCell } from '@/log-console/components/LogConsoleTableHeaderCell';
 import { LOG_CONSOLE_ANIMATION_EASING } from '@/log-console/constants/LogConsoleAnimationEasing';
+import { LOG_CONSOLE_TABLE_HTML_ID } from '@/log-console/constants/LogConsoleTableHtmlId';
 import { LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID } from '@/log-console/constants/LogConsoleTableScrollWrapperId';
+import { logConsoleColumnWidthsFamilyState } from '@/log-console/states/logConsoleColumnWidthsFamilyState';
 import { type LogConsoleSource } from '@/log-console/types/LogConsoleSource';
+import { getLogConsoleColumnWidthCSSVariableName } from '@/log-console/utils/getLogConsoleColumnWidthCSSVariableName';
+import { updateLogConsoleTableCSSVariable } from '@/log-console/utils/updateLogConsoleTableCSSVariable';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { useAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyState';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useScrollWrapperHTMLElement } from '@/ui/utilities/scroll/hooks/useScrollWrapperHTMLElement';
 import { type EventLogRecord } from '~/generated-metadata/graphql';
@@ -103,8 +107,6 @@ export const LogConsoleTable = ({
   onLoadMore,
   onEntryClick,
 }: LogConsoleTableProps) => {
-  const { t } = useLingui();
-
   const { scrollWrapperHTMLElement } = useScrollWrapperHTMLElement(
     LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID,
   );
@@ -119,11 +121,53 @@ export const LogConsoleTable = ({
     },
   });
 
+  const [columnWidths, setColumnWidths] = useAtomFamilyState(
+    logConsoleColumnWidthsFamilyState,
+    source.id,
+  );
+
   const columns = source.columns;
 
   const gridTemplateColumns = columns
-    .map((column) => column.gridTrack)
+    .map((column) => {
+      const storedWidth = columnWidths[column.id];
+      const track = isDefined(storedWidth)
+        ? `${storedWidth}px`
+        : column.gridTrack;
+
+      return `var(${getLogConsoleColumnWidthCSSVariableName(column.id)}, ${track})`;
+    })
     .join(' ');
+
+  const clearColumnWidthPreview = (columnId: string) => {
+    updateLogConsoleTableCSSVariable(
+      getLogConsoleColumnWidthCSSVariableName(columnId),
+      null,
+    );
+  };
+
+  const handleColumnWidthPreview = (columnId: string, width: number) => {
+    updateLogConsoleTableCSSVariable(
+      getLogConsoleColumnWidthCSSVariableName(columnId),
+      `${width}px`,
+    );
+  };
+
+  const handleColumnWidthCommitted = (columnId: string, width: number) => {
+    clearColumnWidthPreview(columnId);
+    setColumnWidths((previousColumnWidths) => ({
+      ...previousColumnWidths,
+      [columnId]: width,
+    }));
+  };
+
+  const handleColumnWidthReset = (columnId: string) => {
+    clearColumnWidthPreview(columnId);
+    setColumnWidths(
+      ({ [columnId]: _resetColumnWidth, ...remainingColumnWidths }) =>
+        remainingColumnWidths,
+    );
+  };
 
   const isInitialLoading = loading && entries.length === 0;
 
@@ -158,15 +202,24 @@ export const LogConsoleTable = ({
 
   return (
     <ScrollWrapper componentInstanceId={LOG_CONSOLE_TABLE_SCROLL_WRAPPER_ID}>
-      <StyledTable>
+      <StyledTable id={LOG_CONSOLE_TABLE_HTML_ID}>
         <StyledHeaderRow
           gridTemplateColumns={gridTemplateColumns}
           hoverBackgroundColor={themeCssVariables.background.primary}
         >
           {columns.map((column) => (
-            <TableHeader key={column.id} align={column.align}>
-              {t(column.label)}
-            </TableHeader>
+            <LogConsoleTableHeaderCell
+              key={column.id}
+              column={column}
+              onWidthPreview={(width) =>
+                handleColumnWidthPreview(column.id, width)
+              }
+              onWidthCommitted={(width) =>
+                handleColumnWidthCommitted(column.id, width)
+              }
+              onWidthReset={() => handleColumnWidthReset(column.id)}
+              onResizeEnd={() => clearColumnWidthPreview(column.id)}
+            />
           ))}
         </StyledHeaderRow>
         {entries.map((entry, entryIndex) =>

@@ -9,6 +9,7 @@ import { isDefined } from 'src/utils/is-defined';
 import { FATHOM_PROVIDER_NAME } from 'src/constants/fathom.constant';
 import { FATHOM_UNINSTALL_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type FathomWebhookRegistration } from 'src/logic-functions/types/fathom-webhook-registration.type';
+import { getConnectionAccessTokenOrThrow } from 'src/logic-functions/utils/get-connection-access-token-or-throw.util';
 import { getFathomConnectionClaimKey } from 'src/logic-functions/utils/get-fathom-connection-claim-key.util';
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
 import { getFathomWebhookRegistrationKey } from 'src/logic-functions/utils/get-fathom-webhook-registration-key.util';
@@ -28,7 +29,9 @@ const deleteWebhookForConnection = async (
   let isWebhookGone = false;
 
   try {
-    await createFathomClient(connection.accessToken).deleteWebhook({
+    await createFathomClient(
+      getConnectionAccessTokenOrThrow(connection),
+    ).deleteWebhook({
       id: registration.webhookId,
     });
     isWebhookGone = true;

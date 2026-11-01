@@ -1,5 +1,11 @@
+import { msg } from '@lingui/core/macro';
+import { z } from 'zod';
 import {
-  BadRequestException,
+  ApplicationException,
+  ApplicationExceptionCode,
+} from 'src/engine/core-modules/application/application.exception';
+import { ApplicationRestApiExceptionFilter } from 'src/engine/core-modules/application/application-rest-api-exception.filter';
+import {
   Body,
   Controller,
   Get,
@@ -8,6 +14,7 @@ import {
   ParseUUIDPipe,
   Post,
   UseGuards,
+  UseFilters,
 } from '@nestjs/common';
 import { ApiPath } from 'twenty-shared/types';
 import { doNotTranslate } from 'twenty-shared/i18n';
@@ -19,9 +26,9 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AiFrontComponentService } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service';
-import { frontComponentDiagnosticSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-diagnostic.schema';
 
 @Controller(`${ApiPath.Rest}/ai-front-components`)
+@UseFilters(ApplicationRestApiExceptionFilter)
 export class AiFrontComponentController {
   constructor(private readonly components: AiFrontComponentService) {}
 
@@ -45,14 +52,14 @@ export class AiFrontComponentController {
     @Param('draftId', ParseUUIDPipe) draftId: string,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
-    return this.components.getPreview(
+    return this.components.getPreview({
       userWorkspaceId,
       draftId,
-      getWorkspaceAuthContext(),
-    );
+      authContext: getWorkspaceAuthContext(),
+    });
   }
 
-  @Post('drafts/:draftId/diagnostic')
+  @Post('drafts/:draftId/preview-error')
   @UseGuards(
     AuthPrincipalGuard({
       userSession: {
@@ -67,74 +74,27 @@ export class AiFrontComponentController {
     }),
     NoPermissionGuard,
   )
-  reportDiagnostic(
+  reportPreviewError(
     @Param('draftId', ParseUUIDPipe) draftId: string,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
-    @Body() body: unknown,
+    @Body('message') message: unknown,
   ) {
-    const diagnostic = frontComponentDiagnosticSchema.safeParse(body);
+    const validation = z.string().min(1).max(2000).safeParse(message);
 
-    if (!diagnostic.success) {
-      throw new BadRequestException(
-        doNotTranslate('Invalid component preview diagnostic.'),
+    if (!validation.success) {
+      throw new ApplicationException(
+        doNotTranslate('Invalid preview error message.'),
+        ApplicationExceptionCode.INVALID_INPUT,
+        { userFriendlyMessage: msg`Invalid preview error message.` },
       );
     }
 
-    return this.components.recordDiagnostic(
-      workspace.id,
+    return this.components.reportPreviewError({
+      workspaceId: workspace.id,
       userWorkspaceId,
       draftId,
-      diagnostic.data,
-    );
-  }
-
-  @Get(':frontComponentId/runtime')
-  @Header('Cache-Control', 'no-store')
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: false,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
-    }),
-    NoPermissionGuard,
-  )
-  getRuntime(
-    @Param('frontComponentId', ParseUUIDPipe) frontComponentId: string,
-  ) {
-    return this.components.getRuntime(
-      frontComponentId,
-      getWorkspaceAuthContext(),
-    );
-  }
-
-  @Get('shared-dependencies/:cacheKey')
-  @Header('Content-Type', 'application/javascript')
-  @Header('Cache-Control', 'private, max-age=31536000, immutable')
-  @UseGuards(
-    AuthPrincipalGuard({
-      userSession: {
-        standard: true,
-        impersonated: true,
-        playground: false,
-        workspaceAgnostic: false,
-      },
-      apiKey: false,
-      oauthClient: false,
-      application: false,
-    }),
-    NoPermissionGuard,
-  )
-  getSharedDependencies(@Param('cacheKey') cacheKey: string) {
-    return this.components.getSharedDependencies(
-      cacheKey,
-      getWorkspaceAuthContext(),
-    );
+      previewError: validation.data,
+    });
   }
 }

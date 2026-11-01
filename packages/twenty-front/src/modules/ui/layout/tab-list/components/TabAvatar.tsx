@@ -9,7 +9,12 @@ export const TabAvatar = ({ tab }: { tab: SingleTabProps }) => {
 
   if (isDefined(tab.logo)) {
     return (
-      <Avatar src={getAbsoluteImageUrl(tab.logo)} size="md" name={tab.title} />
+      <Avatar
+        src={getAbsoluteImageUrl(tab.logo)}
+        size="md"
+        name={tab.title}
+        colorSeed={tab.colorSeed}
+      />
     );
   }
   return (

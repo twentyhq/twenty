@@ -11,17 +11,15 @@ import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMemb
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { SidePanelShareRecordContent } from '@/side-panel/pages/share-record/components/SidePanelShareRecordContent';
 import {
-  ObjectSharingReach,
   RecordShareAccessLevel,
   RecordSharePrincipalType,
   RecordShareRowCause,
-  RecordSharingMode,
 } from '~/generated-metadata/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
-const setGeneralAccess = fn();
+const setPrivate = fn();
 const setShare = fn();
 const removeShare = fn();
 const refetch = fn().mockResolvedValue(undefined);
@@ -55,12 +53,13 @@ const MEMBERS = [
 ];
 
 const SHARING = {
-  sharingMode: RecordSharingMode.PRIVATE,
+  __typename: 'RecordSharingDTO' as const,
+  isShareable: true,
+  isPrivate: true,
   canManageSharing: true,
-  generalAccessLevel: RecordShareAccessLevel.NONE,
-  defaultGeneralAccessLevel: RecordShareAccessLevel.NONE,
   hasManagedGeneralAccess: false,
   permissions: {
+    __typename: 'RecordPermissionsDTO' as const,
     canRead: true,
     canUpdate: true,
     canDelete: false,
@@ -68,6 +67,7 @@ const SHARING = {
   },
   shares: [
     {
+      __typename: 'RecordSharingGrantDTO' as const,
       id: 'owner-grant',
       principalId: 'owner',
       principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
@@ -76,6 +76,7 @@ const SHARING = {
       accessLevel: RecordShareAccessLevel.FULL,
     },
     {
+      __typename: 'RecordSharingGrantDTO' as const,
       id: 'member-grant',
       principalId: 'member',
       principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
@@ -84,6 +85,7 @@ const SHARING = {
       accessLevel: RecordShareAccessLevel.READ_WRITE,
     },
     {
+      __typename: 'RecordSharingGrantDTO' as const,
       id: 'role-grant',
       principalId: 'sales',
       principalType: RecordSharePrincipalType.ROLE,
@@ -92,7 +94,15 @@ const SHARING = {
       accessLevel: RecordShareAccessLevel.READ,
     },
   ],
-  roles: [{ id: 'sales', label: 'Sales', canRead: true, canUpdate: true }],
+  roles: [
+    {
+      __typename: 'RecordSharingRoleDTO' as const,
+      id: 'sales',
+      label: 'Sales',
+      canRead: true,
+      canUpdate: true,
+    },
+  ],
 };
 
 const StyledSidePanel = styled.div`
@@ -139,21 +149,20 @@ const meta: Meta<typeof SidePanelShareRecordContent> = {
   args: {
     recordUrl: 'https://example.com/chat/shared-chat',
     objectLabelPlural: 'Chats',
-    sharingReach: ObjectSharingReach.WORKSPACE,
     sharingState: {
       sharing: SHARING,
       loading: false,
       error: undefined,
       saving: false,
-      setGeneralAccess,
+      setPrivate,
       setShare,
       removeShare,
       refetch,
     },
   },
   beforeEach: () => {
-    setGeneralAccess.mockClear();
-    setGeneralAccess.mockResolvedValue(SHARING);
+    setPrivate.mockClear();
+    setPrivate.mockResolvedValue(SHARING);
     setShare.mockClear();
     setShare.mockResolvedValue(SHARING);
     removeShare.mockClear();
@@ -192,41 +201,23 @@ export const Default: Story = {
     await expect(generalAccess).toHaveFocus();
     await userEvent.keyboard('{Enter}');
     const restrictedOption = await page.findByRole('menuitemradio', {
-      name: 'Restricted (default)',
+      name: 'Restricted',
     });
     await expect(restrictedOption).toBeVisible();
-    const restrictedLabel = within(restrictedOption).getByText(
-      'Restricted (default)',
-    );
+    const restrictedLabel = within(restrictedOption).getByText('Restricted');
     await canvasElement.ownerDocument.fonts.ready;
     await expect(restrictedLabel.scrollWidth).toBeLessThanOrEqual(
       restrictedLabel.clientWidth,
     );
-    const generalAccessHeading = page.getByText(
-      `Everyone with access to ${args.objectLabelPlural}`,
-    );
-    const headingRange = canvasElement.ownerDocument.createRange();
-    headingRange.selectNodeContents(generalAccessHeading);
-    await expect(headingRange.getClientRects()).toHaveLength(1);
     await expect(
       page.queryByRole('menuitemradio', { name: 'Full access' }),
     ).not.toBeInTheDocument();
-    await userEvent.click(page.getByRole('menuitemradio', { name: 'Viewer' }));
-    await waitFor(() =>
-      expect(setGeneralAccess).toHaveBeenLastCalledWith(
-        RecordShareAccessLevel.READ,
-      ),
-    );
-    await expect(generalAccess).toHaveFocus();
-    await userEvent.keyboard('{Enter}');
     await userEvent.click(
-      await page.findByRole('menuitemradio', { name: 'Editor' }),
+      page.getByRole('menuitemradio', {
+        name: `Everyone with access to ${args.objectLabelPlural}`,
+      }),
     );
-    await waitFor(() =>
-      expect(setGeneralAccess).toHaveBeenLastCalledWith(
-        RecordShareAccessLevel.READ_WRITE,
-      ),
-    );
+    await waitFor(() => expect(setPrivate).toHaveBeenLastCalledWith(false));
     await expect(generalAccess).toHaveFocus();
     await userEvent.tab();
     await expect(role).toHaveFocus();
@@ -330,7 +321,7 @@ export const ChangeAccessWithoutMovingRecipients: Story = {
       loading: false,
       error: undefined,
       saving: false,
-      setGeneralAccess,
+      setPrivate,
       setShare,
       removeShare,
       refetch,
@@ -354,7 +345,6 @@ export const ChangeAccessWithoutMovingRecipients: Story = {
       <SidePanelShareRecordContent
         recordUrl={args.recordUrl}
         objectLabelPlural={args.objectLabelPlural}
-        sharingReach={args.sharingReach}
         sharingState={{
           ...args.sharingState,
           sharing,
@@ -442,7 +432,7 @@ export const InvitePeople: Story = {
     await expect(page.queryByText('Selected')).not.toBeInTheDocument();
     await expect(page.queryByText('Not shared with')).not.toBeInTheDocument();
     await expect(page.queryByRole('checkbox')).not.toBeInTheDocument();
-    await expect(setGeneralAccess).not.toHaveBeenCalled();
+    await expect(setPrivate).not.toHaveBeenCalled();
   },
 };
 
@@ -463,13 +453,9 @@ export const InviteEveryone: Story = {
       page.queryByRole('menuitemradio', { name: 'Full access' }),
     ).not.toBeInTheDocument();
     await userEvent.click(page.getByRole('menuitemradio', { name: 'Editor' }));
-    await expect(setGeneralAccess).not.toHaveBeenCalled();
+    await expect(setPrivate).not.toHaveBeenCalled();
     await userEvent.click(page.getByRole('button', { name: 'Invite 1' }));
-    await waitFor(() =>
-      expect(setGeneralAccess).toHaveBeenCalledWith(
-        RecordShareAccessLevel.READ_WRITE,
-      ),
-    );
+    await waitFor(() => expect(setPrivate).toHaveBeenCalledWith(false));
     await expect(setShare).not.toHaveBeenCalled();
   },
 };
@@ -486,7 +472,7 @@ export const InviteRole: Story = {
       loading: false,
       error: undefined,
       saving: false,
-      setGeneralAccess,
+      setPrivate,
       setShare,
       removeShare,
       refetch,
@@ -513,7 +499,7 @@ export const InviteRole: Story = {
       principal: { roleId: 'sales' },
       accessLevel: RecordShareAccessLevel.FULL,
     });
-    await expect(setGeneralAccess).not.toHaveBeenCalled();
+    await expect(setPrivate).not.toHaveBeenCalled();
   },
 };
 
@@ -522,14 +508,12 @@ export const DefaultGeneralAccess: Story = {
     sharingState: {
       sharing: {
         ...SHARING,
-        sharingMode: RecordSharingMode.OPEN_BY_DEFAULT,
-        generalAccessLevel: RecordShareAccessLevel.READ_WRITE,
-        defaultGeneralAccessLevel: RecordShareAccessLevel.READ_WRITE,
+        isPrivate: false,
       },
       loading: false,
       error: undefined,
       saving: false,
-      setGeneralAccess,
+      setPrivate,
       setShare,
       removeShare,
       refetch,
@@ -538,11 +522,13 @@ export const DefaultGeneralAccess: Story = {
   play: async ({ canvasElement }) => {
     const page = within(canvasElement.ownerDocument.body);
     const generalAccess = await page.findByRole('button', {
-      name: 'Everyone with access to Chats Editor',
+      name: 'Everyone with access to Chats As their role allows',
     });
     await userEvent.click(generalAccess);
     await expect(
-      await page.findByRole('menuitemradio', { name: 'Editor (default)' }),
+      await page.findByRole('menuitemradio', {
+        name: 'Everyone with access to Chats',
+      }),
     ).toBeVisible();
     await expect(
       page.queryByRole('menuitemradio', { name: 'Full access' }),
@@ -550,20 +536,7 @@ export const DefaultGeneralAccess: Story = {
     await userEvent.click(
       page.getByRole('menuitemradio', { name: 'Restricted' }),
     );
-    await waitFor(() =>
-      expect(setGeneralAccess).toHaveBeenLastCalledWith(
-        RecordShareAccessLevel.NONE,
-      ),
-    );
-    await userEvent.click(generalAccess);
-    await userEvent.click(
-      await page.findByRole('menuitemradio', { name: 'Viewer' }),
-    );
-    await waitFor(() =>
-      expect(setGeneralAccess).toHaveBeenLastCalledWith(
-        RecordShareAccessLevel.READ,
-      ),
-    );
+    await waitFor(() => expect(setPrivate).toHaveBeenLastCalledWith(true));
     await expect(
       page.getByRole('button', { name: 'Phil Schiler Editor' }),
     ).toBeVisible();
@@ -611,7 +584,7 @@ export const Loading: Story = {
       loading: true,
       error: undefined,
       saving: false,
-      setGeneralAccess,
+      setPrivate,
       setShare,
       removeShare,
       refetch,
@@ -634,7 +607,7 @@ export const Loading: Story = {
     const footer = copyLink.closest('[data-variant="compact"]');
     await expect(footer?.getBoundingClientRect().height).toBe(40);
     await expect(setShare).not.toHaveBeenCalled();
-    await expect(setGeneralAccess).not.toHaveBeenCalled();
+    await expect(setPrivate).not.toHaveBeenCalled();
   },
 };
 
@@ -645,7 +618,7 @@ export const Saving: Story = {
       loading: false,
       error: undefined,
       saving: true,
-      setGeneralAccess,
+      setPrivate,
       setShare,
       removeShare,
       refetch,
@@ -672,7 +645,7 @@ export const Saving: Story = {
       await expect(page.queryByRole('menu')).not.toBeInTheDocument();
     }
     await expect(setShare).not.toHaveBeenCalled();
-    await expect(setGeneralAccess).not.toHaveBeenCalled();
+    await expect(setPrivate).not.toHaveBeenCalled();
     await expect(removeShare).not.toHaveBeenCalled();
   },
 };
@@ -689,7 +662,7 @@ export const ReadOnly: Story = {
       loading: false,
       error: undefined,
       saving: false,
-      setGeneralAccess,
+      setPrivate,
       setShare,
       removeShare,
       refetch,
@@ -729,7 +702,7 @@ export const LoadError: Story = {
       loading: false,
       error: new Error('Sharing unavailable'),
       saving: false,
-      setGeneralAccess,
+      setPrivate,
       setShare,
       removeShare,
       refetch,
@@ -765,7 +738,7 @@ export const ManagedAccess: Story = {
       loading: false,
       error: undefined,
       saving: false,
-      setGeneralAccess,
+      setPrivate,
       setShare,
       removeShare,
       refetch,

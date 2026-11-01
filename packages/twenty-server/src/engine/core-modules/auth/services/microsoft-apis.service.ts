@@ -310,6 +310,10 @@ export class MicrosoftAPIsService {
                 workspaceId,
                 messageChannelId: messageChannel.id,
               },
+              {
+                workspaceId,
+                isWorkspaceJob: true,
+              },
             );
             await this.enqueueWebhookSubscriptionCreation({
               channelType: WebhookSubscriptionChannelType.MESSAGING,
@@ -347,6 +351,10 @@ export class MicrosoftAPIsService {
             {
               calendarChannelId: calendarChannel.id,
               workspaceId,
+            },
+            {
+              workspaceId,
+              isWorkspaceJob: true,
             },
           );
           await this.enqueueWebhookSubscriptionCreation({
@@ -386,7 +394,11 @@ export class MicrosoftAPIsService {
       await this.webhookQueueService.add<CreateWebhookSubscriptionJobData>(
         CreateWebhookSubscriptionJob.name,
         { channelType, channelId, workspaceId },
-        { retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT },
+        {
+          retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT,
+          workspaceId,
+          isWorkspaceJob: true,
+        },
       );
     } catch (error) {
       this.logger.warn(

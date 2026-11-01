@@ -35,6 +35,8 @@ export const FIND_APPLICATION_REGISTRATION_MONITORING = gql`
       }
       creditUsage {
         bucketStart
+        operationType
+        operationLabel
         creditsUsed
       }
       issues {

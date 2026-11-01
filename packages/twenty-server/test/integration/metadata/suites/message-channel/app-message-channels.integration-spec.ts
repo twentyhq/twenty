@@ -89,6 +89,39 @@ const INGEST_MESSAGES_MUTATION = gql`
   }
 `;
 
+const LIST_FOLDERS_QUERY = gql`
+  query AppMessageFolders($filter: ListAppMessageFoldersInput) {
+    appMessageFolders(filter: $filter) {
+      id
+      externalId
+      name
+      isSynced
+      messageChannelId
+    }
+  }
+`;
+
+const SYNC_FOLDERS_MUTATION = gql`
+  mutation SyncAppMessageFolders($input: SyncAppMessageFoldersInput!) {
+    syncAppMessageFolders(input: $input) {
+      id
+      externalId
+      name
+      isSynced
+      messageChannelId
+    }
+  }
+`;
+
+const UPDATE_MESSAGE_FOLDERS_MUTATION = gql`
+  mutation UpdateMessageFolders($input: UpdateMessageFoldersInput!) {
+    updateMessageFolders(input: $input) {
+      id
+      isSynced
+    }
+  }
+`;
+
 const buildManifestWithProvider = ({
   appId,
   roleId,
@@ -144,6 +177,13 @@ type AppMessagePayload = {
   text: string;
   receivedAt: string;
   participants: AppMessageParticipantPayload[];
+  folderExternalIds?: string[];
+};
+
+type AppMessageFolderPayload = {
+  externalId: string;
+  name: string;
+  isSynced?: boolean;
 };
 
 const buildMessage = ({
@@ -192,6 +232,7 @@ describe('app message channels API (e2e)', () => {
   let ownConnectionId: string;
   let otherAppConnectionId: string;
   let foreignMemberConnectionId: string;
+  let foreignWorkspaceConnectionId: string;
 
   const insertAppConnection = async ({
     id,
@@ -283,6 +324,55 @@ describe('app message channels API (e2e)', () => {
       token,
     );
 
+  const syncFolders = ({
+    messageChannelId,
+    folders,
+    token,
+  }: {
+    messageChannelId: string;
+    folders: AppMessageFolderPayload[];
+    token?: string;
+  }) =>
+    request(
+      {
+        query: SYNC_FOLDERS_MUTATION,
+        variables: { input: { messageChannelId, folders } },
+      },
+      token,
+    );
+
+  const findFolder = ({
+    folders,
+    externalId,
+  }: {
+    folders: { id: string; externalId: string }[];
+    externalId: string;
+  }) => {
+    const folder = folders.find(
+      (candidate) => candidate.externalId === externalId,
+    );
+
+    if (!isDefined(folder)) {
+      throw new Error(`Folder ${externalId} was not returned`);
+    }
+
+    return folder;
+  };
+
+  const findLinkedFolderIds = async (messageId: string): Promise<string[]> => {
+    const rows: { messageFolderId: string }[] =
+      await globalThis.testDataSource.query(
+        `SELECT folder."messageFolderId"
+           FROM "${WORKSPACE_SCHEMA}"."messageChannelMessageAssociationMessageFolder" folder
+           JOIN "${WORKSPACE_SCHEMA}"."messageChannelMessageAssociation" association
+             ON association.id = folder."messageChannelMessageAssociationId"
+          WHERE association."messageId" = $1`,
+        [messageId],
+      );
+
+    return rows.map((row) => row.messageFolderId);
+  };
+
   const findAssociation = async (
     messageId: string,
   ): Promise<{ direction: string; messageExternalId: string }> => {
@@ -366,6 +456,7 @@ describe('app message channels API (e2e)', () => {
     ownConnectionId = uuidv4();
     otherAppConnectionId = uuidv4();
     foreignMemberConnectionId = uuidv4();
+    foreignWorkspaceConnectionId = uuidv4();
 
     await insertAppConnection({
       id: ownConnectionId,
@@ -388,6 +479,14 @@ describe('app message channels API (e2e)', () => {
       applicationId: owningApplicationDbId,
       connectionProviderId: owningProviderDbId,
       scope: 'USER',
+      userWorkspaceId: uuidv4(),
+    });
+
+    await insertAppConnection({
+      id: foreignWorkspaceConnectionId,
+      applicationId: owningApplicationDbId,
+      connectionProviderId: owningProviderDbId,
+      scope: 'WORKSPACE',
       userWorkspaceId: uuidv4(),
     });
   }, 180000);
@@ -447,7 +546,14 @@ describe('app message channels API (e2e)', () => {
 
     await globalThis.testDataSource.query(
       `DELETE FROM core."messageChannel" WHERE "connectedAccountId" = ANY($1)`,
-      [[ownConnectionId, otherAppConnectionId, foreignMemberConnectionId]],
+      [
+        [
+          ownConnectionId,
+          otherAppConnectionId,
+          foreignMemberConnectionId,
+          foreignWorkspaceConnectionId,
+        ],
+      ],
     );
   });
 
@@ -858,6 +964,356 @@ describe('app message channels API (e2e)', () => {
       );
 
       expect(Number(count)).toBe(0);
+    });
+  });
+
+  describe('syncAppMessageFolders', () => {
+    it('creates folders, synced unless the app says otherwise', async () => {
+      const channel = await createChannelOrThrow();
+
+      const response = await syncFolders({
+        messageChannelId: channel.id,
+        folders: [
+          { externalId: 'inb_support', name: 'Support' },
+          { externalId: 'inb_sales', name: 'Sales', isSynced: false },
+        ],
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.syncAppMessageFolders).toEqual([
+        expect.objectContaining({
+          externalId: 'inb_sales',
+          name: 'Sales',
+          isSynced: false,
+        }),
+        expect.objectContaining({
+          externalId: 'inb_support',
+          name: 'Support',
+          isSynced: true,
+          messageChannelId: channel.id,
+        }),
+      ]);
+    });
+
+    it('renames, keeps an omitted isSynced and removes folders missing from the list', async () => {
+      const channel = await createChannelOrThrow();
+
+      const first = await syncFolders({
+        messageChannelId: channel.id,
+        folders: [
+          { externalId: 'inb_support', name: 'Support', isSynced: false },
+          { externalId: 'inb_sales', name: 'Sales' },
+        ],
+      });
+
+      const supportFolder = findFolder({
+        folders: first.body.data.syncAppMessageFolders,
+        externalId: 'inb_support',
+      });
+
+      const second = await syncFolders({
+        messageChannelId: channel.id,
+        folders: [{ externalId: 'inb_support', name: 'Customer support' }],
+      });
+
+      expect(second.body.errors).toBeUndefined();
+      expect(second.body.data.syncAppMessageFolders).toEqual([
+        expect.objectContaining({
+          id: supportFolder.id,
+          name: 'Customer support',
+          isSynced: false,
+        }),
+      ]);
+    });
+
+    it('refuses the same externalId twice in one list', async () => {
+      const channel = await createChannelOrThrow();
+
+      const response = await syncFolders({
+        messageChannelId: channel.id,
+        folders: [
+          { externalId: 'inb_support', name: 'Support' },
+          { externalId: 'inb_support', name: 'Support again' },
+        ],
+      });
+
+      expect(response.body.errors?.[0]?.extensions?.code).toBe(
+        'BAD_USER_INPUT',
+      );
+    });
+
+    it('does not tell another application that the channel exists', async () => {
+      const channel = await createChannelOrThrow();
+
+      const response = await syncFolders({
+        messageChannelId: channel.id,
+        folders: [{ externalId: 'inb_support', name: 'Support' }],
+        token: otherApplicationToken,
+      });
+
+      expect(response.body.errors?.[0]?.extensions?.code).toBe('NOT_FOUND');
+    });
+  });
+
+  describe('appMessageFolders', () => {
+    it("lists the channel's folders", async () => {
+      const channel = await createChannelOrThrow();
+
+      await syncFolders({
+        messageChannelId: channel.id,
+        folders: [{ externalId: 'inb_support', name: 'Support' }],
+      });
+
+      const response = await request({
+        query: LIST_FOLDERS_QUERY,
+        variables: { filter: { messageChannelId: channel.id } },
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.appMessageFolders).toEqual([
+        expect.objectContaining({
+          externalId: 'inb_support',
+          name: 'Support',
+          isSynced: true,
+        }),
+      ]);
+    });
+
+    it("lists folders across the application's channels and nothing else without a filter", async () => {
+      const channel = await createChannelOrThrow();
+      const otherHandleChannel = await createChannelOrThrow({
+        handle: 'second-bot@linkedin.test',
+      });
+      const foreignChannel = await createChannelOrThrow({
+        connectedAccountId: otherAppConnectionId,
+        token: otherApplicationToken,
+      });
+
+      await syncFolders({
+        messageChannelId: channel.id,
+        folders: [{ externalId: 'inb_support', name: 'Support' }],
+      });
+      await syncFolders({
+        messageChannelId: otherHandleChannel.id,
+        folders: [{ externalId: 'inb_sales', name: 'Sales' }],
+      });
+      await syncFolders({
+        messageChannelId: foreignChannel.id,
+        folders: [{ externalId: 'inb_foreign', name: 'Foreign' }],
+        token: otherApplicationToken,
+      });
+
+      const response = await request({ query: LIST_FOLDERS_QUERY });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(
+        response.body.data.appMessageFolders.map(
+          (folder: { externalId: string }) => folder.externalId,
+        ),
+      ).toEqual(['inb_sales', 'inb_support']);
+    });
+
+    it("refuses another application's channel", async () => {
+      const channel = await createChannelOrThrow();
+
+      const response = await request(
+        {
+          query: LIST_FOLDERS_QUERY,
+          variables: { filter: { messageChannelId: channel.id } },
+        },
+        otherApplicationToken,
+      );
+
+      expect(response.body.errors?.[0]?.extensions?.code).toBe('NOT_FOUND');
+    });
+  });
+
+  describe('ingestAppMessages with folders', () => {
+    it('links a message to its folders, adding folders on re-ingestion', async () => {
+      const channel = await createChannelOrThrow();
+      const threadExternalId = `thread-${uuidv4()}`;
+
+      const syncResponse = await syncFolders({
+        messageChannelId: channel.id,
+        folders: [
+          { externalId: 'inb_support', name: 'Support' },
+          { externalId: 'inb_sales', name: 'Sales' },
+        ],
+      });
+
+      const supportFolder = findFolder({
+        folders: syncResponse.body.data.syncAppMessageFolders,
+        externalId: 'inb_support',
+      });
+      const salesFolder = findFolder({
+        folders: syncResponse.body.data.syncAppMessageFolders,
+        externalId: 'inb_sales',
+      });
+
+      const message = buildMessage({
+        externalId: 'in-support',
+        threadExternalId,
+        senderHandle: 'candidate@linkedin.test',
+      });
+
+      const first = await ingest({
+        messageChannelId: channel.id,
+        messages: [{ ...message, folderExternalIds: ['inb_support'] }],
+      });
+
+      expect(first.body.errors).toBeUndefined();
+
+      const [{ messageId }] = first.body.data.ingestAppMessages.messages;
+
+      expect(await findLinkedFolderIds(messageId)).toEqual([supportFolder.id]);
+
+      const second = await ingest({
+        messageChannelId: channel.id,
+        messages: [{ ...message, folderExternalIds: ['inb_sales'] }],
+      });
+
+      expect(second.body.errors).toBeUndefined();
+      expect((await findLinkedFolderIds(messageId)).sort()).toEqual(
+        [supportFolder.id, salesFolder.id].sort(),
+      );
+    });
+
+    it('refuses a folder the channel has not declared and saves nothing', async () => {
+      const channel = await createChannelOrThrow();
+
+      const response = await ingest({
+        messageChannelId: channel.id,
+        messages: [
+          {
+            ...buildMessage({
+              externalId: 'in-unknown-folder',
+              threadExternalId: `thread-${uuidv4()}`,
+              senderHandle: 'candidate@linkedin.test',
+            }),
+            folderExternalIds: ['inb_unknown'],
+          },
+        ],
+      });
+
+      expect(response.body.errors?.[0]?.extensions?.code).toBe(
+        'BAD_USER_INPUT',
+      );
+
+      const [{ count }] = await globalThis.testDataSource.query(
+        `SELECT count(*) AS count FROM "${WORKSPACE_SCHEMA}"."message"
+           WHERE "headerMessageId" LIKE $1`,
+        [`app:${owningApplicationDbId}:${channel.id}:%`],
+      );
+
+      expect(Number(count)).toBe(0);
+    });
+
+    it('keeps the message when its folder is removed', async () => {
+      const channel = await createChannelOrThrow();
+
+      await syncFolders({
+        messageChannelId: channel.id,
+        folders: [{ externalId: 'inb_support', name: 'Support' }],
+      });
+
+      const response = await ingest({
+        messageChannelId: channel.id,
+        messages: [
+          {
+            ...buildMessage({
+              externalId: 'outlives-its-folder',
+              threadExternalId: `thread-${uuidv4()}`,
+              senderHandle: 'candidate@linkedin.test',
+            }),
+            folderExternalIds: ['inb_support'],
+          },
+        ],
+      });
+
+      const [{ messageId }] = response.body.data.ingestAppMessages.messages;
+
+      const removal = await syncFolders({
+        messageChannelId: channel.id,
+        folders: [],
+      });
+
+      expect(removal.body.errors).toBeUndefined();
+      expect(removal.body.data.syncAppMessageFolders).toEqual([]);
+      expect(await findLinkedFolderIds(messageId)).toEqual([]);
+      expect(await findAssociation(messageId)).toMatchObject({
+        messageExternalId: 'outlives-its-folder',
+      });
+    });
+  });
+
+  describe('updateMessageFolders on an app channel', () => {
+    const createFolderOnForeignWorkspaceConnection = async () => {
+      const channel = await createChannelOrThrow({
+        connectedAccountId: foreignWorkspaceConnectionId,
+      });
+
+      const response = await syncFolders({
+        messageChannelId: channel.id,
+        folders: [{ externalId: 'inb_support', name: 'Support' }],
+      });
+
+      return findFolder({
+        folders: response.body.data.syncAppMessageFolders,
+        externalId: 'inb_support',
+      });
+    };
+
+    const updateFolders = ({
+      messageFolderIds,
+      isSynced,
+      token,
+    }: {
+      messageFolderIds: string[];
+      isSynced: boolean;
+      token: string;
+    }) =>
+      makeMetadataApiRequest(
+        {
+          query: UPDATE_MESSAGE_FOLDERS_MUTATION,
+          variables: {
+            input: { ids: messageFolderIds, update: { isSynced } },
+          },
+        },
+        token,
+      );
+
+    it("lets a workspace admin toggle a folder on a workspace-shared connection they don't own", async () => {
+      const folder = await createFolderOnForeignWorkspaceConnection();
+
+      const response = await updateFolders({
+        messageFolderIds: [folder.id],
+        isSynced: false,
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
+
+      expect(response.body.errors).toBeUndefined();
+      expect(response.body.data.updateMessageFolders).toEqual([
+        { id: folder.id, isSynced: false },
+      ]);
+    });
+
+    it('refuses a member without the applications permission', async () => {
+      const folder = await createFolderOnForeignWorkspaceConnection();
+
+      const response = await updateFolders({
+        messageFolderIds: [folder.id],
+        isSynced: false,
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
+
+      expect(response.body.errors?.[0]?.extensions?.code).toBe('FORBIDDEN');
+
+      const [storedFolder] = await globalThis.testDataSource.query(
+        `SELECT "isSynced" FROM core."messageFolder" WHERE id = $1`,
+        [folder.id],
+      );
+
+      expect(storedFolder.isSynced).toBe(true);
     });
   });
 });

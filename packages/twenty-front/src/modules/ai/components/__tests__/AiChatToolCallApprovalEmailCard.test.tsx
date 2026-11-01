@@ -7,6 +7,10 @@ import { type ProposedToolCall } from 'twenty-shared/ai';
 
 import { AiChatToolCallApprovalCard } from '@/ai/components/AiChatToolCallApprovalCard';
 
+jest.mock('@/ai/hooks/useRefreshFrontComponents', () => ({
+  useRefreshFrontComponents: () => ({ refreshFrontComponents: jest.fn() }),
+}));
+
 const answerAgentChatToolCall = jest.fn();
 jest.mock('@/ai/hooks/useAnswerAgentChatToolCall', () => ({
   useAnswerAgentChatToolCall: () => ({ answerAgentChatToolCall }),
@@ -27,14 +31,18 @@ jest.mock(
   () => ({
     FormAdvancedTextFieldInput: ({
       defaultValue,
+      value,
       onChange,
     }: {
-      defaultValue: string;
+      defaultValue?: string;
+      value?: string;
       onChange: (value: string) => void;
     }) => (
       <textarea
         aria-label="Email body"
-        defaultValue={JSON.parse(defaultValue).content[0].content[0].text}
+        defaultValue={
+          JSON.parse(value ?? defaultValue ?? '').content[0].content[0].text
+        }
         onChange={(event) =>
           onChange(
             JSON.stringify({
@@ -131,6 +139,26 @@ describe('AiChatToolCallApprovalCard for an email', () => {
       optimisticToolOutput: undefined,
     });
     expect(screen.getByRole('button', { name: 'Discard' })).toBeDisabled();
+  });
+
+  it('keeps the subject unchanged when the proposal disallows editing', async () => {
+    const user = userEvent.setup();
+    renderCard({ ...PROPOSAL, areArgumentsEditable: false });
+
+    const subject = screen.getByRole('textbox', { name: 'Subject' });
+    expect(subject).toBeDisabled();
+    await user.type(subject, 'Changed subject');
+    await user.click(screen.getByRole('button', { name: 'Send' }));
+
+    expect(answerAgentChatToolCall).toHaveBeenCalledWith(
+      expect.objectContaining({
+        response: {
+          decision: 'approve',
+          toolName: 'send_email',
+          arguments: EMAIL_ARGUMENTS,
+        },
+      }),
+    );
   });
 
   it('saves the email as a draft through the alternative tool', async () => {

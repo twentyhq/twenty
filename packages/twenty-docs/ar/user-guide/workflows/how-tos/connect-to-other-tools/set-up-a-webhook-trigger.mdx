@@ -3,7 +3,7 @@ title: إعداد مشغّل ربط الويب
 description: استقبل بيانات من خدمات خارجية لتشغيل عمليات سير العمل.
 ---
 
-تتيح مشغّلات ربط الويب للخدمات الخارجية بدء تشغيل عمليات سير العمل لديك عبر إرسال بيانات إلى عنوان URL فريد. استخدمها لربط النماذج والتطبيقات من جهات خارجية والتكاملات المخصّصة.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## متى تستخدم ربط الويب
 
@@ -61,12 +61,12 @@ description: استقبل بيانات من خدمات خارجية لتشغيل
 2. حدِّد كائن **الأشخاص**
 3. عيّن الحقول:
 
-| الحقل             | القيمة                                            |
-| ----------------- | ------------------------------------------------- |
-| الاسم الأول       | `{{trigger.body.firstName}}`                      |
-| الاسم الأخير      | `{{trigger.body.lastName}}`                       |
-| البريد الإلكتروني | `{{trigger.body.email}}`                          |
-| الشركة            | ابحث أو أنشئ بناءً على `{{trigger.body.company}}` |
+| الحقل             | القيمة                                      |
+| ----------------- | ------------------------------------------- |
+| الاسم الأول       | `{{trigger.firstName}}`                     |
+| الاسم الأخير      | `{{trigger.lastName}}`                      |
+| البريد الإلكتروني | `{{trigger.email}}`                         |
+| الشركة            | ابحث أو أنشئ بناء على `{{trigger.company}}` |
 
 ### الخطوة 5: اختبار ربط الويب
 
@@ -107,7 +107,7 @@ curl -X POST https://api.twenty.com/webhooks/workflow/abc123... \
 }
 ```
 
-أشر إليها باستخدام: `{{trigger.body.contact.email}}`
+أشر إليها باستخدام: `{{trigger.contact.email}}`
 
 ### المصفوفات
 
@@ -168,3 +168,5 @@ export const main = async (params: { items: any }) => {
 
 * [مشغلات سير العمل](/ar/user-guide/workflows/capabilities/workflow-triggers)
 * [إجراءات سير العمل](/ar/user-guide/workflows/capabilities/workflow-actions)
+
+<PageBanner illustration="card-page-webhooks" />

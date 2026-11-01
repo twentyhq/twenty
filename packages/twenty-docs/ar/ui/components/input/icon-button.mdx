@@ -1,0 +1,163 @@
+---
+title: IconButton
+description: فعّل الإجراءات باستخدام أزرار أيقونات يمكن الوصول إليها.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import IconButtonReference from '/snippets/ui/generated/components/input/icon-button.mdx';
+
+## نظرة عامة
+
+يُركّب `IconButton` [زر](/ar/ui/primitives/input/button) مع سطح مربع أو دائري. مرّر الأيقونة كعناصر فرعية وقدّم اسمًا متاحًا باستخدام `aria-label` أو `aria-labelledby`. محتوى الرمز زخرفي ومخفي عن التقنية المساعدة.
+
+<StoryEmbed storyId="ui-components-iconbutton--display" title="زر أيقونة باسم يمكن الوصول إليه" height={110} />
+
+## استخدام
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconSearch } from 'twenty-ui/icon';
+
+export const SearchButton = () => (
+  <IconButton aria-label="Search">
+    <IconSearch />
+  </IconButton>
+);
+```
+
+الأحجام هي `xs` ‏(20px) و`sm` ‏(24px) و`md` ‏(32px). القيم الافتراضية هي `md` و`outline` و`neutral`. تتطابق الأنماط والألوان مع Button. استخدم `shape="round"` لزر دائري؛ الشكل الافتراضي هو `square`.
+
+## خيارات مرئية
+
+قارن خيارًا مرئيًا واحدًا في كل مرة. استخدم أمثلة تلميح الأدوات المسمى والمرتفع والمجمّع للتركيب.
+
+<StoryEmbed storyId="ui-components-iconbutton--catalog" title="متغيرات زر الأيقونة وألوانه وأحجامه وأشكاله وارتفاعه وحالاته" height={810} />
+
+## الأسماء المتاحة
+
+استخدم `aria-label` لاسم يُقدَّم مباشرةً على عنصر التحكم. عندما يَسمّي النص المرئي الإجراء بالفعل، استخدم `aria-labelledby` للإشارة إليه بدلًا من ذلك. مطلوب وجود خاصية تسمية واحدة على الأقل.
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconSearch } from 'twenty-ui/icon';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const LabelledSearchButton = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <Text render={<span />} id="records-search-label">
+      Search records
+    </Text>
+    <IconButton aria-labelledby="records-search-label" tooltip="Find a record">
+      <IconSearch />
+    </IconButton>
+  </Text>
+);
+```
+
+<StoryEmbed title="زر أيقونة يُسمّى بواسطة نص مرئي" storyId="ui-components-iconbutton--labelled-by" height={140} />
+
+## تلميح
+
+أضف `tooltip` لإظهار النص عند التمرير والتركيز باستخدام لوحة المفاتيح. احتفظ بـ `aria-label` أو `aria-labelledby` باعتباره الاسم المتاح للإجراء. تحتفظ الأزرار المعطلة وأزرار التحميل بتلميحات التمرير.
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconSearch } from 'twenty-ui/icon';
+
+export const SearchRecordsButton = () => (
+  <IconButton aria-label="Search" tooltip="Search records">
+    <IconSearch />
+  </IconButton>
+);
+```
+
+<StoryEmbed title="زر أيقونة مع تلميح" storyId="ui-components-iconbutton--tooltip-documentation" height={140} />
+
+يظهر التلميح في الأسفل افتراضيًا، مع تأخير قدره 1000ms وإزاحة قدرها 5px. استخدم `tooltipPlace` و`tooltipDelay` و`tooltipOffset` لضبطه. يؤدي حذف `tooltip` إلى عرض الزر مباشرةً.
+
+## ملكية الحالة
+
+يوفر تطبيقك `loading` و`disabled`. كلاهما يمنع التفعيل. تحافظ حالة التحميل على الأبعاد المربعة والتسمية التي يمكن الوصول إليها. لا يتتبع الزر قيمة محددة ولا يضبط حالة التحميل تلقائيًا بعد النقر. يتبع تركيز لوحة المفاتيح الأصلي المتصفح؛ استخدم `aria-pressed` عندما يمتلك تطبيقك حالة تبديل.
+
+## إجراءات مرتفعة
+
+استخدم `elevated` لإضافة ظل وتمويه للخلفية. يكتسب زر المخطط المحايد الافتراضي أيضًا سطحًا ذا حدود بألوان أيقونة وتفاعل متطابقة. تحتفظ المتغيرات الأخرى والألوان الدلالية بلوحة الألوان الحالية.
+
+القيمة الافتراضية لـ `elevated` هي `false`. لا يغيّر الموضع أو الظهور أو الحجم. يبقى الحجم `md` ‏(32px) افتراضيًا؛ عيّن `size="sm"` لعنصر تحكم بحجم 24px.
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconPlus } from 'twenty-ui/icon';
+
+export const AddWidgetButton = () => (
+  <IconButton elevated size="sm" aria-label="Add widget">
+    <IconPlus />
+  </IconButton>
+);
+```
+
+<StoryEmbed title="إجراء أيقونة بارز" storyId="ui-components-iconbutton--elevated" height={100} />
+
+احذف `elevated` أو عيّنه إلى `false` لاستعادة المظهر القياسي. تدعم الأزرار البارزة تلميحات الأدوات وحالات التحميل والروابط وتفاعلات لوحة المفاتيح نفسها.
+
+<StoryEmbed title="إجراء أيقونة بارز مع تلميح أداة" storyId="ui-components-iconbutton--elevated-tooltip" height={140} />
+
+استبدل عناصر التحكم `FloatingIconButton` الحالية بـ `IconButton elevated`. مرّر الأيقونة باعتبارها children، واستخدم `aria-label` الأصلي، وحوّل `small` إلى `sm` و`medium` إلى `md`. وفّر `size="sm"` عندما كان عنصر التحكم السابق يستخدم حجمه الافتراضي. يستبدل التركيز الأصلي و`aria-pressed` التركيز الاصطناعي وعلامات الحالة النشطة.
+
+تمت إزالة `FloatingIconButtonGroup`. ركّب ButtonGroup مع IconButton للإجراءات المجمّعة، واحتفظ بأي سطح عائم مشترك في تخطيطك.
+
+## إجراءات مجمعة
+
+```tsx
+import { ButtonGroup } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components/input';
+import { IconPlus, IconSearch } from 'twenty-ui/icon';
+
+export const RecordActions = () => (
+  <ButtonGroup
+    aria-label="Record actions"
+    size="sm"
+    variant="solid"
+    color="accent"
+  >
+    <IconButton
+      aria-label="Search records"
+      tooltip="Search records"
+      variant="outline"
+      color="neutral"
+    >
+      <IconSearch />
+    </IconButton>
+    <IconButton aria-label="Create record" tooltip="Create record">
+      <IconPlus />
+    </IconButton>
+  </ButtonGroup>
+);
+```
+
+يوفّر [ButtonGroup](/ar/ui/primitives/input/button-group) قيمًا افتراضية للحجم والمتغير واللون، بالإضافة إلى الزوايا المتجاورة. تتقدم خصائص العناصر الفرعية الصريحة بشكل مستقل، بما في ذلك `size="xs"`. لا تحتاج الأزرار الفردية إلى خاصية موضع.
+
+أبقِ الأزرار المتصلة بالحجم نفسه لكي تصطف حوافها. عيّن الحجم للمجموعة ودَع كل زر يرثه.
+
+<StoryEmbed storyId="ui-components-iconbutton--grouped-overrides" title="مظهر زر الأيقونة الفردي ضمن مجموعة" height={140} />
+
+## الروابط والنماذج
+
+من دون `render` مخصص، يعرض `href` رابط ارتساء ما لم تكن قيمة `nativeButton` هي true صراحةً. لرابط ارتساء تنقل مخصص أو رابط موجه، اضبط `nativeButton={false}` و`role="link"`. يمكن لأداة التصيير امتلاك وجهتها دون `href` لـ IconButton. أبقِ `nativeButton` بقيمة true لزر أصلي مخصص، واستخدم false لعنصر إجراء غير أصلي. تُحفظ خصائص nativeButton وrole الصريحة. لا يمكن للروابط المعطلة والتي قيد التحميل أن تُفعَّل. يبقى التوجيه داخل التطبيق.
+
+تُمرَّر سمات الزر الأصلي ورابط الارتساء، ومعالجات الأحداث، وتفاصيل الأحداث، والمراجع، وتركيب التصيير إلى Button. يتلقى المرجع عنصر الجذر الفعلي. يحافظ تركيب تلميح الأداة على ذلك الجذر واسمه المتاح. القيمة الافتراضية هي `type="button"`؛ اضبط `type="submit"` صراحةً لإرسال النموذج.
+
+## عناصر تحكم صغيرة ومستديرة
+
+استخدم `size="xs"` لعنصر تحكم بحجم 20px و`shape="round"` لزوايا دائرية. تصبح عناصر التحكم `RoundedIconButton` الحالية `IconButton` مع `shape="round"` و`variant="solid"` و`color="accent"`. عيّن الحجم القديم `small` إلى `xs` والحجم `medium` إلى `sm`. وفّر عناصر فرعية للأيقونة واسمًا متاحًا.
+
+<StoryEmbed storyId="ui-components-iconbutton--round-documentation" title="أزرار أيقونات مستديرة بأحجام مدمجة وعادية" height={140} />
+
+## الإزاحة
+
+<IconButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

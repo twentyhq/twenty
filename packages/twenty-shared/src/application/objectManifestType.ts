@@ -1,9 +1,7 @@
+import { type ObjectPermissionAction } from '@/application/objectPermissionActionType';
 import { type ObjectFieldManifest } from '@/application/objectFieldManifest.type';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
-import { type MetadataReadability } from '@/types/MetadataReadability';
-import { type MetadataWritability } from '@/types/MetadataWritability';
 import { type ObjectOpenRecordIn } from '@/types/ObjectOpenRecordIn';
-import { type ObjectSharingReach } from '@/types/ObjectSharingReach';
 
 export type ObjectManifest = SyncableEntityOptions & {
   nameSingular: string;
@@ -17,10 +15,7 @@ export type ObjectManifest = SyncableEntityOptions & {
   isSearchable?: boolean;
   isUICreatable?: boolean;
   isUIEditable?: boolean;
-  writability?: MetadataWritability;
-  readability?: MetadataReadability;
-  readabilityParentFieldUniversalIdentifiers?: string[] | null;
-  sharingReach?: ObjectSharingReach;
+  disabledObjectPermissionActions?: ObjectPermissionAction[];
   openRecordIn?: ObjectOpenRecordIn;
   fields: ObjectFieldManifest[];
   labelIdentifierFieldMetadataUniversalIdentifier: string;

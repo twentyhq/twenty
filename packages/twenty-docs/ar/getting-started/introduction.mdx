@@ -1,8 +1,18 @@
 ---
-title: لماذا Twenty
+title: التقى بعشرين
+description: انظر إلى ما يجعل العشرين مختلفاً، قم بتهيئة مساحة عملك، وتعلم المفاهيم الكامنة وراءها.
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { LandingActions, LandingButton } from "/snippets/landing-actions.mdx"
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+<LandingActions>
+  <LandingButton href="/ar/getting-started/quickstart">Quickstart</LandingButton>
+  <LandingButton href="/ar/getting-started/key-features" outlined>الميزات الرئيسية</LandingButton>
+</LandingActions>
+
+## لماذا Twenty
 
 كنتَ دائمًا تختار بين برمجيات يسهل البدء بها لكن يستحيل تغييرها، وبين برمجيات مرنة لكنها تتطلب أشهرًا لإعدادها. Twenty هو الخيار الثالث: **نظام إدارة علاقات العملاء جاهز للإنتاج يمكنك إعادة تشكيله أثناء الاستخدام.**
 
@@ -11,19 +21,19 @@ import { CardTitle } from "/snippets/card-title.mdx"
 Twenty هو منصة يمكنك البناء عليها، وليس منتجًا تقوم فقط بتهيئته.
 
 <CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
-  <Card img="/images/documentation/banner-icons-v2/ai.svg">
+  <Card href="/ar/getting-started/core-concepts/ai" img="/images/documentation/banner-icons-v2/ai.svg">
     <CardTitle>مصمَّم للوكلاء</CardTitle>
     يعمل الوكلاء داخل نموذج بياناتك مع صلاحيات حقيقية. مهارات، أدوات، MCP.
   </Card>
-  <Card img="/images/documentation/banner-icons-v2/dev-apps.svg">
+  <Card href="/ar/getting-started/core-concepts/apps" img="/images/documentation/banner-icons-v2/dev-apps.svg">
     <CardTitle>قابلية توسعة مؤمّنة</CardTitle>
     مرونة أدوات مبرمجة على أسس مؤمّنة.
   </Card>
-  <Card img="/images/documentation/banner-icons-v2/dev-api.svg">
+  <Card href="/ar/developers/introduction" img="/images/documentation/banner-icons-v2/dev-api.svg">
     <CardTitle>حزمة تقنية حديثة</CardTitle>
     React، TypeScript. فريقك يعرف بالفعل كيفية توسيع Twenty. لا لغات احتكارية، ولا حجب للوصول.
   </Card>
-  <Card img="/images/user-guide/halftone/no-lock-in.png">
+  <Card href="/ar/user-guide/data-migration/how-tos/export-your-data" img="/images/user-guide/halftone/no-lock-in.png">
     <CardTitle>بدون قيود</CardTitle>
     نواة مفتوحة المصدر، وقابلية للاستضافة الذاتية، وإمكانية تصدير بياناتك في أي وقت.
   </Card>
@@ -60,6 +70,15 @@ Twenty هو منصة يمكنك البناء عليها، وليس منتجًا 
   ولا جلسات إحاطة تنفيذية. نحن ننجح مع الفرق التي لديها
   صلاحية اختيار أدواتها الخاصة.
 
-<Card title="هل أنتم مستعدون للبدء؟" icon="rocket" href="/ar/getting-started/quickstart">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ar/getting-started/quickstart" img="/images/documentation/getting-started-icons-v1/quickstart.svg">
+  <CardTitle>هل أنتم مستعدون للبدء؟</CardTitle>
   اضبط إعدادات Twenty في أقل من 5 دقائق — على السحابة أو بالاستضافة الذاتية.
 </Card>
+<Card href="https://discord.gg/cx5n4Jzs57" img="/images/user-guide/halftone/community-discord.svg">
+  <CardTitle>Discord</CardTitle>
+  طرح أسئلة ومشاركة ما تبنيه مع المجتمع العشرين.
+</Card>
+</CardGroup>
+
+<PageBanner illustration="meet-twenty" />

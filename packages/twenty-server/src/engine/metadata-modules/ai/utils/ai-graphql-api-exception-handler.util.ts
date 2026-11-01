@@ -45,12 +45,14 @@ export const aiGraphqlApiExceptionHandler = (error: Error) => {
       case AiExceptionCode.AGENT_ALREADY_EXISTS:
       case AiExceptionCode.NO_FAILED_TURN_TO_RETRY:
       case AiExceptionCode.CHAT_CHANNELS_UNAVAILABLE:
+      case AiExceptionCode.CHAT_UPGRADE_IN_PROGRESS:
       case AiExceptionCode.THREAD_AWAITING_ANSWER:
       case AiExceptionCode.CHAT_THREAD_ASSIGNEE_CANNOT_UNSUBSCRIBE:
       case AiExceptionCode.CHAT_CHANNEL_NOT_EMPTY:
       case AiExceptionCode.CHAT_CHANNEL_BUSY:
         throw new ConflictError(error);
       case AiExceptionCode.AGENT_IS_STANDARD:
+      case AiExceptionCode.AGENT_IS_INACTIVE:
       case AiExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS:
       case AiExceptionCode.RUN_AS_WORKSPACE_MEMBER_NOT_ALLOWED:
       case AiExceptionCode.RUN_AGENT_NOT_ALLOWED:

@@ -1,0 +1,20 @@
+.salesfarce-badge {
+  align-items: center;
+  background: linear-gradient(#ffffff4d, #ffffff00 55%, #00000014), #e39321;
+  border-radius: 3px;
+  box-shadow: inset 0 0 0 1px #00000033;
+  box-sizing: border-box;
+  color: #ffffff;
+  display: inline-flex;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  height: 20px;
+  inset-inline-end: 4px;
+  padding: 0 6px;
+  pointer-events: none;
+  position: absolute;
+  text-shadow: 0 1px 1px #00000080;
+  top: 4px;
+  white-space: nowrap;
+}

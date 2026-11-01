@@ -66,6 +66,7 @@ export const DOCUMENTATION_PATHS = {
   DEVELOPERS_EXTEND_APPS_LOGIC_CONNECTIONS:
     '/developers/extend/apps/logic/connections',
   DEVELOPERS_EXTEND_APPS_LOGIC_CREDITS: '/developers/extend/apps/logic/credits',
+  DEVELOPERS_EXTEND_APPS_LOGIC_INBOX: '/developers/extend/apps/logic/inbox',
   DEVELOPERS_EXTEND_APPS_LOGIC_KEY_VALUE_STORE:
     '/developers/extend/apps/logic/key-value-store',
   DEVELOPERS_EXTEND_APPS_LOGIC_LOGIC_FUNCTIONS:
@@ -80,8 +81,8 @@ export const DOCUMENTATION_PATHS = {
     '/developers/extend/apps/logic/workflows',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_CLI:
     '/developers/extend/apps/operations/cli',
-  DEVELOPERS_EXTEND_APPS_OPERATIONS_MARKETPLACE_VETTING:
-    '/developers/extend/apps/operations/marketplace-vetting',
+  DEVELOPERS_EXTEND_APPS_OPERATIONS_MARKETPLACE_REVIEW:
+    '/developers/extend/apps/operations/marketplace-review',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_MONITORING:
     '/developers/extend/apps/operations/monitoring',
   DEVELOPERS_EXTEND_APPS_OPERATIONS_OVERVIEW:
@@ -255,6 +256,8 @@ export const DOCUMENTATION_PATHS = {
   USER_GUIDE_BILLING_OVERVIEW: '/user-guide/billing/overview',
   USER_GUIDE_CALENDAR_EMAILS_CAPABILITIES_CALENDAR:
     '/user-guide/calendar-emails/capabilities/calendar',
+  USER_GUIDE_CALENDAR_EMAILS_CAPABILITIES_EMAIL_CHANNELS:
+    '/user-guide/calendar-emails/capabilities/email-channels',
   USER_GUIDE_CALENDAR_EMAILS_CAPABILITIES_MAILBOX:
     '/user-guide/calendar-emails/capabilities/mailbox',
   USER_GUIDE_CALENDAR_EMAILS_HOW_TOS_CAN_I_BOOK_MEETINGS_FROM_TWENTY:

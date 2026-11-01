@@ -1,0 +1,106 @@
+---
+title: علامة
+description: ضع تسمية على فئة أو سمة باستخدام لون النسق وأيقونة اختيارية.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import TagReference from '/snippets/ui/generated/data-display/tag.mdx';
+
+## نظرة عامة
+
+استخدم `Tag` للفئات أو الأولويات أو السمات القصيرة الأخرى. احتفظ بتسمية نصية حتى لا يعتمد المعنى على اللون. استخدم [الحالة](/ar/ui/primitives/data-display/status) عندما تحتاج إلى مؤشر حالة وملاحظات التحميل.
+
+<StoryEmbed storyId="ui-data-display-tag--display" title="مثال على Tag" height={90} />
+
+## استخدام
+
+```tsx
+import { Tag } from 'twenty-ui/primitives/data-display';
+
+export const PriorityTag = () => <Tag color="red">Urgent</Tag>;
+```
+
+`color` مطلوب ويقبل لون نسق أو `transparent`. العنصر الافتراضي يكون دائمًا `span`، بما في ذلك عند توفير معالج نقر أصلي. أضف أيقونة زخرفية باستخدام `startIcon`؛ يوفر الملصق معناه المتاح.
+
+## الأشكال
+
+<StoryEmbed storyId="ui-data-display-tag--catalog" title="أشكال الشارة" height={140} />
+
+```tsx
+import { Tag } from 'twenty-ui/primitives/data-display';
+
+export const CategoryTags = () => (
+  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+    <Tag color="blue" variant="soft">
+      Customer
+    </Tag>
+    <Tag color="green" variant="solid">
+      Partner
+    </Tag>
+    <Tag color="orange" variant="outline">
+      Prospect
+    </Tag>
+    <Tag color="transparent" variant="outline" borderStyle="dashed">
+      Unassigned
+    </Tag>
+  </div>
+);
+```
+
+`soft` هو نمط العرض الافتراضي. يبرز `solid` الملصق، ويضيف `outline` حدودًا، ويزيل `ghost` الخلفية. استخدم `borderStyle="dashed"` مع `outline` و`weight="medium"` للحصول على ملصق أقوى.
+
+## ألوان
+
+<StoryEmbed storyId="ui-data-display-tag--colors" title="ألوان سمة الشارة" height={240} />
+
+أبقِ التسمية ذات معنى من دون الاعتماد على لونها. يقارن الكتالوج المعالجة الناعمة الافتراضية؛ وتتوفر لوحة الألوان نفسها للأشكال الأخرى.
+
+## تصفية حسب علامة
+
+```tsx
+import { Tag } from 'twenty-ui/primitives/data-display';
+
+type CategoryFilterProps = {
+  selected: boolean;
+  onToggle: () => void;
+};
+
+export const CategoryFilter = ({ selected, onToggle }: CategoryFilterProps) => (
+  <Tag
+    color="blue"
+    variant={selected ? 'solid' : 'outline'}
+    render={<button type="button" aria-pressed={selected} onClick={onToggle} />}
+  >
+    Customer
+  </Tag>
+);
+```
+
+أنشئ مالكًا تفاعليًا عبر `render`. ضع معالج النقر والسمات الأصلية والمرجع وحالة التعطيل على ذلك المالك. يوفر الزر الحقيقي التركيز والتنشيط بمفتاحَي Enter وSpace. تنتمي حالة التحديد إلى تطبيقك؛ استخدم `aria-pressed` للتبديل ونمط عرض مرئي للحالة المحددة. للتنقل، اعرض رابطًا مع وجهته، مثل `<a href="/records" />`. يحتفظ المالكون الأصليون بمظهر Tag.
+
+## تسميات طويلة
+
+افتراضيًا، يقوم `truncate={true}` باقتطاع تسميات السلاسل النصية المقيّدة ويعرض نصها الكامل في تلميح عند التمرير. اضبط `truncate={false}` للاحتفاظ بالتسمية كاملةً بعرضها الطبيعي من دون تلميح أداة، حتى عندما يكون عنصرها الأصل أضيق. يتولى تخطيط العنصر الأصل الالتفاف والتمرير والاقتصاص.
+
+```tsx
+import { Tag } from 'twenty-ui/primitives/data-display';
+
+export const FullCategoryLabel = () => (
+  <Tag color="green" truncate={false}>
+    Enterprise customer
+  </Tag>
+);
+```
+
+يبقى محتوى العناصر الفرعية لـ Node مملوكًا للمستدعي، لذا أنشئ نصها وترجماتها وروابطها المقصودة مباشرةً.
+
+## الإزاحة
+
+تُنشأ الأنواع والقيم الافتراضية من الأنواع العامة للمكوّن. تُقبل أيضًا السمات الأصلية ومعالجات الأحداث.
+
+<TagReference />
+
+<PageBanner illustration="page-cover-checkbox" />

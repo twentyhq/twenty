@@ -5,9 +5,9 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { resolveInheritedReadabilityParents } from 'src/engine/core-modules/record-share/utils/resolve-inherited-readability-parents.util';
+import { findLegacyOpenParentJoinColumnNames } from 'src/database/commands/upgrade-version-command/2-43/utils/find-legacy-open-parent-join-column-names.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type RowAccessPolicyEnvironment } from 'src/engine/twenty-orm/types/row-access-policy.type';
+import { type RowAccessPolicyEnvironment } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { computeObjectTargetTable } from 'src/engine/utils/compute-object-target-table.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
@@ -15,6 +15,14 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 const LEGACY_ACCESS_MIGRATION_KEY =
   'COMMON_RECORD_SHARING_LEGACY_ACCESS_MIGRATED';
 const BACKFILL_BATCH_SIZE = 10000;
+
+type LegacyObjectAccess = {
+  id: string;
+  universalIdentifier: string;
+  readability: MetadataReadability;
+  writability: MetadataWritability;
+  readabilityParentFieldUniversalIdentifiers: string[] | null;
+};
 
 export const preserveLegacyRecordAccess = async ({
   manager,
@@ -39,11 +47,25 @@ export const preserveLegacyRecordAccess = async ({
   if (completed.length > 0) {
     return;
   }
+  const legacyObjectAccesses = await manager.query<LegacyObjectAccess[]>(
+    `SELECT id, "universalIdentifier", readability, writability, "readabilityParentFieldUniversalIdentifiers"
+      FROM core."objectMetadata" WHERE "workspaceId" = $1`,
+    [workspaceId],
+  );
+  const legacyObjectAccessById = new Map(
+    legacyObjectAccesses.map((legacyObjectAccess) => [
+      legacyObjectAccess.id,
+      legacyObjectAccess,
+    ]),
+  );
   if (
     isLegacyRecordAccessOpen({
       flatObjectMetadataMaps: {
         byUniversalIdentifier: Object.fromEntries(
-          objects.map((object) => [object.universalIdentifier, object]),
+          legacyObjectAccesses.map((legacyObjectAccess) => [
+            legacyObjectAccess.universalIdentifier,
+            legacyObjectAccess,
+          ]),
         ),
       },
       wasRecordSharingEnabled,
@@ -52,11 +74,13 @@ export const preserveLegacyRecordAccess = async ({
     const schema = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
     const snapshot = new Date();
     for (const object of objects) {
+      const legacyObjectAccess = legacyObjectAccessById.get(object.id);
       if (
         object.universalIdentifier ===
           STANDARD_OBJECTS.agentChatThread.universalIdentifier ||
+        !isDefined(legacyObjectAccess) ||
         ![MetadataReadability.PRIVATE, MetadataReadability.INHERITED].includes(
-          object.readability,
+          legacyObjectAccess.readability,
         )
       ) {
         continue;
@@ -68,27 +92,31 @@ export const preserveLegacyRecordAccess = async ({
       if (!isDefined(lastRecord)) {
         continue;
       }
-      const openParents =
-        object.readability === MetadataReadability.INHERITED &&
+      const openParentJoinColumnNames =
+        legacyObjectAccess.readability === MetadataReadability.INHERITED &&
         isDefined(inheritanceMetadata)
-          ? resolveInheritedReadabilityParents({
+          ? findLegacyOpenParentJoinColumnNames({
               flatObjectMetadata: object,
-              ...inheritanceMetadata,
-            }).filter(
-              (parent) =>
-                parent.kind === 'column' &&
-                parent.parentFlatObjectMetadata.readability ===
-                  MetadataReadability.OPEN &&
-                parent.parentFlatObjectMetadata.writability ===
-                  MetadataWritability.OPEN,
-            )
+              readabilityParentFieldUniversalIdentifiers:
+                legacyObjectAccess.readabilityParentFieldUniversalIdentifiers ??
+                [],
+              isParentObjectOpen: (objectMetadataId) => {
+                const parentAccess =
+                  legacyObjectAccessById.get(objectMetadataId);
+
+                return (
+                  parentAccess?.readability === MetadataReadability.OPEN &&
+                  parentAccess.writability === MetadataWritability.OPEN
+                );
+              },
+              flatFieldMetadataMaps: inheritanceMetadata.flatFieldMetadataMaps,
+            })
           : [];
       // Rows attached directly to an OPEN parent already have shared access.
-      const detachedCondition = openParents
-        .flatMap((parent) =>
-          parent.kind === 'column'
-            ? [`record.${escapeIdentifier(parent.joinColumnName)} IS NULL`]
-            : [],
+      const detachedCondition = openParentJoinColumnNames
+        .map(
+          (joinColumnName) =>
+            `record.${escapeIdentifier(joinColumnName)} IS NULL`,
         )
         .join(' AND ');
       let cursor = '00000000-0000-0000-0000-000000000000';

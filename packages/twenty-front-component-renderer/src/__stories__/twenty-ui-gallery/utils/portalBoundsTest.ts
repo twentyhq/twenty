@@ -1,6 +1,7 @@
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
 import { errorHandler } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
+import { expectElementBackdropToReachHostPage } from '@/__stories__/shared/test-utils/matchers/expectElementBackdropToReachHostPage';
 import { expectElementToReceivePointer } from '@/__stories__/shared/test-utils/matchers/expectElementToReceivePointer';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import { MAXIMUM_DROPDOWN_TRIGGER_GAP } from '@/__stories__/twenty-ui-gallery/constants/MaximumDropdownTriggerGap';
@@ -11,6 +12,7 @@ import { waitForGeometryTrackerToIdle } from '@/__stories__/twenty-ui-gallery/ut
 import { FRONT_COMPONENT_PORTAL_MARGIN } from '@/constants/FrontComponentPortalMargin';
 
 const WIDGET_SCROLL_OFFSET = 40;
+const PORTAL_BOUNDARY_OFFSET = 1;
 
 const expectPortalActionAtOwnerBottom = ({
   portalAction,
@@ -176,9 +178,12 @@ export const portalBoundsTest: TwentyUiGalleryPlayFunction = async ({
     name: 'Menu item 1',
   });
   await waitFor(() => {
+    const menu = page.getByRole('menu');
+
+    expectElementBackdropToReachHostPage(menu);
     expectElementToReceivePointer(firstMenuItem);
     expectDropdownAttachedToTriggerWithinPortalArea({
-      menu: page.getByRole('menu'),
+      menu,
       menuTrigger,
       ownerRoot,
     });
@@ -204,6 +209,21 @@ export const portalBoundsTest: TwentyUiGalleryPlayFunction = async ({
       ),
     ),
   ).toBe(true);
+  const portalBoundaryLeft =
+    ownerRectangle.left - FRONT_COMPONENT_PORTAL_MARGIN;
+  const portalCenterY = ownerRectangle.top + ownerRectangle.height / 2;
+
+  const insidePortalBoundary = hostDocument.elementFromPoint(
+    portalBoundaryLeft + PORTAL_BOUNDARY_OFFSET,
+    portalCenterY,
+  );
+  const outsidePortalBoundary = hostDocument.elementFromPoint(
+    portalBoundaryLeft - PORTAL_BOUNDARY_OFFSET,
+    portalCenterY,
+  );
+
+  expect(oversizedPortal.contains(insidePortalBoundary)).toBe(true);
+  expect(oversizedPortal.contains(outsidePortalBoundary)).toBe(false);
   expectElementToReceivePointer(hostAction);
   await userEvent.click(hostAction);
   expect(

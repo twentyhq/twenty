@@ -11,7 +11,7 @@ import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/appl
 
 type UpdateApplicationRegistrationResult = Pick<
   ApplicationRegistrationEntity,
-  'id' | 'name' | 'isListed' | 'isPreInstalled' | 'isVetted'
+  'id' | 'name' | 'isListed' | 'isPreInstalled'
 >;
 
 export const updateApplicationRegistration = async ({

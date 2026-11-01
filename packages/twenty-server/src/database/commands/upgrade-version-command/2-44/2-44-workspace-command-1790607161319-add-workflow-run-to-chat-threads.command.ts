@@ -1,6 +1,5 @@
 import { Command } from 'nest-commander';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { MetadataReadability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -17,7 +16,6 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -31,15 +29,11 @@ const WORKFLOW_RUN_THREAD_INDEX_UNIVERSAL_IDENTIFIERS = [
   LEGACY_CHAT_THREAD_WORKFLOW_RUN_INDEX_UNIVERSAL_IDENTIFIER,
 ];
 
-// A workflow agent step now records each execution as a chat thread owned by
-// its run rather than by a member. Threads therefore stop requiring an owner
-// and inherit readability from the run; a thread without a run has no parent,
-// so member chats keep reading exactly as they did under PRIVATE.
 @RegisteredWorkspaceCommand('2.44.0', 1790607161319)
 @Command({
   name: 'upgrade:2-44:add-workflow-run-to-chat-threads',
   description:
-    'Link chat threads to workflow runs and make threads inherit readability from their run',
+    'Link chat threads to workflow runs',
 })
 export class AddWorkflowRunToChatThreadsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -127,7 +121,7 @@ export class AddWorkflowRunToChatThreadsCommand extends ProvisionedWorkspaceComm
 
     if (options.dryRun ?? false) {
       this.logger.log(
-        `[DRY RUN] Would create ${fieldsToCreate.length} field(s) and ${indexesToCreate.length} index(es), update ${fieldsToUpdate.length} field(s)${isRunLinkStandard ? ', then make chat threads inherit readability from their run' : ''} for workspace ${workspaceId}`,
+        `[DRY RUN] Would create ${fieldsToCreate.length} field(s) and ${indexesToCreate.length} index(es), update ${fieldsToUpdate.length} field(s) for workspace ${workspaceId}`,
       );
 
       return;
@@ -155,86 +149,10 @@ export class AddWorkflowRunToChatThreadsCommand extends ProvisionedWorkspaceComm
         },
       });
     }
-
-    if (!isRunLinkStandard) {
-      return;
-    }
-
-    // verify-common-record-sharing has already refused SYSTEM threads, so
-    // anything but PRIVATE here is a re-run
-    if (threadObject.readability !== MetadataReadability.PRIVATE) {
-      this.logger.log(
-        `agentChatThread readability is ${threadObject.readability} for workspace ${workspaceId}, leaving it`,
-      );
-
-      return;
-    }
-
-    // Readability names the parent field, so it can only change once the
-    // field exists.
-    const flatObjectMetadatasToUpdate: FlatObjectMetadata[] = [
-      {
-        ...threadObject,
-        readability: MetadataReadability.INHERITED,
-        readabilityParentFieldUniversalIdentifiers: [
-          LEGACY_CHAT_THREAD_WORKFLOW_RUN_FIELD_UNIVERSAL_IDENTIFIER,
-        ],
-      },
-    ];
-
-    await this.runMigration({
-      workspaceId,
-      applicationUniversalIdentifier:
-        twentyStandardFlatApplication.universalIdentifier,
-      allFlatEntityOperationByMetadataName: {
-        objectMetadata: {
-          flatEntityToCreate: [],
-          flatEntityToDelete: [],
-          flatEntityToUpdate: flatObjectMetadatasToUpdate,
-        },
-      },
-    });
   }
 
-  async down({ workspaceId }: RunOnWorkspaceArgs): Promise<void> {
-    const { flatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-      ]);
-    const threadObject =
-      flatObjectMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.agentChatThread.universalIdentifier
-      ];
-
-    if (!isDefined(threadObject)) {
-      return;
-    }
-
-    const { twentyStandardFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-
-    // The run link and its conversations stay: under PRIVATE nobody but a
-    // thread's own grantees reads it, and ownerless run threads have none.
-    await this.runMigration({
-      workspaceId,
-      applicationUniversalIdentifier:
-        twentyStandardFlatApplication.universalIdentifier,
-      allFlatEntityOperationByMetadataName: {
-        objectMetadata: {
-          flatEntityToCreate: [],
-          flatEntityToDelete: [],
-          flatEntityToUpdate: [
-            {
-              ...threadObject,
-              readability: MetadataReadability.PRIVATE,
-              readabilityParentFieldUniversalIdentifiers: null,
-            },
-          ],
-        },
-      },
-    });
+  async down(_args: RunOnWorkspaceArgs): Promise<void> {
+    // The run link and its conversations stay.
   }
 
   private async runMigration(
@@ -247,7 +165,7 @@ export class AddWorkflowRunToChatThreadsCommand extends ProvisionedWorkspaceComm
   ): Promise<void> {
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
-        { ...args, isSystemBuild: true },
+        { shouldDeferActions: false, ...args, isSystemBuild: true },
       );
 
     if (result.status === 'fail') {

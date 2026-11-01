@@ -1,0 +1,105 @@
+---
+title: Testo
+description: Componi la tipografia del tema con troncamento su una singola riga o un numero limitato di righe.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import TextReference from '/snippets/ui/generated/typography/text.mdx';
+
+## Panoramica
+
+`Text` fornisce la tipografia e la gestione dell'overflow. Per impostazione predefinita, esegue il rendering di un `div`. Ometti `size`, `weight` e `color` per continuare a ereditare la tipografia dall'ambiente circostante.
+
+<StoryEmbed storyId="ui-typography-text--display" title="Esempio di testo" height={90} />
+
+## Utilizzo
+
+Assegna al testo una larghezza vincolata, quindi imposta `truncate` per mostrare un'ellissi quando va in overflow:
+
+```tsx
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ContactName = () => (
+  <Text truncate style={{ maxWidth: 160 }}>
+    Alexandra Montgomery
+  </Text>
+);
+```
+
+## Scegli la tipografia
+
+`size` utilizza la scala del tema esistente. Modifica la dimensione del carattere, senza valori predefiniti per altezza, font-family o line-height:
+
+| Dimensione | Valore del tema |
+| ---------- | --------------- |
+| `xxs`      | `0.625rem`      |
+| `xs`       | `0.85rem`       |
+| `sm`       | `0.92rem`       |
+| `md`       | `1rem`          |
+| `lg`       | `1.23rem`       |
+| `xl`       | `1.54rem`       |
+| `xxl`      | `1.85rem`       |
+
+`weight` accetta `regular` (400), `medium` (500) o `semibold` (600). `color` accetta `primary`, `secondary`, `tertiary` o `light`. Ogni prop omessa viene ereditata in modo indipendente. La dimensione visiva non modifica l'elemento semantico.
+
+<StoryEmbed storyId="ui-typography-text--typography-catalog" title="Scala tipografica del testo" height={410} />
+
+Per le didascalie, componi la dimensione piccola, il peso semibold e il colore light:
+
+```tsx
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const Caption = () => (
+  <Text size="xs" weight="semibold" color="light">
+    Workspace
+  </Text>
+);
+```
+
+Utilizza `style` nativo per i colori in fase di runtime e i vincoli di layout del genitore. Le classi chiamanti e la composizione di rendering sono destinate allo stesso elemento di testo. Text non aggiunge valori tipografici predefiniti quando queste prop sono omesse.
+
+## Limita il numero di righe
+
+<StoryEmbed storyId="ui-typography-text--catalog" title="Opzioni di overflow del testo" height={210} />
+
+Usa `lineClamp` con un numero intero positivo. Scegli `truncate` o `lineClamp`; le rispettive props si escludono a vicenda.
+
+```tsx
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const Summary = () => (
+  <Text lineClamp={2} style={{ maxWidth: 240 }}>
+    Follow up with the customer about their onboarding milestones and upcoming
+    renewal.
+  </Text>
+);
+```
+
+## Scegli un elemento
+
+Usa `render` quando il testo richiede un altro elemento semantico:
+
+```tsx
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const Description = () => (
+  <Text render={<p />}>Account description</Text>
+);
+```
+
+Il troncamento influisce sulla presentazione visiva; non abbrevia il testo nel DOM. Fornisci un modo per leggere il contenuto completo quando la parte visibile è insufficiente.
+
+## Props
+
+Gli attributi nativi, gli elementi figlio, i ref, i nomi delle classi e gli stili hanno come destinazione l'elemento di testo renderizzato. `TextProps` viene esportato da `twenty-ui/primitives/typography`. Il contenuto di testo viene renderizzato senza modifiche, inclusi i link forniti dal chiamante.
+
+<TextReference />
+
+## Migrazione
+
+`color` ora seleziona un colore semantico del tema. Sposta i valori arbitrari dei colori CSS da un attributo `color` nativo a `style={{ color: customColor }}`. Gli stili, le classi e la composizione di rendering esistenti continuano a essere destinati all'elemento di testo.
+
+<PageBanner illustration="section-document-generator" />

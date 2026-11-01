@@ -15,6 +15,7 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   AgentChatChannelAssignmentFilter,
+  AgentChatChannelThreadFilter,
   AgentChatChannelThreadStatus,
 } from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
@@ -140,6 +141,7 @@ describe('AiChatInboxThreadPagination', () => {
       channelId: 'channel-id',
       channelStatus: AgentChatChannelThreadStatus.OPEN,
       assignment: AgentChatChannelAssignmentFilter.ANY,
+      filter: AgentChatChannelThreadFilter.ANY,
     };
 
     jotaiStore.set(agentChatChannelViewState.atom, channelView);

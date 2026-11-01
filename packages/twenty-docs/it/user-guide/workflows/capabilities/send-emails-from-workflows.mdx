@@ -3,7 +3,7 @@ title: Invia email dai flussi di lavoro
 description: Invia automaticamente email personalizzate utilizzando le azioni dei flussi di lavoro.
 ---
 
-Invia automaticamente email quando si verificano eventi specifici nel tuo CRM—dai il benvenuto ai nuovi contatti, effettua il follow-up delle opportunità o avvisa i membri del team.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Prerequisiti
 
@@ -29,11 +29,11 @@ Prima di poter inviare email dai flussi di lavoro:
    * Seleziona **Invia email**
    * Configura l'email:
 
-| Campo       | Valore                                 |
-| ----------- | -------------------------------------- |
-| **A**       | `{{trigger.object.email}}`             |
-| **Oggetto** | `Benvenuto in {{Your Company Name}}`   |
-| **Corpo**   | `Hi {{trigger.object.firstName}}, ...` |
+| Campo       | Valore                                                |
+| ----------- | ----------------------------------------------------- |
+| **A**       | `{{trigger.properties.after.emails.primaryEmail}}`    |
+| **Oggetto** | `Benvenuto in {{Your Company Name}}`                  |
+| **Corpo**   | `Hi {{trigger.properties.after.name.firstName}}, ...` |
 
 4. **Testa e attiva**: Esegui un test con un record di esempio, quindi attiva
 
@@ -42,11 +42,9 @@ Prima di poter inviare email dai flussi di lavoro:
 Richiama i dati dai passaggi precedenti usando la sintassi `{{variable}}`:
 
 ```text
-Hi {{trigger.object.firstName}},
+Hi {{trigger.properties.after.name.firstName}},
 
 Thank you for connecting with us!
-
-Your company, {{trigger.object.company.name}}, is now in our system.
 
 Best regards,
 The Team
@@ -54,11 +52,14 @@ The Team
 
 ### Variabili disponibili dai trigger
 
-| Tipo di trigger              | Variabili comuni                       |
-| ---------------------------- | -------------------------------------- |
-| **Record creato/aggiornato** | `{{trigger.object.fieldName}}`         |
-| **Manuale**                  | `{{trigger.selectedRecord.fieldName}}` |
-| **Webhook**                  | `{{trigger.body.fieldName}}`           |
+| Tipo di trigger                        | Variabili comuni                          |
+| -------------------------------------- | ----------------------------------------- |
+| **Record creato/aggiornato**           | `{{trigger.properties.after.fieldName}}`  |
+| **Record eliminato**                   | `{{trigger.properties.before.fieldName}}` |
+| **Manuale** (su un record selezionato) | `{{trigger.payload.fieldName}}`           |
+| **Webhook**                            | `{{trigger.fieldName}}`                   |
+
+I campi di relazione espongono solo l'ID del record correlato, ad esempio `{{trigger.properties.after.companyId}}`. Per utilizzare altri campi del record correlato, aggiungi prima un passaggio **Cerca record**. Il modo più semplice per ottenere il percorso corretto è inserire la variabile dal selettore.
 
 ## Avanzato: Email condizionali
 
@@ -71,7 +72,7 @@ The Team
 1. **Trigger**: Record creato (Persone)
 
 2. **Aggiungi l'azione Filtro**:
-   * Condizione: `{{trigger.object.source}}` uguale a `"Website"`
+   * Condizione: `{{trigger.properties.after.source}}` uguale a `"Website"`
    * Se vero → continua con l'email di benvenuto per il sito web
 
 3. **Diramazione per altre origini**:
@@ -88,15 +89,19 @@ The Team
 
 1. **Trigger**: Record aggiornato (Opportunità, Fase = "Chiusa vinta")
 
-2. **Cerca record**: Trova il responsabile del proprietario dell'opportunità
+2. **Cerca record** (assegnagli il nome "Trova proprietario"): trova il proprietario dell'opportunità
+   * Oggetto: Membri dello spazio di lavoro
+   * Filtro: ID uguale a `{{trigger.properties.after.ownerId}}`
 
-3. **Invia email n. 1**: Al proprietario dell'opportunità
-   * A: `{{trigger.object.owner.email}}`
-   * Oggetto: `Congratulazioni per la chiusura di {{trigger.object.name}}!`
+3. **Cerca record**: Trova il responsabile del proprietario dell'opportunità
 
-4. **Invia email n. 2**: Al responsabile
+4. **Invia email n. 1**: Al proprietario dell'opportunità
+   * A: `{{Find Owner.first.userEmail}}` (selezionalo dal selettore di variabili; digitare il nome del passaggio non funziona)
+   * Oggetto: `Congratulazioni per la chiusura di {{trigger.properties.after.name}}!`
+
+5. **Invia email n. 2**: Al responsabile
    * A: `{{searchRecords.manager.email}}`
-   * Oggetto: `Opportunità vinta: {{trigger.object.name}}`
+   * Oggetto: `Opportunità vinta: {{trigger.properties.after.name}}`
 
 ## Email di follow-up programmate
 
@@ -165,3 +170,5 @@ Gli allegati sono statici—lo stesso file viene inviato a tutti i destinatari. 
 
 * [Trigger dei flussi di lavoro](/it/user-guide/workflows/capabilities/workflow-triggers)
 * [Azioni dei flussi di lavoro](/it/user-guide/workflows/capabilities/workflow-actions)
+
+<PageBanner illustration="page-cover-email" />
