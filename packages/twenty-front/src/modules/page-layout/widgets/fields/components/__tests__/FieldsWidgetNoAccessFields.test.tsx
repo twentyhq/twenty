@@ -2,7 +2,7 @@ import { type ApolloClient } from '@apollo/client';
 import { useApolloClient } from '@apollo/client/react';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
@@ -330,6 +330,23 @@ describe('FieldsWidget with field-level permissions', () => {
 
     expect(screen.queryByText('No fields to display')).not.toBeInTheDocument();
     expect(screen.getByText(/More \(/)).toBeInTheDocument();
+  });
+
+  it('maps hover to the correct field when a preceding field is No Access', () => {
+    setObjectsPermissions({
+      [addressField.id]: { canRead: false, canUpdate: false },
+    });
+    renderFieldsWidget();
+
+    expect(screen.queryByText(addressField.label)).not.toBeInTheDocument();
+
+    fireEvent.mouseEnter(screen.getByText(employeesField.label));
+
+    // The hover portal renders a second display of the hovered field's
+    // value; with a stale globalIndex it would resolve Linkedin (wrong
+    // field) or nothing at all.
+    expect(screen.getAllByText('250')).toHaveLength(2);
+    expect(screen.queryByText('https://linkedin.com/company/acme')).toBeNull();
   });
 
   it('completely hides a field the role has No Access to', () => {
