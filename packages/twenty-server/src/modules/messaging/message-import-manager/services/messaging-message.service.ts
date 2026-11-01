@@ -2,12 +2,10 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import chunk from 'lodash.chunk';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
-import { MessageChannelType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 import { v4 } from 'uuid';
 
-import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -55,12 +53,19 @@ export class MessagingMessageService {
 
   constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
-  public async saveMessagesWithinTransaction(
-    messages: MessageWithParticipants[],
-    messageChannel: Pick<MessageChannelEntity, 'id' | 'type'>,
-    transactionScope: WorkspaceTransactionScope,
-    workspaceId: string,
-  ): Promise<{
+  public async saveMessagesWithinTransaction({
+    messages,
+    messageChannelId,
+    messageExternalIdsToRefresh,
+    transactionScope,
+    workspaceId,
+  }: {
+    messages: MessageWithParticipants[];
+    messageChannelId: string;
+    messageExternalIdsToRefresh: string[];
+    transactionScope: WorkspaceTransactionScope;
+    workspaceId: string;
+  }): Promise<{
     createdMessages: Partial<MessageWorkspaceEntity>[];
     messageExternalIdsAndIdsMap: Map<string, string>;
     messageExternalIdToMessageChannelMessageAssociationIdMap: Map<
@@ -70,7 +75,7 @@ export class MessagingMessageService {
     messageExternalIdToMessageThreadIdMap: Map<string, string>;
   }> {
     const authContext = buildSystemAuthContext(workspaceId);
-    const messageChannelId = messageChannel.id;
+    const messageExternalIdsToRefreshSet = new Set(messageExternalIdsToRefresh);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
@@ -200,9 +205,8 @@ export class MessagingMessageService {
             messageAccumulator.existingMessageChannelMessageAssociationInDB;
 
           if (
-            messageChannel.type !== MessageChannelType.APP &&
             isDefined(existingAssociation) &&
-            existingAssociation.messageExternalId === message.externalId
+            messageExternalIdsToRefreshSet.has(message.externalId)
           ) {
             messageAccumulator.messageToRefresh = {
               id: newOrExistingMessageId,
