@@ -12,7 +12,13 @@ import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/a
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 import { STREAM_EXECUTION_FAILED_CODE } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 
-const buildService = async (finish: jest.Mock) => {
+const buildService = async ({
+  finish,
+  eventPublisherService = {},
+}: {
+  finish: jest.Mock;
+  eventPublisherService?: Record<string, jest.Mock>;
+}) => {
   const module = await Test.createTestingModule({
     providers: [
       AgentTurnStreamService,
@@ -20,7 +26,10 @@ const buildService = async (finish: jest.Mock) => {
         provide: getAgentHistoryRepositoryToken('agentChatThread'),
         useValue: {},
       },
-      { provide: AgentChatEventPublisherService, useValue: {} },
+      {
+        provide: AgentChatEventPublisherService,
+        useValue: eventPublisherService,
+      },
       { provide: AgentChatCancelSubscriberService, useValue: {} },
       { provide: AgentChatStreamHeartbeatService, useValue: {} },
       { provide: AgentChatStreamRecoveryService, useValue: {} },
@@ -74,7 +83,7 @@ describe('AgentTurnStreamService streamTurn without a claim', () => {
 
     await expect(
       streamTurnWithoutClaim({
-        service: await buildService(finish),
+        service: await buildService({ finish }),
         turnError,
       }),
     ).rejects.toBe(turnError);
@@ -90,11 +99,63 @@ describe('AgentTurnStreamService streamTurn without a claim', () => {
 
     await expect(
       streamTurnWithoutClaim({
-        service: await buildService(finish),
+        service: await buildService({ finish }),
         turnError,
       }),
     ).rejects.toBe(turnError);
 
     expectFailureRecordedOnce(finish);
+  });
+});
+
+describe('AgentTurnStreamService streamTurn of a claimed turn', () => {
+  it('keeps a finished turn completed when its end event cannot be sent', async () => {
+    const finish = jest.fn().mockResolvedValue(true);
+    const publish = jest.fn(async ({ event }: { event: { type: string } }) => {
+      if (event.type === 'message-persisted') {
+        throw new Error('Redis unavailable');
+      }
+    });
+
+    const service = await buildService({
+      finish,
+      eventPublisherService: { publish },
+    });
+
+    await expect(
+      service.streamTurn({
+        workspaceId: 'workspace-id',
+        claim: {
+          workspaceId: 'workspace-id',
+          threadId: 'thread-id',
+          streamId: 'stream-id',
+        },
+        turnId: 'turn-id',
+        startTurn: async () => ({
+          source: {
+            modelConfig: { contextWindowTokens: 1000 } as never,
+            parts: new ReadableStream({
+              start(controller) {
+                [
+                  { type: 'start' },
+                  { type: 'finish', finishReason: 'stop', totalUsage: {} },
+                ].forEach((part) => controller.enqueue(part as never));
+                controller.close();
+              },
+            }),
+          },
+        }),
+        completeTurn: async () => ({ modelId: 'model-id', stopReason: null }),
+        isBackgroundRun: true,
+      }),
+    ).resolves.toMatchObject({ finish: { outcome: { kind: 'completed' } } });
+
+    expect(finish).toHaveBeenCalledTimes(1);
+    expect(finish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        turnId: 'turn-id',
+        status: AgentTurnStatus.COMPLETED,
+      }),
+    );
   });
 });
