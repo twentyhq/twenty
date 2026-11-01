@@ -5,7 +5,7 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type PermissionsRowAccessRequest } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { resolveNamedPrincipalIds } from 'src/engine/permissions/principal/utils/resolve-named-principal-ids.util';
-import { hasPrivateRecords } from 'src/engine/permissions/private-record/utils/has-private-records.util';
+import { isRecordPrivacyApplicable } from 'src/engine/permissions/private-record/utils/is-record-privacy-applicable.util';
 import { isOperationGrantedBeyondRole } from 'src/engine/permissions/record-share/utils/is-operation-granted-beyond-role.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/permissions/record-share/utils/resolve-required-record-share-access-levels.util';
 
@@ -31,7 +31,7 @@ export const resolvePermissionsShareGrant = (
   if (
     !isNonEmptyArray(principalIds) ||
     !isNonEmptyArray(accessLevels) ||
-    (!isGrantedBeyondRole && !hasPrivateRecords(request))
+    (!isGrantedBeyondRole && !isRecordPrivacyApplicable(request))
   ) {
     return undefined;
   }

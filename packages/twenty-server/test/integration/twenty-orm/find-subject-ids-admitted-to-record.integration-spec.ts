@@ -118,6 +118,7 @@ describe('WorkspaceRepository.findSubjectIdsAdmittedToRecord', () => {
     const deniedSubjectId = randomUUID();
     const admittedSubjectId = randomUUID();
     const refusedSubjectId = randomUUID();
+    const readOnlySubjectId = randomUUID();
 
     expect(
       await findAdmittedSubjectIds({
@@ -127,6 +128,23 @@ describe('WorkspaceRepository.findSubjectIdsAdmittedToRecord', () => {
           [deniedSubjectId, { ...openSubject, objectsPermissions: {} }],
           [admittedSubjectId, buildIdSubject(recordId)],
           [refusedSubjectId, buildIdSubject(otherRecordId)],
+          [
+            readOnlySubjectId,
+            {
+              ...openSubject,
+              objectsPermissions: {
+                [personObjectMetadata.id]: {
+                  canReadObjectRecords: true,
+                  canUpdateObjectRecords: false,
+                  canSoftDeleteObjectRecords: false,
+                  canDestroyObjectRecords: false,
+                  restrictedFields: {},
+                  rowLevelPermissionPredicates: [],
+                  rowLevelPermissionPredicateGroups: [],
+                },
+              },
+            },
+          ],
         ]),
       }),
     ).toEqual([openSubjectId, admittedSubjectId].sort());

@@ -8,14 +8,14 @@ import { resolveRequiredRecordShareAccessLevels } from 'src/engine/permissions/r
 import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
 
 // An insert has no record yet, so privacy cannot apply to it
-export const hasPrivateRecords = ({
+export const isRecordPrivacyApplicable = ({
   subject,
   environment,
   flatObjectMetadata,
   operationType,
-}: Omit<
+}: Pick<
   PermissionsRowAccessRequest,
-  'hypotheticalRecordShareAccessLevel'
+  'subject' | 'environment' | 'flatObjectMetadata' | 'operationType'
 >): boolean =>
   isNonEmptyArray(resolveRequiredRecordShareAccessLevels(operationType)) &&
   isPrivateRecordEnabled(environment.featureFlagsMap) &&

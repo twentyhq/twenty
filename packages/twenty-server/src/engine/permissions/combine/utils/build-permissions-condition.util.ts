@@ -55,16 +55,18 @@ export const buildPermissionsCondition = ({
   )
     ? resolvePermissionsRowLevelPermissionFilter(sqlRequest)
     : undefined;
-  const conditions =
-    isDefined(rowLevelPermissionFilter) && recordConditions.length > 0
-      ? [
-          ...roleConditions,
-          combineSqlConditions([
-            rowLevelPermissionFilter.condition,
-            combineWithOr(recordConditions),
-          ]),
-        ]
-      : [...roleConditions, ...recordConditions];
+
+  if (isDefined(rowLevelPermissionFilter) && recordConditions.length > 0) {
+    return combineWithOr([
+      ...roleConditions,
+      combineSqlConditions([
+        rowLevelPermissionFilter.condition,
+        combineWithOr(recordConditions),
+      ]),
+    ]);
+  }
+
+  const conditions = [...roleConditions, ...recordConditions];
 
   return conditions.length === 0 ? false : combineWithOr(conditions);
 };

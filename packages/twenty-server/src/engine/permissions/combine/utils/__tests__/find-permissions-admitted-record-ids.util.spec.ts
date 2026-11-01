@@ -43,10 +43,12 @@ const flatObjectMetadata = {
   fieldIds: [statusField.id, createdByField.id],
 };
 
+const emptyFlatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> =
+  createEmptyFlatEntityMaps();
 const flatFieldMetadataMaps = [statusField, createdByField].reduce(
   (flatEntityMaps, flatEntity) =>
     addFlatEntityToFlatEntityMapsOrThrow({ flatEntity, flatEntityMaps }),
-  createEmptyFlatEntityMaps() as FlatEntityMaps<FlatFieldMetadata>,
+  emptyFlatFieldMetadataMaps,
 );
 
 const records: RowAccessRecord[] = [
