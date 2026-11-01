@@ -61,7 +61,8 @@ export const findPermissionsAdmittedRecordIds = async <
   const objectMetadataId = grants.flatObjectMetadata.id;
   const isLimitedToPublicRecords = grants.areRoleGrantsLimitedToPublicRecords;
   const isReadingPrivacy =
-    isLimitedToPublicRecords ||
+    (isLimitedToPublicRecords &&
+      (grants.isObjectGranted || isDefined(rowLevelPermissionGrant))) ||
     (isDefined(shareGrant) && shareGrant.isLimitedToPrivateRecords) ||
     isDefined(creatorGrant);
   const privateRecordStates = isReadingPrivacy
