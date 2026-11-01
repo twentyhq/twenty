@@ -23,7 +23,7 @@ const GENERATE_MUTATION = `
 `;
 
 export const ai = {
-  // runs as the function's caller; with no scope it gets no data tools, and a scope only narrows the caller
+  // sent with the application's token, so it acts as the application; with no scope it gets no data tools
   generate: async ({
     input,
     ...rest

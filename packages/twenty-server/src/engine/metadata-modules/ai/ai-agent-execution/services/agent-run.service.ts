@@ -160,6 +160,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     const responseFormat = parseAgentInputOrThrow({
       schema: agentResponseFormatSchema.nullish(),
       input: input.responseFormat,
+      label: 'response format',
     });
 
     const agentRow = await this.agentRepository.findOne(workspace.id, {

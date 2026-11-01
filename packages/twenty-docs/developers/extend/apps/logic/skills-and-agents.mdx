@@ -347,7 +347,7 @@ const { success, text, error } = await ai.generate({
 ```
 
 - `input` is a string, or a list of `{ role, content }` messages.
-- `instructions` (optional) is the system prompt.
+- `instructions` (optional) adds the caller's system instructions.
 - `modelId` (optional) picks the model. Without it, the call uses the
   workspace's default model.
 - `responseFormat` (optional) works as in `runAgent()`. With
@@ -368,8 +368,10 @@ It resolves to `{ success, text, object, error, runId, usage }`:
   steps that finished before a failure.
 
 The call acts as whoever made it: the member a user-scoped token belongs to,
-otherwise your application, otherwise the API key. It never exceeds your
-application's role.
+otherwise your application, otherwise the API key. From a logic function the
+SDK sends your application's own token, as `runAgent()` does, so the call acts
+as your application. It never exceeds your application's role, and an
+application without a default role cannot call it.
 
 Without `scope`, the call reads and writes no records. To let it use the
 database, pass a `scope`, written like a role's permissions:
