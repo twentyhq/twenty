@@ -6,9 +6,7 @@ import { preserveLegacyRecordAccess } from 'src/database/commands/upgrade-versio
 import { isEmptyUnprovisionedAgentHistoryWorkspace } from 'src/database/commands/upgrade-version-command/2-43/utils/is-empty-unprovisioned-agent-history-workspace.util';
 import { backfillLegacyChatThreadOwnerGrants as backfillChatThreadOwnerGrants } from 'src/database/commands/agent-history/utils/backfill-legacy-chat-thread-owner-grants.util';
 import { Command } from 'nest-commander';
-import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
@@ -17,7 +15,6 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 @RegisteredWorkspaceCommand('2.43.0', 1790312694997)
 @Command({
@@ -30,7 +27,6 @@ export class EnableCommonRecordSharingCommand extends ProvisionedWorkspaceComman
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly storage: AgentHistoryUpgradeStorageService,
-    private readonly migrations: WorkspaceMigrationValidateBuildAndRunService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     @InjectDataSource() private readonly dataSource: DataSource,
   ) {
@@ -110,8 +106,6 @@ export class EnableCommonRecordSharingCommand extends ProvisionedWorkspaceComman
         flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
       },
     });
-    // Ownership commits before metadata changes. Retries are idempotent and
-    // failure leaves SYSTEM protection intact.
     // run() refuses workspaces whose history has not moved to workspace storage.
     await this.storage.run(workspaceId, async ({ manager, table }) => {
       await backfillChatThreadOwnerGrants({
@@ -123,41 +117,16 @@ export class EnableCommonRecordSharingCommand extends ProvisionedWorkspaceComman
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'rolesPermissions',
     ]);
-    const result =
-      await this.migrations.validateBuildAndRunLegacyWorkspaceMigration({
-        shouldDeferActions: false,
-        workspaceId,
-        isSystemBuild: true,
-        applicationUniversalIdentifier:
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-        allFlatEntityOperationByMetadataName: {
-          objectMetadata: {
-            flatEntityToCreate: [],
-            flatEntityToDelete: [],
-            flatEntityToUpdate: [
-              {
-                ...thread,
-                readability: MetadataReadability.PRIVATE,
-                writability: MetadataWritability.OPEN,
-              },
-            ],
-          },
-          fieldMetadata: {
-            flatEntityToCreate: [],
-            flatEntityToDelete: [],
-            flatEntityToUpdate: [
-              {
-                ...title,
-                writability: MetadataWritability.OPEN,
-              },
-            ],
-          },
-        },
-      });
-    if (result.status === 'fail') {
-      throw new Error(
-        `Could not migrate conversation permissions: ${JSON.stringify(result)}`,
-      );
-    }
+    // Later upgrades turn legacy SYSTEM access into disabled actions, which would lock existing chats away
+    await this.dataSource.query(
+      `UPDATE core."objectMetadata" SET readability = 'PRIVATE', writability = 'OPEN'
+        WHERE "workspaceId" = $1 AND id = $2`,
+      [workspaceId, thread.id],
+    );
+    await this.dataSource.query(
+      `UPDATE core."fieldMetadata" SET writability = 'OPEN'
+        WHERE "workspaceId" = $1 AND id = $2`,
+      [workspaceId, title.id],
+    );
   }
 }

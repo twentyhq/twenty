@@ -58,6 +58,11 @@ const StyledScheduledChangeItem = styled.div`
   }
 `;
 
+const StyledIncludedBillingItem = styled(StyledScheduledChangeItem)`
+  gap: ${themeCssVariables.spacing[3]};
+  grid-template-columns: max-content minmax(0, 1fr);
+`;
+
 type BillingFieldRowProps = {
   Icon: IconComponent;
   label: string;
@@ -103,5 +108,25 @@ export const ScheduledBillingChangeField = ({
       </StyledBillingFieldLabel>
       <StyledBillingFieldValue>{value}</StyledBillingFieldValue>
     </StyledScheduledChangeItem>
+  );
+};
+
+export type IncludedBillingFieldProps = ScheduledBillingChangeFieldProps;
+
+export const IncludedBillingField = ({
+  Icon,
+  label,
+  value,
+}: IncludedBillingFieldProps) => {
+  const theme = useTheme();
+
+  return (
+    <StyledIncludedBillingItem>
+      <StyledBillingFieldLabel>
+        <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+        {label}
+      </StyledBillingFieldLabel>
+      <StyledBillingFieldValue>{value}</StyledBillingFieldValue>
+    </StyledIncludedBillingItem>
   );
 };

@@ -20,7 +20,6 @@ import {
   type UniversalDeleteWorkflowAction,
   type UniversalUpdateWorkflowAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/workflow/types/workspace-migration-workflow-action.type';
-import { type FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { type FlatAgentMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-agent-maps.type';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { type FlatCommandMenuItemMaps } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item-maps.type';
@@ -32,6 +31,8 @@ import { type FlatEventMetadataMaps } from 'src/engine/metadata-modules/flat-eve
 import { type FlatEventMetadata } from 'src/engine/metadata-modules/flat-event-metadata/types/flat-event-metadata.type';
 import { type FlatTimelineActivityTypeMaps } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type-maps.type';
 import { type FlatTimelineActivityType } from 'src/engine/metadata-modules/flat-timeline-activity-type/types/flat-timeline-activity-type.type';
+import { type FlatRelatedRecordPathMaps } from 'src/engine/metadata-modules/flat-related-record-path/types/flat-related-record-path-maps.type';
+import { type FlatRelatedRecordPath } from 'src/engine/metadata-modules/flat-related-record-path/types/flat-related-record-path.type';
 import { type FlatValidationRuleMaps } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule-maps.type';
 import { type FlatValidationRule } from 'src/engine/metadata-modules/flat-validation-rule/types/flat-validation-rule.type';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
@@ -101,8 +102,9 @@ import { type UniversalFlatConnectionProvider } from 'src/engine/workspace-manag
 import { type UniversalFlatMessagingProvider } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-messaging-provider.type';
 import { type UniversalFlatEventMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-event-metadata.type';
 import { type UniversalFlatTimelineActivityType } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-timeline-activity-type.type';
+import { type UniversalFlatRelatedRecordPath } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-related-record-path.type';
 import { type UniversalFlatValidationRule } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-validation-rule.type';
-import { type UniversalFlatEntityFrom } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-entity-from.type';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatFieldPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-permission.type';
 import { type UniversalFlatFrontComponent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-front-component.type';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
@@ -179,6 +181,14 @@ import {
   type UniversalDeleteTimelineActivityTypeAction,
   type UniversalUpdateTimelineActivityTypeAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/timeline-activity-type/types/workspace-migration-timeline-activity-type-action.type';
+import {
+  type FlatCreateRelatedRecordPathAction,
+  type FlatDeleteRelatedRecordPathAction,
+  type FlatUpdateRelatedRecordPathAction,
+  type UniversalCreateRelatedRecordPathAction,
+  type UniversalDeleteRelatedRecordPathAction,
+  type UniversalUpdateRelatedRecordPathAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/related-record-path/types/workspace-migration-related-record-path-action.type';
 import {
   type FlatCreateValidationRuleAction,
   type FlatDeleteValidationRuleAction,
@@ -467,10 +477,7 @@ export type AllFlatEntityTypesByMetadataName = {
       delete: FlatDeleteFieldAction;
     };
     flatEntity: FlatFieldMetadata;
-    universalFlatEntity: UniversalFlatEntityFrom<
-      FieldMetadataEntity,
-      'fieldMetadata'
-    >;
+    universalFlatEntity: UniversalFlatFieldMetadata;
     entity: MetadataEntity<'fieldMetadata'>;
   };
   objectMetadata: {
@@ -1064,6 +1071,22 @@ export type AllFlatEntityTypesByMetadataName = {
     flatEntity: FlatSettingsMenuItem;
     universalFlatEntity: UniversalFlatSettingsMenuItem;
     entity: MetadataEntity<'settingsMenuItem'>;
+  };
+  relatedRecordPath: {
+    flatEntityMaps: FlatRelatedRecordPathMaps;
+    universalActions: {
+      create: UniversalCreateRelatedRecordPathAction;
+      update: UniversalUpdateRelatedRecordPathAction;
+      delete: UniversalDeleteRelatedRecordPathAction;
+    };
+    flatActions: {
+      create: FlatCreateRelatedRecordPathAction;
+      update: FlatUpdateRelatedRecordPathAction;
+      delete: FlatDeleteRelatedRecordPathAction;
+    };
+    flatEntity: FlatRelatedRecordPath;
+    universalFlatEntity: UniversalFlatRelatedRecordPath;
+    entity: MetadataEntity<'relatedRecordPath'>;
   };
   validationRule: {
     flatEntityMaps: FlatValidationRuleMaps;

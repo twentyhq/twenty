@@ -260,14 +260,14 @@ This is free — it runs before the sandbox and does not add a code_interpreter 
    \`\`\`
    Never paginate through hundreds of existing records with \`find_many_*\` to find the ones you just created.
 5. **Confirm the mapping before writing.** Present the proposed column → field mapping to the user (source column → target field, relation strategy such as "Company matched by name → companyId", and any type coercions) and wait for them to confirm or adjust. Do not write anything before this confirmation.
-6. **Silently validate the mapping with a 2-row upsert.** Inside the same \`code_interpreter\` run, upsert just 2 rows as an internal correctness check. This is NOT a user-facing step: do not announce or narrate it. Only surface it if it FAILS — then report the error and the offending mapping so it can be fixed before the full import.
-7. **Write with bulk_upsert.** Prefer upsert so dedup on unique fields (e.g. email) is handled server-side and re-runs are idempotent:
+6. **Silently validate the mapping with a 2-row upsert.** Inside the same \`code_interpreter\` run, upsert just the first 2 rows as an internal correctness check. This is NOT a user-facing step: do not announce or narrate it. Only surface it if it FAILS — then report the error and the offending mapping so it can be fixed before the full import.
+7. **Write the remaining rows with bulk_upsert.** Write \`records[2:]\`, never the full list again: objects without a unique field (opportunities, tasks, notes, most custom objects) cannot dedupe, so the 2 check rows would be created twice. Prefer upsert so dedup on unique fields (e.g. email) is handled server-side and re-runs are idempotent:
    \`\`\`python
-   summary = twenty.bulk_upsert('people', records)
+   summary = twenty.bulk_upsert('people', records[2:])
    print(summary)  # { 'created': 4000, 'updated': 380, 'upserted': 4380, 'failed': 0, 'errors': [] }
    \`\`\`
    \`bulk_upsert\` batches at 200 (the platform maximum) and paginates to completion. Never stop at "partial" — if some batches failed, report the count and retry the failed offsets.
-8. **Report a compact summary only** — the \`created\` / \`updated\` / \`failed\` split plus a few sample errors. Never echo the created records back into the conversation.
+8. **Report a compact summary only** — the \`created\` / \`updated\` / \`failed\` split plus a few sample errors. Add the 2 check rows' \`created\` / \`updated\` counts so the totals cover every row. Never echo the created records back into the conversation.
 
 ### Anti-patterns — never do these
 
@@ -1861,14 +1861,15 @@ Lead with counts, so the user sees the shape of the problem before the detail. T
 
 Always confirm before writing. Show what you will change and wait.
 
-- You cannot merge records. There is no merge tool; merging happens in the UI, where the user selects the records and uses the Merge action. Report each duplicate pair with both records referenced and leave the merge to them.
+- Merge duplicates with merge_many_* (merge_many_companies, merge_many_people, and so on), one call per group. Call it with dryRun: true first and show the user the merged record. When the records disagree, ask which one to keep and pass its position in ids as conflictPriorityIndex. The other records are permanently deleted, so merge only the groups the user approved.
+- If there is no merge_many_* tool for the object, the user's role cannot merge it. Report each group with its records referenced and leave the merge to someone who can.
 - Fill missing fields only from data already in the workspace, never from a guess.
 - Apply approved changes in one call rather than one record at a time. These tools carry the object's plural name: update_many_people, upsert_many_companies, and so on. Use update_many_* when every matched record gets the same value, upsert_many_* when each record needs its own.
 - Report what changed afterwards, and say what you deliberately left alone.
 
 ## Rules
 
-- Never delete a record in this skill, and never fake a merge by copying fields across and deleting the loser.
+- Never delete a record in this skill except through merge_many_*, and never fake a merge by copying fields across and deleting the loser: that loses every record linked to it.
 - Never confirm on the user's behalf, and never read a general yes as approval for a second batch.
 - If there is nothing wrong, say so. A clean workspace is a valid result.`,
         isSystem: false,

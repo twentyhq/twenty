@@ -101,9 +101,15 @@ export { FRONT_COMPONENT_SHARED_DEPENDENCIES_BUILT_PATH } from './constants/Fron
 export { FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER } from './constants/FrontComponentSharedDependenciesImportSpecifier';
 export { FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES } from './constants/FrontComponentWidgetPageLayoutTypes';
 export { GENERATED_DIR } from './constants/GeneratedDirectory';
+export { GETTING_STARTED_APP_UNIVERSAL_IDENTIFIERS } from './constants/GettingStartedAppUniversalIdentifiers';
 export { MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION } from './constants/MinimumUniversalIdentifierUuidVersion';
 export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
+export { RESERVED_SETTINGS_MENU_ITEM_SLUGS } from './constants/ReservedSettingsMenuItemSlugs';
+export { SETTINGS_GENERAL_TAB_ID } from './constants/SettingsGeneralTabId';
+export { SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH } from './constants/SettingsMenuItemSlugMaxLength';
+export { SETTINGS_VARIABLES_TAB_ID } from './constants/SettingsVariablesTabId';
+export { TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS } from './constants/TwentyPublicAppUniversalIdentifiers';
 export { TWENTY_STANDARD_APPLICATION_NAME } from './constants/TwentyStandardApplicationName';
 export { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from './constants/TwentyStandardApplicationUniversalIdentifier';
 export type {
@@ -136,6 +142,7 @@ export { getObjectPermissionUniversalIdentifier } from './deterministic-identifi
 export { getObjectUniversalIdentifier } from './deterministic-identifier/get-object-universal-identifier.util';
 export { getPageLayoutUniversalIdentifier } from './deterministic-identifier/get-page-layout-universal-identifier.util';
 export { getPermissionFlagUniversalIdentifier } from './deterministic-identifier/get-permission-flag-universal-identifier.util';
+export { getRelatedRecordPathUniversalIdentifier } from './deterministic-identifier/get-related-record-path-universal-identifier.util';
 export { getRolePermissionFlagUniversalIdentifier } from './deterministic-identifier/get-role-permission-flag-universal-identifier.util';
 export { getRoleTargetUniversalIdentifier } from './deterministic-identifier/get-role-target-universal-identifier.util';
 export { getRoleUniversalIdentifier } from './deterministic-identifier/get-role-universal-identifier.util';
@@ -204,6 +211,7 @@ export type {
   IdentifiedAccount,
   IdentifyAccountResult,
 } from './identifyAccountType';
+export type { InboxThreadRecordInput } from './inboxThreadRecordInputType';
 export type { IndexFieldManifest } from './indexFieldManifestType';
 export type { IndexManifest } from './indexManifestType';
 export type {
@@ -213,6 +221,7 @@ export type {
   HttpRouteTriggerSettings,
 } from './logicFunctionManifestType';
 export type { TranslationsManifest, Manifest } from './manifestType';
+export type { McpServerManifest } from './mcpServerManifestType';
 export type { MessagingProviderManifest } from './messagingProviderManifestType';
 export type { NavigationMenuItemManifest } from './navigationMenuItemManifestType';
 export type {
@@ -238,6 +247,7 @@ export type {
 } from './permissionFlagManifestType';
 export type { PostInstallLogicFunctionApplicationManifest } from './postInstallLogicFunctionApplicationType';
 export type { PreInstallLogicFunctionApplicationManifest } from './preInstallLogicFunctionApplicationType';
+export type { RelatedRecordPathManifest } from './relatedRecordPathManifestType';
 export type { RoleManifestGrant } from './roleManifestGrantType';
 export type {
   ObjectPermissionManifest,
@@ -289,6 +299,7 @@ export type { UninstallLogicFunctionApplicationManifest } from './uninstallLogic
 export type { UsageOperationTypeValue } from './usageOperationTypesType';
 export {
   USAGE_OPERATION_TYPES,
+  DEFAULT_APP_USAGE_OPERATION_TYPE,
   isUsageOperationTypeValue,
 } from './usageOperationTypesType';
 export {
@@ -308,10 +319,12 @@ export { getRoleManifestGrantsNotCoveredBy } from './utils/getRoleManifestGrants
 export { getRowLevelRestrictionSignature } from './utils/getRowLevelRestrictionSignature';
 export { isConnectionProviderScope } from './utils/isConnectionProviderScope';
 export { isFrontComponentWidgetPageLayoutType } from './utils/isFrontComponentWidgetPageLayoutType';
+export { isReservedSettingsMenuItemSlug } from './utils/isReservedSettingsMenuItemSlug';
 export {
   RESERVED_SETTINGS_MENU_ITEM_TITLES,
   isReservedSettingsMenuItemTitle,
 } from './utils/isReservedSettingsMenuItemTitle';
+export { isValidSettingsMenuItemSlug } from './utils/isValidSettingsMenuItemSlug';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
 export type {
   ViewManifestFilterValue,
@@ -333,6 +346,7 @@ export type { WorkflowManifest } from './workflowManifestType';
 export { workflowManifestSchema } from './workflowManifestType';
 export type { WorkflowStepManifest } from './workflowStepManifestType';
 export {
+  workflowManifestPositionSchema,
   workflowStepFilterManifestSchema,
   workflowStepManifestSchema,
 } from './workflowStepManifestType';

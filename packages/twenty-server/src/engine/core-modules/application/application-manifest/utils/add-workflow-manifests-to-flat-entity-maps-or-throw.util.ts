@@ -7,7 +7,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { fromWorkflowManifestToUniversalFlatWorkflowOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-manifest-to-universal-flat-workflow-or-throw.util';
-import { type WorkflowManifestConnectedAccountReference } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
+import { type ConnectedAccountForWorkflowStepResolution } from 'src/engine/metadata-modules/connected-account/types/connected-account-for-workflow-step-resolution.type';
 import { findActiveFlatWorkflowVersionByWorkflowId } from 'src/engine/core-modules/application/application-manifest/utils/find-active-flat-workflow-version-by-workflow-id.util';
 import { prepareWorkflowManifestReferences } from 'src/engine/core-modules/application/application-manifest/utils/prepare-workflow-manifest-references.util';
 import { validateWorkflowManifestRecordFields } from 'src/engine/core-modules/application/application-manifest/utils/validate-workflow-manifest-record-fields.util';
@@ -64,7 +64,7 @@ export const addWorkflowManifestsToFlatEntityMapsOrThrow = ({
   existingAllFlatEntityMaps: AllFlatEntityMaps;
   idByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName;
   isWorkspaceCustomApplication: boolean;
-  connectedAccounts: readonly WorkflowManifestConnectedAccountReference[];
+  connectedAccounts: readonly ConnectedAccountForWorkflowStepResolution[];
   now: string;
 }): (UniversalFlatWorkflow & { id: string })[] => {
   const applicationUniversalIdentifier =

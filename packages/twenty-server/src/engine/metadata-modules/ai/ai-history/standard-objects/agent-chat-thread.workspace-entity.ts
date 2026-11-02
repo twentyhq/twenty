@@ -4,6 +4,7 @@ import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai
 import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { type AgentChatThreadParticipantWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread-participant.workspace-entity';
 import { type AgentChatThreadTargetWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread-target.workspace-entity';
+import { type AgentChatThreadConversationType } from 'src/engine/metadata-modules/ai/ai-history/types/agent-chat-thread-conversation-type.type';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -24,6 +25,7 @@ export class AgentChatThreadWorkspaceEntity extends BaseWorkspaceEntity {
   channelArchivedAt: string | null;
   channelSnoozedUntil: string | null;
   title: string | null;
+  conversationType: AgentChatThreadConversationType;
   isAssistantParticipant: boolean;
   lastActivityAt: string | null;
   lastMessageText: string | null;

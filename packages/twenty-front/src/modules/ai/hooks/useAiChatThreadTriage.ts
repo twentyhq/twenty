@@ -15,7 +15,13 @@ import {
 } from '~/generated-metadata/graphql';
 import { isAiChatInboxPath } from '~/utils/isAiChatInboxPath';
 
-export const useAiChatThreadTriage = (threadId: string) => {
+export const useAiChatThreadTriage = ({
+  threadId,
+  channelIdOutsideInbox,
+}: {
+  threadId: string;
+  channelIdOutsideInbox?: string | null;
+}) => {
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
   const isInboxEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
@@ -27,23 +33,24 @@ export const useAiChatThreadTriage = (threadId: string) => {
   const agentChatShownChannelView = useAtomStateValue(
     agentChatShownChannelViewSelector,
   );
+  const channelId = isAiChatInboxPath(location.pathname)
+    ? (agentChatShownChannelView?.channelId ?? null)
+    : (channelIdOutsideInbox ?? null);
   const { [threadId]: inboxStatus } = useAtomFamilySelectorValue(
     agentChatThreadInboxStatusByThreadIdFamilySelector,
-    {
-      threadIds: [threadId],
-      channelId: isAiChatInboxPath(location.pathname)
-        ? (agentChatShownChannelView?.channelId ?? null)
-        : null,
-    },
+    { threadIds: [threadId], channelId },
   );
+  const isInChannel = inboxStatus?.isChannelCopy ?? false;
 
   return {
     status: getAiChatThreadTriageStatus({
       hasAiPermission,
       isInboxEnabled,
-      areParticipantsLoaded: isDefined(agentChatThreadParticipants),
+      areParticipantsLoaded:
+        isInChannel || isDefined(agentChatThreadParticipants),
       scope: inboxStatus?.scope ?? 'NONE',
     }),
-    isInChannel: inboxStatus?.isChannelCopy ?? false,
+    isInChannel,
+    channelId,
   };
 };

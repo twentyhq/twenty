@@ -55,6 +55,7 @@ import { ApplicationWorkflowStepPermissionService } from 'src/modules/workflow/w
 import { RUN_WORKFLOW_JOB_NAME } from 'src/modules/workflow/workflow-runner/constants/run-workflow-job-name';
 import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/types/run-workflow-job-data.type';
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
+import { WorkflowRunJobScopeWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-job-scope.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 import { WorkflowStepWaitWorkspaceService } from 'src/modules/workflow/workflow-wait/services/workflow-step-wait.workspace-service';
 
@@ -80,6 +81,7 @@ export class WorkflowExecutorWorkspaceService {
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly applicationWorkflowStepPermissionService: ApplicationWorkflowStepPermissionService,
+    private readonly workflowRunJobScopeWorkspaceService: WorkflowRunJobScopeWorkspaceService,
   ) {}
 
   async executeFromSteps({
@@ -180,7 +182,7 @@ export class WorkflowExecutorWorkspaceService {
           workflowRunId,
           workspaceId,
           billingSpenders,
-          runApplicationId: workflowRun.createdBy.context?.applicationId,
+          runApplicationId: workflow.applicationId,
         }));
 
       if (isDefined(actionOutput.error) && !actionOutput.isUserError) {
@@ -196,6 +198,7 @@ export class WorkflowExecutorWorkspaceService {
             retryDelayMs: getStepRetryDelayMs({ stepInfo: stepInfos[stepId] }),
             workflowRunId,
             workspaceId,
+            applicationId: workflow.applicationId,
           });
 
           return;
@@ -271,6 +274,7 @@ export class WorkflowExecutorWorkspaceService {
         lastExecutedStepId: stepId,
         workflowRunId,
         workspaceId,
+        applicationId: workflow.applicationId,
       });
 
       return;
@@ -583,7 +587,7 @@ export class WorkflowExecutorWorkspaceService {
     workflowRunId: string;
     workspaceId: string;
     billingSpenders: WorkflowBillingSpenders;
-    runApplicationId?: string;
+    runApplicationId: string;
   }) {
     const stepId = step.id;
 
@@ -758,12 +762,14 @@ export class WorkflowExecutorWorkspaceService {
     retryDelayMs,
     workflowRunId,
     workspaceId,
+    applicationId,
   }: {
     stepId: string;
     error: string;
     retryDelayMs: number;
     workflowRunId: string;
     workspaceId: string;
+    applicationId: string;
   }) {
     await this.workflowRunWorkspaceService.moveStepToRetry({
       stepId,
@@ -780,7 +786,16 @@ export class WorkflowExecutorWorkspaceService {
           workflowRunId,
           stepIdsToRetry: [stepId],
         },
-        { ...buildRunWorkflowJobOptions(workflowRunId), delay: retryDelayMs },
+        {
+          ...buildRunWorkflowJobOptions({
+            workflowRunId,
+            scope:
+              await this.workflowRunJobScopeWorkspaceService.resolveForApplication(
+                { workspaceId, applicationId },
+              ),
+          }),
+          delay: retryDelayMs,
+        },
       );
     } catch (enqueueError) {
       await this.workflowRunWorkspaceService.updateWorkflowRunStepInfos({
@@ -797,10 +812,12 @@ export class WorkflowExecutorWorkspaceService {
     lastExecutedStepId,
     workflowRunId,
     workspaceId,
+    applicationId,
   }: {
     lastExecutedStepId: string;
     workflowRunId: string;
     workspaceId: string;
+    applicationId: string;
   }) {
     await this.messageQueueService.add<RunWorkflowJobData>(
       RUN_WORKFLOW_JOB_NAME,
@@ -809,7 +826,14 @@ export class WorkflowExecutorWorkspaceService {
         workflowRunId,
         lastExecutedStepId,
       },
-      buildRunWorkflowJobOptions(workflowRunId),
+      buildRunWorkflowJobOptions({
+        workflowRunId,
+        scope:
+          await this.workflowRunJobScopeWorkspaceService.resolveForApplication({
+            workspaceId,
+            applicationId,
+          }),
+      }),
     );
   }
 }

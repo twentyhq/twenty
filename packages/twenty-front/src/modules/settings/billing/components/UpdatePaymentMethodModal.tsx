@@ -12,10 +12,14 @@ import { Dialog } from 'twenty-ui/primitives/surfaces';
 
 type UpdatePaymentMethodModalProps = {
   modalInstanceId: string;
+  title?: string;
+  description?: string;
 };
 
 export const UpdatePaymentMethodModal = ({
   modalInstanceId,
+  title,
+  description,
 }: UpdatePaymentMethodModalProps) => {
   const { t } = useLingui();
   const { closeDialog } = useDialog();
@@ -52,9 +56,12 @@ export const UpdatePaymentMethodModal = ({
           data-globally-prevent-click-outside
         >
           <Dialog.Header>
-            <Dialog.Title>{t`Update your payment method`}</Dialog.Title>
+            <Dialog.Title>
+              {title ?? t`Update your payment method`}
+            </Dialog.Title>
             <Dialog.Description>
-              {t`Add a card below to update your billing details and retry your payment.`}
+              {description ??
+                t`Add a card below to update your billing details and retry your payment.`}
             </Dialog.Description>
           </Dialog.Header>
           <Dialog.Body>

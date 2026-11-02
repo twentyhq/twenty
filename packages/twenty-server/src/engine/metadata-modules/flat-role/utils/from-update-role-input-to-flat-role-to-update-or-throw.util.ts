@@ -7,7 +7,7 @@ import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-
 import {
   PermissionsException,
   PermissionsExceptionCode,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
+} from 'src/engine/permissions/permissions.exception';
 import { type UpdateRoleInput } from 'src/engine/metadata-modules/role/dtos/update-role.input';
 
 export const fromUpdateRoleInputToFlatRoleToUpdateOrThrow = ({

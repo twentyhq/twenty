@@ -1,29 +1,16 @@
-import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
+import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_CHANNEL_NAVIGATION_ITEMS } from '@/ai/constants/AgentChatChannelNavigationItems';
 import { type AgentChatChannelView } from '@/ai/types/AgentChatChannelView';
-import { AgentChatChannelAssignmentFilter } from '~/generated-metadata/graphql';
 
 export const getAgentChatChannelNavigationItemOrThrow = (
-  channelView: Pick<AgentChatChannelView, 'channelStatus' | 'assignment'>,
+  channelView: Pick<AgentChatChannelView, 'channelStatus'>,
 ) => {
-  const matchingView = AGENT_CHAT_CHANNEL_NAVIGATION_ITEMS.find(
-    ({ channelStatus, assignment }) =>
-      channelStatus === channelView.channelStatus &&
-      assignment === channelView.assignment,
+  const navigationItem = AGENT_CHAT_CHANNEL_NAVIGATION_ITEMS.find(
+    ({ channelStatus }) => channelStatus === channelView.channelStatus,
   );
 
-  if (isDefined(matchingView)) {
-    return matchingView;
-  }
+  assertIsDefinedOrThrow(navigationItem);
 
-  const matchingStatus = AGENT_CHAT_CHANNEL_NAVIGATION_ITEMS.find(
-    ({ channelStatus, assignment }) =>
-      channelStatus === channelView.channelStatus &&
-      assignment === AgentChatChannelAssignmentFilter.ANY,
-  );
-
-  assertIsDefinedOrThrow(matchingStatus);
-
-  return matchingStatus;
+  return navigationItem;
 };

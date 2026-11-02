@@ -294,28 +294,25 @@ export default defineLogicFunction({
 Endpoint-ul este accesibil la:
 
 ```
-POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionId
+POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationId/:resolverLogicFunctionUniversalIdentifier
 ```
 
-Identificatorul este `id` al resolverului: cheia primară pe care serverul o atribuie când aplicația este sincronizată pentru prima dată în spațiul de lucru al proprietarului, nu `universalIdentifier` din manifestul dvs. Citiți-l din API-ul `/metadata` al spațiului de lucru al proprietarului, apoi înregistrați acel URL la furnizor:
+Primul segment este ID-ul înregistrării aplicației dvs., iar al doilea este `universalIdentifier` al resolver-ului din manifestul dvs. O rută se rezolvă doar către un resolver al acelei înregistrări, în spațiul de lucru al proprietarului. Când aplicația dvs. înregistrează webhook-ul propriu-zis, construiți URL-ul dintr-o funcție logică folosind `getServerRouteUrl`; Twenty injectează URL-ul de bază al rutelor de server ale aplicației dvs. ca `TWENTY_SERVER_ROUTES_URL`:
 
-```graphql
-query {
-  findManyLogicFunctions {
-    id
-    name
-    universalIdentifier
-  }
-}
+```ts
+import { getServerRouteUrl } from 'twenty-sdk/utils';
+
+const destinationUrl = getServerRouteUrl(
+  INVOICE_PAID_RESOLVER_UNIVERSAL_IDENTIFIER,
+);
 ```
 
 <Note>
-  Un URL care conține `universalIdentifier` al resolver-ului încă se rezolvă,
-  deocamdată, iar răspunsul conține un header `Deprecation`. Un `universalIdentifier` este
-  unic pentru fiecare spațiu de lucru, nu la nivel global: dacă o altă înregistrare deținută de un
-  spațiu de lucru diferit declară același identificator, platforma răspunde cu `404` pentru acel
-  URL în loc să aleagă între ele. Mutați URL-urile înregistrate la
-  furnizorii dvs. în forma `id`.
+  URL-urile care conțin doar `id` sau `universalIdentifier` ale resolverului
+  (`/webhooks/server/:identifier`) sunt încă rezolvate deocamdată, iar ambele răspund cu
+  un antet `Deprecation`. Forma `universalIdentifier` returnează `409` atunci când două
+  înregistrări declară același identificator. Mutați URL-urile înregistrate la
+  furnizorii dvs. în formularul de înregistrare.
 </Note>
 
 **Răspunsul la un GET de verificare.** Unii furnizori verifică un punct final înainte de a livra către acesta, trimițând un `GET` care conține o provocare la același URL către care vor trimite ulterior evenimente prin `POST` — WhatsApp Cloud API de la Meta este unul dintre aceștia. O rută de server răspunde numai la `POST`, cu excepția cazului în care specifici altfel, așa că declară ambele metode:
@@ -554,7 +551,7 @@ Fără `batchMode`, funcția de gestionare continuă să primească un `Database
 
 #### Contextul execuției
 
-Fiecare gestionar primește un al doilea argument care descrie execuția propriu-zisă, indiferent de ce a declanșat-o. În timp ce primul argument își schimbă forma pentru fiecare declanșator, acesta nu se schimbă:
+Handler-ele funcțiilor logice generice primesc un al doilea argument care descrie rularea în sine, indiferent de ce a declanșat-o. În timp ce primul argument își schimbă forma pentru fiecare declanșator, acesta nu se schimbă:
 
 ```ts
 import type { LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
@@ -899,7 +896,7 @@ const handler = async (params: { parentMessageId?: string }) => {
 
 Declară o verificare de sănătate cu `defineHealthCheck` pentru a raporta dacă aplicația ta poate rula efectiv. Este pentru lucruri pe care numai aplicația le poate ști: o cheie prezentă, dar revocată, un cont cu planul greșit, un webhook care nu a fost niciodată înregistrat. Ceea ce Twenty poate vedea singur — o variabilă obligatorie pe care nimeni nu a completat-o — este acoperit de [`isRequired`](/ro/developers/extend/apps/config/application) și nu necesită cod.
 
-Rulează pe partea de server, deci citește variabile secrete ca orice altă funcție logică. Handlerul nu primește argumente.
+Rulează pe partea de server, deci citește variabile secrete ca orice altă funcție logică. O verificare a spațiului de lucru nu are pe nimeni în spatele ei, deci handler-ul nu are nevoie de argumente.
 
 ```ts src/logic-functions/health-check.ts
 import { defineHealthCheck } from 'twenty-sdk/define';
@@ -952,7 +949,42 @@ O verificare care aruncă o excepție, expiră sau returnează o structură pe c
 
 Locația trebuie să rămână în Twenty, deci începe cu `/` sau `#`: una externă, relativă la protocol sau relativă își pierde butonul în loc să devină o redirecționare în altă parte. Butonul este, de asemenea, eliminat atunci când aplicația nu raportează nicio locație și nu are nicio filă de configurare la care să revină, astfel încât o verificare a unei aplicații fără variabile și fără elemente de meniu de setări îi afișează titlul fără un buton inactiv.
 
-Este permisă o singură verificare de sănătate pentru fiecare aplicație; declararea a mai mult de una duce la eșecul build-ului.
+### Verificarea configurației fiecărui membru
+
+O aplicație declară o funcție de verificare a stării. Omiteți `runOnUserPreferences` sau setați-o la `false` pentru a rula o verificare a spațiului de lucru în pagina de setări a aplicației, cu un handler fără argumente. Setați `runOnUserPreferences: true` pentru a rula în schimb o verificare a membrului în pagina sa de preferințe Apps. Un handler de membru primește `{ userWorkspaceId: string }` obligatoriu din sesiunea autentificată:
+
+```ts src/logic-functions/health-check.ts
+import { defineHealthCheck } from 'twenty-sdk/define';
+import { listConnections } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
+
+export default defineHealthCheck({
+  universalIdentifier: 'f3b6a4d2-9c81-4e0a-b5c7-2d1e8f4a6b03',
+  name: 'health-check',
+  runOnUserPreferences: true,
+  handler: async ({ userWorkspaceId }) => {
+    const [myConnection] = await listConnections({
+      scope: 'USER',
+      userWorkspaceId,
+    });
+
+    if (!isDefined(myConnection) || isDefined(myConnection.authFailedAt)) {
+      return { status: 'WARNING', title: 'Connect your account' };
+    }
+
+    return { status: 'OK' };
+  },
+});
+```
+
+O verificare a membrului rulează atunci când un membru deschide aplicația în pagina sa de **preferințe Apps**, iar numai acel membru îi vede bannerul. Rulează ca acel membru: handler-ul primește `{ userWorkspaceId }` din sesiunea autentificată, iar variabilele cu domeniu de utilizator își păstrează valorile. Obiectul parametrului și ID-ul sunt obligatorii pentru acest mod. Nu rulează în setările aplicației pentru spațiul de lucru. Transmiteți `userWorkspaceId` la `listConnections()` pentru ca aceasta să returneze numai conexiunile acelui membru. O conexiune a cărei reîmprospătare a tokenului eșuează este omisă din listă, deci „nicio conexiune” acoperă și „reconectare”. Un buton fără `location` duce la fila General a aplicației din acea pagină.
+
+<Note>
+  Verificările membrilor necesită Twenty 2.55.0 sau o versiune ulterioară. **Preferințele Apps** nu sunt încă activate
+  în fiecare spațiu de lucru: acolo unde nu sunt, o verificare a membrului nu rulează niciodată.
+</Note>
+
+O aplicație poate declara o singură funcție de verificare a stării, fie în modul spațiu de lucru, fie în modul membru. Declarațiile existente își păstrează handler-ul spațiului de lucru fără argumente. Declararea unei a doua funcții face ca compilarea să eșueze.
 
 ## Creați o activitate pe cronologie
 

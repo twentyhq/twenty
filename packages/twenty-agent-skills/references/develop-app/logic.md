@@ -22,7 +22,8 @@ Other rules:
 - Prefer idempotent behavior for jobs and repeated invocations.
 - Read secrets through the application-config helper, not raw `process.env`.
 - An application variable declared with `scope: 'USER'` is in `process.env` with the value of the member who triggered the run, or its default until they set their own; a run nobody triggered (cron, install hooks) gets no user variables. That member is not always the one the run is about: a database event runs as whoever edited the record. For example, with a user `SLACK_TOKEN`, a function on opportunity update posts with the editor's token, not the opportunity owner's. When the run is about someone else or every member, read the values with `myUserApplicationVariables` through `new MetadataApiClient({ runAs: 'application' })`.
-- Twenty injects `TWENTY_API_URL`, `TWENTY_APP_ACCESS_TOKEN`, `TWENTY_APP_APPLICATION_ACCESS_TOKEN`, `TWENTY_API_KEY`, `TWENTY_FUNCTIONS_URL` and `APPLICATION_ID` into every run. Never declare an application or server variable with one of these names: the manifest is rejected on sync and publish.
+- Twenty injects `TWENTY_API_URL`, `TWENTY_APP_ACCESS_TOKEN`, `TWENTY_APP_APPLICATION_ACCESS_TOKEN`, `TWENTY_API_KEY`, `TWENTY_FUNCTIONS_URL`, `TWENTY_SERVER_ROUTES_URL` and `APPLICATION_ID` into every run. Never declare an application or server variable with one of these names, or any other name starting with `TWENTY_`: the manifest is rejected on sync and publish.
+- To register a server route with a webhook provider, build its URL with `getServerRouteUrl(logicFunctionUniversalIdentifier)` from `twenty-sdk/utils`. It returns `/webhooks/server/<applicationRegistrationId>/<logicFunctionUniversalIdentifier>` on the server's URL, and only works inside a logic function of an application. Do not build the URL by hand.
 - Do not hide customer-impacting side effects behind UI-only actions.
 
 Soft cap: a `*.logic-function.ts` or `*.post-install.ts` file over 200 lines is a refactor signal.
@@ -93,6 +94,7 @@ When adding AI behavior:
 - The message is always from the app. The call runs like the default clients: as the member who triggered the run or looks at the page, who then needs the AI permission too, or as the app when nobody triggered the run. In a front component an expired token is refreshed once before the call is retried.
 - Write mentions with `await inboxMention({ workspaceMemberId })` and record chips with `await inboxReferenceRecord({ objectNameSingular, recordId })`, never by hand. Both read the label the chip shows (the member's full name or email, the record's label identifier), so the caller needs read access to the member or record. A mention only renders: list every recipient in `workspaceMemberIds`.
 - `INBOX_ASSISTANT_MENTION` is the composer's mention of the assistant.
+- `await attachRecordToInboxThread({ threadId, objectNameSingular, recordId })` links a conversation to a person, company, opportunity or custom object record, and `detachRecordFromInboxThread` with the same input removes the link. Both are idempotent and run with the same access as `sendInboxMessage`: a member must be able to edit the conversation, and the app can act on one it wrote in or one its default role was granted (`THREAD_NOT_FOUND` otherwise). The record must be readable with that access (`RECORD_NOT_FOUND` otherwise).
 
 ## Realtime Events
 
@@ -126,9 +128,19 @@ To let members reply to an app's message channels, declare `defineMessagingProvi
 - The send function receives `{ messagingProviderName, connectedAccountId, messageChannelId, threadExternalId, text, idempotencyKey, recipients }` (type `SendAppMessagePayload`; `recipients` are the latest message's participants), must deliver the reply and return `{ externalId, sentAt? }`. Twenty then records it in the thread, and a later ingestion of the same `externalId` is a no-op. Throw on failure so nothing is recorded. A `sendAppChannelMessage` retry with the same `idempotencyKey` records the delivered reply without calling the function again; forward the key to the provider when it supports idempotent sends.
 - Declare one messaging provider per kind of messaging (LinkedIn, WhatsApp) even when they share a connection provider. Its connection provider cannot change after the first sync; declare a new one with a new `universalIdentifier` instead. Requires `"engines": { "twenty": ">=2.52.0" }`.
 
+## MCP Servers
+
+Beta: MCP servers are not live yet. Workspaces cannot use their tools until the feature ships, so do not build a feature that depends on them.
+
+To let the workspace's AI call a remote MCP server (Streamable HTTP) without syncing its data into Twenty, declare `defineMcpServer` with a snake_case `name` (lowercase letters, digits and underscores, starting with a letter, at most 32 characters; it prefixes the server's tool names), a `label` and an HTTP(S) `url`:
+
+- To authenticate, set `connectionProvider: { universalIdentifier }` to a connection provider of the same app; calls send that connection's access token as a Bearer token. Omit it for a public server.
+- The `url` cannot change in a later version while a connection provider is linked; declare a new server with a new `universalIdentifier` instead.
+- Workspaces can deactivate a server and a later app version keeps that choice. Requires `"engines": { "twenty": ">=2.53.0" }`.
+
 ## Post-Install Hooks
 
-Use `definePostInstallLogicFunction` for records that must exist on install — default workflows, views, roles, or seeded reference data. Do not implement this as runtime first-run code.
+Use `definePostInstallLogicFunction` for records that must exist on install — views, roles, or seeded reference data. Ship workflows with `defineWorkflow` (see `workflows.md`). Do not implement this as runtime first-run code.
 
 Post-install hook files live alongside other logic functions (typically `src/logic-functions/<name>.post-install.ts`). Kebab-case filename, one export per file.
 
@@ -156,9 +168,11 @@ The hook runs before the app's metadata, data, and code are removed, so handlers
 
 Use `defineHealthCheck` to report whether the app is actually able to run. It covers what only the app can know: a key that is present but revoked, an account on the wrong plan, a webhook that was never registered. A required variable nobody filled in is already covered by `isRequired` and needs no code.
 
-Health check files live alongside other logic functions (typically `src/logic-functions/health-check.ts`). Only one health check is allowed per app; declaring more than one fails the build.
+Health check files live alongside other logic functions (typically `src/logic-functions/health-check.ts`). An app declares one function with `defineHealthCheck`; a second declaration fails the build. Omit `runOnUserPreferences` or set it to `false` for a workspace check. Set it to `true` for a member check on Apps preferences instead; the check then does not run on workspace app settings.
 
-The config takes `universalIdentifier` and `handler`. The handler takes no arguments and runs server-side, so it reads secret variables like any other logic function.
+`defineHealthCheck` takes `universalIdentifier` and `handler`. The handler runs server-side, so it reads secret variables like any other logic function. A workspace handler takes no arguments.
+
+A member check reports each member's own setup, such as their own connection. It runs when a member opens the app on their Apps preferences page, as that member, and only that member sees the banner. With `runOnUserPreferences: true`, the handler requires `{ userWorkspaceId: string }` from the authenticated session: `handler: async ({ userWorkspaceId }) => ...`. User-scoped variables hold that member's values. Pass `userWorkspaceId` to `listConnections({ scope: 'USER', userWorkspaceId })` so it returns that member's connections only; a connection whose token refresh fails is left out, so return a `WARNING` ("connect your account") when the list is empty. An action with no `location` lands on the app's General tab of that page. That page is not enabled in every workspace yet, so a member check does not run everywhere. Requires `"engines": { "twenty": ">=2.55.0" }`.
 
 The handler returns `ApplicationHealthCheckResult`, a discriminated union:
 

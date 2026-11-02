@@ -1,38 +1,110 @@
 ---
-title: Local Server
-description: Connect the standalone CLI to a local Twenty server.
+title: Local Environment
+description: Run the full Twenty development environment with the CLI.
 ---
 
 import { PageBanner } from "/snippets/page-banner.mdx"
 
-## Setup
+## Start Twenty locally
 
-The standalone CLI connects to a running Twenty server. It does not start or manage Docker containers.
+Install and start Docker, then run:
 
-Use the [self-hosting guide](/developers/self-host/self-host) to run Twenty with Docker. In a Twenty repository checkout, the existing development environment also works:
+```bash
+twenty local start
+twenty auth login --url http://localhost:2020 --name local
+```
+
+`local start` runs the web UI, API, worker and databases. It works outside an app
+folder, waits for the environment to be ready, and prints its URL. Sign-in is a
+separate step. To install your app afterward, run `twenty app apply --create
+--remote local` from its directory.
+
+For a new instance, pass a version explicitly or let the CLI select the highest
+published version matching your app's `engines.twenty`. Outside an app with that
+setting, it uses `latest`. Existing instances keep their version and data.
+For an existing instance, compatibility with `engines.twenty` is checked using
+the image's `APP_VERSION`, including when its tag is `latest`. A missing, invalid
+or incompatible version produces a warning and startup continues.
+
+```bash
+twenty local start 2.53.1
+twenty local status
+twenty local logs
+twenty local logs --lines 100 --no-follow
+twenty local stop
+```
+
+New instances listen only on loopback, on port `2020`. Use `--port <port>` when
+creating an instance to choose another port. Use a local Docker socket context;
+remote Docker engines are not supported by these commands.
+
+## Upgrade or reset
+
+```bash
+twenty local upgrade 2.53.1
+```
+
+Upgrade pulls the requested image before replacing the instance. It preserves
+its ports, database and file volumes, and environment overrides. New CLI defaults
+apply to newly created instances; upgrades preserve existing environment values.
+Without a version, it follows the same version selection as a new start. Custom storage
+layouts are rejected. Downgrades are rejected before replacing the container,
+including when using a tag such as `latest`. Both images must declare a valid
+`APP_VERSION` so the CLI can compare their actual versions.
+
+Pass `2.53` to start or upgrade using the floating `v2.53` image tag, or `2.53.1`
+to select a specific patch version.
+
+If replacement creation fails or is cancelled, the CLI
+restores the previous container and settings. Once the new version starts,
+failed upgrades retain data volumes but do not roll back database migrations.
+
+`stop` keeps all data. To permanently delete the instance and its data, run:
+
+```bash
+twenty local reset
+twenty local start
+```
+
+Reset asks for confirmation. Scripts must pass `--yes`. Saved remotes and
+credentials are not removed.
+
+## Integration tests
+
+Use the separate test instance, default port `2021`:
+
+```bash
+twenty local start --test
+twenty local status --test
+TWENTY_API_URL=http://localhost:2021 yarn test
+```
+
+Set `TWENTY_API_KEY` to a key for that instance. Integration tests install and
+uninstall an app, so keep them separate from your development workspace.
+Pass `--test` to logs, stop, upgrade or reset when managing this instance.
+
+The generated CI workflow provisions an isolated instance through
+`twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` and installs the
+standalone CLI separately.
+
+## Other local setups
+
+For a Twenty source checkout, the existing development environment also works:
 
 ```bash
 bash packages/twenty-utils/setup-dev-env.sh
 yarn start
-```
-
-Then authenticate against the server URL for your workspace:
-
-```bash
 twenty auth login --url http://localhost:3000 --name local
-twenty app apply --create --remote local
 ```
 
-Use the actual URL and port of your server. For subdomain workspaces, use the workspace's hostname.
-
-## Integration tests
-
-Use a separate disposable server or workspace. Integration test setup installs an app and teardown uninstalls it. Set `TWENTY_API_URL` and `TWENTY_API_KEY` to that test instance before running `yarn test`.
-
-The generated CI workflow provisions an isolated instance through `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` and installs the standalone CLI separately.
+Use the actual URL and port of your server. For subdomain workspaces, use the
+workspace's hostname. For production deployment, follow the
+[self-hosting guide](/developers/self-host/self-host).
 
 ## Project dependencies
 
-Install `twenty-sdk` and `twenty-client-sdk` as project dependencies. Install the `twenty` CLI globally, then run `twenty app typecheck`, `twenty app build`, and `twenty app apply` from the app directory.
+Install `twenty-sdk` and `twenty-client-sdk` as project dependencies. Install the
+`twenty` CLI globally, then run `twenty app typecheck`, `twenty app build`, and
+`twenty app apply` from the app directory.
 
 <PageBanner illustration="dev-self-host" />

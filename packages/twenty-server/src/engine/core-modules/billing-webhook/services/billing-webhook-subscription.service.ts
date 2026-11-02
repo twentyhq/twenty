@@ -263,6 +263,10 @@ export class BillingWebhookSubscriptionService {
         await this.messageQueueService.add<CleanWorkspaceDeletionWarningUserVarsJobData>(
           CleanWorkspaceDeletionWarningUserVarsJob.name,
           { workspaceId },
+          {
+            workspaceId,
+            isWorkspaceJob: true,
+          },
         );
       }
     }

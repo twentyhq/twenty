@@ -1,15 +1,16 @@
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { RecordCreationFormCancellationEffect } from '@/object-record/record-form/components/RecordCreationFormCancellationEffect';
 import {
   RecordCreationFormContextProvider,
   type RecordCreationFormContextValue,
 } from '@/object-record/record-form/contexts/RecordCreationFormContext';
+import { type RecordCreationRequest } from '@/object-record/record-form/types/RecordCreationRequest';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { recordCreationFormRequestComponentState } from '@/side-panel/pages/record-creation-form/states/recordCreationFormRequestComponentState';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
+import { useCloseAnyOpenDropdown } from '@/ui/layout/dropdown/hooks/useCloseAnyOpenDropdown';
 import { t } from '@lingui/core/macro';
 import { useStore } from 'jotai';
 import { type ReactNode, useCallback, useMemo, useState } from 'react';
@@ -20,7 +21,7 @@ import { v4 } from 'uuid';
 
 type PendingRecordCreation = {
   requestId: string;
-  createRecord: (draftRecord: Partial<ObjectRecord>) => Promise<ObjectRecord>;
+  createRecord: RecordCreationRequest['createRecord'];
   resolve: (createdRecord: ObjectRecord | null) => void;
   isSettling: boolean;
 };
@@ -35,6 +36,7 @@ export const RecordCreationFormProvider = ({
   const store = useStore();
   const { removePageFromSidePanelHistory } = useSidePanelHistory();
   const { navigateSidePanelMenu } = useSidePanelMenu();
+  const { closeAnyOpenDropdown } = useCloseAnyOpenDropdown();
 
   const [pendingRecordCreations, setPendingRecordCreations] = useState<
     PendingRecordCreation[]
@@ -117,14 +119,9 @@ export const RecordCreationFormProvider = ({
     ({
       objectMetadataItem,
       initialDraftRecord,
+      canCreateAnother = true,
       createRecord,
-    }: {
-      objectMetadataItem: EnrichedObjectMetadataItem;
-      initialDraftRecord?: Partial<ObjectRecord>;
-      createRecord: (
-        draftRecord: Partial<ObjectRecord>,
-      ) => Promise<ObjectRecord>;
-    }) => {
+    }: RecordCreationRequest) => {
       const topSidePanelPage = store.get(isSidePanelOpenedState.atom)
         ? store.get(sidePanelNavigationStackState.atom).at(-1)
         : undefined;
@@ -142,6 +139,8 @@ export const RecordCreationFormProvider = ({
 
       const requestId = v4();
 
+      closeAnyOpenDropdown();
+
       store.set(
         recordCreationFormRequestComponentState.atomFamily({
           instanceId: requestId,
@@ -150,6 +149,7 @@ export const RecordCreationFormProvider = ({
           requestId,
           objectMetadataId: objectMetadataItem.id,
           initialDraftRecord: initialDraftRecord ?? {},
+          canCreateAnother,
         },
       );
 
@@ -172,7 +172,7 @@ export const RecordCreationFormProvider = ({
         });
       });
     },
-    [navigateSidePanelMenu, store],
+    [closeAnyOpenDropdown, navigateSidePanelMenu, store],
   );
 
   const cancelPendingRecordCreation = useCallback(

@@ -1,11 +1,9 @@
-import { AppChip } from '@/applications/components/AppChip';
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { SettingsApplicationConnectCard } from '@/settings/app-preferences/components/SettingsApplicationConnectCard';
 import { useApplicationsWithPreferences } from '@/settings/app-preferences/hooks/useApplicationsWithPreferences';
-import { getApplicationPreferencesGeneralPath } from '@/settings/app-preferences/utils/getApplicationPreferencesGeneralPath';
-import { useTriggerAppOAuth } from '@/settings/applications/hooks/useTriggerAppOAuth';
+import { getApplicationPreferencesPostConnectPath } from '@/settings/app-preferences/utils/getApplicationPreferencesPostConnectPath';
 import { canStartConnectionProviderAuthorization } from '@/settings/applications/utils/canStartConnectionProviderAuthorization';
-import { SettingsCard } from '@/settings/components/SettingsCard';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 
@@ -13,18 +11,23 @@ export const SettingsApplicationConnectCards = () => {
   const { t } = useLingui();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { applicationsWithPreferences } = useApplicationsWithPreferences();
-  const { triggerAppOAuth } = useTriggerAppOAuth();
 
   const connectableProviders = applicationsWithPreferences.flatMap(
-    ({ application, connectionProviders }) => {
+    ({ application, connectionProviders, settingsMenuItems }) => {
       const authorizableProviders = connectionProviders.filter(
         canStartConnectionProviderAuthorization,
       );
+
+      const postConnectPath = getApplicationPreferencesPostConnectPath({
+        applicationId: application.id,
+        settingsMenuItems,
+      });
 
       return authorizableProviders.map((connectionProvider) => ({
         application,
         connectionProvider,
         hasMultipleConnectionProviders: authorizableProviders.length > 1,
+        postConnectPath,
       }));
     },
   );
@@ -36,6 +39,7 @@ export const SettingsApplicationConnectCards = () => {
           application,
           connectionProvider,
           hasMultipleConnectionProviders,
+          postConnectPath,
         }) => {
           const applicationName = getApplicationDisplayName({
             application,
@@ -46,21 +50,12 @@ export const SettingsApplicationConnectCards = () => {
             : applicationName;
 
           return (
-            <SettingsCard
+            <SettingsApplicationConnectCard
               key={connectionProvider.id}
-              Icon={
-                <AppChip applicationId={application.id} size="md" chipOnly />
-              }
+              applicationId={application.id}
+              connectionProvider={connectionProvider}
               title={t`Connect with ${appName}`}
-              onClick={() =>
-                triggerAppOAuth({
-                  applicationId: application.id,
-                  providerName: connectionProvider.name,
-                  redirectLocation: getApplicationPreferencesGeneralPath(
-                    application.id,
-                  ),
-                })
-              }
+              redirectLocation={postConnectPath}
             />
           );
         },

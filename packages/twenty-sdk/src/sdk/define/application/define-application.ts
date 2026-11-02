@@ -73,7 +73,10 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
       continue;
     }
 
-    if (!isUsageOperationTypeValue(billableOperation.operationType)) {
+    if (
+      isDefined(billableOperation.operationType) &&
+      !isUsageOperationTypeValue(billableOperation.operationType)
+    ) {
       errors.push(
         `Billable operation "${operationName}" must map to a known operationType (${USAGE_OPERATION_TYPES.join(
           ', ',
@@ -84,6 +87,15 @@ export const defineApplication: DefineEntity<ApplicationConfig> = (config) => {
     if (!isNonEmptyString(billableOperation.label)) {
       errors.push(
         `Billable operation "${operationName}" must have a non empty label`,
+      );
+    }
+
+    if (
+      isDefined(billableOperation.icon) &&
+      !isNonEmptyString(billableOperation.icon)
+    ) {
+      errors.push(
+        `Billable operation "${operationName}" must have a non empty icon when set`,
       );
     }
   }

@@ -92,4 +92,34 @@ await sendInboxMessage({
 * إشارة فقط تعطل. وهو لا يضيف العضو إلى المحادثة أو يخطر بها، ومن ثم يدرج كل من ينبغي أن يتلقى الرسالة في `workspaceMemberIds`.
 * `INBOX_ASSISTANT_MENTION` هو النص الذي يكتبه الملحن عندما يذكر أحد الأعضاء المساعد (`@Ada`)، وبالتالي فإن رسائلك تسميه بنفس الطريقة.
 
+## إرفاق السجلات بمحادثة
+
+تربط `attachRecordToInboxThread()` محادثةً بسجل، وتزيل `detachRecordFromInboxThread()` الرابط.
+
+```ts src/logic-functions/file-call-recap.ts
+import {
+  attachRecordToInboxThread,
+  sendInboxMessage,
+} from 'twenty-sdk/logic-function';
+
+const { threadId } = await sendInboxMessage({
+  workspaceMemberIds: [owner.id],
+  threadKey: `call-recap-${call.id}`,
+  idempotencyKey: `call-recap-${call.id}`,
+  title: `Recap of ${call.title}`,
+  text: call.summary,
+});
+
+await attachRecordToInboxThread({
+  threadId,
+  objectNameSingular: 'company',
+  recordId: company.id,
+});
+```
+
+* يأخذ كلاهما `threadId` الخاص بالمحادثة والسجل باعتبارهما `objectNameSingular` و`recordId`. يمكن ربط المحادثة بالأشخاص والشركات والفرص وسجلات الكائنات المخصصة.
+* كلاهما متكرر بأمان: يؤدي إرفاق سجل مرتين إلى الاحتفاظ برابط واحد، ولا يؤدي فصل سجل غير مرفق إلى تغيير أي شيء.
+* يعمل الاستدعاء بنفس صلاحية الوصول الخاصة بـ[إرسال رسالة](#who-sends-the-message)، والتي تتطلب إذن `AI`. يجب أن يكون العضو قادرًا على تحرير المحادثة، ويمكن لتطبيقك العمل على محادثة كتبها بنفسه أو مُنحها دوره الافتراضي؛ وإلا فسيفشل الاستدعاء بالرمز `THREAD_NOT_FOUND`.
+* يجب أن يكون السجل قابلاً للقراءة باستخدام صلاحية الوصول تلك، وإلا فسيفشل الاستدعاء بالرمز `RECORD_NOT_FOUND`.
+
 <PageBanner illustration="card-page-inbox" />

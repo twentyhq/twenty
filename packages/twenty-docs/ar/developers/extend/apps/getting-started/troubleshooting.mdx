@@ -7,7 +7,7 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## المشكلات الشائعة
 
-* **أخطاء الخادم المحلي**، تحقّق من بيئة تطوير Docker أو المستودع لديك. لا تدير واجهة CLI المستقلة الحاويات.
+* **أخطاء البيئة المحلية**، تحقّق من `twenty local status` و`twenty local logs --no-follow`. يجب تثبيت Docker وتشغيله باستخدام سياق مقبس محلي. أضف `--test` لمثيل الاختبار. يؤدي فشل البدء إلى الاحتفاظ بالحاوية وبياناتها للتشخيص.
 * **إصدار Node غير صحيح** — تحتاج إلى 24.5+ أو 26.5+ (`engines.node: ^24.5.0 || ^26.5.1`). تحقّق باستخدام `node -v`.
 * **Yarn 4 غير موجود** — شغّل `corepack enable` (على Node 26، نفّذ أولاً `npm install -g corepack`).
 * **تبعيات تالفة** — `rm -rf node_modules && yarn install`.

@@ -70,6 +70,7 @@ exports[`registry-derived override property maps derives the overridable propert
     "isActive",
   ],
   "permissionFlag": [],
+  "relatedRecordPath": [],
   "role": [],
   "rolePermissionFlag": [],
   "roleTarget": [],

@@ -18,10 +18,13 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
-import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
-import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-objects-permissions-from-role-permission-config.util';
+import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
+import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
+import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
+import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/permissions/role/utils/get-objects-permissions-from-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 
 export type CommonApiContext = {
   queryRunnerContext: CommonBaseQueryRunnerContext;
@@ -30,6 +33,7 @@ export type CommonApiContext = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   objectsPermissions: ObjectsPermissions;
+  principal: PermissionsPrincipal | undefined;
 };
 
 @Injectable()
@@ -93,7 +97,7 @@ export class CommonApiContextBuilderService {
       );
     }
 
-    const objectsPermissions = await this.getObjectsPermissions({
+    const { objectsPermissions, principal } = await this.getPermissionsContext({
       authContext,
       rolePermissionConfig,
     });
@@ -125,16 +129,20 @@ export class CommonApiContextBuilderService {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       objectsPermissions,
+      principal,
     };
   }
 
-  private async getObjectsPermissions({
+  private async getPermissionsContext({
     authContext,
     rolePermissionConfig,
   }: {
     authContext: WorkspaceAuthContext;
     rolePermissionConfig?: RolePermissionConfig;
-  }): Promise<ObjectsPermissions> {
+  }): Promise<{
+    objectsPermissions: ObjectsPermissions;
+    principal: PermissionsPrincipal | undefined;
+  }> {
     const {
       rolesPermissions,
       flatObjectMetadataMaps,
@@ -172,12 +180,22 @@ export class CommonApiContextBuilderService {
       );
     }
 
-    return getObjectsPermissionsFromRolePermissionConfig({
-      rolesPermissions,
-      rolePermissionConfig: resolvedRolePermissionConfig,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      flatApplicationMaps,
-    });
+    return {
+      objectsPermissions: getObjectsPermissionsFromRolePermissionConfig({
+        rolesPermissions,
+        rolePermissionConfig: resolvedRolePermissionConfig,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatApplicationMaps,
+      }),
+      principal: buildPermissionsPrincipal({
+        workspaceId: authContext.workspace.id,
+        rolePermissionConfig: resolvedRolePermissionConfig,
+        workspaceMemberId: isUserAuthContext(authContext)
+          ? authContext.workspaceMemberId
+          : undefined,
+        flatApplicationMaps,
+      }),
+    };
   }
 }

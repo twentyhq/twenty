@@ -39,6 +39,10 @@ export class MessagingMessageCleanerConnectedAccountListener {
             workspaceId,
             connectedAccountId: event.connectedAccountId,
           },
+          {
+            workspaceId,
+            isWorkspaceJob: true,
+          },
         ),
       ),
     );

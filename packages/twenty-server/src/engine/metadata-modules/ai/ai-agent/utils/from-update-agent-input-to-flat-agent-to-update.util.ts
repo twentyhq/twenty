@@ -83,6 +83,8 @@ const computeAgentFlatRoleTargetToUpdate = ({
       agentId: flatAgent.id,
       agentUniversalIdentifier: flatAgent.universalIdentifier,
       apiKeyId: null,
+      webhookId: null,
+      webhookUniversalIdentifier: null,
       createdAt: updatedAt,
       updatedAt,
       universalIdentifier: v4(),

@@ -15,9 +15,11 @@ import { getResolvableReferenceUniversalIdentifiers } from 'src/engine/core-modu
 import { reconstructNavigationMenuItemsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-navigation-menu-items-manifest.util';
 import { reconstructPageLayoutsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-page-layouts-manifest.util';
 import { reconstructRolesManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-roles-manifest.util';
+import { reconstructRelatedRecordPathsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-related-record-paths-manifest.util';
 import { reconstructSkillsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-skills-manifest.util';
 import { reconstructViewsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-views-manifest.util';
 import { reconstructWorkflowsManifest } from 'src/engine/core-modules/application/application-manifest/utils/reconstruct-workflows-manifest.util';
+import { ApplicationDependencyFilesService } from 'src/engine/core-modules/application/application-package/application-dependency-files.service';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationTranslationCacheService } from 'src/engine/core-modules/application/application-translation/application-translation-cache.service';
 import {
@@ -47,6 +49,7 @@ const findUniversalIdentifierById = ({
 export class ApplicationManifestExportService {
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly applicationDependencyFilesService: ApplicationDependencyFilesService,
     private readonly applicationTranslationCacheService: ApplicationTranslationCacheService,
     private readonly applicationRegistrationLookupService: ApplicationRegistrationLookupService,
     private readonly applicationService: ApplicationService,
@@ -56,9 +59,11 @@ export class ApplicationManifestExportService {
   async exportApplication({
     workspaceId,
     applicationUniversalIdentifier,
+    shouldIncludeDependencies = false,
   }: {
     workspaceId: string;
     applicationUniversalIdentifier: string;
+    shouldIncludeDependencies?: boolean;
   }): Promise<ApplicationExport> {
     const { flatApplicationMaps, ...allFlatEntityMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -159,16 +164,6 @@ export class ApplicationManifestExportService {
       await this.connectedAccountMetadataService.findAllForWorkflowStepResolution(
         { workspaceId },
       );
-    const { workflows, coverage: workflowsCoverage } =
-      reconstructWorkflowsManifest({
-        applicationAllFlatEntityMaps,
-        allFlatEntityMaps,
-        exportedObjectUniversalIdentifiers,
-        resolvableFieldUniversalIdentifiers,
-        isWorkspaceCustomApplication:
-          flatApplication.id === workspaceCustomFlatApplication.id,
-        connectedAccounts,
-      });
     const { agents, coverage: agentsCoverage } = reconstructAgentsManifest({
       applicationAllFlatEntityMaps,
       allFlatEntityMaps,
@@ -178,9 +173,24 @@ export class ApplicationManifestExportService {
           metadataName: 'role',
         }),
     });
+    const { workflows, coverage: workflowsCoverage } =
+      reconstructWorkflowsManifest({
+        applicationAllFlatEntityMaps,
+        allFlatEntityMaps,
+        exportedObjectUniversalIdentifiers,
+        resolvableFieldUniversalIdentifiers,
+        exportedAgentUniversalIdentifiers: new Set(
+          agents.map(({ universalIdentifier }) => universalIdentifier),
+        ),
+        isWorkspaceCustomApplication:
+          flatApplication.id === workspaceCustomFlatApplication.id,
+        connectedAccounts,
+      });
     const { skills, coverage: skillsCoverage } = reconstructSkillsManifest({
       applicationAllFlatEntityMaps,
     });
+    const { relatedRecordPaths, coverage: relatedRecordPathsCoverage } =
+      reconstructRelatedRecordPathsManifest({ applicationAllFlatEntityMaps });
     const translations = isDefined(flatApplication.applicationRegistrationId)
       ? await this.applicationTranslationCacheService.getCatalogsByLocale(
           flatApplication.applicationRegistrationId,
@@ -215,6 +225,7 @@ export class ApplicationManifestExportService {
       commandMenuItems: [],
       timelineActivityTypes: [],
       settingsMenuItems: [],
+      relatedRecordPaths,
       workflows,
       ...(isDefined(translations) ? { translations } : {}),
     };
@@ -239,9 +250,17 @@ export class ApplicationManifestExportService {
           ...workflowsCoverage,
           ...agentsCoverage,
           ...skillsCoverage,
+          ...relatedRecordPathsCoverage,
         ],
       }),
-      files: [],
+      files: shouldIncludeDependencies
+        ? await this.applicationDependencyFilesService.getExportedDependencyFiles(
+            {
+              workspaceId,
+              applicationUniversalIdentifier,
+            },
+          )
+        : [],
     };
   }
 }

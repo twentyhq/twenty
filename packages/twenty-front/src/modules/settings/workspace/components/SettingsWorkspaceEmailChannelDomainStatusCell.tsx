@@ -9,8 +9,6 @@ import {
   UnsubscribeHostnameStatus,
 } from '~/generated-metadata/graphql';
 import { getEmailingDomainStatusDisplay } from '@/settings/emailing-domains/utils/getEmailingDomainStatusDisplay';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
@@ -24,9 +22,6 @@ export const SettingsWorkspaceEmailChannelDomainStatusCell = ({
 }: SettingsWorkspaceEmailChannelDomainStatusCellProps) => {
   const { t } = useLingui();
   const { data } = useQuery(GetEmailingDomainsDocument);
-  const isMessageCampaignEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-  );
 
   const channelDomain = getEmailChannelDomain(item.connectedAccount?.handle);
   const emailingDomain = data?.getEmailingDomains?.find(
@@ -38,7 +33,6 @@ export const SettingsWorkspaceEmailChannelDomainStatusCell = ({
   }
 
   const isUnsubscribeHostnamePending =
-    isMessageCampaignEnabled &&
     emailingDomain.status === EmailingDomainStatus.VERIFIED &&
     emailingDomain.unsubscribeHostnameStatus !==
       UnsubscribeHostnameStatus.ACTIVE;

@@ -96,6 +96,11 @@ describe('buildApplicationFileList', () => {
           fileFolder: FileFolder.BuiltFrontComponent,
           isRequired: true,
         },
+        {
+          relativePath: 'front-component-shared-dependencies.mjs.json',
+          fileFolder: FileFolder.Dependencies,
+          isRequired: false,
+        },
       ]),
     );
   });

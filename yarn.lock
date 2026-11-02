@@ -8743,10 +8743,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ioredis/as-callback@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "@ioredis/as-callback@npm:3.0.0"
+  checksum: 10c0/cbeae0c4a8f8f8ea1987d105056fd595a5a1a781a73dfa3a13ac13027fd1de099af6f3590bd315fd20284efd8597430a7ba3b912570804d158dabbdb2071523b
+  languageName: node
+  linkType: hard
+
 "@ioredis/commands@npm:1.5.1":
   version: 1.5.1
   resolution: "@ioredis/commands@npm:1.5.1"
   checksum: 10c0/cb8f6d13cff0753e3e7ef001fb895491985d9a623248192538f13bc2fd9bfdfde3c18cf2ba6f20ec8ceaa681b0771070d3a09b82eed044c798bcfef5e3ae54b3
+  languageName: node
+  linkType: hard
+
+"@ioredis/commands@npm:^1.4.0":
+  version: 1.11.0
+  resolution: "@ioredis/commands@npm:1.11.0"
+  checksum: 10c0/fa8758f51ad1557e6c710f59890b83cd95c9c7fd419b6f7018268612d6479202d18566e16378097b52549e5dfafedc11a9a4703107a77d4b972684ee1757611a
   languageName: node
   linkType: hard
 
@@ -19432,6 +19446,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/ioredis-mock@npm:8.2.8":
+  version: 8.2.8
+  resolution: "@types/ioredis-mock@npm:8.2.8"
+  peerDependencies:
+    ioredis: ^5
+  checksum: 10c0/af7a6546b2f43f4c8af4ef1deb453d1e436d901bd9e25d23b0e100b6170712ae38e72ca022fd12fa3616b4abe8ceee5a5b483db8774a99b3403ee3d2097fb9c6
+  languageName: node
+  linkType: hard
+
 "@types/istanbul-lib-coverage@npm:*, @types/istanbul-lib-coverage@npm:^2.0.0, @types/istanbul-lib-coverage@npm:^2.0.1, @types/istanbul-lib-coverage@npm:^2.0.4, @types/istanbul-lib-coverage@npm:^2.0.6":
   version: 2.0.6
   resolution: "@types/istanbul-lib-coverage@npm:2.0.6"
@@ -29266,6 +29289,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fengari-interop@npm:^0.1.3":
+  version: 0.1.4
+  resolution: "fengari-interop@npm:0.1.4"
+  peerDependencies:
+    fengari: ^0.1.0
+  checksum: 10c0/ba8aca9b741b603a7740343b3f99dbd60c4536aab115a8e02caa33030e16e0dd13a0d03f0c31050f7fa1ead7945358040cead48531df41c3b3147e61b50f383c
+  languageName: node
+  linkType: hard
+
+"fengari@npm:^0.1.4":
+  version: 0.1.5
+  resolution: "fengari@npm:0.1.5"
+  dependencies:
+    readline-sync: "npm:^1.4.10"
+    sprintf-js: "npm:^1.1.3"
+    tmp: "npm:^0.2.5"
+  checksum: 10c0/8688c3483e00028b0b09928f71452bb2c8b4db5f7380e0e8dd65619bb4ccb38438557ebdfd977c55a6d3fb5e7601cbac26c62873317320ffd20b59936f464244
+  languageName: node
+  linkType: hard
+
 "fernet@npm:^0.3.3":
   version: 0.3.3
   resolution: "fernet@npm:0.3.3"
@@ -32033,6 +32076,22 @@ __metadata:
   dependencies:
     loose-envify: "npm:^1.0.0"
   checksum: 10c0/5af133a917c0bcf65e84e7f23e779e7abc1cd49cb7fdc62d00d1de74b0d8c1b5ee74ac7766099fb3be1b05b26dfc67bab76a17030d2fe7ea2eef867434362dfc
+  languageName: node
+  linkType: hard
+
+"ioredis-mock@npm:8.13.1":
+  version: 8.13.1
+  resolution: "ioredis-mock@npm:8.13.1"
+  dependencies:
+    "@ioredis/as-callback": "npm:^3.0.0"
+    "@ioredis/commands": "npm:^1.4.0"
+    fengari: "npm:^0.1.4"
+    fengari-interop: "npm:^0.1.3"
+    semver: "npm:^7.7.2"
+  peerDependencies:
+    "@types/ioredis-mock": ^8
+    ioredis: ^5
+  checksum: 10c0/47e17a307301da01a89d041a6d6101828baefd3a1c216a09fe8ff9e1bd7d7239de93544365280f6cda4ad98af1f302e7497f9563f36cb24b528d9c7b3164301f
   languageName: node
   linkType: hard
 
@@ -41401,7 +41460,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"readline-sync@npm:^1.4.9":
+"readline-sync@npm:^1.4.10, readline-sync@npm:^1.4.9":
   version: 1.4.10
   resolution: "readline-sync@npm:1.4.10"
   checksum: 10c0/0a4d0fe4ad501f8f005a3c9cbf3cc0ae6ca2ced93e9a1c7c46f226bdfcb6ef5d3f437ae7e9d2e1098ee13524a3739c830e4c8dbc7f543a693eecd293e41093a3
@@ -43789,6 +43848,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"sprintf-js@npm:^1.1.3":
+  version: 1.1.3
+  resolution: "sprintf-js@npm:1.1.3"
+  checksum: 10c0/09270dc4f30d479e666aee820eacd9e464215cdff53848b443964202bf4051490538e5dd1b42e1a65cf7296916ca17640aebf63dae9812749c7542ee5f288dec
+  languageName: node
+  linkType: hard
+
 "sprintf-js@npm:~1.0.2":
   version: 1.0.3
   resolution: "sprintf-js@npm:1.0.3"
@@ -46101,6 +46167,7 @@ __metadata:
     "@types/graphql-fields": "npm:^1.3.6"
     "@types/graphql-upload": "npm:^16.0.7"
     "@types/html-to-text": "npm:^9.0.4"
+    "@types/ioredis-mock": "npm:8.2.8"
     "@types/jest": "npm:^30.0.0"
     "@types/lodash.chunk": "npm:^4.2.9"
     "@types/lodash.compact": "npm:^3.0.9"
@@ -46168,6 +46235,7 @@ __metadata:
     ical-generator: "npm:^11.0.0"
     imapflow: "npm:2.0.2"
     ioredis: "npm:5.10.1"
+    ioredis-mock: "npm:8.13.1"
     jest: "npm:29.7.0"
     jsdom: "npm:^30.0.1"
     json-schema: "npm:0.4.0"
@@ -46263,6 +46331,7 @@ __metadata:
     addressparser: "npm:1.0.1"
     ai: "npm:7.0.126"
     babel-plugin-module-resolver: "npm:^5.0.2"
+    cjs-module-lexer: "npm:^2.2.0"
     class-validator: "npm:^0.14.0"
     entities: "npm:^4.5.0"
     esbuild: "npm:^0.28.1"
@@ -46408,6 +46477,7 @@ __metadata:
     react: "npm:19.2.3"
     react-dom: "npm:19.2.3"
     react-markdown: "npm:^10.1.0"
+    remark-gfm: "npm:^4.0.1"
     server-only: "npm:^0.0.1"
     stripe: "npm:^20.3.1"
     three: "npm:^0.184.0"
@@ -46448,7 +46518,6 @@ __metadata:
     "@types/node": "npm:^24.0.0"
     "@types/semver": "npm:^7.5.8"
     chokidar: "npm:^3.6.0"
-    cjs-module-lexer: "npm:^2.2.0"
     commander: "npm:^14.0.3"
     esbuild: "npm:^0.28.1"
     execa: "npm:^5.1.1"

@@ -87,6 +87,48 @@ describe('renderFrontComponent', () => {
     delete (globalThis as Record<string, unknown>)[FRONT_COMPONENT_CONTEXT_KEY];
   });
 
+  it('passes the supplied data and waits for initial rendering', async () => {
+    const componentProps = { records: [{ id: 'sample', name: 'Example' }] };
+    const initialRenderControl = { resolve: () => {} };
+    const initialRender = new Promise<void>((resolve) => {
+      initialRenderControl.resolve = resolve;
+    });
+    const render = jest.fn(() => initialRender);
+    jest
+      .mocked(loadFrontComponentModule)
+      .mockResolvedValue({ default: render });
+    const onReady = jest.fn();
+    const result = renderFrontComponent({
+      connection: createConnection(),
+      renderContext: { ...COMPONENT_RENDER_CONTEXT, componentProps },
+      hostFetch: jest.fn(),
+    }).then(onReady);
+
+    await Promise.resolve();
+    expect(render).toHaveBeenCalledTimes(1);
+    expect(render).toHaveBeenCalledWith({}, componentProps);
+    expect(onReady).not.toHaveBeenCalled();
+    initialRenderControl.resolve();
+    await result;
+    expect(onReady).toHaveBeenCalledTimes(1);
+  });
+
+  it('propagates asynchronous initial rendering failures', async () => {
+    jest.mocked(loadFrontComponentModule).mockResolvedValue({
+      default: async () => {
+        throw new Error('Component failed');
+      },
+    });
+
+    await expect(
+      renderFrontComponent({
+        connection: createConnection(),
+        renderContext: COMPONENT_RENDER_CONTEXT,
+        hostFetch: jest.fn(),
+      }),
+    ).rejects.toThrow('Component failed');
+  });
+
   it('should fail closed when the host fetch bridge is unavailable', async () => {
     await expect(
       renderFrontComponent({

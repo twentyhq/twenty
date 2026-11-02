@@ -41,6 +41,7 @@ import { resolvePolyfillHooks } from '@/polyfills/dom/utils/resolvePolyfillHooks
 import { installPointerCapturePolyfill } from '@/polyfills/events/utils/installPointerCapturePolyfill';
 import { installEventConstructorPolyfills } from '@/polyfills/events/utils/installEventConstructorPolyfills';
 import { installHostEventRetargetingPolyfill } from '@/polyfills/events/utils/installHostEventRetargetingPolyfill';
+import { installOutsidePressObservation } from '@/polyfills/events/utils/installOutsidePressObservation';
 import { installSelectorMethodsPolyfill } from '@/polyfills/selectors/utils/installSelectorMethodsPolyfill';
 import { workerGeometryStore } from '@/polyfills/geometry/states/workerGeometryStore';
 import { installElementGeometryPolyfill } from '@/polyfills/geometry/utils/installElementGeometryPolyfill';
@@ -63,6 +64,8 @@ import { exposeGlobals } from '@/utils/exposeGlobals';
 import { installAriaBooleanPropertyAccessors } from '@/remote/elements/utils/installAriaBooleanPropertyAccessors';
 import { installStylePropertyOnRemoteElements } from '@/remote/elements/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementAttributes } from '@/remote/elements/utils/patchRemoteElementAttributes';
+import { dispatchOutsidePressEvent } from '@/remote/elements/utils/dispatchOutsidePressEvent';
+import { dispatchOwnedPressEvent } from '@/remote/elements/utils/dispatchOwnedPressEvent';
 import { resolveRemoteElementPrototypes } from '@/remote/elements/utils/resolveRemoteElementPrototypes';
 import { buildFrontComponentHostCommunicationApiFromThreadImports } from '@/remote/worker/thread/utils/buildFrontComponentHostCommunicationApiFromThreadImports';
 import { handleCommandConfirmationModalResult } from '@/remote/worker/thread/utils/handleCommandConfirmationModalResult';
@@ -132,10 +135,11 @@ const workerPointerCapture = installPointerCapturePolyfill({
   elementPrototype: HTMLElement.prototype,
   documentTarget: document,
 });
+const polyfillHooks = resolvePolyfillHooks(
+  resolveGlobalScopeInstallTargets(toGlobalScopeRecord(globalThis)),
+);
 installActiveElementDetachmentHook({
-  hooks: resolvePolyfillHooks(
-    resolveGlobalScopeInstallTargets(toGlobalScopeRecord(globalThis)),
-  ),
+  hooks: polyfillHooks,
   activeElementStore: workerActiveElementStore,
   onRemoveSubtree: (node) => {
     workerFocusTransport.blurFocusedElementWithinSubtree(node);
@@ -143,6 +147,10 @@ installActiveElementDetachmentHook({
     workerScrollStore.scheduleDetachedElementSweep();
     workerPointerCapture.scheduleDetachedCaptureSweep();
   },
+});
+const workerOutsidePressObservation = installOutsidePressObservation({
+  hooks: polyfillHooks,
+  documentTarget: document,
 });
 installHostEventRetargetingPolyfill(HTMLElement.prototype);
 installElementClickMethodPolyfill(HTMLElement.prototype);
@@ -293,6 +301,12 @@ const workerExports: WorkerExports = {
   pushCapturedPointerEvent: async (update) => {
     workerPointerCapture.dispatchCapturedPointerEvent(update);
   },
+  pushOutsidePressEvent: async (eventData) => {
+    dispatchOutsidePressEvent({ documentTarget: document, eventData });
+  },
+  pushOwnedPressEvent: async (eventData) => {
+    dispatchOwnedPressEvent({ documentTarget: document, eventData });
+  },
   pushMediaSessionEvents: async (batch) => {
     workerMediaBridge.dispatchEvents(batch);
   },
@@ -316,6 +330,7 @@ self.addEventListener('message', (event) => {
 
   workerGeometryStore.connectTransport(nextHostThread.imports);
   workerMediaBridge.connectTransport(nextHostThread.imports);
+  workerOutsidePressObservation.connectTransport(nextHostThread.imports);
 
   transferredPort.start();
 });

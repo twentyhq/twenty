@@ -10,13 +10,15 @@ const ACCOUNT_GROUP_PROVIDERS: ReadonlySet<ConnectedAccountProvider> = new Set([
 ]);
 
 export const useMyAccountGroups = () => {
-  const { accounts, loading, error, refetch } = useMyPersonalConnectedAccounts({
-    providers: ACCOUNT_GROUP_PROVIDERS,
-  });
+  const { accounts, loading, hasLoaded, error, refetch } =
+    useMyPersonalConnectedAccounts({
+      providers: ACCOUNT_GROUP_PROVIDERS,
+    });
 
   return {
     groups: groupConnectedAccountsByBuiltInAccount(accounts),
     loading,
+    hasLoaded,
     error,
     refetch,
   };

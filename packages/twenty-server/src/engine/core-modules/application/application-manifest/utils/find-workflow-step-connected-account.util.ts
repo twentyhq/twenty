@@ -5,7 +5,7 @@ import {
 } from 'twenty-shared/utils';
 
 import { type WorkflowConnectedAccountStepType } from 'src/engine/core-modules/application/application-manifest/types/workflow-connected-account-step-type.type';
-import { type WorkflowManifestConnectedAccountReference } from 'src/engine/core-modules/application/application-manifest/types/workflow-manifest-references.type';
+import { type ConnectedAccountForWorkflowStepResolution } from 'src/engine/metadata-modules/connected-account/types/connected-account-for-workflow-step-resolution.type';
 import { canConnectedAccountCreateCalendarEvents } from 'src/modules/calendar/calendar-event-creation-manager/utils/can-connected-account-create-calendar-events.util';
 
 const canConnectedAccountRunStep = ({
@@ -13,7 +13,7 @@ const canConnectedAccountRunStep = ({
   connectedAccount,
 }: {
   stepType: WorkflowConnectedAccountStepType;
-  connectedAccount: WorkflowManifestConnectedAccountReference;
+  connectedAccount: ConnectedAccountForWorkflowStepResolution;
 }): boolean => {
   switch (stepType) {
     case 'SEND_EMAIL':
@@ -39,8 +39,8 @@ export const findWorkflowStepConnectedAccount = ({
 }: {
   stepType: WorkflowConnectedAccountStepType;
   handle: string;
-  connectedAccounts: readonly WorkflowManifestConnectedAccountReference[];
-}): WorkflowManifestConnectedAccountReference | undefined =>
+  connectedAccounts: readonly ConnectedAccountForWorkflowStepResolution[];
+}): ConnectedAccountForWorkflowStepResolution | undefined =>
   connectedAccounts.find(
     (connectedAccount) =>
       // Sync acts for no member, so a handle can only name an account shared with the workspace

@@ -205,6 +205,10 @@ export class AgentChatStreamRecoveryService {
         await this.chatMessageQueueService.add<FlushQueuedAgentChatMessagesJobData>(
           FLUSH_QUEUED_AGENT_CHAT_MESSAGES_JOB_NAME,
           { workspaceId, threadId },
+          {
+            workspaceId,
+            isWorkspaceJob: true,
+          },
         );
       } else if (isDefined(nextRun)) {
         await this.pendingWakeUpService.scheduleResolution({ wakeUp: nextRun });

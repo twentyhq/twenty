@@ -1,13 +1,13 @@
 import { i18n } from '@lingui/core';
 
 import { getRecordSharingGeneralAccess } from '@/object-record/record-sharing/utils/getRecordSharingGeneralAccess';
-import { RecordShareAccessLevel } from '~/generated-metadata/graphql';
 
 describe('getRecordSharingGeneralAccess', () => {
-  it('includes application-managed access without an explicit workspace grant', () => {
+  it('includes application-managed access on a private record', () => {
     const generalAccess = getRecordSharingGeneralAccess({
       sharing: {
-        generalAccessLevel: RecordShareAccessLevel.NONE,
+        isShareable: true,
+        isPrivate: true,
         hasManagedGeneralAccess: true,
       },
       objectLabelPlural: 'Companies',
@@ -19,11 +19,12 @@ describe('getRecordSharingGeneralAccess', () => {
     );
   });
 
-  it('includes an explicit workspace grant without application-managed access', () => {
+  it('includes a record that follows its roles', () => {
     expect(
       getRecordSharingGeneralAccess({
         sharing: {
-          generalAccessLevel: RecordShareAccessLevel.READ,
+          isShareable: true,
+          isPrivate: false,
           hasManagedGeneralAccess: false,
         },
         objectLabelPlural: 'Companies',
@@ -31,13 +32,11 @@ describe('getRecordSharingGeneralAccess', () => {
     ).toBe(true);
   });
 
-  it('keeps restricted and unknown sharing without general access', () => {
+  it('keeps private, role-only and unknown sharing without general access', () => {
     for (const sharing of [
       undefined,
-      {
-        generalAccessLevel: RecordShareAccessLevel.NONE,
-        hasManagedGeneralAccess: false,
-      },
+      { isShareable: true, isPrivate: true, hasManagedGeneralAccess: false },
+      { isShareable: false, isPrivate: false, hasManagedGeneralAccess: false },
     ]) {
       expect(
         getRecordSharingGeneralAccess({

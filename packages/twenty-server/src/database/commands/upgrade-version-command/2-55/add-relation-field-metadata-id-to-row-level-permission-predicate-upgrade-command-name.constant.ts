@@ -1,0 +1,2 @@
+export const ADD_RELATION_FIELD_METADATA_ID_TO_ROW_LEVEL_PERMISSION_PREDICATE_UPGRADE_COMMAND_NAME =
+  '2.55.0_AddRelationFieldMetadataIdToRowLevelPermissionPredicateFastInstanceCommand_1793381326752';

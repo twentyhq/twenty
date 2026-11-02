@@ -1,6 +1,5 @@
 import { ToolCategory } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { z } from 'zod';
 
@@ -23,7 +22,6 @@ const sendCampaignTestInputSchema = z.object({
   name: SEND_CAMPAIGN_TEST_TOOL_NAME,
   category: ToolCategory.ACTION,
   requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
-  requiredFeatureFlags: [FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED],
   description:
     'Send one test email of a saved campaign to a single address, from the campaign sender. ' +
     'Variables render with empty values or their fallbacks, since the test is not tied to a person. ' +

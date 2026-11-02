@@ -6,7 +6,7 @@ import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { type AdminApplicationMonitoringData } from '@/settings/admin-panel/apps/types/AdminApplicationMonitoringData';
-import { getAdminApplicationMonitoringWorkspaceLabel } from '@/settings/admin-panel/apps/utils/getAdminApplicationMonitoringWorkspaceLabel';
+import { getAdminWorkspaceLabel } from '@/settings/admin-panel/utils/getAdminWorkspaceLabel';
 import { APPLICATION_MONITORING_TABLE_METRIC_COLUMNS } from '@/settings/application-monitoring/constants/ApplicationMonitoringTableMetricColumns';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -14,6 +14,7 @@ import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { beautifyPastDateRelativeToNow } from '~/utils/date-utils';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 
@@ -60,12 +61,15 @@ export const SettingsAdminApplicationMonitoringWorkspacesTable = ({
             >
               <Avatar
                 src={getAbsoluteImageUrl(workspace.workspaceLogoUrl)}
-                name={getAdminApplicationMonitoringWorkspaceLabel(workspace)}
-                colorSeed={workspace.workspaceId}
+                name={workspace.workspaceName ?? ''}
+                colorSeed={getWorkspaceAvatarColorSeed(workspace.workspaceName)}
                 size="md"
               />
               <OverflowingTextWithTooltip
-                text={getAdminApplicationMonitoringWorkspaceLabel(workspace)}
+                text={getAdminWorkspaceLabel({
+                  id: workspace.workspaceId,
+                  name: workspace.workspaceName,
+                })}
               />
             </TableCell>
             <TableCell color={themeCssVariables.font.color.tertiary}>

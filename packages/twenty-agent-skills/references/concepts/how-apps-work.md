@@ -37,7 +37,7 @@ The API key authenticates the developer against the target workspace. It determi
 
 Connect to an existing Twenty workspace with `twenty auth login --url <twenty-instance-url> --name dev`. This opens browser authentication and saves a remote.
 
-For local development, provision a separate Twenty server through Docker or the repository's development environment, then authenticate against its URL. The standalone CLI does not start containers.
+For local development, run `twenty local start` to create or start the full Twenty environment, then authenticate against `http://localhost:2020`. Docker must be installed and running. Use `--test` for a separate instance on port `2021`. The repository's development environment remains an alternative.
 
 ## App Lifecycle
 
@@ -110,4 +110,4 @@ my-app/
 - **Remotes**: Named connections to Twenty instances. Stored in `~/.twenty/config.json`. Switch with `twenty remote use <name>`.
 - **Sync**: `twenty app apply` builds, deploys, and installs the app on the active remote in one step. This is the standard way to get code changes onto a Twenty instance.
 - **Publish**: `twenty app publish` packages the app for distribution to other instances or the marketplace. Requires a strictly higher semver version than the previously published version.
-- **Reserved variable names**: `TWENTY_API_URL`, `TWENTY_APP_ACCESS_TOKEN`, `TWENTY_APP_APPLICATION_ACCESS_TOKEN`, `TWENTY_API_KEY`, `TWENTY_FUNCTIONS_URL` and `APPLICATION_ID` are set by Twenty for every logic function run. A manifest that declares one of them as an application or server variable is rejected on sync and publish.
+- **Reserved variable names**: `TWENTY_API_URL`, `TWENTY_APP_ACCESS_TOKEN`, `TWENTY_APP_APPLICATION_ACCESS_TOKEN`, `TWENTY_API_KEY`, `TWENTY_FUNCTIONS_URL`, `TWENTY_SERVER_ROUTES_URL` and `APPLICATION_ID` are set by Twenty for every logic function run, and every other name starting with `TWENTY_` is kept for variables Twenty adds later. A manifest that declares a reserved name as an application or server variable is rejected on sync and publish.

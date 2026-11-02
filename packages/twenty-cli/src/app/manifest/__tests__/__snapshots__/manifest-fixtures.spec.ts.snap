@@ -16,6 +16,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "logicFunctions": [
       "src/logic-functions/add-numbers.function.ts",
     ],
+    "mcpServers": [],
     "messagingProviders": [],
     "navigationMenuItems": [],
     "objects": [],
@@ -24,6 +25,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "pageLayouts": [],
     "permissionFlags": [],
     "publicAssets": [],
+    "relatedRecordPaths": [],
     "roles": [
       "my.role.ts",
     ],
@@ -80,6 +82,7 @@ The scripts invoke that local build directly, so the SDK binary cannot shadow it
         "universalIdentifier": "f9e5589c-e951-4d99-85db-0a305ab53502",
       },
     ],
+    "mcpServers": [],
     "messagingProviders": [],
     "navigationMenuItems": [],
     "objects": [],
@@ -88,6 +91,7 @@ The scripts invoke that local build directly, so the SDK binary cannot shadow it
     "pageLayouts": [],
     "permissionFlags": [],
     "publicAssets": [],
+    "relatedRecordPaths": [],
     "roles": [
       {
         "canBeAssignedToAgents": false,
@@ -151,6 +155,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "logicFunctions": [
       "my.function.ts",
     ],
+    "mcpServers": [],
     "messagingProviders": [],
     "navigationMenuItems": [],
     "objects": [
@@ -161,6 +166,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "pageLayouts": [],
     "permissionFlags": [],
     "publicAssets": [],
+    "relatedRecordPaths": [],
     "roles": [
       "my.role.ts",
     ],
@@ -216,6 +222,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
         "universalIdentifier": "e1e2e3e4-e5e6-4000-8000-000000000010",
       },
     ],
+    "mcpServers": [],
     "messagingProviders": [],
     "navigationMenuItems": [],
     "objects": [
@@ -253,6 +260,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "pageLayouts": [],
     "permissionFlags": [],
     "publicAssets": [],
+    "relatedRecordPaths": [],
     "roles": [
       {
         "canBeAssignedToAgents": false,
@@ -327,6 +335,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
       "src/logic-functions/test-function.function.ts",
       "src/root.function.ts",
     ],
+    "mcpServers": [],
     "messagingProviders": [],
     "navigationMenuItems": [
       "src/navigation-menu-items/post-card-recipients.navigation-menu-item.ts",
@@ -350,6 +359,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "publicAssets": [
       "public/favicon.png",
     ],
+    "relatedRecordPaths": [],
     "roles": [
       "src/roles/default-function.role.ts",
       "src/root.role.ts",
@@ -886,6 +896,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
         "universalIdentifier": "f0f1f2f3-f4f5-4000-8000-000000000001",
       },
     ],
+    "mcpServers": [],
     "messagingProviders": [],
     "navigationMenuItems": [
       {
@@ -1167,6 +1178,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
         "fileType": "png",
       },
     ],
+    "relatedRecordPaths": [],
     "roles": [
       {
         "canBeAssignedToAgents": false,
@@ -1431,6 +1443,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     ],
     "indexes": [],
     "logicFunctions": [],
+    "mcpServers": [],
     "messagingProviders": [],
     "navigationMenuItems": [],
     "objects": [],
@@ -1439,6 +1452,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "pageLayouts": [],
     "permissionFlags": [],
     "publicAssets": [],
+    "relatedRecordPaths": [],
     "roles": [
       "my.role.ts",
     ],
@@ -1488,6 +1502,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     ],
     "indexes": [],
     "logicFunctions": [],
+    "mcpServers": [],
     "messagingProviders": [],
     "navigationMenuItems": [],
     "objects": [],
@@ -1496,6 +1511,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "pageLayouts": [],
     "permissionFlags": [],
     "publicAssets": [],
+    "relatedRecordPaths": [],
     "roles": [
       {
         "canBeAssignedToAgents": false,

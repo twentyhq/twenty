@@ -3,17 +3,14 @@ import { createManyOperation } from 'test/integration/graphql/utils/create-many-
 import { destroyManyOperationFactory } from 'test/integration/graphql/utils/destroy-many-operation-factory.util';
 import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graphql-api-request.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { expectEventually } from 'test/integration/utils/expect-eventually.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
-import { FeatureFlagKey, FieldActorSource } from 'twenty-shared/types';
+import { FieldActorSource } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
-import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
-import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { type AddPeopleToMessageListService } from 'src/modules/emailing/services/add-people-to-message-list.service';
 
 const people = Array.from({ length: 1005 }, (_, index) => ({
@@ -152,23 +149,7 @@ const destroyInBatches = async ({
 };
 
 describe('triggerAddPeopleToMessageListJob (integration)', () => {
-  let wasMessageCampaignEnabled: boolean;
-
   beforeAll(async () => {
-    wasMessageCampaignEnabled =
-      await getAppProviderByClassName<FeatureFlagService>(
-        'FeatureFlagService',
-      ).isFeatureEnabled(
-        FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-        SEED_APPLE_WORKSPACE_ID,
-      );
-
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-
     for (let offset = 0; offset < people.length; offset += 100) {
       const result = await createManyOperation({
         objectMetadataSingularName: 'person',
@@ -202,11 +183,6 @@ describe('triggerAddPeopleToMessageListJob (integration)', () => {
       objectMetadataPluralName: 'people',
       field: 'id',
       values: personIds,
-    });
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-      value: wasMessageCampaignEnabled,
-      expectToFail: false,
     });
   }, 60_000);
 

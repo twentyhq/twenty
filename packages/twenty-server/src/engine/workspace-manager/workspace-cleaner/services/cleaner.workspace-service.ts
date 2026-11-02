@@ -110,7 +110,11 @@ export class CleanerWorkspaceService {
     return this.workspaceDestroyQueueService.add<DestroySoftDeletedWorkspaceJobData>(
       DestroySoftDeletedWorkspaceJob.name,
       { workspaceId },
-      { id: `destroy-soft-deleted-workspace-${workspaceId}` },
+      {
+        id: `destroy-soft-deleted-workspace-${workspaceId}`,
+        workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 

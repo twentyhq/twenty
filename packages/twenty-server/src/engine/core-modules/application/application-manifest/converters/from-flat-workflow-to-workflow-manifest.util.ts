@@ -35,13 +35,13 @@ const isReproducedBySyncOrThrow = ({
     ...references,
   }).flatUniversalWorkflowVersion;
 
-  return isSameWorkflowVersionDefinition(
-    {
+  return isSameWorkflowVersionDefinition({
+    left: {
       triggers: reproducedVersion?.triggers ?? null,
       steps: reproducedVersion?.steps ?? null,
     },
-    flatWorkflowVersion,
-  );
+    right: flatWorkflowVersion,
+  });
 };
 
 export const fromFlatWorkflowToWorkflowManifest = ({

@@ -1,8 +1,17 @@
 import { type LogicFunctionExecutionContext } from 'twenty-shared/logic-function';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import {
+  type BrowserTranspileParams,
+  type BrowserTranspileResult,
+  type BrowserDependenciesBuildParams,
+  type BrowserDependenciesBuildResult,
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/types/transpile.type';
 import { type LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
-import { type LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import {
+  type LogicFunctionExecutionMode,
+  type LogicFunctionRuntime,
+} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 
 export type LogicFunctionExecuteError = {
@@ -23,7 +32,6 @@ export type LogicFunctionExecuteResult = {
 export type LogicFunctionExecuteParams = {
   flatLogicFunction: FlatLogicFunction;
   flatApplication: FlatApplication;
-  applicationUniversalIdentifier: string;
   payload: object;
   context: LogicFunctionExecutionContext;
   env?: Record<string, string>;
@@ -34,10 +42,10 @@ export type LogicFunctionExecuteParams = {
 export type LogicFunctionInstallPrebuiltBundleParams = {
   flatLogicFunction: FlatLogicFunction;
   flatApplication: FlatApplication;
-  applicationUniversalIdentifier: string;
 };
 
 export type LogicFunctionTranspileParams = {
+  targetRuntime: LogicFunctionRuntime;
   sourceCode: string;
   sourceFileName: string;
   builtFileName: string;
@@ -63,6 +71,10 @@ export interface LogicFunctionDriver {
   transpile(
     params: LogicFunctionTranspileParams,
   ): Promise<LogicFunctionTranspileResult>;
+  transpile(params: BrowserTranspileParams): Promise<BrowserTranspileResult>;
+  buildDependencies(
+    params: BrowserDependenciesBuildParams,
+  ): Promise<BrowserDependenciesBuildResult>;
   installPrebuiltBundle(
     params: LogicFunctionInstallPrebuiltBundleParams,
   ): Promise<void>;

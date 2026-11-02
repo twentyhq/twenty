@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
-import { workflowStepFilterManifestSchema } from '@/application/workflowStepManifestType';
+import {
+  workflowManifestPositionSchema,
+  workflowStepFilterManifestSchema,
+} from '@/application/workflowStepManifestType';
 import { ViewFilterOperand } from '@/types/ViewFilterOperand';
 import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
 import { isDefined } from '@/utils/validation/isDefined';
@@ -64,11 +67,19 @@ const webhookTriggerSettingsManifestSchema = z.discriminatedUnion(
   ],
 );
 
+// Optional because the workflow builder stores triggers without one
+const baseTriggerShape = {
+  universalIdentifier: z.uuid().optional(),
+  name: z.string().min(1).optional(),
+  nextStepIds: z.array(z.uuid()).min(1),
+  position: workflowManifestPositionSchema.nullable().optional(),
+  outputSchema: z.record(z.string(), z.unknown()).optional(),
+};
+
 const workflowTriggerManifestOptions = [
   z.strictObject({
-    universalIdentifier: z.uuid(),
+    ...baseTriggerShape,
     type: z.literal('MANUAL'),
-    nextStepIds: z.array(z.uuid()).min(1),
     settings: z
       .strictObject({
         availability: manualTriggerAvailabilityManifestSchema.optional(),
@@ -91,15 +102,13 @@ const workflowTriggerManifestOptions = [
       .optional(),
   }),
   z.strictObject({
-    universalIdentifier: z.uuid(),
+    ...baseTriggerShape,
     type: z.literal('CRON'),
-    nextStepIds: z.array(z.uuid()).min(1),
     settings: cronTriggerSettingsManifestSchema,
   }),
   z.strictObject({
-    universalIdentifier: z.uuid(),
+    ...baseTriggerShape,
     type: z.literal('DATABASE_EVENT'),
-    nextStepIds: z.array(z.uuid()).min(1),
     settings: z
       .strictObject({
         objectUniversalIdentifier: z.uuid(),
@@ -208,9 +217,8 @@ const workflowTriggerManifestOptions = [
       }),
   }),
   z.strictObject({
-    universalIdentifier: z.uuid(),
+    ...baseTriggerShape,
     type: z.literal('WEBHOOK'),
-    nextStepIds: z.array(z.uuid()).min(1),
     settings: webhookTriggerSettingsManifestSchema,
   }),
 ] as const;

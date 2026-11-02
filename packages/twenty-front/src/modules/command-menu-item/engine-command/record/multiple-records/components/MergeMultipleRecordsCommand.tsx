@@ -21,11 +21,10 @@ export const MergeMultipleRecordsCommand = () => {
   const { openMergeRecordsPageInSidePanel } =
     useOpenMergeRecordsPageInSidePanel({
       objectNameSingular: objectMetadataItem.nameSingular,
-      objectRecordIds: selectedRecordIds,
     });
 
   const handleExecute = () => {
-    openMergeRecordsPageInSidePanel();
+    openMergeRecordsPageInSidePanel(selectedRecordIds);
   };
 
   return <HeadlessEngineCommandWrapperEffect execute={handleExecute} />;

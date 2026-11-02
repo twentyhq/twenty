@@ -1,6 +1,5 @@
 import { ToolCategory } from 'twenty-shared/ai';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { z } from 'zod';
 
 import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
@@ -34,7 +33,6 @@ const findCampaignSuppressionsInputSchema = z.object({
   name: 'find_campaign_suppressions',
   category: ToolCategory.ACTION,
   requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
-  requiredFeatureFlags: [FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED],
   description:
     'List the email addresses that campaigns skip: bounces, spam complaints, unsubscribes (global or per topic) and tracking opt-outs, newest first. ' +
     'Use it to explain why someone is not receiving campaigns. Read only: suppressions can only be removed from the settings page.',

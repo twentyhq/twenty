@@ -7,6 +7,7 @@ export type HostPointerCaptureController = {
     pointerId: number;
   }) => void;
   claimPointerEventForwarding: ClaimPointerEventForwarding;
+  hasActivePointerCaptureForEvent: (event: object) => boolean;
   setPushCapturedPointerEvent: (
     pushCapturedPointerEvent: PushCapturedPointerEvent | null,
   ) => void;

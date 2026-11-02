@@ -17,7 +17,8 @@ import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { IconEyeOff, useIcons } from 'twenty-ui/icon';
+import { IconEyeOff } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
 export const ViewFieldsVisibleDropdownSection = () => {

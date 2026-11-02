@@ -35,6 +35,7 @@ export const METADATA_EVENTS_TO_EMIT = {
   messagingProvider: true,
   eventMetadata: true,
   timelineActivityType: true,
+  relatedRecordPath: true,
   validationRule: true,
   searchFieldMetadata: true,
   agentChatChannel: true,

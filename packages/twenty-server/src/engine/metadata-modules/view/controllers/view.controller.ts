@@ -10,6 +10,8 @@ import {
   Req,
   UseFilters,
   UseGuards,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 
 import { type APP_LOCALES } from 'twenty-shared/translations';
@@ -31,7 +33,6 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { buildViewNameObjectLabels } from 'src/engine/metadata-modules/view/utils/build-view-name-object-labels.util';
 import { resolveViewName } from 'src/engine/metadata-modules/view/utils/resolve-view-name.util';
-import { getTwentyStandardApplicationIdOrThrow } from 'src/engine/metadata-modules/utils/get-twenty-standard-application-id-or-throw.util';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { CreateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/create-view.input';
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
@@ -46,10 +47,10 @@ import {
 import { ViewRestApiExceptionFilter } from 'src/engine/metadata-modules/view/filters/view-rest-api-exception.filter';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { FlatEntityMapsRestApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-rest-api-exception.filter';
-import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
+import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/permissions-rest-api-exception.filter';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
-import { ViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-permission.guard';
-import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-permission.guard';
+import { ViewPermissionGuard } from 'src/engine/permissions/view/guards/view-permission.guard';
+import { CreateViewPermissionGuard } from 'src/engine/permissions/view/guards/create-view-permission.guard';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 
 @Controller(`${ApiPath.Rest}/metadata/views`)
@@ -164,6 +165,7 @@ export class ViewController {
 
   @Patch(':id')
   @UseGuards(ViewPermissionGuard)
+  @UsePipes(new ValidationPipe())
   async update(
     @Param('id') id: string,
     @Body() input: UpdateViewInput,
@@ -209,27 +211,13 @@ export class ViewController {
     workspaceId: string,
     locale?: keyof typeof APP_LOCALES,
   ): Promise<ViewDTO[]> {
-    const hasTemplates = views.some((view) =>
-      hasObjectMetadataLabelPlaceholder(view.name),
-    );
-
-    const { flatObjectMetadataMaps, flatApplicationMaps } =
+    const { flatObjectMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatApplicationMaps'],
+          flatMapsKeys: ['flatObjectMetadataMaps'],
         },
       );
-
-    const twentyStandardApplicationId =
-      getTwentyStandardApplicationIdOrThrow(flatApplicationMaps);
-
-    if (
-      !hasTemplates &&
-      views.every((view) => view.applicationId !== twentyStandardApplicationId)
-    ) {
-      return views;
-    }
 
     const getI18nContext =
       await this.applicationTranslationCatalogService.getI18nContextByApplicationId(

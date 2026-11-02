@@ -13,6 +13,7 @@ export enum ServerRouteTriggerExceptionCode {
   RESOLVER_INVALID_RESULT = 'RESOLVER_INVALID_RESULT',
   RESOLVER_REQUIRES_AUTHENTICATION = 'RESOLVER_REQUIRES_AUTHENTICATION',
   METHOD_NOT_ALLOWED = 'METHOD_NOT_ALLOWED',
+  AMBIGUOUS_SERVER_ROUTE = 'AMBIGUOUS_SERVER_ROUTE',
 }
 
 const getServerRouteTriggerExceptionUserFriendlyMessage = (
@@ -35,6 +36,8 @@ const getServerRouteTriggerExceptionUserFriendlyMessage = (
       return msg`Server logic function requires authentication.`;
     case ServerRouteTriggerExceptionCode.METHOD_NOT_ALLOWED:
       return msg`This HTTP method is not allowed on this server route.`;
+    case ServerRouteTriggerExceptionCode.AMBIGUOUS_SERVER_ROUTE:
+      return msg`Several applications declare this server route. Use the application registration URL instead.`;
     default:
       assertUnreachable(code);
   }

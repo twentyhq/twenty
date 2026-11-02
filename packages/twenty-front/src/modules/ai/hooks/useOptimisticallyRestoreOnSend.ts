@@ -1,4 +1,5 @@
 import { useStore } from 'jotai';
+import { getAgentChatMentionsResolvedAt } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CHAT_THREAD_PARTICIPANT_UNSAVED_UPDATED_AT } from '@/ai/constants/AgentChatThreadParticipantUnsavedUpdatedAt';
@@ -45,6 +46,9 @@ export const useOptimisticallyRestoreOnSend = () => {
               ...participants[threadId],
               threadId,
               lastReadAt: optimisticUpdatedAt,
+              mentionsResolvedAt: getAgentChatMentionsResolvedAt(
+                previousParticipant ?? {},
+              ),
               archivedAt: null,
               snoozedUntil: null,
               isSubscribed: true,
@@ -60,6 +64,9 @@ export const useOptimisticallyRestoreOnSend = () => {
         ? { ...visit, isUnread: false, isKeptUnread: false }
         : visit,
     );
+    const optimisticParticipant = store.get(
+      agentChatThreadParticipantsState.atom,
+    )?.[threadId];
 
     return () => {
       applyAgentChatThreadUpdate({
@@ -71,7 +78,10 @@ export const useOptimisticallyRestoreOnSend = () => {
         ...(isDefined(thread?.deletedAt) && { deletedAt: thread.deletedAt }),
       });
       store.set(agentChatThreadParticipantsState.atom, (participants) => {
-        if (!isDefined(participants)) {
+        if (
+          !isDefined(participants) ||
+          participants[threadId] !== optimisticParticipant
+        ) {
           return participants;
         }
 

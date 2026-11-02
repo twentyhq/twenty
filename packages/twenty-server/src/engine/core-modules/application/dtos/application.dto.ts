@@ -112,6 +112,10 @@ export class ApplicationDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   healthCheckLogicFunctionId?: string;
 
+  @IsBoolean()
+  @Field(() => Boolean)
+  runOnUserPreferences: boolean;
+
   @IsOptional()
   @Field(() => RoleDTO, { nullable: true })
   defaultLogicFunctionRole?: RoleDTO;

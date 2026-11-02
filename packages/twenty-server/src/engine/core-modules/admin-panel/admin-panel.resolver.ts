@@ -573,7 +573,7 @@ export class AdminPanelResolver {
     await this.cronQueueService.add(
       MarketplaceCatalogSyncCronJob.name,
       {},
-      { id: 'marketplace-catalog-sync' }, // Avoids triggering multiple pending jobs
+      { id: 'marketplace-catalog-sync', isSystemJob: true }, // Avoids triggering multiple pending jobs
     );
 
     return true;

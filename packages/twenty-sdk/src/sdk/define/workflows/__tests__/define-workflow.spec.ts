@@ -61,6 +61,25 @@ describe('defineWorkflow', () => {
     });
   });
 
+  it('accepts the trigger state a workflow built in the workflow builder pulls with', () => {
+    const { universalIdentifier: _universalIdentifier, ...trigger } =
+      workflow.version.trigger;
+    const pulled = {
+      ...workflow,
+      version: {
+        ...workflow.version,
+        trigger: {
+          ...trigger,
+          name: 'Launch manually',
+          position: null,
+          outputSchema: {},
+        },
+      },
+    };
+
+    expect(defineWorkflow(pulled).errors).toEqual([]);
+  });
+
   it('accepts a workflow flagged as system', () => {
     const systemWorkflow = { ...workflow, isSystem: true };
 
@@ -92,7 +111,7 @@ describe('defineWorkflow', () => {
       problem: 'a step type applications cannot use',
       definition: withStep({ type: 'CODE' }),
       error:
-        'version.steps.0.type: Unsupported step type. Application workflows support: LOGIC_FUNCTION, HTTP_REQUEST, CLASSIFY, ITERATOR, DELAY, WAIT_FOR_EVENT, EMPTY, CREATE_RECORD, UPDATE_RECORD, UPSERT_RECORD, DELETE_RECORD, FIND_RECORDS, PICK_RECORD, FILTER, IF_ELSE, FORM, SEND_EMAIL, DRAFT_EMAIL, CREATE_CALENDAR_EVENT, AI_AGENT',
+        'version.steps.0.type: Unsupported step type. Application workflows support: LOGIC_FUNCTION, HTTP_REQUEST, CLASSIFY, ITERATOR, DELAY, WAIT_FOR_EVENT, EMPTY, CREATE_RECORD, UPDATE_RECORD, UPSERT_RECORD, DELETE_RECORD, FIND_RECORDS, PICK_RECORD, FILTER, IF_ELSE, FORM, SEND_EMAIL, DRAFT_EMAIL, CREATE_CALENDAR_EVENT, SEND_CHAT_MESSAGE, AI_AGENT',
     },
     {
       problem: 'an unknown trigger type',

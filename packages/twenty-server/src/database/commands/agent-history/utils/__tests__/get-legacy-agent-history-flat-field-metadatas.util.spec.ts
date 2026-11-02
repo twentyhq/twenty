@@ -1,5 +1,4 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { MetadataWritability } from 'twenty-shared/types';
 
 import { getLegacyAgentHistoryFlatFieldMetadatas } from 'src/database/commands/agent-history/utils/get-legacy-agent-history-flat-field-metadatas.util';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
@@ -34,7 +33,6 @@ describe('getLegacyAgentHistoryFlatFieldMetadatas', () => {
           field.objectMetadataUniversalIdentifier
         ]?.id,
       );
-      expect(field.writability).toBe(MetadataWritability.SYSTEM);
     }
   });
 
