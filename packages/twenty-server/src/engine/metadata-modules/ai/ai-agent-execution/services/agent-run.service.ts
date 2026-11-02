@@ -505,10 +505,7 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     // a run never exceeds the agent's application, whoever calls it
     const agentRunRoleIds: AgentRunRoleIds = {
       ...callerRoleIds,
-      ...resolveApplicationRoleId({
-        application: agentContext.application,
-        isMissingApplicationRoleTolerated: true,
-      }),
+      ...resolveApplicationRoleId({ application: agentContext.application }),
     };
 
     return {

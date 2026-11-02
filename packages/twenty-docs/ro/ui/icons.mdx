@@ -36,10 +36,10 @@ Pictogramele exportate își păstrează lățimea solicitată în aspectele fle
 
 ## Nume de pictograme dinamice
 
-Folosește `IconsProvider` și `Icon` când numele sunt alese în timpul rulării. Furnizorul încarcă asincron harta completă a pictogramelor; pachetele construite fără împărțirea codului, precum componentele front-end, includ întreaga hartă. Înainte ca încărcarea să se finalizeze și pentru nume necunoscute, `Icon` redă `Icon123`. Harta dinamică diferă de catalogul de exporturi denumite; nu presupune că fiecare export de marcă sau ilustrație poate fi rezolvat după nume.
+Utilizați `IconsProvider` și `Icon` din `twenty-ui/icon/provider` când numele sunt alese în timpul rulării. Furnizorul încarcă asincron harta completă a pictogramelor; pachetele construite fără împărțirea codului, precum componentele front-end, includ întreaga hartă. `twenty-ui/icon` nu include providerul, astfel încât importarea pictogramelor denumite nu include niciodată harta. Înainte ca încărcarea să se finalizeze și pentru nume necunoscute, `Icon` redă `Icon123`. Harta dinamică diferă de catalogul de exporturi denumite; nu presupune că fiecare export de marcă sau ilustrație poate fi rezolvat după nume.
 
 ```tsx
-import { Icon, IconsProvider } from 'twenty-ui/icon';
+import { Icon, IconsProvider } from 'twenty-ui/icon/provider';
 import { Button } from 'twenty-ui/primitives/input';
 
 export const DynamicAction = ({ iconName }: { iconName: string }) => (

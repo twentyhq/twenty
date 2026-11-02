@@ -8,7 +8,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
-import { computeObjectsPermissionsForRolePermissionConfig } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-role-permission-config.util';
+import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/permissions/role/utils/get-objects-permissions-from-role-permission-config.util';
 import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principal/types/application-default-role-maps.type';
 
 export const resolveObjectRecordsPermissions = ({
@@ -43,8 +43,8 @@ export const resolveObjectRecordsPermissions = ({
   }
 
   return {
-    objectRecordsPermissions: computeObjectsPermissionsForRolePermissionConfig({
-      intersectionOf: rolePermissionConfig.intersectionOf,
+    objectRecordsPermissions: getObjectsPermissionsFromRolePermissionConfig({
+      rolePermissionConfig,
       rolesPermissions: objectPermissionsByRoleId,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,

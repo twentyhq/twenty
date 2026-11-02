@@ -7,8 +7,10 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
-import { computeObjectsPermissionsForRolePermissionConfig } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-role-permission-config.util';
+import { computeObjectsPermissionsForRoles } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-roles.util';
 import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principal/types/application-default-role-maps.type';
+import { getRoleIdsToIntersect } from 'src/engine/permissions/principal/utils/get-role-ids-to-intersect.util';
+import { resolvePermissionsPrincipalActingApplicationId } from 'src/engine/permissions/principal/utils/resolve-permissions-principal-acting-application-id.util';
 
 export const getObjectsPermissionsFromRolePermissionConfig = ({
   rolesPermissions,
@@ -27,8 +29,14 @@ export const getObjectsPermissionsFromRolePermissionConfig = ({
     return {};
   }
 
-  return computeObjectsPermissionsForRolePermissionConfig({
-    intersectionOf: rolePermissionConfig.intersectionOf,
+  const { intersectionOf } = rolePermissionConfig;
+
+  return computeObjectsPermissionsForRoles({
+    roleIds: getRoleIdsToIntersect(intersectionOf) ?? [],
+    applicationId: resolvePermissionsPrincipalActingApplicationId({
+      intersectionOf,
+      flatApplicationMaps,
+    }),
     rolesPermissions,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,

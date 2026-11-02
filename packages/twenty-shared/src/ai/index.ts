@@ -121,6 +121,7 @@ export { isAiModelTier } from './utils/is-ai-model-tier.util';
 export { isAiSdkPackage } from './utils/is-ai-sdk-package.util';
 export { isCompleteWorkspaceSetupToolPart } from './utils/is-complete-workspace-setup-tool-part.util';
 export { isDataResidency } from './utils/is-data-residency.util';
+export { isFrontComponentProposedToolCall } from './utils/is-front-component-proposed-tool-call.util';
 export { isNoReplyToolPart } from './utils/is-no-reply-tool-part.util';
 export { isPausingToolPart } from './utils/is-pausing-tool-part.util';
 export { isSilentAgentChatMessageParts } from './utils/is-silent-agent-chat-message-parts.util';

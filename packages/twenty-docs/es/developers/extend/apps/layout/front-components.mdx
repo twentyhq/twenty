@@ -1039,7 +1039,7 @@ Importa iconos individuales desde `twenty-ui/icon`:
 import { IconBox, IconCheck } from 'twenty-ui/icon';
 ```
 
-Cada icono con nombre se optimiza con tree-shaking, por lo que importar unos pocos añade muy poco a tu bundle. Evita `IconsProvider` y `useIcons` en los componentes de Front. Los componentes de Front se empaquetan sin división de código, por lo que el catálogo dinámico de iconos del proveedor (el conjunto completo de Tabler, aproximadamente 2 MB minificado) termina en tu paquete. Consulta la [referencia de iconos](/es/ui/icons) para ver las exportaciones disponibles y las props compatibles.
+Cada icono con nombre se optimiza con tree-shaking, por lo que importar unos pocos añade muy poco a tu bundle. Evita `twenty-ui/icon/provider` (`IconsProvider`, `useIcons` y el `Icon` por nombre) en los componentes front. Los componentes de Front se empaquetan sin división de código, por lo que el catálogo dinámico de iconos del proveedor (el conjunto completo de Tabler, aproximadamente 2 MB minificado) termina en tu paquete. Consulta la [referencia de iconos](/es/ui/icons) para ver las exportaciones disponibles y las props compatibles.
 
 ### Temas y tokens de tema
 

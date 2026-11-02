@@ -26,7 +26,7 @@ export const findRowLevelPermissionMatchingRecordIds = ({
         record,
         filter: rowLevelPermissionFilter.recordFilter,
         flatObjectMetadata: request.flatObjectMetadata,
-        flatFieldMetadataMaps: request.environment.flatFieldMetadataMaps,
+        flatFieldMetadataMaps: request.metadataMaps.flatFieldMetadataMaps,
         shouldIgnoreSoftDeleteDefaultFilter:
           context.shouldIgnoreSoftDeleteDefaultFilter,
       }),

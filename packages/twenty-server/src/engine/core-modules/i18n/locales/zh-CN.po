@@ -1436,6 +1436,11 @@ msgstr "应用程序变量范围在创建后无法更改"
 msgid "Applications cannot update these fields: {fieldsList}."
 msgstr "应用程序无法更新以下字段：{fieldsList}。"
 
+#. js-lingui-id: agujn9
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Approve this draft in its original chat."
+msgstr "在原始聊天中批准此草稿。"
+
 #. js-lingui-id: rczXz4
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 msgid "Approve your access domain"
@@ -11819,6 +11824,11 @@ msgctxt "commandMenuItem.label"
 msgid "Save Dashboard"
 msgstr "保存仪表板"
 
+#. js-lingui-id: YlXHmh
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Saving a component requires human approval."
+msgstr "保存组件需要人工批准。"
+
 #. js-lingui-id: gqz/Jf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -13786,6 +13796,11 @@ msgstr "无法找到要修改的角色。"
 msgid "The same column cannot appear twice in an index."
 msgstr "同一列在一个索引中不能出现两次。"
 
+#. js-lingui-id: IoxxxC
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "The saved component differs from this draft."
+msgstr "已保存的组件与此草稿不同。"
+
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
 msgid "The selected model has been disabled by the administrator."
@@ -14290,10 +14305,10 @@ msgstr "该域名已被占用。"
 msgid "This draft is being updated. Try again."
 msgstr "此草稿正在更新。请重试。"
 
-#. js-lingui-id: HJFKCt
+#. js-lingui-id: EM4fuz
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
-msgid "This draft was superseded or belongs to another chat. Start a new draft."
-msgstr "此草稿已被替代或属于其他聊天。请新建草稿。"
+msgid "This draft was superseded, saved or belongs to another chat. Start a new draft."
+msgstr "此草稿已被取代、保存，或属于其他聊天。请开始新草稿。"
 
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts
@@ -14577,6 +14592,11 @@ msgstr "此权限在对象上已禁用，无法授予"
 msgid "This plan is not available."
 msgstr "此套餐不可用。"
 
+#. js-lingui-id: GA6RMi
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This preview changed. Approve the latest revision."
+msgstr "此预览已更改。请批准最新修订版本。"
+
 #. js-lingui-id: Y5C3uK
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "This provider is not supported."
@@ -14681,6 +14701,11 @@ msgstr "此角色无法编辑。"
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "此角色无法修改，因为它是系统角色。只有自定义角色可以编辑。"
+
+#. js-lingui-id: UjNNWw
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This saved component was deleted. Create a new draft."
+msgstr "此已保存的组件已删除。请创建新草稿。"
 
 #. js-lingui-id: DEJJoY
 #: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts

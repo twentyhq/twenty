@@ -1431,6 +1431,11 @@ msgstr ""
 msgid "Applications cannot update these fields: {fieldsList}."
 msgstr ""
 
+#. js-lingui-id: agujn9
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Approve this draft in its original chat."
+msgstr ""
+
 #. js-lingui-id: rczXz4
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 msgid "Approve your access domain"
@@ -11814,6 +11819,11 @@ msgctxt "commandMenuItem.label"
 msgid "Save Dashboard"
 msgstr ""
 
+#. js-lingui-id: YlXHmh
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Saving a component requires human approval."
+msgstr ""
+
 #. js-lingui-id: gqz/Jf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -13781,6 +13791,11 @@ msgstr ""
 msgid "The same column cannot appear twice in an index."
 msgstr ""
 
+#. js-lingui-id: IoxxxC
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "The saved component differs from this draft."
+msgstr ""
+
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
 msgid "The selected model has been disabled by the administrator."
@@ -14285,9 +14300,9 @@ msgstr ""
 msgid "This draft is being updated. Try again."
 msgstr ""
 
-#. js-lingui-id: HJFKCt
+#. js-lingui-id: EM4fuz
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
-msgid "This draft was superseded or belongs to another chat. Start a new draft."
+msgid "This draft was superseded, saved or belongs to another chat. Start a new draft."
 msgstr ""
 
 #. js-lingui-id: NcQ6eO
@@ -14572,6 +14587,11 @@ msgstr ""
 msgid "This plan is not available."
 msgstr ""
 
+#. js-lingui-id: GA6RMi
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This preview changed. Approve the latest revision."
+msgstr ""
+
 #. js-lingui-id: Y5C3uK
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "This provider is not supported."
@@ -14675,6 +14695,11 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-permission-flag-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
+msgstr ""
+
+#. js-lingui-id: UjNNWw
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This saved component was deleted. Create a new draft."
 msgstr ""
 
 #. js-lingui-id: DEJJoY
