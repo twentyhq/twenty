@@ -188,6 +188,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       );
 
     const chatSharing = {
+      assertHasMentionResolutionOrThrow: jest.fn().mockResolvedValue(undefined),
       getThreadWithAccess: ({
         workspaceId,
         threadId,
@@ -250,6 +251,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
         conversationWriter,
         chatThreadService,
         { resolveMentionInTransaction: jest.fn() } as never,
+        chatSharing as never,
       );
 
     const createActorService = (messageRepository: typeof messages) =>

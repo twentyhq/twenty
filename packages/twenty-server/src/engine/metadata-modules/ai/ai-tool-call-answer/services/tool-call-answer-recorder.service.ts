@@ -1,16 +1,22 @@
 import { Injectable } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { findAwaitingPausingTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-awaiting-pausing-tool.util';
+import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
+import { AgentChatThreadParticipantEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant-event.service';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
+import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
+import { type AgentChatThreadParticipantWrite } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-write.type';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
-import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
+import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
-import { buildEndWaitingAgentTurnQuery } from 'src/engine/metadata-modules/ai/ai-history/utils/build-end-waiting-agent-turn-query.util';
+import { AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
+import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
+import { buildToolCallStatusWhere } from 'src/engine/metadata-modules/ai/ai-history/utils/build-tool-call-status-where.util';
 import { buildToolCallNotPendingException } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/utils/build-tool-call-not-pending-exception.util';
 
 @Injectable()
@@ -18,8 +24,13 @@ export class ToolCallAnswerRecorderService {
   constructor(
     @InjectAgentHistoryRepository('agentMessagePart')
     private readonly messagePartRepository: AgentHistoryRepository<AgentMessagePartWorkspaceEntity>,
+    @InjectAgentHistoryRepository('agentMessage')
+    private readonly messageRepository: AgentHistoryRepository<AgentMessageWorkspaceEntity>,
+    private readonly conversationWriterService: AgentConversationWriterService,
+    private readonly sharingService: AgentChatSharingService,
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
     private readonly participantService: AgentChatThreadParticipantService,
+    private readonly participantEventService: AgentChatThreadParticipantEventService,
   ) {}
 
   async findAwaitingToolParts({
@@ -43,32 +54,51 @@ export class ToolCallAnswerRecorderService {
   async claimToolCallAnswerOrThrow({
     threadId,
     partId,
+    pendingToolOutput,
     toolOutput,
     workspaceId,
     workspaceMemberId,
-  }: {
-    threadId: string;
+  }: AgentChatThreadAccessArgs & {
     partId: string;
+    pendingToolOutput: unknown;
     toolOutput: Record<string, unknown>;
-    workspaceId: string;
-    workspaceMemberId: string;
   }): Promise<void> {
-    await this.participantService.resolveMention({
-      threadId,
-      workspaceId,
-      workspaceMemberId,
-      writeResponse: async ({ manager, table }) => {
-        const claimedParts = await manager.query<{ id: string }[]>(
-          `WITH claimed_part AS (UPDATE ${table('agentMessagePart')} SET "toolOutput" = "toolOutput" || $2::jsonb, "updatedAt" = now()
-           WHERE id = $1 AND "toolOutput"->'result'->>'status' = 'pending' RETURNING id) SELECT id FROM claimed_part`,
-          [partId, JSON.stringify(toolOutput)],
-        );
+    if (!isPlainObject(pendingToolOutput)) {
+      throw buildToolCallNotPendingException();
+    }
 
-        if (claimedParts.length !== 1) {
-          throw buildToolCallNotPendingException();
-        }
-      },
-    });
+    const mentionAccess = { workspaceId, workspaceMemberId, threadId };
+
+    await this.sharingService.assertHasMentionResolutionOrThrow(workspaceId);
+
+    const participantWrite =
+      await this.conversationWriterService.runInTransaction(
+        workspaceId,
+        async (scope) => {
+          await this.participantService.lockInTransaction({
+            scope,
+            ...mentionAccess,
+          });
+
+          const mentionResolution = await this.resolveMentionInTransaction({
+            scope,
+            ...mentionAccess,
+          });
+          const claimedPartCount = await scope.update(
+            'agentMessagePart',
+            { id: partId, toolOutput: buildToolCallStatusWhere('pending') },
+            { toolOutput: { ...pendingToolOutput, ...toolOutput } },
+          );
+
+          if (claimedPartCount !== 1) {
+            throw buildToolCallNotPendingException();
+          }
+
+          return mentionResolution;
+        },
+      );
+
+    await this.emitParticipantWrite({ workspaceId, participantWrite });
   }
 
   // written together so an answer never strands a conversation waiting on answered calls
@@ -89,52 +119,72 @@ export class ToolCallAnswerRecorderService {
     workspaceId: string;
     resolveMentionForWorkspaceMemberId: string | null;
   }): Promise<void> {
-    let isPendingQuestionCleared = false;
+    const mentionAccess = isDefined(resolveMentionForWorkspaceMemberId)
+      ? {
+          workspaceId,
+          workspaceMemberId: resolveMentionForWorkspaceMemberId,
+          threadId,
+        }
+      : null;
 
-    const writeResponse = async ({
-      manager,
-      table,
-    }: AgentHistoryStorageContext) => {
-      await manager.query(
-        `UPDATE ${table('agentMessagePart')} SET "toolOutput" = $2::jsonb, "updatedAt" = now() WHERE id = $1`,
-        [partId, JSON.stringify(toolOutput)],
-      );
-
-      if (!isLastAnswer) {
-        return;
-      }
-
-      const clearedThreads = await manager.query<{ id: string }[]>(
-        `WITH cleared AS (
-           UPDATE ${table('agentChatThread')} SET "pendingQuestionMessageId" = NULL, "updatedAt" = now()
-           WHERE id = $1 AND "pendingQuestionMessageId" = $2
-           RETURNING id
-         ) SELECT id FROM cleared`,
-        [threadId, messageId],
-      );
-
-      if (clearedThreads.length === 0) {
-        return;
-      }
-
-      await manager.query(buildEndWaitingAgentTurnQuery({ table }), [
-        messageId,
-        AgentTurnStatus.COMPLETED,
-      ]);
-
-      isPendingQuestionCleared = true;
-    };
-
-    if (isDefined(resolveMentionForWorkspaceMemberId)) {
-      await this.participantService.resolveMention({
-        workspaceId,
-        workspaceMemberId: resolveMentionForWorkspaceMemberId,
-        threadId,
-        writeResponse,
-      });
-    } else {
-      await this.messagePartRepository.query(workspaceId, writeResponse);
+    if (isDefined(mentionAccess)) {
+      await this.sharingService.assertHasMentionResolutionOrThrow(workspaceId);
     }
+
+    const turnId = isLastAnswer
+      ? await this.findMessageTurnId({ workspaceId, messageId })
+      : null;
+
+    const { isPendingQuestionCleared, participantWrite } =
+      await this.conversationWriterService.runInTransaction(
+        workspaceId,
+        async (scope) => {
+          if (isDefined(mentionAccess)) {
+            await this.participantService.lockInTransaction({
+              scope,
+              ...mentionAccess,
+            });
+          }
+
+          const clearedThreadCount = isLastAnswer
+            ? await scope.update(
+                'agentChatThread',
+                { id: threadId, pendingQuestionMessageId: messageId },
+                { pendingQuestionMessageId: null },
+              )
+            : 0;
+          const mentionResolution = isDefined(mentionAccess)
+            ? await this.resolveMentionInTransaction({
+                scope,
+                ...mentionAccess,
+              })
+            : null;
+
+          await scope.update(
+            'agentMessagePart',
+            { id: partId },
+            { toolOutput },
+          );
+
+          if (clearedThreadCount > 0 && isDefined(turnId)) {
+            await scope.update(
+              'agentTurn',
+              { id: turnId, status: AgentTurnStatus.WAITING_FOR_INPUT },
+              {
+                status: AgentTurnStatus.COMPLETED,
+                endedAt: new Date().toISOString(),
+              },
+            );
+          }
+
+          return {
+            isPendingQuestionCleared: clearedThreadCount > 0,
+            participantWrite: mentionResolution,
+          };
+        },
+      );
+
+    await this.emitParticipantWrite({ workspaceId, participantWrite });
 
     if (isPendingQuestionCleared) {
       await this.threadRecordEventService.emitPendingQuestionCleared({
@@ -143,5 +193,55 @@ export class ToolCallAnswerRecorderService {
         messageId,
       });
     }
+  }
+
+  private async findMessageTurnId({
+    workspaceId,
+    messageId,
+  }: {
+    workspaceId: string;
+    messageId: string;
+  }): Promise<string | null> {
+    const message = await this.messageRepository.findOne(workspaceId, {
+      where: { id: messageId },
+      select: ['id', 'turnId'],
+    });
+
+    return message?.turnId ?? null;
+  }
+
+  private async resolveMentionInTransaction({
+    scope,
+    ...args
+  }: AgentChatThreadAccessArgs & {
+    scope: AgentHistoryTransactionScope;
+  }): Promise<AgentChatThreadParticipantWrite | null> {
+    const before = await this.participantService.findOneInTransaction({
+      scope,
+      ...args,
+    });
+    const after = await this.participantService.resolveMentionInTransaction({
+      scope,
+      ...args,
+    });
+
+    return isDefined(after) ? { before, after } : null;
+  }
+
+  private async emitParticipantWrite({
+    workspaceId,
+    participantWrite,
+  }: {
+    workspaceId: string;
+    participantWrite: AgentChatThreadParticipantWrite | null;
+  }): Promise<void> {
+    if (!isDefined(participantWrite)) {
+      return;
+    }
+
+    await this.participantEventService.emitParticipantWritten({
+      workspaceId,
+      ...participantWrite,
+    });
   }
 }

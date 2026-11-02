@@ -29,6 +29,7 @@ import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/se
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -1439,9 +1440,13 @@ describe('Chat thread participant state through the authenticated API', () => {
       const write =
         getAppProviderByClassName<AgentChatThreadParticipantService>(
           'AgentChatThreadParticipantService',
-        ).resolveMention({
-          ...buildJonyThreadAccess(threadId),
-          writeResponse: async ({ manager, table }) => {
+        ).updateInboxState({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          threadIds: [threadId],
+          action: AgentChatInboxAction.READ,
+          snoozedUntil: null,
+          writeThread: async ({ manager, table }) => {
             const [{ backendProcessId }] = await manager.query<
               { backendProcessId: number }[]
             >('SELECT pg_backend_pid() AS "backendProcessId"');
@@ -1462,7 +1467,7 @@ describe('Chat thread participant state through the authenticated API', () => {
       writeEvents.emit('resumed');
 
       await expect(Promise.all([write, reply])).resolves.toEqual([
-        undefined,
+        [expect.objectContaining({ threadId })],
         expect.objectContaining({ threadId }),
       ]);
     });
@@ -1508,55 +1513,81 @@ describe('Chat thread participant state through the authenticated API', () => {
     });
   });
 
-  it('rolls mention resolution back when a response cannot be recorded', async () => {
+  it('preserves a newer mention when an older answer finishes first', async () => {
     const threadId = await createTestThread();
 
     await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
 
-    await expect(
-      getAppProviderByClassName<AgentChatThreadParticipantService>(
-        'AgentChatThreadParticipantService',
-      ).resolveMention({
-        ...buildJonyThreadAccess(threadId),
-        writeResponse: async () => {
-          throw new Error('The response is invalid');
-        },
-      }),
-    ).rejects.toThrow('The response is invalid');
-
-    expect(
-      await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
-    ).toMatchObject({ mentionsResolvedAt: null });
-  });
-
-  it('preserves a newer mention when an older response finishes first', async () => {
-    const threadId = await createTestThread();
-
-    await addParticipants(threadId, [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY]);
-
-    const responseEvents = new EventEmitter();
-    const responseStarted = once(responseEvents, 'started');
-    const responseFinished = once(responseEvents, 'finished');
     const participantService =
       getAppProviderByClassName<AgentChatThreadParticipantService>(
         'AgentChatThreadParticipantService',
       );
-    const response = participantService.resolveMention({
-      ...buildJonyThreadAccess(threadId),
-      writeResponse: async () => {
-        responseEvents.emit('started');
-        await responseFinished;
-      },
+    const markAsAssigned: AgentChatThreadParticipantService['markAsAssigned'] =
+      participantService.markAsAssigned.bind(participantService);
+    const assignmentEvents = new EventEmitter();
+    const assignmentHeld = once(assignmentEvents, 'held');
+    const assignmentReleased = once(assignmentEvents, 'released');
+    const answerEvents = new EventEmitter();
+    const answerResolved = once(answerEvents, 'resolved');
+    const answerFinished = once(answerEvents, 'finished');
+
+    jest
+      .spyOn(participantService, 'markAsAssigned')
+      .mockImplementationOnce(({ writeAssignment, ...args }) =>
+        markAsAssigned({
+          ...args,
+          writeAssignment: async (context) => {
+            await writeAssignment(context);
+
+            const [{ backendProcessId }] = await context.manager.query<
+              { backendProcessId: number }[]
+            >('SELECT pg_backend_pid() AS "backendProcessId"');
+
+            assignmentEvents.emit('held', backendProcessId);
+            await assignmentReleased;
+          },
+        }),
+      );
+
+    const assignment = getAppProviderByClassName<AgentChatThreadService>(
+      'AgentChatThreadService',
+    ).assign({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      threadId,
+      assigneeWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+    });
+    const [assigningProcessId] = await assignmentHeld;
+    const answer = getAppProviderByClassName<AgentConversationWriterService>(
+      'AgentConversationWriterService',
+    ).runInTransaction(SEED_APPLE_WORKSPACE_ID, async (scope) => {
+      await participantService.lockInTransaction({
+        scope,
+        ...buildJonyThreadAccess(threadId),
+      });
+      await scope.update(
+        'agentChatThread',
+        { id: threadId },
+        { pendingQuestionMessageId: null },
+      );
+      await participantService.resolveMentionInTransaction({
+        scope,
+        ...buildJonyThreadAccess(threadId),
+      });
+      answerEvents.emit('resolved');
+      await answerFinished;
     });
 
-    await responseStarted;
+    await waitForBlockedDatabaseQueryOrThrow(assigningProcessId);
+    assignmentEvents.emit('released');
+    await answerResolved;
 
     const laterMention = participantService.markAsMentioned(
       buildJonyThreadAccess(threadId),
     );
 
-    responseEvents.emit('finished');
-    await Promise.all([response, laterMention]);
+    answerEvents.emit('finished');
+    await Promise.all([assignment, answer, laterMention]);
 
     const participant = await findMyParticipant(
       threadId,

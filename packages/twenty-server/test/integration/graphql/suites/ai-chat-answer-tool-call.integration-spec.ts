@@ -1,7 +1,10 @@
 import { randomUUID } from 'node:crypto';
 
 import { parse } from 'graphql';
-import { buildFallbackProposedToolCall } from 'twenty-shared/ai';
+import {
+  buildFallbackProposedToolCall,
+  type ExtendedUIMessagePart,
+} from 'twenty-shared/ai';
 import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/answer-tool-call.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
@@ -24,7 +27,11 @@ import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enum
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
+import { type AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { type AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
+import { type AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
+import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { readToolCallStatus as readToolCallOutputStatus } from 'src/engine/metadata-modules/ai/ai-history/utils/read-tool-call-status.util';
 import { createAskQuestionTool } from 'src/engine/metadata-modules/ai/ai-chat/tools/ask-question.tool';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -58,7 +65,7 @@ describe('Answering a chat tool call', () => {
   let enqueueStream: jest.SpyInstance;
   const spies: jest.SpyInstance[] = [];
 
-  const pauseOnQuestions = async (...toolCallIds: string[]) => {
+  const pauseOn = async (parts: ExtendedUIMessagePart[]) => {
     const userMessage = await chat.addMessage({
       workspaceId,
       threadId,
@@ -69,53 +76,51 @@ describe('Answering a chat tool call', () => {
       },
     });
 
-    const assistantMessageId = randomUUID();
+    const assistantMessageId =
+      await getAppProviderByClassName<AgentConversationWriterService>(
+        'AgentConversationWriterService',
+      ).insertMessage({
+        workspaceId,
+        threadId,
+        turnId: userMessage.turnId,
+        role: AgentMessageRole.ASSISTANT,
+        agentId: null,
+        senderUserWorkspaceId: null,
+        isAwaitingAnswer: true,
+        parts,
+      });
+
+    return { assistantMessageId };
+  };
+
+  const pauseOnQuestions = async (...toolCallIds: string[]) => {
     const pendingOutput = await createAskQuestionTool({
       isWorkspaceSetupThread: false,
     }).execute(QUESTION);
 
-    await getAppProviderByClassName<AgentConversationWriterService>(
-      'AgentConversationWriterService',
-    ).upsertAssistantMessage({
-      id: assistantMessageId,
-      threadId,
-      turnId: userMessage.turnId,
-      workspaceId,
-      parts: toolCallIds.map((toolCallId) => ({
+    return pauseOn(
+      toolCallIds.map((toolCallId) => ({
         type: 'tool-ask_question',
         toolCallId,
         state: 'output-available',
         input: QUESTION,
         output: pendingOutput,
       })) as never,
-    });
-
-    await global.testDataSource.query(
-      `UPDATE "${schema}"."agentChatThread" SET "pendingQuestionMessageId" = $1 WHERE id = $2`,
-      [assistantMessageId, threadId],
     );
-
-    return { assistantMessageId };
   };
 
-  const pauseOnProposal = async (toolCallId: string) => {
-    await pauseOnQuestions(toolCallId);
-    await global.testDataSource.query(
-      `UPDATE "${schema}"."agentMessagePart"
-       SET "toolName" = 'propose_tool_call', "toolInput" = $2::jsonb,
-         "toolOutput" = $3::jsonb
-       WHERE "toolCallId" = $1`,
-      [
+  const pauseOnProposal = (toolCallId: string) =>
+    pauseOn([
+      {
+        type: 'tool-propose_tool_call',
         toolCallId,
-        JSON.stringify(PROPOSAL_INPUT),
-        JSON.stringify(
-          buildProposeToolCallPendingOutput(
-            buildFallbackProposedToolCall(PROPOSAL_INPUT),
-          ),
+        state: 'output-available',
+        input: PROPOSAL_INPUT,
+        output: buildProposeToolCallPendingOutput(
+          buildFallbackProposedToolCall(PROPOSAL_INPUT),
         ),
-      ],
-    );
-  };
+      },
+    ] as never);
 
   const answerQuestions = (toolCallId: string) =>
     answerToolCall({
@@ -125,19 +130,22 @@ describe('Answering a chat tool call', () => {
 
   const readPendingQuestionMessageId = async () =>
     (
-      await global.testDataSource.query(
-        `SELECT "pendingQuestionMessageId" FROM "${schema}"."agentChatThread" WHERE id = $1`,
-        [threadId],
-      )
-    )[0].pendingQuestionMessageId;
+      await global.app
+        .get<string, AgentHistoryRepository<AgentChatThreadWorkspaceEntity>>(
+          getAgentHistoryRepositoryToken('agentChatThread'),
+          { strict: false },
+        )
+        .findOne(workspaceId, { where: { id: threadId } })
+    )?.pendingQuestionMessageId;
 
   const readToolCallStatus = async (toolCallId: string) =>
-    (
-      await global.testDataSource.query(
-        `SELECT "toolOutput" FROM "${schema}"."agentMessagePart" WHERE "toolCallId" = $1`,
-        [toolCallId],
-      )
-    )[0]?.toolOutput?.result?.status;
+    readToolCallOutputStatus(
+      (
+        await getAppProviderByClassName<AgentConversationReaderService>(
+          'AgentConversationReaderService',
+        ).findToolPart({ threadId, toolCallId, workspaceId })
+      )?.toolOutput,
+    );
 
   const markAsMentioned = () =>
     getAppProviderByClassName<AgentChatThreadParticipantService>(
@@ -250,6 +258,15 @@ describe('Answering a chat tool call', () => {
     await pauseOnQuestions('call-first', 'call-last');
     enqueueStream.mockClear();
 
+    const emitPendingQuestionCleared = jest.spyOn(
+      getAppProviderByClassName<AgentChatThreadRecordEventService>(
+        'AgentChatThreadRecordEventService',
+      ),
+      'emitPendingQuestionCleared',
+    );
+
+    spies.push(emitPendingQuestionCleared);
+
     const first = await answerQuestions('call-first');
 
     expect(first.body.errors).toBeUndefined();
@@ -258,12 +275,14 @@ describe('Answering a chat tool call', () => {
     expect(await readToolCallStatus('call-last')).toBe('pending');
     expect(await readPendingQuestionMessageId()).not.toBeNull();
     expect(enqueueStream).not.toHaveBeenCalled();
+    expect(emitPendingQuestionCleared).not.toHaveBeenCalled();
 
     const last = await answerQuestions('call-last');
 
     expect(last.body.errors).toBeUndefined();
     expect(last.body.data.answerToolCall.streamId).toEqual(expect.any(String));
     expect(await readPendingQuestionMessageId()).toBeNull();
+    expect(emitPendingQuestionCleared).toHaveBeenCalledTimes(1);
     expect(enqueueStream).toHaveBeenCalledTimes(1);
     expect(enqueueStream).toHaveBeenLastCalledWith(
       expect.any(String),
@@ -298,6 +317,10 @@ describe('Answering a chat tool call', () => {
     );
     expect(await readToolCallStatus('mention-pending-answer')).toBe('pending');
     expect(await readPendingQuestionMessageId()).not.toBeNull();
+
+    expect(
+      (await answerQuestions('mention-pending-answer')).body.errors,
+    ).toBeUndefined();
   });
 
   it('preserves a new mention arriving while an accepted approval executes', async () => {

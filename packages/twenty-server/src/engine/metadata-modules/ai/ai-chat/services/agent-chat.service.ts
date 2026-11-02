@@ -141,6 +141,10 @@ export class AgentChatService {
     workspaceMemberId,
     ...message
   }: AddMessageArgs & { workspaceMemberId: string }) {
+    await this.sharingService.assertHasMentionResolutionOrThrow(
+      message.workspaceId,
+    );
+
     return this.conversationWriterService.runInTransaction(
       message.workspaceId,
       async (scope) => {

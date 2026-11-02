@@ -224,6 +224,7 @@ export class ToolCallAnswerService {
         await this.toolCallAnswerRecorderService.claimToolCallAnswerOrThrow({
           threadId,
           partId: toolPart.id,
+          pendingToolOutput: toolPart.toolOutput,
           toolOutput: runningToolResult,
           workspaceId,
           workspaceMemberId: args.workspaceMemberId,

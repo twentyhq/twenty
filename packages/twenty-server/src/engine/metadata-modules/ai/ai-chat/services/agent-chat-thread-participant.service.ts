@@ -82,7 +82,7 @@ const buildMentionResolutionQuery = ({
    SET "mentionsResolvedAt" = ${ALL_MENTIONS_RESOLVED_AT}, "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
    WHERE "threadId" = $1 AND "workspaceMemberId" = $2
      AND ${AGENT_CHAT_HAS_UNRESOLVED_MENTION_PREDICATE}
-   RETURNING *`;
+   RETURNING ${PARTICIPANT_COLUMNS}`;
 
 // Mirrored by applyAgentChatInboxAction for the optimistic copy
 const INBOX_ACTION_QUERIES: Record<
@@ -314,18 +314,34 @@ export class AgentChatThreadParticipantService {
     );
   }
 
-  async resolveMention({
-    writeResponse,
+  // An answer takes it before the thread, in the order the member's other writes take both
+  async lockInTransaction({
+    scope,
     ...args
   }: AgentChatThreadAccessArgs & {
-    writeResponse: AgentChatThreadWriteStep;
+    scope: Pick<AgentHistoryTransactionScope, 'executeRawQuery'>;
   }): Promise<void> {
-    await this.write(
-      { ...args, threadIds: [args.threadId] },
-      buildMentionResolutionQuery,
-      [],
-      writeResponse,
-    );
+    await scope.executeRawQuery(PARTICIPANT_LOCK_QUERY, [
+      buildAgentChatThreadParticipantLockKey(args),
+    ]);
+  }
+
+  async findOneInTransaction({
+    scope,
+    workspaceId,
+    workspaceMemberId,
+    threadId,
+  }: AgentChatThreadAccessArgs & {
+    scope: Pick<AgentHistoryTransactionScope, 'executeRawQuery'>;
+  }): Promise<AgentChatThreadParticipantRow | null> {
+    const [participant] = (await scope.executeRawQuery(
+      `SELECT ${PARTICIPANT_COLUMNS}
+       FROM ${getAgentChatThreadParticipantTable(workspaceId)}
+       WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
+      [threadId, workspaceMemberId],
+    )) as unknown as AgentChatThreadParticipantRow[];
+
+    return participant ?? null;
   }
 
   async resolveMentionInTransaction({
@@ -333,20 +349,18 @@ export class AgentChatThreadParticipantService {
     ...args
   }: AgentChatThreadAccessArgs & {
     scope: Pick<AgentHistoryTransactionScope, 'executeRawQuery'>;
-  }): Promise<void> {
-    await this.sharingService.assertHasMentionResolutionOrThrow(
-      args.workspaceId,
-    );
+  }): Promise<AgentChatThreadParticipantRow | null> {
     // Taken by the writes on the other pool too, so before and after stay this write's
-    await scope.executeRawQuery(PARTICIPANT_LOCK_QUERY, [
-      buildAgentChatThreadParticipantLockKey(args),
-    ]);
-    await scope.executeRawQuery(
+    await this.lockInTransaction({ scope, ...args });
+
+    const [resolvedParticipant] = (await scope.executeRawQuery(
       buildMentionResolutionQuery({
         participantTable: getAgentChatThreadParticipantTable(args.workspaceId),
       }),
       [args.threadId, args.workspaceMemberId],
-    );
+    )) as unknown as AgentChatThreadParticipantRow[];
+
+    return resolvedParticipant ?? null;
   }
 
   // An assignee follows the chat and finds it in their inbox, unread unless

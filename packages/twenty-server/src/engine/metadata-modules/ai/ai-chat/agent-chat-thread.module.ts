@@ -62,6 +62,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     AgentChatChannelService,
     AgentChatChannelThreadsService,
     AgentChatSharingService,
+    AgentChatThreadParticipantEventService,
     AgentChatThreadParticipantService,
     AgentChatThreadService,
     AgentChatThreadTriageService,

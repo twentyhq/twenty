@@ -7,6 +7,7 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 import { In, Like } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { type AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
@@ -34,6 +35,7 @@ export class AgentChatQueueService {
     private readonly conversationWriterService: AgentConversationWriterService,
     private readonly threadService: AgentChatThreadService,
     private readonly participantService: AgentChatThreadParticipantService,
+    private readonly sharingService: AgentChatSharingService,
   ) {}
 
   async queueMessage({
@@ -97,6 +99,7 @@ export class AgentChatQueueService {
         })),
     ];
 
+    await this.sharingService.assertHasMentionResolutionOrThrow(workspaceId);
     await this.conversationWriterService.runInTransaction(
       workspaceId,
       async (scope) => {
