@@ -38,10 +38,18 @@ const StyledActionSlot = styled.div`
   flex: 1;
 `;
 
-const parseInteger = (value: string): number | null => {
+const parseInteger = ({
+  value,
+  min,
+}: {
+  value: string;
+  min: number;
+}): number | null => {
   const parsed = Number(value);
 
-  return isNonEmptyString(value.trim()) && Number.isInteger(parsed)
+  return isNonEmptyString(value.trim()) &&
+    Number.isInteger(parsed) &&
+    parsed >= min
     ? parsed
     : null;
 };
@@ -79,9 +87,15 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
       mutationOptions,
     );
 
-  const parsedLimitValue = parseInteger(limitValue);
+  const minimumLimitValue = row.limitKind === 'quota' ? 0 : 1;
+  const parsedLimitValue = parseInteger({
+    value: limitValue,
+    min: minimumLimitValue,
+  });
   const hasBurstValue = isNonEmptyString(burstValue.trim());
-  const parsedBurstValue = hasBurstValue ? parseInteger(burstValue) : null;
+  const parsedBurstValue = hasBurstValue
+    ? parseInteger({ value: burstValue, min: 1 })
+    : null;
   const isBurstAllowed = row.limitKind === 'speed';
   const isBusy = isCreating || isResetting;
   const isValid =
@@ -191,7 +205,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
                 instanceId={`${dialogId}-limit-value`}
                 label={t(unitLabel.name)}
                 type="number"
-                min={1}
+                min={minimumLimitValue}
                 value={limitValue}
                 onChange={setLimitValue}
                 disabled={row.isOverridden}

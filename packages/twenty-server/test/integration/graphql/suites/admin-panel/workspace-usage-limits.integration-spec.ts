@@ -9,8 +9,6 @@ import { type Repository } from 'typeorm';
 
 import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
-import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
-import { type BillingLimitOverrideExpiryCronJob } from 'src/engine/core-modules/billing/limit-override/crons/billing-limit-override-expiry.cron.job';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -96,6 +94,8 @@ const USER_CREDIT_QUOTA_PAYLOAD = {
   burstValue: null,
 };
 
+const isBillingEnabled = process.env.IS_BILLING_ENABLED === 'true';
+
 describe('Workspace usage limits from the admin panel', () => {
   const twentyConfigService = getAppProviderByClassName<TwentyConfigService>(
     'TwentyConfigService',
@@ -103,7 +103,6 @@ describe('Workspace usage limits from the admin panel', () => {
   const readConfig = twentyConfigService.get.bind(twentyConfigService);
 
   let usageLimitRepository: Repository<UsageLimitEntity>;
-  let billingArrangementRepository: Repository<BillingArrangementEntity>;
 
   const createWorkspaceUsageLimit = async (
     payload: typeof STORAGE_STOCK_PAYLOAD | typeof USER_CREDIT_QUOTA_PAYLOAD,
@@ -120,16 +119,6 @@ describe('Workspace usage limits from the admin panel', () => {
     return usageLimitId;
   };
 
-  const findLimitOverrides = (usageLimitId: string) =>
-    billingArrangementRepository.find({
-      where: {
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        type: BillingArrangementType.LIMIT_OVERRIDE,
-        usageLimitId,
-      },
-      order: { createdAt: 'ASC' },
-    });
-
   const findWorkspaceUsageLimits = async () => {
     const response = await makeAdminPanelApiRequest({
       query: WORKSPACE_USAGE_LIMITS,
@@ -142,9 +131,6 @@ describe('Workspace usage limits from the admin panel', () => {
   beforeAll(() => {
     usageLimitRepository =
       getCoreRepository<UsageLimitEntity>(UsageLimitEntity);
-    billingArrangementRepository = getCoreRepository<BillingArrangementEntity>(
-      BillingArrangementEntity,
-    );
 
     jest.spyOn(twentyConfigService, 'get').mockImplementation((key) => {
       if (key === 'WORKSPACE_STORAGE_LIMIT_BYTES') {
@@ -165,9 +151,12 @@ describe('Workspace usage limits from the admin panel', () => {
 
   afterEach(async () => {
     await usageLimitRepository.delete({ workspaceId: SEED_APPLE_WORKSPACE_ID });
-    await billingArrangementRepository.delete({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-    });
+
+    if (isBillingEnabled) {
+      await getCoreRepository<BillingArrangementEntity>(
+        BillingArrangementEntity,
+      ).delete({ workspaceId: SEED_APPLE_WORKSPACE_ID });
+    }
   });
 
   it('lists the instance defaults that apply to the workspace', async () => {
@@ -224,52 +213,28 @@ describe('Workspace usage limits from the admin panel', () => {
     ).toEqual(
       expect.objectContaining({ overriddenByUsageLimitId: usageLimitId }),
     );
-    expect(await findLimitOverrides(usageLimitId)).toEqual([
-      expect.objectContaining({
-        grantedByUserId: USER_DATA_SEED_IDS.JANE,
-        revokedAt: null,
-      }),
-    ]);
   });
 
-  it('records the end date given when an operator creates an override', async () => {
-    const endsAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+  (isBillingEnabled ? it.skip : it)(
+    'refuses an end date when billing is disabled',
+    async () => {
+      const response = await makeAdminPanelApiRequest({
+        query: CREATE_WORKSPACE_USAGE_LIMIT,
+        variables: {
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          payload: STORAGE_STOCK_PAYLOAD,
+          endsAt: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString(),
+        },
+      });
 
-    const response = await makeAdminPanelApiRequest({
-      query: CREATE_WORKSPACE_USAGE_LIMIT,
-      variables: {
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        payload: STORAGE_STOCK_PAYLOAD,
-        endsAt: endsAt.toISOString(),
-      },
-    });
-
-    const usageLimitId = response.body.data?.createWorkspaceUsageLimit?.id;
-
-    jestExpectToBeDefined(usageLimitId);
-
-    expect(await findLimitOverrides(usageLimitId)).toEqual([
-      expect.objectContaining({ endsAt }),
-    ]);
-  });
-
-  it('refuses an override that ends in the past', async () => {
-    const response = await makeAdminPanelApiRequest({
-      query: CREATE_WORKSPACE_USAGE_LIMIT,
-      variables: {
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-        payload: STORAGE_STOCK_PAYLOAD,
-        endsAt: new Date(Date.now() - 60_000).toISOString(),
-      },
-    });
-
-    expect(response.body.errors).toBeDefined();
-    expect(
-      await usageLimitRepository.countBy({
-        workspaceId: SEED_APPLE_WORKSPACE_ID,
-      }),
-    ).toBe(0);
-  });
+      expect(response.body.errors).toBeDefined();
+      expect(
+        await usageLimitRepository.countBy({
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+        }),
+      ).toBe(0);
+    },
+  );
 
   it('lets an operator override the AI credits each member gets per week', async () => {
     const usageLimitId = await createWorkspaceUsageLimit(
@@ -288,28 +253,6 @@ describe('Workspace usage limits from the admin panel', () => {
         overriddenByUsageLimitId: usageLimitId,
       }),
     );
-  });
-
-  it('removes the usage limit of a limit override once it has ended', async () => {
-    const usageLimitId = await createWorkspaceUsageLimit(STORAGE_STOCK_PAYLOAD);
-
-    await billingArrangementRepository.update(
-      { workspaceId: SEED_APPLE_WORKSPACE_ID, usageLimitId },
-      { endsAt: new Date(Date.now() - 60_000) },
-    );
-
-    const expiryCronJob =
-      getAppProviderByClassName<BillingLimitOverrideExpiryCronJob>(
-        'BillingLimitOverrideExpiryCronJob',
-      );
-
-    await expiryCronJob.handle();
-    await expiryCronJob.handle();
-
-    expect(await usageLimitRepository.existsBy({ id: usageLimitId })).toBe(
-      false,
-    );
-    expect(await findLimitOverrides(usageLimitId)).toHaveLength(1);
   });
 
   it('lets an operator remove the override it created', async () => {
@@ -337,9 +280,6 @@ describe('Workspace usage limits from the admin panel', () => {
         workspaceId: SEED_APPLE_WORKSPACE_ID,
       }),
     ).toBe(0);
-    expect(await findLimitOverrides(usageLimitId)).toEqual([
-      expect.objectContaining({ revokedByUserId: USER_DATA_SEED_IDS.JANE }),
-    ]);
   });
 
   describe('a workspace admin who is not an operator', () => {

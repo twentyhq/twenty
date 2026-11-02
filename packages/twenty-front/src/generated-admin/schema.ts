@@ -709,6 +709,7 @@ export type MutationCreateWorkspaceDataExportArgs = {
 
 
 export type MutationCreateWorkspaceUsageLimitArgs = {
+  endsAt?: InputMaybe<Scalars['DateTime']['input']>;
   payload: CreateUsageLimitInput;
   workspaceId: Scalars['UUID']['input'];
 };

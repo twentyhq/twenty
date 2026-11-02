@@ -4,7 +4,7 @@ import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Between, Repository } from 'typeorm';
+import { LessThanOrEqual, Repository } from 'typeorm';
 
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
@@ -14,9 +14,7 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
-
-// Hourly runs retry a failed deletion for a day; an already removed limit is a no-op
-const EXPIRED_LIMIT_OVERRIDE_LOOKBACK_MS = 24 * 60 * 60 * 1000;
+import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 
 @Processor(MessageQueue.cronQueue)
 export class BillingLimitOverrideExpiryCronJob {
@@ -36,18 +34,24 @@ export class BillingLimitOverrideExpiryCronJob {
     BILLING_LIMIT_OVERRIDE_EXPIRY_CRON_PATTERN,
   )
   async handle(): Promise<void> {
-    const now = new Date();
-
-    const expiredLimitOverrides = await this.billingArrangementRepository.find({
-      select: { workspaceId: true, usageLimitId: true },
-      where: {
+    // Only overrides whose limit still exists, so a failed deletion is retried on every run
+    const expiredLimitOverrides = await this.billingArrangementRepository
+      .createQueryBuilder('billingArrangement')
+      .innerJoin(
+        UsageLimitEntity,
+        'usageLimit',
+        '"usageLimit"."id" = "billingArrangement"."usageLimitId"',
+      )
+      .select([
+        'billingArrangement.id',
+        'billingArrangement.workspaceId',
+        'billingArrangement.usageLimitId',
+      ])
+      .where({
         type: BillingArrangementType.LIMIT_OVERRIDE,
-        endsAt: Between(
-          new Date(now.getTime() - EXPIRED_LIMIT_OVERRIDE_LOOKBACK_MS),
-          now,
-        ),
-      },
-    });
+        endsAt: LessThanOrEqual(new Date()),
+      })
+      .getMany();
 
     for (const { workspaceId, usageLimitId } of expiredLimitOverrides) {
       if (!isDefined(usageLimitId)) {
