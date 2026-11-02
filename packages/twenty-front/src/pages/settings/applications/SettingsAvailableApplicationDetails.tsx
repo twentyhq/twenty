@@ -167,11 +167,15 @@ export const SettingsAvailableApplicationDetails = () => {
 
     // Each member connects these from their own account, so there is nothing for the workspace to install
     if (isDefined(builtInMcpClientApp)) {
-      return isAppPreferencesEnabled ? (
+      if (!isAppPreferencesEnabled) {
+        return undefined;
+      }
+
+      return (
         <SettingsBuiltInMcpClientAppConnectButton
           builtInMcpClientApp={builtInMcpClientApp}
         />
-      ) : undefined;
+      );
     }
 
     return (

@@ -24,6 +24,10 @@ import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearc
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
+const WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIER_LIST = Object.values<string>(
+  WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS,
+);
+
 const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
 `;
@@ -76,9 +80,9 @@ export const SettingsApplicationsAvailableTab = () => {
     ? marketplaceApps
     : marketplaceApps.filter(
         (marketplaceApp) =>
-          !Object.values<string>(
-            WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS,
-          ).includes(marketplaceApp.id),
+          !WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIER_LIST.includes(
+            marketplaceApp.id,
+          ),
       );
 
   const hasSearchTerm = searchTerm.trim().length > 0;
