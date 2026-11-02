@@ -44,9 +44,9 @@ describe('getBillingArrangementValidationErrors', () => {
       draft({ type: BillingArrangementType.FREE_SEATS, seats: 3 }),
     ],
     [
-      'a coupon',
+      'a discount',
       draft({
-        type: BillingArrangementType.COUPON,
+        type: BillingArrangementType.DISCOUNT,
         stripeCouponId: 'coupon_non_profit',
       }),
     ],
@@ -97,7 +97,7 @@ describe('getBillingArrangementValidationErrors', () => {
   it.each(['', '   '])('treats %p as a missing setting', (stripeCouponId) => {
     expect(
       getBillingArrangementValidationErrors(
-        draft({ type: BillingArrangementType.COUPON, stripeCouponId }),
+        draft({ type: BillingArrangementType.DISCOUNT, stripeCouponId }),
       ),
     ).toEqual([{ code: 'MISSING_SETTING', setting: 'stripeCouponId' }]);
   });
