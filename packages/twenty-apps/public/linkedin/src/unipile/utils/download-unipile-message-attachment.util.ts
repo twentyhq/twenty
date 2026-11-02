@@ -36,8 +36,12 @@ export const downloadUnipileMessageAttachment = async ({
     { deadlineAtMs },
   );
 
+  if (!(data instanceof ReadableStream)) {
+    throw new Error('Unipile returned no attachment content');
+  }
+
   // Streamed so a file Unipile listed without a size is stopped at the limit instead of buffered whole
-  const reader = (data as ReadableStream<Uint8Array>).getReader();
+  const reader: ReadableStreamDefaultReader<Uint8Array> = data.getReader();
   const chunks: Uint8Array[] = [];
   let sizeBytes = 0;
 

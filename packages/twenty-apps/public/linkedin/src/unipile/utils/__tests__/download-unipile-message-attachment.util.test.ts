@@ -15,12 +15,13 @@ vi.mock('src/unipile/utils/get-unipile-request-options.util', () => ({
 const { downloadUnipileMessageAttachment } =
   await import('src/unipile/utils/download-unipile-message-attachment.util');
 
-const streamOf = (chunks: string[]) =>
+const streamOf = (chunks: string[], onCancel?: () => void) =>
   new ReadableStream<Uint8Array>({
     start(controller) {
       chunks.forEach((chunk) => controller.enqueue(Buffer.from(chunk)));
       controller.close();
     },
+    cancel: onCancel,
   });
 
 const download = (maxSizeBytes: number) =>
@@ -57,10 +58,13 @@ describe('downloadUnipileMessageAttachment', () => {
   });
 
   it('stops a download that goes over the size limit', async () => {
+    const onCancel = vi.fn();
+
     mocks.getAttachment.mockResolvedValue({
-      data: streamOf(['abc', 'def']),
+      data: streamOf(['abc', 'def', 'ghi'], onCancel),
     });
 
     await expect(download(4)).rejects.toThrow('larger than 4 bytes');
+    expect(onCancel).toHaveBeenCalledOnce();
   });
 });

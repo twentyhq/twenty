@@ -13,7 +13,7 @@ const isImportableAttachment = (
   attachment: UnipileMessageAttachment,
 ): boolean =>
   LINKEDIN_IMPORTED_ATTACHMENT_TYPES.includes(attachment.type) &&
-  attachment.is_unavailable !== true &&
+  !attachment.is_unavailable &&
   (!isDefined(attachment.file_size) ||
     attachment.file_size <= LINKEDIN_ATTACHMENT_MAX_SIZE_BYTES);
 

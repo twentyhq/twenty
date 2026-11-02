@@ -139,7 +139,7 @@ describe('linkedinHandleWebhookEventHandler', () => {
     mocks.downloadUnipileMessageAttachment.mockResolvedValue(
       Buffer.from('png'),
     );
-    vi.spyOn(console, 'log').mockImplementation(() => {});
+    const consoleLog = vi.spyOn(console, 'log').mockImplementation(() => {});
 
     await expect(
       linkedinHandleWebhookEventHandler(
@@ -165,6 +165,8 @@ describe('linkedinHandleWebhookEventHandler', () => {
       maxSizeBytes: 25 * 1024 * 1024,
       deadlineAtMs: expect.any(Number),
     });
+
+    consoleLog.mockRestore();
   });
 
   it('imports a group message from a stranger when another member is a contact', async () => {
