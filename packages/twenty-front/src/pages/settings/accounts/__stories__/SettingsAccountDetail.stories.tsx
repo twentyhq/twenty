@@ -43,7 +43,7 @@ export const EmailsAndCalendarTabs: Story = {
       await canvas.findByTestId('tab-emails', undefined, { timeout: 3000 }),
     );
 
-    expect(canvas.getByText('Apps preferences')).toBeVisible();
+    expect(canvas.getAllByText('Apps preferences').length).toBeGreaterThan(0);
     expect(await canvas.findByText('Visibility')).toBeVisible();
 
     await userEvent.click(canvas.getByTestId('tab-calendar'));

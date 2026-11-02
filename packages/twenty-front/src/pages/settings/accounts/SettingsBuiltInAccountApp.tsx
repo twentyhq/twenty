@@ -10,7 +10,7 @@ import { useEnabledBuiltInAccountApps } from '@/settings/app-preferences/hooks/u
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
 import { getConnectedAccountSettingsChannels } from '@/settings/app-preferences/utils/getConnectedAccountSettingsChannels';
 import { getBuiltInAccountAppChannelTabsVisibility } from '@/settings/app-preferences/utils/getBuiltInAccountAppChannelTabsVisibility';
-import { getBuiltInAccountAppLogoUrl } from '@/settings/app-preferences/utils/getBuiltInAccountAppLogoUrl';
+import { getBuiltInAppLogoUrl } from '@/settings/app-preferences/utils/getBuiltInAppLogoUrl';
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
 import { SettingsAccountsMessageChannelsSSEEffect } from '@/settings/accounts/components/SettingsAccountsMessageChannelsSSEEffect';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -84,7 +84,7 @@ export const SettingsBuiltInAccountApp = () => {
   }
 
   const appName = t(app.name);
-  const logoUrl = getBuiltInAccountAppLogoUrl(app);
+  const logoUrl = getBuiltInAppLogoUrl(app);
 
   const getSelectedAccount = (
     accounts: ConnectedAccount[],

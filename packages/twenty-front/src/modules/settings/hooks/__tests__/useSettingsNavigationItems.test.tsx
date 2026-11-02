@@ -241,4 +241,28 @@ describe('useSettingsNavigationItems', () => {
     expect(accountsItem?.isHidden).toBe(false);
     expect(accountsItem?.subItems).toBeUndefined();
   });
+
+  it('should show Apps preferences without the connected accounts permission when app preferences are on', () => {
+    setPermissionFlags([]);
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      featureFlags: [
+        { key: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED, value: true },
+      ],
+    });
+
+    const appPreferencesItem = getAccountsOrAppPreferencesItem();
+
+    expect(appPreferencesItem?.path).toBe(SettingsPath.AppPreferences);
+    expect(appPreferencesItem?.isHidden).toBe(false);
+  });
+
+  it('should hide Accounts without the connected accounts permission when app preferences are off', () => {
+    setPermissionFlags([]);
+
+    const accountsItem = getAccountsOrAppPreferencesItem();
+
+    expect(accountsItem?.path).toBe(SettingsPath.Accounts);
+    expect(accountsItem?.isHidden).toBe(true);
+  });
 });
