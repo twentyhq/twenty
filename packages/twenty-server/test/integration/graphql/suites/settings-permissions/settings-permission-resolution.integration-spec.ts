@@ -390,8 +390,8 @@ describe('Settings permission resolution', () => {
       );
     });
 
-    it('bounds the user by the user role alone when the application has no default role', async () => {
-      expectAllowed(
+    it('denies a user acting through an application without a default role', async () => {
+      expectPermissionDenied(
         await queryApiKeys(
           await generateApplicationAccessToken({
             applicationId: rolelessApplication.id,

@@ -1,5 +1,4 @@
 import { type ActorMetadata } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
@@ -41,7 +40,5 @@ export const buildWorkflowAgentRunExecutionContext = ({
   agentRunRoleIds: getAgentRunRoleIdsFromRolePermissionConfig(
     executionContext.rolePermissionConfig,
   ),
-  ...(isDefined(executionContext.application)
-    ? { application: executionContext.application }
-    : {}),
+  application: executionContext.application,
 });

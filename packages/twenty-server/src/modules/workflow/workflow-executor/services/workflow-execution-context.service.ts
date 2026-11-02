@@ -1,24 +1,22 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
 import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
-import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
-import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatWorkflow } from 'src/engine/metadata-modules/flat-workflow/types/flat-workflow.type';
 import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import {
   WorkflowStepExecutorException,
@@ -35,36 +33,47 @@ export class WorkflowExecutionContextService {
   constructor(
     private readonly workflowRunService: WorkflowRunService,
     private readonly userWorkspaceService: UserWorkspaceService,
-    private readonly applicationService: ApplicationService,
-    private readonly roleService: RoleService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    @InjectRepository(WorkspaceEntity)
-    private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
   ) {}
 
   async getExecutionContext(
     runInfo: WorkflowRunInfo,
   ): Promise<WorkflowExecutionContext> {
-    const workflowRun = await this.workflowRunService.getWorkflowRunOrFail({
-      workflowRunId: runInfo.workflowRunId,
-      workspaceId: runInfo.workspaceId,
-    });
+    const [workflowRun, workspace] = await Promise.all([
+      this.workflowRunService.getWorkflowRunOrFail({
+        workflowRunId: runInfo.workflowRunId,
+        workspaceId: runInfo.workspaceId,
+      }),
+      this.findWorkspaceOrThrow(runInfo.workspaceId),
+    ]);
 
-    return this.buildExecutionContext(workflowRun, runInfo.workspaceId);
+    return this.buildExecutionContext(workflowRun, workspace);
   }
 
-  async getApplicationBoundExecutionContext({
+  // workspace workflow forms still read picked records unrestricted, relations included
+  async getFormRecordReadContext({
     workflowRun,
     workspaceId,
   }: {
     workflowRun: WorkflowRunWorkspaceEntity;
     workspaceId: string;
   }): Promise<WorkflowExecutionContext | null> {
-    if (!isDefined(workflowRun.createdBy.context?.applicationId)) {
+    const [workspace, { flatWorkflowMaps }] = await Promise.all([
+      this.findWorkspaceOrThrow(workspaceId),
+      this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkflowMaps',
+      ]),
+    ]);
+
+    if (
+      this.getRunApplicationId(workflowRun, flatWorkflowMaps) ===
+      workspace.workspaceCustomApplicationId
+    ) {
       return null;
     }
 
-    return this.buildExecutionContext(workflowRun, workspaceId);
+    return this.buildExecutionContext(workflowRun, workspace);
   }
 
   assertRunApplicationCanTriggerStepTargetOrThrow({
@@ -80,7 +89,6 @@ export class WorkflowExecutionContextService {
     targetLabel: string;
   }): void {
     if (
-      !isDefined(application) ||
       canCallerReachApplication({
         callingApplication: application,
         applicationId: targetApplicationId,
@@ -100,25 +108,31 @@ export class WorkflowExecutionContextService {
 
   private async buildExecutionContext(
     workflowRun: WorkflowRunWorkspaceEntity,
-    workspaceId: string,
+    workspace: FlatWorkspace,
   ): Promise<WorkflowExecutionContext> {
-    const application = await this.findRunApplication(workflowRun, workspaceId);
+    const { flatApplicationMaps, flatWorkflowMaps, userWorkspaceRoleMap } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatApplicationMaps',
+        'flatWorkflowMaps',
+        'userWorkspaceRoleMap',
+      ]);
+
+    const application = resolveWorkflowRunApplicationOrThrow({
+      applicationId: this.getRunApplicationId(workflowRun, flatWorkflowMaps),
+      applicationsById: flatApplicationMaps.byId,
+    });
 
     const isActingOnBehalfOfUser =
       workflowRun.createdBy.source === FieldActorSource.MANUAL &&
       isDefined(workflowRun.createdBy.workspaceMemberId);
 
-    const authContext = await this.buildAuthContext({
-      workflowRun,
-      workspaceId,
-      application,
-      isActingOnBehalfOfUser,
-    });
-
-    const { userWorkspaceRoleMap } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'userWorkspaceRoleMap',
-      ]);
+    const authContext = isActingOnBehalfOfUser
+      ? await this.buildMemberAuthContext({
+          workflowRun,
+          workspace,
+          application,
+        })
+      : buildApplicationAuthContext({ workspace, application });
 
     const rolePermissionConfig = resolveRolePermissionConfig({
       authContext,
@@ -143,67 +157,51 @@ export class WorkflowExecutionContextService {
     };
   }
 
-  private async findRunApplication(
-    workflowRun: WorkflowRunWorkspaceEntity,
-    workspaceId: string,
-  ): Promise<FlatApplication | null> {
-    if (!isDefined(workflowRun.createdBy.context?.applicationId)) {
-      return null;
+  private getRunApplicationId(
+    workflowRun: Pick<WorkflowRunWorkspaceEntity, 'coreWorkflowId'>,
+    flatWorkflowMaps: FlatEntityMaps<FlatWorkflow>,
+  ): string {
+    const workflow = isDefined(workflowRun.coreWorkflowId)
+      ? findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: workflowRun.coreWorkflowId,
+          flatEntityMaps: flatWorkflowMaps,
+        })
+      : undefined;
+
+    if (!isDefined(workflow)) {
+      throw new WorkflowStepExecutorException(
+        'The workflow of this run no longer exists',
+        WorkflowStepExecutorExceptionCode.FORBIDDEN,
+      );
     }
 
-    const { flatApplicationMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatApplicationMaps',
-      ]);
-
-    return resolveWorkflowRunApplicationOrThrow({
-      workflowRun,
-      applicationsById: flatApplicationMaps.byId,
-    });
+    return workflow.applicationId;
   }
 
-  private buildAuthContext({
+  private async buildMemberAuthContext({
     workflowRun,
-    workspaceId,
+    workspace,
     application,
-    isActingOnBehalfOfUser,
   }: {
     workflowRun: WorkflowRunWorkspaceEntity;
-    workspaceId: string;
-    application: FlatApplication | null;
-    isActingOnBehalfOfUser: boolean;
+    workspace: FlatWorkspace;
+    application: FlatApplication;
   }): Promise<WorkspaceAuthContext> {
-    if (isActingOnBehalfOfUser) {
-      return this.buildMemberAuthContext(workflowRun, workspaceId, application);
-    }
-
-    if (isDefined(application)) {
-      return this.buildBoundApplicationAuthContext(workspaceId, application);
-    }
-
-    return this.buildStandardApplicationAuthContext(workspaceId);
-  }
-
-  private async buildMemberAuthContext(
-    workflowRun: WorkflowRunWorkspaceEntity,
-    workspaceId: string,
-    application: FlatApplication | null,
-  ): Promise<WorkspaceAuthContext> {
     const workspaceMember =
       await this.userWorkspaceService.getWorkspaceMemberOrThrow({
         workspaceMemberId: workflowRun.createdBy.workspaceMemberId!,
-        workspaceId,
+        workspaceId: workspace.id,
       });
 
     const userWorkspace =
       await this.userWorkspaceService.getUserWorkspaceForUserOrThrow({
         userId: workspaceMember.userId,
-        workspaceId,
-        relations: ['workspace', 'user'],
+        workspaceId: workspace.id,
+        relations: ['user'],
       });
 
     return buildUserAuthContext({
-      workspace: fromWorkspaceEntityToFlat(userWorkspace.workspace),
+      workspace,
       userWorkspaceId: userWorkspace.id,
       user: fromUserEntityToFlat(userWorkspace.user),
       workspaceMemberId: workspaceMember.id,
@@ -212,47 +210,21 @@ export class WorkflowExecutionContextService {
     });
   }
 
-  private async buildBoundApplicationAuthContext(
+  private async findWorkspaceOrThrow(
     workspaceId: string,
-    application: FlatApplication,
-  ): Promise<WorkspaceAuthContext> {
-    const workspace = await this.workspaceRepository.findOneOrFail({
-      where: { id: workspaceId },
-    });
+  ): Promise<FlatWorkspace> {
+    const workspace = await this.coreEntityCacheService.get(
+      'workspaceEntity',
+      workspaceId,
+    );
 
-    return buildApplicationAuthContext({
-      workspace: fromWorkspaceEntityToFlat(workspace),
-      application,
-    });
-  }
-
-  private async buildStandardApplicationAuthContext(
-    workspaceId: string,
-  ): Promise<WorkspaceAuthContext> {
-    const { application, workspace } =
-      await this.applicationService.findTwentyStandardApplicationOrThrow(
-        workspaceId,
+    if (!isDefined(workspace)) {
+      throw new WorkflowStepExecutorException(
+        'Workspace not found',
+        WorkflowStepExecutorExceptionCode.SCOPED_WORKSPACE_NOT_FOUND,
       );
-
-    // In the future we should probably assign the Admin role to the Standard Application
-    let roleId = application.defaultRoleId;
-
-    if (!isDefined(roleId)) {
-      // Fallback: Look up admin role for existing workspaces without defaultRoleId
-      const adminRole = await this.roleService.getRoleByUniversalIdentifier({
-        universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
-        workspaceId,
-      });
-
-      roleId = adminRole?.id ?? null;
     }
 
-    return buildApplicationAuthContext({
-      workspace: fromWorkspaceEntityToFlat(workspace),
-      application: {
-        ...application,
-        defaultRoleId: roleId,
-      },
-    });
+    return workspace;
   }
 }

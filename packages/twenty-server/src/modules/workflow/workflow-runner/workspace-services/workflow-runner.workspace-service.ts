@@ -198,24 +198,23 @@ export class WorkflowRunnerWorkspaceService {
       return undefined;
     }
 
-    const applicationBoundExecutionContext =
-      await this.workflowExecutionContextService
-        .getApplicationBoundExecutionContext({ workflowRun, workspaceId })
-        .catch((error: unknown) => {
-          if (error instanceof WorkflowStepExecutorException) {
-            throw new WorkflowVersionStepException(
-              error.message,
-              WorkflowVersionStepExceptionCode.INVALID_REQUEST,
-              {
-                userFriendlyMessage: msg`The permissions of this run no longer allow submitting this form.`,
-              },
-            );
-          }
+    const formRecordReadContext = await this.workflowExecutionContextService
+      .getFormRecordReadContext({ workflowRun, workspaceId })
+      .catch((error: unknown) => {
+        if (error instanceof WorkflowStepExecutorException) {
+          throw new WorkflowVersionStepException(
+            error.message,
+            WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+            {
+              userFriendlyMessage: msg`The permissions of this run no longer allow submitting this form.`,
+            },
+          );
+        }
 
-          throw error;
-        });
+        throw error;
+      });
 
-    return applicationBoundExecutionContext ?? undefined;
+    return formRecordReadContext ?? undefined;
   }
 
   async stopWorkflowRun(workspaceId: string, workflowRunId: string) {
