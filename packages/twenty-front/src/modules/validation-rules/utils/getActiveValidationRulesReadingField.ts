@@ -1,4 +1,7 @@
-import { tokenizeValidationRuleExpression } from 'twenty-shared/utils';
+import {
+  isValidationRuleReservedName,
+  tokenizeValidationRuleExpression,
+} from 'twenty-shared/utils';
 
 import { type ValidationRule } from '@/validation-rules/types/ValidationRule';
 
@@ -13,6 +16,9 @@ export const getActiveValidationRulesReadingField = ({
     ({ isActive, expression }) =>
       isActive &&
       tokenizeValidationRuleExpression(expression).some(
-        ({ type, text }) => type === 'path' && text.split('.')[0] === fieldName,
+        ({ type, text }) =>
+          type === 'path' &&
+          text.split('.')[0] === fieldName &&
+          !isValidationRuleReservedName({ name: fieldName, isMember: false }),
       ),
   );

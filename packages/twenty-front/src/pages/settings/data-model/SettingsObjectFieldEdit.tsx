@@ -119,6 +119,9 @@ export const SettingsObjectFieldEdit = () => {
       fieldMetadataItem.name === newNameDuringSave,
   );
 
+  // The page can be open in the main area and the side panel at once
+  const deactivateFieldModalId = `${DEACTIVATE_FIELD_MODAL_ID}-${workspaceSurface.type}`;
+
   const { validationRules, loading: isLoadingValidationRules } =
     useValidationRules({
       objectMetadataId: objectMetadataItem?.id ?? '',
@@ -287,7 +290,7 @@ export const SettingsObjectFieldEdit = () => {
     }
 
     if (isNonEmptyArray(validationRulesReadingField)) {
-      openDialog(DEACTIVATE_FIELD_MODAL_ID);
+      openDialog(deactivateFieldModalId);
 
       return;
     }
@@ -481,6 +484,7 @@ export const SettingsObjectFieldEdit = () => {
                     <Button
                       startIcon={<IconTrash />}
                       size="sm"
+                      disabled={isLoadingValidationRules}
                       onClick={handleDelete}
                       variant="outline"
                       color="danger"
@@ -493,12 +497,12 @@ export const SettingsObjectFieldEdit = () => {
         </SettingsPageLayout>
       </FormProvider>
       <ConfirmationDialog
-        dialogId={DEACTIVATE_FIELD_MODAL_ID}
+        dialogId={deactivateFieldModalId}
         title={t`Deactivate ${fieldLabel} field?`}
         subtitle={validationRulesWarning ?? ''}
         confirmButtonText={t`Deactivate`}
         onConfirmClick={confirmDeactivate}
-        onClose={() => closeDialog(DEACTIVATE_FIELD_MODAL_ID)}
+        onClose={() => closeDialog(deactivateFieldModalId)}
       />
       {isCustomField && (
         <ConfirmationDialog

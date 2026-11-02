@@ -34,4 +34,17 @@ describe('getActiveValidationRulesReadingField', () => {
       }).map(({ name }) => name),
     ).toEqual(['Amount', 'Function']);
   });
+
+  it('should not mistake a function name or the now variable for a field', () => {
+    for (const fieldName of ['isDefined', 'now']) {
+      expect(
+        getActiveValidationRulesReadingField({
+          validationRules: [
+            buildRule({ name: 'Rule', expression: 'isDefined(now)' }),
+          ],
+          fieldName,
+        }),
+      ).toEqual([]);
+    }
+  });
 });
