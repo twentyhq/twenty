@@ -441,6 +441,25 @@ describe('buildAllFlatEntityOperationRecordByMetadataNameFromFromTo', () => {
     });
   });
 
+  it('keeps a role assignable to applications when its manifest is synced back', () => {
+    const buildAllFlatEntityMapsWithRole = (flatRole: FlatRole) =>
+      withRole(flatRole)(createEmptyAllFlatEntityMaps());
+
+    const result = buildAllFlatEntityOperationRecordByMetadataNameFromFromTo({
+      fromAllFlatEntityMaps: buildAllFlatEntityMapsWithRole({
+        ...ROLE,
+        canBeAssignedToApplications: true,
+      }),
+      toAllUniversalFlatEntityMaps: buildAllFlatEntityMapsWithRole({
+        ...ROLE,
+        canBeAssignedToApplications: false,
+      }),
+      buildOptions: BUILD_OPTIONS,
+    });
+
+    expect(result).toEqual({});
+  });
+
   it('uses the app default when creating a layout', () => {
     const result = buildAllFlatEntityOperationRecordByMetadataNameFromFromTo({
       fromAllFlatEntityMaps: createEmptyAllFlatEntityMaps(),
