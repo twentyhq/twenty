@@ -7,6 +7,7 @@ import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/ut
 import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { randomUUID } from 'node:crypto';
+import { buildAgentChatUnownedChannelThreadInsertQuery } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-unowned-channel-thread-insert-query.util';
 import { buildAgentChatThreadParticipantOwnerShareInsert } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-participant-owner-share-insert.util';
 import { hasAgentChatThreadChannelField } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-agent-chat-thread-channel-field.util';
 import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
@@ -470,6 +471,8 @@ export class AgentChatSharingService {
     channelId: string;
   }): Promise<AgentChatThreadWorkspaceEntity> {
     const objectMetadata = await this.getThreadObjectMetadata(workspaceId);
+    const privateRecordInsertSql =
+      await this.getPrivateRecordInsertSql(workspaceId);
 
     return this.threadRepository.query(
       workspaceId,
@@ -485,8 +488,10 @@ export class AgentChatSharingService {
           channelIds: [channelId],
         });
         const [record] = await manager.query<AgentChatThreadWorkspaceEntity[]>(
-          `INSERT INTO ${table('agentChatThread')} (id, title, "channelId", "lastActivityAt")
-           VALUES ($1, $2, $3, clock_timestamp()) RETURNING *`,
+          buildAgentChatUnownedChannelThreadInsertQuery({
+            threadTable: table('agentChatThread'),
+            ...privateRecordInsertSql,
+          }),
           [id, title, channelId],
         );
         await this.recordShareStorageService.deleteByRecordIdsInTransaction({
