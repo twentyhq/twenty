@@ -10,7 +10,10 @@ export const findActiveFlatValidationRulesReadingField = ({
   flatValidationRuleMaps,
 }: {
   fieldUniversalIdentifier: string;
-  flatValidationRuleMaps: FlatEntityMaps<FlatValidationRule>;
+  flatValidationRuleMaps: Pick<
+    FlatEntityMaps<FlatValidationRule>,
+    'byUniversalIdentifier'
+  >;
 }): FlatValidationRule[] =>
   Object.values(flatValidationRuleMaps.byUniversalIdentifier)
     .filter(isDefined)

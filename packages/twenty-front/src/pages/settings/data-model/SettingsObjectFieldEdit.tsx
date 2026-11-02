@@ -36,12 +36,7 @@ import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
-import {
-  getSettingsPath,
-  isDefined,
-  isEmptyObject,
-  isNonEmptyArray,
-} from 'twenty-shared/utils';
+import { getSettingsPath, isDefined, isEmptyObject } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconArchive, IconArchiveOff, IconTrash } from 'twenty-ui/icon';
@@ -127,11 +122,10 @@ export const SettingsObjectFieldEdit = () => {
   } = useValidationRulesReadingField({
     fieldMetadataId: fieldMetadataItem?.id ?? '',
   });
-  const validationRulesWarning = hasValidationRulesFailedToLoad
-    ? t`We couldn't check which validation rules use this field. This may also deactivate them.`
-    : isNonEmptyArray(validationRulesReadingField)
-      ? getFieldRemovalValidationRulesWarning(validationRulesReadingField)
-      : undefined;
+  const validationRulesWarning = getFieldRemovalValidationRulesWarning({
+    validationRulesReadingField,
+    hasFailedToLoad: hasValidationRulesFailedToLoad,
+  });
 
   const isReverseJunctionRelation =
     resolveJunctionConfig({
