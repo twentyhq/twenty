@@ -29,29 +29,23 @@ const getMainRoleIdKey = ({
   mainPrincipal: PermissionsMainPrincipal | undefined;
   roleIdsBySource: RoleIdsBySource;
 }): keyof RoleIdsBySource | undefined => {
-  if (!isDefined(mainPrincipal) || 'isDeprecatedRoleOnly' in mainPrincipal) {
-    return FALLBACK_MAIN_ROLE_ID_KEYS.find(
-      (roleIdKey) => roleIdsBySource[roleIdKey] !== undefined,
-    );
+  switch (mainPrincipal?.type) {
+    case undefined:
+    case 'deprecatedRoleOnly':
+      return FALLBACK_MAIN_ROLE_ID_KEYS.find(
+        (roleIdKey) => roleIdsBySource[roleIdKey] !== undefined,
+      );
+    case 'workspaceMember':
+      return 'userWorkspaceRoleId';
+    case 'apiKey':
+      return 'apiKeyRoleId';
+    case 'agent':
+      return 'agentRoleId';
+    case 'application':
+      return 'applicationRoleId';
+    case 'webhook':
+      return 'webhookRoleId';
   }
-
-  if ('workspaceMemberId' in mainPrincipal) {
-    return 'userWorkspaceRoleId';
-  }
-
-  if ('apiKeyId' in mainPrincipal) {
-    return 'apiKeyRoleId';
-  }
-
-  if ('agentId' in mainPrincipal) {
-    return 'agentRoleId';
-  }
-
-  if ('applicationId' in mainPrincipal) {
-    return 'applicationRoleId';
-  }
-
-  return 'webhookRoleId';
 };
 
 // TODO(@charlesBochet): an agent or application always needs a role; until then one without counts as the custom app
@@ -67,8 +61,8 @@ const buildLimitingPrincipal = ({
   }
 
   return isDefined(agentId)
-    ? { roleId: agentRoleId, agentId }
-    : { roleId: agentRoleId, isDeprecatedRoleOnly: true };
+    ? { type: 'agent', roleId: agentRoleId, agentId }
+    : { type: 'deprecatedRoleOnly', roleId: agentRoleId };
 };
 
 const buildApplicationPrincipal = ({
@@ -79,12 +73,12 @@ const buildApplicationPrincipal = ({
   applicationId: string | undefined;
 }): PermissionsApplicationPrincipalWithRole => {
   if (!isDefined(applicationRoleId)) {
-    return { isCustomApp: true };
+    return { type: 'customApplication' };
   }
 
   return isDefined(applicationId)
-    ? { roleId: applicationRoleId, applicationId }
-    : { roleId: applicationRoleId, isDeprecatedRoleOnly: true };
+    ? { type: 'application', roleId: applicationRoleId, applicationId }
+    : { type: 'deprecatedRoleOnly', roleId: applicationRoleId };
 };
 
 const getIdentifiedMainPrincipal = (
@@ -92,9 +86,9 @@ const getIdentifiedMainPrincipal = (
 ) => {
   const mainPrincipal = principalsContext?.mainPrincipal;
 
-  return isDefined(mainPrincipal) && !('isDeprecatedRoleOnly' in mainPrincipal)
-    ? mainPrincipal
-    : undefined;
+  return mainPrincipal?.type === 'deprecatedRoleOnly'
+    ? undefined
+    : mainPrincipal;
 };
 
 export const buildPermissionsPrincipalRoles = ({
@@ -131,7 +125,7 @@ export const buildPermissionsPrincipalRoles = ({
     identifiedMainPrincipal,
   )
     ? { ...identifiedMainPrincipal, roleId: mainRoleId }
-    : { roleId: mainRoleId, isDeprecatedRoleOnly: true };
+    : { type: 'deprecatedRoleOnly', roleId: mainRoleId };
 
   const limitingPrincipal = principalsContext?.limitingPrincipal;
   const applicationPrincipal = principalsContext?.applicationPrincipal;
@@ -144,15 +138,14 @@ export const buildPermissionsPrincipalRoles = ({
         : buildLimitingPrincipal({
             agentRoleId: roleIdsBySource.agentRoleId,
             agentId:
-              isDefined(limitingPrincipal) && 'agentId' in limitingPrincipal
+              limitingPrincipal?.type === 'agent'
                 ? limitingPrincipal.agentId
                 : undefined,
           }),
     applicationPrincipal: buildApplicationPrincipal({
       applicationRoleId: roleIdsBySource.applicationRoleId,
       applicationId:
-        isDefined(applicationPrincipal) &&
-        'applicationId' in applicationPrincipal
+        applicationPrincipal?.type === 'application'
           ? applicationPrincipal.applicationId
           : undefined,
     }),
