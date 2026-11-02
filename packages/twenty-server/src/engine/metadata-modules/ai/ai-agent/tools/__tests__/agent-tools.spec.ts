@@ -2,6 +2,7 @@ import { type DiscoveryService } from '@nestjs/core';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey, FieldActorSource } from 'twenty-shared/types';
+import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -17,6 +18,7 @@ import { UpdateAgentTool } from 'src/engine/metadata-modules/ai/ai-agent/tools/u
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { type PermissionsService } from 'src/engine/permissions/permissions.service';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const workspaceId = 'workspace-id';
@@ -86,6 +88,11 @@ const buildAgentTools = (options?: {
         workspaceCustomFlatApplication: { id: workspaceCustomApplicationId },
       }),
   };
+  const workspaceCacheService = {
+    getOrRecompute: jest.fn().mockResolvedValue({
+      flatWorkflowVersionMaps: { byUniversalIdentifier: {} },
+    }),
+  };
   const permissionsService = {
     checkRolesPermissions: jest
       .fn()
@@ -117,6 +124,7 @@ const buildAgentTools = (options?: {
     new DeleteAgentTool(
       agentService as unknown as AgentService,
       manageableAgentService,
+      workspaceCacheService as unknown as WorkspaceCacheService,
     ),
   ];
 
@@ -164,6 +172,7 @@ const buildAgentTools = (options?: {
     agentService,
     aiModelRegistryService,
     permissionsService,
+    workspaceCacheService,
   };
 };
 
@@ -438,6 +447,31 @@ describe('Agent tools', () => {
       agentService.findOneAgentById.mockResolvedValue(
         buildAgent({ isSystem: true }),
       );
+
+      await expect(
+        executeTool({ toolName: 'delete_agent', args: { id: agentId } }),
+      ).rejects.toMatchObject({ code: AiExceptionCode.INVALID_AGENT_INPUT });
+      expect(agentService.deleteOneAgent).not.toHaveBeenCalled();
+    });
+
+    it('refuses to delete a reusable agent that workflow steps run', async () => {
+      const { executeTool, agentService, workspaceCacheService } =
+        buildAgentTools();
+
+      workspaceCacheService.getOrRecompute.mockResolvedValue({
+        flatWorkflowVersionMaps: {
+          byUniversalIdentifier: {
+            'workflow-version-id': {
+              steps: [
+                {
+                  type: WorkflowActionType.AI_AGENT,
+                  settings: { input: { agentId } },
+                },
+              ],
+            },
+          },
+        },
+      });
 
       await expect(
         executeTool({ toolName: 'delete_agent', args: { id: agentId } }),
