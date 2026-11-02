@@ -197,7 +197,7 @@ describe('streamConversation', () => {
     );
 
     await expect(collect(streamConversation(CONVERSATION))).rejects.toThrow(
-      'the stream closed early',
+      'streamConversation() failed: the stream closed early; read the history and stream again to resume',
     );
   });
 

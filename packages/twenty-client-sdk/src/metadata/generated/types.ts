@@ -5363,6 +5363,9 @@ export default {
             "responseFormat": [
                 327
             ],
+            "runId": [
+                537
+            ],
             "scope": [
                 327
             ],
@@ -13067,6 +13070,9 @@ export default {
                 14,
                 {
                     "agentUniversalIdentifier": [
+                        537
+                    ],
+                    "runId": [
                         537
                     ],
                     "threadId": [

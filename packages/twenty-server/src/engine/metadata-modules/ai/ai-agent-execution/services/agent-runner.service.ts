@@ -113,9 +113,12 @@ export class AgentRunnerService {
   }
 
   // a failure after the turn is recorded comes back as the outcome, so the caller still gets the run id
-  async runInRequest(
-    input: Omit<AgentRunnerRunInput, 'conversation' | 'caller' | 'persona'>,
-  ): Promise<InRequestAgentRun> {
+  async runInRequest({
+    streamChannelId,
+    ...input
+  }: Omit<AgentRunnerRunInput, 'conversation' | 'caller' | 'persona'> & {
+    streamChannelId?: string;
+  }): Promise<InRequestAgentRun> {
     const persona = await this.agentRunPersonaService.resolveOrThrow({
       workspaceId: input.workspaceId,
       spec: input.spec,
@@ -139,6 +142,7 @@ export class AgentRunnerService {
           input: runInput,
           suspension: null,
           stream: null,
+          streamChannelId,
           openedTurn,
         }).then(
           (result): AgentRunnerOutcome => result.outcome,
@@ -684,11 +688,13 @@ export class AgentRunnerService {
     input,
     suspension,
     stream,
+    streamChannelId,
     openedTurn: { turnId, priorMessages, canStoreResult },
   }: {
     input: AgentRunnerRunInput;
     suspension: AgentRunSuspension | null;
     stream: AgentRunStream | null;
+    streamChannelId?: string;
     openedTurn: OpenedAgentRunTurn;
   }): Promise<AgentRunnerResult> {
     const { workspaceId, spec, persona, prompt, executionContext } = input;
@@ -727,6 +733,7 @@ export class AgentRunnerService {
       this.turnStreamService.streamTurn({
         workspaceId,
         claim: stream?.claim ?? null,
+        streamChannelId,
         turnId,
         abortSignal,
         startTurn: () => this.agentRunTurnService.startTurn(turnInput),
@@ -832,7 +839,8 @@ export class AgentRunnerService {
         canStoreResult,
         turnId: await this.conversationWriterService.insertTurn({
           workspaceId,
-          id: oneShotTurnId,
+          // a queued run's turn id comes with its job, an ai.generate call's with its run id
+          id: oneShotTurnId ?? prompt?.turnId,
           threadId: null,
           agentId: persona.agentId,
           status: AgentTurnStatus.RUNNING,

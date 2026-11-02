@@ -99,6 +99,8 @@ export type AgentTurnStreamInput<
 > = {
   workspaceId: string;
   claim: AgentChatStreamClaim | null;
+  // where a turn without a claim streams, when its caller follows it; a claimed turn streams to its thread
+  streamChannelId?: string;
   turnId: string;
   abortSignal?: AbortSignal;
   startTurn: (
@@ -236,24 +238,41 @@ export class AgentTurnStreamService {
   >(
     input: AgentTurnStreamInput<TStarted, TCompletion>,
   ): Promise<AgentTurnStreamOutput<TStarted, TCompletion>> {
-    const { workspaceId, claim, turnId } = input;
+    const { workspaceId, claim, streamChannelId, turnId } = input;
 
     return this.streamAndFinishTurn(input).catch(async (error: unknown) => {
-      // a claimed turn's failure is recorded when its claim is released
+      // a claimed turn's failure is recorded and published when its claim is released
       if (!isDefined(claim)) {
+        const turnError = mapErrorToStreamError(error);
+
         // a failure to record it must not hide why the turn failed
         await this.turnRecorderService
           .finish({
             workspaceId,
             turnId,
             status: AgentTurnStatus.FAILED,
-            error: mapErrorToStreamError(error),
+            error: turnError,
           })
           .catch((finishError: unknown) =>
             this.logger.warn(
               `Could not record the failure of turn ${turnId} in workspace ${workspaceId}: ${formatErrorWithCause(finishError)}`,
             ),
           );
+
+        if (isDefined(streamChannelId)) {
+          await this.eventPublisherService
+            .publish({
+              threadId: streamChannelId,
+              workspaceId,
+              event: { type: 'stream-error', ...turnError },
+              shouldKeepCatchup: false,
+            })
+            .catch((publishError: unknown) =>
+              this.logger.warn(
+                `Could not publish the failure of channel ${streamChannelId} in workspace ${workspaceId}: ${formatErrorWithCause(publishError)}`,
+              ),
+            );
+        }
       }
 
       throw error;
@@ -266,6 +285,7 @@ export class AgentTurnStreamService {
   >({
     workspaceId,
     claim,
+    streamChannelId,
     turnId,
     abortSignal,
     startTurn,
@@ -275,9 +295,11 @@ export class AgentTurnStreamService {
     AgentTurnStreamOutput<TStarted, TCompletion>
   > {
     const threadId = claim?.threadId ?? null;
+    const channelId = threadId ?? streamChannelId;
     const streamed = await this.stream({
       workspaceId,
       claim,
+      channelId,
       turnId,
       startTurn,
     });
@@ -319,7 +341,7 @@ export class AgentTurnStreamService {
       throw streamed.streamError;
     }
 
-    if (!isDefined(claim)) {
+    if (!isDefined(channelId)) {
       return { streamed, completion, finish };
     }
 
@@ -328,20 +350,23 @@ export class AgentTurnStreamService {
     // and the saved reply shows once the thread reloads
     await this.eventPublisherService
       .publish({
-        threadId: claim.threadId,
+        threadId: channelId,
         workspaceId,
         event:
           completion.stopReason === 'workspaceAllowance'
             ? { type: 'credits-exhausted', turnId }
-            : {
-                type: 'message-persisted',
-                messageId: streamed.assistantMessageId,
-                turnId,
-              },
+            : isDefined(threadId)
+              ? {
+                  type: 'message-persisted',
+                  messageId: streamed.assistantMessageId,
+                  turnId,
+                }
+              : { type: 'run-finished', turnId },
+        shouldKeepCatchup: isDefined(threadId),
       })
       .catch((error: unknown) =>
         this.logger.warn(
-          `Could not publish the end of turn ${turnId} in thread ${claim.threadId}: ${formatErrorWithCause(error)}`,
+          `Could not publish the end of turn ${turnId} on channel ${channelId}: ${formatErrorWithCause(error)}`,
         ),
       );
 
@@ -351,12 +376,15 @@ export class AgentTurnStreamService {
   private async stream<TStarted extends { source: AgentTurnStreamSource }>({
     workspaceId,
     claim,
+    channelId,
     turnId,
     startTurn,
   }: Pick<
     AgentTurnStreamInput<TStarted, AgentTurnCompletion>,
     'workspaceId' | 'claim' | 'turnId' | 'startTurn'
-  >): Promise<AgentTurnStreamResult & { started: TStarted }> {
+  > & {
+    channelId: string | undefined;
+  }): Promise<AgentTurnStreamResult & { started: TStarted }> {
     // a turn without a claim keeps no reply, so its id only has to be its own
     const assistantMessageId = uuidv5(
       claim?.streamId ?? turnId,
@@ -486,17 +514,18 @@ export class AgentTurnStreamService {
     }
 
     for await (const chunk of publishStream) {
-      if (!isDefined(claim) || chunk.type === 'error') {
+      if (!isDefined(channelId) || chunk.type === 'error') {
         continue;
       }
 
       await this.eventPublisherService.publish({
-        threadId: claim.threadId,
+        threadId: channelId,
         workspaceId,
         event: {
           type: 'stream-chunk',
           chunk: chunk as Record<string, unknown>,
         },
+        shouldKeepCatchup: isDefined(claim),
       });
     }
 
