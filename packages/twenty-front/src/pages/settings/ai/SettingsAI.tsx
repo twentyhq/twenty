@@ -1,11 +1,13 @@
 import { NavigationButton } from '@/ui/input/components/NavigationButton';
-import { useSettingsAiTabs } from '@/settings/ai/hooks/useSettingsAiTabs';
+import { getSettingsAiTabs } from '@/settings/ai/utils/getSettingsAiTabs';
 
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
+import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 
@@ -26,7 +28,10 @@ import { SettingsAiOverview } from '~/pages/settings/ai/components/SettingsAiOve
 import { SettingsAiMcpSection } from '~/pages/settings/ai/components/SettingsAiMcpSection';
 import { SettingsAiWorkspaceInstructionsSection } from '~/pages/settings/ai/components/SettingsAiWorkspaceInstructionsSection';
 import { SettingsAiSystemPromptsSection } from '~/pages/settings/ai/components/SettingsAiSystemPromptsSection';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 
 const AI_HERO_LIGHT = '/images/ai/ai-tools-cover-light.png';
 const AI_HERO_DARK = '/images/ai/ai-tools-cover-dark.png';
@@ -36,7 +41,14 @@ const SETTINGS_AI_HERO_INSTANCE_ID_PREFIX = 'settings-ai-hero';
 export const SettingsAI = () => {
   const { handleCreateTool, isCreatingTool } = useCreateTool();
   const canReadSystemPrompts = useHasPermissionFlag(PermissionFlagType.AI);
-  const { tabs, activeTabId } = useSettingsAiTabs();
+  const isInboxEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+  );
+  const tabs = getSettingsAiTabs(isInboxEnabled);
+  const activeTabId = useSettingsActiveTabId(
+    SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID,
+    tabs.map((tab) => tab.id),
+  );
   const isOverviewTab = activeTabId === SETTINGS_AI_TABS.TABS_IDS.OVERVIEW;
   const isMcpTab = activeTabId === SETTINGS_AI_TABS.TABS_IDS.MCP;
   const isModelsTab = activeTabId === SETTINGS_AI_TABS.TABS_IDS.MODELS;
