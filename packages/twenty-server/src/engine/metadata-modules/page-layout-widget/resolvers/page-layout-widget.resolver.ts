@@ -16,12 +16,14 @@ import {
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { type IframeMediaPermission } from 'twenty-shared/types';
 
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { IframeMediaPermissionDTO } from 'src/engine/core-modules/workspace/dtos/iframe-media-permission.dto';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { AuthApplication } from 'src/engine/decorators/auth/auth-application.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -36,7 +38,6 @@ import { PageLayoutGraphqlApiExceptionFilter } from 'src/engine/metadata-modules
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @MetadataResolver(() => PageLayoutWidgetDTO)
 @UseInterceptors(WorkspaceMigrationGraphqlApiExceptionInterceptor)
@@ -59,36 +60,44 @@ export class PageLayoutWidgetResolver {
   constructor(
     private readonly pageLayoutWidgetService: PageLayoutWidgetService,
     private readonly applicationTranslationCatalogService: ApplicationTranslationCatalogService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   @ResolveField(() => String, { nullable: true })
   async applicationName(
     @Parent() widget: Pick<PageLayoutWidgetDTO, 'applicationId'>,
-    @AuthWorkspace() workspace: Pick<WorkspaceEntity, 'id'>,
+    @AuthWorkspace()
+    workspace: Pick<WorkspaceEntity, 'id' | 'workspaceCustomApplicationId'>,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ): Promise<string | undefined> {
-    const { flatApplicationMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspace.id, [
-        'flatApplicationMaps',
-      ]);
+    const application =
+      await this.pageLayoutWidgetService.findWidgetApplication({
+        applicationId: widget.applicationId,
+        workspaceId: workspace.id,
+        workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
+        callingApplication,
+      });
 
-    return flatApplicationMaps.byId[widget.applicationId]?.name;
+    return application?.name;
   }
 
   @ResolveField(() => [IframeMediaPermissionDTO], { nullable: true })
   async applicationGrantedIframeMediaPermissions(
     @Parent() widget: Pick<PageLayoutWidgetDTO, 'applicationId'>,
-    @AuthWorkspace() workspace: Pick<WorkspaceEntity, 'id'>,
+    @AuthWorkspace()
+    workspace: Pick<WorkspaceEntity, 'id' | 'workspaceCustomApplicationId'>,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ): Promise<IframeMediaPermission[]> {
-    const { flatApplicationMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspace.id, [
-        'flatApplicationMaps',
-      ]);
+    const application =
+      await this.pageLayoutWidgetService.findWidgetApplication({
+        applicationId: widget.applicationId,
+        workspaceId: workspace.id,
+        workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
+        callingApplication,
+      });
 
-    return (
-      flatApplicationMaps.byId[widget.applicationId]
-        ?.grantedIframeMediaPermissions ?? []
-    );
+    return application?.grantedIframeMediaPermissions ?? [];
   }
 
   @ResolveField(() => String)
