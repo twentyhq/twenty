@@ -9,6 +9,8 @@ import { mockedApolloClient } from '~/testing/mockedApolloClient';
 import {
   type ApproveApplicationIframeMediaPermissionsMutation,
   type ApproveApplicationIframeMediaPermissionsMutationVariables,
+  type FindOneApplicationQuery,
+  type FindOneApplicationQueryVariables,
 } from '~/generated-metadata/graphql';
 
 const APPLICATION_ID = '20202020-6a7b-4c3d-8e4f-000000000001';
@@ -17,12 +19,71 @@ const VIDEO_ORIGIN = 'https://video.example.com';
 const CONFIRMATION_MESSAGE =
   'Approve media access for Recorder?\nThis grants access to this app for everyone in your workspace.\nLet phone.example.com use your camera\nLet video.example.com use your microphone and camera';
 const approveRequest = fn();
-const refetchApplicationRequest = fn().mockResolvedValue(undefined);
+const refetchApplicationRequest = fn();
 
 const APPROVED_PERMISSIONS = [
   { origin: PHONE_ORIGIN, microphone: false, camera: true },
   { origin: VIDEO_ORIGIN, microphone: true, camera: true },
 ];
+
+const REFRESHED_APPLICATION: FindOneApplicationQuery['findOneApplication'] = {
+  __typename: 'Application',
+  id: APPLICATION_ID,
+  name: 'Recorder',
+  description: null,
+  logoUrl: null,
+  version: '1.1.0',
+  universalIdentifier: APPLICATION_ID,
+  applicationRegistrationId: null,
+  applicationRegistration: null,
+  canBeUninstalled: true,
+  isUninstallBlockedByOtherWorkspaceInstallations: false,
+  autoUpgrade: false,
+  createdAt: '2026-11-02T00:00:00.000Z',
+  defaultRoleId: null,
+  settingsCustomTabFrontComponentId: null,
+  healthCheckLogicFunctionId: null,
+  availablePackages: {},
+  requestedIframeMediaPermissions: [
+    {
+      __typename: 'IframeMediaPermission',
+      origin: VIDEO_ORIGIN,
+      microphone: true,
+      camera: false,
+    },
+  ],
+  grantedIframeMediaPermissions: [],
+  applicationVariables: [],
+  agents: [],
+  frontComponents: [],
+  commandMenuItems: [],
+  settingsMenuItems: [],
+  objects: [],
+  logicFunctions: [],
+};
+
+const refetchApplicationHandler = graphql.query<
+  FindOneApplicationQuery,
+  FindOneApplicationQueryVariables
+>('FindOneApplication', ({ variables }) => {
+  refetchApplicationRequest(variables);
+
+  return HttpResponse.json({
+    data: { findOneApplication: REFRESHED_APPLICATION },
+  });
+});
+
+const rejectedApprovalHandler = graphql.mutation(
+  'ApproveApplicationIframeMediaPermissions',
+  () =>
+    HttpResponse.json({
+      errors: [
+        {
+          message: 'Application permissions changed. Review them again.',
+        },
+      ],
+    }),
+);
 
 const meta: Meta<typeof SettingsApplicationIframeMediaPermissionsSection> = {
   title:
@@ -32,7 +93,6 @@ const meta: Meta<typeof SettingsApplicationIframeMediaPermissionsSection> = {
   args: {
     applicationId: APPLICATION_ID,
     applicationName: 'Recorder',
-    onRefetchApplication: refetchApplicationRequest,
     requestedPermissions: [
       { origin: PHONE_ORIGIN, microphone: true, camera: true },
       { origin: VIDEO_ORIGIN, microphone: true, camera: true },
@@ -49,6 +109,7 @@ const meta: Meta<typeof SettingsApplicationIframeMediaPermissionsSection> = {
   parameters: {
     msw: {
       handlers: [
+        refetchApplicationHandler,
         graphql.mutation<
           ApproveApplicationIframeMediaPermissionsMutation,
           ApproveApplicationIframeMediaPermissionsMutationVariables
@@ -126,17 +187,7 @@ export const ApprovesOnlyReviewedAdditionalAccess: Story = {
 export const DoesNotApplyRejectedApproval: Story = {
   parameters: {
     msw: {
-      handlers: [
-        graphql.mutation('ApproveApplicationIframeMediaPermissions', () =>
-          HttpResponse.json({
-            errors: [
-              {
-                message: 'Application permissions changed. Review them again.',
-              },
-            ],
-          }),
-        ),
-      ],
+      handlers: [rejectedApprovalHandler, refetchApplicationHandler],
     },
   },
   play: async ({ canvasElement }) => {
@@ -149,15 +200,66 @@ export const DoesNotApplyRejectedApproval: Story = {
       );
 
       expect(confirm).toHaveBeenCalledWith(CONFIRMATION_MESSAGE);
-      await waitFor(() =>
-        expect(refetchApplicationRequest).toHaveBeenCalledTimes(1),
-      );
+      await waitFor(() => {
+        expect(refetchApplicationRequest).toHaveBeenCalledTimes(1);
+        expect(refetchApplicationRequest).toHaveBeenLastCalledWith({
+          id: APPLICATION_ID,
+        });
+      });
       expect(
         canvas.queryByRole('button', { name: 'Reload page' }),
       ).not.toBeInTheDocument();
       expect(
         canvas.getByRole('button', { name: 'Review media access' }),
       ).toBeEnabled();
+    } finally {
+      confirm.mockRestore();
+    }
+  },
+};
+
+export const ReportsFailedRefresh: Story = {
+  parameters: {
+    msw: {
+      handlers: [
+        rejectedApprovalHandler,
+        graphql.query('FindOneApplication', ({ variables }) => {
+          refetchApplicationRequest(variables);
+
+          return HttpResponse.json({
+            errors: [
+              {
+                message: 'Application refresh failed.',
+                extensions: {
+                  userFriendlyMessage: 'Application refresh failed.',
+                },
+              },
+            ],
+          });
+        }),
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const confirm = spyOn(window, 'confirm').mockReturnValue(true);
+
+    try {
+      await userEvent.click(
+        canvas.getByRole('button', { name: 'Review media access' }),
+      );
+
+      expect(
+        await body.findByText('Application refresh failed.'),
+      ).toBeVisible();
+      expect(refetchApplicationRequest).toHaveBeenCalledTimes(1);
+      expect(refetchApplicationRequest).toHaveBeenLastCalledWith({
+        id: APPLICATION_ID,
+      });
+      expect(
+        canvas.queryByRole('button', { name: 'Reload page' }),
+      ).not.toBeInTheDocument();
     } finally {
       confirm.mockRestore();
     }

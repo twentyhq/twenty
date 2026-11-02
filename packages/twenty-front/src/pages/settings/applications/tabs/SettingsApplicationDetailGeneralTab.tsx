@@ -47,7 +47,6 @@ type SettingsApplicationDetailGeneralTabProps = {
   onUninstall: () => void;
   isUninstalling: boolean;
   uninstallProgress?: number;
-  onRefetchApplication: () => Promise<unknown>;
 };
 
 export const SettingsApplicationDetailGeneralTab = ({
@@ -65,7 +64,6 @@ export const SettingsApplicationDetailGeneralTab = ({
   onUninstall,
   isUninstalling,
   uninstallProgress,
-  onRefetchApplication,
 }: SettingsApplicationDetailGeneralTabProps) => {
   const navigateSettings = useNavigateSettings();
 
@@ -166,7 +164,6 @@ export const SettingsApplicationDetailGeneralTab = ({
           applicationName={displayName}
           requestedPermissions={application.requestedIframeMediaPermissions}
           grantedPermissions={application.grantedIframeMediaPermissions}
-          onRefetchApplication={onRefetchApplication}
         />
       )}
       {applicationHasHttpTriggeredFunctions(application) && (

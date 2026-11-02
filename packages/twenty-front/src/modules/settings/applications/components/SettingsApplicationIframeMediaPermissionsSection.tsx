@@ -1,7 +1,7 @@
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { buildApplicationIframeMediaPermissionSummary } from '@/marketplace/utils/buildApplicationIframeMediaPermissionSummary';
 import { getPendingApplicationIframeMediaPermissions } from '@/settings/applications/utils/getPendingApplicationIframeMediaPermissions';
-import { useMutation } from '@apollo/client/react';
+import { useApolloClient, useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
@@ -12,14 +12,16 @@ import { Section } from 'twenty-ui/components/layout';
 import { Button } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { ApproveApplicationIframeMediaPermissionsDocument } from '~/generated-metadata/graphql';
+import {
+  ApproveApplicationIframeMediaPermissionsDocument,
+  FindOneApplicationDocument,
+} from '~/generated-metadata/graphql';
 
 type SettingsApplicationIframeMediaPermissionsSectionProps = {
   applicationId: string;
   applicationName: string;
   requestedPermissions: readonly IframeMediaPermission[];
   grantedPermissions: readonly IframeMediaPermission[];
-  onRefetchApplication: () => Promise<unknown>;
 };
 
 const StyledContent = styled.div`
@@ -33,9 +35,9 @@ export const SettingsApplicationIframeMediaPermissionsSection = ({
   applicationName,
   requestedPermissions,
   grantedPermissions,
-  onRefetchApplication,
 }: SettingsApplicationIframeMediaPermissionsSectionProps) => {
   const { enqueueToast } = useToast();
+  const apolloClient = useApolloClient();
   const [hasSavedChanges, setHasSavedChanges] = useState(false);
   const [approvePermissions, { loading: isSaving }] = useMutation(
     ApproveApplicationIframeMediaPermissionsDocument,
@@ -44,6 +46,19 @@ export const SettingsApplicationIframeMediaPermissionsSection = ({
     requestedPermissions,
     grantedPermissions,
   });
+
+  const refreshApplication = async () => {
+    try {
+      await apolloClient.query({
+        query: FindOneApplicationDocument,
+        variables: { id: applicationId },
+        fetchPolicy: 'network-only',
+      });
+    } catch (error) {
+      enqueueToast(getToastOptionsFromError({ error }));
+    }
+  };
+
   const reviewPermissions = async () => {
     const approvedPermissions = pendingPermissions;
 
@@ -76,7 +91,7 @@ export const SettingsApplicationIframeMediaPermissionsSection = ({
       }
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
-      await onRefetchApplication().catch(() => undefined);
+      await refreshApplication();
     }
   };
 
