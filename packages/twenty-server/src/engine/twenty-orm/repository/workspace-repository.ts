@@ -46,7 +46,7 @@ import { buildPermissionsCondition } from 'src/engine/permissions/combine/utils/
 import { type RecordShareGrant } from 'src/engine/permissions/record-share/types/record-share-grant.type';
 import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
 import { isObjectOperationDeniedToPrincipal } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principal.util';
-import { isObjectOperationDisabled } from 'src/engine/permissions/role/utils/is-object-operation-disabled.util';
+import { isObjectOperationDisabledToPrincipal } from 'src/engine/permissions/role/utils/is-object-operation-disabled-to-principal.util';
 import { isObjectOperationPermitted } from 'src/engine/permissions/role/utils/is-object-operation-permitted.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -55,7 +55,6 @@ import {
   getUpdateEventRecords,
   mergeRecordsWithUpdateValues,
 } from 'src/engine/twenty-orm/utils/merge-records-with-update-values.util';
-import { isPermissionsPrincipalOwningObject } from 'src/engine/permissions/principal/utils/is-permissions-principal-owning-object.util';
 import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
@@ -2283,17 +2282,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return false;
     }
 
-    return (
-      isObjectOperationDisabled({
-        objectMetadata: flatObjectMetadata,
-        operationType,
-      }) &&
-      !isPermissionsPrincipalOwningObject({
-        principal: this.resolvePermissionsPrincipal(),
-        flatApplicationMaps: this.options.internalContext.flatApplicationMaps,
-        flatObjectMetadata,
-      })
-    );
+    return isObjectOperationDisabledToPrincipal({
+      principal: this.resolvePermissionsPrincipal(),
+      metadataMaps: this.resolvePermissionsMetadataMaps(),
+      flatObjectMetadata,
+      operationType,
+    });
   }
 
   private resolvePermissionsPrincipal(): PermissionsPrincipal {
