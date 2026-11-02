@@ -23,14 +23,6 @@ const EXTRA_PROPERTIES_TO_COMPARE = {
       toCompare: true,
     },
   },
-  // Applications are not syncable metadata, so the relation constants cannot carry this foreign key
-  roleTarget: {
-    targetApplicationUniversalIdentifier: {
-      toStringify: false,
-      universalProperty: 'targetApplicationUniversalIdentifier',
-      toCompare: true,
-    },
-  },
 } as const satisfies {
   [P in AllMetadataName]?: Partial<
     Record<keyof MetadataFlatEntity<P>, PropertyConfiguration>

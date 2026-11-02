@@ -730,10 +730,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
     ),
     renamedProperties: {},
     workspaceLocalProperties: [],
-    knownGaps: {
-      canBeAssignedToApplications:
-        'applications cannot grant roles to applications, only the workspace can',
-    },
+    knownGaps: {},
   },
   {
     metadataName: 'objectPermission',
@@ -898,8 +895,6 @@ const EXPORTED_KINDS: ExportedKind[] = [
         'API key role assignments are reported as excluded, only agent roles are exported',
       webhookUniversalIdentifier:
         'webhook role assignments are reported as excluded, only agent roles are exported',
-      targetApplicationUniversalIdentifier:
-        'application role assignments are reported as excluded, only agent roles are exported',
     },
   },
   {

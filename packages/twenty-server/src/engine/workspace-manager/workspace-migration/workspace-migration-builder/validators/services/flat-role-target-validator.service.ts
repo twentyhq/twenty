@@ -169,17 +169,6 @@ export class FlatRoleTargetValidatorService {
       ...flatEntityUpdate,
     };
 
-    if (
-      updatedFlatRoleTarget.targetApplicationUniversalIdentifier !==
-      existingRoleTarget.targetApplicationUniversalIdentifier
-    ) {
-      validationResult.errors.push({
-        code: RoleTargetExceptionCode.INVALID_ROLE_TARGET_DATA,
-        message: t`Role target application cannot be changed`,
-        userFriendlyMessage: msg`Role target application cannot be changed`,
-      });
-    }
-
     validationResult.errors.push(
       ...validateFlatRoleTargetTargetsOnlyOneEntity({
         flatRoleTarget: updatedFlatRoleTarget,
