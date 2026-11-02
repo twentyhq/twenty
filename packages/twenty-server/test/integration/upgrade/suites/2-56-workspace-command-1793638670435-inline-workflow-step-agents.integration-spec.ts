@@ -9,11 +9,11 @@ import {
   deleteLegacyWorkspaceWorkflowRecords,
   linkCoreWorkflowToLegacyWorkspaceIds,
   runCoreWorkflowVersion,
-  updateCoreWorkflowVersionStep,
   updateCoreWorkflowVersionTrigger,
 } from 'test/integration/graphql/suites/workflow/utils/core-workflow.util';
 import { waitForWorkflowCompletion } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
+import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
 import { updateOneAgent } from 'test/integration/metadata/suites/agent/utils/update-one-agent.util';
 import { upsertFieldPermissions } from 'test/integration/metadata/suites/field-permission/utils/upsert-field-permissions.util';
 import { upsertObjectPermissions } from 'test/integration/metadata/suites/object-permission/utils/upsert-object-permissions.util';
@@ -308,14 +308,10 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
       coreWorkflowVersionId,
       stepType: 'AI_AGENT',
     });
-    const agentId = String(createdStep.settings.input.agentId);
-
-    agentIds.push(agentId);
-
-    await updateOneAgent({
+    const { data } = await createOneAgent({
       expectToFail: false,
       input: {
-        id: agentId,
+        label: `Workflow Agent ${randomUUID().substring(0, 4)}`,
         prompt: STEP_AGENT_INSTRUCTIONS,
         modelId: TEST_AI_MODEL_ID,
         modelConfiguration: STEP_AGENT_MODEL_CONFIGURATION,
@@ -323,13 +319,32 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
         roleId: stepAgentRoleId,
       },
     });
-    await updateCoreWorkflowVersionStep({
-      coreWorkflowVersionId,
-      step: {
-        ...withStepInput({ step: createdStep, input: stepInput }),
-        name: STEP_NAME,
+    const agentId = data.createOneAgent.id;
+
+    agentIds.push(agentId);
+
+    // the builder no longer gives a step its own hidden agent, so the legacy shape is written as it left it
+    const legacyStep: AiAgentStep = {
+      ...createdStep,
+      name: STEP_NAME,
+      settings: {
+        ...createdStep.settings,
+        input: { agentId, prompt: '', ...stepInput },
       },
-    });
+    };
+
+    await global.testDataSource.query(
+      `UPDATE core."agent" SET "isSystem" = true WHERE id = $1`,
+      [agentId],
+    );
+    await global.testDataSource.query(
+      `UPDATE core."workflowVersion" SET steps = $2::jsonb WHERE id = $1`,
+      [coreWorkflowVersionId, JSON.stringify([legacyStep])],
+    );
+    await global.workflowTestServices.workspaceCache.invalidateAndRecompute(
+      SEED_APPLE_WORKSPACE_ID,
+      ['flatAgentMaps', 'flatWorkflowVersionMaps'],
+    );
 
     const {
       workspaceWorkflowId,
