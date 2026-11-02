@@ -1,6 +1,7 @@
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { Toaster } from 'twenty-ui/components/feedback';
 import {
   AiChatAssistantMode,
   PermissionFlagType,
@@ -45,7 +46,10 @@ const meta = {
     <SettingsProtectedRouteWrapper
       settingsPermission={PermissionFlagType.AI_SETTINGS}
     >
-      <SettingsAI />
+      <>
+        <SettingsAI />
+        <Toaster />
+      </>
     </SettingsProtectedRouteWrapper>
   ),
 } satisfies Meta<SettingsAiIntegrationStoryArgs>;
@@ -220,6 +224,51 @@ export const BehaviorSaveFailure: Story = {
     expect(fixture.saveBehavior).toHaveBeenLastCalledWith({
       aiChatDirectMessageAssistantMode: AiChatAssistantMode.NEVER,
     });
+  },
+};
+
+export const InstructionsFailurePreservesBehavior: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const bodyQueries = within(canvasElement.ownerDocument.body);
+    const instructions = await canvas.findByRole('textbox', {
+      name: 'Workspace Instructions',
+    });
+    const directMessages = canvas.getByRole('combobox', { name: 'DMs' });
+
+    fixture.pauseInstructionsSave();
+    fixture.failNextInstructionsSave();
+    await userEvent.type(instructions, 'Use concise replies.');
+    await waitFor(
+      () => expect(fixture.instructionsSaveStarted).toHaveBeenCalledOnce(),
+      { timeout: 3000 },
+    );
+
+    await userEvent.click(directMessages);
+    const options = await bodyQueries.findByRole('listbox', { name: 'DMs' });
+    await userEvent.click(
+      within(options).getByRole('option', { name: 'Never' }),
+    );
+    await waitFor(() => expect(directMessages).toHaveTextContent('Never'));
+
+    fixture.resumeInstructionsSave();
+    expect(
+      await bodyQueries.findByText('Workspace instructions could not be saved'),
+    ).toBeVisible();
+    expect(directMessages).toHaveTextContent('Never');
+    expect(fixture.saveInstructions).not.toHaveBeenCalled();
+    expect(fixture.saveBehavior).toHaveBeenCalledOnce();
+
+    await userEvent.click(canvas.getByRole('link', { name: 'Models' }));
+    await canvas.findByRole('heading', { name: 'Models' });
+    await userEvent.click(canvas.getByRole('link', { name: 'Overview' }));
+
+    expect(
+      await canvas.findByRole('combobox', { name: 'DMs' }),
+    ).toHaveTextContent('Never');
+    expect(
+      canvas.getByRole('textbox', { name: 'Workspace Instructions' }),
+    ).not.toHaveTextContent('Use concise replies.');
   },
 };
 

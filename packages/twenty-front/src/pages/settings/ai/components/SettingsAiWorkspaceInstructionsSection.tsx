@@ -49,11 +49,15 @@ export const SettingsAiWorkspaceInstructionsSection = () => {
     ) {
       return;
     }
+
+    const workspaceId = currentWorkspace.id;
+
     try {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        aiAdditionalInstructions: newValue || null,
-      });
+      setCurrentWorkspace((previousWorkspace) =>
+        previousWorkspace?.id === workspaceId
+          ? { ...previousWorkspace, aiAdditionalInstructions: newValue || null }
+          : previousWorkspace,
+      );
       await updateWorkspace({
         variables: {
           input: { aiAdditionalInstructions: newValue || null },
@@ -61,10 +65,14 @@ export const SettingsAiWorkspaceInstructionsSection = () => {
       });
       setOriginalInstructions(newValue);
     } catch (error) {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        aiAdditionalInstructions: originalInstructions || null,
-      });
+      setCurrentWorkspace((previousWorkspace) =>
+        previousWorkspace?.id === workspaceId
+          ? {
+              ...previousWorkspace,
+              aiAdditionalInstructions: originalInstructions || null,
+            }
+          : previousWorkspace,
+      );
       if (CombinedGraphQLErrors.is(error)) {
         enqueueToast(getToastOptionsFromError({ error }));
       } else {
