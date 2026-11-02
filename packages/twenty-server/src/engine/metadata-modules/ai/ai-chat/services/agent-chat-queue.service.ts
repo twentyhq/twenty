@@ -104,7 +104,6 @@ export class AgentChatQueueService {
       workspaceId,
       async (scope) => {
         await this.participantService.resolveMentionInTransaction({
-          workspaceId,
           workspaceMemberId,
           threadId,
           scope,

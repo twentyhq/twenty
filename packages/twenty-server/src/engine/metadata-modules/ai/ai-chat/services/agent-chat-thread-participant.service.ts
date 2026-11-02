@@ -326,7 +326,7 @@ export class AgentChatThreadParticipantService {
     scope,
     workspaceMemberId,
     threadId,
-  }: AgentChatThreadAccessArgs & {
+  }: Pick<AgentChatThreadAccessArgs, 'workspaceMemberId' | 'threadId'> & {
     scope: Pick<AgentHistoryTransactionScope, 'getRepository'>;
   }): Promise<AgentChatThreadParticipantWrite | null> {
     const participantRepository =
