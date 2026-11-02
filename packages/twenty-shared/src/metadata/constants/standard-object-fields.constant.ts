@@ -165,6 +165,7 @@ export const STANDARD_OBJECT_FIELDS = {
     messages: { universalIdentifier: '737c3559-ea1a-4269-aea4-e672b17afbb1' },
     status: { universalIdentifier: 'c17a4d49-f4f5-40e2-b084-11c5c4bae431' },
     error: { universalIdentifier: 'b0ed90f6-5953-4c85-aff8-407a28ec8cc7' },
+    result: { universalIdentifier: '3efbea8e-5385-4d55-a210-9987e9ffb176' },
     startedAt: { universalIdentifier: '578977d7-b0d9-48d1-83f7-29ad6215a6f0' },
     endedAt: { universalIdentifier: '2b13f528-738b-402c-a033-7bbb0cce73a4' },
     modelId: { universalIdentifier: 'b1e1c27b-03dc-40b1-8052-4474c15b8233' },

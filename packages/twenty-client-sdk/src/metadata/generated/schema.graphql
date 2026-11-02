@@ -215,7 +215,7 @@ type AgentRun {
   reply: String
   startedAt: DateTime
   status: AgentTurnStatus!
-  threadId: UUID!
+  threadId: UUID
   threadTitle: String
   toolNames: [String!]!
 }

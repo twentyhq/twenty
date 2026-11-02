@@ -1,22 +1,13 @@
-import { getWorkflowAiAgentStepKind } from 'twenty-shared/workflow';
-
 import { validateWorkflowAiAgentStep } from 'src/modules/workflow/workflow-builder/workflow-validation/utils/validate-workflow-ai-agent-step.util';
 import { type WorkflowAiAgentActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/types/workflow-ai-agent-action-input.type';
 
-const errorCodesFor = ({
-  input,
-  agent = { isSystem: false },
-}: {
-  input: WorkflowAiAgentActionInput;
-  agent?: { isSystem: boolean };
-}) =>
+const errorCodesFor = ({ input }: { input: WorkflowAiAgentActionInput }) =>
   validateWorkflowAiAgentStep({
     step: {
       id: 'step-1',
       name: 'Qualify',
       settings: { outputSchema: {}, input },
     },
-    stepKind: getWorkflowAiAgentStepKind({ input, agent }),
   })
     .filter(({ severity }) => severity === 'error')
     .map(({ code }) => code);
@@ -96,22 +87,13 @@ describe('validateWorkflowAiAgentStep', () => {
     ).toEqual([]);
   });
 
-  it('accepts a response format on a step running a reusable agent', () => {
+  it('accepts a response format on a step running an agent', () => {
     expect(
       errorCodesFor({
         input: {
           agentId: 'agent-id',
           responseFormat: { type: 'text' },
         },
-      }),
-    ).toEqual([]);
-  });
-
-  it('accepts a response format on a step running its hidden agent', () => {
-    expect(
-      errorCodesFor({
-        input: { agentId: 'agent-id', responseFormat: { type: 'text' } },
-        agent: { isSystem: true },
       }),
     ).toEqual([]);
   });

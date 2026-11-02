@@ -206,7 +206,7 @@ export interface AgentRun {
     reply?: Scalars['String']
     startedAt?: Scalars['DateTime']
     status: AgentTurnStatus
-    threadId: Scalars['UUID']
+    threadId?: Scalars['UUID']
     threadTitle?: Scalars['String']
     toolNames: Scalars['String'][]
     __typename: 'AgentRun'

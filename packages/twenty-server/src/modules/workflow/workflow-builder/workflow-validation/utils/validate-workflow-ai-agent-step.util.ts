@@ -2,8 +2,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
   getWorkflowAiAgentStepConfigIssues,
+  isWorkflowAiAgentGenerateStep,
   WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES,
-  type WorkflowAiAgentStepKind,
   type WorkflowValidationIssue,
 } from 'twenty-shared/workflow';
 
@@ -11,22 +11,17 @@ import { type WorkflowAiAgentAction } from 'src/modules/workflow/workflow-execut
 
 export const validateWorkflowAiAgentStep = ({
   step,
-  stepKind,
 }: {
   step: Pick<WorkflowAiAgentAction, 'id' | 'name'> & {
     settings: Pick<WorkflowAiAgentAction['settings'], 'input' | 'outputSchema'>;
   };
-  stepKind: WorkflowAiAgentStepKind;
 }): WorkflowValidationIssue[] => {
   const issues: WorkflowValidationIssue[] = [];
 
-  const input = step.settings?.input;
+  const input = step.settings?.input ?? {};
   const stepLabel = step.name ?? step.id;
 
-  for (const issueCode of getWorkflowAiAgentStepConfigIssues({
-    stepKind,
-    input: input ?? {},
-  })) {
+  for (const issueCode of getWorkflowAiAgentStepConfigIssues(input)) {
     issues.push({
       severity: 'error',
       code: 'AI_AGENT_CONFLICTING_CONFIG',
@@ -35,7 +30,10 @@ export const validateWorkflowAiAgentStep = ({
     });
   }
 
-  if (stepKind === 'generate' && !isNonEmptyString(input?.prompt?.trim())) {
+  if (
+    isWorkflowAiAgentGenerateStep(input) &&
+    !isNonEmptyString(input.prompt?.trim())
+  ) {
     issues.push({
       severity: 'error',
       code: 'AI_AGENT_MISSING_PROMPT',
