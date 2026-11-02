@@ -102,13 +102,15 @@ export class AgentTurnRecorderService {
     );
   }
 
-  // A stream that lost its claim leaves the turn to whoever took the claim
+  // A stream that lost its claim leaves the turn to whoever took the claim. The result is written with
+  // the status, so a worker that dies once the turn completed never leaves it without its result
   async finish({
     workspaceId,
     turnId,
     status,
     error = null,
     modelId,
+    result,
     streamClaim,
   }: {
     workspaceId: string;
@@ -116,8 +118,11 @@ export class AgentTurnRecorderService {
     status: AgentTurnStatus;
     error?: StreamErrorPayload | null;
     modelId?: string;
+    result?: object;
     streamClaim?: AgentTurnStreamClaim;
   }): Promise<boolean> {
+    const resultParameters = isDefined(result) ? [JSON.stringify(result)] : [];
+
     return this.turnRepository.query(
       workspaceId,
       async ({ manager, table }) => {
@@ -127,8 +132,9 @@ export class AgentTurnRecorderService {
            "error" = $3::jsonb,
            "endedAt" = $4,
            "modelId" = COALESCE($5, "modelId"),
+           ${isDefined(result) ? '"result" = $6::jsonb,' : ''}
            "updatedAt" = now()
-         WHERE id = $1${buildStreamClaimCondition({ table, streamClaim, firstParameterIndex: 6 })}
+         WHERE id = $1${buildStreamClaimCondition({ table, streamClaim, firstParameterIndex: 6 + resultParameters.length })}
          RETURNING id`,
           [
             turnId,
@@ -136,6 +142,7 @@ export class AgentTurnRecorderService {
             isDefined(error) ? JSON.stringify(error) : null,
             isAgentTurnStatusFinal(status) ? new Date().toISOString() : null,
             modelId ?? null,
+            ...resultParameters,
             ...buildStreamClaimParameters(streamClaim),
           ],
         );
@@ -279,19 +286,27 @@ export class AgentTurnRecorderService {
     };
   }
 
+  // a workspace the add-agent-turn-result command has not reached has no result to select
   async findTurn({
     workspaceId,
     turnId,
+    withResult,
   }: {
     workspaceId: string;
     turnId: string;
-  }): Promise<Pick<
-    AgentTurnWorkspaceEntity,
-    'id' | 'status' | 'error'
-  > | null> {
+    withResult: boolean;
+  }): Promise<
+    | (Pick<AgentTurnWorkspaceEntity, 'id' | 'status' | 'error'> &
+        Partial<Pick<AgentTurnWorkspaceEntity, 'result'>>)
+    | null
+  > {
+    const select: (keyof AgentTurnWorkspaceEntity)[] = withResult
+      ? ['id', 'status', 'error', 'result']
+      : ['id', 'status', 'error'];
+
     return this.turnRepository.findOne(workspaceId, {
       where: { id: turnId },
-      select: ['id', 'status', 'error'],
+      select,
     });
   }
 

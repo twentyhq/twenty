@@ -21,7 +21,11 @@ const JOB_DATA = {
 } as unknown as RunAgentJobData;
 
 const buildRunner = (
-  recordedTurn: { status: AgentTurnStatus; error: unknown } | null,
+  recordedTurn: {
+    status: AgentTurnStatus;
+    error: unknown;
+    result?: object | null;
+  } | null,
   { responseFormat = null }: { responseFormat?: object | null } = {},
 ) => {
   const handler = {
@@ -52,7 +56,7 @@ const buildRunner = (
     {} as never,
     agentRunConversationService as never,
     conversationReaderService as never,
-    {} as never,
+    { canStoreTurnResult: jest.fn().mockResolvedValue(true) } as never,
     agentRunSuspensionService as never,
     { getHandlerOrThrow: () => handler } as never,
     {} as never,
@@ -81,6 +85,7 @@ const buildRunner = (
     agentRunConversationService,
     agentRunSuspensionService,
     turnRecorderService,
+    conversationReaderService,
   };
 };
 
@@ -167,7 +172,7 @@ describe('AgentRunnerService runStarted on a stalled job retried with its run id
     });
   });
 
-  it('completes a run whose turn completed with the text of its reply', async () => {
+  it('completes a run whose turn completed before results were kept with the text of its reply', async () => {
     const {
       runner,
       agentRunConversationService,
@@ -189,7 +194,43 @@ describe('AgentRunnerService runStarted on a stalled job retried with its run id
     });
   });
 
-  it('fails a run whose completed turn had a structured result, which is kept nowhere', async () => {
+  it.each([
+    ['text', { response: 'Followed up and booked a call' }, null],
+    ['structured', { isBooked: true }, { type: 'json', schema: {} }],
+  ])(
+    'completes a run with the %s result its completed turn kept, without reading its reply',
+    async (_kind, storedResult, responseFormat) => {
+      const {
+        runner,
+        agentRunConversationService,
+        agentRunSuspensionService,
+        turnRecorderService,
+        conversationReaderService,
+      } = buildRunner(
+        { status: AgentTurnStatus.COMPLETED, error: null, result: storedResult },
+        { responseFormat },
+      );
+
+      await runner.runStarted(JOB_DATA);
+
+      expect(turnRecorderService.findTurn).toHaveBeenCalledWith({
+        workspaceId: 'workspace-id',
+        turnId: 'run-id',
+        withResult: true,
+      });
+      expect(agentRunConversationService.openTurn).not.toHaveBeenCalled();
+      expect(conversationReaderService.findReplyText).not.toHaveBeenCalled();
+      expect(agentRunSuspensionService.deliverOutcome).toHaveBeenCalledWith({
+        workspaceId: 'workspace-id',
+        caller: JOB_DATA.caller,
+        threadId: 'thread-id',
+        outcome: { status: 'COMPLETED', result: storedResult },
+        summary: null,
+      });
+    },
+  );
+
+  it('fails a run whose completed turn had a structured result from before results were kept', async () => {
     const { runner, agentRunSuspensionService } = buildRunner(
       { status: AgentTurnStatus.COMPLETED, error: null },
       { responseFormat: { type: 'json', schema: {} } },

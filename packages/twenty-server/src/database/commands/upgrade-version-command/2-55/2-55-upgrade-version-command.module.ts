@@ -10,6 +10,7 @@ import { MakeRestrictedRecordsPrivateCommand } from 'src/database/commands/upgra
 import { MakeChatThreadsPrivateRecordsCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793460623155-make-chat-threads-private-records.command';
 import { UpdateDataManipulationSkillImportCheckCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793607354182-update-data-manipulation-skill-import-check.command';
 import { MakeAgentTurnThreadOptionalCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793633232324-make-agent-turn-thread-optional.command';
+import { AddAgentTurnResultCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793636518596-add-agent-turn-result.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -35,6 +36,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     MakeChatThreadsPrivateRecordsCommand,
     UpdateDataManipulationSkillImportCheckCommand,
     MakeAgentTurnThreadOptionalCommand,
+    AddAgentTurnResultCommand,
   ],
 })
 export class V2_55_UpgradeVersionCommandModule {}
