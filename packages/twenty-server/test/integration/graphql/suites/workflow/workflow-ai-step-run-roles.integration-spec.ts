@@ -631,6 +631,13 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
         [turn.id],
       ),
     ).toEqual([]);
+    // the result is kept on the turn, since a threadless run has no reply to rebuild it from
+    expect(
+      await global.testDataSource.query(
+        `SELECT result FROM "${schema}"."agentTurn" WHERE id = $1`,
+        [turn.id],
+      ),
+    ).toEqual([{ result: { response: 'Done' } }]);
   });
 
   it('runs a Generate step one-shot, outside any thread', async () => {

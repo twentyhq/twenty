@@ -338,3 +338,94 @@ describe('AgentTurnStreamService streamTurn of a claimed turn', () => {
     );
   });
 });
+
+describe('AgentTurnStreamService streamTurn of a run without a conversation', () => {
+  const streamRunWithoutClaim = ({
+    service,
+    stopReason,
+    isAborted = false,
+  }: {
+    service: AgentTurnStreamService;
+    stopReason: 'workspaceAllowance' | null;
+    isAborted?: boolean;
+  }) =>
+    service.streamTurn({
+      workspaceId: 'workspace-id',
+      claim: null,
+      turnId: 'turn-id',
+      startTurn: async () => ({
+        source: {
+          modelConfig: { contextWindowTokens: 1000 } as never,
+          parts: new ReadableStream({
+            start(controller) {
+              [
+                { type: 'start' },
+                { type: 'finish', finishReason: 'stop', totalUsage: {} },
+              ].forEach((part) => controller.enqueue(part as never));
+              controller.close();
+            },
+          }),
+        },
+      }),
+      completeTurn: async () => ({
+        modelId: 'model-id',
+        stopReason,
+        isAborted,
+        result: { summary: 'Followed up' },
+      }),
+      isBackgroundRun: true,
+    });
+
+  it('records the result of a completed run in the write that completes its turn', async () => {
+    const finish = jest.fn().mockResolvedValue(true);
+
+    await streamRunWithoutClaim({
+      service: await buildService({ finish }),
+      stopReason: null,
+    });
+
+    expect(finish).toHaveBeenCalledTimes(1);
+    expect(finish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        turnId: 'turn-id',
+        status: AgentTurnStatus.COMPLETED,
+        result: { summary: 'Followed up' },
+      }),
+    );
+  });
+
+  it('records no result on a run that did not complete', async () => {
+    const finish = jest.fn().mockResolvedValue(true);
+
+    await streamRunWithoutClaim({
+      service: await buildService({ finish }),
+      stopReason: 'workspaceAllowance',
+    });
+
+    expect(finish).toHaveBeenCalledTimes(1);
+    expect(finish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        status: AgentTurnStatus.FAILED,
+        result: undefined,
+      }),
+    );
+  });
+
+  it('records a run stopped after its stream ended as cancelled, without its result', async () => {
+    const finish = jest.fn().mockResolvedValue(true);
+
+    await streamRunWithoutClaim({
+      service: await buildService({ finish }),
+      stopReason: null,
+      isAborted: true,
+    });
+
+    expect(finish).toHaveBeenCalledTimes(1);
+    expect(finish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        status: AgentTurnStatus.CANCELLED,
+        result: undefined,
+      }),
+    );
+  });
+});

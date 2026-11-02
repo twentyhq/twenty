@@ -86,7 +86,11 @@ export type AgentTurnCompletion = {
   modelId: string;
   stopReason: StepDebitResult['stopReason'];
   isWaiting?: boolean;
+  // a stop the caller saw land after the stream ended, so the turn is recorded as stopped too
+  isAborted?: boolean;
   usage?: AgentTurnStreamUsage;
+  // kept on a completed turn, so a retried job hands it back without running the model again
+  result?: object;
 };
 
 export type AgentTurnStreamInput<
@@ -309,10 +313,15 @@ export class AgentTurnStreamService {
       workspaceId,
       claim,
       turnId,
-      result: { ...streamed, usage: completion.usage ?? streamed.usage },
+      result: {
+        ...streamed,
+        isAborted: streamed.isAborted || completion.isAborted === true,
+        usage: completion.usage ?? streamed.usage,
+      },
       modelId: completion.modelId,
       stopReason: completion.stopReason,
       isWaiting: completion.isWaiting,
+      runResult: completion.result,
       isBackgroundRun,
     });
 
@@ -531,6 +540,7 @@ export class AgentTurnStreamService {
     modelId,
     stopReason,
     isWaiting = false,
+    runResult,
     isBackgroundRun = false,
   }: Pick<
     AgentTurnStreamInput<
@@ -543,6 +553,7 @@ export class AgentTurnStreamService {
     modelId: string;
     stopReason: StepDebitResult['stopReason'];
     isWaiting?: boolean;
+    runResult?: object;
     // a background run's reply stays out of the inbox unless it asks something, and its result
     // stands in for a written reply
     isBackgroundRun?: boolean;
@@ -580,12 +591,17 @@ export class AgentTurnStreamService {
       });
     }
 
+    const turnStatus = mapAgentChatTurnOutcomeToTurnStatus(outcome);
     const finishTurn = () =>
       this.turnRecorderService.finish({
         workspaceId,
         turnId,
-        ...mapAgentChatTurnOutcomeToTurnStatus(outcome),
+        ...turnStatus,
         modelId,
+        result:
+          turnStatus.status === AgentTurnStatus.COMPLETED
+            ? runResult
+            : undefined,
         streamClaim: claim ?? undefined,
       });
 

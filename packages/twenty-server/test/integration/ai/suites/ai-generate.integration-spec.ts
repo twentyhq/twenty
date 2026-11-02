@@ -18,6 +18,7 @@ import { type GenerateMutationInput } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const DATA_TOOL_NAME_PATTERN =
@@ -139,6 +140,14 @@ describe('generate mutation (integration)', () => {
 });
 
 describe('generate mutation for an application without a default role (integration)', () => {
+  const countAgentTurns = async (): Promise<number> => {
+    const [{ count }] = await globalThis.testDataSource.query(
+      `SELECT count(*)::int AS count FROM "${getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID)}"."agentTurn"`,
+    );
+
+    return count;
+  };
+
   let application: ApplicationWithResources;
   let memberBoundToken: string;
 
@@ -175,7 +184,10 @@ describe('generate mutation for an application without a default role (integrati
   });
 
   it('refuses a member-bound application rather than run with the member role alone', async () => {
-    mockScriptedAiModel(() => answerWith('Acme looks like a fit'));
+    const offeredToolNamesByCall = mockScriptedAiModel(() =>
+      answerWith('Acme looks like a fit'),
+    );
+    const turnCountBefore = await countAgentTurns();
 
     const response = await makeMetadataApiRequest(
       generateQueryFactory({
@@ -184,9 +196,12 @@ describe('generate mutation for an application without a default role (integrati
       memberBoundToken,
     );
 
+    // the AI permission guard refuses it before the generate service's own default role check
     expect(response.body.errors?.[0]).toMatchObject({
-      message: expect.stringContaining('needs a default role'),
       extensions: { code: 'FORBIDDEN' },
     });
+    expect(response.body.data?.generate ?? null).toBeNull();
+    expect(offeredToolNamesByCall).toHaveLength(0);
+    expect(await countAgentTurns()).toBe(turnCountBefore);
   });
 });

@@ -66,7 +66,8 @@ export class AiGenerateService {
 
     assertAgentResponseFormatHasOutputFieldsOrThrow(responseFormat);
 
-    // the application's role is the ceiling of what its generate may reach, so it cannot run without one
+    // the application's role is the ceiling of what its generate may reach, so it cannot run without one. The AI
+    // guard refuses other roleless applications first; an OAuth-only one acting with its member's role gets here
     if (
       isDefined(callerApplication) &&
       !isDefined(callerApplication.defaultRoleId)

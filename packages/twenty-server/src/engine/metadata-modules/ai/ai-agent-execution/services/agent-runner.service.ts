@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { randomUUID } from 'node:crypto';
+
 import { isNonEmptyString } from '@sniptt/guards';
 import { generateId } from 'ai';
 import { type AgentRunSummary, type ExtendedUIMessage } from 'twenty-shared/ai';
@@ -71,6 +73,7 @@ type AgentRunnerResult = {
 type OpenedAgentRunTurn = {
   turnId: string;
   priorMessages: ExtendedUIMessage[];
+  canStoreResult: boolean;
 };
 
 @Injectable()
@@ -99,7 +102,9 @@ export class AgentRunnerService {
   async start(input: RunAgentJobData): Promise<void> {
     await this.messageQueueService.add<RunAgentJobData>(
       RUN_AGENT_JOB_NAME,
-      input,
+      isDefined(input.conversation)
+        ? input
+        : { ...input, turnId: randomUUID() },
       await this.agentRunJobScopeService.resolve({
         workspaceId: input.workspaceId,
         spec: input.spec,
@@ -248,7 +253,7 @@ export class AgentRunnerService {
 
   // a run that fails before it settles is delivered as failed here, so null means nothing is left to do
   private async runOrDeliverFailure({
-    jobData: { workspaceId, conversation, caller, spec, prompt },
+    jobData: { workspaceId, conversation, turnId, caller, spec, prompt },
     handler,
   }: {
     jobData: RunAgentJobData;
@@ -262,10 +267,16 @@ export class AgentRunnerService {
       const run = async (
         stream: AgentRunStream | null,
       ): Promise<AgentRunnerResult | null> => {
-        const retriedTurn = isDefined(prompt?.turnId)
+        // a one-shot run's turn id comes with its job, a conversation run's with its prompt
+        const retriedTurnId = turnId ?? prompt?.turnId;
+        const retriedTurn = isDefined(retriedTurnId)
           ? await this.turnRecorderService.findTurn({
               workspaceId,
-              turnId: prompt.turnId,
+              turnId: retriedTurnId,
+              withResult:
+                await this.conversationWriterService.canStoreTurnResult(
+                  workspaceId,
+                ),
             })
           : null;
 
@@ -289,6 +300,7 @@ export class AgentRunnerService {
               input: {
                 workspaceId,
                 conversation,
+                turnId,
                 caller,
                 spec,
                 persona,
@@ -330,7 +342,7 @@ export class AgentRunnerService {
     }
   }
 
-  // a stalled job's retry settles the run from its turn, since its agent may already have acted
+  // a stalled job's retry settles the run from its turn rather than run again, since its agent may already have acted
   private async settleRetriedRun({
     workspaceId,
     caller,
@@ -341,7 +353,8 @@ export class AgentRunnerService {
     workspaceId: string;
     caller: AgentRunCaller;
     threadId: string | null;
-    turn: Pick<AgentTurnWorkspaceEntity, 'id' | 'status' | 'error'>;
+    turn: Pick<AgentTurnWorkspaceEntity, 'id' | 'status' | 'error'> &
+      Partial<Pick<AgentTurnWorkspaceEntity, 'result'>>;
     isJsonResponse: boolean;
   }): Promise<void> {
     if (turn.status === AgentTurnStatus.RUNNING) {
@@ -353,11 +366,14 @@ export class AgentRunnerService {
       });
     }
 
-    const completedResult = await this.findRetriedRunTextResult({
-      workspaceId,
-      turn,
-      isJsonResponse,
-    });
+    const completedResult =
+      turn.result ??
+      (await this.findRetriedRunTextResult({
+        workspaceId,
+        threadId,
+        turn,
+        isJsonResponse,
+      }));
     const outcome = buildRetriedAgentRunOutcome({ turn, completedResult });
 
     if (!isDefined(outcome)) {
@@ -373,17 +389,24 @@ export class AgentRunnerService {
     });
   }
 
-  // a text result is the reply's last step, while a structured one is kept nowhere
+  // turns completed before their result was kept: a text result is the reply's last step, while a
+  // structured one, or a one-shot run's, is kept nowhere
   private async findRetriedRunTextResult({
     workspaceId,
+    threadId,
     turn,
     isJsonResponse,
   }: {
     workspaceId: string;
+    threadId: string | null;
     turn: Pick<AgentTurnWorkspaceEntity, 'id' | 'status'>;
     isJsonResponse: boolean;
   }) {
-    if (turn.status !== AgentTurnStatus.COMPLETED || isJsonResponse) {
+    if (
+      turn.status !== AgentTurnStatus.COMPLETED ||
+      !isDefined(threadId) ||
+      isJsonResponse
+    ) {
       return null;
     }
 
@@ -666,7 +689,7 @@ export class AgentRunnerService {
     suspension,
     stream,
     streamChannelId,
-    openedTurn: { turnId, priorMessages },
+    openedTurn: { turnId, priorMessages, canStoreResult },
   }: {
     input: AgentRunnerRunInput;
     suspension: AgentRunSuspension | null;
@@ -704,8 +727,7 @@ export class AgentRunnerService {
 
     // the toolset and prompt come from the spec alone, so a continued run gets those it paused with
     const {
-      streamed,
-      completion: { execution, wait },
+      completion: { execution, wait, isAborted },
       finish,
     } = await withDedicatedAiTrace(() =>
       this.turnStreamService.streamTurn({
@@ -729,10 +751,20 @@ export class AgentRunnerService {
                 execution.steps[execution.steps.length - 1]?.toolResults ?? [],
               )
             : undefined;
+          // a stop can also land while the structured output is asked for, after the stream ended. It is
+          // read once here, so the turn records the outcome its caller gets
+          const isAborted = streamed.isAborted || abortSignal?.aborted === true;
+          const isCompleted =
+            !isAborted &&
+            !isDefined(execution.stopReason) &&
+            !execution.isPaused;
 
           return {
             execution,
             wait,
+            isAborted,
+            result:
+              isCompleted && canStoreResult ? execution.result : undefined,
             modelId: execution.modelId,
             stopReason: execution.stopReason,
             isWaiting: isDefined(wait),
@@ -763,37 +795,53 @@ export class AgentRunnerService {
 
     return {
       summary,
-      // a stop can also land while the structured output is asked for, after the stream ended
-      outcome:
-        streamed.isAborted || abortSignal?.aborted
-          ? { status: 'FAILED', error: AGENT_RUN_STOPPED_ERROR }
-          : await this.settleTurn({
-              input,
-              execution,
-              wait,
-              isAwaitingAnswer: finish?.isAwaitingAnswer ?? false,
-              summary,
-              suspension,
-              stream,
-            }),
+      outcome: isAborted
+        ? { status: 'FAILED', error: AGENT_RUN_STOPPED_ERROR }
+        : await this.settleTurn({
+            input,
+            execution,
+            wait,
+            isAwaitingAnswer: finish?.isAwaitingAnswer ?? false,
+            summary,
+            suspension,
+            stream,
+          }),
     };
   }
 
   private async openTurn({
-    input: { workspaceId, conversation, persona, prompt, executionContext },
+    input: {
+      workspaceId,
+      conversation,
+      turnId: oneShotTurnId,
+      persona,
+      prompt,
+      executionContext,
+    },
     suspension,
   }: {
     input: Pick<
       AgentRunnerRunInput,
-      'workspaceId' | 'conversation' | 'persona' | 'prompt' | 'executionContext'
+      | 'workspaceId'
+      | 'conversation'
+      | 'turnId'
+      | 'persona'
+      | 'prompt'
+      | 'executionContext'
     >;
     suspension: AgentRunSuspension | null;
   }): Promise<OpenedAgentRunTurn> {
+    // read before the turn opens, so nothing fails between opening it and the stream finishing it
+    const canStoreResult =
+      await this.conversationWriterService.canStoreTurnResult(workspaceId);
+
     if (!isDefined(conversation)) {
       return {
+        canStoreResult,
         turnId: await this.conversationWriterService.insertTurn({
           workspaceId,
-          id: prompt?.turnId,
+          // a queued run's turn id comes with its job, an ai.generate call's with its run id
+          id: oneShotTurnId ?? prompt?.turnId,
           threadId: null,
           agentId: persona.agentId,
           status: AgentTurnStatus.RUNNING,
@@ -842,6 +890,7 @@ export class AgentRunnerService {
 
     return {
       turnId,
+      canStoreResult,
       priorMessages: conversationMessages.filter(
         ({ id }) => !promptMessageIds.includes(id),
       ),
