@@ -41,4 +41,16 @@ describe('groupChatMessagesBySender', () => {
 
     expect(groups).toHaveLength(2);
   });
+
+  it('should not merge messages whose sender is unknown', () => {
+    const senderlessMessage = (id: string) =>
+      ({ id, text: id, sender: undefined }) as EmailThreadMessageWithSender;
+
+    const groups = groupChatMessagesBySender(
+      [senderlessMessage('1'), senderlessMessage('2')],
+      new Set(),
+    );
+
+    expect(groups).toHaveLength(2);
+  });
 });

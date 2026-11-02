@@ -1,5 +1,6 @@
 import { type ChatMessageGroup } from '@/activities/emails/types/ChatMessageGroup';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
+import { isDefined } from 'twenty-shared/utils';
 
 export const groupChatMessagesBySender = (
   messages: EmailThreadMessageWithSender[],
@@ -12,7 +13,8 @@ export const groupChatMessagesBySender = (
 
     if (
       lastGroup?.isOutgoing === isOutgoing &&
-      lastSenderHandle === message.sender?.handle
+      isDefined(message.sender?.handle) &&
+      lastSenderHandle === message.sender.handle
     ) {
       lastGroup.messages.push(message);
 
