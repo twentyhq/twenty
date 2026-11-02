@@ -84,8 +84,8 @@ export type { AppMessageFolder } from '@/sdk/logic-function/messaging/types/app-
 export { runAgent } from '@/sdk/logic-function/agents/run-agent';
 export type { RunAgentInput, RunAgentResult } from 'twenty-shared/application';
 
-export { ai } from '@/sdk/logic-function/ai/ai';
-export type { GenerateInput, GenerateResult } from 'twenty-shared/application';
+export { ai, type GenerateInput } from '@/sdk/logic-function/ai/ai';
+export type { GenerateResult } from 'twenty-shared/application';
 export type { AiRunScope } from 'twenty-shared/ai';
 
 export { sendInboxMessage } from '@/sdk/inbox/send-inbox-message';
