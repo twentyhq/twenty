@@ -6,7 +6,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import type { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import type { WellKnownOAuthClientInstallService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-install.service';
+import type { ApplicationOAuthIdentityInstallService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-install.service';
 import type { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import type { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import type { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
@@ -68,9 +68,9 @@ describe('ApplicationUninstallRunnerService', () => {
     recordApplicationPlatformEvents: jest.fn(),
   } as unknown as EventLogEmitterService;
 
-  const wellKnownOAuthClientInstallService = {
+  const applicationOAuthIdentityInstallService = {
     findFoldedInstallUniversalIdentifiers: jest.fn(),
-  } as unknown as WellKnownOAuthClientInstallService;
+  } as unknown as ApplicationOAuthIdentityInstallService;
 
   const service = new ApplicationUninstallRunnerService(
     applicationLookupService,
@@ -79,7 +79,7 @@ describe('ApplicationUninstallRunnerService', () => {
     metricsService,
     cacheLockService,
     eventLogEmitterService,
-    wellKnownOAuthClientInstallService,
+    applicationOAuthIdentityInstallService,
   );
 
   const uninstallTarget = () =>
@@ -93,7 +93,7 @@ describe('ApplicationUninstallRunnerService', () => {
   ) =>
     jest
       .spyOn(
-        wellKnownOAuthClientInstallService,
+        applicationOAuthIdentityInstallService,
         'findFoldedInstallUniversalIdentifiers',
       )
       .mockResolvedValue(universalIdentifiers);
@@ -128,7 +128,7 @@ describe('ApplicationUninstallRunnerService', () => {
       TARGET_UNIVERSAL_IDENTIFIER,
     ]);
     expect(
-      wellKnownOAuthClientInstallService.findFoldedInstallUniversalIdentifiers,
+      applicationOAuthIdentityInstallService.findFoldedInstallUniversalIdentifiers,
     ).toHaveBeenCalledTimes(1);
     expect(
       findMetricUniversalIdentifiers(MetricsKeys.AppUninstallSucceeded),

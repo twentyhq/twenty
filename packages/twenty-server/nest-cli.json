@@ -80,10 +80,6 @@
       {
         "include": "engine/core-modules/application/application-package/constants/yarn-engine/*.cjs",
         "outDir": "dist"
-      },
-      {
-        "include": "engine/core-modules/application/well-known-oauth-client/assets/**",
-        "outDir": "dist/assets"
       }
     ]
   },

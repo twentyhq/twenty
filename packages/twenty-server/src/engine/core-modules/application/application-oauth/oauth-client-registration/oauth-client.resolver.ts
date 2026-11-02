@@ -6,13 +6,13 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { ApplicationOAuthIdentityService } from 'src/engine/core-modules/application/application-oauth-identity/services/application-oauth-identity.service';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { toClientIdMetadataDocumentRegistrationFields } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/to-client-id-metadata-document-registration-fields.util';
 import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration-resolver.service';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
-import { getWellKnownOAuthClientOfRegistration } from 'src/engine/core-modules/application/well-known-oauth-client/utils/get-well-known-oauth-client-of-registration.util';
 import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
@@ -26,6 +26,7 @@ export class OAuthClientResolver {
   constructor(
     private readonly oAuthClientRegistrationResolverService: OAuthClientRegistrationResolverService,
     private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
+    private readonly applicationOAuthIdentityService: ApplicationOAuthIdentityService,
   ) {}
 
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
@@ -48,6 +49,11 @@ export class OAuthClientResolver {
     const { registration, clientIdMetadataDocument } = resolvedClient;
 
     if (isDefined(registration)) {
+      const oAuthIdentityUniversalIdentifier =
+        await this.applicationOAuthIdentityService.findOAuthIdentityUniversalIdentifier(
+          registration,
+        );
+
       return {
         id: registration.id,
         name: registration.name,
@@ -57,8 +63,12 @@ export class OAuthClientResolver {
           ),
         websiteUrl: registration.websiteUrl,
         oAuthScopes: registration.oAuthScopes,
-        wellKnownOAuthClient:
-          getWellKnownOAuthClientOfRegistration(registration),
+        oAuthIdentityUniversalIdentifier,
+        claimsVerifiedClientName:
+          !isDefined(oAuthIdentityUniversalIdentifier) &&
+          (await this.applicationOAuthIdentityService.isVerifiedClientName(
+            registration.name,
+          )),
       };
     }
 
@@ -76,7 +86,9 @@ export class OAuthClientResolver {
       logoUrl: logo,
       websiteUrl: null,
       oAuthScopes: [...ALL_OAUTH_SCOPES],
-      wellKnownOAuthClient: null,
+      oAuthIdentityUniversalIdentifier: null,
+      claimsVerifiedClientName:
+        await this.applicationOAuthIdentityService.isVerifiedClientName(name),
     };
   }
 }

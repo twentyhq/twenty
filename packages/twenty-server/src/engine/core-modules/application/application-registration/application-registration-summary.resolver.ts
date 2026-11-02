@@ -1,16 +1,16 @@
 import { Parent, ResolveField } from '@nestjs/graphql';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { ApplicationOAuthIdentityService } from 'src/engine/core-modules/application/application-oauth-identity/services/application-oauth-identity.service';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSummaryDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-summary.dto';
-import { WellKnownOAuthClient } from 'src/engine/core-modules/application/well-known-oauth-client/enums/well-known-oauth-client.enum';
-import { getWellKnownOAuthClientOfRegistration } from 'src/engine/core-modules/application/well-known-oauth-client/utils/get-well-known-oauth-client-of-registration.util';
 
 @MetadataResolver(() => ApplicationRegistrationSummaryDTO)
 export class ApplicationRegistrationSummaryResolver {
   constructor(
     private readonly applicationRegistrationAssetUrlService: ApplicationRegistrationAssetUrlService,
+    private readonly applicationOAuthIdentityService: ApplicationOAuthIdentityService,
   ) {}
 
   @ResolveField(() => String, { nullable: true })
@@ -22,10 +22,12 @@ export class ApplicationRegistrationSummaryResolver {
     );
   }
 
-  @ResolveField(() => WellKnownOAuthClient, { nullable: true })
-  wellKnownOAuthClient(
+  @ResolveField(() => String, { nullable: true })
+  oAuthIdentityUniversalIdentifier(
     @Parent() registration: ApplicationRegistrationEntity,
-  ): WellKnownOAuthClient | null {
-    return getWellKnownOAuthClientOfRegistration(registration);
+  ): Promise<string | null> {
+    return this.applicationOAuthIdentityService.findOAuthIdentityUniversalIdentifier(
+      registration,
+    );
   }
 }

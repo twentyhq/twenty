@@ -590,10 +590,57 @@ export const buildManifest = async (
     publicAssetsFilePaths.push(relativePath);
   }
 
+  const entityFilePaths: EntityFilePaths = {
+    application: applicationFilePaths,
+    objects: objectsFilePaths,
+    fields: fieldsFilePaths,
+    indexes: indexesFilePaths,
+    permissionFlags: permissionFlagsFilePaths,
+    roles: rolesFilePaths,
+    skills: skillsFilePaths,
+    agents: agentsFilePaths,
+    workflows: workflowsFilePaths,
+    connectionProviders: connectionProvidersFilePaths,
+    messagingProviders: messagingProvidersFilePaths,
+    mcpServers: mcpServersFilePaths,
+    relatedRecordPaths: relatedRecordPathsFilePaths,
+    logicFunctions: logicFunctionsFilePaths,
+    frontComponents: frontComponentsFilePaths,
+    publicAssets: publicAssetsFilePaths,
+    views: viewsFilePaths,
+    viewFields: viewFieldsFilePaths,
+    navigationMenuItems: navigationMenuItemsFilePaths,
+    pageLayouts: pageLayoutsFilePaths,
+    pageLayoutTabs: pageLayoutTabsFilePaths,
+    pageLayoutWidgets: pageLayoutWidgetsFilePaths,
+    commandMenuItems: commandMenuItemsFilePaths,
+    timelineActivityTypes: timelineActivityTypesFilePaths,
+    settingsMenuItems: settingsMenuItemsFilePaths,
+  };
+
   if (!applicationConfig) {
     errors.push(
       'Cannot build application, please export default defineApplication() to define an application',
     );
+  }
+
+  const hasOAuthIdentity = isDefined(applicationConfig?.oAuthIdentity);
+
+  if (hasOAuthIdentity) {
+    const shippedEntityKinds = Object.entries(entityFilePaths)
+      .filter(
+        ([entityKind, filePaths]) =>
+          entityKind !== 'application' &&
+          entityKind !== 'publicAssets' &&
+          filePaths.length > 0,
+      )
+      .map(([entityKind]) => entityKind);
+
+    if (shippedEntityKinds.length > 0) {
+      errors.push(
+        `An application with an OAuth identity acts with the connecting member's permissions, so it cannot ship ${shippedEntityKinds.join(', ')}`,
+      );
+    }
   }
 
   if (applicationConfig) {
@@ -664,7 +711,11 @@ export const buildManifest = async (
       ? applicationRoleUniversalIdentifiers[0]
       : undefined);
 
-  if (applicationConfig && !resolvedDefaultRoleUniversalIdentifier) {
+  if (
+    applicationConfig &&
+    !hasOAuthIdentity &&
+    !resolvedDefaultRoleUniversalIdentifier
+  ) {
     errors.push(
       'Application must declare a default role: either pass `defaultRoleUniversalIdentifier` to defineApplication() or mark a role file with defineApplicationRole()',
     );
@@ -695,7 +746,8 @@ export const buildManifest = async (
   }
 
   const application: ApplicationManifest | undefined =
-    applicationConfig && resolvedDefaultRoleUniversalIdentifier
+    applicationConfig &&
+    (hasOAuthIdentity || isDefined(resolvedDefaultRoleUniversalIdentifier))
       ? (() => {
           const {
             logoUrl: _logoUrl,
@@ -779,34 +831,6 @@ export const buildManifest = async (
         settingsMenuItems: settingsMenuItems.sort(byId),
         relatedRecordPaths: relatedRecordPaths.sort(byId),
       };
-
-  const entityFilePaths: EntityFilePaths = {
-    application: applicationFilePaths,
-    objects: objectsFilePaths,
-    fields: fieldsFilePaths,
-    indexes: indexesFilePaths,
-    permissionFlags: permissionFlagsFilePaths,
-    roles: rolesFilePaths,
-    skills: skillsFilePaths,
-    agents: agentsFilePaths,
-    workflows: workflowsFilePaths,
-    connectionProviders: connectionProvidersFilePaths,
-    messagingProviders: messagingProvidersFilePaths,
-    mcpServers: mcpServersFilePaths,
-    relatedRecordPaths: relatedRecordPathsFilePaths,
-    logicFunctions: logicFunctionsFilePaths,
-    frontComponents: frontComponentsFilePaths,
-    publicAssets: publicAssetsFilePaths,
-    views: viewsFilePaths,
-    viewFields: viewFieldsFilePaths,
-    navigationMenuItems: navigationMenuItemsFilePaths,
-    pageLayouts: pageLayoutsFilePaths,
-    pageLayoutTabs: pageLayoutTabsFilePaths,
-    pageLayoutWidgets: pageLayoutWidgetsFilePaths,
-    commandMenuItems: commandMenuItemsFilePaths,
-    timelineActivityTypes: timelineActivityTypesFilePaths,
-    settingsMenuItems: settingsMenuItemsFilePaths,
-  };
 
   return { manifest, filePaths: entityFilePaths, errors, warnings };
 };

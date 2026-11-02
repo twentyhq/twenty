@@ -23,12 +23,11 @@ import {
   ALL_OAUTH_SCOPES,
   type OAuthScope,
 } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
+import { ApplicationOAuthIdentityService } from 'src/engine/core-modules/application/application-oauth-identity/services/application-oauth-identity.service';
 import { OAuthRegisterInput } from 'src/engine/core-modules/application/application-oauth/dtos/oauth-register.input';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { WellKnownOAuthClientRegistrationService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-registration.service';
 import { toOAuthClientInformationResponse } from 'src/engine/core-modules/application/application-oauth/utils/to-oauth-client-information-response.util';
-import { findWellKnownOAuthClientByRedirectUris } from 'src/engine/core-modules/application/well-known-oauth-client/utils/find-well-known-oauth-client-by-redirect-uris.util';
 import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-rest-api-exception.filter';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
@@ -53,7 +52,7 @@ export class OAuthRegistrationController {
     @InjectRepository(ApplicationRegistrationEntity)
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly throttlerService: ThrottlerService,
-    private readonly wellKnownOAuthClientRegistrationService: WellKnownOAuthClientRegistrationService,
+    private readonly applicationOAuthIdentityService: ApplicationOAuthIdentityService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -158,22 +157,18 @@ export class OAuthRegistrationController {
 
     const issuer = `${req.protocol}://${req.get('host')}`;
 
-    const wellKnownOAuthClient = findWellKnownOAuthClientByRedirectUris(
-      body.redirect_uris,
-    );
+    const oAuthIdentityRegistration =
+      await this.applicationOAuthIdentityService.findRegistrationByRedirectUris(
+        body.redirect_uris,
+      );
 
-    if (isDefined(wellKnownOAuthClient)) {
-      const wellKnownOAuthClientRegistration =
-        await this.wellKnownOAuthClientRegistrationService.findOrCreateRegistration(
-          wellKnownOAuthClient,
-        );
-
+    if (isDefined(oAuthIdentityRegistration)) {
       return toOAuthClientInformationResponse({
-        registration: wellKnownOAuthClientRegistration,
+        registration: oAuthIdentityRegistration,
         issuer,
         redirectUris: body.redirect_uris,
         scopes: requestedScopes.filter((scope) =>
-          wellKnownOAuthClientRegistration.oAuthScopes.includes(scope),
+          oAuthIdentityRegistration.oAuthScopes.includes(scope),
         ),
         grantTypes,
         responseTypes,

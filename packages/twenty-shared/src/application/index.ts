@@ -56,6 +56,7 @@ export type {
   ApplicationHealthCheckResult,
 } from './applicationHealthType';
 export { isApplicationHealthCheckResult } from './applicationHealthType';
+export type { ApplicationOAuthIdentity } from './applicationOAuthIdentityType';
 export type { ApplicationManifest } from './applicationType';
 export type {
   ApplicationVariableType,
@@ -97,6 +98,8 @@ export { FRONT_COMPONENT_WIDGET_PAGE_LAYOUT_TYPES } from './constants/FrontCompo
 export { GENERATED_DIR } from './constants/GeneratedDirectory';
 export { MINIMUM_UNIVERSAL_IDENTIFIER_UUID_VERSION } from './constants/MinimumUniversalIdentifierUuidVersion';
 export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
+export { OAUTH_IDENTITY_MCP_SERVER_URL_PLACEHOLDER } from './constants/OAuthIdentityMcpServerUrlPlaceholder';
+export { OAUTH_IDENTITY_REDIRECT_URI_WILDCARD_SEGMENT } from './constants/OAuthIdentityRedirectUriWildcardSegment';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
 export { TWENTY_STANDARD_APPLICATION_NAME } from './constants/TwentyStandardApplicationName';
 export { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from './constants/TwentyStandardApplicationUniversalIdentifier';
@@ -297,11 +300,13 @@ export { getRoleManifestGrantsNotCoveredBy } from './utils/getRoleManifestGrants
 export { getRowLevelRestrictionSignature } from './utils/getRowLevelRestrictionSignature';
 export { isConnectionProviderScope } from './utils/isConnectionProviderScope';
 export { isFrontComponentWidgetPageLayoutType } from './utils/isFrontComponentWidgetPageLayoutType';
+export { isRedirectUriAllowedByOAuthIdentity } from './utils/isRedirectUriAllowedByOAuthIdentity';
 export {
   RESERVED_SETTINGS_MENU_ITEM_TITLES,
   isReservedSettingsMenuItemTitle,
 } from './utils/isReservedSettingsMenuItemTitle';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
+export { validateApplicationOAuthIdentity } from './utils/validateApplicationOAuthIdentity';
 export type {
   ViewManifestFilterValue,
   ViewFieldManifest,

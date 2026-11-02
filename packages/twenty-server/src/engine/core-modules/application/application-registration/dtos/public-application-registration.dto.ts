@@ -1,7 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { WellKnownOAuthClient } from 'src/engine/core-modules/application/well-known-oauth-client/enums/well-known-oauth-client.enum';
 
 @ObjectType('PublicApplicationRegistration')
 export class PublicApplicationRegistrationDTO {
@@ -20,6 +19,11 @@ export class PublicApplicationRegistrationDTO {
   @Field(() => [String])
   oAuthScopes: string[];
 
-  @Field(() => WellKnownOAuthClient, { nullable: true })
-  wellKnownOAuthClient: WellKnownOAuthClient | null;
+  // The app whose OAuth identity this client was verified against
+  @Field(() => String, { nullable: true })
+  oAuthIdentityUniversalIdentifier: string | null;
+
+  // An unverified client named like a verified app, which a consent screen should flag
+  @Field(() => Boolean)
+  claimsVerifiedClientName: boolean;
 }

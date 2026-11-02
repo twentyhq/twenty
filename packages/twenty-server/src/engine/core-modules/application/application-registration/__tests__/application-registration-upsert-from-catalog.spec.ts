@@ -111,7 +111,7 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
         },
         {
           provide: ApplicationRegistrationSeedingService,
-          useValue: { invalidateMarketplaceCatalog: jest.fn() },
+          useValue: { invalidateCatalogCaches: jest.fn() },
         },
         {
           provide: MetricsService,

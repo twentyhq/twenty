@@ -136,7 +136,7 @@ describe('ApplicationRegistrationSeedingService', () => {
   it('does not fail a request when the catalog cache cannot be invalidated', async () => {
     invalidate.mockRejectedValue(new Error('Redis down'));
 
-    await expect(service.invalidateMarketplaceCatalog()).resolves.toBe(
+    await expect(service.invalidateCatalogCaches()).resolves.toBe(
       undefined,
     );
   });

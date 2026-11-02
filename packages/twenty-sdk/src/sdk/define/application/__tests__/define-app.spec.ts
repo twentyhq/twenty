@@ -496,4 +496,36 @@ describe('defineApplication', () => {
       'Application must have a universalIdentifier',
     );
   });
+
+  it('should accept a valid OAuth identity', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'Claude',
+      description: 'Work with Twenty from Claude',
+      oAuthIdentity: {
+        redirectUris: ['https://claude.ai/api/mcp/auth_callback'],
+        clientIdMetadataDocumentHostnames: ['claude.ai'],
+        connectUrl: 'https://claude.ai/customize/connectors',
+      },
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('should return error when an OAuth identity is invalid', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'Claude',
+      description: 'Work with Twenty from Claude',
+      oAuthIdentity: {
+        redirectUris: ['http://claude.ai/api/mcp/auth_callback'],
+        connectUrl: 'https://claude.ai/customize/connectors',
+      },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual([
+      'OAuth identity redirect URI "http://claude.ai/api/mcp/auth_callback" must use https',
+    ]);
+  });
 });

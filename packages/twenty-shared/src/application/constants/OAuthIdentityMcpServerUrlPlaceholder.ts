@@ -1,0 +1,1 @@
+export const OAUTH_IDENTITY_MCP_SERVER_URL_PLACEHOLDER = '{mcpServerUrl}';

@@ -1,7 +1,7 @@
-import { type ApplicationRegistrationAssetManifest } from 'src/engine/core-modules/application/application-registration/types/application-registration-asset-manifest.type';
+import { type ApplicationManifest } from 'twenty-shared/application';
 
 export const toGalleryImagePaths = (
-  application: ApplicationRegistrationAssetManifest | undefined,
+  application: ApplicationManifest | undefined,
 ): string[] => {
   const galleryImages = application?.galleryImages;
 

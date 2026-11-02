@@ -27,6 +27,7 @@ import {
 } from 'src/engine/core-modules/application/application-package/constants/version-reason-to-exception-code.constant';
 import { ApplicationRegistrationVersionService } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { isOAuthOnlyApplicationRegistration } from 'src/engine/core-modules/application/application-oauth-identity/utils/is-oauth-only-application-registration.util';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { isImageFilePath } from 'src/engine/core-modules/application/application-registration/utils/is-image-file-path.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -125,10 +126,7 @@ export class ApplicationInstallService {
       return true;
     }
 
-    if (
-      appRegistration.sourceType ===
-      ApplicationRegistrationSourceType.OAUTH_ONLY
-    ) {
+    if (isOAuthOnlyApplicationRegistration(appRegistration)) {
       this.logger.log(
         `Skipping install for OAUTH_ONLY app ${appRegistration.universalIdentifier} (OAuth-only clients have no code artifacts)`,
       );

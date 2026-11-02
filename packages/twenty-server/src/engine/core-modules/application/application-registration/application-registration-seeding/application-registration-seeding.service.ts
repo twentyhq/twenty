@@ -7,6 +7,7 @@ import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialE
 import { v4 } from 'uuid';
 
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
+import { APPLICATION_OAUTH_IDENTITIES_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-oauth-identity/constants/application-oauth-identities-cache-entity-id.constant';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -80,7 +81,7 @@ export class ApplicationRegistrationSeedingService {
       .execute();
 
     if (insertResult.raw.length > 0) {
-      await this.invalidateMarketplaceCatalog();
+      await this.invalidateCatalogCaches();
     }
 
     const registration =
@@ -98,14 +99,21 @@ export class ApplicationRegistrationSeedingService {
     return registration;
   }
 
-  async invalidateMarketplaceCatalog(): Promise<void> {
+  // Both are computed from catalog registrations, so every catalog change stales both
+  async invalidateCatalogCaches(): Promise<void> {
     try {
-      await this.coreEntityCacheService.invalidate(
-        'marketplaceCatalog',
-        MARKETPLACE_CATALOG_CACHE_ENTITY_ID,
-      );
+      await Promise.all([
+        this.coreEntityCacheService.invalidate(
+          'marketplaceCatalog',
+          MARKETPLACE_CATALOG_CACHE_ENTITY_ID,
+        ),
+        this.coreEntityCacheService.invalidate(
+          'applicationOAuthIdentities',
+          APPLICATION_OAUTH_IDENTITIES_CACHE_ENTITY_ID,
+        ),
+      ]);
     } catch (error) {
-      this.logger.error('Failed to invalidate marketplace apps cache', error);
+      this.logger.error('Failed to invalidate the catalog caches', error);
     }
   }
 }

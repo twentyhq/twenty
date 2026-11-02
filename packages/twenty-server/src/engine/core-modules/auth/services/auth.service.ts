@@ -54,6 +54,7 @@ import {
 import { assertIssuerIsPublishedOrThrow } from 'src/engine/core-modules/auth/utils/assert-issuer-is-published.util';
 import { assertUserPasswordIsValidOrThrow } from 'src/engine/core-modules/auth/utils/assert-user-password-is-valid-or-throw.util';
 import { isRedirectUriListedInClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/is-redirect-uri-listed-in-client-id-metadata-document.util';
+import { getApplicationOAuthIdentity } from 'src/engine/core-modules/application/application-oauth-identity/utils/get-application-oauth-identity.util';
 import { isRedirectUriRegisteredForApplicationRegistration } from 'src/engine/core-modules/application/application-registration/utils/is-redirect-uri-registered-for-application-registration.util';
 import { isLoopbackHostname } from 'src/engine/core-modules/auth/utils/is-loopback-hostname.util';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
@@ -591,7 +592,8 @@ export class AuthService {
     // RFC 8252 §7.3: native apps may use any loopback port, so a registration without redirect URIs
     // (e.g. the seeded CLI one) accepts any loopback redirect URI
     const hasRegisteredRedirectUris =
-      applicationRegistration.oAuthRedirectUris.length > 0;
+      applicationRegistration.oAuthRedirectUris.length > 0 ||
+      isDefined(getApplicationOAuthIdentity(applicationRegistration));
 
     if (hasRegisteredRedirectUris) {
       if (
