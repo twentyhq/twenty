@@ -35,7 +35,6 @@ import { frontComponentBuildResultSchema } from 'src/engine/metadata-modules/ai/
 import { frontComponentDependenciesBuildResultSchema } from 'src/engine/metadata-modules/ai/ai-front-component/schemas/front-component-dependencies-build-result.schema';
 import { type FrontComponentBuilderRequest } from 'src/engine/metadata-modules/ai/ai-front-component/types/front-component-builder-request.type';
 import { copyFrontComponentBuilder } from 'src/engine/metadata-modules/ai/ai-front-component/utils/copy-front-component-builder.util';
-import { getFrontComponentBuilderName } from 'src/engine/metadata-modules/ai/ai-front-component/utils/get-front-component-builder-name.util';
 import {
   FrontComponentException,
   FrontComponentExceptionCode,
@@ -120,17 +119,6 @@ export class LocalDriver implements LogicFunctionDriver {
     } finally {
       await temporaryDirManager.clean();
     }
-  }
-
-  async getDependenciesBuildCacheKey({
-    workspaceId,
-  }: Pick<BrowserDependenciesBuildParams, 'workspaceId'>) {
-    const name = await getFrontComponentBuilderName({
-      workspaceId,
-      namespace: 'local',
-      action: 'buildDependencies',
-    });
-    return `local:${name}`;
   }
 
   async buildDependencies({

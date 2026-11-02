@@ -356,6 +356,7 @@ export interface Application {
     objects: Object[]
     packageJsonChecksum?: Scalars['String']
     packageJsonFileId?: Scalars['UUID']
+    runOnUserPreferences: Scalars['Boolean']
     settingsCustomTabFrontComponentId?: Scalars['UUID']
     settingsMenuItems?: SettingsMenuItem[]
     universalIdentifier: Scalars['String']
@@ -574,6 +575,7 @@ export interface ApplicationMonitoringVersion {
 export interface ApplicationPreferences {
     applicationId: Scalars['UUID']
     connectionProviders: ApplicationConnectionProvider[]
+    hasUserHealthCheck: Scalars['Boolean']
     settingsMenuItems: SettingsMenuItem[]
     variables: UserApplicationVariableValue[]
     __typename: 'ApplicationPreferences'
@@ -1524,7 +1526,7 @@ export interface FeatureFlag {
     __typename: 'FeatureFlag'
 }
 
-export type FeatureFlagKey = 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
+export type FeatureFlagKey = 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' | 'IS_AI_CHAT_INBOX_ENABLED' | 'IS_APP_PREFERENCES_ENABLED' | 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' | 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' | 'IS_MCP_SERVERS_ENABLED' | 'IS_PRIVATE_RECORD_ENABLED' | 'IS_RECORD_CREATION_FORM_ENABLED' | 'IS_RECORD_LEVEL_SHARING_ENABLED' | 'IS_RELATED_RECORD_PATHS_ENABLED' | 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' | 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
 
 export interface Field {
     applicationId: Scalars['UUID']
@@ -1556,7 +1558,6 @@ export interface Field {
     type: FieldMetadataType
     universalIdentifier: Scalars['String']
     updatedAt: Scalars['DateTime']
-    writability?: MetadataWritability
     __typename: 'Field'
 }
 
@@ -2180,8 +2181,6 @@ export interface MetadataEvent {
 /** Metadata Event Action */
 export type MetadataEventAction = 'CREATED' | 'DELETED' | 'UPDATED'
 
-export type MetadataReadability = 'APPLICATION' | 'INHERITED' | 'OPEN' | 'PRIVATE' | 'SYSTEM'
-
 export interface MetadataTranslation {
     canonicalValue: Scalars['String']
     locale: Scalars['String']
@@ -2198,8 +2197,6 @@ export interface MetadataTranslation {
 
 /** Where a resolved metadata label comes from: a workspace-authored translation, a shipped application catalog, or inheritance from the canonical value */
 export type MetadataTranslationProvenance = 'INHERITED' | 'SHIPPED' | 'WORKSPACE'
-
-export type MetadataWritability = 'APPLICATION' | 'OPEN' | 'SYSTEM'
 
 export interface MinimalMetadata {
     collectionHashes: CollectionHash[]
@@ -2419,6 +2416,7 @@ export interface Mutation {
     rotateApplicationRegistrationClientSecret: RotateClientSecret
     runAgent: RunAgentResult
     runApplicationHealthCheck?: ApplicationHealthCheckResult
+    runMyApplicationHealthCheck?: ApplicationHealthCheckResult
     saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess
     sendAppChannelMessage: SendAppChannelMessageOutput
     sendChatMessage: SendChatMessageResult
@@ -2429,7 +2427,7 @@ export interface Mutation {
     sendMessageCampaignTest: SendEmailViaDomainOutput
     setAppKeyValue: AppKeyValue
     setEnterpriseKey: EnterpriseLicenseInfoDTO
-    setRecordGeneralAccess: RecordSharingDTO
+    setRecordPrivate: RecordSharingDTO
     setRecordShare: RecordSharingDTO
     setResourceCreditSubscriptionPrice: BillingUpdate
     signIn: AvailableWorkspacesAndAccessTokens
@@ -2603,14 +2601,10 @@ export interface Object {
     namePlural: Scalars['String']
     nameSingular: Scalars['String']
     openRecordIn: ObjectOpenRecordIn
-    readability: MetadataReadability
-    readabilityParentFieldUniversalIdentifiers?: Scalars['UUID'][]
     searchFieldMetadataList: SearchField[]
-    sharingReach: ObjectSharingReach
     shortcut?: Scalars['String']
     universalIdentifier: Scalars['String']
     updatedAt: Scalars['DateTime']
-    writability: MetadataWritability
     __typename: 'Object'
 }
 
@@ -2699,8 +2693,6 @@ export interface ObjectRecordEventWithQueryIds {
 
 /** Date granularity options (e.g. DAY, MONTH, QUARTER, YEAR, WEEK, DAY_OF_THE_WEEK, MONTH_OF_THE_YEAR, QUARTER_OF_THE_YEAR) */
 export type ObjectRecordGroupByDateGranularity = 'DAY' | 'DAY_OF_THE_WEEK' | 'MONTH' | 'MONTH_OF_THE_YEAR' | 'NONE' | 'QUARTER' | 'QUARTER_OF_THE_YEAR' | 'WEEK' | 'YEAR'
-
-export type ObjectSharingReach = 'ROLE_ACCESS' | 'WORKSPACE'
 
 
 /** Onboarding status */
@@ -3166,13 +3158,12 @@ export type RecordShareRowCause = 'APPLICATION' | 'MANUAL' | 'OWNER' | 'RULE'
 
 export interface RecordSharingDTO {
     canManageSharing: Scalars['Boolean']
-    defaultGeneralAccessLevel?: RecordShareAccessLevel
-    generalAccessLevel?: RecordShareAccessLevel
     hasManagedGeneralAccess: Scalars['Boolean']
+    isPrivate: Scalars['Boolean']
+    isShareable: Scalars['Boolean']
     permissions: RecordPermissionsDTO
     roles: RecordSharingRoleDTO[]
     shares: RecordSharingGrantDTO[]
-    sharingMode: RecordSharingMode
     __typename: 'RecordSharingDTO'
 }
 
@@ -3185,10 +3176,6 @@ export interface RecordSharingGrantDTO {
     rowCause: RecordShareRowCause
     __typename: 'RecordSharingGrantDTO'
 }
-
-
-/** How records of an object are shared: only through roles, private until shared, readable through linked records, or open by default with per-record exceptions */
-export type RecordSharingMode = 'INHERITED' | 'OPEN_BY_DEFAULT' | 'PRIVATE' | 'ROLE_ONLY'
 
 export interface RecordSharingRoleDTO {
     canRead?: Scalars['Boolean']
@@ -3289,6 +3276,7 @@ export interface RowLevelPermissionPredicate {
     objectMetadataId: Scalars['String']
     operand: RowLevelPermissionPredicateOperand
     positionInRowLevelPermissionPredicateGroup?: Scalars['Float']
+    relationFieldMetadataId?: Scalars['String']
     roleId: Scalars['String']
     rowLevelPermissionPredicateGroupId?: Scalars['String']
     subFieldName?: Scalars['String']
@@ -4606,6 +4594,7 @@ export interface ApplicationGenqlSelection{
     objects?: ObjectGenqlSelection
     packageJsonChecksum?: boolean | number
     packageJsonFileId?: boolean | number
+    runOnUserPreferences?: boolean | number
     settingsCustomTabFrontComponentId?: boolean | number
     settingsMenuItems?: SettingsMenuItemGenqlSelection
     universalIdentifier?: boolean | number
@@ -4844,6 +4833,7 @@ export interface ApplicationMonitoringVersionGenqlSelection{
 export interface ApplicationPreferencesGenqlSelection{
     applicationId?: boolean | number
     connectionProviders?: ApplicationConnectionProviderGenqlSelection
+    hasUserHealthCheck?: boolean | number
     settingsMenuItems?: SettingsMenuItemGenqlSelection
     variables?: UserApplicationVariableValueGenqlSelection
     __typename?: boolean | number
@@ -6050,7 +6040,6 @@ export interface FieldGenqlSelection{
     type?: boolean | number
     universalIdentifier?: boolean | number
     updatedAt?: boolean | number
-    writability?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6947,6 +6936,7 @@ export interface MutationGenqlSelection{
     rotateApplicationRegistrationClientSecret?: (RotateClientSecretGenqlSelection & { __args: {id: Scalars['String']} })
     runAgent?: (RunAgentResultGenqlSelection & { __args: {input: RunAgentInput} })
     runApplicationHealthCheck?: (ApplicationHealthCheckResultGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
+    runMyApplicationHealthCheck?: (ApplicationHealthCheckResultGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
     saveImapSmtpCaldavAccount?: (ImapSmtpCaldavConnectionSuccessGenqlSelection & { __args: {connectionParameters: EmailAccountConnectionParameters, handle: Scalars['String'], id?: (Scalars['UUID'] | null)} })
     sendAppChannelMessage?: (SendAppChannelMessageOutputGenqlSelection & { __args: {input: SendAppChannelMessageInput} })
     sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {browsingContext?: (Scalars['JSON'] | null), channelId?: (Scalars['UUID'] | null), fileAttachments?: (FileAttachmentInput[] | null), mentionedWorkspaceMemberIds?: (Scalars['UUID'][] | null), messageId: Scalars['UUID'], modelId?: (Scalars['String'] | null), shouldAssistantReply?: (Scalars['Boolean'] | null), text: Scalars['String'], threadId: Scalars['UUID']} })
@@ -6957,7 +6947,7 @@ export interface MutationGenqlSelection{
     sendMessageCampaignTest?: (SendEmailViaDomainOutputGenqlSelection & { __args: {input: SendMessageCampaignTestInput} })
     setAppKeyValue?: (AppKeyValueGenqlSelection & { __args: {input: SetAppKeyValueInput} })
     setEnterpriseKey?: (EnterpriseLicenseInfoDTOGenqlSelection & { __args: {enterpriseKey: Scalars['String']} })
-    setRecordGeneralAccess?: (RecordSharingDTOGenqlSelection & { __args: {accessLevel: RecordShareAccessLevel, target: RecordTargetInput} })
+    setRecordPrivate?: (RecordSharingDTOGenqlSelection & { __args: {isPrivate: Scalars['Boolean'], target: RecordTargetInput} })
     setRecordShare?: (RecordSharingDTOGenqlSelection & { __args: {accessLevel: RecordShareAccessLevel, principal: RecordSharePrincipalInput, target: RecordTargetInput} })
     setResourceCreditSubscriptionPrice?: (BillingUpdateGenqlSelection & { __args: {priceId: Scalars['String']} })
     signIn?: (AvailableWorkspacesAndAccessTokensGenqlSelection & { __args: {captchaToken?: (Scalars['String'] | null), email: Scalars['String'], locale?: (Scalars['String'] | null), password: Scalars['String'], verifyEmailRedirectPath?: (Scalars['String'] | null)} })
@@ -7141,14 +7131,10 @@ export interface ObjectGenqlSelection{
     namePlural?: boolean | number
     nameSingular?: boolean | number
     openRecordIn?: boolean | number
-    readability?: boolean | number
-    readabilityParentFieldUniversalIdentifiers?: boolean | number
     searchFieldMetadataList?: SearchFieldGenqlSelection
-    sharingReach?: boolean | number
     shortcut?: boolean | number
     universalIdentifier?: boolean | number
     updatedAt?: boolean | number
-    writability?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7746,13 +7732,12 @@ export interface RecordSharePrincipalInput {roleId?: (Scalars['UUID'] | null),wo
 
 export interface RecordSharingDTOGenqlSelection{
     canManageSharing?: boolean | number
-    defaultGeneralAccessLevel?: boolean | number
-    generalAccessLevel?: boolean | number
     hasManagedGeneralAccess?: boolean | number
+    isPrivate?: boolean | number
+    isShareable?: boolean | number
     permissions?: RecordPermissionsDTOGenqlSelection
     roles?: RecordSharingRoleDTOGenqlSelection
     shares?: RecordSharingGrantDTOGenqlSelection
-    sharingMode?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7880,6 +7865,7 @@ export interface RowLevelPermissionPredicateGenqlSelection{
     objectMetadataId?: boolean | number
     operand?: boolean | number
     positionInRowLevelPermissionPredicateGroup?: boolean | number
+    relationFieldMetadataId?: boolean | number
     roleId?: boolean | number
     rowLevelPermissionPredicateGroupId?: boolean | number
     subFieldName?: boolean | number
@@ -7903,7 +7889,7 @@ export interface RowLevelPermissionPredicateGroupGenqlSelection{
 
 export interface RowLevelPermissionPredicateGroupInput {id?: (Scalars['UUID'] | null),logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,objectMetadataId: Scalars['UUID'],parentRowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null)}
 
-export interface RowLevelPermissionPredicateInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand: RowLevelPermissionPredicateOperand,positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null),rowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null)}
+export interface RowLevelPermissionPredicateInput {fieldMetadataId: Scalars['UUID'],id?: (Scalars['UUID'] | null),operand: RowLevelPermissionPredicateOperand,positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null),relationFieldMetadataId?: (Scalars['UUID'] | null),rowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),subFieldName?: (Scalars['String'] | null),value?: (Scalars['JSON'] | null),workspaceMemberFieldMetadataId?: (Scalars['String'] | null),workspaceMemberSubFieldName?: (Scalars['String'] | null)}
 
 export interface RunAgentInput {additionalInstructions?: (Scalars['String'] | null),agentUniversalIdentifier: Scalars['String'],input?: (RunAgentMessageInput[] | null),messages?: (RunAgentMessageInput[] | null),prompt?: (Scalars['String'] | null),responseFormat?: (Scalars['JSON'] | null),runAsWorkspaceMemberId?: (Scalars['UUID'] | null),thread?: (RunAgentThreadInput | null),waitForCompletion?: (Scalars['Boolean'] | null)}
 
@@ -8365,7 +8351,7 @@ export interface UpdateMessageFoldersInput {ids: Scalars['UUID'][],update: Updat
 
 export interface UpdateNavigationMenuItemInput {color?: (Scalars['String'] | null),folderId?: (Scalars['UUID'] | null),icon?: (Scalars['String'] | null),link?: (Scalars['String'] | null),name?: (Scalars['String'] | null),pageLayoutId?: (Scalars['UUID'] | null),position?: (Scalars['Float'] | null)}
 
-export interface UpdateObjectPayload {color?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isActive?: (Scalars['Boolean'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),labelPlural?: (Scalars['String'] | null),labelSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),openRecordIn?: (ObjectOpenRecordIn | null),readability?: (MetadataReadability | null),sharingReach?: (ObjectSharingReach | null),shortcut?: (Scalars['String'] | null),translations?: (MetadataTranslationOverrideInput[] | null)}
+export interface UpdateObjectPayload {color?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isActive?: (Scalars['Boolean'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),labelPlural?: (Scalars['String'] | null),labelSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),openRecordIn?: (ObjectOpenRecordIn | null),shortcut?: (Scalars['String'] | null),translations?: (MetadataTranslationOverrideInput[] | null)}
 
 export interface UpdateOneFieldMetadataInput {
 /** The id of the record to update */
@@ -12363,15 +12349,18 @@ export const enumEventLogTable = {
 }
 
 export const enumFeatureFlagKey = {
+   IS_AI_CHAT_COMPONENT_BUILDER_ENABLED: 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED' as const,
    IS_AI_CHAT_INBOX_ENABLED: 'IS_AI_CHAT_INBOX_ENABLED' as const,
    IS_APP_PREFERENCES_ENABLED: 'IS_APP_PREFERENCES_ENABLED' as const,
    IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED: 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED' as const,
    IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED: 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED' as const,
    IS_MCP_SERVERS_ENABLED: 'IS_MCP_SERVERS_ENABLED' as const,
+   IS_PRIVATE_RECORD_ENABLED: 'IS_PRIVATE_RECORD_ENABLED' as const,
    IS_RECORD_CREATION_FORM_ENABLED: 'IS_RECORD_CREATION_FORM_ENABLED' as const,
    IS_RECORD_LEVEL_SHARING_ENABLED: 'IS_RECORD_LEVEL_SHARING_ENABLED' as const,
    IS_RELATED_RECORD_PATHS_ENABLED: 'IS_RELATED_RECORD_PATHS_ENABLED' as const,
-   IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const
+   IS_REST_METADATA_API_NEW_FORMAT_DIRECT: 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT' as const,
+   IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED: 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED' as const
 }
 
 export const enumFieldDisplayMode = {
@@ -12551,24 +12540,10 @@ export const enumMetadataEventAction = {
    UPDATED: 'UPDATED' as const
 }
 
-export const enumMetadataReadability = {
-   APPLICATION: 'APPLICATION' as const,
-   INHERITED: 'INHERITED' as const,
-   OPEN: 'OPEN' as const,
-   PRIVATE: 'PRIVATE' as const,
-   SYSTEM: 'SYSTEM' as const
-}
-
 export const enumMetadataTranslationProvenance = {
    INHERITED: 'INHERITED' as const,
    SHIPPED: 'SHIPPED' as const,
    WORKSPACE: 'WORKSPACE' as const
-}
-
-export const enumMetadataWritability = {
-   APPLICATION: 'APPLICATION' as const,
-   OPEN: 'OPEN' as const,
-   SYSTEM: 'SYSTEM' as const
 }
 
 export const enumModelFamily = {
@@ -12605,11 +12580,6 @@ export const enumObjectRecordGroupByDateGranularity = {
    QUARTER_OF_THE_YEAR: 'QUARTER_OF_THE_YEAR' as const,
    WEEK: 'WEEK' as const,
    YEAR: 'YEAR' as const
-}
-
-export const enumObjectSharingReach = {
-   ROLE_ACCESS: 'ROLE_ACCESS' as const,
-   WORKSPACE: 'WORKSPACE' as const
 }
 
 export const enumOnboardingStatus = {
@@ -12693,13 +12663,6 @@ export const enumRecordShareRowCause = {
    MANUAL: 'MANUAL' as const,
    OWNER: 'OWNER' as const,
    RULE: 'RULE' as const
-}
-
-export const enumRecordSharingMode = {
-   INHERITED: 'INHERITED' as const,
-   OPEN_BY_DEFAULT: 'OPEN_BY_DEFAULT' as const,
-   PRIVATE: 'PRIVATE' as const,
-   ROLE_ONLY: 'ROLE_ONLY' as const
 }
 
 export const enumRelationType = {

@@ -21,6 +21,7 @@ import {
   type McpServerManifest,
   type MessagingProviderManifest,
   type NavigationMenuItemManifest,
+  type RelatedRecordPathManifest,
   type SkillManifest,
   type StandalonePageLayoutWidgetManifest,
   type StandaloneViewFieldManifest,
@@ -53,6 +54,7 @@ export type DefinableEntity =
   | ViewConfig
   | StandaloneViewFieldManifest
   | NavigationMenuItemManifest
+  | RelatedRecordPathManifest
   | PageLayoutConfig
   | PageLayoutTabConfig
   | StandalonePageLayoutWidgetManifest

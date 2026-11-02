@@ -103,12 +103,6 @@ export class LambdaDriver implements LogicFunctionDriver {
     return this.toolFunctions.buildDependencies(params);
   }
 
-  async getDependenciesBuildCacheKey(
-    params: Pick<BrowserDependenciesBuildParams, 'workspaceId'>,
-  ) {
-    return this.toolFunctions.getDependenciesBuildCacheKey(params);
-  }
-
   async delete(flatLogicFunction: FlatLogicFunction): Promise<void> {
     await this.executorManager.delete(flatLogicFunction);
   }

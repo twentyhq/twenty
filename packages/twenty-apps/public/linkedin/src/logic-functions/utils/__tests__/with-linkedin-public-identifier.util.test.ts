@@ -14,6 +14,9 @@ vi.mock('src/unipile/utils/get-unipile-user.util', () => ({
   getUnipileUser: mocks.getUnipileUser,
 }));
 
+const { UnipileRequestError } =
+  await import('src/unipile/utils/request-unipile.util');
+
 const { withLinkedinPublicIdentifier } =
   await import('src/logic-functions/utils/with-linkedin-public-identifier.util');
 
@@ -71,8 +74,20 @@ describe('withLinkedinPublicIdentifier', () => {
     );
   });
 
-  it('falls back to the user as received when the profile lookup fails', async () => {
-    mocks.getUnipileUser.mockRejectedValue(new Error('429 too many requests'));
+  it('fails on a temporary lookup error rather than linking a member id URL', async () => {
+    mocks.getUnipileUser.mockRejectedValue(
+      new UnipileRequestError('Unipile get user profile failed (429)', 429),
+    );
+
+    await expect(
+      withLinkedinPublicIdentifier({ unipileAccountId: 'acc_1', user: DAPHNE }),
+    ).rejects.toThrow('(429)');
+  });
+
+  it('falls back to the user as received when the profile is gone', async () => {
+    mocks.getUnipileUser.mockRejectedValue(
+      new UnipileRequestError('Unipile get user profile failed (404)', 404),
+    );
 
     await expect(
       withLinkedinPublicIdentifier({ unipileAccountId: 'acc_1', user: DAPHNE }),

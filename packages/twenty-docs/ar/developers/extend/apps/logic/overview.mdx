@@ -84,7 +84,7 @@ import { CardTitle } from "/snippets/card-title.mdx"
 <Note>
 **خطافات وقت التثبيت** — الشيفرة التي تعمل قبل التثبيت أو بعده — تشارك بيئة التشغيل هذه ولكنها تستخدم دوال تعريف خاصة بها وتوجد ضمن [Config → Install Hooks](/ar/developers/extend/apps/config/install-hooks).
 
-تشاركه [**عملية التحقق من الحالة**](/ar/developers/extend/apps/logic/logic-functions#health-check) أيضًا. لا يعلن عن أي مشغّل: يستدعيه Twenty عند الطلب عند فتح صفحة إعدادات التطبيق.
+تشاركه [**عملية التحقق من الحالة**](/ar/developers/extend/apps/logic/logic-functions#health-check) أيضًا. يُعرّف تطبيقٌ عمليةَ تحقّق واحدةً دون مُشغِّل. افتراضيًا، يستدعي Twenty معالجه الذي لا يتطلب أي وسيطات عند فتح إعدادات تطبيق مساحة العمل. عيّن `runOnUserPreferences: true` لتشغيله بدلًا من ذلك على صفحة تفضيلات التطبيقات الخاصة بالعضو، مع `userWorkspaceId` المطلوب لديه.
 </Note>
 
 <PageBanner illustration="section-apps-logic" />

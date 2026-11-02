@@ -229,6 +229,7 @@ const fromActionInput = ({
       };
     }
     case WorkflowActionType.HTTP_REQUEST:
+    case WorkflowActionType.SEND_CHAT_MESSAGE:
     case WorkflowActionType.CLASSIFY:
     case WorkflowActionType.ITERATOR:
     case WorkflowActionType.DELAY:

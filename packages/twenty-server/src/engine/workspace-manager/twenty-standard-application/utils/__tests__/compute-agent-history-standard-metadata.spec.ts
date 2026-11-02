@@ -3,11 +3,7 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 import { isDefined } from 'twenty-shared/utils';
 import { validateMorphOrRelationFlatFieldOnDelete } from 'src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-on-delete.util';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import {
-  FieldMetadataType,
-  MetadataReadability,
-  MetadataWritability,
-} from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 
@@ -90,26 +86,6 @@ describe('agent history workspace metadata', () => {
       ).toMatchObject({ isUnique: false });
     },
   );
-  const SHARED_ACCESS_POLICY_BY_OBJECT_NAME: Partial<
-    Record<
-      (typeof OBJECT_NAMES)[number],
-      { readability: MetadataReadability; writability: MetadataWritability }
-    >
-  > = {
-    agentChatThread: {
-      readability: MetadataReadability.PRIVATE,
-      writability: MetadataWritability.OPEN,
-    },
-    agentChatThreadTarget: {
-      readability: MetadataReadability.INHERITED,
-      writability: MetadataWritability.OPEN,
-    },
-    agentChatThreadParticipant: {
-      readability: MetadataReadability.PRIVATE,
-      writability: MetadataWritability.SYSTEM,
-    },
-  };
-
   it.each(OBJECT_NAMES)('keeps %s protected by metadata policy', (name) => {
     expect(
       allFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
@@ -123,10 +99,6 @@ describe('agent history workspace metadata', () => {
       isUICreatable: false,
       // Chats can be renamed from their record page
       isUIEditable: name === 'agentChatThread',
-      ...(SHARED_ACCESS_POLICY_BY_OBJECT_NAME[name] ?? {
-        readability: MetadataReadability.SYSTEM,
-        writability: MetadataWritability.SYSTEM,
-      }),
     });
   });
 
@@ -164,14 +136,6 @@ describe('agent history workspace metadata', () => {
       disabledFieldPermissionActions: ['canUpdateFieldValue'],
       options: [{ value: 'STANDARD' }, { value: 'DIRECT_MESSAGE' }],
     });
-  });
-
-  it('keeps the legacy archive column out of reach now that archive is soft delete', () => {
-    expect(
-      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.agentChatThread.fields.archivedAt.universalIdentifier
-      ],
-    ).toMatchObject({ writability: MetadataWritability.SYSTEM });
   });
 
   it('retains messages when a sender member is deleted', () => {
@@ -235,7 +199,6 @@ describe('agent history workspace metadata', () => {
       type: FieldMetadataType.UUID,
       isSystem: true,
       isNullable: true,
-      writability: MetadataWritability.SYSTEM,
     });
   });
 

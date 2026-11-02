@@ -7,4 +7,5 @@ export type WorkspaceSchemaColumnDefinition = {
   isArray?: boolean;
   asExpression?: string;
   generatedType?: 'STORED' | 'VIRTUAL';
+  isGeneratedAlwaysAsIdentity?: boolean;
 };

@@ -2,8 +2,8 @@
 
 exports[`sortMetadataNamesChildrenFirst should return metadata names sorted with children first (most manyToOne relations first) 1`] = `
 [
-  "navigationMenuItem",
   "rowLevelPermissionPredicate",
+  "navigationMenuItem",
   "commandMenuItem",
   "relatedRecordPath",
   "viewFilter",

@@ -11,8 +11,8 @@ import { NotFoundError } from 'src/engine/core-modules/graphql/utils/graphql-err
 import {
   RecordShareException,
   RecordShareExceptionCode,
-} from 'src/engine/core-modules/record-share/record-share.exception';
-import { RecordSharingService } from 'src/engine/core-modules/record-share/services/record-sharing.service';
+} from 'src/engine/permissions/record-share/record-share.exception';
+import { RecordSharingService } from 'src/engine/permissions/record-share/services/record-sharing.service';
 import { ShareRecordTool } from 'src/engine/core-modules/tool/tools/share-record-tool/share-record-tool';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 

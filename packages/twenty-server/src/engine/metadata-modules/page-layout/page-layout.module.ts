@@ -9,7 +9,7 @@ import { PageLayoutDuplicationService } from 'src/engine/metadata-modules/page-l
 import { PageLayoutResetService } from 'src/engine/metadata-modules/page-layout/services/page-layout-reset.service';
 import { PageLayoutUpdateService } from 'src/engine/metadata-modules/page-layout/services/page-layout-update.service';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { DashboardSyncModule } from 'src/modules/dashboard-sync/dashboard-sync.module';

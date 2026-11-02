@@ -24,6 +24,7 @@ import { createFrontComponentSandboxMessageHandler } from '@/remote/sandbox/util
 import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 
 import { type FrontComponentThread } from '@/types/FrontComponentThread';
+import { type SdkClientSources } from '@/types/SdkClientSources';
 import { type SdkClientUrls } from '@/types/SdkClientUrls';
 import { buildAuthorizationHeadersFromAccessToken } from '@/host/component-source/utils/buildAuthorizationHeadersFromAccessToken';
 import { containsSdkClientImportSpecifier } from '@/utils/module-imports/containsSdkClientImportSpecifier';
@@ -39,6 +40,7 @@ type FrontComponentWorkerEffectProps = {
   apiUrl?: string;
   functionsBaseUrl?: string;
   sdkClientUrls?: SdkClientUrls;
+  sdkClientSources?: SdkClientSources;
   sharedDependenciesUrl?: string;
   applicationVariables?: Record<string, string>;
   storageNamespace?: string;
@@ -66,6 +68,7 @@ export const FrontComponentWorkerEffect = ({
   apiUrl,
   functionsBaseUrl,
   sdkClientUrls,
+  sdkClientSources: providedSdkClientSources,
   sharedDependenciesUrl,
   applicationVariables,
   storageNamespace,
@@ -175,13 +178,14 @@ export const FrontComponentWorkerEffect = ({
         };
 
         const [sdkClientSources, sharedDependenciesSource] = await Promise.all([
-          isDefined(sdkClientUrls) &&
-          containsSdkClientImportSpecifier(componentSource)
-            ? fetchSdkClientSources({
-                sdkClientUrls,
-                headers: authorizationHeaders,
-              })
-            : undefined,
+          providedSdkClientSources ??
+            (isDefined(sdkClientUrls) &&
+            containsSdkClientImportSpecifier(componentSource)
+              ? fetchSdkClientSources({
+                  sdkClientUrls,
+                  headers: authorizationHeaders,
+                })
+              : undefined),
           resolveSharedDependenciesSource(),
         ]);
 
@@ -251,6 +255,7 @@ export const FrontComponentWorkerEffect = ({
   }, [
     componentUrl,
     providedComponentSource,
+    providedSdkClientSources,
     stableComponentProps,
     providedSharedDependenciesSource,
     applicationAccessToken,

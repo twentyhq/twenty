@@ -550,7 +550,7 @@ Without `batchMode`, the handler keeps receiving one `DatabaseEventPayload` per 
 
 #### Execution context
 
-Every handler receives a second argument describing the run itself, whatever triggered it. Where the first argument changes shape per trigger, this one does not:
+Generic logic function handlers receive a second argument describing the run itself, whatever triggered it. Where the first argument changes shape per trigger, this one does not:
 
 ```ts
 import type { LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
@@ -895,7 +895,7 @@ const handler = async (params: { parentMessageId?: string }) => {
 
 Declare a health check with `defineHealthCheck` to report whether your app is actually able to run. It is for what only the app can know: a key that is present but revoked, an account on the wrong plan, a webhook that was never registered. What Twenty can see by itself — a required variable nobody filled in — is covered by [`isRequired`](/developers/extend/apps/config/application) and needs no code.
 
-It runs server-side, so it reads secret variables like any other logic function. The handler takes no arguments.
+It runs server-side, so it reads secret variables like any other logic function. A workspace check has nobody behind it, so the handler needs no arguments.
 
 ```ts src/logic-functions/health-check.ts
 import { defineHealthCheck } from 'twenty-sdk/define';
@@ -948,7 +948,42 @@ A check that throws, times out or returns a shape Twenty cannot read is treated 
 
 The location has to stay inside Twenty, so it starts with `/` or `#`: an external, protocol-relative or relative one loses its button rather than becoming a redirect somewhere else. The button is also dropped when the app reports no location and has no configuration tab to fall back to, so a check on an app with no variables and no settings menu items shows its title without a dead button.
 
-Only one health check is allowed per app; declaring more than one fails the build.
+### Checking each member's own setup
+
+An app declares one health-check function. Omit `runOnUserPreferences` or set it to `false` to run a workspace check on the app's settings page, with a zero-argument handler. Set `runOnUserPreferences: true` to run a member check on their Apps preferences page instead. A member handler receives the required `{ userWorkspaceId: string }` from the authenticated session:
+
+```ts src/logic-functions/health-check.ts
+import { defineHealthCheck } from 'twenty-sdk/define';
+import { listConnections } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
+
+export default defineHealthCheck({
+  universalIdentifier: 'f3b6a4d2-9c81-4e0a-b5c7-2d1e8f4a6b03',
+  name: 'health-check',
+  runOnUserPreferences: true,
+  handler: async ({ userWorkspaceId }) => {
+    const [myConnection] = await listConnections({
+      scope: 'USER',
+      userWorkspaceId,
+    });
+
+    if (!isDefined(myConnection) || isDefined(myConnection.authFailedAt)) {
+      return { status: 'WARNING', title: 'Connect your account' };
+    }
+
+    return { status: 'OK' };
+  },
+});
+```
+
+A member check runs when a member opens the app on their **Apps preferences** page, and only that member sees its banner. It runs as that member: the handler receives `{ userWorkspaceId }` from the authenticated session, and user-scoped variables hold their values. The parameter object and ID are required for this mode. It does not run on workspace app settings. Pass `userWorkspaceId` to `listConnections()` so it returns that member's connections only. A connection whose token refresh fails is left out of the list, so "no connection" covers "reconnect" too. A button with no `location` lands on the app's General tab of that page.
+
+<Note>
+  Member checks require Twenty 2.55.0 or later. **Apps preferences** is not enabled
+  in every workspace yet: where it is not, a member check never runs.
+</Note>
+
+An app can declare only one health-check function, in either workspace or member mode. Existing declarations keep their zero-argument workspace handler. Declaring a second function fails the build.
 
 ## Create a timeline activity
 

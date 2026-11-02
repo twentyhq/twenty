@@ -1,13 +1,8 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { type Request, type Response } from 'express';
-import {
-  FRONT_COMPONENT_HOST_FETCH_HEADER_NAME,
-  SESSION_COOKIE_OPT_IN_HEADER_NAME,
-} from 'twenty-shared/constants';
+import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
 
-import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
-import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserSessionCookieService } from 'src/engine/core-modules/user-session/services/user-session-cookie.service';
 
@@ -25,11 +20,8 @@ const buildResponse = (request: Request): Response =>
 
 describe('UserSessionCookieService', () => {
   let service: UserSessionCookieService;
-  let incrementCounterBy: jest.Mock;
 
   beforeEach(async () => {
-    incrementCounterBy = jest.fn();
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserSessionCookieService,
@@ -41,7 +33,6 @@ describe('UserSessionCookieService', () => {
             ),
           },
         },
-        { provide: MetricsService, useValue: { incrementCounterBy } },
       ],
     }).compile();
 
@@ -53,7 +44,6 @@ describe('UserSessionCookieService', () => {
 
     expect(service.extractSessionTokenFromRequest(request)).toBe('sess_abc');
     expect(service.hasSessionCookie(request)).toBe(true);
-    expect(incrementCounterBy).not.toHaveBeenCalled();
   });
 
   it('should read the session cookie on top-level navigations', () => {
@@ -62,27 +52,8 @@ describe('UserSessionCookieService', () => {
     expect(service.extractSessionTokenFromRequest(request)).toBe('sess_abc');
   });
 
-  it('should still read the session cookie on legacy requests and count them by API path', () => {
-    const request = {
-      ...buildRequest({ 'sec-fetch-mode': 'cors' }),
-      path: '/',
-      originalUrl: '/file-upload/upload-id?token=abc',
-    } as Request;
-
-    expect(service.extractSessionTokenFromRequest(request)).toBe('sess_abc');
-    expect(incrementCounterBy).toHaveBeenCalledTimes(1);
-    expect(incrementCounterBy).toHaveBeenCalledWith({
-      key: MetricsKeys.UserSessionCookieLegacyAccess,
-      amount: 1,
-      attributes: { apiPath: 'file-upload' },
-    });
-  });
-
-  it('should ignore the session cookie on front component host fetches', () => {
-    const request = buildRequest({
-      'sec-fetch-mode': 'cors',
-      [FRONT_COMPONENT_HOST_FETCH_HEADER_NAME]: '1',
-    });
+  it('should ignore the session cookie on requests that neither opt in nor navigate', () => {
+    const request = buildRequest({ 'sec-fetch-mode': 'cors' });
 
     expect(service.extractSessionTokenFromRequest(request)).toBeUndefined();
     expect(
@@ -91,10 +62,8 @@ describe('UserSessionCookieService', () => {
     expect(service.hasSessionCookie(request)).toBe(false);
   });
 
-  it('should not set or clear session cookies in response to front component host fetches', () => {
-    const response = buildResponse(
-      buildRequest({ [FRONT_COMPONENT_HOST_FETCH_HEADER_NAME]: '1' }),
-    );
+  it('should not set or clear session cookies in response to requests that do not opt in', () => {
+    const response = buildResponse(buildRequest({ 'sec-fetch-mode': 'cors' }));
 
     service.attachSessionTokenToResponse(
       response,

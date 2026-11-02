@@ -17,7 +17,7 @@ import { UpsertObjectPermissionsTool } from 'src/engine/metadata-modules/role/to
 import { UpsertRowLevelPermissionRulesTool } from 'src/engine/metadata-modules/role/tools/upsert-row-level-permission-rules.tool';
 import { type RowLevelPermissionPredicateGroupService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate-group.service';
 import { type RowLevelPermissionPredicateService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate.service';
-import { type UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { type UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
 
 const workspaceId = 'workspace-id';
 const callerRoleId = 'caller-role-id';

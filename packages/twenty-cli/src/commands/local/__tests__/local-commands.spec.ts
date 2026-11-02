@@ -5,6 +5,7 @@ import {
   parseSingleJsonLine,
   runCliForTest,
 } from '@/__tests__/utils/run-cli-for-test';
+import { getEngineVersionRange } from '@/app/manifest/get-engine-version-range';
 import { checkLocalHealth } from '@/local/check-local-health';
 import { waitForLocalHealth } from '@/local/wait-for-local-health';
 import { getLocalEnvironment } from '@/local/get-local-environment';
@@ -12,6 +13,9 @@ import { runDocker } from '@/local/run-docker';
 import { CliError } from '@/output/cli-error';
 
 vi.mock('@/local/run-docker', () => ({ runDocker: vi.fn() }));
+vi.mock('@/app/manifest/get-engine-version-range', () => ({
+  getEngineVersionRange: vi.fn(),
+}));
 vi.mock('@/local/check-local-health', () => ({
   checkLocalHealth: vi.fn(),
 }));
@@ -26,17 +30,34 @@ const makeContainer = (isRunning = true) => {
   };
   return {
     Id: 'test-container',
+    Image: 'old-image',
     Config: {
       Image: 'twentycrm/twenty-app-dev:v2.53.0',
+      Env: [
+        'APP_VERSION=2.53.0',
+        'NODE_PORT=2021',
+        'SERVER_URL=http://localhost:12021',
+        'CUSTOM_SETTING=enabled',
+      ],
     },
     State: { Running: isRunning },
     HostConfig: {
       PortBindings: portBindings,
     },
+    Mounts: Object.entries(environment.volumes).map(([Destination, Name]) => ({
+      Type: 'volume',
+      Destination,
+      Name,
+    })),
   };
 };
 let container: ReturnType<typeof makeContainer> | undefined;
+let previousContainer: ReturnType<typeof makeContainer> | undefined;
 let failure: string | undefined;
+let shouldCancelCreation = false;
+let nextImageId: string;
+let currentImageVersion: string | undefined;
+let nextImageVersion: string | undefined;
 
 const runJson = async (args: string[]) => {
   const result = await runCliForTest(['local', ...args, '--test', '--json']);
@@ -46,13 +67,28 @@ const dockerArguments = () =>
   vi.mocked(runDocker).mock.calls.map(([{ args }]) => args);
 const mutations = () =>
   dockerArguments().filter(([command]) =>
-    ['run', 'start', 'stop', 'pull'].includes(command),
+    [
+      'run',
+      'create',
+      'rename',
+      'start',
+      'stop',
+      'pull',
+      'rm',
+      'volume',
+    ].includes(command),
   );
 
 describe('local commands', () => {
   beforeEach(() => {
     container = makeContainer();
+    previousContainer = undefined;
     failure = undefined;
+    shouldCancelCreation = false;
+    nextImageId = 'new-image';
+    currentImageVersion = '2.53.0';
+    nextImageVersion = '2.54.0';
+    vi.mocked(getEngineVersionRange).mockReturnValue(null);
     vi.stubEnv('DOCKER_HOST', '');
     vi.stubEnv('DOCKER_CONTEXT', '');
     vi.stubEnv('TWENTY_REMOTE', '');
@@ -60,47 +96,99 @@ describe('local commands', () => {
     vi.stubEnv('TWENTY_API_KEY', '');
     vi.mocked(checkLocalHealth).mockResolvedValue(true);
     vi.mocked(waitForLocalHealth).mockResolvedValue(undefined);
-    vi.mocked(runDocker).mockImplementation(async ({ args, onOutput }) => {
-      if (args[0] === failure || args.slice(0, 2).join(' ') === failure) {
-        throw new CliError({
-          code: 'LOCAL_ENVIRONMENT_FAILED',
-          message: 'Docker failed',
-        });
-      }
-      if (args[0] === 'context') {
-        return 'unix:///var/run/docker.sock';
-      }
-      if (args[0] === 'info') {
-        return '28.0';
-      }
-      if (args[0] === 'container' && args[1] === 'ls') {
-        return container?.Id ?? '';
-      }
-      if (args[0] === 'container') {
-        return JSON.stringify(container);
-      }
-      if (args[0] === 'start' && isDefined(container)) {
-        container.State.Running = true;
-      }
-      if (args[0] === 'stop' && isDefined(container)) {
-        container.State.Running = false;
-      }
-      if (args[0] === 'run') {
-        container = makeContainer();
-        container.Config.Image = args.at(-1)!;
-        const [, hostPort, internalPort] =
-          args[args.indexOf('--publish') + 1].split(':');
-        container.HostConfig.PortBindings = {
-          [`${internalPort}/tcp`]: [
-            { HostIp: '127.0.0.1', HostPort: hostPort },
-          ],
-        };
-      }
-      if (args[0] === 'logs') {
-        await onOutput?.('server started\nworker ready\n');
-      }
-      return '';
-    });
+    vi.mocked(runDocker).mockImplementation(
+      async ({ args, onOutput, signal }) => {
+        if (args[0] === failure || args.slice(0, 2).join(' ') === failure) {
+          throw new CliError({
+            code: 'LOCAL_ENVIRONMENT_FAILED',
+            message: 'Docker failed',
+          });
+        }
+        if (args[0] === 'context') {
+          return 'unix:///var/run/docker.sock';
+        }
+        if (args[0] === 'info') {
+          return '28.0';
+        }
+        if (args[0] === 'container' && args[1] === 'ls') {
+          return container?.Id ?? '';
+        }
+        if (args[0] === 'container') {
+          return JSON.stringify(container);
+        }
+        if (args[0] === 'image') {
+          if (args[3] === '{{.Id}}') {
+            return nextImageId;
+          }
+          if (args.at(-1) === 'old-image') {
+            return JSON.stringify([
+              ...(isDefined(currentImageVersion)
+                ? [`APP_VERSION=${currentImageVersion}`]
+                : []),
+              'NODE_PORT=3000',
+            ]);
+          }
+          return JSON.stringify(
+            isDefined(nextImageVersion)
+              ? [`APP_VERSION=${nextImageVersion}`]
+              : [],
+          );
+        }
+        if (args[0] === 'rename') {
+          if (args[2] === environment.name) {
+            container = previousContainer;
+            previousContainer = undefined;
+          } else {
+            previousContainer = container;
+            container = undefined;
+          }
+        }
+        const target =
+          args.at(-1) === previousContainer?.Id ? previousContainer : container;
+        if (args[0] === 'start' && isDefined(target)) {
+          target.State.Running = true;
+        }
+        if (args[0] === 'stop' && isDefined(target)) {
+          target.State.Running = false;
+        }
+        if (args[0] === 'rm' && target === previousContainer) {
+          previousContainer = undefined;
+          return '';
+        }
+        if (args[0] === 'rm') {
+          container = undefined;
+          return '';
+        }
+        if (args[0] === 'run' || args[0] === 'create') {
+          container = makeContainer(args[0] === 'run');
+          container.Id = 'replacement-container';
+          container.Config.Image = args.at(-1)!;
+          container.Image = nextImageId;
+          const [, hostPort, internalPort] =
+            args[args.indexOf('--publish') + 1].split(':');
+          container.HostConfig.PortBindings = {
+            [`${internalPort}/tcp`]: [
+              { HostIp: '127.0.0.1', HostPort: hostPort },
+            ],
+          };
+          if (shouldCancelCreation) {
+            process.emit('SIGINT');
+            signal.throwIfAborted();
+          }
+        }
+        if (args[0] === 'volume' && args[1] === 'ls') {
+          return [
+            ...Object.values(environment.volumes),
+            'twenty-app-dev-data',
+            'unrelated',
+          ].join('\n');
+        }
+        if (args[0] === 'logs') {
+          await onOutput?.('server started\nworker ready\n');
+        }
+        return '';
+      },
+    );
   });
   afterEach(() => {
     vi.unstubAllEnvs();
@@ -123,11 +211,11 @@ describe('local commands', () => {
     });
     const run = mutations().find(([command]) => command === 'run')!;
     expect(run).toContain('127.0.0.1:12021:12021');
-    expect(run).toContain('twentycrm/twenty-app-dev:v2.54.0');
-    expect(run).toContain('twenty-app-dev-test-data:/data/postgres');
     expect(run).toContain('API_RATE_LIMITING_SHORT_LIMIT=100000');
     expect(run).toContain('API_RATE_LIMITING_LONG_LIMIT=100000');
     expect(run).toContain('MARKETPLACE_CATALOG_SYNC_CRON_ENABLED=false');
+    expect(run).toContain('twentycrm/twenty-app-dev:v2.54.0');
+    expect(run).toContain('twenty-app-dev-test-data:/data/postgres');
     expect(run).not.toContain('twenty-app-dev-data:/data/postgres');
   });
 
@@ -143,6 +231,60 @@ describe('local commands', () => {
     const { exitCode, envelope } = await runJson(['start', 'other/image:tag']);
     expect(exitCode).toBe(1);
     expect(envelope.error.code).toBe('INVALID_INPUT');
+    expect(mutations()).toEqual([]);
+  });
+
+  it.each(['start', 'upgrade'])(
+    'uses the floating minor tag for %s 2.53',
+    async (command) => {
+      if (command === 'start') {
+        container = undefined;
+      }
+      nextImageVersion = '2.53.1';
+      expect((await runJson([command, '2.53'])).exitCode).toBe(0);
+      expect(mutations()[0]).toEqual([
+        'pull',
+        'twentycrm/twenty-app-dev:v2.53',
+      ]);
+      expect(container?.Config.Image).toBe('twentycrm/twenty-app-dev:v2.53');
+    },
+  );
+
+  it.each(['latest', 'v2.53', 'v2.40.0'])(
+    'checks the actual image version behind %s instead of the tag or container overrides',
+    async (tag) => {
+      vi.mocked(getEngineVersionRange).mockReturnValue('^2.53.0');
+      container!.Config.Image = `twentycrm/twenty-app-dev:${tag}`;
+      container!.Config.Env[0] = 'APP_VERSION=2.40.0';
+      const { exitCode, envelope } = await runJson(['start']);
+      expect(exitCode).toBe(0);
+      expect(envelope.warnings).toEqual([]);
+      expect(mutations()).toEqual([]);
+    },
+  );
+
+  it.each(['2.52.0', undefined, 'not-a-version'])(
+    'warns without blocking startup when the image version is %s',
+    async (version) => {
+      vi.mocked(getEngineVersionRange).mockReturnValue('^2.53.0');
+      currentImageVersion = version;
+      container = makeContainer(false);
+      container.Config.Image = 'twentycrm/twenty-app-dev:latest';
+      const { exitCode, envelope } = await runJson(['start']);
+      expect(exitCode).toBe(0);
+      expect(envelope.warnings).toEqual([
+        expect.objectContaining({ code: 'LOCAL_VERSION_MISMATCH' }),
+      ]);
+      expect(mutations()).toEqual([['start', 'test-container']]);
+    },
+  );
+
+  it('reports Docker inspection failures during the compatibility check', async () => {
+    vi.mocked(getEngineVersionRange).mockReturnValue('^2.53.0');
+    failure = 'image inspect';
+    const { exitCode, envelope } = await runJson(['start']);
+    expect(exitCode).toBe(1);
+    expect(envelope.error.code).toBe('LOCAL_ENVIRONMENT_FAILED');
     expect(mutations()).toEqual([]);
   });
 
@@ -199,6 +341,209 @@ describe('local commands', () => {
   it('stops without removing the container or its data', async () => {
     expect((await runJson(['stop'])).exitCode).toBe(0);
     expect(mutations()).toEqual([['stop', 'test-container']]);
+  });
+
+  it('requires explicit approval before reset in JSON mode', async () => {
+    const { exitCode, envelope } = await runJson(['reset']);
+    expect(exitCode).toBe(2);
+    expect(envelope.error.code).toBe('CONFIRMATION_REQUIRED');
+    expect(runDocker).not.toHaveBeenCalled();
+  });
+
+  it('resets only the selected instance and its known volumes', async () => {
+    expect((await runJson(['reset', '--yes'])).exitCode).toBe(0);
+    expect(mutations()).toEqual([
+      ['rm', '--force', 'test-container'],
+      ['volume', 'ls', '--format', '{{.Name}}'],
+      ['volume', 'rm', ...Object.values(environment.volumes)],
+    ]);
+  });
+
+  it.each(['reset', 'upgrade'])(
+    'refuses custom storage before %s changes anything',
+    async (command) => {
+      container!.Mounts[0].Type = 'bind';
+      const { envelope } = await runJson([
+        command,
+        ...(command === 'reset' ? ['--yes'] : ['2.54.0']),
+      ]);
+      expect(envelope.error.code).toBe('CONFLICT');
+      expect(mutations()).toEqual([]);
+    },
+  );
+
+  it('refuses to reset a same-name container owned by another image', async () => {
+    container!.Config.Image = 'another/service:latest';
+    expect((await runJson(['reset', '--yes'])).envelope.error.code).toBe(
+      'CONFLICT',
+    );
+    expect(mutations()).toEqual([]);
+  });
+
+  it('refuses a remote Docker endpoint even for an approved reset', async () => {
+    vi.stubEnv('DOCKER_HOST', 'ssh://production');
+    expect((await runJson(['reset', '--yes'])).envelope.error.code).toBe(
+      'INVALID_CONFIG',
+    );
+    expect(runDocker).not.toHaveBeenCalled();
+  });
+
+  it('leaves the running instance untouched if the upgrade image cannot be pulled', async () => {
+    failure = 'pull';
+    expect((await runJson(['upgrade', '2.54.0'])).exitCode).toBe(1);
+    expect(mutations()).toEqual([['pull', 'twentycrm/twenty-app-dev:v2.54.0']]);
+    expect(container?.State.Running).toBe(true);
+  });
+
+  it('does not recreate an instance already on the requested image digest', async () => {
+    nextImageId = 'old-image';
+    expect(
+      (await runJson(['upgrade', '2.54.0'])).envelope.data.isUpgraded,
+    ).toBe(false);
+    expect(mutations()).toEqual([['pull', 'twentycrm/twenty-app-dev:v2.54.0']]);
+  });
+
+  it.each(['2.50.0', 'latest'])(
+    'refuses an older version behind %s before replacing the container',
+    async (version) => {
+      container!.Config.Image = 'twentycrm/twenty-app-dev:latest';
+      container!.Config.Env[0] = 'APP_VERSION=2.40.0';
+      const previousSettings = structuredClone(container);
+      nextImageVersion = '2.50.0';
+      const { exitCode, envelope } = await runJson(['upgrade', version]);
+      expect(exitCode).toBe(1);
+      expect(envelope.error).toMatchObject({
+        code: 'CONFLICT',
+        message:
+          'Cannot downgrade the local environment from 2.53.0 to 2.50.0.',
+      });
+      expect(mutations()).toEqual([
+        [
+          'pull',
+          `twentycrm/twenty-app-dev:${version === 'latest' ? version : `v${version}`}`,
+        ],
+      ]);
+      expect(container).toEqual(previousSettings);
+    },
+  );
+
+  it.each([undefined, 'not-a-version'])(
+    'leaves the instance untouched if the image version is %s',
+    async (version) => {
+      const previousSettings = structuredClone(container);
+      nextImageVersion = version;
+      const { envelope } = await runJson(['upgrade', 'latest']);
+      expect(envelope.error.code).toBe('INVALID_RESPONSE');
+      expect(container).toEqual(previousSettings);
+      expect(mutations()).toEqual([
+        ['pull', 'twentycrm/twenty-app-dev:latest'],
+      ]);
+    },
+  );
+
+  it('allows a rebuilt image of the same version', async () => {
+    nextImageVersion = '2.53.0';
+    expect(
+      (await runJson(['upgrade', '2.53.0'])).envelope.data.isUpgraded,
+    ).toBe(true);
+  });
+
+  it('upgrades gracefully, preserving volumes, port mapping and user overrides without stale image defaults', async () => {
+    container!.Config.Env.push(
+      'API_RATE_LIMITING_SHORT_LIMIT=50',
+      'MARKETPLACE_CATALOG_SYNC_CRON_ENABLED=true',
+    );
+    const { exitCode, envelope } = await runJson(['upgrade', '2.54.0']);
+    expect(exitCode).toBe(0);
+    expect(envelope.data).toMatchObject({
+      isUpgraded: true,
+      isDataPreserved: true,
+      url: 'http://localhost:12021',
+    });
+    expect(mutations().slice(0, 3)).toEqual([
+      ['pull', 'twentycrm/twenty-app-dev:v2.54.0'],
+      ['rename', 'test-container', 'twenty-app-dev-test-previous'],
+      ['stop', '--time', '30', 'test-container'],
+    ]);
+    expect(mutations().slice(-2)).toEqual([
+      ['rm', 'test-container'],
+      ['start', environment.name],
+    ]);
+    const run = mutations()[3];
+    expect(run[0]).toBe('create');
+    expect(run).toContain('127.0.0.1:12021:2021');
+    expect(run).toContain('twenty-app-dev-test-data:/data/postgres');
+    expect(run).toContain('CUSTOM_SETTING=enabled');
+    expect(run).toContain('API_RATE_LIMITING_SHORT_LIMIT=50');
+    expect(run).toContain('MARKETPLACE_CATALOG_SYNC_CRON_ENABLED=true');
+    expect(run).not.toContain('API_RATE_LIMITING_SHORT_LIMIT=100000');
+    expect(run.filter((value) => value.startsWith('SERVER_URL='))).toEqual([
+      'SERVER_URL=http://localhost:12021',
+    ]);
+    expect(run).not.toContain('APP_VERSION=2.53.0');
+    expect(run).not.toContain('APP_VERSION=2.54.0');
+  });
+
+  it.each([true, false])(
+    'restores the previous settings after creation fails (running: %s)',
+    async (isRunning) => {
+      container = makeContainer(isRunning);
+      const previousSettings = structuredClone(container);
+      failure = 'create';
+      expect((await runJson(['upgrade', '2.54.0'])).exitCode).toBe(1);
+      expect(container).toEqual(previousSettings);
+      expect(previousContainer).toBeUndefined();
+      expect(mutations()).not.toContainEqual(['rm', 'test-container']);
+    },
+  );
+
+  it('restores the old container after cancellation during replacement creation', async () => {
+    const previousSettings = structuredClone(container);
+    shouldCancelCreation = true;
+    const { exitCode, envelope } = await runJson(['upgrade', '2.54.0']);
+    expect(exitCode).toBe(130);
+    expect(envelope.error.code).toBe('CANCELLED');
+    expect(container).toEqual(previousSettings);
+    expect(previousContainer).toBeUndefined();
+    expect(mutations()).toContainEqual(['rm', 'replacement-container']);
+    const recoveryCalls = vi
+      .mocked(runDocker)
+      .mock.calls.filter(
+        ([{ args }]) =>
+          args[0] === 'rm' ||
+          (args[0] === 'rename' && args[2] === environment.name),
+      );
+    expect(recoveryCalls.every(([{ signal }]) => !signal.aborted)).toBe(true);
+  });
+
+  it('does not roll back to the old image after starting new database migrations', async () => {
+    vi.mocked(waitForLocalHealth).mockRejectedValue(
+      new CliError({ code: 'TIMEOUT', message: 'Not ready' }),
+    );
+    expect((await runJson(['upgrade', '2.54.0'])).envelope.error.code).toBe(
+      'TIMEOUT',
+    );
+    expect(container?.Config.Image).toBe('twentycrm/twenty-app-dev:v2.54.0');
+    expect(previousContainer).toBeUndefined();
+    expect(mutations()).not.toContainEqual(['start', 'test-container']);
+  });
+
+  it('preserves older SDK volumes while adding storage for the current image', async () => {
+    container!.Mounts = container!.Mounts.filter(
+      (mount) => mount.Destination !== '/data/clickhouse',
+    );
+    expect((await runJson(['upgrade', '2.54.0'])).exitCode).toBe(0);
+    const run = mutations().find(([command]) => command === 'create')!;
+    expect(run).toContain('twenty-app-dev-test-data:/data/postgres');
+    expect(run).toContain(
+      'twenty-app-dev-test-storage:/app/packages/twenty-server/.local-storage',
+    );
+    expect(run).toContain('twenty-app-dev-test-clickhouse:/data/clickhouse');
+  });
+
+  it('does not report reset success when Docker cannot delete a volume', async () => {
+    failure = 'volume rm';
+    expect((await runJson(['reset', '--yes'])).exitCode).toBe(1);
   });
 
   it('rejects malformed port bindings before changing the container', async () => {
