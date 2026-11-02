@@ -31,10 +31,13 @@ const buildRule = (
   ...rule,
 });
 
-const findRuleNames = (
-  rules: FlatValidationRule[],
+const findRuleNames = ({
+  rules,
   fieldUniversalIdentifiers = ['employees'],
-) => {
+}: {
+  rules: FlatValidationRule[];
+  fieldUniversalIdentifiers?: string[];
+}) => {
   const flatValidationRuleMaps: FlatEntityMaps<FlatValidationRule> =
     createEmptyFlatEntityMaps();
 
@@ -54,40 +57,44 @@ const findRuleNames = (
 describe('findActiveFlatValidationRulesReadingField', () => {
   it('should find a rule reading the field directly or through a relation', () => {
     expect(
-      findRuleNames([
-        buildRule({ name: 'direct', bindings: { employees: 'employees' } }),
-        buildRule({
-          name: 'through relation',
-          bindings: { company: 'company', 'company.employees': 'employees' },
-        }),
-      ]),
+      findRuleNames({
+        rules: [
+          buildRule({ name: 'direct', bindings: { employees: 'employees' } }),
+          buildRule({
+            name: 'through relation',
+            bindings: { company: 'company', 'company.employees': 'employees' },
+          }),
+        ],
+      }),
     ).toEqual(['direct', 'through relation']);
   });
 
   it('should find a rule reading the other side of a relation', () => {
     expect(
-      findRuleNames(
-        [
+      findRuleNames({
+        rules: [
           buildRule({
             name: 'through reverse side',
             bindings: { company: 'company', 'company.employees': 'employees' },
           }),
         ],
-        ['people', 'company'],
-      ),
+        fieldUniversalIdentifiers: ['people', 'company'],
+      }),
     ).toEqual(['through reverse side']);
   });
 
   it('should ignore inactive rules and rules reading other fields', () => {
     expect(
-      findRuleNames([
-        buildRule({
-          name: 'inactive',
-          bindings: { employees: 'employees' },
-          isActive: false,
-        }),
-        buildRule({ name: 'other', bindings: { employees: 'score' } }),
-      ]),
+      findRuleNames({
+        rules: [
+          buildRule({
+            name: 'inactive',
+            bindings: { employees: 'employees' },
+            isActive: false,
+          }),
+          buildRule({ name: 'other', bindings: { employees: 'score' } }),
+        ],
+      }),
     ).toEqual([]);
   });
 });

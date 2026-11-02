@@ -24,8 +24,7 @@ type BuildValidationRuleFieldDescriptorsArgs = {
   objectMetadataId: string;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<ValidationRuleFlatFieldMetadata>;
-  // Record writes use the ORM cache, whose raw isActive ignores overrides. An
-  // active rule was checked when saved, so writes keep the type of every field.
+  // Record writes can't see overrides, and an active rule was checked when saved
   shouldIncludeInactiveFields?: boolean;
 };
 

@@ -13,7 +13,13 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 
 const OBJECT_METADATA_ID = 'object-id';
 
-const buildMorphField = (name: string, relationTargetName: string) =>
+const buildMorphField = ({
+  name,
+  relationTargetName,
+}: {
+  name: string;
+  relationTargetName: string;
+}) =>
   getFlatFieldMetadataMock({
     id: `${name}-id`,
     universalIdentifier: name,
@@ -24,7 +30,13 @@ const buildMorphField = (name: string, relationTargetName: string) =>
     relationTargetFieldMetadataUniversalIdentifier: relationTargetName,
   });
 
-const buildRelationField = (name: string, objectMetadataId: string) =>
+const buildRelationField = ({
+  name,
+  objectMetadataId,
+}: {
+  name: string;
+  objectMetadataId: string;
+}) =>
   getFlatFieldMetadataMock({
     id: `${name}-id`,
     universalIdentifier: name,
@@ -34,10 +46,13 @@ const buildRelationField = (name: string, objectMetadataId: string) =>
 
 const compute = (flatFieldMetadata: FlatFieldMetadata) => {
   const fields = [
-    buildMorphField('targetRocket', 'owner'),
-    buildMorphField('targetPet', 'petOwner'),
-    buildRelationField('owner', 'rocket-object-id'),
-    buildRelationField('petOwner', 'pet-object-id'),
+    buildMorphField({ name: 'targetRocket', relationTargetName: 'owner' }),
+    buildMorphField({ name: 'targetPet', relationTargetName: 'petOwner' }),
+    buildRelationField({ name: 'owner', objectMetadataId: 'rocket-object-id' }),
+    buildRelationField({
+      name: 'petOwner',
+      objectMetadataId: 'pet-object-id',
+    }),
   ];
   const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> =
     createEmptyFlatEntityMaps();
@@ -82,7 +97,7 @@ describe('computeFieldUniversalIdentifiersDeactivatedTogether', () => {
 
   it('should include the sibling morph fields and all their other sides', () => {
     const universalIdentifiers = compute(
-      buildMorphField('targetRocket', 'owner'),
+      buildMorphField({ name: 'targetRocket', relationTargetName: 'owner' }),
     );
 
     expect(new Set(universalIdentifiers)).toEqual(
