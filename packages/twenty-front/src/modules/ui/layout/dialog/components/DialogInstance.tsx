@@ -2,6 +2,7 @@ import { useContext, type ReactNode } from 'react';
 import { useStore } from 'jotai';
 import { isDefined } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import { FRONT_COMPONENT_HOST_UI_CLASS_NAME } from 'twenty-front-component-renderer';
 import { Dialog, type DialogPopupProps } from 'twenty-ui/primitives/surfaces';
 
 import { RootStackingContextZIndices } from '@/ui/layout/constants/RootStackingContextZIndices';
@@ -18,7 +19,7 @@ import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contex
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 type DialogInstanceProps = {
-  className?: string;
+  shouldIsolateAppEvents?: boolean;
   dialogId: string;
   children: (popupProps: Pick<DialogPopupProps, 'onKeyDown'>) => ReactNode;
   onEnter?: () => void;
@@ -40,7 +41,7 @@ const PROPAGATED_KEYS = new Set(
 );
 
 export const DialogInstance = ({
-  className,
+  shouldIsolateAppEvents = false,
   dialogId,
   children,
   onEnter,
@@ -123,7 +124,11 @@ export const DialogInstance = ({
             <DialogEnterHotkeyEffect dialogId={dialogId} onEnter={onEnter} />
           )}
           <Dialog.Portal
-            className={className}
+            className={
+              shouldIsolateAppEvents
+                ? FRONT_COMPONENT_HOST_UI_CLASS_NAME
+                : undefined
+            }
             container={
               renderInDocumentBody ? document.body : (container ?? undefined)
             }

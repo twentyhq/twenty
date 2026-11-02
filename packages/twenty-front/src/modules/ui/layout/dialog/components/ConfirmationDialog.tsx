@@ -14,7 +14,7 @@ import { Dialog } from 'twenty-ui/primitives/surfaces';
 const defaultConfirmButtonText = msg`Confirm`;
 
 export const ConfirmationDialog = ({
-  className,
+  shouldIsolateAppEvents,
   dialogId,
   title,
   loading,
@@ -83,7 +83,7 @@ export const ConfirmationDialog = ({
 
   return (
     <DialogInstance
-      className={className}
+      shouldIsolateAppEvents={shouldIsolateAppEvents}
       dialogId={dialogId}
       dismissible={true}
       onClose={() => {

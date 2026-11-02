@@ -9,14 +9,13 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Fragment, useCallback, useId, useState } from 'react';
-import { FRONT_COMPONENT_HOST_UI_CLASS_NAME } from 'twenty-front-component-renderer';
 import { type IframeMediaPermission } from 'twenty-shared/types';
 import { getIframeMediaAllow, isDefined } from 'twenty-shared/utils';
 
 type ManagedIframeSessionProps = ManagedIframeElementProps & {
   ownerId: string;
   ownerName: string;
-  requiresConfirmation: boolean;
+  shouldRequireConfirmation: boolean;
   permission: IframeMediaPermission | null;
 };
 
@@ -50,7 +49,7 @@ export const ManagedIframeSession = ({
   iframeElement,
   ownerId,
   ownerName,
-  requiresConfirmation,
+  shouldRequireConfirmation,
   permission,
 }: ManagedIframeSessionProps) => {
   const mediaAccessSessionId = useId();
@@ -83,7 +82,7 @@ export const ManagedIframeSession = ({
     setActivatedPermission(null);
   }, []);
   const handleEnable = () => {
-    if (requiresConfirmation) {
+    if (shouldRequireConfirmation) {
       setPermissionAwaitingConfirmation(permission);
       openDialog(confirmationDialogId);
 
@@ -119,7 +118,7 @@ export const ManagedIframeSession = ({
 
   return (
     <>
-      {requiresConfirmation && (
+      {shouldRequireConfirmation && (
         <ManagedIframePermissionDialogEffect
           dialogId={confirmationDialogId}
           hasInvalidRequest={hasInvalidRequest}
@@ -128,7 +127,7 @@ export const ManagedIframeSession = ({
       )}
       {isDefined(permissionAwaitingConfirmation) && (
         <ConfirmationDialog
-          className={FRONT_COMPONENT_HOST_UI_CLASS_NAME}
+          shouldIsolateAppEvents
           dialogId={confirmationDialogId}
           title={t`Enable media access for ${ownerName}?`}
           subtitle={
