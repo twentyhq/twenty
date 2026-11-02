@@ -26,6 +26,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
+import { type SendInboxMessageInputDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/send-inbox-message.input';
 import { type AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-ids.util';
 import { buildInboxThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-thread-id.util';
@@ -598,7 +599,7 @@ describe('Addressing channels and existing conversations as an application', () 
 
   const senderKey = () => `application:${application.id}`;
 
-  const sendInboxMessage = (input: SendInboxMessageInput) =>
+  const sendInboxMessage = (input: SendInboxMessageInputDTO) =>
     makeMetadataApiRequest(
       { query: SEND_INBOX_MESSAGE, variables: { input } },
       applicationToken,

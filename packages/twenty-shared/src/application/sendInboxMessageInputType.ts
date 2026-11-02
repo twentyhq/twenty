@@ -4,12 +4,21 @@ import { type SendInboxMessageToolCall } from '@/application/sendInboxMessageToo
 export type SendInboxMessageInput = {
   workspaceMemberIds?: string[];
   mentionedWorkspaceMemberIds?: string[];
-  threadKey?: string;
-  threadId?: string;
-  channelId?: string;
   idempotencyKey: string;
-  title?: string;
   text: string;
   toolCall?: SendInboxMessageToolCall;
   recordTargets?: Omit<InboxThreadRecordInput, 'threadId'>[];
-};
+} & (
+  | {
+      threadKey: string;
+      title: string;
+      channelId?: string;
+      threadId?: never;
+    }
+  | {
+      threadId: string;
+      threadKey?: never;
+      channelId?: never;
+      title?: string;
+    }
+);
