@@ -36,7 +36,7 @@ export class AccessPolicyService {
   ) {}
 
   // Throws what AuthPrincipalGuard, FeatureFlagGuard and SettingsPermissionGuard throw
-  async assertRequestAccessPolicySatisfied({
+  async assertRequestAccessPolicySatisfiedOrThrow({
     accessPolicy,
     request,
   }: {

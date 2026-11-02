@@ -30,7 +30,7 @@ export const AccessPolicyGuard = (
         throw new AuthPrincipalRefusedException();
       }
 
-      await this.accessPolicyService.assertRequestAccessPolicySatisfied({
+      await this.accessPolicyService.assertRequestAccessPolicySatisfiedOrThrow({
         accessPolicy,
         request,
       });
