@@ -3,7 +3,7 @@ import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/metada
 export const EMAILS_TAB_TITLE = 'Emails';
 export const MESSAGES_TAB_TITLE = 'Messages';
 export const EMAILS_TAB_ICON = 'IconMail';
-export const MESSAGES_TAB_ICON = 'IconMessages';
+export const MESSAGES_TAB_ICON = 'IconMessage';
 
 const RECORD_PAGES_WITH_MESSAGES_TAB = [
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage,
