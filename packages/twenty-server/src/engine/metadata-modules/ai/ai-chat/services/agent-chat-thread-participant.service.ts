@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { isNumber } from '@sniptt/guards';
 
+import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { type EntityManager, In } from 'typeorm';
 
@@ -626,19 +628,32 @@ export class AgentChatThreadParticipantService {
              UNION SELECT unnest($2::uuid[])
            ) members`;
     const countMembersParameters = [threadId, additionalWorkspaceMemberIds];
-    const [{ memberCount }] = isDefined(transactionScope)
-      ? await transactionScope.executeRawQuery(
+
+    if (isDefined(transactionScope)) {
+      const [{ memberCount }] = await transactionScope.executeRawQuery(
+        countMembersQuery,
+        countMembersParameters,
+      );
+
+      if (!isNumber(memberCount)) {
+        throw new Error(
+          doNotTranslate('Expected a numeric chat participant count'),
+        );
+      }
+
+      return memberCount;
+    }
+
+    const [{ memberCount }] = await this.threadRepository.query(
+      workspaceId,
+      ({ manager }) =>
+        manager.query<{ memberCount: number }[]>(
           countMembersQuery,
           countMembersParameters,
-        )
-      : await this.threadRepository.query(workspaceId, ({ manager }) =>
-          manager.query<{ memberCount: number }[]>(
-            countMembersQuery,
-            countMembersParameters,
-          ),
-        );
+        ),
+    );
 
-    return memberCount as number;
+    return memberCount;
   }
 
   // Over the chats the member can open and follows, the way the inbox lists
