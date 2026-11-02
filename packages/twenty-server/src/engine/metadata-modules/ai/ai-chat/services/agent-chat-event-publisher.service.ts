@@ -55,7 +55,6 @@ export class AgentChatEventPublisherService {
     });
   }
 
-  // a chunk is kept, numbered by its position, until the turn it belongs to ends
   private async keepCatchup({
     threadId,
     event,
