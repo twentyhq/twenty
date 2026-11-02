@@ -58,6 +58,19 @@ to the workspace that made the connection, so no per-workspace domain is needed.
 
    The import runs through the requesting user's Fathom connection.
 
+## Workspace-shared and personal connections
+
+Connecting Fathom from **Settings > Applications > Fathom** adds a
+workspace-shared connection. Its webhook receives the connected account's own
+recordings and the team recordings it can access.
+
+Members can also add a personal connection from **Settings > App preferences**,
+which is behind the `IS_APP_PREFERENCES_ENABLED` workspace feature flag. A
+personal connection's webhook receives only that member's own recordings
+(`my_recordings` and `my_shared_with_team_recordings`), so teammates who each
+connect do not all import the same team recordings. Actions run by a member use
+their personal connection first and fall back to the workspace-shared one.
+
 ## Media import behaviour
 
 Fathom prepares the downloadable file after the transcript is ready, so a Call

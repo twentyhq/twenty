@@ -1,4 +1,9 @@
 export const FATHOM_PROVIDER_NAME = 'fathom';
+export const FATHOM_USER_PROVIDER_NAME = 'fathom-user';
+export const FATHOM_PROVIDER_NAMES: readonly string[] = [
+  FATHOM_PROVIDER_NAME,
+  FATHOM_USER_PROVIDER_NAME,
+];
 export const FATHOM_WEBHOOK_CONNECTION_QUERY_PARAMETER = 'connectionId';
 export const CALENDAR_EVENT_PAGE_SIZE = 200;
 export const MAX_CALENDAR_EVENT_PAGES = 10;

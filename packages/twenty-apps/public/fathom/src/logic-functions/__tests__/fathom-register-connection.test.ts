@@ -113,6 +113,40 @@ describe('fathomRegisterConnectionHandler', () => {
     });
   });
 
+  it('subscribes a workspace-shared connection to the team recordings it can access', async () => {
+    sdkMocks.getConnection.mockResolvedValue({
+      scope: 'WORKSPACE',
+      accessToken: 'token',
+    });
+
+    await fathomRegisterConnectionHandler(HOOK_PAYLOAD);
+
+    expect(sdkMocks.createWebhook).toHaveBeenCalledWith(
+      expect.objectContaining({
+        triggeredFor: [
+          'my_recordings',
+          'my_shared_with_team_recordings',
+          'shared_team_recordings',
+        ],
+      }),
+    );
+  });
+
+  it('subscribes a personal connection to its own recordings only', async () => {
+    sdkMocks.getConnection.mockResolvedValue({
+      scope: 'USER',
+      accessToken: 'token',
+    });
+
+    await fathomRegisterConnectionHandler(HOOK_PAYLOAD);
+
+    expect(sdkMocks.createWebhook).toHaveBeenCalledWith(
+      expect.objectContaining({
+        triggeredFor: ['my_recordings', 'my_shared_with_team_recordings'],
+      }),
+    );
+  });
+
   it('starts the initial import once the registration is stored', async () => {
     await fathomRegisterConnectionHandler(HOOK_PAYLOAD);
 

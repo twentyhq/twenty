@@ -1,12 +1,7 @@
 import { defineUninstallLogicFunction } from 'twenty-sdk/define';
-import {
-  type AppConnection,
-  kv,
-  listConnections,
-} from 'twenty-sdk/logic-function';
+import { type AppConnection, kv } from 'twenty-sdk/logic-function';
 import { isDefined } from 'src/utils/is-defined';
 
-import { FATHOM_PROVIDER_NAME } from 'src/constants/fathom.constant';
 import { FATHOM_UNINSTALL_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type FathomWebhookRegistration } from 'src/logic-functions/types/fathom-webhook-registration.type';
 import { getConnectionAccessTokenOrThrow } from 'src/logic-functions/utils/get-connection-access-token-or-throw.util';
@@ -14,6 +9,7 @@ import { getFathomConnectionClaimKey } from 'src/logic-functions/utils/get-fatho
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
 import { getFathomWebhookRegistrationKey } from 'src/logic-functions/utils/get-fathom-webhook-registration-key.util';
 import { isFathomNotFoundError } from 'src/logic-functions/utils/is-fathom-not-found-error.util';
+import { listFathomConnections } from 'src/logic-functions/utils/list-fathom-connections.util';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
 
 const deleteWebhookForConnection = async (
@@ -58,9 +54,7 @@ const deleteWebhookForConnection = async (
 export const fathomUninstallHandler = async (): Promise<{
   deletedWebhookCount: number;
 }> => {
-  const connections = await listConnections({
-    providerName: FATHOM_PROVIDER_NAME,
-  });
+  const connections = await listFathomConnections();
   let deletedWebhookCount = 0;
 
   for (const connection of connections) {

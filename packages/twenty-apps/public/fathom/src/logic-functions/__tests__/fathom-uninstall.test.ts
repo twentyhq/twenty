@@ -27,7 +27,11 @@ vi.mock('fathom-typescript', () => ({
 const { fathomUninstallHandler } =
   await import('src/logic-functions/fathom-uninstall');
 
-const buildConnection = (id: string) => ({ id, accessToken: `token-${id}` });
+const buildConnection = (id: string) => ({
+  id,
+  providerName: 'fathom',
+  accessToken: `token-${id}`,
+});
 
 const buildRegistration = (registrationKey: string) => ({
   webhookId: `webhook-for-${registrationKey}`,
