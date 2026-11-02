@@ -68,7 +68,6 @@ const generateDescriptors = async (
     {
       workspaceId,
       authContext,
-      authPrincipalVariant: undefined,
       application,
     },
     { includeSchemas: false },

@@ -157,7 +157,6 @@ describe('DatabaseToolProvider', () => {
           apiKey: { id: 'api-key-id' },
         } as WorkspaceAuthContext,
         explicitObjectGrants: options?.explicitObjectGrants,
-        authPrincipalVariant: undefined,
       },
       { includeSchemas: false },
     )) as (ToolIndexEntry | ToolDescriptor)[];

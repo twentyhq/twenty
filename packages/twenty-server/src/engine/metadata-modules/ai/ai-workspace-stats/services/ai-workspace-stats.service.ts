@@ -32,7 +32,6 @@ export class AiWorkspaceStatsService {
       // the full role-scoped catalog, to match the Tools tab
       this.toolRegistryService.buildToolIndex(workspaceId, {
         authContext,
-        authPrincipalVariant: { kind: 'userSession', variant: 'standard' },
       }),
     ]);
 

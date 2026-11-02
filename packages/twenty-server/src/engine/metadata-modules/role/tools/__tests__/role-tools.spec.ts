@@ -7,6 +7,7 @@ import {
 } from 'twenty-shared/types';
 
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { type ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { type RoleService } from 'src/engine/metadata-modules/role/role.service';
@@ -85,12 +86,12 @@ const buildListRolesTool = (services: ReturnType<typeof buildServices>) =>
 
 const context: ToolProviderContext = {
   workspaceId,
-  authPrincipalVariant: { kind: 'userSession', variant: 'standard' },
   userWorkspaceId: callerUserWorkspaceId,
   authContext: {
     type: 'user',
     workspace: { id: workspaceId },
     userWorkspaceId: callerUserWorkspaceId,
+    sessionVariant: 'standard',
   } as WorkspaceAuthContext,
   actorContext: {
     source: FieldActorSource.MANUAL,

@@ -20,6 +20,7 @@ import { isSnakeCaseToolName } from 'src/engine/core-modules/tool-provider/utils
 import { humanizeToolName } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principal-variant.type';
+import { classifyWorkspaceAuthContext } from 'src/engine/guards/utils/classify-workspace-auth-context.util';
 import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
 
 // Tools are built for agents, and an agent's own role already narrows what its
@@ -163,7 +164,11 @@ export class DefinedToolRegistryService implements OnModuleInit {
   }): Promise<boolean> {
     return this.accessPolicyService.isToolAccessPolicySatisfied({
       accessPolicy,
-      authPrincipalVariant: withoutAgent(context.authPrincipalVariant),
+      authPrincipalVariant: withoutAgent(
+        isDefined(context.authContext)
+          ? classifyWorkspaceAuthContext(context.authContext)
+          : undefined,
+      ),
       authContext: context.authContext,
       featureFlagsMap,
     });

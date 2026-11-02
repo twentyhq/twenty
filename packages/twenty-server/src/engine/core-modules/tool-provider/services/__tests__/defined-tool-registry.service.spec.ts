@@ -5,6 +5,13 @@ import { PermissionFlagType } from 'twenty-shared/constants';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { z } from 'zod';
 
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import {
+  type ApiKeyWorkspaceAuthContext,
+  type ApplicationWorkspaceAuthContext,
+  type UserWorkspaceAuthContext,
+} from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
 import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-tool.interface';
@@ -19,9 +26,23 @@ import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util
 
 const webhookId = '2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e';
 
+const MEMBER_AUTH_CONTEXT = {
+  type: 'user',
+  sessionVariant: 'standard',
+} as UserWorkspaceAuthContext;
+
+const APPLICATION = {
+  sourceType: ApplicationRegistrationSourceType.NPM,
+} as FlatApplication;
+
+const APPLICATION_AUTH_CONTEXT = {
+  type: 'application',
+  application: APPLICATION,
+} as ApplicationWorkspaceAuthContext;
+
 const context: ToolProviderContext = {
   workspaceId: 'workspace-id',
-  authPrincipalVariant: { kind: 'userSession', variant: 'standard' },
+  authContext: MEMBER_AUTH_CONTEXT,
 };
 
 const WEBHOOK_ACCESS_POLICY: AccessPolicy = {
@@ -294,11 +315,7 @@ describe('DefinedToolRegistryService', () => {
       expect(
         await listToolNames(definedToolRegistryService, {
           ...context,
-          authPrincipalVariant: {
-            kind: 'application',
-            variant: 'withoutUser',
-            withAgent: false,
-          },
+          authContext: APPLICATION_AUTH_CONTEXT,
         }),
       ).toEqual(['rename_webhook']);
     });
@@ -312,10 +329,10 @@ describe('DefinedToolRegistryService', () => {
       expect(
         await listToolNames(definedToolRegistryService, {
           ...context,
-          authPrincipalVariant: {
-            kind: 'application',
-            variant: 'withUser',
-            withAgent: true,
+          authContext: {
+            ...MEMBER_AUTH_CONTEXT,
+            application: APPLICATION,
+            agentId: 'agent-id',
           },
         }),
       ).toEqual(['rename_webhook']);
@@ -330,7 +347,7 @@ describe('DefinedToolRegistryService', () => {
       expect(
         await listToolNames(definedToolRegistryService, {
           ...context,
-          authPrincipalVariant: undefined,
+          authContext: undefined,
         }),
       ).toEqual([]);
     });
@@ -388,7 +405,10 @@ describe('DefinedToolRegistryService', () => {
         await definedToolRegistryService.execute({
           definedTool,
           args: { id: webhookId },
-          context: { ...context, authPrincipalVariant: { kind: 'apiKey' } },
+          context: {
+            ...context,
+            authContext: { type: 'apiKey' } as ApiKeyWorkspaceAuthContext,
+          },
         }),
       ).toMatchObject({ success: true });
       expect(
@@ -397,11 +417,7 @@ describe('DefinedToolRegistryService', () => {
           args: { id: webhookId },
           context: {
             ...context,
-            authPrincipalVariant: {
-              kind: 'application',
-              variant: 'withoutUser',
-              withAgent: false,
-            },
+            authContext: APPLICATION_AUTH_CONTEXT,
           },
         }),
       ).toMatchObject({

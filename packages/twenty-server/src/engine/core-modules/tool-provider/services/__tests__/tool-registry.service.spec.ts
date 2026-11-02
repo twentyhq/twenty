@@ -41,13 +41,11 @@ describe('ToolRegistryService', () => {
         buildToolRegistryService();
       const resolvedContext: ToolProviderContext = {
         workspaceId,
-        authPrincipalVariant: undefined,
       };
 
       await toolRegistryService.getCatalog({
         workspaceId,
         explicitObjectGrants: { canReadAllObjectRecords: true },
-        authPrincipalVariant: undefined,
         resolveExecutionContext: async () => resolvedContext,
       });
 

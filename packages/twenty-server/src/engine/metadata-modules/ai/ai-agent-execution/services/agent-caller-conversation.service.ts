@@ -6,7 +6,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
-import { classifyWorkspaceAuthContext } from 'src/engine/guards/utils/classify-workspace-auth-context.util';
 import { buildProposeToolCallPendingOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-tool-call.pausing-tool';
 import { type ProposedToolCallAnswer } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/types/proposed-tool-call-answer.type';
 import { findMissingRequiredToolArguments } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/find-missing-required-tool-arguments.util';
@@ -273,9 +272,6 @@ export class AgentCallerConversationService {
     const toolContext = {
       workspaceId,
       authContext,
-      authPrincipalVariant: isDefined(authContext)
-        ? classifyWorkspaceAuthContext(authContext)
-        : undefined,
       application,
     } satisfies ToolContext;
 

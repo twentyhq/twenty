@@ -6,6 +6,7 @@ import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provider/services/defined-tool-registry.service';
@@ -51,7 +52,11 @@ const otherApplication = {
 
 const context: ToolProviderContext = {
   workspaceId,
-  authPrincipalVariant: { kind: 'userSession', variant: 'standard' },
+  authContext: {
+    type: 'user',
+    workspace: { id: workspaceId },
+    sessionVariant: 'standard',
+  } as UserWorkspaceAuthContext,
   userWorkspaceId: 'caller-user-workspace-id',
   actorContext: {
     source: FieldActorSource.MANUAL,

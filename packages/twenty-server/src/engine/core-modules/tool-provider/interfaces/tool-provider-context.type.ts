@@ -4,7 +4,6 @@ import { type APP_LOCALES } from 'twenty-shared/translations';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type ExplicitObjectGrants } from 'src/engine/core-modules/tool-provider/interfaces/explicit-object-grants.type';
-import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principal-variant.type';
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/code-execution-stream-emitter.type';
 
 export type ToolProviderContext = {
@@ -12,8 +11,6 @@ export type ToolProviderContext = {
   workspaceId: string;
   approvedToolName?: string;
   authContext?: WorkspaceAuthContext;
-  // undefined when the caller is no principal an access policy can admit
-  authPrincipalVariant: AuthPrincipalVariant | undefined;
   application?: FlatApplication;
   actorContext?: ActorMetadata;
   userId?: string;

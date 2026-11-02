@@ -1,6 +1,7 @@
 import { type ActingAgent } from 'src/engine/core-modules/auth/types/acting-agent.type';
 import { type RawAuthContext } from 'src/engine/core-modules/auth/types/raw-auth-context.type';
 import { type PermissionScope } from 'src/engine/permissions/principal/types/permission-scope.type';
+import { type UserSessionVariant } from 'src/engine/core-modules/auth/types/user-session-variant.type';
 
 export type WorkspaceAuthContextType =
   | 'system'
@@ -29,6 +30,8 @@ export interface UserWorkspaceAuthContext extends BaseWorkspaceAuthContext {
   user: NonNullable<RawAuthContext['user']>;
   workspaceMemberId: NonNullable<RawAuthContext['workspaceMemberId']>;
   workspaceMember: NonNullable<RawAuthContext['workspaceMember']>;
+  // Taken from the request token; contexts rebuilt outside a request are standard
+  sessionVariant: UserSessionVariant;
   application?: NonNullable<RawAuthContext['application']>;
   agentId?: string;
   // Set when an AI run narrows the caller to an inline scope

@@ -39,7 +39,6 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { classifyAuthPrincipal } from 'src/engine/guards/utils/classify-auth-principal.util';
 import { WorkspaceNotSuspendedGuard } from 'src/engine/guards/workspace-not-suspended.guard';
 
 @Controller(ApiPath.Mcp)
@@ -100,7 +99,6 @@ export class McpCoreController {
     // The guard authenticates after WorkspaceAuthContextMiddleware has run, so the context is built here
     const queryContext: McpCoreQueryContext = {
       authContext: buildWorkspaceAuthContextFromRequest(request),
-      authPrincipalVariant: classifyAuthPrincipal(request),
       workspace,
       userId: user?.id,
       userWorkspaceId,

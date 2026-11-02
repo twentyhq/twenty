@@ -5,11 +5,24 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import { type UserSessionVariant } from 'src/engine/core-modules/auth/types/user-session-variant.type';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { buildPendingActivationUserAuthContext } from 'src/engine/core-modules/auth/utils/build-pending-activation-user-auth-context.util';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
+import { isImpersonating } from 'src/engine/guards/utils/is-impersonating.util';
+
+const getUserSessionVariant = (req: Request): UserSessionVariant => {
+  if (req.tokenType === JwtTokenTypeEnum.PLAYGROUND) {
+    return 'playground';
+  }
+
+  return isImpersonating(req.impersonationContext)
+    ? 'impersonated'
+    : 'standard';
+};
 
 export const buildWorkspaceAuthContextFromRequest = (
   req: Request,
@@ -33,6 +46,7 @@ export const buildWorkspaceAuthContextFromRequest = (
       user: req.user,
       workspaceMemberId: req.workspaceMemberId,
       workspaceMember: req.workspaceMember,
+      sessionVariant: getUserSessionVariant(req),
       application: req.application,
       agentId: req.agentId,
     });

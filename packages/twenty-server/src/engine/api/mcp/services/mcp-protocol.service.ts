@@ -64,7 +64,6 @@ import {
   LOAD_SKILL_TOOL_NAME,
 } from 'src/engine/core-modules/tool-provider/tools/load-skill.tool';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
-import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principal-variant.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { handleException } from 'src/engine/utils/global-exception-handler.util';
@@ -110,7 +109,6 @@ export class McpProtocolService {
       await this.mcpInstructionBuilderService.buildInstructions({
         workspaceId: context.workspace.id,
         authContext: context.authContext,
-        authPrincipalVariant: context.authPrincipalVariant,
         isDirectMode: context.isDirectMode,
       });
 
@@ -174,7 +172,6 @@ export class McpProtocolService {
     workspace: FlatWorkspace,
     options?: {
       authContext?: WorkspaceAuthContext;
-      authPrincipalVariant: AuthPrincipalVariant | undefined;
       userId?: string;
       userWorkspaceId?: string;
       apiKey?: FlatApiKey;
@@ -191,7 +188,6 @@ export class McpProtocolService {
     const toolContext: ToolProviderContext = {
       workspaceId: workspace.id,
       authContext: options?.authContext,
-      authPrincipalVariant: options?.authPrincipalVariant,
       application: options?.application,
       userId: options?.userId,
       userWorkspaceId: options?.userWorkspaceId,
@@ -208,7 +204,6 @@ export class McpProtocolService {
       ...annotatePreloadedMcpTools(preloadedTools),
       [GET_TOOL_CATALOG_TOOL_NAME]: {
         ...createGetToolCatalogTool(this.toolRegistry, workspace.id, {
-          authPrincipalVariant: options?.authPrincipalVariant,
           userId: options?.userId,
           userWorkspaceId: options?.userWorkspaceId,
           excludeTools: MCP_EXCLUDED_TOOL_NAMES,
@@ -407,7 +402,6 @@ export class McpProtocolService {
       () =>
         this.buildMcpToolSet(context.workspace, {
           authContext: context.authContext,
-          authPrincipalVariant: context.authPrincipalVariant,
           application: context.application,
           userId: context.userId,
           userWorkspaceId: context.userWorkspaceId,

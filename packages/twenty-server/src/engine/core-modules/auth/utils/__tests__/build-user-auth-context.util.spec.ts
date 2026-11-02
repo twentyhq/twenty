@@ -9,6 +9,7 @@ const baseInput = {
   workspaceMember: { id: 'workspace-member-1' } as NonNullable<
     RawAuthContext['workspaceMember']
   >,
+  sessionVariant: 'standard' as const,
 };
 
 const application = {

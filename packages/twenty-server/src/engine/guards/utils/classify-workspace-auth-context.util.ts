@@ -21,9 +21,8 @@ const classifyApplicationPrincipal = ({
   return withAgent ? undefined : { kind: 'oauthClient', variant };
 };
 
-// The in-process counterpart of classifyAuthPrincipal, for callers that hold an
-// auth context instead of a request: a session's token type is not kept, so
-// every user is a standard session
+// The counterpart of classifyAuthPrincipal for callers that hold an auth context
+// instead of a request
 export const classifyWorkspaceAuthContext = (
   authContext: WorkspaceAuthContext,
 ): AuthPrincipalVariant | undefined => {
@@ -41,7 +40,7 @@ export const classifyWorkspaceAuthContext = (
 
       return isDefined(authContext.agentId)
         ? undefined
-        : { kind: 'userSession', variant: 'standard' };
+        : { kind: 'userSession', variant: authContext.sessionVariant };
     }
     case 'pendingActivationUser':
       return { kind: 'userSession', variant: 'standard' };
