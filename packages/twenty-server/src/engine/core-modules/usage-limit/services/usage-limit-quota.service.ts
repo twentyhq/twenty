@@ -35,6 +35,7 @@ import { buildConsumeScriptArguments } from 'src/engine/core-modules/usage-limit
 import { buildIntraWorkspaceLimitCounterKeys } from 'src/engine/core-modules/usage-limit/utils/build-intra-workspace-limit-counter-keys.util';
 import { buildLimitQuotaCounter } from 'src/engine/core-modules/usage-limit/utils/build-limit-quota-counter.util';
 import { buildPeriodGroupKey } from 'src/engine/core-modules/usage-limit/utils/build-period-group-key.util';
+import { applyPerSpenderDefaultOverrides } from 'src/engine/core-modules/usage-limit/utils/apply-per-spender-default-overrides.util';
 import { buildQuotaCounters } from 'src/engine/core-modules/usage-limit/utils/build-quota-counters.util';
 import { buildQuotaDebits } from 'src/engine/core-modules/usage-limit/utils/build-quota-debits.util';
 import { buildQuotaExhaustedScope } from 'src/engine/core-modules/usage-limit/utils/build-quota-exhausted-scope.util';
@@ -245,7 +246,7 @@ export class UsageLimitQuotaService {
   }
 
   async hasUserCredits(workspaceId: string): Promise<boolean> {
-    const quotaLimitDefaults = await this.buildQuotaLimitDefaults({
+    const { quotaLimitDefaults } = await this.findQuotaLimitsAndDefaults({
       workspaceId,
       resourceType: UsageResourceType.AI,
     });
@@ -698,15 +699,8 @@ export class UsageLimitQuotaService {
   }: QuotaConsumeArgs): Promise<
     (LimitQuotaCounter | UserAllowanceQuotaCounter)[]
   > {
-    const quotaLimitDefaults = await this.buildQuotaLimitDefaults({
-      workspaceId,
-      resourceType,
-    });
-
-    const quotaLimits = await this.findQuotaLimits({
-      workspaceId,
-      resourceType,
-    });
+    const { quotaLimitDefaults, quotaLimits } =
+      await this.findQuotaLimitsAndDefaults({ workspaceId, resourceType });
 
     if (quotaLimits.length === 0 && quotaLimitDefaults.length === 0) {
       return [];
@@ -728,6 +722,32 @@ export class UsageLimitQuotaService {
         ],
       }),
     });
+  }
+
+  private async findQuotaLimitsAndDefaults({
+    workspaceId,
+    resourceType,
+  }: {
+    workspaceId: string;
+    resourceType: UsageResourceType;
+  }): Promise<{
+    quotaLimitDefaults: QuotaLimitDefault[];
+    quotaLimits: FlatQuotaLimit[];
+  }> {
+    const [quotaLimitDefaults, quotaLimits] = await Promise.all([
+      this.buildQuotaLimitDefaults({ workspaceId, resourceType }),
+      this.findQuotaLimits({ workspaceId, resourceType }),
+    ]);
+
+    const overridden = applyPerSpenderDefaultOverrides({
+      quotaLimitDefaults,
+      limits: quotaLimits,
+    });
+
+    return {
+      quotaLimitDefaults: overridden.quotaLimitDefaults,
+      quotaLimits: overridden.limits,
+    };
   }
 
   private async buildQuotaLimitDefaults({

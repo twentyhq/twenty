@@ -23,8 +23,10 @@ import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/se
 import { BillingCreditOneTimeTopUpService } from 'src/engine/core-modules/billing/services/billing-credit-one-time-top-up.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { BillingWorkspaceCreditAllowanceService } from 'src/engine/core-modules/billing/services/billing-workspace-credit-allowance.service';
 import { ResourceCreditService } from 'src/engine/core-modules/billing/services/resource-credit.service';
 import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/services/stripe-invoice.service';
+import { computeRolloverClosingAllowances } from 'src/engine/core-modules/billing/utils/compute-rollover-closing-allowances.util';
 import { deriveBillingPeriodTransition } from 'src/engine/core-modules/billing/utils/derive-billing-period-transition.util';
 import { isCreditTopUpInvoice } from 'src/engine/core-modules/billing/utils/is-credit-top-up-invoice.util';
 import { resolveBillingTransitionBoundary } from 'src/engine/core-modules/billing/utils/resolve-billing-transition-boundary.util';
@@ -48,6 +50,7 @@ export class BillingWebhookInvoiceService {
     private readonly billingCreditRolloverService: BillingCreditRolloverService,
     private readonly billingCreditOneTimeTopUpService: BillingCreditOneTimeTopUpService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly billingWorkspaceCreditAllowanceService: BillingWorkspaceCreditAllowanceService,
     private readonly resourceCreditService: ResourceCreditService,
     private readonly stripeInvoiceService: StripeInvoiceService,
     private readonly eventLogEmitterService: EventLogEmitterService,
@@ -167,19 +170,31 @@ export class BillingWebhookInvoiceService {
       ledgerPeriodStart,
     });
 
-    // Trial credits carry into the first paid period; the trial allowance comes from config, not the price
-    const closingAllowanceMicro = isFirstPeriodAfterTrial
-      ? this.billingUsageService.getTrialResourceUsageCap(subscription)
-      : params.workspaceCreditsForPackMicro;
+    const workspaceCreditAllowanceMicro =
+      await this.billingWorkspaceCreditAllowanceService.findActiveWorkspaceCreditAllowanceMicro(
+        {
+          workspaceId: subscription.workspaceId,
+          interval: subscription.interval,
+          isTrialing: isFirstPeriodAfterTrial,
+          at: new Date(closingPeriodEnd.getTime() - 1),
+        },
+      );
+
+    const { closingAllowanceMicro, closingSeatAllowanceMicro } =
+      computeRolloverClosingAllowances({
+        planWorkspaceCredits: params,
+        trialAllowanceMicro:
+          this.billingUsageService.getTrialResourceUsageCap(subscription),
+        isFirstPeriodAfterTrial,
+        workspaceCreditAllowanceMicro,
+      });
 
     await this.billingCreditRolloverService.processRolloverOnPeriodTransition({
       workspaceId: subscription.workspaceId,
       closingPeriodStart,
       closingPeriodEnd,
       closingAllowanceMicro,
-      closingSeatAllowanceMicro: isFirstPeriodAfterTrial
-        ? 0
-        : params.workspaceCreditsForSeatsMicro,
+      closingSeatAllowanceMicro,
       nextPeriodStart,
       nextAllowanceMicro: params.workspaceCreditsForPackMicro,
     });

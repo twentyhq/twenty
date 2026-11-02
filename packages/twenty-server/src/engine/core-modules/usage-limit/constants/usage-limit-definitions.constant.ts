@@ -109,7 +109,7 @@ export const USAGE_LIMIT_DEFINITIONS = {
           periodUnit: 'week',
           periodCount: 1,
           limitValueConfigVariable: 'AI_USER_CREDITS_LIMIT',
-          isOverridable: false,
+          isOverridable: true,
         },
       ],
     },

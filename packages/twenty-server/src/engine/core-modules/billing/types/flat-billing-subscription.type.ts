@@ -6,6 +6,7 @@ import { type BillingPlanKey } from 'src/engine/core-modules/billing/enums/billi
 import { type BillingSubscriptionCollectionMethod } from 'src/engine/core-modules/billing/enums/billing-subscription-collection-method.enum';
 import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums/billing-subscription-interval.enum';
 import { type SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
+import { type WorkspaceCreditAllowanceWindow } from 'src/engine/core-modules/billing/types/workspace-credit-allowance-window.type';
 import { type CreditAllowanceGrant } from 'src/engine/core-modules/usage-limit/types/credit-allowance-grant.type';
 
 export type FlatBillingSubscription = {
@@ -26,6 +27,8 @@ export type FlatBillingSubscription = {
   trialEnd: Date | null;
   collectionMethod: BillingSubscriptionCollectionMethod;
   planAllowanceMicro: number | null;
+  includedWorkspaceCreditsMicro: number;
+  workspaceCreditAllowances: WorkspaceCreditAllowanceWindow[];
   planKey: BillingPlanKey | null;
   userCreditsFallback: UserCreditsFallback;
   creditGrants: CreditAllowanceGrant[];

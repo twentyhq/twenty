@@ -7,8 +7,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { BillingWorkspaceCreditAllowanceService } from 'src/engine/core-modules/billing/services/billing-workspace-credit-allowance.service';
 
 import { NO_BILLING_SUBSCRIPTION } from 'src/engine/core-modules/billing/constants/no-billing-subscription.constant';
+import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { UserCreditsFallback } from 'src/engine/core-modules/billing/enums/billing-user-credits-fallback.enum';
 import { type CurrentBillingSubscription } from 'src/engine/core-modules/billing/types/flat-billing-subscription.type';
 import { isBaseProductSubscriptionItem } from 'src/engine/core-modules/billing/utils/is-base-product-subscription-item.util';
@@ -23,6 +25,7 @@ export class WorkspaceCurrentBillingSubscriptionCacheService extends WorkspaceCa
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingCreditGrantService: BillingCreditGrantService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly billingWorkspaceCreditAllowanceService: BillingWorkspaceCreditAllowanceService,
   ) {
     super();
   }
@@ -39,10 +42,19 @@ export class WorkspaceCurrentBillingSubscriptionCacheService extends WorkspaceCa
       return NO_BILLING_SUBSCRIPTION;
     }
 
-    const [unexpiredGrants, billingCustomer] = await Promise.all([
-      this.billingCreditGrantService.findUnexpiredGrants(workspaceId),
-      this.billingSubscriptionService.getBillingCustomer(workspaceId),
-    ]);
+    const [unexpiredGrants, billingCustomer, workspaceCreditAllowances] =
+      await Promise.all([
+        this.billingCreditGrantService.findUnexpiredGrants(workspaceId),
+        this.billingSubscriptionService.getBillingCustomer(workspaceId),
+        this.billingWorkspaceCreditAllowanceService.findWorkspaceCreditAllowanceWindows(
+          {
+            workspaceId,
+            interval: subscription.interval,
+            isTrialing: subscription.status === SubscriptionStatus.Trialing,
+            endingAfter: new Date(),
+          },
+        ),
+      ]);
 
     return {
       id: subscription.id,
@@ -63,6 +75,9 @@ export class WorkspaceCurrentBillingSubscriptionCacheService extends WorkspaceCa
       collectionMethod: subscription.collectionMethod,
       planAllowanceMicro:
         this.billingUsageService.findResourceUsageCap(subscription),
+      includedWorkspaceCreditsMicro:
+        this.billingUsageService.getIncludedWorkspaceCreditsMicro(subscription),
+      workspaceCreditAllowances,
       planKey:
         subscription.billingSubscriptionItems.find(
           isBaseProductSubscriptionItem,

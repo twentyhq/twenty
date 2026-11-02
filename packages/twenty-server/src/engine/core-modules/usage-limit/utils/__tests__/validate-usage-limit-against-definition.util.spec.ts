@@ -203,4 +203,23 @@ describe('validateUsageLimitAgainstDefinition', () => {
   it('rejects a storage stock counted in credits', () => {
     rejects({ ...validStockLimit, unit: UsageUnit.CREDIT });
   });
+
+  it('accepts a user credit row that overrides the per-member AI credit default', () => {
+    accepts({
+      ...validQuotaLimit,
+      operationType: UsageOperationType.ALL,
+      spenderType: 'userWorkspace',
+      periodUnit: 'week',
+      unit: UsageUnit.USER_CREDIT,
+    });
+  });
+
+  it('rejects user credits on a single AI operation, which no default covers', () => {
+    rejects({
+      ...validQuotaLimit,
+      spenderType: 'userWorkspace',
+      periodUnit: 'week',
+      unit: UsageUnit.USER_CREDIT,
+    });
+  });
 });

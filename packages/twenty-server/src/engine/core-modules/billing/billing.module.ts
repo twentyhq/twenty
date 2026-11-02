@@ -12,6 +12,7 @@ import { BillingResolver } from 'src/engine/core-modules/billing/billing.resolve
 import { BillingSyncCustomerDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-customer-data.command';
 import { BillingSyncPlansDataCommand } from 'src/engine/core-modules/billing/commands/billing-sync-plans-data.command';
 import { BillingUpdateSubscriptionPriceCommand } from 'src/engine/core-modules/billing/commands/billing-update-subscription-price.command';
+import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { BillingCreditGrantEntity } from 'src/engine/core-modules/billing/entities/billing-credit-grant.entity';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
@@ -24,6 +25,7 @@ import { BillingCreditAllowanceService } from 'src/engine/core-modules/billing/s
 import { BillingCreditGrantService } from 'src/engine/core-modules/billing/services/billing-credit-grant.service';
 import { BillingCreditRolloverService } from 'src/engine/core-modules/billing/services/billing-credit-rollover.service';
 import { BillingCreditService } from 'src/engine/core-modules/billing/services/billing-credit.service';
+import { BillingWorkspaceCreditAllowanceService } from 'src/engine/core-modules/billing/services/billing-workspace-credit-allowance.service';
 import { BillingCreditOneTimeTopUpService } from 'src/engine/core-modules/billing/services/billing-credit-one-time-top-up.service';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPortalWorkspaceService } from 'src/engine/core-modules/billing/services/billing-portal.workspace-service';
@@ -64,6 +66,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
       BillingProductEntity,
       BillingPriceEntity,
       BillingCreditGrantEntity,
+      BillingArrangementEntity,
       WorkspaceEntity,
       UserWorkspaceEntity,
     ]),
@@ -97,6 +100,8 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ResourceCreditService,
     BillingGaugeService,
     WorkspaceCurrentBillingSubscriptionCacheService,
+    BillingWorkspaceCreditAllowanceService,
+    provideWorkspaceScopedRepository(BillingArrangementEntity),
     provideWorkspaceScopedRepository(BillingCreditGrantEntity),
     provideWorkspaceScopedRepository(BillingCustomerEntity),
     provideWorkspaceScopedRepository(BillingSubscriptionEntity),
@@ -113,6 +118,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingCreditService,
     BillingCreditOneTimeTopUpService,
     ResourceCreditService,
+    BillingWorkspaceCreditAllowanceService,
   ],
 })
 export class BillingModule {}
