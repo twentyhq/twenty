@@ -95,7 +95,9 @@ const meta: Meta<PageDecoratorArgs> = {
         ),
         graphql.query('FindOneApplicationByUniversalIdentifier', () =>
           HttpResponse.json({
-            data: { findOneApplication: null },
+            errors: [
+              { message: 'Not installed', extensions: { code: 'NOT_FOUND' } },
+            ],
           }),
         ),
         ...graphqlMocks.handlers,

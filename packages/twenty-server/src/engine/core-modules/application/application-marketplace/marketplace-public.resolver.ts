@@ -46,17 +46,15 @@ export class MarketplacePublicResolver {
   async findPublicMarketplaceAppDetail(
     @Args('universalIdentifier') universalIdentifier: string,
   ): Promise<MarketplaceAppDetailDTO> {
-    const detail =
-      await this.marketplaceQueryService.findMarketplaceAppDetail(
-        universalIdentifier,
-      );
+    const detail = isDefined(
+      findWellKnownOAuthClientByUniversalIdentifier(universalIdentifier),
+    )
+      ? null
+      : await this.marketplaceQueryService.findMarketplaceAppDetail(
+          universalIdentifier,
+        );
 
-    if (
-      !detail.isListed ||
-      isDefined(
-        findWellKnownOAuthClientByUniversalIdentifier(universalIdentifier),
-      )
-    ) {
+    if (!isDefined(detail) || !detail.isListed) {
       throw new ApplicationRegistrationException(
         `No listed marketplace application found for identifier "${universalIdentifier}"`,
         ApplicationRegistrationExceptionCode.APPLICATION_REGISTRATION_NOT_FOUND,
