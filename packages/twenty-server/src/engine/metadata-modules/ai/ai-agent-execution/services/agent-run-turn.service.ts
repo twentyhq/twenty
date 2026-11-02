@@ -377,7 +377,9 @@ export class AgentRunTurnService {
     };
   }
 
-  private async readSameRequestOutputOrThrow(turn: AgentTurn): Promise<object> {
+  private async readSameRequestOutputOrThrow(
+    turn: Pick<AgentTurn, 'stream'>,
+  ): Promise<object> {
     let formatError: unknown;
     const output: unknown = await Promise.resolve(turn.stream.output).catch(
       (error: unknown) => {

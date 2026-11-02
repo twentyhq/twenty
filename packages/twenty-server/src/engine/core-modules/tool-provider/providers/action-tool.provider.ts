@@ -301,7 +301,7 @@ export class ActionToolProvider implements ToolProvider {
     context,
   }: {
     toolName: string;
-    context: ToolProviderContext;
+    context: Pick<ToolProviderContext, 'rolePermissionConfig'>;
   }): boolean {
     return isWithheldFromPermissionScope({
       canRunUnderScope:

@@ -279,7 +279,6 @@ export class AgentTurnRecorderService {
       );
     }
 
-    // a turn records no usage until a step reports some
     return {
       inputTokens: turn.inputTokens ?? 0,
       outputTokens: turn.outputTokens ?? 0,

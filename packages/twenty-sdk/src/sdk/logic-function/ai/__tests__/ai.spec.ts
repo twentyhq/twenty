@@ -384,11 +384,11 @@ describe('ai.generate with onChunk', () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
 
     try {
-      for (const seq of [1, 2, 3, 4, 5]) {
+      for (const sequence of [1, 2, 3, 4, 5]) {
         runChannel.send({
           type: 'stream-chunk',
-          chunk: { type: 'text-delta', id: 'text-1', delta: `${seq}` },
-          seq,
+          chunk: { type: 'text-delta', id: 'text-1', delta: `${sequence}` },
+          seq: sequence,
         });
       }
       runChannel.answerMutation({ data: { generate: RESULT } });
@@ -425,11 +425,11 @@ describe('ai.generate with onChunk', () => {
     vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
 
     try {
-      for (const seq of [1, 2, 3, 4, 5]) {
+      for (const sequence of [1, 2, 3, 4, 5]) {
         runChannel.send({
           type: 'stream-chunk',
-          chunk: { type: 'text-delta', id: 'text-1', delta: `${seq}` },
-          seq,
+          chunk: { type: 'text-delta', id: 'text-1', delta: `${sequence}` },
+          seq: sequence,
         });
       }
       runChannel.answerMutation({ data: { generate: RESULT } });
@@ -497,11 +497,11 @@ describe('ai.generate with onChunk', () => {
 
     await vi.waitFor(() => expect(runChannel.requests).toHaveLength(2));
 
-    for (const seq of [1, 2, 3, 4]) {
+    for (const sequence of [1, 2, 3, 4]) {
       runChannel.send({
         type: 'stream-chunk',
-        chunk: { type: 'text-delta', id: 'text-1', delta: `${seq}` },
-        seq,
+        chunk: { type: 'text-delta', id: 'text-1', delta: `${sequence}` },
+        seq: sequence,
       });
     }
     runChannel.send({ type: 'run-finished' });

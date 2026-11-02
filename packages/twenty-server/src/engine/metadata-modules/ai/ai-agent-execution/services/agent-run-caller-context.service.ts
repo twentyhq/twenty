@@ -46,7 +46,7 @@ export class AgentRunCallerContextService {
     callerApplication: FlatApplication | undefined;
   }): Promise<AgentRunExecutionContext> {
     const { authContext, actorContext, callerRoleIds } =
-      await this.buildCallerContext({
+      await this.buildCallerContextOrThrow({
         workspace,
         callerRef,
         applicationAuthContext: isDefined(application)
@@ -80,7 +80,7 @@ export class AgentRunCallerContextService {
   }
 
   // the API key is looked up again, so a run continued after its revocation stops
-  private async buildCallerContext({
+  private async buildCallerContextOrThrow({
     workspace,
     callerRef,
     applicationAuthContext,

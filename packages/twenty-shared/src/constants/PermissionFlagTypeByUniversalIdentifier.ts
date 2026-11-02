@@ -1,7 +1,5 @@
-import {
-  PermissionFlagType,
-  SystemPermissionFlag,
-} from 'twenty-shared/constants';
+import { PermissionFlagType } from './PermissionFlagType';
+import { SystemPermissionFlag } from './SystemPermissionFlag';
 
 export const PERMISSION_FLAG_TYPE_BY_UNIVERSAL_IDENTIFIER = new Map<
   string,
