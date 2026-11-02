@@ -135,6 +135,7 @@ describe('2-55 workspace command - rename Emails tab to Messages (integration)',
         icon: EMAILS_TAB_ICON,
       }),
     );
+    widgets.forEach((widget) => expect(widget.title).toBe(EMAILS_TAB_TITLE));
   });
 
   it('renames the Emails tabs and widgets to Messages', async () => {
@@ -170,9 +171,12 @@ describe('2-55 workspace command - rename Emails tab to Messages (integration)',
   });
 
   it('is a no-op once the workspace is migrated', async () => {
+    await resetToEmailsTabs();
     await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
 
     const before = await findMessagesTabsAndWidgets();
+
+    before.tabs.forEach((tab) => expect(tab.title).toBe(MESSAGES_TAB_TITLE));
 
     await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
 
