@@ -216,16 +216,18 @@ export class CommonApiContextBuilderService {
       );
     }
 
+    if (!isDefined(permissionsPrincipal)) {
+      return { objectsPermissions: {}, principals };
+    }
+
     return {
-      objectsPermissions: isDefined(permissionsPrincipal)
-        ? computeObjectsPermissionsForRoles({
-            principal: permissionsPrincipal,
-            rolesPermissions,
-            flatObjectMetadataMaps,
-            flatFieldMetadataMaps,
-            flatApplicationMaps,
-          })
-        : {},
+      objectsPermissions: computeObjectsPermissionsForRoles({
+        principal: permissionsPrincipal,
+        rolesPermissions,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+        flatApplicationMaps,
+      }),
       principals,
     };
   }
