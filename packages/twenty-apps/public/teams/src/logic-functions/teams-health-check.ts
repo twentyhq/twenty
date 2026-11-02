@@ -38,6 +38,23 @@ export const teamsHealthCheckHandler =
       };
     }
 
+    // Chat routes a Microsoft tenant here only through a workspace-shared
+    // connection; personal connections never claim one.
+    const hasWorkingWorkspaceConnection = connections.some(
+      (connection) =>
+        connection.scope === 'WORKSPACE' && !isDefined(connection.authFailedAt),
+    );
+
+    if (isTeamsChatEnabled() && !hasWorkingWorkspaceConnection) {
+      return {
+        status: 'WARNING',
+        title: 'Microsoft Teams chat needs a workspace connection',
+        description:
+          'Chat only answers messages from the Microsoft organization of a working workspace-shared connection, and personal connections do not count. Add a workspace connection, or reconnect the existing one, to use chat.',
+        action: { label: 'Add connection', location: '#general' },
+      };
+    }
+
     return { status: 'OK' };
   };
 

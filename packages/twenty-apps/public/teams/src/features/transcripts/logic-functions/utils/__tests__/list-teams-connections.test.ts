@@ -27,5 +27,6 @@ describe('listTeamsConnections', () => {
       { id: 'shared-connection', providerName: 'microsoft-teams' },
       { id: 'personal-connection', providerName: 'microsoft-teams-user' },
     ]);
+    expect(listConnectionsMock).toHaveBeenCalledExactlyOnceWith();
   });
 });
