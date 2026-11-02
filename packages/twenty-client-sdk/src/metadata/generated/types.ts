@@ -10283,8 +10283,14 @@ export default {
         "PageLayoutTabLayoutMode": {},
         "PageLayoutType": {},
         "PageLayoutWidget": {
+            "applicationGrantedIframeMediaPermissions": [
+                306
+            ],
             "applicationId": [
                 537
+            ],
+            "applicationName": [
+                1
             ],
             "conditionalAvailabilityExpression": [
                 1

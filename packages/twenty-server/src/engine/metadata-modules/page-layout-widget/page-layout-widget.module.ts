@@ -8,6 +8,7 @@ import { PageLayoutWidgetResolver } from 'src/engine/metadata-modules/page-layou
 import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout-widget/services/page-layout-widget.service';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { DashboardSyncModule } from 'src/modules/dashboard-sync/dashboard-sync.module';
 
 @Module({
@@ -17,6 +18,7 @@ import { DashboardSyncModule } from 'src/modules/dashboard-sync/dashboard-sync.m
     WorkspaceMigrationModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     ApplicationModule,
+    WorkspaceCacheModule,
     DashboardSyncModule,
   ],
   controllers: [PageLayoutWidgetController],

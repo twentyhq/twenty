@@ -80,7 +80,7 @@ See [Media capture](/developers/extend/apps/layout/front-components#media-captur
 
 ## Embedded website media access
 
-Set `requestedIframeMediaPermissions` when a front component embeds a website that needs the microphone or camera, such as a phone or video tool. List up to 20 websites, each as an exact HTTPS origin, with microphone and camera access set separately. Origins must be unique, contain no path or wildcard, and request at least one of microphone or camera access.
+Set `requestedIframeMediaPermissions` when a front component or an `IFRAME` page layout widget embeds a website that needs the microphone or camera, such as a phone or video tool. List up to 20 websites, each as an exact HTTPS origin, with microphone and camera access set separately. Origins must be unique, contain no path or wildcard, and request at least one of microphone or camera access.
 
 ```ts
 import { defineApplication } from 'twenty-sdk/define';
@@ -95,7 +95,7 @@ export default defineApplication({
 });
 ```
 
-Declared websites appear during installation. Approval requires a workspace member who can manage apps and applies to the whole workspace, for the app's own front components only. Package updates do not automatically grant additional websites. Locally synced development apps receive the websites declared in their manifest. These grants do not replace browser or operating system permissions. Browser headers have a size limit, so if a workspace's websites exceed it, workspace-approved websites come first and the remaining websites do not receive media access.
+Declared websites appear during installation. Approval requires a workspace member who can manage apps and applies to the whole workspace, for the app's own front components and iframe widgets. Workspace security approvals apply only to widgets created in the workspace. Package updates do not automatically grant additional websites. Locally synced development apps receive the websites declared in their manifest. These grants do not replace browser or operating system permissions. Browser headers have a size limit, so if a workspace's websites exceed it, workspace-approved websites come first and the remaining websites do not receive media access.
 
 See [Embedded websites with media access](/developers/extend/apps/layout/front-components#embedded-websites-with-media-access) for the iframe requirements.
 

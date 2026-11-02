@@ -3910,7 +3910,9 @@ enum PageLayoutType {
 }
 
 type PageLayoutWidget {
+  applicationGrantedIframeMediaPermissions: [IframeMediaPermission!]
   applicationId: UUID!
+  applicationName: String
   conditionalAvailabilityExpression: String
   conditionalDisplay: JSON
   configuration: WidgetConfiguration!

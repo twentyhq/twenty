@@ -5629,7 +5629,9 @@ export enum PageLayoutType {
 
 export type PageLayoutWidget = {
   __typename?: 'PageLayoutWidget';
+  applicationGrantedIframeMediaPermissions?: Maybe<Array<IframeMediaPermission>>;
   applicationId: Scalars['UUID']['output'];
+  applicationName?: Maybe<Scalars['String']['output']>;
   conditionalAvailabilityExpression?: Maybe<Scalars['String']['output']>;
   conditionalDisplay?: Maybe<Scalars['JSON']['output']>;
   configuration: WidgetConfiguration;

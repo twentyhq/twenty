@@ -2843,7 +2843,9 @@ export type PageLayoutTabLayoutMode = 'CANVAS' | 'GRID' | 'VERTICAL_LIST'
 export type PageLayoutType = 'DASHBOARD' | 'RECORD_FORM' | 'RECORD_INDEX' | 'RECORD_PAGE' | 'STANDALONE_PAGE'
 
 export interface PageLayoutWidget {
+    applicationGrantedIframeMediaPermissions?: IframeMediaPermission[]
     applicationId: Scalars['UUID']
+    applicationName?: Scalars['String']
     conditionalAvailabilityExpression?: Scalars['String']
     conditionalDisplay?: Scalars['JSON']
     configuration: WidgetConfiguration
@@ -7465,7 +7467,9 @@ export interface PageLayoutTabGenqlSelection{
 }
 
 export interface PageLayoutWidgetGenqlSelection{
+    applicationGrantedIframeMediaPermissions?: IframeMediaPermissionGenqlSelection
     applicationId?: boolean | number
+    applicationName?: boolean | number
     conditionalAvailabilityExpression?: boolean | number
     conditionalDisplay?: boolean | number
     configuration?: WidgetConfigurationGenqlSelection
