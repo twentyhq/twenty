@@ -27,8 +27,8 @@ import {
   ApplicationRegistrationSourceType,
   FeatureFlagKey,
   type FindMarketplaceAppDetailQuery,
+  type FindOneApplicationQuery,
   PermissionFlagType,
-  WellKnownOAuthClient,
 } from '~/generated-metadata/graphql';
 
 import { SettingsApplicationDetails } from '~/pages/settings/applications/SettingsApplicationDetails';
@@ -151,7 +151,7 @@ const buildApplicationHandlers = ({
 }: {
   settingsMenuItems: ReturnType<typeof buildSettingsMenuItem>[];
   marketplaceAppDetail?: FindMarketplaceAppDetailQuery['findMarketplaceAppDetail'];
-  applicationRegistration?: Record<string, unknown> | null;
+  applicationRegistration?: FindOneApplicationQuery['findOneApplication']['applicationRegistration'];
 }) => [
   graphql.query('FindOneApplication', () =>
     HttpResponse.json({
@@ -486,7 +486,6 @@ export const OAuthOnlyAppListsItsConnectedMembers: Story = {
             latestAvailableVersion: null,
             sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
             logoUrl: null,
-            wellKnownOAuthClient: WellKnownOAuthClient.CLAUDE,
           },
         }),
       ],

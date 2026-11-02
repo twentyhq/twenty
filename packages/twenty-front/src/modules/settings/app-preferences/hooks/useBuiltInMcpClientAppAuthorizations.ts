@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { CurrentUserApplicationAuthorizationsDocument } from '~/generated-metadata/graphql';
 
 export const useBuiltInMcpClientAppAuthorizations = (
-  builtInMcpClientApp: BuiltInMcpClientApp,
+  builtInMcpClientApp: Pick<BuiltInMcpClientApp, 'wellKnownOAuthClient'>,
 ) => {
   const { data, loading, error, refetch } = useQuery(
     CurrentUserApplicationAuthorizationsDocument,

@@ -8,6 +8,7 @@ import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
+import { WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { SearchInput } from 'twenty-ui/components/input';
@@ -20,6 +21,8 @@ import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/comp
 import { SettingsAvailableApplicationCard } from '~/pages/settings/applications/components/SettingsAvailableApplicationCard';
 import { filterMarketplaceApps } from '~/pages/settings/applications/utils/filterMarketplaceApps';
 import { SettingsSearchFilterTrigger } from '@/settings/components/SettingsSearchFilterTrigger';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -64,10 +67,24 @@ export const SettingsApplicationsAvailableTab = () => {
     refetch,
   } = useMarketplaceApps();
 
+  const isAppPreferencesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
+  );
+
+  // Only App preferences can disconnect these, so offer them only when it is enabled
+  const availableMarketplaceApps = isAppPreferencesEnabled
+    ? marketplaceApps
+    : marketplaceApps.filter(
+        (marketplaceApp) =>
+          !Object.values<string>(
+            WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS,
+          ).includes(marketplaceApp.id),
+      );
+
   const hasSearchTerm = searchTerm.trim().length > 0;
 
   const textFilteredApplications = filterMarketplaceApps({
-    marketplaceApps,
+    marketplaceApps: availableMarketplaceApps,
     searchTerm,
   });
 

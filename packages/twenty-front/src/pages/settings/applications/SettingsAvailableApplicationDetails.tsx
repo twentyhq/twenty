@@ -19,6 +19,7 @@ import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSec
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
@@ -29,6 +30,7 @@ import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconEyeOff, IconShoppingBag } from 'twenty-ui/icon';
 import {
   ApplicationRegistrationSourceType,
+  FeatureFlagKey,
   FindMarketplaceAppDetailDocument,
   FindOneApplicationByUniversalIdentifierDocument,
   PermissionFlagType,
@@ -70,6 +72,9 @@ export const SettingsAvailableApplicationDetails = () => {
 
   const canInstallMarketplaceApps = useHasPermissionFlag(
     PermissionFlagType.APPLICATIONS,
+  );
+  const isAppPreferencesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
   );
 
   const { data: applicationData } = useQuery(
@@ -151,7 +156,6 @@ export const SettingsAvailableApplicationDetails = () => {
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
 
-  // Each member connects these from their own account, so there is nothing for the workspace to install
   const builtInMcpClientApp = findBuiltInMcpClientApp(
     detail?.wellKnownOAuthClient,
   );
@@ -161,12 +165,13 @@ export const SettingsAvailableApplicationDetails = () => {
       return undefined;
     }
 
+    // Each member connects these from their own account, so there is nothing for the workspace to install
     if (isDefined(builtInMcpClientApp)) {
-      return (
+      return isAppPreferencesEnabled ? (
         <SettingsBuiltInMcpClientAppConnectButton
           builtInMcpClientApp={builtInMcpClientApp}
         />
-      );
+      ) : undefined;
     }
 
     return (

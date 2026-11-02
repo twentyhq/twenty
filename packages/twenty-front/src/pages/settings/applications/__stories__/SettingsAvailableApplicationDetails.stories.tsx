@@ -9,9 +9,13 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   ApplicationRegistrationSourceType,
+  FeatureFlagKey,
   type FindMarketplaceAppDetailQuery,
   WellKnownOAuthClient,
 } from '~/generated-metadata/graphql';
@@ -52,6 +56,22 @@ const CLAUDE_MARKETPLACE_APP_DETAIL: FindMarketplaceAppDetailQuery['findMarketpl
     roles: [],
   };
 
+const seedAppPreferencesFlag = ({
+  isAppPreferencesEnabled,
+}: {
+  isAppPreferencesEnabled: boolean;
+}) => {
+  jotaiStore.set(currentWorkspaceState.atom, {
+    ...mockCurrentWorkspace,
+    featureFlags: [
+      {
+        key: FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
+        value: isAppPreferencesEnabled,
+      },
+    ],
+  });
+};
+
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Applications/SettingsAvailableApplicationDetails',
   component: SettingsAvailableApplicationDetails,
@@ -88,6 +108,7 @@ export default meta;
 export type Story = StoryObj<typeof SettingsAvailableApplicationDetails>;
 
 export const WellKnownOAuthClientOffersToConnectInsteadOfInstall: Story = {
+  beforeEach: () => seedAppPreferencesFlag({ isAppPreferencesEnabled: true }),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
@@ -99,6 +120,27 @@ export const WellKnownOAuthClientOffersToConnectInsteadOfInstall: Story = {
       ),
     ).toBeVisible();
     expect(canvas.getByRole('button', { name: 'Connect' })).toBeVisible();
+    expect(
+      canvas.queryByRole('button', { name: /Install/ }),
+    ).not.toBeInTheDocument();
+  },
+};
+
+export const WellKnownOAuthClientOffersNoActionWhenFeatureFlagIsOff: Story = {
+  beforeEach: () => seedAppPreferencesFlag({ isAppPreferencesEnabled: false }),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    expect(
+      await canvas.findByText(
+        'Work with your Twenty workspace from Claude through the Twenty connector.',
+        undefined,
+        { timeout: 3000 },
+      ),
+    ).toBeVisible();
+    expect(
+      canvas.queryByRole('button', { name: 'Connect' }),
+    ).not.toBeInTheDocument();
     expect(
       canvas.queryByRole('button', { name: /Install/ }),
     ).not.toBeInTheDocument();

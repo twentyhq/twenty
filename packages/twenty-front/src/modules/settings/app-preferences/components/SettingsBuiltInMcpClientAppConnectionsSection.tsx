@@ -5,7 +5,6 @@ import { SettingsApplicationAuthorizationRowDropdownMenu } from '@/settings/appl
 import { SettingsApplicationAuthorizationPermissionsCell } from '@/settings/applications/components/SettingsApplicationAuthorizationPermissionsCell';
 import { useBuiltInMcpClientAppAuthorizations } from '@/settings/app-preferences/hooks/useBuiltInMcpClientAppAuthorizations';
 import { type BuiltInMcpClientApp } from '@/settings/app-preferences/types/BuiltInMcpClientApp';
-import { type BuiltInMcpClientAppAuthorization } from '@/settings/app-preferences/types/BuiltInMcpClientAppAuthorization';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationTableHeaderRow } from '@/settings/applications/components/SettingsApplicationTableHeaderRow';
 import { SettingsApplicationTableRow } from '@/settings/applications/components/SettingsApplicationTableRow';
@@ -59,23 +58,12 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
   const appName = t(app.name);
   const isConnectDisabled = !isDefined(connectLink);
 
-  // A member has one grant per install, plus one on an install made before ChatGPT and Claude were shared;
-  // to them it is one connection, so it reads and disconnects as one
+  // Earlier per-connection installs leave extra grants, but to the member they are one connection
   const [latestAuthorization] = [...authorizations].sort(
     (first, second) =>
       new Date(second.lastUsedAt).getTime() -
       new Date(first.lastUsedAt).getTime(),
   );
-
-  const getLastUsedLabel = (
-    authorization: BuiltInMcpClientAppAuthorization,
-  ) => {
-    const lastUsed = beautifyPastDateRelativeToNowShort(
-      authorization.lastUsedAt,
-    );
-
-    return t`Last used ${lastUsed}`;
-  };
 
   const disconnect = () =>
     Promise.all(
@@ -118,6 +106,10 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
       );
     }
 
+    const lastUsed = beautifyPastDateRelativeToNowShort(
+      latestAuthorization.lastUsedAt,
+    );
+
     return (
       <Table>
         <SettingsApplicationTableHeaderRow
@@ -134,9 +126,7 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
             name={
               <>
                 <app.Icon size={theme.icon.size.md} />
-                <OverflowingTextWithTooltip
-                  text={getLastUsedLabel(latestAuthorization)}
-                />
+                <OverflowingTextWithTooltip text={t`Last used ${lastUsed}`} />
               </>
             }
             middle={
