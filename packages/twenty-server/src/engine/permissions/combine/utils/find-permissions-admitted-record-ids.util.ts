@@ -26,14 +26,13 @@ export const findPermissionsAdmittedRecordIds = async (
     return new Set(records.map((record) => record.id));
   }
 
-  if (isRecordAccessHeldToShares(request)) {
-    return new Set(await findPermissionsShareAdmittedRecordIds(request));
-  }
-
-  const admittedRecordIds = new Set([
-    ...(await findPermissionsObjectAdmittedRecordIds(request)),
-    ...(await findPermissionsRlsAdmittedRecordIds(request)),
-  ]);
+  // TODO(@charlesBochet): remove with isRecordAccessHeldToShares after 2.55
+  const admittedRecordIds = isRecordAccessHeldToShares(request)
+    ? new Set<string>()
+    : new Set([
+        ...(await findPermissionsObjectAdmittedRecordIds(request)),
+        ...(await findPermissionsRlsAdmittedRecordIds(request)),
+      ]);
   const rowLevelPermissionMatchingRecordIds =
     areRecordGrantsHeldToRowLevelPermissions(request)
       ? findRowLevelPermissionMatchingRecordIds(request)

@@ -37,20 +37,22 @@ export const buildPermissionsCondition = ({
     return outcome;
   }
 
-  if (isRecordAccessHeldToShares(sqlRequest)) {
-    return buildPermissionsShareCondition(sqlRequest) ?? false;
-  }
-
-  const objectCondition = buildPermissionsObjectCondition(sqlRequest);
+  // TODO(@charlesBochet): remove with isRecordAccessHeldToShares after 2.55
+  const isHeldToShares = isRecordAccessHeldToShares(sqlRequest);
+  const objectCondition = isHeldToShares
+    ? false
+    : buildPermissionsObjectCondition(sqlRequest);
 
   if (objectCondition === true) {
     return true;
   }
 
-  const roleConditions = [
-    objectCondition === false ? undefined : objectCondition,
-    buildPermissionsRlsCondition(sqlRequest),
-  ].filter(isDefined);
+  const roleConditions = isHeldToShares
+    ? []
+    : [
+        objectCondition === false ? undefined : objectCondition,
+        buildPermissionsRlsCondition(sqlRequest),
+      ].filter(isDefined);
   const recordConditions = [
     buildPermissionsShareCondition(sqlRequest),
     buildPermissionsCreatorCondition(sqlRequest),

@@ -243,6 +243,7 @@ describe('buildPermissionsCondition', () => {
     ).toEqual({ kind: 'open' });
   });
 
+  // TODO(@charlesBochet): remove with isRecordAccessHeldToShares after 2.55
   it('keeps chats to their shares until private records are enabled', () => {
     const sql = gatedSql({
       principal: readEverything,
@@ -253,6 +254,21 @@ describe('buildPermissionsCondition', () => {
     expect(sql).not.toContain('_isPrivate');
   });
 
+  // TODO(@charlesBochet): remove with isRecordAccessHeldToShares after 2.55
+  it('holds chat shares to the role filter until private records are enabled', () => {
+    (resolveRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue(
+      NOTE_FILTER,
+    );
+    const sql = gatedSql({
+      principal: readEverything,
+      flatObjectMetadata: person,
+    });
+
+    expect(sql).toContain('"person"."title" = :restricted');
+    expect(sql).toContain('"workspace"."recordShare"');
+  });
+
+  // TODO(@charlesBochet): remove with isRecordAccessHeldToShares after 2.55
   it('leaves chats open to inserts by their role until private records are enabled', () => {
     expect(
       buildConditionOutcome({

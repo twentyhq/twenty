@@ -233,6 +233,7 @@ describe('findPermissionsAdmittedRecordIds', () => {
     });
   });
 
+  // TODO(@charlesBochet): remove with isRecordAccessHeldToShares after 2.55
   it('admits chats only through shares naming the member until private records are enabled', async () => {
     const context = buildContext();
 
@@ -245,5 +246,18 @@ describe('findPermissionsAdmittedRecordIds', () => {
       }),
     ).toEqual(new Set(['active-shared', 'archived-shared']));
     expect(context.findPrivateRecordStates).not.toHaveBeenCalled();
+  });
+
+  // TODO(@charlesBochet): remove with isRecordAccessHeldToShares after 2.55
+  it('holds chat shares to the role filter until private records are enabled', async () => {
+    filterByStatus('active');
+
+    expect(
+      await findAdmitted({
+        principal: memberPrincipal,
+        featureFlagKeys: [],
+        object: chatFlatObjectMetadata,
+      }),
+    ).toEqual(new Set(['active-shared']));
   });
 });

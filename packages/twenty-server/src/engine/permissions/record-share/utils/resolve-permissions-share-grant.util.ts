@@ -28,7 +28,7 @@ export const resolvePermissionsShareGrant = (
     featureFlagsMap: request.metadataMaps.featureFlagsMap,
     operationType: request.operationType,
   });
-
+  // TODO(@charlesBochet): remove with isRecordAccessHeldToShares after 2.55
   const isHeldToShares = isRecordAccessHeldToShares(request);
 
   if (
