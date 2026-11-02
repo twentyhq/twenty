@@ -1,5 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { Text } from 'twenty-ui/primitives/typography';
 import { SettingsAiOverview } from '~/pages/settings/ai/components/SettingsAiOverview';
@@ -18,6 +20,7 @@ const meta = {
   args: {
     routePath: '/settings/ai',
     routeParams: {},
+    additionalRoutes: [getSettingsPath(SettingsPath.AiPrompts)],
     mcpSection: settingsAiOverviewStorySections.mcpSection,
     workspaceInstructionsSection:
       settingsAiOverviewStorySections.workspaceInstructionsSection,
@@ -85,5 +88,21 @@ export const WithSections: Story = {
       'System Prompt',
     ]);
     expect(canvas.getByText('Overview navigation')).toBeInTheDocument();
+  },
+};
+
+export const SystemPromptsNavigation: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.click(
+      await canvas.findByRole('link', { name: 'Read system prompts' }),
+    );
+
+    expect(
+      await canvas.findByText(
+        `Navigated to ${getSettingsPath(SettingsPath.AiPrompts)}`,
+      ),
+    ).toBeVisible();
   },
 };
