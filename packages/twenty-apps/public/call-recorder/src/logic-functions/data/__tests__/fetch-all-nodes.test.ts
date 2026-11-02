@@ -33,6 +33,18 @@ describe('fetchAllNodes', () => {
     );
   });
 
+  it('throws when the cursor does not advance instead of refetching the same page', async () => {
+    const fetchPage = vi.fn().mockResolvedValue({
+      pageInfo: { hasNextPage: true, endCursor: 'cursor-1' },
+      edges: [{ node: 'a' }],
+    });
+
+    await expect(fetchAllNodes(fetchPage)).rejects.toThrow(
+      'endCursor did not advance',
+    );
+    expect(fetchPage).toHaveBeenCalledTimes(2);
+  });
+
   it('throws when the query returns no connection', async () => {
     const fetchPage = vi.fn().mockResolvedValue(undefined);
 

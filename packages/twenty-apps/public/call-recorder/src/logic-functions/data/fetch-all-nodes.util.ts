@@ -38,6 +38,12 @@ export const fetchAllNodes = async <TNode>(
       );
     }
 
+    if (hasNextPage && endCursor === afterCursor) {
+      throw new Error(
+        'Inconsistent pagination state: endCursor did not advance',
+      );
+    }
+
     afterCursor = isString(endCursor) ? endCursor : undefined;
   }
 

@@ -11,10 +11,10 @@ type WorkspaceMemberApplicationVariablesNode = {
   variables?: Array<{ key?: string | null; value?: string | null }> | null;
 };
 
-// User-scoped values are absent from process.env in cron and sweep runs, and a
-// database event run carries the editor's values, not the attendees', so the
-// opted-in set is always read for every member.
-export const fetchOptedInWorkspaceMemberIds = async (): Promise<Set<string>> => {
+// Cron and sweep runs get no member values in process.env and database event runs get the editor's, so every member is read here.
+export const fetchOptedInWorkspaceMemberIds = async (): Promise<
+  Set<string>
+> => {
   const client = new MetadataApiClient({
     runAs: 'application',
     fetch: fetchWithRateLimitRetry,
@@ -30,8 +30,8 @@ export const fetchOptedInWorkspaceMemberIds = async (): Promise<Set<string>> => 
     },
   });
 
-  const memberNodes = (queryResult.myUserApplicationVariables ??
-    []) as WorkspaceMemberApplicationVariablesNode[];
+  const memberNodes: WorkspaceMemberApplicationVariablesNode[] =
+    queryResult.myUserApplicationVariables ?? [];
   const optedInWorkspaceMemberIds = new Set<string>();
 
   for (const memberNode of memberNodes) {
@@ -40,7 +40,8 @@ export const fetchOptedInWorkspaceMemberIds = async (): Promise<Set<string>> => 
     }
 
     const recordMyMeetingsVariable = memberNode.variables?.find(
-      (variable) => variable.key === CALL_RECORDER_RECORD_MY_MEETINGS_ENV_VAR_NAME,
+      (variable) =>
+        variable.key === CALL_RECORDER_RECORD_MY_MEETINGS_ENV_VAR_NAME,
     );
     const isRecordingMeetings = parseBooleanApplicationVariableValue({
       rawValue: recordMyMeetingsVariable?.value ?? undefined,

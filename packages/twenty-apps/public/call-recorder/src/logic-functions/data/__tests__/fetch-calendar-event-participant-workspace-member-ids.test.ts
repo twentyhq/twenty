@@ -20,7 +20,10 @@ type ParticipantNode = {
 
 const buildPage = (
   participants: ParticipantNode[],
-  { hasNextPage = false, endCursor = null as string | null } = {},
+  {
+    hasNextPage = false,
+    endCursor = null,
+  }: { hasNextPage?: boolean; endCursor?: string | null } = {},
 ) => ({
   calendarEventParticipants: {
     pageInfo: { hasNextPage, endCursor },
@@ -70,7 +73,10 @@ describe('fetchCalendarEventParticipantWorkspaceMemberIds', () => {
       .mockResolvedValueOnce(
         buildPage(
           [
-            { calendarEventId: 'calendar-event-1', workspaceMemberId: 'member-1' },
+            {
+              calendarEventId: 'calendar-event-1',
+              workspaceMemberId: 'member-1',
+            },
             { calendarEventId: 'calendar-event-1', workspaceMemberId: null },
           ],
           { hasNextPage: true, endCursor: 'cursor-1' },
@@ -78,9 +84,18 @@ describe('fetchCalendarEventParticipantWorkspaceMemberIds', () => {
       )
       .mockResolvedValueOnce(
         buildPage([
-          { calendarEventId: 'calendar-event-1', workspaceMemberId: 'member-1' },
-          { calendarEventId: 'calendar-event-1', workspaceMemberId: 'member-2' },
-          { calendarEventId: 'calendar-event-2', workspaceMemberId: 'member-2' },
+          {
+            calendarEventId: 'calendar-event-1',
+            workspaceMemberId: 'member-1',
+          },
+          {
+            calendarEventId: 'calendar-event-1',
+            workspaceMemberId: 'member-2',
+          },
+          {
+            calendarEventId: 'calendar-event-2',
+            workspaceMemberId: 'member-2',
+          },
           { calendarEventId: null, workspaceMemberId: 'member-3' },
         ]),
       );
@@ -91,6 +106,13 @@ describe('fetchCalendarEventParticipantWorkspaceMemberIds', () => {
     );
 
     expect(queryMock).toHaveBeenCalledTimes(2);
+    expect(queryMock.mock.calls[1][0]).toEqual(
+      expect.objectContaining({
+        calendarEventParticipants: expect.objectContaining({
+          __args: expect.objectContaining({ after: 'cursor-1' }),
+        }),
+      }),
+    );
     expect(result.get('calendar-event-1')).toEqual(['member-1', 'member-2']);
     expect(result.get('calendar-event-2')).toEqual(['member-2']);
     expect(result.has('calendar-event-3')).toBe(false);

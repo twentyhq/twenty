@@ -16,10 +16,13 @@ vi.mock('twenty-client-sdk/metadata', () => ({
   },
 }));
 
-const buildMember = (
-  workspaceMemberId: string | null,
-  value: string | null | undefined,
-) => ({
+const buildMember = ({
+  workspaceMemberId,
+  value,
+}: {
+  workspaceMemberId: string | null;
+  value: string | null | undefined;
+}) => ({
   workspaceMemberId,
   variables:
     value === undefined
@@ -51,12 +54,12 @@ describe('fetchOptedInWorkspaceMemberIds', () => {
   it('keeps members whose value is on, missing or unparseable and drops those set to off', async () => {
     queryMock.mockResolvedValue({
       myUserApplicationVariables: [
-        buildMember('member-on', 'true'),
-        buildMember('member-off', 'false'),
-        buildMember('member-default', undefined),
-        buildMember('member-blank', ''),
-        buildMember('member-garbage', 'maybe'),
-        buildMember(null, 'true'),
+        buildMember({ workspaceMemberId: 'member-on', value: 'true' }),
+        buildMember({ workspaceMemberId: 'member-off', value: 'false' }),
+        buildMember({ workspaceMemberId: 'member-default', value: undefined }),
+        buildMember({ workspaceMemberId: 'member-blank', value: '' }),
+        buildMember({ workspaceMemberId: 'member-garbage', value: 'maybe' }),
+        buildMember({ workspaceMemberId: null, value: 'true' }),
       ],
     });
 

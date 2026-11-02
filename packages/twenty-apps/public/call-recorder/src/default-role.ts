@@ -77,8 +77,7 @@ export default defineApplicationRole({
   permissionFlagUniversalIdentifiers: [
     SystemPermissionFlag.UPLOAD_FILE,
     SystemPermissionFlag.AI,
-    // The settings front components write the app's own workspace and user
-    // application variables through the metadata API, gated behind these flags.
+    // The settings front components write workspace and member application variables through the metadata API, gated by these flags.
     SystemPermissionFlag.APPLICATIONS,
     SystemPermissionFlag.CONNECTED_ACCOUNTS,
   ],
