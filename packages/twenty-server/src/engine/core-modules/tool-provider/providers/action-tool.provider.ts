@@ -37,6 +37,7 @@ import { ShareRecordTool } from 'src/engine/core-modules/tool/tools/share-record
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type Tool } from 'src/engine/core-modules/tool/types/tool.type';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { isRestrictedByPermissionScope } from 'src/engine/permissions/principal/utils/is-restricted-by-permission-scope.util';
 import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool';
 
 @Injectable()
@@ -234,8 +235,10 @@ export class ActionToolProvider implements ToolProvider {
       );
     }
 
+    // the sandbox calls back with a token for the member, which cannot carry a scope
     const hasCodeInterpreterPermission =
       this.codeInterpreterService.isEnabled() &&
+      !isRestrictedByPermissionScope(context.rolePermissionConfig) &&
       (await this.permissionsService.checkRolesPermissions(
         context.rolePermissionConfig,
         context.workspaceId,

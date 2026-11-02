@@ -24,6 +24,15 @@ const context: ToolProviderContext = {
   },
 };
 
+// an AI run's config: the member's role narrowed by a scope
+const scopedContext: ToolProviderContext = {
+  ...context,
+  rolePermissionConfig: {
+    intersectionOf: { userWorkspaceRoleId: 'member-role-id' },
+    scope: { objectsPermissions: {}, permissionFlags: {} },
+  },
+};
+
 const renameWebhookInputSchema = z.object({ id: z.uuid() });
 
 @DefineTool({
@@ -99,6 +108,25 @@ class PauseWebhookTool extends BaseTool<typeof pauseWebhookInputSchema> {
   }
 }
 
+const resendWebhookInputSchema = z.object({ id: z.uuid() });
+
+@DefineTool({
+  name: 'resend_webhook',
+  category: ToolCategory.WEBHOOK,
+  description: 'Resend a webhook as the member.',
+  requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
+  ignoresRolePermissionConfig: true,
+})
+class ResendWebhookTool extends BaseTool<typeof resendWebhookInputSchema> {
+  readonly inputSchema = resendWebhookInputSchema;
+
+  async execute({
+    input,
+  }: ToolExecuteArgs<typeof resendWebhookInputSchema>): Promise<ToolOutput> {
+    return { success: true, message: `Webhook ${input.id} resent` };
+  }
+}
+
 const buildDefinedToolRegistryService = ({
   tools,
   isGranted,
@@ -136,9 +164,10 @@ const buildDefinedToolRegistryService = ({
 
 const listToolNames = async (
   definedToolRegistryService: DefinedToolRegistryService,
+  callerContext: ToolProviderContext = context,
 ) =>
   (
-    await definedToolRegistryService.getAvailableDescriptors(context, {
+    await definedToolRegistryService.getAvailableDescriptors(callerContext, {
       includeSchemas: false,
     })
   ).map(({ name }) => name);
@@ -292,6 +321,52 @@ describe('DefinedToolRegistryService', () => {
       ).toMatchObject({
         success: false,
         message: 'Tool "replay_webhook" is not available',
+      });
+      expect(executeSpy).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('tools that ignore the role permission config', () => {
+    const buildResendWebhookTool = () => {
+      const tool = new ResendWebhookTool();
+      const { definedToolRegistryService } = buildDefinedToolRegistryService({
+        tools: [tool, new RenameWebhookTool()],
+        isGranted: true,
+      });
+      const definedTool =
+        definedToolRegistryService.findDefinedTool('resend_webhook');
+
+      jestExpectToBeDefined(definedTool);
+
+      return { definedToolRegistryService, definedTool, tool };
+    };
+
+    it('should be listed for a caller without a scope', async () => {
+      const { definedToolRegistryService } = buildResendWebhookTool();
+
+      expect(await listToolNames(definedToolRegistryService)).toEqual([
+        'resend_webhook',
+        'rename_webhook',
+      ]);
+    });
+
+    it('should be withheld from a caller narrowed by a scope, even one granting its flags', async () => {
+      const { definedToolRegistryService, definedTool, tool } =
+        buildResendWebhookTool();
+      const executeSpy = jest.spyOn(tool, 'execute');
+
+      expect(
+        await listToolNames(definedToolRegistryService, scopedContext),
+      ).toEqual(['rename_webhook']);
+      expect(
+        await definedToolRegistryService.execute({
+          definedTool,
+          args: { id: webhookId },
+          context: scopedContext,
+        }),
+      ).toMatchObject({
+        success: false,
+        message: 'Tool "resend_webhook" is not available',
       });
       expect(executeSpy).not.toHaveBeenCalled();
     });
