@@ -110,6 +110,8 @@ export const ChatThreadComposer = ({
         messageChannelId,
         messageThreadId,
         text: pendingMessage.text,
+        // Reused on retry so the server does not deliver the message twice
+        idempotencyKey: pendingMessage.id,
       });
       setPendingMessageStatus(pendingMessage.id, null);
       onMessageSent();

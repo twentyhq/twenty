@@ -39,7 +39,10 @@ export const MessageThreadWidget = ({
 
   const lastMessage = messages.at(-1);
 
-  if (threadLoading || messageThreadChannelLoading) {
+  if (
+    (threadLoading && !isDefined(lastMessage)) ||
+    messageThreadChannelLoading
+  ) {
     return (
       <StyledWidgetContentContainer>
         <WidgetRelationsHeader />
