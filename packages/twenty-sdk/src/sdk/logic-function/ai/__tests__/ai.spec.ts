@@ -571,6 +571,38 @@ describe('ai.generate with onChunk', () => {
     expect(fetchSpy.mock.calls[1][1]?.signal?.aborted).toBe(true);
   });
 
+  it('leaves no rejection unhandled when onChunk throws before the result', async () => {
+    const runChannel = mockRunChannel({ fetchSpy });
+    const unhandledRejections: unknown[] = [];
+    const recordUnhandledRejection = (reason: unknown) =>
+      unhandledRejections.push(reason);
+
+    process.on('unhandledRejection', recordUnhandledRejection);
+
+    try {
+      const generation = ai.generate({
+        input: 'Hi',
+        onChunk: () => {
+          throw new Error('Could not render the chunk');
+        },
+      });
+
+      await vi.waitFor(() => expect(runChannel.requests).toHaveLength(2));
+      runChannel.send({
+        type: 'stream-chunk',
+        chunk: { type: 'start' },
+        seq: 1,
+      });
+
+      await expect(generation).rejects.toThrow('Could not render the chunk');
+      await new Promise((resolve) => setTimeout(resolve, 50));
+
+      expect(unhandledRejections).toEqual([]);
+    } finally {
+      process.off('unhandledRejection', recordUnhandledRejection);
+    }
+  });
+
   it('stops following the run when the mutation fails', async () => {
     const runChannel = mockRunChannel({ fetchSpy });
 

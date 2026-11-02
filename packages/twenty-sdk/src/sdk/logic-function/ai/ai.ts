@@ -165,6 +165,8 @@ const generateWithChunks = async ({
     });
 
     void followed.catch(() => undefined);
+    // the race on the result may settle first, so this rejection must not go unhandled
+    void followedUnlessChannelFailed.catch(() => undefined);
 
     const generated = requestGenerate({
       variables: { input: { ...variables.input, runId } },
