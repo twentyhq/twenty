@@ -190,23 +190,14 @@ export class ValidationRuleService {
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
     } = await this.getFlatMaps(workspaceId);
-    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: fieldMetadataId,
       flatEntityMaps: flatFieldMetadataMaps,
     });
-
-    if (!isDefined(flatFieldMetadata)) {
-      return [];
-    }
-
-    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
       flatEntityId: flatFieldMetadata.objectMetadataId,
       flatEntityMaps: flatObjectMetadataMaps,
     });
-
-    if (!isDefined(flatObjectMetadata)) {
-      return [];
-    }
 
     return findActiveFlatValidationRulesReadingField({
       fieldUniversalIdentifiers: [
