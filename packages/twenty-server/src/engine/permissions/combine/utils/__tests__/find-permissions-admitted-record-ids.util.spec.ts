@@ -18,7 +18,7 @@ import {
   type RowAccessRecord,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
-import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/permissions/record-share/types/record-share-grant.type';
@@ -99,19 +99,19 @@ const fullAccess = {
   rowLevelPermissionPredicateGroups: [],
 };
 
-const rolePrincipal: PermissionsPrincipalsContext = {
+const rolePrincipal: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
   mainPrincipal: { roleId: MEMBER_ROLE_ID, isDeprecatedRoleOnly: true },
   applicationPrincipal: { isCustomApp: true },
 };
 
-const memberPrincipal: PermissionsPrincipalsContext = {
+const memberPrincipal: PermissionsPrincipalsWithRolesContext = {
   ...rolePrincipal,
   mainPrincipal: { roleId: MEMBER_ROLE_ID, workspaceMemberId: MEMBER_ID },
   applicationPrincipal: { isCustomApp: true },
 };
 
-const deniedPrincipal: PermissionsPrincipalsContext = {
+const deniedPrincipal: PermissionsPrincipalsWithRolesContext = {
   ...memberPrincipal,
   mainPrincipal: { roleId: 'missing-role', workspaceMemberId: MEMBER_ID },
   applicationPrincipal: { isCustomApp: true },
@@ -137,7 +137,7 @@ const findAdmitted = ({
   featureFlagKeys = [FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED],
   context = buildContext(),
 }: {
-  principal: PermissionsPrincipalsContext;
+  principal: PermissionsPrincipalsWithRolesContext;
   featureFlagKeys?: FeatureFlagKey[];
   context?: RowAccessEvaluationContext;
 }) =>

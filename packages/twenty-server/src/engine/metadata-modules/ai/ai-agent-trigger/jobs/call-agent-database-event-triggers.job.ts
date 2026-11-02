@@ -85,7 +85,7 @@ export class CallAgentDatabaseEventTriggersJob {
       const admittedRecordIds =
         await eventRecordAccessGate.resolveAdmittedRecordIds({
           workspaceId: workspaceEventBatch.workspaceId,
-          mainPrincipal: { roleId: agentRoleId, agentId: flatAgent.id },
+          mainPrincipal: { agentId: flatAgent.id },
           applicationPrincipal: { isCustomApp: true },
         });
       const admittedEvents = workspaceEventBatch.events

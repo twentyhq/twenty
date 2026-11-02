@@ -2,30 +2,28 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  type PermissionsPrincipalsContext,
-  type PermissionsPrincipals,
-} from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { buildPermissionsPrincipalRoles } from 'src/engine/permissions/principal/utils/build-permissions-principal-roles.util';
 
-// undefined when the config bypasses permission checks or denies everything
-export const buildPermissionsPrincipal = ({
+// TODO(@charlesBochet): drop once repositories resolve roles from the principals instead of a RolePermissionConfig
+export const buildPermissionsPrincipalsWithRolesFromConfig = ({
   workspaceId,
   rolePermissionConfig,
-  principals,
+  principalsContext,
 }: {
   workspaceId: string;
   rolePermissionConfig: RolePermissionConfig;
-  principals: PermissionsPrincipals;
-}): PermissionsPrincipalsContext | undefined => {
+  principalsContext: PermissionsPrincipalsContext | undefined;
+}): PermissionsPrincipalsWithRolesContext | undefined => {
   if (!('intersectionOf' in rolePermissionConfig)) {
     return undefined;
   }
 
   const principalRoles = buildPermissionsPrincipalRoles({
     roleIdsBySource: rolePermissionConfig.intersectionOf,
-    principals,
+    principalsContext,
   });
 
   if (!isDefined(principalRoles)) {

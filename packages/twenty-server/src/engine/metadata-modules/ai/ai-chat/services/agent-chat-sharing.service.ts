@@ -325,13 +325,13 @@ export class AgentChatSharingService {
     const admittedMemberIds = new Set(
       (
         await Promise.all(
-          [...roleIdByMemberId.entries()].map(async ([memberId, roleId]) => {
+          [...roleIdByMemberId.keys()].map(async (memberId) => {
             const grants = await Promise.all(
               AGENT_CHAT_REPLY_OPERATION_TYPES.map((operationType) =>
                 this.recordAccessPolicyService.hasAccessToRecords({
-                  principal: {
+                  principals: {
                     workspaceId,
-                    mainPrincipal: { roleId, workspaceMemberId: memberId },
+                    mainPrincipal: { workspaceMemberId: memberId },
                     applicationPrincipal: { isCustomApp: true },
                   },
                   flatObjectMetadata: threadFlatObjectMetadata,

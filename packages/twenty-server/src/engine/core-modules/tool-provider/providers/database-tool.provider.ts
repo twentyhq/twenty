@@ -32,8 +32,8 @@ import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/a
 import { type FlatObjectPermission } from 'src/engine/metadata-modules/flat-object-permission/types/flat-object-permission.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { buildDeprecatedPermissionsPrincipalsFromConfig } from 'src/engine/permissions/principal/utils/build-deprecated-permissions-principals-from-config.util';
 import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
-import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/permissions/role/utils/get-objects-permissions-from-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -91,26 +91,25 @@ export class DatabaseToolProvider implements ToolProvider {
         },
       );
 
+    const principals =
+      (isDefined(context.authContext)
+        ? getPermissionsPrincipalsFromAuthContext(context.authContext)
+        : undefined) ??
+      buildDeprecatedPermissionsPrincipalsFromConfig({
+        workspaceId: context.workspaceId,
+        rolePermissionConfig: context.rolePermissionConfig,
+      });
+
     const objectPermissions = getObjectsPermissionsFromRolePermissionConfig({
       rolesPermissions,
       rolePermissionConfig: context.rolePermissionConfig,
-      principals: getPermissionsPrincipalsFromAuthContext(context.authContext),
+      principals,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatApplicationMaps,
     });
 
-    if (Object.keys(objectPermissions).length === 0) {
-      return descriptors;
-    }
-
-    const principal = buildPermissionsPrincipal({
-      workspaceId: context.workspaceId,
-      rolePermissionConfig: context.rolePermissionConfig,
-      principals: getPermissionsPrincipalsFromAuthContext(context.authContext),
-    });
-
-    if (!isDefined(principal)) {
+    if (Object.keys(objectPermissions).length === 0 || !isDefined(principals)) {
       return descriptors;
     }
 
@@ -180,7 +179,7 @@ export class DatabaseToolProvider implements ToolProvider {
         (explicitPermission?.[objectPermission] ?? false);
       const hasAccessToSomeRecords = async (operationType: OperationType) =>
         this.recordAccessPolicyService.hasAccessToSomeRecords({
-          principal,
+          principals,
           flatObjectMetadata: flatObject,
           operationType,
         });

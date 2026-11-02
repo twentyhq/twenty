@@ -10,7 +10,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
 import { type PermissionsRowAccessRequest } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { resolvePermissionsRowAccessOutcome } from 'src/engine/permissions/combine/utils/resolve-permissions-row-access-outcome.util';
-import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 
 const APPLICATION_ID = 'application-id';
@@ -33,13 +33,13 @@ const readOnlyPermissions: ObjectPermissions = {
   rowLevelPermissionPredicateGroups: [],
 };
 
-const readOnlyPrincipal: PermissionsPrincipalsContext = {
+const readOnlyPrincipal: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
   mainPrincipal: { roleId: READ_ONLY_ROLE_ID, isDeprecatedRoleOnly: true },
   applicationPrincipal: { isCustomApp: true },
 };
 
-const owningApplicationPrincipal: PermissionsPrincipalsContext = {
+const owningApplicationPrincipal: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
   mainPrincipal: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
   applicationPrincipal: {
@@ -55,7 +55,7 @@ const resolveOutcome = ({
   disabledObjectPermissionActions = [],
   hypotheticalRecordShareAccessLevel,
 }: {
-  principal?: PermissionsPrincipalsContext;
+  principal?: PermissionsPrincipalsWithRolesContext;
   operationType?: OperationType;
   featureFlagKeys?: FeatureFlagKey[];
   disabledObjectPermissionActions?: typeof flatObjectMetadata.disabledObjectPermissionActions;

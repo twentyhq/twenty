@@ -3,12 +3,15 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import {
+  type PermissionsMainPrincipal,
   type PermissionsPrincipalsContext,
-  type PermissionsPrincipals,
-  type PermissionsPrincipalApplication,
-  type PermissionsPrincipalLimiting,
-  type PermissionsPrincipalMain,
 } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import {
+  type PermissionsApplicationPrincipalWithRole,
+  type PermissionsLimitingPrincipalWithRole,
+  type PermissionsMainPrincipalWithRole,
+  type PermissionsPrincipalsWithRolesContext,
+} from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type RoleIdsBySource } from 'src/engine/permissions/principal/types/role-permission-config.type';
 
 const FALLBACK_MAIN_ROLE_ID_KEYS: (keyof RoleIdsBySource)[] = [
@@ -23,10 +26,10 @@ const getMainRoleIdKey = ({
   mainPrincipal,
   roleIdsBySource,
 }: {
-  mainPrincipal: PermissionsPrincipals['mainPrincipal'];
+  mainPrincipal: PermissionsMainPrincipal | undefined;
   roleIdsBySource: RoleIdsBySource;
 }): keyof RoleIdsBySource | undefined => {
-  if (!isDefined(mainPrincipal)) {
+  if (!isDefined(mainPrincipal) || 'isDeprecatedRoleOnly' in mainPrincipal) {
     return FALLBACK_MAIN_ROLE_ID_KEYS.find(
       (roleIdKey) => roleIdsBySource[roleIdKey] !== undefined,
     );
@@ -58,7 +61,7 @@ const buildLimitingPrincipal = ({
 }: {
   agentRoleId: string | null | undefined;
   agentId: string | undefined;
-}): PermissionsPrincipalLimiting | undefined => {
+}): PermissionsLimitingPrincipalWithRole | undefined => {
   if (!isDefined(agentRoleId)) {
     return undefined;
   }
@@ -74,7 +77,7 @@ const buildApplicationPrincipal = ({
 }: {
   applicationRoleId: string | null | undefined;
   applicationId: string | undefined;
-}): PermissionsPrincipalApplication => {
+}): PermissionsApplicationPrincipalWithRole => {
   if (!isDefined(applicationRoleId)) {
     return { isCustomApp: true };
   }
@@ -84,16 +87,28 @@ const buildApplicationPrincipal = ({
     : { roleId: applicationRoleId, isDeprecatedRoleOnly: true };
 };
 
+const getIdentifiedMainPrincipal = (
+  principalsContext: PermissionsPrincipalsContext | undefined,
+) => {
+  const mainPrincipal = principalsContext?.mainPrincipal;
+
+  return isDefined(mainPrincipal) && !('isDeprecatedRoleOnly' in mainPrincipal)
+    ? mainPrincipal
+    : undefined;
+};
+
+// Pairs the role ids a RolePermissionConfig lists with the principals acting;
 // undefined denies everything: the main principal has no role, or a role id cannot be placed without losing its restriction
 export const buildPermissionsPrincipalRoles = ({
   roleIdsBySource,
-  principals,
+  principalsContext,
 }: {
   roleIdsBySource: RoleIdsBySource;
-  principals: PermissionsPrincipals;
-}): Omit<PermissionsPrincipalsContext, 'workspaceId'> | undefined => {
+  principalsContext: PermissionsPrincipalsContext | undefined;
+}): Omit<PermissionsPrincipalsWithRolesContext, 'workspaceId'> | undefined => {
+  const identifiedMainPrincipal = getIdentifiedMainPrincipal(principalsContext);
   const mainRoleIdKey = getMainRoleIdKey({
-    mainPrincipal: principals.mainPrincipal,
+    mainPrincipal: identifiedMainPrincipal,
     roleIdsBySource,
   });
 
@@ -114,11 +129,14 @@ export const buildPermissionsPrincipalRoles = ({
     return undefined;
   }
 
-  const mainPrincipal: PermissionsPrincipalMain = isDefined(
-    principals.mainPrincipal,
+  const mainPrincipal: PermissionsMainPrincipalWithRole = isDefined(
+    identifiedMainPrincipal,
   )
-    ? { ...principals.mainPrincipal, roleId: mainRoleId }
+    ? { ...identifiedMainPrincipal, roleId: mainRoleId }
     : { roleId: mainRoleId, isDeprecatedRoleOnly: true };
+
+  const limitingPrincipal = principalsContext?.limitingPrincipal;
+  const applicationPrincipal = principalsContext?.applicationPrincipal;
 
   return {
     mainPrincipal,
@@ -127,11 +145,18 @@ export const buildPermissionsPrincipalRoles = ({
         ? undefined
         : buildLimitingPrincipal({
             agentRoleId: roleIdsBySource.agentRoleId,
-            agentId: principals.agentId,
+            agentId:
+              isDefined(limitingPrincipal) && 'agentId' in limitingPrincipal
+                ? limitingPrincipal.agentId
+                : undefined,
           }),
     applicationPrincipal: buildApplicationPrincipal({
       applicationRoleId: roleIdsBySource.applicationRoleId,
-      applicationId: principals.applicationId,
+      applicationId:
+        isDefined(applicationPrincipal) &&
+        'applicationId' in applicationPrincipal
+          ? applicationPrincipal.applicationId
+          : undefined,
     }),
   };
 };

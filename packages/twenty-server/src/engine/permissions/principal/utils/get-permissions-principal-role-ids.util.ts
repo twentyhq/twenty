@@ -2,12 +2,12 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 
 // The limiting role comes first: the intersection keeps the first role's row-level predicates
 export const getPermissionsPrincipalRoleIds = (
   principal: Pick<
-    PermissionsPrincipalsContext,
+    PermissionsPrincipalsWithRolesContext,
     'mainPrincipal' | 'limitingPrincipal' | 'applicationPrincipal'
   >,
 ): string[] => [

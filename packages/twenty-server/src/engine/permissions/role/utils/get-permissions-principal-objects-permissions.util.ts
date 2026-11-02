@@ -4,11 +4,11 @@ import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/combine/types/row-access-policy.type';
-import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { computeObjectsPermissionsForRoles } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-roles.util';
 
 const objectsPermissionsByMetadataMapsByPrincipal = new WeakMap<
-  PermissionsPrincipalsContext,
+  PermissionsPrincipalsWithRolesContext,
   WeakMap<PermissionsMetadataMaps, ObjectsPermissions>
 >();
 
@@ -16,7 +16,7 @@ export const getPermissionsPrincipalObjectsPermissions = ({
   principal,
   metadataMaps,
 }: {
-  principal: PermissionsPrincipalsContext;
+  principal: PermissionsPrincipalsWithRolesContext;
   metadataMaps: PermissionsMetadataMaps;
 }): ObjectsPermissions => {
   const objectsPermissionsByMetadataMaps =

@@ -19,7 +19,7 @@ import {
   type SqlCondition,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { buildPermissionsCondition } from 'src/engine/permissions/combine/utils/build-permissions-condition.util';
-import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/rls/utils/render-row-level-permission-filter-to-sql.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
 
@@ -123,13 +123,13 @@ const buildConditionOutcome = (
   return { kind: 'gated', condition };
 };
 
-const readEverything: PermissionsPrincipalsContext = {
+const readEverything: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
   mainPrincipal: { roleId: FULL_ACCESS_ROLE_ID, workspaceMemberId: 'member-1' },
   applicationPrincipal: { isCustomApp: true },
 };
 
-const owningApplication: PermissionsPrincipalsContext = {
+const owningApplication: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
   mainPrincipal: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
   applicationPrincipal: {
@@ -138,7 +138,7 @@ const owningApplication: PermissionsPrincipalsContext = {
   },
 };
 
-const withoutObjectPermission: PermissionsPrincipalsContext = {
+const withoutObjectPermission: PermissionsPrincipalsWithRolesContext = {
   ...readEverything,
   mainPrincipal: {
     roleId: ROLE_WITHOUT_PERMISSION_ID,
@@ -152,7 +152,7 @@ const build = ({
   flatObjectMetadata,
   policyMetadataMaps = metadataMaps,
 }: {
-  principal: PermissionsPrincipalsContext;
+  principal: PermissionsPrincipalsWithRolesContext;
   flatObjectMetadata: FlatObjectMetadata;
   policyMetadataMaps?: typeof metadataMaps;
 }) =>
@@ -169,7 +169,7 @@ const gatedSql = ({
   flatObjectMetadata,
   policyMetadataMaps = metadataMaps,
 }: {
-  principal: PermissionsPrincipalsContext;
+  principal: PermissionsPrincipalsWithRolesContext;
   flatObjectMetadata: FlatObjectMetadata;
   policyMetadataMaps?: typeof metadataMaps;
 }): string => {
@@ -287,7 +287,7 @@ describe('buildPermissionsCondition', () => {
   describe('with a record shared beyond the role', () => {
     const company = buildObject({ id: 'company' });
     const buildForCompany = (
-      principal: PermissionsPrincipalsContext,
+      principal: PermissionsPrincipalsWithRolesContext,
       operationType: 'select' | 'update' | 'delete' = 'select',
     ) =>
       buildConditionOutcome({
@@ -297,7 +297,7 @@ describe('buildPermissionsCondition', () => {
         flatObjectMetadata: company,
         operationType,
       });
-    const withoutCompanyPermission: PermissionsPrincipalsContext = {
+    const withoutCompanyPermission: PermissionsPrincipalsWithRolesContext = {
       ...readEverything,
       limitingPrincipal: { roleId: 'role-2', agentId: 'agent-1' },
       mainPrincipal: { roleId: 'role-3', workspaceMemberId: 'member-1' },
@@ -565,7 +565,9 @@ describe('buildPermissionsCondition', () => {
         flatEntityMaps: emptyFlatFieldMetadataMaps,
       }),
     };
-    const buildForCreator = (principal: PermissionsPrincipalsContext) =>
+    const buildForCreator = (
+      principal: PermissionsPrincipalsWithRolesContext,
+    ) =>
       buildConditionOutcome({
         principal,
         metadataMaps: creatorMetadataMaps,

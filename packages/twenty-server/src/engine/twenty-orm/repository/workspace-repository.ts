@@ -54,7 +54,7 @@ import {
   getUpdateEventRecords,
   mergeRecordsWithUpdateValues,
 } from 'src/engine/twenty-orm/utils/merge-records-with-update-values.util';
-import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
 import { validateRLSPredicatesForRecords } from 'src/engine/permissions/rls/utils/validate-rls-predicates-for-records.util';
@@ -109,7 +109,7 @@ import {
   type WorkspaceTableShape,
 } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
-import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
+import { buildPermissionsPrincipalsWithRolesFromConfig } from 'src/engine/permissions/principal/utils/build-permissions-principals-with-roles-from-config.util';
 
 const ALWAYS_FALSE_CONDITION = '1=0';
 const MUTATION_EVENT_ACTIONS_BY_KIND: Record<
@@ -161,7 +161,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   private _filesFieldSync?: FilesFieldSync;
 
-  private permissionsPrincipal?: PermissionsPrincipalsContext;
+  private permissionsPrincipal?: PermissionsPrincipalsWithRolesContext;
 
   private permissionsMetadataMaps?: PermissionsMetadataMaps;
 
@@ -2183,7 +2183,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     operationType,
     hypotheticalRecordShareAccessLevel,
   }: {
-    principal: PermissionsPrincipalsContext;
+    principal: PermissionsPrincipalsWithRolesContext;
     recordIds: string[];
     operationType: OperationType;
     hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
@@ -2291,14 +2291,16 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
   }
 
-  private resolvePermissionsPrincipal(): PermissionsPrincipalsContext {
-    this.permissionsPrincipal ??= buildPermissionsPrincipal({
-      workspaceId: this.options.internalContext.workspaceId,
-      rolePermissionConfig: this.options.rolePermissionConfig,
-      principals: getPermissionsPrincipalsFromAuthContext(
-        this.options.authContext,
-      ),
-    });
+  private resolvePermissionsPrincipal(): PermissionsPrincipalsWithRolesContext {
+    this.permissionsPrincipal ??= buildPermissionsPrincipalsWithRolesFromConfig(
+      {
+        workspaceId: this.options.internalContext.workspaceId,
+        rolePermissionConfig: this.options.rolePermissionConfig,
+        principalsContext: getPermissionsPrincipalsFromAuthContext(
+          this.options.authContext,
+        ),
+      },
+    );
 
     if (!isDefined(this.permissionsPrincipal)) {
       throw new PermissionsException(

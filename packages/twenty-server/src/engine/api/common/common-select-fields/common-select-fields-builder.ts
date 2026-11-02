@@ -28,10 +28,10 @@ export class CommonSelectFieldsBuilder {
 
   // Relations to objects the ORM would refuse are left out, so they cannot fail the whole query
   async findReadableObjectMetadataIds({
-    principal,
+    principals,
     flatObjectMetadataMaps,
   }: {
-    principal: PermissionsPrincipalsContext;
+    principals: PermissionsPrincipalsContext;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   }): Promise<Set<string>> {
     const flatObjectMetadatas = Object.values(
@@ -41,7 +41,7 @@ export class CommonSelectFieldsBuilder {
     const readableFlags = await Promise.all(
       flatObjectMetadatas.map((flatObjectMetadata) =>
         this.recordAccessPolicyService.hasAccessToSomeRecords({
-          principal,
+          principals,
           flatObjectMetadata,
           operationType: 'select',
         }),

@@ -53,9 +53,7 @@ import { getRoleIdsToIntersect } from 'src/engine/permissions/principal/utils/ge
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
-import { buildPermissionsPrincipals } from 'src/engine/permissions/principal/utils/build-permissions-principals.util';
-import { omitPermissionsPrincipalWorkspaceMember } from 'src/engine/permissions/principal/utils/omit-permissions-principal-workspace-member.util';
-import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
+import { buildPermissionsPrincipalsContext } from 'src/engine/permissions/principal/utils/build-permissions-principals-context.util';
 
 type StreamPermissionsContext = {
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
@@ -208,23 +206,20 @@ export class ObjectRecordEventPublisher {
       }),
     };
 
-    const principal = buildPermissionsPrincipal({
+    const principals = buildPermissionsPrincipalsContext({
       workspaceId: workspaceEventBatch.workspaceId,
-      rolePermissionConfig,
-      principals: buildPermissionsPrincipals({
-        workspaceMemberId: subscriberAuthContext.workspaceMemberId,
-        apiKeyId: subscriberAuthContext.apiKeyId,
-        applicationId: subscriberAuthContext.applicationId,
-        agentId: undefined,
-      }),
+      workspaceMemberId: subscriberAuthContext.workspaceMemberId,
+      apiKeyId: subscriberAuthContext.apiKeyId,
+      applicationId: subscriberAuthContext.applicationId,
+      agentId: undefined,
     });
 
-    if (!isDefined(principal)) {
+    if (!isDefined(principals)) {
       return;
     }
 
     const admittedRecordIds =
-      await eventRecordAccessGate.resolveAdmittedRecordIds(principal);
+      await eventRecordAccessGate.resolveAdmittedRecordIds(principals);
 
     if (admittedRecordIds.size === 0) {
       return;
@@ -289,7 +284,7 @@ export class ObjectRecordEventPublisher {
           streamData,
           workspaceId: workspaceEventBatch.workspaceId,
           rolePermissionConfig,
-          principal,
+          principals,
           objectsPermissions,
         });
       } catch (error) {
@@ -320,7 +315,7 @@ export class ObjectRecordEventPublisher {
     events,
     workspaceId,
     rolePermissionConfig,
-    principal,
+    principals,
     objectsPermissions,
   }: {
     streamData: EventStreamData;
@@ -328,7 +323,7 @@ export class ObjectRecordEventPublisher {
     events: ObjectRecordEvent[];
     workspaceId: string;
     rolePermissionConfig: RolePermissionConfig;
-    principal: PermissionsPrincipalsContext;
+    principals: PermissionsPrincipalsContext;
     objectsPermissions: ObjectsPermissions;
   }) {
     const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
@@ -362,7 +357,7 @@ export class ObjectRecordEventPublisher {
     const { selectedFields } = this.commonSelectFieldsBuilder.buildFromDepth({
       readableObjectMetadataIds:
         await this.commonSelectFieldsBuilder.findReadableObjectMetadataIds({
-          principal: omitPermissionsPrincipalWorkspaceMember(principal),
+          principals,
           flatObjectMetadataMaps,
         }),
       depth: 1,

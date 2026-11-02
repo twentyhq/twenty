@@ -4,6 +4,6 @@ import { type PermissionsPrincipalsContext } from 'src/engine/permissions/princi
 
 export type EventRecordAccessGate = {
   resolveAdmittedRecordIds: (
-    principal: PermissionsPrincipalsContext,
+    principals: PermissionsPrincipalsContext,
   ) => Promise<Set<string>>;
 };

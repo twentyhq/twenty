@@ -258,7 +258,6 @@ describe('Records shared beyond the role that can access their object', () => {
     const buildJonyPrincipal = (): PermissionsPrincipalsContext => ({
       workspaceId,
       mainPrincipal: {
-        roleId: memberRoleId,
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       },
       applicationPrincipal: { isCustomApp: true },
@@ -266,7 +265,7 @@ describe('Records shared beyond the role that can access their object', () => {
 
     expect(
       await recordAccessPolicyService.hasAccessToSomeRecords({
-        principal: buildJonyPrincipal(),
+        principals: buildJonyPrincipal(),
         flatObjectMetadata,
         operationType: 'select',
       }),
@@ -274,25 +273,25 @@ describe('Records shared beyond the role that can access their object', () => {
 
     await setShare({ principal: JONY });
 
-    const principal = buildJonyPrincipal();
+    const principals = buildJonyPrincipal();
 
     expect(
       await recordAccessPolicyService.hasAccessToSomeRecords({
-        principal,
+        principals,
         flatObjectMetadata,
         operationType: 'select',
       }),
     ).toBe(true);
     expect(
       await recordAccessPolicyService.hasAccessToSomeRecords({
-        principal,
+        principals,
         flatObjectMetadata,
         operationType: 'update',
       }),
     ).toBe(false);
     expect(
       await recordAccessPolicyService.hasAccessToRecords({
-        principal,
+        principals,
         flatObjectMetadata,
         operationType: 'select',
         recordIds: [SHARED_RECORD_ID],
@@ -300,7 +299,7 @@ describe('Records shared beyond the role that can access their object', () => {
     ).toBe(true);
     expect(
       await recordAccessPolicyService.hasAccessToRecords({
-        principal,
+        principals,
         flatObjectMetadata,
         operationType: 'select',
         recordIds: [SHARED_RECORD_ID, OTHER_RECORD_ID],
@@ -525,7 +524,6 @@ describe('Records shared beyond the role that can access their object', () => {
         .resolveAdmittedRecordIds({
           workspaceId: workspaceId,
           mainPrincipal: {
-            roleId: memberRoleId,
             workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
           },
           applicationPrincipal: { isCustomApp: true },

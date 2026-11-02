@@ -1,32 +1,21 @@
 /* @license Enterprise */
 
-import { isDefined } from 'twenty-shared/utils';
-
 import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-key-auth-context.guard';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type PermissionsPrincipals } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
-import { buildPermissionsPrincipals } from 'src/engine/permissions/principal/utils/build-permissions-principals.util';
+import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import { buildPermissionsPrincipalsContext } from 'src/engine/permissions/principal/utils/build-permissions-principals-context.util';
 
-const NO_PRINCIPALS = {
-  workspaceMemberId: undefined,
-  apiKeyId: undefined,
-  applicationId: undefined,
-  agentId: undefined,
-};
-
+// TODO(@charlesBochet): agent runs do not always carry their agent yet, so their row-level checks can miss its role
 export const getPermissionsPrincipalsFromAuthContext = (
-  authContext: WorkspaceAuthContext | undefined,
-): PermissionsPrincipals => {
-  if (!isDefined(authContext)) {
-    return buildPermissionsPrincipals(NO_PRINCIPALS);
-  }
-
+  authContext: WorkspaceAuthContext,
+): PermissionsPrincipalsContext | undefined => {
   if (isUserAuthContext(authContext)) {
-    return buildPermissionsPrincipals({
-      ...NO_PRINCIPALS,
+    return buildPermissionsPrincipalsContext({
+      workspaceId: authContext.workspace.id,
       workspaceMemberId: authContext.workspaceMemberId,
+      apiKeyId: undefined,
       applicationId: (authContext.application ?? authContext.viaApplication)
         ?.id,
       agentId: authContext.agentId,
@@ -34,19 +23,24 @@ export const getPermissionsPrincipalsFromAuthContext = (
   }
 
   if (isApiKeyAuthContext(authContext)) {
-    return buildPermissionsPrincipals({
-      ...NO_PRINCIPALS,
+    return buildPermissionsPrincipalsContext({
+      workspaceId: authContext.workspace.id,
+      workspaceMemberId: undefined,
       apiKeyId: authContext.apiKey.id,
+      applicationId: undefined,
+      agentId: undefined,
     });
   }
 
   if (isApplicationAuthContext(authContext)) {
-    return buildPermissionsPrincipals({
-      ...NO_PRINCIPALS,
+    return buildPermissionsPrincipalsContext({
+      workspaceId: authContext.workspace.id,
+      workspaceMemberId: undefined,
+      apiKeyId: undefined,
       applicationId: authContext.application.id,
       agentId: authContext.agentId,
     });
   }
 
-  return buildPermissionsPrincipals(NO_PRINCIPALS);
+  return undefined;
 };

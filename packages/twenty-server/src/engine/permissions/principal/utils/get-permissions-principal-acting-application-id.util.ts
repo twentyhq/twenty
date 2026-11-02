@@ -3,7 +3,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principal/types/application-default-role-maps.type';
-import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 
 // TODO(@charlesBochet): members hold Admin, the Standard app's default role (#28667); simplify once they no longer do
 export const getPermissionsPrincipalActingApplicationId = ({
@@ -11,7 +11,7 @@ export const getPermissionsPrincipalActingApplicationId = ({
   flatApplicationMaps,
 }: {
   principal: Pick<
-    PermissionsPrincipalsContext,
+    PermissionsPrincipalsWithRolesContext,
     'mainPrincipal' | 'limitingPrincipal' | 'applicationPrincipal'
   >;
   flatApplicationMaps: ApplicationDefaultRoleMaps;

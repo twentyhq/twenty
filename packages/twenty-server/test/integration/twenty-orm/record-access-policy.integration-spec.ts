@@ -96,7 +96,7 @@ describe('RecordAccessPolicyService', () => {
     operationType?: OperationType;
   }): Promise<boolean> =>
     recordAccessPolicyService.hasAccessToRecords({
-      principal,
+      principals: principal,
       flatObjectMetadata: personFlatObjectMetadata,
       operationType,
       recordIds,
@@ -142,7 +142,7 @@ describe('RecordAccessPolicyService', () => {
     it('follows the role when it permits the operation', async () => {
       expect(
         await recordAccessPolicyService.hasAccessToSomeRecords({
-          principal: adminPrincipal,
+          principals: adminPrincipal,
           flatObjectMetadata: personFlatObjectMetadata,
           operationType: 'select',
         }),
@@ -152,7 +152,7 @@ describe('RecordAccessPolicyService', () => {
     it('denies a principal with no role and no share on the object', async () => {
       expect(
         await recordAccessPolicyService.hasAccessToSomeRecords({
-          principal: missingRolePrincipal,
+          principals: missingRolePrincipal,
           flatObjectMetadata: personFlatObjectMetadata,
           operationType: 'select',
         }),
