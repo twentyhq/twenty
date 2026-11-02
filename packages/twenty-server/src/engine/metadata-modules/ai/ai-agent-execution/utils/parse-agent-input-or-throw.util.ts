@@ -1,3 +1,4 @@
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { type z } from 'zod';
 
 import {
@@ -22,7 +23,7 @@ export const parseAgentInputOrThrow = <TSchema extends z.ZodType>({
     throw new AiException(
       `Invalid ${label}: ${parsedInput.error.issues
         .map(({ path, message }) =>
-          path.length > 0 ? `${path.join('.')}: ${message}` : message,
+          isNonEmptyArray(path) ? `${path.join('.')}: ${message}` : message,
         )
         .join(', ')}`,
       AiExceptionCode.INVALID_AGENT_INPUT,

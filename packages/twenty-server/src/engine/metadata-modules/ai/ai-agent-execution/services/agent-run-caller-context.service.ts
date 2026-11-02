@@ -144,6 +144,6 @@ export class AgentRunCallerContextService {
       );
     }
 
-    return { authContext: applicationAuthContext };
+    return { authContext: applicationAuthContext, callerRoleIds: {} };
   }
 }

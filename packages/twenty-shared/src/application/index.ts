@@ -314,6 +314,7 @@ export {
 } from './utils/getEffectiveObjectPermissionsFromRoleManifest';
 export { getRoleManifestGrantsNotCoveredBy } from './utils/getRoleManifestGrantsNotCoveredBy';
 export { getRowLevelRestrictionSignature } from './utils/getRowLevelRestrictionSignature';
+export { hasRunAgentMessageContentOrAttachments } from './utils/hasRunAgentMessageContentOrAttachments';
 export { isConnectionProviderScope } from './utils/isConnectionProviderScope';
 export { isFrontComponentWidgetPageLayoutType } from './utils/isFrontComponentWidgetPageLayoutType';
 export {
