@@ -1,10 +1,9 @@
 /* @license Enterprise */
 
-import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type EntityManager, IsNull, type Repository } from 'typeorm';
+import { type EntityManager, IsNull } from 'typeorm';
 
 import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { BillingArrangementLabel } from 'src/engine/core-modules/billing/enums/billing-arrangement-label.enum';
@@ -21,15 +20,9 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 
 @Injectable()
 export class BillingLimitOverrideService {
-  protected readonly logger = new Logger(BillingLimitOverrideService.name);
-
   constructor(
     @InjectWorkspaceScopedRepository(BillingArrangementEntity)
     private readonly billingArrangementRepository: WorkspaceScopedRepository<BillingArrangementEntity>,
-    // Expired overrides are swept across every workspace
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
-    @InjectRepository(BillingArrangementEntity)
-    private readonly allWorkspacesBillingArrangementRepository: Repository<BillingArrangementEntity>,
     private readonly usageLimitService: UsageLimitService,
   ) {}
 
@@ -87,39 +80,6 @@ export class BillingLimitOverrideService {
           revokedByUserId,
         }),
     });
-  }
-
-  async deleteExpiredLimitOverrideRows(): Promise<void> {
-    const expiredLimitOverrides =
-      await this.allWorkspacesBillingArrangementRepository
-        .createQueryBuilder('arrangement')
-        .select('"arrangement"."workspaceId"', 'workspaceId')
-        .addSelect('"arrangement"."usageLimitId"', 'usageLimitId')
-        .innerJoin(
-          UsageLimitEntity,
-          'usageLimit',
-          '"usageLimit"."id" = "arrangement"."usageLimitId"',
-        )
-        .where('"arrangement"."type" = :type', {
-          type: BillingArrangementType.LIMIT_OVERRIDE,
-        })
-        .andWhere('"arrangement"."endsAt" <= now()')
-        .getRawMany<{ workspaceId: string; usageLimitId: string }>();
-
-    for (const { workspaceId, usageLimitId } of expiredLimitOverrides) {
-      try {
-        await this.usageLimitService.delete({
-          workspaceId,
-          usageLimitId,
-          isOperator: true,
-        });
-      } catch (error) {
-        this.logger.error(
-          `Could not delete the expired limit override ${usageLimitId} of workspace ${workspaceId}`,
-          error,
-        );
-      }
-    }
   }
 
   private async insertLimitOverride({

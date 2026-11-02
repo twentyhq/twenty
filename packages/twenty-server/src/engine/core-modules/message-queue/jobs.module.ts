@@ -10,7 +10,6 @@ import { UpdateSubscriptionQuantityJob } from 'src/engine/core-modules/billing/j
 import { ApplicationRecurringChargeModule } from 'src/engine/core-modules/billing/app-billing/application-recurring-charge.module';
 import { ApplicationRecurringChargeCronJob } from 'src/engine/core-modules/billing/app-billing/crons/jobs/application-recurring-charge.cron.job';
 import { BillingLimitOverrideModule } from 'src/engine/core-modules/billing/limit-override/billing-limit-override.module';
-import { BillingLimitOverrideExpiryCronJob } from 'src/engine/core-modules/billing/limit-override/crons/billing-limit-override-expiry.cron.job';
 import { BillingReminderModule } from 'src/engine/core-modules/billing/reminders/billing-reminder.module';
 import { BillingReminderCronJob } from 'src/engine/core-modules/billing/reminders/crons/billing-reminder.cron.job';
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
@@ -126,7 +125,6 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
   providers: [
     ApplicationRecurringChargeCronJob,
     BillingReminderCronJob,
-    BillingLimitOverrideExpiryCronJob,
     CleanSuspendedWorkspacesJob,
     CleanOnboardingWorkspacesJob,
     EmailSenderJob,

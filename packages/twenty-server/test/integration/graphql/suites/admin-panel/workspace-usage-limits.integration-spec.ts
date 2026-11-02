@@ -10,7 +10,7 @@ import { type Repository } from 'typeorm';
 import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
-import { type BillingLimitOverrideService } from 'src/engine/core-modules/billing/limit-override/services/billing-limit-override.service';
+import { type BillingLimitOverrideExpiryCronJob } from 'src/engine/core-modules/billing/limit-override/crons/billing-limit-override-expiry.cron.job';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -298,9 +298,13 @@ describe('Workspace usage limits from the admin panel', () => {
       { endsAt: new Date(Date.now() - 60_000) },
     );
 
-    await getAppProviderByClassName<BillingLimitOverrideService>(
-      'BillingLimitOverrideService',
-    ).deleteExpiredLimitOverrideRows();
+    const expiryCronJob =
+      getAppProviderByClassName<BillingLimitOverrideExpiryCronJob>(
+        'BillingLimitOverrideExpiryCronJob',
+      );
+
+    await expiryCronJob.handle();
+    await expiryCronJob.handle();
 
     expect(await usageLimitRepository.existsBy({ id: usageLimitId })).toBe(
       false,
