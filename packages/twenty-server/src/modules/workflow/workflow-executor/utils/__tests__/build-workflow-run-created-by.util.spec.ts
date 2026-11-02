@@ -22,7 +22,6 @@ const build = ({
   buildWorkflowRunCreatedBy({
     source: buildSource(startingApplicationId),
     workflowApplicationId,
-    workspaceCustomApplicationId: CUSTOM_APPLICATION_ID,
   });
 
 describe('buildWorkflowRunCreatedBy', () => {
@@ -39,16 +38,16 @@ describe('buildWorkflowRunCreatedBy', () => {
     ).toBe(INSTALLED_APPLICATION_ID);
   });
 
-  it('leaves a run of a workspace workflow unbound, whoever starts it', () => {
+  it('binds a run of a workspace workflow to the workspace custom application, whoever starts it', () => {
     expect(
       build({ workflowApplicationId: CUSTOM_APPLICATION_ID }).context
         .applicationId,
-    ).toBeUndefined();
+    ).toBe(CUSTOM_APPLICATION_ID);
     expect(
       build({
         workflowApplicationId: CUSTOM_APPLICATION_ID,
         startingApplicationId: INSTALLED_APPLICATION_ID,
       }).context.applicationId,
-    ).toBeUndefined();
+    ).toBe(CUSTOM_APPLICATION_ID);
   });
 });

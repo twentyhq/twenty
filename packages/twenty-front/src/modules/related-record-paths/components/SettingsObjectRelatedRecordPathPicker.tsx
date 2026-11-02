@@ -4,7 +4,8 @@ import { useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { IconChevronLeft, useIcons } from 'twenty-ui/icon';
+import { IconChevronLeft } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { normalizeSearchText } from 'twenty-ui/utilities';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';

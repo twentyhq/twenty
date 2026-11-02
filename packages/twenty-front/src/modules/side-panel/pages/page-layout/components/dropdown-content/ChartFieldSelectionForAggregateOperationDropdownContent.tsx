@@ -11,7 +11,8 @@ import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/is
 import { getChartAggregateDropdownPageId } from '@/side-panel/pages/page-layout/utils/getChartAggregateDropdownPageId';
 import { t } from '@lingui/core/macro';
 import { Fragment, useState } from 'react';
-import { IconCheck, useIcons } from 'twenty-ui/icon';
+import { IconCheck } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';

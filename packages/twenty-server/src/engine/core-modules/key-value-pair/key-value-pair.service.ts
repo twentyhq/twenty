@@ -28,8 +28,10 @@ export class KeyValuePairService<
     applicationId?: string | null;
     type: KeyValuePairType;
     key?: Extract<K, string>;
-  }): Promise<Array<KeyValueTypesMap[K]>> {
-    const keyValuePairs = (await this.keyValuePairRepository.find({
+  }): Promise<
+    Array<Omit<KeyValuePairEntity, 'value'> & { value: KeyValueTypesMap[K] }>
+  > {
+    const keyValuePairs = await this.keyValuePairRepository.find({
       where: {
         ...(userId === undefined
           ? {}
@@ -47,11 +49,12 @@ export class KeyValuePairService<
           : { applicationId }),
         type,
       },
-    })) as Array<KeyValueTypesMap[K]>;
+    });
 
     return keyValuePairs.map((keyValuePair) => ({
       ...keyValuePair,
-      value: keyValuePair.value ?? keyValuePair.textValueDeprecated,
+      value: (keyValuePair.value ??
+        keyValuePair.textValueDeprecated) as KeyValueTypesMap[K],
     }));
   }
 
