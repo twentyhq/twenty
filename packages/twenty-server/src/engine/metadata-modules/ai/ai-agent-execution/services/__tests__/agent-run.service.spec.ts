@@ -91,6 +91,35 @@ const runAgent = (service: AgentRunService) =>
   });
 
 describe('AgentRunService', () => {
+  describe('buildExecutionContext', () => {
+    it('reads the thread as the calling application when a run resumes', async () => {
+      const { service } = buildService({});
+
+      const executionContext = await service.buildExecutionContext({
+        workspaceId: WORKSPACE_ID,
+        caller: {
+          type: 'AGENT_API_RUN',
+          ref: {
+            agentId: AGENT_ID,
+            runAsWorkspaceMemberId: null,
+            requestUserWorkspaceId: null,
+            createdBy: {
+              source: 'APPLICATION',
+              name: APPLICATION.name,
+              workspaceMemberId: null,
+              context: { applicationId: APPLICATION_ID },
+            },
+          },
+        },
+      });
+
+      expect(executionContext.conversationViewer).toEqual({
+        workspaceMemberId: undefined,
+        applicationId: APPLICATION_ID,
+      });
+    });
+  });
+
   describe('run', () => {
     it('runs with the overridden label and response format', async () => {
       const { service, agentRunnerService } = buildService({

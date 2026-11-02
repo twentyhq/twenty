@@ -519,14 +519,21 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       );
     }
 
+    const executionContext = await this.buildCallerExecutionContext({
+      workspace: agentContext.authContext.workspace,
+      ref,
+      application: agentContext.application,
+      callerApplication: undefined,
+    });
+
+    // the calling application is kept on the run's author, so a resumed run reads the thread as it did
     return {
-      ...(await this.buildCallerExecutionContext({
-        workspace: agentContext.authContext.workspace,
-        ref,
-        application: agentContext.application,
-        callerApplication: undefined,
-      })),
+      ...executionContext,
       turnCreatedBy: ref.createdBy,
+      conversationViewer: {
+        ...executionContext.conversationViewer,
+        applicationId: ref.createdBy.context?.applicationId,
+      },
     };
   }
 
