@@ -9,7 +9,7 @@ import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { isNonEmptyString } from '@sniptt/guards';
+import { isNonEmptyString, isNull } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { IconLink, IconMail } from 'twenty-ui/icon';
@@ -48,31 +48,34 @@ export const EmptyInboxPlaceholder = () => {
             : t`Connect email, WhatsApp or LinkedIn to see your conversations here.`}
         </EmptyState.Description>
       </EmptyState.Content>
-      <EmptyState.Actions>
-        {hasConnectedAccount ? (
-          <>
-            <LinkEmailThreadsDropdown
-              dropdownIdPrefix="empty-inbox-link-email-threads"
-              trigger={
-                <Button startIcon={<IconLink />} variant="outline">
-                  {t`Link email threads`}
-                </Button>
-              }
-            />
+      {/* Accounts are null until loaded; wait so "Connect an account" never flashes */}
+      {!isNull(myConnectedAccounts) && (
+        <EmptyState.Actions>
+          {hasConnectedAccount ? (
+            <>
+              <LinkEmailThreadsDropdown
+                dropdownIdPrefix="empty-inbox-link-email-threads"
+                trigger={
+                  <Button startIcon={<IconLink />} variant="outline">
+                    {t`Link email threads`}
+                  </Button>
+                }
+              />
+              <Button
+                startIcon={<IconMail />}
+                onClick={openComposer}
+                disabled={loading}
+                variant="outline"
+              >{t`Send Email`}</Button>
+            </>
+          ) : (
             <Button
-              startIcon={<IconMail />}
-              onClick={openComposer}
-              disabled={loading}
+              onClick={() => navigateSettings(SettingsPath.NewAccount)}
               variant="outline"
-            >{t`Send Email`}</Button>
-          </>
-        ) : (
-          <Button
-            onClick={() => navigateSettings(SettingsPath.NewAccount)}
-            variant="outline"
-          >{t`Connect an account`}</Button>
-        )}
-      </EmptyState.Actions>
+            >{t`Connect an account`}</Button>
+          )}
+        </EmptyState.Actions>
+      )}
     </EmptyState.Root>
   );
 };
