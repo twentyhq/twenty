@@ -28,7 +28,6 @@ export type PermissionsMetadataMaps = {
   flatApplicationMaps: ApplicationDefaultRoleMaps;
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
   flatRowLevelPermissionPredicateGroupMaps: FlatRowLevelPermissionPredicateGroupMaps;
-  // Only loaded when a predicate compares records with the reader's member fields
   flatWorkspaceMemberMaps?: FlatWorkspaceMemberMaps;
 };
 

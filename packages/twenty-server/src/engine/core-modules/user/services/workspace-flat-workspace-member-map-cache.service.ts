@@ -47,7 +47,6 @@ export class WorkspaceFlatWorkspaceMemberMapCacheService extends WorkspaceCacheP
             })
             .find({ withDeleted: true }),
         buildSystemAuthContext(workspaceId),
-        // A full context loads this cache when a row rule reads member fields
         { lite: true },
       );
 
