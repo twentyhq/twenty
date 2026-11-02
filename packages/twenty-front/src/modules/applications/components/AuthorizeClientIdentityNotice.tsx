@@ -42,7 +42,7 @@ export const AuthorizeClientIdentityNotice = ({
     return (
       <StyledVerifiedNotice>
         <StyledVerifiedIcon>
-          <IconCircleCheck size={theme.icon.size.sm} />
+          <IconCircleCheck aria-hidden="true" size={theme.icon.size.sm} />
         </StyledVerifiedIcon>
         <Trans>Verified by Twenty as the official {appName}</Trans>
       </StyledVerifiedNotice>

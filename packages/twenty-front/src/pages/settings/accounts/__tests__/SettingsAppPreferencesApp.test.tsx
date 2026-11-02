@@ -62,11 +62,14 @@ describe('SettingsAppPreferencesApp', () => {
     resetJotaiStore();
   });
 
-  it('opens ChatGPT and Claude without the connected accounts permission', () => {
-    renderAppPreferencesApp({ applicationId: 'claude', permissionFlags: [] });
+  it.each(['chatgpt', 'claude'])(
+    'opens %s without the connected accounts permission',
+    (applicationId) => {
+      renderAppPreferencesApp({ applicationId, permissionFlags: [] });
 
-    expect(screen.getByText('ChatGPT or Claude page')).toBeInTheDocument();
-  });
+      expect(screen.getByText('ChatGPT or Claude page')).toBeInTheDocument();
+    },
+  );
 
   it.each(['google', 'linear-application-id'])(
     'keeps %s behind the connected accounts permission',
