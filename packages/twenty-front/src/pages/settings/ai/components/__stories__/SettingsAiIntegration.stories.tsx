@@ -1,7 +1,10 @@
 import { SettingsProtectedRouteWrapper } from '@/settings/components/SettingsProtectedRouteWrapper';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
-import { PermissionFlagType } from '~/generated-metadata/graphql';
+import {
+  AiChatAssistantMode,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 import { SettingsAI } from '~/pages/settings/ai/SettingsAI';
 import { createSettingsAiIntegrationStoryFixture } from '~/pages/settings/ai/components/__stories__/createSettingsAiIntegrationStoryFixture';
 import {
@@ -61,9 +64,7 @@ export const OverviewNavigationAndInstructionsPersistence: Story = {
       expect(overview).toHaveAttribute('aria-current', 'page'),
     );
     expect(canvas.getByRole('heading', { name: 'MCP Server' })).toBeVisible();
-    expect(
-      canvas.queryByRole('heading', { name: 'Behavior' }),
-    ).not.toBeInTheDocument();
+    expect(canvas.getByRole('heading', { name: 'Behavior' })).toBeVisible();
     expect(
       canvas.queryByRole('heading', { name: 'Avatar' }),
     ).not.toBeInTheDocument();
@@ -119,6 +120,109 @@ export const OverviewNavigationAndInstructionsPersistence: Story = {
   },
 };
 
+export const BehaviorPersistence: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const bodyQueries = within(canvasElement.ownerDocument.body);
+    const directMessages = await canvas.findByRole('combobox', { name: 'DMs' });
+    const inbox = canvas.getByRole('combobox', { name: 'Global inbox' });
+
+    expect(directMessages).toHaveTextContent('Only when mentioned');
+    expect(inbox).toHaveTextContent('Auto');
+
+    fixture.pauseBehaviorSave();
+    await userEvent.click(directMessages);
+    const directMessageOptions = await bodyQueries.findByRole('listbox', {
+      name: 'DMs',
+    });
+    await userEvent.click(
+      within(directMessageOptions).getByRole('option', { name: 'Never' }),
+    );
+
+    await waitFor(() => expect(fixture.saveBehavior).toHaveBeenCalledOnce());
+    expect(fixture.saveBehavior).toHaveBeenLastCalledWith({
+      aiChatDirectMessageAssistantMode: AiChatAssistantMode.NEVER,
+    });
+    expect(directMessages).toHaveAttribute('data-disabled');
+    expect(inbox).toHaveAttribute('data-disabled');
+    expect(directMessages).toHaveTextContent('Only when mentioned');
+    expect(inbox).toHaveTextContent('Auto');
+
+    fixture.resumeBehaviorSave();
+    await waitFor(() => expect(directMessages).toHaveTextContent('Never'));
+    await waitFor(() => expect(inbox).not.toHaveAttribute('data-disabled'));
+    await userEvent.click(inbox);
+    const inboxOptions = await bodyQueries.findByRole('listbox', {
+      name: 'Global inbox',
+    });
+    await userEvent.click(
+      within(inboxOptions).getByRole('option', { name: 'Only when mentioned' }),
+    );
+
+    await waitFor(() => expect(inbox).toHaveTextContent('Only when mentioned'));
+    expect(directMessages).toHaveTextContent('Never');
+    expect(fixture.saveBehavior).toHaveBeenCalledTimes(2);
+    expect(fixture.saveBehavior).toHaveBeenLastCalledWith({
+      aiChatInboxAssistantMode: AiChatAssistantMode.MENTION_ONLY,
+    });
+    expect(fixture.saveInstructions).not.toHaveBeenCalled();
+
+    await userEvent.click(canvas.getByRole('link', { name: 'Models' }));
+    await canvas.findByRole('heading', { name: 'Models' });
+    await fixture.reloadWorkspace();
+    await userEvent.click(canvas.getByRole('link', { name: 'Overview' }));
+
+    expect(
+      await canvas.findByRole('combobox', { name: 'DMs' }),
+    ).toHaveTextContent('Never');
+    expect(
+      canvas.getByRole('combobox', { name: 'Global inbox' }),
+    ).toHaveTextContent('Only when mentioned');
+    expect(fixture.saveBehavior).toHaveBeenCalledTimes(2);
+  },
+};
+
+export const BehaviorSaveFailure: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const bodyQueries = within(canvasElement.ownerDocument.body);
+    const directMessages = await canvas.findByRole('combobox', { name: 'DMs' });
+    const inbox = canvas.getByRole('combobox', { name: 'Global inbox' });
+
+    fixture.failNextBehaviorSave();
+    await userEvent.click(directMessages);
+    const failedOptions = await bodyQueries.findByRole('listbox', {
+      name: 'DMs',
+    });
+    await userEvent.click(
+      within(failedOptions).getByRole('option', { name: 'Never' }),
+    );
+
+    expect(await canvas.findByRole('alert')).toHaveTextContent(
+      'Failed to save behavior settings. Try again.',
+    );
+    expect(directMessages).toHaveTextContent('Only when mentioned');
+    expect(inbox).toHaveTextContent('Auto');
+    expect(fixture.saveBehavior).toHaveBeenCalledOnce();
+
+    await userEvent.click(directMessages);
+    const retryOptions = await bodyQueries.findByRole('listbox', {
+      name: 'DMs',
+    });
+    await userEvent.click(
+      within(retryOptions).getByRole('option', { name: 'Never' }),
+    );
+
+    await waitFor(() => expect(directMessages).toHaveTextContent('Never'));
+    expect(inbox).toHaveTextContent('Auto');
+    expect(canvas.queryByRole('alert')).not.toBeInTheDocument();
+    expect(fixture.saveBehavior).toHaveBeenCalledTimes(2);
+    expect(fixture.saveBehavior).toHaveBeenLastCalledWith({
+      aiChatDirectMessageAssistantMode: AiChatAssistantMode.NEVER,
+    });
+  },
+};
+
 export const LegacyTabsWithoutInbox: Story = {
   args: { isInboxEnabled: false, routeHash: '#overview' },
   play: async ({ canvasElement }) => {
@@ -139,6 +243,7 @@ export const LegacyTabsWithoutInbox: Story = {
     expect(
       canvas.getByRole('heading', { name: 'System Prompt' }),
     ).toBeVisible();
+    expect(fixture.saveBehavior).not.toHaveBeenCalled();
   },
 };
 
@@ -157,6 +262,7 @@ export const SettingsPermissionDenied: Story = {
     ).not.toBeInTheDocument();
     expect(fixture.loadSystemPrompts).not.toHaveBeenCalled();
     expect(fixture.saveInstructions).not.toHaveBeenCalled();
+    expect(fixture.saveBehavior).not.toHaveBeenCalled();
   },
 };
 
