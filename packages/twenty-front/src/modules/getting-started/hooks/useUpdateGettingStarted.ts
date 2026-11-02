@@ -45,11 +45,17 @@ export const useUpdateGettingStarted = () => {
     },
   );
 
-  const updateGettingStarted = async (input: UpdateGettingStartedInput) => {
+  const updateGettingStarted = async (
+    input: UpdateGettingStartedInput,
+  ): Promise<boolean> => {
     try {
       await updateGettingStartedMutation({ variables: { input } });
+
+      return true;
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
+
+      return false;
     }
   };
 

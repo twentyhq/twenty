@@ -57,10 +57,11 @@ jest.mocked(useShouldOpenGettingStarted).mockReturnValue({
   shouldOpenGettingStarted: false,
   isLoading: false,
 });
-const setupMockShouldOpenGettingStarted = (shouldOpenGettingStartedResult?: {
-  shouldOpenGettingStarted: boolean;
-  isLoading: boolean;
-}) => {
+const setupMockShouldOpenGettingStarted = (
+  shouldOpenGettingStartedResult?: ReturnType<
+    typeof useShouldOpenGettingStarted
+  >,
+) => {
   jest.mocked(useShouldOpenGettingStarted).mockReturnValueOnce(
     shouldOpenGettingStartedResult ?? {
       shouldOpenGettingStarted: false,

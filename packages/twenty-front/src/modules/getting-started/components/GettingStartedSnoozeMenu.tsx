@@ -47,8 +47,11 @@ export const GettingStartedSnoozeMenu = () => {
   ];
 
   const updateAndNavigateHome = async (input: UpdateGettingStartedInput) => {
-    await updateGettingStarted(input);
-    navigate(defaultHomePagePath);
+    const isUpdated = await updateGettingStarted(input);
+
+    if (isUpdated) {
+      navigate(defaultHomePagePath);
+    }
   };
 
   return (

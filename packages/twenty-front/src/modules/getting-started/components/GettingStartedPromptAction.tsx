@@ -6,6 +6,7 @@ import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettin
 import { TextArea } from '@/ui/input/components/TextArea';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { IconButton } from 'twenty-ui/components/input';
 import { IconArrowUp } from 'twenty-ui/icon';
@@ -71,7 +72,9 @@ export const GettingStartedPromptAction = ({
             color="accent"
             shape="round"
             aria-label={t`Send instructions`}
-            disabled={!canSendAgentChatMessage || trimmedPrompt === ''}
+            disabled={
+              !canSendAgentChatMessage || !isNonEmptyString(trimmedPrompt)
+            }
             onClick={sendPrompt}
           >
             <IconArrowUp />
