@@ -142,7 +142,10 @@ export class AgentChatDirectMessageIdentityService {
     flatWorkspaceMemberMaps,
     pair,
   }: {
-    flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
+    flatWorkspaceMemberMaps: Pick<
+      FlatWorkspaceMemberMaps,
+      'byId' | 'userWorkspaceIdByUserId'
+    >;
     pair: DirectMessagePair;
   }): void {
     for (const workspaceMemberId of [
