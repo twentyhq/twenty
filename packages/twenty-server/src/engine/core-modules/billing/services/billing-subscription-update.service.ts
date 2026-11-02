@@ -225,13 +225,23 @@ export class BillingSubscriptionUpdateService {
       return;
     }
 
-    const { billingSubscriptionId, seatSyncPlan } = currentSeatSyncPlan;
+    const {
+      billingSubscriptionId,
+      seatSyncPlan: { currentPeriodSeats, nextPeriodSeats },
+    } = currentSeatSyncPlan;
 
     await this.updateSubscription(workspaceId, billingSubscriptionId, {
       type: SubscriptionUpdateType.SEATS,
-      newSeats: seatSyncPlan.currentPeriodSeats,
-      nextPeriodSeats: seatSyncPlan.nextPeriodSeats ?? undefined,
+      newSeats: currentPeriodSeats,
     });
+
+    if (isDefined(nextPeriodSeats) && nextPeriodSeats !== currentPeriodSeats) {
+      await this.updateSubscription(workspaceId, billingSubscriptionId, {
+        type: SubscriptionUpdateType.SEATS,
+        newSeats: nextPeriodSeats,
+        shouldUpdateAtPeriodEnd: true,
+      });
+    }
   }
 
   async updateSubscription(
@@ -275,15 +285,6 @@ export class BillingSubscriptionUpdateService {
             })
           )?.currentPeriodSeats ?? currentPrices.seats);
 
-    const nextPeriodSubscriptionUpdate: SubscriptionUpdate =
-      subscriptionUpdate.type === SubscriptionUpdateType.SEATS &&
-      isDefined(subscriptionUpdate.nextPeriodSeats)
-        ? {
-            type: SubscriptionUpdateType.SEATS,
-            newSeats: subscriptionUpdate.nextPeriodSeats,
-          }
-        : subscriptionUpdate;
-
     const toUpdateCurrentPrices = await this.computeSubscriptionPricesUpdate(
       subscriptionUpdate,
       { ...currentPrices, seats },
@@ -307,9 +308,8 @@ export class BillingSubscriptionUpdateService {
           toUpdateCurrentPrices: undefined,
           toUpdateNextPrices: toUpdateCurrentPrices,
           currentPhase: toPhaseUpdateParams(currentPhase),
-          subscriptionCurrentPeriodEnd: Math.floor(
-            subscription.currentPeriodEnd.getTime() / 1000,
-          ),
+          subscriptionCurrentPeriodEnd:
+            stripeSubscription.items.data[0].current_period_end,
         });
       } else {
         assertIsDefinedOrThrow(nextPhase);
@@ -331,9 +331,8 @@ export class BillingSubscriptionUpdateService {
           toUpdateCurrentPrices: undefined,
           currentPhase: toPhaseUpdateParams(currentPhase),
           nextPhase: toPhaseUpdateParams(nextPhase),
-          subscriptionCurrentPeriodEnd: Math.floor(
-            subscription.currentPeriodEnd.getTime() / 1000,
-          ),
+          subscriptionCurrentPeriodEnd:
+            stripeSubscription.items.data[0].current_period_end,
         });
       }
     } else {
@@ -366,7 +365,7 @@ export class BillingSubscriptionUpdateService {
             nextPhase.items,
           );
         const toUpdateNextPrices = await this.computeSubscriptionPricesUpdate(
-          nextPeriodSubscriptionUpdate,
+          subscriptionUpdate,
           nextPhasePrices,
         );
 
@@ -376,29 +375,6 @@ export class BillingSubscriptionUpdateService {
           toUpdateCurrentPrices: undefined,
           currentPhase: toPhaseUpdateParams(refreshedCurrentPhase),
           nextPhase: toPhaseUpdateParams(nextPhase),
-          subscriptionCurrentPeriodEnd:
-            updatedStripeSubscription?.items.data[0].current_period_end ??
-            stripeSubscription.items.data[0].current_period_end,
-        });
-      } else if (
-        !isDefined(schedule) &&
-        subscriptionUpdate.type === SubscriptionUpdateType.SEATS &&
-        isDefined(subscriptionUpdate.nextPeriodSeats) &&
-        subscriptionUpdate.nextPeriodSeats !== toUpdateCurrentPrices.seats
-      ) {
-        const { schedule: createdSchedule, currentPhase: createdCurrentPhase } =
-          await this.stripeSubscriptionScheduleService.createSubscriptionSchedule(
-            subscription.stripeSubscriptionId,
-          );
-
-        await this.runSubscriptionScheduleUpdate({
-          stripeScheduleId: createdSchedule.id,
-          toUpdateNextPrices: {
-            ...toUpdateCurrentPrices,
-            seats: subscriptionUpdate.nextPeriodSeats,
-          },
-          toUpdateCurrentPrices: undefined,
-          currentPhase: toPhaseUpdateParams(createdCurrentPhase),
           subscriptionCurrentPeriodEnd:
             updatedStripeSubscription?.items.data[0].current_period_end ??
             stripeSubscription.items.data[0].current_period_end,
@@ -648,7 +624,7 @@ export class BillingSubscriptionUpdateService {
         return isDowngrade;
       }
       case SubscriptionUpdateType.SEATS:
-        return false;
+        return update.shouldUpdateAtPeriodEnd ?? false;
       case SubscriptionUpdateType.INTERVAL: {
         const currentInterval = subscription.interval;
         const isDowngrade =
