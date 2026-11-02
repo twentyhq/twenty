@@ -37,7 +37,7 @@ import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-val
 import { KeyValuePairService } from 'src/engine/core-modules/key-value-pair/key-value-pair.service';
 import { UserVarsService } from 'src/engine/core-modules/user/user-vars/services/user-vars.service';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 

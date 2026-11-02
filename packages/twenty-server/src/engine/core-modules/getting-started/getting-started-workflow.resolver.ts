@@ -26,7 +26,7 @@ import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { BillingEnabledGuard } from 'src/engine/guards/billing-enabled.guard';
 import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 
 @MetadataResolver()
 @UseGuards(

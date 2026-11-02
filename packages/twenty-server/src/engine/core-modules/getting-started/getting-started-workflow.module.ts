@@ -7,7 +7,7 @@ import { GettingStartedWorkflowWorkspaceService } from 'src/engine/core-modules/
 import { UserVarsModule } from 'src/engine/core-modules/user/user-vars/user-vars.module';
 import { CoreWorkflowServicesModule } from 'src/engine/core-modules/workflow/core-workflow-services.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 
 @Module({
   imports: [
