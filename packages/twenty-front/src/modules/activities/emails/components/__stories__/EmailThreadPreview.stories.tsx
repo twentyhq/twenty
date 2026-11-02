@@ -2,6 +2,8 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, within } from 'storybook/test';
 
 import { EmailThreadPreview } from '@/activities/emails/components/EmailThreadPreview';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
   MessageChannelType,
@@ -10,6 +12,15 @@ import {
 } from '~/generated/graphql';
 import { MemoryRouterDecorator } from '~/testing/decorators/MemoryRouterDecorator';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
+
+const LINKEDIN_APPLICATION = {
+  id: '0d6e3f2a-4b1c-4e8a-9f3d-2c5b7a1e6d40',
+  name: 'LinkedIn',
+  universalIdentifier: '6f1a2b3c-4d5e-4f60-8a7b-9c0d1e2f3a4b',
+  logoUrl: null,
+  createdAt: '2026-09-01T00:00:00.000Z',
+};
 
 const thread: TimelineThread = {
   id: '1b2032b1-49da-4b23-8676-916cb19b93fa',
@@ -118,9 +129,18 @@ export const LinkedInConversation: Story = {
       channel: {
         type: MessageChannelType.APP,
         provider: 'app',
-        applicationId: '0d6e3f2a-4b1c-4e8a-9f3d-2c5b7a1e6d40',
+        applicationId: LINKEDIN_APPLICATION.id,
       },
     },
+  },
+  beforeEach: () => {
+    jotaiStore.set(currentWorkspaceState.atom, {
+      ...mockCurrentWorkspace,
+      installedApplications: [
+        ...mockCurrentWorkspace.installedApplications,
+        LINKEDIN_APPLICATION,
+      ],
+    });
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -129,5 +149,7 @@ export const LinkedInConversation: Story = {
       'Great meeting you at Dreamforce. Happy to connect.',
     );
     await expect(canvas.queryByText('4')).not.toBeInTheDocument();
+    // The app has no logo, so its avatar falls back to the name's initial
+    await expect(canvas.getByText('L')).toBeVisible();
   },
 };

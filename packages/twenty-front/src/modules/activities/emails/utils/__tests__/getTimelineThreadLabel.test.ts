@@ -32,17 +32,20 @@ describe('getTimelineThreadLabel', () => {
     ).toBe('Email thread');
   });
 
-  it('should fall back to a conversation label for chat channels', () => {
-    expect(
-      getTimelineThreadLabel({
-        subject: '',
-        visibility: MessageChannelVisibility.SHARE_EVERYTHING,
-        channel: {
-          type: MessageChannelType.APP,
-          provider: 'app',
-          applicationId: '0d6e3f2a-4b1c-4e8a-9f3d-2c5b7a1e6d40',
-        },
-      }),
-    ).toBe('Conversation');
-  });
+  it.each([MessageChannelType.APP, MessageChannelType.SMS])(
+    'should fall back to a conversation label for %s channels',
+    (type) => {
+      expect(
+        getTimelineThreadLabel({
+          subject: '',
+          visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+          channel: {
+            type,
+            provider: 'app',
+            applicationId: null,
+          },
+        }),
+      ).toBe('Conversation');
+    },
+  );
 });
