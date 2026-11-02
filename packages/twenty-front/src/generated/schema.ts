@@ -562,6 +562,7 @@ export type Query = {
   coreWorkflowsWithCurrentVersions: Array<CoreWorkflowWithCurrentVersionDto>;
   dpaAgreements: Array<DpaAgreement>;
   dpaPreview: DpaDocument;
+  getMessageThreadChannel?: Maybe<TimelineThreadChannel>;
   /** @deprecated Use getTimelineCalendarEventsFromObjectRecord instead */
   getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
   getTimelineCalendarEventsFromObjectRecord: TimelineCalendarEventsWithTotal;
@@ -625,6 +626,11 @@ export type QueryCoreWorkflowsArgs = {
 
 export type QueryCoreWorkflowsWithCurrentVersionsArgs = {
   input: CoreWorkflowsWithCurrentVersionsInput;
+};
+
+
+export type QueryGetMessageThreadChannelArgs = {
+  messageThreadId: Scalars['UUID']['input'];
 };
 
 
