@@ -55,6 +55,14 @@ describe('2-55 workspace command - add direct message pair identity (integration
   let identityService: AgentChatDirectMessageIdentityService;
   let originalFlagValue: boolean | undefined;
 
+  const deleteThread = (threadId: string) =>
+    global.testDataSource
+      .createQueryBuilder()
+      .delete()
+      .from(`${SCHEMA}.agentChatThread`)
+      .where('id = :threadId', { threadId })
+      .execute();
+
   const findIdentityFlag = async (): Promise<boolean | undefined> => {
     const [flag]: { value: boolean }[] = await global.testDataSource.query(
       `SELECT value FROM core."featureFlag" WHERE "workspaceId" = $1 AND key = $2`,
@@ -280,12 +288,7 @@ describe('2-55 workspace command - add direct message pair identity (integration
     try {
       await expect(identityService.getOrCreate(PAIR)).resolves.toBe(threadId);
     } finally {
-      await global.testDataSource
-        .createQueryBuilder()
-        .delete()
-        .from(`${SCHEMA}.agentChatThread`)
-        .where('id = :threadId', { threadId })
-        .execute();
+      await deleteThread(threadId);
     }
   });
 
@@ -313,12 +316,7 @@ describe('2-55 workspace command - add direct message pair identity (integration
       expect(await findIdentityFlag()).toBe(true);
       await expect(identityService.getOrCreate(PAIR)).resolves.toBe(threadId);
     } finally {
-      await global.testDataSource
-        .createQueryBuilder()
-        .delete()
-        .from(`${SCHEMA}.agentChatThread`)
-        .where('id = :threadId', { threadId })
-        .execute();
+      await deleteThread(threadId);
     }
   });
 
