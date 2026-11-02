@@ -23,7 +23,7 @@ const resolveUserAndApplicationRoleIds = ({
   authContext,
   userRoleId,
 }: {
-  authContext: UserWorkspaceAuthContext;
+  authContext: Pick<UserWorkspaceAuthContext, 'application' | 'viaApplication'>;
   userRoleId: string | undefined;
 }): RoleIdsBySource => {
   if (isDefined(authContext.application)) {
