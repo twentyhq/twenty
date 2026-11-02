@@ -43,6 +43,15 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { type AgentChatThreadParticipantWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread-participant.workspace-entity';
+import { buildAgentChatThreadParticipantOwnerShares } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-participant-owner-shares.util';
+import { buildNextAgentChatLastMentionedAt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-next-agent-chat-last-mentioned-at.util';
+import { buildNextAgentChatThreadParticipantUpdatedAt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-next-agent-chat-thread-participant-updated-at.util';
+import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
+import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
 type BuildParticipantWriteQuery = (
@@ -56,19 +65,10 @@ const NEXT_PARTICIPANT_UPDATED_AT = `GREATEST(clock_timestamp(), participant."up
 
 const ALL_MENTIONS_RESOLVED_AT = `GREATEST(participant."mentionsResolvedAt", participant."lastMentionedAt")`;
 
-const NEXT_LAST_MENTIONED_AT = `GREATEST(
-  EXCLUDED."lastMentionedAt",
-  participant."lastMentionedAt" + interval '1 millisecond',
-  participant."mentionsResolvedAt" + interval '1 millisecond'
-)`;
-
 const IS_IN_INBOX = `(participant."isSubscribed" AND (participant."archivedAt" IS NULL OR thread."lastActivityAt" > participant."archivedAt"))`;
 
 const PARTICIPANT_LOCK_QUERY =
   'SELECT pg_advisory_xact_lock(hashtextextended($1, 0))';
-
-const PARTICIPANTS_LOCK_QUERY = `SELECT pg_advisory_xact_lock(hashtextextended(lock_key, 0))
-   FROM unnest($1::text[]) lock_key ORDER BY lock_key`;
 
 // Saved as ended when already due, since its queued end may have run before this write
 const buildSnoozeQuery: BuildParticipantWriteQuery = ({
@@ -212,32 +212,6 @@ const PARTICIPANT_COLUMN_NAMES = [
 const PARTICIPANT_COLUMNS = PARTICIPANT_COLUMN_NAMES.map(
   (columnName) => `"${columnName}"`,
 ).join(', ');
-const buildMoveMembersToInboxQuery = ({
-  workspaceId,
-  privateColumn,
-  privateValue,
-}: { workspaceId: string } & PrivateRecordInsertSql) =>
-  `WITH written_participant AS (
-     INSERT INTO ${getAgentChatThreadParticipantTable(workspaceId)} AS participant ("threadId", "workspaceMemberId"${privateColumn}, "lastMentionedAt")
-     SELECT $1, member_id${privateValue}, CASE WHEN $4::boolean THEN clock_timestamp() END
-     FROM unnest($2::uuid[]) member_id
-     ON CONFLICT ("threadId", "workspaceMemberId") DO UPDATE SET
-       "lastReadAt" = NULL,
-       "lastMentionedAt" = CASE WHEN $4::boolean THEN ${NEXT_LAST_MENTIONED_AT} ELSE participant."lastMentionedAt" END,
-       "archivedAt" = NULL,
-       "snoozedUntil" = NULL,
-       "isSubscribed" = true,
-       "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
-     RETURNING *
-   ), owner_share AS (
-     ${buildAgentChatThreadParticipantOwnerShareInsert({
-       workspaceId,
-       participantSource: 'written_participant',
-       objectMetadataIdParameter: '$3',
-     })}
-   )
-   SELECT ${PARTICIPANT_COLUMNS} FROM written_participant`;
-
 // Timestamps compared against thread.lastActivityAt are stamped by Postgres
 // (clock_timestamp), so ordering follows the database rather than app servers.
 // Every row is granted to its member, and every change to it is sent as a
@@ -252,6 +226,9 @@ export class AgentChatThreadParticipantService {
     @InjectMessageQueue(MessageQueue.delayedJobsQueue)
     private readonly delayedJobsQueueService: MessageQueueService,
     private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly privateRecordStorageService: PrivateRecordStorageService,
+    private readonly recordShareStorageService: RecordShareStorageService,
   ) {}
 
   async updateInboxState({
@@ -341,10 +318,19 @@ export class AgentChatThreadParticipantService {
     await this.assertCanMoveMembersToInbox({ ...args, memberIds });
 
     const { workspaceId, threadId } = args;
-    const objectMetadataId =
-      await this.sharingService.getParticipantObjectMetadataId(workspaceId);
-    const privateRecordInsertSql =
-      await this.sharingService.getPrivateRecordInsertSql(workspaceId);
+
+    await this.sharingService.getParticipantObjectMetadataId(workspaceId);
+
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+        'featureFlagsMap',
+      ]);
+    const participantObjectMetadata =
+      findAgentChatFlatObjectMetadata(
+        flatObjectMetadataMaps,
+        'agentChatThreadParticipant',
+      ) ?? throwAgentChatThreadNotFound();
     const writes = await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.workspaceOrmManager.runInWorkspaceTransaction((scope) =>
@@ -354,8 +340,7 @@ export class AgentChatThreadParticipantService {
             threadId,
             memberIds,
             isMention,
-            objectMetadataId,
-            privateRecordInsertSql,
+            participantObjectMetadata,
           }),
         ),
       buildSystemAuthContext(workspaceId),
@@ -756,26 +741,6 @@ export class AgentChatThreadParticipantService {
     return participant ?? null;
   }
 
-  private async lockParticipants({
-    scope,
-    workspaceId,
-    threadId,
-    memberIds,
-  }: Pick<AgentChatThreadAccessArgs, 'workspaceId' | 'threadId'> & {
-    scope: WorkspaceTransactionScope;
-    memberIds: string[];
-  }): Promise<void> {
-    await scope.executeRawQuery(PARTICIPANTS_LOCK_QUERY, [
-      memberIds.map((workspaceMemberId) =>
-        buildAgentChatThreadParticipantLockKey({
-          workspaceId,
-          threadId,
-          workspaceMemberId,
-        }),
-      ),
-    ]);
-  }
-
   private async assertCanWriteInboxState({
     workspaceId,
     workspaceMemberId,
@@ -815,42 +780,96 @@ export class AgentChatThreadParticipantService {
     }
   }
 
+  // Last write wins: values are computed here from the rows read, with no lock
   private async writeMembersToInbox({
     scope,
     workspaceId,
     threadId,
     memberIds,
     isMention,
-    objectMetadataId,
-    privateRecordInsertSql,
+    participantObjectMetadata,
   }: Pick<AgentChatThreadAccessArgs, 'workspaceId' | 'threadId'> & {
     scope: WorkspaceTransactionScope;
     memberIds: string[];
     isMention: boolean;
-    objectMetadataId: string;
-    privateRecordInsertSql: PrivateRecordInsertSql;
+    participantObjectMetadata: FlatObjectMetadata;
   }): Promise<AgentChatThreadParticipantWrite[]> {
-    await this.lockParticipants({ scope, workspaceId, threadId, memberIds });
+    const participantRepository =
+      scope.getRepository<AgentChatThreadParticipantWorkspaceEntity>(
+        'agentChatThreadParticipant',
+        { shouldBypassPermissionChecks: true },
+        { shouldSkipEventEmission: true },
+      );
+    const findParticipants = () =>
+      participantRepository
+        .createQueryBuilder()
+        .select(PARTICIPANT_COLUMN_NAMES)
+        .where({ threadId, workspaceMemberId: In(memberIds) })
+        .withDeleted()
+        .getMany<AgentChatThreadParticipantRow>({ noFormatting: true });
 
-    const participantsBefore = await scope
-      .getRepository('agentChatThreadParticipant', {
-        shouldBypassPermissionChecks: true,
-      })
-      .createQueryBuilder()
-      .select(PARTICIPANT_COLUMN_NAMES)
-      .where({ threadId, workspaceMemberId: In(memberIds) })
-      .withDeleted()
-      .getMany<AgentChatThreadParticipantRow>({ noFormatting: true });
-    const participantsAfter = (await scope.executeRawQuery(
-      buildMoveMembersToInboxQuery({ workspaceId, ...privateRecordInsertSql }),
-      [threadId, memberIds, objectMetadataId, isMention],
-    )) as unknown as AgentChatThreadParticipantRow[];
+    const participantsBefore = await findParticipants();
     const participantBeforeByMemberId = new Map(
       participantsBefore.map((participant) => [
         participant.workspaceMemberId,
         participant,
       ]),
     );
+    const missingMemberIds = memberIds.filter(
+      (memberId) => !participantBeforeByMemberId.has(memberId),
+    );
+
+    if (isNonEmptyArray(missingMemberIds)) {
+      const lastMentionedAt = isMention ? new Date().toISOString() : null;
+      const { identifiers } = await participantRepository.insert(
+        missingMemberIds.map((workspaceMemberId) => ({
+          threadId,
+          workspaceMemberId,
+          lastMentionedAt,
+        })),
+        { onConflictDoNothing: true },
+      );
+
+      await this.privateRecordStorageService.setPrivate({
+        workspaceId,
+        flatObjectMetadata: participantObjectMetadata,
+        recordIds: identifiers.map(({ id }) => id),
+        isPrivate: true,
+        transactionScope: scope,
+      });
+    }
+
+    for (const participantBefore of participantsBefore) {
+      await participantRepository.update(
+        { id: participantBefore.id },
+        {
+          lastReadAt: null,
+          archivedAt: null,
+          snoozedUntil: null,
+          isSubscribed: true,
+          ...(isMention
+            ? {
+                lastMentionedAt:
+                  buildNextAgentChatLastMentionedAt(participantBefore),
+              }
+            : {}),
+          updatedAt: buildNextAgentChatThreadParticipantUpdatedAt(
+            participantBefore.updatedAt,
+          ),
+        },
+      );
+    }
+
+    const participantsAfter = await findParticipants();
+
+    await this.recordShareStorageService.insertMany({
+      workspaceId,
+      recordShares: buildAgentChatThreadParticipantOwnerShares({
+        participants: participantsAfter,
+        objectMetadataId: participantObjectMetadata.id,
+      }),
+      transactionScope: scope,
+    });
 
     return participantsAfter.map((participantAfter) => ({
       before:
