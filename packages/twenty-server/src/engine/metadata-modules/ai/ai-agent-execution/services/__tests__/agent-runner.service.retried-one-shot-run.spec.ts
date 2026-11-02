@@ -30,6 +30,7 @@ const buildRunner = (
     error?: unknown;
     result?: object | null;
   } | null,
+  { canStoreTurnResult = jest.fn().mockResolvedValue(true) } = {},
 ) => {
   const handler = {
     getWaitingState: jest.fn().mockResolvedValue('WAITING'),
@@ -41,7 +42,7 @@ const buildRunner = (
   };
   const conversationWriterService = {
     insertTurn: jest.fn().mockRejectedValue(new Error('Database unavailable')),
-    canStoreTurnResult: jest.fn().mockResolvedValue(true),
+    canStoreTurnResult,
   };
   const agentRunSuspensionService = {
     deliverOutcome: jest.fn().mockResolvedValue(undefined),
@@ -196,6 +197,31 @@ describe('AgentRunnerService runStarted on a retried one-shot run', () => {
     expect(conversationWriterService.insertTurn).toHaveBeenCalledWith(
       expect.objectContaining({ id: 'turn-id', threadId: null }),
     );
+  });
+});
+
+describe('AgentRunnerService runStarted on a one-shot run whose result fence cannot be read', () => {
+  beforeEach(() => {
+    jest.spyOn(Logger.prototype, 'error').mockImplementation(() => undefined);
+  });
+
+  afterEach(() => jest.restoreAllMocks());
+
+  it('fails the run before opening a turn it could leave running', async () => {
+    const { runner, conversationWriterService, agentRunSuspensionService } =
+      buildRunner(null, {
+        canStoreTurnResult: jest
+          .fn()
+          .mockRejectedValue(new Error('Cache unavailable')),
+      });
+
+    await runner.runStarted(JOB_DATA);
+
+    expect(conversationWriterService.insertTurn).not.toHaveBeenCalled();
+    expectOutcomeDeliveredOnce(agentRunSuspensionService.deliverOutcome, {
+      status: 'FAILED',
+      error: 'Cache unavailable',
+    });
   });
 });
 

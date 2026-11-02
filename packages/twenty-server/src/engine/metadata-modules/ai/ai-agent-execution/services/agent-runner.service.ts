@@ -551,10 +551,13 @@ export class AgentRunnerService {
   }): Promise<AgentRunnerResult> {
     const { workspaceId, spec, persona, prompt, executionContext } = input;
     const abortSignal = stream?.abortSignal;
-    const [{ turnId, priorMessages }, canStoreResult] = await Promise.all([
-      this.openTurn({ input, suspension }),
-      this.conversationWriterService.canStoreTurnResult(workspaceId),
-    ]);
+    // read before the turn opens, so nothing fails between opening it and the stream finishing it
+    const canStoreResult =
+      await this.conversationWriterService.canStoreTurnResult(workspaceId);
+    const { turnId, priorMessages } = await this.openTurn({
+      input,
+      suspension,
+    });
     const canPause = isDefined(stream);
 
     const startedAtMs = Date.now();
