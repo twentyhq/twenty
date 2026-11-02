@@ -6,11 +6,13 @@ import { useChatReplyChannel } from '@/activities/emails/hooks/useChatReplyChann
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
 import { WidgetRelationsHeader } from '@/page-layout/widgets/components/WidgetRelationsHeader';
 import { isApplicationConnectionReconnectNeeded } from '@/settings/applications/utils/isApplicationConnectionReconnectNeeded';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import {
   StyledWidgetContentContainer,
   StyledWidgetScrollContainer,
 } from '@/ui/layout/components/WidgetContentContainer';
 import { isDefined } from 'twenty-shared/utils';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 type ChatThreadWidgetContentProps = {
   messageThreadId: string;
@@ -18,7 +20,7 @@ type ChatThreadWidgetContentProps = {
   loading: boolean;
   onFetchMoreMessages: () => void;
   messageChannelId: string | null;
-  onMessageSent: () => void;
+  onMessageSent: () => Promise<unknown>;
 };
 
 export const ChatThreadWidgetContent = ({
@@ -30,6 +32,9 @@ export const ChatThreadWidgetContent = ({
   onMessageSent,
 }: ChatThreadWidgetContentProps) => {
   const replyChannel = useChatReplyChannel(messageChannelId);
+  const canSendMessages = useHasPermissionFlag(
+    PermissionFlagType.SEND_EMAIL_TOOL,
+  );
 
   const isDisconnected =
     isDefined(replyChannel) &&
@@ -64,8 +69,9 @@ export const ChatThreadWidgetContent = ({
           onLastRowVisible={onFetchMoreMessages}
         />
       </StyledWidgetScrollContainer>
-      {isDefined(replyChannel) && (
+      {isDefined(replyChannel) && canSendMessages && (
         <ChatThreadComposer
+          key={messageThreadId}
           messageThreadId={messageThreadId}
           messageChannelId={replyChannel.messageChannel.id}
           channelName={replyChannel.connectionProvider.displayName}

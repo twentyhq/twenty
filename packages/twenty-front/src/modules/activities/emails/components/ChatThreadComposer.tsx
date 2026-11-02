@@ -21,6 +21,14 @@ const StyledContainer = styled.div`
   padding: ${themeCssVariables.spacing[4]};
 `;
 
+const StyledPendingMessages = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+  max-height: 120px;
+  overflow-y: auto;
+`;
+
 const StyledInputBox = styled.div`
   background: ${themeCssVariables.background.secondary};
   border: 1px solid ${themeCssVariables.border.color.medium};
@@ -71,7 +79,7 @@ type ChatThreadComposerProps = {
   applicationId: string | null;
   recipientName: string | null;
   isDisconnected: boolean;
-  onMessageSent: () => void;
+  onMessageSent: () => Promise<unknown>;
 };
 
 export const ChatThreadComposer = ({
@@ -113,11 +121,15 @@ export const ChatThreadComposer = ({
         // Reused on retry so the server does not deliver the message twice
         idempotencyKey: pendingMessage.id,
       });
-      setPendingMessageStatus(pendingMessage.id, null);
-      onMessageSent();
     } catch {
       setPendingMessageStatus(pendingMessage.id, 'failed');
+
+      return;
     }
+
+    // Keep the bubble until the refreshed thread shows the sent message
+    await onMessageSent().catch(() => undefined);
+    setPendingMessageStatus(pendingMessage.id, null);
   };
 
   const handleSubmit = () => {
@@ -160,14 +172,18 @@ export const ChatThreadComposer = ({
 
   return (
     <StyledContainer>
-      {pendingMessages.map((pendingMessage) => (
-        <ChatThreadPendingMessage
-          key={pendingMessage.id}
-          pendingMessage={pendingMessage}
-          onRetry={send}
-          onDiscard={({ id }) => setPendingMessageStatus(id, null)}
-        />
-      ))}
+      {pendingMessages.length > 0 && (
+        <StyledPendingMessages>
+          {pendingMessages.map((pendingMessage) => (
+            <ChatThreadPendingMessage
+              key={pendingMessage.id}
+              pendingMessage={pendingMessage}
+              onRetry={send}
+              onDiscard={({ id }) => setPendingMessageStatus(id, null)}
+            />
+          ))}
+        </StyledPendingMessages>
+      )}
       <StyledInputBox>
         <StyledTextarea
           aria-label={t`Message`}
