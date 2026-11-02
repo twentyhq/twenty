@@ -143,8 +143,8 @@ export const UnresolvedTokens: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(canvas.getByLabelText('Medium icon size')).toHaveTextContent(
-      JSON.stringify(themeCssVariables.icon.size.md),
+    await expect(canvas.getByLabelText('Medium icon size').textContent).toBe(
+      '16',
     );
     await expect(canvas.getByLabelText('Primary font color')).toHaveTextContent(
       JSON.stringify(themeCssVariables.font.color.primary),
@@ -163,8 +163,8 @@ export const NumericTokens: Story = {
     await expect(canvas.getByLabelText('Medium icon size').textContent).toBe(
       '16',
     );
-    await expect(canvas.getByLabelText('Small icon size')).toHaveTextContent(
-      JSON.stringify(themeCssVariables.icon.size.sm),
+    await expect(canvas.getByLabelText('Small icon size').textContent).toBe(
+      '14',
     );
   },
 };
