@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type RenameEmailsTabToMessagesCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793634470352-rename-emails-tab-to-messages.command';
+import { type RenameEmailsTabToMessagesCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793639013340-rename-emails-tab-to-messages.command';
 import {
   EMAILS_TAB_ICON,
   EMAILS_TAB_TITLE,
@@ -11,7 +11,7 @@ import {
   MESSAGES_TAB_TITLE,
   MESSAGES_TAB_UNIVERSAL_IDENTIFIERS,
   MESSAGES_WIDGET_UNIVERSAL_IDENTIFIERS,
-} from 'src/database/commands/upgrade-version-command/2-55/constants/messages-tab-migration-universal-identifiers.constant';
+} from 'src/database/commands/upgrade-version-command/2-56/constants/messages-tab-migration-universal-identifiers.constant';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -25,7 +25,7 @@ const RUN_ON_WORKSPACE_ARGS = {
   total: 1,
 };
 
-describe('2-55 workspace command - rename Emails tab to Messages (integration)', () => {
+describe('2-56 workspace command - rename Emails tab to Messages (integration)', () => {
   let command: RenameEmailsTabToMessagesCommand;
   let workspaceCacheService: WorkspaceCacheService;
   let workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService;

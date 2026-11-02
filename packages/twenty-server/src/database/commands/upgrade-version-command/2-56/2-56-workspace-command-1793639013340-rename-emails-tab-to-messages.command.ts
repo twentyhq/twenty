@@ -4,15 +4,15 @@ import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildMessagesTabMigration } from 'src/database/commands/upgrade-version-command/2-55/utils/build-messages-tab-migration.util';
+import { buildMessagesTabMigration } from 'src/database/commands/upgrade-version-command/2-56/utils/build-messages-tab-migration.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-@RegisteredWorkspaceCommand('2.55.0', 1793634470352)
+@RegisteredWorkspaceCommand('2.56.0', 1793639013340)
 @Command({
-  name: 'upgrade:2-55:rename-emails-tab-to-messages',
+  name: 'upgrade:2-56:rename-emails-tab-to-messages',
   description: 'Rename the standard Emails record tab and widget to Messages',
 })
 export class RenameEmailsTabToMessagesCommand extends ProvisionedWorkspaceCommandRunner {

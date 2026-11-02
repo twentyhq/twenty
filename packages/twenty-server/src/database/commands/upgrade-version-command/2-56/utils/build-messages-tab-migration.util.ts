@@ -8,7 +8,7 @@ import {
   MESSAGES_TAB_TITLE,
   MESSAGES_TAB_UNIVERSAL_IDENTIFIERS,
   MESSAGES_WIDGET_UNIVERSAL_IDENTIFIERS,
-} from 'src/database/commands/upgrade-version-command/2-55/constants/messages-tab-migration-universal-identifiers.constant';
+} from 'src/database/commands/upgrade-version-command/2-56/constants/messages-tab-migration-universal-identifiers.constant';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
 
