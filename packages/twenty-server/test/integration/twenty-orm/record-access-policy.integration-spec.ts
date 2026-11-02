@@ -11,7 +11,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -19,12 +19,13 @@ import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-appl
 
 describe('RecordAccessPolicyService', () => {
   const recordId = randomUUID();
-  let adminPrincipal: PermissionsPrincipal;
+  let adminPrincipal: PermissionsPrincipalsContext;
   let personFlatObjectMetadata: FlatObjectMetadata;
   let recordAccessPolicyService: RecordAccessPolicyService;
-  const missingRolePrincipal: PermissionsPrincipal = {
+  const missingRolePrincipal: PermissionsPrincipalsContext = {
     workspaceId: SEED_APPLE_WORKSPACE_ID,
-    roleIds: [randomUUID()],
+    mainPrincipal: { roleId: randomUUID(), isDeprecatedRoleOnly: true },
+    applicationPrincipal: { isCustomApp: true },
   };
 
   // Other suites wipe every person, so the record under test is created here
@@ -70,7 +71,8 @@ describe('RecordAccessPolicyService', () => {
 
     adminPrincipal = {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
-      roleIds: [adminRoleId],
+      mainPrincipal: { roleId: adminRoleId, isDeprecatedRoleOnly: true },
+      applicationPrincipal: { isCustomApp: true },
     };
   });
 
@@ -89,12 +91,12 @@ describe('RecordAccessPolicyService', () => {
     recordIds,
     operationType = 'select',
   }: {
-    principal: PermissionsPrincipal;
+    principal: PermissionsPrincipalsContext;
     recordIds: string[];
     operationType?: OperationType;
   }): Promise<boolean> =>
     recordAccessPolicyService.hasAccessToRecords({
-      principal,
+      principals: principal,
       flatObjectMetadata: personFlatObjectMetadata,
       operationType,
       recordIds,
@@ -140,7 +142,7 @@ describe('RecordAccessPolicyService', () => {
     it('follows the role when it permits the operation', async () => {
       expect(
         await recordAccessPolicyService.hasAccessToSomeRecords({
-          principal: adminPrincipal,
+          principals: adminPrincipal,
           flatObjectMetadata: personFlatObjectMetadata,
           operationType: 'select',
         }),
@@ -150,7 +152,7 @@ describe('RecordAccessPolicyService', () => {
     it('denies a principal with no role and no share on the object', async () => {
       expect(
         await recordAccessPolicyService.hasAccessToSomeRecords({
-          principal: missingRolePrincipal,
+          principals: missingRolePrincipal,
           flatObjectMetadata: personFlatObjectMetadata,
           operationType: 'select',
         }),
