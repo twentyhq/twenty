@@ -2,6 +2,7 @@ import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/Fo
 import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/ai/constants/AiInstructionsEditorProfile';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { SettingsAiWorkspaceInstructionsAutoSaveEffect } from '@/settings/ai/components/SettingsAiWorkspaceInstructionsAutoSaveEffect';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client';
@@ -78,6 +79,9 @@ export const SettingsAiWorkspaceInstructionsSection = () => {
 
   return (
     <Section.Root>
+      <SettingsAiWorkspaceInstructionsAutoSaveEffect
+        flushAutoSave={autoSave.flush}
+      />
       <Section.Header
         title={t`Workspace Instructions`}
         description={t`Custom instructions appended to every system prompt`}
