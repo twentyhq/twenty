@@ -58,7 +58,7 @@ describe.each([
   const legacyWidget = { ...widget, title: 'Emails' };
 
   it('should match the standard application definition', () => {
-    expect(tab).toMatchObject({ title: 'Messages', icon: 'IconMessages' });
+    expect(tab).toMatchObject({ title: 'Messages', icon: 'IconMessage' });
     expect(widget).toMatchObject({ title: 'Messages' });
     expect(
       allFlatEntityMaps.flatPageLayoutTabMaps.byUniversalIdentifier[
@@ -75,7 +75,7 @@ describe.each([
         {
           ...legacyTab,
           title: 'Messages',
-          icon: 'IconMessages',
+          icon: 'IconMessage',
           updatedAt: NOW,
         },
       ],
@@ -90,7 +90,7 @@ describe.each([
       buildMigration({ tabs: [{ ...legacyTab, title: 'Inbox' }] })
         .pageLayoutTabsToUpdate,
     ).toEqual([
-      { ...legacyTab, title: 'Inbox', icon: 'IconMessages', updatedAt: NOW },
+      { ...legacyTab, title: 'Inbox', icon: 'IconMessage', updatedAt: NOW },
     ]);
   });
 
