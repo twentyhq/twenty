@@ -31,7 +31,7 @@ import {
   type StepAgentInlineConfig,
   type StoredWorkflowStep,
 } from 'src/database/commands/upgrade-version-command/2-56/utils/step-agent-inline-config.type';
-import { rewriteJsonbRowsWithCompareAndSet } from 'src/database/commands/upgrade-version-command/utils/rewrite-jsonb-rows-with-compare-and-set.util';
+import { rewriteJsonbRowsWithCompareAndSet } from 'src/database/commands/upgrade-version-command/2-56/utils/rewrite-jsonb-rows-with-compare-and-set.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
