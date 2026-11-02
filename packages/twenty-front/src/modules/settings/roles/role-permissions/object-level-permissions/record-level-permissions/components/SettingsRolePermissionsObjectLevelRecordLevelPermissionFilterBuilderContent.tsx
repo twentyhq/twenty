@@ -99,8 +99,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
         recordFilterGroupId: rootRecordFilterGroup?.id,
       });
 
-    // The server ANDs ungrouped predicates with the root group, so moving them
-    // into an OR root group would widen access
+    // Kept out of the root group: the server ANDs them with it, so an OR group would widen access
     const ungroupedRecordFilters = currentRecordFilters.filter(
       (recordFilter) => !isDefined(recordFilter.recordFilterGroupId),
     );

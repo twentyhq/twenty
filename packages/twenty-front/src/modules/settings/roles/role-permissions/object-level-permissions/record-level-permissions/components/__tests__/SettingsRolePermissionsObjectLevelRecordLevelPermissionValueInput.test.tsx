@@ -53,16 +53,21 @@ jest.mock('@/object-record/record-field/ui/components/FormFieldInput', () => ({
 
 const INSTANCE_ID = 'record-level-permission-filter';
 
-const renderValueInput = (
-  value: string,
-  operand: ViewFilterOperand = ViewFilterOperand.IS,
-) => {
+const renderValueInput = ({
+  value,
+  operand = ViewFilterOperand.IS,
+  type = 'RELATION',
+}: {
+  value: string;
+  operand?: ViewFilterOperand;
+  type?: RecordFilter['type'];
+}) => {
   const recordFilter: RecordFilter = {
     id: 'filter-id',
     fieldMetadataId: 'field-id',
     value,
     displayValue: value,
-    type: 'RELATION',
+    type,
     operand,
     label: 'Owner',
   };
@@ -98,38 +103,42 @@ describe('SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput', ()
   });
 
   it('shows Me for a relation value selecting the current workspace member', () => {
-    renderValueInput(
-      JSON.stringify({
+    renderValueInput({
+      value: JSON.stringify({
         isCurrentWorkspaceMemberSelected: true,
         selectedRecordIds: [],
       }),
-    );
+    });
 
     expect(screen.getByText('Me')).toBeInTheDocument();
     expect(screen.queryByText('Static value input')).not.toBeInTheDocument();
   });
 
   it('shows the other selected records next to Me', () => {
-    renderValueInput(
-      JSON.stringify({
+    renderValueInput({
+      value: JSON.stringify({
         isCurrentWorkspaceMemberSelected: true,
         selectedRecordIds: ['record-1', 'record-2'],
       }),
-    );
+    });
 
     expect(screen.getByText('Me')).toBeInTheDocument();
     expect(screen.getByText('+ 2 more')).toBeInTheDocument();
   });
 
-  it('clears the relation value when resetting to a static value', async () => {
-    const { recordFilter } = renderValueInput(
-      JSON.stringify({
+  it('clears the relation value when resetting to a static value from the keyboard', async () => {
+    const { recordFilter } = renderValueInput({
+      value: JSON.stringify({
         isCurrentWorkspaceMemberSelected: true,
         selectedRecordIds: [],
       }),
-    );
+    });
 
-    await userEvent.click(screen.getByLabelText('Reset to static value'));
+    await userEvent.tab();
+    expect(
+      screen.getByRole('button', { name: 'Reset to static value' }),
+    ).toHaveFocus();
+    await userEvent.keyboard('{Enter}');
 
     expect(mockUpsertFilter).toHaveBeenCalledTimes(1);
     expect(mockUpsertFilter).toHaveBeenCalledWith({
@@ -142,13 +151,13 @@ describe('SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput', ()
   it.each([ViewFilterOperand.IS_EMPTY, ViewFilterOperand.IS_NOT_EMPTY])(
     'hides a leftover current workspace member value for the %s operand',
     (operand) => {
-      renderValueInput(
-        JSON.stringify({
+      renderValueInput({
+        value: JSON.stringify({
           isCurrentWorkspaceMemberSelected: true,
           selectedRecordIds: ['record-1'],
         }),
         operand,
-      );
+      });
 
       expect(screen.queryByText('Me')).not.toBeInTheDocument();
       expect(screen.queryByText('+ 1 more')).not.toBeInTheDocument();
@@ -157,12 +166,26 @@ describe('SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput', ()
   );
 
   it('keeps the static input for a relation value without the current workspace member', () => {
-    renderValueInput(
-      JSON.stringify({
+    renderValueInput({
+      value: JSON.stringify({
         isCurrentWorkspaceMemberSelected: false,
         selectedRecordIds: ['record-1'],
       }),
-    );
+    });
+
+    expect(screen.getByText('Static value input')).toBeInTheDocument();
+    expect(screen.queryByText('Me')).not.toBeInTheDocument();
+  });
+
+  it('keeps the static input for a text value shaped like a relation value', () => {
+    renderValueInput({
+      value: JSON.stringify({
+        isCurrentWorkspaceMemberSelected: true,
+        selectedRecordIds: [],
+      }),
+      operand: ViewFilterOperand.CONTAINS,
+      type: 'TEXT',
+    });
 
     expect(screen.getByText('Static value input')).toBeInTheDocument();
     expect(screen.queryByText('Me')).not.toBeInTheDocument();

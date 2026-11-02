@@ -3,7 +3,6 @@ import { I18nProvider } from '@lingui/react';
 import { render, screen, waitFor } from '@testing-library/react';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 
-import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type RecordFilter } from '@/object-record/record-filter/types/RecordFilter';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
 import { DEFAULT_SETTINGS_DRAFT_ROLE } from '@/settings/roles/constants/DefaultSettingsDraftRole';
@@ -16,9 +15,10 @@ import {
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from '~/generated-metadata/graphql';
+import { getMockObjectMetadataItemOrThrow } from '~/testing/utils/getMockObjectMetadataItemOrThrow';
 
 const ROLE_ID = 'role-id';
-const OBJECT_METADATA_ID = 'object-metadata-id';
+const OBJECT_METADATA_ITEM = getMockObjectMetadataItemOrThrow('company');
 const FIELD_METADATA_ID = 'field-metadata-id';
 const OR_GROUP_ID = 'or-group-id';
 
@@ -71,7 +71,7 @@ const buildPredicate = (
   __typename: 'RowLevelPermissionPredicate',
   id,
   fieldMetadataId: FIELD_METADATA_ID,
-  objectMetadataId: OBJECT_METADATA_ID,
+  objectMetadataId: OBJECT_METADATA_ITEM.id,
   operand: RowLevelPermissionPredicateOperand.IS,
   value: null,
   subFieldName: null,
@@ -89,13 +89,16 @@ const OR_GROUP: RowLevelPermissionPredicateGroup = {
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator.OR,
   positionInRowLevelPermissionPredicateGroup: null,
   roleId: ROLE_ID,
-  objectMetadataId: OBJECT_METADATA_ID,
+  objectMetadataId: OBJECT_METADATA_ITEM.id,
 };
 
-const renderBuilder = (
-  rowLevelPermissionPredicates: RowLevelPermissionPredicate[],
-  rowLevelPermissionPredicateGroups: RowLevelPermissionPredicateGroup[],
-) => {
+const renderBuilder = ({
+  rowLevelPermissionPredicates,
+  rowLevelPermissionPredicateGroups,
+}: {
+  rowLevelPermissionPredicates: RowLevelPermissionPredicate[];
+  rowLevelPermissionPredicateGroups: RowLevelPermissionPredicateGroup[];
+}) => {
   const draftRole: RoleWithPartialMembers = {
     ...DEFAULT_SETTINGS_DRAFT_ROLE,
     id: ROLE_ID,
@@ -112,9 +115,7 @@ const renderBuilder = (
       <JotaiProvider store={store}>
         <SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder
           roleId={ROLE_ID}
-          objectMetadataItem={
-            { id: OBJECT_METADATA_ID } as EnrichedObjectMetadataItem
-          }
+          objectMetadataItem={OBJECT_METADATA_ITEM}
         />
       </JotaiProvider>
     </I18nProvider>,
@@ -129,7 +130,10 @@ describe('SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder',
   });
 
   it('shows ungrouped predicates when the object has no root group', async () => {
-    renderBuilder([buildPredicate('ungrouped', null)], []);
+    renderBuilder({
+      rowLevelPermissionPredicates: [buildPredicate('ungrouped', null)],
+      rowLevelPermissionPredicateGroups: [],
+    });
 
     expect(
       await screen.findByText('ungrouped in no group'),
@@ -138,13 +142,13 @@ describe('SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilder',
   });
 
   it('keeps ungrouped predicates out of an OR root group', async () => {
-    const { getDraftRole } = renderBuilder(
-      [
+    const { getDraftRole } = renderBuilder({
+      rowLevelPermissionPredicates: [
         buildPredicate('ungrouped', null),
         buildPredicate('grouped', OR_GROUP_ID),
       ],
-      [OR_GROUP],
-    );
+      rowLevelPermissionPredicateGroups: [OR_GROUP],
+    });
 
     expect(
       await screen.findByText('ungrouped in no group'),

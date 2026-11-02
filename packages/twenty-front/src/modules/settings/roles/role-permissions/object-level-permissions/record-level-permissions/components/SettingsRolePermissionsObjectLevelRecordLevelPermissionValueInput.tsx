@@ -40,7 +40,7 @@ const StyledContainer = styled.div`
   min-width: 0;
 `;
 
-const StyledIconContainer = styled.div`
+const StyledResetButton = styled.button`
   align-items: center;
   background-color: ${themeCssVariables.background.transparent.lighter};
   border: 1px solid ${themeCssVariables.border.color.medium};
@@ -134,7 +134,8 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
       selectedRecordIds: otherSelectedRecordIds,
     } = parseWorkspaceMemberFilterValue(recordFilter?.value);
     const isMeValue =
-      isDefined(dynamicValue) || isCurrentWorkspaceMemberSelected;
+      isDefined(dynamicValue) ||
+      (recordFilter?.type === 'RELATION' && isCurrentWorkspaceMemberSelected);
 
     const operandHasNoInput =
       isDefined(recordFilter) &&
@@ -219,16 +220,22 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
         !isDefined(dynamicValue) && otherSelectedRecordCount > 0
           ? t`+ ${otherSelectedRecordCount} more`
           : null;
-      const fullLabel = isDefined(workspaceMemberFieldLabel)
-        ? t`Me / ${workspaceMemberFieldLabel}`
-        : isDefined(otherSelectedRecordsLabel)
-          ? t`Me ${otherSelectedRecordsLabel}`
-          : t`Me`;
+      const getFullLabel = () => {
+        if (isDefined(workspaceMemberFieldLabel)) {
+          return t`Me / ${workspaceMemberFieldLabel}`;
+        }
+
+        if (isDefined(otherSelectedRecordsLabel)) {
+          return t`Me ${otherSelectedRecordsLabel}`;
+        }
+
+        return t`Me`;
+      };
 
       return (
         <StyledContainer>
           <Tooltip
-            content={fullLabel}
+            content={getFullLabel()}
             delay={TooltipDelay.shortDelay}
             side="bottom"
             positionMethod="fixed"
@@ -243,12 +250,13 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
               )}
             </StyledReadOnlyInput>
           </Tooltip>
-          <StyledIconContainer
+          <StyledResetButton
+            type="button"
             onClick={handleResetToStaticValue}
             aria-label={t`Reset to static value`}
           >
             <IconEraser size={theme.icon.size.sm} />
-          </StyledIconContainer>
+          </StyledResetButton>
         </StyledContainer>
       );
     }
