@@ -361,6 +361,7 @@ for await (const event of streamConversation({
       await listConversationMessages(conversation);
 
     showMessages(messages);
+    for (const chunk of streamCatchup.chunks) showChunk(chunk);
     maxCatchupSeq = streamCatchup.maxSeq;
   }
 
@@ -391,8 +392,8 @@ for await (const event of streamConversation({
   `readUIMessageStream()` from the `ai` package.
 - `listConversationMessages()` returns `{ messages, streamCatchup }`: the saved
   messages as AI SDK `UIMessage`s, as the chat builds them, and the chunks of
-  a reply still streaming. Skip live chunks whose `seq` is at most
-  `streamCatchup.maxSeq`, since they repeat them.
+  a reply still streaming. Show those chunks, then skip live chunks whose
+  `seq` is at most `streamCatchup.maxSeq`, since they repeat them.
 - `runAgent()` returns `runId`, the turn the call opens: messages of that run
   carry it as `metadata.turnId`. A run that waits goes on in later turns of
   the conversation.
