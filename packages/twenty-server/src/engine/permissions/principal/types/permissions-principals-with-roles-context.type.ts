@@ -1,22 +1,32 @@
 /* @license Enterprise */
 
-import { type PermissionsDeprecatedRoleOnlyPrincipal } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import {
+  type PermissionsAgentPrincipal,
+  type PermissionsApiKeyPrincipal,
+  type PermissionsApplicationIdPrincipal,
+  type PermissionsCustomApplicationPrincipal,
+  type PermissionsDeprecatedRoleOnlyPrincipal,
+  type PermissionsWebhookPrincipal,
+  type PermissionsWorkspaceMemberPrincipal,
+} from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+
+type WithRoleId<TPrincipal> = TPrincipal & { roleId: string };
 
 export type PermissionsMainPrincipalWithRole =
-  | { roleId: string; workspaceMemberId: string }
-  | { roleId: string; apiKeyId: string }
-  | { roleId: string; agentId: string }
-  | { roleId: string; webhookId: string }
-  | { roleId: string; applicationId: string }
+  | WithRoleId<PermissionsWorkspaceMemberPrincipal>
+  | WithRoleId<PermissionsApiKeyPrincipal>
+  | WithRoleId<PermissionsAgentPrincipal>
+  | WithRoleId<PermissionsWebhookPrincipal>
+  | WithRoleId<PermissionsApplicationIdPrincipal>
   | PermissionsDeprecatedRoleOnlyPrincipal;
 
 export type PermissionsLimitingPrincipalWithRole =
-  | { roleId: string; agentId: string }
+  | WithRoleId<PermissionsAgentPrincipal>
   | PermissionsDeprecatedRoleOnlyPrincipal;
 
 export type PermissionsApplicationPrincipalWithRole =
-  | { roleId: string; applicationId: string }
-  | { isCustomApp: true }
+  | WithRoleId<PermissionsApplicationIdPrincipal>
+  | PermissionsCustomApplicationPrincipal
   | PermissionsDeprecatedRoleOnlyPrincipal;
 
 export type PermissionsPrincipalsWithRolesContext = {
