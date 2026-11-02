@@ -36,7 +36,8 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
 import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
-import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/permissions/role/utils/get-objects-permissions-from-role-permission-config.util';
+import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
+import { computeObjectsPermissionsForRoles } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-roles.util';
 
 export interface PageInfo {
   hasNextPage?: boolean;
@@ -110,22 +111,32 @@ export abstract class RestApiBaseHandler {
       ],
     );
 
+    const principal = resolvePermissionsPrincipalsWithRoles({
+      principalsContext: principals,
+      roleMaps: buildPermissionsPrincipalRoleMaps({
+        flatWorkspaceMemberMaps,
+        userWorkspaceRoleMap,
+        apiKeyRoleMap,
+        flatRoleTargetByAgentIdMaps,
+        flatApplicationMaps,
+      }),
+    });
+
+    if (!isDefined(principal)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
     return {
       principals,
-      objectsPermissions: getObjectsPermissionsFromRolePermissionConfig({
-        workspaceId: authContext.workspace.id,
+      objectsPermissions: computeObjectsPermissionsForRoles({
+        principal,
         rolesPermissions,
-        rolePermissionConfig: { principals },
-        principals,
-        roleMaps: buildPermissionsPrincipalRoleMaps({
-          flatWorkspaceMemberMaps,
-          userWorkspaceRoleMap,
-          apiKeyRoleMap,
-          flatRoleTargetByAgentIdMaps,
-          flatApplicationMaps,
-        }),
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
+        flatApplicationMaps,
       }),
     };
   };

@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import {
   FieldMetadataType,
   type ObjectPermissions,
@@ -254,36 +255,41 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
     ).toEqual({});
   });
 
-  it('should deny a member acting through an installed application without a role, unless it is OAuth-only', () => {
-    const buildMemberRoleMaps = (
-      sourceType: ApplicationRegistrationSourceType,
-    ) => ({
-      ...buildRoleMaps({
-        byId: {
-          'application-id': {
-            id: 'application-id',
-            defaultRoleId: null,
-            sourceType,
-            deletedAt: null,
-          },
-        },
-      }),
-      flatWorkspaceMemberMaps: {
-        byId: { 'workspace-member-id': { userId: 'user-id' } },
-        userWorkspaceIdByUserId: { 'user-id': 'user-workspace-id' },
-      },
-      userWorkspaceRoleMap: { 'user-workspace-id': 'default-role-id' },
-    });
-    const getObjectsPermissions = (
-      sourceType: ApplicationRegistrationSourceType,
-    ) =>
+  describe('with member and application principals', () => {
+    const getObjectsPermissions = ({
+      sourceType = ApplicationRegistrationSourceType.LOCAL,
+      applicationRoleId = null,
+      memberRoleId = 'default-role-id',
+    }: {
+      sourceType?: ApplicationRegistrationSourceType;
+      applicationRoleId?: string | null;
+      memberRoleId?: string | null;
+    }) =>
       getObjectsPermissionsFromRolePermissionConfig({
         principals: undefined,
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
         workspaceId: 'workspace-id',
-        roleMaps: buildMemberRoleMaps(sourceType),
+        roleMaps: {
+          ...buildRoleMaps({
+            byId: {
+              'application-id': {
+                id: 'application-id',
+                defaultRoleId: applicationRoleId,
+                sourceType,
+                deletedAt: null,
+              },
+            },
+          }),
+          flatWorkspaceMemberMaps: {
+            byId: { 'workspace-member-id': { userId: 'user-id' } },
+            userWorkspaceIdByUserId: { 'user-id': 'user-workspace-id' },
+          },
+          userWorkspaceRoleMap: isDefined(memberRoleId)
+            ? { 'user-workspace-id': memberRoleId }
+            : {},
+        },
         rolePermissionConfig: {
           principals: {
             workspaceId: 'workspace-id',
@@ -299,12 +305,32 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
         },
       });
 
-    expect(
-      getObjectsPermissions(ApplicationRegistrationSourceType.LOCAL),
-    ).toEqual({});
-    expect(
-      getObjectsPermissions(ApplicationRegistrationSourceType.OAUTH_ONLY),
-    ).toBe(defaultRolePermissions);
+    it('should intersect the member role with the application role', () => {
+      expect(
+        getObjectsPermissions({ applicationRoleId: 'agent-role-id' }),
+      ).toEqual(defaultRolePermissions);
+    });
+
+    it('should deny a member without a role', () => {
+      expect(
+        getObjectsPermissions({
+          applicationRoleId: 'agent-role-id',
+          memberRoleId: null,
+        }),
+      ).toEqual({});
+    });
+
+    it('should deny an installed application without a role', () => {
+      expect(getObjectsPermissions({})).toEqual({});
+    });
+
+    it('should fall back to the member role for an OAuth-only application', () => {
+      expect(
+        getObjectsPermissions({
+          sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+        }),
+      ).toBe(defaultRolePermissions);
+    });
   });
 
   it('should deny when no actor restricts the call', () => {

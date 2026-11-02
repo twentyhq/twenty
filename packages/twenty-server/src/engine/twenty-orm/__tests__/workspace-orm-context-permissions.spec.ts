@@ -1,3 +1,7 @@
+import {
+  type PendingActivationUserWorkspaceAuthContext,
+  type UserWorkspaceAuthContext,
+} from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
@@ -6,7 +10,16 @@ jest.mock(
   () => ({ getWorkspaceContext: jest.fn() }),
 );
 
-const setup = (authContext: Record<string, unknown>) => {
+type TestAuthContext =
+  | (Pick<UserWorkspaceAuthContext, 'type' | 'workspaceMemberId'> & {
+      application: Pick<
+        NonNullable<UserWorkspaceAuthContext['application']>,
+        'id'
+      >;
+    })
+  | Pick<PendingActivationUserWorkspaceAuthContext, 'type' | 'userWorkspaceId'>;
+
+const setup = (authContext: TestAuthContext) => {
   const repository = {};
   const getRepository = jest.fn().mockReturnValue(repository);
   const manager = new WorkspaceOrmManager(
@@ -21,7 +34,7 @@ const setup = (authContext: Record<string, unknown>) => {
   return { manager, getRepository, repository };
 };
 
-const USER_AUTH_CONTEXT = {
+const USER_AUTH_CONTEXT: TestAuthContext = {
   type: 'user',
   workspaceMemberId: 'workspace-member-id',
   application: { id: 'application-id' },

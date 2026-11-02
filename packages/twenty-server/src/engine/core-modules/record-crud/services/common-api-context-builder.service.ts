@@ -23,7 +23,8 @@ import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
 import { resolveRepositoryPermissionConfig } from 'src/engine/permissions/principal/utils/resolve-repository-permission-config.util';
-import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/permissions/role/utils/get-objects-permissions-from-role-permission-config.util';
+import { buildPermissionsPrincipalsWithRolesFromConfig } from 'src/engine/permissions/principal/utils/build-permissions-principals-with-roles-from-config.util';
+import { computeObjectsPermissionsForRoles } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-roles.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import {
   PermissionsException,
@@ -192,22 +193,39 @@ export class CommonApiContextBuilderService {
       );
     }
 
-    return {
-      objectsPermissions: getObjectsPermissionsFromRolePermissionConfig({
-        workspaceId: authContext.workspace.id,
-        rolesPermissions,
-        rolePermissionConfig: resolvedRolePermissionConfig,
-        principals,
-        roleMaps: buildPermissionsPrincipalRoleMaps({
-          flatWorkspaceMemberMaps,
-          userWorkspaceRoleMap,
-          apiKeyRoleMap,
-          flatRoleTargetByAgentIdMaps,
-          flatApplicationMaps,
-        }),
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
+    const permissionsPrincipal = buildPermissionsPrincipalsWithRolesFromConfig({
+      workspaceId: authContext.workspace.id,
+      rolePermissionConfig: resolvedRolePermissionConfig,
+      principalsContext: principals,
+      roleMaps: buildPermissionsPrincipalRoleMaps({
+        flatWorkspaceMemberMaps,
+        userWorkspaceRoleMap,
+        apiKeyRoleMap,
+        flatRoleTargetByAgentIdMaps,
+        flatApplicationMaps,
       }),
+    });
+
+    if (
+      'principals' in resolvedRolePermissionConfig &&
+      !isDefined(permissionsPrincipal)
+    ) {
+      throw new RecordCrudException(
+        'No role found for this auth context',
+        RecordCrudExceptionCode.INVALID_REQUEST,
+      );
+    }
+
+    return {
+      objectsPermissions: isDefined(permissionsPrincipal)
+        ? computeObjectsPermissionsForRoles({
+            principal: permissionsPrincipal,
+            rolesPermissions,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            flatApplicationMaps,
+          })
+        : {},
       principals,
     };
   }
