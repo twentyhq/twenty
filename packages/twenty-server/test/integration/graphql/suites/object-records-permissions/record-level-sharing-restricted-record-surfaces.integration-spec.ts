@@ -314,7 +314,7 @@ describe('A restricted record on an object open by default', () => {
             roleId: memberRole.id,
             workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
           },
-          app: { isCustomApp: true },
+          applicationPrincipal: { isCustomApp: true },
         });
 
     expect([...admittedRecordIds]).toEqual([OPEN_COMPANY_ID]);

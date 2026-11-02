@@ -127,7 +127,7 @@ export class RecordSharePrincipalService {
       const rolePrincipal: PermissionsPrincipalsContext = {
         workspaceId,
         mainPrincipal: { roleId, isDeprecatedRoleOnly: true },
-        app: { isCustomApp: true },
+        applicationPrincipal: { isCustomApp: true },
       };
 
       if (
@@ -157,7 +157,7 @@ export class RecordSharePrincipalService {
         principal: {
           workspaceId,
           mainPrincipal: { roleId, workspaceMemberId: principal.principalId },
-          app: { isCustomApp: true },
+          applicationPrincipal: { isCustomApp: true },
         },
         flatObjectMetadata,
         operationType: 'select',

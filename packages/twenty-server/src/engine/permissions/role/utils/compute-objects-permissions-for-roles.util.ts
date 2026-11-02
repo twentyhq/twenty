@@ -25,7 +25,7 @@ export const computeObjectsPermissionsForRoles = ({
 }: {
   principal: Pick<
     PermissionsPrincipalsContext,
-    'mainPrincipal' | 'limiting' | 'app'
+    'mainPrincipal' | 'limitingPrincipal' | 'applicationPrincipal'
   >;
   rolesPermissions: ObjectsPermissionsByRoleId;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;

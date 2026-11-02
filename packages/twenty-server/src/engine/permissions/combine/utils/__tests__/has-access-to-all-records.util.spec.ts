@@ -47,14 +47,14 @@ const buildPrincipal = (roleId: string): PermissionsPrincipalsContext => {
     return {
       workspaceId: 'workspace-id',
       mainPrincipal: { roleId, workspaceMemberId: 'member-1' },
-      app: { isCustomApp: true },
+      applicationPrincipal: { isCustomApp: true },
     };
   }
 
   return {
     workspaceId: 'workspace-id',
     mainPrincipal: { roleId, applicationId },
-    app: { roleId, applicationId },
+    applicationPrincipal: { roleId, applicationId },
   };
 };
 

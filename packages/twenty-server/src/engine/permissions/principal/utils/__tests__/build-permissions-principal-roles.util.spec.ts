@@ -1,4 +1,4 @@
-import { type PermissionsPrincipalIds } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import { type PermissionsPrincipals } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 import { buildPermissionsPrincipalRoles } from 'src/engine/permissions/principal/utils/build-permissions-principal-roles.util';
 
 const MEMBER_ID = 'member-1';
@@ -8,7 +8,7 @@ const USER_ROLE_ID = 'user-role';
 const AGENT_ROLE_ID = 'agent-role';
 const APPLICATION_ROLE_ID = 'application-role';
 
-const MEMBER_ACTORS: PermissionsPrincipalIds = {
+const MEMBER_ACTORS: PermissionsPrincipals = {
   mainPrincipal: { workspaceMemberId: MEMBER_ID },
   agentId: AGENT_ID,
   applicationId: APPLICATION_ID,
@@ -23,12 +23,15 @@ describe('buildPermissionsPrincipalRoles', () => {
           agentRoleId: AGENT_ROLE_ID,
           applicationRoleId: APPLICATION_ROLE_ID,
         },
-        principalIds: MEMBER_ACTORS,
+        principals: MEMBER_ACTORS,
       }),
     ).toEqual({
       mainPrincipal: { roleId: USER_ROLE_ID, workspaceMemberId: MEMBER_ID },
-      limiting: { roleId: AGENT_ROLE_ID, agentId: AGENT_ID },
-      app: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
+      limitingPrincipal: { roleId: AGENT_ROLE_ID, agentId: AGENT_ID },
+      applicationPrincipal: {
+        roleId: APPLICATION_ROLE_ID,
+        applicationId: APPLICATION_ID,
+      },
     });
   });
 
@@ -36,7 +39,7 @@ describe('buildPermissionsPrincipalRoles', () => {
     expect(
       buildPermissionsPrincipalRoles({
         roleIdsBySource: { apiKeyRoleId: 'api-key-role' },
-        principalIds: {
+        principals: {
           mainPrincipal: { apiKeyId: 'api-key-1' },
           agentId: undefined,
           applicationId: undefined,
@@ -44,8 +47,8 @@ describe('buildPermissionsPrincipalRoles', () => {
       }),
     ).toEqual({
       mainPrincipal: { roleId: 'api-key-role', apiKeyId: 'api-key-1' },
-      limiting: undefined,
-      app: { isCustomApp: true },
+      limitingPrincipal: undefined,
+      applicationPrincipal: { isCustomApp: true },
     });
   });
 
@@ -53,7 +56,7 @@ describe('buildPermissionsPrincipalRoles', () => {
     expect(
       buildPermissionsPrincipalRoles({
         roleIdsBySource: { applicationRoleId: APPLICATION_ROLE_ID },
-        principalIds: {
+        principals: {
           mainPrincipal: { applicationId: APPLICATION_ID },
           agentId: undefined,
           applicationId: APPLICATION_ID,
@@ -64,8 +67,11 @@ describe('buildPermissionsPrincipalRoles', () => {
         roleId: APPLICATION_ROLE_ID,
         applicationId: APPLICATION_ID,
       },
-      limiting: undefined,
-      app: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
+      limitingPrincipal: undefined,
+      applicationPrincipal: {
+        roleId: APPLICATION_ROLE_ID,
+        applicationId: APPLICATION_ID,
+      },
     });
   });
 
@@ -77,12 +83,12 @@ describe('buildPermissionsPrincipalRoles', () => {
           agentRoleId: null,
           applicationRoleId: null,
         },
-        principalIds: MEMBER_ACTORS,
+        principals: MEMBER_ACTORS,
       }),
     ).toEqual({
       mainPrincipal: { roleId: USER_ROLE_ID, workspaceMemberId: MEMBER_ID },
-      limiting: undefined,
-      app: { isCustomApp: true },
+      limitingPrincipal: undefined,
+      applicationPrincipal: { isCustomApp: true },
     });
   });
 
@@ -90,7 +96,7 @@ describe('buildPermissionsPrincipalRoles', () => {
     expect(
       buildPermissionsPrincipalRoles({
         roleIdsBySource: { userWorkspaceRoleId: null },
-        principalIds: MEMBER_ACTORS,
+        principals: MEMBER_ACTORS,
       }),
     ).toBeUndefined();
   });
@@ -102,7 +108,7 @@ describe('buildPermissionsPrincipalRoles', () => {
           userWorkspaceRoleId: USER_ROLE_ID,
           apiKeyRoleId: 'api-key-role',
         },
-        principalIds: MEMBER_ACTORS,
+        principals: MEMBER_ACTORS,
       }),
     ).toBeUndefined();
   });
@@ -111,7 +117,7 @@ describe('buildPermissionsPrincipalRoles', () => {
     expect(
       buildPermissionsPrincipalRoles({
         roleIdsBySource: { agentRoleId: AGENT_ROLE_ID },
-        principalIds: {
+        principals: {
           mainPrincipal: undefined,
           agentId: undefined,
           applicationId: undefined,
@@ -119,8 +125,8 @@ describe('buildPermissionsPrincipalRoles', () => {
       }),
     ).toEqual({
       mainPrincipal: { roleId: AGENT_ROLE_ID, isDeprecatedRoleOnly: true },
-      limiting: undefined,
-      app: { isCustomApp: true },
+      limitingPrincipal: undefined,
+      applicationPrincipal: { isCustomApp: true },
     });
   });
 });

@@ -15,7 +15,7 @@ export type PermissionsPrincipalLimiting =
   | { roleId: string; agentId: string }
   | DeprecatedRoleOnly;
 
-export type PermissionsPrincipalApp =
+export type PermissionsPrincipalApplication =
   | { roleId: string; applicationId: string }
   | { isCustomApp: true }
   | DeprecatedRoleOnly;
@@ -23,11 +23,11 @@ export type PermissionsPrincipalApp =
 export type PermissionsPrincipalsContext = {
   workspaceId: string;
   mainPrincipal: PermissionsPrincipalMain;
-  limiting?: PermissionsPrincipalLimiting;
-  app: PermissionsPrincipalApp;
+  limitingPrincipal?: PermissionsPrincipalLimiting;
+  applicationPrincipal: PermissionsPrincipalApplication;
 };
 
-export type PermissionsPrincipalIds = {
+export type PermissionsPrincipals = {
   mainPrincipal:
     | { workspaceMemberId: string }
     | { apiKeyId: string }

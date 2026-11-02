@@ -32,7 +32,7 @@ import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/a
 import { type FlatObjectPermission } from 'src/engine/metadata-modules/flat-object-permission/types/flat-object-permission.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { getPermissionsPrincipalIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-ids.util';
+import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
 import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/permissions/role/utils/get-objects-permissions-from-role-permission-config.util';
@@ -94,7 +94,7 @@ export class DatabaseToolProvider implements ToolProvider {
     const objectPermissions = getObjectsPermissionsFromRolePermissionConfig({
       rolesPermissions,
       rolePermissionConfig: context.rolePermissionConfig,
-      principalIds: getPermissionsPrincipalIds(context.authContext),
+      principals: getPermissionsPrincipalsFromAuthContext(context.authContext),
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatApplicationMaps,
@@ -107,7 +107,7 @@ export class DatabaseToolProvider implements ToolProvider {
     const principal = buildPermissionsPrincipal({
       workspaceId: context.workspaceId,
       rolePermissionConfig: context.rolePermissionConfig,
-      principalIds: getPermissionsPrincipalIds(context.authContext),
+      principals: getPermissionsPrincipalsFromAuthContext(context.authContext),
     });
 
     if (!isDefined(principal)) {

@@ -332,7 +332,7 @@ export class AgentChatSharingService {
                   principal: {
                     workspaceId,
                     mainPrincipal: { roleId, workspaceMemberId: memberId },
-                    app: { isCustomApp: true },
+                    applicationPrincipal: { isCustomApp: true },
                   },
                   flatObjectMetadata: threadFlatObjectMetadata,
                   recordIds: [threadId],

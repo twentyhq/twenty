@@ -6,26 +6,26 @@ import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import { type PermissionsPrincipalIds } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
-import { buildPermissionsPrincipalIds } from 'src/engine/permissions/principal/utils/build-permissions-principal-ids.util';
+import { type PermissionsPrincipals } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import { buildPermissionsPrincipals } from 'src/engine/permissions/principal/utils/build-permissions-principals.util';
 
-const NO_PRINCIPAL_IDS = {
+const NO_PRINCIPALS = {
   workspaceMemberId: undefined,
   apiKeyId: undefined,
   applicationId: undefined,
   agentId: undefined,
 };
 
-export const getPermissionsPrincipalIds = (
+export const getPermissionsPrincipalsFromAuthContext = (
   authContext: WorkspaceAuthContext | undefined,
-): PermissionsPrincipalIds => {
+): PermissionsPrincipals => {
   if (!isDefined(authContext)) {
-    return buildPermissionsPrincipalIds(NO_PRINCIPAL_IDS);
+    return buildPermissionsPrincipals(NO_PRINCIPALS);
   }
 
   if (isUserAuthContext(authContext)) {
-    return buildPermissionsPrincipalIds({
-      ...NO_PRINCIPAL_IDS,
+    return buildPermissionsPrincipals({
+      ...NO_PRINCIPALS,
       workspaceMemberId: authContext.workspaceMemberId,
       applicationId: (authContext.application ?? authContext.viaApplication)
         ?.id,
@@ -34,19 +34,19 @@ export const getPermissionsPrincipalIds = (
   }
 
   if (isApiKeyAuthContext(authContext)) {
-    return buildPermissionsPrincipalIds({
-      ...NO_PRINCIPAL_IDS,
+    return buildPermissionsPrincipals({
+      ...NO_PRINCIPALS,
       apiKeyId: authContext.apiKey.id,
     });
   }
 
   if (isApplicationAuthContext(authContext)) {
-    return buildPermissionsPrincipalIds({
-      ...NO_PRINCIPAL_IDS,
+    return buildPermissionsPrincipals({
+      ...NO_PRINCIPALS,
       applicationId: authContext.application.id,
       agentId: authContext.agentId,
     });
   }
 
-  return buildPermissionsPrincipalIds(NO_PRINCIPAL_IDS);
+  return buildPermissionsPrincipals(NO_PRINCIPALS);
 };

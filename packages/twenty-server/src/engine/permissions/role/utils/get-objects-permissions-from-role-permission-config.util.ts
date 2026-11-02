@@ -11,19 +11,19 @@ import { type RolePermissionConfig } from 'src/engine/permissions/principal/type
 import { computeObjectsPermissionsForRoles } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-roles.util';
 import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principal/types/application-default-role-maps.type';
 import { buildPermissionsPrincipalRoles } from 'src/engine/permissions/principal/utils/build-permissions-principal-roles.util';
-import { type PermissionsPrincipalIds } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import { type PermissionsPrincipals } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 
 export const getObjectsPermissionsFromRolePermissionConfig = ({
   rolesPermissions,
   rolePermissionConfig,
-  principalIds,
+  principals,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   flatApplicationMaps,
 }: {
   rolesPermissions: ObjectsPermissionsByRoleId;
   rolePermissionConfig: RolePermissionConfig;
-  principalIds: PermissionsPrincipalIds;
+  principals: PermissionsPrincipals;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatApplicationMaps: ApplicationDefaultRoleMaps;
@@ -34,7 +34,7 @@ export const getObjectsPermissionsFromRolePermissionConfig = ({
 
   const principalRoles = buildPermissionsPrincipalRoles({
     roleIdsBySource: rolePermissionConfig.intersectionOf,
-    principalIds,
+    principals,
   });
 
   if (!isDefined(principalRoles)) {

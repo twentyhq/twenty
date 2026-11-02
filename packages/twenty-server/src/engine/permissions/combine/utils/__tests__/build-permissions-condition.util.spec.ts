@@ -126,13 +126,16 @@ const buildConditionOutcome = (
 const readEverything: PermissionsPrincipalsContext = {
   workspaceId: 'workspace-id',
   mainPrincipal: { roleId: FULL_ACCESS_ROLE_ID, workspaceMemberId: 'member-1' },
-  app: { isCustomApp: true },
+  applicationPrincipal: { isCustomApp: true },
 };
 
 const owningApplication: PermissionsPrincipalsContext = {
   workspaceId: 'workspace-id',
   mainPrincipal: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
-  app: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
+  applicationPrincipal: {
+    roleId: APPLICATION_ROLE_ID,
+    applicationId: APPLICATION_ID,
+  },
 };
 
 const withoutObjectPermission: PermissionsPrincipalsContext = {
@@ -141,7 +144,7 @@ const withoutObjectPermission: PermissionsPrincipalsContext = {
     roleId: ROLE_WITHOUT_PERMISSION_ID,
     workspaceMemberId: 'member-1',
   },
-  app: { isCustomApp: true },
+  applicationPrincipal: { isCustomApp: true },
 };
 
 const build = ({
@@ -296,9 +299,9 @@ describe('buildPermissionsCondition', () => {
       });
     const withoutCompanyPermission: PermissionsPrincipalsContext = {
       ...readEverything,
-      limiting: { roleId: 'role-2', agentId: 'agent-1' },
+      limitingPrincipal: { roleId: 'role-2', agentId: 'agent-1' },
       mainPrincipal: { roleId: 'role-3', workspaceMemberId: 'member-1' },
-      app: { isCustomApp: true },
+      applicationPrincipal: { isCustomApp: true },
     };
 
     it('narrows a principal without object permission to the records named for them', () => {

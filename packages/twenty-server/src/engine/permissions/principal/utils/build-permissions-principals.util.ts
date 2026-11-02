@@ -2,9 +2,9 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type PermissionsPrincipalIds } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import { type PermissionsPrincipals } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 
-export const buildPermissionsPrincipalIds = ({
+export const buildPermissionsPrincipals = ({
   workspaceMemberId,
   apiKeyId,
   applicationId,
@@ -14,7 +14,7 @@ export const buildPermissionsPrincipalIds = ({
   apiKeyId: string | undefined;
   applicationId: string | undefined;
   agentId: string | undefined;
-}): PermissionsPrincipalIds => {
+}): PermissionsPrincipals => {
   if (isDefined(workspaceMemberId)) {
     return { mainPrincipal: { workspaceMemberId }, agentId, applicationId };
   }

@@ -102,19 +102,19 @@ const fullAccess = {
 const rolePrincipal: PermissionsPrincipalsContext = {
   workspaceId: 'workspace-id',
   mainPrincipal: { roleId: MEMBER_ROLE_ID, isDeprecatedRoleOnly: true },
-  app: { isCustomApp: true },
+  applicationPrincipal: { isCustomApp: true },
 };
 
 const memberPrincipal: PermissionsPrincipalsContext = {
   ...rolePrincipal,
   mainPrincipal: { roleId: MEMBER_ROLE_ID, workspaceMemberId: MEMBER_ID },
-  app: { isCustomApp: true },
+  applicationPrincipal: { isCustomApp: true },
 };
 
 const deniedPrincipal: PermissionsPrincipalsContext = {
   ...memberPrincipal,
   mainPrincipal: { roleId: 'missing-role', workspaceMemberId: MEMBER_ID },
-  app: { isCustomApp: true },
+  applicationPrincipal: { isCustomApp: true },
 };
 
 const filterByStatus = (status: string) =>

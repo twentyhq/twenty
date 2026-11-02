@@ -8,14 +8,16 @@ import { type PermissionsPrincipalsContext } from 'src/engine/permissions/princi
 export const getPermissionsPrincipalRoleIds = (
   principal: Pick<
     PermissionsPrincipalsContext,
-    'mainPrincipal' | 'limiting' | 'app'
+    'mainPrincipal' | 'limitingPrincipal' | 'applicationPrincipal'
   >,
 ): string[] => [
   ...new Set(
     [
-      principal.limiting?.roleId,
+      principal.limitingPrincipal?.roleId,
       principal.mainPrincipal.roleId,
-      'roleId' in principal.app ? principal.app.roleId : undefined,
+      'roleId' in principal.applicationPrincipal
+        ? principal.applicationPrincipal.roleId
+        : undefined,
     ].filter(isDefined),
   ),
 ];

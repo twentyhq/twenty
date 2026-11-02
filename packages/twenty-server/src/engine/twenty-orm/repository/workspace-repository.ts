@@ -108,7 +108,7 @@ import {
   type WorkspaceRelationShape,
   type WorkspaceTableShape,
 } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
-import { getPermissionsPrincipalIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-ids.util';
+import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
 import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
 
 const ALWAYS_FALSE_CONDITION = '1=0';
@@ -2295,7 +2295,9 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     this.permissionsPrincipal ??= buildPermissionsPrincipal({
       workspaceId: this.options.internalContext.workspaceId,
       rolePermissionConfig: this.options.rolePermissionConfig,
-      principalIds: getPermissionsPrincipalIds(this.options.authContext),
+      principals: getPermissionsPrincipalsFromAuthContext(
+        this.options.authContext,
+      ),
     });
 
     if (!isDefined(this.permissionsPrincipal)) {

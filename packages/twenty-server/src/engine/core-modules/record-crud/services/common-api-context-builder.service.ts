@@ -19,7 +19,7 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
-import { getPermissionsPrincipalIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-ids.util';
+import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
 import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
@@ -185,11 +185,11 @@ export class CommonApiContextBuilderService {
       );
     }
 
-    const principalIds = getPermissionsPrincipalIds(authContext);
+    const principals = getPermissionsPrincipalsFromAuthContext(authContext);
     const principal = buildPermissionsPrincipal({
       workspaceId: authContext.workspace.id,
       rolePermissionConfig: resolvedRolePermissionConfig,
-      principalIds,
+      principals,
     });
 
     if (!isDefined(principal)) {
@@ -203,7 +203,7 @@ export class CommonApiContextBuilderService {
       objectsPermissions: getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
         rolePermissionConfig: resolvedRolePermissionConfig,
-        principalIds,
+        principals,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatApplicationMaps,

@@ -40,7 +40,7 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { type RoleIdsBySource } from 'src/engine/permissions/principal/types/role-permission-config.type';
-import { getPermissionsPrincipalIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-ids.util';
+import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
 import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/permissions/role/utils/get-objects-permissions-from-role-permission-config.util';
 
@@ -142,11 +142,11 @@ export abstract class RestApiBaseHandler {
     );
 
     const rolePermissionConfig = { intersectionOf };
-    const principalIds = getPermissionsPrincipalIds(authContext);
+    const principals = getPermissionsPrincipalsFromAuthContext(authContext);
     const principal = buildPermissionsPrincipal({
       workspaceId: authContext.workspace.id,
       rolePermissionConfig,
-      principalIds,
+      principals,
     });
 
     if (!isDefined(principal)) {
@@ -161,7 +161,7 @@ export abstract class RestApiBaseHandler {
       objectsPermissions: getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
         rolePermissionConfig,
-        principalIds,
+        principals,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatApplicationMaps,

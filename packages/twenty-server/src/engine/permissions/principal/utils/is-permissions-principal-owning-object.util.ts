@@ -14,7 +14,7 @@ export const isPermissionsPrincipalOwningObject = ({
 }: {
   principal: Pick<
     PermissionsPrincipalsContext,
-    'mainPrincipal' | 'limiting' | 'app'
+    'mainPrincipal' | 'limitingPrincipal' | 'applicationPrincipal'
   >;
   flatObjectMetadata: Pick<FlatObjectMetadata, 'applicationId'>;
   flatApplicationMaps: ApplicationDefaultRoleMaps;

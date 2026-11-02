@@ -12,31 +12,31 @@ export const getPermissionsPrincipalActingApplicationId = ({
 }: {
   principal: Pick<
     PermissionsPrincipalsContext,
-    'mainPrincipal' | 'limiting' | 'app'
+    'mainPrincipal' | 'limitingPrincipal' | 'applicationPrincipal'
   >;
   flatApplicationMaps: ApplicationDefaultRoleMaps;
 }): string | undefined => {
-  const { mainPrincipal, limiting, app } = principal;
+  const { mainPrincipal, limitingPrincipal, applicationPrincipal } = principal;
 
   if ('applicationId' in mainPrincipal) {
     return mainPrincipal.applicationId;
   }
 
   if (
-    !('roleId' in app) ||
-    app.roleId === mainPrincipal.roleId ||
-    app.roleId === limiting?.roleId
+    !('roleId' in applicationPrincipal) ||
+    applicationPrincipal.roleId === mainPrincipal.roleId ||
+    applicationPrincipal.roleId === limitingPrincipal?.roleId
   ) {
     return undefined;
   }
 
-  if ('applicationId' in app) {
-    return app.applicationId;
+  if ('applicationId' in applicationPrincipal) {
+    return applicationPrincipal.applicationId;
   }
 
   return Object.values(flatApplicationMaps.byId).find(
     (flatApplication) =>
-      flatApplication?.defaultRoleId === app.roleId &&
+      flatApplication?.defaultRoleId === applicationPrincipal.roleId &&
       !isDefined(flatApplication.deletedAt),
   )?.id;
 };

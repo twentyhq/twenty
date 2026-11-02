@@ -5,8 +5,11 @@ describe('getPermissionsPrincipalRoleIds', () => {
     expect(
       getPermissionsPrincipalRoleIds({
         mainPrincipal: { roleId: 'user-role', workspaceMemberId: 'member-1' },
-        limiting: { roleId: 'agent-role', agentId: 'agent-1' },
-        app: { roleId: 'user-role', applicationId: 'application-1' },
+        limitingPrincipal: { roleId: 'agent-role', agentId: 'agent-1' },
+        applicationPrincipal: {
+          roleId: 'user-role',
+          applicationId: 'application-1',
+        },
       }),
     ).toEqual(['agent-role', 'user-role']);
   });
@@ -15,7 +18,7 @@ describe('getPermissionsPrincipalRoleIds', () => {
     expect(
       getPermissionsPrincipalRoleIds({
         mainPrincipal: { roleId: 'user-role', workspaceMemberId: 'member-1' },
-        app: { isCustomApp: true },
+        applicationPrincipal: { isCustomApp: true },
       }),
     ).toEqual(['user-role']);
   });

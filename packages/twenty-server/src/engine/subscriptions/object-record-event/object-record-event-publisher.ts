@@ -53,7 +53,8 @@ import { getRoleIdsToIntersect } from 'src/engine/permissions/principal/utils/ge
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
-import { buildPermissionsPrincipalIds } from 'src/engine/permissions/principal/utils/build-permissions-principal-ids.util';
+import { buildPermissionsPrincipals } from 'src/engine/permissions/principal/utils/build-permissions-principals.util';
+import { omitPermissionsPrincipalWorkspaceMember } from 'src/engine/permissions/principal/utils/omit-permissions-principal-workspace-member.util';
 import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
 
 type StreamPermissionsContext = {
@@ -210,7 +211,7 @@ export class ObjectRecordEventPublisher {
     const principal = buildPermissionsPrincipal({
       workspaceId: workspaceEventBatch.workspaceId,
       rolePermissionConfig,
-      principalIds: buildPermissionsPrincipalIds({
+      principals: buildPermissionsPrincipals({
         workspaceMemberId: subscriberAuthContext.workspaceMemberId,
         apiKeyId: subscriberAuthContext.apiKeyId,
         applicationId: subscriberAuthContext.applicationId,
@@ -361,16 +362,7 @@ export class ObjectRecordEventPublisher {
     const { selectedFields } = this.commonSelectFieldsBuilder.buildFromDepth({
       readableObjectMetadataIds:
         await this.commonSelectFieldsBuilder.findReadableObjectMetadataIds({
-          principal: {
-            ...principal,
-            mainPrincipal:
-              'workspaceMemberId' in principal.mainPrincipal
-                ? {
-                    roleId: principal.mainPrincipal.roleId,
-                    isDeprecatedRoleOnly: true,
-                  }
-                : principal.mainPrincipal,
-          },
+          principal: omitPermissionsPrincipalWorkspaceMember(principal),
           flatObjectMetadataMaps,
         }),
       depth: 1,

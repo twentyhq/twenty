@@ -87,7 +87,7 @@ export class PermissionsService {
       objectsPermissions: computeObjectsPermissionsForRoles({
         principal: {
           mainPrincipal: { roleId: flatRole.id, isDeprecatedRoleOnly: true },
-          app: { isCustomApp: true },
+          applicationPrincipal: { isCustomApp: true },
         },
         rolesPermissions,
         flatObjectMetadataMaps,

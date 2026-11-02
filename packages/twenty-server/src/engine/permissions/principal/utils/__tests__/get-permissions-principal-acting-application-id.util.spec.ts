@@ -20,7 +20,10 @@ describe('getPermissionsPrincipalActingApplicationId', () => {
       getPermissionsPrincipalActingApplicationId({
         principal: {
           mainPrincipal: { roleId: 'user-role', workspaceMemberId: 'member-1' },
-          app: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
+          applicationPrincipal: {
+            roleId: APPLICATION_ROLE_ID,
+            applicationId: APPLICATION_ID,
+          },
         },
         flatApplicationMaps,
       }),
@@ -35,7 +38,10 @@ describe('getPermissionsPrincipalActingApplicationId', () => {
             roleId: APPLICATION_ROLE_ID,
             applicationId: APPLICATION_ID,
           },
-          app: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
+          applicationPrincipal: {
+            roleId: APPLICATION_ROLE_ID,
+            applicationId: APPLICATION_ID,
+          },
         },
         flatApplicationMaps,
       }),
@@ -47,7 +53,10 @@ describe('getPermissionsPrincipalActingApplicationId', () => {
       getPermissionsPrincipalActingApplicationId({
         principal: {
           mainPrincipal: { roleId: 'user-role', isDeprecatedRoleOnly: true },
-          app: { roleId: APPLICATION_ROLE_ID, isDeprecatedRoleOnly: true },
+          applicationPrincipal: {
+            roleId: APPLICATION_ROLE_ID,
+            isDeprecatedRoleOnly: true,
+          },
         },
         flatApplicationMaps,
       }),
@@ -62,7 +71,10 @@ describe('getPermissionsPrincipalActingApplicationId', () => {
             roleId: APPLICATION_ROLE_ID,
             workspaceMemberId: 'member-1',
           },
-          app: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
+          applicationPrincipal: {
+            roleId: APPLICATION_ROLE_ID,
+            applicationId: APPLICATION_ID,
+          },
         },
         flatApplicationMaps,
       }),
@@ -74,7 +86,7 @@ describe('getPermissionsPrincipalActingApplicationId', () => {
       getPermissionsPrincipalActingApplicationId({
         principal: {
           mainPrincipal: { roleId: 'user-role', workspaceMemberId: 'member-1' },
-          app: { isCustomApp: true },
+          applicationPrincipal: { isCustomApp: true },
         },
         flatApplicationMaps,
       }),

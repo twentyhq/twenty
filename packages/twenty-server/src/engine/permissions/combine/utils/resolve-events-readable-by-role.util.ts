@@ -31,7 +31,7 @@ export const resolveEventsReadableByRole = async <
   const principal: PermissionsPrincipalsContext = {
     workspaceId: workspaceEventBatch.workspaceId,
     mainPrincipal: { roleId, applicationId },
-    app: { roleId, applicationId },
+    applicationPrincipal: { roleId, applicationId },
   };
   const objectsPermissions = getPermissionsPrincipalObjectsPermissions({
     principal,

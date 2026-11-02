@@ -36,13 +36,16 @@ const readOnlyPermissions: ObjectPermissions = {
 const readOnlyPrincipal: PermissionsPrincipalsContext = {
   workspaceId: 'workspace-id',
   mainPrincipal: { roleId: READ_ONLY_ROLE_ID, isDeprecatedRoleOnly: true },
-  app: { isCustomApp: true },
+  applicationPrincipal: { isCustomApp: true },
 };
 
 const owningApplicationPrincipal: PermissionsPrincipalsContext = {
   workspaceId: 'workspace-id',
   mainPrincipal: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
-  app: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
+  applicationPrincipal: {
+    roleId: APPLICATION_ROLE_ID,
+    applicationId: APPLICATION_ID,
+  },
 };
 
 const resolveOutcome = ({
@@ -104,7 +107,7 @@ describe('resolvePermissionsRowAccessOutcome', () => {
         principal: {
           ...readOnlyPrincipal,
           mainPrincipal: { roleId: 'missing-role', isDeprecatedRoleOnly: true },
-          app: { isCustomApp: true },
+          applicationPrincipal: { isCustomApp: true },
         },
       }),
     ).toBe(false);
