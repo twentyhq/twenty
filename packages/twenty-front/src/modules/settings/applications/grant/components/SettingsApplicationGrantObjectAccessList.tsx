@@ -141,7 +141,10 @@ export const SettingsApplicationGrantObjectAccessList = ({
       ...value,
       objects: [
         ...value.objects,
-        { objectMetadataId: objectMetadataIdToAdd, accessLevel: accessLevelToAdd },
+        {
+          objectMetadataId: objectMetadataIdToAdd,
+          accessLevel: accessLevelToAdd,
+        },
       ],
     });
     setObjectMetadataIdToAdd(null);
@@ -221,7 +224,8 @@ export const SettingsApplicationGrantObjectAccessList = ({
                       onChange({
                         ...value,
                         objects: value.objects.filter(
-                          (object) => object.objectMetadataId !== objectMetadataId,
+                          (object) =>
+                            object.objectMetadataId !== objectMetadataId,
                         ),
                       })
                     }

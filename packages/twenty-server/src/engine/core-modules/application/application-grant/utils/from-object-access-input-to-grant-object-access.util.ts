@@ -35,7 +35,8 @@ export const fromObjectAccessInputToGrantObjectAccess = ({
   return {
     coversAllObjects: objectAccess.coversAllObjects,
     objects: objectAccess.objects.map(({ objectMetadataId, accessLevel }) => ({
-      objectUniversalIdentifier: findObjectUniversalIdentifier(objectMetadataId),
+      objectUniversalIdentifier:
+        findObjectUniversalIdentifier(objectMetadataId),
       accessLevel:
         accessLevel as GrantObjectAccess['objects'][number]['accessLevel'],
     })),
