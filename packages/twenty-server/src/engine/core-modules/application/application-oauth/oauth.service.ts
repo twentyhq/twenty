@@ -17,6 +17,7 @@ import { isRefreshTokenCoveredByAuthorization } from 'src/engine/core-modules/ap
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration-resolver.service';
+import { type ResolvedOAuthClientRegistration } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/types/resolved-oauth-client-registration.type';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -29,6 +30,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 
 @Injectable()
 export class OAuthService {
@@ -448,7 +450,9 @@ export class OAuthService {
   }): Promise<{ success: boolean }> {
     const { token, clientId, clientSecret } = params;
 
-    let applicationRegistration: ApplicationRegistrationEntity | undefined;
+    let applicationRegistration:
+      | Pick<ApplicationRegistrationEntity, 'id'>
+      | undefined;
 
     if (clientId) {
       const clientValidation = await this.validateClient(clientId);
@@ -489,11 +493,13 @@ export class OAuthService {
         if (
           application?.applicationRegistrationId === applicationRegistration.id
         ) {
-          await this.revokeUserAuthorization({
-            userId: payload.userId,
-            workspaceId: payload.workspaceId,
-            applicationId: payload.applicationId,
-          });
+          await this.applicationAuthorizationService.backfillAndRevokeMemberAuthorizations(
+            {
+              userId: payload.userId,
+              workspaceId: payload.workspaceId,
+              applicationIds: [payload.applicationId],
+            },
+          );
         }
       }
 
@@ -623,7 +629,7 @@ export class OAuthService {
 
   private async validateClient(
     clientId: string,
-  ): Promise<ApplicationRegistrationEntity | OAuthErrorResponse> {
+  ): Promise<ResolvedOAuthClientRegistration | OAuthErrorResponse> {
     const applicationRegistration =
       await this.oAuthClientRegistrationResolverService.findByClientId(
         clientId,
@@ -637,7 +643,10 @@ export class OAuthService {
   }
 
   private async validateClientSecret(
-    applicationRegistration: ApplicationRegistrationEntity,
+    applicationRegistration: Pick<
+      ApplicationRegistrationEntity,
+      'oAuthClientSecretHash'
+    >,
     clientSecret: string,
   ): Promise<OAuthErrorResponse | null> {
     const isValid =
@@ -718,39 +727,6 @@ export class OAuthService {
     return null;
   }
 
-  // Lays a row down first, or the refresh path would backfill a fresh active one for a pre-table token
-  private async revokeUserAuthorization({
-    userId,
-    workspaceId,
-    applicationId,
-  }: {
-    userId: string;
-    workspaceId: string;
-    applicationId: string;
-  }): Promise<void> {
-    const userWorkspace = await this.userWorkspaceRepository.findOne({
-      where: { userId, workspaceId },
-    });
-
-    if (isDefined(userWorkspace)) {
-      await this.applicationAuthorizationService.backfillAuthorizationFromRefreshToken(
-        {
-          userId,
-          workspaceId,
-          userWorkspaceId: userWorkspace.id,
-          applicationId,
-        },
-      );
-    }
-
-    await this.applicationAuthorizationService.revokeAuthorizationForApplication(
-      {
-        userId,
-        applicationId,
-      },
-    );
-  }
-
   private async isRefreshTokenAuthorized({
     userId,
     applicationId,
@@ -793,7 +769,15 @@ export class OAuthService {
   }
 
   private async findOrInstallApplication(
-    applicationRegistration: ApplicationRegistrationEntity,
+    applicationRegistration: Pick<
+      ApplicationRegistrationEntity,
+      | 'id'
+      | 'name'
+      | 'universalIdentifier'
+      | 'description'
+      | 'latestAvailableVersion'
+      | 'sourceType'
+    >,
     workspaceId: string,
   ): Promise<ApplicationEntity> {
     const existingApplication = await this.findInstalledApplication({
@@ -844,6 +828,10 @@ export class OAuthService {
         workspaceId,
       });
     } catch (error) {
+      if (!isUniqueViolationError(error)) {
+        throw error;
+      }
+
       // First connections race to create the install; the loser reuses it since its authorization code is already spent
       const concurrentlyInstalledApplication =
         await this.findInstalledApplication({

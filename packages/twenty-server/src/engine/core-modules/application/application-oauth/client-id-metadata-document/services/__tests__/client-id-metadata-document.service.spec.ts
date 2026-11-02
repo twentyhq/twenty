@@ -1,5 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { AxiosError, AxiosHeaders } from 'axios';
+
 import { isDefined } from 'twenty-shared/utils';
 
 import { CLIENT_ID_METADATA_DOCUMENT_LIMITS } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/constants/client-id-metadata-document-limits.constant';
@@ -136,6 +138,65 @@ describe('ClientIdMetadataDocumentService', () => {
         isAxiosError: true,
         response: { status: 404 },
       }),
+    );
+
+    await expect(service.findDocument(DOCUMENT_URL)).resolves.toBeNull();
+  });
+
+  it('keeps serving the last document when the body of a 200 fails to arrive', async () => {
+    await service.findDocument(DOCUMENT_URL);
+    moveClockPastRefresh();
+    httpGet.mockRejectedValueOnce(
+      new AxiosError(
+        'stream has been aborted',
+        AxiosError.ERR_BAD_RESPONSE,
+        undefined,
+        undefined,
+        {
+          status: 200,
+          statusText: 'OK',
+          headers: {},
+          config: { headers: new AxiosHeaders() },
+          data: undefined,
+        },
+      ),
+    );
+
+    await expect(service.findDocument(DOCUMENT_URL)).resolves.toMatchObject({
+      clientName: 'Claude',
+    });
+  });
+
+  it('drops a document whose URL now redirects elsewhere', async () => {
+    await service.findDocument(DOCUMENT_URL);
+    moveClockPastRefresh();
+    httpGet.mockRejectedValueOnce(
+      new AxiosError(
+        'Request failed with status code 301',
+        AxiosError.ERR_BAD_REQUEST,
+        undefined,
+        undefined,
+        {
+          status: 301,
+          statusText: 'Moved Permanently',
+          headers: {},
+          config: { headers: new AxiosHeaders() },
+          data: undefined,
+        },
+      ),
+    );
+
+    await expect(service.findDocument(DOCUMENT_URL)).resolves.toBeNull();
+  });
+
+  it('drops a document that grew past the size cap', async () => {
+    await service.findDocument(DOCUMENT_URL);
+    moveClockPastRefresh();
+    httpGet.mockRejectedValueOnce(
+      new AxiosError(
+        'maxContentLength size of 5120 exceeded',
+        AxiosError.ERR_BAD_RESPONSE,
+      ),
     );
 
     await expect(service.findDocument(DOCUMENT_URL)).resolves.toBeNull();
