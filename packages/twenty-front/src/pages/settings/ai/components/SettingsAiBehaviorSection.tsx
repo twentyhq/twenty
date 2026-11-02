@@ -5,6 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useId } from 'react';
 import { Section } from 'twenty-ui/components/layout';
 import { IconInbox, IconMessage } from 'twenty-ui/icon';
+import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { Banner } from 'twenty-ui/primitives/feedback';
 import { Text } from 'twenty-ui/primitives/typography';
@@ -39,14 +40,18 @@ export const SettingsAiBehaviorSection = ({
   const hasError = isNonEmptyString(errorMessage);
   const isDisabled = disabled || isLoading;
   const describedBy = hasError ? `${helperId} ${errorId}` : helperId;
+  const loadingMessage = isLoading ? t`Loading behavior settings...` : '';
 
   return (
-    <Section.Root aria-busy={isLoading}>
+    <Section.Root>
       <Section.Header
         title={t`Behavior`}
         description={t`Choose when Ada participates in conversations across your workspace`}
       />
-      <Card.Root backgroundColor={themeCssVariables.background.secondary}>
+      <Card.Root
+        backgroundColor={themeCssVariables.background.secondary}
+        aria-busy={isLoading}
+      >
         <StyledSettingsSelectGroup controlWidth={180}>
           <SettingsOptionCardContentSelect
             Icon={IconMessage}
@@ -85,10 +90,11 @@ export const SettingsAiBehaviorSection = ({
         {t`Never keeps Ada out. Only when mentioned asks Ada to reply when tagged. Auto lets Ada decide when to reply. Chats with only you and Ada always get replies.`}
       </Text>
       {isLoading && (
-        <Text role="status" size="sm" color="tertiary">
-          {t`Loading behavior settings...`}
+        <Text aria-hidden size="sm" color="tertiary">
+          {loadingMessage}
         </Text>
       )}
+      <VisuallyHidden role="status">{loadingMessage}</VisuallyHidden>
       {hasError && (
         <Banner id={errorId} role="alert" status="error">
           {errorMessage}
