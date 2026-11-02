@@ -14,19 +14,18 @@ import {
 export class ApplicationWorkflowStepPermissionService {
   constructor(private readonly permissionsService: PermissionsService) {}
 
-  // Runs without an application keep the reach of whoever built the workflow
   async assertRunApplicationMayUseStepOrThrow({
     workspaceId,
     runApplicationId,
     stepType,
   }: {
     workspaceId: string;
-    runApplicationId?: string;
+    runApplicationId: string;
     stepType: WorkflowActionType;
   }): Promise<void> {
     const permissionFlag = APPLICATION_WORKFLOW_STEP_PERMISSION_FLAGS[stepType];
 
-    if (!isDefined(runApplicationId) || !isDefined(permissionFlag)) {
+    if (!isDefined(permissionFlag)) {
       return;
     }
 

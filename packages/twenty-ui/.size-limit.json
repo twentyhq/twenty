@@ -85,6 +85,11 @@
   {
     "name": "icon",
     "path": "dist/icon.mjs",
+    "limit": "70 kB"
+  },
+  {
+    "name": "icon/provider",
+    "path": "dist/icon/provider.mjs",
     "limit": "290 kB"
   },
   {

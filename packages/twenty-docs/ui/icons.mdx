@@ -36,10 +36,10 @@ Exported icons keep their requested width in flex layouts, including inside butt
 
 ## Dynamic icon names
 
-Use `IconsProvider` and `Icon` when names are chosen at runtime. The provider loads the complete icon map asynchronously; bundles built without code splitting, such as front components, include the whole map. Before loading completes, and for unknown names, `Icon` renders `Icon123`. The dynamic map differs from the named export catalog; do not assume every brand or illustration export can be resolved by name.
+Use `IconsProvider` and `Icon` from `twenty-ui/icon/provider` when names are chosen at runtime. The provider loads the complete icon map asynchronously; bundles built without code splitting, such as front components, include the whole map. `twenty-ui/icon` does not include the provider, so importing named icons never pulls in the map. Before loading completes, and for unknown names, `Icon` renders `Icon123`. The dynamic map differs from the named export catalog; do not assume every brand or illustration export can be resolved by name.
 
 ```tsx
-import { Icon, IconsProvider } from 'twenty-ui/icon';
+import { Icon, IconsProvider } from 'twenty-ui/icon/provider';
 import { Button } from 'twenty-ui/primitives/input';
 
 export const DynamicAction = ({ iconName }: { iconName: string }) => (

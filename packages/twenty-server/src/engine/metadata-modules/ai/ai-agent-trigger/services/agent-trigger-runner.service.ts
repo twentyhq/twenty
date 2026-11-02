@@ -207,7 +207,6 @@ export class AgentTriggerRunnerService
     // the agent never exceeds its application, as in its runAgent runs
     const agentRunRoleIds: AgentRunRoleIds = resolveApplicationRoleId({
       application,
-      isMissingApplicationRoleTolerated: true,
     });
 
     const actingAgent = { id: agent.id, label: agent.label };

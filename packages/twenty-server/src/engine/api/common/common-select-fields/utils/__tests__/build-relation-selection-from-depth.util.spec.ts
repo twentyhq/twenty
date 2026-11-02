@@ -173,11 +173,9 @@ const buildArgs = (
       opportunity.fieldIds.includes(field.id),
     ),
     objectsPermissions: Object.fromEntries(
-      objects.map((object) => [
-        object.id,
-        { canReadObjectRecords: true, restrictedFields: {} },
-      ]),
+      objects.map((object) => [object.id, { restrictedFields: {} }]),
     ),
+    readableObjectMetadataIds: new Set(objects.map((object) => object.id)),
     depth,
   };
 };

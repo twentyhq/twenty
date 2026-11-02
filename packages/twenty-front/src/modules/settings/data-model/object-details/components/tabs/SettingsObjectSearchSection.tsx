@@ -22,13 +22,8 @@ import { useMemo, useState } from 'react';
 import { useToast } from 'twenty-ui/components/feedback';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import {
-  IconEye,
-  IconPlus,
-  IconSearch,
-  IconTrash,
-  useIcons,
-} from 'twenty-ui/icon';
+import { IconEye, IconPlus, IconSearch, IconTrash } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Button } from 'twenty-ui/primitives/input';
 import { Card } from 'twenty-ui/primitives/surfaces';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
