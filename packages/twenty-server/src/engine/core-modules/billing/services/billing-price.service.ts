@@ -3,7 +3,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { type Repository } from 'typeorm';
+import { assertIsDefinedOrThrow, findOrThrow } from 'twenty-shared/utils';
+import { In, type Repository } from 'typeorm';
 
 import {
   BillingException,
@@ -17,7 +18,9 @@ import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/bill
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { type BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
+import { type SubscriptionStripePrices } from 'src/engine/core-modules/billing/types/subscription-stripe-prices.type';
 import { isSellableCatalogPrice } from 'src/engine/core-modules/billing/utils/is-sellable-catalog-price.util';
+import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normalize-price-ref.utils';
 
 @Injectable()
 export class BillingPriceService {
@@ -189,5 +192,47 @@ export class BillingPriceService {
         .filter((p) => Number(p.metadata?.credit_amount ?? 0) <= scaledAmount)
         .pop() ?? resourceCreditCandidates[0]
     );
+  }
+
+  async getSubscriptionPricesFromItems(
+    items: { price: string | { id: string }; quantity?: number }[],
+  ): Promise<SubscriptionStripePrices> {
+    const phaseItemPriceIds = items.map((item) =>
+      normalizePriceRef(item.price),
+    );
+
+    const phaseItemPrices = await this.billingPriceRepository.find({
+      where: { stripePriceId: In(phaseItemPriceIds) },
+      relations: ['billingProduct'],
+    });
+
+    const basePlanPrice = phaseItemPrices.find(
+      (price) =>
+        price.billingProduct?.metadata?.productKey ===
+        BillingProductKey.BASE_PRODUCT,
+    );
+
+    assertIsDefinedOrThrow(basePlanPrice);
+
+    const basePlanPhaseItem = findOrThrow(
+      items,
+      (item) => normalizePriceRef(item.price) === basePlanPrice.stripePriceId,
+    );
+
+    assertIsDefinedOrThrow(basePlanPhaseItem.quantity);
+
+    const resourceCreditPrice = phaseItemPrices.find(
+      (price) =>
+        price.billingProduct?.metadata?.productKey ===
+        BillingProductKey.RESOURCE_CREDIT,
+    );
+
+    assertIsDefinedOrThrow(resourceCreditPrice);
+
+    return {
+      baseProductPriceId: basePlanPrice.stripePriceId,
+      seats: basePlanPhaseItem.quantity,
+      resourceCreditPriceId: resourceCreditPrice.stripePriceId,
+    };
   }
 }

@@ -6,7 +6,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   assertIsDefinedOrThrow,
   assertUnreachable,
-  findOrThrow,
   isDefined,
 } from 'twenty-shared/utils';
 import { In, type Repository } from 'typeorm';
@@ -36,7 +35,6 @@ import {
   SubscriptionUpdateType,
 } from 'src/engine/core-modules/billing/types/billing-subscription-update.type';
 import { computeImmediateSubscriptionUpdate } from 'src/engine/core-modules/billing/utils/compute-immediate-subscription-update.util';
-import { computeSeatSyncPlan } from 'src/engine/core-modules/billing/utils/compute-seat-sync-plan.util';
 import { computeSubscriptionUpdateOptions } from 'src/engine/core-modules/billing/utils/compute-subscription-update-options.util';
 import { findSellableBaseProductPriceOrThrow } from 'src/engine/core-modules/billing/utils/find-sellable-base-product-price-or-throw.util';
 import { findProductPriceForIntervalOrThrow } from 'src/engine/core-modules/billing/utils/find-product-price-for-interval-or-throw.util';
@@ -47,12 +45,10 @@ import { getBaseProductSubscriptionItemOrThrow } from 'src/engine/core-modules/b
 import { getBillingPlanConfig } from 'src/engine/core-modules/billing/utils/get-billing-plan-config.util';
 import { getPlanSwitchOrThrow } from 'src/engine/core-modules/billing/utils/get-plan-switch-or-throw.util';
 import { getCurrentResourceCreditSubscriptionItemOrThrow } from 'src/engine/core-modules/billing/utils/get-resource-credit-subscription-item-or-throw.util';
-import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normalize-price-ref.utils';
 import { buildSchedulePhasesUpdate } from 'src/engine/core-modules/billing/utils/build-schedule-phases-update.util';
 import { buildSubscriptionItemsUpdate } from 'src/engine/core-modules/billing/utils/build-subscription-items-update.util';
 import { isSamePhaseSignature } from 'src/engine/core-modules/billing/utils/is-same-phase-signature.util';
 import { toPhaseUpdateParams } from 'src/engine/core-modules/billing/utils/to-phase-update-params.util';
-import { type SeatSyncPlan } from 'src/engine/core-modules/billing/types/seat-sync-plan.type';
 import { type SubscriptionStripePrices } from 'src/engine/core-modules/billing/types/subscription-stripe-prices.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -222,29 +218,16 @@ export class BillingSubscriptionUpdateService {
   }
 
   async syncSeats(workspaceId: string) {
-    const billingSubscription =
-      await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
-        { workspaceId },
-      );
+    const currentSeatSyncPlan =
+      await this.billingSeatService.computeCurrentSeatSyncPlan(workspaceId);
 
-    const { subscription: stripeSubscription } =
-      await this.stripeSubscriptionScheduleService.loadSubscriptionSchedule(
-        billingSubscription.stripeSubscriptionId,
-      );
-
-    const seatSyncPlan = await this.computeSeatSyncPlan({
-      workspaceId,
-      stripeSubscription,
-      currentSeats: (
-        await this.getSubscriptionPricesFromItems(stripeSubscription.items.data)
-      ).seats,
-    });
-
-    if (!isDefined(seatSyncPlan)) {
+    if (!isDefined(currentSeatSyncPlan)) {
       return;
     }
 
-    await this.updateSubscription(workspaceId, billingSubscription.id, {
+    const { billingSubscriptionId, seatSyncPlan } = currentSeatSyncPlan;
+
+    await this.updateSubscription(workspaceId, billingSubscriptionId, {
       type: SubscriptionUpdateType.SEATS,
       newSeats: seatSyncPlan.currentPeriodSeats,
       nextPeriodSeats: seatSyncPlan.nextPeriodSeats ?? undefined,
@@ -276,15 +259,16 @@ export class BillingSubscriptionUpdateService {
       subscription.stripeSubscriptionId,
     );
 
-    const currentPrices = await this.getSubscriptionPricesFromItems(
-      stripeSubscription.items.data,
-    );
+    const currentPrices =
+      await this.billingPriceService.getSubscriptionPricesFromItems(
+        stripeSubscription.items.data,
+      );
 
     const seats =
       subscriptionUpdate.type === SubscriptionUpdateType.SEATS
         ? subscriptionUpdate.newSeats
         : ((
-            await this.computeSeatSyncPlan({
+            await this.billingSeatService.computeSeatSyncPlan({
               workspaceId,
               stripeSubscription,
               currentSeats: currentPrices.seats,
@@ -331,9 +315,10 @@ export class BillingSubscriptionUpdateService {
         assertIsDefinedOrThrow(nextPhase);
         assertIsDefinedOrThrow(currentPhase);
 
-        const nextPhasePrices = await this.getSubscriptionPricesFromItems(
-          nextPhase.items,
-        );
+        const nextPhasePrices =
+          await this.billingPriceService.getSubscriptionPricesFromItems(
+            nextPhase.items,
+          );
 
         const toUpdateNextPrices = await this.computeSubscriptionPricesUpdate(
           subscriptionUpdate,
@@ -376,9 +361,10 @@ export class BillingSubscriptionUpdateService {
 
         assertIsDefinedOrThrow(refreshedCurrentPhase);
 
-        const nextPhasePrices = await this.getSubscriptionPricesFromItems(
-          nextPhase.items,
-        );
+        const nextPhasePrices =
+          await this.billingPriceService.getSubscriptionPricesFromItems(
+            nextPhase.items,
+          );
         const toUpdateNextPrices = await this.computeSubscriptionPricesUpdate(
           nextPeriodSubscriptionUpdate,
           nextPhasePrices,
@@ -424,37 +410,6 @@ export class BillingSubscriptionUpdateService {
       subscription.workspaceId,
       subscription.stripeSubscriptionId,
     );
-  }
-
-  private async computeSeatSyncPlan({
-    workspaceId,
-    stripeSubscription,
-    currentSeats,
-  }: {
-    workspaceId: string;
-    stripeSubscription: Stripe.Subscription;
-    currentSeats: number;
-  }): Promise<SeatSyncPlan | null> {
-    const memberCount =
-      await this.billingSeatService.countWorkspaceMembers(workspaceId);
-
-    if (memberCount <= 0) {
-      return null;
-    }
-
-    const { current_period_start, current_period_end } =
-      stripeSubscription.items.data[0];
-
-    return computeSeatSyncPlan({
-      memberCount,
-      currentSeats,
-      seatArrangements:
-        await this.billingSeatService.findSeatArrangements(workspaceId),
-      now: new Date(),
-      currentPeriodStart: new Date(current_period_start * 1000),
-      currentPeriodEnd: new Date(current_period_end * 1000),
-      isTrialing: stripeSubscription.status === SubscriptionStatus.Trialing,
-    });
   }
 
   private async createResourceCreditUpgradeInvoice({
@@ -534,48 +489,6 @@ export class BillingSubscriptionUpdateService {
           : [];
       }),
     );
-  }
-
-  private async getSubscriptionPricesFromItems(
-    items: { price: string | { id: string }; quantity?: number }[],
-  ): Promise<SubscriptionStripePrices> {
-    const phaseItemPriceIds = items.map((item) =>
-      normalizePriceRef(item.price),
-    );
-
-    const phaseItemPrices = await this.billingPriceRepository.find({
-      where: { stripePriceId: In(phaseItemPriceIds) },
-      relations: ['billingProduct'],
-    });
-
-    const basePlanPrice = phaseItemPrices.find(
-      (price) =>
-        price.billingProduct?.metadata?.productKey ===
-        BillingProductKey.BASE_PRODUCT,
-    );
-
-    assertIsDefinedOrThrow(basePlanPrice);
-
-    const basePlanPhaseItem = findOrThrow(
-      items,
-      (item) => normalizePriceRef(item.price) === basePlanPrice.stripePriceId,
-    );
-
-    assertIsDefinedOrThrow(basePlanPhaseItem.quantity);
-
-    const resourceCreditPrice = phaseItemPrices.find(
-      (price) =>
-        price.billingProduct?.metadata?.productKey ===
-        BillingProductKey.RESOURCE_CREDIT,
-    );
-
-    assertIsDefinedOrThrow(resourceCreditPrice);
-
-    return {
-      baseProductPriceId: basePlanPrice.stripePriceId,
-      seats: basePlanPhaseItem.quantity,
-      resourceCreditPriceId: resourceCreditPrice.stripePriceId,
-    };
   }
 
   private async applyImmediateSubscriptionUpdate({
