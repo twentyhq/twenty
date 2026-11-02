@@ -14,9 +14,11 @@ import { ClientIdMetadataDocumentService } from 'src/engine/core-modules/applica
 import { type ClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/client-id-metadata-document.type';
 import { isClientIdMetadataDocumentUrl } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/is-client-id-metadata-document-url.util';
 import { type ResolvedOAuthClient } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/resolved-oauth-client.type';
+import { type ResolvedOAuthClientRegistration } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/types/resolved-oauth-client-registration.type';
 import { toClientIdMetadataDocumentRegistrationFields } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/to-client-id-metadata-document-registration-fields.util';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT } from 'src/engine/core-modules/application/application-registration/constants/application-registration-without-manifest-select.constant';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { WellKnownOAuthClientRegistrationService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-registration.service';
 import { findWellKnownOAuthClientByClientIdMetadataDocument } from 'src/engine/core-modules/application/well-known-oauth-client/utils/find-well-known-oauth-client-by-client-id-metadata-document.util';
@@ -56,7 +58,7 @@ export class OAuthClientRegistrationResolverService {
 
   async findByClientId(
     clientId: string,
-  ): Promise<ApplicationRegistrationEntity | null> {
+  ): Promise<ResolvedOAuthClientRegistration | null> {
     return (await this.resolveClient(clientId))?.registration ?? null;
   }
 
@@ -64,7 +66,7 @@ export class OAuthClientRegistrationResolverService {
   async findOrRegisterByClientId(
     clientId: string,
   ): Promise<
-    | (ResolvedOAuthClient & { registration: ApplicationRegistrationEntity })
+    | (ResolvedOAuthClient & { registration: ResolvedOAuthClientRegistration })
     | null
   > {
     const resolvedClient = await this.resolveClient(clientId);
@@ -128,9 +130,15 @@ export class OAuthClientRegistrationResolverService {
     };
   }
 
-  private findRegistrationByOAuthClientId(oAuthClientId: string) {
+  private findRegistrationByOAuthClientId(
+    oAuthClientId: string,
+  ): Promise<ResolvedOAuthClientRegistration | null> {
     return this.applicationRegistrationRepository.findOne({
       where: { oAuthClientId },
+      select: [
+        ...APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
+        'oAuthClientSecretHash',
+      ],
     });
   }
 
@@ -139,8 +147,8 @@ export class OAuthClientRegistrationResolverService {
     existingRegistration,
   }: {
     clientIdMetadataDocument: ClientIdMetadataDocument;
-    existingRegistration: ApplicationRegistrationEntity | null;
-  }): Promise<ApplicationRegistrationEntity | null> {
+    existingRegistration: ResolvedOAuthClientRegistration | null;
+  }): Promise<ResolvedOAuthClientRegistration | null> {
     const documentFields = toClientIdMetadataDocumentRegistrationFields(
       clientIdMetadataDocument,
     );

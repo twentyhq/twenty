@@ -1,5 +1,10 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
-import { isDefined, isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
+import {
+  getUrlSafely,
+  isDefined,
+  isNonEmptyArray,
+  isPlainObject,
+} from 'twenty-shared/utils';
 
 import { type ClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/client-id-metadata-document.type';
 import { validateRedirectUri } from 'src/engine/core-modules/auth/utils/validate-redirect-uri.util';
@@ -60,13 +65,16 @@ export const parseClientIdMetadataDocument = ({
 
   const clientName = rawDocument.client_name;
   const logoUri = rawDocument.logo_uri;
+  const logoUrl = isNonEmptyString(logoUri) ? getUrlSafely(logoUri) : null;
 
   return {
     document: {
       clientId: clientIdMetadataDocumentUrl,
       clientName: isNonEmptyString(clientName) ? clientName : null,
       logoUri:
-        isNonEmptyString(logoUri) && logoUri.startsWith('https://')
+        isNonEmptyString(logoUri) &&
+        logoUri.startsWith('https://') &&
+        isDefined(logoUrl)
           ? logoUri
           : null,
       redirectUris,

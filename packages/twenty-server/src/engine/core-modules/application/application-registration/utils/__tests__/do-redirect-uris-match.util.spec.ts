@@ -40,6 +40,21 @@ describe('doRedirectUrisMatch', () => {
     ).toBe(false);
   });
 
+  it('still compares the userinfo and fragment of a loopback callback', () => {
+    expect(
+      doRedirectUrisMatch({
+        registeredRedirectUri: 'http://localhost/callback',
+        redirectUri: 'http://attacker:secret@localhost:3118/callback',
+      }),
+    ).toBe(false);
+    expect(
+      doRedirectUrisMatch({
+        registeredRedirectUri: 'http://localhost/callback',
+        redirectUri: 'http://localhost:3118/callback#fragment',
+      }),
+    ).toBe(false);
+  });
+
   it('keeps the port of any other callback', () => {
     expect(
       doRedirectUrisMatch({

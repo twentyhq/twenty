@@ -11836,6 +11836,15 @@ export default {
             "webhooks": [
                 661
             ],
+            "workspaceApplicationAuthorizations": [
+                47,
+                {
+                    "applicationId": [
+                        533,
+                        "UUID!"
+                    ]
+                }
+            ],
             "__typename": [
                 1
             ]
@@ -11846,15 +11855,6 @@ export default {
             ],
             "optionValue": [
                 1
-            ],
-            "workspaceApplicationAuthorizations": [
-                47,
-                {
-                    "applicationId": [
-                        533,
-                        "UUID!"
-                    ]
-                }
             ],
             "__typename": [
                 1

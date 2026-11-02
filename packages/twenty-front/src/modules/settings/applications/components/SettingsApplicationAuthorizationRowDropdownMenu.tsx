@@ -47,6 +47,7 @@ export const SettingsApplicationAuthorizationRowDropdownMenu = ({
         <DropdownContent side="right" align="start">
           <Dropdown.Section>
             <Dropdown.ActionItem
+              color="danger"
               startIcon={<IconUnlink />}
               onClick={() => openDialog(revokeDialogId)}
             >

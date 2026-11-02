@@ -172,9 +172,6 @@ export class OAuthRegistrationController {
         registration: wellKnownOAuthClientRegistration,
         issuer,
         redirectUris: body.redirect_uris,
-        scopes: requestedScopes.filter((scope) =>
-          wellKnownOAuthClientRegistration.oAuthScopes.includes(scope),
-        ),
         grantTypes,
         responseTypes,
       });
