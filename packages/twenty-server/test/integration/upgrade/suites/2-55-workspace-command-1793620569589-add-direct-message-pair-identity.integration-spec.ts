@@ -3,7 +3,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type AddDirectMessagePairIdentityCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793371089726-add-direct-message-pair-identity.command';
+import { type AddDirectMessagePairIdentityCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793620569589-add-direct-message-pair-identity.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type AgentChatDirectMessageIdentityService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-direct-message-identity.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
