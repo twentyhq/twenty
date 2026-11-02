@@ -3,9 +3,14 @@ import {
   SystemPermissionFlag,
 } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { FieldMetadataType } from 'twenty-shared/types';
+import {
+  FieldMetadataType,
+  type ObjectsPermissions,
+} from 'twenty-shared/types';
 
 import { resolveAiRunPermissionScope } from 'src/engine/permissions/role/utils/resolve-ai-run-permission-scope.util';
+import { restrictObjectsPermissionsToScope } from 'src/engine/permissions/role/utils/restrict-objects-permissions-to-scope.util';
+import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
@@ -16,6 +21,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 const PERSON_ID = 'person-id';
 const COMPANY_ID = 'company-id';
 const WORKFLOW_ID = 'workflow-id';
+const CAMPAIGN_ID = 'campaign-id';
 const WORKFLOW_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.workflow.universalIdentifier;
 const EMAIL_FIELD_ID = 'email-field-id';
@@ -23,13 +29,19 @@ const EMAIL_FIELD_ID = 'email-field-id';
 const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> =
   createEmptyFlatEntityMaps();
 
-for (const [id, universalIdentifier] of [
-  [PERSON_ID, 'person'],
-  [COMPANY_ID, 'company'],
-  [WORKFLOW_ID, WORKFLOW_UNIVERSAL_IDENTIFIER],
-]) {
+for (const [id, universalIdentifier, isSystem] of [
+  [PERSON_ID, 'person', false],
+  [COMPANY_ID, 'company', false],
+  [WORKFLOW_ID, WORKFLOW_UNIVERSAL_IDENTIFIER, false],
+  [CAMPAIGN_ID, 'campaign', true],
+] as const) {
   flatObjectMetadataMaps.byUniversalIdentifier[universalIdentifier] =
-    getFlatObjectMetadataMock({ id, universalIdentifier, isSystem: false });
+    getFlatObjectMetadataMock({
+      id,
+      universalIdentifier,
+      nameSingular: universalIdentifier,
+      isSystem,
+    });
   flatObjectMetadataMaps.universalIdentifierById[id] = universalIdentifier;
 }
 
@@ -120,11 +132,8 @@ describe('resolveAiRunPermissionScope', () => {
       ],
     });
 
-    expect(
-      Object.values(objectsPermissions).some(
-        (objectPermissions) => objectPermissions.canReadObjectRecords,
-      ),
-    ).toBe(false);
+    expect(objectsPermissions[PERSON_ID]?.canReadObjectRecords).toBe(false);
+    expect(objectsPermissions[COMPANY_ID]?.canReadObjectRecords).toBe(false);
   });
 
   describe('on the workflow objects, which the workflows flag grants', () => {
@@ -201,6 +210,74 @@ describe('resolveAiRunPermissionScope', () => {
         ],
       }),
     ).toThrow('Field email does not belong to object company');
+  });
+
+  describe('on a system object', () => {
+    it('leaves it readable but not writable when the scope grants nothing', () => {
+      expect(resolve({}).objectsPermissions[CAMPAIGN_ID]).toMatchObject({
+        canReadObjectRecords: true,
+        canUpdateObjectRecords: false,
+        canSoftDeleteObjectRecords: false,
+        canDestroyObjectRecords: false,
+      });
+    });
+
+    it('lets a scope grant writing it, on all objects or on that one', () => {
+      expect(
+        resolve({ canUpdateAllObjectRecords: true }).objectsPermissions[
+          CAMPAIGN_ID
+        ]?.canUpdateObjectRecords,
+      ).toBe(true);
+      expect(
+        resolve({
+          objectPermissions: [
+            {
+              objectUniversalIdentifier: 'campaign',
+              canUpdateObjectRecords: true,
+            },
+          ],
+        }).objectsPermissions[CAMPAIGN_ID]?.canUpdateObjectRecords,
+      ).toBe(true);
+    });
+
+    it('refuses an insert by a member who can write it, under a scope that grants nothing', () => {
+      const memberObjectsPermissions: ObjectsPermissions = {
+        [CAMPAIGN_ID]: {
+          canReadObjectRecords: true,
+          canUpdateObjectRecords: true,
+          canSoftDeleteObjectRecords: true,
+          canDestroyObjectRecords: true,
+          restrictedFields: {},
+          rowLevelPermissionPredicates: [],
+          rowLevelPermissionPredicateGroups: [],
+        },
+      };
+      const insertCampaign = (objectsPermissions: ObjectsPermissions) =>
+        validateOperationIsPermittedOrThrow({
+          entityName: 'campaign',
+          operationType: 'insert',
+          objectsPermissions,
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          objectIdByNameSingular: { campaign: CAMPAIGN_ID },
+          selectedColumns: [],
+          updatedColumns: [],
+        });
+
+      expect(() => insertCampaign(memberObjectsPermissions)).not.toThrow();
+      expect(() =>
+        insertCampaign(
+          restrictObjectsPermissionsToScope({
+            objectsPermissions: memberObjectsPermissions,
+            scope: resolveAiRunPermissionScope({
+              scope: {},
+              flatObjectMetadataMaps,
+              flatFieldMetadataMaps,
+            }),
+          }),
+        ),
+      ).toThrow('Entity performing the request does not have permission');
+    });
   });
 
   it('grants the flags it names, and tool flags with all tools', () => {

@@ -119,6 +119,7 @@ export const resolveAiRunPermissionScope = ({
           scope.canSoftDeleteAllObjectRecords ?? false,
         canDestroyAllObjectRecords: scope.canDestroyAllObjectRecords ?? false,
         isPermissionFlagGranted,
+        areSystemObjectsReadOnlyByDefault: true,
         objectPermissions,
         fieldPermissions: (scope.fieldPermissions ?? []).flatMap(
           ({
