@@ -29,7 +29,6 @@ const saveDraftWithVariables = (...variables: string[]) =>
     'MessageCampaignDraftService',
   ).saveDraft({
     workspaceId: SEED_APPLE_WORKSPACE_ID,
-    // variables are validated before any write, so the permissions are irrelevant here
     rolePermissionConfig: { shouldBypassPermissionChecks: true },
     subject: 'Hello',
     body: buildBodyWithVariables(variables),
