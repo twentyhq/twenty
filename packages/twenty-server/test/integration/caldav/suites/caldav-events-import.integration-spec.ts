@@ -181,7 +181,11 @@ describe('CalDAV calendar events import (integration)', () => {
     });
 
     expect(response.status).toBe(200);
-    expect(await response.text()).toContain(`SUMMARY:${title}`);
+
+    const body = await response.text();
+
+    expect(body).toContain(`SUMMARY:${title}`);
+    expect(body.toLowerCase()).toContain(`mailto:${HANDLE.toLowerCase()}`);
   }, 300000);
 
   it('advances the sync token and imports an event added afterwards', async () => {
