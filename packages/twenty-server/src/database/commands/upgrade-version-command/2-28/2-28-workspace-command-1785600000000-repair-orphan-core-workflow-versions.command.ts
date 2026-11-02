@@ -50,7 +50,7 @@ export class RepairOrphanCoreWorkflowVersionsCommand extends ProvisionedWorkspac
       await this.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const workflowVersionRepository =
-            this.workspaceOrmManager.getSystemRepository<WorkflowVersionWorkspaceEntity>('workflowVersion');
+            this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkflowVersionWorkspaceEntity>('workflowVersion');
 
           return workflowVersionRepository.count();
         },

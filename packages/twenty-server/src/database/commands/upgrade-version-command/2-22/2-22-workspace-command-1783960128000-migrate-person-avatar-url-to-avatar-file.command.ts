@@ -91,7 +91,7 @@ export class MigratePersonAvatarUrlToAvatarFileCommand extends ProvisionedWorksp
     }
 
     const personRepository =
-      this.workspaceOrmManager.getSystemRepository<PersonWorkspaceEntity>('person');
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<PersonWorkspaceEntity>('person');
 
     let candidateCount = 0;
     let migratedCount = 0;

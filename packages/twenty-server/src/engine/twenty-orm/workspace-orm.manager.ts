@@ -49,12 +49,14 @@ export class WorkspaceOrmManager {
     );
   }
 
-  // Ignores who the request acts for: only for work the system does itself
-  getSystemRepository<T extends ObjectLiteral = ObjectRecord>(
+  // Only for work the system does itself, never on behalf of a caller
+  getRepositoryWithoutPermissionChecks<T extends ObjectLiteral = ObjectRecord>(
     workspaceEntityOrObjectMetadataName: Type<T> | string,
     repositoryOptions?: OrmRepositoryOptions,
   ): WorkspaceRepository<T> {
-    return this.getDataSource(repositoryOptions).getSystemRepository<T>(
+    return this.getDataSource(
+      repositoryOptions,
+    ).getRepositoryWithoutPermissionChecks<T>(
       this.resolveObjectMetadataName(workspaceEntityOrObjectMetadataName),
       { shouldSkipEventEmission: repositoryOptions?.shouldSkipEventEmission },
     );

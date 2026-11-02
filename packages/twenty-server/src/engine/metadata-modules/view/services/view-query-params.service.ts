@@ -172,7 +172,7 @@ export class ViewQueryParamsService {
 
     try {
       const workspaceMemberRepository =
-        this.workspaceOrmManager.getSystemRepository<WorkspaceMemberWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
           'workspaceMember',
         );
 

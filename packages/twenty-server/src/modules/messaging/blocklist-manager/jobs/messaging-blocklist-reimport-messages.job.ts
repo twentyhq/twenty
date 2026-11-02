@@ -103,7 +103,7 @@ export class BlocklistReimportMessagesJob {
     workspaceId: string;
   }): Promise<string[]> {
     const workspaceMemberRepository =
-      this.workspaceOrmManager.getSystemRepository<WorkspaceMemberWorkspaceEntity>(
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
         'workspaceMember',
       );
 

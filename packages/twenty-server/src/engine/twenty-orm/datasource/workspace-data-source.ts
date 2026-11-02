@@ -83,7 +83,7 @@ export class WorkspaceDataSource {
     });
   }
 
-  getSystemRepository<T extends ObjectLiteral = ObjectRecord>(
+  getRepositoryWithoutPermissionChecks<T extends ObjectLiteral = ObjectRecord>(
     nameSingular: string,
     repositoryOptions?: WorkspaceRepositoryOptions,
   ): WorkspaceRepository<T> {
@@ -143,7 +143,9 @@ export class WorkspaceDataSource {
               repositoryOptions?.shouldSkipEventEmission ?? false,
             internalContext: transactionalInternalContext,
           }),
-        getSystemRepository: <T extends ObjectLiteral = ObjectRecord>(
+        getRepositoryWithoutPermissionChecks: <
+          T extends ObjectLiteral = ObjectRecord,
+        >(
           nameSingular: string,
           repositoryOptions?: WorkspaceRepositoryOptions,
         ) =>
@@ -277,7 +279,7 @@ export class WorkspaceDataSource {
         this.transaction((transactionScope) =>
           work(
             shouldBypassPermissionChecks
-              ? transactionScope.getSystemRepository<T>(
+              ? transactionScope.getRepositoryWithoutPermissionChecks<T>(
                   flatObjectMetadata.nameSingular,
                   { shouldSkipEventEmission },
                 )

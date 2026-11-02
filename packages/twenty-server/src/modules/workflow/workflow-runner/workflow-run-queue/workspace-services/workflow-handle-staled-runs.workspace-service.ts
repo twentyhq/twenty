@@ -51,7 +51,7 @@ export class WorkflowHandleStaledRunsWorkspaceService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowRunRepository =
-        this.workspaceOrmManager.getSystemRepository(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
           WorkflowRunWorkspaceEntity,
         );
 
@@ -284,7 +284,7 @@ export class WorkflowHandleStaledRunsWorkspaceService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowRunRepository =
-        this.workspaceOrmManager.getSystemRepository(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
           WorkflowRunWorkspaceEntity,
         );
 

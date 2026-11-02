@@ -823,9 +823,10 @@ export class WorkflowVersionStepOperationsWorkspaceService {
               .filter((field) => field.type === FieldMetadataType.RELATION)
               .map((field) => field.name);
 
-            const repository = this.workspaceOrmManager.getSystemRepository(
-              field.settings.objectName,
-            );
+            const repository =
+              this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+                field.settings.objectName,
+              );
 
             const record = await repository.findOne({
               // @ts-expect-error legacy noImplicitAny

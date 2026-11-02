@@ -103,7 +103,9 @@ export class TrashCleanupService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const repository =
-        this.workspaceOrmManager.getSystemRepository(objectName);
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          objectName,
+        );
 
       let deleted = 0;
 

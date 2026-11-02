@@ -327,7 +327,9 @@ export class ApplicationMessageIngestionService {
     }
 
     const repository =
-      this.workspaceOrmManager.getSystemRepository(objectMetadataName);
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+        objectMetadataName,
+      );
 
     const found = await repository.find({
       where: { id: In([...ids]) },

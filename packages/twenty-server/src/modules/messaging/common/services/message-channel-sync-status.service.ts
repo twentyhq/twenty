@@ -453,7 +453,7 @@ export class MessageChannelSyncStatusService {
     });
 
     const workspaceMemberRepository =
-      this.workspaceOrmManager.getSystemRepository<WorkspaceMemberWorkspaceEntity>(
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
         'workspaceMember',
       );
 

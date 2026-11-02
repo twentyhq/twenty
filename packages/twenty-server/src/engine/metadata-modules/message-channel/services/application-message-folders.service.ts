@@ -154,7 +154,7 @@ export class ApplicationMessageFoldersService {
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const messageFolderAssociationRepository =
-          this.workspaceOrmManager.getSystemRepository<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
             'messageChannelMessageAssociationMessageFolder',
           );
 

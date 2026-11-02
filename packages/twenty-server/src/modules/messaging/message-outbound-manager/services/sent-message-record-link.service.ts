@@ -48,7 +48,7 @@ export class SentMessageRecordLinkService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageThreadTargetRepository =
-        this.workspaceOrmManager.getSystemRepository<MessageThreadTargetWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageThreadTargetWorkspaceEntity>(
           'messageThreadTarget',
         );
 

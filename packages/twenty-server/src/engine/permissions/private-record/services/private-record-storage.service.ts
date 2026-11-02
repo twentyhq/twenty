@@ -169,16 +169,19 @@ export class PrivateRecordStorageService {
   }): Promise<TResult> {
     if (isDefined(transactionScope)) {
       return work(
-        transactionScope.getSystemRepository(flatObjectMetadata.nameSingular, {
-          shouldSkipEventEmission: true,
-        }),
+        transactionScope.getRepositoryWithoutPermissionChecks(
+          flatObjectMetadata.nameSingular,
+          {
+            shouldSkipEventEmission: true,
+          },
+        ),
       );
     }
 
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         work(
-          this.workspaceOrmManager.getSystemRepository(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
             flatObjectMetadata.nameSingular,
             { shouldSkipEventEmission: true },
           ),

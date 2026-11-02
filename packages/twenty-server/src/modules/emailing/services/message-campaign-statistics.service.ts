@@ -69,7 +69,7 @@ export class MessageCampaignStatisticsService {
     const groups = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const campaignDeliveryRepository =
-          this.workspaceOrmManager.getSystemRepository(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
             CampaignDeliveryWorkspaceEntity,
             { shouldSkipEventEmission: true },
           );
@@ -132,9 +132,10 @@ export class MessageCampaignStatisticsService {
   }): Promise<void> {
     const campaignIds =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-        const campaignRepository = this.workspaceOrmManager.getSystemRepository(
-          MessageCampaignWorkspaceEntity,
-        );
+        const campaignRepository =
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+            MessageCampaignWorkspaceEntity,
+          );
 
         const campaigns = await campaignRepository.find({
           where: [
@@ -166,9 +167,10 @@ export class MessageCampaignStatisticsService {
     counts: CampaignCounts;
   }): Promise<void> {
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const campaignRepository = this.workspaceOrmManager.getSystemRepository(
-        MessageCampaignWorkspaceEntity,
-      );
+      const campaignRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          MessageCampaignWorkspaceEntity,
+        );
 
       const campaign = await campaignRepository.findOne({
         where: { id: campaignId },
@@ -225,9 +227,10 @@ export class MessageCampaignStatisticsService {
     deliveredCount: number;
   }): Promise<void> {
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const campaignRepository = this.workspaceOrmManager.getSystemRepository(
-        MessageCampaignWorkspaceEntity,
-      );
+      const campaignRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          MessageCampaignWorkspaceEntity,
+        );
 
       const campaign = await campaignRepository.findOne({
         where: { id: campaignId },

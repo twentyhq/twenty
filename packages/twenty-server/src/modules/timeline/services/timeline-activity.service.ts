@@ -494,7 +494,7 @@ export class TimelineActivityService {
     }
 
     const workspaceMemberRepository =
-      this.workspaceOrmManager.getSystemRepository(
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
         WorkspaceMemberWorkspaceEntity,
       );
 

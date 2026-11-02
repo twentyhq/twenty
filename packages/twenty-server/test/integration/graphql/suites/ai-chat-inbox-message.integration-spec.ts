@@ -323,7 +323,9 @@ describe('Sending an inbox message as an application', () => {
       await workspaceOrmManager.executeInWorkspaceContext(
         () =>
           Object.getPrototypeOf(
-            workspaceOrmManager.getSystemRepository('agentMessagePart'),
+            workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+              'agentMessagePart',
+            ),
           ),
         buildSystemAuthContext(SEED_APPLE_WORKSPACE_ID),
         { lite: true },

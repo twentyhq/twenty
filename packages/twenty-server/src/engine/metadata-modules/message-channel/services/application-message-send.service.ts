@@ -271,7 +271,9 @@ export class ApplicationMessageSendService {
       await this.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const threadMessages = await this.workspaceOrmManager
-            .getSystemRepository<MessageWorkspaceEntity>('message')
+            .getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>(
+              'message',
+            )
             .find({ where: { messageThreadId }, select: { id: true } });
 
           const threadMessageIds = threadMessages.map((message) => message.id);
@@ -281,7 +283,7 @@ export class ApplicationMessageSendService {
           }
 
           const associations = await this.workspaceOrmManager
-            .getSystemRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+            .getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
               'messageChannelMessageAssociation',
             )
             .find({
@@ -297,7 +299,9 @@ export class ApplicationMessageSendService {
           }
 
           const latestMessages = await this.workspaceOrmManager
-            .getSystemRepository<MessageWorkspaceEntity>('message')
+            .getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>(
+              'message',
+            )
             .find({
               where: {
                 id: In(
@@ -312,7 +316,7 @@ export class ApplicationMessageSendService {
           const messageIds = latestMessages.map((message) => message.id);
 
           const participants = await this.workspaceOrmManager
-            .getSystemRepository<MessageParticipantWorkspaceEntity>(
+            .getRepositoryWithoutPermissionChecks<MessageParticipantWorkspaceEntity>(
               'messageParticipant',
             )
             .find({
@@ -416,7 +420,7 @@ export class ApplicationMessageSendService {
     }
 
     const records = await this.workspaceOrmManager
-      .getSystemRepository(objectMetadataName)
+      .getRepositoryWithoutPermissionChecks(objectMetadataName)
       .find({ where: { id: In(definedIds) }, select: { id: true } });
 
     return new Set(records.map((record) => record.id));

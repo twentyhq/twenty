@@ -90,7 +90,7 @@ export class TimelineActivityRepository {
     linkedRecordIds,
   }: LinkedTimelineActivityHappensAtSyncUpdate) {
     const sourceRepository =
-      this.workspaceOrmManager.getSystemRepository<ObjectLiteral>(
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<ObjectLiteral>(
         sourceObjectNameSingular,
       );
 
@@ -118,7 +118,7 @@ export class TimelineActivityRepository {
     }
 
     const timelineActivityRepository =
-      this.workspaceOrmManager.getSystemRepository<ObjectLiteral>(
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<ObjectLiteral>(
         'timelineActivity',
       );
 
@@ -171,7 +171,7 @@ export class TimelineActivityRepository {
           });
 
           const timelineActivityRepository =
-            transactionScope.getSystemRepository<ObjectLiteral>(
+            transactionScope.getRepositoryWithoutPermissionChecks<ObjectLiteral>(
               'timelineActivity',
             );
 
@@ -297,7 +297,9 @@ export class TimelineActivityRepository {
     }
 
     const targetRepository =
-      transactionScope.getSystemRepository<ObjectLiteral>(objectSingularName);
+      transactionScope.getRepositoryWithoutPermissionChecks<ObjectLiteral>(
+        objectSingularName,
+      );
 
     const existingRecords = await targetRepository.find({
       select: ['id'],

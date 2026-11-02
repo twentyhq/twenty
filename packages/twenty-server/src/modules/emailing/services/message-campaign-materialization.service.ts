@@ -69,9 +69,10 @@ export class MessageCampaignMaterializationService {
     recipients,
   }: MaterializeCampaignJobData): Promise<void> {
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const campaignRepository = this.workspaceOrmManager.getSystemRepository(
-        MessageCampaignWorkspaceEntity,
-      );
+      const campaignRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          MessageCampaignWorkspaceEntity,
+        );
 
       const campaign = await campaignRepository.findOne({
         where: { id: campaignId },
@@ -90,7 +91,7 @@ export class MessageCampaignMaterializationService {
       });
 
       const existingDeliveries = await this.workspaceOrmManager
-        .getSystemRepository(CampaignDeliveryWorkspaceEntity, {
+        .getRepositoryWithoutPermissionChecks(CampaignDeliveryWorkspaceEntity, {
           shouldSkipEventEmission: true,
         })
         .find({
@@ -204,9 +205,10 @@ export class MessageCampaignMaterializationService {
     recipients,
   }: MaterializeCampaignChunkJobData): Promise<void> {
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const campaignRepository = this.workspaceOrmManager.getSystemRepository(
-        MessageCampaignWorkspaceEntity,
-      );
+      const campaignRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          MessageCampaignWorkspaceEntity,
+        );
 
       const campaign = await campaignRepository.findOne({
         where: { id: campaignId },
@@ -279,9 +281,10 @@ export class MessageCampaignMaterializationService {
       return [];
     }
 
-    const messageRepository = this.workspaceOrmManager.getSystemRepository(
-      MessageWorkspaceEntity,
-    );
+    const messageRepository =
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+        MessageWorkspaceEntity,
+      );
 
     const alreadyMaterialized = await messageRepository.find({
       where: {
@@ -417,7 +420,7 @@ export class MessageCampaignMaterializationService {
     }
 
     await this.workspaceOrmManager
-      .getSystemRepository(CampaignDeliveryWorkspaceEntity, {
+      .getRepositoryWithoutPermissionChecks(CampaignDeliveryWorkspaceEntity, {
         shouldSkipEventEmission: true,
       })
       .insert(
@@ -452,7 +455,7 @@ export class MessageCampaignMaterializationService {
     await this.workspaceOrmManager.runInWorkspaceTransaction(
       async (transactionScope) => {
         const repositoryFor = <T extends ObjectLiteral>(objectName: string) =>
-          transactionScope.getSystemRepository<T>(objectName, {
+          transactionScope.getRepositoryWithoutPermissionChecks<T>(objectName, {
             shouldSkipEventEmission: true,
           });
 

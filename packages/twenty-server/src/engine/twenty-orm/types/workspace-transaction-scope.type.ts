@@ -11,7 +11,9 @@ export type WorkspaceTransactionScope = {
     objectMetadataName: string,
     repositoryOptions?: WorkspaceRepositoryOptions,
   ) => WorkspaceRepository<T>;
-  getSystemRepository: <T extends ObjectLiteral = ObjectRecord>(
+  getRepositoryWithoutPermissionChecks: <
+    T extends ObjectLiteral = ObjectRecord,
+  >(
     objectMetadataName: string,
     repositoryOptions?: WorkspaceRepositoryOptions,
   ) => WorkspaceRepository<T>;

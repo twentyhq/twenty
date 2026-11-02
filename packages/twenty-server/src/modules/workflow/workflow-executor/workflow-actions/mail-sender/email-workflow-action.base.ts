@@ -140,7 +140,7 @@ export abstract class EmailWorkflowActionBase extends ToolBackedWorkflowAction<W
     workspaceMemberId: string,
   ): Promise<WorkspaceMemberWorkspaceEntity | null> {
     const workspaceMemberRepository =
-      this.workspaceOrmManager.getSystemRepository<WorkspaceMemberWorkspaceEntity>(
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
         'workspaceMember',
       );
 

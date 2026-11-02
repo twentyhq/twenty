@@ -55,7 +55,7 @@ export class BlocklistItemDeleteMessagesJob {
         );
 
         const blocklistRepository =
-          this.workspaceOrmManager.getSystemRepository<BlocklistWorkspaceEntity>(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<BlocklistWorkspaceEntity>(
             'blocklist',
           );
 
@@ -119,7 +119,7 @@ export class BlocklistItemDeleteMessagesJob {
     workspaceId: string;
   }): Promise<MessageChannelEntity[]> {
     const workspaceMemberRepository =
-      this.workspaceOrmManager.getSystemRepository<WorkspaceMemberWorkspaceEntity>(
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
         'workspaceMember',
       );
 
@@ -173,12 +173,12 @@ export class BlocklistItemDeleteMessagesJob {
     handles: string[];
   }): Promise<void> {
     const messageChannelMessageAssociationRepository =
-      this.workspaceOrmManager.getSystemRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
         'messageChannelMessageAssociation',
       );
 
     const messageParticipantRepository =
-      this.workspaceOrmManager.getSystemRepository<MessageParticipantWorkspaceEntity>(
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageParticipantWorkspaceEntity>(
         'messageParticipant',
       );
 

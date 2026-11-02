@@ -35,7 +35,9 @@ export class WorkflowRunInboxSenderWorkspaceService {
       await this.workspaceOrmManager.executeInWorkspaceContext(
         () =>
           this.workspaceOrmManager
-            .getSystemRepository<WorkflowRunWorkspaceEntity>('workflowRun')
+            .getRepositoryWithoutPermissionChecks<WorkflowRunWorkspaceEntity>(
+              'workflowRun',
+            )
             .findOne({
               where: { id: workflowRunId },
               select: ['id', 'coreWorkflowId'],

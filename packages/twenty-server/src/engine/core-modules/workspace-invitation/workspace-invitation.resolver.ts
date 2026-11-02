@@ -111,7 +111,7 @@ export class WorkspaceInvitationResolver {
     const workspaceMember =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workspaceMemberRepository =
-          this.workspaceOrmManager.getSystemRepository<WorkspaceMemberWorkspaceEntity>(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
             'workspaceMember',
           );
 
@@ -183,7 +183,7 @@ export class WorkspaceInvitationResolver {
     const workspaceMember =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workspaceMemberRepository =
-          this.workspaceOrmManager.getSystemRepository<WorkspaceMemberWorkspaceEntity>(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
             'workspaceMember',
           );
 

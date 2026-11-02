@@ -56,9 +56,10 @@ export class CreateCompanyService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const companyRepository = this.workspaceOrmManager.getSystemRepository(
-        CompanyWorkspaceEntity,
-      );
+      const companyRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          CompanyWorkspaceEntity,
+        );
 
       const normalizedCompanies = companies.map((company) => ({
         ...company,
@@ -196,9 +197,10 @@ export class CreateCompanyService {
       return [];
     }
 
-    const companyRepository = this.workspaceOrmManager.getSystemRepository(
-      CompanyWorkspaceEntity,
-    );
+    const companyRepository =
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+        CompanyWorkspaceEntity,
+      );
 
     const containmentConditions = domainNames
       .map(

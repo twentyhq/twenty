@@ -91,7 +91,7 @@ export class CalendarEventsImportService {
           });
 
           const workspaceMemberRepository =
-            this.workspaceOrmManager.getSystemRepository<WorkspaceMemberWorkspaceEntity>(
+            this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
               'workspaceMember',
             );
 
@@ -155,7 +155,7 @@ export class CalendarEventsImportService {
           }
           if (eventExternalIdsToRemove.length > 0) {
             const calendarChannelEventAssociationRepository =
-              this.workspaceOrmManager.getSystemRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+              this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<CalendarChannelEventAssociationWorkspaceEntity>(
                 'calendarChannelEventAssociation',
               );
 

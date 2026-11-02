@@ -87,9 +87,10 @@ export class MessageCampaignLifecycleService {
     scheduledAt: Date;
   }): Promise<boolean> {
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const campaignRepository = this.workspaceOrmManager.getSystemRepository(
-        MessageCampaignWorkspaceEntity,
-      );
+      const campaignRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          MessageCampaignWorkspaceEntity,
+        );
 
       return campaignRepository.existsBy({
         id: campaignId,
@@ -104,9 +105,10 @@ export class MessageCampaignLifecycleService {
   async findRunningCampaign(
     campaignId: string,
   ): Promise<MessageCampaignWorkspaceEntity | null> {
-    const campaignRepository = this.workspaceOrmManager.getSystemRepository(
-      MessageCampaignWorkspaceEntity,
-    );
+    const campaignRepository =
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+        MessageCampaignWorkspaceEntity,
+      );
 
     const campaign = await campaignRepository.findOne({
       where: { id: campaignId },
@@ -261,7 +263,7 @@ export class MessageCampaignLifecycleService {
     const { generatedMaps: settledDeliveries } =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const campaignDeliveryRepository =
-          this.workspaceOrmManager.getSystemRepository(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
             CampaignDeliveryWorkspaceEntity,
             { shouldSkipEventEmission: true },
           );
@@ -284,7 +286,7 @@ export class MessageCampaignLifecycleService {
     const hasUnfinishedDelivery =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const campaignDeliveryRepository =
-          this.workspaceOrmManager.getSystemRepository(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
             CampaignDeliveryWorkspaceEntity,
             { shouldSkipEventEmission: true },
           );
@@ -319,9 +321,10 @@ export class MessageCampaignLifecycleService {
         : [MessageCampaignStatus.SENDING];
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const campaignRepository = this.workspaceOrmManager.getSystemRepository(
-        MessageCampaignWorkspaceEntity,
-      );
+      const campaignRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          MessageCampaignWorkspaceEntity,
+        );
 
       await campaignRepository.update(
         { id: campaignId, status: In(correctableStatuses) },

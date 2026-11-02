@@ -30,7 +30,7 @@ export class CalendarEventCleanerService {
         await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const calendarChannelEventAssociationRepository =
-              transactionScope.getSystemRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<CalendarChannelEventAssociationWorkspaceEntity>(
                 'calendarChannelEventAssociation',
               );
 
@@ -80,11 +80,11 @@ export class CalendarEventCleanerService {
         await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const calendarEventRepository =
-              transactionScope.getSystemRepository<CalendarEventWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<CalendarEventWorkspaceEntity>(
                 'calendarEvent',
               );
             const calendarChannelEventAssociationRepository =
-              transactionScope.getSystemRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<CalendarChannelEventAssociationWorkspaceEntity>(
                 'calendarChannelEventAssociation',
               );
 
@@ -132,11 +132,11 @@ export class CalendarEventCleanerService {
         await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const calendarEventRepository =
-              transactionScope.getSystemRepository<CalendarEventWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<CalendarEventWorkspaceEntity>(
                 'calendarEvent',
               );
             const calendarChannelEventAssociationRepository =
-              transactionScope.getSystemRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<CalendarChannelEventAssociationWorkspaceEntity>(
                 'calendarChannelEventAssociation',
               );
 

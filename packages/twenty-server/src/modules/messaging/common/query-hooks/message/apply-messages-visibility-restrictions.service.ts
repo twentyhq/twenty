@@ -101,7 +101,7 @@ export class ApplyMessagesVisibilityRestrictionsService
       await this.workspaceOrmManager.executeInWorkspaceContext(
         async () =>
           this.workspaceOrmManager
-            .getSystemRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+            .getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
               'messageChannelMessageAssociation',
             )
             .find({

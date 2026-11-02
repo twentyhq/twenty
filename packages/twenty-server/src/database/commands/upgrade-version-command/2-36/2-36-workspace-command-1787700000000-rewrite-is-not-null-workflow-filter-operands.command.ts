@@ -74,7 +74,7 @@ export class RewriteIsNotNullWorkflowFilterOperandsCommand extends ProvisionedWo
     }
 
     const workflowVersionRepository =
-      await this.workspaceOrmManager.getSystemRepository<WorkflowVersionWorkspaceEntity>(
+      await this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkflowVersionWorkspaceEntity>(
         'workflowVersion');
 
     const allVersions = await workflowVersionRepository.find();
@@ -129,7 +129,7 @@ export class RewriteIsNotNullWorkflowFilterOperandsCommand extends ProvisionedWo
     }
 
     const automatedTriggerRepository =
-      await this.workspaceOrmManager.getSystemRepository<WorkflowAutomatedTriggerWorkspaceEntity>(
+      await this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkflowAutomatedTriggerWorkspaceEntity>(
         'workflowAutomatedTrigger');
 
     const allTriggers = await automatedTriggerRepository.find();

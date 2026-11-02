@@ -96,11 +96,13 @@ describe('Inbound email reply threading (integration)', () => {
       const messageId = randomUUID();
 
       await workspaceOrmManager
-        .getSystemRepository<MessageThreadWorkspaceEntity>('messageThread')
+        .getRepositoryWithoutPermissionChecks<MessageThreadWorkspaceEntity>(
+          'messageThread',
+        )
         .insert({ id: messageThreadId });
 
       await workspaceOrmManager
-        .getSystemRepository<MessageWorkspaceEntity>('message')
+        .getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>('message')
         .insert({
           id: messageId,
           headerMessageId: providerMessageId,
@@ -110,7 +112,7 @@ describe('Inbound email reply threading (integration)', () => {
         });
 
       await workspaceOrmManager
-        .getSystemRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+        .getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
           'messageChannelMessageAssociation',
         )
         .insert({
@@ -156,7 +158,7 @@ describe('Inbound email reply threading (integration)', () => {
   const findThreadIdOfMessage = (headerMessageId: string) =>
     inWorkspace(async (workspaceOrmManager) => {
       const message = await workspaceOrmManager
-        .getSystemRepository<MessageWorkspaceEntity>('message')
+        .getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>('message')
         .createQueryBuilder('message')
         .where('message.headerMessageId = :headerMessageId', {
           headerMessageId,

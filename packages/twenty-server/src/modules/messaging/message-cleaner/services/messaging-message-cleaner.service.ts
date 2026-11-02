@@ -38,15 +38,15 @@ export class MessagingMessageCleanerService {
         await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const messageRepository =
-              transactionScope.getSystemRepository<MessageWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>(
                 'message',
               );
             const messageChannelMessageAssociationRepository =
-              transactionScope.getSystemRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
                 'messageChannelMessageAssociation',
               );
             const messageThreadRepository =
-              transactionScope.getSystemRepository<MessageThreadWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<MessageThreadWorkspaceEntity>(
                 'messageThread',
               );
 
@@ -148,7 +148,7 @@ export class MessagingMessageCleanerService {
         await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const messageChannelMessageAssociationRepository =
-              transactionScope.getSystemRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
                 'messageChannelMessageAssociation',
               );
 
@@ -188,15 +188,15 @@ export class MessagingMessageCleanerService {
         await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const messageThreadRepository =
-              transactionScope.getSystemRepository<MessageThreadWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<MessageThreadWorkspaceEntity>(
                 'messageThread',
               );
             const messageRepository =
-              transactionScope.getSystemRepository<MessageWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>(
                 'message',
               );
             const messageChannelMessageAssociationRepository =
-              transactionScope.getSystemRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
                 'messageChannelMessageAssociation',
               );
 

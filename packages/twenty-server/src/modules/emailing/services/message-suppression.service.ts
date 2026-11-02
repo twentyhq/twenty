@@ -92,7 +92,7 @@ export class MessageSuppressionService {
     const [records, totalCount] =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const suppressionRepository =
-          this.workspaceOrmManager.getSystemRepository(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
             MessageSuppressionWorkspaceEntity,
             { shouldSkipEventEmission: true },
           );
@@ -130,7 +130,7 @@ export class MessageSuppressionService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const suppressionRepository =
-        this.workspaceOrmManager.getSystemRepository(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
           MessageSuppressionWorkspaceEntity,
           { shouldSkipEventEmission: true },
         );
@@ -164,7 +164,7 @@ export class MessageSuppressionService {
     const optOuts = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const suppressionRepository =
-          this.workspaceOrmManager.getSystemRepository(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
             MessageSuppressionWorkspaceEntity,
             { shouldSkipEventEmission: true },
           );
@@ -225,7 +225,7 @@ export class MessageSuppressionService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const suppressionRepository =
-        this.workspaceOrmManager.getSystemRepository(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
           MessageSuppressionWorkspaceEntity,
           { shouldSkipEventEmission: true },
         );
@@ -268,7 +268,7 @@ export class MessageSuppressionService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const suppressionRepository =
-        this.workspaceOrmManager.getSystemRepository(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
           MessageSuppressionWorkspaceEntity,
           { shouldSkipEventEmission: true },
         );
@@ -336,7 +336,7 @@ export class MessageSuppressionService {
     const suppression =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const suppressionRepository =
-          this.workspaceOrmManager.getSystemRepository(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
             MessageSuppressionWorkspaceEntity,
             { shouldSkipEventEmission: true },
           );
@@ -364,7 +364,7 @@ export class MessageSuppressionService {
   }: RemoveSuppressionArgs): Promise<void> {
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const suppressionRepository =
-        this.workspaceOrmManager.getSystemRepository(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
           MessageSuppressionWorkspaceEntity,
           { shouldSkipEventEmission: true },
         );
@@ -413,7 +413,7 @@ export class MessageSuppressionService {
     const optOuts = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const suppressionRepository =
-          this.workspaceOrmManager.getSystemRepository(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
             MessageSuppressionWorkspaceEntity,
             { shouldSkipEventEmission: true },
           );
@@ -553,7 +553,7 @@ export class MessageSuppressionService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const suppressionRepository =
-        this.workspaceOrmManager.getSystemRepository(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
           MessageSuppressionWorkspaceEntity,
           { shouldSkipEventEmission: true },
         );

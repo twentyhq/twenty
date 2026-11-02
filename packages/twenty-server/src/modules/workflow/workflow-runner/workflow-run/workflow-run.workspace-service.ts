@@ -77,7 +77,7 @@ export class WorkflowRunWorkspaceService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowRunRepository =
-        this.workspaceOrmManager.getSystemRepository<WorkflowRunWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkflowRunWorkspaceEntity>(
           'workflowRun',
         );
       const position = await this.recordPositionService.buildRecordPosition({
@@ -502,7 +502,7 @@ export class WorkflowRunWorkspaceService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowRunRepository =
-        this.workspaceOrmManager.getSystemRepository<WorkflowRunWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkflowRunWorkspaceEntity>(
           'workflowRun',
         );
 
@@ -525,7 +525,9 @@ export class WorkflowRunWorkspaceService {
       await this.workspaceOrmManager.executeInWorkspaceContext(
         async () =>
           this.workspaceOrmManager
-            .getSystemRepository<WorkflowRunWorkspaceEntity>('workflowRun')
+            .getRepositoryWithoutPermissionChecks<WorkflowRunWorkspaceEntity>(
+              'workflowRun',
+            )
             .findOne({
               where: { id: workflowRunId },
               select: ['id', 'coreWorkflowId'],
@@ -593,7 +595,7 @@ export class WorkflowRunWorkspaceService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowRunRepository =
-        this.workspaceOrmManager.getSystemRepository<WorkflowRunWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkflowRunWorkspaceEntity>(
           'workflowRun',
         );
 

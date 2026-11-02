@@ -309,7 +309,7 @@ export class WorkflowDatabaseEventTriggerListener {
         }
 
         const relatedObjectRepository =
-          this.workspaceOrmManager.getSystemRepository(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
             relatedObjectMetadataNameSingular,
           );
 

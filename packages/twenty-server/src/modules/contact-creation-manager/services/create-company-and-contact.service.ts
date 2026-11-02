@@ -63,12 +63,13 @@ export class CreateCompanyAndPersonService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const personRepository = this.workspaceOrmManager.getSystemRepository(
-        PersonWorkspaceEntity,
-      );
+      const personRepository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          PersonWorkspaceEntity,
+        );
 
       const workspaceMemberRepository =
-        this.workspaceOrmManager.getSystemRepository(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
           WorkspaceMemberWorkspaceEntity,
         );
 
@@ -191,7 +192,7 @@ export class CreateCompanyAndPersonService {
     const accountOwner =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workspaceMemberRepository =
-          this.workspaceOrmManager.getSystemRepository(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
             WorkspaceMemberWorkspaceEntity,
           );
 

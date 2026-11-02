@@ -54,7 +54,7 @@ export class WorkflowRunEnqueueWorkspaceService {
 
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workflowRunRepository =
-          this.workspaceOrmManager.getSystemRepository(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
             WorkflowRunWorkspaceEntity,
           );
 

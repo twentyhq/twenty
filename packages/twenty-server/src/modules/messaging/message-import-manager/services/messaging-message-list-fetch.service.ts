@@ -151,7 +151,7 @@ export class MessagingMessageListFetchService {
           );
 
           const messageChannelMessageAssociationRepository =
-            this.workspaceOrmManager.getSystemRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+            this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
               'messageChannelMessageAssociation',
             );
 
@@ -362,7 +362,7 @@ export class MessagingMessageListFetchService {
     messageExternalIds: string[],
   ) {
     const messageChannelMessageAssociationRepository =
-      this.workspaceOrmManager.getSystemRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
         'messageChannelMessageAssociation',
       );
 

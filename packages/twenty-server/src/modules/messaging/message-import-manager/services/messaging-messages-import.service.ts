@@ -152,7 +152,7 @@ export class MessagingMessagesImportService {
           });
 
           const workspaceMemberRepository =
-            this.workspaceOrmManager.getSystemRepository<WorkspaceMemberWorkspaceEntity>(
+            this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
               'workspaceMember',
             );
 

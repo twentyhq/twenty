@@ -350,12 +350,20 @@ export class RecordAccessPolicyService {
     work: (repository: WorkspaceRepository) => Promise<TResult>;
   }): Promise<TResult> {
     if (isDefined(transactionScope)) {
-      return work(transactionScope.getSystemRepository(objectNameSingular));
+      return work(
+        transactionScope.getRepositoryWithoutPermissionChecks(
+          objectNameSingular,
+        ),
+      );
     }
 
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
-        work(this.workspaceOrmManager.getSystemRepository(objectNameSingular)),
+        work(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+            objectNameSingular,
+          ),
+        ),
       buildSystemAuthContext(workspaceId),
     );
   }

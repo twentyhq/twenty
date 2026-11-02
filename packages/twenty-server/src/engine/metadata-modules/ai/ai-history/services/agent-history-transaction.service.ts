@@ -18,7 +18,7 @@ export class AgentHistoryTransactionService {
         this.workspaceOrmManager.runInWorkspaceTransaction(
           (transactionScope) => {
             const getRepository = (name: AgentHistoryObjectName) =>
-              transactionScope.getSystemRepository(name, {
+              transactionScope.getRepositoryWithoutPermissionChecks(name, {
                 shouldSkipEventEmission: true,
               });
 

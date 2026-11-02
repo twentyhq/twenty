@@ -170,7 +170,7 @@ export class EmailingDomainService {
     const isCampaignSending =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const hasSendingCampaign = await this.workspaceOrmManager
-          .getSystemRepository(MessageCampaignWorkspaceEntity)
+          .getRepositoryWithoutPermissionChecks(MessageCampaignWorkspaceEntity)
           .exists({ where: { status: MessageCampaignStatus.SENDING } });
 
         if (hasSendingCampaign) {
@@ -178,7 +178,7 @@ export class EmailingDomainService {
         }
 
         return this.workspaceOrmManager
-          .getSystemRepository(CampaignDeliveryWorkspaceEntity)
+          .getRepositoryWithoutPermissionChecks(CampaignDeliveryWorkspaceEntity)
           .exists({
             where: {
               state: In([

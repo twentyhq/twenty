@@ -241,10 +241,10 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
       .map(([recordKey]) => recordKey);
 
     const unrestrictedRepository = isDefined(transactionScope)
-      ? transactionScope.getSystemRepository<ObjectRecord>(
+      ? transactionScope.getRepositoryWithoutPermissionChecks<ObjectRecord>(
           flatObjectMetadata.nameSingular,
         )
-      : this.workspaceOrmManager.getSystemRepository<ObjectRecord>(
+      : this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<ObjectRecord>(
           flatObjectMetadata.nameSingular,
         );
 

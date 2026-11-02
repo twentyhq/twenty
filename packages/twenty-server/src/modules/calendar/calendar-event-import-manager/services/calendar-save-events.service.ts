@@ -59,12 +59,12 @@ export class CalendarSaveEventsService {
     } = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const calendarChannelEventAssociationRepository =
-          this.workspaceOrmManager.getSystemRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<CalendarChannelEventAssociationWorkspaceEntity>(
             'calendarChannelEventAssociation',
           );
 
         const calendarEventRepository =
-          this.workspaceOrmManager.getSystemRepository<CalendarEventWorkspaceEntity>(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<CalendarEventWorkspaceEntity>(
             'calendarEvent',
           );
 
@@ -222,12 +222,12 @@ export class CalendarSaveEventsService {
         await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const calendarEventRepository =
-              transactionScope.getSystemRepository<CalendarEventWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<CalendarEventWorkspaceEntity>(
                 'calendarEvent',
               );
 
             const associationRepository =
-              transactionScope.getSystemRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+              transactionScope.getRepositoryWithoutPermissionChecks<CalendarChannelEventAssociationWorkspaceEntity>(
                 'calendarChannelEventAssociation',
               );
 

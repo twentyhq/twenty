@@ -31,7 +31,7 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
     >,
     private readonly workspaceOrmManager: Pick<
       WorkspaceOrmManager,
-      'executeInWorkspaceContext' | 'getSystemRepository'
+      'executeInWorkspaceContext' | 'getRepositoryWithoutPermissionChecks'
     >,
   ) {}
 
@@ -47,9 +47,12 @@ export class AgentHistoryRepository<TRecord extends { id: string }> {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         work(
-          this.workspaceOrmManager.getSystemRepository<TRecord>(this.name, {
-            shouldSkipEventEmission: true,
-          }),
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<TRecord>(
+            this.name,
+            {
+              shouldSkipEventEmission: true,
+            },
+          ),
           context,
         ),
       buildSystemAuthContext(workspaceId),

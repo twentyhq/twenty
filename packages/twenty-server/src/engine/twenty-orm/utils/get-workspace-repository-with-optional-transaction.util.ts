@@ -20,6 +20,8 @@ export const getWorkspaceRepositoryWithOptionalTransaction = <
   const repositorySource = transactionScope ?? workspaceOrmManager;
 
   return shouldBypassPermissionChecks
-    ? repositorySource.getSystemRepository<Entity>(objectMetadataName)
+    ? repositorySource.getRepositoryWithoutPermissionChecks<Entity>(
+        objectMetadataName,
+      )
     : repositorySource.getRepository<Entity>(objectMetadataName);
 };

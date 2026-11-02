@@ -148,8 +148,10 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
           ),
         getRepository:
           workspaceDataSource.getRepository.bind(workspaceDataSource),
-        getSystemRepository:
-          workspaceDataSource.getSystemRepository.bind(workspaceDataSource),
+        getRepositoryWithoutPermissionChecks:
+          workspaceDataSource.getRepositoryWithoutPermissionChecks.bind(
+            workspaceDataSource,
+          ),
         runInWorkspaceTransaction:
           workspaceDataSource.transaction.bind(workspaceDataSource),
       };

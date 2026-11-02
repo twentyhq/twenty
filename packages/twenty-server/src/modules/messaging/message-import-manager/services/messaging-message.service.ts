@@ -62,17 +62,17 @@ export class MessagingMessageService {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const messageChannelMessageAssociationRepository =
-          transactionScope.getSystemRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+          transactionScope.getRepositoryWithoutPermissionChecks<MessageChannelMessageAssociationWorkspaceEntity>(
             'messageChannelMessageAssociation',
           );
 
         const messageRepository =
-          transactionScope.getSystemRepository<MessageWorkspaceEntity>(
+          transactionScope.getRepositoryWithoutPermissionChecks<MessageWorkspaceEntity>(
             'message',
           );
 
         const messageThreadRepository =
-          transactionScope.getSystemRepository<MessageThreadWorkspaceEntity>(
+          transactionScope.getRepositoryWithoutPermissionChecks<MessageThreadWorkspaceEntity>(
             'messageThread',
           );
 

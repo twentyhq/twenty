@@ -450,7 +450,7 @@ export class UserResolver {
     const workspaceMemberToDelete =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workspaceMemberRepository =
-          this.workspaceOrmManager.getSystemRepository<WorkspaceMemberWorkspaceEntity>(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
             'workspaceMember',
           );
 
@@ -575,7 +575,7 @@ export class UserResolver {
 
     const workspaceMemberRepository =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () =>
-        this.workspaceOrmManager.getSystemRepository<WorkspaceMemberWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
           'workspaceMember',
         ),
       );

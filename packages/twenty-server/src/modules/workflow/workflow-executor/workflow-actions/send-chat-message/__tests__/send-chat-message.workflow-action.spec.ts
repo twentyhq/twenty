@@ -67,7 +67,7 @@ describe('SendChatMessageWorkflowAction', () => {
       new WorkflowRunInboxSenderWorkspaceService(
         {
           executeInWorkspaceContext: jest.fn((callback) => callback()),
-          getSystemRepository: jest
+          getRepositoryWithoutPermissionChecks: jest
             .fn()
             .mockReturnValue({ findOne: findWorkflowRun }),
         } as unknown as WorkspaceOrmManager,

@@ -144,7 +144,7 @@ export class WorkflowCleanWorkflowRunsCronJob {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const workflowRunRepository =
-          this.workspaceOrmManager.getSystemRepository(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
             WorkflowRunWorkspaceEntity,
           );
 

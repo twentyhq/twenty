@@ -563,7 +563,9 @@ export class PageLayoutService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const dashboardRepository =
-        this.workspaceOrmManager.getSystemRepository('dashboard');
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          'dashboard',
+        );
 
       const dashboards = await dashboardRepository.find({
         where: {

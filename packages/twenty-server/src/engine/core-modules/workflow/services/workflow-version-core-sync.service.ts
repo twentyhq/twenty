@@ -337,7 +337,7 @@ export class WorkflowVersionCoreSyncService {
     const linkedCoreVersionId =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workflowVersion = await this.workspaceOrmManager
-          .getSystemRepository<WorkflowVersionWorkspaceEntity>(
+          .getRepositoryWithoutPermissionChecks<WorkflowVersionWorkspaceEntity>(
             'workflowVersion',
           )
           .findOne({
@@ -369,7 +369,9 @@ export class WorkflowVersionCoreSyncService {
   ): Promise<string | null> {
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowVersion = await this.workspaceOrmManager
-        .getSystemRepository<WorkflowVersionWorkspaceEntity>('workflowVersion')
+        .getRepositoryWithoutPermissionChecks<WorkflowVersionWorkspaceEntity>(
+          'workflowVersion',
+        )
         .findOne({ where: { coreWorkflowVersionId }, select: { id: true } });
 
       return workflowVersion?.id ?? null;
@@ -389,7 +391,7 @@ export class WorkflowVersionCoreSyncService {
     const workflows = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const workflowRepository =
-          this.workspaceOrmManager.getSystemRepository<WorkflowWorkspaceEntity>(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkflowWorkspaceEntity>(
             'workflow',
           );
 
@@ -452,7 +454,7 @@ export class WorkflowVersionCoreSyncService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceWorkflowVersionRepository =
-        this.workspaceOrmManager.getSystemRepository<WorkflowVersionWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkflowVersionWorkspaceEntity>(
           'workflowVersion',
         );
 

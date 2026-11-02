@@ -37,7 +37,7 @@ export class CalendarEventParticipantService {
     calendarEventIds: string[];
   }): Promise<CalendarEventParticipantWorkspaceEntity[]> {
     const calendarEventParticipantRepository =
-      this.workspaceOrmManager.getSystemRepository<CalendarEventParticipantWorkspaceEntity>(
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<CalendarEventParticipantWorkspaceEntity>(
         'calendarEventParticipant',
       );
 
@@ -54,7 +54,7 @@ export class CalendarEventParticipantService {
     transactionScope: WorkspaceTransactionScope;
   }): Promise<void> {
     const calendarEventParticipantRepository =
-      transactionScope.getSystemRepository<CalendarEventParticipantWorkspaceEntity>(
+      transactionScope.getRepositoryWithoutPermissionChecks<CalendarEventParticipantWorkspaceEntity>(
         'calendarEventParticipant',
       );
 
@@ -99,7 +99,7 @@ export class CalendarEventParticipantService {
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const calendarEventParticipantRepository =
-          this.workspaceOrmManager.getSystemRepository<CalendarEventParticipantWorkspaceEntity>(
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<CalendarEventParticipantWorkspaceEntity>(
             'calendarEventParticipant',
           );
 

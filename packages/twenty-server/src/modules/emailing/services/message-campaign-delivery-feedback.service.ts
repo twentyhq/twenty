@@ -41,7 +41,7 @@ export class MessageCampaignDeliveryFeedbackService {
       generatedMaps: [updatedDelivery],
     } = await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const campaignDeliveryRepository =
-        this.workspaceOrmManager.getSystemRepository(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
           CampaignDeliveryWorkspaceEntity,
           { shouldSkipEventEmission: true },
         );

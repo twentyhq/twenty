@@ -80,7 +80,7 @@ const sumPetColumn = ({
     authContext: {} as WorkspaceAuthContext,
     objectPermissionsByRoleId: {},
   })
-    .getSystemRepository('pet')
+    .getRepositoryWithoutPermissionChecks('pet')
     .sum(columnName);
 
 const expectSingleQueryContaining = (pool: Pool, sqlFragment: string) => {

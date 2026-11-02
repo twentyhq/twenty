@@ -161,9 +161,10 @@ export class RecordPositionService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const repository = this.workspaceOrmManager.getSystemRepository(
-        objectMetadata.nameSingular,
-      );
+      const repository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          objectMetadata.nameSingular,
+        );
 
       const record = await repository.findOneBy({
         position: positionValue,
@@ -182,9 +183,10 @@ export class RecordPositionService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const repository = this.workspaceOrmManager.getSystemRepository(
-        objectMetadata.nameSingular,
-      );
+      const repository =
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+          objectMetadata.nameSingular,
+        );
 
       await repository.update(recordId, {
         position: positionValue,
@@ -200,9 +202,10 @@ export class RecordPositionService {
 
     const result = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const repository = this.workspaceOrmManager.getSystemRepository(
-          objectMetadata.nameSingular,
-        );
+        const repository =
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+            objectMetadata.nameSingular,
+          );
 
         return await repository.minimum('position');
       },
@@ -220,9 +223,10 @@ export class RecordPositionService {
 
     const result = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const repository = this.workspaceOrmManager.getSystemRepository(
-          objectMetadata.nameSingular,
-        );
+        const repository =
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+            objectMetadata.nameSingular,
+          );
 
         return await repository.maximum('position');
       },

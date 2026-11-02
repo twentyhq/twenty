@@ -56,7 +56,7 @@ export class TimelineMessagingService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageThreadRepository =
-        this.workspaceOrmManager.getSystemRepository<MessageThreadWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageThreadWorkspaceEntity>(
           'messageThread',
         );
 
@@ -126,7 +126,7 @@ export class TimelineMessagingService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageThreadRepository =
-        this.workspaceOrmManager.getSystemRepository<MessageThreadWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageThreadWorkspaceEntity>(
           'messageThread',
         );
 
@@ -260,7 +260,7 @@ export class TimelineMessagingService {
     }
 
     const messageThreadRepository =
-      this.workspaceOrmManager.getSystemRepository<MessageThreadWorkspaceEntity>(
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageThreadWorkspaceEntity>(
         'messageThread',
       );
 
@@ -315,7 +315,7 @@ export class TimelineMessagingService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageParticipantRepository =
-        this.workspaceOrmManager.getSystemRepository<MessageParticipantWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageParticipantWorkspaceEntity>(
           'messageParticipant',
         );
 
@@ -427,7 +427,7 @@ export class TimelineMessagingService {
   }> {
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const messageThreadRepository =
-        this.workspaceOrmManager.getSystemRepository<MessageThreadWorkspaceEntity>(
+        this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<MessageThreadWorkspaceEntity>(
           'messageThread',
         );
 

@@ -46,7 +46,7 @@ export class WorkflowDeletionCleanupWorkspaceService {
     where: { coreWorkflowId: string } | { coreWorkflowVersionId: string };
   }): Promise<void> {
     const workflowRunRepository =
-      this.workspaceOrmManager.getSystemRepository<WorkflowRunWorkspaceEntity>(
+      this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkflowRunWorkspaceEntity>(
         'workflowRun',
       );
 

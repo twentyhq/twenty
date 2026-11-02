@@ -65,7 +65,9 @@ export class DashboardSyncService {
     try {
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const dashboardRepository =
-          this.workspaceOrmManager.getSystemRepository('dashboard');
+          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks(
+            'dashboard',
+          );
 
         await dashboardRepository.update({ pageLayoutId }, { updatedAt });
       }, authContext);

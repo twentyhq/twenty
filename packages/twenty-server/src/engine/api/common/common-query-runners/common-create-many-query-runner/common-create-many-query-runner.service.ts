@@ -158,7 +158,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
       repository:
         objectSharing.isPrivateByDefault &&
         isDefined(queryRunnerContext.transactionScope)
-          ? queryRunnerContext.transactionScope.getSystemRepository(
+          ? queryRunnerContext.transactionScope.getRepositoryWithoutPermissionChecks(
               flatObjectMetadata.nameSingular,
             )
           : repository,

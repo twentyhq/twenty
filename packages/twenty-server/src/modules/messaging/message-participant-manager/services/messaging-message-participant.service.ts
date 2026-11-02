@@ -36,7 +36,7 @@ export class MessagingMessageParticipantService {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const messageParticipantRepository =
-          transactionScope.getSystemRepository<MessageParticipantWorkspaceEntity>(
+          transactionScope.getRepositoryWithoutPermissionChecks<MessageParticipantWorkspaceEntity>(
             'messageParticipant',
           );
 
