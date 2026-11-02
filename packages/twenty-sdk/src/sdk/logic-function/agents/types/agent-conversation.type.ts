@@ -1,3 +1,5 @@
+import { type AgentMessageReactionSummary } from 'twenty-shared/ai';
+
 // an application names its conversation with an agent by the key it passes to runAgent
 export type AgentConversationInput = {
   agentUniversalIdentifier: string;
@@ -43,12 +45,7 @@ export type AgentConversationMessage = {
   createdAt: string;
   processedAt: string | null;
   parts: AgentConversationMessagePart[];
-  reactions: {
-    emoji: string;
-    workspaceMemberIds: string[];
-    agentIds: string[];
-    hasAssistantReacted: boolean;
-  }[];
+  reactions: AgentMessageReactionSummary[];
 };
 
 export type AgentConversationHistory = {

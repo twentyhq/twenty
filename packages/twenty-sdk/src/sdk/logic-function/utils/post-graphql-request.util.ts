@@ -11,7 +11,8 @@ export const postGraphqlRequest = async <TVariables, TData>({
   caller: string;
   isActingAsCaller?: boolean;
 }): Promise<TData> => {
-  const { apiUrl, accessToken } = getApplicationApiConfigOrThrow(caller, {
+  const { apiUrl, accessToken } = getApplicationApiConfigOrThrow({
+    caller,
     isActingAsCaller,
   });
 

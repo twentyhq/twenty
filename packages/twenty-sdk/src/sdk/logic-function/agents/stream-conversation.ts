@@ -49,7 +49,7 @@ const isReactionSummary = (reaction: unknown): boolean =>
   reaction.agentIds.every(isString) &&
   isBoolean(reaction.hasAssistantReacted);
 
-const HAS_EVENT_FIELDS: Record<
+const EVENT_FIELD_VALIDATORS: Record<
   AgentChatSubscriptionEvent['type'],
   (event: Record<string, unknown>) => boolean
 > = {
@@ -80,14 +80,14 @@ const HAS_EVENT_FIELDS: Record<
 const isKnownEventType = (
   type: string,
 ): type is AgentChatSubscriptionEvent['type'] =>
-  Object.prototype.hasOwnProperty.call(HAS_EVENT_FIELDS, type);
+  Object.prototype.hasOwnProperty.call(EVENT_FIELD_VALIDATORS, type);
 
 const isAgentChatSubscriptionEvent = (
   event: Record<string, unknown>,
 ): event is AgentChatSubscriptionEvent =>
   isString(event.type) &&
   isKnownEventType(event.type) &&
-  HAS_EVENT_FIELDS[event.type](event);
+  EVENT_FIELD_VALIDATORS[event.type](event);
 
 // GraphQL over server-sent events: one `next` event per result, then `complete`
 const parseServerSentEvent = (block: string): ServerSentEvent => {
@@ -152,8 +152,9 @@ export async function* streamConversation({
   signal,
   ...conversation
 }: StreamConversationInput): AsyncGenerator<AgentChatSubscriptionEvent> {
-  const { apiUrl, accessToken } =
-    getApplicationApiConfigOrThrow('streamConversation');
+  const { apiUrl, accessToken } = getApplicationApiConfigOrThrow({
+    caller: 'streamConversation',
+  });
   let reader: ReadableStreamDefaultReader<string> | undefined;
 
   if (signal?.aborted) {

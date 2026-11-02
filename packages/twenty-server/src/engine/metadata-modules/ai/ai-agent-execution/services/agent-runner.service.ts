@@ -349,16 +349,11 @@ export class AgentRunnerService {
       });
     }
 
-    // a text result is the reply's last step, while a structured one is kept nowhere
-    const completedResult =
-      turn.status === AgentTurnStatus.COMPLETED && !isJsonResponse
-        ? {
-            response: await this.conversationReaderService.findReplyText({
-              workspaceId,
-              turnId: turn.id,
-            }),
-          }
-        : null;
+    const completedResult = await this.findRetriedRunTextResult({
+      workspaceId,
+      turn,
+      isJsonResponse,
+    });
     const outcome = buildRetriedAgentRunOutcome({ turn, completedResult });
 
     if (!isDefined(outcome)) {
@@ -372,6 +367,28 @@ export class AgentRunnerService {
       outcome,
       summary: null,
     });
+  }
+
+  // a text result is the reply's last step, while a structured one is kept nowhere
+  private async findRetriedRunTextResult({
+    workspaceId,
+    turn,
+    isJsonResponse,
+  }: {
+    workspaceId: string;
+    turn: Pick<AgentTurnWorkspaceEntity, 'id' | 'status'>;
+    isJsonResponse: boolean;
+  }) {
+    if (turn.status !== AgentTurnStatus.COMPLETED || isJsonResponse) {
+      return null;
+    }
+
+    return {
+      response: await this.conversationReaderService.findReplyText({
+        workspaceId,
+        turnId: turn.id,
+      }),
+    };
   }
 
   // Picks a suspended run up where it paused once its wake-up resolved, holding its conversation.
