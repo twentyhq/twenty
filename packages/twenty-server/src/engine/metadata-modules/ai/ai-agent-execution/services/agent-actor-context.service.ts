@@ -92,6 +92,7 @@ export class AgentActorContextService {
       authContext: buildApplicationAuthContext({
         workspace: fromWorkspaceEntityToFlat(workspace),
         application,
+        agentId: agent.id,
       }),
       agentRoleId,
     };
@@ -166,10 +167,12 @@ export class AgentActorContextService {
     workspaceMemberId,
     workspaceId,
     viaApplication,
+    agentId,
   }: {
     workspaceMemberId: string;
     workspaceId: string;
     viaApplication?: FlatApplication;
+    agentId?: string;
   }): Promise<RunAsWorkspaceMemberContext> {
     const workspaceMember = await this.userWorkspaceService.getWorkspaceMember({
       workspaceMemberId,
@@ -216,6 +219,7 @@ export class AgentActorContextService {
         workspaceMemberId: workspaceMember.id,
         workspaceMember,
         viaApplication,
+        agentId,
       }),
       roleId,
     };

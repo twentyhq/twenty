@@ -32,6 +32,9 @@ import { buildAgentRoleIdsBySource } from 'src/engine/permissions/principal/util
 import { buildUserRoleIdsBySource } from 'src/engine/permissions/principal/utils/build-user-role-ids-by-source.util';
 import { getRoleIdsToIntersect } from 'src/engine/permissions/principal/utils/get-role-ids-to-intersect.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { resolveRoleIdsBySourceFromAuthContext } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
+import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 
 @Injectable()
 export class PermissionsService {
@@ -39,6 +42,33 @@ export class PermissionsService {
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly apiKeyRoleService: ApiKeyRoleService,
   ) {}
+
+  public async resolveRolePermissionConfigForAuthContext(
+    authContext: WorkspaceAuthContext,
+  ): Promise<RolePermissionConfig> {
+    if (isSystemAuthContext(authContext)) {
+      return { shouldBypassPermissionChecks: true };
+    }
+
+    const { userWorkspaceRoleMap, apiKeyRoleMap, flatRoleTargetByAgentIdMaps } =
+      await this.workspaceCacheService.getOrRecompute(
+        authContext.workspace.id,
+        [
+          'userWorkspaceRoleMap',
+          'apiKeyRoleMap',
+          'flatRoleTargetByAgentIdMaps',
+        ],
+      );
+
+    return {
+      intersectionOf: resolveRoleIdsBySourceFromAuthContext({
+        authContext,
+        userWorkspaceRoleMap,
+        apiKeyRoleMap,
+        flatRoleTargetByAgentIdMaps,
+      }),
+    };
+  }
 
   public async getUserWorkspacePermissions({
     userWorkspaceId,

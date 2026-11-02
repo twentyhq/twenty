@@ -501,17 +501,20 @@ describe('agent runs that wait (integration)', () => {
         expect.objectContaining(authContext),
       ]);
 
-      const agentRunRoleIds = {
-        [callerRoleSource]: await findCallerRoleId(roleTargetId),
-        applicationRoleId:
-          await findApplicationDefaultRoleId(agentApplicationId),
+      const rolePermissionConfig = {
+        intersectionOf: {
+          [callerRoleSource]: await findCallerRoleId(roleTargetId),
+          applicationRoleId:
+            await findApplicationDefaultRoleId(agentApplicationId),
+          agentRoleId: expect.any(String),
+        },
       };
 
       expect(
         runTurn.mock.calls.map(
-          ([execution]) => execution.executionContext.agentRunRoleIds,
+          ([execution]) => execution.executionContext.rolePermissionConfig,
         ),
-      ).toEqual([agentRunRoleIds, agentRunRoleIds]);
+      ).toEqual([rolePermissionConfig, rolePermissionConfig]);
     },
   );
 

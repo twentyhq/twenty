@@ -43,7 +43,6 @@ import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-age
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
 import { type AgentToolLoadingStrategy } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-tool-loading-strategy.type';
 import { assertAgentResponseFormatHasOutputFieldsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util';
-import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
 import { buildStrictAgentResponseSchema } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-strict-agent-response-schema.util';
 import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/provider-options.util';
 import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/replace-unsupported-file-parts.util';
@@ -63,6 +62,9 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+import { withAuthContextAgent } from 'src/engine/core-modules/auth/utils/with-auth-context-agent.util';
+import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 
 type AgentRunTurnInput = {
   agent: AgentEntity;
@@ -105,6 +107,7 @@ export class AgentRunTurnService {
     private readonly agentTurnService: AgentTurnService,
     private readonly aiBillingService: AiBillingService,
     private readonly aiAgentRoleService: AiAgentRoleService,
+    private readonly permissionsService: PermissionsService,
     private readonly runAgentAttachmentService: RunAgentAttachmentService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
@@ -345,7 +348,7 @@ export class AgentRunTurnService {
 
   private async buildAgentRegistryAccess({
     agent,
-    executionContext: { authContext, actorContext, agentRunRoleIds },
+    executionContext: { authContext, actorContext },
     additionalExcludedToolNames,
     toolLoadingStrategy,
   }: Pick<
@@ -364,20 +367,26 @@ export class AgentRunTurnService {
       return { type: 'none' };
     }
 
+    const agentAuthContext = withAuthContextAgent({
+      authContext,
+      agentId: agent.id,
+    });
+
     const toolContext: ToolContext = {
       workspaceId: agent.workspaceId,
       agentId: agent.id,
-      authContext,
-      application: getAuthContextApplication(authContext),
+      authContext: agentAuthContext,
+      application: getAuthContextApplication(agentAuthContext),
       actorContext,
-      rolePermissionConfig: buildAgentRolePermissionConfig({
-        agentRoleId,
-        agentRunRoleIds,
-      }),
-      ...(isDefined(authContext) && isUserAuthContext(authContext)
+      rolePermissionConfig: isSystemAuthContext(agentAuthContext)
+        ? { intersectionOf: { agentRoleId } }
+        : await this.permissionsService.resolveRolePermissionConfigForAuthContext(
+            agentAuthContext,
+          ),
+      ...(isUserAuthContext(agentAuthContext)
         ? {
-            userId: authContext.user.id,
-            userWorkspaceId: authContext.userWorkspaceId,
+            userId: agentAuthContext.user.id,
+            userWorkspaceId: agentAuthContext.userWorkspaceId,
           }
         : {}),
     };

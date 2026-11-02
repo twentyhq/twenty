@@ -63,7 +63,11 @@ const buildService = (overrides: Record<string, unknown>) => {
     {} as never,
     {} as never,
     {} as never,
-    {} as never,
+    {
+      resolveRolePermissionConfigForAuthContext: jest
+        .fn()
+        .mockResolvedValue({ intersectionOf: {} }),
+    } as never,
     {} as never,
     applicationLookupService as never,
     agentRepository as never,
