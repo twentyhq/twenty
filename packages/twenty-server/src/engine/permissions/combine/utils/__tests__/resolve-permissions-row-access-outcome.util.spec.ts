@@ -35,14 +35,19 @@ const readOnlyPermissions: ObjectPermissions = {
 
 const readOnlyPrincipal: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
-  mainPrincipal: { roleId: READ_ONLY_ROLE_ID, isDeprecatedRoleOnly: true },
-  applicationPrincipal: { isCustomApp: true },
+  mainPrincipal: { type: 'deprecatedRoleOnly', roleId: READ_ONLY_ROLE_ID },
+  applicationPrincipal: { type: 'customApplication' },
 };
 
 const owningApplicationPrincipal: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
-  mainPrincipal: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
+  mainPrincipal: {
+    type: 'application',
+    roleId: APPLICATION_ROLE_ID,
+    applicationId: APPLICATION_ID,
+  },
   applicationPrincipal: {
+    type: 'application',
     roleId: APPLICATION_ROLE_ID,
     applicationId: APPLICATION_ID,
   },
@@ -106,8 +111,8 @@ describe('resolvePermissionsRowAccessOutcome', () => {
       resolveOutcome({
         principal: {
           ...readOnlyPrincipal,
-          mainPrincipal: { roleId: 'missing-role', isDeprecatedRoleOnly: true },
-          applicationPrincipal: { isCustomApp: true },
+          mainPrincipal: { type: 'deprecatedRoleOnly', roleId: 'missing-role' },
+          applicationPrincipal: { type: 'customApplication' },
         },
       }),
     ).toBe(false);

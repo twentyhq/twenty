@@ -19,8 +19,13 @@ describe('getPermissionsPrincipalActingApplicationId', () => {
     expect(
       getPermissionsPrincipalActingApplicationId({
         principal: {
-          mainPrincipal: { roleId: 'user-role', workspaceMemberId: 'member-1' },
+          mainPrincipal: {
+            type: 'workspaceMember',
+            roleId: 'user-role',
+            workspaceMemberId: 'member-1',
+          },
           applicationPrincipal: {
+            type: 'application',
             roleId: APPLICATION_ROLE_ID,
             applicationId: APPLICATION_ID,
           },
@@ -35,10 +40,12 @@ describe('getPermissionsPrincipalActingApplicationId', () => {
       getPermissionsPrincipalActingApplicationId({
         principal: {
           mainPrincipal: {
+            type: 'application',
             roleId: APPLICATION_ROLE_ID,
             applicationId: APPLICATION_ID,
           },
           applicationPrincipal: {
+            type: 'application',
             roleId: APPLICATION_ROLE_ID,
             applicationId: APPLICATION_ID,
           },
@@ -52,10 +59,10 @@ describe('getPermissionsPrincipalActingApplicationId', () => {
     expect(
       getPermissionsPrincipalActingApplicationId({
         principal: {
-          mainPrincipal: { roleId: 'user-role', isDeprecatedRoleOnly: true },
+          mainPrincipal: { type: 'deprecatedRoleOnly', roleId: 'user-role' },
           applicationPrincipal: {
+            type: 'deprecatedRoleOnly',
             roleId: APPLICATION_ROLE_ID,
-            isDeprecatedRoleOnly: true,
           },
         },
         flatApplicationMaps,
@@ -68,12 +75,12 @@ describe('getPermissionsPrincipalActingApplicationId', () => {
       getPermissionsPrincipalActingApplicationId({
         principal: {
           mainPrincipal: {
+            type: 'deprecatedRoleOnly',
             roleId: APPLICATION_ROLE_ID,
-            isDeprecatedRoleOnly: true,
           },
           applicationPrincipal: {
+            type: 'deprecatedRoleOnly',
             roleId: APPLICATION_ROLE_ID,
-            isDeprecatedRoleOnly: true,
           },
         },
         flatApplicationMaps,
@@ -86,10 +93,12 @@ describe('getPermissionsPrincipalActingApplicationId', () => {
       getPermissionsPrincipalActingApplicationId({
         principal: {
           mainPrincipal: {
+            type: 'workspaceMember',
             roleId: APPLICATION_ROLE_ID,
             workspaceMemberId: 'member-1',
           },
           applicationPrincipal: {
+            type: 'application',
             roleId: APPLICATION_ROLE_ID,
             applicationId: APPLICATION_ID,
           },
@@ -103,8 +112,12 @@ describe('getPermissionsPrincipalActingApplicationId', () => {
     expect(
       getPermissionsPrincipalActingApplicationId({
         principal: {
-          mainPrincipal: { roleId: 'user-role', workspaceMemberId: 'member-1' },
-          applicationPrincipal: { isCustomApp: true },
+          mainPrincipal: {
+            type: 'workspaceMember',
+            roleId: 'user-role',
+            workspaceMemberId: 'member-1',
+          },
+          applicationPrincipal: { type: 'customApplication' },
         },
         flatApplicationMaps,
       }),

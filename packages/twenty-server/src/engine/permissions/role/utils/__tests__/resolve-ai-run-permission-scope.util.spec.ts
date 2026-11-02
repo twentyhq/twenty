@@ -278,10 +278,11 @@ describe('resolveAiRunPermissionScope', () => {
           principal: {
             workspaceId: 'workspace-id',
             mainPrincipal: {
+              type: 'workspaceMember',
               roleId: 'member-role-id',
               workspaceMemberId: 'workspace-member-id',
             },
-            applicationPrincipal: { isCustomApp: true },
+            applicationPrincipal: { type: 'customApplication' },
             ...(isDefined(scope) ? { scope } : {}),
           },
           metadataMaps: {

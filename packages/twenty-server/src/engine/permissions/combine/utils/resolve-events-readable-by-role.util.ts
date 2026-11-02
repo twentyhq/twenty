@@ -30,8 +30,8 @@ export const resolveEventsReadableByRole = async <
 
   const principal: PermissionsPrincipalsWithRolesContext = {
     workspaceId: workspaceEventBatch.workspaceId,
-    mainPrincipal: { roleId, applicationId },
-    applicationPrincipal: { roleId, applicationId },
+    mainPrincipal: { type: 'application', roleId, applicationId },
+    applicationPrincipal: { type: 'application', roleId, applicationId },
   };
   const objectsPermissions = getPermissionsPrincipalObjectsPermissions({
     principal,
@@ -40,8 +40,8 @@ export const resolveEventsReadableByRole = async <
   const admittedRecordIds =
     await eventRecordAccessGate.resolveAdmittedRecordIds({
       workspaceId: workspaceEventBatch.workspaceId,
-      mainPrincipal: { applicationId },
-      applicationPrincipal: { applicationId },
+      mainPrincipal: { type: 'application', applicationId },
+      applicationPrincipal: { type: 'application', applicationId },
     });
 
   return workspaceEventBatch.events
