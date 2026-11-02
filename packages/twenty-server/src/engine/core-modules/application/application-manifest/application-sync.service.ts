@@ -16,7 +16,7 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { resolveSyncedApplicationCapabilities } from 'src/engine/core-modules/application/utils/resolve-synced-application-capabilities.util';
 import { resolveSyncedApplicationIframeMediaPermissions } from 'src/engine/core-modules/application/utils/resolve-synced-application-iframe-media-permissions.util';
 import { toApplicationCapabilities } from 'src/engine/core-modules/application/utils/to-application-capabilities.util';
-import { toRequestedIframeMediaPermissions } from 'src/engine/core-modules/application/utils/to-requested-iframe-media-permissions.util';
+import { toRequestedIframeMediaPermissionsOrThrow } from 'src/engine/core-modules/application/utils/to-requested-iframe-media-permissions-or-throw.util';
 import { ApplicationManifestMigrationService } from 'src/engine/core-modules/application/application-manifest/application-manifest-migration.service';
 import { ApplicationUninstallService } from 'src/engine/core-modules/application/application-manifest/services/application-uninstall.service';
 import { enrichApplicationManifestSyncError } from 'src/engine/core-modules/application/application-manifest/utils/enrich-application-manifest-sync-error.util';
@@ -90,7 +90,7 @@ export class ApplicationSyncService {
       );
     }
 
-    toRequestedIframeMediaPermissions(
+    toRequestedIframeMediaPermissionsOrThrow(
       manifest.application.requestedIframeMediaPermissions,
     );
 
@@ -195,7 +195,7 @@ export class ApplicationSyncService {
       grantedCapabilities: toApplicationCapabilities(
         manifest.application.requestedCapabilities,
       ),
-      grantedIframeMediaPermissions: toRequestedIframeMediaPermissions(
+      grantedIframeMediaPermissions: toRequestedIframeMediaPermissionsOrThrow(
         manifest.application.requestedIframeMediaPermissions,
       ),
       logicFunctionLayerId: null,

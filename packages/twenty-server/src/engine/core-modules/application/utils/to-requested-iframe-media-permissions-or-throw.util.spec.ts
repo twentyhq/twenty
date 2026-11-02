@@ -2,7 +2,7 @@ import { i18n } from '@lingui/core';
 import { MAX_ALLOWED_IFRAME_ORIGINS } from 'twenty-shared/constants';
 
 import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
-import { toRequestedIframeMediaPermissions } from 'src/engine/core-modules/application/utils/to-requested-iframe-media-permissions.util';
+import { toRequestedIframeMediaPermissionsOrThrow } from 'src/engine/core-modules/application/utils/to-requested-iframe-media-permissions-or-throw.util';
 
 const PERMISSIONS = Array.from(
   { length: MAX_ALLOWED_IFRAME_ORIGINS + 1 },
@@ -13,18 +13,20 @@ const PERMISSIONS = Array.from(
   }),
 );
 
-describe('toRequestedIframeMediaPermissions', () => {
+describe('toRequestedIframeMediaPermissionsOrThrow', () => {
   it('accepts a manifest at the origin limit', () => {
     const permissions = PERMISSIONS.slice(0, MAX_ALLOWED_IFRAME_ORIGINS);
 
-    expect(toRequestedIframeMediaPermissions(permissions)).toEqual(permissions);
+    expect(toRequestedIframeMediaPermissionsOrThrow(permissions)).toEqual(
+      permissions,
+    );
   });
 
   it('reports the translated origin limit before granting permissions', () => {
     expect.assertions(1);
 
     try {
-      toRequestedIframeMediaPermissions(PERMISSIONS);
+      toRequestedIframeMediaPermissionsOrThrow(PERMISSIONS);
     } catch (error) {
       if (!(error instanceof ApplicationException)) {
         throw error;

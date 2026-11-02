@@ -10,7 +10,7 @@ import {
 } from 'src/engine/core-modules/application/application.exception';
 import { toIframeMediaPermissions } from 'src/engine/core-modules/application/utils/to-iframe-media-permissions.util';
 
-export const toRequestedIframeMediaPermissions = (
+export const toRequestedIframeMediaPermissionsOrThrow = (
   permissions: unknown,
 ): IframeMediaPermission[] => {
   if (isArray(permissions) && permissions.length > MAX_ALLOWED_IFRAME_ORIGINS) {
