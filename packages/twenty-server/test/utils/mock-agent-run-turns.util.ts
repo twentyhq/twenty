@@ -129,6 +129,7 @@ export const mockAgentRunTurns = (
     startTurn.mockImplementationOnce(async () => ({
       turn: {} as never,
       spenders: {},
+      structuredOutputStrategy: 'follow-up-request',
       source: {
         parts: new ReadableStream({
           start: (controller) => {

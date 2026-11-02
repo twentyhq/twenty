@@ -14,7 +14,8 @@ export type AgentRunnerRunInput = {
   conversation: AgentRunConversation | null;
   // a one-shot run's turn, chosen when it is queued so a retried job finds the turn its first attempt left
   turnId?: string;
-  caller: AgentRunCaller;
+  // null for a run answered within its caller's request, which pauses on nothing and is called back by no one
+  caller: AgentRunCaller | null;
   spec: AgentRunSpec;
   persona: ResolvedAgentRunPersona;
   // what the run is asked and who asked it; absent when the run continues its conversation without a new message
@@ -22,6 +23,7 @@ export type AgentRunnerRunInput = {
     messages: RunAgentMessage[];
     senderUserWorkspaceId: string | null;
     senderApplicationId: string | null;
+    turnId?: string;
   } | null;
   executionContext: AgentRunExecutionContext;
 };

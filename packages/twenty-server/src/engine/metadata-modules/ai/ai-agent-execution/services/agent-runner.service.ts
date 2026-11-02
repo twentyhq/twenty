@@ -18,6 +18,7 @@ import { RUN_AGENT_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-agent-exec
 import { AGENT_WAIT_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/agent-wait-prompt.constant';
 import { createAgentWaitTools } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/create-agent-wait-tools.util';
 import { findAgentRunWait } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/wait-tools/find-agent-run-wait.util';
+import { AGENT_RUN_STOPPED_ERROR } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-stopped-error.constant';
 import { AGENT_RUN_OUT_OF_CREDITS_ERROR } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-out-of-credits-error.const';
 import { AgentRunCallerHandlerRegistryService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-handler-registry.service';
 import { AgentRunPersonaService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service';
@@ -25,18 +26,21 @@ import { AgentRunJobScopeService } from 'src/engine/metadata-modules/ai/ai-agent
 import { AgentRunConversationService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-conversation.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
+import { AGENT_TURN_INTERRUPTED_ERROR } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-turn-interrupted-error.constant';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { addStepToAgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/add-step-to-agent-turn-usage.util';
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
 import { type AgentRunnerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-outcome.type';
 import { type AgentRunnerRunInput } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-runner-run-input.type';
+import { type InRequestAgentRun } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/in-request-agent-run.type';
 import { type AgentRunSuspension } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-suspension.type';
 import { type ContinueAgentRunJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/continue-agent-run-job-data.type';
 import { type AgentRunCallerHandler } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-handler.type';
 import { type RunAgentJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-agent-job-data.type';
-import { buildRetriedAgentRunOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-retried-agent-run-outcome.util';
 import { buildAgentRunSummary } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-summary.util';
+import { buildRetriedAgentRunOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-retried-agent-run-outcome.util';
 import { sumAgentRunSummaries } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/sum-agent-run-summaries.util';
 import { AgentChatEventPublisherService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-event-publisher.service';
 import {
@@ -45,12 +49,10 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-stream-recovery.service';
 import { AgentChatWaitingRunService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-waiting-run.service';
 import { AgentTurnStreamService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
-import { AGENT_TURN_INTERRUPTED_ERROR } from 'src/engine/metadata-modules/ai/ai-history/constants/agent-turn-interrupted-error.constant';
 import { mapErrorToStreamError } from 'src/engine/metadata-modules/ai/ai-history/utils/map-error-to-stream-error.util';
 import { AgentConversationReaderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-reader.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
-import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { withDedicatedAiTrace } from 'src/engine/metadata-modules/ai/ai-models/utils/with-dedicated-ai-trace.util';
 
 const AGENT_RUN_MAX_CONTINUATIONS = 50;
@@ -66,6 +68,12 @@ type AgentRunnerResult = {
   outcome: AgentRunnerOutcome;
   // the run so far, across every segment of a continued run
   summary: AgentRunSummary;
+};
+
+type OpenedAgentRunTurn = {
+  turnId: string;
+  priorMessages: ExtendedUIMessage[];
+  canStoreResult: boolean;
 };
 
 @Injectable()
@@ -101,6 +109,65 @@ export class AgentRunnerService {
         workspaceId: input.workspaceId,
         spec: input.spec,
       }),
+    );
+  }
+
+  // a failure after the turn is recorded comes back as the outcome, so the caller still gets the run id
+  async runInRequest({
+    streamChannelId,
+    ...input
+  }: Omit<AgentRunnerRunInput, 'conversation' | 'caller' | 'persona'> & {
+    streamChannelId?: string;
+  }): Promise<InRequestAgentRun> {
+    const persona = await this.agentRunPersonaService.resolveOrThrow({
+      workspaceId: input.workspaceId,
+      spec: input.spec,
+    });
+    const runInput: AgentRunnerRunInput = {
+      ...input,
+      conversation: null,
+      caller: null,
+      persona,
+    };
+
+    return workspaceAuthContextStorage.run(
+      input.executionContext.authContext,
+      async () => {
+        const openedTurn = await this.openTurn({
+          input: runInput,
+          suspension: null,
+        });
+        const { turnId } = openedTurn;
+        const outcome = await this.runOpenedTurn({
+          input: runInput,
+          suspension: null,
+          stream: null,
+          streamChannelId,
+          openedTurn,
+        }).then(
+          (result): AgentRunnerOutcome => result.outcome,
+          (error: unknown): AgentRunnerOutcome => {
+            this.logger.error(
+              `Agent run ${turnId} of workspace ${input.workspaceId} failed`,
+              error instanceof Error ? error.stack : error,
+            );
+
+            return {
+              status: 'FAILED',
+              error: error instanceof Error ? error.message : String(error),
+            };
+          },
+        );
+
+        return {
+          runId: turnId,
+          outcome,
+          usage: await this.turnRecorderService.findUsageOrThrow({
+            workspaceId: input.workspaceId,
+            turnId,
+          }),
+        };
+      },
     );
   }
 
@@ -193,37 +260,58 @@ export class AgentRunnerService {
     handler: AgentRunCallerHandler;
   }): Promise<AgentRunnerResult | typeof CONVERSATION_BUSY | null> {
     try {
-      const retriedTurn = isDefined(turnId)
-        ? await this.turnRecorderService.findTurn({ workspaceId, turnId })
-        : null;
-
-      if (isDefined(retriedTurn)) {
-        await this.settleRetriedRun({ workspaceId, caller, turn: retriedTurn });
-
-        return null;
-      }
-
       const [executionContext, persona] = await Promise.all([
         handler.buildExecutionContext({ workspaceId, caller }),
         this.agentRunPersonaService.resolveOrThrow({ workspaceId, spec }),
       ]);
-      const run = (stream: AgentRunStream | null) =>
-        workspaceAuthContextStorage.run(executionContext.authContext, () =>
-          this.runTurn({
-            input: {
+      const run = async (
+        stream: AgentRunStream | null,
+      ): Promise<AgentRunnerResult | null> => {
+        // a one-shot run's turn id comes with its job, a conversation run's with its prompt
+        const retriedTurnId = turnId ?? prompt?.turnId;
+        const retriedTurn = isDefined(retriedTurnId)
+          ? await this.turnRecorderService.findTurn({
               workspaceId,
-              conversation,
-              turnId,
-              caller,
-              spec,
-              persona,
-              prompt,
-              executionContext,
-            },
-            suspension: null,
-            stream,
-          }),
+              turnId: retriedTurnId,
+              shouldSelectResult:
+                await this.conversationWriterService.canStoreTurnResult(
+                  workspaceId,
+                ),
+            })
+          : null;
+
+        if (isDefined(retriedTurn)) {
+          await this.settleRetriedRun({
+            workspaceId,
+            caller,
+            threadId: conversation?.threadId ?? null,
+            turn: retriedTurn,
+            isJsonResponse:
+              (spec.responseFormat ?? persona.responseFormat)?.type === 'json',
+          });
+
+          return null;
+        }
+
+        return workspaceAuthContextStorage.run(
+          executionContext.authContext,
+          () =>
+            this.runTurn({
+              input: {
+                workspaceId,
+                conversation,
+                turnId,
+                caller,
+                spec,
+                persona,
+                prompt,
+                executionContext,
+              },
+              suspension: null,
+              stream,
+            }),
         );
+      };
 
       return isDefined(conversation)
         ? await this.withClaimedConversation({
@@ -258,11 +346,16 @@ export class AgentRunnerService {
   private async settleRetriedRun({
     workspaceId,
     caller,
+    threadId,
     turn,
+    isJsonResponse,
   }: {
     workspaceId: string;
     caller: AgentRunCaller;
-    turn: Pick<AgentTurnWorkspaceEntity, 'id' | 'status' | 'error' | 'result'>;
+    threadId: string | null;
+    turn: Pick<AgentTurnWorkspaceEntity, 'id' | 'status' | 'error'> &
+      Partial<Pick<AgentTurnWorkspaceEntity, 'result'>>;
+    isJsonResponse: boolean;
   }): Promise<void> {
     if (turn.status === AgentTurnStatus.RUNNING) {
       await this.turnRecorderService.finish({
@@ -273,10 +366,15 @@ export class AgentRunnerService {
       });
     }
 
-    const outcome = buildRetriedAgentRunOutcome({
-      turn,
-      completedResult: turn.result,
-    });
+    const completedResult =
+      turn.result ??
+      (await this.findRetriedRunTextResult({
+        workspaceId,
+        threadId,
+        turn,
+        isJsonResponse,
+      }));
+    const outcome = buildRetriedAgentRunOutcome({ turn, completedResult });
 
     if (!isDefined(outcome)) {
       return;
@@ -285,10 +383,39 @@ export class AgentRunnerService {
     await this.agentRunSuspensionService.deliverOutcome({
       workspaceId,
       caller,
-      threadId: null,
+      threadId,
       outcome,
       summary: null,
     });
+  }
+
+  // turns completed before their result was kept: a text result is the reply's last step, while a
+  // structured one, or a one-shot run's, is kept nowhere
+  private async findRetriedRunTextResult({
+    workspaceId,
+    threadId,
+    turn,
+    isJsonResponse,
+  }: {
+    workspaceId: string;
+    threadId: string | null;
+    turn: Pick<AgentTurnWorkspaceEntity, 'id' | 'status'>;
+    isJsonResponse: boolean;
+  }) {
+    if (
+      turn.status !== AgentTurnStatus.COMPLETED ||
+      !isDefined(threadId) ||
+      isJsonResponse
+    ) {
+      return null;
+    }
+
+    const response = await this.conversationReaderService.findReplyText({
+      workspaceId,
+      turnId: turn.id,
+    });
+
+    return isDefined(response) ? { response } : null;
   }
 
   // Picks a suspended run up where it paused once its wake-up resolved, holding its conversation.
@@ -549,15 +676,29 @@ export class AgentRunnerService {
     // null for a run without a conversation, which streams to no one
     stream: AgentRunStream | null;
   }): Promise<AgentRunnerResult> {
-    const { workspaceId, spec, persona, prompt, executionContext } = input;
-    const abortSignal = stream?.abortSignal;
-    // read before the turn opens, so nothing fails between opening it and the stream finishing it
-    const canStoreResult =
-      await this.conversationWriterService.canStoreTurnResult(workspaceId);
-    const { turnId, priorMessages } = await this.openTurn({
+    return this.runOpenedTurn({
       input,
       suspension,
+      stream,
+      openedTurn: await this.openTurn({ input, suspension }),
     });
+  }
+
+  private async runOpenedTurn({
+    input,
+    suspension,
+    stream,
+    streamChannelId,
+    openedTurn: { turnId, priorMessages, canStoreResult },
+  }: {
+    input: AgentRunnerRunInput;
+    suspension: AgentRunSuspension | null;
+    stream: AgentRunStream | null;
+    streamChannelId?: string;
+    openedTurn: OpenedAgentRunTurn;
+  }): Promise<AgentRunnerResult> {
+    const { workspaceId, spec, persona, prompt, executionContext } = input;
+    const abortSignal = stream?.abortSignal;
     const canPause = isDefined(stream);
 
     const startedAtMs = Date.now();
@@ -580,6 +721,7 @@ export class AgentRunnerService {
       executionContext,
       additionalExcludedToolNames: spec.additionalExcludedToolNames,
       toolLoadingStrategy: spec.toolLoadingStrategy,
+      structuredOutputStrategy: spec.structuredOutputStrategy,
       abortSignal,
     };
 
@@ -591,6 +733,7 @@ export class AgentRunnerService {
       this.turnStreamService.streamTurn({
         workspaceId,
         claim: stream?.claim ?? null,
+        streamChannelId,
         turnId,
         abortSignal,
         startTurn: () => this.agentRunTurnService.startTurn(turnInput),
@@ -652,7 +795,7 @@ export class AgentRunnerService {
     return {
       summary,
       outcome: isAborted
-        ? { status: 'FAILED', error: 'The run was stopped' }
+        ? { status: 'FAILED', error: AGENT_RUN_STOPPED_ERROR }
         : await this.settleTurn({
             input,
             execution,
@@ -686,12 +829,18 @@ export class AgentRunnerService {
       | 'executionContext'
     >;
     suspension: AgentRunSuspension | null;
-  }): Promise<{ turnId: string; priorMessages: ExtendedUIMessage[] }> {
+  }): Promise<OpenedAgentRunTurn> {
+    // read before the turn opens, so nothing fails between opening it and the stream finishing it
+    const canStoreResult =
+      await this.conversationWriterService.canStoreTurnResult(workspaceId);
+
     if (!isDefined(conversation)) {
       return {
+        canStoreResult,
         turnId: await this.conversationWriterService.insertTurn({
           workspaceId,
-          id: oneShotTurnId,
+          // a queued run's turn id comes with its job, an ai.generate call's with its run id
+          id: oneShotTurnId ?? prompt?.turnId,
           threadId: null,
           agentId: persona.agentId,
           status: AgentTurnStatus.RUNNING,
@@ -715,6 +864,7 @@ export class AgentRunnerService {
         workspaceId,
         threadId,
         agentId: persona.agentId,
+        turnId: prompt?.turnId,
         senderUserWorkspaceId: prompt?.senderUserWorkspaceId ?? null,
         senderApplicationId: prompt?.senderApplicationId ?? null,
         createdBy: executionContext.turnCreatedBy,
@@ -734,11 +884,12 @@ export class AgentRunnerService {
       await this.conversationReaderService.loadMessages({
         workspaceId,
         threadId,
-        actor: executionContext.conversationActor,
+        viewer: executionContext.conversationViewer,
       });
 
     return {
       turnId,
+      canStoreResult,
       priorMessages: conversationMessages.filter(
         ({ id }) => !promptMessageIds.includes(id),
       ),
@@ -766,8 +917,8 @@ export class AgentRunnerService {
       return { status: 'COMPLETED', result: execution.result };
     }
 
-    // offered no way to pause, a run without a conversation stops early only when out of credits
-    if (!isDefined(stream)) {
+    // offered no way to pause, a run without a conversation or a caller stops early only when out of credits
+    if (!isDefined(stream) || !isDefined(caller)) {
       return { status: 'FAILED', error: AGENT_RUN_OUT_OF_CREDITS_ERROR };
     }
 

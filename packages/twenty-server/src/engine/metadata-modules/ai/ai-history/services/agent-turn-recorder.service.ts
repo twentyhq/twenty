@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { type AiRunUsage } from 'twenty-shared/application';
 import { type ActorMetadata, FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -10,6 +11,10 @@ import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { type AgentTurnUsage } from 'src/engine/metadata-modules/ai/ai-billing/types/agent-turn-usage.type';
 import { buildEndWaitingAgentTurnQuery } from 'src/engine/metadata-modules/ai/ai-history/utils/build-end-waiting-agent-turn-query.util';
 import { buildReleaseStreamClaimQuery } from 'src/engine/metadata-modules/ai/ai-history/utils/build-release-stream-claim-query.util';
@@ -255,19 +260,52 @@ export class AgentTurnRecorderService {
     );
   }
 
-  async findTurn({
+  async findUsageOrThrow({
     workspaceId,
     turnId,
   }: {
     workspaceId: string;
     turnId: string;
-  }): Promise<Pick<
-    AgentTurnWorkspaceEntity,
-    'id' | 'status' | 'error' | 'result'
-  > | null> {
+  }): Promise<AiRunUsage> {
+    const turn = await this.turnRepository.findOne(workspaceId, {
+      where: { id: turnId },
+      select: ['inputTokens', 'outputTokens'],
+    });
+
+    if (!isDefined(turn)) {
+      throw new AiException(
+        `Turn ${turnId} not found`,
+        AiExceptionCode.AGENT_EXECUTION_FAILED,
+      );
+    }
+
+    return {
+      inputTokens: turn.inputTokens ?? 0,
+      outputTokens: turn.outputTokens ?? 0,
+    };
+  }
+
+  // a workspace the add-agent-turn-result command has not reached has no result to select
+  async findTurn({
+    workspaceId,
+    turnId,
+    shouldSelectResult,
+  }: {
+    workspaceId: string;
+    turnId: string;
+    shouldSelectResult: boolean;
+  }): Promise<
+    | (Pick<AgentTurnWorkspaceEntity, 'id' | 'status' | 'error'> &
+        Partial<Pick<AgentTurnWorkspaceEntity, 'result'>>)
+    | null
+  > {
+    const select: (keyof AgentTurnWorkspaceEntity)[] = shouldSelectResult
+      ? ['id', 'status', 'error', 'result']
+      : ['id', 'status', 'error'];
+
     return this.turnRepository.findOne(workspaceId, {
       where: { id: turnId },
-      select: ['id', 'status', 'error', 'result'],
+      select,
     });
   }
 
