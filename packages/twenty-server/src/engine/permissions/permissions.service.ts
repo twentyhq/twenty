@@ -4,7 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
-import { computeObjectsPermissionsForRolePermissionConfig } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-role-permission-config.util';
+import { computeObjectsPermissionsForRoles } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-roles.util';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import {
   ApplicationException,
@@ -84,8 +84,8 @@ export class PermissionsService {
 
     return {
       permissionFlags,
-      objectsPermissions: computeObjectsPermissionsForRolePermissionConfig({
-        intersectionOf: { userWorkspaceRoleId: flatRole.id },
+      objectsPermissions: computeObjectsPermissionsForRoles({
+        roleIds: [flatRole.id],
         rolesPermissions,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
