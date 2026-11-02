@@ -1,4 +1,4 @@
-import { FrontComponentMediaSessionIndicator } from '@/front-components/media-session/components/FrontComponentMediaSessionIndicator';
+import { MediaAccessIndicator } from '@/media-access/components/MediaAccessIndicator';
 import { APP_HEADER_HEIGHT } from '@/ui/layout/constants/AppHeaderHeight';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -77,7 +77,7 @@ export const NavigationDrawerHeader = () => {
         </StyledWorkspaceDropdownContainer>
         {isExpanded && (
           <StyledRightActions>
-            <FrontComponentMediaSessionIndicator />
+            <MediaAccessIndicator />
             {searchButton}
             <NavigationDrawerCollapseButton
               direction="left"
@@ -88,7 +88,7 @@ export const NavigationDrawerHeader = () => {
       </StyledHeaderRow>
       {!isExpanded && !isMobile && (
         <StyledCollapsedSearch>
-          <FrontComponentMediaSessionIndicator />
+          <MediaAccessIndicator />
           {searchButton}
         </StyledCollapsedSearch>
       )}

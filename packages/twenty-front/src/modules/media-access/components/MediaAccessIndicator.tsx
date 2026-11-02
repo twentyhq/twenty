@@ -1,5 +1,5 @@
-import { FrontComponentMediaSessionTooltipRow } from '@/front-components/media-session/components/FrontComponentMediaSessionTooltipRow';
-import { frontComponentMediaSessionsState } from '@/front-components/media-session/states/frontComponentMediaSessionsState';
+import { MediaAccessSessionRow } from '@/media-access/components/MediaAccessSessionRow';
+import { mediaAccessSessionsState } from '@/media-access/states/mediaAccessSessionsState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -33,22 +33,35 @@ const StyledApplications = styled.div`
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-export const FrontComponentMediaSessionIndicator = () => {
-  const frontComponentMediaSessions = useAtomStateValue(
-    frontComponentMediaSessionsState,
-  );
+export const MediaAccessIndicator = () => {
+  const mediaAccessSessions = useAtomStateValue(mediaAccessSessionsState);
 
-  if (!isNonEmptyArray(frontComponentMediaSessions)) {
+  if (!isNonEmptyArray(mediaAccessSessions)) {
     return null;
   }
 
-  const isCapturing = frontComponentMediaSessions.some((session) =>
-    isNonEmptyArray(session.activeMediaTypes),
+  const isCapturing = mediaAccessSessions.some(
+    (session) => session.status === 'capturing',
   );
-  const title = isCapturing ? t`Apps recording` : t`Recording requests`;
-  const sessionsByApplication = groupBy(
-    frontComponentMediaSessions,
-    'applicationId',
+  const hasPendingRequest = mediaAccessSessions.some(
+    (session) => session.status === 'pending',
+  );
+  const getTitle = () => {
+    if (isCapturing) {
+      return t`Microphone or camera in use`;
+    }
+
+    if (hasPendingRequest) {
+      return t`Media access requests`;
+    }
+
+    return t`Media access enabled`;
+  };
+  const title = getTitle();
+  const sessionsByGroupKey = groupBy(mediaAccessSessions, (session) =>
+    session.status === 'delegated'
+      ? `${session.ownerId}:delegated:${session.origin}`
+      : session.ownerId,
   );
 
   return (
@@ -66,10 +79,10 @@ export const FrontComponentMediaSessionIndicator = () => {
           <StyledPopup initialFocus={false}>
             <Popover.Title>{title}</Popover.Title>
             <StyledApplications role="list" aria-label={title}>
-              {Object.entries(sessionsByApplication).map(
-                ([applicationId, sessions]) => (
-                  <FrontComponentMediaSessionTooltipRow
-                    key={applicationId}
+              {Object.entries(sessionsByGroupKey).map(
+                ([sessionGroupKey, sessions]) => (
+                  <MediaAccessSessionRow
+                    key={sessionGroupKey}
                     sessions={sessions}
                   />
                 ),
