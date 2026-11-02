@@ -251,7 +251,7 @@ export class AgentChatResolver {
             mentionedWorkspaceMemberIds: mentionedWorkspaceMemberIds ?? [],
           });
 
-          return this.sendChatMessageToThread({
+          const sentMessageToThread = await this.sendChatMessageToThread({
             threadId,
             text,
             messageId,
@@ -268,21 +268,22 @@ export class AgentChatResolver {
             mentionedWorkspaceMemberIds: mentionedWorkspaceMemberIds ?? [],
             recipientWorkspaceMemberIds: recipientWorkspaceMemberIds ?? [],
           });
+          const mentionedParticipantWorkspaceMemberIds =
+            await this.threadService.addMentionedParticipants({
+              threadId,
+              workspaceMemberId,
+              workspaceId: workspace.id,
+              mentionedWorkspaceMemberIds: mentionedWorkspaceMemberIds ?? [],
+            });
+
+          return {
+            ...sentMessageToThread,
+            mentionedParticipantWorkspaceMemberIds,
+          };
         },
       });
 
-    const mentionedParticipantWorkspaceMemberIds =
-      await this.threadService.addMentionedParticipants({
-        threadId,
-        workspaceMemberId,
-        workspaceId: workspace.id,
-        mentionedWorkspaceMemberIds: mentionedWorkspaceMemberIds ?? [],
-      });
-
-    return {
-      ...sentMessage,
-      mentionedParticipantWorkspaceMemberIds,
-    };
+    return sentMessage;
   }
 
   private async sendChatMessageToThread({
