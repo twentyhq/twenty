@@ -1,8 +1,8 @@
-import { inlineWorkflowStepAgents } from 'src/database/commands/upgrade-version-command/2-55/utils/inline-workflow-step-agents.util';
+import { inlineWorkflowStepAgents } from 'src/database/commands/upgrade-version-command/2-56/utils/inline-workflow-step-agents.util';
 import {
   type StepAgentInlineConfig,
   type StoredWorkflowStep,
-} from 'src/database/commands/upgrade-version-command/2-55/utils/step-agent-inline-config.type';
+} from 'src/database/commands/upgrade-version-command/2-56/utils/step-agent-inline-config.type';
 
 const INLINE_CONFIG: StepAgentInlineConfig = {
   instructions: 'Qualify the lead.',

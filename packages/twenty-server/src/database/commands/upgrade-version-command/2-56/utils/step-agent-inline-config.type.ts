@@ -14,7 +14,7 @@ export type StepAgentInlineConfig = {
   scope: AiRunScope | null;
 };
 
-// the inlineConfig a paused run's spec holds in 2.55
+// the inlineConfig a paused run's spec holds in 2.56
 export type PausedRunInlineConfig = Omit<
   StepAgentInlineConfig,
   'responseFormat'

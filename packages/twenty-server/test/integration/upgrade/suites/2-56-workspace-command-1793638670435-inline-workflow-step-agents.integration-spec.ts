@@ -33,7 +33,7 @@ import {
 } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
-import { type InlineWorkflowStepAgentsCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793635126613-inline-workflow-step-agents.command';
+import { type InlineWorkflowStepAgentsCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793638670435-inline-workflow-step-agents.command';
 import {
   type AiModelRegistryService,
   type RegisteredAiModel,
@@ -196,7 +196,7 @@ const scriptModelAnsweringASummary = (): ModelCall[] => {
 
 const EDITED_STEP_AGENT_INSTRUCTIONS = 'Summarize the company for a sales call';
 
-describe('2-55 workspace command - inline workflow step agents (integration)', () => {
+describe('2-56 workspace command - inline workflow step agents (integration)', () => {
   let command: InlineWorkflowStepAgentsCommand;
   let stepAgentRoleId: string;
   let workspaceCustomApplicationId: string;

@@ -1,8 +1,8 @@
-import { inlineStepAgent } from 'src/database/commands/upgrade-version-command/2-55/utils/inline-step-agent.util';
+import { inlineStepAgent } from 'src/database/commands/upgrade-version-command/2-56/utils/inline-step-agent.util';
 import {
   type PausedRunInlineConfig,
   type StepAgentInlineConfig,
-} from 'src/database/commands/upgrade-version-command/2-55/utils/step-agent-inline-config.type';
+} from 'src/database/commands/upgrade-version-command/2-56/utils/step-agent-inline-config.type';
 
 export type StoredRunSpec = {
   agentId?: unknown;

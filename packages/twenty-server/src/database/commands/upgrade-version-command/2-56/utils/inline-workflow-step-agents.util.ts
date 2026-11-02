@@ -2,11 +2,11 @@ import { isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { hasWorkflowAiAgentConversationConfig } from 'twenty-shared/workflow';
 
-import { inlineStepAgent } from 'src/database/commands/upgrade-version-command/2-55/utils/inline-step-agent.util';
+import { inlineStepAgent } from 'src/database/commands/upgrade-version-command/2-56/utils/inline-step-agent.util';
 import {
   type StepAgentInlineConfig,
   type StoredWorkflowStep,
-} from 'src/database/commands/upgrade-version-command/2-55/utils/step-agent-inline-config.type';
+} from 'src/database/commands/upgrade-version-command/2-56/utils/step-agent-inline-config.type';
 
 export type ConversationalWorkflowStep = {
   stepId: string;

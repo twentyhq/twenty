@@ -17,17 +17,17 @@ import {
   buildAiRunScopeFromStepAgentRole,
   type StoredFieldPermissionRow,
   type StoredObjectPermissionRow,
-} from 'src/database/commands/upgrade-version-command/2-55/utils/build-ai-run-scope-from-step-agent-role.util';
-import { buildConversationalStepAgentLabel } from 'src/database/commands/upgrade-version-command/2-55/utils/build-conversational-step-agent-label.util';
+} from 'src/database/commands/upgrade-version-command/2-56/utils/build-ai-run-scope-from-step-agent-role.util';
+import { buildConversationalStepAgentLabel } from 'src/database/commands/upgrade-version-command/2-56/utils/build-conversational-step-agent-label.util';
 import {
   inlinePausedAgentRunSpec,
   type StoredRunSpec,
-} from 'src/database/commands/upgrade-version-command/2-55/utils/inline-paused-agent-run-spec.util';
-import { inlineWorkflowStepAgents } from 'src/database/commands/upgrade-version-command/2-55/utils/inline-workflow-step-agents.util';
+} from 'src/database/commands/upgrade-version-command/2-56/utils/inline-paused-agent-run-spec.util';
+import { inlineWorkflowStepAgents } from 'src/database/commands/upgrade-version-command/2-56/utils/inline-workflow-step-agents.util';
 import {
   type StepAgentInlineConfig,
   type StoredWorkflowStep,
-} from 'src/database/commands/upgrade-version-command/2-55/utils/step-agent-inline-config.type';
+} from 'src/database/commands/upgrade-version-command/2-56/utils/step-agent-inline-config.type';
 import { rewriteJsonbRowsWithCompareAndSet } from 'src/database/commands/upgrade-version-command/utils/rewrite-jsonb-rows-with-compare-and-set.util';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -93,9 +93,9 @@ type ConversationalStepAgentSource = {
 
 // Moves each builder AI step's hidden agent into the step; deleting the agents is a later command.
 // A step with human input or a conversation is an Agent step: it keeps its agent, made visible so that deletion spares it
-@RegisteredWorkspaceCommand('2.55.0', 1793635126613)
+@RegisteredWorkspaceCommand('2.56.0', 1793638670435)
 @Command({
-  name: 'upgrade:2-55:inline-workflow-step-agents',
+  name: 'upgrade:2-56:inline-workflow-step-agents',
   description:
     'Move the prompt, model and permissions of the hidden agent behind each AI workflow step into the step',
 })

@@ -1,5 +1,5 @@
-import { inlinePausedAgentRunSpec } from 'src/database/commands/upgrade-version-command/2-55/utils/inline-paused-agent-run-spec.util';
-import { type StepAgentInlineConfig } from 'src/database/commands/upgrade-version-command/2-55/utils/step-agent-inline-config.type';
+import { inlinePausedAgentRunSpec } from 'src/database/commands/upgrade-version-command/2-56/utils/inline-paused-agent-run-spec.util';
+import { type StepAgentInlineConfig } from 'src/database/commands/upgrade-version-command/2-56/utils/step-agent-inline-config.type';
 
 const RUN_SPEC = {
   agentId: 'agent-id',

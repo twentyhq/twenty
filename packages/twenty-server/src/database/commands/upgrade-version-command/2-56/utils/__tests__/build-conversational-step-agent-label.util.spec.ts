@@ -1,4 +1,4 @@
-import { buildConversationalStepAgentLabel } from 'src/database/commands/upgrade-version-command/2-55/utils/build-conversational-step-agent-label.util';
+import { buildConversationalStepAgentLabel } from 'src/database/commands/upgrade-version-command/2-56/utils/build-conversational-step-agent-label.util';
 
 describe('buildConversationalStepAgentLabel', () => {
   it('names a generated label after the workflow and step', () => {

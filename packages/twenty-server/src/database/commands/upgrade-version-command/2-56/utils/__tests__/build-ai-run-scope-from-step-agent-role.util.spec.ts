@@ -1,4 +1,4 @@
-import { buildAiRunScopeFromStepAgentRole } from 'src/database/commands/upgrade-version-command/2-55/utils/build-ai-run-scope-from-step-agent-role.util';
+import { buildAiRunScopeFromStepAgentRole } from 'src/database/commands/upgrade-version-command/2-56/utils/build-ai-run-scope-from-step-agent-role.util';
 
 const DENY_ALL_ROLE: Parameters<typeof buildAiRunScopeFromStepAgentRole>[0] = {
   canUpdateAllSettings: false,
