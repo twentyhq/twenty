@@ -15,9 +15,7 @@ export const SettingsConnectableApp = () => {
   const { t } = useLingui();
   const { applicationId } = useParams<{ applicationId: string }>();
   const { connectableApps, isLoading } = useConnectableApps();
-  const connectableApp = connectableApps.find(
-    ({ id }) => id === applicationId,
-  );
+  const connectableApp = connectableApps.find(({ id }) => id === applicationId);
 
   if (!isDefined(connectableApp) && !isLoading) {
     return (

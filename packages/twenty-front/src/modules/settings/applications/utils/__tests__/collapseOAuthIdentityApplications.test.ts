@@ -63,19 +63,15 @@ describe('collapseOAuthIdentityApplications', () => {
     });
 
     expect(
-      collapseOAuthIdentityApplications([
-        CLAUDE_APP,
-        chatGpt,
-        ZAPIER,
-      ]).map(({ id }) => id),
+      collapseOAuthIdentityApplications([CLAUDE_APP, chatGpt, ZAPIER]).map(
+        ({ id }) => id,
+      ),
     ).toEqual(['claude-app', 'chatgpt', 'zapier']);
   });
 
   it('leaves applications without a registration alone', () => {
     const standard = { id: 'standard', applicationRegistration: null };
 
-    expect(collapseOAuthIdentityApplications([standard])).toEqual([
-      standard,
-    ]);
+    expect(collapseOAuthIdentityApplications([standard])).toEqual([standard]);
   });
 });
