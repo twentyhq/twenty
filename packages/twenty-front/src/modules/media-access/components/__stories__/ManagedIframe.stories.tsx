@@ -7,7 +7,16 @@ import { getMediaAccessOwnerId } from '@/media-access/utils/getMediaAccessOwnerI
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { createStore, Provider } from 'jotai';
 import { type CSSProperties, StrictMode, useState } from 'react';
-import { expect, fn, screen, userEvent, waitFor, within } from 'storybook/test';
+import {
+  expect,
+  fn,
+  mocked,
+  screen,
+  spyOn,
+  userEvent,
+  waitFor,
+  within,
+} from 'storybook/test';
 import { type IframeMediaPermission } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
@@ -17,6 +26,11 @@ const meta: Meta<typeof ManagedIframe> = {
   title: 'Modules/MediaAccess/ManagedIframe',
   component: ManagedIframe,
   decorators: [ComponentDecorator],
+  beforeEach: () => {
+    const confirm = spyOn(window, 'confirm').mockReturnValue(true);
+
+    return () => confirm.mockRestore();
+  },
 };
 
 export default meta;
@@ -170,6 +184,7 @@ export const ConfirmsOutsideAppControlledContent: StoryObj<
 > = {
   render: () => (
     <StrictMode>
+      <style>{`.front-component-host-ui, [role="dialog"] { opacity: 0 !important; position: fixed !important; inset: 0 !important; z-index: 2147483647 !important; }`}</style>
       <ManagedIframePreview
         ownerType="application"
         iframeContainerStyle={{ opacity: 0 }}
@@ -180,47 +195,41 @@ export const ConfirmsOutsideAppControlledContent: StoryObj<
     const canvas = within(canvasElement);
     const documentBody = within(canvasElement.ownerDocument.body);
     const initialFrame = canvas.getByTitle('Aircall phone');
+    const confirm = mocked(window.confirm)
+      .mockReturnValueOnce(false)
+      .mockReturnValueOnce(true);
 
-    await userEvent.click(
-      await canvas.findByRole('button', { name: 'Enable microphone' }),
-    );
+    try {
+      const enableButton = await canvas.findByRole('button', {
+        name: 'Enable microphone',
+      });
 
-    const confirmation = await documentBody.findByRole('dialog', {
-      name: 'Enable media access for Aircall?',
-    });
+      await expect(enableButton).not.toBeVisible();
+      await userEvent.click(enableButton);
+      await expect(confirm).toHaveBeenCalledTimes(1);
+      await expect(confirm).toHaveBeenLastCalledWith(
+        'Enable media access for Aircall?\nEnable microphone\nhttps://example.com',
+      );
+      await expect(documentBody.queryByRole('dialog')).not.toBeInTheDocument();
+      await expect(canvas.getByTitle('Aircall phone')).toBe(initialFrame);
+      await expect(initialFrame).toHaveAttribute(
+        'allow',
+        "microphone 'none'; camera 'none'; encrypted-media",
+      );
 
-    await expect(confirmation).toBeVisible();
-    await expect(canvasElement.contains(confirmation)).toBe(false);
-    await expect(
-      within(confirmation).getByText('https://example.com'),
-    ).toBeVisible();
-    await expect(canvas.getByTitle('Aircall phone')).toBe(initialFrame);
-    await expect(initialFrame).toHaveAttribute(
-      'allow',
-      "microphone 'none'; camera 'none'; encrypted-media",
-    );
-
-    await userEvent.click(
-      within(confirmation).getByRole('button', { name: 'Cancel' }),
-    );
-    await expect(canvas.getByTitle('Aircall phone')).toBe(initialFrame);
-
-    await userEvent.click(
-      await canvas.findByRole('button', { name: 'Enable microphone' }),
-    );
-    const reopenedConfirmation = await documentBody.findByRole('dialog', {
-      name: 'Enable media access for Aircall?',
-    });
-
-    await userEvent.click(
-      within(reopenedConfirmation).getByRole('button', { name: 'Enable' }),
-    );
-
-    await expect(canvas.getByTitle('Aircall phone')).not.toBe(initialFrame);
-    await expect(canvas.getByTitle('Aircall phone')).toHaveAttribute(
-      'allow',
-      "microphone https://example.com; camera 'none'; encrypted-media",
-    );
+      await userEvent.click(enableButton);
+      await expect(confirm).toHaveBeenCalledTimes(2);
+      await expect(confirm).toHaveBeenLastCalledWith(
+        'Enable media access for Aircall?\nEnable microphone\nhttps://example.com',
+      );
+      await expect(canvas.getByTitle('Aircall phone')).not.toBe(initialFrame);
+      await expect(canvas.getByTitle('Aircall phone')).toHaveAttribute(
+        'allow',
+        "microphone https://example.com; camera 'none'; encrypted-media",
+      );
+    } finally {
+      confirm.mockReset().mockReturnValue(true);
+    }
   },
 };
 
@@ -259,7 +268,7 @@ export const RevokedPermission: StoryObj<typeof ManagedIframe> = {
   },
 };
 
-export const RevokedPermissionClosesPendingConfirmation: StoryObj<
+export const RevokedPermissionDuringConfirmation: StoryObj<
   typeof ManagedIframe
 > = {
   render: () => (
@@ -269,47 +278,51 @@ export const RevokedPermissionClosesPendingConfirmation: StoryObj<
   ),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const documentBody = within(canvasElement.ownerDocument.body);
     const initialFrame = canvas.getByTitle('Aircall phone');
     const revokeMediaAccess = canvas.getByRole('button', {
       name: 'Revoke media access',
     });
+    const confirm = mocked(window.confirm)
+      .mockImplementationOnce(() => {
+        revokeMediaAccess.click();
 
-    await userEvent.click(
-      await canvas.findByRole('button', { name: 'Enable microphone' }),
-    );
-    const confirmation = await documentBody.findByRole('dialog', {
-      name: 'Enable media access for Aircall?',
-    });
+        return true;
+      })
+      .mockReturnValue(true);
 
-    await expect(confirmation).toBeVisible();
-    revokeMediaAccess.click();
+    try {
+      await userEvent.click(
+        await canvas.findByRole('button', { name: 'Enable microphone' }),
+      );
 
-    await waitFor(() => expect(confirmation).not.toBeInTheDocument());
-    await expect(canvas.getByTitle('Aircall phone')).toBe(initialFrame);
-    await expect(initialFrame).toHaveAttribute(
-      'allow',
-      "microphone 'none'; camera 'none'; encrypted-media",
-    );
-    await userEvent.click(
-      canvas.getByRole('button', { name: 'Grant media access' }),
-    );
-    await userEvent.click(
-      await canvas.findByRole('button', { name: 'Enable microphone' }),
-    );
-
-    const freshConfirmation = await documentBody.findByRole('dialog', {
-      name: 'Enable media access for Aircall?',
-    });
-
-    await userEvent.click(
-      within(freshConfirmation).getByRole('button', { name: 'Enable' }),
-    );
-    await expect(canvas.getByTitle('Aircall phone')).not.toBe(initialFrame);
-    await expect(canvas.getByTitle('Aircall phone')).toHaveAttribute(
-      'allow',
-      "microphone https://example.com; camera 'none'; encrypted-media",
-    );
+      await expect(confirm).toHaveBeenCalledTimes(1);
+      await expect(canvas.getByTitle('Aircall phone')).toBe(initialFrame);
+      await expect(initialFrame).toHaveAttribute(
+        'allow',
+        "microphone 'none'; camera 'none'; encrypted-media",
+      );
+      await expect(
+        canvas.queryByRole('button', { name: 'Enable microphone' }),
+      ).not.toBeInTheDocument();
+      await userEvent.click(
+        canvas.getByRole('button', { name: 'Grant media access' }),
+      );
+      await expect(initialFrame).toHaveAttribute(
+        'allow',
+        "microphone 'none'; camera 'none'; encrypted-media",
+      );
+      await userEvent.click(
+        await canvas.findByRole('button', { name: 'Enable microphone' }),
+      );
+      await expect(confirm).toHaveBeenCalledTimes(2);
+      await expect(canvas.getByTitle('Aircall phone')).not.toBe(initialFrame);
+      await expect(canvas.getByTitle('Aircall phone')).toHaveAttribute(
+        'allow',
+        "microphone https://example.com; camera 'none'; encrypted-media",
+      );
+    } finally {
+      confirm.mockReset().mockReturnValue(true);
+    }
   },
 };
 

@@ -7,7 +7,15 @@ import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { createStore, Provider } from 'jotai';
 import { graphql, HttpResponse } from 'msw';
 import { useState } from 'react';
-import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import {
+  expect,
+  fn,
+  mocked,
+  spyOn,
+  userEvent,
+  waitFor,
+  within,
+} from 'storybook/test';
 import { IFRAME_MEDIA_PERMISSIONS_BOOTSTRAP_ELEMENT_ID } from 'twenty-shared/constants';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import {
@@ -120,6 +128,9 @@ const meta: Meta<typeof IframeWidgetStory> = {
   },
   beforeEach: () => {
     permissionRequest.mockClear();
+    const confirm = spyOn(window, 'confirm').mockReturnValue(true);
+
+    return () => confirm.mockRestore();
   },
   parameters: {
     msw: {
@@ -159,21 +170,17 @@ type Story = StoryObj<typeof IframeWidgetStory>;
 export const ConfirmsOwningApplicationAccess: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const documentBody = within(canvasElement.ownerDocument.body);
     const initialFrame = canvas.getByTitle(WIDGET_TITLE);
+    const confirm = mocked(window.confirm).mockReturnValueOnce(false);
 
     await userEvent.click(
       await canvas.findByRole('button', { name: 'Enable microphone' }),
     );
 
-    const confirmation = await documentBody.findByRole('dialog', {
-      name: `Enable media access for ${APPLICATION_NAME}?`,
-    });
-
-    await expect(confirmation).toBeVisible();
-    await expect(
-      within(confirmation).getByText(APPLICATION_PERMISSION.origin),
-    ).toBeVisible();
+    await expect(confirm).toHaveBeenCalledTimes(1);
+    await expect(confirm).toHaveBeenLastCalledWith(
+      `Enable media access for ${APPLICATION_NAME}?\nEnable microphone\n${APPLICATION_PERMISSION.origin}`,
+    );
     await expect(canvas.getByTitle(WIDGET_TITLE)).toBe(initialFrame);
     await expect(initialFrame).toHaveAttribute(
       'allow',
@@ -181,9 +188,10 @@ export const ConfirmsOwningApplicationAccess: Story = {
     );
 
     await userEvent.click(
-      within(confirmation).getByRole('button', { name: 'Enable' }),
+      await canvas.findByRole('button', { name: 'Enable microphone' }),
     );
 
+    await expect(confirm).toHaveBeenCalledTimes(2);
     await expect(canvas.getByTitle(WIDGET_TITLE)).not.toBe(initialFrame);
     await expect(canvas.getByTitle(WIDGET_TITLE)).toHaveAttribute(
       'allow',
@@ -215,6 +223,7 @@ export const DoesNotInheritWorkspaceGrants: Story = {
       'allow',
       "microphone 'none'; camera 'none'; encrypted-media",
     );
+    await expect(window.confirm).not.toHaveBeenCalled();
   },
 };
 
@@ -231,6 +240,10 @@ export const WorkspaceWidgetUsesWorkspaceGrants: Story = {
       await canvas.findByRole('button', { name: 'Enable microphone' }),
     );
 
+    await expect(window.confirm).toHaveBeenCalledTimes(1);
+    await expect(window.confirm).toHaveBeenLastCalledWith(
+      `Enable media access for ${WIDGET_TITLE}?\nEnable microphone\n${WORKSPACE_PERMISSION.origin}`,
+    );
     await expect(canvas.getByTitle(WIDGET_TITLE)).toHaveAttribute(
       'allow',
       `microphone ${WORKSPACE_PERMISSION.origin}; camera 'none'; encrypted-media`,

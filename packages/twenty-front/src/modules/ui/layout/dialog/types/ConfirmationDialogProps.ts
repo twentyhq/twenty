@@ -2,7 +2,6 @@ import { type ReactNode } from 'react';
 import { type ButtonColor } from 'twenty-ui/primitives/input';
 
 export type ConfirmationDialogProps = {
-  shouldIsolateAppEvents?: boolean;
   dialogId: string;
   title: string;
   loading?: boolean;

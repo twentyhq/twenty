@@ -1212,7 +1212,7 @@ An orange dot in the workspace header indicates active capture. Hover over or se
 
 ### Embedded websites with media access
 
-To embed a phone or video tool, declare its HTTPS origin in your application's [`requestedIframeMediaPermissions`](/developers/extend/apps/config/application#embedded-website-media-access), with microphone and camera access set separately. Installing the app grants these websites to the workspace. Updates to published apps preserve existing grants and do not automatically grant additional media access. Locally synced development apps automatically receive the websites declared in their manifest. A member who can manage apps can approve new requests from the installed app's **General** tab, under **Embedded website media access** > **Review media access**. Twenty reads the granted websites when a tab loads, so reload open Twenty tabs after installation or approval.
+To embed a phone or video tool, declare its HTTPS origin in your application's [`requestedIframeMediaPermissions`](/developers/extend/apps/config/application#embedded-website-media-access), with microphone and camera access set separately. Installing the app grants these websites to the workspace. Updates to published apps preserve existing grants and do not automatically grant additional media access. Locally synced development apps automatically receive the websites declared in their manifest. A member who can manage apps can approve new requests from the installed app's **General** tab, under **Embedded website media access** > **Review media access**. This approval uses a native browser confirmation showing the app, website origins, and requested microphone or camera access. Twenty reads the granted websites when a tab loads, so reload open Twenty tabs after installation or approval.
 
 Request the corresponding features on the iframe:
 
@@ -1226,7 +1226,7 @@ Request the corresponding features on the iframe:
 />
 ```
 
-For video, use `allow="microphone; camera"` and declare both for the origin. Twenty only delegates the media your app was granted for that origin. Members must select the embed's **Enable** control and confirm the app and website in Twenty's dialog before it receives media access. The confirmation appears outside the app's content. Browser and operating system permissions still apply. `srcDoc` and embeds at Twenty's own origin cannot receive this delegation. App-defined `IFRAME` page layout widgets use their owning app's granted origins and the same confirmation flow.
+For video, use `allow="microphone; camera"` and declare both for the origin. Twenty only delegates the media your app was granted for that origin. Members must select the embed's **Enable** control and approve a native browser confirmation showing the app, website origin, and requested microphone or camera access before it receives media access. Browser and operating system permissions still apply. `srcDoc` and embeds at Twenty's own origin cannot receive this delegation. App-defined `IFRAME` page layout widgets use their owning app's granted origins and the same confirmation flow.
 
 Enabled embeds appear in the same header indicator as native capture, with **Microphone access enabled** or **Camera access enabled** rather than a claim that recording is active. The indicator stays visible while access is enabled, even if the embed is hidden. **Disable** unloads the iframe and reloads it with media blocked. App capture through `getUserMedia()` continues to report actual capture and retains its own **Stop** control.
 

@@ -52,7 +52,6 @@ export const ManagedIframe = ({
       iframeElement={iframeElement}
       ownerId={ownerId}
       ownerName={owner.name}
-      shouldRequireConfirmation={owner.type === 'application'}
       permission={permission}
     />
   );

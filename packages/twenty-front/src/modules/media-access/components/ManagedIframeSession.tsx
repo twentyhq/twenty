@@ -1,11 +1,8 @@
 import { ManagedIframeEnableButton } from '@/media-access/components/ManagedIframeEnableButton';
 import { ManagedIframeMediaAccessSessionEffect } from '@/media-access/components/ManagedIframeMediaAccessSessionEffect';
-import { ManagedIframePermissionDialogEffect } from '@/media-access/components/ManagedIframePermissionDialogEffect';
 import { type ManagedIframeElementProps } from '@/media-access/types/ManagedIframeElementProps';
 import { getDelegatedIframeMediaPermission } from '@/media-access/utils/getDelegatedIframeMediaPermission';
 import { isIframeMediaPermissionCovered } from '@/media-access/utils/isIframeMediaPermissionCovered';
-import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
-import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Fragment, useCallback, useId, useState } from 'react';
@@ -15,7 +12,6 @@ import { getIframeMediaAllow, isDefined } from 'twenty-shared/utils';
 type ManagedIframeSessionProps = ManagedIframeElementProps & {
   ownerId: string;
   ownerName: string;
-  shouldRequireConfirmation: boolean;
   permission: IframeMediaPermission | null;
 };
 
@@ -49,14 +45,9 @@ export const ManagedIframeSession = ({
   iframeElement,
   ownerId,
   ownerName,
-  shouldRequireConfirmation,
   permission,
 }: ManagedIframeSessionProps) => {
   const mediaAccessSessionId = useId();
-  const confirmationDialogId = useId();
-  const { openDialog } = useDialog();
-  const [permissionAwaitingConfirmation, setPermissionAwaitingConfirmation] =
-    useState<IframeMediaPermission | null>(null);
   const [nativeIframeElement, setNativeIframeElement] =
     useState<HTMLIFrameElement | null>(null);
   const [activatedPermission, setActivatedPermission] =
@@ -82,25 +73,23 @@ export const ManagedIframeSession = ({
     setActivatedPermission(null);
   }, []);
   const handleEnable = () => {
-    if (shouldRequireConfirmation) {
-      setPermissionAwaitingConfirmation(permission);
-      openDialog(confirmationDialogId);
+    if (!isDefined(permission)) {
+      return;
+    }
 
+    if (
+      !window.confirm(
+        [
+          t`Enable media access for ${ownerName}?`,
+          getEnableLabel(permission),
+          permission.origin,
+        ].join('\n'),
+      )
+    ) {
       return;
     }
 
     setActivatedPermission(permission);
-  };
-  const permissionToConfirm = getDelegatedIframeMediaPermission({
-    activatedPermission: permissionAwaitingConfirmation,
-    permission,
-  });
-  const hasInvalidRequest =
-    isDefined(permissionAwaitingConfirmation) &&
-    !isDefined(permissionToConfirm);
-  const handleConfirm = () => {
-    setActivatedPermission(permissionToConfirm);
-    setPermissionAwaitingConfirmation(null);
   };
   const iframeAllow = getIframeMediaAllow({
     allow,
@@ -118,31 +107,6 @@ export const ManagedIframeSession = ({
 
   return (
     <>
-      {shouldRequireConfirmation && (
-        <ManagedIframePermissionDialogEffect
-          dialogId={confirmationDialogId}
-          hasInvalidRequest={hasInvalidRequest}
-          onReset={setPermissionAwaitingConfirmation}
-        />
-      )}
-      {isDefined(permissionAwaitingConfirmation) && (
-        <ConfirmationDialog
-          shouldIsolateAppEvents
-          dialogId={confirmationDialogId}
-          title={t`Enable media access for ${ownerName}?`}
-          subtitle={
-            <>
-              <div>{getEnableLabel(permissionAwaitingConfirmation)}</div>
-              <div>{permissionAwaitingConfirmation.origin}</div>
-            </>
-          }
-          confirmButtonText={t`Enable`}
-          confirmButtonColor="neutral"
-          isConfirmButtonDisabled={!isDefined(permissionToConfirm)}
-          onConfirmClick={handleConfirm}
-          onClose={() => setPermissionAwaitingConfirmation(null)}
-        />
-      )}
       {isDefined(delegatedPermission) && (
         <ManagedIframeMediaAccessSessionEffect
           id={mediaAccessSessionId}

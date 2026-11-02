@@ -97,7 +97,7 @@ export default defineApplication({
 
 Declared websites appear during installation. Approval requires a workspace member who can manage apps and applies to the whole workspace, for the app's own front components and iframe widgets. Workspace security approvals apply only to widgets created in the workspace. Locally synced development apps receive the websites declared in their manifest. These grants do not replace browser or operating system permissions. Browser headers have a size limit, so if a workspace's websites exceed it, workspace-approved websites come first and the remaining websites do not receive media access.
 
-Updates to published apps preserve existing grants and do not automatically grant additional media access. To approve new requests, a member who can manage apps opens the installed app's **General** tab and selects **Review media access** under **Embedded website media access**. After approving, reload open Twenty tabs to apply the updated permissions.
+Updates to published apps preserve existing grants and do not automatically grant additional media access. To approve new requests, a member who can manage apps opens the installed app's **General** tab and selects **Review media access** under **Embedded website media access**. This approval uses a native browser confirmation showing the app, website origins, and requested microphone or camera access. After approving, reload open Twenty tabs to apply the updated permissions.
 
 See [Embedded websites with media access](/developers/extend/apps/layout/front-components#embedded-websites-with-media-access) for the iframe requirements.
 
