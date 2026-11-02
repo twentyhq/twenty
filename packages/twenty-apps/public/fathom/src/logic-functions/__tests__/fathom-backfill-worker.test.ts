@@ -149,6 +149,7 @@ describe('fathomBackfillWorkerHandler', () => {
 
     await expect(fathomBackfillWorkerHandler(PAYLOAD)).rejects.toThrow();
 
+    expect(mocks.listMeetings).toHaveBeenCalledOnce();
     expect(mocks.listMeetings.mock.calls[0][0]).not.toHaveProperty(
       'recordedBy',
     );
@@ -165,7 +166,7 @@ describe('fathomBackfillWorkerHandler', () => {
 
     await expect(fathomBackfillWorkerHandler(PAYLOAD)).rejects.toThrow();
 
-    expect(mocks.listMeetings).toHaveBeenCalledWith(
+    expect(mocks.listMeetings).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({ recordedBy: ['member@acme.com'] }),
     );
   });

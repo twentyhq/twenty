@@ -121,7 +121,7 @@ describe('fathomRegisterConnectionHandler', () => {
 
     await fathomRegisterConnectionHandler(HOOK_PAYLOAD);
 
-    expect(sdkMocks.createWebhook).toHaveBeenCalledWith(
+    expect(sdkMocks.createWebhook).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
         triggeredFor: [
           'my_recordings',
@@ -140,7 +140,7 @@ describe('fathomRegisterConnectionHandler', () => {
 
     await fathomRegisterConnectionHandler(HOOK_PAYLOAD);
 
-    expect(sdkMocks.createWebhook).toHaveBeenCalledWith(
+    expect(sdkMocks.createWebhook).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
         triggeredFor: ['my_recordings', 'my_shared_with_team_recordings'],
       }),
