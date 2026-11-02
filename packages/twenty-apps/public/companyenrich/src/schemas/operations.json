@@ -1,0 +1,3416 @@
+{
+  "operations": [
+    {
+      "name": "enrich-company",
+      "label": "Enrich company by domain",
+      "path": "/companies/enrich",
+      "method": "GET",
+      "universalIdentifier": "dbd040fa-8442-4db5-aa42-c6327181d295",
+      "example": {
+        "domain": "example.com",
+        "waitForEnrichment": true
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "domain": {
+            "maxLength": 1024,
+            "type": "string"
+          },
+          "expand": {
+            "type": "array",
+            "items": {
+              "enum": ["workforce"],
+              "type": "string"
+            }
+          },
+          "waitForEnrichment": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "required": ["domain"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "enrich-company-properties",
+      "label": "Enrich company by properties",
+      "path": "/companies/enrich",
+      "method": "POST",
+      "universalIdentifier": "2fe6222a-0e18-4e94-9e09-7db579c07b1c",
+      "example": {
+        "body": {
+          "name": "Example"
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "expand": {
+            "type": "array",
+            "items": {
+              "enum": ["workforce"],
+              "type": "string"
+            }
+          },
+          "body": {
+            "$ref": "#/components/schemas/EnrichRequest"
+          }
+        },
+        "required": ["body"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "enrich-companies-batch",
+      "label": "Batch enrich companies",
+      "path": "/companies/enrich/batch",
+      "method": "POST",
+      "universalIdentifier": "1dc65d4b-288f-487a-80ec-3a2874401c4c",
+      "example": {
+        "body": {
+          "domains": ["example.com"]
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "expand": {
+            "type": "array",
+            "items": {
+              "enum": ["workforce"],
+              "type": "string"
+            }
+          },
+          "body": {
+            "$ref": "#/components/schemas/BatchEnrichRequest"
+          }
+        },
+        "required": ["body"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-company",
+      "label": "Get company by ID",
+      "path": "/companies",
+      "method": "GET",
+      "universalIdentifier": "12ae0e15-323f-406e-bab7-89f458cb8845",
+      "example": {
+        "id": "00000000-0000-0000-0000-000000000001"
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "expand": {
+            "type": "array",
+            "items": {
+              "enum": ["workforce"],
+              "type": "string"
+            }
+          }
+        },
+        "required": ["id"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search-companies",
+      "label": "Search companies",
+      "path": "/companies/search",
+      "method": "POST",
+      "universalIdentifier": "37d28771-2a63-4526-a23c-69aec71ef054",
+      "example": {
+        "body": {
+          "semanticQuery": "B2B software companies",
+          "page": 1,
+          "pageSize": 10
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "expand": {
+            "type": "array",
+            "items": {
+              "enum": ["workforce"],
+              "type": "string"
+            }
+          },
+          "body": {
+            "$ref": "#/components/schemas/CompanySearchPageInput"
+          }
+        },
+        "required": ["body"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "similar-companies",
+      "label": "Find similar companies",
+      "path": "/companies/similar",
+      "method": "POST",
+      "universalIdentifier": "b4932ae5-eefb-4909-aaa5-55a27cd26ad3",
+      "example": {
+        "body": {
+          "domains": ["example.com"],
+          "page": 1,
+          "pageSize": 10
+        },
+        "waitForEnrichment": true
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "expand": {
+            "type": "array",
+            "items": {
+              "enum": ["workforce"],
+              "type": "string"
+            }
+          },
+          "waitForEnrichment": {
+            "type": "boolean",
+            "default": true
+          },
+          "body": {
+            "$ref": "#/components/schemas/CompanySimilarPageInput"
+          }
+        },
+        "required": ["body"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "count-companies",
+      "label": "Count matching companies",
+      "path": "/companies/search/count",
+      "method": "POST",
+      "universalIdentifier": "e52b9a97-4831-4306-850e-92f9656a6622",
+      "example": {
+        "body": {
+          "countries": ["US"]
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "body": {
+            "$ref": "#/components/schemas/CompanySearchInput"
+          }
+        },
+        "required": ["body"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "count-similar-companies",
+      "label": "Count similar companies",
+      "path": "/companies/similar/count",
+      "method": "POST",
+      "universalIdentifier": "e2415068-7fb4-4eae-8f57-b590ea577429",
+      "example": {
+        "body": {
+          "domains": ["example.com"]
+        },
+        "waitForEnrichment": true
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "waitForEnrichment": {
+            "type": "boolean",
+            "default": true
+          },
+          "body": {
+            "$ref": "#/components/schemas/CompanySimilarInput2"
+          }
+        },
+        "required": ["body"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "company-workforce",
+      "label": "Get company workforce",
+      "path": "/companies/workforce",
+      "method": "GET",
+      "universalIdentifier": "239ca13a-0753-4829-aced-1cc8cb09cd0a",
+      "example": {
+        "domain": "example.com"
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "domain": {
+            "type": "string"
+          }
+        },
+        "required": [],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search-people",
+      "label": "Search professional profiles",
+      "path": "/people/search",
+      "method": "POST",
+      "universalIdentifier": "fb725c3a-efe2-4f59-8e4b-e12eda787248",
+      "example": {
+        "body": {
+          "domains": ["example.com"],
+          "positionQuery": ["Engineer"],
+          "page": 1,
+          "pageSize": 10
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "expand": {
+            "type": "array",
+            "items": {
+              "enum": ["education"],
+              "type": "string"
+            }
+          },
+          "body": {
+            "$ref": "#/components/schemas/PersonSearchPageInput"
+          }
+        },
+        "required": ["body"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "lookup-person",
+      "label": "Look up person by known email",
+      "path": "/people/lookup",
+      "method": "POST",
+      "universalIdentifier": "e9b6dac0-66a6-46a1-9363-673b074324fb",
+      "example": {
+        "body": {
+          "email": "jane@example.com"
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "expand": {
+            "type": "array",
+            "items": {
+              "enum": ["education"],
+              "type": "string"
+            }
+          },
+          "body": {
+            "$ref": "#/components/schemas/PersonLookupRequest"
+          }
+        },
+        "required": ["body"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get-person",
+      "label": "Get person by ID",
+      "path": "/people",
+      "method": "GET",
+      "universalIdentifier": "5e941aab-af8d-458d-aaf1-dd149b569373",
+      "example": {
+        "id": "9223372036854775806"
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,18}$"
+          },
+          "expand": {
+            "type": "array",
+            "items": {
+              "enum": ["education"],
+              "type": "string"
+            }
+          }
+        },
+        "required": ["id"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "autocomplete-companies",
+      "label": "Autocomplete company domains",
+      "path": "/companies/autocomplete",
+      "method": "GET",
+      "universalIdentifier": "60bd612e-5c20-410b-b0fc-e8a1559fa975",
+      "example": {
+        "query": "example"
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string"
+          }
+        },
+        "required": ["query"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "person-education",
+      "label": "Get person education",
+      "path": "/people/education",
+      "method": "GET",
+      "universalIdentifier": "77c61efd-6b4e-4793-87bb-172d43ddb612",
+      "example": {
+        "id": "9223372036854775806"
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "pattern": "^[1-9][0-9]{0,18}$"
+          }
+        },
+        "required": ["id"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "preview-companies",
+      "label": "Preview companies (Scale plan)",
+      "path": "/companies/search/preview",
+      "method": "POST",
+      "universalIdentifier": "a9037d43-cc2a-41f6-85a2-60ac530a480d",
+      "example": {
+        "body": {
+          "countries": ["US"]
+        }
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "body": {
+            "$ref": "#/components/schemas/CompanySearchInput"
+          }
+        },
+        "required": ["body"],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "preview-similar-companies",
+      "label": "Preview similar companies (Scale plan)",
+      "path": "/companies/similar/preview",
+      "method": "POST",
+      "universalIdentifier": "b3cd17b2-fb60-4dca-8c64-15f7232b97ce",
+      "example": {
+        "body": {
+          "domains": ["example.com"]
+        },
+        "waitForEnrichment": true
+      },
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "waitForEnrichment": {
+            "type": "boolean",
+            "default": true
+          },
+          "body": {
+            "$ref": "#/components/schemas/CompanySimilarInput2"
+          }
+        },
+        "required": ["body"],
+        "additionalProperties": false
+      }
+    }
+  ],
+  "components": {
+    "schemas": {
+      "EnrichRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "The name of the company to enrich"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "linkedinUrl": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "The LinkedIn URL of the company to enrich",
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "linkedinId": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "The LinkedIn ID of the company to enrich"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "twitterUrl": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "The Twitter URL of the company to enrich",
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "facebookUrl": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "The Facebook URL of the company to enrich",
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "instagramUrl": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "The Instagram URL of the company to enrich",
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "youTubeUrl": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "The YouTube URL of the company to enrich",
+                "format": "uri"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "BatchEnrichRequest": {
+        "required": ["domains"],
+        "type": "object",
+        "properties": {
+          "domains": {
+            "maxItems": 50,
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A list of domains to enrich. Up to 50 domains can be provided in a single request."
+          }
+        },
+        "additionalProperties": false
+      },
+      "CompanySearchPageInput": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "description": "The page number to return. Must be greater than 0",
+            "format": "int32"
+          },
+          "pageSize": {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "description": "The number of results to return in each page. Must be between 1 and 100",
+            "format": "int32"
+          },
+          "lists": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "The list IDs to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "semanticQuery": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string",
+                "description": "The semantic search query to find companies with. More natural language version of the standard query."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "semanticWeight": {
+            "anyOf": [
+              {
+                "maximum": 1,
+                "minimum": 0,
+                "type": "number",
+                "description": "The semantic weight to apply to the results. Must be between 0 and 1. 0.7 is default. Larger values will prioritize semantic similarity, smaller values will prioritize traditional search factors.",
+                "format": "double"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "exclude": {
+            "$ref": "#/components/schemas/CompanyExcludeFilters"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "maxLength": 250,
+                "type": "string",
+                "description": "The search query to apply on the company name and domain"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "foundedYear": {
+            "$ref": "#/components/schemas/YearRange"
+          },
+          "fundingAmount": {
+            "$ref": "#/components/schemas/CompanyFundingAmountRange"
+          },
+          "fundingYear": {
+            "$ref": "#/components/schemas/YearRange"
+          },
+          "categoryOperator": {
+            "$ref": "#/components/schemas/NullableOfFilterOperator"
+          },
+          "keywordsOperator": {
+            "$ref": "#/components/schemas/NullableOfFilterOperator"
+          },
+          "technologiesOperator": {
+            "$ref": "#/components/schemas/NullableOfFilterOperator"
+          },
+          "workforceGrowth": {
+            "$ref": "#/components/schemas/CompanyWorkforceGrowthInput"
+          },
+          "workforceSize": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyWorkforceSizeInput"
+                },
+                "description": "Filter companies by absolute workforce headcount. Multiple entries can be provided to filter on different departments simultaneously."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "require": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/FeatureRequirement"
+                },
+                "description": "The features that must exist for the company"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "regions": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The region IDs to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "countries": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The 2 letter country codes to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "states": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "description": "The state IDs to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "cities": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "description": "The city IDs to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "type": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyType"
+                },
+                "description": "The list of company types to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyCategory"
+                },
+                "description": "The list of company categories to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "employees": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyEmployees"
+                },
+                "description": "The list of employee counts to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reportedEmployees": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyEmployees"
+                },
+                "description": "The list of externally reported employee counts to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "revenue": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyRevenue"
+                },
+                "description": "The list of revenue ranges to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "naicsCode": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "description": "The NAICS codes to filter by. Can be 2 to 6 digit codes. In case of a 2-5 digit code, all 6 digit codes under it will be included"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "keywords": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The keywords to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "technologies": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The technologies to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fundingRounds": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyFundingRound"
+                },
+                "description": "The funding rounds to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "CompanyExcludeFilters": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "domains": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The domain names of companies to exclude from the results"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "regions": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The region IDs to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "countries": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The 2 letter country codes to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "states": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "description": "The state IDs to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "cities": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "description": "The city IDs to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CompanyType"
+                    },
+                    "description": "The list of company types to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "category": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CompanyCategory"
+                    },
+                    "description": "The list of company categories to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "employees": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CompanyEmployees"
+                    },
+                    "description": "The list of employee counts to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "reportedEmployees": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CompanyEmployees"
+                    },
+                    "description": "The list of externally reported employee counts to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "revenue": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CompanyRevenue"
+                    },
+                    "description": "The list of revenue ranges to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "naicsCode": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "description": "The NAICS codes to filter by. Can be 2 to 6 digit codes. In case of a 2-5 digit code, all 6 digit codes under it will be included"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "keywords": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The keywords to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "technologies": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The technologies to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "fundingRounds": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CompanyFundingRound"
+                    },
+                    "description": "The funding rounds to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "description": "Exclusion filters to apply on the companies. If a company matches any of the filters here, it will be excluded from the results.",
+            "additionalProperties": false
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "CompanyType": {
+        "enum": [
+          "private",
+          "public",
+          "self-employed",
+          "self-owned",
+          "partnership",
+          "nonprofit",
+          "educational",
+          "government"
+        ]
+      },
+      "CompanyCategory": {
+        "enum": [
+          "b2b",
+          "b2c",
+          "b2g",
+          "e-commerce",
+          "media",
+          "service-provider",
+          "mobile",
+          "saas"
+        ]
+      },
+      "CompanyEmployees": {
+        "enum": [
+          "1-10",
+          "11-50",
+          "51-200",
+          "201-500",
+          "501-1K",
+          "1K-5K",
+          "5K-10K",
+          "over-10K"
+        ]
+      },
+      "CompanyRevenue": {
+        "enum": [
+          "under-1m",
+          "1m-10m",
+          "10m-50m",
+          "50m-100m",
+          "100m-200m",
+          "200m-1b",
+          "over-1b"
+        ]
+      },
+      "CompanyFundingRound": {
+        "enum": [
+          "seed",
+          "debt_financing",
+          "angel",
+          "venture",
+          "series_a",
+          "series_b",
+          "series_c",
+          "series_d",
+          "series_e",
+          "series_f",
+          "series_g",
+          "series_h",
+          "other"
+        ]
+      },
+      "YearRange": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "min": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "description": "The minimum year (inclusive)",
+                    "format": "int32"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "max": {
+                "anyOf": [
+                  {
+                    "type": "integer",
+                    "description": "The maximum year (inclusive)",
+                    "format": "int32"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "description": "The range of years",
+            "additionalProperties": false
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "CompanyFundingAmountRange": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "min": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "description": "The minimum funding amount (inclusive)",
+                    "format": "double"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "max": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "description": "The maximum funding amount (inclusive)",
+                    "format": "double"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "description": "The funding amount range to filter by",
+            "additionalProperties": false
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "NullableOfFilterOperator": {
+        "anyOf": [
+          {
+            "enum": ["And", "Or", null],
+            "description": "The operator to apply to the filters. Defaults to And."
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "CompanyWorkforceGrowthInput": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "period": {
+                "$ref": "#/components/schemas/NullableOfCompanyWorkforceGrowthPeriod"
+              },
+              "department": {
+                "$ref": "#/components/schemas/NullableOfCompanyWorkforceGrowthDepartment"
+              },
+              "minPercent": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "description": "The minimum workforce growth percentage (inclusive). Example: 15 means 15% growth, -10 means 10% decline.",
+                    "format": "double"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "maxPercent": {
+                "anyOf": [
+                  {
+                    "type": "number",
+                    "description": "The maximum workforce growth percentage (inclusive). Example: 15 means 15% growth, -10 means 10% decline.",
+                    "format": "double"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "description": "Filter companies by workforce growth percentage over a selected period and department.",
+            "additionalProperties": false
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "NullableOfCompanyWorkforceGrowthPeriod": {
+        "anyOf": [
+          {
+            "enum": ["m6", "y1", "y2", null],
+            "description": "The period to measure workforce growth over."
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "NullableOfCompanyWorkforceGrowthDepartment": {
+        "anyOf": [
+          {
+            "enum": [
+              "overall",
+              "c_suite",
+              "product_management",
+              "engineering_technical",
+              "design",
+              "education",
+              "finance",
+              "human_resources",
+              "information_technology",
+              "legal",
+              "marketing",
+              "medical_health",
+              "operations",
+              "sales",
+              "consulting",
+              null
+            ],
+            "description": "The department to measure workforce growth for."
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "CompanyWorkforceSizeInput": {
+        "type": "object",
+        "properties": {
+          "department": {
+            "$ref": "#/components/schemas/NullableOfCompanyWorkforceGrowthDepartment2"
+          },
+          "min": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "description": "The minimum headcount (inclusive).",
+                "format": "int32"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "max": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "description": "The maximum headcount (inclusive).",
+                "format": "int32"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "NullableOfCompanyWorkforceGrowthDepartment2": {
+        "anyOf": [
+          {
+            "enum": [
+              "overall",
+              "c_suite",
+              "product_management",
+              "engineering_technical",
+              "design",
+              "education",
+              "finance",
+              "human_resources",
+              "information_technology",
+              "legal",
+              "marketing",
+              "medical_health",
+              "operations",
+              "sales",
+              "consulting",
+              null
+            ],
+            "description": "The department to filter headcount for. Defaults to overall if not specified."
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "FeatureRequirement": {
+        "enum": [
+          "linkedin",
+          "twitter",
+          "facebook",
+          "instagram",
+          "angellist",
+          "crunchbase",
+          "youtube",
+          "country",
+          "city",
+          "state",
+          "revenue",
+          "foundedYear",
+          "anyFunding"
+        ]
+      },
+      "CompanySimilarPageInput": {
+        "type": "object",
+        "properties": {
+          "domain": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "The domain to find similar companies for. This is deprecated, use `domains` instead. Using `domains` with a single domain acts the same as using the `domain` parameter."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "page": {
+            "type": "integer",
+            "description": "The page number to return. Must be greater than 0",
+            "format": "int32"
+          },
+          "pageSize": {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "description": "The number of results to return. Must be between 1 and 100",
+            "format": "int32"
+          },
+          "domains": {
+            "maxItems": 10,
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The domains to find similar companies for. Up to 10 domains are allowed."
+          },
+          "similarityWeight": {
+            "maximum": 1,
+            "minimum": -1,
+            "type": "number",
+            "description": "The similarity weight to apply to the results. Must be between -1 and 1. 0 is default. Larger values will prioritize more similar companies, smaller values will prioritize more established companies.",
+            "format": "double"
+          },
+          "minScore": {
+            "anyOf": [
+              {
+                "maximum": 1,
+                "minimum": 0,
+                "type": "number",
+                "description": "The minimum similarity score required for results. Must be between 0 and 1. When omitted, the default cutoff is used.",
+                "format": "double"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "exclude": {
+            "$ref": "#/components/schemas/CompanyExcludeFilters"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "maxLength": 250,
+                "type": "string",
+                "description": "The search query to apply on the company name and domain"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "foundedYear": {
+            "$ref": "#/components/schemas/YearRange"
+          },
+          "fundingAmount": {
+            "$ref": "#/components/schemas/CompanyFundingAmountRange"
+          },
+          "fundingYear": {
+            "$ref": "#/components/schemas/YearRange"
+          },
+          "categoryOperator": {
+            "$ref": "#/components/schemas/NullableOfFilterOperator"
+          },
+          "keywordsOperator": {
+            "$ref": "#/components/schemas/NullableOfFilterOperator"
+          },
+          "technologiesOperator": {
+            "$ref": "#/components/schemas/NullableOfFilterOperator"
+          },
+          "workforceGrowth": {
+            "$ref": "#/components/schemas/CompanyWorkforceGrowthInput"
+          },
+          "workforceSize": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyWorkforceSizeInput"
+                },
+                "description": "Filter companies by absolute workforce headcount. Multiple entries can be provided to filter on different departments simultaneously."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "require": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/FeatureRequirement"
+                },
+                "description": "The features that must exist for the company"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "regions": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The region IDs to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "countries": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The 2 letter country codes to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "states": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "description": "The state IDs to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "cities": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "description": "The city IDs to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "type": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyType"
+                },
+                "description": "The list of company types to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyCategory"
+                },
+                "description": "The list of company categories to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "employees": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyEmployees"
+                },
+                "description": "The list of employee counts to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reportedEmployees": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyEmployees"
+                },
+                "description": "The list of externally reported employee counts to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "revenue": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyRevenue"
+                },
+                "description": "The list of revenue ranges to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "naicsCode": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "description": "The NAICS codes to filter by. Can be 2 to 6 digit codes. In case of a 2-5 digit code, all 6 digit codes under it will be included"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "keywords": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The keywords to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "technologies": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The technologies to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fundingRounds": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyFundingRound"
+                },
+                "description": "The funding rounds to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "CompanySearchInput": {
+        "type": "object",
+        "properties": {
+          "lists": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                },
+                "description": "The list IDs to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "semanticQuery": {
+            "anyOf": [
+              {
+                "maxLength": 500,
+                "type": "string",
+                "description": "The semantic search query to find companies with. More natural language version of the standard query."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "semanticWeight": {
+            "anyOf": [
+              {
+                "maximum": 1,
+                "minimum": 0,
+                "type": "number",
+                "description": "The semantic weight to apply to the results. Must be between 0 and 1. 0.7 is default. Larger values will prioritize semantic similarity, smaller values will prioritize traditional search factors.",
+                "format": "double"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "exclude": {
+            "$ref": "#/components/schemas/CompanyExcludeFilters"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "maxLength": 250,
+                "type": "string",
+                "description": "The search query to apply on the company name and domain"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "foundedYear": {
+            "$ref": "#/components/schemas/YearRange"
+          },
+          "fundingAmount": {
+            "$ref": "#/components/schemas/CompanyFundingAmountRange"
+          },
+          "fundingYear": {
+            "$ref": "#/components/schemas/YearRange"
+          },
+          "categoryOperator": {
+            "$ref": "#/components/schemas/NullableOfFilterOperator"
+          },
+          "keywordsOperator": {
+            "$ref": "#/components/schemas/NullableOfFilterOperator"
+          },
+          "technologiesOperator": {
+            "$ref": "#/components/schemas/NullableOfFilterOperator"
+          },
+          "workforceGrowth": {
+            "$ref": "#/components/schemas/CompanyWorkforceGrowthInput"
+          },
+          "workforceSize": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyWorkforceSizeInput"
+                },
+                "description": "Filter companies by absolute workforce headcount. Multiple entries can be provided to filter on different departments simultaneously."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "require": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/FeatureRequirement"
+                },
+                "description": "The features that must exist for the company"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "regions": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The region IDs to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "countries": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The 2 letter country codes to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "states": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "description": "The state IDs to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "cities": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "description": "The city IDs to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "type": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyType"
+                },
+                "description": "The list of company types to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyCategory"
+                },
+                "description": "The list of company categories to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "employees": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyEmployees"
+                },
+                "description": "The list of employee counts to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reportedEmployees": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyEmployees"
+                },
+                "description": "The list of externally reported employee counts to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "revenue": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyRevenue"
+                },
+                "description": "The list of revenue ranges to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "naicsCode": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "description": "The NAICS codes to filter by. Can be 2 to 6 digit codes. In case of a 2-5 digit code, all 6 digit codes under it will be included"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "keywords": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The keywords to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "technologies": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The technologies to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fundingRounds": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyFundingRound"
+                },
+                "description": "The funding rounds to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "CompanySimilarInput2": {
+        "type": "object",
+        "properties": {
+          "domains": {
+            "maxItems": 10,
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "The domains to find similar companies for. Up to 10 domains are allowed."
+          },
+          "similarityWeight": {
+            "maximum": 1,
+            "minimum": -1,
+            "type": "number",
+            "description": "The similarity weight to apply to the results. Must be between -1 and 1. 0 is default. Larger values will prioritize more similar companies, smaller values will prioritize more established companies.",
+            "format": "double"
+          },
+          "minScore": {
+            "anyOf": [
+              {
+                "maximum": 1,
+                "minimum": 0,
+                "type": "number",
+                "description": "The minimum similarity score required for results. Must be between 0 and 1. When omitted, the default cutoff is used.",
+                "format": "double"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "exclude": {
+            "$ref": "#/components/schemas/CompanyExcludeFilters"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "maxLength": 250,
+                "type": "string",
+                "description": "The search query to apply on the company name and domain"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "foundedYear": {
+            "$ref": "#/components/schemas/YearRange"
+          },
+          "fundingAmount": {
+            "$ref": "#/components/schemas/CompanyFundingAmountRange"
+          },
+          "fundingYear": {
+            "$ref": "#/components/schemas/YearRange"
+          },
+          "categoryOperator": {
+            "$ref": "#/components/schemas/NullableOfFilterOperator"
+          },
+          "keywordsOperator": {
+            "$ref": "#/components/schemas/NullableOfFilterOperator"
+          },
+          "technologiesOperator": {
+            "$ref": "#/components/schemas/NullableOfFilterOperator"
+          },
+          "workforceGrowth": {
+            "$ref": "#/components/schemas/CompanyWorkforceGrowthInput"
+          },
+          "workforceSize": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyWorkforceSizeInput"
+                },
+                "description": "Filter companies by absolute workforce headcount. Multiple entries can be provided to filter on different departments simultaneously."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "require": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/FeatureRequirement"
+                },
+                "description": "The features that must exist for the company"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "regions": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The region IDs to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "countries": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The 2 letter country codes to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "states": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "description": "The state IDs to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "cities": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "description": "The city IDs to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "type": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyType"
+                },
+                "description": "The list of company types to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "category": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyCategory"
+                },
+                "description": "The list of company categories to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "employees": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyEmployees"
+                },
+                "description": "The list of employee counts to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reportedEmployees": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyEmployees"
+                },
+                "description": "The list of externally reported employee counts to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "revenue": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyRevenue"
+                },
+                "description": "The list of revenue ranges to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "naicsCode": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "integer",
+                  "format": "int32"
+                },
+                "description": "The NAICS codes to filter by. Can be 2 to 6 digit codes. In case of a 2-5 digit code, all 6 digit codes under it will be included"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "keywords": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The keywords to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "technologies": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The technologies to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fundingRounds": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/CompanyFundingRound"
+                },
+                "description": "The funding rounds to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false
+      },
+      "PersonSearchPageInput": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "maximum": 1000000,
+            "minimum": 1,
+            "type": "integer",
+            "description": "The page number to return. Must be greater than 0",
+            "format": "int32"
+          },
+          "pageSize": {
+            "maximum": 100,
+            "minimum": 1,
+            "type": "integer",
+            "description": "The number of results to return in each page. Must be between 1 and 100",
+            "format": "int32"
+          },
+          "companyFilter": {
+            "$ref": "#/components/schemas/CompanyLookupInput"
+          },
+          "query": {
+            "anyOf": [
+              {
+                "maxLength": 250,
+                "type": "string",
+                "description": "The search query to apply on the company name and domain"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "positionQuery": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The list of search queries to apply on the person's current job position/title"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "atCurrentCompanyAfter": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "Filter by current company join date - only include people who joined after this UTC date",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "atCurrentCompanyBefore": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "Filter by current company join date - only include people who joined before this UTC date",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "atCurrentPositionAfter": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "Filter by current position start date - only include people who started after this UTC date",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "atCurrentPositionBefore": {
+            "anyOf": [
+              {
+                "type": "string",
+                "description": "Filter by current position start date - only include people who started before this UTC date",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "exclude": {
+            "$ref": "#/components/schemas/PersonExcludeFilters"
+          },
+          "countries": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The 2 letter country codes to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "domains": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The domains to find people for. Up to 2,500 domains are allowed."
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "seniority": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/PersonSeniority"
+                },
+                "description": "The seniorities to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "department": {
+            "anyOf": [
+              {
+                "type": "array",
+                "items": {
+                  "$ref": "#/components/schemas/PersonDepartment"
+                },
+                "description": "The departments to filter by"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "education": {
+            "$ref": "#/components/schemas/PersonEducationFilterInput"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CompanyLookupInput": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "search": {
+                "$ref": "#/components/schemas/CompanySearchInput2"
+              },
+              "similar": {
+                "$ref": "#/components/schemas/CompanySimilarInput"
+              }
+            },
+            "description": "The filters to be applied on the companies to find people for",
+            "additionalProperties": false
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "CompanySearchInput2": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "lists": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "description": "The list IDs to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "semanticQuery": {
+                "anyOf": [
+                  {
+                    "maxLength": 500,
+                    "type": "string",
+                    "description": "The semantic search query to find companies with. More natural language version of the standard query."
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "semanticWeight": {
+                "anyOf": [
+                  {
+                    "maximum": 1,
+                    "minimum": 0,
+                    "type": "number",
+                    "description": "The semantic weight to apply to the results. Must be between 0 and 1. 0.7 is default. Larger values will prioritize semantic similarity, smaller values will prioritize traditional search factors.",
+                    "format": "double"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "exclude": {
+                "$ref": "#/components/schemas/CompanyExcludeFilters"
+              },
+              "query": {
+                "anyOf": [
+                  {
+                    "maxLength": 250,
+                    "type": "string",
+                    "description": "The search query to apply on the company name and domain"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "foundedYear": {
+                "$ref": "#/components/schemas/YearRange"
+              },
+              "fundingAmount": {
+                "$ref": "#/components/schemas/CompanyFundingAmountRange"
+              },
+              "fundingYear": {
+                "$ref": "#/components/schemas/YearRange"
+              },
+              "categoryOperator": {
+                "$ref": "#/components/schemas/NullableOfFilterOperator"
+              },
+              "keywordsOperator": {
+                "$ref": "#/components/schemas/NullableOfFilterOperator"
+              },
+              "technologiesOperator": {
+                "$ref": "#/components/schemas/NullableOfFilterOperator"
+              },
+              "workforceGrowth": {
+                "$ref": "#/components/schemas/CompanyWorkforceGrowthInput"
+              },
+              "workforceSize": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CompanyWorkforceSizeInput"
+                    },
+                    "description": "Filter companies by absolute workforce headcount. Multiple entries can be provided to filter on different departments simultaneously."
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "require": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/FeatureRequirement"
+                    },
+                    "description": "The features that must exist for the company"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "regions": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The region IDs to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "countries": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The 2 letter country codes to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "states": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "description": "The state IDs to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "cities": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "description": "The city IDs to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CompanyType"
+                    },
+                    "description": "The list of company types to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "category": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CompanyCategory"
+                    },
+                    "description": "The list of company categories to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "employees": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CompanyEmployees"
+                    },
+                    "description": "The list of employee counts to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "reportedEmployees": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CompanyEmployees"
+                    },
+                    "description": "The list of externally reported employee counts to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "revenue": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CompanyRevenue"
+                    },
+                    "description": "The list of revenue ranges to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "naicsCode": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "description": "The NAICS codes to filter by. Can be 2 to 6 digit codes. In case of a 2-5 digit code, all 6 digit codes under it will be included"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "keywords": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The keywords to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "technologies": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The technologies to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "fundingRounds": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CompanyFundingRound"
+                    },
+                    "description": "The funding rounds to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "description": "The filters to be applied on the companies",
+            "additionalProperties": false
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "CompanySimilarInput": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "domains": {
+                "maxItems": 10,
+                "minItems": 1,
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "The domains to find similar companies for. Up to 10 domains are allowed."
+              },
+              "similarityWeight": {
+                "maximum": 1,
+                "minimum": -1,
+                "type": "number",
+                "description": "The similarity weight to apply to the results. Must be between -1 and 1. 0 is default. Larger values will prioritize more similar companies, smaller values will prioritize more established companies.",
+                "format": "double"
+              },
+              "minScore": {
+                "anyOf": [
+                  {
+                    "maximum": 1,
+                    "minimum": 0,
+                    "type": "number",
+                    "description": "The minimum similarity score required for results. Must be between 0 and 1. When omitted, the default cutoff is used.",
+                    "format": "double"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "exclude": {
+                "$ref": "#/components/schemas/CompanyExcludeFilters"
+              },
+              "query": {
+                "anyOf": [
+                  {
+                    "maxLength": 250,
+                    "type": "string",
+                    "description": "The search query to apply on the company name and domain"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "foundedYear": {
+                "$ref": "#/components/schemas/YearRange"
+              },
+              "fundingAmount": {
+                "$ref": "#/components/schemas/CompanyFundingAmountRange"
+              },
+              "fundingYear": {
+                "$ref": "#/components/schemas/YearRange"
+              },
+              "categoryOperator": {
+                "$ref": "#/components/schemas/NullableOfFilterOperator"
+              },
+              "keywordsOperator": {
+                "$ref": "#/components/schemas/NullableOfFilterOperator"
+              },
+              "technologiesOperator": {
+                "$ref": "#/components/schemas/NullableOfFilterOperator"
+              },
+              "workforceGrowth": {
+                "$ref": "#/components/schemas/CompanyWorkforceGrowthInput"
+              },
+              "workforceSize": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {},
+                    "description": "Filter companies by absolute workforce headcount. Multiple entries can be provided to filter on different departments simultaneously."
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "require": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/FeatureRequirement"
+                    },
+                    "description": "The features that must exist for the company"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "regions": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The region IDs to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "countries": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The 2 letter country codes to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "states": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "description": "The state IDs to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "cities": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "description": "The city IDs to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "type": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CompanyType"
+                    },
+                    "description": "The list of company types to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "category": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CompanyCategory"
+                    },
+                    "description": "The list of company categories to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "employees": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CompanyEmployees"
+                    },
+                    "description": "The list of employee counts to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "reportedEmployees": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CompanyEmployees"
+                    },
+                    "description": "The list of externally reported employee counts to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "revenue": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CompanyRevenue"
+                    },
+                    "description": "The list of revenue ranges to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "naicsCode": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "description": "The NAICS codes to filter by. Can be 2 to 6 digit codes. In case of a 2-5 digit code, all 6 digit codes under it will be included"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "keywords": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The keywords to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "technologies": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The technologies to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "fundingRounds": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CompanyFundingRound"
+                    },
+                    "description": "The funding rounds to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "description": "The filters used to find similar companies",
+            "additionalProperties": false
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "PersonExcludeFilters": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "positionQuery": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The list of search queries to exclude on the person's current job position/title"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "countries": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The 2 letter country codes to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "domains": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The domains to find people for. Up to 2,500 domains are allowed."
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "seniority": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/PersonSeniority"
+                    },
+                    "description": "The seniorities to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "department": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/PersonDepartment"
+                    },
+                    "description": "The departments to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "education": {
+                "$ref": "#/components/schemas/PersonEducationFilterInput"
+              }
+            },
+            "description": "Exclusion filters to apply on the people. If a person matches any of the filters here, it will be excluded from the results.",
+            "additionalProperties": false
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "PersonSeniority": {
+        "enum": [
+          "owner",
+          "founder",
+          "c-suite",
+          "partner",
+          "vp",
+          "head",
+          "director",
+          "manager",
+          "senior",
+          "entry",
+          "intern"
+        ]
+      },
+      "PersonDepartment": {
+        "enum": [
+          "c-suite",
+          "c-suite/executive",
+          "c-suite/finance-executive",
+          "c-suite/founder",
+          "c-suite/human-resources-executive",
+          "c-suite/information-technology-executive",
+          "c-suite/legal-executive",
+          "c-suite/marketing-executive",
+          "c-suite/medical-health-executive",
+          "c-suite/operations-executive",
+          "c-suite/sales-executive",
+          "product-management",
+          "product-management/product-development",
+          "product-management/product-management",
+          "engineering-technical",
+          "engineering-technical/artificial-intelligence-machine-learning",
+          "engineering-technical/bioengineering",
+          "engineering-technical/biometrics",
+          "engineering-technical/business-intelligence",
+          "engineering-technical/chemical-engineering",
+          "engineering-technical/cloud-mobility",
+          "engineering-technical/data-science",
+          "engineering-technical/devops",
+          "engineering-technical/digital-transformation",
+          "engineering-technical/emerging-technology-innovation",
+          "engineering-technical/engineering-technical",
+          "engineering-technical/industrial-engineering",
+          "engineering-technical/mechanic",
+          "engineering-technical/mobile-development",
+          "engineering-technical/project-management",
+          "engineering-technical/research-development",
+          "engineering-technical/scrum-master-agile-coach",
+          "engineering-technical/software-development",
+          "engineering-technical/support-technical-services",
+          "engineering-technical/technician",
+          "engineering-technical/technology-operations",
+          "engineering-technical/test-quality-assurance",
+          "engineering-technical/ui-ux",
+          "engineering-technical/web-development",
+          "design",
+          "design/all-design",
+          "design/product-ui-ux-design",
+          "design/graphic-design",
+          "education",
+          "education/teacher",
+          "education/principal",
+          "education/superintendent",
+          "education/professor",
+          "finance",
+          "finance/accounting",
+          "finance/finance",
+          "finance/financial-planning-analysis",
+          "finance/financial-reporting",
+          "finance/financial-strategy",
+          "finance/financial-systems",
+          "finance/internal-audit-control",
+          "finance/investor-relations",
+          "finance/mergers-acquisitions",
+          "finance/real-estate-finance",
+          "finance/financial-risk",
+          "finance/shared-services",
+          "finance/sourcing-procurement",
+          "finance/tax",
+          "finance/treasury",
+          "human-resources",
+          "human-resources/compensation-benefits",
+          "human-resources/culture-diversity-inclusion",
+          "human-resources/employee-labor-relations",
+          "human-resources/health-safety",
+          "human-resources/human-resource-information-system",
+          "human-resources/human-resources",
+          "human-resources/hr-business-partner",
+          "human-resources/learning-development",
+          "human-resources/organizational-development",
+          "human-resources/recruiting-talent-acquisition",
+          "human-resources/talent-management",
+          "human-resources/workforce-management",
+          "human-resources/people-operations",
+          "information-technology",
+          "information-technology/application-development",
+          "information-technology/business-service-management-itsm",
+          "information-technology/collaboration-web-app",
+          "information-technology/data-center",
+          "information-technology/data-warehouse",
+          "information-technology/database-administration",
+          "information-technology/ecommerce-development",
+          "information-technology/enterprise-architecture",
+          "information-technology/help-desk-desktop-services",
+          "information-technology/hr-financial-erp-systems",
+          "information-technology/information-security",
+          "information-technology/information-technology",
+          "information-technology/infrastructure",
+          "information-technology/it-asset-management",
+          "information-technology/it-audit-it-compliance",
+          "information-technology/it-operations",
+          "information-technology/it-procurement",
+          "information-technology/it-strategy",
+          "information-technology/it-training",
+          "information-technology/networking",
+          "information-technology/project-program-management",
+          "information-technology/quality-assurance",
+          "information-technology/retail-store-systems",
+          "information-technology/servers",
+          "information-technology/storage-disaster-recovery",
+          "information-technology/telecommunications",
+          "information-technology/virtualization",
+          "legal",
+          "legal/acquisitions",
+          "legal/compliance",
+          "legal/contracts",
+          "legal/corporate-secretary",
+          "legal/ediscovery",
+          "legal/ethics",
+          "legal/governance",
+          "legal/governmental-affairs-regulatory-law",
+          "legal/intellectual-property-patent",
+          "legal/labor-employment",
+          "legal/lawyer-attorney",
+          "legal/legal",
+          "legal/legal-counsel",
+          "legal/legal-operations",
+          "legal/litigation",
+          "legal/privacy",
+          "marketing",
+          "marketing/advertising",
+          "marketing/brand-management",
+          "marketing/content-marketing",
+          "marketing/customer-experience",
+          "marketing/customer-marketing",
+          "marketing/demand-generation",
+          "marketing/digital-marketing",
+          "marketing/ecommerce-marketing",
+          "marketing/event-marketing",
+          "marketing/field-marketing",
+          "marketing/lead-generation",
+          "marketing/marketing",
+          "marketing/marketing-analytics-insights",
+          "marketing/marketing-communications",
+          "marketing/marketing-operations",
+          "marketing/product-marketing",
+          "marketing/public-relations",
+          "marketing/search-engine-optimization-pay-per-click",
+          "marketing/social-media-marketing",
+          "marketing/strategic-communications",
+          "marketing/technical-marketing",
+          "medical-health",
+          "medical-health/anesthesiology",
+          "medical-health/chiropractics",
+          "medical-health/clinical-systems",
+          "medical-health/dentistry",
+          "medical-health/dermatology",
+          "medical-health/doctors-physicians",
+          "medical-health/epidemiology",
+          "medical-health/first-responder",
+          "medical-health/infectious-disease",
+          "medical-health/medical-administration",
+          "medical-health/medical-education-training",
+          "medical-health/medical-research",
+          "medical-health/medicine",
+          "medical-health/neurology",
+          "medical-health/nursing",
+          "medical-health/nutrition-dietetics",
+          "medical-health/obstetrics-gynecology",
+          "medical-health/oncology",
+          "medical-health/opthalmology",
+          "medical-health/optometry",
+          "medical-health/orthopedics",
+          "medical-health/pathology",
+          "medical-health/pediatrics",
+          "medical-health/pharmacy",
+          "medical-health/physical-therapy",
+          "medical-health/psychiatry",
+          "medical-health/psychology",
+          "medical-health/public-health",
+          "medical-health/radiology",
+          "medical-health/social-work",
+          "operations",
+          "operations/call-center",
+          "operations/construction",
+          "operations/corporate-strategy",
+          "operations/customer-service-support",
+          "operations/enterprise-resource-planning",
+          "operations/facilities-management",
+          "operations/leasing",
+          "operations/logistics",
+          "operations/office-operations",
+          "operations/operations",
+          "operations/physical-security",
+          "operations/project-development",
+          "operations/quality-management",
+          "operations/real-estate",
+          "operations/safety",
+          "operations/store-operations",
+          "operations/supply-chain",
+          "sales",
+          "sales/account-management",
+          "sales/business-development",
+          "sales/channel-sales",
+          "sales/customer-retention-development",
+          "sales/customer-success",
+          "sales/field-outside-sales",
+          "sales/inside-sales",
+          "sales/partnerships",
+          "sales/revenue-operations",
+          "sales/sales",
+          "sales/sales-enablement",
+          "sales/sales-engineering",
+          "sales/sales-operations",
+          "sales/sales-training",
+          "consulting",
+          "consulting/consultant"
+        ]
+      },
+      "PersonEducationFilterInput": {
+        "anyOf": [
+          {
+            "type": "object",
+            "properties": {
+              "institutionLinkedinHandles": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The LinkedIn handles of education institutions to filter by"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "institutionNameQuery": {
+                "anyOf": [
+                  {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    },
+                    "description": "The search queries to apply on education institution names"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              }
+            },
+            "description": "The education history filters to apply",
+            "additionalProperties": false
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "PersonLookupRequest": {
+        "required": ["email"],
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "description": "The email address of the person to look up"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}
