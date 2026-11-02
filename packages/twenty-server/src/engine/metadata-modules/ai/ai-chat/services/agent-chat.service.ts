@@ -23,7 +23,8 @@ import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/a
 import { AgentChatThreadRecordEventService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-record-event.service';
 import { filterPartsOfTurnActedByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/filter-parts-of-turn-acted-by-others.util';
 import { resolveMessageSenderApplicationId } from 'src/engine/metadata-modules/ai/ai-chat/utils/resolve-message-sender-application-id.util';
-import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
+import { AgentChatParticipationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-participation.service';
+import { type AgentChatAssistantParticipationArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-participation-args.type';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
@@ -52,7 +53,7 @@ export class AgentChatService {
     private readonly threadRecordEventService: AgentChatThreadRecordEventService,
     private readonly conversationWriterService: AgentConversationWriterService,
     private readonly threadService: AgentChatThreadService,
-    private readonly participantService: AgentChatThreadParticipantService,
+    private readonly participationService: AgentChatParticipationService,
   ) {}
 
   private getMessageSenderValues({
@@ -139,21 +140,19 @@ export class AgentChatService {
 
   async addMessageAndResolveMention({
     workspaceMemberId,
+    participation,
     ...message
-  }: AddMessageArgs & { workspaceMemberId: string }) {
-    return this.conversationWriterService.runInTransaction(
-      message.workspaceId,
-      async (scope) => {
-        await this.participantService.resolveMentionInTransaction({
-          workspaceId: message.workspaceId,
-          workspaceMemberId,
-          threadId: message.threadId,
-          scope,
-        });
-
-        return this.addMessage({ ...message, scope });
-      },
-    );
+  }: AddMessageArgs & {
+    workspaceMemberId: string;
+    participation?: AgentChatAssistantParticipationArgs;
+  }) {
+    return this.participationService.persistMessage({
+      workspaceId: message.workspaceId,
+      threadId: message.threadId,
+      workspaceMemberId,
+      participation,
+      persistMessage: (scope) => this.addMessage({ ...message, scope }),
+    });
   }
 
   // the contexts are the thread owner's, so the turns of other participants run without them

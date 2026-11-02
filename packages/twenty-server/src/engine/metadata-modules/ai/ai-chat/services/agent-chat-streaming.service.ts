@@ -52,6 +52,9 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentTurnRecorderService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-turn-recorder.service';
 
+import { type AgentChatAssistantParticipationArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-participation-args.type';
+import { type AgentChatMessageParticipationResult } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-message-participation-result.type';
+
 type MemberMessageOptions = {
   thread: AgentChatThreadWorkspaceEntity;
   userWorkspaceId: string;
@@ -60,6 +63,7 @@ type MemberMessageOptions = {
   text: string;
   messageId?: string;
   fileAttachments?: AiChatFileAttachment[];
+  participation?: AgentChatAssistantParticipationArgs;
 };
 
 type StreamAgentChatOptions = MemberMessageOptions & {
@@ -93,11 +97,17 @@ export class AgentChatStreamingService {
   ) {}
 
   // a message sent while a reply or a run streams in the conversation waits in its queue
-  async streamAgentChat(
-    options: StreamAgentChatOptions,
-  ): Promise<
-    | { queued: false; streamId: string; messageId: string; turnId: string }
-    | { queued: true; messageId: string }
+  async streamAgentChat(options: StreamAgentChatOptions): Promise<
+    | ({
+        queued: false;
+        streamId: string;
+        messageId: string;
+        turnId: string;
+      } & AgentChatMessageParticipationResult)
+    | ({
+        queued: true;
+        messageId: string;
+      } & AgentChatMessageParticipationResult)
   > {
     const {
       thread,
@@ -155,6 +165,10 @@ export class AgentChatStreamingService {
 
               return {
                 queued: false as const,
+                mentionedParticipantWorkspaceMemberIds:
+                  savedUserMessage.mentionedParticipantWorkspaceMemberIds,
+                recipientParticipantWorkspaceMemberIds:
+                  savedUserMessage.recipientParticipantWorkspaceMemberIds,
                 streamId,
                 messageId: savedUserMessage.id,
                 turnId: savedUserMessage.turnId,
@@ -174,6 +188,7 @@ export class AgentChatStreamingService {
       workspaceId,
       userWorkspaceId,
       workspaceMemberId,
+      participation: options.participation,
     });
 
     if (isDefined(suspendedRun)) {
@@ -188,19 +203,32 @@ export class AgentChatStreamingService {
       await this.flushNextQueuedMessage({ threadId, workspaceId });
     }
 
-    return { queued: true, messageId: queuedMessage.id };
+    return {
+      queued: true,
+      messageId: queuedMessage.id,
+      mentionedParticipantWorkspaceMemberIds:
+        queuedMessage.mentionedParticipantWorkspaceMemberIds,
+      recipientParticipantWorkspaceMemberIds:
+        queuedMessage.recipientParticipantWorkspaceMemberIds,
+    };
   }
 
   async saveMessageWithoutReply(
     options: MemberMessageOptions,
-  ): Promise<{ messageId: string }> {
+  ): Promise<{ messageId: string } & AgentChatMessageParticipationResult> {
     const savedMessage = await this.addMemberMessage({
       ...options,
       turnStatus: AgentTurnStatus.COMPLETED,
       eventType: 'message-added',
     });
 
-    return { messageId: savedMessage.id };
+    return {
+      messageId: savedMessage.id,
+      mentionedParticipantWorkspaceMemberIds:
+        savedMessage.mentionedParticipantWorkspaceMemberIds,
+      recipientParticipantWorkspaceMemberIds:
+        savedMessage.recipientParticipantWorkspaceMemberIds,
+    };
   }
 
   // the agent speaks first, from a context in place of a user message
@@ -500,6 +528,7 @@ export class AgentChatStreamingService {
     fileAttachments,
     turnStatus,
     eventType,
+    participation,
   }: MemberMessageOptions & {
     turnStatus?: AgentTurnStatus;
     eventType: 'message-added' | 'message-persisted';
@@ -524,6 +553,7 @@ export class AgentChatStreamingService {
         },
         turnStatus,
         workspaceId,
+        participation,
       });
 
     await this.eventPublisherService.publish({

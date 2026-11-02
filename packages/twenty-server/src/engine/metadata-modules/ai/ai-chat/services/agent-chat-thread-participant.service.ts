@@ -301,10 +301,12 @@ export class AgentChatThreadParticipantService {
   async moveMembersToInbox({
     participantWorkspaceMemberIds,
     isMention,
+    transactionScope,
     ...args
   }: AgentChatThreadAccessArgs & {
     participantWorkspaceMemberIds: string[];
     isMention: boolean;
+    transactionScope?: WorkspaceTransactionScope;
   }): Promise<void> {
     const memberIds = [...new Set(participantWorkspaceMemberIds)].filter(
       (memberId) => memberId !== args.workspaceMemberId,
@@ -314,7 +316,11 @@ export class AgentChatThreadParticipantService {
       return;
     }
 
-    await this.assertCanMoveMembersToInbox({ ...args, memberIds });
+    await this.assertCanMoveMembersToInbox({
+      ...args,
+      memberIds,
+      transactionScope,
+    });
 
     const { workspaceId, threadId } = args;
 
@@ -330,6 +336,24 @@ export class AgentChatThreadParticipantService {
         flatObjectMetadataMaps,
         'agentChatThreadParticipant',
       ) ?? throwAgentChatThreadNotFound();
+
+    if (isDefined(transactionScope)) {
+      const writes = await this.writeMembersToInbox({
+        scope: transactionScope,
+        workspaceId,
+        threadId,
+        memberIds,
+        isMention,
+        participantObjectMetadata,
+      });
+
+      transactionScope.afterCommit(() =>
+        this.emitParticipantWrites({ workspaceId, writes }),
+      );
+
+      return;
+    }
+
     const writes = await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.workspaceOrmManager.runInWorkspaceTransaction((scope) =>
@@ -588,26 +612,33 @@ export class AgentChatThreadParticipantService {
     workspaceId,
     threadId,
     additionalWorkspaceMemberIds,
+    transactionScope,
   }: {
     workspaceId: string;
     threadId: string;
     additionalWorkspaceMemberIds: string[];
+    transactionScope?: WorkspaceTransactionScope;
   }): Promise<number> {
-    const [{ memberCount }] = await this.threadRepository.query(
-      workspaceId,
-      ({ manager }) =>
-        manager.query<{ memberCount: number }[]>(
-          `SELECT COUNT(DISTINCT member)::int AS "memberCount" FROM (
+    const countMembersQuery = `SELECT COUNT(DISTINCT member)::int AS "memberCount" FROM (
              SELECT "workspaceMemberId" AS member
              FROM ${getAgentChatThreadParticipantTable(workspaceId)}
              WHERE "threadId" = $1
              UNION SELECT unnest($2::uuid[])
-           ) members`,
-          [threadId, additionalWorkspaceMemberIds],
-        ),
-    );
+           ) members`;
+    const countMembersParameters = [threadId, additionalWorkspaceMemberIds];
+    const [{ memberCount }] = isDefined(transactionScope)
+      ? await transactionScope.executeRawQuery(
+          countMembersQuery,
+          countMembersParameters,
+        )
+      : await this.threadRepository.query(workspaceId, ({ manager }) =>
+          manager.query<{ memberCount: number }[]>(
+            countMembersQuery,
+            countMembersParameters,
+          ),
+        );
 
-    return memberCount;
+    return memberCount as number;
   }
 
   // Over the chats the member can open and follows, the way the inbox lists
@@ -760,11 +791,16 @@ export class AgentChatThreadParticipantService {
 
   private async assertCanMoveMembersToInbox({
     memberIds,
+    transactionScope,
     ...args
-  }: AgentChatThreadAccessArgs & { memberIds: string[] }): Promise<void> {
+  }: AgentChatThreadAccessArgs & {
+    memberIds: string[];
+    transactionScope?: WorkspaceTransactionScope;
+  }): Promise<void> {
     await this.sharingService.getThreadWithAccess({
       ...args,
       operationType: 'update',
+      transactionScope,
     });
 
     const eligibleMemberIds =
@@ -772,6 +808,7 @@ export class AgentChatThreadParticipantService {
         ...args,
         memberIds,
         shouldConsiderNewShares: false,
+        transactionScope,
       });
 
     if (eligibleMemberIds.length !== memberIds.length) {

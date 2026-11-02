@@ -1,5 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
 import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -9,10 +12,15 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 export class AgentHistoryTransactionService {
   constructor(private readonly workspaceOrmManager: WorkspaceOrmManager) {}
 
-  async run<TResult>(
-    workspaceId: string,
-    work: (scope: AgentHistoryTransactionScope) => Promise<TResult>,
-  ): Promise<TResult> {
+  async run<TResult>({
+    workspaceId,
+    authContext,
+    work,
+  }: {
+    workspaceId: string;
+    authContext?: WorkspaceAuthContext;
+    work: (scope: AgentHistoryTransactionScope) => Promise<TResult>;
+  }): Promise<TResult> {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.workspaceOrmManager.runInWorkspaceTransaction(
@@ -25,7 +33,7 @@ export class AgentHistoryTransactionService {
               );
 
             return work({
-              executeRawQuery: transactionScope.executeRawQuery,
+              ...transactionScope,
               insert: async (name, values) => {
                 await getRepository(name).insert(values);
               },
@@ -54,8 +62,8 @@ export class AgentHistoryTransactionService {
             });
           },
         ),
-      buildSystemAuthContext(workspaceId),
-      { lite: true },
+      authContext ?? buildSystemAuthContext(workspaceId),
+      { lite: !isDefined(authContext) },
     );
   }
 }

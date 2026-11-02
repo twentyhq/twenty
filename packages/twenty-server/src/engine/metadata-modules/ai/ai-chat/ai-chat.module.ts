@@ -11,7 +11,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
-import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -63,7 +62,6 @@ import { AgentInboxAccessService } from 'src/engine/metadata-modules/ai/ai-chat/
     TypeOrmModule.forFeature([FileEntity, WorkspaceEntity]),
     AiAgentExecutionModule,
     BillingModule,
-    CacheLockModule,
     FeatureFlagModule,
     FileModule,
     PermissionsModule,

@@ -7,6 +7,7 @@ import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
 
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ui-message-parts-to-db-parts.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
@@ -31,11 +32,16 @@ export class AgentConversationWriterService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  runInTransaction<TResult>(
-    workspaceId: string,
-    work: (scope: AgentHistoryTransactionScope) => Promise<TResult>,
-  ): Promise<TResult> {
-    return this.transactionService.run(workspaceId, work);
+  runInTransaction<TResult>({
+    workspaceId,
+    authContext,
+    work,
+  }: {
+    workspaceId: string;
+    authContext?: WorkspaceAuthContext;
+    work: (scope: AgentHistoryTransactionScope) => Promise<TResult>;
+  }): Promise<TResult> {
+    return this.transactionService.run({ workspaceId, authContext, work });
   }
 
   // the message is replaced whole, so no reader or crash ever finds it without its parts
@@ -54,23 +60,26 @@ export class AgentConversationWriterService {
   }): Promise<void> {
     const dbParts = mapUIMessagePartsToDBParts(parts, id);
 
-    await this.transactionService.run(workspaceId, async (scope) => {
-      await scope.upsert(
-        'agentMessage',
-        {
-          id,
-          threadId,
-          turnId,
-          role: AgentMessageRole.ASSISTANT,
-          processedAt: new Date().toISOString(),
-        },
-        ['id'],
-      );
-      await scope.delete('agentMessagePart', { messageId: id });
+    await this.transactionService.run({
+      workspaceId,
+      work: async (scope) => {
+        await scope.upsert(
+          'agentMessage',
+          {
+            id,
+            threadId,
+            turnId,
+            role: AgentMessageRole.ASSISTANT,
+            processedAt: new Date().toISOString(),
+          },
+          ['id'],
+        );
+        await scope.delete('agentMessagePart', { messageId: id });
 
-      if (dbParts.length > 0) {
-        await scope.insert('agentMessagePart', dbParts);
-      }
+        if (dbParts.length > 0) {
+          await scope.insert('agentMessagePart', dbParts);
+        }
+      },
     });
   }
 
@@ -132,29 +141,32 @@ export class AgentConversationWriterService {
     contextMessageId?: string;
     context: string;
   }): Promise<string> {
-    return this.transactionService.run(workspaceId, async (scope) => {
-      const insertedTurnId = await this.insertTurn({
-        workspaceId,
-        threadId,
-        id: turnId,
-        agentId: null,
-        status: AgentTurnStatus.RUNNING,
-        scope,
-      });
+    return this.transactionService.run({
+      workspaceId,
+      work: async (scope) => {
+        const insertedTurnId = await this.insertTurn({
+          workspaceId,
+          threadId,
+          id: turnId,
+          agentId: null,
+          status: AgentTurnStatus.RUNNING,
+          scope,
+        });
 
-      await this.insertMessage({
-        workspaceId,
-        id: contextMessageId,
-        threadId,
-        turnId: insertedTurnId,
-        role: AgentMessageRole.SYSTEM,
-        agentId: null,
-        senderUserWorkspaceId: null,
-        parts: [{ type: 'text', text: context }],
-        scope,
-      });
+        await this.insertMessage({
+          workspaceId,
+          id: contextMessageId,
+          threadId,
+          turnId: insertedTurnId,
+          role: AgentMessageRole.SYSTEM,
+          agentId: null,
+          senderUserWorkspaceId: null,
+          parts: [{ type: 'text', text: context }],
+          scope,
+        });
 
-      return insertedTurnId;
+        return insertedTurnId;
+      },
     });
   }
 
@@ -242,7 +254,7 @@ export class AgentConversationWriterService {
     if (isDefined(scope)) {
       await write(scope);
     } else {
-      await this.transactionService.run(workspaceId, write);
+      await this.transactionService.run({ workspaceId, work: write });
     }
 
     return messageId;

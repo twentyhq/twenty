@@ -59,12 +59,12 @@ export class AgentRunConversationService {
         return false;
       }
     } else {
-      await this.conversationWriterService.runInTransaction(
+      await this.conversationWriterService.runInTransaction({
         workspaceId,
         // two runs starting one keyed conversation can both find it missing
-        (scope) =>
+        work: (scope) =>
           scope.upsert('agentChatThread', { id: threadId, title }, ['id']),
-      );
+      });
     }
 
     return this.streamRecoveryService.tryClaimStream({
@@ -97,9 +97,9 @@ export class AgentRunConversationService {
     promptMessageIds: string[];
     hasTakenQueuedMessages: boolean;
   }> {
-    return this.conversationWriterService.runInTransaction(
+    return this.conversationWriterService.runInTransaction({
       workspaceId,
-      async (scope) => {
+      work: async (scope) => {
         const turnId = await this.conversationWriterService.insertTurn({
           workspaceId,
           threadId,
@@ -151,7 +151,7 @@ export class AgentRunConversationService {
           hasTakenQueuedMessages: takenMessageCount > 0,
         };
       },
-    );
+    });
   }
 
   private buildMessageParts(message: RunAgentMessage): ExtendedUIMessagePart[] {

@@ -11,6 +11,7 @@ import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
+import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type AssistantPolicyThread = Pick<
@@ -46,11 +47,13 @@ export class AgentChatAssistantPolicyService {
     thread,
     candidateWorkspaceMemberIds = [],
     workspace,
+    transactionScope,
   }: {
     workspaceId: string;
     thread: AssistantPolicyThread;
     candidateWorkspaceMemberIds?: string[];
     workspace?: AssistantPolicyWorkspace;
+    transactionScope?: WorkspaceTransactionScope;
   }): Promise<{
     mode: AiChatAssistantMode;
     isDirectAssistantChat: boolean;
@@ -97,10 +100,12 @@ export class AgentChatAssistantPolicyService {
         workspaceId,
         objectMetadataId: threadObjectMetadata.id,
         recordIds: [thread.id],
+        transactionScope,
       }),
       this.participantService.countMembers({
         workspaceId,
         threadId: thread.id,
+        transactionScope,
         additionalWorkspaceMemberIds: [
           thread.workspaceMemberId,
           ...(thread.writerWorkspaceMemberIds ?? []),
