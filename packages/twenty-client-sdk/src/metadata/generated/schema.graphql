@@ -4045,6 +4045,7 @@ type PublicApplicationRegistration {
   name: String!
   oAuthScopes: [String!]!
   websiteUrl: String
+  wellKnownOAuthClient: WellKnownOAuthClient
 }
 
 type PublicConnectionParametersOutput {

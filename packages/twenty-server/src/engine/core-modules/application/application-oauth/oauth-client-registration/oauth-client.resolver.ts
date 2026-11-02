@@ -12,6 +12,7 @@ import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { PublicApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/public-application-registration.dto';
+import { getWellKnownOAuthClientOfRegistration } from 'src/engine/core-modules/application/well-known-oauth-client/utils/get-well-known-oauth-client-of-registration.util';
 import { ThrottlerGraphqlApiExceptionFilter } from 'src/engine/core-modules/throttler/filters/throttler-graphql-api-exception.filter';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
@@ -56,6 +57,8 @@ export class OAuthClientResolver {
           ),
         websiteUrl: registration.websiteUrl,
         oAuthScopes: registration.oAuthScopes,
+        wellKnownOAuthClient:
+          getWellKnownOAuthClientOfRegistration(registration),
       };
     }
 
@@ -73,6 +76,7 @@ export class OAuthClientResolver {
       logoUrl: logo,
       websiteUrl: null,
       oAuthScopes: [...ALL_OAUTH_SCOPES],
+      wellKnownOAuthClient: null,
     };
   }
 }

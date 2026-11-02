@@ -8,6 +8,7 @@ export const FIND_APPLICATION_REGISTRATION_BY_CLIENT_ID = gql`
       name
       oAuthScopes
       websiteUrl
+      wellKnownOAuthClient
     }
   }
 `;

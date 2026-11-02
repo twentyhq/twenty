@@ -2957,6 +2957,7 @@ export interface PublicApplicationRegistration {
     name: Scalars['String']
     oAuthScopes: Scalars['String'][]
     websiteUrl?: Scalars['String']
+    wellKnownOAuthClient?: WellKnownOAuthClient
     __typename: 'PublicApplicationRegistration'
 }
 
@@ -7577,6 +7578,7 @@ export interface PublicApplicationRegistrationGenqlSelection{
     name?: boolean | number
     oAuthScopes?: boolean | number
     websiteUrl?: boolean | number
+    wellKnownOAuthClient?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
