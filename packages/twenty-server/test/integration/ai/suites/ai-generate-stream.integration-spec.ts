@@ -13,7 +13,7 @@ import {
 } from 'test/integration/metadata/suites/application/utils/setup-application-with-resources.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
-import { type AgentChatSubscriptionEvent } from 'twenty-shared/ai';
+import { isAgentChatTurnEndEvent } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -44,11 +44,6 @@ const waitForOrThrow = async (isDone: () => boolean, timeoutMs = 10_000) => {
     await new Promise((resolve) => setTimeout(resolve, 20));
   }
 };
-
-const isRunEnd = ({ type }: Pick<AgentChatSubscriptionEvent, 'type'>) =>
-  type === 'run-finished' ||
-  type === 'credits-exhausted' ||
-  type === 'stream-error';
 
 describe('ai.generate runs followed by their application (integration)', () => {
   let application: ApplicationWithResources;
@@ -115,7 +110,9 @@ describe('ai.generate runs followed by their application (integration)', () => {
         runId,
       });
 
-      await waitForOrThrow(() => ownStream.events.some(isRunEnd));
+      await waitForOrThrow(() =>
+        ownStream.events.some(isAgentChatTurnEndEvent),
+      );
 
       const chunks = ownStream.events.flatMap((event) =>
         event.type === 'stream-chunk' ? [event.chunk] : [],
@@ -128,7 +125,7 @@ describe('ai.generate runs followed by their application (integration)', () => {
           .map(({ delta }) => delta)
           .join(''),
       ).toBe('Acme looks like a fit');
-      expect(ownStream.events.find(isRunEnd)).toMatchObject({
+      expect(ownStream.events.find(isAgentChatTurnEndEvent)).toMatchObject({
         type: 'run-finished',
       });
 
@@ -181,7 +178,7 @@ describe('ai.generate runs followed by their application (integration)', () => {
         runId,
       });
 
-      await waitForOrThrow(() => stream.events.some(isRunEnd));
+      await waitForOrThrow(() => stream.events.some(isAgentChatTurnEndEvent));
     } finally {
       await stream.close();
     }

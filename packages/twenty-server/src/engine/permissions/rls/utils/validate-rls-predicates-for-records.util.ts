@@ -6,7 +6,7 @@ import { type ObjectLiteral } from 'typeorm';
 
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/combine/types/row-access-policy.type';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import {
   TwentyOrmException,
   TwentyOrmExceptionCode,
@@ -17,7 +17,7 @@ import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rl
 type ValidateRLSPredicatesForRecordsArgs<T extends ObjectLiteral> = {
   records: T[];
   objectMetadata: FlatObjectMetadata;
-  principal: PermissionsPrincipal;
+  principal: PermissionsPrincipalsWithRolesContext;
   metadataMaps: PermissionsMetadataMaps;
 };
 

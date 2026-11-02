@@ -1,6 +1,5 @@
 import { type AgentResponseFormat } from 'twenty-shared/ai';
 
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AgentRunTurnService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-turn.service';
 import { type ResolvedAgentRunPersona } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/resolved-agent-run-persona.type';
 
@@ -36,7 +35,11 @@ const startTurn = async (persona: ResolvedAgentRunPersona) => {
     {
       assertAiExecutionAllowed: jest.fn().mockResolvedValue(undefined),
     } as never,
-    {} as never,
+    {
+      resolveRolePermissionConfig: jest
+        .fn()
+        .mockResolvedValue({ intersectionOf: {} }),
+    } as never,
     {} as never,
     { findOneBy: jest.fn().mockResolvedValue(null) } as never,
   );
@@ -51,8 +54,6 @@ const startTurn = async (persona: ResolvedAgentRunPersona) => {
       authContext: {} as never,
       turnCreatedBy: {} as never,
       userWorkspaceId: null,
-      rolePermissionConfig: { intersectionOf: {} },
-      usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
     },
     structuredOutputStrategy: 'same-request',
   });

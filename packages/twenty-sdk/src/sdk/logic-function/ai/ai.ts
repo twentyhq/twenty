@@ -1,8 +1,12 @@
 import { isString } from '@sniptt/guards';
-import { type AgentChatSubscriptionEvent } from 'twenty-shared/ai';
 import {
-  type GenerateInput,
+  type AgentResponseFormat,
+  type AiRunScope,
+  isAgentChatTurnEndEvent,
+} from 'twenty-shared/ai';
+import {
   type GenerateResult,
+  type RunAgentMessage,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -26,6 +30,22 @@ const GENERATE_MUTATION = `
   }
 `;
 
+// an AI SDK UIMessageChunk, typed without the ai package
+export type GenerateChunk = { type: string } & Record<string, unknown>;
+
+export type GenerateInput = {
+  // a string is sent as one user message
+  input: string | RunAgentMessage[];
+  instructions?: string | null;
+  // the workspace default model when unset
+  modelId?: string | null;
+  responseFormat?: AgentResponseFormat | null;
+  // no data tools when unset
+  scope?: AiRunScope | null;
+  onChunk?: (chunk: GenerateChunk) => void | Promise<void>;
+  signal?: AbortSignal;
+};
+
 const ON_AGENT_RUN_EVENT_SUBSCRIPTION = `
   subscription OnAgentRunEvent($runId: UUID!) {
     onAgentChatEvent(runId: $runId) {
@@ -38,7 +58,8 @@ const END_EVENT_GRACE_MS = 5_000;
 
 type GenerateVariables = {
   input: Omit<GenerateInput, 'input' | 'onChunk' | 'signal'> & {
-    input: ReturnType<typeof toRunAgentMessages>;
+    input: RunAgentMessage[];
+    runId?: string;
   };
 };
 
@@ -63,17 +84,10 @@ const requestGenerate = async ({
   return result;
 };
 
-type UIMessageChunk = Parameters<NonNullable<GenerateInput['onChunk']>>[0];
-
 // the run channel carries the AI SDK's own chunks, so one that names its type is taken as one
-const isUIMessageChunk = (
+const isGenerateChunk = (
   chunk: Record<string, unknown>,
-): chunk is UIMessageChunk => isString(chunk.type);
-
-const isRunEnd = ({ type }: Pick<AgentChatSubscriptionEvent, 'type'>) =>
-  type === 'run-finished' ||
-  type === 'credits-exhausted' ||
-  type === 'stream-error';
+): chunk is GenerateChunk => isString(chunk.type);
 
 // Starts the run once its channel is live (the first keepalive). The channel is read no faster than onChunk
 // takes its chunks, and the grace after the result only counts time spent waiting for the next event
@@ -86,7 +100,7 @@ const generateWithChunks = async ({
   onChunk: NonNullable<GenerateInput['onChunk']>;
   signal: AbortSignal | undefined;
 }): Promise<GenerateResult> => {
-  const runId = variables.input.runId ?? crypto.randomUUID();
+  const runId = crypto.randomUUID();
   const stopFollowing = new AbortController();
   const runSignal = isDefined(signal)
     ? AbortSignal.any([signal, stopFollowing.signal])
@@ -135,7 +149,7 @@ const generateWithChunks = async ({
           return;
         }
 
-        if (event.type === 'stream-chunk' && isUIMessageChunk(event.chunk)) {
+        if (event.type === 'stream-chunk' && isGenerateChunk(event.chunk)) {
           isDelivering = true;
 
           try {
@@ -149,7 +163,7 @@ const generateWithChunks = async ({
           }
         }
 
-        if (isRunEnd(event)) {
+        if (isAgentChatTurnEndEvent(event)) {
           return;
         }
 

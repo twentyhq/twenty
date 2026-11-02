@@ -67,6 +67,22 @@ export class ValidationRuleResolver {
     });
   }
 
+  @Query(() => [ValidationRuleDTO])
+  @UseGuards(
+    FeatureFlagGuard(FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED),
+    NoPermissionGuard,
+  )
+  async validationRulesReadingField(
+    @Args('fieldMetadataId', { type: () => UUIDScalarType })
+    fieldMetadataId: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<ValidationRuleDTO[]> {
+    return await this.validationRuleService.findActiveReadingField({
+      fieldMetadataId,
+      workspaceId: workspace.id,
+    });
+  }
+
   @Mutation(() => ValidationRuleDTO)
   @UseGuards(
     FeatureFlagGuard(FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED),

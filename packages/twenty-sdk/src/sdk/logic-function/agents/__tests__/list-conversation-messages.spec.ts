@@ -11,7 +11,9 @@ import {
 import { listConversationMessages } from '@/sdk/logic-function/agents/list-conversation-messages';
 import { type AgentConversationHistory } from '@/sdk/logic-function/agents/types/agent-conversation.type';
 
-const HISTORY: AgentConversationHistory = {
+const STREAM_CATCHUP = { chunks: [], maxSeq: 0, error: null };
+
+const RESPONSE = {
   messages: [
     {
       id: 'message-id',
@@ -22,11 +24,31 @@ const HISTORY: AgentConversationHistory = {
       status: 'sent',
       createdAt: '2026-10-31T10:00:00.000Z',
       processedAt: '2026-10-31T10:00:02.000Z',
-      parts: [],
-      reactions: [],
+      parts: [
+        { orderIndex: 1, type: 'text', textContent: 'Acme is a fit.' },
+        { orderIndex: 0, type: 'step-start' },
+      ],
     },
   ],
-  streamCatchup: { chunks: [], maxSeq: 0, error: null },
+  streamCatchup: STREAM_CATCHUP,
+};
+
+const HISTORY: AgentConversationHistory = {
+  messages: [
+    {
+      id: 'message-id',
+      role: 'assistant',
+      parts: [{ type: 'step-start' }, { type: 'text', text: 'Acme is a fit.' }],
+      metadata: {
+        createdAt: '2026-10-31T10:00:00.000Z',
+        senderWorkspaceMemberId: null,
+        turnId: 'run-id',
+        startedAt: '2026-10-31T10:00:00.000Z',
+        finishedAt: '2026-10-31T10:00:02.000Z',
+      },
+    },
+  ],
+  streamCatchup: STREAM_CATCHUP,
 };
 
 describe('listConversationMessages', () => {
@@ -37,7 +59,7 @@ describe('listConversationMessages', () => {
     vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', 'app-token');
     fetchSpy = vi.spyOn(globalThis, 'fetch');
     fetchSpy.mockResolvedValue(
-      new Response(JSON.stringify({ data: HISTORY }), { status: 200 }),
+      new Response(JSON.stringify({ data: RESPONSE }), { status: 200 }),
     );
   });
 
@@ -46,13 +68,13 @@ describe('listConversationMessages', () => {
     fetchSpy.mockRestore();
   });
 
-  it('reads the chat history and stream catch-up of a conversation by agent and thread key', async () => {
+  it('reads the history of a conversation by agent and thread key as UI messages', async () => {
     const conversation = {
       agentUniversalIdentifier: 'agent-uid',
       threadKey: 'C123:1700000000.000100',
     };
 
-    expect(await listConversationMessages(conversation)).toEqual(HISTORY);
+    expect(await listConversationMessages(conversation)).toMatchObject(HISTORY);
 
     const [url, requestInit] = fetchSpy.mock.calls[0];
     const sentBody = JSON.parse(String(requestInit?.body));

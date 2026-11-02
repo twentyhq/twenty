@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import {
-  generateInputSchema,
+  generateJsonFieldsSchema,
   type GenerateResult,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
@@ -11,11 +11,13 @@ import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AgentRunCallerContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-caller-context.service';
+import { type GenerateInputDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/generate.input';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { buildAgentRunStreamChannelId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-stream-channel-id.util';
 import { assertAgentResponseFormatHasOutputFieldsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util';
 import { parseAgentInputOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/parse-agent-input-or-throw.util';
 import { readGeneratedOutputOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/read-generated-output-or-throw.util';
+import { resolveRunAgentMessagesOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-run-agent-messages-or-throw.util';
 import { resolveAgentRunCallerRefOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-agent-run-caller-ref-or-throw.util';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -55,14 +57,15 @@ export class AiGenerateService {
     requestWorkspaceMemberId: string | null;
     callerApplication?: FlatApplication;
     callerApiKey?: FlatApiKey;
-    input: unknown;
+    input: GenerateInputDTO;
   }): Promise<GenerateResult> {
-    const { input: messages, ...settings } = parseAgentInputOrThrow({
-      schema: generateInputSchema,
-      input,
+    const messages = resolveRunAgentMessagesOrThrow({ input: input.input });
+    const jsonFields = parseAgentInputOrThrow({
+      schema: generateJsonFieldsSchema,
+      input: { responseFormat: input.responseFormat, scope: input.scope },
     });
-    const responseFormat = settings.responseFormat ?? undefined;
-    const requestedRunId = settings.runId ?? undefined;
+    const responseFormat = jsonFields.responseFormat ?? undefined;
+    const requestedRunId = input.runId ?? undefined;
 
     assertAgentResponseFormatHasOutputFieldsOrThrow(responseFormat);
 
@@ -108,10 +111,10 @@ export class AiGenerateService {
         spec: {
           agentId: null,
           inlineConfig: {
-            instructions: settings.instructions ?? '',
-            modelId: settings.modelId ?? AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
+            instructions: input.instructions ?? '',
+            modelId: input.modelId ?? AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID,
             modelConfiguration: null,
-            scope: settings.scope ?? null,
+            scope: jsonFields.scope ?? null,
             // a call without an application belongs to the workspace custom application
             applicationId:
               callerApplication?.id ?? workspace.workspaceCustomApplicationId,

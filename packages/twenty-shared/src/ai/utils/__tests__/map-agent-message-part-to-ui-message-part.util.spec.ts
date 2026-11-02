@@ -1,8 +1,6 @@
-import { type AgentMessagePart } from '~/generated-metadata/graphql';
+import { mapAgentMessagePartToUIMessagePart } from '@/ai/utils/map-agent-message-part-to-ui-message-part.util';
 
-import { mapDBPartToUIMessagePart } from '@/ai/utils/mapDBPartToUIMessagePart';
-
-describe('mapDBPartToUIMessagePart', () => {
+describe('mapAgentMessagePartToUIMessagePart', () => {
   it('preserves OpenAI encrypted reasoning metadata', () => {
     const providerMetadata = {
       openai: {
@@ -12,12 +10,13 @@ describe('mapDBPartToUIMessagePart', () => {
     };
 
     expect(
-      mapDBPartToUIMessagePart({
+      mapAgentMessagePartToUIMessagePart({
         type: 'reasoning',
         reasoningContent: 'reasoning summary',
+        orderIndex: 0,
         state: 'done',
         providerMetadata,
-      } as AgentMessagePart),
+      }),
     ).toEqual({
       type: 'reasoning',
       text: 'reasoning summary',
@@ -28,11 +27,12 @@ describe('mapDBPartToUIMessagePart', () => {
 
   it('maps reasoning stored without content to empty text', () => {
     expect(
-      mapDBPartToUIMessagePart({
+      mapAgentMessagePartToUIMessagePart({
         type: 'reasoning',
         reasoningContent: null,
+        orderIndex: 0,
         state: 'done',
-      } as AgentMessagePart),
+      }),
     ).toMatchObject({ type: 'reasoning', text: '' });
   });
 });

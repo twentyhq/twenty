@@ -11,18 +11,20 @@ import { type RolePermissionConfig } from 'src/engine/permissions/principal/type
 import { computeObjectsPermissionsForRoles } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-roles.util';
 import { restrictObjectsPermissionsToScope } from 'src/engine/permissions/role/utils/restrict-objects-permissions-to-scope.util';
 import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principal/types/application-default-role-maps.type';
-import { getRoleIdsToIntersect } from 'src/engine/permissions/principal/utils/get-role-ids-to-intersect.util';
-import { resolvePermissionsPrincipalActingApplicationId } from 'src/engine/permissions/principal/utils/resolve-permissions-principal-acting-application-id.util';
+import { buildPermissionsPrincipalRoles } from 'src/engine/permissions/principal/utils/build-permissions-principal-roles.util';
+import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 
 export const getObjectsPermissionsFromRolePermissionConfig = ({
   rolesPermissions,
   rolePermissionConfig,
+  principals,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   flatApplicationMaps,
 }: {
   rolesPermissions: ObjectsPermissionsByRoleId;
   rolePermissionConfig: RolePermissionConfig;
+  principals: PermissionsPrincipalsContext | undefined;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatApplicationMaps: ApplicationDefaultRoleMaps;
@@ -32,13 +34,17 @@ export const getObjectsPermissionsFromRolePermissionConfig = ({
   }
 
   const { intersectionOf, scope } = rolePermissionConfig;
+  const principalRoles = buildPermissionsPrincipalRoles({
+    roleIdsBySource: intersectionOf,
+    principalsContext: principals,
+  });
+
+  if (!isDefined(principalRoles)) {
+    return {};
+  }
 
   const rolesObjectsPermissions = computeObjectsPermissionsForRoles({
-    roleIds: getRoleIdsToIntersect(intersectionOf) ?? [],
-    applicationId: resolvePermissionsPrincipalActingApplicationId({
-      intersectionOf,
-      flatApplicationMaps,
-    }),
+    principal: principalRoles,
     rolesPermissions,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,

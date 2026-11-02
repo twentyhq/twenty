@@ -122,43 +122,23 @@ describe('streamConversation', () => {
     );
   });
 
-  it.each([
-    { type: 'stream-chunk' },
-    { type: 'stream-chunk', chunk: { type: 'text-delta' }, seq: null },
-    { type: 'stream-chunk', chunk: [] },
-    {
-      type: 'message-reactions-updated',
-      messageId: 'message-id',
-      reactions: [{ emoji: '👍' }],
-      revision: 1,
-    },
-  ])(
-    'fails on a chat event that lacks the fields of its type: %j',
-    async (event) => {
-      fetchSpy.mockResolvedValue(
-        mockServerSentEvents([
-          `event: next\ndata: ${JSON.stringify({ data: { onAgentChatEvent: { event } } })}\n\n`,
-        ]),
-      );
+  it('passes on what a newer server sends, checking only the event type', async () => {
+    const events = [
+      { type: 'thread-renamed' },
+      { type: 'keepalive', addedField: 1 },
+    ];
 
-      await expect(collect(streamConversation(CONVERSATION))).rejects.toThrow(
-        'streamConversation() failed: unexpected result',
-      );
-    },
-  );
-
-  it('skips an event type it does not know yet', async () => {
     fetchSpy.mockResolvedValue(
       mockServerSentEvents([
-        `event: next\ndata: ${JSON.stringify({ data: { onAgentChatEvent: { event: { type: 'thread-renamed' } } } })}\n\n`,
-        toNextEvent(toEventData(KEEPALIVE)),
+        ...events.map(
+          (event) =>
+            `event: next\ndata: ${JSON.stringify({ data: { onAgentChatEvent: { event } } })}\n\n`,
+        ),
         'event: complete\n\n',
       ]),
     );
 
-    expect(await collect(streamConversation(CONVERSATION))).toEqual([
-      KEEPALIVE,
-    ]);
+    expect(await collect(streamConversation(CONVERSATION))).toEqual(events);
   });
 
   it('reads events whose CRLF line endings are split across reads', async () => {

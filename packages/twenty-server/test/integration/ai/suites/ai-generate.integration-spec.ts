@@ -1,5 +1,8 @@
 import { APICallError } from '@ai-sdk/provider';
-import { generateQueryFactory } from 'test/integration/ai/utils/generate-query-factory.util';
+import {
+  generateQueryFactory,
+  type GenerateTestInput,
+} from 'test/integration/ai/utils/generate-query-factory.util';
 import {
   answerWith,
   mockScriptedAiModel,
@@ -14,7 +17,6 @@ import {
   setupApplicationWithResources,
 } from 'test/integration/metadata/suites/application/utils/setup-application-with-resources.util';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
-import { type GenerateMutationInput } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -34,7 +36,7 @@ const failWith = (message: string): ScriptedModelResponse => ({
   }),
 });
 
-const generate = async (input: Omit<GenerateMutationInput, 'modelId'>) => {
+const generate = async (input: GenerateTestInput) => {
   const response = await makeMetadataApiRequest(generateQueryFactory(input));
 
   expect(response.body.errors).toBeUndefined();

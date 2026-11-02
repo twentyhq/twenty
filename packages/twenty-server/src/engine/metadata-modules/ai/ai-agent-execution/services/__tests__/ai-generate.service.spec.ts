@@ -1,6 +1,8 @@
 import { QueryFailedError } from 'typeorm';
 
 import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
+import { type GenerateInputDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/generate.input';
+import { RunAgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/enums/run-agent-message-role.enum';
 import { AiGenerateService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/ai-generate.service';
 import { buildAgentRunStreamChannelId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-stream-channel-id.util';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
@@ -8,7 +10,7 @@ import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 const WORKSPACE = { id: 'workspace-id' };
 const APPLICATION = { id: 'application-id', defaultRoleId: 'role-id' };
 const RUN_ID = '3f1c9a52-7b0e-4d6a-8c2f-9e4b5a6d7c81';
-const INPUT = [{ role: 'user', content: 'Qualify Acme' }];
+const INPUT = [{ role: RunAgentMessageRole.user, content: 'Qualify Acme' }];
 
 const buildService = ({
   existingTurn = null,
@@ -37,7 +39,7 @@ const generate = ({
   requestWorkspaceMemberId = null,
 }: {
   service: AiGenerateService;
-  input: Record<string, unknown>;
+  input: GenerateInputDTO;
   callerApplication: { id: string; defaultRoleId: string | null } | undefined;
   requestWorkspaceMemberId?: string | null;
 }) =>
@@ -176,17 +178,5 @@ describe('AiGenerateService', () => {
       }),
     ).rejects.toMatchObject({ code: AiExceptionCode.INVALID_AGENT_INPUT });
     expect(runInRequest).not.toHaveBeenCalled();
-  });
-
-  it('refuses a run id that is not a uuid', async () => {
-    const { service } = buildService({});
-
-    await expect(
-      generate({
-        service,
-        input: { input: INPUT, runId: 'run-1' },
-        callerApplication: APPLICATION,
-      }),
-    ).rejects.toMatchObject({ code: AiExceptionCode.INVALID_AGENT_INPUT });
   });
 });

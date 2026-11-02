@@ -11,7 +11,7 @@ import { type AgentChatEventInput } from 'src/engine/metadata-modules/ai/ai-chat
 import { type AgentChatChannel } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-channel.type';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
 import { createAgentChatLiveEventFilter } from 'src/engine/metadata-modules/ai/ai-chat/utils/create-agent-chat-live-event-filter.util';
-import { isAgentTurnOpenedByOtherMember } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-turn-opened-by-other-member.util';
+import { isAgentTurnOpenedByOtherMember } from 'src/engine/metadata-modules/ai/ai-history/utils/is-agent-turn-opened-by-other-member.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';

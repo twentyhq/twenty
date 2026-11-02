@@ -10,15 +10,12 @@ import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-a
 import { type ApplicationWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
-import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { AgentActorContextService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-actor-context.service';
 import { type AgentRunCallerContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-context.type';
 import { type AgentRunCallerRef } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-ref.schema';
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
 import { type AgentRunRoleIds } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-role-ids.type';
-import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
-import { buildAgentRunConversationActor } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-conversation-actor.util';
 import { buildAgentRunTurnCreatedBy } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-turn-created-by.util';
 import {
   AiException,
@@ -40,7 +37,6 @@ export class AgentRunCallerContextService {
     requestUserWorkspaceId,
     application,
     callerApplication,
-    agent,
   }: {
     workspace: FlatWorkspace;
     callerRef: AgentRunCallerRef;
@@ -48,7 +44,6 @@ export class AgentRunCallerContextService {
     application: FlatApplication | undefined;
     // differs from application when an application runs an agent of another one
     callerApplication: FlatApplication | undefined;
-    agent?: { roleId: string | undefined };
   }): Promise<AgentRunExecutionContext> {
     const { authContext, actorContext, callerRoleIds } =
       await this.buildCallerContext({
@@ -74,18 +69,13 @@ export class AgentRunCallerContextService {
       userWorkspaceId: isUserAuthContext(authContext)
         ? authContext.userWorkspaceId
         : requestUserWorkspaceId,
-      rolePermissionConfig: isDefined(agent)
-        ? buildAgentRolePermissionConfig({
-            agentRoleId: agent.roleId,
-            agentRunRoleIds,
-          })
-        : { intersectionOf: agentRunRoleIds },
       agentRunRoleIds,
-      conversationActor: buildAgentRunConversationActor({
-        authContext,
-        application,
-      }),
-      usageOperationType: UsageOperationType.AI_WORKFLOW_TOKEN,
+      conversationViewer: {
+        workspaceMemberId: isUserAuthContext(authContext)
+          ? authContext.workspaceMemberId
+          : undefined,
+        applicationId: callerApplication?.id,
+      },
     };
   }
 

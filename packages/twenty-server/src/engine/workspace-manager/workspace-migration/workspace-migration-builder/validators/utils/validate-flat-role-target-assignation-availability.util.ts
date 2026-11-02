@@ -50,6 +50,14 @@ export const validateFlatRoleTargetAssignationAvailability = ({
         userFriendlyMessage: msg`Role "${roleLabel}" cannot be assigned to webhooks`,
       });
     }
+  } else if (isDefined(flatRoleTarget.targetApplicationUniversalIdentifier)) {
+    if (!flatRole.canBeAssignedToApplications) {
+      errors.push({
+        code: RoleTargetExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY,
+        message: t`Role "${roleLabel}" cannot be assigned to applications`,
+        userFriendlyMessage: msg`Role "${roleLabel}" cannot be assigned to applications`,
+      });
+    }
   }
 
   return errors;

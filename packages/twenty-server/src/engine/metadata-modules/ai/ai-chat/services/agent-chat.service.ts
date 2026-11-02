@@ -28,7 +28,7 @@ import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/s
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { AgentTitleGenerationService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-title-generation.service';
 import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
-import { isAgentTurnOpenedByOtherMember } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-turn-opened-by-other-member.util';
+import { isAgentTurnOpenedByOtherMember } from 'src/engine/metadata-modules/ai/ai-history/utils/is-agent-turn-opened-by-other-member.util';
 
 type AddMessageArgs = {
   threadId: string;

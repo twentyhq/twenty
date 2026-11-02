@@ -190,7 +190,6 @@ describe('ai.generate with onChunk', () => {
 
     const generation = ai.generate({
       input: 'Is Acme a good fit?',
-      runId: RUN_ID,
       onChunk: (chunk) => {
         chunks.push(chunk);
       },
@@ -202,13 +201,13 @@ describe('ai.generate with onChunk', () => {
 
     const [subscriptionCall, mutationCall] = fetchSpy.mock.calls;
 
-    expect(JSON.parse(String(subscriptionCall[1]?.body))).toMatchObject({
-      query: expect.stringContaining('onAgentChatEvent(runId: $runId)'),
-      variables: { runId: RUN_ID },
-    });
+    const subscriptionBody = JSON.parse(String(subscriptionCall[1]?.body));
+
+    expect(subscriptionBody.query).toContain('onAgentChatEvent(runId: $runId)');
+    // the SDK picks the run id itself, so the mutation runs on the channel it follows
     expect(
       JSON.parse(String(mutationCall[1]?.body)).variables.input,
-    ).toMatchObject({ runId: RUN_ID });
+    ).toMatchObject({ runId: subscriptionBody.variables.runId });
 
     runChannel.send({
       type: 'stream-chunk',

@@ -347,13 +347,14 @@ export class AgentTurnStreamService {
         workspaceId,
         event:
           completion.stopReason === 'workspaceAllowance'
-            ? { type: 'credits-exhausted' }
+            ? { type: 'credits-exhausted', turnId }
             : isDefined(threadId)
               ? {
                   type: 'message-persisted',
                   messageId: streamed.assistantMessageId,
+                  turnId,
                 }
-              : { type: 'run-finished' },
+              : { type: 'run-finished', turnId },
       })
       .catch((error: unknown) =>
         this.logger.warn(

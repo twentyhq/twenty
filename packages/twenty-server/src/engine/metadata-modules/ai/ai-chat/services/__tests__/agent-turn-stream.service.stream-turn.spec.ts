@@ -191,6 +191,7 @@ describe('AgentTurnStreamService streamTurn of a followed run', () => {
     ).toEqual(['start', 'text-start', 'text-delta', 'text-end', 'finish']);
     expect(publishedEvents[publishedEvents.length - 1]).toEqual({
       type: 'run-finished',
+      turnId: 'turn-id',
     });
     expect(publishedEvents.map(({ type }) => type)).not.toContain(
       'message-persisted',
