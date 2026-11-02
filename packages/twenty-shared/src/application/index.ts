@@ -307,6 +307,7 @@ export {
   RESERVED_SETTINGS_MENU_ITEM_TITLES,
   isReservedSettingsMenuItemTitle,
 } from './utils/isReservedSettingsMenuItemTitle';
+export { isRestorableFrontComponentSourcePath } from './utils/isRestorableFrontComponentSourcePath';
 export { isValidSettingsMenuItemSlug } from './utils/isValidSettingsMenuItemSlug';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
 export type {

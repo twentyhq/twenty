@@ -1,4 +1,3 @@
-import { type FrontComponentManifest } from 'twenty-shared/application';
 import { describe, expect, it } from 'vitest';
 
 import { parsePullFiles } from '@/app/pull/parse-pull-files';
@@ -15,13 +14,13 @@ describe('parsePullFiles', () => {
       packageFile,
       { folder: 'dependencies', path: 'yarn.lock', content: '' },
     ];
-    expect(parsePullFiles(files)).toEqual(files);
+    expect(parsePullFiles({ value: files })).toEqual(files);
   });
 
   const component = {
     universalIdentifier: 'fefefefe-fefe-4efe-8efe-fefefefefefe',
     sourceComponentPath: 'src/components/hello.tsx',
-  } as FrontComponentManifest;
+  };
   const sourceFile = {
     folder: 'source',
     path: component.sourceComponentPath,
@@ -29,12 +28,17 @@ describe('parsePullFiles', () => {
   };
 
   it('accepts only source files declared by exported frontend components', () => {
-    expect(parsePullFiles([sourceFile], [component])).toEqual([sourceFile]);
-    expect(() => parsePullFiles([sourceFile])).toThrow(
+    expect(
+      parsePullFiles({ value: [sourceFile], frontComponents: [component] }),
+    ).toEqual([sourceFile]);
+    expect(() => parsePullFiles({ value: [sourceFile] })).toThrow(
       'declared front component',
     );
     expect(() =>
-      parsePullFiles([{ ...sourceFile, folder: 'attachment' }], [component]),
+      parsePullFiles({
+        value: [{ ...sourceFile, folder: 'attachment' }],
+        frontComponents: [component],
+      }),
     ).toThrow();
   });
 
@@ -49,10 +53,10 @@ describe('parsePullFiles', () => {
     'src\\component.tsx',
   ])('refuses the declared source path %s', (path) => {
     expect(() =>
-      parsePullFiles(
-        [{ ...sourceFile, path }],
-        [{ ...component, sourceComponentPath: path }],
-      ),
+      parsePullFiles({
+        value: [{ ...sourceFile, path }],
+        frontComponents: [{ ...component, sourceComponentPath: path }],
+      }),
     ).toThrow();
   });
 
@@ -65,7 +69,7 @@ describe('parsePullFiles', () => {
     'yarn.lock/../package.json',
     '..\\package.json',
   ])('refuses the dependency path %s', (path) => {
-    expect(() => parsePullFiles([{ ...packageFile, path }])).toThrow(
+    expect(() => parsePullFiles({ value: [{ ...packageFile, path }] })).toThrow(
       'only pull dependency files',
     );
   });
@@ -76,15 +80,15 @@ describe('parsePullFiles', () => {
     [{ ...packageFile, content: null }],
     [packageFile, packageFile],
   ])('refuses malformed or duplicate files (%#)', (files) => {
-    expect(() => parsePullFiles(files)).toThrow();
+    expect(() => parsePullFiles({ value: files })).toThrow();
   });
 
   it.each(['invalid-json', 'null', '[]', '42', '{}, {}'])(
     'refuses invalid package.json contents %s',
     (content) => {
-      expect(() => parsePullFiles([{ ...packageFile, content }])).toThrow(
-        'JSON object',
-      );
+      expect(() =>
+        parsePullFiles({ value: [{ ...packageFile, content }] }),
+      ).toThrow('JSON object');
     },
   );
 });

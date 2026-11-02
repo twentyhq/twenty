@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { posix } from 'node:path';
-import { type FrontComponentManifest } from 'twenty-shared/application';
+import {
+  isRestorableFrontComponentSourcePath,
+  type FrontComponentManifest,
+} from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
@@ -36,6 +38,9 @@ export class ApplicationFrontComponentExportService {
     const frontComponents: FrontComponentManifest[] = [];
     const files: ApplicationExportFile[] = [];
     const coverage: ApplicationExportCoverageEntry[] = [];
+    if (!shouldIncludeSourceFiles) {
+      return { frontComponents, files, coverage };
+    }
     const packageNames = new Set([
       'twenty-sdk',
       'twenty-shared',
@@ -70,17 +75,7 @@ export class ApplicationFrontComponentExportService {
       if (!isDefined(manifest)) {
         reason =
           'widget availability cannot be expressed by a front component definition';
-      } else if (
-        posix.isAbsolute(path) ||
-        path.includes('\\') ||
-        path
-          .split('/')
-          .some((part) =>
-            ['..', '.', '', 'node_modules', 'dist', '.twenty'].includes(part),
-          ) ||
-        !/\.tsx?$/.test(path) ||
-        path.endsWith('.d.ts')
-      ) {
+      } else if (!isRestorableFrontComponentSourcePath(path)) {
         reason = 'source path cannot be restored inside an application';
       } else {
         const location = {
@@ -123,9 +118,7 @@ export class ApplicationFrontComponentExportService {
         universalIdentifier: component.universalIdentifier,
         status: ApplicationExportCoverageStatus.EXPORTED,
       });
-      if (shouldIncludeSourceFiles) {
-        files.push({ folder: FileFolder.Source, path, content });
-      }
+      files.push({ folder: FileFolder.Source, path, content });
     }
     return { frontComponents, files, coverage };
   }

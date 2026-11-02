@@ -244,6 +244,7 @@ describe('app pull command with the packaged worker', () => {
     expect(await readFile(join(appPath, 'yarn.lock'), 'utf8')).toBe(
       'legacy-lock',
     );
+    expect(result.envelope.data.coverage).toEqual(exported.coverage);
     expect(result.exitCode, JSON.stringify(result.envelope)).toBe(0);
     const requests = server.requests
       .filter((request) => request.body.includes('exportApplication'))

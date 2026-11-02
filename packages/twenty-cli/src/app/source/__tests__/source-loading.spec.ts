@@ -82,20 +82,21 @@ describe('CLI app source loading', () => {
 
   it('recognizes a component definition after JSX in a TSX file', () => {
     expect(
-      extractDefineEntity(
-        `const Component = () => <div>Hello</div>;
+      extractDefineEntity({
+        fileContent: `const Component = () => <div>Hello</div>;
 export default defineFrontComponent({ component: Component });`,
-        'component.tsx',
-      ),
+        filePath: 'component.tsx',
+      }),
     ).toBe('defineFrontComponent');
   });
 
   it('retains the supported default define-call syntax', () => {
     expect(
-      extractDefineEntity(
-        '// export default defineObject({});\nexport default defineApplication({});',
-        'application.ts',
-      ),
+      extractDefineEntity({
+        fileContent:
+          '// export default defineObject({});\nexport default defineApplication({});',
+        filePath: 'application.ts',
+      }),
     ).toBe('defineApplication');
     for (const source of [
       'export default sdk.defineApplication({});',
@@ -105,7 +106,12 @@ export default defineFrontComponent({ component: Component });`,
       'export default renamedDefine({});',
       'function helper() { return defineApplication({}); }',
     ]) {
-      expect(extractDefineEntity(source, 'application.ts')).toBeUndefined();
+      expect(
+        extractDefineEntity({
+          fileContent: source,
+          filePath: 'application.ts',
+        }),
+      ).toBeUndefined();
     }
   });
 

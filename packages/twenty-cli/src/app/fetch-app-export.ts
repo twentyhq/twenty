@@ -14,10 +14,13 @@ const NOT_EXPORTABLE_SUB_CODES = new Set([
   'STANDARD_APPLICATION_NOT_EXPORTABLE',
 ]);
 
-const isExportValidationError = (
-  error: unknown,
-  messagePrefix: string,
-): error is CliError => {
+const isExportValidationError = ({
+  error,
+  messagePrefix,
+}: {
+  error: unknown;
+  messagePrefix: string;
+}): boolean => {
   if (!(error instanceof CliError) || error.code !== 'GRAPHQL_ERROR') {
     return false;
   }
@@ -104,10 +107,11 @@ export const fetchAppExport = async ({
     .catch((error: unknown) => {
       if (
         shouldIncludeSourceFiles &&
-        isExportValidationError(
-          error,
-          'Unknown argument "shouldIncludeSourceFiles" on field "Query.exportApplication".',
-        )
+        isExportValidationError({
+          error: error,
+          messagePrefix:
+            'Unknown argument "shouldIncludeSourceFiles" on field "Query.exportApplication".',
+        })
       ) {
         return query(false);
       }
@@ -122,10 +126,11 @@ export const fetchAppExport = async ({
       }
 
       if (
-        isExportValidationError(
-          error,
-          'Cannot query field "exportApplication" on type "Query".',
-        )
+        isExportValidationError({
+          error: error,
+          messagePrefix:
+            'Cannot query field "exportApplication" on type "Query".',
+        })
       ) {
         throw new CliError({
           code: 'APP_EXPORT_UNSUPPORTED',

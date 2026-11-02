@@ -175,7 +175,10 @@ export const buildManifest = async (
       ...validateConditionalAvailabilityUsage(fileContent, relativePath),
     );
 
-    const targetFunctionName = extractDefineEntity(fileContent, filePath);
+    const targetFunctionName = extractDefineEntity({
+      fileContent: fileContent,
+      filePath: filePath,
+    });
 
     if (!targetFunctionName) {
       continue;

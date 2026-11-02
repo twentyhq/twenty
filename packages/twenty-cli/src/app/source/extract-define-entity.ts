@@ -39,10 +39,13 @@ export type ManifestEntityKey = (typeof DEFINE_ENTITY_KEYS)[TargetFunction];
 const isTargetFunction = (name: string): name is TargetFunction =>
   Object.hasOwn(DEFINE_ENTITY_KEYS, name);
 
-export const extractDefineEntity = (
-  fileContent: string,
-  filePath: string,
-): TargetFunction | undefined => {
+export const extractDefineEntity = ({
+  fileContent,
+  filePath,
+}: {
+  fileContent: string;
+  filePath: string;
+}): TargetFunction | undefined => {
   const sourceFile = ts.createSourceFile(
     filePath,
     fileContent,

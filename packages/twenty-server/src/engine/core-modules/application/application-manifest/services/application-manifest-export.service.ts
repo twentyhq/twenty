@@ -136,10 +136,11 @@ export class ApplicationManifestExportService {
     });
     const dependencyFiles =
       shouldIncludeDependencies ||
-      Object.keys(
-        applicationAllFlatEntityMaps.flatFrontComponentMaps
-          .byUniversalIdentifier,
-      ).length > 0
+      (shouldIncludeSourceFiles &&
+        Object.keys(
+          applicationAllFlatEntityMaps.flatFrontComponentMaps
+            .byUniversalIdentifier,
+        ).length > 0)
         ? await this.applicationDependencyFilesService.getExportedDependencyFiles(
             { workspaceId, applicationUniversalIdentifier },
           )

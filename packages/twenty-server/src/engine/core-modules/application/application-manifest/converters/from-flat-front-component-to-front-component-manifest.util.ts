@@ -29,7 +29,7 @@ export const fromFlatFrontComponentToFrontComponentManifest = (
   ) {
     return undefined;
   }
-  return {
+  const manifest: FrontComponentManifest = {
     universalIdentifier: component.universalIdentifier,
     name: component.name,
     ...(isDefined(component.description)
@@ -41,18 +41,18 @@ export const fromFlatFrontComponentToFrontComponentManifest = (
     componentName: component.componentName,
     isHeadless: component.isHeadless,
     usesSdkClient: component.usesSdkClient,
-    ...(isDefined(pageLayoutType)
-      ? {
-          widgetAvailability:
-            pageLayoutType === PageLayoutType.RECORD_PAGE
-              ? {
-                  pageLayoutType,
-                  ...(objects.length > 0
-                    ? { objectUniversalIdentifiers: objects }
-                    : {}),
-                }
-              : { pageLayoutType },
-        }
-      : {}),
   };
+  if (!isDefined(pageLayoutType)) {
+    return manifest;
+  }
+  if (pageLayoutType === PageLayoutType.RECORD_PAGE) {
+    return {
+      ...manifest,
+      widgetAvailability: {
+        pageLayoutType,
+        ...(objects.length > 0 ? { objectUniversalIdentifiers: objects } : {}),
+      },
+    };
+  }
+  return { ...manifest, widgetAvailability: { pageLayoutType } };
 };

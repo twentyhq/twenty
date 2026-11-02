@@ -225,7 +225,10 @@ export default defineField({
 
   const componentIdentifier = 'fefefefe-fefe-4efe-8efe-fefefefefefe';
   const componentPath = 'src/front-components/hello.front-component.tsx';
-  const createComponentExport = (label = 'Hello', checksum = label) => {
+  const createComponentExport = ({
+    label = 'Hello',
+    checksum = label,
+  }: { label?: string; checksum?: string } = {}) => {
     const exported = createExport({ includeObject: false });
     const content = `import { defineFrontComponent } from 'twenty-sdk/define';
 const Hello = () => <div>${label}</div>;
@@ -274,7 +277,7 @@ export default defineFrontComponent({ universalIdentifier: '${componentIdentifie
     await writeFile(join(appPath, componentPath), localContent);
     expect(requireSuccess(await pull(exported)).writes).toEqual([]);
     expect(await read(componentPath)).toBe(localContent);
-    const remote = createComponentExport('Remote edit');
+    const remote = createComponentExport({ label: 'Remote edit' });
     const data = requireSuccess(await pull(remote));
     expect(await read(componentPath)).toBe(remote.files[0].content);
     expect(data.overwrittenLocalChanges).toContainEqual({
@@ -381,7 +384,7 @@ export default defineFrontComponent({ universalIdentifier: '${componentIdentifie
   it('does not reuse stale fingerprints when a component moves back to an earlier remote path', async () => {
     const original = createComponentExport();
     requireSuccess(await pull(original));
-    const moved = createComponentExport('Moved');
+    const moved = createComponentExport({ label: 'Moved' });
     const movedPath = 'src/front-components/moved.tsx';
     moved.manifest.frontComponents[0].sourceComponentPath = movedPath;
     moved.files[0].path = movedPath;

@@ -1,5 +1,8 @@
 import { isArray, isString } from '@sniptt/guards';
-import { type FrontComponentManifest } from 'twenty-shared/application';
+import {
+  isRestorableFrontComponentSourcePath,
+  type FrontComponentManifest,
+} from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isPlainObject } from 'twenty-shared/utils';
 
@@ -14,10 +17,13 @@ const isPackageJsonObject = (content: string): boolean => {
   }
 };
 
-export const parsePullFiles = (
-  value: unknown,
-  frontComponents: FrontComponentManifest[] = [],
-): AppExportFile[] => {
+export const parsePullFiles = ({
+  value,
+  frontComponents = [],
+}: {
+  value: unknown;
+  frontComponents?: Pick<FrontComponentManifest, 'sourceComponentPath'>[];
+}): AppExportFile[] => {
   if (!isArray(value)) {
     throw new CliError({
       code: 'INVALID_RESPONSE',
@@ -46,15 +52,7 @@ export const parsePullFiles = (
       frontComponents.some(
         (component) => component.sourceComponentPath === file.path,
       ) &&
-      /\.tsx?$/.test(file.path) &&
-      !file.path.endsWith('.d.ts') &&
-      !file.path.includes('\\') &&
-      !file.path.startsWith('/') &&
-      !file.path
-        .split('/')
-        .some((part) =>
-          ['..', '.', '', 'node_modules', 'dist', '.twenty'].includes(part),
-        );
+      isRestorableFrontComponentSourcePath(file.path);
     if (
       !isFrontComponentSource &&
       (file.folder !== FileFolder.Dependencies ||

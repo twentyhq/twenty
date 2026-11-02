@@ -1,4 +1,5 @@
 import { Readable } from 'node:stream';
+import { Test } from '@nestjs/testing';
 import { type FlatFrontComponent } from 'src/engine/metadata-modules/flat-front-component/types/flat-front-component.type';
 import { buildFrontComponentEntrySource } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util';
 import { type ApplicationExportFile } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
@@ -7,7 +8,7 @@ import { ApplicationFrontComponentExportService } from 'src/engine/core-modules/
 import { fromFrontComponentManifestToUniversalFlatFrontComponent } from 'src/engine/core-modules/application/application-manifest/converters/from-front-component-manifest-to-universal-flat-front-component.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { addAllFlatEntitiesToFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/__tests__/add-all-flat-entities-to-flat-entity-maps.test-util';
-import { type FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
+import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 
 const identifier = '11111111-1111-4111-8111-111111111111';
 const sourcePath = 'src/components/hello.tsx';
@@ -40,14 +41,16 @@ const maps = createEmptyAllFlatEntityMaps();
 
 describe('ApplicationFrontComponentExportService', () => {
   const storage = { checkFileExists: jest.fn(), readFile: jest.fn() };
-  const service = new ApplicationFrontComponentExportService(
-    storage as unknown as FileStorageService,
-  );
-  const run = (
+  let service: ApplicationFrontComponentExportService;
+  const run = ({
     shouldIncludeSourceFiles = true,
-    dependencyFiles: ApplicationExportFile[] = [],
-    frontComponent: FlatFrontComponent = component,
-  ) =>
+    dependencyFiles = [],
+    frontComponent = component,
+  }: {
+    shouldIncludeSourceFiles?: boolean;
+    dependencyFiles?: ApplicationExportFile[];
+    frontComponent?: FlatFrontComponent;
+  } = {}) =>
     service.exportFrontComponents({
       workspaceId: identifier,
       applicationUniversalIdentifier: identifier,
@@ -61,8 +64,15 @@ describe('ApplicationFrontComponentExportService', () => {
       dependencyFiles,
       shouldIncludeSourceFiles,
     });
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.useRealTimers();
+    const module = await Test.createTestingModule({
+      providers: [
+        ApplicationFrontComponentExportService,
+        { provide: FileStorageService, useValue: storage },
+      ],
+    }).compile();
+    service = module.get(ApplicationFrontComponentExportService);
     storage.checkFileExists.mockReset();
     storage.readFile.mockReset();
     storage.checkFileExists.mockResolvedValue(true);
@@ -95,26 +105,33 @@ describe('ApplicationFrontComponentExportService', () => {
     storage.readFile.mockImplementation(async () =>
       Readable.from([Buffer.from(entrySource)]),
     );
-    const result = await run(true, [
-      {
-        folder: FileFolder.Dependencies,
-        path: 'package.json',
-        content: JSON.stringify({
-          dependencies: {
-            react: '19.0.0',
-            'react-dom': '19.0.0',
-            'twenty-ui': '2.55.0',
-          },
-        }),
-      },
-    ]);
+    const result = await run({
+      shouldIncludeSourceFiles: true,
+      dependencyFiles: [
+        {
+          folder: FileFolder.Dependencies,
+          path: 'package.json',
+          content: JSON.stringify({
+            dependencies: {
+              react: '19.0.0',
+              'react-dom': '19.0.0',
+              'twenty-ui': '2.55.0',
+            },
+          }),
+        },
+      ],
+    });
     expect(result.coverage[0].status).toBe('EXPORTED');
     expect(result.files[0].content).toBe(entrySource);
   });
   it.each([{ name: 'Renamed' }, { description: 'Edited in the workspace' }])(
     'reports source metadata drift for %j',
     async (updates) => {
-      const result = await run(true, [], { ...component, ...updates });
+      const result = await run({
+        shouldIncludeSourceFiles: true,
+        dependencyFiles: [],
+        frontComponent: { ...component, ...updates },
+      });
       expect(result.frontComponents).toEqual([]);
       expect(result.files).toEqual([]);
       expect(result.coverage).toEqual([
@@ -139,23 +156,31 @@ describe('ApplicationFrontComponentExportService', () => {
     );
     expect(
       (
-        await run(true, [], {
-          ...component,
-          name: 'Named',
-          description: 'Details',
+        await run({
+          shouldIncludeSourceFiles: true,
+          dependencyFiles: [],
+          frontComponent: {
+            ...component,
+            name: 'Named',
+            description: 'Details',
+          },
         })
       ).coverage[0].status,
     ).toBe('EXPORTED');
   });
   it('reports unresolved object restrictions instead of exporting unrestricted availability', async () => {
-    const result = await run(true, [], {
-      ...component,
-      universalWidgetAvailability: [
-        {
-          pageLayoutType: PageLayoutType.RECORD_PAGE,
-          objectMetadataUniversalIdentifier: null,
-        },
-      ],
+    const result = await run({
+      shouldIncludeSourceFiles: true,
+      dependencyFiles: [],
+      frontComponent: {
+        ...component,
+        universalWidgetAvailability: [
+          {
+            pageLayoutType: PageLayoutType.RECORD_PAGE,
+            objectMetadataUniversalIdentifier: null,
+          },
+        ],
+      },
     });
     expect(result.frontComponents).toEqual([]);
     expect(result.files).toEqual([]);
@@ -166,11 +191,15 @@ describe('ApplicationFrontComponentExportService', () => {
     expect(storage.readFile).not.toHaveBeenCalled();
   });
   it('retains unrestricted record page availability', async () => {
-    const result = await run(true, [], {
-      ...component,
-      universalWidgetAvailability: [
-        { pageLayoutType: PageLayoutType.RECORD_PAGE },
-      ],
+    const result = await run({
+      shouldIncludeSourceFiles: true,
+      dependencyFiles: [],
+      frontComponent: {
+        ...component,
+        universalWidgetAvailability: [
+          { pageLayoutType: PageLayoutType.RECORD_PAGE },
+        ],
+      },
     });
     expect(result.frontComponents[0].widgetAvailability).toEqual({
       pageLayoutType: PageLayoutType.RECORD_PAGE,
@@ -182,19 +211,28 @@ describe('ApplicationFrontComponentExportService', () => {
         Buffer.from(`import 'optional-package/style.css';\n${source}`),
       ]),
     );
-    const result = await run(true, [
-      {
-        folder: FileFolder.Dependencies,
-        path: 'package.json',
-        content: JSON.stringify({
-          optionalDependencies: { 'optional-package': '1.0.0' },
-        }),
-      },
-    ]);
+    const result = await run({
+      shouldIncludeSourceFiles: true,
+      dependencyFiles: [
+        {
+          folder: FileFolder.Dependencies,
+          path: 'package.json',
+          content: JSON.stringify({
+            optionalDependencies: { 'optional-package': '1.0.0' },
+          }),
+        },
+      ],
+    });
     expect(result.coverage[0].status).toBe('EXPORTED');
   });
-  it('keeps source bytes out of metadata-only exports', async () => {
-    expect((await run(false)).files).toEqual([]);
+  it('keeps components out of metadata-only exports without reading storage', async () => {
+    expect(await run({ shouldIncludeSourceFiles: false })).toEqual({
+      frontComponents: [],
+      files: [],
+      coverage: [],
+    });
+    expect(storage.checkFileExists).not.toHaveBeenCalled();
+    expect(storage.readFile).not.toHaveBeenCalled();
   });
   it('reports missing source rather than a restorable component', async () => {
     storage.checkFileExists.mockResolvedValue(false);

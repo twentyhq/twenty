@@ -59,9 +59,10 @@ export const parseAppExport = ({
     },
     manifest: applicationExport.manifest,
     coverage: applicationExport.coverage,
-    files: parsePullFiles(
-      applicationExport.files,
-      toPullManifest(applicationExport.manifest).frontComponents ?? [],
-    ),
+    files: parsePullFiles({
+      value: applicationExport.files,
+      frontComponents:
+        toPullManifest(applicationExport.manifest).frontComponents ?? [],
+    }),
   };
 };
