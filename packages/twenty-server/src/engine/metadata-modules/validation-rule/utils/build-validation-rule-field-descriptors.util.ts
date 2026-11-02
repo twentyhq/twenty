@@ -17,7 +17,7 @@ import {
   resolveEffectiveFlatEntityProperty,
 } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
-// The ORM cache leaves overrides out, so record writes only see the raw isActive
+// Record writes use the ORM cache, which has no overrides and only sees the raw isActive
 type ValidationRuleFlatFieldMetadata = OrmFlatFieldMetadata &
   OverridableFlatEntity;
 
@@ -49,12 +49,14 @@ const findActiveFlatFieldMetadatasOfObject = ({
       }),
     )
     .filter(isDefined)
-    .filter((flatFieldMetadata) =>
-      resolveEffectiveFlatEntityProperty({
-        metadataName: 'fieldMetadata',
-        flatEntity: flatFieldMetadata,
-        property: 'isActive',
-      }),
+    .filter(
+      (flatFieldMetadata) =>
+        flatFieldMetadata.isActive &&
+        resolveEffectiveFlatEntityProperty({
+          metadataName: 'fieldMetadata',
+          flatEntity: flatFieldMetadata,
+          property: 'isActive',
+        }),
     );
 };
 

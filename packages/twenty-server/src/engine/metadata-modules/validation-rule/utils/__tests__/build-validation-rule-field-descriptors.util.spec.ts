@@ -67,7 +67,7 @@ describe('buildValidationRuleFieldDescriptors', () => {
     ).toEqual(['score']);
   });
 
-  it('should keep a field the workspace reactivated through an override', () => {
+  it('should leave out a field reactivated through an override, which record writes would not see', () => {
     expect(
       buildFieldNames([
         buildField({
@@ -76,7 +76,7 @@ describe('buildValidationRuleFieldDescriptors', () => {
           overrides: { 'workspace-application': { isActive: true } },
         }),
       ]),
-    ).toEqual(['employees']);
+    ).toEqual([]);
   });
 
   it('should leave out a field whose own isActive is false', () => {

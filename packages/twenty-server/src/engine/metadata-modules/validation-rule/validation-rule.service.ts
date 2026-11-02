@@ -196,7 +196,11 @@ export class ValidationRuleService {
     }
 
     return findActiveFlatValidationRulesReadingField({
-      fieldUniversalIdentifier: flatFieldMetadata.universalIdentifier,
+      // Deactivating a relation field also deactivates its other side
+      fieldUniversalIdentifiers: [
+        flatFieldMetadata.universalIdentifier,
+        flatFieldMetadata.relationTargetFieldMetadataUniversalIdentifier,
+      ].filter(isDefined),
       flatValidationRuleMaps,
     }).map(fromFlatValidationRuleToValidationRuleDto);
   }

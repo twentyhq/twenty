@@ -31,7 +31,10 @@ const buildRule = (
   ...rule,
 });
 
-const findRuleNames = (rules: FlatValidationRule[]) => {
+const findRuleNames = (
+  rules: FlatValidationRule[],
+  fieldUniversalIdentifiers = ['employees'],
+) => {
   const flatValidationRuleMaps: FlatEntityMaps<FlatValidationRule> =
     createEmptyFlatEntityMaps();
 
@@ -43,7 +46,7 @@ const findRuleNames = (rules: FlatValidationRule[]) => {
   }
 
   return findActiveFlatValidationRulesReadingField({
-    fieldUniversalIdentifier: 'employees',
+    fieldUniversalIdentifiers,
     flatValidationRuleMaps,
   }).map(({ name }) => name);
 };
@@ -59,6 +62,20 @@ describe('findActiveFlatValidationRulesReadingField', () => {
         }),
       ]),
     ).toEqual(['direct', 'through relation']);
+  });
+
+  it('should find a rule reading the other side of a relation', () => {
+    expect(
+      findRuleNames(
+        [
+          buildRule({
+            name: 'through reverse side',
+            bindings: { company: 'company', 'company.employees': 'employees' },
+          }),
+        ],
+        ['people', 'company'],
+      ),
+    ).toEqual(['through reverse side']);
   });
 
   it('should ignore inactive rules and rules reading other fields', () => {
