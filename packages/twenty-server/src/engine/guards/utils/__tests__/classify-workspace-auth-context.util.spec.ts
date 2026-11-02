@@ -20,7 +20,7 @@ const memberFields = {
   userWorkspaceId: 'user-workspace-id',
   workspaceMemberId: 'workspace-member-id',
   workspaceMember: { id: 'workspace-member-id' },
-  sessionVariant: 'standard',
+  userSessionVariant: 'standard',
 };
 
 const CASES: [string, object, AuthPrincipalVariant | undefined][] = [
@@ -31,12 +31,12 @@ const CASES: [string, object, AuthPrincipalVariant | undefined][] = [
   ],
   [
     'a member on a playground token as a playground user session',
-    { type: 'user', ...memberFields, sessionVariant: 'playground' },
+    { type: 'user', ...memberFields, userSessionVariant: 'playground' },
     { kind: 'userSession', variant: 'playground' },
   ],
   [
     'an impersonated member as an impersonated user session',
-    { type: 'user', ...memberFields, sessionVariant: 'impersonated' },
+    { type: 'user', ...memberFields, userSessionVariant: 'impersonated' },
     { kind: 'userSession', variant: 'impersonated' },
   ],
   [

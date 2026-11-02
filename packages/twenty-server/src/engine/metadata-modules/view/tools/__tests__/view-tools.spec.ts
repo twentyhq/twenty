@@ -241,7 +241,7 @@ describe('View tools', () => {
       userWorkspaceId,
       authContext: {
         type: 'user',
-        sessionVariant: 'standard',
+        userSessionVariant: 'standard',
       } as UserWorkspaceAuthContext,
       actorContext: workspaceMemberId
         ? {

@@ -40,7 +40,7 @@ export const classifyWorkspaceAuthContext = (
 
       return isDefined(authContext.agentId)
         ? undefined
-        : { kind: 'userSession', variant: authContext.sessionVariant };
+        : { kind: 'userSession', variant: authContext.userSessionVariant };
     }
     case 'pendingActivationUser':
       return { kind: 'userSession', variant: 'standard' };

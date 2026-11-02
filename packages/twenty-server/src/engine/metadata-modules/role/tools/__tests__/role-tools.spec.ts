@@ -91,7 +91,7 @@ const context: ToolProviderContext = {
     type: 'user',
     workspace: { id: workspaceId },
     userWorkspaceId: callerUserWorkspaceId,
-    sessionVariant: 'standard',
+    userSessionVariant: 'standard',
   } as WorkspaceAuthContext,
   actorContext: {
     source: FieldActorSource.MANUAL,

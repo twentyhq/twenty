@@ -177,7 +177,7 @@ export class UserWorkspaceAuthContextService {
       user: fromUserEntityToFlat(userWorkspace.user),
       workspaceMemberId,
       workspaceMember,
-      sessionVariant: 'standard',
+      userSessionVariant: 'standard',
     });
   }
 }

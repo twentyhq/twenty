@@ -46,7 +46,7 @@ export const buildWorkspaceAuthContextFromRequest = (
       user: req.user,
       workspaceMemberId: req.workspaceMemberId,
       workspaceMember: req.workspaceMember,
-      sessionVariant: getUserSessionVariant(req),
+      userSessionVariant: getUserSessionVariant(req),
       application: req.application,
       agentId: req.agentId,
     });

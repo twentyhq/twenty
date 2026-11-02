@@ -28,7 +28,7 @@ const webhookId = '2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e';
 
 const MEMBER_AUTH_CONTEXT = {
   type: 'user',
-  sessionVariant: 'standard',
+  userSessionVariant: 'standard',
 } as UserWorkspaceAuthContext;
 
 const APPLICATION = {
