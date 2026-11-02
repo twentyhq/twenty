@@ -1,7 +1,8 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
-import { expect, within } from 'storybook/test';
+import { expect, userEvent, within } from 'storybook/test';
 import { WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   PageDecorator,
@@ -94,7 +95,7 @@ const meta: Meta<PageDecoratorArgs> = {
         ),
         graphql.query('FindOneApplicationByUniversalIdentifier', () =>
           HttpResponse.json({
-            data: { findOneApplicationByUniversalIdentifier: null },
+            data: { findOneApplication: null },
           }),
         ),
         ...graphqlMocks.handlers,
@@ -107,10 +108,12 @@ export default meta;
 
 export type Story = StoryObj<typeof SettingsAvailableApplicationDetails>;
 
+// Storybook serves over http, so Claude's Connect stays disabled with the HTTPS reason
 export const WellKnownOAuthClientOffersToConnectInsteadOfInstall: Story = {
   beforeEach: () => seedAppPreferencesFlag({ isAppPreferencesEnabled: true }),
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
 
     expect(
       await canvas.findByText(
@@ -119,10 +122,22 @@ export const WellKnownOAuthClientOffersToConnectInsteadOfInstall: Story = {
         { timeout: 3000 },
       ),
     ).toBeVisible();
-    expect(canvas.getByRole('button', { name: 'Connect' })).toBeVisible();
+    const connectButton = canvas.getByRole('button', { name: 'Connect' });
+    expect(connectButton).toBeDisabled();
     expect(
       canvas.queryByRole('button', { name: /Install/ }),
     ).not.toBeInTheDocument();
+
+    const connectTooltipTrigger = connectButton.parentElement;
+
+    if (!isDefined(connectTooltipTrigger)) {
+      throw new Error('Connect tooltip trigger is missing');
+    }
+
+    await userEvent.hover(connectTooltipTrigger);
+    expect(await body.findByRole('tooltip')).toHaveTextContent(
+      'Claude needs this server to use HTTPS.',
+    );
   },
 };
 

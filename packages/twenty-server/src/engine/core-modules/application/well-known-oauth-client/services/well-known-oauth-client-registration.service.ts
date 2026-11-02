@@ -10,9 +10,26 @@ import { ApplicationRegistrationSeedingService } from 'src/engine/core-modules/a
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { type WellKnownOAuthClientDefinition } from 'src/engine/core-modules/application/well-known-oauth-client/types/well-known-oauth-client-definition.type';
 
+const SYNCED_FIELD_NAMES = [
+  'name',
+  'description',
+  'aboutDescription',
+  'author',
+  'category',
+  'websiteUrl',
+  'logo',
+  'oAuthScopes',
+  'isListed',
+] as const;
+
+type SyncedFields = Pick<
+  ApplicationRegistrationEntity,
+  (typeof SYNCED_FIELD_NAMES)[number]
+>;
+
 const toSyncedFields = (
   wellKnownOAuthClient: WellKnownOAuthClientDefinition,
-) => ({
+): SyncedFields => ({
   name: wellKnownOAuthClient.name,
   description: wellKnownOAuthClient.description,
   aboutDescription: wellKnownOAuthClient.aboutDescription,
@@ -55,9 +72,8 @@ export class WellKnownOAuthClientRegistrationService {
       await this.findOrCreateRegistration(wellKnownOAuthClient);
     const syncedFields = toSyncedFields(wellKnownOAuthClient);
 
-    const hasChanged = Object.entries(syncedFields).some(
-      ([fieldName, value]) =>
-        !isEqual(registration[fieldName as keyof typeof syncedFields], value),
+    const hasChanged = SYNCED_FIELD_NAMES.some(
+      (fieldName) => !isEqual(registration[fieldName], syncedFields[fieldName]),
     );
 
     if (hasChanged) {

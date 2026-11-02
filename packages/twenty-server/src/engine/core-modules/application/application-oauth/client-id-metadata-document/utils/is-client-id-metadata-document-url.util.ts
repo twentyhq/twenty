@@ -6,7 +6,7 @@ export const isClientIdMetadataDocumentUrl = (clientId: string): boolean => {
   return (
     url?.protocol === 'https:' &&
     url.pathname !== '/' &&
-    url.hash === '' &&
+    !clientId.includes('#') &&
     url.username === '' &&
     url.password === ''
   );

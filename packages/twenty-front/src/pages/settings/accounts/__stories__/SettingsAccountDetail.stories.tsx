@@ -43,7 +43,10 @@ export const EmailsAndCalendarTabs: Story = {
       await canvas.findByTestId('tab-emails', undefined, { timeout: 3000 }),
     );
 
-    expect(canvas.getAllByText('Apps preferences').length).toBeGreaterThan(0);
+    const breadcrumb = canvas.getByRole('navigation', { name: 'Breadcrumb' });
+    expect(
+      within(breadcrumb).getByRole('link', { name: 'Apps preferences' }),
+    ).toBeVisible();
     expect(await canvas.findByText('Visibility')).toBeVisible();
 
     await userEvent.click(canvas.getByTestId('tab-calendar'));

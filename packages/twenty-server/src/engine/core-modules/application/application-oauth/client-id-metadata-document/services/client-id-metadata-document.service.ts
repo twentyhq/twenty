@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isAxiosError } from 'axios';
+import { AxiosError, isAxiosError } from 'axios';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CLIENT_ID_METADATA_DOCUMENT_LIMITS } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/constants/client-id-metadata-document-limits.constant';
@@ -63,7 +63,9 @@ export class ClientIdMetadataDocumentService {
     return !isDefined(cachedEntry) || !this.isFresh(cachedEntry);
   }
 
-  private isFresh({ checkedAt }: CachedClientIdMetadataDocument): boolean {
+  private isFresh({
+    checkedAt,
+  }: Pick<CachedClientIdMetadataDocument, 'checkedAt'>): boolean {
     return (
       Date.now() - checkedAt < CLIENT_ID_METADATA_DOCUMENT_LIMITS.refreshAfterMs
     );
@@ -106,12 +108,19 @@ export class ClientIdMetadataDocumentService {
       const isWithdrawn =
         isAxiosError(error) &&
         isDefined(error.response) &&
+        error.response.status >= 300 &&
         error.response.status < 500 &&
         !CLIENT_ID_METADATA_DOCUMENT_TRANSIENT_CLIENT_ERROR_STATUS_CODES.includes(
           error.response.status,
         );
 
-      return { status: isWithdrawn ? 'invalid' : 'unreachable' };
+      // A response-less ERR_BAD_RESPONSE is a body over the size cap, not a host outage
+      const isOversized =
+        isAxiosError(error) &&
+        !isDefined(error.response) &&
+        error.code === AxiosError.ERR_BAD_RESPONSE;
+
+      return { status: isWithdrawn || isOversized ? 'invalid' : 'unreachable' };
     }
   }
 }

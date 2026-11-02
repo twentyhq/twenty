@@ -1285,7 +1285,13 @@ describe('OAuth (integration)', () => {
         token,
       );
 
-    const revokeWorkspaceMemberAccess = (userId: string, token: string) =>
+    const revokeWorkspaceMemberAccess = ({
+      userId,
+      token,
+    }: {
+      userId: string;
+      token: string;
+    }) =>
       makeMetadataApiRequest(
         {
           query: gql`
@@ -1324,10 +1330,10 @@ describe('OAuth (integration)', () => {
     it('should let an admin revoke a member access', async () => {
       const { refreshToken } = await exchangeForTokens();
 
-      const revokeResponse = await revokeWorkspaceMemberAccess(
-        TEST_USER_ID,
-        APPLE_JANE_ADMIN_ACCESS_TOKEN,
-      );
+      const revokeResponse = await revokeWorkspaceMemberAccess({
+        userId: TEST_USER_ID,
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
 
       expect(
         revokeResponse.body.data.revokeWorkspaceApplicationMemberAccess,
@@ -1352,10 +1358,10 @@ describe('OAuth (integration)', () => {
 
       expect(listResponse.body.errors).toBeDefined();
 
-      const revokeResponse = await revokeWorkspaceMemberAccess(
-        TEST_USER_ID,
-        APPLE_JONY_MEMBER_ACCESS_TOKEN,
-      );
+      const revokeResponse = await revokeWorkspaceMemberAccess({
+        userId: TEST_USER_ID,
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
 
       expect(revokeResponse.body.errors).toBeDefined();
       expect((await findAuthorization()).revokedAt).toBeNull();
