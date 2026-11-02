@@ -278,7 +278,7 @@ import { AddRelatedRecordPathIsInherentFastInstanceCommand } from 'src/database/
 import { AddRelationFieldMetadataIdToRowLevelPermissionPredicateFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793381326752-add-relation-field-metadata-id-to-row-level-permission-predicate';
 import { IndexTemporaryFileExpirationSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-slow-1793462047826-index-temporary-file-expiration';
 import { EnableUserHealthCheckFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793473469981-enable-user-health-check';
-import { CreateBillingArrangementTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793612049448-create-billing-arrangement-table';
+import { CreateBillingArrangementTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793626365542-create-billing-arrangement-table';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
