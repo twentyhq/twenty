@@ -149,7 +149,6 @@ export const LinkedInConversation: Story = {
       'Great meeting you at Dreamforce. Happy to connect.',
     );
     await expect(canvas.queryByText('4')).not.toBeInTheDocument();
-    // The app has no logo, so its avatar falls back to the name's initial
     await expect(canvas.getByText('L')).toBeVisible();
   },
 };

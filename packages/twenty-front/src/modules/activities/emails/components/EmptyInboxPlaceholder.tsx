@@ -48,7 +48,6 @@ export const EmptyInboxPlaceholder = () => {
             : t`Connect email, WhatsApp or LinkedIn to see your conversations here.`}
         </EmptyState.Description>
       </EmptyState.Content>
-      {/* Accounts are null until loaded; wait so "Connect an account" never flashes */}
       {!isNull(myConnectedAccounts) && (
         <EmptyState.Actions>
           {hasConnectedAccount ? (
