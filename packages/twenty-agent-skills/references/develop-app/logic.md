@@ -107,7 +107,7 @@ To push live updates to front components or to visitors on an external website, 
 - For a visitor, mint a token in the public route the widget calls with `createVisitorEventToken({ anonymousId, events, expiresInSeconds? })` (15 minutes by default, 24 hours max, up to 20 events), then have the widget open an `EventSource` on `<server-url>/app-events/stream?token=<token>` and listen for `occurrence` messages, each `{ id, type, occurredAt, properties }`. The token is not an API credential, and the stream closes when it expires.
 - Delivery is best effort with no replay: keep the source of truth in records and refetch on (re)connect.
 
-Requires `"engines": { "twenty": ">=2.53.0" }`.
+Requires `"engines": { "twenty": ">=2.56.0" }`.
 
 ## Connection Providers
 
