@@ -88,8 +88,8 @@ export const getWorkflowAiAgentScopePermissions = ({
       )
       .filter(isDefined),
     otherPermissionLabels: [
-      ...(scope?.canUpdateAllSettings === true ? [t`All settings`] : []),
-      ...(scope?.canAccessAllTools === true ? [t`All tools`] : []),
+      ...(scope?.canUpdateAllSettings ? [t`All settings`] : []),
+      ...(scope?.canAccessAllTools ? [t`All tools`] : []),
       ...deniedPermissionLabels,
       ...fieldPermissionLabels,
     ],

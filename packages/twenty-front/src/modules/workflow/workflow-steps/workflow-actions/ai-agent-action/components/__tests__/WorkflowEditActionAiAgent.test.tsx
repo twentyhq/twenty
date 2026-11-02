@@ -10,6 +10,7 @@ import userEvent from '@testing-library/user-event';
 import { createStore, Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import {
   AssignRoleToAgentDocument,
   CreateOneRoleDocument,
@@ -120,7 +121,7 @@ jest.mock('@/workflow/workflow-steps/components/WorkflowStepFooter', () => ({
     agent?: { id: string };
   }) => (
     <>
-      {agent && <span>{`View agent ${agent.id}`}</span>}
+      {isDefined(agent) && <span>{`View agent ${agent.id}`}</span>}
       {additionalActions}
     </>
   ),

@@ -1,7 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
-import { WorkflowActionType } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
+import { isAgentBackingWorkflowStep } from 'src/engine/metadata-modules/ai/ai-agent/tools/utils/is-agent-backing-workflow-step.util';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 import {
   type WorkflowToolContext,
@@ -85,13 +85,10 @@ Any other AI_AGENT step is configured with update_workflow_version_step: a step 
         await deps.coreWorkflowVersionListService.findDraftCoreWorkflowVersions(
           { workspaceId },
         );
-      const isRunByDraftStep = draftCoreVersions.some((draftCoreVersion) =>
-        (draftCoreVersion.steps ?? []).some(
-          (step) =>
-            step.type === WorkflowActionType.AI_AGENT &&
-            step.settings?.input?.agentId === agentId,
-        ),
-      );
+      const isRunByDraftStep = isAgentBackingWorkflowStep({
+        agentId,
+        flatWorkflowVersions: draftCoreVersions,
+      });
 
       if (!isRunByDraftStep) {
         return {
