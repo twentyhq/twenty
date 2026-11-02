@@ -14,6 +14,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { WorkflowSchemaModule } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.module';
 import { CodeStepBuildModule } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/code-step-build.module';
+import { WorkflowAiAgentStepAgentService } from 'src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service';
 import { WorkflowVersionStepOperationsWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-version-step/workflow-version-step-operations.workspace-service';
 import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-crud.module';
 
@@ -34,9 +35,13 @@ import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-cru
   ],
   providers: [
     WorkflowVersionStepOperationsWorkspaceService,
+    WorkflowAiAgentStepAgentService,
     provideWorkspaceScopedRepository(RoleTargetEntity),
     provideWorkspaceScopedRepository(ObjectMetadataEntity),
   ],
-  exports: [WorkflowVersionStepOperationsWorkspaceService],
+  exports: [
+    WorkflowVersionStepOperationsWorkspaceService,
+    WorkflowAiAgentStepAgentService,
+  ],
 })
 export class WorkflowVersionStepModule {}

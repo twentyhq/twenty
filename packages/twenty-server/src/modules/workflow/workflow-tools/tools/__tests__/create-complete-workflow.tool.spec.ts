@@ -1,3 +1,7 @@
+import {
+  WorkflowVersionStepException,
+  WorkflowVersionStepExceptionCode,
+} from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { createCreateCompleteWorkflowTool } from 'src/modules/workflow/workflow-tools/tools/create-complete-workflow.tool';
 
 const CORE_WORKFLOW_ID = 'b3b8a4f0-0000-4000-8000-000000000001';
@@ -12,13 +16,19 @@ const trigger = {
   nextStepIds: [],
 };
 
-const buildStep = (type: string) => ({
+const buildStep = ({
+  type,
+  input = {},
+}: {
+  type: string;
+  input?: Record<string, unknown>;
+}) => ({
   id: STEP_ID,
   name: 'Step',
   type,
   valid: true,
   nextStepIds: [],
-  settings: { input: {}, outputSchema: {} },
+  settings: { input, outputSchema: {} },
 });
 
 const edges = [{ source: 'trigger', target: STEP_ID }];
@@ -36,17 +46,27 @@ const buildTool = () => {
   const coreWorkflowLifecycleService = {
     activateCoreWorkflowVersion: jest.fn().mockResolvedValue(true),
   };
+  const workflowAiAgentStepAgentService = {
+    findAgentRunnableByNewStepOrThrow: jest.fn(),
+  };
+  const dependencies: Parameters<typeof createCreateCompleteWorkflowTool>[0] = {
+    coreWorkflowMutationService,
+    coreWorkflowLifecycleService,
+    workflowAiAgentStepAgentService,
+  };
 
-  const tool = createCreateCompleteWorkflowTool(
-    { coreWorkflowMutationService, coreWorkflowLifecycleService } as never,
-    {
-      workspaceId: 'workspace-id',
-      userWorkspaceId: 'user-workspace-id',
-      rolePermissionConfig: { shouldBypassPermissionChecks: true },
-    },
-  );
+  const tool = createCreateCompleteWorkflowTool(dependencies, {
+    workspaceId: 'workspace-id',
+    userWorkspaceId: 'user-workspace-id',
+    rolePermissionConfig: { shouldBypassPermissionChecks: true },
+  });
 
-  return { tool, coreWorkflowMutationService, coreWorkflowLifecycleService };
+  return {
+    tool,
+    coreWorkflowMutationService,
+    coreWorkflowLifecycleService,
+    workflowAiAgentStepAgentService,
+  };
 };
 
 type ToolInput = Parameters<
@@ -57,7 +77,7 @@ const buildInput = (overrides: Partial<Record<string, unknown>> = {}) =>
   ({
     name: 'My workflow',
     trigger,
-    steps: [buildStep('SEND_EMAIL')],
+    steps: [buildStep({ type: 'SEND_EMAIL' })],
     edges,
     ...overrides,
   }) as unknown as ToolInput;
@@ -79,7 +99,7 @@ describe('createCreateCompleteWorkflowTool', () => {
         userWorkspaceId: 'user-workspace-id',
         name: 'My workflow',
         trigger,
-        steps: [buildStep('SEND_EMAIL')],
+        steps: [buildStep({ type: 'SEND_EMAIL' })],
         edges,
       }),
     );
@@ -114,21 +134,67 @@ describe('createCreateCompleteWorkflowTool', () => {
     });
   });
 
-  it.each(['CODE', 'AI_AGENT'])(
-    'refuses %s steps without creating anything',
-    async (stepType) => {
-      const { tool, coreWorkflowMutationService } = buildTool();
+  it('refuses CODE steps without creating anything', async () => {
+    const { tool, coreWorkflowMutationService } = buildTool();
 
-      const result = await tool.execute(
-        buildInput({ steps: [buildStep(stepType)] }),
-      );
+    const result = await tool.execute(
+      buildInput({ steps: [buildStep({ type: 'CODE' })] }),
+    );
 
-      expect(result.success).toBe(false);
-      expect(
-        coreWorkflowMutationService.createWorkflowWithContent,
-      ).not.toHaveBeenCalled();
-    },
-  );
+    expect(result.success).toBe(false);
+    expect(
+      coreWorkflowMutationService.createWorkflowWithContent,
+    ).not.toHaveBeenCalled();
+  });
+
+  it('creates AI_AGENT steps, which need no agent', async () => {
+    const { tool, coreWorkflowMutationService } = buildTool();
+
+    const result = await tool.execute(
+      buildInput({ steps: [buildStep({ type: 'AI_AGENT' })] }),
+    );
+
+    expect(result.success).toBe(true);
+    expect(
+      coreWorkflowMutationService.createWorkflowWithContent,
+    ).toHaveBeenCalled();
+  });
+
+  it("refuses an AI_AGENT step running another step's hidden agent", async () => {
+    const {
+      tool,
+      coreWorkflowMutationService,
+      workflowAiAgentStepAgentService,
+    } = buildTool();
+
+    workflowAiAgentStepAgentService.findAgentRunnableByNewStepOrThrow.mockRejectedValue(
+      new WorkflowVersionStepException(
+        'Agent "Hidden step agent" is archived or belongs to another workflow step',
+        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+      ),
+    );
+
+    const result = await tool.execute(
+      buildInput({
+        steps: [
+          buildStep({
+            type: 'AI_AGENT',
+            input: { agentId: 'hidden-agent-id' },
+          }),
+        ],
+      }),
+    );
+
+    expect(result).toEqual(
+      expect.objectContaining({
+        success: false,
+        error: expect.stringContaining('belongs to another workflow step'),
+      }),
+    );
+    expect(
+      coreWorkflowMutationService.createWorkflowWithContent,
+    ).not.toHaveBeenCalled();
+  });
 
   it('activates the created version when asked to', async () => {
     const { tool, coreWorkflowLifecycleService } = buildTool();

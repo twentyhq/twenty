@@ -1,32 +1,29 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useActionRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig';
+import { useSettingsRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelSubPageNavigationHeader } from '@/side-panel/pages/common/components/SidePanelSubPageNavigationHeader';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useWorkflowAiAgentPermissionActions } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions';
-import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
 import { workflowAiAgentPermissionsIsAddingPermissionState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsAddingPermissionState';
 import { workflowAiAgentPermissionsIsSystemObjectsListOpenState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsIsSystemObjectsListOpenState';
 import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdState';
-import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
-import { GetRoleDocument } from '~/generated-metadata/graphql';
-import { SidePanelSkeletonLoader } from '~/loading/components/SidePanelSkeletonLoader';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
 import { isNonTextWritingKey } from '@/ui/utilities/hotkey/utils/isNonTextWritingKey';
+import { type WorkflowAiAgentObjectPermissionChange } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentObjectPermissionChange';
+import { type WorkflowAiAgentObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentObjectPermission';
 import { WorkflowAiAgentPermissionList } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionList';
 import { CRUD_PERMISSIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { WorkflowAiAgentPermissionsCrudList } from './WorkflowAiAgentPermissionsCrudList';
 import { WorkflowAiAgentPermissionsFlagList } from './WorkflowAiAgentPermissionsFlagList';
 import { WorkflowAiAgentPermissionsObjectsList } from './WorkflowAiAgentPermissionsObjectsList';
-import { getFilteredPermissions } from './workflowAiAgentPermissions.utils';
 
 const StyledSearchInputContainer = styled.div`
   background-color: ${themeCssVariables.background.transparent.lighter};
@@ -61,22 +58,26 @@ const StyledGroupsContainer = styled.div`
 `;
 
 type WorkflowAiAgentPermissionsTabProps = {
-  stepId: string;
   readonly: boolean;
-  isAgentLoading: boolean;
-  refetchAgent: () => Promise<{ data?: { findOneAgent?: FlatAgent } }>;
+  objectPermissions: WorkflowAiAgentObjectPermission[];
+  permissionFlagKeys: string[];
+  otherPermissionLabels?: string[];
+  onAddPermission?: (change: WorkflowAiAgentObjectPermissionChange) => void;
+  onDeletePermission?: (change: WorkflowAiAgentObjectPermissionChange) => void;
+  onAddPermissionFlag?: (permissionFlagKey: string) => void;
+  onDeletePermissionFlag?: (permissionFlagKey: string) => void;
 };
 
 export const WorkflowAiAgentPermissionsTab = ({
-  stepId,
   readonly,
-  isAgentLoading,
-  refetchAgent,
+  objectPermissions,
+  permissionFlagKeys,
+  otherPermissionLabels = [],
+  onAddPermission,
+  onDeletePermission,
+  onAddPermissionFlag,
+  onDeletePermissionFlag,
 }: WorkflowAiAgentPermissionsTabProps) => {
-  const workflowAiAgentActionAgent = useAtomStateValue(
-    workflowAiAgentActionAgentState,
-  );
-
   const [
     workflowAiAgentPermissionsSelectedObjectId,
     setWorkflowAiAgentPermissionsSelectedObjectId,
@@ -101,27 +102,18 @@ export const WorkflowAiAgentPermissionsTab = ({
       itemA.nameSingular.localeCompare(itemB.nameSingular),
     );
 
-  const agentRoleId = workflowAiAgentActionAgent?.roleId;
-  const {
-    data: roleData,
-    loading: roleLoading,
-    refetch: refetchRole,
-  } = useQuery(GetRoleDocument, {
-    variables: { id: agentRoleId ?? '' },
-    skip: !isDefined(agentRoleId),
-  });
-
   const [searchQuery, setSearchQuery] = useState('');
-  const role = roleData?.getRole;
-  const objectPermissions = role?.objectPermissions || [];
-  const permissionFlagKeys =
-    role?.permissionFlags?.map((permissionFlag) => permissionFlag.flag) ?? [];
-  const hasRoleWithPermissions =
-    isDefined(workflowAiAgentActionAgent?.roleId) &&
-    (objectPermissions.length > 0 || permissionFlagKeys.length > 0);
-  const actionPermissionsConfig = useActionRolePermissionFlagConfig({
+  const hasPermissions =
+    permissionFlagKeys.length > 0 ||
+    otherPermissionLabels.length > 0 ||
+    objectPermissions.some((objectPermission) =>
+      CRUD_PERMISSIONS.some(({ key }) => objectPermission[key]),
+    );
+  const agentActionPermissionsConfig = useActionRolePermissionFlagConfig({
     assignmentCapabilities: { canBeAssignedToAgents: true },
   });
+  const actionPermissionsConfig = useActionRolePermissionFlagConfig();
+  const settingsPermissionsConfig = useSettingsRolePermissionFlagConfig();
 
   type ObjectMetadataListItem = (typeof objectMetadataItems)[number];
   const filteredObjects = filterBySearchQuery<ObjectMetadataListItem>({
@@ -136,47 +128,23 @@ export const WorkflowAiAgentPermissionsTab = ({
     getSearchableValues: (item) => [item.labelSingular, item.labelPlural],
   });
 
-  const {
-    filteredPermissions: filteredActionPermissions,
-    filteredEnabledPermissions: filteredEnabledActionPermissions,
-  } = getFilteredPermissions({
-    permissions: actionPermissionsConfig,
-    permissionFlagKeys,
-    searchQuery,
-  });
+  const filterPermissionsBySearchQuery = (
+    permissions: typeof actionPermissionsConfig,
+  ) =>
+    filterBySearchQuery({
+      items: permissions,
+      searchQuery,
+      getSearchableValues: (permission) => [permission.name],
+    });
 
-  const refetchAgentAndRoles = async () => {
-    const result = await refetchAgent();
-    const refetchedAgent = result?.data?.findOneAgent;
-
-    // The role may have just been created, so the query can still be skipped or bound to a stale id
-    if (isDefined(refetchedAgent?.roleId)) {
-      await refetchRole({ id: refetchedAgent.roleId });
-    }
-
-    return { refetchedAgent };
-  };
-
-  const {
-    handleAddPermission,
-    handleDeletePermission,
-    handleAddPermissionFlag,
-    handleDeletePermissionFlag,
-  } = useWorkflowAiAgentPermissionActions({
-    stepId,
-    readonly,
-    objectPermissions,
-    permissionFlagKeys,
-    refetchAgentAndRoles,
-  });
-
-  if (isAgentLoading || roleLoading) {
-    return <SidePanelSkeletonLoader />;
-  }
-
-  if (!isDefined(workflowAiAgentActionAgent)) {
-    return null;
-  }
+  const filterEnabledPermissions = (
+    permissions: typeof actionPermissionsConfig,
+  ) =>
+    filterPermissionsBySearchQuery(
+      permissions.filter((permission) =>
+        permissionFlagKeys.includes(permission.key),
+      ),
+    );
 
   const selectedObject = isDefined(workflowAiAgentPermissionsSelectedObjectId)
     ? allObjectMetadataItems.find(
@@ -214,10 +182,10 @@ export const WorkflowAiAgentPermissionsTab = ({
     workflowAiAgentPermissionsIsAddingPermission;
   const shouldShowCrudList = isDefined(selectedObject);
   const shouldShowSelectionLists =
-    (!hasRoleWithPermissions || workflowAiAgentPermissionsIsAddingPermission) &&
+    (!hasPermissions || workflowAiAgentPermissionsIsAddingPermission) &&
     !isDefined(selectedObject);
   const shouldShowExistingPermissions =
-    hasRoleWithPermissions && !workflowAiAgentPermissionsIsAddingPermission;
+    hasPermissions && !workflowAiAgentPermissionsIsAddingPermission;
 
   return (
     <StyledContainer>
@@ -257,7 +225,7 @@ export const WorkflowAiAgentPermissionsTab = ({
             })}
             objectPermissions={objectPermissionForSelected}
             readonly={readonly}
-            onAddPermission={handleAddPermission}
+            onAddPermission={onAddPermission}
             objectMetadataId={selectedObject.id}
           />
         )}
@@ -282,10 +250,12 @@ export const WorkflowAiAgentPermissionsTab = ({
               />
               <WorkflowAiAgentPermissionsFlagList
                 title={t`Actions`}
-                permissions={filteredActionPermissions}
+                permissions={filterPermissionsBySearchQuery(
+                  agentActionPermissionsConfig,
+                )}
                 enabledPermissionFlagKeys={permissionFlagKeys}
                 readonly={readonly}
-                onAddPermissionFlag={handleAddPermissionFlag}
+                onAddPermissionFlag={onAddPermissionFlag}
               />
             </>
           ))}
@@ -295,17 +265,34 @@ export const WorkflowAiAgentPermissionsTab = ({
             <WorkflowAiAgentPermissionList
               readonly={readonly}
               objectPermissions={objectPermissions}
-              onDeletePermission={handleDeletePermission}
+              onDeletePermission={onDeletePermission}
               searchQuery={searchQuery}
             />
             <WorkflowAiAgentPermissionsFlagList
               title={t`Actions`}
-              permissions={filteredEnabledActionPermissions}
+              permissions={filterEnabledPermissions(actionPermissionsConfig)}
               enabledPermissionFlagKeys={permissionFlagKeys}
               readonly={readonly}
-              showDeleteButton={!readonly}
-              onDeletePermissionFlag={handleDeletePermissionFlag}
+              shouldShowDeleteButton={!readonly}
+              onDeletePermissionFlag={onDeletePermissionFlag}
             />
+            <WorkflowAiAgentPermissionsFlagList
+              title={t`Settings`}
+              permissions={filterEnabledPermissions(settingsPermissionsConfig)}
+              enabledPermissionFlagKeys={permissionFlagKeys}
+              readonly={readonly}
+              shouldShowDeleteButton={!readonly}
+              onDeletePermissionFlag={onDeletePermissionFlag}
+            />
+            {otherPermissionLabels.length > 0 && (
+              <SidePanelGroup heading={t`Other permissions`}>
+                {otherPermissionLabels.map((label) => (
+                  <ListItem key={label} disabled>
+                    {label}
+                  </ListItem>
+                ))}
+              </SidePanelGroup>
+            )}
           </>
         )}
       </StyledGroupsContainer>

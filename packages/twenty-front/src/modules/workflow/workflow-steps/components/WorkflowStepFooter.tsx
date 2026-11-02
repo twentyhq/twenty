@@ -5,8 +5,7 @@ import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFoot
 import { WorkflowStepOptionsMenuItems } from '@/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { useDuplicateStep } from '@/workflow/workflow-steps/hooks/useDuplicateStep';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { workflowAiAgentActionAgentState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentActionAgentState';
+import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { Dropdown } from 'twenty-ui/components/navigation';
@@ -18,13 +17,17 @@ import { Button } from 'twenty-ui/primitives/input';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
+type WorkflowStepFooterProps = {
+  stepId: string;
+  additionalActions?: React.ReactNode[];
+  agent?: Pick<FlatAgent, 'id' | 'roleId'>;
+};
+
 export const WorkflowStepFooter = ({
   stepId,
   additionalActions,
-}: {
-  stepId: string;
-  additionalActions?: React.ReactNode[];
-}) => {
+  agent,
+}: WorkflowStepFooterProps) => {
   const dropdownId = useId();
   const { t } = useLingui();
   const { duplicateStep } = useDuplicateStep();
@@ -37,15 +40,13 @@ export const WorkflowStepFooter = ({
   const { deleteStep } = useDeleteStep();
   const navigateApp = useNavigateApp();
   const navigateSettings = useNavigateSettings();
-  const workflowAiAgentActionAgent = useAtomStateValue(
-    workflowAiAgentActionAgentState,
-  );
   const shouldPinDeleteButton =
     !isDefined(additionalActions) || additionalActions.length === 0;
 
-  const agentId = workflowAiAgentActionAgent?.id;
+  const agentId = agent?.id;
+  const agentRoleId = agent?.roleId;
   const hasViewAgentOption = isDefined(agentId);
-  const hasViewRoleOption = isDefined(workflowAiAgentActionAgent?.roleId);
+  const hasViewRoleOption = isDefined(agentRoleId);
 
   const handleChangeNodeType = () => {
     if (stepId === TRIGGER_STEP_ID) {
@@ -75,10 +76,8 @@ export const WorkflowStepFooter = ({
   };
 
   const handleViewRole = () => {
-    if (isDefined(workflowAiAgentActionAgent?.roleId)) {
-      navigateSettings(SettingsPath.RoleDetail, {
-        roleId: workflowAiAgentActionAgent.roleId,
-      });
+    if (isDefined(agentRoleId)) {
+      navigateSettings(SettingsPath.RoleDetail, { roleId: agentRoleId });
     }
   };
 

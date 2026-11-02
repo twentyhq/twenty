@@ -14,6 +14,7 @@ import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logi
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkflowSchemaWorkspaceService } from 'src/modules/workflow/workflow-builder/workflow-schema/workflow-schema.workspace-service';
+import { WorkflowAiAgentStepAgentService } from 'src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service';
 import { createActivateWorkflowVersionTool } from 'src/modules/workflow/workflow-tools/tools/activate-workflow-version.tool';
 import { createComputeStepOutputSchemaTool } from 'src/modules/workflow/workflow-tools/tools/compute-step-output-schema.tool';
 import { createCreateCompleteWorkflowTool } from 'src/modules/workflow/workflow-tools/tools/create-complete-workflow.tool';
@@ -57,6 +58,7 @@ export class WorkflowToolWorkspaceService {
     logicFunctionFromSourceService: LogicFunctionFromSourceService,
     flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     agentService: AgentService,
+    workflowAiAgentStepAgentService: WorkflowAiAgentStepAgentService,
   ) {
     this.deps = {
       coreWorkflowListService,
@@ -70,6 +72,7 @@ export class WorkflowToolWorkspaceService {
       logicFunctionFromSourceService,
       flatEntityMapsCacheService,
       agentService,
+      workflowAiAgentStepAgentService,
     };
   }
 

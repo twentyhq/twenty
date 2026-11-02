@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { randomUUID } from 'node:crypto';
 
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
@@ -30,6 +31,42 @@ export class AgentConversationWriterService {
     private readonly transactionService: AgentHistoryTransactionService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
+
+  // TODO(@FelixMalfait): drop these upgrade fences once 2-56's make-agent-turn-thread-optional and
+  // add-agent-turn-result have reached every workspace. A one-shot run reads its turn's result when
+  // retried, so it waits for both
+  async canInsertTurnWithoutThread(workspaceId: string): Promise<boolean> {
+    const fieldsByUniversalIdentifier =
+      await this.findFieldsByUniversalIdentifier(workspaceId);
+
+    return (
+      fieldsByUniversalIdentifier[
+        STANDARD_OBJECTS.agentTurn.fields.thread.universalIdentifier
+      ]?.isNullable === true &&
+      isDefined(
+        fieldsByUniversalIdentifier[
+          STANDARD_OBJECTS.agentTurn.fields.result.universalIdentifier
+        ],
+      )
+    );
+  }
+
+  async canStoreTurnResult(workspaceId: string): Promise<boolean> {
+    return isDefined(
+      (await this.findFieldsByUniversalIdentifier(workspaceId))[
+        STANDARD_OBJECTS.agentTurn.fields.result.universalIdentifier
+      ],
+    );
+  }
+
+  private async findFieldsByUniversalIdentifier(workspaceId: string) {
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    return flatFieldMetadataMaps.byUniversalIdentifier;
+  }
 
   runInTransaction<TResult>(
     workspaceId: string,
@@ -84,7 +121,7 @@ export class AgentConversationWriterService {
     scope,
   }: {
     workspaceId: string;
-    threadId: string;
+    threadId: string | null;
     agentId: string | null;
     status: AgentTurnStatus;
     createdBy?: ActorMetadata;

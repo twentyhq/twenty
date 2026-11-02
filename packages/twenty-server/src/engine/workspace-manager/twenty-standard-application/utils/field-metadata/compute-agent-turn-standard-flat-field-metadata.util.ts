@@ -112,6 +112,31 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
   },
+  result: {
+    ...createStandardFieldFlatMetadata({
+      ...args,
+      context: {
+        fieldName: 'result',
+        type: FieldMetadataType.RAW_JSON,
+        label: i18nLabel(
+          msg({ message: 'Result', context: 'fieldMetadata.label' }),
+        ),
+        description: i18nLabel(
+          msg({
+            message: 'Final result of a completed run',
+            context: 'fieldMetadata.description',
+          }),
+        ),
+        icon: 'IconFileText',
+        isSystem: true,
+        isUIEditable: false,
+        isNullable: true,
+      },
+    }),
+    disabledFieldPermissionActions:
+      PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
+    isAuditLogged: false,
+  },
   startedAt: {
     ...createStandardFieldFlatMetadata({
       ...args,
@@ -440,7 +465,8 @@ export const buildAgentTurnStandardFlatFieldMetadatas = (
         ),
         icon: 'IconRelationOneToMany',
         isUIEditable: false,
-        isNullable: false,
+        // a one-shot AI call records its turn without a conversation
+        isNullable: true,
         targetObjectName: 'agentChatThread',
         targetFieldName: 'turns',
         morphId: null,
