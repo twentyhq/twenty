@@ -231,23 +231,27 @@ export class UserWorkspaceService {
       return;
     }
 
-    await this.billingSeatService.assertWorkspaceHasSeatForNewMember(
-      workspace.id,
-    );
-
     const resolvedRoleId = await this.resolveRoleIdForNewMember(
       roleId,
       workspace,
     );
 
-    const userWorkspace = await this.create({
-      userId: user.id,
-      workspaceId: workspace.id,
-      isExistingUser: true,
-      locale: user.locale,
-    });
+    const userWorkspace =
+      await this.billingSeatService.addMemberWithinSeatLimit(
+        workspace.id,
+        async () => {
+          const createdUserWorkspace = await this.create({
+            userId: user.id,
+            workspaceId: workspace.id,
+            isExistingUser: true,
+            locale: user.locale,
+          });
 
-    await this.createWorkspaceMember(workspace.id, user);
+          await this.createWorkspaceMember(workspace.id, user);
+
+          return createdUserWorkspace;
+        },
+      );
 
     await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
       'flatWorkspaceMemberMaps',

@@ -11,6 +11,7 @@ import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS } from 'src/engine/core-modules/billing/constants/billing-subscription-state-lock-options.constant';
 import { SEAT_BILLING_ARRANGEMENT_TYPES } from 'src/engine/core-modules/billing/constants/seat-billing-arrangement-types.constant';
 import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
@@ -18,8 +19,10 @@ import { BillingPriceService } from 'src/engine/core-modules/billing/services/bi
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { type SeatSyncPlan } from 'src/engine/core-modules/billing/types/seat-sync-plan.type';
+import { buildBillingSeatLockKey } from 'src/engine/core-modules/billing/utils/build-billing-seat-lock-key.util';
 import { computeSeatSyncPlan } from 'src/engine/core-modules/billing/utils/compute-seat-sync-plan.util';
 import { isSeatLimitReached } from 'src/engine/core-modules/billing/utils/is-seat-limit-reached.util';
+import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -37,6 +40,7 @@ export class BillingSeatService {
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingPriceService: BillingPriceService,
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
+    private readonly cacheLockService: CacheLockService,
   ) {}
 
   async countWorkspaceMembers(workspaceId: string): Promise<number> {
@@ -122,28 +126,39 @@ export class BillingSeatService {
     });
   }
 
-  async assertWorkspaceHasSeatForNewMember(workspaceId: string) {
+  async addMemberWithinSeatLimit<TResult>(
+    workspaceId: string,
+    addMember: () => Promise<TResult>,
+  ): Promise<TResult> {
     if (!this.twentyConfigService.get('IS_BILLING_ENABLED')) {
-      return;
+      return await addMember();
     }
 
     const seatArrangements = await this.findSeatArrangements(workspaceId);
 
     if (seatArrangements.length === 0) {
-      return;
+      return await addMember();
     }
 
-    if (
-      isSeatLimitReached({
-        memberCount: await this.countWorkspaceMembers(workspaceId),
-        seatArrangements,
-        now: new Date(),
-      })
-    ) {
-      throw new BillingException(
-        `Workspace ${workspaceId} has reached its committed seats`,
-        BillingExceptionCode.BILLING_SEAT_LIMIT_REACHED,
-      );
-    }
+    return await this.cacheLockService.withLock(
+      async () => {
+        if (
+          isSeatLimitReached({
+            memberCount: await this.countWorkspaceMembers(workspaceId),
+            seatArrangements,
+            now: new Date(),
+          })
+        ) {
+          throw new BillingException(
+            `Workspace ${workspaceId} has reached its committed seats`,
+            BillingExceptionCode.BILLING_SEAT_LIMIT_REACHED,
+          );
+        }
+
+        return await addMember();
+      },
+      buildBillingSeatLockKey(workspaceId),
+      BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS,
+    );
   }
 }
