@@ -6,13 +6,21 @@ import { type FindOperator, In, IsNull, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationAuthorizationEntity } from 'src/engine/core-modules/application/application-authorization/application-authorization.entity';
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { WellKnownOAuthClientInstallService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-install.service';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class ApplicationAuthorizationService {
   constructor(
     @InjectRepository(ApplicationAuthorizationEntity)
     private readonly applicationAuthorizationRepository: Repository<ApplicationAuthorizationEntity>,
+    @InjectRepository(UserWorkspaceEntity)
+    private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    @InjectWorkspaceScopedRepository(ApplicationEntity)
+    private readonly applicationRepository: WorkspaceScopedRepository<ApplicationEntity>,
     private readonly wellKnownOAuthClientInstallService: WellKnownOAuthClientInstallService,
   ) {}
 
@@ -171,6 +179,12 @@ export class ApplicationAuthorizationService {
         applicationId,
       });
 
+    await this.backfillMemberAuthorizations({
+      workspaceId,
+      userId,
+      applicationIds,
+    });
+
     return await this.revokeMatching({
       workspaceId,
       userId,
@@ -186,6 +200,42 @@ export class ApplicationAuthorizationService {
     applicationId: string;
   }): Promise<boolean> {
     return await this.revokeMatching({ userId, applicationId });
+  }
+
+  // Lays rows down first, or the refresh path would backfill a fresh active one for a pre-table token.
+  // Only for installs of this workspace: the application id is caller input.
+  private async backfillMemberAuthorizations({
+    workspaceId,
+    userId,
+    applicationIds,
+  }: {
+    workspaceId: string;
+    userId: string;
+    applicationIds: string[];
+  }): Promise<void> {
+    const userWorkspace = await this.userWorkspaceRepository.findOne({
+      where: { userId, workspaceId },
+    });
+
+    if (!isDefined(userWorkspace)) {
+      return;
+    }
+
+    const installs = await this.applicationRepository.find(workspaceId, {
+      select: { id: true },
+      where: { id: In(applicationIds) },
+    });
+
+    await Promise.all(
+      installs.map((install) =>
+        this.backfillAuthorizationFromRefreshToken({
+          userId,
+          workspaceId,
+          userWorkspaceId: userWorkspace.id,
+          applicationId: install.id,
+        }),
+      ),
+    );
   }
 
   private createActiveAuthorizationsQueryBuilder(workspaceId: string) {

@@ -311,13 +311,13 @@ describe('OAuth well-known clients (integration)', () => {
     });
 
     it('should show the registration logo on its install, which has no bundle of its own', async () => {
-      const [{ logo: previousLogo }] = await ds.query(
+      const [{ logo: previousLogo }] = await dataSource.query(
         `SELECT logo FROM core."applicationRegistration" WHERE "universalIdentifier" = $1`,
         [WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE],
       );
       const logoUrl = 'https://claude.ai/logo.png';
 
-      await ds.query(
+      await dataSource.query(
         `UPDATE core."applicationRegistration" SET logo = $1 WHERE "universalIdentifier" = $2`,
         [logoUrl, WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE],
       );
@@ -345,7 +345,7 @@ describe('OAuth well-known clients (integration)', () => {
 
         expect(claudeApplication.logoUrl).toBe(logoUrl);
       } finally {
-        await ds.query(
+        await dataSource.query(
           `UPDATE core."applicationRegistration" SET logo = $1 WHERE "universalIdentifier" = $2`,
           [previousLogo, WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE],
         );
@@ -627,7 +627,7 @@ describe('OAuth well-known clients (integration)', () => {
     const registerLegacyClaudeClient = async (): Promise<string> => {
       const legacyClaudeClientId = crypto.randomUUID();
 
-      await ds.query(
+      await dataSource.query(
         `INSERT INTO core."applicationRegistration"
           ("universalIdentifier", name, "oAuthClientId", "oAuthRedirectUris", "oAuthScopes", "sourceType")
          VALUES ($1, 'claudeai', $2, $3, $4, 'oauth-only')`,
@@ -703,7 +703,7 @@ describe('OAuth well-known clients (integration)', () => {
     const findInstalls = (
       clientId: string,
     ): Promise<{ id: string; universalIdentifier: string }[]> =>
-      ds.query(
+      dataSource.query(
         `SELECT application.id, application."universalIdentifier" FROM core."application" application
          JOIN core."applicationRegistration" registration ON registration.id = application."applicationRegistrationId"
          WHERE registration."oAuthClientId" = $1 AND application."workspaceId" = $2 AND application."deletedAt" IS NULL`,
@@ -712,6 +712,25 @@ describe('OAuth well-known clients (integration)', () => {
 
     const isInstalled = async (clientId: string): Promise<boolean> =>
       (await findInstalls(clientId)).length > 0;
+
+    const revokeMemberAccess = (variables: {
+      applicationId: string;
+      userId: string;
+    }) =>
+      makeMetadataApiRequest({
+        query: gql`
+          mutation RevokeWorkspaceApplicationMemberAccess(
+            $applicationId: UUID!
+            $userId: UUID!
+          ) {
+            revokeWorkspaceApplicationMemberAccess(
+              applicationId: $applicationId
+              userId: $userId
+            )
+          }
+        `,
+        variables,
+      });
 
     it('should list the members of older per-connection installs as members of the shared Claude install', async () => {
       const { legacyClaudeClientId } =
@@ -752,22 +771,9 @@ describe('OAuth well-known clients (integration)', () => {
       });
       const [sharedInstall] = await findInstalls(claudeClientId);
 
-      const response = await makeMetadataApiRequest({
-        query: gql`
-          mutation RevokeWorkspaceApplicationMemberAccess(
-            $applicationId: UUID!
-            $userId: UUID!
-          ) {
-            revokeWorkspaceApplicationMemberAccess(
-              applicationId: $applicationId
-              userId: $userId
-            )
-          }
-        `,
-        variables: {
-          applicationId: sharedInstall.id,
-          userId: USER_DATA_SEED_IDS.JONY,
-        },
+      const response = await revokeMemberAccess({
+        applicationId: sharedInstall.id,
+        userId: USER_DATA_SEED_IDS.JONY,
       });
 
       expect(response.body.errors).toBeUndefined();
@@ -780,6 +786,41 @@ describe('OAuth well-known clients (integration)', () => {
         legacyRefreshToken,
         sharedRefreshToken,
       });
+    });
+
+    // Deleting the row recreates a refresh token minted before the authorization table existed
+    it('should revoke a member refresh token that predates the authorization record', async () => {
+      const refreshToken = await connect({
+        clientId: claudeClientId,
+        token: APPLE_JONY_MEMBER_ACCESS_TOKEN,
+      });
+      const [sharedInstall] = await findInstalls(claudeClientId);
+
+      await dataSource.query(
+        `DELETE FROM core."applicationAuthorization" WHERE "userId" = $1 AND "applicationId" = $2`,
+        [USER_DATA_SEED_IDS.JONY, sharedInstall.id],
+      );
+
+      const response = await revokeMemberAccess({
+        applicationId: sharedInstall.id,
+        userId: USER_DATA_SEED_IDS.JONY,
+      });
+
+      expect(response.body.errors).toBeUndefined();
+
+      const refreshResponse = await refresh({
+        clientId: claudeClientId,
+        refreshToken,
+      }).expect(400);
+
+      expect(refreshResponse.body.error).toBe('invalid_grant');
+
+      const [authorization] = await dataSource.query(
+        `SELECT "revokedAt" FROM core."applicationAuthorization" WHERE "userId" = $1 AND "applicationId" = $2`,
+        [USER_DATA_SEED_IDS.JONY, sharedInstall.id],
+      );
+
+      expect(authorization.revokedAt).not.toBeNull();
     });
 
     it('should disconnect the members of older per-connection Claude installs too', async () => {
