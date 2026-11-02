@@ -31,7 +31,6 @@ import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine
 import { resolveEventRecordSnapshots } from 'src/engine/permissions/combine/utils/resolve-event-record-snapshots.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
 
 @Injectable()
 export class RecordAccessPolicyService {
@@ -149,14 +148,7 @@ export class RecordAccessPolicyService {
       'flatRowLevelPermissionPredicateGroupMaps',
     ]);
 
-    const flatWorkspaceMemberMaps = hasWorkspaceMemberBoundPredicates(
-      flatRowLevelPermissionPredicateMaps,
-    )
-      ? await this.loadWorkspaceMemberMaps(workspaceId)
-      : undefined;
-
-    return {
-      flatWorkspaceMemberMaps,
+    const metadataMaps: PermissionsMetadataMaps = {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
       featureFlagsMap,
@@ -165,17 +157,19 @@ export class RecordAccessPolicyService {
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
     };
-  }
 
-  private async loadWorkspaceMemberMaps(
-    workspaceId: string,
-  ): Promise<FlatWorkspaceMemberMaps> {
+    if (
+      !hasWorkspaceMemberBoundPredicates(flatRowLevelPermissionPredicateMaps)
+    ) {
+      return metadataMaps;
+    }
+
     const { flatWorkspaceMemberMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatWorkspaceMemberMaps',
       ]);
 
-    return flatWorkspaceMemberMaps;
+    return { ...metadataMaps, flatWorkspaceMemberMaps };
   }
 
   // Event snapshots go through the same grant paths as the principal's queries
