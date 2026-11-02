@@ -17,6 +17,10 @@ const APPLICATION_ID = 'application-id';
 const APPLICATION_ROLE_ID = 'application-role';
 const READ_ONLY_ROLE_ID = 'read-only-role';
 const OTHER_APPLICATION_ROLE_ID = 'other-application-role';
+const APPLICATION_ID_BY_ROLE_ID: Record<string, string> = {
+  [APPLICATION_ROLE_ID]: APPLICATION_ID,
+  [OTHER_APPLICATION_ROLE_ID]: 'other-application-id',
+};
 
 const flatObjectMetadata = {
   ...COMPANY_FLAT_OBJECT_MOCK,
@@ -46,11 +50,8 @@ const hasAccess = ({
   const request: PermissionsObjectAccessRequest = {
     principal: {
       workspaceId: 'workspace-id',
-      intersectionOf: [APPLICATION_ROLE_ID, OTHER_APPLICATION_ROLE_ID].includes(
-        roleId,
-      )
-        ? { applicationRoleId: roleId }
-        : { userWorkspaceRoleId: roleId },
+      roleIds: [roleId],
+      applicationId: APPLICATION_ID_BY_ROLE_ID[roleId],
     },
     metadataMaps: {
       flatFieldMetadataMaps: createEmptyFlatEntityMaps(),

@@ -20,6 +20,7 @@ import { getPermissionsPrincipalShareKeys } from 'src/engine/permissions/princip
 import { resolvePermissionsShareGrant } from 'src/engine/permissions/record-share/utils/resolve-permissions-share-grant.util';
 import { isObjectOperationDeniedToPrincipal } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principal.util';
 import { isObjectOperationDisabledToPrincipal } from 'src/engine/permissions/role/utils/is-object-operation-disabled-to-principal.util';
+import { hasWorkspaceMemberBoundPredicates } from 'src/engine/permissions/rls/utils/has-workspace-member-bound-predicates.util';
 import { isRolePermittingOperation } from 'src/engine/permissions/role/utils/is-role-permitting-operation.util';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
@@ -147,7 +148,7 @@ export class RecordAccessPolicyService {
       'flatRowLevelPermissionPredicateGroupMaps',
     ]);
 
-    return {
+    const metadataMaps: PermissionsMetadataMaps = {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps: flatFieldMetadataMapsOrm,
       featureFlagsMap,
@@ -156,6 +157,19 @@ export class RecordAccessPolicyService {
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
     };
+
+    if (
+      !hasWorkspaceMemberBoundPredicates(flatRowLevelPermissionPredicateMaps)
+    ) {
+      return metadataMaps;
+    }
+
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    return { ...metadataMaps, flatWorkspaceMemberMaps };
   }
 
   // Event snapshots go through the same grant paths as the principal's queries

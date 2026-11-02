@@ -17,7 +17,6 @@ import { type RecordShareInput } from 'src/engine/permissions/record-share/types
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 type RecordSharePrincipal = Pick<
   RecordShareInput,
@@ -127,7 +126,7 @@ export class RecordSharePrincipalService {
 
       const rolePrincipal: PermissionsPrincipal = {
         workspaceId,
-        intersectionOf: { userWorkspaceRoleId: roleId },
+        roleIds: [roleId],
       };
 
       if (
@@ -153,15 +152,10 @@ export class RecordSharePrincipalService {
         continue;
       }
 
-      const workspaceMember = await transactionScope
-        .getRepository<WorkspaceMemberWorkspaceEntity>('workspaceMember', {
-          shouldBypassPermissionChecks: true,
-        })
-        .findOne({ where: { id: principal.principalId } });
       const hasGrant = await this.recordAccessPolicyService.hasAccessToRecords({
         principal: {
           ...rolePrincipal,
-          workspaceMember: workspaceMember ?? undefined,
+          workspaceMemberId: principal.principalId,
         },
         flatObjectMetadata,
         operationType: 'select',

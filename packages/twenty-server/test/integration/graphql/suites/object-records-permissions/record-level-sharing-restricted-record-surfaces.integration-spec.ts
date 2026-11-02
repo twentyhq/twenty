@@ -310,10 +310,8 @@ describe('A restricted record on an object open by default', () => {
         })
         .resolveAdmittedRecordIds({
           workspaceId: workspaceId,
-          intersectionOf: { userWorkspaceRoleId: memberRole.id },
-          workspaceMember: {
-            id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-          },
+          roleIds: [memberRole.id],
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
         });
 
     expect([...admittedRecordIds]).toEqual([OPEN_COMPANY_ID]);
