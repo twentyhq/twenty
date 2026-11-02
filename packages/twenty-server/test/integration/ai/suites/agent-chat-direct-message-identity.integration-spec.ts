@@ -10,6 +10,7 @@ import { type AgentChatDirectMessageIdentityService } from 'src/engine/metadata-
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_YCOMBINATOR_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 type DirectMessageIdentity = {
@@ -57,17 +58,24 @@ describe('Canonical direct message identity', () => {
       }),
     );
 
-  const readIdentity = async (threadId: string) => {
-    const [identity]: DirectMessageIdentity[] =
-      await global.testDataSource.query(
-        `SELECT id, "conversationType", "directMessageFirstWorkspaceMemberId", "directMessageSecondWorkspaceMemberId",
-                "workspaceMemberId", "isAssistantParticipant", "channelId", title, "lastActivityAt", "deletedAt"
-         FROM "${context.schema}"."agentChatThread" WHERE id = $1`,
-        [threadId],
-      );
-
-    return identity;
-  };
+  const readIdentity = (threadId: string) =>
+    global.testDataSource
+      .createQueryBuilder()
+      .select([
+        'id',
+        '"conversationType"',
+        '"directMessageFirstWorkspaceMemberId"',
+        '"directMessageSecondWorkspaceMemberId"',
+        '"workspaceMemberId"',
+        '"isAssistantParticipant"',
+        '"channelId"',
+        'title',
+        '"lastActivityAt"',
+        '"deletedAt"',
+      ])
+      .from(`${context.schema}.agentChatThread`, 'thread')
+      .where('id = :threadId', { threadId })
+      .getRawOne<DirectMessageIdentity>();
 
   it('returns one identity for concurrent starts in both directions', async () => {
     const forwardPair = {
@@ -88,16 +96,23 @@ describe('Canonical direct message identity', () => {
     expect(new Set(threadIds).size).toBe(1);
     expect(await getOrCreate(reversePair)).toBe(threadIds[0]);
 
-    const [count]: { count: number }[] = await global.testDataSource.query(
-      `SELECT count(*)::int AS count FROM "${context.schema}"."agentChatThread"
-       WHERE "directMessageFirstWorkspaceMemberId" = $1 AND "directMessageSecondWorkspaceMemberId" = $2`,
-      [
-        WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-        WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-      ],
-    );
+    const storedThreads = await global.testDataSource
+      .createQueryBuilder()
+      .select('id')
+      .from(`${context.schema}.agentChatThread`, 'thread')
+      .where(
+        '"directMessageFirstWorkspaceMemberId" = :firstWorkspaceMemberId',
+        {
+          firstWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        },
+      )
+      .andWhere(
+        '"directMessageSecondWorkspaceMemberId" = :secondWorkspaceMemberId',
+        { secondWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY },
+      )
+      .getRawMany<{ id: string }>();
 
-    expect(count.count).toBe(1);
+    expect(storedThreads).toHaveLength(1);
   });
 
   it('keeps different pairs and the same pair in another workspace independent', async () => {
@@ -116,10 +131,14 @@ describe('Canonical direct message identity', () => {
         3,
       );
     } finally {
-      await global.testDataSource.query(
-        `DELETE FROM "${getWorkspaceSchemaName(SEED_YCOMBINATOR_WORKSPACE_ID)}"."agentChatThread" WHERE id = $1`,
-        [otherWorkspacePair],
-      );
+      await global.testDataSource
+        .createQueryBuilder()
+        .delete()
+        .from(
+          `${getWorkspaceSchemaName(SEED_YCOMBINATOR_WORKSPACE_ID)}.agentChatThread`,
+        )
+        .where('id = :threadId', { threadId: otherWorkspacePair })
+        .execute();
     }
   });
 
@@ -143,63 +162,85 @@ describe('Canonical direct message identity', () => {
       deletedAt: null,
     });
 
-    const [counts]: {
-      participants: number;
-      messages: number;
-      shares: number;
-    }[] = await global.testDataSource.query(
-      `SELECT
-         (SELECT count(*)::int FROM "${context.schema}"."agentChatThreadParticipant" WHERE "threadId" = $1) AS participants,
-         (SELECT count(*)::int FROM "${context.schema}"."agentMessage" WHERE "threadId" = $1) AS messages,
-         (SELECT count(*)::int FROM "${context.schema}"."recordShare" WHERE "recordId" = $1) AS shares`,
-      [threadId],
-    );
+    const [participants, messages, shares] = await Promise.all([
+      global.testDataSource
+        .createQueryBuilder()
+        .select('id')
+        .from(`${context.schema}.agentChatThreadParticipant`, 'participant')
+        .where('"threadId" = :threadId', { threadId })
+        .getRawMany<{ id: string }>(),
+      global.testDataSource
+        .createQueryBuilder()
+        .select('id')
+        .from(`${context.schema}.agentMessage`, 'message')
+        .where('"threadId" = :threadId', { threadId })
+        .getRawMany<{ id: string }>(),
+      global.testDataSource
+        .createQueryBuilder()
+        .select('id')
+        .from(`${context.schema}.recordShare`, 'share')
+        .where('"recordId" = :threadId', { threadId })
+        .getRawMany<{ id: string }>(),
+    ]);
 
-    expect(counts).toEqual({ participants: 0, messages: 0, shares: 0 });
+    expect(participants).toHaveLength(0);
+    expect(messages).toHaveLength(0);
+    expect(shares).toHaveLength(0);
   });
 
   it('rejects duplicate pairs at the database boundary', async () => {
     await getOrCreate();
 
     await expect(
-      global.testDataSource.query(
-        `INSERT INTO "${context.schema}"."agentChatThread"
-         (id, "conversationType", "directMessageFirstWorkspaceMemberId", "directMessageSecondWorkspaceMemberId")
-         VALUES ($1, 'DIRECT_MESSAGE', $2, $3)`,
-        [
-          randomUUID(),
-          WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-          WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-        ],
-      ),
+      global.testDataSource
+        .createQueryBuilder()
+        .insert()
+        .into(`${context.schema}.agentChatThread`)
+        .values({
+          id: randomUUID(),
+          conversationType: 'DIRECT_MESSAGE',
+          directMessageFirstWorkspaceMemberId:
+            WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+          directMessageSecondWorkspaceMemberId:
+            WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        })
+        .execute(),
     ).rejects.toMatchObject({ code: '23505' });
   });
 
   it('retains a soft-deleted thread identity without restoring it', async () => {
     const threadId = await getOrCreate();
 
-    await global.testDataSource.query(
-      `UPDATE "${context.schema}"."agentChatThread" SET "deletedAt" = now() WHERE id = $1`,
-      [threadId],
-    );
+    await global.testDataSource
+      .createQueryBuilder()
+      .update(`${context.schema}.agentChatThread`)
+      .set({ deletedAt: new Date() })
+      .where('id = :threadId', { threadId })
+      .execute();
     const deletedIdentity = await readIdentity(threadId);
 
     expect(await getOrCreate()).toBe(threadId);
     expect(await readIdentity(threadId)).toEqual(deletedIdentity);
-    expect(deletedIdentity.deletedAt).not.toBeNull();
+    expect(deletedIdentity).toMatchObject({ deletedAt: expect.anything() });
   });
 
   it('retains the human pair after Ada joins and a member becomes unavailable', async () => {
     const threadId = await getOrCreate();
 
-    await global.testDataSource.query(
-      `UPDATE "${context.schema}"."agentChatThread" SET "isAssistantParticipant" = true WHERE id = $1`,
-      [threadId],
-    );
-    await global.testDataSource.query(
-      `UPDATE "${context.schema}"."workspaceMember" SET "deletedAt" = now() WHERE id = $1`,
-      [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
-    );
+    await global.testDataSource
+      .createQueryBuilder()
+      .update(`${context.schema}.agentChatThread`)
+      .set({ isAssistantParticipant: true })
+      .where('id = :threadId', { threadId })
+      .execute();
+    await global.testDataSource
+      .createQueryBuilder()
+      .update(`${context.schema}.workspaceMember`)
+      .set({ deletedAt: new Date() })
+      .where('id = :workspaceMemberId', {
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+      })
+      .execute();
 
     try {
       expect(await getOrCreate()).toBe(threadId);
@@ -211,10 +252,14 @@ describe('Canonical direct message identity', () => {
         isAssistantParticipant: true,
       });
     } finally {
-      await global.testDataSource.query(
-        `UPDATE "${context.schema}"."workspaceMember" SET "deletedAt" = null WHERE id = $1`,
-        [WORKSPACE_MEMBER_DATA_SEED_IDS.JONY],
-      );
+      await global.testDataSource
+        .createQueryBuilder()
+        .update(`${context.schema}.workspaceMember`)
+        .set({ deletedAt: null })
+        .where('id = :workspaceMemberId', {
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+        })
+        .execute();
     }
   });
 
@@ -245,6 +290,26 @@ describe('Canonical direct message identity', () => {
         secondWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.SCOTT,
       }),
     ).rejects.toMatchObject({ code: AiExceptionCode.THREAD_NOT_FOUND });
+  });
+
+  it('rejects new pairs when a human has lost workspace membership', async () => {
+    const membershipQuery = global.testDataSource
+      .createQueryBuilder()
+      .update('core.userWorkspace')
+      .where('"workspaceId" = :workspaceId', {
+        workspaceId: context.workspaceId,
+      })
+      .andWhere('"userId" = :userId', { userId: USER_DATA_SEED_IDS.JONY });
+
+    await membershipQuery.clone().set({ deletedAt: new Date() }).execute();
+
+    try {
+      await expect(getOrCreate()).rejects.toMatchObject({
+        code: AiExceptionCode.THREAD_NOT_FOUND,
+      });
+    } finally {
+      await membershipQuery.clone().set({ deletedAt: null }).execute();
+    }
   });
 
   it.each([

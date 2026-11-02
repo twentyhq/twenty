@@ -53,33 +53,47 @@ describe('2-55 workspace command - add direct message pair identity (integration
         'flatFieldMetadataMaps',
         'flatIndexMaps',
       ]);
-    const columns: { column_name: string }[] =
-      await global.testDataSource.query(
-        `SELECT column_name FROM information_schema.columns
-         WHERE table_schema = $1 AND table_name = 'agentChatThread'
-           AND column_name = ANY($2::text[])`,
-        [SCHEMA, PAIR_COLUMN_NAMES],
+    const queryRunner = global.testDataSource.createQueryRunner();
+
+    try {
+      const table = await queryRunner.getTable(`${SCHEMA}.agentChatThread`);
+
+      if (!isDefined(table)) {
+        throw new Error('Agent chat thread table is missing');
+      }
+
+      const columns = table.columns.filter(({ name }) =>
+        PAIR_COLUMN_NAMES.includes(name),
       );
-    const pairIndexes: { indexdef: string }[] =
-      await global.testDataSource.query(
-        `SELECT indexdef FROM pg_indexes
-         WHERE schemaname = $1 AND tablename = 'agentChatThread'
-           AND indexdef LIKE 'CREATE UNIQUE INDEX%directMessageFirstWorkspaceMemberId%'`,
-        [SCHEMA],
+      const pairIndexes = table.indices.filter(({ columnNames }) =>
+        PAIR_COLUMN_NAMES.every((columnName) =>
+          columnNames.includes(columnName),
+        ),
       );
 
-    return {
-      hasFields: PAIR_FIELD_UNIVERSAL_IDENTIFIERS.every((universalIdentifier) =>
-        isDefined(
-          flatFieldMetadataMaps.byUniversalIdentifier[universalIdentifier],
+      return {
+        hasFields: PAIR_FIELD_UNIVERSAL_IDENTIFIERS.every(
+          (universalIdentifier) =>
+            isDefined(
+              flatFieldMetadataMaps.byUniversalIdentifier[universalIdentifier],
+            ),
         ),
-      ),
-      hasIndexMetadata: isDefined(
-        flatIndexMaps.byUniversalIdentifier[PAIR_INDEX_UNIVERSAL_IDENTIFIER],
-      ),
-      columnCount: columns.length,
-      pairIndexes: pairIndexes.map(({ indexdef }) => indexdef),
-    };
+        hasIndexMetadata: isDefined(
+          flatIndexMaps.byUniversalIdentifier[PAIR_INDEX_UNIVERSAL_IDENTIFIER],
+        ),
+        columnCount: columns.length,
+        pairIndexes: pairIndexes.map(
+          ({ name, columnNames, isUnique, where }) => ({
+            name,
+            columnNames: [...columnNames].sort(),
+            isUnique,
+            where,
+          }),
+        ),
+      };
+    } finally {
+      await queryRunner.release();
+    }
   };
 
   const removePairIndexAndFields = async (
@@ -185,7 +199,14 @@ describe('2-55 workspace command - add direct message pair identity (integration
       hasFields: true,
       hasIndexMetadata: true,
       columnCount: PAIR_COLUMN_NAMES.length,
-      pairIndexes: [expect.not.stringContaining('WHERE')],
+      pairIndexes: [
+        {
+          name: expect.any(String),
+          columnNames: PAIR_COLUMN_NAMES,
+          isUnique: true,
+          where: '',
+        },
+      ],
     });
 
     const threadId = await identityService.getOrCreate(PAIR);
@@ -193,10 +214,12 @@ describe('2-55 workspace command - add direct message pair identity (integration
     try {
       await expect(identityService.getOrCreate(PAIR)).resolves.toBe(threadId);
     } finally {
-      await global.testDataSource.query(
-        `DELETE FROM "${SCHEMA}"."agentChatThread" WHERE id = $1`,
-        [threadId],
-      );
+      await global.testDataSource
+        .createQueryBuilder()
+        .delete()
+        .from(`${SCHEMA}.agentChatThread`)
+        .where('id = :threadId', { threadId })
+        .execute();
     }
   });
 
@@ -214,10 +237,12 @@ describe('2-55 workspace command - add direct message pair identity (integration
 
       await expect(identityService.getOrCreate(PAIR)).resolves.toBe(threadId);
     } finally {
-      await global.testDataSource.query(
-        `DELETE FROM "${SCHEMA}"."agentChatThread" WHERE id = $1`,
-        [threadId],
-      );
+      await global.testDataSource
+        .createQueryBuilder()
+        .delete()
+        .from(`${SCHEMA}.agentChatThread`)
+        .where('id = :threadId', { threadId })
+        .execute();
     }
   });
 

@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { normalizeAgentChatDirectMessagePairOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/normalize-agent-chat-direct-message-pair-or-throw.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
@@ -15,7 +16,6 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 type DirectMessagePair = ReturnType<
   typeof normalizeAgentChatDirectMessagePairOrThrow
@@ -49,26 +49,27 @@ export class AgentChatDirectMessageIdentityService {
 
     const createdThreadId = await this.threadRepository.query(
       workspaceId,
-      async ({ manager, table }) => {
+      async ({ manager }) => {
         await this.assertMembersAvailableOrThrow({
           manager,
           workspaceId,
           pair,
         });
 
-        const [createdThread] = await manager.query<{ id: string }[]>(
-          `INSERT INTO ${table('agentChatThread')}
-            ("conversationType", "directMessageFirstWorkspaceMemberId", "directMessageSecondWorkspaceMemberId", "isAssistantParticipant")
-           VALUES ('DIRECT_MESSAGE', $1, $2, false)
-           ON CONFLICT ("directMessageFirstWorkspaceMemberId", "directMessageSecondWorkspaceMemberId") DO NOTHING
-           RETURNING id`,
-          [
-            pair.directMessageFirstWorkspaceMemberId,
-            pair.directMessageSecondWorkspaceMemberId,
-          ],
-        );
+        const { raw: createdThreads }: { raw: { id: string }[] } = await manager
+          .createQueryBuilder()
+          .insert()
+          .into(`${getWorkspaceSchemaName(workspaceId)}.agentChatThread`)
+          .values({
+            conversationType: 'DIRECT_MESSAGE',
+            ...pair,
+            isAssistantParticipant: false,
+          })
+          .orIgnore()
+          .returning('id')
+          .execute();
 
-        return createdThread?.id;
+        return createdThreads[0]?.id;
       },
     );
 
@@ -130,19 +131,21 @@ export class AgentChatDirectMessageIdentityService {
       pair.directMessageFirstWorkspaceMemberId,
       pair.directMessageSecondWorkspaceMemberId,
     ];
-    const schema = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
-    const members = await manager.query<{ id: string }[]>(
-      `SELECT member.id FROM ${schema}."workspaceMember" member
-       JOIN core."userWorkspace" membership
-         ON membership."userId" = member."userId"
-        AND membership."workspaceId" = $1
-        AND membership."deletedAt" IS NULL
-       WHERE member.id = ANY($2::uuid[])
-         AND member."deletedAt" IS NULL
-       ORDER BY member.id
-       FOR SHARE OF member, membership`,
-      [workspaceId, workspaceMemberIds],
-    );
+    const members = await manager
+      .createQueryBuilder()
+      .select('member.id', 'id')
+      .from(`${getWorkspaceSchemaName(workspaceId)}.workspaceMember`, 'member')
+      .innerJoin(
+        UserWorkspaceEntity,
+        'membership',
+        'membership.userId = member."userId"',
+      )
+      .where('membership.workspaceId = :workspaceId', { workspaceId })
+      .andWhere('member.id IN (:...workspaceMemberIds)', { workspaceMemberIds })
+      .andWhere('member."deletedAt" IS NULL')
+      .orderBy('member.id', 'ASC')
+      .setLock('pessimistic_read', undefined, ['member', 'membership'])
+      .getRawMany<{ id: string }>();
 
     if (members.length !== workspaceMemberIds.length) {
       throwAgentChatThreadNotFound();
