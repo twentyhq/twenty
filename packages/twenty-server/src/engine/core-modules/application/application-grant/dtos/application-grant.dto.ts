@@ -40,8 +40,8 @@ export class ApplicationGrantLockedObjectPermissionDTO {
   canDestroyObjectRecords: boolean;
 }
 
-@ObjectType('ApplicationGrantAddedObject')
-export class ApplicationGrantAddedObjectDTO {
+@ObjectType('ApplicationGrantObject')
+export class ApplicationGrantObjectDTO {
   @Field(() => UUIDScalarType)
   objectMetadataId: string;
 
@@ -51,11 +51,11 @@ export class ApplicationGrantAddedObjectDTO {
 
 @ObjectType('ApplicationGrantObjectAccess')
 export class ApplicationGrantObjectAccessDTO {
-  @Field(() => [UUIDScalarType], { nullable: true })
-  chosenObjectMetadataIds: string[] | null;
+  @Field()
+  coversAllObjects: boolean;
 
-  @Field(() => [ApplicationGrantAddedObjectDTO])
-  addedObjects: ApplicationGrantAddedObjectDTO[];
+  @Field(() => [ApplicationGrantObjectDTO])
+  objects: ApplicationGrantObjectDTO[];
 }
 
 @ObjectType('ApplicationGrant')

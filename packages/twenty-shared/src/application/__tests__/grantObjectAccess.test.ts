@@ -19,7 +19,7 @@ describe('grant object access', () => {
   it('grants exactly the request when the admin changes nothing', () => {
     const grant = buildGrantRoleManifestFromObjectAccess({
       approvedRoleManifest: REQUEST,
-      objectAccess: { chosenObjectUniversalIdentifiers: null, addedObjects: [] },
+      objectAccess: { coversAllObjects: true, objects: [] },
     });
 
     expect(grant.canReadAllObjectRecords).toBe(true);
@@ -28,13 +28,17 @@ describe('grant object access', () => {
         approvedRoleManifest: REQUEST,
         grantRoleManifest: grant,
       }),
-    ).toEqual({ chosenObjectUniversalIdentifiers: null, addedObjects: [] });
+    ).toEqual({ coversAllObjects: true, objects: [] });
   });
 
-  it('narrows the "all objects" request to chosen objects and adds objects at a level', () => {
+  it('turns the "all objects" request off and grants listed objects at their level', () => {
     const objectAccess = {
-      chosenObjectUniversalIdentifiers: ['person'],
-      addedObjects: [
+      coversAllObjects: false,
+      objects: [
+        {
+          objectUniversalIdentifier: 'person',
+          accessLevel: RecordShareAccessLevel.READ as const,
+        },
         {
           objectUniversalIdentifier: 'opportunity',
           accessLevel: RecordShareAccessLevel.READ_WRITE as const,

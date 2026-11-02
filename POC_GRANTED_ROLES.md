@@ -4,7 +4,7 @@ Proof of concept for the "requested role / granted role" design (core-team-issue
 
 Screenshots are in `poc-screenshots/`. Numbers `01` to `07` are referenced below.
 
-v1 is object-level only. The admin decides two things: which objects an "all objects" request covers (all objects, including future ones, or a chosen list), and extra objects, each with an access level. Permission flags are exactly as requested, and grants have no field permissions or row-level rules: an app's default role and the roles its agents use can't declare either. Standalone roles meant for members keep both.
+v1 is object-level only. The admin decides two things: whether an "all objects" request keeps covering every object, including future ones (a switch), and a list of objects, each with an access level. Permission flags are exactly as requested, and grants have no field permissions or row-level rules: an app's default role and the roles its agents use can't declare either. Standalone roles meant for members keep both.
 
 ## What works
 
@@ -38,16 +38,16 @@ Verified end to end on a fresh dev workspace (`tim@apple.dev`), mostly through t
   - LOCAL (dev) apps mirror their request on every sync. I checked this with `twenty app dev`.
   - Uninstall deletes the grant and its targets.
 - **GraphQL** (all guarded by `APPLICATIONS` + `ROLES`, user sessions only)
-  - `applicationGrant(applicationId)`: returns the grant role, locked rows, requested "all objects" actions, pending permissions, and `objectAccess` (the chosen objects, or null for all objects, and the added objects with their level).
+  - `applicationGrant(applicationId)`: returns the grant role, locked rows, requested "all objects" actions, pending permissions, and `objectAccess` (`coversAllObjects`, and the listed objects with their level).
   - `updateApplicationGrantObjectAccess(input: { applicationId, objectAccess })`. The server rejects anything below the locked minimum.
   - `approveApplicationGrantPendingPermissions`.
   - `triggerInstallApplication(input: { grantObjectAccess })`, same shape as `objectAccess`. Omitted, the grant is exactly the request, under the usual `APPLICATIONS` guard. Sent, it also needs `ROLES`, like every other grant edit.
   - `Role.canBeAssignedToApplications` and `Role.grantedToApplicationId`.
 - **Front**
   - **One list for grants** (`SettingsApplicationGrantObjectAccessList`), used at install and in the Access tab. It does not use the role editor.
-    - An "all objects" request is one row at the top: "All objects (including future ones)" or "Chosen objects". Chosen objects get the requested "all objects" level and can be removed.
+    - An "all objects" request is a switch above the list: "Read every other object, including future ones", on by default. Turning it off leaves the app only the objects in the list.
     - Required rows show their level and a lock. A requested row whose actions match no level (read, update and delete without destroy) is shown as requested, for example "read, update, delete", and stays locked.
-    - "Add object" picks an object and a level (Read, Read & write, Full). Added rows can change level or be removed; removing is how you get "none".
+    - The list has "Object" and "Access" columns. "Add object" picks an object and a level (Read, Read & write, Full). Listed objects can change level or be removed; removing is how you get "none".
   - **Pre-install app page**: the "requires" card lists everything the app asks for, with each "all objects" request at its full reach ("Read all objects, including future ones") (`07`).
   - **Install dialog** (`01`): the card with what the list can't show (the app's own objects, which don't exist yet, permission flags, capabilities, billing), then the list, read-only. **Customize** (shown only with `ROLES`) makes the list editable in place (`02`). Authorize without changes installs exactly the request.
   - **Access tab** on the installed app page: the same list, editable, with Save and Cancel (`03`), the pending card above it, and the granted permission flags listed read-only.
@@ -55,9 +55,9 @@ Verified end to end on a fresh dev workspace (`tim@apple.dev`), mostly through t
   - **Roles list**: requested roles are hidden. The "Application roles" filter shows grants, with the app they are granted to under "Assigned to", and opens the app's Access tab (`06`).
 - **Runtime checks done** (logic function `list-records`, called by the user through its HTTP route, all against `/rest`):
   - A one-click install gave a grant equal to the request (read all objects, Companies read and update, own object).
-  - A customized install (Chosen objects: People; Opportunities added at Read & write) gave exactly that grant. Companies, People, Opportunities and the app's own object could be read; Pets was denied. For about twenty seconds right after the install, every call except the own object answered 401 "Invalid auth context"; it then settled.
-  - Adding Pets at Read in the Access tab and saving made Pets readable.
-  - Upgrades: v1 (narrower) removed update on Companies and kept the admin's choices. v2 showed "update Companies" as pending, and Approve granted it. v3 dropped it again; it also drops the "all objects" request, so the chosen objects then show as added objects at Read.
+  - A customized install (switch off; People at Read; Opportunities at Read & write) gave exactly that grant. Companies, People, Opportunities and the app's own object could be read; Pets was denied. For about twenty seconds right after the install, every call except the own object answered 401 "Invalid auth context"; it then settled.
+  - Adding Pets at Read in the Access tab and saving made Pets readable. Turning the switch back on and saving restored read on all objects.
+  - Upgrades: v1 (narrower) removed update on Companies and kept the admin's choices. v2 showed "update Companies" as pending, and Approve granted it. v3 dropped it again; it also drops the "all objects" request, so the switch disappears and the listed objects stay.
   - A `triggerInstallApplication` call below the locked minimum is rejected before the job is queued (checked with the previous install input; the check is unchanged).
   - OAuth: browser `twenty auth login`, then `app publish --private` and `getRoles` with that token, all worked. With its grant removed, the grant demo's route was denied.
   - The agent is assigned to the grant (`getRoles` lists it under "Grant demo role"). I did not run the agent: no LLM provider is configured in this environment.
@@ -79,7 +79,7 @@ Tests:
    ```
    Then `cd packages/twenty-apps/examples/grant-demo && yarn install`.
 3. Publish v1 as a private tarball app: `node ../../../twenty-cli/dist/cli.cjs app publish --private -r grant-demo-local`. Pass `-r grant-demo-local` on every CLI call below.
-4. In the UI, open Settings › Apps and find "Grant demo" (or open `/settings/applications/available/7f1b2c4e-5a6d-4e8f-9a0b-1c2d3e4f5a61`), then click Install. Click Customize, switch the top row to "Chosen objects", choose People, add Opportunities at Read & write, and Authorize. (Authorize without customizing grants exactly the request.)
+4. In the UI, open Settings › Apps and find "Grant demo" (or open `/settings/applications/available/7f1b2c4e-5a6d-4e8f-9a0b-1c2d3e4f5a61`), then click Install. Click Customize, turn off "Read every other object", add People at Read and Opportunities at Read & write, and Authorize. (Authorize without customizing grants exactly the request.)
 5. Open the installed app's **Access** tab. Add Pets at Read, then Save.
 6. Call the function with a user token:
    ```
@@ -96,7 +96,7 @@ Tests:
 - **The runtime role is a computed field on `FlatApplication`.** It is set by the flat application cache, which now also reads `roleTarget` rows and the workspace's custom app id. The cache is invalidated whenever role targets change. An application read from the database instead of the cache falls back to "exempt if it has no approved request".
 - **Provenance is not stored per row.** The grant stores only the approved request snapshot. "From the request" means covered by that snapshot; anything else in the grant is treated as the admin's. The pending, narrowing and lock logic reuses `getRoleManifestGrantsNotCoveredBy` from twenty-shared.
 - **Tarball registrations now store the full manifest.** Before, they stored only `application`, so the install page could not show the requested role until after the first install (`application-tarball.service.ts`).
-- **Chosen versus added objects are inferred.** Without per-row provenance, a row that grants exactly the requested "all objects" actions, under a narrowed scope, reads back as a chosen object; any other extra row reads back as an added object (`getGrantObjectAccess`). So an object added at the same level as the "all objects" request shows as chosen after a reload.
+- **Listed objects are read back from the grant.** Every granted row the app does not require is a listed object, at the smallest level that covers its actions (`getGrantObjectAccess`).
 - **Request version.** `application.requestedRoleVersion` (one more generated instance command) records the version whose request was last synced. `application.version` is only written when an install or upgrade completes. Pending computation starts at manifest sync, about ten seconds earlier, so labelling pending permissions with `version` showed the previous version in that window. `approvedRoleRequest` is written in the same reconcile step as the grant, so it has no such window.
 - **The postcard example and the rich-app fixture** declared field permissions in their default role; those entries are removed so they still build.
 - **Pending labels are plain English strings** built on the server, not translated.
@@ -112,8 +112,8 @@ Tests:
 
 ## Design questions the POC surfaced
 
-1. **Scope versus additions.** Should the grant store the admin's scope choice separately from the extra rows? Without it, narrowing an "all objects" request cannot remove the chosen objects (see above), and an object added at the "all objects" level reads back as a chosen one.
-2. **One "all objects" level.** The list shows one top row for the "all objects" request, at the requested level. A request with read on all objects and update on all objects gets one scope for both; the POC does not let the admin scope them separately.
+1. **Narrowing keeps listed objects.** When a new version drops an "all objects" request, the switch goes away and the listed objects stay, because nothing records whether the admin listed them because of that request. Is that right, or should the grant store why each object was listed?
+2. **One "all objects" switch.** A request with read on all objects and update on all objects gets one switch for both; the POC does not let the admin turn them off separately.
 3. **Hidden fields break generic reads.** A field permission that hides a field makes `GET /rest/<object>` fail outright instead of omitting the field. If grants get field permissions in a later version, should app requests omit restricted fields instead?
 4. **Implied read.** A named row such as "update Companies" under a requested "read all objects" makes read on Companies effectively required. The POC locks the effective values of named rows, so admins cannot scope that read away. Is that right?
 5. **Take-it-or-leave-it switches on upgrade.** `canAccessAllAgentChatChannels` is outside `getRoleManifestGrantsNotCoveredBy`. The POC copies it from the approved request, so a new request for it is never shown as pending.

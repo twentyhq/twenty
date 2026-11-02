@@ -305,8 +305,8 @@ export class ApplicationGrantService {
       const desiredRoleManifest = buildGrantRoleManifestFromObjectAccess({
         approvedRoleManifest: state.requestedRoleManifest,
         objectAccess: (isLocal ? undefined : installObjectAccess) ?? {
-          chosenObjectUniversalIdentifiers: null,
-          addedObjects: [],
+          coversAllObjects: true,
+          objects: [],
         },
       });
 
@@ -434,14 +434,8 @@ export class ApplicationGrantService {
         ?.id;
 
     return {
-      chosenObjectMetadataIds: isDefined(
-        objectAccess.chosenObjectUniversalIdentifiers,
-      )
-        ? objectAccess.chosenObjectUniversalIdentifiers
-            .map(findObjectMetadataId)
-            .filter(isDefined)
-        : null,
-      addedObjects: objectAccess.addedObjects.flatMap(
+      coversAllObjects: objectAccess.coversAllObjects,
+      objects: objectAccess.objects.flatMap(
         ({ objectUniversalIdentifier, accessLevel }) => {
           const objectMetadataId = findObjectMetadataId(
             objectUniversalIdentifier,

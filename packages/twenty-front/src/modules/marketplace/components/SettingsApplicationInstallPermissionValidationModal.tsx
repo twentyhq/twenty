@@ -114,8 +114,8 @@ const StyledAccessHint = styled.div`
 `;
 
 const UNCHANGED_GRANT_OBJECT_ACCESS: ApplicationGrantObjectAccessValue = {
-  chosenObjectMetadataIds: null,
-  addedObjects: [],
+  coversAllObjects: true,
+  objects: [],
 };
 
 type LockedObjectPermission = { objectMetadataId: string } & Record<

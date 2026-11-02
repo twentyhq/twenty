@@ -33,18 +33,11 @@ export const fromObjectAccessInputToGrantObjectAccess = ({
   };
 
   return {
-    chosenObjectUniversalIdentifiers: isDefined(
-      objectAccess.chosenObjectMetadataIds,
-    )
-      ? objectAccess.chosenObjectMetadataIds.map(findObjectUniversalIdentifier)
-      : null,
-    addedObjects: objectAccess.addedObjects.map(
-      ({ objectMetadataId, accessLevel }) => ({
-        objectUniversalIdentifier:
-          findObjectUniversalIdentifier(objectMetadataId),
-        accessLevel:
-          accessLevel as GrantObjectAccess['addedObjects'][number]['accessLevel'],
-      }),
-    ),
+    coversAllObjects: objectAccess.coversAllObjects,
+    objects: objectAccess.objects.map(({ objectMetadataId, accessLevel }) => ({
+      objectUniversalIdentifier: findObjectUniversalIdentifier(objectMetadataId),
+      accessLevel:
+        accessLevel as GrantObjectAccess['objects'][number]['accessLevel'],
+    })),
   };
 };

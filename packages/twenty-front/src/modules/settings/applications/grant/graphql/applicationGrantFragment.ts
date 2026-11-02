@@ -22,8 +22,8 @@ export const APPLICATION_GRANT_FRAGMENT = gql`
       permissionFlagUniversalIdentifier
     }
     objectAccess {
-      chosenObjectMetadataIds
-      addedObjects {
+      coversAllObjects
+      objects {
         objectMetadataId
         accessLevel
       }

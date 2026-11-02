@@ -11,13 +11,12 @@ import {
   OBJECT_PERMISSION_ACTIONS_BY_ACCESS_LEVEL,
 } from '@/application/utils/recordShareAccessLevelObjectPermissions';
 import { RecordShareAccessLevel } from '@/types/RecordShareAccessLevel';
-import { isDefined } from '@/utils/validation/isDefined';
 
-// What an admin decides about a grant: the scope of the "all objects" request
-// (null keeps all objects, including future ones) and extra objects with a level
+// What an admin decides about a grant: whether the "all objects" request keeps covering every object,
+// including future ones, and objects listed with a level on top of what the app requires
 export type GrantObjectAccess = {
-  chosenObjectUniversalIdentifiers: string[] | null;
-  addedObjects: {
+  coversAllObjects: boolean;
+  objects: {
     objectUniversalIdentifier: string;
     accessLevel: GrantAccessLevel;
   }[];
@@ -59,8 +58,7 @@ export const buildGrantRoleManifestFromObjectAccess = ({
   const requestedAllObjectsActions =
     getRequestedAllObjectsActions(approvedRoleManifest);
   const isScoped =
-    isDefined(objectAccess.chosenObjectUniversalIdentifiers) &&
-    requestedAllObjectsActions.length > 0;
+    !objectAccess.coversAllObjects && requestedAllObjectsActions.length > 0;
 
   const actionsByObject = new Map<
     string,
@@ -87,14 +85,7 @@ export const buildGrantRoleManifestFromObjectAccess = ({
     });
   };
 
-  if (isScoped) {
-    for (const objectUniversalIdentifier of objectAccess.chosenObjectUniversalIdentifiers ??
-      []) {
-      grantActions(objectUniversalIdentifier, requestedAllObjectsActions);
-    }
-  }
-
-  for (const { objectUniversalIdentifier, accessLevel } of objectAccess.addedObjects) {
+  for (const { objectUniversalIdentifier, accessLevel } of objectAccess.objects) {
     grantActions(
       objectUniversalIdentifier,
       OBJECT_PERMISSION_ACTIONS_BY_ACCESS_LEVEL[accessLevel],
@@ -120,8 +111,7 @@ export const buildGrantRoleManifestFromObjectAccess = ({
   };
 };
 
-// Reads the admin's decisions back from a grant. Without per-row provenance, a row granting exactly the
-// requested "all objects" actions under a narrowed scope is a chosen object, any other extra row an added one.
+// Reads the admin's decisions back from a grant: every granted row the app does not require is a listed object
 export const getGrantObjectAccess = ({
   approvedRoleManifest,
   grantRoleManifest,
@@ -129,55 +119,35 @@ export const getGrantObjectAccess = ({
   approvedRoleManifest: RoleManifest;
   grantRoleManifest: RoleManifest;
 }): GrantObjectAccess => {
-  const requestedAllObjectsActions =
-    getRequestedAllObjectsActions(approvedRoleManifest);
   const requiredObjectUniversalIdentifiers = new Set(
     (approvedRoleManifest.objectPermissions ?? []).map(
       ({ objectUniversalIdentifier }) => objectUniversalIdentifier,
     ),
   );
-  const isScoped = requestedAllObjectsActions.some(
-    (action) =>
-      grantRoleManifest[ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION[action]] !==
-      true,
-  );
 
-  const chosenObjectUniversalIdentifiers: string[] = [];
-  const addedObjects: GrantObjectAccess['addedObjects'] = [];
-
-  for (const { objectUniversalIdentifier, ...actions } of materializeRoleManifestObjectPermissions(
-    grantRoleManifest,
-  ).objectPermissions ?? []) {
+  const objects = (
+    materializeRoleManifestObjectPermissions(grantRoleManifest)
+      .objectPermissions ?? []
+  ).flatMap(({ objectUniversalIdentifier, ...actions }) => {
     const grantedActions = getGrantedActions(actions);
 
-    if (
-      requiredObjectUniversalIdentifiers.has(objectUniversalIdentifier) ||
+    return requiredObjectUniversalIdentifiers.has(objectUniversalIdentifier) ||
       grantedActions.length === 0
-    ) {
-      continue;
-    }
-
-    const isChosen =
-      isScoped &&
-      grantedActions.length === requestedAllObjectsActions.length &&
-      requestedAllObjectsActions.every((action) =>
-        grantedActions.includes(action),
-      );
-
-    if (isChosen) {
-      chosenObjectUniversalIdentifiers.push(objectUniversalIdentifier);
-    } else {
-      addedObjects.push({
-        objectUniversalIdentifier,
-        accessLevel: getCoveringAccessLevel(grantedActions),
-      });
-    }
-  }
+      ? []
+      : [
+          {
+            objectUniversalIdentifier,
+            accessLevel: getCoveringAccessLevel(grantedActions),
+          },
+        ];
+  });
 
   return {
-    chosenObjectUniversalIdentifiers: isScoped
-      ? chosenObjectUniversalIdentifiers
-      : null,
-    addedObjects,
+    coversAllObjects: getRequestedAllObjectsActions(approvedRoleManifest).every(
+      (action) =>
+        grantRoleManifest[ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION[action]] ===
+        true,
+    ),
+    objects,
   };
 };

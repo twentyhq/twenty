@@ -3,8 +3,8 @@ import { Field, InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import {
   IsArray,
+  IsBoolean,
   IsIn,
-  IsOptional,
   IsUUID,
   ValidateNested,
 } from 'class-validator';
@@ -13,8 +13,8 @@ import { RecordShareAccessLevel } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
-@InputType('ApplicationGrantAddedObjectInput')
-export class ApplicationGrantAddedObjectInput {
+@InputType('ApplicationGrantObjectInput')
+export class ApplicationGrantObjectInput {
   @IsUUID()
   @Field(() => UUIDScalarType)
   objectMetadataId: string;
@@ -26,16 +26,14 @@ export class ApplicationGrantAddedObjectInput {
 
 @InputType('ApplicationGrantObjectAccessInput')
 export class ApplicationGrantObjectAccessInput {
-  // Omitted or null: the "all objects" request covers all objects, including future ones
-  @IsOptional()
-  @IsArray()
-  @IsUUID('all', { each: true })
-  @Field(() => [UUIDScalarType], { nullable: true })
-  chosenObjectMetadataIds?: string[] | null;
+  // Whether the "all objects" request keeps covering every object, including future ones
+  @IsBoolean()
+  @Field()
+  coversAllObjects: boolean;
 
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => ApplicationGrantAddedObjectInput)
-  @Field(() => [ApplicationGrantAddedObjectInput])
-  addedObjects: ApplicationGrantAddedObjectInput[];
+  @Type(() => ApplicationGrantObjectInput)
+  @Field(() => [ApplicationGrantObjectInput])
+  objects: ApplicationGrantObjectInput[];
 }

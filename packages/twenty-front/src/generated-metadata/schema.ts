@@ -642,17 +642,6 @@ export type ApplicationGrant = {
   requestedRoleId?: Maybe<Scalars['UUID']['output']>;
 };
 
-export type ApplicationGrantAddedObject = {
-  __typename?: 'ApplicationGrantAddedObject';
-  accessLevel: RecordShareAccessLevel;
-  objectMetadataId: Scalars['UUID']['output'];
-};
-
-export type ApplicationGrantAddedObjectInput = {
-  accessLevel: RecordShareAccessLevel;
-  objectMetadataId: Scalars['UUID']['input'];
-};
-
 export type ApplicationGrantLockedObjectPermission = {
   __typename?: 'ApplicationGrantLockedObjectPermission';
   canDestroyObjectRecords: Scalars['Boolean']['output'];
@@ -662,15 +651,26 @@ export type ApplicationGrantLockedObjectPermission = {
   objectMetadataId: Scalars['UUID']['output'];
 };
 
+export type ApplicationGrantObject = {
+  __typename?: 'ApplicationGrantObject';
+  accessLevel: RecordShareAccessLevel;
+  objectMetadataId: Scalars['UUID']['output'];
+};
+
 export type ApplicationGrantObjectAccess = {
   __typename?: 'ApplicationGrantObjectAccess';
-  addedObjects: Array<ApplicationGrantAddedObject>;
-  chosenObjectMetadataIds?: Maybe<Array<Scalars['UUID']['output']>>;
+  coversAllObjects: Scalars['Boolean']['output'];
+  objects: Array<ApplicationGrantObject>;
 };
 
 export type ApplicationGrantObjectAccessInput = {
-  addedObjects: Array<ApplicationGrantAddedObjectInput>;
-  chosenObjectMetadataIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
+  coversAllObjects: Scalars['Boolean']['input'];
+  objects: Array<ApplicationGrantObjectInput>;
+};
+
+export type ApplicationGrantObjectInput = {
+  accessLevel: RecordShareAccessLevel;
+  objectMetadataId: Scalars['UUID']['input'];
 };
 
 export type ApplicationGrantPermission = {

@@ -4,6 +4,7 @@ import {
   materializeRoleManifestObjectPermissions,
   type RoleManifest,
 } from 'twenty-shared/application';
+import { RecordShareAccessLevel } from 'twenty-shared/types';
 
 import {
   addRoleManifestGrants,
@@ -52,8 +53,13 @@ describe('application grant role manifest', () => {
     const grant = buildGrantRoleManifestFromObjectAccess({
       approvedRoleManifest: buildRequest(),
       objectAccess: {
-        chosenObjectUniversalIdentifiers: [PERSON],
-        addedObjects: [],
+        coversAllObjects: false,
+        objects: [
+          {
+            objectUniversalIdentifier: PERSON,
+            accessLevel: RecordShareAccessLevel.READ,
+          },
+        ],
       },
     });
 

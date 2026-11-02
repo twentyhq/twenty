@@ -53,14 +53,12 @@ const StyledIntro = styled.div`
 const toObjectAccessValue = (
   objectAccess: NonNullable<ApplicationGrant['objectAccess']>,
 ): ApplicationGrantObjectAccessValue => ({
-  chosenObjectMetadataIds: objectAccess.chosenObjectMetadataIds ?? null,
-  addedObjects: objectAccess.addedObjects.map(
-    ({ objectMetadataId, accessLevel }) => ({
-      objectMetadataId,
-      accessLevel:
-        accessLevel as ApplicationGrantObjectAccessValue['addedObjects'][number]['accessLevel'],
-    }),
-  ),
+  coversAllObjects: objectAccess.coversAllObjects,
+  objects: objectAccess.objects.map(({ objectMetadataId, accessLevel }) => ({
+    objectMetadataId,
+    accessLevel:
+      accessLevel as ApplicationGrantObjectAccessValue['objects'][number]['accessLevel'],
+  })),
 });
 
 const SettingsApplicationGrantObjectAccessEditor = ({
@@ -100,7 +98,7 @@ const SettingsApplicationGrantObjectAccessEditor = ({
     <Section.Root>
       <Section.Header
         title={t`Access to your records`}
-        description={t`Locked objects are required by the app. You can choose which objects "all objects" covers, and add objects.`}
+        description={t`Locked objects are required by the app. Add objects to give it more access.`}
         actions={
           isDirty && (
             <StyledActions>
