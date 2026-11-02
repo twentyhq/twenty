@@ -76,8 +76,8 @@ export class GettingStartedService {
       userVars,
       { permissionFlags },
       ownSendingMailbox,
-      companyEnrichment,
-      companyEnrichmentAttempt,
+      [companyEnrichmentKeyValuePair],
+      [companyEnrichmentAttemptKeyValuePair],
       featuredApps,
     ] = await Promise.all([
       this.userVarsService.getAll({ userId, workspaceId }),
@@ -86,12 +86,16 @@ export class GettingStartedService {
         workspaceId,
       }),
       this.findOwnSendingMailbox({ workspaceId, userWorkspaceId }),
-      this.findWorkspaceConfigVariable({
+      this.keyValuePairService.get<typeof COMPANY_ENRICHMENT_KEY>({
+        userId: null,
         workspaceId,
+        type: KeyValuePairType.CONFIG_VARIABLE,
         key: COMPANY_ENRICHMENT_KEY,
       }),
-      this.findWorkspaceConfigVariable({
+      this.keyValuePairService.get<typeof COMPANY_ENRICHMENT_ATTEMPT_KEY>({
+        userId: null,
         workspaceId,
+        type: KeyValuePairType.CONFIG_VARIABLE,
         key: COMPANY_ENRICHMENT_ATTEMPT_KEY,
       }),
       this.marketplaceQueryService.findManyMarketplaceApps({
@@ -100,6 +104,8 @@ export class GettingStartedService {
       }),
     ]);
 
+    const companyEnrichment = companyEnrichmentKeyValuePair?.value ?? null;
+
     const assignedStepActionKeys = await this.getOrSaveAssignedStepActionKeys({
       userId,
       userEmail,
@@ -107,8 +113,9 @@ export class GettingStartedService {
       savedStepActionKeys: userVars.get(
         GETTING_STARTED_STEP_ACTION_KEYS_USER_VAR_KEY,
       ),
-      companyEnrichment: companyEnrichment ?? null,
-      companyEnrichmentAttempt: companyEnrichmentAttempt ?? null,
+      companyEnrichment,
+      companyEnrichmentAttempt:
+        companyEnrichmentAttemptKeyValuePair?.value ?? null,
     });
 
     const stepActionKeys = filterGettingStartedStepActionKeys({
@@ -154,7 +161,7 @@ export class GettingStartedService {
 
     return {
       stepActionKeys,
-      companyEnrichment: companyEnrichment ?? null,
+      companyEnrichment,
       completedStepActionKeys,
       selectedStepActionKey:
         stepActionKeys.find(
@@ -269,25 +276,6 @@ export class GettingStartedService {
     }
 
     return stepActionKeys;
-  }
-
-  private async findWorkspaceConfigVariable<
-    TKey extends keyof WorkspaceEnrichmentKeyValueTypeMap,
-  >({
-    workspaceId,
-    key,
-  }: {
-    workspaceId: string;
-    key: Extract<TKey, string>;
-  }): Promise<WorkspaceEnrichmentKeyValueTypeMap[TKey] | undefined> {
-    const [keyValuePair] = (await this.keyValuePairService.get<TKey>({
-      userId: null,
-      workspaceId,
-      type: KeyValuePairType.CONFIG_VARIABLE,
-      key,
-    })) as { value?: WorkspaceEnrichmentKeyValueTypeMap[TKey] }[];
-
-    return keyValuePair?.value;
   }
 
   private async findAlreadyDoneStepActionKeys({
