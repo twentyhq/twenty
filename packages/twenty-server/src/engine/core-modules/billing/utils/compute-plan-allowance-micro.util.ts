@@ -8,14 +8,14 @@ import { findActiveWorkspaceCreditAllowanceMicro } from 'src/engine/core-modules
 
 export const computePlanAllowanceMicro = ({
   planAllowanceMicro,
-  includedWorkspaceCreditsMicro,
+  workspaceCreditsForPackMicro,
   workspaceCreditAllowances,
   interval,
   status,
   nowMs,
 }: Pick<
   FlatBillingSubscription,
-  'planAllowanceMicro' | 'includedWorkspaceCreditsMicro' | 'interval' | 'status'
+  'planAllowanceMicro' | 'workspaceCreditsForPackMicro' | 'interval' | 'status'
 > &
   Partial<Pick<FlatBillingSubscription, 'workspaceCreditAllowances'>> & {
     nowMs: number;
@@ -34,9 +34,5 @@ export const computePlanAllowanceMicro = ({
     return planAllowanceMicro;
   }
 
-  return (
-    (planAllowanceMicro ?? 0) -
-    includedWorkspaceCreditsMicro +
-    workspaceCreditAllowanceMicro
-  );
+  return workspaceCreditsForPackMicro + workspaceCreditAllowanceMicro;
 };

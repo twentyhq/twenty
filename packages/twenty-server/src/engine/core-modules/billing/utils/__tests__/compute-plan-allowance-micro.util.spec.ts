@@ -18,7 +18,7 @@ describe('computePlanAllowanceMicro', () => {
       computePlanAllowanceMicro({
         ...monthlySubscription,
         planAllowanceMicro: 30_000_000,
-        includedWorkspaceCreditsMicro: 20_000_000,
+        workspaceCreditsForPackMicro: 10_000_000,
         workspaceCreditAllowances: [],
         nowMs: NOW_MS,
       }),
@@ -30,7 +30,7 @@ describe('computePlanAllowanceMicro', () => {
       computePlanAllowanceMicro({
         ...monthlySubscription,
         planAllowanceMicro: 30_000_000,
-        includedWorkspaceCreditsMicro: 20_000_000,
+        workspaceCreditsForPackMicro: 10_000_000,
         workspaceCreditAllowances: [
           {
             creditAllowanceMicro: 0,
@@ -48,7 +48,7 @@ describe('computePlanAllowanceMicro', () => {
       computePlanAllowanceMicro({
         ...monthlySubscription,
         planAllowanceMicro: null,
-        includedWorkspaceCreditsMicro: 0,
+        workspaceCreditsForPackMicro: 0,
         workspaceCreditAllowances: [
           {
             creditAllowanceMicro: 5_000_000,
@@ -66,7 +66,7 @@ describe('computePlanAllowanceMicro', () => {
       computePlanAllowanceMicro({
         ...monthlySubscription,
         planAllowanceMicro: 30_000_000,
-        includedWorkspaceCreditsMicro: 20_000_000,
+        workspaceCreditsForPackMicro: 10_000_000,
         nowMs: NOW_MS,
       }),
     ).toBe(30_000_000);
@@ -80,7 +80,7 @@ describe('computePlanAllowanceMicro', () => {
       computePlanAllowanceMicro({
         ...monthlySubscription,
         planAllowanceMicro: 30_000_000,
-        includedWorkspaceCreditsMicro: 20_000_000,
+        workspaceCreditsForPackMicro: 10_000_000,
         workspaceCreditAllowances: [
           { creditAllowanceMicro: 0, startsAtMs, endsAtMs },
         ],

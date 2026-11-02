@@ -27,7 +27,7 @@ export type FlatBillingSubscription = {
   trialEnd: Date | null;
   collectionMethod: BillingSubscriptionCollectionMethod;
   planAllowanceMicro: number | null;
-  includedWorkspaceCreditsMicro: number;
+  workspaceCreditsForPackMicro: number;
   workspaceCreditAllowances: WorkspaceCreditAllowanceWindow[];
   planKey: BillingPlanKey | null;
   userCreditsFallback: UserCreditsFallback;

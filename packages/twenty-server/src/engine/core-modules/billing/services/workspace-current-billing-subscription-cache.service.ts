@@ -45,7 +45,7 @@ export class WorkspaceCurrentBillingSubscriptionCacheService extends WorkspaceCa
       await Promise.all([
         this.billingCreditGrantService.findUnexpiredGrants(workspaceId),
         this.billingSubscriptionService.getBillingCustomer(workspaceId),
-        this.billingWorkspaceCreditAllowanceService.findWorkspaceCreditAllowances(
+        this.billingWorkspaceCreditAllowanceService.findUnexpiredWorkspaceCreditAllowances(
           workspaceId,
         ),
       ]);
@@ -67,10 +67,7 @@ export class WorkspaceCurrentBillingSubscriptionCacheService extends WorkspaceCa
       trialStart: subscription.trialStart,
       trialEnd: subscription.trialEnd,
       collectionMethod: subscription.collectionMethod,
-      planAllowanceMicro:
-        this.billingUsageService.findResourceUsageCap(subscription),
-      includedWorkspaceCreditsMicro:
-        this.billingUsageService.getIncludedWorkspaceCreditsMicro(subscription),
+      ...this.billingUsageService.getPlanAllowance(subscription),
       workspaceCreditAllowances,
       planKey:
         subscription.billingSubscriptionItems.find(

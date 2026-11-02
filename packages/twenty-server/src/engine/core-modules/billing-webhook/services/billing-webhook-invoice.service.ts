@@ -28,7 +28,6 @@ import { ResourceCreditService } from 'src/engine/core-modules/billing/services/
 import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/services/stripe-invoice.service';
 import { computeRolloverClosingAllowances } from 'src/engine/core-modules/billing/utils/compute-rollover-closing-allowances.util';
 import { deriveBillingPeriodTransition } from 'src/engine/core-modules/billing/utils/derive-billing-period-transition.util';
-import { findActiveWorkspaceCreditAllowanceMicro } from 'src/engine/core-modules/billing/utils/find-active-workspace-credit-allowance-micro.util';
 import { isCreditTopUpInvoice } from 'src/engine/core-modules/billing/utils/is-credit-top-up-invoice.util';
 import { resolveBillingTransitionBoundary } from 'src/engine/core-modules/billing/utils/resolve-billing-transition-boundary.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -172,15 +171,14 @@ export class BillingWebhookInvoiceService {
     });
 
     const workspaceCreditAllowanceMicro =
-      findActiveWorkspaceCreditAllowanceMicro({
-        workspaceCreditAllowances:
-          await this.billingWorkspaceCreditAllowanceService.findWorkspaceCreditAllowances(
-            subscription.workspaceId,
-          ),
-        nowMs: closingPeriodEnd.getTime() - 1,
-        interval: subscription.interval,
-        isTrialing: isFirstPeriodAfterTrial,
-      });
+      await this.billingWorkspaceCreditAllowanceService.findActiveWorkspaceCreditAllowanceMicro(
+        {
+          workspaceId: subscription.workspaceId,
+          nowMs: closingPeriodEnd.getTime() - 1,
+          interval: subscription.interval,
+          isTrialing: isFirstPeriodAfterTrial,
+        },
+      );
 
     const { closingAllowanceMicro, closingSeatAllowanceMicro } =
       computeRolloverClosingAllowances({
