@@ -15,11 +15,15 @@ export const GETTING_STARTED_WORKFLOW_USER_VARIABLE_KEY_PREFIX =
   'GETTING_STARTED_WORKFLOW_';
 
 export type GettingStartedKeyValueTypeMap = {
-  [Key in `${typeof GETTING_STARTED_COMPLETED_STEP_USER_VARIABLE_KEY_PREFIX}${GettingStartedStepActionKey}`]: {
+  [
+    Key in `${typeof GETTING_STARTED_COMPLETED_STEP_USER_VARIABLE_KEY_PREFIX}${GettingStartedStepActionKey}`
+  ]: {
     completedAt: string;
   };
 } & {
-  [Key in `${typeof GETTING_STARTED_WORKFLOW_USER_VARIABLE_KEY_PREFIX}${GettingStartedStepActionKey}`]: GettingStartedWorkflowDTO;
+  [
+    Key in `${typeof GETTING_STARTED_WORKFLOW_USER_VARIABLE_KEY_PREFIX}${GettingStartedStepActionKey}`
+  ]: GettingStartedWorkflowDTO;
 } & {
   [GETTING_STARTED_STEP_ACTION_KEYS_USER_VARIABLE_KEY]: string[];
   [GETTING_STARTED_SELECTED_STEP_USER_VARIABLE_KEY]: GettingStartedStepActionKey;
