@@ -3,10 +3,14 @@
 import { isNonEmptyString, isString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { BILLING_ARRANGEMENT_COMMENT_MAX_LENGTH } from 'src/engine/core-modules/billing/constants/billing-arrangement-comment-max-length.constant';
 import { BILLING_ARRANGEMENT_SETTINGS_BY_TYPE } from 'src/engine/core-modules/billing/constants/billing-arrangement-settings-by-type.constant';
 import { type BillingArrangementDraft } from 'src/engine/core-modules/billing/types/billing-arrangement-draft.type';
 import { type BillingArrangementSettingKey } from 'src/engine/core-modules/billing/types/billing-arrangement-setting-key.type';
 import { type BillingArrangementValidationError } from 'src/engine/core-modules/billing/types/billing-arrangement-validation-error.type';
+import { isValidDate } from 'src/utils/date/isValidDate';
+
+const POSTGRES_INTEGER_MAX = 2_147_483_647;
 
 const ALL_SETTING_KEYS = [
   ...new Set(
@@ -25,7 +29,7 @@ const isSettingSet = ({
 }): boolean => {
   const value = arrangement[setting];
 
-  return isString(value) ? isNonEmptyString(value) : isDefined(value);
+  return isString(value) ? isNonEmptyString(value.trim()) : isDefined(value);
 };
 
 export const getBillingArrangementValidationErrors = (
@@ -49,7 +53,9 @@ export const getBillingArrangementValidationErrors = (
 
   if (
     isDefined(arrangement.seats) &&
-    (!Number.isInteger(arrangement.seats) || arrangement.seats <= 0)
+    (!Number.isInteger(arrangement.seats) ||
+      arrangement.seats <= 0 ||
+      arrangement.seats > POSTGRES_INTEGER_MAX)
   ) {
     errors.push({ code: 'INVALID_SEATS' });
   }
@@ -63,6 +69,18 @@ export const getBillingArrangementValidationErrors = (
   }
 
   if (
+    isDefined(arrangement.comment) &&
+    arrangement.comment.length > BILLING_ARRANGEMENT_COMMENT_MAX_LENGTH
+  ) {
+    errors.push({ code: 'COMMENT_TOO_LONG' });
+  }
+
+  if (
+    !isValidDate(arrangement.startsAt) ||
+    (isDefined(arrangement.endsAt) && !isValidDate(arrangement.endsAt))
+  ) {
+    errors.push({ code: 'INVALID_DATE' });
+  } else if (
     isDefined(arrangement.endsAt) &&
     arrangement.endsAt <= arrangement.startsAt
   ) {

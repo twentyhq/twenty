@@ -7,4 +7,6 @@ export type BillingArrangementValidationError =
   | { code: 'UNEXPECTED_SETTING'; setting: BillingArrangementSettingKey }
   | { code: 'INVALID_SEATS' }
   | { code: 'INVALID_CREDIT_ALLOWANCE' }
+  | { code: 'COMMENT_TOO_LONG' }
+  | { code: 'INVALID_DATE' }
   | { code: 'ENDS_BEFORE_START' };

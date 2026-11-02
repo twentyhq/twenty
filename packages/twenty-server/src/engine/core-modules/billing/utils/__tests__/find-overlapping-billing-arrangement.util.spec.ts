@@ -39,6 +39,36 @@ describe('findOverlappingBillingArrangement', () => {
     ).toBe(existingArrangement);
   });
 
+  it('finds a bounded arrangement that partly overlaps a bounded one', () => {
+    const existingArrangement = period({
+      endsAt: new Date('2027-01-01T00:00:00.000Z'),
+    });
+
+    expect(
+      findOverlappingBillingArrangement({
+        arrangement: period({
+          startsAt: new Date('2026-12-01T00:00:00.000Z'),
+          endsAt: new Date('2027-02-01T00:00:00.000Z'),
+        }),
+        workspaceArrangements: [existingArrangement],
+      }),
+    ).toBe(existingArrangement);
+  });
+
+  it('ignores an arrangement that ends when it starts', () => {
+    expect(
+      findOverlappingBillingArrangement({
+        arrangement: period(),
+        workspaceArrangements: [
+          period({
+            startsAt: new Date('2026-12-01T00:00:00.000Z'),
+            endsAt: new Date('2026-12-01T00:00:00.000Z'),
+          }),
+        ],
+      }),
+    ).toBeUndefined();
+  });
+
   it('ignores another type', () => {
     expect(
       findOverlappingBillingArrangement({

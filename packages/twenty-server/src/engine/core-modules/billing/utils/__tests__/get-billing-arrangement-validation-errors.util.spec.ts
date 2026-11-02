@@ -65,6 +65,14 @@ describe('getBillingArrangementValidationErrors', () => {
       }),
     ],
     [
+      'a limit override',
+      draft({
+        type: BillingArrangementType.LIMIT_OVERRIDE,
+        usageLimitId: '20202020-0000-4000-8000-000000000002',
+        endsAt: new Date('2026-12-01T00:00:00.000Z'),
+      }),
+    ],
+    [
       'a refund',
       draft({
         type: BillingArrangementType.REFUND,
@@ -86,13 +94,10 @@ describe('getBillingArrangementValidationErrors', () => {
     ]);
   });
 
-  it('treats an empty string as a missing setting', () => {
+  it.each(['', '   '])('treats %p as a missing setting', (stripeCouponId) => {
     expect(
       getBillingArrangementValidationErrors(
-        draft({
-          type: BillingArrangementType.COUPON,
-          stripeCouponId: '',
-        }),
+        draft({ type: BillingArrangementType.COUPON, stripeCouponId }),
       ),
     ).toEqual([{ code: 'MISSING_SETTING', setting: 'stripeCouponId' }]);
   });
@@ -109,7 +114,7 @@ describe('getBillingArrangementValidationErrors', () => {
     ).toEqual([{ code: 'UNEXPECTED_SETTING', setting: 'stripeCouponId' }]);
   });
 
-  it.each([0, -1, 1.5])('rejects %s seats', (seats) => {
+  it.each([0, -1, 1.5, 2_147_483_648])('rejects %s seats', (seats) => {
     expect(
       getBillingArrangementValidationErrors(
         draft({ type: BillingArrangementType.FREE_SEATS, seats }),
@@ -130,6 +135,29 @@ describe('getBillingArrangementValidationErrors', () => {
       ).toEqual([{ code: 'INVALID_CREDIT_ALLOWANCE' }]);
     },
   );
+
+  it('rejects a comment longer than the column', () => {
+    expect(
+      getBillingArrangementValidationErrors(
+        draft({
+          type: BillingArrangementType.FREE_SEATS,
+          seats: 3,
+          comment: 'a'.repeat(501),
+        }),
+      ),
+    ).toEqual([{ code: 'COMMENT_TOO_LONG' }]);
+  });
+
+  it.each<[string, Partial<BillingArrangementDraft>]>([
+    ['start', { startsAt: new Date('not a date') }],
+    ['end', { endsAt: new Date('not a date') }],
+  ])('rejects an invalid %s date', (_, dates) => {
+    expect(
+      getBillingArrangementValidationErrors(
+        draft({ type: BillingArrangementType.FREE_SEATS, seats: 3, ...dates }),
+      ),
+    ).toEqual([{ code: 'INVALID_DATE' }]);
+  });
 
   it('rejects an end date on a one-time type', () => {
     expect(
