@@ -31,6 +31,7 @@ import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 import { StyledAiChatAskCard } from '@/ai/components/StyledAiChatAskCard';
 import { TextWithChatReferences } from '@/ai/components/TextWithChatReferences';
 import { AiChatComposerActionsRow } from '@/ai/components/internal/AiChatComposerActionsRow';
+import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatQuestionOtherOption } from '@/ai/components/internal/AiChatQuestionOtherOption';
 import { useAnswerAgentChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
 import { type AgentChatPendingQuestion } from '@/ai/types/AgentChatPendingQuestion';
@@ -468,11 +469,14 @@ export const AiChatQuestionCard = ({
       <StyledComposerSection>
         <AiChatComposerActionsRow
           leftActions={
-            isDefined(onSkip) ? (
-              <Button size="sm" disabled={isSubmitting} onClick={onSkip}>
-                {t`Skip`}
-              </Button>
-            ) : undefined
+            <>
+              {isDefined(onSkip) && (
+                <Button size="sm" disabled={isSubmitting} onClick={onSkip}>
+                  {t`Skip`}
+                </Button>
+              )}
+              <AiChatContextUsageButton />
+            </>
           }
           modelTierDropdownId={`ai-chat-question-model-tier-dropdown-${toolCallId}`}
           sendButton={
