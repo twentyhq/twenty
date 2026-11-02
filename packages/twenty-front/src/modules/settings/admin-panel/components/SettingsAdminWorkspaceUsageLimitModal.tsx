@@ -12,7 +12,6 @@ import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsF
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { CREATE_WORKSPACE_USAGE_LIMIT } from '@/settings/admin-panel/graphql/mutations/createWorkspaceUsageLimit';
 import { DELETE_WORKSPACE_USAGE_LIMIT } from '@/settings/admin-panel/graphql/mutations/deleteWorkspaceUsageLimit';
-import { UPDATE_WORKSPACE_USAGE_LIMIT } from '@/settings/admin-panel/graphql/mutations/updateWorkspaceUsageLimit';
 import { WORKSPACE_USAGE_LIMITS } from '@/settings/admin-panel/graphql/queries/workspaceUsageLimits';
 import { type AdminUsageLimitRow } from '@/settings/admin-panel/types/AdminUsageLimitRow';
 import { getAdminUsageLimitScopeLabel } from '@/settings/admin-panel/utils/getAdminUsageLimitScopeLabel';
@@ -39,10 +38,12 @@ const StyledActionSlot = styled.div`
   flex: 1;
 `;
 
-const parsePositiveInteger = (value: string): number | null => {
+const parseInteger = (value: string): number | null => {
   const parsed = Number(value);
 
-  return Number.isInteger(parsed) && parsed >= 1 ? parsed : null;
+  return isNonEmptyString(value.trim()) && Number.isInteger(parsed)
+    ? parsed
+    : null;
 };
 
 export const SettingsAdminWorkspaceUsageLimitModal = ({
@@ -72,23 +73,17 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
     CREATE_WORKSPACE_USAGE_LIMIT,
     mutationOptions,
   );
-  const [updateWorkspaceUsageLimit, { loading: isUpdating }] = useMutation(
-    UPDATE_WORKSPACE_USAGE_LIMIT,
-    mutationOptions,
-  );
   const [deleteWorkspaceUsageLimit, { loading: isResetting }] =
     useMutation<DeleteWorkspaceUsageLimitMutation>(
       DELETE_WORKSPACE_USAGE_LIMIT,
       mutationOptions,
     );
 
-  const parsedLimitValue = parsePositiveInteger(limitValue);
+  const parsedLimitValue = parseInteger(limitValue);
   const hasBurstValue = isNonEmptyString(burstValue.trim());
-  const parsedBurstValue = hasBurstValue
-    ? parsePositiveInteger(burstValue)
-    : null;
+  const parsedBurstValue = hasBurstValue ? parseInteger(burstValue) : null;
   const isBurstAllowed = row.limitKind === 'speed';
-  const isBusy = isCreating || isUpdating || isResetting;
+  const isBusy = isCreating || isResetting;
   const isValid =
     isDefined(parsedLimitValue) &&
     (!isBurstAllowed || !hasBurstValue || isDefined(parsedBurstValue));
@@ -116,18 +111,9 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
     };
 
     try {
-      if (isDefined(row.usageLimitId)) {
-        await updateWorkspaceUsageLimit({
-          variables: {
-            workspaceId,
-            payload: { id: row.usageLimitId, payload },
-          },
-        });
-      } else {
-        await createWorkspaceUsageLimit({
-          variables: { workspaceId, payload },
-        });
-      }
+      await createWorkspaceUsageLimit({
+        variables: { workspaceId, payload },
+      });
 
       enqueueToast({
         status: 'success',
@@ -208,6 +194,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
                 min={1}
                 value={limitValue}
                 onChange={setLimitValue}
+                disabled={row.isOverridden}
                 autoFocusOnMount
                 fullWidth
               />
@@ -221,6 +208,7 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
                   min={1}
                   value={burstValue}
                   onChange={setBurstValue}
+                  disabled={row.isOverridden}
                   fullWidth
                 />
               )}
@@ -245,15 +233,17 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
                 variant="outline"
               >{t`Cancel`}</Button>
             </StyledActionSlot>
-            <StyledActionSlot>
-              <Button
-                onClick={handleSubmit}
-                fullWidth
-                disabled={!isValid || isBusy}
-                variant="solid"
-                color="accent"
-              >{t`Save`}</Button>
-            </StyledActionSlot>
+            {!row.isOverridden && (
+              <StyledActionSlot>
+                <Button
+                  onClick={handleSubmit}
+                  fullWidth
+                  disabled={!isValid || isBusy}
+                  variant="solid"
+                  color="accent"
+                >{t`Save`}</Button>
+              </StyledActionSlot>
+            )}
           </Dialog.Footer>
         </Dialog.Popup>
       )}

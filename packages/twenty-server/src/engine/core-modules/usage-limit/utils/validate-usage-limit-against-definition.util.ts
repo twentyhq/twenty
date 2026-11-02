@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined, isValidUuid } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray, isValidUuid } from 'twenty-shared/utils';
 
 import { LIMIT_KIND_RULES } from 'src/engine/core-modules/usage-limit/constants/limit-kind-rules.constant';
 import { type CreateUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/create-usage-limit.input';
@@ -7,7 +7,9 @@ import {
   UsageLimitException,
   UsageLimitExceptionCode,
 } from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
+import { buildUsageLimitScope } from 'src/engine/core-modules/usage-limit/utils/build-usage-limit-scope.util';
 import { findAllowedUsageLimitUnits } from 'src/engine/core-modules/usage-limit/utils/find-allowed-usage-limit-units.util';
+import { findSuppressedUsageLimitDefaults } from 'src/engine/core-modules/usage-limit/utils/find-suppressed-usage-limit-defaults.util';
 import { findUsageLimitDefinition } from 'src/engine/core-modules/usage-limit/utils/find-usage-limit-definition.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
@@ -58,6 +60,14 @@ export const validateUsageLimitAgainstDefinition = (
   if (
     spansEveryOperation &&
     !LIMIT_KIND_RULES[input.limitKind].isAllOperationTypeAllowed
+  ) {
+    return;
+  }
+
+  if (
+    isNonEmptyArray(
+      findSuppressedUsageLimitDefaults(buildUsageLimitScope(input)),
+    )
   ) {
     return;
   }
