@@ -43,7 +43,6 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { type AgentChatThreadParticipantWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread-participant.workspace-entity';
 import { buildAgentChatThreadParticipantOwnerShares } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-participant-owner-shares.util';
 import { buildNextAgentChatLastMentionedAt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-next-agent-chat-last-mentioned-at.util';
 import { buildNextAgentChatThreadParticipantUpdatedAt } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-next-agent-chat-thread-participant-updated-at.util';
@@ -795,18 +794,17 @@ export class AgentChatThreadParticipantService {
     participantObjectMetadata: FlatObjectMetadata;
   }): Promise<AgentChatThreadParticipantWrite[]> {
     const participantRepository =
-      scope.getRepository<AgentChatThreadParticipantWorkspaceEntity>(
+      scope.getRepository<AgentChatThreadParticipantRow>(
         'agentChatThreadParticipant',
         { shouldBypassPermissionChecks: true },
         { shouldSkipEventEmission: true },
       );
     const findParticipants = () =>
-      participantRepository
-        .createQueryBuilder()
-        .select(PARTICIPANT_COLUMN_NAMES)
-        .where({ threadId, workspaceMemberId: In(memberIds) })
-        .withDeleted()
-        .getMany<AgentChatThreadParticipantRow>({ noFormatting: true });
+      participantRepository.find({
+        select: PARTICIPANT_COLUMN_NAMES,
+        where: { threadId, workspaceMemberId: In(memberIds) },
+        withDeleted: true,
+      });
 
     const participantsBefore = await findParticipants();
     const participantBeforeByMemberId = new Map(
