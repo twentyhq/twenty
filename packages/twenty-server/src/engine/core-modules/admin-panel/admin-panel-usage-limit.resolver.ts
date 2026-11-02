@@ -5,6 +5,7 @@ import { AdminResolver } from 'src/engine/api/graphql/graphql-config/decorators/
 import {
   AdminPanelCreateUsageLimitInput,
   AdminPanelDeleteUsageLimitInput,
+  AdminPanelUpdateUsageLimitInput,
   AdminPanelWorkspaceUsageLimitsInput,
 } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-usage-limit.input';
 import {
@@ -13,13 +14,11 @@ import {
 } from 'src/engine/core-modules/admin-panel/dtos/admin-panel-workspace-usage-limits.dto';
 import { AdminPanelUsageLimitService } from 'src/engine/core-modules/admin-panel/services/admin-panel-usage-limit.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
-import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
-import { BillingLimitOverrideService } from 'src/engine/core-modules/billing/limit-override/services/billing-limit-override.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { UsageLimitGraphqlApiExceptionFilter } from 'src/engine/core-modules/usage-limit/filters/usage-limit-graphql-api-exception.filter';
+import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
 import { fromUsageLimitEntityToDto } from 'src/engine/core-modules/usage-limit/utils/from-usage-limit-entity-to-dto.util';
-import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -49,7 +48,7 @@ import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 export class AdminPanelUsageLimitResolver {
   constructor(
     private readonly adminPanelUsageLimitService: AdminPanelUsageLimitService,
-    private readonly billingLimitOverrideService: BillingLimitOverrideService,
+    private readonly usageLimitService: UsageLimitService,
   ) {}
 
   @Query(() => AdminPanelWorkspaceUsageLimitsDTO)
@@ -63,14 +62,25 @@ export class AdminPanelUsageLimitResolver {
 
   @Mutation(() => AdminPanelUsageLimitDTO)
   async createWorkspaceUsageLimit(
-    @Args() { workspaceId, payload, endsAt }: AdminPanelCreateUsageLimitInput,
-    @AuthUser() actor: AuthContextUser,
+    @Args() { workspaceId, payload }: AdminPanelCreateUsageLimitInput,
   ): Promise<AdminPanelUsageLimitDTO> {
-    const usageLimit = await this.billingLimitOverrideService.create({
+    const usageLimit = await this.usageLimitService.create({
       workspaceId,
       input: payload,
-      endsAt: endsAt ?? null,
-      grantedByUserId: actor.id,
+      isOperator: true,
+    });
+
+    return fromUsageLimitEntityToDto(usageLimit);
+  }
+
+  @Mutation(() => AdminPanelUsageLimitDTO)
+  async updateWorkspaceUsageLimit(
+    @Args() { workspaceId, payload }: AdminPanelUpdateUsageLimitInput,
+  ): Promise<AdminPanelUsageLimitDTO> {
+    const usageLimit = await this.usageLimitService.update({
+      workspaceId,
+      input: payload,
+      isOperator: true,
     });
 
     return fromUsageLimitEntityToDto(usageLimit);
@@ -79,12 +89,11 @@ export class AdminPanelUsageLimitResolver {
   @Mutation(() => Boolean)
   async deleteWorkspaceUsageLimit(
     @Args() { workspaceId, usageLimitId }: AdminPanelDeleteUsageLimitInput,
-    @AuthUser() actor: AuthContextUser,
   ): Promise<boolean> {
-    return this.billingLimitOverrideService.end({
+    return this.usageLimitService.delete({
       workspaceId,
       usageLimitId,
-      revokedByUserId: actor.id,
+      isOperator: true,
     });
   }
 }
