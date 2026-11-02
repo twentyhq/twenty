@@ -55,6 +55,9 @@ export const buildPhaseUpdateParamsOrThrow = ({
   return {
     start_date: startDate,
     ...(isDefined(endDate) ? { end_date: endDate } : {}),
+    ...(isDefined(currentPhase.discounts)
+      ? { discounts: currentPhase.discounts }
+      : {}),
     proration_behavior: 'none',
     items: currentItems.map((item, index) => {
       const managedPrice = resolveManagedItemPrice({

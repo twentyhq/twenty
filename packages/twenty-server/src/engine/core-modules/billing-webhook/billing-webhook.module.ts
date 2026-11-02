@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { EventLogEmitterModule } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.module';
 import { BillingWebhookController } from 'src/engine/core-modules/billing-webhook/billing-webhook.controller';
 import { BillingWebhookCustomerService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-customer.service';
+import { BillingWebhookDiscountService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-discount.service';
 import { BillingSyncEntitlementsCommand } from 'src/engine/core-modules/billing-webhook/commands/billing-sync-entitlements.command';
 import { BillingEntitlementSyncService } from 'src/engine/core-modules/billing-webhook/services/billing-entitlement-sync.service';
 import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-entitlement.service';
@@ -56,6 +57,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingWebhookPriceService,
     BillingWebhookInvoiceService,
     BillingWebhookCustomerService,
+    BillingWebhookDiscountService,
     BillingWebhookSubscriptionService,
     BillingWebhookSubscriptionScheduleService,
     BillingEntitlementSyncService,

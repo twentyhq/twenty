@@ -70,4 +70,32 @@ describe('toPhaseUpdateParams', () => {
 
     expect(phase.end_date).toBeUndefined();
   });
+
+  it('keeps the phase discounts, since Stripe drops the ones a phase update leaves out', () => {
+    const phase = toPhaseUpdateParams(
+      buildPhase({
+        discounts: [
+          { coupon: 'coupon_early', discount: null, promotion_code: null },
+          {
+            coupon: null,
+            discount: { id: 'di_existing' },
+            promotion_code: null,
+          },
+          { coupon: null, discount: null, promotion_code: 'promo_partner' },
+        ] as unknown as Stripe.SubscriptionSchedule.Phase['discounts'],
+      }),
+    );
+
+    expect(phase.discounts).toEqual([
+      { coupon: 'coupon_early' },
+      { discount: 'di_existing' },
+      { promotion_code: 'promo_partner' },
+    ]);
+  });
+
+  it('omits discounts when the phase carries none', () => {
+    const phase = toPhaseUpdateParams(buildPhase({ discounts: [] }));
+
+    expect('discounts' in phase).toBe(false);
+  });
 });

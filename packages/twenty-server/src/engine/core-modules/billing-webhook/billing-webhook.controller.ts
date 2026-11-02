@@ -17,6 +17,7 @@ import Stripe from 'stripe';
 import { ApiPath } from 'twenty-shared/types';
 
 import { BillingWebhookCustomerService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-customer.service';
+import { BillingWebhookDiscountService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-discount.service';
 import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-entitlement.service';
 import { BillingWebhookInvoiceService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-invoice.service';
 import { BillingWebhookPriceService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-price.service';
@@ -49,6 +50,7 @@ export class BillingWebhookController {
     private readonly billingWebhookInvoiceService: BillingWebhookInvoiceService,
     private readonly billingWebhookCustomerService: BillingWebhookCustomerService,
     private readonly billingWebhookSubscriptionScheduleService: BillingWebhookSubscriptionScheduleService,
+    private readonly billingWebhookDiscountService: BillingWebhookDiscountService,
   ) {}
 
   @Post(`${ApiPath.Webhooks}/stripe`)
@@ -130,6 +132,13 @@ export class BillingWebhookController {
           event,
         );
 
+      case BillingWebhookEvent.CUSTOMER_DISCOUNT_CREATED:
+      case BillingWebhookEvent.CUSTOMER_DISCOUNT_UPDATED:
+      case BillingWebhookEvent.CUSTOMER_DISCOUNT_DELETED:
+        return await this.billingWebhookDiscountService.processStripeEvent(
+          event.data,
+        );
+
       case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED:
       case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_UPDATED:
       case BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED: {
@@ -142,10 +151,20 @@ export class BillingWebhookController {
           );
         }
 
-        return await this.billingWebhookSubscriptionService.processStripeEvent(
-          workspaceId,
-          event,
-        );
+        const result =
+          await this.billingWebhookSubscriptionService.processStripeEvent(
+            workspaceId,
+            event,
+          );
+
+        if (event.type === BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_DELETED) {
+          await this.billingWebhookDiscountService.processSubscriptionDeleted({
+            workspaceId,
+            subscription: event.data.object,
+          });
+        }
+
+        return result;
       }
 
       default:

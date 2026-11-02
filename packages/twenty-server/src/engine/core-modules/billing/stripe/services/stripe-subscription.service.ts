@@ -4,6 +4,8 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import type Stripe from 'stripe';
 
+import { NOT_ENDED_SUBSCRIPTION_STATUSES } from 'src/engine/core-modules/billing/constants/not-ended-subscription-statuses.constant';
+import { type SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { StripeSDKService } from 'src/engine/core-modules/billing/stripe/stripe-sdk/services/stripe-sdk.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -35,6 +37,24 @@ export class StripeSubscriptionService {
     });
 
     return subscription.data[0]?.customer ?? undefined;
+  }
+
+  async listNotEndedSubscriptionsWithDiscounts(
+    stripeCustomerId: string,
+  ): Promise<Stripe.Subscription[]> {
+    const subscriptions = await this.stripe.subscriptions
+      .list({
+        customer: stripeCustomerId,
+        expand: ['data.discounts'],
+        limit: 100,
+      })
+      .autoPagingToArray({ limit: 1000 });
+
+    return subscriptions.filter((subscription) =>
+      NOT_ENDED_SUBSCRIPTION_STATUSES.includes(
+        subscription.status as SubscriptionStatus,
+      ),
+    );
   }
 
   async payOpenInvoices({

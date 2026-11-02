@@ -39,6 +39,14 @@ export class StripeCustomerService {
     });
   }
 
+  async getCustomerDiscount(
+    stripeCustomerId: string,
+  ): Promise<Stripe.Discount | null> {
+    const customer = await this.stripe.customers.retrieve(stripeCustomerId);
+
+    return customer.deleted ? null : (customer.discount ?? null);
+  }
+
   async hasPaymentMethod(stripeCustomerId: string) {
     const { data: paymentMethods } =
       await this.stripe.customers.listPaymentMethods(stripeCustomerId);
