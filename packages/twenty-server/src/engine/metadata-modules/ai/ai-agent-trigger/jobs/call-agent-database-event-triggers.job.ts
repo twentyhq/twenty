@@ -22,7 +22,7 @@ import { isDatabaseEventCausedByAgent } from 'src/engine/metadata-modules/ai/ai-
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { filterEventsByUpdatedFields } from 'src/engine/workspace-event-emitter/utils/filter-events-by-updated-fields.util';
-import { buildRolePermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-role-permissions-principal.util';
+import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
 
 @Processor(MessageQueue.triggerQueue)
 export class CallAgentDatabaseEventTriggersJob {
@@ -85,9 +85,10 @@ export class CallAgentDatabaseEventTriggersJob {
 
       const admittedRecordIds =
         await eventRecordAccessGate.resolveAdmittedRecordIds(
-          buildRolePermissionsPrincipal({
+          buildPermissionsPrincipal({
             workspaceId: workspaceEventBatch.workspaceId,
             roleId: agentRoleId,
+            applicationId: undefined,
           }),
         );
       const admittedEvents = workspaceEventBatch.events
