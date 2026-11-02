@@ -1,6 +1,5 @@
 import { parseClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/parse-client-id-metadata-document.util';
 
-// Copied from the vendors' real documents at their client_id URLs
 const CHATGPT_DOCUMENT = {
   client_id: 'https://chatgpt.com/oauth/client.json',
   client_uri: 'https://chatgpt.com/',

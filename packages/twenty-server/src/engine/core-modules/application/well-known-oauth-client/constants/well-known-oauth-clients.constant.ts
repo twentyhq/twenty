@@ -4,7 +4,6 @@ import { WellKnownOAuthClient } from 'src/engine/core-modules/application/well-k
 import { type WellKnownOAuthClientDefinition } from 'src/engine/core-modules/application/well-known-oauth-client/types/well-known-oauth-client-definition.type';
 
 export const WELL_KNOWN_OAUTH_CLIENTS: WellKnownOAuthClientDefinition[] = [
-  // Callbacks and document hosts per https://developers.openai.com/apps-sdk/build/auth
   {
     client: WellKnownOAuthClient.CHATGPT,
     universalIdentifier: WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CHATGPT,
@@ -23,7 +22,6 @@ export const WELL_KNOWN_OAUTH_CLIENTS: WellKnownOAuthClientDefinition[] = [
     ],
     clientIdMetadataDocumentHostnames: ['chatgpt.com'],
   },
-  // Callbacks and document hosts per https://claude.com/docs/connectors/building/authentication
   {
     client: WellKnownOAuthClient.CLAUDE,
     universalIdentifier: WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,

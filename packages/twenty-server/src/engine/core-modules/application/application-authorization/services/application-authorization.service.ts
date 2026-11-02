@@ -109,7 +109,6 @@ export class ApplicationAuthorizationService {
       .getMany();
   }
 
-  // A well-known client's members are gathered across every install the server attributes to it
   async findActiveAuthorizationsForWorkspaceApplication({
     workspaceId,
     applicationId,
@@ -193,7 +192,6 @@ export class ApplicationAuthorizationService {
     return await this.revokeMatching({ userId, applicationId });
   }
 
-  // Inner join drops authorizations of soft-deleted applications
   private createActiveAuthorizationsQueryBuilder(workspaceId: string) {
     return this.applicationAuthorizationRepository
       .createQueryBuilder('applicationAuthorization')

@@ -6,7 +6,6 @@ import { type WellKnownOAuthClient } from 'src/engine/core-modules/application/w
 import { findWellKnownOAuthClientByRedirectUris } from 'src/engine/core-modules/application/well-known-oauth-client/utils/find-well-known-oauth-client-by-redirect-uris.util';
 import { findWellKnownOAuthClientByUniversalIdentifier } from 'src/engine/core-modules/application/well-known-oauth-client/utils/find-well-known-oauth-client-by-universal-identifier.util';
 
-// Per-connection registrations made before the seeded ones existed hold live refresh tokens, so they are recognized by their callbacks
 export const getWellKnownOAuthClientOfRegistration = (
   registration:
     | Pick<

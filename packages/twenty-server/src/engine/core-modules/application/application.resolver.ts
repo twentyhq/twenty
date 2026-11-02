@@ -111,7 +111,6 @@ export class ApplicationResolver {
 
   // Resolves the display url of the logo bundled in the installed
   // application's public assets, so clients never build file urls themselves.
-  // An OAuth-only install has no bundle, so it shows its registration's logo.
   @ResolveField(() => String, { nullable: true })
   logoUrl(
     @Parent()

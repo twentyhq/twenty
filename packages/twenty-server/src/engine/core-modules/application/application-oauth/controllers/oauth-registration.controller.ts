@@ -158,7 +158,6 @@ export class OAuthRegistrationController {
 
     const issuer = `${req.protocol}://${req.get('host')}`;
 
-    // RFC 7591 §3.2.1 lets the server pick the client_id
     const wellKnownOAuthClient = findWellKnownOAuthClientByRedirectUris(
       body.redirect_uris,
     );
@@ -181,7 +180,6 @@ export class OAuthRegistrationController {
       });
     }
 
-    // Only new registrations count: a well-known client's users arrive from a few shared IPs and get the seeded client
     const rateLimitResult = await this.applyRateLimit(req);
 
     if (isDefined(rateLimitResult)) {

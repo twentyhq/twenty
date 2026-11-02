@@ -58,7 +58,6 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
   const appName = t(app.name);
   const isConnectDisabled = !isDefined(connectLink);
 
-  // Earlier per-connection installs leave extra grants, but to the member they are one connection
   const [latestAuthorization] = [...authorizations].sort(
     (first, second) =>
       new Date(second.lastUsedAt).getTime() -

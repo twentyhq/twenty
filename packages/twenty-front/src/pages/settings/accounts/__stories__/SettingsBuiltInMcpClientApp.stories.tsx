@@ -17,7 +17,6 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const CLAUDE_AUTHORIZATION_ID = '20202020-6a7b-4c3d-8e4f-0000000000c1';
 
-// The mock-date decorator fakes Date only at render, after this module loads
 const buildClaudeAuthorization = ({
   id = CLAUDE_AUTHORIZATION_ID,
   lastUsedHoursAgo = 2,

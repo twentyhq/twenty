@@ -1036,7 +1036,6 @@ export class ApplicationRegistrationService {
         'category',
         'manifest',
       ],
-      // Listed OAuth-only registrations, the well-known clients, have no package but members connect them from the marketplace
       where: [
         { sourceType: ApplicationRegistrationSourceType.NPM },
         {

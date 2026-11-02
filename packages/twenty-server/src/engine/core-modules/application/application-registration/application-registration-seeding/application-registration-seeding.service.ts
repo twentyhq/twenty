@@ -26,7 +26,6 @@ export type SeededOAuthOnlyRegistrationValues = Pick<
 > &
   QueryDeepPartialEntity<ApplicationRegistrationEntity>;
 
-// Seeding here means creating the server's own registrations (Twenty CLI, well-known OAuth clients) on first use at runtime
 @Injectable()
 export class ApplicationRegistrationSeedingService {
   private readonly logger = new Logger(
@@ -49,7 +48,6 @@ export class ApplicationRegistrationSeedingService {
       );
 
     if (isDefined(existingRegistration)) {
-      // A row created by someone else under this identifier must not be served as the server's own
       if (
         existingRegistration.sourceType !==
           ApplicationRegistrationSourceType.OAUTH_ONLY ||

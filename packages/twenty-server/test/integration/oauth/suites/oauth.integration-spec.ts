@@ -1065,7 +1065,6 @@ describe('OAuth (integration)', () => {
 
       await revokeRefreshToken(revokedRefreshToken);
 
-      // Token issue times have second precision
       await new Promise((resolve) => setTimeout(resolve, 1100));
 
       const { refreshToken } = await exchangeForTokens();

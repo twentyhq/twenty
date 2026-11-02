@@ -70,7 +70,6 @@ export class OAuthClientResolver {
       clientIdMetadataDocument,
     );
 
-    // Not registered until a user authorizes it, so this id names no stored row
     return {
       id: v4(),
       name,

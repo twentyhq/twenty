@@ -348,7 +348,6 @@ export const ShowsOneClaudeRowForEveryClaudeConnection: Story = {
 
     const recorderRow = await canvas.findByRole('link', { name: /Recorder/ });
 
-    // The status query also writes Query.findManyApplications, so check the rows once it has landed
     expect(
       await within(recorderRow).findByText('Setup incomplete'),
     ).toBeVisible();

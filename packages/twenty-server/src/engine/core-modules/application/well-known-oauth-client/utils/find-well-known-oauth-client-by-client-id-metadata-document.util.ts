@@ -2,7 +2,6 @@ import { type ClientIdMetadataDocument } from 'src/engine/core-modules/applicati
 import { type WellKnownOAuthClientDefinition } from 'src/engine/core-modules/application/well-known-oauth-client/types/well-known-oauth-client-definition.type';
 import { findWellKnownOAuthClientByRedirectUris } from 'src/engine/core-modules/application/well-known-oauth-client/utils/find-well-known-oauth-client-by-redirect-uris.util';
 
-// Host and callbacks must both be the vendor's: Claude Code is also published on claude.ai but uses loopback callbacks
 export const findWellKnownOAuthClientByClientIdMetadataDocument = (
   clientIdMetadataDocument: Pick<
     ClientIdMetadataDocument,

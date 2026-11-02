@@ -856,7 +856,6 @@ const createSettingsRouteElements = ({
         />
       </Route>
     </Route>
-    {/* Own ChatGPT and Claude connections need no Connected accounts permission */}
     <Route
       element={
         <SettingsProtectedRouteWrapper

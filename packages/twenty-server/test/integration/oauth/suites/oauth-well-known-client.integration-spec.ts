@@ -152,11 +152,9 @@ describe('OAuth well-known clients (integration)', () => {
     chatGptClientId = chatGptRegistration.body.client_id;
   });
 
-  // Tests spend several token requests, and the token endpoint admits 60 a minute per IP
   beforeEach(() => clearTokenBuckets('oauth:*'));
 
   afterAll(async () => {
-    // Other suites insert catalog rows directly and expect the cached catalog to be rebuilt from them
     await getAppProviderByClassName<CoreEntityCacheService>(
       'CoreEntityCacheService',
     ).invalidate('marketplaceCatalog', MARKETPLACE_CATALOG_CACHE_ENTITY_ID);
@@ -422,7 +420,6 @@ describe('OAuth well-known clients (integration)', () => {
       const clearFetchRateLimit = () =>
         clearTokenBuckets('oauth-client-metadata-document-fetch:*');
 
-      // A private address, which the SSRF-safe client refuses without waiting on the network
       const buildUnreachableDocumentUrl = () =>
         `https://10.255.255.1/${crypto.randomUUID()}`;
 
@@ -560,7 +557,6 @@ describe('OAuth well-known clients (integration)', () => {
     const registerLegacyClaudeClient = async (): Promise<string> => {
       const legacyClaudeClientId = crypto.randomUUID();
 
-      // Each Claude connection registered its own client before the shared one existed
       await ds.query(
         `INSERT INTO core."applicationRegistration"
           ("universalIdentifier", name, "oAuthClientId", "oAuthRedirectUris", "oAuthScopes", "sourceType")

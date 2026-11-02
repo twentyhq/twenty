@@ -22,7 +22,6 @@ import { WellKnownOAuthClientRegistrationService } from 'src/engine/core-modules
 import { findWellKnownOAuthClientByClientIdMetadataDocument } from 'src/engine/core-modules/application/well-known-oauth-client/utils/find-well-known-oauth-client-by-client-id-metadata-document.util';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 
-// A client_id is a registered id or a Client ID Metadata Document URL, which maps to one registration per URL, not per connection
 @Injectable()
 export class OAuthClientRegistrationResolverService {
   constructor(
@@ -33,7 +32,6 @@ export class OAuthClientRegistrationResolverService {
     private readonly throttlerService: ThrottlerService,
   ) {}
 
-  // The public OAuth endpoints let anyone make the server fetch a URL, so those fetches are rationed per IP
   async throttleClientIdMetadataDocumentFetchOrThrow({
     clientId,
     requestIp,
@@ -157,7 +155,6 @@ export class OAuthClientRegistrationResolverService {
       return { ...existingRegistration, ...documentFields };
     }
 
-    // A concurrent first authorization trips the oAuthClientId unique index, and the lookup below returns its row
     await this.applicationRegistrationRepository
       .createQueryBuilder()
       .insert()

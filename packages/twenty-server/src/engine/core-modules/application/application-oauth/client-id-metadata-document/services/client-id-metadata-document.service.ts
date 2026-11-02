@@ -103,7 +103,6 @@ export class ClientIdMetadataDocumentService {
         `Failed to fetch client ID metadata document ${clientIdMetadataDocumentUrl}: ${error instanceof Error ? error.message : String(error)}`,
       );
 
-      // A 4xx means the client withdrew the document; outages, timeouts and rate limits fall back to the cached copy
       const isWithdrawn =
         isAxiosError(error) &&
         isDefined(error.response) &&

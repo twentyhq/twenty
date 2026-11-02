@@ -36,7 +36,6 @@ export class WellKnownOAuthClientInstallService {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  // Mirrors Installed apps, which with app preferences on folds a client's installs into its seeded install, or into a per-connection one while there is none
   async findFoldedInstallUniversalIdentifiers({
     workspaceId,
     universalIdentifier,

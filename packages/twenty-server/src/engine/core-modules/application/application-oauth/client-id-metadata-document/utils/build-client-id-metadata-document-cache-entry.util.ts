@@ -33,7 +33,6 @@ const buildEntry = ({
   }
 };
 
-// Failures are cached too so requests stop waiting on the vendor, and an outage never extends the last good copy
 export const buildClientIdMetadataDocumentCacheEntry = ({
   fetchResult,
   cachedEntry,

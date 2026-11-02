@@ -75,7 +75,6 @@ export const SettingsApplicationsAvailableTab = () => {
     FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
   );
 
-  // Only App preferences can disconnect these, so offer them only when it is enabled
   const availableMarketplaceApps = isAppPreferencesEnabled
     ? marketplaceApps
     : marketplaceApps.filter(

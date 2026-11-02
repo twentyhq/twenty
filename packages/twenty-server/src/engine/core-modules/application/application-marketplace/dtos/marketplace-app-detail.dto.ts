@@ -38,7 +38,6 @@ export class MarketplaceAppDetailDTO {
   @Field(() => ApplicationRegistrationSourceType)
   sourceType: ApplicationRegistrationSourceType;
 
-  // Set for the clients a member connects from their own account rather than installs
   @Field(() => WellKnownOAuthClient, { nullable: true })
   wellKnownOAuthClient: WellKnownOAuthClient | null;
 

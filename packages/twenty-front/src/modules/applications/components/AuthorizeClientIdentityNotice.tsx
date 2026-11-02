@@ -55,7 +55,6 @@ export const AuthorizeClientIdentityNotice = ({
 
   return (
     <StyledWarningContainer>
-      {/* A plain string child is cut to one line, and this warning must be read in full */}
       <InlineBanner
         status="warning"
         icon={<IconAlertTriangle aria-hidden="true" />}

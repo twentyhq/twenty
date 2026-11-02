@@ -2,7 +2,6 @@ import { getUrlSafely, isDefined } from 'twenty-shared/utils';
 
 import { isLoopbackHostname } from 'src/engine/core-modules/auth/utils/is-loopback-hostname.util';
 
-// RFC 8252 §7.3: native apps bind an ephemeral port, so a registered loopback callback matches on any port
 export const doRedirectUrisMatch = ({
   registeredRedirectUri,
   redirectUri,

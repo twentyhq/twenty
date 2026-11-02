@@ -41,7 +41,6 @@ export class ApplicationUninstallRunnerService {
     workspaceId: string;
     updateProgress?: MessageQueueJobProgressContext['updateProgress'];
   }): Promise<void> {
-    // The installs folded into the target's row go first, so a failure leaves the target to retry
     const foldedInstallUniversalIdentifiers =
       await this.wellKnownOAuthClientInstallService.findFoldedInstallUniversalIdentifiers(
         { workspaceId, universalIdentifier },
@@ -104,7 +103,6 @@ export class ApplicationUninstallRunnerService {
         APPLICATION_LIFECYCLE_LOCK_OPTIONS,
       );
     } catch (error) {
-      // Matched on the read under the lock, so it also skips one a concurrent run was still uninstalling
       if (
         shouldSkipIfNotInstalled &&
         getApplicationErrorCode(error) ===

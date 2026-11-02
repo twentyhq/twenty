@@ -11,7 +11,6 @@ const RESERVED_UNIVERSAL_IDENTIFIERS: string[] = [
   ...Object.values(WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS),
 ];
 
-// Registrations the server provides itself: a workspace must not create or claim one, or it would control every user of it
 export const isReservedApplicationRegistrationUniversalIdentifier = (
   universalIdentifier: string,
 ): boolean =>

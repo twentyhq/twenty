@@ -10,7 +10,6 @@ import { ApplicationRegistrationSeedingService } from 'src/engine/core-modules/a
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { type WellKnownOAuthClientDefinition } from 'src/engine/core-modules/application/well-known-oauth-client/types/well-known-oauth-client-definition.type';
 
-// What the server owns on the seeded row, refreshed on each catalog sync
 const toSyncedFields = (
   wellKnownOAuthClient: WellKnownOAuthClientDefinition,
 ) => ({
@@ -25,7 +24,6 @@ const toSyncedFields = (
   isListed: true,
 });
 
-// One OAuth-only registration per well-known client, shared by every connection so each workspace installs it once
 @Injectable()
 export class WellKnownOAuthClientRegistrationService {
   constructor(

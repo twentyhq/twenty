@@ -39,7 +39,6 @@ export class MarketplaceCatalogSyncService {
   ) {}
 
   async syncCatalog(): Promise<void> {
-    // Ahead of the registry so an unreachable registry cannot hold them back
     await this.syncWellKnownOAuthClients();
     await this.syncRegistryApps();
 

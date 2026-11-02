@@ -169,7 +169,6 @@ describe('OAuthClientRegistrationResolverService', () => {
             !isDefined(registration.deletedAt),
         ) ?? null,
     );
-    // Like Postgres: a soft-deleted row keeps its primary key, but the oAuthClientId index skips it
     insertedValues.mockImplementation(
       (values: { id?: string; oAuthClientId: string }) => {
         const id = values.id ?? randomUUID();

@@ -2,7 +2,6 @@ import { ApiPath } from 'twenty-shared/types';
 
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 
-// RFC 7591 §3.2.1 client information response; registrations made dynamically are always public clients
 export const toOAuthClientInformationResponse = ({
   registration,
   issuer,
