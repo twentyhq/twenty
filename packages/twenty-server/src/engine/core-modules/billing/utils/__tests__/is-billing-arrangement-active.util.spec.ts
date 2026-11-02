@@ -62,6 +62,17 @@ describe('isBillingArrangementActive', () => {
     ).toBe(false);
   });
 
+  it('is active until a future revocation', () => {
+    expect(
+      isBillingArrangementActive({
+        arrangement: period({
+          revokedAt: new Date('2026-12-01T00:00:00.000Z'),
+        }),
+        now: NOW,
+      }),
+    ).toBe(true);
+  });
+
   it('is never active for a one-time type', () => {
     expect(
       isBillingArrangementActive({

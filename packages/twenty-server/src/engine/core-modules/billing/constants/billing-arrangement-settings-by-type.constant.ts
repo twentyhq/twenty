@@ -18,8 +18,8 @@ export const BILLING_ARRANGEMENT_SETTINGS_BY_TYPE: Record<
     required: ['seats'],
     optional: ['endsAt'],
   },
-  [BillingArrangementType.COUPON]: {
-    required: ['stripeCouponId'],
+  [BillingArrangementType.DISCOUNT]: {
+    required: ['stripeDiscountId'],
     optional: ['endsAt'],
   },
   [BillingArrangementType.TRIAL_EXTENSION]: {

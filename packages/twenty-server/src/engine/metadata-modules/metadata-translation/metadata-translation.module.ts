@@ -4,7 +4,7 @@ import { ApplicationTranslationCatalogModule } from 'src/engine/metadata-modules
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { MetadataTranslationResolver } from 'src/engine/metadata-modules/metadata-translation/metadata-translation.resolver';
 import { MetadataTranslationService } from 'src/engine/metadata-modules/metadata-translation/services/metadata-translation.service';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 
 @Module({
   imports: [

@@ -22,6 +22,7 @@ import {
   type StandalonePageLayoutWidgetManifest,
 } from './pageLayoutManifestType';
 import { type PermissionFlagManifest } from './permissionFlagManifestType';
+import { type RelatedRecordPathManifest } from './relatedRecordPathManifestType';
 import { type RoleManifest } from './roleManifestType';
 import { type SettingsMenuItemManifest } from './settingsMenuItemManifestType';
 import { type SkillManifest } from './skillManifestType';
@@ -60,5 +61,6 @@ export type Manifest = {
   commandMenuItems: CommandMenuItemManifest[];
   timelineActivityTypes: TimelineActivityTypeManifest[];
   settingsMenuItems: SettingsMenuItemManifest[];
+  relatedRecordPaths?: RelatedRecordPathManifest[];
   translations?: TranslationsManifest;
 };

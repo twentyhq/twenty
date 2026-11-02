@@ -19,7 +19,7 @@ const draft = (
   seats: null,
   seatCapMode: null,
   stripePriceId: null,
-  stripeCouponId: null,
+  stripeDiscountId: null,
   creditAllowanceMicro: null,
   stripeCreditNoteId: null,
   creditGrantId: null,
@@ -44,10 +44,10 @@ describe('getBillingArrangementValidationErrors', () => {
       draft({ type: BillingArrangementType.FREE_SEATS, seats: 3 }),
     ],
     [
-      'a coupon',
+      'a discount',
       draft({
-        type: BillingArrangementType.COUPON,
-        stripeCouponId: 'coupon_non_profit',
+        type: BillingArrangementType.DISCOUNT,
+        stripeDiscountId: 'di_non_profit',
       }),
     ],
     [
@@ -62,6 +62,14 @@ describe('getBillingArrangementValidationErrors', () => {
       draft({
         type: BillingArrangementType.WORKSPACE_CREDIT_ALLOWANCE,
         creditAllowanceMicro: 0,
+      }),
+    ],
+    [
+      'a limit override',
+      draft({
+        type: BillingArrangementType.LIMIT_OVERRIDE,
+        usageLimitId: '20202020-0000-4000-8000-000000000002',
+        endsAt: new Date('2026-12-01T00:00:00.000Z'),
       }),
     ],
     [
@@ -86,15 +94,12 @@ describe('getBillingArrangementValidationErrors', () => {
     ]);
   });
 
-  it('treats an empty string as a missing setting', () => {
+  it.each(['', '   '])('treats %p as a missing setting', (stripeDiscountId) => {
     expect(
       getBillingArrangementValidationErrors(
-        draft({
-          type: BillingArrangementType.COUPON,
-          stripeCouponId: '',
-        }),
+        draft({ type: BillingArrangementType.DISCOUNT, stripeDiscountId }),
       ),
-    ).toEqual([{ code: 'MISSING_SETTING', setting: 'stripeCouponId' }]);
+    ).toEqual([{ code: 'MISSING_SETTING', setting: 'stripeDiscountId' }]);
   });
 
   it('reports settings that belong to another type', () => {
@@ -103,13 +108,13 @@ describe('getBillingArrangementValidationErrors', () => {
         draft({
           type: BillingArrangementType.FREE_SEATS,
           seats: 3,
-          stripeCouponId: 'coupon_non_profit',
+          stripeDiscountId: 'di_non_profit',
         }),
       ),
-    ).toEqual([{ code: 'UNEXPECTED_SETTING', setting: 'stripeCouponId' }]);
+    ).toEqual([{ code: 'UNEXPECTED_SETTING', setting: 'stripeDiscountId' }]);
   });
 
-  it.each([0, -1, 1.5])('rejects %s seats', (seats) => {
+  it.each([0, -1, 1.5, 2_147_483_648])('rejects %s seats', (seats) => {
     expect(
       getBillingArrangementValidationErrors(
         draft({ type: BillingArrangementType.FREE_SEATS, seats }),
@@ -130,6 +135,29 @@ describe('getBillingArrangementValidationErrors', () => {
       ).toEqual([{ code: 'INVALID_CREDIT_ALLOWANCE' }]);
     },
   );
+
+  it('rejects a comment longer than the column', () => {
+    expect(
+      getBillingArrangementValidationErrors(
+        draft({
+          type: BillingArrangementType.FREE_SEATS,
+          seats: 3,
+          comment: 'a'.repeat(501),
+        }),
+      ),
+    ).toEqual([{ code: 'COMMENT_TOO_LONG' }]);
+  });
+
+  it.each<[string, Partial<BillingArrangementDraft>]>([
+    ['start', { startsAt: new Date('not a date') }],
+    ['end', { endsAt: new Date('not a date') }],
+  ])('rejects an invalid %s date', (_, dates) => {
+    expect(
+      getBillingArrangementValidationErrors(
+        draft({ type: BillingArrangementType.FREE_SEATS, seats: 3, ...dates }),
+      ),
+    ).toEqual([{ code: 'INVALID_DATE' }]);
+  });
 
   it('rejects an end date on a one-time type', () => {
     expect(

@@ -7,7 +7,7 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Problemas comunes
 
-* **Errores del servidor local**, comprueba tu entorno de desarrollo de Docker o del repositorio. La CLI independiente no administra contenedores.
+* **Errores del entorno local**, consulta `twenty local status` y `twenty local logs --no-follow`. Docker debe estar instalado y ejecutándose con un contexto de socket local. Añade `--test` para la instancia de prueba. Un inicio fallido conserva su contenedor y sus datos para el diagnóstico.
 * **Versión de Node incorrecta** — Se necesita 24.5+ o 26.5+ (`engines.node: ^24.5.0 || ^26.5.1`). Compruébalo con `node -v`.
 * **Falta Yarn 4** — Ejecuta `corepack enable` (en Node 26, primero `npm install -g corepack`).
 * **Dependencias rotas** — `rm -rf node_modules && yarn install`.

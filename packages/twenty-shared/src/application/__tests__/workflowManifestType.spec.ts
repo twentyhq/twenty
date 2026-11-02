@@ -153,6 +153,36 @@ describe('workflow manifest step types', () => {
         addConferencing: false,
       },
     },
+    {
+      type: 'AI_AGENT',
+      input: {
+        agentUniversalIdentifier: '66666666-6666-4666-8666-666666666666',
+        prompt: '{{trigger.properties.after.summary}}',
+        responseFormat: { type: 'text' },
+        humanInputInstructions: 'Ask when the company is unclear',
+        workspaceMemberId: ASSIGNEE,
+        conversation: {
+          key: 'mail:{{trigger.properties.after.threadId}}',
+          scope: 'KEY',
+        },
+      },
+    },
+    {
+      type: 'SEND_CHAT_MESSAGE',
+      input: {
+        workspaceMemberId: ASSIGNEE,
+        title: 'Approve the opportunity',
+        text: 'Detected in an email thread',
+        toolCall: {
+          toolName: 'create_one_opportunity',
+          arguments: { name: '{{trigger.properties.after.name}}' },
+        },
+        conversation: {
+          key: 'mail:{{trigger.properties.after.threadId}}',
+          scope: 'KEY',
+        },
+      },
+    },
   ])('accepts $type steps', ({ type, input }) => {
     const definition = structuredClone(workflow);
     Object.assign(getStep(definition, 2), { type, input });
@@ -228,6 +258,24 @@ describe('workflow manifest step types', () => {
         'connectedAccountHandle',
       ]);
     });
+  });
+
+  it('requires the member a chat message is sent to', () => {
+    const definition = structuredClone(workflow);
+    Object.assign(getStep(definition, 2), {
+      type: 'SEND_CHAT_MESSAGE',
+      input: { title: 'Approve', text: 'Please review' },
+    });
+    const result = workflowManifestSchema.safeParse(definition);
+
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.path).toEqual([
+      'version',
+      'steps',
+      2,
+      'input',
+      'workspaceMemberId',
+    ]);
   });
 
   it('rejects a step type applications cannot use', () => {

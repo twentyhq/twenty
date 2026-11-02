@@ -1031,6 +1031,19 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
+  accessGroup: {
+    universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.accessGroup,
+    fields: STANDARD_OBJECT_FIELDS.accessGroup,
+    indexes: {
+      roleIdIndex: {
+        universalIdentifier: '933f2eee-0856-46fd-b144-ffd4bad7e9c8',
+      },
+      groupHashUniqueIndex: {
+        universalIdentifier: 'dcb0d254-43ae-442e-9223-8ac052eddb28',
+      },
+    },
+    views: {},
+  },
   recordShare: {
     universalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.recordShare,
     fields: STANDARD_OBJECT_FIELDS.recordShare,

@@ -9,6 +9,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { BILLING_ARRANGEMENT_COMMENT_MAX_LENGTH } from 'src/engine/core-modules/billing/constants/billing-arrangement-comment-max-length.constant';
 import { type BillingArrangementLabel } from 'src/engine/core-modules/billing/enums/billing-arrangement-label.enum';
 import { BillingArrangementSeatCapMode } from 'src/engine/core-modules/billing/enums/billing-arrangement-seat-cap-mode.enum';
 import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
@@ -33,7 +34,11 @@ export class BillingArrangementEntity {
   @Column({ nullable: false, type: 'varchar' })
   label: BillingArrangementLabel;
 
-  @Column({ nullable: true, type: 'varchar', length: 500 })
+  @Column({
+    nullable: true,
+    type: 'varchar',
+    length: BILLING_ARRANGEMENT_COMMENT_MAX_LENGTH,
+  })
   comment: string | null;
 
   @Column({ nullable: true, type: 'int' })
@@ -49,8 +54,9 @@ export class BillingArrangementEntity {
   @Column({ nullable: true, type: 'varchar' })
   stripePriceId: string | null;
 
+  @Index('IDX_BILLING_ARRANGEMENT_STRIPE_DISCOUNT_ID_UNIQUE', { unique: true })
   @Column({ nullable: true, type: 'varchar' })
-  stripeCouponId: string | null;
+  stripeDiscountId: string | null;
 
   @Column({
     nullable: true,

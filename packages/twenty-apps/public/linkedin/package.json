@@ -1,6 +1,6 @@
 {
   "name": "@twentyhq/linkedin",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "LinkedIn messages in Twenty: each member connects their LinkedIn account through Unipile and their conversations land on People timelines.",
   "license": "MIT",
   "engines": {
@@ -33,11 +33,17 @@
     "@unipile/sdk": "^2.59.0"
   },
   "devDependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.0",
     "@types/node": "^24.7.2",
+    "@types/react": "^19.0.0",
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "oxlint": "^0.16.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
     "twenty-client-sdk": "2.53.0",
     "twenty-sdk": "2.53.0",
+    "twenty-ui": "^2.53.0",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^4.1.12"

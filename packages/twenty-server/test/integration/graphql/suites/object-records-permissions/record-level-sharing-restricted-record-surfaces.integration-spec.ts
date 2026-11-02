@@ -1,7 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
 import { parse } from 'graphql';
-import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -23,8 +22,8 @@ import { makeRestApiRequest } from 'test/integration/rest/utils/make-rest-api-re
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 import { getCoreRepository } from 'test/integration/utils/get-core-repository.util';
 
-import { type RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
-import { type RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
+import { type RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -39,13 +38,13 @@ const COMPANY_IDS = [RESTRICTED_COMPANY_ID, OPEN_COMPANY_ID];
 const PERSON_ID = randomUUID();
 
 const SET_SHARE = parse(
-  `mutation SetShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!, $accessLevel: RecordShareAccessLevel!) { setRecordShare(target: $target, principal: $principal, accessLevel: $accessLevel) { generalAccessLevel } }`,
+  `mutation SetShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!, $accessLevel: RecordShareAccessLevel!) { setRecordShare(target: $target, principal: $principal, accessLevel: $accessLevel) { isPrivate } }`,
 );
 const REMOVE_SHARE = parse(
-  `mutation RemoveShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!) { removeRecordShare(target: $target, principal: $principal) { generalAccessLevel } }`,
+  `mutation RemoveShare($target: RecordTargetInput!, $principal: RecordSharePrincipalInput!) { removeRecordShare(target: $target, principal: $principal) { isPrivate } }`,
 );
-const SET_GENERAL_ACCESS = parse(
-  `mutation SetGeneralAccess($target: RecordTargetInput!, $accessLevel: RecordShareAccessLevel!) { setRecordGeneralAccess(target: $target, accessLevel: $accessLevel) { generalAccessLevel } }`,
+const SET_PRIVATE = parse(
+  `mutation SetPrivate($target: RecordTargetInput!, $isPrivate: Boolean!) { setRecordPrivate(target: $target, isPrivate: $isPrivate) { isPrivate } }`,
 );
 
 const FIND_COMPANIES = parse(
@@ -140,14 +139,10 @@ describe('A restricted record on an object open by default', () => {
       companyId: RESTRICTED_COMPANY_ID,
     });
 
-    const restricted = await changeSharing(SET_GENERAL_ACCESS, {
-      accessLevel: RecordShareAccessLevel.NONE,
-    });
+    const restricted = await changeSharing(SET_PRIVATE, { isPrivate: true });
 
     expect(restricted.body.errors).toBeUndefined();
-    expect(restricted.body.data.setRecordGeneralAccess.generalAccessLevel).toBe(
-      RecordShareAccessLevel.NONE,
-    );
+    expect(restricted.body.data.setRecordPrivate.isPrivate).toBe(true);
   });
 
   afterAll(async () => {
@@ -287,13 +282,10 @@ describe('A restricted record on an object open by default', () => {
 
   it('should leave it out of the events delivered to others', async () => {
     const memberRole = await findOneRoleByLabel({ label: 'Member' });
-    const { rolesPermissions, flatObjectMetadataMaps } =
+    const { flatObjectMetadataMaps } =
       await getAppProviderByClassName<WorkspaceCacheService>(
         'WorkspaceCacheService',
-      ).getOrRecompute(workspaceId, [
-        'rolesPermissions',
-        'flatObjectMetadataMaps',
-      ]);
+      ).getOrRecompute(workspaceId, ['flatObjectMetadataMaps']);
     const companyObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: companyObjectMetadataId,
       flatEntityMaps: flatObjectMetadataMaps,
@@ -317,16 +309,11 @@ describe('A restricted record on an object open by default', () => {
           })) as ObjectRecordEvent[],
         })
         .resolveAdmittedRecordIds({
-          isSystemContext: false,
-          objectsPermissions: rolesPermissions[memberRole.id],
-          principalIds: [
-            EVERYONE_PRINCIPAL_ID,
-            WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-            memberRole.id,
-          ],
-          canAccessAllRecords: false,
-          isOwningApplication: () => false,
-          resolveRowLevelPermissionRecordFilter: () => null,
+          workspaceId: workspaceId,
+          intersectionOf: { userWorkspaceRoleId: memberRole.id },
+          workspaceMember: {
+            id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          },
         });
 
     expect([...admittedRecordIds]).toEqual([OPEN_COMPANY_ID]);
