@@ -12,6 +12,8 @@ export type AgentRunnerRunInput = {
   workspaceId: string;
   // null for a one-shot run: no thread, no claim, and nothing to pause on
   conversation: AgentRunConversation | null;
+  // a one-shot run's turn, chosen when it is queued so a retried job finds the turn its first attempt left
+  turnId?: string;
   caller: AgentRunCaller;
   spec: AgentRunSpec;
   persona: ResolvedAgentRunPersona;
