@@ -697,6 +697,16 @@ msgstr "{currentStepCredits, plural, other {무료 크레딧}}"
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, other {{days}일}}"
 
+#. js-lingui-id: Irx6Dx
+#: src/modules/getting-started/components/GettingStartedSidebarTrialCountdown.tsx
+msgid "{daysLeft, plural, one {# day left} other {# days left}}"
+msgstr ""
+
+#. js-lingui-id: omamQu
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
+msgid "{daysLeft, plural, one {day left in your trial} other {days left in your trial}}"
+msgstr ""
+
 #. js-lingui-id: 7o03+8
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "{decimals, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
@@ -948,6 +958,11 @@ msgstr "{participantNames}님이 입력 중…"
 msgid "{participantNames} is typing…"
 msgstr "{participantNames}님이 입력 중…"
 
+#. js-lingui-id: v5nX2L
+#: src/modules/getting-started/components/GettingStartedMailboxDoneDescription.tsx
+msgid "{peopleCount, plural, one {{formattedPeopleCount} person} other {{formattedPeopleCount} people}} and {companyCount, plural, one {{formattedCompanyCount} company} other {{formattedCompanyCount} companies}} in your workspace"
+msgstr ""
+
 #. js-lingui-id: FaQB54
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
 msgid "{permissionLabel} permission removed"
@@ -999,6 +1014,16 @@ msgstr "{remainingCount}개 더"
 #: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "{remainingDraftCount, plural, =0 {No more drafts after this one} one {# more draft after this one} other {# more drafts after this one}}"
 msgstr "{remainingDraftCount, plural, =0 {이 초안 이후에는 더 이상 초안이 없습니다} other {이 초안 이후에 #개의 초안이 더 있습니다}}"
+
+#. js-lingui-id: mqfjQO
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
+msgid "{remainingStepCount, plural, one {Finish # step by {formattedTrialEnd}} other {Finish # steps by {formattedTrialEnd}}}"
+msgstr ""
+
+#. js-lingui-id: yICp8R
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
+msgid "{remainingStepCount, plural, one {Finish # step} other {Finish # steps}}"
+msgstr ""
 
 #. js-lingui-id: r4MTJW
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
@@ -1539,6 +1564,11 @@ msgstr "500 오류 - {duration}ms"
 msgid "90 days"
 msgstr "90일"
 
+#. js-lingui-id: 81nnG3
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "A CSV or Excel export from any tool"
+msgstr ""
+
 #. js-lingui-id: 43TqJC
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "A display name for this provider"
@@ -1795,6 +1825,7 @@ msgid "action"
 msgstr "작업"
 
 #. js-lingui-id: bwRvnp
+#: src/modules/getting-started/components/GettingStartedWorkflowPreview.tsx
 #: src/modules/log-console/constants/LogConsoleRecordChangeColumns.tsx
 #: src/modules/log-console/constants/LogConsoleRecordChangeFilterFields.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -3270,6 +3301,11 @@ msgstr "모든 역할"
 msgid "All Sources"
 msgstr "모든 소스"
 
+#. js-lingui-id: wiGHxh
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
+msgid "All steps done"
+msgstr ""
+
 #. js-lingui-id: p+lpde
 #: src/modules/activities/tasks/components/TaskGroupsContent.tsx
 msgid "All tasks addressed. Maintain the momentum."
@@ -4631,6 +4667,11 @@ msgstr "{text}(으)로 돌아가기"
 #: src/pages/not-found/NotFound.tsx
 msgid "Back to content"
 msgstr "콘텐츠로 돌아가기"
+
+#. js-lingui-id: +cSNzs
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
+msgid "Back to current step"
+msgstr ""
 
 #. js-lingui-id: dGEega
 #: src/pages/ai-chat/AiChatInboxPage.tsx
@@ -7194,6 +7235,11 @@ msgstr "실패 시 계속 진행"
 msgid "Continue on iteration failure"
 msgstr "반복 실패 시 계속 진행"
 
+#. js-lingui-id: uxdS61
+#: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
+msgid "Continue setup"
+msgstr ""
+
 #. js-lingui-id: RvVi9c
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Continue with Email"
@@ -7201,12 +7247,14 @@ msgstr "이메일로 계속"
 
 #. js-lingui-id: oZyG4C
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithGoogle.tsx
+#: src/modules/getting-started/components/GettingStartedMailboxAction.tsx
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Continue with Google"
 msgstr "Google로 계속"
 
 #. js-lingui-id: ztoybH
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithMicrosoft.tsx
+#: src/modules/getting-started/components/GettingStartedMailboxAction.tsx
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Continue with Microsoft"
 msgstr "Microsoft로 계속"
@@ -7519,6 +7567,11 @@ msgstr "서명된 DPA를 생성할 수 없습니다. 다시 시도하세요."
 #: src/modules/front-components/media-session/components/FrontComponentMediaPermissionModal.tsx
 msgid "Could not grant media access. Please try again."
 msgstr "미디어 액세스를 허용할 수 없습니다. 다시 시도하세요."
+
+#. js-lingui-id: rLrhvg
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
+msgid "Could not load Getting started."
+msgstr ""
 
 #. js-lingui-id: Y5qCpF
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
@@ -10533,6 +10586,7 @@ msgid "Email accounts"
 msgstr "이메일 계정"
 
 #. js-lingui-id: ATGYL1
+#: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
 msgid "Email address"
 msgstr "이메일 주소"
@@ -11981,6 +12035,11 @@ msgstr "내보내기({exportedCount})"
 msgid "Export ({percentageValue}%)"
 msgstr "내보내기({percentageValue}%)"
 
+#. js-lingui-id: YkvQVd
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Export a CSV from"
+msgstr ""
+
 #. js-lingui-id: 2KAI4N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Export CSV"
@@ -13062,6 +13121,11 @@ msgstr "오류와 함께 흐름 완료"
 msgid "Finish Setup"
 msgstr "설정 완료"
 
+#. js-lingui-id: 97Hg0Y
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
+msgid "Finish your setup"
+msgstr ""
+
 #. js-lingui-id: 4dQFvz
 #: src/modules/ai/constants/AiChatThreadReasons.ts
 msgid "Finished"
@@ -13298,6 +13362,11 @@ msgstr "{objectLabel}을(를) 찾았습니다"
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Found connected accounts"
 msgstr "연결된 계정을 찾았습니다"
+
+#. js-lingui-id: Vc8HGN
+#: src/modules/getting-started/components/GettingStartedInviteAction.tsx
+msgid "Found in your emails"
+msgstr ""
 
 #. js-lingui-id: 1hxId5
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -13628,8 +13697,22 @@ msgid "Gets this record only: their role can't access {objectLabelPlural}"
 msgstr "이 레코드만 액세스 가능: 해당 역할은 {objectLabelPlural}에 액세스할 수 없습니다"
 
 #. js-lingui-id: 7hktsm
+#: src/modules/getting-started/components/GettingStartedOpenedSection.tsx
+#: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+#: src/pages/getting-started/GettingStartedPage.tsx
+#: src/pages/getting-started/GettingStartedPage.tsx
 msgid "Getting started"
+msgstr ""
+
+#. js-lingui-id: YRBB4k
+#: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
+msgid "Getting started progress"
+msgstr ""
+
+#. js-lingui-id: dV3VgV
+#: src/modules/getting-started/components/GettingStartedStepStack.tsx
+msgid "Getting started steps"
 msgstr ""
 
 #. js-lingui-id: XXtAx5
@@ -14168,6 +14251,11 @@ msgstr "필드 숨기기"
 msgid "Hide fields"
 msgstr "필드 숨기기"
 
+#. js-lingui-id: 3CeQ1O
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+msgid "Hide for good"
+msgstr ""
+
 #. js-lingui-id: CbeJV4
 #. placeholder {0}: groupValue ?? ''
 #: src/modules/object-record/record-group/components/RecordGroupVisibilityRow.tsx
@@ -14665,6 +14753,11 @@ msgstr "선택된 폴더/레이블만 가져오기"
 msgid "Import or add the MCP configuration from JetBrains settings."
 msgstr "JetBrains 설정에서 MCP 구성을 가져오거나 추가하세요."
 
+#. js-lingui-id: e2aT+Z
+#: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
+msgid "Import the attached files into Twenty. Work out which records they contain, then create them and link them together."
+msgstr ""
+
 #. js-lingui-id: vXTVX9
 #: src/pages/onboarding/ImportContacts.tsx
 msgid "Import your contacts"
@@ -14705,6 +14798,11 @@ msgstr "{dateDiff} 후에"
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
 msgid "In {listName}"
 msgstr "{listName}에 있음"
+
+#. js-lingui-id: jS5U2e
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+msgid "In an hour"
+msgstr ""
 
 #. js-lingui-id: /LCAwL
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
@@ -14963,6 +15061,11 @@ msgstr "설치"
 msgid "Install {appDisplayName} on your workspace"
 msgstr "워크스페이스에 {appDisplayName}를 설치하기"
 
+#. js-lingui-id: rQN3ie
+#: src/modules/getting-started/components/GettingStartedAppInstallButton.tsx
+msgid "Install {appLabel}"
+msgstr ""
+
 #. js-lingui-id: sOOkDn
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -15148,6 +15251,7 @@ msgstr "유효하지 않은 도메인입니다. 하위 도메인을 하나 이�
 #. js-lingui-id: B2Tpo0
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+#: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 msgid "Invalid email"
 msgstr "잘못된 이메일"
 
@@ -15250,6 +15354,7 @@ msgid "Invitations"
 msgstr "초대"
 
 #. js-lingui-id: MFKlMB
+#: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 #: src/modules/object-record/record-sharing/components/RecordSharingInvitation.tsx
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 #: src/pages/onboarding/InviteTeam.tsx
@@ -15290,6 +15395,7 @@ msgid "Invite by Link"
 msgstr "링크로 초대"
 
 #. js-lingui-id: 5IfmKA
+#: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 #: src/modules/onboarding/hooks/useInviteTeam.ts
 msgid "Invite link sent to email addresses"
 msgstr "이메일 주소로 전송된 초대 링크"
@@ -15582,6 +15688,11 @@ msgstr "칸반"
 msgid "Kanban widget"
 msgstr "칸반 위젯"
 
+#. js-lingui-id: uW9WOr
+#: src/modules/getting-started/hooks/useGettingStartedTrial.ts
+msgid "Keep {planLabel}"
+msgstr ""
+
 #. js-lingui-id: LHkoee
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Keep executing the next nodes even if this one fails"
@@ -15601,6 +15712,11 @@ msgstr "내 이메일 열람 추적 계속"
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageTrackingCopy.ts
 msgid "Keep tracking my opens and clicks"
 msgstr "내 이메일 열람 및 클릭 추적 계속"
+
+#. js-lingui-id: 9l8cs3
+#: src/modules/getting-started/hooks/useGettingStartedTrial.ts
+msgid "Keep your plan"
+msgstr ""
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -16630,6 +16746,11 @@ msgstr "스킬 로드 중..."
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadWidget.tsx
 msgid "Loading thread"
 msgstr "스레드 로드 중"
+
+#. js-lingui-id: KOolcu
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
+msgid "Loading your progress"
+msgstr ""
 
 #. js-lingui-id: Z3FXyt
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
@@ -18089,6 +18210,11 @@ msgstr "이름은 문자로 시작해야 합니다."
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
 msgid "Name: {0}"
 msgstr "이름: {0}"
+
+#. js-lingui-id: fZT56Z
+#: src/modules/getting-started/components/GettingStartedInviteAction.tsx
+msgid "name@{emailDomain}"
+msgstr ""
 
 #. js-lingui-id: JxC/pi
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
@@ -20101,6 +20227,11 @@ msgstr "하나의 구독은 하나의 프로덕션 인스턴스와 하나의 스
 msgid "Only applications published to npm can be claimed this way."
 msgstr "npm에 게시된 애플리케이션만 이 방법으로 소유권을 등록할 수 있습니다."
 
+#. js-lingui-id: dD26o4
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Only CSV and Excel files are supported"
+msgstr ""
+
 #. js-lingui-id: zii2Qj
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Only date & participants will be shared with your team."
@@ -20259,6 +20390,11 @@ msgstr "대화 열기"
 msgid "Open Cursor's MCP installer with the Twenty remote server config."
 msgstr "Twenty 원격 서버 구성이 미리 채워진 상태로 Cursor의 MCP 설치 프로그램을 여세요."
 
+#. js-lingui-id: JvSHIq
+#: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
+msgid "Open Getting started"
+msgstr ""
+
 #. js-lingui-id: pZZH4Q
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Open Gmail"
@@ -20365,6 +20501,11 @@ msgstr "설정 열기"
 msgid "Open side panel"
 msgstr "사이드 패널 열기"
 
+#. js-lingui-id: Cq4Ta5
+#: src/modules/getting-started/components/GettingStartedWorkflowAction.tsx
+msgid "Open the workflow"
+msgstr ""
+
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Open Twenty's official ChatGPT integration for your workspace."
@@ -20376,6 +20517,7 @@ msgid "Open webhook settings"
 msgstr "웹훅 설정 열기"
 
 #. js-lingui-id: OV5wZZ
+#: src/modules/getting-started/components/GettingStartedOpenedSection.tsx
 #: src/modules/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection.tsx
 msgid "Opened"
 msgstr "열림"
@@ -24955,6 +25097,11 @@ msgstr "연결된 계정에서 이메일 보내기"
 msgid "Send emails via connected accounts"
 msgstr "연결된 계정을 사용하여 이메일 전송 허용"
 
+#. js-lingui-id: lPcA5V
+#: src/modules/getting-started/components/GettingStartedPromptAction.tsx
+msgid "Send instructions"
+msgstr ""
+
 #. js-lingui-id: 6nwEi6
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -25227,6 +25374,11 @@ msgstr "소스 주소에서 이 대상 주소로 전달을 설정하세요."
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
 msgid "Set up the following DNS records for {domain} in the Cloudflare account already open in my browser."
 msgstr "브라우저에서 이미 열려 있는 Cloudflare 계정에서 {domain}에 다음 DNS 레코드를 설정하세요."
+
+#. js-lingui-id: uB2UEQ
+#: src/modules/getting-started/components/GettingStartedWorkflowAction.tsx
+msgid "Set up the workflow"
+msgstr ""
 
 #. js-lingui-id: 9HNKkV
 #: src/modules/settings/applications/components/SettingsApplicationDetailVariablesTab.tsx
@@ -25710,6 +25862,7 @@ msgstr "스킬"
 #: src/modules/ai/components/AiChatFormCardContent.tsx
 #: src/modules/ai/components/AiChatQuestionCard.tsx
 #: src/modules/ai/components/AiChatTimePickerCard.tsx
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
 #: src/modules/onboarding/components/OnboardingSkipButton.tsx
 msgid "Skip"
 msgstr "건너뛰기"
@@ -25828,6 +25981,13 @@ msgstr "일시 중지 종료됨"
 #: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "일시 중지 종료됨 {eventTime}"
+
+#. js-lingui-id: oIDreL
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+msgid "Snooze Getting started"
+msgstr ""
 
 #. js-lingui-id: VkkXmS
 #: src/modules/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker.tsx
@@ -26066,6 +26226,11 @@ msgstr "여러 값 분리"
 #: src/modules/ai/constants/AiChatInboxLayoutOptions.ts
 msgid "Split view"
 msgstr "분할 보기"
+
+#. js-lingui-id: jAoGz1
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Spreadsheet"
+msgstr ""
 
 #. js-lingui-id: vnS6Rf
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -26979,6 +27144,11 @@ msgstr "팀"
 msgid "Team member"
 msgstr "팀원"
 
+#. js-lingui-id: IVUOhR
+#: src/modules/getting-started/components/GettingStartedInviteAction.tsx
+msgid "Teammate email {emailNumber}"
+msgstr ""
+
 #. js-lingui-id: GEkQWt
 #. placeholder {0}: index + 1
 #: src/pages/onboarding/InviteTeam.tsx
@@ -26990,6 +27160,11 @@ msgstr "팀원 이메일 {0}"
 #: src/modules/mention/hooks/useWorkspaceMemberMentionSearch.ts
 msgid "Teammates"
 msgstr "팀원"
+
+#. js-lingui-id: Dqvkhs
+#: src/modules/getting-started/components/GettingStartedMailboxAction.tsx
+msgid "Teammates see who you talk to, not what you write."
+msgstr ""
 
 #. js-lingui-id: XpPpz7
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
@@ -28264,6 +28439,7 @@ msgstr "토마토"
 
 #. js-lingui-id: BRMXj0
 #: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "내일"
@@ -28467,6 +28643,7 @@ msgid "Triage"
 msgstr "분류"
 
 #. js-lingui-id: lhkaAC
+#: src/modules/getting-started/components/GettingStartedSidebarTrialCountdown.tsx
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -28520,6 +28697,7 @@ msgid "Trialing"
 msgstr "평가판 사용 중"
 
 #. js-lingui-id: H2Sfhg
+#: src/modules/getting-started/components/GettingStartedWorkflowPreview.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunSource.tsx
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
@@ -28633,6 +28811,7 @@ msgstr "참/거짓"
 
 #. js-lingui-id: KDw4GX
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingPlansErrorState.tsx
@@ -29296,6 +29475,11 @@ msgstr "지원되지 않는 이미지 형식"
 msgid "Until {snoozedUntilDay}"
 msgstr "{snoozedUntilDay}까지"
 
+#. js-lingui-id: LRU2W5
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+msgid "Until the last 3 days"
+msgstr ""
+
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AiChatThreadListItem.tsx
 #: src/modules/ai/components/AiChatThreadTitle.tsx
@@ -29675,6 +29859,7 @@ msgid "Upload a file or an image"
 msgstr "파일 또는 이미지 업로드"
 
 #. js-lingui-id: 2IXDgU
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormFilesFieldInput.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
@@ -29920,6 +30105,11 @@ msgstr "영문자, 숫자, 밑줄, 점 또는 하이픈만 사용할 수 있습�
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
 msgstr "API를 사용하거나 첫 번째 {objectLabel}을 수동으로 추가하세요"
+
+#. js-lingui-id: zwL0lf
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Use the import wizard instead"
+msgstr ""
 
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -31892,6 +32082,16 @@ msgstr "구독 설정이 완료되지 않았습니다."
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your subscription status is: {statusLabel}"
 msgstr "구독 상태: {statusLabel}"
+
+#. js-lingui-id: RMyx+h
+#: src/modules/getting-started/utils/getGettingStartedKeepPlanDescription.ts
+msgid "Your trial ends on {formattedTrialEnd}. Add a card now to keep your plan after that. You won't be charged before then."
+msgstr ""
+
+#. js-lingui-id: 0p2q58
+#: src/modules/getting-started/utils/getGettingStartedKeepPlanDescription.ts
+msgid "Your trial ends on {formattedTrialEnd}. Add a card now to stay on the {planLabel} plan after that. You won't be charged before then."
+msgstr ""
 
 #. js-lingui-id: oC6WBs
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx

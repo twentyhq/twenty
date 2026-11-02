@@ -692,6 +692,16 @@ msgstr "{currentStepCredits, plural, one {free credit} other {free credits}}"
 msgid "{days, plural, one {{days} day} other {{days} days}}"
 msgstr "{days, plural, one {{days} day} other {{days} days}}"
 
+#. js-lingui-id: Irx6Dx
+#: src/modules/getting-started/components/GettingStartedSidebarTrialCountdown.tsx
+msgid "{daysLeft, plural, one {# day left} other {# days left}}"
+msgstr "{daysLeft, plural, one {# day left} other {# days left}}"
+
+#. js-lingui-id: omamQu
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
+msgid "{daysLeft, plural, one {day left in your trial} other {days left in your trial}}"
+msgstr "{daysLeft, plural, one {day left in your trial} other {days left in your trial}}"
+
 #. js-lingui-id: 7o03+8
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
 msgid "{decimals, plural, one {E.g. {example} for # decimal} other {E.g. {example} for # decimals}}"
@@ -943,6 +953,11 @@ msgstr "{participantNames} are typing…"
 msgid "{participantNames} is typing…"
 msgstr "{participantNames} is typing…"
 
+#. js-lingui-id: v5nX2L
+#: src/modules/getting-started/components/GettingStartedMailboxDoneDescription.tsx
+msgid "{peopleCount, plural, one {{formattedPeopleCount} person} other {{formattedPeopleCount} people}} and {companyCount, plural, one {{formattedCompanyCount} company} other {{formattedCompanyCount} companies}} in your workspace"
+msgstr "{peopleCount, plural, one {{formattedPeopleCount} person} other {{formattedPeopleCount} people}} and {companyCount, plural, one {{formattedCompanyCount} company} other {{formattedCompanyCount} companies}} in your workspace"
+
 #. js-lingui-id: FaQB54
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
 msgid "{permissionLabel} permission removed"
@@ -994,6 +1009,16 @@ msgstr "{remainingCount} more"
 #: src/modules/ai/components/AiChatApprovalEmailReviewDeck.tsx
 msgid "{remainingDraftCount, plural, =0 {No more drafts after this one} one {# more draft after this one} other {# more drafts after this one}}"
 msgstr "{remainingDraftCount, plural, =0 {No more drafts after this one} one {# more draft after this one} other {# more drafts after this one}}"
+
+#. js-lingui-id: mqfjQO
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
+msgid "{remainingStepCount, plural, one {Finish # step by {formattedTrialEnd}} other {Finish # steps by {formattedTrialEnd}}}"
+msgstr "{remainingStepCount, plural, one {Finish # step by {formattedTrialEnd}} other {Finish # steps by {formattedTrialEnd}}}"
+
+#. js-lingui-id: yICp8R
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
+msgid "{remainingStepCount, plural, one {Finish # step} other {Finish # steps}}"
+msgstr "{remainingStepCount, plural, one {Finish # step} other {Finish # steps}}"
 
 #. js-lingui-id: r4MTJW
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
@@ -1534,6 +1559,11 @@ msgstr "500 Error - {duration}ms"
 msgid "90 days"
 msgstr "90 days"
 
+#. js-lingui-id: 81nnG3
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "A CSV or Excel export from any tool"
+msgstr "A CSV or Excel export from any tool"
+
 #. js-lingui-id: 43TqJC
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "A display name for this provider"
@@ -1790,6 +1820,7 @@ msgid "action"
 msgstr "action"
 
 #. js-lingui-id: bwRvnp
+#: src/modules/getting-started/components/GettingStartedWorkflowPreview.tsx
 #: src/modules/log-console/constants/LogConsoleRecordChangeColumns.tsx
 #: src/modules/log-console/constants/LogConsoleRecordChangeFilterFields.tsx
 #: src/modules/log-console/constants/LogConsoleSources.tsx
@@ -3265,6 +3296,11 @@ msgstr "All roles"
 msgid "All Sources"
 msgstr "All Sources"
 
+#. js-lingui-id: wiGHxh
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
+msgid "All steps done"
+msgstr "All steps done"
+
 #. js-lingui-id: p+lpde
 #: src/modules/activities/tasks/components/TaskGroupsContent.tsx
 msgid "All tasks addressed. Maintain the momentum."
@@ -4626,6 +4662,11 @@ msgstr "Back to {text}"
 #: src/pages/not-found/NotFound.tsx
 msgid "Back to content"
 msgstr "Back to content"
+
+#. js-lingui-id: +cSNzs
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
+msgid "Back to current step"
+msgstr "Back to current step"
 
 #. js-lingui-id: dGEega
 #: src/pages/ai-chat/AiChatInboxPage.tsx
@@ -7189,6 +7230,11 @@ msgstr "Continue on failure"
 msgid "Continue on iteration failure"
 msgstr "Continue on iteration failure"
 
+#. js-lingui-id: uxdS61
+#: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
+msgid "Continue setup"
+msgstr "Continue setup"
+
 #. js-lingui-id: RvVi9c
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Continue with Email"
@@ -7196,12 +7242,14 @@ msgstr "Continue with Email"
 
 #. js-lingui-id: oZyG4C
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithGoogle.tsx
+#: src/modules/getting-started/components/GettingStartedMailboxAction.tsx
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Continue with Google"
 msgstr "Continue with Google"
 
 #. js-lingui-id: ztoybH
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithMicrosoft.tsx
+#: src/modules/getting-started/components/GettingStartedMailboxAction.tsx
 #: src/pages/onboarding/SyncEmails.tsx
 msgid "Continue with Microsoft"
 msgstr "Continue with Microsoft"
@@ -7514,6 +7562,11 @@ msgstr "Could not generate the signed DPA. Please try again."
 #: src/modules/front-components/media-session/components/FrontComponentMediaPermissionModal.tsx
 msgid "Could not grant media access. Please try again."
 msgstr "Could not grant media access. Please try again."
+
+#. js-lingui-id: rLrhvg
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
+msgid "Could not load Getting started."
+msgstr "Could not load Getting started."
 
 #. js-lingui-id: Y5qCpF
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
@@ -10528,6 +10581,7 @@ msgid "Email accounts"
 msgstr "Email accounts"
 
 #. js-lingui-id: ATGYL1
+#: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribersList.tsx
 msgid "Email address"
 msgstr "Email address"
@@ -11976,6 +12030,11 @@ msgstr "Export ({exportedCount})"
 msgid "Export ({percentageValue}%)"
 msgstr "Export ({percentageValue}%)"
 
+#. js-lingui-id: YkvQVd
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Export a CSV from"
+msgstr "Export a CSV from"
+
 #. js-lingui-id: 2KAI4N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
 msgid "Export CSV"
@@ -13057,6 +13116,11 @@ msgstr "Finish flow with errors"
 msgid "Finish Setup"
 msgstr "Finish Setup"
 
+#. js-lingui-id: 97Hg0Y
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
+msgid "Finish your setup"
+msgstr "Finish your setup"
+
 #. js-lingui-id: 4dQFvz
 #: src/modules/ai/constants/AiChatThreadReasons.ts
 msgid "Finished"
@@ -13293,6 +13357,11 @@ msgstr "Found {objectLabel}"
 #: src/modules/ai/constants/ActionToolStatusLabels.ts
 msgid "Found connected accounts"
 msgstr "Found connected accounts"
+
+#. js-lingui-id: Vc8HGN
+#: src/modules/getting-started/components/GettingStartedInviteAction.tsx
+msgid "Found in your emails"
+msgstr "Found in your emails"
 
 #. js-lingui-id: 1hxId5
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -13623,9 +13692,23 @@ msgid "Gets this record only: their role can't access {objectLabelPlural}"
 msgstr "Gets this record only: their role can't access {objectLabelPlural}"
 
 #. js-lingui-id: 7hktsm
+#: src/modules/getting-started/components/GettingStartedOpenedSection.tsx
+#: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+#: src/pages/getting-started/GettingStartedPage.tsx
+#: src/pages/getting-started/GettingStartedPage.tsx
 msgid "Getting started"
 msgstr "Getting started"
+
+#. js-lingui-id: YRBB4k
+#: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
+msgid "Getting started progress"
+msgstr "Getting started progress"
+
+#. js-lingui-id: dV3VgV
+#: src/modules/getting-started/components/GettingStartedStepStack.tsx
+msgid "Getting started steps"
+msgstr "Getting started steps"
 
 #. js-lingui-id: XXtAx5
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
@@ -14163,6 +14246,11 @@ msgstr "Hide field"
 msgid "Hide fields"
 msgstr "Hide fields"
 
+#. js-lingui-id: 3CeQ1O
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+msgid "Hide for good"
+msgstr "Hide for good"
+
 #. js-lingui-id: CbeJV4
 #. placeholder {0}: groupValue ?? ''
 #: src/modules/object-record/record-group/components/RecordGroupVisibilityRow.tsx
@@ -14660,6 +14748,11 @@ msgstr "Import only selected folders/labels"
 msgid "Import or add the MCP configuration from JetBrains settings."
 msgstr "Import or add the MCP configuration from JetBrains settings."
 
+#. js-lingui-id: e2aT+Z
+#: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
+msgid "Import the attached files into Twenty. Work out which records they contain, then create them and link them together."
+msgstr "Import the attached files into Twenty. Work out which records they contain, then create them and link them together."
+
 #. js-lingui-id: vXTVX9
 #: src/pages/onboarding/ImportContacts.tsx
 msgid "Import your contacts"
@@ -14700,6 +14793,11 @@ msgstr "In {dateDiff}"
 #: src/modules/side-panel/pages/send-campaign/components/SendCampaignRecipientsCard.tsx
 msgid "In {listName}"
 msgstr "In {listName}"
+
+#. js-lingui-id: jS5U2e
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+msgid "In an hour"
+msgstr "In an hour"
 
 #. js-lingui-id: /LCAwL
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
@@ -14958,6 +15056,11 @@ msgstr "Install"
 msgid "Install {appDisplayName} on your workspace"
 msgstr "Install {appDisplayName} on your workspace"
 
+#. js-lingui-id: rQN3ie
+#: src/modules/getting-started/components/GettingStartedAppInstallButton.tsx
+msgid "Install {appLabel}"
+msgstr "Install {appLabel}"
+
 #. js-lingui-id: sOOkDn
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -15143,6 +15246,7 @@ msgstr "Invalid domain. Please include at least one subdomain (e.g., sub.example
 #. js-lingui-id: B2Tpo0
 #: src/modules/auth/sign-in-up/hooks/useHandleResendEmailVerificationToken.ts
 #: src/modules/auth/sign-in-up/hooks/useHandleResetPassword.ts
+#: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 msgid "Invalid email"
 msgstr "Invalid email"
 
@@ -15245,6 +15349,7 @@ msgid "Invitations"
 msgstr "Invitations"
 
 #. js-lingui-id: MFKlMB
+#: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 #: src/modules/object-record/record-sharing/components/RecordSharingInvitation.tsx
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 #: src/pages/onboarding/InviteTeam.tsx
@@ -15285,6 +15390,7 @@ msgid "Invite by Link"
 msgstr "Invite by Link"
 
 #. js-lingui-id: 5IfmKA
+#: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 #: src/modules/onboarding/hooks/useInviteTeam.ts
 msgid "Invite link sent to email addresses"
 msgstr "Invite link sent to email addresses"
@@ -15577,6 +15683,11 @@ msgstr "Kanban"
 msgid "Kanban widget"
 msgstr "Kanban widget"
 
+#. js-lingui-id: uW9WOr
+#: src/modules/getting-started/hooks/useGettingStartedTrial.ts
+msgid "Keep {planLabel}"
+msgstr "Keep {planLabel}"
+
 #. js-lingui-id: LHkoee
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
 msgid "Keep executing the next nodes even if this one fails"
@@ -15596,6 +15707,11 @@ msgstr "Keep tracking my opens"
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageTrackingCopy.ts
 msgid "Keep tracking my opens and clicks"
 msgstr "Keep tracking my opens and clicks"
+
+#. js-lingui-id: 9l8cs3
+#: src/modules/getting-started/hooks/useGettingStartedTrial.ts
+msgid "Keep your plan"
+msgstr "Keep your plan"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -16625,6 +16741,11 @@ msgstr "Loading skills..."
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadWidget.tsx
 msgid "Loading thread"
 msgstr "Loading thread"
+
+#. js-lingui-id: KOolcu
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
+msgid "Loading your progress"
+msgstr "Loading your progress"
 
 #. js-lingui-id: Z3FXyt
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
@@ -18084,6 +18205,11 @@ msgstr "Name should start with a letter."
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
 msgid "Name: {0}"
 msgstr "Name: {0}"
+
+#. js-lingui-id: fZT56Z
+#: src/modules/getting-started/components/GettingStartedInviteAction.tsx
+msgid "name@{emailDomain}"
+msgstr "name@{emailDomain}"
 
 #. js-lingui-id: JxC/pi
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
@@ -20096,6 +20222,11 @@ msgstr "One subscription provides one Organization key that powers one productio
 msgid "Only applications published to npm can be claimed this way."
 msgstr "Only applications published to npm can be claimed this way."
 
+#. js-lingui-id: dD26o4
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Only CSV and Excel files are supported"
+msgstr "Only CSV and Excel files are supported"
+
 #. js-lingui-id: zii2Qj
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
 msgid "Only date & participants will be shared with your team."
@@ -20254,6 +20385,11 @@ msgstr "Open conversation"
 msgid "Open Cursor's MCP installer with the Twenty remote server config."
 msgstr "Open Cursor's MCP installer with the Twenty remote server config."
 
+#. js-lingui-id: JvSHIq
+#: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
+msgid "Open Getting started"
+msgstr "Open Getting started"
+
 #. js-lingui-id: pZZH4Q
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
 msgid "Open Gmail"
@@ -20360,6 +20496,11 @@ msgstr "Open settings"
 msgid "Open side panel"
 msgstr "Open side panel"
 
+#. js-lingui-id: Cq4Ta5
+#: src/modules/getting-started/components/GettingStartedWorkflowAction.tsx
+msgid "Open the workflow"
+msgstr "Open the workflow"
+
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Open Twenty's official ChatGPT integration for your workspace."
@@ -20371,6 +20512,7 @@ msgid "Open webhook settings"
 msgstr "Open webhook settings"
 
 #. js-lingui-id: OV5wZZ
+#: src/modules/getting-started/components/GettingStartedOpenedSection.tsx
 #: src/modules/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection.tsx
 msgid "Opened"
 msgstr "Opened"
@@ -24950,6 +25092,11 @@ msgstr "Send emails from connected accounts"
 msgid "Send emails via connected accounts"
 msgstr "Send emails via connected accounts"
 
+#. js-lingui-id: lPcA5V
+#: src/modules/getting-started/components/GettingStartedPromptAction.tsx
+msgid "Send instructions"
+msgstr "Send instructions"
+
 #. js-lingui-id: 6nwEi6
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
@@ -25222,6 +25369,11 @@ msgstr "Set up forwarding from the source address to this destination."
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
 msgid "Set up the following DNS records for {domain} in the Cloudflare account already open in my browser."
 msgstr "Set up the following DNS records for {domain} in the Cloudflare account already open in my browser."
+
+#. js-lingui-id: uB2UEQ
+#: src/modules/getting-started/components/GettingStartedWorkflowAction.tsx
+msgid "Set up the workflow"
+msgstr "Set up the workflow"
 
 #. js-lingui-id: 9HNKkV
 #: src/modules/settings/applications/components/SettingsApplicationDetailVariablesTab.tsx
@@ -25705,6 +25857,7 @@ msgstr "Skills"
 #: src/modules/ai/components/AiChatFormCardContent.tsx
 #: src/modules/ai/components/AiChatQuestionCard.tsx
 #: src/modules/ai/components/AiChatTimePickerCard.tsx
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
 #: src/modules/onboarding/components/OnboardingSkipButton.tsx
 msgid "Skip"
 msgstr "Skip"
@@ -25823,6 +25976,13 @@ msgstr "Snooze ended"
 #: src/modules/ai/components/AiChatThreadInboxStateNotice.tsx
 msgid "Snooze ended {eventTime}"
 msgstr "Snooze ended {eventTime}"
+
+#. js-lingui-id: oIDreL
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+msgid "Snooze Getting started"
+msgstr "Snooze Getting started"
 
 #. js-lingui-id: VkkXmS
 #: src/modules/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker.tsx
@@ -26061,6 +26221,11 @@ msgstr "Split multiple values"
 #: src/modules/ai/constants/AiChatInboxLayoutOptions.ts
 msgid "Split view"
 msgstr "Split view"
+
+#. js-lingui-id: jAoGz1
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Spreadsheet"
+msgstr "Spreadsheet"
 
 #. js-lingui-id: vnS6Rf
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -26974,6 +27139,11 @@ msgstr "Team"
 msgid "Team member"
 msgstr "Team member"
 
+#. js-lingui-id: IVUOhR
+#: src/modules/getting-started/components/GettingStartedInviteAction.tsx
+msgid "Teammate email {emailNumber}"
+msgstr "Teammate email {emailNumber}"
+
 #. js-lingui-id: GEkQWt
 #. placeholder {0}: index + 1
 #: src/pages/onboarding/InviteTeam.tsx
@@ -26985,6 +27155,11 @@ msgstr "Teammate's email {0}"
 #: src/modules/mention/hooks/useWorkspaceMemberMentionSearch.ts
 msgid "Teammates"
 msgstr "Teammates"
+
+#. js-lingui-id: Dqvkhs
+#: src/modules/getting-started/components/GettingStartedMailboxAction.tsx
+msgid "Teammates see who you talk to, not what you write."
+msgstr "Teammates see who you talk to, not what you write."
 
 #. js-lingui-id: XpPpz7
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
@@ -28261,6 +28436,7 @@ msgstr "Tomato"
 
 #. js-lingui-id: BRMXj0
 #: src/modules/ai/utils/getAgentChatThreadSnoozeOptions.ts
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/localization/utils/formatDateISOStringToRelativeDate.ts
 msgid "Tomorrow"
 msgstr "Tomorrow"
@@ -28464,6 +28640,7 @@ msgid "Triage"
 msgstr "Triage"
 
 #. js-lingui-id: lhkaAC
+#: src/modules/getting-started/components/GettingStartedSidebarTrialCountdown.tsx
 #: src/modules/settings/billing/components/internal/PlansTags.tsx
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -28517,6 +28694,7 @@ msgid "Trialing"
 msgstr "Trialing"
 
 #. js-lingui-id: H2Sfhg
+#: src/modules/getting-started/components/GettingStartedWorkflowPreview.tsx
 #: src/modules/object-core/agents/components/CoreAgentRunSource.tsx
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
 #: src/modules/side-panel/components/SidePanelWorkflowStepInfo.tsx
@@ -28630,6 +28808,7 @@ msgstr "True/False"
 
 #. js-lingui-id: KDw4GX
 #: src/modules/ai/components/AiChatSchedulingSlots.tsx
+#: src/modules/getting-started/components/GettingStartedPageContent.tsx
 #: src/modules/onboarding/components/upgrade-free-trial/ChooseYourPlanErrorState.tsx
 #: src/modules/page-layout/widgets/chat-threads/components/ChatThreadsCardContent.tsx
 #: src/modules/settings/billing/components/SettingsBillingPlansErrorState.tsx
@@ -29293,6 +29472,11 @@ msgstr "Unsupported image format"
 msgid "Until {snoozedUntilDay}"
 msgstr "Until {snoozedUntilDay}"
 
+#. js-lingui-id: LRU2W5
+#: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
+msgid "Until the last 3 days"
+msgstr "Until the last 3 days"
+
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AiChatThreadListItem.tsx
 #: src/modules/ai/components/AiChatThreadTitle.tsx
@@ -29672,6 +29856,7 @@ msgid "Upload a file or an image"
 msgstr "Upload a file or an image"
 
 #. js-lingui-id: 2IXDgU
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/FilesFieldInput.tsx
 #: src/modules/object-record/record-form/components/RecordFormFilesFieldInput.tsx
 #: src/modules/settings/security/components/sso/SettingsSsoSamlForm.tsx
@@ -29917,6 +30102,11 @@ msgstr "Use only letters, numbers, underscores, dots or hyphens (max 64 characte
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Use our API or add your first {objectLabel} manually"
 msgstr "Use our API or add your first {objectLabel} manually"
+
+#. js-lingui-id: zwL0lf
+#: src/modules/getting-started/components/GettingStartedImportAction.tsx
+msgid "Use the import wizard instead"
+msgstr "Use the import wizard instead"
 
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -31889,6 +32079,16 @@ msgstr "Your subscription setup was not completed."
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your subscription status is: {statusLabel}"
 msgstr "Your subscription status is: {statusLabel}"
+
+#. js-lingui-id: RMyx+h
+#: src/modules/getting-started/utils/getGettingStartedKeepPlanDescription.ts
+msgid "Your trial ends on {formattedTrialEnd}. Add a card now to keep your plan after that. You won't be charged before then."
+msgstr "Your trial ends on {formattedTrialEnd}. Add a card now to keep your plan after that. You won't be charged before then."
+
+#. js-lingui-id: 0p2q58
+#: src/modules/getting-started/utils/getGettingStartedKeepPlanDescription.ts
+msgid "Your trial ends on {formattedTrialEnd}. Add a card now to stay on the {planLabel} plan after that. You won't be charged before then."
+msgstr "Your trial ends on {formattedTrialEnd}. Add a card now to stay on the {planLabel} plan after that. You won't be charged before then."
 
 #. js-lingui-id: oC6WBs
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx
