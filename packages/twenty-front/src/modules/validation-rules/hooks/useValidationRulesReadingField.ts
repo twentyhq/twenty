@@ -22,7 +22,6 @@ export const useValidationRulesReadingField = ({
   const skip =
     !isRecordCreationFormEnabled || !isNonEmptyString(fieldMetadataId);
 
-  // A cached list could hide a rule from the warning
   const { data, loading, error, refetch } = useQuery(
     FindValidationRulesReadingFieldDocument,
     {
