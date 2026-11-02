@@ -7,7 +7,6 @@ import { type ActorMetadata } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull } from 'typeorm';
 
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { mapUIMessagePartsToDBParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ui-message-parts-to-db-parts.util';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
@@ -34,14 +33,12 @@ export class AgentConversationWriterService {
 
   runInTransaction<TResult>({
     workspaceId,
-    authContext,
     work,
   }: {
     workspaceId: string;
-    authContext?: WorkspaceAuthContext;
     work: (scope: AgentHistoryTransactionScope) => Promise<TResult>;
   }): Promise<TResult> {
-    return this.transactionService.run({ workspaceId, authContext, work });
+    return this.transactionService.run({ workspaceId, work });
   }
 
   // the message is replaced whole, so no reader or crash ever finds it without its parts

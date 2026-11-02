@@ -236,7 +236,7 @@ const SCHEMA = getWorkspaceSchemaName(WORKSPACE_ID);
       chatThreadService,
       chatSharing as never,
       { resolveMentionInTransaction: jest.fn() } as never,
-      conversationWriter,
+      orm as never,
     );
 
     const createChatService = (messageRepository: typeof messages) =>

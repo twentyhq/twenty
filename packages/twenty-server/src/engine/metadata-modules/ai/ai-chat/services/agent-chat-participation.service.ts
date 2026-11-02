@@ -10,9 +10,10 @@ import { type AgentChatAssistantParticipationArgs } from 'src/engine/metadata-mo
 import { type AgentChatMessageParticipationResult } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-message-participation-result.type';
 import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { formatErrorWithCause } from 'src/engine/metadata-modules/ai/ai-chat/utils/format-error-with-cause.util';
-import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
+import { createAgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/utils/create-agent-history-transaction-scope.util';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
 @Injectable()
 export class AgentChatParticipationService {
@@ -22,7 +23,7 @@ export class AgentChatParticipationService {
     private readonly threadService: AgentChatThreadService,
     private readonly sharingService: AgentChatSharingService,
     private readonly participantService: AgentChatThreadParticipantService,
-    private readonly conversationWriterService: AgentConversationWriterService,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
   ) {}
 
   async persistMessage<TSavedMessage extends { id: string }>({
@@ -38,46 +39,49 @@ export class AgentChatParticipationService {
     await this.threadService.getWritableThread(args);
     const authContext = await this.sharingService.getAuthContext(args);
 
-    return this.conversationWriterService.runInTransaction({
-      workspaceId: args.workspaceId,
+    return this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.workspaceOrmManager.runInWorkspaceTransaction(async (scope) => {
+          await this.sharingService.lockThreadForWriteInTransaction({
+            workspaceId: args.workspaceId,
+            threadId: args.threadId,
+            transactionScope: scope,
+          });
+
+          await this.participantService.resolveMentionInTransaction({
+            ...args,
+            scope,
+          });
+
+          const appliedParticipation = isDefined(participation)
+            ? await this.threadService.applyAssistantParticipation({
+                ...args,
+                ...participation,
+                transactionScope: scope,
+              })
+            : undefined;
+
+          const savedMessage = await persistMessage(
+            createAgentHistoryTransactionScope(scope),
+          );
+          const delivery = isDefined(participation)
+            ? await this.deliverParticipants({
+                ...args,
+                ...participation,
+                messageId: savedMessage.id,
+                isInitialMessage:
+                  appliedParticipation?.isInitialMessage ?? false,
+                scope,
+              })
+            : {
+                mentionedParticipantWorkspaceMemberIds: [],
+                recipientParticipantWorkspaceMemberIds: [],
+              };
+
+          return { ...savedMessage, ...delivery };
+        }),
       authContext,
-      work: async (scope) => {
-        await this.sharingService.lockThreadForWriteInTransaction({
-          workspaceId: args.workspaceId,
-          threadId: args.threadId,
-          transactionScope: scope,
-        });
-
-        await this.participantService.resolveMentionInTransaction({
-          ...args,
-          scope,
-        });
-
-        const appliedParticipation = isDefined(participation)
-          ? await this.threadService.applyAssistantParticipation({
-              ...args,
-              ...participation,
-              transactionScope: scope,
-            })
-          : undefined;
-
-        const savedMessage = await persistMessage(scope);
-        const delivery = isDefined(participation)
-          ? await this.deliverParticipants({
-              ...args,
-              ...participation,
-              messageId: savedMessage.id,
-              isInitialMessage: appliedParticipation?.isInitialMessage ?? false,
-              scope,
-            })
-          : {
-              mentionedParticipantWorkspaceMemberIds: [],
-              recipientParticipantWorkspaceMemberIds: [],
-            };
-
-        return { ...savedMessage, ...delivery };
-      },
-    });
+    );
   }
 
   private async deliverParticipants({
@@ -89,7 +93,7 @@ export class AgentChatParticipationService {
     ...args
   }: AgentChatThreadAccessArgs &
     AgentChatAssistantParticipationArgs & {
-      scope: AgentHistoryTransactionScope;
+      scope: WorkspaceTransactionScope;
       isInitialMessage: boolean;
       messageId: string;
     }): Promise<AgentChatMessageParticipationResult> {
