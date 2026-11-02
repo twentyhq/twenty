@@ -7,8 +7,7 @@ import { NavigationDrawerSection } from '@/ui/navigation/navigation-drawer/compo
 import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { styled } from '@linaria/react';
-import { plural } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react/macro';
+import { Plural, useLingui } from '@lingui/react/macro';
 import { Link, useMatch } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -173,10 +172,11 @@ export const GettingStartedSidebarCard = () => {
                 <StyledTrialRow>
                   <IconHourglassHigh size={theme.icon.size.md} />
                   <StyledDaysLeft>
-                    {plural(daysLeft, {
-                      one: '# day left',
-                      other: '# days left',
-                    })}
+                    <Plural
+                      value={daysLeft}
+                      one="# day left"
+                      other="# days left"
+                    />
                   </StyledDaysLeft>
                   <StyledTrialLabel>{t`Trial`}</StyledTrialLabel>
                 </StyledTrialRow>

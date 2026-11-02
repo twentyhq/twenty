@@ -8,6 +8,10 @@ import { expect, userEvent, waitFor, within } from 'storybook/test';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
 import { GettingStartedPageContent } from '@/getting-started/components/GettingStartedPageContent';
+import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
+import { gettingStartedJustCompletedStepState } from '@/getting-started/states/gettingStartedJustCompletedStepState';
+import { getGettingStartedStepSelection } from '@/getting-started/utils/getGettingStartedStepSelection';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { isDefined } from 'twenty-shared/utils';
 import { Button } from 'twenty-ui/primitives/input';
@@ -114,6 +118,7 @@ const meta: Meta<typeof GettingStartedPageContent> = {
   beforeEach: () => {
     jotaiStore.set(currentWorkspaceState.atom, TRIALING_WORKSPACE);
     jotaiStore.set(billingState.atom, mockedClientConfig.billing);
+    jotaiStore.set(gettingStartedJustCompletedStepState.atom, null);
   },
 };
 
@@ -251,48 +256,42 @@ const StyledAnimationPreviewToolbar = styled.div`
 
 const GettingStartedAnimationPreview = () => {
   const apolloClient = useApolloClient();
+  const { updateGettingStarted } = useUpdateGettingStarted();
+  const setGettingStartedJustCompletedStep = useSetAtomState(
+    gettingStartedJustCompletedStepState,
+  );
 
-  const writeProgress = (
-    progress: GettingStartedProgressQuery['gettingStartedProgress'],
-  ) => {
-    animationPreviewProgress = progress;
+  const resetProgress = () => {
+    animationPreviewProgress = createAnimationPreviewProgress();
+    setGettingStartedJustCompletedStep(null);
     apolloClient.writeQuery({
       query: GettingStartedProgressDocument,
-      data: { gettingStartedProgress: progress },
+      data: { gettingStartedProgress: animationPreviewProgress },
     });
   };
 
-  const completeCurrentStep = () => {
+  const completeDisplayedStep = () => {
     const { steps, completedStepActionKeys, selectedStepActionKey } =
       animationPreviewProgress;
-    const stepToComplete =
-      isDefined(selectedStepActionKey) &&
-      !completedStepActionKeys.includes(selectedStepActionKey)
-        ? selectedStepActionKey
-        : steps.find(
-            ({ actionKey }) => !completedStepActionKeys.includes(actionKey),
-          )?.actionKey;
+    const { selectedStepActionKey: displayedStepActionKey } =
+      getGettingStartedStepSelection({
+        stepActionKeys: steps.map(({ actionKey }) => actionKey),
+        completedStepActionKeys,
+        selectedStepActionKey,
+      });
 
-    if (!isDefined(stepToComplete)) {
-      return;
-    }
-
-    writeProgress({
-      ...animationPreviewProgress,
-      completedStepActionKeys: [...completedStepActionKeys, stepToComplete],
+    void updateGettingStarted({
+      completedStepActionKey: displayedStepActionKey,
     });
   };
 
   return (
     <>
       <StyledAnimationPreviewToolbar>
-        <Button variant="solid" color="accent" onClick={completeCurrentStep}>
+        <Button variant="solid" color="accent" onClick={completeDisplayedStep}>
           Complete the current step
         </Button>
-        <Button
-          variant="ghost"
-          onClick={() => writeProgress(createAnimationPreviewProgress())}
-        >
+        <Button variant="ghost" onClick={resetProgress}>
           Reset
         </Button>
       </StyledAnimationPreviewToolbar>
@@ -321,6 +320,14 @@ export const StepAnimations: Story = {
         result: ({ input }: UpdateGettingStartedMutationVariables) => {
           animationPreviewProgress = {
             ...animationPreviewProgress,
+            completedStepActionKeys: [
+              ...new Set(
+                [
+                  ...animationPreviewProgress.completedStepActionKeys,
+                  input.completedStepActionKey,
+                ].filter(isDefined),
+              ),
+            ],
             selectedStepActionKey:
               input.selectedStepActionKey ??
               animationPreviewProgress.selectedStepActionKey,

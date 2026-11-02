@@ -1,5 +1,6 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { billingState } from '@/client-config/states/billingState';
+import { getGettingStartedTrialCountdown } from '@/getting-started/utils/getGettingStartedTrialCountdown';
 import { useDateTimeFormat } from '@/localization/hooks/useDateTimeFormat';
 import { dateLocaleState } from '@/localization/states/dateLocaleState';
 import { formatDateISOStringToCustomUnicodeFormat } from '@/localization/utils/formatDateISOStringToCustomUnicodeFormat';
@@ -10,14 +11,10 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useLingui } from '@lingui/react/macro';
-import { differenceInCalendarDays } from 'date-fns';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 
-import {
-  PermissionFlagType,
-  SubscriptionStatus,
-} from '~/generated-metadata/graphql';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export const useGettingStartedTrial = () => {
   const { t } = useLingui();
@@ -33,26 +30,19 @@ export const useGettingStartedTrial = () => {
 
   const currentBillingSubscription =
     currentWorkspace?.currentBillingSubscription;
-  const trialEnd =
-    subscriptionStatus === SubscriptionStatus.Trialing &&
-    isDefined(currentBillingSubscription?.currentPeriodEnd)
-      ? new Date(currentBillingSubscription.currentPeriodEnd)
-      : null;
-  const isCountdownVisible =
-    isDefined(trialEnd) && billingHasPaymentMethod === false;
+  const { trialEnd, isCountdownVisible, daysLeft, trialDays } =
+    getGettingStartedTrialCountdown({
+      subscriptionStatus,
+      currentPeriodEnd: currentBillingSubscription?.currentPeriodEnd,
+      hasPaymentMethod: billingHasPaymentMethod,
+      trialPeriods: billing?.trialPeriods ?? [],
+      now: new Date(),
+    });
 
   const planKey = getSubscriptionPlanKey(currentBillingSubscription);
   const planLabel = isDefined(planKey)
     ? t(BILLING_PLAN_LABELS[planKey])
     : undefined;
-
-  const daysLeft = isDefined(trialEnd)
-    ? Math.max(0, differenceInCalendarDays(trialEnd, new Date()))
-    : 0;
-  const trialDurationInDays =
-    billing?.trialPeriods.find(
-      (trialPeriod) => !trialPeriod.isCreditCardRequired,
-    )?.duration ?? 0;
 
   return {
     trialEnd,
@@ -67,7 +57,7 @@ export const useGettingStartedTrial = () => {
         : undefined,
     planLabel,
     daysLeft,
-    trialDays: Math.max(trialDurationInDays, daysLeft),
+    trialDays,
     isCountdownVisible,
     canKeepPlan: isCountdownVisible && hasBillingPermission,
     keepPlanLabel: isDefined(planLabel)

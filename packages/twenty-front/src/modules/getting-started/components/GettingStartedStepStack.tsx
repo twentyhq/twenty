@@ -1,5 +1,9 @@
 import { GettingStartedStepCard } from '@/getting-started/components/GettingStartedStepCard';
+import { GETTING_STARTED_STACKED_STEP_COLOR_BY_DEPTH } from '@/getting-started/constants/GettingStartedStackedStepColorByDepth';
+import { useSelectGettingStartedStep } from '@/getting-started/hooks/useSelectGettingStartedStep';
+import { gettingStartedJustCompletedStepState } from '@/getting-started/states/gettingStartedJustCompletedStepState';
 import { EASE_OUT } from '@/ui/theme/constants/EaseOut';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
@@ -69,12 +73,7 @@ const StyledStackedStepBase = styled.button<{ depth: number }>`
   border: 1px solid ${themeCssVariables.border.color.light};
   border-radius: ${themeCssVariables.border.radius.lg}
     ${themeCssVariables.border.radius.lg} 0 0;
-  color: ${({ depth }) =>
-    depth === 1
-      ? themeCssVariables.font.color.primary
-      : depth === 2
-        ? themeCssVariables.font.color.secondary
-        : themeCssVariables.font.color.tertiary};
+  color: ${({ depth }) => GETTING_STARTED_STACKED_STEP_COLOR_BY_DEPTH[depth]};
   cursor: pointer;
   display: flex;
   font: inherit;
@@ -108,29 +107,27 @@ type GettingStartedStepStackProps = {
   steps: GettingStartedStepDefinition[];
   selectedStepActionKey: GettingStartedStepActionKey;
   completedStepActionKeys: GettingStartedStepActionKey[];
-  justCompletedStep: GettingStartedStepActionKey | null;
-  isSaving: boolean;
-  onSelectStep: (stepActionKey: GettingStartedStepActionKey) => void;
 };
 
 export const GettingStartedStepStack = ({
   steps,
   selectedStepActionKey,
   completedStepActionKeys,
-  justCompletedStep,
-  isSaving,
-  onSelectStep,
 }: GettingStartedStepStackProps) => {
   const { t } = useLingui();
   const theme = useTheme();
   const { getIcon } = useIcons();
   const shouldReduceMotion = useReducedMotion();
+  const { selectGettingStartedStep, isSaving } = useSelectGettingStartedStep();
+  const gettingStartedJustCompletedStep = useAtomStateValue(
+    gettingStartedJustCompletedStepState,
+  );
   const stepTransition = {
     duration: theme.animation.duration.normal,
     ease: EASE_OUT,
   };
-  const stackOffset = shouldReduceMotion ? 0 : 8;
-  const cardOffset = shouldReduceMotion ? 0 : 16;
+  const stackOffset = shouldReduceMotion ? 0 : theme.spacingMultiplicator * 2;
+  const cardOffset = shouldReduceMotion ? 0 : theme.spacingMultiplicator * 4;
 
   const selectedStepIndex = steps.findIndex(
     ({ actionKey }) => actionKey === selectedStepActionKey,
@@ -161,7 +158,7 @@ export const GettingStartedStepStack = ({
               type="button"
               depth={depth}
               disabled={isSaving}
-              onClick={() => onSelectStep(actionKey)}
+              onClick={() => selectGettingStartedStep(actionKey)}
             >
               <StepIcon
                 size={theme.icon.size.md}
@@ -186,7 +183,7 @@ export const GettingStartedStepStack = ({
                 completedStepActionKeys.includes(actionKey) || undefined
               }
               disabled={isSaving}
-              onClick={() => onSelectStep(actionKey)}
+              onClick={() => selectGettingStartedStep(actionKey)}
             />
           ))}
         </StyledSteps>
@@ -211,7 +208,9 @@ export const GettingStartedStepStack = ({
               isCompleted={completedStepActionKeys.includes(
                 selectedStepActionKey,
               )}
-              isJustCompleted={justCompletedStep === selectedStepActionKey}
+              isJustCompleted={
+                gettingStartedJustCompletedStep === selectedStepActionKey
+              }
             />
           </motion.div>
         </AnimatePresence>

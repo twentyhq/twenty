@@ -1,5 +1,5 @@
 import { currentUserState } from '@/auth/states/currentUserState';
-import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
+import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
 import { getValidInviteEmails } from '@/onboarding/utils/getValidInviteEmails';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -15,7 +15,10 @@ import { IconX } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
-import { GetInviteSuggestionsDocument } from '~/generated-metadata/graphql';
+import {
+  GetInviteSuggestionsDocument,
+  GettingStartedStepActionKey,
+} from '~/generated-metadata/graphql';
 
 const StyledForm = styled.form`
   display: flex;
@@ -42,7 +45,7 @@ const StyledFooter = styled.div`
 export const GettingStartedInviteAction = () => {
   const { t } = useLingui();
   const { enqueueToast } = useToast();
-  const { refetch } = useGettingStartedProgress();
+  const { updateGettingStarted } = useUpdateGettingStarted();
   const { sendInvitation } = useCreateWorkspaceInvitation();
   const currentUser = useAtomStateValue(currentUserState);
   const emailDomain = currentUser?.email.split('@').at(1);
@@ -114,7 +117,9 @@ export const GettingStartedInviteAction = () => {
         status: 'success',
         children: t`Invite link sent to email addresses`,
       });
-      void refetch();
+      void updateGettingStarted({
+        completedStepActionKey: GettingStartedStepActionKey.INVITE_TEAM,
+      });
     } finally {
       setIsSending(false);
     }

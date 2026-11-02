@@ -29,7 +29,10 @@ const StyledComposer = styled.div`
 `;
 
 type GettingStartedPromptActionProps = {
-  stepDefinition: GettingStartedStepDefinition;
+  stepDefinition: Pick<
+    GettingStartedStepDefinition,
+    'actionKey' | 'prompt' | 'promptLabel'
+  >;
 };
 
 export const GettingStartedPromptAction = ({

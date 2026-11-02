@@ -1,5 +1,5 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
+import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
 import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
 import { useInstallMarketplaceApp } from '@/marketplace/hooks/useInstallMarketplaceApp';
 import { getMarketplaceAppDefaultRoleManifest } from '@/marketplace/utils/getMarketplaceAppDefaultRoleManifest';
@@ -12,6 +12,7 @@ import { IconButton } from 'twenty-ui/components/input';
 import { IconCheck, IconPlus } from 'twenty-ui/icon';
 import {
   FindMarketplaceAppDetailDocument,
+  GettingStartedStepActionKey,
   type MarketplaceApp,
 } from '~/generated-metadata/graphql';
 
@@ -24,7 +25,7 @@ export const GettingStartedAppInstallButton = ({
 }: GettingStartedAppInstallButtonProps) => {
   const { t } = useLingui();
   const { openDialog } = useDialog();
-  const { refetch } = useGettingStartedProgress();
+  const { updateGettingStarted } = useUpdateGettingStarted();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isInstalled =
     currentWorkspace?.installedApplications.some(
@@ -37,7 +38,10 @@ export const GettingStartedAppInstallButton = ({
   const marketplaceAppDetail = data?.findMarketplaceAppDetail;
   const { install, isInstalling } = useInstallMarketplaceApp({
     universalIdentifier,
-    onCompleted: () => void refetch(),
+    onCompleted: () =>
+      void updateGettingStarted({
+        completedStepActionKey: GettingStartedStepActionKey.INSTALL_APP,
+      }),
   });
   const modalInstanceId = `getting-started-install-${universalIdentifier}`;
 

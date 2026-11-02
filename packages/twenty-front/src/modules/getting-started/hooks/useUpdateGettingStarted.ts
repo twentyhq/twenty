@@ -1,4 +1,7 @@
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { gettingStartedJustCompletedStepState } from '@/getting-started/states/gettingStartedJustCompletedStepState';
+import { getGettingStartedJustCompletedStep } from '@/getting-started/utils/getGettingStartedJustCompletedStep';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useMutation } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
@@ -11,6 +14,9 @@ import {
 
 export const useUpdateGettingStarted = () => {
   const { enqueueToast } = useToast();
+  const setGettingStartedJustCompletedStep = useSetAtomState(
+    gettingStartedJustCompletedStepState,
+  );
 
   const [updateGettingStartedMutation, { loading }] = useMutation(
     UpdateGettingStartedDocument,
@@ -18,6 +24,17 @@ export const useUpdateGettingStarted = () => {
       update: (cache, { data }) => {
         if (!isDefined(data)) {
           return;
+        }
+
+        const justCompletedStep = getGettingStartedJustCompletedStep({
+          previousProgress: cache.readQuery({
+            query: GettingStartedProgressDocument,
+          })?.gettingStartedProgress,
+          progress: data.updateGettingStarted,
+        });
+
+        if (isDefined(justCompletedStep)) {
+          setGettingStartedJustCompletedStep(justCompletedStep);
         }
 
         cache.writeQuery({

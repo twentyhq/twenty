@@ -5,18 +5,19 @@ import { GettingStartedRollingText } from '@/getting-started/components/GettingS
 import { GettingStartedStepStack } from '@/getting-started/components/GettingStartedStepStack';
 import { GETTING_STARTED_CONTENT_MAX_WIDTH } from '@/getting-started/constants/GettingStartedContentMaxWidth';
 import { GETTING_STARTED_IMPORT_CONTEXT_STORE_INSTANCE_ID } from '@/getting-started/constants/GettingStartedImportContextStoreInstanceId';
-import { useGettingStartedJustCompletedStep } from '@/getting-started/hooks/useGettingStartedJustCompletedStep';
 import { useGettingStartedProgress } from '@/getting-started/hooks/useGettingStartedProgress';
 import { useGettingStartedTrial } from '@/getting-started/hooks/useGettingStartedTrial';
-import { useUpdateGettingStarted } from '@/getting-started/hooks/useUpdateGettingStarted';
+import { useSelectGettingStartedStep } from '@/getting-started/hooks/useSelectGettingStartedStep';
+import { gettingStartedJustCompletedStepState } from '@/getting-started/states/gettingStartedJustCompletedStepState';
 import { getGettingStartedStepSelection } from '@/getting-started/utils/getGettingStartedStepSelection';
 import { StyledOnboardingStepTitle } from '@/onboarding/components/StyledOnboardingStepTitle';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SpreadsheetImportProvider } from '@/spreadsheet-import/provider/components/SpreadsheetImportProvider';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { plural } from '@lingui/core/macro';
-import { useLingui } from '@lingui/react/macro';
+import { Plural, useLingui } from '@lingui/react/macro';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Callout } from 'twenty-ui/components/feedback';
 import { IconCheck, IconListCheck } from 'twenty-ui/icon';
@@ -25,7 +26,6 @@ import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import {
-  type GettingStartedStepActionKey,
   GettingStartedWorkflowPreviewsDocument,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
@@ -118,11 +118,12 @@ export const GettingStartedPageContent = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const { progress, loading, error, refetch } = useGettingStartedProgress();
-  const { updateGettingStarted, isSaving } = useUpdateGettingStarted();
+  const { selectGettingStartedStep, isSaving } = useSelectGettingStartedStep();
   const { formattedTrialEnd, daysLeft, isCountdownVisible, canKeepPlan } =
     useGettingStartedTrial();
-  const { justCompletedStep, clearJustCompletedStep } =
-    useGettingStartedJustCompletedStep({ progress });
+  const gettingStartedJustCompletedStep = useAtomStateValue(
+    gettingStartedJustCompletedStepState,
+  );
   const hasWorkflowsPermission = useHasPermissionFlag(
     PermissionFlagType.WORKFLOWS,
   );
@@ -143,7 +144,7 @@ export const GettingStartedPageContent = () => {
       stepActionKeys,
       completedStepActionKeys,
       selectedStepActionKey:
-        justCompletedStep ?? progress?.selectedStepActionKey,
+        gettingStartedJustCompletedStep ?? progress?.selectedStepActionKey,
     });
   const isSelectedStepCompleted = completedStepActionKeys.includes(
     selectedStepActionKey,
@@ -161,17 +162,12 @@ export const GettingStartedPageContent = () => {
       });
   const goalLabel = isComplete ? t`All steps done` : remainingStepsLabel;
 
-  const selectStep = (stepActionKey: GettingStartedStepActionKey) => {
-    clearJustCompletedStep();
-    void updateGettingStarted({ selectedStepActionKey: stepActionKey });
-  };
-
   return (
     <StyledScroll>
-      {isDefined(justCompletedStep) && (
+      {isDefined(gettingStartedJustCompletedStep) && (
         <GettingStartedAutoAdvanceEffect
-          completedStepActionKey={justCompletedStep}
-          onAdvance={() => selectStep(nextStep)}
+          completedStepActionKey={gettingStartedJustCompletedStep}
+          nextStepActionKey={nextStep}
         />
       )}
       <ContextStoreComponentInstanceContext.Provider
@@ -193,12 +189,15 @@ export const GettingStartedPageContent = () => {
               </StyledDigits>
             )}
             <StyledOnboardingStepTitle>
-              {isCountdownVisible
-                ? plural(daysLeft, {
-                    one: 'day left in your trial',
-                    other: 'days left in your trial',
-                  })
-                : t`Finish your setup`}
+              {isCountdownVisible ? (
+                <Plural
+                  value={daysLeft}
+                  one="day left in your trial"
+                  other="days left in your trial"
+                />
+              ) : (
+                t`Finish your setup`
+              )}
             </StyledOnboardingStepTitle>
           </StyledCountdown>
           {canKeepPlan && <GettingStartedKeepPlanButton color="accent" />}
@@ -239,9 +238,6 @@ export const GettingStartedPageContent = () => {
                 steps={stepDefinitions}
                 selectedStepActionKey={selectedStepActionKey}
                 completedStepActionKeys={completedStepActionKeys}
-                justCompletedStep={justCompletedStep}
-                isSaving={isSaving}
-                onSelectStep={selectStep}
               />
             )}
             {!isComplete && (
@@ -249,7 +245,7 @@ export const GettingStartedPageContent = () => {
                 <Button
                   variant="ghost"
                   disabled={isSaving}
-                  onClick={() => selectStep(stepAfterSkip)}
+                  onClick={() => selectGettingStartedStep(stepAfterSkip)}
                 >
                   {isSelectedStepCompleted ? t`Back to current step` : t`Skip`}
                 </Button>
