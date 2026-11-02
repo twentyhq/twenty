@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { ApplicationAuthorizationEntity } from 'src/engine/core-modules/application/application-authorization/application-authorization.entity';
 
@@ -25,8 +26,9 @@ export class ApplicationAuthorizationService {
     userWorkspaceId: string;
     applicationId: string;
     scopes: string[];
-  }): Promise<void> {
+  }): Promise<string> {
     const now = new Date();
+    const consentId = v4();
 
     await this.applicationAuthorizationRepository.upsert(
       {
@@ -36,6 +38,7 @@ export class ApplicationAuthorizationService {
         applicationId,
         scopes,
         lastAuthorizedAt: now,
+        consentId,
         lastUsedAt: now,
         revokedAt: null,
       },
@@ -44,6 +47,8 @@ export class ApplicationAuthorizationService {
         skipUpdateIfNoValuesChanged: false,
       },
     );
+
+    return consentId;
   }
 
   // Scopes and consent time stay null: pre-table refresh tokens carry neither, and today's declared scopes prove nothing.
