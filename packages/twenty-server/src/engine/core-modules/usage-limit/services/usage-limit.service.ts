@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { InjectDataSource } from '@nestjs/typeorm';
 import { isNonEmptyString } from '@sniptt/guards';
 import isEqual from 'lodash.isequal';
 import { isDefined } from 'twenty-shared/utils';
+import { DataSource, type EntityManager } from 'typeorm';
 
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -34,6 +36,11 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
+type WriteAlongside = (
+  entityManager: EntityManager,
+  usageLimit: UsageLimitEntity,
+) => Promise<void>;
+
 @Injectable()
 export class UsageLimitService {
   constructor(
@@ -54,6 +61,8 @@ export class UsageLimitService {
     private readonly usageLimitStockService: UsageLimitStockService,
     private readonly usageLimitEntitlementService: UsageLimitEntitlementService,
     private readonly usagePeriodService: UsagePeriodService,
+    @InjectDataSource()
+    private readonly dataSource: DataSource,
   ) {}
 
   async findAll(workspaceId: string): Promise<UsageLimitEntity[]> {
@@ -64,10 +73,12 @@ export class UsageLimitService {
     workspaceId,
     input,
     isOperator,
+    writeAlongside,
   }: {
     workspaceId: string;
     input: CreateUsageLimitInput;
     isOperator: boolean;
+    writeAlongside?: WriteAlongside;
   }): Promise<UsageLimitEntity> {
     await this.validateInput({ workspaceId, input, isOperator });
 
@@ -77,22 +88,31 @@ export class UsageLimitService {
 
     await this.assertScopeIsFree({ workspaceId, scope });
 
-    await this.usageLimitRepository.insert(workspaceId, {
-      workspaceId,
-      ...scope,
-      limitValue: input.limitValue,
-      burstValue: input.burstValue ?? null,
-      isInstanceOverride: isOperator,
-    });
+    const usageLimit = await this.dataSource.transaction(
+      async (entityManager) => {
+        const repository = this.usageLimitRepository.withManager(entityManager);
+
+        await repository.insert(workspaceId, {
+          workspaceId,
+          ...scope,
+          limitValue: input.limitValue,
+          burstValue: input.burstValue ?? null,
+          isInstanceOverride: isOperator,
+        });
+
+        const insertedUsageLimit = await repository.findOneOrFail(workspaceId, {
+          where: scope,
+        });
+
+        await writeAlongside?.(entityManager, insertedUsageLimit);
+
+        return insertedUsageLimit;
+      },
+    );
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'usageLimits',
     ]);
-
-    const usageLimit = await this.usageLimitRepository.findOneOrFail(
-      workspaceId,
-      { where: scope },
-    );
 
     await this.dropCounter(usageLimit);
 
@@ -103,10 +123,12 @@ export class UsageLimitService {
     workspaceId,
     input,
     isOperator,
+    writeAlongside,
   }: {
     workspaceId: string;
     input: UpdateUsageLimitInput;
     isOperator: boolean;
+    writeAlongside?: WriteAlongside;
   }): Promise<UsageLimitEntity> {
     const usageLimit = await this.usageLimitRepository.findOne(workspaceId, {
       where: { id: input.id },
@@ -140,36 +162,45 @@ export class UsageLimitService {
       allowedUsageLimitId: usageLimit.id,
     });
 
-    const { affected } = await this.usageLimitRepository.update(
-      workspaceId,
-      {
-        id: usageLimit.id,
-        ...authorizedScope,
-        isInstanceOverride: usageLimit.isInstanceOverride,
-      },
-      {
-        ...scope,
-        limitValue: input.payload.limitValue,
-        burstValue: input.payload.burstValue ?? null,
-        isInstanceOverride: isOperator,
+    const updatedUsageLimit = await this.dataSource.transaction(
+      async (entityManager) => {
+        const repository = this.usageLimitRepository.withManager(entityManager);
+
+        const { affected } = await repository.update(
+          workspaceId,
+          {
+            id: usageLimit.id,
+            ...authorizedScope,
+            isInstanceOverride: usageLimit.isInstanceOverride,
+          },
+          {
+            ...scope,
+            limitValue: input.payload.limitValue,
+            burstValue: input.payload.burstValue ?? null,
+            isInstanceOverride: isOperator,
+          },
+        );
+
+        if (!isDefined(affected) || affected === 0) {
+          throw new UsageLimitException(
+            `Usage limit ${input.id} changed while this request was being authorized`,
+            UsageLimitExceptionCode.LIMIT_CONFLICT,
+          );
+        }
+
+        const savedUsageLimit = await repository.findOneOrFail(workspaceId, {
+          where: { id: usageLimit.id },
+        });
+
+        await writeAlongside?.(entityManager, savedUsageLimit);
+
+        return savedUsageLimit;
       },
     );
-
-    if (!isDefined(affected) || affected === 0) {
-      throw new UsageLimitException(
-        `Usage limit ${input.id} changed while this request was being authorized`,
-        UsageLimitExceptionCode.LIMIT_CONFLICT,
-      );
-    }
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'usageLimits',
     ]);
-
-    const updatedUsageLimit = await this.usageLimitRepository.findOneOrFail(
-      workspaceId,
-      { where: { id: usageLimit.id } },
-    );
 
     if (
       usageLimit.isInstanceOverride !== isOperator ||
@@ -255,10 +286,12 @@ export class UsageLimitService {
     workspaceId,
     usageLimitId,
     isOperator,
+    writeAlongside,
   }: {
     workspaceId: string;
     usageLimitId: string;
     isOperator: boolean;
+    writeAlongside?: WriteAlongside;
   }): Promise<boolean> {
     const usageLimit = await this.usageLimitRepository.findOne(workspaceId, {
       where: { id: usageLimitId },
@@ -275,18 +308,24 @@ export class UsageLimitService {
       isOperator,
     });
 
-    const { affected } = await this.usageLimitRepository.delete(workspaceId, {
-      id: usageLimitId,
-      ...buildUsageLimitScope(usageLimit),
-      isInstanceOverride: usageLimit.isInstanceOverride,
-    });
+    await this.dataSource.transaction(async (entityManager) => {
+      const { affected } = await this.usageLimitRepository
+        .withManager(entityManager)
+        .delete(workspaceId, {
+          id: usageLimitId,
+          ...buildUsageLimitScope(usageLimit),
+          isInstanceOverride: usageLimit.isInstanceOverride,
+        });
 
-    if (!isDefined(affected) || affected === 0) {
-      throw new UsageLimitException(
-        `Usage limit ${usageLimitId} changed while this request was being authorized`,
-        UsageLimitExceptionCode.LIMIT_CONFLICT,
-      );
-    }
+      if (!isDefined(affected) || affected === 0) {
+        throw new UsageLimitException(
+          `Usage limit ${usageLimitId} changed while this request was being authorized`,
+          UsageLimitExceptionCode.LIMIT_CONFLICT,
+        );
+      }
+
+      await writeAlongside?.(entityManager, usageLimit);
+    });
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'usageLimits',
