@@ -101,7 +101,7 @@ describe('buildWorkflowAgentRunSpec', () => {
         scope,
         prompt: 'Qualify {{trigger.name}}',
       }),
-            applicationId: 'application-id',
+      applicationId: 'application-id',
     });
 
     expect(spec).toMatchObject({
@@ -120,7 +120,7 @@ describe('buildWorkflowAgentRunSpec', () => {
   it('gives a step without an agent or scope no data tools', () => {
     const spec = buildWorkflowAgentRunSpec({
       step: buildStep({ instructions: 'Summarize.' }),
-            applicationId: 'application-id',
+      applicationId: 'application-id',
     });
 
     expect(spec.inlineConfig?.scope).toBeNull();
