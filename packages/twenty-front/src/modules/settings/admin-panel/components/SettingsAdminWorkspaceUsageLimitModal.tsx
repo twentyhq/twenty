@@ -39,12 +39,10 @@ const StyledActionSlot = styled.div`
   flex: 1;
 `;
 
-const parseIntegerAtLeast = (value: string, minimum: number): number | null => {
+const parseInteger = (value: string): number | null => {
   const parsed = Number(value);
 
-  return isNonEmptyString(value.trim()) &&
-    Number.isInteger(parsed) &&
-    parsed >= minimum
+  return isNonEmptyString(value.trim()) && Number.isInteger(parsed)
     ? parsed
     : null;
 };
@@ -86,11 +84,9 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
       mutationOptions,
     );
 
-  const parsedLimitValue = parseIntegerAtLeast(limitValue, 0);
+  const parsedLimitValue = parseInteger(limitValue);
   const hasBurstValue = isNonEmptyString(burstValue.trim());
-  const parsedBurstValue = hasBurstValue
-    ? parseIntegerAtLeast(burstValue, 1)
-    : null;
+  const parsedBurstValue = hasBurstValue ? parseInteger(burstValue) : null;
   const isBurstAllowed = row.limitKind === 'speed';
   const isBusy = isCreating || isUpdating || isResetting;
   const isValid =
