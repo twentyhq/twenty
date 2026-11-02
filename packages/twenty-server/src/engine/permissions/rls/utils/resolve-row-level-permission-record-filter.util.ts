@@ -33,7 +33,9 @@ export const resolveRowLevelPermissionRecordFilter = ({
     objectMetadata: flatObjectMetadata,
     roleIds,
     workspaceMember: isDefined(workspaceMemberId)
-      ? metadataMaps.flatWorkspaceMemberMaps?.byId[workspaceMemberId]
+      ? (metadataMaps.flatWorkspaceMemberMaps?.byId[workspaceMemberId] ?? {
+          id: workspaceMemberId,
+        })
       : undefined,
   });
 

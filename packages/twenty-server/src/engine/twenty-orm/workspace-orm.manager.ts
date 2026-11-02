@@ -30,6 +30,8 @@ import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/works
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/utils/convert-class-to-object-metadata-name.util';
 import { hasWorkspaceMemberBoundPredicates } from 'src/engine/permissions/rls/utils/has-workspace-member-bound-predicates.util';
+import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
+import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
 
 @Injectable()
 export class WorkspaceOrmManager {
@@ -170,15 +172,11 @@ export class WorkspaceOrmManager {
     const { idByNameSingular: objectIdByNameSingular } =
       buildObjectIdByNameMaps(flatObjectMetadataMaps);
 
-    const flatWorkspaceMemberMaps = hasWorkspaceMemberBoundPredicates(
-      flatRowLevelPermissionPredicateMaps,
-    )
-      ? (
-          await this.workspaceCacheService.getOrRecompute(workspaceId, [
-            'flatWorkspaceMemberMaps',
-          ])
-        ).flatWorkspaceMemberMaps
-      : undefined;
+    const flatWorkspaceMemberMaps =
+      await this.loadWorkspaceMemberMapsForRowLevelPermissions({
+        workspaceId,
+        flatRowLevelPermissionPredicateMaps,
+      });
 
     const flatValidationRuleMaps = isValidationRuleEnforcementEnabled({
       featureFlagsMap,
@@ -211,6 +209,27 @@ export class WorkspaceOrmManager {
       flatRoleTargetByAgentIdMaps,
       flatApplicationMaps,
     };
+  }
+
+  private async loadWorkspaceMemberMapsForRowLevelPermissions({
+    workspaceId,
+    flatRowLevelPermissionPredicateMaps,
+  }: {
+    workspaceId: string;
+    flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
+  }): Promise<FlatWorkspaceMemberMaps | undefined> {
+    if (
+      !hasWorkspaceMemberBoundPredicates(flatRowLevelPermissionPredicateMaps)
+    ) {
+      return undefined;
+    }
+
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    return flatWorkspaceMemberMaps;
   }
 
   private async loadLiteWorkspaceContext(
