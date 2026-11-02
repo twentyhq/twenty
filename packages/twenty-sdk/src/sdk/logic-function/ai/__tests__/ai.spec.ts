@@ -448,6 +448,36 @@ describe('ai.generate with onChunk', () => {
     }
   });
 
+  it('stops after the quiet grace even while keepalives keep coming', async () => {
+    const runChannel = mockRunChannel({ fetchSpy });
+    let isSettled = false;
+
+    const generation = ai
+      .generate({ input: 'Hi', onChunk: () => {} })
+      .finally(() => {
+        isSettled = true;
+      });
+
+    await vi.waitFor(() => expect(runChannel.requests).toHaveLength(2));
+    vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
+
+    try {
+      runChannel.answerMutation({ data: { generate: RESULT } });
+
+      for (const _second of [1, 2, 3, 4]) {
+        runChannel.send({ type: 'keepalive' });
+        await vi.advanceTimersByTimeAsync(1_000);
+      }
+
+      await vi.advanceTimersByTimeAsync(1_500);
+
+      expect(isSettled).toBe(true);
+      await expect(generation).resolves.toEqual(RESULT);
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it('never runs a slow onChunk concurrently, and keeps the chunk order', async () => {
     const runChannel = mockRunChannel({ fetchSpy });
     const deliveredDeltas: unknown[] = [];

@@ -161,12 +161,14 @@ const generateWithChunks = async ({
     });
 
     const deliverChunks = async () => {
+      // only a chunk restarts the grace, since keepalives keep coming after the result
+      let wait = waitForQuietAfterResult(generated);
+
       try {
         for (;;) {
-          const wait = waitForQuietAfterResult(generated);
-          const next = await Promise.race([events.next(), wait.quiet])
-            .catch(() => undefined)
-            .finally(wait.stop);
+          const next = await Promise.race([events.next(), wait.quiet]).catch(
+            () => undefined,
+          );
 
           if (
             !isDefined(next) ||
@@ -181,10 +183,13 @@ const generateWithChunks = async ({
             next.value.type === 'stream-chunk' &&
             isGenerateChunk(next.value.chunk)
           ) {
+            wait.stop();
             await onChunk(next.value.chunk);
+            wait = waitForQuietAfterResult(generated);
           }
         }
       } finally {
+        wait.stop();
         // a read left pending settles once following stops, so the channel closes without waiting on it
         void events.return(undefined).catch(() => undefined);
       }
