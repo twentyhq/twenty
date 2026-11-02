@@ -473,12 +473,14 @@ describe('buildPermissionsCondition', () => {
       const policy = buildConditionOutcome({
         ...prospectiveShareArguments,
         metadataMaps,
+        tableAlias: note.nameSingular,
+        flatObjectMetadata: note,
       });
 
       expect(policy).toMatchObject({
         kind: 'gated',
         condition: {
-          sql: expect.stringContaining('"person"."title" = :restricted'),
+          sql: expect.stringContaining('"note"."title" = :restricted'),
         },
       });
       expect(policy).toMatchObject({
