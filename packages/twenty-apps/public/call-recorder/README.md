@@ -53,7 +53,7 @@ belongs to, so nothing is copied onto the recording.
 
 ## 🗓️ Pausing the recorder
 
-The **Record my calendar meetings** toggle in the app settings is on
+The **Record calendar meetings** toggle in the app settings is on
 by default. Turn it off to stop scheduling bots for upcoming meetings and cancel
 every recording that is already scheduled; the Recording Bot field of those
 meetings goes back to blank, and an Off you set yourself is left alone. Turn it
