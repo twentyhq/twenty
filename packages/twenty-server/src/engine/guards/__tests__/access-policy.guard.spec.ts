@@ -67,9 +67,13 @@ const buildGuard = ({
     userHasWorkspaceSettingPermission: jest.fn().mockResolvedValue(isGranted),
   };
   const featureFlagService = {
-    isFeatureEnabled: jest.fn(async (featureFlag: FeatureFlagKey) =>
-      enabledFeatureFlags.includes(featureFlag),
-    ),
+    getWorkspaceFeatureFlagsMap: jest
+      .fn()
+      .mockResolvedValue(
+        Object.fromEntries(
+          enabledFeatureFlags.map((featureFlag) => [featureFlag, true]),
+        ),
+      ),
   };
   const Guard = AccessPolicyGuard(accessPolicy);
 

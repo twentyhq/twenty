@@ -184,7 +184,6 @@ describe('Agent tools', () => {
       const { listToolNames, permissionsService } = buildAgentTools();
 
       await expect(listToolNames()).resolves.toHaveLength(4);
-      expect(permissionsService.hasPermissionFlag).toHaveBeenCalledTimes(1);
       expect(permissionsService.hasPermissionFlag).toHaveBeenCalledWith({
         authContext: context.authContext,
         setting: PermissionFlagType.AI_SETTINGS,

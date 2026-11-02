@@ -2,7 +2,6 @@ import { Injectable, type OnModuleInit } from '@nestjs/common';
 import { DiscoveryService } from '@nestjs/core';
 
 import { type ToolCategory } from 'twenty-shared/ai';
-import { type PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FeatureFlagMap } from 'src/engine/core-modules/feature-flag/interfaces/feature-flag-map.interface';
@@ -79,10 +78,6 @@ export class DefinedToolRegistryService implements OnModuleInit {
       await this.featureFlagService.getWorkspaceFeatureFlagsMap(
         context.workspaceId,
       );
-    const grantedByPermissionFlag = new Map<
-      PermissionFlagType,
-      Promise<boolean>
-    >();
 
     const isAvailableByTool = await Promise.all(
       requestedTools.map((definedTool) =>
@@ -90,7 +85,6 @@ export class DefinedToolRegistryService implements OnModuleInit {
           definedTool,
           context,
           featureFlagsMap,
-          grantedByPermissionFlag,
         }),
       ),
     );
@@ -162,19 +156,16 @@ export class DefinedToolRegistryService implements OnModuleInit {
     },
     context,
     featureFlagsMap,
-    grantedByPermissionFlag,
   }: {
     definedTool: DefinedTool;
     context: ToolProviderContext;
     featureFlagsMap: FeatureFlagMap;
-    grantedByPermissionFlag?: Map<PermissionFlagType, Promise<boolean>>;
   }): Promise<boolean> {
     const refusal = await this.accessPolicyService.findCallerRefusal({
       accessPolicy,
       authPrincipalVariant: withoutAgent(context.authPrincipalVariant),
       authContext: context.authContext,
       featureFlagsMap,
-      grantedByPermissionFlag,
     });
 
     return !isDefined(refusal);

@@ -48,12 +48,10 @@ const findCallerRefusal = ({
   accessPolicyService,
   authPrincipalVariant = MEMBER,
   isFeatureFlagEnabled = true,
-  grantedByPermissionFlag,
 }: {
   accessPolicyService: AccessPolicyService;
   authPrincipalVariant?: AuthPrincipalVariant;
   isFeatureFlagEnabled?: boolean;
-  grantedByPermissionFlag?: Map<PermissionFlagType, Promise<boolean>>;
 }) =>
   accessPolicyService.findCallerRefusal({
     accessPolicy: ROLE_WRITE_ACCESS_POLICY,
@@ -62,7 +60,6 @@ const findCallerRefusal = ({
     featureFlagsMap: {
       [FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED]: isFeatureFlagEnabled,
     } as FeatureFlagMap,
-    grantedByPermissionFlag,
   });
 
 describe('AccessPolicyService', () => {
@@ -125,20 +122,6 @@ describe('AccessPolicyService', () => {
         reason: 'permissionFlag',
         permissionFlag: PermissionFlagType.ROLES,
       });
-    });
-
-    it('should resolve a permission flag once across checks sharing grants', async () => {
-      const { accessPolicyService, permissionsService } =
-        buildAccessPolicyService();
-      const grantedByPermissionFlag = new Map<
-        PermissionFlagType,
-        Promise<boolean>
-      >();
-
-      await findCallerRefusal({ accessPolicyService, grantedByPermissionFlag });
-      await findCallerRefusal({ accessPolicyService, grantedByPermissionFlag });
-
-      expect(permissionsService.hasPermissionFlag).toHaveBeenCalledTimes(1);
     });
   });
 });
