@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { type ReactNode, useContext, useState } from 'react';
 import {
   getIframeMediaAllow,
   isDefined,
@@ -12,9 +12,14 @@ import { createPlainHostElement } from '@/host/elements/utils/createPlainHostEle
 import { getIframeHostReactProps } from '@/host/elements/utils/getIframeHostReactProps';
 import { getRequestedIframeMediaCapabilities } from '@/host/elements/utils/getRequestedIframeMediaCapabilities';
 
-type HostIframeElementProps = Record<string, unknown>;
+type HostIframeElementProps = {
+  children?: ReactNode;
+} & Record<string, unknown>;
 
-export const HostIframeElement = (props: HostIframeElementProps) => {
+export const HostIframeElement = ({
+  children,
+  ...props
+}: HostIframeElementProps) => {
   const IframeHost = useContext(FrontComponentIframeHostContext);
   const { reactBindableProps, hostEnforcedProps, composedElementRef } =
     useHtmlHostElementProps({ props, htmlTag: 'iframe' });
@@ -49,7 +54,7 @@ export const HostIframeElement = (props: HostIframeElementProps) => {
               sandbox,
             },
             composedElementRef: managedIframeElementRef,
-            children: undefined,
+            children,
           })
         }
       />
@@ -65,6 +70,6 @@ export const HostIframeElement = (props: HostIframeElementProps) => {
       allow: getIframeMediaAllow({ allow: iframeProps.allow }),
     },
     composedElementRef,
-    children: undefined,
+    children,
   });
 };

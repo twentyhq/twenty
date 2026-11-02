@@ -77,7 +77,9 @@ describe('HostIframeElement', () => {
           allow="camera 'none'; autoplay"
           data-embed-kind="document"
           className="document-frame"
-        />
+        >
+          Document unavailable
+        </HostIframeElement>
       </FrontComponentIframeHostContext.Provider>,
     );
     const iframe = findIframe(markup);
@@ -88,6 +90,7 @@ describe('HostIframeElement', () => {
     );
     expect(iframe?.getAttribute('data-embed-kind')).toBe('document');
     expect(iframe?.className).toBe('document-frame');
+    expect(iframe?.textContent).toBe('Document unavailable');
   });
 
   it('preserves native iframe attributes, styles and handlers while enforcing managed media options', () => {
@@ -112,7 +115,9 @@ describe('HostIframeElement', () => {
           data-embed-kind="phone"
           hidden
           onKeyDown={onKeyDown}
-        />
+        >
+          Phone unavailable
+        </HostIframeElement>
       </FrontComponentIframeHostContext.Provider>,
     );
     const iframe = findIframe(markup);
@@ -128,6 +133,7 @@ describe('HostIframeElement', () => {
       "microphone 'none'; camera 'none'",
     );
     expect(iframe?.getAttribute('sandbox')).toBe('allow-scripts');
+    expect(iframe?.textContent).toBe('Phone unavailable');
     expect(TrustedIframeHost.mock.results[0]?.value).toEqual(
       expect.objectContaining({
         props: expect.objectContaining({ onKeyDown: expect.any(Function) }),
