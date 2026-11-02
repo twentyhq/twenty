@@ -71,7 +71,7 @@ const findApplicationRegistrationByClientIdQuery = gql`
 describe('OAuth well-known clients (integration)', () => {
   const baseUrl = `http://localhost:${APP_PORT}`;
 
-  let ds: DataSource;
+  let dataSource: DataSource;
   let claudeClientId: string;
   let chatGptClientId: string;
   const createdRegistrationClientIds: string[] = [];
@@ -142,7 +142,7 @@ describe('OAuth well-known clients (integration)', () => {
     });
 
   beforeAll(async () => {
-    ds = global.testDataSource;
+    dataSource = global.testDataSource;
 
     const claudeRegistration = await register({
       client_name: 'Claude',
@@ -161,20 +161,20 @@ describe('OAuth well-known clients (integration)', () => {
 
   afterAll(async () => {
     if (createdRegistrationClientIds.length > 0) {
-      await ds.query(
+      await dataSource.query(
         `DELETE FROM core."application" application
          USING core."applicationRegistration" registration
          WHERE registration.id = application."applicationRegistrationId"
            AND registration."oAuthClientId" = ANY($1)`,
         [createdRegistrationClientIds],
       );
-      await ds.query(
+      await dataSource.query(
         `DELETE FROM core."applicationRegistration" WHERE "oAuthClientId" = ANY($1)`,
         [createdRegistrationClientIds],
       );
     }
 
-    await ds.query(
+    await dataSource.query(
       `DELETE FROM core."application" application
        USING core."applicationRegistration" registration
        WHERE registration.id = application."applicationRegistrationId"
@@ -182,7 +182,7 @@ describe('OAuth well-known clients (integration)', () => {
       [Object.values(WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS)],
     );
 
-    await ds.query(
+    await dataSource.query(
       `DELETE FROM core."appToken" WHERE context->>'redirectUri' = ANY($1)`,
       [
         [
@@ -204,7 +204,7 @@ describe('OAuth well-known clients (integration)', () => {
       expect(secondRegistration.body.client_id).toBe(claudeClientId);
       expect(secondRegistration.body.client_name).toBe('Claude');
 
-      const [seededRegistration] = await ds.query(
+      const [seededRegistration] = await dataSource.query(
         `SELECT "oAuthClientId", "sourceType" FROM core."applicationRegistration" WHERE "universalIdentifier" = $1`,
         [WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE],
       );
@@ -278,7 +278,7 @@ describe('OAuth well-known clients (integration)', () => {
       expect(janeExchange.status).toBe(200);
       expect(jonyExchange.status).toBe(200);
 
-      const claudeApplications = await ds.query(
+      const claudeApplications = await dataSource.query(
         `SELECT application.id FROM core."application" application
          JOIN core."applicationRegistration" registration ON registration.id = application."applicationRegistrationId"
          WHERE registration."universalIdentifier" = $1 AND application."workspaceId" = $2 AND application."deletedAt" IS NULL`,

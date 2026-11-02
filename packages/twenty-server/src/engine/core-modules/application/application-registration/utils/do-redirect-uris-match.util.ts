@@ -27,8 +27,11 @@ export const doRedirectUrisMatch = ({
 
   return (
     requestedUrl.protocol === registeredUrl.protocol &&
+    requestedUrl.username === registeredUrl.username &&
+    requestedUrl.password === registeredUrl.password &&
     requestedUrl.hostname === registeredUrl.hostname &&
     requestedUrl.pathname === registeredUrl.pathname &&
-    requestedUrl.search === registeredUrl.search
+    requestedUrl.search === registeredUrl.search &&
+    requestedUrl.hash === registeredUrl.hash
   );
 };
