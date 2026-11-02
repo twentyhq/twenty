@@ -98,7 +98,10 @@ describe('validateAgentRolesWithinApplicationRole', () => {
   ])('rejects %s in a role an agent uses', (_, restrictions) => {
     const errors = validateAgentRolesWithinApplicationRole({
       agents: [buildAgent()],
-      roles: [applicationRole, buildRole(restrictions as Partial<RoleManifest>)],
+      roles: [
+        applicationRole,
+        buildRole(restrictions as Partial<RoleManifest>),
+      ],
       objects: [],
       permissionFlags: [],
       defaultRoleUniversalIdentifier: APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
