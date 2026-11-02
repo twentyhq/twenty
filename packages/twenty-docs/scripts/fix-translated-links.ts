@@ -22,13 +22,13 @@ const LINKED_SECTIONS = [
 export const localizeLinks = (content: string, language: string): string =>
   LINKED_SECTIONS.reduce(
     (result, section) =>
-      result
-        .replaceAll(`href="/${section}/`, `href="/${language}/${section}/`)
-        .replaceAll(`](/${section}/`, `](/${language}/${section}/`)
-        .replaceAll(
-          `https://docs.twenty.com/${section}/`,
-          `https://docs.twenty.com/${language}/${section}/`,
+      result.replaceAll(
+        new RegExp(
+          `((?:href=["']\\/|]\\(\\/|https:\\/\\/docs\\.twenty\\.com\\/))${section}(?=[/'")#?\\s]|$)`,
+          'g',
         ),
+        `$1${language}/${section}`,
+      ),
     content,
   );
 
