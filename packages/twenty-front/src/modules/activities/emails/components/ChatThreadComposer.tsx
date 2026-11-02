@@ -4,7 +4,6 @@ import { type KeyboardEvent, useState } from 'react';
 import TextareaAutosize from 'react-textarea-autosize';
 import { v4 } from 'uuid';
 
-import { AppChip } from '@/applications/components/AppChip';
 import { ChatThreadPendingMessage } from '@/activities/emails/components/ChatThreadPendingMessage';
 import { useSendAppChannelMessage } from '@/activities/emails/hooks/useSendAppChannelMessage';
 import { type PendingChatMessage } from '@/activities/emails/types/PendingChatMessage';
@@ -62,21 +61,13 @@ const StyledTextarea = styled(TextareaAutosize)`
 const StyledFooter = styled.div`
   align-items: center;
   display: flex;
-  justify-content: space-between;
-`;
-
-const StyledChannel = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.secondary};
-  display: flex;
-  gap: ${themeCssVariables.spacing[1]};
+  justify-content: flex-end;
 `;
 
 type ChatThreadComposerProps = {
   messageThreadId: string;
   messageChannelId: string;
   channelName: string;
-  applicationId: string | null;
   recipientName: string | null;
   isDisconnected: boolean;
   onMessageSent: () => Promise<unknown>;
@@ -86,7 +77,6 @@ export const ChatThreadComposer = ({
   messageThreadId,
   messageChannelId,
   channelName,
-  applicationId,
   recipientName,
   isDisconnected,
   onMessageSent,
@@ -118,7 +108,6 @@ export const ChatThreadComposer = ({
         messageChannelId,
         messageThreadId,
         text: pendingMessage.text,
-        // Reused on retry so the server does not deliver the message twice
         idempotencyKey: pendingMessage.id,
       });
     } catch {
@@ -127,7 +116,6 @@ export const ChatThreadComposer = ({
       return;
     }
 
-    // Keep the bubble until the refreshed thread shows the sent message
     await onMessageSent().catch(() => undefined);
     setPendingMessageStatus(pendingMessage.id, null);
   };
@@ -196,10 +184,6 @@ export const ChatThreadComposer = ({
           onKeyDown={handleKeyDown}
         />
         <StyledFooter>
-          <StyledChannel>
-            <AppChip applicationId={applicationId} chipOnly />
-            {channelName}
-          </StyledChannel>
           <IconButton
             variant="solid"
             color="accent"
