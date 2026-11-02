@@ -1,6 +1,11 @@
 export const TWENTY_UI_OVERRIDE_EXEMPTIONS = [
   {
     filePath:
+      'packages/twenty-front/src/modules/ui/layout/dialog/components/ConfirmationDialog.tsx',
+    reason: 'Forwards the host UI event-isolation marker to the dialog popup',
+  },
+  {
+    filePath:
       'packages/twenty-front/src/modules/activities/calendar/components/CalendarDayCardContent.tsx',
     reason: 'Card.Content day row layout and the animation for ended days',
   },

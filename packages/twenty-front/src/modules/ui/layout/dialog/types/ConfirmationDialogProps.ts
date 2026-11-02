@@ -2,6 +2,7 @@ import { type ReactNode } from 'react';
 import { type ButtonColor } from 'twenty-ui/primitives/input';
 
 export type ConfirmationDialogProps = {
+  className?: string;
   dialogId: string;
   title: string;
   loading?: boolean;

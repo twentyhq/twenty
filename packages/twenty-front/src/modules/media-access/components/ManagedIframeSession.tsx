@@ -1,17 +1,22 @@
 import { ManagedIframeEnableButton } from '@/media-access/components/ManagedIframeEnableButton';
 import { ManagedIframeMediaAccessSessionEffect } from '@/media-access/components/ManagedIframeMediaAccessSessionEffect';
+import { ManagedIframePermissionDialogCleanupEffect } from '@/media-access/components/ManagedIframePermissionDialogCleanupEffect';
 import { type ManagedIframeElementProps } from '@/media-access/types/ManagedIframeElementProps';
 import { getDelegatedIframeMediaPermission } from '@/media-access/utils/getDelegatedIframeMediaPermission';
 import { isIframeMediaPermissionCovered } from '@/media-access/utils/isIframeMediaPermissionCovered';
+import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
+import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Fragment, useCallback, useId, useState } from 'react';
+import { FRONT_COMPONENT_HOST_UI_CLASS_NAME } from 'twenty-front-component-renderer';
 import { type IframeMediaPermission } from 'twenty-shared/types';
 import { getIframeMediaAllow, isDefined } from 'twenty-shared/utils';
 
 type ManagedIframeSessionProps = ManagedIframeElementProps & {
   ownerId: string;
   ownerName: string;
+  requiresConfirmation: boolean;
   permission: IframeMediaPermission | null;
 };
 
@@ -45,9 +50,14 @@ export const ManagedIframeSession = ({
   iframeElement,
   ownerId,
   ownerName,
+  requiresConfirmation,
   permission,
 }: ManagedIframeSessionProps) => {
   const mediaAccessSessionId = useId();
+  const confirmationDialogId = useId();
+  const { openDialog } = useDialog();
+  const [permissionAwaitingConfirmation, setPermissionAwaitingConfirmation] =
+    useState<IframeMediaPermission | null>(null);
   const [nativeIframeElement, setNativeIframeElement] =
     useState<HTMLIFrameElement | null>(null);
   const [activatedPermission, setActivatedPermission] =
@@ -73,7 +83,22 @@ export const ManagedIframeSession = ({
     setActivatedPermission(null);
   }, []);
   const handleEnable = () => {
+    if (requiresConfirmation) {
+      setPermissionAwaitingConfirmation(permission);
+      openDialog(confirmationDialogId);
+
+      return;
+    }
+
     setActivatedPermission(permission);
+  };
+  const permissionToConfirm = getDelegatedIframeMediaPermission({
+    activatedPermission: permissionAwaitingConfirmation,
+    permission,
+  });
+  const handleConfirm = () => {
+    setActivatedPermission(permissionToConfirm);
+    setPermissionAwaitingConfirmation(null);
   };
   const iframeAllow = getIframeMediaAllow({
     allow,
@@ -91,6 +116,29 @@ export const ManagedIframeSession = ({
 
   return (
     <>
+      {requiresConfirmation && (
+        <ManagedIframePermissionDialogCleanupEffect
+          dialogId={confirmationDialogId}
+        />
+      )}
+      {isDefined(permissionAwaitingConfirmation) && (
+        <ConfirmationDialog
+          className={FRONT_COMPONENT_HOST_UI_CLASS_NAME}
+          dialogId={confirmationDialogId}
+          title={t`Enable media access for ${ownerName}?`}
+          subtitle={
+            <>
+              <div>{getEnableLabel(permissionAwaitingConfirmation)}</div>
+              <div>{permissionAwaitingConfirmation.origin}</div>
+            </>
+          }
+          confirmButtonText={t`Enable`}
+          confirmButtonColor="neutral"
+          isConfirmButtonDisabled={!isDefined(permissionToConfirm)}
+          onConfirmClick={handleConfirm}
+          onClose={() => setPermissionAwaitingConfirmation(null)}
+        />
+      )}
       {isDefined(delegatedPermission) && (
         <ManagedIframeMediaAccessSessionEffect
           id={mediaAccessSessionId}

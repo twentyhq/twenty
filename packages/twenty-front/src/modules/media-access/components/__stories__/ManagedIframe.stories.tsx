@@ -2,10 +2,11 @@ import { ManagedIframe } from '@/media-access/components/ManagedIframe';
 import { MediaAccessIndicator } from '@/media-access/components/MediaAccessIndicator';
 import { mediaAccessSessionsState } from '@/media-access/states/mediaAccessSessionsState';
 import { type MediaAccessSession } from '@/media-access/types/MediaAccessSession';
+import { type MediaAccessOwner } from '@/media-access/types/MediaAccessOwner';
 import { getMediaAccessOwnerId } from '@/media-access/utils/getMediaAccessOwnerId';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { createStore, Provider } from 'jotai';
-import { type CSSProperties, useState } from 'react';
+import { type CSSProperties, StrictMode, useState } from 'react';
 import { expect, fn, screen, userEvent, waitFor, within } from 'storybook/test';
 import { type IframeMediaPermission } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -42,11 +43,15 @@ const ManagedIframePreview = ({
   iframeStyle,
   iframeClassName,
   initialPermission = MICROPHONE_PERMISSION,
+  ownerType = 'workspace-widget',
+  iframeContainerStyle,
 }: {
   hasNativeCapture?: boolean;
   iframeStyle?: CSSProperties;
   iframeClassName?: string;
   initialPermission?: IframeMediaPermission;
+  ownerType?: MediaAccessOwner['type'];
+  iframeContainerStyle?: CSSProperties;
 }) => {
   const [isHidden, setIsHidden] = useState(false);
   const [isGranted, setIsGranted] = useState(true);
@@ -81,9 +86,9 @@ const ManagedIframePreview = ({
       >
         {permission.camera ? 'Revoke camera' : 'Grant camera'}
       </Button>
-      <div style={{ width: 500, height: 250 }}>
+      <div style={{ width: 500, height: 250, ...iframeContainerStyle }}>
         <ManagedIframe
-          owner={{ type: 'workspace-widget', id: 'phone', name: 'Aircall' }}
+          owner={{ type: ownerType, id: 'phone', name: 'Aircall' }}
           iframeMediaPermissions={isGranted ? [permission] : []}
           requestedMediaCapabilities={['microphone', 'camera']}
           src="https://example.com"
@@ -156,6 +161,65 @@ export const EnableAndDisable: StoryObj<typeof ManagedIframe> = {
     await expect(canvas.getByTitle('Aircall phone')).toHaveAttribute(
       'allow',
       "microphone 'none'; camera 'none'; encrypted-media",
+    );
+  },
+};
+
+export const ConfirmsOutsideAppControlledContent: StoryObj<
+  typeof ManagedIframe
+> = {
+  render: () => (
+    <StrictMode>
+      <ManagedIframePreview
+        ownerType="application"
+        iframeContainerStyle={{ opacity: 0 }}
+      />
+    </StrictMode>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const documentBody = within(canvasElement.ownerDocument.body);
+    const initialFrame = canvas.getByTitle('Aircall phone');
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Enable microphone' }),
+    );
+
+    const confirmation = await documentBody.findByRole('dialog', {
+      name: 'Enable media access for Aircall?',
+    });
+
+    await expect(confirmation).toBeVisible();
+    await expect(canvasElement.contains(confirmation)).toBe(false);
+    await expect(
+      within(confirmation).getByText('https://example.com'),
+    ).toBeVisible();
+    await expect(canvas.getByTitle('Aircall phone')).toBe(initialFrame);
+    await expect(initialFrame).toHaveAttribute(
+      'allow',
+      "microphone 'none'; camera 'none'; encrypted-media",
+    );
+
+    await userEvent.click(
+      within(confirmation).getByRole('button', { name: 'Cancel' }),
+    );
+    await expect(canvas.getByTitle('Aircall phone')).toBe(initialFrame);
+
+    await userEvent.click(
+      await canvas.findByRole('button', { name: 'Enable microphone' }),
+    );
+    const reopenedConfirmation = await documentBody.findByRole('dialog', {
+      name: 'Enable media access for Aircall?',
+    });
+
+    await userEvent.click(
+      within(reopenedConfirmation).getByRole('button', { name: 'Enable' }),
+    );
+
+    await expect(canvas.getByTitle('Aircall phone')).not.toBe(initialFrame);
+    await expect(canvas.getByTitle('Aircall phone')).toHaveAttribute(
+      'allow',
+      "microphone https://example.com; camera 'none'; encrypted-media",
     );
   },
 };
