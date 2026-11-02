@@ -1,5 +1,4 @@
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
-import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
 import { type PermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/types/permissions-principal-role-maps.type';
 import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
 
@@ -11,13 +10,13 @@ const OAUTH_APPLICATION_ID = 'oauth-application-1';
 
 const roleMaps: PermissionsPrincipalRoleMaps = {
   flatWorkspaceMemberMaps: {
-    byId: { [MEMBER_ID]: { id: MEMBER_ID, userId: 'user-1' } },
+    byId: { [MEMBER_ID]: { userId: 'user-1' } },
     userWorkspaceIdByUserId: { 'user-1': 'user-workspace-1' },
-  } as unknown as PermissionsPrincipalRoleMaps['flatWorkspaceMemberMaps'],
+  },
   userWorkspaceRoleMap: { 'user-workspace-1': 'member-role' },
   apiKeyRoleMap: { 'api-key-1': 'api-key-role' },
   flatRoleTargetByAgentIdMaps: {
-    [AGENT_ID]: { roleId: 'agent-role' } as FlatRoleTarget,
+    [AGENT_ID]: { roleId: 'agent-role' },
   },
   flatApplicationMaps: {
     byId: {

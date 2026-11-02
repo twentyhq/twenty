@@ -31,7 +31,6 @@ const buildMainPrincipal = ({
   return undefined;
 };
 
-// undefined when nobody acts, as for the system
 export const buildPermissionsPrincipalsContext = ({
   workspaceId,
   workspaceMemberId,

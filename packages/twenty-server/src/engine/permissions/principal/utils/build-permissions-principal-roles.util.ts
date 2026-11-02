@@ -97,8 +97,7 @@ const getIdentifiedMainPrincipal = (
     : undefined;
 };
 
-// Pairs the role ids a RolePermissionConfig lists with the principals acting;
-// undefined denies everything: the main principal has no role, or a role id cannot be placed without losing its restriction
+// undefined denies: the main principal has no role, or a role id would lose its restriction
 export const buildPermissionsPrincipalRoles = ({
   roleIdsBySource,
   principalsContext,

@@ -16,8 +16,7 @@ export const getPermissionsPrincipalsFromAuthContext = (
       workspaceId: authContext.workspace.id,
       workspaceMemberId: authContext.workspaceMemberId,
       apiKeyId: undefined,
-      applicationId: (authContext.application ?? authContext.viaApplication)
-        ?.id,
+      applicationId: authContext.application?.id,
       agentId: authContext.agentId,
     });
   }
