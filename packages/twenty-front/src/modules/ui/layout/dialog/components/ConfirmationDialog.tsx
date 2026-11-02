@@ -83,6 +83,7 @@ export const ConfirmationDialog = ({
 
   return (
     <DialogInstance
+      className={className}
       dialogId={dialogId}
       dismissible={true}
       onClose={() => {
@@ -94,7 +95,6 @@ export const ConfirmationDialog = ({
     >
       {({ onKeyDown }) => (
         <Dialog.Popup
-          className={className}
           onKeyDown={onKeyDown}
           data-globally-prevent-click-outside
           size="sm"

@@ -18,6 +18,7 @@ import { ClickOutsideListenerContext } from '@/ui/utilities/pointer-event/contex
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 
 type DialogInstanceProps = {
+  className?: string;
   dialogId: string;
   children: (popupProps: Pick<DialogPopupProps, 'onKeyDown'>) => ReactNode;
   onEnter?: () => void;
@@ -39,6 +40,7 @@ const PROPAGATED_KEYS = new Set(
 );
 
 export const DialogInstance = ({
+  className,
   dialogId,
   children,
   onEnter,
@@ -121,6 +123,7 @@ export const DialogInstance = ({
             <DialogEnterHotkeyEffect dialogId={dialogId} onEnter={onEnter} />
           )}
           <Dialog.Portal
+            className={className}
             container={
               renderInDocumentBody ? document.body : (container ?? undefined)
             }
