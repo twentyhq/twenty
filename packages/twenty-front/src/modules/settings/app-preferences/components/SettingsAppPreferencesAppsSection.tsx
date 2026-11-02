@@ -26,14 +26,16 @@ export const SettingsAppPreferencesAppsSection = () => {
   const {
     groups,
     loading: accountGroupsLoading,
+    hasLoaded: hasLoadedAccountGroups,
     error: accountGroupsError,
     refetch: refetchAccountGroups,
   } = useMyAccountGroups();
   const isLoadingApplications =
     loading && !hasLoadedApplicationsWithPreferences;
+  const isLoadingStatuses = accountGroupsLoading && !hasLoadedAccountGroups;
   const hasAccountGroupsLoadError = isDefined(accountGroupsError);
   const statusesById =
-    accountGroupsLoading || hasAccountGroupsLoadError
+    isLoadingStatuses || hasAccountGroupsLoadError
       ? {}
       : getAppPreferencesAppStatusesById({
           groups,
@@ -71,6 +73,7 @@ export const SettingsAppPreferencesAppsSection = () => {
       middleColumn="status"
       statusesById={statusesById}
       isLoading={isLoadingApplications}
+      isLoadingStatuses={isLoadingStatuses}
     />
   );
 };

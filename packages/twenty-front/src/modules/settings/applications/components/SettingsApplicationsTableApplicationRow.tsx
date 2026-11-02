@@ -2,6 +2,7 @@ import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay
 import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
 import { type ApplicationDisplayData } from '@/applications/types/ApplicationDisplayData';
 import { SettingsApplicationStatusCell } from '@/settings/applications/components/SettingsApplicationStatusCell';
+import { SettingsApplicationStatusCellSkeleton } from '@/settings/applications/components/SettingsApplicationStatusCellSkeleton';
 import { SettingsApplicationTableRow } from '@/settings/applications/components/SettingsApplicationTableRow';
 import { SettingsApplicationTableRowChevronIcon } from '@/settings/applications/components/SettingsApplicationTableRowChevronIcon';
 import { SettingsApplicationTypeOrStatusCell } from '@/settings/applications/components/SettingsApplicationTypeOrStatusCell';
@@ -37,6 +38,7 @@ type SettingsApplicationsTableApplicationRowProps = {
   link: string;
   middleColumn?: SettingsApplicationTableRowMiddleColumn;
   statuses?: SettingsApplicationStatus[];
+  isLoadingStatuses?: boolean;
 };
 
 export const SettingsApplicationsTableApplicationRow = ({
@@ -44,6 +46,7 @@ export const SettingsApplicationsTableApplicationRow = ({
   link,
   middleColumn = 'type',
   statuses = [],
+  isLoadingStatuses = false,
 }: SettingsApplicationsTableApplicationRowProps) => {
   const resolvedDescription = useResolvedApplicationDescription(application);
   const sourceTypeLabel = getSourceTypeLabel(application.sourceType);
@@ -51,17 +54,22 @@ export const SettingsApplicationsTableApplicationRow = ({
     middleColumn === 'type' &&
     statuses.some((status) => status.type === 'updateAvailable');
 
+  const statusOrSkeleton = (statusCell: ReactNode) =>
+    isLoadingStatuses ? <SettingsApplicationStatusCellSkeleton /> : statusCell;
+
   const middleByColumn: Record<
     SettingsApplicationTableRowMiddleColumn,
     ReactNode
   > = {
     type: sourceTypeLabel,
-    status: <SettingsApplicationStatusCell statuses={statuses} />,
-    typeOrStatus: (
+    status: statusOrSkeleton(
+      <SettingsApplicationStatusCell statuses={statuses} />,
+    ),
+    typeOrStatus: statusOrSkeleton(
       <SettingsApplicationTypeOrStatusCell
         typeLabel={sourceTypeLabel}
         statuses={statuses}
-      />
+      />,
     ),
   };
 
