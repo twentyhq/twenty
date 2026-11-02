@@ -109,23 +109,27 @@ export class AgentConversationReaderService {
         type: 'text',
       },
       select: ['messageId', 'textContent'],
-      order: { orderIndex: 'DESC' },
+      order: { orderIndex: 'ASC' },
     });
 
-    return recentMessages.reverse().flatMap(({ id, role }) =>
-      role === AgentMessageRole.USER || role === AgentMessageRole.ASSISTANT
-        ? [
-            {
-              role,
-              text:
-                textParts.find(
-                  ({ messageId, textContent }) =>
-                    messageId === id && isNonEmptyString(textContent?.trim()),
-                )?.textContent ?? '',
-            },
-          ]
-        : [],
-    );
+    return recentMessages.reverse().flatMap(({ id, role }) => {
+      if (
+        role !== AgentMessageRole.USER &&
+        role !== AgentMessageRole.ASSISTANT
+      ) {
+        return [];
+      }
+
+      const text = textParts
+        .filter(
+          ({ messageId, textContent }) =>
+            messageId === id && isNonEmptyString(textContent?.trim()),
+        )
+        .map(({ textContent }) => textContent)
+        .join('\n\n');
+
+      return isNonEmptyString(text) ? [{ role, text }] : [];
+    });
   }
 
   async loadMessages({
