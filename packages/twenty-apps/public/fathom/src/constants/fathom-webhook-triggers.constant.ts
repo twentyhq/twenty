@@ -1,7 +1,6 @@
 import { type TriggeredFor } from 'fathom-typescript/sdk/models/operations';
 
-// Personal connections follow only their own recordings, so teammates who each
-// connect do not all receive, and compete to import, the same team recordings.
+// Personal connections skip team recordings so teammates do not all import the same ones.
 export const FATHOM_USER_WEBHOOK_TRIGGERS: TriggeredFor[] = [
   'my_recordings',
   'my_shared_with_team_recordings',
