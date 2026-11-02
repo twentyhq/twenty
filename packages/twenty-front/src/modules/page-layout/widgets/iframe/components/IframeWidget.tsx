@@ -78,12 +78,15 @@ export const IframeWidget = ({ widget }: IframeWidgetProps) => {
     !isDefined(error) &&
     applicationWidget?.id === widget.id &&
     applicationWidget?.applicationId === widget.applicationId;
+  const applicationIframeMediaPermissions =
+    applicationWidget?.applicationGrantedIframeMediaPermissions ?? [];
+  const matchingApplicationIframeMediaPermissions = hasMatchingApplication
+    ? applicationIframeMediaPermissions
+    : [];
   const iframeMediaPermissions = isWorkspaceWidget
     ? workspaceIframeMediaPermissions
     : limitToDocumentIframeMediaPermissions(
-        hasMatchingApplication
-          ? (applicationWidget?.applicationGrantedIframeMediaPermissions ?? [])
-          : [],
+        matchingApplicationIframeMediaPermissions,
       );
   const applicationName = hasMatchingApplication
     ? (applicationWidget?.applicationName ?? widget.title)
