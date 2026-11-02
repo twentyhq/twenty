@@ -38,6 +38,9 @@ const insertLinkedinPerson = async ({
   return createPerson.id;
 };
 
+const isPersonIdTakenError = (error: unknown): boolean =>
+  error instanceof Error && error.message.includes('person_pkey');
+
 export const createLinkedinPerson = async ({
   firstName,
   lastName,
@@ -77,6 +80,10 @@ export const createLinkedinPerson = async ({
       );
 
       return existingPersonId;
+    }
+
+    if (!isPersonIdTakenError(error)) {
+      throw error;
     }
 
     const createdPersonId = await insertLinkedinPerson({

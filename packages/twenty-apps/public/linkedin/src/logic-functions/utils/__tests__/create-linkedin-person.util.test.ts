@@ -86,5 +86,6 @@ describe('createLinkedinPerson', () => {
     mocks.query.mockResolvedValue({ people: { edges: [] } });
 
     await expect(createLinkedinPerson(DAPHNE)).rejects.toThrow('Forbidden');
+    expect(mocks.mutation).toHaveBeenCalledOnce();
   });
 });
