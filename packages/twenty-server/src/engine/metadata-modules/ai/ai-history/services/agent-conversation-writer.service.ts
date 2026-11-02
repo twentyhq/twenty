@@ -32,32 +32,40 @@ export class AgentConversationWriterService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  // TODO(@FelixMalfait): drop this upgrade fence once 2-55's make-agent-turn-thread-optional has reached every workspace
+  // TODO(@FelixMalfait): drop these upgrade fences once 2-55's make-agent-turn-thread-optional and
+  // add-agent-turn-result have reached every workspace. A one-shot run reads its turn's result when
+  // retried, so it waits for both
   async canInsertTurnWithoutThread(workspaceId: string): Promise<boolean> {
-    const { flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatFieldMetadataMaps',
-      ]);
+    const fieldsByUniversalIdentifier =
+      await this.findFieldsByUniversalIdentifier(workspaceId);
 
     return (
-      flatFieldMetadataMaps.byUniversalIdentifier[
+      fieldsByUniversalIdentifier[
         STANDARD_OBJECTS.agentTurn.fields.thread.universalIdentifier
-      ]?.isNullable === true
+      ]?.isNullable === true &&
+      isDefined(
+        fieldsByUniversalIdentifier[
+          STANDARD_OBJECTS.agentTurn.fields.result.universalIdentifier
+        ],
+      )
     );
   }
 
-  // TODO(@FelixMalfait): drop this upgrade fence once 2-55's add-agent-turn-result has reached every workspace
   async canStoreTurnResult(workspaceId: string): Promise<boolean> {
+    return isDefined(
+      (await this.findFieldsByUniversalIdentifier(workspaceId))[
+        STANDARD_OBJECTS.agentTurn.fields.result.universalIdentifier
+      ],
+    );
+  }
+
+  private async findFieldsByUniversalIdentifier(workspaceId: string) {
     const { flatFieldMetadataMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatFieldMetadataMaps',
       ]);
 
-    return isDefined(
-      flatFieldMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.agentTurn.fields.result.universalIdentifier
-      ],
-    );
+    return flatFieldMetadataMaps.byUniversalIdentifier;
   }
 
   runInTransaction<TResult>(

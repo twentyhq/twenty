@@ -164,9 +164,11 @@ describe('AgentTurnStreamService streamTurn of a run without a conversation', ()
   const streamRunWithoutClaim = ({
     service,
     stopReason,
+    isAborted = false,
   }: {
     service: AgentTurnStreamService;
     stopReason: 'workspaceAllowance' | null;
+    isAborted?: boolean;
   }) =>
     service.streamTurn({
       workspaceId: 'workspace-id',
@@ -189,6 +191,7 @@ describe('AgentTurnStreamService streamTurn of a run without a conversation', ()
       completeTurn: async () => ({
         modelId: 'model-id',
         stopReason,
+        isAborted,
         result: { summary: 'Followed up' },
       }),
       isBackgroundRun: true,
@@ -224,6 +227,24 @@ describe('AgentTurnStreamService streamTurn of a run without a conversation', ()
     expect(finish).toHaveBeenCalledWith(
       expect.objectContaining({
         status: AgentTurnStatus.FAILED,
+        result: undefined,
+      }),
+    );
+  });
+
+  it('records a run stopped after its stream ended as cancelled, without its result', async () => {
+    const finish = jest.fn().mockResolvedValue(true);
+
+    await streamRunWithoutClaim({
+      service: await buildService({ finish }),
+      stopReason: null,
+      isAborted: true,
+    });
+
+    expect(finish).toHaveBeenCalledTimes(1);
+    expect(finish).toHaveBeenCalledWith(
+      expect.objectContaining({
+        status: AgentTurnStatus.CANCELLED,
         result: undefined,
       }),
     );
