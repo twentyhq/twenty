@@ -25,11 +25,14 @@ export const CoreAgentRecordTriggerForm = ({
 }: CoreAgentRecordTriggerFormProps) => {
   const { t } = useLingui();
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
-  const objectOptions = useObjectMetadataItemSelectOptions();
 
   const { objectType, event } = splitWorkflowTriggerEventName(
     trigger.settings.eventName,
   );
+
+  const objectOptions = useObjectMetadataItemSelectOptions({
+    selectedObjectNameSingular: objectType,
+  });
 
   const selectedObjectMetadataItem = objectMetadataItems.find(
     (item) => item.isActive && item.nameSingular === objectType,
