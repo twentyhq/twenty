@@ -88,9 +88,10 @@ export class BillingDiscountService {
     stripeCustomerId: string,
   ): Promise<StripeCouponDiscount[]> {
     const [subscriptions, customerDiscount] = await Promise.all([
-      this.stripeSubscriptionService.listNotEndedSubscriptionsWithDiscounts(
+      this.stripeSubscriptionService.listCustomerNotEndedSubscriptions({
         stripeCustomerId,
-      ),
+        expand: ['data.discounts'],
+      }),
       this.stripeCustomerService.getCustomerDiscount(stripeCustomerId),
     ]);
 

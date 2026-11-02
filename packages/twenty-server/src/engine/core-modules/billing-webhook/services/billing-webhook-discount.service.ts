@@ -62,7 +62,7 @@ export class BillingWebhookDiscountService {
     subscription,
   }: {
     workspaceId: string;
-    subscription: Stripe.Subscription;
+    subscription: Pick<Stripe.Subscription, 'customer'>;
   }) {
     if (
       !(await this.billingDiscountService.hasActiveDiscountArrangement(

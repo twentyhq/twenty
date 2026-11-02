@@ -106,8 +106,12 @@ describe('computeDiscountArrangementSync', () => {
           { stripeCouponId: 'coupon_early', startsAt: LAST_MONTH, endsAt: NOW },
         ],
         now: NOW,
-      }).arrangementIdsToEnd,
-    ).toEqual(['arrangement-early']);
+      }),
+    ).toEqual({
+      arrangementIdsToEnd: ['arrangement-early'],
+      arrangementEndsAtUpdate: null,
+      discountToRecord: null,
+    });
   });
 
   it('replaces the arrangement when Stripe swapped the coupon, starting the new one after it', () => {

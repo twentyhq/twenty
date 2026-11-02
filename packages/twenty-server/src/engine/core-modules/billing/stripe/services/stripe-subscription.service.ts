@@ -39,13 +39,17 @@ export class StripeSubscriptionService {
     return subscription.data[0]?.customer ?? undefined;
   }
 
-  async listNotEndedSubscriptionsWithDiscounts(
-    stripeCustomerId: string,
-  ): Promise<Stripe.Subscription[]> {
+  async listCustomerNotEndedSubscriptions({
+    stripeCustomerId,
+    expand,
+  }: {
+    stripeCustomerId: string;
+    expand: string[];
+  }): Promise<Stripe.Subscription[]> {
     const subscriptions = await this.stripe.subscriptions
       .list({
         customer: stripeCustomerId,
-        expand: ['data.discounts'],
+        expand,
         limit: 100,
       })
       .autoPagingToArray({ limit: 1000 });
