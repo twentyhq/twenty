@@ -17,7 +17,9 @@ export class ObjectRecordCountService {
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
-  // Never-analyzed tables report reltuples as -1
+  // reltuples is -1 until a table is analyzed, so new/small tables read 0.
+  // n_live_tup is kept current by the stats collector on insert, so take
+  // whichever is larger to stay accurate before autovacuum analyzes.
   async getApproximateRecordCountByTableName(
     workspaceId: string,
   ): Promise<Map<string, number>> {
@@ -25,9 +27,11 @@ export class ObjectRecordCountService {
 
     const rows: { relname: string; approximate_count: number }[] =
       await this.coreDataSource.query(
-        `SELECT relname, reltuples::bigint AS approximate_count
+        `SELECT c.relname,
+                GREATEST(c.reltuples, COALESCE(s.n_live_tup, 0))::bigint AS approximate_count
          FROM pg_class c
          JOIN pg_namespace n ON c.relnamespace = n.oid
+         LEFT JOIN pg_stat_all_tables s ON s.relid = c.oid
          WHERE n.nspname = $1
          AND c.relkind = 'r'`,
         [schemaName],
