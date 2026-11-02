@@ -44,35 +44,31 @@ export class OAuthClientResolver {
       return null;
     }
 
-    const { registration, clientIdMetadataDocument } = resolvedClient;
+    // The stored name and logo only follow the document once a user authorizes, so consent shows the fetched ones
+    if (resolvedClient.kind === 'clientIdMetadataDocument') {
+      const { registration, clientIdMetadataDocument } = resolvedClient;
+      const { name, logo } = toClientIdMetadataDocumentRegistrationFields(
+        clientIdMetadataDocument,
+      );
 
-    if (isDefined(registration)) {
       return {
-        id: registration.id,
-        name: registration.name,
-        logoUrl:
-          this.applicationRegistrationAssetUrlService.buildLogoUrl(
-            registration,
-          ),
-        websiteUrl: registration.websiteUrl,
-        oAuthScopes: registration.oAuthScopes,
+        id: registration?.id ?? v4(),
+        name,
+        logoUrl: logo,
+        websiteUrl: registration?.websiteUrl ?? null,
+        oAuthScopes: registration?.oAuthScopes ?? [...ALL_OAUTH_SCOPES],
       };
     }
 
-    if (!isDefined(clientIdMetadataDocument)) {
-      return null;
-    }
-
-    const { name, logo } = toClientIdMetadataDocumentRegistrationFields(
-      clientIdMetadataDocument,
-    );
+    const { registration } = resolvedClient;
 
     return {
-      id: v4(),
-      name,
-      logoUrl: logo,
-      websiteUrl: null,
-      oAuthScopes: [...ALL_OAUTH_SCOPES],
+      id: registration.id,
+      name: registration.name,
+      logoUrl:
+        this.applicationRegistrationAssetUrlService.buildLogoUrl(registration),
+      websiteUrl: registration.websiteUrl,
+      oAuthScopes: registration.oAuthScopes,
     };
   }
 }

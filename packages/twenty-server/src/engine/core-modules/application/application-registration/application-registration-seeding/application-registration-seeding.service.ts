@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { v4 } from 'uuid';
@@ -48,17 +48,10 @@ export class ApplicationRegistrationSeedingService {
       );
 
     if (isDefined(existingRegistration)) {
-      if (
-        existingRegistration.sourceType !==
-          ApplicationRegistrationSourceType.OAUTH_ONLY ||
-        isDefined(existingRegistration.ownerWorkspaceId) ||
-        isDefined(existingRegistration.oAuthClientSecretHash)
-      ) {
-        throw new ApplicationRegistrationException(
-          `The ${values.name} application registration is taken by another owner`,
-          ApplicationRegistrationExceptionCode.RESERVED_REGISTRATION_TAKEN,
-        );
-      }
+      this.assertIsUnclaimedOAuthOnlyRegistration(
+        existingRegistration,
+        values.name,
+      );
 
       return existingRegistration;
     }
@@ -79,7 +72,7 @@ export class ApplicationRegistrationSeedingService {
       .returning('id')
       .execute();
 
-    if (insertResult.raw.length > 0) {
+    if (isNonEmptyArray(insertResult.raw)) {
       await this.invalidateMarketplaceCatalog();
     }
 
@@ -95,6 +88,8 @@ export class ApplicationRegistrationSeedingService {
       );
     }
 
+    this.assertIsUnclaimedOAuthOnlyRegistration(registration, values.name);
+
     return registration;
   }
 
@@ -106,6 +101,23 @@ export class ApplicationRegistrationSeedingService {
       );
     } catch (error) {
       this.logger.error('Failed to invalidate marketplace apps cache', error);
+    }
+  }
+
+  private assertIsUnclaimedOAuthOnlyRegistration(
+    registration: ApplicationRegistrationEntity,
+    name: string,
+  ): void {
+    if (
+      registration.sourceType !==
+        ApplicationRegistrationSourceType.OAUTH_ONLY ||
+      isDefined(registration.ownerWorkspaceId) ||
+      isDefined(registration.oAuthClientSecretHash)
+    ) {
+      throw new ApplicationRegistrationException(
+        `The ${name} application registration is taken by another owner`,
+        ApplicationRegistrationExceptionCode.RESERVED_REGISTRATION_TAKEN,
+      );
     }
   }
 }
