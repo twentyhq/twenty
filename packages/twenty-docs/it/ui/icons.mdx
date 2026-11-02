@@ -36,7 +36,7 @@ Le icone esportate mantengono la larghezza richiesta nei layout flex, anche all'
 
 ## Nomi dinamici delle icone
 
-Use `IconsProvider` and `Icon` from `twenty-ui/icon/provider` when names are chosen at runtime. Il provider carica in modo asincrono la mappa completa delle icone; i bundle creati senza code splitting, come i componenti front, includono l'intera mappa. `twenty-ui/icon` does not include the provider, so importing named icons never pulls in the map. Prima del completamento del caricamento e per i nomi sconosciuti, `Icon` esegue il rendering di `Icon123`. La mappa dinamica differisce dal catalogo delle esportazioni denominate; non presumere che ogni esportazione del brand o dell'illustrazione possa essere risolta in base al nome.
+Usa `IconsProvider` e `Icon` da `twenty-ui/icon/provider` quando i nomi vengono scelti in fase di esecuzione. Il provider carica in modo asincrono la mappa completa delle icone; i bundle creati senza code splitting, come i componenti front, includono l'intera mappa. `twenty-ui/icon` non include il provider, quindi l'importazione di icone denominate non include mai la mappa. Prima del completamento del caricamento e per i nomi sconosciuti, `Icon` esegue il rendering di `Icon123`. La mappa dinamica differisce dal catalogo delle esportazioni denominate; non presumere che ogni esportazione del brand o dell'illustrazione possa essere risolta in base al nome.
 
 ```tsx
 import { Icon, IconsProvider } from 'twenty-ui/icon/provider';
