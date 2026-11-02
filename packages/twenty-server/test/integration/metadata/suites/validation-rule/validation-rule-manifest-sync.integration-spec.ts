@@ -15,6 +15,8 @@ import { type ValidationRuleManifest } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+
 const TEST_APP_ID = uuidv4();
 const TEST_ROLE_ID = uuidv4();
 const REFERENCE_FIELD_ID = uuidv4();
@@ -104,8 +106,8 @@ const findValidationRuleIdentifiers = async () => {
 
 const findCompanyObjectMetadataId = async () => {
   const rows: { id: string }[] = await globalThis.testDataSource.query(
-    `SELECT id FROM core."objectMetadata" WHERE "universalIdentifier" = $1 LIMIT 1`,
-    [COMPANY_OBJECT_UNIVERSAL_IDENTIFIER],
+    `SELECT id FROM core."objectMetadata" WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
+    [COMPANY_OBJECT_UNIVERSAL_IDENTIFIER, SEED_APPLE_WORKSPACE_ID],
   );
 
   return { data: rows[0].id };
