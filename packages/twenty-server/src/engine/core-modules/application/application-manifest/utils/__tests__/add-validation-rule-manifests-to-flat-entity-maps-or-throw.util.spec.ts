@@ -366,6 +366,10 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
       });
 
       expect(warnings).toEqual([]);
+      expect(
+        maps.toAllUniversalFlatEntityMaps.flatValidationRuleMaps
+          .byUniversalIdentifier.rule?.isActive,
+      ).toBe(true);
     });
 
     it('reads a field the manifest dropped when the sync does not prune', () => {
@@ -380,6 +384,10 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
       });
 
       expect(warnings).toEqual([]);
+      expect(
+        maps.toAllUniversalFlatEntityMaps.flatValidationRuleMaps
+          .byUniversalIdentifier.rule?.isActive,
+      ).toBe(true);
     });
   });
 

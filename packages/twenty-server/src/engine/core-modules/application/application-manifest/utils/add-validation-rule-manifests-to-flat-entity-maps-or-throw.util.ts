@@ -486,7 +486,7 @@ export const addValidationRuleManifestsToFlatEntityMapsOrThrow = ({
 
     if (isErrorFieldDetached) {
       warnings.push(
-        `Validation rule "${validationRuleManifest.name}" is no longer attached to its error field, which does not exist in this workspace.`,
+        `Validation rule "${validationRuleManifest.name}" is no longer attached to its error field, which does not exist in this workspace. Point errorFieldUniversalIdentifier at an existing field, or remove it.`,
       );
     }
 

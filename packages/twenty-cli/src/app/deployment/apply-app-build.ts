@@ -116,8 +116,24 @@ export const applyAppBuild = async ({
       });
   };
 
+  const printedWarnings = new Set<string>();
+  const printWarning = (message: string) => {
+    if (printedWarnings.has(message)) {
+      return;
+    }
+
+    printedWarnings.add(message);
+    output.warn({ code: 'SYNC_WARNING', message });
+  };
+
   const preview = () =>
-    fetchAppPlan({ build, inferDeletionFromMissingEntities, target, signal });
+    fetchAppPlan({
+      build,
+      inferDeletionFromMissingEntities,
+      target,
+      signal,
+      onWarning: printWarning,
+    });
 
   const previewOrBootstrap = async () => {
     try {
@@ -225,9 +241,7 @@ export const applyAppBuild = async ({
     }),
   );
 
-  for (const message of warnings) {
-    output.warn({ code: 'SYNC_WARNING', message });
-  }
+  warnings.forEach(printWarning);
 
   return {
     completedPhases,
