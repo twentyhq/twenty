@@ -191,12 +191,8 @@ export type {
   FrontComponentManifest,
 } from './frontComponentManifestType';
 export type { FrontComponentSharedDependenciesManifest } from './frontComponentSharedDependenciesManifestType';
-export { generateInputSchema } from './generateInputSchema';
-export type {
-  GenerateMutationInput,
-  GenerateInput,
-  GenerateResult,
-} from './generateType';
+export { generateJsonFieldsSchema } from './generateJsonFieldsSchema';
+export type { GenerateResult } from './generateType';
 export type { HealthCheckLogicFunctionApplicationManifest } from './healthCheckLogicFunctionApplicationType';
 export type {
   IdentifyAccountPayload,

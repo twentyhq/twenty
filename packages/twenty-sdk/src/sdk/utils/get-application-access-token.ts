@@ -3,27 +3,12 @@ import {
   DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME,
 } from 'twenty-shared/application-runtime';
 
-type AccessTokenHolder = 'application' | 'caller';
-
-const ACCESS_TOKEN_NAME_BY_HOLDER: Record<AccessTokenHolder, string> = {
-  application: DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME,
-  caller: DEFAULT_APP_ACCESS_TOKEN_NAME,
-};
-
-const getAccessTokenPreferring = (
-  preferredHolder: AccessTokenHolder,
-): string | undefined => {
-  const fallbackHolder: AccessTokenHolder =
-    preferredHolder === 'application' ? 'caller' : 'application';
-
-  return (
-    process.env[ACCESS_TOKEN_NAME_BY_HOLDER[preferredHolder]] ??
-    process.env[ACCESS_TOKEN_NAME_BY_HOLDER[fallbackHolder]]
-  );
-};
-
+// These reach the application's own resources, so prefer the application token when the runtime injects one
 export const getApplicationAccessToken = (): string | undefined =>
-  getAccessTokenPreferring('application');
+  process.env[DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME] ??
+  process.env[DEFAULT_APP_ACCESS_TOKEN_NAME];
 
+// acts as whoever triggered the run, like the client SDK's default runAs
 export const getCallerAccessToken = (): string | undefined =>
-  getAccessTokenPreferring('caller');
+  process.env[DEFAULT_APP_ACCESS_TOKEN_NAME] ??
+  process.env[DEFAULT_APP_APPLICATION_ACCESS_TOKEN_NAME];

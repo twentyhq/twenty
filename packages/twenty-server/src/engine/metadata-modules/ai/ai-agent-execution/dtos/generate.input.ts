@@ -3,7 +3,6 @@ import { Field, InputType } from '@nestjs/graphql';
 import { Type } from 'class-transformer';
 import GraphQLJSON from 'graphql-type-json';
 import { type AgentResponseFormat, type AiRunScope } from 'twenty-shared/ai';
-import { type GenerateMutationInput } from 'twenty-shared/application';
 import {
   ArrayMaxSize,
   ArrayNotEmpty,
@@ -16,9 +15,9 @@ import {
 
 import { RunAgentMessageInputDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/run-agent-message.input';
 
-// mirrors generateInputSchema, which the service parses the JSON fields with
+// the service parses the JSON fields with generateJsonFieldsSchema
 @InputType('GenerateInput')
-export class GenerateInputDTO implements GenerateMutationInput {
+export class GenerateInputDTO {
   @IsArray()
   @ArrayNotEmpty()
   @ArrayMaxSize(100)

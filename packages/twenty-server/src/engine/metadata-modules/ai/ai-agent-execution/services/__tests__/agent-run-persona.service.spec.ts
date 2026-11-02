@@ -22,6 +22,7 @@ const buildService = (flatApplicationsById: Record<string, object>) =>
         flatApplicationMaps: { byId: flatApplicationsById },
       }),
     } as never,
+    {} as never,
   );
 
 describe('AgentRunPersonaService', () => {
@@ -54,4 +55,46 @@ describe('AgentRunPersonaService', () => {
       ).rejects.toMatchObject({ code: AiExceptionCode.INVALID_AGENT_INPUT });
     },
   );
+});
+
+describe('AgentRunPersonaService.resolveRolePermissionConfig', () => {
+  const service = buildService({});
+  const agentRunRoleIds = { applicationRoleId: 'application-role-id' };
+
+  it("narrows the agent's role to the run's roles", async () => {
+    expect(
+      await service.resolveRolePermissionConfig({
+        workspaceId: WORKSPACE_ID,
+        persona: {
+          permissions: {
+            agentRoleId: 'agent-role-id',
+            scope: null,
+            explicitObjectGrants: { objectPermissions: [] },
+          },
+        },
+        agentRunRoleIds,
+      }),
+    ).toEqual({
+      intersectionOf: {
+        applicationRoleId: 'application-role-id',
+        agentRoleId: 'agent-role-id',
+      },
+    });
+  });
+
+  it('reads nothing for a run handed no data access', async () => {
+    expect(
+      await service.resolveRolePermissionConfig({
+        workspaceId: WORKSPACE_ID,
+        persona: {
+          permissions: {
+            agentRoleId: null,
+            scope: null,
+            explicitObjectGrants: null,
+          },
+        },
+        agentRunRoleIds,
+      }),
+    ).toBeNull();
+  });
 });

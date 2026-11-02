@@ -4290,6 +4290,7 @@ type Query {
   usageQuotasWithConsumption: [UsageQuotaWithConsumption!]!
   validatePasswordResetToken(passwordResetToken: String!): ValidatePasswordResetToken!
   validationRules(objectMetadataId: UUID!): [ValidationRule!]!
+  validationRulesReadingField(fieldMetadataId: UUID!): [ValidationRule!]!
   webhook(id: UUID!): Webhook
   webhooks: [Webhook!]!
 }

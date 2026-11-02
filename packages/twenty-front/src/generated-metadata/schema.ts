@@ -6013,6 +6013,7 @@ export type Query = {
   usageQuotasWithConsumption: Array<UsageQuotaWithConsumption>;
   validatePasswordResetToken: ValidatePasswordResetToken;
   validationRules: Array<ValidationRule>;
+  validationRulesReadingField: Array<ValidationRule>;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
 };
@@ -6551,6 +6552,11 @@ export type QueryValidatePasswordResetTokenArgs = {
 
 export type QueryValidationRulesArgs = {
   objectMetadataId: Scalars['UUID']['input'];
+};
+
+
+export type QueryValidationRulesReadingFieldArgs = {
+  fieldMetadataId: Scalars['UUID']['input'];
 };
 
 

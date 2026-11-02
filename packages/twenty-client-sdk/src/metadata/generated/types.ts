@@ -11873,6 +11873,15 @@ export default {
                     ]
                 }
             ],
+            "validationRulesReadingField": [
+                641,
+                {
+                    "fieldMetadataId": [
+                        534,
+                        "UUID!"
+                    ]
+                }
+            ],
             "webhook": [
                 665,
                 {

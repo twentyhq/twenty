@@ -85,7 +85,10 @@ export class PermissionsService {
     return {
       permissionFlags,
       objectsPermissions: computeObjectsPermissionsForRoles({
-        roleIds: [flatRole.id],
+        principal: {
+          mainPrincipal: { roleId: flatRole.id, isDeprecatedRoleOnly: true },
+          applicationPrincipal: { isCustomApp: true },
+        },
         rolesPermissions,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,

@@ -11,9 +11,10 @@ import {
   setupApplicationWithResources,
 } from 'test/integration/metadata/suites/application/utils/setup-application-with-resources.util';
 import { generateAppleAdminApplicationTokenPair } from 'test/integration/utils/generate-apple-admin-application-token-pair.util';
-import { type GenerateMutationInput } from 'twenty-shared/application';
+import { type RunAgentMessage } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type GenerateInputDTO } from 'src/engine/metadata-modules/ai/ai-agent-execution/dtos/generate.input';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
@@ -75,7 +76,11 @@ const mockModel = (respond: (callIndex: number) => ScriptedModelResponse) => {
   return offeredToolNamesByCall;
 };
 
-const generate = async (input: Omit<GenerateMutationInput, 'modelId'>) => {
+const generate = async (
+  input: Omit<GenerateInputDTO, 'input' | 'modelId'> & {
+    input: RunAgentMessage[];
+  },
+) => {
   const response = await makeMetadataApiRequest({
     query: gql`
       mutation Generate($input: GenerateInput!) {

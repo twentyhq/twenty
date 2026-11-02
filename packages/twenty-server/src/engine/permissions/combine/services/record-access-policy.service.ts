@@ -15,7 +15,9 @@ import {
   type PermissionsMetadataMaps,
   type PermissionsObjectAccessRequest,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
+import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
 import { getPermissionsPrincipalShareKeys } from 'src/engine/permissions/principal/utils/get-permissions-principal-share-keys.util';
 import { resolvePermissionsShareGrant } from 'src/engine/permissions/record-share/utils/resolve-permissions-share-grant.util';
 import { isObjectOperationDeniedToPrincipal } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principal.util';
@@ -32,15 +34,27 @@ import { resolveEventRecordSnapshots } from 'src/engine/permissions/combine/util
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
+type PrincipalsAccessRequest = Omit<
+  PermissionsObjectAccessRequest,
+  'principal' | 'metadataMaps'
+> & { principals: PermissionsPrincipalsContext };
+
+const EMPTY_WORKSPACE_MEMBER_MAPS = { byId: {}, userWorkspaceIdByUserId: {} };
+
 @Injectable()
 export class RecordAccessPolicyService {
+  private readonly principalsWithRolesByPrincipals = new WeakMap<
+    PermissionsPrincipalsContext,
+    Promise<PermissionsPrincipalsWithRolesContext | undefined>
+  >();
+
   private readonly metadataMapsByPrincipal = new WeakMap<
-    PermissionsPrincipal,
+    PermissionsPrincipalsWithRolesContext,
     Promise<PermissionsMetadataMaps>
   >();
 
   private readonly sharedAccessLevelsByPrincipal = new WeakMap<
-    PermissionsPrincipal,
+    PermissionsPrincipalsWithRolesContext,
     Promise<Map<string, RecordShareAccessLevel[]>>
   >();
 
@@ -53,10 +67,16 @@ export class RecordAccessPolicyService {
 
   // Shares only count once a row exists, so an object reached by nothing stays out of reach
   async hasAccessToSomeRecords({
-    principal,
+    principals,
     flatObjectMetadata,
     operationType,
-  }: Omit<PermissionsObjectAccessRequest, 'metadataMaps'>): Promise<boolean> {
+  }: PrincipalsAccessRequest): Promise<boolean> {
+    const principal = await this.findPrincipalsWithRoles(principals);
+
+    if (!isDefined(principal)) {
+      return false;
+    }
+
     const request = {
       principal,
       metadataMaps: await this.findPrincipalMetadataMaps(principal),
@@ -92,13 +112,13 @@ export class RecordAccessPolicyService {
   }
 
   async hasAccessToRecords({
-    principal,
+    principals,
     flatObjectMetadata,
     operationType,
     recordIds,
     hypotheticalRecordShareAccessLevel,
     transactionScope,
-  }: Omit<PermissionsObjectAccessRequest, 'metadataMaps'> & {
+  }: PrincipalsAccessRequest & {
     recordIds: string[];
     hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
     transactionScope?: WorkspaceTransactionScope;
@@ -106,10 +126,12 @@ export class RecordAccessPolicyService {
     const uniqueRecordIds = [
       ...new Set(recordIds.map((recordId) => recordId.toLowerCase())),
     ];
+    const principal = await this.findPrincipalsWithRoles(principals);
 
-    if (uniqueRecordIds.length === 0) {
+    if (uniqueRecordIds.length === 0 || !isDefined(principal)) {
       return false;
     }
+
     const findAdmittedRecordIds = (repository: WorkspaceRepository) =>
       repository.findPrincipalAdmittedRecordIds({
         principal,
@@ -252,8 +274,14 @@ export class RecordAccessPolicyService {
     let metadataMaps: Promise<PermissionsMetadataMaps> | undefined;
 
     return {
-      resolveAdmittedRecordIds: async (principal) =>
-        findPermissionsAdmittedRecordIds({
+      resolveAdmittedRecordIds: async (principals) => {
+        const principal = await this.findPrincipalsWithRoles(principals);
+
+        if (!isDefined(principal)) {
+          return new Set<string>();
+        }
+
+        return findPermissionsAdmittedRecordIds({
           principal,
           metadataMaps: await (metadataMaps ??=
             this.loadPermissionsMetadataMaps(workspaceId)),
@@ -265,7 +293,8 @@ export class RecordAccessPolicyService {
             fetchRecordShares,
             findPrivateRecordStates,
           },
-        }),
+        });
+      },
     };
   }
 
@@ -299,8 +328,66 @@ export class RecordAccessPolicyService {
     );
   }
 
+  private findPrincipalsWithRoles(
+    principals: PermissionsPrincipalsContext,
+  ): Promise<PermissionsPrincipalsWithRolesContext | undefined> {
+    const cachedPrincipalsWithRoles =
+      this.principalsWithRolesByPrincipals.get(principals);
+
+    if (isDefined(cachedPrincipalsWithRoles)) {
+      return cachedPrincipalsWithRoles;
+    }
+
+    const principalsWithRoles = this.resolvePrincipalsWithRoles(principals);
+
+    this.principalsWithRolesByPrincipals.set(principals, principalsWithRoles);
+
+    return principalsWithRoles;
+  }
+
+  private async resolvePrincipalsWithRoles(
+    principals: PermissionsPrincipalsContext,
+  ): Promise<PermissionsPrincipalsWithRolesContext | undefined> {
+    const { mainPrincipal, workspaceId } = principals;
+    const {
+      userWorkspaceRoleMap,
+      apiKeyRoleMap,
+      flatRoleTargetByAgentIdMaps,
+      flatApplicationMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'userWorkspaceRoleMap',
+      'apiKeyRoleMap',
+      'flatRoleTargetByAgentIdMaps',
+      'flatApplicationMaps',
+    ]);
+    const { flatWorkspaceMemberMaps } =
+      'workspaceMemberId' in mainPrincipal
+        ? await this.workspaceCacheService.getOrRecompute(workspaceId, [
+            'flatWorkspaceMemberMaps',
+          ])
+        : { flatWorkspaceMemberMaps: EMPTY_WORKSPACE_MEMBER_MAPS };
+    const { flatRoleTargetMaps } =
+      'webhookId' in mainPrincipal
+        ? await this.workspaceCacheService.getOrRecompute(workspaceId, [
+            'flatRoleTargetMaps',
+          ])
+        : { flatRoleTargetMaps: undefined };
+
+    return resolvePermissionsPrincipalsWithRoles({
+      principalsContext: principals,
+      roleMaps: {
+        flatWorkspaceMemberMaps,
+        userWorkspaceRoleMap,
+        apiKeyRoleMap,
+        flatRoleTargetByAgentIdMaps,
+        flatApplicationMaps,
+        flatRoleTargetMaps,
+      },
+    });
+  }
+
   private findPrincipalMetadataMaps(
-    principal: PermissionsPrincipal,
+    principal: PermissionsPrincipalsWithRolesContext,
   ): Promise<PermissionsMetadataMaps> {
     const cachedMetadataMaps = this.metadataMapsByPrincipal.get(principal);
 
@@ -318,7 +405,7 @@ export class RecordAccessPolicyService {
   }
 
   private findSharedAccessLevelsByObjectMetadataId(
-    principal: PermissionsPrincipal,
+    principal: PermissionsPrincipalsWithRolesContext,
   ): Promise<Map<string, RecordShareAccessLevel[]>> {
     const cachedSharedAccessLevels =
       this.sharedAccessLevelsByPrincipal.get(principal);
