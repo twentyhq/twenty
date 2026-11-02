@@ -90,7 +90,9 @@ Display single key values prominently.
 ### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}><ChartIcon icon="frame" />iFrames</span>
 Embed external tools and content directly in your dashboard.
 
-For embedded phones or video tools, a member with permission to manage security can configure **Settings → General → Security → Embedded website media access**. Add the website's exact HTTPS origin, such as `https://workspace.aircall.io`, and enable **Microphone**, **Camera**, or both. Paths and wildcards are not accepted. Only approve websites you trust.
+For iframe widgets added in the workspace, a member with permission to manage security can configure **Settings → General → Security → Embedded website media access**. Add the website's exact HTTPS origin, such as `https://workspace.aircall.io`, and enable **Microphone**, **Camera**, or both. Paths and wildcards are not accepted. Only approve websites you trust.
+
+Media embeds supplied by an installed app use a separate approval: the app declares the website in [`requestedIframeMediaPermissions`](/developers/extend/apps/config/application#embedded-website-media-access), and a member who can manage apps approves it during installation. These grants apply to the app's front components. App-defined iframe widgets do not support media access.
 
 Reload open Twenty tabs after changing these permissions. Reloading ends active calls and recordings. Each member then selects **Enable microphone**, **Enable camera**, or **Enable microphone and camera** on the embed and approves the browser permission when prompted.
 

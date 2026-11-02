@@ -80,7 +80,7 @@ See [Media capture](/developers/extend/apps/layout/front-components#media-captur
 
 ## Embedded website media access
 
-Set `requestedIframeMediaPermissions` when a front component embeds a website that needs the microphone or camera, such as a phone or video tool. List up to 20 websites, each as an exact HTTPS origin, with microphone and camera access set separately.
+Set `requestedIframeMediaPermissions` when a front component embeds a website that needs the microphone or camera, such as a phone or video tool. List up to 20 websites, each as an exact HTTPS origin, with microphone and camera access set separately. Origins must be unique, contain no path or wildcard, and request at least one of microphone or camera access.
 
 ```ts
 import { defineApplication } from 'twenty-sdk/define';
