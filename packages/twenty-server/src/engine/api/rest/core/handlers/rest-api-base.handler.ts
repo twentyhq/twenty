@@ -34,10 +34,8 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
-import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
-import { resolvePermissionsPrincipalsWithRoles } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
-import { computeObjectsPermissionsForRoles } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-roles.util';
 
 export interface PageInfo {
   hasNextPage?: boolean;
@@ -57,6 +55,8 @@ export interface FormatResult {
 export abstract class RestApiBaseHandler {
   @Inject()
   protected readonly workspaceCacheService: WorkspaceCacheService;
+  @Inject()
+  protected readonly recordAccessPolicyService: RecordAccessPolicyService;
   @Inject()
   protected readonly actorFromAuthContextService: ActorFromAuthContextService;
   @Inject()
@@ -88,56 +88,12 @@ export abstract class RestApiBaseHandler {
       );
     }
 
-    const {
-      rolesPermissions,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      flatApplicationMaps,
-      userWorkspaceRoleMap,
-      apiKeyRoleMap,
-      flatRoleTargetByAgentIdMaps,
-      flatWorkspaceMemberMaps,
-    } = await this.workspaceCacheService.getOrRecompute(
-      authContext.workspace.id,
-      [
-        'rolesPermissions',
-        'flatObjectMetadataMaps',
-        'flatFieldMetadataMaps',
-        'flatApplicationMaps',
-        'userWorkspaceRoleMap',
-        'apiKeyRoleMap',
-        'flatRoleTargetByAgentIdMaps',
-        'flatWorkspaceMemberMaps',
-      ],
-    );
-
-    const principal = resolvePermissionsPrincipalsWithRoles({
-      principalsContext: principals,
-      roleMaps: buildPermissionsPrincipalRoleMaps({
-        flatWorkspaceMemberMaps,
-        userWorkspaceRoleMap,
-        apiKeyRoleMap,
-        flatRoleTargetByAgentIdMaps,
-        flatApplicationMaps,
-      }),
-    });
-
-    if (!isDefined(principal)) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-      );
-    }
-
     return {
       principals,
-      objectsPermissions: computeObjectsPermissionsForRoles({
-        principal,
-        rolesPermissions,
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-        flatApplicationMaps,
-      }),
+      objectsPermissions:
+        await this.recordAccessPolicyService.getObjectsPermissionsOrThrow(
+          principals,
+        ),
     };
   };
 

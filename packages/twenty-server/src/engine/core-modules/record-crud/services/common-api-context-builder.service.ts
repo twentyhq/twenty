@@ -22,9 +22,8 @@ import { type PermissionsPrincipalsContext } from 'src/engine/permissions/princi
 import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
-import { resolveRepositoryPermissionConfig } from 'src/engine/permissions/principal/utils/resolve-repository-permission-config.util';
-import { buildPermissionsPrincipalsWithRolesFromConfig } from 'src/engine/permissions/principal/utils/build-permissions-principals-with-roles-from-config.util';
-import { computeObjectsPermissionsForRoles } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-roles.util';
+import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/permissions/role/utils/get-objects-permissions-from-role-permission-config.util';
+import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import {
   PermissionsException,
@@ -47,6 +46,7 @@ export class CommonApiContextBuilderService {
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly recordAccessPolicyService: RecordAccessPolicyService,
   ) {}
 
   async build({
@@ -151,39 +151,6 @@ export class CommonApiContextBuilderService {
     objectsPermissions: ObjectsPermissions;
     principals: PermissionsPrincipalsContext;
   }> {
-    const {
-      rolesPermissions,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      flatApplicationMaps,
-      userWorkspaceRoleMap,
-      apiKeyRoleMap,
-      flatRoleTargetByAgentIdMaps,
-      flatWorkspaceMemberMaps,
-    } = await this.workspaceCacheService.getOrRecompute(
-      authContext.workspace.id,
-      [
-        'rolesPermissions',
-        'flatObjectMetadataMaps',
-        'flatFieldMetadataMaps',
-        'flatApplicationMaps',
-        'userWorkspaceRoleMap',
-        'apiKeyRoleMap',
-        'flatRoleTargetByAgentIdMaps',
-        'flatWorkspaceMemberMaps',
-      ],
-    );
-
-    const resolvedRolePermissionConfig =
-      rolePermissionConfig ?? resolveRepositoryPermissionConfig(authContext);
-
-    if (!isDefined(resolvedRolePermissionConfig)) {
-      throw new RecordCrudException(
-        'No role found for this auth context',
-        RecordCrudExceptionCode.INVALID_REQUEST,
-      );
-    }
-
     const principals = getPermissionsPrincipalsFromAuthContext(authContext);
 
     if (!isDefined(principals)) {
@@ -193,40 +160,46 @@ export class CommonApiContextBuilderService {
       );
     }
 
-    const permissionsPrincipal = buildPermissionsPrincipalsWithRolesFromConfig({
-      workspaceId: authContext.workspace.id,
-      rolePermissionConfig: resolvedRolePermissionConfig,
-      principalsContext: principals,
-      roleMaps: buildPermissionsPrincipalRoleMaps({
-        flatWorkspaceMemberMaps,
-        userWorkspaceRoleMap,
-        apiKeyRoleMap,
-        flatRoleTargetByAgentIdMaps,
-        flatApplicationMaps,
-      }),
-    });
-
-    if (
-      'principals' in resolvedRolePermissionConfig &&
-      !isDefined(permissionsPrincipal)
-    ) {
-      throw new RecordCrudException(
-        'No role found for this auth context',
-        RecordCrudExceptionCode.INVALID_REQUEST,
-      );
+    if (!isDefined(rolePermissionConfig)) {
+      return {
+        objectsPermissions:
+          await this.recordAccessPolicyService.getObjectsPermissionsOrThrow(
+            principals,
+          ),
+        principals,
+      };
     }
 
-    if (!isDefined(permissionsPrincipal)) {
-      return { objectsPermissions: {}, principals };
-    }
+    // TODO(@charlesBochet): drop once tool contexts carry principals instead of role ids
+    const {
+      rolesPermissions,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+      flatApplicationMaps,
+    } = await this.workspaceCacheService.getOrRecompute(
+      authContext.workspace.id,
+      [
+        'rolesPermissions',
+        'flatObjectMetadataMaps',
+        'flatFieldMetadataMaps',
+        'flatApplicationMaps',
+      ],
+    );
 
     return {
-      objectsPermissions: computeObjectsPermissionsForRoles({
-        principal: permissionsPrincipal,
+      objectsPermissions: getObjectsPermissionsFromRolePermissionConfig({
+        workspaceId: authContext.workspace.id,
         rolesPermissions,
+        rolePermissionConfig,
+        principals,
+        roleMaps: buildPermissionsPrincipalRoleMaps({
+          userWorkspaceRoleMap: {},
+          apiKeyRoleMap: {},
+          flatRoleTargetByAgentIdMaps: {},
+          flatApplicationMaps,
+        }),
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        flatApplicationMaps,
       }),
       principals,
     };
