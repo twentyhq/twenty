@@ -1357,18 +1357,18 @@ msgstr "برنامه"
 #. js-lingui-id: DI3ExZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Application \"{applicationName}\" cannot be assigned a role"
-msgstr ""
+msgstr "نمی‌توان نقشی به برنامه \"{applicationName}\" اختصاص داد"
 
 #. js-lingui-id: UtDk/w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Application \"{applicationName}\" cannot be assigned a role: only installed applications can"
-msgstr ""
+msgstr "نمی‌توان نقشی به برنامه \"{applicationName}\" اختصاص داد: فقط می‌توان به برنامه‌های نصب‌شده نقش اختصاص داد"
 
 #. js-lingui-id: zmQlIf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Application already has a role assigned"
-msgstr ""
+msgstr "برنامه از قبل نقشی دارد"
 
 #. js-lingui-id: 1WWVFC
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -9874,12 +9874,12 @@ msgstr "فقط مقادیر این فرم قابل تغییر هستند."
 #. js-lingui-id: soFgCh
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Only the workspace can assign roles to applications"
-msgstr ""
+msgstr "فقط فضای کاری می‌تواند به برنامه‌ها نقش اختصاص دهد"
 
 #. js-lingui-id: IPv2FN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Only the workspace custom application can assign roles to applications"
-msgstr ""
+msgstr "فقط برنامه سفارشی فضای کاری می‌تواند به برنامه‌ها نقش اختصاص دهد"
 
 #. js-lingui-id: 9rFxst
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11658,7 +11658,7 @@ msgstr "نقش \"{roleLabel}\" نمی‌تواند به کلیدهای API اخ�
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to applications"
-msgstr ""
+msgstr "نمی‌توان نقش \"{roleLabel}\" را به برنامه‌ها اختصاص داد"
 
 #. js-lingui-id: 9ZQkou
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11680,7 +11680,7 @@ msgstr "نقش \"{roleLabel}\" قابل تخصیص نیست: نقش‌های س�
 #. js-lingui-id: Xl64Bj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Role \"{roleLabel}\" must be owned by the workspace custom application to be assigned to an application"
-msgstr ""
+msgstr "برای اختصاص نقش \"{roleLabel}\" به یک برنامه، این نقش باید متعلق به برنامه سفارشی فضای کاری باشد"
 
 #. js-lingui-id: ViBevc
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
@@ -11783,7 +11783,7 @@ msgstr "شناسه هدف نقش وجود ندارد."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, webhookUniversalIdentifier, or targetApplicationUniversalIdentifier"
-msgstr ""
+msgstr "هدف نقش باید دقیقاً یکی از موارد زیر را داشته باشد: apiKeyId، userWorkspaceId، agentUniversalIdentifier، webhookUniversalIdentifier یا targetApplicationUniversalIdentifier"
 
 #. js-lingui-id: oNYUjk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
@@ -11964,7 +11964,7 @@ msgstr "رکوردهای نمونه از 100 کیلوبایت بیشتر هست�
 #. js-lingui-id: P79LWT
 #: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
 msgid "Sample records must include every selected field."
-msgstr ""
+msgstr "رکوردهای نمونه باید شامل همه فیلدهای انتخاب‌شده باشند."
 
 #. js-lingui-id: 0ovywa
 #: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
@@ -13168,7 +13168,7 @@ msgstr "بارگذاری Tarball یافت نشد."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Target application not found"
-msgstr ""
+msgstr "برنامه هدف پیدا نشد"
 
 #. js-lingui-id: DkjT6k
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts

@@ -7063,7 +7063,7 @@ msgstr "Повежите додатне MCP клијенте помоћу лин
 #. js-lingui-id: vPCRNy
 #: src/pages/settings/ai/components/SettingsAiMcpSection.tsx
 msgid "Connect AI assistants like Claude or Cursor to your workspace via the Model Context Protocol"
-msgstr ""
+msgstr "Повежите AI асистенте као што су Claude или Cursor са вашим радним простором преко Model Context Protocol-а"
 
 #. js-lingui-id: TA7R1S
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -9006,7 +9006,7 @@ msgstr "Деактивирај"
 #. js-lingui-id: ILJMvx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Deactivate {fieldLabel} field?"
-msgstr ""
+msgstr "Деактивирати поље {fieldLabel}?"
 
 #. js-lingui-id: mMIGcw
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
@@ -17386,7 +17386,7 @@ msgstr "MCP сервер"
 #. js-lingui-id: 8CWirf
 #: src/pages/settings/ai/components/SettingsAiMcpSection.tsx
 msgid "MCP Server"
-msgstr ""
+msgstr "MCP сервер"
 
 #. js-lingui-id: 8qgfac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -25450,7 +25450,7 @@ msgstr "Подесите прослеђивање са изворне адрес
 #. js-lingui-id: dq5Wx1
 #: src/pages/settings/ai/components/SettingsAiMcpSection.tsx
 msgid "Set up MCP"
-msgstr ""
+msgstr "Подесите MCP"
 
 #. js-lingui-id: RNxRBn
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
@@ -28229,12 +28229,12 @@ msgstr "Ове недеље"
 #. js-lingui-id: S9wb8X
 #: src/modules/validation-rules/utils/getFieldRemovalValidationRulesWarning.ts
 msgid "This will also deactivate the validation rule {validationRuleNames}."
-msgstr ""
+msgstr "Овим ће се такође деактивирати правило за валидацију {validationRuleNames}."
 
 #. js-lingui-id: nEFDDt
 #: src/modules/validation-rules/utils/getFieldRemovalValidationRulesWarning.ts
 msgid "This will also deactivate these validation rules: {validationRuleNames}."
-msgstr ""
+msgstr "Овим ће се такође деактивирати следећа правила за валидацију: {validationRuleNames}."
 
 #. js-lingui-id: DF2voz
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
@@ -28266,7 +28266,7 @@ msgstr "Ово ће изменити {contextStoreNumberOfSelectedRecords} за�
 #. js-lingui-id: j4VddB
 #: src/modules/validation-rules/utils/getFieldDeletionConfirmationSubtitle.ts
 msgid "This will permanently delete the field and all its data from {objectLabel}."
-msgstr ""
+msgstr "Ово ће трајно обрисати поље и све његове податке из {objectLabel}."
 
 #. js-lingui-id: L85ZX9
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -29066,7 +29066,7 @@ msgstr "Укуцајте '/' за команде, '@' за помињања"
 #. js-lingui-id: uerxa/
 #: src/modules/validation-rules/utils/getFieldDeletionConfirmationSubtitle.ts
 msgid "Type \"yes\" to confirm."
-msgstr ""
+msgstr "Унесите \"yes\" да потврдите."
 
 #. js-lingui-id: XhqvGG
 #: src/modules/validation-rules/components/SettingsValidationRuleExpressionEditor.tsx
@@ -30952,7 +30952,7 @@ msgstr "Није било могуће приступити регистру п�
 #. js-lingui-id: LCtrdC
 #: src/modules/validation-rules/utils/getFieldRemovalValidationRulesWarning.ts
 msgid "We couldn't check which validation rules use this field. This may also deactivate them."
-msgstr ""
+msgstr "Нисмо могли да проверимо која правила валидације користе ово поље. Ово их такође може деактивирати."
 
 #. js-lingui-id: h4KC4F
 #: src/modules/settings/billing/components/AddPaymentMethodForm.tsx
@@ -31984,7 +31984,7 @@ msgstr "Данас ће вам бити наплаћено ${priceDisplay} по 
 #. js-lingui-id: He3wTg
 #: src/modules/validation-rules/utils/getFieldDeletionConfirmationSubtitle.ts
 msgid "You'll need to edit any deactivated rule before turning it back on."
-msgstr ""
+msgstr "Мораћете да измените свако деактивирано правило пре него што га поново укључите."
 
 #. js-lingui-id: Cl+hUj
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx

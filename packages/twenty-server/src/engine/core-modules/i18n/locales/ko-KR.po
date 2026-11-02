@@ -1357,18 +1357,18 @@ msgstr "응용 프로그램"
 #. js-lingui-id: DI3ExZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Application \"{applicationName}\" cannot be assigned a role"
-msgstr ""
+msgstr "애플리케이션 \"{applicationName}\"에 역할을 할당할 수 없습니다"
 
 #. js-lingui-id: UtDk/w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Application \"{applicationName}\" cannot be assigned a role: only installed applications can"
-msgstr ""
+msgstr "애플리케이션 \"{applicationName}\"에 역할을 할당할 수 없습니다. 설치된 애플리케이션에만 할당할 수 있습니다"
 
 #. js-lingui-id: zmQlIf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Application already has a role assigned"
-msgstr ""
+msgstr "애플리케이션에 이미 역할이 할당되어 있습니다"
 
 #. js-lingui-id: 1WWVFC
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -9874,12 +9874,12 @@ msgstr "이 양식의 값만 변경할 수 있습니다."
 #. js-lingui-id: soFgCh
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Only the workspace can assign roles to applications"
-msgstr ""
+msgstr "워크스페이스만 애플리케이션에 역할을 할당할 수 있습니다"
 
 #. js-lingui-id: IPv2FN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Only the workspace custom application can assign roles to applications"
-msgstr ""
+msgstr "워크스페이스 사용자 지정 애플리케이션만 애플리케이션에 역할을 할당할 수 있습니다"
 
 #. js-lingui-id: 9rFxst
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11658,7 +11658,7 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to applications"
-msgstr ""
+msgstr "역할 \"{roleLabel}\"은 애플리케이션에 할당할 수 없습니다."
 
 #. js-lingui-id: 9ZQkou
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11680,7 +11680,7 @@ msgstr "역할 \"{roleLabel}\"을 할당할 수 없습니다: 사용자 지정 �
 #. js-lingui-id: Xl64Bj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Role \"{roleLabel}\" must be owned by the workspace custom application to be assigned to an application"
-msgstr ""
+msgstr "역할 \"{roleLabel}\"을 애플리케이션에 할당하려면 워크스페이스 사용자 지정 애플리케이션이 해당 역할을 소유해야 합니다"
 
 #. js-lingui-id: ViBevc
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
@@ -11783,7 +11783,7 @@ msgstr "역할 대상에 식별자가 누락되었습니다."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, webhookUniversalIdentifier, or targetApplicationUniversalIdentifier"
-msgstr ""
+msgstr "역할 대상에는 apiKeyId, userWorkspaceId, agentUniversalIdentifier, webhookUniversalIdentifier 또는 targetApplicationUniversalIdentifier 중 정확히 하나가 있어야 합니다"
 
 #. js-lingui-id: oNYUjk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
@@ -11964,7 +11964,7 @@ msgstr "샘플 레코드가 100KB를 초과합니다."
 #. js-lingui-id: P79LWT
 #: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
 msgid "Sample records must include every selected field."
-msgstr ""
+msgstr "샘플 레코드에는 선택한 모든 필드가 포함되어야 합니다."
 
 #. js-lingui-id: 0ovywa
 #: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
@@ -13168,7 +13168,7 @@ msgstr "Tarball 업로드를 찾을 수 없습니다."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Target application not found"
-msgstr ""
+msgstr "대상 애플리케이션을 찾을 수 없음"
 
 #. js-lingui-id: DkjT6k
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts

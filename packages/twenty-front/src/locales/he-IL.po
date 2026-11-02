@@ -7063,7 +7063,7 @@ msgstr "חבר לקוחות MCP נוספים באמצעות קישורי התק�
 #. js-lingui-id: vPCRNy
 #: src/pages/settings/ai/components/SettingsAiMcpSection.tsx
 msgid "Connect AI assistants like Claude or Cursor to your workspace via the Model Context Protocol"
-msgstr ""
+msgstr "חבר עוזרי AI כמו Claude או Cursor לסביבת העבודה שלך באמצעות Model Context Protocol"
 
 #. js-lingui-id: TA7R1S
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -9006,7 +9006,7 @@ msgstr "השבת"
 #. js-lingui-id: ILJMvx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Deactivate {fieldLabel} field?"
-msgstr ""
+msgstr "לבטל את הפעלת השדה {fieldLabel}?"
 
 #. js-lingui-id: mMIGcw
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
@@ -17386,7 +17386,7 @@ msgstr "שרת MCP"
 #. js-lingui-id: 8CWirf
 #: src/pages/settings/ai/components/SettingsAiMcpSection.tsx
 msgid "MCP Server"
-msgstr ""
+msgstr "שרת MCP"
 
 #. js-lingui-id: 8qgfac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -25450,7 +25450,7 @@ msgstr "הגדר העברה מכתובת המקור לכתובת יעד זו."
 #. js-lingui-id: dq5Wx1
 #: src/pages/settings/ai/components/SettingsAiMcpSection.tsx
 msgid "Set up MCP"
-msgstr ""
+msgstr "הגדרת MCP"
 
 #. js-lingui-id: RNxRBn
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
@@ -28229,12 +28229,12 @@ msgstr "השבוע"
 #. js-lingui-id: S9wb8X
 #: src/modules/validation-rules/utils/getFieldRemovalValidationRulesWarning.ts
 msgid "This will also deactivate the validation rule {validationRuleNames}."
-msgstr ""
+msgstr "פעולה זו תבטל גם את הפעלת כלל האימות {validationRuleNames}."
 
 #. js-lingui-id: nEFDDt
 #: src/modules/validation-rules/utils/getFieldRemovalValidationRulesWarning.ts
 msgid "This will also deactivate these validation rules: {validationRuleNames}."
-msgstr ""
+msgstr "פעולה זו תבטל גם את הפעלת כללי האימות הבאים: {validationRuleNames}."
 
 #. js-lingui-id: DF2voz
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
@@ -28266,7 +28266,7 @@ msgstr "פעולה זו תעדכן {contextStoreNumberOfSelectedRecords} רשו�
 #. js-lingui-id: j4VddB
 #: src/modules/validation-rules/utils/getFieldDeletionConfirmationSubtitle.ts
 msgid "This will permanently delete the field and all its data from {objectLabel}."
-msgstr ""
+msgstr "פעולה זו תמחק לצמיתות את השדה ואת כל הנתונים שלו מתוך {objectLabel}."
 
 #. js-lingui-id: L85ZX9
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -29066,7 +29066,7 @@ msgstr "הקלד/י '/' עבור פקודות, '@' עבור אזכורים"
 #. js-lingui-id: uerxa/
 #: src/modules/validation-rules/utils/getFieldDeletionConfirmationSubtitle.ts
 msgid "Type \"yes\" to confirm."
-msgstr ""
+msgstr "הקלד \"yes\" כדי לאשר."
 
 #. js-lingui-id: XhqvGG
 #: src/modules/validation-rules/components/SettingsValidationRuleExpressionEditor.tsx
@@ -30952,7 +30952,7 @@ msgstr "לא הצלחנו ליצור קשר עם רישום החבילות כד�
 #. js-lingui-id: LCtrdC
 #: src/modules/validation-rules/utils/getFieldRemovalValidationRulesWarning.ts
 msgid "We couldn't check which validation rules use this field. This may also deactivate them."
-msgstr ""
+msgstr "לא הצלחנו לבדוק אילו כללי אימות משתמשים בשדה זה. פעולה זו עשויה גם להשבית אותם."
 
 #. js-lingui-id: h4KC4F
 #: src/modules/settings/billing/components/AddPaymentMethodForm.tsx
@@ -31984,7 +31984,7 @@ msgstr "תחויב ${priceDisplay} למשתמש היום, ולאחר מכן בכ
 #. js-lingui-id: He3wTg
 #: src/modules/validation-rules/utils/getFieldDeletionConfirmationSubtitle.ts
 msgid "You'll need to edit any deactivated rule before turning it back on."
-msgstr ""
+msgstr "יהיה עליך לערוך כל כלל שהושבת לפני שתפעיל אותו מחדש."
 
 #. js-lingui-id: Cl+hUj
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx

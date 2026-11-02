@@ -7063,7 +7063,7 @@ msgstr "Kết nối thêm các máy khách MCP bằng liên kết cài đặt ho
 #. js-lingui-id: vPCRNy
 #: src/pages/settings/ai/components/SettingsAiMcpSection.tsx
 msgid "Connect AI assistants like Claude or Cursor to your workspace via the Model Context Protocol"
-msgstr ""
+msgstr "Kết nối các trợ lý AI như Claude hoặc Cursor với không gian làm việc của bạn thông qua Model Context Protocol"
 
 #. js-lingui-id: TA7R1S
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -9006,7 +9006,7 @@ msgstr "Hủy kích hoạt"
 #. js-lingui-id: ILJMvx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Deactivate {fieldLabel} field?"
-msgstr ""
+msgstr "Vô hiệu hóa trường {fieldLabel}?"
 
 #. js-lingui-id: mMIGcw
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
@@ -17386,7 +17386,7 @@ msgstr "Máy chủ MCP"
 #. js-lingui-id: 8CWirf
 #: src/pages/settings/ai/components/SettingsAiMcpSection.tsx
 msgid "MCP Server"
-msgstr ""
+msgstr "Máy chủ MCP"
 
 #. js-lingui-id: 8qgfac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -25450,7 +25450,7 @@ msgstr "Thiết lập chuyển tiếp từ địa chỉ nguồn đến địa ch
 #. js-lingui-id: dq5Wx1
 #: src/pages/settings/ai/components/SettingsAiMcpSection.tsx
 msgid "Set up MCP"
-msgstr ""
+msgstr "Thiết lập MCP"
 
 #. js-lingui-id: RNxRBn
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
@@ -28229,12 +28229,12 @@ msgstr "Tuần này"
 #. js-lingui-id: S9wb8X
 #: src/modules/validation-rules/utils/getFieldRemovalValidationRulesWarning.ts
 msgid "This will also deactivate the validation rule {validationRuleNames}."
-msgstr ""
+msgstr "Thao tác này cũng sẽ vô hiệu hóa quy tắc xác thực {validationRuleNames}."
 
 #. js-lingui-id: nEFDDt
 #: src/modules/validation-rules/utils/getFieldRemovalValidationRulesWarning.ts
 msgid "This will also deactivate these validation rules: {validationRuleNames}."
-msgstr ""
+msgstr "Thao tác này cũng sẽ vô hiệu hóa các quy tắc xác thực sau: {validationRuleNames}."
 
 #. js-lingui-id: DF2voz
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
@@ -28266,7 +28266,7 @@ msgstr "Thao tác này sẽ sửa đổi {contextStoreNumberOfSelectedRecords} b
 #. js-lingui-id: j4VddB
 #: src/modules/validation-rules/utils/getFieldDeletionConfirmationSubtitle.ts
 msgid "This will permanently delete the field and all its data from {objectLabel}."
-msgstr ""
+msgstr "Thao tác này sẽ xóa vĩnh viễn trường và toàn bộ dữ liệu của nó khỏi {objectLabel}."
 
 #. js-lingui-id: L85ZX9
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -29066,7 +29066,7 @@ msgstr "Nhập '/' để dùng lệnh, '@' để nhắc đến"
 #. js-lingui-id: uerxa/
 #: src/modules/validation-rules/utils/getFieldDeletionConfirmationSubtitle.ts
 msgid "Type \"yes\" to confirm."
-msgstr ""
+msgstr "Nhập \"yes\" để xác nhận."
 
 #. js-lingui-id: XhqvGG
 #: src/modules/validation-rules/components/SettingsValidationRuleExpressionEditor.tsx
@@ -30952,7 +30952,7 @@ msgstr "Chúng tôi không thể truy cập vào registry gói để xác minh n
 #. js-lingui-id: LCtrdC
 #: src/modules/validation-rules/utils/getFieldRemovalValidationRulesWarning.ts
 msgid "We couldn't check which validation rules use this field. This may also deactivate them."
-msgstr ""
+msgstr "Chúng tôi không thể kiểm tra những quy tắc xác thực nào sử dụng trường này. Thao tác này cũng có thể vô hiệu hóa chúng."
 
 #. js-lingui-id: h4KC4F
 #: src/modules/settings/billing/components/AddPaymentMethodForm.tsx
@@ -31984,7 +31984,7 @@ msgstr "Hôm nay, bạn sẽ bị tính phí ${priceDisplay} cho mỗi người 
 #. js-lingui-id: He3wTg
 #: src/modules/validation-rules/utils/getFieldDeletionConfirmationSubtitle.ts
 msgid "You'll need to edit any deactivated rule before turning it back on."
-msgstr ""
+msgstr "Bạn sẽ cần chỉnh sửa mọi quy tắc đã bị vô hiệu hóa trước khi bật lại chúng."
 
 #. js-lingui-id: Cl+hUj
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx

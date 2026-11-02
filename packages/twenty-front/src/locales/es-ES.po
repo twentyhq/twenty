@@ -7063,7 +7063,7 @@ msgstr "Conecta clientes MCP adicionales usando enlaces de instalación o la doc
 #. js-lingui-id: vPCRNy
 #: src/pages/settings/ai/components/SettingsAiMcpSection.tsx
 msgid "Connect AI assistants like Claude or Cursor to your workspace via the Model Context Protocol"
-msgstr ""
+msgstr "Conecta asistentes de IA como Claude o Cursor a tu espacio de trabajo mediante el Model Context Protocol"
 
 #. js-lingui-id: TA7R1S
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -9006,7 +9006,7 @@ msgstr "Desactivar"
 #. js-lingui-id: ILJMvx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 msgid "Deactivate {fieldLabel} field?"
-msgstr ""
+msgstr "¿Desactivar el campo {fieldLabel}?"
 
 #. js-lingui-id: mMIGcw
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
@@ -17386,7 +17386,7 @@ msgstr "Servidor MCP"
 #. js-lingui-id: 8CWirf
 #: src/pages/settings/ai/components/SettingsAiMcpSection.tsx
 msgid "MCP Server"
-msgstr ""
+msgstr "Servidor MCP"
 
 #. js-lingui-id: 8qgfac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
@@ -25450,7 +25450,7 @@ msgstr "Configura el reenvío desde la dirección de origen a este destino."
 #. js-lingui-id: dq5Wx1
 #: src/pages/settings/ai/components/SettingsAiMcpSection.tsx
 msgid "Set up MCP"
-msgstr ""
+msgstr "Configurar MCP"
 
 #. js-lingui-id: RNxRBn
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
@@ -28231,12 +28231,12 @@ msgstr "Esta semana"
 #. js-lingui-id: S9wb8X
 #: src/modules/validation-rules/utils/getFieldRemovalValidationRulesWarning.ts
 msgid "This will also deactivate the validation rule {validationRuleNames}."
-msgstr ""
+msgstr "Esto también desactivará la regla de validación {validationRuleNames}."
 
 #. js-lingui-id: nEFDDt
 #: src/modules/validation-rules/utils/getFieldRemovalValidationRulesWarning.ts
 msgid "This will also deactivate these validation rules: {validationRuleNames}."
-msgstr ""
+msgstr "Esto también desactivará estas reglas de validación: {validationRuleNames}."
 
 #. js-lingui-id: DF2voz
 #: src/modules/side-panel/pages/page-layout/components/RegularTabSettingsContent.tsx
@@ -28268,7 +28268,7 @@ msgstr "Esto modificará {contextStoreNumberOfSelectedRecords} registros. Esta a
 #. js-lingui-id: j4VddB
 #: src/modules/validation-rules/utils/getFieldDeletionConfirmationSubtitle.ts
 msgid "This will permanently delete the field and all its data from {objectLabel}."
-msgstr ""
+msgstr "Esto eliminará permanentemente el campo y todos sus datos de {objectLabel}."
 
 #. js-lingui-id: L85ZX9
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
@@ -29068,7 +29068,7 @@ msgstr "Escribe \"/\" para comandos, \"@\" para menciones"
 #. js-lingui-id: uerxa/
 #: src/modules/validation-rules/utils/getFieldDeletionConfirmationSubtitle.ts
 msgid "Type \"yes\" to confirm."
-msgstr ""
+msgstr "Escribe \"yes\" para confirmar."
 
 #. js-lingui-id: XhqvGG
 #: src/modules/validation-rules/components/SettingsValidationRuleExpressionEditor.tsx
@@ -30954,7 +30954,7 @@ msgstr "No pudimos contactar con el registro de paquetes para verificar la proce
 #. js-lingui-id: LCtrdC
 #: src/modules/validation-rules/utils/getFieldRemovalValidationRulesWarning.ts
 msgid "We couldn't check which validation rules use this field. This may also deactivate them."
-msgstr ""
+msgstr "No pudimos comprobar qué reglas de validación usan este campo. Esto también puede desactivarlas."
 
 #. js-lingui-id: h4KC4F
 #: src/modules/settings/billing/components/AddPaymentMethodForm.tsx
@@ -31986,7 +31986,7 @@ msgstr "Se te cobrará ${priceDisplay} por usuario hoy y, después, cada año."
 #. js-lingui-id: He3wTg
 #: src/modules/validation-rules/utils/getFieldDeletionConfirmationSubtitle.ts
 msgid "You'll need to edit any deactivated rule before turning it back on."
-msgstr ""
+msgstr "Deberás editar cualquier regla desactivada antes de volver a activarla."
 
 #. js-lingui-id: Cl+hUj
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx

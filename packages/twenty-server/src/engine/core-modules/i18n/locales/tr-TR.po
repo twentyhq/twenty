@@ -1357,18 +1357,18 @@ msgstr "Uygulama"
 #. js-lingui-id: DI3ExZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Application \"{applicationName}\" cannot be assigned a role"
-msgstr ""
+msgstr "\"{applicationName}\" uygulamasına rol atanamaz"
 
 #. js-lingui-id: UtDk/w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Application \"{applicationName}\" cannot be assigned a role: only installed applications can"
-msgstr ""
+msgstr "\"{applicationName}\" uygulamasına rol atanamaz: yalnızca yüklü uygulamalara rol atanabilir"
 
 #. js-lingui-id: zmQlIf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Application already has a role assigned"
-msgstr ""
+msgstr "Uygulamaya zaten bir rol atanmış"
 
 #. js-lingui-id: 1WWVFC
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -9874,12 +9874,12 @@ msgstr "Yalnızca bu formun değerleri değiştirilebilir."
 #. js-lingui-id: soFgCh
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Only the workspace can assign roles to applications"
-msgstr ""
+msgstr "Uygulamalara yalnızca çalışma alanı rol atayabilir"
 
 #. js-lingui-id: IPv2FN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Only the workspace custom application can assign roles to applications"
-msgstr ""
+msgstr "Uygulamalara yalnızca çalışma alanı özel uygulaması rol atayabilir"
 
 #. js-lingui-id: 9rFxst
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11658,7 +11658,7 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to applications"
-msgstr ""
+msgstr "\"{roleLabel}\" rolü uygulamalara atanamaz"
 
 #. js-lingui-id: 9ZQkou
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11680,7 +11680,7 @@ msgstr "\"{roleLabel}\" rolü atanamaz: özel roller için Organization planı g
 #. js-lingui-id: Xl64Bj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Role \"{roleLabel}\" must be owned by the workspace custom application to be assigned to an application"
-msgstr ""
+msgstr "\"{roleLabel}\" rolünün bir uygulamaya atanabilmesi için çalışma alanı özel uygulamasına ait olması gerekir"
 
 #. js-lingui-id: ViBevc
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
@@ -11783,7 +11783,7 @@ msgstr "Rol hedefinde tanımlayıcı eksik."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, webhookUniversalIdentifier, or targetApplicationUniversalIdentifier"
-msgstr ""
+msgstr "Rol hedefinde apiKeyId, userWorkspaceId, agentUniversalIdentifier, webhookUniversalIdentifier veya targetApplicationUniversalIdentifier öğelerinden tam olarak biri olmalıdır"
 
 #. js-lingui-id: oNYUjk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
@@ -11964,7 +11964,7 @@ msgstr "Örnek kayıtlar 100 KB'ı aşıyor."
 #. js-lingui-id: P79LWT
 #: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
 msgid "Sample records must include every selected field."
-msgstr ""
+msgstr "Örnek kayıtlar, seçilen her alanı içermelidir."
 
 #. js-lingui-id: 0ovywa
 #: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
@@ -13168,7 +13168,7 @@ msgstr "Tarball yüklemesi bulunamadı."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Target application not found"
-msgstr ""
+msgstr "Hedef uygulama bulunamadı"
 
 #. js-lingui-id: DkjT6k
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts

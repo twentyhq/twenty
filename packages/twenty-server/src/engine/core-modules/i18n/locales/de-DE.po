@@ -1357,18 +1357,18 @@ msgstr "Anwendung"
 #. js-lingui-id: DI3ExZ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Application \"{applicationName}\" cannot be assigned a role"
-msgstr ""
+msgstr "Der Anwendung \"{applicationName}\" kann keine Rolle zugewiesen werden."
 
 #. js-lingui-id: UtDk/w
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Application \"{applicationName}\" cannot be assigned a role: only installed applications can"
-msgstr ""
+msgstr "Der Anwendung \"{applicationName}\" kann keine Rolle zugewiesen werden: Nur installierten Anwendungen kann"
 
 #. js-lingui-id: zmQlIf
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Application already has a role assigned"
-msgstr ""
+msgstr "Der Anwendung ist bereits eine Rolle zugewiesen"
 
 #. js-lingui-id: 1WWVFC
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -9874,12 +9874,12 @@ msgstr "Nur die Werte dieses Formulars können geändert werden."
 #. js-lingui-id: soFgCh
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Only the workspace can assign roles to applications"
-msgstr ""
+msgstr "Nur der Arbeitsbereich kann Anwendungen Rollen zuweisen"
 
 #. js-lingui-id: IPv2FN
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Only the workspace custom application can assign roles to applications"
-msgstr ""
+msgstr "Nur die benutzerdefinierte Anwendung des Arbeitsbereichs kann Anwendungen Rollen zuweisen"
 
 #. js-lingui-id: 9rFxst
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11658,7 +11658,7 @@ msgstr ""
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned to applications"
-msgstr ""
+msgstr "Die Rolle \"{roleLabel}\" kann Anwendungen nicht zugewiesen werden"
 
 #. js-lingui-id: 9ZQkou
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
@@ -11680,7 +11680,7 @@ msgstr "Die Rolle \"{roleLabel}\" kann nicht zugewiesen werden: Benutzerdefinier
 #. js-lingui-id: Xl64Bj
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Role \"{roleLabel}\" must be owned by the workspace custom application to be assigned to an application"
-msgstr ""
+msgstr "Die Rolle \"{roleLabel}\" muss der benutzerdefinierten Anwendung des Arbeitsbereichs gehören, um einer Anwendung zugewiesen werden zu können"
 
 #. js-lingui-id: ViBevc
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
@@ -11783,7 +11783,7 @@ msgstr "Dem Rollenziel fehlt ein Identifikator."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, webhookUniversalIdentifier, or targetApplicationUniversalIdentifier"
-msgstr ""
+msgstr "Das Rollenziel muss genau eines der folgenden Felder haben: apiKeyId, userWorkspaceId, agentUniversalIdentifier, webhookUniversalIdentifier oder targetApplicationUniversalIdentifier"
 
 #. js-lingui-id: oNYUjk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
@@ -11964,7 +11964,7 @@ msgstr "Beispieldatensätze überschreiten 100 KB."
 #. js-lingui-id: P79LWT
 #: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
 msgid "Sample records must include every selected field."
-msgstr ""
+msgstr "Beispieldatensätze müssen jedes ausgewählte Feld enthalten."
 
 #. js-lingui-id: 0ovywa
 #: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
@@ -13168,7 +13168,7 @@ msgstr "Tarball-Upload nicht gefunden."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-application-target.util.ts
 msgid "Target application not found"
-msgstr ""
+msgstr "Zielanwendung nicht gefunden"
 
 #. js-lingui-id: DkjT6k
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-navigation-menu-item-validator.service.ts
