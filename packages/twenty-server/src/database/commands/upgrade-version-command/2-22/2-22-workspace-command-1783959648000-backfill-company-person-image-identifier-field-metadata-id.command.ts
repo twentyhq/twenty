@@ -142,6 +142,7 @@ export class BackfillCompanyPersonImageIdentifierFieldMetadataIdCommand extends 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             objectMetadata: {
               flatEntityToCreate: [],

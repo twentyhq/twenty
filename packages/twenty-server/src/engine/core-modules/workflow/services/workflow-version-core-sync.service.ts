@@ -155,7 +155,7 @@ export class WorkflowVersionCoreSyncService {
         { workspaceId },
       );
 
-    const { flatWorkflowVersionMaps } =
+    let { flatWorkflowVersionMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         { workspaceId, flatMapsKeys: ['flatWorkflowVersionMaps'] },
       );
@@ -169,6 +169,28 @@ export class WorkflowVersionCoreSyncService {
         })
       ).map(({ id }) => id),
     );
+
+    if (
+      coreRows.some(
+        ({ id }) =>
+          persistedCoreVersionIds.has(id) &&
+          !isDefined(
+            findFlatEntityByIdInFlatEntityMaps({
+              flatEntityId: id,
+              flatEntityMaps: flatWorkflowVersionMaps,
+            }),
+          ),
+      )
+    ) {
+      await this.flatEntityMapsCacheService.invalidateFlatEntityMaps({
+        workspaceId,
+        flatMapsKeys: ['flatWorkflowVersionMaps'],
+      });
+      ({ flatWorkflowVersionMaps } =
+        await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+          { workspaceId, flatMapsKeys: ['flatWorkflowVersionMaps'] },
+        ));
+    }
 
     const timestamp = new Date().toISOString();
     const flatVersionsToCreate: (UniversalFlatWorkflowVersion & {

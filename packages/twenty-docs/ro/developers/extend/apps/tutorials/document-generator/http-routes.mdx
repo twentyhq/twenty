@@ -3,6 +3,12 @@ title: 3. Rute HTTP
 description: Declanșați funcția de HTTP și redați documentele ca pagini web.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Prezentare generală
+
 Același gestionar poate răspunde și la solicitările HTTP. Vom adăuga două rute:
 
 * a **POST** final apeluri interfață pentru a genera un document, și
@@ -70,13 +76,19 @@ import { CoreApiClient } from 'twenty-client-sdk/core';
 import { documentHtmlPage } from 'src/utils/render-document';
 
 const htmlResponse = (html: string, status = 200): Response =>
-  new Response(html, { status, headers: { 'Content-Type': 'text/html; charset=utf-8' } });
+  new Response(html, {
+    status,
+    headers: { 'Content-Type': 'text/html; charset=utf-8' },
+  });
 
 const handler = async (event: RoutePayload): Promise<Response> => {
   const documentId = event.queryStringParameters?.id;
 
   if (!documentId) {
-    return htmlResponse(documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'), 400);
+    return htmlResponse(
+      documentHtmlPage('Missing document id', 'Provide ?id=<documentId>.'),
+      400,
+    );
   }
 
   // Filtered list query so an unknown id renders a clean 404 page instead of throwing.
@@ -89,10 +101,18 @@ const handler = async (event: RoutePayload): Promise<Response> => {
 
   const document = documents?.edges?.[0]?.node;
   if (!document?.id) {
-    return htmlResponse(documentHtmlPage('Document not found', `No document with id ${documentId}.`), 404);
+    return htmlResponse(
+      documentHtmlPage(
+        'Document not found',
+        `No document with id ${documentId}.`,
+      ),
+      404,
+    );
   }
 
-  return htmlResponse(documentHtmlPage(document.name ?? 'Document', document.content ?? ''));
+  return htmlResponse(
+    documentHtmlPage(document.name ?? 'Document', document.content ?? ''),
+  );
 };
 
 export default defineLogicFunction({
@@ -114,8 +134,8 @@ sanitizat) şi îl introduce într-o curată, pagina printabilă care afișează
 
 ## Încearcă-l
 
-Cu un șablon și o Persoană în spațiul de lucru, sunați ruta (apucați un token de la
-**Setări → API-uri & Webhooks**):
+Cu un șablon și o Persoană în spațiul tău de lucru, apelează ruta (obține un token din
+**Setări → Dezvoltatori → API**):
 
 ```bash filename="Terminal"
 curl -X POST http://localhost:2020/s/documents/generate \
@@ -135,14 +155,17 @@ http://localhost:2020/s/documents/view?id=<documentId>
 </Frame>
 
 <Tip>
-De asemenea, poți viziona jurnalele unei funcții în timp ce testezi cu
-`yarn douăzeci dev:function:logs`, sau să o invoci direct cu
-`yarn douăzeci dev:function:exec`.
+  De asemenea, poți transmite în flux jurnalele unei funcții în timp ce testezi cu `twenty app logs` sau o poți invoca direct cu `twenty app exec`.
 </Tip>
 
 **După acest pas:** aplicația poate genera documente prin HTTP și le poate servi ca
 pagini web. Acum hai să îl facem utilizabil fără 'curl'.
 
-<Card title="Următorul: construirea interfeței →" icon="layout-columns" href="/ro/developers/extend/apps/tutorials/document-generator/building-the-ui">
-  Vizualizări, navigare, o comandă și o componentă frontală.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ro/developers/extend/apps/tutorials/document-generator/building-the-ui" img="/images/user-guide/halftone/card-page-tutorial-ui.svg">
+  <CardTitle>Următorul: construirea UI →</CardTitle>
+  vizualizări, navigare, o comandă şi o componentă frontală.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="card-page-tutorial-http" />

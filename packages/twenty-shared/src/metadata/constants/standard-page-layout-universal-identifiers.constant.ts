@@ -39,6 +39,16 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
       },
     },
   },
+  workspaceMemberRecordPage: buildStandardObjectRecordPageLayout({
+    objectUniversalIdentifier:
+      STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.workspaceMember,
+    tabs: {
+      home: {
+        title: 'Home',
+        widgets: { fields: 'Fields' },
+      },
+    },
+  }),
   attachmentRecordPage: buildStandardObjectRecordPageLayout({
     objectUniversalIdentifier: STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.attachment,
     tabs: {

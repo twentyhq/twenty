@@ -1,12 +1,15 @@
 ---
 title: Docker Compose
+description: Rulează douăzeci în producţie cu Docker Compose.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
 
 <Warning>
 Containerele Docker sunt destinate găzduirii în producție sau auto-găzduirii. Pentru a contribui, consultați [Configurarea locală](/ro/developers/contribute/capabilities/local-setup).
 </Warning>
-
-## Prezentare generală
 
 Acest ghid oferă instrucțiuni pas cu pas pentru a instala și configura aplicația Twenty folosind Docker Compose. Scopul este de a face procesul direct și de a preveni capcanele comune care ar putea deteriora configurarea dvs.
 
@@ -27,14 +30,22 @@ Instalați cea mai recentă versiune stabilă a Twenty cu o singură comandă:
 bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
 ```
 
-Pentru a instala o versiune sau ramură specifică:
+Pentru a instala o versiune specifică:
 
 ```bash
-VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+VERSION=v2.38.1 bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
 ```
 
-* Înlocuiți x.y.z cu numărul versiunii dorite.
-* Înlocuiți branch-name cu numele ramurii pe care doriți să o instalați.
+* `VERSION` trebuie să fie o etichetă de lansare completă publicată pe [Docker Hub](https://hub.docker.com/r/twentycrm/twenty/tags), cum ar fi `v2.38.1`. Aliasurile precum `v2` sau `latest` nu sunt acceptate.
+* Fișierul `docker-compose.yml` corespunzător este preluat din eticheta git `twenty/<version>`, așadar versiunile lansate înaintea acestor etichete (v2.9.0 și versiunile mai vechi) nu pot fi instalate cu scriptul.
+
+Pentru a prelua în schimb fișierele de configurare dintr-o ramură, de exemplu pentru a testa modificări nelansate:
+
+```bash
+BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+* Înlocuiți branch-name cu ramura din care să preluați `docker-compose.yml` și `.env.example`. Imaginea folosește în continuare implicit cea mai recentă versiune, cu excepția cazului în care este setată și `VERSION`.
 
 ## Opțiunea 2: Pași manuali
 
@@ -72,11 +83,19 @@ Urmați acești pași pentru o configurare manuală.
 
 4. **Setați Parola pentru Postgres**
 
-   Actualizați valoarea `PG_DATABASE_PASSWORD` în fișierul .env cu o parolă puternică fără caractere speciale.
+   Actualizați valoarea `PG_DATABASE_PASSWORD` în fișierul .env cu o parolă puternică fără caractere speciale. Parola este inserată necodificată în URL-ul de conexiune Postgres, astfel încât caractere precum `@`, `/`, `#` sau `%` întrerup șirul de conexiune. Generați unul cu:
+
+   ```bash
+   openssl rand -hex 32
+   ```
 
    ```ini
    PG_DATABASE_PASSWORD=my_strong_password
    ```
+
+<Note>
+Variabilele pe care `docker-compose.yml` le transmite fără o valoare implicită `:-`, precum `SERVER_URL` și variabilele `STORAGE_S3_*`, ajung la server ca un șir gol atunci când sunt goale sau lipsesc din `.env`, iar serverul tratează un șir gol ca pe o valoare configurată, nu ca pe una nesetată. Mențineți `SERVER_URL` setată și, când `STORAGE_TYPE=S_3`, setați fiecare variabilă `STORAGE_S3_*` necesară: un `STORAGE_S3_NAME` gol întrerupe fiecare încărcare. Variabilele cu o valoare implicită în `docker-compose.yml`, precum părțile `PG_DATABASE_*` și `REDIS_URL`, revin la acea valoare implicită atunci când sunt goale sau lipsesc.
+</Note>
 
 ### Pasul 2: Obțineți Fișierul Docker Compose
 
@@ -125,6 +144,8 @@ SSL (HTTPS) este necesar pentru funcționarea corespunzătoare a anumitor funcț
 De exemplu, API-ul pentru clipboard ar putea necesita un context securizat - unele funcții precum butoanele de copiere din aplicație ar putea să nu funcționeze fără HTTPS activat.
 
 Recomandăm cu tărie configurarea Twenty din spatele unui proxy revers cu terminare SSL pentru securitate și funcționalitate optimă.
+
+<Tip>Înainte de a expune Twenty pe internet, citiți [Securizarea instanței dvs.](/ro/developers/self-host/capabilities/security). Majoritatea echipelor pot păstra aplicația privată și pot deschide doar câteva căi.</Tip>
 
 #### Configurarea `SERVER_URL`
 
@@ -259,3 +280,5 @@ Dacă întâmpinați vreo problemă, verificați [Depanare](/ro/developers/self-
 <Tip>
   Preferiți să nu rulați și să nu întrețineți Twenty chiar dumneavoastră? [Găsiți un partener Twenty certificat pentru găzduire](https://twenty.com/partners/list?categories=HOSTING\&ref=docs-docker-compose) care să vă implementeze, găzduiască și gestioneze instanța de la un capăt la altul. *(Sau contactați echipa noastră: [contact@twenty.com](mailto:contact@twenty.com).)*
 </Tip>
+
+<PageBanner illustration="dev-self-host" />

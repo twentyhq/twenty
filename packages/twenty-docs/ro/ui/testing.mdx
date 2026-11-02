@@ -1,0 +1,157 @@
+---
+title: Instrumente auxiliare Storybook
+description: Prezentați previzualizări ale componentelor și cataloage de variante cu twenty-ui/testing.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import ComponentStorybookLayoutReference from '/snippets/ui/generated/testing/component-storybook-layout.mdx';
+import GroupedCatalogReference from '/snippets/ui/generated/testing/grouped-catalog.mdx';
+
+## Prezentare generală
+
+`twenty-ui/testing` expune decoratori Storybook, ajutoare pentru aspectul previzualizării și suprascrieri ale interogărilor media. Configurați stilurile și un [ThemeProvider](/ro/ui/theming) în previzualizarea Storybook înainte de a reda componente tematice.
+
+## Roluri pentru scenarii
+
+Începeți fiecare ghid de componente cu un scenariu `Display` care prezintă un exemplu reprezentativ și utilizabil. Continuați cu codul de utilizare care reproduce previzualizarea folosind importuri publice. Componentele compuse își demonstrează împreună părțile. Furnizorii și ajutoarele de accesibilitate își demonstrează efectul în context.
+
+Adăugați un `Catalog` atunci când o comparație etichetată ajută cititorii să aleagă dintre opțiunile vizuale. Grupați separat variantele, dimensiunile, culorile și stările; folosiți o matrice numai atunci când este utilă compararea simultană a două dimensiuni. O componentă simplă poate utiliza un exemplu alternativ. Dialogurile, meniurile și alte componente interactive necesită de obicei exemple specifice pentru fiecare workflow.
+
+Păstrați acoperirea completă cu capturi de ecran în scenarii `VisualRegression` separate, inclusiv teme întunecate și matrici de variante. Etichetați acele scenarii cu `!autodocs` și păstrați-le în afara ghidurilor de componente.
+
+Denumiți celelalte scenarii după ceea ce demonstrează, cum ar fi `Controlled`, `WithValidation` sau `MultipleSelection`. Păstrați verificările de interacțiune în scenarii separate cu funcții `play`. Afișajul și celelalte previzualizări din documentație rămân utilizabile de către cititor fără acțiuni automatizate.
+
+## ComponentDecorator
+
+`ComponentDecorator` încadrează un story în `ComponentStorybookLayout`. Setați `parameters.container.width` și `parameters.container.height` în pixeli. De asemenea, citește argumentele `inverted` și `accent` ale story-ului pentru a alege un fundal opțional.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { ComponentDecorator } from 'twenty-ui/testing';
+
+const meta = {
+  component: Button,
+  decorators: [ComponentDecorator],
+  parameters: { container: { width: 240, height: 100 } },
+};
+
+export default meta;
+
+export const Display = { args: { children: 'Save changes' } };
+```
+
+## Catalog grupat
+
+`GroupedCatalog` oferă cataloagelor curatoriate o structură comună pentru titluri, rânduri care se încadrează și spațiere. Fiecare grup are un `label` și o matrice `examples`. Fiecare exemplu are nevoie de un `label` unic în cadrul grupului său; poate conține orice alte date utilizate de `renderExample`.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+import { GroupedCatalog } from 'twenty-ui/testing';
+
+const groups = [
+  {
+    label: 'Variants',
+    examples: [
+      { label: 'Solid', variant: 'solid' as const },
+      { label: 'Outline', variant: 'outline' as const },
+    ],
+  },
+];
+
+export const ButtonCatalog = () => (
+  <GroupedCatalog
+    groups={groups}
+    renderExample={({ label, variant }) => (
+      <>
+        <Text>{label}</Text>
+        <Button variant={variant}>Save changes</Button>
+      </>
+    )}
+  />
+);
+```
+
+<GroupedCatalogReference />
+
+## CatalogDecorator
+
+`CatalogDecorator` redă combinații de până la patru dimensiuni din `parameters.catalog.dimensions`. Fiecare dimensiune are un `name`, `values`, o funcție de mapare `props(value)` și un formatator opțional `labels(value)`. Funcția de mapare returnează proprietățile pentru acea celulă. `parameters.catalog.options.elementContainer` acceptă `width`, `style` și `className`.
+
+```tsx
+import { Button, type ButtonVariant } from 'twenty-ui/primitives/input';
+import { CatalogDecorator } from 'twenty-ui/testing';
+
+const meta = { component: Button };
+export default meta;
+
+export const VisualRegression = {
+  tags: ['!autodocs'],
+  args: { children: 'Save changes' },
+  decorators: [CatalogDecorator],
+  parameters: {
+    catalog: {
+      dimensions: [
+        {
+          name: 'variant',
+          values: ['outline', 'solid', 'ghost'],
+          props: (variant: ButtonVariant) => ({ variant }),
+        },
+      ],
+    },
+  },
+};
+```
+
+## ComponentStorybookLayout
+
+Utilizați aspectul direct atunci când compuneți o previzualizare în afara unui decorator. Acceptă un element copil.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { ComponentStorybookLayout } from 'twenty-ui/testing';
+
+export const ButtonPreview = () => (
+  <ComponentStorybookLayout width={240} height={100}>
+    <Button>Save changes</Button>
+  </ComponentStorybookLayout>
+);
+```
+
+<ComponentStorybookLayoutReference />
+
+## Suprascrieri ale interogărilor media
+
+Utilizează `overrideMediaQueryMatches` în `beforeEach` al unui story pentru a forța rezultatele hookurilor responsive. Returnează funcția sa de curățare pentru a restaura `window.matchMedia` după story:
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { overrideMediaQueryMatches } from 'twenty-ui/testing';
+import { MOBILE_MEDIA_QUERY, useIsMobile } from 'twenty-ui/utilities';
+
+const ResponsiveAction = () => {
+  const isMobile = useIsMobile();
+
+  return <Button fullWidth={isMobile}>Save changes</Button>;
+};
+
+const meta = { component: ResponsiveAction };
+export default meta;
+
+export const Mobile = {
+  beforeEach: () => overrideMediaQueryMatches({ [MOBILE_MEDIA_QUERY]: true }),
+};
+```
+
+Interogările omise din suprascriere își păstrează comportamentul nativ. Suprascrie separat `TOUCH_DEVICE_MEDIA_QUERY` atunci când un exemplu depinde de introducerea tactilă. Aceste suprascrieri controlează rezultatele `matchMedia`; utilizează un viewport Storybook pentru a modifica interogările media CSS și lățimea previzualizării.
+
+## Previzualizări ale documentației
+
+Story-urile încorporate în documentație trebuie să fie de prezentare și să nu aibă o funcție `play`. Păstrați testele de interacțiune în story-uri separate. Partajați explicit `args`, `render`, `decorators` și `parameters` atunci când este necesar, în loc să extindeți un story de interacțiune într-o previzualizare. Verificarea încorporărilor în documentație respinge story-urile marcate cu eticheta `play-fn` a Storybook, inclusiv funcțiile play moștenite.
+
+Prima încorporare din fiecare ghid de componente trebuie să facă referire la un scenariu exportat ca `Display`. Oferiți fiecărei încorporări un titlu descriptiv pentru iframe-ul său și o înălțime suficientă pentru a afișa exemplul. Previzualizarea comună oferă file pentru tema deschisă și întunecată, precum și un link către Storybook, unde cititorii pot utiliza controale pentru a explora proprietățile.
+
+Rulați `npx nx check:ui-stories twenty-docs` pentru a verifica afișajul necesar, titlurile previzualizărilor, referințele și regulile de prezentare. Rulați `npx nx check:ui twenty-docs` pentru a valida referințele API generate și a verifica tipurile exemplelor care pot fi copiate.
+
+<PageBanner illustration="card-page-testing" />

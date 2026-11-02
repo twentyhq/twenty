@@ -61,6 +61,7 @@ export class MoveMessageCampaignCommandsToCampaignFlagCommand extends Provisione
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           workspaceId,
           applicationUniversalIdentifier:

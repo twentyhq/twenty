@@ -3,7 +3,10 @@ title: Быстрый старт
 description: Запустите Twenty и начните работу менее чем за 5 минут — в облаке или на собственном сервере.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Регистрация
 
@@ -56,17 +59,23 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Следующие шаги
 
-<CardGroup cols={2}>
-  <Card title="Изучите интерфейс" icon="layout-columns" href="/ru/getting-started/core-concepts/layout">
-    Навигация, представления, командное меню, боковая панель.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ru/getting-started/core-concepts/layout" img="/images/user-guide/halftone/layout-window-v1.svg">
+    <CardTitle>Изучите макет</CardTitle>
+    Боковая панель, представления, меню команд, дополнительная панель.
   </Card>
-  <Card title="Создавайте рабочие процессы" icon="bolt" href="/ru/user-guide/workflows/overview">
+  <Card href="/ru/user-guide/workflows/overview" img="/images/user-guide/halftone/workflows-belt-v1.svg">
+    <CardTitle>Создавайте рабочие процессы</CardTitle>
     Автоматизируйте свои бизнес-процессы.
   </Card>
-  <Card title="Создавайте представления" icon="table" href="/ru/user-guide/layout/overview">
+  <Card href="/ru/user-guide/views-pipelines/overview" img="/images/documentation/section-overview-icons-v1/views-pipelines.svg">
+    <CardTitle>Создавайте представления</CardTitle>
     Таблица, канбан, календарь — фильтруйте и сортируйте свои данные.
   </Card>
-  <Card title="Изучите API" icon="plug" href="/ru/developers/extend/api">
-    REST и GraphQL с отдельной схемой для каждого арендатора.
+  <Card href="/ru/developers/extend/api" img="/images/documentation/banner-icons-v2/dev-api.svg">
+    <CardTitle>Изучите API</CardTitle>
+    REST и GraphQL со схемой для каждого арендатора.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="getting-started-quickstart" />

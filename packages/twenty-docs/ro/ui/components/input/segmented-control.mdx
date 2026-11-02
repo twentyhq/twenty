@@ -1,0 +1,105 @@
+---
+title: Control segmentat
+description: Alegeți o valoare dintr-un grup compact de opțiuni cu etichete sau pictograme.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import SegmentedControlReference from '/snippets/ui/generated/components/input/segmented-control.mdx';
+
+## Prezentare generală
+
+`SegmentedControl` este o presetare alcătuită din [Radio](/ro/ui/primitives/input/radio) și [RadioGroup](/ro/ui/primitives/input/radio-group), cu opțiuni alăturate. Utilizați-l pentru o alegere scurtă, reciproc exclusivă. Pentru navigarea între panouri de conținut, utilizați [Tabs](/ro/ui/primitives/navigation/tabs).
+
+<StoryEmbed storyId="components-input-segmentedcontrol--display" title="Exemplu SegmentControl" height={110} />
+
+## Utilizare
+
+Furnizați un nume de grup accesibil folosind `aria-label` sau `aria-labelledby`. Fiecare opțiune necesită o valoare de tip șir unică în `value`. Selecția aparține grupului; opțiunile nu au o stare de bifare independentă.
+
+```tsx
+import { SegmentedControl } from 'twenty-ui/components/input';
+
+export const BillingPeriod = () => (
+  <SegmentedControl
+    aria-label="Billing period"
+    name="billingPeriod"
+    defaultValue="annual"
+    options={[
+      { label: 'Annual', value: 'annual' },
+      { label: 'Monthly', value: 'monthly' },
+    ]}
+  />
+);
+```
+
+`defaultValue` inițializează selecția. Grupul gestionează modificările ulterioare. Adăugați `onValueChange` dacă trebuie să le observați fără a controla valoarea.
+
+## Stare controlată
+
+```tsx
+import { useState } from 'react';
+import { SegmentedControl } from 'twenty-ui/components/input';
+
+export const BillingPeriod = () => {
+  const [period, setPeriod] = useState('annual');
+
+  return (
+    <SegmentedControl
+      aria-label="Billing period"
+      name="billingPeriod"
+      value={period}
+      onValueChange={setPeriod}
+      options={[
+        { label: 'Annual', value: 'annual' },
+        { label: 'Monthly', value: 'monthly' },
+      ]}
+    />
+  );
+};
+```
+
+Păstrați `value` în starea aplicației și actualizați-o în `onValueChange`. Nu combinați `value` și `defaultValue` și nu schimbați modurile de gestionare după montare.
+
+## Opțiuni de pictograme
+
+```tsx
+import { SegmentedControl } from 'twenty-ui/components/input';
+import { IconList, IconLayoutKanban } from 'twenty-ui/icon';
+
+export const RecordLayout = () => (
+  <SegmentedControl
+    aria-label="Record layout"
+    defaultValue="list"
+    itemWidth="content"
+    options={[
+      { value: 'list', startIcon: <IconList />, 'aria-label': 'List' },
+      {
+        value: 'kanban',
+        startIcon: <IconLayoutKanban />,
+        'aria-label': 'Kanban',
+      },
+    ]}
+  />
+);
+```
+
+O opțiune doar cu pictogramă necesită un `aria-label`. `startIcon` este decorativ și ascuns tehnologiei asistive. Opțiunile cu text vizibil utilizează `label` și pot oferi, de asemenea, `startIcon`. Setați `disabled` pentru o opțiune ca să împiedicați selectarea acesteia sau pentru grup ca să dezactivați fiecare opțiune.
+
+## Tastatură, formulare și direcție
+
+Tab intră în grup; tastele săgeată se deplasează între opțiunile activate și actualizează selecția. Acest lucru urmează comportamentul butoanelor radio. Grupurile de selectare din listele derulante mută focalizarea cu tastele săgeată și selectează la activare. `itemWidth="equal"` este implicit; utilizați `content` când etichetele ar trebui să determine lățimile. Setați `name` pentru a include valoarea selectată în trimiterea formularului nativ. Presetarea păstrează starea `required`, `readOnly` și disabled a RadioGroup, precum și integrarea cu formularele native. `onValueChange` primește valoarea selectată și detaliile evenimentului Base UI, inclusiv `reason` și `cancel()`.
+
+Pentru conținut de la dreapta la stânga, asociați [DirectionProvider](/ro/ui/primitives/layout/direction-provider) cu un atribut `dir` corespunzător. Furnizorul controlează interacțiunea direcțională; `dir` controlează aspectul documentului.
+
+## Compoziție și proprietăți native
+
+Proprietățile native, `className`, `style`, `render` și `ref` vizează `div`-ul grupului. Utilizați `render` pentru a compune acel grup cu un alt element; păstrați-i numele accesibil și semantica de grup de butoane radio. Opțiunile redau elemente `span` cu `role="radio"` și intrări radio native ascunse. Presetarea nu atribuie roluri de filă sau panou de filă. Pentru conținut radio personalizat, proprietăți native pentru fiecare opțiune sau o țintă de redare radio diferită, compuneți direct `Radio.Root` și `RadioGroup`.
+
+## Proprietăți
+
+<SegmentedControlReference />
+
+<PageBanner illustration="page-cover-switch" />

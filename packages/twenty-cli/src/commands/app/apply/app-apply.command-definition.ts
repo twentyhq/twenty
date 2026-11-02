@@ -11,8 +11,18 @@ export const APP_APPLY_COMMAND_DEFINITION: TargetCommandDefinition = {
         'App directory (default: the app containing the current folder)',
     },
     {
-      flags: '--no-delete',
+      flags: '--prune',
+      description:
+        'Delete remote entities missing from the app source (the default, except for the workspace custom application)',
+    },
+    {
+      flags: '--no-prune',
       description: 'Keep remote entities missing from the app source',
+    },
+    {
+      flags: '--no-delete',
+      description: 'Deprecated alias of --no-prune',
+      hidden: true,
     },
     {
       flags: '--create',
@@ -28,7 +38,8 @@ export const APP_APPLY_COMMAND_DEFINITION: TargetCommandDefinition = {
   examples: [
     'twenty app apply --remote dev',
     'twenty app apply --create --json',
-    'twenty app apply --no-delete',
+    'twenty app apply --no-prune',
+    'twenty app apply --prune',
   ],
   outputModes: ['human', 'json'],
   writes: true,

@@ -3,6 +3,11 @@ title: Panoramica
 description: Configura l'app stessa — la sua identità, le autorizzazioni predefinite e ciò che viene eseguito al momento dell'installazione.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Cosa copre il livello di configurazione
+
 Il **config layer** di un'app Twenty è ciò che descrive l'app *alla piattaforma* — la sua identità, le autorizzazioni che detiene e il codice che viene eseguito durante l'installazione o l'aggiornamento. Queste dichiarazioni non aggiungono nuove strutture di dati o comportamenti a runtime; dicono a Twenty *chi è l'app* e *come configurarla*.
 
 ```text
@@ -32,15 +37,18 @@ Il **config layer** di un'app Twenty è ciò che descrive l'app *alla piattaform
 
 ## In questa sezione
 
-<CardGroup cols={2}>
-  <Card title="Configurazione dell'applicazione" icon="rocket" href="/it/developers/extend/apps/config/application">
-    `defineApplication` — identità, ruolo predefinito, variabili, metadati del marketplace.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/it/developers/extend/apps/config/application" img="/images/user-guide/halftone/card-page-application-config.svg">
+    <CardTitle>Application Config</CardTitle>
+    `defineApplication` — identità, ruolo predefinito, variabili, metadati di mercato.
   </Card>
-  <Card title="Ruoli e permessi" icon="shield-half" href="/it/developers/extend/apps/config/roles">
+  <Card href="/it/developers/extend/apps/config/roles" img="/images/user-guide/halftone/card-page-roles.svg">
+    <CardTitle>Ruoli e autorizzazioni</CardTitle>
     `defineRole` — dichiara ciò che le funzioni logiche della tua app possono leggere e scrivere.
   </Card>
-  <Card title="Hook di installazione" icon="tool" href="/it/developers/extend/apps/config/install-hooks">
-    `definePreInstallLogicFunction`, `definePostInstallLogicFunction` e `defineUninstallLogicFunction` — esegui il backup dei dati, imposta i valori predefiniti, convalida gli aggiornamenti, pulisci al momento della rimozione.
+  <Card href="/it/developers/extend/apps/config/install-hooks" img="/images/user-guide/halftone/card-page-install-hooks.svg">
+    <CardTitle>Installa Hooks</CardTitle>
+    `definePreInstallLogicFunction`, `definePostInstallLogicFunction` e `defineUninstallLogicFunction` — backup dei dati, seed default, convalida aggiornamenti, pulizia alla rimozione.
   </Card>
 </CardGroup>
 
@@ -53,3 +61,5 @@ Il **config layer** di un'app Twenty è ciò che descrive l'app *alla piattaform
 <Note>
 Gli hook di installazione condividono il runtime delle [logic function](/it/developers/extend/apps/logic/logic-functions) — stessa firma dell'handler, stesse variabili d'ambiente, stesso client API tipizzato — ma sono dichiarati con le proprie funzioni `define` e vivono al di fuori del normale modello di trigger (HTTP, cron, eventi del database).
 </Note>
+
+<PageBanner illustration="section-apps-config" />

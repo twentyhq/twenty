@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export const GRANOLA_FOLDER_TREE_INDENT_PIXELS = 24;
 const ROW_HEIGHT_PIXELS = 28;

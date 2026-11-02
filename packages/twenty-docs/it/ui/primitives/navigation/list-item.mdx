@@ -1,0 +1,403 @@
+---
+title: ListItem
+description: Componi righe coerenti con icone, descrizioni, indicatori e azioni.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ListItemReference from '/snippets/ui/generated/navigation/list-item.mdx';
+
+## Panoramica
+
+`ListItem` fornisce il layout visivo condiviso dalle righe di elenchi e menu. Per impostazione predefinita, esegue il rendering di un `div` per i contenuti passivi. Usa [ListItemButton](/it/ui/components/navigation/list-item-button) per le normali righe di azione. Componi `ListItem` con un'ancora per la navigazione o con un elemento proprietario semantico personalizzato quando necessario. Utilizza [Dropdown](/it/ui/components/navigation/dropdown) o [Select](/it/ui/primitives/input/select) quando ti serve un contenitore completo per popup o selezioni.
+
+<StoryEmbed storyId="ui-navigation-listitem--display" title="Esempio di ListItem" height={100} />
+
+## Utilizzo
+
+```tsx
+import { IconBell } from 'twenty-ui/icon';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const NotificationRow = () => (
+  <ListItem startIcon={<IconBell />}>Notifications</ListItem>
+);
+```
+
+## Anatomia
+
+`ListItem` espone slot di contenuto tramite le props. Questi slot organizzano il contenuto all'interno di una riga; non sono componenti esportati separatamente.
+
+```text
+ListItem
+├── startIcon
+├── children
+├── description
+├── actions
+└── endIcon
+```
+
+| Slot                                  | Requisito                                      | Scopo                                                                                                            |
+| ------------------------------------- | ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| `children`                            | Obbligatorio per un'etichetta di riga visibile | Fornisce il testo principale.                                                                                    |
+| `startIcon`, `endIcon`                | Facoltativo                                    | Aggiunge icone, avatar, metadati o controlli indipendenti a entrambe le estremità.                               |
+| `description`                         | Facoltativo                                    | Aggiunge contenuto di supporto in linea, sotto l'etichetta o alla fine.                                          |
+| `azioni`                              | Facoltativo                                    | Aggiunge contenuto finale, ad esempio un'azione attivabile separatamente.                                        |
+| `indicator`, `shortcut`, `hasSubmenu` | Facoltativo                                    | Configura i contrassegni di selezione integrati, i suggerimenti per le scorciatoie e l'indicatore del sottomenu. |
+
+La riga fornisce il layout. `render` accetta un elemento o una callback che riceve props nativi e stato visivo. Distribuisci tali props sulla radice effettiva quando usi una callback. Gli attributi nativi, i gestori di eventi, `className`, `style` e `ref` raggiungono tale radice. Per una riga con pulsanti di azione indipendenti, mantieni la riga stessa non interattiva affinché tali pulsanti rimangano controlli separati.
+
+## Righe su più righe
+
+Imposta `descriptionPlacement="below"` per posizionare il contenuto di supporto sotto l'etichetta. Il titolo mantiene il comportamento di troncamento esistente e il contenuto di supporto va a capo in base alla larghezza disponibile. Il posizionamento predefinito `inline` e il posizionamento `end` mantengono il loro aspetto esistente.
+
+<StoryEmbed storyId="ui-navigation-listitem-multiline--display" title="Esempio di ListItem su più righe" height={150} />
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const PlanningRow = () => (
+  <ListItem
+    descriptionPlacement="below"
+    startIcon={<Avatar name="Alex Morgan" size="md" imageProps={{ alt: '' }} />}
+    description="Review the proposed timeline and confirm the next steps with the team."
+    endIcon={
+      <Text render={<span />} size="sm" color="secondary">
+        09:48
+      </Text>
+    }
+  >
+    Quarterly planning
+  </ListItem>
+);
+```
+
+Per anteprime più brevi, passa un componente [Text](/it/ui/primitives/typography/text) con `truncate` o `lineClamp` come `description`. Il contenuto personalizzato controlla il proprio layout e le proprie etichette accessibili.
+
+### Stati visivi indipendenti
+
+Tutto lo stato visivo appartiene al chiamante. `active` identifica la riga aperta o corrente senza selezionarla. `selected` rappresenta la selezione e `focused` rappresenta un'evidenziazione della navigazione tramite tastiera senza spostare il focus DOM. `active` applica lo sfondo della riga corrente. Imposta `selectionAppearance="accent"` per un riempimento accentato sulle righe selezionate, indipendentemente dalla posizione della descrizione. L'aspetto predefinito mantiene lo stile di selezione esistente basato su indicatori. `focused` applica lo sfondo evidenziato condiviso, incluso quando un proprietario lo usa per l'evidenziazione del puntatore. Il contorno visibile del focus segue l'effettivo focus della tastiera sulla radice o sui relativi controlli.
+
+Queste props non aggiungono stati accessibili. Fornisci `aria-current`, `aria-selected` o lo stato `checked` di un controllo al proprietario semantico appropriato. L'effettivo focus della tastiera mantiene anche il contorno nativo visibile del focus.
+
+### Controlli indipendenti
+
+Mantieni la radice `div` predefinita quando una riga contiene una vera casella di controllo o pulsanti di azione indipendenti. Usa `startIcon` per la casella di controllo e `actions` per i pulsanti. L'`indicator` decorativo non è necessario quando una vera casella di controllo mostra già la selezione.
+
+```tsx
+import { useState } from 'react';
+import { Button, Checkbox } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+type SelectablePlanningRowProps = {
+  active?: boolean;
+  disabled?: boolean;
+  onOpen: () => void;
+};
+
+export const SelectablePlanningRow = ({
+  active = false,
+  disabled = false,
+  onOpen,
+}: SelectablePlanningRowProps) => {
+  const [selected, setSelected] = useState(false);
+
+  return (
+    <ListItem
+      active={active}
+      selected={selected}
+      selectionAppearance="accent"
+      disabled={disabled}
+      descriptionPlacement="below"
+      description="Review the proposed timeline and confirm the next steps with the team."
+      startIcon={
+        <Checkbox
+          aria-label="Select quarterly planning"
+          checked={selected}
+          onCheckedChange={setSelected}
+          disabled={disabled}
+        />
+      }
+      actions={
+        <Button variant="ghost" size="sm" onClick={onOpen} disabled={disabled}>
+          Open
+        </Button>
+      }
+    >
+      Quarterly planning
+    </ListItem>
+  );
+};
+```
+
+La selezione e l'apertura sono interazioni separate. L'applicazione gestisce la propagazione degli eventi e qualsiasi attivazione delle righe o criterio relativo alla tastiera. `ListItem.disabled` modifica solo l'aspetto; passa `disabled` a ogni controllo reale per impedirne l'attivazione.
+
+Il comportamento esistente di visibilità delle azioni si applica alle righe su più righe: `actionsVisibility="hover"` mostra le azioni al passaggio del mouse o al focus all'interno della riga e le mantiene visibili sui dispositivi touch. Impostalo su `always` per azioni persistenti, incluso quando è aperto un popup gestito dal chiamante. Con larghezze delle righe pari o inferiori a 480px, le azioni su più righe vengono spostate sulla propria riga e vanno a capo secondo necessità.
+
+## Riga di azione
+
+Usa [ListItemButton](/it/ui/components/navigation/list-item-button) per abbinare lo stile della riga all'interazione nativa del pulsante. Passa `disabled` una volta per controllare sia l'aspetto sia l'attivazione.
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { IconCopy } from 'twenty-ui/icon';
+
+type DuplicateActionProps = {
+  onDuplicate: () => void;
+  disabled?: boolean;
+};
+
+export const DuplicateAction = ({
+  onDuplicate,
+  disabled = false,
+}: DuplicateActionProps) => (
+  <ListItemButton
+    disabled={disabled}
+    startIcon={<IconCopy />}
+    description="Create a copy"
+    onClick={onDuplicate}
+  >
+    Duplicate
+  </ListItemButton>
+);
+```
+
+Un proprietario di pulsante personalizzato può comunque comporre `ListItem` tramite `render`. Tale proprietario fornisce focus nativo, attivazione con Invio e Spazio e comportamento disabilitato. `ListItem.disabled` fornisce solo lo stile visivo corrispondente. `shortcut` visualizza suggerimenti; la tua applicazione registra le scorciatoie.
+
+<StoryEmbed storyId="ui-navigation-listitem--button-owner" title="Composizione di pulsante personalizzata" height={100} />
+
+## Navigazione e link espliciti
+
+Passa un'ancora tramite `render` quando l'intera riga effettua la navigazione. Inserisci gli attributi dell'ancora, inclusi `href`, `target` e `rel`, su tale elemento.
+
+```tsx
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const DocumentationLink = () => (
+  <ListItem render={<a href="https://twenty.com/developers" />}>
+    Typography documentation
+  </ListItem>
+);
+```
+
+<StoryEmbed storyId="ui-navigation-listitem--link-owner" title="Riga con link" height={100} />
+
+Le etichette stringa restano testo, incluse le stringhe con formato URL. ListItem non crea link. Per collegare una parte di una riga non interattiva, fornisci un'ancora come contenuto di proprietà del chiamante. Mantieni tale riga come `div` per evitare link o pulsanti annidati. Le etichette stringa mantengono il troncamento e il tooltip di overflow; il contenuto personalizzato può usare [OverflowingTextWithTooltip](/it/ui/primitives/typography/overflowing-text-with-tooltip) con un'ancora renderizzata esplicita.
+
+I link non hanno un attributo `disabled` nativo. Se una destinazione non è disponibile, il proprietario del link deve fornire la semantica appropriata, l'ordine di tabulazione e la politica di navigazione. Assegnargli lo stile solo con `ListItem.disabled` non impedisce la navigazione.
+
+## Proprietario dell'elemento popup
+
+Utilizza `Dropdown.ActionItem` o `Dropdown.OptionItem` all'interno del relativo contenitore popup. Queste parti compongono già il layout di ListItem ed espongono i relativi slot visivi. Il proprietario popup fornisce ruoli, focus, navigazione da tastiera, attivazione e comportamento disabilitato.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+
+type RecordActionsProps = { onDuplicate: () => void };
+
+export const RecordActions = ({ onDuplicate }: RecordActionsProps) => (
+  <Dropdown.Root type="menu">
+    <Dropdown.Trigger render={<Button>Record actions</Button>} />
+    <Dropdown.Content>
+      <Dropdown.ActionItem onClick={onDuplicate}>
+        Duplicate record
+      </Dropdown.ActionItem>
+      <Dropdown.ActionItem disabled>Unavailable action</Dropdown.ActionItem>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+<StoryEmbed storyId="ui-components-dropdown--display" title="Contenitore di elementi Dropdown" height={420} />
+
+## Politica degli eventi nativi
+
+ListItem inoltra oggetti e gestori di eventi nativi. I clic si propagano normalmente, inclusi i clic sui controlli di azione finali. Definisci qualsiasi confine intenzionale sul proprietario interattivo o sul gestore del chiamante.
+
+```tsx
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+type OpenRecordProps = { onOpen: () => void };
+
+export const OpenRecord = ({ onOpen }: OpenRecordProps) => (
+  <ListItem
+    render={<button type="button" />}
+    onClick={(event) => {
+      event.stopPropagation();
+      onOpen();
+    }}
+  >
+    Open record
+  </ListItem>
+);
+```
+
+Il chiamante gestisce inoltre qualsiasi politica `preventDefault()`, come impedire la navigazione di un link. Passare `onClick` non aggiunge un ruolo, non rende un `div` utilizzabile da tastiera né modifica la propagazione.
+
+## Trascinamento gestito dall'applicazione e navigazione dell'editor
+
+Componi righe riordinabili con `ListItem` all'interno dell'host di trascinamento della tua applicazione. Inserisci gli attributi e gli ascoltatori di trascinamento dell'host sulla relativa maniglia e passa la maniglia o l'impugnatura tramite `startIcon`. Mantieni controlli indipendenti di visibilità, modifica ed eliminazione in `actions`. L'host di trascinamento gestisce il riordinamento tramite puntatore e tastiera, il trascinamento disabilitato e le etichette accessibili della maniglia.
+
+Per i suggerimenti dell'editor, mantieni la listbox esistente dell'editor e il proprietario dell'opzione attiva. Esegui il rendering di ogni `ListItem` con `role="option"` e `aria-selected`, e usa `focused` per l'aspetto della riga attiva. L'editor gestisce la navigazione con le frecce e l'attivazione con Invio mentre lo stato attivo rimane nella superficie di modifica. Impedisci le modifiche dello stato attivo al pointer-down quando l'editor le richiede e gestisci la selezione tramite puntatore nel gestore di riga dell'applicazione.
+
+Per i suggerimenti in una pagina Dropdown, usa `Dropdown.OptionItem` o `Dropdown.ActionItem` affinché la pagina gestisca la navigazione e l'attivazione. Non aggiungere un secondo gestore per Invio o Spazio a un proprietario che si attiva già dalla tastiera.
+
+## Riga delle impostazioni
+
+Usa [SettingsRow](/it/ui/components/settings/settings-row) per una riga di interruttore con etichetta. Compone `ListItem` e `Switch`, gestisce la loro associazione accessibile e utilizza lo stato disabilitato dell'interruttore per l'aspetto della riga.
+
+## Indicatore di selezione
+
+```tsx
+import { useState } from 'react';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const ShowArchivedToggle = () => {
+  const [selected, setSelected] = useState(false);
+
+  return (
+    <ListItem
+      render={<button type="button" aria-pressed={selected} />}
+      selected={selected}
+      indicator="check"
+      onClick={() => setSelected(!selected)}
+    >
+      Show archived records
+    </ListItem>
+  );
+};
+```
+
+`active`, `selected`, `focused` e `disabled` controllano indipendentemente lo stile della riga. Non registrano azioni, non spostano il focus DOM, non aggiungono ruoli o stati accessibili e non sopprimono eventi. Gli indicatori `check` e `checkbox` sono decorativi; usa un vero [Checkbox](/it/ui/primitives/input/checkbox) per un controllo del modulo. Imposta `aria-pressed`, `aria-selected` o altre semantiche di stato sul proprietario che ne ha bisogno.
+
+## Righe del selettore.
+
+La selezione appartiene al componente padre. `ListItem` non ha uno stato di selezione non controllato: passa `selected` e aggiornalo da `onClick`. Usa `indicator="check"` per una singola scelta e `indicator="checkbox"` per scelte multiple. Entrambi gli indicatori sono decorativi; il proprietario interattivo gestisce l'attivazione.
+
+In una listbox esistente, passa `role="option"` e `aria-selected` e mantieni la gestione dello stato attivo e dei tasti freccia nella listbox. Per un widget di selezione completo, usa [Select](/it/ui/primitives/input/select). I pulsanti di selezione indipendenti possono usare `aria-pressed`, come in questi esempi.
+
+### Selezione singola
+
+Inserisci un [Avatar](/it/ui/primitives/data-display/avatar) in `startIcon` per identificare un record. Usa `description` per il testo di supporto e `descriptionPlacement="end"` per un valore finale.
+
+<StoryEmbed storyId="ui-navigation-listitem-picker--single-selection" title="Righe a selezione singola" height={170} />
+
+```tsx
+import { useState } from 'react';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const AssigneeButtons = () => {
+  const [assignee, setAssignee] = useState<string | null>(null);
+
+  return (
+    <div role="group" aria-label="Assignee">
+      {['Alex Morgan', 'Sam Taylor'].map((name) => (
+        <ListItem
+          key={name}
+          render={<button type="button" />}
+          aria-pressed={assignee === name}
+          selected={assignee === name}
+          indicator="check"
+          startIcon={<Avatar name={name} size="md" imageProps={{ alt: '' }} />}
+          onClick={() => setAssignee(name)}
+        >
+          {name}
+        </ListItem>
+      ))}
+    </div>
+  );
+};
+```
+
+### Selezione multipla
+
+Componi [Tag](/it/ui/primitives/data-display/tag) come contenuto della riga per i valori con tag oppure inserisci [ColorSample](/it/ui/primitives/data-display/color-sample) in `startIcon` per una scelta di colore. Una riga può contenere anche testo semplice o un avatar.
+
+<StoryEmbed storyId="ui-navigation-listitem-picker--multiple-selection" title="Righe a selezione multipla" height={170} />
+
+```tsx
+import { useState } from 'react';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const TeammateButtons = () => {
+  const [teammates, setTeammates] = useState<string[]>([]);
+
+  const toggleTeammate = (name: string) => {
+    setTeammates((current) =>
+      current.includes(name)
+        ? current.filter((teammate) => teammate !== name)
+        : [...current, name],
+    );
+  };
+
+  return (
+    <div role="group" aria-label="Teammates">
+      {['Alex Morgan', 'Sam Taylor'].map((name) => (
+        <ListItem
+          key={name}
+          render={<button type="button" />}
+          aria-pressed={teammates.includes(name)}
+          selected={teammates.includes(name)}
+          indicator="checkbox"
+          onClick={() => toggleTeammate(name)}
+        >
+          <Tag color="blue">{name}</Tag>
+        </ListItem>
+      ))}
+    </div>
+  );
+};
+```
+
+L'indicatore della casella di controllo non è un controllo del modulo e non invia un valore. Usa [Checkbox](/it/ui/primitives/input/checkbox) quando hai bisogno della partecipazione al modulo. Imposta `disabled` nativo sul pulsante renderizzato per impedire l'attivazione e rimuoverlo dall'ordine di tabulazione. Passa anche `ListItem.disabled` per il suo aspetto visivo.
+
+## Slot
+
+Usa `startIcon` e `endIcon` per icone o contenuti gestiti dal chiamante, `description` per il testo di supporto, `actions` per il contenuto finale e `hasSubmenu` per un indicatore di sottomenu. `descriptionPlacement` accetta `inline`, `end` o `below`. `color="danger"` applica lo stile a un'azione distruttiva. Evita di nidificare controlli interattivi all'interno di una riga resa come pulsante.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+type ContactRowProps = { onOpen: () => void };
+
+export const ContactRow = ({ onOpen }: ContactRowProps) => (
+  <ListItem
+    description="Account owner"
+    actions={
+      <Button
+        type="button"
+        aria-label="Open Alex Morgan's profile"
+        variant="ghost"
+        size="sm"
+        onClick={onOpen}
+      >
+        Open
+      </Button>
+    }
+  >
+    Alex Morgan
+  </ListItem>
+);
+```
+
+## Etichette
+
+Usa `shortcutJoinLabel` per personalizzare il testo tra i passaggi sequenziali delle scorciatoie. Per impostazione predefinita è `then`; una stringa vuota rimuove il testo di collegamento. La stessa prop è disponibile nelle parti degli elementi `Dropdown`.
+
+## Props
+
+Il riferimento viene generato dai tipi di componenti pubblici. Gli attributi e i gestori `div` nativi sono accettati, inclusi nomi accessibili ed eventi nativi. Inserisci gli attributi specifici del pulsante o dell'ancora sull'elemento fornito tramite `render`. Sia `ref` sia il ref dell'elemento renderizzato puntano alla radice DOM effettiva.
+
+<ListItemReference />
+
+Passa `shortcut={['Mod', 'Enter']}` per tasti simultanei o `shortcut={[['G'], ['P']]}` per pressioni successive. Consulta [Shortcut](/it/ui/primitives/typography/shortcut) per le combinazioni annidate e il formattatore di stringhe condiviso.
+
+<PageBanner illustration="section-apps-data" />

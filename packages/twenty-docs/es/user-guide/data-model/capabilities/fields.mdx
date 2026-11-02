@@ -3,6 +3,8 @@ title: Campos
 description: Comprenda el papel de los campos y cómo gestionarlos.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Acerca de los Campos
@@ -99,7 +101,7 @@ Si recibe un error al establecer la unicidad, verifique los valores duplicados e
 
 ## Índices (avanzado)
 
-Los índices de base de datos se gestionan automáticamente; crear índices propios rara vez es necesario y es fácil equivocarse. Con el modo avanzado activado, cada objeto tiene una sección de **Índices** en `Settings → Data Model → <object>` para los casos en los que sabes que necesitas uno.
+Los índices de base de datos se gestionan automáticamente; crear índices propios rara vez es necesario y es fácil equivocarse. En los casos en los que sepa que necesita uno, abra `Settings → Data Model → <object>`, vaya a la pestaña **Configuración** y haga clic en **Administrar índices** en la sección **Avanzado**.
 
 ## Mejores Prácticas de Configuración de Campos
 
@@ -120,3 +122,5 @@ Los índices de base de datos se gestionan automáticamente; crear índices prop
 ### Campos de Texto del Registro
 
 * **Cada objeto tiene un campo principal de visualización**: Este campo aparece en la columna más a la izquierda y representa el registro cuando se vincula a otros objetos. Debe ser un campo de texto. Por ejemplo, las Personas utilizan `Nombre` como el campo principal, por lo que cuando vincula una persona a una empresa, verá su nombre en la vista de la empresa.
+
+<PageBanner illustration="section-apps-data" />

@@ -1,0 +1,199 @@
+---
+title: Dialog
+description: Prezentați o sarcină concentrată deasupra paginii curente.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import DialogReference from '/snippets/ui/generated/surfaces/dialog.mdx';
+
+## Prezentare generală
+
+Utilizați `Dialog` pentru formulare, detalii și alte sarcini care se deschid deasupra paginii. Gestionează focalizarea, închiderea de la tastatură, clicurile în exterior și derularea. Utilizați [AlertDialog](/ro/ui/primitives/surfaces/alert-dialog) când utilizatorul trebuie să răspundă explicit la o decizie.
+
+Acest API este destinat pentru Twenty UI independent și aplicația-gazdă Twenty. Componentele Front trebuie să utilizeze [`openCommandConfirmationModal`](/ro/developers/extend/apps/layout/front-components#host-communication-api) din SDK în loc să redea direct `Dialog` sau `AlertDialog`. Dialogurile și ferestrele pop-up native ale browserului sunt, de asemenea, interzise în randatorul de componente Front.
+
+<StoryEmbed storyId="ui-surfaces-dialog--display" title="Exemplu de dialog" height={440} />
+
+## Utilizare
+
+### Stare necontrolată
+
+`Root` gestionează vizibilitatea în mod implicit. Setați `defaultOpen` pentru starea sa inițială. Declanșatoarele, controalele de închidere, Escape și clicurile în exterior actualizează acea stare.
+
+```tsx
+import { Button, Field, Input } from 'twenty-ui/primitives/input';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
+
+export const AccountDialog = () => (
+  <Dialog.Root defaultOpen={false}>
+    <Dialog.Trigger render={<Button>Edit account</Button>} />
+    <Dialog.Portal>
+      <Dialog.Backdrop />
+      <Dialog.Viewport>
+        <Dialog.Popup>
+          <Dialog.Header>
+            <Dialog.Title>Edit account</Dialog.Title>
+            <Dialog.Description>Update the account details.</Dialog.Description>
+          </Dialog.Header>
+          <Dialog.Body>
+            <Field.Root name="company">
+              <Field.Label>Company name</Field.Label>
+              <Input defaultValue="Acme" />
+            </Field.Root>
+          </Dialog.Body>
+          <Dialog.Footer>
+            <Dialog.Close render={<Button variant="outline">Close</Button>} />
+            <Dialog.Close render={<Button>Save</Button>} />
+          </Dialog.Footer>
+        </Dialog.Popup>
+      </Dialog.Viewport>
+    </Dialog.Portal>
+  </Dialog.Root>
+);
+```
+
+## Anatomie
+
+```text
+Dialog.Root
+├── Dialog.Trigger
+└── Dialog.Portal
+    ├── Dialog.Backdrop
+    └── Dialog.Viewport
+        └── Dialog.Popup
+            ├── Dialog.Header
+            │   ├── Dialog.Title
+            │   └── Dialog.Description
+            ├── Dialog.Body
+            └── Dialog.Footer
+                └── Dialog.Close
+```
+
+| Parte                      | Țintă nativă și ref                                                                                                  |
+| -------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `Root`                     | Coordonează vizibilitatea și comportamentul modal. Nu redă niciun nod DOM și nu acceptă atribute native sau ref DOM. |
+| `Declanșator`              | Un buton în mod implicit. Deschide dialogul și furnizează o țintă de restabilire a focalizării.                      |
+| `Portal`                   | Div-ul portalului. Gestionează containerul de destinație și dacă conținutul închis rămâne montat.                    |
+| `Backdrop`                 | Div-ul de fundal de sub fereastra pop-up. Opțional; omiteți-l când nu este necesar un fundal vizibil.                |
+| `Viewport`                 | Div-ul de poziționare din jurul ferestrei pop-up.                                                                    |
+| `Popup`                    | Div-ul dialogului. Gestionează conținutul, dimensiunea, țintele de focalizare și semantica dialogului.               |
+| `Titlu`                    | Un `h2` în mod implicit. Furnizează numele accesibil. Furnizați `aria-label` pentru `Popup` când îl omiteți.         |
+| `Description`              | Un paragraf în mod implicit. Asociază textul de suport cu dialogul.                                                  |
+| `Header`, `Body`, `Footer` | Div-uri opționale care aranjează titlurile, conținutul și acțiunile.                                                 |
+| `Închide`                  | Un buton în mod implicit. Furnizează o acțiune de închidere vizibilă, inclusiv pentru cititoarele de ecran tactile.  |
+
+Asamblați explicit `Portal`, `Backdrop`, `Viewport` și `Popup`. Fiecare parte DOM acceptă propriile atribute native, handlere, `className`, `style`, ref și compunerea `render`. Un ref vizează elementul redat al acelei părți. `Popup` nu creează un portal, un fundal sau un viewport.
+
+## Stare controlată
+
+Transmiteți `open` și `onOpenChange` când aplicația gestionează vizibilitatea. Callbackul primește starea solicitată și detaliile evenimentului Base UI, inclusiv `reason`, `event`, `trigger` și `cancel()`. Actualizați starea pentru a accepta o modificare sau apelați `eventDetails.cancel()` pentru a o respinge. `onOpenChangeComplete` se execută când se termină animația de deschidere sau închidere.
+
+```tsx
+import { useState } from 'react';
+import { Button, Field, Input } from 'twenty-ui/primitives/input';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
+
+export const AccountDialog = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Dialog.Root open={open} onOpenChange={setOpen}>
+      <Dialog.Trigger render={<Button>Edit account</Button>} />
+      <Dialog.Portal>
+        <Dialog.Backdrop />
+        <Dialog.Viewport>
+          <Dialog.Popup>
+            <Dialog.Header>
+              <Dialog.Title>Edit account</Dialog.Title>
+              <Dialog.Description>
+                Update the account details.
+              </Dialog.Description>
+            </Dialog.Header>
+            <Dialog.Body>
+              <Field.Root name="company">
+                <Field.Label>Company name</Field.Label>
+                <Input defaultValue="Acme" />
+              </Field.Root>
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Dialog.Close render={<Button variant="outline">Close</Button>} />
+              <Dialog.Close render={<Button>Save</Button>} />
+            </Dialog.Footer>
+          </Dialog.Popup>
+        </Dialog.Viewport>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+};
+```
+
+Pentru un formular asincron, mențineți dialogul deschis în timpul trimiterii. Închideți-l după reușită și afișați erorile în dialog.
+
+## Compoziție
+
+`Trigger` și `Close` acceptă `render` pentru compunerea cu `Button`, după cum se arată mai sus. Învelișurile personalizate trebuie să [redirecționeze props și refs furnizate](/ro/ui/primitives/overview#custom-components). Părțile DOM păstrează numele claselor, stilurile și contractele callbackului `render` dependente de stare ale Base UI. `Header`, `Body` și `Footer` își păstrează aspectul stilizat și compunerea div nativă.
+
+Includeți un alt `Dialog.Root` într-un popup pentru a deschide un al doilea dialog. Închiderea dialogului imbricat readuce focalizarea la declanșatorul său din cel părinte.
+
+Pentru a deschide un dialog din declanșatoare aflate în afara `Root`, creați o singură dată un handle cu `Dialog.createHandle\<TPayload>()` și transmiteți-l la `handle` atât pentru `Root`, cât și pentru fiecare `Trigger`. Valorile `payload` ale declanșatorului sunt disponibile în funcția de randare a lui `Root`. `Dialog.Handle` și tipul public `DialogHandle` expun contractul handle instalat:
+
+| Membru                     | Scop                                                                 |
+| -------------------------- | -------------------------------------------------------------------- |
+| `open(triggerId)`          | Deschide cu un declanșator corespunzător ca declanșator activ.       |
+| `open(null)`               | Deschide fără a asocia un declanșator.                               |
+| `openWithPayload(payload)` | Deschide cu o sarcină utilă tipizată și fără un declanșator asociat. |
+| `close()`                  | Solicită închiderea.                                                 |
+| `isOpen`                   | Indică dacă dialogul asociat este deschis.                           |
+
+Acțiunile imperative au efect numai cât timp Root-ul asociat este montat. `actionsRef` al Root-ului expune și `close()` și `unmount()` pentru controlul explicit al tranziției. Pentru a controla o animație externă de închidere, apelați `eventDetails.preventUnmountOnClose()` în `onOpenChange`, apoi apelați acțiunea `unmount()` când animația se termină.
+
+`Title` utilizează `Heading` și are implicit un `h2` cu text mare, culoare primară a textului, aliniere centrată și spațierea 4 sub acesta. Utilizați `level` pentru a schimba nivelul titlului independent de `size` sau `color` pentru a-i schimba culoarea textului. `className`, `style`, refs și `render` native sunt redirecționate către titlu. Păstrați un element de titlu când utilizați `render`. `Description` este centrată precum `Title`; AlertDialog le menține pe ambele aliniate la stânga.
+
+`Popup` nu are spațiere interioară. `Header`, `Body` și `Footer` asigură spațierea interioară, astfel încât conținutul plasat direct în `Popup` se află lipit de marginile sale.
+
+## Focalizare, derulare și închidere
+
+`Root.modal` controlează limita de interacțiune:
+
+| Valoare           | Focalizare                      | Derularea paginii și interacțiunea din exterior                    |
+| ----------------- | ------------------------------- | ------------------------------------------------------------------ |
+| `true` (implicit) | Captiv în interiorul dialogului | Derularea paginii și interacțiunea din exterior sunt blocate.      |
+| `"trap-focus"`    | Captată în dialog               | Derularea paginii și interacțiunea în exterior rămân disponibile.  |
+| `fals`            | Poate părăsi dialogul           | Derularea paginii și interacțiunea din exterior rămân disponibile. |
+
+Omiteți `Backdrop` când nu este necesar un fundal vizibil. Pentru un dialog nemodal al cărui viewport trebuie să permită trecerea evenimentelor de indicator către pagină, utilizați `\<Dialog.Viewport data-backdrop-hidden="true">`; Popup rămâne interactiv. Omiterea numai a fundalului vizual nu modifică `Root.modal`.
+
+Setați `Popup.initialFocus` sau `Popup.finalFocus` la un ref sau callback pentru a alege țintele de focalizare; `false` dezactivează această mutare automată a focalizării. Callbackurile de focalizare primesc tipul de interacțiune și păstrează comportamentul de returnare Base UI pentru boolean, element, null și undefined. Închiderea restabilește în mod normal focalizarea la declanșator sau la elementul focalizat anterior.
+
+`Root.disablePointerDismissal` împiedică clicurile în exterior să solicite închiderea. Pentru a preveni închiderea cu Escape, anulați modificarea `escape-key` în `onOpenChange`. Furnizați întotdeauna o modalitate vizibilă de a închide un dialog modal.
+
+## Dimensiuni și portaluri
+
+`Popup.size` acceptă `sm`, `compact`, `md`, `lg`, `xl` și `fullscreen`, iar valoarea implicită este `md`. Conținutul lung se derulează în popup. Lățimea este limitată la fereastra de vizualizare.
+
+Setați `Portal.container` pentru a alege o destinație:
+
+| Valoare                  | Rezoluție                                                                                                                                             |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Omis sau `undefined`     | Utilizează cel mai apropiat container de temă cu domeniu de aplicare. În lipsa acestuia, Base UI utilizează portalul părinte sau corpul documentului. |
+| Element sau `ShadowRoot` | Utilizează destinația explicită respectivă în locul domeniului temei.                                                                                 |
+| Ref                      | Base UI rezolvă elementul său curent. Un ref a cărui valoare curentă este null revine la portalul părinte sau la corpul documentului.                 |
+| `null`                   | Așteaptă fără montare. Furnizați o destinație într-o redare ulterioară pentru montare.                                                                |
+
+`Portal.keepMounted` păstrează conținutul și starea formularului când este închis. `Viewport` și `Popup` transferă direcția textului furnizată într-un container extern; propriile prop-uri explicite `dir` au prioritate. Fără un furnizor de direcție sau un `dir` explicit, acestea moștenesc direcția de la destinație. Consultați [tematizarea](/ro/ui/theming) și [DirectionProvider](/ro/ui/primitives/layout/direction-provider).
+
+Personalizați `Backdrop` și `Viewport` prin propriile prop-uri. Atributele native, handlerele, ref-urile și `render` ale acestora se aplică acelor elemente independent de Popup. `forceRender` al Backdrop-ului menține vizibil fundalul unui dialog imbricat atunci când este necesar. Starea de deschidere și de tranziție Base UI rămâne disponibilă pentru stilurile dependente de stare și callbackurile de redare.
+
+## Migrare
+
+Încapsulați conținutul existent `Dialog.Popup` în `Dialog.Portal` și `Dialog.Viewport` și adăugați un `Dialog.Backdrop` frate în Portal. Mutați `container` și `keepMounted` din Popup în Portal. Mutați fostele prop-uri `backdrop` în Backdrop; înlocuiți `backdrop={false}` prin omiterea Backdrop. Mutați `viewportProps` în Viewport, păstrând `data-backdrop-hidden="true"` când viewportul trebuie să permită trecerea evenimentelor de indicator externe. Păstrați `size`, `initialFocus`, `finalFocus`, atributele native ale ferestrei pop-up și ref-urile ferestrei pop-up în Popup. Prop-urile de asamblare Popup fuzionate sunt eliminate.
+
+Root, Trigger, Close, Title, Description, Header, Body, Footer și handle-urile existente își păstrează rolurile. Prop-urile părților publice, starea, acțiunile și tipurile de detalii ale evenimentelor sunt exportate din `twenty-ui/primitives/surfaces`.
+
+## Proprietăți
+
+<DialogReference />
+
+<PageBanner illustration="layout" />

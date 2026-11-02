@@ -47,4 +47,8 @@ export const CRUD_TOOL_OPERATION_VERBS: Record<
     loading: msg`Deleting {objectLabel}`,
     completed: msg`Deleted {objectLabel}`,
   },
+  merge_many: {
+    loading: msg`Merging {objectLabel}`,
+    completed: msg`Merged {objectLabel}`,
+  },
 };

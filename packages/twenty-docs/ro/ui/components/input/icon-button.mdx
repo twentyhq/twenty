@@ -1,0 +1,163 @@
+---
+title: IconButton
+description: Declanșați acțiuni cu butoane de pictograme accesibile.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import IconButtonReference from '/snippets/ui/generated/components/input/icon-button.mdx';
+
+## Prezentare generală
+
+`IconButton` compune [Buton](/ro/ui/primitives/input/button) cu o suprafață pătrată sau rotundă. Transmite pictograma ca element copil și furnizează un nume accesibil cu `aria-label` sau `aria-labelledby`. Conținutul pictogramei este decorativ și ascuns tehnologiilor asistive.
+
+<StoryEmbed storyId="ui-components-iconbutton--display" title="Buton cu pictogramă cu un nume accesibil" height={110} />
+
+## Utilizare
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconSearch } from 'twenty-ui/icon';
+
+export const SearchButton = () => (
+  <IconButton aria-label="Search">
+    <IconSearch />
+  </IconButton>
+);
+```
+
+Dimensiunile sunt `xs` (20px), `sm` (24px) și `md` (32px). Valorile implicite sunt `md`, `outline` și `neutral`. Variantele și culorile corespund cu Button. Utilizați `shape="round"` pentru un buton circular; forma implicită este `square`.
+
+## Opțiuni vizuale
+
+Comparați câte o opțiune vizuală pe rând. Folosiți exemplele cu tooltip denumit, cu elevație și grupate pentru compunere.
+
+<StoryEmbed storyId="ui-components-iconbutton--catalog" title="Variante, culori, dimensiuni, forme, elevație și stări ale butoanelor cu pictogramă" height={810} />
+
+## Nume accesibile
+
+Utilizează `aria-label` pentru un nume furnizat direct pe control. Când textul vizibil denumește deja acțiunea, utilizează în schimb `aria-labelledby` pentru a face referire la acesta. Este necesară cel puțin o proprietate de denumire.
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconSearch } from 'twenty-ui/icon';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const LabelledSearchButton = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <Text render={<span />} id="records-search-label">
+      Search records
+    </Text>
+    <IconButton aria-labelledby="records-search-label" tooltip="Find a record">
+      <IconSearch />
+    </IconButton>
+  </Text>
+);
+```
+
+<StoryEmbed title="Buton cu pictogramă denumit prin text vizibil" storyId="ui-components-iconbutton--labelled-by" height={140} />
+
+## Indiciu
+
+Adăugați `tooltip` pentru a afișa text la trecerea cursorului și la focalizarea cu tastatura. Păstrează `aria-label` sau `aria-labelledby` ca nume accesibil al acțiunii. Butoanele dezactivate și cele în încărcare păstrează indiciile la trecerea cursorului.
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconSearch } from 'twenty-ui/icon';
+
+export const SearchRecordsButton = () => (
+  <IconButton aria-label="Search" tooltip="Search records">
+    <IconSearch />
+  </IconButton>
+);
+```
+
+<StoryEmbed title="Buton cu pictogramă și indiciu" storyId="ui-components-iconbutton--tooltip-documentation" height={140} />
+
+Indiciul este poziționat implicit jos, cu o întârziere de 1000ms și un decalaj de 5px. Folosiți `tooltipPlace`, `tooltipDelay` și `tooltipOffset` pentru a-l ajusta. Omiterea `tooltip` afișează butonul direct.
+
+## Gestionarea stării
+
+Aplicația dvs. furnizează `loading` și `disabled`. Ambele împiedică activarea. Starea de încărcare păstrează dimensiunile pătrate și eticheta accesibilă. Butonul nu urmărește o valoare selectată și nu activează automat încărcarea după un clic. Focalizarea nativă cu tastatura urmează comportamentul browserului; folosiți `aria-pressed` atunci când aplicația dvs. gestionează o stare de comutare.
+
+## Acțiuni elevate
+
+Utilizați `elevated` pentru a adăuga o umbră și o estompare a fundalului. Butonul cu contur neutru implicit capătă, de asemenea, o suprafață cu bordură, cu culori corespunzătoare pentru pictogramă și interacțiune. Alte variante și culori semantice își păstrează paleta existentă.
+
+`elevated` are valoarea implicită `false`. Nu modifică poziționarea, vizibilitatea sau dimensiunea. Dimensiunea rămâne implicit `md` (32px); setați `size="sm"` pentru un control de 24px.
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconPlus } from 'twenty-ui/icon';
+
+export const AddWidgetButton = () => (
+  <IconButton elevated size="sm" aria-label="Add widget">
+    <IconPlus />
+  </IconButton>
+);
+```
+
+<StoryEmbed title="Acțiune cu pictogramă elevată" storyId="ui-components-iconbutton--elevated" height={100} />
+
+Omiteți `elevated` sau setați-l la `false` pentru a restabili aspectul standard. Butoanele elevate acceptă aceleași sfaturi contextuale, stări de încărcare, linkuri și interacțiuni cu tastatura.
+
+<StoryEmbed title="Acțiune cu pictogramă elevată cu sfat contextual" storyId="ui-components-iconbutton--elevated-tooltip" height={140} />
+
+Înlocuiți controalele `FloatingIconButton` existente cu `IconButton elevated`. Transmiteți pictograma ca elemente copil, utilizați `aria-label` nativ și mapați `small` la `sm` și `medium` la `md`. Furnizați `size="sm"` atunci când controlul anterior utiliza dimensiunea sa implicită. Focalizarea nativă și `aria-pressed` înlocuiesc focalizarea sintetică și indicatorii activi.
+
+`FloatingIconButtonGroup` este eliminat. Compuneți ButtonGroup cu IconButton pentru acțiuni grupate și păstrați orice suprafață flotantă partajată în aspectul dvs.
+
+## Acțiuni grupate
+
+```tsx
+import { ButtonGroup } from 'twenty-ui/primitives/input';
+import { IconButton } from 'twenty-ui/components/input';
+import { IconPlus, IconSearch } from 'twenty-ui/icon';
+
+export const RecordActions = () => (
+  <ButtonGroup
+    aria-label="Record actions"
+    size="sm"
+    variant="solid"
+    color="accent"
+  >
+    <IconButton
+      aria-label="Search records"
+      tooltip="Search records"
+      variant="outline"
+      color="neutral"
+    >
+      <IconSearch />
+    </IconButton>
+    <IconButton aria-label="Create record" tooltip="Create record">
+      <IconPlus />
+    </IconButton>
+  </ButtonGroup>
+);
+```
+
+[ButtonGroup](/ro/ui/primitives/input/button-group) furnizează valori implicite pentru dimensiune, variantă și culoare, plus colțuri adiacente. Proprietățile explicite ale elementelor copil au prioritate independent, inclusiv `size="xs"`. Butoanele individuale nu au nevoie de o proprietate de poziție.
+
+Păstrați butoanele atașate la aceeași dimensiune, astfel încât marginile lor să fie aliniate. Setați dimensiunea pentru grup și lăsați fiecare buton să o moștenească.
+
+<StoryEmbed storyId="ui-components-iconbutton--grouped-overrides" title="Aspectul butonului individual cu pictogramă într-un grup" height={140} />
+
+## Linkuri și formulare
+
+Fără un `render` personalizat, `href` redă o ancoră, cu excepția cazului în care `nativeButton` este explicit adevărat. Pentru o ancoră de navigare personalizată sau un link de router, setează `nativeButton={false}` și `role="link"`. Rendererul poate gestiona propria destinație fără un `href` pentru IconButton. Păstrează `nativeButton` ca adevărat pentru un buton nativ personalizat și utilizează fals pentru un element de acțiune nenativ. Proprietățile explicite nativeButton și role sunt păstrate. Linkurile dezactivate și cele în curs de încărcare nu se pot activa. Rutarea rămâne în aplicație.
+
+Atributele butoanelor native și ale ancorelor, gestionarii de evenimente, detaliile evenimentelor, referințele și compunerea render se transmit către Button. Referința primește elementul rădăcină efectiv. Compunerea Tooltip păstrează acea rădăcină și numele său accesibil. Valoarea implicită este `type="button"`; setați explicit `type="submit"` pentru trimiterea formularului.
+
+## Controale compacte și rotunde
+
+Utilizați `size="xs"` pentru un control de 20px și `shape="round"` pentru colțuri circulare. Controalele `RoundedIconButton` existente devin `IconButton` cu `shape="round"`, `variant="solid"` și `color="accent"`. Asociați dimensiunea lor veche `small` cu `xs` și dimensiunea `medium` cu `sm`. Furnizați elemente copil de tip pictogramă și un nume accesibil.
+
+<StoryEmbed storyId="ui-components-iconbutton--round-documentation" title="Butoane rotunde cu pictogramă, în dimensiuni compacte și obișnuite" height={140} />
+
+## Proprietăți
+
+<IconButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

@@ -3,6 +3,12 @@ title: ٢. إصدار الوثائق
 description: وظيفة منطقية واحدة معرّفة كأداة الذكاء الاصطناعي وعملية سير العمل.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## نظرة عامة
+
 الآن النواة الأساسية: [دالة المنطقية](/ar/developers/extend/apps/logic/logic-functions)
 التي تحمّل قالب وسجل، تملأ العناصر النائبة، وتحفظ وثيقة
 جديدة.
@@ -186,8 +192,9 @@ pdf-lib: العناوين الحقيقية، **الجريئة**/*italic*، تد�
 تضمين خط Unicode.
 </Note>
 
-ثم قم بتحميله وتخزين المرجع في السجل. مسارات 'uploadFile' بايت
-إلى حقل الملفات الذي تملكه التطبيق؛ و\`id' المعاد هو ما قمت بحفظه:
+ثم قم بتحميله وتخزين المرجع في السجل. `uploadFile` يرسل
+البايتات مباشرةً إلى تخزين الملفات ويرفقها بحقل الملفات المملوك لتطبيقك؛
+قيمة `id` المُعادة هي ما تحفظه:
 
 ```ts filename="src/logic-functions/handlers/generate-document-handler.ts"
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -197,12 +204,11 @@ const documentName = `${documentTemplate.name} — ${record.displayName}`;
 const bytes = await generateDocumentPdf(documentName, content);
 const fileName = 'proposal.pdf';
 
-const uploaded = await new MetadataApiClient().uploadFile(
-  Buffer.from(bytes),
-  fileName,
-  'application/pdf',
-  DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
-);
+const uploaded = await new MetadataApiClient().uploadFile({
+  fileBuffer: Buffer.from(bytes),
+  filename: fileName,
+  fieldMetadataUniversalIdentifier: DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+});
 
 await client.mutation({
   updateDocument: {
@@ -232,6 +238,11 @@ await client.mutation({
 **بعد هذه الخطوة:** كل مستند تم إنشاؤه لديه PDF حقيقي، قابل للتنزيل. ولكن
 لا يوجد ما يمكنه *استدعاء* المولّد من واجهة المستخدم بعد — ولأجل ذلك نحتاج إلى مسار HTTP.
 
-<Card title="التالي: طرق HTTP →" icon="world" href="/ar/developers/extend/apps/tutorials/document-generator/http-routes">
-  خدمة الوظيفة عبر HTTP وتقديم الوثائق كصفحات على الويب.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ar/developers/extend/apps/tutorials/document-generator/http-routes" img="/images/user-guide/halftone/card-page-tutorial-http.svg">
+  <CardTitle>التالي: مسارات HTTP →</CardTitle>
+  قدّم الدالة عبر HTTP واعرض المستندات كصفحات ويب.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="card-page-tutorial-documents" />

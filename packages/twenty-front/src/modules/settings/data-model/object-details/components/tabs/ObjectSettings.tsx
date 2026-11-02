@@ -4,15 +4,16 @@ import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMeta
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
-import { isShareableObjectMetadataItem } from '@/object-record/record-sharing/utils/isShareableObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
+import { SettingsObjectRelatedRecordPathsSection } from '@/related-record-paths/components/SettingsObjectRelatedRecordPathsSection';
+import { useHasRelatedRecordPathsEntitlement } from '@/related-record-paths/hooks/useHasRelatedRecordPathsEntitlement';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
-import { ObjectSharingReachPicker } from '@/settings/data-model/object-details/components/tabs/ObjectSharingReachPicker';
 import { SettingsObjectValidationRulesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import { OrganizationAdornment } from '@/settings/enterprise/components/OrganizationAdornment';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import {
   type SettingsDataModelObjectAboutFormValues,
   settingsDataModelObjectAboutFormSchema,
@@ -34,7 +35,10 @@ import { Section } from 'twenty-ui/components/layout';
 import { IconArchive, IconBolt, IconSearch, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type ObjectSettingsProps = {
@@ -105,9 +109,12 @@ export const ObjectSettings = ({
     FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
   );
   const hasValidationRulesEntitlement = useHasValidationRulesEntitlement();
-  const isRecordLevelSharingEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+  const isRelatedRecordPathsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
   );
+  const hasRolesPermission = useHasPermissionFlag(PermissionFlagType.ROLES);
+  const hasRelatedRecordPathsEntitlement =
+    useHasRelatedRecordPathsEntitlement();
 
   const handleDisable = async () => {
     const result = await updateOneObjectMetadataItem({
@@ -162,6 +169,29 @@ export const ObjectSettings = ({
           objectMetadataItem={objectMetadataItem}
         />
       </Section.Root>
+      {isRelatedRecordPathsEnabled &&
+        hasRolesPermission &&
+        !objectMetadataItem.isRemote && (
+          <Section.Root>
+            <Section.Header
+              title={t`Related records`}
+              description={t`Records reached through these relations follow access to ${objectLabel}.`}
+              actions={
+                <OrganizationAdornment
+                  tooltipContent={
+                    hasRelatedRecordPathsEntitlement
+                      ? undefined
+                      : t`Upgrade to Organization to change related records`
+                  }
+                />
+              }
+            />
+            <SettingsObjectRelatedRecordPathsSection
+              objectMetadataItem={objectMetadataItem}
+              isReadOnly={isDDLLocked || !hasRelatedRecordPathsEntitlement}
+            />
+          </Section.Root>
+        )}
       {isRecordCreationFormEnabled &&
         !objectMetadataItem.isRemote &&
         !objectMetadataItem.isSystem && (
@@ -183,19 +213,6 @@ export const ObjectSettings = ({
                 buttonTitle={t`Activate`}
               />
             )}
-          </Section.Root>
-        )}
-      {isRecordLevelSharingEnabled &&
-        isShareableObjectMetadataItem(objectMetadataItem) && (
-          <Section.Root>
-            <Section.Header
-              title={t`Record sharing`}
-              description={t`Who a record of ${objectLabel} can be shared with. Roles still decide what people see by default.`}
-            />
-            <ObjectSharingReachPicker
-              objectMetadataItem={objectMetadataItem}
-              isReadOnly={isReadOnly}
-            />
           </Section.Root>
         )}
       <Section.Root>

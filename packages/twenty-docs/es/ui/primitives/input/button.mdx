@@ -1,0 +1,269 @@
+---
+title: Botón
+description: Activa acciones o navega con botones estilizados.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ButtonReference from '/snippets/ui/generated/input/button.mdx';
+
+## Resumen
+
+Usa `Button` para una acción y proporciona su etiqueta visible como elementos secundarios. Usa [IconButton](/es/ui/components/input/icon-button) para controles de solo icono, con un nombre accesible de `aria-label` o `aria-labelledby`.
+
+Para valores predeterminados de diseño recurrentes, usa [MainButton](/es/ui/components/input/main-button)
+o [LightButton](/es/ui/components/input/light-button) de `twenty-ui/components`.
+Ambos comparten las props nativas, las refs, el estado y el comportamiento de representación de Button.
+
+<StoryEmbed title="Visualización del botón" storyId="ui-input-button-button--display" height={100} />
+
+## "Uso"
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+export const SaveChanges = () => <Button>Save changes</Button>;
+```
+
+## Apariencia
+
+Compare las variantes, los colores semánticos, los tamaños y los estados comunes por separado. Cada grupo cambia una opción y mantiene fijas las demás.
+
+<StoryEmbed storyId="ui-input-button-button--catalog" title="Apariencia del botón" height={630} />
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { IconPlus } from 'twenty-ui/icon';
+
+export const CreateRecord = () => (
+  <Button variant="solid" color="accent" size="sm" startIcon={<IconPlus />}>
+    Create record
+  </Button>
+);
+```
+
+Elige `solid`, `outline`, `soft`, `ghost` o `link` de forma independiente del color `neutral`, `accent`, `danger` o `success`. Los tamaños son `sm` y `md`; los valores predeterminados son `outline`, `neutral` y `md`. `fullWidth` ocupa el ancho disponible. `startIcon` y `endIcon` aceptan elementos y son decorativos. `elevated` añade una sombra y desenfoque de fondo. Los botones de contorno neutro también obtienen una superficie con borde y colores de texto e interacción coincidentes. Otras variantes y colores semánticos conservan su paleta existente. De forma predeterminada, es `false` y no cambia el tamaño ni la posición. `shortcut` muestra sugerencias de teclado en pantallas más grandes; vincula los atajos en tu aplicación.
+
+Use `color="inherit"` para los controles sobre una superficie de color. La etiqueta, los iconos, el indicador de carga y el borde de contorno siguen el color del texto circundante. Los rellenos de interacción usan negro translúcido. Los botones con contorno se asientan sobre una superficie transparente con un borde `currentColor` del 25% y usan rellenos negros del 10% y del 20% al pasar el cursor y al pulsar. Ghost usa rellenos negros transparentes, del 10% y del 20%; soft usa rellenos del 10%, del 20% y del 30%. Link permanece sin relleno.
+
+`inherit` admite `outline`, `ghost`, `soft` y `link`. Una combinación resuelta de `solid` e `inherit` genera un error de tiempo de ejecución, incluidos los valores predeterminados proporcionados por ButtonGroup o un contenedor. `MainButton` usa `solid` de forma predeterminada, así que proporcione una variante que no sea `solid` al heredar el color.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+export const SurfaceActions = () => (
+  <>
+    <Button color="inherit" variant="outline">
+      Save
+    </Button>
+    <Button color="inherit" variant="ghost">
+      Cancel
+    </Button>
+  </>
+);
+```
+
+`link` utiliza texto compacto sin borde ni fondo relleno. Sigue la altura de su contenido en ambos tamaños, con una fuente más pequeña y un relleno más estrecho. Su color neutro utiliza un texto más intenso al pasar el cursor. La apariencia no determina la semántica: utiliza `onClick` para las acciones y `href` para la navegación.
+
+`disabled` y `loading` impiden la activación. La carga mantiene la etiqueta accesible y comunica un estado de ocupado. De forma predeterminada, `loadingPosition="center"` oculta el contenido mientras conserva su espacio de diseño y centra el indicador giratorio. Establezca `loadingPosition` en `start` o `end` para mantener visibles los elementos secundarios y el icono opuesto mientras reemplaza el icono correspondiente por el indicador giratorio.
+
+Su aplicación controla el formato del progreso y la etiqueta traducida. Pase la frase de estado completa como elementos secundarios, por ejemplo, `Installing (42%)`.
+
+<StoryEmbed title="Carga del botón al final" storyId="ui-input-button-button--loading-at-end" height={100} />
+
+## Propiedad del estado
+
+`Button` activa una acción y no administra un valor seleccionado, por lo que no tiene un modo de selección controlado ni no controlado. Su prop nativa `value` proporciona datos de formulario, no estado de selección.
+
+Tu aplicación controla `loading` y `disabled`, cuyos valores predeterminados son `false`. Hacer clic en un botón no cambia estas props ni muestra automáticamente la carga mientras se ejecuta un controlador asíncrono. Pasa explícitamente el estado actual de la aplicación.
+
+```tsx
+import { useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+
+type SaveRecordProps = { onSave: () => Promise<void> };
+
+export const SaveRecord = ({ onSave }: SaveRecordProps) => {
+  const [loading, setLoading] = useState(false);
+  const [hasError, setHasError] = useState(false);
+
+  const handleSave = async () => {
+    setLoading(true);
+    setHasError(false);
+
+    try {
+      await onSave();
+    } catch {
+      setHasError(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <Button loading={loading} onClick={handleSave}>
+        Save record
+      </Button>
+      {hasError && <p role="alert">Unable to save the record. Try again.</p>}
+    </>
+  );
+};
+```
+
+La aplicación inicia y desactiva la carga alrededor de la operación de guardado. El botón impide la activación durante la carga y vuelve a estar disponible cuando finaliza la operación, incluso después de un error. `MainButton` y `LightButton` usan el mismo modelo de estado.
+
+## Activadores de ventanas emergentes
+
+Componga un activador de ventana emergente con `Button`, `LightButton` u otro contenedor de Button mediante `render`. El activador proporciona `data-popup-open`, por lo que el botón mantiene su fondo al pasar el cursor mientras la ventana emergente está abierta y usa su fondo activo al pasar el cursor o al presionarlo. Cada variante y color mantiene su propia paleta. Los fondos de los enlaces permanecen transparentes y los botones deshabilitados o en carga conservan su apariencia deshabilitada. Los botones con `aria-pressed="true"` conservan su estilo de alternancia existente. El estado emergente no establece `aria-pressed` ni representa un valor seleccionado.
+
+```tsx
+import { LightButton } from 'twenty-ui/components/input';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const DetailsPopup = () => (
+  <Popover.Root>
+    <Popover.Trigger render={<LightButton>Show details</LightButton>} />
+    <Popover.Portal>
+      <Popover.Positioner>
+        <Popover.Popup>
+          <Popover.Title>Details</Popover.Title>
+          <Popover.Description>
+            More information about this record.
+          </Popover.Description>
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
+  </Popover.Root>
+);
+```
+
+## Próximas Funcionalidades
+
+Tu aplicación controla la disponibilidad de la funcionalidad y su etiqueta. Compón un botón deshabilitado con `Badge` como elementos secundarios para que la etiqueta siga formando parte del nombre accesible del botón. Proporciona texto localizado desde tu aplicación.
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const UpcomingAction = () => (
+  <Button disabled>
+    <Text
+      render={<span />}
+      style={{
+        display: 'inline-flex',
+        alignItems: 'center',
+        gap: 'var(--t-spacing-1)',
+      }}
+    >
+      Upcoming action
+      <Badge>Coming soon</Badge>
+    </Text>
+  </Button>
+);
+```
+
+Esta composición también funciona con `MainButton` y `LightButton`. Reemplaza las props `soon` y `soonLabel` eliminadas.
+
+## Iconos animados.
+
+Combina `Button` con `AnimatedIconCrossfade` para cambiar su icono cuando cambie el estado de la aplicación. Pasa el elemento animado a `startIcon` y la etiqueta como elementos secundarios.
+
+```tsx
+import { useState } from 'react';
+import { IconPencil, IconX } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+import { AnimatedIconCrossfade } from 'twenty-ui/components/layout';
+
+export const EditActions = () => {
+  const [isEditing, setIsEditing] = useState(false);
+
+  return (
+    <Button
+      size="sm"
+      aria-expanded={isEditing}
+      onClick={() => setIsEditing(!isEditing)}
+      startIcon={
+        <AnimatedIconCrossfade
+          isActive={isEditing}
+          activeIcon={<IconX size={14} />}
+          inactiveIcon={<IconPencil size={14} />}
+        />
+      }
+    >
+      Edit actions
+    </Button>
+  );
+};
+```
+
+Cuando un icono es en sí mismo una acción, usa `IconButton` o `LightIconButton` y anima el contenido de su icono. Cuando un encabezado desplegable controla la expansión, mantén su chevrón decorativo y expón `aria-expanded` en el control del encabezado. Mantén los estilos de animación con la funcionalidad y respeta `prefers-reduced-motion`.
+
+<StoryEmbed title="Botón con un icono animado" storyId="ui-components-layout-animatediconcrossfade--display" height={100} />
+
+## Enlaces y formularios
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+export const DocumentationLink = () => (
+  <Button
+    variant="link"
+    href="https://twenty.com"
+    target="_blank"
+    rel="noreferrer"
+    hrefLang="en"
+    referrerPolicy="no-referrer"
+  >
+    Read documentation
+  </Button>
+);
+```
+
+Sin un `render` personalizado, `href` representa un ancla con semántica de enlace, a menos que establezcas explícitamente `nativeButton` en `true`. Los atributos de ancla nativos como `download`, `hrefLang`, `ping` y `referrerPolicy` llegan al ancla. Las props compartidas con botones nativos conservan sus tipos de Base UI. Para proporcionar un tipo MIME de ancla, colócalo en el renderizador; por ejemplo, `render={<a href="/records.csv" type="text/csv">Download records</a>}` con `nativeButton={false}` y `role="link"`. Los enlaces deshabilitados y en carga no se pueden activar.
+
+Usa `render` para componer otro elemento o un enlace de enrutador. `nativeButton` describe el elemento representado y su valor predeterminado es `true` para los renderizadores personalizados. Establece `nativeButton={false}` y `role="link"` para un ancla de navegación. El componente de ancla o enrutador puede tener su destino sin un `href` de `Button`.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+export const RecordsLink = () => (
+  <Button nativeButton={false} role="link" render={<a href="/records" />}>
+    Open records
+  </Button>
+);
+```
+
+Para un `\<button>` nativo personalizado, mantén `nativeButton` en true. Para un elemento de acción no nativo como un `\<div>`, usa `nativeButton={false}`; Base UI proporciona el comportamiento de botón del teclado. Un `nativeButton` o `role` explícito se conserva incluso cuando también se proporciona `href`.
+
+Los botones usan de forma predeterminada `type="button"`. Establece explícitamente `type="submit"` o `type="reset"` para los formularios. Los atributos nativos, los controladores de eventos, los detalles de eventos y las refs llegan a la raíz representada. Una ref recibe el botón, ancla o elemento raíz personalizado real. Los controladores de teclado conservan los métodos de eventos de Base UI, incluido `preventBaseUIHandler()` para cancelar su acción de teclado integrada. La devolución de llamada de renderizado de Base UI recibe tanto las props raíz como el estado deshabilitado actual; propaga las props en tu raíz para conservar el comportamiento de composición.
+
+## Valores predeterminados del grupo
+
+[ButtonGroup](/es/ui/primitives/input/button-group) proporciona una variante, color y tamaño compartidos. Una prop explícita en un elemento secundario tiene prioridad sobre el valor predeterminado del grupo. Cuando ninguno establece una prop, se aplica el valor predeterminado del componente.
+
+## Migración desde ClickToActionLink
+
+Importa `Button` desde `twenty-ui/primitives/input` y reemplaza `ClickToActionLink` por `Button variant="link"`. Conserva `href`, `target` y `rel` para la navegación. Las acciones sin `href` ahora muestran un botón nativo con activación mediante teclado. Los atributos, eventos y refs nativos se transfieren al elemento raíz.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+
+type LogOutProps = { onLogOut: () => void };
+
+export const LogOut = ({ onLogOut }: LogOutProps) => (
+  <Button variant="link" onClick={onLogOut}>
+    Log out
+  </Button>
+);
+```
+
+## "Props"
+
+<ButtonReference />
+
+Pasa `shortcut={['Mod', 'Enter']}` para teclas simultáneas o `shortcut={[['G'], ['P']]}` para pulsaciones sucesivas. Consulta [Shortcut](/es/ui/primitives/typography/shortcut) para combinaciones anidadas y el formateador de cadenas compartido.
+
+<PageBanner illustration="page-cover-pointer" />

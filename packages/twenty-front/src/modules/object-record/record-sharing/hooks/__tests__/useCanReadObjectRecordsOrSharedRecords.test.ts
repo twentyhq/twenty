@@ -1,10 +1,7 @@
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { renderHook } from '@testing-library/react';
 
 import { useCanReadObjectRecordsOrSharedRecords } from '@/object-record/record-sharing/hooks/useCanReadObjectRecordsOrSharedRecords';
-import {
-  MetadataReadability,
-  ObjectSharingReach,
-} from '~/generated-metadata/graphql';
 
 const mockIsRecordLevelSharingEnabled = jest.fn();
 const mockCanReadObjectRecords = jest.fn();
@@ -19,18 +16,14 @@ jest.mock('@/object-record/hooks/useObjectPermissionsForObject', () => ({
 }));
 
 const renderCanRead = (
-  objectMetadataItem: Partial<{
-    isSystem: boolean;
-    readability: MetadataReadability;
-    sharingReach: ObjectSharingReach;
-  }> = {},
+  objectMetadataItem: Partial<
+    Pick<EnrichedObjectMetadataItem, 'isSystem'>
+  > = {},
 ) =>
   renderHook(() =>
     useCanReadObjectRecordsOrSharedRecords({
       id: 'object-id',
       isSystem: false,
-      readability: MetadataReadability.OPEN,
-      sharingReach: ObjectSharingReach.WORKSPACE,
       ...objectMetadataItem,
     }),
   ).result.current;
@@ -48,14 +41,8 @@ describe('useCanReadObjectRecordsOrSharedRecords', () => {
     expect(renderCanRead()).toBe(true);
   });
 
-  it('allows reading shared records when the object can be shared with anyone', () => {
+  it('allows reading shared records when the object can be shared', () => {
     expect(renderCanRead()).toBe(true);
-  });
-
-  it('denies when sharing stays within role access', () => {
-    expect(
-      renderCanRead({ sharingReach: ObjectSharingReach.ROLE_ACCESS }),
-    ).toBe(false);
   });
 
   it.each([true, false])(
@@ -66,13 +53,6 @@ describe('useCanReadObjectRecordsOrSharedRecords', () => {
       );
 
       expect(renderCanRead({ isSystem: true })).toBe(false);
-    },
-  );
-
-  it.each([MetadataReadability.APPLICATION, MetadataReadability.SYSTEM])(
-    'denies on %s objects, whose records are never shared',
-    (readability) => {
-      expect(renderCanRead({ readability })).toBe(false);
     },
   );
 

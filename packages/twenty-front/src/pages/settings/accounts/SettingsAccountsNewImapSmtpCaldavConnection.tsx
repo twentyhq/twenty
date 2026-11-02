@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
 
+import { useAccountsSettingsBreadcrumbLink } from '@/settings/app-preferences/hooks/useAccountsSettingsBreadcrumbLink';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsSaveAndCancelPageCommands } from '@/settings/page-commands/components/SettingsSaveAndCancelPageCommands';
@@ -15,6 +16,7 @@ import { useImapSmtpCaldavConnectionForm } from '@/settings/accounts/hooks/useIm
 export const SettingsAccountsNewImapSmtpCaldavConnection = () => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
+  const accountsBreadcrumbLink = useAccountsSettingsBreadcrumbLink(t`Accounts`);
 
   const {
     formMethods,
@@ -37,10 +39,7 @@ export const SettingsAccountsNewImapSmtpCaldavConnection = () => {
             children: t`User`,
             href: getSettingsPath(SettingsPath.ProfilePage),
           },
-          {
-            children: t`Accounts`,
-            href: getSettingsPath(SettingsPath.Accounts),
-          },
+          accountsBreadcrumbLink,
           { children: t`New Account` },
         ]}
         pageCommands={

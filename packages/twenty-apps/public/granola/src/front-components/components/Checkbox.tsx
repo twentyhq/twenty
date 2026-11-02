@@ -1,6 +1,6 @@
 import styled from '@emotion/styled';
 import { IconCheck, IconMinus } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 // twenty-ui's Checkbox dispatches a PointerEvent the front-component sandbox does not provide.
 const CHECKBOX_BOX_SIZE_PIXELS = 14;

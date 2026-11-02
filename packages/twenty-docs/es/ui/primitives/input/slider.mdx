@@ -1,0 +1,176 @@
+---
+title: Deslizador
+description: Elija un valor numérico o un intervalo con controladores arrastrables y accesibles mediante teclado.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SliderReference from '/snippets/ui/generated/input/slider.mdx';
+
+## Resumen
+
+`Slider` admite un único número o una matriz de números para un intervalo. Componga su etiqueta, pista, indicador y controladores dentro de `Root`.
+
+<StoryEmbed storyId="ui-input-slider--display" title="Ejemplo de deslizador" height={120} />
+
+## "Uso"
+
+### Estado no controlado.
+
+Usa `defaultValue` para establecer el volumen inicial. El control deslizante gestiona los cambios posteriores.
+
+```tsx
+import { Slider } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const VolumeSlider = () => (
+  <Slider.Root name="volume" defaultValue={40} min={0} max={100} step={1}>
+    <Text
+      render={<div />}
+      style={{ display: 'flex', justifyContent: 'space-between' }}
+    >
+      <Slider.Label>Volume</Slider.Label>
+      <Slider.Value />
+    </Text>
+    <Slider.Control>
+      <Slider.Track>
+        <Slider.Indicator />
+        <Slider.Thumb />
+      </Slider.Track>
+    </Slider.Control>
+  </Slider.Root>
+);
+```
+
+## Opciones visuales
+
+Compare los colores de acento y éxito en los valores mínimo, medio, máximo y deshabilitado. Los controles deslizantes habilitados siguen siendo interactivos.
+
+<StoryEmbed storyId="ui-input-slider--catalog" title="Opciones visuales para el control deslizante" height={340} />
+
+## Anatomía
+
+Coloca la pista y los controles dentro de `Slider.Control`, que gestiona la interacción del puntero. Este árbol muestra un control deslizante con un solo control.
+
+```text
+Slider.Root
+├── Slider.Label
+├── Slider.Value
+└── Slider.Control
+    └── Slider.Track
+        ├── Slider.Indicator
+        └── Slider.Thumb
+```
+
+| Parte       | Requisito                          | Propósito                                                                    |
+| ----------- | ---------------------------------- | ---------------------------------------------------------------------------- |
+| `Root`      | Obligatorio                        | Gestiona el valor, los límites, el paso y la orientación.                    |
+| `Control`   | Obligatorio                        | Gestiona la interacción del puntero y posiciona los controles.               |
+| `Track`     | Necesario para la pista con estilo | Muestra el intervalo de valores completo.                                    |
+| `Thumb`     | Uno por cada valor ajustable       | Proporciona un control enfocable con interacción mediante teclado.           |
+| `Label`     | Recomendado                        | Proporciona una etiqueta visible; cada control necesita un nombre accesible. |
+| `Valor`     | Opcional                           | Muestra el valor numérico actual.                                            |
+| `Indicator` | Opcional                           | Muestra la parte seleccionada de la pista.                                   |
+
+Para un intervalo, añade un control para cada valor con su `index` correspondiente y un nombre accesible distinto. Las etiquetas y la salida numérica permanecen fuera de `Control`, por lo que no pasan a formar parte del área arrastrable.
+
+## Estado controlado.
+
+Pasa `value` y actualízalo con `onValueChange` para gestionar el mismo volumen en el estado de React. La devolución de llamada recibe el siguiente valor y los detalles del evento.
+
+```tsx
+import { useState } from 'react';
+import { Slider } from 'twenty-ui/primitives/input';
+
+export const VolumeSlider = () => {
+  const [volume, setVolume] = useState(40);
+
+  return (
+    <Slider.Root
+      name="volume"
+      value={volume}
+      onValueChange={setVolume}
+      min={0}
+      max={100}
+      step={1}
+    >
+      <Slider.Label>Volume</Slider.Label>
+      <Slider.Value />
+      <Slider.Control>
+        <Slider.Track>
+          <Slider.Indicator />
+          <Slider.Thumb />
+        </Slider.Track>
+      </Slider.Control>
+    </Slider.Root>
+  );
+};
+```
+
+Usa `onValueChange` para mantener actualizado el valor controlado durante una interacción. `onValueCommitted` gestiona el valor final cuando termina la interacción, por ejemplo, para guardarlo. Ambas devoluciones de llamada también están disponibles en el modo no controlado sin gestionar el valor.
+
+Los detalles del cambio incluyen el `event` de origen, el `reason` de la interacción, el `activeThumbIndex` y `cancel()`. Los detalles de confirmación utilizan el contrato de eventos genérico de Base UI y no incluyen la cancelación de cambios. Un cambio cancelado no se confirma.
+
+## Rango
+
+```tsx
+import { Slider } from 'twenty-ui/primitives/input';
+
+export const PriceRange = () => (
+  <Slider.Root
+    defaultValue={[25, 75]}
+    min={0}
+    max={100}
+    minStepsBetweenValues={10}
+  >
+    <Slider.Label>Price range</Slider.Label>
+    <Slider.Value />
+    <Slider.Control>
+      <Slider.Track>
+        <Slider.Indicator />
+        <Slider.Thumb index={0} aria-label="Minimum price" />
+        <Slider.Thumb index={1} aria-label="Maximum price" />
+      </Slider.Track>
+    </Slider.Control>
+  </Slider.Root>
+);
+```
+
+Asigne nombres accesibles distintos a los controladores del intervalo y un `index` correspondiente a su valor. `minStepsBetweenValues` establece la separación mínima en pasos. El tipo de valor genérico de la raíz es un número o una matriz de números de solo lectura.
+
+Para controlar un intervalo, almacena la matriz en el estado de React y pásala mediante `value` y `onValueChange`, igual que para un único valor.
+
+## Teclado y apariencia
+
+Las teclas de flecha ajustan un controlador enfocado en un paso. Inicio y Fin lo mueven hacia los límites respetando las restricciones del intervalo. `orientation="vertical"` cambia el diseño y la dirección del teclado. Use `disabled` en `Root` para impedir cambios.
+
+Establezca `color="success"` para la paleta alternativa; la predeterminada es `accent`.
+
+El valor predeterminado de `thumbAlignment` es `edge`. Pasa `center` o `edge-client-only` para anularlo. La composición nativa de `className`, `style` y `render` sigue estando disponible en cada parte, incluidas las funciones de estado.
+
+<Note>
+  Con la alineación `edge` y `edge-client-only`, Base UI 1.8 y 1.9 nunca
+  vuelven a medir un tirador después de que cambie el tamaño de su `Slider.Control`, y un control deslizante montado
+  mientras está oculto mantiene sus tiradores ocultos cuando se muestra
+  ([mui/base-ui#5995](https://github.com/mui/base-ui/issues/5995)). Los componentes frontales de React
+  presentan el mismo problema en su primer renderizado. Use
+  `thumbAlignment="center"` hasta que una versión de Base UI incluya la corrección
+  ([mui/base-ui#6000](https://github.com/mui/base-ui/pull/6000)).
+</Note>
+
+## Integración y tipos nativos
+
+`Slider.Root` infiere un número o un arreglo numérico de solo lectura a partir de `value` o `defaultValue`, y conserva ese tipo en ambas devoluciones de llamada. `SliderRootProps` acepta ambos de forma predeterminada; usa `SliderRootProps\<number>` para los ayudantes de valor único o `SliderRootProps\<readonly number[]>` para los ayudantes de rango.
+
+Cada parte tiene un tipo de props exportado en `twenty-ui/primitives/input`: `SliderRootProps`, `SliderControlProps`, `SliderTrackProps`, `SliderIndicatorProps`, `SliderThumbProps`, `SliderLabelProps` y `SliderValueProps`.
+
+Las refs se dirigen a elementos div para Root, Control, Track, Indicator, Thumb y Label, y a un elemento output para Value. La ref de un Thumb se dirige a su controlador visible; su nombre accesible y el valor de formulario nativo pertenecen a la entrada de rango anidada. Usa `name` y `form` en Root para el envío nativo, con una entrada por cada valor de rango.
+
+## "Props"
+
+La referencia se genera a partir de los tipos de componentes públicos. Los atributos nativos, incluidos los nombres accesibles y los controladores de eventos, también se aceptan en las partes que representan elementos.
+
+<SliderReference />
+
+<PageBanner illustration="section-apps-config" />

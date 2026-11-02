@@ -3,6 +3,10 @@ title: Extindeți
 description: Extindeți funcționalitatea Twenty cu API-uri, webhook-uri și aplicații personalizate.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
 ## Prezentare generală
 
 Twenty este conceput pentru a fi extensibil. Utilizați API-urile noastre, webhook-urile noastre și framework-ul pentru aplicații pentru a vă integra cu instrumentele existente și a crea funcționalități personalizate.
@@ -15,14 +19,19 @@ Twenty este conceput pentru a fi extensibil. Utilizați API-urile noastre, webho
 
 ## Începeți
 
-<CardGroup cols={2}>
-  <Card title="API-uri" icon="code" href="/ro/developers/extend/api">
-    Conectați-vă programatic la Twenty
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ro/developers/extend/api" img="/images/documentation/banner-icons-v2/dev-api.svg">
+    <CardTitle>APIA</CardTitle>
+    Conectează-te la douăzeci programatic
   </Card>
-  <Card title="Webhook-uri" icon="bell" href="/ro/developers/extend/webhooks">
+  <Card href="/ro/developers/extend/webhooks" img="/images/user-guide/halftone/card-page-webhooks.svg">
+    <CardTitle>Webhooks</CardTitle>
     Primiți notificări despre evenimente în timp real
   </Card>
-  <Card title="Aplicații" icon="puzzle" href="/ro/developers/extend/apps/getting-started/quick-start">
-    Construiți personalizări sub formă de cod
+  <Card href="/ro/developers/extend/apps/getting-started/quick-start" img="/images/documentation/banner-icons-v2/dev-apps.svg">
+    <CardTitle>Aplicații</CardTitle>
+    Construiește personalizări ca cod
   </Card>
 </CardGroup>
+
+<PageBanner illustration="dev-apps" />

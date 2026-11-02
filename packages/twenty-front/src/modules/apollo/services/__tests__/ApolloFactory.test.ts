@@ -1,6 +1,7 @@
 import { gql, InMemoryCache } from '@apollo/client';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import fetchMock, { enableFetchMocks } from 'jest-fetch-mock';
+import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
 
 import { ApolloFactory, type Options } from '@/apollo/services/ApolloFactory';
 import { clearSessionGeneration } from '@/auth/utils/clearSessionGeneration';
@@ -291,7 +292,7 @@ describe('ApolloFactory', () => {
       ([key]) => key.toLowerCase() === name.toLowerCase(),
     )?.[1];
 
-  it('should not attach an Authorization header', async () => {
+  it('should opt into the session cookie without an Authorization header', async () => {
     fetchMock.mockResponse(() =>
       Promise.resolve({ body: JSON.stringify({ data: {} }) }),
     );
@@ -306,6 +307,7 @@ describe('ApolloFactory', () => {
     expect(readHeader(headers, 'authorization')).toBeUndefined();
     // Version-mismatch detection must keep working without one.
     expect(readHeader(headers, 'X-App-Version')).toBe('1.0.0');
+    expect(readHeader(headers, SESSION_COOKIE_OPT_IN_HEADER_NAME)).toBe('1');
   });
 
   // The session cookie is server-managed, so a rejection ends the session.

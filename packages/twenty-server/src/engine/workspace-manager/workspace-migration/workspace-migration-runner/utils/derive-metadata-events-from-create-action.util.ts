@@ -98,6 +98,7 @@ const deriveAllMetadataEventsFromCreateAction = (
     case 'fieldPermission':
     case 'viewSort':
     case 'webhook':
+    case 'mcpServer':
     case 'workflow':
     case 'workflowVersion':
     case 'connectionProvider':
@@ -106,6 +107,7 @@ const deriveAllMetadataEventsFromCreateAction = (
     case 'agentChatChannel':
     case 'agentChatChannelRole':
     case 'settingsMenuItem':
+    case 'relatedRecordPath':
     case 'validationRule':
     case 'searchFieldMetadata': {
       return [

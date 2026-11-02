@@ -1,0 +1,119 @@
+---
+title: التقدم
+description: أنشئ مكون تقدم متاحًا مع نطاق مشترك ودلالات للتسمية والقيمة.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ProgressReference from '/snippets/ui/generated/feedback/progress.mdx';
+
+## نظرة عامة
+
+يكشف `Progress` عن أجزاء Base UI المثبتة: `Root` و`Track` و`Indicator` و`Label` و`Value`. استوردها من `twenty-ui/primitives/feedback`. استخدم [شريط التقدم](/ar/ui/primitives/feedback/progress-bar) أو [حلقة التقدم](/ar/ui/primitives/feedback/progress-ring) للحصول على مظهر ملائم مع العقد الدلالي نفسه.
+
+<StoryEmbed storyId="ui-feedback-progress--display" title="مثال على تقدم مُنشأ" height={100} />
+
+## استخدام
+
+يمتلك `Root` القيمة المتحكَّم بها ودلالات شريط التقدم المتاح. يوفر `Label` اسمه المتاح. يعرض `Value` القيمة المنسقة. يصف `Track` و`Indicator` التعبئة المرئية؛ ويأتي عرض المؤشر من النطاق المطبع للجذر. لا تفرض الأجزاء مظهرًا.
+
+```tsx
+import { Progress } from 'twenty-ui/primitives/feedback';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportProgress = () => (
+  <Progress.Root
+    value={70}
+    min={20}
+    max={120}
+    style={{
+      display: 'grid',
+      gridTemplateColumns: '1fr auto',
+      alignItems: 'center',
+      gap: 8,
+      width: 320,
+      maxWidth: '100%',
+    }}
+  >
+    <Progress.Label render={<Text />}>Importing records</Progress.Label>
+    <Progress.Value render={<Text />} />
+    <Progress.Track
+      style={{
+        gridColumn: '1 / -1',
+        height: 8,
+        background: 'var(--t-background-tertiary)',
+      }}
+    >
+      <Progress.Indicator
+        style={{
+          height: '100%',
+          background: 'var(--t-font-color-primary)',
+        }}
+      />
+    </Progress.Track>
+  </Progress.Root>
+);
+```
+
+يعرض هذا النطاق `50%` بينما تكون قيمة `aria-valuenow` هي `70`، وقيمة `aria-valuemin` هي `20`، وقيمة `aria-valuemax` هي `120`. يمتلك التطبيق الطلبات والتوقيت وتحديثات التقدم. لا توجد `defaultValue` ولا زيادة تلقائية.
+
+## القيم والنطاقات والتقدم غير المحدد
+
+القيمة الافتراضية لـ `min` هي `0`، والقيمة الافتراضية لـ `max` هي `100`. وفّر حدودًا منتهية باستخدام `min \< max`. تُقيَّد القيم المنتهية خارج النطاق للقيمة الدلالية والقيمة المنسقة والتعبئة المرئية. يكتمل التقدم عند القيمة القصوى. يؤدي تغيير النطاق إلى إعادة حساب النسبة المئوية دون تغيير القيمة الأولية التي يوفرها التطبيق.
+
+مرّر `value={null}` عندما يكون مقدار التقدم غير معروف. يكون للجذر عندئذٍ حالة غير محددة، ويُغفل `aria-valuenow`، ويستخدم `indeterminate progress` كنص قيمة متاح افتراضيًا. تظل القيم غير المنتهية غير محددة أيضًا؛ ولا تُحوَّل إلى صفر. لا يحتوي `Indicator` الأولي على عرض نسبة مئوية محسوب في تلك الحالة، لذا يختار التركيب مظهره غير المحدد.
+
+```tsx
+import { ProgressBar } from 'twenty-ui/primitives/feedback';
+
+export const PendingImport = () => (
+  <ProgressBar value={null} aria-label="Preparing the import" />
+);
+```
+
+## التسميات والتنسيق
+
+أنشئ `Progress.Label` داخل `Root`، أو عيّن `aria-label` أو `aria-labelledby` الأصليين. استخدم `aria-valuetext` لبديل قابل للقراءة البشرية عندما لا تكون النسبة المئوية كافية.
+
+يعرض المنسق الافتراضي النسبة المئوية المطبعة. يحتفظ `locale` و`format` بعقد `Intl.NumberFormat` المثبت؛ ويقوم `format` الصريح بتنسيق القيمة الرقمية المقيّدة. تتلقى `getAriaValueText(formattedValue, value)` ذلك النص المنسق وقيمة التطبيق الأولية، بما في ذلك `null`. يغيّر نص القيمة المتاح دون تغيير التعبئة.
+
+```tsx
+import { Progress } from 'twenty-ui/primitives/feedback';
+
+export const RecordCount = () => (
+  <Progress.Root
+    value={600}
+    max={1000}
+    format={{ style: 'decimal' }}
+    getAriaValueText={(formattedValue) => `${formattedValue} of 1,000 records`}
+  >
+    <Progress.Label>Importing records</Progress.Label>
+    <Progress.Value>
+      {(formattedValue) => `${formattedValue} / 1,000`}
+    </Progress.Value>
+  </Progress.Root>
+);
+```
+
+يتلقى `Progress.Value` كلًا من القيمة المنسقة والقيمة الأولية من خلال رد نداء الطفل الاختياري الخاص به. بالنسبة إلى التقدم غير المحدد، يتلقى رد النداء `indeterminate` كنص منسق؛ وبدون رد نداء، لا يعرض جزء القيمة أي محتوى. لا يصبح محتوى العرض تلقائيًا الاسم المتاح أو نص القيمة المتاح.
+
+## الخصائص الأصلية والمراجع والتركيب
+
+| الجزء       | DOM الافتراضي وهدف المرجع            |
+| ----------- | ------------------------------------ |
+| `Root`      | عنصر `div` خارجي بدلالات شريط التقدم |
+| `Track`     | عنصر `div` للمسار                    |
+| `Indicator` | عنصر `div` للتعبئة                   |
+| `Label`     | عنصر `span` للتسمية                  |
+| `القيمة`    | عنصر `span` للقيمة                   |
+
+يحافظ كل جزء على الخصائص الأصلية والمراجع وعقد تركيب `render` المثبت. مرّر الخصائص والمرجع المزوَّدين عند استبدال عنصر. تتلقى ردود النداء `className` و`style` و`render` الحالة العامة مع `status`: `progressing` أو `complete` أو `indeterminate`. تجعل سمات الحالة الحالة نفسها متاحة للأنماط.
+
+تصدّر نقطة الإدخال `ProgressStatus` وأنواع `Props` و`State` لكل جزء، بما في ذلك `ProgressRootProps` و`ProgressRootState` و`ProgressIndicatorProps` و`ProgressIndicatorState`. يمرر كل جزء معالجات الأحداث الأصلية. تمتلك التطبيقات تنسيق الميزات وردود نداء الإكمال.
+
+## الخصائص
+
+<ProgressReference />
+
+<PageBanner illustration="card-page-usage-limits" />

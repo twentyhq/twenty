@@ -1,9 +1,11 @@
 import type * as esbuild from 'esbuild';
-import { createJsxRuntimeRemoteWrapperPlugin } from 'twenty-shared/front-component-build';
+import {
+  createJsxRuntimeRemoteWrapperPlugin,
+  createSharedDependenciesShimPlugin,
+  type SharedDependenciesBuildContext,
+} from 'twenty-shared/front-component-build';
 import { isDefined } from 'twenty-shared/utils';
 
-import { createSharedDependenciesShimPlugin } from '@/front-component-renderer/build/shared-dependencies-build/create-shared-dependencies-shim-plugin';
-import { type SharedDependenciesBuildContext } from '@/front-component-renderer/build/shared-dependencies-build/types/shared-dependencies-build-context.type';
 import { cssInjectionPlugin } from '../css-injection-plugin';
 import { jsxTransformToRemoteDomWorkerFormatPlugin } from '../jsx-transform-to-remote-dom-worker-format-plugin';
 import { createPreactAliasPlugin } from '../preact-alias-plugin';
@@ -19,9 +21,10 @@ export const getFrontComponentBuildPlugins = (
 ): esbuild.Plugin[] => [
   ...(isDefined(options?.getSharedDependenciesBuildContext)
     ? [
-        createSharedDependenciesShimPlugin(
-          options.getSharedDependenciesBuildContext,
-        ),
+        createSharedDependenciesShimPlugin({
+          getSharedDependenciesBuildContext:
+            options.getSharedDependenciesBuildContext,
+        }),
       ]
     : []),
   createJsxRuntimeRemoteWrapperPlugin(

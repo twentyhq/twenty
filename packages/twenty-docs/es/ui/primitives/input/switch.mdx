@@ -1,0 +1,119 @@
+---
+title: Cambiar
+description: Un control etiquetado de encendido o apagado con estado controlado y no controlado.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SwitchReference from '/snippets/ui/generated/input/switch.mdx';
+
+## Resumen
+
+Use `Switch` para una preferencia de encendido o apagado. Proporcione al control una etiqueta visible o un nombre accesible.
+
+<StoryEmbed storyId="ui-input-switch-switch--display" title="Ejemplo de Cambiar" height={90} />
+
+## Uso
+
+### Estado no controlado
+
+Usa `defaultChecked` para establecer el estado inicial de selección. El interruptor controla los cambios posteriores.
+
+```tsx
+import { useId } from 'react';
+import { Switch } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const NotificationsPreference = () => {
+  const switchId = useId();
+
+  return (
+    <label
+      htmlFor={switchId}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+    >
+      <Switch id={switchId} name="notifications" />
+      <Text render={<span />}>Email notifications</Text>
+    </label>
+  );
+};
+```
+
+## Opciones visuales
+
+Compare los dos tamaños en los estados activado, desactivado, deshabilitado, de solo lectura y de foco. Use los ejemplos habilitados para probar la activación y desactivación.
+
+<StoryEmbed storyId="ui-input-switch-switch--catalog" title="Opciones visuales para el interruptor" height={440} />
+
+## Estado controlado
+
+Pasa `checked` y actualízalo con `onCheckedChange` para controlar la misma preferencia en el estado de React.
+
+```tsx
+import { useId, useState } from 'react';
+import { Switch } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const NotificationsPreference = () => {
+  const switchId = useId();
+  const [checked, setChecked] = useState(false);
+
+  return (
+    <label
+      htmlFor={switchId}
+      style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+    >
+      <Switch
+        id={switchId}
+        name="notifications"
+        checked={checked}
+        onCheckedChange={setChecked}
+      />
+      <Text render={<span />}>Email notifications</Text>
+    </label>
+  );
+};
+```
+
+`onCheckedChange` recibe el siguiente valor booleano y los detalles del evento. La prop `size` acepta `sm` o `md` y el valor predeterminado es `md`.
+
+Para una fila de ancho completo uniforme con un icono, una descripción y un interruptor, usa [SettingsRow](/es/ui/components/settings/settings-row).
+
+## Teclado y formularios
+
+Tab mueve el foco al interruptor; la barra espaciadora lo alterna. Al hacer clic en su etiqueta asociada también se alterna. Use `disabled` para impedir la interacción o `readOnly` para conservar un control que puede recibir el foco y cuyo valor no se puede cambiar.
+
+Un interruptor con nombre envía su valor cuando está activado. Use `value` para personalizar ese valor y `uncheckedValue` si el formulario también debe enviar un valor cuando está apagado.
+
+## Partes y contenido personalizado
+
+`Switch` ensambla la raíz con estilo y su control deslizante predeterminado. Usa `Switch.Root` con `Switch.Thumb` para controlar el contenido del control deslizante. Root gestiona el estado y la apariencia de la pista; Thumb renderiza el contenido que proporcionas.
+
+```tsx
+import { Switch } from 'twenty-ui/primitives/input';
+
+export const CustomPreference = () => (
+  <Switch.Root aria-label="Updates" defaultChecked>
+    <Switch.Thumb></Switch.Thumb>
+  </Switch.Root>
+);
+```
+
+`SwitchRootProps` y `SwitchThumbProps` son tipos públicos exportados desde `twenty-ui/primitives/input`. Ambas partes aceptan atributos nativos, manejadores, refs, `render` y funciones de devolución de llamada de `className` y `style` basadas en el estado. La `ref` de Root apunta al control visible; `inputRef` apunta a la entrada nativa. La ref de la parte apunta a su elemento renderizado. Pasa `nativeButton` con `render={<button />}` al reemplazar Root por un botón. Las props de apariencia pertenecen a Root; las clases y los estilos explícitos se combinan con los predeterminados.
+
+Thumb recibe el estado actual de checked, disabled, readOnly, required y Field. Su posición sigue la dirección de lectura.
+
+<StoryEmbed storyId="ui-input-switch-parts--composition" title="Composición de partes de Switch" height={90} />
+
+El ensamblaje invocable y su tipo `SwitchProps` siguen siendo compatibles. Reemplaza el ensamblaje con Root y su parte cuando proporciones contenido personalizado para el control deslizante, en lugar de añadir otra parte a los elementos secundarios del ensamblaje.
+
+Para restablecer un formulario controlado, gestiona el `onReset` del formulario y restaura `checked` a tu valor inicial. Base UI 1.8 no restaura el estado de los componentes no controlados al restablecer formularios de forma nativa. `required`, `form`, `value` y `uncheckedValue` conservan el comportamiento de la entrada nativa de origen.
+
+## "Props"
+
+La referencia incluye props específicas del componente y props heredadas de Base UI. También se aceptan atributos nativos como `aria-label` y `data-*`.
+
+<SwitchReference />
+
+<PageBanner illustration="page-cover-switch" />

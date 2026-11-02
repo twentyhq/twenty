@@ -9,13 +9,20 @@ import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
 import { isCoreAgentMatchingFilterSettings } from '@/object-core/agents/utils/isCoreAgentMatchingFilterSettings';
 
 const buildAgent = (overrides: Partial<CoreAgent>): CoreAgent => ({
+  __typename: 'Agent',
   id: 'agent-1',
   name: 'leadQualifier',
   label: 'Lead qualifier',
+  description: null,
+  icon: null,
   prompt: 'Prompt',
   modelId: 'workspace-default-model',
-  isCustom: true,
+  responseFormat: null,
+  roleId: null,
+  modelConfiguration: null,
+  applicationId: null,
   isSystem: false,
+  isActive: true,
   triggers: [],
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',

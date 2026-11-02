@@ -3,9 +3,9 @@ title: Auto-ospitazione
 description: Distribuisci e gestisci Twenty sulla tua infrastruttura.
 ---
 
-<Frame>
-  <img src="/images/user-guide/what-is-twenty/20.png" alt="AI" />
-</Frame>
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Panoramica
 
@@ -19,8 +19,11 @@ Twenty può essere auto-ospitato sulla tua infrastruttura, offrendoti il pieno c
 
 ## Per iniziare
 
-<CardGroup cols={2}>
-  <Card title="Docker Compose" icon="brand-docker" href="/it/developers/self-host/capabilities/docker-compose">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/it/developers/self-host/capabilities/docker-compose" img="/images/documentation/banner-icons-v2/dev-self-host.svg">
+    <CardTitle>Docker componi</CardTitle>
     Configurazione rapida con Docker
   </Card>
 </CardGroup>
+
+<PageBanner illustration="card-page-self-host-guide" />

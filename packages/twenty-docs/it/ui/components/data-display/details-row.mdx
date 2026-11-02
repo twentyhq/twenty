@@ -1,0 +1,105 @@
+---
+title: Riga dei dettagli
+description: Allinea le etichette dei dettagli con valori su più righe e azioni facoltative.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import DetailsRowReference from '/snippets/ui/generated/components/data-display/details-row.mdx';
+
+## Panoramica
+
+`DetailsRow` associa un'etichetta a un valore in un elenco di descrizioni. Aggiungi un'icona decorativa, più elementi di valore o un'azione fornita dalla tua applicazione.
+
+<StoryEmbed storyId="ui-data-display-detailsrow--display" title="Esempio di riga dei dettagli" height={220} />
+
+## Utilizzo
+
+```tsx
+import { DetailsRow } from 'twenty-ui/components/data-display';
+import { IconNotes, IconTag, IconUser } from 'twenty-ui/icon';
+import { Chip, Tag } from 'twenty-ui/primitives/data-display';
+import { Card } from 'twenty-ui/primitives/surfaces';
+
+export const CollectionDetails = () => (
+  <Card.Root>
+    <Card.Content>
+      <dl style={{ display: 'grid', gap: 8, margin: 0 }}>
+        <DetailsRow label="Owner" startIcon={<IconUser size={16} />}>
+          <Chip>Jordan Lee</Chip>
+        </DetailsRow>
+        <DetailsRow label="Categories" startIcon={<IconTag size={16} />}>
+          <Tag color="blue">Research</Tag>
+          <Tag color="purple">Design</Tag>
+        </DetailsRow>
+        <DetailsRow label="Description" startIcon={<IconNotes size={16} />}>
+          A shared collection of customer research and design decisions.
+        </DetailsRow>
+      </dl>
+    </Card.Content>
+  </Card.Root>
+);
+```
+
+Inserisci ogni riga direttamente all'interno di un `dl`. Passa l'etichetta tramite `label` e il relativo valore tramite `children`. L'applicazione gestisce le etichette, la localizzazione, i valori formattati e i segnaposto per i valori mancanti.
+
+## Allineamento e disposizione su più righe
+
+Le etichette e i valori vanno a capo anziché essere troncati. Più elementi di valore, come chip o tag, vanno a capo su righe aggiuntive. Le righe allineano il proprio contenuto in alto man mano che questo cresce.
+
+Per impostazione predefinita, la colonna dell'etichetta è `7rem` ed è limitata al 40% della larghezza della riga per lasciare spazio al valore in contenitori stretti. Imposta lo stesso `labelWidth` nelle righe dello stesso livello per regolarne l'allineamento. I numeri usano i pixel; sono supportate anche lunghezze CSS come `'8rem'`.
+
+```tsx
+import { DetailsRow } from 'twenty-ui/components/data-display';
+
+export const PublicationDetails = () => (
+  <dl style={{ display: 'grid', gap: 8, margin: 0, maxWidth: 360 }}>
+    <DetailsRow label="Primary contributor" labelWidth={128}>
+      Jordan Lee
+    </DetailsRow>
+    <DetailsRow label="Review notes" labelWidth={128}>
+      Include findings from the customer interviews before publication.
+    </DetailsRow>
+  </dl>
+);
+```
+
+## Azioni
+
+Usa `action` per un controllo accanto al valore. La riga non aggiunge comportamenti di modifica, clic o tastiera. Fornisci un controllo con un nome accessibile e collega il relativo gestore al comportamento dell'applicazione.
+
+```tsx
+import { DetailsRow } from 'twenty-ui/components/data-display';
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconCopy } from 'twenty-ui/icon';
+
+export const ContactDetails = ({ onCopy }: { onCopy: () => void }) => (
+  <dl style={{ margin: 0 }}>
+    <DetailsRow
+      label="Email"
+      action={
+        <LightIconButton aria-label="Copy email address" onClick={onCopy}>
+          <IconCopy size={16} />
+        </LightIconButton>
+      }
+    >
+      jordan@example.com
+    </DetailsRow>
+  </dl>
+);
+```
+
+## Composizione e accessibilità
+
+Ogni riga esegue il rendering di un raggruppamento `div` con un'etichetta `dt` e un `dd` contenente il valore e l'azione facoltativa. Il chiamante fornisce il `dl` contenitore. Fornisci testo significativo nell'etichetta. Il `startIcon` facoltativo è nascosto alle tecnologie assistive e il chiamante ne controlla le dimensioni.
+
+Gli attributi nativi, `className`, `style` e `ref` si applicano al `div` esterno. Quando usi `render` con un wrapper personalizzato, mantieni tale `div` direttamente all'interno del `dl` e inoltra tutte le props fornite e il ref. Mantieni le azioni nel relativo slot affinché il termine e la definizione rimangano i figli diretti della riga.
+
+Usa [MetricRow](/it/ui/components/data-display/metric-row) per una metrica con avanzamento facoltativo. `DetailsRow` fornisce solo il layout di etichetta, valore e azione.
+
+## Props
+
+<DetailsRowReference />
+
+<PageBanner illustration="page-cover-input" />

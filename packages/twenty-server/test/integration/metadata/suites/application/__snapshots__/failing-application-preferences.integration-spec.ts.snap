@@ -19,3 +19,47 @@ exports[`My application preferences should fail should refuse an application tok
   "message": "This endpoint is not available to this caller",
 }
 `;
+
+exports[`My application preferences should fail when running my application health check past the rate limit should refuse a member once their bucket for the application is spent 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "LIMIT_REACHED",
+    "userFriendlyMessage": "Rate limit reached. Please try again later.",
+  },
+  "message": "Limit reached (10 tokens per 60000 ms)",
+  "name": "UserInputError",
+}
+`;
+
+exports[`My application preferences should fail when running my application health check should not find an application that is not installed in the workspace 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "APPLICATION_NOT_FOUND",
+    "userFriendlyMessage": "Application not found.",
+  },
+  "message": "Application with id 9f1b7c2e-4d3a-4b5c-8e6f-0a1b2c3d4e5f or universalIdentifier undefined not found",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`My application preferences should fail when running my application health check should refuse an API key 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;
+
+exports[`My application preferences should fail when running my application health check should refuse an application token, even one a member is behind 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "userFriendlyMessage": "You do not have permission to perform this action.",
+  },
+  "message": "This endpoint is not available to this caller",
+}
+`;

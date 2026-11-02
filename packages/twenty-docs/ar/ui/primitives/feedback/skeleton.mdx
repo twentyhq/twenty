@@ -1,0 +1,64 @@
+---
+title: هيكل عظمي
+description: اعرض أشكال العناصر النائبة ذات النسق أثناء تحميل المحتوى.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import SkeletonReference from '/snippets/ui/generated/feedback/skeleton.mdx';
+
+## نظرة عامة
+
+يوفر `Skeleton` شكل عنصر نائب بألوان النسق وتمييز متحرك. أنشئ الأشكال وفق تخطيط المحتوى الذي يتم تحميله. يمتلك التطبيق حالة التحميل والتخطيطات الخاصة بالميزات.
+
+<StoryEmbed storyId="ui-feedback-skeleton--display" title="أشكال الهيكل العظمي" height={110} />
+
+## استخدام
+
+```tsx
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const LoadingProfile = () => (
+  <Text render={<div />} style={{ display: 'flex', gap: 16 }}>
+    <Skeleton width={40} height={40} borderRadius="50%" />
+    <Text
+      render={<div />}
+      style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
+    >
+      <Skeleton width={180} height={SKELETON_HEIGHT_SIZES.s} />
+      <Skeleton width={120} height={SKELETON_HEIGHT_SIZES.xs} />
+    </Text>
+  </Text>
+);
+```
+
+يُعرَض Skeleton ككتلة ولا يتجاوز عرضه عرض الحاوية. استخدم `layout="inline"` لوضع عنصر نائب داخل سطر من النص.
+
+تستخدم الأبعاد الرقمية وحدات البكسل. أطوال CSS، مثل النسب المئوية و`em`، مدعومة أيضًا. من دون أبعاد، يملأ العنصر النائب العرض المتاح ويستخدم ارتفاع الخط الموروث. استخدم أبعادًا متساوية و`borderRadius="50%"` لدائرة.
+
+يوفر `SKELETON_HEIGHT_SIZES` ارتفاعات مشتركة لـ `xs` (13px) و`s` (16px) و`m` (24px) و`l` (32px) و`xl` (40px). احتفظ بالأبعاد الخاصة بالتخطيط في التطبيق.
+
+يعرض كل `Skeleton` عنصرًا نائبًا واحدًا. احتفظ بالأسطر المتكررة وتباعد أسطر النص ومناطق التحميل في مكونات التطبيق التي تغلف العنصر البدائي.
+
+## الحركة وإمكانية الوصول
+
+تُعد الهياكل العظمية زخرفية ولديها `aria-hidden="true"` افتراضيًا. احتفظ بإعلانات التحميل في منطقة حالة يملكها المضيف بدلًا من الإعلان عن كل شكل. لا يقبل Skeleton عناصر فرعية.
+
+ينتقل التمييز من اليسار إلى اليمين في حلقة مدتها 1.5 ثانية بتأثير تسارع وتباطؤ، ويُخفى عندما يفضّل المستخدم تقليل الحركة. مرر `animated={false}` لعنصر نائب ثابت.
+
+<StoryEmbed storyId="ui-feedback-skeleton--static" title="هيكل عظمي ثابت" height={90} />
+
+## التركيب والسمة
+
+تستهدف الخصائص الأصلية و`className` و`style` و`ref` امتداد العنصر النائب. استخدم `render` لتركيب عنصر آخر. تتجاوز الأنماط الأصلية الصريحة خصائص الأبعاد واللون.
+
+تُضبط الألوان الأساسية وألوان التمييز افتراضيًا على الخلفية الثالثة للسمة والخلفية الشفافة الفاتحة. استخدم `baseColor` و`highlightColor` و`borderRadius` لتجاوزها. تبقى الزوايا مستديرة، بما في ذلك عندما تستخدم السمة أشكال سكويركل. يستخدم نصف القطر الافتراضي رمز السمة `smRound` ‏(4px). مرّر `themeCssVariables.border.radius.mdRound` من `twenty-ui/theme` للحصول على زوايا بمقدار 8px. تظل أنصاف الأقطار المخصصة بالبكسل وCSS مدعومة، بما في ذلك `borderRadius={80}` لكبسولة ضيقة و`borderRadius="50%"` لدائرة. لا حاجة إلى موفر أو استيراد ورقة أنماط خاص بالهيكل العظمي بعد تحميل `twenty-ui/style.css` وسمة واجهة المستخدم.
+
+## الإزاحة
+
+<SkeletonReference />
+
+<PageBanner illustration="section-ui-primitives" />

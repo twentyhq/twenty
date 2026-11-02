@@ -1,0 +1,47 @@
+---
+title: Accesibilidad
+description: Etiquete los controles, conserve el comportamiento del teclado y pruebe las interfaces de usuario accesibles de Twenty.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
+Los componentes interactivos migrados utilizan primitivas de Base UI para la semántica y el comportamiento del teclado. Su aplicación sigue proporcionando etiquetas significativas, descripciones, mensajes de error y orden de enfoque.
+
+## Etiquete todos los controles
+
+Use `Field.Label` con una entrada para asociar una etiqueta visible con el control. `Field.Description` proporciona texto de apoyo:
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const EmailField = () => (
+  <Field.Root>
+    <Field.Label>Email</Field.Label>
+    <Input type="email" name="email" required />
+    <Field.Description>
+      We send account updates to this address.
+    </Field.Description>
+    <Field.Error>Enter a valid email address.</Field.Error>
+  </Field.Root>
+);
+```
+
+Usa [VisuallyHidden](/es/ui/primitives/accessibility/visually-hidden) cuando el texto de apoyo deba seguir estando disponible para la tecnología de asistencia sin mostrarse.
+
+Los marcadores de posición complementan las etiquetas; no las sustituyen. Para un control sin texto visible, proporcione un nombre accesible mediante `aria-label` o `aria-labelledby`.
+
+## Conserve el comportamiento nativo
+
+Use las props de estado y cambio del componente, como `checked` y `onCheckedChange` en `Switch`. Mantenga visibles los indicadores de foco. Al usar `render` para reemplazar un elemento, conserve la ref, los controladores de eventos y los atributos que el componente le pasa.
+
+Un control deshabilitado no se puede cambiar y, por lo general, se excluye de la navegación con teclado y del envío de formularios. Un control de solo lectura conserva su valor y puede seguir siendo enfocable; elija el estado que coincida con la interacción que pretende.
+
+## Pruebe la interfaz completa
+
+Compruebe la navegación con teclado, las etiquetas, los anuncios de errores, el movimiento del foco en las superposiciones y el zoom en el contexto en el que se usa el componente. Verifique el contraste en ambas paletas y después de aplicar anulaciones de tokens personalizadas.
+
+Las historias de Twenty UI contienen comprobaciones de interacción y accesibilidad automatizadas. Algunas historias aún posponen las comprobaciones de contraste de color, por lo que esas comprobaciones no establecen la conformidad total de accesibilidad de una aplicación.
+
+<PageBanner illustration="page-cover-accessibility" />

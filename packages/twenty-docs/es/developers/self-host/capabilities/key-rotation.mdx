@@ -1,6 +1,11 @@
 ---
 title: Rotación de claves
+description: Rota las claves de firma JWT y la clave de cifrado en reposo.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
 
 Twenty tiene dos familias de claves independientes:
 
@@ -57,3 +62,5 @@ Cada valor cifrado se encapsula como `enc:v2:\<keyId>:\<payload>`, donde `\<keyI
 ## Compatibilidad heredada con `APP_SECRET`
 
 Las instancias más antiguas que nunca configuraron `ENCRYPTION_KEY` usan `APP_SECRET` como la clave de cifrado en reposo (y como el secreto de la cookie de sesión, derivado de esta). Esta ruta se conserva por compatibilidad retroactiva, pero está **en desuso**: configure una `ENCRYPTION_KEY` dedicada y siga el procedimiento de rotación anterior para migrar y dejar de usarla. El propio `APP_SECRET` sigue utilizándose para verificar tokens de acceso HS256 heredados.
+
+<PageBanner illustration="card-page-sso" />

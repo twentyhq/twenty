@@ -16,6 +16,32 @@ describe('resolveAndValidateHostname', () => {
     expect(mockDnsLookup).toHaveBeenCalledWith('imap.fastmail.com');
   });
 
+  it('should trim leading and trailing whitespace from plain hostname before resolving', async () => {
+    mockDnsLookup.mockResolvedValue({ address: '93.184.216.34', family: 4 });
+
+    await resolveAndValidateHostname(
+      '   imap.fastmail.com   ',
+      [],
+      mockDnsLookup,
+    );
+
+    expect(mockDnsLookup).toHaveBeenCalledTimes(1);
+    expect(mockDnsLookup).toHaveBeenCalledWith('imap.fastmail.com');
+  });
+
+  it('should trim leading and trailing whitespace from a full URL before resolving', async () => {
+    mockDnsLookup.mockResolvedValue({ address: '93.184.216.34', family: 4 });
+
+    await resolveAndValidateHostname(
+      '  https://caldav.example.com:8443/dav/principals  ',
+      [],
+      mockDnsLookup,
+    );
+
+    expect(mockDnsLookup).toHaveBeenCalledTimes(1);
+    expect(mockDnsLookup).toHaveBeenCalledWith('caldav.example.com');
+  });
+
   it('should extract hostname from a full URL before resolving', async () => {
     mockDnsLookup.mockResolvedValue({ address: '93.184.216.34', family: 4 });
 

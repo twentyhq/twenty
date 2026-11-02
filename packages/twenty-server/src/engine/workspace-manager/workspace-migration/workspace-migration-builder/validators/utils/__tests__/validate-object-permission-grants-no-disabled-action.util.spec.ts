@@ -20,23 +20,33 @@ const buildObjectPermission = (
   ...overrides,
 });
 
+const OWNING_APPLICATION_UNIVERSAL_IDENTIFIER = 'stripe-universal-identifier';
+
 const invoice = getFlatObjectMetadataMock({
   universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier: OWNING_APPLICATION_UNIVERSAL_IDENTIFIER,
   disabledObjectPermissionActions: ['canDestroyObjectRecords'],
 });
 
-describe('validateObjectPermissionGrantsNoDisabledAction', () => {
-  it('should reject granting an action the object disables', () => {
-    expect(
-      validateObjectPermissionGrantsNoDisabledAction({
-        flatObjectPermission: buildObjectPermission({
-          canDestroyObjectRecords: true,
-        }),
-        flatObjectMetadata: invoice,
-      }),
-    ).toEqual([expect.objectContaining({ value: 'canDestroyObjectRecords' })]);
-  });
+const OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'stripe-default-role-universal-identifier';
 
+const owningApplicationDefaultRole = {
+  universalIdentifier: OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier: OWNING_APPLICATION_UNIVERSAL_IDENTIFIER,
+};
+
+const owningApplicationOtherRole = {
+  universalIdentifier: 'stripe-other-role-universal-identifier',
+  applicationUniversalIdentifier: OWNING_APPLICATION_UNIVERSAL_IDENTIFIER,
+};
+
+const otherApplicationDefaultRole = {
+  universalIdentifier: OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier: 'workspace-custom-universal-identifier',
+};
+
+describe('validateObjectPermissionGrantsNoDisabledAction', () => {
   it('should accept turning a disabled action off or leaving it unset', () => {
     for (const canDestroyObjectRecords of [false, null]) {
       expect(
@@ -45,8 +55,46 @@ describe('validateObjectPermissionGrantsNoDisabledAction', () => {
             canDestroyObjectRecords,
           }),
           flatObjectMetadata: invoice,
+          flatRole: owningApplicationOtherRole,
+          applicationDefaultRoleUniversalIdentifier:
+            OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
         }),
       ).toEqual([]);
+    }
+  });
+
+  it('should let the owning application grant a disabled action to its default role', () => {
+    expect(
+      validateObjectPermissionGrantsNoDisabledAction({
+        flatObjectPermission: buildObjectPermission({
+          canDestroyObjectRecords: true,
+        }),
+        flatObjectMetadata: invoice,
+        flatRole: owningApplicationDefaultRole,
+        applicationDefaultRoleUniversalIdentifier:
+          OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+      }),
+    ).toEqual([]);
+  });
+
+  it('should reject a disabled action granted to a role that is not the owning application default role', () => {
+    for (const flatRole of [
+      owningApplicationOtherRole,
+      otherApplicationDefaultRole,
+    ]) {
+      expect(
+        validateObjectPermissionGrantsNoDisabledAction({
+          flatObjectPermission: buildObjectPermission({
+            canDestroyObjectRecords: true,
+          }),
+          flatObjectMetadata: invoice,
+          flatRole,
+          applicationDefaultRoleUniversalIdentifier:
+            OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+        }),
+      ).toEqual([
+        expect.objectContaining({ value: 'canDestroyObjectRecords' }),
+      ]);
     }
   });
 });

@@ -1,0 +1,47 @@
+---
+title: مخفي بصريًا
+description: أبقِ النص الداعم متاحًا للتقنيات المساعدة دون عرضه بصريًا.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import VisuallyHiddenReference from '/snippets/ui/generated/accessibility/visually-hidden.mdx';
+
+## نظرة عامة
+
+يعرض `VisuallyHidden` عنصر `span` مخفيًا بصريًا. يبقى محتواه في شجرة إمكانية الوصول ويمكنه توفير اسم يمكن الوصول إليه. يقبل خصائص span الأصلية ومرجع span وتركيب `render` الخاص بـ Base UI. استورد `VisuallyHiddenProps` من نقطة الإدخال نفسها.
+
+<StoryEmbed storyId="ui-accessibility-visuallyhidden--display" title="مثال على الإخفاء البصري" height={100} />
+
+## استخدام
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
+import { IconPlus } from 'twenty-ui/icon';
+
+type AddRecordActionProps = { onAdd: () => void };
+
+export const AddRecordAction = ({ onAdd }: AddRecordActionProps) => (
+  <Button onClick={onAdd}>
+    <IconPlus aria-hidden />
+    <VisuallyHidden>Add record</VisuallyHidden>
+  </Button>
+);
+```
+
+استخدم تسمية مرئية عندما تسمح المساحة بذلك. بالنسبة إلى عناصر التحكم التي تقبل `aria-label` بالفعل، تُعد تلك السمة طريقة أخرى لتوفير اسم يمكن الوصول إليه.
+
+## المحتوى المخفي
+
+ضع النص الداعم داخل الغلاف. تجنب وضع عناصر تحكم قابلة للتركيز داخله: يظل الغلاف مخفيًا بصريًا عندما تتلقى عناصره الفرعية التركيز. لا يضيف منطقة حية، ولا يزيل المحتوى من التقنية المساعدة، ولا يخفي البيانات السرية.
+
+استخدم `id` لربط الأوصاف المخفية بـ `aria-describedby`. تستهدف السمات الأصلية و`className` و`style` و`ref` عنصر span المخفي أو العنصر المُوفَّر عبر `render`. راجع [إمكانية الوصول](/ar/ui/accessibility) للاطلاع على أنماط التسمية والإشعار.
+
+## الخصائص
+
+<VisuallyHiddenReference />
+
+<PageBanner illustration="page-cover-accessibility" />

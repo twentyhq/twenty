@@ -204,6 +204,10 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
           contactsToCreate,
           source: FieldActorSource.EMAIL,
         },
+        {
+          workspaceId,
+          isWorkspaceJob: true,
+        },
       );
     }
 

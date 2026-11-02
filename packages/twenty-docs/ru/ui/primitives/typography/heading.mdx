@@ -1,0 +1,43 @@
+---
+title: Заголовок
+description: Отображайте семантические заголовки с независимыми визуальными размерами.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import HeadingReference from '/snippets/ui/generated/typography/heading.mdx';
+
+## Обзор
+
+`Heading` по умолчанию отображает `h2`. Используйте `children` для содержимого, `level` для структуры документа, а `size` для внешнего вида.
+
+<StoryEmbed storyId="ui-typography-heading--display" title="Пример заголовка" height={90} />
+
+## Использование
+
+Выбирайте уровни в порядке следования в документе. Меньший визуальный размер не изменяет уровень, объявляемый вспомогательными технологиями.
+
+```tsx
+import { Heading } from 'twenty-ui/primitives/typography';
+
+export const WorkspaceTitle = () => <Heading>Workspace settings</Heading>;
+```
+
+Размеры `xs`, `sm`, `md`, `lg`, `xl` и `xxl` используют соответствующие токены шрифта. Для больших размеров используются `1.54rem` и `1.85rem` соответственно. Во всех размерах сохраняются полужирное начертание и межстрочный интервал `1.1`. `Section.Header` и `Dialog.Title` принимают те же значения размера. У заголовков нет внешних отступов; интервалы определяются окружающей разметкой.
+
+## Цвет и композиция
+
+<StoryEmbed storyId="ui-typography-heading--catalog" title="Размеры и цвета заголовков" height={480} />
+
+Используйте `color="secondary"` для менее заметных заголовков. `tertiary` также доступен, но его контрастность зависит от размера шрифта, темы и фона. Проверяйте читаемость при его использовании.
+
+Нативные атрибуты, стили, имена классов и refs передаются заголовку. Используйте `render` для композиции с пользовательским элементом или компонентом; этот элемент отвечает за сохранение семантики заголовка.
+
+Для заголовка с поясняющим текстом или действиями используйте [Section](/ru/ui/components/layout/section).
+
+## Свойства
+
+<HeadingReference />
+
+<PageBanner illustration="section-document-generator" />

@@ -3,6 +3,10 @@ title: Server MCP
 description: Collega gli assistenti AI al tuo spazio di lavoro di Twenty utilizzando il Model Context Protocol.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
 Twenty espone un server [MCP](https://modelcontextprotocol.io/) affinché gli assistenti AI — Claude Desktop, Claude Code, Cursor, ChatGPT e altri — possano leggere e scrivere i dati del tuo CRM in linguaggio naturale.
 
 Usa l'**URL dello spazio di lavoro** (l'URL che usi per accedere a Twenty) come endpoint MCP. Su Twenty Cloud, l'URL del tuo spazio di lavoro potrebbe essere `https://{mycompany}.twenty.com` oppure un dominio personalizzato. Il server è disponibile all'indirizzo:
@@ -68,13 +72,13 @@ Se il tuo client MCP non supporta OAuth, o preferisci credenziali statiche, pass
 La tua chiave API concede l'accesso ai dati dello spazio di lavoro. Mantienila fuori dal controllo versione e dai dotfile condivisi.
 </Warning>
 
-Per creare una chiave API, vai su **Impostazioni → MCP e API → API → + Crea chiave**. Vedi [API](/it/developers/extend/api#create-an-api-key) per i dettagli.
+Per creare una chiave API, vai su **Impostazioni → Sviluppatori → API → + Crea chiave**. Vedi [API](/it/developers/extend/api#create-an-api-key) per i dettagli.
 
 ## Avvio rapido
 
 ### 1. Copia la configurazione
 
-Vai su **Impostazioni → MCP e API → MCP** in Twenty. Scegli il metodo di autenticazione (OAuth o Chiave API), copia lo snippet JSON (userà già l'URL del tuo spazio di lavoro) e incollalo nel file di configurazione del tuo client MCP.
+Vai su **Impostazioni → AI → MCP** in Twenty. Scegli il metodo di autenticazione (OAuth o Chiave API), copia lo snippet JSON (userà già l'URL del tuo spazio di lavoro) e incollalo nel file di configurazione del tuo client MCP.
 
 | Client             | Percorso del file di configurazione                                                                                                                                                     |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -103,6 +107,12 @@ Una volta connesso, il server MCP espone strumenti che rispecchiano l'API di Twe
 2. **`execute_tool`** — eseguire uno strumento
 
 Non è necessario ricordare i nomi degli strumenti. Chiedi al tuo assistente AI cosa può fare e chiamerà `learn_tools` automaticamente.
+
+I nomi delle operazioni sui record seguono una grammatica, quindi un assistente può crearli senza una chiamata di individuazione: `find_many_companies`, `find_one_person`, `update_one_opportunity`. Se un nome non è corretto, `learn_tools` lo segnala in `notFound` insieme ai nomi corrispondenti più simili.
+
+Per qualsiasi altra cosa, `get_tool_catalog` esplora gli strumenti rimanenti una categoria alla volta. È un ripiego: una chiamata non filtrata restituisce centinaia di operazioni e la maggior parte degli assistenti troncherà la risposta.
+
+`/mcp?mode=direct` elenca direttamente ogni strumento e richiede un client che carichi gli strumenti su richiesta.
 
 ## Permessi
 
@@ -135,3 +145,5 @@ L'endpoint MCP, gli endpoint OAuth e i metadati di discovery derivano tutti da q
 **Timeout di connessione**
 
 * Verifica che l'URL dell'endpoint MCP sia raggiungibile dalla tua macchina. Per le istanze self-hosted, controlla che il server sia in esecuzione e che `SERVER_URL` sia impostato correttamente.
+
+<PageBanner illustration="card-page-connections" />

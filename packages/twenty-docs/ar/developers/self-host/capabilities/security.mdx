@@ -1,0 +1,335 @@
+---
+title: تأمين مثيلك
+description: أبقِ Twenty بعيدًا عن الإنترنت العام وافتح فقط المسارات القليلة التي تحتاجها تكاملاتك.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## نظرة عامة
+
+يحتوي نظام إدارة علاقات العملاء لديك على عملائك وصفقاتك ورسائلك الإلكترونية وتقويمك. عندما يصدر إصلاح أمني في إصدار من Twenty، يشير الإصلاح نفسه إلى المهاجمين حيث ينبغي أن يبحثوا، ويكون كل مثيل لم يُرقَّ بعد هدفًا.
+
+الترقية سريعًا هي الحل الحقيقي، لكن معظم المثيلات المستضافة ذاتيًا تعمل بإصدارات متأخرة ببضعة إصدارات. أفضل حماية إلى أن تلحق بالركب بسيطة: **تأكد من أنه لا يمكن لأي شخص على الإنترنت الوصول إلى مثيلك من الأساس.**
+
+توضح هذه الصفحة كيفية القيام بذلك باستخدام Tailscale أو Cloudflare أو الوكيل العكسي الخاص بك.
+
+## خاص افتراضيًا
+
+قسّم مثيلك إلى ثلاث مناطق:
+
+| المنطقة                              | المسارات                                                       | من يمكنه الوصول إليه                                                                                                           |
+| ------------------------------------ | -------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| **خاص**                              | كل شيء آخر: التطبيق، `/graphql`، `/rest`، `/metadata`، الملفات | فريقك فقط                                                                                                                      |
+| **Public**                           | `/webhooks`, `/s`, `/emailing`                                 | أي شخص. تستدعيها خدمات لا يمكنها الانضمام إلى شبكتك.                                                                           |
+| **موصلات الذكاء الاصطناعي السحابية** | `/mcp`, `/oauth`, `/.well-known`                               | نطاقات عناوين IP الخاصة بـ Anthropic وOpenAI. يمكن لأي من مستخدميهم الوصول إلى هذه المسارات، لكن فريقك فقط يمكنه تسجيل الدخول. |
+
+يغطي كل مسار كل ما يندرج تحته. افتح المنطقتين العامة والخاصة بالذكاء الاصطناعي السحابي فقط إذا كنت تستخدم الميزات الموجودة خلفهما، راجع [المسارات العامة](#public-paths). وإلا، فأبقِ المثيل بأكمله خاصًا. لا تحتاج مساعدات الذكاء الاصطناعي التي تعمل على أجهزة كمبيوتر فريقك، مثل Claude Code، إلى فتح أي شيء، راجع [عملاء الذكاء الاصطناعي](#ai-clients-mcp).
+
+<Note>
+**ما ستتخلى عنه:** لا يمكن لأدوات الأتمتة المستضافة التي تستدعي واجهة Twenty API من سحابتهم الخاصة (Zapier وMake وn8n Cloud) الوصول إلى مثيل خاص. شغّلها داخل شبكتك بدلًا من ذلك (يعمل n8n المستضاف ذاتيًا جيدًا)، أو استخدم [سير عمل Twenty](/ar/user-guide/workflows/overview). لا تجعل `/graphql` أو `/rest` عامين للتحايل على ذلك: فالتطبيق نفسه يعمل على نقاط النهاية هذه، لذا فإن كشفها يكشف كل شيء.
+</Note>
+
+## اختر إعدادًا
+
+<CardGroup cols={3} className="documentation-card-group">
+  <Card href="#option-1-tailscale" img="/images/user-guide/halftone/community-tailscale.svg">
+    <CardTitle>Tailscale</CardTitle>
+    خاص تماماً. أبسط إعداد، والأفضل للفرق الصغيرة.
+  </Card>
+  <Card href="#option-2-cloudflare-tunnel-and-access" img="/images/user-guide/halftone/community-cloudflare.svg">
+    <CardTitle>Cloudflare</CardTitle>
+    لا توجد منافذ مفتوحة، قم بتسجيل الدخول مع موفر هويتك والمسار العام عند الحاجة.
+  </Card>
+  <Card href="#option-3-your-own-reverse-proxy" img="/images/user-guide/halftone/community-reverse-proxy.svg">
+    <CardTitle>عكس الوكيل</CardTitle>
+    Caddy أو Nginx مع قوائم أذونات IP لا توجد خدمة تابعة لجهة خارجية.
+  </Card>
+</CardGroup>
+
+|                                                       | تايل سكيل                   | كلاودفلير                                             | الوكيل العكسي             |
+| ----------------------------------------------------- | --------------------------- | ----------------------------------------------------- | ------------------------- |
+| كيفية دخول فريقك                                      | تطبيق Tailscale على كل جهاز | تسجيل الدخول عبر المتصفح من خلال موفر الهوية الخاص بك | من شبكة المكتب أو عبر VPN |
+| منافذ الوارد المفتوحة على الخادم                      | لا شيء                      | لا شيء                                                | 443                       |
+| خطافات الويب العامة                                   | لا                          | نعم                                                   | نعم                       |
+| عملاء الذكاء الاصطناعي المحليون (Claude Code، Codex)  | نعم                         | نعم                                                   | نعم                       |
+| موصلات الذكاء الاصطناعي السحابية (Claude.ai، ChatGPT) | لا                          | نعم                                                   | نعم                       |
+
+## الخيار 1: Tailscale
+
+تضع [Tailscale](https://tailscale.com) خادمك وأجهزة فريقك على شبكة خاصة. يحصل Twenty على عنوان HTTPS لا يعمل إلا للأشخاص الموجودين على تلك الشبكة.
+
+<Steps>
+  <Step title="اربط Twenty بـ localhost">
+    في `docker-compose.yml`، غيّر تعيين منفذ `server` بحيث لا يمكن الوصول إلى الحاوية إلا من الخادم نفسه:
+
+    ```yaml
+    services:
+      server:
+        ports:
+          - "127.0.0.1:3000:3000"
+    ```
+  </Step>
+  <Step title="أضف الخادم إلى tailnet الخاص بك">
+    ثبّت [Tailscale](https://tailscale.com/download/linux) على الخادم، ثم:
+
+    ```bash
+    sudo tailscale up --hostname=twenty
+    ```
+  </Step>
+  <Step title="قدّم Twenty عبر HTTPS">
+    ```bash
+    sudo tailscale serve --bg 3000
+    ```
+
+    أصبح Twenty الآن متاحًا على `https://twenty.\<your-tailnet>.ts.net`، مع شهادة تديرها Tailscale. إذا طلب منك الأمر ذلك، فعّل شهادات HTTPS لشبكة tailnet الخاصة بك في وحدة تحكم المشرف.
+  </Step>
+  <Step title="حدّث SERVER_URL">
+    ```ini
+    SERVER_URL=https://twenty.your-tailnet.ts.net
+    ```
+
+    ثم أعد التشغيل باستخدام `docker compose up -d`.
+  </Step>
+</Steps>
+
+استخدم [عناصر التحكم بالوصول في Tailscale](https://tailscale.com/kb/1018/acls) لقصر الوصول إلى الخادم على الأشخاص الذين يحتاجون إليه، وليس على شبكة tailnet بأكملها.
+
+لا يزال ربط حسابات Google أو Microsoft يعمل: تحدث إعادة توجيه OAuth في متصفح زميلك، الموجود على شبكة tailnet. ترتبط رسائل الدعوة الإلكترونية بعنوان tailnet، لذا يحتاج الزملاء الجدد إلى الانضمام إلى tailnet قبل قبولها.
+
+<Warning>
+ينشر Tailscale Funnel منفذًا كاملًا على الإنترنت، وليس مسارات فردية. لا يمكنك استخدامه لجعل `/webhooks` عامًا مع إبقاء التطبيق خاصًا. إذا كنت تحتاج إلى مسارات عامة أو موصلات ذكاء اصطناعي، فاستخدم الخيار 2 أو 3.
+</Warning>
+
+## الخيار 2: Cloudflare Tunnel وAccess
+
+يربط [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) خادمك بـ Cloudflare عبر اتصال صادر، لذا لا تكون أي منافذ مفتوحة على الخادم. يطلب [Cloudflare Access](https://developers.cloudflare.com/cloudflare-one/policies/access/) من فريقك بعد ذلك تسجيل الدخول باستخدام موفر الهوية لديك قبل وصول أي طلب إلى Twenty.
+
+<Steps>
+  <Step title="احمِ اسم المضيف باستخدام Access">
+    افعل ذلك قبل إنشاء النفق، حتى لا يمكن الوصول إلى اسم المضيف مطلقًا بدون تسجيل دخول. أنشئ تطبيقات Access مستضافة ذاتيًا. يطبّق Access المسار الأكثر تحديدًا، لذا تكون قواعد المسار أدناه لها الأولوية على قاعدة اسم المضيف.
+
+    | المسار على `crm.example.com`     | إجراء السياسة | تضمين                                                                                                       |
+    | -------------------------------- | ------------- | ----------------------------------------------------------------------------------------------------------- |
+    | `/` (اسم المضيف بالكامل)         | سماح          | فريقك، مثلًا عناوين البريد الإلكتروني المنتهية بـ `@example.com`                                            |
+    | `/webhooks`, `/s`, `/emailing`   | تجاوز         | الجميع                                                                                                      |
+    | `/mcp`, `/oauth`, `/.well-known` | تجاوز         | نطاقات IP لموصل Cloud AI من [عملاء الذكاء الاصطناعي](#ai-clients-mcp)، بالإضافة إلى عناوين IP لمكتبك أو VPN |
+
+    أنشئ تطبيقًا واحدًا لكل مسار. أضف قواعد التجاوز للميزات التي تستخدمها فقط.
+
+    لا يمكن لعملاء الذكاء الاصطناعي المحليين مثل Claude Code إكمال تسجيل الدخول عبر المتصفح، لذا يعتمدون على عناوين IP الخاصة بالمكتب أو VPN في القاعدة الأخيرة. إذا كان فريقك يعمل من أي مكان، فأضف بدلًا من ذلك سياسة سماح لفريقك إلى ذلك التطبيق، وفعّل مصادقة WARP في Access، واجعلهم يشغّلون عميل Cloudflare WARP.
+  </Step>
+  <Step title="أنشئ نفقًا">
+    في لوحة معلومات Cloudflare Zero Trust، أنشئ نفقًا، واختر **Docker** كالبيئة وانسخ الرمز المميز. أضف اسم مضيف عامًا، `crm.example.com`، يشير إلى `http://server:3000`.
+  </Step>
+  <Step title="شغّل cloudflared بجانب Twenty">
+    أضف هذه الخدمة إلى `docker-compose.yml` وأزل قسم `ports` من `server`. يصل cloudflared إلى Twenty عبر شبكة Docker، لذا لا يحتاج الخادم إلى نشر أي منفذ.
+
+    ```yaml
+    services:
+      cloudflared:
+        image: cloudflare/cloudflared:latest
+        command: tunnel --no-autoupdate run
+        environment:
+          TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
+        depends_on:
+          - server
+        restart: always
+    ```
+
+    أضف `CLOUDFLARE_TUNNEL_TOKEN` إلى `.env` الخاص بك.
+  </Step>
+  <Step title="حدّث SERVER_URL">
+    ```ini
+    SERVER_URL=https://crm.example.com
+    ```
+
+    ثم أعد التشغيل باستخدام `docker compose up -d`.
+  </Step>
+</Steps>
+
+إذا كنت تستخدم WAF من Cloudflare أو حماية من الروبوتات، فتجاوز التحديات في مسارات MCP وOAuth. لا يستطيع Claude وChatGPT حل صفحة التحدي.
+
+## الخيار 3: الوكيل العكسي الخاص بك
+
+إذا كنت تشغّل بالفعل وكيلاً عكسيًا، فأضف عناوين IP لمكتبك أو VPN إلى قائمة السماح للتطبيق وافتح المسارات العامة فقط. اربط Twenty بـ localhost أولًا، كما في [الخيار 1](#option-1-tailscale)، حتى لا يتجاوز أي شيء الوكيل.
+
+<Tabs>
+  <Tab title="Caddy">
+    ```caddyfile
+    crm.example.com {
+      # Keep only the public paths you use
+      @public path /webhooks/* /s/* /emailing/*
+      handle @public {
+        reverse_proxy localhost:3000
+      }
+
+      @ai_clients {
+        path /mcp /mcp/* /oauth/* /.well-known/*
+        remote_ip 160.79.104.0/21 {$CHATGPT_CONNECTOR_IPS}
+      }
+      handle @ai_clients {
+        reverse_proxy localhost:3000
+      }
+
+      @team remote_ip 203.0.113.0/24
+      handle @team {
+        reverse_proxy localhost:3000
+      }
+
+      handle {
+        respond 403
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="Nginx">
+    ```nginx
+    server {
+      listen 443 ssl;
+      server_name crm.example.com;
+      ssl_certificate /etc/ssl/crm.example.com/fullchain.pem;
+      ssl_certificate_key /etc/ssl/crm.example.com/privkey.pem;
+
+      proxy_set_header Host $host;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_http_version 1.1;
+      proxy_set_header Connection "";
+      proxy_buffering off;
+
+      # Keep only the public paths you use
+      location ^~ /webhooks/ { proxy_pass http://127.0.0.1:3000; }
+      location ^~ /s/ { proxy_pass http://127.0.0.1:3000; }
+      location ^~ /emailing/ { proxy_pass http://127.0.0.1:3000; }
+
+      location ~ ^/(mcp|oauth|\.well-known)(/|$) {
+        allow 203.0.113.0/24;
+        allow 160.79.104.0/21;
+        # one allow line per ChatGPT connector range
+        deny all;
+        proxy_pass http://127.0.0.1:3000;
+      }
+
+      location / {
+        allow 203.0.113.0/24;
+        deny all;
+        proxy_pass http://127.0.0.1:3000;
+      }
+    }
+    ```
+
+    ترويسات `Host` و`X-Forwarded-Proto` مطلوبة: ينشئ Twenty عناوين URL لاكتشاف OAuth وMCP منهما، وبدونهما يعلن عن `http://127.0.0.1:3000`. تظهر عناوين IP لفريقك في موقع MCP أيضًا، لذلك يستمر عمل عملاء الذكاء الاصطناعي المحليين. يضبط Caddy هذه الترويسات تلقائيًا.
+  </Tab>
+</Tabs>
+
+استبدل `203.0.113.0/24` بعناوين مكتبك أو VPN. يحتوي `CHATGPT_CONNECTOR_IPS` على نطاقات OpenAI، راجع [عملاء الذكاء الاصطناعي](#ai-clients-mcp)؛ اتركه فارغًا إذا كنت لا تستخدم ChatGPT. إذا كان وكيلك يقع خلف موازن تحميل، فطابق عنوان IP للعميل الذي يمرره (`client_ip` مع `trusted_proxies` في Caddy، و`set_real_ip_from` في Nginx)، وليس عنوان موازن التحميل.
+
+## المسارات العامة
+
+هذه هي المسارات التي تستدعيها الخدمات خارج شبكتك. افتح فقط ما تحتاج إليه منها.
+
+| مسار                                      | يستدعيه                                                | مطلوب عند                                                           |
+| ----------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------- |
+| `/webhooks/workflows`                     | أي خدمة خارجية                                         | تستخدم مهام سير العمل مع مشغّل **Webhook**                          |
+| `/s`, `/webhooks/server`                  | أي خدمة خارجية                                         | تستخدم تطبيقات أو دوال منطقية تكشف مسارات HTTP                      |
+| `/webhooks/google`, `/webhooks/microsoft` | Google وMicrosoft                                      | فعّلت المزامنة الفورية لصناديق البريد والتقويمات (انظر أدناه)       |
+| `/webhooks/messaging`                     | Amazon SES، Resend                                     | ترسل بريدًا إلكترونيًا عبر SES أو Resend وتريد أحداث التسليم        |
+| `/emailing`                               | الأشخاص الذين يتلقون رسائل البريد الإلكتروني الخاصة بك | ترسل حملات بريد إلكتروني (روابط إلغاء الاشتراك، وتتبع الفتح والنقر) |
+| `/mcp`, `/oauth`, `/.well-known`          | Claude، ChatGPT                                        | تضيف Twenty كموصل، راجع [عملاء الذكاء الاصطناعي](#ai-clients-mcp)   |
+
+افتراضيًا، يستطلع Twenty صناديق البريد والتقويمات، لذا لا يتصل Google وMicrosoft بمثيلك مطلقًا. لا يفعلان ذلك إلا إذا ضبطت `IS_CONNECTED_ACCOUNT_WEBHOOK_SUBSCRIPTION_ENABLED=true`.
+
+كيفية حماية كل مسار عام:
+
+* لا تتحقق **خطافات ويب مهام سير العمل** إلا من وجود مساحة العمل ومهمة سير العمل. يمكن لأي شخص يعرف عنوان URL تشغيل مهمة سير العمل، لذا تعامل مع عنوان URL كسِر وتحقق من الحمولة في مهمة سير العمل قبل اتخاذ إجراء بشأنها.
+* تكون **مسارات التطبيق والدوال المنطقية** عامة ما لم يكن المسار يتطلب مصادقة (`isAuthRequired`). بالنسبة إلى المسارات العامة، تحقق من هوية المستدعي في التعليمات البرمجية الخاصة بك، مثلًا باستخدام توقيع خدمة الإرسال.
+* يتحقق Twenty من **خطافات ويب Google وMicrosoft وSES وResend** باستخدام توقيع الموفر أو رمزه المميز.
+* لا يمكن أن تسجل **روابط البريد الإلكتروني** إلا فتحًا أو نقرة أو إلغاء اشتراك للمستلم الذي أُرسلت إليه.
+
+## عملاء الذكاء الاصطناعي (MCP)
+
+يُعد مساعدو الذكاء الاصطناعي إحدى الطرق الرئيسية التي سيستخدم بها فريقك Twenty، عبر [خادم MCP](/ar/user-guide/ai/capabilities/mcp) الخاص به. يعتمد ما تحتاج إلى فتحه على مكان تشغيل المساعد، وليس على المساعد الذي هو عليه.
+
+### العملاء المحليون: لا شيء لفتحه
+
+يتصل Claude Code وCodex CLI وCursor والأدوات الأخرى التي تعمل على جهاز الكمبيوتر الخاص بك بـ Twenty من ذلك الكمبيوتر. إذا كان موجودًا على tailnet أو VPN الخاص بك، فإنها تصل إلى `/mcp` بالطريقة نفسها التي يصل بها متصفحك إلى التطبيق. هذا هو الإعداد الأكثر أمانًا، لذا فضّله عندما تستطيع.
+
+يُعد Claude Desktop الاستثناء: تعمل الموصلات المضافة في **الإعدادات → الموصلات** في سحابة Anthropic، حتى في تطبيق سطح المكتب. للحفاظ على الاتصال محليًا، أضف Twenty كخادم MCP محلي في `claude_desktop_config.json` بدلًا من ذلك:
+
+```json
+{
+  "mcpServers": {
+    "twenty": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://twenty.your-tailnet.ts.net/mcp"
+      ]
+    }
+  }
+}
+```
+
+### الموصلات السحابية: افتح بحذر
+
+يستدعي Claude (الويب والجوال والموصلات في تطبيق سطح المكتب) وChatGPT خادمك من بنية Anthropic وOpenAI الأساسية، وليس من جهازك. لا يمكنهما الوصول إلى مثيل خاص، لذا عليك فتح `/mcp` و`/oauth` و`/.well-known` لنطاقات IP الخاصة بهما.
+
+<Warning>
+تتحقق قائمة سماح عناوين IP من الشبكة التي يأتي منها الطلب، وليس ممن أرسله. يمكن لأي شخص لديه حساب Claude أو ChatGPT إضافة عنوان URL الخاص بك كموصل وإرسال طلبات إلى هذه المسارات.
+</Warning>
+
+ما يمنعهم هو تسجيل الدخول. للحصول على رمز مميز، يجب على المستخدم تسجيل الدخول في صفحة `/authorize` الخاصة بـ Twenty، التي تظل في المنطقة الخاصة. يمكن لشخص خارج شبكتك بدء تدفق الاتصال لكنه لا يستطيع إكماله، ويرفض `/mcp` كل طلب دون رمز مميز صالح.
+
+ما يبقى مكشوفًا هو التعليمة البرمجية التي تعمل قبل تسجيل الدخول: اكتشاف OAuth وتسجيل العميل (`/oauth/register`) ونقطة نهاية الرمز المميز. تضيّق قائمة السماح ذلك: لا تستطيع أدوات الفحص على مستوى الإنترنت الوصول إلى هذه المسارات مباشرةً، ويجب أن تأتي الطلبات عبر بنية Claude أو ChatGPT الأساسية. لا يجعل ذلك تلك التعليمة البرمجية آمنة بمفرده، لذا تظل الترقيات مهمة.
+
+إذا كنت تستخدم موصلات سحابية:
+
+* افتح فقط `/mcp` و`/oauth` و`/.well-known`. لا تفتح مطلقًا `/authorize` أو بقية التطبيق.
+* اسمح فقط للموردين الذين تستخدمهم:
+  * **Anthropic:** `160.79.104.0/21`، من [صفحة عناوين IP الخاصة بـ Anthropic](https://platform.claude.com/docs/en/api/ip-addresses).
+  * **OpenAI:** القائمة الموجودة في [chatgpt-connectors.json](https://openai.com/chatgpt-connectors.json). تصفها OpenAI بأنها بأفضل جهد وتتغير بمرور الوقت، لذا حدّثها وفق جدول زمني:
+
+    ```bash
+    curl -s https://openai.com/chatgpt-connectors.json | jq -r '.prefixes[].ipv4Prefix | select(.)'
+    ```
+* رقِّ بسرعة عندما تذكر ملاحظات الإصدار إصلاحات MCP أو OAuth.
+
+## تحقق من إعدادك
+
+اختبر من جانبي شبكتك بعد أي تغيير:
+
+| تجربة                                   | من                | المتوقع                                                     |
+| --------------------------------------- | ----------------- | ----------------------------------------------------------- |
+| التطبيق و`/graphql` و`/authorize`       | خارج شبكتك        | محظور، أو صفحة تسجيل الدخول إلى Access الخاصة بك            |
+| المنفذ `3000` على عنوان IP العام للخادم | خارج شبكتك        | لا يوجد اتصال                                               |
+| التطبيق وعميل ذكاء اصطناعي محلي         | داخل شبكتك        | كلاهما يعمل                                                 |
+| طلب MCP بدون رمز مميز (أدناه)           | داخل شبكتك        | `401`، مع عنوان URL للاكتشاف على عنوان HTTPS العام الخاص بك |
+| موصل سحابي                              | Claude أو ChatGPT | يمكنك الاتصال وتسجيل الدخول واستدعاء أداة                   |
+| كل مسار عام فتحته                       | الخدمة الفعلية    | يمر حدث الاختبار الخاص بها                                  |
+
+```bash
+curl -si -X POST https://crm.example.com/mcp | grep -i www-authenticate
+```
+
+يجب أن تشير الترويسة إلى `https://crm.example.com/.well-known/...`. إذا كانت تعرض `http://` أو `127.0.0.1`، فإن وكيلك لا يمرر ترويسات `Host` و`X-Forwarded-Proto`.
+
+## قائمة التحقق الأساسية
+
+<Check>لم يتم نشر Postgres وRedis. لا ينشرهما `docker-compose.yml` الافتراضي؛ حافظ على ذلك إذا عدّلته.</Check>
+<Check>لا شيء يتجاوز الوكيل أو النفق الخاص بك. مع وكيل على المضيف، يُربط منفذ Twenty بـ `127.0.0.1`. مع cloudflared في Docker، لا تنشر خدمة `server` أي منفذ. يكتب Docker قواعد جدار الحماية الخاصة به، لذا تتجاوز المنافذ التي ينشرها `ufw` وجدران حماية المضيف المشابهة.</Check>
+<Check>الأسرار طويلة وعشوائية، وأنت تعرف كيفية [تدويرها](/ar/developers/self-host/capabilities/key-rotation).</Check>
+<Check>يستخدم أعضاء مساحة العمل SSO أو المصادقة الثنائية.</Check>
+<Check>تُنسخ قاعدة البيانات احتياطيًا وفق جدول زمني، وقد اختبرت عملية استعادة.</Check>
+<Check>يُثبّت `TAG` على إصدار، وتُجري الترقية عن قصد.</Check>
+
+## ابقَ على اطلاع دائم
+
+لا شيء مما سبق يغني عن الترقية. إنه يمنحك وقتًا.
+
+* راقب الإصدارات على [GitHub](https://github.com/twentyhq/twenty): **مراقبة → مخصص → الإصدارات**.
+* عندما يتضمن إصدار إصلاحًا أمنيًا، رقِّ في أقرب وقت تشير إليه استشارته: في اليوم نفسه للمشكلات الحرجة. اتبع [دليل الترقية](/ar/developers/self-host/capabilities/upgrade-guide).
+* أبلغ عن الثغرات الأمنية إلى [security@twenty.com](mailto:security@twenty.com)، وليس في المشكلات العامة.
+
+<PageBanner illustration="community-reverse-proxy" />

@@ -53,8 +53,8 @@ app, uploads its build and synchronizes its metadata. Once registered, inspect
 changes with `twenty app plan` before applying them. `app dev` watches inputs and
 syncs successful builds.
 
-Missing definitions imply remote deletions by default. Pass `--no-delete` to
-preserve them. Object and field deletions require confirmation because they
+Missing definitions imply remote deletions by default. Pass `--no-prune` to
+preserve them. The workspace custom application only deletes them with `--prune`. Object and field deletions require confirmation because they
 also delete stored data. Pull can overwrite local edits; read its
 [reconciliation rules](docs/commands.md#pull-an-app) before using it.
 

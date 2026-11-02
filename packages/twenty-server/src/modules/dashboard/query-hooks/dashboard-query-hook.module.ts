@@ -6,6 +6,7 @@ import { DashboardCreateManyPreQueryHook } from 'src/modules/dashboard/query-hoo
 import { DashboardCreateOnePreQueryHook } from 'src/modules/dashboard/query-hooks/dashboard-create-one.pre-query.hook';
 import { DashboardDestroyManyPreQueryHook } from 'src/modules/dashboard/query-hooks/dashboard-destroy-many.pre-query.hook';
 import { DashboardDestroyOnePreQueryHook } from 'src/modules/dashboard/query-hooks/dashboard-destroy-one.pre-query.hook';
+import { DashboardMergeManyPreQueryHook } from 'src/modules/dashboard/query-hooks/dashboard-merge-many.pre-query.hook';
 import { DashboardToPageLayoutSyncService } from 'src/modules/dashboard/services/dashboard-to-page-layout-sync.service';
 
 @Module({
@@ -16,6 +17,7 @@ import { DashboardToPageLayoutSyncService } from 'src/modules/dashboard/services
     DashboardCreateManyPreQueryHook,
     DashboardDestroyOnePreQueryHook,
     DashboardDestroyManyPreQueryHook,
+    DashboardMergeManyPreQueryHook,
   ],
 })
 export class DashboardQueryHookModule {}

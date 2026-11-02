@@ -1,5 +1,4 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { MetadataWritability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { buildAgentChatThreadRecordModelUpdates } from 'src/database/commands/upgrade-version-command/2-44/utils/build-agent-chat-thread-record-model-updates.util';
@@ -45,10 +44,6 @@ const titleField = getStandard<FlatFieldMetadata>(
   allFlatEntityMaps.flatFieldMetadataMaps,
   CHAT_FIELDS.title.universalIdentifier,
 );
-const archivedAtField = getStandard<FlatFieldMetadata>(
-  allFlatEntityMaps.flatFieldMetadataMaps,
-  CHAT_FIELDS.archivedAt.universalIdentifier,
-);
 
 const buildMaps = ({
   object,
@@ -77,14 +72,10 @@ const previousChatObject: FlatObjectMetadata = {
   labelIdentifierFieldMetadataId: idField.id,
   labelIdentifierFieldMetadataUniversalIdentifier: idField.universalIdentifier,
 };
-const previousFields = [
-  idField,
-  { ...titleField, isUIEditable: false },
-  { ...archivedAtField, writability: MetadataWritability.OPEN },
-];
+const previousFields = [idField, { ...titleField, isUIEditable: false }];
 
 describe('buildAgentChatThreadRecordModelUpdates', () => {
-  it('names chats, identifies them by title and locks the archive column', () => {
+  it('names chats and identifies them by title', () => {
     const { objectToUpdate, fieldsToUpdate } =
       buildAgentChatThreadRecordModelUpdates({
         ...buildMaps({ object: previousChatObject, fields: previousFields }),
@@ -105,10 +96,6 @@ describe('buildAgentChatThreadRecordModelUpdates', () => {
         universalIdentifier: titleField.universalIdentifier,
         isUIEditable: true,
       }),
-      expect.objectContaining({
-        universalIdentifier: archivedAtField.universalIdentifier,
-        writability: MetadataWritability.SYSTEM,
-      }),
     ]);
   });
 
@@ -117,7 +104,7 @@ describe('buildAgentChatThreadRecordModelUpdates', () => {
       buildAgentChatThreadRecordModelUpdates({
         ...buildMaps({
           object: chatObject,
-          fields: [idField, titleField, archivedAtField],
+          fields: [idField, titleField],
         }),
         now: NOW,
         direction: 'up',
@@ -130,7 +117,7 @@ describe('buildAgentChatThreadRecordModelUpdates', () => {
       buildAgentChatThreadRecordModelUpdates({
         ...buildMaps({
           object: chatObject,
-          fields: [idField, titleField, archivedAtField],
+          fields: [idField, titleField],
         }),
         now: NOW,
         direction: 'down',
@@ -141,6 +128,6 @@ describe('buildAgentChatThreadRecordModelUpdates', () => {
       isUIEditable: false,
       labelIdentifierFieldMetadataId: idField.id,
     });
-    expect(fieldsToUpdate).toHaveLength(2);
+    expect(fieldsToUpdate).toHaveLength(1);
   });
 });

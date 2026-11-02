@@ -3,6 +3,12 @@ title: 1. Modelo de datos
 description: Modelo de documentos y plantillas con objetos, campos y una relación.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Resumen
+
 Nuestra aplicación necesita dos objetos personalizados: **plantillas de documentos** (qué escribir) y
 **documentos** (el resultado generado). Vamos a definirlos.
 
@@ -10,15 +16,15 @@ Escaffold cada archivo de entidad con la CLI — genera un UUID válido y la car
 correcta para ti:
 
 ```bash filename="Terminal"
-yarn twenty dev:add object
+twenty app add object
 ```
 
 A continuación mostramos los archivos terminados.
 
 <Note>
-Cada `*_UNIVERSAL_IDENTIFIER` vida constante en
-`src/constants/universal-identifiers.ts` y es importado donde se utiliza. Los fragmentos
-a continuación omiten las importaciones por brevedad — manténgalos en tus propios archivos.
+  Cada `*_UNIVERSAL_IDENTIFIER` vida constante en
+  `src/constants/universal-identifiers.ts` y es importado donde se utiliza. Los
+  fragmentos a continuación omiten esas importaciones por brevedad; consérvalas en tus propios archivos.
 </Note>
 
 ## El objeto de plantilla
@@ -40,28 +46,54 @@ export default defineObject({
   labelIdentifierFieldMetadataUniversalIdentifier:
     TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [
-    { universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.TEXT, name: 'name', label: 'Name', icon: 'IconAbc' },
-    { universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.RICH_TEXT, name: 'body', label: 'Body', icon: 'IconFileText',
-      description: 'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.' },
-    { universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.SELECT, name: 'target', label: 'Target', icon: 'IconTarget',
+    {
+      universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.TEXT,
+      name: 'name',
+      label: 'Name',
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.RICH_TEXT,
+      name: 'body',
+      label: 'Body',
+      icon: 'IconFileText',
+      description:
+        'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.',
+    },
+    {
+      universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.SELECT,
+      name: 'target',
+      label: 'Target',
+      icon: 'IconTarget',
       defaultValue: `'PERSON'`,
       options: [
-        { id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
-          value: 'PERSON', label: 'Person', color: 'blue', position: 0 },
-        { id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
-          value: 'COMPANY', label: 'Company', color: 'green', position: 1 },
-      ] },
+        {
+          id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
+          value: 'PERSON',
+          label: 'Person',
+          color: 'blue',
+          position: 0,
+        },
+        {
+          id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
+          value: 'COMPANY',
+          label: 'Company',
+          color: 'green',
+          position: 1,
+        },
+      ],
+    },
   ],
 });
 ```
 
 <Warning>
-`SELECT` option **values** debe ser `UPPER_CASE` (`PERSON`, no `person`), y el
-`defaultValue` está envuelto en comillas adicionales: `` `'PERSON'` ``. La `label` es lo que
-los usuarios ven.
+  Los **valores** de la opción `SELECT` deben estar en `UPPER_CASE` (`PERSON`, no `person`), y
+  el `defaultValue` está entre comillas adicionales: `` `'PERSON'` ``. La `label`
+  es lo que ven los usuarios.
 </Warning>
 
 ## El objeto del documento
@@ -76,7 +108,12 @@ Cada documento debe apuntar de nuevo a la plantilla de la que proviene. Las rela
 **bidireccionales** — defines ambos lados, cada uno en su propio archivo de campo.
 
 ```ts filename="src/fields/document-template-relation.field.ts"
-import { defineField, FieldType, OnDeleteAction, RelationType } from 'twenty-sdk/define';
+import {
+  defineField,
+  FieldType,
+  OnDeleteAction,
+  RelationType,
+} from 'twenty-sdk/define';
 
 // The "many" side: each document belongs to one template.
 export default defineField({
@@ -103,15 +140,15 @@ Ver [Relations](/es/developers/extend/apps/data/relations) para ver el patrón c
 
 ## Ver en Veinte
 
-Con `yarn veinte dev` en ejecución, abre **Ajustes → Modelo de datos**. Ambos objetos
+Con `twenty app dev` en ejecución, abre **Configuración → Modelo de datos**. Ambos objetos
 aparecen, etiquetados con tu aplicación.
 
 <Frame caption="Ambos objetos personalizados, propiedad del generador de documentos.">
   <img src="/images/docs/developers/extends/apps/document-generator/01-data-model.png" alt="Configuración del modelo de datos mostrando plantillas de documentos y documentos" />
 </Frame>
 
-Crea una plantilla para probar con — nombra la *propuesta de ventas*, establece el **objetivo** a
-*Persona*, y pega un cuerpo con unos pocos marcadores de posición:
+Crea una plantilla para probarla; llámala *Propuesta de ventas*, establece **Destino** en
+*Persona* y pega un cuerpo con algunos marcadores de posición:
 
 ```text
 Dear {{name.firstName}} {{name.lastName}},
@@ -129,6 +166,11 @@ The Team
 **Después de este paso:** tienes los objetos `documentTemplate` y `document`, enlazados por
 una relación, y una plantilla para generar. Después, la lógica que lo llena.
 
-<Card title="Siguiente: generando documentos →" icon="bolt" href="/es/developers/extend/apps/tutorials/document-generator/generating-documents">
-  Escriba la función lógica que llena la plantilla.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/es/developers/extend/apps/tutorials/document-generator/generating-documents" img="/images/user-guide/halftone/card-page-tutorial-documents.svg">
+  <CardTitle>Siguiente: generar documentos →</CardTitle>
+  Escribe la función lógica que llena la plantilla.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="card-page-tutorial-data" />

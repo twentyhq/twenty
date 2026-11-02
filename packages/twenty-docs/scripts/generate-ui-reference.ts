@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { globSync, readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 import {
@@ -9,6 +9,7 @@ import { checkUiReferenceImports } from './ui/check-ui-reference-imports';
 import { renderComponentReference } from './ui/render-component-reference';
 import { type IconDocumentationGroup } from '../../twenty-ui/docs/IconDocumentationGroup';
 import { renderIconReference } from './ui/render-icon-reference';
+import { renderUiDocumentation } from './ui/render-ui-documentation';
 import { renderTokenReference } from './ui/render-ui-reference';
 import { syncUiReferenceFiles } from './ui/sync-ui-reference-files';
 
@@ -54,6 +55,35 @@ const syncErrors = syncUiReferenceFiles({
   })),
   isCheckMode: process.argv.includes('--check'),
 });
+
+const { version } = JSON.parse(
+  readFileSync(resolve(__dirname, '../../twenty-ui/package.json'), 'utf8'),
+);
+
+syncErrors.push(
+  ...syncUiReferenceFiles({
+    directory: resolve(
+      __dirname,
+      '../../twenty-server/src/engine/metadata-modules/ai/ai-front-component/constants/generated',
+    ),
+    outputs: [
+      {
+        name: 'ui-documentation.json',
+        content: renderUiDocumentation({
+          version,
+          components,
+          guides: globSync('**/*.mdx', { cwd: pagesRoot })
+            .sort()
+            .map((name) => ({
+              name,
+              content: readFileSync(resolve(pagesRoot, name), 'utf8'),
+            })),
+        }),
+      },
+    ],
+    isCheckMode: process.argv.includes('--check'),
+  }),
+);
 
 if (syncErrors.length > 0) {
   process.stderr.write(

@@ -1,0 +1,72 @@
+---
+title: LightButton
+description: Предоставляет облегченные действия со стандартным или ненавязчивым акцентом.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import LightButtonReference from '/snippets/ui/generated/components/input/light-button.mdx';
+
+## Обзор
+
+Используйте общий компонент `LightButton` для облегченного действия. Он объединяет
+[Button](/ru/ui/primitives/input/button) с поверхностью ghost, небольшим размером, обычной
+толщиной шрифта и без возвышения.
+
+<StoryEmbed storyId="ui-components-lightbutton--display" title="Пример LightButton" height={100} />
+
+## Использование
+
+```tsx
+import { LightButton } from 'twenty-ui/components/input';
+
+export const FilterAction = () => <LightButton>Add filter</LightButton>;
+```
+
+## Визуальные параметры
+
+Сравните обычное и ненавязчивое выделение для распространенных состояний действий.
+
+<StoryEmbed storyId="ui-components-lightbutton--catalog" title="Выделение и состояния светлой кнопки" height={230} />
+
+## Управление состоянием
+
+`LightButton` использует модель состояния Button и не добавляет собственного состояния. Ваше приложение задаёт `loading` и `disabled`; `emphasis` изменяет только внешний вид. См. [пример управления состоянием Button](/ru/ui/primitives/input/button#state-ownership) для управления асинхронным действием. Управляемый и неуправляемый режимы выбора отсутствуют.
+
+## Выделение и значки
+
+```tsx
+import { LightButton } from 'twenty-ui/components/input';
+import { IconPlus } from 'twenty-ui/icon';
+
+export const FilterActions = () => (
+  <LightButton emphasis="subtle" startIcon={<IconPlus />}>
+    Add filter
+  </LightButton>
+);
+```
+
+По умолчанию `emphasis="standard"` использует вторичный нейтральный текст.
+`emphasis="subtle"` использует третичный нейтральный текст на поверхностях ghost, outline и soft. Семантические цвета и сплошные поверхности сохраняют контрастное оформление.
+
+При необходимости переопределите `variant`, `color`, `size` или `elevated`.
+[ButtonGroup](/ru/ui/primitives/input/button-group) может задавать общий размер, поверхность
+и цвет. Явно заданный внешний вид дочернего элемента имеет приоритет над группой, а затем следуют
+значения компонента по умолчанию. Ненавязчивое выделение не заменяет семантический цвет.
+
+## Взаимодействие
+
+`LightButton` принимает нативные атрибуты Button, refs, обработчики событий, слоты
+иконок, состояния загрузки и отключения, а также композицию render. Его нативное значение по умолчанию
+— `type="button"`. Установите `type="submit"` для отправки или используйте `href` для ссылки.
+Передайте `render`, чтобы выбрать пользовательский корневой элемент, включая ссылку маршрутизатора,
+принадлежащую приложению. Установите `nativeButton={false}` и `role="link"` для рендерера навигации.
+Пользовательские нативные кнопки сохраняют `nativeButton` равным true.
+
+## Свойства
+
+<LightButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

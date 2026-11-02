@@ -1,0 +1,77 @@
+---
+title: MainButton
+description: Предоставляйте заметные действия с общими настройками дизайна по умолчанию.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import MainButtonReference from '/snippets/ui/generated/components/input/main-button.mdx';
+
+## Обзор
+
+Используйте общий компонент `MainButton` для заметного действия. Он объединяет
+[Button](/ru/ui/primitives/input/button) со сплошной поверхностью, возвышением, полужирным
+текстом и горизонтальными отступами 12px. Его цвет по умолчанию — нейтральный, а размер — `md`.
+
+<StoryEmbed storyId="ui-components-mainbutton--display" title="Пример MainButton" height={110} />
+
+## Использование
+
+```tsx
+import { MainButton } from 'twenty-ui/components/input';
+
+export const SaveAction = () => <MainButton>Save changes</MainButton>;
+```
+
+## Визуальные параметры
+
+Сравните сплошной и контурный варианты оформления в стандартном и малом размерах, а также в отключенном состоянии и состоянии загрузки.
+
+<StoryEmbed storyId="ui-components-mainbutton--catalog" title="Варианты и состояния основной кнопки" height={230} />
+
+## Управление состоянием
+
+`MainButton` использует модель состояния Button и не добавляет собственного состояния. Ваше приложение предоставляет `loading` и `disabled`; управляемые и неуправляемые режимы выбора отсутствуют. См. [пример управления состоянием Button](/ru/ui/primitives/input/button#state-ownership) для управления асинхронным действием.
+
+## Формы и ширина
+
+```tsx
+import { MainButton } from 'twenty-ui/components/input';
+
+export const SaveProfile = () => (
+  <MainButton type="submit" fullWidth>
+    Save profile
+  </MainButton>
+);
+```
+
+Ширина зависит от содержимого, если не задан `fullWidth` или не предоставлена стилизация
+макета приложения. При необходимости переопределите `variant`, `color`, `size` и `elevated`;
+например, используйте `variant="outline"` и `elevated={false}` для действия с контуром.
+
+При `color="inherit"` явно выберите вариант, отличный от solid, или унаследуйте его от ButtonGroup. Автономный вариант solid по умолчанию с унаследованным цветом вызывает ошибку времени выполнения.
+
+Сохраняйте макет страницы в стилях вашего приложения.
+
+## Взаимодействие
+
+`MainButton` принимает нативные атрибуты Button, обработчики событий, refs, слоты для значков,
+свойства `loading` и `disabled`. По умолчанию у кнопок задан `type="button"`;
+для отправки формы явно задайте `type="submit"`.
+
+Используйте `href` для ссылки. Передайте `render`, чтобы выбрать пользовательский корневой элемент, включая
+ссылку маршрутизатора, принадлежащего приложению. Установите `nativeButton={false}` и `role="link"` для
+рендерера навигации. Пользовательские нативные кнопки сохраняют значение `nativeButton` равным true.
+
+[ButtonGroup](/ru/ui/primitives/input/button-group) может задать общий размер, поверхность
+и цвет. Явно заданный внешний вид дочернего элемента имеет приоритет над группой, затем
+используются значения по умолчанию компонента. Классы потребителя, включая функции состояния, передаются
+корневому элементу.
+
+## Свойства
+
+<MainButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

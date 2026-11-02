@@ -3,13 +3,13 @@ title: Webhooks
 description: Ricevi notifiche in tempo reale quando si verificano eventi nel tuo CRM.
 ---
 
-import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-I webhook inviano dati ai tuoi sistemi in tempo reale quando si verificano eventi in Twenty — senza necessità di polling. Usali per mantenere sincronizzati i sistemi esterni, attivare automazioni o inviare avvisi.
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Crea un Webhook
 
-1. Vai a **Impostazioni → API e Webhook → Webhook**
+1. Vai a **Impostazioni → Sviluppatori → Webhook**
 2. Clicca su **+ Crea webhook**
 3. Inserisci l'URL del tuo webhook (deve essere pubblicamente accessibile)
 4. Clicca su **Salva**
@@ -110,3 +110,5 @@ const isValid = expectedSignature === req.headers["x-twenty-webhook-signature"];
 | **Trigger webhook del Workflow** | IN        | Ricevi dati in Twenty da sistemi esterni                                 |
 
 Per la ricezione di dati esterni, vedi [Configura un trigger webhook](/it/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger).
+
+<PageBanner illustration="card-page-webhooks" />

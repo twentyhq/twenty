@@ -1,0 +1,215 @@
+---
+title: AlertDialog
+description: Запрашивает подтверждение перед действием, требующим явного решения.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import AlertDialogReference from '/snippets/ui/generated/surfaces/alert-dialog.mdx';
+
+## Обзор
+
+Используйте `AlertDialog` для решения, которое прерывает текущий рабочий процесс, например для подтверждения удаления. Он предоставляет семантику `alertdialog`, управление фокусом и явное подтверждение или отмену.
+
+Этот примитив предназначен для автономных интерфейсов Twenty UI и интерфейсов, принадлежащих хосту. Компоненты Front должны запрашивать подтверждение через [API диалогового окна хоста SDK](/ru/developers/extend/apps/layout/front-components#host-communication-api). Прямое использование `Dialog`, `AlertDialog` и нативных диалоговых окон браузера запрещено внутри рендерера фронтового компонента.
+
+<StoryEmbed storyId="ui-surfaces-alertdialog--display" title="Пример AlertDialog" height={440} />
+
+## Использование
+
+### Неконтролируемое состояние
+
+Используйте `defaultOpen`, чтобы задать начальную видимость. Диалог управляет последующими изменениями, вызванными его триггером, элементами управления закрытием и взаимодействиями закрытия.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { AlertDialog } from 'twenty-ui/primitives/surfaces';
+
+type DeleteConfirmationProps = { onDelete: () => void };
+
+export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => (
+  <AlertDialog.Root defaultOpen={false}>
+    <AlertDialog.Trigger
+      render={<Button variant="solid">Delete record</Button>}
+    />
+    <AlertDialog.Portal>
+      <AlertDialog.Backdrop />
+      <AlertDialog.Viewport>
+        <AlertDialog.Popup>
+          <AlertDialog.Header>
+            <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+            <AlertDialog.Description>
+              This record will be permanently deleted. This action cannot be
+              undone.
+            </AlertDialog.Description>
+          </AlertDialog.Header>
+          <AlertDialog.Footer>
+            <AlertDialog.Close render={<Button>Cancel</Button>} />
+            <AlertDialog.Close
+              onClick={onDelete}
+              render={<Button color="danger">Delete</Button>}
+            />
+          </AlertDialog.Footer>
+        </AlertDialog.Popup>
+      </AlertDialog.Viewport>
+    </AlertDialog.Portal>
+  </AlertDialog.Root>
+);
+```
+
+По умолчанию для `defaultOpen` установлено значение `false`, поэтому его можно опустить. В этом примере используется синхронный обратный вызов подтверждения, и диалог закрывается после выполнения действия.
+
+## Анатомия компонента.
+
+Держите связанные части внутри `AlertDialog.Root` или подключайте отдельные триггеры через дескриптор. Комбинируйте портал, фон, область просмотра и всплывающее окно по отдельности.
+
+```text
+AlertDialog.Root
+├── AlertDialog.Trigger
+└── AlertDialog.Portal
+    ├── AlertDialog.Backdrop
+    └── AlertDialog.Viewport
+        └── AlertDialog.Popup
+            ├── AlertDialog.Header
+            │   ├── AlertDialog.Title
+            │   └── AlertDialog.Description
+            ├── AlertDialog.Body
+            └── AlertDialog.Footer
+                ├── AlertDialog.Close
+                └── Confirmation action
+```
+
+| Часть                      | Требование                                         | Назначение                                                                        |
+| -------------------------- | -------------------------------------------------- | --------------------------------------------------------------------------------- |
+| `Root`                     | Обязательно                                        | Управляет состоянием открытия и поведением модального окна.                       |
+| `Триггер`                  | Необязательно для диалога, открываемого программно | Открывает диалог и предоставляет цель для возврата фокуса.                        |
+| `Portal`                   | Рекомендуется                                      | Перемещает наложение в контейнер и управляет монтированием.                       |
+| `Backdrop`                 | Необязательно                                      | Визуально отделяет предупреждение от окружающей страницы.                         |
+| `Viewport`                 | Рекомендуется                                      | Размещает всплывающее окно и предоставляет окружающую его прокручиваемую область. |
+| `Popup`                    | Обязательно                                        | Отрисовывает содержимое предупреждения с управлением фокусом.                     |
+| `Заголовок`                | Рекомендуется                                      | Предоставляет видимое имя предупреждения. Доступное имя всегда обязательно.       |
+| `Description`              | Рекомендуется для подтверждения                    | Объясняет решение и его последствия.                                              |
+| `Header`, `Body`, `Footer` | Необязательные части структуры                     | Упорядочивают заголовки, дополнительное содержимое и действия.                    |
+| `Закрыть`                  | Рекомендуется для отмены                           | Предоставляет явное действие закрытия.                                            |
+
+Задайте `container` и `keepMounted` для `Portal`, атрибуты фона для `Backdrop`, атрибуты макета для `Viewport`, а также `size` и свойства фокуса для `Popup`. Каждая часть элемента принимает собственные нативные атрибуты, обработчики, ref и композицию `render`. `Popup.ref` указывает на элемент содержимого предупреждения. `Title` и `Description` устанавливают связи для доступности; при отсутствии заголовка укажите `aria-label` для `Popup`.
+
+Действие подтверждения является содержимым приложения, а не экспортируемой частью. Используйте `Close` с синхронным обработчиком или `Button` с управляемым состоянием открытия для асинхронного подтверждения.
+
+## Контролируемое состояние
+
+Передайте `open` и обновляйте его с помощью `onOpenChange`, чтобы управлять видимостью этого же диалога в состоянии React. Функция обратного вызова получает запрошенное логическое значение и сведения о вышестоящем событии, включая `reason`, `event` и `cancel()`. Вызовите `eventDetails.cancel()`, чтобы отклонить запрошенное изменение. `onOpenChangeComplete` выполняется после завершения переходов открытия или закрытия.
+
+```tsx
+import { useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { AlertDialog } from 'twenty-ui/primitives/surfaces';
+
+type DeleteConfirmationProps = { onDelete: () => void };
+
+export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <AlertDialog.Root open={open} onOpenChange={setOpen}>
+      <AlertDialog.Trigger
+        render={<Button variant="solid">Delete record</Button>}
+      />
+      <AlertDialog.Portal>
+        <AlertDialog.Backdrop />
+        <AlertDialog.Viewport>
+          <AlertDialog.Popup>
+            <AlertDialog.Header>
+              <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+              <AlertDialog.Description>
+                This record will be permanently deleted. This action cannot be
+                undone.
+              </AlertDialog.Description>
+            </AlertDialog.Header>
+            <AlertDialog.Footer>
+              <AlertDialog.Close render={<Button>Cancel</Button>} />
+              <AlertDialog.Close
+                onClick={onDelete}
+                render={<Button color="danger">Delete</Button>}
+              />
+            </AlertDialog.Footer>
+          </AlertDialog.Popup>
+        </AlertDialog.Viewport>
+      </AlertDialog.Portal>
+    </AlertDialog.Root>
+  );
+};
+```
+
+Для асинхронного подтверждения используйте `Button` с обработчиком вашего действия вместо `AlertDialog.Close`. Сохраняйте значение `open` равным true, пока действие выполняется, вызовите `setOpen(false)` после его успешного завершения и покажите ошибку внутри диалога в случае сбоя.
+
+## Композиция с кнопками
+
+Используйте `render`, чтобы придать триггеру и элементам управления закрытием стиль кнопок Twenty UI. Части диалога предоставляют обработчики взаимодействия и ссылки для кнопок.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { AlertDialog } from 'twenty-ui/primitives/surfaces';
+
+type DeleteConfirmationProps = { onDelete: () => void };
+
+export const DeleteConfirmation = ({ onDelete }: DeleteConfirmationProps) => (
+  <AlertDialog.Root>
+    <AlertDialog.Trigger
+      render={<Button variant="solid">Delete record</Button>}
+    />
+    <AlertDialog.Portal>
+      <AlertDialog.Backdrop />
+      <AlertDialog.Viewport>
+        <AlertDialog.Popup>
+          <AlertDialog.Header>
+            <AlertDialog.Title>Delete this record?</AlertDialog.Title>
+            <AlertDialog.Description>
+              This record will be permanently deleted. This action cannot be
+              undone.
+            </AlertDialog.Description>
+          </AlertDialog.Header>
+          <AlertDialog.Footer>
+            <AlertDialog.Close render={<Button>Cancel</Button>} />
+            <AlertDialog.Close
+              onClick={onDelete}
+              render={<Button color="danger">Delete</Button>}
+            />
+          </AlertDialog.Footer>
+        </AlertDialog.Popup>
+      </AlertDialog.Viewport>
+    </AlertDialog.Portal>
+  </AlertDialog.Root>
+);
+```
+
+Сохраняйте каждое действие как один интерактивный элемент управления. Если вы оборачиваете `Button` в собственный компонент, [передавайте предоставленные свойства и ссылку](/ru/ui/primitives/overview#custom-components).
+
+## Отдельные триггеры и императивные действия
+
+Создайте дескриптор один раз с помощью `AlertDialog.createHandle\<Payload>()` и передайте его в `handle` у `Root` и каждого отдельного `Trigger`. Типизированный `payload` триггера доступен функции рендеринга дочернего элемента корневого компонента. Дескриптор также поддерживает `open(triggerId)`, `openWithPayload(payload)`, `close()` и геттер `isOpen`, пока его корневой компонент смонтирован. Передайте соответствующий идентификатор триггера в `open` или `null`, чтобы открыть без триггера. Вызывайте императивные методы из обработчиков событий или эффектов.
+
+`Root.actionsRef` предоставляет `close()` и `unmount()`. Для внешне управляемой анимации закрытия вызовите `eventDetails.preventUnmountOnClose()` в `onOpenChange`, затем вызовите `actionsRef.current?.unmount()` после завершения анимации. Обычные стилизованные части управляют собственными переходами без этих императивных действий.
+
+## Размеры и порталы
+
+`Popup.size` принимает `sm`, `md`, `lg`, `xl` и `fullscreen`; по умолчанию используется `md`. Размер и внешний вид относятся к поверхности AlertDialog и не обязаны соответствовать предустановкам Dialog.
+
+По умолчанию `Portal.container` использует контейнер портала ближайшей темы. Без него Base UI использует назначение портала по умолчанию, обычно `document.body`. Явно указанный элемент, теневой корень или ref переопределяет это назначение. Явно указанное значение `null` откладывает монтирование, пока контейнер не станет доступен. Base UI разрешает ref, у которого `current` имеет значение `null`, используя назначение по умолчанию; используйте `container={null}`, когда монтирование должно ожидать.
+
+Содержимое, отрисованное через портал, сохраняет контекст темы. `Portal` и `Viewport` наследуют заданное направление текста, если вы явно не установите `dir`. Установите `Portal.keepMounted`, чтобы сохранять смонтированное содержимое и состояние формы в закрытом состоянии.
+
+## Фокус и закрытие
+
+Пока предупреждение открыто, оно удерживает фокус, блокирует внешнее взаимодействие и блокирует прокрутку страницы. Escape запрашивает закрытие; щелчок снаружи этого не делает. Чтобы предотвратить закрытие по Escape, отмените изменение `escape-key` в `onOpenChange`. Всегда предоставляйте видимое действие «Отмена» или «Закрыть».
+
+По умолчанию фокус перемещается на первый элемент управления, доступный по Tab, или на всплывающее окно при открытии касанием. Поместите первым наименее разрушительное действие или используйте `Popup.initialFocus`, чтобы выбрать его. При закрытии предупреждения фокус возвращается к триггеру или ранее сфокусированному элементу. Используйте `Popup.finalFocus`, когда успешное действие удаляет этот целевой элемент. Оба свойства фокуса принимают логическое значение, ref элемента или функцию обратного вызова типа взаимодействия в соответствии с вышестоящим контрактом.
+
+## Свойства
+
+Справочник генерируется из публичных типов компонентов. Нативные атрибуты, включая доступные имена и обработчики событий, также поддерживаются для частей, отображающих элементы.
+
+<AlertDialogReference />
+
+<PageBanner illustration="card-page-billing-faq" />

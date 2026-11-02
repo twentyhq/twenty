@@ -3,6 +3,12 @@ title: 4. بناء واجهة المستخدم
 description: المشاهدة، الملاحة الجانبية، الأوامر، والمكونات الأمامية.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## نظرة عامة
+
 الآن يمكن الوصول إلى الكائنات فقط من خلال الإعدادات. لنمنح التطبيق حضورًا حقيقيًا في واجهة المستخدم: طرق عرض القوائم، وعناصر في الشريط الجانبي، وأمر **إنشاء مستند** بنقرة واحدة، ومكوّن واجهة أمامية في صفحة السجل من أجل **معاينة** مستند، وعلامة تبويب **محرر** نص منسق أصلية للقوالب.
 
 ## وجهات النظر والملاحة
@@ -108,10 +114,13 @@ export default defineFrontComponent({
 ```
 
 <Warning>
-النمط مع متغيرات CSS المضمنة (`var(--t-color-blue)`)، ليس القيم المستوردة من
-`XXui`. تمزق SDK تلك الحزمة أثناء البناء، لذا فإن واردات مستوى الوحدة النمطية من ثوابت السمة
-ستكون 'غير محددة\`. انظر
-[الكامل المكون](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/front-components/generate-document-form.front-component.tsx).
+  اقرأ `useTheme()` أو `themeCssVariables` من `twenty-ui/theme` داخل
+  جسم المكوّن عند التنسيق باستخدام رموز Twenty. تحاكي واجهة CLI سطر الأوامر `twenty-ui`
+  أثناء استخراج البيان، لذا قد يؤدي إلغاء الإشارة إلى ثوابت النسق المستوردة على
+  نطاق الوحدة إلى فشل عملية البناء. راجع النسق ورموز
+  النسق
+  والمكوّن
+  الكامل.
 </Warning>
 
 ## أمر لفتحه
@@ -215,7 +224,10 @@ export default defineFrontComponent({
 `FRONT_COMPONENT` واحدة المكوّن بكامل العرض:
 
 ```ts filename="src/page-layouts/document-record.page-layout.ts"
-import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import {
+  definePageLayout,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
 
 export default definePageLayout({
   universalIdentifier: DOCUMENT_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
@@ -232,6 +244,7 @@ export default definePageLayout({
       universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
       title: 'Document preview',
       type: 'FRONT_COMPONENT',
+      heightBehavior: 'TAB_VIEWPORT',
       configuration: {
         configurationType: 'FRONT_COMPONENT',
         frontComponentUniversalIdentifier: DOCUMENT_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
@@ -291,6 +304,11 @@ export default definePageLayout({
 **بعد هذه الخطوة:** معاينة الوثائق بشكل جميل والقوالب قابلة للتحرير
 في التطبيق. ثم دعنا وكيل الذكاء الاصطناعي يولدها من محادثة.
 
-<Card title="التالي : وكيل AI →" icon="robot" href="/ar/developers/extend/apps/tutorials/document-generator/ai-agent">
-  إضافة وكيل ومهارة يتصلان بأداتك.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ar/developers/extend/apps/tutorials/document-generator/ai-agent" img="/images/user-guide/halftone/card-page-skills-agents.svg">
+  <CardTitle>التالي: وكيل ذكاء اصطناعي →</CardTitle>
+  أضف وكيلاً ومهارة يستدعيان أداتك.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="card-page-tutorial-ui" />

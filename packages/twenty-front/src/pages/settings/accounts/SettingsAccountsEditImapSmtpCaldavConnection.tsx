@@ -3,6 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 
+import { useAccountsSettingsBreadcrumbLink } from '@/settings/app-preferences/hooks/useAccountsSettingsBreadcrumbLink';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsSaveAndCancelPageCommands } from '@/settings/page-commands/components/SettingsSaveAndCancelPageCommands';
@@ -28,6 +29,7 @@ const StyledLoadingContainer = styled.div`
 export const SettingsAccountsEditImapSmtpCaldavConnection = () => {
   const { t } = useLingui();
   const navigate = useNavigateSettings();
+  const accountsBreadcrumbLink = useAccountsSettingsBreadcrumbLink(t`Accounts`);
   const { connectedAccountId } = useParams<{ connectedAccountId: string }>();
 
   const {
@@ -71,10 +73,7 @@ export const SettingsAccountsEditImapSmtpCaldavConnection = () => {
             children: t`User`,
             href: getSettingsPath(SettingsPath.ProfilePage),
           },
-          {
-            children: t`Accounts`,
-            href: getSettingsPath(SettingsPath.Accounts),
-          },
+          accountsBreadcrumbLink,
           { children: t`Edit Account` },
         ]}
         pageCommands={

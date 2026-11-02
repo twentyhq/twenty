@@ -1,0 +1,63 @@
+---
+title: ColorSample
+description: Visualizza un colore del tema o un colore personalizzato accanto a un'etichetta di testo.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ColorSampleReference from '/snippets/ui/generated/data-display/color-sample.mdx';
+
+## Panoramica
+
+`ColorSample` è un campione di colore non interattivo. Usalo accanto a un'etichetta affinché il significato non dipenda solo dal colore. La selezione appartiene al controllo circostante.
+
+<StoryEmbed storyId="ui-data-display-colorsample--display" title="Esempio di ColorSample" height={90} />
+
+## Utilizzo
+
+```tsx
+import { ColorSample } from 'twenty-ui/primitives/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const PriorityColor = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <ColorSample colorName="red" render={<span />} aria-hidden="true" />
+    High priority
+  </Text>
+);
+```
+
+`colorName` seleziona una voce della tavolozza del tema per il riempimento e il bordo. `variant` accetta `default` o `circle`. Omettendolo, viene utilizzata la forma predefinita.
+
+## Colori personalizzati
+
+```tsx
+import { ColorSample } from 'twenty-ui/primitives/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const BrandColor = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <ColorSample
+      colorName="blue"
+      color="#2563eb"
+      render={<span />}
+      aria-hidden="true"
+    />
+    Brand blue
+  </Text>
+);
+```
+
+Un valore `color` personalizzato sovrascrive il riempimento; `colorName` rimane obbligatorio e determina comunque il colore del bordo. Le props native, `className`, `style` e `ref` si applicano al div del campione. `render` accetta un elemento o una callback tramite la composizione di Base UI, ad esempio uno span all'interno del testo. Gli stili del consumer sovrascrivono il riempimento, il bordo o la geometria predefiniti. I campioni decorativi usano `aria-hidden="true"`; un campione autonomo significativo usa `role="img"` con `aria-label` o `aria-labelledby`. Per offrire colori selezionabili, inserisci il campione all'interno di un [ListItem](/it/ui/primitives/navigation/list-item) con etichetta.
+
+## Migrazione
+
+`ColorSampleProps` e `ColorSampleVariant` restano disponibili nella famiglia data-display. La variante `pipeline` inutilizzata viene rimossa. Gli indicatori specifici del prodotto appartengono all'applicazione e utilizzano stili nativi o la composizione. I campioni predefinito e circolare mantengono il loro aspetto esistente.
+
+## Props
+
+<ColorSampleReference />
+
+<PageBanner illustration="page-cover-palette" />

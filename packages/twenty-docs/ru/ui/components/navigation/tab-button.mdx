@@ -1,0 +1,107 @@
+---
+title: Кнопка вкладки
+description: Размещайте ссылки маршрутов и действия рядом с вкладками в едином стиле.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import TabButtonReference from '/snippets/ui/generated/components/navigation/tab-button.mdx';
+
+## Обзор
+
+Используйте `TabButton` для ссылок маршрутов и действий, таких как добавление вкладки или открытие меню переполнения. Он имеет такой же внешний вид, как [Вкладки](/ru/ui/primitives/navigation/tabs), и для взаимодействия использует [Кнопку](/ru/ui/primitives/input/button).
+
+<StoryEmbed storyId="ui-components-tabbutton--display" title="Пример TabButton" height={120} />
+
+## Использование
+
+```tsx
+import { TabButton } from 'twenty-ui/components/navigation';
+import { IconSettings } from 'twenty-ui/icon';
+
+export const GeneralAction = ({ onOpen }: { onOpen: () => void }) => (
+  <TabButton startIcon={<IconSettings />} onClick={onOpen}>
+    General
+  </TabButton>
+);
+```
+
+## Состояние и семантика
+
+Ваше приложение передает `active` на основе текущего состояния маршрута или меню. Это свойство выделяет элемент управления. Установите `aria-current="page"` для ссылки текущего маршрута. Ссылки маршрутов и соседние действия сохраняют семантику ссылок или кнопок без роли вкладки, `aria-selected` или связи с панелью.
+
+Используйте `Tabs.Root`, `Tabs.List`, `Tabs.Tab`, `Tabs.Panel` и необязательный `Tabs.Indicator` для переключения между связанными панелями содержимого. Размещайте элементы управления маршрутом и действиями вне `Tabs.List`.
+
+## Навигация
+
+Задайте `href`, чтобы отрисовать нативную ссылку. Текущий маршрут управляет своим видом `active` и значением `aria-current`.
+
+```tsx
+import { TabButton } from 'twenty-ui/components/navigation';
+import { IconCreditCard } from 'twenty-ui/icon';
+
+export const BillingLink = () => (
+  <TabButton
+    href="/billing"
+    active
+    aria-current="page"
+    startIcon={<IconCreditCard />}
+  >
+    Billing
+  </TabButton>
+);
+```
+
+Для маршрутизации на стороне клиента передайте ссылку маршрутизатора через `render`, задайте `nativeButton={false}` и `role="link"`, а разрешенный пункт назначения передайте как `href`. Сохраняйте параметры состояния маршрута и истории в ссылке маршрутизатора. Пользовательские обертки должны передавать предоставленные props и ref своему элементу anchor.
+
+```tsx
+import { TabButton } from 'twenty-ui/components/navigation';
+
+export const ComposedBillingLink = () => (
+  <TabButton
+    nativeButton={false}
+    role="link"
+    href="/billing"
+    render={<a />}
+    aria-current="page"
+    active
+  >
+    Billing
+  </TabButton>
+);
+```
+
+Явно заданный `nativeButton` управляет контрактом взаимодействия даже при наличии `href`. Сопоставьте его с фактически отрисованным элементом. Отключенные ссылки сохраняют роль ссылки и блокируют активацию.
+
+## Действия
+
+Без `href` элемент управления отображает нативную кнопку с `type="button"`. Нативные атрибуты, refs, стили, имена классов и обработчики событий передаются без изменений. `render` принимает элемент или функцию, получающую props и состояние Button. Refs указывают на фактически отрисованную кнопку или anchor, включая refs, предоставленные для составного элемента.
+
+```tsx
+import { useState } from 'react';
+import { TabButton } from 'twenty-ui/components/navigation';
+import { IconPlus } from 'twenty-ui/icon';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const AddTabAction = () => {
+  const [count, setCount] = useState(1);
+
+  return (
+    <>
+      <TabButton startIcon={<IconPlus />} onClick={() => setCount(count + 1)}>
+        New Tab
+      </TabButton>
+      <Text role="status">Tabs: {count}</Text>
+    </>
+  );
+};
+```
+
+Используйте `startIcon`, `endIcon` и `badge` для вспомогательного содержимого. Аватар, переданный в слот значка, является декоративным, когда текст называет назначение. `size` сохраняет публичный контракт размера Button. Явно заданный размер имеет приоритет над размером окружающей `ButtonGroup`; в противном случае компонент по умолчанию использует `sm`.
+
+## Свойства
+
+<TabButtonReference />
+
+<PageBanner illustration="layout" />

@@ -1,0 +1,268 @@
+---
+title: Popover
+description: اعرض محتوى سياقيًا مرتبطًا بمشغّل.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import PopoverReference from '/snippets/ui/generated/surfaces/popover.mdx';
+
+## نظرة عامة
+
+استخدم `Popover` للمعلومات السياقية أو عناصر التحكم البسيطة. أنشئ البوابة الخاصة به، وغلاف التموضع، والنافذة المنبثقة بشكل منفصل. استخدم [Dropdown](/ar/ui/components/navigation/dropdown) للقوائم والمنتقيات واللوحات ذات التنقل عالي المستوى.
+
+<StoryEmbed storyId="ui-surfaces-popover--display" title="مثال على Popover" height={280} />
+
+## استخدام
+
+### حالة غير متحكم بها.
+
+استخدم `defaultOpen` لتعيين مستوى الظهور الأولي. تدير النافذة المنبثقة التغييرات اللاحقة من مشغّلها وعناصر تحكم الإغلاق وتفاعلات الإخفاء.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const ContactDetailsPopover = () => (
+  <Popover.Root defaultOpen={false}>
+    <Popover.Trigger render={<Button>Show details</Button>} />
+    <Popover.Portal>
+      <Popover.Positioner align="start">
+        <Popover.Popup
+          style={{ boxSizing: 'border-box', width: 260, padding: 16, gap: 12 }}
+        >
+          <Popover.Title>Contact details</Popover.Title>
+          <Popover.Description>
+            Reach Alex at alex@example.com.
+          </Popover.Description>
+          <Popover.Close
+            style={{ alignSelf: 'flex-end' }}
+            render={<Button size="sm">Close</Button>}
+          />
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
+  </Popover.Root>
+);
+```
+
+القيمة الافتراضية لـ `defaultOpen` هي `false`، لذا يمكن حذفه. استخدم `Title` و`Description` لتعريف النافذة المنبثقة. يعرض المشغّل زرًا افتراضيًا؛ يتيح لك `render` توفير عنصر متوافق.
+
+## مقارنة المواضع
+
+قارن الجوانب المدعومة مع سهم وبدونه. تُبقي هذه الأمثلة المفتوحة كل نافذة منبثقة بجانب المُشغِّل الخاص بها للفحص؛ استخدم مثال العرض لتجربة فتح نافذة منبثقة وإغلاقها.
+
+<StoryEmbed storyId="ui-surfaces-popover--catalog" title="مقارنة المواضع للنافذة المنبثقة" height={640} />
+
+## البنية التشريحية
+
+أبقِ المشغّل والنافذة المنبثقة داخل `Popover.Root`. يمكن أن تحتوي النافذة المنبثقة على نص وعناصر تحكم في النموذج وإجراءات.
+
+```text
+Popover.Root
+├── Popover.Trigger
+└── Popover.Portal
+    ├── Popover.Backdrop (optional)
+    └── Popover.Positioner
+        └── Popover.Popup
+            ├── Popover.Arrow (optional)
+            └── Popover.Viewport (optional)
+                ├── Popover.Title
+                ├── Popover.Description
+                └── Popover.Close
+```
+
+| الجزء         | الغرض والهدف الأصلي                                                                  |
+| ------------- | ------------------------------------------------------------------------------------ |
+| `Root`        | يمتلك الحالة والمشغلات والتفاعلات. لا يعرض أي عنصر DOM.                              |
+| `المشغّل`     | يفتح النافذة المنبثقة ويوفر المرساة الافتراضية لها. يستهدف زرًا.                     |
+| `Portal`      | يختار الوجهة. تستهدف الخصائص الأصلية والمعالجات و`render` والمرجع عنصر div الخاص به. |
+| `Positioner`  | يمتلك المراسي والمحاذاة والإزاحات ومعالجة التصادمات. يستهدف عنصر div الخاص به.       |
+| `Popup`       | يعرض المحتوى ويدير التركيز. يستهدف عنصر div الخاص به.                                |
+| `Arrow`       | سهم اختياري ذو تنسيق داخل Popup. يستهدف عنصر div الخاص به.                           |
+| `Backdrop`    | خلفية اختيارية من المصدر داخل Portal. يستهدف عنصر div الخاص به.                      |
+| `Viewport`    | حاوية انتقالية اختيارية للمحتوى المتغير. يستهدف عنصر div الخاص به.                   |
+| `العنوان`     | يوفر اسمًا مرئيًا يمكن الوصول إليه. يستهدف عنصر h2.                                  |
+| `Description` | يربط نصًا توضيحيًا. يستهدف فقرة.                                                     |
+| `إغلاق`       | يطلب الإغلاق. يستهدف زرًا.                                                           |
+
+تدعم جميع الأجزاء المعروضة سمات Base UI الأصلية المثبتة ومعالجاتها ومراجعها وتركيب `render` للعناصر/الدوال. يجب أن تمرر المكونات المخصصة الخصائص والمرجع المقدمين. لكل جزء نوع `Popover\<Part>Props` ونوع `Popover\<Part>State` عامّان. يحافظ `PopoverRootProps` و`PopoverTriggerProps` على الأنواع العامة للحمولة. يُصدَّر أيضًا كل من `PopoverHandle` و`PopoverRootActions` و`PopoverRootChangeEventDetails` و`PopoverRootChangeEventReason` من `twenty-ui/primitives/surfaces`.
+
+## حالة متحكَّم بها
+
+مرّر `open` وحدّثه باستخدام `onOpenChange` لإدارة ظهور النافذة المنبثقة نفسها في حالة React.
+
+```tsx
+import { useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const ContactDetailsPopover = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Popover.Root open={open} onOpenChange={setOpen}>
+      <Popover.Trigger render={<Button>Show details</Button>} />
+      <Popover.Portal>
+        <Popover.Positioner align="start">
+          <Popover.Popup
+            style={{
+              boxSizing: 'border-box',
+              width: 260,
+              padding: 16,
+              gap: 12,
+            }}
+          >
+            <Popover.Title>Contact details</Popover.Title>
+            <Popover.Description>
+              Reach Alex at alex@example.com.
+            </Popover.Description>
+            <Popover.Close
+              style={{ alignSelf: 'flex-end' }}
+              render={<Button size="sm">Close</Button>}
+            />
+          </Popover.Popup>
+        </Popover.Positioner>
+      </Popover.Portal>
+    </Popover.Root>
+  );
+};
+```
+
+يتلقى `onOpenChange` القيمة المنطقية التالية وتفاصيل الحدث، بما في ذلك التغييرات التي يطلبها المشغّل وعناصر تحكم الإغلاق ومفتاح Escape والتفاعل الخارجي.
+
+## التركيب باستخدام الأزرار
+
+مرّر `Button` من واجهة Twenty عبر `render` لاستخدامه كمشغّل أو عنصر تحكم للإغلاق. تحافظ النافذة المنبثقة على حالة فتحها وسلوك لوحة المفاتيح ومعالجة التركيز.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const ImportHelp = () => (
+  <Popover.Root>
+    <Popover.Trigger render={<Button variant="outline">Import help</Button>} />
+    <Popover.Portal>
+      <Popover.Positioner align="start">
+        <Popover.Popup
+          style={{ boxSizing: 'border-box', width: 260, padding: 16, gap: 12 }}
+        >
+          <Popover.Arrow />
+          <Popover.Title>Import a CSV file</Popover.Title>
+          <Popover.Description>
+            Use a header row to identify your columns.
+          </Popover.Description>
+          <Popover.Close
+            style={{ alignSelf: 'flex-end' }}
+            render={<Button size="sm">Got it</Button>}
+          />
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
+  </Popover.Root>
+);
+```
+
+يضيف `render` السلوك إلى الزر المقدم. يجب أن تقوم مكونات الغلاف المخصصة [بتمرير الخصائص والمرجع المقدمين](/ar/ui/primitives/overview#custom-components) للحفاظ على هذا السلوك.
+
+## الموضع والتركيز
+
+القيم الافتراضية لـ`Positioner` هي `side="bottom"` و`align="center"` و`sideOffset={8}`. يقبل عقد Base UI المثبت كاملًا، بما في ذلك مراسي العناصر/المراجع/الدوال/الافتراضية، والإزاحات الوظيفية، و`positionMethod` و`collisionBoundary` و`collisionPadding` و`collisionAvoidance` و`arrowPadding` و`sticky` و`disableAnchorTracking`. يتحكم DirectionProvider في التموضع المنطقي ويوفر اتجاه DOM. يمكن لـ`dir` صريح تجاوز السمة الأصلية؛ استخدم الموفر لتغيير موضع الجانب المنطقي.
+
+```tsx
+import { useRef } from 'react';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const AnchoredHelp = () => {
+  const anchor = useRef<HTMLDivElement>(null);
+
+  return (
+    <div ref={anchor}>
+      <Popover.Root>
+        <Popover.Trigger>Help</Popover.Trigger>
+        <Popover.Portal>
+          <Popover.Positioner
+            anchor={anchor}
+            side="inline-end"
+            align="start"
+            sideOffset={({ anchor }) => anchor.width / 2}
+            collisionBoundary="clipping-ancestors"
+            collisionAvoidance={{ side: 'flip', align: 'shift' }}
+            collisionPadding={8}
+            positionMethod="fixed"
+          >
+            <Popover.Popup aria-label="Help">
+              <Popover.Arrow />
+              Contextual help
+            </Popover.Popup>
+          </Popover.Positioner>
+        </Popover.Portal>
+      </Popover.Root>
+    </div>
+  );
+};
+```
+
+يغلق Escape النافذة المنبثقة ويستعيد التركيز إلى مشغلها. يؤدي التفاعل الخارجي إلى إغلاقها افتراضيًا. يقبل `Popup.initialFocus` و`Popup.finalFocus` أهداف التركيز واستدعاءات رد الاتصال من المصدر. يحتفظ `Root.modal` بأوضاع Base UI الافتراضية غير المشروطة والمشروطة وحبس التركيز للاستخدام المستقل.
+
+## وجهات البوابة والسمة
+
+عيّن `container` و`keepMounted` في `Portal`:
+
+| حاوية                      | الحل                                                                                                                                                       |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| محذوف أو `undefined`       | يستخدم أقرب حاوية ThemeProvider ذات نطاق. عند عدم وجودها، يستخدم Base UI البوابة الأصلية أو متن المستند.                                                   |
+| `null`                     | ينتظر دون عرض محتوى البوابة حتى تتغير الحاوية. لا يعود إلى السمة أو المتن.                                                                                 |
+| عنصر أو ShadowRoot أو مرجع | يمرر الهدف المقدم دون تغيير إلى Base UI. يحتفظ المرجع غير المحلول بالرجوع إلى البوابة الأصلية/المتن في Base UI؛ استخدم null صريحة عند الحاجة إلى الانتظار. |
+
+تحافظ الوجهة الافتراضية ذات النطاق على رموز CSS ونظام الألوان الخاصين بها. ترث الوجهة الصريحة CSS من نطاق DOM الفعلي الخاص بها. ضعها داخل نطاق السمة المقصود، أو وفر أنماط السمة هناك. تحتاج أهداف ShadowRoot إلى CSS الخاصة بالمكتبة وأنماط السمة في شجرة الظل تلك. يبقى سياق سمة React واتجاه النص المقدم متاحين عبر البوابات. لا توسع واجهة برمجة التطبيقات هذه وجهات البوابة المسموح بها للعارض.
+
+## المشغلات والحمولات المنفصلة
+
+يربط `Popover.createHandle\<TPayload>()` المشغلات المنفصلة بجذر ويكشف `open(triggerId)` و`close()` و`isOpen`. `Popover.Handle` هو منشئ المقبض من المصدر المثبت. تتلقى دالة العرض الخاصة بالجذر الحمولة النشطة. استدعِ الإجراءات الحتمية من معالجات الأحداث أو التأثيرات.
+
+```tsx
+import { useState } from 'react';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const OwnerHelp = () => {
+  const [handle] = useState(() => Popover.createHandle<{ name: string }>());
+
+  return (
+    <>
+      <Popover.Trigger handle={handle} id="owner" payload={{ name: 'Alice' }}>
+        Owner
+      </Popover.Trigger>
+      <Popover.Root handle={handle}>
+        {({ payload }) => (
+          <Popover.Portal>
+            <Popover.Positioner align="start">
+              <Popover.Popup aria-label="Account owner">
+                {payload?.name}
+                <Popover.Close>Close</Popover.Close>
+              </Popover.Popup>
+            </Popover.Positioner>
+          </Popover.Portal>
+        )}
+      </Popover.Root>
+    </>
+  );
+};
+```
+
+يحافظ `onOpenChange` على `reason` و`event` و`trigger` و`cancel()` و`preventUnmountOnClose()`. تحتفظ الجذور المتحكم بها بـ`triggerId`؛ وتحتفظ الجذور غير المتحكم بها بـ`defaultTriggerId`. يكشف `actionsRef` عن إجراءات الإغلاق/إلغاء التحميل من المصدر.
+
+## الترحيل
+
+انقل `container` و`keepMounted` من Popup إلى Portal. انقل خصائص الموضع والمرساة والتصادم إلى Positioner. استبدل `Popup.arrow` بابن `Popover.Arrow` صريح. تستمر الخصائص الأصلية لـPopup ومعالجاته وخصائص التركيز والمرجع في استهداف عنصر المحتوى. يحتفظ Dropdown.Content بتجميعه الملائم الحالي.
+
+داخل المكونات الأمامية، استخدم تركيبًا غير مشروط ضمن سياسة البوابة الحالية ذات النطاق. تُحظر النوافذ المنبثقة/مربعات الحوار الأصلية للمتصفح والوضعية المملوكة مباشرةً للتطبيق؛ استخدم واجهة برمجة تطبيقات مربع حوار مضيف SDK لمربعات الحوار. يبقى عمل قدرات بوابة العارض والهندسة والتمرير والرفض منفصلًا عن واجهة برمجة التطبيقات الأولية هذه.
+
+## الخصائص
+
+يتم إنشاء المرجع من أنواع المكونات العامة. تُقبل أيضًا السمات الأصلية، بما فيها الأسماء التي يمكن الوصول إليها ومعالجات الأحداث، في الأجزاء التي تعرض عناصر.
+
+<PopoverReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

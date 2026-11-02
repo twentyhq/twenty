@@ -1,0 +1,75 @@
+---
+title: EmojiPicker
+description: Ищите и выбирайте эмодзи, используя данные Emojibase, размещенные у вызывающей стороны.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import EmojiPickerReference from '/snippets/ui/generated/components/input/emoji-picker.mdx';
+
+## Обзор
+
+`EmojiPicker` предоставляет поиск эмодзи, просмотр категорий и выбор с помощью клавиатуры. Ваше приложение предоставляет свои метки, расположение данных эмодзи и обработчик выбора.
+
+<StoryEmbed storyId="ui-input-emojipicker--display" title="Ищите эмодзи и выбирайте реакцию" height={400} />
+
+## Использование
+
+```tsx
+import { useState } from 'react';
+import { EmojiPicker } from 'twenty-ui/components/input';
+import { Text } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
+import { isDefined } from 'twenty-ui/utilities';
+
+export const EmojiPickerExample = () => {
+  const [emoji, setEmoji] = useState<string | undefined>();
+
+  return (
+    <Text
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: themeCssVariables.spacing[2],
+        width: 296,
+      }}
+    >
+      <EmojiPicker
+        emojibaseUrl="/emojibase"
+        searchLabel="Search emojis"
+        loadingLabel="Loading emojis"
+        emptyLabel="No emoji found"
+        onEmojiSelect={setEmoji}
+      />
+      <Text role="status">
+        {isDefined(emoji) ? `Selected emoji: ${emoji}` : 'Choose an emoji'}
+      </Text>
+    </Text>
+  );
+};
+```
+
+В предварительном просмотре используется небольшой каталог фикстур. В примере использования предполагается, что ваше приложение предоставляет данные Emojibase по адресу `/emojibase`.
+
+## Данные и метки
+
+`emojibaseUrl` является обязательным. Средство выбора загружает как `${emojibaseUrl}/${locale}/data.json`, так и `${emojibaseUrl}/${locale}/messages.json`. Размещайте эти файлы из пакета данных Emojibase для каждой поддерживаемой локали. Локаль по умолчанию — `en`; предоставление переведенных меток интерфейса не изменяет локаль каталога эмодзи.
+
+Предоставьте локализованные `searchLabel`, `loadingLabel` и `emptyLabel`. `searchLabel` задает название поля поиска и его заполнитель, если только `searchPlaceholder` не переопределяет его. Названия эмодзи, категории и теги поиска берутся из выбранной локали Emojibase.
+
+## Выбор и компоновка
+
+`onEmojiSelect` получает выбранную строку эмодзи Unicode. Средство выбора хранит свой поиск и активный эмодзи внутри себя. Ваше приложение управляет любым выбранным значением, количеством реакций, идентификаторами сообщений, разрешениями, сохранением данных и видимостью всплывающего окна. Размещайте его внутри [Dropdown](/ru/ui/components/navigation/dropdown), когда требуется всплывающее окно.
+
+Средство выбора использует восемь столбцов и высоту 280px. Установите ширину его контейнера так, чтобы она соответствовала сетке. Нативные атрибуты div, обработчики, стили, имена классов и refs относятся к его внешнему контейнеру.
+
+## Доступность
+
+Поле ввода для поиска имеет указанное доступное имя. Переведите на него фокус с помощью Tab или задайте `autoFocus` при открытии всплывающего окна. Клавиши со стрелками позволяют перемещаться по сетке эмодзи, а Enter выбирает активный эмодзи. У каждого эмодзи есть доступное имя из выбранного каталога. Значение `autoFocus` по умолчанию — `false`.
+
+## Свойства
+
+<EmojiPickerReference />
+
+<PageBanner illustration="page-cover-emoji" />

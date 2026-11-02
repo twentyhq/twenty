@@ -1,0 +1,444 @@
+---
+title: Menú desplegable
+description: Menús de acciones, selectores con búsqueda y paneles de formulario con una presentación e interacción compartidas.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import DropdownReference from '/snippets/ui/generated/components/navigation/dropdown.mdx';
+
+## Resumen
+
+`Dropdown` combina una ventana emergente posicionada, filas visuales, navegación por teclado, foco y cierre. Tu aplicación gestiona los datos, el filtrado, la obtención y la paginación. `SelectionGroup` gestiona valores de selección independientes dentro de la ventana emergente. Impórtalo desde `twenty-ui/components`.
+
+<StoryEmbed storyId="ui-components-dropdown--display" title="Acciones de Dropdown" height={420} />
+
+Dropdown.Content acepta desplazamientos numéricos o funciones para `sideOffset` y `alignOffset`. Las funciones de desplazamiento reciben las dimensiones del ancla y de la ventana emergente, el lado y la alineación. Úsalas para conservar el solapamiento de un selector de campos anclado cuando se escala la celda.
+
+## Uso
+
+```tsx
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { IconArchive, IconCopy, IconDownload } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const RecordActions = () => (
+  <Dropdown.Root type="menu">
+    <Dropdown.Trigger render={<Button>Record actions</Button>} />
+    <Dropdown.Content aria-label="Record actions" width={240}>
+      <Dropdown.Section>
+        <Dropdown.ActionItem startIcon={<IconCopy />}>
+          Duplicate
+        </Dropdown.ActionItem>
+        <Dropdown.Submenu>
+          <Dropdown.SubmenuTrigger startIcon={<IconDownload />}>
+            Export
+          </Dropdown.SubmenuTrigger>
+          <Dropdown.Content aria-label="Export formats">
+            <Dropdown.Section>
+              <Dropdown.ActionItem>CSV</Dropdown.ActionItem>
+              <Dropdown.ActionItem>Excel</Dropdown.ActionItem>
+            </Dropdown.Section>
+          </Dropdown.Content>
+        </Dropdown.Submenu>
+      </Dropdown.Section>
+      <Dropdown.Separator />
+      <Dropdown.Section>
+        <Dropdown.ActionItem startIcon={<IconArchive />}>
+          Archive
+        </Dropdown.ActionItem>
+        <Dropdown.ActionItem
+          render={
+            <a href="#dropdown-documentation" aria-label="Documentation" />
+          }
+        >
+          Documentation
+        </Dropdown.ActionItem>
+      </Dropdown.Section>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+## Elige un tipo de interacción
+
+Establece `type` en `Dropdown.Root` para que coincida con el contenido de la ventana emergente.
+
+| Tipo     | Contenido                                              | Interacción                                                                                                                                                  |
+| -------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `menu`   | Comandos y enlaces de navegación                       | Semántica de menú con navegación mediante flechas y búsqueda incremental.                                                                                    |
+| `picker` | Búsqueda, valores seleccionables y comandos opcionales | Un cuadro de diálogo que contiene búsqueda, cuadros de lista seleccionables y comandos opcionales. Las teclas de flecha navegan por las filas de resultados. |
+| `panel`  | Entradas, formularios y acciones de apoyo              | Un cuadro de diálogo con comportamiento de entrada nativo y navegación con Tab.                                                                              |
+
+Los selectores permiten acciones de creación y grupos de selección independientes en la misma página, en cualquier orden. Cada grupo de selector es un cuadro de lista y sus opciones exponen `aria-selected`. Los grupos de menú usan elementos de menú de radio o casilla de verificación marcados. Los grupos de panel usan botones con `aria-pressed`. Los comandos conservan la semántica de acción de su modo. Asigna un nombre accesible a cada grupo y a `Search`. Este selector personalizado no es un Combobox nativo.
+
+`Content` toma su nombre accesible de `Trigger`, o de `SubmenuTrigger` en un submenú. Pasa `aria-label` en `Content` cuando el activador muestra un valor, como la opción seleccionada, o cuando la raíz no tiene activador. Una `aria-label` o `aria-labelledby` explícita, y un `Title` dentro de un `Header`, tienen prioridad sobre el nombre del activador.
+
+[Select](/es/ui/primitives/input/select) y [Popover](/es/ui/primitives/surfaces/popover) siguen disponibles para la composición directa.
+
+## Anatomía
+
+```text
+Dropdown.Root
+├── Dropdown.Trigger
+└── Dropdown.Content
+    ├── Dropdown.Header
+    │   ├── Dropdown.Close
+    │   └── Dropdown.Title
+    ├── Dropdown.Search
+    └── Dropdown.Section
+        ├── Dropdown.ActionItem
+        └── Dropdown.SelectionGroup
+            └── Dropdown.OptionItem
+```
+
+`Content` incluye el portal y el posicionador. Usa `width`, `side`, `align`, `sideOffset` y `alignOffset` para controlar la ubicación, y `collisionPadding` para mantener la ventana emergente más alejada de los bordes del viewport antes de que se desplace o invierta (5 píxeles de forma predeterminada). `Section` agrupa filas con espaciado compartido y `Separator` divide secciones. Una `Section` `scrollable` limita su altura y se desplaza; anida secciones etiquetadas dentro de ella para desplazarlas como una sola lista. Las filas usan [ListItem](/es/ui/primitives/navigation/list-item) para su apariencia.
+
+```tsx
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { IconCopy } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const RecordActions = ({ onDuplicate }: { onDuplicate: () => void }) => (
+  <Dropdown.Root type="menu">
+    <Dropdown.Trigger render={<Button>Record actions</Button>} />
+    <Dropdown.Content>
+      <Dropdown.Section>
+        <Dropdown.ActionItem startIcon={<IconCopy />} onClick={onDuplicate}>
+          Duplicate
+        </Dropdown.ActionItem>
+      </Dropdown.Section>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+Pasa elementos de activación personalizados mediante `render` para que el activador siga siendo un único elemento interactivo. Los componentes personalizados deben reenviar las props y la ref proporcionadas. `ActionItem` también acepta `render` para enlaces.
+
+## Acciones de elemento
+
+`ActionItem` y `OptionItem` aceptan `actions` para controles finales, como el botón de edición de una pestaña. Úselos solo en páginas `picker` y `panel`: un `menu` solo puede contener elementos de menú, por lo que no puede contener otros controles. Establezca `actionsVisibility="always"` para mantenerlos visibles; el valor predeterminado es `"hover"`. Los controles secundarios se muestran junto al control de fila principal y se activan de forma independiente: no cierran la ventana emergente, así que ciérrela desde el controlador de la acción cuando sea necesario. La prop `render` y la referencia siguen aplicándose al control principal, por lo que también puede servir como asa de arrastre.
+
+Usa `tabIndex={-1}` para una acción secundaria solo con puntero que tenga una alternativa de teclado independiente. La navegación con teclado sigue enfocando y activando el control principal.
+
+## Encabezados
+
+`Header` organiza una fila en la parte superior de la ventana emergente. Coloca un `Title` en él para nombrar la ventana emergente según el título en lugar del activador. `Close` cierra la ventana emergente del mismo modo que una pulsación fuera de ella. De forma predeterminada, muestra un botón de icono con una X, así que asígnale una `aria-label` o pasa `render` e hijos para otro control. Otros controles, como un botón que vuelve a un paso anterior, pueden estar en la misma fila. Usa `Dropdown.Back` al navegar por el historial de páginas de la raíz.
+
+## Búsqueda y selección
+
+`Search` proporciona la entrada y la navegación hacia las filas de resultados. Pasa `value` y `onValueChange`; calcula u obtén resultados coincidentes en tu aplicación. Renderiza `Loading` mientras haya una solicitud pendiente y `Empty` cuando no coincida ningún resultado. Ambos aceptan texto de estado proporcionado por quien realiza la llamada.
+
+<StoryEmbed storyId="ui-components-dropdown--picker-documentation" title="Selector con búsqueda y creación en línea" height={420} />
+
+Envuelve las opciones seleccionables en `SelectionGroup` y asigna a cada opción un `value` estable y único dentro del grupo. Un grupo no controlado también necesita un `id` único dentro de su árbol desplegable, incluidos los submenús. Los componentes `Root` anidados de forma independiente mantienen su propio almacén de selección. La selección única usa una cadena o `null` si no hay selección. La selección múltiple usa un array, incluido `[]` si no hay selección.
+
+```tsx
+import { useState } from 'react';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const PersonPicker = () => {
+  const [search, setSearch] = useState('');
+  const [selectedPerson, setSelectedPerson] = useState<string | null>(null);
+  const people = ['Ada Lovelace', 'Grace Hopper'].filter((person) =>
+    person.toLowerCase().includes(search.toLowerCase()),
+  );
+
+  return (
+    <Dropdown.Root type="picker">
+      <Dropdown.Trigger render={<Button>Choose person</Button>} />
+      <Dropdown.Content>
+        <Dropdown.Search
+          aria-label="Search people"
+          value={search}
+          onValueChange={setSearch}
+        />
+        <Dropdown.SelectionGroup
+          id="person"
+          aria-label="Person"
+          value={selectedPerson}
+          onValueChange={setSelectedPerson}
+        >
+          {people.map((person) => (
+            <Dropdown.OptionItem key={person} value={person}>
+              {person}
+            </Dropdown.OptionItem>
+          ))}
+        </Dropdown.SelectionGroup>
+      </Dropdown.Content>
+    </Dropdown.Root>
+  );
+};
+```
+
+Pasa `value` y `onValueChange` para una selección controlada. Omitir `value` o pasar `undefined` deja la selección sin controlar; `defaultValue` establece su valor inicial. Un grupo no controlado tiene como valor predeterminado `null`, o `[]` con `multiple`. Su `id` estable conserva la selección al cerrar y volver a abrir, y al navegar entre páginas. Eliminar o filtrar una opción no borra su identificador seleccionado ni emite un cambio; la opción se selecciona de nuevo cuando vuelve. Usa un valor controlado cuando la aplicación necesita borrar opciones no disponibles.
+
+Cada grupo cambia de forma independiente. Una opción se confirma en su grupo más cercano, mientras que la página activa proporciona una colección ordenada para la navegación con flechas entre grupos y filas de acciones. La activación repetida de una opción única seleccionada conserva su valor sin otra devolución de llamada de cambio. La activación múltiple alterna la opción en el array.
+
+<StoryEmbed storyId="ui-components-dropdown--selection-groups-documentation" title="Selecciones independientes del propietario y del observador" height={440} />
+
+La selección única se cierra de forma predeterminada; la selección múltiple permanece abierta. `SelectionGroup.closeOnSelect` cambia el valor predeterminado del grupo y `OptionItem.closeOnSelect` lo reemplaza para una opción. Las filas de acciones usan `closeOnClick` de forma independiente. Un cambio cancelado conserva la selección anterior y no cierra automáticamente la ventana emergente.
+
+`onValueChange` recibe el siguiente valor y los detalles del evento con `event`, `reason`, `trigger`, `cancel()` e `isCanceled`. El motivo es `item-press` y `event` es el evento de activación original. `OptionItem.onSelect` recibe los mismos detalles antes de que su propietario confirme la selección. Llama a `cancel()` en cualquiera de las devoluciones de llamada para evitar la selección y el cierre automático.
+
+```tsx
+import { Dropdown } from 'twenty-ui/components/navigation';
+
+<Dropdown.SelectionGroup
+  id="watchers"
+  aria-label="Watchers"
+  multiple
+  defaultValue={[]}
+  onValueChange={(value, eventDetails) => {
+    if (value.length > 3) {
+      eventDetails.cancel();
+    }
+  }}
+>
+  <Dropdown.OptionItem value="ada">Ada Lovelace</Dropdown.OptionItem>
+  <Dropdown.OptionItem value="grace">Grace Hopper</Dropdown.OptionItem>
+</Dropdown.SelectionGroup>;
+```
+
+La búsqueda recibe el foco cuando se abre el selector. Sin búsqueda, la primera opción seleccionada habilitada recibe el foco, o la primera fila habilitada cuando no hay ninguna opción seleccionada. Mientras `Search` tiene el foco y una consulta no vacía, se resalta el primer `OptionItem` elegible de los grupos de selección y Enter lo activa. Las filas de acción nunca se seleccionan de esta forma. ArrowDown mueve el foco a la primera fila habilitada, incluidas las acciones. Al salir de la búsqueda, se borran la vista previa y `aria-activedescendant`, incluso cuando la ventana emergente permanece abierta. Al volver a la búsqueda, se restaura la vista previa de la consulta actual.
+
+Enter no hace nada para una consulta vacía o que solo contiene espacios en blanco, o cuando no queda ninguna opción elegible. La composición de texto con un método de entrada no activa una opción ni mueve el foco con las teclas de flecha. Cuando las filas se fijan encima de las coincidencias, como el valor actual o una fila "ninguno", muéstralas solo cuando coincidan con el texto de búsqueda. La ventana emergente permanece abierta cuando no coincide ninguna opción. El filtrado sigue siendo responsabilidad de quien realiza la llamada.
+
+<StoryEmbed storyId="ui-components-dropdown--multiple-selection-documentation" title="Selección múltiple" height={420} />
+
+`OptionItem` independiente sigue aceptando `selected` y `onSelect` para quienes gestionan la selección por sí mismos. Las opciones agrupadas derivan la selección del valor del grupo; no dupliques ese estado en la opción. Los grupos de selección personalizados no proporcionan envío de formularios nativo, restablecimiento, validación obligatoria, comportamiento de solo lectura ni integración con Field. Usa [Select](/es/ui/primitives/input/select) cuando se necesiten esos contratos de formularios nativos.
+
+## Cuadrículas de iconos
+
+<StoryEmbed storyId="ui-components-dropdown--icon-grid-documentation" title="Cuadrícula de iconos con estilo de celda seleccionada" height={360} />
+
+Establece `columns` en `Section` para organizar los elementos en columnas de cuadrícula de igual ancho. El mismo número controla la navegación por teclado: Left y Right se mueven dentro de una fila, mientras que Up y Down se mueven entre filas. La navegación omite las opciones deshabilitadas y sigue la dirección de lectura. Cuando no queda ninguna opción habilitada en la columna, Up y Down se mueven a la opción habilitada más cercana de la fila siguiente. Up desde la primera fila vuelve al campo de búsqueda cuando no existe una sección anterior. Una fila final corta usa su último elemento cuando falta la columna solicitada. Dentro de un submenú, la flecha hacia atrás cierra el submenú cuando no queda ninguna opción habilitada a su izquierda.
+
+Renderiza cada icono como un `OptionItem` con una etiqueta accesible y un botón de icono mediante `render`. Usa `indicator="none"` para mostrar la selección mediante el fondo del botón. La devolución de llamada `render` recibe el estado `{ selected, multiple, disabled }`; úsalo para aplicar estilo a una celda seleccionada y reenviar las props y la referencia proporcionadas.
+
+```tsx
+import { LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { IconCalendar } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const IconGrid = () => (
+  <Dropdown.Root type="picker">
+    <Dropdown.Trigger render={<Button>Choose icon</Button>} />
+    <Dropdown.Content>
+      <Dropdown.SelectionGroup
+        id="icon"
+        aria-label="Icon"
+        defaultValue="calendar"
+      >
+        <Dropdown.Section columns={5}>
+          <Dropdown.OptionItem
+            value="calendar"
+            aria-label="Calendar"
+            indicator="none"
+            nativeButton
+            render={(props, state) => (
+              <LightIconButton
+                // oxlint-disable-next-line react/jsx-props-no-spreading
+                {...props}
+                size="md"
+                color={state.selected ? 'accent' : 'neutral'}
+                aria-label="Calendar"
+              >
+                <IconCalendar />
+              </LightIconButton>
+            )}
+          />
+        </Dropdown.Section>
+      </Dropdown.SelectionGroup>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+## Foco del teclado
+
+En las páginas `menu` y `picker`, las filas forman un único punto de tabulación. Las teclas de flecha desplazan el foco entre secciones, acciones y opciones, y Inicio y Fin se desplazan a la primera y última filas habilitadas, a menos que el campo de búsqueda tenga el foco. Mover el foco nunca selecciona una opción; Intro o Espacio activa la fila enfocada. Al volver a las filas con Tab, se regresa a la última fila enfocada o a la primera fila habilitada una vez que esa fila ya no existe. La búsqueda, `Back` junto a una búsqueda, los botones de encabezado y otros controles dentro de la ventana emergente conservan sus propios puntos de tabulación.
+
+Tab y Shift+Tab cierran un `menu`, junto con sus menús principales cuando el foco está en un submenú. En un `picker`, Tab recorre los controles de la ventana emergente y la cierra cuando el foco sale de ella. Un `panel` conserva el orden nativo de Tab de sus controles.
+
+## Páginas y submenús
+
+Usa `Page` para la navegación que reemplaza el contenido de la misma ventana emergente. Envuelve la primera página en `Page id="root"` o elige otra página inicial con `defaultPage`. Establece `page` en una acción para navegar sin cerrar. `Back` vuelve a la página anterior y restaura el foco en la fila que la invocó.
+
+Las páginas se montan cuando se visitan por primera vez y permanecen montadas durante esa sesión abierta. Al volver a una página, se conservan su búsqueda local, los borradores de formularios y las secciones desplazables. Las páginas inactivas están ocultas e inertes: no participan en la navegación mediante teclado, el foco ni el árbol de accesibilidad, y sus ventanas emergentes Dropdown anidadas están inactivas.
+
+Al volver a abrirse, se inicia una nueva sesión en `defaultPage` con contenido nuevo, incluso cuando se establece `Content.keepMounted` o la ventana emergente vuelve a abrirse durante su transición de salida. Se restablecen el historial de páginas, la búsqueda local y los borradores. La página que se está cerrando permanece montada durante su transición de salida.
+
+Los valores no controlados de `SelectionGroup` permanecen almacenados en `Root` bajo el `id` estable de cada grupo y se conservan al volver a abrirse. Los valores controlados por quien realiza la llamada siguen perteneciendo a quien realiza la llamada. Por ejemplo, un valor de búsqueda almacenado por encima de `Content` permanece sin cambios hasta que quien realiza la llamada lo actualiza. Coloque el estado temporal de búsqueda o borrador en un componente dentro de `Content` o `Page` cuando deba restablecerse con la sesión; mantenga el estado duradero de la aplicación por encima de `Content`.
+
+Una página puede anular el `type` de la raíz. Por ejemplo, un menú de acciones puede abrir una página de selector con búsqueda o un panel de formulario. Search recibe el foco al entrar en una página con búsqueda; las demás páginas enfocan su primera fila después de `Back`.
+
+<StoryEmbed storyId="ui-components-dropdown--pages-documentation" title="Navegación de página de menú a selector" height={420} />
+
+```tsx
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const FilterMenu = () => (
+  <Dropdown.Root type="menu">
+    <Dropdown.Trigger render={<Button>Filters</Button>} />
+    <Dropdown.Content>
+      <Dropdown.Page id="root">
+        <Dropdown.Section>
+          <Dropdown.ActionItem page="status">Status</Dropdown.ActionItem>
+        </Dropdown.Section>
+      </Dropdown.Page>
+      <Dropdown.Page id="status" type="picker">
+        <Dropdown.Back>Filters</Dropdown.Back>
+        <Dropdown.Section>
+          <Dropdown.SelectionGroup id="status" aria-label="Status">
+            <Dropdown.OptionItem value="active">Active</Dropdown.OptionItem>
+            <Dropdown.OptionItem value="archived">Archived</Dropdown.OptionItem>
+          </Dropdown.SelectionGroup>
+        </Dropdown.Section>
+      </Dropdown.Page>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+Para navegar desde el código, llama a `useDropdownPage` en un componente renderizado dentro de la raíz. Devuelve los valores actuales `page`, `goToPage(page)`, `goBack()`, `canGoBack` e `isActive`. Dentro de una página, `isActive` es verdadero solo mientras esa página está activa y su menú desplegable está abierto. Use `isActive` para mostrar las ventanas emergentes personalizadas de una página representadas mediante portal, de modo que desaparezcan cuando la página se vuelva inactiva o se cierre el menú desplegable. Por ejemplo, una opción puede volver a la página anterior después de una selección mientras la ventana emergente permanece abierta:
+
+```tsx
+import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
+
+export const StatusOptions = ({
+  status,
+  onStatusChange,
+}: {
+  status: string | null;
+  onStatusChange: (status: string | null) => void;
+}) => {
+  const { goBack } = useDropdownPage();
+
+  return (
+    <Dropdown.SelectionGroup
+      id="status"
+      aria-label="Status"
+      value={status}
+      closeOnSelect={false}
+      onValueChange={(value) => {
+        onStatusChange(value);
+        goBack();
+      }}
+    >
+      {['Active', 'Archived'].map((option) => (
+        <Dropdown.OptionItem key={option} value={option}>
+          {option}
+        </Dropdown.OptionItem>
+      ))}
+    </Dropdown.SelectionGroup>
+  );
+};
+```
+
+Usa `Submenu` con `SubmenuTrigger` y un `Content` anidado para un menú en paralelo. Arrow Right entra en el submenú; Arrow Left vuelve a su elemento padre. Seleccionar una acción que cierra cierra todo el menú desplegable.
+
+```text
+Dropdown.Content
+└── Dropdown.Submenu
+    ├── Dropdown.SubmenuTrigger
+    └── Dropdown.Content
+        └── Dropdown.ActionItem
+```
+
+## Selectores anidados independientes
+
+Coloca otro `Dropdown.Root` dentro de `Content` cuando un control abre su propio selector, como un selector de dirección de ordenación. Seleccionar una opción interna cierra solo ese selector y restaura el foco en su activador. Escape y las pulsaciones fuera de los elementos cierran una capa cada vez. Usa `Submenu` para comandos que deben cerrar todo el árbol de menús al seleccionarse.
+
+<StoryEmbed storyId="ui-components-dropdown--nested-documentation" title="Selector de ordenación con un selector de dirección anidado" height={420} />
+
+## Paneles y estado controlado
+
+Usa `type="panel"` para entradas de formulario. La interacción con las entradas mantiene abierto el panel; una acción de guardar puede cerrarlo. Gestiona `open` y `onOpenChange` cuando otro componente o un atajo necesite abrir el menú desplegable. Mantén ese estado con la funcionalidad que coordina la interacción.
+
+<StoryEmbed storyId="ui-components-dropdown--panel-documentation" title="Panel de formulario controlado" height={420} />
+
+Escape cierra la ventana emergente y restaura el foco en su activador. La interacción externa también la cierra, y el clic que la cierra no activa aquello sobre lo que cae. Las teclas pulsadas dentro de la ventana emergente permanecen dentro de ella, excepto los atajos Ctrl o Cmd que el menú desplegable no gestiona, por lo que los atajos de nivel de página siguen funcionando. `Content` acepta opciones de foco y portal de Popover, incluido un destino explícito de devolución del foco para flujos de trabajo de edición.
+
+## Cierre
+
+Escape, una pulsación fuera de la ventana emergente y salir de ella con Tab cierran el menú desplegable. Pasa `onEscapeKeyDown` u `onInteractOutside` a `Root` para reaccionar antes de que se cierre, y llama a `event.preventDefault()` para mantenerlo abierto. `event.target` es el elemento pulsado fuera, o `null` cuando el foco se desplaza con Tab, y `event.type` es el tipo de evento DOM que lo desencadenó, como `touchmove` para un deslizamiento fuera del elemento emergente. Una pulsación externa impedida sigue llegando al elemento sobre el que cae.
+
+```tsx
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const ViewSettings = ({ isEditing }: { isEditing: boolean }) => (
+  <Dropdown.Root
+    type="panel"
+    onInteractOutside={(event) => {
+      if (isEditing) {
+        event.preventDefault();
+      }
+    }}
+  >
+    <Dropdown.Trigger render={<Button>View settings</Button>} />
+    <Dropdown.Content>
+      <Dropdown.ActionItem>Save view</Dropdown.ActionItem>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+## Anclaje sin activador
+
+Una raíz puede abrirse sin un `Trigger`, por ejemplo, como un menú contextual. Contrólalo con `open` y `onOpenChange`, y pasa `anchor` a `Content`: un elemento, una ref o un elemento virtual que devuelve un rectángulo en coordenadas del viewport. Asigna a `Content` una `aria-label`, ya que no hay ningún activador que le dé nombre. Al cerrar, el foco vuelve al elemento que estaba enfocado cuando se abrió la ventana emergente.
+
+<StoryEmbed storyId="ui-components-dropdown--context-menu-documentation" title="Menú contextual anclado al puntero" height={420} />
+
+```tsx
+import { useState } from 'react';
+import { Dropdown } from 'twenty-ui/components/navigation';
+
+export const RecordContextMenu = ({ recordName }: { recordName: string }) => {
+  const [open, setOpen] = useState(false);
+  const [point, setPoint] = useState({ x: 0, y: 0 });
+
+  return (
+    <>
+      <p
+        onContextMenu={(event) => {
+          event.preventDefault();
+          setPoint({ x: event.clientX, y: event.clientY });
+          setOpen(true);
+        }}
+      >
+        {recordName}
+      </p>
+      <Dropdown.Root type="menu" open={open} onOpenChange={setOpen}>
+        <Dropdown.Content
+          aria-label="Record actions"
+          anchor={{
+            getBoundingClientRect: () => new DOMRect(point.x, point.y, 0, 0),
+          }}
+        >
+          <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
+        </Dropdown.Content>
+      </Dropdown.Root>
+    </>
+  );
+};
+```
+
+Hacer clic con el botón derecho en otro lugar mientras el menú está abierto lo mueve al nuevo punto.
+
+Llama a `useDropdownPlacementOrThrow` dentro de `Dropdown.Content` para leer sus valores resueltos de `side` y `align`, incluidos los cambios por colisión. Usa el lado resuelto para colocar la búsqueda y los controles de creación de un selector junto a su activador. Mantén los controles en su orden visual del DOM para que la navegación con teclado siga el diseño. Una búsqueda debajo de los resultados recibe el foco desde `ArrowDown` en el último resultado; `ArrowUp` desde esa búsqueda vuelve al último resultado.
+
+## Etiquetas
+
+Cada parte gestiona su texto: proporciona `Search.placeholder` y nombres accesibles nativos, atributos accesibles para `Close` e hijos para `Back`, `Loading` y `Empty`. `Back` usa `Back` de forma predeterminada; los estados de carga y vacío no tienen ningún mensaje integrado. Las partes de elementos aceptan `shortcutJoinLabel` para reemplazar el `then` predeterminado entre pasos de atajos secuenciales. `aria-labelledby` nativo tiene prioridad sobre `aria-label`.
+
+## "Props"
+
+<DropdownReference />
+
+<PageBanner illustration="page-cover-input" />

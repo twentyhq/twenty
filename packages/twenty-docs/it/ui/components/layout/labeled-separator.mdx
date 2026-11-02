@@ -1,0 +1,87 @@
+---
+title: LabeledSeparator
+description: Separa il contenuto con un'etichetta di testo centrata o allineata alla fine.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import LabeledSeparatorReference from '/snippets/ui/generated/components/layout/labeled-separator.mdx';
+
+## Panoramica
+
+`LabeledSeparator` compone [Separatore](/it/ui/primitives/layout/separator) e [Testo](/it/ui/primitives/typography/text) in un divisore orizzontale denominato. L'applicazione fornisce l'etichetta e la spaziatura circostante.
+
+<StoryEmbed storyId="ui-layout-labeledseparator--display" title="Separatore con etichetta tra le opzioni di importazione" height={180} />
+
+## Utilizzo
+
+```tsx
+import { LabeledSeparator } from 'twenty-ui/components/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportOptions = () => (
+  <Text
+    style={{
+      display: 'grid',
+      gap: 'var(--t-spacing-3)',
+      width: 320,
+      maxWidth: '100%',
+    }}
+  >
+    <Button fullWidth>Import a CSV file</Button>
+    <LabeledSeparator>Or</LabeledSeparator>
+    <Button fullWidth variant="outline">
+      Connect a data source
+    </Button>
+  </Text>
+);
+```
+
+## Posizionamento e tono dell'etichetta
+
+`labelPosition` è impostato per impostazione predefinita su `center`, con una linea su ciascun lato dell'etichetta. Usa `end` per posizionare l'etichetta dopo la linea iniziale. L'etichetta accetta una stringa fornita e localizzata dall'applicazione.
+
+`tone` è impostato per impostazione predefinita su `neutral`. Usa `danger` per un indicatore rosso con un'etichetta di peso medio e una linea più spessa. Imposta `hasStartMarker` per aggiungere un piccolo terminale decorativo all'inizio della linea.
+
+Il terminale facoltativo segue il [design condiviso delle linee del calendario e della chat](https://www.figma.com/design/xt8O9mFeLl46C5InWwoMrN/Twenty?node-id=118289-146574).
+
+<StoryEmbed storyId="ui-layout-labeledseparator--unread-marker" title="Indicatore di non letto con un'etichetta allineata alla fine" height={100} />
+
+```tsx
+import { LabeledSeparator } from 'twenty-ui/components/layout';
+
+export const UnreadMarker = () => (
+  <LabeledSeparator
+    labelPosition="end"
+    tone="danger"
+    hasStartMarker
+    style={{ width: 488, maxWidth: '100%' }}
+  >
+    New
+  </LabeledSeparator>
+);
+```
+
+## Spaziatura e stato dell'applicazione
+
+Il componente riempie il relativo contenitore e non aggiunge alcun margine esterno. Usa la spaziatura del layout padre o `style` e `className` nativi per margini e allineamento. Mantieni nell'applicazione gli scostamenti per avatar adiacenti o posizioni del calendario.
+
+Il componente presenta l'etichetta fornita. L'applicazione decide dove collocare un confine di non letto o un indicatore del calendario e quando è visibile.
+
+## Accessibilità e composizione
+
+L'elemento radice espone un separatore orizzontale denominato in base alla relativa etichetta. I segmenti della linea e l'indicatore iniziale facoltativo sono decorativi, quindi la tecnologia assistiva non annuncia separatori aggiuntivi. Gli attributi accessibili nativi possono fornire un nome o una descrizione diversi quando necessario.
+
+Gli attributi nativi, gli stili, i nomi delle classi e `ref` si applicano al `div` esterno. Usa `render` per comporre un altro elemento non interattivo inoltrando le props fornite e ref. `LabeledSeparatorProps` viene esportato da `twenty-ui/components/layout`.
+
+## Migrazione
+
+Sostituisci il `LabeledDivider` del frontend con `LabeledSeparator`. Rinomina `textPosition` in `labelPosition` e usa `tone="danger"` per l'aspetto rosso dell'indicatore di non letto. Rimuovi `noMargin`, poiché i margini esterni sono impostati su zero per impostazione predefinita. Mantieni la precedente spaziatura predefinita con `style={{ marginBlock: 'var(--t-spacing-3)' }}` dove necessario.
+
+## Props
+
+<LabeledSeparatorReference />
+
+<PageBanner illustration="layout" />

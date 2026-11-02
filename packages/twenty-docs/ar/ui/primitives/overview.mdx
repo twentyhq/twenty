@@ -1,0 +1,112 @@
+---
+title: العناصر الأساسية
+sidebarTitle: نظرة عامة
+description: عناصر التحكم الأساسية لبناء واجهات باستخدام Twenty UI.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## نظرة عامة
+
+العناصر الأساسية هي عناصر التحكم التأسيسية في Twenty UI. تتضمن عناصر إدخال وعناصر عرض وتنقّل وعناصر تحكم مركبة مثل Select وPopover وAlertDialog. يتلقى كل عنصر أساسي البيانات ودوال الاستدعاء الخلفي من تطبيقك.
+
+استورد العناصر الأساسية من نقطة إدخال عائلة، مثل `twenty-ui/primitives/input`. يُصدّر الإدخال المجمّع `twenty-ui/primitives` أيضًا كل مجموعة من العناصر الأولية. راجع [بدء الاستخدام](/ar/ui/getting-started) للتثبيت وإعداد النسق.
+
+تجمع [المكوّنات](/ar/ui/components/overview) هذه العناصر الأساسية في إعدادات تصميم مشتركة ووحدات بناء قابلة لإعادة الاستخدام للتطبيقات.
+
+## ملكية الحالة العربية
+
+استخدم الحالة غير المتحكم بها عندما يتمكن المكوّن من إدارة تفاعلاته الخاصة. توفر الخاصية الافتراضية الحالة الأولية. استخدم الحالة المتحكم بها عندما يحتاج التطبيق إلى تنسيق تلك الحالة مع عناصر التحكم الأخرى أو التنقل أو بيانات التطبيق.
+
+| الحالة                                     | الحالة الأولية غير المتحكم بها | الحالة المتحكم بها | دالة رد الاتصال الخاصة بالتغيير |
+| ------------------------------------------ | ------------------------------ | ------------------ | ------------------------------- |
+| الإدخال أو التحديد أو علامة التبويب النشطة | `defaultValue`                 | `القيمة`           | `onValueChange`                 |
+| مربع اختيار أو مفتاح تبديل                 | `defaultChecked`               | `checked`          | `onCheckedChange`               |
+| ظهور النافذة المنبثقة                      | `defaultOpen`                  | `افتح`             | `onOpenChange`                  |
+
+في الوضع المتحكم به، مرر الحالة الحالية وحدّثها في دالة رد الاتصال الخاصة بالتغيير. في الوضع غير المتحكم به، لا يزال بإمكانك الاستماع إلى التغييرات دون تولي ملكية الحالة. إضافة دالة رد اتصال وحدها لا تجعل المكوّن متحكمًا به.
+
+اختر وضعًا لكل حالة والتزم به طوال عمر المكوّن. تهيئ الخصائص الافتراضية الحالة؛ ولا يؤدي تغييرها لاحقًا إلى استبدال الحالة الحالية. تجنب تمرير الخاصية الافتراضية والخاصية المتحكم بها معًا للحالة نفسها.
+
+تحتوي بعض المكوّنات على أكثر من حالة مستقلة واحدة. على سبيل المثال، يمكن أن يحتوي [تحديد](/ar/ui/primitives/input/select#open-state) على قيمة متحكم بها وظهور نافذة منبثقة غير متحكم به.
+
+تنتمي الحالة إلى الجزء الذي يدير التفاعل. هيئ تحديد زر الاختيار في [مجموعة أزرار الاختيار](/ar/ui/primitives/input/radio-group)، وليس في كل Radio. لا تحتوي مكوّنات العرض مثل Text على وضع متحكم به أو غير متحكم به. يفوض [Toast](/ar/ui/components/feedback/toast) ظهوره وإزالته إلى التطبيق.
+
+## التركيب
+
+تكشف العناصر الأولية المركبة عن أجزاء مثل `Select.Root` و`Select.Trigger` و`Select.Popup`. أبقِ الأجزاء ذات الصلة تحت الجذر نفسه في شجرة المكوّنات لكي تشترك في الحالة وعلاقات إمكانية الوصول. يحدد قسم البنية التشريحية لكل مكوّن الأجزاء المطلوبة والمحتوى الاختياري.
+
+تقبل الفتحات مثل `InputGroup.startElement` و`ListItem.actions` عُقد React كخصائص. تضيف محتوى ضمن تخطيط المكوّن. الأجزاء والفتحات هما واجهتا برمجة تطبيقات مختلفتان؛ استخدم الأسماء المدرجة في دليل المكوّن.
+
+### تركيب النافذة المنبثقة
+
+توفّر Select وPopover وAutocomplete أجزاءً منفصلة هي `Portal` و`Positioner` و`Popup`:
+
+| الجزء        | المسؤولية                                      |
+| ------------ | ---------------------------------------------- |
+| `Portal`     | حاوية الوجهة والتركيب                          |
+| `Positioner` | الموضع، والمرساة، والإزاحات، ومعالجة التصادمات |
+| `Popup`      | المحتوى، وسلوك التركيز، والسمات الأصلية، وref  |
+| `Arrow`      | سهم اختياري داخل النافذة المنبثقة              |
+
+ضمّن Popup داخل Positioner وPositioner داخل Portal. ضع المحتوى داخل Popup وأضف Arrow صراحةً عند الحاجة. قد تنقل البوابة DOM المعروض إلى حاوية أخرى مع الحفاظ على تسلسل المكوّنات والسياق. راجع [تخصيص المظهر](/ar/ui/theming#scope-an-override) للتعرّف على حاويات البوابة ذات النطاق المحدد.
+
+يحافظ كل جزء معروض على سماته الأصلية الخاصة به، وهدف ref، وتركيب العرض. يحافظ [Autocomplete](/ar/ui/primitives/input/autocomplete) أيضًا على أجزاء المجموعة والتجميع والشبكة والتصفية والحالة المثبّتة من المصدر الأساسي.
+
+يعرض [Dialog](/ar/ui/primitives/surfaces/dialog) و[AlertDialog](/ar/ui/primitives/surfaces/alert-dialog) أجزاء `Portal` و`Backdrop` و`Viewport` و`Popup` منفصلة. اضبط التركيب والوجهة في Portal، ومظهر التراكب في Backdrop وViewport، وحجم المحتوى والتركيز في Popup. يحافظ كل جزء على سماته الأصلية وهدف المرجع وتركيب العرض الخاص به. واجهات برمجة تطبيقات مربع الحوار هذه مخصصة لواجهة المستخدم المستقلة ومضيف Twenty. تستخدم مكونات Front [واجهة برمجة تطبيقات مربع حوار مضيف SDK](/ar/developers/extend/apps/layout/front-components#host-communication-api).
+
+### المكوّنات المخصصة
+
+بالنسبة إلى الأجزاء التي تدعم `render`، مرّر عنصرًا أو مكوّنًا متوافقًا لاستبدال العنصر الافتراضي. على سبيل المثال، يمكن لـ `Popover.Trigger` استخدام `Button` من واجهة Twenty مع الاحتفاظ بسلوك المشغّل الخاص به.
+
+يجب أن يمرّر الغلاف المخصص الخصائص وref المزوّدين إلى العنصر التفاعلي. يحافظ هذا على معالجات الأحداث، وسمات إمكانية الوصول، والتموضع، واستعادة التركيز. يمرّرها هذا المثال عبر `Button`، الذي يربطها بزره الأصلي.
+
+```tsx
+import { type ComponentPropsWithRef } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+type HelpButtonProps = ComponentPropsWithRef<typeof Button>;
+
+const HelpButton = ({ ref, ...props }: HelpButtonProps) => (
+  <Button {...props} ref={ref} variant="outline" />
+);
+
+export const ImportHelp = () => (
+  <Popover.Root>
+    <Popover.Trigger render={<HelpButton>Import help</HelpButton>} />
+    <Popover.Portal>
+      <Popover.Positioner>
+        <Popover.Popup>
+          <Popover.Title>Import a CSV file</Popover.Title>
+          <Popover.Description>
+            Use a header row to identify your columns.
+          </Popover.Description>
+          <Popover.Close render={<Button>Got it</Button>} />
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
+  </Popover.Root>
+);
+```
+
+مرّر الزر عبر `render` واجعل كل إجراء عنصر تحكم تفاعليًا واحدًا. حافظ على المعالجات وref المزوّدين إلى غلافك عند إضافة سلوكك الخاص. يجب أن يصل ref إلى العنصر الذي يتلقى التركيز.
+
+استخدم زرًا أصليًا للأجزاء الشبيهة بالأزرار. في الأجزاء التي تعرض `nativeButton`، عيّن `nativeButton={false}` فقط عندما لا يكون العنصر المعروض زرًا أصليًا. يحتفظ المكوّن المخصص الذي يعرض زرًا في النهاية، مثل `HelpButton`، بسلوك الزر الافتراضي.
+
+## تصفح العناصر الأولية
+
+تتضمن كل صفحة أمثلة على الاستخدام، وإرشادات للتفاعل، ومرجع API مُنشأ تلقائيًا.
+
+| الفئة             | العناصر الأولية                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| إمكانية الوصول    | [مخفي بصريًا](/ar/ui/primitives/accessibility/visually-hidden)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| البيانات المعروضة | [Avatar](/ar/ui/primitives/data-display/avatar)، [Chip](/ar/ui/primitives/data-display/chip)، [ColorSample](/ar/ui/primitives/data-display/color-sample)، [Badge](/ar/ui/primitives/data-display/badge)، [Status](/ar/ui/primitives/data-display/status)، [Tag](/ar/ui/primitives/data-display/tag)                                                                                                                                                                                                                                                                                                                                                                     |
+| التغذية الراجعة   | [Banner](/ar/ui/primitives/feedback/banner)، [Loader](/ar/ui/primitives/feedback/loader)، [Progress](/ar/ui/primitives/feedback/progress)، [ProgressBar](/ar/ui/primitives/feedback/progress-bar)، [ProgressRing](/ar/ui/primitives/feedback/progress-ring)، [Skeleton](/ar/ui/primitives/feedback/skeleton)                                                                                                                                                                                                                                                                                                                                                            |
+| النماذج           | [الإكمال التلقائي](/ar/ui/primitives/input/autocomplete)، [زر](/ar/ui/primitives/input/button)، [مجموعة الأزرار](/ar/ui/primitives/input/button-group)، [مربع اختيار](/ar/ui/primitives/input/checkbox)، [حقل](/ar/ui/primitives/input/field)، [إدخال](/ar/ui/primitives/input/input)، [مجموعة الإدخال](/ar/ui/primitives/input/input-group)، [حقل الأرقام](/ar/ui/primitives/input/number-field)، [زر اختيار](/ar/ui/primitives/input/radio)، [مجموعة أزرار الاختيار](/ar/ui/primitives/input/radio-group)، [تحديد](/ar/ui/primitives/input/select)، [شريط تمرير](/ar/ui/primitives/input/slider)، [مفتاح تبديل](/ar/ui/primitives/input/switch)، [منطقة نص](/ar/ui/primitives/input/textarea) |
+| التخطيط           | [Collapsible](/ar/ui/primitives/layout/collapsible)، [Separator](/ar/ui/primitives/layout/separator)، [ResizeHandle](/ar/ui/primitives/layout/resize-handle)، [DirectionProvider](/ar/ui/primitives/layout/direction-provider)                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| التنقل            | [مسار التنقل](/ar/ui/primitives/navigation/breadcrumb)، [عنصر القائمة](/ar/ui/primitives/navigation/list-item)، [علامات التبويب](/ar/ui/primitives/navigation/tabs)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            |
+| الأسطح            | [AlertDialog](/ar/ui/primitives/surfaces/alert-dialog)، [Card](/ar/ui/primitives/surfaces/card)، [Dialog](/ar/ui/primitives/surfaces/dialog)، [Popover](/ar/ui/primitives/surfaces/popover)، [Tooltip](/ar/ui/primitives/surfaces/tooltip)                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| الطباعة           | [عنوان](/ar/ui/primitives/typography/heading)، [نص متجاوز مع تلميح](/ar/ui/primitives/typography/overflowing-text-with-tooltip)، [موفر وضع تلميح النص المتجاوز](/ar/ui/primitives/typography/overflowing-text-tooltip-mode-provider)، [اختصار](/ar/ui/primitives/typography/shortcut)، [نص](/ar/ui/primitives/typography/text)                                                                                                                                                                                                                                                                                                                                       |
+
+<PageBanner illustration="section-ui-primitives" />

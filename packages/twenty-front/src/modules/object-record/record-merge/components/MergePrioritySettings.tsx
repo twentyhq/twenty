@@ -46,6 +46,11 @@ export const MergePrioritySettings = ({
     return null;
   }
 
+  // The server rejects an out-of-range index, so "no priority" is only shown, never offered
+  const isPriorityRecordMissing = !priorityOptions.some(
+    (option) => option.value === priorityRecordIndex,
+  );
+
   return (
     <StyledSectionContainer>
       <Section.Root>
@@ -53,10 +58,14 @@ export const MergePrioritySettings = ({
           dropdownId={dropdownId}
           options={priorityOptions}
           value={priorityRecordIndex}
-          emptyOption={{
-            value: MISSING_PRIORITY_RECORD_INDEX,
-            label: t`No record holds priority`,
-          }}
+          emptyOption={
+            isPriorityRecordMissing
+              ? {
+                  value: MISSING_PRIORITY_RECORD_INDEX,
+                  label: t`No record holds priority`,
+                }
+              : undefined
+          }
           onChange={onPriorityRecordIndexChange}
           label={t`Fields conflicts`}
           disabled={disabled}

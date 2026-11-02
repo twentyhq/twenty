@@ -3,6 +3,12 @@ title: 2. Generazione documenti
 description: Una funzione logica, esposta come strumento AI e un'azione di flusso di lavoro.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Panoramica
+
 Ora il core: una [funzione logica](/it/developers/extend/apps/logic/logic-functions)
 che carica un modello e un record, riempie i segnaposti, e salva un nuovo documento
 .
@@ -171,7 +177,7 @@ yarn add pdf-lib marked
 
 L'helper completo è
 [`generate-document-pdf.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/logic-functions/utils/generate-document-pdf.ts).
-Analizza il Markdown in token con `marked. exer`, poi li mette fuori con
+Analizza il Markdown in token con `marked.lexer`, poi li mette fuori con
 pdf-lib: intestazioni reali, **bold**/*italic* runs, proiettile e liste numerate,
 blockquotes e regole — un rendering A4 lucido e multi-pagina del modello
 stesso, piuttosto che un muro di testo.
@@ -187,8 +193,9 @@ non possono codificare. Rendering non latino script (Cinese, Arabo, Cirillico) s
 incorporare un carattere Unicode.
 </Note>
 
-Quindi caricarlo e memorizzare il riferimento sul record. `uploadFile` percorre bytes
-nel campo dei file di proprietà dell'app; il `id` restituito è quello che salvi:
+Quindi caricarlo e memorizzare il riferimento sul record. `uploadFile` invia i
+byte direttamente all'archiviazione file e li allega al campo dei file di proprietà della tua app;
+l'`id` restituito è quello che salvi:
 
 ```ts filename="src/logic-functions/handlers/generate-document-handler.ts"
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -198,12 +205,11 @@ const documentName = `${documentTemplate.name} — ${record.displayName}`;
 const bytes = await generateDocumentPdf(documentName, content);
 const fileName = 'proposal.pdf';
 
-const uploaded = await new MetadataApiClient().uploadFile(
-  Buffer.from(bytes),
-  fileName,
-  'application/pdf',
-  DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
-);
+const uploaded = await new MetadataApiClient().uploadFile({
+  fileBuffer: Buffer.from(bytes),
+  filename: fileName,
+  fieldMetadataUniversalIdentifier: DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+});
 
 await client.mutation({
   updateDocument: {
@@ -233,6 +239,11 @@ per le registrazioni.
 **Dopo questo passaggio:** ogni documento generato ha un PDF reale e scaricabile. Ma
 niente può *chiamare* il generatore dall'interfaccia utente ancora — per questo abbiamo bisogno di un percorso HTTP.
 
-<Card title="Il prossimo: percorsi HTTP →" icon="world" href="/it/developers/extend/apps/tutorials/document-generator/http-routes">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/it/developers/extend/apps/tutorials/document-generator/http-routes" img="/images/user-guide/halftone/card-page-tutorial-http.svg">
+  <CardTitle>Avanti: HTTP route →</CardTitle>
   Servire la funzione su HTTP e rendere i documenti come pagine web.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="card-page-tutorial-documents" />

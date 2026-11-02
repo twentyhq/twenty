@@ -1,0 +1,89 @@
+---
+title: CountPager
+description: Навигация по конечной коллекции с помощью элементов управления «Назад» и «Далее» и форматированного текста позиции.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CountPagerReference from '/snippets/ui/generated/components/navigation/count-pager.mdx';
+
+## Обзор
+
+`CountPager` объединяет кнопки «Назад» и «Далее» с текстом позиции, форматируемым вызывающей стороной. Используйте его для перемещения по небольшой коллекции, например элементам проверки или запросам.
+
+<StoryEmbed storyId="ui-components-countpager--display" title="Пример пейджера количества" height={100} />
+
+## Использование
+
+```tsx
+import { useState } from 'react';
+import { CountPager } from 'twenty-ui/components/navigation';
+
+export const ReviewPager = () => {
+  const [index, setIndex] = useState(0);
+
+  return (
+    <CountPager
+      aria-label="Review item"
+      index={index}
+      count={3}
+      onIndexChange={setIndex}
+      positionText={`${index + 1} of 3`}
+      previousLabel="Previous item"
+      nextLabel="Next item"
+    />
+  );
+};
+```
+
+## Управляемая навигация
+
+Укажите отсчитываемый от нуля `index`, `count` коллекции и `onIndexChange`. Активация доступной кнопки запрашивает соседний индекс. Ваше приложение обновляет индекс и отображает соответствующее содержимое.
+
+Кнопка «Назад» отключена для первого элемента, а «Далее» — для последнего. Обе кнопки отключены для пустой коллекции или коллекции с одним элементом, при установленном `disabled`, а также если указанный индекс или количество недопустимы. Количество должно быть неотрицательным целым числом, а индекс — целым числом в пределах коллекции.
+
+Изменение свойств никогда не вызывает `onIndexChange`. Когда элементы исчезают или коллекция изменяется, ваше приложение выбирает следующий активный элемент. Загрузка данных, стабильные идентификаторы элементов, сохранение черновиков и выполнение отображаемого элемента остаются на стороне приложения.
+
+## Текст позиции и размещение
+
+`positionText` является обязательным и остаётся под управлением приложения. Форматируйте числа, единицы измерения и переводы перед передачей в пейджер. Для пустой коллекции укажите осмысленное значение, например `No items`; компонент не создаёт метку пустого состояния самостоятельно.
+
+По умолчанию `positionPlacement="between"` отображает «Назад», текст позиции и «Далее». Установите `positionPlacement="start"`, чтобы разместить текст перед обеими кнопками. Затем текст заполняет доступную ширину, чтобы элементы управления выравнивались по концу строки.
+
+```tsx
+import { useState } from 'react';
+import { CountPager } from 'twenty-ui/components/navigation';
+
+export const RequestPager = () => {
+  const [index, setIndex] = useState(0);
+
+  return (
+    <CountPager
+      aria-label="Pending requests"
+      index={index}
+      count={3}
+      onIndexChange={setIndex}
+      positionText={`Request ${index + 1} of 3`}
+      previousLabel="Previous request"
+      nextLabel="Next request"
+      positionPlacement="start"
+      style={{ width: 280, maxWidth: '100%' }}
+    />
+  );
+};
+```
+
+## Доступность и композиция
+
+Корневой элемент по умолчанию является группой. Укажите контекстное доступное имя с помощью `aria-label` или `aria-labelledby`, а также `previousLabel` и `nextLabel` для двух кнопок со значками. Текст позиции использует вежливую живую область, поэтому об изменениях можно сообщать без перемещения фокуса.
+
+Элементы управления используют нативные кнопки с общим оформлением [LightIconButton](/ru/ui/components/input/light-icon-button). Tab перемещает между включёнными элементами управления, а Enter или Space активирует кнопку в фокусе. Отключённые элементы управления не позволяют выполнять навигацию. Щелчки по пейджеру не отправляют окружающую форму.
+
+Нативные атрибуты, `className`, `style` и `ref` применяются к корневому элементу. Используйте `render` для компоновки другого корневого элемента с сохранением предоставленных свойств и ref. Сохраняйте кнопки и семантику их взаимодействия без изменений.
+
+## Свойства
+
+<CountPagerReference />
+
+<PageBanner illustration="dashboards" />

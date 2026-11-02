@@ -1,0 +1,167 @@
+---
+title: Radio
+description: Visualizza un'opzione in un gruppo radio a selezione esclusiva.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import RadioReference from '/snippets/ui/generated/input/radio.mdx';
+
+## Panoramica
+
+`Radio` rappresenta un'opzione all'interno di [RadioGroup](/it/ui/primitives/input/radio-group). Assegna a ogni opzione un `value` distinto e un'etichetta visibile. Il gruppo possiede il valore selezionato.
+
+<StoryEmbed storyId="ui-input-radio--display" title="Esempio di radio" height={140} />
+
+## Utilizzo
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const ContactMethod = () => (
+  <RadioGroup
+    name="contactMethod"
+    defaultValue="email"
+    aria-label="Preferred contact method"
+  >
+    <Radio value="email">Email</Radio>
+    <Radio value="phone">Phone</Radio>
+    <Radio value="post" disabled>
+      Postal mail (unavailable)
+    </Radio>
+  </RadioGroup>
+);
+```
+
+La prop `size` accetta `sm` o `md` e il valore predefinito è `sm`. Utilizza la stessa dimensione per le opzioni di un gruppo.
+
+## Scelte visive
+
+Confronta gli stati selezionato e disabilitato, le dimensioni e gli aspetti predefinito e a scheda. Utilizza un gruppo di opzioni etichettato per una scelta effettiva.
+
+<StoryEmbed storyId="ui-input-radio--catalog" title="Scelte visive per i pulsanti di opzione" height={380} />
+
+## Parti complete
+
+`Radio.Root` e `Radio.Indicator` espongono le parti Base UI installate senza l'assemblaggio con stili. Componili quando hai bisogno di contenuti personalizzati o di un posizionamento personalizzato dell'indicatore. Il componente richiamabile `Radio` fornisce l'aspetto e l'indicatore radio di Twenty per le opzioni comuni.
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const StorageChoice = () => (
+  <RadioGroup aria-label="Storage" defaultValue="ssd">
+    <Radio.Root value="ssd">
+      <Radio.Indicator keepMounted render={<span />}>
+        ✓
+      </Radio.Indicator>
+      SSD
+    </Radio.Root>
+    <Radio.Root value="hdd">HDD</Radio.Root>
+  </RadioGroup>
+);
+```
+
+I radio standard e `Radio.Root` eseguono il rendering di uno span con semantica radio e di un input nativo nascosto adiacente. I radio a scheda eseguono il rendering di un div. `ref` punta alla radice sottoposta a rendering; `inputRef` punta all'input. `Radio.Indicator` esegue il rendering di uno span e il relativo ref punta a quell'elemento. `render`, `className` e `style` basati sullo stato, gli attributi nativi e i gestori di eventi mantengono i rispettivi contratti upstream. I tipi pubblici includono `RadioProps`, `RadioRootProps`, `RadioRootState`, `RadioIndicatorProps` e `RadioIndicatorState`.
+
+## Opzioni della scheda
+
+Usa `variant="card"` per opzioni a larghezza intera con un indicatore radio inserito. Per impostazione predefinita, i radio a scheda mantengono la propria radice div. Usa `render` per scegliere esplicitamente un altro elemento. Quando tale elemento è un pulsante nativo, imposta anche `nativeButton`. Mantieni i controlli interattivi al di fuori del contenuto della scheda.
+
+Assegna al gruppo una larghezza sufficiente per il relativo contenuto e lascia spazio per l'indicatore in alto a destra. Un titolo, un'icona e una breve descrizione aiutano a spiegare ciascuna scelta.
+
+<StoryEmbed storyId="ui-input-radio--cards-documentation" title="Opzioni radio scheda" height={290} />
+
+```tsx
+import { IconLayoutKanban, IconTable } from 'twenty-ui/icon';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+const VIEWS = [
+  {
+    value: 'table',
+    title: 'Table view',
+    description: 'Browse records in rows.',
+    Icon: IconTable,
+  },
+  {
+    value: 'board',
+    title: 'Board view',
+    description: 'Track progress across columns.',
+    Icon: IconLayoutKanban,
+  },
+];
+
+export const ViewChoice = () => (
+  <RadioGroup
+    aria-label="Default view"
+    defaultValue="table"
+    style={{ width: 280 }}
+  >
+    {VIEWS.map(({ value, title, description, Icon }) => (
+      <Radio key={value} variant="card" value={value}>
+        <span style={{ display: 'grid', gap: 8, paddingInlineEnd: 24 }}>
+          <Icon size={20} aria-hidden />
+          <Text
+            render={<span />}
+            style={{ fontWeight: 'var(--t-font-weight-medium)' }}
+          >
+            {title}
+          </Text>
+          <Text
+            render={<span />}
+            style={{ color: 'var(--t-font-color-secondary)', lineHeight: 1.5 }}
+          >
+            {description}
+          </Text>
+        </span>
+      </Radio>
+    ))}
+  </RadioGroup>
+);
+```
+
+## Composizione nativa esplicita
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const BillingChoice = () => (
+  <RadioGroup aria-label="Billing interval" defaultValue="monthly">
+    <Radio
+      variant="card"
+      value="monthly"
+      nativeButton
+      render={<button type="button" />}
+    >
+      Monthly
+    </Radio>
+    <Radio
+      variant="card"
+      value="yearly"
+      nativeButton
+      render={<button type="button" />}
+    >
+      Yearly
+    </Radio>
+  </RadioGroup>
+);
+```
+
+Il ref punta al pulsante composto. Per le radici personalizzate che non sono pulsanti, lascia `nativeButton` su false e inoltra le props di render fornite e il ref all'elemento effettivo.
+
+## Tastiera e selezione
+
+Tab consente di entrare o uscire dal gruppo. I tasti freccia consentono di spostarsi tra le opzioni abilitate e di selezionare l'opzione attiva. Spazio seleziona il radio attivo. Il radio Base UI installato sopprime la selezione con Invio sia per le radici predefinite sia per i pulsanti nativi composti. I gestori di selezione e modifica appartengono a `RadioGroup`; consulta il relativo [esempio non controllato](/it/ui/primitives/input/radio-group#uncontrolled-state) e [esempio controllato](/it/ui/primitives/input/radio-group#controlled-state).
+
+Le frecce del radio modificano la selezione mentre spostano lo stato attivo. [Dropdown.SelectionGroup](/it/ui/components/navigation/dropdown) sposta lo stato attivo con le frecce e conferma una scelta con Invio o Spazio.
+
+`Radio` e `Radio.Root` sono generici rispetto al tipo di valore. Mantieni tale tipo coerente con il relativo gruppo. Gli attributi nativi come `aria-describedby` possono associare un'opzione a testo di assistenza aggiuntivo.
+
+## Props
+
+Il riferimento viene generato dai tipi di componenti pubblici. Gli attributi nativi, inclusi i nomi accessibili e i gestori di eventi, sono accettati anche nelle parti che eseguono il rendering degli elementi.
+
+<RadioReference />
+
+<PageBanner illustration="page-cover-switch" />

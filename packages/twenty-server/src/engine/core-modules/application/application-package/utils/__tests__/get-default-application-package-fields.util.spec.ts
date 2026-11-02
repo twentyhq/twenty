@@ -14,7 +14,7 @@ describe('application dependency defaults', () => {
     expect(standard.packageJsonChecksum).toBe(
       '7a6f26a21a5a95e71afea95f73d91f97',
     );
-    expect(standard.yarnLockChecksum).toBe('b2ad1ca487a0818f3fdba803aa8a8548');
+    expect(standard.yarnLockChecksum).toBe('2c7d126594a5344f2d167caf8e5a37c0');
     const standardPackage = JSON.parse(standard.packageJsonContent);
     const customPackage = JSON.parse(custom.packageJsonContent);
     expect(standardPackage.devDependencies).toBeUndefined();

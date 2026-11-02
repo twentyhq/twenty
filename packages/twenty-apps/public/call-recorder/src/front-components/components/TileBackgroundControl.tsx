@@ -1,6 +1,6 @@
 import { isUndefined } from '@sniptt/guards';
 import { useState } from 'react';
-import { DEFAULT_COLOR_LABELS } from 'twenty-ui/navigation';
+import { DEFAULT_COLOR_LABELS } from 'twenty-ui/components/navigation';
 import { MAIN_COLOR_NAMES, type ThemeColor } from 'twenty-ui/theme';
 import { isDefined } from 'twenty-ui/utilities';
 

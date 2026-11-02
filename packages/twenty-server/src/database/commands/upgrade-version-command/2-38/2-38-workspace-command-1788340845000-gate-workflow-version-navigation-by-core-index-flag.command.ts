@@ -79,6 +79,7 @@ export class GateWorkflowVersionNavigationByCoreIndexFlagCommand extends Provisi
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {
               flatEntityToCreate: [],

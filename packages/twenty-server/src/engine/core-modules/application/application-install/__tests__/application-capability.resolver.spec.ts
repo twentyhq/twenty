@@ -21,7 +21,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 
 const APPLICATION_ID = 'c832302c-e551-4b4f-b11c-19907888a284';
 const WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';

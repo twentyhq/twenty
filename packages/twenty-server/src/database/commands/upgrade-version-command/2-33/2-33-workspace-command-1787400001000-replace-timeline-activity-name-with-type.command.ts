@@ -178,6 +178,7 @@ export class ReplaceTimelineActivityNameWithTypeCommand extends ProvisionedWorks
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           workspaceId,
           applicationUniversalIdentifier,
@@ -278,6 +279,7 @@ export class ReplaceTimelineActivityNameWithTypeCommand extends ProvisionedWorks
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           workspaceId,
           applicationUniversalIdentifier,

@@ -3,6 +3,10 @@ title: Элементы меню команд
 description: Отображайте фронтенд-компоненты как быстрые действия и элементы командного меню (Cmd+K) с помощью `defineCommandMenuItem`.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Обзор
+
 **Элемент командного меню** — это мост между пользователем и [фронтенд-компонентом](/ru/developers/extend/apps/layout/front-components). Он регистрирует компонент в командном меню Twenty (Cmd+K) и, при необходимости, как закреплённую кнопку быстрого действия в правом верхнем углу страницы.
 
 ```ts src/command-menu-items/open-dashboard.command-menu-item.ts
@@ -31,6 +35,7 @@ export default defineCommandMenuItem({
 | `availabilityType`                      | Нет         | Определяет, где отображается команда: `'GLOBAL'` (доступна всегда), `'GLOBAL_OBJECT_CONTEXT'` (только на страницах с объектным контекстом — индексные страницы и карточки записей), `'RECORD_SELECTION'` (только при выборе записей) или `'FALLBACK'` (показывается, когда другие команды не подходят) |
 | `availabilityObjectUniversalIdentifier` | Нет         | Ограничивает команду страницами определённого типа объектов (например, только для записей Company)                                                                                                                                                                                                     |
 | `conditionalAvailabilityExpression`     | Нет         | Логическое выражение, которое динамически управляет видимостью (см. ниже)                                                                                                                                                                                                                              |
+| `conditionalPinnedExpression`           | Нет         | Логическое выражение, которое сужает `isPinned`: команда отображается как кнопка быстрого действия, только пока оно истинно, а в противном случае остаётся в меню команд. Тот же синтаксис и переменные, что и у `conditionalAvailabilityExpression`                                                   |
 
 ## Команды без интерфейса
 
@@ -115,3 +120,5 @@ export default defineCommandMenuItem({
 | `none(array, prop)`                 | `true`, если свойство ложно для каждого элемента                          |
 | `noneDefined(array, prop)`          | `true`, если свойство не определено ни у одного элемента                  |
 | `noneEquals(array, prop, value)`    | `true`, если свойство не равно значению ни у одного элемента              |
+
+<PageBanner illustration="card-page-command-menu" />

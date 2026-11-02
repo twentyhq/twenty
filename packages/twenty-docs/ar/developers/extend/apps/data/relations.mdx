@@ -3,14 +3,16 @@ title: العلاقات
 description: وصِل الكائنات معًا بعلاقات MANY_TO_ONE / ONE_TO_MANY ثنائية الاتجاه.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## كيف تعمل العلاقات
+
 تربط العلاقات كائنين معًا. في Twenty، تكون العلاقات دائمًا **ثنائية الاتجاه** — لكل علاقة جانبَان، ويُصرَّح عن كل جانب كحقل يُشير إلى الآخر.
 
 | نوع العلاقة   | الوصف                                                  | هل لديه مفتاح خارجي؟   |
 | ------------- | ------------------------------------------------------ | ---------------------- |
 | `MANY_TO_ONE` | تشير العديد من سجلات هذا الكائن إلى سجل واحد من الهدف  | نعم (`joinColumnName`) |
 | `ONE_TO_MANY` | يحتوي سجل واحد من هذا الكائن على العديد من سجلات الهدف | لا (الجانب العكسي)     |
-
-## كيف تعمل العلاقات
 
 تتطلّب كل علاقة **حقلين** يشيران إلى بعضهما البعض:
 
@@ -108,7 +110,9 @@ export default defineField({
 
 ## الربط مع الكائنات القياسية
 
-لإنشاء علاقة مع كائن Twenty مضمّن (Person, Company, etc.)، استخدم `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`:
+لإنشاء علاقة مع كائن Twenty مضمّن (Person, Company, etc.)، استخدم `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`.
+
+يُعلَن عن العلاقة دائمًا على كلا الكائنين، ولا يتغير ذلك عندما يكون أحد الجانبين كائنًا قياسيًا: يجب أن يعرّف البيان أيضًا الحقل العكسي على الكائن القياسي، مع `universalIdentifier` الخاص بالكائن القياسي على أنه `objectUniversalIdentifier`. إذا كان الحقل العكسي مفقودًا، يفشل التطبيق في المزامنة مع `Relation field target metadata not found`.
 
 ```ts src/fields/person-on-self-hosting-user.field.ts
 import {
@@ -138,6 +142,35 @@ export default defineField({
     relationType: RelationType.MANY_TO_ONE,
     onDelete: OnDeleteAction.SET_NULL,
     joinColumnName: 'personId',
+  },
+});
+```
+
+```ts src/fields/self-hosting-users-on-person.field.ts
+import {
+  defineField,
+  FieldType,
+  RelationType,
+  STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+import { SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER } from '../objects/self-hosting-user.object';
+import {
+  PERSON_FIELD_ID,
+  SELF_HOSTING_USER_REVERSE_FIELD_ID,
+} from './person-on-self-hosting-user.field';
+
+export default defineField({
+  universalIdentifier: SELF_HOSTING_USER_REVERSE_FIELD_ID,
+  objectUniversalIdentifier:
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  type: FieldType.RELATION,
+  name: 'selfHostingUsers',
+  label: 'Self hosting users',
+  relationTargetObjectMetadataUniversalIdentifier:
+    SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER,
+  relationTargetFieldMetadataUniversalIdentifier: PERSON_FIELD_ID,
+  universalSettings: {
+    relationType: RelationType.ONE_TO_MANY,
   },
 });
 ```
@@ -181,3 +214,5 @@ export default defineObject({
   ],
 });
 ```
+
+<PageBanner illustration="card-page-relations" />

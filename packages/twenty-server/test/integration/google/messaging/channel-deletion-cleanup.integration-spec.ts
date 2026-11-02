@@ -69,11 +69,15 @@ describe('Channel deletion cleanup (integration)', () => {
       expectedSubject,
     ]);
 
-    await enqueueJobAndDrain<MessagingMessageChannelDeletionCleanupJobData>(
-      MessageQueue.messagingQueue,
-      MessagingMessageChannelDeletionCleanupJob.name,
-      { workspaceId, messageChannelId: channel.channelId },
-    );
+    await enqueueJobAndDrain<MessagingMessageChannelDeletionCleanupJobData>({
+      queue: MessageQueue.messagingQueue,
+      jobName: MessagingMessageChannelDeletionCleanupJob.name,
+      data: { workspaceId, messageChannelId: channel.channelId },
+      scope: {
+        workspaceId,
+        isWorkspaceJob: true,
+      },
+    });
 
     expect(await findImportedMessageSubjects([expectedSubject])).toEqual([]);
   }, 120000);
@@ -83,11 +87,15 @@ describe('Channel deletion cleanup (integration)', () => {
       eventTitle,
     ]);
 
-    await enqueueJobAndDrain<CalendarChannelDeletionCleanupJobData>(
-      MessageQueue.calendarQueue,
-      CalendarChannelDeletionCleanupJob.name,
-      { workspaceId, calendarChannelId: channel.calendarChannelId },
-    );
+    await enqueueJobAndDrain<CalendarChannelDeletionCleanupJobData>({
+      queue: MessageQueue.calendarQueue,
+      jobName: CalendarChannelDeletionCleanupJob.name,
+      data: { workspaceId, calendarChannelId: channel.calendarChannelId },
+      scope: {
+        workspaceId,
+        isWorkspaceJob: true,
+      },
+    });
 
     expect(await findImportedCalendarEventTitles([eventTitle])).toEqual([]);
   }, 120000);

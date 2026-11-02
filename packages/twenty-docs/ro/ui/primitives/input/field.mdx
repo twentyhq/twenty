@@ -1,0 +1,141 @@
+---
+title: Câmp
+description: Conectați un control de formular la eticheta, descrierea și feedbackul său de validare.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import FieldReference from '/snippets/ui/generated/input/field.mdx';
+
+## Prezentare generală
+
+Utilizați `Field` pentru a grupa un control cu eticheta sa accesibilă și textul ajutător. Componente precum [Input](/ro/ui/primitives/input/input) se integrează direct cu câmpul.
+
+<StoryEmbed storyId="ui-input-field--display" title="Exemplu de câmp" height={180} />
+
+## Utilizare
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const EmailField = () => (
+  <Field.Root name="email" validationMode="onBlur">
+    <Field.Label>Work email</Field.Label>
+    <Input type="email" required placeholder="you@example.com" />
+    <Field.Description>
+      We send account updates to this address.
+    </Field.Description>
+    <Field.Error match="valueMissing">Enter your email address.</Field.Error>
+    <Field.Error match="typeMismatch">Enter a valid email address.</Field.Error>
+  </Field.Root>
+);
+```
+
+`Field.Root` gestionează numele controlului, starea de dezactivare și validitatea acestuia. `Field.Label` și `Field.Description` își conectează conținutul la control. Setați momentul validării cu `validationMode`; utilizați `validate` pentru validare personalizată.
+
+## Anatomie internă a componentelor?
+
+Plasați un control și componentele sale auxiliare în `Field.Root`. Această structură arată un câmp construit cu componenta stilizată `Input`.
+
+```text
+Field.Root
+├── Field.Label
+├── Input
+├── Field.Description
+└── Field.Error
+```
+
+| Parte                               | Cerință                 | Scop                                                                                          |
+| ----------------------------------- | ----------------------- | --------------------------------------------------------------------------------------------- |
+| `Root`                              | Obligatoriu             | Partajează numele, starea dezactivată și validarea cu controlul.                              |
+| `Item`                              | Opțional pentru grupuri | Asociază fiecărui buton radio sau fiecărei casete de selectare propria etichetă și descriere. |
+| `Label`                             | Recomandat              | Furnizează o etichetă vizibilă asociată. Este întotdeauna necesar un nume accesibil.          |
+| `Input` sau un alt control integrat | Obligatoriu             | Primește datele introduse de utilizator și se conectează la câmp.                             |
+| `Control`                           | Control alternativ      | Furnizează o intrare nestilizată atunci când nu utilizați un control integrat.                |
+| `Description`                       | Opțional                | Adaugă text de ajutor persistent asociat cu controlul.                                        |
+| `Eroare`                            | Opțional                | Afișează feedback pentru o stare de validare corespunzătoare.                                 |
+| `Validity`                          | Opțional                | Expune validitatea printr-o funcție de randare pentru copii.                                  |
+
+`Input` și `Textarea` se integrează deja cu câmpul. Plasați-le direct în `Root`; acestea furnizează singure comportamentul de control. Controalele compuse, precum [Select](/ro/ui/primitives/input/select#compose-with-a-field), își păstrează propria rădăcină și propriile componente în interiorul câmpului.
+
+## Erori externe
+
+Utilizați `invalid` atunci când aplicația dvs. gestionează starea de eroare. Un `match` explicit face vizibil mesajul de eroare.
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+type UsernameFieldProps = { error?: string };
+
+export const UsernameField = ({ error }: UsernameFieldProps) => (
+  <Field.Root name="username" invalid={Boolean(error)}>
+    <Field.Label>Username</Field.Label>
+    <Input autoComplete="username" />
+    <Field.Error match={Boolean(error)}>{error}</Field.Error>
+  </Field.Root>
+);
+```
+
+Păstrați mesajele de eroare ușor de acționat și oferiți o etichetă vizibilă chiar și atunci când controlul are un substituent.
+
+## Controale grupate
+
+Folosește `Field.Item` într-un grup de butoane radio sau de casete de selectare pentru a asocia fiecare opțiune cu propria etichetă și descriere. Păstrează eticheta grupului în afara elementelor. Un element poate fi dezactivat independent; un `Field.Root` dezactivat dezactivează fiecare element.
+
+<StoryEmbed storyId="ui-input-field--grouped-items" title="Elemente de câmp" height={220} />
+
+```tsx
+import { Field, Radio, RadioGroup } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const NotificationsField = () => (
+  <Field.Root name="notifications">
+    <Field.Label>Notifications</Field.Label>
+    <RadioGroup defaultValue="important" style={{ gap: 16, marginTop: 12 }}>
+      <Field.Item style={{ display: 'flex', alignItems: 'start', gap: 12 }}>
+        <Radio value="important" />
+        <Text>
+          <Field.Label>Important updates</Field.Label>
+          <Field.Description>
+            Only messages that need your attention
+          </Field.Description>
+        </Text>
+      </Field.Item>
+      <Field.Item style={{ display: 'flex', alignItems: 'start', gap: 12 }}>
+        <Radio value="all" />
+        <Text>
+          <Field.Label>All updates</Field.Label>
+          <Field.Description>Every change to your records</Field.Description>
+        </Text>
+      </Field.Item>
+      <Field.Item
+        disabled
+        style={{ display: 'flex', alignItems: 'start', gap: 12 }}
+      >
+        <Radio value="digest" />
+        <Text>
+          <Field.Label>Daily digest</Field.Label>
+          <Field.Description>Coming soon</Field.Description>
+        </Text>
+      </Field.Item>
+    </RadioGroup>
+  </Field.Root>
+);
+```
+
+## Integrare nativă și tipuri
+
+Field păstrează momentul validării Base UI, validarea personalizată, valorile controlate și necontrolate ale controalelor și detaliile evenimentului de modificare a valorii. `Validity` expune rezultatul validării prin funcția sa children. Controalele integrate își păstrează comportamentul nativ al formularului.
+
+`Root`, `Item`, `Label`, `Control`, `Description` și `Error` transmit props native, refs și compoziția `render`. Elementele lor implicite sunt, respectiv, un div, div, label, input, paragraf și div. `Validity` nu redă propriul element.
+
+Importă `FieldRootProps`, `FieldItemProps`, `FieldLabelProps`, `FieldControlProps`, `FieldDescriptionProps`, `FieldErrorProps` și `FieldValidityProps` din `twenty-ui/primitives/input` pentru contractele corespunzătoare ale componentelor din amonte.
+
+## Proprietăți
+
+Referința este generată din tipurile componentei publice. Atributele native, inclusiv numele accesibile și gestionarele de evenimente, sunt acceptate și pe părțile care redau elemente.
+
+<FieldReference />
+
+<PageBanner illustration="page-cover-input" />

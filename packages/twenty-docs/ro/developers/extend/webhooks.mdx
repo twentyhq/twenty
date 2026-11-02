@@ -3,13 +3,17 @@ title: Webhooks
 description: Primește notificări când înregistrările se modifică — HTTP POST către endpoint-ul tău la fiecare creare, actualizare sau ștergere.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+
+## Prezentare generală
 
 Twenty trimite o solicitare HTTP POST către URL-ul tău ori de câte ori o înregistrare este creată, actualizată sau ștearsă. Toate tipurile de obiecte sunt acoperite, inclusiv obiectele personalizate.
 
 ## Creați un webhook
 
-1. Mergeți la **Setări → API-uri și Webhooks → Webhooks**
+1. Mergeți la **Setări → Dezvoltatori → Webhook-uri**
 2. Faceți clic pe **+ Creează webhook**
 3. Introduceți URL-ul webhook-ului dvs. (trebuie să fie accesibil public)
 4. Faceți clic pe **Salvează**
@@ -114,3 +118,5 @@ const isValid = crypto.timingSafeEqual(
 | **Declanșator webhook în fluxul de lucru** | IN       | Primiți date în Twenty din sisteme externe                                       |
 
 Pentru a primi date externe, consultați [Configurați un declanșator Webhook](/ro/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger).
+
+<PageBanner illustration="card-page-webhooks" />

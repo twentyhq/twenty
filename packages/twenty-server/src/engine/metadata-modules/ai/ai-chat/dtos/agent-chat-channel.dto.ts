@@ -22,8 +22,8 @@ export class AgentChatChannelDTO {
   @Field(() => [UUIDScalarType])
   roleIds: string[];
 
-  @Field(() => Boolean)
-  isCustom: boolean;
+  @Field(() => UUIDScalarType)
+  applicationId: string;
 
   @Field(() => Boolean, { nullable: true })
   isAccessible?: boolean;

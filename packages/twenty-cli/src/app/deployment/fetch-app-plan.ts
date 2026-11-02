@@ -1,4 +1,4 @@
-import { isPlainObject } from 'twenty-shared/utils';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { isApplicationNotFoundError } from '@/app/is-application-not-found-error';
 import { parseAppPlan } from '@/app/deployment/parse-app-plan';
@@ -14,7 +14,7 @@ export const fetchAppPlan = async ({
   signal,
 }: {
   build: ToolingBuild;
-  inferDeletionFromMissingEntities: boolean;
+  inferDeletionFromMissingEntities: boolean | undefined;
   target: ResolvedTarget;
   signal: AbortSignal;
 }) => {
@@ -37,7 +37,9 @@ export const fetchAppPlan = async ({
         __args: {
           manifest: build.manifest,
           dryRun: true,
-          inferDeletionFromMissingEntities,
+          ...(isDefined(inferDeletionFromMissingEntities) && {
+            inferDeletionFromMissingEntities,
+          }),
         },
         applicationUniversalIdentifier: true,
         actions: true,

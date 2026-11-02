@@ -8,6 +8,7 @@ import {
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
 import { Not, Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
@@ -32,10 +33,12 @@ import { findSellableBaseProductPriceOrThrow } from 'src/engine/core-modules/bil
 import { isSellableCatalogPrice } from 'src/engine/core-modules/billing/utils/is-sellable-catalog-price.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { getDomainFromEmail } from 'src/utils/get-domain-from-email';
 @Injectable()
 export class BillingPortalWorkspaceService {
   protected readonly logger = new Logger(BillingPortalWorkspaceService.name);
@@ -52,15 +55,22 @@ export class BillingPortalWorkspaceService {
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly cacheLockService: CacheLockService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async hasReachedTrialLimit({
     userId,
+    userEmail,
     workspaceId,
   }: {
     userId: string;
+    userEmail: string;
     workspaceId: string;
   }): Promise<boolean> {
+    if (this.isTrialLimitExemptEmail(userEmail)) {
+      return false;
+    }
+
     const otherTrialWorkspaceCount = await this.userWorkspaceRepository
       .createQueryBuilder('userWorkspace')
       .innerJoin(
@@ -80,20 +90,33 @@ export class BillingPortalWorkspaceService {
 
   async withTrialLimitLock<TResult>({
     userId,
+    userEmail,
     workspaceId,
     createSubscription,
   }: {
     userId: string;
+    userEmail: string;
     workspaceId: string;
     createSubscription: (isTrialLimitReached: boolean) => Promise<TResult>;
   }): Promise<TResult> {
     return await this.cacheLockService.withLock(
       async () =>
         createSubscription(
-          await this.hasReachedTrialLimit({ userId, workspaceId }),
+          await this.hasReachedTrialLimit({ userId, userEmail, workspaceId }),
         ),
       buildBillingTrialLimitLockKey(userId),
       BILLING_SUBSCRIPTION_STATE_LOCK_OPTIONS,
+    );
+  }
+
+  private isTrialLimitExemptEmail(email: string): boolean {
+    const domain = getDomainFromEmail(email)?.toLowerCase();
+
+    return (
+      isNonEmptyString(domain) &&
+      this.twentyConfigService
+        .get('BILLING_TRIAL_LIMIT_EXEMPT_EMAIL_DOMAINS')
+        .some((exemptDomain) => exemptDomain.toLowerCase() === domain)
     );
   }
 

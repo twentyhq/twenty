@@ -19,6 +19,7 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   AgentChatChannelAssignmentFilter,
+  AgentChatChannelThreadFilter,
   AgentChatChannelThreadStatus,
 } from '~/generated-metadata/graphql';
 import { messages } from '~/locales/generated/en';
@@ -60,7 +61,7 @@ const SALES_CHANNEL = {
   icon: 'IconCoins',
   color: 'green',
   position: 1,
-  isCustom: true,
+  applicationId: 'workspace-custom-application-id',
   isAccessible: true,
   roleIds: [],
 };
@@ -216,6 +217,7 @@ describe('AiChatThreadListItem', () => {
       channelId: SALES_CHANNEL.id,
       channelStatus: AgentChatChannelThreadStatus.OPEN,
       assignment: AgentChatChannelAssignmentFilter.ANY,
+      filter: AgentChatChannelThreadFilter.ANY,
     });
 
     renderListItem({ thread: buildThread({ channelId: SALES_CHANNEL.id }) });

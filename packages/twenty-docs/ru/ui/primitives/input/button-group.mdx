@@ -1,0 +1,102 @@
+---
+title: ButtonGroup
+description: Группируйте связанные кнопки с общим оформлением и необязательной рамкой.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ButtonGroupReference from '/snippets/ui/generated/input/button-group.mdx';
+
+## Обзор
+
+Задайте группе доступное имя и разместите внутри неё связанные кнопки. Группа объединяет смежные границы и может применять значения по умолчанию для размера, варианта и цвета. Кнопки сохраняют собственные позиции в порядке табуляции.
+
+<StoryEmbed storyId="ui-input-button-buttongroup--display" title="Группа кнопок" height={100} />
+
+## Использование
+
+```tsx
+import { IconCheckbox, IconNotes, IconTimelineEvent } from 'twenty-ui/icon';
+import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
+
+export const ActivityActions = () => (
+  <ButtonGroup aria-label="Create activity" size="sm">
+    <Button startIcon={<IconNotes />}>Note</Button>
+    <Button startIcon={<IconCheckbox />}>Task</Button>
+    <Button startIcon={<IconTimelineEvent />}>Activity</Button>
+  </ButtonGroup>
+);
+```
+
+## Владение состоянием
+
+`ButtonGroup` координирует внешний вид, а не выбор. У него нет управляемого или неуправляемого режима выбора. Каждая кнопка получает собственный обработчик действия и состояние приложения; сведения о поведении при загрузке см. в [примере владения состоянием Button](/ru/ui/primitives/input/button#state-ownership).
+
+Для взаимоисключающего выбора используйте [RadioGroup](/ru/ui/primitives/input/radio-group), который управляет выбором для своих переключателей.
+
+## Приоритет внешнего вида
+
+Каждый пропс внешнего вида определяется независимо: явный пропс дочернего элемента, затем значение группы по умолчанию, затем значение компонента по умолчанию. Это относится как к Button, так и к IconButton, включая явный `IconButton size="xs"`. Значения по умолчанию передаются дочерним элементам через фрагменты, обёртки и якоря всплывающих подсказок.
+
+Группа может задавать `color="inherit"` на цветной поверхности. Дочерний элемент, получающий унаследованный цвет, также должен получать несплошной вариант. Явно заданные переопределения цвета и варианта дочернего элемента имеют приоритет, поэтому дочерний элемент может выбрать несплошной вариант или семантический цвет, когда группа одновременно задает сплошной вариант и наследование.
+
+Сохраняйте одинаковый размер присоединённых кнопок, чтобы их края выравнивались. В этом примере переопределяются вариант и цвет, а размер группы наследуется.
+
+```tsx
+import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
+
+export const ActivityActions = () => (
+  <ButtonGroup
+    aria-label="Activity actions"
+    variant="solid"
+    color="accent"
+    size="sm"
+  >
+    <Button variant="ghost" color="danger">
+      Delete activity
+    </Button>
+    <Button color="neutral">Duplicate activity</Button>
+    <Button>New activity</Button>
+  </ButtonGroup>
+);
+```
+
+<StoryEmbed storyId="ui-input-button-buttongroup--appearance-overrides" title="Индивидуальный внешний вид в группе кнопок" height={100} />
+
+## Отдельные элементы управления
+
+Установите `attached={false}`, чтобы сохранить скруглённые углы каждого элемента управления и промежуток 2px. Значения группы по умолчанию по-прежнему применяются через обёртки и якоря всплывающих подсказок; явные свойства дочерних элементов имеют приоритет.
+
+## Элементы управления с рамкой
+
+Установите `framed`, чтобы добавить полупрозрачный фон, границу, отступ 2px и концентрические скругления углов. Рамка работает с присоединёнными и отдельными элементами управления и сохраняет явно заданный внешний вид дочерних элементов. Используйте `size="xs"` для [IconButton](/ru/ui/components/input/icon-button) для компактных действий размером 20px.
+
+<StoryEmbed storyId="ui-components-iconbutton--framed-group-documentation" title="Группа кнопок с рамкой" height={100} />
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconPlus, IconTrash } from 'twenty-ui/icon';
+import { ButtonGroup } from 'twenty-ui/primitives/input';
+
+export const CompactRecordActions = () => (
+  <ButtonGroup framed attached={false} aria-label="Record actions">
+    <IconButton size="xs" aria-label="Add" variant="ghost">
+      <IconPlus />
+    </IconButton>
+    <IconButton size="xs" aria-label="Delete" variant="ghost" disabled>
+      <IconTrash />
+    </IconButton>
+  </ButtonGroup>
+);
+```
+
+## Обновление существующих групп
+
+Замените `IconButtonGroup` и его массив `iconButtons` на `ButtonGroup framed attached={false}` с явными дочерними элементами. Замените `InsideButton` на `LightIconButton size="xs"`. Каждая кнопка имеет собственные доступное имя, обработчик действия, состояние отключения и необязательную всплывающую подсказку.
+
+## Свойства
+
+<ButtonGroupReference />
+
+<PageBanner illustration="page-cover-pointer" />

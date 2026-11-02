@@ -3,13 +3,15 @@ title: 6. Публикация
 description: Добавьте метаданные торговой площадки и публикуйте свое приложение.
 ---
 
-Ваше приложение работает. Последним шагом является его описание для рынка и публикации.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-## Добавить метаданные торговой площадки
+import { CardTitle } from "/snippets/card-title.mdx"
 
-[Конфигурация приложений](/ru/developers/extend/apps/config/application) имеет идентификацию
-отображаемую на рынке: автор, категорию, логотип и поддержку
-ссылок. Поместите логотип в `public/` и укажите его в `logo`.
+## Добавить метаданные маркетплейса
+
+[Конфигурация приложения](/ru/developers/extend/apps/config/application) содержит
+сведения, отображаемые в маркетплейсе: автора, категорию, логотип и ссылки
+на поддержку. Поместите логотип в `public/` и укажите его в `logo`.
 
 ```ts filename="src/application-config.ts"
 import { defineApplication } from 'twenty-sdk/define';
@@ -30,19 +32,19 @@ export default defineApplication({
 ```
 
 <Tip>
-Роль по умолчанию объявлена `defineApplicationRole()` в своем собственном файле — вы
-больше не передаете `defaultRoleUniversalIdentifier` здесь.
+  Роль по умолчанию объявляется с помощью `defineApplicationRole()` в отдельном файле —
+  здесь больше не нужно передавать `defaultRoleUniversalIdentifier`.
 </Tip>
 
-Также добавьте ключевое слово `twenty-app` в `package.json`, чтобы приложение было найдено:
+Также добавьте ключевое слово `twenty-app` в `package.json`, чтобы приложение можно было найти:
 
 ```json filename="package.json"
 { "keywords": ["twenty-app"] }
 ```
 
-## Добавить скриншоты галереи
+## Добавьте скриншоты в галерею
 
-Список торговых площадок продается со скриншотами. Поместите несколько PNG-файлов в
+Страница приложения в маркетплейсе говорит сама за себя благодаря скриншотам. Поместите несколько PNG-файлов в
 `public/gallery/` и укажите их в `galleryImages` — они будут отображаться как галерея
 на странице каталога, в порядке следования в массиве.
 
@@ -59,78 +61,80 @@ export default defineApplication({
 ```
 
 <Tip>
-Возглавие с выплатом: сделайте первый скриншот завершённый результат (сгенерированный
-документ), затем покажите как он срабатывает и аутентифицирует. Используйте четкие, высококачественные
-скриншоты — это первое, что видит пользователь.
+  Начните с результата: сделайте первым скриншотом готовый результат (сгенерированный
+  документ), а затем покажите, как он запускается и создается. Используйте четкие,
+  высококачественные скриншоты — это первое, что видит пользователь.
 </Tip>
 
-Дайте `README.md` ту же обработку — это главная страница npm и GitHub.
+Уделите `README.md` такое же внимание — это главная страница на npm и GitHub.
 Начните с описания ценностного предложения и скриншота, перечислите ключевые функции,
 а затем поместите технические детали ниже основной части страницы.
 
-## Проверить перед отправкой
+## Проверьте перед выпуском
 
-Выполнить те же ворота CI делает:
+Выполните те же проверки, что и CI:
 
 ```bash filename="Terminal"
 yarn lint          # oxlint
 yarn typecheck     # tsgo
 yarn test:unit     # unit tests
-yarn twenty plan   # preview the metadata diff
+twenty app plan   # preview the metadata diff
 ```
 
 План точно показывает, что изменится на сервере, не применяя эти изменения —
 хорошая финальная проверка. См.
-[Testing](/ru/developers/extend/apps/operations/testing) и
+[Тестирование](/ru/developers/extend/apps/operations/testing) и
 [Синхронизация и восстановление](/ru/developers/extend/apps/operations/sync-and-recovery).
 
 ## Публикация
 
 ```bash filename="Terminal"
 # Public app → npm (default)
-yarn twenty app:publish
+twenty app publish
 
 # Or deploy privately to a specific server's registry
-yarn twenty app:publish --private -r <remote>
+twenty app publish --private -r <remote>
 ```
 
-`app:publish` строит и публикует в npm по умолчанию; `--private` загружает
-tarball в частный реестр Twenty сервера. Для постройки опубликованного приложения
-в магазине экземпляра, запустите синхронизацию каталога:
-
-```bash filename="Terminal"
-yarn twenty dev:catalog-sync -r <remote>
-```
+`twenty app publish` по умолчанию собирает и публикует приложение в npm; `--private` вместо этого загружает
+tarball в частный реестр сервера Twenty. Чтобы опубликованное приложение появилось
+в маркетплейсе экземпляра, дождитесь синхронизации каталога маркетплейса сервером.
 
 Подробности и контрольный список для выпуска:
 [Публикация](/ru/developers/extend/apps/operations/publishing).
 
 ## Вы создали приложение 🎉
 
-В шести главах вы использовали большую часть поверхности SDK:
+За шесть глав вы использовали большую часть возможностей SDK:
 
-* **Объекты, поля и отношение** для моделирования данных
-* **логическая функция** выставлена как **ИИ инструмент**, **действие рабочего процесса** и **HTTP маршруты**
-* **Виды, навигация, команда и передний компонент** для интерфейса
-* **Агент + навык** для естественного поколения
-* **Метаданные торговой площадки** и поток публикаций
+* **Объекты, поля и связь** для моделирования данных
+* **Функция логики**, представленная как **инструмент ИИ**, **действие workflow** и **маршруты HTTP**
+* **Представления, навигация, команда и фронтенд-компонент** для интерфейса
+* **Агент и навык** для генерации на естественном языке
+* **Метаданные маркетплейса** и процесс публикации
 
 Готовое приложение находится по адресу
 [`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
 
-## Где перейти далее
+## Что дальше
 
-<CardGroup cols={2}>
-  <Card title="Ссылка на данные" icon="database" href="/ru/developers/extend/apps/data/overview">
-    Каждый параметр типа поля, отношения и индекса.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ru/developers/extend/apps/data/overview" img="/images/documentation/section-overview-icons-v1/apps-data.svg">
+    <CardTitle>Справочник по данным</CardTitle>
+    Все типы полей, связи и параметры индексов.
   </Card>
-  <Card title="Ссылка на логику" icon="bolt" href="/ru/developers/extend/apps/logic/overview">
-    Вызовы cron и события базы данных, хранилище ключевого значения, OAuth соединения.
+  <Card href="/ru/developers/extend/apps/logic/overview" img="/images/documentation/section-overview-icons-v1/apps-logic.svg">
+    <CardTitle>Справочник по логике</CardTitle>
+    Триггеры Cron и событий базы данных, хранилище ключ-значение, подключения OAuth.
   </Card>
-  <Card title="Ссылка на макет" icon="layout-columns" href="/ru/developers/extend/apps/layout/overview">
-    Панели страниц, виджеты панели управления и другие поверхности интерфейса.
+  <Card href="/ru/developers/extend/apps/layout/overview" img="/images/user-guide/halftone/layout-window-v1.svg">
+    <CardTitle>Справочник по макетам</CardTitle>
+    Макеты страниц, виджеты панели управления и другие элементы интерфейса.
   </Card>
-  <Card title="Операции" icon="rocket" href="/ru/developers/extend/apps/operations/overview">
-    CLI, testing, remotes and CI.
+  <Card href="/ru/developers/extend/apps/operations/overview" img="/images/documentation/section-overview-icons-v1/apps-operations.svg">
+    <CardTitle>Операции</CardTitle>
+    CLI, тестирование, удаленные репозитории и CI.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="card-page-tutorial-publishing" />

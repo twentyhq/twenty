@@ -1,4 +1,4 @@
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 // Mirrors the settings inputs twenty-front renders for application variables,
 // which cannot be imported here: twenty-ui ships no text, select or textarea

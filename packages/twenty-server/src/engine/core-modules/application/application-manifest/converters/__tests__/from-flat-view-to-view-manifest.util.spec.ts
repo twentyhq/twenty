@@ -162,7 +162,6 @@ describe('fromFlatViewToViewManifest', () => {
       icon: 'IconCalendar',
       position: 1,
       isCompact: false,
-      isCustom: true,
       visibility: ViewVisibility.WORKSPACE,
       openRecordIn: ViewOpenRecordIn.SIDE_PANEL,
       key: null,

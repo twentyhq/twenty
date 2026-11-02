@@ -1,0 +1,79 @@
+---
+title: Сочетание клавиш
+description: Отображение одновременных сочетаний клавиш и последовательных сочетаний клавиш.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ShortcutReference from '/snippets/ui/generated/typography/shortcut.mdx';
+
+## Обзор
+
+Импортируйте `Shortcut` и `formatShortcut` из `twenty-ui/primitives/typography`. Оба используют одинаковую модель, символы и разделители. Регистрируйте сочетания клавиш в приложении. `Shortcut` только форматирует подсказку; он не регистрирует действия клавиатуры. Нативные атрибуты, обработчики событий, стили, имена классов и ссылки нацелены на его внешний span. `ShortcutProps` и `ShortcutFormatOptions` — публичные типы.
+
+<StoryEmbed storyId="ui-typography-shortcut--display" title="Представления сочетаний клавиш" height={90} />
+
+## Использование
+
+```tsx
+import { Shortcut } from 'twenty-ui/primitives/typography';
+
+export const SearchShortcut = () => <Shortcut shortcut={['Mod', 'K']} />;
+```
+
+## Комбинации и последовательности
+
+```tsx
+import { Shortcut, formatShortcut } from 'twenty-ui/primitives/typography';
+
+export const ShortcutExamples = () => (
+  <>
+    <Shortcut shortcut={['Enter']} />
+    <Shortcut shortcut={['Mod', 'K']} />
+    <Shortcut shortcut={[['G'], ['P']]} sequenceJoinLabel="then" />
+    <Shortcut
+      shortcut={[
+        ['Mod', 'K'],
+        ['Mod', 'C'],
+      ]}
+      sequenceJoinLabel="then"
+    />
+  </>
+);
+
+const hint = formatShortcut({
+  shortcut: ['Mod', 'Enter'],
+});
+```
+
+Плоский массив представляет собой одновременное сочетание: `['Mod', 'K']` означает, что нужно нажать Mod и K одновременно. Вложенный массив представляет собой упорядоченную последовательность: `[['G'], ['P']]` означает, что нужно нажать G, затем P. Каждый вложенный массив — это одно сочетание, поэтому `[['Mod', 'K'], ['Mod', 'C']]` означает, что нужно нажать Mod и K, затем Mod и C. Для одной клавиши используйте массив с одним элементом. Обе формы массивов могут быть readonly.
+
+`Mod` и `CommandOrControl` отображают Command в macOS и iOS, а Control — в других системах. Явно указанные клавиши `Command`, `Control`, `Alt` и `Enter` также имеют отображаемые обозначения. Другие строки отображаются как указано. Определение устройства безопасно без глобальных объектов браузера; `platform` позволяет переопределить его значением `mac` или `other`.
+
+Используйте `sequenceJoinLabel` для локализованного текста соединения. `combinationSeparator` может сохранять принятый в приложении формат, например `+`. Текстовый разделитель по умолчанию отсутствует на устройствах Apple и представляет собой пробел в других случаях. `variant` выбирает `keys`, `text` или `button`. `visibility="desktop"` скрывает подсказку при ширине мобильной области просмотра, а `always` оставляет её видимой.
+
+Символы клавиш имеют понятные доступные имена. Используйте `accessibleKeyLabels` для локализации названий отдельных клавиш в выводе программы чтения с экрана. Укажите `aria-label` или `aria-labelledby` для локализованного имени всего сочетания клавиш либо `aria-hidden` для декоративной подсказки. Кнопки сохраняют названия своих действий и скрывают декоративные подсказки на мобильных устройствах. Строки меню и списков сохраняют видимость своих подсказок.
+
+## Внешний вид
+
+Используйте `keys` для отдельных клавиш, `text` для встроенной подсказки или `button` для компактной подсказки внутри действия. Эти варианты изменяют только представление.
+
+<StoryEmbed storyId="ui-typography-shortcut--catalog" title="Варианты внешнего вида сочетаний клавиш" height={160} />
+
+## Миграция
+
+| Предыдущее свойство                             | Замена                                                   |
+| ----------------------------------------------- | -------------------------------------------------------- |
+| Кнопка `hotkeys={['⌘', 'K']}`                   | `shortcut={['Mod', 'K']}`                                |
+| Последовательные `hotkeys` / `hotKeys` ListItem | `shortcut={[['G'], ['P']]}`                              |
+| `hotkeysJoinLabel` / `hotKeysJoinLabel`         | `shortcutJoinLabel` в частях Button, ListItem и Dropdown |
+| Ручная конкатенация клавиш в подсказке          | `formatShortcut({ shortcut: ['Mod', 'Enter'] })`         |
+
+Плоские сохранённые массивы, представляющие последовательные нажатия клавиш, необходимо сделать вложенными перед передачей в `shortcut`: `hotKeys.map((key) => [key])`. Массивы, представляющие одновременные нажатия клавиш, можно передавать напрямую. Строки клавиш остаются литеральными токенами, поэтому `['Mod', '+']` содержит клавишу плюса, а `['Space']` содержит клавишу пробела; разбор строк сочетаний клавиш не требуется.
+
+## Свойства
+
+<ShortcutReference />
+
+<PageBanner illustration="card-page-command-menu" />

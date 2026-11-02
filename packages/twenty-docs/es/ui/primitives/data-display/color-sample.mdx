@@ -1,0 +1,63 @@
+---
+title: ColorSample
+description: Muestra un color del tema o un color personalizado junto a una etiqueta de texto.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ColorSampleReference from '/snippets/ui/generated/data-display/color-sample.mdx';
+
+## Resumen
+
+`ColorSample` es una muestra de color no interactiva. Úsalo junto a una etiqueta para que el significado no dependa solo del color. La selección pertenece al control circundante.
+
+<StoryEmbed storyId="ui-data-display-colorsample--display" title="Ejemplo de ColorSample" height={90} />
+
+## Uso
+
+```tsx
+import { ColorSample } from 'twenty-ui/primitives/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const PriorityColor = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <ColorSample colorName="red" render={<span />} aria-hidden="true" />
+    High priority
+  </Text>
+);
+```
+
+`colorName` selecciona una entrada de la paleta del tema para el relleno y el borde. `variant` acepta `default` o `circle`. Si se omite, se usa la forma predeterminada.
+
+## Colores personalizados
+
+```tsx
+import { ColorSample } from 'twenty-ui/primitives/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const BrandColor = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <ColorSample
+      colorName="blue"
+      color="#2563eb"
+      render={<span />}
+      aria-hidden="true"
+    />
+    Brand blue
+  </Text>
+);
+```
+
+Un `color` personalizado anula el relleno; `colorName` sigue siendo obligatorio y continúa determinando el color del borde. Las props nativas, `className`, `style` y `ref` se dirigen al div de la muestra. `render` acepta un elemento o una callback mediante la composición de Base UI; por ejemplo, un span dentro de texto. Los estilos del consumidor anulan el relleno, el borde o la geometría predeterminados. Las muestras decorativas usan `aria-hidden="true"`; una muestra independiente con significado usa `role="img"` con `aria-label` o `aria-labelledby`. Para ofrecer colores seleccionables, compón la muestra de color dentro de un [ListItem](/es/ui/primitives/navigation/list-item) con etiqueta.
+
+## Migración
+
+`ColorSampleProps` y `ColorSampleVariant` siguen disponibles en la familia data-display. Se elimina la variante `pipeline` no utilizada. Los indicadores específicos del producto pertenecen a la aplicación y usan estilos nativos o composición. Las muestras predeterminadas y circulares mantienen su apariencia actual.
+
+## "Props"
+
+<ColorSampleReference />
+
+<PageBanner illustration="page-cover-palette" />

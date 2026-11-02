@@ -19,6 +19,10 @@ export const hasRecordFieldValue = (value: unknown): boolean => {
     return value.length > 0;
   }
 
+  if (value instanceof Date) {
+    return !isNaN(value.getTime());
+  }
+
   if (typeof value === 'object') {
     const objectValue = value as Record<string, unknown>;
 

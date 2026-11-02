@@ -1,0 +1,159 @@
+---
+title: مجموعة الصور الرمزية
+description: صور رمزية متداخلة مع مؤشر تجاوز مشتق.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import AvatarGroupReference from '/snippets/ui/generated/components/data-display/avatar-group.mdx';
+
+## نظرة عامة
+
+يتلقى `AvatarGroup` الصور الرمزية المعروضة ويستنتج العدد المخفي. يعدّ `maxVisible` الصور الرمزية الفعلية؛ ومؤشر التجاوز يكون إضافيًا. ثماني صور رمزية مقدمة مع `maxVisible={3}` تعرض ثلاث صور رمزية و`+5`.
+
+<StoryEmbed storyId="ui-data-display-avatargroup--display" title="ثماني صور رمزية مع ظهور ثلاث منها" height={100} />
+
+## استخدام
+
+```tsx
+import { AvatarGroup } from 'twenty-ui/components/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const TeamAvatars = () => (
+  <AvatarGroup
+    maxVisible={3}
+    overflowShape="circle"
+    overlap="left"
+    overlapOffset="4px"
+    avatars={[
+      'Ada',
+      'Grace',
+      'Margaret',
+      'Annie',
+      'Mary',
+      'Dorothy',
+      'Katherine',
+      'Joan',
+    ].map((name) => (
+      <Avatar
+        key={name}
+        name={name}
+        shape="circle"
+        imageProps={{ alt: name }}
+      />
+    ))}
+  />
+);
+```
+
+وفّر مفاتيح مستقرة للحفاظ على تركيب الصور الرمزية المتبقية عند تغيّر الحد أو الإجمالي أو ترتيب العرض. الصور الرمزية زخرفية افتراضيا. عندما تكون المجموعة هي التمثيل الوحيد لأعضائها، وفّر اسم كل عضو عبر `imageProps.alt` لتسمية الصورة والبديل الافتراضي. أبقِ الصور الرمزية زخرفية عندما يكون النص المرئي أو تسمية المالك يوفران هذه الهوية بالفعل.
+
+## خيارات العرض
+
+قارن بين الصور الرمزية الدائرية والمربعة في كل حجم. تحتفظ المجموعة بثلاثة أعضاء ظاهرين في هذه المقارنة.
+
+<StoryEmbed storyId="ui-data-display-avatargroup--catalog" title="قارن بين أشكال الصور الرمزية وأحجامها" height={850} />
+
+## المجموعات المحمّلة جزئيًا
+
+استخدم `total` لحجم المجموعة الكامل عندما لا تكون سوى بعض الصور الرمزية محمّلة. ثلاث صور رمزية مقدمة ومرئية مع `total={20}` تعرض `+17`. مرّر جميع الصور الرمزية المحمّلة ودع المجموعة تطبّق `maxVisible`.
+
+```tsx
+import { AvatarGroup } from 'twenty-ui/components/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const LoadedTeamAvatars = () => (
+  <AvatarGroup
+    maxVisible={3}
+    total={20}
+    avatars={['Ada', 'Grace', 'Margaret'].map((name) => (
+      <Avatar key={name} name={name} imageProps={{ alt: name }} />
+    ))}
+  />
+);
+```
+
+يُقرّب `total` إلى الأسفل ولا يمكن أن يكون أصغر من عدد الصور الرمزية القابلة للعرض المقدمة. تستخدم الإجماليات غير المنتهية العدد المقدّم. يكون العدد المخفي المشتق غير سالب دائمًا.
+
+القيمة الافتراضية لـ `maxVisible` هي `4`. تُقرّب الحدود المنتهية إلى الأسفل وتُقيّد بالصفر، ويعرض `Infinity` جميع الصور الرمزية المقدمة، بينما لا يعرض `NaN` أيًا منها. لا تُحتسب عقد React الفارغة كصور رمزية. يمكن أن يعرض الحد الصفري مؤشر التجاوز فقط. يمكن لمجموعة فارغة ذات إجمالي موجب أن تعرض ذلك الإجمالي في مؤشرها؛ أما المجموعة الفارغة التي لا تحتوي على صور رمزية مخفية فلا تعرض شيئًا.
+
+<StoryEmbed storyId="ui-data-display-avatargroup--partially-loaded" title="ثلاثة أعضاء محمّلين من فريق مكوّن من عشرين عضوًا" height={100} />
+
+## تجاوز مخصص
+
+يتلقى `renderOverflow` العدد المخفي المشتق نفسه الذي يتلقاه مؤشر `+N` الافتراضي. لا يعمل إلا عندما يكون ذلك العدد موجبًا. أعد `null` لإخفاء المؤشر دون تغيير الصور الرمزية المرئية.
+
+استخدم عنصر تحكم صريحًا عندما ينفذ المؤشر إجراءً. ينبغي أن يوضح اسمه المتاح الإجراء والعدد.
+
+```tsx
+import { AvatarGroup } from 'twenty-ui/components/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+
+type TeamAvatarsWithActionProps = { onShowAll: () => void };
+
+export const TeamAvatarsWithAction = ({
+  onShowAll,
+}: TeamAvatarsWithActionProps) => (
+  <AvatarGroup
+    maxVisible={3}
+    total={20}
+    avatars={['Ada', 'Grace', 'Margaret'].map((name) => (
+      <Avatar key={name} name={name} imageProps={{ alt: name }} />
+    ))}
+    renderOverflow={(hiddenCount) => (
+      <Button
+        size="sm"
+        aria-label={`Show ${hiddenCount} more members`}
+        onClick={onShowAll}
+      >
+        +{hiddenCount}
+      </Button>
+    )}
+  />
+);
+```
+
+<StoryEmbed storyId="ui-data-display-avatargroup--custom-overflow" title="زر تجاوز مخصص" height={100} />
+
+## المظهر
+
+تُعرَض الصور الرمزية اللاحقة دائمًا فوق الصور السابقة. يختار `overlap` الهامش الفعلي، `left` أو `right`، الذي يحمل الإزاحة السالبة. يعيّن `overlapOffset` تلك الإزاحة كطول CSS. يعيّن `overflowShape` شكل المؤشر الرقمي الافتراضي.
+
+## تخصيص الجذر
+
+تصل السمات الأصلية ومعالجات الأحداث و`className` و`style` إلى الجذر. عنصره الافتراضي هو `div`، بما في ذلك عند توفير `onClick`. استخدم العناصر التفاعلية الأصلية للإجراءات، مثل زر التجاوز أعلاه.
+
+يقبل الجذر ref و`render`، والذي يمكن أن يكون عنصرًا أو دالة. يجب أن تمرّر المكونات المخصصة الـ props وref المقدمة إلى جذرها الأصلي. راجع [المكونات المخصصة](/ar/ui/primitives/overview#custom-components) لمتطلبات التركيب.
+
+```tsx
+import { useRef } from 'react';
+import { AvatarGroup } from 'twenty-ui/components/data-display';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+
+export const NamedTeamAvatars = () => {
+  const groupRef = useRef<HTMLDivElement>(null);
+
+  return (
+    <AvatarGroup
+      ref={groupRef}
+      role="group"
+      aria-label="Project members"
+      style={{ marginBlock: 8 }}
+      render={<div data-location="project-header" />}
+      avatars={['Ada', 'Grace', 'Margaret'].map((name) => (
+        <Avatar key={name} name={name} imageProps={{ alt: name }} />
+      ))}
+    />
+  );
+};
+```
+
+## الخصائص
+
+يتم تصدير `AvatarGroupProps` من `twenty-ui/components/data-display`.
+
+<AvatarGroupReference />
+
+<PageBanner illustration="page-cover-users" />

@@ -1,0 +1,221 @@
+---
+title: بطاقة
+description: جمّع المعلومات ذات الصلة داخل سطح ذي حدود.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CardReference from '/snippets/ui/generated/surfaces/card.mdx';
+
+## نظرة عامة
+
+يجمع `Card` المعلومات والإجراءات ذات الصلة ضمن تصدير مُسمّى واحد. ركّب `Card.Root` و`Card.Header` و`Card.Content` و`Card.Footer` لفصل العنوان والمحتوى والإجراءات الداعمة. لا تدير الأجزاء التحديد أو التركيز أو حالة التطبيق. يمتلك التطبيق سلوك أي عناصر تحكم موضوعة بداخلها.
+
+<StoryEmbed storyId="ui-surfaces-card--display" title="مثال على البطاقة" height={200} />
+
+## استخدام
+
+```tsx
+import { useId } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Heading, Text } from 'twenty-ui/primitives/typography';
+
+export const ImportSummary = () => {
+  const titleId = useId();
+
+  return (
+    <Card.Root fullWidth role="region" aria-labelledby={titleId}>
+      <Card.Header>
+        <Heading id={titleId} level={2}>
+          Import summary
+        </Heading>
+      </Card.Header>
+      <Card.Content>
+        <Text>24 records are ready to import.</Text>
+      </Card.Content>
+      <Card.Footer>
+        <Button>Review records</Button>
+      </Card.Footer>
+    </Card.Root>
+  );
+};
+```
+
+استخدم [العنوان](/ar/ui/primitives/typography/heading) بالمستوى الذي تتطلبه الصفحة المحيطة. ضع الإجراءات في [الزر](/ar/ui/primitives/input/button) أو رابط أصلي حتى يتمكن مستخدمو لوحة المفاتيح والتقنيات المساعدة من تفعيلها.
+
+## البنية
+
+```text
+Card.Root (outer surface)
+├── Card.Header (optional)
+├── Card.Content (optional, repeatable)
+├── Card.Footer (optional)
+├── Card.Action (optional, inside an action area)
+└── Card.Control (optional, independent control or tooltip target)
+```
+
+استورد `Card` من `twenty-ui/primitives/surfaces`. يوفر `Card.Root` الحد الخارجي والقص، لكنه لا ينشئ أي أقسام داخليًا. لا يتطلب أي جزء جزءًا آخر أو ترتيبًا معينًا للأقسام. تعمل الأقسام أيضًا بصورة مستقلة، دون `Card.Root` أو سياق.
+
+تُعرَض Root وHeader وContent وFooter على شكل `div` افتراضيًا وتقبل سمات div الأصلية، ومعالجات الأحداث، و`className`، و`style`، ومرجع DOM `ref`. تُعرَض Action كزر أصلي مع `type="button"`، وتُعرَض Control كعنصر span. استخدم `render` مع عنصر أو دالة رد نداء لاختيار هدف دلالي. لا يستنتج أي جزء عنصراً أو دوراً من `onClick`.
+
+يتم تصدير `CardRootProps` و`CardHeaderProps` و`CardContentProps` و`CardFooterProps` و`CardActionProps` و`CardControlProps` من `twenty-ui/primitives/surfaces` و`twenty-ui/primitives` والحزمة الجذرية.
+
+## المظهر والفواصل
+
+يملك `Card.Root` خلفية شفافة افتراضيا. يملأ `fullWidth` حاويته، ويغيّر `backgroundColor` الخلفية الخارجية. تملك الأقسام الفرعية خلفياتها الخاصة.
+
+يملك `Card.Header` خلفية أساسية وحشوة وحدا سفليا. يملك `Card.Content` خلفية ثانوية وحشوة؛ ويضيف `divider` الاختياري حدا سفليا. يملك `Card.Footer` خلفية أساسية وحشوة وحدا علويا ما لم يكن `divider={false}`. تجنب إضافة حدين عند الحد الفاصل نفسه للقسم.
+
+```tsx
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportSections = () => (
+  <Card.Root>
+    <Card.Content divider>
+      <Text>24 records are ready to import.</Text>
+    </Card.Content>
+    <Card.Content divider>
+      <Text>3 records need review.</Text>
+    </Card.Content>
+    <Card.Footer divider={false}>
+      <Text>Last checked just now.</Text>
+    </Card.Footer>
+  </Card.Root>
+);
+```
+
+## تركيب تفاعلي
+
+اختر زرا أصليا لإجراء ما أو مرساة للتنقل عبر `render`. وفّر السمات الخاصة بالهدف، مثل `type` و`disabled` و`href` و`target`، على ذلك العنصر. يوفّر المالك الفعلي سلوك لوحة المفاتيح والتركيز والتعطيل والروابط الخاص به. لا تضيف Card هذه السلوكيات إلى `div` للعرض.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type ReviewCardProps = {
+  disabled?: boolean;
+  onReview: () => void;
+  onDismiss: () => void;
+};
+
+export const ReviewCard = ({
+  disabled,
+  onReview,
+  onDismiss,
+}: ReviewCardProps) => (
+  <Card.Root>
+    <Card.Content
+      render={<button type="button" disabled={disabled} />}
+      onClick={onReview}
+    >
+      <Text render={<span />}>Review 24 ready records</Text>
+    </Card.Content>
+    <Card.Footer>
+      <Button onClick={onDismiss}>Dismiss</Button>
+    </Card.Footer>
+  </Card.Root>
+);
+```
+
+زر الإجراء وزر الرفض عنصران شقيقان داخل بطاقة للعرض. لا تضع زرا أو رابطا أو إدخالا أو عنصر تحكم تفاعليا آخر داخل مالك زر أو رابط. عندما يحتوي زر على أجزاء Card، اعرض تلك الأجزاء كعناصر صياغة مثل `span`.
+
+```tsx
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ImportLinkCard = () => (
+  <Card.Root render={<a href="/imports" />} fullWidth>
+    <Card.Content>
+      <Text>View imports</Text>
+    </Card.Content>
+  </Card.Root>
+);
+```
+
+تحتفظ مالكات الأزرار والروابط الأصلية بتخطيط البطاقة وتحصل على مخطط تركيز مرئي. تُبرز مالكات الأزرار والروابط الصريحة عند التمرير. تحافظ المالكَات المعطلة على مظهرها المعطل. يجب أن توفّر المالكَات المخصصة سلوك التفاعل الخاص بها، بما في ذلك التفعيل بلوحة المفاتيح ومعالجة التعطيل عند الاقتضاء.
+
+## إجراءات ممتدة وعناصر تحكم مستقلة
+
+استخدم `Card.Action` عندما يغطي إجراء أساسي واحد قسمًا من البطاقة يحتوي أيضًا على عناصر تحكم مستقلة. ضع الإجراء مباشرةً داخل Card.Root أو Card.Header أو Card.Content أو Card.Footer. يحدد ذلك الجزء المباشر المنطقة الممتدة. احتفظ بإجراء أساسي واحد لكل منطقة، وأبقِ النماذج الموسعة أو الأقسام المستقلة الأخرى خارجها.
+
+يكون `Card.Action` زرًا أصليًا افتراضيًا. امنح الإجراء الفارغ اسمًا متاحًا باستخدام `aria-label` أو `aria-labelledby`، واستخدم `aria-describedby` للنص الداعم. يحتفظ الرابط الأصلي أو رابط الموجّه المقدَّم عبر `render` بالتنقل والهدف وسلوك النقر مع مفتاح تعديل والقائمة السياقية الخاصة به. لا تتلقى المكونات المالكة المخصصة دور زر اصطناعيًا أو معالج لوحة مفاتيح أو موضع توقف في التنقل بالزر Tab. ضع السمات الأصلية الخاصة بالهدف على العنصر المعروض.
+
+يرفع `Card.Control` عنصر تحكم مستقلًا أو هدف تلميح أداة فوق الإجراء الممتد. ركّب العنصر الموجود لديه عبر `render` للاحتفاظ بتخطيطه وسماته. تبقى عناصر التحكم عناصر شقيقة للإجراء الأساسي، بدلًا من أن تكون عناصر تابعة لزر أو رابط. لا تستنتج Card العناصر التابعة التفاعلية ولا تعيد توجيه نقراتها إلى الإجراء الأساسي. تتولى التطبيقات أي معالجة إضافية لازمة للنص العادي المرفوع.
+
+```tsx
+import { useId } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const CustomerImportActions = () => {
+  const titleId = useId();
+
+  return (
+    <Card.Root>
+      <Card.Content>
+        <Card.Action
+          aria-labelledby={titleId}
+          render={<a href="/imports/review" />}
+        />
+        <Text id={titleId}>Review customer import</Text>
+        <Card.Control render={<Button variant="ghost" />}>
+          Import options
+        </Card.Control>
+      </Card.Content>
+    </Card.Root>
+  );
+};
+```
+
+تستخدم مناطق الإجراءات الممكّنة لون التمرير المشترك لـ Card، بما في ذلك عند تمرير مؤشر الماوس فوق عنصر تحكم مستقل. تمتلك منطقة الإجراء المتداخلة تمييزها ولا تميّز عناصرها السلفية. تعرض إجراءات الأزرار والروابط الأصلية مخطط تركيز داخليًا بعرض 2px حول المنطقة الممتدة. يُزال الزر الأصلي المعطّل من التنقل بلوحة المفاتيح، ولا تُميَّز منطقته، بما في ذلك الزر المقدَّم عبر `render`. تظل الروابط وعناصر التحكم المرتبطة عبر التسميات مسؤولة عن سلوك التعطيل الخاص بها؛ كما أن الخاصية `disabled` لـ Action تمنع أيضًا معالجة منطقة الإجراء المشتركة.
+
+بالنسبة إلى صف Switch أو Radio، اعرض Action باعتباره `<label htmlFor={controlId} />` وامنح عنصر التحكم الفعلي ذلك المعرّف. أبقِ تسميته المرئية ووصفه المتاح مرتبطين بعنصر التحكم. لا تنشئ التسمية هدفًا إضافيًا للوحة المفاتيح أو حلقة تركيز. يحتفظ Switch وRadio بسلوك التركيز ولوحة المفاتيح الخاص بهما. ضع النموذج الموسع لخيار radio في Card.Content منفصل بحيث تغطي التسمية رأس التحديد الخاص به فقط.
+
+<StoryEmbed storyId="ui-surfaces-card-interactions--stretched-actions" title="إجراءات ممتدة مع عناصر تحكم مستقلة" height={360} />
+
+## أجزاء مستقلة وأغلفة مخصصة
+
+يمكن استخدام قسم دون السطح الخارجي. يمكن للأغلفة استخدام نوع الخصائص المصدّر الخاص به ونشره للحفاظ على السمات الأصلية ومعالجات الأحداث والمراجع وتركيب العرض والفئات والأنماط. مع هدف مخصص، ضع المرجع الخاص بالهدف على العنصر الموفّر. تدمج Base UI ذلك المرجع مع مرجع الجزء والخصائص المركبة.
+
+```tsx
+import { Card, type CardContentProps } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type SummaryContentProps = CardContentProps;
+
+const SummaryContent = ({ children, ...props }: SummaryContentProps) => (
+  <Card.Content {...props}>{children}</Card.Content>
+);
+
+export const StandaloneSummary = () => (
+  <SummaryContent aria-label="Import summary" style={{ maxWidth: 360 }}>
+    <Text>24 records are ready to import.</Text>
+  </SummaryContent>
+);
+```
+
+## الترحيل
+
+استبدل عمليات الاستيراد الأربع المنفصلة بـ `import { Card } from 'twenty-ui/primitives/surfaces'`. تصدّر الحزمة الجذرية و`twenty-ui/primitives` أيضا كائن `Card` نفسه.
+
+| واجهة برمجة التطبيقات السابقة                   | واجهة برمجة التطبيقات المركبة                        |
+| ----------------------------------------------- | ---------------------------------------------------- |
+| `Card` كمكوّن                                   | `Card.Root`                                          |
+| `CardHeader`                                    | `Card.Header`                                        |
+| `CardContent`                                   | `Card.Content`                                       |
+| `CardFooter`                                    | `Card.Footer`                                        |
+| `ComponentProps\<typeof Card>` | `ComponentProps\<typeof Card.Root>` |
+| `styled(Card)`                                  | `styled(Card.Root)`                                  |
+
+طبّق أسماء الأعضاء نفسها على وسوم JSX والأغلفة المنسقة وأنواع الخصائص. تُزال تصديرات الأجزاء المستقلة دون أسماء مستعارة للتوافق. تبقى خصائص التخطيط وإعدادات التنسيق الافتراضية واستخدام القسم المستقل. استبدل `isClickable` و`hasHoverHighlight` بمالك أصلي صريح عبر `render`. انقل معالجات الإجراءات من الأغلفة المخصصة للعرض فقط، وحافظ على الأسماء المتاحة، وأبق عناصر التحكم المتداخلة خارج الإجراء الأساسي. استخدم `render={<button type="button" disabled={disabled} />}` لإجراء ما و`render={<a href="/imports" />}` للتنقل. تشير مراجع DOM الآن إلى الجزء المعروض فعليا.
+
+## الإزاحة
+
+<CardReference />
+
+<PageBanner illustration="section-ui-primitives" />

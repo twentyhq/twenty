@@ -7,7 +7,7 @@ import { AuthRestApiExceptionFilter } from 'src/engine/core-modules/auth/filters
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { CustomPermissionGuard } from 'src/engine/guards/custom-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
+import { PermissionsRestApiExceptionFilter } from 'src/engine/permissions/utils/permissions-rest-api-exception.filter';
 import { DuplicatedDashboardDTO } from 'src/modules/dashboard/dtos/duplicated-dashboard.dto';
 import { DashboardRestApiExceptionFilter } from 'src/modules/dashboard/filters/dashboard-rest-api-exception.filter';
 import { DashboardDuplicationService } from 'src/modules/dashboard/services/dashboard-duplication.service';

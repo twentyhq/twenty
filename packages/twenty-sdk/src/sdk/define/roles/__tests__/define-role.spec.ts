@@ -1,3 +1,5 @@
+import { SystemPermissionFlag as SharedSystemPermissionFlag } from 'twenty-shared/constants';
+
 import { SystemPermissionFlag, defineRole } from '@/sdk/define';
 
 describe('defineRole', () => {
@@ -45,6 +47,54 @@ describe('defineRole', () => {
 
     expect(result.success).toBe(true);
     expect(result.config?.permissionFlagUniversalIdentifiers).toHaveLength(2);
+  });
+
+  it('should list a permission flag once when it is listed twice', () => {
+    const result = defineRole({
+      ...validConfig,
+      permissionFlagUniversalIdentifiers: [
+        SystemPermissionFlag.UPLOAD_FILE,
+        SystemPermissionFlag.UPLOAD_FILE,
+      ],
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.config.permissionFlagUniversalIdentifiers).toEqual([
+      SystemPermissionFlag.UPLOAD_FILE,
+    ]);
+  });
+
+  it.each([
+    ['CONNECTED_ACCOUNTS', 'USER_APPS'],
+    ['APPLICATIONS', 'WORKSPACE_APPS'],
+  ] as const)(
+    'should list a flag once when deprecated %s is listed with %s',
+    (deprecatedName, replacementName) => {
+      const result = defineRole({
+        ...validConfig,
+        permissionFlagUniversalIdentifiers: [
+          SystemPermissionFlag[replacementName],
+          SystemPermissionFlag[deprecatedName],
+        ],
+      });
+
+      expect(result.success).toBe(true);
+      expect(result.config.permissionFlagUniversalIdentifiers).toEqual([
+        SystemPermissionFlag[replacementName],
+      ]);
+    },
+  );
+
+  it('should keep a role listing every SystemPermissionFlag value valid', () => {
+    const result = defineRole({
+      ...validConfig,
+      permissionFlagUniversalIdentifiers: Object.values(SystemPermissionFlag),
+    });
+
+    expect(result.success).toBe(true);
+    expect(
+      [...(result.config.permissionFlagUniversalIdentifiers ?? [])].sort(),
+    ).toEqual(Object.values(SharedSystemPermissionFlag).sort());
   });
 
   it('should return error when universalIdentifier is missing', () => {

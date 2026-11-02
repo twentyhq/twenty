@@ -1,6 +1,6 @@
-import { isNumber } from '@sniptt/guards';
 import { type CSSProperties } from 'react';
 
+import { formatCssLength } from '@ui/utilities/internal/formatCssLength';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
 export const formatInlineBlockSize = (
@@ -10,5 +10,5 @@ export const formatInlineBlockSize = (
     return '';
   }
 
-  return isNumber(blockSize) ? `${blockSize}px` : String(blockSize);
+  return formatCssLength(blockSize);
 };

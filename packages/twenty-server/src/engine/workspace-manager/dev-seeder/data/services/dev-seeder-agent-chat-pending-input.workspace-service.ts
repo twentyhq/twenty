@@ -11,7 +11,8 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { v5 } from 'uuid';
 
-import { RecordShareStorageService } from 'src/engine/core-modules/record-share/services/record-share-storage.service';
+import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
+import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { PAUSING_TOOLS } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/constants/pausing-tools.constant';
 import { mapAiStepsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-ai-steps-to-ui-message-parts.util';
@@ -414,6 +415,12 @@ export class DevSeederAgentChatPendingInputWorkspaceService {
         ? null
         : seedId('assistantMessage'),
     });
+    await this.threadRepository.query(workspaceId, ({ manager, table }) =>
+      manager.query(
+        `UPDATE ${table('agentChatThread')} SET "${IS_PRIVATE_COLUMN_NAME}" = true WHERE id = $1`,
+        [threadId],
+      ),
+    );
 
     const questionTurnId = seedId('questionTurn');
 

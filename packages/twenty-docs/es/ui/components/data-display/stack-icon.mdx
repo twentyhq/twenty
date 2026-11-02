@@ -1,0 +1,47 @@
+---
+title: Icono de pila
+description: Un icono de 16 px con un elemento más pequeño apilado en su esquina inferior derecha.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import StackIconReference from '/snippets/ui/generated/components/data-display/stack-icon.mdx';
+
+## Resumen
+
+Pase el icono principal mediante la ranura de nodo `icon` y el elemento apilado mediante `stackedIcon`. El contenedor mide 16 px de ancho y alto; el elemento apilado se coloca de forma absoluta a 8 px de la izquierda y 7 px de la parte superior, por lo que sobresale de la esquina inferior derecha. Un avatar cuadrado de 12 px es el tamaño previsto para un logotipo de aplicación. Ambos nodos son decorativos, así que mantenga una etiqueta visible junto al icono.
+
+Deja espacio para el desbordamiento del elemento apilado al colocar contenido adyacente. El ejemplo utiliza un espacio de 12 px entre el contenedor del icono y su etiqueta.
+
+<StoryEmbed storyId="ui-components-data-display-stackicon--display" title="Icono de empresa con un logotipo apilado" height={100} />
+
+## Uso
+
+```tsx
+import { StackIcon } from 'twenty-ui/components/data-display';
+import { IconBuildingSkyscraper } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const CompanyFieldLabel = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <StackIcon
+      icon={<IconBuildingSkyscraper size={16} />}
+      stackedIcon={
+        <Avatar size="xs" shape="square" variant="outline" name="Stripe" />
+      }
+    />
+    <Text>Companies</Text>
+  </Text>
+);
+```
+
+Los atributos nativos, los eventos, `className`, `style` y `ref` se aplican al div externo. `render` reemplaza ese objetivo mediante la composición de Base UI y conserva ambos nodos de icono.
+
+## "Props"
+
+<StackIconReference />
+
+<PageBanner illustration="section-ui-components" />

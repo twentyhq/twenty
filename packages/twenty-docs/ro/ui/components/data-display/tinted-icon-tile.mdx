@@ -1,0 +1,64 @@
+---
+title: Bloc de pictogramă nuanțată
+description: O pictogramă pe un fundal nuanțat derivat dintr-o culoare a temei.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import TintedIconTileReference from '/snippets/ui/generated/components/data-display/tinted-icon-tile.mdx';
+
+## Prezentare generală
+
+Transmiteți conținutul pictogramei prin slotul de nod `icon` cu litere mici. Dala își preia culoarea de fundal și culoarea moștenită de prim-plan din paleta temei. Conținutul pictogramei este decorativ. Păstrați o etichetă vizibilă lângă aceasta sau atribuiți rădăcinii `role="img"` și un nume accesibil pentru o imagine etichetată independentă.
+
+<StoryEmbed storyId="ui-components-data-display-tintedicontile--display" title="Pictograma companiei pe o dală nuanțată" height={100} />
+
+## Utilizare
+
+```tsx
+import { TintedIconTile } from 'twenty-ui/components/data-display';
+import { IconBuildingSkyscraper } from 'twenty-ui/icon';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const CompanyLabel = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <TintedIconTile icon={<IconBuildingSkyscraper size={16} />} color="blue" />
+    <Text>Companies</Text>
+  </Text>
+);
+```
+
+## Geometrie și compoziție nativă
+
+Dala are implicit 16px prin tokenul de spațiere și utilizează tokenul mic pentru raza bordurii. Setați dimensiunile și conturul pictogramei direct pe nod. `style` sau `className` de pe rădăcină controlează lățimea, înălțimea, bordura, forma și culorile dalei; stilurile explicite înlocuiesc valorile implicite ale paletei. Grafica personalizată trebuie să moștenească `currentColor` atunci când utilizează culoarea de prim-plan a paletei.
+
+```tsx
+import { TintedIconTile } from 'twenty-ui/components/data-display';
+
+export const CustomCompanyTile = () => (
+  <TintedIconTile
+    icon={
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M2 2h16v16H2z" />
+      </svg>
+    }
+    color="blue"
+    role="img"
+    aria-label="Companies"
+    render={<span />}
+    style={{ width: 32, height: 32 }}
+  />
+);
+```
+
+Atributele native, evenimentele, `className`, `style` și `ref` vizează elementul div exterior. `render` înlocuiește acea țintă prin compunerea Base UI, păstrând în același timp conținutul decorativ al pictogramei. Denumiți controlul înconjurător atunci când compuneți o dală într-o acțiune.
+
+Înlocuiți `Icon={CompanyIcon}` cu `icon={<CompanyIcon size={16} />}`. Mutați opțiunile anterioare `size` și `stroke` în nodul pictogramei și utilizați stiluri pe rădăcină pentru dimensiuni personalizate ale dalei.
+
+## Proprietăți
+
+<TintedIconTileReference />
+
+<PageBanner illustration="page-cover-palette" />

@@ -12,13 +12,17 @@ import { AiChatThreadChannelIcon } from '@/ai/components/AiChatThreadChannelIcon
 import { AiChatThreadRow } from '@/ai/components/AiChatThreadRow';
 import { AiChatThreadSubtitle } from '@/ai/components/AiChatThreadSubtitle';
 import { AiChatThreadTitle } from '@/ai/components/AiChatThreadTitle';
+import { useAgentChatThreadSubtitleContent } from '@/ai/hooks/useAgentChatThreadSubtitleContent';
 import { useAiChatThreadRename } from '@/ai/hooks/useAiChatThreadRename';
 import { useAiChatThreadTriage } from '@/ai/hooks/useAiChatThreadTriage';
+import { agentChatIsStreamingFamilyState } from '@/ai/states/agentChatIsStreamingFamilyState';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
+import { type AiChatThreadListVariant } from '@/ai/types/AiChatThreadListVariant';
 import { getCommandMenuDropdownIdFromCommandMenuId } from '@/command-menu-item/utils/getCommandMenuDropdownIdFromCommandMenuId';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 
 const StyledActivityTime = styled.div`
   align-items: center;
@@ -28,6 +32,7 @@ const StyledActivityTime = styled.div`
 
 type AiChatThreadListItemProps = {
   thread: AgentChatThreadRecord;
+  variant?: AiChatThreadListVariant;
   isSelected: boolean;
   isChecked?: boolean;
   onClick: (
@@ -47,6 +52,7 @@ type AiChatThreadListItemProps = {
 
 export const AiChatThreadListItem = ({
   thread,
+  variant = 'default',
   isSelected,
   isChecked = false,
   onClick,
@@ -71,7 +77,16 @@ export const AiChatThreadListItem = ({
     isDropdownOpenComponentState,
     itemMenuDropdownId,
   );
-  const { status: triageStatus } = useAiChatThreadTriage(thread.id);
+  const { status: triageStatus } = useAiChatThreadTriage({
+    threadId: thread.id,
+  });
+  const agentChatIsStreaming = useAtomFamilyStateValue(
+    agentChatIsStreamingFamilyState,
+    { threadId: thread.id },
+  );
+  const { hasContent: hasSubtitleContent } =
+    useAgentChatThreadSubtitleContent(thread);
+  const isCompact = variant === 'compact';
   const shouldShowMore =
     isDefined(onDetach) ||
     isDefined(thread.deletedAt) ||
@@ -80,12 +95,14 @@ export const AiChatThreadListItem = ({
 
   return (
     <AiChatThreadRow
+      variant={variant}
       id={thread.id}
       label={thread.title ?? t`Untitled`}
       isSelected={isSelected}
       isChecked={isChecked}
       isEditing={isRenaming}
       isActionMenuOpen={isDropdownOpen}
+      isStreaming={agentChatIsStreaming}
       onClick={(event) => onClick(thread, event)}
       onCheckboxClick={
         isDefined(onCheckboxClick)
@@ -97,7 +114,9 @@ export const AiChatThreadListItem = ({
           ? (event) => onContextMenu(thread, event)
           : undefined
       }
-      avatar={<AiChatThreadAvatar thread={thread} />}
+      avatar={
+        <AiChatThreadAvatar thread={thread} size={isCompact ? 'md' : 'lg'} />
+      }
       title={
         isRenaming ? (
           <TextInput
@@ -133,18 +152,25 @@ export const AiChatThreadListItem = ({
         !isRenaming && (
           <StyledActivityTime>
             <AiChatThreadChannelIcon thread={thread} />
-            <AiChatThreadActivityTime thread={thread} />
+            <AiChatThreadActivityTime thread={thread} variant={variant} />
           </StyledActivityTime>
         )
       }
-      subtitle={<AiChatThreadSubtitle thread={thread} />}
+      subtitle={
+        !isCompact || hasSubtitleContent ? (
+          <AiChatThreadSubtitle
+            thread={thread}
+            size={isCompact ? 'md' : 'sm'}
+          />
+        ) : undefined
+      }
       actions={
         <AiChatThreadActionsDropdown
           thread={thread}
           instanceId={actionsInstanceId}
           onRenameRequested={startRename}
           onDetach={onDetach}
-          shouldShowTriageActions
+          shouldShowTriageActions={!isCompact}
           shouldShowMore={shouldShowMore}
         />
       }

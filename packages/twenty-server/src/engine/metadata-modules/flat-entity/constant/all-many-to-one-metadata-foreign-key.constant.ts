@@ -182,6 +182,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
       foreignKey: 'agentId',
     },
     apiKey: null,
+    webhook: {
+      foreignKey: 'webhookId',
+    },
     workspace: null,
     application: null,
   },
@@ -257,6 +260,9 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     fieldMetadata: {
       foreignKey: 'fieldMetadataId',
     },
+    relationFieldMetadata: {
+      foreignKey: 'relationFieldMetadataId',
+    },
     workspaceMemberFieldMetadata: {
       foreignKey: 'workspaceMemberFieldMetadataId',
     },
@@ -298,6 +304,13 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
   webhook: {
     workspace: null,
     application: null,
+  },
+  mcpServer: {
+    workspace: null,
+    application: null,
+    connectionProvider: {
+      foreignKey: 'connectionProviderId',
+    },
   },
   applicationVariable: {
     workspace: null,
@@ -343,6 +356,22 @@ export const ALL_MANY_TO_ONE_METADATA_FOREIGN_KEY = {
     },
     tsVectorFieldMetadata: {
       foreignKey: 'tsVectorFieldMetadataId',
+    },
+  },
+  relatedRecordPath: {
+    workspace: null,
+    application: null,
+    objectMetadata: {
+      foreignKey: 'objectMetadataId',
+    },
+    firstFieldMetadata: {
+      foreignKey: 'firstFieldMetadataId',
+    },
+    secondFieldMetadata: {
+      foreignKey: 'secondFieldMetadataId',
+    },
+    thirdFieldMetadata: {
+      foreignKey: 'thirdFieldMetadataId',
     },
   },
   validationRule: {

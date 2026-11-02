@@ -89,13 +89,15 @@ export class ApplicationDevelopmentResolver {
       requireApplicationRegistrationOwnership: true,
     })
     { manifest, dryRun, inferDeletionFromMissingEntities }: ApplicationInput,
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
   ): Promise<WorkspaceMigrationDTO> {
     return this.applicationDevelopmentService.syncApplication({
       manifest,
       dryRun,
       inferDeletionFromMissingEntities,
       workspaceId,
+      workspaceCustomApplicationId,
     });
   }
 

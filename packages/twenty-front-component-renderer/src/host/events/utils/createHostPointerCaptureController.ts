@@ -1,3 +1,4 @@
+import { isInteger } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CAPTURED_POINTER_EVENT_TYPES } from '@/constants/CapturedPointerEventTypes';
@@ -65,6 +66,13 @@ export const createHostPointerCaptureController = ({
   return {
     startPointerCapture,
     claimPointerEventForwarding,
+    hasActivePointerCaptureForEvent: (event) =>
+      isCapturedPointerEvent(event) &&
+      'isTrusted' in event &&
+      event.isTrusted === true &&
+      'pointerId' in event &&
+      isInteger(event.pointerId) &&
+      endSessionByPointerId.has(event.pointerId),
     setPushCapturedPointerEvent: (nextPushCapturedPointerEvent) => {
       pushCapturedPointerEvent = nextPushCapturedPointerEvent;
     },

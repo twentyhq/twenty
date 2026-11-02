@@ -16,8 +16,8 @@ import { doNotTranslate } from 'twenty-shared/i18n';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { v4 } from 'uuid';
+import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
 import {
-  type Agent,
   type ObjectPermission,
   AssignRoleToAgentDocument,
   CreateOneRoleDocument,
@@ -30,7 +30,7 @@ type UseWorkflowAiAgentPermissionActionsParams = {
   readonly: boolean;
   objectPermissions: ObjectPermission[];
   permissionFlagKeys: string[];
-  refetchAgentAndRoles: () => Promise<{ refetchedAgent?: Agent }>;
+  refetchAgentAndRoles: () => Promise<{ refetchedAgent?: FlatAgent }>;
 };
 
 export const useWorkflowAiAgentPermissionActions = ({

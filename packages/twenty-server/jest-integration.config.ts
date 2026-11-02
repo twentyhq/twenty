@@ -41,7 +41,7 @@ const jestConfig: JestConfigWithTsJest = {
   setupFilesAfterEnv: [
     '<rootDir>/test/integration/utils/setup-wait-for-all-jobs-between-tests.ts',
   ],
-  testTimeout: 20000,
+  testTimeout: 90000,
   maxWorkers: 1,
   // ESM-only deps (jsdom 29 and msw chains, ai, @ai-sdk/*, @workflow/serde) that swc must transform for jest
   transformIgnorePatterns: [

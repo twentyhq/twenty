@@ -1,11 +1,32 @@
 ---
-title: Guida utente
-description: Benvenuto nella Guida utente di Twenty, la tua risorsa per configurazioni avanzate e migliori pratiche.
+title: Maestro Venti
+description: Guide passo-passo per modellare i tuoi dati, automatizzare il tuo lavoro ed eseguire il tuo workspace.
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { LandingActions, LandingButton } from "/snippets/landing-actions.mdx"
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-<CardGroup cols={3} className="documentation-card-group documentation-card-group--patterned">
+<LandingActions>
+  <LandingButton href="/it/user-guide/data-model/overview">Modello i tuoi dati</LandingButton>
+  <LandingButton href="/it/user-guide/data-migration/overview" outlined>Importa dati</LandingButton>
+</LandingActions>
+
+## Adatta Twenty alla tua squadra
+
+Venti sono costruiti per cambiare con il vostro business. Questa guida ti mostra come configurare il tuo spazio di lavoro e come configurarlo quando vai, dai dati che tracciate agli schermi che il vostro team lavora ogni giorno.
+
+* **Configura i tuoi dati.** Modelli di oggetti e campi intorno alla tua azienda, quindi inserisci i tuoi record da file CSV o da un altro CRM.
+* **Porta le tue conversazioni.** Sincronizza email e calendario in modo che ogni scambio atterra sul record giusto e raggiungi i tuoi contatti con le campagne email.
+* **Organizza il lavoro.** Costruisci le viste, le pipeline e registra le pagine che il tuo team usa ogni giorno.
+* **Automatizza il lavoro occupato.** Passaggi ripetitivi della mano ai flussi di lavoro e alle attività multi-step agli agenti AI.
+* **Rimani in controllo.** Segui i tuoi numeri sui dashboard, decidi chi vede cosa con i ruoli e gestisci la fatturazione e le impostazioni.
+
+## Esplora la guida utente
+
+Ogni sezione copre una parte di Venti, dal modello di dati alla fatturazione e alle impostazioni.
+
+<CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
   <Card href="/it/user-guide/data-model/overview" img="/images/documentation/banner-icons-v2/data-model.svg">
     <CardTitle>Modello di dati</CardTitle>
     Personalizza il tuo modello di dati per adattarlo ai tuoi processi aziendali.
@@ -21,6 +42,11 @@ import { CardTitle } from "/snippets/card-title.mdx"
     Centralizza le riunioni e le email del tuo team.
   </Card>
 
+  <Card href="/it/user-guide/email-campaigns/overview" img="/images/documentation/section-overview-icons-v1/email-campaigns.svg">
+    <CardTitle>Email Campagne</CardTitle>
+    Invia campagne email basate sui tuoi dati CRM.
+  </Card>
+
   <Card href="/it/user-guide/workflows/overview" img="/images/user-guide/halftone/workflows-belt-v1.svg">
     <CardTitle>Flussi di lavoro</CardTitle>
     Automatizza i processi e integra con strumenti esterni.
@@ -33,7 +59,7 @@ import { CardTitle } from "/snippets/card-title.mdx"
 
   <Card href="/it/user-guide/layout/overview" img="/images/user-guide/halftone/layout-window-v1.svg">
     <CardTitle>Layout</CardTitle>
-    Navigazione, viste e personalizzazione della pagina del record.
+    Barra laterale, viste e personalizzazione della pagina del record.
   </Card>
 
   <Card href="/it/user-guide/dashboards/overview" img="/images/documentation/banner-icons-v2/dashboards.svg">
@@ -56,4 +82,11 @@ import { CardTitle } from "/snippets/card-title.mdx"
     Configura le preferenze del tuo spazio di lavoro.
   </Card>
 
+  <Card href="https://discord.gg/cx5n4Jzs57" img="/images/user-guide/halftone/community-discord.svg">
+    <CardTitle>Discord</CardTitle>
+    Fai domande e condividi quello che costruisci con la community Twenty.
+  </Card>
+
 </CardGroup>
+
+<PageBanner illustration="user-guide" />

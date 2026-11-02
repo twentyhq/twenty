@@ -11,5 +11,8 @@ export type CreateUserSessionInput = {
   impersonatedUserWorkspaceId?: string | null;
   userAgent?: string | null;
   ipAddress?: string | null;
+  country?: string | null;
+  region?: string | null;
+  city?: string | null;
   origin: UserSessionCreationOrigin;
 };

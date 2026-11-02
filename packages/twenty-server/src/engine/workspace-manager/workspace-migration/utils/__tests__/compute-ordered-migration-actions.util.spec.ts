@@ -20,6 +20,10 @@ import {
   type UniversalUpdateSettingsMenuItemAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/settings-menu-item/types/workspace-migration-settings-menu-item-action.type';
 import { type UniversalCreateViewSortAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/view-sort/types/workspace-migration-view-sort-action.type';
+import {
+  type UniversalCreateWorkflowVersionAction,
+  type UniversalUpdateWorkflowVersionAction,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/workflow-version/types/workspace-migration-workflow-version-action.type';
 
 describe('computeOrderedMigrationActions', () => {
   it('should remove a replaced view sort before creating its replacement', () => {
@@ -142,6 +146,32 @@ describe('computeOrderedMigrationActions', () => {
     );
     expect(orderedActions.indexOf(droppedItemDeleteAction)).toBeLessThan(
       frontComponentDeleteIndex,
+    );
+  });
+
+  it('should archive the active workflow version before creating the one that replaces it', () => {
+    const archiveAction = {
+      type: 'update',
+      metadataName: 'workflowVersion',
+      universalIdentifier: 'published-version',
+      update: { status: 'ARCHIVED' },
+    } as unknown as UniversalUpdateWorkflowVersionAction;
+    const publishAction = {
+      type: 'create',
+      metadataName: 'workflowVersion',
+      flatEntity: { universalIdentifier: 'new-version', status: 'ACTIVE' },
+    } as unknown as UniversalCreateWorkflowVersionAction;
+    const orchestratorActionsReport = createEmptyOrchestratorActionsReport();
+
+    orchestratorActionsReport.workflowVersion.create.push(publishAction);
+    orchestratorActionsReport.workflowVersion.update.push(archiveAction);
+
+    const orderedActions = computeOrderedMigrationActions(
+      orchestratorActionsReport,
+    );
+
+    expect(orderedActions.indexOf(archiveAction)).toBeLessThan(
+      orderedActions.indexOf(publishAction),
     );
   });
 

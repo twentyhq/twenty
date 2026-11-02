@@ -6,6 +6,7 @@ import { DEFAULT_TOOL_INPUT_SCHEMA } from 'twenty-shared/logic-function';
 import { type AgentResponseSchema } from 'twenty-shared/ai';
 import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
 import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
+import { findAgents } from 'test/integration/metadata/suites/agent/utils/find-agents.util';
 import { updateOneAgent } from 'test/integration/metadata/suites/agent/utils/update-one-agent.util';
 
 describe('Agent update should succeed', () => {
@@ -319,5 +320,63 @@ describe('Agent update should succeed', () => {
       id: testAgentId,
       triggers: [],
     });
+  });
+
+  it('should store edits and the archive of another application agent as workspace overrides', async () => {
+    const { data } = await findAgents({
+      expectToFail: false,
+      input: undefined,
+      gqlFields: 'id name label',
+    });
+
+    const helperAgent = data.findManyAgents.find(
+      (agent) => agent.name === 'helper',
+    );
+
+    expect(helperAgent).toBeDefined();
+
+    try {
+      const { data: editData } = await updateOneAgent({
+        expectToFail: false,
+        input: {
+          id: helperAgent!.id,
+          label: 'Workspace helper',
+          isActive: false,
+        },
+        gqlFields: 'id label isActive',
+      });
+
+      expect(editData.updateOneAgent).toMatchObject({
+        label: 'Workspace helper',
+        isActive: false,
+      });
+
+      const [agentRow] = await global.testDataSource.query(
+        `SELECT label, "isActive", overrides FROM core."agent" WHERE id = $1`,
+        [helperAgent!.id],
+      );
+
+      expect(agentRow.label).toBe(helperAgent!.label);
+      expect(agentRow.isActive).toBe(true);
+      expect(Object.values(agentRow.overrides)).toEqual([
+        { label: 'Workspace helper', isActive: false },
+      ]);
+    } finally {
+      // Every spec shares the helper agent, so a failed assertion must not leave it archived
+      const { data: revertData } = await updateOneAgent({
+        expectToFail: false,
+        input: {
+          id: helperAgent!.id,
+          label: helperAgent!.label,
+          isActive: true,
+        },
+        gqlFields: 'id label isActive',
+      });
+
+      expect(revertData.updateOneAgent).toMatchObject({
+        label: helperAgent!.label,
+        isActive: true,
+      });
+    }
   });
 });

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { useTranslate } from 'twenty-sdk/front-component';
-import { Button } from 'twenty-ui/input';
-import { H2Title } from 'twenty-ui/typography';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { Section } from 'twenty-ui/components/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { APPLICATION_UNIVERSAL_IDENTIFIER } from 'src/constants/APPLICATION_UNIVERSAL_IDENTIFIER';
 
@@ -118,7 +118,7 @@ export const DesktopSettings = () => {
         gap: themeCssVariables.spacing[4],
       }}
     >
-      <H2Title
+      <Section.Header
         title={t('Twenty for macOS')}
         description={t(
           'Record meetings on your computer and find transcripts and summaries in this workspace.',
@@ -203,10 +203,12 @@ export const DesktopSettings = () => {
       ))}
       {applicationId && (
         <Button
-          title={t('Save settings')}
+          style={{ alignSelf: 'flex-start' }}
           disabled={saving || Object.keys(drafts).length === 0}
           onClick={() => void save()}
-        />
+        >
+          {t('Save settings')}
+        </Button>
       )}
     </div>
   );

@@ -4,7 +4,6 @@ import {
 } from 'twenty-shared/application';
 import {
   FieldMetadataType,
-  MetadataWritability,
   RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
@@ -35,7 +34,7 @@ const TEXT_FIELD_MANIFEST: Required<
   defaultValue: "'untitled'",
   isNullable: false,
   isUIEditable: false,
-  writability: MetadataWritability.APPLICATION,
+  disabledFieldPermissionActions: ['canUpdateFieldValue'],
   isUnique: true,
   isSearchable: true,
   isAuditLogged: false,
@@ -56,7 +55,7 @@ const RELATION_FIELD_MANIFEST: Required<
   defaultValue: null,
   isNullable: true,
   isUIEditable: true,
-  writability: MetadataWritability.OPEN,
+  disabledFieldPermissionActions: [],
   isUnique: false,
   isSearchable: false,
   isAuditLogged: true,

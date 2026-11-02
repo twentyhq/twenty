@@ -169,6 +169,7 @@ export class BackfillTimelineActivitySearchFieldMetadataCommand extends Provisio
       };
 
       await this.workspaceMigrationRunnerService.run({
+        shouldDeferActions: false,
         workspaceMigration: {
           applicationUniversalIdentifier:
             timelineActivityFlatObjectMetadata.applicationUniversalIdentifier,
@@ -187,6 +188,7 @@ export class BackfillTimelineActivitySearchFieldMetadataCommand extends Provisio
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           workspaceId,
           applicationUniversalIdentifier:

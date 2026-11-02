@@ -1,0 +1,119 @@
+---
+title: رقاقة
+description: اعرض محتوى مضغوطًا مملوكًا للمستدعي مع خانات اختيارية في البداية والنهاية.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ChipReference from '/snippets/ui/generated/data-display/chip.mdx';
+
+## نظرة عامة
+
+استخدم `Chip` للإشارات المضغوطة إلى الأشخاص أو السجلات أو الملفات. استخدم [علامة](/ar/ui/primitives/data-display/tag) للفئات الملوّنة و[حالة](/ar/ui/primitives/data-display/status) لحالات سير العمل.
+
+<StoryEmbed storyId="ui-data-display-chip--display" title="مثال على Chip" height={90} />
+
+## استخدام
+
+```tsx
+import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
+
+export const AssigneeChip = () => (
+  <Chip
+    variant="soft"
+    startElement={
+      <Avatar name="Jane" size="sm" shape="circle" imageProps={{ alt: '' }} />
+    }
+  >
+    Jane
+  </Chip>
+);
+```
+
+تقبل العناصر التابعة نصًا أو عُقدًا. يقبل `startElement` و`endElement` صورًا رمزية أو أيقونات أو محتوى آخر. يضيف `endElementDivider` فاصلاً قبل المحتوى اللاحق. الشريحة الافتراضية هي `div`؛ ويمكن أن تحتوي فتحاتها على إجراء منفصل بينما تظل الشريحة نفسها للعرض فقط.
+
+لا تُدرج Chip تسمية أبدًا. وفّر نصًا احتياطيًا مترجمًا من تطبيقك عند الحاجة. احذف العناصر الفرعية للمحتوى المُنشأ بالكامل من الفتحات. تحتاج الشريحة التفاعلية التي تحتوي على أيقونة فقط إلى اسم متاح يوفّره المستدعي.
+
+## المظهر
+
+<StoryEmbed storyId="ui-data-display-chip--catalog" title="أنواع وأحجام الشرائح" height={200} />
+
+يقبل `size` القيمتين `sm` أو `md`، بارتفاعين إجماليين قدرهما 20px و24px. يقبل `variant` القيم `ghost` أو `soft` أو `solid` أو `plain` أو `outline`؛ والقيمة `ghost` هي الافتراضية. لا تحتوي شرائح plain على تعبئة في حالة السكون أو حشو بادئ. تحتوي شرائح outline على حد قوي بسماكة 1px، وتعبئة أخف في حالة السكون، وحشوة داخلية بمقدار 8px على كل جانب، مع الارتفاع الإجمالي نفسه للمتغيرات الأخرى. تستخدم شرائح plain وoutline القابلة للنقر خلفيات ghost عند التمرير والضغط، ومؤشرًا على شكل يد، وحلقة تركيز. استخدم `shape="round"` لشكل كبسولة، و`weight="medium"` للتأكيد، و`color="secondary"` للنص الثانوي.
+
+## الأزرار والروابط
+
+```tsx
+import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
+
+type AssigneeActionProps = {
+  onOpenAssignee: () => void;
+  disabled?: boolean;
+};
+
+export const AssigneeAction = ({
+  onOpenAssignee,
+  disabled,
+}: AssigneeActionProps) => (
+  <Chip
+    render={<button type="button" disabled={disabled} />}
+    onClick={onOpenAssignee}
+    aria-label="Open Jane's record"
+    startElement={
+      <Avatar name="Jane" size="sm" shape="circle" imageProps={{ alt: '' }} />
+    }
+  >
+    Jane
+  </Chip>
+);
+```
+
+يؤدي توفير `onClick` إلى الإبقاء على `div` الافتراضي. استخدم `render` لتكوين زر أصلي صريح، أو رابط ارتساء، أو رابط موجّه، أو عنصر مناسب آخر. تصل السمات الأصلية والمعالجات والأنماط ومرجع الجذر إلى ذلك العنصر. يوفر الزر الأصلي التفعيل بلوحة المفاتيح وسلوك التعطيل. تتعرف Chip على حالة التعطيل الأصلية و`aria-disabled` للمظهر؛ ولا يمنع `aria-disabled` وحده التفعيل.
+
+يتحكم `clickable` في مظهر التمرير والمؤشر، ويكون افتراضيًا بحسب ما إذا كان `onClick` مُوفّرًا. عيّنه صراحةً لرابط من دون معالج نقر. لا تُضمّن أزرارًا أو روابط داخل شريحة تفاعلية بحد ذاتها.
+
+```tsx
+import { Chip } from 'twenty-ui/primitives/data-display';
+
+export const DocumentationChip = () => (
+  <Chip
+    variant="outline"
+    shape="round"
+    render={<a href="https://twenty.com/developers" />}
+    clickable
+  >
+    Documentation
+  </Chip>
+);
+```
+
+يبقى نص عنوان URL نصًا عاديًا. تنتمي الروابط المقصودة إلى محتوى المستدعي أو إلى تكوين الجذر الصريح.
+
+## الاقتطاع وتلميحات الأدوات
+
+```tsx
+import { Chip } from 'twenty-ui/primitives/data-display';
+
+export const FileChip = () => (
+  <Chip variant="soft" maxWidth={180} tooltipPlace="top">
+    Quarterly customer research.pdf
+  </Chip>
+);
+```
+
+`maxWidth` يقيّد عرض الشريحة المعروضة بالبكسل، بما في ذلك الحشو وأي حد للمخطط الخارجي. ينطبق الحد نفسه على الشرائح العادية ذات الحشوة غير المتماثلة. يُقتطع المحتوى بعلامة حذف افتراضيًا؛ ويترك `truncate={false}` المحتوى دون قيود بسبب الاقتطاع. توفر العناصر الفرعية النصية نص تلميح الأداة الخاص بها. عيّن `tooltipContent` للنص المخصص أو محتوى العقدة، و`tooltipDelay` لتأخير الفتح، و`isTooltipMultiline` للحفاظ على فواصل الأسطر. يُفعّل `alwaysShowTooltip` أيضًا تلميح الأداة عندما يكون المحتوى ملائمًا. تتبع هذه الخيارات [OverflowingTextWithTooltip](/ar/ui/primitives/typography/overflowing-text-with-tooltip). أبقِ المعلومات الأساسية متاحة دون الاعتماد على التمرير.
+
+## الترحيل
+
+استبدل `emptyLabel` بعناصر فرعية احتياطية يوفرها المستدعي، واستبدل `forceEmptyText` أو `isLabelHidden` بعناصر فرعية محذوفة. احتفظ بالنصوص الاحتياطية المترجمة للمنتج في التطبيق. استبدل `tooltipLabel` بـ `tooltipContent`. انقل `disabled` إلى العنصر التفاعلي الصريح وأزل `nativeButton`. أضف زرًا أصليًا أو رابطًا عبر `render` حيثما كانت الشريحة تعتمد سابقًا على `onClick` لاختيار عنصرها.
+
+استبدل تجاوزات الحشوة البادئة بـ `variant="plain"`. أبقِ `clickable` مفعّلًا للروابط والأزرار الأصلية التي تحتاج إلى تغذية راجعة عند التمرير والضغط.
+
+## الخصائص
+
+تُنشأ الأنواع والقيم الافتراضية من أنواع المكونات العامة. تُقبل أيضًا السمات الأصلية ومعالجات الأحداث.
+
+<ChipReference />
+
+<PageBanner illustration="page-cover-checkbox" />

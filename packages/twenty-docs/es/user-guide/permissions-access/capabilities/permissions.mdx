@@ -3,6 +3,10 @@ title: Permisos
 description: Controla el acceso a objetos, campos y ajustes con permisos basados en roles.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
 El sistema de permisos de Twenty te permite controlar el acceso a tres áreas principales:
 
 * **Objetos y Campos**: Controla quién puede ver, editar o eliminar registros y campos individuales
@@ -57,7 +61,7 @@ Si se elimina un rol, cualquier miembro del espacio de trabajo asignado a él se
 4. Los nuevos miembros del espacio de trabajo serán asignados a este rol cuando se unan
 
 <Note>
-Solo puedes asignar roles a miembros existentes del espacio de trabajo. Para invitar a nuevos miembros, utiliza [Gestión de Miembros](/es/user-guide/settings/capabilities/member-management).
+Solo puedes asignar roles a miembros existentes del espacio de trabajo. Para invitar a nuevos miembros, utiliza [Gestión de Miembros](/l/es/user-guide/settings/capabilities/member-management).
 </Note>
 
 ## Personalizar Permisos
@@ -211,3 +215,5 @@ El agente de IA solo podrá acceder a los datos y realizar las acciones permitid
 <Note>
 Para los agentes de IA que se ejecutan dentro de flujos de trabajo, esto garantiza que el agente no pueda acceder ni modificar datos fuera de su alcance previsto, incluso si el flujo de trabajo tiene permisos más amplios.
 </Note>
+
+<PageBanner illustration="card-page-permissions" />

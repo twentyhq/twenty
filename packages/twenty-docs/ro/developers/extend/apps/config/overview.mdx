@@ -3,6 +3,11 @@ title: Prezentare generală
 description: Configurează însăși aplicația — identitatea ei, permisiunile implicite și ceea ce rulează în momentul instalării.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Ce acoperă stratul de configurare
+
 **Stratul de configurare** al unei aplicații Twenty este cel care descrie aplicația *pentru platformă* — identitatea ei, permisiunile pe care le deține și codul care rulează în timpul instalării sau actualizării. Aceste declarații nu adaugă noi structuri de date sau comportamente la rulare; ele îi spun lui Twenty *cine este aplicația* și *cum să fie configurată*.
 
 ```text
@@ -32,24 +37,29 @@ description: Configurează însăși aplicația — identitatea ei, permisiunile
 
 ## În această secțiune
 
-<CardGroup cols={2}>
-  <Card title="Configurația aplicației" icon="rocket" href="/ro/developers/extend/apps/config/application">
-    `defineApplication` — identitate, rol implicit, variabile, metadate pentru marketplace.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ro/developers/extend/apps/config/application" img="/images/user-guide/halftone/card-page-application-config.svg">
+    <CardTitle>Aplicația Config</CardTitle>
+    `defineApplication` - identitate, rol implicit, variabile, piață metadate.
   </Card>
-  <Card title="Roluri și permisiuni" icon="shield-half" href="/ro/developers/extend/apps/config/roles">
-    `defineRole` — declară ce pot citi și scrie funcțiile de logică ale aplicației dvs.
+  <Card href="/ro/developers/extend/apps/config/roles" img="/images/user-guide/halftone/card-page-roles.svg">
+    <CardTitle>Roluri & Permisiuni</CardTitle>
+    `defineRole` - declara ce functii logice ale aplicatiei tale pot citi si scrie.
   </Card>
-  <Card title="Hook-uri de instalare" icon="tool" href="/ro/developers/extend/apps/config/install-hooks">
-    `definePreInstallLogicFunction`, `definePostInstallLogicFunction` și `defineUninstallLogicFunction` — fac backup la date, introduc valori implicite, validează actualizările și curăță la eliminare.
+  <Card href="/ro/developers/extend/apps/config/install-hooks" img="/images/user-guide/halftone/card-page-install-hooks.svg">
+    <CardTitle>Instalați Hooks</CardTitle>
+    `definePreInstallLogicFunction`, `definePostInstallLogicFunction`, și `defineUninstallLogicFunction` - date de backup, setări, validare actualizări, curățare la eliminare.
   </Card>
 </CardGroup>
 
-## Cum se leagă componentele între ele
+## Cum se leagă piesele
 
-* **Aplicația** este punctul de intrare. Fiecare aplicație are exact un apel `defineApplication()`, iar acesta indică un singur **Rol** ca implicit.
-* **Rolul** controlează ce pot citi și scrie funcțiile de logică și componentele front-end ale aplicației. Respectați principiul celui mai mic privilegiu: acordați doar permisiunile de care codul dvs. are cu adevărat nevoie.
-* **Hook-urile de instalare** rulează în timpul instalării sau actualizării — pre-install înainte de migrarea metadatelor (astfel încât să poată refuza o actualizare riscantă), post-install după migrare (astfel încât să poată introduce date implicite în noua schemă). Hook-ul de dezinstalare rulează chiar înainte ca aplicația să fie eliminată, astfel încât poate curăța resursele externe cât timp datele aplicației sunt încă lizibile.
+* **Cererea** este punctul de intrare. Fiecare aplicație are exact un apel `defineApplication()`, și indică ca implicit la unul **Role**.
+* **Rolul** controlează funcțiile logice ale aplicației și componentele frontale pot citi și scrie. Urmărește cel mai puțin privilegiu: acordă doar permisiunile de care are nevoie codul tău.
+* **Instalați Hooks** rulați în timpul instalării sau actualizării - preinstalați înainte de migrarea metadatelor (astfel încât poate refuza o actualizare riscantă), post-instalare după migrare (astfel încât să poată semăna date implicite cu noua schemă). Cârligul de dezinstalare rulează chiar înainte ca aplicația să fie eliminată, astfel încât să poată curăța resursele externe în timp ce datele aplicației sunt încă lizibile.
 
 <Note>
-Hook-urile de instalare împart același runtime cu [funcțiile de logică](/ro/developers/extend/apps/logic/logic-functions) — aceeași semnătură a handlerului, aceleași variabile de mediu, același client API tipizat — dar sunt declarate cu propriile lor funcții `define` și există în afara modelului obișnuit de declanșare (HTTP, cron, evenimente de bază de date).
+Instalarea hook-urilor partajează [funcția logică](/ro/developers/extend/apps/logic/logic-functions) rulează - aceeași semnătură de manipulator, aceleași variabile de mediu, același client API tastat — dar sunt declarate cu propriile funcții de definire și trăiesc în afara modelului de declanșare regulat (HTTP, cron, baza de date evenimente).
 </Note>
+
+<PageBanner illustration="section-apps-config" />

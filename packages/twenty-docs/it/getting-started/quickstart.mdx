@@ -3,7 +3,10 @@ title: Guida rapida
 description: Metti Twenty in funzione in meno di 5 minuti — sul cloud o in modalità self-hosted.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Registrati
 
@@ -56,17 +59,23 @@ Usa il menu Comando (`Cmd+K` / `Ctrl+K`) per importare Persone, Aziende, Opportu
 
 ## Prossimi passaggi
 
-<CardGroup cols={2}>
-  <Card title="Scopri il layout" icon="layout-columns" href="/it/getting-started/core-concepts/layout">
-    Navigazione, viste, menu comandi, pannello laterale.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/it/getting-started/core-concepts/layout" img="/images/user-guide/halftone/layout-window-v1.svg">
+    <CardTitle>Scopri il layout</CardTitle>
+    Barra laterale, visualizzazioni, menu dei comandi, pannello laterale.
   </Card>
-  <Card title="Crea workflow" icon="bolt" href="/it/user-guide/workflows/overview">
+  <Card href="/it/user-guide/workflows/overview" img="/images/user-guide/halftone/workflows-belt-v1.svg">
+    <CardTitle>Crea Workflows</CardTitle>
     Automatizza i tuoi processi aziendali.
   </Card>
-  <Card title="Crea viste" icon="table" href="/it/user-guide/layout/overview">
+  <Card href="/it/user-guide/views-pipelines/overview" img="/images/documentation/section-overview-icons-v1/views-pipelines.svg">
+    <CardTitle>Crea visualizzazioni</CardTitle>
     Tabella, kanban, calendario — filtra e ordina i tuoi dati.
   </Card>
-  <Card title="Esplora le API" icon="plug" href="/it/developers/extend/api">
-    Schema-per-tenant REST e GraphQL.
+  <Card href="/it/developers/extend/api" img="/images/documentation/banner-icons-v2/dev-api.svg">
+    <CardTitle>Esplora l'API</CardTitle>
+    Schema per tenant REST e GraphQL.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="getting-started-quickstart" />

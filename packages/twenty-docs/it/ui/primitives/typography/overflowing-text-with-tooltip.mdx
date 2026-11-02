@@ -1,0 +1,131 @@
+---
+title: OverflowingTextWithTooltip
+description: Tronca il testo lungo e ne mostra il valore completo in un tooltip.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import OverflowingTextWithTooltipReference from '/snippets/ui/generated/typography/overflowing-text-with-tooltip.mdx';
+
+## Panoramica
+
+`OverflowingTextWithTooltip` tronca il contenuto entro la larghezza disponibile. Verifica la presenza di overflow al passaggio del puntatore e al focus, quindi mostra un tooltip solo quando necessario. Gestisce internamente la visibilità del tooltip e non espone prop controllate o non controllate per lo stato di apertura. Usa [OverflowingTextTooltipModeProvider](/it/ui/primitives/typography/overflowing-text-tooltip-mode-provider) per modificare quando una sottoalbero verifica il troncamento o per disattivare il tooltip.
+
+<StoryEmbed storyId="ui-surfaces-overflowingtextwithtooltip--display" title="Esempio di OverflowingTextWithTooltip" height={180} />
+
+## Utilizzo
+
+```tsx
+import {
+  OverflowingTextWithTooltip,
+  Text,
+} from 'twenty-ui/primitives/typography';
+
+export const RecordTitle = () => (
+  <Text style={{ maxWidth: 220 }}>
+    <OverflowingTextWithTooltip
+      text="Quarterly account review and renewal preparation"
+      isFocusable
+    />
+  </Text>
+);
+```
+
+Limita la larghezza del layout circostante affinché possa verificarsi il troncamento. `isFocusable` assegna al testo un punto di tabulazione e apre il tooltip al focus o al clic. Mantieni disponibili le informazioni essenziali per gli utenti che non possono passare il puntatore sopra un elemento.
+
+## Scegli la tipografia
+
+`size`, `weight` e `color` corrispondono a [Testo](/it/ui/primitives/typography/text). Sono facoltativi ed ereditano indipendentemente quando omessi. La tipografia esplicita si applica al testo visualizzato; il tooltip mantiene il suo aspetto condiviso.
+
+```tsx
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+
+export const WorkspaceCaption = () => (
+  <OverflowingTextWithTooltip
+    text="Quarterly account review and renewal preparation"
+    size="xs"
+    weight="semibold"
+    color="light"
+    style={{ maxWidth: 220 }}
+  />
+);
+```
+
+## Contenuto su più righe
+
+```tsx
+import {
+  OverflowingTextWithTooltip,
+  Text,
+} from 'twenty-ui/primitives/typography';
+
+export const RecordDescription = () => (
+  <Text style={{ maxWidth: 220 }}>
+    <OverflowingTextWithTooltip
+      text="Review the account history, confirm the renewal date, and prepare the next conversation with the customer."
+      lineClamp={2}
+      isTooltipMultiline
+      isFocusable
+    />
+  </Text>
+);
+```
+
+`lineClamp` corrisponde a Text e limita le righe visualizzate; usa un intero positivo. `isTooltipMultiline` conserva gli spazi vuoti e le interruzioni di riga all'interno del tooltip. Senza un limite di righe, il testo viene troncato su una riga.
+
+## Contenuto e tempistica personalizzati
+
+```tsx
+import {
+  OverflowingTextWithTooltip,
+  Text,
+} from 'twenty-ui/primitives/typography';
+
+export const ImportResult = () => (
+  <Text style={{ maxWidth: 220 }}>
+    <OverflowingTextWithTooltip
+      text={<strong>24 records imported successfully</strong>}
+      tooltipContent="24 records imported successfully"
+      tooltipPlace="top"
+      tooltipDelay={300}
+      isFocusable
+    />
+  </Text>
+);
+```
+
+Il contenuto React richiede `tooltipContent` come stringa semplice. Con testo in formato stringa, questa prop può sostituire l'etichetta del tooltip; altrimenti viene usato il testo stesso. Un'etichetta vuota o mancante non apre un tooltip. Gli URL stringa rimangono testo normale. Fornisci i link esplicitamente in `text` o tramite `render`. Il contenuto dei link e la navigazione restano sotto il controllo del chiamante.
+
+`alwaysShowTooltip` consente il tooltip anche senza troncamento. `tooltipDelay` controlla il ritardo al passaggio del puntatore e per impostazione predefinita è di 500 millisecondi. `tooltipPlace` per impostazione predefinita è `bottom`.
+
+Gli attributi nativi, gli stili, i nomi delle classi, i gestori di eventi e i ref si applicano all'elemento Text visualizzato, un `div` per impostazione predefinita. `render` può sostituire quell'elemento mantenendo il comportamento di troncamento e del tooltip. `OverflowingTextWithTooltipProps` viene esportato da `twenty-ui/primitives/typography`. La tipografia viene ereditata dal layout circostante, a meno che non venga fornita una prop typography esplicita. Imposta `truncate={false}` per andare a capo; scegli `truncate` oppure `lineClamp`. Anche gli elementi renderizzati selezionabili tramite tastiera e un `tabIndex` fornito dal chiamante mostrano il tooltip quando ricevono il focus. Usa direttamente [Text](/it/ui/primitives/typography/text) e [Tooltip](/it/ui/primitives/surfaces/tooltip) quando hai bisogno di una composizione personalizzata. Il contenuto interattivo dei popup va inserito in [Popover](/it/ui/primitives/surfaces/popover).
+
+## Link espliciti
+
+```tsx
+import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
+
+export const DocumentationLink = () => (
+  <OverflowingTextWithTooltip
+    text="https://twenty.com/developers"
+    render={
+      <a href="https://twenty.com/developers" aria-label="Documentation" />
+    }
+    style={{ maxWidth: 160, display: 'block' }}
+  />
+);
+```
+
+Usa un'unica ancora per l'intera etichetta oppure fornisci singole ancore nel contenuto React con un semplice `tooltipContent`. Il componente non aggiunge ancore proprie. Mantieni informativo il contenuto del tooltip.
+
+## Migrazione
+
+Sostituisci `displayedMaxRows` con `lineClamp`. Le precedenti opzioni `size="small"` e `size="large"` controllavano l'altezza, non la dimensione del carattere. `large` impostava un'altezza di 16px. Il nuovo `size` seleziona le dimensioni dei caratteri del tema e non accetta alias legacy; usa `style` o `className` nativi per i vincoli di altezza. `color` ora accetta colori semantici; sposta i colori CSS arbitrari in `style={{ color: customColor }}`. Sposta il riconoscimento intenzionale degli URL nel contenuto sotto il controllo del chiamante. In questo componente non rimane alcuna conversione automatica in link.
+
+## Props
+
+<OverflowingTextWithTooltipReference />
+
+<PageBanner illustration="section-document-generator" />

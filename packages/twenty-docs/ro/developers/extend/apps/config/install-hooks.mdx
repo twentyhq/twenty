@@ -3,6 +3,10 @@ title: Hook-uri de instalare
 description: Rulați logică în timpul ciclului de viață de instalare, actualizare sau dezinstalare — populați date, faceți backup pentru înregistrări, validați actualizarea, curățați resursele externe.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
 Hook-urile de instalare sunt funcții logice speciale care rulează în timpul ciclului de viață de instalare, actualizare sau dezinstalare. Acestea folosesc același runtime de handler ca și [funcțiile logice](/ro/developers/extend/apps/logic/logic-functions) obișnuite, dar sunt declarate cu propriile lor funcții de definire și există în afara modelului obișnuit de declanșatori (HTTP, cron, evenimente de bază de date). Hook-urile de instalare primesc un `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` este `undefined` la o instalare nouă); hook-ul de dezinstalare primește un `UninstallPayload` (`{ version?: string }` — versiunea care este eliminată).
 
 Fiecare aplicație poate defini **cel mult unul** din fiecare hook (pre-instalare, post-instalare, dezinstalare). Construirea manifestului va genera o eroare dacă se detectează mai mult de unul de orice tip.
@@ -46,11 +50,11 @@ Fiecare aplicație poate defini **cel mult unul** din fiecare hook (pre-instalar
 * Mediul obișnuit al funcțiilor logice (`APPLICATION_ID`, `APP_ACCESS_TOKEN`, `API_URL`) este injectat, astfel încât puteți apela API-ul Twenty cu tokenul aplicației voastre.
 * Hook-ul este atașat automat la manifestul aplicației la build (`preInstallLogicFunction` / `postInstallLogicFunction`) — nu este nevoie să fie referențiat în [`defineApplication()`](/ro/developers/extend/apps/config/application).
 * Valoarea implicită pentru `timeoutSeconds` este 300 pentru a permite sarcini de configurare mai lungi, cum ar fi popularea datelor.
-* **Nu este executat în modul dev**: `yarn twenty dev` sare peste fluxul de instalare și sincronizează fișierele direct, astfel încât hook-urile nu rulează acolo. Declanșați-le manual în schimb:
+* **Nu este executat în modul dev**: `twenty app dev` sare peste fluxul de instalare și sincronizează fișierele direct, astfel încât hook-urile nu rulează acolo. Declanșați-le manual în schimb:
 
 ```bash filename="Terminal"
-yarn twenty dev:function:exec --postInstall
-yarn twenty dev:function:exec --preInstall
+twenty app exec --post-install
+twenty app exec --pre-install
 ```
 
 <AccordionGroup>
@@ -59,7 +63,10 @@ yarn twenty dev:function:exec --preInstall
 Rulează după ce aplicația voastră a terminat instalarea: metadate sincronizate, clientul SDK generat, noua schemă poate fi interogată. Exemplu — populează o înregistrare implicită la instalări noi:
 
 ```ts src/logic-functions/post-install.ts
-import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import {
+  definePostInstallLogicFunction,
+  type InstallPayload,
+} from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
@@ -68,7 +75,9 @@ const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
   const client = new CoreApiClient();
   await client.mutation({
     createPostCard: {
-      __args: { data: { name: 'Welcome to Postcard', content: 'Your first card!' } },
+      __args: {
+        data: { name: 'Welcome to Postcard', content: 'Your first card!' },
+      },
       id: true,
     },
   });
@@ -100,10 +109,16 @@ Pre-install este întotdeauna **sincron** și blochează instalarea. Dacă handl
 Exemplu — copiați valorile unui câmp vechi înainte ca migrarea să îl elimine:
 
 ```ts src/logic-functions/pre-install.ts
-import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import {
+  definePreInstallLogicFunction,
+  type InstallPayload,
+} from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
+const handler = async ({
+  previousVersion,
+  newVersion,
+}: InstallPayload): Promise<void> => {
   // Only the 1.x → 2.x upgrade drops the legacy `notes` field.
   if (!previousVersion?.startsWith('1.') || !newVersion.startsWith('2.')) {
     return;
@@ -132,7 +147,8 @@ const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise
 export default definePreInstallLogicFunction({
   universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
   name: 'pre-install',
-  description: 'Backs up legacy notes into description before the v2 migration.',
+  description:
+    'Backs up legacy notes into description before the v2 migration.',
   timeoutSeconds: 300,
   shouldRunOnVersionUpgrade: true,
   handler,
@@ -155,11 +171,14 @@ Notițe:
 * La fel ca hook-urile de instalare, **nu este executat în modul de dezvoltare (dev mode)** — declanșează-l manual în schimb:
 
 ```bash filename="Terminal"
-yarn twenty dev:function:exec --uninstall
+twenty app exec --uninstall-hook
 ```
 
 ```ts src/logic-functions/uninstall.ts
-import { defineUninstallLogicFunction, type UninstallPayload } from 'twenty-sdk/define';
+import {
+  defineUninstallLogicFunction,
+  type UninstallPayload,
+} from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (_payload: UninstallPayload): Promise<void> => {
@@ -185,3 +204,5 @@ export default defineUninstallLogicFunction({
   handler,
 });
 ```
+
+<PageBanner illustration="card-page-install-hooks" />

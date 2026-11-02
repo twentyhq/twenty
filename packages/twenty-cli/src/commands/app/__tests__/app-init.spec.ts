@@ -23,6 +23,7 @@ import {
   parseSingleJsonLine,
   runCliForTest,
 } from '@/__tests__/utils/run-cli-for-test';
+import { createAppProject } from '@/app/create-app-project';
 import { getAppTemplateDirectory } from '@/app/get-app-template-directory';
 import { CLI_VERSION } from '@/constants/cli-version.constant';
 
@@ -82,6 +83,55 @@ describe('app init', () => {
     await rm(root, { recursive: true, force: true });
   });
 
+  it.each([false, true])(
+    'inherits shared template files and scripts with example=%s',
+    async (shouldIncludeExample) => {
+      const templateDirectory = join(root, 'template');
+      const appDirectory = join(workDirectory, 'my-app');
+
+      await cp(TEMPLATE_DIRECTORY, templateDirectory, { recursive: true });
+      await mkdir(join(templateDirectory, 'config'));
+      await writeFile(join(templateDirectory, 'config/shared.json'), '{}');
+      const templatePackageJson = await readPackageJson(templateDirectory);
+
+      templatePackageJson.scripts['check:shared'] = 'echo shared';
+      await writeFile(
+        join(templateDirectory, 'package.json'),
+        JSON.stringify(templatePackageJson),
+      );
+      vi.mocked(getAppTemplateDirectory).mockReturnValue(templateDirectory);
+
+      await createAppProject({
+        appDirectory,
+        appName: 'my-app',
+        appDisplayName: 'My app',
+        appDescription: '',
+        shouldIncludeExample,
+        signal: new AbortController().signal,
+      });
+
+      expect(
+        await readFile(join(appDirectory, 'config/shared.json'), 'utf8'),
+      ).toBe('{}');
+      expect((await readPackageJson(appDirectory)).scripts).toEqual({
+        ...templatePackageJson.scripts,
+        ...(shouldIncludeExample
+          ? JSON.parse(
+              await readFile(
+                join(templateDirectory, 'example/scripts.json'),
+                'utf8',
+              ),
+            )
+          : {}),
+      });
+      const appFiles = await readdir(appDirectory);
+
+      expect(appFiles.includes('src')).toBe(shouldIncludeExample);
+      expect(appFiles.includes('public')).toBe(shouldIncludeExample);
+      expect(appFiles).not.toContain('example');
+    },
+  );
+
   it('creates the app from the bundled template without installing or saving anything', async () => {
     const result = await run(['my-app']);
     const appDirectory = join(workDirectory, 'my-app');
@@ -106,7 +156,7 @@ describe('app init', () => {
     expect(await readPackageJson(appDirectory)).toMatchObject({
       name: 'my-app',
       engines: {
-        node: '^24.5.0',
+        node: '^24.5.0 || ^26.5.1',
         npm: 'please-use-yarn',
         twenty: `>=${semver.major(APP_TEMPLATE_PACKAGE_VERSION)}.${semver.minor(APP_TEMPLATE_PACKAGE_VERSION)}.0`,
         yarn: '>=4.0.2',
@@ -157,7 +207,14 @@ describe('app init', () => {
     expect(globalSetup).not.toContain('twenty-sdk/cli');
     expect(await readFile(join(testsDirectory, 'run-twenty.ts'), 'utf8')).toBe(
       await readFile(
-        join(TEMPLATE_DIRECTORY, 'src', '__tests__', 'run-twenty.ts'),
+        join(
+          TEMPLATE_DIRECTORY,
+          'example',
+          'files',
+          'src',
+          '__tests__',
+          'run-twenty.ts',
+        ),
         'utf8',
       ),
     );

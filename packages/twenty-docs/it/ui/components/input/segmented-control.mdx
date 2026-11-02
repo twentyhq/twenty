@@ -1,0 +1,105 @@
+---
+title: Controllo segmentato
+description: Scegli un valore da un gruppo compatto di opzioni etichettate o con icone.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import SegmentedControlReference from '/snippets/ui/generated/components/input/segmented-control.mdx';
+
+## Panoramica
+
+`SegmentedControl` è un preset composto da [Radio](/it/ui/primitives/input/radio) e [RadioGroup](/it/ui/primitives/input/radio-group), con opzioni unite. Usalo per una scelta breve e mutuamente esclusiva. Per la navigazione tra pannelli di contenuto, usa [Tabs](/it/ui/primitives/navigation/tabs).
+
+<StoryEmbed storyId="components-input-segmentedcontrol--display" title="Esempio di SegmentedControl" height={110} />
+
+## Utilizzo
+
+Fornisci un nome di gruppo accessibile con `aria-label` o `aria-labelledby`. Ogni opzione necessita di una stringa `value` univoca. La selezione appartiene al gruppo; le opzioni non hanno uno stato selezionato indipendente.
+
+```tsx
+import { SegmentedControl } from 'twenty-ui/components/input';
+
+export const BillingPeriod = () => (
+  <SegmentedControl
+    aria-label="Billing period"
+    name="billingPeriod"
+    defaultValue="annual"
+    options={[
+      { label: 'Annual', value: 'annual' },
+      { label: 'Monthly', value: 'monthly' },
+    ]}
+  />
+);
+```
+
+`defaultValue` inizializza la selezione. Il gruppo gestisce le modifiche successive. Aggiungi `onValueChange` se devi osservarle senza controllare il valore.
+
+## Stato controllato
+
+```tsx
+import { useState } from 'react';
+import { SegmentedControl } from 'twenty-ui/components/input';
+
+export const BillingPeriod = () => {
+  const [period, setPeriod] = useState('annual');
+
+  return (
+    <SegmentedControl
+      aria-label="Billing period"
+      name="billingPeriod"
+      value={period}
+      onValueChange={setPeriod}
+      options={[
+        { label: 'Annual', value: 'annual' },
+        { label: 'Monthly', value: 'monthly' },
+      ]}
+    />
+  );
+};
+```
+
+Mantieni `value` nello stato dell'applicazione e aggiornalo in `onValueChange`. Non combinare `value` e `defaultValue` e non cambiare modalità di gestione dopo il montaggio.
+
+## Opzioni delle icone
+
+```tsx
+import { SegmentedControl } from 'twenty-ui/components/input';
+import { IconList, IconLayoutKanban } from 'twenty-ui/icon';
+
+export const RecordLayout = () => (
+  <SegmentedControl
+    aria-label="Record layout"
+    defaultValue="list"
+    itemWidth="content"
+    options={[
+      { value: 'list', startIcon: <IconList />, 'aria-label': 'List' },
+      {
+        value: 'kanban',
+        startIcon: <IconLayoutKanban />,
+        'aria-label': 'Kanban',
+      },
+    ]}
+  />
+);
+```
+
+Un'opzione con sola icona richiede un `aria-label`. `startIcon` è decorativo ed è nascosto alla tecnologia assistiva. Le opzioni con testo visibile usano `label` e possono anche fornire `startIcon`. Imposta `disabled` su un'opzione per impedirne la selezione oppure sul gruppo per disabilitare tutte le opzioni.
+
+## Tastiera, moduli e direzione
+
+Tab entra nel gruppo; i tasti freccia si spostano tra le opzioni abilitate e aggiornano la selezione. Questo segue il comportamento dei pulsanti radio. I gruppi di selezione a discesa spostano lo stato attivo con i tasti freccia e selezionano all'attivazione. `itemWidth="equal"` è il valore predefinito; usa `content` quando le etichette devono determinare le larghezze. Imposta `name` per includere il valore selezionato nell'invio del modulo nativo. La preimpostazione mantiene `required`, `readOnly`, lo stato disabled e l'integrazione con i moduli nativi di RadioGroup. `onValueChange` riceve il valore selezionato e i dettagli dell'evento Base UI, inclusi `reason` e `cancel()`.
+
+Per i contenuti da destra a sinistra, abbina [DirectionProvider](/it/ui/primitives/layout/direction-provider) a un attributo `dir` corrispondente. Il provider controlla l'interazione direzionale; `dir` controlla il layout del documento.
+
+## Composizione e prop native
+
+Le prop native, `className`, `style`, `render` e `ref` hanno come destinazione il `div` del gruppo. Usa `render` per comporre quel gruppo con un altro elemento; preservane il nome accessibile e la semantica del gruppo radio. Le opzioni eseguono il rendering di elementi `span` con `role="radio"` e input radio nativi nascosti. La preimpostazione non assegna ruoli di scheda o pannello di scheda. Per contenuti radio personalizzati, prop native per opzione o una destinazione di rendering radio diversa, componi direttamente `Radio.Root` e `RadioGroup`.
+
+## Props
+
+<SegmentedControlReference />
+
+<PageBanner illustration="page-cover-switch" />

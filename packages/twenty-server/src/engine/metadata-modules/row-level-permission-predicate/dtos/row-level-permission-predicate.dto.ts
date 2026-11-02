@@ -19,6 +19,9 @@ export class RowLevelPermissionPredicateDTO {
   @Field(() => String)
   fieldMetadataId: string;
 
+  @Field(() => String, { nullable: true })
+  relationFieldMetadataId?: string | null;
+
   @Field(() => String)
   objectMetadataId: string;
 

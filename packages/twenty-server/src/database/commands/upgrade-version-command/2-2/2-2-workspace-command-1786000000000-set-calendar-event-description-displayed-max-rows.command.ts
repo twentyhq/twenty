@@ -94,6 +94,7 @@ export class SetCalendarEventDescriptionDisplayedMaxRowsCommand extends Provisio
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {
               flatEntityToCreate: [],

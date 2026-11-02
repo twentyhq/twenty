@@ -1,0 +1,47 @@
+---
+title: Visualmente oculto
+description: Mantén el texto de apoyo disponible para la tecnología de asistencia sin mostrarlo visualmente.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import VisuallyHiddenReference from '/snippets/ui/generated/accessibility/visually-hidden.mdx';
+
+## Resumen
+
+`VisuallyHidden` representa un `span` oculto visualmente. Su contenido permanece en el árbol de accesibilidad y puede proporcionar un nombre accesible. Acepta props nativas de span, una ref de span y composición de Base UI con `render`. Importe `VisuallyHiddenProps` desde el mismo punto de entrada.
+
+<StoryEmbed storyId="ui-accessibility-visuallyhidden--display" title="Ejemplo visualmente oculto" height={100} />
+
+## "Uso"
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
+import { IconPlus } from 'twenty-ui/icon';
+
+type AddRecordActionProps = { onAdd: () => void };
+
+export const AddRecordAction = ({ onAdd }: AddRecordActionProps) => (
+  <Button onClick={onAdd}>
+    <IconPlus aria-hidden />
+    <VisuallyHidden>Add record</VisuallyHidden>
+  </Button>
+);
+```
+
+Use una etiqueta visible cuando el espacio lo permita. Para los controles que ya aceptan `aria-label`, ese atributo es otra forma de proporcionar un nombre accesible.
+
+## Contenido oculto
+
+Coloque texto complementario dentro del contenedor. Evite colocar controles que puedan recibir el foco dentro de él: el contenedor permanece visualmente oculto cuando sus elementos secundarios reciben el foco. No añade una región activa, no elimina contenido de la tecnología de asistencia ni oculta datos confidenciales.
+
+Use `id` para asociar descripciones ocultas con `aria-describedby`. Los atributos nativos, `className`, `style` y `ref` se aplican al span oculto o al elemento proporcionado mediante `render`. Consulte [accesibilidad](/es/ui/accessibility) para ver patrones de etiquetado y anuncio.
+
+## "Props"
+
+<VisuallyHiddenReference />
+
+<PageBanner illustration="page-cover-accessibility" />

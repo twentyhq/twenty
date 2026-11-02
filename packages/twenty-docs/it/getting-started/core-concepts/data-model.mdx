@@ -3,9 +3,10 @@ title: Modello dati
 description: Comprendi come Twenty struttura i tuoi dati con oggetti, campi e relazioni.
 ---
 
-import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-Tutto in Twenty è costruito attorno a **oggetti** e **campi**, i mattoni fondamentali del tuo modello di dati.
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Oggetti
 
@@ -39,8 +40,13 @@ Gli oggetti si collegano tra loro tramite relazioni. Un’Azienda ha molte Perso
 
 A differenza dei CRM tradizionali, in cui sei limitato a campi predefiniti su oggetti predefiniti, Twenty ti permette di modellare i tuoi dati esattamente come funziona la tua azienda. Gli oggetti personalizzati ricevono lo stesso trattamento di prima classe di quelli integrati, inclusi endpoint API, viste, autorizzazioni e trigger dei flussi di lavoro.
 
-<Card title="Approfondisci il modello di dati" icon="arrow-right" href="/it/user-guide/data-model/overview">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/it/user-guide/data-model/overview" img="/images/documentation/banner-icons-v2/data-model.svg">
+  <CardTitle>Approfondisci il modello di dati</CardTitle>
   Riferimento completo su oggetti, campi, relazioni e su come configurarli.
 </Card>
+</CardGroup>
 
 <VimeoEmbed videoId="1185511827" title="Modello dati" />
+
+<PageBanner illustration="getting-started-data-model" />

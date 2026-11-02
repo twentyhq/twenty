@@ -65,6 +65,18 @@ const buildPageCommandMenuItem = ({
   isActive: true,
   hotKeys: null,
   availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+  universalIdentifier: null,
+  applicationId: null,
+  coreWorkflowVersionId: null,
+  workflowVersionId: null,
+  frontComponentId: null,
+  conditionalAvailabilityExpression: null,
+  conditionalPinnedExpression: null,
+  availabilityObjectMetadataId: null,
+  navigationTargetObjectMetadataId: null,
+  pageLayoutId: null,
+  frontComponent: null,
+  payload: null,
 });
 
 const COMMAND_MENU_ITEMS = [

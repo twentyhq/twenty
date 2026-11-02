@@ -1,6 +1,6 @@
 import { type ComponentProps } from 'react';
 
-import { type IconsProvider } from '../src/icon/providers/IconsProvider';
+import { type IconsProvider } from '../src/icon/provider/IconsProvider';
 
 export const ICONS_PROVIDER_PROP_DESCRIPTIONS = {
   children:

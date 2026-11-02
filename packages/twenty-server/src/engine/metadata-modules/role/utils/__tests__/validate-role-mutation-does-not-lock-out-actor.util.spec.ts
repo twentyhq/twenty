@@ -2,7 +2,7 @@ import { SystemPermissionFlag } from 'twenty-shared/constants';
 
 import { type FlatRolePermissionFlagMaps } from 'src/engine/metadata-modules/flat-role-permission-flag/types/flat-role-permission-flag-maps.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
-import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsException } from 'src/engine/permissions/permissions.exception';
 import {
   validateRoleDeletionDoesNotLockOutActorOrThrow,
   validateRoleUpdateDoesNotLockOutActorOrThrow,

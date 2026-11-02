@@ -17,7 +17,7 @@ export const useCurrentResourceCredit = () => {
   ): BillingPriceLicensed[] => {
     const prices = currentPlan.resourceCreditProducts
       .flatMap((product) => product.prices ?? [])
-      .filter((price): price is BillingPriceLicensed => isDefined(price));
+      .filter(isDefined);
 
     return interval
       ? prices.filter((p) => p.recurringInterval === interval)

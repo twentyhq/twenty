@@ -56,63 +56,38 @@ Type chooses the variant:
 
 Note: creating a new custom object via create_object_metadata already auto-creates an OBJECT navigation menu item — do not double-create.",
     "inputSchema": {
-      "$defs": {
-        "__schema0": {
-          "description": "'user' creates a personal favorite, visible only to the current user. 'workspace' creates a shared navigation menu item visible to everyone (requires the LAYOUTS permission). Twenty has no separate Favorites concept — favorites are just navigation menu items with scope=user.",
-          "enum": [
-            "workspace",
-            "user",
-          ],
-          "type": "string",
-        },
-        "__schema1": {
-          "description": "Label shown in the sidebar.",
-          "minLength": 1,
-          "type": "string",
-        },
-        "__schema2": {
-          "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
-          "type": "string",
-        },
-        "__schema3": {
-          "description": "Optional hex colour",
-          "type": "string",
-        },
-        "__schema4": {
-          "description": "Position among siblings; defaults to the end.",
-          "type": "number",
-        },
-        "__schema5": {
-          "description": "Parent folder id, if the item should live inside a folder.",
-          "format": "uuid",
-          "type": "string",
-        },
-        "__schema6": {
-          "description": "Optional custom label. If omitted, the sidebar shows the target's own name (object's plural label / view name / record identifier). Only pass this if the user explicitly wants a different label.",
-          "minLength": 1,
-          "type": "string",
-        },
-      },
       "anyOf": [
         {
           "properties": {
             "color": {
-              "$ref": "#/$defs/__schema3",
+              "description": "Optional hex colour",
+              "type": "string",
             },
             "folderId": {
-              "$ref": "#/$defs/__schema5",
+              "description": "Parent folder id, if the item should live inside a folder.",
+              "format": "uuid",
+              "type": "string",
             },
             "icon": {
-              "$ref": "#/$defs/__schema2",
+              "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
+              "type": "string",
             },
             "name": {
-              "$ref": "#/$defs/__schema1",
+              "description": "Label shown in the sidebar.",
+              "minLength": 1,
+              "type": "string",
             },
             "position": {
-              "$ref": "#/$defs/__schema4",
+              "description": "Position among siblings; defaults to the end.",
+              "type": "number",
             },
             "scope": {
-              "$ref": "#/$defs/__schema0",
+              "description": "'user' creates a personal favorite, visible only to the current user. 'workspace' creates a shared navigation menu item visible to everyone (requires the LAYOUTS permission). Twenty has no separate Favorites concept — favorites are just navigation menu items with scope=user.",
+              "enum": [
+                "workspace",
+                "user",
+              ],
+              "type": "string",
             },
             "type": {
               "const": "FOLDER",
@@ -129,13 +104,17 @@ Note: creating a new custom object via create_object_metadata already auto-creat
         {
           "properties": {
             "color": {
-              "$ref": "#/$defs/__schema3",
+              "description": "Optional hex colour",
+              "type": "string",
             },
             "folderId": {
-              "$ref": "#/$defs/__schema5",
+              "description": "Parent folder id, if the item should live inside a folder.",
+              "format": "uuid",
+              "type": "string",
             },
             "icon": {
-              "$ref": "#/$defs/__schema2",
+              "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
+              "type": "string",
             },
             "link": {
               "description": "Target URL",
@@ -143,13 +122,21 @@ Note: creating a new custom object via create_object_metadata already auto-creat
               "type": "string",
             },
             "name": {
-              "$ref": "#/$defs/__schema1",
+              "description": "Label shown in the sidebar.",
+              "minLength": 1,
+              "type": "string",
             },
             "position": {
-              "$ref": "#/$defs/__schema4",
+              "description": "Position among siblings; defaults to the end.",
+              "type": "number",
             },
             "scope": {
-              "$ref": "#/$defs/__schema0",
+              "description": "'user' creates a personal favorite, visible only to the current user. 'workspace' creates a shared navigation menu item visible to everyone (requires the LAYOUTS permission). Twenty has no separate Favorites concept — favorites are just navigation menu items with scope=user.",
+              "enum": [
+                "workspace",
+                "user",
+              ],
+              "type": "string",
             },
             "type": {
               "const": "LINK",
@@ -167,22 +154,34 @@ Note: creating a new custom object via create_object_metadata already auto-creat
         {
           "properties": {
             "color": {
-              "$ref": "#/$defs/__schema3",
+              "description": "Optional hex colour",
+              "type": "string",
             },
             "folderId": {
-              "$ref": "#/$defs/__schema5",
+              "description": "Parent folder id, if the item should live inside a folder.",
+              "format": "uuid",
+              "type": "string",
             },
             "icon": {
-              "$ref": "#/$defs/__schema2",
+              "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
+              "type": "string",
             },
             "name": {
-              "$ref": "#/$defs/__schema6",
+              "description": "Optional custom label. If omitted, the sidebar shows the target's own name (object's plural label / view name / record identifier). Only pass this if the user explicitly wants a different label.",
+              "minLength": 1,
+              "type": "string",
             },
             "position": {
-              "$ref": "#/$defs/__schema4",
+              "description": "Position among siblings; defaults to the end.",
+              "type": "number",
             },
             "scope": {
-              "$ref": "#/$defs/__schema0",
+              "description": "'user' creates a personal favorite, visible only to the current user. 'workspace' creates a shared navigation menu item visible to everyone (requires the LAYOUTS permission). Twenty has no separate Favorites concept — favorites are just navigation menu items with scope=user.",
+              "enum": [
+                "workspace",
+                "user",
+              ],
+              "type": "string",
             },
             "targetObjectMetadataId": {
               "description": "Id of the object to pin",
@@ -204,22 +203,34 @@ Note: creating a new custom object via create_object_metadata already auto-creat
         {
           "properties": {
             "color": {
-              "$ref": "#/$defs/__schema3",
+              "description": "Optional hex colour",
+              "type": "string",
             },
             "folderId": {
-              "$ref": "#/$defs/__schema5",
+              "description": "Parent folder id, if the item should live inside a folder.",
+              "format": "uuid",
+              "type": "string",
             },
             "icon": {
-              "$ref": "#/$defs/__schema2",
+              "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
+              "type": "string",
             },
             "name": {
-              "$ref": "#/$defs/__schema6",
+              "description": "Optional custom label. If omitted, the sidebar shows the target's own name (object's plural label / view name / record identifier). Only pass this if the user explicitly wants a different label.",
+              "minLength": 1,
+              "type": "string",
             },
             "position": {
-              "$ref": "#/$defs/__schema4",
+              "description": "Position among siblings; defaults to the end.",
+              "type": "number",
             },
             "scope": {
-              "$ref": "#/$defs/__schema0",
+              "description": "'user' creates a personal favorite, visible only to the current user. 'workspace' creates a shared navigation menu item visible to everyone (requires the LAYOUTS permission). Twenty has no separate Favorites concept — favorites are just navigation menu items with scope=user.",
+              "enum": [
+                "workspace",
+                "user",
+              ],
+              "type": "string",
             },
             "type": {
               "const": "VIEW",
@@ -241,22 +252,34 @@ Note: creating a new custom object via create_object_metadata already auto-creat
         {
           "properties": {
             "color": {
-              "$ref": "#/$defs/__schema3",
+              "description": "Optional hex colour",
+              "type": "string",
             },
             "folderId": {
-              "$ref": "#/$defs/__schema5",
+              "description": "Parent folder id, if the item should live inside a folder.",
+              "format": "uuid",
+              "type": "string",
             },
             "icon": {
-              "$ref": "#/$defs/__schema2",
+              "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
+              "type": "string",
             },
             "name": {
-              "$ref": "#/$defs/__schema6",
+              "description": "Optional custom label. If omitted, the sidebar shows the target's own name (object's plural label / view name / record identifier). Only pass this if the user explicitly wants a different label.",
+              "minLength": 1,
+              "type": "string",
             },
             "position": {
-              "$ref": "#/$defs/__schema4",
+              "description": "Position among siblings; defaults to the end.",
+              "type": "number",
             },
             "scope": {
-              "$ref": "#/$defs/__schema0",
+              "description": "'user' creates a personal favorite, visible only to the current user. 'workspace' creates a shared navigation menu item visible to everyone (requires the LAYOUTS permission). Twenty has no separate Favorites concept — favorites are just navigation menu items with scope=user.",
+              "enum": [
+                "workspace",
+                "user",
+              ],
+              "type": "string",
             },
             "targetObjectMetadataId": {
               "description": "Id of the record's object metadata",
@@ -284,26 +307,38 @@ Note: creating a new custom object via create_object_metadata already auto-creat
         {
           "properties": {
             "color": {
-              "$ref": "#/$defs/__schema3",
+              "description": "Optional hex colour",
+              "type": "string",
             },
             "folderId": {
-              "$ref": "#/$defs/__schema5",
+              "description": "Parent folder id, if the item should live inside a folder.",
+              "format": "uuid",
+              "type": "string",
             },
             "icon": {
-              "$ref": "#/$defs/__schema2",
+              "description": "Icon identifier (e.g. "IconStar", "IconFolder")",
+              "type": "string",
             },
             "name": {
-              "$ref": "#/$defs/__schema1",
+              "description": "Label shown in the sidebar.",
+              "minLength": 1,
+              "type": "string",
             },
             "pageLayoutId": {
               "description": "Id of the page layout to pin",
               "type": "string",
             },
             "position": {
-              "$ref": "#/$defs/__schema4",
+              "description": "Position among siblings; defaults to the end.",
+              "type": "number",
             },
             "scope": {
-              "$ref": "#/$defs/__schema0",
+              "description": "'user' creates a personal favorite, visible only to the current user. 'workspace' creates a shared navigation menu item visible to everyone (requires the LAYOUTS permission). Twenty has no separate Favorites concept — favorites are just navigation menu items with scope=user.",
+              "enum": [
+                "workspace",
+                "user",
+              ],
+              "type": "string",
             },
             "type": {
               "const": "PAGE_LAYOUT",
@@ -331,15 +366,11 @@ Note: creating a new custom object via create_object_metadata already auto-creat
           "type": "string",
         },
         "folderId": {
-          "anyOf": [
-            {
-              "type": "string",
-            },
-            {
-              "type": "null",
-            },
-          ],
           "description": "Move into a different folder. Pass null to move to the top level.",
+          "type": [
+            "string",
+            "null",
+          ],
         },
         "icon": {
           "description": "New icon identifier",

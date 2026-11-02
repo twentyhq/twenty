@@ -1,6 +1,11 @@
 ---
 title: Rotirea cheilor
+description: Rotește cheile de semnare JWT și cheia de criptare în rest.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
 
 Twenty are două familii de chei independente:
 
@@ -57,3 +62,5 @@ Fiecare valoare criptată este încapsulată ca `enc:v2:\<keyId>:\<payload>`, un
 ## Compatibilitate veche pentru `APP_SECRET`
 
 Instanțele mai vechi care nu au setat niciodată `ENCRYPTION_KEY` folosesc `APP_SECRET` ca cheie de criptare pentru date în repaus (și ca secret pentru cookie-urile de sesiune, derivat din aceasta). Acest mecanism este păstrat pentru compatibilitate retroactivă, dar este **învechit** — setează o `ENCRYPTION_KEY` dedicată și urmează procedura de rotire de mai sus pentru a migra de la el. `APP_SECRET` în sine rămâne în uz pentru a verifica token-urile de acces HS256 vechi.
+
+<PageBanner illustration="card-page-sso" />

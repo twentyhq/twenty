@@ -3,6 +3,12 @@ title: 2. Создание документов
 description: Одна логическая функция, выставленная в качестве инструмента ИИ и действий рабочего процесса.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Обзор
+
 Теперь ядро: [логическая функция](/ru/developers/extend/apps/logic/logic-functions)
 , загружающая шаблон и запись, заполняет плейсхолдеры, и сохраняет новый документ
 .
@@ -171,7 +177,7 @@ yarn add pdf-lib marked
 
 Полный помощник
 [`generate-document-pdf.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/logic-functions/utils/generate-document-pdf.ts).
-Он анализирует Markdown в токены с `marked. exer`, затем расположите их с помощью
+Он анализирует Markdown в токены с `marked.lexer`, затем расположите их с помощью
 pdf-lib: настоящие заголовки, **черный**/*курсив* пробег, пуля и нумерованные списки,
 blockquotes and rules — отполированный, многостраничный A4 рендеринг самого шаблона
 вместо стенки текста.
@@ -187,8 +193,9 @@ blockquotes and rules — отполированный, многостранич
 встраивание шрифта Unicode.
 </Note>
 
-Затем загрузите его и сохраните ссылку на запись. `uploadFile` маршруты байт
-в поле файлы, принадлежащее приложению; возвращается `id`, что вы сохраните:
+Затем загрузите его и сохраните ссылку на запись. `uploadFile` отправляет
+байты напрямую в файловое хранилище и прикрепляет их к полю файлов вашего приложения;
+возвращаемый `id` — это то, что вы сохраняете:
 
 ```ts filename="src/logic-functions/handlers/generate-document-handler.ts"
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -198,12 +205,11 @@ const documentName = `${documentTemplate.name} — ${record.displayName}`;
 const bytes = await generateDocumentPdf(documentName, content);
 const fileName = 'proposal.pdf';
 
-const uploaded = await new MetadataApiClient().uploadFile(
-  Buffer.from(bytes),
-  fileName,
-  'application/pdf',
-  DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
-);
+const uploaded = await new MetadataApiClient().uploadFile({
+  fileBuffer: Buffer.from(bytes),
+  filename: fileName,
+  fieldMetadataUniversalIdentifier: DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+});
 
 await client.mutation({
   updateDocument: {
@@ -233,6 +239,11 @@ await client.mutation({
 **После этого шага:** у каждого сгенерированного документа есть реальный, загружаемый PDF. Но
 ничего не может *вызвать* генератор из пользовательского интерфейса — для этого нам нужен HTTP маршрут.
 
-<Card title="Далее: HTTP-маршруты →" icon="world" href="/ru/developers/extend/apps/tutorials/document-generator/http-routes">
-  Сервис функции по HTTP и рендеринг документов как веб-страниц.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ru/developers/extend/apps/tutorials/document-generator/http-routes" img="/images/user-guide/halftone/card-page-tutorial-http.svg">
+  <CardTitle>Далее : HTTP-маршруты →</CardTitle>
+  Serve the function over HTTP and render documents as web pages.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="card-page-tutorial-documents" />

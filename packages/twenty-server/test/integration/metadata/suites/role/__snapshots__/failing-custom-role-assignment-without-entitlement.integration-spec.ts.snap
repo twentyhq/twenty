@@ -36,6 +36,42 @@ exports[`Custom role assignment without the custom roles entitlement should refu
 }
 `;
 
+exports[`Custom role assignment without the custom roles entitlement should refuse creating a role that members or API keys can be assigned 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "role": [
+        {
+          "errors": [
+            {
+              "code": "CUSTOM_ROLES_NOT_ENTITLED",
+              "message": "Custom roles require the Organization plan",
+              "userFriendlyMessage": "Custom roles are part of the Organization plan.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "label": "Unentitled custom role",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "role",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 role",
+    "summary": {
+      "role": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Custom roles are part of the Organization plan.",
+  },
+  "message": "Multiple validation errors occurred while creating role",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`Custom role assignment without the custom roles entitlement should refuse creating an API key with a custom role 1`] = `
 {
   "extensions": {
@@ -67,6 +103,41 @@ exports[`Custom role assignment without the custom roles entitlement should refu
     "userFriendlyMessage": "Custom roles are part of the Organization plan. Upgrade to assign "Entitlement gated role".",
   },
   "message": "Multiple validation errors occurred while creating role targets",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Custom role assignment without the custom roles entitlement should refuse making an agent-only role assignable to members 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "role": [
+        {
+          "errors": [
+            {
+              "code": "CUSTOM_ROLES_NOT_ENTITLED",
+              "message": "Custom roles require the Organization plan",
+              "userFriendlyMessage": "Custom roles are part of the Organization plan.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "role",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 role",
+    "summary": {
+      "role": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Custom roles are part of the Organization plan.",
+  },
+  "message": "Multiple validation errors occurred while updating role",
   "name": "GraphQLError",
 }
 `;

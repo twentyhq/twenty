@@ -1,0 +1,75 @@
+---
+title: Sezione
+description: Raggruppa i contenuti con un'intestazione, una descrizione di supporto e un'azione facoltativa.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SectionReference from '/snippets/ui/generated/components/layout/section.mdx';
+
+## Panoramica
+
+`Section.Root` raggruppa contenuti correlati. `Section.Header` combina [Heading](/it/ui/primitives/typography/heading) con una descrizione e contenuto `actions` facoltativo. Le descrizioni sono testo normale associato all'intestazione, pertanto non aggiungono livelli alla struttura del documento.
+
+<StoryEmbed storyId="ui-components-section--display" title="Esempio di sezione" height={150} />
+
+## Utilizzo
+
+```tsx
+import { Section } from 'twenty-ui/components/layout';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const WorkspaceSection = () => (
+  <Section.Root>
+    <Section.Header
+      title="Workspace settings"
+      description="Manage your workspace name and preferences."
+    />
+    <Text>Workspace preferences appear here.</Text>
+  </Section.Root>
+);
+```
+
+## Aggiungere una descrizione e un'azione
+
+```tsx
+import { Section } from 'twenty-ui/components/layout';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const WorkspaceSection = () => (
+  <Section.Root>
+    <Section.Header
+      title="Workspace settings"
+      description="Manage your workspace name and preferences."
+      actions={<Button>Edit workspace</Button>}
+    />
+    <Text>Workspace preferences appear here.</Text>
+  </Section.Root>
+);
+```
+
+`Section.Root` per impostazione predefinita è un `div` a larghezza intera con allineamento a sinistra e il colore del testo principale. Usa `align`, `color` e `fullWidth` per regolare il wrapper del contenuto.
+
+`Section.Header` può essere utilizzato anche da solo. I relativi `level`, `size` e `color` configurano l'intestazione e per impostazione predefinita sono `2`, `md` e `primary`. Dopo l'intestazione è presente un margine spacing-4. Usa `style` o `className` nativi per regolare quella spaziatura.
+
+## Overflow della descrizione
+
+Le descrizioni delle stringhe mostrano fino a cinque righe. Imposta `descriptionLineClamp` su un numero intero positivo per scegliere un altro limite oppure su `false` per visualizzare la descrizione completa senza un tooltip di overflow. Al passaggio del mouse viene visualizzato il testo in eccesso. Per impostazione predefinita, le descrizioni non aggiungono una destinazione di tabulazione; imposta `isDescriptionFocusable` per abilitare l'accesso tramite stato attivo al tooltip. Esc chiude il tooltip.
+
+L'intestazione accetta contenuti del nodo. Scegli `level` per la struttura del documento indipendentemente da `size` e `color` visivi. Componi esplicitamente collegamenti e altri contenuti avanzati in una descrizione del nodo.
+
+Passa un nodo React per contenuti di supporto più ricchi. Le descrizioni avanzate vengono visualizzate come fornite, senza troncamento automatico né tooltip.
+
+## Composizione
+
+Entrambe le parti inoltrano attributi nativi, ref, nomi di classe, stili e `render` al proprio elemento esterno. Ad esempio, `Section.Root render={<section aria-label="Workspace settings" />}` fornisce una sezione denominata e `Section.Header render={<header />}` utilizza un contenitore header.
+
+Durante la migrazione, sostituisci `adornment` con `actions`. Attiva lo stato attivo della descrizione con `isDescriptionFocusable` quando necessario. `SectionRootProps` e `SectionHeaderProps` vengono esportati da `twenty-ui/components/layout`.
+
+## Props
+
+<SectionReference />
+
+<PageBanner illustration="layout" />

@@ -3,6 +3,10 @@ title: الأسئلة الشائعة حول سير العمل
 description: الأسئلة الشائعة حول سير العمل في Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## أسئلة شائعة
+
 <AccordionGroup>
 
   <Accordion title="لماذا لا أستطيع تفعيل سير عمل؟">
@@ -39,20 +43,8 @@ description: الأسئلة الشائعة حول سير العمل في Twenty.
     راجع [مشغلات سير العمل](/ar/user-guide/workflows/capabilities/workflow-triggers) للحصول على التفاصيل.
   </Accordion>
 
-  <Accordion title="لا أرى عقدة If/Else. ماذا يجب أن أفعل؟">
-    عقدة If/Else صريحة غير متاحة بعد، لكنها ضمن خارطة الطريق لدينا.
-
-    **الحل المؤقت الحالي**: أنشئ عدة فروع من خطوتك، يبدأ كل منها بإجراء **Filter**:
-
-    ```
-    Step 1
-       │
-       ├── Branch A: Filter (condition = true) → Actions...
-       │
-       └── Branch B: Filter (condition = false) → Actions...
-    ```
-
-    فقط الفرع الذي يمر فيه شرط التصفية سيُنفِّذ إجراءاته اللاحقة.
+  <Accordion title="كيف أضيف عقدة If/Else؟">
+    أضف إجراء **If/else** من قسم **Flow** في منتقي الإجراءات، بالطريقة نفسها التي تضيف بها أي إجراء آخر. هيّئ شرطًا في فرع **If**، وأضف اختياريًا فروع **Else if** بشروطها الخاصة، وفرع **Else** أخيرًا يلتقط كل ما عدا ذلك — لا يُشغَّل إلا أول فرع مطابق.
 
     راجع [كيفية استخدام الفروع](/ar/user-guide/workflows/capabilities/workflow-branches) للحصول على دليل خطوة بخطوة.
   </Accordion>
@@ -103,7 +95,7 @@ description: الأسئلة الشائعة حول سير العمل في Twenty.
     * أو اكتب `{{stepName.fieldName}}` مباشرةً
 
     **أمثلة**:
-    * بيانات المشغل: `{{trigger.object.email}}`
+    * بيانات المشغّل: `{{trigger.properties.after.name}}` لمشغّل سجل، و`{{trigger.payload.name}}` لمشغّل يدوي على سجل محدد
     * نتائج البحث: `{{searchRecords[0].name}}`
     * مخرجات الكود: `{{code.calculatedValue}}`
 
@@ -234,3 +226,5 @@ description: الأسئلة الشائعة حول سير العمل في Twenty.
   </Accordion>
 
 </AccordionGroup>
+
+<PageBanner illustration="card-page-billing-faq" />

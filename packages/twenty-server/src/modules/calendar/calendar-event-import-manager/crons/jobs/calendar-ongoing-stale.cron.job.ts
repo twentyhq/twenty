@@ -45,6 +45,10 @@ export class CalendarOngoingStaleCronJob {
           {
             workspaceId,
           },
+          {
+            workspaceId,
+            isWorkspaceJob: true,
+          },
         );
       } catch (error) {
         this.exceptionHandlerService.captureExceptions([error], {

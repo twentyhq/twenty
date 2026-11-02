@@ -93,6 +93,7 @@ export class DropFavoriteObjectsCommand extends ProvisionedWorkspaceCommandRunne
       }
 
       await this.objectMetadataService.deleteOneObject({
+        shouldDeferActions: false,
         deleteObjectInput: { id: flatObjectMetadata.id },
         workspaceId,
         isSystemBuild: true,

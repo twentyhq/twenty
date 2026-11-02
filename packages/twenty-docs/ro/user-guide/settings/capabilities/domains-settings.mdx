@@ -3,7 +3,7 @@ title: Setări domeniu
 description: Configurați domeniul spațiului de lucru, domeniile de acces aprobate și domeniile personalizate ale aplicației.
 ---
 
-Setările de domeniu se află în trei locuri, în funcție de ceea ce configurați.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Domeniu Spațiu de lucru
 
@@ -13,7 +13,7 @@ Editați numele subdomeniului sau setați un domeniu personalizat pentru spațiu
 
 ### Personalizează Domeniul
 
-1. Faceţi clic pe **Subdomeniul** pentru a vă edita subdomeniul (de exemplu, `compania.twenty.com`)
+1. Faceţi clic pe **Subdomeniul** pentru a vă edita subdomeniul (de exemplu, `yourcompany.twenty.com`)
 2. Sau faceţi clic pe **domeniu personalizat** pentru a configura un domeniu personalizat (de exemplu, `crm.yourcompany.com`)
 
 Pentru domeniile personalizate, va trebui să configurați setările DNS la furnizorul de domeniu.
@@ -38,7 +38,7 @@ Acest lucru este util pentru a permite întregii echipe să se înregistreze sin
 
 ## Domenii personalizate ale aplicației
 
-Configurați în **Setări → Aplicații → aplicația dvs. → Setări → URL aplicație**.
+Configurați în **Setări → Aplicații → aplicația dvs. → General → URL aplicație**. Secțiunea **URL-ul aplicației** apare atunci când aplicația are funcții declanșate prin HTTP.
 
 Aplicațiile care expun rute pe web sunt disponibile la un URL dedicat, afișat în secțiunea **URL aplicație**. Puteți publica o aplicație pe un domeniu pe care îl dețineți.
 
@@ -50,3 +50,5 @@ Aplicațiile care expun rute pe web sunt disponibile la un URL dedicat, afișat 
 4. Verificați domeniul
 
 Numai rutele acelei aplicații sunt accesibile pe domeniu. Certificatele SSL sunt furnizate automat.
+
+<PageBanner illustration="card-page-tutorial-http" />

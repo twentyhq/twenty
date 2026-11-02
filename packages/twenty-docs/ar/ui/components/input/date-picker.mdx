@@ -1,0 +1,158 @@
+---
+title: منتقي التاريخ
+description: شارك محرك التقويم الحالي مع تصفح الأشهر بشكل مستقل عن التاريخ المحدد.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import DatePickerReference from '/snippets/ui/generated/components/input/date-picker.mdx';
+
+## نظرة عامة
+
+يشارك `DatePicker` محرك التقويم `react-datepicker` المستخدم في حقول إدخال التاريخ والتاريخ والوقت في Twenty. يوفر قيماً للتاريخ فقط وتحكماً مستقلاً في التاريخ المحدد والشهر المعروض.
+
+<StoryEmbed storyId="ui-components-datepicker--display" title="مثال DatePicker" height={330} />
+
+## استخدام
+
+```tsx
+import { useState } from 'react';
+import { DatePicker } from 'twenty-ui/components/input';
+
+export const ChooseDate = () => {
+  const [value, setValue] = useState<string | null>('2026-10-07');
+  const [viewedMonth, setViewedMonth] = useState('2026-10');
+
+  return (
+    <DatePicker
+      aria-label="Choose a date"
+      value={value}
+      onValueChange={setValue}
+      viewedMonth={viewedMonth}
+      onViewedMonthChange={setViewedMonth}
+      weekStart={1}
+      weekdayLabels={['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']}
+      locale="en-US"
+      previousMonthLabel="Previous month"
+      nextMonthLabel="Next month"
+      monthLabel="Month"
+      yearLabel="Year"
+    />
+  );
+};
+```
+
+## التحديد والتصفح
+
+يؤدي تغيير الشهر أو السنة إلى استدعاء `onViewedMonthChange` ويترك `value` دون تغيير. يؤدي اختيار يوم متاح إلى استدعاء `onValueChange` عند تغيّر التاريخ المحدد.
+
+استخدم `onValueSelect` لتأكيد تاريخ أو إغلاق منتقي المنتجات. يتلقى التاريخ الأساسي `YYYY-MM-DD` حتى عندما يختار المستخدم اليوم المحدد مسبقًا. أبق سلوك الإغلاق في مُهايئ التطبيق.
+
+حدّث كل خاصية مضبوطة في دالة الاستدعاء المطابقة لها. لا تؤدي تغييرات الخاصية إلى تحديد تاريخ بديل. يوفر الرأس الافتراضي محددات للشهر والسنة وزري السابق والتالي؛ ويسرد محدد السنة فيه ما يصل إلى 100 سنة قبل السنة المعروضة وبعدها.
+
+## قيم التاريخ والتوطين
+
+مرر سلاسل التاريخ الميلادي الأساسية التي تتضمن التاريخ فقط: `YYYY-MM-DD` للقيمة `value` وحدود النطاق المميز، و`YYYY-MM` للقيمة `viewedMonth`. عيّن `value={null}` لعدم وجود تحديد. لا تحتوي هذه القيم على وقت أو منطقة زمنية. السنوات المدعومة هي من 0001 إلى 9999.
+
+تنسق `locale` رأس الشهر/السنة الافتراضي وعناوين أيام الأسبوع الكاملة عند توفير `weekdayLabels` مخصصة. تحتفظ تسميات الأيام والتقويم الأساسي بسلوك اللغة الحالي لـ `react-datepicker`.
+
+تعيّن `weekStart` العمود الأول، باستخدام 0 ليوم الأحد حتى 6 ليوم السبت. استخدم `weekdayLabels` لسبع تسميات قصيرة مرئية بترتيب يبدأ بالأحد، بغض النظر عن `weekStart`. توفر محرك التقويم أسماء أيام الأسبوع عند حذف هذه الخاصية.
+
+يتبع عرض اليوم الحالي سلوك ساعة المتصفح في محرك التقويم. تتولى مُهايئات المنتج تحويل المنطقة الزمنية، والبدائل الاحتياطية للتاريخ الأولي، وتفضيلات الأعضاء، وبيانات الجدولة.
+
+## سلوك التقويم الحالي
+
+يستخدم عرض الأيام، وترميز إمكانية الوصول، والتنقل بين التواريخ بلوحة المفاتيح، ومعالجة التواريخ غير المتاحة `react-datepicker`. تظل الأيام المرئية من الأشهر المجاورة قابلة للتحديد عند توفرها.
+
+عيّن `isDateUnavailable` لمنع تحديد التواريخ وفقًا لسياسة تطبيقك. تتلقى دالة الاستدعاء سلسلة أساسية بالتنسيق `YYYY-MM-DD`. عيّن `disabled` لتعطيل تحديد التاريخ وعناصر تحكم الرأس الافتراضية.
+
+القيمة الافتراضية لـ `isKeyboardNavigationDisabled` هي `false`. يمكن لمُهايئات إدخال المنتج الحالية تعيينها للحفاظ على سلوك لوحة المفاتيح الخاص بها. تحتفظ عناصر تحكم الرأس بتفاعلها الأصلي عبر لوحة المفاتيح.
+
+## النطاقات المميزة والعروض للقراءة فقط
+
+مرر `highlightedRange={{ start: '2026-10-05', end: '2026-10-11' }}` لتمييز نطاق تاريخ شامل. يحسب التطبيق النطاق؛ ولا يؤدي التمييز إلى تحديد تواريخ متعددة أو تغيير `value`.
+
+استخدم `readOnly` لعرض نطاق محسوب أو تاريخ محدد مع السماح بتصفح الشهر والسنة. استخدم `isGridHidden` لمتصفح يقتصر على الشهر ويحتفظ بالرأس نفسه.
+
+## رؤوس مخصصة
+
+استخدم `renderHeader` لتجميع رأس منتج حالي مع مدخلات التاريخ أو مدخلات الوقت أو عناصر تحكم خاصة بالتطبيق. توفر وسيطة `DatePickerHeaderProps` هذه القيم والإجراءات:
+
+| الخاصية                                          | الغرض                                       |
+| ------------------------------------------------ | ------------------------------------------- |
+| `viewedMonth`                                    | الشهر الحالي `YYYY-MM`.                     |
+| `onPreviousMonth`, `onNextMonth`                 | تصفّح إلى الشهر المجاور.                    |
+| `onMonthChange`                                  | تصفّح إلى رقم شهر من 1 إلى 12.              |
+| `onYearChange`                                   | تصفّح إلى السنة المقدمة.                    |
+| `isPreviousMonthDisabled`, `isNextMonthDisabled` | ما إذا كان كل إجراء للشهر المجاور غير متاح. |
+
+تغيّر إجراءات الرأس هذه الشهر المعروض وتترك التاريخ المحدد دون تغيير.
+
+```tsx
+import { useState } from 'react';
+import { DatePicker } from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+export const CalendarWithProductHeader = () => {
+  const [value, setValue] = useState<string | null>('2026-10-07');
+  const [viewedMonth, setViewedMonth] = useState('2026-10');
+
+  return (
+    <DatePicker
+      aria-label="Choose a date"
+      value={value}
+      onValueChange={setValue}
+      viewedMonth={viewedMonth}
+      onViewedMonthChange={setViewedMonth}
+      weekStart={1}
+      locale="en-US"
+      previousMonthLabel="Previous month"
+      nextMonthLabel="Next month"
+      monthLabel="Month"
+      yearLabel="Year"
+      renderHeader={({
+        viewedMonth: month,
+        onPreviousMonth,
+        onNextMonth,
+        isPreviousMonthDisabled,
+        isNextMonthDisabled,
+      }) => (
+        <Text
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: themeCssVariables.spacing[2],
+          }}
+        >
+          <Button size="sm" disabled={isPreviousMonthDisabled} onClick={onPreviousMonth}>
+            Previous month
+          </Button>
+          <Text>{month}</Text>
+          <Button size="sm" disabled={isNextMonthDisabled} onClick={onNextMonth}>
+            Next month
+          </Button>
+        </Text>
+      )}
+    />
+  );
+};
+```
+
+## التجميع ومُهايئات المنتج
+
+وفر اسمًا للمجموعة باستخدام `aria-label` أو `aria-labelledby`. تنطبق السمات الأصلية و`className` و`style` و`ref` على الجذر. استخدم `render` لتجميع جذر مختلف مع الحفاظ على الخصائص المقدمة وref.
+
+مرر `loadingFallback` للحفاظ على واجهة تحميل المنتج أثناء تحميل محرك التقويم. البديل الافتراضي هو `Skeleton` بارتفاع 300px.
+
+بالنسبة إلى الرأس الافتراضي، يقوم `portalContainer` بتركيب النوافذ المنبثقة للمحددات في حاوية يوفرها المضيف. يتلقى `onNavigationOpenChange` القيمة `{ open, control }` لـ `month` أو `year`، مع `open: true` عند بدء الفتح و`open: false` بعد اكتمال الإغلاق. يمكن للمضيفين الاحتفاظ بمعالجة النوافذ المنبثقة والتركيز الخاصة بهم خلال الإغلاق. تتولى الرؤوس المخصصة تكامل نوافذها المنبثقة.
+
+احتفظ برؤوس المنتج ومدخلات النص وتحرير الوقت وتحويل المنطقة الزمنية وإجراءات المسح وحساب عوامل التصفية النسبية في `twenty-front`. يمكن لمُهايئات التاريخ والتاريخ-الوقت والشهر فقط تجميع محرك التقويم المشترك هذا مع `highlightedRange` و`readOnly` و`isGridHidden` حسب الحاجة.
+
+## الإزاحة
+
+<DatePickerReference />
+
+<PageBanner illustration="calendar-emails" />

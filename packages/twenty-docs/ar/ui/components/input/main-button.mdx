@@ -1,0 +1,76 @@
+---
+title: MainButton
+description: اعرض الإجراءات البارزة باستخدام إعدادات التصميم الافتراضية المشتركة.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import MainButtonReference from '/snippets/ui/generated/components/input/main-button.mdx';
+
+## نظرة عامة
+
+استخدم المكوّن المشترك `MainButton` لإجراء بارز. يتكوّن من
+[Button](/ar/ui/primitives/input/button) مع سطح مصمت، وارتفاع، ونص شبه عريض، وحشوة أفقية بمقدار 12px. لونه الافتراضي محايد وحجمه هو `md`.
+
+<StoryEmbed storyId="ui-components-mainbutton--display" title="مثال MainButton" height={110} />
+
+## استخدام
+
+```tsx
+import { MainButton } from 'twenty-ui/components/input';
+
+export const SaveAction = () => <MainButton>Save changes</MainButton>;
+```
+
+## الخيارات المرئية
+
+قارن بين المظهرين المصمت والمحدد عبر الأحجام الافتراضية والصغيرة، بالإضافة إلى حالتي التعطيل والتحميل.
+
+<StoryEmbed storyId="ui-components-mainbutton--catalog" title="متغيرات الزر الرئيسي وحالاته" height={230} />
+
+## ملكية الحالة
+
+يستخدم `MainButton` نموذج حالة Button ولا يضيف أي حالة خاصة به. يوفّر تطبيقك `loading` و`disabled`؛ ولا توجد أوضاع تحديد مضبوطة وغير مضبوطة. راجع [مثال ملكية حالة Button](/ar/ui/primitives/input/button#state-ownership) لإدارة إجراء غير متزامن.
+
+## الأشكال والعرض
+
+```tsx
+import { MainButton } from 'twenty-ui/components/input';
+
+export const SaveProfile = () => (
+  <MainButton type="submit" fullWidth>
+    Save profile
+  </MainButton>
+);
+```
+
+يتبع العرض المحتوى ما لم تضبط `fullWidth` أو توفّر تنسيق
+تخطيط للتطبيق. تجاوز `variant` و`color` و`size` و`elevated` حسب الحاجة؛
+على سبيل المثال، استخدم `variant="outline"` و`elevated={false}` لإجراء ذي مخطط خارجي.
+
+باستخدام `color="inherit"`، اختر صيغة غير ممتلئة صراحةً أو ورّث واحدة من ButtonGroup. تؤدي القيمة الافتراضية الممتلئة المستقلة ذات اللون الموروث إلى ظهور خطأ وقت التشغيل.
+
+أبقِ تخطيط الصفحة ضمن تنسيق تطبيقك.
+
+## التفاعل
+
+يقبل `MainButton` سمات `Button` الأصلية، ومعالجات الأحداث، والمراجع، ومواضع الأيقونات،
+وخصائص `loading` و`disabled`. تكون الأزرار افتراضيًا من `type="button"`؛
+اضبط `type="submit"` صراحةً لإرسال النموذج.
+
+استخدم `href` لرابط. وفّر `render` لاختيار جذر مخصص، بما في ذلك
+رابط موجّه يملكه التطبيق. عيّن `nativeButton={false}` و`role="link"` لـ
+عارض تنقّل. تُبقي الأزرار الأصلية المخصصة `nativeButton` مضبوطًا على true.
+
+يمكن لـ [ButtonGroup](/ar/ui/primitives/input/button-group) تعيين حجم وسطح
+ولون مشتركين. يأخذ مظهر العنصر الفرعي المحدد صراحةً الأسبقية على المجموعة، يليه
+الإعدادات الافتراضية للمكوّن. تُمرَّر فئات المستهلك، بما في ذلك دوال الحالة،
+إلى الجذر.
+
+## الخصائص
+
+<MainButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

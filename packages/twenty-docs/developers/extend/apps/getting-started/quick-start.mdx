@@ -8,7 +8,7 @@ import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Before you start
 
-Use Node.js 24.5+ and Yarn 4. Install the CLI globally; your app keeps its own SDK dependencies.
+Use Node.js 24.5+ or 26.5+ and Yarn 4 (via Corepack: `corepack enable`; on Node 26, install it first with `npm install -g corepack`). Install the CLI globally; your app keeps its own SDK dependencies.
 
 <Note>
 Building Twenty apps is officially supported on Unix systems (macOS and Linux) only. On Windows, work inside WSL 2.
@@ -54,7 +54,7 @@ twenty app plan
 twenty app apply
 ```
 
-`plan` previews changes. `apply` uploads and synchronizes once. Use `--no-delete` to keep remote entities missing from source, or `--yes` to permit object and field deletions without a prompt. All three commands require an authenticated remote and registration ownership.
+`plan` previews changes. `apply` uploads and synchronizes once. Use `--no-prune` to keep remote entities missing from source, or `--yes` to permit object and field deletions without a prompt. All three commands require an authenticated remote and registration ownership.
 
 ## What you can build
 

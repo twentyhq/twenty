@@ -1,14 +1,13 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { FORM_CONTROL_STATE_SERIALIZED_EVENT_KEYS } from '@/host/events/constants/FormControlStateSerializedEventKeys';
+import { forwardedBubblingHostEvents } from '@/host/events/states/forwardedBubblingHostEvents';
 import { type ClaimPointerEventForwarding } from '@/host/events/types/ClaimPointerEventForwarding';
 import { type RemoteSerializedEventListener } from '@/host/events/types/RemoteSerializedEventListener';
 import { applyEventDispatchProperties } from '@/host/events/utils/applyEventDispatchProperties';
 import { resolveNativeHostEvent } from '@/host/events/utils/resolveNativeHostEvent';
 import { serializeEvent } from '@/host/events/utils/serializeEvent';
 import { type FindRemoteElementIdContainingNode } from '@/host/geometry/types/FindRemoteElementIdContainingNode';
-
-const forwardedBubblingHostEvents = new WeakSet<object>();
 
 const nativeHostEventsWithForwardedFormControlState = new WeakSet<object>();
 

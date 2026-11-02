@@ -1,0 +1,97 @@
+---
+title: Componenti
+sidebarTitle: Panoramica
+description: Preset di progettazione condivisi e blocchi di base riutilizzabili per la creazione di app composti da primitive Twenty UI.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
+I componenti combinano le [primitive](/it/ui/primitives/overview) in preset di progettazione ricorrenti e blocchi di base riutilizzabili per la creazione di app. Come le primitive, ricevono dati e callback dalla tua applicazione.
+
+Usa l'importazione della famiglia corrispondente mostrata di seguito. Rimane disponibile anche la voce aggregata `twenty-ui/components`. L'editor di codice ha il proprio punto di ingresso, `twenty-ui/components/code-editor`, perché richiede Monaco. Consulta [Guida introduttiva](/it/ui/getting-started) per l'installazione e la configurazione del tema.
+
+## Input
+
+Importa da `twenty-ui/components/input`.
+
+| Component                                                       | Scopo                                                                            |
+| --------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| [MainButton](/it/ui/components/input/main-button)                  | Azioni principali con superficie piena, elevazione e testo semigrassetto.        |
+| [LightButton](/it/ui/components/input/light-button)                | Azioni leggere con enfasi standard o discreta.                                   |
+| [IconButton](/it/ui/components/input/icon-button)                  | Azioni icona quadrate o rotonde basate su Button.                                |
+| [LightIconButton](/it/ui/components/input/light-icon-button)       | Azioni icona leggere con enfasi standard o discreta.                             |
+| [Pulsante di reazione](/it/ui/components/input/reaction-button)    | Reazioni emoji con conteggio e stato di pressione controllato.                   |
+| [PhoneCountryPicker](/it/ui/components/input/phone-country-picker) | Bandiere dei paesi ricercabili e selezione del prefisso internazionale.          |
+| [NumberStepper](/it/ui/components/input/number-stepper)            | Input numerico compatto con pulsanti di incremento/decremento opzionali.         |
+| [SearchInput](/it/ui/components/input/search-input)                | Testo di ricerca e controlli filtro facoltativi.                                 |
+| [CountrySelect](/it/ui/components/input/country-select)            | Opzioni dei paesi ricercabili, bandiere e una selezione vuota esplicita.         |
+| [CurrencyPicker](/it/ui/components/input/currency-picker)          | Opzioni di valuta ricercabili con formattazione esplicita.                       |
+| [ImageInput](/it/ui/components/input/image-input)                  | Selezione e anteprima delle immagini con caricamenti di proprietà del chiamante. |
+| [Controllo segmentato](/it/ui/components/input/segmented-control)  | Scelta radio compatta con opzioni di testo o icona unite.                        |
+
+## Navigazione
+
+Importa da `twenty-ui/components/navigation`.
+
+| Component                                                              | Scopo                                                                   |
+| ---------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| [Pulsante elemento elenco](/it/ui/components/navigation/list-item-button) | Pulsanti di azione nativi con stile delle righe dell'elenco.            |
+| [Dropdown](/it/ui/components/navigation/dropdown)                         | Menu di azioni, selettori ricercabili e pannelli di moduli.             |
+| [TabButton](/it/ui/components/navigation/tab-button)                      | Collega percorsi e azioni adiacenti con lo stesso aspetto delle schede. |
+
+## Dati visualizzati
+
+Importa da `twenty-ui/components/data-display`.
+
+| Component                                                      | Scopo                                                                        |
+| -------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| [Riga dei dettagli](/it/ui/components/data-display/details-row)   | Etichette allineate, valori su più righe e azioni facoltative.               |
+| [MetricRow](/it/ui/components/data-display/metric-row)            | Etichette e valori formattati con avanzamento determinato opzionale.         |
+| [AvatarGroup](/it/ui/components/data-display/avatar-group)        | Avatar sovrapposti e conteggi di overflow.                                   |
+| [CommandBlock](/it/ui/components/data-display/command-block)      | Testo del comando con un'azione di copia facoltativa.                        |
+| [JsonTree](/it/ui/components/data-display/json-tree)              | Valori JSON espandibili e voci denominate.                                   |
+| [StackIcon](/it/ui/components/data-display/stack-icon)            | Icone con un elemento più piccolo sovrapposto nell'angolo in basso a destra. |
+| [TintedIconTile](/it/ui/components/data-display/tinted-icon-tile) | Icone su riquadri colorati in base al tema.                                  |
+
+## Feedback
+
+Importa da `twenty-ui/components/feedback`.
+
+| Component                                                                          | Scopo                                                   |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| [Toast](/it/ui/components/feedback/toast)                                             | Notifiche, gestione della coda e chiusura.              |
+| [Callout](/it/ui/components/feedback/callout)                                         | Messaggi semantici con azioni e chiusura.               |
+| [InlineBanner](/it/ui/components/feedback/inline-banner)                              | Banner compatti con azioni facoltative.                 |
+| [ToastProvider e Toaster](/it/ui/components/feedback/toast#application-notifications) | Archivi delle notifiche, limiti della coda e rendering. |
+
+## Layout
+
+Importa da `twenty-ui/components/layout`.
+
+| Component                                                              | Scopo                                                                             |
+| ---------------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| [Section](/it/ui/components/layout/section)                               | Contenuti correlati con un'intestazione, una descrizione e un'azione facoltativa. |
+| [AnimatedIconCrossfade](/it/ui/components/layout/animated-icon-crossfade) | Transizioni delle icone basate sullo stato.                                       |
+| [OverflowingList](/it/ui/components/layout/overflowing-list)              | Adatta gli elementi visibili e raccoglie quelli in eccesso.                       |
+
+## Impostazioni
+
+Importa da `twenty-ui/components/settings`.
+
+| Component                                           | Scopo                                               |
+| --------------------------------------------------- | --------------------------------------------------- |
+| [SettingsRow](/it/ui/components/settings/settings-row) | Interruttori etichettati per impostazioni e filtri. |
+
+## Editor di Codice
+
+Importa da `twenty-ui/components/code-editor`.
+
+| Component                                            | Scopo                                                                         |
+| ---------------------------------------------------- | ----------------------------------------------------------------------------- |
+| [CodeEditor](/it/ui/components/code-editor/code-editor) | Modifica del codice con Monaco, un'intestazione facoltativa e il tema Twenty. |
+
+Il routing, la formattazione dei record, i segnaposto di prodotto e lo stato dell'applicazione appartengono all'applicazione host. I componenti condivisi espongono prop di dati, callback e di rendering per tali integrazioni.
+
+<PageBanner illustration="section-ui-components" />

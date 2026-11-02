@@ -10,11 +10,10 @@ import { SETTINGS_UNSUBSCRIBE_TAB_IDS } from '@/settings/unsubscribers/constants
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDialog';
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
+import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
@@ -39,9 +38,6 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
   const { updateUnsubscribeTopic } = useUpdateUnsubscribeTopic();
   const { deleteUnsubscribeTopic, loading: deleting } =
     useDeleteUnsubscribeTopic();
-  const isMessageCampaignEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-  );
 
   const unsubscribeTopic = unsubscribeTopics.find(
     (topic) => topic.id === unsubscribeTopicId,
@@ -63,7 +59,7 @@ export const SettingsWorkspaceUnsubscribeTopicDetail = () => {
     return <SettingsSkeletonLoader />;
   }
 
-  if (!isMessageCampaignEnabled || !isDefined(unsubscribeTopic)) {
+  if (!isDefined(unsubscribeTopic)) {
     return <NotFound />;
   }
 

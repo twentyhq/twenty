@@ -8,6 +8,7 @@ import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/type
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewFilterService } from 'src/engine/metadata-modules/view-filter/services/view-filter.service';
 import { createViewFilterInputSchema } from 'src/engine/metadata-modules/view-filter/tools/schemas/create-view-filter-input.schema';
+import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
 
 const createManyViewFiltersInputSchema = z.object({
   filters: z
@@ -29,16 +30,30 @@ export class CreateManyViewFiltersTool extends BaseTool<
 > {
   readonly inputSchema = createManyViewFiltersInputSchema;
 
-  constructor(private readonly viewFilterService: ViewFilterService) {
+  constructor(
+    private readonly viewFilterService: ViewFilterService,
+    private readonly viewToolAccessService: ViewToolAccessService,
+  ) {
     super();
   }
 
   async execute({
     input,
-    context: { workspaceId },
+    context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<
     typeof createManyViewFiltersInputSchema
   >): Promise<ToolOutput> {
+    await Promise.all(
+      input.filters.map(({ viewId }) =>
+        this.viewToolAccessService.findViewEditableByUserOrThrow({
+          viewId,
+          workspaceId,
+          userWorkspaceId,
+          operation: 'update',
+        }),
+      ),
+    );
+
     const results = [];
 
     for (const filterInput of input.filters) {

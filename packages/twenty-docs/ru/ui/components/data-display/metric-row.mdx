@@ -1,0 +1,77 @@
+---
+title: Строка метрик
+description: Выравнивает метку метрики и отформатированное значение с необязательным индикатором прогресса.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import MetricRowReference from '/snippets/ui/generated/components/data-display/metric-row.mdx';
+
+## Обзор
+
+`MetricRow` выравнивает метку, необязательный значок и предварительно отформатированное значение. Необязательный [ProgressRing](/ru/ui/primitives/feedback/progress-ring) использует видимую метку в качестве доступного имени.
+
+<StoryEmbed storyId="ui-data-display-metricrow--display" title="Пример строки метрики" height={100} />
+
+## Использование
+
+```tsx
+import { MetricRow } from 'twenty-ui/components/data-display';
+import { IconFiles } from 'twenty-ui/icon';
+
+export const ImportMetric = () => (
+  <MetricRow
+    startIcon={<IconFiles size={14} />}
+    value="75 of 100"
+    progress={75}
+  >
+    Imported files
+  </MetricRow>
+);
+```
+
+Передайте непустую текстовую метку как обязательное дочернее содержимое, а отформатированное значение — через `value`. Добавьте `progress`, если у метрики известен процент.
+
+Приложение отвечает за вычисления, единицы измерения, форматирование чисел и значение метрики. `progressColor` принимает CSS-цвет для заполненной дуги.
+
+## Значения без прогресса
+
+Не указывайте `progress`, чтобы показать простое значение. Числовой ноль отображается как `0`; содержимое никогда не заменяется заполнителем. Предоставьте собственный заполнитель, если данные недоступны.
+
+```tsx
+import { MetricRow } from 'twenty-ui/components/data-display';
+
+export const CompletedMetric = () => (
+  <MetricRow value={0}>Completed imports</MetricRow>
+);
+```
+
+## Композиция и доступность
+
+Содержимое метки принимает узлы. Его доступный текст именует индикатор выполнения через `aria-labelledby`, включая вложенный текст. Укажите содержательную видимую метку. Непустое строковое значение также предоставляется как текст доступного значения. Для содержимого с отформатированным значением укажите `progressValueText`, если процент не полностью описывает метрику. Этот текст переопределяет резервное строковое значение. Без него другое содержимое сохраняет текст процентного значения кольца. Пустое `progressValueText` также использует процентное значение, в том числе когда `value` является строкой. Необязательный узел `startIcon` является декоративным. Вызывающая сторона управляет его размерами и толщиной линии.
+
+```tsx
+import { MetricRow } from 'twenty-ui/components/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const FormattedStorageMetric = () => (
+  <MetricRow
+    value={<Text render={<bdi />}>12 / 20 GB</Text>}
+    progress={60}
+    progressValueText="12 of 20 gigabytes used"
+  >
+    <Text render={<strong />}>Storage</Text>
+  </MetricRow>
+);
+```
+
+Замените `startIcon={IconDatabase}` на `startIcon={<IconDatabase size={14} />}`. Значения остаются предварительно отформатированными приложением.
+
+Нативные атрибуты, `className`, `style` и `ref` применяются к внешней строке. `render` может заменить этот элемент. Прогресс остаётся управляемым и ограниченным диапазоном от 0 до 100, с тем же поведением при уменьшении движения, что и `ProgressRing`.
+
+## Свойства
+
+<MetricRowReference />
+
+<PageBanner illustration="dashboards" />

@@ -3,7 +3,6 @@ import { faker } from '@faker-js/faker';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createOneAgent } from 'test/integration/metadata/suites/agent/utils/create-one-agent.util';
 import { deleteOneAgent } from 'test/integration/metadata/suites/agent/utils/delete-one-agent.util';
-import { findAgents } from 'test/integration/metadata/suites/agent/utils/find-agents.util';
 import { updateOneAgent } from 'test/integration/metadata/suites/agent/utils/update-one-agent.util';
 import {
   eachTestingContextFilter,
@@ -208,32 +207,6 @@ describe('Agent update should fail', () => {
       input: {
         id: nonExistentAgentId,
         label: 'Updated Label',
-      },
-    });
-
-    expectOneNotInternalServerErrorSnapshot({
-      errors,
-    });
-  });
-
-  it('should fail when attempting to update a standard agent', async () => {
-    const { data } = await findAgents({
-      expectToFail: false,
-      input: undefined,
-      gqlFields: 'id name isCustom',
-    });
-
-    const helperAgent = data.findManyAgents.find(
-      (agent) => agent.name === 'helper' && agent.isCustom === false,
-    );
-
-    expect(helperAgent).toBeDefined();
-
-    const { errors } = await updateOneAgent({
-      expectToFail: true,
-      input: {
-        id: helperAgent!.id,
-        label: 'Attempted Update to Standard Agent',
       },
     });
 

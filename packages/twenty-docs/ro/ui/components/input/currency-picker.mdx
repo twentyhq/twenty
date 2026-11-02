@@ -1,0 +1,153 @@
+---
+title: Selector de monedă
+description: Alegeți o monedă cu un selector complet sau alcătuiți-i părțile într-un meniu derulant.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CurrencyPickerReference from '/snippets/ui/generated/components/input/currency-picker.mdx';
+
+## Prezentare generală
+
+`CurrencyPicker` combină un declanșator compact pentru monedă, opțiuni care pot fi căutate și un [meniu derulant](/ro/ui/components/navigation/dropdown). Furnizați un catalog de monede și utilizați o singură componentă pentru selectarea obișnuită. Compuneți `Root`, `Trigger` și `Options` cu Dropdown atunci când fereastra pop-up necesită alt conținut sau alte pagini.
+
+<StoryEmbed storyId="ui-input-currencypicker--display" title="Selector de monedă" height={420} />
+
+## Utilizare
+
+Fiecare monedă are un `code` unic, un `name` și proprietăți opționale `symbol` și `disabled`. Codul este identificatorul stabil al selecției. Selectorul nu include un catalog de monede și nu alege o valoare implicită a aplicației.
+
+```tsx
+import { CurrencyPicker } from 'twenty-ui/components/input';
+
+const CURRENCIES = [
+  { code: 'EUR', name: 'Euro', symbol: '€' },
+  { code: 'USD', name: 'US Dollar', symbol: '$' },
+];
+
+export const InvoiceCurrency = () => (
+  <CurrencyPicker
+    currencies={CURRENCIES}
+    defaultValue="USD"
+    aria-label="Invoice currency"
+    optionsProps={{
+      searchLabel: 'Search currencies',
+      emptyLabel: 'No currencies found',
+    }}
+    contentProps={{ width: 280 }}
+  />
+);
+```
+
+Utilizați `defaultValue` pentru selecția necontrolată. Pentru selecția controlată, transmiteți `value` și actualizați-l din `onValueChange`. Funcția de apel invers primește următorul cod sau `null` și detalii despre selecția Dropdown care conțin `event`, `reason`, `trigger`, `cancel` și `isCanceled`. Apelați `details.cancel()` pentru a păstra selecția curentă și a menține fereastra pop-up deschisă. Selectarea codului curent nu emite o altă modificare.
+
+`null` șterge selecția. Un șir gol rămâne un cod valid și nu îl șterge. O valoare necunoscută rămâne neschimbată și apare ca cod brut în declanșator; nu adaugă o opțiune în catalog. O actualizare controlată ulterioară sau o modificare a catalogului actualizează declanșatorul și rândul selectat.
+
+```tsx
+import { useState } from 'react';
+import { CurrencyPicker } from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
+
+const CURRENCIES = [
+  { code: 'EUR', name: 'Euro' },
+  { code: 'USD', name: 'US Dollar' },
+];
+
+export const ClearableCurrency = () => {
+  const [value, setValue] = useState<string | null>('USD');
+
+  return (
+    <>
+      <CurrencyPicker
+        currencies={CURRENCIES}
+        value={value}
+        onValueChange={setValue}
+        aria-label="Invoice currency"
+        triggerProps={{ placeholder: 'Choose a currency' }}
+      />
+      <Button onClick={() => setValue(null)}>Clear currency</Button>
+    </>
+  );
+};
+```
+
+## Compoziție avansată
+
+`CurrencyPicker.Root` pregătește catalogul și gestionează selecția pentru ambele părți. Nu adaugă niciun element DOM și trebuie să se afle în `Dropdown.Root`. Păstrați `Trigger` și `Options` sub aceeași rădăcină a selectorului, inclusiv atunci când opțiunile se află pe o altă pagină a meniului derulant. Copiii de tip funcție de randare ai rădăcinii expun `value`, `selectedCurrency` și `disabled` pentru etichete și conținut suplimentar gestionate de apelant.
+
+```tsx
+import { CurrencyPicker } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+
+const CURRENCIES = [
+  { code: 'EUR', name: 'Euro' },
+  { code: 'USD', name: 'US Dollar' },
+];
+
+export const ComposedCurrency = () => (
+  <Dropdown.Root type="picker">
+    <CurrencyPicker.Root
+      currencies={CURRENCIES}
+      defaultValue="USD"
+      closeOnSelect={false}
+    >
+      {({ value }) => (
+        <>
+          <CurrencyPicker.Trigger
+            aria-label={`Invoice currency: ${value ?? 'none'}`}
+            placeholder="Choose a currency"
+          />
+          <Dropdown.Content aria-label="Invoice currency" width={280}>
+            <Dropdown.Title>Invoice currency</Dropdown.Title>
+            <CurrencyPicker.Options
+              searchLabel="Search currencies"
+              emptyLabel="No currencies found"
+            />
+          </Dropdown.Content>
+        </>
+      )}
+    </CurrencyPicker.Root>
+  </Dropdown.Root>
+);
+```
+
+Dropdown gestionează deschiderea, poziționarea ferestrei pop-up, paginile, navigarea prin căutare și focalizarea. Selectorul utilizează un grup de selecție Dropdown pentru valorile selectate persistente și politica de închidere. `Root.closeOnSelect` este implicit `true`; utilizați `false` pentru a menține fereastra pop-up deschisă după alegerea unei monede. Tastele săgeată, Home și End mută focalizarea fără a modifica valoarea. Enter, Space sau activarea cu indicatorul selectează o opțiune activată. Monedele dezactivate rămân vizibile și nu pot fi selectate.
+
+## Căutare și ordonare
+
+Opțiunile pot fi căutate în mod implicit. Căutarea ignoră spațiile albe de la început și de la sfârșit și găsește coduri, nume, simboluri și eticheta implicită `Name (CODE)` fără a ține cont de majuscule și minuscule, utilizând aceleași reguli în fiecare setare regională a browserului. `getSearchText` pe rădăcină înlocuiește textul care poate fi căutat pentru fiecare monedă. Personalizarea afișării și textul de căutare sunt independente.
+
+Rezultatele păstrează ordinea catalogului. Setați `selectedFirst` pe forma scurtă sau pe rădăcină pentru a muta moneda selectată înaintea celorlalte potriviri. O interogare care o exclude elimină și rândul acesteia. O valoare necunoscută nu creează un rezultat selectat. Rezultatele goale afișează `emptyLabel` într-o regiune de stare.
+
+Setați `Options.searchable={false}` pentru a omite câmpul de căutare. `Options.searchProps` vizează intrarea de căutare nativă, inclusiv `ref`, `render`, atributele accesibile și `value` controlată sau `defaultValue` necontrolată. `searchProps.onValueChange` primește interogarea. În utilizarea formei scurte, transmiteți aceste opțiuni prin `optionsProps`.
+
+Câmpul de căutare primește focalizarea atunci când se deschide un selector în care se poate căuta. Enter cu o interogare nevidă activează primul rezultat activat. Cu o interogare goală, mutați focalizarea la o opțiune înainte de a o selecta. Activarea căutării în timpul compoziției IME și o căutare nouă la redeschidere rămân supuse contractelor comune Dropdown pentru căutare și sesiunea de pagină.
+
+## Prezentare și ținte native
+
+Declanșatorul afișează implicit codul selectat. `renderValue` primește `{ value, selectedCurrency, disabled }` pentru a personaliza acea afișare fără a căuta din nou moneda. `Trigger.children` suprascrie afișarea valorii, iar `Trigger.placeholder` furnizează afișarea pentru lipsa valorii. `getOptionLabel` personalizează conținutul fiecărei opțiuni, cu eticheta implicită `Name (CODE)`. Numele monedelor, simbolurile, etichetele și conținutul opțiunilor aparțin apelantului.
+
+Atributele butonului nativ ale formei scurte, gestionarele de evenimente, `className`, `style`, `ref` și `render` vizează declanșatorul acesteia. `triggerProps` personalizează același buton. Utilizați `optionsProps` pentru div-ul înveliș al opțiunilor și `searchProps` imbricat pentru intrare. `contentProps` personalizează fereastra pop-up a Dropdown. `open`, `defaultOpen` și `onOpenChange` coordonează starea de deschidere a formei scurte.
+
+În utilizarea compusă, atributele native, `ref` și `render` pe `Trigger` vizează butonul său, iar cele pe `Options` vizează div-ul său înveliș. `Options.listLabel` denumește numai caseta de listă de selecție interioară. Redirecționați proprietățile și referința furnizate dintr-o componentă `render` personalizată. Stilizarea învelișului nu modifică ținta nativă a intrării.
+
+Setați `disabled` pe forma scurtă sau pe rădăcină pentru a dezactiva deschiderea, căutarea și selecția. Proprietatea `disabled` a unei părți poate dezactiva suplimentar acea parte. Selecția este o valoare a selectorului; trimiterea formularului nativ, resetarea, validarea obligatorie și integrarea Field rămân în afara acestui API.
+
+## Etichete și integrarea aplicației
+
+`searchLabel` este implicit `Search` și furnizează substituentul de căutare și numele accesibil. `emptyLabel` este implicit `No results` și acceptă conținut. Furnizați din aplicația dvs. etichete sursă localizate, un nume accesibil pentru declanșator și orice substituent. Conținutul Dropdown preia numele declanșatorului, cu excepția cazului în care îl denumește un `Dropdown.Title` sau o etichetă explicită a conținutului. Caseta de listă de selecție preia implicit titlul Dropdown înregistrat sau numele declanșatorului. Setați `Options.listLabel` pentru a oferi doar acelei casete de listă propriul nume accesibil sau transmiteți `optionsProps.listLabel` în utilizarea formei scurte. `aria-label` și `aria-labelledby` native pe `Options` etichetează numai învelișul acestuia. Declanșatorul își păstrează propriul nume accesibil.
+
+Aplicația gestionează editarea sumei, stocarea monedei, formatarea, încărcarea catalogului și valoarea sa inițială. Un adaptor ar trebui să mapeze codurile de monedă stocate și comportamentul de ștergere la `value` și `onValueChange`, păstrând regulile de formatare și de rezervă ale aplicației. Păstrați numele și etichetele traduse ale monedelor în aplicație.
+
+## Renderer pentru componenta Front
+
+Elementele sandbox pentru React și Preact acoperă căutarea și selecția în forma scurtă și cea compusă, controalele și opțiunile dezactivate, referințele declanșatorului, ștergerea cu null, actualizările controlate externe, redeschiderea și restaurarea focalizării cu Escape. Acestea verifică și faptul că ștergerea unei interogări anterioare și tastarea `$` păstrează interogarea după simbol.
+
+Vizibilitatea ferestrei pop-up, geometria, derularea și închiderea depind de suportul Dropdown și portal al redatorului comun. Selectorul utilizează acea implementare comună.
+
+## Proprietăți
+
+<CurrencyPickerReference />
+
+<PageBanner illustration="card-page-tutorial-http" />

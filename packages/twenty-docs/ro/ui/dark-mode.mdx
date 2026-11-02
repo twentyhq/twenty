@@ -1,0 +1,63 @@
+---
+title: Mod întunecat
+description: Încărcați ambele palete Twenty UI și comutați schema de culori activă.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
+Încărcați ambele foi de stil ale temei atunci când aplicația dvs. poate comuta între scheme. `ThemeProvider` selectează o paletă aplicând clasa `light` sau `dark`.
+
+```tsx
+import { useState } from 'react';
+import { Switch } from 'twenty-ui/primitives/input';
+import { ThemeProvider } from 'twenty-ui/theme';
+
+import 'twenty-ui/style.css';
+import 'twenty-ui/theme-light.css';
+import 'twenty-ui/theme-dark.css';
+
+export const App = () => {
+  const [isDark, setIsDark] = useState(false);
+
+  return (
+    <ThemeProvider colorScheme={isDark ? 'dark' : 'light'}>
+      <label>
+        <Switch checked={isDark} onCheckedChange={setIsDark} />
+        Dark mode
+      </label>
+    </ThemeProvider>
+  );
+};
+```
+
+Furnizorul acceptă o schemă explicită. Aplicația dvs. gestionează persistența preferințelor și orice procesare a preferințelor de sistem. Dacă redați pe server, utilizați aceeași schemă inițială pe server și pe client pentru a evita o neconcordanță inițială a paletei.
+
+## Combinați palete
+
+Setați `applyToRoot={false}` pe un furnizor imbricat pentru a oferi unui subarbore o paletă diferită. Ambele foi de stil trebuie încărcate:
+
+```tsx
+import { ThemeProvider } from 'twenty-ui/theme';
+
+export const Preview = () => (
+  <ThemeProvider colorScheme="light">
+    <p>The application uses the light palette.</p>
+    <ThemeProvider colorScheme="dark" applyToRoot={false}>
+      <section
+        style={{
+          background: 'var(--t-background-primary)',
+          color: 'var(--t-font-color-primary)',
+        }}
+      >
+        This preview uses the dark palette.
+      </section>
+    </ThemeProvider>
+  </ThemeProvider>
+);
+```
+
+Utilizați `useThemeColorScheme()` din `twenty-ui/theme` pentru a citi schema activă a furnizorului. Într-o componentă front Twenty, utilizați `useColorScheme()` din `twenty-sdk/front-component` pentru a citi schema spațiului de lucru furnizată de gazdă.
+
+<PageBanner illustration="page-cover-palette" />

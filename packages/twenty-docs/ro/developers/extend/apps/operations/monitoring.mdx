@@ -1,0 +1,77 @@
+---
+title: Monitorizare
+description: Urmărește cum se comportă aplicația ta în fiecare spațiu de lucru care o instalează — erori, limitări de rată, credite, instalări și performanța funcțiilor.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
+După ce aplicația ta este instalată în alte spații de lucru, trebuie să știi când se defectează. Twenty înregistrează ce se întâmplă cu aplicația ta pe platformă și afișează informațiile în două locuri:
+
+* **Pagina de monitorizare** a înregistrării aplicației tale, pentru tine ca proprietar al aplicației, agregată pentru fiecare instalare.
+* **Jurnalele spațiului de lucru**, pentru administratorii fiecărui spațiu de lucru care a instalat aplicația ta, limitate la propriul spațiu de lucru.
+
+```text
+   your app runs in workspace A, B, C …
+              │
+              ▼
+   platform events (function runs, installs, rate limits, route failures)
+              │
+      ┌───────┴────────────────────────┐
+      ▼                                ▼
+   Monitoring page (app owner)      Logs (each workspace admin)
+   all installs, aggregated         one workspace, row by row
+```
+
+## Deschide pagina de monitorizare
+
+Accesează **Settings → Developers → Apps**, deschide aplicația ta, apoi fă clic pe **View monitoring** în fila **General**. Ai nevoie de permisiunea **API keys & webhooks** în spațiul de lucru care deține înregistrarea aplicației.
+
+Alege o perioadă în antet: ultimele 2 ore, 24 de ore, 7 zile, 30 de zile sau 90 de zile. Datele sunt păstrate timp de **90 de zile**. Fără dreptul **Audit logs**, sunt vizibile numai ultimele 2 ore.
+
+## Ce afișează pagina
+
+| Secțiune                                   | Ce îți arată                                                                                                                                                   |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Sănătate**                               | Numerele principale pentru perioadă și o diagramă a erorilor în timp.                                                                                          |
+| **Limitări de rată**                       | Solicitările API trimise de aplicația ta care au fost respinse și sarcinile de declanșare care au fost omise deoarece a fost atinsă limita de punere în coadă. |
+| **Credite utilizate**                      | Creditele consumate de aplicația ta în timp. Afișat numai pe serverele cu facturarea activată.                                                                 |
+| **Erori și avertismente principale**       | Cele mai frecvente probleme, grupate după codul de eroare și funcție, cu numărul de instalări afectate.                                                        |
+| **Instalări, actualizări și dezinstalări** | Rulările ciclului de viață în timp și câte dintre acestea au eșuat.                                                                                            |
+| **Versiuni**                               | Rulări și eșecuri pentru fiecare versiune a aplicației, pentru a identifica o lansare problematică.                                                            |
+| **Funcții**                                | Rulări, eșecuri și durata din percentila 95 pentru fiecare funcție logică.                                                                                     |
+
+Numărătorile sunt exacte: fiecare solicitare respinsă și fiecare sarcină omisă sunt numărate, chiar și atunci când jurnalele de mai jos păstrează doar un rând pe minut.
+
+## Ce se înregistrează
+
+Fiecare eveniment de mai jos este numărat pe pagina de monitorizare. Fiecare dintre acestea scrie și jurnale ale aplicației în spațiul de lucru în care a avut loc, cu o **sursă** care indică de unde provine:
+
+| Sursă            | Înregistrat când                                                                                                                                                                                                                                                                                                                            |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `LOGIC_FUNCTION` | O funcție logică scrie o linie de jurnal sau eșuează, de la orice declanșator. Rulările care nu înregistrează nimic și reușesc sunt numărate pe pagina de monitorizare, dar nu lasă niciun rând de jurnal.                                                                                                                                  |
+| `INSTALL`        | Aplicația ta este instalată, împreună cu rezultatul cârligelor de instalare.                                                                                                                                                                                                                                                                |
+| `UPGRADE`        | Aplicația ta este actualizată la o versiune nouă.                                                                                                                                                                                                                                                                                           |
+| `UNINSTALL`      | Aplicația ta este dezinstalată.                                                                                                                                                                                                                                                                                                             |
+| `API_RATE_LIMIT` | O solicitare de la aplicația ta către API este respinsă de limitarea de rată.                                                                                                                                                                                                                                                               |
+| `JOB_RATE_LIMIT` | Sarcinile de declanșare pentru funcțiile tale logice sunt omise deoarece a fost atinsă limita de punere în coadă a sarcinilor.                                                                                                                                                                                                              |
+| `SERVER_ROUTE`   | O solicitare către una dintre [rutele HTTP](/ro/developers/extend/apps/tutorials/document-generator/http-routes) este refuzată sau eșuează în afara funcției tale, de exemplu din cauza unei metode greșite, a unei autentificări eșuate sau a unei erori de platformă. Erorile generate de funcția ta sunt înregistrate sub `LOGIC_FUNCTION`. |
+
+Eșecurile de limitare a ratei și ale rutelor de server se pot repeta de multe ori pe secundă, astfel încât jurnalele păstrează **un rând pe minut** pentru fiecare instalare, funcție și cod de eroare. Pagina de monitorizare numără în continuare fiecare apariție.
+
+## Jurnalele spațiului de lucru
+
+Administratorii unui spațiu de lucru care a instalat aplicația ta văd aceleași evenimente, numai pentru spațiul lor de lucru, în **Settings → General → Logs**. Aceștia pot filtra după sursă, de exemplu pentru a lista numai eșecurile `INSTALL` sau limitările de rată. Îndrumă-ți utilizatorii acolo când raportează o problemă: codul de eroare și mesajul îți spun unde să cauți.
+
+Pentru propriul tău server de dezvoltare, `twenty app logs` transmite în timp real jurnalele funcțiilor în terminal. Vezi [CLI](/ro/developers/extend/apps/operations/cli#watching-function-logs).
+
+## Interpretarea semnalelor
+
+* **Erorile cresc imediat după o lansare**: compară versiunile în tabelul **Versiuni**, apoi remediază problema și publică o versiune mai nouă. Consultați [Publicarea](/ro/developers/extend/apps/operations/publishing).
+* **Solicitările API sunt limitate ca rată**: aplicația ta apelează API-ul prea des. Grupează citirile și scrierile și evită apelarea API-ului în bucle strânse.
+* **Sarcinile sunt limitate ca rată**: evenimentele bazei de date sau declanșatoarele cron se execută mai repede decât pot fi puse sarcinile în coadă. Restrânge declanșatorul, de exemplu cu `updatedFields` într-un declanșator `databaseEvent`, sau efectuează lucrul în mai puține rulări, dar mai mari. Vezi [Funcții logice](/ro/developers/extend/apps/logic/logic-functions).
+* **Eșecuri de instalare sau actualizare**: verifică-ți [cârligele de instalare](/ro/developers/extend/apps/config/install-hooks). Mesajul de eroare este înregistrat odată cu eșecul.
+* **Funcții lente**: o durată ridicată la percentila 95 indică o funcție care merită profilată sau împărțită.
+
+<PageBanner illustration="card-page-monitoring" />

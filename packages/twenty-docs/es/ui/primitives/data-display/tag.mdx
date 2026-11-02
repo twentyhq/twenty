@@ -1,0 +1,106 @@
+---
+title: Etiqueta
+description: Etiquete una categoría o atributo con un color del tema y un icono opcional.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import TagReference from '/snippets/ui/generated/data-display/tag.mdx';
+
+## Resumen
+
+Use `Tag` para categorías, prioridades u otros atributos breves. Conserve una etiqueta de texto para que el significado no dependa del color. Use [Estado](/es/ui/primitives/data-display/status) cuando necesite un indicador de estado y comentarios de carga.
+
+<StoryEmbed storyId="ui-data-display-tag--display" title="Ejemplo de etiqueta" height={90} />
+
+## "Uso"
+
+```tsx
+import { Tag } from 'twenty-ui/primitives/data-display';
+
+export const PriorityTag = () => <Tag color="red">Urgent</Tag>;
+```
+
+`color` es obligatorio y acepta un color del tema o `transparent`. El elemento predeterminado siempre es un `span`, incluso cuando se proporciona un controlador de clic nativo. Añada un icono decorativo con `startIcon`; la etiqueta proporciona su significado accesible.
+
+## Variantes
+
+<StoryEmbed storyId="ui-data-display-tag--catalog" title="Variantes de etiquetas" height={140} />
+
+```tsx
+import { Tag } from 'twenty-ui/primitives/data-display';
+
+export const CategoryTags = () => (
+  <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+    <Tag color="blue" variant="soft">
+      Customer
+    </Tag>
+    <Tag color="green" variant="solid">
+      Partner
+    </Tag>
+    <Tag color="orange" variant="outline">
+      Prospect
+    </Tag>
+    <Tag color="transparent" variant="outline" borderStyle="dashed">
+      Unassigned
+    </Tag>
+  </div>
+);
+```
+
+`soft` es el estilo predeterminado. `solid` resalta la etiqueta, `outline` añade un borde y `ghost` elimina el fondo. Use `borderStyle="dashed"` con `outline` y `weight="medium"` para una etiqueta más destacada.
+
+## Colores
+
+<StoryEmbed storyId="ui-data-display-tag--colors" title="Colores del tema de las etiquetas" height={240} />
+
+Mantén la etiqueta significativa sin depender de su color. El catálogo compara el tratamiento suave predeterminado; la misma paleta está disponible para las demás variantes.
+
+## Filtrar por una etiqueta
+
+```tsx
+import { Tag } from 'twenty-ui/primitives/data-display';
+
+type CategoryFilterProps = {
+  selected: boolean;
+  onToggle: () => void;
+};
+
+export const CategoryFilter = ({ selected, onToggle }: CategoryFilterProps) => (
+  <Tag
+    color="blue"
+    variant={selected ? 'solid' : 'outline'}
+    render={<button type="button" aria-pressed={selected} onClick={onToggle} />}
+  >
+    Customer
+  </Tag>
+);
+```
+
+Componga un propietario interactivo mediante `render`. Coloque su controlador de clic, atributos nativos, ref y estado deshabilitado en ese propietario. Un botón real proporciona foco y activación con Intro y Espacio. El estado de selección corresponde a su aplicación; use `aria-pressed` para un interruptor y un estilo visible para el estado seleccionado. Para la navegación, renderiza un enlace con su destino, como `<a href="/records" />`. Los propietarios nativos conservan la apariencia de Tag.
+
+## Etiquetas largas
+
+De forma predeterminada, `truncate={true}` trunca las etiquetas de texto con restricciones y muestra su texto completo en una descripción emergente al pasar el cursor. Establece `truncate={false}` para mantener la etiqueta completa en su ancho natural sin una descripción emergente, incluso cuando su elemento principal sea más estrecho. El diseño del elemento principal gestiona el ajuste de línea, el desplazamiento y el recorte.
+
+```tsx
+import { Tag } from 'twenty-ui/primitives/data-display';
+
+export const FullCategoryLabel = () => (
+  <Tag color="green" truncate={false}>
+    Enterprise customer
+  </Tag>
+);
+```
+
+Los elementos secundarios de nodo siguen siendo contenido propiedad del autor de la llamada, así que compón directamente su texto, traducciones y enlaces intencionales.
+
+## "Props"
+
+Los tipos y valores predeterminados se generan a partir de los tipos públicos del componente. También se aceptan atributos nativos y controladores de eventos.
+
+<TagReference />
+
+<PageBanner illustration="page-cover-checkbox" />

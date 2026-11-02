@@ -1,0 +1,102 @@
+---
+title: ButtonGroup
+description: Agrupe botones relacionados con una apariencia compartida y un marco opcional.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ButtonGroupReference from '/snippets/ui/generated/input/button-group.mdx';
+
+## Resumen
+
+Asigna un nombre accesible a un grupo y coloca los botones relacionados dentro de él. El grupo une los bordes adyacentes y puede aplicar valores predeterminados para el tamaño, la variante y el color. Los botones conservan sus propios puntos de tabulación.
+
+<StoryEmbed storyId="ui-input-button-buttongroup--display" title="Grupo de botones" height={100} />
+
+## "Uso"
+
+```tsx
+import { IconCheckbox, IconNotes, IconTimelineEvent } from 'twenty-ui/icon';
+import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
+
+export const ActivityActions = () => (
+  <ButtonGroup aria-label="Create activity" size="sm">
+    <Button startIcon={<IconNotes />}>Note</Button>
+    <Button startIcon={<IconCheckbox />}>Task</Button>
+    <Button startIcon={<IconTimelineEvent />}>Activity</Button>
+  </ButtonGroup>
+);
+```
+
+## Propiedad del estado
+
+`ButtonGroup` coordina el aspecto, no la selección. No tiene un modo de selección controlado ni no controlado. Cada botón recibe su propio controlador de acciones y estado de la aplicación; consulta el [ejemplo de propiedad del estado de Button](/es/ui/primitives/input/button#state-ownership) para conocer el comportamiento de carga.
+
+Para una elección mutuamente excluyente, usa [RadioGroup](/es/ui/primitives/input/radio-group), que gestiona la selección de sus controles de opción.
+
+## Precedencia de apariencia
+
+Cada propiedad de apariencia se resuelve de forma independiente: la propiedad explícita del elemento secundario, luego el valor predeterminado del grupo y, por último, el valor predeterminado del componente. Esto se aplica tanto a Button como a IconButton, incluido un `IconButton size="xs"` explícito. Los valores predeterminados llegan a los elementos secundarios a través de fragmentos, contenedores y anclajes de información sobre herramientas.
+
+Un grupo puede proporcionar `color="inherit"` en una superficie coloreada. Un elemento secundario que se resuelve en un color heredado también debe resolverse en una variante no sólida. Las anulaciones explícitas del color y la variante de un elemento secundario tienen prioridad, por lo que un elemento secundario puede elegir una variante no sólida o un color semántico cuando el grupo proporciona una variante sólida y una heredada conjuntamente.
+
+Mantén los botones adjuntos del mismo tamaño para que sus bordes se alineen. Este ejemplo reemplaza la variante y el color, mientras hereda el tamaño del grupo.
+
+```tsx
+import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
+
+export const ActivityActions = () => (
+  <ButtonGroup
+    aria-label="Activity actions"
+    variant="solid"
+    color="accent"
+    size="sm"
+  >
+    <Button variant="ghost" color="danger">
+      Delete activity
+    </Button>
+    <Button color="neutral">Duplicate activity</Button>
+    <Button>New activity</Button>
+  </ButtonGroup>
+);
+```
+
+<StoryEmbed storyId="ui-input-button-buttongroup--appearance-overrides" title="Apariencia individual en un grupo de botones" height={100} />
+
+## Controles separados
+
+Establece `attached={false}` para conservar las esquinas redondeadas de cada control y una separación de 2 px. Los valores predeterminados del grupo siguen aplicándose mediante contenedores y anclajes de tooltip; las props explícitas de los elementos secundarios tienen prioridad.
+
+## Controles con marco
+
+Establece `framed` para añadir un fondo translúcido, un borde, relleno de 2 px y esquinas concéntricas. El marco funciona con controles adjuntos o separados y conserva el aspecto explícito de los elementos secundarios. Usa `size="xs"` en [IconButton](/es/ui/components/input/icon-button) para acciones compactas de 20 px.
+
+<StoryEmbed storyId="ui-components-iconbutton--framed-group-documentation" title="Grupo de botones con marco" height={100} />
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconPlus, IconTrash } from 'twenty-ui/icon';
+import { ButtonGroup } from 'twenty-ui/primitives/input';
+
+export const CompactRecordActions = () => (
+  <ButtonGroup framed attached={false} aria-label="Record actions">
+    <IconButton size="xs" aria-label="Add" variant="ghost">
+      <IconPlus />
+    </IconButton>
+    <IconButton size="xs" aria-label="Delete" variant="ghost" disabled>
+      <IconTrash />
+    </IconButton>
+  </ButtonGroup>
+);
+```
+
+## Actualización de grupos existentes
+
+Reemplaza `IconButtonGroup` y su matriz `iconButtons` por `ButtonGroup framed attached={false}` y elementos secundarios explícitos. Reemplaza `InsideButton` por `LightIconButton size="xs"`. Cada botón gestiona su nombre accesible, controlador de acciones, estado deshabilitado y tooltip opcional.
+
+## "Props"
+
+<ButtonGroupReference />
+
+<PageBanner illustration="page-cover-pointer" />

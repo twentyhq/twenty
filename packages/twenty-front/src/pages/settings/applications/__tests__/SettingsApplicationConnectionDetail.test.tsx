@@ -159,6 +159,8 @@ describe('SettingsApplicationConnectionDetail', () => {
           lastCredentialsRefreshedAt: null,
           createdAt: '2026-05-01T00:00:00.000Z',
           updatedAt: '2026-05-01T00:00:00.000Z',
+          authFailedReason: null,
+          archivedAt: null,
         },
       ],
       loading: false,
@@ -182,6 +184,8 @@ describe('SettingsApplicationConnectionDetail', () => {
           lastCredentialsRefreshedAt: null,
           createdAt: '2026-05-01T00:00:00.000Z',
           updatedAt: '2026-05-01T00:00:00.000Z',
+          authFailedReason: null,
+          archivedAt: null,
         },
       ],
       loading: false,
@@ -190,7 +194,7 @@ describe('SettingsApplicationConnectionDetail', () => {
 
     renderDetailPage();
 
-    expect(screen.getByText('Reconnect needed')).toBeVisible();
+    expect(screen.getByText('Sync failed')).toBeVisible();
 
     fireEvent.click(screen.getByText('Reconnect'));
 

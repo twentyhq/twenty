@@ -1,0 +1,64 @@
+---
+title: Scheletro
+description: Mostra forme segnaposto a tema durante il caricamento dei contenuti.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import SkeletonReference from '/snippets/ui/generated/feedback/skeleton.mdx';
+
+## Panoramica
+
+`Skeleton` fornisce una forma segnaposto con i colori del tema e un'evidenziazione in movimento. Componi le forme nel layout del contenuto in caricamento. L'applicazione gestisce lo stato di caricamento e i layout specifici della funzionalità.
+
+<StoryEmbed storyId="ui-feedback-skeleton--display" title="Forme dello scheletro" height={110} />
+
+## Utilizzo
+
+```tsx
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const LoadingProfile = () => (
+  <Text render={<div />} style={{ display: 'flex', gap: 16 }}>
+    <Skeleton width={40} height={40} borderRadius="50%" />
+    <Text
+      render={<div />}
+      style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
+    >
+      <Skeleton width={180} height={SKELETON_HEIGHT_SIZES.s} />
+      <Skeleton width={120} height={SKELETON_HEIGHT_SIZES.xs} />
+    </Text>
+  </Text>
+);
+```
+
+Skeleton viene visualizzato come un blocco e non diventa mai più largo del suo contenitore. Usa `layout="inline"` per inserire un segnaposto all'interno di una riga di testo.
+
+Le dimensioni numeriche usano i pixel. Sono supportate anche le lunghezze CSS come le percentuali e `em`. Senza dimensioni, il segnaposto riempie la larghezza disponibile e usa l'altezza del carattere ereditata. Usa dimensioni uguali e `borderRadius="50%"` per un cerchio.
+
+`SKELETON_HEIGHT_SIZES` fornisce altezze condivise per `xs` (13px), `s` (16px), `m` (24px), `l` (32px) e `xl` (40px). Mantieni nell'applicazione le dimensioni specifiche del layout.
+
+Ogni `Skeleton` visualizza un segnaposto. Mantieni le righe ripetute, la spaziatura delle righe di testo e le aree di caricamento nei componenti dell'applicazione che racchiudono il primitivo.
+
+## Movimento e accessibilità
+
+Gli skeleton sono decorativi e per impostazione predefinita hanno `aria-hidden="true"`. Mantieni gli annunci di caricamento in una regione di stato gestita dall'host invece di annunciare ogni forma. Skeleton non accetta elementi figlio.
+
+L'evidenziazione si sposta da sinistra a destra in un ciclo ease-in-out di 1,5 secondi ed è nascosta quando l'utente preferisce il movimento ridotto. Passa `animated={false}` per un segnaposto statico.
+
+<StoryEmbed storyId="ui-feedback-skeleton--static" title="Skeleton statico" height={90} />
+
+## Composizione e tema
+
+Le props native, `className`, `style` e `ref` hanno come destinazione lo span del segnaposto. Usa `render` per comporre un altro elemento. Gli stili nativi espliciti sovrascrivono le props di dimensione e colore.
+
+Per impostazione predefinita, i colori di base e di evidenziazione corrispondono allo sfondo terziario del tema e a uno sfondo trasparente più chiaro. Usa `baseColor`, `highlightColor` e `borderRadius` per sovrascriverli. Gli angoli rimangono arrotondati, anche quando il tema usa gli squircles. Il raggio predefinito utilizza il token del tema `smRound` (4px). Passa `themeCssVariables.border.radius.mdRound` da `twenty-ui/theme` per angoli di 8px. I raggi personalizzati in pixel e CSS rimangono supportati, inclusi `borderRadius={80}` per una capsula stretta e `borderRadius="50%"` per un cerchio. Dopo aver caricato `twenty-ui/style.css` e il tema dell'interfaccia utente, non è necessario alcun provider specifico per Skeleton né alcuna importazione di fogli di stile.
+
+## Props
+
+<SkeletonReference />
+
+<PageBanner illustration="section-ui-primitives" />

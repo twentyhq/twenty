@@ -50,6 +50,10 @@ const buildCommandMenuItem = (
     Partial<CommandMenuItemFieldsFragment>,
 ): CommandMenuItemFieldsFragment => ({
   __typename: 'CommandMenuItem',
+  universalIdentifier: null,
+  applicationId: null,
+  coreWorkflowVersionId: null,
+  workflowVersionId: null,
   isActive: true,
   frontComponentId: null,
   frontComponent: null,
@@ -59,8 +63,11 @@ const buildCommandMenuItem = (
   isPinLocked: false,
   hotKeys: null,
   conditionalAvailabilityExpression: null,
+  conditionalPinnedExpression: null,
   availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
   availabilityObjectMetadataId: null,
+  navigationTargetObjectMetadataId: null,
+  pageLayoutId: null,
   payload: null,
   ...overrides,
 });

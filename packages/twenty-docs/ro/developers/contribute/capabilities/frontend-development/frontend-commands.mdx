@@ -2,6 +2,8 @@
 title: Comenzi Frontend
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Comenzi utile
 
 ### Pornirea aplicației
@@ -73,13 +75,13 @@ Proiectul are un stack curat și simplu, cu cod boilerplate minim.
 
 [React Router](https://reactrouter.com/) se ocupă de rutare.
 
-Pentru a evita [re-redări](/ro/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders) inutile, toată logica de rutare se află în `useEffect` în `PageChangeEffect`.
+Pentru a evita [re-redări](/l/ro/developers/contribute/capabilities/frontend-development/best-practices-front#managing-re-renders) inutile, toată logica de rutare se află în `useEffect` în `PageChangeEffect`.
 
 ### Managementul stării
 
 [Jotai](https://jotai.org/) se ocupă de managementul stării.
 
-Consultați [cele mai bune practici](/ro/developers/contribute/capabilities/frontend-development/best-practices-front#state-management) pentru mai multe informații despre managementul stării.
+Consultați [cele mai bune practici](/l/ro/developers/contribute/capabilities/frontend-development/best-practices-front#state-management) pentru mai multe informații despre managementul stării.
 
 ## Testare
 
@@ -88,3 +90,5 @@ Consultați [cele mai bune practici](/ro/developers/contribute/capabilities/fron
 Jest este utilizat în principal pentru testarea funcțiilor utilitare, nu a componentelor în sine.
 
 Storybook este pentru testarea comportamentului componentelor izolate, precum și pentru afișarea sistemului de design.
+
+<PageBanner illustration="card-page-cli" />

@@ -3,6 +3,8 @@ title: Pagini de înregistrare
 description: Personalizați aspectul paginilor de detalii ale înregistrărilor individuale cu file și widgeturi.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Prezentare generală
 
 Când deschideți o înregistrare în Twenty, pagina de detalii este alcătuită din **file** și **widgeturi**. Ambele sunt complet personalizabile pentru fiecare tip de obiect.
@@ -36,6 +38,16 @@ Widgeturile sunt elementele de bază din fiecare filă. Tipuri de widgeturi disp
 | **iFrame**                | Conținut extern încorporat                         |
 | **Text îmbogățit**        | Conținut static sau descrieri                      |
 
+### Editarea înregistrărilor asociate
+
+Widgeturile de tabel și kanban pentru înregistrări asociate sunt editabile în mod implicit. Pentru a face unul doar pentru citire:
+
+1. Deschide editorul de dispunere a paginii de înregistrare
+2. Selectează widgetul pentru înregistrări asociate
+3. Dezactivează **Permite editarea** din **Date și afișare**
+
+Pentru tabele, aceasta împiedică editarea celulelor. Pentru panourile kanban, aceasta împiedică editarea cardurilor, mutarea lor între coloane și crearea înregistrărilor. Permisiunile rolului se aplică în continuare atunci când editarea este permisă.
+
 ## Personalizarea unei pagini de înregistrare
 
 1. Deschideți orice înregistrare
@@ -59,3 +71,5 @@ sau
 ## Vizibilitatea câmpurilor
 
 Într-un widget Câmpuri, puteți controla care câmpuri sunt vizibile și în ce ordine. Acest lucru vă permite să creați dispuneri concentrate — de exemplu, să afișați doar cele mai importante câmpuri în fila Prezentare generală și să plasați câmpurile detaliate într-o filă separată.
+
+<PageBanner illustration="card-page-page-layouts" />

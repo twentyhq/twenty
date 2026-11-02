@@ -3,10 +3,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   setup,
   teardown,
-} from '../../../app-template/src/__tests__/global-setup';
-import { runTwenty } from '../../../app-template/src/__tests__/run-twenty';
+} from '../../../app-template/example/files/src/__tests__/global-setup';
+import { runTwenty } from '../../../app-template/example/files/src/__tests__/run-twenty';
 
-vi.mock('../../../app-template/src/__tests__/run-twenty', () => ({
+vi.mock('../../../app-template/example/files/src/__tests__/run-twenty', () => ({
   runTwenty: vi.fn(),
 }));
 

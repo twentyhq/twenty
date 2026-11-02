@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 // twenty-ui's Radio is a base-ui control whose click handler constructs a
 // PointerEvent, which the front component sandbox does not provide.

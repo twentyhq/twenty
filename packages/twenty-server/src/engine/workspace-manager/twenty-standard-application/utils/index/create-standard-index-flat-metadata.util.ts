@@ -118,7 +118,6 @@ export const createStandardIndexFlatMetadata = <
       TWENTY_STANDARD_APPLICATION.universalIdentifier,
     indexType,
     indexWhereClause,
-    isCustom: false,
     isUnique,
     isSystemSideEffect: true,
     name: computedIndexName,

@@ -1,0 +1,79 @@
+---
+title: اختصار
+description: اعرض مجموعات المفاتيح المتزامنة والاختصارات المتسلسلة.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ShortcutReference from '/snippets/ui/generated/typography/shortcut.mdx';
+
+## نظرة عامة
+
+استورد `Shortcut` و`formatShortcut` من `twenty-ui/primitives/typography`. يشترك كلاهما في النموذج والرموز والفواصل نفسها. سجّل الاختصارات في تطبيقك. يقوم `Shortcut` بتنسيق التلميح فقط؛ ولا يسجل إجراءات لوحة المفاتيح. تستهدف السمات الأصلية ومعالجات الأحداث والأنماط وأسماء الفئات والمراجع عنصر span الخارجي الخاص به. `ShortcutProps` و`ShortcutFormatOptions` نوعان عامان.
+
+<StoryEmbed storyId="ui-typography-shortcut--display" title="عروض الاختصارات" height={90} />
+
+## استخدام
+
+```tsx
+import { Shortcut } from 'twenty-ui/primitives/typography';
+
+export const SearchShortcut = () => <Shortcut shortcut={['Mod', 'K']} />;
+```
+
+## التركيبات والتسلسلات
+
+```tsx
+import { Shortcut, formatShortcut } from 'twenty-ui/primitives/typography';
+
+export const ShortcutExamples = () => (
+  <>
+    <Shortcut shortcut={['Enter']} />
+    <Shortcut shortcut={['Mod', 'K']} />
+    <Shortcut shortcut={[['G'], ['P']]} sequenceJoinLabel="then" />
+    <Shortcut
+      shortcut={[
+        ['Mod', 'K'],
+        ['Mod', 'C'],
+      ]}
+      sequenceJoinLabel="then"
+    />
+  </>
+);
+
+const hint = formatShortcut({
+  shortcut: ['Mod', 'Enter'],
+});
+```
+
+المصفوفة المسطحة هي مجموعة متزامنة: `['Mod', 'K']` تعني الضغط على Mod وK معًا. المصفوفة المتداخلة هي تسلسل مرتب: `[['G'], ['P']]` تعني الضغط على G، ثم P. كل مصفوفة متداخلة هي مجموعة واحدة، لذا فإن `[['Mod', 'K'], ['Mod', 'C']]` تعني الضغط على Mod وK، ثم Mod وC. استخدم مصفوفة ذات عنصر واحد لمفتاح واحد. يمكن أن يكون كلا شكلي المصفوفات للقراءة فقط.
+
+يعرض `Mod` و`CommandOrControl` مفتاح Command على macOS وiOS، ومفتاح Control في أماكن أخرى. تحتوي مفاتيح `Command` و`Control` و`Alt` و`Enter` الصريحة أيضًا على تسميات عرض. تُعرض السلاسل الأخرى كما تم توفيرها. يكون اكتشاف الجهاز آمنًا دون عموميات المتصفح؛ ويستبدله `platform` اختياريًا بالقيمة `mac` أو `other`.
+
+استخدم `sequenceJoinLabel` لنص الربط المترجم. يمكن أن يحافظ `combinationSeparator` على اصطلاح المضيف مثل `+`. يكون فاصل النص الافتراضي فارغًا على أجهزة Apple ومسافة في أماكن أخرى. يختار `variant` بين `keys` أو `text` أو `button`. يخفي `visibility="desktop"` التلميح عند عروض إطار العرض على الأجهزة المحمولة، بينما يظل `always` مرئيًا.
+
+تحتوي رموز المفاتيح على أسماء مقروءة ومتاحة. استخدم `accessibleKeyLabels` لترجمة أسماء المفاتيح الفردية في مخرجات قارئ الشاشة. وفّر `aria-label` أو `aria-labelledby` اسمًا مترجمًا للاختصار بأكمله، أو `aria-hidden` لتلميح زخرفي. تحتفظ الأزرار بأسماء إجراءاتها وتخفي تلميحاتها الزخرفية على الأجهزة المحمولة. تُبقي صفوف القوائم والقوائم المنسدلة تلميحاتها مرئية.
+
+## المظهر
+
+استخدم `keys` لأغطية المفاتيح الفردية، و`text` لتلميح مضمن، أو `button` للتلميح المضغوط داخل إجراء. تغيّر هذه المتغيرات العرض فقط.
+
+<StoryEmbed storyId="ui-typography-shortcut--catalog" title="متغيرات مظهر الاختصار" height={160} />
+
+## الترحيل
+
+| الخاصية السابقة                         | البديل                                                   |
+| --------------------------------------- | -------------------------------------------------------- |
+| زر `hotkeys={['⌘', 'K']}`               | `shortcut={['Mod', 'K']}`                                |
+| تسلسل `hotkeys` / `hotKeys` في ListItem | `shortcut={[['G'], ['P']]}`                              |
+| `hotkeysJoinLabel` / `hotKeysJoinLabel` | `shortcutJoinLabel` في مكونات Button وListItem وDropdown |
+| تسلسل مفاتيح تلميح الأدوات يدويًا       | `formatShortcut({ shortcut: ['Mod', 'Enter'] })`         |
+
+تحتاج المصفوفات المسطحة المخزنة التي تمثل ضغطات مفاتيح متعاقبة إلى تداخل قبل تمريرها إلى `shortcut`: `hotKeys.map((key) => [key])`. يمكن تمرير المصفوفات التي تمثل مفاتيح متزامنة مباشرةً. تظل سلاسل المفاتيح رموزًا حرفية، لذا تحتوي `['Mod', '+']` على مفتاح زائد وتحتوي `['Space']` على مفتاح Space؛ ولا يلزم تحليل سلسلة الاختصار.
+
+## الإزاحة
+
+<ShortcutReference />
+
+<PageBanner illustration="card-page-command-menu" />

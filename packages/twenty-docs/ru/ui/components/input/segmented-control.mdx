@@ -1,0 +1,105 @@
+---
+title: Сегментированный элемент управления
+description: Выберите одно значение из компактной группы вариантов с метками или значками.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import SegmentedControlReference from '/snippets/ui/generated/components/input/segmented-control.mdx';
+
+## Обзор
+
+`SegmentedControl` — это предустановка, составленная из [Radio](/ru/ui/primitives/input/radio) и [RadioGroup](/ru/ui/primitives/input/radio-group), с объединёнными вариантами. Используйте его для краткого взаимоисключающего выбора. Для навигации между панелями содержимого используйте [Tabs](/ru/ui/primitives/navigation/tabs).
+
+<StoryEmbed storyId="components-input-segmentedcontrol--display" title="Пример SegmentedControl" height={110} />
+
+## Использование
+
+Задайте доступное имя группы с помощью `aria-label` или `aria-labelledby`. Для каждого варианта требуется уникальная строка `value`. Выбор относится к группе; варианты не имеют независимого состояния выбора.
+
+```tsx
+import { SegmentedControl } from 'twenty-ui/components/input';
+
+export const BillingPeriod = () => (
+  <SegmentedControl
+    aria-label="Billing period"
+    name="billingPeriod"
+    defaultValue="annual"
+    options={[
+      { label: 'Annual', value: 'annual' },
+      { label: 'Monthly', value: 'monthly' },
+    ]}
+  />
+);
+```
+
+`defaultValue` инициализирует выбор. Группа управляет последующими изменениями. Добавьте `onValueChange`, если вам нужно отслеживать их, не управляя значением.
+
+## Управляемое состояние
+
+```tsx
+import { useState } from 'react';
+import { SegmentedControl } from 'twenty-ui/components/input';
+
+export const BillingPeriod = () => {
+  const [period, setPeriod] = useState('annual');
+
+  return (
+    <SegmentedControl
+      aria-label="Billing period"
+      name="billingPeriod"
+      value={period}
+      onValueChange={setPeriod}
+      options={[
+        { label: 'Annual', value: 'annual' },
+        { label: 'Monthly', value: 'monthly' },
+      ]}
+    />
+  );
+};
+```
+
+Храните `value` в состоянии приложения и обновляйте его в `onValueChange`. Не сочетайте `value` и `defaultValue` и не переключайте режимы управления после монтирования.
+
+## Параметры значков
+
+```tsx
+import { SegmentedControl } from 'twenty-ui/components/input';
+import { IconList, IconLayoutKanban } from 'twenty-ui/icon';
+
+export const RecordLayout = () => (
+  <SegmentedControl
+    aria-label="Record layout"
+    defaultValue="list"
+    itemWidth="content"
+    options={[
+      { value: 'list', startIcon: <IconList />, 'aria-label': 'List' },
+      {
+        value: 'kanban',
+        startIcon: <IconLayoutKanban />,
+        'aria-label': 'Kanban',
+      },
+    ]}
+  />
+);
+```
+
+Для параметра только со значком требуется `aria-label`. `startIcon` является декоративным и скрыт от вспомогательных технологий. Параметры с видимым текстом используют `label` и также могут предоставлять `startIcon`. Установите `disabled` для параметра, чтобы запретить его выбор, или для группы, чтобы отключить все параметры.
+
+## Клавиатура, формы и направление
+
+Клавиша Tab переводит фокус в группу; клавиши со стрелками перемещают между включенными параметрами и обновляют выбор. Это соответствует поведению переключателей. Группы выбора в раскрывающемся списке перемещают фокус клавишами со стрелками и выбирают при активации. `itemWidth="equal"` используется по умолчанию; используйте `content`, когда ширину должны определять метки. Установите `name`, чтобы включить выбранное значение в отправку нативной формы. Предустановка сохраняет `required`, `readOnly`, состояние disabled и интеграцию с нативными формами RadioGroup. `onValueChange` получает выбранное значение и сведения о событии Base UI, включая `reason` и `cancel()`.
+
+Для содержимого справа налево используйте [DirectionProvider](/ru/ui/primitives/layout/direction-provider) вместе с соответствующим атрибутом `dir`. Провайдер управляет взаимодействием с учетом направления; `dir` управляет макетом документа.
+
+## Композиция и нативные свойства
+
+Нативные свойства, `className`, `style`, `render` и `ref` применяются к `div` группы. Используйте `render`, чтобы скомпоновать эту группу с другим элементом; сохраните ее доступное имя и семантику группы переключателей. Параметры отображают элементы `span` с `role="radio"` и скрытыми нативными входными элементами переключателей. Предустановка не назначает роли вкладки или панели вкладок. Для пользовательского содержимого переключателя, нативных свойств для каждого параметра или другого целевого элемента рендеринга переключателя используйте напрямую `Radio.Root` и `RadioGroup`.
+
+## Свойства
+
+<SegmentedControlReference />
+
+<PageBanner illustration="page-cover-switch" />

@@ -17,6 +17,7 @@ const buildService = (waitingState: 'NOT_READY' | 'WAITING') => {
     {} as never,
     {} as never,
     { getHandlerOrThrow: () => handler } as never,
+    {} as never,
     messageQueueService as never,
   );
 
@@ -41,7 +42,11 @@ describe('AgentRunSuspensionService deliverOutcome', () => {
     expect(messageQueueService.add).toHaveBeenCalledWith(
       DELIVER_AGENT_RUN_OUTCOME_JOB_NAME,
       expect.objectContaining({ outcome: delivery.outcome, attempt: 501 }),
-      { delay: 60_000 },
+      {
+        delay: 60_000,
+        workspaceId: 'workspace-id',
+        isWorkspaceJob: true,
+      },
     );
   });
 

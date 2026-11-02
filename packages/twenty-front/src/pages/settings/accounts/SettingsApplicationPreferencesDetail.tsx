@@ -1,31 +1,31 @@
-import { AppChip } from '@/applications/components/AppChip';
-import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
+import {
+  SETTINGS_GENERAL_TAB_ID,
+  SETTINGS_VARIABLES_TAB_ID,
+} from 'twenty-shared/application';
 import { getApplicationDisplayName } from '@/applications/utils/getApplicationDisplayName';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { PageCommandEffect } from '@/command-menu-item/page-command/components/PageCommandEffect';
-import { SettingsAppPreferencesConnectionsTab } from '@/settings/app-preferences/components/SettingsAppPreferencesConnectionsTab';
-import { APPLICATION_PREFERENCES_CONNECTIONS_TAB_ID } from '@/settings/app-preferences/constants/ApplicationPreferencesConnectionsTabId';
+import { SettingsAppPreferencesGeneralTab } from '@/settings/app-preferences/components/SettingsAppPreferencesGeneralTab';
 import { SETTINGS_APPLICATION_PREFERENCES_TAB_LIST_COMPONENT_ID } from '@/settings/app-preferences/constants/SettingsApplicationPreferencesTabListComponentId';
 import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
-import { APPLICATION_VARIABLES_TAB_ID } from '@/settings/applications/constants/ApplicationVariablesTabId';
 import { getApplicationConfigurationTabId } from '@/settings/applications/utils/getApplicationConfigurationTabId';
+import { getSettingsMenuItemLegacyTabIdRedirect } from '@/settings/applications/utils/getSettingsMenuItemLegacyTabIdRedirect';
+import { getSettingsMenuItemTabId } from '@/settings/applications/utils/getSettingsMenuItemTabId';
 import { hasApplicationVariablesTab } from '@/settings/applications/utils/hasApplicationVariablesTab';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import type { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   getSettingsPath,
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
-import { IconSettings, IconVariable, useIcons } from 'twenty-ui/icon';
+import { IconSettings, IconVariable } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import {
   ApplicationVariableScope,
   EngineComponentKey,
@@ -35,6 +35,8 @@ import { useApplicationVariablesDraft } from '@/settings/applications/hooks/useA
 import { SettingsApplicationCustomSettingsSection } from '@/settings/applications/components/SettingsApplicationCustomSettingsSection';
 import { SettingsApplicationDetailVariablesTab } from '@/settings/applications/components/SettingsApplicationDetailVariablesTab';
 import { SettingsApplicationMissingConfigurationBanner } from '@/settings/applications/components/SettingsApplicationMissingConfigurationBanner';
+import { SettingsApplicationDetailPageLayout } from '@/settings/applications/components/SettingsApplicationDetailPageLayout';
+import { SettingsApplicationStoppedBanner } from '@/settings/applications/components/SettingsApplicationStoppedBanner';
 
 type SettingsApplicationPreferencesDetailProps = {
   applicationWithPreferences: ApplicationWithPreferences;
@@ -55,6 +57,7 @@ export const SettingsApplicationPreferencesDetail = ({
   const { getIcon } = useIcons();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const navigate = useNavigate();
+  const { search, hash } = useLocation();
 
   const [updateMyUserApplicationVariable] = useMutation(
     UpdateMyUserApplicationVariableDocument,
@@ -88,29 +91,25 @@ export const SettingsApplicationPreferencesDetail = ({
   });
 
   const tabs: SingleTabProps[] = [
+    {
+      id: SETTINGS_GENERAL_TAB_ID,
+      title: t`General`,
+      Icon: IconSettings,
+    },
     ...(hasVariablesTab
       ? [
           {
-            id: APPLICATION_VARIABLES_TAB_ID,
+            id: SETTINGS_VARIABLES_TAB_ID,
             title: t`Variables`,
             Icon: IconVariable,
           },
         ]
       : []),
     ...settingsMenuItems.map((settingsMenuItem) => ({
-      id: settingsMenuItem.universalIdentifier,
+      id: getSettingsMenuItemTabId(settingsMenuItem),
       title: settingsMenuItem.title,
       Icon: getIcon(settingsMenuItem.icon, 'IconAdjustments'),
     })),
-    ...(isNonEmptyArray(connectionProviders)
-      ? [
-          {
-            id: APPLICATION_PREFERENCES_CONNECTIONS_TAB_ID,
-            title: t`General`,
-            Icon: IconSettings,
-          },
-        ]
-      : []),
   ];
 
   const tabListComponentInstanceId = `${SETTINGS_APPLICATION_PREFERENCES_TAB_LIST_COMPONENT_ID}-${application.id}`;
@@ -131,83 +130,90 @@ export const SettingsApplicationPreferencesDetail = ({
   });
 
   const activeSettingsMenuItem = settingsMenuItems.find(
-    (settingsMenuItem) => settingsMenuItem.universalIdentifier === activeTabId,
+    (settingsMenuItem) =>
+      getSettingsMenuItemTabId(settingsMenuItem) === activeTabId,
   );
 
+  const legacyTabIdRedirect = getSettingsMenuItemLegacyTabIdRedirect({
+    settingsMenuItems,
+    hashTabId: hash.replace('#', ''),
+  });
+
+  if (isDefined(legacyTabIdRedirect)) {
+    return (
+      <Navigate to={{ search, hash: `#${legacyTabIdRedirect}` }} replace />
+    );
+  }
+
   return (
-    <CurrentApplicationContext.Provider value={application.id}>
-      <SettingsPageLayout
-        title={appName}
-        icon={<AppChip applicationId={application.id} size="md" chipOnly />}
-        links={[
-          {
-            children: t`User`,
-            href: getSettingsPath(SettingsPath.ProfilePage),
-          },
-          {
-            children: t`Apps preferences`,
-            href: getSettingsPath(SettingsPath.Accounts),
-          },
-          { children: appName },
-        ]}
-        pageCommands={
-          activeTabId === APPLICATION_VARIABLES_TAB_ID ? (
-            <PageCommandEffect
-              engineComponentKey={EngineComponentKey.SAVE_PAGE}
-              onRun={saveApplicationVariables}
-              isDisabled={
-                !hasUnsavedApplicationVariables || isSavingApplicationVariables
-              }
-            />
-          ) : undefined
-        }
-        secondaryBar={
-          tabs.length > 1 ? (
-            <SettingsTabBar
-              aria-label={t`${appName} preferences`}
-              tabs={tabs}
-              componentInstanceId={tabListComponentInstanceId}
-            />
-          ) : undefined
-        }
-      >
-        <SettingsPageContainer overflow="visible">
-          {isNonEmptyArray(missingRequiredVariables) &&
-            isDefined(configurationTabId) && (
-              <SettingsApplicationMissingConfigurationBanner
-                missingApplicationVariables={missingRequiredVariables}
-                onConfigure={() =>
-                  navigate(
-                    getSettingsPath(
-                      SettingsPath.ApplicationPreferences,
-                      { applicationId: application.id },
-                      undefined,
-                      configurationTabId,
-                    ),
-                  )
-                }
-              />
-            )}
-          {activeTabId === APPLICATION_VARIABLES_TAB_ID && (
-            <SettingsApplicationDetailVariablesTab
-              applicationVariables={draftApplicationVariables}
-              onVariableChange={setApplicationVariableValue}
-              onVariableClear={clearApplicationVariableValue}
-            />
-          )}
-          {activeTabId === APPLICATION_PREFERENCES_CONNECTIONS_TAB_ID && (
-            <SettingsAppPreferencesConnectionsTab
-              applicationId={application.id}
-              connectionProviders={connectionProviders}
-            />
-          )}
-          {isDefined(activeSettingsMenuItem) && (
-            <SettingsApplicationCustomSettingsSection
-              frontComponentId={activeSettingsMenuItem.frontComponentId}
-            />
-          )}
-        </SettingsPageContainer>
-      </SettingsPageLayout>
-    </CurrentApplicationContext.Provider>
+    <SettingsApplicationDetailPageLayout
+      applicationId={application.id}
+      displayName={appName}
+      links={[
+        {
+          children: t`User`,
+          href: getSettingsPath(SettingsPath.ProfilePage),
+        },
+        {
+          children: t`Apps preferences`,
+          href: getSettingsPath(SettingsPath.AppPreferences),
+        },
+        { children: appName },
+      ]}
+      tabs={tabs}
+      tabListComponentInstanceId={tabListComponentInstanceId}
+      tabListAriaLabel={t`${appName} preferences`}
+      pageCommands={
+        activeTabId === SETTINGS_VARIABLES_TAB_ID ? (
+          <PageCommandEffect
+            engineComponentKey={EngineComponentKey.SAVE_PAGE}
+            onRun={saveApplicationVariables}
+            isDisabled={
+              !hasUnsavedApplicationVariables || isSavingApplicationVariables
+            }
+          />
+        ) : undefined
+      }
+    >
+      {isNonEmptyArray(missingRequiredVariables) &&
+        isDefined(configurationTabId) && (
+          <SettingsApplicationMissingConfigurationBanner
+            missingApplicationVariables={missingRequiredVariables}
+            onConfigure={() =>
+              navigate(
+                getSettingsPath(
+                  SettingsPath.AppPreferencesApp,
+                  { applicationId: application.id },
+                  undefined,
+                  configurationTabId,
+                ),
+              )
+            }
+          />
+        )}
+      <SettingsApplicationStoppedBanner
+        applicationUniversalIdentifier={application.universalIdentifier}
+      />
+      {activeTabId === SETTINGS_GENERAL_TAB_ID && (
+        <SettingsAppPreferencesGeneralTab
+          application={application}
+          displayName={appName}
+          connectionProviders={connectionProviders}
+          settingsMenuItems={settingsMenuItems}
+        />
+      )}
+      {activeTabId === SETTINGS_VARIABLES_TAB_ID && (
+        <SettingsApplicationDetailVariablesTab
+          applicationVariables={draftApplicationVariables}
+          onVariableChange={setApplicationVariableValue}
+          onVariableClear={clearApplicationVariableValue}
+        />
+      )}
+      {isDefined(activeSettingsMenuItem) && (
+        <SettingsApplicationCustomSettingsSection
+          frontComponentId={activeSettingsMenuItem.frontComponentId}
+        />
+      )}
+    </SettingsApplicationDetailPageLayout>
   );
 };

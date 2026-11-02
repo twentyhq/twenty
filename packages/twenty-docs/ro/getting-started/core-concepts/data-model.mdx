@@ -3,9 +3,10 @@ title: Model de date
 description: Înțelege cum Twenty îți structurează datele cu obiecte, câmpuri și relații.
 ---
 
-import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-Totul în Twenty este construit în jurul **obiectelor** și **câmpurilor** — elementele de bază ale modelului tău de date.
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Obiecte
 
@@ -39,8 +40,13 @@ Obiectele se conectează între ele prin relații. O companie are multe persoane
 
 Spre deosebire de CRM-urile tradiționale, unde ești limitat la câmpuri predefinite pe obiecte predefinite, Twenty îți permite să modelezi datele exact așa cum funcționează afacerea ta. Obiectele personalizate primesc același tratament de prim rang ca cele încorporate — inclusiv endpoint-uri API, vizualizări, permisiuni și declanșatoare de fluxuri de lucru.
 
-<Card title="Analiză detaliată a modelului de date" icon="arrow-right" href="/ro/user-guide/data-model/overview">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ro/user-guide/data-model/overview" img="/images/documentation/banner-icons-v2/data-model.svg">
+  <CardTitle>Aprofundează Modelul de date</CardTitle>
   Referință completă despre obiecte, câmpuri, relații și cum să le configurezi.
 </Card>
+</CardGroup>
 
 <VimeoEmbed videoId="1185511827" title="Model de date" />
+
+<PageBanner illustration="getting-started-data-model" />

@@ -3,6 +3,10 @@ title: Contribuiți
 description: Contribuiți la dezvoltarea cu sursă deschisă a Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
 ## Prezentare generală
 
 Twenty este cu sursă deschisă și salută contribuțiile din partea comunității. Indiferent dacă remediați erori, adăugați funcționalități sau îmbunătățiți documentația, contribuțiile dvs. ajută la îmbunătățirea Twenty pentru toată lumea.
@@ -17,11 +21,15 @@ Twenty este cu sursă deschisă și salută contribuțiile din partea comunită�
 
 ## Începeți
 
-<CardGroup cols={2}>
-  <Card title="Raportări de erori și solicitări" icon="bug" href="/ro/developers/contribute/capabilities/bug-and-requests">
-    Raportați probleme sau solicitați funcționalități
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ro/developers/contribute/capabilities/bug-and-requests" img="/images/user-guide/halftone/card-page-bug-requests.svg">
+    <CardTitle>Rapoarte de erori & solicitări</CardTitle>
+    Raportează probleme sau solicită caracteristici
   </Card>
-  <Card title="Dezvoltare frontend" icon="browser" href="/ro/developers/contribute/capabilities/frontend-development/folder-architecture-front">
-    Contribuiți la interfața de utilizator
+  <Card href="/ro/developers/contribute/capabilities/frontend-development/folder-architecture-front" img="/images/user-guide/halftone/card-page-frontend-architecture.svg">
+    <CardTitle>Dezvoltare Frontend</CardTitle>
+    Contribuie la UI
   </Card>
 </CardGroup>
+
+<PageBanner illustration="dev-contribute" />

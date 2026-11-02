@@ -3,6 +3,11 @@ title: "Tutorial: Document Generator"
 description: Crea una aplicación real de Twenty que genere documentos personalizados a partir de los datos de tu CRM.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Lo que construirás
+
 En este tutorial crearás **Document Generator**, una aplicación que convierte plantillas reutilizables en documentos personalizados usando los datos que ya tienes en tu CRM.
 
 Escribe una plantilla una vez con `{{placeholders}}`, luego genera un documento completado para cualquier Persona o Empresa con un solo clic, desde el menú de comandos, desde un agente de IA o desde un flujo de trabajo.
@@ -26,21 +31,23 @@ Cada capítulo añade una capacidad. Al final habrás tocado la mayoría del SDK
 
 ## Prerrequisitos
 
-Deberías haber terminado el [Inicio rápido](/es/developers/extend/apps/getting-started/quick-start):
-un servidor Veinte local corriendo en el puerto `2020` y el CLI autenticado en él.
+Deberías haber completado la [Guía de inicio rápido](/es/developers/extend/apps/getting-started/quick-start):
+un espacio de trabajo de Twenty (en la nube o local) y la CLI autenticada en él.
 
-Si no, andamio e inicia uno ahora:
+Si el servidor o la autenticación no están listos, completa primero la [Guía de inicio rápido](/es/developers/extend/apps/getting-started/quick-start). Luego crea e instala la aplicación del tutorial:
 
 ```bash filename="Terminal"
-npx create-twenty-app@latest document-generator
+twenty app init document-generator
 cd document-generator
-yarn twenty dev
+yarn install
+twenty app apply --create
+twenty app dev
 ```
 
 <Note>
-¿Prefieres leer el código terminado? La aplicación completa vive en
-[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
-Cada fragmento de abajo es copiado de él.
+  ¿Prefieres leer el código terminado? La aplicación completa vive en
+  [`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+  Cada fragmento de abajo es copiado de él.
 </Note>
 
 ## Cómo encaja la aplicación
@@ -57,10 +64,15 @@ un generador.
 
 ## Mantener este ciclo en ejecución
 
-Deja `yarn twenty dev` corriendo en un terminal para el tutorial completo. Cada vez que
+Deja `twenty app dev` ejecutándose en una terminal durante todo el tutorial. Cada vez que
 agregas o editas un archivo en `src/`, se vuelve a sincronizar con tu servidor en unos
 segundos, para que puedas ver cómo cada capacidad aparece en la interfaz de usuario a medida que la construyes.
 
-<Card title="Comenzar construcción →" icon="database" href="/es/developers/extend/apps/tutorials/document-generator/data-model">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/es/developers/extend/apps/tutorials/document-generator/data-model" img="/images/documentation/banner-icons-v2/data-model.svg">
+  <CardTitle>Comience a construir →</CardTitle>
   Capítulo 1: documentos de modelo y plantillas.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="section-document-generator" />

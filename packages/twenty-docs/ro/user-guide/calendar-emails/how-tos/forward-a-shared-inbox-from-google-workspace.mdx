@@ -1,0 +1,132 @@
+---
+title: Redirecționați o căsuță de intrare partajată din Google Workspace
+description: Trimiteți e-mailuri dintr-un grup Google într-un canal de e-mail Twenty.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
+Un canal de e-mail oferă spațiului dvs. de lucru o adresă partajată, precum `sales@yourcompany.com`. E-mailurile trimise la acea adresă trebuie să ajungă cumva în Twenty.
+
+În Google Workspace, acea adresă este aproape întotdeauna un **grup Google**. Îl conectați adăugând adresa privată de redirecționare a Twenty ca membru al grupului. Fiecare mesaj primit de grup este apoi copiat în Twenty, iar echipa dvs. continuă să îl primească la fel ca înainte.
+
+<Note>
+  Acest lucru se aplică numai e-mailurilor noi. Twenty nu va vedea mesajele pe care grupul le-a primit
+  înainte să configurați acest lucru.
+</Note>
+
+## Înainte de a începe
+
+Aveți nevoie de două lucruri:
+
+* **Acces**: trebuie să dețineți grupul sau să fiți Super Admin ori Groups Admin în Google Workspace.
+* **Un grup care acceptă adrese externe**: adresa de redirecționare a Twenty este externă, așadar grupul trebuie să accepte membri externi și e-mailuri din afara companiei dvs. Partea 2 le acoperă pe ambele.
+
+## Partea 1: Creați canalul în Twenty
+
+1. Accesați **Setări → Comunicare**.
+2. Faceți clic pe **Adaugă canal de e-mail**.
+
+<img src="/images/user-guide/emails/inbound-channels/03-twenty-add-email-channel.png" style={{ width: '100%' }} />
+
+3. În **Adresa de e-mail sursă**, introduceți adresa grupului, de exemplu `sales@yourcompany.com`.
+4. În **Nume afișat**, introduceți numele pe care îl văd destinatarii.
+5. Faceți clic pe **Salvează**.
+
+<img src="/images/user-guide/emails/inbound-channels/04-twenty-new-channel-form.png" style={{ width: '100%' }} />
+
+6. Twenty afișează acum o **Adresă de redirecționare**. Aceasta arată astfel: `ch_2cd282d193b5@inbound.twenty.com`. Faceți clic pe **Copiază**.
+
+<img src="/images/user-guide/emails/inbound-channels/05-twenty-forwarding-address.png" style={{ width: '100%' }} />
+
+<Note>
+  Fiecare canal primește propria adresă de redirecționare. Nu direcționați niciodată două grupuri către
+  aceeași adresă, altfel e-mailurile lor vor ajunge în același loc.
+</Note>
+
+## Partea 2: Verificați setările grupului
+
+Două setări determină dacă acest lucru funcționează. Setați-le corect înainte de a continua.
+
+1. Deschideți [Google Groups](https://groups.google.com) și faceți clic pe grupul dvs.
+2. Faceți clic pe **Setările grupului** în bara laterală din stânga.
+3. Găsiți **Membri externi** și activați **Permite membri externi**.
+
+<img src="/images/user-guide/emails/inbound-channels/google-03-allow-external-members.png" style={{ width: '100%' }} />
+
+Google dezactivează implicit această opțiune pentru întreaga organizație, așadar așteptați-vă să fie blocată prima dată. Dacă vedeți notificarea afișată mai sus, numai un administrator Workspace o poate debloca, permițând proprietarilor de grupuri să adauge membri externi în întreaga organizație. Contactați-l, apoi reveniți aici.
+
+4. Derulați în jos la **Cine poate posta** și trageți glisorul complet spre dreapta, pe glob. Aceasta este opțiunea **Oricine pe web**.
+
+<img src="/images/user-guide/emails/inbound-channels/google-04-who-can-post.png" style={{ width: '100%' }} />
+
+Fără această setare, e-mailurile din afara companiei dvs. nu ajung niciodată la grup, deci nu ajung nici la Twenty. Această opțiune este, de asemenea, blocată implicit pentru întreaga organizație și, din nou, numai un administrator o poate modifica.
+
+5. Faceți clic pe **Salvează modificările**.
+
+<Warning>
+  Dacă grupul are eticheta **Securitate** de la Google, opriți-vă aici. Google nu
+  permite conturi non-Google într-un grup de securitate, iar eticheta este permanentă odată
+  aplicată. Creați un grup nou fără aceasta.
+</Warning>
+
+## Partea 3: Adăugați Twenty în grup
+
+1. Faceți clic pe **Membri** în bara laterală din stânga.
+2. Faceți clic pe **Adaugă membri**.
+
+<img src="/images/user-guide/emails/inbound-channels/google-02-members-add-button.png" style={{ width: '100%' }} />
+
+3. Lipiți adresa de redirecționare copiată din Twenty în **Membri ai grupului**.
+4. Lăsați **Abonament** pe **Fiecare e-mail**. Aceasta face ca Google să trimită mai departe fiecare mesaj.
+5. Lăsați bifată opțiunea **Adaugă membri direct**, astfel încât Google să adauge adresa în loc să trimită o invitație care nu poate fi acceptată.
+6. Faceți clic pe **Adaugă membri**.
+
+<img src="/images/user-guide/emails/inbound-channels/google-05-add-forwarding-address.png" style={{ width: '100%' }} />
+
+Aceasta finalizează configurarea. Twenty este acum membru al grupului, ca oricare altul.
+
+## Dacă nu aveți încă un grup
+
+1. În [Google Groups](https://groups.google.com), faceți clic pe **Creează grup**.
+2. Completați **Numele grupului** și prefixul **E-mailul grupului**.
+
+<img src="/images/user-guide/emails/inbound-channels/google-01-create-group.png" style={{ width: '100%' }} />
+
+3. Faceți clic de două ori pe **Următorul**, apoi pe **Creează grup**.
+4. Acum urmați Partea 2 și Partea 3.
+
+## Partea 4: Testați
+
+Trimiteți un e-mail de la o adresă externă (un cont Gmail personal funcționează) la `sales@yourcompany.com`. Ar trebui să apară în Twenty într-un minut sau două.
+
+## Depanare
+
+<Accordion title="A apărut o eroare: 1 utilizator este din afara organizației dvs">
+  Grupul nu acceptă membri externi. Reveniți la Partea 2, pasul 3. Dacă setarea
+  este blocată, numai un administrator Workspace o poate debloca.
+
+  <img src="/images/user-guide/emails/inbound-channels/google-06-external-member-error.png" style={{ width: '100%' }} />
+</Accordion>
+
+<Accordion title="Grupul primește e-mailuri, dar Twenty nu">
+  Deschideți membrul în grup și verificați dacă abonamentul acestuia este **Fiecare e-mail**, nu
+  **Fără e-mail**, **Rezumat** sau **Prescurtat**.
+</Accordion>
+
+<Accordion title="E-mailurile colegilor sosesc, dar cele ale clienților nu">
+  **Cine poate posta** nu este setat la **Oricine pe web**. Consultați Partea 2, pasul 4.
+</Accordion>
+
+<Accordion title="Canalul primește e-mailuri, dar nu poate trimite">
+  Primirea și trimiterea sunt separate. Trimiterea necesită ca domeniul dvs. să fie
+  verificat sub secțiunea **Domeniu** a canalului, ceea ce înseamnă adăugarea
+  a **autentificării domeniului** înregistrează douăzeci de liste acolo. Vezi Email
+  Channels pentru care
+  înregistrează fiecare utilizare necesară.
+</Accordion>
+
+Folosiți un alt furnizor? Consultați [Microsoft 365](/ro/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-microsoft-365) sau [orice alt furnizor de e-mail](/ro/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-any-mail-provider).
+
+<PageBanner illustration="page-cover-email" />

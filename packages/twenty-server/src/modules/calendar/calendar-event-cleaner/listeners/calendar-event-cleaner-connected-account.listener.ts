@@ -39,6 +39,10 @@ export class CalendarEventCleanerConnectedAccountListener {
             workspaceId,
             connectedAccountId: event.connectedAccountId,
           },
+          {
+            workspaceId,
+            isWorkspaceJob: true,
+          },
         ),
       ),
     );

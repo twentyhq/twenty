@@ -83,6 +83,16 @@ export class UserSessionEntity {
   @Column({ type: 'text', nullable: true })
   ipAddress: string | null;
 
+  // ISO 3166-1 alpha-2
+  @Column({ type: 'text', nullable: true })
+  country: string | null;
+
+  @Column({ type: 'text', nullable: true })
+  region: string | null;
+
+  @Column({ type: 'text', nullable: true })
+  city: string | null;
+
   @Index('IDX_USER_SESSION_EXPIRES_AT')
   @Column({ type: 'timestamptz' })
   expiresAt: Date;

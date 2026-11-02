@@ -11,6 +11,7 @@ export type FormFieldRowProps = Omit<
   trailingProps?: Omit<ComponentProps<'div'>, 'children'>;
   children: ReactNode;
   labelWidth?: CSSProperties['width'];
+  contentPaddingInline?: CSSProperties['paddingInline'];
   isHoverable?: boolean;
   hasDivider?: boolean;
 };

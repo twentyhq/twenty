@@ -21,6 +21,8 @@ const MEMBER_SHARE: RecordSharingFieldsFragment['shares'][number] = {
   principalType: RecordSharePrincipalType.WORKSPACE_MEMBER,
   accessLevel: RecordShareAccessLevel.READ,
   rowCause: RecordShareRowCause.MANUAL,
+  __typename: 'RecordSharingGrantDTO',
+  principalRoleId: null,
 };
 
 const SELECTED_RECIPIENT: RecordSharingInvitationRecipient = {
@@ -158,7 +160,15 @@ describe('getRecordSharingSearchResults', () => {
             principalType: RecordSharePrincipalType.ROLE,
           },
         ],
-        roles: [{ id: MEMBER.id, label: 'Sales' }],
+        roles: [
+          {
+            id: MEMBER.id,
+            label: 'Sales',
+            __typename: 'RecordSharingRoleDTO',
+            canRead: null,
+            canUpdate: null,
+          },
+        ],
       },
     });
 

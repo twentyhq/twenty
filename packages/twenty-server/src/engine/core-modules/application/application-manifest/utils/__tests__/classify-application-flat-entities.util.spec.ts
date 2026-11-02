@@ -17,6 +17,7 @@ import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-obje
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
+import { type FlatWorkflowVersion } from 'src/engine/metadata-modules/flat-workflow-version/types/flat-workflow-version.type';
 
 const APP_ID = 'application-id';
 const APP_UID = '11111111-1111-4111-8111-111111111111';
@@ -234,7 +235,7 @@ describe('classifyApplicationFlatEntities', () => {
   it('should exclude a member role assignment as runtime state', () => {
     expect(entryOf(ROLE_TARGET_UID)).toMatchObject({
       status: ApplicationExportCoverageStatus.EXCLUDED,
-      reason: 'member or API key role assignment',
+      reason: 'member, API key or webhook role assignment',
     });
   });
 
@@ -250,7 +251,7 @@ describe('classifyApplicationFlatEntities', () => {
     expect(entryOf(FOREIGN_ROLE_TARGET_UID)).toMatchObject({
       metadataName: 'roleTarget',
       status: ApplicationExportCoverageStatus.EXCLUDED,
-      reason: 'member or API key role assignment',
+      reason: 'member, API key or webhook role assignment',
     });
   });
 
@@ -351,6 +352,40 @@ describe('classifyApplicationFlatEntities workflow commands', () => {
     ).toMatchObject({
       status: ApplicationExportCoverageStatus.EXCLUDED,
       reason: 'command without front component',
+    });
+  });
+});
+
+describe('classifyApplicationFlatEntities workflow versions', () => {
+  it('should exclude a version published from the workflow builder, which its workflow exports', () => {
+    const workflowVersionUniversalIdentifier =
+      'cccccccc-cccc-4ccc-8ccc-cccccccccccc';
+    const maps = createEmptyAllFlatEntityMaps();
+
+    maps.flatWorkflowVersionMaps = addFlatEntityToFlatEntityMapsOrThrow({
+      flatEntity: {
+        id: 'workflow-version-id',
+        universalIdentifier: workflowVersionUniversalIdentifier,
+        applicationId: APP_ID,
+        applicationUniversalIdentifier: APP_UID,
+        isSystemSideEffect: false,
+      } as FlatWorkflowVersion,
+      flatEntityMaps: maps.flatWorkflowVersionMaps,
+    });
+
+    expect(
+      classifyApplicationFlatEntities({
+        flatApplication,
+        allFlatEntityMaps: maps,
+        applicationAllFlatEntityMaps: maps,
+        reconstructedCoverage: [],
+      }).find(
+        (entry) =>
+          entry.universalIdentifier === workflowVersionUniversalIdentifier,
+      ),
+    ).toMatchObject({
+      status: ApplicationExportCoverageStatus.EXCLUDED,
+      reason: 'workflow version, exported through its workflow',
     });
   });
 });

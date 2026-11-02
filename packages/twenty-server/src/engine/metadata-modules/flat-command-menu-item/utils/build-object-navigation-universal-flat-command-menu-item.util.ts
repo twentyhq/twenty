@@ -2,10 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { getSystemNavigationCommandMenuItemUniversalIdentifier } from 'twenty-shared/application';
 import { getMetadataLabelPlaceholder } from 'twenty-shared/i18n';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import {
-  CommandMenuItemAvailabilityType,
-  FeatureFlagKey,
-} from 'twenty-shared/types';
+import { CommandMenuItemAvailabilityType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
@@ -25,15 +22,6 @@ export const NAVIGATION_INTERPOLATED_SHORT_LABEL =
 export const NAVIGATION_INTERPOLATED_ICON =
   getMetadataLabelPlaceholder('objectIcon');
 
-const NAVIGATION_FEATURE_FLAG_GATE_BY_OBJECT_UNIVERSAL_IDENTIFIER: Partial<
-  Record<string, FeatureFlagKey>
-> = {
-  [STANDARD_OBJECTS.messageCampaign.universalIdentifier]:
-    FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-  [STANDARD_OBJECTS.messageList.universalIdentifier]:
-    FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-};
-
 const HIDDEN_NAVIGATION_OBJECT_UNIVERSAL_IDENTIFIERS = new Set<string>([
   STANDARD_OBJECTS.workflowVersion.universalIdentifier,
 ]);
@@ -49,15 +37,7 @@ export const buildNavigationConditionalAvailabilityExpression = ({
     return 'false';
   }
 
-  const targetObjectReadPermissionExpression = `targetObjectReadPermissions.${nameSingular}`;
-  const featureFlagGate =
-    NAVIGATION_FEATURE_FLAG_GATE_BY_OBJECT_UNIVERSAL_IDENTIFIER[
-      universalIdentifier
-    ];
-
-  return isDefined(featureFlagGate)
-    ? `featureFlags.${featureFlagGate} and ${targetObjectReadPermissionExpression}`
-    : targetObjectReadPermissionExpression;
+  return `targetObjectReadPermissions.${nameSingular}`;
 };
 
 export const buildObjectNavigationUniversalFlatCommandMenuItem = ({

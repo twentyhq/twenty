@@ -1,0 +1,194 @@
+---
+title: محرر التعليمات البرمجية
+description: حرّر الكود واعرضه في محرر Monaco بتنسيق سمة Twenty.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CodeEditorReference from '/snippets/ui/generated/components/code-editor/code-editor.mdx';
+import CodeEditorHeaderReference from '/snippets/ui/generated/components/code-editor/code-editor-header.mdx';
+
+## نظرة عامة
+
+يعرض `CodeEditor` محرر [Monaco](https://microsoft.github.io/monaco-editor/) يتبع سمة Twenty في الوضعين الفاتح والداكن. يضيف `CodeEditorHeader` شريطًا فوقه لعنوان أو علامات تبويب أو إجراءات. كلاهما يأتيان من `twenty-ui/components/code-editor`، وهي نقطة إدخال منفصلة، لذا يعمل باقي Twenty UI دون Monaco.
+
+<StoryEmbed storyId="ui-components-codeeditor--display" title="مثال على محرر الكود" height={280} />
+
+## استخدام
+
+```tsx
+import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
+
+export const WorkspaceEditor = () => (
+  <>
+    <CodeEditorHeader title="workspace.json" />
+    <CodeEditor
+      variant="with-header"
+      language="json"
+      defaultValue={JSON.stringify(
+        { name: 'Acme', plan: 'Pro', seats: 12 },
+        null,
+        2,
+      )}
+      height={160}
+    />
+  </>
+);
+```
+
+## إعداد
+
+ثبّت التبعيات الاختيارية النظيرة للمحرر:
+
+```bash
+yarn add @monaco-editor/react monaco-editor
+```
+
+يحمّل المحرر حزمة `monaco-editor` المثبّتة لديك بدلًا من نسخة من CDN. يشغّل Monaco ميزات اللغة، مثل التحقق والإكمال التلقائي، في web workers، ويعتمد إنشاء هذه العمال على أداة التجميع لديك. قبل تركيب محرر، عرّف `MonacoEnvironment.getWorker` كما هو موصوف في [دليل تكامل ESM لـ Monaco](https://github.com/microsoft/monaco-editor/blob/main/docs/integrate-esm.md). بدونه، سيظل المحرر معروضًا، لكن ميزات اللغة لن تكون متاحة.
+
+لا يعمل محرر الكود داخل [مكوّنات الواجهة الأمامية](/ar/developers/extend/apps/layout/front-components) بعد.
+
+## محتوى متحكم فيه
+
+```tsx
+import { useState } from 'react';
+import { isDefined } from 'twenty-ui/utilities';
+import { CodeEditor } from 'twenty-ui/components/code-editor';
+
+export const PayloadEditor = () => {
+  const [payload, setPayload] = useState('{\n  "name": "Acme"\n}');
+
+  return (
+    <CodeEditor
+      language="json"
+      value={payload}
+      onChange={(value) => {
+        if (isDefined(value)) {
+          setPayload(value);
+        }
+      }}
+      height={200}
+    />
+  );
+};
+```
+
+يتضمن `CodeEditorProps` عقد محرر Monaco React المثبّت. يتلقى `onChange(value, event)` المحتوى (`string | undefined`) و`IModelContentChangedEvent` الأصلي، بما في ذلك النطاقات التي تم تغييرها والإصدار وتفاصيل التراجع/الإعادة. تحقق من قيمة غير معرّفة عند الحد الذي يتطلب تطبيقك فيه سلسلة نصية.
+
+يعمل `beforeMount(monaco)` بعد تعريف سمة Twenty وقبل إنشاء المحرر. يتلقى `onMount(editor, monaco)` مثيل المحرر بعد تطبيق السمة المحددة. تتلقى `onValidate(markers)` تشخيصات Monaco دون تغيير. يمرر `overrideServices` إلى إنشاء المحرر.
+
+يظهر `Loader` من Twenty إلى أن يتم تحميل Monaco. مرر `loading` لتخصيص ذلك المحتوى، أو عيّن `isLoading` لإبقائه مرئيًا أثناء تحميل بياناتك الخاصة. يقوم `isLoading` بإلغاء تحميل محرر موجود ويتبع قواعد التخلص من النماذج في Monaco React.
+
+## النماذج والقيم
+
+استخدم `defaultValue` و`defaultLanguage` و`defaultPath` لتهيئة نموذج غير متحكم به، أو `value` و`language` و`path` للتحديثات. تحتفظ هذه الخصائص بسلوك Monaco React، بما في ذلك قواعده لاختيار القيم الأولية وإعادة استخدام معرّف URI لنموذج موجود. لا يؤدي تغيير `defaultValue` إلى الكتابة فوق نموذج موجود بالفعل.
+
+يؤدي تغيير `path` إلى تحديد نموذج أو إنشائه. تكون القيمة الافتراضية لـ `saveViewState` هي true، ويستعيد حالة مؤشر النموذج وتمريره عند الرجوع إليه. يكشف `line` عن سطر عند تحميل المحرر أو تغيّر الخاصية. تكون القيمة الافتراضية لـ `keepCurrentModel` هي false؛ وعندما تكون true، يكون المستدعي مسؤولًا عن التخلص من النموذج المحتفظ به.
+
+```tsx
+import { CodeEditor } from 'twenty-ui/components/code-editor';
+
+export const FileEditor = () => (
+  <CodeEditor
+    defaultPath="file:///workspace/settings.json"
+    defaultLanguage="json"
+    defaultValue={'{\n  "name": "Acme"\n}'}
+    saveViewState
+  />
+);
+```
+
+## التكامل الأصلي
+
+يشير `ref` إلى div الخارجي لمجموعة Twenty، الذي يستخدم `display: contents` افتراضيًا. يحافظ هذا على قسم Monaco ضمن تخطيط التحجيم وflex الخاص بالعنصر الأب. لا يحتوي div الخارجي على مربع تخطيط قابل للقياس.
+
+استخدم `containerProps` للسمات الأصلية لمعالج الأحداث والفئة والنمط الخاصة بـ div الخارجي. تتطلب الخلفية والحدود والحشو والأبعاد تجاوز `display` الخاص به. فضّل قسم `wrapperProps` في Monaco React لأنماط التخطيط وref أصلي قابل للقياس. يستهدف `className` div حاوية المحرر داخل ذلك القسم؛ استخدم `onMount` لمثيل محرر Monaco.
+
+يحتوي قسم Monaco React على محتوى التحميل الخاص به إلى أن يصبح المحرر جاهزًا. أثناء تهيئة Monaco المضمّنة الأولية أو `isLoading`، يعرض Twenty أداة تحميل منفصلة دون `wrapperProps` أو `className`. يبقى `containerProps` و`ref` الخارجيان متاحين في هذه الحالات.
+
+```tsx
+import { useRef } from 'react';
+import { CodeEditor } from 'twenty-ui/components/code-editor';
+
+export const NamedEditor = () => {
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  return (
+    <CodeEditor
+      ref={containerRef}
+      containerProps={{ id: 'payload-editor' }}
+      wrapperProps={{ 'data-editor-surface': 'payload' }}
+      options={{ ariaLabel: 'Payload code' }}
+    />
+  );
+};
+```
+
+## إضافة ترويسة
+
+```tsx
+import { CodeEditor, CodeEditorHeader } from 'twenty-ui/components/code-editor';
+import { Button } from 'twenty-ui/primitives/input';
+
+type ScriptEditorProps = {
+  script: string;
+  onRun: () => void;
+};
+
+export const ScriptEditor = ({ script, onRun }: ScriptEditorProps) => (
+  <div>
+    <CodeEditorHeader
+      title="index.ts"
+      endElement={
+        <Button size="sm" onClick={onRun}>
+          Run
+        </Button>
+      }
+    />
+    <CodeEditor language="typescript" value={script} variant="with-header" />
+  </div>
+);
+```
+
+يزيل `variant="with-header"` الحد العلوي للمحرر لكي يتصل بالترويسة. استخدم `borderless` عندما يكون المحرر داخل سطح يحتوي بالفعل على حد.
+
+يقبل الرأس محتوى العقدة في `title` و`startElement` و`endElement`. استخدم الأجزاء لعلامات تبويب أو إجراءات متعددة. تستهدف الخصائص الأصلية و`className` و`style` و`ref` عنصر div الجذر الخاص به. استخدم `render` لاستبدال ذلك الجذر، على سبيل المثال `render={<header />}`. توفر الخاصية `title` محتوى مرئيًا؛ ولتعيين سمة title أصلية، مرّرها على العنصر المزوّد إلى `render`.
+
+## الحجم والمظهر
+
+يبلغ ارتفاع المحرر 450px وعرضه 100% افتراضيًا. يقبل `width` و`height` البكسلات أو طول CSS.
+
+يتبع التحجيم هذا الترتيب:
+
+1. يبدأ `resizable` من الارتفاع المعروض، بما في ذلك أطوال CSS، ضمن حدود مقبض تغيير الحجم من 50px إلى 500px. يضيف مقبضًا بعد تحميل Monaco. يؤدي السحب أو إدخال لوحة المفاتيح بعد ذلك إلى تعيين ارتفاع بالبكسل. يؤدي تغيير `height` إلى إعادة تعيينه ضمن الحدود نفسها.
+2. بخلاف ذلك، يستخدم `autoHeight` ارتفاع محتوى Monaco. يُستخدم الارتفاع الصريح أو الافتراضي إلى أن يُقاس المحتوى.
+3. بخلاف ذلك، يُطبّق `height` الصريح أو الافتراضي.
+
+يفعّل Monaco React `automaticLayout` افتراضيًا. إذا عطّلته في `options`، فيجب أن يستدعي تطبيقك `editor.layout()` عندما يتغير حجم الحاوية. يتم تمرير `wrapperProps.style` الأصلي دون تغيير ويمكنه تجاوز عرض القسم أو ارتفاعه.
+
+مرّر `resizeLabel` مترجمًا لتسمية مقبض تغيير الحجم لقارئات الشاشة.
+
+يوفر Twenty إعدادات افتراضية للخط والتنسيق وشريط التمرير والخريطة المصغرة والحشو. يوسّع `contentPadding="comfortable"` أيضًا الفجوة بين أرقام الأسطر والرمز البرمجي. تستبدل `options` الخاصة بالمستدعي الإعدادات الافتراضية المقابلة، بما في ذلك كائن `padding` بالكامل و`lineDecorationsWidth`.
+
+تكون لـ `theme` الصريحة الأولوية على `options.theme`؛ وبخلاف ذلك، يتبع المحرر النسق الفاتح أو الداكن لـ Twenty. عرّف سمات Monaco المخصصة في `beforeMount`. سمات Monaco عامة، لذا فإن تغيير إحداها يؤثر في محررات Monaco الأخرى على الصفحة نفسها. يتحكم `transparentBackground` في مظهر غلاف Twenty بشكل مستقل.
+
+## التحقق
+
+يبلّغ Monaco عن تشخيصاته الخاصة، مثل أخطاء صياغة JSON، عبر `onValidate`. لإضافة تشخيصاتك الخاصة، أعد بيانات العلامات من `setMarkers`. يعمل عند التحميل واختيار النموذج وكل تغيير في محتوى النموذج، بما في ذلك تحديثات القيم المتحكم بها، ويستبدل العلامات المخصصة للنموذج الحالي.
+
+## لوحة المفاتيح
+
+أثناء تركيز المحرر، يمنع انتشار أحداث لوحة المفاتيح. لا تتلقى معالجات مفاتيح React في المكوّنات الأصلية والاختصارات على مستوى المستند ضغطات المفاتيح المكتوبة في المحرر.
+
+## الإزاحة
+
+### محرر التعليمات البرمجية
+
+<CodeEditorReference />
+
+### رأس محرر التعليمات البرمجية
+
+<CodeEditorHeaderReference />
+
+<PageBanner illustration="dev-api" />

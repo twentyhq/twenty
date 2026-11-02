@@ -1,0 +1,36 @@
+---
+title: Redare pe server
+description: Înțelegeți constrângerile actuale ale Twenty UI privind redarea pe server și inițializarea temei.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
+Twenty nu oferă încă o garanție de randare pe server pentru întregul pachet. Verificați punctele de intrare și componentele specifice pe care le utilizați cu compilarea pentru server și fluxul de hidratare ale cadrului vostru de lucru.
+
+## Încărcați CSS prin cadrul vostru de lucru
+
+Biblioteca include foi de stil precompilate. Importați-le din punctul de intrare al aplicației sau din aspectul care permite cadrului vostru de lucru să încarce CSS global. Un server care importă JavaScript fără un încărcător CSS nu poate încărca direct un import de foaie de stil.
+
+Componentele care utilizează API-uri de browser, măsurători ale aspectului sau efecte trebuie să se afle într-o limită de client atunci când cadrul vostru de lucru diferențiază componentele de server de cele de client.
+
+## Inițializați tema
+
+Foile de stil ale temei își definesc tokenurile în `.light` și `.dark`. Aplicați clasa inițială în documentul redat pe server, apoi inițializați `ThemeProvider` cu aceeași schemă pe client:
+
+```html
+<html class="light"></html>
+```
+
+Astfel, paleta devine disponibilă înainte de hidratare. Stabiliți schema inițială pe baza informațiilor disponibile pentru ambele redări, cum ar fi o preferință salvată transmisă de server.
+
+## Păstrați măsurătorile browserului pe client
+
+`ThemeProvider` rezolvă valorile folosind stiluri calculate în browser. În timpul redării pe server sau fără suport pentru stiluri calculate, valorile temei pot rămâne referințe la variabile CSS. Nu presupuneți că un token numeric returnat în timpul redării pe server este deja un număr JavaScript.
+
+Utilizați referințe la variabile CSS pentru stiluri și amânați calculele care necesită dimensiuni rezolvate până când clientul a încărcat tema. Testați hidratarea cu aceleași componente, foi de stil și schemă inițială pe care le implementați.
+
+[Rendererul de componente frontale](/ro/developers/extend/apps/layout/front-components#current-limitations) este un sandbox separat, cu propriile limitări DOM; redarea reușită în browser nu confirmă suportul sandboxului.
+
+<PageBanner illustration="dev-self-host" />

@@ -1,0 +1,229 @@
+import { build, transform } from 'esbuild';
+import { PageLayoutType } from 'twenty-shared/types';
+
+import { FRONT_COMPONENT_UI_IMPORTS } from 'twenty-shared/front-component-build';
+import { buildFrontComponent as compileFrontComponent } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component.util';
+import { buildFrontComponentEntrySource } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-entry-source.util';
+import { FrontComponentBuildException } from 'src/engine/metadata-modules/ai/ai-front-component/exceptions/front-component-build.exception';
+
+jest.useRealTimers();
+
+const sharedDependencies: Parameters<
+  typeof compileFrontComponent
+>[0]['sharedDependencies'] = {
+  checksum: 'a'.repeat(64),
+  exportNamesBySpecifier: new Map([
+    [
+      'react',
+      { namedExports: ['useEffect', 'useState'], hasDefaultExport: true },
+    ],
+    [
+      'react/jsx-runtime',
+      { namedExports: ['jsx', 'jsxs', 'Fragment'], hasDefaultExport: false },
+    ],
+    [
+      'react-dom/client',
+      { namedExports: ['createRoot'], hasDefaultExport: false },
+    ],
+    [
+      'twenty-ui/theme',
+      { namedExports: ['ThemeProvider'], hasDefaultExport: false },
+    ],
+    ['twenty-ui/style.css', { namedExports: [], hasDefaultExport: false }],
+    [
+      'twenty-ui/theme-light.css',
+      { namedExports: [], hasDefaultExport: false },
+    ],
+  ]),
+};
+const buildFrontComponent = (
+  input: Parameters<typeof compileFrontComponent>[0]['input'],
+) => compileFrontComponent({ input, sharedDependencies });
+
+const SOURCE = `import { useEffect, useState } from 'react';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+export const Component = () => {
+  const [records, setRecords] = useState<{ id: string; name: string }[]>([]);
+  useEffect(() => {
+    new CoreApiClient().query({ companies: {
+      __args: { first: 20 }, edges: { node: { id: true, name: true } },
+      totalCount: true, pageInfo: { hasNextPage: true },
+    } }).then(result => setRecords(result.companies.edges.map(edge => edge.node)));
+  }, []);
+  return <div>{records.map(record => <p key={record.id}>{record.name}</p>)}</div>;
+};`;
+const INPUT = {
+  componentId: 'component-id',
+  name: 'Sales "this week"',
+  source: SOURCE,
+  pageLayoutType: PageLayoutType.DASHBOARD as const,
+};
+
+describe('buildFrontComponent', () => {
+  it.each([PageLayoutType.DASHBOARD, PageLayoutType.RECORD_PAGE] as const)(
+    'builds one editable SDK file for the selected %s surface',
+    async (pageLayoutType) => {
+      const { source, compiledSource, checksum, hasSdkClientImport } =
+        await buildFrontComponent({
+          ...INPUT,
+          pageLayoutType,
+        });
+
+      expect(source).toContain(SOURCE);
+      expect(source).toContain(
+        `widgetAvailability: { pageLayoutType: TwentyPageLayoutType.${pageLayoutType} }`,
+      );
+      expect(source).not.toContain('componentQuery');
+      expect(hasSdkClientImport).toBe(true);
+      expect(compiledSource).toContain('twenty-client-sdk/core');
+      expect(checksum).toMatch(/^[a-f0-9]{64}$/);
+      expect(compiledSource).not.toContain('TWENTY_APP_ACCESS_TOKEN');
+      await expect(
+        transform(compiledSource, { loader: 'js' }),
+      ).resolves.toHaveProperty('code');
+      await expect(
+        build({
+          stdin: { contents: source, loader: 'tsx' },
+          bundle: true,
+          write: false,
+          format: 'esm',
+          external: [
+            'twenty-client-sdk/core',
+            'react',
+            'react/jsx-runtime',
+            'twenty-sdk/define',
+            'twenty-shared/types',
+            ...FRONT_COMPONENT_UI_IMPORTS,
+          ],
+        }),
+      ).resolves.toHaveProperty('outputFiles');
+    },
+  );
+
+  it.each([
+    'node:fs',
+    'twenty-sdk',
+    './secret',
+    'https://example.com/code.js',
+    'twenty-ui',
+    'twenty-ui/components/code-editor',
+    'twenty-ui/../../package.json',
+    '@tabler/icons-react',
+  ])('rejects unsupported import %s', async (importPath) => {
+    await expect(
+      buildFrontComponent({
+        ...INPUT,
+        source: `import value from '${importPath}'; export const Component = () => <div>{value}</div>;`,
+      }),
+    ).rejects.toThrow('Unsupported import');
+  });
+
+  it.each([
+    'node:fs',
+    'react-dom/client',
+    'twenty-shared/types',
+    'twenty-client-sdk/core',
+  ])(
+    'rejects unsupported dynamic import %s during the build',
+    async (importPath) => {
+      await expect(
+        buildFrontComponent({
+          ...INPUT,
+          source: `export const Component = () => <button onClick={() => import('${importPath}')}>Load</button>;`,
+        }),
+      ).rejects.toThrow('Unsupported import');
+    },
+  );
+
+  it.each([
+    'import(url)',
+    'import(`https://example.com/${url}.js`)',
+    'require(url)',
+    "require('react' + url)",
+  ])('rejects computed module loading: %s', async (expression) => {
+    await expect(
+      buildFrontComponent({
+        ...INPUT,
+        source: `export const Component = ({ url }) => <button onClick={() => ${expression}}>Load</button>;`,
+      }),
+    ).rejects.toMatchObject({
+      code: 'INVALID_INPUT',
+      message: 'Use a string literal for import() and require().',
+    });
+  });
+
+  it('rejects computed imports even when esbuild would remove the unused function', async () => {
+    await expect(
+      buildFrontComponent({
+        ...INPUT,
+        source:
+          'const load = (url) => import(url); export const Component = () => <div />;',
+      }),
+    ).rejects.toMatchObject({ code: 'INVALID_INPUT' });
+  });
+
+  it.each(['import("react")', 'import(`react`)', 'require("react")'])(
+    'allows supported literal module loading: %s',
+    async (expression) => {
+      await expect(
+        buildFrontComponent({
+          ...INPUT,
+          source: `export const Component = () => <button onClick={() => ${expression}}>Load</button>;`,
+        }),
+      ).resolves.toHaveProperty('compiledSource');
+    },
+  );
+
+  it.each(['LIST', 'DASHBOARD }; globalThis.injected = true; //'])(
+    'rejects invalid page layout before generating source: %s',
+    (pageLayoutType) => {
+      expect(() =>
+        buildFrontComponentEntrySource({
+          ...INPUT,
+          pageLayoutType: pageLayoutType as typeof INPUT.pageLayoutType,
+        }),
+      ).toThrow(
+        expect.objectContaining({
+          code: 'INVALID_SETTINGS',
+          message: expect.stringContaining('pageLayoutType'),
+        }),
+      );
+    },
+  );
+
+  it.each([
+    'export default () => <div />;',
+    'export default function Component() { return <div />; }',
+    'const View = () => <div />; export { View as default };',
+    'export const View = () => <div />;',
+  ])(
+    'rejects source outside the named Component contract: %s',
+    async (source) => {
+      await expect(buildFrontComponent({ ...INPUT, source })).rejects.toThrow(
+        FrontComponentBuildException,
+      );
+    },
+  );
+
+  it('returns compiler diagnostics for malformed TSX', async () => {
+    await expect(
+      buildFrontComponent({
+        ...INPUT,
+        source: 'export const Component = () => <div>;',
+      }),
+    ).rejects.toMatchObject({
+      code: 'BUILD_FAILED',
+      message: expect.stringContaining('Build failed'),
+    });
+  });
+
+  it('rejects collisions with the SDK wrapper before saving', async () => {
+    await expect(
+      buildFrontComponent({
+        ...INPUT,
+        source:
+          'export const Component = () => <div />; const TwentyComponent = "other";',
+      }),
+    ).rejects.toThrow('TwentyComponent');
+  });
+});

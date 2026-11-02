@@ -1,7 +1,6 @@
 import {
   defineObject,
   FieldType,
-  MetadataWritability,
   OnDeleteAction,
   RelationType,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
@@ -27,7 +26,11 @@ export default defineObject({
   description:
     'Links a Microsoft Teams account to a workspace member so the assistant can act with that member permissions.',
   icon: 'IconLink',
-  writability: MetadataWritability.APPLICATION,
+  disabledObjectPermissionActions: [
+    'canUpdateObjectRecords',
+    'canSoftDeleteObjectRecords',
+    'canDestroyObjectRecords',
+  ],
   labelIdentifierFieldMetadataUniversalIdentifier:
     TEAMS_USER_LINK_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [

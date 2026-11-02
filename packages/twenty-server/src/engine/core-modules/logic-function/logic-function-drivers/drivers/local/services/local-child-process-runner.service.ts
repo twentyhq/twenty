@@ -1,36 +1,41 @@
 import { promises as fs } from 'fs';
-import { spawn } from 'node:child_process';
+import { type ChildProcess, spawn } from 'node:child_process';
 import { join } from 'path';
 
+import { isObject } from '@sniptt/guards';
+
 import { type LogicFunctionExecutionContext } from 'twenty-shared/logic-function';
+import { isDefined } from 'twenty-shared/utils';
+import { z } from 'zod';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { buildLocalChildProcessEnv } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/build-local-child-process-env.util';
+import { buildLocalChildProcessNodeFlags } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/build-local-child-process-node-flags.util';
 import { getLocalDepsLayerPath } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/get-local-deps-layer-path.util';
 import { getLocalSdkLayerPath } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/get-local-sdk-layer-path.util';
 import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
+
+const childProcessResultSchema = z.object({
+  ok: z.boolean(),
+  result: z.unknown().optional(),
+  errorType: z.string().optional(),
+  error: z.string().optional(),
+  stack: z.string().optional(),
+});
 
 export class LocalChildProcessRunnerService {
   // twenty-client-sdk comes from the SDK layer (workspace-specific generated client), not the deps layer.
   async assembleNodeModules({
     sourceTemporaryDir,
     flatApplication,
-    applicationUniversalIdentifier,
   }: {
     sourceTemporaryDir: string;
     flatApplication: FlatApplication;
-    applicationUniversalIdentifier: string;
   }): Promise<void> {
-    const depsNodeModules = join(
-      getLocalDepsLayerPath(flatApplication),
-      'node_modules',
-    );
-    const sdkNodeModules = join(
-      getLocalSdkLayerPath({
-        workspaceId: flatApplication.workspaceId,
-        applicationUniversalIdentifier,
-      }),
-      'node_modules',
-    );
+    const { depsLayerDirectory, sdkLayerDirectory } =
+      this.getLayerDirectories(flatApplication);
+    const depsNodeModules = join(depsLayerDirectory, 'node_modules');
+    const sdkNodeModules = join(sdkLayerDirectory, 'node_modules');
     const execNodeModules = join(sourceTemporaryDir, 'node_modules');
 
     await fs.mkdir(execNodeModules, { recursive: true });
@@ -144,95 +149,179 @@ export class LocalChildProcessRunnerService {
     return runnerPath;
   }
 
-  runChildWithEnv(options: {
+  async runChildWithEnv(options: {
     runnerPath: string;
+    executionDirectory: string;
+    flatApplication: FlatApplication;
     env: Record<string, string>;
     payload: unknown;
     context: LogicFunctionExecutionContext;
     timeoutMs: number;
   }) {
-    const { runnerPath, env, payload, context, timeoutMs } = options;
+    const {
+      runnerPath,
+      executionDirectory,
+      flatApplication,
+      env,
+      payload,
+      context,
+      timeoutMs,
+    } = options;
 
-    return new Promise<{
-      ok: boolean;
-      result?: unknown;
-      errorType?: string;
-      error?: string;
-      stack?: string;
-      stdout: string;
-      stderr: string;
-    }>((resolve) => {
-      // Strip NODE_OPTIONS to prevent tsx loader from being inherited
-      const { NODE_OPTIONS: _n1, ...cleanProcessEnv } = process.env;
-      const { NODE_OPTIONS: _n2, ...cleanUserEnv } = env;
+    const temporaryDirectory = join(executionDirectory, 'tmp');
 
-      const child = spawn(process.execPath, [runnerPath], {
-        env: { ...cleanProcessEnv, ...cleanUserEnv },
-        stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
-      });
+    await fs.mkdir(temporaryDirectory, { recursive: true });
 
-      let stdout = '';
-      let stderr = '';
-      let settled = false;
+    const nodeFlags = buildLocalChildProcessNodeFlags({
+      readableDirectories: [
+        executionDirectory,
+        ...Object.values(this.getLayerDirectories(flatApplication)),
+      ],
+      writableDirectory: temporaryDirectory,
+      // Node 25+ denies network access under --permission unless --allow-net is passed.
+      shouldAllowNetwork:
+        process.allowedNodeEnvironmentFlags.has('--allow-net'),
+    });
 
-      child.stdout?.on('data', (d) => (stdout += String(d)));
-      child.stderr?.on('data', (d) => (stderr += String(d)));
+    const childEnv = buildLocalChildProcessEnv({
+      hostEnv: process.env,
+      functionEnv: env,
+      temporaryDirectory,
+    });
 
-      child.on(
-        'message',
-        (
-          msg:
-            | {
-                ok: true;
-                result?: unknown;
-                stdout?: string;
-                stderr?: string;
-              }
-            | {
-                ok: false;
-                errorType?: string;
-                error: string;
-                stack?: string;
-                stdout?: string;
-                stderr?: string;
-              },
-        ) => {
-          if (settled) return;
-          settled = true;
-          resolve({ ...msg, stdout, stderr });
+    return this.runChild({
+      runnerPath,
+      executionDirectory,
+      env: childEnv,
+      nodeFlags,
+      payload,
+      context,
+      timeoutMs,
+    });
+  }
+
+  async runChild({
+    runnerPath,
+    executionDirectory,
+    env,
+    nodeFlags = [],
+    payload,
+    context,
+    timeoutMs,
+    maxOutputLength,
+  }: {
+    runnerPath: string;
+    executionDirectory: string;
+    env: NodeJS.ProcessEnv;
+    nodeFlags?: string[];
+    payload: unknown;
+    context?: LogicFunctionExecutionContext;
+    timeoutMs: number;
+    maxOutputLength?: number;
+  }) {
+    const child = spawn(process.execPath, [...nodeFlags, runnerPath], {
+      cwd: executionDirectory,
+      env,
+      stdio: ['pipe', 'pipe', 'pipe', 'ipc'],
+      detached: true,
+    });
+    const closed = new Promise<void>((resolve) =>
+      child.once('close', () => resolve()),
+    );
+    let timeout: ReturnType<typeof setTimeout> | undefined;
+    let stdout = '';
+    let stderr = '';
+
+    child.stdout?.on('data', (data: Buffer) => {
+      stdout += data.toString();
+      if (isDefined(maxOutputLength)) {
+        stdout = stdout.slice(-maxOutputLength);
+      }
+    });
+    child.stderr?.on('data', (data: Buffer) => {
+      stderr += data.toString();
+      if (isDefined(maxOutputLength)) {
+        stderr = stderr.slice(-maxOutputLength);
+      }
+    });
+
+    let result: z.infer<typeof childProcessResultSchema>;
+    try {
+      result = await new Promise<z.infer<typeof childProcessResultSchema>>(
+        (resolve) => {
+          child.once('message', (message: unknown) => {
+            const parsed = childProcessResultSchema.safeParse(message);
+
+            resolve(
+              parsed.success
+                ? parsed.data
+                : { ok: false, error: 'Invalid child process response' },
+            );
+          });
+          child.once('error', (error) =>
+            resolve({ ok: false, error: error.message, errorType: error.name }),
+          );
+          child.once('exit', (code, signal) =>
+            resolve(
+              code === 0
+                ? { ok: true }
+                : { ok: false, error: `Exited with code ${signal ?? code}` },
+            ),
+          );
+          timeout = setTimeout(
+            () =>
+              resolve({ ok: false, error: `Timed out after ${timeoutMs}ms` }),
+            timeoutMs,
+          );
+          child.send({ type: 'run', payload, context }, (error) => {
+            if (isDefined(error)) {
+              resolve({
+                ok: false,
+                error: error.message,
+                errorType: error.name,
+              });
+            }
+          });
         },
       );
+    } finally {
+      clearTimeout(timeout);
+      this.killChildProcess(child);
+      await closed;
+    }
+    return { ...result, stdout, stderr };
+  }
 
-      child.on('exit', (code) => {
-        if (settled) return;
-        settled = true;
-        if (code === 0) {
-          resolve({ ok: true, stdout, stderr });
-        } else {
-          resolve({
-            ok: false,
-            error: `Exited with code ${code}`,
-            stdout,
-            stderr,
-          });
-        }
-      });
+  private killChildProcess(child: ChildProcess) {
+    if (!isDefined(child.pid)) {
+      return;
+    }
 
-      const t = setTimeout(() => {
-        if (settled) return;
-        settled = true;
-        child.kill('SIGKILL');
-        resolve({
-          ok: false,
-          error: `Timed out after ${timeoutMs}ms`,
-          stdout,
-          stderr,
-        });
-      }, timeoutMs);
+    try {
+      // Yarn and esbuild must exit before their temporary files are removed.
+      process.kill(-child.pid, 'SIGKILL');
+    } catch (error) {
+      const code = isObject(error) && 'code' in error ? error.code : undefined;
 
-      child.send?.({ type: 'run', payload, context });
+      if (code === 'ESRCH') {
+        return;
+      }
 
-      child.on('close', () => clearTimeout(t));
-    });
+      if (code !== 'EPERM') {
+        throw error;
+      }
+
+      child.kill('SIGKILL');
+    }
+  }
+
+  private getLayerDirectories(flatApplication: FlatApplication) {
+    return {
+      depsLayerDirectory: getLocalDepsLayerPath(flatApplication),
+      sdkLayerDirectory: getLocalSdkLayerPath({
+        workspaceId: flatApplication.workspaceId,
+        applicationUniversalIdentifier: flatApplication.universalIdentifier,
+      }),
+    };
   }
 }

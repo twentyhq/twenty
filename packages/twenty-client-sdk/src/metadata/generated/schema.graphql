@@ -17,7 +17,8 @@ type Agent {
   description: String
   icon: String
   id: UUID!
-  isCustom: Boolean!
+  isActive: Boolean!
+  isCustom: Boolean! @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
   isSystem: Boolean!
   label: String!
   modelConfiguration: JSON
@@ -31,11 +32,12 @@ type Agent {
 }
 
 type AgentChatChannel {
+  applicationId: UUID!
   color: String
   icon: String
   id: UUID!
   isAccessible: Boolean
-  isCustom: Boolean!
+  isCustom: Boolean! @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
   name: String!
   position: Float!
   roleIds: [UUID!]!
@@ -43,6 +45,7 @@ type AgentChatChannel {
 
 enum AgentChatChannelAssignmentFilter {
   ANY
+  ASSIGNED
   ASSIGNED_TO_ME
   UNASSIGNED
 }
@@ -55,9 +58,23 @@ type AgentChatChannelRole {
 }
 
 type AgentChatChannelSummary {
+  assignedCount: Int!
+  assignedToMeCount: Int!
   channelId: UUID!
+  doneCount: Int!
+  hasUnreadAssignedToMe: Boolean!
   hasUnreadOpen: Boolean!
+  mentionedCount: Int!
+  needsInputCount: Int!
   openCount: Int!
+  snoozedCount: Int!
+  unassignedCount: Int!
+}
+
+enum AgentChatChannelThreadFilter {
+  ANY
+  MENTIONED
+  NEEDS_INPUT
 }
 
 type AgentChatChannelThreadIds {
@@ -88,11 +105,16 @@ enum AgentChatInboxAction {
 }
 
 type AgentChatOpenThreadsSummary {
+  assignedThreadCount: Int!
+  assignedToMeThreadCount: Int!
   hasUnreadAssignedThread: Boolean!
   hasUnreadMentionThread: Boolean!
   hasUnreadOpenThread: Boolean!
+  mentionThreadCount: Int!
   needsInputThreadCount: Int!
   openThreadCount: Int!
+  unassignedThreadCount: Int!
+  unreadOpenThreadCount: Int!
 }
 
 type AgentChatThread {
@@ -116,6 +138,7 @@ type AgentChatThreadParticipant {
   isSubscribed: Boolean!
   lastMentionedAt: DateTime
   lastReadAt: DateTime
+  mentionsResolvedAt: DateTime
   snoozedUntil: DateTime
   threadId: UUID!
   updatedAt: DateTime!
@@ -280,6 +303,7 @@ enum AllMetadataName {
   frontComponent
   index
   logicFunction
+  mcpServer
   messagingProvider
   navigationMenuItem
   objectMetadata
@@ -288,6 +312,7 @@ enum AllMetadataName {
   pageLayoutTab
   pageLayoutWidget
   permissionFlag
+  relatedRecordPath
   role
   rolePermissionFlag
   roleTarget
@@ -424,6 +449,7 @@ type Application {
   objects: [Object!]!
   packageJsonChecksum: String
   packageJsonFileId: UUID
+  runOnUserPreferences: Boolean!
   settingsCustomTabFrontComponentId: UUID
   settingsMenuItems: [SettingsMenuItem!]
   universalIdentifier: String!
@@ -598,6 +624,7 @@ type ApplicationMonitoringActivityBucket {
 type ApplicationMonitoringCreditBucket {
   bucketStart: DateTime!
   creditsUsed: Float!
+  operationLabel: String
   operationType: String!
 }
 
@@ -637,6 +664,7 @@ type ApplicationMonitoringVersion {
 type ApplicationPreferences {
   applicationId: UUID!
   connectionProviders: [ApplicationConnectionProvider!]!
+  hasUserHealthCheck: Boolean!
   settingsMenuItems: [SettingsMenuItem!]!
   variables: [UserApplicationVariableValue!]!
 }
@@ -648,7 +676,6 @@ type ApplicationRegistration {
   isConfigured: Boolean!
   isListed: Boolean!
   isPreInstalled: Boolean!
-  isVetted: Boolean!
   latestAvailableVersion: String
   logoUrl: String
   name: String!
@@ -1589,6 +1616,15 @@ input CreateLogicFunctionFromSourceInput {
   workflowActionTriggerSettings: JSON
 }
 
+input CreateMcpServerInput {
+  connectionProviderId: UUID
+  id: UUID
+  isActive: Boolean
+  label: String!
+  name: String!
+  url: String!
+}
+
 input CreateMessageSuppressionInput {
   emailAddress: String!
   unsubscribeTopicId: UUID
@@ -1669,6 +1705,14 @@ input CreateRecordExportInput {
   filter: JSON
   objectMetadataId: UUID!
   orderBy: JSON
+}
+
+input CreateRelatedRecordPathInput {
+  firstFieldMetadataId: UUID
+  isInherent: Boolean
+  objectMetadataId: UUID
+  secondFieldMetadataId: UUID
+  thirdFieldMetadataId: UUID
 }
 
 input CreateRoleInput {
@@ -1813,12 +1857,14 @@ input CreateWebhookInput {
   description: String
   id: UUID
   operations: [String!]!
+  roleId: UUID!
   secret: String
   targetUrl: String!
 }
 
 type CreditUsedItem {
   creditsUsed: Float!
+  icon: String
   label: String
   operation: UsageOperationType
   resource: UsageResourceType
@@ -2108,6 +2154,7 @@ enum EngineComponentKey {
   MARK_AI_CHAT_AS_READ
   MARK_AI_CHAT_AS_UNREAD
   MERGE_MULTIPLE_RECORDS
+  MERGE_WITH_RECORD
   NAVIGATE_TO_NEXT_RECORD
   NAVIGATE_TO_PREVIOUS_RECORD
   NAVIGATION
@@ -2283,15 +2330,19 @@ type FeatureFlag {
 }
 
 enum FeatureFlagKey {
+  IS_AI_CHAT_COMPONENT_BUILDER_ENABLED
   IS_AI_CHAT_INBOX_ENABLED
   IS_APP_PREFERENCES_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
-  IS_DEFERRED_WORKSPACE_MIGRATION_ACTIONS_ENABLED
-  IS_MESSAGE_CAMPAIGN_ENABLED
+  IS_GETTING_STARTED_ENABLED
+  IS_MCP_SERVERS_ENABLED
+  IS_PRIVATE_RECORD_ENABLED
   IS_RECORD_CREATION_FORM_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
+  IS_RELATED_RECORD_PATHS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
+  IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED
 }
 
 type Field {
@@ -2299,6 +2350,7 @@ type Field {
   createdAt: DateTime!
   defaultValue: JSON
   description: String
+  disabledFieldPermissionActions: [String!]
   icon: String
   id: UUID!
   isActive: Boolean
@@ -2322,7 +2374,6 @@ type Field {
   type: FieldMetadataType!
   universalIdentifier: String!
   updatedAt: DateTime!
-  writability: MetadataWritability
 }
 
 type FieldConfiguration {
@@ -2551,6 +2602,64 @@ input GetAuthorizationUrlForSSOInput {
   workspaceInviteHash: String
 }
 
+type GettingStartedProgress {
+  completedStepActionKeys: [GettingStartedStepActionKey!]!
+  isHidden: Boolean!
+  selectedStepActionKey: GettingStartedStepActionKey
+  snoozedUntil: String
+  steps: [GettingStartedStepDefinition!]!
+}
+
+enum GettingStartedStepActionKey {
+  CONNECT_MAILBOX
+  CUSTOMIZE_DATA_MODEL
+  FOLLOW_UP_DEALS
+  HANDOVER_DEALS
+  IMPORT_DATA
+  INSTALL_APP
+  INVITE_TEAM
+}
+
+type GettingStartedStepDefinition {
+  actionKey: GettingStartedStepActionKey!
+  description: String!
+  doneTitle: String!
+  icon: String!
+  iconColor: String!
+  kind: GettingStartedStepKind!
+  prompt: String
+  promptLabel: String
+  title: String!
+}
+
+enum GettingStartedStepKind {
+  CUSTOM
+  PROMPT
+  WORKFLOW
+}
+
+type GettingStartedWorkflow {
+  versionId: String!
+  workflowId: String!
+}
+
+type GettingStartedWorkflowPreview {
+  actions: [GettingStartedWorkflowPreviewAction!]!
+  stepActionKey: GettingStartedStepActionKey!
+  trigger: GettingStartedWorkflowPreviewTrigger!
+}
+
+type GettingStartedWorkflowPreviewAction {
+  title: String!
+  type: WorkflowActionType!
+}
+
+type GettingStartedWorkflowPreviewTrigger {
+  databaseEventAction: String
+  title: String!
+  type: String!
+}
+
 input GrantApplicationCapabilitiesInput {
   applicationId: UUID!
   capabilities: [String!]!
@@ -2584,6 +2693,12 @@ type IframeConfiguration {
   url: String
 }
 
+type IframeMediaPermission {
+  camera: Boolean!
+  microphone: Boolean!
+  origin: String!
+}
+
 type ImapSmtpCaldavConnectionSuccess {
   connectedAccountId: String!
   success: Boolean!
@@ -2608,13 +2723,21 @@ type Impersonate {
   workspace: WorkspaceUrlsAndId!
 }
 
+input InboxThreadRecordInput {
+  objectNameSingular: String!
+  recordId: UUID!
+  threadId: UUID!
+}
+
 type Index {
+  applicationId: UUID!
   createdAt: DateTime!
   id: UUID!
   indexFieldMetadataList: [IndexField!]!
   indexType: IndexType!
   indexWhereClause: String
-  isCustom: Boolean
+  isCustom: Boolean @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
+  isSystemSideEffect: Boolean!
   isUnique: Boolean!
   name: String!
   updatedAt: DateTime!
@@ -2640,7 +2763,7 @@ type IndexField {
 input IndexFilter {
   and: [IndexFilter!]
   id: UUIDFilterComparison
-  isCustom: BooleanFieldComparison
+  isCustom: BooleanFieldComparison @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
   or: [IndexFilter!]
 }
 
@@ -2867,7 +2990,7 @@ type MarketplaceApp {
   category: String!
   description: String!
   id: String!
-  isVetted: Boolean!
+  isListed: Boolean!
   logoUrl: String
   name: String!
   sourcePackage: String
@@ -2885,7 +3008,6 @@ type MarketplaceAppDetail {
   id: String!
   installCount: Int!
   isListed: Boolean!
-  isVetted: Boolean!
   issueReportUrl: String
   latestAvailableVersion: String
   logoUrl: String
@@ -2940,6 +3062,18 @@ type MarketplaceAppRoleObjectPermission {
   canUpdateObjectRecords: Boolean
   objectUniversalIdentifier: String!
   universalIdentifier: String!
+}
+
+type McpServer {
+  applicationId: UUID!
+  connectionProviderId: UUID
+  createdAt: DateTime!
+  id: UUID!
+  isActive: Boolean!
+  label: String!
+  name: String!
+  updatedAt: DateTime!
+  url: String!
 }
 
 type MessageCampaignBodyConfiguration {
@@ -3100,14 +3234,6 @@ enum MetadataEventAction {
   UPDATED
 }
 
-enum MetadataReadability {
-  APPLICATION
-  INHERITED
-  OPEN
-  PRIVATE
-  SYSTEM
-}
-
 type MetadataTranslation {
   canonicalValue: String!
   locale: String!
@@ -3139,12 +3265,6 @@ input MetadataTranslationsInput {
   fieldMetadataId: UUID
   locale: String
   objectMetadataId: UUID
-}
-
-enum MetadataWritability {
-  APPLICATION
-  OPEN
-  SYSTEM
 }
 
 type MinimalMetadata {
@@ -3189,6 +3309,7 @@ type Mutation {
   assignAgentChatThread(assigneeWorkspaceMemberId: UUID, threadId: UUID!): Boolean!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   assignRoleToApiKey(apiKeyId: UUID!, roleId: UUID!): Boolean!
+  attachRecordToInboxThread(input: InboxThreadRecordInput!): Boolean!
   authorizeApp(clientId: String!, codeChallenge: String, issuer: String, redirectUrl: String!, scope: String, state: String): AuthorizeApp!
   cancelMessageCampaign(input: CancelMessageCampaignInput!): CancelMessageCampaignOutputDTO!
   cancelSwitchBillingInterval: BillingUpdate!
@@ -3224,6 +3345,7 @@ type Mutation {
   createManyViewFieldGroups(inputs: [CreateViewFieldGroupInput!]!): [ViewFieldGroup!]!
   createManyViewFields(inputs: [CreateViewFieldInput!]!): [ViewField!]!
   createManyViewGroups(inputs: [CreateViewGroupInput!]!): [ViewGroup!]!
+  createMcpServer(input: CreateMcpServerInput!): McpServer!
   createMessageSuppression(input: CreateMessageSuppressionInput!): MessageSuppression!
   createNavigationMenuItem(input: CreateNavigationMenuItemInput!): NavigationMenuItem!
   createNewWorkspaceLogoUpload(filename: String!, size: Float!, workspaceId: String!): FileUploadTarget!
@@ -3239,6 +3361,7 @@ type Mutation {
   createPageLayoutTab(input: CreatePageLayoutTabInput!): PageLayoutTab!
   createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!
   createPublicDomain(applicationId: String!, domain: String!): PublicDomain!
+  createRelatedRecordPath(input: CreateRelatedRecordPathInput!): RelatedRecordPath!
   createSAMLIdentityProvider(input: SetupSAMLSsoInput!): SetupSso!
   createSkill(input: CreateSkillInput!): Skill!
   createSubscriptionPaymentIntent(idempotencyKey: String!, plan: BillingPlanKey!, recurringInterval: SubscriptionInterval!, requirePaymentMethod: Boolean! = true, successUrlPath: String): BillingPaymentIntent!
@@ -3266,6 +3389,7 @@ type Mutation {
   deleteEmailingDomain(id: String!): Boolean!
   deleteFrontComponent(id: UUID!): FrontComponent!
   deleteManyNavigationMenuItems(ids: [UUID!]!): [NavigationMenuItem!]!
+  deleteMcpServer(id: UUID!): McpServer!
   deleteMessageSuppression(id: UUID!): Boolean!
   deleteNavigationMenuItem(id: UUID!): NavigationMenuItem!
   deleteOneAgent(input: AgentIdInput!): Agent!
@@ -3276,6 +3400,7 @@ type Mutation {
   deleteOneRole(roleId: UUID!): String!
   deletePublicDomain(domain: String!): Boolean!
   deleteQueuedChatMessage(messageId: UUID!): Boolean!
+  deleteRelatedRecordPath(id: UUID!): RelatedRecordPath!
   deleteSSOIdentityProvider(input: DeleteSsoInput!): DeleteSso!
   deleteSkill(id: UUID!): Skill!
   deleteTwoFactorAuthenticationMethod(twoFactorAuthenticationMethodId: UUID!): DeleteTwoFactorAuthenticationMethod!
@@ -3303,6 +3428,7 @@ type Mutation {
   destroyViewFilterGroup(id: String!): Boolean!
   destroyViewGroup(input: DestroyViewGroupInput!): ViewGroup!
   destroyViewSort(input: DestroyViewSortInput!): Boolean!
+  detachRecordFromInboxThread(input: InboxThreadRecordInput!): Boolean!
   disconnectConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   duplicateDashboard(id: UUID!): DuplicatedDashboard!
   duplicateMessageList(id: UUID!): DuplicatedMessageList!
@@ -3334,6 +3460,7 @@ type Mutation {
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
   markAgentChatThreadAsDoneInChannel(threadId: UUID!): Boolean!
   moveAgentChatThreadToChannel(channelId: UUID, threadId: UUID!): Boolean!
+  prepareGettingStartedWorkflow(stepActionKey: GettingStartedStepActionKey!): GettingStartedWorkflow!
   refreshEnterpriseValidityToken: Boolean!
   releaseEnterpriseServerBinding: EnterpriseLicenseInfoDTO!
   removeAgentChatMessageReaction(emoji: String!, messageId: UUID!): [AgentMessageReactionSummary!]!
@@ -3360,6 +3487,7 @@ type Mutation {
   rotateApplicationRegistrationClientSecret(id: String!): RotateClientSecret!
   runAgent(input: RunAgentInput!): RunAgentResult!
   runApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
+  runMyApplicationHealthCheck(applicationId: UUID!): ApplicationHealthCheckResult
   saveImapSmtpCaldavAccount(connectionParameters: EmailAccountConnectionParameters!, handle: String!, id: UUID): ImapSmtpCaldavConnectionSuccess!
   sendAppChannelMessage(input: SendAppChannelMessageInput!): SendAppChannelMessageOutput!
   sendChatMessage(browsingContext: JSON, channelId: UUID, fileAttachments: [FileAttachmentInput!], mentionedWorkspaceMemberIds: [UUID!], messageId: UUID!, modelId: String, shouldAssistantReply: Boolean, text: String!, threadId: UUID!): SendChatMessageResult!
@@ -3370,7 +3498,7 @@ type Mutation {
   sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
   setAppKeyValue(input: SetAppKeyValueInput!): AppKeyValue!
   setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
-  setRecordGeneralAccess(accessLevel: RecordShareAccessLevel!, target: RecordTargetInput!): RecordSharingDTO!
+  setRecordPrivate(isPrivate: Boolean!, target: RecordTargetInput!): RecordSharingDTO!
   setRecordShare(accessLevel: RecordShareAccessLevel!, principal: RecordSharePrincipalInput!, target: RecordTargetInput!): RecordSharingDTO!
   setResourceCreditSubscriptionPrice(priceId: String!): BillingUpdate!
   signIn(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
@@ -3409,10 +3537,12 @@ type Mutation {
   updateCommandMenuItem(input: UpdateCommandMenuItemInput!): CommandMenuItem!
   updateEmailGroupChannel(input: UpdateEmailGroupChannelInput!): MessageChannel!
   updateFrontComponent(input: UpdateFrontComponentInput!): FrontComponent!
+  updateGettingStarted(input: UpdateGettingStartedInput!): GettingStartedProgress!
   updateLabPublicFeatureFlag(input: UpdateLabPublicFeatureFlagInput!): FeatureFlag!
   updateManyNavigationMenuItems(inputs: [UpdateOneNavigationMenuItemInput!]!): [NavigationMenuItem!]!
   updateManyObjects(inputs: [UpdateOneObjectInput!]!): [Object!]!
   updateManyViewGroups(inputs: [UpdateViewGroupInput!]!): [ViewGroup!]!
+  updateMcpServer(input: UpdateMcpServerInput!): McpServer!
   updateMessageChannel(input: UpdateMessageChannelInput!): MessageChannel!
   updateMessageFolder(input: UpdateMessageFolderInput!): MessageFolder!
   updateMessageFolders(input: UpdateMessageFoldersInput!): [MessageFolder!]!
@@ -3445,7 +3575,8 @@ type Mutation {
   updateViewSort(input: UpdateViewSortInput!): ViewSort!
   updateWebhook(input: UpdateWebhookInput!): Webhook!
   updateWorkspace(data: UpdateWorkspaceInput!): Workspace!
-  updateWorkspaceAllowedIframeOrigins(data: UpdateWorkspaceAllowedIframeOriginsInput!): Workspace!
+  updateWorkspaceAllowedEmbeddingOrigins(data: UpdateWorkspaceAllowedEmbeddingOriginsInput!): Workspace!
+  updateWorkspaceIframeMediaPermissions(data: UpdateWorkspaceIframeMediaPermissionsInput!): Workspace!
   updateWorkspaceMemberRole(roleId: UUID!, workspaceMemberId: UUID!): WorkspaceMember!
   updateWorkspaceMemberSettings(input: UpdateWorkspaceMemberSettingsInput!): Boolean!
   upgradeApplication(appRegistrationId: String!, targetVersion: String!): Boolean!
@@ -3535,6 +3666,7 @@ type Object {
     paging: CursorPaging! = {first: 10}
   ): ObjectIndexMetadatasConnection!
   isActive: Boolean!
+  isAuditLogged: Boolean!
   isLabelSyncedWithName: Boolean!
   isRemote: Boolean!
   isSearchable: Boolean!
@@ -3548,14 +3680,10 @@ type Object {
   namePlural: String!
   nameSingular: String!
   openRecordIn: ObjectOpenRecordIn!
-  readability: MetadataReadability!
-  readabilityParentFieldUniversalIdentifiers: [UUID!]
   searchFieldMetadataList: [SearchField!]!
-  sharingReach: ObjectSharingReach!
   shortcut: String
   universalIdentifier: String!
   updatedAt: DateTime!
-  writability: MetadataWritability!
 }
 
 type ObjectConnection {
@@ -3672,11 +3800,6 @@ enum ObjectRecordGroupByDateGranularity {
   QUARTER_OF_THE_YEAR
   WEEK
   YEAR
-}
-
-enum ObjectSharingReach {
-  ROLE_ACCESS
-  WORKSPACE
 }
 
 """Onboarding status"""
@@ -3986,7 +4109,7 @@ type PublicWorkspaceDataSummary {
 type Query {
   agentChatChannelRoles: [AgentChatChannelRole!]!
   agentChatChannelSummaries: [AgentChatChannelSummary!]!
-  agentChatChannelThreadIds(after: String, assignment: AgentChatChannelAssignmentFilter, channelId: UUID!, first: Int, status: AgentChatChannelThreadStatus): AgentChatChannelThreadIds!
+  agentChatChannelThreadIds(after: String, assignment: AgentChatChannelAssignmentFilter, channelId: UUID!, filter: AgentChatChannelThreadFilter, first: Int, status: AgentChatChannelThreadStatus): AgentChatChannelThreadIds!
   agentChatChannels: [AgentChatChannel!]!
   agentChatOpenThreadsSummary: AgentChatOpenThreadsSummary!
   agentRuns(agentId: UUID!, limit: Int! = 100): [AgentRun!]!
@@ -4024,7 +4147,7 @@ type Query {
   enterprisePortalSession(returnUrlPath: String): String
   enterpriseSubscriptionStatus: EnterpriseSubscriptionStatusDTO
   eventLogs(input: EventLogQueryInput!): EventLogQueryResult!
-  exportApplication(universalIdentifier: UUID!): ApplicationExport!
+  exportApplication(shouldIncludeDependencies: Boolean = false, universalIdentifier: UUID!): ApplicationExport!
   field(
     """The id of the record to find."""
     id: UUID!
@@ -4103,10 +4226,14 @@ type Query {
   getViewSorts(viewId: String): [ViewSort!]!
   getViews(objectMetadataId: String, viewTypes: [ViewType!]): [View!]!
   getWorkspaceCreationDefaults: WorkspaceCreationDefaultsDTO!
+  gettingStartedProgress: GettingStartedProgress!
+  gettingStartedWorkflowPreviews: [GettingStartedWorkflowPreview!]!
   githubClaimAuthorizationUrl(applicationRegistrationId: String!): String!
   isApplicationStopped(applicationUniversalIdentifier: String!): Boolean!
   lineChartData(input: LineChartDataInput!): LineChartData!
   listPlans: [BillingPlan!]! @deprecated(reason: "Use billingPlans instead.")
+  mcpServer(id: UUID!): McpServer
+  mcpServers: [McpServer!]!
   messageSuppressions(input: FindMessageSuppressionsInput!): MessageSuppressionList!
   metadataTranslations(input: MetadataTranslationsInput!): [MetadataTranslation!]!
   minimalMetadata: MinimalMetadata!
@@ -4135,9 +4262,10 @@ type Query {
   previewMessageCampaignAudience(input: PreviewMessageCampaignAudienceInput!): CampaignAudiencePreviewDTO!
   previewMessageCampaignSend(input: PreviewMessageCampaignSendInput!): PreviewMessageCampaignSendOutputDTO!
   publicMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
-  publicMarketplaceApps(isVetted: Boolean! = true): [MarketplaceApp!]!
+  publicMarketplaceApps: [MarketplaceApp!]!
   recordPermissions(targets: [RecordTargetInput!]!): [RecordPermissionsResult!]!
   recordSharing(target: RecordTargetInput!): RecordSharingDTO!
+  relatedRecordPaths: [RelatedRecordPath!]!
   skill(id: UUID!): Skill
   skills: [Skill!]!
   timelineActivityTypes: [TimelineActivityType!]!
@@ -4212,13 +4340,12 @@ enum RecordShareRowCause {
 
 type RecordSharingDTO {
   canManageSharing: Boolean!
-  defaultGeneralAccessLevel: RecordShareAccessLevel
-  generalAccessLevel: RecordShareAccessLevel
   hasManagedGeneralAccess: Boolean!
+  isPrivate: Boolean!
+  isShareable: Boolean!
   permissions: RecordPermissionsDTO!
   roles: [RecordSharingRoleDTO!]!
   shares: [RecordSharingGrantDTO!]!
-  sharingMode: RecordSharingMode!
 }
 
 type RecordSharingGrantDTO {
@@ -4228,16 +4355,6 @@ type RecordSharingGrantDTO {
   principalRoleId: UUID
   principalType: RecordSharePrincipalType!
   rowCause: RecordShareRowCause!
-}
-
-"""
-How records of an object are shared: only through roles, private until shared, readable through linked records, or open by default with per-record exceptions
-"""
-enum RecordSharingMode {
-  INHERITED
-  OPEN_BY_DEFAULT
-  PRIVATE
-  ROLE_ONLY
 }
 
 type RecordSharingRoleDTO {
@@ -4257,6 +4374,15 @@ type RecordTableConfiguration {
 input RecordTargetInput {
   objectMetadataId: UUID!
   recordId: UUID!
+}
+
+type RelatedRecordPath {
+  firstFieldMetadataId: UUID!
+  id: UUID!
+  isInherent: Boolean!
+  objectMetadataId: UUID!
+  secondFieldMetadataId: UUID
+  thirdFieldMetadataId: UUID
 }
 
 type Relation {
@@ -4341,6 +4467,7 @@ type RowLevelPermissionPredicate {
   objectMetadataId: String!
   operand: RowLevelPermissionPredicateOperand!
   positionInRowLevelPermissionPredicateGroup: Float
+  relationFieldMetadataId: String
   roleId: String!
   rowLevelPermissionPredicateGroupId: String
   subFieldName: String
@@ -4376,6 +4503,7 @@ input RowLevelPermissionPredicateInput {
   id: UUID
   operand: RowLevelPermissionPredicateOperand!
   positionInRowLevelPermissionPredicateGroup: Float
+  relationFieldMetadataId: UUID
   rowLevelPermissionPredicateGroupId: UUID
   subFieldName: String
   value: JSON
@@ -4593,6 +4721,7 @@ type SettingsMenuItem {
   id: UUID!
   position: Float!
   scope: SettingsMenuItemScope!
+  slug: String
   title: String!
   universalIdentifier: UUID!
   updatedAt: DateTime!
@@ -4647,7 +4776,7 @@ type Skill {
   icon: String
   id: UUID!
   isActive: Boolean!
-  isCustom: Boolean!
+  isCustom: Boolean! @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
   isSystem: Boolean!
   label: String!
   name: String!
@@ -4891,6 +5020,7 @@ input UpdateAgentInput {
   description: String
   icon: String
   id: UUID!
+  isActive: Boolean
   label: String
   modelConfiguration: JSON
   modelId: String
@@ -5010,6 +5140,13 @@ input UpdateFrontComponentInputUpdates {
   name: String
 }
 
+input UpdateGettingStartedInput {
+  completedStepActionKey: GettingStartedStepActionKey
+  isHidden: Boolean
+  selectedStepActionKey: GettingStartedStepActionKey
+  snoozedUntil: String
+}
+
 input UpdateLabPublicFeatureFlagInput {
   publicFeatureFlag: String!
   value: Boolean!
@@ -5035,6 +5172,19 @@ input UpdateLogicFunctionFromSourceInputUpdates {
   timeoutSeconds: Float
   toolTriggerSettings: JSON
   workflowActionTriggerSettings: JSON
+}
+
+input UpdateMcpServerInput {
+  id: UUID!
+  update: UpdateMcpServerInputUpdates!
+}
+
+input UpdateMcpServerInputUpdates {
+  connectionProviderId: UUID
+  isActive: Boolean
+  label: String
+  name: String
+  url: String
 }
 
 input UpdateMessageChannelInput {
@@ -5090,8 +5240,6 @@ input UpdateObjectPayload {
   namePlural: String
   nameSingular: String
   openRecordIn: ObjectOpenRecordIn
-  readability: MetadataReadability
-  sharingReach: ObjectSharingReach
   shortcut: String
   translations: [MetadataTranslationOverrideInput!]
 }
@@ -5332,6 +5480,7 @@ input UpdateViewInput {
   openRecordIn: ViewOpenRecordIn
   position: Float
   shouldHideEmptyGroups: Boolean
+  translations: [MetadataTranslationOverrideInput!]
   type: ViewType
   visibility: ViewVisibility
 }
@@ -5360,12 +5509,19 @@ input UpdateWebhookInput {
 input UpdateWebhookInputUpdates {
   description: String
   operations: [String!]
+  roleId: UUID
   secret: String
   targetUrl: String
 }
 
-input UpdateWorkspaceAllowedIframeOriginsInput {
+input UpdateWorkspaceAllowedEmbeddingOriginsInput {
   operation: String!
+  origin: String!
+}
+
+input UpdateWorkspaceIframeMediaPermissionsInput {
+  camera: Boolean!
+  microphone: Boolean!
   origin: String!
 }
 
@@ -5605,6 +5761,7 @@ enum UsageOperationType {
   AI_WORKFLOW_WEB_SEARCH
   ALL
   API_REQUEST
+  APP_OPERATION
   CALL_RECORDING
   CODE_EXECUTION
   EMAIL_SEND
@@ -5757,6 +5914,8 @@ enum UserCreditsFallback {
 
 type UserSession {
   authProvider: String!
+  city: String
+  country: String
   createdAt: DateTime!
   expiresAt: DateTime!
   id: UUID!
@@ -5764,6 +5923,7 @@ type UserSession {
   isCurrent: Boolean!
   isImpersonating: Boolean!
   lastActiveAt: DateTime!
+  region: String
   userAgent: String
   workspaceId: UUID
 }
@@ -5842,7 +6002,7 @@ type View {
   id: UUID!
   isActive: Boolean!
   isCompact: Boolean!
-  isCustom: Boolean!
+  isCustom: Boolean! @deprecated(reason: "Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead.")
   isSystemSideEffect: Boolean!
   kanbanAggregateOperation: AggregateOperations
   kanbanAggregateOperationFieldMetadataId: UUID
@@ -6027,6 +6187,7 @@ type Webhook {
   description: String
   id: UUID!
   operations: [String!]!
+  role: Role
   secret: String!
   targetUrl: String!
   updatedAt: DateTime!
@@ -6095,6 +6256,31 @@ enum WidgetType {
   WORKFLOW_VERSION
 }
 
+enum WorkflowActionType {
+  AI_AGENT
+  CLASSIFY
+  CODE
+  CREATE_CALENDAR_EVENT
+  CREATE_RECORD
+  DELAY
+  DELETE_RECORD
+  DRAFT_EMAIL
+  EMPTY
+  FILTER
+  FIND_RECORDS
+  FORM
+  HTTP_REQUEST
+  IF_ELSE
+  ITERATOR
+  LOGIC_FUNCTION
+  PICK_RECORD
+  SEND_CHAT_MESSAGE
+  SEND_EMAIL
+  UPDATE_RECORD
+  UPSERT_RECORD
+  WAIT_FOR_EVENT
+}
+
 type WorkflowConfiguration {
   configurationType: WidgetConfigurationType!
 }
@@ -6115,7 +6301,7 @@ type Workspace {
   aiEvaluationModelId: String
   aiModelIdByTier: JSON!
   allowImpersonation: Boolean!
-  allowedIframeOrigins: [String!]
+  allowedEmbeddingOrigins: [String!]
   billingCustomer: BillingCustomer
   billingEntitlements: [BillingEntitlement!]!
   billingSubscriptions: [BillingSubscription!]!
@@ -6132,6 +6318,7 @@ type Workspace {
   hasValidEnterpriseValidityToken: Boolean!
   hasValidSignedEnterpriseKey: Boolean!
   id: UUID!
+  iframeMediaPermissions: [IframeMediaPermission!]
   installedApplications: [Application!]!
   inviteHash: String
   isAutoModelSelectionEnabled: Boolean!

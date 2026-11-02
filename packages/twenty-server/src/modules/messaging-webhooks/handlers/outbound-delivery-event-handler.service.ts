@@ -25,6 +25,8 @@ export class OutboundDeliveryEventHandlerService {
         doNotCheckDuplicatesBasedOnPrefix: true,
         retryLimit: DELIVERY_EVENT_RETRY_LIMIT,
         backoff: CAMPAIGN_SEND_RETRY_BACKOFF,
+        workspaceId: event.workspaceId,
+        isWorkspaceJob: true,
       },
     );
   }

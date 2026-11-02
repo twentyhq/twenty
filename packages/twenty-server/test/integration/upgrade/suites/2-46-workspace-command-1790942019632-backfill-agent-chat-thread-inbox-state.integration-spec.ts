@@ -47,6 +47,7 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
   let backfillCommand: BackfillAgentChatThreadInboxStateCommand;
   let subscriptionsCommand: AddAgentChatThreadSubscriptionsCommand;
   let workspaceOrmManager: WorkspaceOrmManager;
+  let seededParticipantColumns: string[];
 
   const sharedThreadId = randomUUID();
   const emptyThreadId = randomUUID();
@@ -146,6 +147,18 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
       [threadIds],
     );
 
+  const listParticipantColumns = async (): Promise<string[]> => {
+    const columns: { column_name: string }[] =
+      await global.testDataSource.query(
+        `SELECT column_name FROM information_schema.columns
+         WHERE table_schema = $1 AND table_name = 'agentChatThreadParticipant'
+         ORDER BY column_name`,
+        [SCHEMA],
+      );
+
+    return columns.map(({ column_name }) => column_name);
+  };
+
   const readOwnerShares = async () => {
     const rows: { principalId: string; workspaceMemberId: string }[] =
       await global.testDataSource.query(
@@ -175,6 +188,7 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
     workspaceOrmManager = getAppProviderByClassName<WorkspaceOrmManager>(
       'WorkspaceOrmManager',
     );
+    seededParticipantColumns = await listParticipantColumns();
 
     // 2.47 dropped the column the 2.46 commands still read
     await global.testDataSource.query(
@@ -292,6 +306,7 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
     await global.testDataSource.query(
       `ALTER TABLE ${SCHEMA}."agentMessage" DROP COLUMN IF EXISTS "isHidden"`,
     );
+    expect(await listParticipantColumns()).toEqual(seededParticipantColumns);
   });
 
   it('registers both commands in order for 2.46.0', () => {

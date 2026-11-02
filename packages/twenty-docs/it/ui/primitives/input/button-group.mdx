@@ -1,0 +1,102 @@
+---
+title: ButtonGroup
+description: Raggruppa pulsanti correlati con un aspetto condiviso e una cornice facoltativa.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ButtonGroupReference from '/snippets/ui/generated/input/button-group.mdx';
+
+## Panoramica
+
+Assegna al gruppo un nome accessibile e inserisci al suo interno i pulsanti correlati. Il gruppo unisce i bordi adiacenti e può applicare valori predefiniti per dimensione, variante e colore. I pulsanti mantengono i propri punti di tabulazione.
+
+<StoryEmbed storyId="ui-input-button-buttongroup--display" title="Gruppo di pulsanti" height={100} />
+
+## Utilizzo
+
+```tsx
+import { IconCheckbox, IconNotes, IconTimelineEvent } from 'twenty-ui/icon';
+import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
+
+export const ActivityActions = () => (
+  <ButtonGroup aria-label="Create activity" size="sm">
+    <Button startIcon={<IconNotes />}>Note</Button>
+    <Button startIcon={<IconCheckbox />}>Task</Button>
+    <Button startIcon={<IconTimelineEvent />}>Activity</Button>
+  </ButtonGroup>
+);
+```
+
+## Proprietà dello stato
+
+`ButtonGroup` coordina l'aspetto, non la selezione. Non dispone di una modalità di selezione controllata o non controllata. Ogni pulsante riceve il proprio gestore di azioni e lo stato dell'applicazione; consulta [l'esempio di proprietà dello stato di Button](/it/ui/primitives/input/button#state-ownership) per il comportamento di caricamento.
+
+Per una scelta mutuamente esclusiva, usa [RadioGroup](/it/ui/primitives/input/radio-group), che gestisce la selezione per i relativi controlli radio.
+
+## Precedenza dell'aspetto
+
+Ogni prop dell'aspetto viene risolta in modo indipendente: prima la prop esplicita dell'elemento figlio, poi il valore predefinito del gruppo, quindi il valore predefinito del componente. Questo si applica sia a Button sia a IconButton, incluso un `IconButton size="xs"` esplicito. I valori predefiniti raggiungono gli elementi figlio tramite frammenti, wrapper e ancore dei tooltip.
+
+Un gruppo può fornire `color="inherit"` su una superficie colorata. Un elemento figlio che viene risolto in un colore ereditato deve essere risolto anche in una variante non uniforme. Le sostituzioni esplicite del colore e della variante dell'elemento figlio hanno la precedenza, quindi un elemento figlio può scegliere una variante non uniforme o un colore semantico quando il gruppo fornisce insieme uniforme e inherit.
+
+Mantieni i pulsanti collegati della stessa dimensione affinché i bordi siano allineati. Questo esempio sovrascrive la variante e il colore ereditando la dimensione del gruppo.
+
+```tsx
+import { Button, ButtonGroup } from 'twenty-ui/primitives/input';
+
+export const ActivityActions = () => (
+  <ButtonGroup
+    aria-label="Activity actions"
+    variant="solid"
+    color="accent"
+    size="sm"
+  >
+    <Button variant="ghost" color="danger">
+      Delete activity
+    </Button>
+    <Button color="neutral">Duplicate activity</Button>
+    <Button>New activity</Button>
+  </ButtonGroup>
+);
+```
+
+<StoryEmbed storyId="ui-input-button-buttongroup--appearance-overrides" title="Aspetto individuale in un gruppo di pulsanti" height={100} />
+
+## Controlli separati
+
+Imposta `attached={false}` per mantenere gli angoli arrotondati di ciascun controllo e uno spazio di 2px. I valori predefiniti del gruppo si applicano comunque tramite wrapper e ancoraggi dei tooltip; le proprietà esplicite dei figli hanno la precedenza.
+
+## Controlli con cornice
+
+Imposta `framed` per aggiungere uno sfondo traslucido, un bordo, un padding di 2px e angoli concentrici. La cornice funziona con controlli collegati o separati e mantiene l'aspetto esplicito dei figli. Usa `size="xs"` su [IconButton](/it/ui/components/input/icon-button) per azioni compatte da 20px.
+
+<StoryEmbed storyId="ui-components-iconbutton--framed-group-documentation" title="Gruppo di pulsanti con cornice" height={100} />
+
+```tsx
+import { IconButton } from 'twenty-ui/components/input';
+import { IconPlus, IconTrash } from 'twenty-ui/icon';
+import { ButtonGroup } from 'twenty-ui/primitives/input';
+
+export const CompactRecordActions = () => (
+  <ButtonGroup framed attached={false} aria-label="Record actions">
+    <IconButton size="xs" aria-label="Add" variant="ghost">
+      <IconPlus />
+    </IconButton>
+    <IconButton size="xs" aria-label="Delete" variant="ghost" disabled>
+      <IconTrash />
+    </IconButton>
+  </ButtonGroup>
+);
+```
+
+## Aggiornamento dei gruppi esistenti
+
+Sostituisci `IconButtonGroup` e il relativo array `iconButtons` con `ButtonGroup framed attached={false}` e figli espliciti. Sostituisci `InsideButton` con `LightIconButton size="xs"`. Ogni pulsante dispone del proprio nome accessibile, gestore di azioni, stato disabilitato e tooltip facoltativo.
+
+## Props
+
+<ButtonGroupReference />
+
+<PageBanner illustration="page-cover-pointer" />

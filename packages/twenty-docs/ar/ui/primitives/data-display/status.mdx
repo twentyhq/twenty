@@ -1,0 +1,91 @@
+---
+title: الحالة
+description: اعرض حالة مسماة مع مؤشر ملوّن وملاحظات تحميل اختيارية.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import StatusReference from '/snippets/ui/generated/data-display/status.mdx';
+
+## نظرة عامة
+
+يجمع `Status` بين نقطة ملوّنة وتسمية نصية ومؤشر تحميل اختياري. استخدمه لحالات سير العمل أو السجل. استخدم [الوسم](/ar/ui/primitives/data-display/tag) لفئة من دون مؤشر الحالة.
+
+<StoryEmbed storyId="ui-data-display-status--display" title="مثال على الحالة" height={90} />
+
+## استخدام
+
+```tsx
+import { Status } from 'twenty-ui/primitives/data-display';
+
+export const RecordStatus = () => (
+  <Status color="red" weight="medium">
+    Urgent
+  </Status>
+);
+```
+
+`color` مطلوب ويستخدم لوحة ألوان النسق. تنقل التسمية المعنى بصورة مستقلة عن اللون. العنصر الافتراضي هو دائمًا `span`، بما في ذلك عند توفير معالج نقر أصلي؛ تؤكد `weight="medium"` نصه.
+
+## التحميل والإعلانات
+
+<StoryEmbed storyId="ui-data-display-status--loading" title="الحالة أثناء الحفظ" height={90} />
+
+```tsx
+import { Status } from 'twenty-ui/primitives/data-display';
+
+type SaveStatusProps = { isSaving: boolean };
+
+export const SaveStatus = ({ isSaving }: SaveStatusProps) => (
+  <div role="status">
+    <Status color={isSaving ? 'blue' : 'green'} loading={isSaving}>
+      {isSaving ? 'Saving' : 'Saved'}
+    </Status>
+  </div>
+);
+```
+
+يعرض `loading` أداة تحميل زخرفية بعد التسمية ويضبط `aria-busy` افتراضيًا على `true`. وفّر `aria-busy` صراحةً عندما يكون سير العمل المحيط مسؤولًا عن تلك الحالة. لا يضيف المكوّن منطقة حية ولا يغيّر نصه تلقائيًا. أبقِ حاوية `role="status"` مركّبة عندما ينبغي الإعلان عن التحديثات للتقنية المساعدة، وقدّم تسمية تصف الحالة الحالية.
+
+## تغيير حالة
+
+```tsx
+import { Status } from 'twenty-ui/primitives/data-display';
+
+type ChangeStatusActionProps = {
+  isUpdating: boolean;
+  onChangeStatus: () => void;
+};
+
+export const ChangeStatusAction = ({
+  isUpdating,
+  onChangeStatus,
+}: ChangeStatusActionProps) => (
+  <Status
+    color="blue"
+    loading={isUpdating}
+    render={
+      <button
+        type="button"
+        disabled={isUpdating}
+        onClick={onChangeStatus}
+        aria-label="Change record status"
+      />
+    }
+  >
+    {isUpdating ? 'Updating' : 'In progress'}
+  </Status>
+);
+```
+
+أنشئ عنصرًا مالكًا تفاعليًا عبر `render`. ضع معالج النقر والسمات الأصلية والمرجع وحالة التعطيل على ذلك العنصر المالك. يوفر الزر الحقيقي التركيز والتنشيط بالمؤشر وبمفتاح Enter وبمفتاح Space. يعرض `Status.loading` التقدم؛ مرّر `disabled` إلى الزر عندما يجب أن ينتظر الإجراء. للتنقل، اعرض رابطًا بوجهته، مثل `<a href="/records" />`. تحتفظ العناصر المالكة الأصلية بمظهر Status. تحافظ العقد الفرعية على النص والترجمات والروابط المقصودة التي يملكها المستدعي.
+
+## الإزاحة
+
+تُولَّد الأنواع والقيم الافتراضية من أنواع المكوّن العامة. تُقبل أيضًا السمات الأصلية ومعالجات الأحداث.
+
+<StatusReference />
+
+<PageBanner illustration="page-cover-checkbox" />

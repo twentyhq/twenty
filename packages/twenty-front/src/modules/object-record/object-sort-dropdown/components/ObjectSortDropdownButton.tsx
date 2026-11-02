@@ -23,7 +23,7 @@ import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSe
 import { Trans, useLingui } from '@lingui/react/macro';
 import { findByProperty, isNonEmptyArray } from 'twenty-shared/utils';
 import { LightButton } from 'twenty-ui/components/input';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { v4 } from 'uuid';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
 

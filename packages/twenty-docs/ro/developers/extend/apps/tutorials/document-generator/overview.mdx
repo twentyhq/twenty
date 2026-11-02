@@ -3,6 +3,11 @@ title: "Tutorial: Document Generator"
 description: Construiește o aplicație Twenty reală care generează documente personalizate din datele din CRM-ul tău.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Ce vei construi
+
 În acest tutorial vei construi **Document Generator** — o aplicație care transformă șabloanele reutilizabile
 în documente personalizate folosind datele deja existente în CRM-ul tău.
 
@@ -29,21 +34,23 @@ Fiecare capitol adaugă o capacitate. Până la sfârşit veţi fi atins cea mai
 
 ## Cerințe
 
-Trebuie să fi terminat [Quick Start](/ro/developers/extend/apps/getting-started/quick-start):
-un server local de douăzeci care rulează pe portul `2020` şi CLI autentificat la acesta.
+Ar trebui să fi finalizat [Pornire rapidă](/ro/developers/extend/apps/getting-started/quick-start):
+un spațiu de lucru Twenty (cloud sau local) și CLI-ul autentificat în acesta.
 
-Dacă nu, schildează şi începe acum unul:
+Dacă serverul sau autentificarea nu sunt pregătite, finalizați mai întâi [Pornire rapidă](/ro/developers/extend/apps/getting-started/quick-start). Apoi creați și instalați aplicația din tutorial:
 
 ```bash filename="Terminal"
-npx create-twenty-app@latest document-generator
+twenty app init document-generator
 cd document-generator
-yarn twenty dev
+yarn install
+twenty app apply --create
+twenty app dev
 ```
 
 <Note>
-Preferă să citești codul finalizat? Aplicația completă trăiește în
-[`pachete/douăzeci de aplicații/exemple/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
-Fiecare snippet de mai jos este copiat din el.
+  Preferă să citești codul finalizat? Aplicația completă trăiește în
+  [`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+  Fiecare snippet de mai jos este copiat din el.
 </Note>
 
 ## Cum se potrivește aplicația împreună
@@ -60,10 +67,15 @@ pasul fluxului de lucru, link-ul partajabil - este doar o modalitate diferită d
 
 ## Păstrează această buclă rulantă
 
-Lăsați `yarn douăzeci de` să ruleze într-un terminal pentru întregul tutorial. De fiecare dată când
+Lăsați `twenty app dev` să ruleze într-un terminal pe tot parcursul tutorialului. De fiecare dată când
 adaugi sau editezi un fişier sub `src/`, el re-sincronizează pe serverul tău în câteva
 secunde, pentru ca fiecare capabilitate să apară în interfață pe măsură ce o construiești.
 
-<Card title="Începe construirea →" icon="database" href="/ro/developers/extend/apps/tutorials/document-generator/data-model">
-  Capitolul 1: modele de documente și modele.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ro/developers/extend/apps/tutorials/document-generator/data-model" img="/images/documentation/banner-icons-v2/data-model.svg">
+  <CardTitle>Începe construirea →</CardTitle>
+  Capitolul 1: modele de documente şi şabloane.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="section-document-generator" />

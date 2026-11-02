@@ -1,0 +1,63 @@
+---
+title: Modalità scura
+description: Carica entrambe le tavolozze dell'interfaccia utente Twenty e cambia lo schema di colori attivo.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
+Carica entrambi i fogli di stile del tema quando la tua applicazione può cambiare schema. `ThemeProvider` seleziona una tavolozza applicando la classe `light` o `dark`.
+
+```tsx
+import { useState } from 'react';
+import { Switch } from 'twenty-ui/primitives/input';
+import { ThemeProvider } from 'twenty-ui/theme';
+
+import 'twenty-ui/style.css';
+import 'twenty-ui/theme-light.css';
+import 'twenty-ui/theme-dark.css';
+
+export const App = () => {
+  const [isDark, setIsDark] = useState(false);
+
+  return (
+    <ThemeProvider colorScheme={isDark ? 'dark' : 'light'}>
+      <label>
+        <Switch checked={isDark} onCheckedChange={setIsDark} />
+        Dark mode
+      </label>
+    </ThemeProvider>
+  );
+};
+```
+
+Il provider accetta uno schema esplicito. La tua applicazione gestisce la persistenza delle preferenze e qualsiasi gestione delle preferenze di sistema. Se esegui il rendering sul server, usa lo stesso schema iniziale sul server e sul client per evitare una discordanza iniziale tra le tavolozze.
+
+## Combina le tavolozze
+
+Imposta `applyToRoot={false}` su un provider annidato per assegnare a un sottoalbero una tavolozza diversa. Entrambi i fogli di stile devono essere caricati:
+
+```tsx
+import { ThemeProvider } from 'twenty-ui/theme';
+
+export const Preview = () => (
+  <ThemeProvider colorScheme="light">
+    <p>The application uses the light palette.</p>
+    <ThemeProvider colorScheme="dark" applyToRoot={false}>
+      <section
+        style={{
+          background: 'var(--t-background-primary)',
+          color: 'var(--t-font-color-primary)',
+        }}
+      >
+        This preview uses the dark palette.
+      </section>
+    </ThemeProvider>
+  </ThemeProvider>
+);
+```
+
+Usa `useThemeColorScheme()` da `twenty-ui/theme` per leggere lo schema attivo del provider. In un componente front di Twenty, usa `useColorScheme()` da `twenty-sdk/front-component` per leggere lo schema dello spazio di lavoro fornito dall'host.
+
+<PageBanner illustration="page-cover-palette" />

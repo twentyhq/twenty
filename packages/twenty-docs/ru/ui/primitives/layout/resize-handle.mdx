@@ -1,0 +1,213 @@
+---
+title: ResizeHandle
+description: Изменяйте размер панели перетаскиванием указателем или с помощью элементов управления с клавиатуры.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ResizeHandleReference from '/snippets/ui/generated/layout/resize-handle.mdx';
+
+## Обзор
+
+`ResizeHandle` управляет числовым размером и предоставляет фокусируемый разделитель. Приложение применяет этот размер к панели; маркер не изменяет размер другого элемента автоматически.
+
+<StoryEmbed storyId="ui-layout-resizehandle--display" title="Пример ResizeHandle" height={600} />
+
+## Использование
+
+Используйте `edge` для границы панели или `axis="y"` для изменения высоты во встроенном режиме и `axis="x"` для изменения ширины во встроенном режиме. Задайте маркеру конкретное доступное имя и используйте `aria-controls` для указания панели.
+
+```tsx
+import { useId, useState } from 'react';
+import { ResizeHandle } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ResizableNotes = () => {
+  const panelId = useId();
+  const [height, setHeight] = useState(150);
+
+  return (
+    <Card.Root style={{ width: 300, maxWidth: '100%' }}>
+      <Text
+        id={panelId}
+        style={{
+          height,
+          overflow: 'auto',
+          padding: 16,
+          boxSizing: 'border-box',
+        }}
+      >
+        <Text
+          style={{
+            color: 'var(--t-font-color-primary)',
+            fontWeight: 'var(--t-font-weight-medium)',
+          }}
+        >
+          Record notes
+        </Text>
+        <Text style={{ marginTop: 8, lineHeight: 1.5 }}>
+          Follow up with Morgan about the proposal. Share the revised timeline
+          before Friday.
+        </Text>
+      </Text>
+      <Text style={{ padding: 4 }}>
+        <ResizeHandle
+          axis="y"
+          defaultValue={150}
+          onValueChange={setHeight}
+          min={50}
+          max={500}
+          aria-label="Resize notes height"
+          aria-controls={panelId}
+        />
+      </Text>
+    </Card.Root>
+  );
+};
+```
+
+Ползунок самостоятельно хранит своё значение. `onValueChange` копирует последний размер в компоновку панелей, не управляя ползунком. `defaultValue` задаёт только начальный размер.
+
+## Управляемое состояние
+
+```tsx
+import { useId, useState } from 'react';
+import { ResizeHandle } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ResizableNotes = () => {
+  const panelId = useId();
+  const [height, setHeight] = useState(150);
+
+  return (
+    <Card.Root style={{ width: 300, maxWidth: '100%' }}>
+      <Text
+        id={panelId}
+        style={{
+          height,
+          overflow: 'auto',
+          padding: 16,
+          boxSizing: 'border-box',
+        }}
+      >
+        <Text
+          style={{
+            color: 'var(--t-font-color-primary)',
+            fontWeight: 'var(--t-font-weight-medium)',
+          }}
+        >
+          Record notes
+        </Text>
+        <Text style={{ marginTop: 8, lineHeight: 1.5 }}>
+          Follow up with Morgan about the proposal. Share the revised timeline
+          before Friday.
+        </Text>
+      </Text>
+      <Text style={{ padding: 4 }}>
+        <ResizeHandle
+          axis="y"
+          value={height}
+          onValueChange={setHeight}
+          min={50}
+          max={500}
+          aria-label="Resize notes height"
+          aria-controls={panelId}
+        />
+      </Text>
+    </Card.Root>
+  );
+};
+```
+
+Приложение владеет значением и может обновлять его с помощью других элементов управления. Отражайте текущие изменения в `value`; используйте `onValueCommitted`, чтобы сохранить окончательный размер. Не смешивайте `value` и `defaultValue` и сохраняйте один и тот же режим владения на протяжении всего жизненного цикла компонента.
+
+## Края и промежутки панелей
+
+`edge="left"`, `"right"`, `"top"` или `"bottom"` определяет как ось, так и физическое направление увеличения. Движение влево увеличивает левый край, движение вверх увеличивает верхний край; для правого и нижнего краёв действует обратное правило. Это поведение не меняется в содержимом с направлением справа налево. Используйте либо `edge`, либо `axis` и `direction`.
+
+При использовании `edge` по умолчанию применяется размещение `"edge"`. Поместите ползунок внутрь панели с `position: 'relative'`, чтобы расположить его вдоль этой границы. `placement="inline"` сохраняет его в обычном потоке. Используйте `placement="gap"` между соседними панелями и задайте его ширину или высоту через `style`, если компоновке нужен промежуток. По умолчанию ползунки промежутков не имеют видимой ручки.
+
+```tsx
+import { useId, useState } from 'react';
+import { ResizeHandle } from 'twenty-ui/primitives/layout';
+import { Card } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ResizableDetails = ({
+  saveWidth,
+}: {
+  saveWidth: (value: number) => void;
+}) => {
+  const detailsId = useId();
+  const [width, setWidth] = useState(380);
+
+  return (
+    <div style={{ display: 'flex', height: 200 }}>
+      <Card.Root style={{ flex: 1 }}>
+        <Text>Activity</Text>
+      </Card.Root>
+      <ResizeHandle
+        edge="left"
+        placement="gap"
+        value={width}
+        onValueChange={setWidth}
+        onValueCommitted={saveWidth}
+        min={280}
+        max={800}
+        style={{ width: 12 }}
+        aria-label="Resize details"
+        aria-controls={detailsId}
+      />
+      <Card.Root id={detailsId} style={{ width }}>
+        <Text>Details</Text>
+      </Card.Root>
+    </div>
+  );
+};
+```
+
+<StoryEmbed storyId="ui-layout-resizehandle-panels--documentation" title="Пример края панели ResizeHandle" height={250} />
+
+<StoryEmbed storyId="ui-layout-resizehandle-panels--gap" title="Пример промежутка панели ResizeHandle" height={520} />
+
+Приложение управляет макетом, сохранённым размером, состоянием сворачивания и местом назначения фокуса, когда при сворачивании удаляется ручка. Используйте `onActivate` для необязательного действия сворачивания.
+
+## Клавиатура и границы
+
+Для `axis="y"` клавиша «Вниз» увеличивает размер, а «Вверх» уменьшает его. Для `axis="x"` Right увеличивает, а Left уменьшает в содержимом с направлением слева направо; направления меняются на противоположные при использовании [DirectionProvider](/ru/ui/primitives/layout/direction-provider) с `direction="rtl"`.
+
+Клавиши со стрелками используют `step`, значение которого по умолчанию — `10`. Home перемещает к `min`, а End — к `max`. Нажатия клавиш с Alt, Control или Meta игнорируются. Перетаскивание указателем использует перемещение в пикселях и не привязано к `step`. Оба взаимодействия не выходят за границы. Нажатия указателем не перемещают фокус; пользователи клавиатуры достигают ручки с помощью Tab. `disabled` предотвращает изменение размера и исключает маркер из порядка навигации по клавише Tab.
+
+Ориентация разделителя описывает разделяющую границу: горизонтальная для изменения высоты и вертикальная для изменения ширины.
+
+## Физические направления и масштабирование
+
+Задайте `direction="normal"` или `direction="reverse"`, когда увеличение размера должно следовать фиксированному физическому направлению независимо от направления текста. Normal увеличивает размер при движении вправо или вниз. Reverse увеличивает размер при движении влево или вверх. Не указывайте `direction`, чтобы сохранить описанное выше поведение, зависящее от направления текста.
+
+`scale` принимает положительный коэффициент масштабирования или функцию, которая его возвращает. Ручка считывает его при нажатии указателя и делит перемещение указателя на это значение. Шаги клавиатуры остаются без изменений.
+
+## Жизненный цикл жеста
+
+`onValueChange` сообщает текущие значения. `onValueCommitted` сообщает окончательное значение после успешного перетаскивания указателем или результативного изменения с клавиатуры. Клавиши Home, End и стрелки немедленно фиксируют значение, когда изменяют размер.
+
+`onResizeStart` получает первого ограниченного кандидата после того, как указатель превысит `dragThreshold`. Порог по умолчанию равен `5` при использовании `edge` и `0` в остальных случаях; он измеряется в физических пикселях. `onResizeEnd` получает `{ cancelled, value }` для начатого перетаскивания. Escape, отмена указателя, потеря захвата указателя и размонтирование отменяют жест без фиксации; отключение ручки отменяет его при следующем событии указателя. При отмене вызывается `onValueChange` с начальным значением, ограниченным текущими границами. `onResizeEnd` получает это восстановленное значение.
+
+Передайте `onActivate` для обработки щелчка без перетаскивания, Enter или Space. Превышение порога предотвращает активацию последующего щелчка указателем, даже если указатель возвращается в начальное положение.
+
+Нативные обработчики выполняются до взаимодействия с маркером. Вызов `preventDefault()` в `onPointerDown` или `onKeyDown` пропускает это взаимодействие. Предотвращение `onPointerMove` пропускает только это обновление и сохраняет жест активным. Предотвращение `onPointerUp` отменяет перетаскивание, восстанавливает исходное ограниченное значение и пропускает `onValueCommitted`. Отмена указателя и потеря захвата по-прежнему завершают жест.
+
+## Пользовательский маркер
+
+`ref`, нативные атрибуты, `className`, `style` и нативные обработчики событий относятся к корневому элементу разделителя, по умолчанию к `div`. Ref не относится к изменяемой по размеру панели или видимому захвату.
+
+`children` заменяет видимый захват, а `children={null}` скрывает его; это не заменяет поведение разделителя. `render` может заменить корневой элемент, и тогда ref относится к этой замене. Пользовательские обёртки должны [передавать предоставленные props и ref](/ru/ui/primitives/overview#custom-components), чтобы фокус, захват указателя, обработчики клавиатуры и атрибуты доступности достигали того же элемента.
+
+## Свойства
+
+<ResizeHandleReference />
+
+<PageBanner illustration="layout" />

@@ -14,7 +14,8 @@ import { useMemo, useState } from 'react';
 
 import { Section } from 'twenty-ui/components/layout';
 import { IconSearch } from 'twenty-ui/icon';
-import { type Agent, type ApiKeyForRole } from '~/generated-metadata/graphql';
+import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
+import { type ApiKeyForRole } from '~/generated-metadata/graphql';
 import { type PartialWorkspaceMember } from '@/settings/roles/types/RoleWithPartialMembers';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { normalizeSearchText } from 'twenty-ui/utilities';
@@ -89,7 +90,7 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
     if (!searchFilter) return roleTargets;
 
     const getSearchableFields = (
-      roleTarget: PartialWorkspaceMember | Agent | ApiKeyForRole,
+      roleTarget: PartialWorkspaceMember | FlatAgent | ApiKeyForRole,
     ): string[] => {
       switch (roleTargetType) {
         case 'member': {
@@ -101,7 +102,7 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
           ];
         }
         case 'agent': {
-          const agent = roleTarget as Agent;
+          const agent = roleTarget as FlatAgent;
           return [
             normalizeSearchText(agent.name),
             normalizeSearchText(agent.label),
@@ -123,7 +124,7 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
   }, [roleTargets, searchFilter, roleTargetType]);
 
   const createRoleTarget = (
-    roleTarget: PartialWorkspaceMember | Agent | ApiKeyForRole,
+    roleTarget: PartialWorkspaceMember | FlatAgent | ApiKeyForRole,
   ): RoleTarget => {
     switch (roleTargetType) {
       case 'member':
@@ -132,7 +133,7 @@ export const SettingsRoleAssignmentTable = <T extends RoleTargetType>({
           data: roleTarget as PartialWorkspaceMember,
         };
       case 'agent':
-        return { type: roleTargetType, data: roleTarget as Agent };
+        return { type: roleTargetType, data: roleTarget as FlatAgent };
       case 'apiKey':
         return { type: roleTargetType, data: roleTarget as ApiKeyForRole };
     }

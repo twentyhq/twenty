@@ -1,4 +1,9 @@
-import { UseGuards, UseInterceptors, UseFilters } from '@nestjs/common';
+import {
+  UseFilters,
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
+} from '@nestjs/common';
 import {
   Args,
   Context,
@@ -12,6 +17,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { type I18nContext } from 'src/engine/core-modules/i18n/types/i18n-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
@@ -94,6 +100,7 @@ export class TimelineActivityTypeResolver {
 
   @Mutation(() => TimelineActivityTypeDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.APPLICATIONS))
+  @UsePipes(ResolverValidationPipe)
   async updateTimelineActivityType(
     @Args('input') input: UpdateTimelineActivityTypeInput,
     @AuthWorkspace() workspace: WorkspaceEntity,

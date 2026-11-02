@@ -15,6 +15,7 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
+import { useIsNavigationDrawerContentExpanded } from '@/ui/navigation/navigation-drawer/hooks/useIsNavigationDrawerContentExpanded';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
@@ -38,6 +39,8 @@ export const NavigationDrawerAiChatChannelsSection = () => {
     PermissionFlagType.AI_SETTINGS,
   );
   const { openAgentChatChannel } = useOpenAgentChatChannel();
+  const isNavigationDrawerContentExpanded =
+    useIsNavigationDrawerContentExpanded();
   const [newChannelName, setNewChannelName] = useState<string | null>(null);
 
   if (!isDefined(agentChatChannels)) {
@@ -66,7 +69,7 @@ export const NavigationDrawerAiChatChannelsSection = () => {
     const channelId = await createAgentChatChannel(trimmedName);
 
     if (isDefined(channelId)) {
-      openAgentChatChannel(channelId);
+      openAgentChatChannel({ channelId });
     }
   };
 
@@ -118,10 +121,10 @@ export const NavigationDrawerAiChatChannelsSection = () => {
           placeholder={t`Channel name`}
         />
       ) : (
-        agentChatAccessibleChannels.length === 0 &&
-        canManageChannels && (
+        canManageChannels &&
+        isNavigationDrawerContentExpanded && (
           <NavigationDrawerItem
-            label={t`New channel`}
+            label={t`Add channel`}
             Icon={IconPlus}
             variant="tertiary"
             onClick={startCreate}

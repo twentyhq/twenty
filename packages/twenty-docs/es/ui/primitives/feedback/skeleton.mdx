@@ -1,0 +1,64 @@
+---
+title: Esqueleto
+description: Muestra formas de marcador de posición con tema mientras se carga el contenido.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import SkeletonReference from '/snippets/ui/generated/feedback/skeleton.mdx';
+
+## Resumen
+
+`Skeleton` proporciona una forma de marcador de posición con colores de tema y un resaltado en movimiento. Compón formas con el diseño del contenido que se está cargando. La aplicación controla el estado de carga y los diseños específicos de cada funcionalidad.
+
+<StoryEmbed storyId="ui-feedback-skeleton--display" title="Formas de esqueleto" height={110} />
+
+## "Uso"
+
+```tsx
+import { Skeleton, SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const LoadingProfile = () => (
+  <Text render={<div />} style={{ display: 'flex', gap: 16 }}>
+    <Skeleton width={40} height={40} borderRadius="50%" />
+    <Text
+      render={<div />}
+      style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
+    >
+      <Skeleton width={180} height={SKELETON_HEIGHT_SIZES.s} />
+      <Skeleton width={120} height={SKELETON_HEIGHT_SIZES.xs} />
+    </Text>
+  </Text>
+);
+```
+
+Skeleton se representa como un bloque y nunca crece más que su contenedor. Usa `layout="inline"` para colocar un marcador de posición dentro de una línea de texto.
+
+Las dimensiones numéricas usan píxeles. También se admiten longitudes CSS, como porcentajes y `em`. Sin dimensiones, el marcador de posición ocupa el ancho disponible y usa la altura de fuente heredada. Use dimensiones iguales y `borderRadius="50%"` para un círculo.
+
+`SKELETON_HEIGHT_SIZES` proporciona alturas compartidas para `xs` (13px), `s` (16px), `m` (24px), `l` (32px) y `xl` (40px). Mantenga las dimensiones específicas del diseño en la aplicación.
+
+Cada `Skeleton` representa un marcador de posición. Mantenga las líneas repetidas, el espaciado entre líneas de texto y las regiones de carga en componentes de la aplicación que encapsulen el elemento primitivo.
+
+## Movimiento y accesibilidad
+
+Los esqueletos son decorativos y tienen `aria-hidden="true"` de forma predeterminada. Mantenga los anuncios de carga en una región de estado propiedad del host en lugar de anunciar cada forma. Skeleton no acepta elementos secundarios.
+
+El resaltado se mueve de izquierda a derecha en un bucle de entrada y salida suave de 1,5 segundos y se oculta cuando el usuario prefiere movimiento reducido. Pase `animated={false}` para un marcador de posición estático.
+
+<StoryEmbed storyId="ui-feedback-skeleton--static" title="Esqueleto estático" height={90} />
+
+## Composición y tema
+
+Las props nativas, `className`, `style` y `ref` se aplican al span del marcador de posición. Use `render` para componer otro elemento. Los estilos nativos explícitos anulan las props de dimensión y color.
+
+Los colores base y de resaltado usan de forma predeterminada el fondo terciario del tema y un fondo transparente más claro. Use `baseColor`, `highlightColor` y `borderRadius` para anularlos. Las esquinas se mantienen redondeadas, incluso cuando el tema usa superelipses. El radio predeterminado usa el token de tema `smRound` (4px). Pase `themeCssVariables.border.radius.mdRound` de `twenty-ui/theme` para esquinas de 8px. Los radios personalizados en píxeles y CSS siguen siendo compatibles, incluidos `borderRadius={80}` para una cápsula estrecha y `borderRadius="50%"` para un círculo. No se necesita ningún proveedor específico de skeleton ni importar una hoja de estilos después de cargar `twenty-ui/style.css` y el tema de la interfaz de usuario.
+
+## "Props"
+
+<SkeletonReference />
+
+<PageBanner illustration="section-ui-primitives" />

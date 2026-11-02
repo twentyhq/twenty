@@ -1,5 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { HttpResponse, delay, graphql } from 'msw';
+import { HttpResponse, delay, graphql, http } from 'msw';
 import { expect, userEvent, within } from 'storybook/test';
 
 import {
@@ -12,6 +12,7 @@ import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicros
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { SettingsBuiltInAccountApp } from '~/pages/settings/accounts/SettingsBuiltInAccountApp';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
+import { mockedClientConfig } from '~/testing/mock-data/config';
 import { clickAndCaptureOAuthRedirect } from '~/pages/settings/accounts/__stories__/clickAndCaptureOAuthRedirect';
 import {
   ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
@@ -31,9 +32,9 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsBuiltInAccountApp,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/accounts/apps/:builtInAccountAppId',
-    routeParams: { ':builtInAccountAppId': 'google' },
-    additionalRoutes: ['/settings/accounts'],
+    routePath: '/settings/app-preferences/:applicationId',
+    routeParams: { ':applicationId': 'google' },
+    additionalRoutes: ['/settings/app-preferences'],
   },
   beforeEach: seedAccountGroupsStory,
   parameters: {
@@ -54,6 +55,11 @@ export const GoogleGeneralShowsAccountsAndBlocklist: Story = {
       await canvas.findByTestId('tab-general', undefined, { timeout: 3000 }),
     );
 
+    expect(
+      await canvas.findByText(
+        'Sync emails and calendar events from your Google accounts.',
+      ),
+    ).toBeVisible();
     expect(await canvas.findByText('Blocklist')).toBeVisible();
     expect(await canvas.findByText('tim@apple.dev')).toBeVisible();
     expect(canvas.getByText('tim.cook@gmail.com')).toBeVisible();
@@ -70,11 +76,14 @@ export const GoogleGeneralShowsAccountsAndBlocklist: Story = {
   },
 };
 
-export const TabBarAndHeadersStayWhileLoading: Story = {
+export const TabBarStaysWhileLoading: Story = {
   parameters: {
     msw: {
       handlers: [
-        graphql.query('MyConnectedAccounts', async () => {
+        graphql.query('MyMessageChannels', async () => {
+          await delay('infinite');
+        }),
+        graphql.query('MyCalendarChannels', async () => {
           await delay('infinite');
         }),
         ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
@@ -89,11 +98,10 @@ export const TabBarAndHeadersStayWhileLoading: Story = {
         timeout: 3000,
       }),
     ).toBeVisible();
-    expect(canvas.getByTestId('tab-general')).toBeVisible();
+    expect(await canvas.findByTestId('tab-general')).toBeVisible();
     expect(canvas.getByTestId('tab-emails')).toBeVisible();
     expect(canvas.getByTestId('tab-calendar')).toBeVisible();
     expect(canvas.getByText('Blocklist')).toBeVisible();
-    expect(canvas.getByText('Permissions')).toBeVisible();
     expect(canvasElement.querySelector('[aria-busy="true"]')).not.toBeNull();
     expect(canvas.queryByText('tim@apple.dev')).not.toBeInTheDocument();
   },
@@ -138,7 +146,7 @@ export const GoogleCalendarTabShowsCalendarSettings: Story = {
 
 export const OutlookHasEmailsAndCalendarTabs: Story = {
   args: {
-    routeParams: { ':builtInAccountAppId': 'outlook' },
+    routeParams: { ':applicationId': 'outlook' },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -164,7 +172,20 @@ export const OutlookHasEmailsAndCalendarTabs: Story = {
 
 export const OutlookWithoutCalendarServiceHasNoCalendarTab: Story = {
   args: {
-    routeParams: { ':builtInAccountAppId': 'outlook' },
+    routeParams: { ':applicationId': 'outlook' },
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        http.get(`${REACT_APP_SERVER_BASE_URL}/client-config`, () =>
+          HttpResponse.json({
+            ...mockedClientConfig,
+            isMicrosoftCalendarEnabled: false,
+          }),
+        ),
+        ...ACCOUNT_GROUPS_GRAPHQL_HANDLERS,
+      ],
+    },
   },
   beforeEach: async () => {
     await seedAccountGroupsStory();
@@ -182,7 +203,7 @@ export const OutlookWithoutCalendarServiceHasNoCalendarTab: Story = {
 
 export const CalendarPendingSetupHidesCalendarTab: Story = {
   args: {
-    routeParams: { ':builtInAccountAppId': 'outlook' },
+    routeParams: { ':applicationId': 'outlook' },
   },
   parameters: {
     msw: {
@@ -213,24 +234,28 @@ export const CalendarPendingSetupHidesCalendarTab: Story = {
   },
 };
 
-export const DisabledAppGoesBackToAccounts: Story = {
+export const DisabledAppGoesBackToAppPreferences: Story = {
   args: {
-    routeParams: { ':builtInAccountAppId': 'imap' },
+    routeParams: { ':applicationId': 'imap' },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     expect(
-      await canvas.findByText('Navigated to /settings/accounts', undefined, {
-        timeout: 3000,
-      }),
+      await canvas.findByText(
+        'Navigated to /settings/app-preferences',
+        undefined,
+        {
+          timeout: 3000,
+        },
+      ),
     ).toBeVisible();
   },
 };
 
-export const OutlookWithoutAccountOffersMicrosoftOnly: Story = {
+export const OutlookWithoutAccountOffersOutlookOnly: Story = {
   args: {
-    routeParams: { ':builtInAccountAppId': 'outlook' },
+    routeParams: { ':applicationId': 'outlook' },
   },
   parameters: {
     msw: {
@@ -252,11 +277,14 @@ export const OutlookWithoutAccountOffersMicrosoftOnly: Story = {
     const canvas = within(canvasElement);
 
     expect(
-      await canvas.findByText('Connect with Microsoft', undefined, {
+      await canvas.findByText('Connect with Outlook', undefined, {
         timeout: 3000,
       }),
     ).toBeVisible();
-    expect(canvas.queryByText('Connect with Google')).not.toBeInTheDocument();
+    expect(
+      canvas.queryByText('Connect with Gmail and Calendar'),
+    ).not.toBeInTheDocument();
+    expect(canvas.queryByTestId('tab-general')).not.toBeInTheDocument();
     expect(canvas.getByText('Blocklist')).toBeVisible();
   },
 };
@@ -328,7 +356,7 @@ export const ReconnectReturnsToTheAppPage: Story = {
     );
 
     expect(redirectUrl.searchParams.get('redirectLocation')).toBe(
-      '/settings/accounts/apps/google#general',
+      '/settings/app-preferences/google#general',
     );
   },
 };

@@ -1,0 +1,79 @@
+---
+title: Scorciatoia
+description: Visualizza combinazioni di tasti simultanee e scorciatoie sequenziali.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ShortcutReference from '/snippets/ui/generated/typography/shortcut.mdx';
+
+## Panoramica
+
+Importa `Shortcut` e `formatShortcut` da `twenty-ui/primitives/typography`. Entrambi condividono lo stesso modello, gli stessi simboli e separatori. Registra le scorciatoie nella tua applicazione. `Shortcut` formatta solo il suggerimento; non registra azioni della tastiera. Attributi nativi, gestori di eventi, stili, nomi di classi e ref sono destinati al relativo span esterno. `ShortcutProps` e `ShortcutFormatOptions` sono tipi pubblici.
+
+<StoryEmbed storyId="ui-typography-shortcut--display" title="Presentazioni delle scorciatoie" height={90} />
+
+## Utilizzo
+
+```tsx
+import { Shortcut } from 'twenty-ui/primitives/typography';
+
+export const SearchShortcut = () => <Shortcut shortcut={['Mod', 'K']} />;
+```
+
+## Combinazioni e sequenze
+
+```tsx
+import { Shortcut, formatShortcut } from 'twenty-ui/primitives/typography';
+
+export const ShortcutExamples = () => (
+  <>
+    <Shortcut shortcut={['Enter']} />
+    <Shortcut shortcut={['Mod', 'K']} />
+    <Shortcut shortcut={[['G'], ['P']]} sequenceJoinLabel="then" />
+    <Shortcut
+      shortcut={[
+        ['Mod', 'K'],
+        ['Mod', 'C'],
+      ]}
+      sequenceJoinLabel="then"
+    />
+  </>
+);
+
+const hint = formatShortcut({
+  shortcut: ['Mod', 'Enter'],
+});
+```
+
+Un array piatto è una combinazione simultanea: `['Mod', 'K']` significa premere Mod e K insieme. Un array annidato è una sequenza ordinata: `[['G'], ['P']]` significa premere G, poi P. Ogni array annidato è una combinazione, quindi `[['Mod', 'K'], ['Mod', 'C']]` significa premere Mod e K, poi Mod e C. Usa un array a un elemento per un singolo tasto. Entrambe le forme di array possono essere readonly.
+
+`Mod` e `CommandOrControl` visualizzano Command su macOS e iOS, e Control altrove. Anche i tasti espliciti `Command`, `Control`, `Alt` e `Enter` hanno etichette visualizzate. Le altre stringhe vengono visualizzate come fornite. Il rilevamento del dispositivo è sicuro senza globali del browser; `platform` lo sostituisce facoltativamente con `mac` o `other`.
+
+Usa `sequenceJoinLabel` per il testo di unione localizzato. `combinationSeparator` può mantenere una convenzione dell'host come `+`. Il separatore di testo predefinito è vuoto sui dispositivi Apple e uno spazio altrove. `variant` seleziona `keys`, `text` o `button`. `visibility="desktop"` nasconde il suggerimento alle larghezze della viewport mobile, mentre `always` rimane visibile.
+
+I simboli dei tasti hanno nomi accessibili leggibili. Usa `accessibleKeyLabels` per localizzare i nomi dei singoli tasti nell'output dello screen reader. Fornisci `aria-label` o `aria-labelledby` per un nome localizzato dell'intera scorciatoia, oppure `aria-hidden` per un suggerimento decorativo. I pulsanti mantengono i nomi delle azioni e nascondono i suggerimenti decorativi sui dispositivi mobili. Le righe dei menu e degli elenchi mantengono visibili i suggerimenti.
+
+## Aspetto
+
+Usa `keys` per i singoli tasti, `text` per un suggerimento in linea oppure `button` per il suggerimento compatto all'interno di un'azione. Queste varianti modificano solo la presentazione.
+
+<StoryEmbed storyId="ui-typography-shortcut--catalog" title="Varianti di aspetto delle scorciatoie" height={160} />
+
+## Migrazione
+
+| Prop precedente                              | Sostituzione                                                |
+| -------------------------------------------- | ----------------------------------------------------------- |
+| Pulsante `hotkeys={['⌘', 'K']}`              | `shortcut={['Mod', 'K']}`                                   |
+| ListItem sequenziale `hotkeys` / `hotKeys`   | `shortcut={[['G'], ['P']]}`                                 |
+| `hotkeysJoinLabel` / `hotKeysJoinLabel`      | `shortcutJoinLabel` nelle parti Button, ListItem e Dropdown |
+| Concatenazione manuale dei tasti del tooltip | `formatShortcut({ shortcut: ['Mod', 'Enter'] })`            |
+
+Gli array piatti archiviati che rappresentano pressioni di tasti successive devono essere annidati prima di essere passati a `shortcut`: `hotKeys.map((key) => [key])`. Gli array che rappresentano tasti simultanei possono essere passati direttamente. Le stringhe dei tasti restano token letterali, quindi `['Mod', '+']` contiene un tasto più e `['Space']` contiene il tasto Space; non è necessario alcun parsing delle stringhe di scorciatoia.
+
+## Props
+
+<ShortcutReference />
+
+<PageBanner illustration="card-page-command-menu" />

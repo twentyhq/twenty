@@ -82,12 +82,11 @@ export class AddWorkflowCoreSoftRefFieldCommand extends ProvisionedWorkspaceComm
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
 
-    const standardField = findFlatEntityByUniversalIdentifier<FlatFieldMetadata>(
-      {
+    const standardField =
+      findFlatEntityByUniversalIdentifier<FlatFieldMetadata>({
         flatEntityMaps: standardAllFlatEntityMaps.flatFieldMetadataMaps,
         universalIdentifier: CORE_WORKFLOW_ID_FIELD_UNIVERSAL_IDENTIFIER,
-      },
-    );
+      });
 
     if (!isDefined(standardField)) {
       throw new Error(
@@ -112,6 +111,7 @@ export class AddWorkflowCoreSoftRefFieldCommand extends ProvisionedWorkspaceComm
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           workspaceId,
           applicationUniversalIdentifier:

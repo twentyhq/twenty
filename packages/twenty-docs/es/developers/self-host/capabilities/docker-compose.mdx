@@ -1,12 +1,15 @@
 ---
 title: Docker Compose
+description: Ejecuta Veinte en producción con Docker Compose.
 ---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
 
 <Warning>
 Los contenedores de Docker son para alojamiento en producción o autoalojamiento. Para contribuir, consulta la [Configuración local](/es/developers/contribute/capabilities/local-setup).
 </Warning>
-
-## Resumen
 
 Esta guía proporciona instrucciones paso a paso para instalar y configurar la aplicación Twenty utilizando Docker Compose. El objetivo es simplificar el proceso y prevenir errores comunes que podrían arruinar tu configuración.
 
@@ -27,14 +30,22 @@ Instala la última versión estable de Twenty con un solo comando:
 bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
 ```
 
-Para instalar una versión o rama específica:
+Para instalar una versión específica:
 
 ```bash
-VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+VERSION=v2.38.1 bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
 ```
 
-* Reemplace x.y.z con el número de versión deseado.
-* Reemplace branch-name con el nombre de la rama que desea instalar.
+* `VERSION` debe ser una etiqueta de versión completa publicada en [Docker Hub](https://hub.docker.com/r/twentycrm/twenty/tags), como `v2.38.1`. No se aceptan alias como `v2` o `latest`.
+* El archivo `docker-compose.yml` correspondiente se obtiene de la etiqueta de git `twenty/<version>`, por lo que las versiones anteriores a estas etiquetas (v2.9.0 y anteriores) no se pueden instalar con el script.
+
+Para obtener los archivos de configuración de una rama en su lugar, por ejemplo, para probar cambios aún no publicados:
+
+```bash
+BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
+```
+
+* Reemplaza branch-name por la rama desde la que se obtendrán `docker-compose.yml` y `.env.example`. La imagen sigue usando de forma predeterminada la versión más reciente, a menos que también se establezca `VERSION`.
 
 ## Opción 2: Pasos manuales
 
@@ -72,11 +83,19 @@ Sigue estos pasos para una configuración manual.
 
 4. **Establecer la contraseña de Postgres**
 
-   Actualiza el valor de `PG_DATABASE_PASSWORD` en el archivo .env con una contraseña fuerte sin caracteres especiales.
+   Actualiza el valor de `PG_DATABASE_PASSWORD` en el archivo .env con una contraseña fuerte sin caracteres especiales. La contraseña se inserta sin codificar en la URL de conexión de Postgres, por lo que caracteres como `@`, `/`, `#` o `%` rompen la cadena de conexión. Genera uno con:
+
+   ```bash
+   openssl rand -hex 32
+   ```
 
    ```ini
    PG_DATABASE_PASSWORD=my_strong_password
    ```
+
+<Note>
+Las variables que `docker-compose.yml` reenvía sin un valor predeterminado `:-`, como `SERVER_URL` y las variables `STORAGE_S3_*`, llegan al servidor como una cadena vacía cuando están vacías o faltan en `.env`, y el servidor trata una cadena vacía como un valor configurado en lugar de como no establecido. Mantén `SERVER_URL` establecido y, cuando `STORAGE_TYPE=S_3`, establece cada variable `STORAGE_S3_*` obligatoria: un valor `STORAGE_S3_NAME` vacío rompe cada carga. Las variables con un valor predeterminado en `docker-compose.yml`, como las partes `PG_DATABASE_*` y `REDIS_URL`, recurren a ese valor predeterminado cuando están vacías o faltan.
+</Note>
 
 ### Paso 2: Obtener el archivo Docker Compose
 
@@ -125,6 +144,8 @@ SSL (HTTPS) es requerido para que ciertas características del navegador funcion
 Por ejemplo, es posible que la API del portapapeles requiera un contexto seguro: algunas características como los botones de copia en toda la aplicación pueden no funcionar sin HTTPS habilitado.
 
 Recomendamos encarecidamente configurar Twenty detrás de un proxy inverso con terminación SSL para una seguridad y funcionalidad óptimas.
+
+<Tip>Antes de exponer Twenty a Internet, lee [Protege tu instancia](/es/developers/self-host/capabilities/security). La mayoría de los equipos pueden mantener la aplicación privada y abrir solo unas pocas rutas.</Tip>
 
 #### Configurando `SERVER_URL`
 
@@ -259,3 +280,5 @@ Si encuentras algún problema, consulta [Solución de Problemas](/es/developers/
 <Tip>
   ¿Prefieres no ejecutar y mantener Twenty por tu cuenta? [Encuentra un partner de alojamiento certificado de Twenty](https://twenty.com/partners/list?categories=HOSTING\&ref=docs-docker-compose) para implementar, alojar y gestionar tu instancia de principio a fin. *(O contacta con nuestro equipo: [contact@twenty.com](mailto:contact@twenty.com).)*
 </Tip>
+
+<PageBanner illustration="dev-self-host" />

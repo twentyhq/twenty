@@ -12,7 +12,7 @@ import { makeMetadataApiRequestWithMemberRole } from 'test/integration/metadata/
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsExceptionMessage } from 'src/engine/permissions/permissions.exception';
 
 describe('datamodel permissions', () => {
   describe('fieldMetadata', () => {

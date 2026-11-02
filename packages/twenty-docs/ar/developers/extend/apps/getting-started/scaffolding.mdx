@@ -1,62 +1,33 @@
 ---
 title: إنشاء القوالب
-description: أنشئ ملفات الكيانات بشكل تفاعلي باستخدام yarn twenty dev:add — بما في ذلك الكائنات والحقول والعروض والدوال المنطقية والمزيد.
+description: أنشئ كيانات التطبيق باستخدام twenty app add.
 ---
 
-بدلًا من إنشاء ملفات الكيانات يدويًا، استخدم أداة القوالب التفاعلية:
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-```bash filename="Terminal"
-yarn twenty dev:add
+## نظرة عامة
+
+استخدم واجهة CLI المستقلة لإنشاء كائن أو حقل أو دالة منطقية أو مكوّن أمامي:
+
+```bash
+twenty app add
+twenty app add object --name invoice --name-plural invoices --no-input
+twenty app add field --name amount --type NUMBER --object <object-uuid> --no-input
+twenty app add logic-function --name send-invoice --no-input
+twenty app add front-component --name invoice-panel --no-input
 ```
 
-ستطلب منك اختيار نوع الكيان وتُرشدك عبر الحقول المطلوبة، ثم تُنشئ ملفًا جاهزًا للاستخدام يحتوي على `universalIdentifier` ثابت واستدعاء `defineEntity()` الصحيح.
+بدون خيارات، تطلب الطرفيات التفاعلية القيم المفقودة. بالنسبة إلى البرامج النصية والوكلاء، وفّر الحقول المطلوبة واستخدم `--no-input` أو `--json`.
 
-يمكنك أيضًا تمرير نوع الكيان مباشرة لتخطي المطالبة الأولى:
+يمكن أن يؤدي إنشاء الكائنات أيضًا إلى إنشاء عرض وعنصر تنقل وتخطيط صفحة سجل:
 
-```bash filename="Terminal"
-yarn twenty dev:add object
-yarn twenty dev:add logicFunction
-yarn twenty dev:add frontComponent
+```bash
+twenty app add object --name invoice --name-plural invoices \
+  --create-view --create-navigation-menu-item --create-page-layout --no-input
 ```
 
-## أنواع الكيانات المتاحة
+بالنسبة إلى أنواع الكيانات الأخرى، اكتب ملف `define*` المقابل باستخدام `twenty-sdk/define` ومعرّف UUID v4 صالح. شغّل `twenty app typecheck` و`twenty app plan` قبل المزامنة.
 
-| نوع الكيان               | أمر                                        | الملف المُولَّد                                           |
-| ------------------------ | ------------------------------------------ | --------------------------------------------------------- |
-| كائن                     | `yarn twenty dev:add object`               | `src/objects/\<name>.ts`                 |
-| الحقل                    | `yarn twenty dev:add field`                | `src/fields/\<name>.ts`                  |
-| دالة منطقية              | `yarn twenty dev:add logicFunction`        | `src/logic-functions/\<name>.ts`         |
-| مكوّن أمامي              | `yarn twenty dev:add frontComponent`       | `src/front-components/\<name>.tsx`       |
-| دور                      | `yarn twenty dev:add role`                 | `src/roles/\<name>.ts`                   |
-| مهارة                    | `yarn twenty dev:add skill`                | `src/skills/\<name>.ts`                  |
-| وكيل                     | `yarn twenty dev:add agent`                | `src/agents/\<name>.ts`                  |
-| عرض                      | `yarn twenty dev:add view`                 | `src/views/\<name>.ts`                   |
-| عنصر قائمة التنقّل       | `yarn twenty dev:add navigationMenuItem`   | `src/navigation-menu-items/\<name>.ts`   |
-| تخطيط الصفحة             | `yarn twenty dev:add pageLayout`           | `src/page-layouts/\<name>.ts`            |
-| علامة تبويب تخطيط الصفحة | `yarn twenty dev:add pageLayoutTab`        | `src/page-layout-tabs/\<name>.ts`        |
-| عنصر قائمة الأوامر       | `yarn twenty dev:add commandMenuItem`      | `src/command-menu-items/\<name>.ts`      |
-| حقل العرض                | `yarn twenty dev:add viewField`            | `src/view-fields/\<name>.ts`             |
-| موفر الاتصال             | `yarn twenty dev:add connectionProvider`   | `src/connection-providers/\<name>.ts`    |
-| نوع نشاط الجدول الزمني   | `yarn twenty dev:add timelineActivityType` | `src/timeline-activity-types/\<name>.ts` |
+يحدد `--path` دليل التطبيق، وليس مجلد إخراج مخصصًا. شغّل `twenty app add --help` للاطلاع على الخيارات المدعومة.
 
-## ما الذي تُنشئه أداة القوالب
-
-لكل نوع كيان قالب خاص به. على سبيل المثال، يسأل `yarn twenty dev:add object` عن:
-
-1. **الاسم (مفرد)** — مثل `invoice`
-2. **الاسم (جمع)** — مثل `invoices`
-3. **التسمية (مفرد)** — تُستمد تلقائيًا من الاسم (مثل `Invoice`)
-4. **التسمية (جمع)** — تُملأ تلقائيًا (مثل `Invoices`)
-5. **إنشاء عرض وعنصر تنقّل؟** — إذا أجبت بنعم، فستُنشئ أداة القوالب أيضًا عرضًا مطابقًا ورابط شريط جانبي للكائن الجديد.
-
-أنواع الكيانات الأخرى لها مطالبات أبسط — فمعظمها يطلب اسمًا فقط.
-
-نوع الكيان `field` أكثر تفصيلاً: يطلب اسم الحقل وتسمية الحقل ونوعه (من قائمة بكل أنواع الحقول المتاحة مثل `TEXT` و`NUMBER` و`SELECT` و`RELATION` وغيرها)، ومعرّف `universalIdentifier` للكائن الهدف.
-
-## مسار خرج مخصّص
-
-استخدم العلم `--path` لوضع الملف المُولَّد في موقع مخصّص:
-
-```bash filename="Terminal"
-yarn twenty dev:add logicFunction --path src/custom-folder
-```
+<PageBanner illustration="dev-contribute" />

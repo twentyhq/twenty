@@ -3,7 +3,9 @@ title: 6. Publicación
 description: Añade metadatos de mercado y publica tu aplicación.
 ---
 
-Tu app funciona. El último paso es describirlo para el mercado y publicarlo.
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Añadir metadatos de mercado
 
@@ -30,8 +32,8 @@ export default defineApplication({
 ```
 
 <Tip>
-El rol por defecto se declara con `defineApplicationRole()` en su propio archivo — usted
-ya no pase `defaultRoleUniversalIdentifier` aquí.
+  El rol por defecto se declara con `defineApplicationRole()` en su propio archivo —
+  ya no pasas `defaultRoleUniversalIdentifier` aquí.
 </Tip>
 
 También añade la palabra clave `twenty-app` a `package.json` para que la aplicación sea detectable:
@@ -57,9 +59,9 @@ export default defineApplication({
 ```
 
 <Tip>
-Lance con la ganancia: haga la primera captura de pantalla el resultado terminado (un documento
-generado), luego muestre cómo se activa y se autoriza. Usa capturas
-nítidas y de alta resolución, son lo primero que un usuario ve.
+  Lidera con la ganancia: haz la primera captura de pantalla el resultado terminado (un documento
+  generado), luego muestra cómo se activa y se autoriza. Usa capturas nítidas,
+  de alta resolución, son lo primero que un usuario ve.
 </Tip>
 
 Dale a `README.md` el mismo tratamiento: es la página principal de npm y GitHub.
@@ -74,7 +76,7 @@ Ejecuta las mismas puertas que CI hace:
 yarn lint          # oxlint
 yarn typecheck     # tsgo
 yarn test:unit     # unit tests
-yarn twenty plan   # preview the metadata diff
+twenty app plan   # preview the metadata diff
 ```
 
 El plan muestra exactamente qué cambiaría en el servidor sin aplicarlos —
@@ -86,19 +88,15 @@ una buena comprobación final. Ver
 
 ```bash filename="Terminal"
 # Public app → npm (default)
-yarn twenty app:publish
+twenty app publish
 
 # Or deploy privately to a specific server's registry
-yarn twenty app:publish --private -r <remote>
+twenty app publish --private -r <remote>
 ```
 
-`app:publish` construye y publica a npm por defecto; `--private` sube un tarball
-a un registro privado del servidor Veinte en su lugar. Para superficiar una aplicación publicada
-en el mercado de una instancia, dispara una sincronización de catálogo:
-
-```bash filename="Terminal"
-yarn twenty dev:catalog-sync -r <remote>
-```
+`veinte aplicaciones publish` construye y publica a npm por defecto; `--private` sube un tarball
+a un registro privado del servidor Veinte en su lugar. Para superficializar una aplicación publicada
+en el mercado de una instancia, espera la sincronización del catálogo de marketplace del servidor.
 
 Detalles completos y la lista de verificación de lanzamiento:
 [Publishing](/es/developers/extend/apps/operations/publishing).
@@ -118,17 +116,23 @@ La aplicación terminada está en
 
 ## A dónde ir siguiente
 
-<CardGroup cols={2}>
-  <Card title="Referencia de datos" icon="database" href="/es/developers/extend/apps/data/overview">
-    Cada tipo de campo, relación y opción de índice.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/es/developers/extend/apps/data/overview" img="/images/documentation/section-overview-icons-v1/apps-data.svg">
+    <CardTitle>referencia de datos</CardTitle>
+    Opción de cada tipo de campo, relación e índice.
   </Card>
-  <Card title="Referencia lógica" icon="bolt" href="/es/developers/extend/apps/logic/overview">
+  <Card href="/es/developers/extend/apps/logic/overview" img="/images/documentation/section-overview-icons-v1/apps-logic.svg">
+    <CardTitle>referencia lógica</CardTitle>
     Activadores de eventos Cron y base de datos, el almacén clave-valor, conexiones OAuth.
   </Card>
-  <Card title="Referencia del diseño" icon="layout-columns" href="/es/developers/extend/apps/layout/overview">
-    Diseños de páginas, widgets de tablero y más superficies de interfaz.
+  <Card href="/es/developers/extend/apps/layout/overview" img="/images/user-guide/halftone/layout-window-v1.svg">
+    <CardTitle>Referencia de diseño</CardTitle>
+    Diseños de páginas, widgets de panel y más superficies de interfaz de usuario.
   </Card>
-  <Card title="Operaciones" icon="rocket" href="/es/developers/extend/apps/operations/overview">
-    CLI, prueba, control remoto, y CI.
+  <Card href="/es/developers/extend/apps/operations/overview" img="/images/documentation/section-overview-icons-v1/apps-operations.svg">
+    <CardTitle>Operaciones</CardTitle>
+    CLI, pruebas, mandos y CI.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="card-page-tutorial-publishing" />

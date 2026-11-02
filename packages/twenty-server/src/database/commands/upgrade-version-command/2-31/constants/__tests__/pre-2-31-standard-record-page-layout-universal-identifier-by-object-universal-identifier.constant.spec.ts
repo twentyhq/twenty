@@ -12,6 +12,7 @@ const POST_2_28_RECORD_PAGE_KEYS: string[] = [
   'agentChatThreadRecordPage',
   'attachmentRecordPage',
   'messageRecordPage',
+  'workspaceMemberRecordPage',
 ];
 
 describe('PRE_2_31_STANDARD_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER_BY_OBJECT_UNIVERSAL_IDENTIFIER', () => {

@@ -138,7 +138,11 @@ const renderSkillTag = (node: TipTapNode): string => {
   return typeof label === 'string' ? label : '';
 };
 
-const renderListItem = (item: TipTapNode, marker: string): string => {
+const renderListItem = (
+  item: TipTapNode,
+  marker: string,
+  checkbox = '',
+): string => {
   const [firstLine = '', ...continuationLines] = renderChildren(item)
     .trim()
     .split('\n');
@@ -147,7 +151,7 @@ const renderListItem = (item: TipTapNode, marker: string): string => {
     .map((line) => (line === '' ? '' : `${indentation}${line}`))
     .join('\n');
 
-  return `${marker}${firstLine}${
+  return `${marker}${checkbox}${firstLine}${
     indentedContinuation === '' ? '' : `\n${indentedContinuation}`
   }\n`;
 };
@@ -198,7 +202,8 @@ const renderTipTapNodeToMarkdown = (node: TipTapNode): string => {
         .map((item) =>
           renderListItem(
             item,
-            item.attrs?.checked === true ? '- [x] ' : '- [ ] ',
+            '- ',
+            item.attrs?.checked === true ? '[x] ' : '[ ] ',
           ),
         )
         .join('')}\n`;

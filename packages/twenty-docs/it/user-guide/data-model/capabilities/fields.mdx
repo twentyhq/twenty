@@ -3,6 +3,8 @@ title: Campi
 description: Comprendere il ruolo dei campi e come gestirli.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## Informazioni sui Campi
@@ -99,7 +101,7 @@ Se ottieni un errore impostando l'unicità, controlla i valori duplicati nei tuo
 
 ## Indici (Avanzato)
 
-Gli indici del database sono gestiti automaticamente — aggiungerne di propri è raramente necessario ed è facile commettere errori. Con la modalità Avanzata attiva, ogni oggetto ha una sezione **Indici** in `Impostazioni → Modello dati → <object>` per i casi in cui sai di averne bisogno.
+Gli indici del database sono gestiti automaticamente — aggiungerne di propri è raramente necessario ed è facile commettere errori. Nei casi in cui sai di averne bisogno, apri `Settings → Data Model → <object>`, vai alla scheda **Impostazioni** e fai clic su **Gestisci indici** nella sezione **Avanzate**.
 
 ## Procedure Migliori per la Configurazione dei Campi
 
@@ -120,3 +122,5 @@ Gli indici del database sono gestiti automaticamente — aggiungerne di propri �
 ### Campi di Testo dei Record
 
 * **Ogni oggetto ha un campo di visualizzazione principale**: Questo campo appare nella colonna più a sinistra e rappresenta il record quando collegato a altri oggetti. Deve essere un campo di testo. Ad esempio, Persone usa `Nome` come campo principale, quindi quando colleghi una persona a un'azienda, vedrai il loro nome nella vista dell'azienda.
+
+<PageBanner illustration="section-apps-data" />

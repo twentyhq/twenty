@@ -3,6 +3,10 @@ title: Estendere gli oggetti
 description: Aggiungi campi agli oggetti standard di Twenty (Person, Company, …) o agli oggetti di altre app usando defineField.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
 Usa `defineField()` per aggiungere un campo a un oggetto che non possiedi — un oggetto standard di Twenty come Person o Company, oppure un oggetto fornito da un'altra app installata. A differenza dei campi inline dichiarati all'interno di [`defineObject`](/it/developers/extend/apps/data/objects), i campi autonomi richiedono un `objectUniversalIdentifier` per specificare quale oggetto estendono.
 
 ```ts src/fields/company-loyalty-tier.field.ts
@@ -40,12 +44,18 @@ export default defineField({
 
 * `defineField()` è l'unico modo per aggiungere campi a oggetti che non hai creato con `defineObject()`.
 
-* Il percorso del file dipende da te. La convenzione è `src/fields/\<name>.field.ts`, ma l'SDK rileva i campi ovunque in `src/`.
+* `SELECT` e `MULTI_SELECT` seguono le stesse [regole di convalida delle opzioni e dei colori](/it/developers/extend/apps/data/objects#select-options) dei campi in linea. Un colore omesso o null usa per impostazione predefinita `gray`; i colori non supportati vengono rifiutati.
 
-* La `writability` può anche essere impostata per singolo campo: `MetadataWritability.APPLICATION` limita le scritture alle sole funzioni di logica della tua app, mentre `MetadataWritability.SYSTEM` è riservata ai dati gestiti dalla piattaforma. La writability di un campo può essere solo più restrittiva rispetto al livello del relativo oggetto e le letture non sono influenzate. Consulta [Objects](/it/developers/extend/apps/data/objects) per i dettagli completi sulla semantica.
+* Il percorso del file dipende da te. La convenzione è `src/fields/\<name>.field.ts`, ma la CLI rileva i campi ovunque in `src/`.
+
+* È possibile impostare `isSearchable: true` su `defineField()` con gli stessi vincoli dei campi inline (oggetto di destinazione ricercabile, tipo di campo compatibile con il testo), in modo che i record dell'oggetto di destinazione siano individuabili tramite i valori del campo nella ricerca full-text.
+
+* È possibile impostare `isAuditLogged: false` su `defineField()` per escludere le modifiche del campo dalla cronologia del record di destinazione, il che è particolarmente importante per i campi che l'app riscrive secondo una pianificazione.
 
 * Per aggiungere una scheda a un layout di pagina standard (ad es. la pagina di dettaglio di Task o Company), utilizza [`definePageLayoutTab`](/it/developers/extend/apps/layout/page-layouts#definepagelayouttab) con `STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS` da `twenty-sdk/define`.
 
 ## Aggiungere una relazione a un oggetto esistente
 
 Per aggiungere un campo di relazione (ad esempio collegare il tuo oggetto personalizzato a un `Person` standard), usa `defineField()` con `FieldType.RELATION`. Lo schema è lo stesso delle relazioni inline, ma con `objectUniversalIdentifier` impostato esplicitamente. Vedi [Relazioni](/it/developers/extend/apps/data/relations) per lo schema bidirezionale.
+
+<PageBanner illustration="card-page-extending-objects" />

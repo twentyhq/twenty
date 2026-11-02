@@ -3,6 +3,8 @@ title: Подготовить файлы CSV
 description: Полное пошаговое руководство по форматированию ваших данных для импорта в Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Обзор
 
 Это руководство проведет вас через подготовку файла CSV для успешного импорта. Следуйте этим шагам, чтобы избежать ошибок.
@@ -134,7 +136,7 @@ Twenty требует уникальности для некоторых пол�
 
 1. Перейдите в **Настройки → Модель данных**
 2. Выберите объект и поле
-3. Включите **Расширенный режим** (переключатель внизу справа)
+3. Откройте меню **⋮** рядом с **Options** и выберите **Show API values**
 4. Скопируйте имя API (например, `OPTION_1`, а не "Option 1")
 
 <Note>Новые варианты списка не создаются автоматически. Добавьте их в **Настройки → Модель данных** перед импортом.</Note>
@@ -265,3 +267,5 @@ Jane,Doe,jane@widgets.co,https://widgets.co
 * [Импорт компаний](/ru/user-guide/data-migration/how-tos/import-companies-via-csv) (сначала импортируйте их)
 * [Импорт контактов](/ru/user-guide/data-migration/how-tos/import-contacts-via-csv)
 * [Исправьте ошибки импорта](/ru/user-guide/data-migration/how-tos/fix-import-errors)
+
+<PageBanner illustration="section-document-generator" />

@@ -1,9 +1,9 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString, isUndefined } from '@sniptt/guards';
 import { getPublicAssetUrl } from 'twenty-sdk/utils';
-import { Avatar, Chip, ChipVariant } from 'twenty-ui/data-display';
+import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
 import { IconCalendar } from 'twenty-ui/icon';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { CallRecordingRowMetadata } from 'src/front-components/components/CallRecordingRowMetadata';
 import { CallRecordingRowStatus } from 'src/front-components/components/CallRecordingRowStatus';
@@ -54,19 +54,20 @@ export const CallRecordingRow = ({
 
   const chip = (
     <Chip
-      label={title}
       clickable={isClickable}
-      variant={isClickable ? ChipVariant.Highlighted : ChipVariant.Transparent}
-      leftComponent={
+      variant={isClickable ? 'soft' : 'plain'}
+      startElement={
         <Avatar
-          avatarUrl={getPublicAssetUrl('logo.svg')}
-          placeholder={title}
-          placeholderColorSeed={callRecordingId}
-          type="rounded"
+          src={getPublicAssetUrl('logo.svg')}
+          name={title}
+          colorSeed={callRecordingId}
+          shape="circle"
           size="sm"
         />
       }
-    />
+    >
+      {title}
+    </Chip>
   );
 
   return (

@@ -17,10 +17,14 @@ const buildExistingViewGroup = (
 
 const buildUpdatedViewGroup = (
   viewGroup: Partial<FlatViewGroup>,
-): FlatViewGroup & { createdAt: string; updatedAt: string } => ({
+): Parameters<
+  typeof computeViewGroupsReplacementForView
+>[0]['updatedViewGroups'][number] => ({
+  __typename: 'ViewGroup',
   ...buildExistingViewGroup(viewGroup),
   createdAt: '2026-01-01T00:00:00.000Z',
   updatedAt: '2026-01-01T00:00:00.000Z',
+  deletedAt: null,
 });
 
 describe('computeViewGroupsReplacementForView', () => {

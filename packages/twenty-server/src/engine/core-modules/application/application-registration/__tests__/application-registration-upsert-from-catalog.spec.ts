@@ -6,6 +6,7 @@ import {
   type Manifest,
 } from 'twenty-shared/application';
 
+import { MARKETPLACE_FEATURED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-featured-applications.constant';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationExceptionCode } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
@@ -166,7 +167,7 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     },
   );
 
-  it('should leave the operator listing and vetting choices untouched on update', async () => {
+  it('should leave the operator listing choice untouched on update', async () => {
     const existingRegistration = buildExistingRegistration({
       sourceType: ApplicationRegistrationSourceType.NPM,
       isListed: false,
@@ -257,10 +258,26 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
     expect(updateFromManifestSpy).not.toHaveBeenCalled();
   });
 
-  it('should create new catalog registrations as listed', async () => {
+  it('should create new catalog registrations as unlisted until reviewed', async () => {
     applicationRegistrationRepository.findOne.mockResolvedValue(null);
 
     await service.upsertFromCatalog(catalogParams);
+
+    expect(applicationRegistrationRepository.save).toHaveBeenCalledWith(
+      expect.objectContaining({ isListed: false }),
+    );
+  });
+
+  it('should create featured catalog registrations as listed', async () => {
+    const [featuredApplication] = MARKETPLACE_FEATURED_APPLICATIONS;
+
+    applicationRegistrationRepository.findOne.mockResolvedValue(null);
+
+    await service.upsertFromCatalog({
+      ...catalogParams,
+      universalIdentifier: featuredApplication.universalIdentifier,
+      sourcePackage: featuredApplication.sourcePackage,
+    });
 
     expect(applicationRegistrationRepository.save).toHaveBeenCalledWith(
       expect.objectContaining({ isListed: true }),

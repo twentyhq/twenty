@@ -1,0 +1,98 @@
+---
+title: السمات
+description: استخدم رموز سمة Twenty UI، واحصر تجاوزات السمة في جزء من تطبيقك.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import ThemeProviderReference from '/snippets/ui/generated/theme/theme-provider.mdx';
+
+## نظرة عامة
+
+تقرأ مكونات Twenty UI خصائص CSS المخصصة العامة التي تبدأ بالبادئة `--t-`. فضّل الرموز الدلالية مثل `background.secondary` و`font.color.primary` عند تنسيق مكوناتك الخاصة؛ إذ تتكيف هذه القيم مع لوحة الألوان النشطة.
+
+## استخدم الرموز في الأنماط
+
+يربط `themeCssVariables` مسارات الرموز بمراجع متغيرات CSS. استخدمه للقيم التي تحلها CSS:
+
+```tsx
+import { themeCssVariables } from 'twenty-ui/theme';
+
+export const Summary = () => (
+  <section
+    style={{
+      background: themeCssVariables.background.secondary,
+      color: themeCssVariables.font.color.primary,
+      padding: themeCssVariables.spacing[4],
+      borderRadius: themeCssVariables.border.radius.md,
+    }}
+  >
+    Three tasks are due today.
+  </section>
+);
+```
+
+تستخدم CSS المكافئة المتغيرات مباشرةً:
+
+```css
+.summary {
+  background: var(--t-background-secondary);
+  color: var(--t-font-color-primary);
+  padding: var(--t-spacing-4);
+  border-radius: var(--t-border-radius-md);
+}
+```
+
+## اقرأ القيم المحلولة
+
+تقرأ `useTheme()` الرموز المحسوبة للموفر النشط. استخدمها عندما يتوقع أحد المكونات رقم JavaScript، مثل حجم الأيقونة. يحتاج الموفر إلى تحميل ورقة أنماط السمة في المتصفح لحل متغيرات CSS.
+
+```tsx
+import { IconCheck } from 'twenty-ui/icon';
+import { useTheme } from 'twenty-ui/theme';
+
+export const CompleteIcon = () => {
+  const theme = useTheme();
+
+  return <IconCheck size={theme.icon.size.md} aria-hidden />;
+};
+```
+
+كل إدخال في `themeCssVariables` هو سلسلة مرجع CSS، بما في ذلك الرموز الرقمية. لا تجرِ عمليات حسابية على تلك السلاسل. على الخادم، لا تتوفر قيم المتصفح المحلولة؛ راجع [العرض على الخادم](/ar/ui/ssr).
+
+## احصر تجاوزًا
+
+مرر `applyToRoot={false}` لتطبيق سمة على شجرة فرعية. تجاوز متغيرات CSS العامة باستخدام أسمائها الكاملة:
+
+```tsx
+import { type ReactNode } from 'react';
+import { ThemeProvider } from 'twenty-ui/theme';
+
+export const EmbeddedPanel = ({ children }: { children: ReactNode }) => (
+  <ThemeProvider
+    colorScheme="light"
+    applyToRoot={false}
+    overrides={{ '--t-background-secondary': '#f4f6ff' }}
+  >
+    {children}
+  </ThemeProvider>
+);
+```
+
+يضيف موفر محدود النطاق غلافًا يتضمن `display: contents`؛ ولا ينشئ مربع تخطيط. كما يوفر حاوية للمكونات التي تدعم البوابات ذات السمات. تحتاج البوابات التي تنشئها مكتبات أخرى إلى إعداد الحاوية الخاص بها.
+
+المتغيرات التي تبدأ بالبادئة `--tw-` هي تفاصيل خاصة بالمكونات. استخدم الخصائص العامة ورموز `--t-` بدلًا من الاعتماد على تلك المتغيرات.
+
+راجع [مرجع الرموز](/ar/ui/tokens) للاطلاع على الأسماء وقيم لوحة الألوان المتاحة.
+
+## القيم الصريحة والمقياس
+
+يوفّر الخاصية `theme` قيم نسق JavaScript المحلولة بدلًا من قراءة الأنماط المحسوبة. ويتدفق أيضًا إلى الموفّرين المتداخلين ما لم يوفّروا نسقًا صريحًا آخر. يغيّر هذا القيم التي تقرؤها الخطافات؛ حمّل ورقة الأنماط المناسبة واستخدم تجاوزات CSS لتنسيق المكوّنات.
+
+تكتب `scale` القيمة `--t-scale-user` في جذر المستند. يؤثر ذلك فقط في الواجهات التي يستهلك CSS الخاص بها ذلك المتغير، ويتجاهله الموفّرون المحددون النطاق. تُطبَّق `className` على غلاف محدد النطاق؛ وتمريرها وحدها لا ينشئ غلافًا. تنشئ `overrides` نطاقًا حتى عندما تبقى `applyToRoot` بالقيمة true.
+
+## خصائص ThemeProvider
+
+<ThemeProviderReference />
+
+<PageBanner illustration="page-cover-palette" />

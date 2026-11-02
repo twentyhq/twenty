@@ -85,6 +85,8 @@ export const useAiChatFileUpload = () => {
         ...successfulUploads,
       ]);
     }
+
+    return successfulUploads;
   };
 
   return { uploadFiles };

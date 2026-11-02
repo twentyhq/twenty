@@ -8,13 +8,9 @@ import { DataSource } from 'typeorm';
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
-import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
-import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 
 // Copied rather than imported: this command must keep granting exactly this
@@ -34,9 +30,7 @@ const EVERYONE_PRINCIPAL_ID = '5047ca8f-514a-4609-8ef4-1bb63f3084c5';
 export class FollowWorkflowVisibilityOnRunsCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
-    private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     @InjectDataSource() private readonly dataSource: DataSource,
   ) {
     super(workspaceIteratorService);
@@ -79,39 +73,11 @@ export class FollowWorkflowVisibilityOnRunsCommand extends ProvisionedWorkspaceC
 
     await this.grantWorkflowRunVisibility(workspaceId);
 
-    const { twentyStandardFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-
-    const flatObjectMetadatasToUpdate: FlatObjectMetadata[] = [
-      {
-        ...workflowRunObject,
-        readability: MetadataReadability.PRIVATE,
-        readabilityParentFieldUniversalIdentifiers: null,
-      },
-    ];
-
-    const result =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
-        {
-          workspaceId,
-          isSystemBuild: true,
-          applicationUniversalIdentifier:
-            twentyStandardFlatApplication.universalIdentifier,
-          allFlatEntityOperationByMetadataName: {
-            objectMetadata: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: flatObjectMetadatasToUpdate,
-            },
-          },
-        },
-      );
-
-    if (result.status === 'fail') {
-      throw new WorkspaceMigrationBuilderException(result);
-    }
+    await this.setWorkflowRunReadability({
+      workspaceId,
+      workflowRunObjectMetadataId: workflowRunObject.id,
+      readability: MetadataReadability.PRIVATE,
+    });
   }
 
   async down({ workspaceId }: RunOnWorkspaceArgs): Promise<void> {
@@ -119,49 +85,42 @@ export class FollowWorkflowVisibilityOnRunsCommand extends ProvisionedWorkspaceC
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatObjectMetadataMaps',
       ]);
-    const { twentyStandardFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-
-    const flatObjectMetadatasToUpdate = [
+    const workflowRunObject =
       flatObjectMetadataMaps.byUniversalIdentifier[
         STANDARD_OBJECTS.workflowRun.universalIdentifier
-      ],
-    ]
-      .filter(isDefined)
-      .map((flatObjectMetadata) => ({
-        ...flatObjectMetadata,
-        readability: MetadataReadability.OPEN,
-        readabilityParentFieldUniversalIdentifiers: null,
-      }));
+      ];
+
+    if (!isDefined(workflowRunObject)) {
+      return;
+    }
 
     // The grants stay: they are inert once the objects are open again.
-    const result =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
-        {
-          workspaceId,
-          isSystemBuild: true,
-          applicationUniversalIdentifier:
-            twentyStandardFlatApplication.universalIdentifier,
-          allFlatEntityOperationByMetadataName: {
-            objectMetadata: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: flatObjectMetadatasToUpdate,
-            },
-          },
-        },
-      );
-
-    if (result.status === 'fail') {
-      throw new WorkspaceMigrationBuilderException(result);
-    }
+    await this.setWorkflowRunReadability({
+      workspaceId,
+      workflowRunObjectMetadataId: workflowRunObject.id,
+      readability: MetadataReadability.OPEN,
+    });
   }
 
-  private async grantWorkflowRunVisibility(
-    workspaceId: string,
-  ): Promise<void> {
+  // Legacy column, still read by later upgrades
+  private async setWorkflowRunReadability({
+    workspaceId,
+    workflowRunObjectMetadataId,
+    readability,
+  }: {
+    workspaceId: string;
+    workflowRunObjectMetadataId: string;
+    readability: MetadataReadability;
+  }): Promise<void> {
+    await this.dataSource.query(
+      `UPDATE core."objectMetadata"
+        SET readability = $3, "readabilityParentFieldUniversalIdentifiers" = NULL
+        WHERE "workspaceId" = $1 AND id = $2`,
+      [workspaceId, workflowRunObjectMetadataId, readability],
+    );
+  }
+
+  private async grantWorkflowRunVisibility(workspaceId: string): Promise<void> {
     const schemaName = escapeIdentifier(getWorkspaceSchemaName(workspaceId));
     const parameters = [
       workspaceId,

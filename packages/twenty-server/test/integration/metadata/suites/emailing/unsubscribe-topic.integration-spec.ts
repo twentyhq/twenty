@@ -1,7 +1,5 @@
 import { gql } from 'graphql-tag';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 const CREATE_UNSUBSCRIBE_TOPIC = gql`
   mutation CreateUnsubscribeTopic($input: CreateUnsubscribeTopicInput!) {
@@ -44,22 +42,6 @@ const UNSUBSCRIBE_TOPICS = gql`
 
 describe('unsubscribeTopicResolver (integration)', () => {
   const createdTopicIds: string[] = [];
-
-  beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-  });
-
-  afterAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_MESSAGE_CAMPAIGN_ENABLED,
-      value: false,
-      expectToFail: false,
-    });
-  });
 
   afterEach(async () => {
     for (const id of createdTopicIds) {

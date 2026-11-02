@@ -3,6 +3,10 @@ title: Hooks de instalación
 description: "Ejecuta lógica durante el ciclo de vida de instalación, actualización o desinstalación: siembra datos, realiza copias de seguridad de registros, valida la actualización, limpia recursos externos."
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
 Los hooks de instalación son funciones de lógica especiales que se ejecutan durante el ciclo de vida de la instalación, actualización o desinstalación. Comparten el mismo tiempo de ejecución del controlador que las [logic functions](/es/developers/extend/apps/logic/logic-functions) normales, pero se declaran con sus propias funciones de definición y están fuera del modelo de desencadenadores normal (HTTP, cron, eventos de base de datos). Los hooks de instalación reciben un `InstallPayload` (`{ previousVersion?: string; newVersion: string }` — `previousVersion` es `undefined` en una instalación nueva); el hook de desinstalación recibe un `UninstallPayload` (`{ version?: string }` — la versión que se está eliminando).
 
 Cada aplicación puede definir **como máximo un** hook de cada tipo (preinstalación, postinstalación, desinstalación). La compilación del manifiesto genera un error si se detecta más de uno de cualquier tipo.
@@ -46,11 +50,11 @@ Cada aplicación puede definir **como máximo un** hook de cada tipo (preinstala
 * El entorno habitual de las logic functions (`APPLICATION_ID`, `APP_ACCESS_TOKEN`, `API_URL`) se inyecta, por lo que puedes llamar a la API de Twenty con el token de tu app.
 * El hook se adjunta automáticamente al manifiesto de la aplicación en tiempo de compilación (`preInstallLogicFunction` / `postInstallLogicFunction`) — no hay nada que referenciar en [`defineApplication()`](/es/developers/extend/apps/config/application).
 * El `timeoutSeconds` predeterminado es 300 para permitir tareas de configuración más largas como la siembra de datos.
-* **No se ejecuta en modo de desarrollo**: `yarn twenty dev` omite el flujo de instalación y sincroniza los archivos directamente, por lo que los hooks nunca se ejecutan ahí. En su lugar, dispáralos manualmente:
+* **No se ejecuta en modo de desarrollo**: `twenty app dev` omite el flujo de instalación y sincroniza los archivos directamente, por lo que los hooks nunca se ejecutan allí. En su lugar, dispáralos manualmente:
 
 ```bash filename="Terminal"
-yarn twenty dev:function:exec --postInstall
-yarn twenty dev:function:exec --preInstall
+twenty app exec --post-install
+twenty app exec --pre-install
 ```
 
 <AccordionGroup>
@@ -59,7 +63,10 @@ yarn twenty dev:function:exec --preInstall
 Se ejecuta una vez que tu app ha terminado de instalarse: metadatos sincronizados, cliente SDK generado, nuevo esquema disponible para consulta. Ejemplo — sembrar un registro predeterminado en instalaciones nuevas:
 
 ```ts src/logic-functions/post-install.ts
-import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import {
+  definePostInstallLogicFunction,
+  type InstallPayload,
+} from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
@@ -68,7 +75,9 @@ const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
   const client = new CoreApiClient();
   await client.mutation({
     createPostCard: {
-      __args: { data: { name: 'Welcome to Postcard', content: 'Your first card!' } },
+      __args: {
+        data: { name: 'Welcome to Postcard', content: 'Your first card!' },
+      },
       id: true,
     },
   });
@@ -87,7 +96,7 @@ export default definePostInstallLogicFunction({
 
 El flag `shouldRunSynchronously` controla el modelo de ejecución:
 
-* `false` *(predeterminado)* — encolado en la cola de mensajes (`retryLimit: 3`) y ejecutado por un worker. La respuesta de instalación se devuelve tan pronto como el trabajo se pone en la cola. **Usar para trabajo de larga duración** — siembra de grandes conjuntos de datos, APIs de terceros lentas.
+* `false` *(predeterminado)* — se pone en cola en la cola de mensajes (`retryLimit: 3`) y lo ejecuta un worker. La respuesta de instalación se devuelve tan pronto como el trabajo se pone en la cola. **Usar para trabajo de larga duración** — siembra de grandes conjuntos de datos, APIs de terceros lentas.
 * `true` — se ejecuta en línea durante el flujo de instalación. La solicitud de instalación se bloquea hasta que el handler finaliza; un error lanzado aparece como `POST_INSTALL_ERROR` para quien realiza la llamada (sin reintentos). **Usar para trabajo rápido que debe completarse antes de la respuesta.** La migración ya se ha aplicado en este punto, por lo que un fallo no revierte los cambios de esquema — solo expone el error.
 
 </Accordion>
@@ -100,10 +109,16 @@ La pre-instalación siempre es **síncrona** y bloquea la instalación. Si el ha
 Ejemplo — copiar los valores de un campo heredado antes de que la migración lo elimine:
 
 ```ts src/logic-functions/pre-install.ts
-import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import {
+  definePreInstallLogicFunction,
+  type InstallPayload,
+} from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
+const handler = async ({
+  previousVersion,
+  newVersion,
+}: InstallPayload): Promise<void> => {
   // Only the 1.x → 2.x upgrade drops the legacy `notes` field.
   if (!previousVersion?.startsWith('1.') || !newVersion.startsWith('2.')) {
     return;
@@ -132,7 +147,8 @@ const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise
 export default definePreInstallLogicFunction({
   universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
   name: 'pre-install',
-  description: 'Backs up legacy notes into description before the v2 migration.',
+  description:
+    'Backs up legacy notes into description before the v2 migration.',
   timeoutSeconds: 300,
   shouldRunOnVersionUpgrade: true,
   handler,
@@ -155,11 +171,14 @@ Notas:
 * Al igual que los hooks de instalación, **no se ejecuta en modo de desarrollo**; en su lugar, actívalo manualmente:
 
 ```bash filename="Terminal"
-yarn twenty dev:function:exec --uninstall
+twenty app exec --uninstall-hook
 ```
 
 ```ts src/logic-functions/uninstall.ts
-import { defineUninstallLogicFunction, type UninstallPayload } from 'twenty-sdk/define';
+import {
+  defineUninstallLogicFunction,
+  type UninstallPayload,
+} from 'twenty-sdk/define';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (_payload: UninstallPayload): Promise<void> => {
@@ -185,3 +204,5 @@ export default defineUninstallLogicFunction({
   handler,
 });
 ```
+
+<PageBanner illustration="card-page-install-hooks" />

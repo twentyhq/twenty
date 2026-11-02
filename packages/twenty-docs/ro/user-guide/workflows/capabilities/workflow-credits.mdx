@@ -3,7 +3,7 @@ title: Credite pentru fluxuri de lucru
 description: Înțelegeți consumul și gestionarea creditelor pentru fluxurile de lucru.
 ---
 
-Creditele fluxului de lucru stimulează automatizările dvs. în Twenty. Înțelegerea modului în care funcționează vă ajută să optimizați costurile și să gestionați eficient bugetul de automatizare.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Alocarea creditelor
 
@@ -40,7 +40,7 @@ Creditele sunt consumate când fluxurile de lucru se execută, nu atunci când l
   * Prompturile mai complexe și rezultatele mai lungi utilizează mai multe credite
 
 * **Acțiuni Delay**: Consum minim de credite
-  * Nodul Delay consumă **1 credit** la execuție
+  * Nodul Delay consumă **0.0001 credit (0.0001 USD)** atunci când se execută, la fel ca un pas standard de flux de lucru
   * **Nu se consumă credite** în perioada de așteptare
   * O întârziere de 5 minute costă la fel ca o întârziere de 5 zile
 
@@ -73,3 +73,5 @@ Dacă aveți nevoie de mai multe credite decât alocarea planificată:
 * **Prelucrarea în lot**: Folosește operațiuni în vrac și acțiuni ale Iteratorului în mod eficient pentru a reduce apelurile individuale de acțiune
 * **Optimizare pentru declanșatorul manual**: Pentru declanșatoarele manuale, alegeți disponibilitatea `Bulk` pentru a procesa mai multe înregistrări într-o singură rulare a fluxului de lucru
 * Optimizați acțiunile de cod pentru eficiență
+
+<PageBanner illustration="card-page-charging-credits" />

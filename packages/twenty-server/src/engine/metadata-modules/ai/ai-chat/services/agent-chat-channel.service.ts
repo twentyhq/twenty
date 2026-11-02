@@ -23,6 +23,7 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type ChannelChanges = {
@@ -149,7 +150,7 @@ export class AgentChatChannelService {
     });
 
     // The standard sync would bring a standard channel back, so its chats stay
-    if (!channel.isCustom) {
+    if (belongsToTwentyStandardApp(channel)) {
       throw new AiException(
         'A standard channel cannot be deleted',
         AiExceptionCode.CHAT_CHANNEL_IS_STANDARD,

@@ -1,11 +1,11 @@
-import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
+import { type QueueJobSettings } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 
 export const UPGRADE_WORKSPACE_APPLICATION_JOB_NAME =
   'UpgradeWorkspaceApplicationJob';
 
 export const UPGRADE_WORKSPACE_APPLICATION_JOB_ENQUEUE_BATCH_SIZE = 500;
 
-export const UPGRADE_WORKSPACE_APPLICATION_JOB_OPTIONS: QueueJobOptions = {
+export const UPGRADE_WORKSPACE_APPLICATION_JOB_OPTIONS: QueueJobSettings = {
   retryLimit: 2,
   backoff: {
     strategy: 'exponential',

@@ -1,0 +1,128 @@
+---
+title: NumberStepper
+description: Edita un número con límites opcionales y botones para incrementar o reducir.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import NumberStepperReference from '/snippets/ui/generated/components/input/number-stepper.mdx';
+
+## Resumen
+
+`NumberStepper` es el preajuste compacto y práctico creado a partir de [NumberField](/es/ui/primitives/input/number-field). Combina una entrada de texto numérica con botones opcionales para reducir e incrementar. Impórtalo desde `twenty-ui/components/input`. Usa `NumberField` cuando necesites opciones de configuración regional o formato, distintos pasos de modificadores, arrastre o composición independiente de partes.
+
+<StoryEmbed storyId="ui-input-numberstepper--display" title="Ejemplo de NumberStepper" height={130} />
+
+## "Uso"
+
+```tsx
+import { NumberStepper } from 'twenty-ui/components/input';
+import { Field } from 'twenty-ui/primitives/input';
+
+export const QuantityInput = () => (
+  <Field.Root>
+    <Field.Label style={{ color: 'var(--t-font-color-primary)' }}>
+      Quantity
+    </Field.Label>
+    <NumberStepper defaultValue={3} min={0} max={10} />
+    <Field.Description style={{ color: 'var(--t-font-color-secondary)' }}>
+      Choose up to ten items.
+    </Field.Description>
+  </Field.Root>
+);
+```
+
+## Opciones visuales
+
+Compare los estados predeterminado, con límites, deshabilitado, de solo lectura y no válido, con o sin botones de incremento.
+
+<StoryEmbed storyId="ui-input-numberstepper--catalog" title="Límites y estados del selector numérico" height={220} />
+
+## Valor no controlado
+
+Usa `defaultValue` para establecer la cantidad inicial. La entrada gestiona los cambios posteriores.
+
+```tsx
+import { NumberStepper } from 'twenty-ui/components/input';
+import { Field } from 'twenty-ui/primitives/input';
+
+export const QuantityInput = () => (
+  <Field.Root>
+    <Field.Label>Quantity</Field.Label>
+    <NumberStepper name="quantity" defaultValue={3} min={0} max={10} step={1} />
+    <Field.Description>Choose up to ten items.</Field.Description>
+  </Field.Root>
+);
+```
+
+## Valor controlado
+
+Pasa un número o `null` mediante `value` y actualízalo en `onValueChange` para gestionar la misma cantidad en el estado de React. La devolución de llamada recibe el siguiente valor numérico y los detalles del evento.
+
+```tsx
+import { useState } from 'react';
+import { NumberStepper } from 'twenty-ui/components/input';
+import { Field } from 'twenty-ui/primitives/input';
+
+export const QuantityInput = () => {
+  const [quantity, setQuantity] = useState<number | null>(3);
+
+  return (
+    <Field.Root>
+      <Field.Label>Quantity</Field.Label>
+      <NumberStepper
+        name="quantity"
+        value={quantity}
+        onValueChange={setQuantity}
+        min={0}
+        max={10}
+        step={1}
+      />
+      <Field.Description>Choose up to ten items.</Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+Al borrar el campo, se informa de `null`. El texto incompleto, como `-` o `+`, sigue siendo editable sin informar de un número no válido hasta que se sustituye o se ajusta mediante un paso. De forma predeterminada, las ediciones numéricas analizables informan del valor limitado; el borrador mostrado se normaliza al perder el foco. Los valores iguales al valor actual no vuelven a llamar a `onValueChange`.
+
+`onValueCommitted(value, details)` informa del valor después de confirmar una edición: al perder el foco tras escribir o borrar, al soltar el puntero tras un ajuste con botón e inmediatamente para los ajustes de teclado. Sus detalles contienen el `event` nativo y `reason`. `onValueChange` conserva los detalles del cambio, incluidos los métodos de cancelación y la dirección de ajuste opcional.
+
+## Validación de la aplicación
+
+Establece `allowOutOfRange` cuando la aplicación necesite el valor analizado antes de aplicar sus propios límites o validación. Entonces, `onValueChange` recibe números escritos y pegados que están fuera del intervalo. Los campos no controlados, o los campos controlados que aceptan esos valores, los conservan al perder el foco. Los campos controlados que los rechazan vuelven a su valor aceptado al perder el foco. Por ejemplo, sustituir `60` por `45` informa de `4` y después de `45`, incluso cuando `min={30}`. La aplicación puede ignorar el valor intermedio sin guardar accidentalmente el mínimo.
+
+Los botones y los ajustes de teclado siguen deteniéndose en `min` y `max`. La validación nativa de formularios impide el envío mientras un valor aceptado esté fuera de ese intervalo. `allowOutOfRange` tiene como valor predeterminado `false`.
+
+## Límites e interacción
+
+`min` y `max` son inclusivos. Los botones de incremento y reducción se detienen en el límite correspondiente. Flecha arriba y Flecha abajo ajustan la entrada enfocada en `step`, cuyo valor predeterminado es `1`. Inicio y Fin seleccionan el límite correspondiente cuando se proporciona; en su lugar, llama a `event.preventBaseUIHandler()` en `onKeyDown` para mantener el comportamiento de edición de texto de una tecla. Se aplica el mismo paso cuando se mantiene pulsada Mayús o Alt. Los valores mostrados admiten hasta 15 dígitos fraccionarios; usa un paso positivo dentro de esa precisión para ajustes decimales.
+
+Los valores usan dígitos latinos y muestran separadores de agrupación a partir de cinco dígitos enteros, como `12,500`. Se aceptan los separadores de agrupación de la configuración regional del navegador escritos y pegados.
+
+`step` controla los ajustes; no redondea los valores escritos a un paso. Cuando se establece `min`, la validación nativa de formularios también requiere `min` más un múltiplo de `step`: con el valor predeterminado de `step` de `1`, un `2.5` escrito bloquea el envío. Establece `showButtons={false}` para editar texto con el mismo comportamiento de teclado.
+
+Cada botón tiene un nombre accesible predeterminado. Usa `decrementLabel` e `incrementLabel` para proporcionar nombres contextuales o traducidos. Proporciona a la entrada un `Field.Label`, `aria-label` o `aria-labelledby` visible.
+
+## Formularios y foco
+
+Usa `name` para incluir el valor numérico en un formulario. `form` lo asocia con un formulario ubicado en otra parte del documento. Los botones de ajuste usan `type="button"`, por lo que ajustar un valor no envía el formulario. `required` participa en la validación nativa.
+
+Usa un `value` controlado cuando tu aplicación necesite restablecer el campo. Un restablecimiento nativo del formulario no restablece el estado numérico.
+
+`disabled` impide los cambios y excluye el valor del envío del formulario. `readOnly` impide los cambios y mantiene la entrada enfocable y su valor disponible para el formulario.
+
+Los atributos y controladores de entrada nativos, `className`, `style`, `ref` y `render` se aplican a la entrada de texto visible. La ref recibe un `HTMLInputElement`; llama a `ref.current?.focus()` para enfocarlo. Al componer mediante `render`, reenvía las props y la ref proporcionadas a una entrada nativa. Personaliza el diseño circundante con un elemento independiente o usa las partes `NumberField.Root` y `NumberField.Group` cuando se requiera acceso al contenedor. Combina la entrada con `Field.Description` y `Field.Error` para mensajes de orientación y validación.
+
+El preajuste usa deliberadamente un estilo compacto, dígitos latinos, hasta 15 dígitos fraccionarios, agrupación a partir de cinco dígitos enteros y el mismo `step` para los ajustes normales, con Mayús y con Alt. Estas opciones se aplican solo a `NumberStepper`. La primitiva completa `NumberField` conserva las opciones de formato y ajuste de Base UI.
+
+## Renderizador de componentes del front-end
+
+Los entornos aislados del renderizador de React y Preact admiten escritura, ajustes de teclado, límites, valores de formulario, ajustes con puntero y pegado sobre texto seleccionado. La galería del renderizador verifica estas interacciones en ambos entornos de ejecución. Al igual que con `NumberField`, los ajustes con puntero informan de cambios, pero el entorno aislado no entrega actualmente la devolución de llamada de confirmación correspondiente al soltar el puntero. Los hosts normales de React conservan el comportamiento completo de confirmación.
+
+## "Props"
+
+<NumberStepperReference />
+
+<PageBanner illustration="page-cover-input" />

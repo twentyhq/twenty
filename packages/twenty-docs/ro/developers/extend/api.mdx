@@ -1,15 +1,17 @@
 ---
 title: API-uri
+sidebarTitle: Prezentare generală
 description: API-urile REST și GraphQL generate din schema spațiului tău de lucru.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## API-uri cu schemă per-tenant
 
 Nu există o referință API statică pentru Twenty. Fiecare spațiu de lucru are propria schemă — când adaugi un obiect personalizat (de exemplu `Invoice`), acesta primește imediat endpoint-uri REST și GraphQL identice cu cele ale obiectelor încorporate precum `Company` sau `Person`. API-ul este generat din schemă, astfel încât endpoint-urile folosesc direct denumirile obiectelor și câmpurilor tale — fără ID-uri opace.
 
-Documentația API specifică spațiului tău de lucru este disponibilă la **Settings → API & Webhooks** după crearea unei chei API. Include un mediu interactiv de testare în care poți executa apeluri reale asupra datelor tale.
+Documentația API specifică spațiului tău de lucru este disponibilă în **Settings → Developers → API** după crearea unei chei API. Include un mediu interactiv de testare în care poți executa apeluri reale asupra datelor tale.
 
 ## Două API-uri
 
@@ -36,7 +38,7 @@ Ambele sunt disponibile ca REST și GraphQL. GraphQL adaugă upsert-uri în lot 
 Authorization: Bearer YOUR_API_KEY
 ```
 
-Creează o cheie API în **Settings → API & Webhooks → + Create key**. Copiază-o imediat — este afișată o singură dată. Cheile pot fi limitate la un rol specific în **Settings → Members → Roles → Assignment tab** pentru a restricționa la ce pot avea acces.
+Creează o cheie API în **Settings → Developers → API → + Create key**. Copiază-o imediat — este afișată o singură dată. Cheile pot fi limitate la un rol specific în **Settings → Members → Roles → Assignment tab** pentru a restricționa la ce pot avea acces.
 
 <VimeoEmbed videoId="928786722" title="Crearea unei chei API" />
 
@@ -46,9 +48,26 @@ Pentru acces bazat pe OAuth (aplicații externe care acționează în numele uti
 
 Atât REST, cât și GraphQL acceptă procesarea în lot de până la 60 de înregistrări per cerere — creare, actualizare sau ștergere. GraphQL acceptă, de asemenea, upsert în lot (creare-sau-actualizare într-un singur apel) folosind nume la plural precum `CreateCompanies`.
 
+## Selectarea câmpurilor (REST)
+
+Endpointurile de înregistrări REST acceptă un parametru de interogare `fields` pentru a returna numai câmpurile de care aveți nevoie:
+
+```
+GET /rest/people?fields=id,name,emails,company
+```
+
+* `id` este returnat întotdeauna.
+* Câmpurile compuse (precum `emails` sau `name`) sunt selectate în întregime după numele câmpului lor.
+* Un câmp de relație mulți-la-unu returnează coloana sa de asociere (de exemplu, `companyId`) cu `depth=0`. Câmpurile de relație unu-la-mulți sunt returnate numai cu `depth=1`. Cu `depth=1`, sunt extinse doar câmpurile de relație enumerate în `fields`.
+* Câmpurile necunoscute sau câmpurile pe care rolul dvs. nu le poate citi returnează o eroare `400`.
+
+Când `fields` este omis pentru un obiect cu mai mult de 200 de câmpuri care pot fi citite, fiecare înregistrare returnează un set implicit de 200 de câmpuri: `id`, câmpurile identificatorului etichetei și imaginii, `createdAt`, `updatedAt`, `deletedAt`, `position`, apoi câmpurile standard înaintea câmpurilor personalizate, ordonate după nume. Transmiteți explicit `fields` pentru a citi orice câmp dincolo de acel set implicit.
+
 ## Limitări de rată
 
 | Limită              | Valoare                    |
 | ------------------- | -------------------------- |
 | Solicitări          | 100 pe minut               |
 | Dimensiunea lotului | 60 de înregistrări pe apel |
+
+<PageBanner illustration="dev-api" />

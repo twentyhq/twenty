@@ -3,9 +3,15 @@ title: Archivio chiave-valore
 description: Rendi persistenti i risultati intermedi, memorizza nella cache i dati e condividi lo stato tra le esecuzioni delle funzioni di logica con l'archivio chiave-valore integrato dell'applicazione.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
 Le funzioni di logica vengono eseguite in sandbox in processi Node.js di breve durata — una volta terminata un'esecuzione, nulla di ciò che era in memoria sopravvive. Quando devi **ricordare qualcosa tra un'esecuzione e l'altra** (memorizzare nella cache una costosa risposta di un'API, archiviare un cursore per sincronizzazioni incrementali, applicare un debounce al lavoro o passare lo stato da una funzione all'altra), conservalo nell'archivio chiave-valore integrato.
 
 Ogni applicazione dispone del proprio namespace isolato: le voci sono associate all'app autenticata, quindi le tue chiavi non potranno mai entrare in conflitto con — o essere lette da — un'altra applicazione.
+
+L'archivio è **persistente**: le voci vengono memorizzate nel database PostgreSQL dell'istanza, non in una cache in memoria come Redis, quindi sopravvivono ai riavvii del server, alle distribuzioni e agli aggiornamenti dell'app e rimangono disponibili finché non le elimini. Ciò lo rende affidabile per uno stato durevole, come i cursori di sincronizzazione o la configurazione per utente, non solo per cache di breve durata. I valori vengono memorizzati come JSON semplice senza crittografia a livello di applicazione, quindi non inserirvi segreti: conserva le chiavi API e altre credenziali nelle [variabili segrete dell'applicazione o del server](/it/developers/extend/apps/config/application), che sono crittografate a riposo.
 
 ```text
   ┌─────────────────┐   kv.set(key, value)   ┌──────────────────────────┐
@@ -95,7 +101,7 @@ export default defineLogicFunction({
 * **Namespace.** Anteponi prefissi alle chiavi per tenere separate le varie aree di interesse — `sync-cursor:linear`, `cache:exchange-rate:USD:EUR`, `lock:nightly-report`.
 * **Scadenza (TTL).** Lo store non ha una scadenza integrata. Archivia un timestamp all'interno del valore (come nell'esempio di cache) e verificalo in lettura oppure cancella le chiavi obsolete da una [funzione attivata da cron](/it/developers/extend/apps/logic/logic-functions).
 * **Cosa archiviare.** Qualsiasi valore serializzabile in JSON — numeri, stringhe, array, oggetti. Mantieni ridotte le dimensioni delle voci; questo meccanismo serve per coordinamento e caching, non per grandi blob o file. Per i file, usa un campo `FILES` e [`uploadFile`](/it/developers/extend/apps/logic/logic-functions#uploading-files).
-* **Visibilità.** Le voci risiedono nel database dell'istanza, non come record di workspace: non vengono mai visualizzate nell'interfaccia utente del workspace, non fanno parte del modello dati della tua app e non richiedono ruoli o autorizzazioni sugli oggetti.
+* **Visibilità.** Le voci risiedono nel database Postgres dell'istanza, non come record di workspace: non vengono mai visualizzate nell'interfaccia utente del workspace, non fanno parte del modello dati della tua app e non richiedono ruoli o autorizzazioni sugli oggetti.
 
 ## Alternativa: un oggetto store interrogabile
 
@@ -107,3 +113,5 @@ L'archivio integrato è volutamente opaco: le voci non sono record, quindi non p
 <Note>
 A differenza dell'archivio integrato, un oggetto personalizzato è sempre limitato a un solo workspace — non può condividere voci tra installazioni come fanno le chiavi `SERVER`.
 </Note>
+
+<PageBanner illustration="card-page-key-value-store" />

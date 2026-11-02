@@ -275,6 +275,11 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
     entityKind: 'webhook',
     getCandidates: () => NO_MANIFEST_CANDIDATES,
   },
+  mcpServer: {
+    entityKind: 'MCP server',
+    getCandidates: (manifest) =>
+      toCandidates(manifest.mcpServers, (mcpServer) => mcpServer.label),
+  },
   applicationVariable: {
     entityKind: 'application variable',
     getCandidates: () => NO_MANIFEST_CANDIDATES,
@@ -290,6 +295,11 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
   workflowVersion: {
     entityKind: 'workflow version',
     getCandidates: () => NO_MANIFEST_CANDIDATES,
+  },
+  relatedRecordPath: {
+    entityKind: 'related record path',
+    getCandidates: (manifest) =>
+      toCandidates(manifest.relatedRecordPaths, () => undefined),
   },
   validationRule: {
     entityKind: 'validation rule',

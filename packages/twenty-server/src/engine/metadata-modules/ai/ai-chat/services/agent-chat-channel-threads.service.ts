@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { AGENT_CHAT_HAS_UNRESOLVED_MENTION_PREDICATE } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-has-unresolved-mention-predicate.constant';
 import { AGENT_CHAT_CHANNEL_THREAD_PREDICATES } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-channel-thread-predicates.constant';
 import {
   AGENT_CHAT_CHANNEL_THREADS_DEFAULT_PAGE_SIZE,
@@ -10,6 +11,7 @@ import {
 import { type AgentChatChannelSummaryDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-summary.dto';
 import { type AgentChatChannelThreadIdsDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-thread-ids.dto';
 import { AgentChatChannelAssignmentFilter } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-assignment-filter.enum';
+import { AgentChatChannelThreadFilter } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-thread-filter.enum';
 import { AgentChatChannelThreadStatus } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-channel-thread-status.enum';
 import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { AgentChatSharingService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-sharing.service';
@@ -25,6 +27,15 @@ import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migrati
 
 const { IS_UNREAD, STATUS } = AGENT_CHAT_CHANNEL_THREAD_PREDICATES;
 
+const IS_ASSIGNED_TO_ME =
+  'thread."assigneeId" = :channelThreadsWorkspaceMemberId::uuid';
+
+const IS_ASSIGNED = 'thread."assigneeId" IS NOT NULL';
+
+const IS_UNASSIGNED = 'thread."assigneeId" IS NULL';
+
+const NEEDS_INPUT = 'thread."pendingQuestionMessageId" IS NOT NULL';
+
 type MemberArgs = Omit<AgentChatThreadAccessArgs, 'threadId'>;
 
 type ReadableThreadsQuery = (readableThreads: {
@@ -34,8 +45,15 @@ type ReadableThreadsQuery = (readableThreads: {
 
 const ASSIGNMENT_FILTERS: Record<AgentChatChannelAssignmentFilter, string> = {
   [AgentChatChannelAssignmentFilter.ANY]: '',
-  [AgentChatChannelAssignmentFilter.UNASSIGNED]: `AND thread."assigneeId" IS NULL`,
-  [AgentChatChannelAssignmentFilter.ASSIGNED_TO_ME]: `AND thread."assigneeId" = :channelThreadsWorkspaceMemberId::uuid`,
+  [AgentChatChannelAssignmentFilter.ASSIGNED]: `AND ${IS_ASSIGNED}`,
+  [AgentChatChannelAssignmentFilter.UNASSIGNED]: `AND ${IS_UNASSIGNED}`,
+  [AgentChatChannelAssignmentFilter.ASSIGNED_TO_ME]: `AND ${IS_ASSIGNED_TO_ME}`,
+};
+
+const THREAD_FILTERS: Record<AgentChatChannelThreadFilter, string> = {
+  [AgentChatChannelThreadFilter.ANY]: '',
+  [AgentChatChannelThreadFilter.NEEDS_INPUT]: `AND ${NEEDS_INPUT}`,
+  [AgentChatChannelThreadFilter.MENTIONED]: `AND ${AGENT_CHAT_HAS_UNRESOLVED_MENTION_PREDICATE}`,
 };
 
 // Computed here because the client cannot load every chat of every channel to sort them
@@ -51,6 +69,7 @@ export class AgentChatChannelThreadsService {
     channelId,
     status,
     assignment,
+    filter,
     first,
     after,
     ...args
@@ -58,6 +77,7 @@ export class AgentChatChannelThreadsService {
     channelId: string;
     status: AgentChatChannelThreadStatus | null;
     assignment: AgentChatChannelAssignmentFilter | null;
+    filter: AgentChatChannelThreadFilter | null;
     first: number | null;
     after: string | null;
   }): Promise<AgentChatChannelThreadIdsDTO> {
@@ -90,6 +110,7 @@ export class AgentChatChannelThreadsService {
             AND thread."channelId" = :channelThreadsChannelId::uuid
             AND ${STATUS[status ?? AgentChatChannelThreadStatus.OPEN]}
             ${ASSIGNMENT_FILTERS[assignment ?? AgentChatChannelAssignmentFilter.ANY]}
+            ${THREAD_FILTERS[filter ?? AgentChatChannelThreadFilter.ANY]}
             ${buildAgentChatChannelThreadCursorFilter(cursor)}
             ORDER BY thread."lastActivityAt" DESC NULLS LAST, thread.id DESC
             LIMIT :channelThreadsLimit`,
@@ -130,13 +151,29 @@ export class AgentChatChannelThreadsService {
     const counts = await this.queryReadableThreads<{
       channelId: string;
       openCount: number;
+      needsInputCount: number;
+      mentionedCount: number;
+      assignedToMeCount: number;
+      assignedCount: number;
+      unassignedCount: number;
+      snoozedCount: number;
+      doneCount: number;
       hasUnreadOpen: boolean;
+      hasUnreadAssignedToMe: boolean;
     }>({
       ...args,
       buildQuery: ({ fromClause, parameters }) => ({
         sql: `SELECT thread."channelId",
               count(*) FILTER (WHERE ${STATUS.OPEN})::int AS "openCount",
-              COALESCE(bool_or(${STATUS.OPEN} AND ${IS_UNREAD}), false) AS "hasUnreadOpen"
+              count(*) FILTER (WHERE ${STATUS.OPEN} AND ${NEEDS_INPUT})::int AS "needsInputCount",
+              count(*) FILTER (WHERE ${STATUS.OPEN} AND ${AGENT_CHAT_HAS_UNRESOLVED_MENTION_PREDICATE})::int AS "mentionedCount",
+              count(*) FILTER (WHERE ${STATUS.OPEN} AND ${IS_ASSIGNED_TO_ME})::int AS "assignedToMeCount",
+              count(*) FILTER (WHERE ${STATUS.OPEN} AND ${IS_ASSIGNED})::int AS "assignedCount",
+              count(*) FILTER (WHERE ${STATUS.OPEN} AND ${IS_UNASSIGNED})::int AS "unassignedCount",
+              count(*) FILTER (WHERE ${STATUS.SNOOZED})::int AS "snoozedCount",
+              count(*) FILTER (WHERE ${STATUS.DONE})::int AS "doneCount",
+              COALESCE(bool_or(${STATUS.OPEN} AND ${IS_UNREAD}), false) AS "hasUnreadOpen",
+              COALESCE(bool_or(${STATUS.OPEN} AND ${IS_ASSIGNED_TO_ME} AND ${IS_UNREAD}), false) AS "hasUnreadAssignedToMe"
             ${fromClause}
             AND thread."channelId" = ANY(:channelThreadsChannelIds::uuid[])
             GROUP BY thread."channelId"`,
@@ -154,7 +191,16 @@ export class AgentChatChannelThreadsService {
     return channels.map(({ id }) => ({
       channelId: id,
       openCount: countByChannelId.get(id)?.openCount ?? 0,
+      needsInputCount: countByChannelId.get(id)?.needsInputCount ?? 0,
+      mentionedCount: countByChannelId.get(id)?.mentionedCount ?? 0,
+      assignedToMeCount: countByChannelId.get(id)?.assignedToMeCount ?? 0,
+      assignedCount: countByChannelId.get(id)?.assignedCount ?? 0,
+      unassignedCount: countByChannelId.get(id)?.unassignedCount ?? 0,
+      snoozedCount: countByChannelId.get(id)?.snoozedCount ?? 0,
+      doneCount: countByChannelId.get(id)?.doneCount ?? 0,
       hasUnreadOpen: countByChannelId.get(id)?.hasUnreadOpen ?? false,
+      hasUnreadAssignedToMe:
+        countByChannelId.get(id)?.hasUnreadAssignedToMe ?? false,
     }));
   }
 

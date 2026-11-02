@@ -46,7 +46,7 @@ jobs:
             .source_sha == $sha and (.dry_run | type == "boolean")
             and (.version | type == "string" and test("^[0-9]+[.][0-9]+[.][0-9]+([+-][0-9A-Za-z.-]+)*$"))
             and (.dist_tag | type == "string" and test("^[a-zA-Z][a-zA-Z0-9._-]*$"))
-            and (.packages == "twenty-client-sdk twenty-ui twenty-sdk twenty create-twenty-app"
+            and (.packages == "twenty-client-sdk twenty-ui twenty-sdk twenty"
               or .packages == "twenty-ui" or .packages == "twenty")
             and ((.stage_only // false) | type == "boolean")
             and (.staging_version == null)
@@ -132,11 +132,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5.0.0
         with:
-          node-version: "24"
+          node-version-file: .nvmrc
           package-manager-cache: false
 
       - name: Build and inspect packages
         run: |
+          npm install -g corepack
           corepack enable
           yarn install --immutable
           projects=$(jq -rn --arg packages "$PACKAGES" \
@@ -149,11 +150,12 @@ jobs:
       - name: Stage validation packages without publishing
         if: env.STAGE_ONLY == 'true'
         run: |
-          # This test stages the SDK before it is publicly available to the CLI's release-readiness check.
-          jq 'del(.scripts.prepublish)' packages/twenty-cli/package.json > "$RUNNER_TEMP/twenty-cli-staging.json"
-          mv "$RUNNER_TEMP/twenty-cli-staging.json" packages/twenty-cli/package.json
+          # This test stages the SDK before it is publicly available to the CLI's release-readiness check,
+          # so the CLI's prepublish is skipped. Same pack and npm signer as the real publish below.
           for package in $PACKAGES; do
-            yarn workspace "$package" npm publish --staged --provenance --tag "$DIST_TAG" --access public
+            tarball="$RUNNER_TEMP/$package-$VERSION.tgz"
+            yarn workspace "$package" pack --out "$tarball"
+            npm stage publish "$tarball" --provenance --tag "$DIST_TAG" --access public
             echo "Staged $package@$VERSION for OIDC validation only. Do not approve; reject after verification." >> "$GITHUB_STEP_SUMMARY"
           done
 
@@ -179,9 +181,17 @@ jobs:
             if curl --fail --silent --show-error "https://registry.npmjs.org/$package/$VERSION" > /dev/null; then
               echo "$package@$VERSION already published; skipping"
             else
-              yarn workspace "$package" npm publish --provenance --tag "$DIST_TAG" --access public
+              # Yarn signs with a 5 s Sigstore timeout, so a slow Rekor write makes its retry hit a 409 on
+              # the entry it just created. npm's signer waits up to fetch-timeout; Yarn still packs, to
+              # resolve workspace: ranges, and pack skips prepublish, so the CLI's runs here.
+              if [[ "$package" == twenty ]]; then
+                yarn workspace twenty run prepublish
+              fi
+              tarball="$RUNNER_TEMP/$package-$VERSION.tgz"
+              yarn workspace "$package" pack --out "$tarball"
+              npm publish "$tarball" --provenance --tag "$DIST_TAG" --access public
             fi
-            if [[ "$package" != twenty && "$package" != create-twenty-app ]]; then
+            if [[ "$package" != twenty ]]; then
               published_libraries="$published_libraries $package"
             fi
           done

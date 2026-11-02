@@ -7,6 +7,7 @@ import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/servic
 import { type AgentInboxSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-sender.type';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import {
   WorkflowStepExecutorException,
@@ -21,6 +22,7 @@ export class WorkflowRunInboxSenderWorkspaceService {
   constructor(
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly workflowCoreSyncService: WorkflowCoreSyncService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async findRunSenderOrThrow({
@@ -64,5 +66,35 @@ export class WorkflowRunInboxSenderWorkspaceService {
         ? workflow.name
         : 'Untitled',
     };
+  }
+
+  // a run's conversation goes to this member's inbox, until a workflow can name a team inbox
+  async findCreatorWorkspaceMemberId({
+    workspaceId,
+    coreWorkflowId,
+  }: {
+    workspaceId: string;
+    coreWorkflowId: string;
+  }): Promise<string | null> {
+    const coreWorkflow =
+      await this.workflowCoreSyncService.findCoreWorkflowById(
+        workspaceId,
+        coreWorkflowId,
+      );
+
+    if (!isDefined(coreWorkflow?.createdByUserWorkspaceId)) {
+      return null;
+    }
+
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    return (
+      flatWorkspaceMemberMaps.idByUserWorkspaceId[
+        coreWorkflow.createdByUserWorkspaceId
+      ] ?? null
+    );
   }
 }

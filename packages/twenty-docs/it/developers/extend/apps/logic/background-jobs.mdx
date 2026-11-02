@@ -3,6 +3,10 @@ title: Job in background
 description: Affida il lavoro lungo o soggetto a limitazioni di frequenza ai worker di Twenty accodando un'altra esecuzione di una logic function invece di fare tutto in linea.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
 L'esecuzione di una logic function è limitata dal suo `timeoutSeconds` (massimo 900 secondi). Qualsiasi attività che non può essere completata in tale intervallo — una risincronizzazione completa, un fan-out per record, un'API di terze parti che applica limitazioni di frequenza — deve essere suddivisa in esecuzioni più piccole.
 
 `enqueueJobs` fa esattamente questo: chiede ai worker di Twenty di eseguire in un secondo momento una delle logic function della tua app, una volta per payload, ogni esecuzione nel proprio processo con il proprio budget di timeout. Il chiamante restituisce immediatamente.
@@ -23,19 +27,69 @@ import { enqueueJobs } from 'twenty-sdk/logic-function';
 
 await enqueueJobs({
   logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
-  payloads: [{ page: 1 }],
+  jobs: [{ payload: { page: 1 } }],
 });
 ```
 
-Ogni esecuzione riceve il proprio payload come argomento dell'handler, esattamente come qualsiasi altro trigger. La destinazione deve appartenere alla **stessa applicazione** del chiamante — l'inserimento in coda della funzione di un'altra app viene rifiutato con `Logic function not found` e non viene inserito nulla in coda. Una singola chiamata accetta fino a `200` payload.
+Ogni esecuzione riceve il proprio payload come argomento dell'handler, esattamente come qualsiasi altro trigger. La destinazione deve appartenere alla **stessa applicazione** del chiamante — l'inserimento in coda della funzione di un'altra app viene rifiutato con `Logic function not found` e non viene inserito nulla in coda. Una singola chiamata accetta fino a `200` job.
 
 <Note>
-`enqueueJobs` restituisce non appena i job sono stati accettati, non quando sono stati eseguiti. Non restituisce i risultati delle destinazioni: fai scrivere a ciascuna destinazione ciò che produce nel [key-value store](/it/developers/extend/apps/logic/key-value-store) o in un record dello spazio di lavoro se hai bisogno di leggerlo di nuovo.
+`enqueueJobs` restituisce non appena i job sono stati accettati, non quando sono stati eseguiti. Non restituisce i risultati delle destinazioni: fai scrivere a ciascuna destinazione ciò che produce nel [key-value store](/it/developers/extend/apps/logic/key-value-store) o in un record dello spazio di lavoro se hai bisogno di leggerlo di nuovo. Per scoprire se un'esecuzione è terminata, esegui il polling del relativo [stato del job](#poll-jobs).
 </Note>
 
 <Note>
-Il precedente helper `enqueueJob`, che mette in coda un singolo job per chiamata, è deprecato. Usa invece `enqueueJobs` con un elenco `payloads` di un solo elemento.
+Il precedente helper `enqueueJob`, che mette in coda un singolo job per chiamata, è deprecato. Usa invece `enqueueJobs` con un elenco `jobs` di un solo elemento. Anche l'argomento `payloads` è deprecato: passa invece `jobs`, che accetta lo stesso payload per ogni esecuzione e ti consente di assegnare un nome a ciascuna.
 </Note>
+
+## Eseguire il polling dei job
+
+`enqueueJobs` restituisce un `jobId` per ogni esecuzione accodata, nello stesso ordine dei job passati. `getJobs` legge a che punto sono arrivate tali esecuzioni, con una sola chiamata.
+
+```ts
+import { enqueueJobs, getJobs } from 'twenty-sdk/logic-function';
+
+const { jobIds } = await enqueueJobs({
+  logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+  jobs: [{ payload: { companyId: 'abc' } }],
+});
+
+const statuses = await getJobs(jobIds);
+```
+
+Una singola chiamata a `getJobs` legge al massimo `200` ID, lo stesso limite che `enqueueJobs` applica a un batch.
+
+Ogni voce contiene l'ID richiesto:
+
+| Campo          | Cosa contiene                                                                              |
+| -------------- | ------------------------------------------------------------------------------------------ |
+| `jobId`        | L'ID usato per il polling.                                                                 |
+| `stato`        | `WAITING`, `PRIORITIZED`, `DELAYED`, `ACTIVE`, `WAITING_CHILDREN`, `COMPLETED` o `FAILED`. |
+| `attemptsMade` | Tentativi della coda effettuati finora, incluso quello corrente.                           |
+| `failedReason` | Il messaggio di errore dell'ultimo tentativo non riuscito, altrimenti `null`.              |
+| `enqueuedAt`   | Quando il job è stato accettato, in millisecondi epoch.                                    |
+| `startedAt`    | Quando un worker lo ha prelevato, `null` mentre è ancora in attesa.                        |
+| `finishedAt`   | Quando è stato completato o non è riuscito, `null` mentre è ancora in esecuzione.          |
+
+Un job che non è ancora stato prelevato viene normalmente indicato come `PRIORITIZED` anziché `WAITING`, perché i job dell'applicazione vengono accodati con una priorità bassa fissa. `COMPLETED` e `FAILED` sono gli stati terminali. Un ciclo di polling dovrebbe anche interrompersi autonomamente dopo un numero limitato di tentativi anziché attendere per sempre, poiché un'esecuzione è leggibile solo finché la coda la conserva: 4 ore dopo il completamento, 7 giorni dopo un errore e, in entrambi i casi, solo gli ultimi 1000 job in tale stato.
+
+`getJobs` restituisce solo i job che conserva ancora, quindi un ID che è stato rimosso — o che non è mai esistito — è semplicemente assente dal risultato anziché generare un errore per l'intero batch. Confronta ciò che ottieni con ciò che hai richiesto per individuarli e considera un ID mancante come "non più noto", che non equivale a "non è mai stato eseguito".
+
+Gli stati sono limitati all'area di lavoro da cui viene effettuata la chiamata, quindi un'area di lavoro non può mai leggere il job di un'altra area di lavoro.
+
+## Scegli il tuo ID job
+
+Passa `jobs` invece di `payloads` per assegnare un nome a ogni esecuzione. L'ID che passi è quello accettato da `getJobs`, quindi un chiamante può effettuare il polling di un job senza dover memorizzare ciò che ha restituito `enqueueJobs`.
+
+```ts
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+  jobs: [{ payload: { companyId: 'abc' }, jobId: 'enrich-abc' }],
+});
+```
+
+Un ID è composto da un massimo di 128 caratteri tra lettere, cifre, `_`, `.` o `-`, e nessun job in una chiamata può condividerlo con un altro. Passa `payloads` oppure `jobs`, mai entrambi. Quando ometti `jobId`, Twenty ne genera uno.
+
+Un `jobId` è anche una chiave di idempotenza: l'accodamento di un ID che la coda conserva ancora viene accettato, ma **non** avvia una seconda esecuzione, e `getJobs` continua a segnalare la prima. Ciò rende sicuro ritentare l'accodamento. Due avvertenze: la garanzia dura solo finché il job viene conservato, quindi lo stesso ID può avviare una nuova esecuzione dopo che l'originale è stato rimosso, e gli ID sono condivisi da tutte le app in un'area di lavoro, quindi aggiungi un prefisso ai tuoi se una collisione sarebbe rilevante.
 
 ## Opzioni del job
 
@@ -49,7 +103,7 @@ Le opzioni si applicano a ogni esecuzione nel batch.
 ```ts
 await enqueueJobs({
   logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
-  payloads: [{ page: 1 }],
+  jobs: [{ payload: { page: 1 } }],
   retryLimit: 3,
   delayMs: 60_000,
 });
@@ -113,7 +167,7 @@ const handler = async (params: { cursor?: string }) => {
   if (nextCursor) {
     await enqueueJobs({
       logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
-      payloads: [{ cursor: nextCursor }],
+      jobs: [{ payload: { cursor: nextCursor } }],
       delayMs: 2_000,
     });
   }
@@ -138,7 +192,7 @@ const companies = await listCompaniesToEnrich();
 
 await enqueueJobs({
   logicFunctionUniversalIdentifier: ENRICH_COMPANY,
-  payloads: companies.map((company) => ({ companyId: company.id })),
+  jobs: companies.map((company) => ({ payload: { companyId: company.id } })),
   retryLimit: 2,
 });
 ```
@@ -172,7 +226,7 @@ const handler = async (params: { offset?: number }) => {
   if (companies.length === CHUNK_SIZE) {
     await enqueueJobs({
       logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
-      payloads: [{ offset: offset + CHUNK_SIZE }],
+      jobs: [{ payload: { offset: offset + CHUNK_SIZE } }],
     });
   }
 
@@ -194,3 +248,5 @@ Cosa rende tutto questo solido:
 * **Conserva i progressi prima di mettere in coda l'esecuzione successiva,** così un anello fallito riparte dall'ultimo blocco completato invece che dall'inizio.
 * **Mantieni ogni blocco idempotente.** Rielaborare un blocco dopo un ritentativo non deve causare scritture duplicate: usa chiavi di scrittura sul record o sull'id esterno che stai elaborando.
 * **Preferisci una catena a blocchi a un'unica enorme suddivisione parallela** quando il lavoro colpisce una terza parte con limitazione di velocità: una catena con `delayMs` si autoregola, mentre migliaia di job messi in coda in una volta sola diventano tutti idonei immediatamente.
+
+<PageBanner illustration="card-page-background-jobs" />

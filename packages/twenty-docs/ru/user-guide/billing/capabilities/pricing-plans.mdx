@@ -3,6 +3,8 @@ title: Ценовые планы
 description: Узнайте о тарифных планах Twenty и о том, как переключаться между ними.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Обзор
 
 Twenty предлагает гибкие тарифы для команд любого размера — независимо от того, предпочитаете ли вы облачный хостинг или самостоятельное размещение.
@@ -87,14 +89,18 @@ Twenty предлагает гибкие тарифы для команд люб
 2. Нажмите **Перейти на помесячный тариф**
 3. Экономьте с помесячной оплатой
 
-## Получите ключ Enterprise для организации (самостоятельный хостинг)
+## Получите ключ Organization
 
-Чтобы использовать тариф Organization (Self-Hosted), необходимо получить ключ Enterprise:
+Тарифный план Organization (Self-Hosted) работает на вашей собственной инфраструктуре. Для начала [установите Twenty с помощью Docker Compose](/ru/developers/self-host/capabilities/docker-compose), затем выполните следующие действия, чтобы активировать лицензию Organization.
 
-1. Перейдите в **Настройки → Панель администратора → Enterprise**
+Если у вас уже есть самостоятельный экземпляр Twenty, вы можете получить ключ Organization непосредственно в его настройках:
 
-<img src="/images/user-guide/billing/organization-key.png" alt="Ключ Enterprise" />
+1. Перейдите в **Настройки → Панель администратора → Organization**
 
-2. Нажмите **Получить ключ Enterprise**
+<img src="/images/user-guide/billing/organization-key.png" alt="Ключ организации" />
+
+2. Нажмите **Получить ключ организации**
 3. Когда вы будете перенаправлены на Stripe, введите платёжные данные и подтвердите
-4. Когда ваш ключ Enterprise будет отображён, вставьте его на странице настроек Enterprise и активируйте лицензию Organization
+4. Когда отобразится ваш ключ Organization, вставьте его на странице настроек Organization и активируйте лицензию Organization
+
+<PageBanner illustration="card-page-pricing-plans" />

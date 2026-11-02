@@ -3,9 +3,9 @@ title: الاستضافة الذاتية
 description: قم بنشر Twenty وإدارته على البنية التحتية الخاصة بك.
 ---
 
-<Frame>
-  <img src="/images/user-guide/what-is-twenty/20.png" alt="الذكاء الاصطناعي" />
-</Frame>
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## نظرة عامة
 
@@ -19,8 +19,11 @@ description: قم بنشر Twenty وإدارته على البنية التحت�
 
 ## البدء
 
-<CardGroup cols={2}>
-  <Card title="Docker Compose" icon="brand-docker" href="/ar/developers/self-host/capabilities/docker-compose">
-    إعداد سريع باستخدام Docker
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ar/developers/self-host/capabilities/docker-compose" img="/images/documentation/banner-icons-v2/dev-self-host.svg">
+    <CardTitle>Docker تكوين</CardTitle>
+    إعداد سريع مع Docker
   </Card>
 </CardGroup>
+
+<PageBanner illustration="card-page-self-host-guide" />

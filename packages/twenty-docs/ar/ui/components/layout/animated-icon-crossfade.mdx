@@ -1,0 +1,57 @@
+---
+title: AnimatedIconCrossfade
+description: تلاشي متبادل بين أيقونتين عند تغيّر حالة التطبيق.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import AnimatedIconCrossfadeReference from '/snippets/ui/generated/components/layout/animated-icon-crossfade.mdx';
+
+## نظرة عامة
+
+يمزج `AnimatedIconCrossfade` تدريجيًا بين محتوى عقدتَي `activeIcon` و`inactiveIcon` وفقًا لـ`isActive`. لا يمتلك الإجراء أو الحالة. استخدمه داخل [زر](/ar/ui/primitives/input/button) مُسمّى.
+
+<StoryEmbed storyId="ui-components-layout-animatediconcrossfade--display" title="مثال AnimatedIconCrossfade" height={100} />
+
+## استخدام
+
+```tsx
+import { useState } from 'react';
+import { AnimatedIconCrossfade } from 'twenty-ui/components/layout';
+import { IconPencil, IconX } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const EditToggle = () => {
+  const [isEditing, setIsEditing] = useState(false);
+
+  return (
+    <Button
+      size="sm"
+      aria-expanded={isEditing}
+      onClick={() => setIsEditing(!isEditing)}
+      startIcon={
+        <AnimatedIconCrossfade
+          isActive={isEditing}
+          activeIcon={<IconX size={14} />}
+          inactiveIcon={<IconPencil size={14} />}
+        />
+      }
+    >
+      Edit actions
+    </Button>
+  );
+};
+```
+
+تبقى كلتا العقدتين محمّلتين أثناء تغيّر `isActive`، مع الحفاظ على حالتهما المحلية. تحرّك الطبقات التعتيم والمقياس، وتعطّل الانتقالات عند تقليل الحركة. كلتا الطبقتين للزينة؛ أبقِ اسم الإجراء المتاح على عنصر التحكم المحيط. لصورة مستقلة تحمل تسمية، اضبط `role="img"` و`aria-label` على الجذر.
+
+تستهدف السمات والأحداث الأصلية و`className` و`style` و`ref` عنصر span مضمنًا، يمكن وضعه داخل زر. يستبدل `render` ذلك الهدف عبر تركيب Base UI. تُضبط أبعاد الجذر افتراضيًا على رمز سمة الأيقونة الصغيرة. حدّد حجم كل عقدة أيقونة صراحةً، واستخدم أنماط عرض الجذر وارتفاعه للأعمال الفنية الأكبر.
+
+استبدل دوال إنشاء `ActiveIcon` و`InactiveIcon` بعقدتَي `activeIcon` و`inactiveIcon` المكتوبتين بأحرف صغيرة. انقل خيار `size` السابق إلى أبعاد العقدة وأنماط الجذر.
+
+## الإزاحة
+
+<AnimatedIconCrossfadeReference />
+
+<PageBanner illustration="card-page-sync-recovery" />

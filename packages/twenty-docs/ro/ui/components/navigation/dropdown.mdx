@@ -1,0 +1,444 @@
+---
+title: Listă derulantă
+description: Meniuri de acțiuni, selectoare cu căutare și panouri de formular cu prezentare și interacțiune comune.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import DropdownReference from '/snippets/ui/generated/components/navigation/dropdown.mdx';
+
+## Prezentare generală
+
+`Dropdown` combină o fereastră pop-up poziționată, rânduri vizuale, navigare prin tastatură, focalizare și închidere. Aplicația dvs. gestionează datele, filtrarea, preluarea și paginarea. `SelectionGroup` gestionează valori de selecție independente în interiorul ferestrei popup. Importați-l din `twenty-ui/components`.
+
+<StoryEmbed storyId="ui-components-dropdown--display" title="Acțiuni Dropdown" height={420} />
+
+Dropdown.Content acceptă decalaje numerice sau funcții pentru `sideOffset` și `alignOffset`. Funcțiile de decalare primesc dimensiunile ancorei și ale ferestrei pop-up, latura și alinierea. Folosește-le pentru a păstra suprapunerea unui selector de câmp ancorat atunci când celula este scalată.
+
+## Utilizare
+
+```tsx
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { IconArchive, IconCopy, IconDownload } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const RecordActions = () => (
+  <Dropdown.Root type="menu">
+    <Dropdown.Trigger render={<Button>Record actions</Button>} />
+    <Dropdown.Content aria-label="Record actions" width={240}>
+      <Dropdown.Section>
+        <Dropdown.ActionItem startIcon={<IconCopy />}>
+          Duplicate
+        </Dropdown.ActionItem>
+        <Dropdown.Submenu>
+          <Dropdown.SubmenuTrigger startIcon={<IconDownload />}>
+            Export
+          </Dropdown.SubmenuTrigger>
+          <Dropdown.Content aria-label="Export formats">
+            <Dropdown.Section>
+              <Dropdown.ActionItem>CSV</Dropdown.ActionItem>
+              <Dropdown.ActionItem>Excel</Dropdown.ActionItem>
+            </Dropdown.Section>
+          </Dropdown.Content>
+        </Dropdown.Submenu>
+      </Dropdown.Section>
+      <Dropdown.Separator />
+      <Dropdown.Section>
+        <Dropdown.ActionItem startIcon={<IconArchive />}>
+          Archive
+        </Dropdown.ActionItem>
+        <Dropdown.ActionItem
+          render={
+            <a href="#dropdown-documentation" aria-label="Documentation" />
+          }
+        >
+          Documentation
+        </Dropdown.ActionItem>
+      </Dropdown.Section>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+## Alegeți un tip de interacțiune
+
+Setați `type` în `Dropdown.Root` pentru a corespunde conținutului ferestrei pop-up.
+
+| Tip      | Conținut                                                  | Interacțiune                                                                                                                                          |
+| -------- | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `menu`   | Comenzi și linkuri de navigare                            | Semantică de meniu cu navigare prin săgeți și căutare pe măsură ce tastați.                                                                           |
+| `picker` | Căutare, valori selectabile și comenzi opționale          | O casetă de dialog care conține căutare, casete cu listă selectabile și comenzi opționale. Tastele săgeată navighează printre rândurile de rezultate. |
+| `panel`  | Câmpuri de introducere, formulare și acțiuni de asistență | Un dialog cu comportament nativ al câmpurilor de introducere și navigare cu Tab.                                                                      |
+
+Selectoarele permit acțiuni de creare și grupuri de selecție independente în aceeași pagină, în orice ordine. Fiecare grup de selectare este o casetă cu listă, iar opțiunile sale expun `aria-selected`. Grupurile de meniu utilizează elemente de meniu radio sau cu casetă de bifare bifate. Grupurile de panouri utilizează butoane cu `aria-pressed`. Comenzile păstrează semantica acțiunilor modului lor. Atribuiți fiecărui grup și lui `Search` un nume accesibil. Acest selector personalizat nu este un Combobox nativ.
+
+`Content` își preia numele accesibil de la `Trigger` sau de la `SubmenuTrigger` într-un submeniu. Transmiteți `aria-label` în `Content` atunci când declanșatorul afișează o valoare, cum ar fi opțiunea selectată, sau când rădăcina nu are declanșator. Un `aria-label` sau `aria-labelledby` explicit și un `Title` dintr-un `Header` au prioritate față de numele declanșatorului.
+
+[Select](/ro/ui/primitives/input/select) și [Popover](/ro/ui/primitives/surfaces/popover) rămân disponibile pentru compunere directă.
+
+## Anatomie
+
+```text
+Dropdown.Root
+├── Dropdown.Trigger
+└── Dropdown.Content
+    ├── Dropdown.Header
+    │   ├── Dropdown.Close
+    │   └── Dropdown.Title
+    ├── Dropdown.Search
+    └── Dropdown.Section
+        ├── Dropdown.ActionItem
+        └── Dropdown.SelectionGroup
+            └── Dropdown.OptionItem
+```
+
+`Content` include portalul și poziționatorul. Utilizați `width`, `side`, `align`, `sideOffset` și `alignOffset` pentru a controla poziționarea, iar `collisionPadding` pentru a menține fereastra pop-up mai departe de marginile ferestrei de vizualizare înainte de a se deplasa sau inversa (5 pixeli în mod implicit). `Section` grupează rânduri cu spațiere comună, iar `Separator` separă secțiunile. O secțiune `scrollable` își limitează înălțimea și se derulează; imbricați în ea secțiuni etichetate pentru a le derula ca pe o singură listă. Rândurile utilizează [ListItem](/ro/ui/primitives/navigation/list-item) pentru aspectul lor.
+
+```tsx
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { IconCopy } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const RecordActions = ({ onDuplicate }: { onDuplicate: () => void }) => (
+  <Dropdown.Root type="menu">
+    <Dropdown.Trigger render={<Button>Record actions</Button>} />
+    <Dropdown.Content>
+      <Dropdown.Section>
+        <Dropdown.ActionItem startIcon={<IconCopy />} onClick={onDuplicate}>
+          Duplicate
+        </Dropdown.ActionItem>
+      </Dropdown.Section>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+Transmiteți elemente de declanșare personalizate prin `render`, astfel încât declanșatorul să rămână un singur element interactiv. Componentele personalizate trebuie să redirecționeze props și ref furnizate. `ActionItem` acceptă, de asemenea, `render` pentru linkuri.
+
+## Acțiuni pentru elemente
+
+`ActionItem` și `OptionItem` acceptă `actions` pentru controalele de final, cum ar fi butonul de editare al unei file. Folosește-le numai în paginile `picker` și `panel`: un `menu` poate conține doar elemente de meniu, deci nu poate include alte controale. Setează `actionsVisibility="always"` pentru a le menține vizibile; valoarea implicită este `"hover"`. Controalele secundare sunt afișate lângă controlul rândului principal și se activează independent: nu închid fereastra pop-up, așadar închide-o din handlerul acțiunii atunci când este necesar. Proprietatea `render` și referința se aplică în continuare controlului principal, astfel încât acesta poate servi și ca mâner de glisare.
+
+Utilizează `tabIndex={-1}` pentru o acțiune secundară disponibilă doar cu indicatorul, care are o alternativă separată pentru tastatură. Navigarea cu tastatura continuă să focalizeze și să activeze controlul principal.
+
+## Anteturi
+
+`Header` aranjează un rând în partea de sus a ferestrei pop-up. Introduceți un `Title` în acesta pentru a denumi fereastra pop-up după titlu, în loc de declanșator. `Close` închide fereastra pop-up în același mod ca o apăsare în exterior. În mod implicit, acesta redă un buton cu pictogramă X, așadar oferiți-i un `aria-label` sau transmiteți `render` și elemente copil pentru un alt control. Alte controale, cum ar fi un buton care revine la un pas anterior, pot fi în același rând. Utilizați `Dropdown.Back` când navigați în istoricul paginilor rădăcinii.
+
+## Căutare și selecție
+
+`Search` furnizează câmpul de introducere și navigarea către rândurile de rezultate. Transmiteți `value` și `onValueChange`; calculați sau preluați rezultatele potrivite în aplicația dvs. Redați `Loading` cât timp o solicitare este în așteptare și `Empty` când nu există rezultate potrivite. Ambele acceptă text de stare furnizat de apelant.
+
+<StoryEmbed storyId="ui-components-dropdown--picker-documentation" title="Selector cu căutare și creare în linie" height={420} />
+
+Încadrați opțiunile selectabile în `SelectionGroup` și atribuiți fiecărei opțiuni un `value` stabil, unic în cadrul grupului. Un grup necontrolat necesită, de asemenea, un `id` unic în cadrul arborelui său derulant, inclusiv în submeniuri. Componentele `Root` imbricate independent își păstrează propriul depozit de selecție. Selecția unică utilizează un șir sau `null` pentru lipsa unei selecții. Selecția multiplă utilizează un tablou, inclusiv `[]` pentru lipsa unei selecții.
+
+```tsx
+import { useState } from 'react';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const PersonPicker = () => {
+  const [search, setSearch] = useState('');
+  const [selectedPerson, setSelectedPerson] = useState<string | null>(null);
+  const people = ['Ada Lovelace', 'Grace Hopper'].filter((person) =>
+    person.toLowerCase().includes(search.toLowerCase()),
+  );
+
+  return (
+    <Dropdown.Root type="picker">
+      <Dropdown.Trigger render={<Button>Choose person</Button>} />
+      <Dropdown.Content>
+        <Dropdown.Search
+          aria-label="Search people"
+          value={search}
+          onValueChange={setSearch}
+        />
+        <Dropdown.SelectionGroup
+          id="person"
+          aria-label="Person"
+          value={selectedPerson}
+          onValueChange={setSelectedPerson}
+        >
+          {people.map((person) => (
+            <Dropdown.OptionItem key={person} value={person}>
+              {person}
+            </Dropdown.OptionItem>
+          ))}
+        </Dropdown.SelectionGroup>
+      </Dropdown.Content>
+    </Dropdown.Root>
+  );
+};
+```
+
+Transmiteți `value` și `onValueChange` pentru selecția controlată. Omiterea lui `value` sau transmiterea lui `undefined` lasă selecția necontrolată; `defaultValue` îi stabilește valoarea inițială. Un grup necontrolat are implicit valoarea `null` sau `[]` cu `multiple`. `id`-ul său stabil păstrează selecția la închidere și redeschidere, precum și la navigarea între pagini. Eliminarea sau filtrarea unei opțiuni nu îi șterge identificatorul selectat și nu emite o modificare; opțiunea este selectată din nou când revine. Utilizați o valoare controlată atunci când aplicația trebuie să elimine alegerile indisponibile.
+
+Fiecare grup se modifică independent. O opțiune se confirmă în cel mai apropiat grup al său, în timp ce pagina activă furnizează o colecție ordonată pentru navigarea cu săgețile între grupuri și rânduri de acțiuni. Activarea repetată a unei opțiuni unice selectate îi păstrează valoarea fără un alt callback de modificare. Activarea multiplă comută opțiunea în tablou.
+
+<StoryEmbed storyId="ui-components-dropdown--selection-groups-documentation" title="Selecții independente ale proprietarului și observatorului" height={440} />
+
+Selecția unică se închide implicit; selecția multiplă rămâne deschisă. `SelectionGroup.closeOnSelect` modifică valoarea implicită a grupului, iar `OptionItem.closeOnSelect` o suprascrie pentru o opțiune. Rândurile de acțiuni utilizează `closeOnClick` independent. O modificare anulată păstrează selecția anterioară și nu închide automat fereastra popup.
+
+`onValueChange` primește următoarea valoare și detaliile evenimentului cu `event`, `reason`, `trigger`, `cancel()` și `isCanceled`. Motivul este `item-press`, iar `event` este evenimentul original de activare. `OptionItem.onSelect` primește aceleași detalii înainte ca proprietarul să confirme. Apelați `cancel()` în oricare dintre callback-uri pentru a preveni selecția și închiderea automată.
+
+```tsx
+import { Dropdown } from 'twenty-ui/components/navigation';
+
+<Dropdown.SelectionGroup
+  id="watchers"
+  aria-label="Watchers"
+  multiple
+  defaultValue={[]}
+  onValueChange={(value, eventDetails) => {
+    if (value.length > 3) {
+      eventDetails.cancel();
+    }
+  }}
+>
+  <Dropdown.OptionItem value="ada">Ada Lovelace</Dropdown.OptionItem>
+  <Dropdown.OptionItem value="grace">Grace Hopper</Dropdown.OptionItem>
+</Dropdown.SelectionGroup>;
+```
+
+Căutarea primește focalizarea când selectorul se deschide. Fără căutare, prima opțiune selectată și activată primește focalizarea sau primul rând activat când nu există nicio opțiune selectată. Cât timp `Search` are focalizarea și o interogare nevidă, primul `OptionItem` eligibil din grupurile de selecție este evidențiat, iar Enter îl activează. Rândurile de acțiuni nu sunt niciodată selectate în acest mod. ArrowDown mută focalizarea pe primul rând activat, inclusiv pe acțiuni. Ieșirea din căutare șterge previzualizarea și `aria-activedescendant`, chiar și atunci când fereastra pop-up rămâne deschisă. Revenirea la căutare restaurează previzualizarea pentru interogarea curentă.
+
+Enter nu face nimic pentru o interogare goală sau care conține doar spații albe ori când nu mai rămâne nicio opțiune eligibilă. Compunerea textului cu o metodă de introducere nu activează o opțiune și nu mută focalizarea cu tastele săgeată. Când rândurile sunt fixate deasupra rezultatelor, cum ar fi valoarea curentă sau un rând „niciuna”, redați-le numai când corespund textului de căutare. Fereastra pop-up rămâne deschisă când nicio opțiune nu se potrivește. Filtrarea rămâne în responsabilitatea apelantului.
+
+<StoryEmbed storyId="ui-components-dropdown--multiple-selection-documentation" title="Selecție multiplă" height={420} />
+
+`OptionItem` independent acceptă în continuare `selected` și `onSelect` pentru apelanții care gestionează singuri selecția. Opțiunile grupate derivă selecția din valoarea grupului; nu duplicați acea stare în opțiune. Grupurile de selecție personalizate nu oferă trimitere nativă a formularelor, resetare, validare obligatorie, comportament doar în citire sau integrare Field. Utilizați [Select](/ro/ui/primitives/input/select) când sunt necesare aceste contracte native ale formularelor.
+
+## Grile de pictograme
+
+<StoryEmbed storyId="ui-components-dropdown--icon-grid-documentation" title="Grilă de pictograme cu stilizarea celulei selectate" height={360} />
+
+Setați `columns` în `Section` pentru a aranja elementele în coloane de grilă cu lățime egală. Același număr controlează navigarea prin tastatură: Left și Right se deplasează într-un rând, iar Up și Down se deplasează între rânduri. Navigarea omite opțiunile dezactivate și urmează direcția de citire. Când nu mai există nicio opțiune activată în coloană, Up și Down se deplasează la cea mai apropiată opțiune activată din rândul următor. Up din primul rând revine la câmpul de căutare când nu există nicio secțiune anterioară. Un ultim rând scurt utilizează ultimul său element când coloana solicitată lipsește. Într-un submeniu, săgeata înapoi închide submeniul când nu mai rămâne nicio opțiune activată în stânga sa.
+
+Redați fiecare pictogramă ca `OptionItem` cu o etichetă accesibilă și un buton cu pictogramă prin `render`. Utilizați `indicator="none"` pentru a afișa selecția prin fundalul butonului. Funcția callback `render` primește starea `{ selected, multiple, disabled }`; utilizați-o pentru a stiliza o celulă selectată și transmiteți prop-urile și ref furnizate.
+
+```tsx
+import { LightIconButton } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { IconCalendar } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const IconGrid = () => (
+  <Dropdown.Root type="picker">
+    <Dropdown.Trigger render={<Button>Choose icon</Button>} />
+    <Dropdown.Content>
+      <Dropdown.SelectionGroup
+        id="icon"
+        aria-label="Icon"
+        defaultValue="calendar"
+      >
+        <Dropdown.Section columns={5}>
+          <Dropdown.OptionItem
+            value="calendar"
+            aria-label="Calendar"
+            indicator="none"
+            nativeButton
+            render={(props, state) => (
+              <LightIconButton
+                // oxlint-disable-next-line react/jsx-props-no-spreading
+                {...props}
+                size="md"
+                color={state.selected ? 'accent' : 'neutral'}
+                aria-label="Calendar"
+              >
+                <IconCalendar />
+              </LightIconButton>
+            )}
+          />
+        </Dropdown.Section>
+      </Dropdown.SelectionGroup>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+## Focalizare tastatură
+
+În paginile `menu` și `picker`, rândurile formează un singur punct de oprire Tab. Tastele săgeată mută focalizarea între secțiuni, acțiuni și opțiuni, iar Home și End o mută la primul și ultimul rând activat, cu excepția cazului în care câmpul de căutare are focalizarea. Mutarea focalizării nu selectează niciodată o opțiune; Enter sau Space activează rândul focalizat. Revenirea cu Tab la rânduri readuce focalizarea la ultimul rând focalizat sau la primul rând activat după ce acel rând nu mai există. Căutarea, `Back` de lângă o căutare, butoanele antetului și alte controale din fereastra pop-up își păstrează propriile puncte de oprire Tab.
+
+Tab și Shift+Tab închid un `menu`, împreună cu meniurile sale părinte atunci când focalizarea este într-un submeniu. Într-un `picker`, Tab parcurge controalele ferestrei pop-up și închide fereastra pop-up atunci când focalizarea o părăsește. Un `panel` păstrează ordinea Tab nativă a controalelor sale.
+
+## Pagini și submeniuri
+
+Utilizați `Page` pentru navigare care înlocuiește conținutul aceleiași ferestre pop-up. Încadrați prima pagină în `Page id="root"` sau alegeți o altă pagină inițială cu `defaultPage`. Setați `page` pentru o acțiune ca să navigați fără a închide. `Back` revine la pagina anterioară și restaurează focalizarea pe rândul care a invocat-o.
+
+Paginile sunt montate la prima vizitare și rămân montate pe durata sesiunii deschise. Revenirea la o pagină îi păstrează căutarea locală, schițele de formular și secțiunile derulabile. Paginile inactive sunt ascunse și inerte: nu participă la navigarea prin tastatură, la focalizare sau la arborele de accesibilitate, iar ferestrele lor popup Dropdown imbricate sunt inactive.
+
+Redeschiderea începe o sesiune nouă la `defaultPage`, cu conținut nou, inclusiv când este setat `Content.keepMounted` sau când fereastra popup se redeschide în timpul tranziției sale de ieșire. Istoricul paginii, căutarea locală și schițele se resetează. Pagina care se închide rămâne montată în timpul tranziției sale de ieșire.
+
+Valorile necontrolate ale `SelectionGroup` rămân stocate în `Root` sub `id`-ul stabil al fiecărui grup și se păstrează la redeschidere. Valorile controlate de apelant rămân în proprietatea apelantului. De exemplu, o valoare de căutare stocată deasupra lui `Content` rămâne neschimbată până când apelantul o actualizează. Pune starea temporară de căutare sau de schiță într-o componentă din `Content` sau `Page` atunci când ar trebui să se reseteze odată cu sesiunea; păstrează starea durabilă a aplicației deasupra lui `Content`.
+
+O pagină poate suprascrie `type` al rădăcinii. De exemplu, un meniu de acțiuni poate deschide o pagină de selector cu căutare sau un panou de formular. Căutarea primește focalizarea la intrarea într-o pagină cu căutare; celelalte pagini își focalizează primul rând după `Back`.
+
+<StoryEmbed storyId="ui-components-dropdown--pages-documentation" title="Navigare de la meniu la pagina selectorului" height={420} />
+
+```tsx
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const FilterMenu = () => (
+  <Dropdown.Root type="menu">
+    <Dropdown.Trigger render={<Button>Filters</Button>} />
+    <Dropdown.Content>
+      <Dropdown.Page id="root">
+        <Dropdown.Section>
+          <Dropdown.ActionItem page="status">Status</Dropdown.ActionItem>
+        </Dropdown.Section>
+      </Dropdown.Page>
+      <Dropdown.Page id="status" type="picker">
+        <Dropdown.Back>Filters</Dropdown.Back>
+        <Dropdown.Section>
+          <Dropdown.SelectionGroup id="status" aria-label="Status">
+            <Dropdown.OptionItem value="active">Active</Dropdown.OptionItem>
+            <Dropdown.OptionItem value="archived">Archived</Dropdown.OptionItem>
+          </Dropdown.SelectionGroup>
+        </Dropdown.Section>
+      </Dropdown.Page>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+Pentru a naviga din cod, apelați `useDropdownPage` într-o componentă redată în interiorul rădăcinii. Returnează `page`-ul curent, `goToPage(page)`, `goBack()`, `canGoBack` și `isActive`. Într-o pagină, `isActive` este adevărat numai cât timp pagina respectivă este activă și meniul său derulant este deschis. Folosește `isActive` pentru a afișa ferestrele popup personalizate ale unei pagini, randate prin portal, astfel încât acestea să dispară când pagina devine inactivă sau meniul derulant se închide. De exemplu, o opțiune poate reveni la pagina anterioară după o selecție, în timp ce fereastra pop-up rămâne deschisă:
+
+```tsx
+import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
+
+export const StatusOptions = ({
+  status,
+  onStatusChange,
+}: {
+  status: string | null;
+  onStatusChange: (status: string | null) => void;
+}) => {
+  const { goBack } = useDropdownPage();
+
+  return (
+    <Dropdown.SelectionGroup
+      id="status"
+      aria-label="Status"
+      value={status}
+      closeOnSelect={false}
+      onValueChange={(value) => {
+        onStatusChange(value);
+        goBack();
+      }}
+    >
+      {['Active', 'Archived'].map((option) => (
+        <Dropdown.OptionItem key={option} value={option}>
+          {option}
+        </Dropdown.OptionItem>
+      ))}
+    </Dropdown.SelectionGroup>
+  );
+};
+```
+
+Utilizați `Submenu` cu `SubmenuTrigger` și un `Content` imbricat pentru un meniu alăturat. Arrow Right intră în submeniu; Arrow Left revine la părintele său. Selectarea unei acțiuni de închidere închide întregul dropdown.
+
+```text
+Dropdown.Content
+└── Dropdown.Submenu
+    ├── Dropdown.SubmenuTrigger
+    └── Dropdown.Content
+        └── Dropdown.ActionItem
+```
+
+## Selectoare imbricate independente
+
+Plasați un alt `Dropdown.Root` în `Content` când un control își deschide propriul selector, cum ar fi un selector pentru direcția de sortare. Selectarea unei opțiuni interioare închide numai acel selector și restaurează focalizarea pe declanșatorul său. Escape și apăsările în exterior închid câte un strat pe rând. Utilizați `Submenu` pentru comenzi care ar trebui să închidă întregul arbore de meniuri când sunt selectate.
+
+<StoryEmbed storyId="ui-components-dropdown--nested-documentation" title="Selector de sortare cu un selector de direcție imbricat" height={420} />
+
+## Panouri și stare controlată
+
+Utilizați `type="panel"` pentru câmpuri de formular. Interacțiunea cu câmpul de introducere menține panoul deschis; o acțiune de salvare îl poate închide. Gestionați `open` și `onOpenChange` când o altă componentă sau o comandă rapidă trebuie să deschidă dropdownul. Păstrați această stare împreună cu funcționalitatea care coordonează interacțiunea.
+
+<StoryEmbed storyId="ui-components-dropdown--panel-documentation" title="Panou de formular controlat" height={420} />
+
+Escape închide fereastra pop-up și restaurează focalizarea pe declanșatorul său. Interacțiunea în exterior o închide, de asemenea, iar clicul care o închide nu activează elementul pe care ajunge. Tastele apăsate în fereastra pop-up rămân în interiorul acesteia, cu excepția comenzilor rapide Ctrl sau Cmd pe care dropdownul nu le gestionează, astfel încât comenzile rapide la nivel de pagină să continue să funcționeze. `Content` acceptă opțiuni de focalizare și portal de la Popover, inclusiv o țintă explicită pentru revenirea focalizării în fluxurile de lucru ale editorului.
+
+## Închidere
+
+Escape, o apăsare în exteriorul ferestrei pop-up și ieșirea cu Tab din aceasta închid dropdownul. Transmiteți `onEscapeKeyDown` sau `onInteractOutside` la `Root` pentru a reacționa înainte de închidere și apelați `event.preventDefault()` pentru a o menține deschisă. `event.target` este elementul apăsat în exterior sau `null` când focalizarea părăsește elementul cu Tab, iar `event.type` este tipul evenimentului DOM care l-a declanșat, cum ar fi `touchmove` pentru o glisare în exteriorul ferestrei pop-up. O apăsare în exterior prevenită ajunge totuși la elementul pe care aterizează.
+
+```tsx
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const ViewSettings = ({ isEditing }: { isEditing: boolean }) => (
+  <Dropdown.Root
+    type="panel"
+    onInteractOutside={(event) => {
+      if (isEditing) {
+        event.preventDefault();
+      }
+    }}
+  >
+    <Dropdown.Trigger render={<Button>View settings</Button>} />
+    <Dropdown.Content>
+      <Dropdown.ActionItem>Save view</Dropdown.ActionItem>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+## Ancorare fără declanșator
+
+O rădăcină se poate deschide fără un `Trigger`, de exemplu ca meniu contextual. Controlați-o cu `open` și `onOpenChange` și transmiteți `anchor` la `Content`: un element, un ref sau un element virtual care returnează un dreptunghi în coordonatele ferestrei de vizualizare. Oferiți lui `Content` un `aria-label`, deoarece nu există un declanșator după care să fie denumit. La închidere, focalizarea revine la elementul care era focalizat când s-a deschis fereastra pop-up.
+
+<StoryEmbed storyId="ui-components-dropdown--context-menu-documentation" title="Meniu contextual ancorat la indicator" height={420} />
+
+```tsx
+import { useState } from 'react';
+import { Dropdown } from 'twenty-ui/components/navigation';
+
+export const RecordContextMenu = ({ recordName }: { recordName: string }) => {
+  const [open, setOpen] = useState(false);
+  const [point, setPoint] = useState({ x: 0, y: 0 });
+
+  return (
+    <>
+      <p
+        onContextMenu={(event) => {
+          event.preventDefault();
+          setPoint({ x: event.clientX, y: event.clientY });
+          setOpen(true);
+        }}
+      >
+        {recordName}
+      </p>
+      <Dropdown.Root type="menu" open={open} onOpenChange={setOpen}>
+        <Dropdown.Content
+          aria-label="Record actions"
+          anchor={{
+            getBoundingClientRect: () => new DOMRect(point.x, point.y, 0, 0),
+          }}
+        >
+          <Dropdown.ActionItem>Duplicate</Dropdown.ActionItem>
+        </Dropdown.Content>
+      </Dropdown.Root>
+    </>
+  );
+};
+```
+
+Un clic dreapta în altă parte, cât timp meniul este deschis, îl mută în noul punct.
+
+Apelați `useDropdownPlacementOrThrow` în `Dropdown.Content` pentru a citi valorile rezolvate pentru `side` și `align`, inclusiv inversările cauzate de coliziuni. Folosiți latura rezolvată pentru a poziționa căutarea și controalele de creare ale unui selector lângă declanșatorul acestuia. Păstrați controalele în ordinea lor vizuală în DOM, astfel încât navigarea cu tastatura să urmeze aspectul. O căutare de sub rezultate primește focalizarea de la `ArrowDown` pe ultimul rezultat; `ArrowUp` din acea căutare revine la ultimul rezultat.
+
+## Etichete
+
+Fiecare parte își gestionează propriul text: furnizați `Search.placeholder` și nume accesibile native, atribute accesibile pentru `Close` și elemente copil pentru `Back`, `Loading` și `Empty`. `Back` are implicit valoarea `Back`; stările de încărcare și gol nu au mesaj integrat. Părțile elementului acceptă `shortcutJoinLabel` pentru a înlocui `then` implicit dintre pașii secvențiali ai unei comenzi rapide. `aria-labelledby` nativ are prioritate față de `aria-label`.
+
+## Proprietăți
+
+<DropdownReference />
+
+<PageBanner illustration="page-cover-input" />

@@ -1,0 +1,158 @@
+---
+title: Выбор даты
+description: Используйте существующий движок календаря, независимо просматривая месяцы относительно выбранной даты.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import DatePickerReference from '/snippets/ui/generated/components/input/date-picker.mdx';
+
+## Обзор
+
+`DatePicker` использует движок календаря `react-datepicker`, применяемый в полях ввода даты и даты со временем Twenty. Он предоставляет значения только даты и независимое управление выбранной датой и просматриваемым месяцем.
+
+<StoryEmbed storyId="ui-components-datepicker--display" title="Пример DatePicker" height={330} />
+
+## Использование
+
+```tsx
+import { useState } from 'react';
+import { DatePicker } from 'twenty-ui/components/input';
+
+export const ChooseDate = () => {
+  const [value, setValue] = useState<string | null>('2026-10-07');
+  const [viewedMonth, setViewedMonth] = useState('2026-10');
+
+  return (
+    <DatePicker
+      aria-label="Choose a date"
+      value={value}
+      onValueChange={setValue}
+      viewedMonth={viewedMonth}
+      onViewedMonthChange={setViewedMonth}
+      weekStart={1}
+      weekdayLabels={['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']}
+      locale="en-US"
+      previousMonthLabel="Previous month"
+      nextMonthLabel="Next month"
+      monthLabel="Month"
+      yearLabel="Year"
+    />
+  );
+};
+```
+
+## Выбор и навигация
+
+Изменение месяца или года вызывает `onViewedMonthChange` и оставляет `value` без изменений. Выбор доступного дня вызывает `onValueChange` при изменении выбранной даты.
+
+Используйте `onValueSelect`, чтобы подтвердить дату или закрыть средство выбора продукта. Он получает каноническую дату `YYYY-MM-DD` даже в том случае, когда пользователь выбирает уже выбранный день. Сохраняйте логику закрытия в адаптере приложения.
+
+Обновляйте каждое управляемое свойство в соответствующем обратном вызове. Изменения свойств не выбирают заменяющую дату. Заголовок по умолчанию содержит селекторы месяца и года, а также кнопки перехода назад и вперед; его селектор года отображает до 100 лет до и после просматриваемого года.
+
+## Значения дат и локализация
+
+Передавайте канонические строки дат только по григорианскому календарю: `YYYY-MM-DD` для `value` и границ выделенного диапазона, а `YYYY-MM` для `viewedMonth`. Установите `value={null}`, если ничего не выбрано. Эти значения не содержат времени или часового пояса. Поддерживаются годы от 0001 до 9999.
+
+`locale` форматирует заголовок месяца/года по умолчанию и полные названия дней недели при передаче пользовательских `weekdayLabels`. Метки дней и базовый календарь сохраняют существующее поведение локали `react-datepicker`.
+
+`weekStart` задает первый столбец: от 0 для воскресенья до 6 для субботы. Используйте `weekdayLabels` для семи коротких видимых меток в порядке от воскресенья независимо от `weekStart`. Если это свойство не задано, механизм календаря предоставляет названия дней недели.
+
+Отображение текущего дня соответствует поведению механизма календаря, использующего часы браузера. Адаптеры продукта отвечают за преобразование часовых поясов, резервные начальные даты, настройки участников и данные расписания.
+
+## Существующее поведение календаря
+
+Отрисовка дней, разметка доступности, навигация по датам с клавиатуры и обработка недоступных дат используют `react-datepicker`. Видимые дни из соседних месяцев остаются доступными для выбора, если они доступны.
+
+Установите `isDateUnavailable`, чтобы запретить выбор дат в соответствии с политикой вашего приложения. Обратный вызов получает каноническую строку `YYYY-MM-DD`. Установите `disabled`, чтобы отключить выбор даты и элементы управления заголовка по умолчанию.
+
+Значение `isKeyboardNavigationDisabled` по умолчанию равно `false`. Существующие адаптеры ввода продукта могут задать его для сохранения собственного поведения клавиатуры. Элементы управления заголовка сохраняют собственное взаимодействие с клавиатурой.
+
+## Выделенные диапазоны и представления только для чтения
+
+Передайте `highlightedRange={{ start: '2026-10-05', end: '2026-10-11' }}`, чтобы выделить включительный диапазон дат. Приложение вычисляет диапазон; выделение не выбирает несколько дат и не изменяет `value`.
+
+Используйте `readOnly`, чтобы отображать вычисленный диапазон или выбранную дату, разрешая при этом навигацию по месяцам и годам. Используйте `isGridHidden` для навигатора только по месяцам, сохраняющего тот же заголовок.
+
+## Пользовательские заголовки
+
+Используйте `renderHeader`, чтобы скомпоновать существующий заголовок продукта с полями ввода даты, полями ввода времени или элементами управления для конкретного приложения. Его аргумент `DatePickerHeaderProps` предоставляет следующие значения и действия:
+
+| Свойство                                         | Назначение                                                     |
+| ------------------------------------------------ | -------------------------------------------------------------- |
+| `viewedMonth`                                    | Текущий месяц в формате `YYYY-MM`.                             |
+| `onPreviousMonth`, `onNextMonth`                 | Переход к соседнему месяцу.                                    |
+| `onMonthChange`                                  | Переход к месяцу с номером от 1 до 12.                         |
+| `onYearChange`                                   | Переход к указанному году.                                     |
+| `isPreviousMonthDisabled`, `isNextMonthDisabled` | Указывает, недоступно ли каждое действие для соседнего месяца. |
+
+Эти действия заголовка изменяют просматриваемый месяц и оставляют выбранную дату без изменений.
+
+```tsx
+import { useState } from 'react';
+import { DatePicker } from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+export const CalendarWithProductHeader = () => {
+  const [value, setValue] = useState<string | null>('2026-10-07');
+  const [viewedMonth, setViewedMonth] = useState('2026-10');
+
+  return (
+    <DatePicker
+      aria-label="Choose a date"
+      value={value}
+      onValueChange={setValue}
+      viewedMonth={viewedMonth}
+      onViewedMonthChange={setViewedMonth}
+      weekStart={1}
+      locale="en-US"
+      previousMonthLabel="Previous month"
+      nextMonthLabel="Next month"
+      monthLabel="Month"
+      yearLabel="Year"
+      renderHeader={({
+        viewedMonth: month,
+        onPreviousMonth,
+        onNextMonth,
+        isPreviousMonthDisabled,
+        isNextMonthDisabled,
+      }) => (
+        <Text
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: themeCssVariables.spacing[2],
+          }}
+        >
+          <Button size="sm" disabled={isPreviousMonthDisabled} onClick={onPreviousMonth}>
+            Previous month
+          </Button>
+          <Text>{month}</Text>
+          <Button size="sm" disabled={isNextMonthDisabled} onClick={onNextMonth}>
+            Next month
+          </Button>
+        </Text>
+      )}
+    />
+  );
+};
+```
+
+## Композиция и адаптеры продукта
+
+Укажите имя группы с помощью `aria-label` или `aria-labelledby`. Нативные атрибуты, `className`, `style` и `ref` применяются к корневому элементу. Используйте `render`, чтобы скомпоновать другой корневой элемент, сохранив предоставленные свойства и ref.
+
+Передайте `loadingFallback`, чтобы сохранить поверхность загрузки продукта во время загрузки механизма календаря. Резервный вариант по умолчанию — `Skeleton` высотой 300 px.
+
+Для заголовка по умолчанию `portalContainer` монтирует всплывающие окна селекторов в контейнер, предоставленный хостом. `onNavigationOpenChange` получает `{ open, control }` для `month` или `year`, где `open: true` при начале открытия и `open: false` после завершения закрытия. Хосты могут сохранять обработку всплывающих окон и фокуса во время закрытия. Пользовательские заголовки самостоятельно интегрируются со всплывающими окнами.
+
+Сохраняйте заголовки продукта, текстовые поля ввода, редактирование времени, преобразование часовых поясов, действия очистки и вычисление относительных фильтров в `twenty-front`. Адаптеры даты, даты и времени, а также только месяца могут компоновать этот общий механизм календаря с `highlightedRange`, `readOnly` и `isGridHidden` по мере необходимости.
+
+## Свойства
+
+<DatePickerReference />
+
+<PageBanner illustration="calendar-emails" />
