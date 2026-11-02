@@ -5,6 +5,7 @@ import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type PermissionsRowAccessRequest } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { getPermissionsPrincipalShareKeys } from 'src/engine/permissions/principal/utils/get-permissions-principal-share-keys.util';
+import { isRecordAccessHeldToShares } from 'src/engine/permissions/private-record/utils/is-record-access-held-to-shares.util';
 import { isRecordPrivacyApplicable } from 'src/engine/permissions/private-record/utils/is-record-privacy-applicable.util';
 import { isOperationGrantedBeyondRole } from 'src/engine/permissions/record-share/utils/is-operation-granted-beyond-role.util';
 import { resolveRequiredRecordShareAccessLevels } from 'src/engine/permissions/record-share/utils/resolve-required-record-share-access-levels.util';
@@ -28,10 +29,14 @@ export const resolvePermissionsShareGrant = (
     operationType: request.operationType,
   });
 
+  const isHeldToShares = isRecordAccessHeldToShares(request);
+
   if (
     !isNonEmptyArray(principalIds) ||
     !isNonEmptyArray(accessLevels) ||
-    (!isGrantedBeyondRole && !isRecordPrivacyApplicable(request))
+    (!isGrantedBeyondRole &&
+      !isHeldToShares &&
+      !isRecordPrivacyApplicable(request))
   ) {
     return undefined;
   }
@@ -39,6 +44,6 @@ export const resolvePermissionsShareGrant = (
   return {
     principalIds,
     accessLevels,
-    isLimitedToPrivateRecords: !isGrantedBeyondRole,
+    isLimitedToPrivateRecords: !isGrantedBeyondRole && !isHeldToShares,
   };
 };

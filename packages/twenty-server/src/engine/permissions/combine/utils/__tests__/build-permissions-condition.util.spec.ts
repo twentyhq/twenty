@@ -243,6 +243,28 @@ describe('buildPermissionsCondition', () => {
     ).toEqual({ kind: 'open' });
   });
 
+  it('keeps chats to their shares until private records are enabled', () => {
+    const sql = gatedSql({
+      principal: readEverything,
+      flatObjectMetadata: person,
+    });
+
+    expect(sql).toContain('"workspace"."recordShare"');
+    expect(sql).not.toContain('_isPrivate');
+  });
+
+  it('leaves chats open to inserts by their role until private records are enabled', () => {
+    expect(
+      buildConditionOutcome({
+        principal: readEverything,
+        metadataMaps,
+        tableAlias: person.nameSingular,
+        flatObjectMetadata: person,
+        operationType: 'insert',
+      }),
+    ).toEqual({ kind: 'open' });
+  });
+
   it('gates every object on private records once they are enabled, without record sharing', () => {
     expect(
       gatedSql({
@@ -473,12 +495,14 @@ describe('buildPermissionsCondition', () => {
       const policy = buildConditionOutcome({
         ...prospectiveShareArguments,
         metadataMaps,
+        tableAlias: note.nameSingular,
+        flatObjectMetadata: note,
       });
 
       expect(policy).toMatchObject({
         kind: 'gated',
         condition: {
-          sql: expect.stringContaining('"person"."title" = :restricted'),
+          sql: expect.stringContaining('"note"."title" = :restricted'),
         },
       });
       expect(policy).toMatchObject({

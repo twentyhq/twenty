@@ -10,6 +10,7 @@ import { areRecordGrantsHeldToRowLevelPermissions } from 'src/engine/permissions
 import { combineSqlConditions } from 'src/engine/permissions/combine/utils/combine-sql-conditions.util';
 import { resolvePermissionsRowAccessOutcome } from 'src/engine/permissions/combine/utils/resolve-permissions-row-access-outcome.util';
 import { buildPermissionsCreatorCondition } from 'src/engine/permissions/private-record/utils/build-permissions-creator-condition.util';
+import { isRecordAccessHeldToShares } from 'src/engine/permissions/private-record/utils/is-record-access-held-to-shares.util';
 import { buildPermissionsShareCondition } from 'src/engine/permissions/record-share/utils/build-permissions-share-condition.util';
 import { buildPermissionsRlsCondition } from 'src/engine/permissions/rls/utils/build-permissions-rls-condition.util';
 import { resolvePermissionsRowLevelPermissionFilter } from 'src/engine/permissions/rls/utils/resolve-permissions-row-level-permission-filter.util';
@@ -34,6 +35,10 @@ export const buildPermissionsCondition = ({
 
   if (isDefined(outcome)) {
     return outcome;
+  }
+
+  if (isRecordAccessHeldToShares(sqlRequest)) {
+    return buildPermissionsShareCondition(sqlRequest) ?? false;
   }
 
   const objectCondition = buildPermissionsObjectCondition(sqlRequest);

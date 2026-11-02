@@ -6,6 +6,7 @@ import { type PermissionsRowAccessEvaluationRequest } from 'src/engine/permissio
 import { areRecordGrantsHeldToRowLevelPermissions } from 'src/engine/permissions/combine/utils/are-record-grants-held-to-row-level-permissions.util';
 import { resolvePermissionsRowAccessOutcome } from 'src/engine/permissions/combine/utils/resolve-permissions-row-access-outcome.util';
 import { findPermissionsCreatorAdmittedRecordIds } from 'src/engine/permissions/private-record/utils/find-permissions-creator-admitted-record-ids.util';
+import { isRecordAccessHeldToShares } from 'src/engine/permissions/private-record/utils/is-record-access-held-to-shares.util';
 import { findPermissionsShareAdmittedRecordIds } from 'src/engine/permissions/record-share/utils/find-permissions-share-admitted-record-ids.util';
 import { findPermissionsRlsAdmittedRecordIds } from 'src/engine/permissions/rls/utils/find-permissions-rls-admitted-record-ids.util';
 import { findRowLevelPermissionMatchingRecordIds } from 'src/engine/permissions/rls/utils/find-row-level-permission-matching-record-ids.util';
@@ -23,6 +24,10 @@ export const findPermissionsAdmittedRecordIds = async (
 
   if (outcome === true) {
     return new Set(records.map((record) => record.id));
+  }
+
+  if (isRecordAccessHeldToShares(request)) {
+    return new Set(await findPermissionsShareAdmittedRecordIds(request));
   }
 
   const admittedRecordIds = new Set([
