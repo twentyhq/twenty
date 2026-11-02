@@ -117,9 +117,9 @@ export class AgentChatDirectMessageIdentityService {
     );
 
     if (
-      featureFlagsMap[
+      !featureFlagsMap[
         FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED
-      ] !== true
+      ]
     ) {
       throw new AiException(
         'Direct messages are unavailable until this workspace finishes upgrading',
