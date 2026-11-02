@@ -4,13 +4,18 @@ import { expect, within } from 'storybook/test';
 import { Button } from '@ui/primitives/input';
 import { ListItem } from '@ui/primitives/navigation';
 import { Shortcut, Text, formatShortcut } from '@ui/primitives/typography';
-import { ComponentDecorator, overrideMediaQueryMatches } from '@ui/testing';
+import {
+  A11Y_DEFER_COLOR_CONTRAST,
+  ComponentDecorator,
+  overrideMediaQueryMatches,
+} from '@ui/testing';
 import { MOBILE_MEDIA_QUERY } from '@ui/utilities';
 
 const meta: Meta<typeof Shortcut> = {
   title: 'UI/Typography/Shortcut',
   component: Shortcut,
   decorators: [ComponentDecorator],
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   args: {
     shortcut: ['Mod', 'K'],
     platform: 'mac',

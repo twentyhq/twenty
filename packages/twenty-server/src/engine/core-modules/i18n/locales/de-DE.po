@@ -394,7 +394,7 @@ msgid "A required field is missing. Please provide all required values and try a
 msgstr "Ein erforderliches Feld fehlt. Bitte geben Sie alle erforderlichen Werte ein und versuchen Sie es erneut."
 
 #. js-lingui-id: Q2De+v
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util.ts
 msgid "A role with this label already exists."
 msgstr "Eine Rolle mit diesem Label existiert bereits."
@@ -403,6 +403,11 @@ msgstr "Eine Rolle mit diesem Label existiert bereits."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util.ts
 msgid "A secret variable cannot have a default value."
 msgstr "Eine geheime Variable darf keinen Standardwert haben."
+
+#. js-lingui-id: KQFDmH
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "A signed-in chat is required."
+msgstr "Ein angemeldeter Chat ist erforderlich."
 
 #. js-lingui-id: 0/nqSW
 #: src/engine/metadata-modules/flat-skill/utils/from-update-skill-input-to-flat-skill-to-update-or-throw.util.ts
@@ -609,6 +614,24 @@ msgstr "Zugesagt"
 msgid "Access denied."
 msgstr ""
 
+#. js-lingui-id: RpHJlx
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelSingular"
+msgid "Access group"
+msgstr "Zugriffsgruppe"
+
+#. js-lingui-id: EObiot
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Access group position"
+msgstr "Position der Zugriffsgruppe"
+
+#. js-lingui-id: YTZTZr
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelPlural"
+msgid "Access groups"
+msgstr "Zugriffsgruppen"
+
 #. js-lingui-id: Va0+qg
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -702,6 +725,11 @@ msgctxt "fieldMetadata.description"
 msgid "Actual recording start"
 msgstr "Tatsächlicher Aufnahmestart"
 
+#. js-lingui-id: ihM2nS
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "Add {missingPackageNames} to the Workspace app package.json and yarn.lock before creating a component."
+msgstr "Füge {missingPackageNames} zur package.json und yarn.lock der Workspace-App hinzu, bevor du eine Komponente erstellst."
+
 #. js-lingui-id: Fk0T9q
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Add a sender to this campaign first."
@@ -759,6 +787,11 @@ msgctxt "commandMenuItem.label"
 msgid "Add View to List"
 msgstr "Ansicht zur Liste hinzufügen"
 
+#. js-lingui-id: ScY5iZ
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "Add yarn.lock to the Workspace app before creating a component."
+msgstr "Füge yarn.lock zur Workspace-App hinzu, bevor du eine Komponente erstellst."
+
 #. js-lingui-id: EtSC0Y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -778,7 +811,7 @@ msgid "Admin Panel"
 msgstr "Admin-Bereich"
 
 #. js-lingui-id: VmatbA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Admin role not found."
 msgstr "Administratorrolle nicht gefunden."
 
@@ -997,6 +1030,11 @@ msgstr "Dem Arbeitsbereichsmitglied zugewiesene KI-Chat-Threads"
 msgctxt "fieldMetadata.description"
 msgid "AI chat threads owned by the workspace member"
 msgstr "KI-Chat-Threads, die dem Arbeitsbereichsmitglied gehören"
+
+#. js-lingui-id: 1ahMBt
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "AI component builder is disabled."
+msgstr "Der KI-Komponenten-Builder ist deaktiviert."
 
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
@@ -1264,7 +1302,7 @@ msgid "API key role configuration not found."
 msgstr "API-Schlüssel-Rollenkonfiguration nicht gefunden."
 
 #. js-lingui-id: tGfHmi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "API key role not found."
 msgstr "API-Schlüssel-Rolle nicht gefunden."
 
@@ -1397,6 +1435,11 @@ msgstr "Der Geltungsbereich der Anwendungsvariable kann nach der Erstellung nich
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Applications cannot update these fields: {fieldsList}."
 msgstr "Anwendungen können diese Felder nicht aktualisieren: {fieldsList}."
+
+#. js-lingui-id: agujn9
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Approve this draft in its original chat."
+msgstr "Diesen Entwurf im ursprünglichen Chat genehmigen."
 
 #. js-lingui-id: rczXz4
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
@@ -1699,7 +1742,7 @@ msgid "Authentication is not enabled with this provider."
 msgstr "Authentifizierung ist bei diesem Anbieter nicht aktiviert."
 
 #. js-lingui-id: Tsx+z2
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "Authentication is required to access this feature. Please sign in and try again."
 msgstr "Eine Authentifizierung ist erforderlich, um auf diese Funktion zuzugreifen. Bitte melden Sie sich an und versuchen Sie es erneut."
 
@@ -1710,7 +1753,7 @@ msgstr "Zur Ausführung dieser Aktion ist eine Authentifizierung erforderlich"
 
 #. js-lingui-id: cgNV3G
 #: src/engine/core-modules/file/file.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Authentication is required."
 msgstr "Authentifizierung ist erforderlich."
 
@@ -2445,12 +2488,12 @@ msgid "Cannot activate non-draft or non-last-published version"
 msgstr "Nicht-Entwurfs- oder Nicht-zuletzt-veröffentlichte Version kann nicht aktiviert werden"
 
 #. js-lingui-id: QYS2AB
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add field permissions on system objects."
 msgstr "Für Systemobjekte können keine Feldberechtigungen hinzugefügt werden."
 
 #. js-lingui-id: FxFlC4
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add permissions on system objects."
 msgstr "Für Systemobjekte können keine Berechtigungen hinzugefügt werden."
 
@@ -2483,7 +2526,7 @@ msgid "Cannot delete standard skill"
 msgstr "Standard-Skill kann nicht gelöscht werden"
 
 #. js-lingui-id: /olFYI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot delete the last admin user."
 msgstr "Der letzte Admin-Benutzer kann nicht gelöscht werden."
 
@@ -2499,12 +2542,12 @@ msgid "Cannot delete, please update the label identifier field first"
 msgstr "Kann nicht löschen, bitte zuerst das Label-ID-Feld aktualisieren"
 
 #. js-lingui-id: lDTqT7
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."
 msgstr "Schreibberechtigungen können nicht für nicht lesbare Objekte vergeben werden."
 
 #. js-lingui-id: r4uEo5
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission without read permission."
 msgstr "Schreibberechtigungen können nicht ohne Leseberechtigung vergeben werden."
 
@@ -2579,7 +2622,7 @@ msgid "Cannot modify predicate to change its role from {existingRoleIdentifier} 
 msgstr "Das Prädikat kann nicht so geändert werden, dass seine Rolle von {existingRoleIdentifier} auf {updatedRoleIdentifier} geändert wird."
 
 #. js-lingui-id: Q0diyJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
 msgstr "Der letzte Administrator kann nicht aus dem Arbeitsbereich entfernt werden."
 
@@ -2596,7 +2639,7 @@ msgid "Cannot target a role owned by another application"
 msgstr "Eine Rolle, die einer anderen Anwendung gehört, kann nicht adressiert werden"
 
 #. js-lingui-id: 2ET75e
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
 msgid "Cannot target a role owned by another application."
 msgstr "Eine Rolle, die einer anderen Anwendung gehört, kann nicht adressiert werden."
@@ -2806,7 +2849,7 @@ msgstr "Chats"
 #. js-lingui-id: Xm27Tc
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Chats are not available yet. Try again in a few minutes."
-msgstr ""
+msgstr "Chats sind noch nicht verfügbar. Versuche es in ein paar Minuten erneut."
 
 #. js-lingui-id: NJ9eLU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -2832,7 +2875,7 @@ msgid "Choose an existing timeline activity type to override"
 msgstr "Wählen Sie einen vorhandenen Timeline-Aktivitätstyp zum Überschreiben aus"
 
 #. js-lingui-id: +eCqA7
-#: src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "Wählen Sie eine Person oder eine Rolle zum Teilen aus."
 
@@ -3050,6 +3093,11 @@ msgstr "Der Komponenten-Build hat das Zeitlimit von {timeoutSeconds} Sekunden ü
 msgid "Component build exceeds the {maximumOutputMegabytes} MB output limit."
 msgstr "Der Komponenten-Build überschreitet das Ausgabelimit von {maximumOutputMegabytes} MB."
 
+#. js-lingui-id: C1+ewF
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Component draft not found or expired."
+msgstr "Komponentenentwurf nicht gefunden oder abgelaufen."
+
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -3069,9 +3117,15 @@ msgid "Compose Email"
 msgstr "E-Mail verfassen"
 
 #. js-lingui-id: L1uQuF
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Composite type not found."
 msgstr "Composite-Typ nicht gefunden."
+
+#. js-lingui-id: d+5s6E
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Conditional grant the group evaluates, empty for whole-object grants"
+msgstr "Bedingte Berechtigung, die die Gruppe auswertet, leer für Berechtigungen für das gesamte Objekt"
 
 #. js-lingui-id: hNJ1TI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -3623,6 +3677,7 @@ msgstr "Erstellt von"
 
 #. js-lingui-id: V+Pnck
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -3663,12 +3718,13 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "Erstellte Feldmetadaten, Elternobjekt-Metadaten nicht gefunden"
 
 #. js-lingui-id: tpPGe6
-#: src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "Creating a record of a private object requires the shareWith argument"
 msgstr "Das Erstellen eines Datensatzes eines privaten Objekts erfordert das Argument shareWith"
 
 #. js-lingui-id: ezEYQZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -3706,6 +3762,7 @@ msgstr "Erstellungsdatum"
 
 #. js-lingui-id: MZxGED
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -3827,8 +3884,8 @@ msgid "Custom object is missing a label identifier field."
 msgstr "Beim benutzerdefinierten Objekt fehlt ein Label-Identifikatorfeld."
 
 #. js-lingui-id: iHlVsm
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "Benutzerdefinierte Rollen sind Teil des Organisationsplans."
@@ -3937,6 +3994,7 @@ msgstr "Datumsformat"
 
 #. js-lingui-id: bCL+CN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -4150,7 +4208,7 @@ msgid "Default Person Layout"
 msgstr "Standard-Personen-Layout"
 
 #. js-lingui-id: cgV4xo
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Default role not found."
 msgstr "Standardrolle nicht gefunden."
 
@@ -4255,6 +4313,7 @@ msgstr "Gelöscht am"
 
 #. js-lingui-id: Sf3H2K
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -4571,7 +4630,7 @@ msgid "Each related record path field must belong to the object reached by the p
 msgstr "Jedes Feld eines Pfads zu zugehörigen Datensätzen muss zu dem Objekt gehören, das durch die vorherige Relation erreicht wird"
 
 #. js-lingui-id: nTBzmZ
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
 msgstr "Jeder shareWith-Eintrag muss genau auf eines von workspaceMemberId, roleId oder everyone abzielen"
 
@@ -4828,7 +4887,7 @@ msgid "Emoji the member reacted with"
 msgstr "Emoji, mit dem das Mitglied reagiert hat"
 
 #. js-lingui-id: aVGG1u
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Empty field permissions are not allowed."
 msgstr "Leere Feldberechtigungen sind nicht zulässig."
 
@@ -4898,6 +4957,11 @@ msgstr "In der Warteschlange"
 msgctxt "skill.label"
 msgid "Enrich"
 msgstr "Anreichern"
+
+#. js-lingui-id: +RIetY
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Enter an HTTPS origin without a path or wildcard"
+msgstr "Geben Sie einen HTTPS-Ursprung ohne Pfad oder Platzhalter ein"
 
 #. js-lingui-id: q1jHuq
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
@@ -5257,7 +5321,7 @@ msgid "Failed to retry jobs. Please try again later."
 msgstr "Fehler beim Wiederholen von Jobs. Bitte versuchen Sie es später erneut."
 
 #. js-lingui-id: Cr+NSQ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Failed to update field permission."
 msgstr "Aktualisierung der Feldberechtigung fehlgeschlagen."
 
@@ -5293,15 +5357,31 @@ msgstr "Feature-Konfiguration nicht gefunden."
 msgid "February"
 msgstr "Februar"
 
+#. js-lingui-id: V1MVzr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" does not belong to the object reached by relation \"{relationFieldName}\""
+msgstr "Feld \"{fieldName}\" gehört nicht zu dem über die Relation \"{relationFieldName}\" erreichten Objekt"
+
 #. js-lingui-id: joINBp
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" is not a many-to-one relation, it has no join column to compare against"
 msgstr "Feld \"{fieldName}\" ist keine Viele-zu-eins-Relation und verfügt über keine Join-Spalte zum Vergleichen"
 
+#. js-lingui-id: XZvE/9
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{relationFieldName}\" is not a relation"
+msgstr "Feld \"{relationFieldName}\" ist keine Relation"
+
 #. js-lingui-id: CJF9q0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
 msgstr "Feld \"{workspaceMemberFieldName}\" ist kein Feld des workspaceMember-Objekts; das Prädikat würde niemals angewendet"
+
+#. js-lingui-id: CKPTLC
+#. placeholder {0}: query.objectName
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Field {0}.{fieldName} is unavailable. Select accessible top-level fields."
+msgstr "Das Feld {0}.{fieldName} ist nicht verfügbar. Wählen Sie zugängliche Felder der obersten Ebene aus."
 
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -5366,8 +5446,8 @@ msgid "Field metadata not found"
 msgstr "Feldmetadaten nicht gefunden"
 
 #. js-lingui-id: JrAl/I
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 msgid "Field metadata not found."
@@ -5417,7 +5497,7 @@ msgid "Field permission not found"
 msgstr "Feldberechtigung nicht gefunden"
 
 #. js-lingui-id: yqmAnC
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field permission not found."
 msgstr "Feldberechtigung nicht gefunden."
 
@@ -5448,7 +5528,7 @@ msgid "Field referenced in index does not exist"
 msgstr "Feld, das im Index referenziert wird, existiert nicht"
 
 #. js-lingui-id: ylQono
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field restrictions only apply to readable objects."
 msgstr "Feldbeschränkungen gelten nur für lesbare Objekte."
 
@@ -5504,6 +5584,7 @@ msgstr "Für die Volltextsuche verwendetes Feld"
 
 #. js-lingui-id: pcBMew
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -6149,6 +6230,12 @@ msgstr "Für das Kreisdiagramm ist ein Gruppierungsfeld erforderlich."
 msgid "Group by field is required for pie chart widget \"{widgetTitle}\""
 msgstr "Für das Kreisdiagramm-Widget \"{widgetTitle}\" ist ein Gruppierungsfeld erforderlich."
 
+#. js-lingui-id: tZ4I1x
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Group hash"
+msgstr "Gruppen-Hash"
+
 #. js-lingui-id: M3UdIL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -6187,6 +6274,12 @@ msgstr "handlerName muss ein gültiger JavaScript-Bezeichner oder ein durch Punk
 msgctxt "fieldMetadata.description"
 msgid "Hash of the authored template and resolved destination URLs"
 msgstr "Hash der verfassten Vorlage und der aufgelösten Ziel-URLs"
+
+#. js-lingui-id: XL/9cp
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Hash of the role, grant and member field values, unique per group"
+msgstr "Hash der Werte der Rollen-, Berechtigungs- und Mitgliedsfelder, eindeutig pro Gruppe"
 
 #. js-lingui-id: 9jN+JX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -6232,6 +6325,7 @@ msgstr "iCal UID"
 
 #. js-lingui-id: OtYhMx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
@@ -6277,6 +6371,7 @@ msgstr "ID"
 
 #. js-lingui-id: dB826o
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
@@ -6481,8 +6576,8 @@ msgid "Internal name of the campaign"
 msgstr "Interner Name der Kampagne"
 
 #. js-lingui-id: Lztd7b
-#: src/engine/core-modules/record-share/services/record-sharing.service.ts
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid access level."
 msgstr "Ungültige Zugriffsebene."
 
@@ -6518,7 +6613,7 @@ msgid "Invalid application workflow definition."
 msgstr "Ungültige Anwendungs-Workflow-Definition."
 
 #. js-lingui-id: KNrRpL
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid argument provided."
 msgstr "Ungültiges Argument angegeben."
 
@@ -6561,6 +6656,11 @@ msgstr "Ungültige Klassifizierungsanfrage."
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
 msgid "Invalid command menu item input."
 msgstr "Ungültige Eingabe für den Befehlsmenüeintrag."
+
+#. js-lingui-id: 5OY08H
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Invalid component draft input."
+msgstr "Ungültige Eingabe für Komponentenentwurf."
 
 #. js-lingui-id: wJMQQx
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
@@ -7021,7 +7121,7 @@ msgid "Invalid permission flag permission type."
 msgstr "Ungültiger Berechtigungstyp für das Berechtigungs-Flag."
 
 #. js-lingui-id: Pt2vVA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid permission setting."
 msgstr "Ungültige Berechtigungseinstellung."
 
@@ -7045,6 +7145,11 @@ msgstr "Ungültiger Telefon-Ländercode."
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
 msgid "Invalid phone number."
 msgstr "Ungültige Telefonnummer."
+
+#. js-lingui-id: weTo0R
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.controller.ts
+msgid "Invalid preview error message."
+msgstr "Ungültige Fehlernachricht für Vorschau."
 
 #. js-lingui-id: r+9b/a
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -7185,8 +7290,8 @@ msgstr "Ungültiges URL-Format."
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
-#: src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util.ts
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid UUID format."
 msgstr "Ungültiges UUID-Format."
 
@@ -7486,7 +7591,7 @@ msgid "Job Title"
 msgstr "Berufsbezeichnung"
 
 #. js-lingui-id: cCj4vg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Join column name is required."
 msgstr "Name der Join-Spalte ist erforderlich."
 
@@ -7736,6 +7841,7 @@ msgstr "Letzte Änderung des Links"
 
 #. js-lingui-id: OBGY97
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -7771,6 +7877,7 @@ msgstr "Letzte Änderung des Datensatzes"
 
 #. js-lingui-id: hzBM8U
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -8050,6 +8157,11 @@ msgctxt "commandMenuItem.label"
 msgid "Make Workflow Private"
 msgstr "Workflow privat machen"
 
+#. js-lingui-id: Ff72+G
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Managing applications is required."
+msgstr "Die Verwaltung von Anwendungen ist erforderlich."
+
 #. js-lingui-id: paJTob
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -8185,6 +8297,12 @@ msgctxt "fieldMetadata.description"
 msgid "Meeting title from the calendar event"
 msgstr "Besprechungstitel aus dem Kalenderereignis"
 
+#. js-lingui-id: I+r+Lx
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Member field values"
+msgstr "Mitgliedsfeldwerte"
+
 #. js-lingui-id: sMsvyG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -8210,17 +8328,23 @@ msgctxt "pageLayoutWidget.title"
 msgid "Members"
 msgstr "Mitglieder"
 
+#. js-lingui-id: sK9eyT
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.description"
+msgid "Members of a role who receive the same evaluated grant"
+msgstr "Mitglieder einer Rolle, die dieselbe ausgewertete Berechtigung erhalten"
+
 #. js-lingui-id: fqpInK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Mentions resolved at"
-msgstr ""
+msgstr "Erwähnungen aufgelöst am"
 
 #. js-lingui-id: gzZpjR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Mentions up to this time are resolved for the member"
-msgstr ""
+msgstr "Erwähnungen bis zu diesem Zeitpunkt sind für das Mitglied aufgelöst"
 
 #. js-lingui-id: UODtG8
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -9024,7 +9148,7 @@ msgid "No permissions are set for this role on the selected object. Please set o
 msgstr "Für diese Rolle sind keine Berechtigungen für das ausgewählte Objekt festgelegt. Bitte setzen Sie zuerst die Objektberechtigungen."
 
 #. js-lingui-id: D2A/H0
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No permissions found in datasource."
 msgstr "Keine Berechtigungen in der Datenquelle gefunden."
 
@@ -9044,12 +9168,12 @@ msgid "No records were affected."
 msgstr "Es wurden keine Datensätze geändert."
 
 #. js-lingui-id: iHQYLb
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role assigned to the application."
 msgstr "Der Anwendung wurde keine Rolle zugewiesen."
 
 #. js-lingui-id: 5ZMHXg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role found for this user in the workspace."
 msgstr "Für diesen Benutzer wurde im Arbeitsbereich keine Rolle gefunden."
 
@@ -9079,7 +9203,7 @@ msgid "No trigger type provided"
 msgstr "Kein Auslösertyp bereitgestellt"
 
 #. js-lingui-id: /BipSk
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "No valid authentication context found."
 msgstr "Kein gültiger Authentifizierungskontext gefunden."
 
@@ -9393,9 +9517,9 @@ msgid "Object metadata not found"
 msgstr "Objektmetadaten nicht gefunden"
 
 #. js-lingui-id: rHce90
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 #: src/modules/workflow/common/exceptions/workflow-common.exception.ts
@@ -9435,7 +9559,7 @@ msgid "Object permission not found"
 msgstr "Objektberechtigung nicht gefunden"
 
 #. js-lingui-id: Qy6mMO
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Object permission not found."
 msgstr "Objektberechtigung nicht gefunden."
 
@@ -9580,7 +9704,7 @@ msgid "Only error"
 msgstr "Einziger Fehler"
 
 #. js-lingui-id: eYgzEd
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "Es sind nur Feldbeschränkungen zulässig."
 
@@ -10272,7 +10396,7 @@ msgid "Permission flag to update not found"
 msgstr "Berechtigungs-Flag zum Aktualisieren nicht gefunden"
 
 #. js-lingui-id: vcvSI3
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Permission not found."
 msgstr "Berechtigung nicht gefunden."
 
@@ -10428,6 +10552,7 @@ msgstr "Ansprechpartner"
 
 #. js-lingui-id: rLOFsu
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -10497,6 +10622,11 @@ msgstr "Dem Prädikat fehlt ein Wert"
 msgid "Predicate value is not valid for this operand"
 msgstr "Der Prädikatswert ist für diesen Operanden nicht gültig"
 
+#. js-lingui-id: nSv3rP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicates reaching a field through a relation are not enabled for this workspace"
+msgstr "Prädikate, die ein Feld über eine Relation erreichen, sind für diesen Arbeitsbereich nicht aktiviert"
+
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10558,6 +10688,11 @@ msgstr "ID des Berechtigten"
 msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "Typ des Berechtigten"
+
+#. js-lingui-id: mQkeUR
+#: src/engine/permissions/private-record/utils/assert-private-record-enabled-or-throw.util.ts
+msgid "Private records are not available in this workspace yet."
+msgstr "Private Datensätze sind in diesem Arbeitsbereich noch nicht verfügbar."
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -10726,7 +10861,7 @@ msgid "Rate limit reached. Please try again later."
 msgstr "Ratenlimit erreicht. Bitte versuchen Sie es später erneut."
 
 #. js-lingui-id: 8G8dJM
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Raw SQL queries are not allowed."
 msgstr "Direkte SQL-Abfragen sind nicht zulässig."
 
@@ -11033,6 +11168,11 @@ msgstr "Pfad zu zugehörigen Datensätzen nicht gefunden."
 msgid "Related record path object not found"
 msgstr "Objekt des Pfads zu zugehörigen Datensätzen nicht gefunden"
 
+#. js-lingui-id: 0ppWJe
+#: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
+msgid "Related record paths require the Organization plan."
+msgstr "Zugehörige Datensatzpfade erfordern den Organization-Plan."
+
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -11055,6 +11195,22 @@ msgstr "Beziehungskonfiguration ist ungültig."
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util.ts
 msgid "Relation creation payload is required"
 msgstr "Nutzlast zur Erstellung von Beziehungen ist erforderlich"
+
+#. js-lingui-id: yRw5Ff
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Relation field \"{relationFieldName}\" does not belong to the object the predicate restricts"
+msgstr "Relationsfeld \"{relationFieldName}\" gehört nicht zu dem Objekt, das das Prädikat einschränkt"
+
+#. js-lingui-id: lEwqUQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Relation field \"{relationFieldName}\" is not active"
+msgstr "Relationsfeld \"{relationFieldName}\" ist nicht aktiv"
+
+#. js-lingui-id: k5Rbos
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Relation field metadata not found"
+msgstr "Relationsfeldmetadaten nicht gefunden"
 
 #. js-lingui-id: 5y41wK
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
@@ -11351,6 +11507,12 @@ msgstr ""
 msgid "Role \"{roleLabel}\" cannot be assigned to users"
 msgstr ""
 
+#. js-lingui-id: Nlegrg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned to webhooks"
+msgstr "Die Rolle \"{roleLabel}\" kann Webhooks nicht zugewiesen werden"
+
 #. js-lingui-id: T/H/3z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
@@ -11360,6 +11522,12 @@ msgstr "Die Rolle \"{roleLabel}\" kann nicht zugewiesen werden: Benutzerdefinier
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 msgid "Role cannot be assigned to this entity."
 msgstr "Rolle kann dieser Entität nicht zugewiesen werden."
+
+#. js-lingui-id: IJxetQ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Role ID"
+msgstr "Rollen-ID"
 
 #. js-lingui-id: k2/sGI
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
@@ -11375,7 +11543,7 @@ msgid "Role is not editable"
 msgstr "Die Rolle kann nicht bearbeitet werden."
 
 #. js-lingui-id: zeffu9
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role must have at least one target."
 msgstr "Rolle muss mindestens ein Ziel haben."
 
@@ -11419,10 +11587,10 @@ msgstr ""
 
 #. js-lingui-id: /BTyf+
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role not found."
 msgstr "Rolle nicht gefunden."
 
@@ -11447,11 +11615,11 @@ msgstr "Rollenziel existiert bereits"
 msgid "Role target is missing identifier."
 msgstr "Dem Rollenziel fehlt ein Identifikator."
 
-#. js-lingui-id: vYrPc5
+#. js-lingui-id: iqcAvV
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
-msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentUniversalIdentifier"
-msgstr "Das Rollenziel muss genau einen der folgenden Werte aufweisen: apiKeyId, userWorkspaceId oder agentUniversalIdentifier"
+msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, or webhookUniversalIdentifier"
+msgstr "Das Rollenziel muss genau einen der folgenden Werte aufweisen: apiKeyId, userWorkspaceId, agentUniversalIdentifier oder webhookUniversalIdentifier"
 
 #. js-lingui-id: oNYUjk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
@@ -11470,6 +11638,12 @@ msgstr "Rollenziel nicht gefunden."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 msgid "Role target with this universal identifier already exists"
 msgstr "Rollenziel mit diesem universellen Bezeichner existiert bereits"
+
+#. js-lingui-id: YDA5ex
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Role whose members can belong to the group"
+msgstr "Rolle, deren Mitglieder der Gruppe angehören können"
 
 #. js-lingui-id: EeAlta
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11530,6 +11704,12 @@ msgstr ""
 msgid "Row level permission predicate group already exists"
 msgstr "Gruppe von Berechtigungsprädikaten auf Zeilenebene existiert bereits"
 
+#. js-lingui-id: A9bb6S
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Row level permission predicate group ID"
+msgstr "ID der Gruppe von Berechtigungsprädikaten auf Zeilenebene"
+
 #. js-lingui-id: va8c5P
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -11588,6 +11768,11 @@ msgctxt "fieldMetadata.label"
 msgid "Rule"
 msgstr "Regel"
 
+#. js-lingui-id: zhLAHJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Rules through a relation are not enabled for this workspace"
+msgstr "Regeln über eine Relation sind für diesen Arbeitsbereich nicht aktiviert"
+
 #. js-lingui-id: F1qT/F
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -11606,6 +11791,16 @@ msgstr "Läufe"
 msgctxt "view.name"
 msgid "Runs"
 msgstr "Läufe"
+
+#. js-lingui-id: y0kFMY
+#: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
+msgid "Sample records exceed 100 KB."
+msgstr "Beispieldatensätze überschreiten 100 KB."
+
+#. js-lingui-id: 0ovywa
+#: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
+msgid "Sample records must only contain selected fields and id."
+msgstr "Beispieldatensätze dürfen nur ausgewählte Felder und id enthalten."
 
 #. js-lingui-id: +5kO8P
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -11628,6 +11823,11 @@ msgstr "Kampagne speichern"
 msgctxt "commandMenuItem.label"
 msgid "Save Dashboard"
 msgstr "Dashboard speichern"
+
+#. js-lingui-id: YlXHmh
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Saving a component requires human approval."
+msgstr "Das Speichern einer Komponente erfordert eine menschliche Genehmigung."
 
 #. js-lingui-id: gqz/Jf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -11718,6 +11918,7 @@ msgstr "Suchvektor"
 
 #. js-lingui-id: Zuw7oP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -11825,6 +12026,11 @@ msgstr "Workflow anzeigen"
 msgctxt "commandMenuItem.shortLabel"
 msgid "See Workflow"
 msgstr "Workflow anzeigen"
+
+#. js-lingui-id: qWQwt8
+#: src/engine/metadata-modules/flat-webhook/utils/from-create-webhook-input-to-flat-webhook-to-create-or-throw.util.ts
+msgid "Select a role for this webhook."
+msgstr "Wählen Sie eine Rolle für diesen Webhook aus."
 
 #. js-lingui-id: dj45uB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11977,10 +12183,20 @@ msgstr "Server-Logikfunktion nicht gefunden."
 msgid "Server logic function requires authentication."
 msgstr "Server-Logikfunktion erfordert Authentifizierung."
 
+#. js-lingui-id: VOUkzJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-server-route-application.util.ts
+msgid "Server routes can only be defined by an application."
+msgstr "Serverrouten können nur von einer Anwendung definiert werden."
+
 #. js-lingui-id: OUDI/C
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Server-level impersonation is not enabled for this user or workspace."
 msgstr "Serverseitige Identitätsübernahme ist für diesen Benutzer oder Arbeitsbereich nicht aktiviert."
+
+#. js-lingui-id: y4fTj2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-server-route-application.util.ts
+msgid "serverRouteTriggerSettings can only be set by an installed application"
+msgstr "serverRouteTriggerSettings kann nur von einer installierten Anwendung festgelegt werden"
 
 #. js-lingui-id: U1u0hG
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -12053,6 +12269,11 @@ msgstr "Der Titel des Einstellungsmenüeintrags \"{updatedTitle}\" ist reservier
 msgid "Settings menu item title is required"
 msgstr "Der Titel des Einstellungsmenüeintrags ist erforderlich"
 
+#. js-lingui-id: AaiDcy
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "Several applications declare this server route. Use the application registration URL instead."
+msgstr "Mehrere Anwendungen deklarieren diese Serverroute. Verwenden Sie stattdessen die URL zur Anwendungsregistrierung."
+
 #. js-lingui-id: r+zQgZ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -12103,17 +12324,17 @@ msgid "Shared record"
 msgstr "Freigegebener Datensatz"
 
 #. js-lingui-id: 4FadYd
-#: src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a role that does not belong to this workspace"
 msgstr "shareWith benennt eine Rolle, die nicht zu diesem Arbeitsbereich gehört"
 
 #. js-lingui-id: 4PQnEW
-#: src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a workspace member that does not belong to this workspace"
 msgstr "shareWith benennt ein Arbeitsbereichsmitglied, das nicht zu diesem Arbeitsbereich gehört"
 
 #. js-lingui-id: qTLqMS
-#: src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "shareWith names the same principal more than once"
 msgstr "shareWith benennt denselben Prinzipal mehr als einmal"
 
@@ -12236,7 +12457,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "Einige der von Ihnen ausgewählten Berechtigungen sind nicht gültig. Bitte versuchen Sie es erneut mit gültigen Berechtigungseinstellungen."
 
 #. js-lingui-id: aPJopM
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "Einige Mitgliedschaften im Arbeitsbereich konnten nicht gefunden werden. Diese haben möglicherweise keinen Zugriff mehr auf diesen Arbeitsbereich."
 
@@ -13044,7 +13265,7 @@ msgid "The agent you are looking for could not be found. It may have been delete
 msgstr "Der Agent, den Sie suchen, konnte nicht gefunden werden. Möglicherweise wurde er gelöscht oder Sie haben keinen Zugriff darauf."
 
 #. js-lingui-id: eC8p5b
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "Dem API-Schlüssel wurde keine gültige Rolle zugewiesen. Bitte überprüfen Sie Ihre API-Schlüssel-Konfiguration."
 
@@ -13060,7 +13281,7 @@ msgid "The app source channel does not match the expected type."
 msgstr "Der Quellkanal der App entspricht nicht dem erwarteten Typ."
 
 #. js-lingui-id: IU78DA
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "Der Anwendung wurde keine gültige Rolle zugewiesen. Bitte überprüfen Sie Ihre Anwendungskonfiguration."
 
@@ -13122,6 +13343,16 @@ msgctxt "fieldMetadata.description"
 msgid "The company's total annual revenue"
 msgstr "Der gesamte Jahresumsatz des Unternehmens"
 
+#. js-lingui-id: ccHTwy
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "The component dependencies are too large. Reduce the Workspace app dependencies and try again."
+msgstr "Die Abhängigkeiten der Komponente sind zu groß. Reduziere die Abhängigkeiten der Workspace-App und versuche es erneut."
+
+#. js-lingui-id: m3v5Oe
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "The component dependencies could not be verified. Try creating the component again."
+msgstr "Die Abhängigkeiten der Komponente konnten nicht überprüft werden. Versuchen Sie, die Komponente erneut zu erstellen."
+
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -13161,6 +13392,7 @@ msgstr "Der Ersteller des Links"
 
 #. js-lingui-id: WhUgpA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -13211,7 +13443,7 @@ msgid "The default role cannot be deleted as it is required for the workspace to
 msgstr "Die Standardrolle kann nicht gelöscht werden, da sie für die ordnungsgemäße Funktion des Arbeitsbereichs erforderlich ist."
 
 #. js-lingui-id: 0biWRI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "The default role cannot be deleted."
 msgstr "Die Standardrolle kann nicht gelöscht werden."
 
@@ -13401,7 +13633,7 @@ msgid "The MCP request parameters are invalid."
 msgstr "Die MCP-Anfrageparameter sind ungültig."
 
 #. js-lingui-id: 9b5Rap
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
 msgid "The Member role cannot be deleted."
 msgstr "Die Rolle „Mitglied“ kann nicht gelöscht werden."
@@ -13492,6 +13724,16 @@ msgctxt "fieldMetadata.description"
 msgid "The person in the list"
 msgstr "Die Person in der Liste"
 
+#. js-lingui-id: vuwSBG
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "The predicate can only go through a relation field"
+msgstr "Das Prädikat kann nur über ein Relationsfeld führen"
+
+#. js-lingui-id: 1pKvRu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "The predicate can only go through an active relation field"
+msgstr "Das Prädikat kann nur über ein aktives Relationsfeld führen"
+
 #. js-lingui-id: yEJMjv
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "The provided connectedAccountId is not a valid UUID"
@@ -13554,10 +13796,20 @@ msgstr "Die Rolle, die Sie ändern möchten, konnte nicht gefunden werden."
 msgid "The same column cannot appear twice in an index."
 msgstr "Dieselbe Spalte kann nicht zweimal in einem Index vorkommen."
 
+#. js-lingui-id: IoxxxC
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "The saved component differs from this draft."
+msgstr "Die gespeicherte Komponente unterscheidet sich von diesem Entwurf."
+
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
 msgid "The selected model has been disabled by the administrator."
 msgstr "Das ausgewählte Modell wurde vom Administrator deaktiviert."
+
+#. js-lingui-id: pkPsbr
+#: src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util.ts
+msgid "The selected role does not exist."
+msgstr "Die ausgewählte Rolle existiert nicht."
 
 #. js-lingui-id: vD3FVp
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
@@ -13718,8 +13970,14 @@ msgctxt "fieldMetadata.description"
 msgid "The workflow version status"
 msgstr "Der Status der Workflow-Version"
 
+#. js-lingui-id: VyvnL/
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "The Workspace app dependencies changed during the build. Try creating the component again."
+msgstr "Die Abhängigkeiten der Workspace-App haben sich während des Builds geändert. Versuchen Sie, die Komponente erneut zu erstellen."
+
 #. js-lingui-id: AiP86c
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -13754,12 +14012,12 @@ msgid "The workspace member who last updated the record"
 msgstr "Das Mitglied des Arbeitsbereichs, das den Datensatz zuletzt aktualisiert hat"
 
 #. js-lingui-id: lRojhv
-#: src/engine/core-modules/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "Ihre Rolle kann nicht auf diese Datensätze zugreifen, und dieses Objekt wird nur mit Rollen geteilt, die dies können."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/core-modules/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "Ihre Rolle kann diesen Datensatz nicht sehen, und dieses Objekt wird nur mit Personen geteilt, die dies können."
 
@@ -13787,6 +14045,11 @@ msgstr "Es gibt keinen vorherigen Onboarding-Schritt, zu dem du zurückgehen kan
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "Diese Felder können nicht aktualisiert werden, bevor der Arbeitsbereich aktiviert ist: {fieldsList}."
+
+#. js-lingui-id: 029tdK
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "These origins are too long to allow together. Remove one and try again."
+msgstr "Diese Ursprünge sind zusammen zu lang. Entfernen Sie einen und versuchen Sie es erneut."
 
 #. js-lingui-id: 4RZeZG
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -14037,6 +14300,16 @@ msgstr "Diese Domäne ist bereits registriert."
 msgid "This domain is already taken."
 msgstr "Diese Domäne ist bereits vergeben."
 
+#. js-lingui-id: Ukfndw
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This draft is being updated. Try again."
+msgstr "Dieser Entwurf wird aktualisiert. Versuchen Sie es erneut."
+
+#. js-lingui-id: EM4fuz
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This draft was superseded, saved or belongs to another chat. Start a new draft."
+msgstr "Dieser Entwurf wurde ersetzt, gespeichert oder gehört zu einem anderen Chat. Erstellen Sie einen neuen Entwurf."
+
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts
 msgid "This email is already in use."
@@ -14076,6 +14349,11 @@ msgstr "Dieses Feature ist nicht aktiviert."
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
 msgstr "Dieses Feld kann nicht geändert werden."
+
+#. js-lingui-id: Bp6UAi
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field does not belong to the object reached by the relation"
+msgstr "Dieses Feld gehört nicht zu dem über die Relation erreichten Objekt"
 
 #. js-lingui-id: NDBu6g
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -14210,7 +14488,7 @@ msgid "This message channel cannot send messages."
 msgstr "Dieser Nachrichtenkanal kann keine Nachrichten senden."
 
 #. js-lingui-id: 6Z/zIt
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This method is not allowed."
 msgstr "Diese Methode ist nicht zulässig."
 
@@ -14314,6 +14592,11 @@ msgstr "Diese Berechtigung ist für das Objekt deaktiviert und kann nicht gewäh
 msgid "This plan is not available."
 msgstr "Dieser Plan ist nicht verfügbar."
 
+#. js-lingui-id: GA6RMi
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This preview changed. Approve the latest revision."
+msgstr "Diese Vorschau wurde geändert. Genehmigen Sie die neueste Überarbeitung."
+
 #. js-lingui-id: Y5C3uK
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "This provider is not supported."
@@ -14355,6 +14638,11 @@ msgstr "Dieser Pfad zu zugehörigen Datensätzen existiert bereits"
 msgid "This relation field cannot be used in a record rule"
 msgstr "Dieses Relationsfeld kann nicht in einer Datensatzregel verwendet werden"
 
+#. js-lingui-id: K7NTYK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This relation field does not belong to the restricted object"
+msgstr "Dieses Relationsfeld gehört nicht zum eingeschränkten Objekt"
+
 #. js-lingui-id: 16eZJL
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This request for input could not be found."
@@ -14391,12 +14679,12 @@ msgid "This role cannot be assigned to API keys."
 msgstr "Diese Rolle kann API-Schlüsseln nicht zugewiesen werden."
 
 #. js-lingui-id: c68K+k
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to users."
 msgstr "Diese Rolle kann Benutzern nicht zugewiesen werden."
 
 #. js-lingui-id: 2jnsqJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be edited."
 msgstr "Diese Rolle kann nicht bearbeitet werden."
 
@@ -14413,6 +14701,11 @@ msgstr "Diese Rolle kann nicht bearbeitet werden."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "Diese Rolle kann nicht geändert werden, da es sich um eine Systemrolle handelt. Nur benutzerdefinierte Rollen können bearbeitet werden."
+
+#. js-lingui-id: UjNNWw
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This saved component was deleted. Create a new draft."
+msgstr "Diese gespeicherte Komponente wurde gelöscht. Erstellen Sie einen neuen Entwurf."
 
 #. js-lingui-id: DEJJoY
 #: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
@@ -14862,7 +15155,7 @@ msgid "To do"
 msgstr "Zu erledigen"
 
 #. js-lingui-id: /ObxXq
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Too many admin candidates found."
 msgstr "Zu viele Administrator-Kandidaten gefunden."
 
@@ -15199,12 +15492,12 @@ msgid "Unknown navigation menu item type {type}"
 msgstr "Unbekannter Navigationsmenüeintrag-Typ {type}"
 
 #. js-lingui-id: tEncxN
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown operation."
 msgstr "Unbekannter Vorgang."
 
 #. js-lingui-id: BIxgma
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown permission required."
 msgstr "Unbekannte Berechtigung erforderlich."
 
@@ -15341,7 +15634,7 @@ msgid "Update DateTime"
 msgstr "Aktualisierungsdatum und -uhrzeit"
 
 #. js-lingui-id: lHCFXi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "Beschränkungen beim Aktualisieren von Feldern gelten nur für aktualisierbare Objekte."
 
@@ -15393,6 +15686,7 @@ msgstr "Aktualisiert am"
 
 #. js-lingui-id: U8sfYC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -15583,7 +15877,7 @@ msgid "User already exists"
 msgstr "Benutzer existiert bereits"
 
 #. js-lingui-id: 9QHVZ2
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User already has a role assigned."
 msgstr "Dem Benutzer ist bereits eine Rolle zugewiesen."
 
@@ -15598,7 +15892,7 @@ msgid "User does not have access to this workspace"
 msgstr "Der Benutzer hat keinen Zugriff auf diesen Arbeitsbereich"
 
 #. js-lingui-id: Sl1ElS
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "User does not have permission."
 msgstr "Der Benutzer hat keine Berechtigung."
 
@@ -15655,7 +15949,7 @@ msgstr "Benutzer wurde nicht mit E-Mail/Passwort erstellt"
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User workspace not found."
 msgstr "Benutzer-Arbeitsbereich nicht gefunden."
 
@@ -15774,6 +16068,12 @@ msgstr "Der Wert \"{stringifiedValue}\" ergibt für den Operanden \"{operand}\" 
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "Der Wert muss in GROSSBUCHSTABEN sein und dem Snake_case \"{sanitizedValue}\" folgen"
+
+#. js-lingui-id: OG7PgU
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Values of the member fields the grant reads, shared by every member of the group"
+msgstr "Werte der Mitgliedsfelder, die die Berechtigung liest und die von allen Mitgliedern der Gruppe geteilt werden"
 
 #. js-lingui-id: NzhR7p
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -16914,7 +17214,7 @@ msgid "Workspace does not exist."
 msgstr "Der Arbeitsbereich existiert nicht."
 
 #. js-lingui-id: oLh4c+
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace ID and role mismatch."
 msgstr "Arbeitsbereichs-ID und Rolle stimmen nicht überein."
 
@@ -17006,7 +17306,7 @@ msgstr "Name des Arbeitsbereichsmitglieds"
 
 #. js-lingui-id: rnnLQA
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace member not found."
 msgstr "Arbeitsbereichsmitglied nicht gefunden."
 
@@ -17253,12 +17553,12 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "Sie können keinen Wiederherstellungscode für sich selbst generieren. Setzen Sie stattdessen die Zwei-Faktor-Authentifizierung über Ihr Profil zurück."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "Sie können Ihre eigene Rolle nicht ändern. Bitte bitten Sie einen anderen Administrator, Ihre Rolle zu aktualisieren."
 
 #. js-lingui-id: xqrB9X
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot delete a role you are assigned to. Ask another administrator to delete it."
 msgstr "Sie können eine Rolle, die Ihnen zugewiesen ist, nicht löschen. Bitten Sie eine andere Administratorin oder einen anderen Administrator, sie zu löschen."
 
@@ -17269,12 +17569,12 @@ msgid "You cannot grant edit permissions without also granting read permissions.
 msgstr "Sie können keine Bearbeitungsrechte vergeben, ohne auch Leserechte zu vergeben. Bitte aktivieren Sie zuerst den Lesezugriff."
 
 #. js-lingui-id: KcnT7Q
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot remove settings access from your own role. Ask another administrator to make this change."
 msgstr "Sie können Ihrer eigenen Rolle den Zugriff auf die Einstellungen nicht entziehen. Bitten Sie eine andere Administratorin oder einen anderen Administrator, diese Änderung vorzunehmen."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "Sie können die Adminrolle nicht vom letzten Administrator entfernen. Bitte weisen Sie zuerst einem anderen Administrator zu."
 
@@ -17299,7 +17599,7 @@ msgid "You cannot set field permissions on system objects as they are managed by
 msgstr "Sie können keine Feldberechtigungen für Systemobjekte setzen, da diese von der Plattform verwaltet werden."
 
 #. js-lingui-id: bAPURS
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot update your own role."
 msgstr "Sie können Ihre eigene Rolle nicht aktualisieren."
 
@@ -17388,7 +17688,7 @@ msgstr "Sie haben keine Berechtigung, die Blockliste des Arbeitsbereichs zu verw
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/guards/exceptions/auth-principal-refused.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You do not have permission to perform this action."
 msgstr "Sie haben keine Berechtigung, diese Aktion auszuführen."
 
@@ -17516,8 +17816,8 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "Ihre Rolle kann einige dieser Datensätze nicht löschen, daher können sie nicht zusammengeführt werden."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/metadata-modules/permissions/permissions.service.ts
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "Ihre Rolle in diesem Arbeitsbereich konnte nicht gefunden werden. Bitte kontaktieren Sie Ihren Arbeitsbereichsadministrator."
 

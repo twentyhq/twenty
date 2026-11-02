@@ -17,9 +17,10 @@ import { type CallWebhookJobData } from 'src/engine/metadata-modules/webhook/typ
 import { type WorkspaceEventBatchForWebhook } from 'src/engine/metadata-modules/webhook/types/workspace-event-batch-for-webhook.type';
 import { findWebhooksMatchingEventName } from 'src/engine/metadata-modules/webhook/utils/find-webhooks-matching-event-name.util';
 import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/webhook/utils/transform-event-batch-to-webhook-events';
-import { EVERYONE_ROW_ACCESS_POLICY_SUBJECT } from 'src/engine/core-modules/record-share/constants/everyone-row-access-policy-subject.constant';
-import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
+import { findFlatRoleTargetFromForeignKey } from 'src/engine/metadata-modules/flat-role-target/utils/find-flat-role-target-from-foreign-key.util';
+import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
 
 const WEBHOOK_JOBS_CHUNK_SIZE = 20;
 
@@ -40,10 +41,10 @@ export class CallWebhookJobsJob {
   ): Promise<void> {
     // Keep in sync with packages/twenty-zapier/src/triggers/trigger_record.ts and computeWebhooks.utils.ts
 
-    const { flatWebhookMaps, flatObjectMetadataMaps } =
+    const { flatWebhookMaps, flatObjectMetadataMaps, flatRoleTargetMaps } =
       await this.workspaceCacheService.getOrRecompute(
         workspaceEventBatch.workspaceId,
-        ['flatWebhookMaps', 'flatObjectMetadataMaps'],
+        ['flatWebhookMaps', 'flatObjectMetadataMaps', 'flatRoleTargetMaps'],
       );
 
     const webhooks = findWebhooksMatchingEventName({
@@ -68,19 +69,49 @@ export class CallWebhookJobsJob {
       return;
     }
 
-    // A webhook carries no identity, so only a row granted to everyone lets an event out
-    const admittedRecordIds = await this.recordAccessPolicyService
-      .buildEventRecordAccessGate({
+    const eventRecordAccessGate =
+      this.recordAccessPolicyService.buildEventRecordAccessGate({
         ...workspaceEventBatch,
         objectMetadata: flatObjectMetadata,
-      })
-      .resolveAdmittedRecordIds(EVERYONE_ROW_ACCESS_POLICY_SUBJECT);
+      });
+    const webhookEvents: CallWebhookJobData[] = [];
+    const admittedRecordIdsByRoleId = new Map<string, Promise<Set<string>>>();
 
-    const webhookEvents = transformEventBatchToWebhookEvents({
-      workspaceEventBatch,
-      webhooks,
-      admittedRecordIds,
-    });
+    for (const webhook of webhooks) {
+      const webhookRoleId = findFlatRoleTargetFromForeignKey({
+        flatRoleTargetMaps,
+        targetMetadataForeignKey: 'webhookId',
+        targetId: webhook.id,
+      })?.roleId;
+
+      if (!isDefined(webhookRoleId)) {
+        this.logger.warn(
+          `Webhook ${webhook.id} has no role in workspace ${workspaceEventBatch.workspaceId}, skipping its events`,
+        );
+
+        continue;
+      }
+
+      const admittedRecordIds =
+        admittedRecordIdsByRoleId.get(webhookRoleId) ??
+        eventRecordAccessGate.resolveAdmittedRecordIds(
+          buildPermissionsPrincipal({
+            workspaceId: workspaceEventBatch.workspaceId,
+            roleId: webhookRoleId,
+            applicationId: undefined,
+          }),
+        );
+
+      admittedRecordIdsByRoleId.set(webhookRoleId, admittedRecordIds);
+
+      webhookEvents.push(
+        ...transformEventBatchToWebhookEvents({
+          workspaceEventBatch,
+          webhooks: [webhook],
+          admittedRecordIds: await admittedRecordIds,
+        }),
+      );
+    }
 
     const admittedWebhookEvents =
       await this.webhookRateLimitService.admitWebhookEventsWithinRateLimit({

@@ -7,7 +7,6 @@ import {
   DateDisplayFormat,
   FieldMetadataType,
   IndexType,
-  MetadataWritability,
   NavigationMenuItemType,
   NumberDataType,
   ObjectOpenRecordIn,
@@ -45,11 +44,6 @@ const buildFieldEnumBindings = (prefix: string[]): EnumBinding[] => [
     members: FieldMetadataType,
   },
   {
-    path: [...prefix, 'writability'],
-    symbol: 'MetadataWritability',
-    members: MetadataWritability,
-  },
-  {
     path: [...prefix, 'universalSettings', 'relationType'],
     symbol: 'RelationType',
     members: RelationType,
@@ -74,11 +68,6 @@ const buildFieldEnumBindings = (prefix: string[]): EnumBinding[] => [
 export const FIELD_ENUM_BINDINGS: EnumBinding[] = buildFieldEnumBindings([]);
 
 export const OBJECT_ENUM_BINDINGS: EnumBinding[] = [
-  {
-    path: ['writability'],
-    symbol: 'MetadataWritability',
-    members: MetadataWritability,
-  },
   {
     path: ['openRecordIn'],
     symbol: 'ObjectOpenRecordIn',

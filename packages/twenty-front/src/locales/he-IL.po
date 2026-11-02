@@ -266,6 +266,12 @@ msgstr "{0, plural, one {# אובייקט} two {# אובייקטים} other {# �
 msgid "{0, plural, one {# Object} other {# Objects}}"
 msgstr "{0, plural, one {# אובייקט} two {# אובייקטים} many {# אובייקטים} other {# אובייקטים}}"
 
+#. js-lingui-id: zHa4lw
+#. placeholder {0}: parts.length
+#: src/modules/ai/components/ThinkingStepsDisplay.tsx
+msgid "{0, plural, one {# step} other {# steps}}"
+msgstr "{0, plural, one {# שלב} two {# שלבים} many {# שלבים} other {# שלבים}}"
+
 #. js-lingui-id: 8ob0vY
 #. placeholder {0}: failedCount + behindCount
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
@@ -631,11 +637,6 @@ msgstr "{callRecordingHours, plural, one {{formattedCallRecordingHours} שעה} 
 msgid "{cardCount, plural, one {Approve # action?} other {Approve # actions?}}"
 msgstr "{cardCount, plural, one {לאשר פעולה אחת?} two {לאשר שתי פעולות?} other {לאשר # פעולות?}}"
 
-#. js-lingui-id: AnO6CC
-#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
-msgid "{channelStatusLabel} · {assignmentLabel}"
-msgstr "{channelStatusLabel} · {assignmentLabel}"
-
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "{count, plural, one {{formattedCount} change} other {{formattedCount} changes}}"
@@ -845,11 +846,6 @@ msgstr "{jobCount, plural, one {זה ינסה להפעיל מחדש את העב�
 #: src/modules/ai/utils/getAiModelModeDescription.ts
 msgid "{label} (Auto)"
 msgstr "{label} (אוטומטי)"
-
-#. js-lingui-id: Qoi5Dj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
-msgid "{label} (default)"
-msgstr "{label} (ברירת מחדל)"
 
 #. js-lingui-id: Oq2RUh
 #: src/modules/ai/utils/getAiModelPinOptions.ts
@@ -1139,11 +1135,6 @@ msgstr "{sourceCount} סוגי מקורות"
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "{spokenMinutes} {spokenSeconds}"
 msgstr "{spokenMinutes} {spokenSeconds}"
-
-#. js-lingui-id: 8vJ+2V
-#: src/modules/ai/components/ThinkingStepsDisplay.tsx
-msgid "{stepCount, plural, one {# step} other {# steps}}"
-msgstr "{stepCount, plural, one {# שלב} two {# שלבים} many {# שלבים} other {# שלבים}}"
 
 #. js-lingui-id: Bzjg0/
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
@@ -1580,6 +1571,11 @@ msgstr "טופס נפתח עבור האדם שמפעיל את תהליך העב�
 msgid "A new one each time the step runs"
 msgstr "אחד חדש בכל הפעלה של השלב"
 
+#. js-lingui-id: 3pDKsj
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "A newer revision exists. Open the latest preview to save."
+msgstr "קיימת גרסה חדשה יותר. פתח את התצוגה המקדימה העדכנית ביותר כדי לשמור."
+
 #. js-lingui-id: K3NJnJ
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "A payment method is needed to keep your workspace active."
@@ -1594,6 +1590,11 @@ msgstr "תשלום עבור המנוי שלך נכשל. תכונות הפרימ�
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
 msgstr "מקליט יצטרף כאשר הפגישה תתחיל."
+
+#. js-lingui-id: fdM8v5
+#: src/modules/settings/developers/validation-schemas/webhookFormSchema.ts
+msgid "A role is required"
+msgstr "נדרש תפקיד"
 
 #. js-lingui-id: C6xZqR
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -1703,7 +1704,7 @@ msgid "Access Key ID"
 msgstr "מזהה מפתח גישה"
 
 #. js-lingui-id: 6hdTJw
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Access to {objectLabelPlural} is set by roles, not record by record."
 msgstr "הגישה אל {objectLabelPlural} מוגדרת לפי תפקידים, ולא רשומה אחר רשומה."
 
@@ -2196,6 +2197,11 @@ msgstr "הוסף דוא\"ל"
 msgid "Add email channel"
 msgstr "הוסף ערוץ אימייל"
 
+#. js-lingui-id: QwQhEf
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+msgid "Add embedded website"
+msgstr "הוסף אתר אינטרנט מוטמע"
+
 #. js-lingui-id: 6kC3KJ
 #: src/modules/ai/components/internal/AiChatToolCallApprovalCardLayout.tsx
 msgid "Add feedback"
@@ -2356,6 +2362,11 @@ msgstr "הוסף מקור"
 msgid "Add Output Field"
 msgstr "הוסף שדה פלט"
 
+#. js-lingui-id: ZqKhbh
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathAddDropdown.tsx
+msgid "Add path"
+msgstr "הוסף נתיב"
+
 #. js-lingui-id: lRpmgk
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "Add payment method"
@@ -2506,6 +2517,11 @@ msgstr "הוסף את השרת המרוחק של Twenty באמצעות קישו�
 msgid "Add these records at your DNS provider. Twenty checks them automatically."
 msgstr "הוסף רשומות אלה אצל ספק ה-DNS שלך. Twenty בודקת אותן באופן אוטומטי."
 
+#. js-lingui-id: Bc+ryO
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
+msgid "Add this path"
+msgstr "הוסף נתיב זה"
+
 #. js-lingui-id: 5+ttxv
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
 msgid "Add to blocklist"
@@ -2546,6 +2562,11 @@ msgstr "הוסף URI"
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "Add view"
 msgstr "הוסף תצוגה"
+
+#. js-lingui-id: hKxpSq
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+msgid "Add website"
+msgstr "הוסף אתר אינטרנט"
 
 #. js-lingui-id: 8sZiWP
 #: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
@@ -2902,6 +2923,11 @@ msgstr "סוכני AI"
 msgid "AI chat"
 msgstr "צ'אט בינה מלאכותית"
 
+#. js-lingui-id: IuEC4q
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "AI chat component builder"
+msgstr "בונה רכיבי צ'אט מבוסס בינה מלאכותית"
+
 #. js-lingui-id: UrjxKN
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI chat inbox"
@@ -3073,7 +3099,6 @@ msgstr "יישור"
 
 #. js-lingui-id: N40H+G
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
@@ -3484,6 +3509,7 @@ msgstr "אירעה שגיאה בעת העלאת התמונה."
 #: src/modules/page-layout/hooks/useResetPageLayoutWidgetToDefault.ts
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWidgets.ts
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets.ts
+#: src/modules/related-record-paths/hooks/useRelatedRecordPathMutations.ts
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/views/hooks/internal/usePerformViewApiUpdate.ts
 #: src/modules/views/hooks/internal/usePerformViewEntityApiPersistOperation.ts
@@ -3734,6 +3760,11 @@ msgstr "האפליקציה נמחקה בהצלחה"
 msgid "App logs"
 msgstr "יומני אפליקציה"
 
+#. js-lingui-id: xqkZbG
+#: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
+msgid "App Operation"
+msgstr "פעולת אפליקציה"
+
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "App preferences"
@@ -3867,6 +3898,7 @@ msgstr "סקירת אישור"
 
 #. js-lingui-id: Z7ZXbT
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Approve"
 msgstr "אשר"
 
@@ -3910,6 +3942,7 @@ msgid "Apps"
 msgstr "אפליקציות"
 
 #. js-lingui-id: THHN20
+#: src/modules/settings/app-preferences/hooks/useAccountsSettingsBreadcrumbLink.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -3920,10 +3953,10 @@ msgstr "אפליקציות"
 msgid "Apps preferences"
 msgstr "העדפות אפליקציות"
 
-#. js-lingui-id: aDW39c
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx
-msgid "Apps recording"
-msgstr "הקלטת אפליקציות"
+#. js-lingui-id: Nk6yc9
+#: src/utils/title-utils.ts
+msgid "Apps preferences - Settings"
+msgstr "העדפות אפליקציות - הגדרות"
 
 #. js-lingui-id: EzsAEI
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
@@ -4063,6 +4096,11 @@ msgstr "חץ למעלה"
 msgid "As it will be displayed in the workspace"
 msgstr ""
 
+#. js-lingui-id: pKkmLw
+#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
+msgid "As their role allows"
+msgstr "כפי שהתפקיד שלהם מאפשר"
+
 #. js-lingui-id: 54PdN4
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
@@ -4178,7 +4216,6 @@ msgid "Assignable to Workspace Members"
 msgstr ""
 
 #. js-lingui-id: lXGdbb
-#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Assigned"
 msgstr "מוקצה"
@@ -4193,6 +4230,11 @@ msgstr "ניתן להקצות את {roleTargetDisplayName}"
 msgid "Assigned to"
 msgstr "מוקצה ל"
 
+#. js-lingui-id: iU3XRS
+#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+msgid "Assigned to me"
+msgstr "מוקצה לי"
+
 #. js-lingui-id: TzM/0+
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Assigned to users who join via invite link, approved domain, or SSO, and used as fallback when an assigned role is deleted"
@@ -4204,7 +4246,6 @@ msgid "Assigned to you"
 msgstr "מוקצה לך"
 
 #. js-lingui-id: ojKCLU
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Assignee"
 msgstr "אחראי"
@@ -4565,6 +4606,7 @@ msgstr "מיליארד"
 #. js-lingui-id: iH8pgl
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 #: src/modules/side-panel/components/SidePanelBackButton.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowDropdownStepOutputItems.tsx
@@ -4973,7 +5015,7 @@ msgid "Build many-to-many relations"
 msgstr "בנו קשרי רבים-לרבים"
 
 #. js-lingui-id: +7fBMP
-#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
 msgid "Built-in"
 msgstr "מובנה"
 
@@ -5274,9 +5316,16 @@ msgid "Calls"
 msgstr "שיחות"
 
 #. js-lingui-id: rT2cV+
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
 msgid "Camera"
 msgstr "מצלמה"
+
+#. js-lingui-id: QIPLcC
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Camera access enabled"
+msgstr ""
 
 #. js-lingui-id: w3vNoK
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -5311,7 +5360,7 @@ msgstr "קנדה"
 #. js-lingui-id: dEgA5A
 #: src/modules/ai/components/AiChatApprovalConfirmation.tsx
 #: src/modules/applications/components/AuthorizeActionButtons.tsx
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -5369,6 +5418,11 @@ msgstr "ביטול החלפת מרווחים"
 msgid "Cancel interval switching?"
 msgstr "האם לבטל את החלפת המרווחים?"
 
+#. js-lingui-id: ujldpy
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Cancel media request for {ownerName}"
+msgstr ""
+
 #. js-lingui-id: rRK/Lf
 #: src/modules/settings/billing/components/SettingsBillingContent.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -5385,11 +5439,6 @@ msgstr "ביטול החלפת תכנית"
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Cancel plan switching?"
 msgstr "האם לבטל את החלפת התכנית?"
-
-#. js-lingui-id: BfJPwg
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
-msgid "Cancel recording for {applicationName}"
-msgstr "בטל הקלטה עבור {applicationName}"
 
 #. js-lingui-id: AnRu/j
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -5569,11 +5618,6 @@ msgstr "עותק/עותק סמוי"
 msgid "Cell controls"
 msgstr "פקדי תא"
 
-#. js-lingui-id: nejZ6P
-#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
-msgid "Certificate invalid"
-msgstr "אישור לא תקין"
-
 #. js-lingui-id: o+XJ9D
 #: src/modules/ai/components/AiChatThreadTriageButtons.tsx
 msgid "Change"
@@ -5647,6 +5691,11 @@ msgstr "שנה את ערכת הנושא למערכת"
 #: src/modules/log-console/constants/LogConsoleRecordChangeColumns.tsx
 msgid "Changes"
 msgstr "שינויים"
+
+#. js-lingui-id: OhVo1W
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
+msgid "Changes saved. Reload open Twenty tabs to apply the updated permissions. Reloading ends active calls and recordings."
+msgstr "השינויים נשמרו. טענו מחדש את לשוניות Twenty הפתוחות כדי להחיל את ההרשאות המעודכנות. טעינה מחדש מסיימת שיחות והקלטות פעילות."
 
 #. js-lingui-id: oRH6Dq
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -6030,6 +6079,11 @@ msgstr "בחר אילו תיקיות אפליקציה זו מייבאת"
 msgid "Choose which profile fields users with the Edit Profile permission can modify"
 msgstr ""
 
+#. js-lingui-id: jgIz8c
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
+msgid "Choose which websites embedded in iframe widgets can request microphone or camera access. Members still need to enable access and approve the browser permission."
+msgstr "בחרו אילו אתרים המוטמעים בווידג'טים של iframe יכולים לבקש גישה למיקרופון או למצלמה. חברים עדיין צריכים להפעיל גישה ולאשר את הרשאת הדפדפן."
+
 #. js-lingui-id: 22LF79
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 msgid "Choose your preferences for the apps installed on your workspace by the admin"
@@ -6260,6 +6314,7 @@ msgstr "לוח הגזירים דורש חיבור מאובטח (HTTPS). יש ל�
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/onboarding/components/OnboardingSkipDialog.tsx
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
@@ -6640,10 +6695,20 @@ msgstr "עבודות שהושלמו נשמרות למשך {completedDuration}, �
 msgid "Complexity"
 msgstr "מורכבות"
 
+#. js-lingui-id: ST17km
+#: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
+msgid "Component failed to render."
+msgstr "עיבוד הרכיב נכשל."
+
 #. js-lingui-id: 3pJ7V5
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 msgid "Component name"
 msgstr "שם הרכיב"
+
+#. js-lingui-id: WcUICq
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Component preview with sample data"
+msgstr "תצוגה מקדימה של רכיב עם נתונים לדוגמה"
 
 #. js-lingui-id: rYRNgS
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
@@ -7449,6 +7514,17 @@ msgstr "לא ניתן היה ליצור את ה-DPA החתום. אנא נסה ש
 msgid "Could not grant media access. Please try again."
 msgstr "לא ניתן היה להעניק גישה למדיה. נסה שוב."
 
+#. js-lingui-id: Y5qCpF
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
+#: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
+msgid "Could not load preview."
+msgstr "לא ניתן לטעון את התצוגה המקדימה."
+
+#. js-lingui-id: mrmGIf
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
+msgid "Could not load related records"
+msgstr "לא ניתן לטעון רשומות קשורות"
+
 #. js-lingui-id: Ft89Ck
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
 msgid "Could not load runs"
@@ -7488,6 +7564,11 @@ msgstr "לא ניתן היה לפתוח את מגרש המשחקים של ה-API
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Could not react with {emoji}"
 msgstr "לא ניתן היה להגיב באמצעות {emoji}"
+
+#. js-lingui-id: 6GjSMn
+#: src/modules/ai/hooks/useRefreshFrontComponents.ts
+msgid "Could not refresh components. Reload to see saved changes."
+msgstr "לא ניתן היה לרענן רכיבים. טען מחדש כדי לראות שינויים שנשמרו."
 
 #. js-lingui-id: w1HkE9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -7777,6 +7858,11 @@ msgstr "צור יישום"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Create and configure AI agents"
 msgstr "צור וקבע תצורה של סוכני AI"
+
+#. js-lingui-id: PRUHBf
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create and preview frontend components in AI chat before adding them to the Workspace app."
+msgstr "צרו תצוגה מקדימה של רכיבי ממשק משתמש בצ'אט מבוסס בינה מלאכותית לפני הוספתם לאפליקציית סביבת העבודה."
 
 #. js-lingui-id: vgdzLf
 #: src/modules/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage.tsx
@@ -8602,6 +8688,11 @@ msgstr "כהה"
 msgid "Dashboard duplicated successfully"
 msgstr "לוח הבקרה שוכפל בהצלחה"
 
+#. js-lingui-id: xLSe09
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Dashboard widget"
+msgstr "וידג'ט לוח בקרה"
+
 #. js-lingui-id: HKH+W+
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
@@ -8944,6 +9035,11 @@ msgstr "הגדר את השם והתיאור של העצם שלך"
 msgid "Define the name and instructions for this skill"
 msgstr "הגדר את השם וההוראות עבור המיומנות הזו"
 
+#. js-lingui-id: zDccHY
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Define the relations along which a record's permissions extend to related records."
+msgstr "הגדר את הקשרים שלאורכם ההרשאות של רשומה מורחבות לרשומות קשורות."
+
 #. js-lingui-id: Ntu10D
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Define user roles and access levels"
@@ -9214,6 +9310,11 @@ msgstr "מחיקת רשומות מכל הישויות"
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 msgid "Delete Related {relationObjectLabelSingular}"
 msgstr "מחק {relationObjectLabelSingular} קשור"
+
+#. js-lingui-id: CW/kVJ
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathTableRow.tsx
+msgid "Delete related record path"
+msgstr "מחיקת נתיב רשומה קשורה"
 
 #. js-lingui-id: efjzvW
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -9606,6 +9707,7 @@ msgid "Direction"
 msgstr "כיוון"
 
 #. js-lingui-id: cO9+2L
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Disable"
 msgstr "השבת"
@@ -9614,6 +9716,11 @@ msgstr "השבת"
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "Disable impersonation"
 msgstr "השבת התחזות"
+
+#. js-lingui-id: QRe0KA
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Disable media access for {ownerName}"
+msgstr ""
 
 #. js-lingui-id: 8v3G2p
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -10635,6 +10742,11 @@ msgstr "כתובות דוא\"ל לא יכולות להיות ריקות"
 msgid "embed"
 msgstr "הטמעה"
 
+#. js-lingui-id: cjPnTO
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
+msgid "Embedded website media access"
+msgstr "גישה למדיה של אתר מוטמע"
+
 #. js-lingui-id: eXoH4Q
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "employees"
@@ -10720,10 +10832,25 @@ msgstr "הפעל"
 msgid "Enable bypass options"
 msgstr "הפעל אפשרויות עקיפה"
 
+#. js-lingui-id: +EDob0
+#: src/modules/media-access/components/ManagedIframeSession.tsx
+msgid "Enable camera"
+msgstr ""
+
 #. js-lingui-id: Tt0V8j
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "Enable impersonation"
 msgstr "הפעל התחזות"
+
+#. js-lingui-id: 4Jrl0H
+#: src/modules/media-access/components/ManagedIframeSession.tsx
+msgid "Enable microphone"
+msgstr ""
+
+#. js-lingui-id: /RSrNr
+#: src/modules/media-access/components/ManagedIframeSession.tsx
+msgid "Enable microphone and camera"
+msgstr ""
 
 #. js-lingui-id: gZo0V9
 #: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
@@ -10910,6 +11037,11 @@ msgstr "הזן סכום x 1 000 000 (לדוגמה: $3.21 → 3210000)"
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 msgid "Enter an HTTP or HTTPS origin without a path or wildcard, such as https://portal.example.com."
 msgstr "הזן מקור HTTP או HTTPS ללא נתיב או תו כללי, כגון https://portal.example.com."
+
+#. js-lingui-id: TO+jkh
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+msgid "Enter an HTTPS origin without a path or wildcard, such as https://workspace.aircall.io."
+msgstr "הזינו מקור HTTPS ללא נתיב או תו כללי, כגון https://workspace.aircall.io."
 
 #. js-lingui-id: 8yJgo+
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
@@ -12819,11 +12951,11 @@ msgstr "סנן לפי סוג האובייקט"
 msgid "Filter by record ID"
 msgstr "סנן לפי מזהה רשומה"
 
-#. js-lingui-id: jge9hE
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
-msgid "Filter channel chats"
-msgstr "סנן צ'אטים בערוץ"
+#. js-lingui-id: /+U0Y/
+#: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
+#: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
+msgid "Filter chats"
+msgstr "סנן צ'אטים"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -15994,10 +16126,20 @@ msgstr "או קטן יותר"
 msgid "Let each member decide for themselves"
 msgstr "אפשר לכל חבר צוות להחליט בעצמו"
 
+#. js-lingui-id: bM+k1O
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Let people make a record visible only to its creator and the people it is shared with."
+msgstr "אפשר לאנשים להפוך רשומה לגלויה רק ליוצר שלה ולאנשים שאיתה היא משותפת."
+
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let people restrict and share individual records."
 msgstr "אפשרו לאנשים להגביל ולשתף רשומות בודדות."
+
+#. js-lingui-id: b3MaZQ
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Let record-level permission rules compare a field of a related record."
+msgstr "אפשר לכללי הרשאות ברמת רשומה להשוות שדה של רשומה קשורה."
 
 #. js-lingui-id: HRo4g8
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -16427,6 +16569,11 @@ msgstr "טוען צ'אטים נוספים..."
 msgid "Loading more..."
 msgstr "טוען עוד..."
 
+#. js-lingui-id: nSgEqx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Loading preview…"
+msgstr "טוען תצוגה מקדימה…"
+
 #. js-lingui-id: WepeNQ
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 msgid "Loading records"
@@ -16483,7 +16630,7 @@ msgstr "טוען…"
 
 #. js-lingui-id: d5zxa4
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "Local"
 msgstr "מקומי"
@@ -17075,6 +17222,16 @@ msgstr "אני / {workspaceMemberFieldLabel}"
 msgid "Measure engagement on the campaigns this workspace sends"
 msgstr "מדדו מעורבות בקמפיינים שמרחב העבודה הזה שולח"
 
+#. js-lingui-id: 62uGRa
+#: src/modules/media-access/components/MediaAccessIndicator.tsx
+msgid "Media access enabled"
+msgstr ""
+
+#. js-lingui-id: rH8KbL
+#: src/modules/media-access/components/MediaAccessIndicator.tsx
+msgid "Media access requests"
+msgstr ""
+
 #. js-lingui-id: agPptk
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 msgid "Medium"
@@ -17293,9 +17450,16 @@ msgid "Method"
 msgstr "שיטה"
 
 #. js-lingui-id: 1iY5xv
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
 msgid "Microphone"
 msgstr "מיקרופון"
+
+#. js-lingui-id: eiGwrP
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Microphone access enabled"
+msgstr ""
 
 #. js-lingui-id: P9IeiA
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
@@ -17303,9 +17467,19 @@ msgid "Microphone access is blocked. Allow it in your browser settings to dictat
 msgstr "הגישה למיקרופון חסומה. אפשר אותה בהגדרות הדפדפן כדי להכתיב."
 
 #. js-lingui-id: /XArxJ
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 msgid "Microphone and camera"
 msgstr "מיקרופון ומצלמה"
+
+#. js-lingui-id: 0Cq1++
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Microphone and camera access enabled"
+msgstr ""
+
+#. js-lingui-id: yGBwBp
+#: src/modules/media-access/components/MediaAccessIndicator.tsx
+msgid "Microphone or camera in use"
+msgstr ""
 
 #. js-lingui-id: 6cH65H
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -17329,12 +17503,6 @@ msgstr "מינ'"
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Min range"
 msgstr "טווח מינימלי"
-
-#. js-lingui-id: oSrMRT
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
-#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
-msgid "Mine"
-msgstr "שלי"
 
 #. js-lingui-id: 8GG+Pa
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
@@ -17377,11 +17545,6 @@ msgstr "כתובת URL להרשאה חסרה"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Missing calendar permission."
 msgstr "חסרה הרשאת לוח שנה."
-
-#. js-lingui-id: XLNNcv
-#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
-msgid "Missing configuration"
-msgstr "תצורה חסרה"
 
 #. js-lingui-id: kgDu74
 #: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
@@ -18989,10 +19152,20 @@ msgstr "לא נמצאו רשומות התואמות לקריטריוני הסי�
 msgid "No records to review"
 msgstr "אין רשומות לסקירה"
 
+#. js-lingui-id: AxHLth
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
+msgid "No related records follow this object yet"
+msgstr "עדיין אין רשומות קשורות שעוקבות אחר אובייקט זה"
+
 #. js-lingui-id: gvIkAA
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "No relation to count by"
 msgstr "אין קשר לפיו ניתן לספור"
+
+#. js-lingui-id: dPgrAv
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
+msgid "No relations"
+msgstr "אין קשרים"
 
 #. js-lingui-id: m3W0Yn
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -19553,7 +19726,7 @@ msgid "now"
 msgstr "עכשיו"
 
 #. js-lingui-id: hzMYNj
-#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "NPM"
 msgstr "NPM"
@@ -19637,7 +19810,7 @@ msgid "Numbered list"
 msgstr ""
 
 #. js-lingui-id: b/j06W
-#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -19663,6 +19836,7 @@ msgstr "אובייקט"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions.tsx
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord.tsx
@@ -19959,12 +20133,12 @@ msgid "Only run when one of these fields changes"
 msgstr "הפעל רק כאשר אחד מהשדות האלה משתנה"
 
 #. js-lingui-id: YSJayJ
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Only the creator of this record and people with full access to it can change who has access."
 msgstr "רק היוצר של רשומה זו ואנשים עם גישה מלאה אליה יכולים לשנות למי יש גישה."
 
 #. js-lingui-id: afNmH6
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Only the creator of this record, people with full access to it and admins can change who has access."
 msgstr "רק היוצר של רשומה זו, אנשים עם גישה מלאה אליה ומנהלים יכולים לשנות למי יש גישה."
 
@@ -21484,6 +21658,11 @@ msgstr "מדיניות הפרטיות"
 msgid "Private"
 msgstr "פרטי"
 
+#. js-lingui-id: MAkP8e
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Private records"
+msgstr "רשומות פרטיות"
+
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
@@ -22010,13 +22189,6 @@ msgstr "מומלץ"
 msgid "Reconnect"
 msgstr "התחבר מחדש"
 
-#. js-lingui-id: XsIxsL
-#: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
-#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
-#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
-msgid "Reconnect needed"
-msgstr "נדרש חיבור מחדש"
-
 #. js-lingui-id: GENn17
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Reconnect this account to grant permission to create calendar events."
@@ -22141,6 +22313,16 @@ msgstr "תווית של רישום"
 msgid "Record page"
 msgstr "דף רשומה"
 
+#. js-lingui-id: J5b8Hz
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Record page widget"
+msgstr "וידג'ט דף רשומה"
+
+#. js-lingui-id: fHTWNa
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Record rules through relations"
+msgstr "כללי רשומות באמצעות קשרים"
+
 #. js-lingui-id: pVTJSR
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Record selection"
@@ -22204,11 +22386,6 @@ msgstr "הקלטה"
 msgid "Recording Failed"
 msgstr "ההקלטה נכשלה"
 
-#. js-lingui-id: kDQf8q
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx
-msgid "Recording requests"
-msgstr "בקשות הקלטה"
-
 #. js-lingui-id: h9TBi+
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Recording Scheduled"
@@ -22235,6 +22412,11 @@ msgstr "רישומים"
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 msgid "Records"
 msgstr "רישומים"
+
+#. js-lingui-id: CjlKOu
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+msgid "Records reached through these relations follow access to {objectLabel}."
+msgstr "רשומות שאליהן מגיעים דרך קשרים אלה יורשות את הגישה אל {objectLabel}."
 
 #. js-lingui-id: J+Qyf2
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
@@ -22352,6 +22534,7 @@ msgstr "נרשם כמופע פיתוח. מופע זה לא יחויב."
 
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Reject"
 msgstr "דחה"
 
@@ -22365,7 +22548,18 @@ msgstr "נדחה"
 msgid "related record path"
 msgstr "נתיב רשומה קשורה"
 
+#. js-lingui-id: l3qF/i
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Related record paths"
+msgstr "נתיבי רשומות קשורות"
+
+#. js-lingui-id: uGfOFe
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+msgid "Related records"
+msgstr "רשומות קשורות"
+
 #. js-lingui-id: h9AYFD
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 msgid "Relation"
 msgstr "קשר"
@@ -22426,6 +22620,11 @@ msgstr "שחרר והעבר לשרת זה"
 msgid "Reload"
 msgstr "טען מחדש"
 
+#. js-lingui-id: tF5Smn
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
+msgid "Reload page"
+msgstr "טענו מחדש את הדף"
+
 #. js-lingui-id: qbM5In
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Reload validity token"
@@ -22455,6 +22654,7 @@ msgstr "מרוחק"
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionRowDropdownMenu.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRemoveConnectionDialog.tsx
 #: src/modules/settings/components/SettingsImageInput.tsx
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/ui/input/components/BaseChip.tsx
@@ -22574,6 +22774,11 @@ msgstr "הסר קישור"
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
 msgid "Remove logo"
 msgstr "הסר לוגו"
+
+#. js-lingui-id: iW2ZAl
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
+msgid "Remove media access for {origin}"
+msgstr "הסירו גישה למדיה עבור {origin}"
 
 #. js-lingui-id: 99VIgC
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
@@ -22718,6 +22923,11 @@ msgstr "שינוי שם עבור כל השפות"
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
 msgid "Rename group"
 msgstr "שנה שם קבוצה"
+
+#. js-lingui-id: cwObXL
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Rendering preview…"
+msgstr "מעבד תצוגה מקדימה…"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -23207,6 +23417,7 @@ msgstr "תפקיד"
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 #: src/modules/side-panel/pages/share-record/hooks/useSidePanelShareRecordInvitation.ts
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -23489,6 +23700,11 @@ msgstr "אותו ערך בכל צד"
 msgid "SAML/OIDC"
 msgstr "SAML/OIDC"
 
+#. js-lingui-id: b/zjTD
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Sample data"
+msgstr "נתונים לדוגמה"
+
 #. js-lingui-id: 3hNFUc
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat.tsx
 msgid "Sample input"
@@ -23552,6 +23768,11 @@ msgstr "שמור הגדרות"
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
 msgid "Save your changes first"
 msgstr "שמור תחילה את השינויים שלך"
+
+#. js-lingui-id: A0/0NU
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Saved to Workspace app"
+msgstr "נשמר באפליקציית סביבת העבודה"
 
 #. js-lingui-id: w9O5DJ
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
@@ -23978,6 +24199,12 @@ msgstr "חפש רשומות..."
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Search registrations..."
 msgstr "חפש רישומים..."
+
+#. js-lingui-id: GHeAhn
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
+msgid "Search relations"
+msgstr "חיפוש קשרים"
 
 #. js-lingui-id: BlLxpG
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
@@ -25014,6 +25241,7 @@ msgstr "הגדרות שרוב סביבות העבודה לעולם אינן צר
 
 #. js-lingui-id: Ue7X/E
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 msgid "Setup incomplete"
 msgstr "ההגדרה לא הושלמה"
 
@@ -26019,9 +26247,14 @@ msgid "Steps of this workflow sharing a key write to the same conversation"
 msgstr "שלבים של תהליך עבודה זה החולקים מפתח כותבים לאותה שיחה"
 
 #. js-lingui-id: ygCKqB
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 msgid "Stop"
 msgstr "עצור"
+
+#. js-lingui-id: gGTNKw
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Stop capture for {ownerName}"
+msgstr ""
 
 #. js-lingui-id: 9QwrMz
 #: src/modules/ai/dictation/components/AiChatDictationButton.tsx
@@ -26032,11 +26265,6 @@ msgstr "הפסק הכתבה"
 #: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
 msgid "Stop impersonating"
 msgstr "הפסק התחזות"
-
-#. js-lingui-id: 5e5VJg
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
-msgid "Stop recording for {applicationName}"
-msgstr "הפסק הקלטה עבור {applicationName}"
 
 #. js-lingui-id: lQeGNv
 #: src/modules/ai/components/internal/SendMessageButton.tsx
@@ -26502,7 +26730,7 @@ msgid "Sync every message"
 msgstr "סנכרן כל הודעה"
 
 #. js-lingui-id: 5TRY4+
-#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
+#: src/modules/settings/applications/components/SettingsSyncFailedStatus.tsx
 msgid "Sync failed"
 msgstr "הסינכרון נכשל"
 
@@ -26673,7 +26901,7 @@ msgstr "דברו עם הצוות שלנו"
 
 #. js-lingui-id: bcrHWv
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "Tarball"
@@ -26970,6 +27198,11 @@ msgstr "ההסכם המלא עם השדות שנפתרו עבור הפריסה �
 msgid "The icon your workflow trigger will display in the command menu"
 msgstr "האייקון שתפעול תהליך העבודה שלך יופיע בתפריט הפקודות"
 
+#. js-lingui-id: RYl4Q1
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
+msgid "The mail server certificate is invalid"
+msgstr "אישור שרת הדואר אינו תקף"
+
 #. js-lingui-id: OpK2Nq
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "The marketplace could not be loaded. Check your connection and try again."
@@ -27066,6 +27299,11 @@ msgstr "לא ניתן היה לטעון את ההקלטה."
 #: src/modules/object-record/record-field/ui/hooks/useCreateJunctionRecordWithNestedTarget.ts
 msgid "The relation configuration could not be resolved."
 msgstr "לא ניתן היה לפענח את תצורת הקשר."
+
+#. js-lingui-id: baXgIX
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "The role attached to this webhook."
+msgstr "התפקיד המשויך ל-webhook זה."
 
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -27191,7 +27429,8 @@ msgid "Thickness"
 msgstr "עובי"
 
 #. js-lingui-id: AUV+TY
-#: src/modules/ai/components/AiChatThinkingRow.tsx
+#: src/modules/ai/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai/utils/getReasoningStepLabel.ts
 msgid "Thinking"
 msgstr "חושב"
 
@@ -27529,6 +27768,11 @@ msgstr "מפתח ארגון זה כבר משויך למופע שרת אחר. ש�
 msgid "This Organization key is currently bound to a different server instance. Transferring it here will release it from the previous server and stop counting seats on it. Are you sure you want to continue?"
 msgstr "מפתח ארגון זה משויך כעת למופע שרת אחר. העברתו לכאן תשחרר אותו מהשרת הקודם ותפסיק את ספירת המושבים בו. האם אתה בטוח שברצונך להמשיך?"
 
+#. js-lingui-id: NBHLa1
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+msgid "This origin is already configured. Use its switches to change access."
+msgstr "מקור זה כבר מוגדר. השתמשו במתגים שלו כדי לשנות את הגישה."
+
 #. js-lingui-id: 0BVkmQ
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "This override no longer exists. Reload to see the current limit."
@@ -27739,7 +27983,7 @@ msgid "This will revoke {0} for {userLabel}."
 msgstr "פעולה זו תשלול {0} עבור {userLabel}."
 
 #. js-lingui-id: f8HOUp
-#: src/modules/ai/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai/utils/getReasoningStepLabel.ts
 msgid "Thought"
 msgstr "מחשבה"
 
@@ -28586,8 +28830,7 @@ msgid "Unanswered"
 msgstr "ללא מענה"
 
 #. js-lingui-id: EbMPZJ
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
-#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
+#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Unassigned"
 msgstr "לא משויך"
 
@@ -28600,6 +28843,11 @@ msgstr "לא משויך"
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 msgid "Unavailable"
 msgstr "לא זמין"
+
+#. js-lingui-id: HY7voI
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathTableRow.tsx
+msgid "Unavailable object"
+msgstr "אובייקט לא זמין"
 
 #. js-lingui-id: N81WTf
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageHeaderDescription.ts
@@ -29117,8 +29365,8 @@ msgstr "עדכן"
 
 #. js-lingui-id: EkH9pt
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
 #: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
-#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "Update"
 msgstr "עדכן"
@@ -29324,6 +29572,11 @@ msgstr "לשדרג לחיוב שנתי?"
 #: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
 msgid "Upgrade to Organization"
 msgstr "שדרג לארגון"
+
+#. js-lingui-id: T10DNC
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+msgid "Upgrade to Organization to change related records"
+msgstr "שדרגו ל-Organization כדי לשנות רשומות קשורות"
 
 #. js-lingui-id: SN4fM+
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -30006,7 +30259,6 @@ msgid "view"
 msgstr "תצוגה"
 
 #. js-lingui-id: jpctdh
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemSecondaryLabel.ts
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
@@ -30275,7 +30527,7 @@ msgid "Waiting for output..."
 msgstr "ממתין לפלט..."
 
 #. js-lingui-id: FZKt6U
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 msgid "Waiting for permission"
 msgstr "ממתין להרשאה"
 
@@ -30524,6 +30776,11 @@ msgstr "וובהוקים"
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Website"
 msgstr "אתר אינטרנט"
+
+#. js-lingui-id: 9FCp7Z
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+msgid "Website origin"
+msgstr "מקור האתר"
 
 #. js-lingui-id: wro6m2
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx

@@ -15,6 +15,7 @@ describe('createWebhookInput', () => {
       { object: null, action: 'test' }, // should be filtered out
     ],
     secret: 'test-secret',
+    roleId: 'role-id',
   };
 
   describe('createWebhookCreateInput', () => {
@@ -26,6 +27,7 @@ describe('createWebhookInput', () => {
         operations: ['person.created', 'company.updated'],
         description: 'Test webhook',
         secret: 'test-secret',
+        roleId: 'role-id',
       });
     });
 
@@ -50,6 +52,7 @@ describe('createWebhookInput', () => {
         operations: ['person.created', 'company.updated'],
         description: 'Test webhook',
         secret: 'test-secret',
+        roleId: 'role-id',
       });
     });
 

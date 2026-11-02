@@ -235,7 +235,7 @@ describe('classifyApplicationFlatEntities', () => {
   it('should exclude a member role assignment as runtime state', () => {
     expect(entryOf(ROLE_TARGET_UID)).toMatchObject({
       status: ApplicationExportCoverageStatus.EXCLUDED,
-      reason: 'member or API key role assignment',
+      reason: 'member, API key or webhook role assignment',
     });
   });
 
@@ -251,7 +251,7 @@ describe('classifyApplicationFlatEntities', () => {
     expect(entryOf(FOREIGN_ROLE_TARGET_UID)).toMatchObject({
       metadataName: 'roleTarget',
       status: ApplicationExportCoverageStatus.EXCLUDED,
-      reason: 'member or API key role assignment',
+      reason: 'member, API key or webhook role assignment',
     });
   });
 

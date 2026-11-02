@@ -1,3 +1,4 @@
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
 import { SettingsApplicationTableHeaderRow } from '@/settings/applications/components/SettingsApplicationTableHeaderRow';
 import { SettingsApplicationsTableApplicationRow } from '@/settings/applications/components/SettingsApplicationsTableApplicationRow';
@@ -6,10 +7,12 @@ import { type SettingsApplicationsTableLinkTarget } from '@/settings/application
 import { type SettingsApplicationTableRowMiddleColumn } from '@/settings/applications/types/SettingsApplicationTableRowMiddleColumn';
 import { type SettingsMemberApplicationStatus } from '@/settings/applications/types/SettingsMemberApplicationStatus';
 import { type SettingsWorkspaceApplicationStatus } from '@/settings/applications/types/SettingsWorkspaceApplicationStatus';
+import { getSettingsApplicationLink } from '@/settings/applications/utils/getSettingsApplicationLink';
 import { getSettingsApplicationsTableRowItems } from '@/settings/applications/utils/getSettingsApplicationsTableRowItems';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { Table } from '@/ui/layout/table/components/Table';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { type ReactNode, useState } from 'react';
@@ -69,9 +72,12 @@ export const SettingsApplicationsTable = ({
 
   const [searchTerm, setSearchTerm] = useState('');
 
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+
   const rowItems = getSettingsApplicationsTableRowItems({
     applications,
     builtInAccountApps,
+    currentWorkspace,
   });
 
   const filteredRowItems = filterBySearchQuery({
@@ -108,8 +114,11 @@ export const SettingsApplicationsTable = ({
               {filteredRowItems.map((rowItem) => (
                 <SettingsApplicationsTableApplicationRow
                   key={rowItem.id}
-                  rowItem={rowItem}
-                  linkTarget={linkTarget}
+                  application={rowItem}
+                  link={getSettingsApplicationLink({
+                    linkTarget,
+                    applicationId: rowItem.id,
+                  })}
                   middleColumn={middleColumn}
                   statuses={statusesById?.[rowItem.id]}
                 />

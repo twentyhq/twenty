@@ -16,6 +16,7 @@ import { type ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
+import { ADD_ACCESS_TOKEN_EXPIRES_AT_TO_CONNECTED_ACCOUNT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-54/add-access-token-expires-at-to-connected-account-upgrade-command-name.constant';
 import { type EncryptedImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
@@ -75,6 +76,13 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
 
   @Column({ type: 'timestamptz', nullable: true })
   lastCredentialsRefreshedAt: Date | null;
+
+  @Column({ type: 'timestamptz', nullable: true })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_ACCESS_TOKEN_EXPIRES_AT_TO_CONNECTED_ACCOUNT_UPGRADE_COMMAND_NAME,
+  })
+  accessTokenExpiresAt: Date | null;
 
   @Column({ type: 'timestamptz', nullable: true })
   authFailedAt: Date | null;

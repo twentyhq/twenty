@@ -266,6 +266,12 @@ msgstr "{0, plural, other {# 个对象}}"
 msgid "{0, plural, one {# Object} other {# Objects}}"
 msgstr "{0, plural, other {# 个对象}}"
 
+#. js-lingui-id: zHa4lw
+#. placeholder {0}: parts.length
+#: src/modules/ai/components/ThinkingStepsDisplay.tsx
+msgid "{0, plural, one {# step} other {# steps}}"
+msgstr "{0, plural, one {# 步} other {# 步}}"
+
 #. js-lingui-id: 8ob0vY
 #. placeholder {0}: failedCount + behindCount
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
@@ -631,11 +637,6 @@ msgstr "{callRecordingHours, plural, other {{formattedCallRecordingHours} 小时
 msgid "{cardCount, plural, one {Approve # action?} other {Approve # actions?}}"
 msgstr "{cardCount, plural, other {批准 # 个操作？}}"
 
-#. js-lingui-id: AnO6CC
-#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
-msgid "{channelStatusLabel} · {assignmentLabel}"
-msgstr "{channelStatusLabel} · {assignmentLabel}"
-
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "{count, plural, one {{formattedCount} change} other {{formattedCount} changes}}"
@@ -845,11 +846,6 @@ msgstr ""
 #: src/modules/ai/utils/getAiModelModeDescription.ts
 msgid "{label} (Auto)"
 msgstr "{label}（自动）"
-
-#. js-lingui-id: Qoi5Dj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
-msgid "{label} (default)"
-msgstr "{label}（默认）"
 
 #. js-lingui-id: Oq2RUh
 #: src/modules/ai/utils/getAiModelPinOptions.ts
@@ -1139,11 +1135,6 @@ msgstr "{sourceCount} 种来源类型"
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "{spokenMinutes} {spokenSeconds}"
 msgstr "{spokenMinutes} {spokenSeconds}"
-
-#. js-lingui-id: 8vJ+2V
-#: src/modules/ai/components/ThinkingStepsDisplay.tsx
-msgid "{stepCount, plural, one {# step} other {# steps}}"
-msgstr "{stepCount, plural, one {# 步} other {# 步}}"
 
 #. js-lingui-id: Bzjg0/
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
@@ -1580,6 +1571,11 @@ msgstr "启动工作流的人员会打开一个表单并当场填写。使用此
 msgid "A new one each time the step runs"
 msgstr "每次步骤运行时新建一个"
 
+#. js-lingui-id: 3pDKsj
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "A newer revision exists. Open the latest preview to save."
+msgstr "存在较新的修订版本。请打开最新预览以保存。"
+
 #. js-lingui-id: K3NJnJ
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "A payment method is needed to keep your workspace active."
@@ -1594,6 +1590,11 @@ msgstr "您的订阅付款失败。我们重试期间，您的高级功能将保
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
 msgstr "会议开始时，录音机器人将加入。"
+
+#. js-lingui-id: fdM8v5
+#: src/modules/settings/developers/validation-schemas/webhookFormSchema.ts
+msgid "A role is required"
+msgstr "角色为必填项"
 
 #. js-lingui-id: C6xZqR
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -1703,7 +1704,7 @@ msgid "Access Key ID"
 msgstr "访问密钥 ID"
 
 #. js-lingui-id: 6hdTJw
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Access to {objectLabelPlural} is set by roles, not record by record."
 msgstr "对 {objectLabelPlural} 的访问由角色设置，而非逐条记录设置。"
 
@@ -2196,6 +2197,11 @@ msgstr "添加电子邮件"
 msgid "Add email channel"
 msgstr "添加电子邮件渠道"
 
+#. js-lingui-id: QwQhEf
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+msgid "Add embedded website"
+msgstr "添加嵌入式网站"
+
 #. js-lingui-id: 6kC3KJ
 #: src/modules/ai/components/internal/AiChatToolCallApprovalCardLayout.tsx
 msgid "Add feedback"
@@ -2356,6 +2362,11 @@ msgstr "添加源"
 msgid "Add Output Field"
 msgstr "添加输出字段"
 
+#. js-lingui-id: ZqKhbh
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathAddDropdown.tsx
+msgid "Add path"
+msgstr "添加路径"
+
 #. js-lingui-id: lRpmgk
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "Add payment method"
@@ -2506,6 +2517,11 @@ msgstr "使用 LM Studio 的安装链接添加 Twenty 远程服务器。"
 msgid "Add these records at your DNS provider. Twenty checks them automatically."
 msgstr "在您的 DNS 提供商处添加这些记录。Twenty 会自动检查它们。"
 
+#. js-lingui-id: Bc+ryO
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
+msgid "Add this path"
+msgstr "添加此路径"
+
 #. js-lingui-id: 5+ttxv
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
 msgid "Add to blocklist"
@@ -2546,6 +2562,11 @@ msgstr "添加 URI"
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "Add view"
 msgstr "添加视图"
+
+#. js-lingui-id: hKxpSq
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+msgid "Add website"
+msgstr "添加网站"
 
 #. js-lingui-id: 8sZiWP
 #: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
@@ -2902,6 +2923,11 @@ msgstr "AI 代理"
 msgid "AI chat"
 msgstr "AI 聊天"
 
+#. js-lingui-id: IuEC4q
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "AI chat component builder"
+msgstr "AI 聊天组件构建器"
+
 #. js-lingui-id: UrjxKN
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI chat inbox"
@@ -3073,7 +3099,6 @@ msgstr "对齐方式"
 
 #. js-lingui-id: N40H+G
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
@@ -3484,6 +3509,7 @@ msgstr "上传图片时发生错误。"
 #: src/modules/page-layout/hooks/useResetPageLayoutWidgetToDefault.ts
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWidgets.ts
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets.ts
+#: src/modules/related-record-paths/hooks/useRelatedRecordPathMutations.ts
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/views/hooks/internal/usePerformViewApiUpdate.ts
 #: src/modules/views/hooks/internal/usePerformViewEntityApiPersistOperation.ts
@@ -3734,6 +3760,11 @@ msgstr "应用删除成功"
 msgid "App logs"
 msgstr "应用日志"
 
+#. js-lingui-id: xqkZbG
+#: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
+msgid "App Operation"
+msgstr "应用操作"
+
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "App preferences"
@@ -3867,6 +3898,7 @@ msgstr "审批审核"
 
 #. js-lingui-id: Z7ZXbT
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Approve"
 msgstr "批准"
 
@@ -3910,6 +3942,7 @@ msgid "Apps"
 msgstr "应用"
 
 #. js-lingui-id: THHN20
+#: src/modules/settings/app-preferences/hooks/useAccountsSettingsBreadcrumbLink.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -3920,10 +3953,10 @@ msgstr "应用"
 msgid "Apps preferences"
 msgstr "应用首选项"
 
-#. js-lingui-id: aDW39c
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx
-msgid "Apps recording"
-msgstr "应用正在录制"
+#. js-lingui-id: Nk6yc9
+#: src/utils/title-utils.ts
+msgid "Apps preferences - Settings"
+msgstr "应用偏好设置 - 设置"
 
 #. js-lingui-id: EzsAEI
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
@@ -4063,6 +4096,11 @@ msgstr "向上箭头"
 msgid "As it will be displayed in the workspace"
 msgstr ""
 
+#. js-lingui-id: pKkmLw
+#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
+msgid "As their role allows"
+msgstr "按其角色允许的范围"
+
 #. js-lingui-id: 54PdN4
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
@@ -4178,7 +4216,6 @@ msgid "Assignable to Workspace Members"
 msgstr ""
 
 #. js-lingui-id: lXGdbb
-#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Assigned"
 msgstr "已分配"
@@ -4193,6 +4230,11 @@ msgstr "分配了 {roleTargetDisplayName}"
 msgid "Assigned to"
 msgstr "分配给"
 
+#. js-lingui-id: iU3XRS
+#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+msgid "Assigned to me"
+msgstr "分配给我"
+
 #. js-lingui-id: TzM/0+
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Assigned to users who join via invite link, approved domain, or SSO, and used as fallback when an assigned role is deleted"
@@ -4204,7 +4246,6 @@ msgid "Assigned to you"
 msgstr "已分配给您"
 
 #. js-lingui-id: ojKCLU
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Assignee"
 msgstr "负责人"
@@ -4565,6 +4606,7 @@ msgstr "十亿"
 #. js-lingui-id: iH8pgl
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 #: src/modules/side-panel/components/SidePanelBackButton.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowDropdownStepOutputItems.tsx
@@ -4973,7 +5015,7 @@ msgid "Build many-to-many relations"
 msgstr "创建多对多关系"
 
 #. js-lingui-id: +7fBMP
-#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
 msgid "Built-in"
 msgstr "内置"
 
@@ -5274,9 +5316,16 @@ msgid "Calls"
 msgstr "通话"
 
 #. js-lingui-id: rT2cV+
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
 msgid "Camera"
 msgstr "摄像头"
+
+#. js-lingui-id: QIPLcC
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Camera access enabled"
+msgstr ""
 
 #. js-lingui-id: w3vNoK
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -5311,7 +5360,7 @@ msgstr "加拿大"
 #. js-lingui-id: dEgA5A
 #: src/modules/ai/components/AiChatApprovalConfirmation.tsx
 #: src/modules/applications/components/AuthorizeActionButtons.tsx
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -5369,6 +5418,11 @@ msgstr "取消周期切换"
 msgid "Cancel interval switching?"
 msgstr "取消周期切换？"
 
+#. js-lingui-id: ujldpy
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Cancel media request for {ownerName}"
+msgstr ""
+
 #. js-lingui-id: rRK/Lf
 #: src/modules/settings/billing/components/SettingsBillingContent.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -5385,11 +5439,6 @@ msgstr "取消计划切换"
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Cancel plan switching?"
 msgstr "取消计划切换？"
-
-#. js-lingui-id: BfJPwg
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
-msgid "Cancel recording for {applicationName}"
-msgstr "取消 {applicationName} 的录制"
 
 #. js-lingui-id: AnRu/j
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -5569,11 +5618,6 @@ msgstr "抄送/密送"
 msgid "Cell controls"
 msgstr "单元格控件"
 
-#. js-lingui-id: nejZ6P
-#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
-msgid "Certificate invalid"
-msgstr "证书无效"
-
 #. js-lingui-id: o+XJ9D
 #: src/modules/ai/components/AiChatThreadTriageButtons.tsx
 msgid "Change"
@@ -5647,6 +5691,11 @@ msgstr "将主题更改为系统"
 #: src/modules/log-console/constants/LogConsoleRecordChangeColumns.tsx
 msgid "Changes"
 msgstr "更改"
+
+#. js-lingui-id: OhVo1W
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
+msgid "Changes saved. Reload open Twenty tabs to apply the updated permissions. Reloading ends active calls and recordings."
+msgstr "更改已保存。请重新加载已打开的 Twenty 标签页以应用更新后的权限。重新加载会结束正在进行的通话和录制。"
 
 #. js-lingui-id: oRH6Dq
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -6030,6 +6079,11 @@ msgstr "选择此应用导入哪些文件夹"
 msgid "Choose which profile fields users with the Edit Profile permission can modify"
 msgstr ""
 
+#. js-lingui-id: jgIz8c
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
+msgid "Choose which websites embedded in iframe widgets can request microphone or camera access. Members still need to enable access and approve the browser permission."
+msgstr "选择嵌入 iframe 小组件的网站是否可以请求访问麦克风或摄像头。成员仍需启用访问权限并批准浏览器权限。"
+
 #. js-lingui-id: 22LF79
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 msgid "Choose your preferences for the apps installed on your workspace by the admin"
@@ -6260,6 +6314,7 @@ msgstr "剪贴板功能需要安全连接 (HTTPS)。请通过 HTTPS 访问此应
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/onboarding/components/OnboardingSkipDialog.tsx
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
@@ -6640,10 +6695,20 @@ msgstr "已完成的任务保留{completedDuration}，失败的任务保留{fail
 msgid "Complexity"
 msgstr "复杂度"
 
+#. js-lingui-id: ST17km
+#: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
+msgid "Component failed to render."
+msgstr "组件渲染失败。"
+
 #. js-lingui-id: 3pJ7V5
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 msgid "Component name"
 msgstr "组件名称"
+
+#. js-lingui-id: WcUICq
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Component preview with sample data"
+msgstr "使用示例数据的组件预览"
 
 #. js-lingui-id: rYRNgS
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
@@ -7449,6 +7514,17 @@ msgstr "无法生成已签署的 DPA。请重试。"
 msgid "Could not grant media access. Please try again."
 msgstr "无法授予媒体访问权限。请重试。"
 
+#. js-lingui-id: Y5qCpF
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
+#: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
+msgid "Could not load preview."
+msgstr "无法加载预览。"
+
+#. js-lingui-id: mrmGIf
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
+msgid "Could not load related records"
+msgstr "无法加载相关记录"
+
 #. js-lingui-id: Ft89Ck
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
 msgid "Could not load runs"
@@ -7488,6 +7564,11 @@ msgstr "无法打开 API 操作台"
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Could not react with {emoji}"
 msgstr "无法使用 {emoji} 添加反应"
+
+#. js-lingui-id: 6GjSMn
+#: src/modules/ai/hooks/useRefreshFrontComponents.ts
+msgid "Could not refresh components. Reload to see saved changes."
+msgstr "无法刷新组件。重新加载以查看已保存的更改。"
 
 #. js-lingui-id: w1HkE9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -7777,6 +7858,11 @@ msgstr "创建应用程序"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Create and configure AI agents"
 msgstr "创建和配置 AI 代理"
+
+#. js-lingui-id: PRUHBf
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create and preview frontend components in AI chat before adding them to the Workspace app."
+msgstr "在将前端组件添加到工作区应用之前，可在 AI 聊天中创建并预览这些组件。"
 
 #. js-lingui-id: vgdzLf
 #: src/modules/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage.tsx
@@ -8602,6 +8688,11 @@ msgstr "深色"
 msgid "Dashboard duplicated successfully"
 msgstr "仪表板复制成功"
 
+#. js-lingui-id: xLSe09
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Dashboard widget"
+msgstr "仪表板小组件"
+
 #. js-lingui-id: HKH+W+
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
@@ -8944,6 +9035,11 @@ msgstr "定义对象的名称和描述"
 msgid "Define the name and instructions for this skill"
 msgstr "为此技能定义名称和指令"
 
+#. js-lingui-id: zDccHY
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Define the relations along which a record's permissions extend to related records."
+msgstr "定义记录的权限可沿其扩展到相关记录的关系。"
+
 #. js-lingui-id: Ntu10D
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Define user roles and access levels"
@@ -9214,6 +9310,11 @@ msgstr "删除所有对象上的记录"
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 msgid "Delete Related {relationObjectLabelSingular}"
 msgstr "删除相关的 {relationObjectLabelSingular}"
+
+#. js-lingui-id: CW/kVJ
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathTableRow.tsx
+msgid "Delete related record path"
+msgstr "删除相关记录路径"
 
 #. js-lingui-id: efjzvW
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -9606,6 +9707,7 @@ msgid "Direction"
 msgstr "方向"
 
 #. js-lingui-id: cO9+2L
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Disable"
 msgstr "禁用"
@@ -9614,6 +9716,11 @@ msgstr "禁用"
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "Disable impersonation"
 msgstr "禁用模拟登录"
+
+#. js-lingui-id: QRe0KA
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Disable media access for {ownerName}"
+msgstr ""
 
 #. js-lingui-id: 8v3G2p
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -10635,6 +10742,11 @@ msgstr "电子邮件不能为空"
 msgid "embed"
 msgstr "嵌入"
 
+#. js-lingui-id: cjPnTO
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
+msgid "Embedded website media access"
+msgstr "嵌入式网站媒体访问权限"
+
 #. js-lingui-id: eXoH4Q
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "employees"
@@ -10720,10 +10832,25 @@ msgstr "启用"
 msgid "Enable bypass options"
 msgstr "启用绕过选项"
 
+#. js-lingui-id: +EDob0
+#: src/modules/media-access/components/ManagedIframeSession.tsx
+msgid "Enable camera"
+msgstr ""
+
 #. js-lingui-id: Tt0V8j
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "Enable impersonation"
 msgstr "启用模拟登录"
+
+#. js-lingui-id: 4Jrl0H
+#: src/modules/media-access/components/ManagedIframeSession.tsx
+msgid "Enable microphone"
+msgstr ""
+
+#. js-lingui-id: /RSrNr
+#: src/modules/media-access/components/ManagedIframeSession.tsx
+msgid "Enable microphone and camera"
+msgstr ""
 
 #. js-lingui-id: gZo0V9
 #: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
@@ -10910,6 +11037,11 @@ msgstr "输入金额 x 1 000 000 (例如: $3.21 → 3210000)"
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 msgid "Enter an HTTP or HTTPS origin without a path or wildcard, such as https://portal.example.com."
 msgstr "输入不含路径或通配符的 HTTP 或 HTTPS 源，例如 https://portal.example.com。"
+
+#. js-lingui-id: TO+jkh
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+msgid "Enter an HTTPS origin without a path or wildcard, such as https://workspace.aircall.io."
+msgstr "输入不含路径或通配符的 HTTPS 源，例如 https://workspace.aircall.io。"
 
 #. js-lingui-id: 8yJgo+
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
@@ -12819,11 +12951,11 @@ msgstr "按对象类型筛选"
 msgid "Filter by record ID"
 msgstr "按记录 ID 筛选"
 
-#. js-lingui-id: jge9hE
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
-msgid "Filter channel chats"
-msgstr "筛选频道聊天"
+#. js-lingui-id: /+U0Y/
+#: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
+#: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
+msgid "Filter chats"
+msgstr "筛选聊天"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -15994,10 +16126,20 @@ msgstr "小于或等于"
 msgid "Let each member decide for themselves"
 msgstr "让每位成员自行决定"
 
+#. js-lingui-id: bM+k1O
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Let people make a record visible only to its creator and the people it is shared with."
+msgstr "允许用户将记录设为仅其创建者及与其共享的人员可见。"
+
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let people restrict and share individual records."
 msgstr "允许用户限制和共享单条记录。"
+
+#. js-lingui-id: b3MaZQ
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Let record-level permission rules compare a field of a related record."
+msgstr "允许记录级权限规则比较关联记录的字段。"
 
 #. js-lingui-id: HRo4g8
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -16427,6 +16569,11 @@ msgstr "正在加载更多对话……"
 msgid "Loading more..."
 msgstr "正在加载更多…"
 
+#. js-lingui-id: nSgEqx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Loading preview…"
+msgstr "正在加载预览……"
+
 #. js-lingui-id: WepeNQ
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 msgid "Loading records"
@@ -16483,7 +16630,7 @@ msgstr "正在加载…"
 
 #. js-lingui-id: d5zxa4
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "Local"
 msgstr "本地"
@@ -17075,6 +17222,16 @@ msgstr "我 / {workspaceMemberFieldLabel}"
 msgid "Measure engagement on the campaigns this workspace sends"
 msgstr "衡量此工作区发送的营销活动的参与度"
 
+#. js-lingui-id: 62uGRa
+#: src/modules/media-access/components/MediaAccessIndicator.tsx
+msgid "Media access enabled"
+msgstr ""
+
+#. js-lingui-id: rH8KbL
+#: src/modules/media-access/components/MediaAccessIndicator.tsx
+msgid "Media access requests"
+msgstr ""
+
 #. js-lingui-id: agPptk
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 msgid "Medium"
@@ -17293,9 +17450,16 @@ msgid "Method"
 msgstr "方法"
 
 #. js-lingui-id: 1iY5xv
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
 msgid "Microphone"
 msgstr "麦克风"
+
+#. js-lingui-id: eiGwrP
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Microphone access enabled"
+msgstr ""
 
 #. js-lingui-id: P9IeiA
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
@@ -17303,9 +17467,19 @@ msgid "Microphone access is blocked. Allow it in your browser settings to dictat
 msgstr "麦克风访问权限已被阻止。请在浏览器设置中允许访问以进行听写。"
 
 #. js-lingui-id: /XArxJ
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 msgid "Microphone and camera"
 msgstr "麦克风和摄像头"
+
+#. js-lingui-id: 0Cq1++
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Microphone and camera access enabled"
+msgstr ""
+
+#. js-lingui-id: yGBwBp
+#: src/modules/media-access/components/MediaAccessIndicator.tsx
+msgid "Microphone or camera in use"
+msgstr ""
 
 #. js-lingui-id: 6cH65H
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -17329,12 +17503,6 @@ msgstr "最小"
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Min range"
 msgstr "最小范围"
-
-#. js-lingui-id: oSrMRT
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
-#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
-msgid "Mine"
-msgstr "我的"
 
 #. js-lingui-id: 8GG+Pa
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
@@ -17377,11 +17545,6 @@ msgstr "缺少授权 URL"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Missing calendar permission."
 msgstr "缺少日历权限。"
-
-#. js-lingui-id: XLNNcv
-#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
-msgid "Missing configuration"
-msgstr "缺少配置"
 
 #. js-lingui-id: kgDu74
 #: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
@@ -18989,10 +19152,20 @@ msgstr "未找到符合筛选条件的记录。"
 msgid "No records to review"
 msgstr "没有待审核的记录"
 
+#. js-lingui-id: AxHLth
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
+msgid "No related records follow this object yet"
+msgstr "尚无相关记录遵循此对象"
+
 #. js-lingui-id: gvIkAA
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "No relation to count by"
 msgstr "没有可用于计数的关联关系"
+
+#. js-lingui-id: dPgrAv
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
+msgid "No relations"
+msgstr "无关系"
 
 #. js-lingui-id: m3W0Yn
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -19553,7 +19726,7 @@ msgid "now"
 msgstr "现在"
 
 #. js-lingui-id: hzMYNj
-#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "NPM"
 msgstr "NPM"
@@ -19637,7 +19810,7 @@ msgid "Numbered list"
 msgstr ""
 
 #. js-lingui-id: b/j06W
-#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -19663,6 +19836,7 @@ msgstr "对象"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions.tsx
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord.tsx
@@ -19959,12 +20133,12 @@ msgid "Only run when one of these fields changes"
 msgstr "仅当这些字段之一发生更改时运行"
 
 #. js-lingui-id: YSJayJ
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Only the creator of this record and people with full access to it can change who has access."
 msgstr "只有此记录的创建者和拥有完全访问权限的人员才能更改谁有访问权限。"
 
 #. js-lingui-id: afNmH6
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Only the creator of this record, people with full access to it and admins can change who has access."
 msgstr "只有此记录的创建者、拥有完全访问权限的人员和管理员才能更改谁有访问权限。"
 
@@ -21484,6 +21658,11 @@ msgstr "隐私政策"
 msgid "Private"
 msgstr "私有"
 
+#. js-lingui-id: MAkP8e
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Private records"
+msgstr "私密记录"
+
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
@@ -22010,13 +22189,6 @@ msgstr "推荐"
 msgid "Reconnect"
 msgstr "重新连接"
 
-#. js-lingui-id: XsIxsL
-#: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
-#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
-#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
-msgid "Reconnect needed"
-msgstr "需要重新连接"
-
 #. js-lingui-id: GENn17
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Reconnect this account to grant permission to create calendar events."
@@ -22141,6 +22313,16 @@ msgstr "记录标签"
 msgid "Record page"
 msgstr "记录页面"
 
+#. js-lingui-id: J5b8Hz
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Record page widget"
+msgstr "记录页面小组件"
+
+#. js-lingui-id: fHTWNa
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Record rules through relations"
+msgstr "通过关联的记录规则"
+
 #. js-lingui-id: pVTJSR
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Record selection"
@@ -22204,11 +22386,6 @@ msgstr "录音中"
 msgid "Recording Failed"
 msgstr "录制失败"
 
-#. js-lingui-id: kDQf8q
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx
-msgid "Recording requests"
-msgstr "录音请求"
-
 #. js-lingui-id: h9TBi+
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Recording Scheduled"
@@ -22235,6 +22412,11 @@ msgstr "记录"
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 msgid "Records"
 msgstr "记录"
+
+#. js-lingui-id: CjlKOu
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+msgid "Records reached through these relations follow access to {objectLabel}."
+msgstr "通过这些关系访问的记录将遵循对 {objectLabel} 的访问权限。"
 
 #. js-lingui-id: J+Qyf2
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
@@ -22352,6 +22534,7 @@ msgstr "已注册为开发实例。此实例不会产生计费。"
 
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Reject"
 msgstr "拒绝"
 
@@ -22365,7 +22548,18 @@ msgstr "已拒绝"
 msgid "related record path"
 msgstr "相关记录路径"
 
+#. js-lingui-id: l3qF/i
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Related record paths"
+msgstr "相关记录路径"
+
+#. js-lingui-id: uGfOFe
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+msgid "Related records"
+msgstr "相关记录"
+
 #. js-lingui-id: h9AYFD
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 msgid "Relation"
 msgstr "关系"
@@ -22426,6 +22620,11 @@ msgstr "释放并转移到此服务器"
 msgid "Reload"
 msgstr "重新加载"
 
+#. js-lingui-id: tF5Smn
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
+msgid "Reload page"
+msgstr "重新加载页面"
+
 #. js-lingui-id: qbM5In
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Reload validity token"
@@ -22455,6 +22654,7 @@ msgstr "远程"
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionRowDropdownMenu.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRemoveConnectionDialog.tsx
 #: src/modules/settings/components/SettingsImageInput.tsx
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/ui/input/components/BaseChip.tsx
@@ -22574,6 +22774,11 @@ msgstr "移除链接"
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
 msgid "Remove logo"
 msgstr "移除徽标"
+
+#. js-lingui-id: iW2ZAl
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
+msgid "Remove media access for {origin}"
+msgstr "移除 {origin} 的媒体访问权限"
 
 #. js-lingui-id: 99VIgC
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
@@ -22718,6 +22923,11 @@ msgstr "为所有语言重命名"
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
 msgid "Rename group"
 msgstr "重命名组"
+
+#. js-lingui-id: cwObXL
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Rendering preview…"
+msgstr "正在渲染预览……"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -23207,6 +23417,7 @@ msgstr "角色"
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 #: src/modules/side-panel/pages/share-record/hooks/useSidePanelShareRecordInvitation.ts
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -23489,6 +23700,11 @@ msgstr "每一侧使用相同的数值"
 msgid "SAML/OIDC"
 msgstr "SAML/OIDC"
 
+#. js-lingui-id: b/zjTD
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Sample data"
+msgstr "示例数据"
+
 #. js-lingui-id: 3hNFUc
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat.tsx
 msgid "Sample input"
@@ -23552,6 +23768,11 @@ msgstr "保存设置"
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
 msgid "Save your changes first"
 msgstr "请先保存更改"
+
+#. js-lingui-id: A0/0NU
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Saved to Workspace app"
+msgstr "已保存到工作区应用"
 
 #. js-lingui-id: w9O5DJ
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
@@ -23978,6 +24199,12 @@ msgstr "搜索记录..."
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Search registrations..."
 msgstr "搜索注册..."
+
+#. js-lingui-id: GHeAhn
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
+msgid "Search relations"
+msgstr "搜索关系"
 
 #. js-lingui-id: BlLxpG
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
@@ -25014,6 +25241,7 @@ msgstr "大多数工作区无需更改的设置"
 
 #. js-lingui-id: Ue7X/E
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 msgid "Setup incomplete"
 msgstr "设置未完成"
 
@@ -26019,9 +26247,14 @@ msgid "Steps of this workflow sharing a key write to the same conversation"
 msgstr "此工作流中共享同一键的步骤会写入同一会话"
 
 #. js-lingui-id: ygCKqB
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 msgid "Stop"
 msgstr "停止"
+
+#. js-lingui-id: gGTNKw
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Stop capture for {ownerName}"
+msgstr ""
 
 #. js-lingui-id: 9QwrMz
 #: src/modules/ai/dictation/components/AiChatDictationButton.tsx
@@ -26032,11 +26265,6 @@ msgstr "停止听写"
 #: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
 msgid "Stop impersonating"
 msgstr "停止假装"
-
-#. js-lingui-id: 5e5VJg
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
-msgid "Stop recording for {applicationName}"
-msgstr "停止录制 {applicationName}"
 
 #. js-lingui-id: lQeGNv
 #: src/modules/ai/components/internal/SendMessageButton.tsx
@@ -26502,7 +26730,7 @@ msgid "Sync every message"
 msgstr "同步每条消息"
 
 #. js-lingui-id: 5TRY4+
-#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
+#: src/modules/settings/applications/components/SettingsSyncFailedStatus.tsx
 msgid "Sync failed"
 msgstr "同步失败"
 
@@ -26673,7 +26901,7 @@ msgstr "与我们的团队沟通"
 
 #. js-lingui-id: bcrHWv
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "Tarball"
@@ -26970,6 +27198,11 @@ msgstr "已为您的部署解析字段的完整协议。"
 msgid "The icon your workflow trigger will display in the command menu"
 msgstr "你的工作流触发器将在命令菜单中显示的图标"
 
+#. js-lingui-id: RYl4Q1
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
+msgid "The mail server certificate is invalid"
+msgstr "邮件服务器证书无效"
+
 #. js-lingui-id: OpK2Nq
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "The marketplace could not be loaded. Check your connection and try again."
@@ -27066,6 +27299,11 @@ msgstr "无法加载该录音。"
 #: src/modules/object-record/record-field/ui/hooks/useCreateJunctionRecordWithNestedTarget.ts
 msgid "The relation configuration could not be resolved."
 msgstr "无法解析关系配置。"
+
+#. js-lingui-id: baXgIX
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "The role attached to this webhook."
+msgstr "附加到此 Webhook 的角色。"
 
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -27191,7 +27429,8 @@ msgid "Thickness"
 msgstr "粗细"
 
 #. js-lingui-id: AUV+TY
-#: src/modules/ai/components/AiChatThinkingRow.tsx
+#: src/modules/ai/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai/utils/getReasoningStepLabel.ts
 msgid "Thinking"
 msgstr "思考中"
 
@@ -27529,6 +27768,11 @@ msgstr "此组织密钥已绑定到其他服务器实例。在此处释放后，
 msgid "This Organization key is currently bound to a different server instance. Transferring it here will release it from the previous server and stop counting seats on it. Are you sure you want to continue?"
 msgstr "此组织密钥当前绑定到其他服务器实例。在此处转移后，将从之前的服务器上释放，并停止在该服务器上统计席位数。确定要继续吗？"
 
+#. js-lingui-id: NBHLa1
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+msgid "This origin is already configured. Use its switches to change access."
+msgstr "此源已配置。请使用其开关更改访问权限。"
+
 #. js-lingui-id: 0BVkmQ
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "This override no longer exists. Reload to see the current limit."
@@ -27739,7 +27983,7 @@ msgid "This will revoke {0} for {userLabel}."
 msgstr "这将收回 {userLabel} 的 {0}。"
 
 #. js-lingui-id: f8HOUp
-#: src/modules/ai/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai/utils/getReasoningStepLabel.ts
 msgid "Thought"
 msgstr "思考"
 
@@ -28586,8 +28830,7 @@ msgid "Unanswered"
 msgstr "未回答"
 
 #. js-lingui-id: EbMPZJ
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
-#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
+#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Unassigned"
 msgstr "未分配"
 
@@ -28600,6 +28843,11 @@ msgstr "未分配"
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 msgid "Unavailable"
 msgstr "不可用"
+
+#. js-lingui-id: HY7voI
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathTableRow.tsx
+msgid "Unavailable object"
+msgstr "不可用的对象"
 
 #. js-lingui-id: N81WTf
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageHeaderDescription.ts
@@ -29117,8 +29365,8 @@ msgstr "更新"
 
 #. js-lingui-id: EkH9pt
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
 #: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
-#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "Update"
 msgstr "更新"
@@ -29324,6 +29572,11 @@ msgstr "升级为按年计费？"
 #: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
 msgid "Upgrade to Organization"
 msgstr "升级到组织计划"
+
+#. js-lingui-id: T10DNC
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+msgid "Upgrade to Organization to change related records"
+msgstr "升级到 Organization 以更改相关记录"
 
 #. js-lingui-id: SN4fM+
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -30006,7 +30259,6 @@ msgid "view"
 msgstr "视图"
 
 #. js-lingui-id: jpctdh
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemSecondaryLabel.ts
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
@@ -30275,7 +30527,7 @@ msgid "Waiting for output..."
 msgstr "正在等待输出..."
 
 #. js-lingui-id: FZKt6U
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 msgid "Waiting for permission"
 msgstr "等待权限"
 
@@ -30524,6 +30776,11 @@ msgstr "Webhooks"
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Website"
 msgstr "网站"
+
+#. js-lingui-id: 9FCp7Z
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+msgid "Website origin"
+msgstr "网站源"
 
 #. js-lingui-id: wro6m2
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx

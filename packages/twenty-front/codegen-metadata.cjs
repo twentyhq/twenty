@@ -28,10 +28,12 @@ module.exports = {
     './src/modules/analytics/graphql/**/*.{ts,tsx}',
     './src/modules/object-metadata/graphql/**/*.{ts,tsx}',
     './src/modules/validation-rules/graphql/**/*.{ts,tsx}',
+    './src/modules/related-record-paths/graphql/**/*.{ts,tsx}',
     './src/modules/navigation-menu-item/**/graphql/**/*.{ts,tsx}',
     './src/modules/command-menu-item/graphql/**/*.{ts,tsx}',
     './src/modules/file/graphql/**/*.{ts,tsx}',
     './src/modules/onboarding/graphql/**/*.{ts,tsx}',
+    './src/modules/getting-started/graphql/**/*.{ts,tsx}',
     './src/modules/front-components/graphql/**/*.{ts,tsx}',
 
     './src/modules/page-layout/widgets/**/graphql/**/*.{ts,tsx}',

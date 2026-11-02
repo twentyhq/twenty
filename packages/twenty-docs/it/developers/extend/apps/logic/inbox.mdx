@@ -92,4 +92,34 @@ await sendInboxMessage({
 * Una menzione solo render. Non aggiunge il membro alla conversazione né li notifica, quindi elenca tutti coloro che dovrebbero ricevere il messaggio in `workspaceMemberIds`.
 * `INBOX_ASSISTANT_MENTION` è il testo che il compositore scrive quando un membro menziona l'assistente (`@Ada`), quindi i tuoi messaggi lo chiamano allo stesso modo.
 
+## Collegare record a una conversazione
+
+`attachRecordToInboxThread()` collega una conversazione a un record e `detachRecordFromInboxThread()` rimuove il collegamento.
+
+```ts src/logic-functions/file-call-recap.ts
+import {
+  attachRecordToInboxThread,
+  sendInboxMessage,
+} from 'twenty-sdk/logic-function';
+
+const { threadId } = await sendInboxMessage({
+  workspaceMemberIds: [owner.id],
+  threadKey: `call-recap-${call.id}`,
+  idempotencyKey: `call-recap-${call.id}`,
+  title: `Recap of ${call.title}`,
+  text: call.summary,
+});
+
+await attachRecordToInboxThread({
+  threadId,
+  objectNameSingular: 'company',
+  recordId: company.id,
+});
+```
+
+* Entrambi accettano il `threadId` della conversazione e il record come `objectNameSingular` e `recordId`. Una conversazione può essere collegata a record di persone, aziende, opportunità e oggetti personalizzati.
+* Entrambi sono idempotenti: collegare un record due volte mantiene un unico collegamento, mentre scollegare un record non collegato non modifica nulla.
+* La chiamata viene eseguita con lo stesso accesso dell'[invio di un messaggio](#who-sends-the-message), che richiede l'autorizzazione `AI`. Un membro deve poter modificare la conversazione e l'applicazione può agire su una conversazione che ha scritto essa stessa o su una a cui è stato concesso il relativo ruolo predefinito; in caso contrario, la chiamata non riesce con `THREAD_NOT_FOUND`.
+* Il record deve essere leggibile con tale accesso, altrimenti la chiamata non riesce con `RECORD_NOT_FOUND`.
+
 <PageBanner illustration="card-page-inbox" />

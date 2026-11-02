@@ -100,18 +100,22 @@ describe('Webhook response event write (integration)', () => {
     receiver = await createWebhookReceiver(WEBHOOK_RECEIVER_PORT);
 
     const reachableWebhookResponse = await createWebhook({
-      targetUrl: `http://127.0.0.1:${WEBHOOK_RECEIVER_PORT}/webhook`,
-      operations: ['person.created'],
-      description: 'Webhook response write test (reachable)',
+      input: {
+        targetUrl: `http://127.0.0.1:${WEBHOOK_RECEIVER_PORT}/webhook`,
+        operations: ['person.created'],
+        description: 'Webhook response write test (reachable)',
+      },
     });
 
     expect(reachableWebhookResponse.body.errors).toBeUndefined();
     reachableWebhookId = reachableWebhookResponse.body.data.createWebhook.id;
 
     const unreachableWebhookResponse = await createWebhook({
-      targetUrl: `http://127.0.0.1:${UNREACHABLE_WEBHOOK_PORT}/webhook`,
-      operations: ['person.created'],
-      description: 'Webhook response write test (unreachable)',
+      input: {
+        targetUrl: `http://127.0.0.1:${UNREACHABLE_WEBHOOK_PORT}/webhook`,
+        operations: ['person.created'],
+        description: 'Webhook response write test (unreachable)',
+      },
     });
 
     expect(unreachableWebhookResponse.body.errors).toBeUndefined();
@@ -121,8 +125,8 @@ describe('Webhook response event write (integration)', () => {
 
   afterAll(async () => {
     await receiver.close();
-    await deleteWebhook(reachableWebhookId).catch(() => {});
-    await deleteWebhook(unreachableWebhookId).catch(() => {});
+    await deleteWebhook({ id: reachableWebhookId }).catch(() => {});
+    await deleteWebhook({ id: unreachableWebhookId }).catch(() => {});
 
     if (personId) {
       await makeGraphqlApiRequest({

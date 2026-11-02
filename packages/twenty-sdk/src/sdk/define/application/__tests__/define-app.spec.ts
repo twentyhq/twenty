@@ -298,6 +298,39 @@ describe('defineApplication', () => {
     );
   });
 
+  it('should accept a billable operation with only a label and an icon', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      billing: {
+        operations: {
+          enrichPerson: { label: 'Person enrichment', icon: 'IconUserSearch' },
+        },
+      },
+    });
+
+    expect(result.success).toBe(true);
+  });
+
+  it('should return error when a billable operation has an empty icon', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      billing: {
+        operations: {
+          enrichPerson: { label: 'Person enrichment', icon: '' },
+        },
+      },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain(
+      'Billable operation "enrichPerson" must have a non empty icon when set',
+    );
+  });
+
   it('should accept a flat and a per member recurring charge', () => {
     const result = defineApplication({
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',

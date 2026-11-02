@@ -123,12 +123,14 @@ describe('ServerRouteTrigger resolver resolution (integration)', () => {
   }, 60000);
 
   describe('by primary key', () => {
-    it('dispatches to the resolver and does not flag the response as deprecated', async () => {
+    it('still dispatches and flags the response as deprecated', async () => {
       const response = await callServerRoute({ identifier: ownerResolverId });
 
       expect(response.status).toBe(200);
       expect(response.body).toEqual(OWNER_RESPONSE);
-      expect(response.headers['deprecation']).toBeUndefined();
+      expect(response.headers['deprecation']).toBe(
+        SERVER_ROUTE_LEGACY_IDENTIFIER_DEPRECATION_HEADER_VALUE,
+      );
     }, 60000);
 
     it('rejects the id of a copy installed in a workspace that does not own the app', async () => {
@@ -222,7 +224,7 @@ describe('ServerRouteTrigger resolver resolution (integration)', () => {
           expectToFail: true,
         });
 
-        expect(response.status).toBe(404);
+        expect(response.status).toBe(409);
         expect(response.body).not.toEqual(OWNER_RESPONSE);
         expectOneNotInternalServerErrorHttpResponseSnapshot({
           status: response.status,

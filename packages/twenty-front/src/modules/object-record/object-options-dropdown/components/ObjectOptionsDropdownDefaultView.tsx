@@ -20,8 +20,8 @@ import {
   IconLayout,
   IconListDetails,
   IconLock,
-  useIcons,
 } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { doNotTranslate } from 'twenty-shared/i18n';
 

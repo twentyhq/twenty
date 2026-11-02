@@ -49,12 +49,12 @@ const QUEUED_TARGET_RETRY_LIMIT = 3;
 
 export type ServerRouteTriggerResult = {
   response: RouteTriggerResponse;
-  isResolvedThroughLegacyIdentifier: boolean;
+  isResolvedThroughDeprecatedRoute: boolean;
 };
 
 type ResolvedServerRouteResolver = {
   resolver: LogicFunctionEntity;
-  isResolvedThroughLegacyIdentifier: boolean;
+  isResolvedThroughDeprecatedRoute: boolean;
 };
 
 @Injectable()
@@ -80,7 +80,7 @@ export class ServerRouteTriggerService {
     resolverLogicFunctionIdentifier: string;
     resolverApplicationRegistrationId?: string;
   }): Promise<ServerRouteTriggerResult> {
-    const { resolver, isResolvedThroughLegacyIdentifier } = isDefined(
+    const { resolver, isResolvedThroughDeprecatedRoute } = isDefined(
       resolverApplicationRegistrationId,
     )
       ? await this.findRegistrationResolverOrThrow({
@@ -159,7 +159,7 @@ export class ServerRouteTriggerService {
       if (isLogicFunctionHttpResponse(resolverResult.data)) {
         return {
           response: buildRouteTriggerResponse(resolverResult.data),
-          isResolvedThroughLegacyIdentifier,
+          isResolvedThroughDeprecatedRoute,
         };
       }
 
@@ -175,7 +175,7 @@ export class ServerRouteTriggerService {
           payload: dispatchResult.payload ?? event,
           applicationRegistrationId,
         }),
-        isResolvedThroughLegacyIdentifier,
+        isResolvedThroughDeprecatedRoute,
       };
     } catch (error) {
       this.recordServerRouteFailure({
@@ -269,9 +269,10 @@ export class ServerRouteTriggerService {
       throw buildNotFoundException();
     }
 
-    return { resolver, isResolvedThroughLegacyIdentifier: false };
+    return { resolver, isResolvedThroughDeprecatedRoute: false };
   }
 
+  // TODO(@charlesBochet): drop the single-identifier routes (id and universalIdentifier) after 2026-11-29.
   private async findResolverOrThrow(
     identifier: string,
   ): Promise<ResolvedServerRouteResolver> {
@@ -280,9 +281,13 @@ export class ServerRouteTriggerService {
       .getOne();
 
     if (isDefined(resolverById)) {
+      this.logger.warn(
+        `Server route ${identifier} resolved through the deprecated logic function id form; the registered URL should move to /webhooks/server/${resolverById.application?.applicationRegistration?.id}/${resolverById.universalIdentifier}`,
+      );
+
       return {
         resolver: resolverById,
-        isResolvedThroughLegacyIdentifier: false,
+        isResolvedThroughDeprecatedRoute: true,
       };
     }
 
@@ -295,14 +300,18 @@ export class ServerRouteTriggerService {
 
     if (legacyCandidates.length > 1) {
       this.logger.error(
-        `Server route ${identifier} is claimed by ${legacyCandidates.length} application registrations (owner workspaces: ${legacyCandidates
+        `Server route ${identifier} is claimed by several application registrations (owner workspaces: ${legacyCandidates
           .map((candidate) => candidate.workspaceId)
           .join(', ')}); refusing to dispatch`,
       );
+
+      throw new ServerRouteTriggerException(
+        `Server route ${identifier} is claimed by several application registrations`,
+        ServerRouteTriggerExceptionCode.AMBIGUOUS_SERVER_ROUTE,
+      );
     }
 
-    const legacyResolver =
-      legacyCandidates.length === 1 ? legacyCandidates[0] : undefined;
+    const [legacyResolver] = legacyCandidates;
 
     if (!isDefined(legacyResolver)) {
       throw new ServerRouteTriggerException(
@@ -317,7 +326,7 @@ export class ServerRouteTriggerService {
 
     return {
       resolver: legacyResolver,
-      isResolvedThroughLegacyIdentifier: true,
+      isResolvedThroughDeprecatedRoute: true,
     };
   }
 

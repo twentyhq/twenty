@@ -5,7 +5,7 @@ import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { McpServerResolver } from 'src/engine/metadata-modules/mcp-server/mcp-server.resolver';
 import { McpServerService } from 'src/engine/metadata-modules/mcp-server/mcp-server.service';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({

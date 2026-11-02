@@ -6,7 +6,8 @@ import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { IconUserCircle, useIcons } from 'twenty-ui/icon';
+import { IconUserCircle } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Field } from 'twenty-ui/primitives/input';
 import {
   CoreObjectNameSingular,

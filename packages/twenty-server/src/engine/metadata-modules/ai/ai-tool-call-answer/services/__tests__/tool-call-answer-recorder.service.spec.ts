@@ -19,6 +19,7 @@ const buildService = () => {
   const service = new ToolCallAnswerRecorderService(
     messagePartRepository as never,
     threadRecordEventService as never,
+    {} as never,
   );
 
   return { service, messagePartRepository, threadRecordEventService };
@@ -31,6 +32,7 @@ describe('ToolCallAnswerRecorderService recordToolCallAnswer', () => {
     partId: 'part-id',
     toolOutput: { result: { status: 'answered' } },
     workspaceId: 'workspace-id',
+    resolveMentionForWorkspaceMemberId: null,
   };
 
   it('tells open chat lists once the last answer stops the wait', async () => {

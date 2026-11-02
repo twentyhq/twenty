@@ -477,7 +477,12 @@ export class ApplicationManifestMigrationService {
         : {}),
       ...(isDefined(healthCheckLogicFunctionId) ||
       inferDeletionFromMissingEntities
-        ? { healthCheckLogicFunctionId }
+        ? {
+            healthCheckLogicFunctionId,
+            isUserHealthCheckEnabled:
+              manifest.application.healthCheckLogicFunction
+                ?.runOnUserPreferences ?? false,
+          }
         : {}),
       ...(isDefined(defaultRoleId) ? { defaultRoleId } : {}),
     });

@@ -18,4 +18,5 @@ export const ENTITY_KEY_BY_KIND: Record<PullEntityKind, ManifestEntityKey> = {
   skill: 'skills',
   agent: 'agents',
   validationRule: 'validationRules',
+  relatedRecordPath: 'relatedRecordPaths',
 };

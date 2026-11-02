@@ -266,6 +266,12 @@ msgstr "{0, plural, one {# obyekt} other {# obyekt}}"
 msgid "{0, plural, one {# Object} other {# Objects}}"
 msgstr "{0, plural, one {# obyekt} other {# obyekt}}"
 
+#. js-lingui-id: zHa4lw
+#. placeholder {0}: parts.length
+#: src/modules/ai/components/ThinkingStepsDisplay.tsx
+msgid "{0, plural, one {# step} other {# steps}}"
+msgstr "{0, plural, one {# qadam} other {# qadam}}"
+
 #. js-lingui-id: 8ob0vY
 #. placeholder {0}: failedCount + behindCount
 #: src/modules/settings/admin-panel/utils/getWorkspacesUpgradeHealthText.ts
@@ -631,11 +637,6 @@ msgstr "{callRecordingHours, plural, one {{formattedCallRecordingHours} soat} ot
 msgid "{cardCount, plural, one {Approve # action?} other {Approve # actions?}}"
 msgstr "{cardCount, plural, one {# ta amalni tasdiqlaysizmi?} other {# ta amalni tasdiqlaysizmi?}}"
 
-#. js-lingui-id: AnO6CC
-#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
-msgid "{channelStatusLabel} · {assignmentLabel}"
-msgstr "{channelStatusLabel} · {assignmentLabel}"
-
 #. js-lingui-id: chd+3h
 #: src/modules/log-console/constants/LogConsoleSources.tsx
 msgid "{count, plural, one {{formattedCount} change} other {{formattedCount} changes}}"
@@ -845,11 +846,6 @@ msgstr "{jobCount, plural, one {Bu tanlangan ishni qayta ishga tushiradi. U bosh
 #: src/modules/ai/utils/getAiModelModeDescription.ts
 msgid "{label} (Auto)"
 msgstr "{label} (Avtomatik)"
-
-#. js-lingui-id: Qoi5Dj
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
-msgid "{label} (default)"
-msgstr "{label} (standart)"
 
 #. js-lingui-id: Oq2RUh
 #: src/modules/ai/utils/getAiModelPinOptions.ts
@@ -1139,11 +1135,6 @@ msgstr "{sourceCount} ta manba turi"
 #: src/modules/page-layout/widgets/call-recording-transcript/components/CallRecordingAudioPlayer.tsx
 msgid "{spokenMinutes} {spokenSeconds}"
 msgstr "{spokenMinutes} {spokenSeconds}"
-
-#. js-lingui-id: 8vJ+2V
-#: src/modules/ai/components/ThinkingStepsDisplay.tsx
-msgid "{stepCount, plural, one {# step} other {# steps}}"
-msgstr "{stepCount, plural, one {# qadam} other {# qadam}}"
 
 #. js-lingui-id: Bzjg0/
 #: src/pages/settings/accounts/SettingsAccountsConfigurationStepCalendar.tsx
@@ -1580,6 +1571,11 @@ msgstr "Workflow’ni ishga tushirgan shaxs uchun forma ochiladi va u joyida to�
 msgid "A new one each time the step runs"
 msgstr "Qadam har safar ishga tushganda yangisi"
 
+#. js-lingui-id: 3pDKsj
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "A newer revision exists. Open the latest preview to save."
+msgstr "Yangiroq tahrir mavjud. Saqlash uchun eng so‘nggi dastlabki ko‘rishni oching."
+
 #. js-lingui-id: K3NJnJ
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "A payment method is needed to keep your workspace active."
@@ -1594,6 +1590,11 @@ msgstr "Obunangiz uchun to‘lov amalga oshmadi. Uni qayta urinib ko‘rayotgani
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "A recorder will join when the meeting starts."
 msgstr "Uchrashuv boshlanganda yozib oluvchi qo‘shiladi."
+
+#. js-lingui-id: fdM8v5
+#: src/modules/settings/developers/validation-schemas/webhookFormSchema.ts
+msgid "A role is required"
+msgstr "Rol majburiy"
 
 #. js-lingui-id: C6xZqR
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -1703,7 +1704,7 @@ msgid "Access Key ID"
 msgstr "Access Key ID"
 
 #. js-lingui-id: 6hdTJw
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Access to {objectLabelPlural} is set by roles, not record by record."
 msgstr "{objectLabelPlural} obyektlariga kirish yozuvma-yozuv emas, rollar orqali belgilanadi."
 
@@ -2196,6 +2197,11 @@ msgstr "Email qo‘shish"
 msgid "Add email channel"
 msgstr "Elektron pochta kanalini qo‘shish"
 
+#. js-lingui-id: QwQhEf
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+msgid "Add embedded website"
+msgstr "Ichki o‘rnatilgan veb-saytni qo‘shish"
+
 #. js-lingui-id: 6kC3KJ
 #: src/modules/ai/components/internal/AiChatToolCallApprovalCardLayout.tsx
 msgid "Add feedback"
@@ -2356,6 +2362,11 @@ msgstr "Manba qo‘shish"
 msgid "Add Output Field"
 msgstr "Chiqish maydoni qo‘shish"
 
+#. js-lingui-id: ZqKhbh
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathAddDropdown.tsx
+msgid "Add path"
+msgstr "Yo‘l qo‘shish"
+
 #. js-lingui-id: lRpmgk
 #: src/modules/information-banner/components/billing/InformationBannerFailPaymentInfo.tsx
 msgid "Add payment method"
@@ -2506,6 +2517,11 @@ msgstr "Twenty masofaviy serverini LM Studioning o‘rnatish havolasi bilan qo�
 msgid "Add these records at your DNS provider. Twenty checks them automatically."
 msgstr "Ushbu yozuvlarni DNS provayderingizga qo‘shing. Twenty ularni avtomatik tekshiradi."
 
+#. js-lingui-id: Bc+ryO
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
+msgid "Add this path"
+msgstr "Bu yo‘lni qo‘shish"
+
 #. js-lingui-id: 5+ttxv
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
 msgid "Add to blocklist"
@@ -2546,6 +2562,11 @@ msgstr "URI qo‘shish"
 #: src/modules/views/view-picker/components/ViewPickerListContent.tsx
 msgid "Add view"
 msgstr "Ko‘rinish qo‘shish"
+
+#. js-lingui-id: hKxpSq
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+msgid "Add website"
+msgstr "Veb-sayt qo‘shish"
 
 #. js-lingui-id: 8sZiWP
 #: src/modules/page-layout/widgets/components/DashboardWidgetPlaceholder.tsx
@@ -2902,6 +2923,11 @@ msgstr "AI agentlar"
 msgid "AI chat"
 msgstr "AI chat"
 
+#. js-lingui-id: IuEC4q
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "AI chat component builder"
+msgstr "AI chat komponentlari yaratuvchisi"
+
 #. js-lingui-id: UrjxKN
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "AI chat inbox"
@@ -3073,7 +3099,6 @@ msgstr "Tekislash"
 
 #. js-lingui-id: N40H+G
 #: src/modules/activities/timeline-activities/components/TimelineCard.tsx
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
 #: src/modules/settings/billing/components/SettingsBillingLimitsFilterDropdown.tsx
@@ -3484,6 +3509,7 @@ msgstr "Rasmni yuklashda xatolik yuz berdi."
 #: src/modules/page-layout/hooks/useResetPageLayoutWidgetToDefault.ts
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWidgets.ts
 #: src/modules/page-layout/hooks/useUpdatePageLayoutWithTabsAndWidgets.ts
+#: src/modules/related-record-paths/hooks/useRelatedRecordPathMutations.ts
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
 #: src/modules/views/hooks/internal/usePerformViewApiUpdate.ts
 #: src/modules/views/hooks/internal/usePerformViewEntityApiPersistOperation.ts
@@ -3734,6 +3760,11 @@ msgstr "Ilova muvaffaqiyatli o‘chirildi"
 msgid "App logs"
 msgstr "Ilova jurnallari"
 
+#. js-lingui-id: xqkZbG
+#: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
+msgid "App Operation"
+msgstr "Ilova amali"
+
 #. js-lingui-id: MAyGac
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "App preferences"
@@ -3867,6 +3898,7 @@ msgstr "Tasdiqlashni ko‘rib chiqish"
 
 #. js-lingui-id: Z7ZXbT
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Approve"
 msgstr "Tasdiqlash"
 
@@ -3910,6 +3942,7 @@ msgid "Apps"
 msgstr "Ilovalar"
 
 #. js-lingui-id: THHN20
+#: src/modules/settings/app-preferences/hooks/useAccountsSettingsBreadcrumbLink.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/pages/settings/accounts/SettingsAccountDetail.tsx
 #: src/pages/settings/accounts/SettingsAccounts.tsx
@@ -3920,10 +3953,10 @@ msgstr "Ilovalar"
 msgid "Apps preferences"
 msgstr "Ilovalar sozlamalari"
 
-#. js-lingui-id: aDW39c
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx
-msgid "Apps recording"
-msgstr "Ilovalar yozuvi"
+#. js-lingui-id: Nk6yc9
+#: src/utils/title-utils.ts
+msgid "Apps preferences - Settings"
+msgstr "Ilovalar sozlamalari - Sozlamalar"
 
 #. js-lingui-id: EzsAEI
 #: src/pages/settings/developers/tabs/SettingsDevelopersAppsTab.tsx
@@ -4063,6 +4096,11 @@ msgstr "Yuqoriga o‘q"
 msgid "As it will be displayed in the workspace"
 msgstr "Ish maydonida qanday ko‘rinishi"
 
+#. js-lingui-id: pKkmLw
+#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordGeneralAccessItem.tsx
+msgid "As their role allows"
+msgstr "Ularning roli ruxsat berganidek"
+
 #. js-lingui-id: 54PdN4
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
 #: src/modules/side-panel/pages/page-layout/utils/getSortLabelSuffixForFieldType.ts
@@ -4178,7 +4216,6 @@ msgid "Assignable to Workspace Members"
 msgstr "Ish maydoni a’zolariga tayinlash mumkin"
 
 #. js-lingui-id: lXGdbb
-#: src/modules/ai/constants/AgentChatChannelNavigationItems.ts
 #: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Assigned"
 msgstr "Biriktirilgan"
@@ -4193,6 +4230,11 @@ msgstr "Biriktirilgan {roleTargetDisplayName}"
 msgid "Assigned to"
 msgstr "Biriktirilgan"
 
+#. js-lingui-id: iU3XRS
+#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
+msgid "Assigned to me"
+msgstr "Menga biriktirilgan"
+
 #. js-lingui-id: TzM/0+
 #: src/modules/settings/roles/components/SettingsRolesDefaultRole.tsx
 msgid "Assigned to users who join via invite link, approved domain, or SSO, and used as fallback when an assigned role is deleted"
@@ -4204,7 +4246,6 @@ msgid "Assigned to you"
 msgstr "Sizga biriktirilgan"
 
 #. js-lingui-id: ojKCLU
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/ai/components/AiChatThreadDetailsDropdown.tsx
 msgid "Assignee"
 msgstr "Mas’ul shaxs"
@@ -4565,6 +4606,7 @@ msgstr "mlrd"
 #. js-lingui-id: iH8pgl
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationRecovery.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationVerification.tsx
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 #: src/modules/side-panel/components/SidePanelBackButton.tsx
 #: src/modules/spreadsheet-import/components/StepNavigationButton.tsx
 #: src/modules/workflow/workflow-steps/components/WorkflowDropdownStepOutputItems.tsx
@@ -4973,7 +5015,7 @@ msgid "Build many-to-many relations"
 msgstr "Ko‘pdan-ko‘pga munosabatlarni yaratish"
 
 #. js-lingui-id: +7fBMP
-#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
 msgid "Built-in"
 msgstr "O‘rnatilgan"
 
@@ -5274,9 +5316,16 @@ msgid "Calls"
 msgstr "Qo‘ng‘iroqlar"
 
 #. js-lingui-id: rT2cV+
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
 msgid "Camera"
 msgstr "Kamera"
+
+#. js-lingui-id: QIPLcC
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Camera access enabled"
+msgstr ""
 
 #. js-lingui-id: w3vNoK
 #: src/modules/settings/usage/constants/UsageOperationTypeLabels.ts
@@ -5311,7 +5360,7 @@ msgstr "Kanada"
 #. js-lingui-id: dEgA5A
 #: src/modules/ai/components/AiChatApprovalConfirmation.tsx
 #: src/modules/applications/components/AuthorizeActionButtons.tsx
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceCreditGrantModal.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
@@ -5369,6 +5418,11 @@ msgstr "Oraliqni o‘zgartirishni bekor qilish"
 msgid "Cancel interval switching?"
 msgstr "Oraliqni o‘zgartirish bekor qilinsinmi?"
 
+#. js-lingui-id: ujldpy
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Cancel media request for {ownerName}"
+msgstr ""
+
 #. js-lingui-id: rRK/Lf
 #: src/modules/settings/billing/components/SettingsBillingContent.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -5385,11 +5439,6 @@ msgstr "Tarifni o‘zgartirishni bekor qilish"
 #: src/modules/settings/billing/hooks/useBillingSubscriptionChangeWording.ts
 msgid "Cancel plan switching?"
 msgstr "Tarifni o‘zgartirish bekor qilinsinmi?"
-
-#. js-lingui-id: BfJPwg
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
-msgid "Cancel recording for {applicationName}"
-msgstr "{applicationName} uchun yozishni bekor qilish"
 
 #. js-lingui-id: AnRu/j
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadComposer.tsx
@@ -5569,11 +5618,6 @@ msgstr "Cc/Bcc"
 msgid "Cell controls"
 msgstr "Katak boshqaruvlari"
 
-#. js-lingui-id: nejZ6P
-#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
-msgid "Certificate invalid"
-msgstr "Sertifikat yaroqsiz"
-
 #. js-lingui-id: o+XJ9D
 #: src/modules/ai/components/AiChatThreadTriageButtons.tsx
 msgid "Change"
@@ -5647,6 +5691,11 @@ msgstr "Mavzuni tizim mavzusiga o‘zgartirish"
 #: src/modules/log-console/constants/LogConsoleRecordChangeColumns.tsx
 msgid "Changes"
 msgstr "O‘zgarishlar"
+
+#. js-lingui-id: OhVo1W
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
+msgid "Changes saved. Reload open Twenty tabs to apply the updated permissions. Reloading ends active calls and recordings."
+msgstr "O‘zgarishlar saqlandi. Yangilangan ruxsatlarni qo‘llash uchun ochiq Twenty yorliqlarini qayta yuklang. Qayta yuklash faol qo‘ng‘iroqlar va yozib olishlarni tugatadi."
 
 #. js-lingui-id: oRH6Dq
 #: src/modules/metadata-error-handler/hooks/useMetadataErrorHandler.ts
@@ -6030,6 +6079,11 @@ msgstr "Bu ilova qaysi papkalarni import qilishini tanlang"
 msgid "Choose which profile fields users with the Edit Profile permission can modify"
 msgstr "\"Profilni tahrirlash\" ruxsatiga ega foydalanuvchilar o‘zgartirishi mumkin bo‘lgan profil maydonlarini tanlang"
 
+#. js-lingui-id: jgIz8c
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
+msgid "Choose which websites embedded in iframe widgets can request microphone or camera access. Members still need to enable access and approve the browser permission."
+msgstr "iframe vidjetlariga joylashtirilgan qaysi veb-saytlar mikrofon yoki kameraga kirishni so‘rashi mumkinligini tanlang. A’zolar hali ham kirishni yoqishlari va brauzer ruxsatini tasdiqlashlari kerak."
+
 #. js-lingui-id: 22LF79
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesAppsSection.tsx
 msgid "Choose your preferences for the apps installed on your workspace by the admin"
@@ -6260,6 +6314,7 @@ msgstr "Almashish buferi uchun xavfsiz ulanish (HTTPS) talab qilinadi. Nusxa ko�
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/object-record/object-sort-dropdown/components/ObjectSortDropdownButton.tsx
 #: src/modules/onboarding/components/OnboardingSkipDialog.tsx
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
 #: src/modules/settings/applications/components/SettingsApplicationScreenshotLightbox.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionMeValueSelect.tsx
 #: src/modules/ui/feedback/toast/components/__tests__/AppToaster.test.tsx
@@ -6640,10 +6695,20 @@ msgstr "Yakunlangan ishlar {completedDuration} davomida, muvaffaqiyatsiz ishlar 
 msgid "Complexity"
 msgstr "Murakkablik"
 
+#. js-lingui-id: ST17km
+#: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
+msgid "Component failed to render."
+msgstr "Komponentni renderlash amalga oshmadi."
+
 #. js-lingui-id: 3pJ7V5
 #: src/pages/settings/applications/tabs/SettingsApplicationFrontComponentSettingsTab.tsx
 msgid "Component name"
 msgstr "Komponent nomi"
+
+#. js-lingui-id: WcUICq
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Component preview with sample data"
+msgstr "Namunaviy ma’lumotlar bilan komponentning dastlabki ko‘rinishi"
 
 #. js-lingui-id: rYRNgS
 #: src/modules/activities/emails/hooks/useComposeEmailRelatedRecordAction.ts
@@ -7449,6 +7514,17 @@ msgstr "Imzolangan DPA’ni yaratib bo‘lmadi. Iltimos, qayta urinib ko‘ring.
 msgid "Could not grant media access. Please try again."
 msgstr "Media ruxsatini berib bo‘lmadi. Iltimos, qayta urinib ko‘ring."
 
+#. js-lingui-id: Y5qCpF
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
+#: src/modules/ai/hooks/useAiChatFrontComponentPreview.ts
+msgid "Could not load preview."
+msgstr "Ko‘rib chiqishni yuklab bo‘lmadi."
+
+#. js-lingui-id: mrmGIf
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
+msgid "Could not load related records"
+msgstr "Bog‘liq yozuvlarni yuklab bo‘lmadi"
+
 #. js-lingui-id: Ft89Ck
 #: src/modules/object-core/agents/components/CoreAgentRunsTab.tsx
 msgid "Could not load runs"
@@ -7488,6 +7564,11 @@ msgstr "API playground ni ochib bo‘lmadi"
 #: src/modules/ai/utils/tool-display/getToolDisplayMessage.ts
 msgid "Could not react with {emoji}"
 msgstr "{emoji} bilan reaksiya bildirib bo‘lmadi"
+
+#. js-lingui-id: 6GjSMn
+#: src/modules/ai/hooks/useRefreshFrontComponents.ts
+msgid "Could not refresh components. Reload to see saved changes."
+msgstr "Komponentlarni yangilab bo‘lmadi. Saqlangan o‘zgarishlarni ko‘rish uchun qayta yuklang."
 
 #. js-lingui-id: w1HkE9
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -7777,6 +7858,11 @@ msgstr "Ilova yaratish"
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Create and configure AI agents"
 msgstr "AI agentlarni yaratish va sozlash"
+
+#. js-lingui-id: PRUHBf
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Create and preview frontend components in AI chat before adding them to the Workspace app."
+msgstr "Workspace ilovasiga qo‘shishdan oldin AI chatda frontend komponentlarini yarating va oldindan ko‘ring."
 
 #. js-lingui-id: vgdzLf
 #: src/modules/side-panel/pages/record-creation-form/components/SidePanelRecordCreationFormPage.tsx
@@ -8602,6 +8688,11 @@ msgstr "Qorong‘i"
 msgid "Dashboard duplicated successfully"
 msgstr "Boshqaruv paneli muvaffaqiyatli nusxalandi"
 
+#. js-lingui-id: xLSe09
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Dashboard widget"
+msgstr "Boshqaruv paneli vidjeti"
+
 #. js-lingui-id: HKH+W+
 #: src/modules/side-panel/pages/page-layout/constants/ChartSettingsHeadings.ts
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
@@ -8944,6 +9035,11 @@ msgstr "Obyektingizning nomi va tavsifini belgilang"
 msgid "Define the name and instructions for this skill"
 msgstr "Ushbu skill uchun nom va ko‘rsatmalarni belgilang"
 
+#. js-lingui-id: zDccHY
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Define the relations along which a record's permissions extend to related records."
+msgstr "Yozuv ruxsatlari bog‘liq yozuvlarga tatbiq etiladigan munosabatlarni belgilang."
+
 #. js-lingui-id: Ntu10D
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Define user roles and access levels"
@@ -9214,6 +9310,11 @@ msgstr "Barcha obyektlardagi yozuvlarni oʻchirish"
 #: src/modules/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationRecordsListItem.tsx
 msgid "Delete Related {relationObjectLabelSingular}"
 msgstr "Bogʻlangan {relationObjectLabelSingular}ni oʻchirish"
+
+#. js-lingui-id: CW/kVJ
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathTableRow.tsx
+msgid "Delete related record path"
+msgstr "Bog‘liq yozuv yo‘lini o‘chirish"
 
 #. js-lingui-id: efjzvW
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettings.tsx
@@ -9606,6 +9707,7 @@ msgid "Direction"
 msgstr "Yo‘nalish"
 
 #. js-lingui-id: cO9+2L
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
 msgid "Disable"
 msgstr "O‘chirish"
@@ -9614,6 +9716,11 @@ msgstr "O‘chirish"
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "Disable impersonation"
 msgstr "Boshqa foydalanuvchi nomidan ishlashni (impersonation) o‘chirish"
+
+#. js-lingui-id: QRe0KA
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Disable media access for {ownerName}"
+msgstr ""
 
 #. js-lingui-id: 8v3G2p
 #: src/modules/validation-rules/components/SettingsValidationRuleEditForm.tsx
@@ -10635,6 +10742,11 @@ msgstr "Elektron pochtalar boʻsh boʻlmasligi kerak"
 msgid "embed"
 msgstr "ichiga joylashtirish"
 
+#. js-lingui-id: cjPnTO
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
+msgid "Embedded website media access"
+msgstr "Joylashtirilgan veb-saytning media vositalariga kirishi"
+
 #. js-lingui-id: eXoH4Q
 #: src/modules/settings/data-model/fields/forms/components/SettingsDataModelFieldIconLabelForm.tsx
 msgid "employees"
@@ -10720,10 +10832,25 @@ msgstr "Yoqish"
 msgid "Enable bypass options"
 msgstr "Chetlab o‘tish parametrlarini yoqish"
 
+#. js-lingui-id: +EDob0
+#: src/modules/media-access/components/ManagedIframeSession.tsx
+msgid "Enable camera"
+msgstr ""
+
 #. js-lingui-id: Tt0V8j
 #: src/modules/settings/admin-panel/components/SettingsAdminServerAdminAccess.tsx
 msgid "Enable impersonation"
 msgstr "Nomidan kirishni yoqish"
+
+#. js-lingui-id: 4Jrl0H
+#: src/modules/media-access/components/ManagedIframeSession.tsx
+msgid "Enable microphone"
+msgstr ""
+
+#. js-lingui-id: /RSrNr
+#: src/modules/media-access/components/ManagedIframeSession.tsx
+msgid "Enable microphone and camera"
+msgstr ""
 
 #. js-lingui-id: gZo0V9
 #: src/modules/ai/components/SettingsAgentModelCapabilities.tsx
@@ -10910,6 +11037,11 @@ msgstr "Miqdorni x 1 000 000 shaklida kiriting (masalan, $3.21 → 3210000)"
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 msgid "Enter an HTTP or HTTPS origin without a path or wildcard, such as https://portal.example.com."
 msgstr "https://portal.example.com kabi yo‘lsiz yoki joker belgisiz HTTP yoki HTTPS manbasini kiriting."
+
+#. js-lingui-id: TO+jkh
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+msgid "Enter an HTTPS origin without a path or wildcard, such as https://workspace.aircall.io."
+msgstr "Yo‘lsiz yoki joker belgisiz HTTPS manbasini kiriting, masalan, https://workspace.aircall.io."
 
 #. js-lingui-id: 8yJgo+
 #: src/modules/logic-functions/components/LogicFunctionExecutionResult.tsx
@@ -12819,11 +12951,11 @@ msgstr "Obyekt turi bo‘yicha filtr"
 msgid "Filter by record ID"
 msgstr "Yozuv identifikatori bo‘yicha filtrlang"
 
-#. js-lingui-id: jge9hE
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
-msgid "Filter channel chats"
-msgstr "Kanal chatlarini filtrlash"
+#. js-lingui-id: /+U0Y/
+#: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
+#: src/modules/ai/components/AiChatInboxFilterDropdown.tsx
+msgid "Filter chats"
+msgstr "Chatlarni filtrlash"
 
 #. js-lingui-id: /VmB4B
 #: src/modules/object-record/advanced-filter/components/AdvancedFilterRecordFilterGroupOptionsDropdown.tsx
@@ -15994,10 +16126,20 @@ msgstr "Kichikroq yoki teng"
 msgid "Let each member decide for themselves"
 msgstr "Har bir a’zoning o‘zi qaror qilishiga ruxsat bering"
 
+#. js-lingui-id: bM+k1O
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Let people make a record visible only to its creator and the people it is shared with."
+msgstr "Odamlar yozuvni faqat uning yaratuvchisi va u ulashilgan odamlarga ko‘rinadigan qilishlariga ruxsat bering."
+
 #. js-lingui-id: 3OsDiZ
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Let people restrict and share individual records."
 msgstr "Odamlarga alohida yozuvlarni cheklash va ulashishga ruxsat bering."
+
+#. js-lingui-id: b3MaZQ
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Let record-level permission rules compare a field of a related record."
+msgstr "Yozuv darajasidagi ruxsat qoidalariga bog‘liq yozuv maydonini solishtirishga ruxsat bering."
 
 #. js-lingui-id: HRo4g8
 #: src/modules/settings/members/components/MemberTwoFactorAuthenticationRecoverySection.tsx
@@ -16427,6 +16569,11 @@ msgstr "Ko'proq chatlar yuklanmoqda..."
 msgid "Loading more..."
 msgstr "Yana yuklanmoqda..."
 
+#. js-lingui-id: nSgEqx
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Loading preview…"
+msgstr "Ko‘rib chiqish yuklanmoqda…"
+
 #. js-lingui-id: WepeNQ
 #: src/modules/ai/components/AiChatAddMenuRecordsPage.tsx
 msgid "Loading records"
@@ -16483,7 +16630,7 @@ msgstr "Yuklanmoqda…"
 
 #. js-lingui-id: d5zxa4
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "Local"
 msgstr "Mahalliy"
@@ -17075,6 +17222,16 @@ msgstr "Men / {workspaceMemberFieldLabel}"
 msgid "Measure engagement on the campaigns this workspace sends"
 msgstr "Ushbu ish maydoni yuboradigan kampaniyalardagi jalb etilishni o‘lchang"
 
+#. js-lingui-id: 62uGRa
+#: src/modules/media-access/components/MediaAccessIndicator.tsx
+msgid "Media access enabled"
+msgstr ""
+
+#. js-lingui-id: rH8KbL
+#: src/modules/media-access/components/MediaAccessIndicator.tsx
+msgid "Media access requests"
+msgstr ""
+
 #. js-lingui-id: agPptk
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
 msgid "Medium"
@@ -17293,9 +17450,16 @@ msgid "Method"
 msgstr "Metod"
 
 #. js-lingui-id: 1iY5xv
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
 msgid "Microphone"
 msgstr "Mikrofon"
+
+#. js-lingui-id: eiGwrP
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Microphone access enabled"
+msgstr ""
 
 #. js-lingui-id: P9IeiA
 #: src/modules/ai/dictation/utils/getDictationFailureMessage.ts
@@ -17303,9 +17467,19 @@ msgid "Microphone access is blocked. Allow it in your browser settings to dictat
 msgstr "Mikrofondan foydalanish bloklangan. Diktant qilish uchun brauzer sozlamalarida unga ruxsat bering."
 
 #. js-lingui-id: /XArxJ
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 msgid "Microphone and camera"
 msgstr "Mikrofon va kamera"
+
+#. js-lingui-id: 0Cq1++
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Microphone and camera access enabled"
+msgstr ""
+
+#. js-lingui-id: yGBwBp
+#: src/modules/media-access/components/MediaAccessIndicator.tsx
+msgid "Microphone or camera in use"
+msgstr ""
 
 #. js-lingui-id: 6cH65H
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -17329,12 +17503,6 @@ msgstr "Min"
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Min range"
 msgstr "Minimal diapazon"
-
-#. js-lingui-id: oSrMRT
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
-#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
-msgid "Mine"
-msgstr "Meniki"
 
 #. js-lingui-id: 8GG+Pa
 #: src/modules/ai/utils/getAiModelEffortLabel.ts
@@ -17377,11 +17545,6 @@ msgstr "Avtorizatsiya URL manzili yo‘q"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateCalendarEvent.tsx
 msgid "Missing calendar permission."
 msgstr "Kalendar uchun ruxsat yetishmaydi."
-
-#. js-lingui-id: XLNNcv
-#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
-msgid "Missing configuration"
-msgstr "Konfiguratsiya mavjud emas"
 
 #. js-lingui-id: kgDu74
 #: src/modules/settings/applications/components/SettingsApplicationMissingConfigurationBanner.tsx
@@ -18989,10 +19152,20 @@ msgstr "Filtr mezonlariga mos keladigan hech qanday yozuv topilmadi."
 msgid "No records to review"
 msgstr "Ko‘rib chiqish uchun yozuvlar yo‘q"
 
+#. js-lingui-id: AxHLth
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
+msgid "No related records follow this object yet"
+msgstr "Hozircha hech qanday bog‘liq yozuv bu obyektga amal qilmaydi"
+
 #. js-lingui-id: gvIkAA
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
 msgid "No relation to count by"
 msgstr "Hisoblash uchun munosabat tanlanmagan"
+
+#. js-lingui-id: dPgrAv
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
+msgid "No relations"
+msgstr "Munosabatlar yo‘q"
 
 #. js-lingui-id: m3W0Yn
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
@@ -19553,7 +19726,7 @@ msgid "now"
 msgstr "hozir"
 
 #. js-lingui-id: hzMYNj
-#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "NPM"
 msgstr "NPM"
@@ -19637,7 +19810,7 @@ msgid "Numbered list"
 msgstr "Raqamlangan ro‘yxat"
 
 #. js-lingui-id: b/j06W
-#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -19663,6 +19836,7 @@ msgstr "obyekt"
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemTypeTooltip.tsx
 #: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemAddOptions.tsx
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
 #: src/modules/settings/developers/components/WebhookEntitySelect.tsx
 #: src/modules/side-panel/components/SidePanelObjectFilterDropdownContent.tsx
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionCreateRecord.tsx
@@ -19959,12 +20133,12 @@ msgid "Only run when one of these fields changes"
 msgstr "Faqat shu maydonlardan biri o‘zgarganda ishga tushirish"
 
 #. js-lingui-id: YSJayJ
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Only the creator of this record and people with full access to it can change who has access."
 msgstr "Bu yozuvni faqat yaratuvchisi va unga to‘liq kira oladiganlar kimning kirish huquqiga ega ekanini o‘zgartira oladi."
 
 #. js-lingui-id: afNmH6
-#: src/modules/side-panel/pages/share-record/components/SidePanelShareRecordContent.tsx
+#: src/modules/object-record/record-sharing/utils/getRecordSharingReadOnlyDescription.ts
 msgid "Only the creator of this record, people with full access to it and admins can change who has access."
 msgstr "Bu yozuvni faqat yaratuvchisi, unga to‘liq kira oladiganlar va administratorlar kimning kirish huquqiga ega ekanini o‘zgartira oladi."
 
@@ -21484,6 +21658,11 @@ msgstr "Maxfiylik siyosati"
 msgid "Private"
 msgstr "Shaxsiy"
 
+#. js-lingui-id: MAkP8e
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Private records"
+msgstr "Shaxsiy yozuvlar"
+
 #. js-lingui-id: 3fPjUY
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
 #: src/modules/settings/billing/constants/BillingPlanLabels.ts
@@ -22010,13 +22189,6 @@ msgstr "Tavsiya etilgan"
 msgid "Reconnect"
 msgstr "Qayta ulash"
 
-#. js-lingui-id: XsIxsL
-#: src/modules/settings/applications/components/SettingsApplicationConnectionStatus.tsx
-#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
-#: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
-msgid "Reconnect needed"
-msgstr "Qayta ulash kerak"
-
 #. js-lingui-id: GENn17
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
 msgid "Reconnect this account to grant permission to create calendar events."
@@ -22141,6 +22313,16 @@ msgstr "Yozuv yorlig‘i"
 msgid "Record page"
 msgstr "Yozuv sahifasi"
 
+#. js-lingui-id: J5b8Hz
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Record page widget"
+msgstr "Yozuv sahifasi vidjeti"
+
+#. js-lingui-id: fHTWNa
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Record rules through relations"
+msgstr "Munosabatlar orqali yozuv qoidalari"
+
 #. js-lingui-id: pVTJSR
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
 msgid "Record selection"
@@ -22204,11 +22386,6 @@ msgstr "Yozib olinmoqda"
 msgid "Recording Failed"
 msgstr "Yozib olish muvaffaqiyatsiz tugadi"
 
-#. js-lingui-id: kDQf8q
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionIndicator.tsx
-msgid "Recording requests"
-msgstr "Yozib olish so‘rovlari"
-
 #. js-lingui-id: h9TBi+
 #: src/modules/page-layout/widgets/call-recording/utils/getCallRecordingStatusDisplayConfiguration.ts
 msgid "Recording Scheduled"
@@ -22235,6 +22412,11 @@ msgstr "yozuvlar"
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 msgid "Records"
 msgstr "Yozuvlar"
+
+#. js-lingui-id: CjlKOu
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+msgid "Records reached through these relations follow access to {objectLabel}."
+msgstr "Ushbu munosabatlar orqali erishilgan yozuvlar {objectLabel} uchun kirish huquqiga amal qiladi."
 
 #. js-lingui-id: J+Qyf2
 #: src/modules/command-menu-item/edit/components/CommandMenuItemEditRecordSelectionDropdown.tsx
@@ -22352,6 +22534,7 @@ msgstr "Ishlab chiqish instansiyasi sifatida ro‘yxatdan o‘tkazildi. Ushbu in
 
 #. js-lingui-id: 1t/NnN
 #: src/modules/ai/components/internal/AiChatToolCallApprovalArgumentsCard.tsx
+#: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
 msgid "Reject"
 msgstr "Rad etish"
 
@@ -22365,7 +22548,18 @@ msgstr "Rad etildi"
 msgid "related record path"
 msgstr "bog‘liq yozuv yo‘li"
 
+#. js-lingui-id: l3qF/i
+#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
+msgid "Related record paths"
+msgstr "Bog‘liq yozuv yo‘llari"
+
+#. js-lingui-id: uGfOFe
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+msgid "Related records"
+msgstr "Bog‘liq yozuvlar"
+
 #. js-lingui-id: h9AYFD
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathsSection.tsx
 #: src/modules/settings/data-model/constants/SettingsFieldTypeCategoryLabels.ts
 msgid "Relation"
 msgstr "Bog‘lanish"
@@ -22426,6 +22620,11 @@ msgstr "Ushbu serverga bo‘shatish va o‘tkazish"
 msgid "Reload"
 msgstr "Qayta yuklash"
 
+#. js-lingui-id: tF5Smn
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissions.tsx
+msgid "Reload page"
+msgstr "Sahifani qayta yuklash"
+
 #. js-lingui-id: qbM5In
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Reload validity token"
@@ -22455,6 +22654,7 @@ msgstr "Masofaviy"
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesConnectionRowDropdownMenu.tsx
 #: src/modules/settings/app-preferences/components/SettingsAppPreferencesRemoveConnectionDialog.tsx
 #: src/modules/settings/components/SettingsImageInput.tsx
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/ValidationStep.tsx
 #: src/modules/ui/input/components/BaseChip.tsx
@@ -22574,6 +22774,11 @@ msgstr "Havolani olib tashlash"
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWorkspaceCreationForm.tsx
 msgid "Remove logo"
 msgstr "Logoni olib tashlash"
+
+#. js-lingui-id: iW2ZAl
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionRow.tsx
+msgid "Remove media access for {origin}"
+msgstr "{origin} uchun media vositalariga kirishni olib tashlash"
 
 #. js-lingui-id: 99VIgC
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
@@ -22718,6 +22923,11 @@ msgstr "Barcha tillar uchun nomini o‘zgartirish"
 #: src/modules/page-layout/widgets/fields/components/FieldsConfigurationGroupEditor.tsx
 msgid "Rename group"
 msgstr "Guruh nomini o‘zgartirish"
+
+#. js-lingui-id: cwObXL
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Rendering preview…"
+msgstr "Ko‘rib chiqish render qilinmoqda…"
 
 #. js-lingui-id: oQjB9l
 #: src/modules/settings/billing/components/SettingsBillingSubscriptionInfo.tsx
@@ -23207,6 +23417,7 @@ msgstr "rol"
 #: src/modules/object-core/agents/components/CoreAgentFormContent.tsx
 #: src/modules/object-core/agents/components/CoreAgentRoleTab.tsx
 #: src/modules/settings/developers/components/SettingsApiKeysTable.tsx
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/members/components/MemberPermissionsTab.tsx
 #: src/modules/side-panel/pages/share-record/hooks/useSidePanelShareRecordInvitation.ts
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
@@ -23489,6 +23700,11 @@ msgstr "Har bir tomonda bir xil qiymat"
 msgid "SAML/OIDC"
 msgstr "SAML/OIDC"
 
+#. js-lingui-id: b/zjTD
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Sample data"
+msgstr "Namuna ma’lumotlari"
+
 #. js-lingui-id: 3hNFUc
 #: src/modules/settings/logic-functions/components/triggers/SettingsLogicFunctionTriggerPayloadFormat.tsx
 msgid "Sample input"
@@ -23552,6 +23768,11 @@ msgstr "Sozlamalarni saqlash"
 #: src/modules/settings/translations/components/SettingsTranslationsCard.tsx
 msgid "Save your changes first"
 msgstr "Avval o‘zgarishlaringizni saqlang"
+
+#. js-lingui-id: A0/0NU
+#: src/modules/ai/components/AiChatFrontComponentPreviewContent.tsx
+msgid "Saved to Workspace app"
+msgstr "Workspace ilovasiga saqlandi"
 
 #. js-lingui-id: w9O5DJ
 #: src/pages/settings/developers/tabs/SettingsDevelopersCliTab.tsx
@@ -23978,6 +24199,12 @@ msgstr "Yozuvlarni qidiring..."
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
 msgid "Search registrations..."
 msgstr "Ro‘yxatdan o‘tkazishlarni qidiring..."
+
+#. js-lingui-id: GHeAhn
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathPicker.tsx
+msgid "Search relations"
+msgstr "Munosabatlarni qidirish"
 
 #. js-lingui-id: BlLxpG
 #: src/modules/ai/components/AiChatAddMenuSkillsPage.tsx
@@ -25014,6 +25241,7 @@ msgstr "Ko‘pchilik ish maydonlari hech qachon o‘zgartirishi shart bo‘lmaga
 
 #. js-lingui-id: Ue7X/E
 #: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
+#: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
 msgid "Setup incomplete"
 msgstr "Sozlash tugallanmagan"
 
@@ -26019,9 +26247,14 @@ msgid "Steps of this workflow sharing a key write to the same conversation"
 msgstr "Kalitni ulashadigan ushbu ish jarayoni qadamlari bir xil suhbatga yozadi"
 
 #. js-lingui-id: ygCKqB
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 msgid "Stop"
 msgstr "To‘xtatish"
+
+#. js-lingui-id: gGTNKw
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
+msgid "Stop capture for {ownerName}"
+msgstr ""
 
 #. js-lingui-id: 9QwrMz
 #: src/modules/ai/dictation/components/AiChatDictationButton.tsx
@@ -26032,11 +26265,6 @@ msgstr "Diktantni to‘xtatish"
 #: src/modules/information-banner/components/impersonate/InformationBannerIsImpersonating.tsx
 msgid "Stop impersonating"
 msgstr "Nomidan ishlashni to‘xtatish"
-
-#. js-lingui-id: 5e5VJg
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
-msgid "Stop recording for {applicationName}"
-msgstr "{applicationName} uchun yozib olishni to‘xtatish"
 
 #. js-lingui-id: lQeGNv
 #: src/modules/ai/components/internal/SendMessageButton.tsx
@@ -26502,7 +26730,7 @@ msgid "Sync every message"
 msgstr "Har bir xabarni sinxronlash"
 
 #. js-lingui-id: 5TRY4+
-#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
+#: src/modules/settings/applications/components/SettingsSyncFailedStatus.tsx
 msgid "Sync failed"
 msgstr "Sinxronlash muvaffaqiyatsiz tugadi"
 
@@ -26673,7 +26901,7 @@ msgstr "Bizning jamoamiz bilan gaplashing"
 
 #. js-lingui-id: bcrHWv
 #: src/modules/settings/admin-panel/apps/components/SettingsAdminApps.tsx
-#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 msgid "Tarball"
@@ -26970,6 +27198,11 @@ msgstr "Joylashtirishingiz uchun barcha maydonlari to‘ldirilgan to‘liq kelis
 msgid "The icon your workflow trigger will display in the command menu"
 msgstr "Ish jarayoni tetiklagichi buyruqlar menyusida ko‘rsatadigan belgi"
 
+#. js-lingui-id: RYl4Q1
+#: src/modules/settings/app-preferences/components/SettingsConnectedAccountSyncStatus.tsx
+msgid "The mail server certificate is invalid"
+msgstr "Pochta serveri sertifikati yaroqsiz"
+
 #. js-lingui-id: OpK2Nq
 #: src/pages/settings/applications/tabs/SettingsApplicationsAvailableTab.tsx
 msgid "The marketplace could not be loaded. Check your connection and try again."
@@ -27066,6 +27299,11 @@ msgstr "Yozuvni yuklab bo‘lmadi."
 #: src/modules/object-record/record-field/ui/hooks/useCreateJunctionRecordWithNestedTarget.ts
 msgid "The relation configuration could not be resolved."
 msgstr "Aloqa konfiguratsiyasini aniqlab bo‘lmadi."
+
+#. js-lingui-id: baXgIX
+#: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
+msgid "The role attached to this webhook."
+msgstr "Ushbu vebxukka biriktirilgan rol."
 
 #. js-lingui-id: wxyrqd
 #: src/modules/workflow/workflow-steps/workflow-actions/pick-record-action/components/WorkflowEditActionPickRecord.tsx
@@ -27191,7 +27429,8 @@ msgid "Thickness"
 msgstr "Qalinlik"
 
 #. js-lingui-id: AUV+TY
-#: src/modules/ai/components/AiChatThinkingRow.tsx
+#: src/modules/ai/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai/utils/getReasoningStepLabel.ts
 msgid "Thinking"
 msgstr "O‘ylanmoqda"
 
@@ -27529,6 +27768,11 @@ msgstr "Ushbu Tashkilot kaliti allaqachon boshqa server instansiyasiga biriktiri
 msgid "This Organization key is currently bound to a different server instance. Transferring it here will release it from the previous server and stop counting seats on it. Are you sure you want to continue?"
 msgstr "Ushbu Tashkilot kaliti hozirda boshqa server instansiyasiga biriktirilgan. Uni bu yerga o‘tkazsangiz, avvalgi serverdan bo‘shatiladi va unda o‘rinlarni hisoblash to‘xtatiladi. Davom etishni xohlaysizmi?"
 
+#. js-lingui-id: NBHLa1
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+msgid "This origin is already configured. Use its switches to change access."
+msgstr "Bu manba allaqachon sozlangan. Kirishni o‘zgartirish uchun uning almashtirgichlaridan foydalaning."
+
 #. js-lingui-id: 0BVkmQ
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceUsageLimitModal.tsx
 msgid "This override no longer exists. Reload to see the current limit."
@@ -27739,7 +27983,7 @@ msgid "This will revoke {0} for {userLabel}."
 msgstr "Bu amal {userLabel} uchun {0} huquqini bekor qiladi."
 
 #. js-lingui-id: f8HOUp
-#: src/modules/ai/components/ThinkingStepsDisplay.tsx
+#: src/modules/ai/utils/getReasoningStepLabel.ts
 msgid "Thought"
 msgstr "Fikr"
 
@@ -28586,8 +28830,7 @@ msgid "Unanswered"
 msgstr "Javobsiz"
 
 #. js-lingui-id: EbMPZJ
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
-#: src/modules/ai/utils/getAgentChatChannelViewLabel.ts
+#: src/modules/ai/constants/AgentChatThreadFilterStatusLabels.ts
 msgid "Unassigned"
 msgstr "Tayinlanmagan"
 
@@ -28600,6 +28843,11 @@ msgstr "Tayinlanmagan"
 #: src/modules/settings/billing/hooks/useBillingPlanActions.ts
 msgid "Unavailable"
 msgstr "Mavjud emas"
+
+#. js-lingui-id: HY7voI
+#: src/modules/related-record-paths/components/SettingsObjectRelatedRecordPathTableRow.tsx
+msgid "Unavailable object"
+msgstr "Mavjud bo‘lmagan obyekt"
 
 #. js-lingui-id: N81WTf
 #: src/modules/settings/unsubscribers/utils/getUnsubscribePageHeaderDescription.ts
@@ -29117,8 +29365,8 @@ msgstr "yangilash"
 
 #. js-lingui-id: EkH9pt
 #: src/modules/information-banner/components/billing/InformationBannerBillingSubscriptionPaused.tsx
+#: src/modules/settings/applications/components/SettingsApplicationsTableApplicationRow.tsx
 #: src/modules/settings/applications/components/SettingsApplicationStatusCell.tsx
-#: src/modules/settings/applications/components/SettingsApplicationTableRow.tsx
 #: src/modules/settings/unsubscribers/components/SettingsUnsubscribePreview.tsx
 msgid "Update"
 msgstr "Yangilash"
@@ -29324,6 +29572,11 @@ msgstr "Yillik hisob-kitobga yangilaysizmi?"
 #: src/modules/settings/billing/components/SettingsBillingLimitSpenderSelect.tsx
 msgid "Upgrade to Organization"
 msgstr "Tashkilot rejasiga yangilash"
+
+#. js-lingui-id: T10DNC
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+msgid "Upgrade to Organization to change related records"
+msgstr "Bog‘liq yozuvlarni o‘zgartirish uchun Tashkilotga yangilang"
 
 #. js-lingui-id: SN4fM+
 #: src/modules/settings/security/components/SettingsSecuritySettings.tsx
@@ -30006,7 +30259,6 @@ msgid "view"
 msgstr "ko‘rinish"
 
 #. js-lingui-id: jpctdh
-#: src/modules/ai/components/AiChatInboxChannelViewDropdown.tsx
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 #: src/modules/navigation-menu-item/display/object/utils/getObjectNavigationMenuItemSecondaryLabel.ts
 #: src/modules/navigation-menu-item/edit/components/NavigationMenuItemAddDropdownContent.tsx
@@ -30275,7 +30527,7 @@ msgid "Waiting for output..."
 msgstr "Natija kutilmoqda..."
 
 #. js-lingui-id: FZKt6U
-#: src/modules/front-components/media-session/components/FrontComponentMediaSessionTooltipRow.tsx
+#: src/modules/media-access/components/MediaAccessSessionRow.tsx
 msgid "Waiting for permission"
 msgstr "Ruxsat kutilmoqda"
 
@@ -30524,6 +30776,11 @@ msgstr "Webhooklar"
 #: src/modules/settings/applications/components/SettingsApplicationAboutSidebar.tsx
 msgid "Website"
 msgstr "Veb-sayt"
+
+#. js-lingui-id: 9FCp7Z
+#: src/modules/settings/security/components/SettingsSecurityIframeMediaPermissionForm.tsx
+msgid "Website origin"
+msgstr "Veb-sayt manbasi"
 
 #. js-lingui-id: wro6m2
 #: src/modules/settings/security/components/SettingsSecurityIframeOrigins.tsx

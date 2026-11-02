@@ -298,7 +298,8 @@ export const MANIFEST_ENTITY_REGISTRY: Record<
   },
   relatedRecordPath: {
     entityKind: 'related record path',
-    getCandidates: () => NO_MANIFEST_CANDIDATES,
+    getCandidates: (manifest) =>
+      toCandidates(manifest.relatedRecordPaths, () => undefined),
   },
   validationRule: {
     entityKind: 'validation rule',

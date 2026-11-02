@@ -5,7 +5,7 @@ import { getWorkflowNodeIconKey } from '@/workflow/workflow-diagram/utils/getWor
 import { WorkflowDiagramStepNodeLogicFunctionIcon } from '@/workflow/workflow-diagram/workflow-nodes/components/WorkflowDiagramStepNodeLogicFunctionIcon';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { getTriggerIconColor } from '@/workflow/workflow-trigger/utils/getTriggerIconColor';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { useTheme } from 'twenty-ui/theme';
 
 export const WorkflowDiagramStepNodeIcon = ({

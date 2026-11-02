@@ -1,12 +1,12 @@
 {
   "name": "@twentyhq/fathom",
   "description": "Fathom connector for Twenty: syncs meeting recordings, transcripts, summaries and action items into Call Recordings.",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
     "npm": "please-use-yarn",
-    "twenty": ">=2.38.0",
+    "twenty": ">=2.53.0",
     "yarn": ">=4.0.2"
   },
   "keywords": [
@@ -31,8 +31,8 @@
     "@types/node": "^24.7.2",
     "@typescript/native-preview": "^7.0.0-dev.20260116.1",
     "oxlint": "^0.16.0",
-    "twenty-client-sdk": "2.50.0",
-    "twenty-sdk": "2.38.0",
+    "twenty-client-sdk": "2.53.0",
+    "twenty-sdk": "2.53.0",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "^4.2.1",
     "vitest": "^4.1.12"

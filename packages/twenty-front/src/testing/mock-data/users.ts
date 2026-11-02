@@ -78,6 +78,7 @@ export const mockCurrentWorkspace = {
   isPasswordAuthEnabled: true,
   isMicrosoftAuthEnabled: false,
   isCustomDomainEnabled: false,
+  iframeMediaPermissions: [],
   isPasswordAuthBypassEnabled: false,
   isGoogleAuthBypassEnabled: false,
   isMicrosoftAuthBypassEnabled: false,

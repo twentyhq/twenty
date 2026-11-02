@@ -132,19 +132,6 @@ const groupAgentNamesByRoleUniversalIdentifier = ({
   return agentNamesByRoleUniversalIdentifier;
 };
 
-const validateApplicationDefaultRoleIsDefined = ({
-  applicationRole,
-  defaultRoleUniversalIdentifier,
-}: {
-  applicationRole: RoleManifest | undefined;
-  defaultRoleUniversalIdentifier: string;
-}): string[] =>
-  isDefined(applicationRole)
-    ? []
-    : [
-        `Application default role "${defaultRoleUniversalIdentifier}" is not defined by this application.`,
-      ];
-
 const validateAgentRolesAreDefined = ({
   agentNamesByRoleUniversalIdentifier,
   roles,
@@ -246,10 +233,6 @@ export const validateAgentRolesWithinApplicationRole = ({
     });
 
   return [
-    ...validateApplicationDefaultRoleIsDefined({
-      applicationRole,
-      defaultRoleUniversalIdentifier,
-    }),
     ...validateAgentRolesAreDefined({
       agentNamesByRoleUniversalIdentifier,
       roles,

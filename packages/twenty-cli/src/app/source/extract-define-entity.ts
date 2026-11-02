@@ -31,6 +31,7 @@ export const DEFINE_ENTITY_KEYS = {
   defineTimelineActivityType: 'timelineActivityTypes',
   defineSettingsMenuItem: 'settingsMenuItems',
   defineValidationRule: 'validationRules',
+  defineRelatedRecordPath: 'relatedRecordPaths',
 } as const;
 
 export type TargetFunction = keyof typeof DEFINE_ENTITY_KEYS;

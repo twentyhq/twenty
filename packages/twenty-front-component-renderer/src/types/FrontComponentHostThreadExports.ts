@@ -10,4 +10,6 @@ export type FrontComponentHostThreadExports =
       hostFetch: HostFetchFunction;
       observeElementGeometry: (remoteElementIds: string[]) => Promise<void>;
       unobserveElementGeometry: (remoteElementIds: string[]) => Promise<void>;
+      observeOutsidePresses: () => Promise<void>;
+      unobserveOutsidePresses: () => Promise<void>;
     };

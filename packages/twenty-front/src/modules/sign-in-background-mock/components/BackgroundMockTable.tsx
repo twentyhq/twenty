@@ -6,7 +6,8 @@ import { BACKGROUND_MOCK_COLUMNS } from '@/sign-in-background-mock/constants/Bac
 import { BACKGROUND_MOCK_COMPANIES } from '@/sign-in-background-mock/constants/BackgroundMockCompanies';
 import { BACKGROUND_MOCK_TABLE_DIMENSIONS } from '@/sign-in-background-mock/constants/BackgroundMockTableDimensions';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { IconChevronDown, IconPlus, useIcons } from 'twenty-ui/icon';
+import { IconChevronDown, IconPlus } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Checkbox } from 'twenty-ui/primitives/input';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 

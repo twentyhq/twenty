@@ -3,12 +3,14 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type CookieOptions, type Request, type Response } from 'express';
+import { isDefined } from 'twenty-shared/utils';
 
 import { USER_SESSION_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-cookie-name.constant';
 import { USER_SESSION_IMPERSONATOR_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-impersonator-cookie-name.constant';
 import { USER_SESSION_IMPERSONATOR_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-impersonator-secure-cookie-name.constant';
 import { USER_SESSION_SECURE_COOKIE_NAME } from 'src/engine/core-modules/user-session/constants/user-session-secure-cookie-name.constant';
 import { extractUserSessionTokenFromRequestCookie } from 'src/engine/core-modules/user-session/utils/extract-user-session-token-from-request.util';
+import { resolveSessionCookieAccess } from 'src/engine/core-modules/user-session/utils/resolve-session-cookie-access.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 const isHttpsUrl = (url: string | undefined): boolean => {
@@ -23,6 +25,7 @@ const isHttpsUrl = (url: string | undefined): boolean => {
   }
 };
 
+// Keep every session-cookie read and write in this service: it is the only place resolveSessionCookieAccess is enforced.
 @Injectable()
 export class UserSessionCookieService {
   constructor(private readonly twentyConfigService: TwentyConfigService) {}
@@ -35,21 +38,47 @@ export class UserSessionCookieService {
     return isHttpsUrl(serverUrl) || sameSite === 'none';
   }
 
-  extractSessionTokenFromRequest(request: Request): string | undefined {
+  private isSessionCookieAccessAllowed(request: Request | undefined): boolean {
+    return (
+      isDefined(request) && resolveSessionCookieAccess(request) !== 'denied'
+    );
+  }
+
+  private extractAllowedSessionToken({
+    request,
+    secureCookieName,
+    insecureCookieName,
+  }: {
+    request: Request;
+    secureCookieName: string;
+    insecureCookieName: string;
+  }): string | undefined {
+    if (!this.isSessionCookieAccessAllowed(request)) {
+      return undefined;
+    }
+
     return extractUserSessionTokenFromRequestCookie(request, {
+      secureCookieName,
+      insecureCookieName,
+      allowInsecureCookieName: !this.isSecureDeployment(),
+    });
+  }
+
+  extractSessionTokenFromRequest(request: Request): string | undefined {
+    return this.extractAllowedSessionToken({
+      request,
       secureCookieName: USER_SESSION_SECURE_COOKIE_NAME,
       insecureCookieName: USER_SESSION_COOKIE_NAME,
-      allowInsecureCookieName: !this.isSecureDeployment(),
     });
   }
 
   extractImpersonatorSessionTokenFromRequest(
     request: Request,
   ): string | undefined {
-    return extractUserSessionTokenFromRequestCookie(request, {
+    return this.extractAllowedSessionToken({
+      request,
       secureCookieName: USER_SESSION_IMPERSONATOR_SECURE_COOKIE_NAME,
       insecureCookieName: USER_SESSION_IMPERSONATOR_COOKIE_NAME,
-      allowInsecureCookieName: !this.isSecureDeployment(),
     });
   }
 
@@ -79,6 +108,10 @@ export class UserSessionCookieService {
     sessionToken: string,
     expiresAt: Date,
   ): void {
+    if (!this.isSessionCookieAccessAllowed(response.req)) {
+      return;
+    }
+
     const { cookieName, options } = this.resolveCookieSettings();
 
     response.cookie(cookieName, sessionToken, {
@@ -91,6 +124,10 @@ export class UserSessionCookieService {
     response: Response,
     sessionToken: string,
   ): void {
+    if (!this.isSessionCookieAccessAllowed(response.req)) {
+      return;
+    }
+
     response.cookie(
       this.isSecureDeployment()
         ? USER_SESSION_IMPERSONATOR_SECURE_COOKIE_NAME
@@ -101,6 +138,10 @@ export class UserSessionCookieService {
   }
 
   clearImpersonatorSessionCookie(response: Response): void {
+    if (!this.isSessionCookieAccessAllowed(response.req)) {
+      return;
+    }
+
     const options = this.resolveCookieOptions();
 
     response.clearCookie(USER_SESSION_IMPERSONATOR_SECURE_COOKIE_NAME, options);
@@ -110,7 +151,10 @@ export class UserSessionCookieService {
   hasSessionCookie(request: Request): boolean {
     const cookieHeader = request.headers.cookie;
 
-    if (!isNonEmptyString(cookieHeader)) {
+    if (
+      !isNonEmptyString(cookieHeader) ||
+      !this.isSessionCookieAccessAllowed(request)
+    ) {
       return false;
     }
 
@@ -123,6 +167,10 @@ export class UserSessionCookieService {
   }
 
   clearSessionCookie(response: Response): void {
+    if (!this.isSessionCookieAccessAllowed(response.req)) {
+      return;
+    }
+
     const { options } = this.resolveCookieSettings();
 
     // Both names, so an instance that switched to https drops the cookie issued under the old one.

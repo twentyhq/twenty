@@ -7,6 +7,7 @@ export type SettingsStatRow = {
   Icon: IconComponent;
   label: string;
   value: ReactNode;
+  hasSeparatorAfter?: boolean;
 };
 
 type SettingsStatsGridProps = {
@@ -41,6 +42,11 @@ const StyledRow = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   height: ${themeCssVariables.spacing[6]};
+`;
+
+const StyledRowSeparator = styled.div`
+  background: ${themeCssVariables.border.color.light};
+  height: 1px;
 `;
 
 const StyledLabel = styled.div`
@@ -78,13 +84,11 @@ export const SettingsStatsGrid = ({ columns }: SettingsStatsGridProps) => (
       <Fragment key={index}>
         {index > 0 && <StyledDivider />}
         <StyledColumn>
-          {column.map((stat) => (
-            <StatRow
-              key={stat.label}
-              Icon={stat.Icon}
-              label={stat.label}
-              value={stat.value}
-            />
+          {column.map((stat, rowIndex) => (
+            <Fragment key={`${rowIndex}-${stat.label}`}>
+              <StatRow Icon={stat.Icon} label={stat.label} value={stat.value} />
+              {stat.hasSeparatorAfter && <StyledRowSeparator />}
+            </Fragment>
           ))}
         </StyledColumn>
       </Fragment>

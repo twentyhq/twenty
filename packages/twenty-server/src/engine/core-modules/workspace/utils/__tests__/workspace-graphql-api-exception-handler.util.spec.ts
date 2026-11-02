@@ -1,6 +1,7 @@
 import {
   ConflictError,
   NotFoundError,
+  UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { workspaceGraphqlApiExceptionHandler } from 'src/engine/core-modules/workspace/utils/workspace-graphql-api-exception-handler.util';
 import {
@@ -50,6 +51,17 @@ describe('workspaceGraphqlApiExceptionHandler', () => {
 
     expect(() => workspaceGraphqlApiExceptionHandler(error)).toThrow(
       ConflictError,
+    );
+  });
+
+  it('should throw UserInputError when iframe media origins overflow the policy header', () => {
+    const error = new WorkspaceException(
+      'Iframe media origins exceed the Permissions-Policy size limit',
+      WorkspaceExceptionCode.IFRAME_MEDIA_PERMISSIONS_POLICY_TOO_LARGE,
+    );
+
+    expect(() => workspaceGraphqlApiExceptionHandler(error)).toThrow(
+      UserInputError,
     );
   });
 

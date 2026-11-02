@@ -4,7 +4,7 @@ import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-ac
 import { type MessageDescriptor } from '@lingui/core';
 import { useLingui } from '@lingui/react/macro';
 import { ListItemButton } from 'twenty-ui/components/navigation';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 
 type Action = {
   defaultLabel: MessageDescriptor;

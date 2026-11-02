@@ -78,7 +78,7 @@ export const ConnectionOnlyAppListsMyConnectionsWithoutTabs: Story = {
       text: 'tim.cook@linear.app',
     });
 
-    expect(reconnectNeededRow.getByText('Reconnect needed')).toBeVisible();
+    expect(reconnectNeededRow.getByText('Sync failed')).toBeVisible();
 
     const archivedRow = withinTableRowOrThrow({
       canvasElement,

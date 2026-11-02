@@ -1,10 +1,18 @@
 import { NextResponse } from 'next/server';
+import { isDefined } from 'twenty-shared/utils';
 
 import { getStripeClient, verifyEnterpriseKey } from '@/platform/enterprise';
+import { forwardToTwentyConnect } from '@/platform/enterprise/forward-to-twenty-connect';
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
+  const forwardedResponse = await forwardToTwentyConnect(request);
+
+  if (isDefined(forwardedResponse)) {
+    return forwardedResponse;
+  }
+
   if (
     !process.env.STRIPE_SECRET_KEY ||
     !process.env.ENTERPRISE_JWT_PUBLIC_KEY

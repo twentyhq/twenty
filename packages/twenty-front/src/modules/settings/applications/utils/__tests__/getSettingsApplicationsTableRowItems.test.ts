@@ -16,6 +16,7 @@ describe('getSettingsApplicationsTableRowItems', () => {
         STANDARD_APPLICATION,
       ],
       builtInAccountApps: BUILT_IN_ACCOUNT_APPS,
+      currentWorkspace: null,
     });
 
     expect(rowItems.map(({ id }) => id)).toEqual([
@@ -36,6 +37,7 @@ describe('getSettingsApplicationsTableRowItems', () => {
         STANDARD_APPLICATION,
       ],
       builtInAccountApps: [],
+      currentWorkspace: null,
     });
 
     expect(rowItems.map(({ id }) => id)).toEqual([
@@ -49,6 +51,7 @@ describe('getSettingsApplicationsTableRowItems', () => {
     const [googleRowItem, npmRowItem] = getSettingsApplicationsTableRowItems({
       applications: [NPM_APPLICATION],
       builtInAccountApps: BUILT_IN_ACCOUNT_APPS.slice(0, 1),
+      currentWorkspace: null,
     });
 
     expect(npmRowItem).toMatchObject({
@@ -63,5 +66,34 @@ describe('getSettingsApplicationsTableRowItems', () => {
       description: 'Sync emails and calendar events from your Google accounts.',
     });
     expect(googleRowItem.sourceType).toBeUndefined();
+  });
+
+  it('gives the standard and custom apps the name and description their rows show', () => {
+    const customApplication = {
+      id: 'custom-application-id',
+      name: 'workspace-custom',
+      universalIdentifier: 'custom-application-universal-identifier',
+    };
+
+    const [standardRowItem, customRowItem] =
+      getSettingsApplicationsTableRowItems({
+        applications: [
+          { ...STANDARD_APPLICATION, name: 'twenty-standard' },
+          customApplication,
+        ],
+        builtInAccountApps: [],
+        currentWorkspace: {
+          workspaceCustomApplication: { id: customApplication.id },
+        },
+      });
+
+    expect(standardRowItem).toMatchObject({
+      name: 'Standard',
+      description: 'The base data model every Twenty workspace runs on.',
+    });
+    expect(customRowItem).toMatchObject({
+      name: 'Custom',
+      description: "Host your workspace's customizations and overrides.",
+    });
   });
 });

@@ -45,8 +45,8 @@ import { type ViewEntity } from 'src/engine/metadata-modules/view/entities/view.
 import { ViewWidgetUpsertService } from 'src/engine/metadata-modules/view/services/view-widget-upsert.service';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { ViewGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/view/utils/view-graphql-api-exception.filter';
-import { ViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/view-permission.guard';
-import { CreateViewPermissionGuard } from 'src/engine/metadata-modules/view-permissions/guards/create-view-permission.guard';
+import { ViewPermissionGuard } from 'src/engine/permissions/view/guards/view-permission.guard';
+import { CreateViewPermissionGuard } from 'src/engine/permissions/view/guards/create-view-permission.guard';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 

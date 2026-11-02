@@ -79,6 +79,29 @@ export const SearchMatchesBuiltInAccountApps: Story = {
   },
 };
 
+export const SearchMatchesTheDescriptionShownForTheStandardApp: Story = {
+  args: {
+    applications: [
+      { ...STANDARD_APPLICATION, name: 'twenty-standard' },
+      NPM_APPLICATION,
+    ],
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await userEvent.type(
+      await canvas.findByPlaceholderText('Search an application'),
+      'data model',
+    );
+
+    await waitFor(() =>
+      expect(getSettingsApplicationsTableRowLinks(canvasElement)).toEqual([
+        '/settings/applications/standard-application-id',
+      ]),
+    );
+  },
+};
+
 export const SearchWithNoMatchShowsAnEmptyState: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
@@ -132,7 +155,7 @@ export const StatusColumnShowsTheMostUrgentStatus: Story = {
 
     const acmeRow = canvas.getByRole('link', { name: /Acme Sync/ });
 
-    expect(within(acmeRow).getByText('Missing configuration')).toBeVisible();
+    expect(within(acmeRow).getByText('Setup incomplete')).toBeVisible();
     expect(acmeRow).not.toHaveTextContent('Update');
     expect(acmeRow).not.toHaveTextContent('NPM');
 
@@ -142,7 +165,7 @@ export const StatusColumnShowsTheMostUrgentStatus: Story = {
 
     const standardRow = canvas.getByRole('link', { name: /Standard/ });
 
-    expect(standardRow).not.toHaveTextContent('Missing configuration');
+    expect(standardRow).not.toHaveTextContent('Setup incomplete');
     expect(standardRow).not.toHaveTextContent('Update');
   },
 };
@@ -166,7 +189,7 @@ export const TypeColumnShowsUpdateNextToTheDescription: Story = {
 
     expect(acmeRow).toHaveTextContent('NPM');
     expect(within(acmeRow).getByText('Update')).toBeVisible();
-    expect(acmeRow).not.toHaveTextContent('Missing configuration');
+    expect(acmeRow).not.toHaveTextContent('Setup incomplete');
 
     const weatherRow = canvas.getByRole('link', { name: /Weather Widget/ });
 
@@ -205,8 +228,8 @@ export const MemberRowsLinkToTheirPreferences: Story = {
 
     const acmeRow = canvas.getByRole('link', { name: /Acme Sync/ });
 
-    expect(within(acmeRow).getByText('Reconnect needed')).toBeVisible();
-    expect(acmeRow).not.toHaveTextContent('Missing configuration');
+    expect(within(acmeRow).getByText('Sync failed')).toBeVisible();
+    expect(acmeRow).not.toHaveTextContent('Setup incomplete');
 
     expect(
       within(canvas.getByRole('link', { name: /Zapier/ })).getByText(

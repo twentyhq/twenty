@@ -116,11 +116,9 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     const executionContext =
       await this.workflowExecutionContextService.getExecutionContext(runInfo);
 
-    const { application } = executionContext;
-
-    this.workflowExecutionContextService.assertStepTargetBelongsToRunApplicationOrThrow(
+    this.workflowExecutionContextService.assertRunApplicationCanTriggerStepTargetOrThrow(
       {
-        application,
+        executionContext,
         targetApplicationId: agent.applicationId,
         targetLabel: `Agent "${agent.name}"`,
       },
@@ -164,10 +162,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         workflowRunId: runInfo.workflowRunId,
         stepId: currentStepId,
       }),
-      spec: buildWorkflowAgentRunSpec({
-        step,
-        isApplicationBound: isDefined(application),
-      }),
+      spec: buildWorkflowAgentRunSpec({ step }),
       prompt: isDefined(resolvedPrompt)
         ? {
             messages: [{ role: 'user', content: resolvedPrompt }],

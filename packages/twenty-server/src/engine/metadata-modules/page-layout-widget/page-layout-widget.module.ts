@@ -6,7 +6,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { PageLayoutWidgetController } from 'src/engine/metadata-modules/page-layout-widget/controllers/page-layout-widget.controller';
 import { PageLayoutWidgetResolver } from 'src/engine/metadata-modules/page-layout-widget/resolvers/page-layout-widget.resolver';
 import { PageLayoutWidgetService } from 'src/engine/metadata-modules/page-layout-widget/services/page-layout-widget.service';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 import { DashboardSyncModule } from 'src/modules/dashboard-sync/dashboard-sync.module';
 

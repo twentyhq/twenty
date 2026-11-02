@@ -43,8 +43,38 @@ export const unwrapDefineFrontComponentToDirectExport = (
 
   return (
     `import { createRoot as __createRoot } from 'react-dom/client';\n` +
+    `import { useEffect as __useEffect } from 'react';\n` +
     `import { jsx as __frontComponentJsx } from 'react/jsx-runtime';\n` +
     transformedSource +
-    `\nexport default function __renderFrontComponent(__container) { __createRoot(__container).render(__frontComponentJsx(${FRONT_COMPONENT_DEFINITION_NAME}.component, {})); }\n`
+    `\nexport default function __renderFrontComponent(__container, __props = {}) {
+      return new Promise((resolve, reject) => {
+        let hasSettled = false;
+        const timeout = setTimeout(() => {
+          settle(reject, new Error('Front component initial render timed out.'));
+        }, 30000);
+        function settle(callback, value) {
+          hasSettled = true;
+          clearTimeout(timeout);
+          callback(value);
+        }
+        function FrontComponentReadyEffect() {
+          __useEffect(() => {
+            settle(resolve);
+          }, []);
+          return __frontComponentJsx(${FRONT_COMPONENT_DEFINITION_NAME}.component, __props);
+        }
+        try {
+          __createRoot(__container, { onUncaughtError(error) {
+            if (hasSettled) {
+              queueMicrotask(() => { throw error; });
+              return;
+            }
+            settle(reject, error);
+          } }).render(__frontComponentJsx(FrontComponentReadyEffect, {}));
+        } catch (error) {
+          settle(reject, error);
+        }
+      });
+    }\n`
   );
 };

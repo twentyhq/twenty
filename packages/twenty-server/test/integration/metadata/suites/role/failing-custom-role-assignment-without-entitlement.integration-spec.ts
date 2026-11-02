@@ -17,7 +17,7 @@ import { type WorkspaceBillingEntitlementsCacheService } from 'src/engine/core-m
 import { type UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { type UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { PermissionsExceptionCode } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsExceptionCode } from 'src/engine/permissions/permissions.exception';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';

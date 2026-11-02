@@ -44,14 +44,14 @@ export class ServerRouteTriggerController {
     request: Request;
     response: Response;
   }) {
-    const { response: triggerResponse, isResolvedThroughLegacyIdentifier } =
+    const { response: triggerResponse, isResolvedThroughDeprecatedRoute } =
       await this.serverRouteTriggerService.handle({
         request,
         resolverLogicFunctionIdentifier,
         resolverApplicationRegistrationId,
       });
 
-    if (isResolvedThroughLegacyIdentifier) {
+    if (isResolvedThroughDeprecatedRoute) {
       response.setHeader(
         'Deprecation',
         SERVER_ROUTE_LEGACY_IDENTIFIER_DEPRECATION_HEADER_VALUE,

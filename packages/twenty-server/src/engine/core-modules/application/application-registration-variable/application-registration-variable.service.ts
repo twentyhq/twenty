@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { type ServerVariables } from 'twenty-shared/application';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -66,6 +67,36 @@ export class ApplicationRegistrationVariableService {
     });
 
     return variables.map((variable) => this.toObfuscatedDTO(variable));
+  }
+
+  async getServerEnvVariables({
+    applicationRegistrationId,
+  }: {
+    applicationRegistrationId: string | null;
+  }): Promise<Record<string, string>> {
+    if (!isDefined(applicationRegistrationId)) {
+      return {};
+    }
+
+    const variables = await this.variableRepository.find({
+      where: { applicationRegistrationId },
+    });
+
+    const envVariables: Record<string, string> = {};
+
+    for (const variable of variables) {
+      if (isReservedEnvVariableName(variable.key)) {
+        continue;
+      }
+
+      const plaintextValue = this.decryptValue(variable);
+
+      if (isNonEmptyString(plaintextValue)) {
+        envVariables[variable.key] = plaintextValue;
+      }
+    }
+
+    return envVariables;
   }
 
   async updateVariable({

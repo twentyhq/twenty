@@ -1,9 +1,13 @@
+import { ManagedIframe } from '@/media-access/components/ManagedIframe';
+import { useWorkspaceIframeMediaPermissions } from '@/media-access/hooks/useWorkspaceIframeMediaPermissions';
+import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { PageLayoutWidgetNoDataDisplay } from '@/page-layout/widgets/components/PageLayoutWidgetNoDataDisplay';
 import { WidgetSkeletonLoader } from '@/page-layout/widgets/components/WidgetSkeletonLoader';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
+import { MEDIA_CAPABILITIES } from 'twenty-shared/constants';
 import { getSafeUrl, isDefined, isHttpUrl } from 'twenty-shared/utils';
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -21,7 +25,7 @@ const StyledContainer = styled.div<{ $isEditMode: boolean }>`
   width: 100%;
 `;
 
-const StyledIframe = styled.iframe<{ $isEditMode: boolean }>`
+const StyledIframe = styled(ManagedIframe)<{ $isEditMode: boolean }>`
   border: none;
   flex: 1;
   height: 100%;
@@ -52,12 +56,15 @@ const StyledErrorContainer = styled.div`
   text-align: center;
 `;
 
-export type IframeWidgetProps = {
+type IframeWidgetProps = {
   widget: PageLayoutWidget;
 };
 
 export const IframeWidget = ({ widget }: IframeWidgetProps) => {
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
+  const iframeMediaPermissions = useWorkspaceIframeMediaPermissions();
+  const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
+  const isWorkspaceWidget = getIsMetadataItemCustom(widget);
 
   const configuration = widget.configuration;
 
@@ -104,6 +111,9 @@ export const IframeWidget = ({ widget }: IframeWidgetProps) => {
       )}
       <StyledIframe
         $isEditMode={isPageLayoutInEditMode}
+        owner={{ type: 'workspace-widget', id: widget.id, name: title }}
+        iframeMediaPermissions={iframeMediaPermissions}
+        requestedMediaCapabilities={isWorkspaceWidget ? MEDIA_CAPABILITIES : []}
         src={safeUrl}
         title={title}
         onLoad={handleIframeLoad}

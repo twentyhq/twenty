@@ -20,8 +20,8 @@ import {
   IconLock,
   IconPencil,
   IconTrash,
-  useIcons,
 } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import {
   PermissionFlagType,
   ViewVisibility,

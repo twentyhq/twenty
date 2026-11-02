@@ -9,7 +9,8 @@ import { SelectOptionIcon } from '@/ui/input/components/SelectOptionIcon';
 import { t } from '@lingui/core/macro';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { IconUserCircle, useIcons } from 'twenty-ui/icon';
+import { IconUserCircle } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 
 type AdvancedFilterRelationTargetFieldSelectMenuProps = {
   recordFilterId: string;

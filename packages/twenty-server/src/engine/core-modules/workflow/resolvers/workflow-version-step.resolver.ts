@@ -23,7 +23,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { ConnectedAccountHandleDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-handle.dto';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 import {
   WorkflowVersionStepException,
   WorkflowVersionStepExceptionCode,

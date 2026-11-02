@@ -293,28 +293,25 @@ export default defineLogicFunction({
 يمكن الوصول إلى نقطة النهاية عند:
 
 ```
-POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionId
+POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationId/:resolverLogicFunctionUniversalIdentifier
 ```
 
-المعرّف هو `id` الخاص بالمحلّل: المفتاح الأساسي الذي يعيّنه الخادم عند مزامنة التطبيق لأول مرة مع مساحة عمل المالك، وليس `universalIdentifier` الوارد في البيان الخاص بك. اقرأه مرة أخرى من واجهة برمجة التطبيقات `/metadata` لمساحة عمل المالك، ثم سجّل عنوان URL هذا لدى الموفّر:
+المقطع الأول هو معرّف تسجيل تطبيقك، والثاني هو `universalIdentifier` الخاص بالـ resolver من ملف manifest لديك. لا يُحلّ المسار إلا إلى resolver تابع لذلك التسجيل، في مساحة العمل الخاصة بمالكه. عندما يسجّل تطبيقك webhook نفسه، أنشئ عنوان URL من داخل دالة منطق باستخدام `getServerRouteUrl`؛ يحقن Twenty عنوان URL الأساسي لمسارات خادم تطبيقك باعتباره `TWENTY_SERVER_ROUTES_URL`:
 
-```graphql
-query {
-  findManyLogicFunctions {
-    id
-    name
-    universalIdentifier
-  }
-}
+```ts
+import { getServerRouteUrl } from 'twenty-sdk/utils';
+
+const destinationUrl = getServerRouteUrl(
+  INVOICE_PAID_RESOLVER_UNIVERSAL_IDENTIFIER,
+);
 ```
 
 <Note>
-  لا يزال عنوان URL الذي يحمل `universalIdentifier` الخاص بالمحلل يُحل في الوقت الحالي،
-  وتحمل الاستجابة رأس `Deprecation`. يكون `universalIdentifier`
-  فريدًا لكل مساحة عمل، وليس عالميًا: إذا أعلن تسجيل آخر تملكه مساحة عمل
-  مختلفة عن المعرف نفسه، فستجيب المنصة بـ `404` لعنوان URL ذلك
-  بدلًا من الاختيار بينهما. انقل عناوين URL المسجلة لدى
-  موفري الخدمة لديك إلى صيغة `id`.
+  تستمر عناوين URL التي لا تحتوي إلا على `id` أو `universalIdentifier` الخاص بالمحلل
+  (`/webhooks/server/:identifier`) في الحل في الوقت الحالي، ويستجيب كلاهما بترويسة
+  `Deprecation`. يعرض نموذج `universalIdentifier` الرمز `409` عندما تعلن عمليتا
+  تسجيل عن المعرّف نفسه. انقل عناوين URL المسجلة لدى
+  موفري الخدمة لديك إلى نموذج التسجيل.
 </Note>
 
 **الرد على طلب GET للتحقق.** يتحقق بعض الموفّرين من نقطة نهاية قبل أن يرسلوا إليها، وذلك بإرسال طلب `GET` يحمل تحديًا إلى عنوان URL نفسه الذي سيرسلون إليه الأحداث لاحقًا عبر `POST` — وتُعد WhatsApp Cloud API من Meta أحدهم. لا يستجيب مسار الخادم إلا لطلبات `POST` ما لم تحدد خلاف ذلك، لذا أعلن الطريقتين معًا:
@@ -552,7 +549,7 @@ const handler = async (batch: PeopleUpdatedBatch) => {
 
 #### سياق التنفيذ
 
-يتلقى كل معالج وسيطًا ثانيًا يصف عملية التشغيل نفسها، بغض النظر عما شغّلها. بينما يتغير شكل الوسيط الأول بحسب المُشغِّل، لا يتغير شكل هذا الوسيط:
+تتلقى معالجات دوال المنطق العامة وسيطة ثانية تصف عملية التشغيل نفسها، بغض النظر عما أدى إلى تشغيلها. بينما يتغير شكل الوسيط الأول بحسب المُشغِّل، لا يتغير شكل هذا الوسيط:
 
 ```ts
 import type { LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
@@ -897,7 +894,7 @@ const handler = async (params: { parentMessageId?: string }) => {
 
 عرّف فحصًا للحالة الصحية باستخدام `defineHealthCheck` للإبلاغ عمّا إذا كان تطبيقك قادرًا بالفعل على التشغيل. وهو مخصص لما لا يمكن أن يعرفه إلا التطبيق: مفتاح موجود لكنه مُلغى، أو حساب ضمن الخطة الخاطئة، أو خطاف ويب لم يُسجَّل قط. ما يمكن لـ Twenty رؤيته بنفسه — متغير مطلوب لم يملأه أحد — تغطيه [`isRequired`](/ar/developers/extend/apps/config/application) ولا يحتاج إلى أي تعليمات برمجية.
 
-يعمل على جانب الخادم، لذا يقرأ المتغيرات السرية مثل أي دالة منطقية أخرى. لا تأخذ المعالجة أي وسائط.
+يعمل على جانب الخادم، لذا يقرأ المتغيرات السرية مثل أي دالة منطقية أخرى. لا يرتبط فحص مساحة العمل بأي عضو، لذا لا يحتاج المعالج إلى أي وسيطات.
 
 ```ts src/logic-functions/health-check.ts
 import { defineHealthCheck } from 'twenty-sdk/define';
@@ -950,7 +947,42 @@ return {
 
 يجب أن يظل الموقع داخل Twenty، لذا يبدأ بـ `/` أو `#`: أما الموقع الخارجي أو النسبي للبروتوكول أو النسبي فيفقد زره بدلًا من أن يصبح إعادة توجيه إلى مكان آخر. يُزال الزر أيضًا عندما يُبلغ التطبيق عن عدم وجود موقع ولا يحتوي على علامة تبويب للإعدادات للرجوع إليها، لذا فإن التحقق من تطبيق لا يحتوي على متغيرات ولا عناصر قائمة إعدادات يعرض عنوانه دون زر معطّل.
 
-يُسمَح بفحص حالة صحية واحد فقط لكل تطبيق؛ إعلان أكثر من واحد يؤدي إلى فشل عملية الإنشاء.
+### التحقق من إعداد كل عضو الخاص
+
+يعرّف التطبيق دالة واحدة لفحص السلامة. احذف `runOnUserPreferences` أو اضبطه على `false` لتشغيل فحص لمساحة العمل في صفحة إعدادات التطبيق، باستخدام معالج بلا وسيطات. اضبط `runOnUserPreferences: true` لتشغيل فحص للعضو في صفحة تفضيلات التطبيقات الخاصة به بدلاً من ذلك. يتلقى معالج العضو `{ userWorkspaceId: string }` المطلوب من الجلسة المصادَق عليها:
+
+```ts src/logic-functions/health-check.ts
+import { defineHealthCheck } from 'twenty-sdk/define';
+import { listConnections } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
+
+export default defineHealthCheck({
+  universalIdentifier: 'f3b6a4d2-9c81-4e0a-b5c7-2d1e8f4a6b03',
+  name: 'health-check',
+  runOnUserPreferences: true,
+  handler: async ({ userWorkspaceId }) => {
+    const [myConnection] = await listConnections({
+      scope: 'USER',
+      userWorkspaceId,
+    });
+
+    if (!isDefined(myConnection) || isDefined(myConnection.authFailedAt)) {
+      return { status: 'WARNING', title: 'Connect your account' };
+    }
+
+    return { status: 'OK' };
+  },
+});
+```
+
+يعمل فحص العضو عندما يفتح عضو التطبيق في صفحة **تفضيلات التطبيقات** الخاصة به، ولا يرى لافتته سوى ذلك العضو. يعمل بهوية ذلك العضو: يتلقى المعالج `{ userWorkspaceId }` من الجلسة المصادَق عليها، وتحتفظ المتغيرات ذات النطاق المستخدم بقيمها. كائن المعلمات والمعرّف مطلوبان لهذا الوضع. لا يعمل في إعدادات التطبيق لمساحة العمل. مرر `userWorkspaceId` إلى `listConnections()` كي يعيد اتصالات ذلك العضو فقط. يُستبعد من القائمة أي اتصال يفشل تحديث رمزه، لذا يشمل "عدم وجود اتصال" "إعادة الاتصال" أيضاً. يؤدي الزر الذي لا يحتوي على `location` إلى علامة التبويب "عام" للتطبيق في تلك الصفحة.
+
+<Note>
+  تتطلب فحوصات الأعضاء Twenty 2.55.0 أو إصداراً أحدث. لم يتم تفعيل **تفضيلات التطبيقات** بعد
+  في كل مساحة عمل: حيث لا تكون مفعّلة، لا يعمل فحص العضو أبداً.
+</Note>
+
+يمكن للتطبيق تعريف دالة واحدة فقط لفحص السلامة، إما في وضع مساحة العمل أو وضع العضو. تحتفظ التعريفات الحالية بمعالج مساحة العمل بلا وسيطات. يؤدي تعريف دالة ثانية إلى فشل الإنشاء.
 
 ## إنشاء نشاط في المخطط الزمني
 

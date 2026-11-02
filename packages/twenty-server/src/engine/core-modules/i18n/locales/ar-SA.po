@@ -394,7 +394,7 @@ msgid "A required field is missing. Please provide all required values and try a
 msgstr "حقل مطلوب مفقود. يرجى تقديم جميع القيم المطلوبة والمحاولة مرة أخرى."
 
 #. js-lingui-id: Q2De+v
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-label-uniqueness.util.ts
 msgid "A role with this label already exists."
 msgstr "يوجد بالفعل دور يحمل هذا الاسم."
@@ -403,6 +403,11 @@ msgstr "يوجد بالفعل دور يحمل هذا الاسم."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-application-variable-default-value.util.ts
 msgid "A secret variable cannot have a default value."
 msgstr "لا يمكن أن يحتوي المتغير السري على قيمة افتراضية."
+
+#. js-lingui-id: KQFDmH
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "A signed-in chat is required."
+msgstr "يلزم تسجيل الدخول إلى دردشة."
 
 #. js-lingui-id: 0/nqSW
 #: src/engine/metadata-modules/flat-skill/utils/from-update-skill-input-to-flat-skill-to-update-or-throw.util.ts
@@ -609,6 +614,24 @@ msgstr "مقبول"
 msgid "Access denied."
 msgstr "تم رفض الوصول."
 
+#. js-lingui-id: RpHJlx
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelSingular"
+msgid "Access group"
+msgstr "مجموعة الوصول"
+
+#. js-lingui-id: EObiot
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Access group position"
+msgstr "موضع مجموعة الوصول"
+
+#. js-lingui-id: YTZTZr
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.labelPlural"
+msgid "Access groups"
+msgstr "مجموعات الوصول"
+
 #. js-lingui-id: Va0+qg
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -702,6 +725,11 @@ msgctxt "fieldMetadata.description"
 msgid "Actual recording start"
 msgstr "بداية التسجيل الفعلية"
 
+#. js-lingui-id: ihM2nS
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "Add {missingPackageNames} to the Workspace app package.json and yarn.lock before creating a component."
+msgstr "أضف {missingPackageNames} إلى package.json وyarn.lock لتطبيق Workspace قبل إنشاء مكوّن."
+
 #. js-lingui-id: Fk0T9q
 #: src/modules/emailing/utils/build-campaign-not-sendable-exceptions.util.ts
 msgid "Add a sender to this campaign first."
@@ -759,6 +787,11 @@ msgctxt "commandMenuItem.label"
 msgid "Add View to List"
 msgstr "إضافة عرض إلى القائمة"
 
+#. js-lingui-id: ScY5iZ
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "Add yarn.lock to the Workspace app before creating a component."
+msgstr "أضف yarn.lock إلى تطبيق Workspace قبل إنشاء مكوّن."
+
 #. js-lingui-id: EtSC0Y
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -778,7 +811,7 @@ msgid "Admin Panel"
 msgstr "اللوحة الإدارية"
 
 #. js-lingui-id: VmatbA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Admin role not found."
 msgstr "دور المسؤول غير موجود."
 
@@ -997,6 +1030,11 @@ msgstr "سلاسل دردشة الذكاء الاصطناعي المعينة ل�
 msgctxt "fieldMetadata.description"
 msgid "AI chat threads owned by the workspace member"
 msgstr "سلاسل دردشة الذكاء الاصطناعي المملوكة لعضو مساحة العمل"
+
+#. js-lingui-id: 1ahMBt
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "AI component builder is disabled."
+msgstr "منشئ مكونات الذكاء الاصطناعي معطل."
 
 #. js-lingui-id: eObJ3x
 #: src/engine/metadata-modules/ai/ai-history/exceptions/agent-history-storage.exception.ts
@@ -1264,7 +1302,7 @@ msgid "API key role configuration not found."
 msgstr "إعداد دور مفتاح API غير موجود."
 
 #. js-lingui-id: tGfHmi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "API key role not found."
 msgstr "دور مفتاح API غير موجود."
 
@@ -1397,6 +1435,11 @@ msgstr "لا يمكن تغيير نطاق متغير التطبيق بعد ال�
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Applications cannot update these fields: {fieldsList}."
 msgstr "لا يمكن للتطبيقات تحديث هذه الحقول: {fieldsList}."
+
+#. js-lingui-id: agujn9
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Approve this draft in its original chat."
+msgstr "اعتمد هذه المسودة في محادثتها الأصلية."
 
 #. js-lingui-id: rczXz4
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
@@ -1699,7 +1742,7 @@ msgid "Authentication is not enabled with this provider."
 msgstr "لم يتم تمكين المصادقة مع هذا الموفر."
 
 #. js-lingui-id: Tsx+z2
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "Authentication is required to access this feature. Please sign in and try again."
 msgstr "يتطلب الوصول إلى هذه الميزة تسجيل الدخول. يُرجى تسجيل الدخول والمحاولة مرة أخرى."
 
@@ -1710,7 +1753,7 @@ msgstr "المصادقة مطلوبة لتنفيذ هذا الإجراء"
 
 #. js-lingui-id: cgNV3G
 #: src/engine/core-modules/file/file.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Authentication is required."
 msgstr "المصادقة مطلوبة."
 
@@ -2445,12 +2488,12 @@ msgid "Cannot activate non-draft or non-last-published version"
 msgstr "لا يمكن تنشيط الإصدارات غير المسودة أو غير المنشورة الأخيرة"
 
 #. js-lingui-id: QYS2AB
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add field permissions on system objects."
 msgstr "لا يمكن إضافة أذونات الحقول على الكائنات النظامية."
 
 #. js-lingui-id: FxFlC4
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot add permissions on system objects."
 msgstr "لا يمكن إضافة الأذونات على الكائنات النظامية."
 
@@ -2483,7 +2526,7 @@ msgid "Cannot delete standard skill"
 msgstr "لا يمكن حذف المهارة القياسية"
 
 #. js-lingui-id: /olFYI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot delete the last admin user."
 msgstr "لا يمكن حذف آخر مستخدم مسؤول."
 
@@ -2499,12 +2542,12 @@ msgid "Cannot delete, please update the label identifier field first"
 msgstr "لا يمكن الحذف، يرجى تحديث حقل معرف العلامة أولاً"
 
 #. js-lingui-id: lDTqT7
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission on non-readable objects."
 msgstr "لا يمكن منح إذن الكتابة على كائنات غير قابلة للقراءة."
 
 #. js-lingui-id: r4uEo5
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot give write permission without read permission."
 msgstr "لا يمكن منح إذن الكتابة بدون إذن القراءة."
 
@@ -2579,7 +2622,7 @@ msgid "Cannot modify predicate to change its role from {existingRoleIdentifier} 
 msgstr "لا يمكن تعديل الشرط لتغيير دوره من {existingRoleIdentifier} إلى {updatedRoleIdentifier}"
 
 #. js-lingui-id: Q0diyJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Cannot remove the last admin from the workspace."
 msgstr "لا يمكن إزالة آخر مسؤول من مساحة العمل."
 
@@ -2596,7 +2639,7 @@ msgid "Cannot target a role owned by another application"
 msgstr "لا يمكن استهداف دور مملوك لتطبيق آخر"
 
 #. js-lingui-id: 2ET75e
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util.ts
 msgid "Cannot target a role owned by another application."
 msgstr "لا يمكن استهداف دور مملوك لتطبيق آخر."
@@ -2806,7 +2849,7 @@ msgstr "الدردشات"
 #. js-lingui-id: Xm27Tc
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "Chats are not available yet. Try again in a few minutes."
-msgstr ""
+msgstr "الدردشات غير متاحة بعد. حاول مرة أخرى خلال بضع دقائق."
 
 #. js-lingui-id: NJ9eLU
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
@@ -2832,7 +2875,7 @@ msgid "Choose an existing timeline activity type to override"
 msgstr "اختر نوع نشاط مخطط زمني موجودًا لتجاوزه"
 
 #. js-lingui-id: +eCqA7
-#: src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
 msgid "Choose one person or one role to share with."
 msgstr "اختر شخصًا واحدًا أو دورًا واحدًا للمشاركة معه."
 
@@ -3050,6 +3093,11 @@ msgstr "تجاوز إنشاء المكوّن الحد الزمني البالغ 
 msgid "Component build exceeds the {maximumOutputMegabytes} MB output limit."
 msgstr "يتجاوز إنشاء المكوّن حد الإخراج البالغ {maximumOutputMegabytes} ميغابايت."
 
+#. js-lingui-id: C1+ewF
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Component draft not found or expired."
+msgstr "لم يتم العثور على مسودة المكون أو انتهت صلاحيتها."
+
 #. js-lingui-id: a9mYsP
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -3069,9 +3117,15 @@ msgid "Compose Email"
 msgstr "إنشاء بريد إلكتروني"
 
 #. js-lingui-id: L1uQuF
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Composite type not found."
 msgstr "النوع المركّب غير موجود."
+
+#. js-lingui-id: d+5s6E
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Conditional grant the group evaluates, empty for whole-object grants"
+msgstr "المنح المشروط الذي تقيّمه المجموعة، يُترك فارغًا لمنح الكائن بالكامل"
 
 #. js-lingui-id: hNJ1TI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -3623,6 +3677,7 @@ msgstr "تم الإنشاء بواسطة"
 
 #. js-lingui-id: V+Pnck
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -3663,12 +3718,13 @@ msgid "Created field metadata, parent object metadata not found"
 msgstr "تم إنشاء بيانات التعريف للحقل، بيانات التعريف للعنصر الأب غير موجودة"
 
 #. js-lingui-id: tpPGe6
-#: src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "Creating a record of a private object requires the shareWith argument"
 msgstr "يتطلب إنشاء سجل لكائن خاص وسيطة shareWith"
 
 #. js-lingui-id: ezEYQZ
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -3706,6 +3762,7 @@ msgstr "تاريخ الإنشاء"
 
 #. js-lingui-id: MZxGED
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -3827,8 +3884,8 @@ msgid "Custom object is missing a label identifier field."
 msgstr "يفتقد الكائن المخصص إلى حقل مُعرِّف التسمية."
 
 #. js-lingui-id: iHlVsm
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-is-entitled.util.ts
 msgid "Custom roles are part of the Organization plan."
 msgstr "الأدوار المخصصة جزء من خطة المؤسسة."
@@ -3937,6 +3994,7 @@ msgstr "تنسيق التاريخ"
 
 #. js-lingui-id: bCL+CN
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -4150,7 +4208,7 @@ msgid "Default Person Layout"
 msgstr "تخطيط الشخص الافتراضي"
 
 #. js-lingui-id: cgV4xo
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Default role not found."
 msgstr "الدور الافتراضي غير موجود."
 
@@ -4255,6 +4313,7 @@ msgstr "تم الحذف في"
 
 #. js-lingui-id: Sf3H2K
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -4571,7 +4630,7 @@ msgid "Each related record path field must belong to the object reached by the p
 msgstr "يجب أن ينتمي كل حقل في مسار السجل المرتبط إلى الكائن الذي تم الوصول إليه عبر العلاقة السابقة"
 
 #. js-lingui-id: nTBzmZ
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Each shareWith entry must target exactly one of workspaceMemberId, roleId or everyone"
 msgstr "يجب أن يستهدف كل إدخال shareWith واحدًا فقط من workspaceMemberId أو roleId أو everyone"
 
@@ -4828,7 +4887,7 @@ msgid "Emoji the member reacted with"
 msgstr "الرمز التعبيري الذي تفاعل به العضو"
 
 #. js-lingui-id: aVGG1u
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Empty field permissions are not allowed."
 msgstr "لا يُسمح بأذونات الحقول الفارغة."
 
@@ -4898,6 +4957,11 @@ msgstr "في قائمة الانتظار"
 msgctxt "skill.label"
 msgid "Enrich"
 msgstr "إثراء"
+
+#. js-lingui-id: +RIetY
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "Enter an HTTPS origin without a path or wildcard"
+msgstr "أدخل مصدر HTTPS بدون مسار أو حرف بدل"
 
 #. js-lingui-id: q1jHuq
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
@@ -5257,7 +5321,7 @@ msgid "Failed to retry jobs. Please try again later."
 msgstr "فشل في إعادة محاولة الوظائف. يرجى المحاولة مرة أخرى لاحقًا."
 
 #. js-lingui-id: Cr+NSQ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Failed to update field permission."
 msgstr "فشل تحديث إذن الحقل."
 
@@ -5293,15 +5357,31 @@ msgstr "إعداد الميزة غير موجود."
 msgid "February"
 msgstr "فبراير"
 
+#. js-lingui-id: V1MVzr
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{fieldName}\" does not belong to the object reached by relation \"{relationFieldName}\""
+msgstr "الحقل \"{fieldName}\" لا ينتمي إلى الكائن الذي تم الوصول إليه عبر العلاقة \"{relationFieldName}\""
+
 #. js-lingui-id: joINBp
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{fieldName}\" is not a many-to-one relation, it has no join column to compare against"
 msgstr "الحقل \"{fieldName}\" ليس علاقة متعدد إلى واحد، ولا يحتوي على عمود ربط للمقارنة به"
 
+#. js-lingui-id: XZvE/9
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Field \"{relationFieldName}\" is not a relation"
+msgstr "الحقل \"{relationFieldName}\" ليس علاقة"
+
 #. js-lingui-id: CJF9q0
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 msgid "Field \"{workspaceMemberFieldName}\" is not a field of the workspaceMember object, the predicate would never apply"
 msgstr "الحقل \"{workspaceMemberFieldName}\" ليس حقلًا في كائن عضو مساحة العمل، لذلك لن يُطبّق المسند أبدًا"
+
+#. js-lingui-id: CKPTLC
+#. placeholder {0}: query.objectName
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Field {0}.{fieldName} is unavailable. Select accessible top-level fields."
+msgstr "الحقل {0}.{fieldName} غير متاح. اختر الحقول المتاحة من المستوى الأعلى."
 
 #. js-lingui-id: vngnhF
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -5366,8 +5446,8 @@ msgid "Field metadata not found"
 msgstr "البيانات الوصفية للحقل غير موجودة"
 
 #. js-lingui-id: JrAl/I
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 msgid "Field metadata not found."
@@ -5417,7 +5497,7 @@ msgid "Field permission not found"
 msgstr "صلاحية الحقل غير موجودة"
 
 #. js-lingui-id: yqmAnC
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field permission not found."
 msgstr "صلاحية الحقل غير موجودة."
 
@@ -5448,7 +5528,7 @@ msgid "Field referenced in index does not exist"
 msgstr "الحقل المشار إليه في الفهرس غير موجود"
 
 #. js-lingui-id: ylQono
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Field restrictions only apply to readable objects."
 msgstr "قيود الحقول تنطبق فقط على الكائنات القابلة للقراءة."
 
@@ -5504,6 +5584,7 @@ msgstr "الحقل المستخدم للبحث النصي الكامل"
 
 #. js-lingui-id: pcBMew
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -6149,6 +6230,12 @@ msgstr "حقل التجميع حسب مطلوب للمخطط الدائري"
 msgid "Group by field is required for pie chart widget \"{widgetTitle}\""
 msgstr "حقل التجميع حسب مطلوب لأداة المخطط الدائري \"{widgetTitle}\""
 
+#. js-lingui-id: tZ4I1x
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Group hash"
+msgstr "تجزئة المجموعة"
+
 #. js-lingui-id: M3UdIL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-participant-standard-flat-field-metadata.util.ts
@@ -6187,6 +6274,12 @@ msgstr "يجب أن يكون handlerName معرّف JavaScript صالحًا أو
 msgctxt "fieldMetadata.description"
 msgid "Hash of the authored template and resolved destination URLs"
 msgstr "تجزئة القالب المؤلف وعناوين URL للوجهة المحلولة"
+
+#. js-lingui-id: XL/9cp
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Hash of the role, grant and member field values, unique per group"
+msgstr "تجزئة قيم حقول الدور والمنح والعضو، فريدة لكل مجموعة"
 
 #. js-lingui-id: 9jN+JX
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-standard-flat-field-metadata.util.ts
@@ -6232,6 +6325,7 @@ msgstr "مُعرّف iCal"
 
 #. js-lingui-id: OtYhMx
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
@@ -6277,6 +6371,7 @@ msgstr "المعرف"
 
 #. js-lingui-id: dB826o
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-target-standard-flat-field-metadata.util.ts
@@ -6481,8 +6576,8 @@ msgid "Internal name of the campaign"
 msgstr "الاسم الداخلي للحملة"
 
 #. js-lingui-id: Lztd7b
-#: src/engine/core-modules/record-share/services/record-sharing.service.ts
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid access level."
 msgstr "مستوى الوصول غير صالح."
 
@@ -6518,7 +6613,7 @@ msgid "Invalid application workflow definition."
 msgstr "تعريف مهمة سير عمل التطبيق غير صالح."
 
 #. js-lingui-id: KNrRpL
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid argument provided."
 msgstr "تم توفير وسيطة غير صالحة."
 
@@ -6561,6 +6656,11 @@ msgstr "طلب التصنيف غير صالح."
 #: src/engine/metadata-modules/command-menu-item/command-menu-item.exception.ts
 msgid "Invalid command menu item input."
 msgstr "إدخال عنصر قائمة الأوامر غير صالح."
+
+#. js-lingui-id: 5OY08H
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Invalid component draft input."
+msgstr "إدخال مسودة المكون غير صالح."
 
 #. js-lingui-id: wJMQQx
 #: src/engine/metadata-modules/flat-page-layout-widget/validators/utils/validate-fields-flat-page-layout-widget-for-creation.util.ts
@@ -7021,7 +7121,7 @@ msgid "Invalid permission flag permission type."
 msgstr "نوع علامة الإذن غير صالح."
 
 #. js-lingui-id: Pt2vVA
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Invalid permission setting."
 msgstr "إعداد إذن غير صالح."
 
@@ -7045,6 +7145,11 @@ msgstr "رمز الدولة للهاتف غير صالح."
 #: src/engine/core-modules/record-transformer/record-transformer.exception.ts
 msgid "Invalid phone number."
 msgstr "رقم هاتف غير صالح."
+
+#. js-lingui-id: weTo0R
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.controller.ts
+msgid "Invalid preview error message."
+msgstr "رسالة خطأ المعاينة غير صالحة."
 
 #. js-lingui-id: r+9b/a
 #: src/engine/core-modules/billing/billing.exception.ts
@@ -7185,8 +7290,8 @@ msgstr "تنسيق عنوان URL غير صالح."
 
 #. js-lingui-id: Z3Su9z
 #: src/engine/api/graphql/workspace-query-runner/utils/assert-is-valid-uuid.util.ts
-#: src/engine/core-modules/record-share/utils/resolve-record-share-principal-or-throw.util.ts
-#: src/engine/core-modules/record-share/utils/resolve-share-with-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-record-share-principal-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/resolve-share-with-principal-or-throw.util.ts
 msgid "Invalid UUID format."
 msgstr "تنسيق UUID غير صالح."
 
@@ -7486,7 +7591,7 @@ msgid "Job Title"
 msgstr "المسمى الوظيفي"
 
 #. js-lingui-id: cCj4vg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Join column name is required."
 msgstr "اسم عمود الربط مطلوب."
 
@@ -7736,6 +7841,7 @@ msgstr "آخر مرة تم فيها تغيير الرابط"
 
 #. js-lingui-id: OBGY97
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -7771,6 +7877,7 @@ msgstr "آخر مرة تم فيها تغيير السجل"
 
 #. js-lingui-id: hzBM8U
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -8050,6 +8157,11 @@ msgctxt "commandMenuItem.label"
 msgid "Make Workflow Private"
 msgstr "جعل سير العمل خاصًا"
 
+#. js-lingui-id: Ff72+G
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Managing applications is required."
+msgstr "يلزم امتلاك صلاحية إدارة التطبيقات."
+
 #. js-lingui-id: paJTob
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -8185,6 +8297,12 @@ msgctxt "fieldMetadata.description"
 msgid "Meeting title from the calendar event"
 msgstr "عنوان الاجتماع من حدث التقويم"
 
+#. js-lingui-id: I+r+Lx
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Member field values"
+msgstr "قيم حقول العضو"
+
 #. js-lingui-id: sMsvyG
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 msgctxt "commandMenuItem.shortLabel"
@@ -8210,17 +8328,23 @@ msgctxt "pageLayoutWidget.title"
 msgid "Members"
 msgstr "الأعضاء"
 
+#. js-lingui-id: sK9eyT
+#: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+msgctxt "objectMetadata.description"
+msgid "Members of a role who receive the same evaluated grant"
+msgstr "أعضاء دور يتلقون المنح المُقيَّم نفسه"
+
 #. js-lingui-id: fqpInK
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
 msgid "Mentions resolved at"
-msgstr ""
+msgstr "تمت معالجة الإشارات في"
 
 #. js-lingui-id: gzZpjR
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-chat-thread-participant-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
 msgid "Mentions up to this time are resolved for the member"
-msgstr ""
+msgstr "تمت معالجة الإشارات حتى هذا الوقت للعضو"
 
 #. js-lingui-id: UODtG8
 #: src/engine/core-modules/tool-provider/utils/get-crud-tool-label.util.ts
@@ -9024,7 +9148,7 @@ msgid "No permissions are set for this role on the selected object. Please set o
 msgstr "لا توجد أذونات مُعيّنة لهذا الدور على الكائن المحدد. يُرجى تعيين أذونات الكائن أولاً."
 
 #. js-lingui-id: D2A/H0
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No permissions found in datasource."
 msgstr "لا توجد أذونات في مصدر البيانات."
 
@@ -9044,12 +9168,12 @@ msgid "No records were affected."
 msgstr "لم تتأثر أي سجلات."
 
 #. js-lingui-id: iHQYLb
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role assigned to the application."
 msgstr "لم يتم تعيين أي دور للتطبيق."
 
 #. js-lingui-id: 5ZMHXg
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "No role found for this user in the workspace."
 msgstr "لا يوجد دور لهذا المستخدم في مساحة العمل."
 
@@ -9079,7 +9203,7 @@ msgid "No trigger type provided"
 msgstr "لم يتم تقديم نوع المشغل"
 
 #. js-lingui-id: /BipSk
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "No valid authentication context found."
 msgstr "لم يتم العثور على سياق مصادقة صالح."
 
@@ -9393,9 +9517,9 @@ msgid "Object metadata not found"
 msgstr "البيانات الوصفية للكيان غير موجودة"
 
 #. js-lingui-id: rHce90
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-action-execution.exception.ts
 #: src/modules/dashboard/chart-data/exceptions/chart-data.exception.ts
 #: src/modules/workflow/common/exceptions/workflow-common.exception.ts
@@ -9435,7 +9559,7 @@ msgid "Object permission not found"
 msgstr "إذن الكائن غير موجود"
 
 #. js-lingui-id: Qy6mMO
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Object permission not found."
 msgstr "إذن الكائن غير موجود."
 
@@ -9580,7 +9704,7 @@ msgid "Only error"
 msgstr "الأخطاء فقط"
 
 #. js-lingui-id: eYgzEd
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Only field restrictions are allowed."
 msgstr "يُسمح فقط بقيود الحقول."
 
@@ -10272,7 +10396,7 @@ msgid "Permission flag to update not found"
 msgstr "علم الإذن للتحديث غير موجود"
 
 #. js-lingui-id: vcvSI3
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Permission not found."
 msgstr "الإذن غير موجود."
 
@@ -10428,6 +10552,7 @@ msgstr "نقطة الاتصال"
 
 #. js-lingui-id: rLOFsu
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -10497,6 +10622,11 @@ msgstr "الشرط يفتقر إلى قيمة"
 msgid "Predicate value is not valid for this operand"
 msgstr "قيمة الشرط غير صالحة لهذا المعامل"
 
+#. js-lingui-id: nSv3rP
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Predicates reaching a field through a relation are not enabled for this workspace"
+msgstr "المسندات التي تصل إلى حقل عبر علاقة غير مفعّلة لمساحة العمل هذه"
+
 #. js-lingui-id: /h13bI
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.description"
@@ -10558,6 +10688,11 @@ msgstr "معرّف الكيان الرئيسي"
 msgctxt "fieldMetadata.label"
 msgid "Principal type"
 msgstr "نوع الكيان الرئيسي"
+
+#. js-lingui-id: mQkeUR
+#: src/engine/permissions/private-record/utils/assert-private-record-enabled-or-throw.util.ts
+msgid "Private records are not available in this workspace yet."
+msgstr "السجلات الخاصة غير متاحة في مساحة العمل هذه بعد."
 
 #. js-lingui-id: 5BFz2t
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-message-standard-flat-field-metadata.util.ts
@@ -10726,7 +10861,7 @@ msgid "Rate limit reached. Please try again later."
 msgstr "تم بلوغ حد المعدل. يُرجى المحاولة لاحقاً."
 
 #. js-lingui-id: 8G8dJM
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Raw SQL queries are not allowed."
 msgstr "لا يُسمح باستعلامات SQL الخام."
 
@@ -11033,6 +11168,11 @@ msgstr "مسار السجل المرتبط غير موجود."
 msgid "Related record path object not found"
 msgstr "كائن مسار السجل المرتبط غير موجود"
 
+#. js-lingui-id: 0ppWJe
+#: src/engine/metadata-modules/related-record-path/related-record-path.exception.ts
+msgid "Related record paths require the Organization plan."
+msgstr "تتطلب مسارات السجلات ذات الصلة خطة Organization."
+
 #. js-lingui-id: Gl4xP9
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-morph-relation-head-flat-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -11055,6 +11195,22 @@ msgstr "إعداد العلاقة غير صالح."
 #: src/engine/metadata-modules/flat-field-metadata/utils/from-relation-create-field-input-to-flat-field-metadatas.util.ts
 msgid "Relation creation payload is required"
 msgstr "بيانات إنشاء العلاقة مطلوبة"
+
+#. js-lingui-id: yRw5Ff
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Relation field \"{relationFieldName}\" does not belong to the object the predicate restricts"
+msgstr "حقل العلاقة \"{relationFieldName}\" لا ينتمي إلى الكائن الذي يقيّده المسند"
+
+#. js-lingui-id: lEwqUQ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Relation field \"{relationFieldName}\" is not active"
+msgstr "حقل العلاقة \"{relationFieldName}\" غير نشط"
+
+#. js-lingui-id: k5Rbos
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Relation field metadata not found"
+msgstr "بيانات التعريف لحقل العلاقة غير موجودة"
 
 #. js-lingui-id: 5y41wK
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
@@ -11351,6 +11507,12 @@ msgstr "لا يمكن إسناد الدور \"{roleLabel}\" إلى مفاتيح 
 msgid "Role \"{roleLabel}\" cannot be assigned to users"
 msgstr "لا يمكن إسناد الدور \"{roleLabel}\" إلى المستخدمين"
 
+#. js-lingui-id: Nlegrg
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-assignation-availability.util.ts
+msgid "Role \"{roleLabel}\" cannot be assigned to webhooks"
+msgstr "لا يمكن إسناد الدور \"{roleLabel}\" إلى خطافات الويب"
+
 #. js-lingui-id: T/H/3z
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-role-is-entitled.util.ts
 msgid "Role \"{roleLabel}\" cannot be assigned: custom roles require the Organization plan"
@@ -11360,6 +11522,12 @@ msgstr "لا يمكن تعيين الدور \"{roleLabel}\": تتطلب الأد
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 msgid "Role cannot be assigned to this entity."
 msgstr "لا يمكن تعيين الدور لهذا الكيان."
+
+#. js-lingui-id: IJxetQ
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Role ID"
+msgstr "معرّف الدور"
 
 #. js-lingui-id: k2/sGI
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
@@ -11375,7 +11543,7 @@ msgid "Role is not editable"
 msgstr "لا يمكن تحرير الدور"
 
 #. js-lingui-id: zeffu9
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role must have at least one target."
 msgstr "يجب أن يحتوي الدور على هدف واحد على الأقل."
 
@@ -11419,10 +11587,10 @@ msgstr "الدور غير موجود"
 
 #. js-lingui-id: /BTyf+
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
 #: src/engine/metadata-modules/role/exceptions/role-target.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate-group.exception.ts
 #: src/engine/metadata-modules/row-level-permission-predicate/exceptions/row-level-permission-predicate.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Role not found."
 msgstr "الدور غير موجود."
 
@@ -11447,11 +11615,11 @@ msgstr "هدف الدور موجود بالفعل"
 msgid "Role target is missing identifier."
 msgstr "هدف الدور يفتقد إلى مُعرِّف."
 
-#. js-lingui-id: vYrPc5
+#. js-lingui-id: iqcAvV
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-flat-role-target-targets-only-one-entity.util.ts
-msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, or agentUniversalIdentifier"
-msgstr "يجب أن يحتوي هدف الدور على واحد فقط من: apiKeyId أو userWorkspaceId أو agentUniversalIdentifier"
+msgid "Role target must have exactly one of: apiKeyId, userWorkspaceId, agentUniversalIdentifier, or webhookUniversalIdentifier"
+msgstr "يجب أن يحتوي هدف الدور على واحد فقط من: apiKeyId أو userWorkspaceId أو agentUniversalIdentifier أو webhookUniversalIdentifier"
 
 #. js-lingui-id: oNYUjk
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
@@ -11470,6 +11638,12 @@ msgstr "هدف الدور غير موجود."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-target-validator.service.ts
 msgid "Role target with this universal identifier already exists"
 msgstr "هدف الدور بهذا المعرّف العالمي موجود بالفعل"
+
+#. js-lingui-id: YDA5ex
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Role whose members can belong to the group"
+msgstr "الدور الذي يمكن لأعضائه الانتماء إلى المجموعة"
 
 #. js-lingui-id: EeAlta
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11530,6 +11704,12 @@ msgstr "ميزة شرط الإذن على مستوى الصف معطلة."
 msgid "Row level permission predicate group already exists"
 msgstr "مجموعة شروط الإذن على مستوى الصف موجودة بالفعل"
 
+#. js-lingui-id: A9bb6S
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.label"
+msgid "Row level permission predicate group ID"
+msgstr "معرّف مجموعة شروط الإذن على مستوى الصف"
+
 #. js-lingui-id: va8c5P
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -11588,6 +11768,11 @@ msgctxt "fieldMetadata.label"
 msgid "Rule"
 msgstr "قاعدة"
 
+#. js-lingui-id: zhLAHJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "Rules through a relation are not enabled for this workspace"
+msgstr "القواعد عبر علاقة غير مفعّلة لمساحة العمل هذه"
+
 #. js-lingui-id: F1qT/F
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
 msgctxt "fieldMetadata.label"
@@ -11606,6 +11791,16 @@ msgstr "عمليات التشغيل"
 msgctxt "view.name"
 msgid "Runs"
 msgstr "عمليات التشغيل"
+
+#. js-lingui-id: y0kFMY
+#: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
+msgid "Sample records exceed 100 KB."
+msgstr "تتجاوز السجلات النموذجية 100 كيلوبايت."
+
+#. js-lingui-id: 0ovywa
+#: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
+msgid "Sample records must only contain selected fields and id."
+msgstr "يجب أن تحتوي السجلات النموذجية على الحقول المحددة وid فقط."
 
 #. js-lingui-id: +5kO8P
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -11628,6 +11823,11 @@ msgstr "حفظ الحملة"
 msgctxt "commandMenuItem.label"
 msgid "Save Dashboard"
 msgstr "حفظ لوحة القيادة"
+
+#. js-lingui-id: YlXHmh
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Saving a component requires human approval."
+msgstr "يتطلب حفظ أحد المكونات موافقة بشرية."
 
 #. js-lingui-id: gqz/Jf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -11718,6 +11918,7 @@ msgstr "متجه البحث"
 
 #. js-lingui-id: Zuw7oP
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -11825,6 +12026,11 @@ msgstr "اطّلع على سير العمل"
 msgctxt "commandMenuItem.shortLabel"
 msgid "See Workflow"
 msgstr "اطّلع على سير العمل"
+
+#. js-lingui-id: qWQwt8
+#: src/engine/metadata-modules/flat-webhook/utils/from-create-webhook-input-to-flat-webhook-to-create-or-throw.util.ts
+msgid "Select a role for this webhook."
+msgstr "حدد دورًا لخطاف الويب هذا."
 
 #. js-lingui-id: dj45uB
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -11977,10 +12183,20 @@ msgstr "دالة منطق الخادم غير موجودة."
 msgid "Server logic function requires authentication."
 msgstr "تتطلب دالة منطق الخادم مصادقة."
 
+#. js-lingui-id: VOUkzJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-server-route-application.util.ts
+msgid "Server routes can only be defined by an application."
+msgstr "لا يمكن تعريف مسارات الخادم إلا بواسطة تطبيق."
+
 #. js-lingui-id: OUDI/C
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
 msgid "Server-level impersonation is not enabled for this user or workspace."
 msgstr "انتحال الهوية على مستوى الخادم غير مفعّل لهذا المستخدم أو مساحة العمل هذه."
+
+#. js-lingui-id: y4fTj2
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-logic-function-server-route-application.util.ts
+msgid "serverRouteTriggerSettings can only be set by an installed application"
+msgstr "لا يمكن تعيين serverRouteTriggerSettings إلا بواسطة تطبيق مثبّت"
 
 #. js-lingui-id: U1u0hG
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -12053,6 +12269,11 @@ msgstr "عنوان عنصر قائمة الإعدادات \"{updatedTitle}\" م�
 msgid "Settings menu item title is required"
 msgstr "عنوان عنصر قائمة الإعدادات مطلوب"
 
+#. js-lingui-id: AaiDcy
+#: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
+msgid "Several applications declare this server route. Use the application registration URL instead."
+msgstr "تُعرّف عدة تطبيقات مسار الخادم هذا. استخدم عنوان URL لتسجيل التطبيق بدلاً من ذلك."
+
 #. js-lingui-id: r+zQgZ
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -12103,17 +12324,17 @@ msgid "Shared record"
 msgstr "السجل المُشارَك"
 
 #. js-lingui-id: 4FadYd
-#: src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a role that does not belong to this workspace"
 msgstr "يسمّي shareWith دورًا لا ينتمي إلى مساحة العمل هذه"
 
 #. js-lingui-id: 4PQnEW
-#: src/engine/core-modules/record-share/utils/validate-share-with-principals-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-principals-or-throw.util.ts
 msgid "shareWith names a workspace member that does not belong to this workspace"
 msgstr "يسمّي shareWith عضوًا في مساحة العمل لا ينتمي إلى مساحة العمل هذه"
 
 #. js-lingui-id: qTLqMS
-#: src/engine/core-modules/record-share/utils/validate-share-with-arg-or-throw.util.ts
+#: src/engine/permissions/record-share/utils/validate-share-with-arg-or-throw.util.ts
 msgid "shareWith names the same principal more than once"
 msgstr "يسمّي shareWith المبدأ نفسه أكثر من مرة"
 
@@ -12236,7 +12457,7 @@ msgid "Some of the permissions you selected are not valid. Please try again with
 msgstr "بعض الأذونات التي اخترتها غير صالحة. يرجى المحاولة مرة أخرى بإعدادات أذونات صالحة."
 
 #. js-lingui-id: aPJopM
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Some workspace memberships could not be found. They may no longer have access to this workspace."
 msgstr "تعذر العثور على بعض عضويات مساحة العمل. قد لا يملكون حق الوصول إلى مساحة العمل هذه بعد الآن."
 
@@ -13044,7 +13265,7 @@ msgid "The agent you are looking for could not be found. It may have been delete
 msgstr "لم يتم العثور على الوكيل الذي تبحث عنه. ربما تم حذفه أو قد لا تكون لديك صلاحية الوصول إليه."
 
 #. js-lingui-id: eC8p5b
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The API key does not have a valid role assigned. Please check your API key configuration."
 msgstr "مفتاح API لا يحتوي على دور صالح معين. يُرجى التحقق من إعدادات مفتاح API."
 
@@ -13060,7 +13281,7 @@ msgid "The app source channel does not match the expected type."
 msgstr "قناة مصدر التطبيق لا تطابق النوع المتوقع."
 
 #. js-lingui-id: IU78DA
-#: src/engine/metadata-modules/permissions/permissions.service.ts
+#: src/engine/permissions/permissions.service.ts
 msgid "The application does not have a valid role assigned. Please check your application configuration."
 msgstr "لا يحتوي التطبيق على دور صالح معين. يُرجى التحقق من إعدادات التطبيق."
 
@@ -13122,6 +13343,16 @@ msgctxt "fieldMetadata.description"
 msgid "The company's total annual revenue"
 msgstr "إجمالي الإيرادات السنوية للشركة"
 
+#. js-lingui-id: ccHTwy
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "The component dependencies are too large. Reduce the Workspace app dependencies and try again."
+msgstr "اعتماديات المكوّن كبيرة جدًا. قلّل اعتماديات تطبيق Workspace وحاول مرة أخرى."
+
+#. js-lingui-id: m3v5Oe
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "The component dependencies could not be verified. Try creating the component again."
+msgstr "تعذر التحقق من تبعيات المكوّن. حاول إنشاء المكوّن مرة أخرى."
+
 #. js-lingui-id: odbiqA
 #. placeholder {0}: connectedAccount.provider
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -13161,6 +13392,7 @@ msgstr "منشئ الرابط"
 
 #. js-lingui-id: WhUgpA
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -13211,7 +13443,7 @@ msgid "The default role cannot be deleted as it is required for the workspace to
 msgstr "لا يمكن حذف الدور الافتراضي لأنه مطلوب لوظيفة مساحة العمل بشكل صحيح."
 
 #. js-lingui-id: 0biWRI
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "The default role cannot be deleted."
 msgstr "لا يمكن حذف الدور الافتراضي."
 
@@ -13401,7 +13633,7 @@ msgid "The MCP request parameters are invalid."
 msgstr "معلمات طلب MCP غير صالحة."
 
 #. js-lingui-id: 9b5Rap
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-role-validator.service.ts
 msgid "The Member role cannot be deleted."
 msgstr "لا يمكن حذف دور العضو."
@@ -13492,6 +13724,16 @@ msgctxt "fieldMetadata.description"
 msgid "The person in the list"
 msgstr "الشخص الموجود في القائمة"
 
+#. js-lingui-id: vuwSBG
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "The predicate can only go through a relation field"
+msgstr "لا يمكن للمسند المرور إلا عبر حقل علاقة"
+
+#. js-lingui-id: 1pKvRu
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "The predicate can only go through an active relation field"
+msgstr "لا يمكن للمسند المرور إلا عبر حقل علاقة نشط"
+
 #. js-lingui-id: yEJMjv
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
 msgid "The provided connectedAccountId is not a valid UUID"
@@ -13554,10 +13796,20 @@ msgstr "لم يتم العثور على الدور الذي تحاول تعدي�
 msgid "The same column cannot appear twice in an index."
 msgstr "لا يمكن أن يظهر نفس العمود مرتين في فهرس واحد."
 
+#. js-lingui-id: IoxxxC
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "The saved component differs from this draft."
+msgstr "يختلف المكون المحفوظ عن هذه المسودة."
+
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
 msgid "The selected model has been disabled by the administrator."
 msgstr "تم تعطيل النموذج المحدد بواسطة المسؤول."
+
+#. js-lingui-id: pkPsbr
+#: src/engine/metadata-modules/webhook/utils/compute-webhook-role-target-operations-or-throw.util.ts
+msgid "The selected role does not exist."
+msgstr "الدور المحدد غير موجود."
 
 #. js-lingui-id: vD3FVp
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
@@ -13718,8 +13970,14 @@ msgctxt "fieldMetadata.description"
 msgid "The workflow version status"
 msgstr "حالة نسخة سير العمل"
 
+#. js-lingui-id: VyvnL/
+#: src/engine/metadata-modules/ai/ai-front-component/workspace-front-component-dependencies.service.ts
+msgid "The Workspace app dependencies changed during the build. Try creating the component again."
+msgstr "تغيّرت تبعيات تطبيق مساحة العمل أثناء عملية البناء. حاول إنشاء المكوّن مرة أخرى."
+
 #. js-lingui-id: AiP86c
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -13754,12 +14012,12 @@ msgid "The workspace member who last updated the record"
 msgstr "عضو مساحة العمل الذي قام بتحديث السجل آخر مرة"
 
 #. js-lingui-id: lRojhv
-#: src/engine/core-modules/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot access these records, and this object is only shared with roles that can."
 msgstr "لا يمكن لدورهم الوصول إلى هذه السجلات، ولا تتم مشاركة هذا الكائن إلا مع الأدوار التي يمكنها الوصول إليها."
 
 #. js-lingui-id: qX/4Ez
-#: src/engine/core-modules/record-share/services/record-share-principal.service.ts
+#: src/engine/permissions/record-share/services/record-share-principal.service.ts
 msgid "Their role cannot see this record, and this object is only shared with people who can."
 msgstr "لا يمكن لدورهم رؤية هذا السجل، ولا تتم مشاركة هذا الكائن إلا مع الأشخاص الذين يمكنهم رؤيته."
 
@@ -13787,6 +14045,11 @@ msgstr "لا توجد خطوة سابقة في عملية الإعداد الأ�
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "These fields cannot be updated before the workspace is activated: {fieldsList}."
 msgstr "لا يمكن تحديث هذه الحقول قبل تنشيط مساحة العمل: {fieldsList}."
+
+#. js-lingui-id: 029tdK
+#: src/engine/core-modules/workspace/workspace.exception.ts
+msgid "These origins are too long to allow together. Remove one and try again."
+msgstr "هذه المصادر طويلة جدًا بحيث لا يمكن السماح بها معًا. أزل واحدًا وحاول مرة أخرى."
 
 #. js-lingui-id: 4RZeZG
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
@@ -14037,6 +14300,16 @@ msgstr "هذا النطاق مُسجَّل بالفعل."
 msgid "This domain is already taken."
 msgstr "هذا النطاق مستخدم بالفعل."
 
+#. js-lingui-id: Ukfndw
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This draft is being updated. Try again."
+msgstr "يجري تحديث هذه المسودة. حاول مرة أخرى."
+
+#. js-lingui-id: EM4fuz
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This draft was superseded, saved or belongs to another chat. Start a new draft."
+msgstr "تم استبدال هذه المسودة أو حفظها أو أنها تخص دردشة أخرى. ابدأ مسودة جديدة."
+
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts
 msgid "This email is already in use."
@@ -14076,6 +14349,11 @@ msgstr "هذه الميزة غير مُمكَّنة."
 #: src/engine/metadata-modules/field-metadata/field-metadata.exception.ts
 msgid "This field cannot be modified."
 msgstr "لا يمكن تعديل هذا الحقل."
+
+#. js-lingui-id: Bp6UAi
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This field does not belong to the object reached by the relation"
+msgstr "هذا الحقل لا ينتمي إلى الكائن الذي تم الوصول إليه عبر العلاقة"
 
 #. js-lingui-id: NDBu6g
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
@@ -14210,7 +14488,7 @@ msgid "This message channel cannot send messages."
 msgstr "لا يمكن لقناة الرسائل هذه إرسال رسائل."
 
 #. js-lingui-id: 6Z/zIt
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This method is not allowed."
 msgstr "هذه الطريقة غير مسموح بها."
 
@@ -14314,6 +14592,11 @@ msgstr "هذا الإذن معطل على الكائن ولا يمكن منحه"
 msgid "This plan is not available."
 msgstr "هذه الخطة غير متاحة."
 
+#. js-lingui-id: GA6RMi
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This preview changed. Approve the latest revision."
+msgstr "تغيرت هذه المعاينة. وافق على أحدث مراجعة."
+
 #. js-lingui-id: Y5C3uK
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "This provider is not supported."
@@ -14355,6 +14638,11 @@ msgstr "مسار السجل المرتبط هذا موجود بالفعل"
 msgid "This relation field cannot be used in a record rule"
 msgstr "لا يمكن استخدام حقل العلاقة هذا في قاعدة سجل"
 
+#. js-lingui-id: K7NTYK
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-row-level-permission-predicate-validator.service.ts
+msgid "This relation field does not belong to the restricted object"
+msgstr "حقل العلاقة هذا لا ينتمي إلى الكائن المقيّد"
+
 #. js-lingui-id: 16eZJL
 #: src/engine/metadata-modules/ai/ai.exception.ts
 msgid "This request for input could not be found."
@@ -14391,12 +14679,12 @@ msgid "This role cannot be assigned to API keys."
 msgstr "لا يمكن تعيين هذا الدور لمفاتيح API."
 
 #. js-lingui-id: c68K+k
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be assigned to users."
 msgstr "لا يمكن تعيين هذا الدور للمستخدمين."
 
 #. js-lingui-id: 2jnsqJ
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "This role cannot be edited."
 msgstr "لا يمكن تحرير هذا الدور."
 
@@ -14413,6 +14701,11 @@ msgstr "لا يمكن تحرير هذا الدور."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "لا يمكن تعديل هذا الدور لأنه دور نظام. يمكن تعديل الأدوار المخصصة فقط."
+
+#. js-lingui-id: UjNNWw
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This saved component was deleted. Create a new draft."
+msgstr "تم حذف هذا المكوّن المحفوظ. أنشئ مسودة جديدة."
 
 #. js-lingui-id: DEJJoY
 #: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts
@@ -14862,7 +15155,7 @@ msgid "To do"
 msgstr "للتنفيذ"
 
 #. js-lingui-id: /ObxXq
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Too many admin candidates found."
 msgstr "تم العثور على عدد كبير جداً من المرشحين لمنصب المسؤول."
 
@@ -15199,12 +15492,12 @@ msgid "Unknown navigation menu item type {type}"
 msgstr "نوع عنصر قائمة التنقل غير معروف {type}"
 
 #. js-lingui-id: tEncxN
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown operation."
 msgstr "عملية غير معروفة."
 
 #. js-lingui-id: BIxgma
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Unknown permission required."
 msgstr "مطلوب إذن غير معروف."
 
@@ -15341,7 +15634,7 @@ msgid "Update DateTime"
 msgstr "تاريخ ووقت التحديث"
 
 #. js-lingui-id: lHCFXi
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Update field restrictions only apply to updatable objects."
 msgstr "قيود تحديث الحقول تنطبق فقط على الكائنات القابلة للتحديث."
 
@@ -15393,6 +15686,7 @@ msgstr "تاريخ التحديث"
 
 #. js-lingui-id: U8sfYC
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-attachment-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-channel-event-association-standard-flat-field-metadata.util.ts
@@ -15583,7 +15877,7 @@ msgid "User already exists"
 msgstr "المستخدم موجود بالفعل"
 
 #. js-lingui-id: 9QHVZ2
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User already has a role assigned."
 msgstr "لدى المستخدم دور مُعيَّن بالفعل."
 
@@ -15598,7 +15892,7 @@ msgid "User does not have access to this workspace"
 msgstr "المستخدم ليس لديه صلاحية الدخول إلى مساحة العمل هذه"
 
 #. js-lingui-id: Sl1ElS
-#: src/engine/metadata-modules/permissions/utils/permission-graphql-api-exception-handler.util.ts
+#: src/engine/permissions/utils/permission-graphql-api-exception-handler.util.ts
 msgid "User does not have permission."
 msgstr "المستخدم ليس لديه الأذونات."
 
@@ -15655,7 +15949,7 @@ msgstr "لم يتم إنشاء المستخدم بالبريد الإلكترو�
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/auth/strategies/jwt.auth.strategy.spec.ts
 #: src/engine/core-modules/user-workspace/user-workspace.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "User workspace not found."
 msgstr "مساحة عمل المستخدم غير موجودة."
 
@@ -15774,6 +16068,12 @@ msgstr "القيمة \"{stringifiedValue}\" لا تُرجِع أي سجل للم
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-enum-flat-field-metadata.util.ts
 msgid "Value must be in UPPER_CASE and follow snake_case \"{sanitizedValue}\""
 msgstr "يجب أن تكون القيمة بأحرف كبيرة وتتبع تنسيق snake_case \"{sanitizedValue}\""
+
+#. js-lingui-id: OG7PgU
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-access-group-standard-flat-field-metadata.util.ts
+msgctxt "fieldMetadata.description"
+msgid "Values of the member fields the grant reads, shared by every member of the group"
+msgstr "قيم حقول العضو التي يقرأها المنح، والمشتركة بين جميع أعضاء المجموعة"
 
 #. js-lingui-id: NzhR7p
 #: src/engine/core-modules/impersonation/constants/impersonation-denial-by-reason.constant.ts
@@ -16914,7 +17214,7 @@ msgid "Workspace does not exist."
 msgstr "مساحة العمل غير موجودة."
 
 #. js-lingui-id: oLh4c+
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace ID and role mismatch."
 msgstr "عدم تطابق بين معرّف مساحة العمل والدور."
 
@@ -17006,7 +17306,7 @@ msgstr "اسم عضو مساحة العمل"
 
 #. js-lingui-id: rnnLQA
 #: src/engine/metadata-modules/ai/ai.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "Workspace member not found."
 msgstr "عضو مساحة العمل غير موجود."
 
@@ -17253,12 +17553,12 @@ msgid "You can't generate a recovery code for yourself. Reset two-factor authent
 msgstr "لا يمكنك إنشاء رمز استرداد لنفسك. أعد تعيين المصادقة الثنائية من ملفك الشخصي بدلًا من ذلك."
 
 #. js-lingui-id: 1SQnFB
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot change your own role. Please ask another administrator to update your role."
 msgstr "لا يمكنك تغيير دورك الخاص. يُرجى طلب من مسؤول آخر تحديث دورك."
 
 #. js-lingui-id: xqrB9X
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot delete a role you are assigned to. Ask another administrator to delete it."
 msgstr "لا يمكنك حذف دور تم تعيينه لك. اطلب من مسؤول آخر حذفه."
 
@@ -17269,12 +17569,12 @@ msgid "You cannot grant edit permissions without also granting read permissions.
 msgstr "لا يمكنك منح أذونات التحرير بدون منح أذونات القراءة. يُرجى تفعيل إذن القراءة أولاً."
 
 #. js-lingui-id: KcnT7Q
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot remove settings access from your own role. Ask another administrator to make this change."
 msgstr "لا يمكنك إزالة صلاحية الوصول إلى الإعدادات من دورك أنت. اطلب من مسؤول آخر إجراء هذا التغيير."
 
 #. js-lingui-id: 8wovNr
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "You cannot remove the admin role from the last administrator. Please assign another administrator first."
 msgstr "لا يمكنك إزالة دور المسؤول من المسؤول الأخير. يُرجى تعيين مسؤول آخر أولاً."
 
@@ -17299,7 +17599,7 @@ msgid "You cannot set field permissions on system objects as they are managed by
 msgstr "لا يمكنك تعيين أذونات الحقل على الكائنات النظامية لأنها تُدار بواسطة المنصة."
 
 #. js-lingui-id: bAPURS
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You cannot update your own role."
 msgstr "لا يمكنك تحديث دورك الخاص."
 
@@ -17388,7 +17688,7 @@ msgstr "ليس لديك إذن لإدارة قائمة الحظر الخاصة �
 #: src/engine/core-modules/auth/auth.exception.ts
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 #: src/engine/guards/exceptions/auth-principal-refused.exception.ts
-#: src/engine/metadata-modules/permissions/permissions.exception.ts
+#: src/engine/permissions/permissions.exception.ts
 msgid "You do not have permission to perform this action."
 msgstr "ليس لديك إذن لتنفيذ هذا الإجراء."
 
@@ -17516,8 +17816,8 @@ msgid "Your role cannot delete some of these records, so they cannot be merged."
 msgstr "لا يمكن لدورك حذف بعض هذه السجلات، لذا لا يمكن دمجها."
 
 #. js-lingui-id: XxkUFT
-#: src/engine/metadata-modules/permissions/permissions.service.ts
-#: src/engine/metadata-modules/user-role/user-role.service.ts
+#: src/engine/permissions/permissions.service.ts
+#: src/engine/permissions/role-assignment/user-role.service.ts
 msgid "Your role in this workspace could not be found. Please contact your workspace administrator."
 msgstr "لم يتم العثور على دورك في مساحة العمل هذه. يُرجى الاتصال بمسؤول مساحة العمل الخاص بك."
 

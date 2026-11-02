@@ -10,10 +10,9 @@ import { Process } from 'src/engine/core-modules/message-queue/decorators/proces
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { RecordAccessPolicyService } from 'src/engine/core-modules/record-share/services/record-access-policy.service';
-import { buildRoleRowAccessPolicySubject } from 'src/engine/core-modules/record-share/utils/build-role-row-access-policy-subject.util';
-import { isUpdateOfHiddenFieldsOnly } from 'src/engine/core-modules/record-share/utils/is-update-of-hidden-fields-only.util';
-import { omitRestrictedFieldsFromEvent } from 'src/engine/metadata-modules/permissions/utils/omit-restricted-fields-from-event.util';
+import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { isUpdateOfHiddenFieldsOnly } from 'src/engine/permissions/masking/utils/is-update-of-hidden-fields-only.util';
+import { omitRestrictedFieldsFromEvent } from 'src/engine/permissions/masking/utils/omit-restricted-fields-from-event.util';
 import { AGENT_TRIGGER_RUN_LIMITS } from 'src/engine/metadata-modules/ai/ai-agent-trigger/constants/agent-trigger-run-limits.const';
 import { RunAgentTriggerJob } from 'src/engine/metadata-modules/ai/ai-agent-trigger/jobs/run-agent-trigger.job';
 import { AgentTriggerThrottlerService } from 'src/engine/metadata-modules/ai/ai-agent-trigger/services/agent-trigger-throttler.service';
@@ -23,6 +22,7 @@ import { isDatabaseEventCausedByAgent } from 'src/engine/metadata-modules/ai/ai-
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { filterEventsByUpdatedFields } from 'src/engine/workspace-event-emitter/utils/filter-events-by-updated-fields.util';
+import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
 
 @Processor(MessageQueue.triggerQueue)
 export class CallAgentDatabaseEventTriggersJob {
@@ -48,18 +48,12 @@ export class CallAgentDatabaseEventTriggersJob {
       flatAgentMaps,
       flatRoleTargetByAgentIdMaps,
       rolesPermissions,
-      roleIdsWithAllRecordsAccess,
-      flatRowLevelPermissionPredicateMaps,
-      flatRowLevelPermissionPredicateGroupMaps,
       flatFieldMetadataMaps,
       flatObjectMetadataMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'flatAgentMaps',
       'flatRoleTargetByAgentIdMaps',
       'rolesPermissions',
-      'roleIdsWithAllRecordsAccess',
-      'flatRowLevelPermissionPredicateMaps',
-      'flatRowLevelPermissionPredicateGroupMaps',
       'flatFieldMetadataMaps',
       'flatObjectMetadataMaps',
     ]);
@@ -91,15 +85,10 @@ export class CallAgentDatabaseEventTriggersJob {
 
       const admittedRecordIds =
         await eventRecordAccessGate.resolveAdmittedRecordIds(
-          buildRoleRowAccessPolicySubject({
+          buildPermissionsPrincipal({
+            workspaceId: workspaceEventBatch.workspaceId,
             roleId: agentRoleId,
-            owningApplicationId: flatAgent.applicationId,
-            rolesPermissions,
-            roleIdsWithAllRecordsAccess,
-            flatRowLevelPermissionPredicateMaps,
-            flatRowLevelPermissionPredicateGroupMaps,
-            flatFieldMetadataMaps,
-            flatObjectMetadataMaps,
+            applicationId: undefined,
           }),
         );
       const admittedEvents = workspaceEventBatch.events
