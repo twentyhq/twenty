@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 
 import { type Request } from 'express';
 import { type PermissionFlagType } from 'twenty-shared/constants';
-import { type FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
 
@@ -35,28 +34,57 @@ export class AccessPolicyService {
   ) {}
 
   async findRequestRefusal({
-    accessPolicy,
+    accessPolicy: {
+      authPrincipals,
+      requiredPermissionFlags,
+      requiredFeatureFlags = [],
+    },
     request,
   }: {
     accessPolicy: AccessPolicy;
     request: Request;
   }): Promise<AccessPolicyRefusal | undefined> {
+    if (
+      !this.isAuthPrincipalAccepted({
+        authPrincipals,
+        authPrincipalVariant: classifyAuthPrincipal(request),
+      })
+    ) {
+      return { reason: 'authPrincipal' };
+    }
+
     const { workspace } = request;
 
-    return this.findRefusal({
-      accessPolicy,
-      authPrincipalVariant: classifyAuthPrincipal(request),
-      isFeatureFlagEnabled: (featureFlag) =>
-        isDefined(workspace) &&
-        this.featureFlagService.isFeatureEnabled(featureFlag, workspace.id),
-      isPermissionFlagGranted: (permissionFlag) =>
-        this.isSettingsPermissionGranted({ request, permissionFlag }),
-    });
+    for (const featureFlag of requiredFeatureFlags) {
+      if (
+        !isDefined(workspace) ||
+        !(await this.featureFlagService.isFeatureEnabled(
+          featureFlag,
+          workspace.id,
+        ))
+      ) {
+        return { reason: 'featureFlag', featureFlag };
+      }
+    }
+
+    for (const permissionFlag of requiredPermissionFlags) {
+      if (
+        !(await this.isSettingsPermissionGranted({ request, permissionFlag }))
+      ) {
+        return { reason: 'permissionFlag', permissionFlag };
+      }
+    }
+
+    return undefined;
   }
 
   // grantedByPermissionFlag lets a caller checking many policies resolve each flag once
   async findCallerRefusal({
-    accessPolicy,
+    accessPolicy: {
+      authPrincipals,
+      requiredPermissionFlags,
+      requiredFeatureFlags = [],
+    },
     authPrincipalVariant,
     authContext,
     featureFlagsMap,
@@ -68,28 +96,31 @@ export class AccessPolicyService {
     featureFlagsMap: FeatureFlagMap;
     grantedByPermissionFlag?: Map<PermissionFlagType, Promise<boolean>>;
   }): Promise<AccessPolicyRefusal | undefined> {
-    return this.findRefusal({
-      accessPolicy,
-      authPrincipalVariant,
-      isFeatureFlagEnabled: (featureFlag) =>
-        featureFlagsMap[featureFlag] === true,
-      isPermissionFlagGranted: (permissionFlag) => {
-        const cachedGrant = grantedByPermissionFlag.get(permissionFlag);
+    if (
+      !this.isAuthPrincipalAccepted({ authPrincipals, authPrincipalVariant })
+    ) {
+      return { reason: 'authPrincipal' };
+    }
 
-        if (isDefined(cachedGrant)) {
-          return cachedGrant;
-        }
+    for (const featureFlag of requiredFeatureFlags) {
+      if (featureFlagsMap[featureFlag] !== true) {
+        return { reason: 'featureFlag', featureFlag };
+      }
+    }
 
-        const grant = this.permissionsService.hasPermissionFlag({
+    for (const permissionFlag of requiredPermissionFlags) {
+      if (
+        !(await this.isRolePermissionGranted({
+          permissionFlag,
           authContext,
-          setting: permissionFlag,
-        });
+          grantedByPermissionFlag,
+        }))
+      ) {
+        return { reason: 'permissionFlag', permissionFlag };
+      }
+    }
 
-        grantedByPermissionFlag.set(permissionFlag, grant);
-
-        return grant;
-      },
-    });
+    return undefined;
   }
 
   async isSettingsPermissionGranted({
@@ -123,52 +154,44 @@ export class AccessPolicyService {
     });
   }
 
-  private async findRefusal({
-    accessPolicy: {
-      authPrincipals,
-      requiredPermissionFlags,
-      requiredFeatureFlags = [],
-    },
+  private isAuthPrincipalAccepted({
+    authPrincipals,
     authPrincipalVariant,
-    isFeatureFlagEnabled,
-    isPermissionFlagGranted,
   }: {
-    accessPolicy: AccessPolicy;
+    authPrincipals: AccessPolicy['authPrincipals'];
     authPrincipalVariant: AuthPrincipalVariant | undefined;
-    isFeatureFlagEnabled: (
-      featureFlag: FeatureFlagKey,
-    ) => boolean | Promise<boolean>;
-    isPermissionFlagGranted: (
-      permissionFlag: PermissionFlagType,
-    ) => Promise<boolean>;
-  }): Promise<AccessPolicyRefusal | undefined> {
-    if (
-      !isDefined(authPrincipalVariant) ||
-      !isAuthPrincipalVariantAccepted({
+  }): boolean {
+    return (
+      isDefined(authPrincipalVariant) &&
+      isAuthPrincipalVariantAccepted({
         authPrincipalGuardConfig: authPrincipals,
         authPrincipalVariant,
       })
-    ) {
-      return { reason: 'authPrincipal' };
+    );
+  }
+
+  private isRolePermissionGranted({
+    permissionFlag,
+    authContext,
+    grantedByPermissionFlag,
+  }: {
+    permissionFlag: PermissionFlagType;
+    authContext: WorkspaceAuthContext | undefined;
+    grantedByPermissionFlag: Map<PermissionFlagType, Promise<boolean>>;
+  }): Promise<boolean> {
+    const cachedGrant = grantedByPermissionFlag.get(permissionFlag);
+
+    if (isDefined(cachedGrant)) {
+      return cachedGrant;
     }
 
-    for (const featureFlag of requiredFeatureFlags) {
-      if (!(await isFeatureFlagEnabled(featureFlag))) {
-        return { reason: 'featureFlag', featureFlag };
-      }
-    }
+    const grant = this.permissionsService.hasPermissionFlag({
+      authContext,
+      setting: permissionFlag,
+    });
 
-    const grants = await Promise.all(
-      requiredPermissionFlags.map((permissionFlag) =>
-        isPermissionFlagGranted(permissionFlag),
-      ),
-    );
-    const refusedPermissionFlag = requiredPermissionFlags.find(
-      (_, index) => !grants[index],
-    );
+    grantedByPermissionFlag.set(permissionFlag, grant);
 
-    return isDefined(refusedPermissionFlag)
-      ? { reason: 'permissionFlag', permissionFlag: refusedPermissionFlag }
-      : undefined;
+    return grant;
   }
 }
