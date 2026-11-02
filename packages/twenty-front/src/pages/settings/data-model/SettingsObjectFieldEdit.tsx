@@ -26,9 +26,6 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useValidationRules } from '@/validation-rules/hooks/useValidationRules';
-import { getActiveValidationRulesReadingField } from '@/validation-rules/utils/getActiveValidationRulesReadingField';
-import { getFieldRemovalValidationRulesWarning } from '@/validation-rules/utils/getFieldRemovalValidationRulesWarning';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -37,12 +34,7 @@ import { useEffect, useState } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
-import {
-  getSettingsPath,
-  isDefined,
-  isEmptyObject,
-  isNonEmptyArray,
-} from 'twenty-shared/utils';
+import { getSettingsPath, isDefined, isEmptyObject } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconArchive, IconArchiveOff, IconTrash } from 'twenty-ui/icon';
@@ -54,7 +46,6 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getFieldMetadataItemInitialValues } from '@/settings/data-model/fields/forms/utils/getFieldMetadataItemInitialValues';
 
 const DELETE_FIELD_MODAL_ID = 'delete-field-confirmation-modal';
-const DEACTIVATE_FIELD_MODAL_ID = 'deactivate-field-confirmation-modal';
 const StyledDangerButtons = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
@@ -118,17 +109,6 @@ export const SettingsObjectFieldEdit = () => {
       fieldMetadataItem.name === fieldName ||
       fieldMetadataItem.name === newNameDuringSave,
   );
-
-  const { validationRules } = useValidationRules({
-    objectMetadataId: objectMetadataItem?.id ?? '',
-  });
-  const validationRulesReadingField = getActiveValidationRulesReadingField({
-    validationRules,
-    fieldName: fieldMetadataItem?.name ?? '',
-  });
-  const validationRulesWarning = isNonEmptyArray(validationRulesReadingField)
-    ? getFieldRemovalValidationRulesWarning(validationRulesReadingField)
-    : undefined;
 
   const isReverseJunctionRelation =
     resolveJunctionConfig({
@@ -280,21 +260,11 @@ export const SettingsObjectFieldEdit = () => {
     navigateBackOrToSettings();
   };
 
-  const handleDeactivate = () => {
+  const handleDeactivate = async () => {
     if (readonly) {
       return;
     }
 
-    if (isNonEmptyArray(validationRulesReadingField)) {
-      openDialog(DEACTIVATE_FIELD_MODAL_ID);
-
-      return;
-    }
-
-    void confirmDeactivate();
-  };
-
-  const confirmDeactivate = async () => {
     const deactivationResult = await deactivateMetadataField(
       fieldMetadataItem.id,
       objectMetadataItem.id,
@@ -487,25 +457,11 @@ export const SettingsObjectFieldEdit = () => {
           </SettingsPageContainer>
         </SettingsPageLayout>
       </FormProvider>
-      <ConfirmationDialog
-        dialogId={DEACTIVATE_FIELD_MODAL_ID}
-        title={t`Deactivate ${fieldLabel} field?`}
-        subtitle={validationRulesWarning ?? ''}
-        confirmButtonText={t`Deactivate`}
-        onConfirmClick={confirmDeactivate}
-        onClose={() => closeDialog(DEACTIVATE_FIELD_MODAL_ID)}
-      />
       {isCustomField && (
         <ConfirmationDialog
           dialogId={DELETE_FIELD_MODAL_ID}
           title={t`Delete ${fieldLabel} field?`}
-          subtitle={[
-            t`This will permanently delete the field and all its data from ${objectLabel}.`,
-            validationRulesWarning,
-            t`Type "yes" to confirm.`,
-          ]
-            .filter(isDefined)
-            .join(' ')}
+          subtitle={t`This will permanently delete the field and all its data from ${objectLabel}. Type "yes" to confirm.`}
           confirmButtonText={t`Delete`}
           confirmationValue="yes"
           confirmationPlaceholder="yes"
