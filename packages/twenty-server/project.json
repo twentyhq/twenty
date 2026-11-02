@@ -16,14 +16,7 @@
           "mkdir -p dist/assets/twenty-client-sdk && cp ../twenty-client-sdk/package.json dist/assets/twenty-client-sdk/ && cp -r ../twenty-client-sdk/dist dist/assets/twenty-client-sdk/dist"
         ]
       },
-      "dependsOn": ["^build"],
-      "inputs": [
-        "production",
-        "^production",
-        "{workspaceRoot}/packages/twenty-docs/ui/**/*.mdx",
-        "{workspaceRoot}/packages/twenty-ui/generated/components.docs.json",
-        "{workspaceRoot}/packages/twenty-ui/package.json"
-      ]
+      "dependsOn": ["^build"]
     },
     "test:integration:secure": {
       "executor": "nx:run-commands",
