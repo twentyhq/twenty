@@ -2,16 +2,15 @@ import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/
 import { isDefined } from 'twenty-shared/utils';
 
 import {
+  EMAILS_TAB_ICON,
+  EMAILS_TAB_TITLE,
+  MESSAGES_TAB_ICON,
+  MESSAGES_TAB_TITLE,
   MESSAGES_TAB_UNIVERSAL_IDENTIFIERS,
   MESSAGES_WIDGET_UNIVERSAL_IDENTIFIERS,
 } from 'src/database/commands/upgrade-version-command/2-55/constants/messages-tab-migration-universal-identifiers.constant';
 import { type FlatPageLayoutTab } from 'src/engine/metadata-modules/flat-page-layout-tab/types/flat-page-layout-tab.type';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
-
-const PREVIOUS_TITLE = 'Emails';
-const NEXT_TITLE = 'Messages';
-const PREVIOUS_TAB_ICON = 'IconMail';
-const NEXT_TAB_ICON = 'IconMessages';
 
 const isStandardEntity = <
   TEntity extends FlatPageLayoutTab | FlatPageLayoutWidget,
@@ -58,8 +57,9 @@ export const buildMessagesTabMigration = ({
     MESSAGES_TAB_UNIVERSAL_IDENTIFIERS,
     flatPageLayoutTabsByUniversalIdentifier,
   ).flatMap((tab) => {
-    const title = tab.title === PREVIOUS_TITLE ? NEXT_TITLE : tab.title;
-    const icon = tab.icon === PREVIOUS_TAB_ICON ? NEXT_TAB_ICON : tab.icon;
+    const title =
+      tab.title === EMAILS_TAB_TITLE ? MESSAGES_TAB_TITLE : tab.title;
+    const icon = tab.icon === EMAILS_TAB_ICON ? MESSAGES_TAB_ICON : tab.icon;
 
     if (title === tab.title && icon === tab.icon) {
       return [];
@@ -72,8 +72,12 @@ export const buildMessagesTabMigration = ({
     MESSAGES_WIDGET_UNIVERSAL_IDENTIFIERS,
     flatPageLayoutWidgetsByUniversalIdentifier,
   )
-    .filter((widget) => widget.title === PREVIOUS_TITLE)
-    .map((widget) => ({ ...widget, title: NEXT_TITLE, updatedAt: now }));
+    .filter((widget) => widget.title === EMAILS_TAB_TITLE)
+    .map((widget) => ({
+      ...widget,
+      title: MESSAGES_TAB_TITLE,
+      updatedAt: now,
+    }));
 
   return {
     pageLayoutTabsToUpdate,
