@@ -510,6 +510,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       "outputTokens": {
         "universalIdentifier": "3e7f5fb8-f9cf-45b2-b1a7-b36c1e8ff2fd",
       },
+      "result": {
+        "universalIdentifier": "3efbea8e-5385-4d55-a210-9987e9ffb176",
+      },
       "startedAt": {
         "universalIdentifier": "578977d7-b0d9-48d1-83f7-29ad6215a6f0",
       },

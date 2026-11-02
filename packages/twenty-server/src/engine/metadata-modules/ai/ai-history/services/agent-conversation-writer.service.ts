@@ -47,6 +47,20 @@ export class AgentConversationWriterService {
     );
   }
 
+  // TODO(@FelixMalfait): drop this upgrade fence once 2-55's add-agent-turn-result has reached every workspace
+  async canStoreTurnResult(workspaceId: string): Promise<boolean> {
+    const { flatFieldMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatFieldMetadataMaps',
+      ]);
+
+    return isDefined(
+      flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.agentTurn.fields.result.universalIdentifier
+      ],
+    );
+  }
+
   runInTransaction<TResult>(
     workspaceId: string,
     work: (scope: AgentHistoryTransactionScope) => Promise<TResult>,
