@@ -27,7 +27,9 @@ export const validateObjectPermissionGrantsNoDisabledAction = ({
   flatRole:
     | Pick<
         UniversalFlatRole,
-        'universalIdentifier' | 'applicationUniversalIdentifier'
+        | 'universalIdentifier'
+        | 'applicationUniversalIdentifier'
+        | 'canBeAssignedToApplications'
       >
     | undefined;
   applicationDefaultRoleUniversalIdentifier: string | undefined;
@@ -44,6 +46,11 @@ export const validateObjectPermissionGrantsNoDisabledAction = ({
     flatRole.applicationUniversalIdentifier ===
       flatObjectMetadata.applicationUniversalIdentifier
   ) {
+    return [];
+  }
+
+  // A grant copies its application's default role, disabled actions included
+  if (flatRole?.canBeAssignedToApplications === true) {
     return [];
   }
 

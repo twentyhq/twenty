@@ -6,6 +6,7 @@ import { EnableDirectMessagePairIdentityCommand } from 'src/database/commands/up
 import { MakeAgentTurnThreadOptionalCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793697418663-make-agent-turn-thread-optional.command';
 import { InlineWorkflowStepAgentsCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793697418665-inline-workflow-step-agents.command';
 import { RenameEmailsTabToMessagesCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793707166734-rename-emails-tab-to-messages.command';
+import { BackfillApplicationGrantsCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793715083564-backfill-application-grants.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -27,6 +28,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     MakeAgentTurnThreadOptionalCommand,
     InlineWorkflowStepAgentsCommand,
     RenameEmailsTabToMessagesCommand,
+    BackfillApplicationGrantsCommand,
   ],
 })
 export class V2_56_UpgradeVersionCommandModule {}
