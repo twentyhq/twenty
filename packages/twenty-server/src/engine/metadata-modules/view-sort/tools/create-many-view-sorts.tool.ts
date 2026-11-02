@@ -8,6 +8,7 @@ import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/type
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
 import { createViewSortInputSchema } from 'src/engine/metadata-modules/view-sort/tools/schemas/create-view-sort-input.schema';
+import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
 
 const createManyViewSortsInputSchema = z.object({
   sorts: z
@@ -29,16 +30,30 @@ export class CreateManyViewSortsTool extends BaseTool<
 > {
   readonly inputSchema = createManyViewSortsInputSchema;
 
-  constructor(private readonly viewSortService: ViewSortService) {
+  constructor(
+    private readonly viewSortService: ViewSortService,
+    private readonly viewToolAccessService: ViewToolAccessService,
+  ) {
     super();
   }
 
   async execute({
     input,
-    context: { workspaceId },
+    context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<
     typeof createManyViewSortsInputSchema
   >): Promise<ToolOutput> {
+    await Promise.all(
+      input.sorts.map(({ viewId }) =>
+        this.viewToolAccessService.findViewEditableByUserOrThrow({
+          viewId,
+          workspaceId,
+          userWorkspaceId,
+          operation: 'update',
+        }),
+      ),
+    );
+
     const results = [];
 
     for (const sortInput of input.sorts) {

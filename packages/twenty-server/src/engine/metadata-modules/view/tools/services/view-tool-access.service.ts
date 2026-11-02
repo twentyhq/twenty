@@ -9,11 +9,16 @@ import {
   ViewExceptionCode,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
+import { ViewEntityLookupService } from 'src/engine/permissions/view/services/view-entity-lookup.service';
+import { type ViewChildEntityKind } from 'src/engine/permissions/view/types/view-permissions.type';
 
 // Stricter than ViewAccessService: holding VIEWS does not let an agent change another member's unlisted view
 @Injectable()
 export class ViewToolAccessService {
-  constructor(private readonly viewService: ViewService) {}
+  constructor(
+    private readonly viewService: ViewService,
+    private readonly viewEntityLookupService: ViewEntityLookupService,
+  ) {}
 
   async findViewEditableByUserOrThrow({
     viewId,
@@ -46,5 +51,35 @@ export class ViewToolAccessService {
     }
 
     return view;
+  }
+
+  async findParentViewEditableByUserOrThrow({
+    kind,
+    entityId,
+    workspaceId,
+    userWorkspaceId,
+  }: {
+    kind: ViewChildEntityKind;
+    entityId: string;
+    workspaceId: string;
+    userWorkspaceId?: string;
+  }): Promise<ViewDTO | null> {
+    const viewId =
+      await this.viewEntityLookupService.findViewIdByEntityIdAndKind(
+        kind,
+        entityId,
+        workspaceId,
+      );
+
+    if (!isDefined(viewId)) {
+      return null;
+    }
+
+    return this.findViewEditableByUserOrThrow({
+      viewId,
+      workspaceId,
+      userWorkspaceId,
+      operation: 'update',
+    });
   }
 }
