@@ -7,14 +7,13 @@ import { setupApplicationForSync } from 'test/integration/metadata/suites/applic
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
 import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import {
   createValidationRule,
   findValidationRules,
 } from 'test/integration/metadata/suites/validation-rule/utils/validation-rule-api.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import { type FieldManifest } from 'twenty-shared/application';
-import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
 const TEST_APP_ID = uuidv4();
@@ -80,12 +79,6 @@ describe('Validation rules across application syncs', () => {
   let validationRuleId: string;
 
   beforeAll(async () => {
-    await updateFeatureFlag({
-      featureFlag: FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
-      value: true,
-      expectToFail: false,
-    });
-
     await setupApplicationForSync({
       applicationUniversalIdentifier: TEST_APP_ID,
       name: 'Validation Rule Sync App',
