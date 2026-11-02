@@ -744,8 +744,7 @@ export class AgentRunnerService {
                 execution.steps[execution.steps.length - 1]?.toolResults ?? [],
               )
             : undefined;
-          // a stop can also land while the structured output is asked for, after the stream ended. It is
-          // read once here, so the turn records the outcome its caller gets
+          // a stop can land after the stream ended; read once so the turn and its caller agree
           const isAborted = streamed.isAborted || abortSignal?.aborted === true;
           const isCompleted =
             !isAborted &&

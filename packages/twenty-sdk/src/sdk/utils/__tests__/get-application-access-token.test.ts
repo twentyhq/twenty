@@ -8,9 +8,11 @@ import {
 const initialEnvironment = process.env;
 
 beforeEach(() => {
-  process.env = { ...initialEnvironment };
-  delete process.env.TWENTY_APP_ACCESS_TOKEN;
-  delete process.env.TWENTY_APP_APPLICATION_ACCESS_TOKEN;
+  process.env = {
+    ...initialEnvironment,
+    TWENTY_APP_ACCESS_TOKEN: undefined,
+    TWENTY_APP_APPLICATION_ACCESS_TOKEN: undefined,
+  };
 });
 
 afterEach(() => {
