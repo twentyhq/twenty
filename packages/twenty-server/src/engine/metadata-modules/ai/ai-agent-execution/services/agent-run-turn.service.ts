@@ -88,6 +88,8 @@ type AgentRunTurnInput = {
 export type StartedAgentRunTurn = {
   turn: AgentTurn;
   source: AgentTurnStreamSource;
+  // decided when the turn starts, from the tools it was given
+  structuredOutputStrategy: AgentStructuredOutputStrategy;
 };
 
 export type CompletedAgentRunTurn = AgentExecutionResult & {
@@ -164,6 +166,18 @@ export class AgentRunTurnService {
       toolLoadingStrategy,
     });
 
+    const hasTools =
+      registryAccess.type !== 'none' ||
+      canAskHumans ||
+      isNonEmptyArray(Object.keys(pausingTools)) ||
+      (persona.modelConfiguration?.webSearch?.enabled ?? false) ||
+      (persona.modelConfiguration?.twitterSearch?.enabled ?? false);
+    // some models refuse a JSON response format alongside function calling, so the output shares the request only without tools
+    const effectiveStructuredOutputStrategy: AgentStructuredOutputStrategy =
+      structuredOutputStrategy === 'same-request' && !hasTools
+        ? 'same-request'
+        : 'follow-up-request';
+
     const turn = await this.agentTurnService.start({
       workspace: workspace ?? undefined,
       modelId: persona.modelId,
@@ -200,7 +214,7 @@ export class AgentRunTurnService {
       }),
       promptCacheKey: persona.promptCacheKey,
       output:
-        structuredOutputStrategy === 'same-request' &&
+        effectiveStructuredOutputStrategy === 'same-request' &&
         responseFormat?.type === 'json'
           ? buildStructuredOutput(responseFormat.schema)
           : undefined,
@@ -244,17 +258,17 @@ export class AgentRunTurnService {
         modelConfig: turn.modelConfig,
         getStreamError: () => streamError,
       },
+      structuredOutputStrategy: effectiveStructuredOutputStrategy,
     };
   }
 
   // a follow-up structured output request is not part of the stream, so its usage is added to the turn's here
   async completeTurn({
-    started: { turn },
+    started: { turn, structuredOutputStrategy },
     persona,
     responseFormat,
     workspaceId,
     executionContext,
-    structuredOutputStrategy = 'follow-up-request',
     abortSignal,
   }: Pick<
     AgentRunTurnInput,
@@ -262,7 +276,6 @@ export class AgentRunTurnService {
     | 'responseFormat'
     | 'workspaceId'
     | 'executionContext'
-    | 'structuredOutputStrategy'
     | 'abortSignal'
   > & {
     started: StartedAgentRunTurn;
