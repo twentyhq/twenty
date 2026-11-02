@@ -254,6 +254,59 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
     ).toEqual({});
   });
 
+  it('should deny a member acting through an installed application without a role, unless it is OAuth-only', () => {
+    const buildMemberRoleMaps = (
+      sourceType: ApplicationRegistrationSourceType,
+    ) => ({
+      ...buildRoleMaps({
+        byId: {
+          'application-id': {
+            id: 'application-id',
+            defaultRoleId: null,
+            sourceType,
+            deletedAt: null,
+          },
+        },
+      }),
+      flatWorkspaceMemberMaps: {
+        byId: { 'workspace-member-id': { userId: 'user-id' } },
+        userWorkspaceIdByUserId: { 'user-id': 'user-workspace-id' },
+      },
+      userWorkspaceRoleMap: { 'user-workspace-id': 'default-role-id' },
+    });
+    const getObjectsPermissions = (
+      sourceType: ApplicationRegistrationSourceType,
+    ) =>
+      getObjectsPermissionsFromRolePermissionConfig({
+        principals: undefined,
+        rolesPermissions,
+        flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+        flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
+        workspaceId: 'workspace-id',
+        roleMaps: buildMemberRoleMaps(sourceType),
+        rolePermissionConfig: {
+          principals: {
+            workspaceId: 'workspace-id',
+            mainPrincipal: {
+              type: 'workspaceMember',
+              workspaceMemberId: 'workspace-member-id',
+            },
+            applicationPrincipal: {
+              type: 'application',
+              applicationId: 'application-id',
+            },
+          },
+        },
+      });
+
+    expect(
+      getObjectsPermissions(ApplicationRegistrationSourceType.LOCAL),
+    ).toEqual({});
+    expect(
+      getObjectsPermissions(ApplicationRegistrationSourceType.OAUTH_ONLY),
+    ).toBe(defaultRolePermissions);
+  });
+
   it('should deny when no actor restricts the call', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({

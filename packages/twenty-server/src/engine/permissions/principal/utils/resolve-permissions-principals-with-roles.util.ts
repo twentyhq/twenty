@@ -126,7 +126,6 @@ const resolveLimitingPrincipal = ({
     : undefined;
 };
 
-// TODO(@charlesBochet): an application always needs a role; until then one without counts as the custom app
 const resolveApplicationPrincipal = ({
   applicationPrincipal,
   mainPrincipal,
@@ -161,7 +160,7 @@ const resolveApplicationPrincipal = ({
         roleId: applicationRoleId,
         applicationId: applicationPrincipal.applicationId,
       }
-    : { type: 'customApplication' };
+    : undefined;
 };
 
 export const resolvePermissionsPrincipalsWithRoles = ({
