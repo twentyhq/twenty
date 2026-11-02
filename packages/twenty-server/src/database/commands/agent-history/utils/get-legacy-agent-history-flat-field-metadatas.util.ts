@@ -1,6 +1,6 @@
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { FieldMetadataType, MetadataWritability } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
@@ -84,7 +84,6 @@ export const getLegacyAgentHistoryFlatFieldMetadatas = ({
       isSearchable: false,
       isAuditLogged: false,
       isUIEditable: false,
-      writability: MetadataWritability.SYSTEM,
       disabledFieldPermissionActions: null,
       isLabelSyncedWithName: false,
       overrides: null,

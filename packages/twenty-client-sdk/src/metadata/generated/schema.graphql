@@ -623,6 +623,7 @@ type ApplicationMonitoringActivityBucket {
 type ApplicationMonitoringCreditBucket {
   bucketStart: DateTime!
   creditsUsed: Float!
+  operationLabel: String
   operationType: String!
 }
 
@@ -1705,6 +1706,7 @@ input CreateRecordExportInput {
 
 input CreateRelatedRecordPathInput {
   firstFieldMetadataId: UUID
+  isInherent: Boolean
   objectMetadataId: UUID
   secondFieldMetadataId: UUID
   thirdFieldMetadataId: UUID
@@ -1859,6 +1861,7 @@ input CreateWebhookInput {
 
 type CreditUsedItem {
   creditsUsed: Float!
+  icon: String
   label: String
   operation: UsageOperationType
   resource: UsageResourceType
@@ -2309,15 +2312,18 @@ type FeatureFlag {
 }
 
 enum FeatureFlagKey {
+  IS_AI_CHAT_COMPONENT_BUILDER_ENABLED
   IS_AI_CHAT_INBOX_ENABLED
   IS_APP_PREFERENCES_ENABLED
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED
   IS_MCP_SERVERS_ENABLED
+  IS_PRIVATE_RECORD_ENABLED
   IS_RECORD_CREATION_FORM_ENABLED
   IS_RECORD_LEVEL_SHARING_ENABLED
   IS_RELATED_RECORD_PATHS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
+  IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED
 }
 
 type Field {
@@ -2349,7 +2355,6 @@ type Field {
   type: FieldMetadataType!
   universalIdentifier: String!
   updatedAt: DateTime!
-  writability: MetadataWritability
 }
 
 type FieldConfiguration {
@@ -2609,6 +2614,12 @@ enum IdentityProviderType {
 type IframeConfiguration {
   configurationType: WidgetConfigurationType!
   url: String
+}
+
+type IframeMediaPermission {
+  camera: Boolean!
+  microphone: Boolean!
+  origin: String!
 }
 
 type ImapSmtpCaldavConnectionSuccess {
@@ -3146,14 +3157,6 @@ enum MetadataEventAction {
   UPDATED
 }
 
-enum MetadataReadability {
-  APPLICATION
-  INHERITED
-  OPEN
-  PRIVATE
-  SYSTEM
-}
-
 type MetadataTranslation {
   canonicalValue: String!
   locale: String!
@@ -3185,12 +3188,6 @@ input MetadataTranslationsInput {
   fieldMetadataId: UUID
   locale: String
   objectMetadataId: UUID
-}
-
-enum MetadataWritability {
-  APPLICATION
-  OPEN
-  SYSTEM
 }
 
 type MinimalMetadata {
@@ -3422,7 +3419,7 @@ type Mutation {
   sendMessageCampaignTest(input: SendMessageCampaignTestInput!): SendEmailViaDomainOutput!
   setAppKeyValue(input: SetAppKeyValueInput!): AppKeyValue!
   setEnterpriseKey(enterpriseKey: String!): EnterpriseLicenseInfoDTO!
-  setRecordGeneralAccess(accessLevel: RecordShareAccessLevel!, target: RecordTargetInput!): RecordSharingDTO!
+  setRecordPrivate(isPrivate: Boolean!, target: RecordTargetInput!): RecordSharingDTO!
   setRecordShare(accessLevel: RecordShareAccessLevel!, principal: RecordSharePrincipalInput!, target: RecordTargetInput!): RecordSharingDTO!
   setResourceCreditSubscriptionPrice(priceId: String!): BillingUpdate!
   signIn(captchaToken: String, email: String!, locale: String, password: String!, verifyEmailRedirectPath: String): AvailableWorkspacesAndAccessTokens!
@@ -3498,7 +3495,8 @@ type Mutation {
   updateViewSort(input: UpdateViewSortInput!): ViewSort!
   updateWebhook(input: UpdateWebhookInput!): Webhook!
   updateWorkspace(data: UpdateWorkspaceInput!): Workspace!
-  updateWorkspaceAllowedIframeOrigins(data: UpdateWorkspaceAllowedIframeOriginsInput!): Workspace!
+  updateWorkspaceAllowedEmbeddingOrigins(data: UpdateWorkspaceAllowedEmbeddingOriginsInput!): Workspace!
+  updateWorkspaceIframeMediaPermissions(data: UpdateWorkspaceIframeMediaPermissionsInput!): Workspace!
   updateWorkspaceMemberRole(roleId: UUID!, workspaceMemberId: UUID!): WorkspaceMember!
   updateWorkspaceMemberSettings(input: UpdateWorkspaceMemberSettingsInput!): Boolean!
   upgradeApplication(appRegistrationId: String!, targetVersion: String!): Boolean!
@@ -3602,14 +3600,10 @@ type Object {
   namePlural: String!
   nameSingular: String!
   openRecordIn: ObjectOpenRecordIn!
-  readability: MetadataReadability!
-  readabilityParentFieldUniversalIdentifiers: [UUID!]
   searchFieldMetadataList: [SearchField!]!
-  sharingReach: ObjectSharingReach!
   shortcut: String
   universalIdentifier: String!
   updatedAt: DateTime!
-  writability: MetadataWritability!
 }
 
 type ObjectConnection {
@@ -3726,11 +3720,6 @@ enum ObjectRecordGroupByDateGranularity {
   QUARTER_OF_THE_YEAR
   WEEK
   YEAR
-}
-
-enum ObjectSharingReach {
-  ROLE_ACCESS
-  WORKSPACE
 }
 
 """Onboarding status"""
@@ -4269,13 +4258,12 @@ enum RecordShareRowCause {
 
 type RecordSharingDTO {
   canManageSharing: Boolean!
-  defaultGeneralAccessLevel: RecordShareAccessLevel
-  generalAccessLevel: RecordShareAccessLevel
   hasManagedGeneralAccess: Boolean!
+  isPrivate: Boolean!
+  isShareable: Boolean!
   permissions: RecordPermissionsDTO!
   roles: [RecordSharingRoleDTO!]!
   shares: [RecordSharingGrantDTO!]!
-  sharingMode: RecordSharingMode!
 }
 
 type RecordSharingGrantDTO {
@@ -4285,16 +4273,6 @@ type RecordSharingGrantDTO {
   principalRoleId: UUID
   principalType: RecordSharePrincipalType!
   rowCause: RecordShareRowCause!
-}
-
-"""
-How records of an object are shared: only through roles, private until shared, readable through linked records, or open by default with per-record exceptions
-"""
-enum RecordSharingMode {
-  INHERITED
-  OPEN_BY_DEFAULT
-  PRIVATE
-  ROLE_ONLY
 }
 
 type RecordSharingRoleDTO {
@@ -4319,6 +4297,7 @@ input RecordTargetInput {
 type RelatedRecordPath {
   firstFieldMetadataId: UUID!
   id: UUID!
+  isInherent: Boolean!
   objectMetadataId: UUID!
   secondFieldMetadataId: UUID
   thirdFieldMetadataId: UUID
@@ -4406,6 +4385,7 @@ type RowLevelPermissionPredicate {
   objectMetadataId: String!
   operand: RowLevelPermissionPredicateOperand!
   positionInRowLevelPermissionPredicateGroup: Float
+  relationFieldMetadataId: String
   roleId: String!
   rowLevelPermissionPredicateGroupId: String
   subFieldName: String
@@ -4441,6 +4421,7 @@ input RowLevelPermissionPredicateInput {
   id: UUID
   operand: RowLevelPermissionPredicateOperand!
   positionInRowLevelPermissionPredicateGroup: Float
+  relationFieldMetadataId: UUID
   rowLevelPermissionPredicateGroupId: UUID
   subFieldName: String
   value: JSON
@@ -5169,8 +5150,6 @@ input UpdateObjectPayload {
   namePlural: String
   nameSingular: String
   openRecordIn: ObjectOpenRecordIn
-  readability: MetadataReadability
-  sharingReach: ObjectSharingReach
   shortcut: String
   translations: [MetadataTranslationOverrideInput!]
 }
@@ -5445,8 +5424,14 @@ input UpdateWebhookInputUpdates {
   targetUrl: String
 }
 
-input UpdateWorkspaceAllowedIframeOriginsInput {
+input UpdateWorkspaceAllowedEmbeddingOriginsInput {
   operation: String!
+  origin: String!
+}
+
+input UpdateWorkspaceIframeMediaPermissionsInput {
+  camera: Boolean!
+  microphone: Boolean!
   origin: String!
 }
 
@@ -5686,6 +5671,7 @@ enum UsageOperationType {
   AI_WORKFLOW_WEB_SEARCH
   ALL
   API_REQUEST
+  APP_OPERATION
   CALL_RECORDING
   CODE_EXECUTION
   EMAIL_SEND
@@ -6200,7 +6186,7 @@ type Workspace {
   aiEvaluationModelId: String
   aiModelIdByTier: JSON!
   allowImpersonation: Boolean!
-  allowedIframeOrigins: [String!]
+  allowedEmbeddingOrigins: [String!]
   billingCustomer: BillingCustomer
   billingEntitlements: [BillingEntitlement!]!
   billingSubscriptions: [BillingSubscription!]!
@@ -6217,6 +6203,7 @@ type Workspace {
   hasValidEnterpriseValidityToken: Boolean!
   hasValidSignedEnterpriseKey: Boolean!
   id: UUID!
+  iframeMediaPermissions: [IframeMediaPermission!]
   installedApplications: [Application!]!
   inviteHash: String
   isAutoModelSelectionEnabled: Boolean!

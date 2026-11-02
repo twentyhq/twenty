@@ -82,24 +82,28 @@ Cum sunt aplicate:
 
 ## Operațiuni facturabile
 
-O operațiune este ceea ce taxează aplicația dvs. pe măsură ce funcționează. Fiecare intrare asociază un nume de operațiune ales de dvs. cu categoria de facturare pe care platforma o contorizează, plus eticheta afișată administratorilor spațiului de lucru în **Setări > Utilizare**.
+O operațiune este ceea ce taxează aplicația dvs. pe măsură ce funcționează. Fiecare intrare denumește o operațiune pe care o alegeți și eticheta afișată administratorilor spațiului de lucru în **Settings > Usage** și vouă în graficul **Credits used** de monitorizare al aplicației voastre. Opțional, se poate mapa la una dintre categoriile de facturare ale platformei.
 
 ```ts src/application-config.ts
 billing: {
   operations: {
+    enrichPerson: {
+      label: 'Person enrichment',
+      icon: 'IconUserSearch',
+    },
     recordMeeting: {
       operationType: 'CALL_RECORDING',
       label: 'Meeting recording',
-    },
-    summarizeMeeting: {
-      operationType: 'AI_CHAT_TOKEN',
-      label: 'Meeting summary',
     },
   },
 },
 ```
 
-`operationType` trebuie să fie una dintre categoriile de facturare ale platformei: `AI_CHAT_TOKEN`, `AI_WORKFLOW_TOKEN`, `WORKFLOW_EXECUTION`, `CODE_EXECUTION`, `WEB_SEARCH`, `CALL_RECORDING`, `EMAIL_SEND`. Aceasta decide cum este contorizată cheltuiala și ce unitate de numărare se aplică (tokenuri, invocări, minute) — nu este ceea ce citesc administratorii. `label` este.
+`icon` este opțional: un nume de pictogramă Twenty (de exemplu, `IconUserSearch`) afișat lângă etichetă în defalcarea creditelor aplicației voastre, pe pagina sa de setări.
+
+`operationType` este opțional și are ca valoare implicită `APP_OPERATION`, categoria dedicată pentru taxele aplicației. Setați-l numai atunci când cheltuiala aparține într-adevăr uneia dintre categoriile platformei: `AI_CHAT_TOKEN`, `AI_WORKFLOW_TOKEN`, `WORKFLOW_EXECUTION`, `CODE_EXECUTION`, `WEB_SEARCH`, `CALL_RECORDING`, `EMAIL_SEND`, `APP_OPERATION`. Aceasta decide cum este contorizată cheltuiala și ce unitate de numărare se aplică (tokenuri, invocări, minute) — nu este ceea ce citesc administratorii. `label` este.
+
+`CODE_EXECUTION` este locul în care platforma contorizează propriile execuții ale funcțiilor dvs., astfel încât taxele înregistrate acolo sunt combinate cu acestea; preferați valoarea implicită.
 
 Compilarea respinge un `operationType` necunoscut, un `label` gol și un nume utilizat atât de o taxă recurentă, cât și de o operațiune.
 
@@ -123,8 +127,8 @@ Notițe:
 
 * Declararea operațiunilor permite ca Utilizare să împartă cheltuiala aplicației dvs. în funcție de ceea ce a taxat. O aplicație care nu declară nimic este totuși raportată, ca o singură secțiune sub numele său afișat.
 * Taxarea unei operațiuni pe care manifestul dvs. nu o declară este respinsă. Adăugați-o la `billing.operations` și sincronizați.
-* Mai multe operațiuni pot partaja un singur `operationType`. Două operațiuni de îmbogățire contorizate ambele ca `CODE_EXECUTION` sunt în continuare afișate ca două secțiuni etichetate.
-* Fără `operation`, numiți direct categoria de facturare cu `operationType`, opțional cu un `resourceContext` în formă liberă. Cele două forme se exclud reciproc: `operation` conține eticheta, `operationType` nu.
+* Mai multe operațiuni pot partaja un singur `operationType`. Două operațiuni de îmbogățire, ambele contorizate ca `APP_OPERATION`, apar în continuare ca două segmente etichetate.
+* Fără `operation`, taxa este încadrată în `APP_OPERATION` sau în categoria pe care o denumiți cu `operationType`, opțional cu un `resourceContext` în format liber. Cele două forme se exclud reciproc: `operation` conține eticheta, `operationType` nu.
 * Taxarea nu face niciodată ca funcția dvs. să eșueze. O eroare de facturare este înregistrată și ignorată, iar apelul nu face nimic în afara mediului de rulare al funcției logice, astfel încât rulările locale și testele să nu se blocheze.
 
 ## Verificarea înainte de a cheltui

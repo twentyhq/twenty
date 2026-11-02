@@ -221,7 +221,24 @@ describe('validateAgentRolesWithinApplicationRole', () => {
     ]);
   });
 
-  it('reports a missing application role and still checks agent role references', () => {
+  it('accepts an external application role without a local definition', () => {
+    const errors = validateAgentRolesWithinApplicationRole({
+      agents: [
+        buildAgent({ roleUniversalIdentifier: undefined }),
+        buildAgent({
+          roleUniversalIdentifier: APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
+        }),
+      ],
+      roles: [],
+      objects: [],
+      permissionFlags: [],
+      defaultRoleUniversalIdentifier: APPLICATION_ROLE_UNIVERSAL_IDENTIFIER,
+    });
+
+    expect(errors).toEqual([]);
+  });
+
+  it('still checks agent role references with an external application role', () => {
     const errors = validateAgentRolesWithinApplicationRole({
       agents: [
         buildAgent(),
@@ -237,7 +254,6 @@ describe('validateAgentRolesWithinApplicationRole', () => {
     });
 
     expect(errors).toEqual([
-      'Application default role "application-role" is not defined by this application.',
       'Agent "lost-assistant" references role "missing-role", which is not defined by this application.',
     ]);
   });

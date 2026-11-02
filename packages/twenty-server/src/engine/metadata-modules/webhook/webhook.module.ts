@@ -3,7 +3,7 @@ import { ApplicationModule } from 'src/engine/core-modules/application/applicati
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { FlatWebhookModule } from 'src/engine/metadata-modules/flat-webhook/flat-webhook.module';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { WebhookController } from 'src/engine/metadata-modules/webhook/controllers/webhook.controller';
 import { WebhookResolver } from 'src/engine/metadata-modules/webhook/webhook.resolver';
 import { WebhookService } from 'src/engine/metadata-modules/webhook/webhook.service';

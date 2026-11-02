@@ -57,8 +57,9 @@ import { CardTitle } from "/snippets/card-title.mdx"
 | **Связь**                           | Двусторонняя связь между двумя объектами — обе стороны объявлены как поля                                                               | `defineField()` с `FieldType.RELATION` |
 | **Индекс**                          | Индекс базы данных для ускорения повторяющегося запроса к одному из ваших объектов                                                      | `defineIndex()`                        |
 | **Тип действия на временной шкале** | Автоматическое событие аудита или явное событие домена, отображаемое на временных шкалах записей                                        | `defineTimelineActivityType()`         |
+| **Путь к связанной записи**         | Цепочка из не более чем трех связей, по которым доступ к записи распространяется на связанные с ней записи                              | `defineRelatedRecordPath()`            |
 
-CLI обнаруживает их с помощью анализа AST во время сборки, поэтому организация файлов остается на ваше усмотрение — по соглашению используются `src/objects/`, `src/fields/`, `src/indexes/` и `src/timeline-activity-types/`. Стабильные UUID `universalIdentifier` связывают все воедино между развертываниями.
+CLI обнаруживает их с помощью анализа AST во время сборки, поэтому организация файлов остается на ваше усмотрение — по соглашению используются `src/objects/`, `src/fields/`, `src/indexes/`, `src/timeline-activity-types/` и `src/related-record-paths/`. Стабильные UUID `universalIdentifier` связывают все воедино между развертываниями.
 
 ## Индексы (необязательно)
 
@@ -103,6 +104,37 @@ defineIndex({
 * Для каждого объекта допускается не более 10 пользовательских индексов (индексы самого фреймворка не учитываются).
 
 Упорядочьте массив `fields` в том порядке, в котором Postgres должен его использовать — сначала самый левый столбец, как в телефонной книге. Индексы не бесплатны: при каждой записи в таблицу они обновляются. Добавляйте индекс только тогда, когда у вас есть запрос, которому он действительно нужен.
+
+## Пути к связанным записям (необязательно)
+
+<Warning>
+  Пути связанных записей находятся в предварительной версии: они синхронизируются с вашим приложением, но разрешения записей
+  пока их не используют. После включения им требуется
+  **тариф Organization или выше**, как и для
+  [безопасности на уровне строк](/ru/developers/extend/apps/config/roles#row-level-security).
+</Warning>
+
+Путь связанной записи начинается на объекте и проходит не более чем по трём полям связей, каждое из которых находится на объекте, достигнутом предыдущим полем. Разрешения записей используют эти пути для расширения доступа от записи к связанным с ней записям.
+
+* **Неотъемлемый** путь (`isInherent: true`) применяется всегда, когда начальная запись доступна для чтения, независимо от того, как был предоставлен этот доступ. Используйте его для записей, принадлежащих родительской записи, например для вложений карточки публикации.
+* **Обычный** путь применяется только тогда, когда доступ к начальной записи предоставляется непосредственно ролью, поэтому рабочие пространства выбирают, на какие из них полагаться.
+
+```ts src/related-record-paths/post-card-attachments.related-record-path.ts
+import { defineRelatedRecordPath } from 'twenty-sdk/define';
+
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+import { ATTACHMENTS_ON_POST_CARD_UNIVERSAL_IDENTIFIER } from '../fields/attachments-on-post-card.field';
+
+export default defineRelatedRecordPath({
+  universalIdentifier: 'c1b8f0d2-7e4a-4b6c-9a1d-3f5e2b7c8d90',
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  firstFieldMetadataUniversalIdentifier:
+    ATTACHMENTS_ON_POST_CARD_UNIVERSAL_IDENTIFIER,
+  isInherent: true,
+});
+```
+
+Добавьте `secondFieldMetadataUniversalIdentifier` и `thirdFieldMetadataUniversalIdentifier` для более длинных путей. Каждый переход должен быть активной связью на достигнутом к этому моменту объекте, путь не может посещать один и тот же объект дважды, и два пути не могут использовать одни и те же переходы.
 
 <Note>
 Ищете **Application Config** или **Roles & Permissions**? Они описывают само приложение, а не данные, которые оно добавляет, — их можно найти в разделе [Config](/ru/developers/extend/apps/config/overview). Ищете **Connections** (Linear, GitHub, Slack OAuth)? Они существуют для вызова *из* логических функций и находятся в разделе [Logic](/ru/developers/extend/apps/logic/connections).

@@ -35,10 +35,12 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
 
   const syncToDraftRole = useCallback(() => {
     setSettingsDraftRole((previousRole) => {
-      const otherObjectPredicates = (
+      const predicatesNotManagedByFilters = (
         previousRole.rowLevelPermissionPredicates ?? []
       ).filter(
-        (predicate) => predicate.objectMetadataId !== objectMetadataItem.id,
+        (predicate) =>
+          predicate.objectMetadataId !== objectMetadataItem.id ||
+          isDefined(predicate.relationFieldMetadataId),
       );
 
       const currentObjectGroupIds = new Set(
@@ -76,7 +78,7 @@ export const useRecordLevelPermissionSyncToDraftRole = ({
       return {
         ...previousRole,
         rowLevelPermissionPredicates: [
-          ...otherObjectPredicates,
+          ...predicatesNotManagedByFilters,
           ...newPredicates,
         ],
         rowLevelPermissionPredicateGroups: [

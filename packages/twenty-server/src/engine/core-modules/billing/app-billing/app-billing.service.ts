@@ -4,6 +4,7 @@ import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
+  DEFAULT_APP_USAGE_OPERATION_TYPE,
   isUsageOperationTypeValue,
   type UsageOperationTypeValue,
 } from 'twenty-shared/application';
@@ -35,6 +36,7 @@ const USAGE_UNIT_BY_OPERATION_TYPE: Record<
   [UsageOperationType.WEB_SEARCH]: UsageUnit.INVOCATION,
   [UsageOperationType.CALL_RECORDING]: UsageUnit.MINUTE,
   [UsageOperationType.EMAIL_SEND]: UsageUnit.INVOCATION,
+  [UsageOperationType.APP_OPERATION]: UsageUnit.INVOCATION,
 };
 
 // workspaceId and applicationId come from the token, never the body, so an app can't charge another workspace or pose as another app
@@ -103,13 +105,9 @@ export class AppBillingService {
     charge: ChargeDto;
   }): Promise<AppChargeableOperationType> {
     if (!isDefined(charge.operation)) {
-      if (!isDefined(charge.operationType)) {
-        throw new BadRequestException(
-          'A charge must name either an operation or an operationType.',
-        );
-      }
-
-      return UsageOperationType[charge.operationType];
+      return UsageOperationType[
+        charge.operationType ?? DEFAULT_APP_USAGE_OPERATION_TYPE
+      ];
     }
 
     const { flatApplicationMaps } =
@@ -137,16 +135,19 @@ export class AppBillingService {
       );
     }
 
+    const declaredOperationType =
+      billableOperation.operationType ?? DEFAULT_APP_USAGE_OPERATION_TYPE;
+
     // jsonb is untrusted: an unknown value would record a row with no category or unit,
     // and a platform-only value like SUBSCRIPTION would bypass ChargeDto's @IsIn
-    if (!isUsageOperationTypeValue(billableOperation.operationType)) {
+    if (!isUsageOperationTypeValue(declaredOperationType)) {
       throw new BadRequestException(
         `Billable operation "${charge.operation}" declares an unknown operationType.`,
       );
     }
 
     // Indexing by the manifest literal makes a drifted USAGE_OPERATION_TYPES value fail to compile
-    return UsageOperationType[billableOperation.operationType];
+    return UsageOperationType[declaredOperationType];
   }
 
   // Scoped to the token's workspace so an app cannot attribute spend outside it

@@ -4,11 +4,13 @@ import { type ApplicationDisplayData } from '@/applications/types/ApplicationDis
 import { SettingsApplicationStatusCell } from '@/settings/applications/components/SettingsApplicationStatusCell';
 import { SettingsApplicationTableRow } from '@/settings/applications/components/SettingsApplicationTableRow';
 import { SettingsApplicationTableRowChevronIcon } from '@/settings/applications/components/SettingsApplicationTableRowChevronIcon';
+import { SettingsApplicationTypeOrStatusCell } from '@/settings/applications/components/SettingsApplicationTypeOrStatusCell';
 import { type SettingsApplicationStatus } from '@/settings/applications/types/SettingsApplicationStatus';
 import { type SettingsApplicationTableRowMiddleColumn } from '@/settings/applications/types/SettingsApplicationTableRowMiddleColumn';
 import { getApplicationDescriptionSummary } from '@/settings/applications/utils/getApplicationDescriptionSummary';
 import { type MessageDescriptor } from '@lingui/core';
 import { msg, t } from '@lingui/core/macro';
+import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
@@ -44,22 +46,31 @@ export const SettingsApplicationsTableApplicationRow = ({
   statuses = [],
 }: SettingsApplicationsTableApplicationRowProps) => {
   const resolvedDescription = useResolvedApplicationDescription(application);
+  const sourceTypeLabel = getSourceTypeLabel(application.sourceType);
   const shouldShowUpdateTag =
     middleColumn === 'type' &&
     statuses.some((status) => status.type === 'updateAvailable');
+
+  const middleByColumn: Record<
+    SettingsApplicationTableRowMiddleColumn,
+    ReactNode
+  > = {
+    type: sourceTypeLabel,
+    status: <SettingsApplicationStatusCell statuses={statuses} />,
+    typeOrStatus: (
+      <SettingsApplicationTypeOrStatusCell
+        typeLabel={sourceTypeLabel}
+        statuses={statuses}
+      />
+    ),
+  };
 
   return (
     <SettingsApplicationTableRow
       middleColumn={middleColumn}
       link={link}
       name={<ApplicationDisplay application={application} />}
-      middle={
-        middleColumn === 'status' ? (
-          <SettingsApplicationStatusCell statuses={statuses} />
-        ) : (
-          getSourceTypeLabel(application.sourceType)
-        )
-      }
+      middle={middleByColumn[middleColumn]}
       details={
         <>
           <OverflowingTextWithTooltip

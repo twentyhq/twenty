@@ -20,11 +20,21 @@ Workflows created at runtime through the workspace API are a `Workflow` plus at 
 - `position: null` means no position. `outputSchema: {}` means an empty schema; omit `outputSchema` to derive it.
 - `twenty app pull` on the workspace Custom application writes builder workflows in this form, keeping the builder's trigger name, positions and output schemas.
 
+## AI Agent Steps
+
+- `AI_AGENT` runs one of the app's agents, named with `agentUniversalIdentifier`, and takes the step's `prompt`, `responseFormat`, `humanInputInstructions`, `conversation` and `workspaceMemberId` (the member the agent's conversation is with).
+- A step can only name an agent the app exports: `twenty app pull` reports a workflow on any other agent as unsupported.
+
 ## Email and Calendar Steps
 
 - `SEND_EMAIL`, `DRAFT_EMAIL` and `CREATE_CALENDAR_EVENT` name their account with exactly one of `connectedAccountId` or `connectedAccountHandle`.
 - Use `connectedAccountHandle` (the account's email address) in app code: ids only exist in one workspace. Apply resolves it to the oldest active account with that address that is shared with the workspace (`WORKSPACE` scope) and can run the step, and fails if none can. A member's private account can't be named by handle.
 - `twenty app pull` writes a shared account's id as its handle. Private account ids, variables and workspace member ids stay `connectedAccountId`.
+
+## Send to Inbox Steps
+
+- `SEND_CHAT_MESSAGE` posts `title` and `text` to the inbox of `workspaceMemberId`, optionally with a `toolCall` the member approves before the run goes on, and an optional `conversation`.
+- Member ids only exist in one workspace: in app code, pass a variable such as `{{trigger.properties.after.assigneeId}}`.
 
 ## Manual Record Trigger
 

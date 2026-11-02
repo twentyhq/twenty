@@ -685,6 +685,7 @@ export type ApplicationMonitoringCreditBucket = {
   __typename?: 'ApplicationMonitoringCreditBucket';
   bucketStart: Scalars['DateTime']['output'];
   creditsUsed: Scalars['Float']['output'];
+  operationLabel?: Maybe<Scalars['String']['output']>;
   operationType: Scalars['String']['output'];
 };
 
@@ -1827,6 +1828,7 @@ export type CreateRecordExportInput = {
 
 export type CreateRelatedRecordPathInput = {
   firstFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
+  isInherent?: InputMaybe<Scalars['Boolean']['input']>;
   objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   secondFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   thirdFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
@@ -1979,6 +1981,7 @@ export type CreateWebhookInput = {
 export type CreditUsedItem = {
   __typename?: 'CreditUsedItem';
   creditsUsed: Scalars['Float']['output'];
+  icon?: Maybe<Scalars['String']['output']>;
   label?: Maybe<Scalars['String']['output']>;
   operation?: Maybe<UsageOperationType>;
   resource?: Maybe<UsageResourceType>;
@@ -2441,15 +2444,18 @@ export type FeatureFlag = {
 };
 
 export enum FeatureFlagKey {
+  IS_AI_CHAT_COMPONENT_BUILDER_ENABLED = 'IS_AI_CHAT_COMPONENT_BUILDER_ENABLED',
   IS_AI_CHAT_INBOX_ENABLED = 'IS_AI_CHAT_INBOX_ENABLED',
   IS_APP_PREFERENCES_ENABLED = 'IS_APP_PREFERENCES_ENABLED',
   IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED = 'IS_CALENDAR_EVENT_SHARED_ACROSS_CHANNELS_ENABLED',
   IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED = 'IS_CONFIGURABLE_SEARCH_FIELDS_ENABLED',
   IS_MCP_SERVERS_ENABLED = 'IS_MCP_SERVERS_ENABLED',
+  IS_PRIVATE_RECORD_ENABLED = 'IS_PRIVATE_RECORD_ENABLED',
   IS_RECORD_CREATION_FORM_ENABLED = 'IS_RECORD_CREATION_FORM_ENABLED',
   IS_RECORD_LEVEL_SHARING_ENABLED = 'IS_RECORD_LEVEL_SHARING_ENABLED',
   IS_RELATED_RECORD_PATHS_ENABLED = 'IS_RELATED_RECORD_PATHS_ENABLED',
-  IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT'
+  IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
+  IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED = 'IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED'
 }
 
 export type Field = {
@@ -2483,7 +2489,6 @@ export type Field = {
   type: FieldMetadataType;
   universalIdentifier: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
-  writability?: Maybe<MetadataWritability>;
 };
 
 export type FieldConfiguration = {
@@ -2761,6 +2766,13 @@ export type IframeConfiguration = {
   __typename?: 'IframeConfiguration';
   configurationType: WidgetConfigurationType;
   url?: Maybe<Scalars['String']['output']>;
+};
+
+export type IframeMediaPermission = {
+  __typename?: 'IframeMediaPermission';
+  camera: Scalars['Boolean']['output'];
+  microphone: Scalars['Boolean']['output'];
+  origin: Scalars['String']['output'];
 };
 
 export type ImapSmtpCaldavConnectionSuccess = {
@@ -3321,14 +3333,6 @@ export enum MetadataEventAction {
   UPDATED = 'UPDATED'
 }
 
-export enum MetadataReadability {
-  APPLICATION = 'APPLICATION',
-  INHERITED = 'INHERITED',
-  OPEN = 'OPEN',
-  PRIVATE = 'PRIVATE',
-  SYSTEM = 'SYSTEM'
-}
-
 export type MetadataTranslation = {
   __typename?: 'MetadataTranslation';
   canonicalValue: Scalars['String']['output'];
@@ -3360,12 +3364,6 @@ export type MetadataTranslationsInput = {
   locale?: InputMaybe<Scalars['String']['input']>;
   objectMetadataId?: InputMaybe<Scalars['UUID']['input']>;
 };
-
-export enum MetadataWritability {
-  APPLICATION = 'APPLICATION',
-  OPEN = 'OPEN',
-  SYSTEM = 'SYSTEM'
-}
 
 export type MinimalMetadata = {
   __typename?: 'MinimalMetadata';
@@ -3602,7 +3600,7 @@ export type Mutation = {
   sendMessageCampaignTest: SendEmailViaDomainOutput;
   setAppKeyValue: AppKeyValue;
   setEnterpriseKey: EnterpriseLicenseInfoDto;
-  setRecordGeneralAccess: RecordSharingDto;
+  setRecordPrivate: RecordSharingDto;
   setRecordShare: RecordSharingDto;
   setResourceCreditSubscriptionPrice: BillingUpdate;
   signIn: AvailableWorkspacesAndAccessTokens;
@@ -3680,7 +3678,8 @@ export type Mutation = {
   updateViewSort: ViewSort;
   updateWebhook: Webhook;
   updateWorkspace: Workspace;
-  updateWorkspaceAllowedIframeOrigins: Workspace;
+  updateWorkspaceAllowedEmbeddingOrigins: Workspace;
+  updateWorkspaceIframeMediaPermissions: Workspace;
   updateWorkspaceMemberRole: WorkspaceMember;
   updateWorkspaceMemberSettings: Scalars['Boolean']['output'];
   upgradeApplication: Scalars['Boolean']['output'];
@@ -4669,8 +4668,8 @@ export type MutationSetEnterpriseKeyArgs = {
 };
 
 
-export type MutationSetRecordGeneralAccessArgs = {
-  accessLevel: RecordShareAccessLevel;
+export type MutationSetRecordPrivateArgs = {
+  isPrivate: Scalars['Boolean']['input'];
   target: RecordTargetInput;
 };
 
@@ -5076,8 +5075,13 @@ export type MutationUpdateWorkspaceArgs = {
 };
 
 
-export type MutationUpdateWorkspaceAllowedIframeOriginsArgs = {
-  data: UpdateWorkspaceAllowedIframeOriginsInput;
+export type MutationUpdateWorkspaceAllowedEmbeddingOriginsArgs = {
+  data: UpdateWorkspaceAllowedEmbeddingOriginsInput;
+};
+
+
+export type MutationUpdateWorkspaceIframeMediaPermissionsArgs = {
+  data: UpdateWorkspaceIframeMediaPermissionsInput;
 };
 
 
@@ -5266,14 +5270,10 @@ export type Object = {
   namePlural: Scalars['String']['output'];
   nameSingular: Scalars['String']['output'];
   openRecordIn: ObjectOpenRecordIn;
-  readability: MetadataReadability;
-  readabilityParentFieldUniversalIdentifiers?: Maybe<Array<Scalars['UUID']['output']>>;
   searchFieldMetadataList: Array<SearchField>;
-  sharingReach: ObjectSharingReach;
   shortcut?: Maybe<Scalars['String']['output']>;
   universalIdentifier: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
-  writability: MetadataWritability;
 };
 
 
@@ -5407,11 +5407,6 @@ export enum ObjectRecordGroupByDateGranularity {
   QUARTER_OF_THE_YEAR = 'QUARTER_OF_THE_YEAR',
   WEEK = 'WEEK',
   YEAR = 'YEAR'
-}
-
-export enum ObjectSharingReach {
-  ROLE_ACCESS = 'ROLE_ACCESS',
-  WORKSPACE = 'WORKSPACE'
 }
 
 /** Onboarding status */
@@ -6501,13 +6496,12 @@ export enum RecordShareRowCause {
 export type RecordSharingDto = {
   __typename?: 'RecordSharingDTO';
   canManageSharing: Scalars['Boolean']['output'];
-  defaultGeneralAccessLevel?: Maybe<RecordShareAccessLevel>;
-  generalAccessLevel?: Maybe<RecordShareAccessLevel>;
   hasManagedGeneralAccess: Scalars['Boolean']['output'];
+  isPrivate: Scalars['Boolean']['output'];
+  isShareable: Scalars['Boolean']['output'];
   permissions: RecordPermissionsDto;
   roles: Array<RecordSharingRoleDto>;
   shares: Array<RecordSharingGrantDto>;
-  sharingMode: RecordSharingMode;
 };
 
 export type RecordSharingGrantDto = {
@@ -6519,14 +6513,6 @@ export type RecordSharingGrantDto = {
   principalType: RecordSharePrincipalType;
   rowCause: RecordShareRowCause;
 };
-
-/** How records of an object are shared: only through roles, private until shared, readable through linked records, or open by default with per-record exceptions */
-export enum RecordSharingMode {
-  INHERITED = 'INHERITED',
-  OPEN_BY_DEFAULT = 'OPEN_BY_DEFAULT',
-  PRIVATE = 'PRIVATE',
-  ROLE_ONLY = 'ROLE_ONLY'
-}
 
 export type RecordSharingRoleDto = {
   __typename?: 'RecordSharingRoleDTO';
@@ -6553,6 +6539,7 @@ export type RelatedRecordPath = {
   __typename?: 'RelatedRecordPath';
   firstFieldMetadataId: Scalars['UUID']['output'];
   id: Scalars['UUID']['output'];
+  isInherent: Scalars['Boolean']['output'];
   objectMetadataId: Scalars['UUID']['output'];
   secondFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
   thirdFieldMetadataId?: Maybe<Scalars['UUID']['output']>;
@@ -6648,6 +6635,7 @@ export type RowLevelPermissionPredicate = {
   objectMetadataId: Scalars['String']['output'];
   operand: RowLevelPermissionPredicateOperand;
   positionInRowLevelPermissionPredicateGroup?: Maybe<Scalars['Float']['output']>;
+  relationFieldMetadataId?: Maybe<Scalars['String']['output']>;
   roleId: Scalars['String']['output'];
   rowLevelPermissionPredicateGroupId?: Maybe<Scalars['String']['output']>;
   subFieldName?: Maybe<Scalars['String']['output']>;
@@ -6684,6 +6672,7 @@ export type RowLevelPermissionPredicateInput = {
   id?: InputMaybe<Scalars['UUID']['input']>;
   operand: RowLevelPermissionPredicateOperand;
   positionInRowLevelPermissionPredicateGroup?: InputMaybe<Scalars['Float']['input']>;
+  relationFieldMetadataId?: InputMaybe<Scalars['UUID']['input']>;
   rowLevelPermissionPredicateGroupId?: InputMaybe<Scalars['UUID']['input']>;
   subFieldName?: InputMaybe<Scalars['String']['input']>;
   value?: InputMaybe<Scalars['JSON']['input']>;
@@ -7474,8 +7463,6 @@ export type UpdateObjectPayload = {
   namePlural?: InputMaybe<Scalars['String']['input']>;
   nameSingular?: InputMaybe<Scalars['String']['input']>;
   openRecordIn?: InputMaybe<ObjectOpenRecordIn>;
-  readability?: InputMaybe<MetadataReadability>;
-  sharingReach?: InputMaybe<ObjectSharingReach>;
   shortcut?: InputMaybe<Scalars['String']['input']>;
   translations?: InputMaybe<Array<MetadataTranslationOverrideInput>>;
 };
@@ -7738,8 +7725,14 @@ export type UpdateWebhookInputUpdates = {
   targetUrl?: InputMaybe<Scalars['String']['input']>;
 };
 
-export type UpdateWorkspaceAllowedIframeOriginsInput = {
+export type UpdateWorkspaceAllowedEmbeddingOriginsInput = {
   operation: Scalars['String']['input'];
+  origin: Scalars['String']['input'];
+};
+
+export type UpdateWorkspaceIframeMediaPermissionsInput = {
+  camera: Scalars['Boolean']['input'];
+  microphone: Scalars['Boolean']['input'];
   origin: Scalars['String']['input'];
 };
 
@@ -7955,6 +7948,7 @@ export enum UsageOperationType {
   AI_WORKFLOW_WEB_SEARCH = 'AI_WORKFLOW_WEB_SEARCH',
   ALL = 'ALL',
   API_REQUEST = 'API_REQUEST',
+  APP_OPERATION = 'APP_OPERATION',
   CALL_RECORDING = 'CALL_RECORDING',
   CODE_EXECUTION = 'CODE_EXECUTION',
   EMAIL_SEND = 'EMAIL_SEND',
@@ -8503,7 +8497,7 @@ export type Workspace = {
   aiEvaluationModelId?: Maybe<Scalars['String']['output']>;
   aiModelIdByTier: Scalars['JSON']['output'];
   allowImpersonation: Scalars['Boolean']['output'];
-  allowedIframeOrigins?: Maybe<Array<Scalars['String']['output']>>;
+  allowedEmbeddingOrigins?: Maybe<Array<Scalars['String']['output']>>;
   billingCustomer?: Maybe<BillingCustomer>;
   billingEntitlements: Array<BillingEntitlement>;
   billingSubscriptions: Array<BillingSubscription>;
@@ -8520,6 +8514,7 @@ export type Workspace = {
   hasValidEnterpriseValidityToken: Scalars['Boolean']['output'];
   hasValidSignedEnterpriseKey: Scalars['Boolean']['output'];
   id: Scalars['UUID']['output'];
+  iframeMediaPermissions?: Maybe<Array<IframeMediaPermission>>;
   installedApplications: Array<Application>;
   inviteHash?: Maybe<Scalars['String']['output']>;
   isAutoModelSelectionEnabled: Scalars['Boolean']['output'];

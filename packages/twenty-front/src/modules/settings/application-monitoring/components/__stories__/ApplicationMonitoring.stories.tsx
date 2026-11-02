@@ -72,18 +72,20 @@ const MONITORING: ApplicationMonitoringData = {
   ],
   creditUsage: (
     [
-      ['2026-10-13', UsageOperationType.CODE_EXECUTION, 21],
-      ['2026-10-14', UsageOperationType.CODE_EXECUTION, 24.5],
-      ['2026-10-16', UsageOperationType.CODE_EXECUTION, 30],
-      ['2026-10-17', UsageOperationType.CODE_EXECUTION, 12],
-      ['2026-10-17', UsageOperationType.AI_WORKFLOW_TOKEN, 50],
-      ['2026-10-18', UsageOperationType.CODE_EXECUTION, 7],
-      ['2026-10-18', UsageOperationType.AI_WORKFLOW_TOKEN, 40],
+      ['2026-10-13', UsageOperationType.CODE_EXECUTION, 21, null],
+      ['2026-10-14', UsageOperationType.CODE_EXECUTION, 24.5, null],
+      ['2026-10-16', UsageOperationType.CODE_EXECUTION, 30, null],
+      ['2026-10-17', UsageOperationType.CODE_EXECUTION, 12, null],
+      ['2026-10-17', UsageOperationType.AI_WORKFLOW_TOKEN, 50, null],
+      ['2026-10-18', UsageOperationType.CODE_EXECUTION, 7, null],
+      ['2026-10-18', UsageOperationType.AI_WORKFLOW_TOKEN, 40, null],
+      ['2026-10-18', UsageOperationType.APP_OPERATION, 15, 'SMS sent'],
     ] as const
-  ).map(([day, operationType, creditsUsed]) => ({
+  ).map(([day, operationType, creditsUsed, operationLabel]) => ({
     __typename: 'ApplicationMonitoringCreditBucket' as const,
     bucketStart: `${day}T00:00:00.000Z`,
     operationType,
+    operationLabel,
     creditsUsed,
   })),
   issues: [

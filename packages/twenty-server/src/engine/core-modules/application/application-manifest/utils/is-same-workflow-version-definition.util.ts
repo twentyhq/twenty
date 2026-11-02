@@ -3,7 +3,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   type StoredWorkflowNode,
-  type StoredWorkflowNodeSettings,
   type StoredWorkflowVersionDefinition,
 } from 'src/engine/core-modules/application/application-manifest/types/stored-workflow-version-definition.type';
 import { normalizeStoredWorkflowErrorHandlingOptions } from 'src/engine/core-modules/application/application-manifest/utils/normalize-stored-workflow-error-handling-options.util';
@@ -12,10 +11,8 @@ import { normalizeStoredWorkflowErrorHandlingOptions } from 'src/engine/core-mod
 const normalizeSettings = ({
   type,
   settings: { objectType, errorHandlingOptions, ...rest },
-}: {
-  type: string;
-  settings: StoredWorkflowNodeSettings;
-}) => ({
+}: Pick<StoredWorkflowNode, 'type'> &
+  Required<Pick<StoredWorkflowNode, 'settings'>>) => ({
   ...rest,
   ...(type === 'MANUAL' ? {} : { objectType }),
   ...(isDefined(errorHandlingOptions)

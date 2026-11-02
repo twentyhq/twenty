@@ -75,9 +75,6 @@ export interface LogicFunctionDriver {
   buildDependencies(
     params: BrowserDependenciesBuildParams,
   ): Promise<BrowserDependenciesBuildResult>;
-  getDependenciesBuildCacheKey(
-    params: Pick<BrowserDependenciesBuildParams, 'workspaceId'>,
-  ): Promise<string>;
   installPrebuiltBundle(
     params: LogicFunctionInstallPrebuiltBundleParams,
   ): Promise<void>;

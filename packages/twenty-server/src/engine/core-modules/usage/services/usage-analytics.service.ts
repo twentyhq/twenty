@@ -4,6 +4,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 
 import { Injectable } from '@nestjs/common';
 
+import { type ApplicationBilling } from 'twenty-shared/application';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { ClickHouseService } from 'src/database/clickhouse/clickhouse.service';
@@ -18,6 +19,9 @@ import { type UsageConsumptionRow } from 'src/engine/core-modules/usage/types/us
 import { type UsageConsumptionTotals } from 'src/engine/core-modules/usage/types/usage-consumption-totals.type';
 import { type UsagePeriodAnchor } from 'src/engine/core-modules/usage/types/usage-period-anchor.type';
 import { type CreditsUsed } from 'src/engine/core-modules/usage/types/credits-used.type';
+import { type CreditsUsedTimeSeriesRow } from 'src/engine/core-modules/usage/types/credits-used-time-series-row.type';
+import { findDeclaredBillingCharge } from 'src/engine/core-modules/usage/utils/find-declared-billing-charge.util';
+import { listDeclaredBillingChargeNames } from 'src/engine/core-modules/usage/utils/list-declared-billing-charge-names.util';
 import { buildInstallationFilterParams } from 'src/engine/core-modules/usage/utils/build-installation-filter-params.util';
 import { buildRecurringChargeKey } from 'src/engine/core-modules/usage/utils/build-recurring-charge-key.util';
 import { buildUsagePeriodClause } from 'src/engine/core-modules/usage/utils/build-usage-period-clause.util';
@@ -109,10 +113,12 @@ export class UsageAnalyticsService {
 
   async getCreditsUsedBreakdownForInstallations({
     installations,
+    billing,
     periodStart,
     periodEnd,
   }: {
     installations: { applicationId: string; workspaceId: string }[];
+    billing: Pick<ApplicationBilling, 'recurring' | 'operations'> | null;
     periodStart: Date;
     periodEnd: Date;
   }): Promise<CreditUsedItemDTO[]> {
@@ -121,61 +127,77 @@ export class UsageAnalyticsService {
     }
 
     const rows = await this.clickHouseService.selectOrThrow<{
-      resourceType: string;
-      operationType: string;
+      operation: string;
+      latestResourceType: string;
+      latestOperationType: string;
       creditsUsedMicro: string | number;
     }>(
-      `SELECT resourceType, operationType, sum(creditsUsedMicro) AS creditsUsedMicro
+      // One row per declared operation, else per operation type: a resource or category split renders as duplicates
+      `SELECT if(resourceType = 'APP' AND has({declaredOperations:Array(String)}, resourceContext), resourceContext, '') AS operation,
+              argMax(resourceType, timestamp) AS latestResourceType,
+              argMax(operationType, timestamp) AS latestOperationType,
+              sum(creditsUsedMicro) AS creditsUsedMicro
        FROM usageEvent
        WHERE workspaceId IN {workspaceIds:Array(String)}
          AND applicationId IN {applicationIds:Array(String)}
          AND timestamp >= {periodStart:DateTime64(3, 'UTC')}
          AND timestamp < {periodEnd:DateTime64(3, 'UTC')}
-       GROUP BY resourceType, operationType
+       GROUP BY operation, if(operation = '', operationType, '')
        HAVING creditsUsedMicro != 0
        ORDER BY creditsUsedMicro DESC
        SETTINGS max_execution_time = 10, use_query_cache = true,
                 query_cache_ttl = 600, query_cache_min_query_duration = 0`,
       {
         ...buildInstallationFilterParams(installations),
+        declaredOperations: listDeclaredBillingChargeNames({ billing }),
         periodStart: formatDateTimeForClickHouse(periodStart),
         periodEnd: formatDateTimeForClickHouse(periodEnd),
       },
     );
 
-    return rows.map(({ resourceType, operationType, creditsUsedMicro }) => {
-      const isKnownOperation = USAGE_OPERATION_TYPES.has(operationType);
+    return rows.map(
+      ({
+        operation,
+        latestResourceType: resourceType,
+        latestOperationType: operationType,
+        creditsUsedMicro,
+      }) => {
+        const isKnownOperation = USAGE_OPERATION_TYPES.has(operationType);
+        const declaredCharge = findDeclaredBillingCharge({
+          billing,
+          chargeName: operation,
+        });
 
-      return {
-        resource: USAGE_RESOURCE_TYPES.has(resourceType)
-          ? (resourceType as UsageResourceType)
-          : null,
-        operation: isKnownOperation
-          ? (operationType as UsageOperationType)
-          : null,
-        label: isKnownOperation ? undefined : operationType,
-        creditsUsed: toDisplayCredits(Number(creditsUsedMicro)),
-      };
-    });
+        return {
+          resource: USAGE_RESOURCE_TYPES.has(resourceType)
+            ? (resourceType as UsageResourceType)
+            : null,
+          operation: isKnownOperation
+            ? (operationType as UsageOperationType)
+            : null,
+          label:
+            declaredCharge?.label ??
+            (isKnownOperation ? undefined : operationType),
+          icon: declaredCharge?.icon,
+          creditsUsed: toDisplayCredits(Number(creditsUsedMicro)),
+        };
+      },
+    );
   }
 
   async getCreditsUsedTimeSeriesForInstallations({
     installations,
+    declaredOperations,
     periodStart,
     periodEnd,
     bucketSizeInSeconds,
   }: {
     installations: { applicationId: string; workspaceId: string }[];
+    declaredOperations: string[];
     periodStart: Date;
     periodEnd: Date;
     bucketSizeInSeconds: number;
-  }): Promise<
-    {
-      bucketStart: Date;
-      operationType: string;
-      creditsUsedMicro: number;
-    }[]
-  > {
+  }): Promise<CreditsUsedTimeSeriesRow[]> {
     if (!isNonEmptyArray(installations)) {
       return [];
     }
@@ -183,34 +205,42 @@ export class UsageAnalyticsService {
     const rows = await this.clickHouseService.selectOrThrow<{
       bucketStart: string;
       operationType: string;
+      operation: string;
       creditsUsedMicro: string | number;
     }>(
+      // Only app-raised rows carry a declared operation name in resourceContext; any other
+      // context is free-form and collapsed here so it cannot fan out into one row per charge
       `SELECT
          toStartOfInterval(timestamp, toIntervalSecond({bucketSizeInSeconds:UInt32})) AS bucketStart,
          operationType,
+         if(resourceType = 'APP' AND has({declaredOperations:Array(String)}, resourceContext), resourceContext, '') AS operation,
          sum(creditsUsedMicro) AS creditsUsedMicro
        FROM usageEvent
        WHERE workspaceId IN {workspaceIds:Array(String)}
          AND applicationId IN {applicationIds:Array(String)}
          AND timestamp >= {periodStart:DateTime64(3, 'UTC')}
          AND timestamp < {periodEnd:DateTime64(3, 'UTC')}
-       GROUP BY bucketStart, operationType
+       GROUP BY bucketStart, operationType, operation
        HAVING creditsUsedMicro != 0
-       ORDER BY bucketStart, operationType
+       ORDER BY bucketStart, operationType, operation
        SETTINGS max_execution_time = 10`,
       {
         ...buildInstallationFilterParams(installations),
+        declaredOperations,
         periodStart: formatDateTimeForClickHouse(periodStart),
         periodEnd: formatDateTimeForClickHouse(periodEnd),
         bucketSizeInSeconds,
       },
     );
 
-    return rows.map(({ bucketStart, operationType, creditsUsedMicro }) => ({
-      bucketStart: parseClickHouseDateTime(bucketStart),
-      operationType,
-      creditsUsedMicro: Number(creditsUsedMicro),
-    }));
+    return rows.map(
+      ({ bucketStart, operationType, operation, creditsUsedMicro }) => ({
+        bucketStart: parseClickHouseDateTime(bucketStart),
+        operationType,
+        operation,
+        creditsUsedMicro: Number(creditsUsedMicro),
+      }),
+    );
   }
 
   async getConsumptionRowsForAllScopes({
