@@ -68,8 +68,12 @@ Members can also add a personal connection from **Settings > App preferences**,
 which is behind the `IS_APP_PREFERENCES_ENABLED` workspace feature flag. A
 personal connection's webhook receives only that member's own recordings
 (`my_recordings` and `my_shared_with_team_recordings`), so teammates who each
-connect do not all import the same team recordings. Actions run by a member use
-their personal connection first and fall back to the workspace-shared one.
+connect do not all import the same team recordings. Its history imports, the
+31-day one on connect and manual backfills, include only calls recorded by the
+member's email. Fathom has no endpoint that names the account behind a token,
+so a member whose Fathom email differs from their Twenty email gets new calls
+but no history. Actions run by a member use their personal connection first and
+fall back to the workspace-shared one.
 
 ## Media import behaviour
 

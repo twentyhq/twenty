@@ -137,4 +137,36 @@ describe('fathomBackfillWorkerHandler', () => {
       notFoundError,
     );
   });
+
+  it('lists every recording a workspace-shared connection can access', async () => {
+    mocks.getConnection.mockResolvedValue({
+      id: 'connection-1',
+      scope: 'WORKSPACE',
+      handle: 'admin@acme.com',
+      accessToken: 'token-1',
+    });
+    mocks.listMeetings.mockRejectedValue(buildFathomNotFoundError());
+
+    await expect(fathomBackfillWorkerHandler(PAYLOAD)).rejects.toThrow();
+
+    expect(mocks.listMeetings.mock.calls[0][0]).not.toHaveProperty(
+      'recordedBy',
+    );
+  });
+
+  it('lists only the recordings of the member behind a personal connection', async () => {
+    mocks.getConnection.mockResolvedValue({
+      id: 'connection-1',
+      scope: 'USER',
+      handle: 'member@acme.com',
+      accessToken: 'token-1',
+    });
+    mocks.listMeetings.mockRejectedValue(buildFathomNotFoundError());
+
+    await expect(fathomBackfillWorkerHandler(PAYLOAD)).rejects.toThrow();
+
+    expect(mocks.listMeetings).toHaveBeenCalledWith(
+      expect.objectContaining({ recordedBy: ['member@acme.com'] }),
+    );
+  });
 });
