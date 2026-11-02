@@ -80,7 +80,10 @@ describe('OAuthRegistrationController', () => {
 
   it('answers a well-known client with its seeded registration', async () => {
     const response = await controller.register(
-      buildBody(['https://claude.ai/api/mcp/auth_callback']),
+      {
+        ...buildBody(['https://claude.ai/api/mcp/auth_callback']),
+        scope: 'api',
+      },
       request,
       buildResponse(),
     );
@@ -92,6 +95,7 @@ describe('OAuthRegistrationController', () => {
       client_id: 'seeded-claude-client-id',
       client_name: 'Claude',
       redirect_uris: ['https://claude.ai/api/mcp/auth_callback'],
+      scope: 'api profile',
     });
     expect(applicationRegistrationRepository.save).not.toHaveBeenCalled();
   });

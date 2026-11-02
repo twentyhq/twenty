@@ -28,6 +28,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { isUniqueViolationError } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-unique-violation-error.util';
 
 @Injectable()
 export class OAuthService {
@@ -840,6 +841,10 @@ export class OAuthService {
         workspaceId,
       });
     } catch (error) {
+      if (!isUniqueViolationError(error)) {
+        throw error;
+      }
+
       // First connections race to create the install; the loser reuses it since its authorization code is already spent
       const concurrentlyInstalledApplication =
         await this.findInstalledApplication({

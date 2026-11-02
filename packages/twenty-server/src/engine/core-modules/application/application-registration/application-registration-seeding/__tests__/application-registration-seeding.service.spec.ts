@@ -15,6 +15,12 @@ const SEEDED_VALUES = {
   oAuthScopes: ['api', 'profile'],
 };
 
+const UNCLAIMED_OAUTH_ONLY_FIELDS = {
+  sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+  ownerWorkspaceId: null,
+  oAuthClientSecretHash: null,
+};
+
 describe('ApplicationRegistrationSeedingService', () => {
   let service: ApplicationRegistrationSeedingService;
   let insertedValues: jest.Mock;
@@ -63,9 +69,7 @@ describe('ApplicationRegistrationSeedingService', () => {
   it('returns the existing registration without inserting one', async () => {
     const existingRegistration = {
       id: 'existing-id',
-      sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-      ownerWorkspaceId: null,
-      oAuthClientSecretHash: null,
+      ...UNCLAIMED_OAUTH_ONLY_FIELDS,
     };
 
     findOneByUniversalIdentifierGlobal.mockResolvedValue(existingRegistration);
@@ -85,9 +89,7 @@ describe('ApplicationRegistrationSeedingService', () => {
     async (squattedFields) => {
       findOneByUniversalIdentifierGlobal.mockResolvedValue({
         id: 'squatted-id',
-        sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-        ownerWorkspaceId: null,
-        oAuthClientSecretHash: null,
+        ...UNCLAIMED_OAUTH_ONLY_FIELDS,
         ...squattedFields,
       });
 
@@ -103,10 +105,14 @@ describe('ApplicationRegistrationSeedingService', () => {
   it('inserts a public OAuth-only registration and refreshes the marketplace catalog', async () => {
     findOneByUniversalIdentifierGlobal
       .mockResolvedValueOnce(null)
-      .mockResolvedValueOnce({ id: 'inserted-id' });
+      .mockResolvedValueOnce({
+        id: 'inserted-id',
+        ...UNCLAIMED_OAUTH_ONLY_FIELDS,
+      });
 
     await service.findOrCreateOAuthOnlyRegistration(SEEDED_VALUES);
 
+    expect(insertedValues).toHaveBeenCalledTimes(1);
     expect(insertedValues).toHaveBeenCalledWith(
       expect.objectContaining({
         ...SEEDED_VALUES,
@@ -122,15 +128,37 @@ describe('ApplicationRegistrationSeedingService', () => {
   });
 
   it('leaves the catalog alone when a concurrent request inserted the row first', async () => {
+    const concurrentRegistration = {
+      id: 'concurrent-id',
+      ...UNCLAIMED_OAUTH_ONLY_FIELDS,
+    };
+
     insertResult = { raw: [] };
     findOneByUniversalIdentifierGlobal
       .mockResolvedValueOnce(null)
-      .mockResolvedValueOnce({ id: 'concurrent-id' });
+      .mockResolvedValueOnce(concurrentRegistration);
 
     await expect(
       service.findOrCreateOAuthOnlyRegistration(SEEDED_VALUES),
-    ).resolves.toEqual({ id: 'concurrent-id' });
+    ).resolves.toBe(concurrentRegistration);
     expect(invalidate).not.toHaveBeenCalled();
+  });
+
+  it('refuses a row someone else created concurrently under the reserved identifier', async () => {
+    insertResult = { raw: [] };
+    findOneByUniversalIdentifierGlobal
+      .mockResolvedValueOnce(null)
+      .mockResolvedValueOnce({
+        id: 'squatted-id',
+        ...UNCLAIMED_OAUTH_ONLY_FIELDS,
+        ownerWorkspaceId: 'attacker-workspace-id',
+      });
+
+    await expect(
+      service.findOrCreateOAuthOnlyRegistration(SEEDED_VALUES),
+    ).rejects.toMatchObject({
+      code: ApplicationRegistrationExceptionCode.RESERVED_REGISTRATION_TAKEN,
+    });
   });
 
   it('does not fail a request when the catalog cache cannot be invalidated', async () => {

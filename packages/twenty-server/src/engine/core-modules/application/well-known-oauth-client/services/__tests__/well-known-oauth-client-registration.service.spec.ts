@@ -14,8 +14,14 @@ const CLAUDE = WELL_KNOWN_OAUTH_CLIENTS.find(
   ({ client }) => client === WellKnownOAuthClient.CLAUDE,
 );
 
-if (!isDefined(CLAUDE)) {
-  throw new Error('Claude is missing from the well-known OAuth clients');
+const CHATGPT = WELL_KNOWN_OAUTH_CLIENTS.find(
+  ({ client }) => client === WellKnownOAuthClient.CHATGPT,
+);
+
+if (!isDefined(CLAUDE) || !isDefined(CHATGPT)) {
+  throw new Error(
+    'Claude or ChatGPT is missing from the well-known OAuth clients',
+  );
 }
 
 const UP_TO_DATE_CLAUDE_REGISTRATION = {
@@ -66,6 +72,20 @@ describe('WellKnownOAuthClientRegistrationService', () => {
         name: 'Claude',
         oAuthRedirectUris: ['https://claude.ai/api/mcp/auth_callback'],
         isListed: true,
+      }),
+    );
+  });
+
+  it('seeds only the exact callbacks of a client that also allows a callback pattern', async () => {
+    await service.findOrCreateRegistration(CHATGPT);
+
+    expect(findOrCreateOAuthOnlyRegistration).toHaveBeenCalledWith(
+      expect.objectContaining({
+        universalIdentifier: CHATGPT.universalIdentifier,
+        name: 'ChatGPT',
+        oAuthRedirectUris: [
+          'https://chatgpt.com/connector_platform_oauth_redirect',
+        ],
       }),
     );
   });
