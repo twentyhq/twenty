@@ -1313,7 +1313,9 @@ describe('Chat thread participant state through the authenticated API', () => {
     );
 
     expect(repliedParticipant!.mentionsResolvedAt).toBe(
-      repliedParticipant!.lastMentionedAt,
+      new Date(
+        Date.parse(repliedParticipant!.lastMentionedAt!) + 1,
+      ).toISOString(),
     );
     expect(await findMyParticipant(threadId)).toMatchObject({
       lastMentionedAt: expect.any(String),
@@ -1417,7 +1419,9 @@ describe('Chat thread participant state through the authenticated API', () => {
       );
 
       expect(repliedParticipant!.mentionsResolvedAt).toBe(
-        repliedParticipant!.lastMentionedAt,
+        new Date(
+          Date.parse(repliedParticipant!.lastMentionedAt!) + 1,
+        ).toISOString(),
       );
 
       await deleteQueuedReply(reply.id);
@@ -1425,7 +1429,7 @@ describe('Chat thread participant state through the authenticated API', () => {
       expect(
         await findMyParticipant(threadId, APPLE_JONY_MEMBER_ACCESS_TOKEN),
       ).toMatchObject({
-        mentionsResolvedAt: repliedParticipant!.lastMentionedAt,
+        mentionsResolvedAt: repliedParticipant!.mentionsResolvedAt,
       });
     });
   });

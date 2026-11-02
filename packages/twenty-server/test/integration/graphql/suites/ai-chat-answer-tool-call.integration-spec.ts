@@ -9,13 +9,14 @@ import { answerToolCall } from 'test/integration/graphql/suites/workflow/utils/a
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { resolveAppProviderByClassName } from 'test/integration/utils/resolve-app-provider-by-class-name.util';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { buildProposeToolCallPendingOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-tool-call.pausing-tool';
-import { StreamAgentChatJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat.job';
+import { type StreamAgentChatJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat.job';
 import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
 import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
 import { type ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
@@ -465,7 +466,12 @@ describe('Answering a chat tool call', () => {
       streamChat,
     );
 
-    await (await global.app.resolve(StreamAgentChatJob)).handle(jobData!);
+    const streamAgentChatJob =
+      await resolveAppProviderByClassName<StreamAgentChatJob>(
+        'StreamAgentChatJob',
+      );
+
+    await streamAgentChatJob.handle(jobData!);
 
     const turn = await global.app
       .get<string, AgentHistoryRepository<AgentTurnWorkspaceEntity>>(
