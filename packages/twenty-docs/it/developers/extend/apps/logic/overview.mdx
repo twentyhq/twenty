@@ -84,7 +84,7 @@ Le funzioni vengono eseguite in sandbox in processi Node.js isolati e accedono a
 <Note>
 **Hook di installazione** — codice che viene eseguito prima o dopo l'installazione — condividono questo runtime ma usano le proprie funzioni define e risiedono in [Config → Install Hooks](/it/developers/extend/apps/config/install-hooks).
 
-Anche il [**controllo dello stato**](/it/developers/extend/apps/logic/logic-functions#health-check) lo condivide. Non dichiara alcun trigger: Twenty lo richiama su richiesta quando si apre la pagina delle impostazioni dell'app.
+Anche il [**controllo dello stato**](/it/developers/extend/apps/logic/logic-functions#health-check) lo condivide. Un'app dichiara un controllo senza trigger. Per impostazione predefinita, Twenty chiama il proprio gestore senza argomenti quando si aprono le impostazioni dell'app dell'area di lavoro. Imposta `runOnUserPreferences: true` per eseguirlo invece nella pagina delle preferenze App di un membro, con il relativo `userWorkspaceId` obbligatorio.
 </Note>
 
 <PageBanner illustration="section-apps-logic" />

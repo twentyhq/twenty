@@ -3,5 +3,6 @@ export const PROPOSED_TOOL_CALL_TEMPLATES = [
   'recordUpdate',
   'recordDelete',
   'email',
+  'frontComponent',
   'generic',
 ] as const;

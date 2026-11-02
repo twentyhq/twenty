@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { ApplicationHealthModule } from 'src/engine/core-modules/application/application-health/application-health.module';
 import { ApplicationPreferencesResolver } from 'src/engine/core-modules/application/application-preferences/application-preferences.resolver';
 import { ApplicationPreferencesService } from 'src/engine/core-modules/application/application-preferences/application-preferences.service';
 import { ApplicationVariableEntityModule } from 'src/engine/core-modules/application/application-variable/application-variable.module';
@@ -10,6 +11,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 
 @Module({
   imports: [
+    ApplicationHealthModule,
     ApplicationModule,
     ApplicationVariableEntityModule,
     ConnectionProviderModule,

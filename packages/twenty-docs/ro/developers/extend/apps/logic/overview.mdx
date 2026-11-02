@@ -84,7 +84,7 @@ Funcțiile rulează în sandbox, în procese Node.js izolate și accesează work
 <Note>
 **Hook-uri de instalare** — cod care rulează înainte sau după instalare — folosesc același runtime, dar au propriile lor funcții define și se află sub [Config → Install Hooks](/ro/developers/extend/apps/config/install-hooks).
 
-[**verificarea stării de funcționare**](/ro/developers/extend/apps/logic/logic-functions#health-check) o partajează și ea. Nu declară niciun declanșator: Twenty o apelează la cerere atunci când se deschide pagina de setări a aplicației.
+[**verificarea stării de funcționare**](/ro/developers/extend/apps/logic/logic-functions#health-check) o partajează și ea. O aplicație declară o verificare fără declanșator. În mod implicit, Twenty apelează gestionarul său fără argumente atunci când se deschid setările aplicației spațiului de lucru. Setați `runOnUserPreferences: true` pentru a o rula în schimb pe pagina de preferințe Aplicații a unui membru, cu `userWorkspaceId` obligatoriu al acestuia.
 </Note>
 
 <PageBanner illustration="section-apps-logic" />
