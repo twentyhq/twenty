@@ -279,7 +279,8 @@ import { AddRelationFieldMetadataIdToRowLevelPermissionPredicateFastInstanceComm
 import { IndexTemporaryFileExpirationSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-slow-1793462047826-index-temporary-file-expiration';
 import { EnableUserHealthCheckFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793473469981-enable-user-health-check';
 import { AddSettingsMenuItemSlugFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793618487873-add-settings-menu-item-slug';
-import { AddEventMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793636239000-add-event-metadata';
+import { AddApplicationRoleTargetFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793627583457-add-application-role-target';
+import { AddEventMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-instance-command-fast-1793639707000-add-event-metadata';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -561,5 +562,6 @@ export const INSTANCE_COMMANDS = [
   IndexTemporaryFileExpirationSlowInstanceCommand,
   EnableUserHealthCheckFastInstanceCommand,
   AddSettingsMenuItemSlugFastInstanceCommand,
+  AddApplicationRoleTargetFastInstanceCommand,
   AddEventMetadataFastInstanceCommand,
 ];

@@ -32,7 +32,8 @@ import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/a
 import { type FlatObjectPermission } from 'src/engine/metadata-modules/flat-object-permission/types/flat-object-permission.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
+import { buildDeprecatedPermissionsPrincipalsFromConfig } from 'src/engine/permissions/principal/utils/build-deprecated-permissions-principals-from-config.util';
+import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/permissions/role/utils/get-objects-permissions-from-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -40,7 +41,6 @@ import { RECORDS_TOOL_WIDGET_NAME, ToolCategory } from 'twenty-shared/ai';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 
 @Injectable()
 export class DatabaseToolProvider implements ToolProvider {
@@ -91,27 +91,27 @@ export class DatabaseToolProvider implements ToolProvider {
         },
       );
 
+    const principals =
+      (isDefined(context.authContext)
+        ? getPermissionsPrincipalsFromAuthContext(context.authContext)
+        : undefined) ??
+      buildDeprecatedPermissionsPrincipalsFromConfig({
+        workspaceId: context.workspaceId,
+        rolePermissionConfig: context.rolePermissionConfig,
+      });
+
     const objectPermissions = getObjectsPermissionsFromRolePermissionConfig({
       rolesPermissions,
       rolePermissionConfig: context.rolePermissionConfig,
+      principals,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatApplicationMaps,
     });
 
-    if (Object.keys(objectPermissions).length === 0) {
+    if (Object.keys(objectPermissions).length === 0 || !isDefined(principals)) {
       return descriptors;
     }
-
-    const principal = buildPermissionsPrincipal({
-      workspaceId: context.workspaceId,
-      rolePermissionConfig: context.rolePermissionConfig,
-      workspaceMemberId:
-        isDefined(context.authContext) && isUserAuthContext(context.authContext)
-          ? context.authContext.workspaceMemberId
-          : undefined,
-      flatApplicationMaps,
-    });
 
     const { explicitObjectGrantsRoleId } = context;
     const requireExplicitObjectGrants = isDefined(explicitObjectGrantsRoleId);
@@ -178,12 +178,11 @@ export class DatabaseToolProvider implements ToolProvider {
         !requireExplicitObjectGrants ||
         (explicitPermission?.[objectPermission] ?? false);
       const hasAccessToSomeRecords = async (operationType: OperationType) =>
-        !isDefined(principal) ||
-        (await this.recordAccessPolicyService.hasAccessToSomeRecords({
-          principal,
+        this.recordAccessPolicyService.hasAccessToSomeRecords({
+          principals,
           flatObjectMetadata: flatObject,
           operationType,
-        }));
+        });
 
       const canCreateRecords =
         permission.canUpdateObjectRecords &&

@@ -3,6 +3,7 @@ import { http, HttpResponse } from 'msw';
 import { getWorker } from 'msw-storybook-addon';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 import {
+  PREVIEW_FRONT_COMPONENT_TOOL_NAME,
   PUBLISH_FRONT_COMPONENT_TOOL_NAME,
   PROPOSE_TOOL_CALL_TOOL_NAME,
   type ProposedToolCall,
@@ -11,6 +12,7 @@ import {
 import { ComponentDecorator } from 'twenty-ui/testing';
 
 import { AiChatPendingAskGate } from '@/ai/components/AiChatPendingAskGate';
+import { AiChatFrontComponentToolPreview } from '@/ai/components/AiChatFrontComponentToolPreview';
 import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChatRefetchMessagesEventName';
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatMessagesFamilyState } from '@/ai/states/agentChatMessagesFamilyState';
@@ -161,9 +163,21 @@ const requestedDraftIds: string[] = [];
 
 export const PendingRequests: Story = {
   render: () => (
-    <AiChatPendingAskGate>
-      <span>No pending requests</span>
-    </AiChatPendingAskGate>
+    <>
+      <AiChatFrontComponentToolPreview
+        toolPart={{
+          type: `tool-${PREVIEW_FRONT_COMPONENT_TOOL_NAME}`,
+          toolCallId: 'preview-call',
+          state: 'output-available',
+          input: {},
+          output: { success: true, result: { draftId: 'current' } },
+        }}
+        isStreaming={false}
+      />
+      <AiChatPendingAskGate>
+        <span>No pending requests</span>
+      </AiChatPendingAskGate>
+    </>
   ),
   beforeEach: () => {
     requestedDraftIds.length = 0;
@@ -220,6 +234,11 @@ export const PendingRequests: Story = {
     const canvas = within(canvasElement);
     await canvas.findByRole('button', { name: 'Count: 0' }, { timeout: 30000 });
     await expect(requestedDraftIds).toEqual(['current']);
+    await expect(
+      canvas.getAllByRole('region', {
+        name: 'Component preview with sample data',
+      }),
+    ).toHaveLength(1);
     await userEvent.click(canvas.getByRole('button', { name: 'Add feedback' }));
     await userEvent.type(
       canvas.getByRole('textbox', { name: 'Feedback' }),

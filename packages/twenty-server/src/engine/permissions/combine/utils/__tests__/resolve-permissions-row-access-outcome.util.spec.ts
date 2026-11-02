@@ -10,7 +10,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
 import { type PermissionsRowAccessRequest } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { resolvePermissionsRowAccessOutcome } from 'src/engine/permissions/combine/utils/resolve-permissions-row-access-outcome.util';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 
 const APPLICATION_ID = 'application-id';
@@ -33,15 +33,19 @@ const readOnlyPermissions: ObjectPermissions = {
   rowLevelPermissionPredicateGroups: [],
 };
 
-const readOnlyPrincipal: PermissionsPrincipal = {
+const readOnlyPrincipal: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
-  roleIds: [READ_ONLY_ROLE_ID],
+  mainPrincipal: { roleId: READ_ONLY_ROLE_ID, isDeprecatedRoleOnly: true },
+  applicationPrincipal: { isCustomApp: true },
 };
 
-const owningApplicationPrincipal: PermissionsPrincipal = {
+const owningApplicationPrincipal: PermissionsPrincipalsWithRolesContext = {
   workspaceId: 'workspace-id',
-  roleIds: [APPLICATION_ROLE_ID],
-  applicationId: APPLICATION_ID,
+  mainPrincipal: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
+  applicationPrincipal: {
+    roleId: APPLICATION_ROLE_ID,
+    applicationId: APPLICATION_ID,
+  },
 };
 
 const resolveOutcome = ({
@@ -51,7 +55,7 @@ const resolveOutcome = ({
   disabledObjectPermissionActions = [],
   hypotheticalRecordShareAccessLevel,
 }: {
-  principal?: PermissionsPrincipal;
+  principal?: PermissionsPrincipalsWithRolesContext;
   operationType?: OperationType;
   featureFlagKeys?: FeatureFlagKey[];
   disabledObjectPermissionActions?: typeof flatObjectMetadata.disabledObjectPermissionActions;
@@ -102,7 +106,8 @@ describe('resolvePermissionsRowAccessOutcome', () => {
       resolveOutcome({
         principal: {
           ...readOnlyPrincipal,
-          roleIds: ['missing-role'],
+          mainPrincipal: { roleId: 'missing-role', isDeprecatedRoleOnly: true },
+          applicationPrincipal: { isCustomApp: true },
         },
       }),
     ).toBe(false);
