@@ -27,6 +27,7 @@ import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/type
 import { buildRecordShareLockKey } from 'src/engine/permissions/record-share/utils/build-record-share-lock-key.util';
 import { RecordShareException } from 'src/engine/permissions/record-share/record-share.exception';
 import { RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
+import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { RecordSharePrincipalService } from 'src/engine/permissions/record-share/services/record-share-principal.service';
 import { RecordSharingService } from 'src/engine/permissions/record-share/services/record-sharing.service';
 import { resolveRecordIdsSharedWithPrincipals } from 'src/engine/permissions/record-share/utils/resolve-record-ids-shared-with-principals.util';
@@ -53,7 +54,6 @@ import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 const READABLE_THREAD_IDS_BATCH_SIZE = 1000;
 
@@ -80,6 +80,7 @@ export class AgentChatSharingService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly channelGrantService: AgentChatChannelGrantService,
     private readonly recordSharePrincipalService: RecordSharePrincipalService,
+    private readonly recordAccessPolicyService: RecordAccessPolicyService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
@@ -314,55 +315,42 @@ export class AgentChatSharingService {
       threadId,
       authContext,
     });
-    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const members = await this.workspaceOrmManager
-        .getRepository<WorkspaceMemberWorkspaceEntity>('workspaceMember', {
-          shouldBypassPermissionChecks: true,
-        })
-        .find({ where: { id: In([...roleIdByMemberId.keys()]) } });
-      const repository = this.workspaceOrmManager.getRepository(
-        'agentChatThread',
-        { shouldBypassPermissionChecks: true },
-      );
-      const hypotheticalRecordShareAccessLevel =
-        shouldConsiderNewShares && canManageSharing
-          ? RecordShareAccessLevel.READ_WRITE
-          : undefined;
-      const admittedMemberIds = new Set(
-        (
-          await Promise.all(
-            members.map(async (member) => {
-              const roleId = roleIdByMemberId.get(member.id);
+    const threadFlatObjectMetadata =
+      await this.getThreadObjectMetadata(workspaceId);
 
-              if (!isDefined(roleId)) {
-                return undefined;
-              }
+    const hypotheticalRecordShareAccessLevel =
+      shouldConsiderNewShares && canManageSharing
+        ? RecordShareAccessLevel.READ_WRITE
+        : undefined;
+    const admittedMemberIds = new Set(
+      (
+        await Promise.all(
+          [...roleIdByMemberId.entries()].map(async ([memberId, roleId]) => {
+            const grants = await Promise.all(
+              AGENT_CHAT_REPLY_OPERATION_TYPES.map((operationType) =>
+                this.recordAccessPolicyService.hasAccessToRecords({
+                  principal: {
+                    workspaceId,
+                    roleIds: [roleId],
+                    workspaceMemberId: memberId,
+                  },
+                  flatObjectMetadata: threadFlatObjectMetadata,
+                  recordIds: [threadId],
+                  operationType,
+                  hypotheticalRecordShareAccessLevel,
+                }),
+              ),
+            );
 
-              const grants = await Promise.all(
-                AGENT_CHAT_REPLY_OPERATION_TYPES.map((operationType) =>
-                  repository.hasPrincipalGrantOnRecords({
-                    principal: {
-                      workspaceId,
-                      intersectionOf: { userWorkspaceRoleId: roleId },
-                      workspaceMember: member,
-                    },
-                    recordIds: [threadId],
-                    operationType,
-                    hypotheticalRecordShareAccessLevel,
-                  }),
-                ),
-              );
+            return grants.every(Boolean) ? memberId : undefined;
+          }),
+        )
+      ).filter(isDefined),
+    );
 
-              return grants.every(Boolean) ? member.id : undefined;
-            }),
-          )
-        ).filter(isDefined),
-      );
-
-      return candidateMemberIds.filter((memberId) =>
-        admittedMemberIds.has(memberId),
-      );
-    }, authContext);
+    return candidateMemberIds.filter((memberId) =>
+      admittedMemberIds.has(memberId),
+    );
   }
 
   async getPrivateRecordInsertSql(

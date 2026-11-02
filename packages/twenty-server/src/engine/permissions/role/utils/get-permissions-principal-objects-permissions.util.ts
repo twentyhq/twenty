@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
-import { computeObjectsPermissionsForRolePermissionConfig } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-role-permission-config.util';
+import { computeObjectsPermissionsForRoles } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-roles.util';
 
 const objectsPermissionsByMetadataMapsByPrincipal = new WeakMap<
   PermissionsPrincipal,
@@ -35,8 +35,9 @@ export const getPermissionsPrincipalObjectsPermissions = ({
     return cachedObjectsPermissions;
   }
 
-  const objectsPermissions = computeObjectsPermissionsForRolePermissionConfig({
-    intersectionOf: principal.intersectionOf,
+  const objectsPermissions = computeObjectsPermissionsForRoles({
+    roleIds: principal.roleIds,
+    applicationId: principal.applicationId,
     rolesPermissions: metadataMaps.rolesPermissions,
     flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
     flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,

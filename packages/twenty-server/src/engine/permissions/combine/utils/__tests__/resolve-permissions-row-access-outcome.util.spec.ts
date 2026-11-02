@@ -35,12 +35,13 @@ const readOnlyPermissions: ObjectPermissions = {
 
 const readOnlyPrincipal: PermissionsPrincipal = {
   workspaceId: 'workspace-id',
-  intersectionOf: { userWorkspaceRoleId: READ_ONLY_ROLE_ID },
+  roleIds: [READ_ONLY_ROLE_ID],
 };
 
 const owningApplicationPrincipal: PermissionsPrincipal = {
   workspaceId: 'workspace-id',
-  intersectionOf: { applicationRoleId: APPLICATION_ROLE_ID },
+  roleIds: [APPLICATION_ROLE_ID],
+  applicationId: APPLICATION_ID,
 };
 
 const resolveOutcome = ({
@@ -101,7 +102,7 @@ describe('resolvePermissionsRowAccessOutcome', () => {
       resolveOutcome({
         principal: {
           ...readOnlyPrincipal,
-          intersectionOf: { userWorkspaceRoleId: 'missing-role' },
+          roleIds: ['missing-role'],
         },
       }),
     ).toBe(false);

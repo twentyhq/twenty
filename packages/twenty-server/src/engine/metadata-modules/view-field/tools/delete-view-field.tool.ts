@@ -7,6 +7,7 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
+import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
 
 const deleteViewFieldInputSchema = z.object({
   id: z
@@ -29,14 +30,24 @@ export class DeleteViewFieldTool extends BaseTool<
 > {
   readonly inputSchema = deleteViewFieldInputSchema;
 
-  constructor(private readonly viewFieldService: ViewFieldService) {
+  constructor(
+    private readonly viewFieldService: ViewFieldService,
+    private readonly viewToolAccessService: ViewToolAccessService,
+  ) {
     super();
   }
 
   async execute({
     input,
-    context: { workspaceId },
+    context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<typeof deleteViewFieldInputSchema>): Promise<ToolOutput> {
+    await this.viewToolAccessService.findParentViewEditableByUserOrThrow({
+      kind: 'viewField',
+      entityId: input.id,
+      workspaceId,
+      userWorkspaceId,
+    });
+
     const viewField = await this.viewFieldService.deleteOne({
       deleteViewFieldInput: { id: input.id },
       workspaceId,

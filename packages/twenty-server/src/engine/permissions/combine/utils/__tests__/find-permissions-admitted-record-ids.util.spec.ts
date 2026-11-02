@@ -101,17 +101,17 @@ const fullAccess = {
 
 const rolePrincipal: PermissionsPrincipal = {
   workspaceId: 'workspace-id',
-  intersectionOf: { userWorkspaceRoleId: MEMBER_ROLE_ID },
+  roleIds: [MEMBER_ROLE_ID],
 };
 
 const memberPrincipal: PermissionsPrincipal = {
   ...rolePrincipal,
-  workspaceMember: { id: MEMBER_ID },
+  workspaceMemberId: MEMBER_ID,
 };
 
 const deniedPrincipal: PermissionsPrincipal = {
   ...memberPrincipal,
-  intersectionOf: { userWorkspaceRoleId: 'missing-role' },
+  roleIds: ['missing-role'],
 };
 
 const filterByStatus = (status: string) =>

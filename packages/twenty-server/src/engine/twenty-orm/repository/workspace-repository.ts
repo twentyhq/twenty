@@ -46,7 +46,7 @@ import { buildPermissionsCondition } from 'src/engine/permissions/combine/utils/
 import { type RecordShareGrant } from 'src/engine/permissions/record-share/types/record-share-grant.type';
 import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
 import { isObjectOperationDeniedToPrincipal } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principal.util';
-import { isObjectOperationDisabled } from 'src/engine/permissions/role/utils/is-object-operation-disabled.util';
+import { isObjectOperationDisabledToPrincipal } from 'src/engine/permissions/role/utils/is-object-operation-disabled-to-principal.util';
 import { isObjectOperationPermitted } from 'src/engine/permissions/role/utils/is-object-operation-permitted.util';
 import { formatData } from 'src/engine/twenty-orm/utils/format-data.util';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
@@ -55,7 +55,6 @@ import {
   getUpdateEventRecords,
   mergeRecordsWithUpdateValues,
 } from 'src/engine/twenty-orm/utils/merge-records-with-update-values.util';
-import { isPermissionsPrincipalOwningObject } from 'src/engine/permissions/principal/utils/is-permissions-principal-owning-object.util';
 import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
@@ -110,6 +109,7 @@ import {
   type WorkspaceRelationShape,
   type WorkspaceTableShape,
 } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
+import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
 
 const ALWAYS_FALSE_CONDITION = '1=0';
 const MUTATION_EVENT_ACTIONS_BY_KIND: Record<
@@ -2177,18 +2177,17 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     }
   }
 
-  async hasPrincipalGrantOnRecords({
+  async findPrincipalAdmittedRecordIds({
     principal,
     recordIds,
-    operationType = 'select',
+    operationType,
     hypotheticalRecordShareAccessLevel,
   }: {
     principal: PermissionsPrincipal;
     recordIds: string[];
-    operationType?: OperationType;
+    operationType: OperationType;
     hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
-  }): Promise<boolean> {
-    const uniqueRecordIds = [...new Set(recordIds)];
+  }): Promise<Set<string>> {
     const condition = buildPermissionsCondition({
       principal,
       metadataMaps: this.resolvePermissionsMetadataMaps(),
@@ -2198,18 +2197,14 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       hypotheticalRecordShareAccessLevel,
     });
 
-    if (condition === false) {
-      return false;
-    }
-
-    if (uniqueRecordIds.length === 0) {
-      return true;
+    if (condition === false || recordIds.length === 0) {
+      return new Set();
     }
 
     const queryBuilder = this.buildBypassingEventSelectQueryBuilder(
       this.options.tableShape.nameSingular,
     )
-      .where({ id: In(uniqueRecordIds) })
+      .where({ id: In(recordIds) })
       .withDeleted()
       .select(['id']);
     const admittedRecords = await (
@@ -2221,7 +2216,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         : queryBuilder
     ).getMany<ObjectRecord>({ noFormatting: true });
 
-    return admittedRecords.length === uniqueRecordIds.length;
+    return new Set(admittedRecords.map(({ id }) => String(id)));
   }
 
   // Whether the role alone permits the operation, regardless of any record
@@ -2288,29 +2283,24 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       return false;
     }
 
-    return (
-      isObjectOperationDisabled({
-        objectMetadata: flatObjectMetadata,
-        operationType,
-      }) &&
-      !isPermissionsPrincipalOwningObject({
-        principal: this.resolvePermissionsPrincipal(),
-        flatApplicationMaps: this.options.internalContext.flatApplicationMaps,
-        flatObjectMetadata,
-      })
-    );
+    return isObjectOperationDisabledToPrincipal({
+      principal: this.resolvePermissionsPrincipal(),
+      flatObjectMetadata,
+      operationType,
+    });
   }
 
   private resolvePermissionsPrincipal(): PermissionsPrincipal {
-    return (this.permissionsPrincipal ??= {
+    return (this.permissionsPrincipal ??= buildPermissionsPrincipal({
       workspaceId: this.options.internalContext.workspaceId,
-      intersectionOf:
-        'intersectionOf' in this.options.rolePermissionConfig
-          ? this.options.rolePermissionConfig.intersectionOf
-          : {},
-      workspaceMember: isUserAuthContext(this.options.authContext)
-        ? this.options.authContext.workspaceMember
+      rolePermissionConfig: this.options.rolePermissionConfig,
+      workspaceMemberId: isUserAuthContext(this.options.authContext)
+        ? this.options.authContext.workspaceMemberId
         : undefined,
+      flatApplicationMaps: this.options.internalContext.flatApplicationMaps,
+    }) ?? {
+      workspaceId: this.options.internalContext.workspaceId,
+      roleIds: [],
     });
   }
 
@@ -2326,6 +2316,8 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
         this.options.internalContext.flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps:
         this.options.internalContext.flatRowLevelPermissionPredicateGroupMaps,
+      flatWorkspaceMemberMaps:
+        this.options.internalContext.flatWorkspaceMemberMaps,
     });
   }
 
