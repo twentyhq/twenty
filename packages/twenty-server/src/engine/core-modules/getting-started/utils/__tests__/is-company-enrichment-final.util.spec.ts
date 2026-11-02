@@ -56,6 +56,15 @@ describe('isCompanyEnrichmentFinal', () => {
     ).toBe(true);
   });
 
+  it('should be final when the result is stored but the attempt is missing', () => {
+    expect(
+      isCompanyEnrichmentFinal({
+        companyEnrichment: COMPANY_ENRICHMENT,
+        companyEnrichmentAttempt: null,
+      }),
+    ).toBe(true);
+  });
+
   it.each(['notFound', 'permanentError'] as const)(
     'should be final after a %s outcome',
     (outcome) => {

@@ -7,6 +7,8 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { getAppInjectablesByClassName } from 'test/integration/utils/get-app-injectables-by-class-name.util';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type UpdateGettingStartedInput } from 'src/engine/core-modules/getting-started/dtos/update-getting-started.input';
+import { GettingStartedStepActionKey } from 'src/engine/core-modules/getting-started/enums/getting-started-step-action-key.enum';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
@@ -86,7 +88,7 @@ const findJaneUserVar = async (key: string) => {
   return keyValuePair?.value;
 };
 
-const updateGettingStarted = (input: Record<string, unknown>) =>
+const updateGettingStarted = (input: UpdateGettingStartedInput) =>
   makeMetadataApiRequest({
     query: UPDATE_GETTING_STARTED_MUTATION,
     variables: { input },
@@ -315,7 +317,7 @@ describe('gettingStarted (e2e)', () => {
   describe('updateGettingStarted', () => {
     it('persists the selected step, the snooze and the hide', async () => {
       const response = await updateGettingStarted({
-        selectedStepActionKey: 'INVITE_TEAM',
+        selectedStepActionKey: GettingStartedStepActionKey.INVITE_TEAM,
         snoozedUntil: '2099-01-01T00:00:00.000Z',
         isHidden: true,
       });
@@ -330,7 +332,7 @@ describe('gettingStarted (e2e)', () => {
 
     it('completes a step', async () => {
       const response = await updateGettingStarted({
-        completedStepActionKey: 'INVITE_TEAM',
+        completedStepActionKey: GettingStartedStepActionKey.INVITE_TEAM,
       });
 
       expect(response.body.errors).toBeUndefined();
@@ -340,14 +342,16 @@ describe('gettingStarted (e2e)', () => {
     });
 
     it('keeps the first completion when a step is completed twice', async () => {
-      await updateGettingStarted({ completedStepActionKey: 'FOLLOW_UP_DEALS' });
+      await updateGettingStarted({
+        completedStepActionKey: GettingStartedStepActionKey.FOLLOW_UP_DEALS,
+      });
 
       const firstCompletion = await findJaneUserVar(
         'GETTING_STARTED_COMPLETED_FOLLOW_UP_DEALS',
       );
 
       const secondResponse = await updateGettingStarted({
-        completedStepActionKey: 'FOLLOW_UP_DEALS',
+        completedStepActionKey: GettingStartedStepActionKey.FOLLOW_UP_DEALS,
       });
 
       expect(secondResponse.body.errors).toBeUndefined();

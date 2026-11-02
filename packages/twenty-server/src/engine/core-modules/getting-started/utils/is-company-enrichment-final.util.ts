@@ -16,6 +16,10 @@ export const isCompanyEnrichmentFinal = ({
     'outcome'
   > | null;
 }): boolean => {
+  if (isDefined(companyEnrichment)) {
+    return true;
+  }
+
   if (
     !isDefined(companyEnrichmentAttempt) ||
     companyEnrichmentAttempt.outcome === 'transientError'
@@ -23,8 +27,5 @@ export const isCompanyEnrichmentFinal = ({
     return false;
   }
 
-  return (
-    companyEnrichmentAttempt.outcome !== 'matched' ||
-    isDefined(companyEnrichment)
-  );
+  return companyEnrichmentAttempt.outcome !== 'matched';
 };
