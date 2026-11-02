@@ -25,7 +25,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     position: 1,
   },
   inboxSection: {
-    universalIdentifier: '20202020-b00d-4b0d-8b0d-c0aba11c000d',
+    universalIdentifier: '20202020-b017-4b17-8b17-c0aba11c0017',
     type: NavigationMenuItemType.AI_CHAT_INBOX,
     position: 0,
   },
@@ -90,13 +90,32 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     folderUniversalIdentifier: '20202020-b010-4b10-8b10-c0aba11c0010',
     position: 5,
   },
+  campaignsFolder: {
+    universalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
+    type: NavigationMenuItemType.FOLDER,
+    name: i18nLabel(
+      msg({ message: `Campaigns`, context: 'navigationMenuItem.name' }),
+    ),
+    icon: 'IconSend',
+    folderUniversalIdentifier: '20202020-b010-4b10-8b10-c0aba11c0010',
+    position: 7,
+  },
   allMessageCampaigns: {
     universalIdentifier: '20202020-b00b-4b0b-8b0b-c0aba11c000b',
     type: NavigationMenuItemType.OBJECT,
     viewUniversalIdentifier:
       STANDARD_OBJECTS.messageCampaign.views.allMessageCampaigns
         .universalIdentifier,
-    position: 7,
+    folderUniversalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
+    position: 0,
+  },
+  allMessageLists: {
+    universalIdentifier: '20202020-b00d-4b0d-8b0d-c0aba11c000d',
+    type: NavigationMenuItemType.OBJECT,
+    viewUniversalIdentifier:
+      STANDARD_OBJECTS.messageList.views.allMessageLists.universalIdentifier,
+    folderUniversalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
+    position: 1,
   },
   workflowsFolder: {
     universalIdentifier: '20202020-b007-4b07-8b07-c0aba11c0007',
@@ -134,7 +153,7 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
     position: 2,
   },
   chatsTab: {
-    universalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
+    universalIdentifier: '20202020-b016-4b16-8b16-c0aba11c0016',
     type: NavigationMenuItemType.TAB,
     name: i18nLabel(
       msg({ message: `Chats`, context: 'navigationMenuItem.name' }),
@@ -145,21 +164,21 @@ export const STANDARD_NAVIGATION_MENU_ITEMS = {
   chatsTabFavoriteChats: {
     universalIdentifier: '20202020-b00e-4b0e-8b0e-c0aba11c000e',
     type: NavigationMenuItemType.AI_CHAT_FAVORITES,
-    folderUniversalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
+    folderUniversalIdentifier: '20202020-b016-4b16-8b16-c0aba11c0016',
     position: 0,
     visibleItemLimit: null,
   },
   chatsTabChannels: {
     universalIdentifier: '20202020-b011-4b11-8b11-c0aba11c0011',
     type: NavigationMenuItemType.AI_CHAT_CHANNELS,
-    folderUniversalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
+    folderUniversalIdentifier: '20202020-b016-4b16-8b16-c0aba11c0016',
     position: 1,
     visibleItemLimit: null,
   },
   chatsTabRecentChats: {
     universalIdentifier: '20202020-b00f-4b0f-8b0f-c0aba11c000f',
     type: NavigationMenuItemType.AI_CHAT_RECENTS,
-    folderUniversalIdentifier: '20202020-b00c-4b0c-8b0c-c0aba11c000c',
+    folderUniversalIdentifier: '20202020-b016-4b16-8b16-c0aba11c0016',
     position: 2,
     visibleItemLimit: 5,
   },
@@ -174,7 +193,9 @@ export const STANDARD_NAVIGATION_MENU_ITEM_DEFAULT_COLORS: Partial<
   allNotes: 'turquoise',
   allOpportunities: 'red',
   workflowsFolder: 'orange',
+  campaignsFolder: 'purple',
   allMessageCampaigns: 'gray',
+  allMessageLists: 'gray',
   allDashboards: 'gray',
   workflowsFolderAllWorkflows: 'gray',
   workflowsFolderAllWorkflowRuns: 'gray',

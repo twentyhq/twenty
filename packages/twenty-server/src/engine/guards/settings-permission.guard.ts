@@ -17,8 +17,8 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+} from 'src/engine/permissions/permissions.exception';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 
 export const SettingsPermissionGuard = (
   requiredPermissions: PermissionFlagType | PermissionFlagType[],

@@ -41,6 +41,7 @@ Keep imports narrow:
 
 - Use `twenty-sdk/front-component` for front component hooks and host APIs.
 - Use `twenty-client-sdk/core` or `twenty-client-sdk/metadata` for data access.
+- Use `sendInboxMessage` and the inbox mention helpers from `twenty-sdk/front-component` to post in members' inbox (see `logic.md`). Open the conversation with `navigate(AppPath.AiChatInbox, { threadId })`: the route is main-page only, and it opens only for the conversation's participants.
 - Install `twenty-ui` from npm at the same version as `twenty-sdk` and `twenty-client-sdk` and import Twenty UI components, icons, and theme tokens from its subpaths (`twenty-ui/primitives/input`, `twenty-ui/primitives/data-display`, `twenty-ui/icon`, `twenty-ui/primitives/typography`, `twenty-ui/theme`, and others) before adding external UI libraries.
 
 Keep the SDK packages and `twenty-ui` in `devDependencies`. Import shared components from their family entry point, such as `twenty-ui/components/input` for `MainButton` and `LightButton`, `twenty-ui/components/feedback` for `Callout`, `twenty-ui/components/layout` for `Section`, and `twenty-ui/components/navigation` for `Dropdown`. Use `twenty-ui/primitives/input` for foundational controls such as `Button`, `Field` and `Input`.
@@ -53,7 +54,7 @@ Read theme tokens with the `useTheme()` hook from `twenty-ui/theme` inside the c
 
 Prefer Twenty UI icons from `twenty-ui/icon` when one exists. Use inline SVG only for app-specific marks or icons that are not available from `twenty-ui/icon`.
 
-Import individual icons, not `IconsProvider` or `useIcons`, which bundle the dynamic icon catalog. Use `themeCssVariables` only for CSS values inside render-time code. In front components, `useTheme()` also returns CSS reference strings by default, including for tokens typed as numbers. Do not perform arithmetic on those references or pass them to APIs requiring resolved numbers.
+Import individual icons, not `twenty-ui/icon/provider` (`IconsProvider`, `useIcons`, by-name `Icon`), which bundles the dynamic icon catalog. Use `themeCssVariables` only for CSS values inside render-time code. In front components, `useTheme()` also returns CSS reference strings by default, including for tokens typed as numbers. Do not perform arithmetic on those references or pass them to APIs requiring resolved numbers.
 
 ## Host UI And Runtime Constraints
 

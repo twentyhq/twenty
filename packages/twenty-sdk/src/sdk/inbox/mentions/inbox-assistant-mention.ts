@@ -1,0 +1,11 @@
+import {
+  AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+  AGENT_CHAT_ASSISTANT_NAME,
+  formatRecordReference,
+} from 'twenty-shared/ai';
+
+export const INBOX_ASSISTANT_MENTION = formatRecordReference({
+  objectNameSingular: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+  recordId: AGENT_CHAT_ASSISTANT_MENTION_OBJECT_NAME_SINGULAR,
+  displayName: AGENT_CHAT_ASSISTANT_NAME,
+});

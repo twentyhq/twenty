@@ -15,6 +15,7 @@ export const MY_APPLICATION_PREFERENCES = gql`
         icon
         position
         scope
+        slug
       }
       variables {
         key

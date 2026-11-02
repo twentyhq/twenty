@@ -5,11 +5,12 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { PermissionsExceptionCode } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsExceptionCode } from 'src/engine/permissions/permissions.exception';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
+import { getPermissionFlagNotFoundError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-permission-flag-not-found-error.util';
 import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
 
 @Injectable()
@@ -87,11 +88,11 @@ export class FlatRolePermissionFlagValidatorService {
     });
 
     if (!isDefined(referencedPermissionFlag)) {
-      validationResult.errors.push({
-        code: PermissionsExceptionCode.INVALID_SETTING,
-        message: t`Permission flag not found`,
-        userFriendlyMessage: msg`Invalid permission setting`,
-      });
+      validationResult.errors.push(
+        getPermissionFlagNotFoundError(
+          flatRolePermissionFlagToValidate.permissionFlagUniversalIdentifier,
+        ),
+      );
     }
 
     const duplicateForSameRole = Object.values(
@@ -187,19 +188,21 @@ export class FlatRolePermissionFlagValidatorService {
       }
     }
 
-    if (isDefined(flatEntityUpdate.permissionFlagUniversalIdentifier)) {
+    const updatedPermissionFlagUniversalIdentifier =
+      flatEntityUpdate.permissionFlagUniversalIdentifier;
+
+    if (isDefined(updatedPermissionFlagUniversalIdentifier)) {
       const referencedPermissionFlag = findFlatEntityByUniversalIdentifier({
-        universalIdentifier:
-          flatEntityUpdate.permissionFlagUniversalIdentifier as string,
+        universalIdentifier: updatedPermissionFlagUniversalIdentifier,
         flatEntityMaps: flatPermissionFlagMaps,
       });
 
       if (!isDefined(referencedPermissionFlag)) {
-        validationResult.errors.push({
-          code: PermissionsExceptionCode.INVALID_SETTING,
-          message: t`Permission flag not found`,
-          userFriendlyMessage: msg`Invalid permission setting`,
-        });
+        validationResult.errors.push(
+          getPermissionFlagNotFoundError(
+            updatedPermissionFlagUniversalIdentifier,
+          ),
+        );
       }
     }
 

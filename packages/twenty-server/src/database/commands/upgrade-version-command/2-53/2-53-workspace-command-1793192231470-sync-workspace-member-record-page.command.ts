@@ -395,6 +395,7 @@ export class SyncWorkspaceMemberRecordPageCommand extends ProvisionedWorkspaceCo
       const result =
         await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
           {
+            shouldDeferActions: false,
             isSystemBuild: true,
             dryRun: isDryRun,
             workspaceId,
@@ -461,6 +462,7 @@ export class SyncWorkspaceMemberRecordPageCommand extends ProvisionedWorkspaceCo
       const result =
         await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
           {
+            shouldDeferActions: false,
             workspaceId,
             isSystemBuild: true,
             applicationUniversalIdentifier,
@@ -541,6 +543,7 @@ export class SyncWorkspaceMemberRecordPageCommand extends ProvisionedWorkspaceCo
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:

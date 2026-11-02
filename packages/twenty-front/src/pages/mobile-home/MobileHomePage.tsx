@@ -1,3 +1,4 @@
+import { GettingStartedSidebarCard } from '@/getting-started/components/GettingStartedSidebarCard';
 import { MobileHomeAiChatSection } from '@/ai/components/MobileHomeAiChatSection';
 import { useNavigationMenuAiChatSections } from '@/navigation-menu-item/display/hooks/useNavigationMenuAiChatSections';
 import { MainNavigationDrawerNavigationContent } from '@/navigation/components/MainNavigationDrawerNavigationContent';
@@ -49,6 +50,7 @@ export const MobileHomePage = () => {
       <NavigationDrawerScrollableContent>
         <StyledSections>
           <MainNavigationDrawerNavigationContent />
+          <GettingStartedSidebarCard />
           {hasAiPermission && !hasAiChatSections && <MobileHomeAiChatSection />}
         </StyledSections>
       </NavigationDrawerScrollableContent>

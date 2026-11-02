@@ -23,15 +23,8 @@ export const NavigationDrawerAiChatInboxSection = ({
   visibleItemLimit,
 }: NavigationDrawerAiChatInboxSectionProps = {}) => {
   const { t } = useLingui();
-  const {
-    openThreadCount,
-    hasUnreadOpenThread,
-    needsInputThreadCount,
-    hasUnreadMentionThread,
-    hasUnreadAssignedThread,
-    unreadMentionThreadCount,
-    unreadAssignedThreadCount,
-  } = useAgentChatOpenThreadsSummary();
+  const { openThreadCount, hasUnreadOpenThread } =
+    useAgentChatOpenThreadsSummary();
   const {
     visibleItems,
     isOverVisibleItemLimit,
@@ -44,20 +37,6 @@ export const NavigationDrawerAiChatInboxSection = ({
         filterStatus: AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
         count: openThreadCount,
         isUnread: hasUnreadOpenThread,
-      },
-      {
-        filterStatus: AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT,
-        count: needsInputThreadCount,
-      },
-      {
-        filterStatus: AGENT_CHAT_THREAD_FILTER_STATUS.MENTIONS,
-        count: unreadMentionThreadCount,
-        isUnread: hasUnreadMentionThread,
-      },
-      {
-        filterStatus: AGENT_CHAT_THREAD_FILTER_STATUS.ASSIGNED,
-        count: unreadAssignedThreadCount,
-        isUnread: hasUnreadAssignedThread,
       },
       { filterStatus: AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED },
       { filterStatus: AGENT_CHAT_THREAD_FILTER_STATUS.DONE },
@@ -77,9 +56,6 @@ export const NavigationDrawerAiChatInboxSection = ({
           key={filterStatus}
           filterStatus={filterStatus}
           count={count}
-          isCountUrgent={
-            filterStatus === AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT
-          }
           isUnread={isUnread}
         />
       ))}

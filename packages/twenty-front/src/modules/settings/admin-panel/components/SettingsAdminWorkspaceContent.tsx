@@ -1,7 +1,7 @@
-import { getChipLabel } from '@/ui/field/display/utils/getChipLabel';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { type WorkspaceInfo } from '@/settings/admin-panel/types/WorkspaceInfo';
 import { getUpgradeHealthStatusBadge } from '@/settings/admin-panel/utils/getUpgradeHealthStatusBadge';
+import { getAdminWorkspaceLabel } from '@/settings/admin-panel/utils/getAdminWorkspaceLabel';
 import { getWorkspaceSchemaName } from '@/settings/admin-panel/utils/getWorkspaceSchemaName';
 import { SettingsAdminWorkspaceDataExportSection } from '@/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection';
 import { SettingsTableCard } from '@/settings/components/SettingsTableCard';
@@ -10,6 +10,7 @@ import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { UserContext } from '@/users/contexts/UserContext';
+import { getWorkspaceAvatarColorSeed } from '@/workspace/utils/getWorkspaceAvatarColorSeed';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -89,6 +90,8 @@ export const SettingsAdminWorkspaceContent = ({
           })}
           startElement={
             <AvatarOrIcon
+              name={activeWorkspace.name}
+              colorSeed={getWorkspaceAvatarColorSeed(activeWorkspace.name)}
               src={getAbsoluteImageUrl(
                 isNonEmptyString(activeWorkspace?.logo)
                   ? activeWorkspace?.logo
@@ -97,7 +100,7 @@ export const SettingsAdminWorkspaceContent = ({
             />
           }
         >
-          {getChipLabel(activeWorkspace.name).content}
+          {getAdminWorkspaceLabel(activeWorkspace)}
         </LinkChip>
       ) : (
         (activeWorkspace?.name ?? '')

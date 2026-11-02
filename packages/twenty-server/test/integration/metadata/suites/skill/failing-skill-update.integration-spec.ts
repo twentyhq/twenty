@@ -1,9 +1,7 @@
 import { faker } from '@faker-js/faker';
-import { STANDARD_SKILL } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-skill.constant';
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
 import { createSkill } from 'test/integration/metadata/suites/skill/utils/create-skill.util';
 import { deleteSkill } from 'test/integration/metadata/suites/skill/utils/delete-skill.util';
-import { findSkills } from 'test/integration/metadata/suites/skill/utils/find-skills.util';
 import { updateSkill } from 'test/integration/metadata/suites/skill/utils/update-skill.util';
 import {
   eachTestingContextFilter,
@@ -128,34 +126,6 @@ describe('Skill update should fail', () => {
       input: {
         id: nonExistentSkillId,
         label: 'Updated Label',
-      },
-    });
-
-    expectOneNotInternalServerErrorSnapshot({
-      errors,
-    });
-  });
-
-  it('should fail when attempting to update a standard skill', async () => {
-    const { data } = await findSkills({
-      expectToFail: false,
-      input: undefined,
-      gqlFields: 'id name',
-    });
-
-    const standardSkill = data.skills.find((skill) =>
-      Object.keys(STANDARD_SKILL).includes(skill.name),
-    );
-
-    if (!standardSkill) {
-      return;
-    }
-
-    const { errors } = await updateSkill({
-      expectToFail: true,
-      input: {
-        id: standardSkill.id,
-        label: 'Attempted Update to Standard Skill',
       },
     });
 

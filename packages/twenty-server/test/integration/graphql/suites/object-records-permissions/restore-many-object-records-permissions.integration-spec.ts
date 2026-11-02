@@ -8,7 +8,7 @@ import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graph
 import { restoreManyOperationFactory } from 'test/integration/graphql/utils/restore-many-operation-factory.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsExceptionMessage } from 'src/engine/permissions/permissions.exception';
 
 describe('restoreManyObjectRecordsPermissions', () => {
   const personId1 = randomUUID();

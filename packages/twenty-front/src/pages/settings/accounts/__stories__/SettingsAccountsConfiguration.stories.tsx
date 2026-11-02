@@ -19,9 +19,10 @@ const meta: Meta<PageDecoratorArgs> = {
   component: SettingsAccountsConfiguration,
   decorators: [PageDecorator],
   args: {
-    routePath: '/settings/accounts/configuration/:connectedAccountId',
+    routePath:
+      '/settings/app-preferences/accounts/:connectedAccountId/configuration',
     routeParams: { ':connectedAccountId': GOOGLE_ACCOUNT_ID },
-    additionalRoutes: ['/settings/accounts/apps/google'],
+    additionalRoutes: ['/settings/app-preferences/google'],
   },
   beforeEach: seedAccountGroupsStory,
   parameters: {
@@ -60,7 +61,7 @@ export const FinishedSetupOpensTheAppPage: Story = {
     );
 
     expect(
-      await canvas.findByText('Navigated to /settings/accounts/apps/google'),
+      await canvas.findByText('Navigated to /settings/app-preferences/google'),
     ).toBeVisible();
   },
 };

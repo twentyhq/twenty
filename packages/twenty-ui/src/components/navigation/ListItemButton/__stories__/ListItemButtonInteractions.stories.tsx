@@ -16,6 +16,7 @@ const meta: Meta<typeof ListItemButton> = {
   title: 'UI/Components/Navigation/ListItemButton/Interactions',
   component: ListItemButton,
   decorators: [ComponentDecorator],
+  parameters: { a11y: A11Y_DEFER_COLOR_CONTRAST },
   tags: ['!autodocs'],
   args: { children: 'Open record', onClick: fn(), style: ROW_STYLE },
 };

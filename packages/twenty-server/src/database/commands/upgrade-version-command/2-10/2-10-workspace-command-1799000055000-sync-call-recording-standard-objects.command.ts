@@ -4,7 +4,7 @@ import {
   STANDARD_OBJECTS,
   STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-shared/metadata';
-import { FieldMetadataType, MetadataWritability } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -143,7 +143,7 @@ const buildLegacyCalendarEventRecordingPreferenceFieldMetadata = ({
   isSearchable: false,
   isAuditLogged: true,
   isUIEditable: true,
-  writability: MetadataWritability.OPEN,
+  disabledFieldPermissionActions: null,
   isLabelSyncedWithName: false,
   overrides: null,
   defaultValue: "'AUTO'",
@@ -510,6 +510,7 @@ export class SyncCallRecordingStandardObjectsCommand extends ProvisionedWorkspac
       const renameResult =
         await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
           {
+            shouldDeferActions: false,
             isSystemBuild: true,
             applicationUniversalIdentifier,
             workspaceId,
@@ -531,6 +532,7 @@ export class SyncCallRecordingStandardObjectsCommand extends ProvisionedWorkspac
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,

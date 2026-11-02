@@ -120,6 +120,7 @@ export class DeduplicateEngineCommandsCommand extends ProvisionedWorkspaceComman
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {
               flatEntityToCreate: itemsToCreate,

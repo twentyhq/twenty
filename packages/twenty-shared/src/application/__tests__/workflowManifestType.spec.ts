@@ -153,11 +153,129 @@ describe('workflow manifest step types', () => {
         addConferencing: false,
       },
     },
+    {
+      type: 'AI_AGENT',
+      input: {
+        agentUniversalIdentifier: '66666666-6666-4666-8666-666666666666',
+        prompt: '{{trigger.properties.after.summary}}',
+        responseFormat: { type: 'text' },
+        humanInputInstructions: 'Ask when the company is unclear',
+        workspaceMemberId: ASSIGNEE,
+        conversation: {
+          key: 'mail:{{trigger.properties.after.threadId}}',
+          scope: 'KEY',
+        },
+      },
+    },
+    {
+      type: 'SEND_CHAT_MESSAGE',
+      input: {
+        workspaceMemberId: ASSIGNEE,
+        title: 'Approve the opportunity',
+        text: 'Detected in an email thread',
+        toolCall: {
+          toolName: 'create_one_opportunity',
+          arguments: { name: '{{trigger.properties.after.name}}' },
+        },
+        conversation: {
+          key: 'mail:{{trigger.properties.after.threadId}}',
+          scope: 'KEY',
+        },
+      },
+    },
   ])('accepts $type steps', ({ type, input }) => {
     const definition = structuredClone(workflow);
     Object.assign(getStep(definition, 2), { type, input });
 
     expect(workflowManifestSchema.safeParse(definition).success).toBe(true);
+  });
+
+  describe('connected account reference', () => {
+    const CALENDAR_EVENT = {
+      title: 'Kick-off',
+      startsAt: '2026-11-02T09:00:00.000Z',
+      endsAt: '2026-11-02T09:30:00.000Z',
+      isFullDay: false,
+      sendInvitations: true,
+      addConferencing: false,
+    };
+    const withStep = ({
+      type,
+      input,
+    }: {
+      type: string;
+      input: Record<string, unknown>;
+    }) => {
+      const definition = structuredClone(workflow);
+      Object.assign(getStep(definition, 2), { type, input });
+      return workflowManifestSchema.safeParse(definition);
+    };
+
+    it.each([
+      { type: 'SEND_EMAIL', input: { recipients: { to: 'jane@example.com' } } },
+      {
+        type: 'DRAFT_EMAIL',
+        input: { recipients: { to: 'jane@example.com' } },
+      },
+      { type: 'CREATE_CALENDAR_EVENT', input: CALENDAR_EVENT },
+    ])(
+      'accepts a $type step naming its account by handle',
+      ({ type, input }) => {
+        const result = withStep({
+          type,
+          input: { ...input, connectedAccountHandle: ' sales@example.com ' },
+        });
+
+        expect(result.success).toBe(true);
+        expect(result.data?.version.steps[2]?.input).toMatchObject({
+          connectedAccountHandle: 'sales@example.com',
+        });
+      },
+    );
+
+    it.each([
+      {
+        case: 'both',
+        reference: {
+          connectedAccountId: ASSIGNEE,
+          connectedAccountHandle: 'sales@example.com',
+        },
+      },
+      { case: 'neither', reference: {} },
+      { case: 'an empty handle', reference: { connectedAccountHandle: ' ' } },
+    ])('rejects $case of the account id and handle', ({ reference }) => {
+      const result = withStep({
+        type: 'CREATE_CALENDAR_EVENT',
+        input: { ...CALENDAR_EVENT, ...reference },
+      });
+
+      expect(result.success).toBe(false);
+      expect(result.error?.issues[0]?.path).toEqual([
+        'version',
+        'steps',
+        2,
+        'input',
+        'connectedAccountHandle',
+      ]);
+    });
+  });
+
+  it('requires the member a chat message is sent to', () => {
+    const definition = structuredClone(workflow);
+    Object.assign(getStep(definition, 2), {
+      type: 'SEND_CHAT_MESSAGE',
+      input: { title: 'Approve', text: 'Please review' },
+    });
+    const result = workflowManifestSchema.safeParse(definition);
+
+    expect(result.success).toBe(false);
+    expect(result.error?.issues[0]?.path).toEqual([
+      'version',
+      'steps',
+      2,
+      'input',
+      'workspaceMemberId',
+    ]);
   });
 
   it('rejects a step type applications cannot use', () => {
@@ -410,6 +528,7 @@ describe('workflow manifest database event trigger', () => {
               value: 'open',
               stepFilterGroupId: 'group',
               fieldMetadataUniversalIdentifier: FIELD_ID,
+              isFullRecord: false,
             },
           ],
         },
@@ -519,6 +638,54 @@ describe('workflow manifest database event trigger', () => {
     expect(result.error?.issues.map((issue) => issue.message)).toEqual([
       'Filter group looping is not reachable from a root group',
     ]);
+  });
+});
+
+describe('workflow manifest state stored by the workflow builder', () => {
+  const { universalIdentifier: _universalIdentifier, ...triggerWithoutId } =
+    workflow.version.trigger;
+
+  const withTrigger = (trigger: Record<string, unknown>) => ({
+    ...workflow,
+    version: { ...workflow.version, trigger },
+  });
+
+  it('accepts a trigger without a universal identifier, with its name, position and output schema', () => {
+    expect(
+      workflowManifestSchema.safeParse(
+        withTrigger({
+          ...triggerWithoutId,
+          name: 'Launch manually',
+          position: { x: 120, y: 26 },
+          outputSchema: {},
+        }),
+      ).success,
+    ).toBe(true);
+  });
+
+  it('accepts a null position for a trigger or step the builder placed nowhere', () => {
+    const [firstStep, ...otherSteps] = workflow.version.steps;
+
+    expect(
+      workflowManifestSchema.safeParse({
+        ...workflow,
+        version: {
+          trigger: { ...workflow.version.trigger, position: null },
+          steps: [{ ...firstStep, position: null }, ...otherSteps],
+        },
+      }).success,
+    ).toBe(true);
+  });
+
+  it.each([
+    { problem: 'an empty name', trigger: { name: '' } },
+    { problem: 'a position without coordinates', trigger: { position: {} } },
+  ])('rejects $problem', ({ trigger }) => {
+    expect(
+      workflowManifestSchema.safeParse(
+        withTrigger({ ...workflow.version.trigger, ...trigger }),
+      ).success,
+    ).toBe(false);
   });
 });
 

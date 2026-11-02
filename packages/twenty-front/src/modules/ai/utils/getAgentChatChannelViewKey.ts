@@ -4,4 +4,6 @@ export const getAgentChatChannelViewKey = ({
   channelId,
   channelStatus,
   assignment,
-}: AgentChatChannelView) => `${channelId}:${channelStatus}:${assignment}`;
+  filter,
+}: AgentChatChannelView) =>
+  `${channelId}:${channelStatus}:${assignment}:${filter}`;

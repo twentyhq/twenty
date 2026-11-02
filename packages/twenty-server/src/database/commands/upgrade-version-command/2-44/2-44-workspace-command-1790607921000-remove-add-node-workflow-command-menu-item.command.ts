@@ -55,6 +55,7 @@ export class RemoveAddNodeWorkflowCommandMenuItemCommand extends ProvisionedWork
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:

@@ -90,6 +90,7 @@ export class RemoveWorkflowCoreIndexFlagFromCommandMenuItemsCommand extends Prov
       commandMenuItems,
     ] of commandMenuItemsByApplicationUniversalIdentifier) {
       const migrationArgs = {
+        shouldDeferActions: false,
         workspaceId,
         isSystemBuild: true,
         applicationUniversalIdentifier,

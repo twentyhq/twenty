@@ -1,8 +1,10 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
-import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
-import { RecordShareStorageModule } from 'src/engine/core-modules/record-share/record-share-storage.module';
+import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
+import { RecordShareStorageModule } from 'src/engine/permissions/record-share/record-share-storage.module';
+import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { AgentChatThreadLifecycleModule } from 'src/engine/metadata-modules/ai/ai-chat/agent-chat-thread-lifecycle.module';
 import { EndAgentChatChannelSnoozeJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/end-agent-chat-channel-snooze.job';
@@ -21,7 +23,7 @@ import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/s
 import { AgentInboxService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-inbox.service';
 import { AgentChatChannelModule } from 'src/engine/metadata-modules/agent-chat-channel/agent-chat-channel.module';
 import { AgentHistoryModule } from 'src/engine/metadata-modules/ai/ai-history/ai-history.module';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 // separate from AiChatModule so workflow actions can message members' chats
@@ -35,6 +37,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     RecordShareModule,
     RecordShareStorageModule,
     TypeORMModule,
+    TypeOrmModule.forFeature([UserWorkspaceEntity]),
     UserWorkspaceModule,
     WorkspaceCacheModule,
   ],

@@ -49,6 +49,10 @@ import { CardTitle } from "/snippets/card-title.mdx"
     <CardTitle>Каналы обмена сообщениями</CardTitle>
     Привлечение разговоров любого провайдера к записям Twenty's Message and Message Thread — включая обсуждение и удаление дублирования.
   </Card>
+  <Card href="/ru/developers/extend/apps/logic/inbox" img="/images/user-guide/halftone/card-page-messaging-channels.svg">
+    <CardTitle>Входящие</CardTitle>
+    Отправляйте сообщения во входящие участников из логических функций и компонентов фронтенда.
+  </Card>
   <Card href="/ru/developers/extend/apps/logic/key-value-store" img="/images/user-guide/halftone/card-page-key-value-store.svg">
     <CardTitle>Store Key-Value Store</CardTitle>
     Сохранять состояние между логическими функциями — кэш, курсоры и межрабочее пространство.
@@ -80,7 +84,7 @@ import { CardTitle } from "/snippets/card-title.mdx"
 <Note>
 **Хуки времени установки** — код, который выполняется до или после установки, — используют то же окружение выполнения, но свои собственные функции `define*` и находятся в разделе [Config → Install Hooks](/ru/developers/extend/apps/config/install-hooks).
 
-[**Проверка работоспособности**](/ru/developers/extend/apps/logic/logic-functions#health-check) также использует его совместно. Она не объявляет триггер: Twenty вызывает ее по требованию при открытии страницы настроек приложения.
+[**Проверка работоспособности**](/ru/developers/extend/apps/logic/logic-functions#health-check) также использует его совместно. Приложение объявляет одну проверку без триггера. По умолчанию Twenty вызывает свой обработчик без аргументов при открытии настроек приложения рабочего пространства. Установите `runOnUserPreferences: true`, чтобы вместо этого запускать его на странице настроек приложений участника с обязательным `userWorkspaceId`.
 </Note>
 
 <PageBanner illustration="section-apps-logic" />

@@ -83,6 +83,7 @@ export class RebuildInstalledAppSearchVectorsCommand extends ProvisionedWorkspac
       }));
 
     await this.workspaceMigrationRunnerService.run({
+      shouldDeferActions: false,
       workspaceMigration: {
         // Cross-app actions; this is only the runner's existence gate, not a scope filter.
         applicationUniversalIdentifier:

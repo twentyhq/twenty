@@ -57,6 +57,7 @@ export const useMetadataErrorHandler = () => {
     searchFieldMetadata: t`search field metadata`,
     timelineActivityType: t`timeline activity type`,
     settingsMenuItem: t`settings menu item`,
+    relatedRecordPath: t`related record path`,
     validationRule: t`validation rule`,
     workflow: t`workflow`,
     workflowVersion: t`workflow version`,

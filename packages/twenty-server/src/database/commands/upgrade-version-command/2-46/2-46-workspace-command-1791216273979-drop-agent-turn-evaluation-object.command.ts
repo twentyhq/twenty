@@ -79,6 +79,7 @@ export class DropAgentTurnEvaluationObjectCommand extends ProvisionedWorkspaceCo
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           allFlatEntityOperationByMetadataName: {
             ...(isDefined(evaluationObject)

@@ -125,6 +125,10 @@ export class WorkflowHandleStaledRunsCronJob {
       await this.messageQueueService.add<WorkflowHandleStaledRunsJobData>(
         WorkflowHandleStaledRunsJob.name,
         { workspaceId },
+        {
+          workspaceId,
+          isWorkspaceJob: true,
+        },
       );
 
       return true;

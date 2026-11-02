@@ -39,6 +39,10 @@ export class MessagingMessageCleanerMessageChannelListener {
             workspaceId,
             messageChannelId: event.messageChannelId,
           },
+          {
+            workspaceId,
+            isWorkspaceJob: true,
+          },
         ),
       ),
     );

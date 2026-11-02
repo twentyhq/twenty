@@ -77,13 +77,12 @@ export class AddAgentChatThreadSubscriptionsCommand extends ProvisionedWorkspace
 
     const fieldsToCreate = hasParticipantObject
       ? getStandardFlatEntitiesToCreateOrThrow<FlatFieldMetadata>({
-          standardFlatEntityMaps: computeTwentyStandardApplicationAllFlatEntityMaps(
-            {
+          standardFlatEntityMaps:
+            computeTwentyStandardApplicationAllFlatEntityMaps({
               now: new Date().toISOString(),
               workspaceId,
               twentyStandardApplicationId: twentyStandardFlatApplication.id,
-            },
-          ).allFlatEntityMaps.flatFieldMetadataMaps,
+            }).allFlatEntityMaps.flatFieldMetadataMaps,
           existingFlatEntityMaps: flatFieldMetadataMaps,
           universalIdentifiers: SUBSCRIPTION_FIELD_UNIVERSAL_IDENTIFIERS,
         })
@@ -114,6 +113,7 @@ export class AddAgentChatThreadSubscriptionsCommand extends ProvisionedWorkspace
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:
@@ -177,6 +177,7 @@ export class AddAgentChatThreadSubscriptionsCommand extends ProvisionedWorkspace
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:

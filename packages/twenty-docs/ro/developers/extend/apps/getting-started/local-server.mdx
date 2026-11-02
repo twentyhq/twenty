@@ -1,38 +1,109 @@
 ---
-title: Server local
-description: Conectați CLI-ul autonom la un server Twenty local.
+title: Mediu local
+description: Rulați mediul complet de dezvoltare Twenty cu CLI-ul.
 ---
 
 import { PageBanner } from "/snippets/page-banner.mdx"
 
-## Configurare
+## Porniți Twenty local
 
-CLI-ul autonom se conectează la un server Twenty care rulează. Nu pornește și nu gestionează containere Docker.
+Instalați și porniți Docker, apoi rulați:
 
-Utilizați [ghidul de auto-găzduire](/ro/developers/self-host/self-host) pentru a rula Twenty cu Docker. Într-un checkout al depozitului Twenty, funcționează și mediul de dezvoltare existent:
+```bash
+twenty local start
+twenty auth login --url http://localhost:2020 --name local
+```
+
+`local start` pornește interfața web, API-ul, workerul și bazele de date. Funcționează în afara unui director de aplicație,
+așteaptă ca mediul să fie gata și îi afișează URL-ul. Autentificarea este un
+pas separat. Pentru a instala ulterior aplicația, rulați `twenty app apply --create --remote local` din directorul acesteia.
+
+Pentru o instanță nouă, specificați explicit o versiune sau lăsați CLI-ul să selecteze cea mai mare
+versiune publicată care corespunde cu `engines.twenty` al aplicației. În afara unei aplicații cu această
+setare, utilizează `latest`. Instanțele existente își păstrează versiunea și datele.
+Pentru o instanță existentă, compatibilitatea cu `engines.twenty` este verificată folosind
+`APP_VERSION` al imaginii, inclusiv atunci când eticheta acesteia este `latest`. O versiune lipsă, nevalidă
+sau incompatibilă generează un avertisment, iar pornirea continuă.
+
+```bash
+twenty local start 2.53.1
+twenty local status
+twenty local logs
+twenty local logs --lines 100 --no-follow
+twenty local stop
+```
+
+Instanțele noi ascultă numai pe loopback, pe portul `2020`. Utilizați `--port \<port>` când
+creați o instanță pentru a alege alt port. Utilizați un context local pentru socket Docker;
+motoarele Docker la distanță nu sunt acceptate de aceste comenzi.
+
+## Faceți upgrade sau resetați
+
+```bash
+twenty local upgrade 2.53.1
+```
+
+Upgrade-ul extrage imaginea solicitată înainte de a înlocui instanța. Acesta păstrează
+porturile, baza de date și volumele de fișiere, precum și suprascrierile de mediu. Noi valori implicite ale CLI
+se aplică noilor instanțe; upgrade-urile păstrează valorile de mediu existente.
+Fără o versiune, urmează aceeași selecție de versiune ca un nou început. Depozitul personalizat
+este respins. Downgrade sunt respinse înainte de a înlocui containerul,
+inclusiv când se folosește o etichetă precum `latest`. Ambele imagini trebuie să declare un
+valid `APP_VERSION` astfel încât CLI să poată compara versiunile lor reale.
+
+Treceți `2.53` să începeți sau să faceți upgrade folosind eticheta de imagine `v2.53` plutitoare, sau `2.53.1`
+pentru a selecta o versiune specifică a patch-ului.
+
+În cazul în care crearea înlocuirii eșuează sau este anulată, CLI
+restaurează containerul anterior și setările. Odată ce noua versiune începe,
+a eșuat actualizarea reține volumele de date dar nu redirecționează migrațiile bazei de date înapoi.
+
+`stop` păstrează toate datele. Pentru a șterge definitiv instanța și datele acesteia, executați:
+
+```bash
+twenty local reset
+twenty local start
+```
+
+Resetarea cere confirmare. Scripturile trebuie să treacă de `--yes`. Credențialele de la telecomenzi salvate și
+nu sunt șterse.
+
+## Teste de integrare
+
+Utilizați instanța de test separată, cu portul implicit `2021`:
+
+```bash
+twenty local start --test
+twenty local status --test
+TWENTY_API_URL=http://localhost:2021 yarn test
+```
+
+Setați `TWENTY_API_KEY` la o cheie pentru acea instanță. Testele de integrare instalează și
+dezinstalează o aplicație, așa că păstrați-le separate de spațiul dvs. de lucru pentru dezvoltare.
+Treceți `--test` la jurnale, opriți, upgradați sau resetați când gestionați această instanță.
+
+Fluxul de lucru CI generat configurează o instanță izolată prin
+`twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` și instalează separat
+CLI-ul independent.
+
+## Alte configurări locale
+
+Pentru un checkout al codului-sursă Twenty, funcționează și mediul de dezvoltare existent:
 
 ```bash
 bash packages/twenty-utils/setup-dev-env.sh
 yarn start
-```
-
-Apoi autentificați-vă la URL-ul serverului pentru spațiul dvs. de lucru:
-
-```bash
 twenty auth login --url http://localhost:3000 --name local
-twenty app apply --create --remote local
 ```
 
-Utilizați URL-ul și portul efective ale serverului dvs. Pentru spațiile de lucru cu subdomenii, utilizați numele de gazdă al spațiului de lucru.
-
-## Teste de integrare
-
-Utilizați un server sau un spațiu de lucru separat, care poate fi eliminat. Configurarea testelor de integrare instalează o aplicație, iar etapa de curățare o dezinstalează. Setați `TWENTY_API_URL` și `TWENTY_API_KEY` la acea instanță de test înainte de a rula `yarn test`.
-
-Fluxul de lucru CI generat configurează o instanță izolată prin `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` și instalează separat CLI-ul autonom.
+Utilizați URL-ul și portul efective ale serverului dvs. Pentru spațiile de lucru cu subdomenii, utilizați
+numele de gazdă al spațiului de lucru. Pentru implementarea în producție, urmați
+[ghidul de auto-găzduire](/ro/developers/self-host/self-host).
 
 ## Dependențele proiectului
 
-Instalați `twenty-sdk` și `twenty-client-sdk` ca dependențe ale proiectului. Instalați CLI-ul `twenty` global, apoi rulați `twenty app typecheck`, `twenty app build` și `twenty app apply` din directorul aplicației.
+Instalați `twenty-sdk` și `twenty-client-sdk` ca dependențe ale proiectului. Instalați
+CLI-ul `twenty` la nivel global, apoi rulați `twenty app typecheck`, `twenty app build` și
+`twenty app apply` din directorul aplicației.
 
 <PageBanner illustration="dev-self-host" />

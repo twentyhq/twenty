@@ -1,0 +1,2 @@
+export const DROP_IS_CUSTOM_FROM_AGENT_SKILL_VIEW_INDEX_AND_AGENT_CHAT_CHANNEL_UPGRADE_COMMAND_NAME =
+  '2.54.0_DropIsCustomFromAgentSkillViewIndexAndAgentChatChannelFastInstanceCommand_1793139794914';

@@ -349,7 +349,12 @@ export class AgentChatThreadTriageService {
     await this.delayedJobsQueueService.add<EndAgentChatChannelSnoozeJobData>(
       END_AGENT_CHAT_CHANNEL_SNOOZE_JOB_NAME,
       data,
-      { delay, ...AGENT_CHAT_THREAD_SNOOZE_END_JOB_RETRY_OPTIONS },
+      {
+        delay,
+        ...AGENT_CHAT_THREAD_SNOOZE_END_JOB_RETRY_OPTIONS,
+        workspaceId: data.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 }

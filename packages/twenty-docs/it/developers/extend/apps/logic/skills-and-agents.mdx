@@ -104,6 +104,39 @@ Note sullo schema:
 * `additionalProperties: false` (facoltativo) vieta qualsiasi proprietà non dichiarata in `properties`.
 
 </Accordion>
+<Accordion title="defineMcpServer" description="Esponi un server MCP esterno all'IA dello spazio di lavoro (beta)">
+
+<Warning>
+  I server MCP sono in beta e non sono ancora attivi: puoi dichiararli, ma gli spazi di lavoro non possono usare i loro strumenti finché la funzionalità non verrà rilasciata.
+</Warning>
+
+Usa `defineMcpServer()` per distribuire un server MCP remoto (Streamable HTTP) con la tua app, in modo che l'IA dello spazio di lavoro possa usare i suoi strumenti senza sincronizzare tali dati in Twenty:
+
+```ts src/mcp-servers/github.ts
+import { defineMcpServer } from 'twenty-sdk/define';
+
+import { GITHUB_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+
+export default defineMcpServer({
+  universalIdentifier: '0b6c4f7e-3d5a-4a8e-9a0d-6f1e2c3b4a01',
+  name: 'github',
+  label: 'GitHub',
+  url: 'https://api.githubcopilot.com/mcp/',
+  connectionProvider: {
+    universalIdentifier: GITHUB_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+Punti chiave:
+* `name` è in snake_case (lettere minuscole, cifre e trattini bassi, inizia con una lettera, massimo 32 caratteri) ed è univoco nello spazio di lavoro. Funge da prefisso per i nomi degli strumenti del server.
+* `url` deve essere un URL HTTP o HTTPS.
+* `connectionProvider` (facoltativo) fa riferimento a un [provider di connessione](/it/developers/extend/apps/logic/connections) dichiarato dalla stessa app. Le chiamate inviano il token di accesso di tale connessione come token Bearer. Omettilo per un server pubblico.
+* L'URL non può cambiare in una versione successiva quando è collegato un provider di connessione, affinché i token non vengano mai inviati a un altro host.
+* Gli spazi di lavoro possono disattivare il server; una versione successiva dell'app mantiene questa scelta.
+* Richiede `"engines": { "twenty": ">=2.53.0" }`.
+
+</Accordion>
 <Accordion title="runAgent" description="Esegui un agente da una funzione di logica">
 
 `runAgent()` permette a una funzione di logica di eseguire uno degli agenti della tua app (con le sue skill e i suoi strumenti). Identifica l'agente tramite l'`universalIdentifier` che hai passato a `defineAgent()` e passa ciò su cui vuoi che lavori come `input`:
@@ -280,64 +313,9 @@ Qualsiasi altra cosa — una semplice sessione utente, una chiave API senza un t
 <Accordion title="sendInboxMessage" description="Avvia o continua una conversazione nelle chat dei membri">
 
 `sendInboxMessage()` pubblica un messaggio dalla tua app nelle chat di uno o più
-membri dello spazio di lavoro. Può terminare con una chiamata a uno strumento a cui il membro risponde dalla chat, dopo la quale
-la conversazione continua con l'assistente di Twenty.
-
-```ts src/logic-functions/notify-first-recording.ts
-import { sendInboxMessage } from 'twenty-sdk/logic-function';
-
-const { threadId } = await sendInboxMessage({
-  workspaceMemberIds: [workspaceMemberId],
-  threadKey: 'first-call-recording',
-  idempotencyKey: 'first-call-recording',
-  title: 'Your first call recording is ready',
-  text: 'Your first call was recorded: **Weekly sync**.',
-  toolCall: {
-    toolName: 'ask_question',
-    input: {
-      header: 'Share',
-      question: 'Do you want to share it with the other attendees?',
-      options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
-    },
-  },
-});
-```
-
-Punti chiave:
-* `workspaceMemberIds` elenca i membri che ricevono la conversazione, almeno
-  uno. Il primo membro di una nuova conversazione ne è il proprietario e gli altri la seguono
-  come partecipanti. Un invio successivo con la stessa chiave che elenca nuovi membri li
-  aggiunge; i membri omessi mantengono la conversazione.
-* `threadKey` seleziona la conversazione per questa app, condivisa da ogni membro a cui viene
-  inviata. Una nuova chiave avvia una conversazione intitolata `title`; una chiave usata in precedenza
-  aggiunge il messaggio a quella conversazione.
-* `idempotencyKey` identifica il messaggio all'interno della conversazione. L'invio
-  di nuovo con le stesse chiavi non scrive nulla di nuovo, quindi i tentativi ripetuti e le esecuzioni simultanee
-  non duplicano mai un messaggio.
-* `toolCall` (facoltativo) termina il messaggio con uno dei seguenti:
-  * una chiamata a cui il membro risponde, che mette in pausa la conversazione: `ask_question`
-    (una domanda a scelta multipla), `request_form` (campi da compilare) o
-    `propose_tool_call` (una chiamata da approvare). Il relativo `input` accetta `toolName`,
-    gli `arguments` con cui chiameresti lo strumento e un `summary` di una frase.
-    Lo strumento deve essere uno che il ruolo predefinito dell'app potrebbe eseguire autonomamente, ad esempio
-    `create_one_person` o `update_one_opportunity` (con l'`id` del record); un'
-    email (`send_email` o `draft_email`, con `recipients`, `subject` e un
-    `body` in HTML) non necessita dell'autorizzazione dell'app. Il membro esamina la chiamata
-    nella stessa scheda di una chiamata proposta dall'assistente, la modifica se vuole e
-    la chiamata approvata viene eseguita con il proprio accesso;
-  * uno degli strumenti della tua app, tramite `logicFunctionUniversalIdentifier`, visualizzato
-    dal relativo componente front-end con l'`input` e l'`output` che passi. Non
-    mette in pausa la conversazione.
-* Solo una chiamata a cui il membro risponde può essere in attesa in una conversazione alla volta:
-  l'invio di un'altra prima che risponda non riesce e restituisce `THREAD_AWAITING_ANSWER`. I messaggi
-  semplici e le chiamate agli strumenti dell'app vengono comunque accettati.
-* Solo il membro proprietario di una conversazione può eliminarla e una conversazione
-  eliminata scompare per tutti i membri: non viene ricreata e non vi viene
-  aggiunto nulla. Gli altri membri possono annullare l'iscrizione per rimuoverla dalla propria
-  posta in arrivo.
-* Ogni membro deve avere l'autorizzazione `AI` e la chiamata non riesce senza
-  scrivere il messaggio se uno di loro non può avere la conversazione. Il [ruolo predefinito](/it/developers/extend/apps/config/roles) della tua app deve concedere
-  `SystemPermissionFlag.AI`.
+membri dello spazio di lavoro. Può terminare con una chiamata di strumento a cui il membro risponde dalla chat,
+dopo la quale la conversazione continua con l'assistente di Twenty. Consulta
+[Posta in arrivo](/it/developers/extend/apps/logic/inbox) per le relative opzioni, gli helper per le menzioni e come pubblicare da un componente front-end.
 
 </Accordion>
 </AccordionGroup>

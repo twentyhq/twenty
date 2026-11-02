@@ -9,8 +9,9 @@ export const createStandardNavigationMenuItemFolderFlatMetadata = ({
   universalIdentifier,
   name,
   icon,
-  folderId,
-  folderUniversalIdentifier,
+  folderId = null,
+  folderUniversalIdentifier = null,
+  color,
   position,
   navigationMenuItemId,
   workspaceId,
@@ -20,8 +21,9 @@ export const createStandardNavigationMenuItemFolderFlatMetadata = ({
   universalIdentifier: string;
   name: string;
   icon?: string | null;
-  folderId: string;
-  folderUniversalIdentifier: string;
+  folderId?: string | null;
+  folderUniversalIdentifier?: string | null;
+  color: string | null;
   position: number;
   navigationMenuItemId: string;
   workspaceId: string;
@@ -52,7 +54,7 @@ export const createStandardNavigationMenuItemFolderFlatMetadata = ({
   icon: icon ?? null,
   visibleItemLimit: null,
   commandKey: null,
-  color: 'orange',
+  color,
   position,
   createdAt: now,
   updatedAt: now,

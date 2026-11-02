@@ -1,3 +1,4 @@
+import { GettingStartedOpenedSection } from '@/getting-started/components/GettingStartedOpenedSection';
 import { NavigationMenuItemCommands } from '@/navigation-menu-item/display/command/components/NavigationMenuItemCommands';
 import { useActiveNavigationMenuTab } from '@/navigation-menu-item/display/hooks/useActiveNavigationMenuTab';
 import { NavigationDrawerOpenedSection } from '@/navigation-menu-item/display/sections/components/NavigationDrawerOpenedSection';
@@ -43,6 +44,7 @@ export const MainNavigationDrawerScrollableItems = () => {
     return (
       <StyledScrollableItemsContainer>
         <NavigationDrawerOpenedSection />
+        <GettingStartedOpenedSection />
         <Suspense fallback={<NavigationDrawerWorkspaceSectionSkeletonLoader />}>
           <FavoritesSectionDispatcher />
           <WorkspaceSectionDispatcher />
@@ -55,6 +57,7 @@ export const MainNavigationDrawerScrollableItems = () => {
     <StyledScrollableItemsContainer>
       <NavigationMenuItemCommands />
       <NavigationDrawerOpenedSection />
+      <GettingStartedOpenedSection />
       <NavigationMenuTabContent
         key={activeNavigationMenuTab?.id}
         tabId={activeNavigationMenuTab?.id ?? null}

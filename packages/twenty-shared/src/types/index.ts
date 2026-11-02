@@ -150,6 +150,7 @@ export { FirstDayOfTheWeek } from './FirstDayOfTheWeek';
 export type { FormatRecordSerializedRelationProperties } from './FormatRecordSerializedRelationProperties';
 export type { FromTo } from './FromToType';
 export { HTTPMethod } from './HttpMethod';
+export type { IframeMediaPermission } from './IframeMediaPermission';
 export type { IndexOf } from './IndexOf';
 export { IndexType } from './IndexType';
 export type { IsEmptyObject } from './IsEmptyObject';

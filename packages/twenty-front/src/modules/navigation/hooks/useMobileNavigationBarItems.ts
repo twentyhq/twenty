@@ -29,8 +29,8 @@ import {
   IconHome,
   IconMessageCirclePlus,
   IconSearch,
-  useIcons,
 } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import {
   FeatureFlagKey,
   PermissionFlagType,

@@ -53,7 +53,11 @@ export class WebhookSubscriptionWorkspaceActivationListener {
       .add<SyncWorkspaceWebhookSubscriptionsJobData>(
         SyncWorkspaceWebhookSubscriptionsJob.name,
         { workspaceId, action },
-        { retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT },
+        {
+          retryLimit: WEBHOOK_SUBSCRIPTION_JOB_RETRY_LIMIT,
+          workspaceId,
+          isWorkspaceJob: true,
+        },
       )
       .catch((error) =>
         this.exceptionHandlerService.captureExceptions([error], {

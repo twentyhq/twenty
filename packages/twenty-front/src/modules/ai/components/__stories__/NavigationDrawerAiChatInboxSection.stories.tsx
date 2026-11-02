@@ -1,18 +1,20 @@
 import { MockedProvider } from '@apollo/client/testing/react';
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { type ComponentProps } from 'react';
-import { MemoryRouter } from 'react-router-dom';
 import { expect, userEvent, within } from 'storybook/test';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { NavigationDrawerAiChatInboxSection } from '@/ai/components/NavigationDrawerAiChatInboxSection';
 import { AGENT_CHAT_THREAD_FILTER_STATUS } from '@/ai/constants/AgentChatThreadFilterStatus';
+import { AI_CHAT_INBOX_INSTANCE_ID } from '@/ai/constants/AiChatInboxInstanceId';
 import { AI_CHAT_INBOX_NAVIGATION_SECTION_ID } from '@/ai/constants/AiChatInboxNavigationSectionId';
 import { agentChatChannelViewState } from '@/ai/states/agentChatChannelViewState';
 import { agentChatThreadFilterStatusState } from '@/ai/states/agentChatThreadFilterStatusState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
+import { NO_RECORD_GROUP_FAMILY_KEY } from '@/object-record/record-index/states/selectors/recordIndexAllRecordIdsComponentSelector';
+import { isRecordSelectedComponentFamilyState } from '@/object-record/record-selection/states/isRecordSelectedComponentFamilyState';
 import { NAVIGATION_DRAWER_CONSTRAINTS } from '@/ui/navigation/navigation-drawer/constants/NavigationDrawerConstraints';
 import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
 import { isNavigationSectionShowingAllItemsFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionShowingAllItemsFamilyState';
@@ -20,21 +22,21 @@ import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNaviga
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import {
   AgentChatChannelAssignmentFilter,
+  AgentChatChannelThreadFilter,
   AgentChatChannelThreadStatus,
   FeatureFlagKey,
   GetAgentChatOpenThreadsSummaryDocument,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
-import { MemoryRouterAppNavigatorProvider } from '~/testing/components/MemoryRouterAppNavigatorProvider';
+import { ComponentWithRouterDecorator } from '~/testing/decorators/ComponentWithRouterDecorator';
 import { IconsProviderDecorator } from '~/testing/decorators/IconsProviderDecorator';
 import {
   mockCurrentWorkspace,
   mockedUserData,
 } from '~/testing/mock-data/users';
 
-type StoryProps = NonNullable<
-  ComponentProps<typeof NavigationDrawerAiChatInboxSection>
->;
+const SELECTED_THREAD_ID = 'selected-chat';
+const OPEN_ITEM_PATTERN = /^Open\b/;
 
 const StyledNavigation = styled.div`
   background: ${themeCssVariables.background.secondary};
@@ -43,20 +45,18 @@ const StyledNavigation = styled.div`
   width: ${NAVIGATION_DRAWER_CONSTRAINTS.default}px;
 `;
 
-const INBOX_FILTER_LABELS = [
-  'Open',
-  'Needs input',
-  'Mentions',
-  'Assigned',
-  'Snoozed',
-  'Done',
-];
+const isSelectedThreadSelected = () =>
+  jotaiStore.get(
+    isRecordSelectedComponentFamilyState.atomFamily({
+      instanceId: AI_CHAT_INBOX_INSTANCE_ID,
+      familyKey: SELECTED_THREAD_ID,
+    }),
+  );
 
-const meta = {
+const meta: Meta = {
   title: 'Modules/AI/NavigationDrawerAiChatInboxSection',
   component: NavigationDrawerAiChatInboxSection,
   decorators: [
-    IconsProviderDecorator,
     (Story) => (
       <MockedProvider
         mocks={[
@@ -67,30 +67,31 @@ const meta = {
               data: {
                 agentChatOpenThreadsSummary: {
                   __typename: 'AgentChatOpenThreadsSummary',
-                  openThreadCount: 2,
-                  needsInputThreadCount: 0,
+                  openThreadCount: 3,
+                  unreadOpenThreadCount: 0,
+                  needsInputThreadCount: 1,
+                  mentionThreadCount: 0,
+                  assignedToMeThreadCount: 0,
+                  assignedThreadCount: 0,
+                  unassignedThreadCount: 3,
                   hasUnreadOpenThread: false,
                   hasUnreadMentionThread: false,
                   hasUnreadAssignedThread: false,
-                  unreadMentionThreadCount: 0,
-                  unreadAssignedThreadCount: 0,
                 },
               },
             },
           },
         ]}
       >
-        <MemoryRouter initialEntries={['/objects/companies']}>
-          <MemoryRouterAppNavigatorProvider>
-            <StyledNavigation>
-              <Story />
-            </StyledNavigation>
-          </MemoryRouterAppNavigatorProvider>
-        </MemoryRouter>
+        <StyledNavigation>
+          <Story />
+        </StyledNavigation>
       </MockedProvider>
     ),
+    IconsProviderDecorator,
+    ComponentWithRouterDecorator,
   ],
-  args: { visibleItemLimit: 1 },
+  args: { routePath: '/inbox' },
   beforeEach: () => {
     jotaiStore.set(isNavigationDrawerExpandedState.atom, true);
     jotaiStore.set(
@@ -115,15 +116,25 @@ const meta = {
       ...mockedUserData.currentUserWorkspace,
       permissionFlags: [PermissionFlagType.AI],
     });
+    jotaiStore.set(agentChatChannelViewState.atom, null);
     jotaiStore.set(
       agentChatThreadFilterStatusState.atom,
-      AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
+      AGENT_CHAT_THREAD_FILTER_STATUS.NEEDS_INPUT,
     );
-    jotaiStore.set(agentChatChannelViewState.atom, {
-      channelId: 'sales',
-      channelStatus: AgentChatChannelThreadStatus.OPEN,
-      assignment: AgentChatChannelAssignmentFilter.ANY,
-    });
+    jotaiStore.set(
+      recordIndexRecordIdsByGroupComponentFamilyState.atomFamily({
+        instanceId: AI_CHAT_INBOX_INSTANCE_ID,
+        familyKey: NO_RECORD_GROUP_FAMILY_KEY,
+      }),
+      [SELECTED_THREAD_ID],
+    );
+    jotaiStore.set(
+      isRecordSelectedComponentFamilyState.atomFamily({
+        instanceId: AI_CHAT_INBOX_INSTANCE_ID,
+        familyKey: SELECTED_THREAD_ID,
+      }),
+      true,
+    );
 
     return () => {
       jotaiStore.set(agentChatChannelViewState.atom, null);
@@ -135,22 +146,62 @@ const meta = {
       );
     };
   },
-} satisfies Meta<StoryProps>;
+};
 
 export default meta;
-type Story = StoryObj<StoryProps>;
+type Story = StoryObj<typeof meta>;
 
-export const FlatFilters: Story = {
+export const OpenRestoresEveryOpenChat: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const openItem = canvas.getByRole('button', { name: OPEN_ITEM_PATTERN });
+
+    await expect(openItem).toHaveAttribute('aria-current', 'true');
+    await expect(isSelectedThreadSelected()).toBe(true);
+    await userEvent.click(openItem);
+    await expect(jotaiStore.get(agentChatThreadFilterStatusState.atom)).toBe(
+      AGENT_CHAT_THREAD_FILTER_STATUS.ACTIVE,
+    );
+    await expect(isSelectedThreadSelected()).toBe(false);
+    await expect(
+      canvas.getByRole('button', { name: OPEN_ITEM_PATTERN }),
+    ).toHaveAttribute('aria-current', 'true');
+  },
+};
+
+export const SnoozedClearsSelection: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
-    await expect(canvas.getByRole('button', { name: 'Open' })).toBeVisible();
+    await userEvent.click(canvas.getByRole('button', { name: 'Snoozed' }));
+    await expect(jotaiStore.get(agentChatThreadFilterStatusState.atom)).toBe(
+      AGENT_CHAT_THREAD_FILTER_STATUS.SNOOZED,
+    );
+    await expect(isSelectedThreadSelected()).toBe(false);
+    await expect(
+      canvas.getByRole('button', { name: 'Snoozed' }),
+    ).toHaveAttribute('aria-current', 'true');
+  },
+};
+
+export const SeeMoreKeepsTheCurrentStatus: Story = {
+  args: { visibleItemLimit: 1 },
+  beforeEach: () => {
+    jotaiStore.set(agentChatChannelViewState.atom, {
+      channelId: 'sales',
+      channelStatus: AgentChatChannelThreadStatus.OPEN,
+      assignment: AgentChatChannelAssignmentFilter.ANY,
+      filter: AgentChatChannelThreadFilter.ANY,
+    });
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expect(
+      canvas.getByRole('button', { name: OPEN_ITEM_PATTERN }),
+    ).toBeVisible();
     await expect(canvas.getAllByRole('button')).toHaveLength(2);
     await userEvent.click(canvas.getByRole('button', { name: 'See more' }));
-
-    for (const label of INBOX_FILTER_LABELS) {
-      await expect(canvas.getByRole('button', { name: label })).toBeVisible();
-    }
 
     await userEvent.click(canvas.getByRole('button', { name: 'Snoozed' }));
     await expect(
@@ -158,25 +209,12 @@ export const FlatFilters: Story = {
     ).toHaveAttribute('aria-current', 'true');
     await expect(jotaiStore.get(agentChatChannelViewState.atom)).toBeNull();
 
-    await userEvent.click(canvas.getByRole('button', { name: 'Done' }));
-    await expect(canvas.getByRole('button', { name: 'Done' })).toHaveAttribute(
-      'aria-current',
-      'true',
-    );
-
-    for (const label of INBOX_FILTER_LABELS) {
-      await expect(canvas.getByRole('button', { name: label })).toBeVisible();
-    }
-
-    await userEvent.click(canvas.getByRole('button', { name: 'Mentions' }));
-    await expect(
-      canvas.getByRole('button', { name: 'Mentions' }),
-    ).toHaveAttribute('aria-current', 'true');
     await userEvent.click(canvas.getByRole('button', { name: 'See less' }));
     await expect(canvas.getAllByRole('button')).toHaveLength(2);
     await userEvent.click(canvas.getByRole('button', { name: 'See more' }));
+    await expect(canvas.getByRole('button', { name: 'Done' })).toBeVisible();
     await expect(
-      canvas.getByRole('button', { name: 'Mentions' }),
+      canvas.getByRole('button', { name: 'Snoozed' }),
     ).toHaveAttribute('aria-current', 'true');
   },
 };

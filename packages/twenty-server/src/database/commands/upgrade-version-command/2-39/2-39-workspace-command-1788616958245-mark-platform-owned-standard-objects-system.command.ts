@@ -1,16 +1,31 @@
-import { Command } from 'nest-commander';
+import { InjectDataSource } from '@nestjs/typeorm';
 
-import { MetadataWritability } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
+import { Command } from 'nest-commander';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
-import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
+
+const PLATFORM_OWNED_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS = [
+  STANDARD_OBJECTS.calendarChannelEventAssociation.universalIdentifier,
+  STANDARD_OBJECTS.messageChannelMessageAssociation.universalIdentifier,
+  STANDARD_OBJECTS.messageChannelMessageAssociationMessageFolder
+    .universalIdentifier,
+  STANDARD_OBJECTS.accessGroup.universalIdentifier,
+  STANDARD_OBJECTS.recordShare.universalIdentifier,
+  STANDARD_OBJECTS.shortLink.universalIdentifier,
+  STANDARD_OBJECTS.workflowAutomatedTrigger.universalIdentifier,
+  STANDARD_OBJECTS.agentChatThreadParticipant.universalIdentifier,
+  STANDARD_OBJECTS.agentMessage.universalIdentifier,
+  STANDARD_OBJECTS.agentMessagePart.universalIdentifier,
+  STANDARD_OBJECTS.agentMessageReaction.universalIdentifier,
+  STANDARD_OBJECTS.agentTurn.universalIdentifier,
+  STANDARD_OBJECTS.campaignDelivery.universalIdentifier,
+  STANDARD_OBJECTS.messageSuppression.universalIdentifier,
+];
 
 @RegisteredWorkspaceCommand('2.39.0', 1788616958245)
 @Command({
@@ -21,9 +36,8 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 export class MarkPlatformOwnedStandardObjectsSystemCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
-    private readonly applicationService: ApplicationService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
-    private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {
     super(workspaceIteratorService);
   }
@@ -32,90 +46,29 @@ export class MarkPlatformOwnedStandardObjectsSystemCommand extends ProvisionedWo
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const isDryRun = options.dryRun ?? false;
+    const filter = `"workspaceId" = $1 AND "universalIdentifier" = ANY($2) AND writability <> 'SYSTEM'`;
+    const parameters = [
+      workspaceId,
+      PLATFORM_OWNED_STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+    ];
 
-    const { twentyStandardFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
+    if (options.dryRun) {
+      const [{ count }] = await this.coreDataSource.query(
+        `SELECT COUNT(*)::int AS "count" FROM core."objectMetadata" WHERE ${filter}`,
+        parameters,
       );
 
-    const { flatObjectMetadataMaps: existingFlatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-      ]);
+      this.logger.log(
+        `[DRY RUN] Would mark ${count} standard object(s) as SYSTEM for workspace ${workspaceId}`,
+      );
 
-    const { allFlatEntityMaps: standardAllFlatEntityMaps } =
-      computeTwentyStandardApplicationAllFlatEntityMaps({
-        now: new Date().toISOString(),
-        workspaceId,
-        twentyStandardApplicationId: twentyStandardFlatApplication.id,
-      });
-
-    const flatObjectMetadatasToUpdate = Object.values(
-      standardAllFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter(
-        (standardFlatObjectMetadata) =>
-          standardFlatObjectMetadata.writability === MetadataWritability.SYSTEM,
-      )
-      .map((standardFlatObjectMetadata) => {
-        const existingFlatObjectMetadata =
-          existingFlatObjectMetadataMaps.byUniversalIdentifier[
-            standardFlatObjectMetadata.universalIdentifier
-          ];
-
-        if (
-          !isDefined(existingFlatObjectMetadata) ||
-          existingFlatObjectMetadata.writability ===
-            standardFlatObjectMetadata.writability
-        ) {
-          return undefined;
-        }
-
-        return {
-          ...existingFlatObjectMetadata,
-          writability: standardFlatObjectMetadata.writability,
-        };
-      })
-      .filter(isDefined);
-
-    if (flatObjectMetadatasToUpdate.length === 0) {
       return;
     }
 
-    this.logger.log(
-      `${isDryRun ? '[DRY RUN] Would mark' : 'Marking'} ${flatObjectMetadatasToUpdate.length} standard object(s) as SYSTEM for workspace ${workspaceId}: ${flatObjectMetadatasToUpdate
-        .map((flatObjectMetadata) => flatObjectMetadata.nameSingular)
-        .join(', ')}`,
+    // Nothing reads writability at runtime, but a later upgrade turns SYSTEM into disabled actions
+    await this.coreDataSource.query(
+      `UPDATE core."objectMetadata" SET writability = 'SYSTEM' WHERE ${filter}`,
+      parameters,
     );
-
-    const validateAndBuildResult =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          isSystemBuild: true,
-          workspaceId,
-          applicationUniversalIdentifier:
-            twentyStandardFlatApplication.universalIdentifier,
-          dryRun: isDryRun,
-          allFlatEntityOperationByMetadataName: {
-            objectMetadata: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: flatObjectMetadatasToUpdate,
-            },
-          },
-        },
-      );
-
-    if (validateAndBuildResult.status === 'fail') {
-      this.logger.error(
-        `Failed to mark standard objects as SYSTEM:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
-      );
-
-      throw new Error(
-        `Failed to mark standard objects as SYSTEM for workspace ${workspaceId}`,
-      );
-    }
   }
 }

@@ -80,7 +80,9 @@ export class BackfillRecordFormCommand extends ProvisionedWorkspaceCommandRunner
     );
 
     if (totalCreateCount === 0) {
-      this.logger.log(`No record form to backfill for workspace ${workspaceId}`);
+      this.logger.log(
+        `No record form to backfill for workspace ${workspaceId}`,
+      );
 
       return;
     }
@@ -293,6 +295,7 @@ export class BackfillRecordFormCommand extends ProvisionedWorkspaceCommandRunner
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           workspaceId,
           applicationUniversalIdentifier,

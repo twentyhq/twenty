@@ -35,6 +35,22 @@ const withStep = (step: Record<string, unknown>) => ({
   },
 });
 
+const withSendEmailStep = (input: Record<string, unknown>) => ({
+  ...workflow,
+  version: {
+    ...workflow.version,
+    steps: [
+      {
+        universalIdentifier: STEP_ID,
+        name: 'Email',
+        type: 'SEND_EMAIL',
+        input: { recipients: { to: 'jane@example.com' }, ...input },
+        nextStepIds: [],
+      },
+    ],
+  },
+});
+
 describe('defineWorkflow', () => {
   it('accepts a manual workflow', () => {
     expect(defineWorkflow(workflow)).toEqual({
@@ -43,6 +59,25 @@ describe('defineWorkflow', () => {
       errors: [],
       warnings: [],
     });
+  });
+
+  it('accepts the trigger state a workflow built in the workflow builder pulls with', () => {
+    const { universalIdentifier: _universalIdentifier, ...trigger } =
+      workflow.version.trigger;
+    const pulled = {
+      ...workflow,
+      version: {
+        ...workflow.version,
+        trigger: {
+          ...trigger,
+          name: 'Launch manually',
+          position: null,
+          outputSchema: {},
+        },
+      },
+    };
+
+    expect(defineWorkflow(pulled).errors).toEqual([]);
   });
 
   it('accepts a workflow flagged as system', () => {
@@ -54,12 +89,29 @@ describe('defineWorkflow', () => {
     });
   });
 
+  it('accepts an email step naming its account by handle', () => {
+    const definition = withSendEmailStep({
+      connectedAccountHandle: 'sales@example.com',
+    }) as WorkflowManifest;
+
+    expect(defineWorkflow(definition).errors).toEqual([]);
+  });
+
   it.each([
+    {
+      problem: 'an email step naming its account by both id and handle',
+      definition: withSendEmailStep({
+        connectedAccountId: '{{trigger.accountId}}',
+        connectedAccountHandle: 'sales@example.com',
+      }),
+      error:
+        'version.steps.0.input.connectedAccountHandle: Set exactly one of connectedAccountId and connectedAccountHandle',
+    },
     {
       problem: 'a step type applications cannot use',
       definition: withStep({ type: 'CODE' }),
       error:
-        'version.steps.0.type: Unsupported step type. Application workflows support: LOGIC_FUNCTION, HTTP_REQUEST, CLASSIFY, ITERATOR, DELAY, WAIT_FOR_EVENT, EMPTY, CREATE_RECORD, UPDATE_RECORD, UPSERT_RECORD, DELETE_RECORD, FIND_RECORDS, PICK_RECORD, FILTER, IF_ELSE, FORM, SEND_EMAIL, DRAFT_EMAIL, CREATE_CALENDAR_EVENT, AI_AGENT',
+        'version.steps.0.type: Unsupported step type. Application workflows support: LOGIC_FUNCTION, HTTP_REQUEST, CLASSIFY, ITERATOR, DELAY, WAIT_FOR_EVENT, EMPTY, CREATE_RECORD, UPDATE_RECORD, UPSERT_RECORD, DELETE_RECORD, FIND_RECORDS, PICK_RECORD, FILTER, IF_ELSE, FORM, SEND_EMAIL, DRAFT_EMAIL, CREATE_CALENDAR_EVENT, SEND_CHAT_MESSAGE, AI_AGENT',
     },
     {
       problem: 'an unknown trigger type',

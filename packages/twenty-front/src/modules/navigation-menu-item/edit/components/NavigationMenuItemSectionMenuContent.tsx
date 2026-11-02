@@ -9,8 +9,8 @@ import {
   IconHome,
   IconPlus,
   IconTrash,
-  useIcons,
 } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { NAVIGATION_MENU_SECTION_VISIBLE_ITEM_LIMIT_OPTIONS } from '@/navigation-menu-item/common/constants/NavigationMenuSectionVisibleItemLimitOptions';

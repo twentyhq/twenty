@@ -99,12 +99,15 @@ const buildOpenThreadsSummaryMock = (
       agentChatOpenThreadsSummary: {
         __typename: 'AgentChatOpenThreadsSummary' as const,
         openThreadCount: 1,
+        unreadOpenThreadCount: 0,
         needsInputThreadCount: 0,
+        mentionThreadCount: 0,
+        assignedToMeThreadCount: 0,
+        assignedThreadCount: 0,
+        unassignedThreadCount: 1,
         hasUnreadOpenThread: false,
         hasUnreadMentionThread: false,
         hasUnreadAssignedThread: false,
-        unreadMentionThreadCount: 0,
-        unreadAssignedThreadCount: 0,
         ...openThreadsSummary,
       },
     },
@@ -444,7 +447,12 @@ describe('MainNavigationDrawerModeSwitcher', () => {
   );
 
   it('does not flag the inbox for unread chats that do not need the member', async () => {
-    renderModeSwitcher({ openThreadsSummary: { hasUnreadOpenThread: true } });
+    renderModeSwitcher({
+      openThreadsSummary: {
+        hasUnreadOpenThread: true,
+        unreadOpenThreadCount: 1,
+      },
+    });
     await waitForOpenThreadsSummary();
 
     expect(screen.getByRole('button', { name: 'AI' })).toBeInTheDocument();

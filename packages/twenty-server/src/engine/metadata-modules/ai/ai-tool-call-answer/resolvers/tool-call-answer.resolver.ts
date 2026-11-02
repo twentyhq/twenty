@@ -25,7 +25,7 @@ import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai
 import { AnswerToolCallResultDTO } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/dtos/answer-tool-call-result.dto';
 import { AnswerToolCallInput } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/dtos/answer-tool-call.input';
 import { ToolCallAnswerService } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/services/tool-call-answer.service';
-import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
+import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/permissions/utils/permissions-graphql-api-exception.filter';
 
 // permission depends on whether the call waits in a chat or on a caller such as a workflow run, so no class guard
 @CoreResolver()

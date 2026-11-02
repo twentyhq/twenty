@@ -106,6 +106,7 @@ export class SetMessageTextDisplayedMaxRowsCommand extends ProvisionedWorkspaceC
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {
               flatEntityToCreate: [],

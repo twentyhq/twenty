@@ -3,8 +3,8 @@ import {
   IconHierarchy2,
   type IconComponent,
   IconLayoutList,
-  useIcons,
 } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import {
   FeatureFlagKey,
   type NavigationMenuItem,

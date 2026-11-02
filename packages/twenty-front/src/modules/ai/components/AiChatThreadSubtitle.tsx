@@ -1,17 +1,12 @@
 import { styled } from '@linaria/react';
-import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
+import { isNonEmptyString } from 'twenty-shared/utils';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AiChatThreadReasonBadge } from '@/ai/components/AiChatThreadReasonBadge';
+import { useAgentChatThreadSubtitleContent } from '@/ai/hooks/useAgentChatThreadSubtitleContent';
 import { useIsAgentChatThreadShownAsUnread } from '@/ai/hooks/useIsAgentChatThreadShownAsUnread';
-import { agentChatDraftPreviewTextFamilySelector } from '@/ai/states/selectors/agentChatDraftPreviewTextFamilySelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
-import { getAgentChatThreadPreviewText } from '@/ai/utils/getAgentChatThreadPreviewText';
-import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
-import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
-import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const StyledSubtitle = styled.div`
   align-items: center;
@@ -32,33 +27,21 @@ const StyledPreview = styled.div`
 
 type AiChatThreadSubtitleProps = {
   thread: AgentChatThreadRecord;
+  size?: 'sm' | 'md';
 };
 
-export const AiChatThreadSubtitle = ({ thread }: AiChatThreadSubtitleProps) => {
+export const AiChatThreadSubtitle = ({
+  thread,
+  size = 'sm',
+}: AiChatThreadSubtitleProps) => {
   const isUnread = useIsAgentChatThreadShownAsUnread(thread);
-  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
-  const currentWorkspaceMembers = useAtomStateValue(
-    currentWorkspaceMembersState,
-  );
-  const isAwaitingAnswer =
-    !isDefined(thread.deletedAt) && isDefined(thread.pendingQuestionMessageId);
-  const draftPreviewText = useAtomFamilySelectorValue(
-    agentChatDraftPreviewTextFamilySelector,
-    thread.id,
-  );
-  const hasDraft = isNonEmptyString(draftPreviewText);
-  const previewText = hasDraft
-    ? draftPreviewText
-    : getAgentChatThreadPreviewText({
-        thread,
-        workspaceMembers: currentWorkspaceMembers,
-        currentWorkspaceMemberId: currentWorkspaceMember?.id,
-      });
+  const { isAwaitingAnswer, hasDraft, previewText } =
+    useAgentChatThreadSubtitleContent(thread);
 
   return (
     <Text
       render={<StyledSubtitle />}
-      size="sm"
+      size={size}
       color={isUnread ? 'secondary' : 'tertiary'}
     >
       {isAwaitingAnswer && (

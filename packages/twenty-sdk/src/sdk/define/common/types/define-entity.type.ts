@@ -18,8 +18,10 @@ import {
   type AgentManifest,
   type ConnectionProviderManifest,
   type FieldManifest,
+  type McpServerManifest,
   type MessagingProviderManifest,
   type NavigationMenuItemManifest,
+  type RelatedRecordPathManifest,
   type SkillManifest,
   type StandalonePageLayoutWidgetManifest,
   type StandaloneViewFieldManifest,
@@ -46,11 +48,13 @@ export type DefinableEntity =
   | AgentManifest
   | ConnectionProviderManifest
   | MessagingProviderManifest
+  | McpServerManifest
   | RoleConfig
   | SkillManifest
   | ViewConfig
   | StandaloneViewFieldManifest
   | NavigationMenuItemManifest
+  | RelatedRecordPathManifest
   | PageLayoutConfig
   | PageLayoutTabConfig
   | StandalonePageLayoutWidgetManifest

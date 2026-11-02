@@ -31,12 +31,15 @@ type OpenThreadsSummary =
 const UNREAD_MENTION_SUMMARY: OpenThreadsSummary = {
   __typename: 'AgentChatOpenThreadsSummary',
   openThreadCount: 1,
+  unreadOpenThreadCount: 1,
   needsInputThreadCount: 0,
+  mentionThreadCount: 1,
+  assignedToMeThreadCount: 0,
+  assignedThreadCount: 0,
+  unassignedThreadCount: 1,
   hasUnreadOpenThread: true,
   hasUnreadMentionThread: true,
   hasUnreadAssignedThread: false,
-  unreadMentionThreadCount: 1,
-  unreadAssignedThreadCount: 0,
 };
 
 const buildChatSection = (

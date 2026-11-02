@@ -4,7 +4,8 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useLocation } from 'react-router-dom';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { LightIconButton } from 'twenty-ui/components/input';
-import { IconPlus, useIcons } from 'twenty-ui/icon';
+import { IconPlus } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { useIsMobile } from 'twenty-ui/utilities';
 import {
   FindManyAgentsDocument,

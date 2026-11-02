@@ -1,5 +1,6 @@
 import { type DynamicModule, Global, Module } from '@nestjs/common';
 
+import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { CacheLockModule } from 'src/engine/core-modules/cache-lock/cache-lock.module';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
@@ -21,6 +22,7 @@ export class LogicFunctionModule {
         TwentyConfigModule,
         ApplicationPackageModule,
         CacheLockModule,
+        CoreEntityCacheModule,
         LogicFunctionResourceModule,
         LogicFunctionTriggerModule,
         LogicFunctionExecutorModule,

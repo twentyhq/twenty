@@ -188,6 +188,7 @@ export class BackfillRecordPageLayoutsCommand extends ProvisionedWorkspaceComman
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             viewField: {
               flatEntityToCreate: [],
@@ -406,6 +407,7 @@ export class BackfillRecordPageLayoutsCommand extends ProvisionedWorkspaceComman
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             pageLayout: {
               flatEntityToCreate: pageLayouts,
@@ -554,6 +556,7 @@ export class BackfillRecordPageLayoutsCommand extends ProvisionedWorkspaceComman
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             pageLayout: {
               flatEntityToCreate: allPageLayouts,

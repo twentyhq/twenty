@@ -12,7 +12,7 @@ import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/
 import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provider/services/defined-tool-registry.service';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { type PermissionsService } from 'src/engine/permissions/permissions.service';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
 const webhookId = '2b3c4d5e-6f7a-4b8c-9d0e-1f2a3b4c5d6e';

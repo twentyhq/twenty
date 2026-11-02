@@ -27,6 +27,7 @@ import { HideDeletedRecordsNoSelectionRecordCommand } from '@/command-menu-item/
 import { ImportRecordsNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/ImportRecordsNoSelectionRecordCommand';
 import { SeeDeletedRecordsNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/SeeDeletedRecordsNoSelectionRecordCommand';
 import { AddToFavoritesCommand } from '@/command-menu-item/engine-command/record/components/AddToFavoritesCommand';
+import { MergeWithRecordSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/MergeWithRecordSingleRecordCommand';
 import { NavigateToNextRecordSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/NavigateToNextRecordSingleRecordCommand';
 import { NavigateToPreviousRecordSingleRecordCommand } from '@/command-menu-item/engine-command/record/single-record/components/NavigateToPreviousRecordSingleRecordCommand';
 import { RemoveFromFavoritesCommand } from '@/command-menu-item/engine-command/record/components/RemoveFromFavoritesCommand';
@@ -77,6 +78,9 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   [EngineComponentKey.ADD_TO_FAVORITES]: <AddToFavoritesCommand />,
   [EngineComponentKey.REMOVE_FROM_FAVORITES]: <RemoveFromFavoritesCommand />,
   [EngineComponentKey.MERGE_MULTIPLE_RECORDS]: <MergeMultipleRecordsCommand />,
+  [EngineComponentKey.MERGE_WITH_RECORD]: (
+    <MergeWithRecordSingleRecordCommand />
+  ),
   [EngineComponentKey.DUPLICATE_DASHBOARD]: (
     <DuplicateDashboardSingleRecordCommand />
   ),

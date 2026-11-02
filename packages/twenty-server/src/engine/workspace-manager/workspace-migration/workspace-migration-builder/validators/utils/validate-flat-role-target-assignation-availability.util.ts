@@ -42,6 +42,14 @@ export const validateFlatRoleTargetAssignationAvailability = ({
         userFriendlyMessage: msg`Role "${roleLabel}" cannot be assigned to API keys`,
       });
     }
+  } else if (isDefined(flatRoleTarget.webhookUniversalIdentifier)) {
+    if (!flatRole.canBeAssignedToApiKeys) {
+      errors.push({
+        code: RoleTargetExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_ENTITY,
+        message: t`Role "${roleLabel}" cannot be assigned to webhooks`,
+        userFriendlyMessage: msg`Role "${roleLabel}" cannot be assigned to webhooks`,
+      });
+    }
   }
 
   return errors;

@@ -5,6 +5,7 @@ import {
   FieldMetadataType,
   MetadataWritability,
 } from 'twenty-shared/types';
+import { type FieldPermissionAction } from 'twenty-shared/application';
 import {
   Check,
   Column,
@@ -23,6 +24,7 @@ import {
 
 import { ADD_IS_SYSTEM_SIDE_EFFECT_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-15/is-system-side-effect-upgrade-command-name.constant';
 import { ADD_METADATA_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-19/add-metadata-overrides-column-upgrade-command-name.constant';
+import { ADD_FIELD_METADATA_DISABLED_FIELD_PERMISSION_ACTIONS_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-53/add-field-metadata-disabled-field-permission-actions-upgrade-command-name.constant';
 import { ADD_METADATA_WRITABILITY_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-32/add-metadata-writability-upgrade-command-name.constant';
 import { ADD_FIELD_METADATA_IS_AUDIT_LOGGED_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-40/add-field-metadata-is-audit-logged-upgrade-command-name.constant';
 import { DROP_METADATA_STANDARD_OVERRIDES_COLUMN_UPGRADE_COMMAND_NAME } from 'src/database/commands/upgrade-version-command/2-20/drop-metadata-standard-overrides-column-upgrade-command-name.constant';
@@ -163,6 +165,13 @@ export class FieldMetadataEntity<
     default: MetadataWritability.OPEN,
   })
   writability: MetadataWritability;
+
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      ADD_FIELD_METADATA_DISABLED_FIELD_PERMISSION_ACTIONS_UPGRADE_COMMAND_NAME,
+  })
+  @Column({ type: 'jsonb', nullable: true })
+  disabledFieldPermissionActions: JsonbProperty<FieldPermissionAction[]> | null;
 
   // superseded by isUIEditable; no @WasRemovedInUpgrade yet: previous-release pods still SELECT it mid rolling deploy (core-team-issues#2542)
   @Column({ type: 'boolean', default: false })

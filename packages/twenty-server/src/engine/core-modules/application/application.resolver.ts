@@ -13,6 +13,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { buildPublicAssetLogoUrl } from 'src/engine/core-modules/application/utils/build-public-asset-logo-url.util';
@@ -122,6 +123,21 @@ export class ApplicationResolver {
   }
 
   @ResolveField(() => Boolean)
+  runOnUserPreferences(
+    @Parent()
+    application: Partial<
+      Pick<ApplicationEntity, 'isUserHealthCheckEnabled'> &
+        Pick<ApplicationDTO, 'runOnUserPreferences'>
+    >,
+  ): boolean {
+    return (
+      application.runOnUserPreferences ??
+      application.isUserHealthCheckEnabled ??
+      false
+    );
+  }
+
+  @ResolveField(() => Boolean)
   isUninstallBlockedByOtherWorkspaceInstallations(
     @Parent()
     application: Pick<ApplicationDTO, 'id' | 'applicationRegistrationId'>,
@@ -139,7 +155,8 @@ export class ApplicationResolver {
   @ResolveField(() => [AgentDTO])
   agents(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
@@ -148,13 +165,15 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
+        operation: 'read',
+        workspaceCustomApplicationId,
       })
     ) {
       return [];
     }
 
     return context.loaders.agentsByApplicationIdLoader.load({
-      workspaceId: workspace.id,
+      workspaceId,
       applicationId: application.id,
     });
   }
@@ -162,7 +181,8 @@ export class ApplicationResolver {
   @ResolveField(() => [FrontComponentDTO])
   frontComponents(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
@@ -171,13 +191,15 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
+        operation: 'read',
+        workspaceCustomApplicationId,
       })
     ) {
       return [];
     }
 
     return context.loaders.frontComponentsByApplicationIdLoader.load({
-      workspaceId: workspace.id,
+      workspaceId,
       applicationId: application.id,
     });
   }
@@ -185,7 +207,8 @@ export class ApplicationResolver {
   @ResolveField(() => [CommandMenuItemDTO])
   commandMenuItems(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
@@ -194,13 +217,15 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
+        operation: 'read',
+        workspaceCustomApplicationId,
       })
     ) {
       return [];
     }
 
     return context.loaders.commandMenuItemsByApplicationIdLoader.load({
-      workspaceId: workspace.id,
+      workspaceId,
       applicationId: application.id,
     });
   }
@@ -208,7 +233,8 @@ export class ApplicationResolver {
   @ResolveField(() => [SettingsMenuItemDTO], { nullable: true })
   settingsMenuItems(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
@@ -217,13 +243,15 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
+        operation: 'read',
+        workspaceCustomApplicationId,
       })
     ) {
       return [];
     }
 
     return context.loaders.settingsMenuItemsByApplicationIdLoader.load({
-      workspaceId: workspace.id,
+      workspaceId,
       applicationId: application.id,
     });
   }
@@ -231,7 +259,8 @@ export class ApplicationResolver {
   @ResolveField(() => [LogicFunctionDTO])
   logicFunctions(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
@@ -240,13 +269,15 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
+        operation: 'read',
+        workspaceCustomApplicationId,
       })
     ) {
       return [];
     }
 
     return context.loaders.logicFunctionsByApplicationIdLoader.load({
-      workspaceId: workspace.id,
+      workspaceId,
       applicationId: application.id,
     });
   }
@@ -254,7 +285,8 @@ export class ApplicationResolver {
   @ResolveField(() => [ObjectMetadataDTO])
   objects(
     @Parent() application: Pick<ApplicationDTO, 'id'>,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @Context() context: { loaders: IDataloaders },
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
@@ -263,13 +295,15 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
+        operation: 'read',
+        workspaceCustomApplicationId,
       })
     ) {
       return [];
     }
 
     return context.loaders.objectMetadataByApplicationIdLoader.load({
-      workspaceId: workspace.id,
+      workspaceId,
       applicationId: application.id,
     });
   }
@@ -286,6 +320,7 @@ export class ApplicationResolver {
       !canCallerReachApplication({
         callingApplication,
         applicationId: application.id,
+        operation: 'manage',
       })
     ) {
       throw new ForbiddenError(

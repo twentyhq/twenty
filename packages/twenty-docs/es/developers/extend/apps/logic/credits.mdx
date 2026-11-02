@@ -82,24 +82,28 @@ Cómo se cobran:
 
 ## Operaciones facturables
 
-Una operación es aquello por lo que cobra tu app mientras funciona. Cada entrada asigna un nombre de operación que eliges a la categoría de facturación que mide la plataforma, además de la etiqueta que se muestra a los administradores del espacio de trabajo en **Configuración > Uso**.
+Una operación es aquello por lo que cobra tu app mientras funciona. Cada entrada nombra una operación que elijas y la etiqueta que se muestra a los administradores del espacio de trabajo en **Configuración > Uso** y a ti en el gráfico de supervisión **Créditos utilizados** de tu aplicación. Opcionalmente, puede asignarse a una de las categorías de facturación de la plataforma.
 
 ```ts src/application-config.ts
 billing: {
   operations: {
+    enrichPerson: {
+      label: 'Person enrichment',
+      icon: 'IconUserSearch',
+    },
     recordMeeting: {
       operationType: 'CALL_RECORDING',
       label: 'Meeting recording',
-    },
-    summarizeMeeting: {
-      operationType: 'AI_CHAT_TOKEN',
-      label: 'Meeting summary',
     },
   },
 },
 ```
 
-`operationType` debe ser una de las categorías de facturación de la plataforma: `AI_CHAT_TOKEN`, `AI_WORKFLOW_TOKEN`, `WORKFLOW_EXECUTION`, `CODE_EXECUTION`, `WEB_SEARCH`, `CALL_RECORDING`, `EMAIL_SEND`. Determina cómo se mide el gasto y qué unidad de recuento se aplica (tokens, invocaciones, minutos); no es lo que leen los administradores. La `label` sí lo es.
+`icon` es opcional: un nombre de icono de Twenty (por ejemplo, `IconUserSearch`) que se muestra junto a la etiqueta en el desglose de créditos de tu aplicación en su página de configuración.
+
+`operationType` es opcional y su valor predeterminado es `APP_OPERATION`, la categoría dedicada a los cargos de la aplicación. Establécelo solo cuando el gasto realmente pertenezca a una de las categorías de la plataforma: `AI_CHAT_TOKEN`, `AI_WORKFLOW_TOKEN`, `WORKFLOW_EXECUTION`, `CODE_EXECUTION`, `WEB_SEARCH`, `CALL_RECORDING`, `EMAIL_SEND`, `APP_OPERATION`. Determina cómo se mide el gasto y qué unidad de recuento se aplica (tokens, invocaciones, minutos); no es lo que leen los administradores. La `label` sí lo es.
+
+`CODE_EXECUTION` es donde la plataforma mide las ejecuciones de tus propias funciones, por lo que los cargos registrados allí se mezclan con ellas; usa el valor predeterminado.
 
 La compilación rechaza un `operationType` desconocido, una `label` vacía y un nombre usado tanto por un cargo recurrente como por una operación.
 
@@ -123,8 +127,8 @@ Notas:
 
 * Declarar operaciones permite que Uso divida el gasto de tu app según aquello por lo que cobró. Una app que no declara nada se sigue informando como una sola sección bajo su nombre visible.
 * Se rechaza el cobro de una operación que tu manifiesto no declara. Añádela a `billing.operations` y sincroniza.
-* Varias operaciones pueden compartir un mismo `operationType`. Dos operaciones de enriquecimiento medidas ambas como `CODE_EXECUTION` siguen mostrándose como dos secciones con etiqueta.
-* Sin `operation`, nombra directamente la categoría de facturación con `operationType`, opcionalmente con un `resourceContext` de formato libre. Las dos formas son mutuamente excluyentes: `operation` incluye la etiqueta; `operationType`, no.
+* Varias operaciones pueden compartir un mismo `operationType`. Dos operaciones de enriquecimiento, ambas medidas como `APP_OPERATION`, siguen mostrándose como dos secciones etiquetadas.
+* Sin `operation`, el cargo se registra en `APP_OPERATION` o en la categoría que indiques con `operationType`, opcionalmente con un `resourceContext` de formato libre. Las dos formas son mutuamente excluyentes: `operation` incluye la etiqueta; `operationType`, no.
 * El cobro nunca hace que falle tu función. Se registra y se descarta un error de facturación, y la llamada no realiza ninguna operación fuera del tiempo de ejecución de la función lógica para que las ejecuciones locales y las pruebas no fallen.
 
 ## Comprobar antes de gastar

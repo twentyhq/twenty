@@ -103,6 +103,7 @@ export class SyncCreateRecordCommandAvailabilityExpressionCommand extends Provis
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {
               flatEntityToCreate: [],

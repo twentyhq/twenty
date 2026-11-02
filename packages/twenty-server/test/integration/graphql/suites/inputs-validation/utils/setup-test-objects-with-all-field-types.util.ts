@@ -4,6 +4,7 @@ import { makeGraphqlApiRequest } from 'test/integration/graphql/utils/make-graph
 import { uploadFileWithDirectUpload } from 'test/integration/graphql/utils/upload-file-with-direct-upload.util';
 import { createOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/create-one-object-metadata.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import { waitForDeferredWorkspaceMigrationActionsOrThrow } from 'test/integration/utils/wait-for-deferred-workspace-migration-actions-or-throw.util';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
@@ -81,6 +82,8 @@ export const setupTestObjectsWithAllFieldTypes = async (
     targetObjectMetadata1Id,
     targetObjectMetadata2Id,
   );
+
+  await waitForDeferredWorkspaceMigrationActionsOrThrow();
 
   const createdFlatFieldMetadatas =
     await getAppProviderByClassName<FieldMetadataService>(

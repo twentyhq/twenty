@@ -16,6 +16,7 @@ import { fromApplicationVariableManifestToUniversalFlatApplicationVariable } fro
 import { fromCommandMenuItemManifestToUniversalFlatCommandMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-command-menu-item-manifest-to-universal-flat-command-menu-item.util';
 import { getConnectionProviderManifestLogicFunctionReferences } from 'src/engine/core-modules/application/application-manifest/utils/get-connection-provider-manifest-logic-function-references.util';
 import { fromConnectionProviderManifestToUniversalFlatConnectionProvider } from 'src/engine/core-modules/application/application-manifest/converters/from-connection-provider-manifest-to-universal-flat-connection-provider.util';
+import { fromMcpServerManifestToUniversalFlatMcpServer } from 'src/engine/core-modules/application/application-manifest/converters/from-mcp-server-manifest-to-universal-flat-mcp-server.util';
 import { fromMessagingProviderManifestToUniversalFlatMessagingProvider } from 'src/engine/core-modules/application/application-manifest/converters/from-messaging-provider-manifest-to-universal-flat-messaging-provider.util';
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-field-manifest-to-universal-flat-field-metadata.util';
 import { fromFieldPermissionManifestToUniversalFlatFieldPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-field-permission-manifest-to-universal-flat-field-permission.util';
@@ -33,6 +34,7 @@ import { fromPermissionFlagToUniversalFlatRolePermissionFlag } from 'src/engine/
 import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-role.util';
 import { fromRowLevelPermissionPredicateGroupManifestToUniversalFlatRowLevelPermissionPredicateGroup } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-group-manifest-to-universal-flat-row-level-permission-predicate-group.util';
 import { fromRowLevelPermissionPredicateManifestToUniversalFlatRowLevelPermissionPredicate } from 'src/engine/core-modules/application/application-manifest/converters/from-row-level-permission-predicate-manifest-to-universal-flat-row-level-permission-predicate.util';
+import { fromRelatedRecordPathManifestToUniversalFlatRelatedRecordPath } from 'src/engine/core-modules/application/application-manifest/converters/from-related-record-path-manifest-to-universal-flat-related-record-path.util';
 import { fromSkillManifestToUniversalFlatSkill } from 'src/engine/core-modules/application/application-manifest/converters/from-skill-manifest-to-universal-flat-skill.util';
 import { fromTimelineActivityTypeManifestToUniversalFlatTimelineActivityType } from 'src/engine/core-modules/application/application-manifest/converters/from-timeline-activity-type-manifest-to-universal-flat-timeline-activity-type.util';
 import { fromSettingsMenuItemManifestToUniversalFlatSettingsMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-settings-menu-item-manifest-to-universal-flat-settings-menu-item.util';
@@ -288,6 +290,31 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
           }),
         universalFlatEntityMapsToMutate:
           allUniversalFlatEntityMaps.flatMessagingProviderMaps,
+      });
+    }
+
+    for (const mcpServerManifest of manifest.mcpServers ?? []) {
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity: fromMcpServerManifestToUniversalFlatMcpServer({
+          mcpServerManifest,
+          applicationUniversalIdentifier,
+          now,
+        }),
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatMcpServerMaps,
+      });
+    }
+
+    for (const relatedRecordPathManifest of manifest.relatedRecordPaths ?? []) {
+      addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+        universalFlatEntity:
+          fromRelatedRecordPathManifestToUniversalFlatRelatedRecordPath({
+            relatedRecordPathManifest,
+            applicationUniversalIdentifier,
+            now,
+          }),
+        universalFlatEntityMapsToMutate:
+          allUniversalFlatEntityMaps.flatRelatedRecordPathMaps,
       });
     }
 

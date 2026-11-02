@@ -17,7 +17,7 @@ import { ManageableAgentService } from 'src/engine/metadata-modules/ai/ai-agent/
 import { UpdateAgentTool } from 'src/engine/metadata-modules/ai/ai-agent/tools/update-agent.tool';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
-import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { type PermissionsService } from 'src/engine/permissions/permissions.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 
@@ -39,6 +39,7 @@ const buildAgent = (overrides: Record<string, unknown> = {}) => ({
   triggers: [],
   applicationId: workspaceCustomApplicationId,
   isSystem: false,
+  isActive: true,
   ...overrides,
 });
 
@@ -247,12 +248,13 @@ describe('Agent tools', () => {
   });
 
   describe('list_agents', () => {
-    it('leaves out system agents', async () => {
+    it('leaves out system and archived agents', async () => {
       const { executeTool, agentService } = buildAgentTools();
 
       agentService.findManyAgents.mockResolvedValue([
         buildAgent(),
         buildAgent({ id: 'workflow-step-agent-id', isSystem: true }),
+        buildAgent({ id: 'archived-agent-id', isActive: false }),
       ]);
 
       const output = await executeTool({ toolName: 'list_agents', args: {} });

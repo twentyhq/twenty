@@ -249,16 +249,16 @@ workspace. Public apps use the monorepo CI workflows.
 
 ## Release checklist
 
-- Deploy the Twenty server changes that add Teams to the vetted and
+- Deploy the Twenty server changes that add Teams to the featured and
   billing-exempt application lists **before publishing and the first catalog
-  sync**. Publishing the npm package alone does not make imports free. Vetting
+  sync**. Publishing the npm package alone does not make imports free. Listing
   is set when the catalog first creates the registration; a later catalog sync
-  does not change an existing registration's vetted status.
+  does not change an existing registration's listing status.
 - Confirm the release version in `package.json`, run the development checks
   above, and inspect the built package before publishing with npm provenance.
   Publish through the Twenty CLI so the manifest and built files are included.
 - Complete [registration and shared-webhook setup](#twenty-registration-and-shared-webhook).
-  Confirm the app appears with **Vetted only** enabled and that its owner
+  Confirm the app appears in the marketplace and that its owner
   workspace and Microsoft OAuth credentials are configured.
 - Run a live pilot from a second workspace: consent and connection, the 31-day
   initial import, a newly transcribed meeting, calendar linking, and a repeated

@@ -112,6 +112,7 @@ export class BackfillMessageThreadSubjectCommand extends ProvisionedWorkspaceCom
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {
               flatEntityToCreate: [],
@@ -230,6 +231,7 @@ export class BackfillMessageThreadSubjectCommand extends ProvisionedWorkspaceCom
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             fieldMetadata: {
               flatEntityToCreate: [flatFieldMetadataToCreate],

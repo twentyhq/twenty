@@ -5,6 +5,7 @@ export enum SidePanelPages {
   // Deprecated: use AppPath.RecordIndexPage through the routed-page API.
   ViewRecords = 'view-records',
   MergeRecords = 'merge-records',
+  MergeWithRecord = 'merge-with-record',
   UpdateRecords = 'update-records',
   EditRichText = 'edit-rich-text',
   // Deprecated: use AskAI.

@@ -11,6 +11,9 @@ import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manage
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 import { FlatMcpServerValidatorService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-mcp-server-validator.service';
 
+const WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER =
+  '7f1c2b9e-6a1d-4c55-9a2e-1a6f0d6c2b11';
+
 const WORKSPACE_ID = v4();
 const APPLICATION_UNIVERSAL_IDENTIFIER = v4();
 const OTHER_APPLICATION_UNIVERSAL_IDENTIFIER = v4();
@@ -105,6 +108,8 @@ const buildValidationArgs = (
     buildOptions: {
       isSystemBuild: false,
       applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+      workspaceCustomApplicationUniversalIdentifier:
+        WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
     },
   };
 };

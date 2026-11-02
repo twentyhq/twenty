@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CronModule } from 'src/engine/core-modules/cron/cron.module';
-import { RecordShareModule } from 'src/engine/core-modules/record-share/record-share.module';
+import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';

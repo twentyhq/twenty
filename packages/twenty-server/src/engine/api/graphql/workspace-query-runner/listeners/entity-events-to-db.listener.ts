@@ -135,7 +135,11 @@ export class EntityEventsToDbListener {
         >(
           UpsertTimelineActivityFromInternalEvent.name,
           batchEvent as WorkspaceEventBatch<ObjectRecordNonDestructiveEvent>,
-          { retryLimit: 1 },
+          {
+            retryLimit: 1,
+            workspaceId: batchEvent.workspaceId,
+            isWorkspaceJob: true,
+          },
         ),
       );
     }
@@ -145,7 +149,11 @@ export class EntityEventsToDbListener {
         this.eventLogQueueService.add<WorkspaceEventBatch<T>>(
           CreateEventLogFromInternalEvent.name,
           batchEvent,
-          { retryLimit: 1 },
+          {
+            retryLimit: 1,
+            workspaceId: batchEvent.workspaceId,
+            isWorkspaceJob: true,
+          },
         ),
       );
     }
@@ -174,7 +182,11 @@ export class EntityEventsToDbListener {
     await this.webhookQueueService.add<WorkspaceEventBatchForWebhook<T>>(
       CallWebhookJobsJob.name,
       batchEventForWebhook,
-      { retryLimit: 3 },
+      {
+        retryLimit: 3,
+        workspaceId: batchEventForWebhook.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 
@@ -199,7 +211,11 @@ export class EntityEventsToDbListener {
     await this.triggerQueueService.add<WorkspaceEventBatch<T>>(
       CallDatabaseEventTriggerJobsJob.name,
       batchEvent,
-      { retryLimit: 3 },
+      {
+        retryLimit: 3,
+        workspaceId: batchEvent.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 
@@ -224,7 +240,11 @@ export class EntityEventsToDbListener {
     await this.triggerQueueService.add<WorkspaceEventBatch<T>>(
       CallAgentDatabaseEventTriggersJob.name,
       batchEvent,
-      { retryLimit: 3 },
+      {
+        retryLimit: 3,
+        workspaceId: batchEvent.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 }

@@ -17,6 +17,7 @@ import {
   type ViewFilterManifest,
   type ViewGroupManifest,
   type ViewManifest,
+  type RelatedRecordPathManifest,
   type SkillManifest,
   type ViewSortManifest,
   type WorkflowManifest,
@@ -41,6 +42,8 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { fromFlatAgentToAgentManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-agent-to-agent-manifest.util';
+import { fromFlatRelatedRecordPathToRelatedRecordPathManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-related-record-path-to-related-record-path-manifest.util';
+import { fromRelatedRecordPathManifestToUniversalFlatRelatedRecordPath } from 'src/engine/core-modules/application/application-manifest/converters/from-related-record-path-manifest-to-universal-flat-related-record-path.util';
 import { fromFlatSkillToSkillManifest } from 'src/engine/core-modules/application/application-manifest/converters/from-flat-skill-to-skill-manifest.util';
 import { fromSkillManifestToUniversalFlatSkill } from 'src/engine/core-modules/application/application-manifest/converters/from-skill-manifest-to-universal-flat-skill.util';
 import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/application/utils/from-agent-manifest-to-universal-flat-agent.util';
@@ -438,6 +441,15 @@ const SKILL_MANIFEST: SkillManifest = {
   content: 'Research the company first.',
 };
 
+const RELATED_RECORD_PATH_MANIFEST: RelatedRecordPathManifest = {
+  universalIdentifier: APP_UID,
+  objectUniversalIdentifier: OBJECT_UID,
+  firstFieldMetadataUniversalIdentifier: FIELD_UID,
+  secondFieldMetadataUniversalIdentifier: FIELD_UID,
+  thirdFieldMetadataUniversalIdentifier: FIELD_UID,
+  isInherent: true,
+};
+
 type ExportedKind = {
   metadataName: keyof typeof ALL_UNIVERSAL_FLAT_ENTITY_PROPERTIES_TO_COMPARE_AND_STRINGIFY;
   emittedProperties: string[];
@@ -483,6 +495,7 @@ const EXPORTED_KINDS: ExportedKind[] = [
           type: FieldMetadataType.TEXT,
           description: 'A field',
           icon: 'IconAbc',
+          disabledFieldPermissionActions: ['canUpdateFieldValue'],
           defaultValue: "'x'",
           options: null,
           universalSettings: null,
@@ -823,7 +836,11 @@ const EXPORTED_KINDS: ExportedKind[] = [
         'workspaceMemberFieldUniversalIdentifier',
     },
     workspaceLocalProperties: [],
-    knownGaps: ROW_LEVEL_PERMISSION_KIND_GAPS,
+    knownGaps: {
+      ...ROW_LEVEL_PERMISSION_KIND_GAPS,
+      relationFieldMetadataUniversalIdentifier:
+        'no manifest slot yet for a predicate reached through a relation',
+    },
   },
   {
     metadataName: 'permissionFlag',
@@ -847,22 +864,20 @@ const EXPORTED_KINDS: ExportedKind[] = [
       exportWorkflowManifestOrThrow(WORKFLOW_MANIFEST),
     ),
     renamedProperties: { versionDefinitionHash: 'version' },
-    workspaceLocalProperties: [],
+    workspaceLocalProperties: ['visibility'],
     knownGaps: {
       isSystem: 'system workflows are reported as excluded',
-      visibility:
-        'private workflows are reported as excluded, exported workflows are visible to the workspace',
       lastPublishedVersionId:
-        'legacy workspace version pointer, always null for synced application workflows',
+        'legacy workspace version pointer, kept while the active version matches the definition',
       lastPublishedCoreWorkflowVersionId:
-        'the sync points it at the version it derives from the definition',
+        'the sync points it at the active version, or at the one it publishes from the definition',
     },
   },
   {
     metadataName: 'agent',
     emittedProperties: Object.keys(EXPORTED_AGENT_MANIFEST),
     renamedProperties: {},
-    workspaceLocalProperties: [],
+    workspaceLocalProperties: WORKSPACE_LOCAL_PROPERTIES,
     knownGaps: {
       modelConfiguration:
         'no manifest slot; an agent with one is reported as unsupported',
@@ -880,6 +895,8 @@ const EXPORTED_KINDS: ExportedKind[] = [
         'member role assignments are reported as excluded, only agent roles are exported',
       apiKeyId:
         'API key role assignments are reported as excluded, only agent roles are exported',
+      webhookUniversalIdentifier:
+        'webhook role assignments are reported as excluded, only agent roles are exported',
     },
   },
   {
@@ -894,13 +911,29 @@ const EXPORTED_KINDS: ExportedKind[] = [
       }),
     ),
     renamedProperties: {},
-    workspaceLocalProperties: [],
+    workspaceLocalProperties: WORKSPACE_LOCAL_PROPERTIES,
     knownGaps: {
-      isActive:
-        'no manifest slot and no overrides; a deactivated skill is reported as unsupported',
       isSystem:
         'always false for application skills; any other value is reported as unsupported',
     },
+  },
+  {
+    metadataName: 'relatedRecordPath',
+    emittedProperties: Object.keys(
+      fromFlatRelatedRecordPathToRelatedRecordPathManifest({
+        flatRelatedRecordPath:
+          fromRelatedRecordPathManifestToUniversalFlatRelatedRecordPath({
+            relatedRecordPathManifest: RELATED_RECORD_PATH_MANIFEST,
+            applicationUniversalIdentifier: APP_UID,
+            now: NOW,
+          }),
+      }),
+    ),
+    renamedProperties: {
+      objectMetadataUniversalIdentifier: 'objectUniversalIdentifier',
+    },
+    workspaceLocalProperties: [],
+    knownGaps: {},
   },
 ];
 

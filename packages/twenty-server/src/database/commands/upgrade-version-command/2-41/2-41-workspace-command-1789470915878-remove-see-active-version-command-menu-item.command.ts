@@ -47,12 +47,11 @@ export class RemoveSeeActiveVersionCommandMenuItemCommand extends ProvisionedWor
         'flatFrontComponentMaps',
       ]);
 
-    const itemToDelete = findFlatEntityByUniversalIdentifier<FlatCommandMenuItem>(
-      {
+    const itemToDelete =
+      findFlatEntityByUniversalIdentifier<FlatCommandMenuItem>({
         flatEntityMaps: flatCommandMenuItemMaps,
         universalIdentifier: SEE_ACTIVE_VERSION_WORKFLOW_UNIVERSAL_IDENTIFIER,
-      },
-    );
+      });
 
     if (!isDefined(itemToDelete)) {
       this.logger.log(
@@ -101,6 +100,7 @@ export class RemoveSeeActiveVersionCommandMenuItemCommand extends ProvisionedWor
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,

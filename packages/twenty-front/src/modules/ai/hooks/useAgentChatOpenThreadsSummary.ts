@@ -10,12 +10,15 @@ import {
 
 const EMPTY_AGENT_CHAT_OPEN_THREADS_SUMMARY = {
   openThreadCount: 0,
+  unreadOpenThreadCount: 0,
   needsInputThreadCount: 0,
+  mentionThreadCount: 0,
+  assignedToMeThreadCount: 0,
+  assignedThreadCount: 0,
+  unassignedThreadCount: 0,
   hasUnreadOpenThread: false,
   hasUnreadMentionThread: false,
   hasUnreadAssignedThread: false,
-  unreadMentionThreadCount: 0,
-  unreadAssignedThreadCount: 0,
 };
 
 // Counted by the server over every chat, past the pages loaded here; it is

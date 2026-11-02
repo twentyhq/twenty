@@ -508,7 +508,7 @@ Ogni connessione ha uno di due ambiti:
 Il `scope` del provider stabilisce quale ambito riceveranno le sue nuove connessioni:
 
 * `scope: 'WORKSPACE'` (il valore predefinito) — l'app funziona con connessioni condivise con lo spazio di lavoro. **Aggiungi connessione** nelle impostazioni dello spazio di lavoro dell'app crea una connessione condivisa nello spazio di lavoro.
-* `scope: 'USER'` — ciascun membro connette il proprio account, creando connessioni personali. I membri li aggiungono, ricollegano e rimuovono dalla pagina dell'app in **Impostazioni > Utente > Preferenze app**, per la quale è necessaria l'autorizzazione `CONNECTED_ACCOUNTS` (App utente). Le impostazioni dello spazio di lavoro dell'app non dispongono del pulsante **Aggiungi connessione** per un provider `USER`.
+* `scope: 'USER'` — ciascun membro connette il proprio account, creando connessioni personali. I membri li aggiungono, ricollegano e rimuovono dalla pagina dell'app in **Impostazioni > Utente > Preferenze app**, che richiede l'autorizzazione App utente. Le impostazioni dello spazio di lavoro dell'app non dispongono del pulsante **Aggiungi connessione** per un provider `USER`.
 
 <Note>
   **Preferenze app** non è ancora abilitato in ogni spazio di lavoro: dove non lo è,
@@ -520,7 +520,7 @@ Un provider ha esattamente un ambito. Se la tua app necessita sia di una credenz
 
 Una connessione ha sempre l'ambito del proprio provider e l'ambito di un provider fa parte della sua identità: una versione successiva non può modificare lo `scope` di un provider esistente e l'aggiornamento viene rifiutato se tenta di farlo. Per spostare un servizio da un ambito all'altro, dichiara un nuovo provider con un nuovo `universalIdentifier` e rimuovi quello vecchio. L'aggiornamento elimina quindi il vecchio provider e ogni connessione effettuata con esso tramite il normale percorso di disconnessione (`onDisconnectLogicFunction`, revoca del token, pulizia del canale), e i membri si connettono nuovamente tramite il nuovo provider.
 
-L'aggiunta o la riconnessione di una connessione **Solo per me** richiede l'autorizzazione `CONNECTED_ACCOUNTS`, mentre l'aggiunta o la riconnessione di una connessione **Condivisa nell'area di lavoro** richiede l'autorizzazione `APPLICATIONS`.
+L'aggiunta o il ricollegamento di una connessione **Solo per me** richiede l'autorizzazione App utente, mentre l'aggiunta o il ricollegamento di una connessione **Condivisa nell'area di lavoro** richiede l'autorizzazione App dell'area di lavoro.
 
 Usa quella giusta per ciascun handler:
 

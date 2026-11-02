@@ -104,6 +104,39 @@ Note despre schemă:
 * `additionalProperties: false` (opțional) interzice orice proprietate care nu este declarată în `properties`.
 
 </Accordion>
+<Accordion title="defineMcpServer" description="Expuneți un server MCP extern către IA spațiului de lucru (beta)">
+
+<Warning>
+  Serverele MCP sunt în versiune beta și nu sunt încă active: le puteți declara, dar spațiile de lucru nu le pot folosi instrumentele până când funcționalitatea nu este lansată.
+</Warning>
+
+Utilizați `defineMcpServer()` pentru a livra un server MCP la distanță (HTTP streaming) împreună cu aplicația dvs., astfel încât IA spațiului de lucru să îi poată utiliza instrumentele fără a sincroniza datele respective în Twenty:
+
+```ts src/mcp-servers/github.ts
+import { defineMcpServer } from 'twenty-sdk/define';
+
+import { GITHUB_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+
+export default defineMcpServer({
+  universalIdentifier: '0b6c4f7e-3d5a-4a8e-9a0d-6f1e2c3b4a01',
+  name: 'github',
+  label: 'GitHub',
+  url: 'https://api.githubcopilot.com/mcp/',
+  connectionProvider: {
+    universalIdentifier: GITHUB_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+Puncte cheie:
+* `name` este în snake_case (litere mici, cifre și caractere de subliniere, începe cu o literă, maximum 32 de caractere) și este unic în spațiul de lucru. Acesta este prefixul numelor instrumentelor serverului.
+* `url` trebuie să fie un URL HTTP sau HTTPS.
+* `connectionProvider` (opțional) face referire la un [furnizor de conexiune](/ro/developers/extend/apps/logic/connections) declarat de aceeași aplicație. Apelurile trimit tokenul de acces al conexiunii respective ca token Bearer. Omiteți-l pentru un server public.
+* URL-ul nu se poate modifica într-o versiune ulterioară cât timp este asociat un furnizor de conexiune, astfel încât tokenurile să nu fie trimise niciodată către o altă gazdă.
+* Spațiile de lucru pot dezactiva serverul; o versiune ulterioară a aplicației păstrează această opțiune.
+* Necesită `"engines": { "twenty": ">=2.53.0" }`.
+
+</Accordion>
 <Accordion title="runAgent" description="Rulează un agent dintr-o funcție logică">
 
 `runAgent()` permite unei funcții logice să ruleze unul dintre agenții aplicației tale (cu abilitățile și instrumentele sale). Identifică agentul prin `universalIdentifier` pe care l-ai transmis
@@ -281,57 +314,10 @@ Orice altceva — o sesiune simplă de utilizator, o cheie API fără un token a
 <Accordion title="sendInboxMessage" description="Începeți sau continuați o conversație în chaturile membrilor">
 
 `sendInboxMessage()` postează un mesaj din aplicația dvs. în chaturile unuia sau mai multor
-membri ai spațiului de lucru. Aceasta se poate încheia cu un apel de instrument la care membrul răspunde din chat, după care conversația continuă cu asistentul Twenty.
-
-```ts src/logic-functions/notify-first-recording.ts
-import { sendInboxMessage } from 'twenty-sdk/logic-function';
-
-const { threadId } = await sendInboxMessage({
-  workspaceMemberIds: [workspaceMemberId],
-  threadKey: 'first-call-recording',
-  idempotencyKey: 'first-call-recording',
-  title: 'Your first call recording is ready',
-  text: 'Your first call was recorded: **Weekly sync**.',
-  toolCall: {
-    toolName: 'ask_question',
-    input: {
-      header: 'Share',
-      question: 'Do you want to share it with the other attendees?',
-      options: [{ label: 'Draft a recap email' }, { label: 'Not now' }],
-    },
-  },
-});
-```
-
-Puncte cheie:
-* `workspaceMemberIds` enumeră membrii care primesc conversația, cel puțin
-  unul. Primul membru al unei conversații noi este proprietarul acesteia, iar ceilalți o urmăresc
-  ca participanți. O trimitere ulterioară cu aceeași cheie care enumeră membri noi îi adaugă;
-  membrii omiși păstrează conversația.
-* `threadKey` selectează conversația pentru această aplicație, partajată de fiecare membru către care
-  este trimisă. O cheie nouă începe o conversație cu titlul `title`; o cheie pe care ați folosit-o înainte
-  adaugă mesajul la conversația respectivă.
-* `idempotencyKey` identifică mesajul în cadrul conversației. Trimiterea din nou cu aceleași chei nu scrie nimic nou, astfel încât reîncercările și rulările simultane nu dublează niciodată un mesaj.
-* `toolCall` (opțional) încheie mesajul cu unul dintre următoarele:
-  * un apel la care răspunde membrul, care întrerupe conversația: `ask_question`
-    (o întrebare cu alegere multiplă), `request_form` (câmpuri de completat) sau
-    `propose_tool_call` (un apel de aprobat). Elementul său `input` primește `toolName`,
-    `arguments` cu care ați apela instrumentul și un `summary` dintr-o singură propoziție.
-    Instrumentul trebuie să fie unul pe care rolul implicit al aplicației dvs. l-ar putea executa singur, cum ar fi
-    `create_one_person` sau `update_one_opportunity` (cu `id` al înregistrării); un
-    e-mail (`send_email` sau `draft_email`, cu `recipients`, `subject` și un
-    `body` în HTML) nu necesită permisiunea aplicației dvs. Membrul examinează apelul
-    în același card ca un apel propus de asistent, îl editează dacă dorește, iar
-    apelul aprobat se execută cu propriul său acces;
-  * unul dintre instrumentele proprii ale aplicației dvs., prin `logicFunctionUniversalIdentifier`, redat de componenta sa front-end cu `input` și `output` pe care le transmiteți. Nu întrerupe conversația.
-* Doar un apel la care membrul răspunde poate aștepta într-o conversație la un moment dat: trimiterea altuia înainte ca acesta să răspundă eșuează cu `THREAD_AWAITING_ANSWER`. Mesajele simple și apelurile instrumentelor aplicației sunt în continuare acceptate.
-* Doar membrul care deține o conversație o poate șterge, iar o conversație ștearsă
-  dispare pentru fiecare membru: nu este recreată și nu i se
-  adaugă nimic. Ceilalți membri se pot dezabona pentru a o elimina din propria
-  căsuță de intrare.
-* Fiecare membru trebuie să aibă permisiunea `AI`, iar apelul eșuează fără
-  a scrie mesajul atunci când unul dintre ei nu poate avea conversația. [Rolul implicit](/ro/developers/extend/apps/config/roles) al aplicației dvs. trebuie să acorde
-  `SystemPermissionFlag.AI`.
+membri ai spațiului de lucru. Se poate încheia cu un apel de instrument la care membrul răspunde din chat,
+după care conversația continuă cu asistentul Twenty. Consultați
+[Căsuța de intrare](/ro/developers/extend/apps/logic/inbox) pentru opțiunile sale, funcțiile ajutătoare pentru mențiuni
+și cum să publicați dintr-o componentă front.
 
 </Accordion>
 </AccordionGroup>

@@ -325,6 +325,7 @@ describe('SidePanelRecordCreationFormPage', () => {
         requestId: REQUEST_ID,
         objectMetadataId: OBJECT_METADATA_ID,
         initialDraftRecord: {},
+        canCreateAnother: true,
       },
     );
   });
@@ -543,6 +544,57 @@ describe('SidePanelRecordCreationFormPage', () => {
     expect(
       screen.queryByRole('menuitem', { name: 'Edit form' }),
     ).not.toBeInTheDocument();
+  });
+
+  it('leaves Create another out of the options menu when the request allows a single record', async () => {
+    const user = userEvent.setup();
+
+    jotaiStore.set(
+      recordCreationFormRequestComponentState.atomFamily({
+        instanceId: REQUEST_ID,
+      }),
+      {
+        requestId: REQUEST_ID,
+        objectMetadataId: OBJECT_METADATA_ID,
+        initialDraftRecord: {},
+        canCreateAnother: false,
+      },
+    );
+
+    renderPage();
+
+    await user.click(screen.getByRole('button', { name: 'Options' }));
+
+    expect(
+      await screen.findByRole('menuitem', { name: 'Edit form' }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole('menuitem', { name: /Create another/ }),
+    ).not.toBeInTheDocument();
+  });
+
+  it('hides the options menu when the request allows a single record and the member cannot edit layouts', () => {
+    mockHasPermissionFlag.mockReturnValue(false);
+    jotaiStore.set(
+      recordCreationFormRequestComponentState.atomFamily({
+        instanceId: REQUEST_ID,
+      }),
+      {
+        requestId: REQUEST_ID,
+        objectMetadataId: OBJECT_METADATA_ID,
+        initialDraftRecord: {},
+        canCreateAnother: false,
+      },
+    );
+
+    renderPage();
+
+    expect(
+      screen.queryByRole('button', { name: 'Options' }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByTestId('record-creation-form-create-button'),
+    ).toBeInTheDocument();
   });
 
   it('creates another record from the options menu and keeps an empty form open', async () => {

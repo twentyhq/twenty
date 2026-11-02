@@ -423,6 +423,41 @@ describe('manifestValidate', () => {
       expect(result.errors).toHaveLength(0);
     });
 
+    it('should not flag an MCP server referencing its connection provider as a duplicate', () => {
+      const connectionProviderId = '550e8400-e29b-41d4-a716-446655440048';
+
+      const result = manifestValidate({
+        ...validManifest,
+        connectionProviders: [
+          {
+            universalIdentifier: connectionProviderId,
+            name: 'github',
+            displayName: 'GitHub',
+            type: 'oauth',
+            oauth: {
+              authorizationEndpoint: 'https://github.com/login/oauth/authorize',
+              tokenEndpoint: 'https://github.com/login/oauth/access_token',
+              scopes: ['repo'],
+              clientIdVariable: 'GITHUB_CLIENT_ID',
+              clientSecretVariable: 'GITHUB_CLIENT_SECRET',
+            },
+          },
+        ],
+        mcpServers: [
+          {
+            universalIdentifier: '550e8400-e29b-41d4-a716-446655440049',
+            name: 'github',
+            label: 'GitHub',
+            url: 'https://api.githubcopilot.com/mcp/',
+            connectionProvider: { universalIdentifier: connectionProviderId },
+          },
+        ],
+      });
+
+      expect(result.isValid).toBe(true);
+      expect(result.errors).toHaveLength(0);
+    });
+
     it('should not flag a custom connection provider referencing its authorize and callback logic functions as duplicates', () => {
       const authorizeLogicFunctionId = '550e8400-e29b-41d4-a716-446655440042';
       const callbackLogicFunctionId = '550e8400-e29b-41d4-a716-446655440043';
@@ -1401,6 +1436,37 @@ describe('manifestValidate', () => {
             'must route through a MANY_TO_ONE relation or a junction-backed ONE_TO_MANY relation',
           ),
         ]),
+      );
+    });
+  });
+
+  describe('settings menu item slug validation', () => {
+    const frontComponentUniversalIdentifier =
+      '7a777777-7777-4777-8777-777777777777';
+
+    it('rejects two settings menu items sharing a slug', () => {
+      const result = manifestValidate({
+        ...validManifest,
+        settingsMenuItems: [
+          {
+            universalIdentifier: '8a888888-8888-4888-8888-888888888881',
+            frontComponentUniversalIdentifier,
+            title: 'Sync',
+            slug: 'sync',
+          },
+          {
+            universalIdentifier: '8a888888-8888-4888-8888-888888888882',
+            frontComponentUniversalIdentifier,
+            title: 'My sync',
+            scope: 'USER',
+            slug: 'sync',
+          },
+        ],
+      });
+
+      expect(result.isValid).toBe(false);
+      expect(result.errors).toContain(
+        'Settings menu item slug "sync" is used more than once. Slugs must be unique within an application.',
       );
     });
   });

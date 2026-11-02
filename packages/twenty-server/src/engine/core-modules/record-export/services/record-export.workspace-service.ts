@@ -37,6 +37,7 @@ import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrap
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { buildApplicationQueueJobScope } from 'src/engine/core-modules/application/utils/build-application-queue-job-scope.util';
 import {
   RECORD_EXPORT_CONNECTION_TTL_MS,
   RECORD_EXPORT_DOWNLOAD_TOKEN_TTL_SECONDS,
@@ -60,7 +61,7 @@ import { hashUserSessionToken } from 'src/engine/core-modules/user-session/utils
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { fromUserEntityToFlat } from 'src/engine/core-modules/user/utils/from-user-entity-to-flat.util';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -224,10 +225,22 @@ export class RecordExportWorkspaceService {
   }
 
   async enqueue(recordExport: RecordExport): Promise<string> {
+    const { workspaceId, applicationId } = recordExport;
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatApplicationMaps',
+      ]);
     const jobId = await this.messageQueueService.add(
       'GenerateRecordExportJob',
       recordExport,
-      { id: recordExport.id },
+      {
+        id: recordExport.id,
+        ...buildApplicationQueueJobScope({
+          workspaceId,
+          applicationId,
+          flatApplicationMaps,
+        }),
+      },
     );
     if (!isDefined(jobId)) {
       throw new RecordExportException(

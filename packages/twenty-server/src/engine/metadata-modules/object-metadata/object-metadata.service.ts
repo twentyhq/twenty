@@ -300,17 +300,20 @@ export class ObjectMetadataService {
     workspaceId,
     isSystemBuild = false,
     ownerFlatApplication,
+    shouldDeferActions,
   }: {
     deleteObjectInput: DeleteOneObjectInput;
     workspaceId: string;
     isSystemBuild?: boolean;
     ownerFlatApplication?: FlatApplication;
+    shouldDeferActions?: boolean;
   }): Promise<FlatObjectMetadata> {
     const deletedObjectMetadataDtos = await this.deleteManyObjectMetadatas({
       deleteObjectInputs: [deleteObjectInput],
       workspaceId,
       isSystemBuild,
       ownerFlatApplication,
+      shouldDeferActions,
     });
 
     if (deletedObjectMetadataDtos.length !== 1) {
@@ -330,11 +333,13 @@ export class ObjectMetadataService {
     deleteObjectInputs,
     isSystemBuild = false,
     ownerFlatApplication,
+    shouldDeferActions,
   }: {
     deleteObjectInputs: DeleteOneObjectInput[];
     workspaceId: string;
     isSystemBuild?: boolean;
     ownerFlatApplication?: FlatApplication;
+    shouldDeferActions?: boolean;
   }): Promise<FlatObjectMetadata[]> {
     if (deleteObjectInputs.length === 0) {
       return [];
@@ -458,6 +463,7 @@ export class ObjectMetadataService {
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          shouldDeferActions,
           allFlatEntityOperationByMetadataName: {
             objectMetadata: {
               flatEntityToCreate: [],

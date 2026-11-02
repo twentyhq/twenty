@@ -6,7 +6,22 @@ export class AgentChatOpenThreadsSummaryDTO {
   openThreadCount: number;
 
   @Field(() => Int)
+  unreadOpenThreadCount: number;
+
+  @Field(() => Int)
   needsInputThreadCount: number;
+
+  @Field(() => Int)
+  mentionThreadCount: number;
+
+  @Field(() => Int)
+  assignedToMeThreadCount: number;
+
+  @Field(() => Int)
+  assignedThreadCount: number;
+
+  @Field(() => Int)
+  unassignedThreadCount: number;
 
   @Field(() => Boolean)
   hasUnreadOpenThread: boolean;
@@ -16,10 +31,4 @@ export class AgentChatOpenThreadsSummaryDTO {
 
   @Field(() => Boolean)
   hasUnreadAssignedThread: boolean;
-
-  @Field(() => Int)
-  unreadMentionThreadCount: number;
-
-  @Field(() => Int)
-  unreadAssignedThreadCount: number;
 }

@@ -69,6 +69,7 @@ export class FixGoToRolesSettingsCommandMenuItemPathCommand extends ProvisionedW
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           workspaceId,
           applicationUniversalIdentifier:

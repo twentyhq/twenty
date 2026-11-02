@@ -1,7 +1,7 @@
 import { useLingui } from '@lingui/react/macro';
 import { useRef } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import {
   type NavigationMenuItem,
   PermissionFlagType,
