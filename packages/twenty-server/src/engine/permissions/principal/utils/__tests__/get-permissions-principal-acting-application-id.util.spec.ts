@@ -63,6 +63,24 @@ describe('getPermissionsPrincipalActingApplicationId', () => {
     ).toBe(APPLICATION_ID);
   });
 
+  it('keeps the owning application of a role-only application config', () => {
+    expect(
+      getPermissionsPrincipalActingApplicationId({
+        principal: {
+          mainPrincipal: {
+            roleId: APPLICATION_ROLE_ID,
+            isDeprecatedRoleOnly: true,
+          },
+          applicationPrincipal: {
+            roleId: APPLICATION_ROLE_ID,
+            isDeprecatedRoleOnly: true,
+          },
+        },
+        flatApplicationMaps,
+      }),
+    ).toBe(APPLICATION_ID);
+  });
+
   it('ignores an app role the member also holds', () => {
     expect(
       getPermissionsPrincipalActingApplicationId({

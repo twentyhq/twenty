@@ -101,14 +101,20 @@ const resolveApplicationPrincipal = ({
   applicationPrincipal: PermissionsApplicationPrincipal;
   mainPrincipal: PermissionsMainPrincipalWithRole;
   roleMaps: PermissionsPrincipalRoleMaps;
-}): PermissionsApplicationPrincipalWithRole => {
+}): PermissionsApplicationPrincipalWithRole | undefined => {
   if (!('applicationId' in applicationPrincipal)) {
     return applicationPrincipal;
   }
 
+  const flatApplication =
+    roleMaps.flatApplicationMaps.byId[applicationPrincipal.applicationId];
+
+  if (!isDefined(flatApplication) || isDefined(flatApplication.deletedAt)) {
+    return undefined;
+  }
+
   const { applicationRoleId } = resolveApplicationRoleId({
-    application:
-      roleMaps.flatApplicationMaps.byId[applicationPrincipal.applicationId],
+    application: flatApplication,
     userRoleId:
       'workspaceMemberId' in mainPrincipal ? mainPrincipal.roleId : undefined,
   });
@@ -121,7 +127,7 @@ const resolveApplicationPrincipal = ({
     : { isCustomApp: true };
 };
 
-// undefined denies everything: the main principal has no role
+// undefined denies everything: the main principal has no role, or the application is gone
 export const resolvePermissionsPrincipalsWithRoles = ({
   principalsContext,
   roleMaps,
@@ -143,6 +149,16 @@ export const resolvePermissionsPrincipalsWithRoles = ({
     roleId: mainRoleId,
   };
 
+  const applicationPrincipal = resolveApplicationPrincipal({
+    applicationPrincipal: principalsContext.applicationPrincipal,
+    mainPrincipal,
+    roleMaps,
+  });
+
+  if (!isDefined(applicationPrincipal)) {
+    return undefined;
+  }
+
   return {
     workspaceId: principalsContext.workspaceId,
     mainPrincipal,
@@ -150,10 +166,6 @@ export const resolvePermissionsPrincipalsWithRoles = ({
       limitingPrincipal: principalsContext.limitingPrincipal,
       roleMaps,
     }),
-    applicationPrincipal: resolveApplicationPrincipal({
-      applicationPrincipal: principalsContext.applicationPrincipal,
-      mainPrincipal,
-      roleMaps,
-    }),
+    applicationPrincipal,
   };
 };

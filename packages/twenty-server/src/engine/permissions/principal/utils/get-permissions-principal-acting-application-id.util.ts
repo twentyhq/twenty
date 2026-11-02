@@ -24,7 +24,8 @@ export const getPermissionsPrincipalActingApplicationId = ({
 
   if (
     !('roleId' in applicationPrincipal) ||
-    applicationPrincipal.roleId === mainPrincipal.roleId ||
+    ('workspaceMemberId' in mainPrincipal &&
+      applicationPrincipal.roleId === mainPrincipal.roleId) ||
     applicationPrincipal.roleId === limitingPrincipal?.roleId
   ) {
     return undefined;

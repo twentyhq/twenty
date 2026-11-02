@@ -87,6 +87,31 @@ describe('resolvePermissionsPrincipalsWithRoles', () => {
     ).toBeUndefined();
   });
 
+  it('denies an application that was deleted', () => {
+    expect(
+      resolvePermissionsPrincipalsWithRoles({
+        principalsContext: {
+          workspaceId: WORKSPACE_ID,
+          mainPrincipal: { workspaceMemberId: MEMBER_ID },
+          applicationPrincipal: { applicationId: 'deleted-application' },
+        },
+        roleMaps: {
+          ...roleMaps,
+          flatApplicationMaps: {
+            byId: {
+              'deleted-application': {
+                id: 'deleted-application',
+                defaultRoleId: 'application-role',
+                sourceType: ApplicationRegistrationSourceType.NPM,
+                deletedAt: new Date('2026-11-01T00:00:00.000Z'),
+              },
+            },
+          },
+        },
+      }),
+    ).toBeUndefined();
+  });
+
   it('denies a main principal without a role', () => {
     expect(
       resolvePermissionsPrincipalsWithRoles({
