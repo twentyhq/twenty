@@ -19,7 +19,8 @@ import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/a
 import { type AgentChatThreadTriageChange } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-triage-change.type';
 import { type AgentChatThreadWriteStep } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-write-step.type';
 import { buildAgentChatThreadTriageChange } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-triage-change.util';
-import { findAgentChatSnoozeRemainingDelay } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-snooze-remaining-delay.util';
+import { buildAgentChatSnoozeDueCondition } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-snooze-due-condition.util';
+import { isAgentChatSnoozeStillWaiting } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-chat-snooze-still-waiting.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -156,27 +157,6 @@ export class AgentChatThreadTriageService {
     threadId,
     snoozedUntil,
   }: EndAgentChatChannelSnoozeJobData): Promise<void> {
-    const remainingDelay = await this.threadRepository.query(
-      workspaceId,
-      ({ manager }) =>
-        findAgentChatSnoozeRemainingDelay({ manager, snoozedUntil }),
-    );
-
-    // This server's clock ran ahead of the database's
-    if (remainingDelay > 0) {
-      await this.scheduleChannelSnoozeEnd({
-        workspaceId,
-        threadId,
-        snoozedUntil,
-        delay: Math.max(
-          remainingDelay,
-          AGENT_CHAT_THREAD_SNOOZE_END_RECHECK_MINIMUM_DELAY_MS,
-        ),
-      });
-
-      return;
-    }
-
     const threadBefore = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
     });
@@ -185,31 +165,43 @@ export class AgentChatThreadTriageService {
       return;
     }
 
-    // A snooze the channel replaced or cleared since has nothing to end
-    const endedThreadIds = await this.threadRepository.query(
+    const { affected } = await this.threadRepository.update(
       workspaceId,
-      ({ manager, table }) =>
-        manager.query<{ id: string }[]>(
-          `WITH ended_thread AS (
-             UPDATE ${table('agentChatThread')}
-             SET "channelArchivedAt" = NULL, "updatedAt" = now()
-             WHERE id = $1 AND "channelSnoozedUntil" = $2
-               AND "channelArchivedAt" IS NOT NULL
-             RETURNING id
-           )
-           SELECT id FROM ended_thread`,
-          [threadId, snoozedUntil],
-        ),
+      {
+        id: threadId,
+        channelArchivedAt: Not(IsNull()),
+        channelSnoozedUntil: buildAgentChatSnoozeDueCondition(snoozedUntil),
+      },
+      { channelArchivedAt: null },
     );
 
-    if (endedThreadIds.length === 0) {
+    if (affected > 0) {
+      await this.threadRecordEventService.emitThreadUpdated({
+        workspaceId,
+        threadBefore,
+      });
+
       return;
     }
 
-    await this.threadRecordEventService.emitThreadUpdated({
-      workspaceId,
-      threadBefore,
-    });
+    // This server's clock ran ahead of the database's
+    if (
+      isAgentChatSnoozeStillWaiting({
+        archivedAt: threadBefore.channelArchivedAt,
+        snoozedUntil: threadBefore.channelSnoozedUntil,
+        jobSnoozedUntil: snoozedUntil,
+      })
+    ) {
+      await this.scheduleChannelSnoozeEnd({
+        workspaceId,
+        threadId,
+        snoozedUntil,
+        delay: Math.max(
+          new Date(snoozedUntil).getTime() - Date.now(),
+          AGENT_CHAT_THREAD_SNOOZE_END_RECHECK_MINIMUM_DELAY_MS,
+        ),
+      });
+    }
   }
 
   // Queued before the write, so no saved snooze lacks its end; the end of a

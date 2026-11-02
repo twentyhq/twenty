@@ -1,3 +1,5 @@
+import { IsNull, Not } from 'typeorm';
+
 import { hasAgentChatThreadChannelField } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-agent-chat-thread-channel-field.util';
 import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
@@ -13,7 +15,7 @@ export const detachAgentChatChannelThreadsFromWorkspaceMember = async ({
 }: {
   threadRepository: Pick<
     AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
-    'query'
+    'update'
   >;
   flatFieldMetadataMaps: Pick<
     FlatEntityMaps<FlatFieldMetadata>,
@@ -26,12 +28,9 @@ export const detachAgentChatChannelThreadsFromWorkspaceMember = async ({
     return;
   }
 
-  await threadRepository.query(workspaceId, ({ manager, table }) =>
-    manager.query(
-      `UPDATE ${table('agentChatThread')}
-       SET "workspaceMemberId" = NULL, "updatedAt" = now()
-       WHERE "workspaceMemberId" = $1 AND "channelId" IS NOT NULL`,
-      [workspaceMemberId],
-    ),
+  await threadRepository.update(
+    workspaceId,
+    { workspaceMemberId, channelId: Not(IsNull()) },
+    { workspaceMemberId: null },
   );
 };

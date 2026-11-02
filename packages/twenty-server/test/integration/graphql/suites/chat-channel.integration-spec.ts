@@ -20,9 +20,13 @@ import { listChatThreadIds } from 'test/integration/utils/list-chat-thread-ids.u
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
 
 import { type PostgresAdvisoryLockService } from 'src/database/typeorm/postgres-advisory-lock.service';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { type MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { type AgentChatChannelMetadataService } from 'src/engine/metadata-modules/agent-chat-channel/services/agent-chat-channel-metadata.service';
 import { type AgentChatChannelSummaryDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-channel-summary.dto';
 import { type UpdateAgentChatChannelInput } from 'src/engine/metadata-modules/ai/ai-chat/dtos/update-agent-chat-channel.input';
+import { END_AGENT_CHAT_CHANNEL_SNOOZE_JOB_NAME } from 'src/engine/metadata-modules/ai/ai-chat/jobs/end-agent-chat-channel-snooze-job-name.constant';
 import { type AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
 import { type AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { type AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-triage.service';
@@ -1306,10 +1310,12 @@ describe('Chat channels through the authenticated API', () => {
 
     expect(pastResponse.body.errors[0].extensions.code).toBe('BAD_USER_INPUT');
 
+    const futureSnoozedUntil = buildFutureSnoozedUntil();
+
     assertGraphQLSuccessfulResponse(
       await makeMetadataApiRequest({
         query: SNOOZE_IN_CHANNEL,
-        variables: { threadId, snoozedUntil: buildFutureSnoozedUntil() },
+        variables: { threadId, snoozedUntil: futureSnoozedUntil },
       }),
     );
 
@@ -1321,17 +1327,42 @@ describe('Chat channels through the authenticated API', () => {
       snoozedUntil: expect.anything(),
     });
 
+    const triageService =
+      getAppProviderByClassName<AgentChatThreadTriageService>(
+        'AgentChatThreadTriageService',
+      );
+    const enqueueDelayedJob = jest
+      .spyOn(
+        global.app.get<MessageQueueService>(
+          getQueueToken(MessageQueue.delayedJobsQueue),
+        ),
+        'add',
+      )
+      .mockResolvedValueOnce(undefined);
+
+    await triageService.endChannelSnooze({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      threadId,
+      snoozedUntil: futureSnoozedUntil,
+    });
+
+    expect((await readChannelState(threadId)).channelArchivedAt).not.toBeNull();
+    expect(enqueueDelayedJob).toHaveBeenCalledWith(
+      END_AGENT_CHAT_CHANNEL_SNOOZE_JOB_NAME,
+      {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        threadId,
+        snoozedUntil: futureSnoozedUntil,
+      },
+      expect.objectContaining({ delay: expect.any(Number) }),
+    );
+
     const snoozedUntil = new Date(Date.now() - 1000);
 
     await global.testDataSource.query(
       `UPDATE ${SCHEMA}."agentChatThread" SET "channelSnoozedUntil" = $2 WHERE id = $1`,
       [threadId, snoozedUntil],
     );
-
-    const triageService =
-      getAppProviderByClassName<AgentChatThreadTriageService>(
-        'AgentChatThreadTriageService',
-      );
 
     const replacedSnoozedUntil = new Date(Date.now() - 5000).toISOString();
 
