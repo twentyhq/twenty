@@ -22,6 +22,7 @@ import {
 import { type Repository } from 'typeorm';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import { getAuthContextApplication } from 'src/engine/core-modules/auth/utils/get-auth-context-application.util';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
@@ -45,7 +46,6 @@ import { assertAgentResponseFormatHasOutputFieldsOrThrow } from 'src/engine/meta
 import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
 import { buildStrictAgentResponseSchema } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-strict-agent-response-schema.util';
 import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/provider-options.util';
-import { resolveAgentRunCallingApplication } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-agent-run-calling-application.util';
 import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/replace-unsupported-file-parts.util';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { STRUCTURED_OUTPUT_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/structured-output-system-prompt.const';
@@ -368,7 +368,7 @@ export class AgentRunTurnService {
       workspaceId: agent.workspaceId,
       agentId: agent.id,
       authContext,
-      application: resolveAgentRunCallingApplication(authContext),
+      application: getAuthContextApplication(authContext),
       actorContext,
       rolePermissionConfig: buildAgentRolePermissionConfig({
         agentRoleId,
