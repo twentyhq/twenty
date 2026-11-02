@@ -1637,5 +1637,67 @@ describe('Chat thread participant state through the authenticated API', () => {
         mentionsResolvedAt: null,
       });
     });
+
+    it('waits for a self-assignment in flight and keeps the chat out of filing', async () => {
+      const threadId = await createSettledThread();
+      const participantService =
+        getAppProviderByClassName<AgentChatThreadParticipantService>(
+          'AgentChatThreadParticipantService',
+        );
+      const markAsAssigned: AgentChatThreadParticipantService['markAsAssigned'] =
+        participantService.markAsAssigned.bind(participantService);
+      const assignmentEvents = new EventEmitter();
+      const assignmentHeld = once(assignmentEvents, 'held');
+      const assignmentReleased = once(assignmentEvents, 'released');
+
+      jest
+        .spyOn(participantService, 'markAsAssigned')
+        .mockImplementationOnce(({ writeAssignment, ...args }) =>
+          markAsAssigned({
+            ...args,
+            writeAssignment: async (context) => {
+              await writeAssignment(context);
+
+              const [{ backendProcessId }] = await context.manager.query<
+                { backendProcessId: number }[]
+              >('SELECT pg_backend_pid() AS "backendProcessId"');
+
+              assignmentEvents.emit('held', backendProcessId);
+              await assignmentReleased;
+            },
+          }),
+        );
+
+      const selfAssignment = getAppProviderByClassName<AgentChatThreadService>(
+        'AgentChatThreadService',
+      ).assign({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        threadId,
+        assigneeWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      });
+      const [assigningProcessId] = await assignmentHeld;
+      const filing = participantService.updateInboxState({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+        threadIds: [threadId],
+        action: AgentChatInboxAction.ARCHIVE_IF_SETTLED,
+        snoozedUntil: null,
+      });
+
+      await waitForBlockedDatabaseQueryOrThrow(assigningProcessId);
+      assignmentEvents.emit('released');
+
+      await expect(Promise.all([selfAssignment, filing])).resolves.toEqual([
+        undefined,
+        [],
+      ]);
+      expect(await readAssigneeId(threadId)).toBe(
+        WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      );
+      expect(await findMyParticipant(threadId)).toMatchObject({
+        archivedAt: null,
+      });
+    });
   });
 });
