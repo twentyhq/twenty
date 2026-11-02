@@ -52,8 +52,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { isPermissionFlagGrantedToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/is-permission-flag-granted-to-flat-role.util';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
-import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
-import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
+import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -195,7 +194,6 @@ export class AgentChatSharingService {
       () =>
         this.assertOperationAllowed({
           threadId: args.threadId,
-          workspaceMemberId: args.workspaceMemberId,
           operationType,
           transactionScope,
         }),
@@ -695,7 +693,6 @@ export class AgentChatSharingService {
             }
             await this.assertOperationAllowed({
               threadId: args.threadId,
-              workspaceMemberId: args.workspaceMemberId,
               operationType: 'restore',
             });
             if (!isDefined(thread.deletedAt)) {
@@ -740,31 +737,20 @@ export class AgentChatSharingService {
   // must run inside the caller's workspace context
   private async assertOperationAllowed({
     threadId,
-    workspaceMemberId,
     operationType,
     transactionScope,
   }: {
     threadId: string;
-    workspaceMemberId: string;
     operationType: OperationType;
     transactionScope?: WorkspaceTransactionScope;
   }): Promise<void> {
     if (isDefined(transactionScope)) {
       const context = getWorkspaceContext();
-      const rolePermissionConfig = resolveRolePermissionConfig(context);
+      const principals = getPermissionsPrincipalsFromAuthContext(
+        context.authContext,
+      );
 
-      if (!isDefined(rolePermissionConfig)) {
-        return throwAgentChatThreadNotFound();
-      }
-
-      const principal = buildPermissionsPrincipal({
-        workspaceId: transactionScope.workspaceId,
-        workspaceMemberId,
-        rolePermissionConfig,
-        flatApplicationMaps: context.flatApplicationMaps,
-      });
-
-      if (!isDefined(principal)) {
+      if (!isDefined(principals)) {
         return throwAgentChatThreadNotFound();
       }
 
@@ -776,7 +762,7 @@ export class AgentChatSharingService {
       const grants = await Promise.all(
         operationTypes.map((requiredOperationType) =>
           this.recordAccessPolicyService.hasAccessToRecords({
-            principal,
+            principals,
             flatObjectMetadata,
             recordIds: [threadId],
             operationType: requiredOperationType,

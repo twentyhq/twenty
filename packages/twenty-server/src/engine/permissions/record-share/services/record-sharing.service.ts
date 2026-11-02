@@ -45,7 +45,8 @@ import {
 import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { getRoleIdsFromRolePermissionConfig } from 'src/engine/permissions/principal/utils/get-role-ids-from-role-permission-config.util';
-import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
+import { buildPermissionsPrincipalsWithRolesFromConfig } from 'src/engine/permissions/principal/utils/build-permissions-principals-with-roles-from-config.util';
+import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
 import { resolvePrincipalIdsFromAuthContext } from 'src/engine/permissions/principal/utils/resolve-principal-ids-from-auth-context.util';
 import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
@@ -643,11 +644,10 @@ export class RecordSharingService {
         return DENIED_RECORD_PERMISSIONS;
       }
 
-      const principal = buildPermissionsPrincipal({
+      const principal = buildPermissionsPrincipalsWithRolesFromConfig({
         workspaceId: transactionScope.workspaceId,
         rolePermissionConfig,
-        workspaceMemberId: authContext.workspaceMemberId,
-        flatApplicationMaps: context.flatApplicationMaps,
+        principalsContext: getPermissionsPrincipalsFromAuthContext(authContext),
       });
 
       if (!isDefined(principal)) {
