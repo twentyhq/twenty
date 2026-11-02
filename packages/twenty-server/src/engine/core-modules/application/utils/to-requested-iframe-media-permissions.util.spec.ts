@@ -1,3 +1,4 @@
+import { i18n } from '@lingui/core';
 import { MAX_ALLOWED_IFRAME_ORIGINS } from 'twenty-shared/constants';
 
 import { ApplicationException } from 'src/engine/core-modules/application/application.exception';
@@ -19,9 +20,19 @@ describe('toRequestedIframeMediaPermissions', () => {
     expect(toRequestedIframeMediaPermissions(permissions)).toEqual(permissions);
   });
 
-  it('rejects a manifest above the origin limit before granting permissions', () => {
-    expect(() => toRequestedIframeMediaPermissions(PERMISSIONS)).toThrow(
-      ApplicationException,
-    );
+  it('reports the translated origin limit before granting permissions', () => {
+    expect.assertions(1);
+
+    try {
+      toRequestedIframeMediaPermissions(PERMISSIONS);
+    } catch (error) {
+      if (!(error instanceof ApplicationException)) {
+        throw error;
+      }
+
+      expect(i18n._(error.userFriendlyMessage)).toBe(
+        `An application can request iframe media access for up to ${MAX_ALLOWED_IFRAME_ORIGINS} origins`,
+      );
+    }
   });
 });
