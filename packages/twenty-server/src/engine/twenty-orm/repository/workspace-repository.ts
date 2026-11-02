@@ -2285,6 +2285,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
     return isObjectOperationDisabledToPrincipal({
       principal: this.resolvePermissionsPrincipal(),
+      metadataMaps: this.resolvePermissionsMetadataMaps(),
       flatObjectMetadata,
       operationType,
     });
@@ -2297,11 +2298,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
       workspaceMemberId: isUserAuthContext(this.options.authContext)
         ? this.options.authContext.workspaceMemberId
         : undefined,
-      flatApplicationMaps: this.options.internalContext.flatApplicationMaps,
-    }) ?? {
-      workspaceId: this.options.internalContext.workspaceId,
-      roleIds: [],
-    });
+    }) ?? { workspaceId: this.options.internalContext.workspaceId });
   }
 
   private resolvePermissionsMetadataMaps(): PermissionsMetadataMaps {

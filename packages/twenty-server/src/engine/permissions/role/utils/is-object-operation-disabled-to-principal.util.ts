@@ -6,9 +6,10 @@ import { isObjectOperationDisabled } from 'src/engine/permissions/role/utils/is-
 
 export const isObjectOperationDisabledToPrincipal = ({
   principal,
+  metadataMaps,
   flatObjectMetadata,
   operationType,
-}: Omit<PermissionsObjectAccessRequest, 'metadataMaps'>): boolean =>
+}: PermissionsObjectAccessRequest): boolean =>
   isObjectOperationDisabled({
     objectMetadata: flatObjectMetadata,
     operationType,
@@ -16,4 +17,5 @@ export const isObjectOperationDisabledToPrincipal = ({
   !isPermissionsPrincipalOwningObject({
     principal,
     flatObjectMetadata,
+    flatApplicationMaps: metadataMaps.flatApplicationMaps,
   });

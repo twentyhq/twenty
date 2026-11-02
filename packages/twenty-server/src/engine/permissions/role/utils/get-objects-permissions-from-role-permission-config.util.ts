@@ -9,8 +9,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { computeObjectsPermissionsForRoles } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-roles.util';
 import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principal/types/application-default-role-maps.type';
-import { getRoleIdsToIntersect } from 'src/engine/permissions/principal/utils/get-role-ids-to-intersect.util';
-import { resolvePermissionsPrincipalActingApplicationId } from 'src/engine/permissions/principal/utils/resolve-permissions-principal-acting-application-id.util';
+import { buildPermissionsPrincipalRoles } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
 
 export const getObjectsPermissionsFromRolePermissionConfig = ({
   rolesPermissions,
@@ -29,13 +28,10 @@ export const getObjectsPermissionsFromRolePermissionConfig = ({
     return {};
   }
 
-  const { intersectionOf } = rolePermissionConfig;
-
   return computeObjectsPermissionsForRoles({
-    roleIds: getRoleIdsToIntersect(intersectionOf) ?? [],
-    applicationId: resolvePermissionsPrincipalActingApplicationId({
-      intersectionOf,
-      flatApplicationMaps,
+    principal: buildPermissionsPrincipalRoles({
+      roleIdsBySource: rolePermissionConfig.intersectionOf,
+      workspaceMemberId: undefined,
     }),
     rolesPermissions,
     flatObjectMetadataMaps,

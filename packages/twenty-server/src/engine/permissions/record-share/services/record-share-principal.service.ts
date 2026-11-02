@@ -126,7 +126,7 @@ export class RecordSharePrincipalService {
 
       const rolePrincipal: PermissionsPrincipal = {
         workspaceId,
-        roleIds: [roleId],
+        main: { roleId },
       };
 
       if (
@@ -154,8 +154,8 @@ export class RecordSharePrincipalService {
 
       const hasGrant = await this.recordAccessPolicyService.hasAccessToRecords({
         principal: {
-          ...rolePrincipal,
-          workspaceMemberId: principal.principalId,
+          workspaceId,
+          main: { roleId, workspaceMemberId: principal.principalId },
         },
         flatObjectMetadata,
         operationType: 'select',

@@ -210,8 +210,7 @@ export class ObjectRecordEventPublisher {
       workspaceId: workspaceEventBatch.workspaceId,
       rolePermissionConfig,
       workspaceMemberId: subscriberAuthContext.workspaceMemberId,
-      flatApplicationMaps: permissionsContext.flatApplicationMaps,
-    }) ?? { workspaceId: workspaceEventBatch.workspaceId, roleIds: [] };
+    }) ?? { workspaceId: workspaceEventBatch.workspaceId };
     const admittedRecordIds =
       await eventRecordAccessGate.resolveAdmittedRecordIds(principal);
 
@@ -351,7 +350,12 @@ export class ObjectRecordEventPublisher {
     const { selectedFields } = this.commonSelectFieldsBuilder.buildFromDepth({
       readableObjectMetadataIds:
         await this.commonSelectFieldsBuilder.findReadableObjectMetadataIds({
-          principal: { ...principal, workspaceMemberId: undefined },
+          principal: {
+            ...principal,
+            main: isDefined(principal.main)
+              ? { roleId: principal.main.roleId }
+              : undefined,
+          },
           objectsPermissions,
           flatObjectMetadataMaps,
         }),

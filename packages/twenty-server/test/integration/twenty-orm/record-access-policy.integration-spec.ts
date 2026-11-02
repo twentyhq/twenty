@@ -24,7 +24,7 @@ describe('RecordAccessPolicyService', () => {
   let recordAccessPolicyService: RecordAccessPolicyService;
   const missingRolePrincipal: PermissionsPrincipal = {
     workspaceId: SEED_APPLE_WORKSPACE_ID,
-    roleIds: [randomUUID()],
+    main: { roleId: randomUUID() },
   };
 
   // Other suites wipe every person, so the record under test is created here
@@ -70,7 +70,7 @@ describe('RecordAccessPolicyService', () => {
 
     adminPrincipal = {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
-      roleIds: [adminRoleId],
+      main: { roleId: adminRoleId },
     };
   });
 

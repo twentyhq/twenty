@@ -12,5 +12,5 @@ export const resolvePermissionsCreatorWorkspaceMemberId = (
     flatObjectMetadata: request.flatObjectMetadata,
     flatFieldMetadataMaps: request.metadataMaps.flatFieldMetadataMaps,
   })
-    ? request.principal.workspaceMemberId
+    ? request.principal.main?.workspaceMemberId
     : undefined;

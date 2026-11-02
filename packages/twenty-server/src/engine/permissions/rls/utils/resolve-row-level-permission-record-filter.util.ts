@@ -6,6 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type PermissionsMetadataMaps } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { getPermissionsPrincipalRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-role-ids.util';
 import { buildRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/build-row-level-permission-record-filter.util';
 
 export const resolveRowLevelPermissionRecordFilter = ({
@@ -17,7 +18,8 @@ export const resolveRowLevelPermissionRecordFilter = ({
   metadataMaps: PermissionsMetadataMaps;
   flatObjectMetadata: FlatObjectMetadata;
 }): RecordGqlOperationFilter | null => {
-  const { roleIds, workspaceMemberId } = principal;
+  const roleIds = getPermissionsPrincipalRoleIds(principal);
+  const workspaceMemberId = principal.main?.workspaceMemberId;
 
   if (roleIds.length === 0) {
     return null;

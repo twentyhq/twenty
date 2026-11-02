@@ -7,8 +7,7 @@ import { isUpdateOfHiddenFieldsOnly } from 'src/engine/permissions/masking/utils
 import { omitRestrictedFieldsFromEvent } from 'src/engine/permissions/masking/utils/omit-restricted-fields-from-event.util';
 import { getPermissionsPrincipalObjectsPermissions } from 'src/engine/permissions/role/utils/get-permissions-principal-objects-permissions.util';
 import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
-import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
-import { resolvePermissionsPrincipalActingApplicationId } from 'src/engine/permissions/principal/utils/resolve-permissions-principal-acting-application-id.util';
+import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
 
 export const resolveEventsReadableByRole = async <
   TEvent extends ObjectRecordEvent,
@@ -27,14 +26,10 @@ export const resolveEventsReadableByRole = async <
     return [];
   }
 
-  const principal = buildPermissionsPrincipal({
+  const principal: PermissionsPrincipal = {
     workspaceId: workspaceEventBatch.workspaceId,
-    roleId,
-    applicationId: resolvePermissionsPrincipalActingApplicationId({
-      intersectionOf: { applicationRoleId: roleId },
-      flatApplicationMaps: metadataMaps.flatApplicationMaps,
-    }),
-  });
+    appRoleId: roleId,
+  };
   const objectsPermissions = getPermissionsPrincipalObjectsPermissions({
     principal,
     metadataMaps,

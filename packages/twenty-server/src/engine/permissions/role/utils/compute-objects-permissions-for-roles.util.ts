@@ -11,29 +11,34 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principal/types/application-default-role-maps.type';
 import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { getPermissionsPrincipalActingApplicationId } from 'src/engine/permissions/principal/utils/get-permissions-principal-acting-application-id.util';
+import { getPermissionsPrincipalRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-role-ids.util';
 import { computePermissionIntersection } from 'src/engine/permissions/role/utils/compute-permission-intersection.util';
 import { restrictObjectsPermissionsToDisabledActions } from 'src/engine/permissions/role/utils/restrict-objects-permissions-to-disabled-actions.util';
 
 export const computeObjectsPermissionsForRoles = ({
-  roleIds,
-  applicationId,
+  principal,
   rolesPermissions,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   flatApplicationMaps,
-}: Pick<PermissionsPrincipal, 'roleIds' | 'applicationId'> & {
+}: {
+  principal: Omit<PermissionsPrincipal, 'workspaceId'>;
   rolesPermissions: ObjectsPermissionsByRoleId;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatApplicationMaps: ApplicationDefaultRoleMaps;
 }): ObjectsPermissions => {
+  const roleIds = getPermissionsPrincipalRoleIds(principal);
+
   if (!isNonEmptyArray(roleIds)) {
     return {};
   }
 
-  const actingApplicationRoleId = isDefined(applicationId)
-    ? flatApplicationMaps.byId[applicationId]?.defaultRoleId
-    : undefined;
+  const actingApplicationId = getPermissionsPrincipalActingApplicationId({
+    principal,
+    flatApplicationMaps,
+  });
 
   const permissionsPerRole = roleIds.map((roleId) => {
     const rolePermissions = rolesPermissions[roleId];
@@ -44,7 +49,7 @@ export const computeObjectsPermissionsForRoles = ({
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
           actingApplicationId:
-            roleId === actingApplicationRoleId ? applicationId : undefined,
+            roleId === principal.appRoleId ? actingApplicationId : undefined,
         })
       : undefined;
   });

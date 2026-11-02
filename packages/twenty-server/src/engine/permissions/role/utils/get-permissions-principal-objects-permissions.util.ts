@@ -36,8 +36,7 @@ export const getPermissionsPrincipalObjectsPermissions = ({
   }
 
   const objectsPermissions = computeObjectsPermissionsForRoles({
-    roleIds: principal.roleIds,
-    applicationId: principal.applicationId,
+    principal,
     rolesPermissions: metadataMaps.rolesPermissions,
     flatObjectMetadataMaps: metadataMaps.flatObjectMetadataMaps,
     flatFieldMetadataMaps: metadataMaps.flatFieldMetadataMaps,

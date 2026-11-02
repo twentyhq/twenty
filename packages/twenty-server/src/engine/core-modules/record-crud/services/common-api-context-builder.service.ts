@@ -194,7 +194,6 @@ export class CommonApiContextBuilderService {
         workspaceMemberId: isUserAuthContext(authContext)
           ? authContext.workspaceMemberId
           : undefined,
-        flatApplicationMaps,
       }),
     };
   }

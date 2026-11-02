@@ -331,8 +331,7 @@ export class AgentChatSharingService {
                 this.recordAccessPolicyService.hasAccessToRecords({
                   principal: {
                     workspaceId,
-                    roleIds: [roleId],
-                    workspaceMemberId: memberId,
+                    main: { roleId, workspaceMemberId: memberId },
                   },
                   flatObjectMetadata: threadFlatObjectMetadata,
                   recordIds: [threadId],

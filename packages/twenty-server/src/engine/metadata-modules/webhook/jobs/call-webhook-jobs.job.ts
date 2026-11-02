@@ -20,7 +20,6 @@ import { transformEventBatchToWebhookEvents } from 'src/engine/metadata-modules/
 import { findFlatRoleTargetFromForeignKey } from 'src/engine/metadata-modules/flat-role-target/utils/find-flat-role-target-from-foreign-key.util';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
 
 const WEBHOOK_JOBS_CHUNK_SIZE = 20;
 
@@ -94,13 +93,10 @@ export class CallWebhookJobsJob {
 
       const admittedRecordIds =
         admittedRecordIdsByRoleId.get(webhookRoleId) ??
-        eventRecordAccessGate.resolveAdmittedRecordIds(
-          buildPermissionsPrincipal({
-            workspaceId: workspaceEventBatch.workspaceId,
-            roleId: webhookRoleId,
-            applicationId: undefined,
-          }),
-        );
+        eventRecordAccessGate.resolveAdmittedRecordIds({
+          workspaceId: workspaceEventBatch.workspaceId,
+          main: { roleId: webhookRoleId },
+        });
 
       admittedRecordIdsByRoleId.set(webhookRoleId, admittedRecordIds);
 

@@ -110,7 +110,6 @@ export class DatabaseToolProvider implements ToolProvider {
         isDefined(context.authContext) && isUserAuthContext(context.authContext)
           ? context.authContext.workspaceMemberId
           : undefined,
-      flatApplicationMaps,
     });
 
     const { explicitObjectGrantsRoleId } = context;
