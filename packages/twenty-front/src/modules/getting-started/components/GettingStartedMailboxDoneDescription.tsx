@@ -1,6 +1,7 @@
 import { type GettingStartedStepDoneDescriptionProps } from '@/getting-started/types/GettingStartedStepDoneDescriptionProps';
 import { formatNumber } from '@/localization/utils/formatNumber';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { plural } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -30,5 +31,5 @@ export const GettingStartedMailboxDoneDescription = ({
   const formattedPeopleCount = formatNumber(peopleCount);
   const formattedCompanyCount = formatNumber(companyCount);
 
-  return t`${formattedPeopleCount} people and ${formattedCompanyCount} companies in your workspace`;
+  return t`${plural(peopleCount, { one: `${formattedPeopleCount} person`, other: `${formattedPeopleCount} people` })} and ${plural(companyCount, { one: `${formattedCompanyCount} company`, other: `${formattedCompanyCount} companies` })} in your workspace`;
 };

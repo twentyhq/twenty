@@ -14,6 +14,7 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useDropzone } from 'react-dropzone';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { useToast } from 'twenty-ui/components/feedback';
 import { IconExternalLink, IconUpload } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { Text } from 'twenty-ui/primitives/typography';
@@ -51,6 +52,7 @@ const StyledExportRow = styled.div`
 
 export const GettingStartedImportAction = () => {
   const { t } = useLingui();
+  const { enqueueToast } = useToast();
   const { updateGettingStarted } = useUpdateGettingStarted();
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: CoreObjectNameSingular.Person,
@@ -92,6 +94,11 @@ export const GettingStartedImportAction = () => {
       'text/csv': ['.csv'],
     },
     onDropAccepted: importFilesWithAi,
+    onDropRejected: () =>
+      enqueueToast({
+        status: 'error',
+        children: t`Only CSV and Excel files are supported`,
+      }),
   });
 
   const openImportDialog = () => {

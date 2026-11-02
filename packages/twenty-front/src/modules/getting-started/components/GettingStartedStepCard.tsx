@@ -73,6 +73,13 @@ const StyledDoneIcon = styled.span<{ isAnimating: boolean }>`
       stroke-dashoffset: 0;
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    & svg path:last-of-type {
+      animation: none;
+      stroke-dashoffset: 0;
+    }
+  }
 `;
 
 const StyledTitle = styled.div`
@@ -112,7 +119,10 @@ export const GettingStartedStepCard = ({
     : undefined;
 
   return (
-    <StyledCard isCompleted={isCompleted} aria-label={stepDefinition.title}>
+    <StyledCard
+      isCompleted={isCompleted}
+      aria-label={isCompleted ? stepDefinition.doneTitle : stepDefinition.title}
+    >
       <StyledHeading isCompleted={isCompleted}>
         {isCompleted ? (
           <StyledDoneIcon isAnimating={isJustCompleted}>

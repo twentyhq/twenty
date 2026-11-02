@@ -31,6 +31,10 @@ const StyledSteps = styled.nav`
   right: calc(100% + ${themeCssVariables.spacing[10]});
   top: 50%;
   transform: translateY(-50%);
+
+  @container getting-started-scroll (max-width: 840px) {
+    display: none;
+  }
 `;
 
 const StyledTick = styled.button`
@@ -195,7 +199,7 @@ export const GettingStartedStepStack = ({
             exit={{
               opacity: 0,
               y: cardOffset,
-              scale: 0.98,
+              scale: shouldReduceMotion ? 1 : 0.98,
               transition: {
                 duration: theme.animation.duration.fast,
                 ease: EASE_OUT,

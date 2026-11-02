@@ -64,6 +64,10 @@ export const GettingStartedAppsAction = () => {
     return <SettingsListSkeletonCard />;
   }
 
+  if (featuredApps.length === 0) {
+    return null;
+  }
+
   return (
     <StyledList>
       {featuredApps.map((featuredApp) => (

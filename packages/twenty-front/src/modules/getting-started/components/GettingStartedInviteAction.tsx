@@ -58,12 +58,14 @@ export const GettingStartedInviteAction = () => {
   const [draftEmails, setDraftEmails] = useState<string[] | null>(null);
   const [isSending, setIsSending] = useState(false);
 
-  const inviteSuggestions = data?.getInviteSuggestions ?? [];
-  const emails = draftEmails ?? [
-    ...inviteSuggestions.map((suggestion) => suggestion.email),
-    '',
-  ];
+  const suggestedEmails = (data?.getInviteSuggestions ?? []).map(
+    (suggestion) => suggestion.email,
+  );
+  const emails = draftEmails ?? [...suggestedEmails, ''];
   const validEmails = getValidInviteEmails(emails);
+  const hasSuggestedEmail = emails.some((email) =>
+    suggestedEmails.includes(email),
+  );
 
   const isInvalidEmail = (email: string) =>
     isNonEmptyString(email) && !isNonEmptyArray(getValidInviteEmails([email]));
@@ -128,7 +130,7 @@ export const GettingStartedInviteAction = () => {
   return (
     <StyledForm onSubmit={(event) => void sendInvitations(event)}>
       <StyledEmailField>
-        {inviteSuggestions.length > 0 && (
+        {hasSuggestedEmail && (
           <Text size="xs" color="light">{t`Found in your emails`}</Text>
         )}
         <StyledEmailInputs>

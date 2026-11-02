@@ -45,7 +45,7 @@ export const GettingStartedMailboxAction = () => {
   const { t } = useLingui();
   const theme = useTheme();
   const { triggerApisOAuth } = useTriggerApisOAuth();
-  const { accounts } = useMyConnectedAccounts();
+  const { accounts, loading } = useMyConnectedAccounts();
   const activeAccounts = accounts.filter(
     (account) => !isDefined(account.archivedAt),
   );
@@ -63,6 +63,10 @@ export const GettingStartedMailboxAction = () => {
       calendarVisibility: CalendarChannelVisibility.METADATA,
       skipMessageChannelConfiguration: true,
     });
+
+  if (loading) {
+    return null;
+  }
 
   if (activeAccounts.length > 0) {
     return (

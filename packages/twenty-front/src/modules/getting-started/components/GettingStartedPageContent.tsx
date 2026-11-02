@@ -31,6 +31,8 @@ import {
 } from '~/generated-metadata/graphql';
 
 const StyledScroll = styled.div`
+  container-name: getting-started-scroll;
+  container-type: inline-size;
   flex: 1;
   overflow: auto;
   padding: ${themeCssVariables.spacing[10]} ${themeCssVariables.spacing[6]};
@@ -179,7 +181,7 @@ export const GettingStartedPageContent = () => {
         <StyledHeading>
           <StyledCountdown>
             {isCountdownVisible && (
-              <StyledDigits>
+              <StyledDigits role="img" aria-label={String(daysLeft)}>
                 {String(daysLeft)
                   .padStart(2, '0')
                   .split('')
@@ -240,7 +242,7 @@ export const GettingStartedPageContent = () => {
                 completedStepActionKeys={completedStepActionKeys}
               />
             )}
-            {!isComplete && (
+            {!isComplete && stepAfterSkip !== selectedStepActionKey && (
               <StyledFooter>
                 <Button
                   variant="ghost"

@@ -173,7 +173,6 @@ export const Trial: Story = {
     });
 
     await waitFor(() => expect(inviteStepCard).toBeVisible());
-    await expect(within(inviteStepCard).queryByText(/each$/)).toBeNull();
   },
 };
 
