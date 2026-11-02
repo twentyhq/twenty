@@ -31,7 +31,7 @@ describe('getFieldDeletionConfirmationSubtitle', () => {
     ).toBe(`${DELETION_SENTENCE} ${CONFIRMATION_SENTENCE}`);
   });
 
-  it('should show the warning alone when the rules could not be loaded', () => {
+  it('should omit the edit sentence when the rules could not be loaded', () => {
     expect(
       getFieldDeletionConfirmationSubtitle({
         objectLabel: 'Company',
