@@ -940,6 +940,7 @@ describe('call recorder app lifecycle (integration)', () => {
       'TWENTY_APP_ACCESS_TOKEN',
       process.env[WORKSPACE_API_KEY_ENV] ?? '',
     );
+    vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', applicationAccessToken);
   });
 
   afterEach(async () => {
@@ -956,6 +957,7 @@ describe('call recorder app lifecycle (integration)', () => {
     }
 
     vi.stubEnv('TWENTY_APP_ACCESS_TOKEN', applicationAccessToken);
+    vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', applicationAccessToken);
 
     try {
       await waitForQueuedTriggerRunsToDrain();
@@ -3974,7 +3976,7 @@ describe('call recorder app lifecycle (integration)', () => {
       expect(callRecording.externalBotId).toBeTruthy();
     });
 
-    it('uses four Core API reads and no writes for a batch of meetings that already have bots', async () => {
+    it('uses six Core API reads and no writes for a batch of meetings that already have bots', async () => {
       const calendarEventIds = [
         await createCalendarEvent(),
         await createCalendarEvent(),
@@ -4019,7 +4021,7 @@ describe('call recorder app lifecycle (integration)', () => {
           ],
         }),
       );
-      expect(twentyGraphqlRequestBodies).toHaveLength(4);
+      expect(twentyGraphqlRequestBodies).toHaveLength(6);
       expect(
         twentyGraphqlRequestBodies.every((body) =>
           JSON.parse(String(body)).query.startsWith('query'),
@@ -4347,6 +4349,7 @@ describe('call recorder app lifecycle (integration)', () => {
       ).toBe('CANCELED');
 
       vi.unstubAllEnvs();
+      vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', applicationAccessToken);
 
       await client.mutation({
         updateCalendarEvent: {
