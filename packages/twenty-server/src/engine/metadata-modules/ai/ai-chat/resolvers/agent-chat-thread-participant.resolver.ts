@@ -15,6 +15,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { AgentChatOpenThreadsSummaryDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-open-threads-summary.dto';
 import { AgentChatThreadParticipantDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-thread-participant.dto';
 import { AgentChatInboxAction } from 'src/engine/metadata-modules/ai/ai-chat/enums/agent-chat-inbox-action.enum';
+import { AgentChatOpenThreadsSummaryService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-open-threads-summary.service';
 import { AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
 import { AgentChatThreadTriageService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-triage.service';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
@@ -43,6 +44,7 @@ import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai
 @MetadataResolver(() => AgentChatThreadParticipantDTO)
 export class AgentChatThreadParticipantResolver {
   constructor(
+    private readonly openThreadsSummaryService: AgentChatOpenThreadsSummaryService,
     private readonly participantService: AgentChatThreadParticipantService,
     private readonly threadService: AgentChatThreadService,
     private readonly triageService: AgentChatThreadTriageService,
@@ -53,7 +55,7 @@ export class AgentChatThreadParticipantResolver {
     @AuthWorkspaceMemberId() workspaceMemberId: string,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentChatOpenThreadsSummaryDTO> {
-    return this.participantService.findOpenThreadsSummary({
+    return this.openThreadsSummaryService.findOpenThreadsSummary({
       workspaceMemberId,
       workspaceId,
     });
