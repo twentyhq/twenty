@@ -1,6 +1,5 @@
 import { useMutation } from '@apollo/client/react';
 import { useCallback } from 'react';
-import { v4 } from 'uuid';
 
 import { SEND_APP_CHANNEL_MESSAGE } from '@/activities/emails/graphql/mutations/sendAppChannelMessage';
 import {
@@ -19,10 +18,12 @@ export const useSendAppChannelMessage = () => {
       messageChannelId,
       messageThreadId,
       text,
+      idempotencyKey,
     }: {
       messageChannelId: string;
       messageThreadId: string;
       text: string;
+      idempotencyKey: string;
     }) => {
       await sendAppChannelMessageMutation({
         variables: {
@@ -30,7 +31,7 @@ export const useSendAppChannelMessage = () => {
             messageChannelId,
             messageThreadId,
             text,
-            idempotencyKey: v4(),
+            idempotencyKey,
           },
         },
       });
