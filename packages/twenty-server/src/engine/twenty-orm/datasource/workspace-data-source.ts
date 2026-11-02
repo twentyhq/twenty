@@ -224,6 +224,7 @@ export class WorkspaceDataSource {
       authContext: this.authContext,
       executor,
       objectRecordsPermissions,
+      rolesPermissions: this.objectPermissionsByRoleId,
       rolePermissionConfig: repositoryRolePermissionConfig,
       shouldBypassPermissionChecks,
       shouldSkipEventEmission: shouldSkipEventEmission ?? false,

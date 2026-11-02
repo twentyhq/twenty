@@ -110,6 +110,7 @@ Intrările lor corespund pașilor din [constructorul de fluxuri de lucru](/ro/us
 * Operanzii de filtrare acceptă valori `ViewFilterOperand`, exportate de `twenty-sdk/define`. Operatorii grupului de filtre acceptă valori șir de caractere precum `'AND'` sau `'OR'`.
 * Câmpurile de formular de tip `RECORD` își denumesc obiectul cu `settings.objectUniversalIdentifier`. Câmpurile de tip `SELECT` și `MULTI_SELECT` oferă opțiunile unui câmp existent de același tip, denumit cu `settings.selectedFieldUniversalIdentifier`.
 * Pentru a executa propriul cod, utilizați un pas `LOGIC_FUNCTION`. Pasul Code al generatorului nu este disponibil.
+* Pașii `AI_AGENT` rulează unul dintre agenții aplicației tale, denumit cu `agentUniversalIdentifier`, și preiau setările pasului din constructor: `prompt`, `responseFormat`, `humanInputInstructions`, `conversation` și `workspaceMemberId` pentru membrul cu care agentul poartă conversația.
 * Pașii de e-mail și calendar rulează numai dacă rolul aplicației dvs. are indicatorul de permisiune corespunzător: `SystemPermissionFlag.SEND_EMAIL_TOOL` pentru `SEND_EMAIL` și `DRAFT_EMAIL`, `SystemPermissionFlag.CREATE_CALENDAR_EVENT_TOOL` pentru `CREATE_CALENDAR_EVENT`. Spațiul de lucru o acordă prin instalarea aplicației, iar pasul poate utiliza apoi orice cont conectat din spațiul de lucru, asemenea unui flux de lucru creat în aplicație.
 * id-urile conturilor conectate sunt locale pentru fiecare spațiu de lucru, deci nu includeți unul direct în cod. Denumiți contul în unul dintre următoarele două moduri:
 

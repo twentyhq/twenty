@@ -3,7 +3,6 @@ import {
   FindManyCommandMenuItemsDocument,
   FindManyNavigationMenuItemsDocument,
   FindManyViewsDocument,
-  MetadataWritability,
 } from '~/generated-metadata/graphql';
 
 export const query = CreateOneObjectMetadataItemDocument;
@@ -42,7 +41,6 @@ export const responseData = {
   isSystem: false,
   isUIEditable: true,
   isUICreatable: true,
-  writability: MetadataWritability.OPEN,
   isSearchable: false,
   shortcut: null,
   duplicateCriteria: null,

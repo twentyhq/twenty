@@ -1041,7 +1041,7 @@ Importă pictograme individuale din `twenty-ui/icon`:
 import { IconBox, IconCheck } from 'twenty-ui/icon';
 ```
 
-Fiecare pictogramă denumită este eliminată prin tree-shaking, astfel încât importarea câtorva adaugă foarte puțin la dimensiunea bundle-ului. Evitați `IconsProvider` și `useIcons` în componentele front. Componentele front sunt incluse în pachet fără divizarea codului, astfel încât catalogul dinamic de pictograme al providerului (setul complet Tabler, aproximativ 2 MB minificat) ajunge în pachetul dvs. Consultați [referința pictogramelor](/ro/ui/icons) pentru exporturile disponibile și proprietățile acceptate.
+Fiecare pictogramă denumită este eliminată prin tree-shaking, astfel încât importarea câtorva adaugă foarte puțin la dimensiunea bundle-ului. Evitați `twenty-ui/icon/provider` (`IconsProvider`, `useIcons` și `Icon` după nume) în componentele front-end. Componentele front sunt incluse în pachet fără divizarea codului, astfel încât catalogul dinamic de pictograme al providerului (setul complet Tabler, aproximativ 2 MB minificat) ajunge în pachetul dvs. Consultați [referința pictogramelor](/ro/ui/icons) pentru exporturile disponibile și proprietățile acceptate.
 
 ### Teme și tokeni de temă
 

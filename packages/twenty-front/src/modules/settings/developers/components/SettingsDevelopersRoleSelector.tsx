@@ -1,6 +1,7 @@
 import { Select } from '@/ui/input/components/Select';
 import { type Role } from '~/generated-metadata/graphql';
-import { type IconComponent, useIcons } from 'twenty-ui/icon';
+import { type IconComponent } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 
 type ApiKeyAssignableRole = Pick<
   Role,

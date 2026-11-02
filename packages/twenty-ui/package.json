@@ -160,6 +160,11 @@
       "import": "./dist/icon.mjs",
       "require": "./dist/icon.cjs"
     },
+    "./icon/provider": {
+      "types": "./dist/icon/provider/index.d.ts",
+      "import": "./dist/icon/provider.mjs",
+      "require": "./dist/icon/provider.cjs"
+    },
     "./primitives": {
       "types": "./dist/primitives/index.d.ts",
       "import": "./dist/primitives.mjs",
@@ -257,6 +262,9 @@
       ],
       "icon": [
         "dist/icon/index.d.ts"
+      ],
+      "icon/provider": [
+        "dist/icon/provider/index.d.ts"
       ],
       "primitives": [
         "dist/primitives/index.d.ts"

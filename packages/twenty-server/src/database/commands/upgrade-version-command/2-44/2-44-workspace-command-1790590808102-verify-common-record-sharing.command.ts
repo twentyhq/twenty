@@ -1,12 +1,13 @@
+import { InjectDataSource } from '@nestjs/typeorm';
+
 import { Command } from 'nest-commander';
-import { MetadataReadability } from 'twenty-shared/types';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { DataSource } from 'typeorm';
 
 import { ProvisionedWorkspaceCommandRunner } from 'src/database/commands/command-runners/provisioned-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @RegisteredWorkspaceCommand('2.44.0', 1790590808102)
 @Command({
@@ -17,7 +18,8 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 export class VerifyCommonRecordSharingCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {
     super(workspaceIteratorService);
   }
@@ -27,15 +29,14 @@ export class VerifyCommonRecordSharingCommand extends ProvisionedWorkspaceComman
   }
 
   async up({ workspaceId }: RunOnWorkspaceArgs): Promise<void> {
-    const { flatObjectMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-      ]);
-    const thread =
-      flatObjectMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.agentChatThread.universalIdentifier
-      ];
-    if (thread?.readability === MetadataReadability.SYSTEM) {
+    const [thread]: { readability: string }[] =
+      await this.coreDataSource.query(
+        `SELECT readability FROM core."objectMetadata"
+          WHERE "workspaceId" = $1 AND "universalIdentifier" = $2`,
+        [workspaceId, STANDARD_OBJECTS.agentChatThread.universalIdentifier],
+      );
+
+    if (thread?.readability === 'SYSTEM') {
       throw new Error(
         `Conversation sharing is incomplete for ${workspaceId}. Run upgrade:2-43:enable-common-record-sharing before serving this workspace.`,
       );

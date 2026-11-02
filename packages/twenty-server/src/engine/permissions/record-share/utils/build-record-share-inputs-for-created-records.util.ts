@@ -112,7 +112,6 @@ export const buildRecordShareInputsForCreatedRecords = ({
   authContext,
   apiKeyRoleMap,
   shareWith,
-  isShareRequired,
   isPrivateByDefault,
   isPrivate,
 }: {
@@ -121,7 +120,6 @@ export const buildRecordShareInputsForCreatedRecords = ({
   authContext: WorkspaceAuthContext;
   apiKeyRoleMap: Record<string, string>;
   shareWith?: ShareWithInput[] | null;
-  isShareRequired: boolean;
   isPrivateByDefault: boolean;
   isPrivate: boolean;
 }): RecordShareInput[] => {
@@ -137,9 +135,7 @@ export const buildRecordShareInputsForCreatedRecords = ({
 
   // An application or API key has no createdBy member to keep its private records through
   const shouldWriteCreatorRows =
-    isShareRequired ||
-    isPrivateByDefault ||
-    (isPrivate && !isUserAuthContext(authContext));
+    isPrivateByDefault || (isPrivate && !isUserAuthContext(authContext));
 
   return [
     ...recordIds.flatMap((recordId) => [
