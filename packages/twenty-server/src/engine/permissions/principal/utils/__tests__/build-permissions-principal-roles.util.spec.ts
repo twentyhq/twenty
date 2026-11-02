@@ -1,4 +1,4 @@
-import { type PermissionsPrincipalActors } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import { type PermissionsPrincipalIds } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 import { buildPermissionsPrincipalRoles } from 'src/engine/permissions/principal/utils/build-permissions-principal-roles.util';
 
 const MEMBER_ID = 'member-1';
@@ -8,8 +8,8 @@ const USER_ROLE_ID = 'user-role';
 const AGENT_ROLE_ID = 'agent-role';
 const APPLICATION_ROLE_ID = 'application-role';
 
-const MEMBER_ACTORS: PermissionsPrincipalActors = {
-  main: { workspaceMemberId: MEMBER_ID },
+const MEMBER_ACTORS: PermissionsPrincipalIds = {
+  mainPrincipal: { workspaceMemberId: MEMBER_ID },
   agentId: AGENT_ID,
   applicationId: APPLICATION_ID,
 };
@@ -23,7 +23,7 @@ describe('buildPermissionsPrincipalRoles', () => {
           agentRoleId: AGENT_ROLE_ID,
           applicationRoleId: APPLICATION_ROLE_ID,
         },
-        actors: MEMBER_ACTORS,
+        principalIds: MEMBER_ACTORS,
       }),
     ).toEqual({
       mainPrincipal: { roleId: USER_ROLE_ID, workspaceMemberId: MEMBER_ID },
@@ -36,8 +36,8 @@ describe('buildPermissionsPrincipalRoles', () => {
     expect(
       buildPermissionsPrincipalRoles({
         roleIdsBySource: { apiKeyRoleId: 'api-key-role' },
-        actors: {
-          main: { apiKeyId: 'api-key-1' },
+        principalIds: {
+          mainPrincipal: { apiKeyId: 'api-key-1' },
           agentId: undefined,
           applicationId: undefined,
         },
@@ -53,8 +53,8 @@ describe('buildPermissionsPrincipalRoles', () => {
     expect(
       buildPermissionsPrincipalRoles({
         roleIdsBySource: { applicationRoleId: APPLICATION_ROLE_ID },
-        actors: {
-          main: { applicationId: APPLICATION_ID },
+        principalIds: {
+          mainPrincipal: { applicationId: APPLICATION_ID },
           agentId: undefined,
           applicationId: APPLICATION_ID,
         },
@@ -77,7 +77,7 @@ describe('buildPermissionsPrincipalRoles', () => {
           agentRoleId: null,
           applicationRoleId: null,
         },
-        actors: MEMBER_ACTORS,
+        principalIds: MEMBER_ACTORS,
       }),
     ).toEqual({
       mainPrincipal: { roleId: USER_ROLE_ID, workspaceMemberId: MEMBER_ID },
@@ -90,7 +90,7 @@ describe('buildPermissionsPrincipalRoles', () => {
     expect(
       buildPermissionsPrincipalRoles({
         roleIdsBySource: { userWorkspaceRoleId: null },
-        actors: MEMBER_ACTORS,
+        principalIds: MEMBER_ACTORS,
       }),
     ).toBeUndefined();
   });
@@ -102,17 +102,17 @@ describe('buildPermissionsPrincipalRoles', () => {
           userWorkspaceRoleId: USER_ROLE_ID,
           apiKeyRoleId: 'api-key-role',
         },
-        actors: MEMBER_ACTORS,
+        principalIds: MEMBER_ACTORS,
       }),
     ).toBeUndefined();
   });
 
-  it('marks roles without a known actor as deprecated role-only', () => {
+  it('marks roles without a known principal as deprecated role-only', () => {
     expect(
       buildPermissionsPrincipalRoles({
         roleIdsBySource: { agentRoleId: AGENT_ROLE_ID },
-        actors: {
-          main: undefined,
+        principalIds: {
+          mainPrincipal: undefined,
           agentId: undefined,
           applicationId: undefined,
         },

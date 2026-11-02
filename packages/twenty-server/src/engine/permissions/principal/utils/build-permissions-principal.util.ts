@@ -4,7 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   type PermissionsPrincipalsContext,
-  type PermissionsPrincipalActors,
+  type PermissionsPrincipalIds,
 } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { buildPermissionsPrincipalRoles } from 'src/engine/permissions/principal/utils/build-permissions-principal-roles.util';
@@ -13,11 +13,11 @@ import { buildPermissionsPrincipalRoles } from 'src/engine/permissions/principal
 export const buildPermissionsPrincipal = ({
   workspaceId,
   rolePermissionConfig,
-  actors,
+  principalIds,
 }: {
   workspaceId: string;
   rolePermissionConfig: RolePermissionConfig;
-  actors: PermissionsPrincipalActors;
+  principalIds: PermissionsPrincipalIds;
 }): PermissionsPrincipalsContext | undefined => {
   if (!('intersectionOf' in rolePermissionConfig)) {
     return undefined;
@@ -25,7 +25,7 @@ export const buildPermissionsPrincipal = ({
 
   const principalRoles = buildPermissionsPrincipalRoles({
     roleIdsBySource: rolePermissionConfig.intersectionOf,
-    actors,
+    principalIds,
   });
 
   if (!isDefined(principalRoles)) {

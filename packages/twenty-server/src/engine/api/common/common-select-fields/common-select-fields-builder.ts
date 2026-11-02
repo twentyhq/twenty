@@ -29,27 +29,14 @@ export class CommonSelectFieldsBuilder {
   // Relations to objects the ORM would refuse are left out, so they cannot fail the whole query
   async findReadableObjectMetadataIds({
     principal,
-    objectsPermissions,
     flatObjectMetadataMaps,
   }: {
-    principal: PermissionsPrincipalsContext | undefined;
-    objectsPermissions: ObjectsPermissions;
+    principal: PermissionsPrincipalsContext;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   }): Promise<Set<string>> {
     const flatObjectMetadatas = Object.values(
       flatObjectMetadataMaps.byUniversalIdentifier,
     ).filter(isDefined);
-
-    if (!isDefined(principal)) {
-      return new Set(
-        flatObjectMetadatas
-          .filter(
-            (flatObjectMetadata) =>
-              objectsPermissions[flatObjectMetadata.id]?.canReadObjectRecords,
-          )
-          .map((flatObjectMetadata) => flatObjectMetadata.id),
-      );
-    }
 
     const readableFlags = await Promise.all(
       flatObjectMetadatas.map((flatObjectMetadata) =>

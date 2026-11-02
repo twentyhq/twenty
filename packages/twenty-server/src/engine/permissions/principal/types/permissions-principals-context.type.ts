@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-// TODO(@charlesBochet): drop isDeprecatedRoleOnly once every caller knows the actor holding the role
+// TODO(@charlesBochet): drop isDeprecatedRoleOnly once every caller names the principal holding the role
 type DeprecatedRoleOnly = { roleId: string; isDeprecatedRoleOnly: true };
 
 export type PermissionsPrincipalMain =
@@ -27,8 +27,8 @@ export type PermissionsPrincipalsContext = {
   app: PermissionsPrincipalApp;
 };
 
-export type PermissionsPrincipalActors = {
-  main:
+export type PermissionsPrincipalIds = {
+  mainPrincipal:
     | { workspaceMemberId: string }
     | { apiKeyId: string }
     | { agentId: string }

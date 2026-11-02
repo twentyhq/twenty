@@ -30,7 +30,7 @@ import {
   generateDashboardExceptionMessage,
 } from 'src/modules/dashboard/exceptions/dashboard.exception';
 import { DashboardWorkspaceEntity } from 'src/modules/dashboard/standard-objects/dashboard.workspace-entity';
-import { getPermissionsPrincipalActors } from 'src/engine/permissions/principal/utils/get-permissions-principal-actors.util';
+import { getPermissionsPrincipalIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-ids.util';
 
 // A role-scoped read validates every selected column, so reading the whole row would refuse over fields never copied
 const DUPLICATION_SOURCE_COLUMNS: (keyof DashboardWorkspaceEntity)[] = [
@@ -163,7 +163,7 @@ export class DashboardDuplicationService {
     const { objectRecordsPermissions, shouldBypassPermissionChecks } =
       resolveObjectRecordsPermissions({
         rolePermissionConfig,
-        actors: getPermissionsPrincipalActors(workspaceContext.authContext),
+        principalIds: getPermissionsPrincipalIds(workspaceContext.authContext),
         objectPermissionsByRoleId: workspaceContext.permissionsPerRoleId,
         flatObjectMetadataMaps: workspaceContext.flatObjectMetadataMaps,
         flatFieldMetadataMaps: workspaceContext.flatFieldMetadataMaps,

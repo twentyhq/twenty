@@ -90,7 +90,7 @@ export class FindRecordsService {
                 objectsPermissions,
                 readableObjectMetadataIds:
                   await this.commonSelectFieldsBuilder.findReadableObjectMetadataIds(
-                    { principal, objectsPermissions, flatObjectMetadataMaps },
+                    { principal, flatObjectMetadataMaps },
                   ),
                 depth: 1,
                 onlyUseLabelIdentifierFieldsInRelations: true,

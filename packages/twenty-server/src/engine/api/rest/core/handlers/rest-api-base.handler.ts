@@ -40,7 +40,7 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { type RoleIdsBySource } from 'src/engine/permissions/principal/types/role-permission-config.type';
-import { getPermissionsPrincipalActors } from 'src/engine/permissions/principal/utils/get-permissions-principal-actors.util';
+import { getPermissionsPrincipalIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-ids.util';
 import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/permissions/role/utils/get-objects-permissions-from-role-permission-config.util';
 
@@ -142,17 +142,26 @@ export abstract class RestApiBaseHandler {
     );
 
     const rolePermissionConfig = { intersectionOf };
+    const principalIds = getPermissionsPrincipalIds(authContext);
+    const principal = buildPermissionsPrincipal({
+      workspaceId: authContext.workspace.id,
+      rolePermissionConfig,
+      principalIds,
+    });
+
+    if (!isDefined(principal)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
 
     return {
-      principal: buildPermissionsPrincipal({
-        workspaceId: authContext.workspace.id,
-        rolePermissionConfig,
-        actors: getPermissionsPrincipalActors(authContext),
-      }),
+      principal,
       objectsPermissions: getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
         rolePermissionConfig,
-        actors: getPermissionsPrincipalActors(authContext),
+        principalIds,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatApplicationMaps,
@@ -181,7 +190,6 @@ export abstract class RestApiBaseHandler {
       readableObjectMetadataIds:
         await this.findRelationReadableObjectMetadataIds({
           principal,
-          objectsPermissions,
           flatObjectMetadataMaps,
           depth,
         }),
@@ -219,7 +227,6 @@ export abstract class RestApiBaseHandler {
       readableObjectMetadataIds:
         await this.findRelationReadableObjectMetadataIds({
           principal,
-          objectsPermissions,
           flatObjectMetadataMaps,
           depth,
         }),
@@ -234,7 +241,6 @@ export abstract class RestApiBaseHandler {
 
   private async findRelationReadableObjectMetadataIds({
     principal,
-    objectsPermissions,
     flatObjectMetadataMaps,
     depth,
   }: Parameters<
@@ -248,7 +254,6 @@ export abstract class RestApiBaseHandler {
 
     return this.commonSelectFieldsBuilder.findReadableObjectMetadataIds({
       principal,
-      objectsPermissions,
       flatObjectMetadataMaps,
     });
   }

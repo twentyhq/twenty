@@ -382,7 +382,7 @@ describe('Conversation sharing through the authenticated API', () => {
       const queue = getAppProviderByClassName<AgentChatQueueService>(
         'AgentChatQueueService',
       );
-      const actors = getAppProviderByClassName<AgentChatActorService>(
+      const principalIds = getAppProviderByClassName<AgentChatActorService>(
         'AgentChatActorService',
       );
       await getAgentChatThreadService().createThread({
@@ -481,13 +481,13 @@ describe('Conversation sharing through the authenticated API', () => {
           messageId: queued.id,
           turnId: turnId!,
         };
-        await expect(actors.authorizeJob(job)).resolves.toMatchObject({
+        await expect(principalIds.authorizeJob(job)).resolves.toMatchObject({
           sender: {
             userWorkspaceId: sender.userWorkspaceId,
             applicationId: null,
           },
         });
-        const senderAuthorization = await actors.authorize({
+        const senderAuthorization = await principalIds.authorize({
           workspaceId,
           threadId,
           sender: {
@@ -502,7 +502,7 @@ describe('Conversation sharing through the authenticated API', () => {
           },
         });
         await expect(
-          actors.authorizeJob({
+          principalIds.authorizeJob({
             ...job,
             userWorkspaceId: owner.userWorkspaceId,
           }),
@@ -510,7 +510,7 @@ describe('Conversation sharing through the authenticated API', () => {
         expect(
           (await grant(RecordShareAccessLevel.READ)).body.errors,
         ).toBeUndefined();
-        await expect(actors.authorizeJob(job)).rejects.toBeDefined();
+        await expect(principalIds.authorizeJob(job)).rejects.toBeDefined();
         const downgraded = await readThread(
           threadId,
           APPLE_JONY_MEMBER_ACCESS_TOKEN,

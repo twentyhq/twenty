@@ -53,7 +53,7 @@ import { getRoleIdsToIntersect } from 'src/engine/permissions/principal/utils/ge
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
-import { getPermissionsPrincipalActorsFromIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-actors-from-ids.util';
+import { buildPermissionsPrincipalIds } from 'src/engine/permissions/principal/utils/build-permissions-principal-ids.util';
 import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
 
 type StreamPermissionsContext = {
@@ -210,7 +210,7 @@ export class ObjectRecordEventPublisher {
     const principal = buildPermissionsPrincipal({
       workspaceId: workspaceEventBatch.workspaceId,
       rolePermissionConfig,
-      actors: getPermissionsPrincipalActorsFromIds({
+      principalIds: buildPermissionsPrincipalIds({
         workspaceMemberId: subscriberAuthContext.workspaceMemberId,
         apiKeyId: subscriberAuthContext.apiKeyId,
         applicationId: subscriberAuthContext.applicationId,
@@ -371,7 +371,6 @@ export class ObjectRecordEventPublisher {
                   }
                 : principal.mainPrincipal,
           },
-          objectsPermissions,
           flatObjectMetadataMaps,
         }),
       depth: 1,

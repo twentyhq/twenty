@@ -12,7 +12,7 @@ import {
 } from 'src/engine/permissions/permissions.exception';
 import { CallRecordingStatus } from 'src/modules/call-recording/common/enums/call-recording-status.enum';
 import { type CallRecordingWorkspaceEntity } from 'src/modules/call-recording/standard-objects/call-recording.workspace-entity';
-import { getPermissionsPrincipalActors } from 'src/engine/permissions/principal/utils/get-permissions-principal-actors.util';
+import { getPermissionsPrincipalIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-ids.util';
 
 const NON_TERMINAL_CALL_RECORDING_STATUSES: CallRecordingStatus[] = [
   CallRecordingStatus.SCHEDULED,
@@ -48,7 +48,7 @@ export class CallRecordingService {
       const { objectRecordsPermissions, shouldBypassPermissionChecks } =
         resolveObjectRecordsPermissions({
           rolePermissionConfig,
-          actors: getPermissionsPrincipalActors(workspaceContext.authContext),
+          principalIds: getPermissionsPrincipalIds(workspaceContext.authContext),
           objectPermissionsByRoleId: workspaceContext.permissionsPerRoleId,
           flatObjectMetadataMaps: workspaceContext.flatObjectMetadataMaps,
           flatFieldMetadataMaps: workspaceContext.flatFieldMetadataMaps,
