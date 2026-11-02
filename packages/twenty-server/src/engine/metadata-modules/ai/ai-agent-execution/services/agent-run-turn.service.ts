@@ -65,6 +65,8 @@ import {
 import { withAuthContextAgent } from 'src/engine/core-modules/auth/utils/with-auth-context-agent.util';
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 
 type AgentRunTurnInput = {
   agent: AgentEntity;
@@ -346,6 +348,22 @@ export class AgentRunTurnService {
     };
   }
 
+  private async resolveAgentToolRolePermissionConfig({
+    agentAuthContext,
+    agentRoleId,
+  }: {
+    agentAuthContext: WorkspaceAuthContext;
+    agentRoleId: string;
+  }): Promise<RolePermissionConfig> {
+    if (isSystemAuthContext(agentAuthContext)) {
+      return { intersectionOf: { agentRoleId } };
+    }
+
+    return this.permissionsService.resolveRolePermissionConfigForAuthContext(
+      agentAuthContext,
+    );
+  }
+
   private async buildAgentRegistryAccess({
     agent,
     executionContext: { authContext, actorContext },
@@ -378,11 +396,10 @@ export class AgentRunTurnService {
       authContext: agentAuthContext,
       application: getAuthContextApplication(agentAuthContext),
       actorContext,
-      rolePermissionConfig: isSystemAuthContext(agentAuthContext)
-        ? { intersectionOf: { agentRoleId } }
-        : await this.permissionsService.resolveRolePermissionConfigForAuthContext(
-            agentAuthContext,
-          ),
+      rolePermissionConfig: await this.resolveAgentToolRolePermissionConfig({
+        agentAuthContext,
+        agentRoleId,
+      }),
       ...(isUserAuthContext(agentAuthContext)
         ? {
             userId: agentAuthContext.user.id,
