@@ -13,6 +13,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { buildPublicAssetLogoUrl } from 'src/engine/core-modules/application/utils/build-public-asset-logo-url.util';
@@ -119,6 +120,21 @@ export class ApplicationResolver {
       workspaceId: workspace.id,
       applicationId: application.id,
     });
+  }
+
+  @ResolveField(() => Boolean)
+  runOnUserPreferences(
+    @Parent()
+    application: Partial<
+      Pick<ApplicationEntity, 'isUserHealthCheckEnabled'> &
+        Pick<ApplicationDTO, 'runOnUserPreferences'>
+    >,
+  ): boolean {
+    return (
+      application.runOnUserPreferences ??
+      application.isUserHealthCheckEnabled ??
+      false
+    );
   }
 
   @ResolveField(() => Boolean)
