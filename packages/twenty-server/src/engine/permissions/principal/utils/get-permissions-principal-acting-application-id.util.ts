@@ -18,20 +18,20 @@ export const getPermissionsPrincipalActingApplicationId = ({
 }): string | undefined => {
   const { mainPrincipal, limitingPrincipal, applicationPrincipal } = principal;
 
-  if ('applicationId' in mainPrincipal) {
+  if (mainPrincipal.type === 'application') {
     return mainPrincipal.applicationId;
   }
 
   if (
-    !('roleId' in applicationPrincipal) ||
-    ('workspaceMemberId' in mainPrincipal &&
+    applicationPrincipal.type === 'customApplication' ||
+    (mainPrincipal.type === 'workspaceMember' &&
       applicationPrincipal.roleId === mainPrincipal.roleId) ||
     applicationPrincipal.roleId === limitingPrincipal?.roleId
   ) {
     return undefined;
   }
 
-  if ('applicationId' in applicationPrincipal) {
+  if (applicationPrincipal.type === 'application') {
     return applicationPrincipal.applicationId;
   }
 

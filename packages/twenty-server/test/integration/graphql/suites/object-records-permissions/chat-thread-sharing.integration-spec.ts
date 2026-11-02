@@ -996,8 +996,8 @@ describe('Conversations through the record API', () => {
         .buildEventRecordAccessGate(batch)
         .resolveAdmittedRecordIds({
           workspaceId: SEED_APPLE_WORKSPACE_ID,
-          mainPrincipal: { workspaceMemberId },
-          applicationPrincipal: { isCustomApp: true },
+          mainPrincipal: { type: 'workspaceMember', workspaceMemberId },
+          applicationPrincipal: { type: 'customApplication' },
         });
 
     return admittedRecordIds.has(threadId);

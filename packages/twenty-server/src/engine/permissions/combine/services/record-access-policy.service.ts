@@ -361,13 +361,13 @@ export class RecordAccessPolicyService {
       'flatApplicationMaps',
     ]);
     const { flatWorkspaceMemberMaps } =
-      'workspaceMemberId' in mainPrincipal
+      mainPrincipal.type === 'workspaceMember'
         ? await this.workspaceCacheService.getOrRecompute(workspaceId, [
             'flatWorkspaceMemberMaps',
           ])
         : { flatWorkspaceMemberMaps: EMPTY_WORKSPACE_MEMBER_MAPS };
     const { flatRoleTargetMaps } =
-      'webhookId' in mainPrincipal
+      mainPrincipal.type === 'webhook'
         ? await this.workspaceCacheService.getOrRecompute(workspaceId, [
             'flatRoleTargetMaps',
           ])

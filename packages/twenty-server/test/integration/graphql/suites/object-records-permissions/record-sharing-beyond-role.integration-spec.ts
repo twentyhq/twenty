@@ -258,9 +258,10 @@ describe('Records shared beyond the role that can access their object', () => {
     const buildJonyPrincipal = (): PermissionsPrincipalsContext => ({
       workspaceId,
       mainPrincipal: {
+        type: 'workspaceMember',
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       },
-      applicationPrincipal: { isCustomApp: true },
+      applicationPrincipal: { type: 'customApplication' },
     });
 
     expect(
@@ -524,9 +525,10 @@ describe('Records shared beyond the role that can access their object', () => {
         .resolveAdmittedRecordIds({
           workspaceId: workspaceId,
           mainPrincipal: {
+            type: 'workspaceMember',
             workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
           },
-          applicationPrincipal: { isCustomApp: true },
+          applicationPrincipal: { type: 'customApplication' },
         });
     };
 
