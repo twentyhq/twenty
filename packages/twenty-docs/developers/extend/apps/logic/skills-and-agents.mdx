@@ -495,8 +495,10 @@ const { text } = await ai.generate({
   `ai` package to build the message.
 - `signal` aborts the call: it rejects with the abort error and closes the
   stream. The run itself goes on, and is recorded as usual.
-- A stream that fails only stops the chunks: the call still resolves with the
-  run's result, which is billed either way.
+- Once the stream is live, a failure of it only stops the chunks: the call
+  still resolves with the run's result, which is billed either way. The call
+  rejects when the subscription fails before it goes live, so the run never
+  starts, or when `onChunk` throws.
 - An app follows only its own runs, so `onChunk` needs an app token.
 - Requires `"engines": { "twenty": ">=2.55.0" }`.
 

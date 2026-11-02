@@ -171,7 +171,7 @@ const generateWithChunks = async ({
           if (
             !isDefined(next) ||
             next.done ||
-            signal?.aborted ||
+            runSignal.aborted ||
             isAgentChatTurnEndEvent(next.value)
           ) {
             return;
