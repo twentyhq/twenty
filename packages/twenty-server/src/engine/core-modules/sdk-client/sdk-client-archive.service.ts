@@ -4,7 +4,7 @@ import * as fs from 'fs/promises';
 import { createHash } from 'crypto';
 import {
   decodeFrontComponentTypeReferences,
-  encodeFrontComponentTypeReferences,
+  encodeFrontComponentTypeReferencesOrThrow,
 } from 'twenty-shared/front-component-build';
 import { isDefined } from 'twenty-shared/utils';
 import { readLruEntry, writeLruEntry } from 'src/utils/lru-map.util';
@@ -165,22 +165,24 @@ export class SdkClientArchiveService {
         file.path === 'dist/core.mjs' || file.path === './dist/core.mjs',
     );
     if (
-      isDefined(checksum) &&
-      isDefined(core) &&
+      !isDefined(checksum) ||
+      !isDefined(core) ||
       createHash('sha256')
         .update(await core.buffer())
-        .digest('hex') === checksum
+        .digest('hex') !== checksum
     ) {
-      const content = encodeFrontComponentTypeReferences(references);
-      if (content.byteLength <= SDK_TYPE_REFERENCES_CACHE_ENTRY_BYTES) {
-        writeLruEntry({
-          map: this.typeReferencesCache,
-          key,
-          value: { checksum, content },
-          maxEntries: SDK_TYPE_REFERENCES_CACHE_ENTRIES,
-        });
-      }
+      return references;
     }
+    const content = encodeFrontComponentTypeReferencesOrThrow(references);
+    if (content.byteLength > SDK_TYPE_REFERENCES_CACHE_ENTRY_BYTES) {
+      return references;
+    }
+    writeLruEntry({
+      map: this.typeReferencesCache,
+      key,
+      value: { checksum, content },
+      maxEntries: SDK_TYPE_REFERENCES_CACHE_ENTRIES,
+    });
     return references;
   }
 

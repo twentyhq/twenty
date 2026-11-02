@@ -1,7 +1,7 @@
 import { createHash } from 'crypto';
 import {
   collectFrontComponentTypeReferences,
-  encodeFrontComponentTypeReferences,
+  encodeFrontComponentTypeReferencesOrThrow,
   FRONT_COMPONENT_REQUIRED_SHARED_DEPENDENCIES,
   createJsxRuntimeRemoteWrapperPlugin,
   cssInjectionPlugin,
@@ -52,7 +52,7 @@ export const buildFrontComponentSharedDependencies = async ({
 
   return {
     source,
-    typeReferences: encodeFrontComponentTypeReferences(
+    typeReferences: encodeFrontComponentTypeReferencesOrThrow(
       collectFrontComponentTypeReferences({
         directory: resolveDirectory,
         dependencies: [...exportNamesBySpecifier.keys()],

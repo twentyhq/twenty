@@ -7,7 +7,7 @@ import { FRONT_COMPONENT_TYPE_REFERENCES_MAX_BYTES } from '../front-component-ty
 import { join, posix, resolve } from 'node:path';
 import { collectFrontComponentTypeReferences } from '../collect-front-component-type-references';
 import { decodeFrontComponentTypeReferences } from '../decode-front-component-type-references';
-import { encodeFrontComponentTypeReferences } from '../encode-front-component-type-references';
+import { encodeFrontComponentTypeReferencesOrThrow } from '../encode-front-component-type-references-or-throw';
 import { getFrontComponentTypeDiagnostics } from '../get-front-component-type-diagnostics';
 
 let platform: Record<string, string>;
@@ -49,7 +49,7 @@ const capture = async (variant: string) => {
     `import { type FC } from 'react'; export declare const Card: { Root: FC<{ variant?: '${variant}'; children?: import('react').ReactNode }> };`,
   );
   return decodeFrontComponentTypeReferences(
-    encodeFrontComponentTypeReferences(
+    encodeFrontComponentTypeReferencesOrThrow(
       collectFrontComponentTypeReferences({
         directory,
         dependencies: ['fixture-ui/card'],
@@ -130,6 +130,17 @@ it('rejects a Component requiring props that previews do not supply', () => {
   );
 });
 
+it('reports an unavailable location when the Component export is missing', () => {
+  expect(
+    getFrontComponentTypeDiagnostics({
+      files: platform,
+      source: 'export const OtherComponent = () => <div />;',
+    }),
+  ).toEqual([
+    `component.tsx (location unavailable) TS2305: Module '"./component"' has no exported member 'Component'.`,
+  ]);
+});
+
 it('does not resolve imports against an existing host file', async () => {
   const file = join(directory, 'secret.ts');
   await writeFile(file, 'export const secret = "host value";');
@@ -168,7 +179,7 @@ it('captures dependencies when the source directory uses Windows separators', as
 
 it('rejects oversized type references before compressing or uploading them', () => {
   expect(() =>
-    encodeFrontComponentTypeReferences({
+    encodeFrontComponentTypeReferencesOrThrow({
       '/large.d.ts': 'x'.repeat(FRONT_COMPONENT_TYPE_REFERENCES_MAX_BYTES),
     }),
   ).toThrow('type references exceed the 32 MiB limit');

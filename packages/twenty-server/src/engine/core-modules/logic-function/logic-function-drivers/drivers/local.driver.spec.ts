@@ -1,4 +1,4 @@
-import { encodeFrontComponentTypeReferences } from 'twenty-shared/front-component-build';
+import { encodeFrontComponentTypeReferencesOrThrow } from 'twenty-shared/front-component-build';
 import { getFrontComponentCompilerTypeReferences } from 'src/engine/metadata-modules/ai/ai-front-component/utils/get-front-component-compiler-type-references.util';
 import {
   access,
@@ -126,7 +126,7 @@ const escapeUnsafeChars = (value: string): string =>
 
 jest.useRealTimers();
 
-const TYPE_REFERENCES = encodeFrontComponentTypeReferences(
+const TYPE_REFERENCES = encodeFrontComponentTypeReferencesOrThrow(
   getFrontComponentCompilerTypeReferences(),
 ).toString('base64');
 

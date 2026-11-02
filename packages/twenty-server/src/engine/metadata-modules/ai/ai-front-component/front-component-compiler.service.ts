@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { createHash } from 'crypto';
 import {
   decodeFrontComponentTypeReferences,
-  encodeFrontComponentTypeReferences,
+  encodeFrontComponentTypeReferencesOrThrow,
 } from 'twenty-shared/front-component-build';
 import { LogicFunctionDriverType } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
@@ -53,7 +53,7 @@ export class FrontComponentCompilerService {
       await this.workspaceDependencies.getSharedDependenciesOrThrow(
         workspaceId,
       );
-    const typeReferences = encodeFrontComponentTypeReferences({
+    const typeReferences = encodeFrontComponentTypeReferencesOrThrow({
       ...getFrontComponentCompilerTypeReferences(),
       ...decodeFrontComponentTypeReferences(
         Buffer.from(builtDependencies.typeReferences, 'base64'),

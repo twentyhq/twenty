@@ -89,16 +89,20 @@ export const getFrontComponentTypeDiagnostics = ({
       diagnostic = {
         ...diagnostic,
         file: sourceFile,
-        start: componentDeclaration?.getStart(sourceFile) ?? 0,
+        start: componentDeclaration?.getStart(sourceFile),
       };
     }
-    const position =
-      isDefined(diagnostic.file) && isDefined(diagnostic.start)
-        ? diagnostic.file.getLineAndCharacterOfPosition(diagnostic.start)
-        : undefined;
-    const location = !isDefined(position)
-      ? ''
-      : `${posix.basename(diagnostic.file?.fileName ?? sourcePath)}:${position.line + 1}:${position.character + 1} `;
-    return `${location}TS${diagnostic.code}: ${ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`;
+    const message = `TS${diagnostic.code}: ${ts.flattenDiagnosticMessageText(diagnostic.messageText, '\n')}`;
+    if (!isDefined(diagnostic.file)) {
+      return message;
+    }
+    const fileName = posix.basename(diagnostic.file.fileName);
+    if (!isDefined(diagnostic.start)) {
+      return `${fileName} (location unavailable) ${message}`;
+    }
+    const position = diagnostic.file.getLineAndCharacterOfPosition(
+      diagnostic.start,
+    );
+    return `${fileName}:${position.line + 1}:${position.character + 1} ${message}`;
   });
 };

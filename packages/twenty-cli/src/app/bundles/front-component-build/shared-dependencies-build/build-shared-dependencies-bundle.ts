@@ -4,7 +4,7 @@ import { getBaseFrontComponentBuildOptions } from '@/app/bundles/front-component
 import { type OnFileBuiltCallback } from '@/app/bundles/types/on-file-built-callback.type';
 import {
   collectFrontComponentTypeReferences,
-  encodeFrontComponentTypeReferences,
+  encodeFrontComponentTypeReferencesOrThrow,
   getSharedDependenciesTypeReferencesPath,
   getSharedDependenciesEntrySource,
   normalizeFrontComponentSharedDependencies,
@@ -107,7 +107,7 @@ export const buildSharedDependenciesBundle = async ({
     checksum,
   });
 
-  const typeReferences = encodeFrontComponentTypeReferences(
+  const typeReferences = encodeFrontComponentTypeReferencesOrThrow(
     collectFrontComponentTypeReferences({ directory: appPath, dependencies }),
   );
   const typeReferencesChecksum = crypto

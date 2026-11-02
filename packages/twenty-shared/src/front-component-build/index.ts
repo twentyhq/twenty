@@ -14,7 +14,7 @@ export {
   cssInjectionPlugin,
 } from './css-injection-plugin';
 export { decodeFrontComponentTypeReferences } from './decode-front-component-type-references';
-export { encodeFrontComponentTypeReferences } from './encode-front-component-type-references';
+export { encodeFrontComponentTypeReferencesOrThrow } from './encode-front-component-type-references-or-throw';
 export { enumerateSharedDependenciesExportNames } from './enumerate-shared-dependencies-export-names';
 export { FRONT_COMPONENT_REACT_IMPORTS } from './front-component-react-imports';
 export { FRONT_COMPONENT_REQUIRED_SHARED_DEPENDENCIES } from './front-component-required-shared-dependencies';

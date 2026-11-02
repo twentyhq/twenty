@@ -1,8 +1,8 @@
-import { encodeFrontComponentTypeReferences } from 'twenty-shared/front-component-build';
+import { encodeFrontComponentTypeReferencesOrThrow } from 'twenty-shared/front-component-build';
 import { getFrontComponentCompilerTypeReferences } from 'src/engine/metadata-modules/ai/ai-front-component/utils/get-front-component-compiler-type-references.util';
 import { validateFrontComponentTypesOrThrow } from 'src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-types-or-throw.util';
 
-const typeReferences = encodeFrontComponentTypeReferences(
+const typeReferences = encodeFrontComponentTypeReferencesOrThrow(
   getFrontComponentCompilerTypeReferences(),
 ).toString('base64');
 
