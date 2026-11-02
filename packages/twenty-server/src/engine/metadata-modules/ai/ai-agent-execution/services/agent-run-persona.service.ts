@@ -133,7 +133,6 @@ export class AgentRunPersonaService {
 
     return {
       agentRoleId,
-      // a role missing from the cache grants nothing, so its run gets no tools
       explicitObjectGrants: isDefined(agentRole)
         ? buildRoleExplicitObjectGrants({
             role: agentRole,

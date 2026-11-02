@@ -3,14 +3,12 @@ import {
   SystemPermissionFlag,
 } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import {
-  FieldMetadataType,
-  type ObjectsPermissions,
-} from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { resolveAiRunPermissionScope } from 'src/engine/permissions/role/utils/resolve-ai-run-permission-scope.util';
-import { restrictObjectsPermissionsToScope } from 'src/engine/permissions/role/utils/restrict-objects-permissions-to-scope.util';
-import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
+import { isObjectOperationDeniedToPrincipal } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principal.util';
+import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
@@ -125,16 +123,48 @@ describe('resolveAiRunPermissionScope', () => {
     ).toMatchObject({ canRead: false });
   });
 
-  it('grants nothing for an object the workspace does not have', () => {
-    const { objectsPermissions } = resolve({
-      objectPermissions: [
-        { objectUniversalIdentifier: 'unknown', canReadObjectRecords: true },
-      ],
-    });
-
-    expect(objectsPermissions[PERSON_ID]?.canReadObjectRecords).toBe(false);
-    expect(objectsPermissions[COMPANY_ID]?.canReadObjectRecords).toBe(false);
-  });
+  it.each([
+    {
+      unknown: 'an object',
+      scope: {
+        objectPermissions: [
+          { objectUniversalIdentifier: 'unknown', canReadObjectRecords: false },
+        ],
+      },
+      message: 'Object unknown in an AI run scope does not exist',
+    },
+    {
+      unknown: 'the object of a field',
+      scope: {
+        fieldPermissions: [
+          {
+            objectUniversalIdentifier: 'unknown',
+            fieldUniversalIdentifier: 'email',
+            canReadFieldValue: false,
+          },
+        ],
+      },
+      message: 'Object unknown in an AI run scope does not exist',
+    },
+    {
+      unknown: 'a field',
+      scope: {
+        fieldPermissions: [
+          {
+            objectUniversalIdentifier: 'person',
+            fieldUniversalIdentifier: 'unknown',
+            canReadFieldValue: false,
+          },
+        ],
+      },
+      message: 'Field unknown in an AI run scope does not exist',
+    },
+  ])(
+    'refuses a scope naming $unknown the workspace does not have',
+    ({ scope, message }) => {
+      expect(() => resolve(scope)).toThrow(message);
+    },
+  );
 
   describe('on the workflow objects, which the workflows flag grants', () => {
     const WORKFLOWS_FLAG = SystemPermissionFlag[PermissionFlagType.WORKFLOWS];
@@ -241,42 +271,50 @@ describe('resolveAiRunPermissionScope', () => {
     });
 
     it('refuses an insert by a member who can write it, under a scope that grants nothing', () => {
-      const memberObjectsPermissions: ObjectsPermissions = {
-        [CAMPAIGN_ID]: {
-          canReadObjectRecords: true,
-          canUpdateObjectRecords: true,
-          canSoftDeleteObjectRecords: true,
-          canDestroyObjectRecords: true,
-          restrictedFields: {},
-          rowLevelPermissionPredicates: [],
-          rowLevelPermissionPredicateGroups: [],
-        },
-      };
-      const insertCampaign = (objectsPermissions: ObjectsPermissions) =>
-        validateOperationIsPermittedOrThrow({
-          entityName: 'campaign',
+      const isInsertDenied = (scope?: PermissionsPrincipal['scope']) =>
+        isObjectOperationDeniedToPrincipal({
+          principal: {
+            workspaceId: 'workspace-id',
+            roleIds: ['member-role-id'],
+            ...(isDefined(scope) ? { scope } : {}),
+          },
+          metadataMaps: {
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            rolesPermissions: {
+              'member-role-id': {
+                [CAMPAIGN_ID]: {
+                  canReadObjectRecords: true,
+                  canUpdateObjectRecords: true,
+                  canSoftDeleteObjectRecords: true,
+                  canDestroyObjectRecords: true,
+                  restrictedFields: {},
+                  rowLevelPermissionPredicates: [],
+                  rowLevelPermissionPredicateGroups: [],
+                },
+              },
+            },
+            flatApplicationMaps: { byId: {} },
+            flatRowLevelPermissionPredicateMaps: createEmptyFlatEntityMaps(),
+            flatRowLevelPermissionPredicateGroupMaps:
+              createEmptyFlatEntityMaps(),
+            featureFlagsMap: {},
+          },
+          flatObjectMetadata: flatObjectMetadataMaps.byUniversalIdentifier
+            .campaign as FlatObjectMetadata,
           operationType: 'insert',
-          objectsPermissions,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-          objectIdByNameSingular: { campaign: CAMPAIGN_ID },
-          selectedColumns: [],
-          updatedColumns: [],
         });
 
-      expect(() => insertCampaign(memberObjectsPermissions)).not.toThrow();
-      expect(() =>
-        insertCampaign(
-          restrictObjectsPermissionsToScope({
-            objectsPermissions: memberObjectsPermissions,
-            scope: resolveAiRunPermissionScope({
-              scope: {},
-              flatObjectMetadataMaps,
-              flatFieldMetadataMaps,
-            }),
+      expect(isInsertDenied()).toBe(false);
+      expect(
+        isInsertDenied(
+          resolveAiRunPermissionScope({
+            scope: {},
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
           }),
         ),
-      ).toThrow('Entity performing the request does not have permission');
+      ).toBe(true);
     });
   });
 

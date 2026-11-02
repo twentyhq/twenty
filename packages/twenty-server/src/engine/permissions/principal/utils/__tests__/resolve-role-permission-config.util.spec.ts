@@ -1,3 +1,4 @@
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
 import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
@@ -16,7 +17,10 @@ const buildUserContext = ({
   application,
 }: {
   userWorkspaceId?: string;
-  application?: { defaultRoleId: string | null };
+  application?: {
+    defaultRoleId: string | null;
+    sourceType?: ApplicationRegistrationSourceType;
+  };
 } = {}): WorkspaceAuthContext =>
   ({
     type: 'user',
@@ -37,11 +41,12 @@ const buildApiKeyContext = (apiKeyId: string): WorkspaceAuthContext =>
 
 const buildApplicationContext = (
   defaultRoleId: string | null,
+  sourceType?: ApplicationRegistrationSourceType,
 ): WorkspaceAuthContext =>
   ({
     type: 'application',
     workspace: { id: 'workspace-1' },
-    application: { defaultRoleId },
+    application: { defaultRoleId, sourceType },
   }) as unknown as WorkspaceAuthContext;
 
 const withAgent = (
@@ -91,10 +96,35 @@ describe('resolveRolePermissionConfig', () => {
     });
   });
 
-  it('adds no application restriction when the application has no role', () => {
+  it('bounds a user acting through an OAuth-only application without a role by the user role alone', () => {
     expect(
-      resolve(buildUserContext({ application: { defaultRoleId: null } })),
-    ).toEqual({ intersectionOf: { userWorkspaceRoleId: USER_ROLE_ID } });
+      resolve(
+        buildUserContext({
+          application: {
+            defaultRoleId: null,
+            sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+          },
+        }),
+      ),
+    ).toEqual({
+      intersectionOf: {
+        userWorkspaceRoleId: USER_ROLE_ID,
+        applicationRoleId: USER_ROLE_ID,
+      },
+    });
+  });
+
+  it('allows nothing for a user acting through an installed application without a role', () => {
+    expect(
+      resolve(
+        buildUserContext({
+          application: {
+            defaultRoleId: null,
+            sourceType: ApplicationRegistrationSourceType.NPM,
+          },
+        }),
+      ),
+    ).toBeNull();
   });
 
   it('allows nothing for a user without a role, even with an application', () => {
@@ -143,6 +173,20 @@ describe('resolveRolePermissionConfig', () => {
 
   it('allows nothing for an application without a role', () => {
     expect(resolve(buildApplicationContext(null))).toBeNull();
+  });
+
+  it('allows nothing for an OAuth-only application without a role acting alone, even with an agent', () => {
+    expect(
+      resolve(
+        withAgent(
+          buildApplicationContext(
+            null,
+            ApplicationRegistrationSourceType.OAUTH_ONLY,
+          ),
+          AGENT_ID,
+        ),
+      ),
+    ).toBeNull();
   });
 
   it('narrows a user application token to the role of the agent it carries', () => {

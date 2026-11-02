@@ -17,6 +17,7 @@ import {
 } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
+import { getAuthContextApplication } from 'src/engine/core-modules/auth/utils/get-auth-context-application.util';
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/code-execution-stream-emitter.type';
 
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
@@ -33,7 +34,6 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-turn.service';
 import { guideUncallableToolCallsToMetaTool } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/guide-uncallable-tool-calls-to-meta-tool.util';
 import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/replace-unsupported-file-parts.util';
-import { resolveAgentRunCallingApplication } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-agent-run-calling-application.util';
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsing-context.type';
 import { AGENT_CHAT_KEEPALIVE_INTERVAL_MS } from 'src/engine/metadata-modules/ai/ai-chat/constants/agent-chat-keepalive-interval-ms.constant';
 import { AI_CHAT_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-excluded-tool-names.const';
@@ -169,7 +169,7 @@ export class ChatExecutionService {
       locale,
       onCodeExecutionUpdate,
       ...authorization,
-      application: resolveAgentRunCallingApplication(authorization.authContext),
+      application: getAuthContextApplication(authorization.authContext),
       resolveExecutionContext,
     };
 

@@ -373,5 +373,24 @@ describe('DefinedToolRegistryService', () => {
       });
       expect(executeSpy).not.toHaveBeenCalled();
     });
+
+    it('should run a tool that honours the scope for a scoped caller', async () => {
+      const { definedToolRegistryService } = buildDefinedToolRegistryService({
+        tools: [new ResendWebhookTool()],
+        isGranted: true,
+      });
+      const resendWebhook =
+        definedToolRegistryService.findDefinedTool('resend_webhook');
+
+      jestExpectToBeDefined(resendWebhook);
+
+      expect(
+        await definedToolRegistryService.execute({
+          definedTool: resendWebhook,
+          args: { id: webhookId },
+          context: scopedContext,
+        }),
+      ).toEqual({ success: true, message: `Webhook ${webhookId} resent` });
+    });
   });
 });

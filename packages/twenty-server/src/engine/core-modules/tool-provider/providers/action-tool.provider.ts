@@ -42,11 +42,14 @@ import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { isWithheldFromPermissionScope } from 'src/engine/permissions/principal/utils/is-withheld-from-permission-scope.util';
 import { SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool';
 
+const CAN_ACTION_TOOL_RUN_UNDER_SCOPE_BY_NAME: Partial<
+  Record<string, boolean>
+> = ACTION_TOOL_CAN_RUN_UNDER_SCOPE;
+
 @Injectable()
 export class ActionToolProvider implements ToolProvider {
   readonly category = ToolCategory.ACTION;
 
-  // each tool is checked against ACTION_TOOL_CAN_RUN_UNDER_SCOPE
   readonly canRunUnderScope = true;
 
   private readonly toolMap: Map<string, Tool>;
@@ -260,7 +263,7 @@ export class ActionToolProvider implements ToolProvider {
     }
 
     return descriptors.filter(
-      ({ name }) => !this.isWithheldFromCaller(name, context),
+      ({ name }) => !this.isWithheldFromCaller({ toolName: name, context }),
     );
   }
 
@@ -277,7 +280,7 @@ export class ActionToolProvider implements ToolProvider {
       );
     }
 
-    if (this.isWithheldFromCaller(toolName, context)) {
+    if (this.isWithheldFromCaller({ toolName, context })) {
       return buildToolNotAvailableOutput(toolName);
     }
 
@@ -293,15 +296,16 @@ export class ActionToolProvider implements ToolProvider {
     });
   }
 
-  private isWithheldFromCaller(
-    toolName: string,
-    context: ToolProviderContext,
-  ): boolean {
+  private isWithheldFromCaller({
+    toolName,
+    context,
+  }: {
+    toolName: string;
+    context: ToolProviderContext;
+  }): boolean {
     return isWithheldFromPermissionScope({
       canRunUnderScope:
-        ACTION_TOOL_CAN_RUN_UNDER_SCOPE[
-          toolName as keyof typeof ACTION_TOOL_CAN_RUN_UNDER_SCOPE
-        ] ?? false,
+        CAN_ACTION_TOOL_RUN_UNDER_SCOPE_BY_NAME[toolName] ?? false,
       rolePermissionConfig: context.rolePermissionConfig,
     });
   }

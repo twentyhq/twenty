@@ -11,7 +11,6 @@ import {
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
-import { isWorkspaceCustomApplication } from 'src/engine/core-modules/application/utils/is-workspace-custom-application.util';
 import { AgentRunPersonaService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { type AgentRunSpec } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-spec.type';
@@ -118,13 +117,6 @@ export class AiAgentWorkflowAction implements WorkflowAction {
 
     const spec = buildWorkflowAgentRunSpec({
       step,
-      isApplicationBound:
-        isDefined(executionContext.application) &&
-        !isWorkspaceCustomApplication({
-          application: executionContext.application,
-          workspaceCustomApplicationId:
-            executionContext.authContext.workspace.workspaceCustomApplicationId,
-        }),
       // a run without an application id belongs to the workspace custom application
       applicationId:
         executionContext.application?.id ??

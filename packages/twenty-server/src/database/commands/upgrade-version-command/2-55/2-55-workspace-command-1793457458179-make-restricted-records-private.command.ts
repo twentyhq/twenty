@@ -1,5 +1,5 @@
 import { Command } from 'nest-commander';
-import { FeatureFlagKey, MetadataReadability } from 'twenty-shared/types';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type QueryRunner } from 'typeorm';
 
@@ -17,14 +17,9 @@ import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-mana
 
 // Objects whose records could be restricted by an everyone row before records became private one by one
 const isRestrictableObject = (
-  flatObjectMetadata: Pick<
-    FlatObjectMetadata,
-    'readability' | 'isSystem' | 'universalIdentifier'
-  >,
+  flatObjectMetadata: Pick<FlatObjectMetadata, 'isSystem' | 'universalIdentifier'>,
 ): boolean =>
-  flatObjectMetadata.readability !== MetadataReadability.PRIVATE &&
-  !flatObjectMetadata.isSystem &&
-  !isPermissionStorageObject(flatObjectMetadata);
+  !flatObjectMetadata.isSystem && !isPermissionStorageObject(flatObjectMetadata);
 
 @RegisteredWorkspaceCommand('2.55.0', 1793457458179)
 @Command({
@@ -68,11 +63,17 @@ export class MakeRestrictedRecordsPrivateCommand extends ProvisionedWorkspaceCom
         queryRunner,
         schemaName,
       });
+      const legacyPrivateObjectMetadataIds =
+        await this.findLegacyPrivateObjectMetadataIds({
+          queryRunner,
+          workspaceId,
+        });
       const restrictableObjects = Object.values(
         flatObjectMetadataMaps.byUniversalIdentifier,
       )
         .filter(isDefined)
         .filter(isRestrictableObject)
+        .filter(({ id }) => !legacyPrivateObjectMetadataIds.has(id))
         .filter((flatObjectMetadata) =>
           tableNamesWithColumn.has(
             getWorkspaceSchemaContextForMigration({
@@ -136,6 +137,21 @@ export class MakeRestrictedRecordsPrivateCommand extends ProvisionedWorkspaceCom
     );
 
     return new Set(columns.map(({ tableName }) => tableName));
+  }
+
+  private async findLegacyPrivateObjectMetadataIds({
+    queryRunner,
+    workspaceId,
+  }: {
+    queryRunner: QueryRunner;
+    workspaceId: string;
+  }): Promise<Set<string>> {
+    const objects: { id: string }[] = await queryRunner.query(
+      `SELECT id FROM core."objectMetadata" WHERE "workspaceId" = $1 AND readability = 'PRIVATE'`,
+      [workspaceId],
+    );
+
+    return new Set(objects.map(({ id }) => id));
   }
 
   private async logDryRun({

@@ -20,6 +20,7 @@ import { acquireUserAuthenticationLock } from 'src/engine/core-modules/auth/util
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TOKEN_BUCKET_THROTTLE_KEY_PREFIX } from 'src/engine/core-modules/throttler/constants/token-bucket-throttle-key-prefix.constant';
 import { TWO_FACTOR_AUTHENTICATION_RECOVERY_CODE_REDEMPTION_RATE_LIMIT_MAX } from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-recovery-code.constant';
+import { buildTwoFactorAuthenticationUsedOtpKey } from 'src/engine/core-modules/two-factor-authentication/utils/build-two-factor-authentication-used-otp-key.util';
 import { hashTwoFactorAuthenticationRecoveryCode } from 'src/engine/core-modules/two-factor-authentication/utils/hash-two-factor-authentication-recovery-code.util';
 import { UserSessionRevokedReason } from 'src/engine/core-modules/user-session/types/user-session-revoked-reason.type';
 import {
@@ -47,10 +48,35 @@ const waitUntilSafelyInsideTotpStep = async (): Promise<void> => {
   }
 };
 
+const clearUsedOtps = async (): Promise<void> => {
+  const redis = new IORedis(process.env.REDIS_URL ?? 'redis://localhost:6379');
+
+  try {
+    const keys = await redis.keys(
+      `${CacheStorageNamespace.IntegrationTests}:${CacheStorageNamespace.EngineAuthSession}:${buildTwoFactorAuthenticationUsedOtpKey({ methodId: '*', token: '*' })}`,
+    );
+
+    if (keys.length > 0) {
+      await redis.del(...keys);
+    }
+  } finally {
+    redis.disconnect();
+  }
+};
+
 const generateOtp = async (secret: string): Promise<string> => {
   await waitUntilSafelyInsideTotpStep();
+  await clearUsedOtps();
 
   return authenticator.generate(secret);
+};
+
+const generatePreviousStepOtp = async (secret: string): Promise<string> => {
+  await waitUntilSafelyInsideTotpStep();
+
+  return authenticator
+    .clone({ epoch: Date.now() - TOTP_STEP_DURATION_MS })
+    .generate(secret);
 };
 
 const clearTwoFactorAuthenticationRateLimits = async (): Promise<void> => {
@@ -455,10 +481,13 @@ describe('Two-factor authentication recovery codes (integration)', () => {
     });
 
     it('leaves exactly one usable code when two are issued at the same time', async () => {
-      const otp = await generateOtp(janeSecret);
+      const otps = [
+        await generateOtp(janeSecret),
+        await generatePreviousStepOtp(janeSecret),
+      ];
 
       const responses = await Promise.all(
-        [0, 1].map(() =>
+        otps.map((otp) =>
           generateTwoFactorAuthenticationRecoveryCode({
             userId: USER_DATA_SEED_IDS.JONY,
             otp,

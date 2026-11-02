@@ -1,4 +1,7 @@
+import { InjectDataSource } from '@nestjs/typeorm';
+
 import { Command } from 'nest-commander';
+import { DataSource } from 'typeorm';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { MetadataWritability } from 'twenty-shared/types';
@@ -27,6 +30,8 @@ export class MoveAgentChatThreadsToRecordModelCommand extends ProvisionedWorkspa
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly storage: AgentHistoryUpgradeStorageService,
+    @InjectDataSource()
+    private readonly coreDataSource: DataSource,
   ) {
     super(workspaceIteratorService);
   }
@@ -76,20 +81,24 @@ export class MoveAgentChatThreadsToRecordModelCommand extends ProvisionedWorkspa
         now: new Date().toISOString(),
         direction,
       });
-    const archivedAtField =
-      flatFieldMetadataMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.agentChatThread.fields.archivedAt.universalIdentifier
-      ];
+    const [fromWritability, toWritability] =
+      direction === 'up'
+        ? [MetadataWritability.OPEN, MetadataWritability.SYSTEM]
+        : [MetadataWritability.SYSTEM, MetadataWritability.OPEN];
+    const archivedAtFieldFilter = `"workspaceId" = $1 AND "universalIdentifier" = $2`;
+    const archivedAtFieldParameters = [
+      workspaceId,
+      STANDARD_OBJECTS.agentChatThread.fields.archivedAt.universalIdentifier,
+    ];
+    const [archivedAtField] = await this.coreDataSource.query<
+      { writability: MetadataWritability }[]
+    >(
+      `SELECT writability FROM core."fieldMetadata" WHERE ${archivedAtFieldFilter}`,
+      archivedAtFieldParameters,
+    );
 
-    // A chat this moved to the trash looks like one archived and deleted
-    // before the upgrade, so chats only move while archivedAt still has the
-    // writability this direction starts from, and before it changes
-    const shouldMoveChats =
-      isDefined(archivedAtField) &&
-      archivedAtField.writability ===
-        (direction === 'up'
-          ? MetadataWritability.OPEN
-          : MetadataWritability.SYSTEM);
+    // Moved chats look like ones archived and deleted before, so the legacy archivedAt writability marks a done move
+    const shouldMoveChats = archivedAtField?.writability === fromWritability;
 
     if (options.dryRun) {
       this.logger.log(
@@ -106,6 +115,11 @@ export class MoveAgentChatThreadsToRecordModelCommand extends ProvisionedWorkspa
           workspaceId,
           direction,
         }),
+      );
+
+      await this.coreDataSource.query(
+        `UPDATE core."fieldMetadata" SET writability = $3 WHERE ${archivedAtFieldFilter}`,
+        [...archivedAtFieldParameters, toWritability],
       );
 
       this.logger.log(

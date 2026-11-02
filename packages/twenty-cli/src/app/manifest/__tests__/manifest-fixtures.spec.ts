@@ -15,6 +15,7 @@ import { fileURLToPath } from 'node:url';
 
 import { stop } from 'esbuild';
 import { EMPTY_YARN_LOCK_CONTENT } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 import {
   afterAll,
   afterEach,
@@ -397,6 +398,73 @@ export default defineWorkflow({
       );
     }
   }, 60000);
+
+  it.each([undefined, false, true])(
+    'matches one health check with member opt-in %s and rejects a second declaration',
+    async (runOnUserPreferences) => {
+      const appPath = await copyFixture('minimal-app');
+      const writeHealthCheck = ({
+        fileName,
+        universalIdentifier,
+        runOnUserPreferences,
+      }: {
+        fileName: string;
+        universalIdentifier: string;
+        runOnUserPreferences?: boolean;
+      }) =>
+        writeFile(
+          join(appPath, fileName),
+          `import { defineHealthCheck } from 'twenty-sdk/define';
+
+export default defineHealthCheck({
+  universalIdentifier: '${universalIdentifier}',
+  name: '${fileName}',
+  ${isDefined(runOnUserPreferences) ? `runOnUserPreferences: ${runOnUserPreferences},` : ''}
+  handler: () => ({ status: 'OK' }),
+});
+`,
+        );
+
+      await writeHealthCheck({
+        fileName: 'health-check.ts',
+        universalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000070',
+        runOnUserPreferences,
+      });
+      const result = await compareManifest(appPath);
+
+      expect(result.success).toBe(true);
+      if (result.success) {
+        const healthCheckLogicFunction = result.manifest.logicFunctions.find(
+          ({ universalIdentifier }) =>
+            universalIdentifier === 'e1e2e3e4-e5e6-4000-8000-000000000070',
+        );
+
+        expect(healthCheckLogicFunction).toBeDefined();
+        expect(healthCheckLogicFunction).not.toHaveProperty(
+          'runOnUserPreferences',
+        );
+        expect(result.manifest.application.healthCheckLogicFunction).toEqual({
+          universalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000070',
+          ...(isDefined(runOnUserPreferences) ? { runOnUserPreferences } : {}),
+        });
+      }
+
+      await writeHealthCheck({
+        fileName: 'second-health-check.ts',
+        universalIdentifier: 'e1e2e3e4-e5e6-4000-8000-000000000071',
+        runOnUserPreferences: true,
+      });
+      const duplicateResult = await compareManifest(appPath);
+
+      expect(duplicateResult.success).toBe(false);
+      if (!duplicateResult.success) {
+        expect(duplicateResult.errors).toContain(
+          'Only one health check is allowed per application',
+        );
+      }
+    },
+    60000,
+  );
 
   it('keeps evaluated source output and workspace credentials outside the manifest result', async () => {
     const appPath = await copyFixture('minimal-app');

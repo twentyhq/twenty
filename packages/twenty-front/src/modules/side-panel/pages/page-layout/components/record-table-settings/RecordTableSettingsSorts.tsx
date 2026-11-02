@@ -10,7 +10,7 @@ import { InputLabel } from '@/ui/input/components/internal/InputLabel/InputLabel
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { ViewSortDirection } from '~/generated-metadata/graphql';
