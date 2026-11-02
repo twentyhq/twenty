@@ -4540,6 +4540,11 @@ msgstr "Το εξουσιοδοτημένο URL αντιγράφηκε στο π
 msgid "Authorizing..."
 msgstr "Γίνεται εξουσιοδότηση..."
 
+#. js-lingui-id: R9Khdg
+#: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
+msgid "Auto"
+msgstr ""
+
 #. js-lingui-id: KqBvMG
 #: src/pages/settings/applications/tabs/SettingsApplicationAutoUpdateSection.tsx
 msgid "Auto update"
@@ -4758,6 +4763,11 @@ msgstr "Κρυφή κοινοποίηση"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "BCC"
 msgstr "Κρυφή κοινοποίηση"
+
+#. js-lingui-id: tK9OCv
+#: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
+msgid "Behavior"
+msgstr ""
 
 #. js-lingui-id: +MqoSu
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -6021,6 +6031,11 @@ msgstr "Επιλέξτε οποιαδήποτε χρήση, σε ποιον εφ
 msgid "Choose automatically"
 msgstr "Αυτόματη επιλογή"
 
+#. js-lingui-id: smH+1Z
+#: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
+msgid "Choose behavior"
+msgstr ""
+
 #. js-lingui-id: Qz73jD
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
 msgid "Choose between OIDC and SAML protocols"
@@ -6097,6 +6112,11 @@ msgstr "Επιλέξτε τι συμβαίνει όταν κάνετε κλικ 
 #: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.ts
 msgid "Choose what happens when you click an email"
 msgstr "Επιλέξτε τι συμβαίνει όταν κάνετε κλικ σε μια διεύθυνση email"
+
+#. js-lingui-id: T3tKFK
+#: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
+msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
+msgstr ""
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -9903,6 +9923,7 @@ msgstr "Πολιτική DMARC"
 #. Abbreviation of direct messages, sidebar section title
 #. js-lingui-id: TdAWxF
 #: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
+#: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "DMs"
 msgstr "Άμεσα μηνύματα"
 
@@ -13733,6 +13754,11 @@ msgstr "Η εξουσιοδότηση GitHub απέτυχε ή απορρίφθ�
 msgid "Global"
 msgstr "Παγκόσμιο"
 
+#. js-lingui-id: BFSjnt
+#: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
+msgid "Global inbox"
+msgstr ""
+
 #. js-lingui-id: lwDz5R
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Global search"
@@ -16639,6 +16665,11 @@ msgstr "Φόρτωση {formattedNames}"
 msgid "Loading apps..."
 msgstr "Φόρτωση εφαρμογών..."
 
+#. js-lingui-id: 3Zpgky
+#: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
+msgid "Loading behavior settings..."
+msgstr ""
+
 #. js-lingui-id: UDL15Z
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerRecentChats.tsx
 msgid "Loading chats..."
@@ -16763,6 +16794,7 @@ msgstr "Φόρτωση της προόδου σας"
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 #: src/modules/views/hooks/useComputeRecordRelationFilterDisplayValue.tsx
+#: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
 msgid "Loading..."
 msgstr "Φόρτωση..."
 
@@ -18272,6 +18304,7 @@ msgstr "Σφάλμα δικτύου"
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
 #: src/modules/settings/developers/constants/ExpirationDates.ts
 #: src/modules/settings/developers/utils/formatExpiration.ts
+#: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
 msgid "Never"
 msgstr "Ποτέ"
 
@@ -18280,6 +18313,11 @@ msgstr "Ποτέ"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableRow.tsx
 msgid "Never expires"
 msgstr "Δεν λήγει ποτέ"
+
+#. js-lingui-id: cHEgp5
+#: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
+msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
+msgstr ""
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20224,6 +20262,11 @@ msgstr "Μία ανά εκτέλεση"
 msgid "One subscription provides one Organization key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same Organization key, then register that server as a development instance. Development instances unlock premium features without extra billing and do not count toward your production seats."
 msgstr "Μία συνδρομή παρέχει ένα κλειδί Οργανισμού που ενεργοποιεί ένα στιγμιότυπο παραγωγής και ένα πιθανό στιγμιότυπο staging ή δοκιμών. Για να εκτελέσετε ένα περιβάλλον staging ή δοκιμών, εγκαταστήστε το Twenty σε δεύτερο διακομιστή, ενεργοποιήστε το με το ίδιο κλειδί Οργανισμού και κατόπιν καταχωρίστε αυτόν τον διακομιστή ως στιγμιότυπο ανάπτυξης. Τα στιγμιότυπα ανάπτυξης ξεκλειδώνουν premium δυνατότητες χωρίς επιπλέον χρέωση και δεν υπολογίζονται στις θέσεις παραγωγής σας."
 
+#. js-lingui-id: ghcoqW
+#: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
+msgid "One-to-one conversations between people"
+msgstr ""
+
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "Only applications published to npm can be claimed this way."
@@ -20307,6 +20350,11 @@ msgstr "Μόνο ο δημιουργός αυτής της εγγραφής, τ�
 #: src/modules/activities/emails/components/EmailThreadNotShared.tsx
 msgid "Only the subject is shared"
 msgstr "Μοιράζεται μόνο το θέμα"
+
+#. js-lingui-id: gYj1mG
+#: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
+msgid "Only when mentioned"
+msgstr ""
 
 #. js-lingui-id: anLgcW
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
@@ -20772,6 +20820,11 @@ msgstr "Άλλο"
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Other clients"
 msgstr "Άλλοι πελάτες"
+
+#. js-lingui-id: Pquq4V
+#: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
+msgid "Other inbox conversations"
+msgstr ""
 
 #. js-lingui-id: ggOXu2
 #: src/modules/settings/data-model/objects/components/SettingsDataModelObjectSummary.tsx

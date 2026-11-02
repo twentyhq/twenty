@@ -4540,6 +4540,11 @@ msgstr "URL مجاز در کلیپ‌بورد کپی شد"
 msgid "Authorizing..."
 msgstr "در حال مجوزدهی..."
 
+#. js-lingui-id: R9Khdg
+#: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
+msgid "Auto"
+msgstr ""
+
 #. js-lingui-id: KqBvMG
 #: src/pages/settings/applications/tabs/SettingsApplicationAutoUpdateSection.tsx
 msgid "Auto update"
@@ -4758,6 +4763,11 @@ msgstr "Bcc"
 #: src/modules/workflow/workflow-steps/workflow-actions/components/WorkflowEditActionEmailBase.tsx
 msgid "BCC"
 msgstr "BCC"
+
+#. js-lingui-id: tK9OCv
+#: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
+msgid "Behavior"
+msgstr ""
 
 #. js-lingui-id: +MqoSu
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -6021,6 +6031,11 @@ msgstr "هر نوع مصرف، افراد مشمول آن و دفعات بازن
 msgid "Choose automatically"
 msgstr "انتخاب خودکار"
 
+#. js-lingui-id: smH+1Z
+#: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
+msgid "Choose behavior"
+msgstr ""
+
 #. js-lingui-id: Qz73jD
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
 msgid "Choose between OIDC and SAML protocols"
@@ -6097,6 +6112,11 @@ msgstr "انتخاب کنید هنگام کلیک روی یک شماره تلف�
 #: src/modules/settings/data-model/fields/forms/utils/getSettingsDataModelFieldOnClickActionDescription.ts
 msgid "Choose what happens when you click an email"
 msgstr "انتخاب کنید هنگام کلیک روی یک ایمیل چه اتفاقی بیفتد"
+
+#. js-lingui-id: T3tKFK
+#: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
+msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
+msgstr ""
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -9903,6 +9923,7 @@ msgstr "خط‌مشی DMARC"
 #. Abbreviation of direct messages, sidebar section title
 #. js-lingui-id: TdAWxF
 #: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
+#: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "DMs"
 msgstr "پیام‌های مستقیم"
 
@@ -13733,6 +13754,11 @@ msgstr "مجوز GitHub ناموفق بود یا رد شد. لطفاً دوبا�
 msgid "Global"
 msgstr "سراسری"
 
+#. js-lingui-id: BFSjnt
+#: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
+msgid "Global inbox"
+msgstr ""
+
 #. js-lingui-id: lwDz5R
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
 msgid "Global search"
@@ -16639,6 +16665,11 @@ msgstr "در حال بارگذاری {formattedNames}"
 msgid "Loading apps..."
 msgstr "در حال بارگیری برنامه‌ها..."
 
+#. js-lingui-id: 3Zpgky
+#: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
+msgid "Loading behavior settings..."
+msgstr ""
+
 #. js-lingui-id: UDL15Z
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerRecentChats.tsx
 msgid "Loading chats..."
@@ -16763,6 +16794,7 @@ msgstr "در حال بارگیری پیشرفت شما"
 #: src/modules/settings/admin-panel/components/SettingsAdminVersionDisplay.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentEntityPickerDropdown.tsx
 #: src/modules/views/hooks/useComputeRecordRelationFilterDisplayValue.tsx
+#: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
 msgid "Loading..."
 msgstr "در حال بارگذاری..."
 
@@ -18272,6 +18304,7 @@ msgstr "خطای شبکه"
 #: src/modules/settings/admin-panel/constants/CreditGrantExpiryOptions.ts
 #: src/modules/settings/developers/constants/ExpirationDates.ts
 #: src/modules/settings/developers/utils/formatExpiration.ts
+#: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
 msgid "Never"
 msgstr "هرگز"
 
@@ -18280,6 +18313,11 @@ msgstr "هرگز"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableRow.tsx
 msgid "Never expires"
 msgstr "هرگز منقضی نمی‌شود"
+
+#. js-lingui-id: cHEgp5
+#: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
+msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
+msgstr ""
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20224,6 +20262,11 @@ msgstr "یکی در هر اجرا"
 msgid "One subscription provides one Organization key that powers one production instance and one potential staging or test instance. To run a staging or test environment, install Twenty on a second server, activate it with this same Organization key, then register that server as a development instance. Development instances unlock premium features without extra billing and do not count toward your production seats."
 msgstr "یک اشتراک، یک کلید سازمان ارائه می‌کند که یک نمونه تولیدی و یک نمونه احتمالی مرحله‌بندی یا آزمایشی را فعال می‌کند. برای اجرای محیط مرحله‌بندی یا آزمایشی، Twenty را روی سرور دوم نصب کنید، آن را با همین کلید سازمان فعال کنید، سپس آن سرور را به‌عنوان یک نمونه توسعه ثبت کنید. نمونه‌های توسعه بدون صورتحساب اضافی قابلیت‌های ممتاز را باز می‌کنند و جزو صندلی‌های تولیدی شما محسوب نمی‌شوند."
 
+#. js-lingui-id: ghcoqW
+#: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
+msgid "One-to-one conversations between people"
+msgstr ""
+
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
 msgid "Only applications published to npm can be claimed this way."
@@ -20307,6 +20350,11 @@ msgstr "فقط ایجادکننده این رکورد، افرادی که دست
 #: src/modules/activities/emails/components/EmailThreadNotShared.tsx
 msgid "Only the subject is shared"
 msgstr "فقط موضوع به اشتراک گذاشته شده است"
+
+#. js-lingui-id: gYj1mG
+#: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
+msgid "Only when mentioned"
+msgstr ""
 
 #. js-lingui-id: anLgcW
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
@@ -20772,6 +20820,11 @@ msgstr "سایر"
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
 msgid "Other clients"
 msgstr "کلاینت‌های دیگر"
+
+#. js-lingui-id: Pquq4V
+#: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
+msgid "Other inbox conversations"
+msgstr ""
 
 #. js-lingui-id: ggOXu2
 #: src/modules/settings/data-model/objects/components/SettingsDataModelObjectSummary.tsx
