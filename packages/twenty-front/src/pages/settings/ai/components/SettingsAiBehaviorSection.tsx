@@ -1,13 +1,15 @@
+import { AGENT_CHAT_ASSISTANT_NAME } from '@/ai/constants/AgentChatAssistantName';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
 import { StyledSettingsSelectGroup } from '@/settings/components/SettingsOptions/StyledSettingsSelectGroup';
+import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useId } from 'react';
+import { InlineBanner } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
-import { IconInbox, IconMessage } from 'twenty-ui/icon';
+import { IconAlertTriangle, IconInbox, IconMessage } from 'twenty-ui/icon';
 import { VisuallyHidden } from 'twenty-ui/primitives/accessibility';
 import { Card } from 'twenty-ui/primitives/surfaces';
-import { Banner } from 'twenty-ui/primitives/feedback';
 import { Text } from 'twenty-ui/primitives/typography';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { SettingsAiBehaviorModeSelect } from '~/pages/settings/ai/components/SettingsAiBehaviorModeSelect';
@@ -24,6 +26,13 @@ type SettingsAiBehaviorSectionProps = {
   disabled?: boolean;
   errorMessage?: string;
 };
+
+const StyledBehaviorMessages = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[2]};
+  margin-top: ${themeCssVariables.spacing[2]};
+`;
 
 export const SettingsAiBehaviorSection = ({
   directMessageMode,
@@ -48,7 +57,7 @@ export const SettingsAiBehaviorSection = ({
     <Section.Root>
       <Section.Header
         title={t`Behavior`}
-        description={t`Choose when Ada participates in conversations across your workspace`}
+        description={t`Choose when ${AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace`}
       />
       <Card.Root
         backgroundColor={themeCssVariables.background.secondary}
@@ -68,7 +77,6 @@ export const SettingsAiBehaviorSection = ({
               describedBy={describedBy}
               disabled={isDisabled}
               isLoading={isLoading}
-              hasError={hasError}
             />
           </SettingsOptionCardContentSelect>
           <SettingsOptionCardContentSelect
@@ -83,25 +91,32 @@ export const SettingsAiBehaviorSection = ({
               describedBy={describedBy}
               disabled={isDisabled}
               isLoading={isLoading}
-              hasError={hasError}
             />
           </SettingsOptionCardContentSelect>
         </StyledSettingsSelectGroup>
       </Card.Root>
-      <Text id={helperId} size="sm" color="tertiary">
-        {t`Never keeps Ada out. Only when mentioned asks Ada to reply when tagged. Auto lets Ada decide when to reply. Chats with only you and Ada always get replies.`}
-      </Text>
-      {isLoading && (
-        <Text aria-hidden size="sm" color="tertiary">
-          {loadingMessage}
+      <StyledBehaviorMessages>
+        <Text id={helperId} size="sm" color="tertiary">
+          {t`Never keeps ${AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks ${AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets ${AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and ${AGENT_CHAT_ASSISTANT_NAME} always get replies.`}
         </Text>
-      )}
-      <VisuallyHidden role="status">{loadingMessage}</VisuallyHidden>
-      {hasError && (
-        <Banner id={errorId} role="alert" status="error">
-          {errorMessage}
-        </Banner>
-      )}
+        {isLoading && (
+          <Text aria-hidden size="sm" color="tertiary">
+            {loadingMessage}
+          </Text>
+        )}
+        <VisuallyHidden role="status">{loadingMessage}</VisuallyHidden>
+        {hasError && (
+          <InlineBanner
+            id={errorId}
+            role="alert"
+            status="error"
+            icon={<IconAlertTriangle aria-hidden="true" />}
+            embedded
+          >
+            {errorMessage}
+          </InlineBanner>
+        )}
+      </StyledBehaviorMessages>
     </Section.Root>
   );
 };

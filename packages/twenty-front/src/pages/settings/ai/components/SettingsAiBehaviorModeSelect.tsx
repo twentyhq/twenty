@@ -11,7 +11,6 @@ type SettingsAiBehaviorModeSelectProps = {
   describedBy: string;
   disabled: boolean;
   isLoading: boolean;
-  hasError: boolean;
 };
 
 const StyledSelectContainer = styled.div`
@@ -26,7 +25,6 @@ export const SettingsAiBehaviorModeSelect = ({
   describedBy,
   disabled,
   isLoading,
-  hasError,
 }: SettingsAiBehaviorModeSelectProps) => {
   const options: { value: SettingsAiAssistantMode; label: string }[] = [
     { value: 'NEVER', label: t`Never` },
@@ -39,8 +37,14 @@ export const SettingsAiBehaviorModeSelect = ({
       <Select.Root<SettingsAiAssistantMode>
         items={options}
         value={isLoading ? null : value}
-        onValueChange={(nextValue) => {
-          if (disabled || !isDefined(nextValue)) {
+        onValueChange={(nextValue, eventDetails) => {
+          const isPickedFromOptions = eventDetails.reason === 'item-press';
+
+          if (
+            !isPickedFromOptions ||
+            !isDefined(nextValue) ||
+            nextValue === value
+          ) {
             return;
           }
 
@@ -52,7 +56,6 @@ export const SettingsAiBehaviorModeSelect = ({
           size="sm"
           aria-labelledby={labelledBy}
           aria-describedby={describedBy}
-          aria-invalid={hasError || undefined}
         >
           <Select.Value
             placeholder={isLoading ? t`Loading...` : t`Choose behavior`}
@@ -60,8 +63,12 @@ export const SettingsAiBehaviorModeSelect = ({
           <Select.Icon />
         </Select.Trigger>
         <Select.Portal>
-          <Select.Positioner align="end" sideOffset={4}>
-            <Select.Popup>
+          <Select.Positioner
+            align="end"
+            sideOffset={4}
+            alignItemWithTrigger={false}
+          >
+            <Select.Popup aria-labelledby={labelledBy}>
               {options.map(({ value: optionValue, label }) => (
                 <Select.Item key={optionValue} value={optionValue}>
                   <Select.ItemText>{label}</Select.ItemText>

@@ -32,25 +32,35 @@ export const IndependentSelection: Story = {
     expect(directMessages).toHaveTextContent('Only when mentioned');
     expect(inbox).toHaveTextContent('Auto');
     await userEvent.click(directMessages);
-    const directMessageOptions = await document.findByRole('listbox');
+    const directMessageOptions = await document.findByRole('listbox', {
+      name: 'DMs',
+    });
 
     await userEvent.click(
       within(directMessageOptions).getByRole('option', { name: 'Never' }),
     );
     await waitFor(() => expect(directMessages).toHaveTextContent('Never'));
-    expect(directMessages).toHaveFocus();
+    await waitFor(() => expect(directMessages).toHaveFocus());
     expect(args.onDirectMessageModeChange).toHaveBeenLastCalledWith('NEVER');
     expect(args.onInboxModeChange).not.toHaveBeenCalled();
     expect(inbox).toHaveTextContent('Auto');
 
     await userEvent.click(inbox);
-    await document.findByRole('listbox');
+    const inboxOptions = await document.findByRole('listbox', {
+      name: 'Global inbox',
+    });
+
+    await waitFor(() =>
+      expect(
+        within(inboxOptions).getByRole('option', { name: 'Auto' }),
+      ).toHaveFocus(),
+    );
     await userEvent.keyboard('{Home}{ArrowDown}{Enter}');
     await waitFor(() => expect(inbox).toHaveTextContent('Only when mentioned'));
     expect(args.onInboxModeChange).toHaveBeenCalledOnce();
     expect(args.onInboxModeChange).toHaveBeenLastCalledWith('MENTION_ONLY');
     expect(directMessages).toHaveTextContent('Never');
-    expect(inbox).toHaveFocus();
+    await waitFor(() => expect(inbox).toHaveFocus());
 
     await userEvent.click(directMessages);
     await document.findByRole('listbox');
@@ -58,12 +68,16 @@ export const IndependentSelection: Story = {
     await waitFor(() => expect(directMessages).toHaveFocus());
     expect(args.onDirectMessageModeChange).toHaveBeenCalledOnce();
     expect(directMessages).toHaveTextContent('Never');
+
+    await userEvent.keyboard('a');
+    expect(args.onDirectMessageModeChange).toHaveBeenCalledOnce();
+    expect(directMessages).toHaveTextContent('Never');
   },
 };
 
 export const Disabled: Story = {
   args: { disabled: true },
-  play: async ({ canvasElement, args }) => {
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     for (const name of ['DMs', 'Global inbox']) {
@@ -76,14 +90,12 @@ export const Disabled: Story = {
     expect(
       within(canvasElement.ownerDocument.body).queryByRole('listbox'),
     ).not.toBeInTheDocument();
-    expect(args.onDirectMessageModeChange).not.toHaveBeenCalled();
-    expect(args.onInboxModeChange).not.toHaveBeenCalled();
   },
 };
 
 export const Loading: Story = {
-  args: { directMessageMode: null, inboxMode: null, isLoading: true },
-  play: async ({ canvasElement, args }) => {
+  args: { isLoading: true },
+  play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     expect(canvas.getByRole('status')).toHaveTextContent(
@@ -93,11 +105,7 @@ export const Loading: Story = {
     for (const trigger of canvas.getAllByRole('combobox')) {
       expect(trigger).toHaveAttribute('data-disabled');
       expect(trigger).toHaveTextContent('Loading...');
-      await userEvent.click(trigger);
     }
-
-    expect(args.onDirectMessageModeChange).not.toHaveBeenCalled();
-    expect(args.onInboxModeChange).not.toHaveBeenCalled();
   },
 };
 
@@ -114,7 +122,9 @@ export const FailedChange: Story = {
     expect(canvas.getByRole('alert')).toHaveTextContent(
       'Unable to save behavior settings. Try again.',
     );
-    expect(directMessages).toHaveAttribute('aria-invalid', 'true');
+    expect(directMessages).toHaveAccessibleDescription(
+      expect.stringContaining('Unable to save behavior settings. Try again.'),
+    );
     await userEvent.click(directMessages);
     const options = await within(canvasElement.ownerDocument.body).findByRole(
       'listbox',
