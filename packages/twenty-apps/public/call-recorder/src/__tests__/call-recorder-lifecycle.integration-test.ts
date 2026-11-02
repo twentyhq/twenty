@@ -1,6 +1,6 @@
 import { randomUUID } from 'crypto';
 
-import { isNull, isUndefined } from '@sniptt/guards';
+import { isNull, isString, isUndefined } from '@sniptt/guards';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 import { enqueueJobs, getJobs } from 'twenty-sdk/logic-function';
@@ -174,62 +174,72 @@ type CalendarEventFixture = {
   };
 };
 
-type CalendarEventFixturesPage = {
-  calendarEvents: {
-    edges: Array<{ node: CalendarEventFixture }>;
-    pageInfo: { hasNextPage: boolean; endCursor: string | null };
-  };
+type ConnectionPage<TNode> = {
+  edges: Array<{ node: TNode }>;
+  pageInfo: { hasNextPage: boolean; endCursor: string | null };
 };
 
-const discoverVisibleCalendarEventFixtures = async (): Promise<
-  CalendarEventFixture[]
-> => {
-  const fixtures: CalendarEventFixture[] = [];
+const fetchAllConnectionNodes = async <TNode>({
+  query,
+  connectionKey,
+}: {
+  query: string;
+  connectionKey: string;
+}): Promise<TNode[]> => {
+  const nodes: TNode[] = [];
   let after: string | null = null;
 
   do {
-    const eventsData: CalendarEventFixturesPage = await twentyGraphql(
+    const data: Record<string, ConnectionPage<TNode>> = await twentyGraphql(
       '/graphql',
-      `query ($after: String) {
-        calendarEvents(first: 200, after: $after) {
-          edges {
-            node {
-              id
-              title
-              startsAt
-              endsAt
-              iCalUid
-              isCanceled
-              isFullDay
-              callRecorderPreference
-              conferenceLink {
-                primaryLinkLabel
-                primaryLinkUrl
-                secondaryLinks { label url }
-              }
-            }
-          }
-          pageInfo { hasNextPage endCursor }
-        }
-      }`,
+      query,
       { after },
     );
-    const connection = eventsData.calendarEvents;
+    const connection = data[connectionKey];
 
-    fixtures.push(
-      ...connection.edges
-        .map((edge) => edge.node)
-        .filter(
-          (node: CalendarEventFixture) =>
-            node.title !== RESTRICTED_TITLE_PLACEHOLDER &&
-            /^event\d+@calendar\.twentycrm\.com$/.test(node.iCalUid),
-        ),
-    );
+    nodes.push(...connection.edges.map((edge) => edge.node));
 
     after = connection.pageInfo.hasNextPage
       ? connection.pageInfo.endCursor
       : null;
   } while (after !== null);
+
+  return nodes;
+};
+
+const discoverVisibleCalendarEventFixtures = async (): Promise<
+  CalendarEventFixture[]
+> => {
+  const calendarEvents = await fetchAllConnectionNodes<CalendarEventFixture>({
+    connectionKey: 'calendarEvents',
+    query: `query ($after: String) {
+      calendarEvents(first: 200, after: $after) {
+        edges {
+          node {
+            id
+            title
+            startsAt
+            endsAt
+            iCalUid
+            isCanceled
+            isFullDay
+            callRecorderPreference
+            conferenceLink {
+              primaryLinkLabel
+              primaryLinkUrl
+              secondaryLinks { label url }
+            }
+          }
+        }
+        pageInfo { hasNextPage endCursor }
+      }
+    }`,
+  });
+  const fixtures = calendarEvents.filter(
+    (node) =>
+      node.title !== RESTRICTED_TITLE_PLACEHOLDER &&
+      /^event\d+@calendar\.twentycrm\.com$/.test(node.iCalUid),
+  );
 
   const calendarEventIdsWithExternalAttendee =
     await discoverCalendarEventIdsWithExternalAttendee();
@@ -250,43 +260,27 @@ const discoverVisibleCalendarEventFixtures = async (): Promise<
 const discoverCalendarEventIdsWithExternalAttendee = async (): Promise<
   Set<string>
 > => {
-  const calendarEventIds = new Set<string>();
-  let after: string | null = null;
-
-  do {
-    const participantsData: {
-      calendarEventParticipants: {
-        edges: { node: { calendarEventId: string | null } }[];
-        pageInfo: { hasNextPage: boolean; endCursor: string | null };
-      };
-    } = await twentyGraphql(
-      '/graphql',
-      `query ($after: String) {
-        calendarEventParticipants(
-          first: 200
-          after: $after
-          filter: { workspaceMemberId: { is: NULL } }
-        ) {
-          edges { node { calendarEventId } }
-          pageInfo { hasNextPage endCursor }
-        }
-      }`,
-      { after },
-    );
-    const connection = participantsData.calendarEventParticipants;
-
-    for (const { node } of connection.edges) {
-      if (!isNull(node.calendarEventId)) {
-        calendarEventIds.add(node.calendarEventId);
+  const participants = await fetchAllConnectionNodes<{
+    calendarEventId: string | null;
+  }>({
+    connectionKey: 'calendarEventParticipants',
+    query: `query ($after: String) {
+      calendarEventParticipants(
+        first: 200
+        after: $after
+        filter: { workspaceMemberId: { is: NULL } }
+      ) {
+        edges { node { calendarEventId } }
+        pageInfo { hasNextPage endCursor }
       }
-    }
+    }`,
+  });
 
-    after = connection.pageInfo.hasNextPage
-      ? connection.pageInfo.endCursor
-      : null;
-  } while (after !== null);
-
-  return calendarEventIds;
+  return new Set(
+    participants
+      .map((participant) => participant.calendarEventId)
+      .filter(isString),
+  );
 };
 
 const inOneHour = () => new Date(Date.now() + 60 * 60 * 1000).toISOString();
