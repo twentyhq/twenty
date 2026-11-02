@@ -1,8 +1,10 @@
-import { isDefined } from 'twenty-shared/utils';
+import omit from 'lodash.omit';
 import {
   isWorkflowAiAgentGenerateStep,
   WORKFLOW_AI_AGENT_GENERATE_STEP_DEFAULT_NAME,
   WORKFLOW_AI_AGENT_STEP_OWNED_AGENT_STEP_DEFAULT_NAME,
+  workflowAiAgentConversationConfigSchema,
+  workflowAiAgentInlineConfigSchema,
   WorkflowActionType,
 } from 'twenty-shared/workflow';
 
@@ -13,50 +15,46 @@ import {
 
 type WorkflowAiAgentStepInput = WorkflowAiAgentAction['settings']['input'];
 
-// a Generate step runs once as the caller, so the conversation settings only carry over to a step that runs an agent
+// a Generate step runs once as the caller, so it has no conversation; an agent step takes its config from the agent
 const getStepInputAfterRebuild = ({
   existingInput,
+  updatedInput,
   builtInput,
 }: {
   existingInput: WorkflowAiAgentStepInput;
+  updatedInput: WorkflowAiAgentStepInput;
   builtInput: WorkflowAiAgentStepInput;
 }): WorkflowAiAgentStepInput => {
-  const {
-    prompt,
-    responseFormat,
-    workspaceMemberId,
-    humanInputInstructions,
-    conversation,
-  } = existingInput;
-  const isBuiltIntoAgentStep = !isWorkflowAiAgentGenerateStep(builtInput);
+  const keysOutsideBuiltStepKind = isWorkflowAiAgentGenerateStep(builtInput)
+    ? [
+        'workspaceMemberId',
+        ...workflowAiAgentConversationConfigSchema.keyof().options,
+      ]
+    : workflowAiAgentInlineConfigSchema.keyof().options;
 
   return {
     ...builtInput,
-    ...(isDefined(prompt) ? { prompt } : {}),
-    ...(isDefined(responseFormat) ? { responseFormat } : {}),
-    ...(isBuiltIntoAgentStep && isDefined(workspaceMemberId)
-      ? { workspaceMemberId }
-      : {}),
-    ...(isBuiltIntoAgentStep && isDefined(humanInputInstructions)
-      ? { humanInputInstructions }
-      : {}),
-    ...(isBuiltIntoAgentStep && isDefined(conversation)
-      ? { conversation }
-      : {}),
+    ...omit({ ...existingInput, ...updatedInput }, [
+      'agentId',
+      ...keysOutsideBuiltStepKind,
+    ]),
   };
 };
 
 export const getWorkflowStepAfterRebuild = ({
   existingStep,
+  updatedStep,
   builtStep,
   previousAgentLabel,
 }: {
   existingStep: WorkflowAction;
+  updatedStep: WorkflowAction;
   builtStep: WorkflowAction;
   previousAgentLabel: string | undefined;
 }): WorkflowAction => {
   if (
     existingStep.type !== WorkflowActionType.AI_AGENT ||
+    updatedStep.type !== WorkflowActionType.AI_AGENT ||
     builtStep.type !== WorkflowActionType.AI_AGENT
   ) {
     return builtStep;
@@ -77,6 +75,7 @@ export const getWorkflowStepAfterRebuild = ({
       ...builtStep.settings,
       input: getStepInputAfterRebuild({
         existingInput: existingStep.settings.input,
+        updatedInput: updatedStep.settings.input,
         builtInput: builtStep.settings.input,
       }),
       errorHandlingOptions: existingStep.settings.errorHandlingOptions,

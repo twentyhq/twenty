@@ -737,6 +737,7 @@ export class CoreWorkflowVersionMutationWorkspaceService {
       updatedStep: {
         ...getWorkflowStepAfterRebuild({
           existingStep,
+          updatedStep: newStep,
           builtStep,
           previousAgentLabel,
         }),

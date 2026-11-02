@@ -62,6 +62,16 @@ const builtAgentStep = buildAiAgentStep({
   input: { agentId: 'agent-id', prompt: '' },
 });
 
+const switchToGenerateStep = buildAiAgentStep({
+  name: 'Score the lead',
+  input: {},
+});
+
+const switchToAgentStep = buildAiAgentStep({
+  name: 'Score the lead',
+  input: { agentId: 'agent-id' },
+});
+
 describe('getWorkflowStepAfterRebuild', () => {
   it.each([
     ['the Generate default', 'Generate'],
@@ -74,6 +84,7 @@ describe('getWorkflowStepAfterRebuild', () => {
           name,
           input: { agentId: 'previous-agent-id' },
         }),
+        updatedStep: switchToGenerateStep,
         builtStep: builtGenerateStep,
         previousAgentLabel: 'Lead qualifier',
       }).name,
@@ -87,6 +98,7 @@ describe('getWorkflowStepAfterRebuild', () => {
           name: 'Score the lead',
           input: { agentId: 'previous-agent-id' },
         }),
+        updatedStep: switchToGenerateStep,
         builtStep: builtGenerateStep,
         previousAgentLabel: 'Lead qualifier',
       }).name,
@@ -97,16 +109,18 @@ describe('getWorkflowStepAfterRebuild', () => {
     [
       'from an agent to Generate',
       { agentId: 'previous-agent-id' },
+      switchToGenerateStep,
       builtGenerateStep,
     ],
     [
       'from Generate to an agent',
       { instructions: 'Qualify leads.' },
+      switchToAgentStep,
       builtAgentStep,
     ],
   ])(
     'keeps retries and continue on failure when an AI step switches %s',
-    (_, input, builtStep) => {
+    (_, input, updatedStep, builtStep) => {
       expect(
         getWorkflowStepAfterRebuild({
           existingStep: buildAiAgentStep({
@@ -114,6 +128,7 @@ describe('getWorkflowStepAfterRebuild', () => {
             input,
             errorHandlingOptions: RETRYING_ERROR_HANDLING_OPTIONS,
           }),
+          updatedStep,
           builtStep,
           previousAgentLabel: undefined,
         }).settings.errorHandlingOptions,
@@ -134,6 +149,7 @@ describe('getWorkflowStepAfterRebuild', () => {
             responseFormat: JSON_RESPONSE_FORMAT,
           },
         }),
+        updatedStep: switchToAgentStep,
         builtStep: builtAgentStep,
         previousAgentLabel: undefined,
       }).settings.input,
@@ -161,6 +177,7 @@ describe('getWorkflowStepAfterRebuild', () => {
             ...conversationInput,
           },
         }),
+        updatedStep: switchToAgentStep,
         builtStep: builtAgentStep,
         previousAgentLabel: undefined,
       }).settings.input,
@@ -179,16 +196,81 @@ describe('getWorkflowStepAfterRebuild', () => {
             humanInputInstructions: 'Ask before emailing.',
           },
         }),
+        updatedStep: switchToGenerateStep,
         builtStep: builtGenerateStep,
         previousAgentLabel: undefined,
       }).settings.input,
     ).toEqual({ instructions: '', prompt: 'Qualify' });
   });
 
+  it('lets the update win when it switches an agent step to Generate with its own config', () => {
+    expect(
+      getWorkflowStepAfterRebuild({
+        existingStep: buildAiAgentStep({
+          name: 'Score the lead',
+          input: {
+            agentId: 'previous-agent-id',
+            prompt: 'Qualify',
+            responseFormat: JSON_RESPONSE_FORMAT,
+            workspaceMemberId: 'workspace-member-id',
+          },
+        }),
+        updatedStep: buildAiAgentStep({
+          name: 'Score the lead',
+          input: {
+            instructions: 'You qualify leads.',
+            modelId: 'model-id',
+            scope: {},
+            prompt: 'Qualify {{trigger.name}}',
+          },
+        }),
+        builtStep: builtGenerateStep,
+        previousAgentLabel: undefined,
+      }).settings.input,
+    ).toEqual({
+      instructions: 'You qualify leads.',
+      modelId: 'model-id',
+      scope: {},
+      prompt: 'Qualify {{trigger.name}}',
+      responseFormat: JSON_RESPONSE_FORMAT,
+    });
+  });
+
+  it('lets the update win when it switches to another agent with new conversation settings', () => {
+    expect(
+      getWorkflowStepAfterRebuild({
+        existingStep: buildAiAgentStep({
+          name: 'Score the lead',
+          input: {
+            agentId: 'previous-agent-id',
+            prompt: 'Qualify',
+            humanInputInstructions: 'Ask before emailing.',
+          },
+        }),
+        updatedStep: buildAiAgentStep({
+          name: 'Score the lead',
+          input: {
+            agentId: 'agent-id',
+            humanInputInstructions: 'Ask before calling.',
+            conversation: { scope: 'RUN' },
+          },
+        }),
+        builtStep: builtAgentStep,
+        previousAgentLabel: undefined,
+      }).settings.input,
+    ).toEqual({
+      agentId: 'agent-id',
+      prompt: 'Qualify',
+      humanInputInstructions: 'Ask before calling.',
+      conversation: { scope: 'RUN' },
+    });
+  });
+
   it('builds a step of another type rebuilt into an AI step afresh', () => {
     expect(
       getWorkflowStepAfterRebuild({
         existingStep: buildDelayStep(RETRYING_ERROR_HANDLING_OPTIONS),
+        updatedStep: switchToGenerateStep,
         builtStep: builtGenerateStep,
         previousAgentLabel: undefined,
       }),
@@ -205,6 +287,7 @@ describe('getWorkflowStepAfterRebuild', () => {
           input: { agentId: 'previous-agent-id', prompt: 'Qualify' },
           errorHandlingOptions: RETRYING_ERROR_HANDLING_OPTIONS,
         }),
+        updatedStep: builtDelayStep,
         builtStep: builtDelayStep,
         previousAgentLabel: 'Lead qualifier',
       }),
