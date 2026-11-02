@@ -16,7 +16,6 @@ type ValidationRuleFieldState = OverridableFlatEntity & {
   isActive: boolean;
 };
 
-// A workspace deactivates another application's field through an override
 const isFieldActive = (field: ValidationRuleFieldState): boolean =>
   resolveEffectiveFlatEntityProperty({
     metadataName: 'fieldMetadata',
