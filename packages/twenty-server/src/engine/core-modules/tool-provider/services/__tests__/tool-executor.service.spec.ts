@@ -37,7 +37,9 @@ const logicFunctionDescriptor: ToolIndexEntry = {
   executionRef: { kind: 'logic_function', logicFunctionId: 'function-id' },
 };
 
-const buildToolExecutorService = () => {
+const buildToolExecutorService = ({
+  canRunUnderScope = false,
+}: { canRunUnderScope?: boolean } = {}) => {
   const executeStaticTool = jest
     .fn()
     .mockResolvedValue({ success: true, message: 'Listed' });
@@ -46,7 +48,7 @@ const buildToolExecutorService = () => {
     .mockResolvedValue({ data: { synced: true } });
   const workflowToolProvider: ToolProvider = {
     category: ToolCategory.WORKFLOW,
-    canRunUnderScope: false,
+    canRunUnderScope,
     isAvailable: jest.fn().mockResolvedValue(true),
     generateDescriptors: jest.fn().mockResolvedValue([]),
     executeStaticTool,
@@ -108,6 +110,21 @@ describe('ToolExecutorService', () => {
       message: 'Tool "list_workflows" is not available',
     });
     expect(executeStaticTool).not.toHaveBeenCalled();
+  });
+
+  it('should dispatch a scoped caller to a provider that can run under a scope', async () => {
+    const { toolExecutorService, executeStaticTool } = buildToolExecutorService(
+      { canRunUnderScope: true },
+    );
+
+    expect(
+      await toolExecutorService.dispatch(
+        workflowToolDescriptor,
+        {},
+        scopedContext,
+      ),
+    ).toMatchObject({ success: true });
+    expect(executeStaticTool).toHaveBeenCalled();
   });
 
   it('should refuse a scoped caller a logic function', async () => {
