@@ -2,6 +2,7 @@ import { type IframeMediaPermission } from 'twenty-shared/types';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { toIframeMediaPermissions } from 'src/engine/core-modules/application/utils/to-iframe-media-permissions.util';
+import { toRequestedIframeMediaPermissions } from 'src/engine/core-modules/application/utils/to-requested-iframe-media-permissions.util';
 
 export const resolveSyncedApplicationIframeMediaPermissions = ({
   sourceType,
@@ -18,6 +19,6 @@ export const resolveSyncedApplicationIframeMediaPermissions = ({
 
   return toIframeMediaPermissions([
     ...toIframeMediaPermissions(grantedIframeMediaPermissions),
-    ...toIframeMediaPermissions(requestedIframeMediaPermissions),
+    ...toRequestedIframeMediaPermissions(requestedIframeMediaPermissions),
   ]);
 };

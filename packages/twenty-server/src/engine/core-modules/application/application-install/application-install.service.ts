@@ -17,7 +17,7 @@ import { Repository } from 'typeorm';
 
 import { buildApplicationFileList } from 'src/engine/core-modules/application/application-install/utils/build-application-file-list.util';
 import { toApplicationCapabilities } from 'src/engine/core-modules/application/utils/to-application-capabilities.util';
-import { toIframeMediaPermissions } from 'src/engine/core-modules/application/utils/to-iframe-media-permissions.util';
+import { toRequestedIframeMediaPermissions } from 'src/engine/core-modules/application/utils/to-requested-iframe-media-permissions.util';
 import { ApplicationManifestApplyService } from 'src/engine/core-modules/application/application-manifest/application-manifest-apply.service';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import {
@@ -414,10 +414,10 @@ export class ApplicationInstallService {
       resolvedPackage.manifest.application.requestedCapabilities,
     ).filter((capability) => approvedCapabilities.includes(capability));
     const grantedIframeMediaPermissions = intersectIframeMediaPermissions({
-      permissions: toIframeMediaPermissions(
+      permissions: toRequestedIframeMediaPermissions(
         resolvedPackage.manifest.application.requestedIframeMediaPermissions,
       ),
-      allowedPermissions: toIframeMediaPermissions(
+      allowedPermissions: toRequestedIframeMediaPermissions(
         appRegistration.manifest?.application?.requestedIframeMediaPermissions,
       ),
     });
