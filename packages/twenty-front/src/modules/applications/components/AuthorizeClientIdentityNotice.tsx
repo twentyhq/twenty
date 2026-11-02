@@ -1,6 +1,7 @@
 import { isBuiltInMcpClientAppName } from '@/applications/utils/isBuiltInMcpClientAppName';
+import { findBuiltInMcpClientApp } from '@/settings/app-preferences/utils/findBuiltInMcpClientApp';
 import { styled } from '@linaria/react';
-import { Trans } from '@lingui/react/macro';
+import { Trans, useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconAlertTriangle, IconCircleCheck } from 'twenty-ui/icon';
@@ -37,14 +38,19 @@ export const AuthorizeClientIdentityNotice = ({
   wellKnownOAuthClient,
 }: AuthorizeClientIdentityNoticeProps) => {
   const theme = useTheme();
+  const { t } = useLingui();
+  const verifiedBuiltInMcpClientApp =
+    findBuiltInMcpClientApp(wellKnownOAuthClient);
 
-  if (isDefined(wellKnownOAuthClient)) {
+  if (isDefined(verifiedBuiltInMcpClientApp)) {
+    const officialAppName = t(verifiedBuiltInMcpClientApp.name);
+
     return (
       <StyledVerifiedNotice>
         <StyledVerifiedIcon>
           <IconCircleCheck aria-hidden="true" size={theme.icon.size.sm} />
         </StyledVerifiedIcon>
-        <Trans>Verified by Twenty as the official {appName}</Trans>
+        <Trans>Verified by Twenty as the official {officialAppName}</Trans>
       </StyledVerifiedNotice>
     );
   }

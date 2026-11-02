@@ -94,7 +94,7 @@ export const Default: Story = {
     msw: {
       handlers: buildHandlers({
         id: 'application-id-default',
-        name: 'ChatGPT',
+        name: 'ChatGPT (Work)',
         logoUrl: null,
         oAuthScopes: ['api', 'profile'],
         websiteUrl: null,
@@ -104,9 +104,13 @@ export const Default: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    await canvas.findByText('Connect ChatGPT to your account', undefined, {
-      timeout: 5000,
-    });
+    await canvas.findByText(
+      'Connect ChatGPT (Work) to your account',
+      undefined,
+      {
+        timeout: 5000,
+      },
+    );
     await canvas.findByText('chatgpt.com');
     await canvas.findByText('Verified by Twenty as the official ChatGPT');
   },
