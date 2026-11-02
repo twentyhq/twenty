@@ -51,6 +51,8 @@ type StepAgentRow = {
   modelConfiguration: ModelConfiguration | null;
   responseFormat: AgentResponseFormat | null;
   roleId: string | null;
+  isActive: boolean;
+  updatedAt: string;
 };
 
 type StepAgentRoleRow = Required<
@@ -65,8 +67,10 @@ type StepAgents = {
   workspaceCustomApplicationId: string | null;
   inlineConfigByAgentId: Map<string, StepAgentInlineConfig>;
   labelByAgentId: Map<string, string>;
-  // their role's row-level predicates have no scope equivalent, so their steps keep them
+  // archived ones, which must keep stopping their steps, and ones whose role's row-level predicates have no scope equivalent
   keptAgentIds: Set<string>;
+  // what each inlined agent was when read, so a step is not rewritten from an agent edited since
+  snapshots: { id: string; prompt: string; updatedAt: string }[];
 };
 
 type WorkflowTables = {
@@ -126,6 +130,16 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
       return;
     }
 
+    // a row is left for the next run when an agent it inlines was edited since it was read
+    const rewriteGuard = {
+      condition: `NOT EXISTS (
+        SELECT 1 FROM jsonb_to_recordset($2::jsonb) AS snapshot(id uuid, prompt text, "updatedAt" text)
+        JOIN core."agent" agent ON agent.id = snapshot.id
+        WHERE rewrite."guardKeys" @> jsonb_build_array(snapshot.id::text)
+          AND (agent.prompt IS DISTINCT FROM snapshot.prompt OR agent."updatedAt"::text IS DISTINCT FROM snapshot."updatedAt"))`,
+      parameter: JSON.stringify(stepAgents.snapshots),
+    };
+
     const workflowTables = await this.findWorkflowTables({
       dataSource,
       workspaceId,
@@ -166,11 +180,15 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
 
       for (const keptStepId of result.keptStepIds) {
         this.logger.warn(
-          `Workspace ${workspaceId}: step ${keptStepId} of ${sourceTable} ${rowId} keeps its agent, whose role has row-level predicates a step scope cannot express`,
+          `Workspace ${workspaceId}: step ${keptStepId} of ${sourceTable} ${rowId} keeps its agent, which is archived or has a role with row-level predicates a step scope cannot express`,
         );
       }
 
-      return { value: result.steps, hasChanged: result.hasChanged };
+      return {
+        value: result.steps,
+        hasChanged: result.hasChanged,
+        guardKeys: result.inlinedAgentIds,
+      };
     };
 
     const coreWorkflowVersionCount = await rewriteJsonbRowsWithCompareAndSet<
@@ -178,6 +196,7 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
     >({
       dataSource,
       isDryRun,
+      rewriteGuard,
       tableName: 'core."workflowVersion"',
       columnName: 'steps',
       whereClause: `"workspaceId" = $1 AND steps @> '[{"type":"AI_AGENT"}]'`,
@@ -198,6 +217,7 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
       return rewriteJsonbRowsWithCompareAndSet<StoredWorkflowStep[]>({
         dataSource,
         isDryRun,
+        rewriteGuard,
         tableName: workflowTables.workflowVersion,
         columnName: 'steps',
         whereClause: `steps @> '[{"type":"AI_AGENT"}]'`,
@@ -221,12 +241,17 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
       }>({
         dataSource,
         isDryRun,
+        rewriteGuard,
         tableName: workflowTables.workflowRun,
         columnName: 'state',
         whereClause: `status::text = ANY($1::text[]) AND state -> 'flow' -> 'steps' @> '[{"type":"AI_AGENT"}]'`,
         whereParameters: [WORKFLOW_RUN_STATUSES_THAT_CAN_RUN_A_STEP],
         mapRow: ({ id, value: state }) => {
-          const { value: steps, hasChanged } = inlineSteps({
+          const {
+            value: steps,
+            hasChanged,
+            guardKeys,
+          } = inlineSteps({
             sourceTable: 'workflowRun',
             rowId: id,
             steps: state.flow.steps,
@@ -235,6 +260,7 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
           return {
             value: { ...state, flow: { ...state.flow, steps } },
             hasChanged,
+            guardKeys,
           };
         },
       });
@@ -247,6 +273,7 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
       await rewriteJsonbRowsWithCompareAndSet<StoredWakeUpPayload>({
         dataSource,
         isDryRun,
+        rewriteGuard,
         tableName: 'core."pendingWakeUp"',
         columnName: 'payload',
         whereClause: `"workspaceId" = $1 AND "ownerType" = 'AGENT_RUN' AND payload -> 'caller' ->> 'type' = 'WORKFLOW_STEP' AND payload -> 'runSpec' ->> 'agentId' = ANY($2::text[])`,
@@ -282,6 +309,7 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
             return {
               value: { ...payload, runSpec: pausedRun.runSpec },
               hasChanged: true,
+              guardKeys: [agentId],
             };
           }
 
@@ -342,7 +370,7 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
     // only builder steps create system agents in the custom application; an installed app's are its own
     const agentRows: StepAgentRow[] = await dataSource.query(
       `SELECT agent.id, agent.label, agent.prompt, agent."modelId", agent."modelConfiguration",
-         agent."responseFormat", target."roleId"
+         agent."responseFormat", agent."isActive", agent."updatedAt"::text AS "updatedAt", target."roleId"
        FROM core."agent" agent
        LEFT JOIN core."roleTarget" target ON target."agentId" = agent.id
        WHERE agent."workspaceId" = $1
@@ -364,6 +392,7 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
       inlineConfigByAgentId: new Map(),
       labelByAgentId: new Map(),
       keptAgentIds: new Set(),
+      snapshots: [],
     };
 
     for (const agentRow of agentRows) {
@@ -373,10 +402,16 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
         ? scopeByRoleId.get(agentRow.roleId)
         : null;
 
-      if (scope === undefined) {
+      if (!agentRow.isActive || scope === undefined) {
         stepAgents.keptAgentIds.add(agentRow.id);
         continue;
       }
+
+      stepAgents.snapshots.push({
+        id: agentRow.id,
+        prompt: agentRow.prompt,
+        updatedAt: agentRow.updatedAt,
+      });
 
       stepAgents.inlineConfigByAgentId.set(agentRow.id, {
         instructions: agentRow.prompt,

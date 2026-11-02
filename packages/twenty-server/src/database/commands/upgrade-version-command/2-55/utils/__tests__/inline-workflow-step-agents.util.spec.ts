@@ -89,6 +89,17 @@ describe('inlineWorkflowStepAgents', () => {
     expect(steps[0].settings?.input).not.toHaveProperty('scope');
   });
 
+  it('reports each agent it inlined once, so its row is not rewritten from an agent edited since', () => {
+    expect(
+      inline({
+        steps: [
+          buildAgentStep({ agentId: 'agent-id' }),
+          { ...buildAgentStep({ agentId: 'agent-id' }), id: 'other-step-id' },
+        ],
+      }).inlinedAgentIds,
+    ).toEqual(['agent-id']);
+  });
+
   it('leaves other steps and agents it does not inline as they are', () => {
     const steps = [
       { id: 'code', type: 'CODE', settings: { input: {} } },
@@ -98,6 +109,7 @@ describe('inlineWorkflowStepAgents', () => {
     expect(inline({ steps })).toEqual({
       steps,
       hasChanged: false,
+      inlinedAgentIds: [],
       keptStepIds: [],
       conversationalSteps: [],
     });
@@ -109,6 +121,7 @@ describe('inlineWorkflowStepAgents', () => {
     expect(inline({ steps, keptAgentIds: ['agent-id'] })).toEqual({
       steps,
       hasChanged: false,
+      inlinedAgentIds: [],
       keptStepIds: ['step-id'],
       conversationalSteps: [],
     });
@@ -126,6 +139,7 @@ describe('inlineWorkflowStepAgents', () => {
     expect(inline({ steps })).toEqual({
       steps,
       hasChanged: false,
+      inlinedAgentIds: [],
       keptStepIds: [],
       conversationalSteps: [
         { stepId: 'step-id', stepName: 'Qualify', agentId: 'agent-id' },
@@ -144,6 +158,7 @@ describe('inlineWorkflowStepAgents', () => {
     expect(inline({ steps })).toEqual({
       steps,
       hasChanged: false,
+      inlinedAgentIds: [],
       keptStepIds: [],
       conversationalSteps: [
         { stepId: 'step-id', stepName: 'Qualify', agentId: 'agent-id' },

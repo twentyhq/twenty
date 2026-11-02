@@ -38,6 +38,8 @@ import {
   type AiModelRegistryService,
   type RegisteredAiModel,
 } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type AgentRunPersonaService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service';
+import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
@@ -191,6 +193,8 @@ const scriptModelAnsweringASummary = (): ModelCall[] => {
 
   return calls;
 };
+
+const EDITED_STEP_AGENT_INSTRUCTIONS = 'Summarize the company for a sales call';
 
 describe('2-55 workspace command - inline workflow step agents (integration)', () => {
   let command: InlineWorkflowStepAgentsCommand;
@@ -654,5 +658,71 @@ describe('2-55 workspace command - inline workflow step agents (integration)', (
     expect(await readCoreSteps(editedWorkflow.coreWorkflowVersionId)).toEqual([
       inlineStepAgentOf(editedStep),
     ]);
+  });
+
+  it('keeps an archived step agent, so its step still stops instead of running', async () => {
+    const archivedWorkflow = await createLegacyAiStepWorkflow({
+      name: 'Company summary with an archived agent',
+      stepInput: { prompt: STEP_PROMPT },
+    });
+
+    await global.testDataSource.query(
+      `UPDATE core."agent" SET "isActive" = false WHERE id = $1`,
+      [archivedWorkflow.agentId],
+    );
+    await global.workflowTestServices.workspaceCache.invalidateAndRecompute(
+      SEED_APPLE_WORKSPACE_ID,
+      ['flatAgentMaps'],
+    );
+
+    await runCommand();
+
+    expect(await readCoreSteps(archivedWorkflow.coreWorkflowVersionId)).toEqual(
+      [archivedWorkflow.step],
+    );
+    await expect(
+      getAppProviderByClassName<AgentRunPersonaService>(
+        'AgentRunPersonaService',
+      ).resolveOrThrow({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        spec: { agentId: archivedWorkflow.agentId },
+      }),
+    ).rejects.toMatchObject({ code: AiExceptionCode.AGENT_IS_INACTIVE });
+  });
+
+  it('leaves a step whose agent was edited while it was being inlined for the next run', async () => {
+    const editedWorkflow = await createLegacyAiStepWorkflow({
+      name: 'Company summary whose agent was edited mid-upgrade',
+      stepInput: { prompt: STEP_PROMPT },
+    });
+    const query = global.testDataSource.query.bind(global.testDataSource);
+
+    jest
+      .spyOn(global.testDataSource, 'query')
+      .mockImplementation(async (sql: string, parameters?: unknown[]) => {
+        if (sql.startsWith('UPDATE core."workflowVersion" AS target')) {
+          await query(
+            `UPDATE core."agent" SET prompt = $2, "updatedAt" = now() WHERE id = $1`,
+            [editedWorkflow.agentId, EDITED_STEP_AGENT_INSTRUCTIONS],
+          );
+        }
+
+        return query(sql, parameters);
+      });
+
+    await runCommand();
+
+    jest.restoreAllMocks();
+
+    expect(await readCoreSteps(editedWorkflow.coreWorkflowVersionId)).toEqual([
+      editedWorkflow.step,
+    ]);
+
+    await runCommand();
+
+    expect(
+      (await readCoreSteps(editedWorkflow.coreWorkflowVersionId))[0].settings
+        .input,
+    ).toMatchObject({ instructions: EDITED_STEP_AGENT_INSTRUCTIONS });
   });
 });

@@ -25,10 +25,12 @@ export const inlineWorkflowStepAgents = ({
 }): {
   steps: StoredWorkflowStep[];
   hasChanged: boolean;
+  inlinedAgentIds: string[];
   keptStepIds: string[];
   conversationalSteps: ConversationalWorkflowStep[];
 } => {
   let hasChanged = false;
+  const inlinedAgentIds = new Set<string>();
   const keptStepIds: string[] = [];
   const conversationalSteps: ConversationalWorkflowStep[] = [];
 
@@ -75,6 +77,7 @@ export const inlineWorkflowStepAgents = ({
     }
 
     hasChanged = true;
+    inlinedAgentIds.add(agentId);
 
     return {
       ...step,
@@ -101,6 +104,7 @@ export const inlineWorkflowStepAgents = ({
   return {
     steps: rewrittenSteps,
     hasChanged,
+    inlinedAgentIds: [...inlinedAgentIds],
     keptStepIds,
     conversationalSteps,
   };
