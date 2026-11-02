@@ -2,8 +2,10 @@ import { findManyObjectMetadata } from 'test/integration/metadata/suites/object-
 import { createOneRole } from 'test/integration/metadata/suites/role/utils/create-one-role.util';
 import { deleteOneRole } from 'test/integration/metadata/suites/role/utils/delete-one-role.util';
 import { upsertRowLevelPermissionPredicates } from 'test/integration/metadata/suites/row-level-permission-predicate/utils/upsert-row-level-permission-predicates.util';
+import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
 import {
+  FeatureFlagKey,
   RowLevelPermissionPredicateGroupLogicalOperator,
   RowLevelPermissionPredicateOperand,
 } from 'twenty-shared/types';
@@ -14,6 +16,8 @@ import { type UpsertRowLevelPermissionPredicatesInput } from 'src/engine/metadat
 describe('Row Level Permission Predicate upsert should succeed', () => {
   let companyObjectMetadataId: string;
   let companyNameFieldMetadataId: string;
+  let personObjectMetadataId: string;
+  let personCompanyFieldMetadataId: string;
   let createdRoleId: string;
 
   beforeAll(async () => {
@@ -49,6 +53,21 @@ describe('Row Level Permission Predicate upsert should succeed', () => {
 
     jestExpectToBeDefined(nameField);
     companyNameFieldMetadataId = nameField.id;
+
+    const personObjectMetadata = objects.find(
+      (object: { nameSingular: string }) => object.nameSingular === 'person',
+    );
+
+    jestExpectToBeDefined(personObjectMetadata);
+    jestExpectToBeDefined(personObjectMetadata.fieldsList);
+    personObjectMetadataId = personObjectMetadata.id;
+
+    const personCompanyField = personObjectMetadata.fieldsList.find(
+      (field: { name: string }) => field.name === 'company',
+    );
+
+    jestExpectToBeDefined(personCompanyField);
+    personCompanyFieldMetadataId = personCompanyField.id;
 
     const { data: roleData } = await createOneRole({
       expectToFail: false,
@@ -115,6 +134,54 @@ describe('Row Level Permission Predicate upsert should succeed', () => {
         rowLevelPermissionPredicateGroupId: null,
       },
     );
+  });
+
+  it('should upsert a predicate reaching a field through a relation', async () => {
+    const input: UpsertRowLevelPermissionPredicatesInput = {
+      roleId: createdRoleId,
+      objectMetadataId: personObjectMetadataId,
+      predicates: [
+        {
+          relationFieldMetadataId: personCompanyFieldMetadataId,
+          fieldMetadataId: companyNameFieldMetadataId,
+          operand: RowLevelPermissionPredicateOperand.CONTAINS,
+          value: 'Acme',
+        },
+      ],
+      predicateGroups: [],
+    };
+
+    await updateFeatureFlag({
+      featureFlag: FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
+      value: true,
+      expectToFail: false,
+    });
+
+    try {
+      const { data } = await upsertRowLevelPermissionPredicates({
+        expectToFail: false,
+        input,
+      });
+
+      expect(data.upsertRowLevelPermissionPredicates.predicates).toHaveLength(
+        1,
+      );
+      expect(
+        data.upsertRowLevelPermissionPredicates.predicates[0],
+      ).toMatchObject({
+        objectMetadataId: personObjectMetadataId,
+        relationFieldMetadataId: personCompanyFieldMetadataId,
+        fieldMetadataId: companyNameFieldMetadataId,
+        value: 'Acme',
+      });
+    } finally {
+      await updateFeatureFlag({
+        featureFlag:
+          FeatureFlagKey.IS_ROW_LEVEL_PERMISSION_RELATION_HOP_ENABLED,
+        value: false,
+        expectToFail: false,
+      });
+    }
   });
 
   it('should upsert predicates with all fields', async () => {

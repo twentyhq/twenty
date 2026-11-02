@@ -28,7 +28,7 @@ export class ListAgentsTool extends BaseTool<typeof listAgentsInputSchema> {
   }
 
   async execute({
-    context: { workspaceId, application },
+    context: { workspaceId, application, authContext },
   }: ToolExecuteArgs<typeof listAgentsInputSchema>): Promise<ToolOutput> {
     const agents = await this.agentService.findManyAgents(workspaceId);
 
@@ -40,6 +40,9 @@ export class ListAgentsTool extends BaseTool<typeof listAgentsInputSchema> {
           canCallerReachApplication({
             callingApplication: application,
             applicationId: agent.applicationId,
+            operation: 'read',
+            workspaceCustomApplicationId:
+              authContext?.workspace.workspaceCustomApplicationId,
           }),
       )
       .map(toAgentSummary);

@@ -15,7 +15,7 @@ import { type ExtractJsonPathsTool } from 'src/engine/core-modules/tool/tools/ou
 import { type SearchOutputTool } from 'src/engine/core-modules/tool/tools/output-navigation-tool/search-output-tool';
 import { type SearchHelpCenterTool } from 'src/engine/core-modules/tool/tools/search-help-center-tool/search-help-center-tool';
 import { type ShareRecordTool } from 'src/engine/core-modules/tool/tools/share-record-tool/share-record-tool';
-import { type PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { type PermissionsService } from 'src/engine/permissions/permissions.service';
 import { type SaveCampaignTool } from 'src/modules/emailing/tools/save-campaign-tool';
 
 const WORKSPACE_ID = 'workspace-id';

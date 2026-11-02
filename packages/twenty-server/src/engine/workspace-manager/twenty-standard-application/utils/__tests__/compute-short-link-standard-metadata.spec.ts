@@ -1,5 +1,4 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
@@ -26,8 +25,6 @@ describe('ShortLink standard metadata build', () => {
       isSystem: true,
       isUICreatable: false,
       isUIEditable: false,
-      readability: MetadataReadability.SYSTEM,
-      writability: MetadataWritability.SYSTEM,
     });
 
     const fields = Object.values(

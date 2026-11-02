@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowActionType } from 'twenty-shared/workflow';
 
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { APPLICATION_WORKFLOW_STEP_PERMISSION_FLAGS } from 'src/modules/workflow/workflow-executor/constants/application-workflow-step-permission-flags.constant';
 import {
   WorkflowStepExecutorException,

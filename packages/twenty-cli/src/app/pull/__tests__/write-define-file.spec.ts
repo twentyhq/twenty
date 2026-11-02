@@ -22,21 +22,15 @@ describe('writeDefineFile', () => {
         universalIdentifier: 'field-uid',
         type: 'TEXT',
         name: 'title',
-        writability: 'OPEN',
       },
       enumBindings: FIELD_ENUM_BINDINGS,
     });
 
     expect(file).toContain(
-      "import { defineField, FieldType, MetadataWritability } from 'twenty-sdk/define';",
+      "import { defineField, FieldType } from 'twenty-sdk/define';",
     );
-    expect(requiredSdkExports).toEqual([
-      'defineField',
-      'FieldType',
-      'MetadataWritability',
-    ]);
+    expect(requiredSdkExports).toEqual(['defineField', 'FieldType']);
     expect(file).toContain('type: FieldType.TEXT,');
-    expect(file).toContain('writability: MetadataWritability.OPEN,');
   });
 
   it('should look up an enum member whose name differs from its value', () => {
@@ -83,7 +77,6 @@ describe('writeDefineFile', () => {
     const { content: file } = writeDefineFile({
       definer: 'defineObject',
       config: {
-        writability: 'OPEN',
         openRecordIn: 'USER_CHOICE',
         fields: [
           {

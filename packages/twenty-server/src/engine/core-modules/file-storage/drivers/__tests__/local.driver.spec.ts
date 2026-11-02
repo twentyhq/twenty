@@ -1,6 +1,7 @@
 import {
   mkdtemp,
   mkdir,
+  open,
   readFile,
   readdir,
   rm,
@@ -80,6 +81,37 @@ describe('LocalDriver', () => {
     });
 
     await expect(readFile(outsideFilePath, 'utf8')).resolves.toBe('outside');
+  });
+
+  it('should preserve an active read when replacing a file', async () => {
+    const storagePath = await createTempDirectory('local-driver-storage-');
+    const driver = new LocalDriver({ storagePath });
+    const filePath = 'workspace/app/draft.json';
+    const original = JSON.stringify({ source: 'original' });
+    const replacement = JSON.stringify({ source: 'replacement' });
+
+    await driver.writeFile({
+      filePath,
+      sourceFile: original,
+      mimeType: 'application/json',
+    });
+
+    const activeRead = await open(path.join(storagePath, filePath));
+
+    try {
+      await driver.writeFile({
+        filePath,
+        sourceFile: Buffer.from(replacement),
+        mimeType: 'application/json',
+      });
+
+      await expect(activeRead.readFile('utf8')).resolves.toBe(original);
+      await expect(
+        readFile(path.join(storagePath, filePath), 'utf8'),
+      ).resolves.toBe(replacement);
+    } finally {
+      await activeRead.close();
+    }
   });
 
   it('should reject downloadFile when path resolves outside storage', async () => {

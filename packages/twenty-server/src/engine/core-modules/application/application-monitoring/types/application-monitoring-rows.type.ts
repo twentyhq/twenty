@@ -1,3 +1,7 @@
+import { type ApplicationBilling } from 'twenty-shared/application';
+
+import { type CreditsUsedTimeSeriesRow } from 'src/engine/core-modules/usage/types/credits-used-time-series-row.type';
+
 type ClickHouseCount = number | string;
 
 export type ApplicationMonitoringTotalsRow = {
@@ -67,4 +71,9 @@ export type ApplicationMonitoringWorkspaceRow = {
   failedRunCount: ClickHouseCount;
   rateLimitEventCount: ClickHouseCount;
   lastEventAt: string;
+};
+
+export type ApplicationMonitoringCreditUsage = {
+  rows: CreditsUsedTimeSeriesRow[];
+  billing: ApplicationBilling | null;
 };

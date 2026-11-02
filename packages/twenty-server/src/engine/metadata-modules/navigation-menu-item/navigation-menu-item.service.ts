@@ -27,7 +27,7 @@ import {
 } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.exception';
 import { NavigationMenuItemAccessService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-access.service';
 import { NavigationMenuItemRecordIdentifierService } from 'src/engine/metadata-modules/navigation-menu-item/services/navigation-menu-item-record-identifier.service';
-import { PermissionsException } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsException } from 'src/engine/permissions/permissions.exception';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 

@@ -17,10 +17,6 @@ import {
   PERSON_ENRICHMENT_ATTEMPT_KEY,
   type PersonEnrichmentAttemptKeyValueTypeMap,
 } from 'src/engine/core-modules/company-enrichment/types/person-enrichment-attempt-key-value.type';
-import {
-  PERSON_ENRICHMENT_KEY,
-  type PersonEnrichmentKeyValueTypeMap,
-} from 'src/engine/core-modules/company-enrichment/types/person-enrichment-key-value.type';
 import { readIsPersonEnrichmentEnabled } from 'src/engine/core-modules/company-enrichment/utils/read-is-person-enrichment-enabled.util';
 import { toWorkspacePersonEnrichment } from 'src/engine/core-modules/company-enrichment/utils/to-workspace-person-enrichment.util';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
@@ -38,9 +34,7 @@ export class PersonEnrichmentService {
     private readonly peopleDataLabsClientService: PeopleDataLabsClientService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly enrichmentThrottleService: EnrichmentThrottleService,
-    private readonly keyValuePairService: KeyValuePairService<
-      PersonEnrichmentAttemptKeyValueTypeMap & PersonEnrichmentKeyValueTypeMap
-    >,
+    private readonly keyValuePairService: KeyValuePairService<PersonEnrichmentAttemptKeyValueTypeMap>,
   ) {}
 
   async enrichPersonForWorkspaceCreator({
@@ -131,13 +125,6 @@ export class PersonEnrichmentService {
       });
     }
 
-    if (enrichmentResult.outcome === 'matched') {
-      await this.storeEnrichment({
-        workspaceId,
-        enrichment: enrichmentResult.enrichment,
-      });
-    }
-
     return enrichmentResult;
   }
 
@@ -211,30 +198,6 @@ export class PersonEnrichmentService {
     } catch (error) {
       this.logger.warn(
         `Failed to record person enrichment attempt for workspace ${workspaceId}: ${
-          error instanceof Error ? error.message : String(error)
-        }`,
-      );
-    }
-  }
-
-  private async storeEnrichment({
-    workspaceId,
-    enrichment,
-  }: {
-    workspaceId: string;
-    enrichment: WorkspacePersonEnrichment;
-  }): Promise<void> {
-    try {
-      await this.keyValuePairService.set({
-        userId: null,
-        workspaceId,
-        key: PERSON_ENRICHMENT_KEY,
-        value: enrichment,
-        type: KeyValuePairType.CONFIG_VARIABLE,
-      });
-    } catch (error) {
-      this.logger.warn(
-        `Failed to store person enrichment for workspace ${workspaceId}: ${
           error instanceof Error ? error.message : String(error)
         }`,
       );

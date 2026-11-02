@@ -416,7 +416,15 @@ export class AgentInboxService {
     threadId: string;
     title: string;
   }): Promise<AgentChatThreadWorkspaceEntity> {
-    await this.threadRepository.insert(workspaceId, { id: threadId, title });
+    const { privateColumn, privateValue } =
+      await this.sharingService.getPrivateRecordInsertSql(workspaceId);
+
+    await this.threadRepository.query(workspaceId, ({ manager, table }) =>
+      manager.query(
+        `INSERT INTO ${table('agentChatThread')} (id, title${privateColumn}) VALUES ($1, $2${privateValue})`,
+        [threadId, title],
+      ),
+    );
 
     return this.threadRepository.findOneOrFail(workspaceId, {
       where: { id: threadId },

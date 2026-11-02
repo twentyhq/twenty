@@ -39,7 +39,7 @@ import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
-import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
+import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { buildToolCallNotPendingException } from 'src/engine/metadata-modules/ai/ai-tool-call-answer/utils/build-tool-call-not-pending-exception.util';
 
@@ -485,11 +485,10 @@ export class ToolCallAnswerService {
           threadId,
         });
 
-        return this.toolRegistryService.resolveAndExecute(
-          toolName,
-          args,
-          await toolContext,
-        );
+        return this.toolRegistryService.resolveAndExecute(toolName, args, {
+          ...(await toolContext),
+          approvedToolName: toolName,
+        });
       },
     };
   }

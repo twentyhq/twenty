@@ -1,5 +1,1 @@
-export type SessionCookieAccess =
-  | 'opted-in'
-  | 'navigation'
-  | 'legacy'
-  | 'denied';
+export type SessionCookieAccess = 'opted-in' | 'navigation' | 'denied';

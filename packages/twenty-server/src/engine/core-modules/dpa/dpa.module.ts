@@ -7,7 +7,7 @@ import { DpaAgreementEntity } from 'src/engine/core-modules/dpa/entities/dpa-agr
 import { DpaRegionService } from 'src/engine/core-modules/dpa/services/dpa-region.service';
 import { DpaService } from 'src/engine/core-modules/dpa/services/dpa.service';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 
 // FileStorageService and TwentyConfigService are provided by @Global() modules.
 @Module({

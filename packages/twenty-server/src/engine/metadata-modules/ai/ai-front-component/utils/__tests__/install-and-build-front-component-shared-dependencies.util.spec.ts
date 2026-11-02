@@ -4,6 +4,7 @@ import { tmpdir } from 'os';
 import { join } from 'path';
 import { promisify } from 'util';
 
+import { FRONT_COMPONENT_REQUIRED_SHARED_DEPENDENCIES } from 'twenty-shared/front-component-build';
 import { buildFrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/utils/build-front-component-shared-dependencies.util';
 import { installAndBuildFrontComponentSharedDependencies } from 'src/engine/metadata-modules/ai/ai-front-component/utils/install-and-build-front-component-shared-dependencies.util';
 
@@ -27,7 +28,14 @@ const install = jest.mocked<
   ) => Promise<{ stdout: string; stderr: string }>
 >(promisify(execFile));
 const build = jest.mocked(buildFrontComponentSharedDependencies);
-const packageJson = '{"private":true,"devDependencies":{"twenty-ui":"2.50.0"}}';
+const packageJson = JSON.stringify({
+  private: true,
+  devDependencies: {
+    react: '19.2.0',
+    'react-dom': '19.2.0',
+    'twenty-ui': '2.50.0',
+  },
+});
 const yarnLock = '# exact stored lock bytes\n';
 const vendor: Awaited<
   ReturnType<typeof buildFrontComponentSharedDependencies>
@@ -111,6 +119,50 @@ describe('installAndBuildFrontComponentSharedDependencies', () => {
     );
     expect(install.mock.calls[0][2].env).not.toHaveProperty('NODE_OPTIONS');
     await expect(access(directory)).rejects.toThrow();
+  });
+
+  it('includes required React and UI imports alongside the app declaration', async () => {
+    const dependencies = ['react', 'twenty-ui/theme', 'some-other-package'];
+    await installAndBuildFrontComponentSharedDependencies({
+      packageJson: JSON.stringify({
+        ...JSON.parse(packageJson),
+        frontComponentSharedDependencies: dependencies,
+      }),
+      yarnLock,
+      yarnEngineDirectory,
+    });
+    expect(build).toHaveBeenCalledWith(
+      expect.objectContaining({
+        dependencies: expect.arrayContaining([
+          ...FRONT_COMPONENT_REQUIRED_SHARED_DEPENDENCIES,
+          ...dependencies,
+          'react/jsx-runtime',
+        ]),
+      }),
+    );
+  });
+
+  it.each([
+    ['not an array', 'react'],
+    ['empty specifier', ['']],
+    ['non-string', [42]],
+    ['relative path', ['./local-module']],
+    ['absolute path', ['/tmp/local-module']],
+    ['Windows path', ['C:\\lib']],
+    ['reserved SDK', ['twenty-client-sdk/core']],
+    ['duplicate', ['react', 'react']],
+  ])('rejects %s before installing anything', async (_label, dependencies) => {
+    await expect(
+      installAndBuildFrontComponentSharedDependencies({
+        packageJson: JSON.stringify({
+          frontComponentSharedDependencies: dependencies,
+        }),
+        yarnLock,
+        yarnEngineDirectory,
+      }),
+    ).rejects.toMatchObject({ code: 'INVALID_INPUT' });
+    expect(install).not.toHaveBeenCalled();
+    expect(build).not.toHaveBeenCalled();
   });
 
   it.each(['install', 'build'])(

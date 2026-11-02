@@ -7,6 +7,7 @@ import { Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApplicationAuthContext } from 'src/engine/core-modules/auth/utils/build-application-auth-context.util';
 import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-user-auth-context.util';
@@ -15,7 +16,7 @@ import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/uti
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
-import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
+import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
@@ -25,7 +26,6 @@ import {
 } from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { type WorkflowRunInfo } from 'src/modules/workflow/workflow-executor/types/workflow-action-input.type';
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
-import { assertStepTargetBelongsToRunApplication } from 'src/modules/workflow/workflow-executor/utils/assert-step-target-belongs-to-run-application.util';
 import { resolveWorkflowRunApplicationOrThrow } from 'src/modules/workflow/workflow-executor/utils/resolve-workflow-run-application-or-throw.util';
 import { WorkflowRunWorkspaceService as WorkflowRunService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
@@ -67,24 +67,35 @@ export class WorkflowExecutionContextService {
     return this.buildExecutionContext(workflowRun, workspaceId);
   }
 
-  assertStepTargetBelongsToRunApplicationOrThrow({
-    application,
+  assertRunApplicationCanTriggerStepTargetOrThrow({
+    executionContext: { application, authContext },
     targetApplicationId,
     targetLabel,
   }: {
-    application: FlatApplication | null;
+    executionContext: Pick<
+      WorkflowExecutionContext,
+      'application' | 'authContext'
+    >;
     targetApplicationId: string;
     targetLabel: string;
   }): void {
-    if (!isDefined(application)) {
+    if (
+      !isDefined(application) ||
+      canCallerReachApplication({
+        callingApplication: application,
+        applicationId: targetApplicationId,
+        operation: 'trigger',
+        workspaceCustomApplicationId:
+          authContext.workspace.workspaceCustomApplicationId,
+      })
+    ) {
       return;
     }
 
-    assertStepTargetBelongsToRunApplication({
-      application,
-      targetApplicationId,
-      targetLabel,
-    });
+    throw new WorkflowStepExecutorException(
+      `${targetLabel} belongs to another application than "${application.name}", so this run cannot use it`,
+      WorkflowStepExecutorExceptionCode.FORBIDDEN,
+    );
   }
 
   private async buildExecutionContext(

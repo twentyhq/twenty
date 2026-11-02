@@ -1,38 +1,109 @@
 ---
-title: Servidor local
-description: Conecta la CLI independiente a un servidor Twenty local.
+title: Entorno local
+description: Ejecuta el entorno de desarrollo completo de Twenty con la CLI.
 ---
 
 import { PageBanner } from "/snippets/page-banner.mdx"
 
-## Configuración
+## Inicia Twenty localmente
 
-La CLI independiente se conecta a un servidor Twenty en ejecución. No inicia ni administra contenedores de Docker.
+Instala e inicia Docker y, a continuación, ejecuta:
 
-Usa la [guía de autoalojamiento](/es/developers/self-host/self-host) para ejecutar Twenty con Docker. En una copia local de un repositorio de Twenty, también funciona el entorno de desarrollo existente:
+```bash
+twenty local start
+twenty auth login --url http://localhost:2020 --name local
+```
+
+`local start` ejecuta la interfaz web, la API, el worker y las bases de datos. Funciona fuera de una carpeta
+de aplicación, espera a que el entorno esté listo e imprime su URL. El inicio de sesión es un
+paso independiente. Para instalar tu aplicación después, ejecuta `twenty app apply --create --remote local` desde su directorio.
+
+Para una instancia nueva, especifica una versión explícitamente o deja que la CLI seleccione la versión publicada más alta
+que coincida con `engines.twenty` de tu aplicación. Fuera de una aplicación con esa
+configuración, usa `latest`. Las instancias existentes conservan su versión y sus datos.
+Para una instancia existente, la compatibilidad con `engines.twenty` se comprueba mediante
+la `APP_VERSION` de la imagen, incluso cuando su etiqueta es `latest`. Una versión ausente, no válida
+o incompatible genera una advertencia y el inicio continúa.
+
+```bash
+twenty local start 2.53.1
+twenty local status
+twenty local logs
+twenty local logs --lines 100 --no-follow
+twenty local stop
+```
+
+Las instancias nuevas escuchan solo en loopback, en el puerto `2020`. Usa `--port \<port>` al
+crear una instancia para elegir otro puerto. Usa un contexto de socket local de Docker;
+los motores Docker remotos no son compatibles con estos comandos.
+
+## Actualizar o restablecer
+
+```bash
+twenty local upgrade 2.53.1
+```
+
+La actualización descarga la imagen solicitada antes de reemplazar la instancia. Conserva
+sus puertos, la base de datos y los volúmenes de archivos, así como las anulaciones de entorno. Nuevos valores predeterminados de CLI
+se aplican a las nuevas instancias creadas; las actualizaciones preservan los valores de entorno existentes.
+Sin una versión, sigue la misma selección de versión que un nuevo comienzo. Almacenamiento personalizado
+diseños rechazados. Los niveles bajos son rechazados antes de reemplazar el contenedor,
+incluyendo al usar una etiqueta como `latest`. Ambas imágenes deben declarar una
+`APP_VERSION` válida para que la CLI pueda comparar sus versiones reales.
+
+Pase `2.53` para iniciar o actualizar usando la etiqueta de imagen `v2.53` flotante, o `2.53.1`
+para seleccionar una versión de parche específica.
+
+Si la creación de reemplazo falla o se cancela, la CLI
+restaura el contenedor y ajustes anteriores. Una vez que se inicia la nueva versión,
+actualizaciones fallidas retienen los volúmenes de datos pero no deshacen las migraciones de la base de datos.
+
+`stop` conserva todos los datos. Para eliminar permanentemente la instancia y sus datos, ejecutar:
+
+```bash
+twenty local reset
+twenty local start
+```
+
+Reiniciar solicitud de confirmación. Los scripts deben pasar `--yes`. Los mandos guardados y las credenciales
+no se eliminan.
+
+## Pruebas de integración
+
+Usa la instancia de prueba independiente, con el puerto predeterminado `2021`:
+
+```bash
+twenty local start --test
+twenty local status --test
+TWENTY_API_URL=http://localhost:2021 yarn test
+```
+
+Configura `TWENTY_API_KEY` con una clave para esa instancia. Las pruebas de integración instalan y
+desinstalan una aplicación, así que mantenlas separadas de tu espacio de trabajo de desarrollo.
+Pasa `--test` a los registros, detener, actualizar o reiniciar al administrar esta instancia.
+
+El workflow de CI generado aprovisiona una instancia aislada mediante
+`twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` e instala la
+CLI independiente por separado.
+
+## Otras configuraciones locales
+
+Para una copia del código fuente de Twenty, el entorno de desarrollo existente también funciona:
 
 ```bash
 bash packages/twenty-utils/setup-dev-env.sh
 yarn start
-```
-
-Luego autentícate con la URL del servidor de tu espacio de trabajo:
-
-```bash
 twenty auth login --url http://localhost:3000 --name local
-twenty app apply --create --remote local
 ```
 
-Usa la URL y el puerto reales de tu servidor. Para espacios de trabajo con subdominios, usa el nombre de host del espacio de trabajo.
-
-## Pruebas de integración
-
-Usa un servidor o espacio de trabajo independiente y desechable. La configuración de las pruebas de integración instala una aplicación y el desmontaje la desinstala. Configura `TWENTY_API_URL` y `TWENTY_API_KEY` para esa instancia de prueba antes de ejecutar `yarn test`.
-
-El flujo de trabajo de CI generado aprovisiona una instancia aislada mediante `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` e instala la CLI independiente por separado.
+Usa la URL y el puerto reales de tu servidor. Para espacios de trabajo con subdominios, usa el
+nombre de host del espacio de trabajo. Para la implementación en producción, sigue la
+[guía de autoalojamiento](/es/developers/self-host/self-host).
 
 ## Dependencias del proyecto
 
-Instala `twenty-sdk` y `twenty-client-sdk` como dependencias del proyecto. Instala la CLI `twenty` globalmente y, luego, ejecuta `twenty app typecheck`, `twenty app build` y `twenty app apply` desde el directorio de la aplicación.
+Instala `twenty-sdk` y `twenty-client-sdk` como dependencias del proyecto. Instala la
+CLI de `twenty` globalmente y, a continuación, ejecuta `twenty app typecheck`, `twenty app build` y
+`twenty app apply` desde el directorio de la aplicación.
 
 <PageBanner illustration="dev-self-host" />

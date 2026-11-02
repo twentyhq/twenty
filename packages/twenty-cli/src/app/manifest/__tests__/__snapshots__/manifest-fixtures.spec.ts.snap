@@ -24,6 +24,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "pageLayouts": [],
     "permissionFlags": [],
     "publicAssets": [],
+    "relatedRecordPaths": [],
     "roles": [
       "my.role.ts",
     ],
@@ -88,6 +89,7 @@ The scripts invoke that local build directly, so the SDK binary cannot shadow it
     "pageLayouts": [],
     "permissionFlags": [],
     "publicAssets": [],
+    "relatedRecordPaths": [],
     "roles": [
       {
         "canBeAssignedToAgents": false,
@@ -161,6 +163,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "pageLayouts": [],
     "permissionFlags": [],
     "publicAssets": [],
+    "relatedRecordPaths": [],
     "roles": [
       "my.role.ts",
     ],
@@ -253,6 +256,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "pageLayouts": [],
     "permissionFlags": [],
     "publicAssets": [],
+    "relatedRecordPaths": [],
     "roles": [
       {
         "canBeAssignedToAgents": false,
@@ -350,6 +354,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "publicAssets": [
       "public/favicon.png",
     ],
+    "relatedRecordPaths": [],
     "roles": [
       "src/roles/default-function.role.ts",
       "src/root.role.ts",
@@ -1167,6 +1172,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
         "fileType": "png",
       },
     ],
+    "relatedRecordPaths": [],
     "roles": [
       {
         "canBeAssignedToAgents": false,
@@ -1439,6 +1445,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "pageLayouts": [],
     "permissionFlags": [],
     "publicAssets": [],
+    "relatedRecordPaths": [],
     "roles": [
       "my.role.ts",
     ],
@@ -1496,6 +1503,7 @@ exports[`CLI manifest fixtures and worker transport > matches the manifest, file
     "pageLayouts": [],
     "permissionFlags": [],
     "publicAssets": [],
+    "relatedRecordPaths": [],
     "roles": [
       {
         "canBeAssignedToAgents": false,

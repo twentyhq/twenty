@@ -2,10 +2,7 @@ import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   CommandMenuItemAvailabilityType,
-  MetadataReadability,
-  MetadataWritability,
   ObjectOpenRecordIn,
-  ObjectSharingReach,
 } from 'twenty-shared/types';
 
 import { buildGlobalChatCommandMenuItemUpdates } from 'src/database/commands/upgrade-version-command/2-52/utils/build-global-chat-command-menu-item-updates.util';
@@ -98,10 +95,6 @@ const CHAT_OBJECT_METADATA: FlatObjectMetadata = {
   isSystem: true,
   isUIEditable: true,
   isUICreatable: true,
-  readability: MetadataReadability.OPEN,
-  writability: MetadataWritability.OPEN,
-  sharingReach: ObjectSharingReach.WORKSPACE,
-  readabilityParentFieldUniversalIdentifiers: null,
   disabledObjectPermissionActions: null,
   openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
   shortcut: null,

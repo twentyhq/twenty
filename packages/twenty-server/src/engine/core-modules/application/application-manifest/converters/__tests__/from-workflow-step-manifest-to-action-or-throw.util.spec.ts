@@ -145,6 +145,11 @@ const inputs = {
     agentUniversalIdentifier: REFERENCE_ID,
     prompt: 'Summarize {{trigger.text}}',
   },
+  SEND_CHAT_MESSAGE: {
+    workspaceMemberId: '{{trigger.assigneeId}}',
+    title: 'Approve',
+    text: '{{trigger.text}}',
+  },
   CLASSIFY: { state: '{{trigger.text}}', questions: [] },
   FILTER: filters,
   IF_ELSE: {
