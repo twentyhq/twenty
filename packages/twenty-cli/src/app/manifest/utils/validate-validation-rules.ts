@@ -57,17 +57,17 @@ const groupDeclaredFieldsByObject = (
   );
 
 const getGeneratedFields = ({
-  manifest,
+  manifest: { application },
   objectUniversalIdentifier,
 }: {
-  manifest: ValidationRulesManifest;
+  manifest: Pick<ValidationRulesManifest, 'application'>;
   objectUniversalIdentifier: string;
 }) =>
   Object.entries(RESERVED_SYSTEM_FIELD_TYPE_BY_NAME).map(([name, type]) => ({
     name,
     type,
     universalIdentifier: getFieldUniversalIdentifier({
-      applicationUniversalIdentifier: manifest.application.universalIdentifier,
+      applicationUniversalIdentifier: application.universalIdentifier,
       objectUniversalIdentifier,
       name,
     }),

@@ -22,6 +22,7 @@ const TEST_ROLE_ID = uuidv4();
 const REFERENCE_FIELD_ID = uuidv4();
 const VALIDATION_RULE_ID = uuidv4();
 const OUTSIDE_VALIDATION_RULE_ID = uuidv4();
+const OVERRIDE_VALIDATION_RULE_ID = uuidv4();
 const GENERATED_FIELD_VALIDATION_RULE_ID = uuidv4();
 
 const COMPANY_OBJECT_UNIVERSAL_IDENTIFIER =
@@ -354,7 +355,7 @@ describe('Validation rules declared in an application manifest', () => {
       fieldName: 'code',
       validationRules: [
         buildValidationRuleManifest({
-          universalIdentifier: OUTSIDE_VALIDATION_RULE_ID,
+          universalIdentifier: OVERRIDE_VALIDATION_RULE_ID,
           objectUniversalIdentifier:
             STANDARD_OBJECTS.person.universalIdentifier,
           expression: 'isNonEmptyString(jobTitle)',
@@ -364,6 +365,10 @@ describe('Validation rules declared in an application manifest', () => {
     });
 
     await syncApplication({ manifest, expectToFail: false });
+
+    expect(
+      await findValidationRuleRow(OVERRIDE_VALIDATION_RULE_ID),
+    ).toMatchObject({ isActive: true });
 
     try {
       await updateOneFieldMetadata({
@@ -386,7 +391,7 @@ describe('Validation rules declared in an application manifest', () => {
         ),
       ]);
       expect(
-        await findValidationRuleRow(OUTSIDE_VALIDATION_RULE_ID),
+        await findValidationRuleRow(OVERRIDE_VALIDATION_RULE_ID),
       ).toMatchObject({ isActive: false });
     } finally {
       await updateOneFieldMetadata({
