@@ -46,8 +46,9 @@ Set these on the application registration after installing
 > a workspace admin tunes inside the app — not server variables. The per-member
 > "Record my meetings" choice (`CALL_RECORDER_RECORD_MY_MEETINGS`) is a
 > user-scoped application variable each member sets under
-> **Settings → App preferences** (external meetings by default, all meetings,
-> or none).
+> **Settings → App preferences → Call Recorder → Recording** (external meetings
+> by default, all meetings, or none). That page only appears while the
+> `IS_APP_PREFERENCES_ENABLED` feature flag is on for the workspace.
 
 ## Configuring the Recall webhook
 

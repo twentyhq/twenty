@@ -11,12 +11,14 @@ type WorkspaceMemberApplicationVariablesNode = {
   variables?: Array<{ key?: string | null; value?: string | null }> | null;
 };
 
+const RECORD_MY_MEETINGS_CHOICES = new Set<string>(
+  Object.values(CallRecorderRecordMyMeetingsChoice),
+);
+
 const isRecordMyMeetingsChoice = (
   value: string | null | undefined,
 ): value is CallRecorderRecordMyMeetingsChoice =>
-  Object.values(CallRecorderRecordMyMeetingsChoice).some(
-    (choice) => choice === value,
-  );
+  isNonEmptyString(value) && RECORD_MY_MEETINGS_CHOICES.has(value);
 
 // Cron and sweep runs get no member values in process.env and database event runs get the editor's, so every member is read here.
 export const fetchRecordMyMeetingsChoices = async (): Promise<

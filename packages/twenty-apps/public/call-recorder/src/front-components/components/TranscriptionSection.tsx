@@ -92,7 +92,7 @@ export const TranscriptionSection = () => {
               options={CALL_RECORDER_TRANSCRIPT_PROVIDER_OPTIONS}
               ariaLabel="Transcript provider"
               listboxId="call-recorder-transcript-provider"
-              allowEmpty
+              isEmptyAllowed
               onChange={handleProviderChange}
             />
           </SettingsOptionCardContentSelect>

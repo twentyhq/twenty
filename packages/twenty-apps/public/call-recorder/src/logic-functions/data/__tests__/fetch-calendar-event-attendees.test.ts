@@ -18,13 +18,15 @@ type ParticipantNode = {
   workspaceMemberId: string | null;
 };
 
-const buildPage = (
-  participants: ParticipantNode[],
-  {
-    hasNextPage = false,
-    endCursor = null,
-  }: { hasNextPage?: boolean; endCursor?: string | null } = {},
-) => ({
+const buildPage = ({
+  participants,
+  hasNextPage = false,
+  endCursor = null,
+}: {
+  participants: ParticipantNode[];
+  hasNextPage?: boolean;
+  endCursor?: string | null;
+}) => ({
   calendarEventParticipants: {
     pageInfo: { hasNextPage, endCursor },
     edges: participants.map((participant) => ({ node: participant })),
@@ -44,7 +46,7 @@ describe('fetchCalendarEventAttendees', () => {
   });
 
   it('filters participants to the given events', async () => {
-    queryMock.mockResolvedValue(buildPage([]));
+    queryMock.mockResolvedValue(buildPage({ participants: [] }));
 
     await fetchCalendarEventAttendees(CLIENT, [
       'calendar-event-1',
@@ -67,33 +69,36 @@ describe('fetchCalendarEventAttendees', () => {
   it('groups unique member ids per event across pages and flags unmatched attendees as external', async () => {
     queryMock
       .mockResolvedValueOnce(
-        buildPage(
-          [
+        buildPage({
+          participants: [
             {
               calendarEventId: 'calendar-event-1',
               workspaceMemberId: 'member-1',
             },
             { calendarEventId: 'calendar-event-1', workspaceMemberId: null },
           ],
-          { hasNextPage: true, endCursor: 'cursor-1' },
-        ),
+          hasNextPage: true,
+          endCursor: 'cursor-1',
+        }),
       )
       .mockResolvedValueOnce(
-        buildPage([
-          {
-            calendarEventId: 'calendar-event-1',
-            workspaceMemberId: 'member-1',
-          },
-          {
-            calendarEventId: 'calendar-event-1',
-            workspaceMemberId: 'member-2',
-          },
-          {
-            calendarEventId: 'calendar-event-2',
-            workspaceMemberId: 'member-2',
-          },
-          { calendarEventId: null, workspaceMemberId: 'member-3' },
-        ]),
+        buildPage({
+          participants: [
+            {
+              calendarEventId: 'calendar-event-1',
+              workspaceMemberId: 'member-1',
+            },
+            {
+              calendarEventId: 'calendar-event-1',
+              workspaceMemberId: 'member-2',
+            },
+            {
+              calendarEventId: 'calendar-event-2',
+              workspaceMemberId: 'member-2',
+            },
+            { calendarEventId: null, workspaceMemberId: 'member-3' },
+          ],
+        }),
       );
 
     const result = await fetchCalendarEventAttendees(CLIENT, [

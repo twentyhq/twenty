@@ -1,6 +1,6 @@
 import 'twenty-ui/style.css';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { Section } from 'twenty-ui/components/layout';
 
 import { CALL_RECORDER_RECORD_MY_MEETINGS_OPTIONS } from 'src/constants/call-recorder-record-my-meetings-options';
@@ -22,10 +22,17 @@ export const CallRecorderUserSettings = () => {
       ) || DEFAULT_CALL_RECORDER_RECORD_MY_MEETINGS,
   );
 
+  const persistedValueRef = useRef(recordMyMeetingsValue);
+
   const { saveImmediately } = useAutosaveApplicationVariable({
     variableKey: CALL_RECORDER_RECORD_MY_MEETINGS_ROW.variableKey,
     scope: 'USER',
-    onSaveSuccess: () => requestCalendarBotSchedulingSync(),
+    onSaveSuccess: (value) => {
+      persistedValueRef.current = value;
+
+      return requestCalendarBotSchedulingSync();
+    },
+    onSaveError: () => setRecordMyMeetingsValue(persistedValueRef.current),
   });
 
   const handleChange = (value: string) => {

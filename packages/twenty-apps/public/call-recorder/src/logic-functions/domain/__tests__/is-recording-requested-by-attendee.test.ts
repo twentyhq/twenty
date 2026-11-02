@@ -17,7 +17,7 @@ describe('isRecordingRequestedByAttendee', () => {
     ).toBe(true);
   });
 
-  it('records an external meeting for a member with the default choice', () => {
+  it('records only external meetings for a member with the default choice', () => {
     expect(
       isRecordingRequestedByAttendee({
         participantWorkspaceMemberIds: ['member-1'],
@@ -25,6 +25,13 @@ describe('isRecordingRequestedByAttendee', () => {
         recordMyMeetingsChoices: new Map(),
       }),
     ).toBe(true);
+    expect(
+      isRecordingRequestedByAttendee({
+        participantWorkspaceMemberIds: ['member-1'],
+        hasExternalAttendee: false,
+        recordMyMeetingsChoices: new Map(),
+      }),
+    ).toBe(false);
   });
 
   it('skips an internal meeting unless an attendee chose all meetings', () => {

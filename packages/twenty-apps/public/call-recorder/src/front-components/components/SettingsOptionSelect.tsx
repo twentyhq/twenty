@@ -25,7 +25,7 @@ type SettingsOptionSelectProps = {
   options: { label: string; value: string }[];
   ariaLabel: string;
   listboxId: string;
-  allowEmpty?: boolean;
+  isEmptyAllowed?: boolean;
   onChange: (value: string) => void;
 };
 
@@ -34,7 +34,7 @@ export const SettingsOptionSelect = ({
   options,
   ariaLabel,
   listboxId,
-  allowEmpty = false,
+  isEmptyAllowed = false,
   onChange,
 }: SettingsOptionSelectProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -42,7 +42,7 @@ export const SettingsOptionSelect = ({
   const getOptionId = (index: number) => `${listboxId}-option-${index}`;
 
   const selectedOption = options.find((option) => option.value === value);
-  const selectableOptions = allowEmpty
+  const selectableOptions = isEmptyAllowed
     ? [{ label: EMPTY_OPTION_LABEL, value: '' }, ...options]
     : options;
   const selectedOptionIndex = Math.max(
