@@ -73,6 +73,16 @@ describe('CLI app source loading', () => {
     },
   );
 
+  it('recognizes a component definition after JSX in a TSX file', () => {
+    expect(
+      extractDefineEntity(
+        `const Component = () => <div>Hello</div>;
+export default defineFrontComponent({ component: Component });`,
+        'component.tsx',
+      ),
+    ).toBe('defineFrontComponent');
+  });
+
   it('retains the supported default define-call syntax', () => {
     expect(
       extractDefineEntity(

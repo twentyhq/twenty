@@ -1,3 +1,4 @@
+import { ApplicationFrontComponentExportService } from 'src/engine/core-modules/application/application-manifest/services/application-front-component-export.service';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -47,6 +48,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ApplicationUninstallService,
     ComputeApplicationManifestAllUniversalFlatEntityMapsService,
     ApplicationManifestExportService,
+    ApplicationFrontComponentExportService,
     provideWorkspaceScopedRepository(ApplicationEntity),
   ],
   exports: [

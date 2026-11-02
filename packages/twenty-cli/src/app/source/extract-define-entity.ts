@@ -41,9 +41,10 @@ const isTargetFunction = (name: string): name is TargetFunction =>
 
 export const extractDefineEntity = (
   fileContent: string,
+  filePath = 'temp.ts',
 ): TargetFunction | undefined => {
   const sourceFile = ts.createSourceFile(
-    'temp.ts',
+    filePath,
     fileContent,
     ts.ScriptTarget.Latest,
     true,
