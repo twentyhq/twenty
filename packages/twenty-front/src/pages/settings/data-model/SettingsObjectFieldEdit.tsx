@@ -120,13 +120,18 @@ export const SettingsObjectFieldEdit = () => {
 
   const deactivateFieldModalId = `${DEACTIVATE_FIELD_MODAL_ID}-${workspaceSurface.type}`;
 
-  const { validationRulesReadingField, loading: isLoadingValidationRules } =
-    useValidationRulesReadingField({
-      fieldMetadataId: fieldMetadataItem?.id ?? '',
-    });
-  const validationRulesWarning = isNonEmptyArray(validationRulesReadingField)
-    ? getFieldRemovalValidationRulesWarning(validationRulesReadingField)
-    : undefined;
+  const {
+    validationRulesReadingField,
+    loading: isLoadingValidationRules,
+    hasFailedToLoad: hasValidationRulesFailedToLoad,
+  } = useValidationRulesReadingField({
+    fieldMetadataId: fieldMetadataItem?.id ?? '',
+  });
+  const validationRulesWarning = hasValidationRulesFailedToLoad
+    ? t`We couldn't check which validation rules use this field. This may also deactivate them.`
+    : isNonEmptyArray(validationRulesReadingField)
+      ? getFieldRemovalValidationRulesWarning(validationRulesReadingField)
+      : undefined;
 
   const isReverseJunctionRelation =
     resolveJunctionConfig({
@@ -283,7 +288,7 @@ export const SettingsObjectFieldEdit = () => {
       return;
     }
 
-    if (isNonEmptyArray(validationRulesReadingField)) {
+    if (isDefined(validationRulesWarning)) {
       openDialog(deactivateFieldModalId);
 
       return;

@@ -90,6 +90,7 @@ describe('useValidationRulesReadingField', () => {
       ]),
     );
     expect(result.current.loading).toBe(false);
+    expect(result.current.hasFailedToLoad).toBe(false);
   });
 
   it('should not load anything when the feature is off', () => {

@@ -92,5 +92,8 @@ export const findValidationRulesReadingField = async (
     variables: { fieldMetadataId },
   });
 
-  return response.body.data.validationRulesReadingField as { name: string }[];
+  const validationRules: { name: string }[] =
+    response.body.data.validationRulesReadingField;
+
+  return validationRules;
 };

@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client/react';
-import { isNonEmptyString } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 
 import { useListenToMetadataOperationBrowserEvent } from '@/browser-event/hooks/useListenToMetadataOperationBrowserEvent';
 import { type ValidationRule } from '@/validation-rules/types/ValidationRule';
@@ -23,7 +23,7 @@ export const useValidationRulesReadingField = ({
     !isRecordCreationFormEnabled || !isNonEmptyString(fieldMetadataId);
 
   // A cached list could hide a rule from the warning
-  const { data, loading, refetch } = useQuery(
+  const { data, loading, error, refetch } = useQuery(
     FindValidationRulesReadingFieldDocument,
     {
       variables: { fieldMetadataId },
@@ -43,5 +43,6 @@ export const useValidationRulesReadingField = ({
   return {
     validationRulesReadingField: data?.validationRulesReadingField ?? [],
     loading,
+    hasFailedToLoad: isDefined(error),
   };
 };
