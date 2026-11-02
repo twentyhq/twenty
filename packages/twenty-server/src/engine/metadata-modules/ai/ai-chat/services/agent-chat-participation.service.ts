@@ -53,30 +53,34 @@ export class AgentChatParticipationService {
             scope,
           });
 
-          const appliedParticipation = isDefined(participation)
-            ? await this.threadService.applyAssistantParticipation({
-                ...args,
-                ...participation,
-                transactionScope: scope,
-              })
-            : undefined;
+          if (!isDefined(participation)) {
+            const savedMessage = await persistMessage(
+              createAgentHistoryTransactionScope(scope),
+            );
 
+            return {
+              ...savedMessage,
+              mentionedParticipantWorkspaceMemberIds: [],
+              recipientParticipantWorkspaceMemberIds: [],
+            };
+          }
+
+          const { isInitialMessage } =
+            await this.threadService.applyAssistantParticipation({
+              ...args,
+              ...participation,
+              transactionScope: scope,
+            });
           const savedMessage = await persistMessage(
             createAgentHistoryTransactionScope(scope),
           );
-          const delivery = isDefined(participation)
-            ? await this.deliverParticipants({
-                ...args,
-                ...participation,
-                messageId: savedMessage.id,
-                isInitialMessage:
-                  appliedParticipation?.isInitialMessage ?? false,
-                scope,
-              })
-            : {
-                mentionedParticipantWorkspaceMemberIds: [],
-                recipientParticipantWorkspaceMemberIds: [],
-              };
+          const delivery = await this.deliverParticipants({
+            ...args,
+            ...participation,
+            messageId: savedMessage.id,
+            isInitialMessage,
+            scope,
+          });
 
           return { ...savedMessage, ...delivery };
         }),
@@ -108,19 +112,24 @@ export class AgentChatParticipationService {
           transactionScope,
         }),
     });
-    const recipientParticipantWorkspaceMemberIds = isInitialMessage
-      ? await this.deliverToInbox({
+    if (!isInitialMessage) {
+      return {
+        mentionedParticipantWorkspaceMemberIds,
+        recipientParticipantWorkspaceMemberIds: [],
+      };
+    }
+
+    const recipientParticipantWorkspaceMemberIds = await this.deliverToInbox({
+      ...args,
+      scope,
+      messageId,
+      deliver: (transactionScope) =>
+        this.threadService.deliverToParticipants({
           ...args,
-          scope,
-          messageId,
-          deliver: (transactionScope) =>
-            this.threadService.deliverToParticipants({
-              ...args,
-              participantWorkspaceMemberIds: recipientWorkspaceMemberIds,
-              transactionScope,
-            }),
-        })
-      : [];
+          participantWorkspaceMemberIds: recipientWorkspaceMemberIds,
+          transactionScope,
+        }),
+    });
 
     return {
       mentionedParticipantWorkspaceMemberIds,

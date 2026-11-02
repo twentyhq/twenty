@@ -40,6 +40,8 @@ import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/service
 import { AgentChatMessageReactionService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-message-reaction.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FeatureFlagKey } from 'twenty-shared/types';
+import { type AgentChatAssistantParticipationArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-assistant-participation-args.type';
+import { type AgentChatThreadAccessArgs } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-access-args.type';
 import { AgentChatThreadService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
 import { tagAiChatStreamScope } from 'src/engine/metadata-modules/ai/ai-chat/utils/tag-ai-chat-stream-scope.util';
@@ -319,24 +321,19 @@ export class AgentChatResolver {
       workspaceMemberId,
       workspaceId: workspace.id,
     };
-    const thread = isAiChatInboxEnabled
-      ? await this.threadService.getWritableThread(threadAccess)
-      : (
-          await this.threadService.applyAssistantParticipation({
-            ...threadAccess,
-            isAssistantMentioned: isAssistantMentioned ?? false,
-            isInitialAssistantParticipant,
-            recipientWorkspaceMemberIds,
-            mentionedWorkspaceMemberIds,
-          })
-        ).thread;
+    const participationArguments = {
+      isAssistantMentioned: isAssistantMentioned ?? false,
+      isInitialAssistantParticipant,
+      recipientWorkspaceMemberIds,
+      mentionedWorkspaceMemberIds,
+    };
+    const thread = await this.getThreadForMessage({
+      ...threadAccess,
+      isAiChatInboxEnabled,
+      participation: participationArguments,
+    });
     const participation = isAiChatInboxEnabled
-      ? {
-          isAssistantMentioned: isAssistantMentioned ?? false,
-          isInitialAssistantParticipant,
-          recipientWorkspaceMemberIds,
-          mentionedWorkspaceMemberIds,
-        }
+      ? participationArguments
       : undefined;
     const isAssistantReplying = shouldAssistantReply || !isAiChatInboxEnabled;
 
@@ -414,6 +411,26 @@ export class AgentChatResolver {
       recipientParticipantWorkspaceMemberIds:
         result.recipientParticipantWorkspaceMemberIds,
     };
+  }
+
+  private async getThreadForMessage({
+    isAiChatInboxEnabled,
+    participation,
+    ...args
+  }: AgentChatThreadAccessArgs & {
+    isAiChatInboxEnabled: boolean;
+    participation: AgentChatAssistantParticipationArgs;
+  }): Promise<AgentChatThreadWorkspaceEntity> {
+    if (isAiChatInboxEnabled) {
+      return this.threadService.getWritableThread(args);
+    }
+
+    const { thread } = await this.threadService.applyAssistantParticipation({
+      ...args,
+      ...participation,
+    });
+
+    return thread;
   }
 
   @Mutation(() => SendChatMessageResultDTO)

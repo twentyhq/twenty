@@ -176,17 +176,7 @@ export class AgentChatSharingService {
     transactionScope?: WorkspaceTransactionScope;
   }) {
     const authContext = await this.getAuthContext(args);
-    const thread = isDefined(transactionScope)
-      ? await transactionScope
-          .getRepository<AgentChatThreadWorkspaceEntity>(
-            'agentChatThread',
-            { shouldBypassPermissionChecks: true },
-            { shouldSkipEventEmission: true },
-          )
-          .findOne({ where: { id: args.threadId }, withDeleted: true })
-      : await this.threadRepository.findOne(args.workspaceId, {
-          where: { id: args.threadId },
-        });
+    const thread = await this.findThread({ ...args, transactionScope });
     if (!isDefined(thread)) {
       return throwAgentChatThreadNotFound();
     }
@@ -200,6 +190,28 @@ export class AgentChatSharingService {
       authContext,
     );
     return thread;
+  }
+
+  private async findThread({
+    workspaceId,
+    threadId,
+    transactionScope,
+  }: Pick<AgentChatThreadAccessArgs, 'workspaceId' | 'threadId'> & {
+    transactionScope?: WorkspaceTransactionScope;
+  }): Promise<AgentChatThreadWorkspaceEntity | null> {
+    if (!isDefined(transactionScope)) {
+      return this.threadRepository.findOne(workspaceId, {
+        where: { id: threadId },
+      });
+    }
+
+    return transactionScope
+      .getRepository<AgentChatThreadWorkspaceEntity>(
+        'agentChatThread',
+        { shouldBypassPermissionChecks: true },
+        { shouldSkipEventEmission: true },
+      )
+      .findOne({ where: { id: threadId }, withDeleted: true });
   }
 
   async lockThreadForWriteInTransaction({
