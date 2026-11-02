@@ -25,7 +25,8 @@ export const ChatThreadDisconnectedBanner = ({
       applicationId,
       providerName: connectionProviderName,
       reconnectingConnectedAccountId: connectedAccountId,
-      redirectLocation: window.location.pathname,
+      // The open thread lives in the search params, so keep them for the return
+      redirectLocation: `${window.location.pathname}${window.location.search}${window.location.hash}`,
     });
 
   return (
