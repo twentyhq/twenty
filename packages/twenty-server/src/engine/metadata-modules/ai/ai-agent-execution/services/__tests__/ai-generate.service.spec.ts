@@ -1,6 +1,7 @@
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
+import { RunAgentMessageRole } from 'src/engine/metadata-modules/ai/ai-agent-execution/enums/run-agent-message-role.enum';
 import { AiGenerateService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/ai-generate.service';
 import {
   AiException,
@@ -26,7 +27,9 @@ describe('AiGenerateService generate', () => {
         defaultRoleId: null,
         sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
       } as FlatApplication,
-      input: { input: [{ role: 'user', content: 'Qualify Acme' }] },
+      input: {
+        input: [{ role: RunAgentMessageRole.user, content: 'Qualify Acme' }],
+      },
     });
 
     await expect(generation).rejects.toBeInstanceOf(AiException);
