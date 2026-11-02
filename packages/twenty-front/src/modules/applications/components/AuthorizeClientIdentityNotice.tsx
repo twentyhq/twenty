@@ -1,11 +1,8 @@
-import { isBuiltInMcpClientAppName } from '@/applications/utils/isBuiltInMcpClientAppName';
 import { styled } from '@linaria/react';
 import { Trans } from '@lingui/react/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconAlertTriangle, IconCircleCheck } from 'twenty-ui/icon';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
-import { type WellKnownOAuthClient } from '~/generated-metadata/graphql';
 
 const StyledVerifiedNotice = styled.p`
   align-items: center;
@@ -29,16 +26,18 @@ const StyledWarningContainer = styled.div`
 
 type AuthorizeClientIdentityNoticeProps = {
   appName: string;
-  wellKnownOAuthClient?: WellKnownOAuthClient | null;
+  isVerified: boolean;
+  claimsVerifiedClientName: boolean;
 };
 
 export const AuthorizeClientIdentityNotice = ({
   appName,
-  wellKnownOAuthClient,
+  isVerified,
+  claimsVerifiedClientName,
 }: AuthorizeClientIdentityNoticeProps) => {
   const theme = useTheme();
 
-  if (isDefined(wellKnownOAuthClient)) {
+  if (isVerified) {
     return (
       <StyledVerifiedNotice>
         <StyledVerifiedIcon>
@@ -49,7 +48,7 @@ export const AuthorizeClientIdentityNotice = ({
     );
   }
 
-  if (!isBuiltInMcpClientAppName(appName)) {
+  if (!claimsVerifiedClientName) {
     return null;
   }
 

@@ -1,10 +1,11 @@
 import { RefetchOnWindowFocusEffect } from '@/apollo/components/RefetchOnWindowFocusEffect';
-import { SettingsBuiltInMcpClientAppConnectTooltip } from '@/settings/app-preferences/components/SettingsBuiltInMcpClientAppConnectTooltip';
-import { useBuiltInMcpClientAppConnectLink } from '@/settings/app-preferences/hooks/useBuiltInMcpClientAppConnectLink';
+import { AppChip } from '@/applications/components/AppChip';
+import { SettingsConnectableAppConnectTooltip } from '@/settings/app-preferences/components/SettingsConnectableAppConnectTooltip';
+import { useConnectableAppAuthorizations } from '@/settings/app-preferences/hooks/useConnectableAppAuthorizations';
+import { useConnectableAppConnectLink } from '@/settings/app-preferences/hooks/useConnectableAppConnectLink';
+import { type ConnectableApp } from '@/settings/app-preferences/types/ConnectableApp';
 import { SettingsApplicationAuthorizationRowDropdownMenu } from '@/settings/applications/components/SettingsApplicationAuthorizationRowDropdownMenu';
 import { SettingsApplicationAuthorizationPermissionsCell } from '@/settings/applications/components/SettingsApplicationAuthorizationPermissionsCell';
-import { useBuiltInMcpClientAppAuthorizations } from '@/settings/app-preferences/hooks/useBuiltInMcpClientAppAuthorizations';
-import { type BuiltInMcpClientApp } from '@/settings/app-preferences/types/BuiltInMcpClientApp';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationTableHeaderRow } from '@/settings/applications/components/SettingsApplicationTableHeaderRow';
 import { SettingsApplicationTableRow } from '@/settings/applications/components/SettingsApplicationTableRow';
@@ -18,7 +19,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { Status } from 'twenty-ui/primitives/data-display';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import { themeCssVariables } from 'twenty-ui/theme';
 import { RevokeApplicationAuthorizationDocument } from '~/generated-metadata/graphql';
 import { beautifyPastDateRelativeToNowShort } from '~/utils/date-utils';
 
@@ -32,24 +33,30 @@ const StyledConnectCardContainer = styled.div`
   flex-direction: column;
 `;
 
-type SettingsBuiltInMcpClientAppConnectionsSectionProps = {
-  app: BuiltInMcpClientApp;
+type SettingsConnectableAppConnectionsSectionProps = {
+  connectableApp: ConnectableApp;
 };
 
-export const SettingsBuiltInMcpClientAppConnectionsSection = ({
-  app,
-}: SettingsBuiltInMcpClientAppConnectionsSectionProps) => {
+export const SettingsConnectableAppConnectionsSection = ({
+  connectableApp,
+}: SettingsConnectableAppConnectionsSectionProps) => {
   const { t } = useLingui();
-  const theme = useTheme();
   const { authorizations, loading, hasLoadError, refetch } =
-    useBuiltInMcpClientAppAuthorizations(app);
-  const connectLink = useBuiltInMcpClientAppConnectLink(app);
+    useConnectableAppAuthorizations(connectableApp);
+  const connectLink = useConnectableAppConnectLink(connectableApp);
   const [revokeApplicationAuthorization] = useMutation(
     RevokeApplicationAuthorizationDocument,
   );
 
-  const appName = t(app.name);
+  const appName = connectableApp.name;
   const isConnectDisabled = !isDefined(connectLink);
+  const appChip = (
+    <AppChip
+      logoUrl={connectableApp.logoUrl}
+      fallbackApplicationData={{ name: appName }}
+      chipOnly
+    />
+  );
 
   const [latestAuthorization] = authorizations;
 
@@ -91,19 +98,19 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
 
     if (!isDefined(latestAuthorization)) {
       return (
-        <SettingsBuiltInMcpClientAppConnectTooltip
+        <SettingsConnectableAppConnectTooltip
           appName={appName}
           isConnectDisabled={isConnectDisabled}
         >
           <StyledConnectCardContainer>
             <SettingsCard
-              Icon={<app.Icon size={theme.icon.size.md} />}
+              Icon={appChip}
               title={t`Connect with ${appName}`}
               href={connectLink}
               disabled={isConnectDisabled}
             />
           </StyledConnectCardContainer>
-        </SettingsBuiltInMcpClientAppConnectTooltip>
+        </SettingsConnectableAppConnectTooltip>
       );
     }
 
@@ -126,7 +133,7 @@ export const SettingsBuiltInMcpClientAppConnectionsSection = ({
             hasActionMenu
             name={
               <>
-                <app.Icon size={theme.icon.size.md} />
+                {appChip}
                 <OverflowingTextWithTooltip text={t`Last used ${lastUsed}`} />
               </>
             }

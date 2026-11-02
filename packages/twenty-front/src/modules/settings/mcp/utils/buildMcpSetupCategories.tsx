@@ -20,8 +20,8 @@ import ZedLogo from '@/settings/mcp/assets/mcp-clients/zed.svg';
 import { McpClientLogo } from '@/settings/mcp/components/McpClientLogo';
 import { MCP_SETUP } from '@/settings/mcp/constants/McpSetup';
 import { type McpSetupCategory } from '@/settings/mcp/types/McpSetup';
-import { getBuiltInMcpClientAppConnectLink } from '@/settings/mcp/utils/getBuiltInMcpClientAppConnectLink';
 import {
+  buildClaudeInstallLink,
   buildCursorInstallLink,
   buildGooseInstallLink,
   buildLmStudioInstallLink,
@@ -48,10 +48,7 @@ export const buildMcpSetupCategories = ({
         badge: t`Official app`,
         description: t`Open Twenty's official ChatGPT integration for your workspace.`,
         ctaLabel: t`Connect`,
-        href: getBuiltInMcpClientAppConnectLink({
-          builtInMcpClientAppId: 'chatgpt',
-          mcpServerUrl,
-        }),
+        href: MCP_SETUP.chatGptTwentyAppUrl,
         logo: <McpClientLogo src={OpenAiLogo} invertInDarkMode />,
       },
       {
@@ -60,10 +57,9 @@ export const buildMcpSetupCategories = ({
         description: t`Open Claude with the Twenty connector name and MCP URL prefilled.`,
         ctaLabel: t`Connect`,
         disabledTooltip: t`Claude connections require an HTTPS MCP URL.`,
-        href: getBuiltInMcpClientAppConnectLink({
-          builtInMcpClientAppId: 'claude',
-          mcpServerUrl,
-        }),
+        href: isHttpsInstallLinkEnabled
+          ? buildClaudeInstallLink(mcpServerUrl)
+          : undefined,
         isDisabled: !isHttpsInstallLinkEnabled,
         logo: <McpClientLogo src={ClaudeLogo} />,
         tooltipId: MCP_SETUP.tooltipIds.claudeInstallDisabled,

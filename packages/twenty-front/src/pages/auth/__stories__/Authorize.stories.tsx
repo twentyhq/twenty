@@ -12,10 +12,8 @@ import { graphqlMocks } from '~/testing/graphqlMocks';
 import { getOperationName } from '~/utils/getOperationName';
 
 import { GET_CURRENT_USER } from '@/users/graphql/queries/getCurrentUser';
-import {
-  FindApplicationRegistrationByClientIdDocument,
-  WellKnownOAuthClient,
-} from '~/generated-metadata/graphql';
+import { CHATGPT_CONNECTABLE_APP } from '@/settings/app-preferences/testing/connectableAppFixtures';
+import { FindApplicationRegistrationByClientIdDocument } from '~/generated-metadata/graphql';
 
 const MOCKED_REDIRECT_URL = 'https://chatgpt.com/connector';
 
@@ -26,7 +24,8 @@ const buildHandlers = (
     logoUrl: string | null;
     oAuthScopes: string[];
     websiteUrl: string | null;
-    wellKnownOAuthClient?: WellKnownOAuthClient | null;
+    oAuthIdentityUniversalIdentifier?: string | null;
+    claimsVerifiedClientName?: boolean;
   } | null,
 ) => [
   graphql.query(
@@ -37,7 +36,8 @@ const buildHandlers = (
           findApplicationRegistrationByClientId: application
             ? {
                 __typename: 'PublicApplicationRegistration',
-                wellKnownOAuthClient: null,
+                oAuthIdentityUniversalIdentifier: null,
+                claimsVerifiedClientName: false,
                 ...application,
               }
             : null,
@@ -98,7 +98,7 @@ export const Default: Story = {
         logoUrl: null,
         oAuthScopes: ['api', 'profile'],
         websiteUrl: null,
-        wellKnownOAuthClient: WellKnownOAuthClient.CHATGPT,
+        oAuthIdentityUniversalIdentifier: CHATGPT_CONNECTABLE_APP.id,
       }),
     },
   },
@@ -127,6 +127,7 @@ export const UnverifiedClientBorrowingAKnownName: Story = {
         logoUrl: null,
         oAuthScopes: ['api', 'profile'],
         websiteUrl: null,
+        claimsVerifiedClientName: true,
       }),
     },
   },

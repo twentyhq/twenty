@@ -3,7 +3,7 @@ import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/comp
 import { SettingsApplicationsTable } from '@/settings/applications/components/SettingsApplicationsTable';
 import { useInstalledBuiltInAccountApps } from '@/settings/applications/hooks/useInstalledBuiltInAccountApps';
 import { useWorkspaceApplicationStatusesById } from '@/settings/applications/hooks/useWorkspaceApplicationStatusesById';
-import { collapseWellKnownOAuthClientApplications } from '@/settings/applications/utils/collapseWellKnownOAuthClientApplications';
+import { collapseOAuthIdentityApplications } from '@/settings/applications/utils/collapseOAuthIdentityApplications';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -23,7 +23,7 @@ export const SettingsApplicationsInstalledAppsSection = () => {
     FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
   );
   const displayedApplications = isAppPreferencesEnabled
-    ? collapseWellKnownOAuthClientApplications(installedApplications)
+    ? collapseOAuthIdentityApplications(installedApplications)
     : installedApplications;
   const {
     statusesById,

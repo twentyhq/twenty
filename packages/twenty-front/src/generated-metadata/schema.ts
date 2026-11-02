@@ -495,6 +495,7 @@ export type Application = {
   runOnUserPreferences: Scalars['Boolean']['output'];
   settingsCustomTabFrontComponentId?: Maybe<Scalars['UUID']['output']>;
   settingsMenuItems?: Maybe<Array<SettingsMenuItem>>;
+  sourceType: ApplicationRegistrationSourceType;
   universalIdentifier: Scalars['String']['output'];
   version?: Maybe<Scalars['String']['output']>;
   yarnLockChecksum?: Maybe<Scalars['String']['output']>;
@@ -510,9 +511,9 @@ export type ApplicationAuthorization = {
   id: Scalars['UUID']['output'];
   lastAuthorizedAt?: Maybe<Scalars['DateTime']['output']>;
   lastUsedAt: Scalars['DateTime']['output'];
+  oAuthIdentityUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   scopes?: Maybe<Array<Scalars['String']['output']>>;
   userId: Scalars['UUID']['output'];
-  wellKnownOAuthClient?: Maybe<WellKnownOAuthClient>;
   workspaceId: Scalars['UUID']['output'];
 };
 
@@ -782,8 +783,8 @@ export type ApplicationRegistrationSummary = {
   id: Scalars['UUID']['output'];
   latestAvailableVersion?: Maybe<Scalars['String']['output']>;
   logoUrl?: Maybe<Scalars['String']['output']>;
+  oAuthIdentityUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   sourceType: ApplicationRegistrationSourceType;
-  wellKnownOAuthClient?: Maybe<WellKnownOAuthClient>;
 };
 
 export type ApplicationRegistrationVariable = {
@@ -3076,6 +3077,7 @@ export type MarketplaceApp = {
   __typename?: 'MarketplaceApp';
   author: Scalars['String']['output'];
   category: Scalars['String']['output'];
+  connectUrl?: Maybe<Scalars['String']['output']>;
   description: Scalars['String']['output'];
   id: Scalars['String']['output'];
   isListed: Scalars['Boolean']['output'];
@@ -3090,6 +3092,7 @@ export type MarketplaceAppDetail = {
   author?: Maybe<Scalars['String']['output']>;
   billsCredits: Scalars['Boolean']['output'];
   category?: Maybe<Scalars['String']['output']>;
+  connectUrl?: Maybe<Scalars['String']['output']>;
   defaultRoleUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   emailSupport?: Maybe<Scalars['String']['output']>;
@@ -3114,7 +3117,6 @@ export type MarketplaceAppDetail = {
   termsUrl?: Maybe<Scalars['String']['output']>;
   universalIdentifier: Scalars['String']['output'];
   websiteUrl?: Maybe<Scalars['String']['output']>;
-  wellKnownOAuthClient?: Maybe<WellKnownOAuthClient>;
 };
 
 export type MarketplaceAppObject = {
@@ -5694,12 +5696,13 @@ export type PreviewMessageCampaignSendOutputDto = {
 
 export type PublicApplicationRegistration = {
   __typename?: 'PublicApplicationRegistration';
+  claimsVerifiedClientName: Scalars['Boolean']['output'];
   id: Scalars['UUID']['output'];
   logoUrl?: Maybe<Scalars['String']['output']>;
   name: Scalars['String']['output'];
+  oAuthIdentityUniversalIdentifier?: Maybe<Scalars['String']['output']>;
   oAuthScopes: Array<Scalars['String']['output']>;
   websiteUrl?: Maybe<Scalars['String']['output']>;
-  wellKnownOAuthClient?: Maybe<WellKnownOAuthClient>;
 };
 
 export type PublicConnectionParametersOutput = {
@@ -8435,11 +8438,6 @@ export type Webhook = {
   targetUrl: Scalars['String']['output'];
   updatedAt: Scalars['DateTime']['output'];
 };
-
-export enum WellKnownOAuthClient {
-  CHATGPT = 'CHATGPT',
-  CLAUDE = 'CLAUDE'
-}
 
 export type WidgetConfiguration = AggregateChartConfiguration | BarChartConfiguration | CalendarConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | ChatConfiguration | ChatThreadsConfiguration | EmailThreadConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | FormFieldConfiguration | FrontComponentConfiguration | IframeConfiguration | LineChartConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | NotesConfiguration | PieChartConfiguration | RecordTableConfiguration | StandaloneRichTextConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration;
 

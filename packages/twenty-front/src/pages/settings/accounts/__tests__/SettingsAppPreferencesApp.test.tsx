@@ -3,19 +3,24 @@ import { Provider as JotaiProvider } from 'jotai';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { SettingsAppPreferencesApp } from '~/pages/settings/accounts/SettingsAppPreferencesApp';
+import { mockCurrentWorkspace } from '~/testing/mock-data/users';
+
+const INSTALLED_APPLICATION_ID =
+  mockCurrentWorkspace.installedApplications[0].id;
 
 jest.mock('@/auth/hooks/useIsLogged', () => ({
   useIsLogged: () => true,
 }));
 
-jest.mock('~/pages/settings/accounts/SettingsBuiltInMcpClientApp', () => ({
-  SettingsBuiltInMcpClientApp: () => <span>ChatGPT or Claude page</span>,
+jest.mock('~/pages/settings/accounts/SettingsConnectableApp', () => ({
+  SettingsConnectableApp: () => <span>Connectable app page</span>,
 }));
 
 jest.mock('~/pages/settings/accounts/SettingsBuiltInAccountApp', () => ({
@@ -39,6 +44,7 @@ const renderAppPreferencesApp = ({
     objectsPermissions: [],
     isImpersonating: false,
   });
+  jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
 
   render(
     <JotaiProvider store={jotaiStore}>
@@ -62,16 +68,16 @@ describe('SettingsAppPreferencesApp', () => {
     resetJotaiStore();
   });
 
-  it.each(['chatgpt', 'claude'])(
-    'opens %s without the connected accounts permission',
-    (applicationId) => {
-      renderAppPreferencesApp({ applicationId, permissionFlags: [] });
+  it('opens an app members connect, like Claude, without the connected accounts permission', () => {
+    renderAppPreferencesApp({
+      applicationId: '3e0bda4b-fb1d-42bd-bab3-03b66698e6ff',
+      permissionFlags: [],
+    });
 
-      expect(screen.getByText('ChatGPT or Claude page')).toBeInTheDocument();
-    },
-  );
+    expect(screen.getByText('Connectable app page')).toBeInTheDocument();
+  });
 
-  it.each(['google', 'linear-application-id'])(
+  it.each(['google', INSTALLED_APPLICATION_ID])(
     'keeps %s behind the connected accounts permission',
     (applicationId) => {
       renderAppPreferencesApp({ applicationId, permissionFlags: [] });

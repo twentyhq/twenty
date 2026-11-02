@@ -7,8 +7,7 @@ import { getStandardApplicationReadme } from '@/applications/utils/getStandardAp
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { SettingsBuiltInMcpClientAppConnectButton } from '@/settings/app-preferences/components/SettingsBuiltInMcpClientAppConnectButton';
-import { findBuiltInMcpClientApp } from '@/settings/app-preferences/utils/findBuiltInMcpClientApp';
+import { SettingsConnectableAppConnectButton } from '@/settings/app-preferences/components/SettingsConnectableAppConnectButton';
 import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
 import { useCopyMarketplaceAppLink } from '@/marketplace/hooks/useCopyMarketplaceAppLink';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
@@ -156,23 +155,19 @@ export const SettingsAvailableApplicationDetails = () => {
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
 
-  const builtInMcpClientApp = findBuiltInMcpClientApp(
-    detail?.wellKnownOAuthClient,
-  );
-
   const renderActionButton = () => {
     if (!isDefined(detail)) {
       return undefined;
     }
 
-    if (isDefined(builtInMcpClientApp)) {
+    if (isDefined(detail.connectUrl)) {
       if (!isAppPreferencesEnabled) {
         return undefined;
       }
 
       return (
-        <SettingsBuiltInMcpClientAppConnectButton
-          builtInMcpClientApp={builtInMcpClientApp}
+        <SettingsConnectableAppConnectButton
+          connectableApp={{ name: detail.name, connectUrl: detail.connectUrl }}
         />
       );
     }

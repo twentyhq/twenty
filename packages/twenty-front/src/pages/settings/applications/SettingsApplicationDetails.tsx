@@ -109,7 +109,7 @@ export const SettingsApplicationDetails = () => {
     onCompleted: handleUpgradeCompleted,
   });
 
-  const sourceType = application?.applicationRegistration?.sourceType;
+  const sourceType = application?.sourceType;
   const currentVersion = application?.version;
   const latestAvailableVersion =
     detail?.latestAvailableVersion ??

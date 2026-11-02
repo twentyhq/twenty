@@ -8,11 +8,13 @@ import {
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
 
-import { MCP_SETUP } from '@/settings/mcp/constants/McpSetup';
+import {
+  CHATGPT_CONNECTABLE_APP,
+  CLAUDE_CONNECTABLE_APP,
+} from '@/settings/app-preferences/testing/connectableAppFixtures';
 import { SettingsAppPreferencesApp } from '~/pages/settings/accounts/SettingsAppPreferencesApp';
-import { SettingsBuiltInMcpClientApp } from '~/pages/settings/accounts/SettingsBuiltInMcpClientApp';
+import { SettingsConnectableApp } from '~/pages/settings/accounts/SettingsConnectableApp';
 import { removeConnectedAccountsPermission } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
-import { WellKnownOAuthClient } from '~/generated-metadata/graphql';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 const CLAUDE_AUTHORIZATION_ID = '20202020-6a7b-4c3d-8e4f-0000000000c1';
@@ -25,7 +27,7 @@ const buildClaudeAuthorization = ({
   __typename: 'ApplicationAuthorization',
   id,
   scopes,
-  wellKnownOAuthClient: WellKnownOAuthClient.CLAUDE,
+  oAuthIdentityUniversalIdentifier: CLAUDE_CONNECTABLE_APP.id,
   lastUsedAt: new Date(
     Date.now() - lastUsedHoursAgo * 60 * 60 * 1000,
   ).toISOString(),
@@ -34,12 +36,12 @@ const buildClaudeAuthorization = ({
 const revokedAuthorizationIds = new Set<string>();
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/Accounts/SettingsBuiltInMcpClientApp',
-  component: SettingsBuiltInMcpClientApp,
+  title: 'Pages/Settings/Accounts/SettingsConnectableApp',
+  component: SettingsConnectableApp,
   decorators: [PageDecorator],
   args: {
     routePath: '/settings/app-preferences/:applicationId',
-    routeParams: { ':applicationId': 'claude' },
+    routeParams: { ':applicationId': CLAUDE_CONNECTABLE_APP.id },
     additionalRoutes: ['/settings/app-preferences'],
   },
   beforeEach: () => {
@@ -49,6 +51,23 @@ const meta: Meta<PageDecoratorArgs> = {
     layout: 'fullscreen',
     msw: {
       handlers: [
+        graphql.query('FindManyMarketplaceApps', () =>
+          HttpResponse.json({
+            data: {
+              findManyMarketplaceApps: [
+                CHATGPT_CONNECTABLE_APP,
+                CLAUDE_CONNECTABLE_APP,
+              ].map((connectableApp) => ({
+                __typename: 'MarketplaceApp',
+                author: '',
+                category: 'Productivity',
+                sourcePackage: null,
+                isListed: true,
+                ...connectableApp,
+              })),
+            },
+          }),
+        ),
         graphql.query('CurrentUserApplicationAuthorizations', () =>
           HttpResponse.json({
             data: {
@@ -73,18 +92,18 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof SettingsBuiltInMcpClientApp>;
+export type Story = StoryObj<typeof SettingsConnectableApp>;
 
 export const ChatGptWithoutConnectionOffersToConnect: Story = {
   args: {
-    routeParams: { ':applicationId': 'chatgpt' },
+    routeParams: { ':applicationId': CHATGPT_CONNECTABLE_APP.id },
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 
     expect(
       await canvas.findByRole('link', { name: /Connect with ChatGPT/ }),
-    ).toHaveAttribute('href', MCP_SETUP.chatGptTwentyAppUrl);
+    ).toHaveAttribute('href', CHATGPT_CONNECTABLE_APP.connectUrl);
     expect(canvas.queryByText('Permissions')).not.toBeInTheDocument();
   },
 };

@@ -3,17 +3,17 @@ import { useLingui } from '@lingui/react/macro';
 import { type ReactElement } from 'react';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
-type SettingsBuiltInMcpClientAppConnectTooltipProps = {
+type SettingsConnectableAppConnectTooltipProps = {
   appName: string;
   isConnectDisabled: boolean;
   children: ReactElement;
 };
 
-export const SettingsBuiltInMcpClientAppConnectTooltip = ({
+export const SettingsConnectableAppConnectTooltip = ({
   appName,
   isConnectDisabled,
   children,
-}: SettingsBuiltInMcpClientAppConnectTooltipProps) => {
+}: SettingsConnectableAppConnectTooltipProps) => {
   const { t } = useLingui();
 
   return (

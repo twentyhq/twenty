@@ -4,39 +4,36 @@ import { renderHook, waitFor } from '@testing-library/react';
 import { GraphQLError } from 'graphql';
 import { type ReactNode } from 'react';
 
-import { BUILT_IN_MCP_CLIENT_APPS } from '@/settings/app-preferences/constants/BuiltInMcpClientApps';
-import { useBuiltInMcpClientAppAuthorizations } from '@/settings/app-preferences/hooks/useBuiltInMcpClientAppAuthorizations';
-import {
-  CurrentUserApplicationAuthorizationsDocument,
-  WellKnownOAuthClient,
-} from '~/generated-metadata/graphql';
+import { useConnectableAppAuthorizations } from '@/settings/app-preferences/hooks/useConnectableAppAuthorizations';
+import { CurrentUserApplicationAuthorizationsDocument } from '~/generated-metadata/graphql';
 
-const CLAUDE_APP = BUILT_IN_MCP_CLIENT_APPS[1];
+const CLAUDE_APP_ID = '3e0bda4b-fb1d-42bd-bab3-03b66698e6ff';
+const CHATGPT_APP_ID = '6e58bb83-49dc-4d4d-ae82-662890eda505';
 
 const CLAUDE_AUTHORIZATION = {
   __typename: 'ApplicationAuthorization',
   id: 'claude-authorization-id',
   scopes: ['api', 'profile'],
-  wellKnownOAuthClient: WellKnownOAuthClient.CLAUDE,
+  oAuthIdentityUniversalIdentifier: CLAUDE_APP_ID,
   lastUsedAt: '2026-10-12T09:00:00.000Z',
 };
 
 const CHATGPT_AUTHORIZATION = {
   ...CLAUDE_AUTHORIZATION,
   id: 'chatgpt-authorization-id',
-  wellKnownOAuthClient: WellKnownOAuthClient.CHATGPT,
+  oAuthIdentityUniversalIdentifier: CHATGPT_APP_ID,
 };
 
 const SELF_NAMED_CLAUDE_AUTHORIZATION = {
   ...CLAUDE_AUTHORIZATION,
   id: 'self-named-claude-authorization-id',
-  wellKnownOAuthClient: null,
+  oAuthIdentityUniversalIdentifier: null,
 };
 
-const renderUseBuiltInMcpClientAppAuthorizations = (
+const renderUseConnectableAppAuthorizations = (
   result: MockedResponse['result'],
 ) =>
-  renderHook(() => useBuiltInMcpClientAppAuthorizations(CLAUDE_APP), {
+  renderHook(() => useConnectableAppAuthorizations({ id: CLAUDE_APP_ID }), {
     wrapper: ({ children }: { children: ReactNode }) => (
       <MockedProvider
         mocks={[
@@ -51,9 +48,9 @@ const renderUseBuiltInMcpClientAppAuthorizations = (
     ),
   });
 
-describe('useBuiltInMcpClientAppAuthorizations', () => {
+describe('useConnectableAppAuthorizations', () => {
   it('returns only the connections the server attributes to the app once loaded', async () => {
-    const { result } = renderUseBuiltInMcpClientAppAuthorizations({
+    const { result } = renderUseConnectableAppAuthorizations({
       data: {
         currentUserApplicationAuthorizations: [
           CLAUDE_AUTHORIZATION,
@@ -72,7 +69,7 @@ describe('useBuiltInMcpClientAppAuthorizations', () => {
   });
 
   it('reports a load error instead of an empty list when the request fails', async () => {
-    const { result } = renderUseBuiltInMcpClientAppAuthorizations({
+    const { result } = renderUseConnectableAppAuthorizations({
       errors: [new GraphQLError('Internal server error')],
     });
 
