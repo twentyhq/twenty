@@ -2,6 +2,7 @@ import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Query } from '@nestjs/graphql';
 
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
@@ -55,12 +56,13 @@ export class OAuthClientResolver {
       return null;
     }
 
-    const { id, name, logo } = toClientIdMetadataDocumentRegistrationFields(
+    const { name, logo } = toClientIdMetadataDocumentRegistrationFields(
       clientIdMetadataDocument,
     );
 
+    // Not registered until a user authorizes it, so this id names no stored row
     return {
-      id,
+      id: v4(),
       name,
       logoUrl: logo,
       websiteUrl: null,

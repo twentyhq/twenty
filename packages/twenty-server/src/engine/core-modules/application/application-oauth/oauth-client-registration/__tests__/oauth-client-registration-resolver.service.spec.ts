@@ -1,6 +1,10 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { randomUUID } from 'crypto';
+
+import { isDefined } from 'twenty-shared/utils';
+
 import { ClientIdMetadataDocumentService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/client-id-metadata-document.service';
 import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration-resolver.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -130,7 +134,7 @@ describe('OAuthClientRegistrationResolverService', () => {
     ).resolves.toBe(createdRegistration);
     expect(insertedValues).toHaveBeenCalledWith(
       expect.objectContaining({
-        id: expect.any(String),
+        universalIdentifier: expect.any(String),
         name: 'Claude Code',
         oAuthClientId: CLAUDE_CODE_DOCUMENT.clientId,
         oAuthClientSecretHash: null,
@@ -138,6 +142,56 @@ describe('OAuthClientRegistrationResolverService', () => {
         sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
       }),
     );
+  });
+
+  it('registers a document client again once its registration was soft-deleted', async () => {
+    const storedRegistrations: {
+      id: string;
+      oAuthClientId: string;
+      deletedAt: Date | null;
+    }[] = [];
+
+    findDocument.mockResolvedValue(CLAUDE_CODE_DOCUMENT);
+    applicationRegistrationRepository.findOne.mockImplementation(
+      async ({ where }: { where: { oAuthClientId: string } }) =>
+        storedRegistrations.find(
+          (registration) =>
+            registration.oAuthClientId === where.oAuthClientId &&
+            !isDefined(registration.deletedAt),
+        ) ?? null,
+    );
+    // Like Postgres: a soft-deleted row keeps its primary key, but the oAuthClientId index skips it
+    insertedValues.mockImplementation(
+      (values: { id?: string; oAuthClientId: string }) => {
+        const id = values.id ?? randomUUID();
+        const isConflicting = storedRegistrations.some(
+          (registration) =>
+            registration.id === id ||
+            (registration.oAuthClientId === values.oAuthClientId &&
+              !isDefined(registration.deletedAt)),
+        );
+
+        if (!isConflicting) {
+          storedRegistrations.push({ ...values, id, deletedAt: null });
+        }
+      },
+    );
+
+    const firstRegistration = await service.findOrRegisterByClientId(
+      CLAUDE_CODE_DOCUMENT.clientId,
+    );
+
+    storedRegistrations[0].deletedAt = new Date();
+
+    const secondRegistration = await service.findOrRegisterByClientId(
+      CLAUDE_CODE_DOCUMENT.clientId,
+    );
+
+    expect(secondRegistration).toMatchObject({
+      oAuthClientId: CLAUDE_CODE_DOCUMENT.clientId,
+      deletedAt: null,
+    });
+    expect(secondRegistration?.id).not.toBe(firstRegistration?.id);
   });
 
   it('follows changes to the document on its existing registration', async () => {

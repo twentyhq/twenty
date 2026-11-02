@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import isEqual from 'lodash.isequal';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { ClientIdMetadataDocumentService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/client-id-metadata-document.service';
 import { type ClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/client-id-metadata-document.type';
@@ -102,8 +103,9 @@ export class OAuthClientRegistrationResolverService {
     clientIdMetadataDocument: ClientIdMetadataDocument;
     existingRegistration: ApplicationRegistrationEntity | null;
   }): Promise<ApplicationRegistrationEntity | null> {
-    const { id, ...documentFields } =
-      toClientIdMetadataDocumentRegistrationFields(clientIdMetadataDocument);
+    const documentFields = toClientIdMetadataDocumentRegistrationFields(
+      clientIdMetadataDocument,
+    );
 
     if (isDefined(existingRegistration)) {
       const hasDocumentChanged =
@@ -126,14 +128,14 @@ export class OAuthClientRegistrationResolverService {
       return { ...existingRegistration, ...documentFields };
     }
 
+    // A concurrent first authorization trips the oAuthClientId unique index, and the lookup below returns its row
     await this.applicationRegistrationRepository
       .createQueryBuilder()
       .insert()
       .into(ApplicationRegistrationEntity)
       .values({
         ...documentFields,
-        id,
-        universalIdentifier: id,
+        universalIdentifier: v4(),
         oAuthClientId: clientIdMetadataDocument.clientId,
         oAuthClientSecretHash: null,
         oAuthScopes: [...ALL_OAUTH_SCOPES],
