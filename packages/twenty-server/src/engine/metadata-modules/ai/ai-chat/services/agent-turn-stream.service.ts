@@ -339,10 +339,12 @@ export class AgentTurnStreamService {
         event:
           completion.stopReason === 'workspaceAllowance'
             ? { type: 'credits-exhausted' }
-            : {
-                type: 'message-persisted',
-                messageId: streamed.assistantMessageId,
-              },
+            : isDefined(threadId)
+              ? {
+                  type: 'message-persisted',
+                  messageId: streamed.assistantMessageId,
+                }
+              : { type: 'run-finished' },
       })
       .catch((error: unknown) =>
         this.logger.warn(

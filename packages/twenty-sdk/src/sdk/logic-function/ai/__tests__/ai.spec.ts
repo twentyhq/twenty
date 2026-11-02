@@ -223,7 +223,7 @@ describe('ai.generate with onChunk', () => {
       chunk: { type: 'finish' },
       seq: 2,
     });
-    runChannel.send({ type: 'message-persisted', messageId: 'message-id' });
+    runChannel.send({ type: 'run-finished' });
 
     await expect(generation).resolves.toEqual({ ...RESULT, runId: RUN_ID });
     expect(chunks).toEqual([
@@ -252,7 +252,7 @@ describe('ai.generate with onChunk', () => {
     );
 
     runChannel.answerMutation({ data: { generate: RESULT } });
-    runChannel.send({ type: 'message-persisted', messageId: 'message-id' });
+    runChannel.send({ type: 'run-finished' });
 
     await expect(generation).resolves.toEqual(RESULT);
   });
@@ -265,7 +265,7 @@ describe('ai.generate with onChunk', () => {
 
     await vi.waitFor(() => expect(runChannel.requests).toHaveLength(2));
     runChannel.answerMutation({ data: { generate: RESULT } });
-    runChannel.send({ type: 'message-persisted', messageId: 'message-id' });
+    runChannel.send({ type: 'run-finished' });
 
     await expect(generation).resolves.toEqual(RESULT);
     expect(
@@ -352,7 +352,7 @@ describe('ai.generate with onChunk', () => {
     await vi.waitFor(() => expect(runChannel.requests).toHaveLength(2));
     runChannel.answerMutation({ data: { generate: RESULT } });
     runChannel.send({ type: 'stream-chunk', chunk: { type: 'start' }, seq: 1 });
-    runChannel.send({ type: 'message-persisted', messageId: 'message-id' });
+    runChannel.send({ type: 'run-finished' });
     await vi.waitFor(() => expect(isOnChunkCalled).toBe(true));
     abortController.abort();
 
@@ -413,7 +413,7 @@ describe('ai.generate with onChunk', () => {
         });
       }
       runChannel.answerMutation({ data: { generate: RESULT } });
-      runChannel.send({ type: 'message-persisted', messageId: 'message-id' });
+      runChannel.send({ type: 'run-finished' });
 
       await vi.advanceTimersByTimeAsync(10_000);
 
@@ -430,7 +430,7 @@ describe('ai.generate with onChunk', () => {
     }
   });
 
-  it('delivers the chunks received before a lost end event once the grace is over', async () => {
+  it('delivers the chunks received before a lost end event, then stops after a quiet grace', async () => {
     const runChannel = mockRunChannel({ fetchSpy });
     const chunks: Record<string, unknown>[] = [];
 
@@ -455,17 +455,52 @@ describe('ai.generate with onChunk', () => {
       }
       runChannel.answerMutation({ data: { generate: RESULT } });
 
+      await vi.advanceTimersByTimeAsync(10_000);
+
+      expect(chunks).toHaveLength(5);
+      expect(fetchSpy.mock.calls[0][1]?.signal?.aborted).toBe(false);
+
       await vi.advanceTimersByTimeAsync(5_000);
 
       expect(fetchSpy.mock.calls[0][1]?.signal?.aborted).toBe(true);
-
-      await vi.advanceTimersByTimeAsync(5_000);
-
       await expect(generation).resolves.toEqual(RESULT);
-      expect(chunks).toHaveLength(5);
     } finally {
       vi.useRealTimers();
     }
+  });
+
+  it('never runs a slow onChunk concurrently, and keeps the chunk order', async () => {
+    const runChannel = mockRunChannel({ fetchSpy });
+    const deliveredDeltas: unknown[] = [];
+    let runningCount = 0;
+    let maxRunningCount = 0;
+
+    const generation = ai.generate({
+      input: 'Hi',
+      onChunk: async (chunk) => {
+        runningCount += 1;
+        maxRunningCount = Math.max(maxRunningCount, runningCount);
+        await new Promise((resolve) => setTimeout(resolve, 20));
+        deliveredDeltas.push(chunk.type === 'text-delta' ? chunk.delta : null);
+        runningCount -= 1;
+      },
+    });
+
+    await vi.waitFor(() => expect(runChannel.requests).toHaveLength(2));
+
+    for (const seq of [1, 2, 3, 4]) {
+      runChannel.send({
+        type: 'stream-chunk',
+        chunk: { type: 'text-delta', id: 'text-1', delta: `${seq}` },
+        seq,
+      });
+    }
+    runChannel.send({ type: 'run-finished' });
+    runChannel.answerMutation({ data: { generate: RESULT } });
+
+    await expect(generation).resolves.toEqual(RESULT);
+    expect(maxRunningCount).toBe(1);
+    expect(deliveredDeltas).toEqual(['1', '2', '3', '4']);
   });
 
   it('resolves with the result and the chunks it received when the channel fails after the result', async () => {

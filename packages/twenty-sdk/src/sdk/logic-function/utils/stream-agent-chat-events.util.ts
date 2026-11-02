@@ -44,6 +44,7 @@ const EVENT_FIELD_VALIDATORS: Record<
     isRecord(chunk) && (seq === undefined || isNumber(seq)),
   'message-persisted': ({ messageId }) => isString(messageId),
   'message-added': ({ messageId }) => isString(messageId),
+  'run-finished': () => true,
   'queue-updated': () => true,
   'tool-call-resolved': ({ toolCallId }) => isString(toolCallId),
   'message-reactions-updated': ({ messageId, reactions, revision }) =>

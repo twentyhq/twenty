@@ -168,10 +168,10 @@ describe('AgentTurnStreamService streamTurn of a followed run', () => {
     expect(eventPublisherService.publish).not.toHaveBeenCalled();
   });
 
-  it('publishes each UI chunk to the run channel, then the end of the reply', async () => {
+  it('publishes each UI chunk to the run channel, then the end of the run, never a saved message', async () => {
     const eventPublisherService = buildPublisher();
 
-    const { streamed } = await streamPartsWithoutClaim({
+    await streamPartsWithoutClaim({
       service: await buildService({ finish: jest.fn(), eventPublisherService }),
       streamChannelId: 'run-channel-id',
     });
@@ -190,16 +190,18 @@ describe('AgentTurnStreamService streamTurn of a followed run', () => {
         .map(({ chunk }) => chunk.type),
     ).toEqual(['start', 'text-start', 'text-delta', 'text-end', 'finish']);
     expect(publishedEvents[publishedEvents.length - 1]).toEqual({
-      type: 'message-persisted',
-      messageId: streamed.assistantMessageId,
+      type: 'run-finished',
     });
+    expect(publishedEvents.map(({ type }) => type)).not.toContain(
+      'message-persisted',
+    );
   });
 
   it('keeps a finished run completed when its end event cannot be sent', async () => {
     const finish = jest.fn().mockResolvedValue(true);
     const eventPublisherService = {
       publish: jest.fn(async ({ event }: { event: { type: string } }) => {
-        if (event.type === 'message-persisted') {
+        if (event.type === 'run-finished') {
           throw new Error('Redis unavailable');
         }
       }),
