@@ -8,6 +8,7 @@ import { type ViewportGeometrySnapshot } from '@/types/ViewportGeometrySnapshot'
 export type HostToWorkerRenderContext = {
   componentUrl: string;
   componentSource: string;
+  componentProps?: Record<string, unknown>;
   applicationAccessToken?: string;
   apiUrl?: string;
   functionsBaseUrl?: string;

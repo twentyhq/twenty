@@ -7,7 +7,7 @@ import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Probleme comune
 
-* **Erori ale serverului local**, verificați mediul de dezvoltare Docker sau al depozitului. CLI-ul autonom nu gestionează containere.
+* **Erori de mediu local**, verifică `twenty local status` și `twenty local logs --no-follow`. Docker trebuie să fie instalat și să ruleze cu un context de socket local. Adaugă `--test` pentru instanța de test. O pornire eșuată păstrează containerul și datele sale pentru diagnosticare.
 * **Versiune Node greșită** — Este necesară versiunea 24.5+ sau 26.5+ (`engines.node: ^24.5.0 || ^26.5.1`). Verificați cu `node -v`.
 * **Yarn 4 lipsește** — Rulați `corepack enable` (pe Node 26, mai întâi `npm install -g corepack`).
 * **Dependențe nefuncționale** — `rm -rf node_modules && yarn install`.

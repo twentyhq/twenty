@@ -20,7 +20,7 @@ import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util
 import { isDefined } from 'twenty-shared/utils';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsExceptionMessage } from 'src/engine/permissions/permissions.exception';
 
 type GraphqlResponse = {
   body: {

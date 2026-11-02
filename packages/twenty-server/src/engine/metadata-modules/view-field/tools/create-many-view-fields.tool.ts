@@ -8,6 +8,7 @@ import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/type
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewFieldService } from 'src/engine/metadata-modules/view-field/services/view-field.service';
 import { createViewFieldInputSchema } from 'src/engine/metadata-modules/view-field/tools/schemas/create-view-field-input.schema';
+import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
 
 const createManyViewFieldsInputSchema = z.object({
   viewFields: z
@@ -29,16 +30,30 @@ export class CreateManyViewFieldsTool extends BaseTool<
 > {
   readonly inputSchema = createManyViewFieldsInputSchema;
 
-  constructor(private readonly viewFieldService: ViewFieldService) {
+  constructor(
+    private readonly viewFieldService: ViewFieldService,
+    private readonly viewToolAccessService: ViewToolAccessService,
+  ) {
     super();
   }
 
   async execute({
     input,
-    context: { workspaceId },
+    context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<
     typeof createManyViewFieldsInputSchema
   >): Promise<ToolOutput> {
+    await Promise.all(
+      input.viewFields.map(({ viewId }) =>
+        this.viewToolAccessService.findViewEditableByUserOrThrow({
+          viewId,
+          workspaceId,
+          userWorkspaceId,
+          operation: 'update',
+        }),
+      ),
+    );
+
     await this.viewFieldService.createMany({
       createViewFieldInputs: input.viewFields.map((viewField) => ({
         viewId: viewField.viewId,

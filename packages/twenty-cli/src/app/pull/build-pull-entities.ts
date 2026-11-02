@@ -48,6 +48,7 @@ export const PULL_ENTITY_KINDS = [
   'workflow',
   'skill',
   'agent',
+  'relatedRecordPath',
 ] as const;
 
 export type PullEntityKind = (typeof PULL_ENTITY_KINDS)[number];
@@ -407,6 +408,23 @@ export const buildPullEntities = ({
       fileBaseName: toFileBaseName({
         segments: [skillManifest.name],
         universalIdentifier: skillManifest.universalIdentifier,
+      }),
+      parentName: null,
+    });
+  }
+
+  for (const relatedRecordPathManifest of manifest.relatedRecordPaths ?? []) {
+    entities.push({
+      kind: 'relatedRecordPath',
+      universalIdentifier: relatedRecordPathManifest.universalIdentifier,
+      definer: 'defineRelatedRecordPath',
+      config: relatedRecordPathManifest,
+      enumBindings: [],
+      defaultFolder: 'src/related-record-paths',
+      fileSuffix: '.related-record-path.ts',
+      fileBaseName: toFileBaseName({
+        segments: [],
+        universalIdentifier: relatedRecordPathManifest.universalIdentifier,
       }),
       parentName: null,
     });

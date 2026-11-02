@@ -78,6 +78,54 @@ const failingSettingsMenuItemSyncTestCases: EachTestingContext<TestContext>[] =
       },
     },
     {
+      title: 'when syncing an item with a malformed slug',
+      context: {
+        settingsMenuItems: [
+          {
+            universalIdentifier: TEST_SETTINGS_MENU_ITEM_ID,
+            frontComponentUniversalIdentifier: TEST_FRONT_COMPONENT_ID,
+            title: 'Sync',
+            slug: 'Sync Settings',
+          },
+        ],
+      },
+    },
+    {
+      title: 'when syncing an item with a reserved slug',
+      context: {
+        settingsMenuItems: [
+          {
+            universalIdentifier: TEST_SETTINGS_MENU_ITEM_ID,
+            frontComponentUniversalIdentifier: TEST_FRONT_COMPONENT_ID,
+            title: 'Sync',
+            slug: 'variables',
+          },
+        ],
+      },
+    },
+    {
+      title: 'when two items of different scopes share a slug',
+      context: {
+        settingsMenuItems: [
+          {
+            universalIdentifier: TEST_SETTINGS_MENU_ITEM_ID,
+            frontComponentUniversalIdentifier: TEST_FRONT_COMPONENT_ID,
+            title: 'First',
+            position: 1,
+            slug: 'sync',
+          },
+          {
+            universalIdentifier: OTHER_SETTINGS_MENU_ITEM_ID,
+            frontComponentUniversalIdentifier: TEST_FRONT_COMPONENT_ID,
+            title: 'Second',
+            position: 2,
+            scope: 'USER',
+            slug: 'sync',
+          },
+        ],
+      },
+    },
+    {
       title: 'when two items collide on the position the manifest omits',
       context: {
         settingsMenuItems: [

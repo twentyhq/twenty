@@ -223,7 +223,7 @@ Fluxurile de lucru `ci.yml` și `cd.yml` fac referire la acțiuni reutilizabile 
 
 ## Publicarea pe npm
 
-Publicarea pe npm face ca aplicația ta să fie eligibilă pentru marketplace-ul Twenty. După sincronizarea catalogului și orice [configurare necesară a rutelor de server](#setting-up-server-routes), spațiile de lucru o pot răsfoi, instala și actualiza din interfața cu utilizatorul. Aplicațiile comunității apar când utilizatorii dezactivează filtrul **Doar verificate**.
+Publicarea pe npm face ca aplicația ta să fie eligibilă pentru marketplace-ul Twenty. După sincronizarea catalogului și orice [setare necesară a rutelor de server](#setting-up-server-routes), spațiile de lucru o pot răsfoi, instala și actualiza din interfață după ce trece de [evaluarea Marketplace](/ro/developers/extend/apps/operations/marketplace-review).
 
 ### Cerințe
 
@@ -372,17 +372,13 @@ Dacă întâmpini probleme la revendicarea aplicației tale, contactează-ne pe 
   Această configurare este deja gestionată pentru tine pe Twenty Cloud.
 </Accordion>
 
-## Vizibilitatea și verificarea în marketplace
+## Vizibilitate și evaluare în Marketplace
 
-Revendicarea stabilește proprietatea; nu acordă o insignă **Verificată**. Marketplace-ul afișează implicit **Doar verificate**. Pentru a găsi aplicații ale comunității, accesează **Setări > Aplicații > Marketplace**, deschide filtrul și debifează **Doar verificate**. De asemenea, poți partaja pagina de instalare directă a aplicației tale folosind **Aplicațiile mele > aplicația ta > Distribuire > Copiază linkul de partajare**.
+Fiecare aplicație listată în Marketplace a trecut de evaluarea Twenty privind securitatea și calitatea. O aplicație publicată recent rămâne nelistată până trece de [evaluarea Marketplace](/ro/developers/extend/apps/operations/marketplace-review); revendicarea stabilește proprietatea, dar nu o listează.
 
-Eticheta Verificată se aplică în prezent aplicațiilor întreținute de Twenty, pentru care echipa poate garanta securitatea și calitatea. Aplicațiile terților pot fi publicate și instalate fără această etichetă.
+O aplicație nelistată poate fi totuși instalată. În **Setări > Aplicații > Marketplace**, deschideți filtrul și activați **Afișează aplicațiile nelistate** sau partajați pagina de instalare directă a aplicației folosind **Aplicațiile mele > aplicația dvs. > Distribuire > Copiere link de partajare**. Spațiile de lucru văd un avertisment că aplicația nu a fost evaluată de Twenty.
 
-[Lista de verificare propusă pentru evaluarea marketplace-urilor terțe](/ro/developers/extend/apps/operations/marketplace-review)
-este în curs de elaborare. Descrie criterii de evaluare și dovezi specifice versiunii,
-nu un program de certificare disponibil.
-
-Dacă aplicația ta încă lipsește cu **Doar verificate** dezactivat, confirmă că sincronizarea catalogului s-a finalizat, că toate variabilele de server necesare sunt completate și că orice configurare a rutelor de server este finalizată.
+Dacă aplicația dvs. este listată, dar încă lipsește din Marketplace, confirmați că sincronizarea catalogului s-a finalizat, că toate variabilele de server necesare sunt completate și că orice setare a rutelor de server este finalizată.
 
 ## Instalarea aplicațiilor
 

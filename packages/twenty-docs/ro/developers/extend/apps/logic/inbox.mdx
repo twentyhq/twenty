@@ -92,4 +92,34 @@ await sendInboxMessage({
 * O mențiune doar de randare. Acesta nu adaugă membrul la conversație sau îi notifică, așa că listează pe toți cei care ar trebui să primească mesajul în `workspaceMemberIds`.
 * `INBOX_ASSISTANT_MENTION` este textul pe care îl scrie compozitorul atunci când un membru menționează asistentul (`@Ada`), așa că mesajele tale îl numesc în același mod.
 
+## Atașarea înregistrărilor la o conversație
+
+`attachRecordToInboxThread()` asociază o conversație cu o înregistrare, iar `detachRecordFromInboxThread()` elimină asocierea.
+
+```ts src/logic-functions/file-call-recap.ts
+import {
+  attachRecordToInboxThread,
+  sendInboxMessage,
+} from 'twenty-sdk/logic-function';
+
+const { threadId } = await sendInboxMessage({
+  workspaceMemberIds: [owner.id],
+  threadKey: `call-recap-${call.id}`,
+  idempotencyKey: `call-recap-${call.id}`,
+  title: `Recap of ${call.title}`,
+  text: call.summary,
+});
+
+await attachRecordToInboxThread({
+  threadId,
+  objectNameSingular: 'company',
+  recordId: company.id,
+});
+```
+
+* Ambele folosesc `threadId` al conversației și înregistrarea ca `objectNameSingular` și `recordId`. O conversație poate fi asociată cu persoane, companii, oportunități și înregistrări de obiecte personalizate.
+* Ambele sunt idempotente: asocierea aceleiași înregistrări de două ori păstrează o singură asociere, iar eliminarea asocierii unei înregistrări care nu este asociată nu modifică nimic.
+* Apelul rulează cu același acces ca [trimiterea unui mesaj](#who-sends-the-message), care necesită permisiunea `AI`. Un membru trebuie să poată edita conversația, iar aplicația dvs. poate acționa asupra unei conversații pe care a scris-o ea însăși sau asupra uneia care a fost acordată rolului său implicit; în caz contrar, apelul eșuează cu `THREAD_NOT_FOUND`.
+* Înregistrarea trebuie să poată fi citită cu acel acces, altfel apelul eșuează cu `RECORD_NOT_FOUND`.
+
 <PageBanner illustration="card-page-inbox" />

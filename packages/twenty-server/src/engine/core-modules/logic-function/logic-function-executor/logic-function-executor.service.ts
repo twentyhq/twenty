@@ -26,7 +26,7 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { isBillingExemptApplication } from 'src/engine/core-modules/application/application-marketplace/utils/is-billing-exempt-application.util';
-import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationStopService } from 'src/engine/core-modules/application/application-stop/application-stop.service';
 import { UserApplicationVariableValueService } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.service';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
@@ -45,7 +45,6 @@ import { buildLogicFunctionExecutionUsage } from 'src/engine/core-modules/logic-
 import { buildLogicFunctionRunMetricEvent } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-logic-function-run-metric-event.util';
 import { LogicFunctionPrebuiltWarmUpService } from 'src/engine/core-modules/logic-function/logic-function-prebuilt-warm-up/logic-function-prebuilt-warm-up.service';
 import { SERVER_ROUTE_PATH } from 'src/engine/core-modules/server-route-trigger/constants/server-route-path.constant';
-import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import {
   ThrottlerException,
   ThrottlerExceptionCode,
@@ -108,7 +107,7 @@ export class LogicFunctionExecutorService {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly applicationTokenService: ApplicationTokenService,
-    private readonly secretEncryptionService: SecretEncryptionService,
+    private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationVariableService: ApplicationVariableEntityService,
     private readonly userApplicationVariableValueService: UserApplicationVariableValueService,
     private readonly subscriptionService: SubscriptionService,
@@ -121,8 +120,6 @@ export class LogicFunctionExecutorService {
     private readonly applicationStopService: ApplicationStopService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectRepository(ApplicationRegistrationVariableEntity)
-    private readonly applicationRegistrationVariableRepository: Repository<ApplicationRegistrationVariableEntity>,
   ) {}
 
   async executeOrThrow({
@@ -458,9 +455,10 @@ export class LogicFunctionExecutorService {
       flatApplication,
     });
 
-    const serverVariables = await this.buildServerVariableEnvMap(
-      flatApplication.applicationRegistrationId,
-    );
+    const serverVariables =
+      await this.applicationRegistrationVariableService.getServerEnvVariables({
+        applicationRegistrationId: flatApplication.applicationRegistrationId,
+      });
     const workspaceVariables =
       await this.applicationVariableService.getServerEnvVariables({
         workspaceId,
@@ -526,34 +524,6 @@ export class LogicFunctionExecutorService {
       workspace,
       primaryPublicDomain,
     });
-  }
-
-  private async buildServerVariableEnvMap(
-    applicationRegistrationId: string | null,
-  ): Promise<Record<string, string>> {
-    if (!isDefined(applicationRegistrationId)) {
-      return {};
-    }
-
-    const serverVariables =
-      await this.applicationRegistrationVariableRepository.find({
-        where: { applicationRegistrationId },
-      });
-
-    const envMap: Record<string, string> = {};
-
-    for (const variable of serverVariables) {
-      const plaintextValue =
-        this.secretEncryptionService.decryptVersionedOrThrow(
-          variable.encryptedValue,
-        );
-
-      if (plaintextValue !== '') {
-        envMap[variable.key] = plaintextValue;
-      }
-    }
-
-    return envMap;
   }
 
   private async publishLogicFunctionLogsToCli({

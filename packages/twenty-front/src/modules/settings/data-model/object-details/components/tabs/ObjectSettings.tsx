@@ -5,12 +5,15 @@ import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdat
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
+import { SettingsObjectRelatedRecordPathsSection } from '@/related-record-paths/components/SettingsObjectRelatedRecordPathsSection';
+import { useHasRelatedRecordPathsEntitlement } from '@/related-record-paths/hooks/useHasRelatedRecordPathsEntitlement';
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
 import { SettingsObjectValidationRulesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectValidationRulesSection';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import { OrganizationAdornment } from '@/settings/enterprise/components/OrganizationAdornment';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import {
   type SettingsDataModelObjectAboutFormValues,
   settingsDataModelObjectAboutFormSchema,
@@ -20,6 +23,7 @@ import { ConfirmationDialog } from '@/ui/layout/dialog/components/ConfirmationDi
 import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useHasValidationRulesEntitlement } from '@/validation-rules/hooks/useHasValidationRulesEntitlement';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -31,6 +35,10 @@ import { Section } from 'twenty-ui/components/layout';
 import { IconArchive, IconBolt, IconSearch, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
+import {
+  FeatureFlagKey,
+  PermissionFlagType,
+} from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type ObjectSettingsProps = {
@@ -98,6 +106,12 @@ export const ObjectSettings = ({
     isObjectMetadataReadOnly({ objectMetadataItem }) || isDDLLocked;
 
   const hasValidationRulesEntitlement = useHasValidationRulesEntitlement();
+  const isRelatedRecordPathsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_RELATED_RECORD_PATHS_ENABLED,
+  );
+  const hasRolesPermission = useHasPermissionFlag(PermissionFlagType.ROLES);
+  const hasRelatedRecordPathsEntitlement =
+    useHasRelatedRecordPathsEntitlement();
 
   const handleDisable = async () => {
     const result = await updateOneObjectMetadataItem({
@@ -152,6 +166,29 @@ export const ObjectSettings = ({
           objectMetadataItem={objectMetadataItem}
         />
       </Section.Root>
+      {isRelatedRecordPathsEnabled &&
+        hasRolesPermission &&
+        !objectMetadataItem.isRemote && (
+          <Section.Root>
+            <Section.Header
+              title={t`Related records`}
+              description={t`Records reached through these relations follow access to ${objectLabel}.`}
+              actions={
+                <OrganizationAdornment
+                  tooltipContent={
+                    hasRelatedRecordPathsEntitlement
+                      ? undefined
+                      : t`Upgrade to Organization to change related records`
+                  }
+                />
+              }
+            />
+            <SettingsObjectRelatedRecordPathsSection
+              objectMetadataItem={objectMetadataItem}
+              isReadOnly={isDDLLocked || !hasRelatedRecordPathsEntitlement}
+            />
+          </Section.Root>
+        )}
       {!objectMetadataItem.isRemote && !objectMetadataItem.isSystem && (
         <Section.Root>
           <Section.Header

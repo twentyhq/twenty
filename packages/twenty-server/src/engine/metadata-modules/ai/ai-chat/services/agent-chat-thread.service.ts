@@ -211,6 +211,9 @@ export class AgentChatThreadService {
       return;
     }
 
+    const participantObjectMetadataId =
+      await this.sharingService.getParticipantObjectMetadataId(workspaceId);
+
     const { generatedMaps: assignedThreads } =
       await this.threadRepository.update(
         workspaceId,
@@ -226,8 +229,6 @@ export class AgentChatThreadService {
     }
 
     const assignedThreadIds = assignedThreads.map(({ id }) => id);
-    const participantObjectMetadataId =
-      await this.sharingService.getParticipantObjectMetadataId(workspaceId);
 
     const setUpThreads = await this.threadRepository.query(
       workspaceId,
@@ -357,6 +358,10 @@ export class AgentChatThreadService {
       participantArgs: AgentChatThreadAccessArgs,
     ) => Promise<void>;
   }): Promise<string[]> {
+    await this.sharingService.assertHasMentionResolutionOrThrow(
+      args.workspaceId,
+    );
+
     const thread = await this.getWritableThread(args);
     const candidateMemberIds = [
       ...new Set(participantWorkspaceMemberIds),

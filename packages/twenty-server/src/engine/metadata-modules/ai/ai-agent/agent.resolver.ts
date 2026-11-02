@@ -67,7 +67,8 @@ export class AgentResolver {
 
   @Query(() => [AgentDTO])
   async findManyAgents(
-    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
   ): Promise<AgentDTO[]> {
@@ -79,6 +80,8 @@ export class AgentResolver {
         canCallerReachApplication({
           callingApplication,
           applicationId: flatAgent.applicationId,
+          operation: 'read',
+          workspaceCustomApplicationId,
         }),
       )
       .map(fromFlatAgentWithRoleIdToAgentDto);

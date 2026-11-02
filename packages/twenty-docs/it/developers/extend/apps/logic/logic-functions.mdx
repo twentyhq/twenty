@@ -293,28 +293,25 @@ export default defineLogicFunction({
 L'endpoint è raggiungibile all'indirizzo:
 
 ```
-POST https://your-twenty-server.com/webhooks/server/:resolverLogicFunctionId
+POST https://your-twenty-server.com/webhooks/server/:applicationRegistrationId/:resolverLogicFunctionUniversalIdentifier
 ```
 
-L'identificatore è l'`id` del resolver: la chiave primaria che il server assegna quando l'app viene sincronizzata per la prima volta nel workspace proprietario, non l'`universalIdentifier` del tuo manifest. Recuperalo dall'API `/metadata` del workspace proprietario, quindi registra quell'URL con il provider:
+Il primo segmento è l'id della registrazione della tua app, il secondo è il `universalIdentifier` del resolver dal tuo manifest. Una route viene risolta solo a un resolver di quella registrazione, nel relativo workspace proprietario. Quando la tua app registra il webhook stesso, crea l'URL dall'interno di una funzione logica con `getServerRouteUrl`; Twenty inserisce l'URL di base delle route del server della tua app come `TWENTY_SERVER_ROUTES_URL`:
 
-```graphql
-query {
-  findManyLogicFunctions {
-    id
-    name
-    universalIdentifier
-  }
-}
+```ts
+import { getServerRouteUrl } from 'twenty-sdk/utils';
+
+const destinationUrl = getServerRouteUrl(
+  INVOICE_PAID_RESOLVER_UNIVERSAL_IDENTIFIER,
+);
 ```
 
 <Note>
-  Un URL contenente il `universalIdentifier` del resolver continua per ora a essere risolto,
-  e la risposta include un header `Deprecation`. Un `universalIdentifier` è
-  univoco per spazio di lavoro, non a livello globale: se un'altra registrazione di proprietà di un
-  diverso spazio di lavoro dichiara lo stesso identificatore, la piattaforma restituisce `404` per quell'
-  URL anziché scegliere tra le due. Sposta gli URL registrati presso i tuoi
-  provider nella forma `id`.
+  Gli URL che contengono solo l'`id` o l'`universalIdentifier` del resolver
+  (`/webhooks/server/:identifier`) continuano per ora a essere risolti, ed entrambi restituiscono
+  un'intestazione `Deprecation`. Il formato `universalIdentifier` restituisce `409` quando due
+  registrazioni dichiarano lo stesso identificatore. Sposta gli URL registrati presso i tuoi
+  provider nel modulo di registrazione.
 </Note>
 
 **Risposta a una verifica GET.** Alcuni provider verificano un endpoint prima di inviarvi dati, inviando un `GET` contenente una verifica allo stesso URL a cui in seguito invieranno eventi tramite `POST` — WhatsApp Cloud API di Meta è uno di questi. Una route del server risponde solo a `POST`, a meno che non venga specificato diversamente, quindi dichiara entrambi i metodi:
@@ -553,7 +550,7 @@ Senza `batchMode`, l'handler continua a ricevere un `DatabaseEventPayload` per r
 
 #### Contesto di esecuzione
 
-Ogni gestore riceve un secondo argomento che descrive l'esecuzione stessa, indipendentemente da cosa l'abbia attivata. Mentre il primo argomento cambia struttura in base all'attivatore, questo no:
+I gestori di funzioni logiche generiche ricevono un secondo argomento che descrive l'esecuzione stessa, indipendentemente da ciò che l'ha attivata. Mentre il primo argomento cambia struttura in base all'attivatore, questo no:
 
 ```ts
 import type { LogicFunctionExecutionContext } from 'twenty-sdk/logic-function';
@@ -898,7 +895,7 @@ const handler = async (params: { parentMessageId?: string }) => {
 
 Dichiara un controllo di integrità con `defineHealthCheck` per segnalare se la tua app è effettivamente in grado di funzionare. Riguarda ciò che solo l'app può sapere: una chiave presente ma revocata, un account con il piano sbagliato, un webhook che non è mai stato registrato. Ciò che Twenty può rilevare autonomamente — una variabile obbligatoria che nessuno ha compilato — è gestito da [`isRequired`](/it/developers/extend/apps/config/application) e non richiede codice.
 
-Viene eseguito lato server, quindi legge le variabili segrete come qualsiasi altra funzione logica. Il gestore non accetta argomenti.
+Viene eseguito lato server, quindi legge le variabili segrete come qualsiasi altra funzione logica. Un controllo dello spazio di lavoro non ha nessuno alle spalle, quindi il gestore non richiede argomenti.
 
 ```ts src/logic-functions/health-check.ts
 import { defineHealthCheck } from 'twenty-sdk/define';
@@ -951,7 +948,42 @@ Un controllo che genera un'eccezione, va in timeout o restituisce una struttura 
 
 La posizione deve rimanere all'interno di Twenty, quindi inizia con `/` o `#`: una posizione esterna, relativa al protocollo o relativa perde il proprio pulsante anziché diventare un reindirizzamento altrove. Il pulsante viene inoltre rimosso quando l'app non segnala alcuna posizione e non dispone di una scheda di configurazione a cui ricorrere, quindi un controllo su un'app senza variabili e senza voci del menu delle impostazioni mostra il relativo titolo senza un pulsante non funzionante.
 
-È consentito un solo controllo di integrità per app; dichiararne più di uno fa fallire la build.
+### Controllo della configurazione di ciascun membro
+
+Un'app dichiara una funzione di controllo dell'integrità. Ometti `runOnUserPreferences` o impostalo su `false` per eseguire un controllo dello spazio di lavoro nella pagina delle impostazioni dell'app, con un gestore senza argomenti. Imposta `runOnUserPreferences: true` per eseguire invece un controllo del membro nella pagina delle preferenze delle app. Un gestore del membro riceve il valore obbligatorio `{ userWorkspaceId: string }` dalla sessione autenticata:
+
+```ts src/logic-functions/health-check.ts
+import { defineHealthCheck } from 'twenty-sdk/define';
+import { listConnections } from 'twenty-sdk/logic-function';
+import { isDefined } from 'twenty-sdk/utils';
+
+export default defineHealthCheck({
+  universalIdentifier: 'f3b6a4d2-9c81-4e0a-b5c7-2d1e8f4a6b03',
+  name: 'health-check',
+  runOnUserPreferences: true,
+  handler: async ({ userWorkspaceId }) => {
+    const [myConnection] = await listConnections({
+      scope: 'USER',
+      userWorkspaceId,
+    });
+
+    if (!isDefined(myConnection) || isDefined(myConnection.authFailedAt)) {
+      return { status: 'WARNING', title: 'Connect your account' };
+    }
+
+    return { status: 'OK' };
+  },
+});
+```
+
+Un controllo del membro viene eseguito quando un membro apre l'app nella propria pagina **preferenze delle app**, e solo quel membro ne vede il banner. Viene eseguito come quel membro: il gestore riceve `{ userWorkspaceId }` dalla sessione autenticata e le variabili con ambito utente mantengono i propri valori. L'oggetto parametro e l'ID sono obbligatori per questa modalità. Non viene eseguito nelle impostazioni dell'app dello spazio di lavoro. Passa `userWorkspaceId` a `listConnections()` affinché restituisca solo le connessioni di quel membro. Una connessione il cui aggiornamento del token non riesce viene esclusa dall'elenco, quindi "nessuna connessione" include anche "riconnetti". Un pulsante senza `location` porta alla scheda Generale dell'app in quella pagina.
+
+<Note>
+  I controlli del membro richiedono Twenty 2.55.0 o versioni successive. **Preferenze delle app** non è ancora abilitato
+  in tutti gli spazi di lavoro: dove non lo è, un controllo del membro non viene mai eseguito.
+</Note>
+
+Un'app può dichiarare una sola funzione di controllo dell'integrità, in modalità spazio di lavoro o membro. Le dichiarazioni esistenti mantengono il proprio gestore dello spazio di lavoro senza argomenti. La dichiarazione di una seconda funzione causa l'errore della build.
 
 ## Crea un'attività della cronologia di eventi
 

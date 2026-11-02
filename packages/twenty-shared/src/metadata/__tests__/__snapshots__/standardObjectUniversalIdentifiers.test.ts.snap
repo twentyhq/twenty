@@ -2,6 +2,56 @@
 
 exports[`STANDARD_OBJECTS universal identifiers should never change without an explicit snapshot update 1`] = `
 {
+  "accessGroup": {
+    "fields": {
+      "createdAt": {
+        "universalIdentifier": "33aeb537-bd63-5f25-8623-d0e62867de62",
+      },
+      "createdBy": {
+        "universalIdentifier": "25371b89-ffee-5d25-a2d9-48d877189573",
+      },
+      "deletedAt": {
+        "universalIdentifier": "16080650-3c69-5b30-bea7-8f684bcee608",
+      },
+      "groupHash": {
+        "universalIdentifier": "04687cce-1268-4774-b47e-04076a152630",
+      },
+      "id": {
+        "universalIdentifier": "24bab7ca-6503-5243-8d11-8c35f5cb8855",
+      },
+      "memberFieldValues": {
+        "universalIdentifier": "a0d519f8-cc6b-4bb5-b107-89213d683705",
+      },
+      "position": {
+        "universalIdentifier": "0e58d739-4e5d-53b2-b472-1f747198202e",
+      },
+      "roleId": {
+        "universalIdentifier": "0f8c81b0-6d46-4593-97cb-97216de930ff",
+      },
+      "rowLevelPermissionPredicateGroupId": {
+        "universalIdentifier": "03f12114-2b40-4dc0-9963-6c2e059bc4b3",
+      },
+      "searchVector": {
+        "universalIdentifier": "a6e1fe3d-d28c-55dd-9416-2e5c5984f186",
+      },
+      "updatedAt": {
+        "universalIdentifier": "4ee4a2f8-a42c-5b14-917f-a9ff57d4a40f",
+      },
+      "updatedBy": {
+        "universalIdentifier": "63f9ebe7-c3d5-53b2-b6eb-e4c527ee7c20",
+      },
+    },
+    "indexes": {
+      "groupHashUniqueIndex": {
+        "universalIdentifier": "dcb0d254-43ae-442e-9223-8ac052eddb28",
+      },
+      "roleIdIndex": {
+        "universalIdentifier": "933f2eee-0856-46fd-b144-ffd4bad7e9c8",
+      },
+    },
+    "universalIdentifier": "47f4ed44-4312-467f-b6f5-787f91037a1d",
+    "views": {},
+  },
   "agentChatThread": {
     "fields": {
       "activeStreamId": {
@@ -136,6 +186,9 @@ exports[`STANDARD_OBJECTS universal identifiers should never change without an e
       },
       "lastReadAt": {
         "universalIdentifier": "7e3a8319-c127-4c4f-add4-6feac37ea555",
+      },
+      "mentionsResolvedAt": {
+        "universalIdentifier": "12c0b0c8-86b2-48e5-8e2f-56a9eb9162c4",
       },
       "snoozedUntil": {
         "universalIdentifier": "65bc5785-877d-4363-b65c-95175ba20fd0",

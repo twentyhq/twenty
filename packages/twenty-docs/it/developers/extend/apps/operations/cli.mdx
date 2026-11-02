@@ -24,16 +24,17 @@ twenty --version
 
 Gli esempi seguenti usano `twenty`. Aggiungi il prefisso `npx twenty@latest` se non l'hai installata globalmente. Esegui `twenty commands` per l'elenco completo dei comandi e `twenty \<command> --help` per le opzioni di un comando.
 
-| Comando          | Cosa fa                                                                            |
-| ---------------- | ---------------------------------------------------------------------------------- |
-| `autenticazione` | Accedi, verifica e rimuovi le credenziali                                          |
-| `remote`         | Elenca, seleziona, rinomina e rimuovi le connessioni salvate allo spazio di lavoro |
-| `metadati`       | Ispeziona oggetti e campi                                                          |
-| `data`           | Elenca e leggi i record                                                            |
-| `api`            | Invia richieste REST o GraphQL non elaborate                                       |
-| `apri`           | Apri lo spazio di lavoro nel browser                                               |
-| `app`            | Crea, compila, sincronizza, esegui il debug e disinstalla app                      |
-| `doctor`         | Diagnostica la CLI, l'SDK dell'app e la connessione allo spazio di lavoro          |
+| Comando          | Cosa fa                                                                                 |
+| ---------------- | --------------------------------------------------------------------------------------- |
+| `autenticazione` | Accedi, verifica e rimuovi le credenziali                                               |
+| `remote`         | Elenca, seleziona, rinomina e rimuovi le connessioni salvate allo spazio di lavoro      |
+| `metadati`       | Ispeziona oggetti e campi                                                               |
+| `data`           | Elenca e leggi i record                                                                 |
+| `api`            | Invia richieste REST o GraphQL non elaborate                                            |
+| `apri`           | Apri lo spazio di lavoro nel browser                                                    |
+| `app`            | Crea, compila, sincronizza, esegui il debug e disinstalla app                           |
+| `locale`         | Avviare, ispezionare, fermare, aggiornare e ripristinare un ambiente di sviluppo locale |
+| `doctor`         | Diagnostica la CLI, l'SDK dell'app e la connessione allo spazio di lavoro               |
 
 Ogni comando che comunica con uno spazio di lavoro accetta `--remote \<name>` per indirizzare una connessione salvata diversa da quella predefinita e `--json` per un output strutturato.
 
@@ -46,7 +47,7 @@ twenty auth login --url https://acme.twenty.com --use
 twenty auth status
 ```
 
-Usa l'indirizzo del tuo spazio di lavoro o l'indirizzo del server per una configurazione locale: `http://localhost:2020` per il [server Docker locale](/it/developers/extend/apps/getting-started/local-server), `http://localhost:3000` per un checkout del codice sorgente. Puoi copiare il comando esatto da **Settings > Developers > CLI**. L'accesso tramite browser richiede Twenty 2.42 o versioni successive.
+Usa l'indirizzo del tuo spazio di lavoro, oppure l'indirizzo del server per una configurazione locale: `http://localhost:2020` per l'[ambiente di sviluppo locale](/it/developers/extend/apps/getting-started/local-server), `http://localhost:3000` per un checkout del codice sorgente. Puoi copiare il comando esatto da **Settings > Developers > CLI**. L'accesso tramite browser richiede Twenty 2.42 o versioni successive.
 
 Mantieni diverse connessioni assegnando loro un nome:
 
@@ -110,7 +111,7 @@ Altri comandi dell'app:
 | `app plan`                    | Visualizza in anteprima le modifiche ai metadati che un'applicazione apporterebbe |
 | `app apply`                   | Compila, carica e sincronizza l'app                                               |
 | `app generate-client`         | Rigenera il client API tipizzato senza sincronizzare                              |
-| `app pull`                    | Scrivi nuovamente i metadati dell'app installata nel codice sorgente locale       |
+| `app pull`                    | Ripristina i metadati, le traduzioni e le dipendenze archiviate                   |
 | `app translations extract`    | Estrai le stringhe traducibili nei cataloghi in `locales/`                        |
 | `app publish`                 | Pubblica l'app su npm o in un registro privato Twenty                             |
 | `app install`                 | Installa nello spazio di lavoro un pacchetto dell'app già registrato              |

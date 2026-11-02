@@ -8,7 +8,7 @@ import {
 import { type WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-builder-additional-cache-data-maps.type';
 import { type AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
-import { type WorkspaceMigrationBuilderOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
+import { type WorkspaceMigrationValidationBuildOptions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration-builder-options.type';
 import { type WorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/workspace-migration.type';
 
 export type FromToAllUniversalFlatEntityMaps = {
@@ -19,7 +19,7 @@ export type FromToAllUniversalFlatEntityMaps = {
 
 export type WorkspaceMigrationOrchestratorBuildArgs = {
   workspaceId: string;
-  buildOptions: WorkspaceMigrationBuilderOptions;
+  buildOptions: WorkspaceMigrationValidationBuildOptions;
   fromToAllFlatEntityMaps: FromToAllUniversalFlatEntityMaps;
   additionalCacheDataMaps: WorkspaceMigrationBuilderAdditionalCacheDataMaps;
   // Must contain the flat entity maps of the current application and of the applications it depends on

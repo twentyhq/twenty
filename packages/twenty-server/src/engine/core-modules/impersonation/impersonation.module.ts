@@ -9,7 +9,7 @@ import { ImpersonationResolver } from 'src/engine/core-modules/impersonation/imp
 import { ImpersonationService } from 'src/engine/core-modules/impersonation/services/impersonation.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserSessionModule } from 'src/engine/core-modules/user-session/user-session.module';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 
 @Module({
   imports: [

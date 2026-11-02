@@ -62,6 +62,19 @@ export class ValidationRuleResolver {
     });
   }
 
+  @Query(() => [ValidationRuleDTO])
+  @UseGuards(NoPermissionGuard)
+  async validationRulesReadingField(
+    @Args('fieldMetadataId', { type: () => UUIDScalarType })
+    fieldMetadataId: string,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<ValidationRuleDTO[]> {
+    return await this.validationRuleService.findActiveReadingField({
+      fieldMetadataId,
+      workspaceId: workspace.id,
+    });
+  }
+
   @Mutation(() => ValidationRuleDTO)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   async createValidationRule(

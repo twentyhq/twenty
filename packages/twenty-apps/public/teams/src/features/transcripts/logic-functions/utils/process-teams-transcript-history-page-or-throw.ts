@@ -30,6 +30,7 @@ import { isTeamsMeetingOccurrenceStartingInWindow } from 'src/features/transcrip
 import { listTeamsCalendarPage } from 'src/features/transcripts/logic-functions/utils/list-teams-calendar-page';
 import { listTeamsOccurrenceTranscripts } from 'src/features/transcripts/logic-functions/utils/list-teams-occurrence-transcripts';
 import { resolveTeamsCalendarNextPageUrlOrThrow } from 'src/features/transcripts/logic-functions/utils/resolve-teams-calendar-next-page-url-or-throw';
+import { getConnectionAccessTokenOrThrow } from 'src/utils/get-connection-access-token-or-throw';
 import { toErrorMessage } from 'src/utils/to-error-message';
 import { isTeamsTranscriptImportEnabled } from 'src/features/transcripts/logic-functions/utils/is-teams-transcript-import-enabled';
 
@@ -116,7 +117,9 @@ const processPageOrThrow = async ({
     return { success: false, error: 'Invalid Teams transcript history job' };
   }
 
-  const { accessToken } = await getConnection(job.connectedAccountId);
+  const accessToken = getConnectionAccessTokenOrThrow(
+    await getConnection(job.connectedAccountId),
+  );
   const page = await listTeamsCalendarPage({
     accessToken,
     url: isDefined(job.nextPageUrl)
