@@ -33,6 +33,7 @@ const findCampaignSuppressionsInputSchema = z.object({
   name: 'find_campaign_suppressions',
   category: ToolCategory.ACTION,
   requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+  ignoresRolePermissionConfig: true,
   description:
     'List the email addresses that campaigns skip: bounces, spam complaints, unsubscribes (global or per topic) and tracking opt-outs, newest first. ' +
     'Use it to explain why someone is not receiving campaigns. Read only: suppressions can only be removed from the settings page.',

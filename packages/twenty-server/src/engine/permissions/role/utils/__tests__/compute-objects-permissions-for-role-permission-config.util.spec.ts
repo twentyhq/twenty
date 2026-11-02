@@ -15,6 +15,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principal/types/application-default-role-maps.type';
 import { type RoleIdsBySource } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { computeObjectsPermissionsForRolePermissionConfig } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-role-permission-config.util';
+import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 
 const INVOICE_ID = 'invoice-id';
 const AMOUNT_FIELD_ID = 'amount-field-id';
@@ -36,6 +37,8 @@ flatObjectMetadataMaps.byUniversalIdentifier.invoice =
   getFlatObjectMetadataMock({
     id: INVOICE_ID,
     universalIdentifier: 'invoice',
+    nameSingular: 'invoice',
+    fieldIds: [AMOUNT_FIELD_ID],
     applicationId: 'owning-application-id',
     disabledObjectPermissionActions: ['canDestroyObjectRecords'],
   });
@@ -47,6 +50,7 @@ const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> =
 flatFieldMetadataMaps.byUniversalIdentifier.amount = getFlatFieldMetadataMock({
   id: AMOUNT_FIELD_ID,
   universalIdentifier: 'amount',
+  name: 'amount',
   objectMetadataId: INVOICE_ID,
   type: FieldMetadataType.NUMBER,
   applicationId: 'owning-application-id',
@@ -341,6 +345,66 @@ describe('computeObjectsPermissionsForRolePermissionConfig', () => {
       expect(invoicePermissions?.restrictedFields[AMOUNT_FIELD_ID]).toEqual({
         canRead: false,
         canUpdate: false,
+      });
+    });
+
+    describe('inserting a record that sets the predicate field', () => {
+      // the user role cannot update amount (a disabled action), which its own predicate exempts on insert
+      const insertAmount = (
+        invoicePermissions: ObjectPermissions | undefined,
+      ) =>
+        validateOperationIsPermittedOrThrow({
+          entityName: 'invoice',
+          operationType: 'insert',
+          objectsPermissions: isDefined(invoicePermissions)
+            ? { [INVOICE_ID]: invoicePermissions }
+            : {},
+          flatObjectMetadataMaps,
+          flatFieldMetadataMaps,
+          objectIdByNameSingular: { invoice: INVOICE_ID },
+          selectedColumns: [],
+          updatedColumns: ['amount'],
+        });
+
+      it('is allowed without a scope', () => {
+        expect(() =>
+          insertAmount(
+            computeObjectsPermissionsForRolePermissionConfig({
+              intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+              rolesPermissions: rolesPermissionsWithPredicate,
+              flatObjectMetadataMaps,
+              flatFieldMetadataMaps,
+              flatApplicationMaps,
+            })[INVOICE_ID],
+          ),
+        ).not.toThrow();
+      });
+
+      it('is allowed when the scope does not restrict the field', () => {
+        expect(() =>
+          insertAmount(
+            compute({
+              intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+              scopeObjectPermissions: FULL_ACCESS,
+            }),
+          ),
+        ).not.toThrow();
+      });
+
+      it('is refused when the scope denies writing the field', () => {
+        expect(() =>
+          insertAmount(
+            compute({
+              intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
+              scopeObjectPermissions: {
+                ...FULL_ACCESS,
+                restrictedFields: {
+                  [AMOUNT_FIELD_ID]: { canRead: null, canUpdate: false },
+                },
+              },
+            }),
+          ),
+        ).toThrow('no permission to write field "amount" on "invoice"');
       });
     });
 

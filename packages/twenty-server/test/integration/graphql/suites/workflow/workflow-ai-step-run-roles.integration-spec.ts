@@ -49,6 +49,8 @@ const OBJECT_NAME = 'aiStepRunRoleRecord';
 const OBJECT_PLURAL = 'aiStepRunRoleRecords';
 const FIND_TOOL_NAME = 'find_many_ai_step_run_role_records';
 const HTTP_REQUEST_TOOL_NAME = 'http_request';
+const SAVE_CAMPAIGN_TOOL_NAME = 'save_campaign';
+const SCOPED_CAMPAIGN_NAME = 'Campaign saved by a scoped AI step';
 const VISIBLE_RECORD_NAME = 'Visible to the member';
 const HIDDEN_RECORD_NAME = 'Hidden from the member';
 
@@ -67,11 +69,15 @@ type ModelCall = {
   toolOutputs: string[];
 };
 
-// The model calls the find tool once, then answers, so the test sees the tools the step offers and what they return
+// The model calls a tool once, then answers, so the test sees the tools the step offers and what they return
 const mockModelCallingFindTool = ({
   providerFailure,
+  toolName = FIND_TOOL_NAME,
+  toolInput = { select: ['id', 'name'] },
 }: {
   providerFailure?: 'ONCE_MID_ANSWER' | 'EVERY_ANSWER' | 'EVERY_CALL';
+  toolName?: string;
+  toolInput?: object;
 } = {}): ModelCall[] => {
   const calls: ModelCall[] = [];
   const model = createScriptedLanguageModel((options) => {
@@ -108,8 +114,8 @@ const mockModelCallingFindTool = ({
           {
             type: 'tool-call',
             toolCallId: 'find-1',
-            toolName: FIND_TOOL_NAME,
-            input: JSON.stringify({ select: ['id', 'name'] }),
+            toolName,
+            input: JSON.stringify(toolInput),
             providerMetadata: { openai: { itemId: 'find-item' } },
           },
         ],
@@ -513,6 +519,57 @@ describe('workflow AI step when a member runs a workspace-owned workflow (integr
     expect(calls[0].offeredToolNames).not.toContain(FIND_TOOL_NAME);
     expect(calls[0].offeredToolNames).not.toContain(HTTP_REQUEST_TOOL_NAME);
     expect(calls[1].toolOutputs.join()).not.toContain(VISIBLE_RECORD_NAME);
+  });
+
+  describe('saving a campaign draft', () => {
+    const mockModelSavingCampaign = () =>
+      mockModelCallingFindTool({
+        toolName: SAVE_CAMPAIGN_TOOL_NAME,
+        toolInput: { name: SCOPED_CAMPAIGN_NAME },
+      });
+
+    const findScopedCampaignIds = async (): Promise<string[]> =>
+      (
+        await global.testDataSource.query(
+          `SELECT id FROM "${schema}"."messageCampaign" WHERE name = $1`,
+          [SCOPED_CAMPAIGN_NAME],
+        )
+      ).map(({ id }: { id: string }) => id);
+
+    afterEach(async () => {
+      await global.testDataSource.query(
+        `DELETE FROM "${schema}"."messageCampaign" WHERE name = $1`,
+        [SCOPED_CAMPAIGN_NAME],
+      );
+    });
+
+    it('writes no draft when the step scope grants nothing', async () => {
+      const calls = mockModelSavingCampaign();
+
+      expect(
+        await runAsMemberUntilDone(await createScopedStepWorkflow({})),
+      ).toBe('COMPLETED');
+
+      expect(calls[0].offeredToolNames).toContain(SAVE_CAMPAIGN_TOOL_NAME);
+      expect(calls[1].toolOutputs.join()).toContain('Failed to save campaign');
+      expect(await findScopedCampaignIds()).toEqual([]);
+    });
+
+    it('writes the draft when the step scope grants writing records', async () => {
+      const calls = mockModelSavingCampaign();
+
+      expect(
+        await runAsMemberUntilDone(
+          await createScopedStepWorkflow({
+            canReadAllObjectRecords: true,
+            canUpdateAllObjectRecords: true,
+          }),
+        ),
+      ).toBe('COMPLETED');
+
+      expect(calls[1].toolOutputs.join()).toContain('created');
+      expect(await findScopedCampaignIds()).toHaveLength(1);
+    });
   });
 
   const findSavedReplyParts = (): Promise<

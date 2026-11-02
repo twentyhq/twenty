@@ -22,6 +22,7 @@ const sendCampaignTestInputSchema = z.object({
   name: SEND_CAMPAIGN_TEST_TOOL_NAME,
   category: ToolCategory.ACTION,
   requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
+  ignoresRolePermissionConfig: true,
   description:
     'Send one test email of a saved campaign to a single address, from the campaign sender. ' +
     'Variables render with empty values or their fallbacks, since the test is not tied to a person. ' +
