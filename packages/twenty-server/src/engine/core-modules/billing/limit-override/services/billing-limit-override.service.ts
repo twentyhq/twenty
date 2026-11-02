@@ -3,19 +3,21 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
 import { type EntityManager, IsNull, type Repository } from 'typeorm';
 
 import { BillingArrangementEntity } from 'src/engine/core-modules/billing/entities/billing-arrangement.entity';
 import { BillingArrangementLabel } from 'src/engine/core-modules/billing/enums/billing-arrangement-label.enum';
 import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/billing-arrangement-type.enum';
 import { type CreateUsageLimitInput } from 'src/engine/core-modules/usage-limit/dtos/create-usage-limit.input';
+import {
+  UsageLimitException,
+  UsageLimitExceptionCode,
+} from 'src/engine/core-modules/usage-limit/exceptions/usage-limit.exception';
 import { UsageLimitService } from 'src/engine/core-modules/usage-limit/services/usage-limit.service';
 import { UsageLimitEntity } from 'src/engine/core-modules/usage-limit/usage-limit.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-
-const buildArrangementEndDateSql = (alias: string) =>
-  `LEAST(COALESCE("${alias}"."revokedAt", 'infinity'), COALESCE("${alias}"."endsAt", 'infinity'))`;
 
 @Injectable()
 export class BillingLimitOverrideService {
@@ -34,12 +36,21 @@ export class BillingLimitOverrideService {
   async create({
     workspaceId,
     input,
+    endsAt,
     grantedByUserId,
   }: {
     workspaceId: string;
     input: CreateUsageLimitInput;
+    endsAt: Date | null;
     grantedByUserId: string;
   }): Promise<UsageLimitEntity> {
+    if (isDefined(endsAt) && endsAt <= new Date()) {
+      throw new UsageLimitException(
+        'A limit override must end in the future',
+        UsageLimitExceptionCode.LIMIT_INVALID,
+      );
+    }
+
     return this.usageLimitService.create({
       workspaceId,
       input,
@@ -49,6 +60,7 @@ export class BillingLimitOverrideService {
           entityManager,
           workspaceId,
           usageLimitId: usageLimit.id,
+          endsAt,
           grantedByUserId,
         }),
     });
@@ -81,7 +93,7 @@ export class BillingLimitOverrideService {
     const expiredLimitOverrides =
       await this.allWorkspacesBillingArrangementRepository
         .createQueryBuilder('arrangement')
-        .select('DISTINCT "arrangement"."workspaceId"', 'workspaceId')
+        .select('"arrangement"."workspaceId"', 'workspaceId')
         .addSelect('"arrangement"."usageLimitId"', 'usageLimitId')
         .innerJoin(
           UsageLimitEntity,
@@ -91,10 +103,7 @@ export class BillingLimitOverrideService {
         .where('"arrangement"."type" = :type', {
           type: BillingArrangementType.LIMIT_OVERRIDE,
         })
-        .andWhere(`${buildArrangementEndDateSql('arrangement')} <= now()`)
-        .andWhere(
-          `NOT EXISTS (SELECT 1 FROM "core"."billingArrangement" "activeArrangement" WHERE "activeArrangement"."usageLimitId" = "arrangement"."usageLimitId" AND ${buildArrangementEndDateSql('activeArrangement')} > now())`,
-        )
+        .andWhere('"arrangement"."endsAt" <= now()')
         .getRawMany<{ workspaceId: string; usageLimitId: string }>();
 
     for (const { workspaceId, usageLimitId } of expiredLimitOverrides) {
@@ -117,11 +126,13 @@ export class BillingLimitOverrideService {
     entityManager,
     workspaceId,
     usageLimitId,
+    endsAt,
     grantedByUserId,
   }: {
     entityManager: EntityManager;
     workspaceId: string;
     usageLimitId: string;
+    endsAt: Date | null;
     grantedByUserId: string;
   }): Promise<void> {
     await this.billingArrangementRepository
@@ -133,7 +144,7 @@ export class BillingLimitOverrideService {
         comment: null,
         usageLimitId,
         startsAt: new Date(),
-        endsAt: null,
+        endsAt,
         grantedByUserId,
       });
   }

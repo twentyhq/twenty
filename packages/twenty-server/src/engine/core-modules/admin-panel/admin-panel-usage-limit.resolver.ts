@@ -63,12 +63,13 @@ export class AdminPanelUsageLimitResolver {
 
   @Mutation(() => AdminPanelUsageLimitDTO)
   async createWorkspaceUsageLimit(
-    @Args() { workspaceId, payload }: AdminPanelCreateUsageLimitInput,
+    @Args() { workspaceId, payload, endsAt }: AdminPanelCreateUsageLimitInput,
     @AuthUser() actor: AuthContextUser,
   ): Promise<AdminPanelUsageLimitDTO> {
     const usageLimit = await this.billingLimitOverrideService.create({
       workspaceId,
       input: payload,
+      endsAt: endsAt ?? null,
       grantedByUserId: actor.id,
     });
 

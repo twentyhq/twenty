@@ -45,8 +45,13 @@ const CREATE_WORKSPACE_USAGE_LIMIT = gql`
   mutation CreateWorkspaceUsageLimit(
     $workspaceId: UUID!
     $payload: CreateUsageLimitInput!
+    $endsAt: DateTime
   ) {
-    createWorkspaceUsageLimit(workspaceId: $workspaceId, payload: $payload) {
+    createWorkspaceUsageLimit(
+      workspaceId: $workspaceId
+      payload: $payload
+      endsAt: $endsAt
+    ) {
       id
       limitValue
     }
@@ -225,6 +230,45 @@ describe('Workspace usage limits from the admin panel', () => {
         revokedAt: null,
       }),
     ]);
+  });
+
+  it('records the end date given when an operator creates an override', async () => {
+    const endsAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+
+    const response = await makeAdminPanelApiRequest({
+      query: CREATE_WORKSPACE_USAGE_LIMIT,
+      variables: {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        payload: STORAGE_STOCK_PAYLOAD,
+        endsAt: endsAt.toISOString(),
+      },
+    });
+
+    const usageLimitId = response.body.data?.createWorkspaceUsageLimit?.id;
+
+    jestExpectToBeDefined(usageLimitId);
+
+    expect(await findLimitOverrides(usageLimitId)).toEqual([
+      expect.objectContaining({ endsAt }),
+    ]);
+  });
+
+  it('refuses an override that ends in the past', async () => {
+    const response = await makeAdminPanelApiRequest({
+      query: CREATE_WORKSPACE_USAGE_LIMIT,
+      variables: {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        payload: STORAGE_STOCK_PAYLOAD,
+        endsAt: new Date(Date.now() - 60_000).toISOString(),
+      },
+    });
+
+    expect(response.body.errors).toBeDefined();
+    expect(
+      await usageLimitRepository.countBy({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+      }),
+    ).toBe(0);
   });
 
   it('lets an operator override the AI credits each member gets per week', async () => {
