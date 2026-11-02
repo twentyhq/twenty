@@ -28,6 +28,10 @@ import { WEBHOOK_TRIGGER } from '@/workflow/workflow-trigger/constants/triggers/
 import { type MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { doNotTranslate } from 'twenty-shared/i18n';
+import {
+  WORKFLOW_AI_AGENT_GENERATE_STEP_DEFAULT_NAME,
+  WORKFLOW_AI_AGENT_STEP_OWNED_AGENT_STEP_DEFAULT_NAME,
+} from 'twenty-shared/workflow';
 
 export const WORKFLOW_STEP_DEFAULT_NAMES: Array<{
   type: WorkflowActionType | WorkflowTriggerType;
@@ -106,8 +110,13 @@ export const WORKFLOW_STEP_DEFAULT_NAMES: Array<{
   },
   {
     type: 'AI_AGENT',
-    name: 'Agent',
+    name: WORKFLOW_AI_AGENT_GENERATE_STEP_DEFAULT_NAME,
     label: AI_AGENT_ACTION.defaultLabel,
+  },
+  {
+    type: 'AI_AGENT',
+    name: WORKFLOW_AI_AGENT_STEP_OWNED_AGENT_STEP_DEFAULT_NAME,
+    label: msg`Agent`,
   },
   {
     type: 'CLASSIFY',

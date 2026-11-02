@@ -47,10 +47,11 @@ describe('useUpdateAgentLabel', () => {
     });
   });
 
-  it('should update agent label when agent is defined', async () => {
+  it('should update the label of a step-owned agent', async () => {
     const mockAgent = {
       id: 'agent-123',
       label: 'Original Label',
+      isSystem: true,
     };
 
     mockUseFindOneAgentQuery.mockReturnValue({
@@ -74,6 +75,24 @@ describe('useUpdateAgentLabel', () => {
       },
       refetchQueries: ['FindOneAgent'],
     });
+  });
+
+  it('should not rename a reusable agent shared with other steps', async () => {
+    mockUseFindOneAgentQuery.mockReturnValue({
+      data: {
+        findOneAgent: {
+          id: 'agent-123',
+          label: 'Original Label',
+          isSystem: false,
+        },
+      },
+    });
+
+    const { result } = renderHook(() => useUpdateAgentLabel('agent-123'));
+
+    await result.current.updateAgentLabel('New Label');
+
+    expect(mockUpdateAgent).not.toHaveBeenCalled();
   });
 
   it('should not update agent label when agent is undefined', async () => {
