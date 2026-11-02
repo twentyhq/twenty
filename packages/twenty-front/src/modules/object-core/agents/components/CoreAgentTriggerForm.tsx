@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { CoreAgentRecordTriggerForm } from '@/object-core/agents/components/CoreAgentRecordTriggerForm';
 import { getWorkflowCronTriggerFromCoreAgentTrigger } from '@/object-core/agents/utils/getWorkflowCronTriggerFromCoreAgentTrigger';
+import { coreAgentTriggerSchema } from '@/object-core/agents/validation-schemas/coreAgentTriggerSchema';
 import { type WorkflowCronTrigger } from '@/workflow/types/Workflow';
 import { WorkflowEditTriggerCronForm } from '@/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm';
 import { convertScheduleToCronExpression } from '@/workflow/workflow-trigger/utils/convertScheduleToCronExpression';
@@ -36,7 +37,13 @@ export const CoreAgentTriggerForm = ({
         return;
       }
 
-      onTriggerChange({ ...trigger, settings: { pattern } });
+      const nextTrigger = { ...trigger, settings: { pattern } };
+
+      if (!coreAgentTriggerSchema.safeParse(nextTrigger).success) {
+        return;
+      }
+
+      onTriggerChange(nextTrigger);
     };
 
     return (
