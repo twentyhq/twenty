@@ -3,10 +3,8 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  getWorkflowAiAgentStepKind,
   isAgentRunnableAsWorkflowStep,
   isWorkflowAiAgentGenerateStep,
-  type WorkflowAiAgentStepKind,
 } from 'twenty-shared/workflow';
 
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
@@ -32,17 +30,14 @@ export class WorkflowAiAgentStepAgentService {
   }: {
     input: Pick<WorkflowAiAgentAction['settings']['input'], 'agentId'>;
     workspaceId: string;
-  }): Promise<{
-    stepKind: WorkflowAiAgentStepKind;
-    agent: FlatAgentWithRoleId | null;
-  }> {
+  }): Promise<FlatAgentWithRoleId | null> {
     const { agentId } = input;
 
     if (isWorkflowAiAgentGenerateStep(input) || !isDefined(agentId)) {
-      return { stepKind: 'generate', agent: null };
+      return null;
     }
 
-    const agent = await this.agentService
+    return this.agentService
       .findOneAgentById({ id: agentId, workspaceId })
       .catch((error) => {
         if (
@@ -54,23 +49,6 @@ export class WorkflowAiAgentStepAgentService {
 
         throw error;
       });
-
-    return { stepKind: getWorkflowAiAgentStepKind({ input, agent }), agent };
-  }
-
-  async findStepOwnedAgent({
-    input,
-    workspaceId,
-  }: {
-    input: Pick<WorkflowAiAgentAction['settings']['input'], 'agentId'>;
-    workspaceId: string;
-  }): Promise<FlatAgentWithRoleId | null> {
-    const { stepKind, agent } = await this.findStepAgent({
-      input,
-      workspaceId,
-    });
-
-    return stepKind === 'stepOwnedAgent' ? agent : null;
   }
 
   async findAgentRunnableByNewStepOrThrow({

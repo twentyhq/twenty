@@ -75,7 +75,6 @@ const switchToAgentStep = buildAiAgentStep({
 describe('getWorkflowStepAfterRebuild', () => {
   it.each([
     ['the Generate default', 'Generate'],
-    ['the hidden agent default', 'Agent'],
     ['the label of the agent it ran', 'Lead qualifier'],
   ])('names an AI step named after %s for its new kind', (_, name) => {
     expect(

@@ -24,8 +24,6 @@ import { FindRecordsService } from 'src/engine/core-modules/record-crud/services
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type WorkflowStepPositionInput } from 'src/engine/core-modules/workflow/dtos/update-workflow-step-position.input';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
-import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
-import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import {
   LogicFunctionException,
@@ -34,7 +32,6 @@ import {
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { findFlatLogicFunctionOrThrow } from 'src/engine/metadata-modules/logic-function/utils/find-flat-logic-function-or-throw.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -80,13 +77,9 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     private readonly workspaceOrmManager: WorkspaceOrmManager,
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
     private readonly codeStepBuildService: CodeStepBuildService,
-    private readonly agentService: AgentService,
-    @InjectWorkspaceScopedRepository(RoleTargetEntity)
-    private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
     @InjectWorkspaceScopedRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: WorkspaceScopedRepository<ObjectMetadataEntity>,
     private readonly workflowCommonWorkspaceService: WorkflowCommonWorkspaceService,
-    private readonly aiAgentRoleService: AiAgentRoleService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workflowVersionCoreSyncService: WorkflowVersionCoreSyncService,
@@ -125,40 +118,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           });
         break;
       }
-      case WorkflowActionType.AI_AGENT: {
-        const stepAgent =
-          await this.workflowAiAgentStepAgentService.findStepOwnedAgent({
-            input: step.settings.input,
-            workspaceId,
-          });
-
-        if (!isDefined(stepAgent)) {
-          break;
-        }
-
-        const roleTarget = await this.roleTargetRepository.findOne(
-          workspaceId,
-          {
-            where: {
-              agentId: stepAgent.id,
-            },
-          },
-        );
-
-        await this.agentService.deleteManyAgents({
-          ids: [stepAgent.id],
-          workspaceId,
-        });
-
-        if (isDefined(roleTarget?.roleId) && isDefined(roleTarget?.id)) {
-          await this.aiAgentRoleService.deleteAgentOnlyRoleIfUnused({
-            roleId: roleTarget.roleId,
-            roleTargetId: roleTarget.id,
-            workspaceId,
-          });
-        }
-        break;
-      }
     }
   }
 
@@ -173,7 +132,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       return undefined;
     }
 
-    const { agent } = await this.workflowAiAgentStepAgentService.findStepAgent({
+    const agent = await this.workflowAiAgentStepAgentService.findStepAgent({
       input: step.settings.input,
       workspaceId,
     });
@@ -967,37 +926,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           },
         };
       }
-      case WorkflowActionType.AI_AGENT: {
-        const clonedStep = {
-          ...step,
-          id: v4(),
-          nextStepIds: [],
-          position: duplicatedStepPosition,
-        };
-        const stepAgent =
-          await this.workflowAiAgentStepAgentService.findStepOwnedAgent({
-            input: step.settings.input,
-            workspaceId,
-          });
-
-        if (!isDefined(stepAgent)) {
-          return clonedStep;
-        }
-
-        const clonedAgent = await this.duplicateAgent({
-          agentId: stepAgent.id,
-          labelSuffix: clonedStep.id.substring(0, 4),
-          workspaceId,
-        });
-
-        return {
-          ...clonedStep,
-          settings: {
-            ...step.settings,
-            input: { ...step.settings.input, agentId: clonedAgent.id },
-          },
-        };
-      }
       case WorkflowActionType.ITERATOR: {
         return {
           ...step,
@@ -1149,79 +1077,9 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           },
         };
       }
-      case WorkflowActionType.AI_AGENT: {
-        const stepAgent =
-          await this.workflowAiAgentStepAgentService.findStepOwnedAgent({
-            input: step.settings.input,
-            workspaceId,
-          });
-
-        if (!isDefined(stepAgent)) {
-          return step;
-        }
-
-        const newAgent = await this.duplicateAgent({
-          agentId: stepAgent.id,
-          labelSuffix: v4().substring(0, 4),
-          workspaceId,
-        });
-
-        const roleId = await this.aiAgentRoleService.findAgentRoleId({
-          agentId: stepAgent.id,
-          workspaceId,
-        });
-
-        if (isDefined(roleId)) {
-          await this.aiAgentRoleService.assignRoleToAgent({
-            agentId: newAgent.id,
-            roleId,
-            workspaceId,
-          });
-        }
-
-        return {
-          ...step,
-          settings: {
-            ...step.settings,
-            input: {
-              ...step.settings.input,
-              agentId: newAgent.id,
-            },
-          },
-        };
-      }
       default: {
         return step;
       }
     }
-  }
-
-  private async duplicateAgent({
-    agentId,
-    labelSuffix,
-    workspaceId,
-  }: {
-    agentId: string;
-    labelSuffix: string;
-    workspaceId: string;
-  }) {
-    const existingAgent = await this.agentService.findOneAgentById({
-      id: agentId,
-      workspaceId,
-    });
-
-    return this.agentService.createOneAgent(
-      {
-        label: existingAgent.label + ' ' + labelSuffix,
-        icon: existingAgent.icon ?? undefined,
-        description: existingAgent.description ?? undefined,
-        prompt: existingAgent.prompt,
-        modelId: existingAgent.modelId,
-        responseFormat: existingAgent.responseFormat ?? undefined,
-        modelConfiguration: existingAgent.modelConfiguration ?? undefined,
-        isSystem: true,
-      },
-      workspaceId,
-    );
   }
 }

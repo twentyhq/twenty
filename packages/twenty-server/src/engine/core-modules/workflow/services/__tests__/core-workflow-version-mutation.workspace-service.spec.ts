@@ -94,11 +94,11 @@ const buildService = async ({
   };
 };
 
-// a step running a hidden agent can no longer be created through the API, so only a unit test reaches this case
 describe('CoreWorkflowVersionMutationWorkspaceService.updateStep', () => {
   it('rebuilds an AI step whose agent is removed, and runs the old step deletion side effects', async () => {
     const existingStep = buildAiAgentStep({
-      input: { agentId: 'hidden-agent-id', prompt: 'Qualify' },
+      name: 'Lead qualifier',
+      input: { agentId: 'agent-id', prompt: 'Qualify' },
     });
     const {
       service,
@@ -143,7 +143,7 @@ describe('CoreWorkflowVersionMutationWorkspaceService.updateStep', () => {
 
   it('creates nothing for the rebuilt step when its previous agent cannot be read', async () => {
     const existingStep = buildAiAgentStep({
-      input: { agentId: 'hidden-agent-id', prompt: 'Qualify' },
+      input: { agentId: 'agent-id', prompt: 'Qualify' },
     });
     const {
       service,

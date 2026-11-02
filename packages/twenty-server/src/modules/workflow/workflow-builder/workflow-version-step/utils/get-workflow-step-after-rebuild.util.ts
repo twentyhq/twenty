@@ -2,7 +2,6 @@ import omit from 'lodash.omit';
 import {
   isWorkflowAiAgentGenerateStep,
   WORKFLOW_AI_AGENT_GENERATE_STEP_DEFAULT_NAME,
-  WORKFLOW_AI_AGENT_STEP_OWNED_AGENT_STEP_DEFAULT_NAME,
   workflowAiAgentConversationConfigSchema,
   workflowAiAgentInlineConfigSchema,
   WorkflowActionType,
@@ -62,7 +61,6 @@ export const getWorkflowStepAfterRebuild = ({
 
   const aiAgentStepDefaultNames = [
     WORKFLOW_AI_AGENT_GENERATE_STEP_DEFAULT_NAME,
-    WORKFLOW_AI_AGENT_STEP_OWNED_AGENT_STEP_DEFAULT_NAME,
     previousAgentLabel,
   ];
 
