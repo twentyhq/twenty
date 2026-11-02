@@ -531,7 +531,8 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       ...executionContext,
       turnCreatedBy: ref.createdBy,
       conversationViewer: {
-        ...executionContext.conversationViewer,
+        workspaceMemberId:
+          executionContext.conversationViewer?.workspaceMemberId,
         applicationId: ref.createdBy.context?.applicationId,
       },
     };
