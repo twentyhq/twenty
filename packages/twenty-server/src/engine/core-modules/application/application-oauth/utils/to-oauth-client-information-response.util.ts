@@ -6,7 +6,6 @@ export const toOAuthClientInformationResponse = ({
   registration,
   issuer,
   redirectUris = registration.oAuthRedirectUris,
-  scopes = registration.oAuthScopes,
   grantTypes = ['authorization_code', 'refresh_token'],
   responseTypes = ['code'],
 }: {
@@ -16,7 +15,6 @@ export const toOAuthClientInformationResponse = ({
   >;
   issuer: string;
   redirectUris?: string[];
-  scopes?: string[];
   grantTypes?: string[];
   responseTypes?: string[];
 }) => ({
@@ -26,7 +24,7 @@ export const toOAuthClientInformationResponse = ({
   grant_types: grantTypes,
   response_types: responseTypes,
   token_endpoint_auth_method: 'none',
-  scope: scopes.join(' '),
+  scope: registration.oAuthScopes.join(' '),
   client_id_issued_at: Math.floor(registration.createdAt.getTime() / 1000),
   registration_client_uri: `${issuer}/${ApiPath.OAuth}/register/${registration.oAuthClientId}`,
 });
