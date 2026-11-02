@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type AgentRunRoleIds } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-role-ids.type';
 import { type AgentRunPersonaSpec } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-spec.type';
 import { type ResolvedAgentRunPersona } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/resolved-agent-run-persona.type';
 import { buildRoleExplicitObjectGrants } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-role-explicit-object-grants.util';
@@ -15,7 +16,10 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
+import { resolveAiRunPermissionScope } from 'src/engine/permissions/role/utils/resolve-ai-run-permission-scope.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -27,6 +31,7 @@ export class AgentRunPersonaService {
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
     private readonly aiAgentRoleService: AiAgentRoleService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   async resolveOrThrow({
@@ -75,6 +80,49 @@ export class AgentRunPersonaService {
         agentId: effectiveAgent.id,
       })),
     });
+  }
+
+  // What the run reads and acts with, for its tools as for the records that wake it up. Null when it may read nothing
+  async resolveRolePermissionConfig({
+    workspaceId,
+    persona: {
+      permissions: { agentRoleId, scope, explicitObjectGrants },
+    },
+    agentRunRoleIds,
+  }: {
+    workspaceId: string;
+    persona: Pick<ResolvedAgentRunPersona, 'permissions'>;
+    agentRunRoleIds: AgentRunRoleIds | undefined;
+  }): Promise<RolePermissionConfig | null> {
+    if (!isDefined(explicitObjectGrants)) {
+      return null;
+    }
+
+    const intersectionOf = {
+      ...agentRunRoleIds,
+      ...(isDefined(agentRoleId) ? { agentRoleId } : {}),
+    };
+
+    if (!isDefined(scope)) {
+      return { intersectionOf };
+    }
+
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        {
+          workspaceId,
+          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
+        },
+      );
+
+    return {
+      intersectionOf,
+      scope: resolveAiRunPermissionScope({
+        scope,
+        flatObjectMetadataMaps,
+        flatFieldMetadataMaps,
+      }),
+    };
   }
 
   // like a deleted agent, a deleted application fails the run rather than letting it act for the workspace
