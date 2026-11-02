@@ -59,6 +59,12 @@ every recording that is already scheduled; the Recording Bot field of those
 meetings goes back to blank, and an Off you set yourself is left alone. Turn it
 back on and the app sweeps upcoming meetings to schedule bots again.
 
+Each member also has their own **Record my meetings** toggle, under
+**Settings → App preferences → Call Recorder**. Turn it off and the recorder
+stays away from meetings you attend, unless another attendee from your
+workspace keeps it on; a meeting whose attendees match no workspace member is
+still recorded. The workspace toggle above wins over every member setting.
+
 ## 🎥 Supported meeting platforms
 
 The recording bot can only join meetings on these platforms:

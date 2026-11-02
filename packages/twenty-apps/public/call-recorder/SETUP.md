@@ -43,7 +43,10 @@ Set these on the application registration after installing
 > (`CALL_RECORDER_TRANSCRIPT_PROVIDER`) and the summary settings
 > (`CALL_RECORDER_SUMMARY_ENABLED`,
 > `CALL_RECORDER_ADDITIONAL_SUMMARY_PROMPT`) are **application variables** that
-> a workspace admin tunes inside the app — not server variables.
+> a workspace admin tunes inside the app — not server variables. The per-member
+> "Record my meetings" toggle (`CALL_RECORDER_RECORD_MY_MEETINGS`) is a
+> user-scoped application variable each member sets under
+> **Settings → App preferences**.
 
 ## Configuring the Recall webhook
 
