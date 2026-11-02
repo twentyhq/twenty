@@ -9,7 +9,9 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/permissions/role/utils/get-objects-permissions-from-role-permission-config.util';
-import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principal/types/application-default-role-maps.type';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
+import { type PermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
@@ -22,9 +24,17 @@ const EMPTY_FLAT_OBJECT_METADATA_MAPS: FlatEntityMaps<FlatObjectMetadata> =
   createEmptyFlatEntityMaps();
 const EMPTY_FLAT_FIELD_METADATA_MAPS: FlatEntityMaps<OrmFlatFieldMetadata> =
   createEmptyFlatEntityMaps();
-const EMPTY_APPLICATION_DEFAULT_ROLE_MAPS: ApplicationDefaultRoleMaps = {
-  byId: {},
-};
+const buildRoleMaps = (
+  flatApplicationMaps: PermissionsPrincipalRoleMaps['flatApplicationMaps'] = {
+    byId: {},
+  },
+): PermissionsPrincipalRoleMaps =>
+  buildPermissionsPrincipalRoleMaps({
+    userWorkspaceRoleMap: {},
+    apiKeyRoleMap: {},
+    flatRoleTargetByAgentIdMaps: {},
+    flatApplicationMaps,
+  });
 
 const agentRolePermissions = {
   [OBJECT_ID]: {
@@ -63,7 +73,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
-        flatApplicationMaps: EMPTY_APPLICATION_DEFAULT_ROLE_MAPS,
+        workspaceId: 'workspace-id',
+        roleMaps: buildRoleMaps(),
         rolePermissionConfig: {
           intersectionOf: { agentRoleId: 'agent-role-id' },
         },
@@ -78,7 +89,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
-        flatApplicationMaps: EMPTY_APPLICATION_DEFAULT_ROLE_MAPS,
+        workspaceId: 'workspace-id',
+        roleMaps: buildRoleMaps(),
         rolePermissionConfig: {
           intersectionOf: {
             userWorkspaceRoleId: 'default-role-id',
@@ -96,7 +108,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
-        flatApplicationMaps: EMPTY_APPLICATION_DEFAULT_ROLE_MAPS,
+        workspaceId: 'workspace-id',
+        roleMaps: buildRoleMaps(),
         rolePermissionConfig: {
           intersectionOf: {
             agentRoleId: 'agent-role-id',
@@ -114,7 +127,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
-        flatApplicationMaps: EMPTY_APPLICATION_DEFAULT_ROLE_MAPS,
+        workspaceId: 'workspace-id',
+        roleMaps: buildRoleMaps(),
         rolePermissionConfig: {
           intersectionOf: {
             userWorkspaceRoleId: 'default-role-id',
@@ -132,7 +146,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
-        flatApplicationMaps: EMPTY_APPLICATION_DEFAULT_ROLE_MAPS,
+        workspaceId: 'workspace-id',
+        roleMaps: buildRoleMaps(),
         rolePermissionConfig: {
           intersectionOf: {
             agentRoleId: 'agent-role-id',
@@ -150,7 +165,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
-        flatApplicationMaps: EMPTY_APPLICATION_DEFAULT_ROLE_MAPS,
+        workspaceId: 'workspace-id',
+        roleMaps: buildRoleMaps(),
         rolePermissionConfig: { shouldBypassPermissionChecks: true },
       }),
     ).toEqual({});
@@ -163,7 +179,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
-        flatApplicationMaps: EMPTY_APPLICATION_DEFAULT_ROLE_MAPS,
+        workspaceId: 'workspace-id',
+        roleMaps: buildRoleMaps(),
         rolePermissionConfig: {
           intersectionOf: { apiKeyRoleId: 'missing-role-id' },
         },
@@ -185,7 +202,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
-        flatApplicationMaps: EMPTY_APPLICATION_DEFAULT_ROLE_MAPS,
+        workspaceId: 'workspace-id',
+        roleMaps: buildRoleMaps(),
         rolePermissionConfig: {
           intersectionOf: {
             agentRoleId: 'agent-role-id',
@@ -203,7 +221,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
-        flatApplicationMaps: EMPTY_APPLICATION_DEFAULT_ROLE_MAPS,
+        workspaceId: 'workspace-id',
+        roleMaps: buildRoleMaps(),
         rolePermissionConfig: { intersectionOf: {} },
       }),
     ).toEqual({});
@@ -248,20 +267,23 @@ flatFieldMetadataMaps.byUniversalIdentifier.amount = getFlatFieldMetadataMock({
 });
 flatFieldMetadataMaps.universalIdentifierById[AMOUNT_FIELD_ID] = 'amount';
 
-const flatApplicationMaps: ApplicationDefaultRoleMaps = {
-  byId: {
-    'owning-application-id': {
-      id: 'owning-application-id',
-      defaultRoleId: 'owning-application-role-id',
-      deletedAt: null,
+const flatApplicationMaps: PermissionsPrincipalRoleMaps['flatApplicationMaps'] =
+  {
+    byId: {
+      'owning-application-id': {
+        id: 'owning-application-id',
+        defaultRoleId: 'owning-application-role-id',
+        sourceType: ApplicationRegistrationSourceType.LOCAL,
+        deletedAt: null,
+      },
+      'other-application-id': {
+        id: 'other-application-id',
+        defaultRoleId: 'other-application-role-id',
+        sourceType: ApplicationRegistrationSourceType.LOCAL,
+        deletedAt: null,
+      },
     },
-    'other-application-id': {
-      id: 'other-application-id',
-      defaultRoleId: 'other-application-role-id',
-      deletedAt: null,
-    },
-  },
-};
+  };
 
 const disabledActionRolesPermissions = Object.fromEntries(
   [
@@ -403,7 +425,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig disabled actions', () =>
         rolesPermissions: disabledActionRolesPermissions,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        flatApplicationMaps,
+        workspaceId: 'workspace-id',
+        roleMaps: buildRoleMaps(flatApplicationMaps),
       })[INVOICE_ID];
 
       expect(invoicePermissions?.canDestroyObjectRecords).toBe(canDestroy);
@@ -488,7 +511,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig disabled actions', () =>
       },
       flatObjectMetadataMaps: objectMaps,
       flatFieldMetadataMaps: fieldMaps,
-      flatApplicationMaps,
+      workspaceId: 'workspace-id',
+      roleMaps: buildRoleMaps(flatApplicationMaps),
     });
 
     expect(

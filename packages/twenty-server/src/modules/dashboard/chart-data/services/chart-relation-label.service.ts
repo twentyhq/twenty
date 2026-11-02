@@ -11,7 +11,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
-import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
+import { resolveRepositoryPermissionConfig } from 'src/engine/permissions/principal/utils/resolve-repository-permission-config.util';
 import { CHART_RELATION_LABEL_BATCH_SIZE } from 'src/modules/dashboard/chart-data/constants/chart-relation-label-batch-size.constant';
 import { type ChartRelationLabelAxisInput } from 'src/modules/dashboard/chart-data/types/chart-relation-label-axis-input.type';
 import { type GroupByRawResult } from 'src/modules/dashboard/chart-data/types/group-by-raw-result.type';
@@ -193,13 +193,9 @@ export class ChartRelationLabelService {
       return await this.workspaceOrmManager.executeInWorkspaceContext(
         async () => {
           const workspaceContext = getWorkspaceContext();
-          const rolePermissionConfig = resolveRolePermissionConfig({
-            authContext: workspaceContext.authContext,
-            userWorkspaceRoleMap: workspaceContext.userWorkspaceRoleMap,
-            apiKeyRoleMap: workspaceContext.apiKeyRoleMap,
-            flatRoleTargetByAgentIdMaps:
-              workspaceContext.flatRoleTargetByAgentIdMaps,
-          });
+          const rolePermissionConfig = resolveRepositoryPermissionConfig(
+            workspaceContext.authContext,
+          );
 
           if (!isDefined(rolePermissionConfig)) {
             return [];

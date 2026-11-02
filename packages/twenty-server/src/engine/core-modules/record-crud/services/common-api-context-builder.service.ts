@@ -21,7 +21,8 @@ import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object
 import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
-import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
+import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
+import { resolveRepositoryPermissionConfig } from 'src/engine/permissions/principal/utils/resolve-repository-permission-config.util';
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/permissions/role/utils/get-objects-permissions-from-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import {
@@ -157,6 +158,7 @@ export class CommonApiContextBuilderService {
       userWorkspaceRoleMap,
       apiKeyRoleMap,
       flatRoleTargetByAgentIdMaps,
+      flatWorkspaceMemberMaps,
     } = await this.workspaceCacheService.getOrRecompute(
       authContext.workspace.id,
       [
@@ -167,17 +169,12 @@ export class CommonApiContextBuilderService {
         'userWorkspaceRoleMap',
         'apiKeyRoleMap',
         'flatRoleTargetByAgentIdMaps',
+        'flatWorkspaceMemberMaps',
       ],
     );
 
     const resolvedRolePermissionConfig =
-      rolePermissionConfig ??
-      resolveRolePermissionConfig({
-        authContext,
-        userWorkspaceRoleMap,
-        apiKeyRoleMap,
-        flatRoleTargetByAgentIdMaps,
-      });
+      rolePermissionConfig ?? resolveRepositoryPermissionConfig(authContext);
 
     if (!isDefined(resolvedRolePermissionConfig)) {
       throw new RecordCrudException(
@@ -197,12 +194,19 @@ export class CommonApiContextBuilderService {
 
     return {
       objectsPermissions: getObjectsPermissionsFromRolePermissionConfig({
+        workspaceId: authContext.workspace.id,
         rolesPermissions,
         rolePermissionConfig: resolvedRolePermissionConfig,
         principals,
+        roleMaps: buildPermissionsPrincipalRoleMaps({
+          flatWorkspaceMemberMaps,
+          userWorkspaceRoleMap,
+          apiKeyRoleMap,
+          flatRoleTargetByAgentIdMaps,
+          flatApplicationMaps,
+        }),
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
-        flatApplicationMaps,
       }),
       principals,
     };

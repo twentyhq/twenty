@@ -51,7 +51,7 @@ import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { assertMutationNotOnRemoteObject } from 'src/engine/metadata-modules/object-metadata/utils/assert-mutation-not-on-remote-object.util';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
+import { type RepositoryPermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
@@ -483,7 +483,7 @@ export class CommonMergeManyQueryRunnerService extends CommonBaseQueryRunnerServ
     };
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>;
-    rolePermissionConfig: RolePermissionConfig;
+    rolePermissionConfig: RepositoryPermissionConfig;
     idsToDelete: string[];
     priorityRecordId: string;
   }): Promise<void> {

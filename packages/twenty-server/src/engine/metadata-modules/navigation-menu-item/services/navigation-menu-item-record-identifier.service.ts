@@ -14,7 +14,7 @@ import { getMinimalSelectForRecordIdentifier } from 'src/engine/metadata-modules
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
-import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
+import { resolveRepositoryPermissionConfig } from 'src/engine/permissions/principal/utils/resolve-repository-permission-config.util';
 import { FileFolder } from 'twenty-shared/types';
 
 @Injectable()
@@ -69,12 +69,9 @@ export class NavigationMenuItemRecordIdentifierService {
     const record = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const context = getWorkspaceContext();
-        const rolePermissionConfig = resolveRolePermissionConfig({
-          authContext: context.authContext,
-          userWorkspaceRoleMap: context.userWorkspaceRoleMap,
-          apiKeyRoleMap: context.apiKeyRoleMap,
-          flatRoleTargetByAgentIdMaps: context.flatRoleTargetByAgentIdMaps,
-        });
+        const rolePermissionConfig = resolveRepositoryPermissionConfig(
+          context.authContext,
+        );
 
         if (!rolePermissionConfig) {
           return null;

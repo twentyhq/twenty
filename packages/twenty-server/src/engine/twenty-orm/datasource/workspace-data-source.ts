@@ -15,7 +15,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceInternalContext } from 'src/engine/twenty-orm/interfaces/workspace-internal-context.interface';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
+import { type RepositoryPermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { ClientQueryExecutor } from 'src/engine/twenty-orm/executor/client-query-executor';
 import { PoolQueryExecutor } from 'src/engine/twenty-orm/executor/pool-query-executor';
@@ -29,7 +29,7 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { buildWorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/utils/build-workspace-table-shape.util';
 import { resolveObjectRecordsPermissions } from 'src/engine/permissions/role/utils/resolve-object-records-permissions.util';
-import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
+import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
 
 const tableShapeCache = new WeakMap<
   FlatEntityMaps<OrmFlatFieldMetadata>,
@@ -62,7 +62,7 @@ export class WorkspaceDataSource {
 
   getRepository<T extends ObjectLiteral = ObjectRecord>(
     nameSingular: string,
-    rolePermissionConfig?: RolePermissionConfig,
+    rolePermissionConfig?: RepositoryPermissionConfig,
     repositoryOptions?: { shouldSkipEventEmission?: boolean },
   ): WorkspaceRepository<T> {
     return this.buildRepository<T>({
@@ -110,7 +110,7 @@ export class WorkspaceDataSource {
         workspaceId: this.internalContext.workspaceId,
         getRepository: <T extends ObjectLiteral = ObjectRecord>(
           nameSingular: string,
-          rolePermissionConfig?: RolePermissionConfig,
+          rolePermissionConfig?: RepositoryPermissionConfig,
           repositoryOptions?: { shouldSkipEventEmission?: boolean },
         ) =>
           this.buildRepository<T>({
@@ -160,7 +160,7 @@ export class WorkspaceDataSource {
     internalContext = this.internalContext,
   }: {
     nameSingular: string;
-    rolePermissionConfig?: RolePermissionConfig;
+    rolePermissionConfig?: RepositoryPermissionConfig;
     executor: QueryExecutor;
     isTransactional?: boolean;
     shouldSkipEventEmission?: boolean;
@@ -197,7 +197,7 @@ export class WorkspaceDataSource {
     internalContext = this.internalContext,
   }: {
     objectMetadataId: string;
-    rolePermissionConfig?: RolePermissionConfig;
+    rolePermissionConfig?: RepositoryPermissionConfig;
     executor: QueryExecutor;
     isTransactional?: boolean;
     shouldSkipEventEmission?: boolean;
@@ -206,18 +206,18 @@ export class WorkspaceDataSource {
     const flatObjectMetadata =
       this.getFlatObjectMetadataOrThrow(objectMetadataId);
 
-    const repositoryRolePermissionConfig: RolePermissionConfig =
-      rolePermissionConfig ?? { intersectionOf: {} };
-
-    const { objectRecordsPermissions, shouldBypassPermissionChecks } =
-      resolveObjectRecordsPermissions({
-        rolePermissionConfig: repositoryRolePermissionConfig,
-        principals: getPermissionsPrincipalsFromAuthContext(this.authContext),
-        objectPermissionsByRoleId: this.objectPermissionsByRoleId,
-        flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
-        flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
-        flatApplicationMaps: this.internalContext.flatApplicationMaps,
-      });
+    const {
+      objectRecordsPermissions,
+      shouldBypassPermissionChecks,
+      permissionsPrincipal,
+    } = resolveObjectRecordsPermissions({
+      rolePermissionConfig,
+      authContext: this.authContext,
+      roleMaps: buildPermissionsPrincipalRoleMaps(this.internalContext),
+      objectPermissionsByRoleId: this.objectPermissionsByRoleId,
+      flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
+      flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,
+    });
 
     return new WorkspaceRepository<T>({
       tableShape: this.getTableShape(objectMetadataId),
@@ -227,7 +227,7 @@ export class WorkspaceDataSource {
       executor,
       objectRecordsPermissions,
       rolesPermissions: this.objectPermissionsByRoleId,
-      rolePermissionConfig: repositoryRolePermissionConfig,
+      permissionsPrincipal,
       shouldBypassPermissionChecks,
       shouldSkipEventEmission: shouldSkipEventEmission ?? false,
       tableShapeByObjectMetadataId: (targetObjectMetadataId) =>

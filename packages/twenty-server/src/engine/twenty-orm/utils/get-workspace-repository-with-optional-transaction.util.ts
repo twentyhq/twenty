@@ -2,7 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
+import { type RepositoryPermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 
@@ -17,7 +17,7 @@ export const getWorkspaceRepositoryWithOptionalTransaction = <
   objectMetadataName: string;
   transactionScope?: WorkspaceTransactionScope;
   workspaceOrmManager: WorkspaceOrmManager;
-  rolePermissionConfig?: RolePermissionConfig;
+  rolePermissionConfig?: RepositoryPermissionConfig;
 }): WorkspaceRepository<Entity> =>
   isDefined(transactionScope)
     ? transactionScope.getRepository<Entity>(

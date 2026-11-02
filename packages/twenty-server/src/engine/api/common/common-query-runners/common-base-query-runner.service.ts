@@ -72,7 +72,7 @@ import { RelationNestedQueries } from 'src/engine/twenty-orm/field-operations/re
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
-import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
+import { resolveRepositoryPermissionConfig } from 'src/engine/permissions/principal/utils/resolve-repository-permission-config.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { addTimelineActivityObjectColumnsToSelect } from 'src/modules/timeline/utils/add-timeline-activity-object-columns-to-select.util';
@@ -375,12 +375,7 @@ export abstract class CommonBaseQueryRunnerService<
 
     const rolePermissionConfig =
       queryRunnerContext.rolePermissionConfig ??
-      resolveRolePermissionConfig({
-        authContext: context.authContext,
-        userWorkspaceRoleMap: context.userWorkspaceRoleMap,
-        apiKeyRoleMap: context.apiKeyRoleMap,
-        flatRoleTargetByAgentIdMaps: context.flatRoleTargetByAgentIdMaps,
-      });
+      resolveRepositoryPermissionConfig(context.authContext);
 
     if (!rolePermissionConfig) {
       throw new CommonQueryRunnerException(

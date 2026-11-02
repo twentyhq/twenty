@@ -55,8 +55,8 @@ import { resolveEffectiveEntityProperty } from 'src/engine/metadata-modules/over
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
-import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
+import { resolveRepositoryPermissionConfig } from 'src/engine/permissions/principal/utils/resolve-repository-permission-config.util';
+import { type RepositoryPermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
@@ -113,14 +113,9 @@ export class SearchService {
           return this.workspaceOrmManager.executeInWorkspaceContext(
             async () => {
               const context = getWorkspaceContext();
-              const rolePermissionConfig =
-                resolveRolePermissionConfig({
-                  authContext: context.authContext,
-                  userWorkspaceRoleMap: context.userWorkspaceRoleMap,
-                  apiKeyRoleMap: context.apiKeyRoleMap,
-                  flatRoleTargetByAgentIdMaps:
-                    context.flatRoleTargetByAgentIdMaps,
-                }) ?? undefined;
+              const rolePermissionConfig = resolveRepositoryPermissionConfig(
+                context.authContext,
+              );
 
               const repository =
                 this.workspaceOrmManager.getRepository<ObjectRecord>(
@@ -222,7 +217,7 @@ export class SearchService {
     after,
   }: {
     entityManager: WorkspaceRepository<Entity>;
-    rolePermissionConfig?: RolePermissionConfig;
+    rolePermissionConfig?: RepositoryPermissionConfig;
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     searchInput: string;
@@ -390,7 +385,7 @@ export class SearchService {
     filter,
   }: {
     entityManager: WorkspaceRepository<Entity>;
-    rolePermissionConfig?: RolePermissionConfig;
+    rolePermissionConfig?: RepositoryPermissionConfig;
     flatObjectMetadata: FlatObjectMetadata;
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     searchInput: string;

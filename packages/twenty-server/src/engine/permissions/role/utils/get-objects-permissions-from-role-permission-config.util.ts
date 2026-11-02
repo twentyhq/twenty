@@ -7,45 +7,45 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
+import { type RepositoryPermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { computeObjectsPermissionsForRoles } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-roles.util';
-import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principal/types/application-default-role-maps.type';
-import { buildPermissionsPrincipalRoles } from 'src/engine/permissions/principal/utils/build-permissions-principal-roles.util';
+import { buildPermissionsPrincipalsWithRolesFromConfig } from 'src/engine/permissions/principal/utils/build-permissions-principals-with-roles-from-config.util';
 import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import { type PermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/resolve-permissions-principals-with-roles.util';
 
 export const getObjectsPermissionsFromRolePermissionConfig = ({
+  workspaceId,
   rolesPermissions,
   rolePermissionConfig,
   principals,
+  roleMaps,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
-  flatApplicationMaps,
 }: {
+  workspaceId: string;
   rolesPermissions: ObjectsPermissionsByRoleId;
-  rolePermissionConfig: RolePermissionConfig;
+  rolePermissionConfig: RepositoryPermissionConfig;
   principals: PermissionsPrincipalsContext | undefined;
+  roleMaps: PermissionsPrincipalRoleMaps;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
-  flatApplicationMaps: ApplicationDefaultRoleMaps;
 }): ObjectsPermissions => {
-  if ('shouldBypassPermissionChecks' in rolePermissionConfig) {
-    return {};
-  }
-
-  const principalRoles = buildPermissionsPrincipalRoles({
-    roleIdsBySource: rolePermissionConfig.intersectionOf,
+  const principal = buildPermissionsPrincipalsWithRolesFromConfig({
+    workspaceId,
+    rolePermissionConfig,
     principalsContext: principals,
+    roleMaps,
   });
 
-  if (!isDefined(principalRoles)) {
+  if (!isDefined(principal)) {
     return {};
   }
 
   return computeObjectsPermissionsForRoles({
-    principal: principalRoles,
+    principal,
     rolesPermissions,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
-    flatApplicationMaps,
+    flatApplicationMaps: roleMaps.flatApplicationMaps,
   });
 };

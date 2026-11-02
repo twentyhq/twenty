@@ -35,6 +35,7 @@ import { RecordAccessPolicyService } from 'src/engine/permissions/combine/servic
 import { buildDeprecatedPermissionsPrincipalsFromConfig } from 'src/engine/permissions/principal/utils/build-deprecated-permissions-principals-from-config.util';
 import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
+import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/permissions/role/utils/get-objects-permissions-from-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { RECORDS_TOOL_WIDGET_NAME, ToolCategory } from 'twenty-shared/ai';
@@ -101,12 +102,18 @@ export class DatabaseToolProvider implements ToolProvider {
       });
 
     const objectPermissions = getObjectsPermissionsFromRolePermissionConfig({
+      workspaceId: context.workspaceId,
       rolesPermissions,
       rolePermissionConfig: context.rolePermissionConfig,
       principals,
+      roleMaps: buildPermissionsPrincipalRoleMaps({
+        userWorkspaceRoleMap: {},
+        apiKeyRoleMap: {},
+        flatRoleTargetByAgentIdMaps: {},
+        flatApplicationMaps,
+      }),
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
-      flatApplicationMaps,
     });
 
     if (Object.keys(objectPermissions).length === 0 || !isDefined(principals)) {

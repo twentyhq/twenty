@@ -23,7 +23,7 @@ import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-targe
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
 
-type PermissionsPrincipalRoleMaps = {
+export type PermissionsPrincipalRoleMaps = {
   flatWorkspaceMemberMaps: {
     byId: Partial<Record<string, Pick<FlatWorkspaceMember, 'userId'>>>;
     userWorkspaceIdByUserId: FlatWorkspaceMemberMaps['userWorkspaceIdByUserId'];

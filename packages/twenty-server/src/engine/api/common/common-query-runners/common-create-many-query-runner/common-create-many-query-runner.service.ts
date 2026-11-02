@@ -52,7 +52,7 @@ import { type ShareWithInput } from 'src/engine/permissions/record-share/types/s
 import { resolveObjectSharing } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
 import { resolveCreatedRecordSharingOrThrow } from 'src/engine/permissions/record-share/utils/resolve-created-record-sharing-or-throw.util';
 import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
-import { RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
+import { RepositoryPermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { containsNestedRelationCreate } from 'src/engine/twenty-orm/utils/contains-nested-relation-create.util';
 import { getNestedRelationFieldNames } from 'src/engine/twenty-orm/utils/get-nested-relation-field-names.util';
 
@@ -201,7 +201,7 @@ export class CommonCreateManyQueryRunnerService extends CommonBaseQueryRunnerSer
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
     authContext: WorkspaceAuthContext;
-    rolePermissionConfig?: RolePermissionConfig;
+    rolePermissionConfig?: RepositoryPermissionConfig;
     repository: WorkspaceRepository<ObjectRecord>;
     nestedRelationsReadPathOptions: NestedRelationsReadPathOptions;
   }): Promise<void> {
