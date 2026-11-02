@@ -141,7 +141,6 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,
@@ -170,7 +169,6 @@ export const buildAgentChatThreadStandardFlatFieldMetadatas = (
         isNullable: true,
       },
     }),
-    writability: MetadataWritability.SYSTEM,
     disabledFieldPermissionActions:
       PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
     isAuditLogged: false,

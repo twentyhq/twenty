@@ -13,9 +13,9 @@ import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/service
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-@RegisteredWorkspaceCommand('2.55.0', 1793629955662)
+@RegisteredWorkspaceCommand('2.56.0', 1793639083813)
 @Command({
-  name: 'upgrade:2-55:enable-direct-message-pair-identity',
+  name: 'upgrade:2-56:enable-direct-message-pair-identity',
   description: doNotTranslate(
     'Enable direct message pair identity after its storage upgrade',
   ),

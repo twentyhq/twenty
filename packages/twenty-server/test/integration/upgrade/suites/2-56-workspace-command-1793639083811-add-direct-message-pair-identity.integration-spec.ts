@@ -4,8 +4,8 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
-import { type AddDirectMessagePairIdentityCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793620569589-add-direct-message-pair-identity.command';
-import { type EnableDirectMessagePairIdentityCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793629955662-enable-direct-message-pair-identity.command';
+import { type AddDirectMessagePairIdentityCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793639083811-add-direct-message-pair-identity.command';
+import { type EnableDirectMessagePairIdentityCommand } from 'src/database/commands/upgrade-version-command/2-56/2-56-workspace-command-1793639083813-enable-direct-message-pair-identity.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type AgentChatDirectMessageIdentityService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-direct-message-identity.service';
@@ -47,7 +47,7 @@ const PAIR = {
   secondWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
 };
 
-describe('2-55 workspace command - add direct message pair identity (integration)', () => {
+describe('2-56 workspace command - add direct message pair identity (integration)', () => {
   let command: AddDirectMessagePairIdentityCommand;
   let enableCommand: EnableDirectMessagePairIdentityCommand;
   let featureFlagService: FeatureFlagService;
