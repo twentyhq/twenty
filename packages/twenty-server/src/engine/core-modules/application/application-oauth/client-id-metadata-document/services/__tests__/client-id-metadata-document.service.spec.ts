@@ -1,6 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { AxiosError } from 'axios';
+import { AxiosError, AxiosHeaders } from 'axios';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -141,6 +141,30 @@ describe('ClientIdMetadataDocumentService', () => {
     );
 
     await expect(service.findDocument(DOCUMENT_URL)).resolves.toBeNull();
+  });
+
+  it('keeps serving the last document when the body of a 200 fails to arrive', async () => {
+    await service.findDocument(DOCUMENT_URL);
+    moveClockPastRefresh();
+    httpGet.mockRejectedValueOnce(
+      new AxiosError(
+        'stream has been aborted',
+        AxiosError.ERR_BAD_RESPONSE,
+        undefined,
+        undefined,
+        {
+          status: 200,
+          statusText: 'OK',
+          headers: {},
+          config: { headers: new AxiosHeaders() },
+          data: undefined,
+        },
+      ),
+    );
+
+    await expect(service.findDocument(DOCUMENT_URL)).resolves.toMatchObject({
+      clientName: 'Claude',
+    });
   });
 
   it('drops a document that grew past the size cap', async () => {
