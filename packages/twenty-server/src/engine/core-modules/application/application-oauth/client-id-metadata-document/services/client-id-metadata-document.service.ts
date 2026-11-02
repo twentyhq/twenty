@@ -108,7 +108,7 @@ export class ClientIdMetadataDocumentService {
       const isWithdrawn =
         isAxiosError(error) &&
         isDefined(error.response) &&
-        error.response.status >= 400 &&
+        error.response.status >= 300 &&
         error.response.status < 500 &&
         !CLIENT_ID_METADATA_DOCUMENT_TRANSIENT_CLIENT_ERROR_STATUS_CODES.includes(
           error.response.status,

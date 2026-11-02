@@ -167,6 +167,28 @@ describe('ClientIdMetadataDocumentService', () => {
     });
   });
 
+  it('drops a document whose URL now redirects elsewhere', async () => {
+    await service.findDocument(DOCUMENT_URL);
+    moveClockPastRefresh();
+    httpGet.mockRejectedValueOnce(
+      new AxiosError(
+        'Request failed with status code 301',
+        AxiosError.ERR_BAD_REQUEST,
+        undefined,
+        undefined,
+        {
+          status: 301,
+          statusText: 'Moved Permanently',
+          headers: {},
+          config: { headers: new AxiosHeaders() },
+          data: undefined,
+        },
+      ),
+    );
+
+    await expect(service.findDocument(DOCUMENT_URL)).resolves.toBeNull();
+  });
+
   it('drops a document that grew past the size cap', async () => {
     await service.findDocument(DOCUMENT_URL);
     moveClockPastRefresh();
