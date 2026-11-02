@@ -92,7 +92,7 @@ const createExport = () => ({
 });
 let exported = createExport();
 let forbidden = false;
-let sourceFilesUnsupported = false;
+let isSourceFileExportUnsupported = false;
 let customApplication: { universalIdentifier: string } | null = {
   universalIdentifier: SOURCE_TEST_APPLICATION_ID,
 };
@@ -108,7 +108,7 @@ const server = await startTestServer((request, response) => {
     });
   }
   if (
-    sourceFilesUnsupported &&
+    isSourceFileExportUnsupported &&
     request.body.includes('shouldIncludeSourceFiles')
   ) {
     return sendJson(response, 400, {
@@ -163,7 +163,7 @@ describe('app pull command with the packaged worker', () => {
     sdkPath = await createSourceTestApp(appPath);
     await writeFile(join(appPath, 'app.ts'), sourceApplication());
     exported = createExport();
-    sourceFilesUnsupported = false;
+    isSourceFileExportUnsupported = false;
     forbidden = false;
     customApplication = { universalIdentifier: SOURCE_TEST_APPLICATION_ID };
     server.requests.length = 0;
@@ -228,7 +228,7 @@ describe('app pull command with the packaged worker', () => {
   });
 
   it('keeps metadata and dependency pull working on servers without source export', async () => {
-    sourceFilesUnsupported = true;
+    isSourceFileExportUnsupported = true;
     exported.coverage.push({
       metadataName: 'frontComponent',
       universalIdentifier: '11111111-1111-4111-8111-111111111111',

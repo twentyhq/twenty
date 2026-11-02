@@ -77,13 +77,13 @@ export const fetchAppExport = async ({
   shouldIncludeSourceFiles?: boolean;
 }): Promise<AppExport> => {
   const client = createMetadataClient({ target, signal });
-  const query = (includeSourceFiles: boolean) =>
+  const query = (shouldQuerySourceFiles: boolean) =>
     client.query({
       __name: 'ExportApplication',
       exportApplication: {
         __args: {
           universalIdentifier,
-          ...(includeSourceFiles ? { shouldIncludeSourceFiles: true } : {}),
+          ...(shouldQuerySourceFiles ? { shouldIncludeSourceFiles: true } : {}),
           ...(shouldIncludeDependencies
             ? { shouldIncludeDependencies: true }
             : {}),

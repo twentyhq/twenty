@@ -234,6 +234,26 @@ describe('ApplicationFrontComponentExportService', () => {
     expect(storage.checkFileExists).not.toHaveBeenCalled();
     expect(storage.readFile).not.toHaveBeenCalled();
   });
+  it.each(['C:/escape.tsx', 'c:escape.tsx'])(
+    'reports a coverage gap for drive-qualified source path %s without accessing storage',
+    async (sourceComponentPath) => {
+      const result = await run({
+        frontComponent: { ...component, sourceComponentPath },
+      });
+      expect(result.frontComponents).toEqual([]);
+      expect(result.files).toEqual([]);
+      expect(result.coverage).toEqual([
+        {
+          metadataName: 'frontComponent',
+          universalIdentifier: identifier,
+          status: 'UNSUPPORTED',
+          reason: 'source path cannot be restored inside an application',
+        },
+      ]);
+      expect(storage.checkFileExists).not.toHaveBeenCalled();
+      expect(storage.readFile).not.toHaveBeenCalled();
+    },
+  );
   it('reports missing source rather than a restorable component', async () => {
     storage.checkFileExists.mockResolvedValue(false);
     const result = await run();

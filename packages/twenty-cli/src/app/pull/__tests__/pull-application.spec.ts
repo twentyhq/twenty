@@ -10,7 +10,15 @@ import {
 import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  afterEach,
+  assert,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { generateMessageId } from 'twenty-shared/i18n';
 
@@ -296,10 +304,7 @@ export default defineFrontComponent({ universalIdentifier: '${componentIdentifie
     await writeFile(join(appPath, 'yarn.lock'), EMPTY_YARN_LOCK_CONTENT);
     const build = async () => {
       const result = await buildAndValidateManifest(appPath);
-      expect(result.success, JSON.stringify(result)).toBe(true);
-      if (!result.success) {
-        throw new Error(result.errors.join('\n'));
-      }
+      assert(result.success, JSON.stringify(result));
       const { builtFileInfos } = await buildApplication({
         appPath,
         manifest: result.manifest,
@@ -357,8 +362,10 @@ export default defineFrontComponent({ universalIdentifier: '${componentIdentifie
     const exported = createComponentExport();
     requireSuccess(await pull(exported));
     const base = JSON.parse(await read(BASE_PATH));
-    delete base.remoteSourceFingerprints;
-    await writeFile(join(appPath, BASE_PATH), JSON.stringify(base));
+    await writeFile(
+      join(appPath, BASE_PATH),
+      JSON.stringify({ ...base, remoteSourceFingerprints: undefined }),
+    );
     await writeFile(
       join(appPath, componentPath),
       exported.files[0].content + '// Local edit\n',

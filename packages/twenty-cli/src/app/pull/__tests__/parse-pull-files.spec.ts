@@ -45,6 +45,8 @@ describe('parsePullFiles', () => {
   it.each([
     '../escape.tsx',
     '/escape.tsx',
+    'C:/escape.tsx',
+    'c:escape.tsx',
     'node_modules/component.tsx',
     'src/../../escape.tsx',
     'src/./component.tsx',

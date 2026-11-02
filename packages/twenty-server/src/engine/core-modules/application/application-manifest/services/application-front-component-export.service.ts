@@ -67,55 +67,61 @@ export class ApplicationFrontComponentExportService {
     for (const component of sortFlatEntitiesByUniversalIdentifier(
       applicationAllFlatEntityMaps.flatFrontComponentMaps,
     )) {
+      const unsupportedCoverage: ApplicationExportCoverageEntry = {
+        metadataName: 'frontComponent',
+        universalIdentifier: component.universalIdentifier,
+        status: ApplicationExportCoverageStatus.UNSUPPORTED,
+      };
       const manifest =
         fromFlatFrontComponentToFrontComponentManifest(component);
-      let reason: string | undefined;
-      let content: string | undefined;
-      const path = component.sourceComponentPath;
       if (!isDefined(manifest)) {
-        reason =
-          'widget availability cannot be expressed by a front component definition';
-      } else if (!isRestorableFrontComponentSourcePath(path)) {
-        reason = 'source path cannot be restored inside an application';
-      } else {
-        const location = {
-          workspaceId,
-          applicationUniversalIdentifier,
-          fileFolder: FileFolder.Source,
-          resourcePath: path,
-        };
-        if (!(await this.fileStorageService.checkFileExists(location))) {
-          reason =
-            'source file is missing; apply or publish the application again to store it';
-        } else {
-          content = (
-            await streamToBuffer(
-              await this.fileStorageService.readFile(location),
-            )
-          ).toString('utf8');
-          reason = getUnsupportedFrontComponentSourceReason({
-            source: content,
-            universalIdentifier: component.universalIdentifier,
-            name: component.name,
-            description: component.description,
-            componentName: component.componentName,
-            packageNames,
-          });
-        }
-      }
-      if (isDefined(reason) || !isDefined(manifest) || !isDefined(content)) {
         coverage.push({
-          metadataName: 'frontComponent',
-          universalIdentifier: component.universalIdentifier,
-          status: ApplicationExportCoverageStatus.UNSUPPORTED,
-          reason,
+          ...unsupportedCoverage,
+          reason:
+            'widget availability cannot be expressed by a front component definition',
         });
+        continue;
+      }
+      const path = component.sourceComponentPath;
+      if (!isRestorableFrontComponentSourcePath(path)) {
+        coverage.push({
+          ...unsupportedCoverage,
+          reason: 'source path cannot be restored inside an application',
+        });
+        continue;
+      }
+      const location = {
+        workspaceId,
+        applicationUniversalIdentifier,
+        fileFolder: FileFolder.Source,
+        resourcePath: path,
+      };
+      if (!(await this.fileStorageService.checkFileExists(location))) {
+        coverage.push({
+          ...unsupportedCoverage,
+          reason:
+            'source file is missing; apply or publish the application again to store it',
+        });
+        continue;
+      }
+      const content = (
+        await streamToBuffer(await this.fileStorageService.readFile(location))
+      ).toString('utf8');
+      const reason = getUnsupportedFrontComponentSourceReason({
+        source: content,
+        universalIdentifier: component.universalIdentifier,
+        name: component.name,
+        description: component.description,
+        componentName: component.componentName,
+        packageNames,
+      });
+      if (isDefined(reason)) {
+        coverage.push({ ...unsupportedCoverage, reason });
         continue;
       }
       frontComponents.push(manifest);
       coverage.push({
-        metadataName: 'frontComponent',
-        universalIdentifier: component.universalIdentifier,
+        ...unsupportedCoverage,
         status: ApplicationExportCoverageStatus.EXPORTED,
       });
       files.push({ folder: FileFolder.Source, path, content });

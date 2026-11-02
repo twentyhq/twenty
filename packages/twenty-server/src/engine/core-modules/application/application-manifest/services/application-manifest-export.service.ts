@@ -134,17 +134,18 @@ export class ApplicationManifestExportService {
       allFlatEntityMaps,
       exportedObjectUniversalIdentifiers,
     });
-    const dependencyFiles =
+    const shouldReadDependencyFiles =
       shouldIncludeDependencies ||
       (shouldIncludeSourceFiles &&
         Object.keys(
           applicationAllFlatEntityMaps.flatFrontComponentMaps
             .byUniversalIdentifier,
-        ).length > 0)
-        ? await this.applicationDependencyFilesService.getExportedDependencyFiles(
-            { workspaceId, applicationUniversalIdentifier },
-          )
-        : [];
+        ).length > 0);
+    const dependencyFiles = shouldReadDependencyFiles
+      ? await this.applicationDependencyFilesService.getExportedDependencyFiles(
+          { workspaceId, applicationUniversalIdentifier },
+        )
+      : [];
     const {
       frontComponents,
       files: sourceFiles,

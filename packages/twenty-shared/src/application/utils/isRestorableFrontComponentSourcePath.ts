@@ -3,6 +3,7 @@ export const isRestorableFrontComponentSourcePath = (path: string): boolean =>
   !path.endsWith('.d.ts') &&
   !path.includes('\\') &&
   !path.startsWith('/') &&
+  !/^[a-z]:/i.test(path) &&
   !path
     .split('/')
     .some((part) =>

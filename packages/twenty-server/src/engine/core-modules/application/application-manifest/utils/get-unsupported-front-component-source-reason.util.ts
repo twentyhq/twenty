@@ -63,8 +63,7 @@ export const getUnsupportedFrontComponentSourceReason = ({
       return `source import "${fileName}" is not a declared package; local imports are not exported yet`;
     }
   }
-  let reason: string | undefined;
-  const visit = (node: typescript.Node): void => {
+  const visit = (node: typescript.Node): string | undefined => {
     if (
       typescript.isCallExpression(node) &&
       (node.expression.kind === typescript.SyntaxKind.ImportKeyword ||
@@ -77,13 +76,12 @@ export const getUnsupportedFrontComponentSourceReason = ({
         !typescript.isStringLiteralLike(specifier) ||
         !isPackageImport(specifier.text)
       ) {
-        reason =
-          'source uses a dynamic or local import that cannot be restored';
+        return 'source uses a dynamic or local import that cannot be restored';
       }
     }
-    typescript.forEachChild(node, visit);
+    return typescript.forEachChild(node, visit);
   };
-  visit(sourceFile);
+  const reason = visit(sourceFile);
   if (isDefined(reason)) {
     return reason;
   }
