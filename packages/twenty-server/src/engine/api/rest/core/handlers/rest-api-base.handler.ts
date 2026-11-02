@@ -177,10 +177,11 @@ export abstract class RestApiBaseHandler {
     const { selectedFields } = this.commonSelectFieldsBuilder.buildFromDepth({
       objectsPermissions,
       readableObjectMetadataIds:
-        await this.commonSelectFieldsBuilder.findReadableObjectMetadataIds({
+        await this.findRelationReadableObjectMetadataIds({
           principal,
           objectsPermissions,
           flatObjectMetadataMaps,
+          depth,
         }),
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -214,10 +215,11 @@ export abstract class RestApiBaseHandler {
     return this.commonSelectFieldsBuilder.buildFromDepth({
       objectsPermissions,
       readableObjectMetadataIds:
-        await this.commonSelectFieldsBuilder.findReadableObjectMetadataIds({
+        await this.findRelationReadableObjectMetadataIds({
           principal,
           objectsPermissions,
           flatObjectMetadataMaps,
+          depth,
         }),
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
@@ -225,6 +227,28 @@ export abstract class RestApiBaseHandler {
       depth,
       requestedFields,
       maximumDefaultFieldCount: REST_API_DEFAULT_MAX_FIELDS,
+    });
+  }
+
+  // Without depth no relation is selected, so the share lookup is skipped
+  private async findRelationReadableObjectMetadataIds({
+    principal,
+    objectsPermissions,
+    flatObjectMetadataMaps,
+    depth,
+  }: Parameters<
+    CommonSelectFieldsBuilder['findReadableObjectMetadataIds']
+  >[0] & {
+    depth: SelectionDepth | undefined;
+  }): Promise<ReadonlySet<string>> {
+    if (!isDefined(depth) || depth === 0) {
+      return new Set();
+    }
+
+    return this.commonSelectFieldsBuilder.findReadableObjectMetadataIds({
+      principal,
+      objectsPermissions,
+      flatObjectMetadataMaps,
     });
   }
 
