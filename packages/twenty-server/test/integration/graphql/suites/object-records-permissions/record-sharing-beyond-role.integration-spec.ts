@@ -236,6 +236,74 @@ describe('Records shared beyond the role that can access their object', () => {
     expect((await renameAsJony('Not allowed')).body.errors).toBeDefined();
   });
 
+  it('should answer access questions for the member from their shares', async () => {
+    const recordAccessPolicyService =
+      getAppProviderByClassName<RecordAccessPolicyService>(
+        'RecordAccessPolicyService',
+      );
+    const { flatObjectMetadataMaps } =
+      await getAppProviderByClassName<WorkspaceCacheService>(
+        'WorkspaceCacheService',
+      ).getOrRecompute(workspaceId, ['flatObjectMetadataMaps']);
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: objectMetadataId,
+      flatEntityMaps: flatObjectMetadataMaps,
+    });
+
+    if (!isDefined(flatObjectMetadata)) {
+      throw new Error('The object under test is not cached');
+    }
+
+    const buildJonyPrincipal = () => ({
+      workspaceId,
+      intersectionOf: { userWorkspaceRoleId: memberRoleId },
+      workspaceMember: { id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY },
+    });
+
+    expect(
+      await recordAccessPolicyService.hasAccessToSomeRecords({
+        principal: buildJonyPrincipal(),
+        flatObjectMetadata,
+        operationType: 'select',
+      }),
+    ).toBe(false);
+
+    await setShare({ principal: JONY });
+
+    const principal = buildJonyPrincipal();
+
+    expect(
+      await recordAccessPolicyService.hasAccessToSomeRecords({
+        principal,
+        flatObjectMetadata,
+        operationType: 'select',
+      }),
+    ).toBe(true);
+    expect(
+      await recordAccessPolicyService.hasAccessToSomeRecords({
+        principal,
+        flatObjectMetadata,
+        operationType: 'update',
+      }),
+    ).toBe(false);
+    expect(
+      await recordAccessPolicyService.hasAccessToRecords({
+        principal,
+        flatObjectMetadata,
+        operationType: 'select',
+        recordIds: [SHARED_RECORD_ID],
+      }),
+    ).toBe(true);
+    expect(
+      await recordAccessPolicyService.hasAccessToRecords({
+        principal,
+        flatObjectMetadata,
+        operationType: 'select',
+        recordIds: [SHARED_RECORD_ID, OTHER_RECORD_ID],
+      }),
+    ).toBe(false);
+  });
+
   it('should let an edit grant edit, but never delete or manage access', async () => {
     await setShare({
       principal: JONY,

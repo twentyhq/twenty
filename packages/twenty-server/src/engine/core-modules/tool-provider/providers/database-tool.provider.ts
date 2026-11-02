@@ -103,18 +103,7 @@ export class DatabaseToolProvider implements ToolProvider {
       return descriptors;
     }
 
-    const principal: PermissionsPrincipal | undefined =
-      'intersectionOf' in context.rolePermissionConfig
-        ? {
-            workspaceId: context.workspaceId,
-            intersectionOf: context.rolePermissionConfig.intersectionOf,
-            workspaceMember:
-              isDefined(context.authContext) &&
-              isUserAuthContext(context.authContext)
-                ? context.authContext.workspaceMember
-                : undefined,
-          }
-        : undefined;
+    const principal = buildToolPermissionsPrincipal(context);
 
     const { explicitObjectGrantsRoleId } = context;
     const requireExplicitObjectGrants = isDefined(explicitObjectGrantsRoleId);
@@ -587,3 +576,22 @@ export class DatabaseToolProvider implements ToolProvider {
     );
   }
 }
+
+const buildToolPermissionsPrincipal = ({
+  workspaceId,
+  rolePermissionConfig,
+  authContext,
+}: ToolProviderContext): PermissionsPrincipal | undefined => {
+  if (!('intersectionOf' in rolePermissionConfig)) {
+    return undefined;
+  }
+
+  return {
+    workspaceId,
+    intersectionOf: rolePermissionConfig.intersectionOf,
+    workspaceMember:
+      isDefined(authContext) && isUserAuthContext(authContext)
+        ? authContext.workspaceMember
+        : undefined,
+  };
+};

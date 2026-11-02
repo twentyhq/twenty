@@ -16,6 +16,7 @@ jest.mock(
 const APPLICATION_ID = 'application-id';
 const APPLICATION_ROLE_ID = 'application-role';
 const READ_ONLY_ROLE_ID = 'read-only-role';
+const OTHER_APPLICATION_ROLE_ID = 'other-application-role';
 
 const flatObjectMetadata = {
   ...COMPANY_FLAT_OBJECT_MOCK,
@@ -46,9 +47,9 @@ const hasAccess = ({
     principal: {
       workspaceId: 'workspace-id',
       intersectionOf:
-        roleId === APPLICATION_ROLE_ID
-          ? { applicationRoleId: roleId }
-          : { userWorkspaceRoleId: roleId },
+        roleId === READ_ONLY_ROLE_ID
+          ? { userWorkspaceRoleId: roleId }
+          : { applicationRoleId: roleId },
     },
     metadataMaps: {
       flatFieldMetadataMaps: createEmptyFlatEntityMaps(),
@@ -58,12 +59,20 @@ const hasAccess = ({
         [APPLICATION_ROLE_ID]: {
           [flatObjectMetadata.id]: readOnlyPermissions,
         },
+        [OTHER_APPLICATION_ROLE_ID]: {
+          [flatObjectMetadata.id]: readOnlyPermissions,
+        },
       },
       flatApplicationMaps: {
         byId: {
           [APPLICATION_ID]: {
             id: APPLICATION_ID,
             defaultRoleId: APPLICATION_ROLE_ID,
+            deletedAt: null,
+          },
+          'other-application-id': {
+            id: 'other-application-id',
+            defaultRoleId: OTHER_APPLICATION_ROLE_ID,
             deletedAt: null,
           },
         },
@@ -111,5 +120,11 @@ describe('hasAccessToAllRecords', () => {
         disabledObjectPermissionActions: ['canReadObjectRecords'],
       }),
     ).toBe(true);
+    expect(
+      hasAccess({
+        roleId: OTHER_APPLICATION_ROLE_ID,
+        disabledObjectPermissionActions: ['canReadObjectRecords'],
+      }),
+    ).toBe(false);
   });
 });

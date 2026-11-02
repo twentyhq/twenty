@@ -103,6 +103,10 @@ export class RecordAccessPolicyService {
     transactionScope?: WorkspaceTransactionScope;
   }): Promise<boolean> {
     const uniqueRecordIds = [...new Set(recordIds)];
+
+    if (uniqueRecordIds.length === 0) {
+      return false;
+    }
     const findAdmittedRecordIds = (repository: WorkspaceRepository) =>
       repository.findPrincipalAdmittedRecordIds({
         principal,
@@ -277,7 +281,6 @@ export class RecordAccessPolicyService {
     );
   }
 
-  // One metadata maps object per principal keeps its role permissions memoized
   private findPrincipalMetadataMaps(
     principal: PermissionsPrincipal,
   ): Promise<PermissionsMetadataMaps> {
