@@ -21,7 +21,11 @@ export const withResolvedToolAuthContext = async <T>(
           context,
           userRepository,
           workspaceCacheService,
-        })
+        }).then((userAuthContext) =>
+          isDefined(context.agentId)
+            ? { ...userAuthContext, agentId: context.agentId }
+            : userAuthContext,
+        )
       : undefined);
 
   if (!isDefined(authContext)) {

@@ -1,3 +1,4 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
@@ -94,6 +95,10 @@ export class ObjectRecordEventPublisher {
       this.recordAccessPolicyService.buildEventRecordAccessGate(eventBatch);
 
     const streamIdsToRemove: string[] = [];
+    const subscriberAuthContexts = new Map<
+      string,
+      Promise<WorkspaceAuthContext>
+    >();
 
     for (const [streamChannelId, streamData] of streamsData) {
       if (!isDefined(streamData)) {
@@ -112,6 +117,7 @@ export class ObjectRecordEventPublisher {
         permissionsContext,
         workspaceMemberIdByUserId,
         eventRecordAccessGate,
+        subscriberAuthContexts,
       });
     }
 
@@ -138,6 +144,7 @@ export class ObjectRecordEventPublisher {
     permissionsContext,
     workspaceMemberIdByUserId,
     eventRecordAccessGate,
+    subscriberAuthContexts,
   }: {
     streamChannelId: string;
     streamData: EventStreamData;
@@ -145,6 +152,7 @@ export class ObjectRecordEventPublisher {
     permissionsContext: StreamPermissionsContext;
     workspaceMemberIdByUserId: Map<string, string>;
     eventRecordAccessGate: EventRecordAccessGate;
+    subscriberAuthContexts: Map<string, Promise<WorkspaceAuthContext>>;
   }): Promise<void> {
     const subscriberAuthContext: SerializableAuthContext = {
       ...streamData.authContext,
@@ -153,16 +161,21 @@ export class ObjectRecordEventPublisher {
         workspaceMemberIdByUserId,
       }),
     };
-    const { userWorkspaceId } = subscriberAuthContext;
+    const { userWorkspaceId, workspaceMemberId } = subscriberAuthContext;
+
+    if (!isDefined(userWorkspaceId) || !isDefined(workspaceMemberId)) {
+      return;
+    }
+
     const principals = buildPermissionsPrincipalsContext({
       workspaceId: workspaceEventBatch.workspaceId,
-      workspaceMemberId: subscriberAuthContext.workspaceMemberId,
+      workspaceMemberId,
       apiKeyId: undefined,
       applicationId: subscriberAuthContext.applicationId,
       agentId: undefined,
     });
 
-    if (!isDefined(userWorkspaceId) || !isDefined(principals)) {
+    if (!isDefined(principals)) {
       return;
     }
 
@@ -254,10 +267,12 @@ export class ObjectRecordEventPublisher {
             (matchedEvent) => matchedEvent.objectRecordEvent,
           ),
           workspaceId: workspaceEventBatch.workspaceId,
-          subscriber: {
+          subscriberAuthContext: this.findSubscriberAuthContext({
+            subscriberAuthContexts,
+            workspaceId: workspaceEventBatch.workspaceId,
             userWorkspaceId,
             applicationId: subscriberAuthContext.applicationId,
-          },
+          }),
           principals,
           objectsPermissions,
         });
@@ -287,14 +302,14 @@ export class ObjectRecordEventPublisher {
     objectMetadata,
     events,
     workspaceId,
-    subscriber,
+    subscriberAuthContext,
     principals,
     objectsPermissions,
   }: {
     objectMetadata: FlatObjectMetadata;
     events: ObjectRecordEvent[];
     workspaceId: string;
-    subscriber: { userWorkspaceId: string; applicationId?: string };
+    subscriberAuthContext: Promise<WorkspaceAuthContext>;
     principals: PermissionsPrincipalsContext;
     objectsPermissions: ObjectsPermissions;
   }) {
@@ -351,12 +366,7 @@ export class ObjectRecordEventPublisher {
       commonQueryParser.parseSelectedFields(selectedFields);
 
     // The ambient context is the writer's, so relations load as the subscriber
-    const subscriberAuthContext =
-      await this.userWorkspaceAuthContextService.resolve({
-        workspaceId,
-        userWorkspaceId: subscriber.userWorkspaceId,
-        applicationId: subscriber.applicationId,
-      });
+    const resolvedSubscriberAuthContext = await subscriberAuthContext;
 
     await this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
@@ -365,7 +375,7 @@ export class ObjectRecordEventPublisher {
           flatFieldMetadataMaps,
           parentObjectMetadataItem: objectMetadata,
           parentObjectRecords: allRecords,
-          authContext: subscriberAuthContext,
+          authContext: resolvedSubscriberAuthContext,
           limit: QUERY_MAX_RECORDS_FROM_RELATION,
           relations: selectedFieldsResult.relations as Record<
             string,
@@ -373,8 +383,38 @@ export class ObjectRecordEventPublisher {
           >,
           selectedFields: selectedFieldsResult.select,
         }),
-      subscriberAuthContext,
+      resolvedSubscriberAuthContext,
     );
+  }
+
+  // Streams of one member share their auth context within a batch; null keeps the writer's application out
+  private findSubscriberAuthContext({
+    subscriberAuthContexts,
+    workspaceId,
+    userWorkspaceId,
+    applicationId,
+  }: {
+    subscriberAuthContexts: Map<string, Promise<WorkspaceAuthContext>>;
+    workspaceId: string;
+    userWorkspaceId: string;
+    applicationId: string | undefined;
+  }): Promise<WorkspaceAuthContext> {
+    const key = `${userWorkspaceId}:${applicationId ?? ''}`;
+    const cachedAuthContext = subscriberAuthContexts.get(key);
+
+    if (isDefined(cachedAuthContext)) {
+      return cachedAuthContext;
+    }
+
+    const authContext = this.userWorkspaceAuthContextService.resolve({
+      workspaceId,
+      userWorkspaceId,
+      applicationId: applicationId ?? null,
+    });
+
+    subscriberAuthContexts.set(key, authContext);
+
+    return authContext;
   }
 
   private buildWorkspaceMemberIdByUserId(

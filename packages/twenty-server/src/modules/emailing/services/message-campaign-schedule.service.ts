@@ -172,6 +172,19 @@ export class MessageCampaignScheduleService {
     userWorkspaceId,
     scheduledAt,
   }: SendScheduledCampaignJobData): Promise<void> {
+    const scheduledAtDate = new Date(scheduledAt);
+
+    const isStillScheduledForThisTime =
+      await this.messageCampaignLifecycleService.isCampaignScheduledFor({
+        workspaceId,
+        campaignId,
+        scheduledAt: scheduledAtDate,
+      });
+
+    if (!isStillScheduledForThisTime) {
+      return;
+    }
+
     const schedulerAuthContext = await this.userWorkspaceAuthContextService
       .resolve({ workspaceId, userWorkspaceId })
       .catch(async (error) => {
@@ -182,7 +195,7 @@ export class MessageCampaignScheduleService {
         await this.releaseUnsendableScheduledCampaign({
           workspaceId,
           campaignId,
-          scheduledAt: new Date(scheduledAt),
+          scheduledAt: scheduledAtDate,
           reason:
             'the member who scheduled it can no longer act in the workspace',
         });
@@ -196,19 +209,6 @@ export class MessageCampaignScheduleService {
 
     // Runs as the member who scheduled it, so it only reaches the records they can
     await withWorkspaceAuthContext(schedulerAuthContext, async () => {
-      const scheduledAtDate = new Date(scheduledAt);
-
-      const isStillScheduledForThisTime =
-        await this.messageCampaignLifecycleService.isCampaignScheduledFor({
-          workspaceId,
-          campaignId,
-          scheduledAt: scheduledAtDate,
-        });
-
-      if (!isStillScheduledForThisTime) {
-        return;
-      }
-
       const prepared = await this.messageCampaignService
         .prepareCampaignSendOrThrow({
           workspaceId,
