@@ -254,6 +254,27 @@ export const LoadingHidesSearchAndRows: Story = {
   },
 };
 
+export const LoadingStatusesShowsASkeletonInTheStatusColumn: Story = {
+  args: {
+    applications: [NPM_APPLICATION],
+    builtInAccountApps: [],
+    middleColumn: 'typeOrStatus',
+    statusesById: {
+      [NPM_APPLICATION.id]: [{ type: 'missingConfiguration' }],
+    },
+    isLoadingStatuses: true,
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    const acmeRow = await canvas.findByRole('link', { name: /Acme Sync/ });
+
+    expect(acmeRow.querySelector('[aria-busy="true"]')).toBeInTheDocument();
+    expect(acmeRow).not.toHaveTextContent('Setup incomplete');
+    expect(acmeRow).not.toHaveTextContent('NPM');
+  },
+};
+
 export const HidesTheDescriptionOnMobile: Story = {
   parameters: {
     viewport: { defaultViewport: 'mobile1' },

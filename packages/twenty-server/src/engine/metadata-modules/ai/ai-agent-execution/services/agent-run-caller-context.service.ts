@@ -60,10 +60,7 @@ export class AgentRunCallerContextService {
       });
     const agentRunRoleIds: AgentRunRoleIds = {
       ...callerRoleIds,
-      ...resolveApplicationRoleId({
-        application,
-        isMissingApplicationRoleTolerated: true,
-      }),
+      ...resolveApplicationRoleId({ application }),
     };
 
     return {
@@ -144,6 +141,6 @@ export class AgentRunCallerContextService {
       );
     }
 
-    return { authContext: applicationAuthContext };
+    return { authContext: applicationAuthContext, callerRoleIds: {} };
   }
 }

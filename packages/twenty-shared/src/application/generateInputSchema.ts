@@ -1,8 +1,7 @@
-import { isNonEmptyString } from '@sniptt/guards';
 import { z } from 'zod';
 
 import { aiRunScopeSchema } from '@/ai/schemas/internal/ai-run-scope-schema';
-import { isNonEmptyArray } from '@/utils/array/isNonEmptyArray';
+import { hasRunAgentMessageContentOrAttachments } from '@/application/utils/hasRunAgentMessageContentOrAttachments';
 import { agentResponseFormatSchema } from '@/workflow/schemas/agent-response-format-schema';
 
 import { type RunAgentMessage } from './runAgentType';
@@ -31,11 +30,7 @@ export const generateInputSchema = z.object({
     .min(1)
     .max(100)
     .refine(
-      (messages) =>
-        messages.every(
-          ({ content, attachments }) =>
-            isNonEmptyString(content.trim()) || isNonEmptyArray(attachments),
-        ),
+      (messages) => messages.every(hasRunAgentMessageContentOrAttachments),
       { message: 'Each message needs content or attachments' },
     ),
   instructions: z.string().min(1).nullish(),

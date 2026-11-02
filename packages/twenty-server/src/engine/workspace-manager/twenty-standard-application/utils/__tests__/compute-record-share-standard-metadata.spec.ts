@@ -1,5 +1,4 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { MetadataReadability, MetadataWritability } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
@@ -21,7 +20,7 @@ describe('RecordShare standard metadata build', () => {
       STANDARD_OBJECTS.recordShare.universalIdentifier
     ];
 
-  it('builds recordShare as a hidden system object with SYSTEM readability and writability', () => {
+  it('builds recordShare as a hidden system object', () => {
     expect(recordShare).toMatchObject({
       nameSingular: 'recordShare',
       isSystem: true,
@@ -29,8 +28,6 @@ describe('RecordShare standard metadata build', () => {
       isAuditLogged: false,
       isUICreatable: false,
       isUIEditable: false,
-      writability: MetadataWritability.SYSTEM,
-      readability: MetadataReadability.SYSTEM,
     });
   });
 

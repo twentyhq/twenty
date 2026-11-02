@@ -279,6 +279,37 @@ export class RecordShareStorageService {
     );
   }
 
+  async findAccessLevelsByObjectMetadataId({
+    workspaceId,
+    principalIds,
+  }: {
+    workspaceId: string;
+    principalIds: string[];
+  }): Promise<Map<string, RecordShareAccessLevel[]>> {
+    if (principalIds.length === 0) {
+      return new Map();
+    }
+
+    const rows = await this.withRepository({ workspaceId }, (repository) =>
+      repository.executeRaw<{
+        objectMetadataId: string;
+        accessLevel: RecordShareAccessLevel;
+      }>(
+        `SELECT DISTINCT "objectMetadataId", "accessLevel" FROM ${escapeIdentifier(getWorkspaceSchemaName(workspaceId))}.${escapeIdentifier(RECORD_SHARE_OBJECT_METADATA_NAME)} WHERE "principalId" = ANY(:principalIds) AND "deletedAt" IS NULL`,
+        { principalIds },
+      ),
+    );
+
+    return rows.reduce((accessLevelsByObjectMetadataId, row) => {
+      accessLevelsByObjectMetadataId.set(row.objectMetadataId, [
+        ...(accessLevelsByObjectMetadataId.get(row.objectMetadataId) ?? []),
+        row.accessLevel,
+      ]);
+
+      return accessLevelsByObjectMetadataId;
+    }, new Map<string, RecordShareAccessLevel[]>());
+  }
+
   async findByRecordIds({
     workspaceId,
     objectMetadataId,

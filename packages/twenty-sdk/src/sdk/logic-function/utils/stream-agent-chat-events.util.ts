@@ -36,7 +36,7 @@ const isReactionSummary = (reaction: unknown): boolean =>
   reaction.agentIds.every(isString) &&
   isBoolean(reaction.hasAssistantReacted);
 
-const HAS_EVENT_FIELDS: Record<
+const EVENT_FIELD_VALIDATORS: Record<
   AgentChatSubscriptionEvent['type'],
   (event: Record<string, unknown>) => boolean
 > = {
@@ -67,14 +67,14 @@ const HAS_EVENT_FIELDS: Record<
 const isKnownEventType = (
   type: string,
 ): type is AgentChatSubscriptionEvent['type'] =>
-  Object.prototype.hasOwnProperty.call(HAS_EVENT_FIELDS, type);
+  Object.prototype.hasOwnProperty.call(EVENT_FIELD_VALIDATORS, type);
 
 const isAgentChatSubscriptionEvent = (
   event: Record<string, unknown>,
 ): event is AgentChatSubscriptionEvent =>
   isString(event.type) &&
   isKnownEventType(event.type) &&
-  HAS_EVENT_FIELDS[event.type](event);
+  EVENT_FIELD_VALIDATORS[event.type](event);
 
 // GraphQL over server-sent events: one `next` event per result, then `complete`
 const parseServerSentEventOrThrow = ({
@@ -158,7 +158,8 @@ export async function* streamAgentChatEvents({
   // appended to the error a dropped connection throws, for callers that can resume
   closedEarlyAdvice?: string;
 }): AsyncGenerator<AgentChatSubscriptionEvent> {
-  const { apiUrl, accessToken } = getApplicationApiConfigOrThrow(caller, {
+  const { apiUrl, accessToken } = getApplicationApiConfigOrThrow({
+    caller,
     isActingAsCaller,
   });
   let reader: ReadableStreamDefaultReader<string> | undefined;

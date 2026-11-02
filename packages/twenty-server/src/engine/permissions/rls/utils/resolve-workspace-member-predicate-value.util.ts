@@ -7,7 +7,7 @@ import {
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-import { type UserWorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { type RowLevelPermissionWorkspaceMember } from 'src/engine/permissions/rls/types/row-level-permission-workspace-member.type';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
@@ -15,7 +15,7 @@ import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-fiel
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 
 type ResolveWorkspaceMemberPredicateValueArgs = {
-  workspaceMember: NonNullable<UserWorkspaceAuthContext['workspaceMember']>;
+  workspaceMember: RowLevelPermissionWorkspaceMember;
   workspaceMemberFieldMetadata: OrmFlatFieldMetadata;
   workspaceMemberSubFieldName: string | null;
 };

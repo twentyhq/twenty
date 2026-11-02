@@ -9,7 +9,6 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-spec.type';
 import { WORKFLOW_BASE_SYSTEM_PROMPT } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/workflow-base-system-prompt.constant';
 import { type WorkflowAiAgentAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
-import { APPLICATION_BOUND_AGENT_EXCLUDED_TOOL_NAMES } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/application-bound-agent-excluded-tool-names.constant';
 import { WORKFLOW_AGENT_HUMAN_INPUT_PROMPT } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/constants/workflow-agent-human-input-prompt.constant';
 
 const buildPersonaSpec = ({
@@ -17,7 +16,7 @@ const buildPersonaSpec = ({
   applicationId,
 }: {
   step: Pick<WorkflowAiAgentAction, 'id' | 'settings'>;
-  applicationId: string | null;
+  applicationId: string;
 }): AgentRunPersonaSpec => {
   const { agentId, instructions, modelId, modelConfiguration, scope } =
     step.settings.input;
@@ -44,13 +43,11 @@ const buildPersonaSpec = ({
 
 export const buildWorkflowAgentRunSpec = ({
   step,
-  isApplicationBound,
   applicationId,
 }: {
   step: WorkflowAiAgentAction;
-  isApplicationBound: boolean;
   // the application the workflow belongs to, which a step without an agent runs under
-  applicationId: string | null;
+  applicationId: string;
 }): AgentRunSpec => {
   const { humanInputInstructions, responseFormat } = step.settings.input;
   const trimmedHumanInputInstructions = humanInputInstructions?.trim();
@@ -67,12 +64,5 @@ export const buildWorkflowAgentRunSpec = ({
       canAskHumans,
     },
     ...(isDefined(responseFormat) ? { responseFormat } : {}),
-    ...(isApplicationBound
-      ? {
-          additionalExcludedToolNames: [
-            ...APPLICATION_BOUND_AGENT_EXCLUDED_TOOL_NAMES,
-          ],
-        }
-      : {}),
   };
 };

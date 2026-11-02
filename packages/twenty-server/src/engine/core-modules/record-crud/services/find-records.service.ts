@@ -10,6 +10,7 @@ import { isNonEmptyArray } from '@sniptt/guards';
 import { CommonFindManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-many-query-runner.service';
 import { DEFAULT_ID_ORDER_BY_TIEBREAKER } from 'src/engine/api/common/constants/default-id-order-by-tiebreaker.constant';
 import { buildRelationSelectionFromDepth } from 'src/engine/api/common/common-select-fields/utils/build-relation-selection-from-depth.util';
+import { CommonSelectFieldsBuilder } from 'src/engine/api/common/common-select-fields/common-select-fields-builder';
 import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
 import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
 import { type FindRecordsResult } from 'src/engine/core-modules/record-crud/types/find-records-result.type';
@@ -25,6 +26,7 @@ export class FindRecordsService {
   constructor(
     private readonly commonFindManyRunner: CommonFindManyQueryRunnerService,
     private readonly commonApiContextBuilder: CommonApiContextBuilderService,
+    private readonly commonSelectFieldsBuilder: CommonSelectFieldsBuilder,
   ) {}
 
   async execute(
@@ -58,6 +60,7 @@ export class FindRecordsService {
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         objectsPermissions,
+        principal,
       } = await this.commonApiContextBuilder.build({
         authContext,
         objectName,
@@ -85,6 +88,10 @@ export class FindRecordsService {
                 flatFieldMetadataMaps,
                 flatObjectMetadata,
                 objectsPermissions,
+                readableObjectMetadataIds:
+                  await this.commonSelectFieldsBuilder.findReadableObjectMetadataIds(
+                    { principal, objectsPermissions, flatObjectMetadataMaps },
+                  ),
                 depth: 1,
                 onlyUseLabelIdentifierFieldsInRelations: true,
               }),

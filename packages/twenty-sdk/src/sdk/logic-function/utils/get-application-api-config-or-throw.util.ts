@@ -10,10 +10,13 @@ import {
   getCallerAccessToken,
 } from '@/sdk/utils/get-application-access-token';
 
-export const getApplicationApiConfigOrThrow = (
-  caller: string,
-  { isActingAsCaller = false }: { isActingAsCaller?: boolean } = {},
-): { apiUrl: string; accessToken: string } => {
+export const getApplicationApiConfigOrThrow = ({
+  caller,
+  isActingAsCaller = false,
+}: {
+  caller: string;
+  isActingAsCaller?: boolean;
+}): { apiUrl: string; accessToken: string } => {
   const apiUrl = process.env[DEFAULT_API_URL_NAME];
   const accessToken = isActingAsCaller
     ? getCallerAccessToken()
