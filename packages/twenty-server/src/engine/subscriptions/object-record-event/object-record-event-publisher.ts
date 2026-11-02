@@ -53,6 +53,7 @@ import { getRoleIdsToIntersect } from 'src/engine/permissions/principal/utils/ge
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
+import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
 
 type StreamPermissionsContext = {
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
@@ -208,13 +209,12 @@ export class ObjectRecordEventPublisher {
       }),
     };
 
-    const principal: PermissionsPrincipal = {
+    const principal: PermissionsPrincipal = buildPermissionsPrincipal({
       workspaceId: workspaceEventBatch.workspaceId,
-      intersectionOf: rolePermissionConfig.intersectionOf,
-      workspaceMember: isDefined(subscriberAuthContext.workspaceMemberId)
-        ? flatWorkspaceMemberMaps.byId[subscriberAuthContext.workspaceMemberId]
-        : undefined,
-    };
+      rolePermissionConfig,
+      workspaceMemberId: subscriberAuthContext.workspaceMemberId,
+      flatApplicationMaps: permissionsContext.flatApplicationMaps,
+    }) ?? { workspaceId: workspaceEventBatch.workspaceId, roleIds: [] };
     const admittedRecordIds =
       await eventRecordAccessGate.resolveAdmittedRecordIds(principal);
 
@@ -354,7 +354,7 @@ export class ObjectRecordEventPublisher {
     const { selectedFields } = this.commonSelectFieldsBuilder.buildFromDepth({
       readableObjectMetadataIds:
         await this.commonSelectFieldsBuilder.findReadableObjectMetadataIds({
-          principal: { ...principal, workspaceMember: undefined },
+          principal: { ...principal, workspaceMemberId: undefined },
           objectsPermissions,
           flatObjectMetadataMaps,
         }),

@@ -1,16 +1,9 @@
 /* @license Enterprise */
 
-import { type RoleIdsBySource } from 'src/engine/permissions/principal/types/role-permission-config.type';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
-
-export type PermissionsPrincipalWorkspaceMember = Pick<
-  WorkspaceMemberWorkspaceEntity,
-  'id'
-> &
-  Partial<WorkspaceMemberWorkspaceEntity>;
-
+// Role grants need every role in roleIds; creator and share grants add on top of them
 export type PermissionsPrincipal = {
   workspaceId: string;
-  intersectionOf: RoleIdsBySource;
-  workspaceMember?: PermissionsPrincipalWorkspaceMember;
+  roleIds: string[];
+  workspaceMemberId?: string;
+  applicationId?: string;
 };

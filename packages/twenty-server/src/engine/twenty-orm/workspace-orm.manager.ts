@@ -29,6 +29,7 @@ import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/wor
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/utils/convert-class-to-object-metadata-name.util';
+import { hasWorkspaceMemberBoundPredicates } from 'src/engine/permissions/rls/utils/has-workspace-member-bound-predicates.util';
 
 @Injectable()
 export class WorkspaceOrmManager {
@@ -169,6 +170,16 @@ export class WorkspaceOrmManager {
     const { idByNameSingular: objectIdByNameSingular } =
       buildObjectIdByNameMaps(flatObjectMetadataMaps);
 
+    const flatWorkspaceMemberMaps = hasWorkspaceMemberBoundPredicates(
+      flatRowLevelPermissionPredicateMaps,
+    )
+      ? (
+          await this.workspaceCacheService.getOrRecompute(workspaceId, [
+            'flatWorkspaceMemberMaps',
+          ])
+        ).flatWorkspaceMemberMaps
+      : undefined;
+
     const flatValidationRuleMaps = isValidationRuleEnforcementEnabled({
       featureFlagsMap,
       billingEntitlements,
@@ -189,6 +200,7 @@ export class WorkspaceOrmManager {
       flatIndexMaps,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
+      flatWorkspaceMemberMaps,
       flatValidationRuleMaps,
       objectIdByNameSingular,
       featureFlagsMap,

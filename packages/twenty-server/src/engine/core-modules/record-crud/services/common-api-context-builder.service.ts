@@ -24,6 +24,7 @@ import { type RolePermissionConfig } from 'src/engine/permissions/principal/type
 import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/permissions/role/utils/get-objects-permissions-from-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 
 export type CommonApiContext = {
   queryRunnerContext: CommonBaseQueryRunnerContext;
@@ -190,7 +191,10 @@ export class CommonApiContextBuilderService {
       principal: buildPermissionsPrincipal({
         workspaceId: authContext.workspace.id,
         rolePermissionConfig: resolvedRolePermissionConfig,
-        authContext,
+        workspaceMemberId: isUserAuthContext(authContext)
+          ? authContext.workspaceMemberId
+          : undefined,
+        flatApplicationMaps,
       }),
     };
   }

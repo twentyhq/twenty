@@ -117,6 +117,7 @@ export class WorkspaceDataSourceService
         workspaceContext.flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps:
         workspaceContext.flatRowLevelPermissionPredicateGroupMaps,
+      flatWorkspaceMemberMaps: workspaceContext.flatWorkspaceMemberMaps,
       flatValidationRuleMaps: workspaceContext.flatValidationRuleMaps,
       objectIdByNameSingular: workspaceContext.objectIdByNameSingular,
       featureFlagsMap: workspaceContext.featureFlagsMap,
