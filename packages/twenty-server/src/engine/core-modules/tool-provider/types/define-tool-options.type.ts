@@ -8,5 +8,7 @@ export type DefineToolOptions = {
   description: string;
   requiredPermissionFlags: PermissionFlagType[];
   requiredFeatureFlags?: FeatureFlagKey[];
+  // the tool authorizes its work itself (as the member or the system), so a caller narrowed by a scope never gets it
+  ignoresRolePermissionConfig?: boolean;
   icon?: string;
 };
