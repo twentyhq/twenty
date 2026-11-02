@@ -156,7 +156,6 @@ export class AiGenerateService {
     };
   }
 
-  // the turn's primary key backs the lookup in a race
   private async resolveStreamChannelIdOrThrow({
     workspaceId,
     callerApplication,
@@ -175,6 +174,7 @@ export class AiGenerateService {
       );
     }
 
+    // a concurrent call that passes this check still fails on the turn's primary key
     const existingTurn = await this.turnRepository.findOne(workspaceId, {
       where: { id: runId },
       select: ['id'],

@@ -15,7 +15,7 @@ const ON_AGENT_RUN_EVENT_SUBSCRIPTION = `
   }
 `;
 
-export const followAgentRunEvents = async ({
+export const followAgentRunEventsOrThrow = async ({
   runId,
   token,
 }: {

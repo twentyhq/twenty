@@ -1,6 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
-import { followAgentRunEvents } from 'test/integration/ai/utils/follow-agent-run-events.util';
+import { followAgentRunEventsOrThrow } from 'test/integration/ai/utils/follow-agent-run-events.util';
 import { generateQueryFactory } from 'test/integration/ai/utils/generate-query-factory.util';
 import {
   answerWith,
@@ -22,6 +22,7 @@ import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core
 
 const INPUT = [{ role: 'user' as const, content: 'Qualify Acme' }];
 const GENERATE_TIMEOUT_MS = 30_000;
+const STREAM_WAIT_TIMEOUT_MS = 10_000;
 
 const setupApplicationWithToken = async (name: string) => {
   const application = await setupApplicationWithResources({ name });
@@ -33,11 +34,11 @@ const setupApplicationWithToken = async (name: string) => {
   return { application, token: applicationAccessToken.token };
 };
 
-const waitForOrThrow = async (isDone: () => boolean, timeoutMs = 10_000) => {
+const waitForOrThrow = async (isDone: () => boolean) => {
   const startedAt = Date.now();
 
   while (!isDone()) {
-    if (Date.now() - startedAt > timeoutMs) {
+    if (Date.now() - startedAt > STREAM_WAIT_TIMEOUT_MS) {
       throw new Error('Timed out waiting for the run stream');
     }
 
@@ -79,14 +80,15 @@ describe('ai.generate runs followed by their application (integration)', () => {
 
   it('streams a run to its application under the run id it chose, and to no other application', async () => {
     const runId = randomUUID();
-    const streams: Awaited<ReturnType<typeof followAgentRunEvents>>[] = [];
+    const streams: Awaited<ReturnType<typeof followAgentRunEventsOrThrow>>[] =
+      [];
 
     try {
-      const ownStream = await followAgentRunEvents({ runId, token });
+      const ownStream = await followAgentRunEventsOrThrow({ runId, token });
 
       streams.push(ownStream);
 
-      const otherStream = await followAgentRunEvents({
+      const otherStream = await followAgentRunEventsOrThrow({
         runId,
         token: otherToken,
       });
@@ -158,7 +160,7 @@ describe('ai.generate runs followed by their application (integration)', () => {
         userId: USER_DATA_SEED_IDS.JANE,
         userWorkspaceId: USER_WORKSPACE_DATA_SEED_IDS.JANE,
       });
-    const stream = await followAgentRunEvents({
+    const stream = await followAgentRunEventsOrThrow({
       runId,
       token: memberBoundToken.token,
     });
