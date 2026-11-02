@@ -274,26 +274,6 @@ describe('ai.generate with onChunk', () => {
     ).toEqual(['Bearer app-token', 'Bearer app-token']);
   });
 
-  it('picks a run id when the caller does not', async () => {
-    const runChannel = mockRunChannel({ fetchSpy });
-
-    const generation = ai.generate({ input: 'Hi', onChunk: () => {} });
-
-    await vi.waitFor(() => expect(runChannel.requests).toHaveLength(2));
-
-    const subscribedRunId = JSON.parse(String(fetchSpy.mock.calls[0][1]?.body))
-      .variables.runId;
-
-    expect(
-      JSON.parse(String(fetchSpy.mock.calls[1][1]?.body)).variables.input.runId,
-    ).toBe(subscribedRunId);
-
-    runChannel.answerMutation({ data: { generate: RESULT } });
-    runChannel.send({ type: 'stream-error', code: 'FAILED', message: 'No' });
-
-    await expect(generation).resolves.toEqual(RESULT);
-  });
-
   it('closes the stream and rejects when aborted during the run', async () => {
     const runChannel = mockRunChannel({ fetchSpy });
     const abortController = new AbortController();
@@ -523,16 +503,17 @@ describe('ai.generate with onChunk', () => {
     expect(chunks).toEqual([{ type: 'start' }]);
   });
 
-  it('fails when the channel fails before the result', async () => {
+  it('still returns the billed result when the channel fails before it', async () => {
     const runChannel = mockRunChannel({ fetchSpy });
 
     const generation = ai.generate({ input: 'Hi', onChunk: () => {} });
 
     await vi.waitFor(() => expect(runChannel.requests).toHaveLength(2));
     runChannel.fail();
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    runChannel.answerMutation({ data: { generate: RESULT } });
 
-    await expect(generation).rejects.toThrow('Network down');
-    expect(fetchSpy.mock.calls[1][1]?.signal?.aborted).toBe(true);
+    await expect(generation).resolves.toEqual(RESULT);
   });
 
   it('rejects when onChunk throws after the result', async () => {

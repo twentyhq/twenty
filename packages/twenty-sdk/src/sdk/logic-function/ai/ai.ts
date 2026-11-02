@@ -89,8 +89,32 @@ const isGenerateChunk = (
   chunk: Record<string, unknown>,
 ): chunk is GenerateChunk => isString(chunk.type);
 
-// Starts the run once its channel is live (the first keepalive). The channel is read no faster than onChunk
-// takes its chunks, and the grace after the result only counts time spent waiting for the next event
+// resolves undefined once the result is in and no event came for the grace, so a lost end event stops the wait
+const waitForQuietAfterResult = (generated: Promise<GenerateResult>) => {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  let isWaiting = true;
+  const quiet = new Promise<undefined>((resolve) => {
+    void generated.then(
+      () => {
+        if (isWaiting) {
+          timer = setTimeout(() => resolve(undefined), END_EVENT_GRACE_MS);
+        }
+      },
+      () => undefined,
+    );
+  });
+
+  return {
+    quiet,
+    stop: () => {
+      isWaiting = false;
+      clearTimeout(timer);
+    },
+  };
+};
+
+// Starts the run once its channel is live (the first keepalive), and reads the channel no faster than onChunk
+// takes its chunks. The run is billed whatever happens to the channel, so a failing channel only stops the reading
 const generateWithChunks = async ({
   variables,
   onChunk,
@@ -105,18 +129,13 @@ const generateWithChunks = async ({
   const runSignal = isDefined(signal)
     ? AbortSignal.any([signal, stopFollowing.signal])
     : stopFollowing.signal;
-  let removeAbortListener = () => {};
-  const callerAborted = new Promise<never>((_resolve, reject) => {
-    if (!isDefined(signal)) {
-      return;
-    }
-
-    const rejectWithReason = () => reject(signal.reason);
-
-    signal.addEventListener('abort', rejectWithReason, { once: true });
-    removeAbortListener = () =>
-      signal.removeEventListener('abort', rejectWithReason);
-  });
+  // settles the call on abort even while an onChunk is still running
+  const callerAborted = new Promise<never>((_resolve, reject) =>
+    signal?.addEventListener('abort', () => reject(signal.reason), {
+      once: true,
+      signal: stopFollowing.signal,
+    }),
+  );
 
   void callerAborted.catch(() => undefined);
 
@@ -136,90 +155,51 @@ const generateWithChunks = async ({
       throw new Error('ai.generate() failed: the stream ended before the run');
     }
 
-    let onChunkFailure: { error: unknown } | undefined;
-    let isDelivering = false;
-    let idleTimer: ReturnType<typeof setTimeout> | undefined;
-    let armIdleTimer: (() => void) | undefined;
-
-    const followed = (async () => {
-      for await (const event of events) {
-        clearTimeout(idleTimer);
-
-        if (signal?.aborted) {
-          return;
-        }
-
-        if (event.type === 'stream-chunk' && isGenerateChunk(event.chunk)) {
-          isDelivering = true;
-
-          try {
-            await onChunk(event.chunk);
-          } catch (error) {
-            onChunkFailure = { error };
-
-            throw error;
-          } finally {
-            isDelivering = false;
-          }
-        }
-
-        if (isAgentChatTurnEndEvent(event)) {
-          return;
-        }
-
-        armIdleTimer?.();
-      }
-    })();
-
-    // a failing channel only ends the reading, while a failing onChunk rejects the call
-    const followedUnlessChannelFailed = followed.catch((error: unknown) => {
-      if (isDefined(onChunkFailure)) {
-        throw error;
-      }
-    });
-
-    void followed.catch(() => undefined);
-    // the race on the result may settle first, so this rejection must not go unhandled
-    void followedUnlessChannelFailed.catch(() => undefined);
-
     const generated = requestGenerate({
       variables: { input: { ...variables.input, runId } },
       signal: runSignal,
     });
 
-    // a failing channel or onChunk rejects at once, while delivering every chunk still waits for the result
-    const result = await Promise.race([
-      generated,
-      followed.then(() => generated),
+    const deliverChunks = async () => {
+      try {
+        for (;;) {
+          const wait = waitForQuietAfterResult(generated);
+          const next = await Promise.race([events.next(), wait.quiet])
+            .catch(() => undefined)
+            .finally(wait.stop);
+
+          if (
+            !isDefined(next) ||
+            next.done ||
+            signal?.aborted ||
+            isAgentChatTurnEndEvent(next.value)
+          ) {
+            return;
+          }
+
+          if (
+            next.value.type === 'stream-chunk' &&
+            isGenerateChunk(next.value.chunk)
+          ) {
+            await onChunk(next.value.chunk);
+          }
+        }
+      } finally {
+        // a read left pending settles once following stops, so the channel closes without waiting on it
+        void events.return(undefined).catch(() => undefined);
+      }
+    };
+
+    const [result] = await Promise.race([
+      Promise.all([generated, deliverChunks()]),
+      callerAborted,
     ]);
 
-    // the result is final, so a lost end event only stops the wait for more chunks after a quiet grace
-    const runEnded = new Promise<void>((resolve, reject) => {
-      armIdleTimer = () => {
-        clearTimeout(idleTimer);
-
-        if (!isDelivering) {
-          idleTimer = setTimeout(resolve, END_EVENT_GRACE_MS);
-        }
-      };
-      armIdleTimer();
-      followedUnlessChannelFailed.then(() => resolve(), reject);
-    });
-
-    await Promise.race([runEnded, callerAborted]).finally(() =>
-      clearTimeout(idleTimer),
-    );
-
-    stopFollowing.abort();
-    // the caller's abort settles the call even while an onChunk is still running
-    await Promise.race([followedUnlessChannelFailed, callerAborted]);
-
-    // the reader ends quietly on abort, so an abort after the mutation returned would read as a full delivery
+    // the reader ends quietly on abort, so an abort after the result would read as a full delivery
     signal?.throwIfAborted();
 
     return result;
   } finally {
-    removeAbortListener();
     stopFollowing.abort();
   }
 };
