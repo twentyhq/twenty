@@ -344,7 +344,9 @@ describe('Connected account deletion runs the on-disconnect hook', () => {
 
     it('executes the hook before the tokens are wiped, revokes the token it left behind, and archives the account', async () => {
       await syncTestApplication({ withOnDisconnectHook: true });
-      await insertAppConnectedAccount({ userWorkspaceId: memberUserWorkspaceId });
+      await insertAppConnectedAccount({
+        userWorkspaceId: memberUserWorkspaceId,
+      });
       const [provider] = await findConnectionProvidersByApplication(appId);
 
       const { errors } = await deleteUserFromWorkspace({
