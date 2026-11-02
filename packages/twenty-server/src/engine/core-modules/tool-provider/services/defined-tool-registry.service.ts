@@ -19,16 +19,8 @@ import { buildToolNotAvailableOutput } from 'src/engine/core-modules/tool-provid
 import { isSnakeCaseToolName } from 'src/engine/core-modules/tool-provider/utils/is-snake-case-tool-name.util';
 import { humanizeToolName } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principal-variant.type';
 import { classifyWorkspaceAuthContext } from 'src/engine/guards/utils/classify-workspace-auth-context.util';
 import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
-
-const withoutAgent = (
-  authPrincipalVariant: AuthPrincipalVariant | undefined,
-): AuthPrincipalVariant | undefined =>
-  authPrincipalVariant?.kind === 'application'
-    ? { ...authPrincipalVariant, withAgent: false }
-    : authPrincipalVariant;
 
 @Injectable()
 export class DefinedToolRegistryService implements OnModuleInit {
@@ -162,11 +154,9 @@ export class DefinedToolRegistryService implements OnModuleInit {
   }): Promise<boolean> {
     return this.accessPolicyService.isToolAccessPolicySatisfied({
       accessPolicy,
-      authPrincipalVariant: withoutAgent(
-        isDefined(context.authContext)
-          ? classifyWorkspaceAuthContext(context.authContext)
-          : undefined,
-      ),
+      authPrincipalVariant: isDefined(context.authContext)
+        ? classifyWorkspaceAuthContext(context.authContext)
+        : undefined,
       authContext: context.authContext,
       featureFlagsMap,
     });

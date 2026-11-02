@@ -90,7 +90,10 @@ export class AccessPolicyService {
     featureFlagsMap: FeatureFlagMap;
   }): Promise<boolean> {
     if (
-      !this.isAuthPrincipalAccepted({ accessPolicy, authPrincipalVariant }) ||
+      !this.isAuthPrincipalAccepted({
+        accessPolicy,
+        authPrincipalVariant: this.withoutAgent(authPrincipalVariant),
+      }) ||
       isDefined(this.findDisabledFeatureFlag({ accessPolicy, featureFlagsMap }))
     ) {
       return false;
@@ -139,6 +142,14 @@ export class AccessPolicyService {
       applicationId: request.application?.id,
       agentId: request.agentId,
     });
+  }
+
+  private withoutAgent(
+    authPrincipalVariant: AuthPrincipalVariant | undefined,
+  ): AuthPrincipalVariant | undefined {
+    return authPrincipalVariant?.kind === 'application'
+      ? { ...authPrincipalVariant, withAgent: false }
+      : authPrincipalVariant;
   }
 
   private isAuthPrincipalAccepted({
