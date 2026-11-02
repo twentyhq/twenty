@@ -360,7 +360,7 @@ describe('Manifest sync - settings menu items', () => {
     await syncApplication({
       manifest: buildManifest([
         BILLING_SETTINGS_MENU_ITEM,
-        SYNC_SETTINGS_MENU_ITEM,
+        { ...SYNC_SETTINGS_MENU_ITEM, slug: 'sync' },
       ]),
       expectToFail: false,
     });
@@ -404,6 +404,7 @@ describe('Manifest sync - settings menu items', () => {
           icon: 'IconRefresh',
           position: 1,
           scope: 'WORKSPACE',
+          slug: 'sync',
         }),
         expect.objectContaining({
           universalIdentifier: BILLING_SETTINGS_MENU_ITEM_ID,
@@ -414,6 +415,7 @@ describe('Manifest sync - settings menu items', () => {
           icon: 'IconCreditCard',
           position: 2,
           scope: 'USER',
+          slug: null,
         }),
       ]),
     );
