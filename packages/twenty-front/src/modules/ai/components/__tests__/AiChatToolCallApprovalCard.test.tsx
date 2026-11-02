@@ -98,7 +98,7 @@ describe('AiChatToolCallApprovalCard', () => {
     refreshFrontComponents.mockReset();
     mockUsePreview
       .mockReset()
-      .mockReturnValue({ preview: { isCurrent: true } });
+      .mockReturnValue({ preview: { isCurrent: true }, isRendered: true });
     mockIsFeatureEnabled.mockReset().mockReturnValue(true);
   });
 
@@ -334,17 +334,34 @@ describe('AiChatToolCallApprovalCard', () => {
   );
 
   it.each([
-    { state: 'loading', preview: undefined, error: undefined },
-    { state: 'superseded', preview: { isCurrent: false }, error: undefined },
+    {
+      state: 'loading',
+      preview: undefined,
+      isRendered: false,
+      error: undefined,
+    },
+    {
+      state: 'rendering',
+      preview: { isCurrent: true },
+      isRendered: false,
+      error: undefined,
+    },
+    {
+      state: 'superseded',
+      preview: { isCurrent: false },
+      isRendered: true,
+      error: undefined,
+    },
     {
       state: 'failed',
       preview: { isCurrent: true },
+      isRendered: true,
       error: 'Could not load preview.',
     },
   ])(
     'blocks approval when the preview is $state',
-    async ({ preview, error }) => {
-      mockUsePreview.mockReturnValue({ preview, error });
+    async ({ preview, isRendered, error }) => {
+      mockUsePreview.mockReturnValue({ preview, isRendered, error });
       renderCard({
         proposal: {
           ...PROPOSAL,

@@ -1,6 +1,5 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useCallback, useState } from 'react';
 import { FrontComponentSourceRenderer } from 'twenty-front-component-renderer';
 import { PageLayoutType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -29,20 +28,25 @@ type AiChatFrontComponentPreviewContentProps = {
   draftId: string;
 } & Pick<
   ReturnType<typeof useAiChatFrontComponentPreview>,
-  'preview' | 'error' | 'loadPreview' | 'reportPreviewError'
+  | 'preview'
+  | 'error'
+  | 'isRendered'
+  | 'loadPreview'
+  | 'reportPreviewError'
+  | 'reportPreviewRendered'
 >;
 
 export const AiChatFrontComponentPreviewContent = ({
   draftId,
   preview,
   error,
+  isRendered,
   loadPreview,
   reportPreviewError,
+  reportPreviewRendered,
 }: AiChatFrontComponentPreviewContentProps) => {
   const { t } = useLingui();
   const colorScheme = useThemeColorScheme();
-  const [isReady, setIsReady] = useState(false);
-  const handleReady = useCallback(() => setIsReady(true), []);
 
   return (
     <StyledPreview>
@@ -75,13 +79,13 @@ export const AiChatFrontComponentPreviewContent = ({
               sharedDependenciesSource={preview.sharedDependenciesSource}
               mockQueryResult={preview.mockQueryResult}
               colorScheme={colorScheme}
-              onReady={handleReady}
+              onReady={reportPreviewRendered}
               onError={reportPreviewError}
             />
           </StyledContent>
         </>
       )}
-      {!isReady && !isDefined(error) && (
+      {!isRendered && !isDefined(error) && (
         <span role="status">
           {isDefined(preview) ? t`Rendering preview…` : t`Loading preview…`}
         </span>

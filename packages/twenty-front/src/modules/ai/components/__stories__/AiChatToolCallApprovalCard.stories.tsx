@@ -137,7 +137,9 @@ export const SupersededAfterRefresh: Story = {
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     await canvas.findByRole('button', { name: 'Count: 0' }, { timeout: 30000 });
-    await expect(canvas.getByRole('button', { name: 'Approve' })).toBeEnabled();
+    await waitFor(() =>
+      expect(canvas.getByRole('button', { name: 'Approve' })).toBeEnabled(),
+    );
     getWorker().use(
       http.get(`${REST_API_BASE_URL}/ai-front-components/drafts/:draftId`, () =>
         HttpResponse.json(getFrontComponentPreviewMock('superseded')),

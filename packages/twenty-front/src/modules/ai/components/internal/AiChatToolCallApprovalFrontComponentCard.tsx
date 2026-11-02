@@ -49,11 +49,18 @@ const AiChatToolCallApprovalFrontComponentContent = ({
   const draftId = isNonEmptyString(proposal.arguments.draftId)
     ? proposal.arguments.draftId
     : '';
-  const { preview, error, loadPreview, reportPreviewError } =
-    useAiChatFrontComponentPreview(draftId);
+  const {
+    preview,
+    error,
+    isRendered,
+    loadPreview,
+    reportPreviewError,
+    reportPreviewRendered,
+  } = useAiChatFrontComponentPreview(draftId);
   const { pendingResponse, isAnswering, approve, reject } = approval;
   const canLoadPreview = isEnabled && isNonEmptyString(draftId);
-  const canApprove = canLoadPreview && preview?.isCurrent && !isDefined(error);
+  const canApprove =
+    canLoadPreview && preview?.isCurrent && isRendered && !isDefined(error);
 
   return (
     <AiChatToolCallApprovalCardLayout
@@ -92,8 +99,10 @@ const AiChatToolCallApprovalFrontComponentContent = ({
           draftId={draftId}
           preview={preview}
           error={error}
+          isRendered={isRendered}
           loadPreview={loadPreview}
           reportPreviewError={reportPreviewError}
+          reportPreviewRendered={reportPreviewRendered}
         />
       ) : (
         <span role="alert">{t`Could not load preview.`}</span>

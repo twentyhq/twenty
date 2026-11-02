@@ -31,6 +31,7 @@ export const useAiChatFrontComponentPreview = (draftId: string) => {
   const [preview, setPreview] = useState<LoadedFrontComponentPreview>();
   const [loadingError, setLoadingError] = useState<string>();
   const [runtimeError, setRuntimeError] = useState<string>();
+  const [isRendered, setIsRendered] = useState(false);
   const endpoint = `${REST_API_BASE_URL}/ai-front-components/drafts/${encodeURIComponent(draftId)}`;
   const loadPreview = useCallback(
     async ({
@@ -139,10 +140,14 @@ export const useAiChatFrontComponentPreview = (draftId: string) => {
     [endpoint, t],
   );
 
+  const reportPreviewRendered = useCallback(() => setIsRendered(true), []);
+
   return {
     preview,
     error: runtimeError ?? loadingError,
+    isRendered,
     loadPreview,
     reportPreviewError,
+    reportPreviewRendered,
   };
 };
