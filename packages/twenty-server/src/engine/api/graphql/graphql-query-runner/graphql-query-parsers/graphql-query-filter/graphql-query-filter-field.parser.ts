@@ -20,7 +20,6 @@ import {
   GraphqlQueryRunnerExceptionCode,
 } from 'src/engine/api/graphql/graphql-query-runner/errors/graphql-query-runner.exception';
 import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/add-relation-join-alias.util';
-import { isOperationGrantedBeyondRole } from 'src/engine/permissions/record-share/utils/is-operation-granted-beyond-role.util';
 import { assertFieldIsReadableOrThrow } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/assert-field-is-readable-or-throw.util';
 import { resolveFilterKeyFieldMetadata } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/resolve-filter-key-field-metadata.util';
 import { assertArrayOperatorValueIsNonEmptyArray } from 'src/engine/api/graphql/graphql-query-runner/utils/assert-array-operator-value-is-non-empty-array.util';
@@ -107,28 +106,6 @@ export class GraphqlQueryFilterFieldParser {
 
     if (!isDefined(fieldMetadata)) {
       throw new Error(`Field metadata not found for field: ${key}`);
-    }
-
-    const objectPermissions =
-      outerQueryBuilder.objectRecordsPermissions[this.flatObjectMetadata.id];
-
-    // Filtering the queried object itself stays possible on records shared by
-    // name, while a filter through a relation still needs the object readable
-    if (
-      objectPermissions?.canReadObjectRecords === false &&
-      !(
-        this.depth === 0 &&
-        isOperationGrantedBeyondRole({
-          flatObjectMetadata: this.flatObjectMetadata,
-          featureFlagsMap: outerQueryBuilder.featureFlagsMap,
-          operationType: 'select',
-        })
-      )
-    ) {
-      throw new PermissionsException(
-        PermissionsExceptionMessage.PERMISSION_DENIED,
-        PermissionsExceptionCode.PERMISSION_DENIED,
-      );
     }
 
     assertFieldIsReadableOrThrow({

@@ -45,6 +45,7 @@ import {
 } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { computePermissionIntersection } from 'src/engine/permissions/role/utils/compute-permission-intersection.util';
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/permissions/rls/utils/is-record-matching-rls-row-level-permission-predicate.util';
+import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
 import { buildUserRoleIdsBySource } from 'src/engine/permissions/principal/utils/build-user-role-ids-by-source.util';
 import { getRoleIdsToIntersect } from 'src/engine/permissions/principal/utils/get-role-ids-to-intersect.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -204,16 +205,15 @@ export class ObjectRecordEventPublisher {
       }),
     };
 
+    const principal: PermissionsPrincipal = {
+      workspaceId: workspaceEventBatch.workspaceId,
+      intersectionOf: rolePermissionConfig.intersectionOf,
+      workspaceMember: isDefined(subscriberAuthContext.workspaceMemberId)
+        ? flatWorkspaceMemberMaps.byId[subscriberAuthContext.workspaceMemberId]
+        : undefined,
+    };
     const admittedRecordIds =
-      await eventRecordAccessGate.resolveAdmittedRecordIds({
-        workspaceId: workspaceEventBatch.workspaceId,
-        intersectionOf: rolePermissionConfig.intersectionOf,
-        workspaceMember: isDefined(subscriberAuthContext.workspaceMemberId)
-          ? flatWorkspaceMemberMaps.byId[
-              subscriberAuthContext.workspaceMemberId
-            ]
-          : undefined,
-      });
+      await eventRecordAccessGate.resolveAdmittedRecordIds(principal);
 
     if (admittedRecordIds.size === 0) {
       return;
@@ -278,6 +278,7 @@ export class ObjectRecordEventPublisher {
           streamData,
           workspaceId: workspaceEventBatch.workspaceId,
           rolePermissionConfig,
+          principal,
           objectsPermissions,
         });
       } catch (error) {
@@ -308,6 +309,7 @@ export class ObjectRecordEventPublisher {
     events,
     workspaceId,
     rolePermissionConfig,
+    principal,
     objectsPermissions,
   }: {
     streamData: EventStreamData;
@@ -315,6 +317,7 @@ export class ObjectRecordEventPublisher {
     events: ObjectRecordEvent[];
     workspaceId: string;
     rolePermissionConfig: RolePermissionConfig;
+    principal: PermissionsPrincipal;
     objectsPermissions: ObjectsPermissions;
   }) {
     const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
@@ -346,6 +349,12 @@ export class ObjectRecordEventPublisher {
     }
 
     const { selectedFields } = this.commonSelectFieldsBuilder.buildFromDepth({
+      readableObjectMetadataIds:
+        await this.commonSelectFieldsBuilder.findReadableObjectMetadataIds({
+          principal,
+          objectsPermissions,
+          flatObjectMetadataMaps,
+        }),
       depth: 1,
       flatObjectMetadata: objectMetadata,
       flatObjectMetadataMaps,

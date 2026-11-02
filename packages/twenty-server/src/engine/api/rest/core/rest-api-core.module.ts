@@ -28,6 +28,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 
 const restApiCoreResolvers = [
   RestApiCreateOneHandler,
@@ -50,6 +51,7 @@ const restApiCoreResolvers = [
 
 @Module({
   imports: [
+    RecordShareModule,
     WorkspaceCacheStorageModule,
     AuthModule,
     ApiKeyModule,

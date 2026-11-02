@@ -35,7 +35,7 @@ type RelationsSelectFlatFieldMetadata = FieldSelectionFlatFieldMetadata &
 
 type RelationsSelectObjectsPermissions = Record<
   string,
-  Pick<ObjectPermissions, 'canReadObjectRecords' | 'restrictedFields'>
+  Pick<ObjectPermissions, 'restrictedFields'>
 >;
 
 export const buildRelationSelectionFromDepth = ({
@@ -44,6 +44,7 @@ export const buildRelationSelectionFromDepth = ({
   flatObjectMetadata,
   flatFields,
   objectsPermissions,
+  readableObjectMetadataIds,
   depth,
   onlyUseLabelIdentifierFieldsInRelations = false,
   currentDepthLevelIsAJunctionTable = false,
@@ -54,6 +55,7 @@ export const buildRelationSelectionFromDepth = ({
   flatObjectMetadata: RelationsSelectFlatObjectMetadata;
   flatFields: readonly RelationsSelectFlatFieldMetadata[];
   objectsPermissions: RelationsSelectObjectsPermissions;
+  readableObjectMetadataIds: ReadonlySet<string>;
   depth: SelectionDepth | undefined;
   onlyUseLabelIdentifierFieldsInRelations?: boolean;
   currentDepthLevelIsAJunctionTable?: boolean;
@@ -98,9 +100,7 @@ export const buildRelationSelectionFromDepth = ({
         flatEntityId: flatField.relationTargetObjectMetadataId,
       });
 
-    if (
-      !objectsPermissions[relationTargetObjectMetadata.id]?.canReadObjectRecords
-    ) {
+    if (!readableObjectMetadataIds.has(relationTargetObjectMetadata.id)) {
       continue;
     }
 
@@ -115,7 +115,8 @@ export const buildRelationSelectionFromDepth = ({
 
     const relationFieldSelectFields = buildFieldSelection({
       restrictedFields:
-        objectsPermissions[relationTargetObjectMetadata.id].restrictedFields,
+        objectsPermissions[relationTargetObjectMetadata.id]?.restrictedFields ??
+        {},
       flatObjectMetadata: relationTargetObjectMetadata,
       flatFields: relationFlatFields,
       onlyUseLabelIdentifierFieldsInRelations,
@@ -142,6 +143,7 @@ export const buildRelationSelectionFromDepth = ({
         flatObjectMetadata: relationTargetObjectMetadata,
         flatFields: relationFlatFields,
         objectsPermissions,
+        readableObjectMetadataIds,
         depth: 1,
         onlyUseLabelIdentifierFieldsInRelations,
         currentDepthLevelIsAJunctionTable: nextLevelIsAJunctionTable,
