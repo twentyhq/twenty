@@ -91,6 +91,7 @@ describe('getBillingArrangementValidationErrors', () => {
     ).toEqual([
       { code: 'MISSING_SETTING', setting: 'seats' },
       { code: 'MISSING_SETTING', setting: 'seatCapMode' },
+      { code: 'MISSING_SETTING', setting: 'endsAt' },
     ]);
   });
 
