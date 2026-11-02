@@ -13,6 +13,7 @@ import {
   CALL_RECORDER_JOIN_EARLY_MINUTES_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
   CALL_RECORDER_NAME_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
   CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+  CALL_RECORDER_RECORD_MY_MEETINGS_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
   CALL_RECORDER_RECORDING_NOTICE_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
   CALL_RECORDER_RECORDING_NOTICE_MESSAGE_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
   CALL_RECORDER_SUMMARY_ENABLED_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
@@ -28,6 +29,7 @@ import { CALL_RECORDER_JOIN_EARLY_MINUTES_ENV_VAR_NAME } from 'src/logic-functio
 import { CALL_RECORDER_NAME_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-name-env-var-name';
 import { CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS } from 'src/logic-functions/constants/call-recorder-noone-joined-timeout-seconds';
 import { CALL_RECORDER_NOONE_JOINED_TIMEOUT_SECONDS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-noone-joined-timeout-seconds-env-var-name';
+import { CALL_RECORDER_RECORD_MY_MEETINGS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-record-my-meetings-env-var-name';
 import { CALL_RECORDER_RECORDING_NOTICE_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-notice-enabled-env-var-name';
 import { CALL_RECORDER_RECORDING_NOTICE_MAX_LENGTH } from 'src/logic-functions/constants/call-recorder-recording-notice-max-length';
 import { CALL_RECORDER_RECORDING_NOTICE_MESSAGE_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-recording-notice-message-env-var-name';
@@ -42,6 +44,7 @@ import { DEFAULT_CALL_RECORDER_BOT_IMAGE_BACKGROUND } from 'src/logic-functions/
 import { DEFAULT_CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED } from 'src/logic-functions/constants/default-call-recorder-calendar-bot-scheduling-enabled';
 import { DEFAULT_CALL_RECORDER_JOIN_EARLY_MINUTES } from 'src/logic-functions/constants/default-call-recorder-join-early-minutes';
 import { DEFAULT_CALL_RECORDER_NAME } from 'src/logic-functions/constants/default-call-recorder-name';
+import { DEFAULT_CALL_RECORDER_RECORD_MY_MEETINGS } from 'src/logic-functions/constants/default-call-recorder-record-my-meetings';
 import { DEFAULT_CALL_RECORDER_RECORDING_NOTICE_ENABLED } from 'src/logic-functions/constants/default-call-recorder-recording-notice-enabled';
 import { DEFAULT_CALL_RECORDER_RECORDING_NOTICE_MESSAGE } from 'src/logic-functions/constants/default-call-recorder-recording-notice-message';
 import { DEFAULT_CALL_RECORDER_RECORDING_RETENTION_HOURS } from 'src/logic-functions/constants/default-call-recorder-recording-retention-hours';
@@ -81,6 +84,17 @@ export default defineApplication({
       isSecret: false,
       type: FieldType.BOOLEAN,
       value: DEFAULT_CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED,
+    },
+    [CALL_RECORDER_RECORD_MY_MEETINGS_ENV_VAR_NAME]: {
+      universalIdentifier:
+        CALL_RECORDER_RECORD_MY_MEETINGS_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
+      label: 'Record my meetings',
+      description:
+        'Whether the recorder joins the meetings you attend. Set to false to stop recording them; a meeting is still recorded when another attendee keeps this on.',
+      isSecret: false,
+      type: FieldType.BOOLEAN,
+      scope: 'USER',
+      value: DEFAULT_CALL_RECORDER_RECORD_MY_MEETINGS,
     },
     [CALL_RECORDER_NAME_ENV_VAR_NAME]: {
       universalIdentifier: CALL_RECORDER_NAME_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
