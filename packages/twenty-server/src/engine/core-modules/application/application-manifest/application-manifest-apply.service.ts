@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { type Manifest, type GrantObjectAccess } from 'twenty-shared/application';
+import {
+  type Manifest,
+  type GrantObjectAccess,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationGrantService } from 'src/engine/core-modules/application/application-grant/services/application-grant.service';

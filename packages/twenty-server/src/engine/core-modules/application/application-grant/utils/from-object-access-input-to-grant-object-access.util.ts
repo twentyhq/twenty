@@ -13,7 +13,10 @@ export const fromObjectAccessInputToGrantObjectAccess = ({
   flatObjectMetadataMaps,
 }: {
   objectAccess: ApplicationGrantObjectAccessInput;
-  flatObjectMetadataMaps: Pick<FlatObjectMetadataMaps, 'universalIdentifierById'>;
+  flatObjectMetadataMaps: Pick<
+    FlatObjectMetadataMaps,
+    'universalIdentifierById'
+  >;
 }): GrantObjectAccess => {
   const findObjectUniversalIdentifier = (objectMetadataId: string) => {
     const universalIdentifier =
@@ -37,8 +40,10 @@ export const fromObjectAccessInputToGrantObjectAccess = ({
       : null,
     addedObjects: objectAccess.addedObjects.map(
       ({ objectMetadataId, accessLevel }) => ({
-        objectUniversalIdentifier: findObjectUniversalIdentifier(objectMetadataId),
-        accessLevel: accessLevel as GrantObjectAccess['addedObjects'][number]['accessLevel'],
+        objectUniversalIdentifier:
+          findObjectUniversalIdentifier(objectMetadataId),
+        accessLevel:
+          accessLevel as GrantObjectAccess['addedObjects'][number]['accessLevel'],
       }),
     ),
   };

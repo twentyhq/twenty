@@ -101,9 +101,9 @@ const StyledPermissionsTitle = styled.div`
   align-items: center;
   color: ${themeCssVariables.font.color.primary};
   display: flex;
-  justify-content: space-between;
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
+  justify-content: space-between;
   margin-bottom: ${themeCssVariables.spacing[3]};
 `;
 

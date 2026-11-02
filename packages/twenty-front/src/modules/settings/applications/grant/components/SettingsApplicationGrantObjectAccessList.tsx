@@ -209,7 +209,7 @@ export const SettingsApplicationGrantObjectAccessList = ({
         <StyledRow isNested>
           <Select<string | null>
             dropdownId="application-grant-choose-object"
-                fullWidth
+            fullWidth
             dropdownWidthAuto
             withSearchInput
             value={null}
@@ -297,7 +297,7 @@ export const SettingsApplicationGrantObjectAccessList = ({
           <StyledName>
             <Select<string | null>
               dropdownId="application-grant-add-object"
-                fullWidth
+              fullWidth
               dropdownWidthAuto
               withSearchInput
               value={objectMetadataIdToAdd}
