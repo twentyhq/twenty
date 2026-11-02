@@ -23,6 +23,7 @@ export class MessagingCleanCacheJob {
       `messages-to-import:${data.workspaceId}:${data.messageChannelId}`,
       `messages-to-import-total:${data.workspaceId}:${data.messageChannelId}`,
       `messages-imported:${data.workspaceId}:${data.messageChannelId}`,
+      `messages-to-refresh:${data.workspaceId}:${data.messageChannelId}`,
     ]);
   }
 }

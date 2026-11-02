@@ -67,6 +67,7 @@ export class MessagingMessageService {
     workspaceId: string;
   }): Promise<{
     createdMessages: Partial<MessageWorkspaceEntity>[];
+    sentDraftMessageExternalIds: string[];
     messageExternalIdsAndIdsMap: Map<string, string>;
     messageExternalIdToMessageChannelMessageAssociationIdMap: Map<
       string,
@@ -76,6 +77,7 @@ export class MessagingMessageService {
   }> {
     const authContext = buildSystemAuthContext(workspaceId);
     const messageExternalIdsToRefreshSet = new Set(messageExternalIdsToRefresh);
+    const sentDraftMessageExternalIds: string[] = [];
 
     return this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
@@ -206,8 +208,16 @@ export class MessagingMessageService {
 
           if (
             isDefined(existingAssociation) &&
+            existingAssociation.messageExternalId === message.externalId &&
             messageExternalIdsToRefreshSet.has(message.externalId)
           ) {
+            if (
+              messageAccumulator.existingMessageInDB?.isDraft === true &&
+              !message.isDraft
+            ) {
+              sentDraftMessageExternalIds.push(message.externalId);
+            }
+
             messageAccumulator.messageToRefresh = {
               id: newOrExistingMessageId,
               subject: message.subject,
@@ -368,6 +378,7 @@ export class MessagingMessageService {
 
         return {
           createdMessages: messagesToCreate,
+          sentDraftMessageExternalIds,
           messageExternalIdsAndIdsMap,
           messageExternalIdToMessageChannelMessageAssociationIdMap,
           messageExternalIdToMessageThreadIdMap,
