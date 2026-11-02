@@ -302,13 +302,13 @@ describe('OAuth well-known clients (integration)', () => {
     });
 
     it('should show the registration logo on its install, which has no bundle of its own', async () => {
-      const [{ logo: previousLogo }] = await ds.query(
+      const [{ logo: previousLogo }] = await dataSource.query(
         `SELECT logo FROM core."applicationRegistration" WHERE "universalIdentifier" = $1`,
         [WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE],
       );
       const logoUrl = 'https://claude.ai/logo.png';
 
-      await ds.query(
+      await dataSource.query(
         `UPDATE core."applicationRegistration" SET logo = $1 WHERE "universalIdentifier" = $2`,
         [logoUrl, WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE],
       );
@@ -336,7 +336,7 @@ describe('OAuth well-known clients (integration)', () => {
 
         expect(claudeApplication.logoUrl).toBe(logoUrl);
       } finally {
-        await ds.query(
+        await dataSource.query(
           `UPDATE core."applicationRegistration" SET logo = $1 WHERE "universalIdentifier" = $2`,
           [previousLogo, WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE],
         );
