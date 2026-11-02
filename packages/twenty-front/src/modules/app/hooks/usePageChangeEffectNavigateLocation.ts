@@ -6,6 +6,7 @@ import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { returnToPathState } from '@/auth/states/returnToPathState';
 import { billingState } from '@/client-config/states/billingState';
 import { useIsCurrentLocationOnAWorkspace } from '@/domain-manager/hooks/useIsCurrentLocationOnAWorkspace';
+import { useShouldOpenGettingStarted } from '@/getting-started/hooks/useShouldOpenGettingStarted';
 import { isMinimalMetadataReadyState } from '@/metadata-store/states/isMinimalMetadataReadyState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
@@ -43,6 +44,14 @@ export const usePageChangeEffectNavigateLocation = () => {
   );
   const { defaultHomePagePath } = useDefaultHomePagePath();
   const location = useLocation();
+  const { shouldOpenGettingStarted, isLoading: isGettingStartedLoading } =
+    useShouldOpenGettingStarted({
+      isEnabled:
+        isLogged &&
+        isOnAWorkspace &&
+        onboardingStatus === OnboardingStatus.COMPLETED &&
+        !isWorkspaceSuspended,
+    });
   const billing = useAtomStateValue(billingState);
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
 
@@ -80,6 +89,11 @@ export const usePageChangeEffectNavigateLocation = () => {
   const resolvedReturnToPath = isNonEmptyString(returnToPath)
     ? returnToPath
     : readReturnToPathFromUrlSearchParams();
+  const homePath = shouldOpenGettingStarted
+    ? AppPath.GettingStarted
+    : defaultHomePagePath;
+  const landingPath =
+    resolvedReturnToPath ?? (isGettingStartedLoading ? undefined : homePath);
 
   const isOnboardingCheckoutPending = useAtomStateValue(
     isOnboardingCheckoutPendingState,
@@ -189,11 +203,11 @@ export const usePageChangeEffectNavigateLocation = () => {
       return;
     }
 
-    return resolvedReturnToPath ?? defaultHomePagePath;
+    return landingPath;
   }
 
   if (isMatchingLocation(location, AppPath.Index) && isLogged) {
-    return resolvedReturnToPath ?? defaultHomePagePath;
+    return landingPath;
   }
 
   if (isMatchingLocation(location, AppPath.Dpa)) {
