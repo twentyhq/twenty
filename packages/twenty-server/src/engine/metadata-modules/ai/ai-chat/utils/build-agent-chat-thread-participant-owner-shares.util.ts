@@ -7,7 +7,6 @@ import {
 import { type AgentChatThreadParticipantRow } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-chat-thread-participant-row.type';
 import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
 
-// A participant row is one member's private inbox state, so only its member is granted it
 export const buildAgentChatThreadParticipantOwnerShares = ({
   participants,
   objectMetadataId,
