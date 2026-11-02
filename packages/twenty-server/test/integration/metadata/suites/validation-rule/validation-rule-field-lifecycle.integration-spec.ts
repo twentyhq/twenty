@@ -17,6 +17,8 @@ import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FeatureFlagKey, FieldMetadataType } from 'twenty-shared/types';
 
+import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+
 const OBJECT_NAME_SINGULAR = 'validationRuleLifecycleGadget';
 
 describe('Validation rules should follow the fields they read', () => {
@@ -157,8 +159,10 @@ describe('Validation rules should follow the fields they read', () => {
         `SELECT field.id, field."objectMetadataId"
          FROM core."fieldMetadata" field
          JOIN core."objectMetadata" object ON object.id = field."objectMetadataId"
-         WHERE object."universalIdentifier" = $1 AND field.name = 'employees'`,
-        [STANDARD_OBJECTS.company.universalIdentifier],
+         WHERE object."universalIdentifier" = $1
+           AND object."workspaceId" = $2
+           AND field.name = 'employees'`,
+        [STANDARD_OBJECTS.company.universalIdentifier, SEED_APPLE_WORKSPACE_ID],
       );
     const { id: standardFieldId, objectMetadataId: companyObjectMetadataId } =
       rows[0];

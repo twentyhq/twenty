@@ -119,9 +119,10 @@ export const SettingsObjectFieldEdit = () => {
       fieldMetadataItem.name === newNameDuringSave,
   );
 
-  const { validationRules } = useValidationRules({
-    objectMetadataId: objectMetadataItem?.id ?? '',
-  });
+  const { validationRules, loading: isLoadingValidationRules } =
+    useValidationRules({
+      objectMetadataId: objectMetadataItem?.id ?? '',
+    });
   const validationRulesReadingField = getActiveValidationRulesReadingField({
     validationRules,
     fieldName: fieldMetadataItem?.name ?? '',
@@ -463,6 +464,9 @@ export const SettingsObjectFieldEdit = () => {
                       )
                     }
                     size="sm"
+                    disabled={
+                      fieldMetadataItem.isActive && isLoadingValidationRules
+                    }
                     onClick={
                       fieldMetadataItem.isActive
                         ? handleDeactivate
