@@ -22495,11 +22495,6 @@ msgstr "레코드 변경 사항"
 msgid "Record changes and app logs are available on your current plan. Other log types require an Organization subscription."
 msgstr "현재 플랜에서는 레코드 변경 사항과 앱 로그를 사용할 수 있습니다. 다른 로그 유형에는 Organization 구독이 필요합니다."
 
-#. js-lingui-id: zod7Md
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record creation form"
-msgstr "레코드 생성 양식"
-
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
 msgid "Record creation stopped. {formattedCreatedRecordsCount} records created."
@@ -30147,11 +30142,6 @@ msgstr "사용 기간"
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "Use ‘{trimmedSidePanelSearch}’ with..."
 msgstr "‘{trimmedSidePanelSearch}’을(를) 다음과 함께 사용..."
-
-#. js-lingui-id: 4fO7a3
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Use a dedicated form when creating records, and enable validation rules."
-msgstr "레코드를 생성할 때 전용 양식을 사용하고 유효성 검사 규칙을 활성화합니다."
 
 #. js-lingui-id: bmkeQS
 #: src/pages/auth/SignInUp.tsx

@@ -22495,11 +22495,6 @@ msgstr "Modifiche ai record"
 msgid "Record changes and app logs are available on your current plan. Other log types require an Organization subscription."
 msgstr "Le modifiche ai record e i log dell'applicazione sono disponibili nel tuo piano attuale. Gli altri tipi di log richiedono un abbonamento Organization."
 
-#. js-lingui-id: zod7Md
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record creation form"
-msgstr "Modulo di creazione dei record"
-
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
 msgid "Record creation stopped. {formattedCreatedRecordsCount} records created."
@@ -30149,11 +30144,6 @@ msgstr "Periodo di utilizzo"
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "Use ‘{trimmedSidePanelSearch}’ with..."
 msgstr "Usa ‘{trimmedSidePanelSearch}’ con..."
-
-#. js-lingui-id: 4fO7a3
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Use a dedicated form when creating records, and enable validation rules."
-msgstr "Usa un modulo dedicato durante la creazione dei record e abilita le regole di convalida."
 
 #. js-lingui-id: bmkeQS
 #: src/pages/auth/SignInUp.tsx

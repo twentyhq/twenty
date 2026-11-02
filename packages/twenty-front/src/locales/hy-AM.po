@@ -22495,11 +22495,6 @@ msgstr "Գրառումների փոփոխություններ"
 msgid "Record changes and app logs are available on your current plan. Other log types require an Organization subscription."
 msgstr "Գրառումների փոփոխությունները և հավելվածի մատյանները հասանելի են ձեր ընթացիկ փաթեթում։ Մատյանների այլ տեսակների համար անհրաժեշտ է Organization բաժանորդագրություն։"
 
-#. js-lingui-id: zod7Md
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record creation form"
-msgstr "Գրառման ստեղծման ձև"
-
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
 msgid "Record creation stopped. {formattedCreatedRecordsCount} records created."
@@ -30147,11 +30142,6 @@ msgstr "Օգտագործման շրջանը"
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "Use ‘{trimmedSidePanelSearch}’ with..."
 msgstr "Օգտագործել «{trimmedSidePanelSearch}»-ը՝..."
-
-#. js-lingui-id: 4fO7a3
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Use a dedicated form when creating records, and enable validation rules."
-msgstr "Գրառումներ ստեղծելիս օգտագործեք առանձին ձև և միացրեք վավերացման կանոնները։"
 
 #. js-lingui-id: bmkeQS
 #: src/pages/auth/SignInUp.tsx

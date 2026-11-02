@@ -22495,11 +22495,6 @@ msgstr "Kayıt değişiklikleri"
 msgid "Record changes and app logs are available on your current plan. Other log types require an Organization subscription."
 msgstr "Kayıt değişiklikleri ve uygulama günlükleri mevcut planınızda kullanılabilir. Diğer günlük türleri için bir Organizasyon aboneliği gerekir."
 
-#. js-lingui-id: zod7Md
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record creation form"
-msgstr "Kayıt oluşturma formu"
-
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
 msgid "Record creation stopped. {formattedCreatedRecordsCount} records created."
@@ -30147,11 +30142,6 @@ msgstr "Kullanım dönemi"
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "Use ‘{trimmedSidePanelSearch}’ with..."
 msgstr "‘{trimmedSidePanelSearch}’ ile kullan..."
-
-#. js-lingui-id: 4fO7a3
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Use a dedicated form when creating records, and enable validation rules."
-msgstr "Kayıt oluştururken özel bir form kullanın ve doğrulama kurallarını etkinleştirin."
 
 #. js-lingui-id: bmkeQS
 #: src/pages/auth/SignInUp.tsx

@@ -22495,11 +22495,6 @@ msgstr "Modificări ale înregistrărilor"
 msgid "Record changes and app logs are available on your current plan. Other log types require an Organization subscription."
 msgstr "Modificările înregistrărilor și jurnalele de aplicație sunt disponibile în planul dvs. actual. Alte tipuri de jurnale necesită un abonament Organization."
 
-#. js-lingui-id: zod7Md
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record creation form"
-msgstr "Formular de creare a înregistrărilor"
-
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
 msgid "Record creation stopped. {formattedCreatedRecordsCount} records created."
@@ -30147,11 +30142,6 @@ msgstr "Perioadă de utilizare"
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "Use ‘{trimmedSidePanelSearch}’ with..."
 msgstr "Folosește ‘{trimmedSidePanelSearch}’ cu..."
-
-#. js-lingui-id: 4fO7a3
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Use a dedicated form when creating records, and enable validation rules."
-msgstr "Utilizați un formular dedicat la crearea înregistrărilor și activați regulile de validare."
 
 #. js-lingui-id: bmkeQS
 #: src/pages/auth/SignInUp.tsx

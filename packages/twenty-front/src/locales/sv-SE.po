@@ -22497,11 +22497,6 @@ msgstr "Poständringar"
 msgid "Record changes and app logs are available on your current plan. Other log types require an Organization subscription."
 msgstr "Poständringar och apploggar är tillgängliga i din nuvarande plan. Andra loggtyper kräver ett Organization-abonnemang."
 
-#. js-lingui-id: zod7Md
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record creation form"
-msgstr "Formulär för att skapa poster"
-
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
 msgid "Record creation stopped. {formattedCreatedRecordsCount} records created."
@@ -30155,11 +30150,6 @@ msgstr "Användningsperiod"
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "Use ‘{trimmedSidePanelSearch}’ with..."
 msgstr "Använd ‘{trimmedSidePanelSearch}’ med..."
-
-#. js-lingui-id: 4fO7a3
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Use a dedicated form when creating records, and enable validation rules."
-msgstr "Använd ett särskilt formulär när du skapar poster och aktivera valideringsregler."
 
 #. js-lingui-id: bmkeQS
 #: src/pages/auth/SignInUp.tsx

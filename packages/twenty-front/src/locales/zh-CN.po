@@ -22495,11 +22495,6 @@ msgstr "记录更改"
 msgid "Record changes and app logs are available on your current plan. Other log types require an Organization subscription."
 msgstr "您当前的方案可使用记录更改和应用日志。其他日志类型需要组织订阅。"
 
-#. js-lingui-id: zod7Md
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record creation form"
-msgstr "记录创建表单"
-
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
 msgid "Record creation stopped. {formattedCreatedRecordsCount} records created."
@@ -30147,11 +30142,6 @@ msgstr "使用周期"
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "Use ‘{trimmedSidePanelSearch}’ with..."
 msgstr "将‘{trimmedSidePanelSearch}’与...一起使用"
-
-#. js-lingui-id: 4fO7a3
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Use a dedicated form when creating records, and enable validation rules."
-msgstr "创建记录时使用专用表单，并启用验证规则。"
 
 #. js-lingui-id: bmkeQS
 #: src/pages/auth/SignInUp.tsx

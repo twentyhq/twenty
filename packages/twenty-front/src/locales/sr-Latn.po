@@ -22495,11 +22495,6 @@ msgstr "Izmene zapisa"
 msgid "Record changes and app logs are available on your current plan. Other log types require an Organization subscription."
 msgstr "Izmene zapisa i dnevnici aplikacije dostupni su u vašem trenutnom paketu. Za druge tipove dnevnika potrebna je pretplata na Organizaciju."
 
-#. js-lingui-id: zod7Md
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Record creation form"
-msgstr "Obrazac za kreiranje zapisa"
-
 #. js-lingui-id: 2CUci6
 #: src/modules/object-record/hooks/useBatchCreateManyRecords.ts
 msgid "Record creation stopped. {formattedCreatedRecordsCount} records created."
@@ -30147,11 +30142,6 @@ msgstr "Period korišćenja"
 #: src/modules/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage.tsx
 msgid "Use ‘{trimmedSidePanelSearch}’ with..."
 msgstr "Koristi ‘{trimmedSidePanelSearch}’ sa..."
-
-#. js-lingui-id: 4fO7a3
-#: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
-msgid "Use a dedicated form when creating records, and enable validation rules."
-msgstr "Koristite namenski obrazac pri kreiranju zapisa i omogućite pravila validacije."
 
 #. js-lingui-id: bmkeQS
 #: src/pages/auth/SignInUp.tsx
