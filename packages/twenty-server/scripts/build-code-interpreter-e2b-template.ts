@@ -11,13 +11,13 @@ const template = Template()
     'libreoffice-writer',
   ])
   .pipInstall([
-    'pdf2image',
-    'pdfplumber',
-    'pymupdf',
-    'pypdf',
-    'PyPDF2',
-    'python-pptx',
-    'reportlab',
+    'pdf2image==1.17.0',
+    'pdfplumber==0.11.10',
+    'pymupdf==2.0',
+    'pypdf==6.21.4',
+    'PyPDF2==3.0.1',
+    'python-pptx==1.0.2',
+    'reportlab==5.1.0',
   ]);
 
 const main = async (): Promise<void> => {
