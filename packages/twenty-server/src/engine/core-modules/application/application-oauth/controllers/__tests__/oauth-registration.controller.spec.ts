@@ -3,11 +3,10 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { type Request, type Response } from 'express';
 
+import { ApplicationOAuthIdentityService } from 'src/engine/core-modules/application/application-oauth-identity/services/application-oauth-identity.service';
 import { OAuthRegistrationController } from 'src/engine/core-modules/application/application-oauth/controllers/oauth-registration.controller';
 import { type OAuthRegisterInput } from 'src/engine/core-modules/application/application-oauth/dtos/oauth-register.input';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import { WellKnownOAuthClient } from 'src/engine/core-modules/application/well-known-oauth-client/enums/well-known-oauth-client.enum';
-import { WellKnownOAuthClientRegistrationService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-registration.service';
 import { HttpExceptionHandlerService } from 'src/engine/core-modules/exception-handler/http-exception-handler.service';
 import {
   ThrottlerException,
@@ -23,7 +22,7 @@ describe('OAuthRegistrationController', () => {
     create: jest.Mock;
     save: jest.Mock;
   };
-  let findOrCreateRegistration: jest.Mock;
+  let findRegistrationByRedirectUris: jest.Mock;
   let tokenBucketThrottleOrThrow: jest.Mock;
 
   const request = {
@@ -52,12 +51,19 @@ describe('OAuthRegistrationController', () => {
       })),
     };
     tokenBucketThrottleOrThrow = jest.fn();
-    findOrCreateRegistration = jest.fn().mockResolvedValue({
-      oAuthClientId: 'seeded-claude-client-id',
-      name: 'Claude',
-      oAuthScopes: ['api', 'profile'],
-      createdAt: new Date('2026-01-01T00:00:00.000Z'),
-    });
+    findRegistrationByRedirectUris = jest.fn(async (redirectUris: string[]) =>
+      redirectUris.every(
+        (redirectUri) =>
+          redirectUri === 'https://claude.ai/api/mcp/auth_callback',
+      )
+        ? {
+            oAuthClientId: 'claude-app-client-id',
+            name: 'Claude',
+            oAuthScopes: ['api', 'profile'],
+            createdAt: new Date('2026-01-01T00:00:00.000Z'),
+          }
+        : null,
+    );
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [OAuthRegistrationController],
@@ -71,8 +77,8 @@ describe('OAuthRegistrationController', () => {
           useValue: { tokenBucketThrottleOrThrow },
         },
         {
-          provide: WellKnownOAuthClientRegistrationService,
-          useValue: { findOrCreateRegistration },
+          provide: ApplicationOAuthIdentityService,
+          useValue: { findRegistrationByRedirectUris },
         },
         {
           provide: TwentyConfigService,
@@ -85,18 +91,15 @@ describe('OAuthRegistrationController', () => {
     controller = module.get(OAuthRegistrationController);
   });
 
-  it('answers a well-known client with its seeded registration', async () => {
+  it("answers a client whose callbacks are an app's OAuth identity with that app's registration", async () => {
     const response = await controller.register(
       buildBody(['https://claude.ai/api/mcp/auth_callback']),
       request,
       buildResponse(),
     );
 
-    expect(findOrCreateRegistration).toHaveBeenCalledWith(
-      expect.objectContaining({ client: WellKnownOAuthClient.CLAUDE }),
-    );
     expect(response).toMatchObject({
-      client_id: 'seeded-claude-client-id',
+      client_id: 'claude-app-client-id',
       client_name: 'Claude',
       redirect_uris: ['https://claude.ai/api/mcp/auth_callback'],
     });
@@ -110,11 +113,10 @@ describe('OAuthRegistrationController', () => {
       buildResponse(),
     );
 
-    expect(findOrCreateRegistration).not.toHaveBeenCalled();
     expect(applicationRegistrationRepository.save).toHaveBeenCalledTimes(1);
     expect(response).toMatchObject({ client_name: 'Claude' });
     expect(response).not.toMatchObject({
-      client_id: 'seeded-claude-client-id',
+      client_id: 'claude-app-client-id',
     });
   });
 
@@ -132,7 +134,7 @@ describe('OAuthRegistrationController', () => {
         request,
         buildResponse(),
       ),
-    ).resolves.toMatchObject({ client_id: 'seeded-claude-client-id' });
+    ).resolves.toMatchObject({ client_id: 'claude-app-client-id' });
 
     const response = buildResponse();
 
@@ -159,7 +161,6 @@ describe('OAuthRegistrationController', () => {
       ),
     ).resolves.toMatchObject({ error: 'not_found' });
     expect(response.status).toHaveBeenCalledWith(404);
-    expect(findOrCreateRegistration).not.toHaveBeenCalled();
     expect(applicationRegistrationRepository.save).not.toHaveBeenCalled();
   });
 });

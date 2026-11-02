@@ -109,17 +109,16 @@ export default {
         649,
         650,
         651,
-        653,
+        654,
         655,
-        656,
-        661,
-        663,
-        666,
+        660,
+        662,
+        665,
+        670,
         671,
         672,
-        673,
-        676,
-        677
+        675,
+        676
     ],
     "types": {
         "ActivateWorkspaceInput": {
@@ -643,7 +642,7 @@ export default {
                 27
             ],
             "configurationType": [
-                655
+                654
             ],
             "description": [
                 1
@@ -1007,6 +1006,9 @@ export default {
             "settingsMenuItems": [
                 484
             ],
+            "sourceType": [
+                73
+            ],
             "universalIdentifier": [
                 1
             ],
@@ -1045,14 +1047,14 @@ export default {
             "lastUsedAt": [
                 211
             ],
+            "oAuthIdentityUniversalIdentifier": [
+                1
+            ],
             "scopes": [
                 1
             ],
             "userId": [
                 525
-            ],
-            "wellKnownOAuthClient": [
-                653
             ],
             "workspaceId": [
                 525
@@ -1611,11 +1613,11 @@ export default {
             "logoUrl": [
                 1
             ],
+            "oAuthIdentityUniversalIdentifier": [
+                1
+            ],
             "sourceType": [
                 73
-            ],
-            "wellKnownOAuthClient": [
-                653
             ],
             "__typename": [
                 1
@@ -1835,7 +1837,7 @@ export default {
                 463
             ],
             "workspaceUrls": [
-                678
+                677
             ],
             "__typename": [
                 1
@@ -1878,7 +1880,7 @@ export default {
                 1
             ],
             "configurationType": [
-                655
+                654
             ],
             "description": [
                 1
@@ -2501,7 +2503,7 @@ export default {
         "CalendarChannelVisibility": {},
         "CalendarConfiguration": {
             "configurationType": [
-                655
+                654
             ],
             "__typename": [
                 1
@@ -2509,7 +2511,7 @@ export default {
         },
         "CallRecordingSummaryConfiguration": {
             "configurationType": [
-                655
+                654
             ],
             "__typename": [
                 1
@@ -2517,7 +2519,7 @@ export default {
         },
         "CallRecordingTranscriptConfiguration": {
             "configurationType": [
-                655
+                654
             ],
             "__typename": [
                 1
@@ -2594,7 +2596,7 @@ export default {
         "ChartNumberFormat": {},
         "ChatConfiguration": {
             "configurationType": [
-                655
+                654
             ],
             "__typename": [
                 1
@@ -2627,7 +2629,7 @@ export default {
         },
         "ChatThreadsConfiguration": {
             "configurationType": [
-                655
+                654
             ],
             "__typename": [
                 1
@@ -3788,7 +3790,7 @@ export default {
                 1
             ],
             "type": [
-                656
+                655
             ],
             "__typename": [
                 1
@@ -4559,7 +4561,7 @@ export default {
         },
         "EmailThreadConfiguration": {
             "configurationType": [
-                655
+                654
             ],
             "__typename": [
                 1
@@ -4601,7 +4603,7 @@ export default {
         "EmailingDomainTenantStatus": {},
         "EmailsConfiguration": {
             "configurationType": [
-                655
+                654
             ],
             "__typename": [
                 1
@@ -4979,7 +4981,7 @@ export default {
         },
         "FieldConfiguration": {
             "configurationType": [
-                655
+                654
             ],
             "fieldDisplayMode": [
                 269
@@ -5095,7 +5097,7 @@ export default {
         },
         "FieldRichTextConfiguration": {
             "configurationType": [
-                655
+                654
             ],
             "__typename": [
                 1
@@ -5103,7 +5105,7 @@ export default {
         },
         "FieldsConfiguration": {
             "configurationType": [
-                655
+                654
             ],
             "newFieldDefaultVisibility": [
                 4
@@ -5186,7 +5188,7 @@ export default {
         },
         "FilesConfiguration": {
             "configurationType": [
-                655
+                654
             ],
             "__typename": [
                 1
@@ -5209,7 +5211,7 @@ export default {
                 296
             ],
             "workspace": [
-                675
+                674
             ],
             "__typename": [
                 1
@@ -5237,7 +5239,7 @@ export default {
         },
         "FormFieldConfiguration": {
             "configurationType": [
-                655
+                654
             ],
             "fieldMetadataId": [
                 1
@@ -5310,7 +5312,7 @@ export default {
         },
         "FrontComponentConfiguration": {
             "configurationType": [
-                655
+                654
             ],
             "frontComponentId": [
                 525
@@ -5409,7 +5411,7 @@ export default {
         "IdentityProviderType": {},
         "IframeConfiguration": {
             "configurationType": [
-                655
+                654
             ],
             "url": [
                 1
@@ -5482,7 +5484,7 @@ export default {
                 83
             ],
             "workspace": [
-                679
+                678
             ],
             "__typename": [
                 1
@@ -5698,7 +5700,7 @@ export default {
                 1
             ],
             "configurationType": [
-                655
+                654
             ],
             "description": [
                 1
@@ -6017,6 +6019,9 @@ export default {
             "category": [
                 1
             ],
+            "connectUrl": [
+                1
+            ],
             "description": [
                 1
             ],
@@ -6050,6 +6055,9 @@ export default {
                 4
             ],
             "category": [
+                1
+            ],
+            "connectUrl": [
                 1
             ],
             "defaultRoleUniversalIdentifier": [
@@ -6117,9 +6125,6 @@ export default {
             ],
             "websiteUrl": [
                 1
-            ],
-            "wellKnownOAuthClient": [
-                653
             ],
             "__typename": [
                 1
@@ -6260,7 +6265,7 @@ export default {
         },
         "MessageCampaignBodyConfiguration": {
             "configurationType": [
-                655
+                654
             ],
             "__typename": [
                 1
@@ -6268,7 +6273,7 @@ export default {
         },
         "MessageCampaignDetailsConfiguration": {
             "configurationType": [
-                655
+                654
             ],
             "__typename": [
                 1
@@ -6605,7 +6610,7 @@ export default {
                 }
             ],
             "activateWorkspace": [
-                660,
+                659,
                 {
                     "data": [
                         0,
@@ -7423,7 +7428,7 @@ export default {
                 }
             ],
             "deleteCurrentWorkspace": [
-                660
+                659
             ],
             "deleteEmailGroupChannel": [
                 346,
@@ -7888,7 +7893,7 @@ export default {
                 }
             ],
             "enrichWorkspaceCompany": [
-                664
+                663
             ],
             "executeOneLogicFunction": [
                 330,
@@ -8717,7 +8722,7 @@ export default {
                 }
             ],
             "syncApplication": [
-                674,
+                673,
                 {
                     "dryRun": [
                         4
@@ -9313,7 +9318,7 @@ export default {
                 }
             ],
             "updateWorkspace": [
-                660,
+                659,
                 {
                     "data": [
                         591,
@@ -9322,7 +9327,7 @@ export default {
                 }
             ],
             "updateWorkspaceAllowedEmbeddingOrigins": [
-                660,
+                659,
                 {
                     "data": [
                         589,
@@ -9331,7 +9336,7 @@ export default {
                 }
             ],
             "updateWorkspaceIframeMediaPermissions": [
-                660,
+                659,
                 {
                     "data": [
                         590,
@@ -9340,7 +9345,7 @@ export default {
                 }
             ],
             "updateWorkspaceMemberRole": [
-                669,
+                668,
                 {
                     "roleId": [
                         525,
@@ -9645,7 +9650,7 @@ export default {
         "NavigationMenuItemType": {},
         "NotesConfiguration": {
             "configurationType": [
-                655
+                654
             ],
             "__typename": [
                 1
@@ -10120,7 +10125,7 @@ export default {
                 315
             ],
             "configuration": [
-                654
+                653
             ],
             "createdAt": [
                 211
@@ -10156,7 +10161,7 @@ export default {
                 1
             ],
             "type": [
-                656
+                655
             ],
             "universalIdentifier": [
                 525
@@ -10280,7 +10285,7 @@ export default {
                 1
             ],
             "configurationType": [
-                655
+                654
             ],
             "dateGranularity": [
                 390
@@ -10433,6 +10438,9 @@ export default {
             ]
         },
         "PublicApplicationRegistration": {
+            "claimsVerifiedClientName": [
+                4
+            ],
             "id": [
                 525
             ],
@@ -10442,14 +10450,14 @@ export default {
             "name": [
                 1
             ],
+            "oAuthIdentityUniversalIdentifier": [
+                1
+            ],
             "oAuthScopes": [
                 1
             ],
             "websiteUrl": [
                 1
-            ],
-            "wellKnownOAuthClient": [
-                653
             ],
             "__typename": [
                 1
@@ -10551,7 +10559,7 @@ export default {
                 1
             ],
             "workspaceUrls": [
-                678
+                677
             ],
             "__typename": [
                 1
@@ -10801,7 +10809,7 @@ export default {
                 }
             ],
             "checkWorkspaceInviteHashIsValid": [
-                668,
+                667,
                 {
                     "inviteHash": [
                         1,
@@ -10840,7 +10848,7 @@ export default {
                 627
             ],
             "currentWorkspace": [
-                660
+                659
             ],
             "enterpriseCheckoutSession": [
                 1,
@@ -11080,10 +11088,10 @@ export default {
                 }
             ],
             "findWorkspaceAiStats": [
-                662
+                661
             ],
             "findWorkspaceFromInviteHash": [
-                660,
+                659,
                 {
                     "inviteHash": [
                         1,
@@ -11092,7 +11100,7 @@ export default {
                 }
             ],
             "findWorkspaceInvitations": [
-                667
+                666
             ],
             "frontComponent": [
                 286,
@@ -11429,7 +11437,7 @@ export default {
                 }
             ],
             "getWorkspaceCreationDefaults": [
-                665
+                664
             ],
             "githubClaimAuthorizationUrl": [
                 1,
@@ -11534,7 +11542,7 @@ export default {
                 }
             ],
             "myUserApplicationVariables": [
-                670
+                669
             ],
             "navigationMenuItem": [
                 373,
@@ -11879,7 +11887,7 @@ export default {
         },
         "RecordTableConfiguration": {
             "configurationType": [
-                655
+                654
             ],
             "isUIEditable": [
                 4
@@ -12075,7 +12083,7 @@ export default {
                 525
             ],
             "workspaceMembers": [
-                669
+                668
             ],
             "__typename": [
                 1
@@ -12551,7 +12559,7 @@ export default {
                 1
             ],
             "result": [
-                667
+                666
             ],
             "success": [
                 4
@@ -12737,7 +12745,7 @@ export default {
                 83
             ],
             "workspace": [
-                679
+                678
             ],
             "__typename": [
                 1
@@ -12806,7 +12814,7 @@ export default {
                 447
             ],
             "configurationType": [
-                655
+                654
             ],
             "__typename": [
                 1
@@ -12814,7 +12822,7 @@ export default {
         },
         "StartWorkspaceSetupChatResult": {
             "outcome": [
-                677
+                676
             ],
             "thread": [
                 17
@@ -12929,7 +12937,7 @@ export default {
         },
         "TasksConfiguration": {
             "configurationType": [
-                655
+                654
             ],
             "__typename": [
                 1
@@ -13012,7 +13020,7 @@ export default {
         },
         "TimelineConfiguration": {
             "configurationType": [
-                655
+                654
             ],
             "__typename": [
                 1
@@ -13953,7 +13961,7 @@ export default {
                 1
             ],
             "type": [
-                656
+                655
             ],
             "__typename": [
                 1
@@ -13985,7 +13993,7 @@ export default {
                 1
             ],
             "type": [
-                656
+                655
             ],
             "__typename": [
                 1
@@ -14544,7 +14552,7 @@ export default {
                 6
             ],
             "workspaceDiscoverability": [
-                666
+                665
             ],
             "__typename": [
                 1
@@ -15116,7 +15124,7 @@ export default {
                 628
             ],
             "currentWorkspace": [
-                660
+                659
             ],
             "deletedAt": [
                 211
@@ -15170,10 +15178,10 @@ export default {
                 628
             ],
             "workspaceMember": [
-                669
+                668
             ],
             "workspaceMembers": [
-                669
+                668
             ],
             "workspaces": [
                 628
@@ -15382,7 +15390,7 @@ export default {
                 83
             ],
             "workspaceUrls": [
-                678
+                677
             ],
             "__typename": [
                 1
@@ -15523,7 +15531,7 @@ export default {
         "ViewCalendarLayout": {},
         "ViewConfiguration": {
             "configurationType": [
-                655
+                654
             ],
             "__typename": [
                 1
@@ -15808,7 +15816,6 @@ export default {
                 1
             ]
         },
-        "WellKnownOAuthClient": {},
         "WidgetConfiguration": {
             "on_AggregateChartConfiguration": [
                 26
@@ -15889,13 +15896,13 @@ export default {
                 638
             ],
             "on_WorkflowConfiguration": [
-                657
+                656
             ],
             "on_WorkflowRunConfiguration": [
-                658
+                657
             ],
             "on_WorkflowVersionConfiguration": [
-                659
+                658
             ],
             "__typename": [
                 1
@@ -15905,7 +15912,7 @@ export default {
         "WidgetType": {},
         "WorkflowConfiguration": {
             "configurationType": [
-                655
+                654
             ],
             "__typename": [
                 1
@@ -15913,7 +15920,7 @@ export default {
         },
         "WorkflowRunConfiguration": {
             "configurationType": [
-                655
+                654
             ],
             "__typename": [
                 1
@@ -15921,7 +15928,7 @@ export default {
         },
         "WorkflowVersionConfiguration": {
             "configurationType": [
-                655
+                654
             ],
             "__typename": [
                 1
@@ -15929,7 +15936,7 @@ export default {
         },
         "Workspace": {
             "activationStatus": [
-                661
+                660
             ],
             "aiAdditionalInstructions": [
                 1
@@ -16094,13 +16101,13 @@ export default {
                 1
             ],
             "workspaceDiscoverability": [
-                666
+                665
             ],
             "workspaceMembersCount": [
                 6
             ],
             "workspaceUrls": [
-                678
+                677
             ],
             "__typename": [
                 1
@@ -16130,13 +16137,13 @@ export default {
                 4
             ],
             "outcome": [
-                663
+                662
             ],
             "personEnrichment": [
                 315
             ],
             "personOutcome": [
-                676
+                675
             ],
             "__typename": [
                 1
@@ -16190,7 +16197,7 @@ export default {
                 1
             ],
             "dateFormat": [
-                671
+                670
             ],
             "id": [
                 525
@@ -16202,7 +16209,7 @@ export default {
                 289
             ],
             "numberFormat": [
-                672
+                671
             ],
             "openRecordIn": [
                 394
@@ -16211,7 +16218,7 @@ export default {
                 448
             ],
             "timeFormat": [
-                673
+                672
             ],
             "timeZone": [
                 1
@@ -16289,7 +16296,7 @@ export default {
                 525
             ],
             "workspaceUrls": [
-                678
+                677
             ],
             "__typename": [
                 1

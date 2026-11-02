@@ -137,10 +137,12 @@ export class ApplicationAuthorizationService {
     applicationId: string;
   }): Promise<ApplicationAuthorizationEntity[]> {
     const applicationIds =
-      await this.applicationOAuthIdentityInstallService.findFoldedApplicationIds({
-        workspaceId,
-        applicationId,
-      });
+      await this.applicationOAuthIdentityInstallService.findFoldedApplicationIds(
+        {
+          workspaceId,
+          applicationId,
+        },
+      );
 
     return await this.createActiveAuthorizationsQueryBuilder(workspaceId)
       .andWhere(
@@ -186,10 +188,12 @@ export class ApplicationAuthorizationService {
     userId: string;
   }): Promise<boolean> {
     const applicationIds =
-      await this.applicationOAuthIdentityInstallService.findFoldedApplicationIds({
-        workspaceId,
-        applicationId,
-      });
+      await this.applicationOAuthIdentityInstallService.findFoldedApplicationIds(
+        {
+          workspaceId,
+          applicationId,
+        },
+      );
 
     return await this.revokeMatching({
       workspaceId,

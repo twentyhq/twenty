@@ -1,4 +1,4 @@
-import { WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
+import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
 
 import { isReservedApplicationRegistrationUniversalIdentifier } from 'src/engine/core-modules/application/application-registration/application-registration-seeding/utils/is-reserved-application-registration-universal-identifier.util';
 import { TWENTY_CLI_APPLICATION_REGISTRATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-cli-application-registration.constant';
@@ -7,7 +7,7 @@ describe('isReservedApplicationRegistrationUniversalIdentifier', () => {
   it('reserves the registrations the server provides, whatever the case', () => {
     expect(
       isReservedApplicationRegistrationUniversalIdentifier(
-        WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE.toUpperCase(),
+        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER.toUpperCase(),
       ),
     ).toBe(true);
     expect(

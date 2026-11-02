@@ -279,7 +279,7 @@ import { AddRelationFieldMetadataIdToRowLevelPermissionPredicateFastInstanceComm
 import { IndexTemporaryFileExpirationSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-slow-1793462047826-index-temporary-file-expiration';
 import { EnableUserHealthCheckFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793473469981-enable-user-health-check';
 import { AddConsentIdToApplicationAuthorizationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793615323524-add-consent-id-to-application-authorization';
-import { MoveClaudeAndChatGptToTheirAppPackagesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-fast-1793619591096-move-claude-and-chatgpt-to-their-app-packages';
+import { MoveClaudeAndChatGptToTheirAppPackagesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-instance-command-slow-1793619591096-move-claude-and-chatgpt-to-their-app-packages';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -561,5 +561,5 @@ export const INSTANCE_COMMANDS = [
   IndexTemporaryFileExpirationSlowInstanceCommand,
   EnableUserHealthCheckFastInstanceCommand,
   AddConsentIdToApplicationAuthorizationFastInstanceCommand,
-  MoveClaudeAndChatGptToTheirAppPackagesFastInstanceCommand,
+  MoveClaudeAndChatGptToTheirAppPackagesSlowInstanceCommand,
 ];

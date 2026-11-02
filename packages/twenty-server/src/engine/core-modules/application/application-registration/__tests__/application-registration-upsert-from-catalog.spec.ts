@@ -8,6 +8,7 @@ import {
 
 import { MARKETPLACE_FEATURED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-featured-applications.constant';
 import { ApplicationRegistrationAssetUrlService } from 'src/engine/core-modules/application/application-registration/application-registration-asset-url.service';
+import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationExceptionCode } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
@@ -192,6 +193,7 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
         additionalFields: {
           name: catalogParams.name,
           sourcePackage: catalogParams.sourcePackage,
+          oAuthScopes: [],
         },
       }),
     );
@@ -283,6 +285,34 @@ describe('ApplicationRegistrationService - upsertFromCatalog', () => {
       expect.objectContaining({ isListed: true }),
     );
   });
+
+  it.each([
+    ['@twentyhq/claude', [...ALL_OAUTH_SCOPES]],
+    ['claude-for-twenty', []],
+  ])(
+    'should give an app with an OAuth identity from %s the scopes it may act with',
+    async (sourcePackage, expectedOAuthScopes) => {
+      applicationRegistrationRepository.findOne.mockResolvedValue(null);
+
+      await service.upsertFromCatalog({
+        ...catalogParams,
+        sourcePackage,
+        manifest: {
+          application: {
+            universalIdentifier: catalogParams.universalIdentifier,
+            oAuthIdentity: {
+              redirectUris: ['https://claude.ai/api/mcp/auth_callback'],
+              connectUrl: 'https://claude.ai/customize/connectors',
+            },
+          },
+        } as unknown as Manifest,
+      });
+
+      expect(applicationRegistrationRepository.save).toHaveBeenCalledWith(
+        expect.objectContaining({ oAuthScopes: expectedOAuthScopes }),
+      );
+    },
+  );
 
   it('should refuse a catalog entry claiming the standard application identifier', async () => {
     applicationRegistrationRepository.findOne.mockResolvedValue(null);

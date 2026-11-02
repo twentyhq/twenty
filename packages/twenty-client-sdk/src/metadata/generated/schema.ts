@@ -359,6 +359,7 @@ export interface Application {
     runOnUserPreferences: Scalars['Boolean']
     settingsCustomTabFrontComponentId?: Scalars['UUID']
     settingsMenuItems?: SettingsMenuItem[]
+    sourceType: ApplicationRegistrationSourceType
     universalIdentifier: Scalars['String']
     version?: Scalars['String']
     yarnLockChecksum?: Scalars['String']
@@ -374,9 +375,9 @@ export interface ApplicationAuthorization {
     id: Scalars['UUID']
     lastAuthorizedAt?: Scalars['DateTime']
     lastUsedAt: Scalars['DateTime']
+    oAuthIdentityUniversalIdentifier?: Scalars['String']
     scopes?: Scalars['String'][]
     userId: Scalars['UUID']
-    wellKnownOAuthClient?: WellKnownOAuthClient
     workspaceId: Scalars['UUID']
     __typename: 'ApplicationAuthorization'
 }
@@ -621,8 +622,8 @@ export interface ApplicationRegistrationSummary {
     id: Scalars['UUID']
     latestAvailableVersion?: Scalars['String']
     logoUrl?: Scalars['String']
+    oAuthIdentityUniversalIdentifier?: Scalars['String']
     sourceType: ApplicationRegistrationSourceType
-    wellKnownOAuthClient?: WellKnownOAuthClient
     __typename: 'ApplicationRegistrationSummary'
 }
 
@@ -1977,6 +1978,7 @@ export interface LoginToken {
 export interface MarketplaceApp {
     author: Scalars['String']
     category: Scalars['String']
+    connectUrl?: Scalars['String']
     description: Scalars['String']
     id: Scalars['String']
     isListed: Scalars['Boolean']
@@ -1991,6 +1993,7 @@ export interface MarketplaceAppDetail {
     author?: Scalars['String']
     billsCredits: Scalars['Boolean']
     category?: Scalars['String']
+    connectUrl?: Scalars['String']
     defaultRoleUniversalIdentifier?: Scalars['String']
     description?: Scalars['String']
     emailSupport?: Scalars['String']
@@ -2015,7 +2018,6 @@ export interface MarketplaceAppDetail {
     termsUrl?: Scalars['String']
     universalIdentifier: Scalars['String']
     websiteUrl?: Scalars['String']
-    wellKnownOAuthClient?: WellKnownOAuthClient
     __typename: 'MarketplaceAppDetail'
 }
 
@@ -2898,12 +2900,13 @@ export interface PreviewMessageCampaignSendOutputDTO {
 }
 
 export interface PublicApplicationRegistration {
+    claimsVerifiedClientName: Scalars['Boolean']
     id: Scalars['UUID']
     logoUrl?: Scalars['String']
     name: Scalars['String']
+    oAuthIdentityUniversalIdentifier?: Scalars['String']
     oAuthScopes: Scalars['String'][]
     websiteUrl?: Scalars['String']
-    wellKnownOAuthClient?: WellKnownOAuthClient
     __typename: 'PublicApplicationRegistration'
 }
 
@@ -4048,8 +4051,6 @@ export interface Webhook {
     __typename: 'Webhook'
 }
 
-export type WellKnownOAuthClient = 'CHATGPT' | 'CLAUDE'
-
 export type WidgetConfiguration = (AggregateChartConfiguration | BarChartConfiguration | CalendarConfiguration | CallRecordingSummaryConfiguration | CallRecordingTranscriptConfiguration | ChatConfiguration | ChatThreadsConfiguration | EmailThreadConfiguration | EmailsConfiguration | FieldConfiguration | FieldRichTextConfiguration | FieldsConfiguration | FilesConfiguration | FormFieldConfiguration | FrontComponentConfiguration | IframeConfiguration | LineChartConfiguration | MessageCampaignBodyConfiguration | MessageCampaignDetailsConfiguration | NotesConfiguration | PieChartConfiguration | RecordTableConfiguration | StandaloneRichTextConfiguration | TasksConfiguration | TimelineConfiguration | ViewConfiguration | WorkflowConfiguration | WorkflowRunConfiguration | WorkflowVersionConfiguration) & { __isUnion?: true }
 
 export type WidgetConfigurationType = 'AGGREGATE_CHART' | 'BAR_CHART' | 'CALENDAR' | 'CALL_RECORDING_SUMMARY' | 'CALL_RECORDING_TRANSCRIPT' | 'CHAT' | 'CHAT_THREADS' | 'EMAILS' | 'EMAIL_THREAD' | 'FIELD' | 'FIELDS' | 'FIELD_RICH_TEXT' | 'FILES' | 'FORM_FIELD' | 'FRONT_COMPONENT' | 'IFRAME' | 'LINE_CHART' | 'MESSAGE_CAMPAIGN_BODY' | 'MESSAGE_CAMPAIGN_DETAILS' | 'NOTES' | 'PIE_CHART' | 'RECORD_TABLE' | 'STANDALONE_RICH_TEXT' | 'TASKS' | 'TIMELINE' | 'VIEW' | 'WORKFLOW' | 'WORKFLOW_RUN' | 'WORKFLOW_VERSION'
@@ -4606,6 +4607,7 @@ export interface ApplicationGenqlSelection{
     runOnUserPreferences?: boolean | number
     settingsCustomTabFrontComponentId?: boolean | number
     settingsMenuItems?: SettingsMenuItemGenqlSelection
+    sourceType?: boolean | number
     universalIdentifier?: boolean | number
     version?: boolean | number
     yarnLockChecksum?: boolean | number
@@ -4622,9 +4624,9 @@ export interface ApplicationAuthorizationGenqlSelection{
     id?: boolean | number
     lastAuthorizedAt?: boolean | number
     lastUsedAt?: boolean | number
+    oAuthIdentityUniversalIdentifier?: boolean | number
     scopes?: boolean | number
     userId?: boolean | number
-    wellKnownOAuthClient?: boolean | number
     workspaceId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -4889,8 +4891,8 @@ export interface ApplicationRegistrationSummaryGenqlSelection{
     id?: boolean | number
     latestAvailableVersion?: boolean | number
     logoUrl?: boolean | number
+    oAuthIdentityUniversalIdentifier?: boolean | number
     sourceType?: boolean | number
-    wellKnownOAuthClient?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -6515,6 +6517,7 @@ export interface LoginTokenGenqlSelection{
 export interface MarketplaceAppGenqlSelection{
     author?: boolean | number
     category?: boolean | number
+    connectUrl?: boolean | number
     description?: boolean | number
     id?: boolean | number
     isListed?: boolean | number
@@ -6530,6 +6533,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     author?: boolean | number
     billsCredits?: boolean | number
     category?: boolean | number
+    connectUrl?: boolean | number
     defaultRoleUniversalIdentifier?: boolean | number
     description?: boolean | number
     emailSupport?: boolean | number
@@ -6554,7 +6558,6 @@ export interface MarketplaceAppDetailGenqlSelection{
     termsUrl?: boolean | number
     universalIdentifier?: boolean | number
     websiteUrl?: boolean | number
-    wellKnownOAuthClient?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7459,12 +7462,13 @@ export interface PreviewMessageCampaignSendOutputDTOGenqlSelection{
 }
 
 export interface PublicApplicationRegistrationGenqlSelection{
+    claimsVerifiedClientName?: boolean | number
     id?: boolean | number
     logoUrl?: boolean | number
     name?: boolean | number
+    oAuthIdentityUniversalIdentifier?: boolean | number
     oAuthScopes?: boolean | number
     websiteUrl?: boolean | number
-    wellKnownOAuthClient?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -12870,11 +12874,6 @@ export const enumViewType = {
 export const enumViewVisibility = {
    UNLISTED: 'UNLISTED' as const,
    WORKSPACE: 'WORKSPACE' as const
-}
-
-export const enumWellKnownOAuthClient = {
-   CHATGPT: 'CHATGPT' as const,
-   CLAUDE: 'CLAUDE' as const
 }
 
 export const enumWidgetConfigurationType = {

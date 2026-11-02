@@ -10,7 +10,6 @@ import { uninstallApplication } from 'test/integration/metadata/suites/applicati
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
-import { WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
@@ -25,6 +24,8 @@ import { TOKEN_BUCKET_THROTTLE_KEY_PREFIX } from 'src/engine/core-modules/thrott
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
+import { TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/application/application-marketplace/constants/twenty-public-app-universal-identifiers.constant';
+import { APPLICATION_OAUTH_IDENTITIES_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-oauth-identity/constants/application-oauth-identities-cache-entity-id.constant';
 
 const CLAUDE_CALLBACK = 'https://claude.ai/api/mcp/auth_callback';
 const CODE_VERIFIER = 'integration-verifier';
@@ -32,6 +33,39 @@ const CHATGPT_CONNECTION_CALLBACK =
   'https://chatgpt.com/connector/oauth/integration-test';
 const CHATGPT_PLATFORM_CALLBACK =
   'https://chatgpt.com/connector_platform_oauth_redirect';
+const CLAUDE_UNIVERSAL_IDENTIFIER = TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.CLAUDE;
+const CHATGPT_UNIVERSAL_IDENTIFIER =
+  TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.CHATGPT;
+const OAUTH_IDENTITY_APP_UNIVERSAL_IDENTIFIERS = [
+  CLAUDE_UNIVERSAL_IDENTIFIER,
+  CHATGPT_UNIVERSAL_IDENTIFIER,
+];
+const OAUTH_IDENTITY_APPS = [
+  {
+    universalIdentifier: CLAUDE_UNIVERSAL_IDENTIFIER,
+    name: 'Claude',
+    sourcePackage: '@twentyhq/claude',
+    oAuthIdentity: {
+      redirectUris: [CLAUDE_CALLBACK],
+      clientIdMetadataDocumentHostnames: ['claude.ai'],
+      connectUrl:
+        'https://claude.ai/customize/connectors?connectorUrl={mcpServerUrl}',
+    },
+  },
+  {
+    universalIdentifier: CHATGPT_UNIVERSAL_IDENTIFIER,
+    name: 'ChatGPT',
+    sourcePackage: '@twentyhq/chatgpt',
+    oAuthIdentity: {
+      redirectUris: [
+        'https://chatgpt.com/connector_platform_oauth_redirect',
+        'https://chatgpt.com/connector/oauth/*',
+      ],
+      clientIdMetadataDocumentHostnames: ['chatgpt.com'],
+      connectUrl: 'https://chatgpt.com/apps/twenty',
+    },
+  },
+];
 const CHATGPT_DOCUMENT = {
   clientId: 'https://chatgpt.com/oauth/integration-test-client.json',
   clientName: 'ChatGPT',
@@ -75,12 +109,13 @@ const findApplicationRegistrationByClientIdQuery = gql`
   query FindApplicationRegistrationByClientId($clientId: String!) {
     findApplicationRegistrationByClientId(clientId: $clientId) {
       name
-      wellKnownOAuthClient
+      oAuthIdentityUniversalIdentifier
+      claimsVerifiedClientName
     }
   }
 `;
 
-describe('OAuth well-known clients (integration)', () => {
+describe('OAuth identity apps (integration)', () => {
   const baseUrl = `http://localhost:${APP_PORT}`;
 
   let ds: DataSource;
@@ -153,8 +188,49 @@ describe('OAuth well-known clients (integration)', () => {
       client_id: clientId,
     });
 
+  const invalidateCatalogCaches = async () => {
+    const coreEntityCacheService =
+      getAppProviderByClassName<CoreEntityCacheService>(
+        'CoreEntityCacheService',
+      );
+
+    await coreEntityCacheService.invalidate(
+      'marketplaceCatalog',
+      MARKETPLACE_CATALOG_CACHE_ENTITY_ID,
+    );
+    await coreEntityCacheService.invalidate(
+      'applicationOAuthIdentities',
+      APPLICATION_OAUTH_IDENTITIES_CACHE_ENTITY_ID,
+    );
+  };
+
   beforeAll(async () => {
     ds = global.testDataSource;
+
+    for (const app of OAUTH_IDENTITY_APPS) {
+      await ds.query(
+        `INSERT INTO core."applicationRegistration"
+          ("universalIdentifier", name, "oAuthClientId", "oAuthScopes", "sourceType", "sourcePackage", "latestAvailableVersion", "isListed", manifest)
+         VALUES ($1, $2, $3, $4, 'npm', $5, '0.1.0', true, $6)`,
+        [
+          app.universalIdentifier,
+          app.name,
+          crypto.randomUUID(),
+          [...ALL_OAUTH_SCOPES],
+          app.sourcePackage,
+          {
+            application: {
+              universalIdentifier: app.universalIdentifier,
+              displayName: app.name,
+              description: `Work with Twenty from ${app.name}`,
+              oAuthIdentity: app.oAuthIdentity,
+            },
+          },
+        ],
+      );
+    }
+
+    await invalidateCatalogCaches();
 
     const claudeRegistration = await register({
       client_name: 'Claude',
@@ -172,10 +248,6 @@ describe('OAuth well-known clients (integration)', () => {
   beforeEach(() => clearTokenBuckets('oauth:*'));
 
   afterAll(async () => {
-    await getAppProviderByClassName<CoreEntityCacheService>(
-      'CoreEntityCacheService',
-    ).invalidate('marketplaceCatalog', MARKETPLACE_CATALOG_CACHE_ENTITY_ID);
-
     if (createdRegistrationClientIds.length > 0) {
       await ds.query(
         `DELETE FROM core."application" application
@@ -195,8 +267,13 @@ describe('OAuth well-known clients (integration)', () => {
        USING core."applicationRegistration" registration
        WHERE registration.id = application."applicationRegistrationId"
          AND registration."universalIdentifier" = ANY($1)`,
-      [Object.values(WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS)],
+      [OAUTH_IDENTITY_APP_UNIVERSAL_IDENTIFIERS],
     );
+    await ds.query(
+      `DELETE FROM core."applicationRegistration" WHERE "universalIdentifier" = ANY($1)`,
+      [OAUTH_IDENTITY_APP_UNIVERSAL_IDENTIFIERS],
+    );
+    await invalidateCatalogCaches();
 
     await ds.query(
       `DELETE FROM core."appToken" WHERE context->>'redirectUri' = ANY($1)`,
@@ -211,7 +288,7 @@ describe('OAuth well-known clients (integration)', () => {
   });
 
   describe('Dynamic client registration', () => {
-    it('should hand every Claude connection the seeded Claude client', async () => {
+    it("should hand every Claude connection the Claude app's client", async () => {
       const secondRegistration = await register({
         client_name: 'claudeai',
         redirect_uris: [CLAUDE_CALLBACK],
@@ -220,13 +297,13 @@ describe('OAuth well-known clients (integration)', () => {
       expect(secondRegistration.body.client_id).toBe(claudeClientId);
       expect(secondRegistration.body.client_name).toBe('Claude');
 
-      const [seededRegistration] = await ds.query(
+      const [claudeAppRegistration] = await ds.query(
         `SELECT "oAuthClientId", "sourceType" FROM core."applicationRegistration" WHERE "universalIdentifier" = $1`,
-        [WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE],
+        [CLAUDE_UNIVERSAL_IDENTIFIER],
       );
 
-      expect(seededRegistration.oAuthClientId).toBe(claudeClientId);
-      expect(seededRegistration.sourceType).toBe('oauth-only');
+      expect(claudeAppRegistration.oAuthClientId).toBe(claudeClientId);
+      expect(claudeAppRegistration.sourceType).toBe('npm');
     });
 
     it('should keep registering a new client when one callback is foreign', async () => {
@@ -241,7 +318,7 @@ describe('OAuth well-known clients (integration)', () => {
       expect(response.body.client_name).toBe('Claude');
     });
 
-    it('should accept a per-connection ChatGPT callback on the seeded ChatGPT client', async () => {
+    it("should accept a per-connection ChatGPT callback on the ChatGPT app's client", async () => {
       const response = await makeMetadataApiRequest({
         query: authorizeAppMutation,
         variables: {
@@ -257,7 +334,7 @@ describe('OAuth well-known clients (integration)', () => {
       );
     });
 
-    it('should reject a callback the seeded client does not allow', async () => {
+    it("should reject a callback the app's OAuth identity does not allow", async () => {
       const response = await makeMetadataApiRequest({
         query: authorizeAppMutation,
         variables: {
@@ -274,7 +351,7 @@ describe('OAuth well-known clients (integration)', () => {
   });
 
   describe('Marketplace', () => {
-    it('should list ChatGPT and Claude as soon as their registrations exist', async () => {
+    it('should list ChatGPT and Claude with where a member connects them', async () => {
       const response = await makeMetadataApiRequest({
         query: gql`
           query FindManyMarketplaceApps {
@@ -282,6 +359,7 @@ describe('OAuth well-known clients (integration)', () => {
               id
               name
               isListed
+              connectUrl
             }
           }
         `,
@@ -290,14 +368,17 @@ describe('OAuth well-known clients (integration)', () => {
       expect(response.body.data.findManyMarketplaceApps).toEqual(
         expect.arrayContaining([
           {
-            id: WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CHATGPT,
+            id: CHATGPT_UNIVERSAL_IDENTIFIER,
             name: 'ChatGPT',
             isListed: true,
+            connectUrl: 'https://chatgpt.com/apps/twenty',
           },
           {
-            id: WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
+            id: CLAUDE_UNIVERSAL_IDENTIFIER,
             name: 'Claude',
             isListed: true,
+            connectUrl:
+              'https://claude.ai/customize/connectors?connectorUrl={mcpServerUrl}',
           },
         ]),
       );
@@ -312,20 +393,21 @@ describe('OAuth well-known clients (integration)', () => {
             ) {
               name
               sourceType
-              wellKnownOAuthClient
+              connectUrl
             }
           }
         `,
         variables: {
           universalIdentifier:
-            WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
+            CLAUDE_UNIVERSAL_IDENTIFIER,
         },
       });
 
       expect(response.body.data.findMarketplaceAppDetail).toEqual({
         name: 'Claude',
-        sourceType: 'OAUTH_ONLY',
-        wellKnownOAuthClient: 'CLAUDE',
+        sourceType: 'NPM',
+        connectUrl:
+          'https://claude.ai/customize/connectors?connectorUrl={mcpServerUrl}',
       });
     });
   });
@@ -352,28 +434,31 @@ describe('OAuth well-known clients (integration)', () => {
       expect(jonyExchange.status).toBe(200);
 
       const claudeApplications = await ds.query(
-        `SELECT application.id FROM core."application" application
+        `SELECT application.id, application."sourceType" FROM core."application" application
          JOIN core."applicationRegistration" registration ON registration.id = application."applicationRegistrationId"
          WHERE registration."universalIdentifier" = $1 AND application."workspaceId" = $2 AND application."deletedAt" IS NULL`,
         [
-          WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
+          CLAUDE_UNIVERSAL_IDENTIFIER,
           SEED_APPLE_WORKSPACE_ID,
         ],
       );
 
-      expect(claudeApplications).toHaveLength(1);
+      // An OAuth-only install acts with each member's permissions
+      expect(claudeApplications).toEqual([
+        { id: expect.any(String), sourceType: 'oauth-only' },
+      ]);
     });
 
     it('should show the registration logo on its install, which has no bundle of its own', async () => {
       const [{ logo: previousLogo }] = await ds.query(
         `SELECT logo FROM core."applicationRegistration" WHERE "universalIdentifier" = $1`,
-        [WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE],
+        [CLAUDE_UNIVERSAL_IDENTIFIER],
       );
       const logoUrl = 'https://claude.ai/logo.png';
 
       await ds.query(
         `UPDATE core."applicationRegistration" SET logo = $1 WHERE "universalIdentifier" = $2`,
-        [logoUrl, WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE],
+        [logoUrl, CLAUDE_UNIVERSAL_IDENTIFIER],
       );
 
       try {
@@ -394,20 +479,20 @@ describe('OAuth well-known clients (integration)', () => {
         const claudeApplication = response.body.data.findManyApplications.find(
           ({ universalIdentifier }: { universalIdentifier: string }) =>
             universalIdentifier ===
-            WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
+            CLAUDE_UNIVERSAL_IDENTIFIER,
         );
 
         expect(claudeApplication.logoUrl).toBe(logoUrl);
       } finally {
         await ds.query(
           `UPDATE core."applicationRegistration" SET logo = $1 WHERE "universalIdentifier" = $2`,
-          [previousLogo, WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE],
+          [previousLogo, CLAUDE_UNIVERSAL_IDENTIFIER],
         );
       }
     });
   });
 
-  describe('Client ID metadata document of a well-known client', () => {
+  describe("Client ID metadata document of an app's OAuth identity", () => {
     let findDocumentSpy: jest.SpyInstance;
     let isFetchDueSpy: jest.SpyInstance;
 
@@ -467,7 +552,7 @@ describe('OAuth well-known clients (integration)', () => {
   });
 
   describe('Consent screen', () => {
-    it('should identify the seeded client by the server, not by its name', async () => {
+    it('should identify the app by its OAuth identity, not by its name', async () => {
       const response = await makeMetadataApiRequest({
         query: findApplicationRegistrationByClientIdQuery,
         variables: { clientId: claudeClientId },
@@ -475,11 +560,12 @@ describe('OAuth well-known clients (integration)', () => {
 
       expect(response.body.data.findApplicationRegistrationByClientId).toEqual({
         name: 'Claude',
-        wellKnownOAuthClient: 'CLAUDE',
+        oAuthIdentityUniversalIdentifier: CLAUDE_UNIVERSAL_IDENTIFIER,
+        claimsVerifiedClientName: false,
       });
     });
 
-    it('should not identify a client that only borrows the name', async () => {
+    it('should flag a client that only borrows the name', async () => {
       const registration = await register({
         client_name: 'Claude',
         redirect_uris: ['https://example.com/claude-callback'],
@@ -492,10 +578,11 @@ describe('OAuth well-known clients (integration)', () => {
         variables: { clientId: registration.body.client_id },
       });
 
-      expect(
-        response.body.data.findApplicationRegistrationByClientId
-          .wellKnownOAuthClient,
-      ).toBeNull();
+      expect(response.body.data.findApplicationRegistrationByClientId).toEqual({
+        name: 'Claude',
+        oAuthIdentityUniversalIdentifier: null,
+        claimsVerifiedClientName: true,
+      });
     });
 
     describe('Client ID metadata document lookups', () => {
@@ -557,7 +644,11 @@ describe('OAuth well-known clients (integration)', () => {
         expect(
           registeredClientResponse.body.data
             .findApplicationRegistrationByClientId,
-        ).toEqual({ name: 'Claude', wellKnownOAuthClient: 'CLAUDE' });
+        ).toEqual({
+          name: 'Claude',
+          oAuthIdentityUniversalIdentifier: CLAUDE_UNIVERSAL_IDENTIFIER,
+          claimsVerifiedClientName: false,
+        });
       });
 
       it('should spend the same fetch allowance on the token, revoke and introspect endpoints', async () => {
@@ -736,7 +827,7 @@ describe('OAuth well-known clients (integration)', () => {
           query WorkspaceApplicationAuthorizations($applicationId: UUID!) {
             workspaceApplicationAuthorizations(applicationId: $applicationId) {
               applicationId
-              wellKnownOAuthClient
+              oAuthIdentityUniversalIdentifier
             }
           }
         `,
@@ -746,8 +837,8 @@ describe('OAuth well-known clients (integration)', () => {
       expect(response.body.errors).toBeUndefined();
       expect(response.body.data.workspaceApplicationAuthorizations).toEqual(
         expect.arrayContaining([
-          { applicationId: legacyInstall.id, wellKnownOAuthClient: 'CLAUDE' },
-          { applicationId: sharedInstall.id, wellKnownOAuthClient: 'CLAUDE' },
+          { applicationId: legacyInstall.id, oAuthIdentityUniversalIdentifier: CLAUDE_UNIVERSAL_IDENTIFIER },
+          { applicationId: sharedInstall.id, oAuthIdentityUniversalIdentifier: CLAUDE_UNIVERSAL_IDENTIFIER },
         ]),
       );
     });
@@ -799,7 +890,7 @@ describe('OAuth well-known clients (integration)', () => {
 
       const { errors } = await uninstallApplication({
         universalIdentifier:
-          WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
+          CLAUDE_UNIVERSAL_IDENTIFIER,
       });
 
       expect(errors).toBeUndefined();
@@ -817,7 +908,7 @@ describe('OAuth well-known clients (integration)', () => {
           triggerUninstallApplication({
             input: {
               universalIdentifier:
-                WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
+                CLAUDE_UNIVERSAL_IDENTIFIER,
             },
           });
 
@@ -891,7 +982,7 @@ describe('OAuth well-known clients (integration)', () => {
 
         const { errors } = await uninstallApplication({
           universalIdentifier:
-            WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
+            CLAUDE_UNIVERSAL_IDENTIFIER,
         });
 
         expect(errors).toBeUndefined();

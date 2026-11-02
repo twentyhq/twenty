@@ -6,7 +6,7 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import type { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import type { ApplicationOAuthIdentityInstallService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-install.service';
+import type { ApplicationOAuthIdentityInstallService } from 'src/engine/core-modules/application/application-oauth-identity/services/application-oauth-identity-install.service';
 import type { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import type { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import type { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';

@@ -1142,7 +1142,7 @@ describe('OAuth (integration)', () => {
             applicationId
             applicationName
             scopes
-            wellKnownOAuthClient
+            oAuthIdentityUniversalIdentifier
           }
         }
       `,
@@ -1196,7 +1196,7 @@ describe('OAuth (integration)', () => {
       expect(authorization).toBeDefined();
       expect(authorization.applicationName).toBe(testRegistration.name);
       expect(authorization.scopes).toEqual(['read']);
-      expect(authorization.wellKnownOAuthClient).toBeNull();
+      expect(authorization.oAuthIdentityUniversalIdentifier).toBeNull();
     });
 
     it('should stop the refresh token being redeemed when revoked from the list', async () => {
