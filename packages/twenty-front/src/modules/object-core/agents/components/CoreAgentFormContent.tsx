@@ -11,7 +11,6 @@ import {
 import { Button } from 'twenty-ui/primitives/input';
 
 import { CoreObjectIdentifierBar } from '@/object-core/components/CoreObjectIdentifierBar';
-import { computeMetadataNameFromLabel } from '@/object-metadata/utils/computeMetadataNameFromLabel';
 import { RecordShowPageResourceEffect } from '@/object-record/record-show/components/RecordShowPageResourceEffect';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { CommandMenuButton } from '@/command-menu/components/CommandMenuButton';
@@ -38,6 +37,7 @@ import { CORE_AGENT_DELETE_DIALOG_ID } from '@/object-core/agents/constants/Core
 import { useCoreAgentDraft } from '@/object-core/agents/hooks/useCoreAgentDraft';
 import { useCoreAgentDirtyState } from '@/object-core/agents/hooks/useCoreAgentDirtyState';
 import { useIsCoreAgentReadOnly } from '@/object-core/agents/hooks/useIsCoreAgentReadOnly';
+import { useRenameCoreAgent } from '@/object-core/agents/hooks/useRenameCoreAgent';
 import { useSaveCoreAgent } from '@/object-core/agents/hooks/useSaveCoreAgent';
 import { getCoreAgentBreadcrumbLinks } from '@/object-core/agents/utils/getCoreAgentBreadcrumbLinks';
 import { type CoreAgentFormValues } from '@/object-core/agents/validation-schemas/coreAgentFormSchema';
@@ -60,27 +60,12 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
   const { isSaving, saveCoreAgent, discardCoreAgentChanges } =
     useSaveCoreAgent(agent);
 
+  const { renameCoreAgent } = useRenameCoreAgent(agent);
+
   const handleFieldChange = (
     field: keyof CoreAgentFormValues,
     value: CoreAgentFormValues[keyof CoreAgentFormValues],
   ) => updateDraft((currentDraft) => ({ ...currentDraft, [field]: value }));
-
-  const handleRename = async (label: string) => {
-    const trimmedLabel = label.trim();
-    const name = computeMetadataNameFromLabel(trimmedLabel);
-
-    if (!isNonEmptyString(name) || trimmedLabel === draft.label) {
-      return true;
-    }
-
-    updateDraft((currentDraft) => ({
-      ...currentDraft,
-      label: trimmedLabel,
-      name,
-    }));
-
-    return true;
-  };
 
   const agentRecord = useMemo(
     () => ({
@@ -166,9 +151,9 @@ export const CoreAgentFormContent = ({ agent }: CoreAgentFormContentProps) => {
       >
         <CoreObjectIdentifierBar
           recordId={agent.id}
-          name={draft.label}
+          name={agent.label}
           namePlaceholder={t`Untitled`}
-          onRename={handleRename}
+          onRename={renameCoreAgent}
           isReadOnly={isReadOnly}
           avatar={
             <CoreAgentAvatarPicker
