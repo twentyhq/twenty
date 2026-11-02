@@ -10,6 +10,10 @@ import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/co
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import {
+  ApplicationRegistrationException,
+  ApplicationRegistrationExceptionCode,
+} from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import {
   ApplicationException,
@@ -22,7 +26,7 @@ export type SeededOAuthOnlyRegistrationValues = Pick<
 > &
   QueryDeepPartialEntity<ApplicationRegistrationEntity>;
 
-// Registrations the server itself provides (the Twenty CLI, well-known OAuth clients), created on first use
+// Seeding here means creating the server's own registrations (Twenty CLI, well-known OAuth clients) on first use at runtime
 @Injectable()
 export class ApplicationRegistrationSeedingService {
   private readonly logger = new Logger(
@@ -52,9 +56,9 @@ export class ApplicationRegistrationSeedingService {
         isDefined(existingRegistration.ownerWorkspaceId) ||
         isDefined(existingRegistration.oAuthClientSecretHash)
       ) {
-        throw new ApplicationException(
+        throw new ApplicationRegistrationException(
           `The ${values.name} application registration is taken by another owner`,
-          ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+          ApplicationRegistrationExceptionCode.UNIVERSAL_IDENTIFIER_ALREADY_CLAIMED,
         );
       }
 

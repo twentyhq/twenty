@@ -1,6 +1,8 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationSeedingService } from 'src/engine/core-modules/application/application-registration/application-registration-seeding/application-registration-seeding.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -10,7 +12,11 @@ import { WellKnownOAuthClientRegistrationService } from 'src/engine/core-modules
 
 const CLAUDE = WELL_KNOWN_OAUTH_CLIENTS.find(
   ({ client }) => client === WellKnownOAuthClient.CLAUDE,
-) as (typeof WELL_KNOWN_OAUTH_CLIENTS)[number];
+);
+
+if (!isDefined(CLAUDE)) {
+  throw new Error('Claude is missing from the well-known OAuth clients');
+}
 
 const UP_TO_DATE_CLAUDE_REGISTRATION = {
   id: 'claude-registration-id',

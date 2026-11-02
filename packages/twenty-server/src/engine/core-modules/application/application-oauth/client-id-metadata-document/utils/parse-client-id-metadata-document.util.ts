@@ -25,8 +25,7 @@ export const parseClientIdMetadataDocument = ({
     return { error: 'The document must not carry a shared secret' };
   }
 
-  // Only public clients are supported. ChatGPT prefers private_key_jwt but also lists "none",
-  // which it falls back to since this server only advertises "none"
+  // Public clients only; ChatGPT prefers private_key_jwt but falls back to "none", the only method advertised here
   const tokenEndpointAuthMethod = rawDocument.token_endpoint_auth_method;
   const tokenEndpointAuthMethodsSupported =
     rawDocument.token_endpoint_auth_methods_supported;

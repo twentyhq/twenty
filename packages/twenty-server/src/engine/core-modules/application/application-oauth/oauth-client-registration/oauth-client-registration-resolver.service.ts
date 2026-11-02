@@ -16,8 +16,7 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { WellKnownOAuthClientRegistrationService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-registration.service';
 import { findWellKnownOAuthClientByClientIdMetadataDocument } from 'src/engine/core-modules/application/well-known-oauth-client/utils/find-well-known-oauth-client-by-client-id-metadata-document.util';
 
-// Resolves the client_id of an authorize, token or consent-screen request: a registered client id, or the URL of a
-// Client ID Metadata Document, which stands for one registration per URL instead of one per connection
+// A client_id is a registered id or a Client ID Metadata Document URL, which maps to one registration per URL, not per connection
 @Injectable()
 export class OAuthClientRegistrationResolverService {
   constructor(
@@ -33,8 +32,7 @@ export class OAuthClientRegistrationResolverService {
     return (await this.resolveClient(clientId))?.registration ?? null;
   }
 
-  // Only called once a signed-in user authorizes the client: the token and consent-screen endpoints are public,
-  // and would otherwise store a registration for any document URL a caller hosts
+  // Only for a signed-in user's authorization: the public token and consent endpoints would store a row for any hosted URL
   async findOrRegisterByClientId(
     clientId: string,
   ): Promise<ApplicationRegistrationEntity | null> {

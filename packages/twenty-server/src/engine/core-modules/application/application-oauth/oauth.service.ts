@@ -777,10 +777,13 @@ export class OAuthService {
     return scope.split(' ').filter((entry) => entry.length > 0);
   }
 
-  private findInstalledApplication(
-    applicationRegistration: ApplicationRegistrationEntity,
-    workspaceId: string,
-  ): Promise<ApplicationEntity | null> {
+  private findInstalledApplication({
+    applicationRegistration,
+    workspaceId,
+  }: {
+    applicationRegistration: ApplicationRegistrationEntity;
+    workspaceId: string;
+  }): Promise<ApplicationEntity | null> {
     return this.applicationRepository.findOne(workspaceId, {
       where: { applicationRegistrationId: applicationRegistration.id },
     });
@@ -790,10 +793,10 @@ export class OAuthService {
     applicationRegistration: ApplicationRegistrationEntity,
     workspaceId: string,
   ): Promise<ApplicationEntity> {
-    const existingApplication = await this.findInstalledApplication(
+    const existingApplication = await this.findInstalledApplication({
       applicationRegistration,
       workspaceId,
-    );
+    });
 
     if (existingApplication) {
       return existingApplication;
@@ -805,10 +808,10 @@ export class OAuthService {
         workspaceId,
       });
 
-      const installedApplication = await this.findInstalledApplication(
+      const installedApplication = await this.findInstalledApplication({
         applicationRegistration,
         workspaceId,
-      );
+      });
 
       if (installedApplication) {
         return installedApplication;
@@ -838,13 +841,12 @@ export class OAuthService {
         workspaceId,
       });
     } catch (error) {
-      // Two members connecting a shared client for the first time race to create its install; the loser reuses it,
-      // since its authorization code is already spent
+      // First connections race to create the install; the loser reuses it since its authorization code is already spent
       const concurrentlyInstalledApplication =
-        await this.findInstalledApplication(
+        await this.findInstalledApplication({
           applicationRegistration,
           workspaceId,
-        );
+        });
 
       if (isDefined(concurrentlyInstalledApplication)) {
         return concurrentlyInstalledApplication;

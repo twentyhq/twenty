@@ -25,8 +25,7 @@ const toSyncedFields = (
   isListed: true,
 });
 
-// One OAuth-only registration per well-known client, shared by every connection
-// on this server, so each workspace installs it once
+// One OAuth-only registration per well-known client, shared by every connection so each workspace installs it once
 @Injectable()
 export class WellKnownOAuthClientRegistrationService {
   constructor(

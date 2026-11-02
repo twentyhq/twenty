@@ -5,6 +5,7 @@ import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/co
 import { ApplicationRegistrationLookupService } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.service';
 import { ApplicationRegistrationSeedingService } from 'src/engine/core-modules/application/application-registration/application-registration-seeding/application-registration-seeding.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationExceptionCode } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 
 const SEEDED_VALUES = {
@@ -75,18 +76,29 @@ describe('ApplicationRegistrationSeedingService', () => {
     expect(insertedValues).not.toHaveBeenCalled();
   });
 
-  it('refuses a row someone else created under the reserved identifier', async () => {
-    findOneByUniversalIdentifierGlobal.mockResolvedValue({
-      id: 'squatted-id',
-      sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
-      ownerWorkspaceId: 'attacker-workspace-id',
-      oAuthClientSecretHash: 'hash',
-    });
+  it.each([
+    { sourceType: ApplicationRegistrationSourceType.NPM },
+    { ownerWorkspaceId: 'attacker-workspace-id' },
+    { oAuthClientSecretHash: 'hash' },
+  ])(
+    'refuses a row someone else created under the reserved identifier (%o)',
+    async (squattedFields) => {
+      findOneByUniversalIdentifierGlobal.mockResolvedValue({
+        id: 'squatted-id',
+        sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
+        ownerWorkspaceId: null,
+        oAuthClientSecretHash: null,
+        ...squattedFields,
+      });
 
-    await expect(
-      service.findOrCreateOAuthOnlyRegistration(SEEDED_VALUES),
-    ).rejects.toThrow('taken by another owner');
-  });
+      await expect(
+        service.findOrCreateOAuthOnlyRegistration(SEEDED_VALUES),
+      ).rejects.toMatchObject({
+        code: ApplicationRegistrationExceptionCode.UNIVERSAL_IDENTIFIER_ALREADY_CLAIMED,
+      });
+      expect(insertedValues).not.toHaveBeenCalled();
+    },
+  );
 
   it('inserts a public OAuth-only registration and refreshes the marketplace catalog', async () => {
     findOneByUniversalIdentifierGlobal

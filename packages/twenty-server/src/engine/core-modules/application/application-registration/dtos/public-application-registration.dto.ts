@@ -20,7 +20,7 @@ export class PublicApplicationRegistrationDTO {
   @Field(() => [String])
   oAuthScopes: string[];
 
-  // Server-verified, unlike the name a dynamically registered client picks for itself
+  // Set by the server, unlike the name, which a dynamically registered client picks itself
   @Field(() => WellKnownOAuthClient, { nullable: true })
   wellKnownOAuthClient: WellKnownOAuthClient | null;
 }

@@ -37,11 +37,10 @@ describe('OAuthRegistrationController', () => {
       status: jest.Mock;
     };
 
-  const buildBody = (redirectUris: string[]): OAuthRegisterInput =>
-    ({
-      client_name: 'Claude',
-      redirect_uris: redirectUris,
-    }) as OAuthRegisterInput;
+  const buildBody = (redirectUris: string[]): OAuthRegisterInput => ({
+    client_name: 'Claude',
+    redirect_uris: redirectUris,
+  });
 
   beforeEach(async () => {
     isDynamicClientRegistrationEnabled = true;

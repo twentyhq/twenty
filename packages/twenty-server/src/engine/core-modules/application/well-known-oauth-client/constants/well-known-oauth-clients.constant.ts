@@ -3,10 +3,8 @@ import { WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/app
 import { WellKnownOAuthClient } from 'src/engine/core-modules/application/well-known-oauth-client/enums/well-known-oauth-client.enum';
 import { type WellKnownOAuthClientDefinition } from 'src/engine/core-modules/application/well-known-oauth-client/types/well-known-oauth-client-definition.type';
 
-// Callbacks and metadata document hosts follow each vendor's connector docs:
-// https://claude.com/docs/connectors/building/authentication
-// https://developers.openai.com/apps-sdk/build/auth
 export const WELL_KNOWN_OAUTH_CLIENTS: WellKnownOAuthClientDefinition[] = [
+  // Callbacks and document hosts per https://developers.openai.com/apps-sdk/build/auth
   {
     client: WellKnownOAuthClient.CHATGPT,
     universalIdentifier: WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CHATGPT,
@@ -25,6 +23,7 @@ export const WELL_KNOWN_OAUTH_CLIENTS: WellKnownOAuthClientDefinition[] = [
     ],
     clientIdMetadataDocumentHostnames: ['chatgpt.com'],
   },
+  // Callbacks and document hosts per https://claude.com/docs/connectors/building/authentication
   {
     client: WellKnownOAuthClient.CLAUDE,
     universalIdentifier: WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,

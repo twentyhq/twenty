@@ -148,7 +148,9 @@ export class OAuthRegistrationController {
 
     const validScopes: readonly string[] = ALL_OAUTH_SCOPES;
     const requestedScopes = body.scope
-      ? body.scope.split(' ').filter((s) => validScopes.includes(s))
+      ? body.scope
+          .split(' ')
+          .filter((scope): scope is OAuthScope => validScopes.includes(scope))
       : [...ALL_OAUTH_SCOPES];
 
     res.setHeader('Cache-Control', 'no-store');
@@ -182,7 +184,7 @@ export class OAuthRegistrationController {
     // Only new registrations count: a well-known client's users arrive from a few shared IPs and get the seeded client
     const rateLimitResult = await this.applyRateLimit(req);
 
-    if (rateLimitResult) {
+    if (isDefined(rateLimitResult)) {
       res.status(429);
 
       return rateLimitResult;
@@ -195,7 +197,7 @@ export class OAuthRegistrationController {
         oAuthClientId: v4(),
         oAuthClientSecretHash: null,
         oAuthRedirectUris: body.redirect_uris,
-        oAuthScopes: requestedScopes as OAuthScope[],
+        oAuthScopes: requestedScopes,
         createdByUserId: null,
         ownerWorkspaceId: null,
         sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,

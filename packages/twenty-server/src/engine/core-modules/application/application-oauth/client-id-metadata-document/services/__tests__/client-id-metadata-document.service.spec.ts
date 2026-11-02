@@ -1,6 +1,8 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { CLIENT_ID_METADATA_DOCUMENT_LIMITS } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/constants/client-id-metadata-document-limits.constant';
 import { ClientIdMetadataDocumentService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/client-id-metadata-document.service';
+import { type CachedClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/cached-client-id-metadata-document.type';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 
@@ -17,7 +19,15 @@ describe('ClientIdMetadataDocumentService', () => {
   let service: ClientIdMetadataDocumentService;
   let httpGet: jest.Mock;
   let getHttpClient: jest.Mock;
-  let cache: Map<string, unknown>;
+  let cache: Map<string, CachedClientIdMetadataDocument>;
+
+  const moveClockPastRefresh = () => {
+    const now = Date.now();
+
+    jest
+      .spyOn(Date, 'now')
+      .mockReturnValue(now + CLIENT_ID_METADATA_DOCUMENT_LIMITS.refreshAfterMs);
+  };
 
   beforeEach(async () => {
     cache = new Map();
@@ -32,7 +42,7 @@ describe('ClientIdMetadataDocumentService', () => {
           provide: CacheStorageNamespace.EngineOAuthClientMetadataDocument,
           useValue: {
             get: async (key: string) => cache.get(key),
-            set: async (key: string, value: unknown) => {
+            set: async (key: string, value: CachedClientIdMetadataDocument) => {
               cache.set(key, value);
             },
           },
@@ -41,6 +51,10 @@ describe('ClientIdMetadataDocumentService', () => {
     }).compile();
 
     service = module.get(ClientIdMetadataDocumentService);
+  });
+
+  afterEach(() => {
+    jest.restoreAllMocks();
   });
 
   it('fetches the document without following redirects and within a size cap', async () => {
@@ -65,10 +79,7 @@ describe('ClientIdMetadataDocumentService', () => {
 
   it('keeps serving the last document while its host is unreachable', async () => {
     await service.findDocument(DOCUMENT_URL);
-    cache.set(DOCUMENT_URL, {
-      ...(cache.get(DOCUMENT_URL) as object),
-      fetchedAt: 0,
-    });
+    moveClockPastRefresh();
     httpGet.mockRejectedValueOnce(new Error('ECONNREFUSED'));
 
     await expect(service.findDocument(DOCUMENT_URL)).resolves.toMatchObject({
@@ -90,10 +101,7 @@ describe('ClientIdMetadataDocumentService', () => {
 
   it('drops a document its host withdrew', async () => {
     await service.findDocument(DOCUMENT_URL);
-    cache.set(DOCUMENT_URL, {
-      ...(cache.get(DOCUMENT_URL) as object),
-      fetchedAt: 0,
-    });
+    moveClockPastRefresh();
     httpGet.mockRejectedValueOnce(
       Object.assign(new Error('Not found'), {
         isAxiosError: true,

@@ -193,7 +193,7 @@ export class ApplicationAuthorizationService {
     return await this.revokeMatching({ userId, applicationId });
   }
 
-  // Inner join drops authorizations of soft-deleted applications; only the registration columns that identify a well-known client are loaded
+  // Inner join drops authorizations of soft-deleted applications
   private createActiveAuthorizationsQueryBuilder(workspaceId: string) {
     return this.applicationAuthorizationRepository
       .createQueryBuilder('applicationAuthorization')
