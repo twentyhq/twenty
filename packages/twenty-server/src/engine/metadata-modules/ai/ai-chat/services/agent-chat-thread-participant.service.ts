@@ -332,8 +332,6 @@ export class AgentChatThreadParticipantService {
     const participantRepository =
       scope.getRepository<AgentChatThreadParticipantWorkspaceEntity>(
         'agentChatThreadParticipant',
-        { shouldBypassPermissionChecks: true },
-        { shouldSkipEventEmission: true },
       );
     const findParticipant = async () => {
       const [participant] = await participantRepository

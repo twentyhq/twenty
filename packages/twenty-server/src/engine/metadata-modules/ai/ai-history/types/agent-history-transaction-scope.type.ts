@@ -1,11 +1,14 @@
 import { type ObjectLiteral } from 'typeorm';
 
 import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
+import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 
 export type AgentHistoryTransactionScope = {
   executeRawQuery: WorkspaceTransactionScope['executeRawQuery'];
-  getRepository: WorkspaceTransactionScope['getRepository'];
+  getRepository: <TEntity extends ObjectLiteral>(
+    name: string,
+  ) => WorkspaceRepository<TEntity>;
   insert: (
     name: AgentHistoryObjectName,
     values: ObjectLiteral | ObjectLiteral[],

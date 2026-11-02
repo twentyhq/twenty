@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
+import { type ObjectLiteral } from 'typeorm';
 
-import { type AgentHistoryObjectName } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-object-name.type';
 import { type AgentHistoryTransactionScope } from 'src/engine/metadata-modules/ai/ai-history/types/agent-history-transaction-scope.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -17,8 +17,10 @@ export class AgentHistoryTransactionService {
       () =>
         this.workspaceOrmManager.runInWorkspaceTransaction(
           (transactionScope) => {
-            const getRepository = (name: AgentHistoryObjectName) =>
-              transactionScope.getRepository(
+            const getRepository = <TEntity extends ObjectLiteral>(
+              name: string,
+            ) =>
+              transactionScope.getRepository<TEntity>(
                 name,
                 { shouldBypassPermissionChecks: true },
                 { shouldSkipEventEmission: true },
@@ -26,7 +28,7 @@ export class AgentHistoryTransactionService {
 
             return work({
               executeRawQuery: transactionScope.executeRawQuery,
-              getRepository: transactionScope.getRepository,
+              getRepository,
               insert: async (name, values) => {
                 await getRepository(name).insert(values);
               },

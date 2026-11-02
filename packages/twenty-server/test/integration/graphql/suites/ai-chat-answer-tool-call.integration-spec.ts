@@ -120,7 +120,7 @@ describe('Answering a chat tool call', () => {
           buildFallbackProposedToolCall(PROPOSAL_INPUT),
         ),
       },
-    ] as never);
+    ]);
 
   const answerQuestions = (toolCallId: string) =>
     answerToolCall({
