@@ -18,6 +18,7 @@ import { type CreateValidationRuleInput } from 'src/engine/metadata-modules/vali
 import { type UpdateValidationRuleInput } from 'src/engine/metadata-modules/validation-rule/dtos/update-validation-rule.input';
 import { type ValidationRuleDTO } from 'src/engine/metadata-modules/validation-rule/dtos/validation-rule.dto';
 import { compileValidationRuleExpressionOrThrow } from 'src/engine/metadata-modules/validation-rule/utils/compile-validation-rule-expression-or-throw.util';
+import { computeFieldUniversalIdentifiersDeactivatedTogether } from 'src/engine/metadata-modules/validation-rule/utils/compute-field-universal-identifiers-deactivated-together.util';
 import { findActiveFlatValidationRulesReadingField } from 'src/engine/metadata-modules/validation-rule/utils/find-active-flat-validation-rules-reading-field.util';
 import { computeValidationRuleBindings } from 'src/engine/metadata-modules/validation-rule/utils/compute-validation-rule-bindings.util';
 import {
@@ -184,8 +185,11 @@ export class ValidationRuleService {
       return [];
     }
 
-    const { flatValidationRuleMaps, flatFieldMetadataMaps } =
-      await this.getFlatMaps(workspaceId);
+    const {
+      flatValidationRuleMaps,
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    } = await this.getFlatMaps(workspaceId);
     const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: fieldMetadataId,
       flatEntityMaps: flatFieldMetadataMaps,
@@ -196,11 +200,12 @@ export class ValidationRuleService {
     }
 
     return findActiveFlatValidationRulesReadingField({
-      // Deactivating a relation field also deactivates its other side
-      fieldUniversalIdentifiers: [
-        flatFieldMetadata.universalIdentifier,
-        flatFieldMetadata.relationTargetFieldMetadataUniversalIdentifier,
-      ].filter(isDefined),
+      fieldUniversalIdentifiers:
+        computeFieldUniversalIdentifiersDeactivatedTogether({
+          flatFieldMetadata,
+          flatFieldMetadataMaps,
+          flatObjectMetadataMaps,
+        }),
       flatValidationRuleMaps,
     }).map(fromFlatValidationRuleToValidationRuleDto);
   }

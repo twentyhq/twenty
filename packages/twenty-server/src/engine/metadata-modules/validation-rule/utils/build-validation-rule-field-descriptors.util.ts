@@ -17,7 +17,6 @@ import {
   resolveEffectiveFlatEntityProperty,
 } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
 
-// Record writes use the ORM cache, which has no overrides and only sees the raw isActive
 type ValidationRuleFlatFieldMetadata = OrmFlatFieldMetadata &
   OverridableFlatEntity;
 
@@ -25,12 +24,16 @@ type BuildValidationRuleFieldDescriptorsArgs = {
   objectMetadataId: string;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<ValidationRuleFlatFieldMetadata>;
+  // Record writes use the ORM cache, whose raw isActive ignores overrides. An
+  // active rule was checked when saved, so writes keep the type of every field.
+  shouldIncludeInactiveFields?: boolean;
 };
 
-const findActiveFlatFieldMetadatasOfObject = ({
+const findFlatFieldMetadatasOfObject = ({
   objectMetadataId,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
+  shouldIncludeInactiveFields = false,
 }: BuildValidationRuleFieldDescriptorsArgs): ValidationRuleFlatFieldMetadata[] => {
   const flatObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
     flatEntityId: objectMetadataId,
@@ -51,7 +54,7 @@ const findActiveFlatFieldMetadatasOfObject = ({
     .filter(isDefined)
     .filter(
       (flatFieldMetadata) =>
-        flatFieldMetadata.isActive &&
+        shouldIncludeInactiveFields ||
         resolveEffectiveFlatEntityProperty({
           metadataName: 'fieldMetadata',
           flatEntity: flatFieldMetadata,
@@ -71,7 +74,7 @@ const toScalarFieldDescriptor = (
 export const buildValidationRuleFieldDescriptors = (
   args: BuildValidationRuleFieldDescriptorsArgs,
 ): ValidationRuleFieldDescriptor[] =>
-  findActiveFlatFieldMetadatasOfObject(args).map((flatFieldMetadata) => {
+  findFlatFieldMetadatasOfObject(args).map((flatFieldMetadata) => {
     if (
       !isFlatFieldMetadataOfType(flatFieldMetadata, FieldMetadataType.RELATION)
     ) {
@@ -88,7 +91,7 @@ export const buildValidationRuleFieldDescriptors = (
       relationTargetFields:
         relationType === RelationType.MANY_TO_ONE &&
         isDefined(relationTargetObjectMetadataId)
-          ? findActiveFlatFieldMetadatasOfObject({
+          ? findFlatFieldMetadatasOfObject({
               ...args,
               objectMetadataId: relationTargetObjectMetadataId,
             }).map(toScalarFieldDescriptor)

@@ -25,7 +25,10 @@ const buildField = (
     ...field,
   });
 
-const buildFieldNames = (fields: FlatFieldMetadata[]) => {
+const buildFieldNames = (
+  fields: FlatFieldMetadata[],
+  shouldIncludeInactiveFields?: boolean,
+) => {
   const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> =
     createEmptyFlatEntityMaps();
   const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> =
@@ -51,6 +54,7 @@ const buildFieldNames = (fields: FlatFieldMetadata[]) => {
     objectMetadataId: OBJECT_METADATA_ID,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
+    shouldIncludeInactiveFields,
   }).map(({ name }) => name);
 };
 
@@ -67,7 +71,7 @@ describe('buildValidationRuleFieldDescriptors', () => {
     ).toEqual(['score']);
   });
 
-  it('should leave out a field reactivated through an override, which record writes would not see', () => {
+  it('should keep a field the workspace reactivated through an override', () => {
     expect(
       buildFieldNames([
         buildField({
@@ -76,12 +80,18 @@ describe('buildValidationRuleFieldDescriptors', () => {
           overrides: { 'workspace-application': { isActive: true } },
         }),
       ]),
-    ).toEqual([]);
+    ).toEqual(['employees']);
   });
 
   it('should leave out a field whose own isActive is false', () => {
     expect(
       buildFieldNames([buildField({ name: 'score', isActive: false })]),
     ).toEqual([]);
+  });
+
+  it('should keep inactive fields for record writes, which cannot see overrides', () => {
+    expect(
+      buildFieldNames([buildField({ name: 'score', isActive: false })], true),
+    ).toEqual(['score']);
   });
 });
