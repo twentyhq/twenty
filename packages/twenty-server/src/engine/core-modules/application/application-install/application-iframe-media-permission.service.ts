@@ -15,7 +15,6 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { buildApplicationIframeMediaPermissionGrantQuery } from 'src/engine/core-modules/application/utils/build-application-iframe-media-permission-grant-query.util';
 import { toRequestedIframeMediaPermissionsOrThrow } from 'src/engine/core-modules/application/utils/to-requested-iframe-media-permissions-or-throw.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -101,10 +100,10 @@ export class ApplicationIframeMediaPermissionService {
       );
     }
 
-    return this.applicationService.update(applicationId, {
+    return this.applicationService.grantIframeMediaPermissions({
+      applicationId,
       workspaceId,
-      grantedIframeMediaPermissions: () =>
-        buildApplicationIframeMediaPermissionGrantQuery(approvedPermissions),
+      permissions: approvedPermissions,
     });
   }
 }

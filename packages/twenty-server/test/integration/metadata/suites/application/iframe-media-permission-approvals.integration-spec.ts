@@ -192,13 +192,23 @@ describe('Installed application iframe media permission approvals', () => {
   });
 
   it('approves the newly requested origin without reinstalling the installed version', async () => {
+    await writeInstalledManifest([
+      EXISTING_PERMISSION,
+      NEW_PERMISSION,
+      SECOND_NEW_PERMISSION,
+    ]);
+
     const beforeApproval = await readApplication();
 
     expect(beforeApproval.body.errors).toBeUndefined();
     expect(beforeApproval.body.data.findOneApplication).toEqual({
       id: applicationId,
       version: INSTALLED_VERSION,
-      requestedIframeMediaPermissions: [EXISTING_PERMISSION, NEW_PERMISSION],
+      requestedIframeMediaPermissions: [
+        EXISTING_PERMISSION,
+        NEW_PERMISSION,
+        SECOND_NEW_PERMISSION,
+      ],
       grantedIframeMediaPermissions: [EXISTING_PERMISSION],
     });
 
@@ -308,6 +318,35 @@ describe('Installed application iframe media permission approvals', () => {
         SECOND_NEW_PERMISSION,
       ]),
     );
+  });
+
+  it('keeps grants unchanged when the installed manifest is unavailable', async () => {
+    await fileStorageService.deleteFileObject({
+      workspaceId: SEED_APPLE_WORKSPACE_ID,
+      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+      fileFolder: FileFolder.Source,
+      resourcePath: 'manifest.json',
+    });
+
+    const response = await approvePermissions({
+      permissions: [NEW_PERMISSION],
+    });
+
+    expect(response.body.errors).toEqual([
+      expect.objectContaining({
+        extensions: expect.objectContaining({ code: 'BAD_USER_INPUT' }),
+      }),
+    ]);
+
+    const application = await readApplication();
+
+    expect(application.body.errors).toBeUndefined();
+    expect(application.body.data.findOneApplication).toEqual({
+      id: applicationId,
+      version: INSTALLED_VERSION,
+      requestedIframeMediaPermissions: [],
+      grantedIframeMediaPermissions: [EXISTING_PERMISSION],
+    });
   });
 
   it('rejects an origin removed from the installed manifest after review', async () => {
