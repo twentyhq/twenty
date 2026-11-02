@@ -12,7 +12,7 @@ import { useLingui } from '@lingui/react/macro';
 import { Fragment, useContext } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { Dropdown, useDropdownPage } from 'twenty-ui/components/navigation';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 
 type AdvancedFilterFieldSelectMenuProps = {
   recordFilterId: string;

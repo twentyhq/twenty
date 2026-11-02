@@ -18,7 +18,8 @@ import {
   isLabelIdentifierFieldMetadataTypes,
   isSearchableFieldType,
 } from 'twenty-shared/utils';
-import { IconCircleOff, IconPlus, useIcons } from 'twenty-ui/icon';
+import { IconCircleOff, IconPlus } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { type SelectOption } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type z } from 'zod';
