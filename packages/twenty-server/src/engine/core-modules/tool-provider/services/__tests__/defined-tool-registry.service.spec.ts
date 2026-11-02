@@ -87,7 +87,7 @@ const pauseWebhookInputSchema = z.object({ id: z.uuid() });
   category: ToolCategory.WEBHOOK,
   description: 'Pause a webhook.',
   requiredPermissionFlags: [PermissionFlagType.API_KEYS_AND_WEBHOOKS],
-  requiredFeatureFlags: [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED],
+  requiredFeatureFlags: [FeatureFlagKey.IS_MCP_SERVERS_ENABLED],
 })
 class PauseWebhookTool extends BaseTool<typeof pauseWebhookInputSchema> {
   readonly inputSchema = pauseWebhookInputSchema;
@@ -219,7 +219,7 @@ describe('DefinedToolRegistryService', () => {
           isGranted: true,
           enabledFeatureFlags: [
             FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
-            FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
+            FeatureFlagKey.IS_MCP_SERVERS_ENABLED,
           ],
         });
 

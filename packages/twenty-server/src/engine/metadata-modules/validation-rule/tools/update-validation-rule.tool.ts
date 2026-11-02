@@ -5,7 +5,6 @@ import {
   PermissionFlagType,
   VALIDATION_RULE_EXPRESSION_SYNTAX_DESCRIPTION,
 } from 'twenty-shared/constants';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { z } from 'zod';
 
 import { DefineTool } from 'src/engine/core-modules/tool-provider/decorators/define-tool.decorator';
@@ -41,7 +40,6 @@ const updateValidationRuleInputSchema = z.object({
   name: 'update_validation_rule',
   category: ToolCategory.METADATA,
   requiredPermissionFlags: [PermissionFlagType.DATA_MODEL],
-  requiredFeatureFlags: [FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED],
   icon: 'IconSettings',
   description:
     'Update a validation rule. Only the provided properties change. When the user is on a validation rule page (a settings path ending in /validation-rules/<id>), requests about a rule are about that one. An active rule rejects an invalid expression with the reason; an inactive rule only checks it when activated, so check it first with validate_validation_rule_expression. Keep the rule inactive unless the user asks to activate it.',
