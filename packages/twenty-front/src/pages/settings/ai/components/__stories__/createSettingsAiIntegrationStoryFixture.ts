@@ -12,6 +12,7 @@ import { fn } from 'storybook/test';
 import {
   FeatureFlagKey,
   type PermissionFlagType,
+  type UpdateWorkspaceMutation,
   type UpdateWorkspaceMutationVariables,
 } from '~/generated-metadata/graphql';
 import { graphqlMocks } from '~/testing/graphqlMocks';
@@ -103,7 +104,7 @@ export const createSettingsAiIntegrationStoryFixture = () => {
         },
       }),
     ),
-    graphql.mutation<Record<string, unknown>, UpdateWorkspaceMutationVariables>(
+    graphql.mutation<UpdateWorkspaceMutation, UpdateWorkspaceMutationVariables>(
       'UpdateWorkspace',
       async ({ variables }) => {
         await delay(100);
@@ -119,7 +120,11 @@ export const createSettingsAiIntegrationStoryFixture = () => {
           data: {
             updateWorkspace: {
               ...workspace,
-              defaultRole: workspace.defaultRole ?? null,
+              __typename: 'Workspace',
+              customDomain: workspace.customDomain ?? null,
+              displayName: workspace.displayName ?? null,
+              logo: workspace.logo ?? null,
+              defaultRole: null,
             },
           },
         });
