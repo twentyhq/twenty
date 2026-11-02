@@ -51,6 +51,9 @@ const renderGuard = ({
     persistedRole,
   );
 
+  const getDraftRole = () =>
+    store.get(settingsDraftRoleFamilyState.getAtom('role-1', scopeId));
+
   render(
     <JotaiProvider store={store}>
       <WorkspaceSurfaceContext.Provider
@@ -68,6 +71,8 @@ const renderGuard = ({
       </WorkspaceSurfaceContext.Provider>
     </JotaiProvider>,
   );
+
+  return { getDraftRole };
 };
 
 describe('SettingsRoleRouteGuard', () => {
@@ -113,6 +118,18 @@ describe('SettingsRoleRouteGuard', () => {
     renderGuard({ surface: 'main', roleIds: ['role-1'] });
 
     expect(screen.getByTestId('role-page')).toBeInTheDocument();
+  });
+
+  it('seeds the draft from the persisted role on a direct load', () => {
+    const role = { ...mockedRoles[0], id: 'role-1' };
+
+    const { getDraftRole } = renderGuard({
+      surface: 'main',
+      roleIds: ['role-1'],
+      persistedRole: role,
+    });
+
+    expect(getDraftRole()).toEqual(role);
   });
 
   it('contains a missing role in the side panel', () => {

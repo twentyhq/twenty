@@ -3,6 +3,7 @@ import { type ReactNode } from 'react';
 import { WorkspaceRouteUnavailable } from '@/ui/layout/page/components/WorkspaceRouteUnavailable';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
+import { SettingsRoleDraftSyncEffect } from '@/settings/roles/role/components/SettingsRoleDraftSyncEffect';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
 import { settingsRoleIdsState } from '@/settings/roles/states/settingsRoleIdsState';
@@ -43,6 +44,7 @@ export const SettingsRoleRouteGuard = ({
   return (
     <>
       <SettingsRolesQueryEffect />
+      <SettingsRoleDraftSyncEffect roleId={roleId} />
       {guardedChildren}
     </>
   );
