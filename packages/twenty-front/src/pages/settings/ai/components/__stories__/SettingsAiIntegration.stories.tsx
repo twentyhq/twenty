@@ -118,7 +118,7 @@ export const OverviewNavigationAndInstructionsPersistence: Story = {
 };
 
 export const LegacyTabsWithoutInbox: Story = {
-  args: { isInboxEnabled: false },
+  args: { isInboxEnabled: false, routeHash: '#overview' },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
     const mcp = await canvas.findByRole('link', { name: 'MCP' });
