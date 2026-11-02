@@ -8,18 +8,9 @@ export const collectCalendarEventIdsFromParticipantEvents = (
   events: ObjectRecordBaseEvent<CalendarEventParticipantForDatabaseEvent>[],
 ): string[] =>
   getUniqueSortedIds(
-    events.flatMap((event) => {
-      const { before, after } = event.properties;
-
-      if (
-        !isNonEmptyString(before?.workspaceMemberId) &&
-        !isNonEmptyString(after?.workspaceMemberId)
-      ) {
-        return [];
-      }
-
-      return [before?.calendarEventId, after?.calendarEventId].filter(
+    events.flatMap(({ properties: { before, after } }) =>
+      [before?.calendarEventId, after?.calendarEventId].filter(
         isNonEmptyString,
-      );
-    }),
+      ),
+    ),
   );

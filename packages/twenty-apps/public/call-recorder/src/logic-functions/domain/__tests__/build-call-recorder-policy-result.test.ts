@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it } from 'vitest';
 
+import { CallRecorderRecordMyMeetingsChoice } from 'src/constants/call-recorder-record-my-meetings-choice';
 import { CALL_RECORDER_CALENDAR_BOT_SCHEDULING_ENABLED_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-calendar-bot-scheduling-enabled-env-var-name';
 import { buildCallRecorderPolicyResult } from 'src/logic-functions/domain/build-call-recorder-policy-result.util';
 import { type CallRecorderPolicyCalendarEventInput } from 'src/logic-functions/types/call-recorder-policy-calendar-event-input.type';
@@ -17,6 +18,7 @@ const buildCalendarEventInput = (
   conferenceLinkUrl: 'https://meet.google.com/customer-sync',
   callRecorderPreference: undefined,
   participantWorkspaceMemberIds: [],
+  hasExternalAttendee: false,
   ...overrides,
 });
 
@@ -32,7 +34,7 @@ describe('buildCallRecorderPolicyResult', () => {
       calendarEvent: buildCalendarEventInput({
         callRecorderPreference: 'ON',
       }),
-      optedInWorkspaceMemberIds: new Set(),
+      recordMyMeetingsChoices: new Map(),
       now: NOW,
     });
 
@@ -46,7 +48,7 @@ describe('buildCallRecorderPolicyResult', () => {
       calendarEvent: buildCalendarEventInput({
         callRecorderPreference: 'OFF',
       }),
-      optedInWorkspaceMemberIds: new Set(),
+      recordMyMeetingsChoices: new Map(),
       now: NOW,
     });
 
@@ -63,7 +65,7 @@ describe('buildCallRecorderPolicyResult', () => {
       calendarEvent: buildCalendarEventInput({
         callRecorderPreference: 'ON',
       }),
-      optedInWorkspaceMemberIds: new Set(),
+      recordMyMeetingsChoices: new Map(),
       now: NOW,
     });
 
@@ -71,12 +73,15 @@ describe('buildCallRecorderPolicyResult', () => {
     expect(policyResult.reason).toBe('CALENDAR_BOT_SCHEDULING_DISABLED');
   });
 
-  it('does not request a bot when the attributed attendees all opted out', () => {
+  it('does not request a bot when the attributed attendees all chose none', () => {
     const policyResult = buildCallRecorderPolicyResult({
       calendarEvent: buildCalendarEventInput({
         participantWorkspaceMemberIds: ['member-1', 'member-2'],
       }),
-      optedInWorkspaceMemberIds: new Set(['member-3']),
+      recordMyMeetingsChoices: new Map([
+        ['member-1', CallRecorderRecordMyMeetingsChoice.NONE],
+        ['member-2', CallRecorderRecordMyMeetingsChoice.NONE],
+      ]),
       now: NOW,
     });
 
@@ -84,12 +89,15 @@ describe('buildCallRecorderPolicyResult', () => {
     expect(policyResult.reason).toBe('ATTENDEES_OPTED_OUT');
   });
 
-  it('requests a bot when at least one attributed attendee is opted in', () => {
+  it('requests a bot when at least one attributed attendee wants the meeting', () => {
     const policyResult = buildCallRecorderPolicyResult({
       calendarEvent: buildCalendarEventInput({
         participantWorkspaceMemberIds: ['member-1', 'member-2'],
       }),
-      optedInWorkspaceMemberIds: new Set(['member-2']),
+      recordMyMeetingsChoices: new Map([
+        ['member-1', CallRecorderRecordMyMeetingsChoice.NONE],
+        ['member-2', CallRecorderRecordMyMeetingsChoice.ALL_MEETINGS],
+      ]),
       now: NOW,
     });
 
@@ -100,8 +108,9 @@ describe('buildCallRecorderPolicyResult', () => {
     const policyResult = buildCallRecorderPolicyResult({
       calendarEvent: buildCalendarEventInput({
         participantWorkspaceMemberIds: [],
+        hasExternalAttendee: false,
       }),
-      optedInWorkspaceMemberIds: new Set(),
+      recordMyMeetingsChoices: new Map(),
       now: NOW,
     });
 

@@ -3,6 +3,7 @@ import { defineApplication, FieldType } from 'twenty-sdk/define';
 import { APP_DESCRIPTION } from 'src/constants/app-description';
 import { APP_DISPLAY_NAME } from 'src/constants/app-display-name';
 import { CALL_RECORDING_BILLABLE_OPERATION_NAME } from 'src/constants/call-recording-billable-operation-name';
+import { CALL_RECORDER_RECORD_MY_MEETINGS_OPTIONS } from 'src/constants/call-recorder-record-my-meetings-options';
 import { CALL_RECORDER_TRANSCRIPT_PROVIDER_OPTIONS } from 'src/constants/call-recorder-transcript-provider-options';
 import {
   APPLICATION_UNIVERSAL_IDENTIFIER,
@@ -90,9 +91,10 @@ export default defineApplication({
         CALL_RECORDER_RECORD_MY_MEETINGS_APP_VARIABLE_UNIVERSAL_IDENTIFIER,
       label: 'Record my meetings',
       description:
-        'Whether the recorder joins the meetings you attend. Set to false to stop recording them; a meeting is still recorded when another attendee keeps this on.',
+        'Which of your meetings the recorder joins: external meetings (someone outside the workspace is invited), all meetings, or none. A meeting is still recorded when another attendee asks for it.',
       isSecret: false,
-      type: FieldType.BOOLEAN,
+      type: FieldType.SELECT,
+      options: CALL_RECORDER_RECORD_MY_MEETINGS_OPTIONS,
       scope: 'USER',
       value: DEFAULT_CALL_RECORDER_RECORD_MY_MEETINGS,
     },

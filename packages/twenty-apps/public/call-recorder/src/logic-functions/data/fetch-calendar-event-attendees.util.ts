@@ -6,6 +6,7 @@ import {
   fetchAllNodes,
   type ConnectionPage,
 } from 'src/logic-functions/data/fetch-all-nodes.util';
+import { type CalendarEventAttendees } from 'src/logic-functions/types/calendar-event-attendees.type';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
 
 type CalendarEventParticipantNode = {
@@ -13,14 +14,14 @@ type CalendarEventParticipantNode = {
   workspaceMemberId?: string | null;
 };
 
-export const fetchCalendarEventParticipantWorkspaceMemberIds = async (
+export const fetchCalendarEventAttendees = async (
   client: CoreApiClient,
   calendarEventIds: string[],
-): Promise<Map<string, string[]>> => {
-  const workspaceMemberIdsByCalendarEventId = new Map<string, string[]>();
+): Promise<Map<string, CalendarEventAttendees>> => {
+  const attendeesByCalendarEventId = new Map<string, CalendarEventAttendees>();
 
   if (calendarEventIds.length === 0) {
-    return workspaceMemberIdsByCalendarEventId;
+    return attendeesByCalendarEventId;
   }
 
   const participantNodes = await fetchAllNodes<CalendarEventParticipantNode>(
@@ -28,10 +29,7 @@ export const fetchCalendarEventParticipantWorkspaceMemberIds = async (
       const queryResult = await client.query({
         calendarEventParticipants: {
           __args: {
-            filter: {
-              calendarEventId: { in: calendarEventIds },
-              workspaceMemberId: { is: 'NOT_NULL' },
-            },
+            filter: { calendarEventId: { in: calendarEventIds } },
             first: TWENTY_PAGE_SIZE,
             ...(isUndefined(afterCursor) ? {} : { after: afterCursor }),
           },
@@ -55,26 +53,24 @@ export const fetchCalendarEventParticipantWorkspaceMemberIds = async (
   );
 
   for (const participant of participantNodes) {
-    if (
-      !isNonEmptyString(participant.calendarEventId) ||
-      !isNonEmptyString(participant.workspaceMemberId)
-    ) {
+    if (!isNonEmptyString(participant.calendarEventId)) {
       continue;
     }
 
-    const workspaceMemberIds =
-      workspaceMemberIdsByCalendarEventId.get(participant.calendarEventId) ??
-      [];
+    const attendees = attendeesByCalendarEventId.get(
+      participant.calendarEventId,
+    ) ?? { workspaceMemberIds: [], hasExternalAttendee: false };
 
-    if (!workspaceMemberIds.includes(participant.workspaceMemberId)) {
-      workspaceMemberIds.push(participant.workspaceMemberId);
+    if (!isNonEmptyString(participant.workspaceMemberId)) {
+      attendees.hasExternalAttendee = true;
+    } else if (
+      !attendees.workspaceMemberIds.includes(participant.workspaceMemberId)
+    ) {
+      attendees.workspaceMemberIds.push(participant.workspaceMemberId);
     }
 
-    workspaceMemberIdsByCalendarEventId.set(
-      participant.calendarEventId,
-      workspaceMemberIds,
-    );
+    attendeesByCalendarEventId.set(participant.calendarEventId, attendees);
   }
 
-  return workspaceMemberIdsByCalendarEventId;
+  return attendeesByCalendarEventId;
 };

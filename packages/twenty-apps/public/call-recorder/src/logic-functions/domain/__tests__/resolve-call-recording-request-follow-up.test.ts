@@ -44,6 +44,7 @@ const buildCalendarEvent = (
   conferenceLinkUrl: 'https://meet.example.com/customer-sync',
   callRecorderPreference: undefined,
   participantWorkspaceMemberIds: [],
+  hasExternalAttendee: false,
   ...overrides,
 });
 

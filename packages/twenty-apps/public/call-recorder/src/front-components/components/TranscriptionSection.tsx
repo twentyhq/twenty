@@ -4,12 +4,12 @@ import { Section } from 'twenty-ui/components/layout';
 import { CALL_RECORDER_TRANSCRIPT_PROVIDER_OPTIONS } from 'src/constants/call-recorder-transcript-provider-options';
 import { LabelledSettingsField } from 'src/front-components/components/LabelledSettingsField';
 import { SettingsOptionCardContentSelect } from 'src/front-components/components/SettingsOptionCardContentSelect';
+import { SettingsOptionSelect } from 'src/front-components/components/SettingsOptionSelect';
 import { SettingsOptionCardContentToggle } from 'src/front-components/components/SettingsOptionCardContentToggle';
 import { StyledDimmable } from 'src/front-components/components/StyledDimmable';
 import { StyledSettingsCard } from 'src/front-components/components/StyledSettingsCard';
 import { StyledSettingsSectionStack } from 'src/front-components/components/StyledSettingsSectionStack';
 import { StyledSettingsTextArea } from 'src/front-components/components/StyledSettingsTextArea';
-import { TranscriptProviderControl } from 'src/front-components/components/TranscriptProviderControl';
 import {
   CALL_RECORDER_SUMMARY_ENABLED_ROW,
   CALL_RECORDER_SUMMARY_PROMPT_FIELD,
@@ -87,9 +87,12 @@ export const TranscriptionSection = () => {
             description={CALL_RECORDER_TRANSCRIPT_PROVIDER_ROW.description}
             divider
           >
-            <TranscriptProviderControl
+            <SettingsOptionSelect
               value={providerValue}
               options={CALL_RECORDER_TRANSCRIPT_PROVIDER_OPTIONS}
+              ariaLabel="Transcript provider"
+              listboxId="call-recorder-transcript-provider"
+              allowEmpty
               onChange={handleProviderChange}
             />
           </SettingsOptionCardContentSelect>

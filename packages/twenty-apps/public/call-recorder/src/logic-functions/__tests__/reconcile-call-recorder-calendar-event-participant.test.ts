@@ -1,11 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { CallRecorderRecordMyMeetingsChoice } from 'src/constants/call-recorder-record-my-meetings-choice';
+
 import reconcileParticipantLogicFunction, {
   reconcileCallRecorderCalendarEventParticipantHandler,
 } from 'src/logic-functions/reconcile-call-recorder-calendar-event-participant';
 
 const reconcileMock = vi.hoisted(() => vi.fn());
-const fetchOptedInWorkspaceMemberIdsMock = vi.hoisted(() => vi.fn());
+const fetchRecordMyMeetingsChoicesMock = vi.hoisted(() => vi.fn());
 
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: class {},
@@ -16,9 +18,9 @@ vi.mock('src/logic-functions/flows/reconcile-call-recorder.util', () => ({
 }));
 
 vi.mock(
-  'src/logic-functions/data/fetch-opted-in-workspace-member-ids.util',
+  'src/logic-functions/data/fetch-record-my-meetings-choices.util',
   () => ({
-    fetchOptedInWorkspaceMemberIds: fetchOptedInWorkspaceMemberIdsMock,
+    fetchRecordMyMeetingsChoices: fetchRecordMyMeetingsChoicesMock,
   }),
 );
 
@@ -30,7 +32,9 @@ describe('reconcileCallRecorderCalendarEventParticipantHandler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     reconcileMock.mockResolvedValue([]);
-    fetchOptedInWorkspaceMemberIdsMock.mockResolvedValue(new Set(['member-1']));
+    fetchRecordMyMeetingsChoicesMock.mockResolvedValue(
+      new Map([['member-1', CallRecorderRecordMyMeetingsChoice.NONE]]),
+    );
   });
 
   it('subscribes to participant changes that can move a member in or out of a meeting', () => {
@@ -43,7 +47,7 @@ describe('reconcileCallRecorderCalendarEventParticipantHandler', () => {
     });
   });
 
-  it('reconciles the meetings whose matched attendees changed with the opted-in set', async () => {
+  it('reconciles the meetings whose attendees changed with every member choice', async () => {
     const result = await reconcileCallRecorderCalendarEventParticipantHandler({
       name: 'calendarEventParticipant.updated',
       events: [
@@ -68,7 +72,9 @@ describe('reconcileCallRecorderCalendarEventParticipantHandler', () => {
     expect(reconcileMock).toHaveBeenCalledExactlyOnceWith(
       expect.objectContaining({
         calendarEventIds: ['calendar-event-1'],
-        optedInWorkspaceMemberIds: new Set(['member-1']),
+        recordMyMeetingsChoices: new Map([
+          ['member-1', CallRecorderRecordMyMeetingsChoice.NONE],
+        ]),
       }),
     );
     expect(result).toEqual({
@@ -78,7 +84,7 @@ describe('reconcileCallRecorderCalendarEventParticipantHandler', () => {
     });
   });
 
-  it('skips a batch that only touches unmatched attendees', async () => {
+  it('reconciles a meeting when an external attendee is added, since that can make it external', async () => {
     const result = await reconcileCallRecorderCalendarEventParticipantHandler({
       name: 'calendarEventParticipant.created',
       events: [
@@ -95,12 +101,30 @@ describe('reconcileCallRecorderCalendarEventParticipantHandler', () => {
       ],
     } as HandlerBatch);
 
-    expect(result).toEqual({
-      skipped: true,
-      reason: 'no workspace member attendee change',
-    });
+    expect(result).toEqual(
+      expect.objectContaining({
+        reconciled: true,
+        calendarEventIds: ['calendar-event-1'],
+      }),
+    );
+  });
+
+  it('skips a batch whose events reference no meeting', async () => {
+    const result = await reconcileCallRecorderCalendarEventParticipantHandler({
+      name: 'calendarEventParticipant.created',
+      events: [
+        {
+          recordId: 'participant-1',
+          properties: {
+            after: { id: 'participant-1', calendarEventId: null },
+          },
+        },
+      ],
+    } as HandlerBatch);
+
+    expect(result).toEqual({ skipped: true, reason: 'no attendee change' });
     expect(reconcileMock).not.toHaveBeenCalled();
-    expect(fetchOptedInWorkspaceMemberIdsMock).not.toHaveBeenCalled();
+    expect(fetchRecordMyMeetingsChoicesMock).not.toHaveBeenCalled();
   });
 
   it('skips events of other objects', async () => {

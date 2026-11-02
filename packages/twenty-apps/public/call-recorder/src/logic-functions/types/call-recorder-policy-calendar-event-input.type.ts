@@ -8,4 +8,5 @@ export type CallRecorderPolicyCalendarEventInput = {
   conferenceLinkUrl: string | undefined;
   callRecorderPreference: string | undefined;
   participantWorkspaceMemberIds: string[];
+  hasExternalAttendee: boolean;
 };

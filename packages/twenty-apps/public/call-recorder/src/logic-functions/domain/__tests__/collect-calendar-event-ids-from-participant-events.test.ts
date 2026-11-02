@@ -26,29 +26,13 @@ const buildEvent = ({
   }) as ParticipantEvent;
 
 describe('collectCalendarEventIdsFromParticipantEvents', () => {
-  it('ignores attendees that match no workspace member', () => {
-    expect(
-      collectCalendarEventIdsFromParticipantEvents([
-        buildEvent({
-          after: {
-            calendarEventId: 'calendar-event-1',
-            workspaceMemberId: null,
-          },
-        }),
-        buildEvent({
-          before: { calendarEventId: 'calendar-event-2' },
-        }),
-      ]),
-    ).toEqual([]);
-  });
-
-  it('collects the event of a matched attendee that was added, matched or removed', () => {
+  it('collects the meetings of added, changed and removed attendees, matched or not', () => {
     expect(
       collectCalendarEventIdsFromParticipantEvents([
         buildEvent({
           after: {
             calendarEventId: 'calendar-event-3',
-            workspaceMemberId: 'member-1',
+            workspaceMemberId: null,
           },
         }),
         buildEvent({
@@ -71,20 +55,22 @@ describe('collectCalendarEventIdsFromParticipantEvents', () => {
     ).toEqual(['calendar-event-1', 'calendar-event-2', 'calendar-event-3']);
   });
 
-  it('collects both events when a matched attendee moves between meetings', () => {
+  it('collects both meetings when an attendee moves between them', () => {
     expect(
       collectCalendarEventIdsFromParticipantEvents([
         buildEvent({
-          before: {
-            calendarEventId: 'calendar-event-1',
-            workspaceMemberId: 'member-1',
-          },
-          after: {
-            calendarEventId: 'calendar-event-2',
-            workspaceMemberId: 'member-1',
-          },
+          before: { calendarEventId: 'calendar-event-1' },
+          after: { calendarEventId: 'calendar-event-2' },
         }),
       ]),
     ).toEqual(['calendar-event-1', 'calendar-event-2']);
+  });
+
+  it('ignores events that reference no meeting', () => {
+    expect(
+      collectCalendarEventIdsFromParticipantEvents([
+        buildEvent({ after: { calendarEventId: null } }),
+      ]),
+    ).toEqual([]);
   });
 });

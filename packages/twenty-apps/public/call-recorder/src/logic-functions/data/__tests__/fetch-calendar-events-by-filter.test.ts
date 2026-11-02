@@ -23,7 +23,7 @@ describe('fetchCalendarEventsByFilter', () => {
     vi.clearAllMocks();
   });
 
-  it('attaches the matched workspace member ids of each event participants', async () => {
+  it('attaches the matched member ids and external flag of each event attendees', async () => {
     queryMock.mockImplementation(async (query: Record<string, unknown>) => {
       if ('calendarEvents' in query) {
         return {
@@ -36,8 +36,15 @@ describe('fetchCalendarEventsByFilter', () => {
 
       return {
         calendarEventParticipants: buildConnection([
-          { calendarEventId: 'calendar-event-1', workspaceMemberId: 'member-1' },
-          { calendarEventId: 'calendar-event-1', workspaceMemberId: 'member-2' },
+          {
+            calendarEventId: 'calendar-event-1',
+            workspaceMemberId: 'member-1',
+          },
+          {
+            calendarEventId: 'calendar-event-1',
+            workspaceMemberId: 'member-2',
+          },
+          { calendarEventId: 'calendar-event-2', workspaceMemberId: null },
         ]),
       };
     });
@@ -58,9 +65,17 @@ describe('fetchCalendarEventsByFilter', () => {
         }),
       }),
     );
-    expect(result.map((calendarEvent) => calendarEvent.participantWorkspaceMemberIds)).toEqual([
-      ['member-1', 'member-2'],
-      [],
+    expect(
+      result.map(({ participantWorkspaceMemberIds, hasExternalAttendee }) => ({
+        participantWorkspaceMemberIds,
+        hasExternalAttendee,
+      })),
+    ).toEqual([
+      {
+        participantWorkspaceMemberIds: ['member-1', 'member-2'],
+        hasExternalAttendee: false,
+      },
+      { participantWorkspaceMemberIds: [], hasExternalAttendee: true },
     ]);
   });
 

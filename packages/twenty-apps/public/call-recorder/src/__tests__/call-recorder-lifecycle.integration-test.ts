@@ -27,7 +27,7 @@ import {
   SWEEP_UPCOMING_CALENDAR_EVENTS_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER,
 } from 'src/constants/universal-identifiers';
 import { CallRecorderPreference } from 'src/constants/call-recorder-preference';
-import { fetchOptedInWorkspaceMemberIds } from 'src/logic-functions/data/fetch-opted-in-workspace-member-ids.util';
+import { fetchRecordMyMeetingsChoices } from 'src/logic-functions/data/fetch-record-my-meetings-choices.util';
 import { followUpCallRecordingRequestHandler } from 'src/logic-functions/follow-up-call-recording-request';
 import { processPendingCallRecordingRequestsHandler } from 'src/logic-functions/process-pending-call-recording-requests';
 import { reconcileStaleBotStateHandler } from 'src/logic-functions/reconcile-stale-bot-state';
@@ -231,13 +231,62 @@ const discoverVisibleCalendarEventFixtures = async (): Promise<
       : null;
   } while (after !== null);
 
-  if (fixtures.length === 0) {
+  const calendarEventIdsWithExternalAttendee =
+    await discoverCalendarEventIdsWithExternalAttendee();
+  const externalFixtures = fixtures.filter((fixture) =>
+    calendarEventIdsWithExternalAttendee.has(fixture.id),
+  );
+
+  if (externalFixtures.length === 0) {
     throw new Error(
-      'No fully visible seeded calendar events found; run the dev seeds before the integration tests',
+      'No fully visible seeded calendar events with an external attendee found; run the dev seeds before the integration tests',
     );
   }
 
-  return fixtures;
+  return externalFixtures;
+};
+
+// Members default to recording external meetings only, so fixtures need an unmatched attendee.
+const discoverCalendarEventIdsWithExternalAttendee = async (): Promise<
+  Set<string>
+> => {
+  const calendarEventIds = new Set<string>();
+  let after: string | null = null;
+
+  do {
+    const participantsData: {
+      calendarEventParticipants: {
+        edges: { node: { calendarEventId: string | null } }[];
+        pageInfo: { hasNextPage: boolean; endCursor: string | null };
+      };
+    } = await twentyGraphql(
+      '/graphql',
+      `query ($after: String) {
+        calendarEventParticipants(
+          first: 200
+          after: $after
+          filter: { workspaceMemberId: { is: NULL } }
+        ) {
+          edges { node { calendarEventId } }
+          pageInfo { hasNextPage endCursor }
+        }
+      }`,
+      { after },
+    );
+    const connection = participantsData.calendarEventParticipants;
+
+    for (const { node } of connection.edges) {
+      if (!isNull(node.calendarEventId)) {
+        calendarEventIds.add(node.calendarEventId);
+      }
+    }
+
+    after = connection.pageInfo.hasNextPage
+      ? connection.pageInfo.endCursor
+      : null;
+  } while (after !== null);
+
+  return calendarEventIds;
 };
 
 const inOneHour = () => new Date(Date.now() + 60 * 60 * 1000).toISOString();
@@ -1189,7 +1238,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
     const [reconciliation] = await reconcileCallRecorderForCalendarEventIds({
       client: reconciliationClient,
-      optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
+      recordMyMeetingsChoices: await fetchRecordMyMeetingsChoices(),
       calendarEventIds: [calendarEventId],
     });
 
@@ -1890,7 +1939,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await reconcileCallRecorderForCalendarEventIds({
         client,
-        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
+        recordMyMeetingsChoices: await fetchRecordMyMeetingsChoices(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -2115,7 +2164,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       const [reconciliation] = await reconcileCallRecorderForCalendarEventIds({
         client,
-        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
+        recordMyMeetingsChoices: await fetchRecordMyMeetingsChoices(),
         calendarEventIds: [calendarEventId],
       });
       const [callRecording] = await findCallRecordings({
@@ -2143,7 +2192,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await reconcileCallRecorderForCalendarEventIds({
         client,
-        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
+        recordMyMeetingsChoices: await fetchRecordMyMeetingsChoices(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -2449,7 +2498,7 @@ describe('call recorder app lifecycle (integration)', () => {
       });
       return reconcileCallRecorderForCalendarEventIds({
         client,
-        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
+        recordMyMeetingsChoices: await fetchRecordMyMeetingsChoices(),
         calendarEventIds: [calendarEventId],
       });
     };
@@ -2504,7 +2553,7 @@ describe('call recorder app lifecycle (integration)', () => {
       await expect(
         reconcileCallRecorderForCalendarEventIds({
           client,
-          optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
+          recordMyMeetingsChoices: await fetchRecordMyMeetingsChoices(),
           calendarEventIds: [calendarEventId, activeCalendarEventId],
         }),
       ).rejects.toThrow();
@@ -3272,7 +3321,7 @@ describe('call recorder app lifecycle (integration)', () => {
       recall.failBotCreation = true;
       await reconcileCallRecorderForCalendarEventIds({
         client,
-        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
+        recordMyMeetingsChoices: await fetchRecordMyMeetingsChoices(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -3309,7 +3358,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       const [reconciliation] = await reconcileCallRecorderForCalendarEventIds({
         client: new CoreApiClient(),
-        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
+        recordMyMeetingsChoices: await fetchRecordMyMeetingsChoices(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -3745,7 +3794,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await reconcileCallRecorderForCalendarEventIds({
         client: applicationClient,
-        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
+        recordMyMeetingsChoices: await fetchRecordMyMeetingsChoices(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -3768,7 +3817,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await reconcileCallRecorderForCalendarEventIds({
         client: applicationClient,
-        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
+        recordMyMeetingsChoices: await fetchRecordMyMeetingsChoices(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -3787,7 +3836,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await reconcileCallRecorderForCalendarEventIds({
         client: applicationClient,
-        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
+        recordMyMeetingsChoices: await fetchRecordMyMeetingsChoices(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -3837,7 +3886,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await reconcileCallRecorderForCalendarEventIds({
         client: applicationClient,
-        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
+        recordMyMeetingsChoices: await fetchRecordMyMeetingsChoices(),
         calendarEventIds: [calendarEventIds[0]],
       });
 
@@ -3868,7 +3917,7 @@ describe('call recorder app lifecycle (integration)', () => {
       });
       await reconcileCallRecorderForCalendarEventIds({
         client: applicationClient,
-        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
+        recordMyMeetingsChoices: await fetchRecordMyMeetingsChoices(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -3889,7 +3938,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       const results = await reconcileCallRecorderForCalendarEventIds({
         client: applicationClient,
-        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
+        recordMyMeetingsChoices: await fetchRecordMyMeetingsChoices(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -3911,7 +3960,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await reconcileCallRecorderForCalendarEventIds({
         client: applicationClient,
-        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
+        recordMyMeetingsChoices: await fetchRecordMyMeetingsChoices(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -3935,7 +3984,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await reconcileCallRecorderForCalendarEventIds({
         client: applicationClient,
-        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
+        recordMyMeetingsChoices: await fetchRecordMyMeetingsChoices(),
         calendarEventIds: [echoedCalendarEventId],
       });
 
@@ -3985,7 +4034,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await reconcileCallRecorderForCalendarEventIds({
         client: applicationClient,
-        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
+        recordMyMeetingsChoices: await fetchRecordMyMeetingsChoices(),
         calendarEventIds,
       });
 
@@ -4151,7 +4200,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await reconcileCallRecorderForCalendarEventIds({
         client: applicationClient,
-        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
+        recordMyMeetingsChoices: await fetchRecordMyMeetingsChoices(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -4174,7 +4223,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await reconcileCallRecorderForCalendarEventIds({
         client: applicationClient,
-        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
+        recordMyMeetingsChoices: await fetchRecordMyMeetingsChoices(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -4303,7 +4352,7 @@ describe('call recorder app lifecycle (integration)', () => {
 
       await reconcileCallRecorderForCalendarEventIds({
         client,
-        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
+        recordMyMeetingsChoices: await fetchRecordMyMeetingsChoices(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -4325,7 +4374,7 @@ describe('call recorder app lifecycle (integration)', () => {
       await syncCalendarBotSchedulingHandler();
       await reconcileCallRecorderForCalendarEventIds({
         client,
-        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
+        recordMyMeetingsChoices: await fetchRecordMyMeetingsChoices(),
         calendarEventIds: [calendarEventId],
       });
 
@@ -4340,7 +4389,7 @@ describe('call recorder app lifecycle (integration)', () => {
       await syncCalendarBotSchedulingHandler();
       await reconcileCallRecorderForCalendarEventIds({
         client,
-        optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
+        recordMyMeetingsChoices: await fetchRecordMyMeetingsChoices(),
         calendarEventIds: [calendarEventId],
       });
 

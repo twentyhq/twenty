@@ -109,6 +109,7 @@ const scheduleBot = ({
       conferenceLinkUrl: 'https://meet.example.com/customer-sync',
       callRecorderPreference: 'ON',
       participantWorkspaceMemberIds: [],
+      hasExternalAttendee: false,
     },
   });
 

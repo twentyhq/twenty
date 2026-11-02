@@ -7,7 +7,7 @@ import {
   fetchAllNodes,
   type ConnectionPage,
 } from 'src/logic-functions/data/fetch-all-nodes.util';
-import { fetchCalendarEventParticipantWorkspaceMemberIds } from 'src/logic-functions/data/fetch-calendar-event-participant-workspace-member-ids.util';
+import { fetchCalendarEventAttendees } from 'src/logic-functions/data/fetch-calendar-event-attendees.util';
 import { resolveConferenceLinkUrl } from 'src/logic-functions/domain/resolve-conference-link-url.util';
 import { stripRestrictedFieldValue } from 'src/logic-functions/data/strip-restricted-field-value.util';
 
@@ -66,11 +66,10 @@ export const fetchCalendarEventsByFilter = async (
     },
   );
 
-  const participantWorkspaceMemberIdsByCalendarEventId =
-    await fetchCalendarEventParticipantWorkspaceMemberIds(
-      client,
-      calendarEventNodes.map((calendarEvent) => calendarEvent.id),
-    );
+  const attendeesByCalendarEventId = await fetchCalendarEventAttendees(
+    client,
+    calendarEventNodes.map((calendarEvent) => calendarEvent.id),
+  );
 
   return calendarEventNodes.map((calendarEvent) => ({
     id: calendarEvent.id,
@@ -90,7 +89,10 @@ export const fetchCalendarEventsByFilter = async (
       ? calendarEvent.callRecorderPreference
       : undefined,
     participantWorkspaceMemberIds:
-      participantWorkspaceMemberIdsByCalendarEventId.get(calendarEvent.id) ??
+      attendeesByCalendarEventId.get(calendarEvent.id)?.workspaceMemberIds ??
       [],
+    hasExternalAttendee:
+      attendeesByCalendarEventId.get(calendarEvent.id)?.hasExternalAttendee ??
+      false,
   }));
 };

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
-import { fetchCalendarEventParticipantWorkspaceMemberIds } from 'src/logic-functions/data/fetch-calendar-event-participant-workspace-member-ids.util';
+import { fetchCalendarEventAttendees } from 'src/logic-functions/data/fetch-calendar-event-attendees.util';
 
 const queryMock = vi.fn();
 
@@ -31,25 +31,22 @@ const buildPage = (
   },
 });
 
-describe('fetchCalendarEventParticipantWorkspaceMemberIds', () => {
+describe('fetchCalendarEventAttendees', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('returns an empty map without querying when no event ids are given', async () => {
-    const result = await fetchCalendarEventParticipantWorkspaceMemberIds(
-      CLIENT,
-      [],
-    );
+    const result = await fetchCalendarEventAttendees(CLIENT, []);
 
     expect(result.size).toBe(0);
     expect(queryMock).not.toHaveBeenCalled();
   });
 
-  it('filters participants to the given events and to matched workspace members', async () => {
+  it('filters participants to the given events', async () => {
     queryMock.mockResolvedValue(buildPage([]));
 
-    await fetchCalendarEventParticipantWorkspaceMemberIds(CLIENT, [
+    await fetchCalendarEventAttendees(CLIENT, [
       'calendar-event-1',
       'calendar-event-2',
     ]);
@@ -60,7 +57,6 @@ describe('fetchCalendarEventParticipantWorkspaceMemberIds', () => {
           __args: expect.objectContaining({
             filter: {
               calendarEventId: { in: ['calendar-event-1', 'calendar-event-2'] },
-              workspaceMemberId: { is: 'NOT_NULL' },
             },
           }),
         }),
@@ -68,7 +64,7 @@ describe('fetchCalendarEventParticipantWorkspaceMemberIds', () => {
     );
   });
 
-  it('groups unique member ids by event across pages and skips unmatched participants', async () => {
+  it('groups unique member ids per event across pages and flags unmatched attendees as external', async () => {
     queryMock
       .mockResolvedValueOnce(
         buildPage(
@@ -100,10 +96,11 @@ describe('fetchCalendarEventParticipantWorkspaceMemberIds', () => {
         ]),
       );
 
-    const result = await fetchCalendarEventParticipantWorkspaceMemberIds(
-      CLIENT,
-      ['calendar-event-1', 'calendar-event-2', 'calendar-event-3'],
-    );
+    const result = await fetchCalendarEventAttendees(CLIENT, [
+      'calendar-event-1',
+      'calendar-event-2',
+      'calendar-event-3',
+    ]);
 
     expect(queryMock).toHaveBeenCalledTimes(2);
     expect(queryMock.mock.calls[1][0]).toEqual(
@@ -113,8 +110,14 @@ describe('fetchCalendarEventParticipantWorkspaceMemberIds', () => {
         }),
       }),
     );
-    expect(result.get('calendar-event-1')).toEqual(['member-1', 'member-2']);
-    expect(result.get('calendar-event-2')).toEqual(['member-2']);
+    expect(result.get('calendar-event-1')).toEqual({
+      workspaceMemberIds: ['member-1', 'member-2'],
+      hasExternalAttendee: true,
+    });
+    expect(result.get('calendar-event-2')).toEqual({
+      workspaceMemberIds: ['member-2'],
+      hasExternalAttendee: false,
+    });
     expect(result.has('calendar-event-3')).toBe(false);
   });
 });

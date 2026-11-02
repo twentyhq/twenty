@@ -1,4 +1,5 @@
 import { CallRecorderPreference } from 'src/constants/call-recorder-preference';
+import { type CallRecorderRecordMyMeetingsChoice } from 'src/constants/call-recorder-record-my-meetings-choice';
 import { type CallRecorderPolicyCalendarEventInput } from 'src/logic-functions/types/call-recorder-policy-calendar-event-input.type';
 import { type CallRecorderPolicyResultForCalendarEvent } from 'src/logic-functions/types/call-recorder-policy-result-for-calendar-event.type';
 import { computeRealMeetingKey } from 'src/logic-functions/domain/compute-real-meeting-key.util';
@@ -8,11 +9,11 @@ import { isCalendarBotSchedulingEnabled } from 'src/logic-functions/utils/is-cal
 
 export const buildCallRecorderPolicyResult = ({
   calendarEvent,
-  optedInWorkspaceMemberIds,
+  recordMyMeetingsChoices,
   now,
 }: {
   calendarEvent: CallRecorderPolicyCalendarEventInput;
-  optedInWorkspaceMemberIds: Set<string>;
+  recordMyMeetingsChoices: Map<string, CallRecorderRecordMyMeetingsChoice>;
   now: Date;
 }): CallRecorderPolicyResultForCalendarEvent => {
   const realMeetingKey = computeRealMeetingKey({
@@ -32,7 +33,8 @@ export const buildCallRecorderPolicyResult = ({
       isRecordingRequestedByAttendee: isRecordingRequestedByAttendee({
         participantWorkspaceMemberIds:
           calendarEvent.participantWorkspaceMemberIds,
-        optedInWorkspaceMemberIds,
+        hasExternalAttendee: calendarEvent.hasExternalAttendee,
+        recordMyMeetingsChoices,
       }),
       callRecorderPreference,
       isCanceled: calendarEvent.isCanceled,

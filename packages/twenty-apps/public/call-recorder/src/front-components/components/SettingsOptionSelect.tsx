@@ -20,30 +20,31 @@ const StyledListbox = styled.div`
   width: 100%;
 `;
 
-const TRANSCRIPT_PROVIDER_LISTBOX_ID = 'call-recorder-transcript-provider';
-
-const getTranscriptProviderOptionId = (index: number) =>
-  `${TRANSCRIPT_PROVIDER_LISTBOX_ID}-option-${index}`;
-
-type TranscriptProviderControlProps = {
+type SettingsOptionSelectProps = {
   value: string;
   options: { label: string; value: string }[];
+  ariaLabel: string;
+  listboxId: string;
+  allowEmpty?: boolean;
   onChange: (value: string) => void;
 };
 
-export const TranscriptProviderControl = ({
+export const SettingsOptionSelect = ({
   value,
   options,
+  ariaLabel,
+  listboxId,
+  allowEmpty = false,
   onChange,
-}: TranscriptProviderControlProps) => {
+}: SettingsOptionSelectProps) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeOptionIndex, setActiveOptionIndex] = useState(0);
+  const getOptionId = (index: number) => `${listboxId}-option-${index}`;
 
   const selectedOption = options.find((option) => option.value === value);
-  const selectableOptions = [
-    { label: EMPTY_OPTION_LABEL, value: '' },
-    ...options,
-  ];
+  const selectableOptions = allowEmpty
+    ? [{ label: EMPTY_OPTION_LABEL, value: '' }, ...options]
+    : options;
   const selectedOptionIndex = Math.max(
     selectableOptions.findIndex(
       (selectableOption) => selectableOption.value === value,
@@ -83,9 +84,9 @@ export const TranscriptProviderControl = ({
     <StyledSettingsSelectAnchor>
       <SettingsSelectControl
         label={selectedOption?.label ?? EMPTY_OPTION_LABEL}
-        ariaLabel="Transcript provider"
-        listboxId={TRANSCRIPT_PROVIDER_LISTBOX_ID}
-        activeDescendantId={getTranscriptProviderOptionId(activeOptionIndex)}
+        ariaLabel={ariaLabel}
+        listboxId={listboxId}
+        activeDescendantId={getOptionId(activeOptionIndex)}
         isExpanded={isMenuOpen}
         onNavigate={handleNavigate}
         onSelectActive={handleSelectActive}
@@ -93,16 +94,12 @@ export const TranscriptProviderControl = ({
         onClick={handleMenuToggle}
       />
       <SettingsSelectMenu isOpen={isMenuOpen} onClose={handleMenuClose}>
-        <StyledListbox
-          id={TRANSCRIPT_PROVIDER_LISTBOX_ID}
-          role="listbox"
-          aria-label="Transcript provider"
-        >
+        <StyledListbox id={listboxId} role="listbox" aria-label={ariaLabel}>
           <DropdownMenuItemsContainer>
             {selectableOptions.map((option, index) => (
               <DropdownMenuOption
                 key={option.value}
-                id={getTranscriptProviderOptionId(index)}
+                id={getOptionId(index)}
                 text={option.label}
                 selected={option.value === value}
                 isActive={index === activeOptionIndex}

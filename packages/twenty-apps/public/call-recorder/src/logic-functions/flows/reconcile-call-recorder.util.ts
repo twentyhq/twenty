@@ -1,6 +1,7 @@
 import { isUndefined } from '@sniptt/guards';
 import { type CoreApiClient } from 'twenty-client-sdk/core';
 
+import { type CallRecorderRecordMyMeetingsChoice } from 'src/constants/call-recorder-record-my-meetings-choice';
 import { CallRecordingRequestStatus } from 'src/logic-functions/constants/call-recording-request-status';
 import { CallRecordingStatus } from 'src/logic-functions/constants/call-recording-status';
 import { type CalendarEventRecord } from 'src/logic-functions/types/calendar-event-record.type';
@@ -50,13 +51,13 @@ type ActiveMeetingReconciliation = {
 export const reconcileCallRecorderForCalendarEventIds = async ({
   client,
   calendarEventIds,
-  optedInWorkspaceMemberIds,
+  recordMyMeetingsChoices,
   removedOccurrences = [],
   now = new Date(),
 }: {
   client: CoreApiClient;
   calendarEventIds: string[];
-  optedInWorkspaceMemberIds: Set<string>;
+  recordMyMeetingsChoices: Map<string, CallRecorderRecordMyMeetingsChoice>;
   removedOccurrences?: RemovedCallRecorderOccurrence[];
   now?: Date;
 }): Promise<CallRecorderReconciliationResult[]> => {
@@ -64,7 +65,7 @@ export const reconcileCallRecorderForCalendarEventIds = async ({
     await resolveCallRecorderPolicyResultsForMeetings({
       client,
       calendarEventIds,
-      optedInWorkspaceMemberIds,
+      recordMyMeetingsChoices,
       removedOccurrences,
       now,
     });
@@ -80,13 +81,13 @@ export const reconcileCallRecorderForCalendarEventIds = async ({
 const resolveCallRecorderPolicyResultsForMeetings = async ({
   client,
   calendarEventIds,
-  optedInWorkspaceMemberIds,
+  recordMyMeetingsChoices,
   removedOccurrences = [],
   now = new Date(),
 }: {
   client: CoreApiClient;
   calendarEventIds: string[];
-  optedInWorkspaceMemberIds: Set<string>;
+  recordMyMeetingsChoices: Map<string, CallRecorderRecordMyMeetingsChoice>;
   removedOccurrences?: RemovedCallRecorderOccurrence[];
   now?: Date;
 }): Promise<CallRecorderMeetingPolicyResolution> => {
@@ -100,7 +101,7 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
     (calendarEvent) =>
       buildCallRecorderPolicyResult({
         calendarEvent,
-        optedInWorkspaceMemberIds,
+        recordMyMeetingsChoices,
         now,
       }),
   );
@@ -147,7 +148,7 @@ const resolveCallRecorderPolicyResultsForMeetings = async ({
       calendarEvent.id,
       buildCallRecorderPolicyResult({
         calendarEvent,
-        optedInWorkspaceMemberIds,
+        recordMyMeetingsChoices,
         now,
       }),
     );

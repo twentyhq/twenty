@@ -47,7 +47,7 @@ export const CALL_RECORDER_RECORD_MY_MEETINGS_ROW = {
   variableKey: CALL_RECORDER_RECORD_MY_MEETINGS_ENV_VAR_NAME,
   title: 'Record my meetings',
   description:
-    'Joins the meetings you attend. Meetings another attendee records are still recorded.',
+    'Which of your meetings the recorder joins. A meeting is external when someone outside the workspace is invited.',
   Icon: IconUser,
 };
 

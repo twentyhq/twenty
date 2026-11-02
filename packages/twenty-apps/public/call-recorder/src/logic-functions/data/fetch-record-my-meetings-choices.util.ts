@@ -1,19 +1,26 @@
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
 
+import { CallRecorderRecordMyMeetingsChoice } from 'src/constants/call-recorder-record-my-meetings-choice';
 import { CALL_RECORDER_RECORD_MY_MEETINGS_ENV_VAR_NAME } from 'src/logic-functions/constants/call-recorder-record-my-meetings-env-var-name';
 import { DEFAULT_CALL_RECORDER_RECORD_MY_MEETINGS } from 'src/logic-functions/constants/default-call-recorder-record-my-meetings';
 import { fetchWithRateLimitRetry } from 'src/logic-functions/utils/fetch-with-rate-limit-retry.util';
 import { isNonEmptyString } from 'src/logic-functions/utils/is-non-empty-string.util';
-import { parseBooleanApplicationVariableValue } from 'src/logic-functions/utils/parse-boolean-application-variable-value.util';
 
 type WorkspaceMemberApplicationVariablesNode = {
   workspaceMemberId?: string | null;
   variables?: Array<{ key?: string | null; value?: string | null }> | null;
 };
 
+const isRecordMyMeetingsChoice = (
+  value: string | null | undefined,
+): value is CallRecorderRecordMyMeetingsChoice =>
+  Object.values(CallRecorderRecordMyMeetingsChoice).some(
+    (choice) => choice === value,
+  );
+
 // Cron and sweep runs get no member values in process.env and database event runs get the editor's, so every member is read here.
-export const fetchOptedInWorkspaceMemberIds = async (): Promise<
-  Set<string>
+export const fetchRecordMyMeetingsChoices = async (): Promise<
+  Map<string, CallRecorderRecordMyMeetingsChoice>
 > => {
   const client = new MetadataApiClient({
     runAs: 'application',
@@ -32,26 +39,28 @@ export const fetchOptedInWorkspaceMemberIds = async (): Promise<
 
   const memberNodes: WorkspaceMemberApplicationVariablesNode[] =
     queryResult.myUserApplicationVariables ?? [];
-  const optedInWorkspaceMemberIds = new Set<string>();
+  const choicesByWorkspaceMemberId = new Map<
+    string,
+    CallRecorderRecordMyMeetingsChoice
+  >();
 
   for (const memberNode of memberNodes) {
     if (!isNonEmptyString(memberNode.workspaceMemberId)) {
       continue;
     }
 
-    const recordMyMeetingsVariable = memberNode.variables?.find(
+    const value = memberNode.variables?.find(
       (variable) =>
         variable.key === CALL_RECORDER_RECORD_MY_MEETINGS_ENV_VAR_NAME,
-    );
-    const isRecordingMeetings = parseBooleanApplicationVariableValue({
-      rawValue: recordMyMeetingsVariable?.value ?? undefined,
-      defaultValue: DEFAULT_CALL_RECORDER_RECORD_MY_MEETINGS,
-    });
+    )?.value;
 
-    if (isRecordingMeetings) {
-      optedInWorkspaceMemberIds.add(memberNode.workspaceMemberId);
-    }
+    choicesByWorkspaceMemberId.set(
+      memberNode.workspaceMemberId,
+      isRecordMyMeetingsChoice(value)
+        ? value
+        : DEFAULT_CALL_RECORDER_RECORD_MY_MEETINGS,
+    );
   }
 
-  return optedInWorkspaceMemberIds;
+  return choicesByWorkspaceMemberId;
 };

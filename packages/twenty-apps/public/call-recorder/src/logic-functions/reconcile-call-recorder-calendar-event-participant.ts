@@ -7,7 +7,7 @@ import { type DatabaseEventBatchPayload } from 'twenty-sdk/logic-function';
 
 import { CALENDAR_EVENT_PARTICIPANT_RECONCILIATION_LOGIC_FUNCTION_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { BATCH_HANDLER_TIMEOUT_SECONDS } from 'src/logic-functions/constants/batch-handler-timeout-seconds';
-import { fetchOptedInWorkspaceMemberIds } from 'src/logic-functions/data/fetch-opted-in-workspace-member-ids.util';
+import { fetchRecordMyMeetingsChoices } from 'src/logic-functions/data/fetch-record-my-meetings-choices.util';
 import { collectCalendarEventIdsFromParticipantEvents } from 'src/logic-functions/domain/collect-calendar-event-ids-from-participant-events.util';
 import { reconcileCallRecorderForCalendarEventIds } from 'src/logic-functions/flows/reconcile-call-recorder.util';
 import { type CalendarEventParticipantForDatabaseEvent } from 'src/logic-functions/types/calendar-event-participant-for-database-event.type';
@@ -40,13 +40,13 @@ export const reconcileCallRecorderCalendarEventParticipantHandler = async (
   );
 
   if (calendarEventIds.length === 0) {
-    return { skipped: true, reason: 'no workspace member attendee change' };
+    return { skipped: true, reason: 'no attendee change' };
   }
 
   const reconciliationResults = await reconcileCallRecorderForCalendarEventIds({
     client: new CoreApiClient({ fetch: fetchWithRateLimitRetry }),
     calendarEventIds,
-    optedInWorkspaceMemberIds: await fetchOptedInWorkspaceMemberIds(),
+    recordMyMeetingsChoices: await fetchRecordMyMeetingsChoices(),
   });
 
   return { reconciled: true, calendarEventIds, reconciliationResults };
