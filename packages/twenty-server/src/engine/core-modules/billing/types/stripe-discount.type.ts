@@ -1,7 +1,7 @@
 /* @license Enterprise */
 
-export type StripeCouponDiscount = {
-  stripeCouponId: string;
+export type StripeDiscount = {
+  stripeDiscountId: string;
   startsAt: Date;
   endsAt: Date | null;
 };

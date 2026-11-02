@@ -12,7 +12,7 @@ const NEXT_MONTH = new Date('2026-11-30T12:00:00Z');
 const buildDiscountArrangement = (
   overrides: Partial<{
     id: string;
-    stripeCouponId: string;
+    stripeDiscountId: string;
     startsAt: Date;
     endsAt: Date | null;
     revokedAt: Date | null;
@@ -20,51 +20,57 @@ const buildDiscountArrangement = (
 ) => ({
   id: 'arrangement-early',
   type: BillingArrangementType.DISCOUNT,
-  stripeCouponId: 'coupon_early',
+  stripeDiscountId: 'di_early',
   startsAt: LAST_MONTH,
   endsAt: null,
   revokedAt: null,
   ...overrides,
 });
 
+const EARLY_DISCOUNT = {
+  stripeDiscountId: 'di_early',
+  startsAt: LAST_MONTH,
+  endsAt: null,
+};
+
 describe('computeDiscountArrangementSync', () => {
   it('records a discount that has no arrangement yet', () => {
     expect(
       computeDiscountArrangementSync({
         discountArrangements: [],
-        stripeCouponDiscounts: [
-          { stripeCouponId: 'coupon_yc', startsAt: NOW, endsAt: NEXT_MONTH },
-        ],
-        now: NOW,
-      }),
-    ).toEqual({
-      arrangementIdsToEnd: [],
-      arrangementEndsAtUpdate: null,
-      discountToRecord: {
-        stripeCouponId: 'coupon_yc',
-        startsAt: NOW,
-        endsAt: NEXT_MONTH,
-      },
-    });
-  });
-
-  it('changes nothing when the active arrangement matches the discount', () => {
-    expect(
-      computeDiscountArrangementSync({
-        discountArrangements: [buildDiscountArrangement()],
-        stripeCouponDiscounts: [
+        stripeDiscounts: [
           {
-            stripeCouponId: 'coupon_early',
-            startsAt: LAST_MONTH,
-            endsAt: null,
+            stripeDiscountId: 'di_yc',
+            startsAt: NOW,
+            endsAt: NEXT_MONTH,
           },
         ],
         now: NOW,
       }),
     ).toEqual({
       arrangementIdsToEnd: [],
-      arrangementEndsAtUpdate: null,
+      arrangementEndsAtUpdates: [],
+      discountToRecord: {
+        stripeDiscountId: 'di_yc',
+        startsAt: NOW,
+        endsAt: NEXT_MONTH,
+      },
+      unmirroredStripeDiscountIds: [],
+    });
+  });
+
+  it('changes nothing when the active arrangement holds the live discount', () => {
+    expect(
+      computeDiscountArrangementSync({
+        discountArrangements: [buildDiscountArrangement()],
+        stripeDiscounts: [EARLY_DISCOUNT],
+        now: NOW,
+      }),
+    ).toEqual({
+      arrangementIdsToEnd: [],
+      arrangementEndsAtUpdates: [],
       discountToRecord: null,
+      unmirroredStripeDiscountIds: [],
     });
   });
 
@@ -72,90 +78,109 @@ describe('computeDiscountArrangementSync', () => {
     expect(
       computeDiscountArrangementSync({
         discountArrangements: [buildDiscountArrangement()],
-        stripeCouponDiscounts: [
-          {
-            stripeCouponId: 'coupon_early',
-            startsAt: LAST_MONTH,
-            endsAt: NEXT_MONTH,
-          },
-        ],
+        stripeDiscounts: [{ ...EARLY_DISCOUNT, endsAt: NEXT_MONTH }],
         now: NOW,
-      }).arrangementEndsAtUpdate,
-    ).toEqual({ arrangementId: 'arrangement-early', endsAt: NEXT_MONTH });
+      }).arrangementEndsAtUpdates,
+    ).toEqual([{ arrangementId: 'arrangement-early', endsAt: NEXT_MONTH }]);
   });
 
   it('ends the active arrangement once Stripe has no discount left', () => {
     expect(
       computeDiscountArrangementSync({
         discountArrangements: [buildDiscountArrangement()],
-        stripeCouponDiscounts: [],
+        stripeDiscounts: [],
         now: NOW,
       }),
     ).toEqual({
       arrangementIdsToEnd: ['arrangement-early'],
-      arrangementEndsAtUpdate: null,
+      arrangementEndsAtUpdates: [],
       discountToRecord: null,
+      unmirroredStripeDiscountIds: [],
     });
   });
 
-  it('ignores a discount that already ended', () => {
+  it('ends the active arrangement when its discount already ended', () => {
     expect(
       computeDiscountArrangementSync({
         discountArrangements: [buildDiscountArrangement()],
-        stripeCouponDiscounts: [
-          { stripeCouponId: 'coupon_early', startsAt: LAST_MONTH, endsAt: NOW },
+        stripeDiscounts: [{ ...EARLY_DISCOUNT, endsAt: NOW }],
+        now: NOW,
+      }),
+    ).toEqual({
+      arrangementIdsToEnd: ['arrangement-early'],
+      arrangementEndsAtUpdates: [],
+      discountToRecord: null,
+      unmirroredStripeDiscountIds: [],
+    });
+  });
+
+  it('replaces the arrangement when the same coupon comes back as a new discount', () => {
+    expect(
+      computeDiscountArrangementSync({
+        discountArrangements: [buildDiscountArrangement()],
+        stripeDiscounts: [
+          { ...EARLY_DISCOUNT, stripeDiscountId: 'di_early_again' },
         ],
         now: NOW,
       }),
     ).toEqual({
       arrangementIdsToEnd: ['arrangement-early'],
-      arrangementEndsAtUpdate: null,
-      discountToRecord: null,
-    });
-  });
-
-  it('replaces the arrangement when Stripe swapped the coupon, starting the new one after it', () => {
-    expect(
-      computeDiscountArrangementSync({
-        discountArrangements: [buildDiscountArrangement()],
-        stripeCouponDiscounts: [
-          {
-            stripeCouponId: 'coupon_nonprofit',
-            startsAt: LAST_MONTH,
-            endsAt: null,
-          },
-        ],
-        now: NOW,
-      }),
-    ).toEqual({
-      arrangementIdsToEnd: ['arrangement-early'],
-      arrangementEndsAtUpdate: null,
+      arrangementEndsAtUpdates: [],
       discountToRecord: {
-        stripeCouponId: 'coupon_nonprofit',
+        ...EARLY_DISCOUNT,
+        stripeDiscountId: 'di_early_again',
         startsAt: NOW,
-        endsAt: null,
       },
+      unmirroredStripeDiscountIds: [],
     });
   });
 
-  it('keeps the discount matching the active arrangement when Stripe holds several', () => {
+  it('keeps the active arrangement and reports the other discounts when Stripe holds several', () => {
     expect(
       computeDiscountArrangementSync({
         discountArrangements: [buildDiscountArrangement()],
-        stripeCouponDiscounts: [
-          { stripeCouponId: 'coupon_yc', startsAt: NOW, endsAt: null },
+        stripeDiscounts: [
           {
-            stripeCouponId: 'coupon_early',
-            startsAt: LAST_MONTH,
+            stripeDiscountId: 'di_yc',
+            startsAt: NOW,
             endsAt: null,
           },
+          EARLY_DISCOUNT,
         ],
         now: NOW,
       }),
     ).toEqual({
       arrangementIdsToEnd: [],
-      arrangementEndsAtUpdate: null,
+      arrangementEndsAtUpdates: [],
       discountToRecord: null,
+      unmirroredStripeDiscountIds: ['di_yc'],
+    });
+  });
+
+  it('counts a discount listed on both the customer and the subscription once', () => {
+    expect(
+      computeDiscountArrangementSync({
+        discountArrangements: [buildDiscountArrangement()],
+        stripeDiscounts: [EARLY_DISCOUNT, EARLY_DISCOUNT],
+        now: NOW,
+      }).unmirroredStripeDiscountIds,
+    ).toEqual([]);
+  });
+
+  it('does not record a discount again once its arrangement was revoked', () => {
+    expect(
+      computeDiscountArrangementSync({
+        discountArrangements: [
+          buildDiscountArrangement({ revokedAt: YESTERDAY }),
+        ],
+        stripeDiscounts: [EARLY_DISCOUNT],
+        now: NOW,
+      }),
+    ).toEqual({
+      arrangementIdsToEnd: [],
+      arrangementEndsAtUpdates: [],
+      discountToRecord: null,
+      unmirroredStripeDiscountIds: ['di_early'],
     });
   });
 
@@ -166,9 +191,9 @@ describe('computeDiscountArrangementSync', () => {
           discountArrangements: [
             buildDiscountArrangement({ endsAt: YESTERDAY }),
           ],
-          stripeCouponDiscounts: [
+          stripeDiscounts: [
             {
-              stripeCouponId: 'coupon_nonprofit',
+              stripeDiscountId: 'di_nonprofit',
               startsAt: LAST_MONTH,
               endsAt: null,
             },
@@ -178,35 +203,13 @@ describe('computeDiscountArrangementSync', () => {
       ).toEqual(YESTERDAY);
     });
 
-    it('after an arrangement ended early while Stripe still holds its coupon', () => {
-      expect(
-        computeDiscountArrangementSync({
-          discountArrangements: [
-            buildDiscountArrangement({ revokedAt: YESTERDAY }),
-          ],
-          stripeCouponDiscounts: [
-            {
-              stripeCouponId: 'coupon_early',
-              startsAt: LAST_MONTH,
-              endsAt: null,
-            },
-          ],
-          now: NOW,
-        }).discountToRecord,
-      ).toEqual({
-        stripeCouponId: 'coupon_early',
-        startsAt: YESTERDAY,
-        endsAt: null,
-      });
-    });
-
     it('when a coupon is removed and another added within a second', () => {
       expect(
         computeDiscountArrangementSync({
           discountArrangements: [buildDiscountArrangement()],
-          stripeCouponDiscounts: [
+          stripeDiscounts: [
             {
-              stripeCouponId: 'coupon_yc',
+              stripeDiscountId: 'di_yc',
               startsAt: ONE_SECOND_AGO,
               endsAt: NEXT_MONTH,
             },

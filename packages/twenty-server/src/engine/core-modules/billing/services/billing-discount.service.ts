@@ -16,14 +16,14 @@ import { BillingArrangementType } from 'src/engine/core-modules/billing/enums/bi
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { type BillingArrangementDraft } from 'src/engine/core-modules/billing/types/billing-arrangement-draft.type';
-import { type StripeCouponDiscount } from 'src/engine/core-modules/billing/types/stripe-coupon-discount.type';
+import { type StripeDiscount } from 'src/engine/core-modules/billing/types/stripe-discount.type';
 import { buildBillingArrangementLockKey } from 'src/engine/core-modules/billing/utils/build-billing-arrangement-lock-key.util';
 import { computeDiscountArrangementSync } from 'src/engine/core-modules/billing/utils/compute-discount-arrangement-sync.util';
 import { findOverlappingBillingArrangement } from 'src/engine/core-modules/billing/utils/find-overlapping-billing-arrangement.util';
 import { getBillingArrangementValidationErrors } from 'src/engine/core-modules/billing/utils/get-billing-arrangement-validation-errors.util';
 import { getExpandedDiscounts } from 'src/engine/core-modules/billing/utils/get-expanded-discounts.util';
 import { isBillingArrangementActive } from 'src/engine/core-modules/billing/utils/is-billing-arrangement-active.util';
-import { toStripeCouponDiscount } from 'src/engine/core-modules/billing/utils/to-stripe-coupon-discount.util';
+import { toStripeDiscount } from 'src/engine/core-modules/billing/utils/to-stripe-discount.util';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -60,18 +60,11 @@ export class BillingDiscountService {
     stripeCustomerId: string;
   }): Promise<void> {
     await this.cacheLockService.withLock(async () => {
-      const stripeCouponDiscounts =
-        await this.findStripeCouponDiscounts(stripeCustomerId);
-
-      if (stripeCouponDiscounts.length > 1) {
-        this.logger.warn(
-          `Workspace ${workspaceId} holds ${stripeCouponDiscounts.length} Stripe discounts, only one is mirrored`,
-        );
-      }
+      const stripeDiscounts = await this.findStripeDiscounts(stripeCustomerId);
 
       await this.applyDiscountArrangementSync({
         workspaceId,
-        stripeCouponDiscounts,
+        stripeDiscounts,
       });
     }, buildBillingArrangementLockKey(workspaceId));
   }
@@ -84,9 +77,9 @@ export class BillingDiscountService {
     });
   }
 
-  private async findStripeCouponDiscounts(
+  private async findStripeDiscounts(
     stripeCustomerId: string,
-  ): Promise<StripeCouponDiscount[]> {
+  ): Promise<StripeDiscount[]> {
     const [subscriptions, customerDiscount] = await Promise.all([
       this.stripeSubscriptionService.listCustomerNotEndedSubscriptions({
         stripeCustomerId,
@@ -100,28 +93,36 @@ export class BillingDiscountService {
         getExpandedDiscounts(discounts),
       ),
       ...(isDefined(customerDiscount) ? [customerDiscount] : []),
-    ]
-      .map(toStripeCouponDiscount)
-      .filter(isDefined);
+    ].map(toStripeDiscount);
   }
 
   private async applyDiscountArrangementSync({
     workspaceId,
-    stripeCouponDiscounts,
+    stripeDiscounts,
   }: {
     workspaceId: string;
-    stripeCouponDiscounts: StripeCouponDiscount[];
+    stripeDiscounts: StripeDiscount[];
   }): Promise<void> {
     const now = new Date();
     const discountArrangements =
       await this.findDiscountArrangements(workspaceId);
 
-    const { arrangementIdsToEnd, arrangementEndsAtUpdate, discountToRecord } =
-      computeDiscountArrangementSync({
-        discountArrangements,
-        stripeCouponDiscounts,
-        now,
-      });
+    const {
+      arrangementIdsToEnd,
+      arrangementEndsAtUpdates,
+      discountToRecord,
+      unmirroredStripeDiscountIds,
+    } = computeDiscountArrangementSync({
+      discountArrangements,
+      stripeDiscounts,
+      now,
+    });
+
+    if (isNonEmptyArray(unmirroredStripeDiscountIds)) {
+      this.logger.warn(
+        `Stripe discounts not mirrored for workspace ${workspaceId}: ${unmirroredStripeDiscountIds.join(', ')}`,
+      );
+    }
 
     const arrangementToRecord = isDefined(discountToRecord)
       ? this.buildDiscountArrangementOrThrow({
@@ -147,19 +148,26 @@ export class BillingDiscountService {
         );
       }
 
-      if (isDefined(arrangementEndsAtUpdate)) {
+      for (const { arrangementId, endsAt } of arrangementEndsAtUpdates) {
         await billingArrangementRepository.update(
           workspaceId,
-          { id: arrangementEndsAtUpdate.arrangementId },
-          { endsAt: arrangementEndsAtUpdate.endsAt },
+          { id: arrangementId },
+          { endsAt },
         );
       }
 
       if (isDefined(arrangementToRecord)) {
-        await billingArrangementRepository.insert(workspaceId, {
-          ...arrangementToRecord,
-          grantedByUserId: null,
-        });
+        // The admin action may record the same discount concurrently and owns its label and grantor
+        await billingArrangementRepository
+          .createQueryBuilder()
+          .insert()
+          .values({
+            ...arrangementToRecord,
+            workspaceId,
+            grantedByUserId: null,
+          })
+          .orIgnore()
+          .execute();
       }
     });
   }
@@ -170,7 +178,7 @@ export class BillingDiscountService {
     workspaceArrangements,
   }: {
     workspaceId: string;
-    discount: StripeCouponDiscount;
+    discount: StripeDiscount;
     workspaceArrangements: BillingArrangementEntity[];
   }): BillingArrangementDraft {
     const arrangement: BillingArrangementDraft = {
@@ -180,7 +188,7 @@ export class BillingDiscountService {
       seats: null,
       seatCapMode: null,
       stripePriceId: null,
-      stripeCouponId: discount.stripeCouponId,
+      stripeDiscountId: discount.stripeDiscountId,
       creditAllowanceMicro: null,
       stripeCreditNoteId: null,
       creditGrantId: null,
@@ -201,7 +209,7 @@ export class BillingDiscountService {
       isDefined(overlappingArrangement)
     ) {
       throw new BillingException(
-        `Could not record Stripe coupon ${discount.stripeCouponId} for workspace ${workspaceId}: ${JSON.stringify({ validationErrors, overlappingArrangementId: overlappingArrangement?.id })}`,
+        `Could not record Stripe discount ${discount.stripeDiscountId} for workspace ${workspaceId}: ${JSON.stringify({ validationErrors, overlappingArrangementId: overlappingArrangement?.id })}`,
         BillingExceptionCode.BILLING_ARRANGEMENT_INVALID,
       );
     }
