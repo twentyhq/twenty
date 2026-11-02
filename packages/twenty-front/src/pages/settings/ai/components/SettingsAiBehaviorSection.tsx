@@ -113,7 +113,7 @@ export const SettingsAiBehaviorSection = ({
             icon={<IconAlertTriangle aria-hidden="true" />}
             embedded
           >
-            {errorMessage}
+            <>{errorMessage}</>
           </InlineBanner>
         )}
       </StyledBehaviorMessages>
