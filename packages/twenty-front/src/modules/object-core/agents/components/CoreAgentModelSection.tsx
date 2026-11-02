@@ -3,6 +3,7 @@ import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { SettingsRow } from 'twenty-ui/components/settings';
+import { Separator } from 'twenty-ui/primitives/layout';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 
 import { AiModelPicker } from '@/ai/components/AiModelPicker';
@@ -60,6 +61,7 @@ export const CoreAgentModelSection = ({
             onModelIdChange={(value) => onFieldChange('modelId', value)}
             disabled={isReadOnly}
           />
+          {isNonEmptyArray(capabilities) && <Separator />}
           {capabilities.map((capability) => (
             <SettingsRow
               key={capability.key}
