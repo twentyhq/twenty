@@ -25,6 +25,9 @@ import type { WorkflowToolWorkspaceService } from 'src/modules/workflow/workflow
 export class WorkflowToolProvider implements ToolProvider {
   readonly category = ToolCategory.WORKFLOW;
 
+  // workflows it builds run later with their own permissions, which a scope cannot follow
+  readonly canRunUnderScope = false;
+
   constructor(
     @Optional()
     @Inject(WORKFLOW_TOOL_SERVICE_TOKEN)

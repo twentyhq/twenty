@@ -4,7 +4,7 @@ import { type AgentRunInlineConfig } from 'src/engine/metadata-modules/ai/ai-age
 import { type AgentToolLoadingStrategy } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-tool-loading-strategy.type';
 
 // What a suspended run needs to continue without its caller building it again.
-// Permissions are left out: the caller derives them anew on each continuation
+// The caller's roles are left out and derived anew on each continuation; an inline scope is kept with the run
 export type AgentRunPersonaSpec =
   | { agentId: string; inlineConfig?: never }
   | { agentId: null; inlineConfig: AgentRunInlineConfig };

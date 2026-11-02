@@ -21,7 +21,7 @@ import { isSnakeCaseToolName } from 'src/engine/core-modules/tool-provider/utils
 import { humanizeToolName } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
-import { isRestrictedByPermissionScope } from 'src/engine/permissions/principal/utils/is-restricted-by-permission-scope.util';
+import { isWithheldFromPermissionScope } from 'src/engine/permissions/principal/utils/is-withheld-from-permission-scope.util';
 
 @Injectable()
 export class DefinedToolRegistryService implements OnModuleInit {
@@ -152,7 +152,7 @@ export class DefinedToolRegistryService implements OnModuleInit {
       options: {
         requiredPermissionFlags,
         requiredFeatureFlags = [],
-        ignoresRolePermissionConfig = false,
+        canRunUnderScope = false,
       },
     },
     context,
@@ -165,8 +165,10 @@ export class DefinedToolRegistryService implements OnModuleInit {
     grantedByPermissionFlag?: Map<PermissionFlagType, Promise<boolean>>;
   }): Promise<boolean> {
     if (
-      ignoresRolePermissionConfig &&
-      isRestrictedByPermissionScope(context.rolePermissionConfig)
+      isWithheldFromPermissionScope({
+        canRunUnderScope,
+        rolePermissionConfig: context.rolePermissionConfig,
+      })
     ) {
       return false;
     }

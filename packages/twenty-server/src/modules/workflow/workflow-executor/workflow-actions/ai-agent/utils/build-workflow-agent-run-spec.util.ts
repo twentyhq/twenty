@@ -17,7 +17,7 @@ const buildPersonaSpec = ({
   applicationId,
 }: {
   step: Pick<WorkflowAiAgentAction, 'id' | 'settings'>;
-  applicationId: string | null;
+  applicationId: string;
 }): AgentRunPersonaSpec => {
   const { agentId, instructions, modelId, modelConfiguration, scope } =
     step.settings.input;
@@ -50,7 +50,7 @@ export const buildWorkflowAgentRunSpec = ({
   step: WorkflowAiAgentAction;
   isApplicationBound: boolean;
   // the application the workflow belongs to, which a step without an agent runs under
-  applicationId: string | null;
+  applicationId: string;
 }): AgentRunSpec => {
   const { humanInputInstructions, responseFormat } = step.settings.input;
   const trimmedHumanInputInstructions = humanInputInstructions?.trim();

@@ -32,7 +32,7 @@ describe('buildWorkflowAgentRunSpec', () => {
         humanInputInstructions: '  ',
       }),
       isApplicationBound: false,
-      applicationId: null,
+      applicationId: 'application-id',
     });
 
     expect(spec).toMatchObject({
@@ -53,7 +53,7 @@ describe('buildWorkflowAgentRunSpec', () => {
         humanInputInstructions: ' Ask before choosing a plan. ',
       }),
       isApplicationBound: false,
-      applicationId: null,
+      applicationId: 'application-id',
     });
 
     expect(spec.agentId).toBe('agent-id');
@@ -68,7 +68,7 @@ describe('buildWorkflowAgentRunSpec', () => {
       buildWorkflowAgentRunSpec({
         step: buildStep({ agentId: 'agent-id', prompt: 'Draft the quote' }),
         isApplicationBound: true,
-        applicationId: null,
+        applicationId: 'application-id',
       }).additionalExcludedToolNames,
     ).toContain('send_email');
   });
@@ -85,7 +85,7 @@ describe('buildWorkflowAgentRunSpec', () => {
     const spec = buildWorkflowAgentRunSpec({
       step: buildStep({ agentId: 'agent-id', responseFormat }),
       isApplicationBound: false,
-      applicationId: null,
+      applicationId: 'application-id',
     });
 
     expect(spec.responseFormat).toEqual(responseFormat);
@@ -95,7 +95,7 @@ describe('buildWorkflowAgentRunSpec', () => {
     const spec = buildWorkflowAgentRunSpec({
       step: buildStep({ agentId: 'agent-id' }),
       isApplicationBound: false,
-      applicationId: null,
+      applicationId: 'application-id',
     });
 
     expect(spec).not.toHaveProperty('responseFormat');
@@ -136,7 +136,7 @@ describe('buildWorkflowAgentRunSpec', () => {
     const spec = buildWorkflowAgentRunSpec({
       step: buildStep({ instructions: 'Summarize.' }),
       isApplicationBound: false,
-      applicationId: null,
+      applicationId: 'application-id',
     });
 
     expect(spec.inlineConfig?.scope).toBeNull();
