@@ -11961,6 +11961,11 @@ msgstr "Ishga tushirishlar"
 msgid "Sample records exceed 100 KB."
 msgstr "Namuna yozuvlar 100 KB dan oshadi."
 
+#. js-lingui-id: P79LWT
+#: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
+msgid "Sample records must include every selected field."
+msgstr ""
+
 #. js-lingui-id: 0ovywa
 #: src/engine/metadata-modules/ai/ai-front-component/utils/validate-front-component-sample-records-or-throw.util.ts
 msgid "Sample records must only contain selected fields and id."
