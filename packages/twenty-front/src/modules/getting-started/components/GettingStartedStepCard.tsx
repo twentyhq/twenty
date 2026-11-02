@@ -56,17 +56,19 @@ const StyledHeading = styled.div<{ isCompleted: boolean }>`
   }
 `;
 
-const StyledDoneIcon = styled.span<{ isAnimating: boolean }>`
+const StyledDoneIcon = styled.span`
   color: ${themeCssVariables.tag.text.green};
   display: flex;
 
   & svg path:last-of-type {
-    animation: ${({ isAnimating }) =>
-      isAnimating
-        ? `getting-started-step-card-draw-check calc(${themeCssVariables.animation.duration.normal} * 1s) ease forwards`
-        : 'none'};
     stroke-dasharray: 9;
-    stroke-dashoffset: ${({ isAnimating }) => (isAnimating ? 9 : 0)};
+    stroke-dashoffset: 0;
+  }
+
+  &[data-animating] svg path:last-of-type {
+    animation: getting-started-step-card-draw-check
+      calc(${themeCssVariables.animation.duration.normal} * 1s) ease forwards;
+    stroke-dashoffset: 9;
   }
 
   @keyframes getting-started-step-card-draw-check {
@@ -76,7 +78,7 @@ const StyledDoneIcon = styled.span<{ isAnimating: boolean }>`
   }
 
   @media (prefers-reduced-motion: reduce) {
-    & svg path:last-of-type {
+    &[data-animating] svg path:last-of-type {
       animation: none;
       stroke-dashoffset: 0;
     }
@@ -126,7 +128,7 @@ export const GettingStartedStepCard = ({
     >
       <StyledHeading isCompleted={isCompleted}>
         {isCompleted ? (
-          <StyledDoneIcon isAnimating={isJustCompleted}>
+          <StyledDoneIcon data-animating={isJustCompleted || undefined}>
             <IconCircleCheck size={theme.icon.size.xl} />
           </StyledDoneIcon>
         ) : (

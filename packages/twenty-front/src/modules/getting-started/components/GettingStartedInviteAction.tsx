@@ -152,6 +152,7 @@ export const GettingStartedInviteAction = () => {
                 noErrorHelper
                 aria-label={t`Teammate email ${emailNumber}`}
                 placeholder={emailPlaceholder}
+                disabled={isSending}
                 onChange={(text) => updateEmail({ index, email: text })}
                 RightIcon={isLastInput ? undefined : IconX}
                 onRightIconClick={
