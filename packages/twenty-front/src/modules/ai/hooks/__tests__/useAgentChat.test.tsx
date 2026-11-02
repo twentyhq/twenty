@@ -340,6 +340,7 @@ describe('useAgentChat', () => {
 
     await send(result);
 
+    expect(sentMessageVariables).toHaveBeenCalledTimes(1);
     expect(sentMessageVariables).toHaveBeenCalledWith(
       expect.objectContaining({
         isAssistantParticipant: true,
@@ -364,6 +365,7 @@ describe('useAgentChat', () => {
 
     await send(result);
 
+    expect(sentMessageVariables).toHaveBeenCalledTimes(1);
     expect(sentMessageVariables).toHaveBeenCalledWith(
       expect.objectContaining({
         isAssistantParticipant: false,
@@ -406,6 +408,7 @@ describe('useAgentChat', () => {
 
     await send(result);
 
+    expect(sentMessageVariables).toHaveBeenCalledTimes(1);
     expect(sentMessageVariables).toHaveBeenCalledWith(
       expect.objectContaining({
         isAssistantParticipant: false,
@@ -539,6 +542,7 @@ describe('useAgentChat', () => {
 
     await send(result);
 
+    expect(sentMessageVariables).toHaveBeenCalledTimes(1);
     expect(sentMessageVariables).toHaveBeenCalledWith(
       expect.objectContaining({
         threadId: EXISTING_THREAD_ID,
