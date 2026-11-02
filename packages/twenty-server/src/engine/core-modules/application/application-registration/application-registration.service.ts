@@ -840,7 +840,7 @@ export class ApplicationRegistrationService {
   }
 
   async verifyClientSecret(
-    registration: ApplicationRegistrationEntity,
+    registration: Pick<ApplicationRegistrationEntity, 'oAuthClientSecretHash'>,
     clientSecret: string,
   ): Promise<boolean> {
     if (!registration.oAuthClientSecretHash) {

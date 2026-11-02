@@ -4,7 +4,9 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { randomUUID } from 'crypto';
 
 import { isDefined } from 'twenty-shared/utils';
+import { QueryFailedError } from 'typeorm';
 
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { ClientIdMetadataDocumentService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/client-id-metadata-document.service';
 import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration-resolver.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -27,6 +29,7 @@ describe('OAuthClientRegistrationResolverService', () => {
   let tokenBucketThrottleOrThrow: jest.Mock;
   let findOrCreateRegistration: jest.Mock;
   let insertedValues: jest.Mock;
+  let executedInsert: jest.Mock;
   let applicationRegistrationRepository: {
     findOne: jest.Mock;
     update: jest.Mock;
@@ -39,23 +42,36 @@ describe('OAuthClientRegistrationResolverService', () => {
     tokenBucketThrottleOrThrow = jest.fn();
     findOrCreateRegistration = jest.fn();
     insertedValues = jest.fn();
+    executedInsert = jest.fn();
 
-    const insertQueryBuilder = {
-      insert: () => insertQueryBuilder,
-      into: () => insertQueryBuilder,
-      values: (values: unknown) => {
-        insertedValues(values);
+    const createInsertQueryBuilder = () => {
+      let pendingValues: unknown;
+      let ignoresDuplicates = false;
 
-        return insertQueryBuilder;
-      },
-      orIgnore: () => insertQueryBuilder,
-      execute: jest.fn(),
+      const insertQueryBuilder = {
+        insert: () => insertQueryBuilder,
+        into: () => insertQueryBuilder,
+        values: (values: unknown) => {
+          insertedValues(values);
+          pendingValues = values;
+
+          return insertQueryBuilder;
+        },
+        orIgnore: () => {
+          ignoresDuplicates = true;
+
+          return insertQueryBuilder;
+        },
+        execute: async () => executedInsert(pendingValues, ignoresDuplicates),
+      };
+
+      return insertQueryBuilder;
     };
 
     applicationRegistrationRepository = {
       findOne: jest.fn(),
       update: jest.fn(),
-      createQueryBuilder: jest.fn(() => insertQueryBuilder),
+      createQueryBuilder: jest.fn(createInsertQueryBuilder),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -83,7 +99,7 @@ describe('OAuthClientRegistrationResolverService', () => {
     service = module.get(OAuthClientRegistrationResolverService);
   });
 
-  // Mirrors the unique indexes that make the insert's orIgnore skip a duplicate
+  // Mirrors the unique indexes: a duplicate insert fails unless it was chained with orIgnore
   const storeRegistrationsInMemory = () => {
     const storedRegistrations: {
       id: string;
@@ -99,8 +115,11 @@ describe('OAuthClientRegistrationResolverService', () => {
             !isDefined(registration.deletedAt),
         ) ?? null,
     );
-    insertedValues.mockImplementation(
-      (values: { id?: string; oAuthClientId: string }) => {
+    executedInsert.mockImplementation(
+      (
+        values: { id?: string; oAuthClientId: string },
+        ignoresDuplicates: boolean,
+      ) => {
         const id = values.id ?? randomUUID();
         const isConflicting = storedRegistrations.some(
           (registration) =>
@@ -111,6 +130,14 @@ describe('OAuthClientRegistrationResolverService', () => {
 
         if (!isConflicting) {
           storedRegistrations.push({ ...values, id, deletedAt: null });
+
+          return;
+        }
+
+        if (!ignoresDuplicates) {
+          throw Object.assign(new QueryFailedError('INSERT', [], new Error()), {
+            code: POSTGRESQL_ERROR_CODES.UNIQUE_VIOLATION,
+          });
         }
       },
     );
@@ -132,11 +159,16 @@ describe('OAuthClientRegistrationResolverService', () => {
   it('loads a registration with its client secret hash but without its manifest', async () => {
     await service.findByClientId('3f1c2a9e-6f1b-4f0e-9d7e-2b3c4d5e6f70');
 
-    const [{ select }] = applicationRegistrationRepository.findOne.mock
-      .calls[0] as [{ select: string[] }];
-
-    expect(select).toContain('oAuthClientSecretHash');
-    expect(select).not.toContain('manifest');
+    expect(applicationRegistrationRepository.findOne).toHaveBeenCalledWith(
+      expect.objectContaining({
+        select: expect.arrayContaining(['oAuthClientSecretHash']),
+      }),
+    );
+    expect(applicationRegistrationRepository.findOne).toHaveBeenCalledWith(
+      expect.objectContaining({
+        select: expect.not.arrayContaining(['manifest']),
+      }),
+    );
   });
 
   it('resolves a well-known client document to its seeded registration', async () => {
@@ -241,6 +273,7 @@ describe('OAuthClientRegistrationResolverService', () => {
       service.findOrRegisterByClientId(CLAUDE_CODE_DOCUMENT.clientId),
     ]);
 
+    expect(insertedValues).toHaveBeenCalledTimes(2);
     expect(storedRegistrations).toHaveLength(1);
     expect(firstResolution?.registration).toBe(storedRegistrations[0]);
     expect(secondResolution?.registration).toBe(storedRegistrations[0]);

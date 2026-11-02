@@ -1,19 +1,19 @@
 import { type ClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/client-id-metadata-document.type';
-import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { type ResolvedOAuthClientRegistration } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/types/resolved-oauth-client-registration.type';
 
 export type ResolvedOAuthClient =
   | {
       kind: 'registeredClient';
-      registration: ApplicationRegistrationEntity;
+      registration: ResolvedOAuthClientRegistration;
       clientIdMetadataDocument: null;
     }
   | {
       kind: 'wellKnownClientIdMetadataDocument';
-      registration: ApplicationRegistrationEntity;
+      registration: ResolvedOAuthClientRegistration;
       clientIdMetadataDocument: ClientIdMetadataDocument;
     }
   | {
       kind: 'clientIdMetadataDocument';
-      registration: ApplicationRegistrationEntity | null;
+      registration: ResolvedOAuthClientRegistration | null;
       clientIdMetadataDocument: ClientIdMetadataDocument;
     };
