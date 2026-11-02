@@ -1,3 +1,5 @@
+import { PUBLISH_FRONT_COMPONENT_TOOL_NAME } from 'twenty-shared/ai';
+
 import { PROPOSE_TOOL_CALL_PAUSING_TOOL } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-tool-call.pausing-tool';
 
 const RECORD_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
@@ -42,37 +44,46 @@ const buildFoundRecordOutput = (record: Record<string, unknown>) => ({
 });
 
 describe('PROPOSE_TOOL_CALL_PAUSING_TOOL', () => {
-  it('keeps the proposed arguments when the tool disallows editing', async () => {
-    const proposal = {
-      toolName: 'save_snapshot',
-      toolLabel: 'Save component',
-      summary: 'Save the reviewed component',
-      template: 'generic' as const,
-      areArgumentsEditable: false,
-      arguments: { draftId: RECORD_ID, checksum: 'reviewed-checksum' },
-    };
-    const call = PROPOSE_TOOL_CALL_PAUSING_TOOL.parseCall(proposal, {
-      success: true,
-      result: { status: 'pending', proposal },
-    });
-    const executeTool = jest
-      .fn()
-      .mockResolvedValue({ success: true, message: 'Saved' });
+  it.each([
+    {
+      template: 'frontComponent',
+      toolName: PUBLISH_FRONT_COMPONENT_TOOL_NAME,
+    },
+    { template: 'frontComponent', toolName: 'save_snapshot' },
+    { template: 'generic', toolName: PUBLISH_FRONT_COMPONENT_TOOL_NAME },
+  ] as const)(
+    'keeps the proposed revision for $template/$toolName when approval supplies another draft and checksum',
+    async ({ template, toolName }) => {
+      const proposal = {
+        toolName,
+        toolLabel: 'Save component',
+        summary: 'Save the reviewed component',
+        template,
+        arguments: { draftId: RECORD_ID, checksum: 'reviewed-checksum' },
+      };
+      const call = PROPOSE_TOOL_CALL_PAUSING_TOOL.parseCall(proposal, {
+        success: true,
+        result: { status: 'pending', proposal },
+      });
+      const executeTool = jest
+        .fn()
+        .mockResolvedValue({ success: true, message: 'Saved' });
 
-    await call!.complete({
-      output: {
-        decision: 'approve',
-        arguments: { draftId: 'another-draft', checksum: 'another-checksum' },
-      },
-      context: { executeTool },
-    });
+      await call!.complete({
+        output: {
+          decision: 'approve',
+          arguments: { draftId: 'another-draft', checksum: 'another-checksum' },
+        },
+        context: { executeTool },
+      });
 
-    expect(executeTool).toHaveBeenCalledTimes(1);
-    expect(executeTool).toHaveBeenCalledWith({
-      toolName: 'save_snapshot',
-      args: proposal.arguments,
-    });
-  });
+      expect(executeTool).toHaveBeenCalledTimes(1);
+      expect(executeTool).toHaveBeenCalledWith({
+        toolName,
+        args: proposal.arguments,
+      });
+    },
+  );
 
   it.each([
     ['an unknown decision', { decision: 'maybe' }],

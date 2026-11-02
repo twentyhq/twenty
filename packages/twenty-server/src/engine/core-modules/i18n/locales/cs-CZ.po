@@ -1436,6 +1436,11 @@ msgstr "Obor proměnné aplikace nelze po vytvoření změnit"
 msgid "Applications cannot update these fields: {fieldsList}."
 msgstr "Aplikace nemohou aktualizovat tato pole: {fieldsList}."
 
+#. js-lingui-id: agujn9
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Approve this draft in its original chat."
+msgstr "Schválit tento návrh v původním chatu."
+
 #. js-lingui-id: rczXz4
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 msgid "Approve your access domain"
@@ -11819,6 +11824,11 @@ msgctxt "commandMenuItem.label"
 msgid "Save Dashboard"
 msgstr "Uložit panel"
 
+#. js-lingui-id: YlXHmh
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Saving a component requires human approval."
+msgstr "Uložení komponenty vyžaduje schválení člověkem."
+
 #. js-lingui-id: gqz/Jf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -13786,6 +13796,11 @@ msgstr "Roli, kterou se snažíte upravit, nelze najít."
 msgid "The same column cannot appear twice in an index."
 msgstr "Stejný sloupec nemůže v indexu figurovat dvakrát."
 
+#. js-lingui-id: IoxxxC
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "The saved component differs from this draft."
+msgstr "Uložená komponenta se liší od tohoto návrhu."
+
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
 msgid "The selected model has been disabled by the administrator."
@@ -14290,10 +14305,10 @@ msgstr "Tato doména je již obsazená."
 msgid "This draft is being updated. Try again."
 msgstr "Tento koncept se aktualizuje. Zkuste to znovu."
 
-#. js-lingui-id: HJFKCt
+#. js-lingui-id: EM4fuz
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
-msgid "This draft was superseded or belongs to another chat. Start a new draft."
-msgstr "Tento koncept byl nahrazen nebo patří jinému chatu. Začněte nový koncept."
+msgid "This draft was superseded, saved or belongs to another chat. Start a new draft."
+msgstr "Tento koncept byl nahrazen, uložen nebo patří do jiného chatu. Začněte nový koncept."
 
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts
@@ -14577,6 +14592,11 @@ msgstr "Toto oprávnění je pro objekt zakázáno a nelze jej udělit"
 msgid "This plan is not available."
 msgstr "Tento plán není k dispozici."
 
+#. js-lingui-id: GA6RMi
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This preview changed. Approve the latest revision."
+msgstr "Tento náhled se změnil. Schvalte nejnovější revizi."
+
 #. js-lingui-id: Y5C3uK
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "This provider is not supported."
@@ -14681,6 +14701,11 @@ msgstr "Tuto roli nelze upravit."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "Tuto roli nelze upravit, protože jde o systémovou roli. Lze upravovat pouze vlastní role."
+
+#. js-lingui-id: UjNNWw
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This saved component was deleted. Create a new draft."
+msgstr "Tato uložená komponenta byla smazána. Vytvořte nový koncept."
 
 #. js-lingui-id: DEJJoY
 #: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts

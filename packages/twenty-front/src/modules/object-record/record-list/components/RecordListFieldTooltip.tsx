@@ -1,7 +1,7 @@
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Tooltip } from 'twenty-ui/primitives/surfaces';
 
 type RecordListFieldTooltipProps = {

@@ -17,7 +17,8 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { IconChevronDown, IconList, useIcons } from 'twenty-ui/icon';
+import { IconChevronDown, IconList } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { MOBILE_VIEWPORT, useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledIconContainer = styled.span`

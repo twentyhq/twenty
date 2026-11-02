@@ -1,7 +1,6 @@
 import { randomUUID } from 'node:crypto';
 
 import { parse } from 'graphql';
-import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 import { FeatureFlagKey, RecordShareAccessLevel } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -283,13 +282,10 @@ describe('A restricted record on an object open by default', () => {
 
   it('should leave it out of the events delivered to others', async () => {
     const memberRole = await findOneRoleByLabel({ label: 'Member' });
-    const { rolesPermissions, flatObjectMetadataMaps } =
+    const { flatObjectMetadataMaps } =
       await getAppProviderByClassName<WorkspaceCacheService>(
         'WorkspaceCacheService',
-      ).getOrRecompute(workspaceId, [
-        'rolesPermissions',
-        'flatObjectMetadataMaps',
-      ]);
+      ).getOrRecompute(workspaceId, ['flatObjectMetadataMaps']);
     const companyObjectMetadata = findFlatEntityByIdInFlatEntityMaps({
       flatEntityId: companyObjectMetadataId,
       flatEntityMaps: flatObjectMetadataMaps,
@@ -313,16 +309,11 @@ describe('A restricted record on an object open by default', () => {
           })) as ObjectRecordEvent[],
         })
         .resolveAdmittedRecordIds({
-          isSystemContext: false,
-          objectsPermissions: rolesPermissions[memberRole.id],
-          principalIds: [
-            EVERYONE_PRINCIPAL_ID,
-            WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-            memberRole.id,
-          ],
-          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-          isOwningApplication: () => false,
-          resolveRowLevelPermissionRecordFilter: () => null,
+          workspaceId: workspaceId,
+          intersectionOf: { userWorkspaceRoleId: memberRole.id },
+          workspaceMember: {
+            id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
+          },
         });
 
     expect([...admittedRecordIds]).toEqual([OPEN_COMPANY_ID]);

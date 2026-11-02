@@ -7,6 +7,7 @@ import { BaseTool } from 'src/engine/core-modules/tool-provider/interfaces/base-
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
+import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
 
 const deleteViewSortInputSchema = z.object({
   id: z.string().uuid().describe('ID of the view sort to delete'),
@@ -24,14 +25,24 @@ export class DeleteViewSortTool extends BaseTool<
 > {
   readonly inputSchema = deleteViewSortInputSchema;
 
-  constructor(private readonly viewSortService: ViewSortService) {
+  constructor(
+    private readonly viewSortService: ViewSortService,
+    private readonly viewToolAccessService: ViewToolAccessService,
+  ) {
     super();
   }
 
   async execute({
     input,
-    context: { workspaceId },
+    context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<typeof deleteViewSortInputSchema>): Promise<ToolOutput> {
+    await this.viewToolAccessService.findParentViewEditableByUserOrThrow({
+      kind: 'viewSort',
+      entityId: input.id,
+      workspaceId,
+      userWorkspaceId,
+    });
+
     const sort = await this.viewSortService.deleteOne({
       deleteViewSortInput: { id: input.id },
       workspaceId,

@@ -11,19 +11,8 @@ import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principa
 import { type RoleIdsBySource } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { computePermissionIntersection } from 'src/engine/permissions/role/utils/compute-permission-intersection.util';
 import { getRoleIdsToIntersect } from 'src/engine/permissions/principal/utils/get-role-ids-to-intersect.util';
+import { resolvePermissionsPrincipalActingApplicationId } from 'src/engine/permissions/principal/utils/resolve-permissions-principal-acting-application-id.util';
 import { restrictObjectsPermissionsToDisabledActions } from 'src/engine/permissions/role/utils/restrict-objects-permissions-to-disabled-actions.util';
-
-const buildApplicationIdByDefaultRoleId = (
-  flatApplicationMaps: ApplicationDefaultRoleMaps,
-): Partial<Record<string, string>> =>
-  Object.fromEntries(
-    Object.values(flatApplicationMaps.byId).flatMap((flatApplication) =>
-      isDefined(flatApplication?.defaultRoleId) &&
-      !isDefined(flatApplication.deletedAt)
-        ? [[flatApplication.defaultRoleId, flatApplication.id]]
-        : [],
-    ),
-  );
 
 export const computeObjectsPermissionsForRolePermissionConfig = ({
   intersectionOf,
@@ -44,20 +33,10 @@ export const computeObjectsPermissionsForRolePermissionConfig = ({
     return {};
   }
 
-  const applicationIdByDefaultRoleId =
-    buildApplicationIdByDefaultRoleId(flatApplicationMaps);
-
-  const { applicationRoleId, ...nonApplicationRoleIdsBySource } =
-    intersectionOf;
-  const nonApplicationRoleIds = new Set(
-    Object.values(nonApplicationRoleIdsBySource).filter(isDefined),
-  );
-
-  // TODO(@charlesBochet): members hold Admin, the Standard app's default role (#28667); simplify once they no longer do
-  const getActingApplicationId = (roleId: string) =>
-    roleId === applicationRoleId && !nonApplicationRoleIds.has(roleId)
-      ? applicationIdByDefaultRoleId[roleId]
-      : undefined;
+  const actingApplicationId = resolvePermissionsPrincipalActingApplicationId({
+    intersectionOf,
+    flatApplicationMaps,
+  });
 
   const permissionsPerRole = roleIds.map((roleId) => {
     const rolePermissions = rolesPermissions[roleId];
@@ -67,7 +46,10 @@ export const computeObjectsPermissionsForRolePermissionConfig = ({
           objectsPermissions: rolePermissions,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
-          actingApplicationId: getActingApplicationId(roleId),
+          actingApplicationId:
+            roleId === intersectionOf.applicationRoleId
+              ? actingApplicationId
+              : undefined,
         })
       : undefined;
   });

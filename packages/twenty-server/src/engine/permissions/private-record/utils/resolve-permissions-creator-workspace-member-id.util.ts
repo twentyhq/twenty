@@ -10,7 +10,7 @@ export const resolvePermissionsCreatorWorkspaceMemberId = (
   isRecordPrivacyApplicable(request) &&
   hasCreatedByField({
     flatObjectMetadata: request.flatObjectMetadata,
-    flatFieldMetadataMaps: request.environment.flatFieldMetadataMaps,
+    flatFieldMetadataMaps: request.metadataMaps.flatFieldMetadataMaps,
   })
-    ? request.subject.workspaceMemberId
+    ? request.principal.workspaceMember?.id
     : undefined;

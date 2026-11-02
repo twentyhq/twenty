@@ -21,7 +21,7 @@ import { ChartSettingsDropdownSection } from '@/side-panel/pages/page-layout/com
 import { t } from '@lingui/core/macro';
 import { useMemo, useState } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Dropdown } from 'twenty-ui/components/navigation';
 import { FieldDisplayMode } from '~/generated-metadata/graphql';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';

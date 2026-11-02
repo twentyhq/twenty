@@ -7,7 +7,8 @@ import {
   getSettingsPath,
   isDefined,
 } from 'twenty-shared/utils';
-import { IconApps, IconLock, useIcons } from 'twenty-ui/icon';
+import { IconApps, IconLock } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Avatar } from 'twenty-ui/primitives/data-display';
 import { useTheme } from 'twenty-ui/theme';
 

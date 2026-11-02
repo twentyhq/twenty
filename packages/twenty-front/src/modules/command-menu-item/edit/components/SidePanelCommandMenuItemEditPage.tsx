@@ -26,12 +26,8 @@ import { ContextStorePageType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { LightIconButton } from 'twenty-ui/components/input';
 import { ListItem } from 'twenty-ui/primitives/navigation';
-import {
-  IconDotsVertical,
-  IconPin,
-  IconPinnedOff,
-  useIcons,
-} from 'twenty-ui/icon';
+import { IconDotsVertical, IconPin, IconPinnedOff } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { ButtonGroup } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { type CommandMenuItemFieldsFragment } from '~/generated-metadata/graphql';

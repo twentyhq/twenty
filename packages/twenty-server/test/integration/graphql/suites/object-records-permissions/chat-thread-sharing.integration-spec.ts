@@ -22,7 +22,6 @@ import { EnableCommonRecordSharingCommand } from 'src/database/commands/upgrade-
 import { type AgentHistoryUpgradeStorageService } from 'src/database/commands/agent-history/agent-history-upgrade-storage.service';
 import { randomUUID } from 'node:crypto';
 import { parse } from 'graphql';
-import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
 import { type ObjectRecordDestroyEvent } from 'twenty-shared/database-events';
 import {
   FeatureFlagKey,
@@ -982,13 +981,10 @@ describe('Conversations through the record API', () => {
     userWorkspaceId: string;
     workspaceMemberId: string;
   }) => {
-    const { userWorkspaceRoleMap, rolesPermissions } =
+    const { userWorkspaceRoleMap } =
       await getAppProviderByClassName<WorkspaceCacheService>(
         'WorkspaceCacheService',
-      ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, [
-        'userWorkspaceRoleMap',
-        'rolesPermissions',
-      ]);
+      ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, ['userWorkspaceRoleMap']);
     const roleId = userWorkspaceRoleMap[userWorkspaceId];
 
     if (!isDefined(roleId)) {
@@ -1001,12 +997,11 @@ describe('Conversations through the record API', () => {
       )
         .buildEventRecordAccessGate(batch)
         .resolveAdmittedRecordIds({
-          isSystemContext: false,
-          objectsPermissions: rolesPermissions[roleId],
-          principalIds: [EVERYONE_PRINCIPAL_ID, workspaceMemberId, roleId],
-          workspaceMemberId,
-          isOwningApplication: () => false,
-          resolveRowLevelPermissionRecordFilter: () => null,
+          workspaceId: SEED_APPLE_WORKSPACE_ID,
+          intersectionOf: { userWorkspaceRoleId: roleId },
+          workspaceMember: {
+            id: workspaceMemberId,
+          },
         });
 
     return admittedRecordIds.has(threadId);

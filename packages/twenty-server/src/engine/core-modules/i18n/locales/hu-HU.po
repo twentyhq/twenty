@@ -1436,6 +1436,11 @@ msgstr "Az alkalmazásváltozó hatóköre a létrehozás után nem módosíthat
 msgid "Applications cannot update these fields: {fieldsList}."
 msgstr "Az alkalmazások nem frissíthetik ezeket a mezőket: {fieldsList}."
 
+#. js-lingui-id: agujn9
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Approve this draft in its original chat."
+msgstr "Hagyja jóvá ezt a piszkozatot az eredeti csevegésében."
+
 #. js-lingui-id: rczXz4
 #: src/engine/core-modules/approved-access-domain/services/approved-access-domain.service.ts
 msgid "Approve your access domain"
@@ -11819,6 +11824,11 @@ msgctxt "commandMenuItem.label"
 msgid "Save Dashboard"
 msgstr "Irányítópult mentése"
 
+#. js-lingui-id: YlXHmh
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "Saving a component requires human approval."
+msgstr "Egy komponens mentéséhez emberi jóváhagyás szükséges."
+
 #. js-lingui-id: gqz/Jf
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-campaign-standard-flat-field-metadata.util.ts
@@ -13786,6 +13796,11 @@ msgstr "A szerepkör, amelyet módosítani próbál, nem található."
 msgid "The same column cannot appear twice in an index."
 msgstr "Ugyanaz az oszlop nem szerepelhet kétszer egy indexben."
 
+#. js-lingui-id: IoxxxC
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "The saved component differs from this draft."
+msgstr "A mentett komponens eltér ettől a piszkozattól."
+
 #. js-lingui-id: NnZcfp
 #: src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service.ts
 msgid "The selected model has been disabled by the administrator."
@@ -14290,10 +14305,10 @@ msgstr "Ez a tartomány már foglalt."
 msgid "This draft is being updated. Try again."
 msgstr "A piszkozat frissítése folyamatban van. Próbálja újra."
 
-#. js-lingui-id: HJFKCt
+#. js-lingui-id: EM4fuz
 #: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
-msgid "This draft was superseded or belongs to another chat. Start a new draft."
-msgstr "Ezt a piszkozatot felváltotta egy másik, vagy másik csevegéshez tartozik. Indítson új piszkozatot."
+msgid "This draft was superseded, saved or belongs to another chat. Start a new draft."
+msgstr "Ezt a piszkozatot felváltották, mentették, vagy egy másik csevegéshez tartozik. Kezdjen új piszkozatot."
 
 #. js-lingui-id: NcQ6eO
 #: src/engine/core-modules/user/user.exception.ts
@@ -14577,6 +14592,11 @@ msgstr "Ez az engedély le van tiltva az objektumon, és nem adható meg"
 msgid "This plan is not available."
 msgstr "Ez a csomag nem érhető el."
 
+#. js-lingui-id: GA6RMi
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This preview changed. Approve the latest revision."
+msgstr "Ez az előnézet megváltozott. Hagyja jóvá a legújabb módosítást."
+
 #. js-lingui-id: Y5C3uK
 #: src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception.ts
 msgid "This provider is not supported."
@@ -14681,6 +14701,11 @@ msgstr "Ez a szerepkör nem szerkeszthető."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/get-role-not-editable-errors.util.ts
 msgid "This role cannot be modified because it is a system role. Only custom roles can be edited."
 msgstr "Ez a szerepkör nem módosítható, mivel rendszerszerepkör. Csak egyéni szerepkörök szerkeszthetők."
+
+#. js-lingui-id: UjNNWw
+#: src/engine/metadata-modules/ai/ai-front-component/ai-front-component.service.ts
+msgid "This saved component was deleted. Create a new draft."
+msgstr "Ezt a mentett komponenst törölték. Hozzon létre új piszkozatot."
 
 #. js-lingui-id: DEJJoY
 #: src/engine/core-modules/application/application-key-value/services/application-key-value.service.ts

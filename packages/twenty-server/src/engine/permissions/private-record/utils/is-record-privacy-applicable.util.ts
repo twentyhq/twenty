@@ -1,6 +1,6 @@
 /* @license Enterprise */
 
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type PermissionsRowAccessRequest } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/utils/is-private-record-enabled.util';
@@ -8,15 +8,13 @@ import { resolveRequiredRecordShareAccessLevels } from 'src/engine/permissions/r
 import { isPermissionStorageObject } from 'src/engine/permissions/utils/is-permission-storage-object.util';
 
 export const isRecordPrivacyApplicable = ({
-  subject,
-  environment,
+  metadataMaps,
   flatObjectMetadata,
   operationType,
 }: Pick<
   PermissionsRowAccessRequest,
-  'subject' | 'environment' | 'flatObjectMetadata' | 'operationType'
+  'metadataMaps' | 'flatObjectMetadata' | 'operationType'
 >): boolean =>
   isNonEmptyArray(resolveRequiredRecordShareAccessLevels(operationType)) &&
-  isPrivateRecordEnabled(environment.featureFlagsMap) &&
-  !isPermissionStorageObject(flatObjectMetadata) &&
-  isDefined(subject.principalIds);
+  isPrivateRecordEnabled(metadataMaps.featureFlagsMap) &&
+  !isPermissionStorageObject(flatObjectMetadata);

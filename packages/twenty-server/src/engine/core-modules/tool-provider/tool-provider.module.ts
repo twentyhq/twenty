@@ -24,6 +24,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { NavigationMenuItemToolsModule } from 'src/engine/metadata-modules/navigation-menu-item/tools/navigation-menu-item-tools.module';
 import { MetadataToolsModule } from 'src/engine/metadata-modules/object-metadata/tools/metadata-tools.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
+import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 import { RoleToolsModule } from 'src/engine/metadata-modules/role/tools/role-tools.module';
 import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
 import { ViewToolsModule } from 'src/engine/metadata-modules/view/tools/view-tools.module';
@@ -47,6 +48,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     FeatureFlagModule,
     FilesFieldModule,
     PermissionsModule,
+    RecordShareModule,
     ViewToolsModule,
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
