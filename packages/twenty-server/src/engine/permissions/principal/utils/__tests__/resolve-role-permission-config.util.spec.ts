@@ -96,7 +96,7 @@ describe('resolveRolePermissionConfig', () => {
     });
   });
 
-  it('adds no application restriction when an OAuth-only application has no role', () => {
+  it('bounds a user acting through an OAuth-only application without a role by the user role alone', () => {
     expect(
       resolve(
         buildUserContext({
@@ -106,7 +106,12 @@ describe('resolveRolePermissionConfig', () => {
           },
         }),
       ),
-    ).toEqual({ intersectionOf: { userWorkspaceRoleId: USER_ROLE_ID } });
+    ).toEqual({
+      intersectionOf: {
+        userWorkspaceRoleId: USER_ROLE_ID,
+        applicationRoleId: USER_ROLE_ID,
+      },
+    });
   });
 
   it('allows nothing for a user acting through an installed application without a role', () => {

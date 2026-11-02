@@ -13,5 +13,5 @@ export const buildUserRoleIdsBySource = ({
     | undefined;
 }): RoleIdsBySource => ({
   userWorkspaceRoleId: userRoleId ?? null,
-  ...resolveApplicationRoleId({ application }),
+  ...resolveApplicationRoleId({ application, userRoleId }),
 });

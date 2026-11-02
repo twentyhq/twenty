@@ -10,13 +10,15 @@ const NO_APPLICATION_RESTRICTION = {} as const;
 
 const APPLICATION_ALLOWS_NOTHING = { applicationRoleId: null } as const;
 
-// OAuth-only applications have no role, so they add no restriction to the member or agent they act with
+// OAuth-only applications have no role yet, so they act with the role of the member they act for
 export const resolveApplicationRoleId = ({
   application,
+  userRoleId,
 }: {
   application:
     | Pick<FlatApplication, 'defaultRoleId' | 'sourceType'>
     | undefined;
+  userRoleId?: string | null;
 }): Pick<RoleIdsBySource, 'applicationRoleId'> => {
   if (!isDefined(application)) {
     return NO_APPLICATION_RESTRICTION;
@@ -26,7 +28,7 @@ export const resolveApplicationRoleId = ({
     return { applicationRoleId: application.defaultRoleId };
   }
 
-  return isOAuthOnlyApplication(application)
-    ? NO_APPLICATION_RESTRICTION
+  return isOAuthOnlyApplication(application) && isDefined(userRoleId)
+    ? { applicationRoleId: userRoleId }
     : APPLICATION_ALLOWS_NOTHING;
 };
