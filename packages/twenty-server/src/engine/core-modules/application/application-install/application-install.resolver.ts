@@ -31,7 +31,6 @@ import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/applica
 import { UpdateApplicationInput } from 'src/engine/core-modules/application/dtos/update-application.input';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { resolveTargetApplicationOrThrow } from 'src/engine/core-modules/application/utils/resolve-target-application-or-throw.util';
-import { WellKnownOAuthClientInstallService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-install.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { JobStatusDTO } from 'src/engine/core-modules/message-queue/dtos/job-status.dto';
@@ -74,7 +73,6 @@ export class ApplicationInstallResolver {
     private readonly marketplaceQueryService: MarketplaceQueryService,
     private readonly applicationLifecycleJobService: ApplicationLifecycleJobService,
     private readonly applicationUninstallRunnerService: ApplicationUninstallRunnerService,
-    private readonly wellKnownOAuthClientInstallService: WellKnownOAuthClientInstallService,
   ) {}
 
   @Query(() => [ApplicationDTO])
@@ -244,11 +242,6 @@ export class ApplicationInstallResolver {
     { universalIdentifier }: TriggerUninstallApplicationInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<TriggerUninstallApplicationResultDTO> {
-    await this.uninstallOtherInstallsOfWellKnownOAuthClient({
-      universalIdentifier,
-      workspaceId: workspace.id,
-    });
-
     return this.applicationLifecycleJobService.triggerUninstallApplication({
       universalIdentifier,
       workspaceId: workspace.id,
@@ -315,11 +308,6 @@ export class ApplicationInstallResolver {
     { universalIdentifier }: TriggerUninstallApplicationJobInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
   ): Promise<TriggerUninstallApplicationJobResultDTO> {
-    await this.uninstallOtherInstallsOfWellKnownOAuthClient({
-      universalIdentifier,
-      workspaceId: workspace.id,
-    });
-
     return this.applicationLifecycleJobService.triggerUninstallApplication({
       universalIdentifier,
       workspaceId: workspace.id,
@@ -450,37 +438,11 @@ export class ApplicationInstallResolver {
     { universalIdentifier }: UninstallApplicationInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    await this.uninstallOtherInstallsOfWellKnownOAuthClient({
-      universalIdentifier,
-      workspaceId,
-    });
-
     await this.applicationUninstallRunnerService.uninstallApplication({
       universalIdentifier,
       workspaceId,
     });
 
     return true;
-  }
-
-  // A well-known client's row folds in its older per-connection installs; they go first so a failure leaves the row to retry
-  private async uninstallOtherInstallsOfWellKnownOAuthClient({
-    universalIdentifier,
-    workspaceId,
-  }: {
-    universalIdentifier: string;
-    workspaceId: string;
-  }): Promise<void> {
-    const otherInstallUniversalIdentifiers =
-      await this.wellKnownOAuthClientInstallService.findOtherInstallUniversalIdentifiers(
-        { workspaceId, universalIdentifier },
-      );
-
-    for (const otherInstallUniversalIdentifier of otherInstallUniversalIdentifiers) {
-      await this.applicationUninstallRunnerService.uninstallApplication({
-        universalIdentifier: otherInstallUniversalIdentifier,
-        workspaceId,
-      });
-    }
   }
 }

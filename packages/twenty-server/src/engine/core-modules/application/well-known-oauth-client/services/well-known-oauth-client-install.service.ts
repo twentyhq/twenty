@@ -24,7 +24,6 @@ const INSTALL_WITH_REGISTRATION_FIND_OPTIONS = {
   },
 } satisfies FindManyOptions<ApplicationEntity>;
 
-// Next to its shared install, a workspace can hold older per-connection installs the server attributes to the same client
 @Injectable()
 export class WellKnownOAuthClientInstallService {
   constructor(

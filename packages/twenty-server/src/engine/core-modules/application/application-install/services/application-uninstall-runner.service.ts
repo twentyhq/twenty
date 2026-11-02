@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ApplicationExceptionCode } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { APPLICATION_LIFECYCLE_LOCK_OPTIONS } from 'src/engine/core-modules/application/application-install/constants/application-lifecycle-lock-options.constant';
 import { APPLICATION_UNINSTALL_STEPS } from 'src/engine/core-modules/application/application-install/constants/application-uninstall-steps.constant';
@@ -12,6 +13,7 @@ import { buildApplicationLifecycleLockKey } from 'src/engine/core-modules/applic
 import { buildApplicationLifecycleLogEntry } from 'src/engine/core-modules/application/application-install/utils/build-application-lifecycle-log-entry.util';
 import { createApplicationLifecycleProgressReporter } from 'src/engine/core-modules/application/application-install/utils/create-application-lifecycle-progress-reporter.util';
 import { getApplicationErrorCode } from 'src/engine/core-modules/application/application-install/utils/get-application-error-code.util';
+import { WellKnownOAuthClientInstallService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-install.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { type MessageQueueJobProgressContext } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
@@ -27,6 +29,7 @@ export class ApplicationUninstallRunnerService {
     private readonly metricsService: MetricsService,
     private readonly cacheLockService: CacheLockService,
     private readonly eventLogEmitterService: EventLogEmitterService,
+    private readonly wellKnownOAuthClientInstallService: WellKnownOAuthClientInstallService,
   ) {}
 
   async uninstallApplication({
@@ -37,6 +40,38 @@ export class ApplicationUninstallRunnerService {
     universalIdentifier: string;
     workspaceId: string;
     updateProgress?: MessageQueueJobProgressContext['updateProgress'];
+  }): Promise<void> {
+    // A well-known client's install folds in its older per-connection installs; uninstalling them first leaves the target to retry on failure
+    const otherInstallUniversalIdentifiers =
+      await this.wellKnownOAuthClientInstallService.findOtherInstallUniversalIdentifiers(
+        { workspaceId, universalIdentifier },
+      );
+
+    for (const otherInstallUniversalIdentifier of otherInstallUniversalIdentifiers) {
+      await this.uninstallOneApplication({
+        universalIdentifier: otherInstallUniversalIdentifier,
+        workspaceId,
+        shouldSkipIfNotInstalled: true,
+      });
+    }
+
+    await this.uninstallOneApplication({
+      universalIdentifier,
+      workspaceId,
+      updateProgress,
+    });
+  }
+
+  private async uninstallOneApplication({
+    universalIdentifier,
+    workspaceId,
+    updateProgress,
+    shouldSkipIfNotInstalled = false,
+  }: {
+    universalIdentifier: string;
+    workspaceId: string;
+    updateProgress?: MessageQueueJobProgressContext['updateProgress'];
+    shouldSkipIfNotInstalled?: boolean;
   }): Promise<void> {
     let application: ApplicationEntity | null = null;
 
@@ -69,6 +104,15 @@ export class ApplicationUninstallRunnerService {
         APPLICATION_LIFECYCLE_LOCK_OPTIONS,
       );
     } catch (error) {
+      // Matched on the read under the lock, so it also skips one a concurrent run was still uninstalling
+      if (
+        shouldSkipIfNotInstalled &&
+        getApplicationErrorCode(error) ===
+          ApplicationExceptionCode.APPLICATION_NOT_FOUND
+      ) {
+        return;
+      }
+
       this.metricsService.incrementCounterBy({
         key: MetricsKeys.AppUninstallFailed,
         amount: 1,
