@@ -13,6 +13,8 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { SettingsAiBehaviorModeSelect } from '~/pages/settings/ai/components/SettingsAiBehaviorModeSelect';
 import { type SettingsAiAssistantMode } from '~/pages/settings/ai/types/SettingsAiAssistantMode';
 
+const BEHAVIOR_SELECT_CONTROL_WIDTH = 180;
+
 type SettingsAiBehaviorSectionProps = {
   directMessageMode: SettingsAiAssistantMode | null;
   inboxMode: SettingsAiAssistantMode | null;
@@ -52,7 +54,7 @@ export const SettingsAiBehaviorSection = ({
         backgroundColor={themeCssVariables.background.secondary}
         aria-busy={isLoading}
       >
-        <StyledSettingsSelectGroup controlWidth={180}>
+        <StyledSettingsSelectGroup controlWidth={BEHAVIOR_SELECT_CONTROL_WIDTH}>
           <SettingsOptionCardContentSelect
             Icon={IconMessage}
             title={<span id={directMessagesLabelId}>{t`DMs`}</span>}
