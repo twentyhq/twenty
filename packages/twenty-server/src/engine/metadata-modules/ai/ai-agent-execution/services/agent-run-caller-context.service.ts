@@ -16,7 +16,6 @@ import { type AgentRunCallerContext } from 'src/engine/metadata-modules/ai/ai-ag
 import { type AgentRunCallerRef } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-ref.schema';
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
 import { type AgentRunRoleIds } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-role-ids.type';
-import { buildAgentRunConversationActor } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-conversation-actor.util';
 import { buildAgentRunTurnCreatedBy } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-turn-created-by.util';
 import {
   AiException,
@@ -71,10 +70,12 @@ export class AgentRunCallerContextService {
         ? authContext.userWorkspaceId
         : requestUserWorkspaceId,
       agentRunRoleIds,
-      conversationActor: buildAgentRunConversationActor({
-        authContext,
-        application,
-      }),
+      conversationViewer: {
+        workspaceMemberId: isUserAuthContext(authContext)
+          ? authContext.workspaceMemberId
+          : undefined,
+        applicationId: callerApplication?.id,
+      },
     };
   }
 

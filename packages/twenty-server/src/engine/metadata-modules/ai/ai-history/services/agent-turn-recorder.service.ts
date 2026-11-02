@@ -286,19 +286,27 @@ export class AgentTurnRecorderService {
     };
   }
 
+  // a workspace the add-agent-turn-result command has not reached has no result to select
   async findTurn({
     workspaceId,
     turnId,
+    shouldSelectResult,
   }: {
     workspaceId: string;
     turnId: string;
-  }): Promise<Pick<
-    AgentTurnWorkspaceEntity,
-    'id' | 'status' | 'error' | 'result'
-  > | null> {
+    shouldSelectResult: boolean;
+  }): Promise<
+    | (Pick<AgentTurnWorkspaceEntity, 'id' | 'status' | 'error'> &
+        Partial<Pick<AgentTurnWorkspaceEntity, 'result'>>)
+    | null
+  > {
+    const select: (keyof AgentTurnWorkspaceEntity)[] = shouldSelectResult
+      ? ['id', 'status', 'error', 'result']
+      : ['id', 'status', 'error'];
+
     return this.turnRepository.findOne(workspaceId, {
       where: { id: turnId },
-      select: ['id', 'status', 'error', 'result'],
+      select,
     });
   }
 

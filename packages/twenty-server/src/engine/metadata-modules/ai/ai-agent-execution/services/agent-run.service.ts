@@ -22,6 +22,7 @@ import { ApiKeyException } from 'src/engine/core-modules/api-key/exceptions/api-
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
+import { type ApplicationCallerOperation } from 'src/engine/core-modules/application/types/application-caller-operation.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
@@ -57,6 +58,10 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+
+type CallingApplication = NonNullable<
+  ApplicationCallerOperation['callingApplication']
+>;
 
 type RunAgentServiceInput = {
   agentUniversalIdentifier: string;
@@ -139,13 +144,6 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
 
     const thread = input.thread ?? null;
 
-    if (isDefined(thread) && !isDefined(callerApplication)) {
-      throw new AiException(
-        'Continuing a conversation requires an application access token',
-        AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
-      );
-    }
-
     if (
       isDefined(thread) &&
       messages.some((message) => message.role !== 'user')
@@ -162,38 +160,17 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       label: 'response format',
     });
 
-    const agentRow = await this.agentRepository.findOne(workspace.id, {
-      where: {
-        universalIdentifier: input.agentUniversalIdentifier,
-      },
+    const agent = await this.findCallerAgentOrThrow({
+      workspace,
+      callerApplication,
+      agentUniversalIdentifier: input.agentUniversalIdentifier,
+      operation: 'trigger',
     });
-
-    if (!isDefined(agentRow)) {
-      throw new NotFoundException(
-        `Agent ${input.agentUniversalIdentifier} not found`,
-      );
-    }
-
-    const agent = resolveEffectiveAgent(agentRow);
 
     if (!agent.isActive) {
       throw new AiException(
         `Agent ${input.agentUniversalIdentifier} is archived`,
         AiExceptionCode.AGENT_IS_INACTIVE,
-      );
-    }
-
-    if (
-      !canCallerReachApplication({
-        callingApplication: callerApplication,
-        applicationId: agent.applicationId,
-        operation: 'trigger',
-        workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
-      })
-    ) {
-      throw new AiException(
-        `Agent ${input.agentUniversalIdentifier} belongs to another application`,
-        AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
       );
     }
 
@@ -215,10 +192,9 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       requestWorkspaceMemberId,
     });
 
-    // keyed by the caller, so an application never continues another one's conversation with a shared agent
     const threadId = isDefined(thread)
-      ? buildAgentRunThreadId({
-          applicationId: callerApplication?.id ?? application.id,
+      ? this.buildCallerThreadIdOrThrow({
+          callerApplication,
           agentId: agent.id,
           threadKey: thread.key,
         })
@@ -308,11 +284,12 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
         messages,
         senderUserWorkspaceId: memberUserWorkspaceId,
         senderApplicationId: callerApplication?.id ?? null,
+        turnId: runId,
       },
     });
 
     if (input.waitForCompletion === false) {
-      return this.buildRunAgentResult({ threadId, status: 'RUNNING' });
+      return this.buildRunAgentResult({ threadId, runId, status: 'RUNNING' });
     }
 
     const settledRun = await this.agentRunSettlementService.waitFor({
@@ -322,7 +299,98 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
 
     return this.buildRunAgentResult({
       threadId,
+      runId,
       ...(settledRun ?? { status: 'RUNNING' }),
+    });
+  }
+
+  async resolveConversationThreadIdOrThrow({
+    workspace,
+    callerApplication,
+    agentUniversalIdentifier,
+    threadKey,
+  }: {
+    workspace: Pick<FlatWorkspace, 'id' | 'workspaceCustomApplicationId'>;
+    callerApplication: CallingApplication;
+    agentUniversalIdentifier: string;
+    threadKey: string;
+  }): Promise<string> {
+    const agent = await this.findCallerAgentOrThrow({
+      workspace,
+      callerApplication,
+      agentUniversalIdentifier,
+      operation: 'read',
+    });
+
+    return this.buildCallerThreadIdOrThrow({
+      callerApplication,
+      agentId: agent.id,
+      threadKey,
+    });
+  }
+
+  private async findCallerAgentOrThrow({
+    workspace,
+    callerApplication,
+    agentUniversalIdentifier,
+    operation,
+  }: {
+    workspace: Pick<FlatWorkspace, 'id' | 'workspaceCustomApplicationId'>;
+    callerApplication: CallingApplication | undefined;
+    agentUniversalIdentifier: string;
+    operation: 'read' | 'trigger';
+  }) {
+    const agentRow = await this.agentRepository.findOne(workspace.id, {
+      where: { universalIdentifier: agentUniversalIdentifier },
+    });
+
+    if (!isDefined(agentRow)) {
+      throw new AiException(
+        `Agent ${agentUniversalIdentifier} not found`,
+        AiExceptionCode.AGENT_NOT_FOUND,
+      );
+    }
+
+    const agent = resolveEffectiveAgent(agentRow);
+
+    if (
+      !canCallerReachApplication({
+        callingApplication: callerApplication,
+        applicationId: agent.applicationId,
+        operation,
+        workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
+      })
+    ) {
+      throw new AiException(
+        `Agent ${agentUniversalIdentifier} belongs to another application`,
+        AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
+      );
+    }
+
+    return agent;
+  }
+
+  // keyed by the caller, so an application never reaches another one's conversation with a shared agent
+  private buildCallerThreadIdOrThrow({
+    callerApplication,
+    agentId,
+    threadKey,
+  }: {
+    callerApplication: Pick<FlatApplication, 'id'> | undefined;
+    agentId: string;
+    threadKey: string;
+  }): string {
+    if (!isDefined(callerApplication)) {
+      throw new AiException(
+        'Continuing a conversation requires an application access token',
+        AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
+      );
+    }
+
+    return buildAgentRunThreadId({
+      applicationId: callerApplication.id,
+      agentId,
+      threadKey,
     });
   }
 
@@ -412,13 +480,15 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
 
   private buildRunAgentResult({
     threadId,
+    runId,
     status,
     result = null,
     error = null,
-  }: Pick<RunAgentResult, 'threadId' | 'status'> &
+  }: Pick<RunAgentResult, 'threadId' | 'runId' | 'status'> &
     Partial<Pick<RunAgentResult, 'result' | 'error'>>): RunAgentResult {
     return {
       threadId,
+      runId,
       status,
       result,
       error,

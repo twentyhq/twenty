@@ -180,6 +180,7 @@ describe('AgentRunnerService runStarted on a retried one-shot run', () => {
       expect(turnRecorderService.findTurn).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
         turnId: 'turn-id',
+        shouldSelectResult: true,
       });
       expect(conversationWriterService.insertTurn).not.toHaveBeenCalled();
       expect(turnStreamService.streamTurn).not.toHaveBeenCalled();

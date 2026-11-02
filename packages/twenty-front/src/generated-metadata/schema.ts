@@ -115,7 +115,7 @@ export enum AgentChatChannelThreadStatus {
 export type AgentChatEvent = {
   __typename?: 'AgentChatEvent';
   event: Scalars['JSON']['output'];
-  threadId: Scalars['String']['output'];
+  threadId?: Maybe<Scalars['String']['output']>;
 };
 
 export enum AgentChatInboxAction {
@@ -2736,6 +2736,7 @@ export type GenerateInput = {
   instructions?: InputMaybe<Scalars['String']['input']>;
   modelId?: InputMaybe<Scalars['String']['input']>;
   responseFormat?: InputMaybe<Scalars['JSON']['input']>;
+  runId?: InputMaybe<Scalars['UUID']['input']>;
   scope?: InputMaybe<Scalars['JSON']['input']>;
 };
 
@@ -6107,12 +6108,16 @@ export type QueryCallRecordingIdForCalendarEventArgs = {
 
 
 export type QueryChatMessagesArgs = {
-  threadId: Scalars['UUID']['input'];
+  agentUniversalIdentifier?: InputMaybe<Scalars['UUID']['input']>;
+  threadId?: InputMaybe<Scalars['UUID']['input']>;
+  threadKey?: InputMaybe<Scalars['String']['input']>;
 };
 
 
 export type QueryChatStreamCatchupChunksArgs = {
-  threadId: Scalars['UUID']['input'];
+  agentUniversalIdentifier?: InputMaybe<Scalars['UUID']['input']>;
+  threadId?: InputMaybe<Scalars['UUID']['input']>;
+  threadKey?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -6857,6 +6862,7 @@ export type RunAgentResult = {
   __typename?: 'RunAgentResult';
   error?: Maybe<Scalars['String']['output']>;
   result?: Maybe<Scalars['JSON']['output']>;
+  runId: Scalars['UUID']['output'];
   status: Scalars['String']['output'];
   success: Scalars['Boolean']['output'];
   threadId: Scalars['UUID']['output'];
@@ -7147,7 +7153,10 @@ export type SubscriptionLogicFunctionLogsArgs = {
 
 
 export type SubscriptionOnAgentChatEventArgs = {
-  threadId: Scalars['UUID']['input'];
+  agentUniversalIdentifier?: InputMaybe<Scalars['UUID']['input']>;
+  runId?: InputMaybe<Scalars['UUID']['input']>;
+  threadId?: InputMaybe<Scalars['UUID']['input']>;
+  threadKey?: InputMaybe<Scalars['String']['input']>;
 };
 
 

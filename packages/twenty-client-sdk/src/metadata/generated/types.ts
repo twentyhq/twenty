@@ -5363,6 +5363,9 @@ export default {
             "responseFormat": [
                 327
             ],
+            "runId": [
+                537
+            ],
             "scope": [
                 327
             ],
@@ -10925,18 +10928,28 @@ export default {
             "chatMessages": [
                 21,
                 {
+                    "agentUniversalIdentifier": [
+                        537
+                    ],
                     "threadId": [
-                        537,
-                        "UUID!"
+                        537
+                    ],
+                    "threadKey": [
+                        1
                     ]
                 }
             ],
             "chatStreamCatchupChunks": [
                 145,
                 {
+                    "agentUniversalIdentifier": [
+                        537
+                    ],
                     "threadId": [
-                        537,
-                        "UUID!"
+                        537
+                    ],
+                    "threadKey": [
+                        1
                     ]
                 }
             ],
@@ -12456,6 +12469,9 @@ export default {
             "result": [
                 327
             ],
+            "runId": [
+                537
+            ],
             "status": [
                 1
             ],
@@ -13053,9 +13069,17 @@ export default {
             "onAgentChatEvent": [
                 14,
                 {
+                    "agentUniversalIdentifier": [
+                        537
+                    ],
+                    "runId": [
+                        537
+                    ],
                     "threadId": [
-                        537,
-                        "UUID!"
+                        537
+                    ],
+                    "threadKey": [
+                        1
                     ]
                 }
             ],

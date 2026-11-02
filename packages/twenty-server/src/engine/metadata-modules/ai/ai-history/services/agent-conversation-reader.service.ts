@@ -14,14 +14,15 @@ import { finalizeDanglingToolParts } from 'src/engine/metadata-modules/ai/ai-his
 import { mapDBPartsToUIMessageParts } from 'src/engine/metadata-modules/ai/ai-history/utils/map-db-parts-to-ui-message-parts.util';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentMessageStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-status.enum';
 import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { type AgentMessagePartWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message-part.workspace-entity';
 import { type AgentMessageWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-message.workspace-entity';
 import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
-import { type AgentConversationActor } from 'src/engine/metadata-modules/ai/ai-history/types/agent-conversation-actor.type';
+import { type AgentConversationViewer } from 'src/engine/metadata-modules/ai/ai-history/types/agent-conversation-viewer.type';
 import { filterPartsOfTurnActedByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/filter-parts-of-turn-acted-by-others.util';
-import { findTurnIdsActedByOthers } from 'src/engine/metadata-modules/ai/ai-history/utils/find-turn-ids-acted-by-others.util';
+import { isAgentTurnOpenedByOtherMember } from 'src/engine/metadata-modules/ai/ai-history/utils/is-agent-turn-opened-by-other-member.util';
 
 @Injectable()
 export class AgentConversationReaderService {
@@ -70,16 +71,41 @@ export class AgentConversationReaderService {
     );
   }
 
+  // a run's text result is its last step's text, not the whole reply
+  async findReplyText({
+    workspaceId,
+    turnId,
+  }: {
+    workspaceId: string;
+    turnId: string;
+  }): Promise<string> {
+    const reply = await this.messageRepository.findOne(workspaceId, {
+      where: { turnId, role: AgentMessageRole.ASSISTANT },
+      order: { createdAt: 'DESC' },
+      relations: ['parts'],
+    });
+    const parts = mapDBPartsToUIMessageParts(reply?.parts ?? []);
+    const lastStepStart = parts
+      .map(({ type }) => type)
+      .lastIndexOf('step-start');
+
+    return parts
+      .slice(lastStepStart + 1)
+      .map((part) => (part.type === 'text' ? part.text : ''))
+      .join('');
+  }
+
   async loadMessages({
     workspaceId,
     threadId,
-    actor,
+    viewer,
   }: {
     workspaceId: string;
     threadId: string;
-    actor?: AgentConversationActor;
+    // the history's rule, so a run reads the conversation as its caller reads it
+    viewer?: AgentConversationViewer;
   }): Promise<ExtendedUIMessage[]> {
-    const [threadMessages, failedTurns] = await Promise.all([
+    const [threadMessages, turns] = await Promise.all([
       this.messageRepository.find(workspaceId, {
         where: { threadId },
         order: {
@@ -88,24 +114,31 @@ export class AgentConversationReaderService {
         },
         relations: ['parts', 'parts.file'],
       }),
-      this.turnRepository.find(workspaceId, {
-        where: { threadId, status: AgentTurnStatus.FAILED },
-        select: ['id'],
-      }),
+      this.turnRepository.find(workspaceId, { where: { threadId } }),
     ]);
 
     // a failed run is kept on record but leaves the conversation as it was, and a chat message
     // queued behind a stream is not sent yet
-    const failedTurnIds = new Set(failedTurns.map(({ id }) => id));
+    const failedTurnIds = new Set(
+      turns
+        .filter(({ status }) => status === AgentTurnStatus.FAILED)
+        .map(({ id }) => id),
+    );
     const messages = threadMessages.filter(
       ({ turnId, status }) =>
         status !== AgentMessageStatus.QUEUED &&
         (!isDefined(turnId) || !failedTurnIds.has(turnId)),
     );
 
-    const turnIdsActedByOthers = isDefined(actor)
-      ? findTurnIdsActedByOthers({ messages, actor })
-      : new Set<string>();
+    const turnIdsActedByOthers = new Set(
+      isDefined(viewer)
+        ? turns
+            .filter(({ createdBy }) =>
+              isAgentTurnOpenedByOtherMember({ createdBy, ...viewer }),
+            )
+            .map(({ id }) => id)
+        : [],
+    );
 
     return Promise.all(
       messages.map(async (message) => {
