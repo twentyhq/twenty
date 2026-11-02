@@ -6,6 +6,7 @@ export const MARKETPLACE_APP_DETAIL_FRAGMENT = gql`
     universalIdentifier
     name
     sourceType
+    wellKnownOAuthClient
     sourcePackage
     latestAvailableVersion
     isListed

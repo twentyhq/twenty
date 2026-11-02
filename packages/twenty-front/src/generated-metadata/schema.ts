@@ -3179,6 +3179,7 @@ export type MarketplaceAppDetail = {
   termsUrl?: Maybe<Scalars['String']['output']>;
   universalIdentifier: Scalars['String']['output'];
   websiteUrl?: Maybe<Scalars['String']['output']>;
+  wellKnownOAuthClient?: Maybe<WellKnownOAuthClient>;
 };
 
 export type MarketplaceAppObject = {

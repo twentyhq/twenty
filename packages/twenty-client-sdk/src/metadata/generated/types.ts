@@ -6225,6 +6225,9 @@ export default {
             "websiteUrl": [
                 1
             ],
+            "wellKnownOAuthClient": [
+                662
+            ],
             "__typename": [
                 1
             ]

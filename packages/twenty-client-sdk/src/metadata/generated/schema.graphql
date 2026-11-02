@@ -3010,6 +3010,7 @@ type MarketplaceAppDetail {
   termsUrl: String
   universalIdentifier: String!
   websiteUrl: String
+  wellKnownOAuthClient: WellKnownOAuthClient
 }
 
 type MarketplaceAppObject {

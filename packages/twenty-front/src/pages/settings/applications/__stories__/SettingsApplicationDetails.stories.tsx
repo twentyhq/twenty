@@ -121,6 +121,7 @@ const MARKETPLACE_APP_DETAIL: FindMarketplaceAppDetailQuery['findMarketplaceAppD
     universalIdentifier: APPLICATION_ID,
     name: 'Recorder Pro',
     sourceType: ApplicationRegistrationSourceType.NPM,
+    wellKnownOAuthClient: null,
     sourcePackage: '@twenty/recorder',
     latestAvailableVersion: '1.0.0',
     isListed: true,

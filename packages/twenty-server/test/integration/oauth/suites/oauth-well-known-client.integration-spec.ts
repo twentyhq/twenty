@@ -15,6 +15,7 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
+import { type CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { type ClientIdMetadataDocumentService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/client-id-metadata-document.service';
 import { CLIENT_ID_METADATA_DOCUMENT_FETCH_RATE_LIMIT_MAX } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/constants/client-id-metadata-document-fetch-rate-limit.constant';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
@@ -23,6 +24,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { TOKEN_BUCKET_THROTTLE_KEY_PREFIX } from 'src/engine/core-modules/throttler/constants/token-bucket-throttle-key-prefix.constant';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
+import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
 
 const CLAUDE_CALLBACK = 'https://claude.ai/api/mcp/auth_callback';
 const CODE_VERIFIER = 'integration-verifier';
@@ -169,6 +171,10 @@ describe('OAuth well-known clients (integration)', () => {
   beforeEach(() => clearTokenBuckets('oauth:*'));
 
   afterAll(async () => {
+    await getAppProviderByClassName<CoreEntityCacheService>(
+      'CoreEntityCacheService',
+    ).invalidate('marketplaceCatalog', MARKETPLACE_CATALOG_CACHE_ENTITY_ID);
+
     if (createdRegistrationClientIds.length > 0) {
       await ds.query(
         `DELETE FROM core."application" application
@@ -263,6 +269,63 @@ describe('OAuth well-known clients (integration)', () => {
       expect(response.body.errors?.[0]?.message).toContain(
         'redirectUrl mismatch',
       );
+    });
+  });
+
+  describe('Marketplace', () => {
+    it('should list ChatGPT and Claude as soon as their registrations exist', async () => {
+      const response = await makeMetadataApiRequest({
+        query: gql`
+          query FindManyMarketplaceApps {
+            findManyMarketplaceApps {
+              id
+              name
+              isListed
+            }
+          }
+        `,
+      });
+
+      expect(response.body.data.findManyMarketplaceApps).toEqual(
+        expect.arrayContaining([
+          {
+            id: WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CHATGPT,
+            name: 'ChatGPT',
+            isListed: true,
+          },
+          {
+            id: WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
+            name: 'Claude',
+            isListed: true,
+          },
+        ]),
+      );
+    });
+
+    it('should tell the marketplace page that Claude is connected, not installed', async () => {
+      const response = await makeMetadataApiRequest({
+        query: gql`
+          query FindMarketplaceAppDetail($universalIdentifier: String!) {
+            findMarketplaceAppDetail(
+              universalIdentifier: $universalIdentifier
+            ) {
+              name
+              sourceType
+              wellKnownOAuthClient
+            }
+          }
+        `,
+        variables: {
+          universalIdentifier:
+            WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
+        },
+      });
+
+      expect(response.body.data.findMarketplaceAppDetail).toEqual({
+        name: 'Claude',
+        sourceType: 'OAUTH_ONLY',
+        wellKnownOAuthClient: 'CLAUDE',
+      });
     });
   });
 

@@ -7,6 +7,8 @@ import { getStandardApplicationReadme } from '@/applications/utils/getStandardAp
 import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
 import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { SettingsBuiltInMcpClientAppConnectButton } from '@/settings/app-preferences/components/SettingsBuiltInMcpClientAppConnectButton';
+import { findBuiltInMcpClientApp } from '@/settings/app-preferences/utils/findBuiltInMcpClientApp';
 import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
 import { useCopyMarketplaceAppLink } from '@/marketplace/hooks/useCopyMarketplaceAppLink';
 import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
@@ -17,6 +19,7 @@ import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSec
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
@@ -27,6 +30,7 @@ import { InlineBanner } from 'twenty-ui/components/feedback';
 import { IconEyeOff, IconShoppingBag } from 'twenty-ui/icon';
 import {
   ApplicationRegistrationSourceType,
+  FeatureFlagKey,
   FindMarketplaceAppDetailDocument,
   FindOneApplicationByUniversalIdentifierDocument,
   PermissionFlagType,
@@ -68,6 +72,9 @@ export const SettingsAvailableApplicationDetails = () => {
 
   const canInstallMarketplaceApps = useHasPermissionFlag(
     PermissionFlagType.APPLICATIONS,
+  );
+  const isAppPreferencesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
   );
 
   const { data: applicationData } = useQuery(
@@ -148,6 +155,38 @@ export const SettingsAvailableApplicationDetails = () => {
     !isDefined(builtInApplicationContent);
 
   const defaultRole = getMarketplaceAppDefaultRoleManifest(detail);
+
+  const builtInMcpClientApp = findBuiltInMcpClientApp(
+    detail?.wellKnownOAuthClient,
+  );
+
+  const renderActionButton = () => {
+    if (!isDefined(detail)) {
+      return undefined;
+    }
+
+    if (isDefined(builtInMcpClientApp)) {
+      if (!isAppPreferencesEnabled) {
+        return undefined;
+      }
+
+      return (
+        <SettingsBuiltInMcpClientAppConnectButton
+          builtInMcpClientApp={builtInMcpClientApp}
+        />
+      );
+    }
+
+    return (
+      <SettingsApplicationActionButton
+        installedApplicationId={application?.id}
+        canInstallMarketplaceApps={canInstallMarketplaceApps}
+        onInstall={requestInstall}
+        isInstalling={isInstalling}
+        installProgress={installProgress}
+      />
+    );
+  };
 
   const renderContent = () => {
     if (isUnavailable) {
@@ -242,17 +281,7 @@ export const SettingsAvailableApplicationDetails = () => {
             />
           ) : undefined
         }
-        actionButton={
-          isDefined(detail) ? (
-            <SettingsApplicationActionButton
-              installedApplicationId={application?.id}
-              canInstallMarketplaceApps={canInstallMarketplaceApps}
-              onInstall={requestInstall}
-              isInstalling={isInstalling}
-              installProgress={installProgress}
-            />
-          ) : undefined
-        }
+        actionButton={renderActionButton()}
       >
         <SettingsPageContainer overflow="visible">
           {isUnlisted && (
