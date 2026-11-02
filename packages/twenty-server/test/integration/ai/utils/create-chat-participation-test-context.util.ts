@@ -76,9 +76,18 @@ export const createChatParticipationTestContext = async () => {
     FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
     workspaceId,
   );
+  const wasRecordSharingEnabled = await featureFlagService.isFeatureEnabled(
+    FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+    workspaceId,
+  );
   await featureFlagService.upsertWorkspaceFeatureFlag({
     workspaceId,
     featureFlag: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
+    value: true,
+  });
+  await featureFlagService.upsertWorkspaceFeatureFlag({
+    workspaceId,
+    featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
     value: true,
   });
 
@@ -252,6 +261,11 @@ export const createChatParticipationTestContext = async () => {
         workspaceId,
         featureFlag: FeatureFlagKey.IS_AI_CHAT_INBOX_ENABLED,
         value: wasInboxEnabled,
+      });
+      await featureFlagService.upsertWorkspaceFeatureFlag({
+        workspaceId,
+        featureFlag: FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED,
+        value: wasRecordSharingEnabled,
       });
       await setAssistantModes({
         aiChatDirectMessageAssistantMode:
