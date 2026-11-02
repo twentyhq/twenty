@@ -256,7 +256,6 @@ const discoverVisibleCalendarEventFixtures = async (): Promise<
   return externalFixtures;
 };
 
-// Members default to recording external meetings only, so fixtures need an unmatched attendee.
 const discoverCalendarEventIdsWithExternalAttendee = async (): Promise<
   Set<string>
 > => {

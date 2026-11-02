@@ -59,12 +59,11 @@ every recording that is already scheduled; the Recording Bot field of those
 meetings goes back to blank, and an Off you set yourself is left alone. Turn it
 back on and the app sweeps upcoming meetings to schedule bots again.
 
-Each member also chooses **Record my meetings** under
+Each member picks **Record my meetings** under
 **Settings → App preferences → Call Recorder → Recording**: external meetings
-(the default, any meeting where someone outside the workspace is invited), all
-meetings, or none. A meeting is recorded when at least one attendee from your
-workspace asks for it, and a meeting whose attendees match no workspace member
-is still recorded. The workspace toggle above wins over every member setting.
+(default), all meetings, or none. A meeting is external when someone outside
+the workspace is invited. It is recorded when one attendee from your workspace
+asks for it. The toggle above wins over every member setting.
 
 ## 🎥 Supported meeting platforms
 
