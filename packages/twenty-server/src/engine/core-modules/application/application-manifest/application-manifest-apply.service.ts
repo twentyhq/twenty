@@ -47,14 +47,13 @@ export class ApplicationManifestApplyService {
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
-    warnings: string[];
   }> {
     // The application version is only persisted by a successful sync: no
     // version means no sync ever completed, so the SDK client must be
     // generated regardless of schema changes.
     const isFirstApply = !isDefined(application.version);
 
-    const { workspaceMigration, hasSchemaMetadataChanged, warnings } =
+    const { workspaceMigration, hasSchemaMetadataChanged } =
       await this.applicationSyncService.synchronizeFromManifest({
         workspaceId,
         manifest,
@@ -73,7 +72,7 @@ export class ApplicationManifestApplyService {
       });
     }
 
-    return { workspaceMigration, hasSchemaMetadataChanged, warnings };
+    return { workspaceMigration, hasSchemaMetadataChanged };
   }
 
   async refreshRegistrationFromManifest({

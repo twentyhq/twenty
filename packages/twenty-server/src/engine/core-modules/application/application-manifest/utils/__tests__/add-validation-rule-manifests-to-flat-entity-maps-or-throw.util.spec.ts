@@ -192,7 +192,7 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
       maps.toAllUniversalFlatEntityMaps.flatValidationRuleMaps
         .byUniversalIdentifier.rule;
 
-    it('leaves the rule inactive and warns when the workspace deactivated a field', () => {
+    it('leaves the rule inactive when the workspace deactivated a field', () => {
       const maps = buildMaps();
 
       maps.existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.employees =
@@ -205,15 +205,11 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
           overrides: { workspace: { isActive: false } },
         });
 
-      const { warnings } = sync(maps);
-
-      expect(warnings).toEqual([
-        expect.stringContaining('"employees", which is deactivated'),
-      ]);
+      sync(maps);
       expect(syncedRule(maps)).toMatchObject({ isActive: false, bindings: {} });
     });
 
-    it('leaves an existing rule inactive and warns when its field left the workspace', () => {
+    it('leaves an existing rule inactive when its field left the workspace', () => {
       const maps = buildMaps();
 
       maps.existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.employees =
@@ -221,11 +217,7 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
       maps.existingAllFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier.rule =
         EXISTING_RULE;
 
-      const { warnings } = sync(maps);
-
-      expect(warnings).toEqual([
-        expect.stringContaining('"employees", which no longer exists'),
-      ]);
+      sync(maps);
       expect(syncedRule(maps)).toMatchObject({
         isActive: false,
         bindings: EXISTING_RULE.bindings,
@@ -294,7 +286,7 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
     maps.existingAllFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier.off =
       buildExistingRule({ isActive: false, universalIdentifier: 'off' });
 
-    const { warnings } = addValidationRuleManifestsToFlatEntityMapsOrThrow({
+    addValidationRuleManifestsToFlatEntityMapsOrThrow({
       validationRules: ['off', 'new'].map((universalIdentifier) => ({
         universalIdentifier,
         objectUniversalIdentifier: 'ticket',
@@ -311,7 +303,6 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
     const { byUniversalIdentifier } =
       maps.toAllUniversalFlatEntityMaps.flatValidationRuleMaps;
 
-    expect(warnings).toEqual([]);
     expect(byUniversalIdentifier.off?.isActive).toBe(false);
     expect(byUniversalIdentifier.new?.isActive).toBe(true);
   });
@@ -357,7 +348,7 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
           isSystemSideEffect: true,
         });
 
-      const { warnings } = addValidationRuleManifestsToFlatEntityMapsOrThrow({
+      addValidationRuleManifestsToFlatEntityMapsOrThrow({
         validationRules: [buildRule('isDefined(updatedAt)')],
         ownerFlatApplication: OWNER_APPLICATION,
         inferDeletionFromMissingEntities: true,
@@ -365,13 +356,16 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
         now: NOW,
       });
 
-      expect(warnings).toEqual([]);
+      expect(
+        maps.toAllUniversalFlatEntityMaps.flatValidationRuleMaps
+          .byUniversalIdentifier.rule?.isActive,
+      ).toBe(true);
     });
 
     it('reads a field the manifest dropped when the sync does not prune', () => {
       const maps = buildMaps();
 
-      const { warnings } = addValidationRuleManifestsToFlatEntityMapsOrThrow({
+      addValidationRuleManifestsToFlatEntityMapsOrThrow({
         validationRules: [buildRule('isNonEmptyString(removedCode)')],
         ownerFlatApplication: OWNER_APPLICATION,
         inferDeletionFromMissingEntities: false,
@@ -379,7 +373,10 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
         now: NOW,
       });
 
-      expect(warnings).toEqual([]);
+      expect(
+        maps.toAllUniversalFlatEntityMaps.flatValidationRuleMaps
+          .byUniversalIdentifier.rule?.isActive,
+      ).toBe(true);
     });
   });
 
@@ -393,23 +390,19 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
       errorFieldUniversalIdentifier: 'deletedField',
     };
 
-    it('keeps the link detached and warns when the workspace deleted the field', () => {
+    it('keeps the link detached when the workspace deleted the field', () => {
       const maps = buildMaps();
 
       maps.existingAllFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier.rule =
         buildExistingRule({ errorFieldMetadataUniversalIdentifier: null });
 
-      const { warnings } = addValidationRuleManifestsToFlatEntityMapsOrThrow({
+      addValidationRuleManifestsToFlatEntityMapsOrThrow({
         validationRules: [RULE],
         ownerFlatApplication: OWNER_APPLICATION,
         inferDeletionFromMissingEntities: true,
         ...maps,
         now: NOW,
       });
-
-      expect(warnings).toEqual([
-        expect.stringContaining('is no longer attached to its error field'),
-      ]);
       expect(
         maps.toAllUniversalFlatEntityMaps.flatValidationRuleMaps
           .byUniversalIdentifier.rule,
@@ -422,7 +415,7 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
     it('keeps the declared error field on a new rule', () => {
       const maps = buildMaps();
 
-      const { warnings } = addValidationRuleManifestsToFlatEntityMapsOrThrow({
+      addValidationRuleManifestsToFlatEntityMapsOrThrow({
         validationRules: [RULE],
         ownerFlatApplication: OWNER_APPLICATION,
         inferDeletionFromMissingEntities: true,
@@ -430,7 +423,6 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
         now: NOW,
       });
 
-      expect(warnings).toEqual([]);
       expect(
         maps.toAllUniversalFlatEntityMaps.flatValidationRuleMaps
           .byUniversalIdentifier.rule?.errorFieldMetadataUniversalIdentifier,

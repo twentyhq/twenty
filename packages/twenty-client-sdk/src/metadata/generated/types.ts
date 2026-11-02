@@ -16369,9 +16369,6 @@ export default {
             "applicationUniversalIdentifier": [
                 1
             ],
-            "warnings": [
-                1
-            ],
             "__typename": [
                 1
             ]

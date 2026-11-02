@@ -167,7 +167,7 @@ export class ApplicationDevelopmentService {
       });
 
     if (dryRun === true) {
-      const { workspaceMigration, warnings } =
+      const { workspaceMigration } =
         await this.applicationSyncService.synchronizeFromManifest({
           workspaceId,
           manifest,
@@ -180,7 +180,6 @@ export class ApplicationDevelopmentService {
         applicationUniversalIdentifier:
           workspaceMigration.applicationUniversalIdentifier,
         actions: workspaceMigration.actions,
-        warnings,
       };
     }
 
@@ -283,7 +282,7 @@ export class ApplicationDevelopmentService {
       );
     }
 
-    const { workspaceMigration, warnings } =
+    const { workspaceMigration } =
       await this.applicationManifestApplyService.applyManifestToWorkspace({
         workspaceId,
         manifest,
@@ -302,7 +301,6 @@ export class ApplicationDevelopmentService {
       applicationUniversalIdentifier:
         workspaceMigration.applicationUniversalIdentifier,
       actions: workspaceMigration.actions,
-      warnings,
     };
   }
 

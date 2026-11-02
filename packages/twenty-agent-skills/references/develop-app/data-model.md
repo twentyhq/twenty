@@ -142,7 +142,7 @@ export default defineValidationRule({
 });
 ```
 
-A sync fails if the app removes a field one of its rules reads. If the field is deactivated outside the app, or deleted outside the app while the rule's expression is unchanged, the sync succeeds, the rule stays off and a warning is shown. A new or edited rule that names a deleted field fails the sync. A sync keeps an existing rule's `isActive`.
+A sync fails if the app removes a field one of its rules reads. If the field is deactivated outside the app, or deleted outside the app while the rule's expression is unchanged, the sync succeeds and the rule stays off. A new or edited rule that names a deleted field fails the sync. A sync keeps an existing rule's `isActive`.
 
 ## Verification
 

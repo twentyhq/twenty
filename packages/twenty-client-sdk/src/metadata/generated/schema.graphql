@@ -6441,7 +6441,6 @@ enum WorkspaceMemberTimeFormatEnum {
 type WorkspaceMigration {
   actions: JSON!
   applicationUniversalIdentifier: String!
-  warnings: [String!]
 }
 
 type WorkspaceNameAndId {

@@ -2,8 +2,6 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { isApplicationNotFoundError } from '@/app/is-application-not-found-error';
 import { parseAppPlan } from '@/app/deployment/parse-app-plan';
-import { readSyncWarnings } from '@/app/deployment/read-sync-warnings';
-import { requestWithSyncWarnings } from '@/app/deployment/request-with-sync-warnings';
 import { type ToolingBuild } from '@/app/types/tooling-result.type';
 import { CliError } from '@/output/cli-error';
 import { type ResolvedTarget } from '@/target/types/resolved-target.type';
@@ -14,13 +12,11 @@ export const fetchAppPlan = async ({
   inferDeletionFromMissingEntities,
   target,
   signal,
-  onWarning,
 }: {
   build: ToolingBuild;
   inferDeletionFromMissingEntities: boolean | undefined;
   target: ResolvedTarget;
   signal: AbortSignal;
-  onWarning?: (message: string) => void;
 }) => {
   if (
     build.manifestFormat !== 'twenty-application' ||
@@ -35,27 +31,20 @@ export const fetchAppPlan = async ({
   }
 
   try {
-    const data = await requestWithSyncWarnings((warningsSelection) =>
-      createMetadataClient({ target, signal }).mutation({
-        __name: 'PreviewApplication',
-        syncApplication: {
-          __args: {
-            manifest: build.manifest,
-            dryRun: true,
-            ...(isDefined(inferDeletionFromMissingEntities) && {
-              inferDeletionFromMissingEntities,
-            }),
-          },
-          applicationUniversalIdentifier: true,
-          actions: true,
-          ...warningsSelection,
+    const data = await createMetadataClient({ target, signal }).mutation({
+      __name: 'PreviewApplication',
+      syncApplication: {
+        __args: {
+          manifest: build.manifest,
+          dryRun: true,
+          ...(isDefined(inferDeletionFromMissingEntities) && {
+            inferDeletionFromMissingEntities,
+          }),
         },
-      }),
-    );
-
-    readSyncWarnings(data?.syncApplication).forEach((warning) =>
-      onWarning?.(warning),
-    );
+        applicationUniversalIdentifier: true,
+        actions: true,
+      },
+    });
 
     return parseAppPlan({
       value: data?.syncApplication,

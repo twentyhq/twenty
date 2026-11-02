@@ -23,7 +23,6 @@ export const syncApplicationQueryFactory = ({
       ) {
         applicationUniversalIdentifier
         actions
-        warnings
       }
     }
   `,

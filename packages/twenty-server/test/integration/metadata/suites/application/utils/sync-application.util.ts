@@ -9,7 +9,6 @@ import { warnIfNoErrorButExpectedToFail } from 'test/integration/metadata/utils/
 type WorkspaceMigration = {
   applicationUniversalIdentifier: string;
   actions: SyncAction[];
-  warnings: string[] | null;
 };
 
 export const syncApplication = async ({

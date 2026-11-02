@@ -212,22 +212,15 @@ export const applyAppBuild = async ({
   );
   output.progress({ message: 'Synchronizing the app…' });
 
-  const {
-    actions: appliedActions,
-    acknowledgedUniversalIdentifier,
-    warnings,
-  } = await runPhase('sync', () =>
-    syncAppManifest({
-      build,
-      inferDeletionFromMissingEntities,
-      target,
-      signal,
-    }),
-  );
-
-  for (const message of warnings) {
-    output.warn({ code: 'SYNC_WARNING', message });
-  }
+  const { actions: appliedActions, acknowledgedUniversalIdentifier } =
+    await runPhase('sync', () =>
+      syncAppManifest({
+        build,
+        inferDeletionFromMissingEntities,
+        target,
+        signal,
+      }),
+    );
 
   return {
     completedPhases,

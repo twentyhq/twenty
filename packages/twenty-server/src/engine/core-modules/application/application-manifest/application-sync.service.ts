@@ -76,7 +76,6 @@ export class ApplicationSyncService {
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
-    warnings: string[];
   }> {
     // Checked upfront: server variables reach the registration only after the workspace changes
     const reservedVariableNames =
@@ -101,7 +100,6 @@ export class ApplicationSyncService {
     let syncResult: {
       workspaceMigration: WorkspaceMigration;
       hasSchemaMetadataChanged: boolean;
-      warnings: string[];
     };
 
     try {

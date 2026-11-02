@@ -3,8 +3,6 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { isSameUniversalIdentifier } from '@/app/is-same-universal-identifier';
 import { parseAppPlan } from '@/app/deployment/parse-app-plan';
-import { readSyncWarnings } from '@/app/deployment/read-sync-warnings';
-import { requestWithSyncWarnings } from '@/app/deployment/request-with-sync-warnings';
 import { type ToolingBuild } from '@/app/types/tooling-result.type';
 import { CliError } from '@/output/cli-error';
 import { type ResolvedTarget } from '@/target/types/resolved-target.type';
@@ -56,8 +54,8 @@ export const syncAppManifest = async ({
   signal: AbortSignal;
 }) => {
   const applicationUniversalIdentifier = build.application.universalIdentifier;
-  const data = await requestWithSyncWarnings((warningsSelection) =>
-    createMetadataClient({ target, signal }).mutation({
+  const data = await createMetadataClient({ target, signal })
+    .mutation({
       __name: 'SyncApplication',
       syncApplication: {
         __args: {
@@ -68,12 +66,11 @@ export const syncAppManifest = async ({
         },
         applicationUniversalIdentifier: true,
         actions: true,
-        ...warningsSelection,
       },
-    }),
-  ).catch((error: unknown) => {
-    throw withoutResponseContent(error);
-  });
+    })
+    .catch((error: unknown) => {
+      throw withoutResponseContent(error);
+    });
   const acknowledgement = data?.syncApplication;
 
   if (
@@ -97,6 +94,5 @@ export const syncAppManifest = async ({
     }),
     acknowledgedUniversalIdentifier:
       acknowledgement.applicationUniversalIdentifier,
-    warnings: readSyncWarnings(acknowledgement),
   };
 };
