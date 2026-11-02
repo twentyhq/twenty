@@ -13,10 +13,6 @@ jest.mock('@/activities/emails/hooks/useSendAppChannelMessage', () => ({
   }),
 }));
 
-jest.mock('@/applications/components/AppChip', () => ({
-  AppChip: () => null,
-}));
-
 describe('ChatThreadComposer', () => {
   it('retries a failed message with the same idempotency key', async () => {
     mockSendAppChannelMessage
@@ -31,7 +27,6 @@ describe('ChatThreadComposer', () => {
           messageThreadId="thread-id"
           messageChannelId="channel-id"
           channelName="LinkedIn"
-          applicationId={null}
           recipientName="Ada"
           isDisconnected={false}
           onMessageSent={onMessageSent}
@@ -67,7 +62,6 @@ describe('ChatThreadComposer', () => {
           messageThreadId="thread-id"
           messageChannelId="channel-id"
           channelName="LinkedIn"
-          applicationId={null}
           recipientName="Ada"
           isDisconnected={false}
           onMessageSent={onMessageSent}
