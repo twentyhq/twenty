@@ -465,7 +465,8 @@ export const SettingsObjectFieldEdit = () => {
                     }
                     size="sm"
                     disabled={
-                      fieldMetadataItem.isActive && isLoadingValidationRules
+                      fieldMetadataItem.isActive === true &&
+                      isLoadingValidationRules
                     }
                     onClick={
                       fieldMetadataItem.isActive
