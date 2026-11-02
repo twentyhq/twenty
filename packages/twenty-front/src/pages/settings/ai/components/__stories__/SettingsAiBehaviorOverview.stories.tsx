@@ -1,5 +1,7 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, within } from 'storybook/test';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { Section } from 'twenty-ui/components/layout';
 import { SettingsAiBehaviorExample } from '~/pages/settings/ai/components/__stories__/SettingsAiBehaviorExample';
 import { SettingsAiOverview } from '~/pages/settings/ai/components/SettingsAiOverview';
@@ -18,6 +20,7 @@ const meta = {
   args: {
     routePath: '/settings/ai',
     routeParams: {},
+    additionalRoutes: [getSettingsPath(SettingsPath.AiPrompts)],
     mcpSection: settingsAiOverviewStorySections.mcpSection,
     workspaceInstructionsSection:
       settingsAiOverviewStorySections.workspaceInstructionsSection,
