@@ -91,7 +91,7 @@ export class AgentChatSubscriptionResolver {
     const { kind, channelId } = channel;
     const threadId = kind === 'thread' ? channelId : null;
     const filterVisibleEvent = isDefined(threadId)
-      ? await this.conversationAccessService.createLiveEventFilter({
+      ? this.conversationAccessService.createLiveEventFilter({
           workspaceId: workspace.id,
           threadId,
           workspaceMemberId,

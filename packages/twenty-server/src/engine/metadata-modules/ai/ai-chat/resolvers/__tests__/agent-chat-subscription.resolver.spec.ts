@@ -72,7 +72,7 @@ const buildResolver = () => {
       .mockResolvedValue({ kind: 'thread', channelId: THREAD_ID }),
     createLiveEventFilter: jest
       .fn()
-      .mockResolvedValue(async (event: AgentChatSubscriptionEvent) => event),
+      .mockReturnValue(async (event: AgentChatSubscriptionEvent) => event),
   };
   const subscriptionService = {
     subscribeToAgentChat: jest.fn().mockResolvedValue(iterator),
@@ -171,7 +171,7 @@ describe('Shared conversation subscriptions', () => {
     const context = buildResolver();
     const maskedChunk = { type: 'message-metadata', messageMetadata: {} };
 
-    context.conversationAccessService.createLiveEventFilter.mockResolvedValue(
+    context.conversationAccessService.createLiveEventFilter.mockReturnValue(
       async (event: AgentChatSubscriptionEvent) =>
         event.type === 'stream-chunk'
           ? { ...event, chunk: maskedChunk }
