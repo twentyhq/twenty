@@ -8,6 +8,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type AgentChatDirectMessageIdentityService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-direct-message-identity.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
+import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_YCOMBINATOR_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
@@ -301,7 +302,15 @@ describe('Canonical direct message identity', () => {
       })
       .andWhere('"userId" = :userId', { userId: USER_DATA_SEED_IDS.JONY });
 
+    const refreshWorkspaceMembers = () =>
+      getAppProviderByClassName<WorkspaceCacheService>(
+        'WorkspaceCacheService',
+      ).invalidateAndRecompute(context.workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
     await membershipQuery.clone().set({ deletedAt: new Date() }).execute();
+    await refreshWorkspaceMembers();
 
     try {
       await expect(getOrCreate()).rejects.toMatchObject({
@@ -309,6 +318,7 @@ describe('Canonical direct message identity', () => {
       });
     } finally {
       await membershipQuery.clone().set({ deletedAt: null }).execute();
+      await refreshWorkspaceMembers();
     }
   });
 

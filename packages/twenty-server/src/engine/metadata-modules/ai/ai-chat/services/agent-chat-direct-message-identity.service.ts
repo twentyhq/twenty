@@ -3,19 +3,21 @@ import { Injectable } from '@nestjs/common';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
+import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
+import { findAgentChatFlatObjectMetadata } from 'src/engine/metadata-modules/ai/ai-chat/utils/find-agent-chat-flat-object-metadata.util';
 import { normalizeAgentChatDirectMessagePairOrThrow } from 'src/engine/metadata-modules/ai/ai-chat/utils/normalize-agent-chat-direct-message-pair-or-throw.util';
 import { throwAgentChatThreadNotFound } from 'src/engine/metadata-modules/ai/ai-chat/utils/throw-agent-chat-thread-not-found.util';
 import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
-import { type AgentHistoryStorageContext } from 'src/engine/metadata-modules/ai/ai-history/services/agent-history-workspace-storage.service';
 import { type AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
+import { PrivateRecordStorageService } from 'src/engine/permissions/private-record/services/private-record-storage.service';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 
 type DirectMessagePair = ReturnType<
   typeof normalizeAgentChatDirectMessagePairOrThrow
@@ -27,6 +29,8 @@ export class AgentChatDirectMessageIdentityService {
     @InjectAgentHistoryRepository('agentChatThread')
     private readonly threadRepository: AgentHistoryRepository<AgentChatThreadWorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly privateRecordStorageService: PrivateRecordStorageService,
   ) {}
 
   async getOrCreate({
@@ -47,31 +51,55 @@ export class AgentChatDirectMessageIdentityService {
       return existingThreadId;
     }
 
-    const createdThreadId = await this.threadRepository.query(
-      workspaceId,
-      async ({ manager }) => {
-        await this.assertMembersAvailableOrThrow({
-          manager,
-          workspaceId,
-          pair,
-        });
+    const { flatWorkspaceMemberMaps, flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+        'flatObjectMetadataMaps',
+        'featureFlagsMap',
+      ]);
 
-        const { raw: createdThreads }: { raw: { id: string }[] } = await manager
-          .createQueryBuilder()
-          .insert()
-          .into(`${getWorkspaceSchemaName(workspaceId)}.agentChatThread`)
-          .values({
-            conversationType: 'DIRECT_MESSAGE',
-            ...pair,
-            isAssistantParticipant: false,
-          })
-          .orIgnore()
-          .returning('id')
-          .execute();
+    this.assertMembersAvailableOrThrow({ flatWorkspaceMemberMaps, pair });
 
-        return createdThreads[0]?.id;
-      },
-    );
+    const threadObjectMetadata =
+      findAgentChatFlatObjectMetadata(
+        flatObjectMetadataMaps,
+        'agentChatThread',
+      ) ?? throwAgentChatThreadNotFound();
+
+    const createdThreadId =
+      await this.workspaceOrmManager.executeInWorkspaceContext(
+        () =>
+          this.workspaceOrmManager.runInWorkspaceTransaction(
+            async (transactionScope) => {
+              const { identifiers } = await transactionScope
+                .getRepository<AgentChatThreadWorkspaceEntity>(
+                  'agentChatThread',
+                  { shouldBypassPermissionChecks: true },
+                  { shouldSkipEventEmission: true },
+                )
+                .insert(
+                  {
+                    conversationType: 'DIRECT_MESSAGE',
+                    ...pair,
+                    isAssistantParticipant: false,
+                  },
+                  { onConflictDoNothing: true },
+                );
+
+              await this.privateRecordStorageService.setPrivate({
+                workspaceId,
+                flatObjectMetadata: threadObjectMetadata,
+                recordIds: identifiers.map(({ id }) => id),
+                isPrivate: true,
+                transactionScope,
+              });
+
+              return identifiers[0]?.id;
+            },
+          ),
+        buildSystemAuthContext(workspaceId),
+        { lite: true },
+      );
 
     return (
       createdThreadId ??
@@ -119,36 +147,28 @@ export class AgentChatDirectMessageIdentityService {
     return thread?.id;
   }
 
-  private async assertMembersAvailableOrThrow({
-    manager,
-    workspaceId,
+  private assertMembersAvailableOrThrow({
+    flatWorkspaceMemberMaps,
     pair,
-  }: Pick<AgentHistoryStorageContext, 'manager'> & {
-    workspaceId: string;
+  }: {
+    flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
     pair: DirectMessagePair;
-  }): Promise<void> {
-    const workspaceMemberIds = [
+  }): void {
+    for (const workspaceMemberId of [
       pair.directMessageFirstWorkspaceMemberId,
       pair.directMessageSecondWorkspaceMemberId,
-    ];
-    const members = await manager
-      .createQueryBuilder()
-      .select('member.id', 'id')
-      .from(`${getWorkspaceSchemaName(workspaceId)}.workspaceMember`, 'member')
-      .innerJoin(
-        UserWorkspaceEntity,
-        'membership',
-        'membership.userId = member."userId"',
-      )
-      .where('membership.workspaceId = :workspaceId', { workspaceId })
-      .andWhere('member.id IN (:...workspaceMemberIds)', { workspaceMemberIds })
-      .andWhere('member."deletedAt" IS NULL')
-      .orderBy('member.id', 'ASC')
-      .setLock('pessimistic_read', undefined, ['member', 'membership'])
-      .getRawMany<{ id: string }>();
+    ]) {
+      const member = flatWorkspaceMemberMaps.byId[workspaceMemberId];
 
-    if (members.length !== workspaceMemberIds.length) {
-      throwAgentChatThreadNotFound();
+      if (
+        !isDefined(member) ||
+        isDefined(member.deletedAt) ||
+        !isDefined(
+          flatWorkspaceMemberMaps.userWorkspaceIdByUserId[member.userId],
+        )
+      ) {
+        throwAgentChatThreadNotFound();
+      }
     }
   }
 }
