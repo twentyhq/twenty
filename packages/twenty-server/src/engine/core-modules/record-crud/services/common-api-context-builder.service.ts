@@ -18,13 +18,17 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
-import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
+import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/permissions/role/utils/get-objects-permissions-from-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+  PermissionsExceptionMessage,
+} from 'src/engine/permissions/permissions.exception';
 
 export type CommonApiContext = {
   queryRunnerContext: CommonBaseQueryRunnerContext;
@@ -33,7 +37,7 @@ export type CommonApiContext = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   objectsPermissions: ObjectsPermissions;
-  principal: PermissionsPrincipal | undefined;
+  principals: PermissionsPrincipalsContext;
 };
 
 @Injectable()
@@ -97,10 +101,12 @@ export class CommonApiContextBuilderService {
       );
     }
 
-    const { objectsPermissions, principal } = await this.getPermissionsContext({
-      authContext,
-      rolePermissionConfig,
-    });
+    const { objectsPermissions, principals } = await this.getPermissionsContext(
+      {
+        authContext,
+        rolePermissionConfig,
+      },
+    );
 
     const restrictedFields =
       objectsPermissions[flatObjectMetadata.id]?.restrictedFields ?? {};
@@ -129,7 +135,7 @@ export class CommonApiContextBuilderService {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       objectsPermissions,
-      principal,
+      principals,
     };
   }
 
@@ -141,7 +147,7 @@ export class CommonApiContextBuilderService {
     rolePermissionConfig?: RolePermissionConfig;
   }): Promise<{
     objectsPermissions: ObjectsPermissions;
-    principal: PermissionsPrincipal | undefined;
+    principals: PermissionsPrincipalsContext;
   }> {
     const {
       rolesPermissions,
@@ -180,22 +186,25 @@ export class CommonApiContextBuilderService {
       );
     }
 
+    const principals = getPermissionsPrincipalsFromAuthContext(authContext);
+
+    if (!isDefined(principals)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
     return {
       objectsPermissions: getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
         rolePermissionConfig: resolvedRolePermissionConfig,
+        principals,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatApplicationMaps,
       }),
-      principal: buildPermissionsPrincipal({
-        workspaceId: authContext.workspace.id,
-        rolePermissionConfig: resolvedRolePermissionConfig,
-        workspaceMemberId: isUserAuthContext(authContext)
-          ? authContext.workspaceMemberId
-          : undefined,
-        flatApplicationMaps,
-      }),
+      principals,
     };
   }
 }

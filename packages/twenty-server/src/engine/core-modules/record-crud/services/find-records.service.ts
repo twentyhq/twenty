@@ -60,7 +60,7 @@ export class FindRecordsService {
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         objectsPermissions,
-        principal,
+        principals,
       } = await this.commonApiContextBuilder.build({
         authContext,
         objectName,
@@ -90,7 +90,7 @@ export class FindRecordsService {
                 objectsPermissions,
                 readableObjectMetadataIds:
                   await this.commonSelectFieldsBuilder.findReadableObjectMetadataIds(
-                    { principal, objectsPermissions, flatObjectMetadataMaps },
+                    { principals, flatObjectMetadataMaps },
                   ),
                 depth: 1,
                 onlyUseLabelIdentifierFieldsInRelations: true,

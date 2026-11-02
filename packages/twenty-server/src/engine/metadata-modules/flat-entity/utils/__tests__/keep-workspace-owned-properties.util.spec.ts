@@ -102,15 +102,17 @@ describe('keepWorkspaceOwnedProperties', () => {
   it('should return the standard entities untouched for a metadata without workspace-owned properties', () => {
     const toFlatEntityMaps = {
       byUniversalIdentifier: {
-        'role-universal-identifier': { label: 'Manager' },
+        'webhook-universal-identifier': { targetUrl: 'https://example.com' },
       },
     };
 
     const result = keepWorkspaceOwnedProperties({
-      metadataName: 'role',
+      metadataName: 'webhook',
       fromFlatEntityMaps: {
         byUniversalIdentifier: {
-          'role-universal-identifier': { label: 'Renamed by the workspace' },
+          'webhook-universal-identifier': {
+            targetUrl: 'https://workspace.example.com',
+          },
         },
       },
       toFlatEntityMaps,
