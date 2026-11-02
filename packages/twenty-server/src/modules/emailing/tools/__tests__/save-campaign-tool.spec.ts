@@ -15,7 +15,6 @@ describe('SaveCampaignTool', () => {
   let saveDraft: jest.Mock;
 
   const campaignId = '20202020-0000-4000-8000-000000000001';
-  // an AI run's config: the member's role narrowed by a scope that grants nothing
   const scopedRolePermissionConfig: RolePermissionConfig = {
     intersectionOf: { userWorkspaceRoleId: 'member-role-id' },
     scope: { objectsPermissions: {}, permissionFlags: {} },

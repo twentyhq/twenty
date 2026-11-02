@@ -3,8 +3,7 @@ import { type ObjectsPermissions } from 'twenty-shared/types';
 import { type PermissionScope } from 'src/engine/permissions/principal/types/permission-scope.type';
 import { computePermissionIntersection } from 'src/engine/permissions/role/utils/compute-permission-intersection.util';
 
-// the roles' predicates are kept, as a scope has none, so the insert guard still exempts their fields;
-// a field the scope denies writing loses that exemption, while the roles' row filter still applies on write
+// the roles' predicates keep their insert-guard field exemption, except on fields the scope denies writing
 export const restrictObjectsPermissionsToScope = ({
   objectsPermissions,
   scope,

@@ -115,6 +115,7 @@ export { formatRecordReference } from './utils/format-record-reference.util';
 export { formatSkillReference } from './utils/format-skill-reference.util';
 export { getAgentChatMentionsResolvedAt } from './utils/get-agent-chat-mentions-resolved-at.util';
 export { getAiModelTierFromModelId } from './utils/get-ai-model-tier-from-model-id.util';
+export { hasAiRunScopeRepeatedEntries } from './utils/has-ai-run-scope-repeated-entries.util';
 export { inferAiSdkPackage } from './utils/infer-ai-sdk-package.util';
 export { isAgentChatMentionUnresolved } from './utils/is-agent-chat-mention-unresolved.util';
 export { isAiEvaluationQuestionType } from './utils/is-ai-evaluation-question-type.util';

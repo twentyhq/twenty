@@ -25,7 +25,6 @@ const previewCampaignSendInputSchema = z.object({
   name: 'preview_campaign_send',
   category: ToolCategory.ACTION,
   requiredPermissionFlags: [PermissionFlagType.WORKSPACE],
-  ignoresRolePermissionConfig: true,
   description:
     'Check whether an email campaign can be sent, without sending anything. ' +
     'Returns the audience: list members, how many are sendable, and how many are skipped and why (no email, duplicate email, suppressed, globally or topic unsubscribed, tracking refused). ' +

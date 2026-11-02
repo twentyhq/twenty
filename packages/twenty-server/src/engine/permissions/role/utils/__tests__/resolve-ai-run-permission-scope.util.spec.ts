@@ -2,6 +2,7 @@ import {
   PermissionFlagType,
   SystemPermissionFlag,
 } from 'twenty-shared/constants';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { resolveAiRunPermissionScope } from 'src/engine/permissions/role/utils/resolve-ai-run-permission-scope.util';
@@ -14,6 +15,9 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 
 const PERSON_ID = 'person-id';
 const COMPANY_ID = 'company-id';
+const WORKFLOW_ID = 'workflow-id';
+const WORKFLOW_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.workflow.universalIdentifier;
 const EMAIL_FIELD_ID = 'email-field-id';
 
 const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> =
@@ -22,6 +26,7 @@ const flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata> =
 for (const [id, universalIdentifier] of [
   [PERSON_ID, 'person'],
   [COMPANY_ID, 'company'],
+  [WORKFLOW_ID, WORKFLOW_UNIVERSAL_IDENTIFIER],
 ]) {
   flatObjectMetadataMaps.byUniversalIdentifier[universalIdentifier] =
     getFlatObjectMetadataMock({ id, universalIdentifier, isSystem: false });
@@ -120,6 +125,82 @@ describe('resolveAiRunPermissionScope', () => {
         (objectPermissions) => objectPermissions.canReadObjectRecords,
       ),
     ).toBe(false);
+  });
+
+  describe('on the workflow objects, which the workflows flag grants', () => {
+    const WORKFLOWS_FLAG = SystemPermissionFlag[PermissionFlagType.WORKFLOWS];
+
+    it('grants every action with the flag', () => {
+      expect(
+        resolve({ permissionFlagUniversalIdentifiers: [WORKFLOWS_FLAG] })
+          .objectsPermissions[WORKFLOW_ID],
+      ).toMatchObject({
+        canReadObjectRecords: true,
+        canUpdateObjectRecords: true,
+        canDestroyObjectRecords: true,
+      });
+    });
+
+    it('lets an explicit deny narrow what the flag grants', () => {
+      expect(
+        resolve({
+          permissionFlagUniversalIdentifiers: [WORKFLOWS_FLAG],
+          objectPermissions: [
+            {
+              objectUniversalIdentifier: WORKFLOW_UNIVERSAL_IDENTIFIER,
+              canUpdateObjectRecords: false,
+              canDestroyObjectRecords: false,
+            },
+          ],
+        }).objectsPermissions[WORKFLOW_ID],
+      ).toMatchObject({
+        canReadObjectRecords: true,
+        canUpdateObjectRecords: false,
+        canDestroyObjectRecords: false,
+      });
+    });
+
+    it('never lets an explicit grant stand in for the flag', () => {
+      expect(
+        resolve({
+          objectPermissions: [
+            {
+              objectUniversalIdentifier: WORKFLOW_UNIVERSAL_IDENTIFIER,
+              canReadObjectRecords: true,
+            },
+          ],
+        }).objectsPermissions[WORKFLOW_ID]?.canReadObjectRecords,
+      ).toBe(false);
+    });
+  });
+
+  it('refuses a scope that lists an object twice', () => {
+    expect(() =>
+      resolve({
+        objectPermissions: [
+          { objectUniversalIdentifier: 'person', canReadObjectRecords: true },
+          {
+            objectUniversalIdentifier: 'person',
+            canUpdateObjectRecords: false,
+          },
+        ],
+      }),
+    ).toThrow('An AI run scope lists an object or field more than once');
+  });
+
+  it('refuses a field named under an object it does not belong to', () => {
+    expect(() =>
+      resolve({
+        canReadAllObjectRecords: true,
+        fieldPermissions: [
+          {
+            objectUniversalIdentifier: 'company',
+            fieldUniversalIdentifier: 'email',
+            canReadFieldValue: false,
+          },
+        ],
+      }),
+    ).toThrow('Field email does not belong to object company');
   });
 
   it('grants the flags it names, and tool flags with all tools', () => {

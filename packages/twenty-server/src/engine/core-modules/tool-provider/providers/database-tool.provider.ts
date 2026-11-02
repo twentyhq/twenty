@@ -43,6 +43,8 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 export class DatabaseToolProvider implements ToolProvider {
   readonly category = ToolCategory.DATABASE_CRUD;
 
+  readonly canRunUnderScope = true;
+
   constructor(
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,

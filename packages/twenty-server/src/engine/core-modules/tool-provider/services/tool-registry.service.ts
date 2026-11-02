@@ -29,6 +29,7 @@ import { findSimilarToolNames } from 'src/engine/core-modules/tool-provider/util
 import { ToolOutputSpillService } from 'src/engine/core-modules/tool/services/tool-output-spill.service';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
+import { isWithheldFromPermissionScope } from 'src/engine/permissions/principal/utils/is-withheld-from-permission-scope.util';
 
 @Injectable()
 export class ToolRegistryService {
@@ -458,7 +459,10 @@ export class ToolRegistryService {
             !isDefined(categories) || categories.includes(provider.category),
         )
         .map(async (provider) =>
-          (await provider.isAvailable(context))
+          !isWithheldFromPermissionScope({
+            canRunUnderScope: provider.canRunUnderScope,
+            rolePermissionConfig: context.rolePermissionConfig,
+          }) && (await provider.isAvailable(context))
             ? this.generateProviderDescriptors({
                 provider,
                 context,
