@@ -40,6 +40,20 @@ const isFieldActiveInWorkspace = (field: UniversalFlatFieldMetadata): boolean =>
     property: 'isActive',
   });
 
+// The sync keeps a workspace's deactivation of a field this manifest still declares
+const isFieldActiveAfterSync = ({
+  field,
+  existingAllFlatEntityMaps,
+}: {
+  field: UniversalFlatFieldMetadata;
+  existingAllFlatEntityMaps: ValidationRuleFlatEntityMaps;
+}): boolean =>
+  isFieldActiveInWorkspace(
+    existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+      field.universalIdentifier
+    ] ?? field,
+  );
+
 const groupFieldsByObjectUniversalIdentifier = (
   fields: (UniversalFlatFieldMetadata | undefined)[],
 ): Map<string, UniversalFlatFieldMetadata[]> => {
@@ -180,7 +194,6 @@ const findUnavailableField = ({
   errorCode,
   errorParams,
   ownerFlatApplication,
-  existingFieldsByObjectUniversalIdentifier,
   fieldsAfterSyncByObjectUniversalIdentifier,
   existingAllFlatEntityMaps,
 }: {
@@ -194,10 +207,6 @@ const findUnavailableField = ({
   errorCode: string | undefined;
   errorParams: ValidationRuleErrorParams | undefined;
   ownerFlatApplication: Pick<FlatApplication, 'id'>;
-  existingFieldsByObjectUniversalIdentifier: Map<
-    string,
-    UniversalFlatFieldMetadata[]
-  >;
   fieldsAfterSyncByObjectUniversalIdentifier: Map<
     string,
     UniversalFlatFieldMetadata[]
@@ -224,13 +233,19 @@ const findUnavailableField = ({
         ?.relationTargetObjectMetadataUniversalIdentifier
     : validationRuleManifest.objectUniversalIdentifier;
 
-  const existingField = isDefined(objectUniversalIdentifier)
-    ? existingFieldsByObjectUniversalIdentifier
+  const fieldAfterSync = isDefined(objectUniversalIdentifier)
+    ? fieldsAfterSyncByObjectUniversalIdentifier
         .get(objectUniversalIdentifier)
         ?.find((field) => field.name === name)
     : undefined;
 
-  if (isDefined(existingField) && !isFieldActiveInWorkspace(existingField)) {
+  if (
+    isDefined(fieldAfterSync) &&
+    !isFieldActiveAfterSync({
+      field: fieldAfterSync,
+      existingAllFlatEntityMaps,
+    })
+  ) {
     return { name, state: 'deactivated' };
   }
 
@@ -322,7 +337,6 @@ const resolveCompilationOutcome = ({
 }: Pick<
   Parameters<typeof findUnavailableField>[0],
   | 'ownerFlatApplication'
-  | 'existingFieldsByObjectUniversalIdentifier'
   | 'fieldsAfterSyncByObjectUniversalIdentifier'
   | 'existingAllFlatEntityMaps'
 > & {
@@ -409,21 +423,10 @@ export const addValidationRuleManifestsToFlatEntityMapsOrThrow = ({
   });
   const fieldsAfterSyncByObjectUniversalIdentifier =
     groupFieldsByObjectUniversalIdentifier(fieldsAfterSync);
-  const existingFieldsByObjectUniversalIdentifier =
-    groupFieldsByObjectUniversalIdentifier(
-      Object.values(
-        existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
-      ),
-    );
-  // The sync keeps a workspace's deactivation of a field this manifest still declares
   const activeFieldsByObjectUniversalIdentifier =
     groupFieldsByObjectUniversalIdentifier(
       fieldsAfterSync.filter((field) =>
-        isFieldActiveInWorkspace(
-          existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
-            field.universalIdentifier
-          ] ?? field,
-        ),
+        isFieldActiveAfterSync({ field, existingAllFlatEntityMaps }),
       ),
     );
 
@@ -466,7 +469,6 @@ export const addValidationRuleManifestsToFlatEntityMapsOrThrow = ({
       validationRuleManifest,
       existingFlatValidationRule,
       ownerFlatApplication,
-      existingFieldsByObjectUniversalIdentifier,
       fieldsAfterSyncByObjectUniversalIdentifier,
       existingAllFlatEntityMaps,
     });

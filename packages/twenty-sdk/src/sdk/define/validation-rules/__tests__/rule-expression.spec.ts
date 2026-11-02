@@ -79,4 +79,10 @@ describe('ruleExpression', () => {
       }).config.expression,
     ).toBe('isNonEmptyString(name)');
   });
+
+  it.each([NaN, Infinity])('rejects %s', (value) => {
+    expect(() =>
+      ruleExpression.gt(ruleExpression.field('score'), value),
+    ).toThrow(`A rule expression can't compare with ${value}`);
+  });
 });

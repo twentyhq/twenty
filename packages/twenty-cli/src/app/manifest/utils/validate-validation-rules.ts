@@ -7,7 +7,6 @@ import { RelationType } from 'twenty-shared/types';
 import {
   compileValidationRuleExpression,
   isDefined,
-  parseValidationRuleExpression,
 } from 'twenty-shared/utils';
 
 import {
@@ -104,11 +103,17 @@ export const validateValidationRules = (
 
     if (!isDefined(objectFields)) {
       // The object lives outside this app, so only the server knows its fields
-      try {
-        parseValidationRuleExpression(expression);
-      } catch (error) {
+      const compilationResult = compileValidationRuleExpression({
+        expression,
+        fields: [],
+      });
+
+      if (
+        !compilationResult.isValid &&
+        compilationResult.errorCode !== 'UNKNOWN_FIELD'
+      ) {
         errors.push(
-          `Validation rule "${name}" has an invalid expression: ${error instanceof Error ? error.message : String(error)}`,
+          `Validation rule "${name}" has an invalid expression: ${compilationResult.errorMessage}`,
         );
       }
       continue;

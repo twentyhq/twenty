@@ -22,6 +22,7 @@ const TEST_ROLE_ID = uuidv4();
 const REFERENCE_FIELD_ID = uuidv4();
 const VALIDATION_RULE_ID = uuidv4();
 const OUTSIDE_VALIDATION_RULE_ID = uuidv4();
+const GENERATED_FIELD_VALIDATION_RULE_ID = uuidv4();
 
 const COMPANY_OBJECT_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.company.universalIdentifier;
@@ -33,6 +34,15 @@ const TEST_OBJECT = buildDefaultObjectManifest({
   labelSingular: 'Validation Rule Manifest Ticket',
   labelPlural: 'Validation Rule Manifest Tickets',
   description: 'Object used to test validation rules declared in a manifest',
+});
+
+const FRESH_OBJECT = buildDefaultObjectManifest({
+  applicationUniversalIdentifier: TEST_APP_ID,
+  nameSingular: 'validationRuleManifestFreshTicket',
+  namePlural: 'validationRuleManifestFreshTickets',
+  labelSingular: 'Validation Rule Manifest Fresh Ticket',
+  labelPlural: 'Validation Rule Manifest Fresh Tickets',
+  description: 'Object created by the sync that declares its rule',
 });
 
 const buildValidationRuleManifest = (
@@ -50,17 +60,19 @@ const buildValidationRuleManifest = (
 const buildManifest = ({
   fieldName = 'reference',
   hasReferenceField = true,
+  objects = [TEST_OBJECT],
   validationRules = [buildValidationRuleManifest()],
 }: {
   fieldName?: string;
   hasReferenceField?: boolean;
+  objects?: (typeof TEST_OBJECT)[];
   validationRules?: ValidationRuleManifest[];
 } = {}) =>
   buildBaseManifest({
     appId: TEST_APP_ID,
     roleId: TEST_ROLE_ID,
     overrides: {
-      objects: [TEST_OBJECT],
+      objects,
       fields: hasReferenceField
         ? [
             {
@@ -301,23 +313,30 @@ describe('Validation rules declared in an application manifest', () => {
   }, 120000);
 
   it('should accept a rule reading a field Twenty generates, on a new and on an existing object', async () => {
-    const generatedFieldRule = buildValidationRuleManifest({
-      expression: 'isDefined(createdAt)',
-      errorFieldUniversalIdentifier: undefined,
+    const manifest = buildManifest({
+      fieldName: 'code',
+      objects: [TEST_OBJECT, FRESH_OBJECT],
+      validationRules: [
+        buildValidationRuleManifest({
+          universalIdentifier: GENERATED_FIELD_VALIDATION_RULE_ID,
+          objectUniversalIdentifier: FRESH_OBJECT.universalIdentifier,
+          expression: 'isDefined(createdAt)',
+          errorFieldUniversalIdentifier: undefined,
+        }),
+      ],
     });
 
-    for (const validationRules of [
-      [generatedFieldRule],
-      [generatedFieldRule],
-    ]) {
+    for (const sync of ['object created', 'object exists']) {
       const { errors } = await syncApplication({
-        manifest: buildManifest({ fieldName: 'code', validationRules }),
+        manifest,
         expectToFail: false,
       });
 
-      expect(errors).toBeUndefined();
+      expect([sync, errors]).toEqual([sync, undefined]);
     }
-    expect(await findValidationRuleRow()).toMatchObject({ isActive: true });
+    expect(
+      await findValidationRuleRow(GENERATED_FIELD_VALIDATION_RULE_ID),
+    ).toMatchObject({ isActive: true });
   }, 60000);
 
   it('should leave the rule off and warn when the workspace deactivated a standard field through an override', async () => {

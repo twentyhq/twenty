@@ -1226,6 +1226,26 @@ describe('manifestValidate', () => {
         ).errors,
       ).toEqual([expect.stringContaining('"Has a score"')]);
     });
+
+    it.each([
+      ['company.employees > 0', []],
+      ['score[0] > 0', ['Bracket access is not supported']],
+      ['company . employees > 0', ['without spaces around the dot']],
+    ])(
+      'checks everything but the fields on an object outside the app: %s',
+      (expression, expectedErrors) => {
+        expect(
+          manifestValidate(
+            manifestWith({
+              objectUniversalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
+              expression,
+            }),
+          ).errors,
+        ).toEqual(
+          expectedErrors.map((error) => expect.stringContaining(error)),
+        );
+      },
+    );
   });
 
   describe('timeline activity type validation', () => {

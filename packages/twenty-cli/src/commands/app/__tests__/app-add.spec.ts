@@ -123,6 +123,12 @@ describe('app add', () => {
       const content = await readFile(join(appPath, path), 'utf8');
 
       expect(content).toContain(`export default ${define}({`);
+
+      if (entity === 'validation-rule') {
+        expect(content).toContain(
+          "objectUniversalIdentifier: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa'",
+        );
+      }
       expect(content).toMatch(
         /universalIdentifier: '[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}'/,
       );

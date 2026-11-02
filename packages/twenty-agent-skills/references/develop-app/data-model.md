@@ -126,7 +126,7 @@ When adding permissions:
 
 ## Validation Rules
 
-Declare record validation with `defineValidationRule`. A record is rejected when the expression is false. `universalIdentifier`, `objectUniversalIdentifier`, `name`, `expression` and `message` are required; `errorFieldUniversalIdentifier`, `description` and `icon` are optional. Write the expression with the `ruleExpression` builder, or as a string using `and`, `or`, `not`, `==` and `in [...]` (not `&&`).
+Declare record validation with `defineValidationRule`. A record is rejected when the expression is false. `universalIdentifier`, `objectUniversalIdentifier`, `name`, `expression` and `message` are required; `errorFieldUniversalIdentifier`, `description` and `icon` are optional. Write the expression with the `ruleExpression` builder, or as a string using `and`, `or`, `not`, `==`, `!=`, `<`, `<=`, `>`, `>=`, `+`, `-`, `*`, `/` and `in [...]` (not `&&`), and functions such as `isDefined`, `isEmpty`, `isNonEmptyString` and `includes`.
 
 ```ts
 import { defineValidationRule, ruleExpression } from 'twenty-sdk/define';
@@ -142,7 +142,7 @@ export default defineValidationRule({
 });
 ```
 
-A sync fails if the app removes a field one of its rules reads. If the field is deactivated or deleted outside the app, the sync succeeds, the rule stays off and a warning is shown. A sync keeps an existing rule's `isActive`.
+A sync fails if the app removes a field one of its rules reads. If the field is deactivated outside the app, or deleted outside the app while the rule's expression is unchanged, the sync succeeds, the rule stays off and a warning is shown. A new or edited rule that names a deleted field fails the sync. A sync keeps an existing rule's `isActive`.
 
 ## Verification
 

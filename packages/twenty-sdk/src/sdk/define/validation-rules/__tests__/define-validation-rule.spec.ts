@@ -40,9 +40,13 @@ describe('defineValidationRule', () => {
     expect(result.errors).toContain(error);
   });
 
-  it('rejects a blank expression', () => {
+  it.each([
+    ['name', 'ValidationRule must have a name'],
+    ['expression', 'ValidationRule must have an expression'],
+    ['message', 'ValidationRule must have a message'],
+  ] as const)('rejects a blank %s', (property, error) => {
     expect(
-      defineValidationRule({ ...baseValidConfig, expression: '   ' }).errors,
-    ).toEqual(['ValidationRule must have an expression']);
+      defineValidationRule({ ...baseValidConfig, [property]: '   ' }).errors,
+    ).toEqual([error]);
   });
 });

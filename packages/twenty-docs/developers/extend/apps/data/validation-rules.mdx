@@ -66,7 +66,7 @@ The builder outputs a plain string, which is what [`twenty app pull`](/developer
 expression: 'amount > 0 and isNonEmptyString(reference)',
 ```
 
-Strings use `and`, `or`, `not`, `==` and `in [...]`, not `&&` or `||`.
+Strings use `and`, `or`, `not`, `==`, `!=`, `<`, `<=`, `>`, `>=`, `+`, `-`, `*`, `/` and `in [...]`, not `&&` or `||`. Text goes in single quotes.
 
 A rule can read fields you declare, and the [system fields](/developers/extend/apps/data/system-fields) Twenty provisions, such as `createdAt`. The CLI checks expressions against your app's own objects. On an object outside your app, it only checks the syntax and the server checks the fields at sync time.
 
@@ -75,7 +75,11 @@ A rule can read fields you declare, and the [system fields](/developers/extend/a
 | Situation | Result |
 | --- | --- |
 | Your app removes a field its rule reads | The sync fails with an error naming the rule and the field |
-| A workspace deactivates or deletes a field outside your app | The sync succeeds, the rule stays off and the CLI shows a warning |
+| A workspace deactivates a field outside your app | The sync succeeds, the rule stays off and the CLI shows a warning |
+| A workspace deletes a field outside your app, and your rule's expression is unchanged | The sync succeeds, the rule stays off and the CLI shows a warning |
+| A new or edited rule names a field that doesn't exist | The sync fails |
 | A workspace deletes the rule's error field | The sync succeeds, the rule is no longer attached to that field and the CLI shows a warning |
 
 A sync keeps an existing rule's `isActive`, so a rule a workspace admin turned off stays off. Only new rules start on.
+
+<PageBanner illustration="dev-contribute" />

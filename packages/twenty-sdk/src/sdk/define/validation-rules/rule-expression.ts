@@ -26,8 +26,13 @@ const isRuleExpression = (
   operand: RuleExpressionOperand,
 ): operand is RuleExpression => typeof operand === 'object';
 
-const toLiteral = (value: string | number | boolean): string =>
-  JSON.stringify(value);
+const toLiteral = (value: string | number | boolean): string => {
+  if (typeof value === 'number' && !Number.isFinite(value)) {
+    throw new Error(`A rule expression can't compare with ${value}`);
+  }
+
+  return JSON.stringify(value);
+};
 
 const toSource = (operand: RuleExpressionOperand): string => {
   if (!isRuleExpression(operand)) {

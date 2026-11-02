@@ -193,6 +193,9 @@ export class ApplicationManifestExportService {
     const { validationRules, coverage: validationRulesCoverage } =
       reconstructValidationRulesManifest({
         applicationAllFlatEntityMaps,
+        allFlatEntityMaps,
+        exportedObjectUniversalIdentifiers,
+        resolvableFieldUniversalIdentifiers,
       });
     const { relatedRecordPaths, coverage: relatedRecordPathsCoverage } =
       reconstructRelatedRecordPathsManifest({ applicationAllFlatEntityMaps });

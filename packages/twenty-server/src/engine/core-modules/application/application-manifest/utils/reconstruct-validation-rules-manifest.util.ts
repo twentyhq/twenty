@@ -7,6 +7,7 @@ import { fromFlatValidationRuleToValidationRuleManifest } from 'src/engine/core-
 import { fromValidationRuleManifestToUniversalFlatValidationRule } from 'src/engine/core-modules/application/application-manifest/converters/from-validation-rule-manifest-to-universal-flat-validation-rule.util';
 import { type ApplicationExportCoverageEntry } from 'src/engine/core-modules/application/application-manifest/types/application-export.type';
 import { buildExportedCoverageEntry } from 'src/engine/core-modules/application/application-manifest/utils/build-exported-coverage-entry.util';
+import { getUnresolvableReferenceReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unresolvable-reference-reason.util';
 import { getUnreproducedPropertiesReason } from 'src/engine/core-modules/application/application-manifest/utils/get-unreproduced-properties-reason.util';
 import { sortFlatEntitiesByUniversalIdentifier } from 'src/engine/core-modules/application/application-manifest/utils/sort-flat-entities-by-universal-identifier.util';
 import { ApplicationExportCoverageStatus } from 'src/engine/core-modules/application/enums/application-export-coverage-status.enum';
@@ -39,11 +40,14 @@ const convertFlatValidationRule = (
 
 export const reconstructValidationRulesManifest = ({
   applicationAllFlatEntityMaps,
+  allFlatEntityMaps,
+  exportedObjectUniversalIdentifiers,
+  resolvableFieldUniversalIdentifiers,
 }: {
-  applicationAllFlatEntityMaps: Pick<
-    AllFlatEntityMaps,
-    'flatValidationRuleMaps'
-  >;
+  applicationAllFlatEntityMaps: AllFlatEntityMaps;
+  allFlatEntityMaps: AllFlatEntityMaps;
+  exportedObjectUniversalIdentifiers: ReadonlySet<string>;
+  resolvableFieldUniversalIdentifiers: ReadonlySet<string>;
 }): {
   validationRules: ValidationRuleManifest[];
   coverage: ApplicationExportCoverageEntry[];
@@ -55,13 +59,35 @@ export const reconstructValidationRulesManifest = ({
     applicationAllFlatEntityMaps.flatValidationRuleMaps,
   )) {
     const conversion = convertFlatValidationRule(flatValidationRule);
+    const reason =
+      getUnresolvableReferenceReason({
+        metadataName: 'validationRule',
+        referenceMetadataName: 'objectMetadata',
+        referenceUniversalIdentifier:
+          flatValidationRule.objectMetadataUniversalIdentifier,
+        applicationAllFlatEntityMaps,
+        allFlatEntityMaps,
+        resolvableReferenceUniversalIdentifiers:
+          exportedObjectUniversalIdentifiers,
+      }) ??
+      getUnresolvableReferenceReason({
+        metadataName: 'validationRule',
+        referenceMetadataName: 'fieldMetadata',
+        referenceUniversalIdentifier:
+          flatValidationRule.errorFieldMetadataUniversalIdentifier,
+        applicationAllFlatEntityMaps,
+        allFlatEntityMaps,
+        resolvableReferenceUniversalIdentifiers:
+          resolvableFieldUniversalIdentifiers,
+      }) ??
+      ('reason' in conversion ? conversion.reason : undefined);
 
-    if ('reason' in conversion) {
+    if (isDefined(reason) || 'reason' in conversion) {
       coverage.push({
         metadataName: 'validationRule',
         universalIdentifier: flatValidationRule.universalIdentifier,
         status: ApplicationExportCoverageStatus.UNSUPPORTED,
-        reason: conversion.reason,
+        reason,
       });
       continue;
     }

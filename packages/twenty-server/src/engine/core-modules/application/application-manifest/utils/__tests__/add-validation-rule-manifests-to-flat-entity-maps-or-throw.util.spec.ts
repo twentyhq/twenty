@@ -253,6 +253,26 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
       );
     });
 
+    it('fails when the application deactivated the field, then removed it', () => {
+      const maps = buildMaps();
+
+      maps.existingAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier.employees =
+        buildField({
+          universalIdentifier: 'employees',
+          name: 'employees',
+          type: FieldMetadataType.NUMBER,
+          objectMetadataUniversalIdentifier: 'company',
+          applicationId: OWNER_APPLICATION.id,
+          isActive: false,
+        });
+      maps.existingAllFlatEntityMaps.flatValidationRuleMaps.byUniversalIdentifier.rule =
+        EXISTING_RULE;
+
+      expect(() => sync(maps)).toThrow(
+        'uses the field "employees", which no longer exists',
+      );
+    });
+
     it('fails when a new rule names a field that exists nowhere', () => {
       const maps = buildMaps();
 
@@ -399,7 +419,7 @@ describe('addValidationRuleManifestsToFlatEntityMapsOrThrow', () => {
       });
     });
 
-    it('leaves a new rule pointing at the field so the validator rejects it', () => {
+    it('keeps the declared error field on a new rule', () => {
       const maps = buildMaps();
 
       const { warnings } = addValidationRuleManifestsToFlatEntityMapsOrThrow({
