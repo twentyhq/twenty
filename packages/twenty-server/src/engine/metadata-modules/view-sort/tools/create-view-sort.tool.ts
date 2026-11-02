@@ -7,6 +7,7 @@ import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/type
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { ViewSortService } from 'src/engine/metadata-modules/view-sort/services/view-sort.service';
 import { createViewSortInputSchema } from 'src/engine/metadata-modules/view-sort/tools/schemas/create-view-sort-input.schema';
+import { ViewToolAccessService } from 'src/engine/metadata-modules/view/tools/services/view-tool-access.service';
 
 @DefineTool({
   name: 'create_view_sort',
@@ -20,14 +21,24 @@ export class CreateViewSortTool extends BaseTool<
 > {
   readonly inputSchema = createViewSortInputSchema;
 
-  constructor(private readonly viewSortService: ViewSortService) {
+  constructor(
+    private readonly viewSortService: ViewSortService,
+    private readonly viewToolAccessService: ViewToolAccessService,
+  ) {
     super();
   }
 
   async execute({
     input,
-    context: { workspaceId },
+    context: { workspaceId, userWorkspaceId },
   }: ToolExecuteArgs<typeof createViewSortInputSchema>): Promise<ToolOutput> {
+    await this.viewToolAccessService.findViewEditableByUserOrThrow({
+      viewId: input.viewId,
+      workspaceId,
+      userWorkspaceId,
+      operation: 'update',
+    });
+
     const sort = await this.viewSortService.createOne({
       createViewSortInput: {
         viewId: input.viewId,
