@@ -1,3 +1,4 @@
+import { getSettingsAiModelsSectionVisibility } from '@/settings/ai/utils/getSettingsAiModelsSectionVisibility';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import {
@@ -11,8 +12,8 @@ export const useSettingsAiModelsSectionVisibility = () => {
   );
   const canReadSystemPrompts = useHasPermissionFlag(PermissionFlagType.AI);
 
-  return {
-    isWorkspaceInstructionsSectionVisible: !isInboxEnabled,
-    isSystemPromptsSectionVisible: !isInboxEnabled && canReadSystemPrompts,
-  };
+  return getSettingsAiModelsSectionVisibility({
+    isInboxEnabled,
+    canReadSystemPrompts,
+  });
 };
