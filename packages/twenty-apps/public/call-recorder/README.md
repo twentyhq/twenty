@@ -63,7 +63,8 @@ Each member picks **Record my meetings** under
 **Settings → App preferences → Call Recorder → Recording**: external meetings
 (default), all meetings, or none. A meeting is external when someone outside
 the workspace is invited. It is recorded when one attendee from your workspace
-asks for it. The toggle above wins over every member setting.
+asks for it, or when none of its attendees is a workspace member. The toggle
+above wins over every member setting.
 
 ## 🎥 Supported meeting platforms
 
