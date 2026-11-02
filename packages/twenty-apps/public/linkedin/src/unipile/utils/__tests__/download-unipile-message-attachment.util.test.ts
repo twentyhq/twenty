@@ -24,7 +24,9 @@ const streamOf = ({
 }) =>
   new ReadableStream<Uint8Array>({
     start(controller) {
-      chunks.forEach((chunk) => controller.enqueue(Buffer.from(chunk)));
+      for (const chunk of chunks) {
+        controller.enqueue(Buffer.from(chunk));
+      }
       controller.close();
     },
     cancel: onCancel,

@@ -57,9 +57,11 @@ export const importLinkedinMessageAttachments = async ({
             });
 
         if (content.byteLength > LINKEDIN_ATTACHMENT_MAX_SIZE_BYTES) {
-          throw new Error(
-            `Attachment is larger than ${LINKEDIN_ATTACHMENT_MAX_SIZE_BYTES} bytes`,
+          console.warn(
+            `[linkedin] attachment ${attachment.id} of message ${message.id} not imported: larger than ${LINKEDIN_ATTACHMENT_MAX_SIZE_BYTES} bytes`,
           );
+
+          continue;
         }
 
         await onAttachmentFile({

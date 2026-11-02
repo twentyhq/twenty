@@ -23,15 +23,13 @@ const ingestUnipileMessage = async ({
   connectedAccountId,
   unipileAccountId,
   message,
+  attachmentDeadlineAtMs,
 }: {
   connectedAccountId: string;
   unipileAccountId: string;
   message: UnipileMessage;
+  attachmentDeadlineAtMs: number;
 }): Promise<LinkedinWebhookEventResult> => {
-  const attachmentDeadlineAtMs =
-    Date.now() +
-    LINKEDIN_HANDLE_WEBHOOK_EVENT_TIMEOUT_SECONDS * 1000 -
-    LINKEDIN_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS;
   const [channel] = await listMessageChannels({ connectedAccountId });
 
   if (!isDefined(channel)) {
@@ -80,6 +78,10 @@ const ingestUnipileMessage = async ({
 export const linkedinHandleWebhookEventHandler = async (
   event: UnipileWebhookEvent,
 ): Promise<LinkedinWebhookEventResult> => {
+  const attachmentDeadlineAtMs =
+    Date.now() +
+    LINKEDIN_HANDLE_WEBHOOK_EVENT_TIMEOUT_SECONDS * 1000 -
+    LINKEDIN_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS;
   const connection = await findLinkedinConnectionByUnipileAccountId(
     event.account_id,
   );
@@ -97,6 +99,7 @@ export const linkedinHandleWebhookEventHandler = async (
         connectedAccountId: connection.id,
         unipileAccountId: event.account_id,
         message: event.payload,
+        attachmentDeadlineAtMs,
       });
     case 'account.status.disconnected':
     case 'account.status.errored':
