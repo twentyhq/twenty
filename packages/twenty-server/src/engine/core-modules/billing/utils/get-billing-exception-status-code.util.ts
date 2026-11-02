@@ -28,6 +28,7 @@ export const getBillingExceptionStatusCode = (
       return 400;
     case BillingExceptionCode.BILLING_SUBSCRIPTION_INACTIVE:
     case BillingExceptionCode.BILLING_UPGRADE_INVOICE_PAYMENT_FAILED:
+    case BillingExceptionCode.BILLING_SEAT_LIMIT_REACHED:
       return 402;
     case BillingExceptionCode.BILLING_CUSTOMER_EVENT_WORKSPACE_NOT_FOUND:
     case BillingExceptionCode.BILLING_PRICE_NOT_FOUND:

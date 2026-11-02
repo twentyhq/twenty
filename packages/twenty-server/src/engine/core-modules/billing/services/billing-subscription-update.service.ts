@@ -26,6 +26,7 @@ import { SubscriptionInterval } from 'src/engine/core-modules/billing/enums/bill
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
+import { BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/services/stripe-invoice.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
@@ -35,6 +36,7 @@ import {
   SubscriptionUpdateType,
 } from 'src/engine/core-modules/billing/types/billing-subscription-update.type';
 import { computeImmediateSubscriptionUpdate } from 'src/engine/core-modules/billing/utils/compute-immediate-subscription-update.util';
+import { computeSeatSyncPlan } from 'src/engine/core-modules/billing/utils/compute-seat-sync-plan.util';
 import { computeSubscriptionUpdateOptions } from 'src/engine/core-modules/billing/utils/compute-subscription-update-options.util';
 import { findSellableBaseProductPriceOrThrow } from 'src/engine/core-modules/billing/utils/find-sellable-base-product-price-or-throw.util';
 import { findProductPriceForIntervalOrThrow } from 'src/engine/core-modules/billing/utils/find-product-price-for-interval-or-throw.util';
@@ -50,14 +52,12 @@ import { buildSchedulePhasesUpdate } from 'src/engine/core-modules/billing/utils
 import { buildSubscriptionItemsUpdate } from 'src/engine/core-modules/billing/utils/build-subscription-items-update.util';
 import { isSamePhaseSignature } from 'src/engine/core-modules/billing/utils/is-same-phase-signature.util';
 import { toPhaseUpdateParams } from 'src/engine/core-modules/billing/utils/to-phase-update-params.util';
+import { type SeatSyncPlan } from 'src/engine/core-modules/billing/types/seat-sync-plan.type';
 import { type SubscriptionStripePrices } from 'src/engine/core-modules/billing/types/subscription-stripe-prices.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 @Injectable()
 export class BillingSubscriptionUpdateService {
   protected readonly logger = new Logger(BillingSubscriptionUpdateService.name);
@@ -73,7 +73,7 @@ export class BillingSubscriptionUpdateService {
     private readonly billingSubscriptionRepository: WorkspaceScopedRepository<BillingSubscriptionEntity>,
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
-    private readonly workspaceOrmManager: WorkspaceOrmManager,
+    private readonly billingSeatService: BillingSeatService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -221,15 +221,25 @@ export class BillingSubscriptionUpdateService {
     });
   }
 
-  async changeSeats(workspaceId: string, newSeats: number) {
+  async syncSeats(workspaceId: string) {
     const billingSubscription =
       await this.billingSubscriptionService.getCurrentBillingSubscriptionOrThrow(
         { workspaceId },
       );
 
+    const seatSyncPlan = await this.computeSeatSyncPlan(
+      billingSubscription,
+      getBaseProductSubscriptionItemOrThrow(billingSubscription).quantity ?? 0,
+    );
+
+    if (!isDefined(seatSyncPlan)) {
+      return;
+    }
+
     await this.updateSubscription(workspaceId, billingSubscription.id, {
       type: SubscriptionUpdateType.SEATS,
-      newSeats,
+      newSeats: seatSyncPlan.currentPeriodSeats,
+      nextPeriodSeats: seatSyncPlan.nextPeriodSeats ?? undefined,
     });
   }
 
@@ -265,11 +275,21 @@ export class BillingSubscriptionUpdateService {
     const seats =
       subscriptionUpdate.type === SubscriptionUpdateType.SEATS
         ? subscriptionUpdate.newSeats
-        : await this.countWorkspaceMembers(workspaceId);
+        : ((await this.computeSeatSyncPlan(subscription, currentPrices.seats))
+            ?.currentPeriodSeats ?? currentPrices.seats);
+
+    const nextPeriodSubscriptionUpdate: SubscriptionUpdate =
+      subscriptionUpdate.type === SubscriptionUpdateType.SEATS &&
+      isDefined(subscriptionUpdate.nextPeriodSeats)
+        ? {
+            type: SubscriptionUpdateType.SEATS,
+            newSeats: subscriptionUpdate.nextPeriodSeats,
+          }
+        : subscriptionUpdate;
 
     const toUpdateCurrentPrices = await this.computeSubscriptionPricesUpdate(
       subscriptionUpdate,
-      { ...currentPrices, seats: seats > 0 ? seats : currentPrices.seats },
+      { ...currentPrices, seats },
     );
 
     const shouldUpdateAtPeriodEnd =
@@ -347,7 +367,7 @@ export class BillingSubscriptionUpdateService {
           nextPhase.items,
         );
         const toUpdateNextPrices = await this.computeSubscriptionPricesUpdate(
-          subscriptionUpdate,
+          nextPeriodSubscriptionUpdate,
           nextPhasePrices,
         );
 
@@ -361,6 +381,29 @@ export class BillingSubscriptionUpdateService {
             updatedStripeSubscription?.items.data[0].current_period_end ??
             Math.floor(subscription.currentPeriodEnd.getTime() / 1000),
         });
+      } else if (
+        !isDefined(schedule) &&
+        subscriptionUpdate.type === SubscriptionUpdateType.SEATS &&
+        isDefined(subscriptionUpdate.nextPeriodSeats) &&
+        subscriptionUpdate.nextPeriodSeats !== toUpdateCurrentPrices.seats
+      ) {
+        const { schedule: createdSchedule, currentPhase: createdCurrentPhase } =
+          await this.stripeSubscriptionScheduleService.createSubscriptionSchedule(
+            subscription.stripeSubscriptionId,
+          );
+
+        await this.runSubscriptionScheduleUpdate({
+          stripeScheduleId: createdSchedule.id,
+          toUpdateNextPrices: {
+            ...toUpdateCurrentPrices,
+            seats: subscriptionUpdate.nextPeriodSeats,
+          },
+          toUpdateCurrentPrices: undefined,
+          currentPhase: toPhaseUpdateParams(createdCurrentPhase),
+          subscriptionCurrentPeriodEnd:
+            updatedStripeSubscription?.items.data[0].current_period_end ??
+            Math.floor(subscription.currentPeriodEnd.getTime() / 1000),
+        });
       }
     }
 
@@ -370,20 +413,29 @@ export class BillingSubscriptionUpdateService {
     );
   }
 
-  private async countWorkspaceMembers(workspaceId: string): Promise<number> {
-    const authContext = buildSystemAuthContext(workspaceId);
-
-    return await this.workspaceOrmManager.executeInWorkspaceContext(
-      async () => {
-        const workspaceMemberRepository =
-          this.workspaceOrmManager.getRepositoryWithoutPermissionChecks<WorkspaceMemberWorkspaceEntity>(
-            'workspaceMember',
-          );
-
-        return await workspaceMemberRepository.count();
-      },
-      authContext,
+  private async computeSeatSyncPlan(
+    subscription: BillingSubscriptionEntity,
+    currentSeats: number,
+  ): Promise<SeatSyncPlan | null> {
+    const memberCount = await this.billingSeatService.countWorkspaceMembers(
+      subscription.workspaceId,
     );
+
+    if (memberCount <= 0) {
+      return null;
+    }
+
+    return computeSeatSyncPlan({
+      memberCount,
+      currentSeats,
+      seatArrangements: await this.billingSeatService.findSeatArrangements(
+        subscription.workspaceId,
+      ),
+      now: new Date(),
+      currentPeriodStart: subscription.currentPeriodStart,
+      currentPeriodEnd: subscription.currentPeriodEnd,
+      isTrialing: subscription.status === SubscriptionStatus.Trialing,
+    });
   }
 
   private async createResourceCreditUpgradeInvoice({

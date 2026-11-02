@@ -19,6 +19,7 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AvailableWorkspace } from 'src/engine/core-modules/auth/dto/available-workspaces.dto';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
+import { BillingSeatService } from 'src/engine/core-modules/billing/services/billing-seat.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
@@ -71,6 +72,7 @@ export class UserWorkspaceService {
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly billingSeatService: BillingSeatService,
   ) {}
 
   async findById(id: string): Promise<UserWorkspaceEntity | null> {
@@ -228,6 +230,10 @@ export class UserWorkspaceService {
     if (existingUserWorkspace) {
       return;
     }
+
+    await this.billingSeatService.assertWorkspaceHasSeatForNewMember(
+      workspace.id,
+    );
 
     const resolvedRoleId = await this.resolveRoleIdForNewMember(
       roleId,

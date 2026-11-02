@@ -20,6 +20,7 @@ export type SubscriptionUpdate =
   | {
       type: SubscriptionUpdateType.SEATS;
       newSeats: number;
+      nextPeriodSeats?: number;
     }
   | {
       type: SubscriptionUpdateType.INTERVAL;
