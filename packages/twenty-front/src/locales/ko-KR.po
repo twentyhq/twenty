@@ -589,6 +589,11 @@ msgstr "{apiKeyCount, plural, one {{apiKeyCount}개 API 키} other {{apiKeyCount
 msgid "{appDisplayName} would like to:"
 msgstr "{appDisplayName}이(가) 다음 권한을 요청합니다:"
 
+#. js-lingui-id: TVseJQ
+#: src/modules/settings/app-preferences/hooks/useAccountGroupApplicationSettingsTabs.ts
+msgid "{applicationName}: {settingsMenuItemTitle}"
+msgstr ""
+
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
 #: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx

@@ -589,6 +589,11 @@ msgstr "{apiKeyCount, plural, one {{apiKeyCount} clau d'API} other {{apiKeyCount
 msgid "{appDisplayName} would like to:"
 msgstr "{appDisplayName} voldria:"
 
+#. js-lingui-id: TVseJQ
+#: src/modules/settings/app-preferences/hooks/useAccountGroupApplicationSettingsTabs.ts
+msgid "{applicationName}: {settingsMenuItemTitle}"
+msgstr ""
+
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
 #: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx

@@ -589,6 +589,11 @@ msgstr "{apiKeyCount, plural, one {{apiKeyCount} 件の API キー} other {{apiK
 msgid "{appDisplayName} would like to:"
 msgstr "{appDisplayName} は次の操作を行おうとしています。"
 
+#. js-lingui-id: TVseJQ
+#: src/modules/settings/app-preferences/hooks/useAccountGroupApplicationSettingsTabs.ts
+msgid "{applicationName}: {settingsMenuItemTitle}"
+msgstr ""
+
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
 #: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx

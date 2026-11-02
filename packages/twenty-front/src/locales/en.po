@@ -584,6 +584,11 @@ msgstr "{apiKeyCount, plural, one {{apiKeyCount} API key} other {{apiKeyCount} A
 msgid "{appDisplayName} would like to:"
 msgstr "{appDisplayName} would like to:"
 
+#. js-lingui-id: TVseJQ
+#: src/modules/settings/app-preferences/hooks/useAccountGroupApplicationSettingsTabs.ts
+msgid "{applicationName}: {settingsMenuItemTitle}"
+msgstr "{applicationName}: {settingsMenuItemTitle}"
+
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
 #: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx

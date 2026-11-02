@@ -589,6 +589,11 @@ msgstr "{apiKeyCount, plural, one {{apiKeyCount} 個 API 金鑰} other {{apiKeyC
 msgid "{appDisplayName} would like to:"
 msgstr "{appDisplayName} 想要："
 
+#. js-lingui-id: TVseJQ
+#: src/modules/settings/app-preferences/hooks/useAccountGroupApplicationSettingsTabs.ts
+msgid "{applicationName}: {settingsMenuItemTitle}"
+msgstr ""
+
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
 #: src/pages/settings/accounts/SettingsBuiltInAccountApp.tsx
