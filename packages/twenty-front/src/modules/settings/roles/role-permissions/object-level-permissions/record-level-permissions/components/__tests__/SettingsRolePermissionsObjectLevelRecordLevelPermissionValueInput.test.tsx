@@ -53,14 +53,17 @@ jest.mock('@/object-record/record-field/ui/components/FormFieldInput', () => ({
 
 const INSTANCE_ID = 'record-level-permission-filter';
 
-const renderValueInput = (value: string) => {
+const renderValueInput = (
+  value: string,
+  operand: ViewFilterOperand = ViewFilterOperand.IS,
+) => {
   const recordFilter: RecordFilter = {
     id: 'filter-id',
     fieldMetadataId: 'field-id',
     value,
     displayValue: value,
     type: 'RELATION',
-    operand: ViewFilterOperand.IS,
+    operand,
     label: 'Owner',
   };
 
@@ -128,12 +131,30 @@ describe('SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput', ()
 
     await userEvent.click(screen.getByLabelText('Reset to static value'));
 
+    expect(mockUpsertFilter).toHaveBeenCalledTimes(1);
     expect(mockUpsertFilter).toHaveBeenCalledWith({
       ...recordFilter,
       value: '',
       rlsDynamicValue: null,
     });
   });
+
+  it.each([ViewFilterOperand.IS_EMPTY, ViewFilterOperand.IS_NOT_EMPTY])(
+    'hides a leftover current workspace member value for the %s operand',
+    (operand) => {
+      renderValueInput(
+        JSON.stringify({
+          isCurrentWorkspaceMemberSelected: true,
+          selectedRecordIds: ['record-1'],
+        }),
+        operand,
+      );
+
+      expect(screen.queryByText('Me')).not.toBeInTheDocument();
+      expect(screen.queryByText('+ 1 more')).not.toBeInTheDocument();
+      expect(screen.queryByText('Static value input')).not.toBeInTheDocument();
+    },
+  );
 
   it('keeps the static input for a relation value without the current workspace member', () => {
     renderValueInput(

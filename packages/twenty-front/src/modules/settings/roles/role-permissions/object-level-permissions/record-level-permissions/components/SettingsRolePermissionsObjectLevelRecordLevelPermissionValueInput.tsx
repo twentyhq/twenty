@@ -212,7 +212,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
       upsertObjectFilterDropdownCurrentFilter(updatedFilter);
     };
 
-    if (isMeValue) {
+    if (isMeValue && !operandHasNoInput) {
       const tooltipId = `record-level-permission-value-${recordFilterId}`;
       const otherSelectedRecordCount = otherSelectedRecordIds.length;
       const otherSelectedRecordsLabel =
