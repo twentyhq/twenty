@@ -29,6 +29,7 @@ import {
 
 export type E2BDriverOptions = {
   apiKey: string;
+  template: string;
   timeoutMs?: number;
   idleTimeoutMs?: number;
 };
@@ -68,7 +69,7 @@ export class E2BDriver implements CodeInterpreterDriver {
     context?: ExecutionContext,
     callbacks?: StreamCallbacks,
   ): Promise<CodeExecutionResult> {
-    const { apiKey } = this.options;
+    const { apiKey, template } = this.options;
     const sessionId = context?.sessionId;
     const idleTimeoutMs =
       this.options.idleTimeoutMs ?? DEFAULT_CODE_INTERPRETER_TIMEOUT_MS;
@@ -84,13 +85,14 @@ export class E2BDriver implements CodeInterpreterDriver {
       ({ sandbox, isReused } = await getOrCreateSessionSandbox({
         sandboxApi: Sandbox,
         apiKey,
+        template,
         sessionId,
         actorKey: context?.actorKey,
         timeoutMs,
         idleTimeoutMs,
       }));
     } else {
-      sandbox = await Sandbox.create({ apiKey, timeoutMs });
+      sandbox = await Sandbox.create(template, { apiKey, timeoutMs });
     }
 
     try {
@@ -101,8 +103,10 @@ export class E2BDriver implements CodeInterpreterDriver {
             SANDBOX_SCRIPTS_PATH,
             '/home/user/scripts',
           );
-        } catch {
-          // Scripts directory might not exist
+        } catch (error) {
+          const reason = error instanceof Error ? error.message : String(error);
+
+          this.logger.warn(`Failed to upload sandbox scripts: ${reason}`);
         }
       }
 

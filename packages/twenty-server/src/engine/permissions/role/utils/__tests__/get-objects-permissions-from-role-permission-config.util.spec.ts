@@ -180,8 +180,11 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
       getObjectsPermissionsFromRolePermissionConfig({
         principals: {
           workspaceId: 'workspace-1',
-          mainPrincipal: { workspaceMemberId: 'member-id' },
-          applicationPrincipal: { isCustomApp: true },
+          mainPrincipal: {
+            type: 'workspaceMember',
+            workspaceMemberId: 'member-id',
+          },
+          applicationPrincipal: { type: 'customApplication' },
         },
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
@@ -286,8 +289,14 @@ describe('getObjectsPermissionsFromRolePermissionConfig disabled actions', () =>
       actor: 'the owning application',
       principals: {
         workspaceId: 'workspace-1',
-        mainPrincipal: { applicationId: 'owning-application-id' },
-        applicationPrincipal: { applicationId: 'owning-application-id' },
+        mainPrincipal: {
+          type: 'application',
+          applicationId: 'owning-application-id',
+        },
+        applicationPrincipal: {
+          type: 'application',
+          applicationId: 'owning-application-id',
+        },
       },
       intersectionOf: { applicationRoleId: 'owning-application-role-id' },
       canDestroy: true,
@@ -296,8 +305,14 @@ describe('getObjectsPermissionsFromRolePermissionConfig disabled actions', () =>
       actor: 'another application',
       principals: {
         workspaceId: 'workspace-1',
-        mainPrincipal: { applicationId: 'other-application-id' },
-        applicationPrincipal: { applicationId: 'other-application-id' },
+        mainPrincipal: {
+          type: 'application',
+          applicationId: 'other-application-id',
+        },
+        applicationPrincipal: {
+          type: 'application',
+          applicationId: 'other-application-id',
+        },
       },
       intersectionOf: { applicationRoleId: 'other-application-role-id' },
       canDestroy: false,
@@ -306,8 +321,11 @@ describe('getObjectsPermissionsFromRolePermissionConfig disabled actions', () =>
       actor: 'a user',
       principals: {
         workspaceId: 'workspace-1',
-        mainPrincipal: { workspaceMemberId: 'member-id' },
-        applicationPrincipal: { isCustomApp: true },
+        mainPrincipal: {
+          type: 'workspaceMember',
+          workspaceMemberId: 'member-id',
+        },
+        applicationPrincipal: { type: 'customApplication' },
       },
       intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
       canDestroy: false,
@@ -316,8 +334,14 @@ describe('getObjectsPermissionsFromRolePermissionConfig disabled actions', () =>
       actor: 'a user through the owning application',
       principals: {
         workspaceId: 'workspace-1',
-        mainPrincipal: { workspaceMemberId: 'member-id' },
-        applicationPrincipal: { applicationId: 'owning-application-id' },
+        mainPrincipal: {
+          type: 'workspaceMember',
+          workspaceMemberId: 'member-id',
+        },
+        applicationPrincipal: {
+          type: 'application',
+          applicationId: 'owning-application-id',
+        },
       },
       intersectionOf: {
         userWorkspaceRoleId: 'user-role-id',
@@ -329,8 +353,11 @@ describe('getObjectsPermissionsFromRolePermissionConfig disabled actions', () =>
       actor: "a user holding the owning application's default role",
       principals: {
         workspaceId: 'workspace-1',
-        mainPrincipal: { workspaceMemberId: 'member-id' },
-        applicationPrincipal: { isCustomApp: true },
+        mainPrincipal: {
+          type: 'workspaceMember',
+          workspaceMemberId: 'member-id',
+        },
+        applicationPrincipal: { type: 'customApplication' },
       },
       intersectionOf: { userWorkspaceRoleId: 'owning-application-role-id' },
       canDestroy: false,
@@ -339,8 +366,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig disabled actions', () =>
       actor: "an API key holding the owning application's default role",
       principals: {
         workspaceId: 'workspace-1',
-        mainPrincipal: { apiKeyId: 'api-key-id' },
-        applicationPrincipal: { isCustomApp: true },
+        mainPrincipal: { type: 'apiKey', apiKeyId: 'api-key-id' },
+        applicationPrincipal: { type: 'customApplication' },
       },
       intersectionOf: { apiKeyRoleId: 'owning-application-role-id' },
       canDestroy: false,
@@ -349,8 +376,8 @@ describe('getObjectsPermissionsFromRolePermissionConfig disabled actions', () =>
       actor: "an agent holding the owning application's default role",
       principals: {
         workspaceId: 'workspace-1',
-        mainPrincipal: { agentId: 'agent-id' },
-        applicationPrincipal: { isCustomApp: true },
+        mainPrincipal: { type: 'agent', agentId: 'agent-id' },
+        applicationPrincipal: { type: 'customApplication' },
       },
       intersectionOf: { agentRoleId: 'owning-application-role-id' },
       canDestroy: false,
@@ -359,8 +386,14 @@ describe('getObjectsPermissionsFromRolePermissionConfig disabled actions', () =>
       actor: 'the owning application with a user holding its default role',
       principals: {
         workspaceId: 'workspace-1',
-        mainPrincipal: { workspaceMemberId: 'member-id' },
-        applicationPrincipal: { applicationId: 'owning-application-id' },
+        mainPrincipal: {
+          type: 'workspaceMember',
+          workspaceMemberId: 'member-id',
+        },
+        applicationPrincipal: {
+          type: 'application',
+          applicationId: 'owning-application-id',
+        },
       },
       intersectionOf: {
         userWorkspaceRoleId: 'owning-application-role-id',

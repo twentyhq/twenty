@@ -10,9 +10,9 @@ const APPLICATION_ROLE_ID = 'application-role';
 
 const MEMBER_PRINCIPALS: PermissionsPrincipalsContext = {
   workspaceId: 'workspace-1',
-  mainPrincipal: { workspaceMemberId: MEMBER_ID },
-  limitingPrincipal: { agentId: AGENT_ID },
-  applicationPrincipal: { applicationId: APPLICATION_ID },
+  mainPrincipal: { type: 'workspaceMember', workspaceMemberId: MEMBER_ID },
+  limitingPrincipal: { type: 'agent', agentId: AGENT_ID },
+  applicationPrincipal: { type: 'application', applicationId: APPLICATION_ID },
 };
 
 describe('buildPermissionsPrincipalRoles', () => {
@@ -27,9 +27,18 @@ describe('buildPermissionsPrincipalRoles', () => {
         principalsContext: MEMBER_PRINCIPALS,
       }),
     ).toEqual({
-      mainPrincipal: { roleId: USER_ROLE_ID, workspaceMemberId: MEMBER_ID },
-      limitingPrincipal: { roleId: AGENT_ROLE_ID, agentId: AGENT_ID },
+      mainPrincipal: {
+        type: 'workspaceMember',
+        roleId: USER_ROLE_ID,
+        workspaceMemberId: MEMBER_ID,
+      },
+      limitingPrincipal: {
+        type: 'agent',
+        roleId: AGENT_ROLE_ID,
+        agentId: AGENT_ID,
+      },
       applicationPrincipal: {
+        type: 'application',
         roleId: APPLICATION_ROLE_ID,
         applicationId: APPLICATION_ID,
       },
@@ -42,14 +51,18 @@ describe('buildPermissionsPrincipalRoles', () => {
         roleIdsBySource: { apiKeyRoleId: 'api-key-role' },
         principalsContext: {
           workspaceId: 'workspace-1',
-          mainPrincipal: { apiKeyId: 'api-key-1' },
-          applicationPrincipal: { isCustomApp: true },
+          mainPrincipal: { type: 'apiKey', apiKeyId: 'api-key-1' },
+          applicationPrincipal: { type: 'customApplication' },
         },
       }),
     ).toEqual({
-      mainPrincipal: { roleId: 'api-key-role', apiKeyId: 'api-key-1' },
+      mainPrincipal: {
+        type: 'apiKey',
+        roleId: 'api-key-role',
+        apiKeyId: 'api-key-1',
+      },
       limitingPrincipal: undefined,
-      applicationPrincipal: { isCustomApp: true },
+      applicationPrincipal: { type: 'customApplication' },
     });
   });
 
@@ -59,17 +72,22 @@ describe('buildPermissionsPrincipalRoles', () => {
         roleIdsBySource: { applicationRoleId: APPLICATION_ROLE_ID },
         principalsContext: {
           workspaceId: 'workspace-1',
-          mainPrincipal: { applicationId: APPLICATION_ID },
-          applicationPrincipal: { applicationId: APPLICATION_ID },
+          mainPrincipal: { type: 'application', applicationId: APPLICATION_ID },
+          applicationPrincipal: {
+            type: 'application',
+            applicationId: APPLICATION_ID,
+          },
         },
       }),
     ).toEqual({
       mainPrincipal: {
+        type: 'application',
         roleId: APPLICATION_ROLE_ID,
         applicationId: APPLICATION_ID,
       },
       limitingPrincipal: undefined,
       applicationPrincipal: {
+        type: 'application',
         roleId: APPLICATION_ROLE_ID,
         applicationId: APPLICATION_ID,
       },
@@ -87,9 +105,13 @@ describe('buildPermissionsPrincipalRoles', () => {
         principalsContext: MEMBER_PRINCIPALS,
       }),
     ).toEqual({
-      mainPrincipal: { roleId: USER_ROLE_ID, workspaceMemberId: MEMBER_ID },
+      mainPrincipal: {
+        type: 'workspaceMember',
+        roleId: USER_ROLE_ID,
+        workspaceMemberId: MEMBER_ID,
+      },
       limitingPrincipal: undefined,
-      applicationPrincipal: { isCustomApp: true },
+      applicationPrincipal: { type: 'customApplication' },
     });
   });
 
@@ -121,9 +143,9 @@ describe('buildPermissionsPrincipalRoles', () => {
         principalsContext: undefined,
       }),
     ).toEqual({
-      mainPrincipal: { roleId: AGENT_ROLE_ID, isDeprecatedRoleOnly: true },
+      mainPrincipal: { type: 'deprecatedRoleOnly', roleId: AGENT_ROLE_ID },
       limitingPrincipal: undefined,
-      applicationPrincipal: { isCustomApp: true },
+      applicationPrincipal: { type: 'customApplication' },
     });
   });
 });

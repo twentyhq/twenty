@@ -11,6 +11,7 @@ const SESSION_ACTOR_METADATA_KEY = 'twentySessionActor';
 type GetOrCreateSessionSandboxArgs = {
   sandboxApi: SandboxApi;
   apiKey: string;
+  template: string;
   sessionId: string;
   actorKey?: string;
   timeoutMs: number;
@@ -76,11 +77,12 @@ const killSandboxById = (
 const createSessionSandbox = (
   sandboxApi: SandboxApi,
   apiKey: string,
+  template: string,
   sessionId: string,
   timeoutMs: number,
   actorKey?: string,
 ) =>
-  sandboxApi.create({
+  sandboxApi.create(template, {
     apiKey,
     timeoutMs,
     lifecycle: { onTimeout: 'pause', autoResume: true },
@@ -95,6 +97,7 @@ const createSessionSandbox = (
 export const getOrCreateSessionSandbox = async ({
   sandboxApi,
   apiKey,
+  template,
   sessionId,
   timeoutMs,
   idleTimeoutMs,
@@ -146,6 +149,7 @@ export const getOrCreateSessionSandbox = async ({
   const sandbox = await createSessionSandbox(
     sandboxApi,
     apiKey,
+    template,
     sessionId,
     aliveTimeoutMs,
     actorKey,

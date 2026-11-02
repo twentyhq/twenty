@@ -17,15 +17,15 @@ const buildMainPrincipal = ({
   applicationId: string | undefined;
 }): PermissionsMainPrincipal | undefined => {
   if (isDefined(workspaceMemberId)) {
-    return { workspaceMemberId };
+    return { type: 'workspaceMember', workspaceMemberId };
   }
 
   if (isDefined(apiKeyId)) {
-    return { apiKeyId };
+    return { type: 'apiKey', apiKeyId };
   }
 
   if (isDefined(applicationId)) {
-    return { applicationId };
+    return { type: 'application', applicationId };
   }
 
   return undefined;
@@ -57,9 +57,11 @@ export const buildPermissionsPrincipalsContext = ({
   return {
     workspaceId,
     mainPrincipal,
-    limitingPrincipal: isDefined(agentId) ? { agentId } : undefined,
+    limitingPrincipal: isDefined(agentId)
+      ? { type: 'agent', agentId }
+      : undefined,
     applicationPrincipal: isDefined(applicationId)
-      ? { applicationId }
-      : { isCustomApp: true },
+      ? { type: 'application', applicationId }
+      : { type: 'customApplication' },
   };
 };
