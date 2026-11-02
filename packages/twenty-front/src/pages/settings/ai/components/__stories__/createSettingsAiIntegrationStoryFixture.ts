@@ -38,8 +38,10 @@ export const createSettingsAiIntegrationStoryFixture = () => {
   const loadSystemPrompts = fn();
   let pendingBehaviorSave: Promise<void> | undefined;
   let releaseBehaviorSave: (() => void) | undefined;
-  let pendingInstructionsSave: Promise<void> | undefined;
-  let releaseInstructionsSave: (() => void) | undefined;
+  let nextInstructionsSave:
+    | { pendingSave: Promise<void>; releaseSave: () => void }
+    | undefined;
+  const instructionsSaveReleases = new Set<() => void>();
   let shouldFailNextBehaviorSave = false;
   let shouldFailNextInstructionsSave = false;
   let resetGeneration = 0;
@@ -54,9 +56,10 @@ export const createSettingsAiIntegrationStoryFixture = () => {
     releaseBehaviorSave?.();
     pendingBehaviorSave = undefined;
     releaseBehaviorSave = undefined;
-    releaseInstructionsSave?.();
-    pendingInstructionsSave = undefined;
-    releaseInstructionsSave = undefined;
+    for (const releaseSave of instructionsSaveReleases) {
+      releaseSave();
+    }
+    nextInstructionsSave = undefined;
     await mockedApolloClient.clearStore();
     saveInstructions.mockClear();
     instructionsSaveStarted.mockClear();
@@ -115,19 +118,21 @@ export const createSettingsAiIntegrationStoryFixture = () => {
   };
 
   const pauseInstructionsSave = () => {
-    if (isDefined(pendingInstructionsSave)) {
-      return;
+    if (isDefined(nextInstructionsSave)) {
+      return nextInstructionsSave.releaseSave;
     }
 
-    pendingInstructionsSave = new Promise<void>((resolve) => {
-      releaseInstructionsSave = resolve;
+    let resolveSave: (() => void) | undefined;
+    const pendingSave = new Promise<void>((resolve) => {
+      resolveSave = resolve;
     });
-  };
-
-  const resumeInstructionsSave = () => {
-    releaseInstructionsSave?.();
-    pendingInstructionsSave = undefined;
-    releaseInstructionsSave = undefined;
+    const releaseSave = () => {
+      resolveSave?.();
+      instructionsSaveReleases.delete(releaseSave);
+    };
+    instructionsSaveReleases.add(releaseSave);
+    nextInstructionsSave = { pendingSave, releaseSave };
+    return releaseSave;
   };
 
   const reloadWorkspace = async () => {
@@ -198,7 +203,7 @@ export const createSettingsAiIntegrationStoryFixture = () => {
           'aiAdditionalInstructions' in variables.input;
         const pendingSave = hasBehaviorUpdate
           ? pendingBehaviorSave
-          : pendingInstructionsSave;
+          : nextInstructionsSave?.pendingSave;
         const shouldRejectBehaviorSave =
           hasBehaviorUpdate && shouldFailNextBehaviorSave;
         const shouldRejectInstructionsSave =
@@ -210,6 +215,7 @@ export const createSettingsAiIntegrationStoryFixture = () => {
         }
 
         if (hasInstructionsUpdate) {
+          nextInstructionsSave = undefined;
           instructionsSaveStarted(variables.input);
           shouldFailNextInstructionsSave = false;
         }
@@ -302,7 +308,6 @@ export const createSettingsAiIntegrationStoryFixture = () => {
     resumeBehaviorSave,
     failNextInstructionsSave,
     pauseInstructionsSave,
-    resumeInstructionsSave,
     reloadWorkspace,
   };
 };

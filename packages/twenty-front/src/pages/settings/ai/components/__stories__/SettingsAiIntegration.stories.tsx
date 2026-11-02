@@ -12,6 +12,9 @@ import {
   PageDecorator,
   type PageDecoratorArgs,
 } from '~/testing/decorators/PageDecorator';
+import { sleep } from '~/utils/sleep';
+
+const WORKSPACE_INSTRUCTIONS_AUTOSAVE_WAIT_MILLISECONDS = 1500;
 
 const fixture = createSettingsAiIntegrationStoryFixture();
 
@@ -236,7 +239,7 @@ export const InstructionsFailurePreservesBehavior: Story = {
     });
     const directMessages = canvas.getByRole('combobox', { name: 'DMs' });
 
-    fixture.pauseInstructionsSave();
+    const resumeInstructionsSave = fixture.pauseInstructionsSave();
     fixture.failNextInstructionsSave();
     await userEvent.type(instructions, 'Use concise replies.');
     await waitFor(
@@ -251,7 +254,7 @@ export const InstructionsFailurePreservesBehavior: Story = {
     );
     await waitFor(() => expect(directMessages).toHaveTextContent('Never'));
 
-    fixture.resumeInstructionsSave();
+    resumeInstructionsSave();
     expect(
       await bodyQueries.findByText('Workspace instructions could not be saved'),
     ).toBeVisible();
@@ -269,6 +272,139 @@ export const InstructionsFailurePreservesBehavior: Story = {
     expect(
       canvas.getByRole('textbox', { name: 'Workspace Instructions' }),
     ).not.toHaveTextContent('Use concise replies.');
+  },
+};
+
+export const EarlierInstructionsFailurePreservesLaterSave: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const instructions = await canvas.findByRole('textbox', {
+      name: 'Workspace Instructions',
+    });
+    const releaseEarlierSave = fixture.pauseInstructionsSave();
+
+    fixture.failNextInstructionsSave();
+    await userEvent.type(instructions, 'Use concise replies.');
+    await waitFor(
+      () => expect(fixture.instructionsSaveStarted).toHaveBeenCalledOnce(),
+      { timeout: 3000 },
+    );
+
+    const releaseLaterSave = fixture.pauseInstructionsSave();
+    await userEvent.type(instructions, ' Add clear next steps.');
+    await sleep(WORKSPACE_INSTRUCTIONS_AUTOSAVE_WAIT_MILLISECONDS);
+    expect(fixture.instructionsSaveStarted).toHaveBeenCalledOnce();
+
+    releaseEarlierSave();
+    await waitFor(
+      () => expect(fixture.instructionsSaveStarted).toHaveBeenCalledTimes(2),
+      { timeout: 3000 },
+    );
+
+    releaseLaterSave();
+    await waitFor(() =>
+      expect(fixture.saveInstructions).toHaveBeenCalledOnce(),
+    );
+    expect(fixture.saveInstructions).toHaveBeenCalledWith({
+      aiAdditionalInstructions: expect.stringContaining(
+        'Add clear next steps.',
+      ),
+    });
+
+    await userEvent.click(canvas.getByRole('link', { name: 'Models' }));
+    await canvas.findByRole('heading', { name: 'Models' });
+    await userEvent.click(canvas.getByRole('link', { name: 'Overview' }));
+
+    expect(
+      await canvas.findByRole('textbox', { name: 'Workspace Instructions' }),
+    ).toHaveTextContent('Add clear next steps.');
+  },
+};
+
+export const LaterInstructionsFailurePreservesEarlierSave: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const bodyQueries = within(canvasElement.ownerDocument.body);
+    const instructions = await canvas.findByRole('textbox', {
+      name: 'Workspace Instructions',
+    });
+    const releaseEarlierSave = fixture.pauseInstructionsSave();
+
+    await userEvent.type(instructions, 'Use concise replies.');
+    await waitFor(
+      () => expect(fixture.instructionsSaveStarted).toHaveBeenCalledOnce(),
+      { timeout: 3000 },
+    );
+
+    const releaseLaterSave = fixture.pauseInstructionsSave();
+    fixture.failNextInstructionsSave();
+    await userEvent.type(instructions, ' Add clear next steps.');
+    await sleep(WORKSPACE_INSTRUCTIONS_AUTOSAVE_WAIT_MILLISECONDS);
+    expect(fixture.instructionsSaveStarted).toHaveBeenCalledOnce();
+
+    releaseEarlierSave();
+    await waitFor(
+      () => expect(fixture.instructionsSaveStarted).toHaveBeenCalledTimes(2),
+      { timeout: 3000 },
+    );
+
+    await waitFor(() =>
+      expect(fixture.saveInstructions).toHaveBeenCalledOnce(),
+    );
+    releaseLaterSave();
+    expect(
+      await bodyQueries.findByText('Workspace instructions could not be saved'),
+    ).toBeVisible();
+
+    await userEvent.click(canvas.getByRole('link', { name: 'Models' }));
+    await canvas.findByRole('heading', { name: 'Models' });
+    await userEvent.click(canvas.getByRole('link', { name: 'Overview' }));
+
+    const savedInstructions = await canvas.findByRole('textbox', {
+      name: 'Workspace Instructions',
+    });
+    expect(savedInstructions).toHaveTextContent('Use concise replies.');
+    expect(savedInstructions).not.toHaveTextContent('Add clear next steps.');
+  },
+};
+
+export const QueuedInstructionsSavesPersistLatestDraft: Story = {
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const instructions = await canvas.findByRole('textbox', {
+      name: 'Workspace Instructions',
+    });
+    const releaseEarlierSave = fixture.pauseInstructionsSave();
+
+    await userEvent.type(instructions, 'Use concise replies.');
+    await waitFor(
+      () => expect(fixture.instructionsSaveStarted).toHaveBeenCalledOnce(),
+      { timeout: 3000 },
+    );
+
+    const releaseLaterSave = fixture.pauseInstructionsSave();
+    await userEvent.type(instructions, ' Add clear next steps.');
+    await sleep(WORKSPACE_INSTRUCTIONS_AUTOSAVE_WAIT_MILLISECONDS);
+    expect(fixture.instructionsSaveStarted).toHaveBeenCalledOnce();
+
+    releaseEarlierSave();
+    await waitFor(
+      () => expect(fixture.instructionsSaveStarted).toHaveBeenCalledTimes(2),
+      { timeout: 3000 },
+    );
+    releaseLaterSave();
+    await waitFor(() =>
+      expect(fixture.saveInstructions).toHaveBeenCalledTimes(2),
+    );
+
+    await userEvent.click(canvas.getByRole('link', { name: 'Models' }));
+    await canvas.findByRole('heading', { name: 'Models' });
+    await fixture.reloadWorkspace();
+    await userEvent.click(canvas.getByRole('link', { name: 'Overview' }));
+
+    expect(
+      await canvas.findByRole('textbox', { name: 'Workspace Instructions' }),
+    ).toHaveTextContent('Add clear next steps.');
   },
 };
 
