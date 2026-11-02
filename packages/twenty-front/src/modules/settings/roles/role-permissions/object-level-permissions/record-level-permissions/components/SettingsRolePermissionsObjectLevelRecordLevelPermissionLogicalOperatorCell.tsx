@@ -3,6 +3,8 @@
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
+import { RecordFilterGroupLogicalOperator } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AdvancedFilterLogicalOperatorDropdown } from '@/object-record/advanced-filter/components/AdvancedFilterLogicalOperatorDropdown';
 import { ADVANCED_FILTER_LOGICAL_OPERATOR_OPTIONS } from '@/object-record/advanced-filter/constants/AdvancedFilterLogicalOperatorOptions';
@@ -31,7 +33,7 @@ const StyledContainer = styled.div`
 type SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOperatorCellProps =
   {
     index: number;
-    recordFilterGroup: RecordFilterGroup;
+    recordFilterGroup?: RecordFilterGroup;
   };
 
 export const SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOperatorCell =
@@ -49,14 +51,17 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionLogicalOpera
     );
 
     const logicalOperatorLabel = logicalOperatorOptions.find(
-      (option) => option.value === recordFilterGroup.logicalOperator,
+      (option) =>
+        option.value ===
+        (recordFilterGroup?.logicalOperator ??
+          RecordFilterGroupLogicalOperator.AND),
     )?.label;
 
     return (
       <StyledContainer>
         {index === 0 ? (
           <StyledText>{t`Where`}</StyledText>
-        ) : index === 1 ? (
+        ) : index === 1 && isDefined(recordFilterGroup) ? (
           readonly ? (
             <Select
               dropdownWidth={GenericDropdownContentWidth.Narrow}

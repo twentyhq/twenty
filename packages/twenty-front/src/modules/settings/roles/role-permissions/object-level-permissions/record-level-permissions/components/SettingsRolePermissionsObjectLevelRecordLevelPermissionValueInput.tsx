@@ -21,6 +21,7 @@ import { getCompositeSubFieldType } from '@/object-record/object-filter-dropdown
 import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { FormFieldInput } from '@/object-record/record-field/ui/components/FormFieldInput';
 import { FormMultiSelectFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiSelectFieldInput';
+import { parseWorkspaceMemberFilterValue } from '@/object-record/record-field/ui/form-types/utils/parseWorkspaceMemberFilterValue';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { type RLSDynamicValue } from '@/object-record/record-filter/types/RecordFilter';
 import { isValidSubFieldName } from '@/settings/data-model/utils/isValidSubFieldName';
@@ -128,7 +129,12 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
       useApplyObjectFilterDropdownFilterValue();
 
     const dynamicValue = recordFilter?.rlsDynamicValue;
-    const isDynamicMode = isDefined(dynamicValue);
+    const {
+      isCurrentWorkspaceMemberSelected,
+      selectedRecordIds: otherSelectedRecordIds,
+    } = parseWorkspaceMemberFilterValue(recordFilter?.value);
+    const isMeValue =
+      isDefined(dynamicValue) || isCurrentWorkspaceMemberSelected;
 
     const operandHasNoInput =
       isDefined(recordFilter) &&
@@ -199,17 +205,25 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
 
       const updatedFilter = {
         ...recordFilter,
+        value: '',
         rlsDynamicValue: null,
       };
 
       upsertObjectFilterDropdownCurrentFilter(updatedFilter);
     };
 
-    if (isDynamicMode) {
+    if (isMeValue) {
       const tooltipId = `record-level-permission-value-${recordFilterId}`;
+      const otherSelectedRecordCount = otherSelectedRecordIds.length;
+      const otherSelectedRecordsLabel =
+        !isDefined(dynamicValue) && otherSelectedRecordCount > 0
+          ? t`+ ${otherSelectedRecordCount} more`
+          : null;
       const fullLabel = isDefined(workspaceMemberFieldLabel)
         ? t`Me / ${workspaceMemberFieldLabel}`
-        : t`Me`;
+        : isDefined(otherSelectedRecordsLabel)
+          ? t`Me ${otherSelectedRecordsLabel}`
+          : t`Me`;
 
       return (
         <StyledContainer>
@@ -223,6 +237,9 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput =
               <StyledMeText>{t`Me`}</StyledMeText>
               {isDefined(workspaceMemberFieldLabel) && (
                 <StyledFieldLabel>{` / ${workspaceMemberFieldLabel}`}</StyledFieldLabel>
+              )}
+              {isDefined(otherSelectedRecordsLabel) && (
+                <StyledFieldLabel>{otherSelectedRecordsLabel}</StyledFieldLabel>
               )}
             </StyledReadOnlyInput>
           </Tooltip>

@@ -2,7 +2,7 @@
 
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { IconFilter, IconPlus } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -40,6 +40,11 @@ const StyledFiltersContainer = styled.div`
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
   width: 100%;
+`;
+
+const StyledRootGroupSeparator = styled.div`
+  color: ${themeCssVariables.font.color.tertiary};
+  padding-left: ${themeCssVariables.spacing[2]};
 `;
 
 const StyledActionButtonWrapper = styled.div`
@@ -94,6 +99,12 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
         recordFilterGroupId: rootRecordFilterGroup?.id,
       });
 
+    // The server ANDs ungrouped predicates with the root group, so moving them
+    // into an OR root group would widen access
+    const ungroupedRecordFilters = currentRecordFilters.filter(
+      (recordFilter) => !isDefined(recordFilter.recordFilterGroupId),
+    );
+
     const { hasInitialized } = useRecordLevelPermissionFilterInitialization({
       roleId,
       objectMetadataItem,
@@ -119,44 +130,60 @@ export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterBuilde
 
     return (
       <AdvancedFilterContext.Provider value={{ objectMetadataItem }}>
-        {isDefined(rootRecordFilterGroup) ? (
-          <StyledContainer>
+        <StyledContainer>
+          {isNonEmptyArray(ungroupedRecordFilters) && (
             <StyledFiltersContainer>
-              {childRecordFiltersAndRecordFilterGroups
-                .filter(
-                  (child): child is RecordFilter =>
-                    !isRecordFilterGroupChildARecordFilterGroup(child),
-                )
-                .map((child, index) => (
-                  <SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow
-                    key={child.id}
-                    recordFilter={child}
-                    index={index}
-                    recordFilterGroup={rootRecordFilterGroup}
-                  />
-                ))}
+              {ungroupedRecordFilters.map((recordFilter, index) => (
+                <SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow
+                  key={recordFilter.id}
+                  recordFilter={recordFilter}
+                  index={index}
+                />
+              ))}
             </StyledFiltersContainer>
-            <StyledActionButtonWrapper>
-              <CommandMenuButton
-                command={{
-                  Icon: IconPlus,
-                  label: t`Add rule`,
-                  shortLabel: t`Add rule`,
-                  key: 'add-rule',
-                }}
-                onClick={() => handleAddFilter(rootRecordFilterGroup)}
-              />
-            </StyledActionButtonWrapper>
-          </StyledContainer>
-        ) : (
-          <Button
-            startIcon={<IconFilter />}
-            size="sm"
-            onClick={handleCreateFirstFilter}
-            aria-label={t`Add filter`}
-            variant="outline"
-          >{t`Add filter`}</Button>
-        )}
+          )}
+          {isDefined(rootRecordFilterGroup) ? (
+            <>
+              {isNonEmptyArray(ungroupedRecordFilters) && (
+                <StyledRootGroupSeparator>{t`And`}</StyledRootGroupSeparator>
+              )}
+              <StyledFiltersContainer>
+                {childRecordFiltersAndRecordFilterGroups
+                  .filter(
+                    (child): child is RecordFilter =>
+                      !isRecordFilterGroupChildARecordFilterGroup(child),
+                  )
+                  .map((child, index) => (
+                    <SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow
+                      key={child.id}
+                      recordFilter={child}
+                      index={index}
+                      recordFilterGroup={rootRecordFilterGroup}
+                    />
+                  ))}
+              </StyledFiltersContainer>
+              <StyledActionButtonWrapper>
+                <CommandMenuButton
+                  command={{
+                    Icon: IconPlus,
+                    label: t`Add rule`,
+                    shortLabel: t`Add rule`,
+                    key: 'add-rule',
+                  }}
+                  onClick={() => handleAddFilter(rootRecordFilterGroup)}
+                />
+              </StyledActionButtonWrapper>
+            </>
+          ) : (
+            <Button
+              startIcon={<IconFilter />}
+              size="sm"
+              onClick={handleCreateFirstFilter}
+              aria-label={t`Add filter`}
+              variant="outline"
+            >{t`Add filter`}</Button>
+          )}
+        </StyledContainer>
       </AdvancedFilterContext.Provider>
     );
   };

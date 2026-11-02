@@ -27,7 +27,7 @@ const StyledOperandSelectContainer = styled.div`
 type SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRowProps = {
   recordFilter: RecordFilter;
   index: number;
-  recordFilterGroup: RecordFilterGroup;
+  recordFilterGroup?: RecordFilterGroup;
 };
 
 export const SettingsRolePermissionsObjectLevelRecordLevelPermissionFilterRow =
