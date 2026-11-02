@@ -1,3 +1,7 @@
+import { currentUser } from 'test/integration/graphql/suites/user-session/utils/current-user.util';
+import { deleteUserFromWorkspace } from 'test/integration/graphql/suites/user-session/utils/delete-user-from-workspace.util';
+import { signUpInWorkspaceAndGetAccessToken } from 'test/integration/graphql/utils/sign-up-in-workspace-and-get-access-token.util';
+import { updateWorkspace } from 'test/integration/graphql/utils/update-workspace.util';
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
@@ -7,6 +11,7 @@ import { getAppProviderByClassName } from 'test/integration/utils/get-app-provid
 import { deleteConnectedAccount } from 'test/integration/utils/query-messaging.util';
 import { type Manifest } from 'twenty-shared/application';
 import { ConnectedAccountProvider, HTTPMethod } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { AppOAuthRevokeService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-revoke.service';
@@ -15,6 +20,7 @@ import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 const PROVIDER_NAME = 'fathom';
+const ORIGINAL_ACCESS_TOKEN = 'enc:v2:original';
 const REFRESHED_ACCESS_TOKEN = 'enc:v2:refreshed-by-hook';
 
 const buildManifestWithConnectionProvider = ({
@@ -86,6 +92,32 @@ const countConnectedAccounts = async (
   return count;
 };
 
+const findConnectedAccount = async (
+  connectedAccountId: string,
+): Promise<{
+  accessToken: string | null;
+  archivedAt: Date | null;
+  userWorkspaceId: string;
+}> => {
+  const [connectedAccount] = await globalThis.testDataSource.query(
+    `SELECT "accessToken", "archivedAt", "userWorkspaceId" FROM core."connectedAccount" WHERE id = $1`,
+    [connectedAccountId],
+  );
+
+  return connectedAccount;
+};
+
+const findUserWorkspaceIdByEmail = async (email: string): Promise<string> => {
+  const [userWorkspace] = await globalThis.testDataSource.query(
+    `SELECT "userWorkspace".id FROM core."userWorkspace" "userWorkspace"
+       JOIN core."user" "user" ON "user".id = "userWorkspace"."userId"
+     WHERE "user".email = $1 AND "userWorkspace"."workspaceId" = $2`,
+    [email, SEED_APPLE_WORKSPACE_ID],
+  );
+
+  return userWorkspace.id;
+};
+
 describe('Connected account deletion runs the on-disconnect hook', () => {
   let appId: string;
   let roleId: string;
@@ -95,6 +127,7 @@ describe('Connected account deletion runs the on-disconnect hook', () => {
   let executeSpy: jest.SpyInstance;
   let revokeSpy: jest.SpyInstance;
   let connectedAccountCountDuringHook: number | undefined;
+  let accessTokenDuringHook: string | null | undefined;
 
   const syncTestApplication = ({
     withOnDisconnectHook,
@@ -112,28 +145,41 @@ describe('Connected account deletion runs the on-disconnect hook', () => {
       expectToFail: false,
     });
 
-  const insertAppConnectedAccount = async (): Promise<void> => {
+  const insertAppConnectedAccount = async ({
+    userWorkspaceId,
+    archivedAt = null,
+  }: {
+    userWorkspaceId?: string;
+    archivedAt?: Date | null;
+  } = {}): Promise<void> => {
     const [provider] = await findConnectionProvidersByApplication(appId);
-    const [userWorkspace] = await globalThis.testDataSource.query(
+    const [firstUserWorkspace] = await globalThis.testDataSource.query(
       `SELECT id FROM core."userWorkspace" WHERE "workspaceId" = $1 LIMIT 1`,
       [SEED_APPLE_WORKSPACE_ID],
     );
 
     await globalThis.testDataSource.query(
       `INSERT INTO core."connectedAccount"
-         (id, handle, provider, scope, "workspaceId", "userWorkspaceId", "applicationId", "connectionProviderId")
-       VALUES ($1, $2, $3, 'WORKSPACE', $4, $5, $6, $7)`,
+         (id, handle, provider, scope, "workspaceId", "userWorkspaceId", "applicationId", "connectionProviderId", "accessToken", "archivedAt")
+       VALUES ($1, $2, $3, 'WORKSPACE', $4, $5, $6, $7, $8, $9)`,
       [
         connectedAccountId,
         'fathom-user@apple.dev',
         ConnectedAccountProvider.APP,
         SEED_APPLE_WORKSPACE_ID,
-        userWorkspace.id,
+        userWorkspaceId ?? firstUserWorkspace.id,
         provider.applicationId,
         provider.id,
+        isDefined(archivedAt) ? null : ORIGINAL_ACCESS_TOKEN,
+        archivedAt,
       ],
     );
   };
+
+  const findHookExecutionsForConnectedAccount = () =>
+    executeSpy.mock.calls.filter(
+      ([{ payload }]) => payload?.connectedAccountId === connectedAccountId,
+    );
 
   beforeEach(async () => {
     appId = uuidv4();
@@ -142,6 +188,7 @@ describe('Connected account deletion runs the on-disconnect hook', () => {
     logicFunctionId = uuidv4();
     connectedAccountId = uuidv4();
     connectedAccountCountDuringHook = undefined;
+    accessTokenDuringHook = undefined;
 
     await setupApplicationForSync({
       applicationUniversalIdentifier: appId,
@@ -174,6 +221,8 @@ describe('Connected account deletion runs the on-disconnect hook', () => {
       .mockImplementation(async () => {
         connectedAccountCountDuringHook =
           await countConnectedAccounts(connectedAccountId);
+        accessTokenDuringHook = (await findConnectedAccount(connectedAccountId))
+          ?.accessToken;
         await globalThis.testDataSource.query(
           `UPDATE core."connectedAccount" SET "accessToken" = $1 WHERE id = $2`,
           [REFRESHED_ACCESS_TOKEN, connectedAccountId],
@@ -262,4 +311,90 @@ describe('Connected account deletion runs the on-disconnect hook', () => {
     expect(executeSpy).not.toHaveBeenCalled();
     expect(await countConnectedAccounts(connectedAccountId)).toBe(0);
   }, 60000);
+
+  describe('when the member who owns it is removed from the workspace', () => {
+    let initialIsPublicInviteLinkEnabled: boolean | undefined;
+    let memberWorkspaceMemberId: string;
+    let memberUserWorkspaceId: string;
+
+    beforeEach(async () => {
+      const { data: workspaceData } = await currentUser({
+        gqlFields: 'currentWorkspace { isPublicInviteLinkEnabled }',
+      });
+
+      initialIsPublicInviteLinkEnabled =
+        workspaceData.currentUser.currentWorkspace?.isPublicInviteLinkEnabled;
+
+      const memberEmail = `connection-owner-${uuidv4()}@example.com`;
+      const memberToken = await signUpInWorkspaceAndGetAccessToken(memberEmail);
+      const { data: memberData } = await currentUser({
+        token: memberToken,
+        gqlFields: 'workspaceMember { id }',
+      });
+
+      memberWorkspaceMemberId = memberData.currentUser.workspaceMember.id;
+      memberUserWorkspaceId = await findUserWorkspaceIdByEmail(memberEmail);
+    }, 60000);
+
+    afterEach(async () => {
+      await updateWorkspace({
+        data: { isPublicInviteLinkEnabled: initialIsPublicInviteLinkEnabled },
+      });
+    });
+
+    it('executes the hook before the tokens are wiped, revokes the token it left behind, and archives the account', async () => {
+      await syncTestApplication({ withOnDisconnectHook: true });
+      await insertAppConnectedAccount({ userWorkspaceId: memberUserWorkspaceId });
+      const [provider] = await findConnectionProvidersByApplication(appId);
+
+      const { errors } = await deleteUserFromWorkspace({
+        input: { workspaceMemberIdToDelete: memberWorkspaceMemberId },
+      });
+
+      expect(errors).toBeUndefined();
+      expect(findHookExecutionsForConnectedAccount()).toEqual([
+        [
+          expect.objectContaining({
+            workspaceId: SEED_APPLE_WORKSPACE_ID,
+            payload: {
+              connectionProviderId: provider.id,
+              connectionProviderName: PROVIDER_NAME,
+              connectedAccountId,
+            },
+          }),
+        ],
+      ]);
+      expect(accessTokenDuringHook).toBe(ORIGINAL_ACCESS_TOKEN);
+      expect(revokeSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          id: connectedAccountId,
+          accessToken: REFRESHED_ACCESS_TOKEN,
+        }),
+      );
+
+      const transferredConnectedAccount =
+        await findConnectedAccount(connectedAccountId);
+
+      expect(transferredConnectedAccount.accessToken).toBeNull();
+      expect(transferredConnectedAccount.archivedAt).not.toBeNull();
+      expect(transferredConnectedAccount.userWorkspaceId).not.toBe(
+        memberUserWorkspaceId,
+      );
+    }, 60000);
+
+    it('does not execute the hook again for an account that was already disconnected', async () => {
+      await syncTestApplication({ withOnDisconnectHook: true });
+      await insertAppConnectedAccount({
+        userWorkspaceId: memberUserWorkspaceId,
+        archivedAt: new Date(),
+      });
+
+      const { errors } = await deleteUserFromWorkspace({
+        input: { workspaceMemberIdToDelete: memberWorkspaceMemberId },
+      });
+
+      expect(errors).toBeUndefined();
+      expect(findHookExecutionsForConnectedAccount()).toEqual([]);
+    }, 60000);
+  });
 });

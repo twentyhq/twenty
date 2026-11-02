@@ -435,6 +435,19 @@ export class ConnectedAccountMetadataService {
       ),
     );
 
+    // Runs before the tokens are wiped below; archived accounts were already disconnected
+    await this.runOnDisconnectHooks({
+      connectedAccounts: connectedAccounts.filter(
+        ({ archivedAt }) => !isDefined(archivedAt),
+      ),
+      workspaceId,
+    });
+
+    // Hooks may have refreshed tokens through getConnection
+    const latestConnectedAccounts = await this.repository.find({
+      where: { id: In(connectedAccountIds), workspaceId },
+    });
+
     await this.repository.manager.transaction(async (entityManager) => {
       await entityManager.update(
         ConnectedAccountEntity,
@@ -486,8 +499,8 @@ export class ConnectedAccountMetadataService {
       );
     });
 
-    for (const connectedAccount of connectedAccounts) {
-      await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
+    for (const latestConnectedAccount of latestConnectedAccounts) {
+      await this.appOAuthRevokeService.revokeIfApp(latestConnectedAccount);
     }
   }
 
@@ -659,15 +672,7 @@ export class ConnectedAccountMetadataService {
       `WorkspaceId: ${workspaceId} Deleting ${connectedAccounts.length} connected account(s) with ${messageChannels.length} message channel(s) and ${calendarChannels.length} calendar channel(s)`,
     );
 
-    for (const { id, connectionProviderId } of connectedAccounts) {
-      if (isDefined(connectionProviderId)) {
-        await this.connectionProviderLifecycleHookService.runOnDisconnect({
-          connectionProviderId,
-          workspaceId,
-          connectedAccountId: id,
-        });
-      }
-    }
+    await this.runOnDisconnectHooks({ connectedAccounts, workspaceId });
 
     await this.stopWebhookSubscriptions({
       messageChannels,
@@ -710,6 +715,27 @@ export class ConnectedAccountMetadataService {
       })),
       workspaceId,
     );
+  }
+
+  private async runOnDisconnectHooks({
+    connectedAccounts,
+    workspaceId,
+  }: {
+    connectedAccounts: Pick<
+      ConnectedAccountEntity,
+      'id' | 'connectionProviderId'
+    >[];
+    workspaceId: string;
+  }): Promise<void> {
+    for (const { id, connectionProviderId } of connectedAccounts) {
+      if (isDefined(connectionProviderId)) {
+        await this.connectionProviderLifecycleHookService.runOnDisconnect({
+          connectionProviderId,
+          workspaceId,
+          connectedAccountId: id,
+        });
+      }
+    }
   }
 
   private async stopWebhookSubscriptions({
