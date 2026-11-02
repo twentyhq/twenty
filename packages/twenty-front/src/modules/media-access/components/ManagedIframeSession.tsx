@@ -2,6 +2,7 @@ import { ManagedIframeEnableButton } from '@/media-access/components/ManagedIfra
 import { ManagedIframeMediaAccessSessionEffect } from '@/media-access/components/ManagedIframeMediaAccessSessionEffect';
 import { type ManagedIframeElementProps } from '@/media-access/types/ManagedIframeElementProps';
 import { getDelegatedIframeMediaPermission } from '@/media-access/utils/getDelegatedIframeMediaPermission';
+import { isIframeMediaPermissionCovered } from '@/media-access/utils/isIframeMediaPermissionCovered';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Fragment, useCallback, useId, useState } from 'react';
@@ -56,6 +57,12 @@ export const ManagedIframeSession = ({
     permission,
   });
   const isActivated = isDefined(delegatedPermission);
+  const isAvailablePermissionActivated =
+    isDefined(permission) &&
+    isIframeMediaPermissionCovered({
+      permission,
+      coveringPermission: delegatedPermission,
+    });
 
   if (isDefined(activatedPermission) && !isActivated) {
     setActivatedPermission(null);
@@ -93,7 +100,7 @@ export const ManagedIframeSession = ({
           onStop={handleDeactivate}
         />
       )}
-      <Fragment key={isActivated ? 'media-enabled' : 'media-disabled'}>
+      <Fragment key={iframeAllow}>
         {isDefined(renderIframe) ? (
           renderIframe({ allow: iframeAllow, sandbox: iframeSandbox })
         ) : (
@@ -116,7 +123,7 @@ export const ManagedIframeSession = ({
         )}
       </Fragment>
       {isDefined(permission) &&
-        !isActivated &&
+        !isAvailablePermissionActivated &&
         !hidden &&
         isDefined(anchorElement) && (
           <ManagedIframeEnableButton
