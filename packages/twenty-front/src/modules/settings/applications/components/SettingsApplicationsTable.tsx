@@ -39,6 +39,7 @@ type SettingsApplicationsTableProps = {
   builtInAccountApps: BuiltInAccountApp[];
   middleColumn: SettingsApplicationTableRowMiddleColumn;
   isLoading?: boolean;
+  isLoadingStatuses?: boolean;
   toolbar?: ReactNode;
 } & (
   | {
@@ -66,6 +67,7 @@ export const SettingsApplicationsTable = ({
   middleColumn,
   statusesById,
   isLoading = false,
+  isLoadingStatuses = false,
   toolbar,
 }: SettingsApplicationsTableProps) => {
   const { t } = useLingui();
@@ -121,6 +123,7 @@ export const SettingsApplicationsTable = ({
                   })}
                   middleColumn={middleColumn}
                   statuses={statusesById?.[rowItem.id]}
+                  isLoadingStatuses={isLoadingStatuses}
                 />
               ))}
             </StyledTableRowsContainer>
