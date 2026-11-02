@@ -51,7 +51,6 @@ export const inlineWorkflowStepAgents = ({
       agentId,
     };
 
-    // human input or a conversation needs an agent, so the step keeps it
     if (
       isStepAgent &&
       hasWorkflowAiAgentConversationConfig({

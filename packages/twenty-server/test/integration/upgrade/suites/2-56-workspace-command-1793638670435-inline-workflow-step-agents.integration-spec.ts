@@ -133,10 +133,13 @@ type ModelCall = {
   offeredToolNames: string[];
 };
 
-const withStepInput = (
-  step: AiAgentStep,
-  input: Record<string, unknown>,
-): AiAgentStep => ({
+const withStepInput = ({
+  step,
+  input,
+}: {
+  step: AiAgentStep;
+  input: Record<string, unknown>;
+}): AiAgentStep => ({
   ...step,
   settings: { ...step.settings, input: { ...step.settings.input, ...input } },
 });
@@ -283,7 +286,6 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
     conversationalAgent: await readAgent(conversationalWorkflow.agentId),
   });
 
-  // the step agent is built by the step builder, then edited the way the step panel did
   const createLegacyAiStepWorkflow = async ({
     name,
     stepInput,
@@ -324,7 +326,7 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
     await updateCoreWorkflowVersionStep({
       coreWorkflowVersionId,
       step: {
-        ...withStepInput(createdStep, stepInput),
+        ...withStepInput({ step: createdStep, input: stepInput }),
         name: STEP_NAME,
       },
     });
@@ -631,8 +633,9 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
       name: 'Company summary edited mid-upgrade',
       stepInput: { prompt: STEP_PROMPT },
     });
-    const editedStep = withStepInput(editedWorkflow.step, {
-      prompt: 'Summarize the company in one line',
+    const editedStep = withStepInput({
+      step: editedWorkflow.step,
+      input: { prompt: 'Summarize the company in one line' },
     });
     const query = global.testDataSource.query.bind(global.testDataSource);
 

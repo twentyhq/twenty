@@ -164,7 +164,10 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
         keptAgentIds: stepAgents.keptAgentIds,
       });
 
-      const keepAgentVisible = ({ stepName, agentId }: KeptWorkflowStep) => {
+      const keepAgentVisible = ({
+        stepName,
+        agentId,
+      }: Pick<KeptWorkflowStep, 'stepName' | 'agentId'>) => {
         if (!visibleAgentSourceByAgentId.has(agentId)) {
           visibleAgentSourceByAgentId.set(agentId, {
             stepName,
@@ -387,6 +390,7 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
        WHERE agent."workspaceId" = $1
          AND agent."isSystem" = true
          AND agent."applicationId" = $2
+         AND agent."deletedAt" IS NULL
          AND COALESCE(jsonb_array_length(agent.triggers), 0) = 0`,
       [workspaceId, workspaceCustomApplicationId],
     );
