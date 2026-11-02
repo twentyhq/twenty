@@ -37,9 +37,7 @@ export class AgentChatParticipationService {
     workspaceId,
     threadId,
     work,
-  }: {
-    workspaceId: string;
-    threadId: string;
+  }: Pick<AgentChatThreadAccessArgs, 'workspaceId' | 'threadId'> & {
     work: () => Promise<TResult>;
   }): Promise<TResult> {
     return this.cacheLockService.withLock(
