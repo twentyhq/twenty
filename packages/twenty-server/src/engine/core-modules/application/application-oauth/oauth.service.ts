@@ -778,14 +778,14 @@ export class OAuthService {
   }
 
   private findInstalledApplication({
-    applicationRegistration,
+    applicationRegistrationId,
     workspaceId,
   }: {
-    applicationRegistration: ApplicationRegistrationEntity;
+    applicationRegistrationId: string;
     workspaceId: string;
   }): Promise<ApplicationEntity | null> {
     return this.applicationRepository.findOne(workspaceId, {
-      where: { applicationRegistrationId: applicationRegistration.id },
+      where: { applicationRegistrationId },
     });
   }
 
@@ -794,7 +794,7 @@ export class OAuthService {
     workspaceId: string,
   ): Promise<ApplicationEntity> {
     const existingApplication = await this.findInstalledApplication({
-      applicationRegistration,
+      applicationRegistrationId: applicationRegistration.id,
       workspaceId,
     });
 
@@ -809,7 +809,7 @@ export class OAuthService {
       });
 
       const installedApplication = await this.findInstalledApplication({
-        applicationRegistration,
+        applicationRegistrationId: applicationRegistration.id,
         workspaceId,
       });
 
@@ -844,7 +844,7 @@ export class OAuthService {
       // First connections race to create the install; the loser reuses it since its authorization code is already spent
       const concurrentlyInstalledApplication =
         await this.findInstalledApplication({
-          applicationRegistration,
+          applicationRegistrationId: applicationRegistration.id,
           workspaceId,
         });
 
