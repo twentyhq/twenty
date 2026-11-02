@@ -1,3 +1,4 @@
+import { PermissionsException } from 'src/engine/permissions/permissions.exception';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { Injectable, Logger } from '@nestjs/common';
 
@@ -216,7 +217,10 @@ export class MessageCampaignScheduleService {
           campaignId,
         })
         .catch(async (error) => {
-          if (!(error instanceof EmailingDomainException)) {
+          if (
+            !(error instanceof EmailingDomainException) &&
+            !(error instanceof PermissionsException)
+          ) {
             throw error;
           }
 
