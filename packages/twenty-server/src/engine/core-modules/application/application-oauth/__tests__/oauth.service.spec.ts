@@ -10,6 +10,7 @@ import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-r
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationAuthorizationService } from 'src/engine/core-modules/application/application-authorization/services/application-authorization.service';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
+import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration-resolver.service';
 import { OAuthService } from 'src/engine/core-modules/application/application-oauth/oauth.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
@@ -87,10 +88,11 @@ describe('OAuthService', () => {
           provide: ApplicationAuthorizationService,
           useValue: { recordAuthorization: jest.fn() },
         },
+        { provide: ApplicationRegistrationService, useValue: {} },
         {
-          provide: ApplicationRegistrationService,
+          provide: OAuthClientRegistrationResolverService,
           useValue: {
-            findOneByClientId: jest.fn().mockResolvedValue({
+            findByClientId: jest.fn().mockResolvedValue({
               id: 'registration-id',
               name: 'Claude',
               universalIdentifier: 'claude-universal-identifier',

@@ -17,6 +17,7 @@ import { isRefreshTokenCoveredByAuthorization } from 'src/engine/core-modules/ap
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { OAuthClientRegistrationResolverService } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/oauth-client-registration-resolver.service';
+import { type ResolvedOAuthClientRegistration } from 'src/engine/core-modules/application/application-oauth/oauth-client-registration/types/resolved-oauth-client-registration.type';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -449,7 +450,9 @@ export class OAuthService {
   }): Promise<{ success: boolean }> {
     const { token, clientId, clientSecret } = params;
 
-    let applicationRegistration: ApplicationRegistrationEntity | undefined;
+    let applicationRegistration:
+      | Pick<ApplicationRegistrationEntity, 'id'>
+      | undefined;
 
     if (clientId) {
       const clientValidation = await this.validateClient(clientId);
@@ -624,7 +627,7 @@ export class OAuthService {
 
   private async validateClient(
     clientId: string,
-  ): Promise<ApplicationRegistrationEntity | OAuthErrorResponse> {
+  ): Promise<ResolvedOAuthClientRegistration | OAuthErrorResponse> {
     const applicationRegistration =
       await this.oAuthClientRegistrationResolverService.findByClientId(
         clientId,
@@ -638,7 +641,10 @@ export class OAuthService {
   }
 
   private async validateClientSecret(
-    applicationRegistration: ApplicationRegistrationEntity,
+    applicationRegistration: Pick<
+      ApplicationRegistrationEntity,
+      'oAuthClientSecretHash'
+    >,
     clientSecret: string,
   ): Promise<OAuthErrorResponse | null> {
     const isValid =
@@ -794,7 +800,15 @@ export class OAuthService {
   }
 
   private async findOrInstallApplication(
-    applicationRegistration: ApplicationRegistrationEntity,
+    applicationRegistration: Pick<
+      ApplicationRegistrationEntity,
+      | 'id'
+      | 'name'
+      | 'universalIdentifier'
+      | 'description'
+      | 'latestAvailableVersion'
+      | 'sourceType'
+    >,
     workspaceId: string,
   ): Promise<ApplicationEntity> {
     const existingApplication = await this.findInstalledApplication({

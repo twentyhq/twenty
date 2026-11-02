@@ -74,8 +74,7 @@ export const parseClientIdMetadataDocument = ({
       logoUri:
         isNonEmptyString(logoUri) &&
         logoUri.startsWith('https://') &&
-        logoUrl?.protocol === 'https:' &&
-        isNonEmptyString(logoUrl.hostname)
+        isDefined(logoUrl)
           ? logoUri
           : null,
       redirectUris,
