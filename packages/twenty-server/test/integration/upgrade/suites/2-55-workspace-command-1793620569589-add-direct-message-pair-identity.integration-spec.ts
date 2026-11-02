@@ -1,10 +1,13 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 import { type AddDirectMessagePairIdentityCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793620569589-add-direct-message-pair-identity.command';
+import { type EnableDirectMessagePairIdentityCommand } from 'src/database/commands/upgrade-version-command/2-55/2-55-workspace-command-1793629955662-enable-direct-message-pair-identity.command';
 import { type ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { type AgentChatDirectMessageIdentityService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-direct-message-identity.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
@@ -36,6 +39,8 @@ const PAIR_FIELD_UNIVERSAL_IDENTIFIERS = [
 const PAIR_INDEX_UNIVERSAL_IDENTIFIER =
   STANDARD_OBJECTS.agentChatThread.indexes.directMessagePairUniqueIndex
     .universalIdentifier;
+const IDENTITY_FEATURE_FLAG =
+  FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED;
 const PAIR = {
   workspaceId: SEED_APPLE_WORKSPACE_ID,
   firstWorkspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
@@ -44,8 +49,41 @@ const PAIR = {
 
 describe('2-55 workspace command - add direct message pair identity (integration)', () => {
   let command: AddDirectMessagePairIdentityCommand;
+  let enableCommand: EnableDirectMessagePairIdentityCommand;
+  let featureFlagService: FeatureFlagService;
   let workspaceCacheService: WorkspaceCacheService;
   let identityService: AgentChatDirectMessageIdentityService;
+  let originalFlagValue: boolean | undefined;
+
+  const findIdentityFlag = async (): Promise<boolean | undefined> => {
+    const [flag]: { value: boolean }[] = await global.testDataSource.query(
+      `SELECT value FROM core."featureFlag" WHERE "workspaceId" = $1 AND key = $2`,
+      [SEED_APPLE_WORKSPACE_ID, IDENTITY_FEATURE_FLAG],
+    );
+
+    return flag?.value;
+  };
+
+  const setIdentityFlag = async (value: boolean | undefined) => {
+    if (isDefined(value)) {
+      await featureFlagService.upsertWorkspaceFeatureFlag({
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        featureFlag: IDENTITY_FEATURE_FLAG,
+        value,
+      });
+
+      return;
+    }
+
+    await global.testDataSource.query(
+      `DELETE FROM core."featureFlag" WHERE "workspaceId" = $1 AND key = $2`,
+      [SEED_APPLE_WORKSPACE_ID, IDENTITY_FEATURE_FLAG],
+    );
+    await workspaceCacheService.invalidateAndRecompute(
+      SEED_APPLE_WORKSPACE_ID,
+      ['featureFlagsMap'],
+    );
+  };
 
   const findPairIdentity = async () => {
     const { flatFieldMetadataMaps, flatIndexMaps } =
@@ -151,6 +189,12 @@ describe('2-55 workspace command - add direct message pair identity (integration
     command = getAppProviderByClassName<AddDirectMessagePairIdentityCommand>(
       'AddDirectMessagePairIdentityCommand',
     );
+    enableCommand =
+      getAppProviderByClassName<EnableDirectMessagePairIdentityCommand>(
+        'EnableDirectMessagePairIdentityCommand',
+      );
+    featureFlagService =
+      getAppProviderByClassName<FeatureFlagService>('FeatureFlagService');
     workspaceCacheService = getAppProviderByClassName<WorkspaceCacheService>(
       'WorkspaceCacheService',
     );
@@ -159,20 +203,26 @@ describe('2-55 workspace command - add direct message pair identity (integration
         'AgentChatDirectMessageIdentityService',
       );
 
+    originalFlagValue = await findIdentityFlag();
+    await setIdentityFlag(undefined);
     await removePairIndexAndFields(PAIR_FIELD_UNIVERSAL_IDENTIFIERS);
   });
 
   afterAll(async () => {
     await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
+    await setIdentityFlag(originalFlagValue);
   });
 
-  it('fences identity allocation until the command reaches the workspace', async () => {
+  it('keeps identity allocation disabled when storage is absent', async () => {
     expect(await findPairIdentity()).toEqual({
       hasFields: false,
       hasIndexMetadata: false,
       columnCount: 0,
       pairIndexes: [],
     });
+    await enableCommand.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
+
+    expect(await findIdentityFlag()).toBeUndefined();
     await expect(identityService.getOrCreate(PAIR)).rejects.toMatchObject({
       code: AiExceptionCode.CHAT_UPGRADE_IN_PROGRESS,
     });
@@ -192,7 +242,7 @@ describe('2-55 workspace command - add direct message pair identity (integration
     });
   });
 
-  it('adds the pair columns and a full unique index, then lifts the fence', async () => {
+  it('enables identity allocation only after storage is added and the flag upgrade runs', async () => {
     await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
 
     expect(await findPairIdentity()).toEqual({
@@ -208,6 +258,22 @@ describe('2-55 workspace command - add direct message pair identity (integration
         },
       ],
     });
+
+    expect(await findIdentityFlag()).toBeUndefined();
+    await expect(identityService.getOrCreate(PAIR)).rejects.toMatchObject({
+      code: AiExceptionCode.CHAT_UPGRADE_IN_PROGRESS,
+    });
+
+    await enableCommand.runOnWorkspace({
+      ...RUN_ON_WORKSPACE_ARGS,
+      options: { dryRun: true },
+    });
+
+    expect(await findIdentityFlag()).toBeUndefined();
+
+    await enableCommand.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
+
+    expect(await findIdentityFlag()).toBe(true);
 
     const threadId = await identityService.getOrCreate(PAIR);
 
@@ -227,14 +293,24 @@ describe('2-55 workspace command - add direct message pair identity (integration
     const threadId = await identityService.getOrCreate(PAIR);
 
     try {
-      await removePairIndexAndFields([]);
+      await setIdentityFlag(false);
 
       await expect(identityService.getOrCreate(PAIR)).rejects.toMatchObject({
         code: AiExceptionCode.CHAT_UPGRADE_IN_PROGRESS,
       });
 
-      await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
+      await removePairIndexAndFields([]);
+      await enableCommand.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
 
+      expect(await findIdentityFlag()).toBe(false);
+      await expect(identityService.getOrCreate(PAIR)).rejects.toMatchObject({
+        code: AiExceptionCode.CHAT_UPGRADE_IN_PROGRESS,
+      });
+
+      await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
+      await enableCommand.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
+
+      expect(await findIdentityFlag()).toBe(true);
       await expect(identityService.getOrCreate(PAIR)).resolves.toBe(threadId);
     } finally {
       await global.testDataSource
@@ -250,7 +326,9 @@ describe('2-55 workspace command - add direct message pair identity (integration
     const pairIdentity = await findPairIdentity();
 
     await command.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
+    await enableCommand.runOnWorkspace(RUN_ON_WORKSPACE_ARGS);
 
+    expect(await findIdentityFlag()).toBe(true);
     expect(await findPairIdentity()).toEqual(pairIdentity);
   });
 });

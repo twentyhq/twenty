@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
@@ -43,7 +43,7 @@ export class AgentChatDirectMessageIdentityService {
   }): Promise<string> {
     const pair = normalizeAgentChatDirectMessagePairOrThrow(members);
 
-    await this.assertStorageAvailableOrThrow(workspaceId);
+    await this.assertIdentityEnabledOrThrow(workspaceId);
 
     const existingThreadId = await this.findThreadId({ workspaceId, pair });
 
@@ -108,22 +108,18 @@ export class AgentChatDirectMessageIdentityService {
     );
   }
 
-  // TODO(@bosiraphael): remove once 2.55 leaves the cross-upgrade window
-  private async assertStorageAvailableOrThrow(
+  private async assertIdentityEnabledOrThrow(
     workspaceId: string,
   ): Promise<void> {
-    const { flatIndexMaps } = await this.workspaceCacheService.getOrRecompute(
+    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
-      ['flatIndexMaps'],
+      ['featureFlagsMap'],
     );
 
     if (
-      !isDefined(
-        flatIndexMaps.byUniversalIdentifier[
-          STANDARD_OBJECTS.agentChatThread.indexes.directMessagePairUniqueIndex
-            .universalIdentifier
-        ],
-      )
+      featureFlagsMap[
+        FeatureFlagKey.IS_AGENT_CHAT_DIRECT_MESSAGE_IDENTITY_ENABLED
+      ] !== true
     ) {
       throw new AiException(
         'Direct messages are unavailable until this workspace finishes upgrading',
