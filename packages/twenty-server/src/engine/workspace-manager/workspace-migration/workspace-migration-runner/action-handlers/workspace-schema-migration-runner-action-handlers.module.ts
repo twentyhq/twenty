@@ -132,6 +132,7 @@ import { DeleteWorkflowRunsDeferredActionHandlerWorkspaceService } from 'src/eng
 import { ValidateForeignKeyDeferredActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/deferred-action-handlers/services/validate-foreign-key-deferred-action-handler.service';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { WorkflowDeletionModule } from 'src/modules/workflow/workflow-deletion/workflow-deletion.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
   imports: [
@@ -139,6 +140,7 @@ import { WorkflowDeletionModule } from 'src/modules/workflow/workflow-deletion/w
     MetricsModule,
     SecretEncryptionModule,
     WorkflowDeletionModule,
+    WorkspaceCacheModule,
   ],
   providers: [
     CreateWorkflowActionHandlerService,

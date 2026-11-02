@@ -90,6 +90,7 @@ const buildCommonValidationArgs = (
       applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
       workspaceCustomApplicationUniversalIdentifier:
         WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
     },
   };
 };

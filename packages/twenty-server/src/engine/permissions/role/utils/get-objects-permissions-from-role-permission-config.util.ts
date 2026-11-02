@@ -2,6 +2,7 @@ import {
   type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -9,18 +10,20 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { computeObjectsPermissionsForRoles } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-roles.util';
 import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principal/types/application-default-role-maps.type';
-import { getRoleIdsToIntersect } from 'src/engine/permissions/principal/utils/get-role-ids-to-intersect.util';
-import { resolvePermissionsPrincipalActingApplicationId } from 'src/engine/permissions/principal/utils/resolve-permissions-principal-acting-application-id.util';
+import { buildPermissionsPrincipalRoles } from 'src/engine/permissions/principal/utils/build-permissions-principal-roles.util';
+import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 
 export const getObjectsPermissionsFromRolePermissionConfig = ({
   rolesPermissions,
   rolePermissionConfig,
+  principals,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   flatApplicationMaps,
 }: {
   rolesPermissions: ObjectsPermissionsByRoleId;
   rolePermissionConfig: RolePermissionConfig;
+  principals: PermissionsPrincipalsContext | undefined;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatApplicationMaps: ApplicationDefaultRoleMaps;
@@ -29,14 +32,17 @@ export const getObjectsPermissionsFromRolePermissionConfig = ({
     return {};
   }
 
-  const { intersectionOf } = rolePermissionConfig;
+  const principalRoles = buildPermissionsPrincipalRoles({
+    roleIdsBySource: rolePermissionConfig.intersectionOf,
+    principalsContext: principals,
+  });
+
+  if (!isDefined(principalRoles)) {
+    return {};
+  }
 
   return computeObjectsPermissionsForRoles({
-    roleIds: getRoleIdsToIntersect(intersectionOf) ?? [],
-    applicationId: resolvePermissionsPrincipalActingApplicationId({
-      intersectionOf,
-      flatApplicationMaps,
-    }),
+    principal: principalRoles,
     rolesPermissions,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,

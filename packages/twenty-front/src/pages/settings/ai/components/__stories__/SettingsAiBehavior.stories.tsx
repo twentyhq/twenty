@@ -3,6 +3,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
+import { AiChatAssistantMode } from '~/generated-metadata/graphql';
 import { SettingsAiBehaviorExample } from '~/pages/settings/ai/components/__stories__/SettingsAiBehaviorExample';
 
 const meta = {
@@ -11,8 +12,8 @@ const meta = {
   decorators: [ComponentDecorator],
   parameters: { container: { width: 694 } },
   args: {
-    directMessageMode: 'MENTION_ONLY',
-    inboxMode: 'AUTOMATIC',
+    directMessageMode: AiChatAssistantMode.MENTION_ONLY,
+    inboxMode: AiChatAssistantMode.AUTOMATIC,
     onDirectMessageModeChange: fn(),
     onInboxModeChange: fn(),
   },
@@ -41,7 +42,9 @@ export const IndependentSelection: Story = {
     );
     await waitFor(() => expect(directMessages).toHaveTextContent('Never'));
     await waitFor(() => expect(directMessages).toHaveFocus());
-    expect(args.onDirectMessageModeChange).toHaveBeenLastCalledWith('NEVER');
+    expect(args.onDirectMessageModeChange).toHaveBeenLastCalledWith(
+      AiChatAssistantMode.NEVER,
+    );
     expect(args.onInboxModeChange).not.toHaveBeenCalled();
     expect(inbox).toHaveTextContent('Auto');
 
@@ -58,7 +61,9 @@ export const IndependentSelection: Story = {
     await userEvent.keyboard('{Home}{ArrowDown}{Enter}');
     await waitFor(() => expect(inbox).toHaveTextContent('Only when mentioned'));
     expect(args.onInboxModeChange).toHaveBeenCalledOnce();
-    expect(args.onInboxModeChange).toHaveBeenLastCalledWith('MENTION_ONLY');
+    expect(args.onInboxModeChange).toHaveBeenLastCalledWith(
+      AiChatAssistantMode.MENTION_ONLY,
+    );
     expect(directMessages).toHaveTextContent('Never');
     await waitFor(() => expect(inbox).toHaveFocus());
 
@@ -134,7 +139,9 @@ export const FailedChange: Story = {
       within(options).getByRole('option', { name: 'Never' }),
     );
     expect(args.onDirectMessageModeChange).toHaveBeenCalledOnce();
-    expect(args.onDirectMessageModeChange).toHaveBeenLastCalledWith('NEVER');
+    expect(args.onDirectMessageModeChange).toHaveBeenLastCalledWith(
+      AiChatAssistantMode.NEVER,
+    );
     await waitFor(() =>
       expect(directMessages).toHaveTextContent('Only when mentioned'),
     );
@@ -162,7 +169,9 @@ export const Narrow: Story = {
     );
     await waitFor(() => expect(directMessages).toHaveTextContent('Never'));
     expect(args.onDirectMessageModeChange).toHaveBeenCalledOnce();
-    expect(args.onDirectMessageModeChange).toHaveBeenLastCalledWith('NEVER');
+    expect(args.onDirectMessageModeChange).toHaveBeenLastCalledWith(
+      AiChatAssistantMode.NEVER,
+    );
     expect(args.onInboxModeChange).not.toHaveBeenCalled();
     await waitFor(() => expect(directMessages).toHaveFocus());
     await userEvent.tab();
