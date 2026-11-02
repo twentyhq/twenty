@@ -670,7 +670,7 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
     ]);
   });
 
-  it('keeps an archived step agent, so its step still stops instead of running', async () => {
+  it('keeps an archived step agent visible, so its step still stops and the agent can be restored', async () => {
     const archivedWorkflow = await createLegacyAiStepWorkflow({
       name: 'Company summary with an archived agent',
       stepInput: { prompt: STEP_PROMPT },
@@ -690,6 +690,9 @@ describe('2-56 workspace command - inline workflow step agents (integration)', (
     expect(await readCoreSteps(archivedWorkflow.coreWorkflowVersionId)).toEqual(
       [archivedWorkflow.step],
     );
+    expect(await readAgent(archivedWorkflow.agentId)).toMatchObject({
+      isSystem: false,
+    });
     await expect(
       getAppProviderByClassName<AgentRunPersonaService>(
         'AgentRunPersonaService',

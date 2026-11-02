@@ -70,7 +70,6 @@ type StepAgents = {
   inlineConfigByAgentId: Map<string, StepAgentInlineConfig>;
   labelByAgentId: Map<string, string>;
   keptAgentIds: Set<string>;
-  archivedAgentIds: Set<string>;
   // what each inlined agent was when read, so a step is not rewritten from an agent edited since
   snapshots: { id: string; prompt: string; updatedAt: string }[];
 };
@@ -188,14 +187,7 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
       }
 
       for (const keptStep of result.keptSteps) {
-        if (!stepAgents.archivedAgentIds.has(keptStep.agentId)) {
-          keepAgentVisible(keptStep);
-          continue;
-        }
-
-        this.logger.warn(
-          `Workspace ${workspaceId}: step ${keptStep.stepId} of ${sourceTable} ${rowId} keeps its archived agent`,
-        );
+        keepAgentVisible(keptStep);
       }
 
       return {
@@ -407,7 +399,6 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
       inlineConfigByAgentId: new Map(),
       labelByAgentId: new Map(),
       keptAgentIds: new Set(),
-      archivedAgentIds: new Set(),
       snapshots: [],
     };
 
@@ -417,10 +408,6 @@ export class InlineWorkflowStepAgentsCommand extends ProvisionedWorkspaceCommand
       const scope = isDefined(agentRow.roleId)
         ? scopeByRoleId.get(agentRow.roleId)
         : null;
-
-      if (!agentRow.isActive) {
-        stepAgents.archivedAgentIds.add(agentRow.id);
-      }
 
       if (!agentRow.isActive || scope === undefined) {
         stepAgents.keptAgentIds.add(agentRow.id);
