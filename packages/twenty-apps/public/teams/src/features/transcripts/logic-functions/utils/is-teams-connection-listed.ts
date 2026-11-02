@@ -1,10 +1,8 @@
-import { listConnections } from 'twenty-sdk/logic-function';
-
-import { TEAMS_PROVIDER_NAME } from 'src/features/transcripts/constants/teams-provider-name';
+import { listTeamsConnections } from 'src/features/transcripts/logic-functions/utils/list-teams-connections';
 
 export const isTeamsConnectionListed = async (
   connectedAccountId: string,
 ): Promise<boolean> =>
-  (await listConnections({ providerName: TEAMS_PROVIDER_NAME })).some(
+  (await listTeamsConnections()).some(
     (connection) => connection.id === connectedAccountId,
   );

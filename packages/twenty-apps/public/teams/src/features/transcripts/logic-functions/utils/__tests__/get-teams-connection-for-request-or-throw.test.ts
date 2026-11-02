@@ -13,20 +13,21 @@ vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
 
 const buildConnection = ({
   id,
-  visibility,
+  scope,
   userWorkspaceId,
 }: {
   id: string;
-  visibility: 'user' | 'workspace';
+  scope: 'USER' | 'WORKSPACE';
   userWorkspaceId: string;
 }) => ({
   id,
-  providerName: 'microsoft-teams',
+  providerName:
+    scope === 'WORKSPACE' ? 'microsoft-teams' : 'microsoft-teams-user',
   name: id,
   handle: `${id}@acme.com`,
   externalAccountId: null,
-  scope: visibility === 'workspace' ? 'WORKSPACE' : 'USER',
-  visibility,
+  scope,
+  visibility: scope === 'WORKSPACE' ? 'workspace' : 'user',
   userWorkspaceId,
   workspaceMemberId: null,
   providerType: 'oauth',
@@ -38,7 +39,7 @@ const buildConnection = ({
 
 const SHARED_CONNECTION = buildConnection({
   id: 'shared-connection',
-  visibility: 'workspace',
+  scope: 'WORKSPACE',
   userWorkspaceId: 'admin',
 });
 
@@ -48,10 +49,16 @@ describe('getTeamsConnectionForRequestOrThrow', () => {
       SHARED_CONNECTION,
       buildConnection({
         id: 'member-connection',
-        visibility: 'user',
+        scope: 'USER',
         userWorkspaceId: 'member',
       }),
     ]);
+  });
+
+  it('should pick the personal connection of the requesting member', async () => {
+    await expect(
+      getTeamsConnectionForRequestOrThrow({ userWorkspaceId: 'member' }),
+    ).resolves.toMatchObject({ id: 'member-connection' });
   });
 
   it('should fall back on the workspace-shared connection by default', async () => {

@@ -13,14 +13,14 @@ const {
   listTeamsCalendarPageMock,
   importTeamsTranscriptHistoryPageMock,
   countTeamsTranscriptHistoryPageMock,
-  listConnectionsMock,
+  listTeamsConnectionsMock,
 } = vi.hoisted(() => ({
   kvStore: new Map<string, unknown>(),
   enqueueJobsMock: vi.fn(),
   listTeamsCalendarPageMock: vi.fn(),
   importTeamsTranscriptHistoryPageMock: vi.fn(),
   countTeamsTranscriptHistoryPageMock: vi.fn(),
-  listConnectionsMock: vi.fn(),
+  listTeamsConnectionsMock: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
@@ -34,10 +34,14 @@ vi.mock('twenty-sdk/logic-function', async (importOriginal) => ({
       kvStore.delete(key);
     },
   },
-  listConnections: listConnectionsMock,
   getConnection: vi.fn().mockResolvedValue({ accessToken: 'token' }),
   enqueueJobs: enqueueJobsMock,
 }));
+
+vi.mock(
+  'src/features/transcripts/logic-functions/utils/list-teams-connections',
+  () => ({ listTeamsConnections: listTeamsConnectionsMock }),
+);
 
 vi.mock('twenty-client-sdk/core', () => ({
   CoreApiClient: vi.fn(),
@@ -137,7 +141,7 @@ describe('processTeamsTranscriptHistoryPageOrThrow', () => {
     kvStore.clear();
     process.env[TRANSCRIPTS_ENABLED_APPLICATION_VARIABLE_KEY] = 'true';
     enqueueJobsMock.mockResolvedValue(undefined);
-    listConnectionsMock.mockResolvedValue([{ id: 'connected-account-1' }]);
+    listTeamsConnectionsMock.mockResolvedValue([{ id: 'connected-account-1' }]);
     listTeamsCalendarPageMock.mockResolvedValue({
       occurrences: [],
       nextPageUrl: NEXT_PAGE_URL,
@@ -291,7 +295,7 @@ describe('processTeamsTranscriptHistoryPageOrThrow', () => {
 
   it('should not leave a run behind for a connection removed while its page was saved', async () => {
     kvStore.set(STATE_KV_KEY, STATE);
-    listConnectionsMock.mockResolvedValue([]);
+    listTeamsConnectionsMock.mockResolvedValue([]);
 
     await expect(processImportPage(JOB)).resolves.toEqual(
       expect.objectContaining({ skipped: true }),
