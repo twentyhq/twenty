@@ -39,7 +39,14 @@ export const importLinkedinMessageAttachments = async ({
               chatId: message.chat_id,
               messageId: message.id,
               attachmentId: attachment.id,
+              maxSizeBytes: LINKEDIN_ATTACHMENT_MAX_SIZE_BYTES,
             });
+
+        if (content.byteLength > LINKEDIN_ATTACHMENT_MAX_SIZE_BYTES) {
+          throw new Error(
+            `Attachment is larger than ${LINKEDIN_ATTACHMENT_MAX_SIZE_BYTES} bytes`,
+          );
+        }
 
         files.push({
           messageExternalId: message.id,

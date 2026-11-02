@@ -61,6 +61,7 @@ describe('importLinkedinMessageAttachments', () => {
       chatId: 'chat-1',
       messageId: 'message-1',
       attachmentId: 'img-1',
+      maxSizeBytes: 25 * 1024 * 1024,
     });
     expect(files[0]).toMatchObject({
       messageExternalId: 'message-1',
@@ -103,6 +104,19 @@ describe('importLinkedinMessageAttachments', () => {
       ]),
     ).resolves.toEqual([]);
     expect(mocks.downloadUnipileMessageAttachment).not.toHaveBeenCalled();
+  });
+
+  it('drops inline content over the size limit when no size was listed', async () => {
+    await expect(
+      importAttachments([
+        {
+          id: 'video-1',
+          type: 'video',
+          mimetype: 'video/mp4',
+          content: Buffer.alloc(25 * 1024 * 1024 + 1).toString('base64'),
+        },
+      ]),
+    ).resolves.toEqual([]);
   });
 
   it('drops a file that fails to download and keeps the others', async () => {
