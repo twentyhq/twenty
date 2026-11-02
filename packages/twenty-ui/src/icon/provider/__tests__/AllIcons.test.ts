@@ -1,4 +1,4 @@
-import { ALL_ICONS } from '@ui/icon/providers/internal/AllIcons';
+import { ALL_ICONS } from '@ui/icon/provider/internal/AllIcons';
 
 const DYNAMIC_ICON_NAMES = [
   'IconCopyPlus',

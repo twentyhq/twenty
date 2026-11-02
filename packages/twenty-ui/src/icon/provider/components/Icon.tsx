@@ -1,4 +1,4 @@
-import { useIcons } from '@ui/icon/hooks/useIcons';
+import { useIcons } from '@ui/icon/provider/hooks/useIcons';
 import { type IconComponentProps } from '@ui/icon/types/IconComponent';
 
 export type IconProps = IconComponentProps & {

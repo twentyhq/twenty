@@ -19,7 +19,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { useState } from 'react';
 import { SKELETON_HEIGHT_SIZES } from 'twenty-ui/primitives/feedback';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { getAbsoluteImageUrl } from '~/utils/image/getAbsoluteImageUrl';
 

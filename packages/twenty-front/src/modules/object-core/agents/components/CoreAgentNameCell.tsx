@@ -1,5 +1,5 @@
 import { isNonEmptyString } from '@sniptt/guards';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 
 import { CoreObjectNameCell } from '@/object-core/components/cells/CoreObjectNameCell';
 import { type CoreAgent } from '@/object-core/agents/types/CoreAgent';
