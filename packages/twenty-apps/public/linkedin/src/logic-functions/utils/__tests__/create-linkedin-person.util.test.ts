@@ -64,11 +64,27 @@ describe('createLinkedinPerson', () => {
     await expect(createLinkedinPerson(DAPHNE)).resolves.toBe('existing-id');
   });
 
-  it('rethrows when nobody was created for the profile', async () => {
+  it('creates the person with a new id when its id belongs to a deleted person', async () => {
+    mocks.mutation
+      .mockRejectedValueOnce(
+        new Error(
+          'A duplicate entry was detected: unique constraint person.person_pkey was violated',
+        ),
+      )
+      .mockResolvedValueOnce({ createPerson: { id: 'new-id' } });
+    mocks.query.mockResolvedValue({ people: { edges: [] } });
+
+    await expect(createLinkedinPerson(DAPHNE)).resolves.toBe('new-id');
+    expect(getCreatedPersonId()).toBeDefined();
+    expect(
+      mocks.mutation.mock.calls[1][0].createPerson.__args.data,
+    ).not.toHaveProperty('id');
+  });
+
+  it('rethrows when the person cannot be created at all', async () => {
     mocks.mutation.mockRejectedValue(new Error('Forbidden'));
     mocks.query.mockResolvedValue({ people: { edges: [] } });
 
     await expect(createLinkedinPerson(DAPHNE)).rejects.toThrow('Forbidden');
-    expect(getCreatedPersonId()).toBeDefined();
   });
 });
