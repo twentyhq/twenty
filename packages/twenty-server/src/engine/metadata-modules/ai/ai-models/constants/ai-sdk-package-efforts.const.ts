@@ -12,6 +12,7 @@ import {
   AI_SDK_GOOGLE,
   AI_SDK_MISTRAL,
   AI_SDK_OPENAI,
+  AI_SDK_OPENAI_COMPATIBLE,
   AI_SDK_XAI,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 
@@ -51,6 +52,15 @@ export const AI_SDK_PACKAGE_EFFORTS: Partial<
   ] satisfies readonly BedrockEffort[],
   [AI_SDK_OPENAI]: ['none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max'],
   [AI_SDK_AZURE]: ['none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max'],
+  [AI_SDK_OPENAI_COMPATIBLE]: [
+    'none',
+    'minimal',
+    'low',
+    'medium',
+    'high',
+    'xhigh',
+    'max',
+  ],
   [AI_SDK_GOOGLE]: [
     'minimal',
     'low',
