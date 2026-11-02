@@ -77,6 +77,7 @@ export class AgentChatConversationAccessService {
       kind: 'run',
       channelId: buildAgentRunStreamChannelId({
         applicationId: reader.callerApplication.id,
+        callerWorkspaceMemberId: reader.workspaceMemberId ?? null,
         runId,
       }),
     };

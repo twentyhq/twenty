@@ -34,15 +34,17 @@ const generate = ({
   service,
   input,
   callerApplication,
+  requestWorkspaceMemberId = null,
 }: {
   service: AiGenerateService;
   input: Record<string, unknown>;
   callerApplication: { id: string; defaultRoleId: string | null } | undefined;
+  requestWorkspaceMemberId?: string | null;
 }) =>
   service.generate({
     workspace: WORKSPACE as never,
     requestUserWorkspaceId: null,
-    requestWorkspaceMemberId: null,
+    requestWorkspaceMemberId,
     callerApplication: callerApplication as never,
     callerApiKey: { id: 'api-key-id' } as never,
     input,
@@ -63,6 +65,28 @@ describe('AiGenerateService', () => {
         prompt: expect.objectContaining({ turnId: RUN_ID }),
         streamChannelId: buildAgentRunStreamChannelId({
           applicationId: APPLICATION.id,
+          callerWorkspaceMemberId: null,
+          runId: RUN_ID,
+        }),
+      }),
+    );
+  });
+
+  it('streams a member-bound call to the run channel of that member', async () => {
+    const { service, runInRequest } = buildService({});
+
+    await generate({
+      service,
+      input: { input: INPUT, runId: RUN_ID },
+      callerApplication: APPLICATION,
+      requestWorkspaceMemberId: 'member-id',
+    });
+
+    expect(runInRequest).toHaveBeenCalledWith(
+      expect.objectContaining({
+        streamChannelId: buildAgentRunStreamChannelId({
+          applicationId: APPLICATION.id,
+          callerWorkspaceMemberId: 'member-id',
           runId: RUN_ID,
         }),
       }),

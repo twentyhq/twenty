@@ -109,10 +109,13 @@ const toNextEvent = (event: Record<string, unknown>) =>
 const isStreamRequest = (requestInit: RequestInit | undefined) =>
   new Headers(requestInit?.headers).get('Accept') === 'text/event-stream';
 
-const mockRunChannel = (
-  fetchSpy: MockInstance<typeof fetch>,
-  { isKeepaliveHeld = false }: { isKeepaliveHeld?: boolean } = {},
-) => {
+const mockRunChannel = ({
+  fetchSpy,
+  isKeepaliveHeld = false,
+}: {
+  fetchSpy: MockInstance<typeof fetch>;
+  isKeepaliveHeld?: boolean;
+}) => {
   let channel: ReadableStreamDefaultController<Uint8Array> | undefined;
   let isChannelCancelled = false;
   let answerMutation: (body: Record<string, unknown>) => void = () => {};
@@ -182,7 +185,7 @@ describe('ai.generate with onChunk', () => {
   });
 
   it('follows the run from before it starts and resolves once its last chunk is delivered', async () => {
-    const runChannel = mockRunChannel(fetchSpy);
+    const runChannel = mockRunChannel({ fetchSpy });
     const chunks: Record<string, unknown>[] = [];
 
     const generation = ai.generate({
@@ -231,7 +234,7 @@ describe('ai.generate with onChunk', () => {
   });
 
   it('starts the run only once the subscription is live', async () => {
-    const runChannel = mockRunChannel(fetchSpy, { isKeepaliveHeld: true });
+    const runChannel = mockRunChannel({ fetchSpy, isKeepaliveHeld: true });
 
     const generation = ai.generate({ input: 'Hi', onChunk: () => {} });
 
@@ -256,7 +259,7 @@ describe('ai.generate with onChunk', () => {
 
   it('follows the run and starts it with the same caller token', async () => {
     vi.stubEnv('TWENTY_APP_APPLICATION_ACCESS_TOKEN', 'application-token');
-    const runChannel = mockRunChannel(fetchSpy);
+    const runChannel = mockRunChannel({ fetchSpy });
 
     const generation = ai.generate({ input: 'Hi', onChunk: () => {} });
 
@@ -273,7 +276,7 @@ describe('ai.generate with onChunk', () => {
   });
 
   it('picks a run id when the caller does not', async () => {
-    const runChannel = mockRunChannel(fetchSpy);
+    const runChannel = mockRunChannel({ fetchSpy });
 
     const generation = ai.generate({ input: 'Hi', onChunk: () => {} });
 
@@ -293,7 +296,7 @@ describe('ai.generate with onChunk', () => {
   });
 
   it('closes the stream and rejects when aborted during the run', async () => {
-    const runChannel = mockRunChannel(fetchSpy);
+    const runChannel = mockRunChannel({ fetchSpy });
     const abortController = new AbortController();
 
     const generation = ai.generate({
@@ -310,7 +313,7 @@ describe('ai.generate with onChunk', () => {
   });
 
   it('rejects when aborted after the mutation returned but before the last chunk', async () => {
-    const runChannel = mockRunChannel(fetchSpy);
+    const runChannel = mockRunChannel({ fetchSpy });
     const abortController = new AbortController();
     const chunks: Record<string, unknown>[] = [];
 
@@ -332,7 +335,7 @@ describe('ai.generate with onChunk', () => {
   });
 
   it('rejects when aborted while onChunk is still running after the result', async () => {
-    const runChannel = mockRunChannel(fetchSpy);
+    const runChannel = mockRunChannel({ fetchSpy });
     const abortController = new AbortController();
     let isOnChunkCalled = false;
 
@@ -368,7 +371,7 @@ describe('ai.generate with onChunk', () => {
   });
 
   it('resolves with the result when the end event never arrives', async () => {
-    const runChannel = mockRunChannel(fetchSpy);
+    const runChannel = mockRunChannel({ fetchSpy });
 
     const generation = ai.generate({ input: 'Hi', onChunk: () => {} });
 
@@ -387,7 +390,7 @@ describe('ai.generate with onChunk', () => {
   });
 
   it('delivers every chunk to a slow onChunk, however long after the result', async () => {
-    const runChannel = mockRunChannel(fetchSpy);
+    const runChannel = mockRunChannel({ fetchSpy });
     const chunks: Record<string, unknown>[] = [];
 
     const generation = ai.generate({
@@ -428,7 +431,7 @@ describe('ai.generate with onChunk', () => {
   });
 
   it('delivers the chunks received before a lost end event once the grace is over', async () => {
-    const runChannel = mockRunChannel(fetchSpy);
+    const runChannel = mockRunChannel({ fetchSpy });
     const chunks: Record<string, unknown>[] = [];
 
     const generation = ai.generate({
@@ -466,7 +469,7 @@ describe('ai.generate with onChunk', () => {
   });
 
   it('resolves with the result and the chunks it received when the channel fails after the result', async () => {
-    const runChannel = mockRunChannel(fetchSpy);
+    const runChannel = mockRunChannel({ fetchSpy });
     const chunks: Record<string, unknown>[] = [];
 
     const generation = ai.generate({
@@ -487,7 +490,7 @@ describe('ai.generate with onChunk', () => {
   });
 
   it('fails when the channel fails before the result', async () => {
-    const runChannel = mockRunChannel(fetchSpy);
+    const runChannel = mockRunChannel({ fetchSpy });
 
     const generation = ai.generate({ input: 'Hi', onChunk: () => {} });
 
@@ -499,7 +502,7 @@ describe('ai.generate with onChunk', () => {
   });
 
   it('rejects when onChunk throws after the result', async () => {
-    const runChannel = mockRunChannel(fetchSpy);
+    const runChannel = mockRunChannel({ fetchSpy });
 
     const generation = ai.generate({
       input: 'Hi',
@@ -517,7 +520,7 @@ describe('ai.generate with onChunk', () => {
   });
 
   it('rejects at once when onChunk throws, without waiting for the result', async () => {
-    const runChannel = mockRunChannel(fetchSpy);
+    const runChannel = mockRunChannel({ fetchSpy });
 
     const generation = ai.generate({
       input: 'Hi',
@@ -534,7 +537,7 @@ describe('ai.generate with onChunk', () => {
   });
 
   it('stops following the run when the mutation fails', async () => {
-    const runChannel = mockRunChannel(fetchSpy);
+    const runChannel = mockRunChannel({ fetchSpy });
 
     const generation = ai.generate({ input: 'Hi', onChunk: () => {} });
 

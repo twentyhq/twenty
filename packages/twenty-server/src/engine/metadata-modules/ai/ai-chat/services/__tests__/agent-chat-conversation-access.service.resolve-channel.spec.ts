@@ -46,8 +46,48 @@ describe('AgentChatConversationAccessService.resolveReadableChannelOrThrow', () 
       kind: 'run',
       channelId: buildAgentRunStreamChannelId({
         applicationId: 'application-a',
+        callerWorkspaceMemberId: null,
         runId: RUN_ID,
       }),
+    });
+  });
+
+  describe('for a run another member started through the same application', () => {
+    const MEMBER_ID = 'member-a';
+    const OTHER_MEMBER_ID = 'member-b';
+    const otherMemberRunChannelId = buildAgentRunStreamChannelId({
+      applicationId: 'application-a',
+      callerWorkspaceMemberId: OTHER_MEMBER_ID,
+      runId: RUN_ID,
+    });
+    const resolveFor = (workspaceMemberId: string | undefined) =>
+      buildService().service.resolveReadableChannelOrThrow({
+        workspace: WORKSPACE,
+        callerApplication: buildApplication('application-a'),
+        workspaceMemberId,
+        source: { runId: RUN_ID },
+      });
+
+    it('keeps a member from following it by its run id', async () => {
+      expect((await resolveFor(MEMBER_ID)).channelId).not.toBe(
+        otherMemberRunChannelId,
+      );
+      expect((await resolveFor(OTHER_MEMBER_ID)).channelId).toBe(
+        otherMemberRunChannelId,
+      );
+    });
+
+    it('keeps an application-only token from following it, which reads only runs the application started alone', async () => {
+      expect((await resolveFor(undefined)).channelId).not.toBe(
+        otherMemberRunChannelId,
+      );
+      expect((await resolveFor(undefined)).channelId).toBe(
+        buildAgentRunStreamChannelId({
+          applicationId: 'application-a',
+          callerWorkspaceMemberId: null,
+          runId: RUN_ID,
+        }),
+      );
     });
   });
 

@@ -81,6 +81,7 @@ export class AiGenerateService {
       ? await this.resolveStreamChannelIdOrThrow({
           workspaceId: workspace.id,
           callerApplication,
+          callerWorkspaceMemberId: requestWorkspaceMemberId,
           runId: requestedRunId,
         })
       : undefined;
@@ -151,14 +152,16 @@ export class AiGenerateService {
     };
   }
 
-  // keyed by the caller app so an app follows only its own runs; the turn's primary key backs the lookup in a race
+  // the turn's primary key backs the lookup in a race
   private async resolveStreamChannelIdOrThrow({
     workspaceId,
     callerApplication,
+    callerWorkspaceMemberId,
     runId,
   }: {
     workspaceId: string;
     callerApplication: Pick<FlatApplication, 'id'> | undefined;
+    callerWorkspaceMemberId: string | null;
     runId: string;
   }): Promise<string> {
     if (!isDefined(callerApplication)) {
@@ -179,6 +182,7 @@ export class AiGenerateService {
 
     return buildAgentRunStreamChannelId({
       applicationId: callerApplication.id,
+      callerWorkspaceMemberId,
       runId,
     });
   }
