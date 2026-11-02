@@ -3,12 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { WorkflowVersionCoreModule } from 'src/engine/core-modules/workflow/workflow-version-core.module';
-import { AiAgentRoleModule } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.module';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
-import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
@@ -25,10 +23,9 @@ import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-cru
     WorkflowCommonModule,
     CodeStepBuildModule,
     FeatureFlagModule,
-    AiAgentRoleModule,
     AiAgentModule,
     WorkspaceCacheModule,
-    TypeOrmModule.forFeature([ObjectMetadataEntity, RoleTargetEntity]),
+    TypeOrmModule.forFeature([ObjectMetadataEntity]),
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkflowVersionCoreModule,
     RecordCrudModule,
@@ -36,7 +33,6 @@ import { RecordCrudModule } from 'src/engine/core-modules/record-crud/record-cru
   providers: [
     WorkflowVersionStepOperationsWorkspaceService,
     WorkflowAiAgentStepAgentService,
-    provideWorkspaceScopedRepository(RoleTargetEntity),
     provideWorkspaceScopedRepository(ObjectMetadataEntity),
   ],
   exports: [

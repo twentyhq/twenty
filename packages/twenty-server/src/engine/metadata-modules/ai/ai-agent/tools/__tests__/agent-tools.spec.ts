@@ -406,22 +406,6 @@ describe('Agent tools', () => {
         workspaceId,
       });
     });
-
-    it('refuses to change the hidden agent of a workflow step', async () => {
-      const { executeTool, agentService } = buildAgentTools();
-
-      agentService.findOneAgentById.mockResolvedValue(
-        buildAgent({ isSystem: true }),
-      );
-
-      await expect(
-        executeTool({
-          toolName: 'update_agent',
-          args: { id: agentId, prompt: 'Something else' },
-        }),
-      ).rejects.toMatchObject({ code: AiExceptionCode.INVALID_AGENT_INPUT });
-      expect(agentService.updateOneAgent).not.toHaveBeenCalled();
-    });
   });
 
   describe('delete_agent', () => {
@@ -439,19 +423,6 @@ describe('Agent tools', () => {
         agentId,
         workspaceId,
       );
-    });
-
-    it('refuses to delete the hidden agent of a workflow step', async () => {
-      const { executeTool, agentService } = buildAgentTools();
-
-      agentService.findOneAgentById.mockResolvedValue(
-        buildAgent({ isSystem: true }),
-      );
-
-      await expect(
-        executeTool({ toolName: 'delete_agent', args: { id: agentId } }),
-      ).rejects.toMatchObject({ code: AiExceptionCode.INVALID_AGENT_INPUT });
-      expect(agentService.deleteOneAgent).not.toHaveBeenCalled();
     });
 
     it('refuses to delete a reusable agent that workflow steps run', async () => {

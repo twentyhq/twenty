@@ -31,7 +31,6 @@ import { createGetWorkflowRunTool } from 'src/modules/workflow/workflow-tools/to
 import { createListLogicFunctionToolsTool } from 'src/modules/workflow/workflow-tools/tools/list-logic-function-tools.tool';
 import { createListWorkflowRunsTool } from 'src/modules/workflow/workflow-tools/tools/list-workflow-runs.tool';
 import { createListWorkflowsTool } from 'src/modules/workflow/workflow-tools/tools/list-workflows.tool';
-import { createUpdateWorkflowAgentTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-agent.tool';
 import { createUpdateLogicFunctionSourceTool } from 'src/modules/workflow/workflow-tools/tools/update-logic-function-source.tool';
 import { createUpdateWorkflowVersionPositionsTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-positions.tool';
 import { createUpdateWorkflowVersionStepTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-version-step.tool';
@@ -112,7 +111,6 @@ export class WorkflowToolWorkspaceService {
       createGetLogicFunctionSourceTool(this.deps, context),
       createUpdateLogicFunctionSourceTool(this.deps, context),
       createListLogicFunctionToolsTool(this.deps, context),
-      createUpdateWorkflowAgentTool(this.deps, context),
       createValidateWorkflowTool(this.deps, context),
     ];
 

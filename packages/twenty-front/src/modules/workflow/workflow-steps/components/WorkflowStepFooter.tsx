@@ -5,28 +5,22 @@ import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFoot
 import { WorkflowStepOptionsMenuItems } from '@/workflow/workflow-steps/components/WorkflowStepOptionsMenuItems';
 import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { useDuplicateStep } from '@/workflow/workflow-steps/hooks/useDuplicateStep';
-import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
 import { useLingui } from '@lingui/react/macro';
 import { useId } from 'react';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { TRIGGER_STEP_ID } from 'twenty-shared/workflow';
-import { IconLego, IconSettings, IconTrash, IconUsers } from 'twenty-ui/icon';
+import { IconSettings, IconTrash } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
-import { useNavigateApp } from '~/hooks/useNavigateApp';
-import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 type WorkflowStepFooterProps = {
   stepId: string;
   additionalActions?: React.ReactNode[];
-  agent?: Pick<FlatAgent, 'id' | 'roleId'>;
 };
 
 export const WorkflowStepFooter = ({
   stepId,
   additionalActions,
-  agent,
 }: WorkflowStepFooterProps) => {
   const dropdownId = useId();
   const { t } = useLingui();
@@ -38,15 +32,8 @@ export const WorkflowStepFooter = ({
     openWorkflowTriggerTypeInSidePanel,
   } = useSidePanelWorkflowNavigation();
   const { deleteStep } = useDeleteStep();
-  const navigateApp = useNavigateApp();
-  const navigateSettings = useNavigateSettings();
   const shouldPinDeleteButton =
     !isDefined(additionalActions) || additionalActions.length === 0;
-
-  const agentId = agent?.id;
-  const agentRoleId = agent?.roleId;
-  const hasViewAgentOption = isDefined(agentId);
-  const hasViewRoleOption = isDefined(agentRoleId);
 
   const handleChangeNodeType = () => {
     if (stepId === TRIGGER_STEP_ID) {
@@ -69,18 +56,6 @@ export const WorkflowStepFooter = ({
     openWorkflowStepSettingsInSidePanel({ workflowId, stepId });
   };
 
-  const handleViewAgent = () => {
-    if (isDefined(agentId)) {
-      navigateApp(AppPath.AgentShowPage, { agentId });
-    }
-  };
-
-  const handleViewRole = () => {
-    if (isDefined(agentRoleId)) {
-      navigateSettings(SettingsPath.RoleDetail, { roleId: agentRoleId });
-    }
-  };
-
   const OptionsDropdown = (
     <SidePanelOptionsDropdown dropdownId={dropdownId}>
       <WorkflowStepOptionsMenuItems
@@ -97,22 +72,6 @@ export const WorkflowStepFooter = ({
             startIcon={<IconSettings />}
           >
             {t`Node settings`}
-          </Dropdown.ActionItem>
-        ) : null}
-        {hasViewAgentOption ? (
-          <Dropdown.ActionItem
-            onClick={handleViewAgent}
-            startIcon={<IconLego />}
-          >
-            {t`View Agent`}
-          </Dropdown.ActionItem>
-        ) : null}
-        {hasViewRoleOption ? (
-          <Dropdown.ActionItem
-            onClick={handleViewRole}
-            startIcon={<IconUsers />}
-          >
-            {t`View Role`}
           </Dropdown.ActionItem>
         ) : null}
       </WorkflowStepOptionsMenuItems>
