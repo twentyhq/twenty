@@ -227,10 +227,18 @@ export class BillingSubscriptionUpdateService {
         { workspaceId },
       );
 
-    const seatSyncPlan = await this.computeSeatSyncPlan(
-      billingSubscription,
-      getBaseProductSubscriptionItemOrThrow(billingSubscription).quantity ?? 0,
-    );
+    const { subscription: stripeSubscription } =
+      await this.stripeSubscriptionScheduleService.loadSubscriptionSchedule(
+        billingSubscription.stripeSubscriptionId,
+      );
+
+    const seatSyncPlan = await this.computeSeatSyncPlan({
+      workspaceId,
+      stripeSubscription,
+      currentSeats: (
+        await this.getSubscriptionPricesFromItems(stripeSubscription.items.data)
+      ).seats,
+    });
 
     if (!isDefined(seatSyncPlan)) {
       return;
@@ -275,8 +283,13 @@ export class BillingSubscriptionUpdateService {
     const seats =
       subscriptionUpdate.type === SubscriptionUpdateType.SEATS
         ? subscriptionUpdate.newSeats
-        : ((await this.computeSeatSyncPlan(subscription, currentPrices.seats))
-            ?.currentPeriodSeats ?? currentPrices.seats);
+        : ((
+            await this.computeSeatSyncPlan({
+              workspaceId,
+              stripeSubscription,
+              currentSeats: currentPrices.seats,
+            })
+          )?.currentPeriodSeats ?? currentPrices.seats);
 
     const nextPeriodSubscriptionUpdate: SubscriptionUpdate =
       subscriptionUpdate.type === SubscriptionUpdateType.SEATS &&
@@ -379,7 +392,7 @@ export class BillingSubscriptionUpdateService {
           nextPhase: toPhaseUpdateParams(nextPhase),
           subscriptionCurrentPeriodEnd:
             updatedStripeSubscription?.items.data[0].current_period_end ??
-            Math.floor(subscription.currentPeriodEnd.getTime() / 1000),
+            stripeSubscription.items.data[0].current_period_end,
         });
       } else if (
         !isDefined(schedule) &&
@@ -402,7 +415,7 @@ export class BillingSubscriptionUpdateService {
           currentPhase: toPhaseUpdateParams(createdCurrentPhase),
           subscriptionCurrentPeriodEnd:
             updatedStripeSubscription?.items.data[0].current_period_end ??
-            Math.floor(subscription.currentPeriodEnd.getTime() / 1000),
+            stripeSubscription.items.data[0].current_period_end,
         });
       }
     }
@@ -413,28 +426,34 @@ export class BillingSubscriptionUpdateService {
     );
   }
 
-  private async computeSeatSyncPlan(
-    subscription: BillingSubscriptionEntity,
-    currentSeats: number,
-  ): Promise<SeatSyncPlan | null> {
-    const memberCount = await this.billingSeatService.countWorkspaceMembers(
-      subscription.workspaceId,
-    );
+  private async computeSeatSyncPlan({
+    workspaceId,
+    stripeSubscription,
+    currentSeats,
+  }: {
+    workspaceId: string;
+    stripeSubscription: Stripe.Subscription;
+    currentSeats: number;
+  }): Promise<SeatSyncPlan | null> {
+    const memberCount =
+      await this.billingSeatService.countWorkspaceMembers(workspaceId);
 
     if (memberCount <= 0) {
       return null;
     }
 
+    const { current_period_start, current_period_end } =
+      stripeSubscription.items.data[0];
+
     return computeSeatSyncPlan({
       memberCount,
       currentSeats,
-      seatArrangements: await this.billingSeatService.findSeatArrangements(
-        subscription.workspaceId,
-      ),
+      seatArrangements:
+        await this.billingSeatService.findSeatArrangements(workspaceId),
       now: new Date(),
-      currentPeriodStart: subscription.currentPeriodStart,
-      currentPeriodEnd: subscription.currentPeriodEnd,
-      isTrialing: subscription.status === SubscriptionStatus.Trialing,
+      currentPeriodStart: new Date(current_period_start * 1000),
+      currentPeriodEnd: new Date(current_period_end * 1000),
+      isTrialing: stripeSubscription.status === SubscriptionStatus.Trialing,
     });
   }
 
