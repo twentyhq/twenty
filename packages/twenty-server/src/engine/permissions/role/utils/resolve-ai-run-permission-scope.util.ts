@@ -84,8 +84,21 @@ export const resolveAiRunPermissionScope = ({
     );
   }
 
-  const findObjectMetadataId = (objectUniversalIdentifier: string) =>
-    flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier]?.id;
+  // a dropped entry could be a deny, so one naming metadata the workspace lacks fails the run
+  const findObjectMetadataIdOrThrow = (objectUniversalIdentifier: string) => {
+    const objectMetadataId =
+      flatObjectMetadataMaps.byUniversalIdentifier[objectUniversalIdentifier]
+        ?.id;
+
+    if (!isDefined(objectMetadataId)) {
+      throw new PermissionsException(
+        `Object ${objectUniversalIdentifier} in an AI run scope does not exist`,
+        PermissionsExceptionCode.INVALID_ARG,
+      );
+    }
+
+    return objectMetadataId;
+  };
 
   const isPermissionFlagGranted = buildIsPermissionFlagGranted({
     role: {
@@ -96,14 +109,11 @@ export const resolveAiRunPermissionScope = ({
       scope.permissionFlagUniversalIdentifiers ?? [],
   });
 
-  const objectPermissions = (scope.objectPermissions ?? []).flatMap(
-    ({ objectUniversalIdentifier, ...objectPermission }) => {
-      const objectMetadataId = findObjectMetadataId(objectUniversalIdentifier);
-
-      return isDefined(objectMetadataId)
-        ? [{ ...objectPermission, objectMetadataId }]
-        : [];
-    },
+  const objectPermissions = (scope.objectPermissions ?? []).map(
+    ({ objectUniversalIdentifier, ...objectPermission }) => ({
+      ...objectPermission,
+      objectMetadataId: findObjectMetadataIdOrThrow(objectUniversalIdentifier),
+    }),
   );
 
   const flatFieldMetadatas = Object.values(
@@ -127,7 +137,7 @@ export const resolveAiRunPermissionScope = ({
             fieldUniversalIdentifier,
             ...fieldPermission
           }) => {
-            const objectMetadataId = findObjectMetadataId(
+            const objectMetadataId = findObjectMetadataIdOrThrow(
               objectUniversalIdentifier,
             );
             const flatFieldMetadata =
@@ -135,8 +145,11 @@ export const resolveAiRunPermissionScope = ({
                 fieldUniversalIdentifier
               ];
 
-            if (!isDefined(objectMetadataId) || !isDefined(flatFieldMetadata)) {
-              return [];
+            if (!isDefined(flatFieldMetadata)) {
+              throw new PermissionsException(
+                `Field ${fieldUniversalIdentifier} in an AI run scope does not exist`,
+                PermissionsExceptionCode.INVALID_ARG,
+              );
             }
 
             // attached to the named object, the restriction would miss the field's own

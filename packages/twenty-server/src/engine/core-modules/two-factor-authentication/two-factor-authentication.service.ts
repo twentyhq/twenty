@@ -17,6 +17,9 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { acquireUserAuthenticationLock } from 'src/engine/core-modules/auth/utils/acquire-user-authentication-lock.util';
+import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
+import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
+import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
@@ -26,10 +29,12 @@ import {
   TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_MAX,
   TWO_FACTOR_AUTHENTICATION_OTP_RATE_LIMIT_WINDOW_MS,
 } from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-otp-rate-limit.constant';
+import { TWO_FACTOR_AUTHENTICATION_USED_OTP_TTL_MS } from 'src/engine/core-modules/two-factor-authentication/constants/two-factor-authentication-used-otp.constant';
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { TOTP_DEFAULT_CONFIGURATION } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/constants/totp.strategy.constants';
 import { TotpStrategy } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/totp/totp.strategy';
 import { buildTwoFactorAuthenticationOtpRateLimitKey } from 'src/engine/core-modules/two-factor-authentication/utils/build-two-factor-authentication-otp-rate-limit-key.util';
+import { buildTwoFactorAuthenticationUsedOtpKey } from 'src/engine/core-modules/two-factor-authentication/utils/build-two-factor-authentication-used-otp-key.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
@@ -56,6 +61,8 @@ export class TwoFactorAuthenticationService {
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly secretEncryptionService: SecretEncryptionService,
     private readonly throttlerService: ThrottlerService,
+    @InjectCacheStorage(CacheStorageNamespace.EngineAuthSession)
+    private readonly cacheStorage: CacheStorageService,
   ) {}
 
   private async decryptStoredSecret({
@@ -238,6 +245,22 @@ export class TwoFactorAuthenticationService {
     ).validate(token, otpContext);
 
     if (!validationResult.isValid) {
+      throw new TwoFactorAuthenticationException(
+        'Invalid OTP',
+        TwoFactorAuthenticationExceptionCode.INVALID_OTP,
+      );
+    }
+
+    const isFirstUseOfToken = await this.cacheStorage.setIfAbsent(
+      buildTwoFactorAuthenticationUsedOtpKey({
+        methodId: userTwoFactorAuthenticationMethod.id,
+        token,
+      }),
+      true,
+      TWO_FACTOR_AUTHENTICATION_USED_OTP_TTL_MS,
+    );
+
+    if (!isFirstUseOfToken) {
       throw new TwoFactorAuthenticationException(
         'Invalid OTP',
         TwoFactorAuthenticationExceptionCode.INVALID_OTP,
