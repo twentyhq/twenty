@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { WellKnownOAuthClient } from 'src/engine/core-modules/application/well-known-oauth-client/enums/well-known-oauth-client.enum';
 
 @ObjectType('ApplicationAuthorization')
 export class ApplicationAuthorizationDTO {
@@ -13,6 +14,9 @@ export class ApplicationAuthorizationDTO {
   @Field(() => UUIDScalarType)
   workspaceId: string;
 
+  @Field(() => UUIDScalarType)
+  userId: string;
+
   @Field(() => String)
   applicationName: string;
 
@@ -23,6 +27,9 @@ export class ApplicationAuthorizationDTO {
   // Null for grants backfilled from refresh tokens predating the authorization record
   @Field(() => [String], { nullable: true })
   scopes: string[] | null;
+
+  @Field(() => WellKnownOAuthClient, { nullable: true })
+  wellKnownOAuthClient: WellKnownOAuthClient | null;
 
   @Field(() => Date, { nullable: true })
   lastAuthorizedAt: Date | null;

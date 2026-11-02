@@ -511,6 +511,8 @@ export type ApplicationAuthorization = {
   lastAuthorizedAt?: Maybe<Scalars['DateTime']['output']>;
   lastUsedAt: Scalars['DateTime']['output'];
   scopes?: Maybe<Array<Scalars['String']['output']>>;
+  userId: Scalars['UUID']['output'];
+  wellKnownOAuthClient?: Maybe<WellKnownOAuthClient>;
   workspaceId: Scalars['UUID']['output'];
 };
 
@@ -3656,6 +3658,7 @@ export type Mutation = {
   revokeApplicationAuthorization: Scalars['Boolean']['output'];
   revokeTwoFactorAuthenticationRecoveryCode: Scalars['Boolean']['output'];
   revokeUserSession: Scalars['Boolean']['output'];
+  revokeWorkspaceApplicationMemberAccess: Scalars['Boolean']['output'];
   rotateApplicationRegistrationClientSecret: RotateClientSecret;
   runAgent: RunAgentResult;
   runApplicationHealthCheck?: Maybe<ApplicationHealthCheckResult>;
@@ -4665,6 +4668,12 @@ export type MutationRevokeTwoFactorAuthenticationRecoveryCodeArgs = {
 
 export type MutationRevokeUserSessionArgs = {
   userSessionId: Scalars['UUID']['input'];
+};
+
+
+export type MutationRevokeWorkspaceApplicationMemberAccessArgs = {
+  applicationId: Scalars['UUID']['input'];
+  userId: Scalars['UUID']['input'];
 };
 
 
@@ -5980,6 +5989,7 @@ export type Query = {
   validationRules: Array<ValidationRule>;
   webhook?: Maybe<Webhook>;
   webhooks: Array<Webhook>;
+  workspaceApplicationAuthorizations: Array<ApplicationAuthorization>;
 };
 
 
@@ -6517,6 +6527,11 @@ export type QueryValidationRulesArgs = {
 
 export type QueryWebhookArgs = {
   id: Scalars['UUID']['input'];
+};
+
+
+export type QueryWorkspaceApplicationAuthorizationsArgs = {
+  applicationId: Scalars['UUID']['input'];
 };
 
 export type RatioAggregateConfig = {

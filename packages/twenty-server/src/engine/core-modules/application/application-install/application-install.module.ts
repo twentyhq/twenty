@@ -24,6 +24,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { ApplicationRegistrationLookupModule } from 'src/engine/core-modules/application/application-registration/application-registration-lookup/application-registration-lookup.module';
 import { ApplicationRegistrationVersionModule } from 'src/engine/core-modules/application/application-registration-version/application-registration-version.module';
+import { WellKnownOAuthClientModule } from 'src/engine/core-modules/application/well-known-oauth-client/well-known-oauth-client.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { ApplicationRegistrationVersionModule } from 'src/engine/core-modules/ap
     PermissionsModule,
     WorkspaceCacheModule,
     WorkspaceIteratorModule,
+    WellKnownOAuthClientModule,
   ],
   providers: [
     ApplicationCapabilityResolver,

@@ -2,16 +2,18 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
+import { type FindOperator, In, IsNull, Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationAuthorizationEntity } from 'src/engine/core-modules/application/application-authorization/application-authorization.entity';
+import { WellKnownOAuthClientInstallService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-install.service';
 
 @Injectable()
 export class ApplicationAuthorizationService {
   constructor(
     @InjectRepository(ApplicationAuthorizationEntity)
     private readonly applicationAuthorizationRepository: Repository<ApplicationAuthorizationEntity>,
+    private readonly wellKnownOAuthClientInstallService: WellKnownOAuthClientInstallService,
   ) {}
 
   async recordAuthorization({
@@ -95,7 +97,6 @@ export class ApplicationAuthorizationService {
     });
   }
 
-  // Inner join drops authorizations of soft-deleted applications
   async findActiveAuthorizationsForUserWorkspace({
     userId,
     workspaceId,
@@ -103,15 +104,31 @@ export class ApplicationAuthorizationService {
     userId: string;
     workspaceId: string;
   }): Promise<ApplicationAuthorizationEntity[]> {
-    return await this.applicationAuthorizationRepository
-      .createQueryBuilder('applicationAuthorization')
-      .innerJoinAndSelect('applicationAuthorization.application', 'application')
-      .where('applicationAuthorization.userId = :userId', { userId })
-      .andWhere('applicationAuthorization.workspaceId = :workspaceId', {
+    return await this.createActiveAuthorizationsQueryBuilder(workspaceId)
+      .andWhere('applicationAuthorization.userId = :userId', { userId })
+      .getMany();
+  }
+
+  async findActiveAuthorizationsForWorkspaceApplication({
+    workspaceId,
+    applicationId,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+  }): Promise<ApplicationAuthorizationEntity[]> {
+    const applicationIds =
+      await this.wellKnownOAuthClientInstallService.findFoldedApplicationIds({
         workspaceId,
-      })
-      .andWhere('applicationAuthorization.revokedAt IS NULL')
-      .orderBy('applicationAuthorization.lastUsedAt', 'DESC')
+        applicationId,
+      });
+
+    return await this.createActiveAuthorizationsQueryBuilder(workspaceId)
+      .andWhere(
+        'applicationAuthorization.applicationId IN (:...applicationIds)',
+        {
+          applicationIds,
+        },
+      )
       .getMany();
   }
 
@@ -139,6 +156,28 @@ export class ApplicationAuthorizationService {
     });
   }
 
+  async revokeMemberAuthorizationsForWorkspaceApplication({
+    workspaceId,
+    applicationId,
+    userId,
+  }: {
+    workspaceId: string;
+    applicationId: string;
+    userId: string;
+  }): Promise<boolean> {
+    const applicationIds =
+      await this.wellKnownOAuthClientInstallService.findFoldedApplicationIds({
+        workspaceId,
+        applicationId,
+      });
+
+    return await this.revokeMatching({
+      workspaceId,
+      userId,
+      applicationId: In(applicationIds),
+    });
+  }
+
   async revokeAuthorizationForApplication({
     userId,
     applicationId,
@@ -149,10 +188,38 @@ export class ApplicationAuthorizationService {
     return await this.revokeMatching({ userId, applicationId });
   }
 
+  private createActiveAuthorizationsQueryBuilder(workspaceId: string) {
+    return this.applicationAuthorizationRepository
+      .createQueryBuilder('applicationAuthorization')
+      .innerJoinAndSelect('applicationAuthorization.application', 'application')
+      .leftJoin(
+        'application.applicationRegistration',
+        'applicationRegistration',
+      )
+      .addSelect([
+        'applicationRegistration.id',
+        'applicationRegistration.universalIdentifier',
+        'applicationRegistration.sourceType',
+        'applicationRegistration.ownerWorkspaceId',
+        'applicationRegistration.oAuthClientId',
+        'applicationRegistration.oAuthRedirectUris',
+      ])
+      .where('applicationAuthorization.workspaceId = :workspaceId', {
+        workspaceId,
+      })
+      .andWhere('applicationAuthorization.revokedAt IS NULL')
+      .orderBy('applicationAuthorization.lastUsedAt', 'DESC');
+  }
+
   // The union rules out empty criteria, which would revoke every row
   private async revokeMatching(
     criteria:
       | { id: string; userId: string; workspaceId: string }
+      | {
+          workspaceId: string;
+          userId: string;
+          applicationId: FindOperator<string>;
+        }
       | { userId: string; applicationId: string },
   ): Promise<boolean> {
     const { affected } = await this.applicationAuthorizationRepository.update(

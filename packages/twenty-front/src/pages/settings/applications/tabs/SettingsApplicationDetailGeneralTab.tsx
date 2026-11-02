@@ -1,7 +1,9 @@
 import { formatQueueJobProgressLabel } from '@/queue-job/utils/formatQueueJobProgressLabel';
+import { SettingsApplicationAuthorizedMembersSection } from '@/settings/applications/components/SettingsApplicationAuthorizedMembersSection';
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
 import { SettingsApplicationUninstallButton } from '@/settings/applications/components/SettingsApplicationUninstallButton';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { SettingsPath } from 'twenty-shared/types';
@@ -11,6 +13,8 @@ import { Button } from 'twenty-ui/primitives/input';
 import { Section } from 'twenty-ui/components/layout';
 import {
   type Application,
+  ApplicationRegistrationSourceType,
+  FeatureFlagKey,
   PermissionFlagType,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -62,10 +66,16 @@ export const SettingsApplicationDetailGeneralTab = ({
   isUninstalling,
   uninstallProgress,
 }: SettingsApplicationDetailGeneralTabProps) => {
+  const isOAuthOnlyApplication =
+    application.applicationRegistration?.sourceType ===
+    ApplicationRegistrationSourceType.OAUTH_ONLY;
   const navigateSettings = useNavigateSettings();
 
   const canManageApplications = useHasPermissionFlag(
     PermissionFlagType.APPLICATIONS,
+  );
+  const isAppPreferencesEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
   );
 
   const isUpgradable = isUpgradableApplicationSourceType(
@@ -126,6 +136,11 @@ export const SettingsApplicationDetailGeneralTab = ({
             onUninstall={onUninstall}
             isUninstalling={isUninstalling}
             uninstallProgress={uninstallProgress}
+            warning={
+              isOAuthOnlyApplication
+                ? t`Every member connected to ${displayName} will be disconnected.`
+                : undefined
+            }
             disabledReason={
               application.isUninstallBlockedByOtherWorkspaceInstallations
                 ? t`Other workspaces rely on this app's server route, which is served from this workspace. Transfer the app ownership to another workspace where it is installed, or uninstall it from all other workspaces, before uninstalling it here.`
@@ -160,6 +175,14 @@ export const SettingsApplicationDetailGeneralTab = ({
         />
       )}
       <SettingsApplicationConnectionsSection applicationId={application.id} />
+      {canManageApplications &&
+        isAppPreferencesEnabled &&
+        isOAuthOnlyApplication && (
+          <SettingsApplicationAuthorizedMembersSection
+            applicationId={application.id}
+            applicationName={displayName}
+          />
+        )}
     </>
   );
 };
