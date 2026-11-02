@@ -8,9 +8,9 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceMigrationRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/workspace-migration-runner.service';
 
-@RegisteredWorkspaceCommand('2.55.0', 1793633232324)
+@RegisteredWorkspaceCommand('2.56.0', 1793638558015)
 @Command({
-  name: 'upgrade:2-55:make-agent-turn-thread-optional',
+  name: 'upgrade:2-56:make-agent-turn-thread-optional',
   description:
     'Let a one-shot AI run record its turn without a conversation thread',
 })

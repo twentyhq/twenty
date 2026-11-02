@@ -33,7 +33,7 @@ export class AgentConversationWriterService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  // TODO(@FelixMalfait): drop these upgrade fences once 2-55's make-agent-turn-thread-optional and
+  // TODO(@FelixMalfait): drop these upgrade fences once 2-56's make-agent-turn-thread-optional and
   // add-agent-turn-result have reached every workspace. A one-shot run reads its turn's result when
   // retried, so it waits for both
   async canInsertTurnWithoutThread(workspaceId: string): Promise<boolean> {
