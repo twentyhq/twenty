@@ -1297,7 +1297,7 @@ msgstr "Ett annat inställningsmenyalternativ använder redan position {nextPosi
 #. js-lingui-id: b2UKvQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item already uses slug \"{slug}\""
-msgstr ""
+msgstr "Ett annat menyalternativ för inställningar använder redan sluggen \"{slug}\""
 
 #. js-lingui-id: wkZ3ZX
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
@@ -1310,7 +1310,7 @@ msgstr "Ett annat inställningsmenyalternativ i den här applikationen använder
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item of this application already uses this slug."
-msgstr ""
+msgstr "Ett annat menyalternativ för inställningar i denna applikation använder redan denna slugg."
 
 #. js-lingui-id: 8IMyyd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -12378,12 +12378,12 @@ msgstr "Omfattningen \"{nextScope}\" för inställningsmenyalternativet är ogil
 #. js-lingui-id: nI9Ltr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item slug \"{slug}\" is reserved"
-msgstr ""
+msgstr "Sluggen \"{slug}\" för menyalternativet för inställningar är reserverad"
 
 #. js-lingui-id: x515yK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item slug \"{slug}\" must be lowercase kebab-case and at most {SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH} characters"
-msgstr ""
+msgstr "Sluggen \"{slug}\" för menyalternativet för inställningar måste vara i kebab-case med gemener och högst {SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH} tecken"
 
 #. js-lingui-id: uBunB1
 #. placeholder {0}: flatSettingsMenuItem.title
@@ -14885,7 +14885,7 @@ msgstr "Omfattningen för det här inställningsmenyalternativet stöds inte."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "This settings menu item slug is invalid or reserved."
-msgstr ""
+msgstr "Denna slug för inställningsmenyalternativ är ogiltig eller reserverad."
 
 #. js-lingui-id: sHo3IM
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts

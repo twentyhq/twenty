@@ -1297,7 +1297,7 @@ msgstr "Một mục menu cài đặt khác đã sử dụng vị trí {nextPosit
 #. js-lingui-id: b2UKvQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item already uses slug \"{slug}\""
-msgstr ""
+msgstr "Một mục menu cài đặt khác đã sử dụng slug \"{slug}\""
 
 #. js-lingui-id: wkZ3ZX
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
@@ -1310,7 +1310,7 @@ msgstr "Một mục menu cài đặt khác của ứng dụng này đã sử d�
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item of this application already uses this slug."
-msgstr ""
+msgstr "Một mục menu cài đặt khác của ứng dụng này đã sử dụng slug này."
 
 #. js-lingui-id: 8IMyyd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -12374,12 +12374,12 @@ msgstr "Phạm vi mục menu cài đặt \"{nextScope}\" không hợp lệ"
 #. js-lingui-id: nI9Ltr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item slug \"{slug}\" is reserved"
-msgstr ""
+msgstr "Slug mục menu cài đặt \"{slug}\" đã được dành riêng"
 
 #. js-lingui-id: x515yK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item slug \"{slug}\" must be lowercase kebab-case and at most {SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH} characters"
-msgstr ""
+msgstr "Slug mục menu cài đặt \"{slug}\" phải ở dạng kebab-case viết thường và có tối đa {SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH} ký tự"
 
 #. js-lingui-id: uBunB1
 #. placeholder {0}: flatSettingsMenuItem.title
@@ -14879,7 +14879,7 @@ msgstr "Phạm vi của mục menu cài đặt này không được hỗ trợ."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "This settings menu item slug is invalid or reserved."
-msgstr ""
+msgstr "Slug của mục menu cài đặt này không hợp lệ hoặc được dành riêng."
 
 #. js-lingui-id: sHo3IM
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts

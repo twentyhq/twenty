@@ -1297,7 +1297,7 @@ msgstr "Başka bir ayarlar menüsü öğesi zaten {nextPosition} konumunu kullan
 #. js-lingui-id: b2UKvQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item already uses slug \"{slug}\""
-msgstr ""
+msgstr "Başka bir ayarlar menüsü öğesi zaten \"{slug}\" slug'ını kullanıyor"
 
 #. js-lingui-id: wkZ3ZX
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
@@ -1310,7 +1310,7 @@ msgstr "Bu uygulamanın başka bir ayarlar menüsü öğesi zaten bu konumu kull
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item of this application already uses this slug."
-msgstr ""
+msgstr "Bu uygulamanın başka bir ayarlar menüsü öğesi bu slug'ı zaten kullanıyor."
 
 #. js-lingui-id: 8IMyyd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -12374,12 +12374,12 @@ msgstr "Ayarlar menüsü öğesi kapsamı \"{nextScope}\" geçersiz"
 #. js-lingui-id: nI9Ltr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item slug \"{slug}\" is reserved"
-msgstr ""
+msgstr "Ayarlar menüsü öğesi slug'ı \"{slug}\" ayrılmıştır"
 
 #. js-lingui-id: x515yK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item slug \"{slug}\" must be lowercase kebab-case and at most {SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH} characters"
-msgstr ""
+msgstr "Ayarlar menüsü öğesi slug'ı \"{slug}\", küçük harfli kebab-case biçiminde ve en fazla {SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH} karakter olmalıdır"
 
 #. js-lingui-id: uBunB1
 #. placeholder {0}: flatSettingsMenuItem.title
@@ -14879,7 +14879,7 @@ msgstr "Bu ayarlar menüsü öğesi kapsamı desteklenmiyor."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "This settings menu item slug is invalid or reserved."
-msgstr ""
+msgstr "Bu ayarlar menüsü öğesi slug'ı geçersiz veya ayrılmıştır."
 
 #. js-lingui-id: sHo3IM
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts

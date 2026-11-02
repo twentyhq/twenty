@@ -1297,7 +1297,7 @@ msgstr "Druga stavka menija podešavanja već koristi poziciju {nextPosition}"
 #. js-lingui-id: b2UKvQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item already uses slug \"{slug}\""
-msgstr ""
+msgstr "Druga stavka menija podešavanja već koristi slug \"{slug}\""
 
 #. js-lingui-id: wkZ3ZX
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
@@ -1310,7 +1310,7 @@ msgstr "Druga stavka menija podešavanja ove aplikacije već koristi ovu pozicij
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item of this application already uses this slug."
-msgstr ""
+msgstr "Druga stavka menija podešavanja ove aplikacije već koristi ovaj slug."
 
 #. js-lingui-id: 8IMyyd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -12374,12 +12374,12 @@ msgstr "Opseg stavke menija podešavanja \"{nextScope}\" je nevažeći"
 #. js-lingui-id: nI9Ltr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item slug \"{slug}\" is reserved"
-msgstr ""
+msgstr "Slug stavke menija podešavanja \"{slug}\" je rezervisan"
 
 #. js-lingui-id: x515yK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item slug \"{slug}\" must be lowercase kebab-case and at most {SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH} characters"
-msgstr ""
+msgstr "Slug stavke menija podešavanja \"{slug}\" mora biti u formatu kebab-case malim slovima i imati najviše {SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH} znakova"
 
 #. js-lingui-id: uBunB1
 #. placeholder {0}: flatSettingsMenuItem.title
@@ -14879,7 +14879,7 @@ msgstr "Opseg ove stavke menija podešavanja nije podržan."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "This settings menu item slug is invalid or reserved."
-msgstr ""
+msgstr "Slug stavke menija podešavanja je nevažeći ili rezervisan."
 
 #. js-lingui-id: sHo3IM
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts

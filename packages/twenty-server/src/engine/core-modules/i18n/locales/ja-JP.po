@@ -1297,7 +1297,7 @@ msgstr "別の設定メニュー項目がすでに位置 {nextPosition} を使�
 #. js-lingui-id: b2UKvQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item already uses slug \"{slug}\""
-msgstr ""
+msgstr "別の設定メニュー項目がすでにスラッグ \"{slug}\" を使用しています"
 
 #. js-lingui-id: wkZ3ZX
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
@@ -1310,7 +1310,7 @@ msgstr "このアプリケーションの別の設定メニュー項目がすで
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item of this application already uses this slug."
-msgstr ""
+msgstr "このアプリケーションの別の設定メニュー項目がすでにこのスラッグを使用しています。"
 
 #. js-lingui-id: 8IMyyd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -12374,12 +12374,12 @@ msgstr "設定メニュー項目のスコープ \"{nextScope}\" は無効です"
 #. js-lingui-id: nI9Ltr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item slug \"{slug}\" is reserved"
-msgstr ""
+msgstr "設定メニュー項目のスラッグ \"{slug}\" は予約されています"
 
 #. js-lingui-id: x515yK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item slug \"{slug}\" must be lowercase kebab-case and at most {SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH} characters"
-msgstr ""
+msgstr "設定メニュー項目のスラッグ \"{slug}\" は小文字のケバブケースで、{SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH} 文字以内である必要があります"
 
 #. js-lingui-id: uBunB1
 #. placeholder {0}: flatSettingsMenuItem.title
@@ -14879,7 +14879,7 @@ msgstr "この設定メニュー項目のスコープはサポートされてい
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "This settings menu item slug is invalid or reserved."
-msgstr ""
+msgstr "この設定メニュー項目のスラッグは無効か、予約済みです。"
 
 #. js-lingui-id: sHo3IM
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts

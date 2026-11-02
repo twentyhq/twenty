@@ -1297,7 +1297,7 @@ msgstr "Boshqa sozlamalar menyusi elementi {nextPosition} o‘rnidan allaqachon 
 #. js-lingui-id: b2UKvQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item already uses slug \"{slug}\""
-msgstr ""
+msgstr "Boshqa sozlamalar menyusi bandi allaqachon \"{slug}\" slugidan foydalanmoqda"
 
 #. js-lingui-id: wkZ3ZX
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
@@ -1310,7 +1310,7 @@ msgstr "Ushbu ilovaning boshqa sozlamalar menyusi elementi bu o‘rindan allaqac
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Another settings menu item of this application already uses this slug."
-msgstr ""
+msgstr "Ushbu ilovaning boshqa sozlamalar menyusi bandi allaqachon ushbu slugdan foydalanmoqda."
 
 #. js-lingui-id: 8IMyyd
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-timeline-activity-type-validator.service.ts
@@ -12374,12 +12374,12 @@ msgstr "Sozlamalar menyusi elementi ko‘lami \"{nextScope}\" yaroqsiz"
 #. js-lingui-id: nI9Ltr
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item slug \"{slug}\" is reserved"
-msgstr ""
+msgstr "\"{slug}\" sozlamalar menyusi bandi slugi zaxiralangan"
 
 #. js-lingui-id: x515yK
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "Settings menu item slug \"{slug}\" must be lowercase kebab-case and at most {SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH} characters"
-msgstr ""
+msgstr "\"{slug}\" sozlamalar menyusi bandi slugi kichik harflardagi kebab-case formatida va ko‘pi bilan {SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH} ta belgidan iborat bo‘lishi kerak"
 
 #. js-lingui-id: uBunB1
 #. placeholder {0}: flatSettingsMenuItem.title
@@ -14879,7 +14879,7 @@ msgstr "Bu sozlamalar menyusi elementi ko‘lami qo‘llab-quvvatlanmaydi."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-settings-menu-item-validator.service.ts
 msgid "This settings menu item slug is invalid or reserved."
-msgstr ""
+msgstr "Ushbu sozlamalar menyusi elementi slug’i noto‘g‘ri yoki band qilingan."
 
 #. js-lingui-id: sHo3IM
 #: src/engine/metadata-modules/settings-menu-item/settings-menu-item.exception.ts
