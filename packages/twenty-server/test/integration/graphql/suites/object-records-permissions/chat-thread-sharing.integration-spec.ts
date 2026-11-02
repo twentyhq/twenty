@@ -985,9 +985,7 @@ describe('Conversations through the record API', () => {
       await getAppProviderByClassName<WorkspaceCacheService>(
         'WorkspaceCacheService',
       ).getOrRecompute(SEED_APPLE_WORKSPACE_ID, ['userWorkspaceRoleMap']);
-    const roleId = userWorkspaceRoleMap[userWorkspaceId];
-
-    if (!isDefined(roleId)) {
+    if (!isDefined(userWorkspaceRoleMap[userWorkspaceId])) {
       throw new Error(`Seeded role of ${userWorkspaceId} is missing`);
     }
 
@@ -998,8 +996,8 @@ describe('Conversations through the record API', () => {
         .buildEventRecordAccessGate(batch)
         .resolveAdmittedRecordIds({
           workspaceId: SEED_APPLE_WORKSPACE_ID,
-          roleIds: [roleId],
-          workspaceMemberId: workspaceMemberId,
+          mainPrincipal: { workspaceMemberId },
+          applicationPrincipal: { isCustomApp: true },
         });
 
     return admittedRecordIds.has(threadId);

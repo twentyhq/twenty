@@ -16,6 +16,50 @@ const COMPONENT_SOURCE = `export default function render(container) {
   container.appendChild(button);
 }`;
 
+const COMPANY_PREVIEW_SOURCE = `import { CoreApiClient } from 'twenty-client-sdk/core';
+export default async function render(container) {
+  const result = await new CoreApiClient().query({ companies: {
+    edges: { node: { id: true, name: true, employees: true, idealCustomerProfile: true } },
+    totalCount: true,
+    pageInfo: { hasNextPage: true },
+  } });
+  const companies = result.companies.edges.map(({ node }) => node);
+  const heading = document.createElement('html-h2');
+  heading.textContent = 'Company size overview';
+  const summary = document.createElement('html-p');
+  const search = document.createElement('html-input');
+  search.setAttribute('aria-label', 'Search companies');
+  const sort = document.createElement('html-button');
+  const list = document.createElement('html-ul');
+  let filter = '';
+  let sortByName = false;
+  const update = () => {
+    const visible = companies
+      .filter(company => company.name.toLowerCase().includes(filter))
+      .sort((left, right) => sortByName
+        ? left.name.localeCompare(right.name)
+        : right.employees - left.employees);
+    summary.textContent = visible.length + ' companies listed, ' +
+      visible.filter(company => company.idealCustomerProfile).length + ' ideal customer profiles';
+    sort.textContent = sortByName ? 'Sort by size' : 'Sort by name';
+    list.replaceChildren(...visible.map(company => {
+      const item = document.createElement('html-li');
+      item.textContent = company.name + ': ' + company.employees + ' employees';
+      return item;
+    }));
+  };
+  search.addEventListener('input', event => { filter = event.target.value.toLowerCase(); update(); });
+  sort.addEventListener('click', () => { sortByName = !sortByName; update(); });
+  container.append(heading, summary, search, sort, list);
+  update();
+}`;
+
+const COMPANY_RECORDS = [
+  { id: 'acme', name: 'Acme', employees: 50, idealCustomerProfile: true },
+  { id: 'nova', name: 'Nova', employees: 220, idealCustomerProfile: false },
+  { id: 'orbit', name: 'Orbit', employees: 10, idealCustomerProfile: true },
+];
+
 const RUNTIME_ERROR_SOURCE = `export default function render() {
   throw new Error('Component crashed.');
 }`;
@@ -36,10 +80,22 @@ export const getFrontComponentPreviewMock = (draftId = 'current') => ({
       : PageLayoutType.DASHBOARD,
   isCurrent: draftId !== 'superseded',
   publishedComponentId: draftId === 'saved' ? 'saved-component' : undefined,
-  componentSource: RUNTIME_ERROR_SOURCES[draftId] ?? COMPONENT_SOURCE,
+  componentSource:
+    draftId === 'companies'
+      ? COMPANY_PREVIEW_SOURCE
+      : (RUNTIME_ERROR_SOURCES[draftId] ?? COMPONENT_SOURCE),
   applicationId: 'storybook-app',
   sharedDependenciesChecksum: 'storybook-checksum',
-  mockQueryResult: {},
+  mockQueryResult:
+    draftId === 'companies'
+      ? {
+          companies: {
+            edges: COMPANY_RECORDS.map((node) => ({ node })),
+            totalCount: COMPANY_RECORDS.length,
+            pageInfo: { hasNextPage: false },
+          },
+        }
+      : {},
 });
 
 export const seedFrontComponentPreviewWorkspace = (isEnabled = true) => {

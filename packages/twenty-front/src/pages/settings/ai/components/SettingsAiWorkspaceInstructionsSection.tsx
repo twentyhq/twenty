@@ -2,6 +2,7 @@ import { FormAdvancedTextFieldInput } from '@/advanced-text-editor/components/Fo
 import { AI_INSTRUCTIONS_EDITOR_PROFILE } from '@/ai/constants/AiInstructionsEditorProfile';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { CombinedGraphQLErrors } from '@apollo/client';
 import { useMutation } from '@apollo/client/react';
@@ -12,7 +13,11 @@ import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { useDebouncedCallback } from 'use-debounce';
-import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
+import {
+  PermissionFlagType,
+  UpdateWorkspaceDocument,
+} from '~/generated-metadata/graphql';
 
 const StyledInstructionsContainer = styled.div`
   display: flex;
@@ -22,6 +27,9 @@ const StyledInstructionsContainer = styled.div`
 
 export const SettingsAiWorkspaceInstructionsSection = () => {
   const { enqueueToast } = useToast();
+  const canEditInstructions = useHasPermissionFlag(
+    PermissionFlagType.WORKSPACE,
+  );
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
@@ -34,7 +42,13 @@ export const SettingsAiWorkspaceInstructionsSection = () => {
     useState(initialInstructions);
 
   const autoSave = useDebouncedCallback(async (newValue: string) => {
-    if (!currentWorkspace?.id || newValue === originalInstructions) return;
+    if (
+      !canEditInstructions ||
+      !isDefined(currentWorkspace) ||
+      newValue === originalInstructions
+    ) {
+      return;
+    }
     try {
       setCurrentWorkspace({
         ...currentWorkspace,
@@ -71,10 +85,15 @@ export const SettingsAiWorkspaceInstructionsSection = () => {
       <StyledInstructionsContainer>
         <FormAdvancedTextFieldInput
           key={originalInstructions}
-          readonly={false}
+          readonly={!canEditInstructions}
+          aria-label={t`Workspace Instructions`}
           defaultValue={workspaceInstructions}
           profile={AI_INSTRUCTIONS_EDITOR_PROFILE}
           onChange={(value) => {
+            if (!canEditInstructions) {
+              return;
+            }
+
             setWorkspaceInstructions(value);
             autoSave(value);
           }}

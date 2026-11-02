@@ -133,6 +133,7 @@ export default defineSettingsMenuItem({
   title: 'Sync',
   icon: 'IconRefresh',
   position: 1,
+  slug: 'sync',
 });
 ```
 
@@ -144,16 +145,25 @@ Declarați câte aveți nevoie. Propriul element **Generale** al Twenty — actu
 
 ### Câmpuri
 
-| Câmp                                | Descriere                                                                            |
-| ----------------------------------- | ------------------------------------------------------------------------------------ |
-| `universalIdentifier`               | Un UUID pe care îl generați o singură dată și îl dețineți, stabil între sincronizări |
-| `frontComponentUniversalIdentifier` | `universalIdentifier` al componentei front-end pe care o afișează acest element      |
-| `titlu`                             | Eticheta elementului. `General` este rezervat și compilarea eșuează                  |
-| `icon` *(opțional)*                 | Numele pictogramei, rezolvat pe client; un nume necunoscut revine la unul implicit   |
-| `position` *(opțional)*             | Ordinea de sortare, crescătoare. Implicit este `0`                                   |
-| `scope` *(opțional)*                | `WORKSPACE` (implicit) sau `USER`                                                    |
+| Câmp                                | Descriere                                                                                  |
+| ----------------------------------- | ------------------------------------------------------------------------------------------ |
+| `universalIdentifier`               | Un UUID pe care îl generați o singură dată și îl dețineți, stabil între sincronizări       |
+| `frontComponentUniversalIdentifier` | `universalIdentifier` al componentei front-end pe care o afișează acest element            |
+| `titlu`                             | Eticheta elementului. `General` este rezervat și compilarea eșuează                        |
+| `icon` *(opțional)*                 | Numele pictogramei, rezolvat pe client; un nume necunoscut revine la unul implicit         |
+| `position` *(opțional)*             | Ordinea de sortare, crescătoare. Implicit este `0`                                         |
+| `scope` *(opțional)*                | `WORKSPACE` (implicit) sau `USER`                                                          |
+| `slug` *(opțional)*                 | ID-ul filei în URL-ul paginii, de ex. `#sync`. Consultați [URL-uri ale filelor](#tab-urls) |
 
 `position` este un număr zecimal, astfel încât un element poate fi plasat între două elemente existente fără renumerotare. Elementele sunt sortate după `position` în ordine crescătoare, iar egalitățile sunt departajate după `universalIdentifier`, astfel încât ordinea este aceeași în fiecare spațiu de lucru. Două elemente ale aceleiași aplicații nu pot avea aceeași poziție în același domeniu — sincronizarea refuză acest lucru, în loc să lase ordinea instalării să decidă care este afișat primul.
+
+### URL-uri ale filelor
+
+Fila fiecărui element este identificată printr-un hash în URL-ul paginii, astfel încât să puteți crea direct un link către aceasta, de exemplu `/settings/applications/\<applicationId>#sync` sau `/settings/app-preferences/\<applicationId>#sync`. Setați `slug` pentru a alege acel hash; fără acesta, fila este identificată prin `universalIdentifier` al elementului. Adăugarea ulterioară a unui slug păstrează funcționale linkurile care folosesc `universalIdentifier`: acestea deschid aceeași filă.
+
+Un slug este în format kebab-case cu litere mici (litere, cifre și cratime simple, precum `sync` sau `sync-settings`) și are cel mult 64 de caractere. `general` și `variables` sunt rezervate pentru filele integrate, un slug în format UUID este respins deoarece ar putea masca linkul altei file, iar două elemente ale aceleiași aplicații nu pot partaja un slug, nici chiar în scopuri diferite. Atât buildul, cât și sincronizarea resping un slug care încalcă aceste reguli.
+
+După ce un membru conectează sau reconectează un cont în **Setări > Preferințe aplicație**, acesta ajunge la prima filă de element `USER` a aplicației, în ordinea `position`, sau la **Generale** atunci când aplicația nu declară niciun astfel de element.
 
 ### Domeniul spațiului de lucru și al utilizatorului
 

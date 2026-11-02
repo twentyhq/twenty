@@ -217,6 +217,68 @@ export const CALENDAR_CHANNELS = [
   ),
 ];
 
+export const FATHOM_USER_SETTINGS_MENU_ITEM_ID =
+  '20202020-1a2b-4c3d-8e4f-000000000051';
+export const FATHOM_USER_SETTINGS_FRONT_COMPONENT_ID =
+  '20202020-1a2b-4c3d-8e4f-000000000052';
+export const GRANOLA_USER_SETTINGS_MENU_ITEM_ID =
+  '20202020-1a2b-4c3d-8e4f-000000000053';
+const GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID =
+  '20202020-1a2b-4c3d-8e4f-000000000054';
+
+const buildUserSettingsApplicationPreferences = ({
+  applicationId,
+  settingsMenuItemId,
+  frontComponentId,
+  slug,
+}: {
+  applicationId: string;
+  settingsMenuItemId: string;
+  frontComponentId: string;
+  slug: string;
+}) => ({
+  __typename: 'ApplicationPreferences',
+  applicationId,
+  connectionProviders: [],
+  variables: [],
+  settingsMenuItems: [
+    {
+      __typename: 'SettingsMenuItem',
+      id: settingsMenuItemId,
+      universalIdentifier: settingsMenuItemId,
+      applicationId,
+      frontComponentId,
+      title: 'My settings',
+      icon: 'IconUser',
+      position: 1,
+      scope: 'USER',
+      slug,
+    },
+  ],
+});
+
+export const USER_SETTINGS_APPLICATION_PREFERENCES_GRAPHQL_HANDLER =
+  graphql.query('MyApplicationPreferences', () =>
+    HttpResponse.json({
+      data: {
+        myApplicationPreferences: [
+          buildUserSettingsApplicationPreferences({
+            applicationId: FATHOM_APPLICATION_ID,
+            settingsMenuItemId: FATHOM_USER_SETTINGS_MENU_ITEM_ID,
+            frontComponentId: FATHOM_USER_SETTINGS_FRONT_COMPONENT_ID,
+            slug: 'emails',
+          }),
+          buildUserSettingsApplicationPreferences({
+            applicationId: GRANOLA_APPLICATION_ID,
+            settingsMenuItemId: GRANOLA_USER_SETTINGS_MENU_ITEM_ID,
+            frontComponentId: GRANOLA_USER_SETTINGS_FRONT_COMPONENT_ID,
+            slug: 'my-settings',
+          }),
+        ],
+      },
+    }),
+  );
+
 const deletedAccountIds = new Set<string>();
 
 export const withoutDeletedAccounts = <TAccount extends { id: string }>(

@@ -2,12 +2,17 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type PermissionsPrincipalsWithRolesContext } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
+import { getPermissionsPrincipalRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-role-ids.util';
+import { getPermissionsPrincipalWorkspaceMemberId } from 'src/engine/permissions/principal/utils/get-permissions-principal-workspace-member-id.util';
 
 export const getPermissionsPrincipalShareKeys = (
-  principal: PermissionsPrincipal,
+  principal: PermissionsPrincipalsWithRolesContext,
 ): string[] => [
   ...new Set(
-    [principal.workspaceMemberId, ...principal.roleIds].filter(isDefined),
+    [
+      getPermissionsPrincipalWorkspaceMemberId(principal),
+      ...getPermissionsPrincipalRoleIds(principal),
+    ].filter(isDefined),
   ),
 ];
