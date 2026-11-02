@@ -47,7 +47,10 @@ import { computePermissionIntersection } from 'src/engine/permissions/role/utils
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/permissions/rls/utils/is-record-matching-rls-row-level-permission-predicate.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import {
+  type PermissionsPrincipal,
+  type PermissionsPrincipalMainActor,
+} from 'src/engine/permissions/principal/types/permissions-principal.type';
 import { buildUserRoleIdsBySource } from 'src/engine/permissions/principal/utils/build-user-role-ids-by-source.util';
 import { getRoleIdsToIntersect } from 'src/engine/permissions/principal/utils/get-role-ids-to-intersect.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -209,8 +212,12 @@ export class ObjectRecordEventPublisher {
     const principal: PermissionsPrincipal = buildPermissionsPrincipal({
       workspaceId: workspaceEventBatch.workspaceId,
       rolePermissionConfig,
-      workspaceMemberId: subscriberAuthContext.workspaceMemberId,
-    }) ?? { workspaceId: workspaceEventBatch.workspaceId };
+      mainActor: this.resolveSubscriberMainActor(subscriberAuthContext),
+    }) ?? {
+      workspaceId: workspaceEventBatch.workspaceId,
+      main: { roleId: null },
+      appRoleId: null,
+    };
     const admittedRecordIds =
       await eventRecordAccessGate.resolveAdmittedRecordIds(principal);
 
@@ -352,9 +359,7 @@ export class ObjectRecordEventPublisher {
         await this.commonSelectFieldsBuilder.findReadableObjectMetadataIds({
           principal: {
             ...principal,
-            main: isDefined(principal.main)
-              ? { roleId: principal.main.roleId }
-              : undefined,
+            main: { roleId: principal.main.roleId },
           },
           objectsPermissions,
           flatObjectMetadataMaps,
@@ -482,6 +487,24 @@ export class ObjectRecordEventPublisher {
   }
 
   // A stream created before the member id was stored only carries the user id
+  private resolveSubscriberMainActor(
+    subscriberAuthContext: SerializableAuthContext,
+  ): PermissionsPrincipalMainActor | undefined {
+    if (isDefined(subscriberAuthContext.workspaceMemberId)) {
+      return { workspaceMemberId: subscriberAuthContext.workspaceMemberId };
+    }
+
+    if (isDefined(subscriberAuthContext.apiKeyId)) {
+      return { apiKeyId: subscriberAuthContext.apiKeyId };
+    }
+
+    if (isDefined(subscriberAuthContext.applicationId)) {
+      return { applicationId: subscriberAuthContext.applicationId };
+    }
+
+    return undefined;
+  }
+
   private resolveSubscriberWorkspaceMemberId({
     subscriberAuthContext,
     workspaceMemberIdByUserId,

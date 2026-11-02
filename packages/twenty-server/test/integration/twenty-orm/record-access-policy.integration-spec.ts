@@ -16,6 +16,7 @@ import { type OperationType } from 'src/engine/permissions/role/utils/validate-o
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-role.constant';
+import { WORKSPACE_APP_ROLE_ID } from 'src/engine/permissions/principal/constants/workspace-app-role-id.constant';
 
 describe('RecordAccessPolicyService', () => {
   const recordId = randomUUID();
@@ -25,6 +26,7 @@ describe('RecordAccessPolicyService', () => {
   const missingRolePrincipal: PermissionsPrincipal = {
     workspaceId: SEED_APPLE_WORKSPACE_ID,
     main: { roleId: randomUUID() },
+    appRoleId: WORKSPACE_APP_ROLE_ID,
   };
 
   // Other suites wipe every person, so the record under test is created here
@@ -71,6 +73,7 @@ describe('RecordAccessPolicyService', () => {
     adminPrincipal = {
       workspaceId: SEED_APPLE_WORKSPACE_ID,
       main: { roleId: adminRoleId },
+      appRoleId: WORKSPACE_APP_ROLE_ID,
     };
   });
 

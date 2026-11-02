@@ -53,6 +53,7 @@ import { isPermissionFlagGrantedToFlatRole } from 'src/engine/metadata-modules/f
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
+import { WORKSPACE_APP_ROLE_ID } from 'src/engine/permissions/principal/constants/workspace-app-role-id.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const READABLE_THREAD_IDS_BATCH_SIZE = 1000;
@@ -332,6 +333,7 @@ export class AgentChatSharingService {
                   principal: {
                     workspaceId,
                     main: { roleId, workspaceMemberId: memberId },
+                    appRoleId: WORKSPACE_APP_ROLE_ID,
                   },
                   flatObjectMetadata: threadFlatObjectMetadata,
                   recordIds: [threadId],

@@ -23,7 +23,10 @@ export const computeObjectsPermissionsForRoles = ({
   flatFieldMetadataMaps,
   flatApplicationMaps,
 }: {
-  principal: Omit<PermissionsPrincipal, 'workspaceId'>;
+  principal: Pick<
+    PermissionsPrincipal,
+    'main' | 'limitingRoleId' | 'appRoleId'
+  >;
   rolesPermissions: ObjectsPermissionsByRoleId;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;

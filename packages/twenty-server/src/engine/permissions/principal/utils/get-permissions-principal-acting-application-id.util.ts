@@ -2,6 +2,7 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { WORKSPACE_APP_ROLE_ID } from 'src/engine/permissions/principal/constants/workspace-app-role-id.constant';
 import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principal/types/application-default-role-maps.type';
 import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
 import { getPermissionsPrincipalRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-role-ids.util';
@@ -11,17 +12,28 @@ export const getPermissionsPrincipalActingApplicationId = ({
   principal,
   flatApplicationMaps,
 }: {
-  principal: Omit<PermissionsPrincipal, 'workspaceId'>;
+  principal: Pick<
+    PermissionsPrincipal,
+    'main' | 'limitingRoleId' | 'appRoleId'
+  >;
   flatApplicationMaps: ApplicationDefaultRoleMaps;
 }): string | undefined => {
-  const { appRoleId } = principal;
+  const { main, appRoleId } = principal;
 
   if (
     !isDefined(appRoleId) ||
-    appRoleId === principal.main?.roleId ||
+    appRoleId === WORKSPACE_APP_ROLE_ID ||
     appRoleId === principal.limitingRoleId ||
     getPermissionsPrincipalRoleIds(principal).length === 0
   ) {
+    return undefined;
+  }
+
+  if ('applicationId' in main) {
+    return main.applicationId;
+  }
+
+  if (appRoleId === main.roleId) {
     return undefined;
   }
 

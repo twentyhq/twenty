@@ -12,6 +12,7 @@ import { type PermissionsRowAccessRequest } from 'src/engine/permissions/combine
 import { resolvePermissionsRowAccessOutcome } from 'src/engine/permissions/combine/utils/resolve-permissions-row-access-outcome.util';
 import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
+import { WORKSPACE_APP_ROLE_ID } from 'src/engine/permissions/principal/constants/workspace-app-role-id.constant';
 
 const APPLICATION_ID = 'application-id';
 const APPLICATION_ROLE_ID = 'application-role';
@@ -36,10 +37,12 @@ const readOnlyPermissions: ObjectPermissions = {
 const readOnlyPrincipal: PermissionsPrincipal = {
   workspaceId: 'workspace-id',
   main: { roleId: READ_ONLY_ROLE_ID },
+  appRoleId: WORKSPACE_APP_ROLE_ID,
 };
 
 const owningApplicationPrincipal: PermissionsPrincipal = {
   workspaceId: 'workspace-id',
+  main: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
   appRoleId: APPLICATION_ROLE_ID,
 };
 
@@ -102,6 +105,7 @@ describe('resolvePermissionsRowAccessOutcome', () => {
         principal: {
           ...readOnlyPrincipal,
           main: { roleId: 'missing-role' },
+          appRoleId: WORKSPACE_APP_ROLE_ID,
         },
       }),
     ).toBe(false);

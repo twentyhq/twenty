@@ -22,6 +22,7 @@ import { buildPermissionsCondition } from 'src/engine/permissions/combine/utils/
 import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/rls/utils/render-row-level-permission-filter-to-sql.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
+import { WORKSPACE_APP_ROLE_ID } from 'src/engine/permissions/principal/constants/workspace-app-role-id.constant';
 
 jest.mock(
   'src/engine/permissions/rls/utils/render-row-level-permission-filter-to-sql.util',
@@ -126,16 +127,19 @@ const buildConditionOutcome = (
 const readEverything: PermissionsPrincipal = {
   workspaceId: 'workspace-id',
   main: { roleId: FULL_ACCESS_ROLE_ID, workspaceMemberId: 'member-1' },
+  appRoleId: WORKSPACE_APP_ROLE_ID,
 };
 
 const owningApplication: PermissionsPrincipal = {
   workspaceId: 'workspace-id',
+  main: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
   appRoleId: APPLICATION_ROLE_ID,
 };
 
 const withoutObjectPermission: PermissionsPrincipal = {
   ...readEverything,
   main: { roleId: ROLE_WITHOUT_PERMISSION_ID, workspaceMemberId: 'member-1' },
+  appRoleId: WORKSPACE_APP_ROLE_ID,
 };
 
 const build = ({
@@ -292,6 +296,7 @@ describe('buildPermissionsCondition', () => {
       ...readEverything,
       limitingRoleId: 'role-2',
       main: { roleId: 'role-3', workspaceMemberId: 'member-1' },
+      appRoleId: WORKSPACE_APP_ROLE_ID,
     };
 
     it('narrows a principal without object permission to the records named for them', () => {
@@ -344,6 +349,8 @@ describe('buildPermissionsCondition', () => {
       expect(
         buildForCompany({
           workspaceId: 'workspace-id',
+          main: { roleId: null },
+          appRoleId: WORKSPACE_APP_ROLE_ID,
         }),
       ).toEqual({ kind: 'denied' });
     });

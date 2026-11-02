@@ -22,6 +22,7 @@ import { type PermissionsPrincipal } from 'src/engine/permissions/principal/type
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/permissions/record-share/types/record-share-grant.type';
+import { WORKSPACE_APP_ROLE_ID } from 'src/engine/permissions/principal/constants/workspace-app-role-id.constant';
 
 jest.mock(
   'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util',
@@ -102,16 +103,19 @@ const fullAccess = {
 const rolePrincipal: PermissionsPrincipal = {
   workspaceId: 'workspace-id',
   main: { roleId: MEMBER_ROLE_ID },
+  appRoleId: WORKSPACE_APP_ROLE_ID,
 };
 
 const memberPrincipal: PermissionsPrincipal = {
   ...rolePrincipal,
   main: { roleId: MEMBER_ROLE_ID, workspaceMemberId: MEMBER_ID },
+  appRoleId: WORKSPACE_APP_ROLE_ID,
 };
 
 const deniedPrincipal: PermissionsPrincipal = {
   ...memberPrincipal,
   main: { roleId: 'missing-role', workspaceMemberId: MEMBER_ID },
+  appRoleId: WORKSPACE_APP_ROLE_ID,
 };
 
 const filterByStatus = (status: string) =>

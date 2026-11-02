@@ -10,15 +10,18 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/permissions/role/utils/get-objects-permissions-from-role-permission-config.util';
 import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principal/types/application-default-role-maps.type';
+import { type PermissionsPrincipalMainActor } from 'src/engine/permissions/principal/types/permissions-principal.type';
 
 export const resolveObjectRecordsPermissions = ({
   rolePermissionConfig,
+  mainActor,
   objectPermissionsByRoleId,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   flatApplicationMaps,
 }: {
   rolePermissionConfig?: RolePermissionConfig;
+  mainActor: PermissionsPrincipalMainActor | undefined;
   objectPermissionsByRoleId: ObjectsPermissionsByRoleId;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
@@ -45,6 +48,7 @@ export const resolveObjectRecordsPermissions = ({
   return {
     objectRecordsPermissions: getObjectsPermissionsFromRolePermissionConfig({
       rolePermissionConfig,
+      mainActor,
       rolesPermissions: objectPermissionsByRoleId,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,

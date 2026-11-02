@@ -32,6 +32,7 @@ import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/a
 import { type FlatObjectPermission } from 'src/engine/metadata-modules/flat-object-permission/types/flat-object-permission.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { getPermissionsPrincipalMainActor } from 'src/engine/permissions/principal/utils/get-permissions-principal-main-actor.util';
 import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/permissions/role/utils/get-objects-permissions-from-role-permission-config.util';
@@ -40,7 +41,6 @@ import { RECORDS_TOOL_WIDGET_NAME, ToolCategory } from 'twenty-shared/ai';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 
 @Injectable()
 export class DatabaseToolProvider implements ToolProvider {
@@ -94,6 +94,9 @@ export class DatabaseToolProvider implements ToolProvider {
     const objectPermissions = getObjectsPermissionsFromRolePermissionConfig({
       rolesPermissions,
       rolePermissionConfig: context.rolePermissionConfig,
+      mainActor: isDefined(context.authContext)
+        ? getPermissionsPrincipalMainActor(context.authContext)
+        : undefined,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatApplicationMaps,
@@ -106,10 +109,9 @@ export class DatabaseToolProvider implements ToolProvider {
     const principal = buildPermissionsPrincipal({
       workspaceId: context.workspaceId,
       rolePermissionConfig: context.rolePermissionConfig,
-      workspaceMemberId:
-        isDefined(context.authContext) && isUserAuthContext(context.authContext)
-          ? context.authContext.workspaceMemberId
-          : undefined,
+      mainActor: isDefined(context.authContext)
+        ? getPermissionsPrincipalMainActor(context.authContext)
+        : undefined,
     });
 
     const { explicitObjectGrantsRoleId } = context;

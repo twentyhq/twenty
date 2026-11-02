@@ -40,6 +40,7 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { type RoleIdsBySource } from 'src/engine/permissions/principal/types/role-permission-config.type';
+import { getPermissionsPrincipalMainActor } from 'src/engine/permissions/principal/utils/get-permissions-principal-main-actor.util';
 import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/permissions/role/utils/get-objects-permissions-from-role-permission-config.util';
 
@@ -146,13 +147,12 @@ export abstract class RestApiBaseHandler {
       principal: buildPermissionsPrincipal({
         workspaceId: authContext.workspace.id,
         rolePermissionConfig,
-        workspaceMemberId: isUserAuthContext(authContext)
-          ? authContext.workspaceMemberId
-          : undefined,
+        mainActor: getPermissionsPrincipalMainActor(authContext),
       }),
       objectsPermissions: getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
         rolePermissionConfig,
+        mainActor: getPermissionsPrincipalMainActor(authContext),
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatApplicationMaps,

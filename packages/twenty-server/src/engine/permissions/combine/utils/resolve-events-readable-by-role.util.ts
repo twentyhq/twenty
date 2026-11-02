@@ -12,11 +12,13 @@ import { type PermissionsPrincipal } from 'src/engine/permissions/principal/type
 export const resolveEventsReadableByRole = async <
   TEvent extends ObjectRecordEvent,
 >({
+  applicationId,
   roleId,
   workspaceEventBatch,
   eventRecordAccessGate,
   metadataMaps,
 }: {
+  applicationId: string;
   roleId: string | null;
   workspaceEventBatch: WorkspaceEventBatch<TEvent>;
   eventRecordAccessGate: EventRecordAccessGate;
@@ -28,6 +30,7 @@ export const resolveEventsReadableByRole = async <
 
   const principal: PermissionsPrincipal = {
     workspaceId: workspaceEventBatch.workspaceId,
+    main: { roleId, applicationId },
     appRoleId: roleId,
   };
   const objectsPermissions = getPermissionsPrincipalObjectsPermissions({

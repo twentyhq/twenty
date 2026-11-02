@@ -16,6 +16,7 @@ import {
 import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
+import { WORKSPACE_APP_ROLE_ID } from 'src/engine/permissions/principal/constants/workspace-app-role-id.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type RecordSharePrincipal = Pick<
@@ -127,6 +128,7 @@ export class RecordSharePrincipalService {
       const rolePrincipal: PermissionsPrincipal = {
         workspaceId,
         main: { roleId },
+        appRoleId: WORKSPACE_APP_ROLE_ID,
       };
 
       if (
@@ -156,6 +158,7 @@ export class RecordSharePrincipalService {
         principal: {
           workspaceId,
           main: { roleId, workspaceMemberId: principal.principalId },
+          appRoleId: WORKSPACE_APP_ROLE_ID,
         },
         flatObjectMetadata,
         operationType: 'select',

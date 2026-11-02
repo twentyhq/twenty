@@ -72,6 +72,7 @@ const updateEvent: ObjectRecordUpdateEvent = {
 
 const resolveForApplication = (applicationId: string) =>
   resolveEventsReadableByRole({
+    applicationId,
     roleId: ROLE_ID,
     workspaceEventBatch: {
       name: 'invoice.updated',

@@ -29,6 +29,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
+import { WORKSPACE_APP_ROLE_ID } from 'src/engine/permissions/principal/constants/workspace-app-role-id.constant';
 
 const workspaceId = SEED_APPLE_WORKSPACE_ID;
 const SEARCH_TERM = `Quorvex${randomUUID().slice(0, 8)}`;
@@ -314,6 +315,7 @@ describe('A restricted record on an object open by default', () => {
             roleId: memberRole.id,
             workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
           },
+          appRoleId: WORKSPACE_APP_ROLE_ID,
         });
 
     expect([...admittedRecordIds]).toEqual([OPEN_COMPANY_ID]);

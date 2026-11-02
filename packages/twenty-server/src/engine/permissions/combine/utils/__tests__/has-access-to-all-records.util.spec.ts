@@ -1,6 +1,7 @@
 /* @license Enterprise */
 
 import { type ObjectPermissions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
@@ -8,6 +9,7 @@ import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/comb
 import { hasAccessToAllRecords } from 'src/engine/permissions/combine/utils/has-access-to-all-records.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
+import { WORKSPACE_APP_ROLE_ID } from 'src/engine/permissions/principal/constants/workspace-app-role-id.constant';
 
 jest.mock(
   'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util',
@@ -17,7 +19,10 @@ const APPLICATION_ID = 'application-id';
 const APPLICATION_ROLE_ID = 'application-role';
 const READ_ONLY_ROLE_ID = 'read-only-role';
 const OTHER_APPLICATION_ROLE_ID = 'other-application-role';
-const APPLICATION_ROLE_IDS = [APPLICATION_ROLE_ID, OTHER_APPLICATION_ROLE_ID];
+const APPLICATION_ID_BY_ROLE_ID: Record<string, string> = {
+  [APPLICATION_ROLE_ID]: APPLICATION_ID,
+  [OTHER_APPLICATION_ROLE_ID]: 'other-application-id',
+};
 
 const flatObjectMetadata = {
   ...COMPANY_FLAT_OBJECT_MOCK,
@@ -47,9 +52,12 @@ const hasAccess = ({
   const request: PermissionsObjectAccessRequest = {
     principal: {
       workspaceId: 'workspace-id',
-      ...(APPLICATION_ROLE_IDS.includes(roleId)
-        ? { appRoleId: roleId }
-        : { main: { roleId } }),
+      ...(isDefined(APPLICATION_ID_BY_ROLE_ID[roleId])
+        ? {
+            main: { roleId, applicationId: APPLICATION_ID_BY_ROLE_ID[roleId] },
+            appRoleId: roleId,
+          }
+        : { main: { roleId }, appRoleId: WORKSPACE_APP_ROLE_ID }),
     },
     metadataMaps: {
       flatFieldMetadataMaps: createEmptyFlatEntityMaps(),

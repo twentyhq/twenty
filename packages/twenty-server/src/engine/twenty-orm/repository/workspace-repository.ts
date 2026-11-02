@@ -20,7 +20,6 @@ import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { findPrivateRecordStates } from 'src/engine/permissions/private-record/utils/find-private-record-states.util';
 import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/utils/is-private-record-enabled.util';
-import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { isRecordStockTrackedObject } from 'src/engine/core-modules/usage-limit/utils/is-record-stock-tracked-object.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
@@ -109,6 +108,7 @@ import {
   type WorkspaceRelationShape,
   type WorkspaceTableShape,
 } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
+import { getPermissionsPrincipalMainActor } from 'src/engine/permissions/principal/utils/get-permissions-principal-main-actor.util';
 import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
 
 const ALWAYS_FALSE_CONDITION = '1=0';
@@ -2295,10 +2295,12 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     return (this.permissionsPrincipal ??= buildPermissionsPrincipal({
       workspaceId: this.options.internalContext.workspaceId,
       rolePermissionConfig: this.options.rolePermissionConfig,
-      workspaceMemberId: isUserAuthContext(this.options.authContext)
-        ? this.options.authContext.workspaceMemberId
-        : undefined,
-    }) ?? { workspaceId: this.options.internalContext.workspaceId });
+      mainActor: getPermissionsPrincipalMainActor(this.options.authContext),
+    }) ?? {
+      workspaceId: this.options.internalContext.workspaceId,
+      main: { roleId: null },
+      appRoleId: null,
+    });
   }
 
   private resolvePermissionsMetadataMaps(): PermissionsMetadataMaps {
