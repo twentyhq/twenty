@@ -4,23 +4,20 @@ import { t } from '@lingui/core/macro';
 
 type WorkflowAiAgentPromptFieldProps = {
   prompt: string | undefined;
-  hint?: string;
   readonly: boolean;
   onPromptChange: (prompt: string) => void;
 };
 
 export const WorkflowAiAgentPromptField = ({
   prompt,
-  hint,
   readonly,
   onPromptChange,
 }: WorkflowAiAgentPromptFieldProps) => (
   <FormTextFieldInput
     multiline
     VariablePicker={WorkflowVariablePicker}
-    label={t`Input (Prompt)`}
+    label={t`Prompt`}
     placeholder={t`Describe what you want the AI to do...`}
-    hint={hint}
     defaultValue={prompt ?? ''}
     onChange={onPromptChange}
     readonly={readonly}
