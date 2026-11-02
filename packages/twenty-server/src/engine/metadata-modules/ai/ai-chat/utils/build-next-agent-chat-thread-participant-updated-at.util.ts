@@ -1,6 +1,5 @@
 import { isDefined } from 'twenty-shared/utils';
 
-// A row version the front compares, so it always moves past the stored one
 export const buildNextAgentChatThreadParticipantUpdatedAt = (
   previousUpdatedAt: Date | string | null | undefined,
 ): string =>
