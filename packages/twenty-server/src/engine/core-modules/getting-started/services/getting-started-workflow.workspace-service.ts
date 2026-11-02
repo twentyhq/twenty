@@ -11,7 +11,7 @@ import {
   GettingStartedExceptionCode,
 } from 'src/engine/core-modules/getting-started/getting-started.exception';
 import {
-  GETTING_STARTED_WORKFLOW_USER_VAR_KEY_PREFIX,
+  GETTING_STARTED_WORKFLOW_USER_VARIABLE_KEY_PREFIX,
   type GettingStartedKeyValueTypeMap,
 } from 'src/engine/core-modules/getting-started/types/getting-started-key-value-type-map.type';
 import { type GettingStartedWorkflow } from 'src/engine/core-modules/getting-started/types/getting-started-workflow.type';
@@ -53,7 +53,7 @@ export class GettingStartedWorkflowWorkspaceService {
       async () => {
         const savedWorkflow = await this.userVarsService.get({
           workspaceId,
-          key: `${GETTING_STARTED_WORKFLOW_USER_VAR_KEY_PREFIX}${stepActionKey}`,
+          key: `${GETTING_STARTED_WORKFLOW_USER_VARIABLE_KEY_PREFIX}${stepActionKey}`,
         });
 
         const savedCoreWorkflow = isDefined(savedWorkflow)
@@ -120,7 +120,7 @@ export class GettingStartedWorkflowWorkspaceService {
 
     await this.userVarsService.set({
       workspaceId,
-      key: `${GETTING_STARTED_WORKFLOW_USER_VAR_KEY_PREFIX}${stepActionKey}`,
+      key: `${GETTING_STARTED_WORKFLOW_USER_VARIABLE_KEY_PREFIX}${stepActionKey}`,
       value: workflow,
     });
 

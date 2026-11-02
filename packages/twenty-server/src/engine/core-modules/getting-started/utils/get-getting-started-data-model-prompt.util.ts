@@ -4,7 +4,10 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { type WorkspaceCompanyEnrichment } from 'twenty-shared/workspace';
 
 export const getGettingStartedDataModelPrompt = (
-  companyEnrichment: WorkspaceCompanyEnrichment | null,
+  companyEnrichment: Pick<
+    WorkspaceCompanyEnrichment,
+    'name' | 'industry'
+  > | null,
 ): MessageDescriptor => {
   const companyName = companyEnrichment?.name;
   const industry = companyEnrichment?.industry;

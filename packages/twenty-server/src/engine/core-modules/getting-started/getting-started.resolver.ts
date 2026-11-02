@@ -62,7 +62,7 @@ export class GettingStartedResolver {
       userWorkspaceId,
     });
 
-    return this.buildProgressDTO({ progress, context });
+    return this.buildProgressDTO({ progress, locale: context.req.locale });
   }
 
   @Mutation(() => GettingStartedProgressDTO)
@@ -81,17 +81,17 @@ export class GettingStartedResolver {
       input,
     });
 
-    return this.buildProgressDTO({ progress, context });
+    return this.buildProgressDTO({ progress, locale: context.req.locale });
   }
 
   private buildProgressDTO({
     progress,
-    context,
+    locale,
   }: {
     progress: GettingStartedProgress;
-    context: I18nContext;
+    locale: I18nContext['req']['locale'];
   }): GettingStartedProgressDTO {
-    const i18nInstance = this.i18nService.getI18nInstance(context.req.locale);
+    const i18nInstance = this.i18nService.getI18nInstance(locale);
     const { companyEnrichment, stepActionKeys, ...progressFields } = progress;
 
     return {

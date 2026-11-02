@@ -21,11 +21,11 @@ import { GETTING_STARTED_STEP_ACTION_KEYS_BY_PROFILE } from 'src/engine/core-mod
 import { type UpdateGettingStartedInput } from 'src/engine/core-modules/getting-started/dtos/update-getting-started.input';
 import { GettingStartedStepActionKey } from 'src/engine/core-modules/getting-started/enums/getting-started-step-action-key.enum';
 import {
-  GETTING_STARTED_COMPLETED_STEP_USER_VAR_KEY_PREFIX,
-  GETTING_STARTED_HIDDEN_USER_VAR_KEY,
-  GETTING_STARTED_SELECTED_STEP_USER_VAR_KEY,
-  GETTING_STARTED_SNOOZED_UNTIL_USER_VAR_KEY,
-  GETTING_STARTED_STEP_ACTION_KEYS_USER_VAR_KEY,
+  GETTING_STARTED_COMPLETED_STEP_USER_VARIABLE_KEY_PREFIX,
+  GETTING_STARTED_HIDDEN_USER_VARIABLE_KEY,
+  GETTING_STARTED_SELECTED_STEP_USER_VARIABLE_KEY,
+  GETTING_STARTED_SNOOZED_UNTIL_USER_VARIABLE_KEY,
+  GETTING_STARTED_STEP_ACTION_KEYS_USER_VARIABLE_KEY,
   type GettingStartedKeyValueTypeMap,
 } from 'src/engine/core-modules/getting-started/types/getting-started-key-value-type-map.type';
 import { type GettingStartedProgress } from 'src/engine/core-modules/getting-started/types/getting-started-progress.type';
@@ -111,7 +111,7 @@ export class GettingStartedService {
       userEmail,
       workspaceId,
       savedStepActionKeys: userVars.get(
-        GETTING_STARTED_STEP_ACTION_KEYS_USER_VAR_KEY,
+        GETTING_STARTED_STEP_ACTION_KEYS_USER_VARIABLE_KEY,
       ),
       companyEnrichment,
       companyEnrichmentAttempt:
@@ -128,7 +128,7 @@ export class GettingStartedService {
     const isSavedAsCompleted = (stepActionKey: GettingStartedStepActionKey) =>
       isDefined(
         userVars.get(
-          `${GETTING_STARTED_COMPLETED_STEP_USER_VAR_KEY_PREFIX}${stepActionKey}`,
+          `${GETTING_STARTED_COMPLETED_STEP_USER_VARIABLE_KEY_PREFIX}${stepActionKey}`,
         ),
       );
 
@@ -153,10 +153,10 @@ export class GettingStartedService {
     );
 
     const savedSelectedStepActionKey = userVars.get(
-      GETTING_STARTED_SELECTED_STEP_USER_VAR_KEY,
+      GETTING_STARTED_SELECTED_STEP_USER_VARIABLE_KEY,
     );
     const snoozedUntil = userVars.get(
-      GETTING_STARTED_SNOOZED_UNTIL_USER_VAR_KEY,
+      GETTING_STARTED_SNOOZED_UNTIL_USER_VARIABLE_KEY,
     );
 
     return {
@@ -168,7 +168,7 @@ export class GettingStartedService {
           (stepActionKey) => stepActionKey === savedSelectedStepActionKey,
         ) ?? null,
       snoozedUntil: isNonEmptyString(snoozedUntil) ? snoozedUntil : null,
-      isHidden: userVars.get(GETTING_STARTED_HIDDEN_USER_VAR_KEY) ?? false,
+      isHidden: userVars.get(GETTING_STARTED_HIDDEN_USER_VARIABLE_KEY) ?? false,
     };
   }
 
@@ -185,7 +185,7 @@ export class GettingStartedService {
       await this.userVarsService.set({
         userId,
         workspaceId,
-        key: GETTING_STARTED_SELECTED_STEP_USER_VAR_KEY,
+        key: GETTING_STARTED_SELECTED_STEP_USER_VARIABLE_KEY,
         value: input.selectedStepActionKey,
       });
     }
@@ -194,7 +194,7 @@ export class GettingStartedService {
       await this.userVarsService.set({
         userId,
         workspaceId,
-        key: GETTING_STARTED_SNOOZED_UNTIL_USER_VAR_KEY,
+        key: GETTING_STARTED_SNOOZED_UNTIL_USER_VARIABLE_KEY,
         value: input.snoozedUntil,
       });
     }
@@ -203,7 +203,7 @@ export class GettingStartedService {
       await this.userVarsService.set({
         userId,
         workspaceId,
-        key: GETTING_STARTED_HIDDEN_USER_VAR_KEY,
+        key: GETTING_STARTED_HIDDEN_USER_VARIABLE_KEY,
         value: input.isHidden,
       });
     }
@@ -236,7 +236,7 @@ export class GettingStartedService {
     await this.userVarsService.setIfNotExists({
       userId,
       workspaceId,
-      key: `${GETTING_STARTED_COMPLETED_STEP_USER_VAR_KEY_PREFIX}${stepActionKey}`,
+      key: `${GETTING_STARTED_COMPLETED_STEP_USER_VARIABLE_KEY_PREFIX}${stepActionKey}`,
       value: { completedAt: new Date().toISOString() },
     });
   }
@@ -270,7 +270,7 @@ export class GettingStartedService {
       await this.userVarsService.setIfNotExists({
         userId,
         workspaceId,
-        key: GETTING_STARTED_STEP_ACTION_KEYS_USER_VAR_KEY,
+        key: GETTING_STARTED_STEP_ACTION_KEYS_USER_VARIABLE_KEY,
         value: stepActionKeys,
       });
     }
