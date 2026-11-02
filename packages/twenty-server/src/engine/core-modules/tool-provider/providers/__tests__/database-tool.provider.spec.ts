@@ -1,4 +1,5 @@
 import { type ObjectPermissions } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { type ApplicationTranslationCatalogService } from 'src/engine/metadata-modules/application-translation-catalog/services/application-translation-catalog.service';
@@ -10,6 +11,8 @@ import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/me
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { type RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
+import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -51,6 +54,25 @@ type GenerateDescriptorsTestOptions = {
   composedObjectPermissions?: Partial<ObjectPermissions>;
   explicitPermissionRowsRoleId?: string;
   rolePermissionConfig?: RolePermissionConfig;
+  sharedOperationTypes?: OperationType[];
+};
+
+const OBJECT_PERMISSION_BY_OPERATION_TYPE: Partial<
+  Record<
+    OperationType,
+    keyof Pick<
+      ObjectPermissions,
+      | 'canReadObjectRecords'
+      | 'canUpdateObjectRecords'
+      | 'canSoftDeleteObjectRecords'
+      | 'canDestroyObjectRecords'
+    >
+  >
+> = {
+  select: 'canReadObjectRecords',
+  update: 'canUpdateObjectRecords',
+  'soft-delete': 'canSoftDeleteObjectRecords',
+  delete: 'canDestroyObjectRecords',
 };
 
 describe('DatabaseToolProvider', () => {
@@ -137,8 +159,27 @@ describe('DatabaseToolProvider', () => {
       }),
     } as unknown as ApplicationTranslationCatalogService;
 
+    const objectPermissions = {
+      ...allObjectPermissions,
+      ...options?.composedObjectPermissions,
+    };
+    const recordAccessPolicyService = {
+      hasAccessToSomeRecords: jest.fn(
+        async ({ operationType }: { operationType: OperationType }) => {
+          const objectPermission =
+            OBJECT_PERMISSION_BY_OPERATION_TYPE[operationType];
+
+          return (
+            (options?.sharedOperationTypes ?? []).includes(operationType) ||
+            (isDefined(objectPermission) && objectPermissions[objectPermission])
+          );
+        },
+      ),
+    } as unknown as RecordAccessPolicyService;
+
     const provider = new DatabaseToolProvider(
       workspaceCacheService,
+      recordAccessPolicyService,
       flatEntityMapsCacheService,
       i18nService,
       applicationTranslationCatalogService,
@@ -299,6 +340,40 @@ describe('DatabaseToolProvider', () => {
     expect(descriptorNames).toContain('update_many_note_targets');
     expect(descriptorNames).not.toContain('merge_many_note_targets');
     expect(descriptorNames).not.toContain('merge_many_dashboards');
+  });
+
+  it('advertises read and update tools on records shared beyond the role, but no create', async () => {
+    const descriptorNames = await generateDescriptorNames(
+      [createFlatObject({ nameSingular: 'company', namePlural: 'companies' })],
+      {
+        composedObjectPermissions: {
+          canReadObjectRecords: false,
+          canUpdateObjectRecords: false,
+          canSoftDeleteObjectRecords: false,
+          canDestroyObjectRecords: false,
+        },
+        sharedOperationTypes: ['select', 'update'],
+      },
+    );
+
+    expect(descriptorNames).toEqual(
+      expect.arrayContaining([
+        'find_many_companies',
+        'find_one_company',
+        'update_one_company',
+        'update_many_companies',
+      ]),
+    );
+
+    for (const roleOnlyToolName of [
+      'create_one_company',
+      'create_many_companies',
+      'upsert_many_companies',
+      'delete_one_company',
+      'merge_many_companies',
+    ]) {
+      expect(descriptorNames).not.toContain(roleOnlyToolName);
+    }
   });
 
   it('does not advertise merge without the destroy permission', async () => {

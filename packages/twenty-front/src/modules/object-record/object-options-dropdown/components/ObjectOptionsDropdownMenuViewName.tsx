@@ -12,7 +12,7 @@ import { viewPickerSelectedIconComponentState } from '@/views/view-picker/states
 import { styled } from '@linaria/react';
 import { useEffect, useRef, useState } from 'react';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
 const StyledDropdownMenuIconAndNameContainer = styled.div`

@@ -1,26 +1,19 @@
 import { type ActorMetadata } from 'twenty-shared/types';
 
-// Only workflows of installed applications bind their runs; the workspace custom application acts across applications
+// A run acts through the application owning its workflow, whoever starts it
 export const buildWorkflowRunCreatedBy = ({
   source,
   workflowApplicationId,
-  workspaceCustomApplicationId,
 }: {
   source: ActorMetadata;
   workflowApplicationId: string;
-  workspaceCustomApplicationId: string;
 }): ActorMetadata => {
-  const runApplicationId =
-    workflowApplicationId === workspaceCustomApplicationId
-      ? undefined
-      : workflowApplicationId;
-
-  if (source.context?.applicationId === runApplicationId) {
+  if (source.context?.applicationId === workflowApplicationId) {
     return source;
   }
 
   return {
     ...source,
-    context: { ...source.context, applicationId: runApplicationId },
+    context: { ...source.context, applicationId: workflowApplicationId },
   };
 };

@@ -35,7 +35,7 @@ type RelationsSelectFlatFieldMetadata = FieldSelectionFlatFieldMetadata &
 
 type RelationsSelectObjectsPermissions = Record<
   string,
-  Pick<ObjectPermissions, 'canReadObjectRecords' | 'restrictedFields'>
+  Pick<ObjectPermissions, 'restrictedFields'>
 >;
 
 export const buildRelationSelectionFromDepth = ({
@@ -44,6 +44,7 @@ export const buildRelationSelectionFromDepth = ({
   flatObjectMetadata,
   flatFields,
   objectsPermissions,
+  readableObjectMetadataIds,
   depth,
   onlyUseLabelIdentifierFieldsInRelations = false,
   currentDepthLevelIsAJunctionTable = false,
@@ -54,6 +55,7 @@ export const buildRelationSelectionFromDepth = ({
   flatObjectMetadata: RelationsSelectFlatObjectMetadata;
   flatFields: readonly RelationsSelectFlatFieldMetadata[];
   objectsPermissions: RelationsSelectObjectsPermissions;
+  readableObjectMetadataIds: ReadonlySet<string>;
   depth: SelectionDepth | undefined;
   onlyUseLabelIdentifierFieldsInRelations?: boolean;
   currentDepthLevelIsAJunctionTable?: boolean;
@@ -98,8 +100,12 @@ export const buildRelationSelectionFromDepth = ({
         flatEntityId: flatField.relationTargetObjectMetadataId,
       });
 
+    const relationTargetObjectPermissions =
+      objectsPermissions[relationTargetObjectMetadata.id];
+
     if (
-      !objectsPermissions[relationTargetObjectMetadata.id]?.canReadObjectRecords
+      !readableObjectMetadataIds.has(relationTargetObjectMetadata.id) ||
+      !isDefined(relationTargetObjectPermissions)
     ) {
       continue;
     }
@@ -114,8 +120,7 @@ export const buildRelationSelectionFromDepth = ({
     });
 
     const relationFieldSelectFields = buildFieldSelection({
-      restrictedFields:
-        objectsPermissions[relationTargetObjectMetadata.id].restrictedFields,
+      restrictedFields: relationTargetObjectPermissions.restrictedFields,
       flatObjectMetadata: relationTargetObjectMetadata,
       flatFields: relationFlatFields,
       onlyUseLabelIdentifierFieldsInRelations,
@@ -142,6 +147,7 @@ export const buildRelationSelectionFromDepth = ({
         flatObjectMetadata: relationTargetObjectMetadata,
         flatFields: relationFlatFields,
         objectsPermissions,
+        readableObjectMetadataIds,
         depth: 1,
         onlyUseLabelIdentifierFieldsInRelations,
         currentDepthLevelIsAJunctionTable: nextLevelIsAJunctionTable,

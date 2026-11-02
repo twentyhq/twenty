@@ -6,7 +6,8 @@ import { isDefined } from 'twenty-shared/utils';
 import { getIconTileColorShades } from 'twenty-ui/components/data-display';
 import { IconButton, LightIconButton } from 'twenty-ui/components/input';
 import { Dropdown } from 'twenty-ui/components/navigation';
-import { IconApps, type IconComponent, useIcons } from 'twenty-ui/icon';
+import { IconApps, type IconComponent } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { ColorSample } from 'twenty-ui/primitives/data-display';
 import {
   type ButtonSize,

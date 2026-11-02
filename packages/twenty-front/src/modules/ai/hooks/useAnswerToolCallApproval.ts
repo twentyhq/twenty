@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import {
+  PUBLISH_FRONT_COMPONENT_TOOL_NAME,
   type ProposeToolCallToolResult,
   type ProposedToolCall,
   type ToolCallApprovalResponse,
 } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
 
+import { useRefreshFrontComponents } from '@/ai/hooks/useRefreshFrontComponents';
 import { useAnswerAgentChatToolCall } from '@/ai/hooks/useAnswerAgentChatToolCall';
 
 export const useAnswerToolCallApproval = ({
@@ -15,6 +17,7 @@ export const useAnswerToolCallApproval = ({
   toolCallId: string;
   proposal: ProposedToolCall;
 }) => {
+  const { refreshFrontComponents } = useRefreshFrontComponents();
   const { answerAgentChatToolCall } = useAnswerAgentChatToolCall();
   const [pendingResponse, setPendingResponse] =
     useState<ToolCallApprovalResponse | null>(null);
@@ -42,6 +45,14 @@ export const useAnswerToolCallApproval = ({
             }
           : undefined,
     });
+
+    if (
+      isAnswered &&
+      response.decision === 'approve' &&
+      proposal.toolName === PUBLISH_FRONT_COMPONENT_TOOL_NAME
+    ) {
+      await refreshFrontComponents();
+    }
 
     // The card goes once its call is closed, so it stays disabled until then.
     if (!isAnswered) {
