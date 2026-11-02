@@ -751,8 +751,7 @@ export class AgentChatSharingService {
     threadId,
     operationType,
     transactionScope,
-  }: {
-    threadId: string;
+  }: Pick<AgentChatThreadAccessArgs, 'threadId'> & {
     operationType: OperationType;
     transactionScope?: WorkspaceTransactionScope;
   }): Promise<void> {

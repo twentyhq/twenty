@@ -73,22 +73,17 @@ export class AgentChatThreadService {
     }
 
     const createdThread = await this.sharingService.createThread(args);
-    const savedThread = shouldApplyAssistantParticipation
-      ? (
-          await this.reconcileAssistantParticipation({
-            workspaceId: args.workspaceId,
-            workspaceMemberId: args.workspaceMemberId,
-            threadId: createdThread.id,
-            thread: createdThread,
-            isInitialMessage: true,
-            isAssistantMentioned,
-            isInitialAssistantParticipant,
-            recipientWorkspaceMemberIds,
-            mentionedWorkspaceMemberIds,
-            shouldEmitEvent: false,
-          })
-        ).thread
-      : createdThread;
+    const savedThread = await this.reconcileInitialAssistantParticipation({
+      workspaceId: args.workspaceId,
+      workspaceMemberId: args.workspaceMemberId,
+      threadId: createdThread.id,
+      thread: createdThread,
+      isAssistantMentioned,
+      isInitialAssistantParticipant,
+      recipientWorkspaceMemberIds,
+      mentionedWorkspaceMemberIds,
+      shouldApplyAssistantParticipation,
+    });
 
     // Sent first, so the new thread never shows as unread to its owner
     await this.participantService.emitParticipantCreated({
@@ -100,6 +95,29 @@ export class AgentChatThreadService {
     await this.threadRecordEventService.emitThreadCreated({
       workspaceId: args.workspaceId,
       threadId: savedThread.id,
+    });
+
+    return savedThread;
+  }
+
+  private async reconcileInitialAssistantParticipation({
+    thread,
+    shouldApplyAssistantParticipation,
+    ...args
+  }: AgentChatThreadAccessArgs &
+    AgentChatAssistantParticipationArgs & {
+      thread: AgentChatThreadWorkspaceEntity;
+      shouldApplyAssistantParticipation: boolean;
+    }): Promise<AgentChatThreadWorkspaceEntity> {
+    if (!shouldApplyAssistantParticipation) {
+      return thread;
+    }
+
+    const { thread: savedThread } = await this.reconcileAssistantParticipation({
+      ...args,
+      thread,
+      isInitialMessage: true,
+      shouldEmitEvent: false,
     });
 
     return savedThread;
