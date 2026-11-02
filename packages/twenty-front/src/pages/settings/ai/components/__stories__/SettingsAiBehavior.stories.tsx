@@ -1,19 +1,13 @@
+import { useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { type ComponentProps } from 'react';
-import { useArgs } from 'storybook/preview-api';
 import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
 import { ComponentDecorator } from 'twenty-ui/testing';
-import { SettingsAiBehaviorSection } from '~/pages/settings/ai/components/SettingsAiBehaviorSection';
-
-type SettingsAiBehaviorStoryArgs = ComponentProps<
-  typeof SettingsAiBehaviorSection
-> & {
-  shouldRejectChanges?: boolean;
-};
+import { SettingsAiBehaviorExample } from '~/pages/settings/ai/components/__stories__/SettingsAiBehaviorExample';
 
 const meta = {
   title: 'Pages/Settings/AI/Behavior',
-  component: SettingsAiBehaviorSection,
+  component: SettingsAiBehaviorExample,
   decorators: [ComponentDecorator],
   parameters: { container: { width: 694 } },
   args: {
@@ -22,41 +16,10 @@ const meta = {
     onDirectMessageModeChange: fn(),
     onInboxModeChange: fn(),
   },
-  render: function Render(args) {
-    const [, updateArgs] = useArgs<SettingsAiBehaviorStoryArgs>();
-
-    return (
-      <SettingsAiBehaviorSection
-        directMessageMode={args.directMessageMode}
-        inboxMode={args.inboxMode}
-        onDirectMessageModeChange={(value) => {
-          args.onDirectMessageModeChange(value);
-
-          if (args.shouldRejectChanges) {
-            return;
-          }
-
-          updateArgs({ directMessageMode: value });
-        }}
-        onInboxModeChange={(value) => {
-          args.onInboxModeChange(value);
-
-          if (args.shouldRejectChanges) {
-            return;
-          }
-
-          updateArgs({ inboxMode: value });
-        }}
-        isLoading={args.isLoading}
-        disabled={args.disabled}
-        errorMessage={args.errorMessage}
-      />
-    );
-  },
-} satisfies Meta<SettingsAiBehaviorStoryArgs>;
+} satisfies Meta<typeof SettingsAiBehaviorExample>;
 
 export default meta;
-type Story = StoryObj<SettingsAiBehaviorStoryArgs>;
+type Story = StoryObj<typeof meta>;
 
 export const IndependentSelection: Story = {
   play: async ({ canvasElement, args }) => {
@@ -195,5 +158,55 @@ export const Narrow: Story = {
     await userEvent.tab();
     expect(inbox).toHaveFocus();
     expect(inbox).toHaveTextContent('Auto');
+  },
+};
+
+export const RefreshedSettings: Story = {
+  render: function Render(args) {
+    const [hasRefreshedSettings, setHasRefreshedSettings] = useState(false);
+
+    return (
+      <>
+        <SettingsAiBehaviorExample
+          directMessageMode={
+            hasRefreshedSettings ? args.inboxMode : args.directMessageMode
+          }
+          inboxMode={
+            hasRefreshedSettings ? args.directMessageMode : args.inboxMode
+          }
+          onDirectMessageModeChange={args.onDirectMessageModeChange}
+          onInboxModeChange={args.onInboxModeChange}
+          isLoading={args.isLoading}
+          disabled={args.disabled}
+          errorMessage={args.errorMessage}
+          shouldRejectChanges={args.shouldRejectChanges}
+        />
+        <Button onClick={() => setHasRefreshedSettings(true)}>
+          Refresh saved settings
+        </Button>
+      </>
+    );
+  },
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const directMessages = canvas.getByRole('combobox', { name: 'DMs' });
+    const inbox = canvas.getByRole('combobox', { name: 'Global inbox' });
+
+    await userEvent.click(directMessages);
+    const options = await within(canvasElement.ownerDocument.body).findByRole(
+      'listbox',
+    );
+    await userEvent.click(
+      within(options).getByRole('option', { name: 'Never' }),
+    );
+    await waitFor(() => expect(directMessages).toHaveTextContent('Never'));
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Refresh saved settings' }),
+    );
+    await waitFor(() => expect(directMessages).toHaveTextContent('Auto'));
+    expect(inbox).toHaveTextContent('Only when mentioned');
+    expect(args.onDirectMessageModeChange).toHaveBeenCalledOnce();
+    expect(args.onInboxModeChange).not.toHaveBeenCalled();
   },
 };
