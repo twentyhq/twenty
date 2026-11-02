@@ -22,11 +22,13 @@ const DISPLAYED_SYNC_STATUSES: ReadonlySet<SyncStatus> = new Set([
 
 type SettingsAccountGroupTableRowProps = {
   group: ConnectedAccountGroup;
+  hasApplicationSettings: boolean;
   builtInAccountApp?: BuiltInAccountApp;
 };
 
 export const SettingsAccountGroupTableRow = ({
   group,
+  hasApplicationSettings,
   builtInAccountApp,
 }: SettingsAccountGroupTableRowProps) => {
   const theme = useTheme();
@@ -37,7 +39,10 @@ export const SettingsAccountGroupTableRow = ({
   });
   const { messageChannel, calendarChannel } =
     getConnectedAccountSettingsChannels(builtInAccount);
-  const hasSettings = isDefined(messageChannel) || isDefined(calendarChannel);
+  const hasSettings =
+    isDefined(messageChannel) ||
+    isDefined(calendarChannel) ||
+    hasApplicationSettings;
   const shouldShowSyncStatus =
     isDefined(builtInAccount) &&
     (isDefined(builtInAccount.archivedAt) ||
