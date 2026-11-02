@@ -16,6 +16,7 @@ import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspac
 import { DOCUMENT_CONTENT_SECURITY_POLICY_DIRECTIVES } from 'src/engine/core-modules/frontend/constants/document-content-security-policy-directives.constant';
 import { buildIframeMediaPermissionsPolicy } from 'src/engine/core-modules/frontend/utils/build-iframe-media-permissions-policy.util';
 import { fitIframeMediaPermissionsToPolicySizeLimit } from 'src/engine/core-modules/frontend/utils/fit-iframe-media-permissions-to-policy-size-limit.util';
+import { getActiveApplicationIframeMediaPermissions } from 'src/engine/core-modules/frontend/utils/get-active-application-iframe-media-permissions.util';
 import { isFrontendDocumentRequest } from 'src/engine/core-modules/frontend/utils/is-frontend-document-request.util';
 import { renderFrontendHtml } from 'src/engine/core-modules/frontend/utils/render-frontend-html.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -117,9 +118,8 @@ export class FrontendService {
         ]);
       const permissions = toIframeMediaPermissions([
         ...workspaceIframeMediaPermissions,
-        ...Object.values(flatApplicationMaps.byId).flatMap(
-          (flatApplication) =>
-            flatApplication?.grantedIframeMediaPermissions ?? [],
+        ...getActiveApplicationIframeMediaPermissions(
+          Object.values(flatApplicationMaps.byId),
         ),
       ]);
       const fittingPermissions = fitIframeMediaPermissionsToPolicySizeLimit({
