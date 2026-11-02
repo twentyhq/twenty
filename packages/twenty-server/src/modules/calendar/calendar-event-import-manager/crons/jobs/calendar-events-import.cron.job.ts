@@ -117,6 +117,10 @@ export class CalendarEventsImportCronJob {
               calendarChannelId,
               workspaceId,
             },
+            {
+              workspaceId,
+              isWorkspaceJob: true,
+            },
           );
         }
       } catch (error) {

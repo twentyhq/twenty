@@ -15,6 +15,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 
 import { AI_CHAT_THREAD_DETAILS_LABEL_WIDTH_IN_PX } from '@/ai/constants/AiChatThreadDetailsLabelWidthInPx';
 import { type AiChatThreadStatusScope } from '@/ai/types/AiChatThreadStatusScope';
+import { type AiChatThreadTriageStatus } from '@/ai/types/AiChatThreadTriageStatus';
 
 const StyledScope = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
@@ -22,11 +23,11 @@ const StyledScope = styled.span`
 `;
 
 type AiChatThreadStatusFieldProps = {
-  status: 'open' | 'snoozed' | 'done';
+  status: AiChatThreadTriageStatus;
   scope: AiChatThreadStatusScope;
   isSaving?: boolean;
   onStatusChange?: (change: {
-    status: AiChatThreadStatusFieldProps['status'];
+    status: AiChatThreadTriageStatus;
     scope: AiChatThreadStatusScope;
   }) => void;
 };

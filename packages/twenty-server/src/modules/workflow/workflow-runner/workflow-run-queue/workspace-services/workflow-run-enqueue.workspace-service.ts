@@ -19,6 +19,7 @@ import { type RunWorkflowJobData } from 'src/modules/workflow/workflow-runner/ty
 import { buildRunWorkflowJobOptions } from 'src/modules/workflow/workflow-runner/utils/build-run-workflow-job-options.util';
 import { NOT_STARTED_RUNS_FIND_OPTIONS } from 'src/modules/workflow/workflow-runner/workflow-run-queue/constants/not-started-runs-find-options';
 import { WorkflowThrottlingWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run-queue/workspace-services/workflow-throttling.workspace-service';
+import { WorkflowRunJobScopeWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-job-scope.workspace-service';
 
 @Injectable()
 export class WorkflowRunEnqueueWorkspaceService {
@@ -29,6 +30,7 @@ export class WorkflowRunEnqueueWorkspaceService {
     @InjectMessageQueue(MessageQueue.workflowQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly metricsService: MetricsService,
+    private readonly workflowRunJobScopeWorkspaceService: WorkflowRunJobScopeWorkspaceService,
   ) {}
 
   async enqueueRunsForWorkspace({
@@ -72,6 +74,11 @@ export class WorkflowRunEnqueueWorkspaceService {
           return;
         }
 
+        const resolveJobScope =
+          await this.workflowRunJobScopeWorkspaceService.getCoreWorkflowJobScopeResolver(
+            workspaceId,
+          );
+
         let totalEnqueuedCount = 0;
         let isSoftThrottled = false;
 
@@ -80,6 +87,7 @@ export class WorkflowRunEnqueueWorkspaceService {
             where: NOT_STARTED_RUNS_FIND_OPTIONS,
             select: {
               id: true,
+              coreWorkflowId: true,
             },
             order: {
               createdAt: 'ASC',
@@ -104,23 +112,27 @@ export class WorkflowRunEnqueueWorkspaceService {
 
           isSoftThrottled = admittedRunCount < batchRuns.length;
 
-          const batchIds = batchRuns
-            .slice(0, admittedRunCount)
-            .map((workflowRun: WorkflowRunWorkspaceEntity) => workflowRun.id);
+          const admittedRuns = batchRuns.slice(0, admittedRunCount);
+          const batchIds = admittedRuns.map(
+            (workflowRun: WorkflowRunWorkspaceEntity) => workflowRun.id,
+          );
 
           await workflowRunRepository.update(batchIds, {
             enqueuedAt: new Date().toISOString(),
             status: WorkflowRunStatus.ENQUEUED,
           });
 
-          for (const workflowRunId of batchIds) {
+          for (const { id: workflowRunId, coreWorkflowId } of admittedRuns) {
             await this.messageQueueService.add<RunWorkflowJobData>(
               RunWorkflowJob.name,
               {
                 workflowRunId,
                 workspaceId,
               },
-              buildRunWorkflowJobOptions(workflowRunId),
+              buildRunWorkflowJobOptions({
+                workflowRunId,
+                scope: resolveJobScope(coreWorkflowId),
+              }),
             );
           }
 

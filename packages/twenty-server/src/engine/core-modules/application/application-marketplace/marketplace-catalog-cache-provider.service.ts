@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { CoreEntityCache } from 'src/engine/core-entity-cache/decorators/core-entity-cache.decorator';
 import { CoreEntityCacheProvider } from 'src/engine/core-entity-cache/interfaces/core-entity-cache-provider.service';
-import { MARKETPLACE_VETTED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-vetted-applications.constant';
+import { MARKETPLACE_FEATURED_APPLICATIONS } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-featured-applications.constant';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { ApplicationVersionValidationService } from 'src/engine/core-modules/application/application-package/application-version-validation.service';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
@@ -11,8 +11,8 @@ import {
   ApplicationRegistrationService,
 } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 
-const VETTED_POSITION_BY_UNIVERSAL_IDENTIFIER = new Map(
-  MARKETPLACE_VETTED_APPLICATIONS.map(({ universalIdentifier, position }) => [
+const FEATURED_POSITION_BY_UNIVERSAL_IDENTIFIER = new Map(
+  MARKETPLACE_FEATURED_APPLICATIONS.map(({ universalIdentifier, position }) => [
     universalIdentifier,
     position,
   ]),
@@ -23,10 +23,10 @@ const compareCatalogCards = (
   cardB: ApplicationRegistrationCatalogCard,
 ): number => {
   const positionA =
-    VETTED_POSITION_BY_UNIVERSAL_IDENTIFIER.get(cardA.universalIdentifier) ??
+    FEATURED_POSITION_BY_UNIVERSAL_IDENTIFIER.get(cardA.universalIdentifier) ??
     Number.POSITIVE_INFINITY;
   const positionB =
-    VETTED_POSITION_BY_UNIVERSAL_IDENTIFIER.get(cardB.universalIdentifier) ??
+    FEATURED_POSITION_BY_UNIVERSAL_IDENTIFIER.get(cardB.universalIdentifier) ??
     Number.POSITIVE_INFINITY;
 
   if (positionA !== positionB) {
@@ -53,7 +53,7 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
 
   async computeForCache(): Promise<Record<string, MarketplaceAppDTO>> {
     const registrations =
-      await this.applicationRegistrationService.findManyListedCatalogCards();
+      await this.applicationRegistrationService.findManyCatalogCards();
 
     if (registrations.length === 0) {
       return {};
@@ -101,7 +101,7 @@ export class MarketplaceCatalogCacheProviderService extends CoreEntityCacheProvi
       category: catalogCard.category ?? '',
       logoUrl: catalogCard.logoUrl ?? undefined,
       sourcePackage: catalogCard.sourcePackage ?? undefined,
-      isVetted: catalogCard.isVetted,
+      isListed: catalogCard.isListed,
     };
   }
 }

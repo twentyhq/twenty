@@ -62,7 +62,9 @@ export const SettingsBillingLimitSpenderSelect = ({
   const workspaceAvatarUrl = getAbsoluteImageUrl(
     currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
   );
-  const workspaceAvatarColorSeed = getWorkspaceAvatarColorSeed(workspaceName);
+  const workspaceAvatarColorSeed = getWorkspaceAvatarColorSeed(
+    currentWorkspace?.displayName,
+  );
 
   const handleSelect = (
     nextSpenderType: UsageLimitSpenderType,
@@ -94,7 +96,7 @@ export const SettingsBillingLimitSpenderSelect = ({
     if (spenderType === 'workspace') {
       return (
         <Avatar
-          name={workspaceName}
+          name={currentWorkspace?.displayName ?? ''}
           colorSeed={workspaceAvatarColorSeed}
           src={workspaceAvatarUrl}
           shape="square"
@@ -155,7 +157,7 @@ export const SettingsBillingLimitSpenderSelect = ({
               description={t`Workspace`}
               startIcon={
                 <Avatar
-                  name={workspaceName}
+                  name={currentWorkspace?.displayName ?? ''}
                   colorSeed={workspaceAvatarColorSeed}
                   src={workspaceAvatarUrl}
                   shape="square"

@@ -104,6 +104,39 @@ Note despre schemă:
 * `additionalProperties: false` (opțional) interzice orice proprietate care nu este declarată în `properties`.
 
 </Accordion>
+<Accordion title="defineMcpServer" description="Expuneți un server MCP extern către IA spațiului de lucru (beta)">
+
+<Warning>
+  Serverele MCP sunt în versiune beta și nu sunt încă active: le puteți declara, dar spațiile de lucru nu le pot folosi instrumentele până când funcționalitatea nu este lansată.
+</Warning>
+
+Utilizați `defineMcpServer()` pentru a livra un server MCP la distanță (HTTP streaming) împreună cu aplicația dvs., astfel încât IA spațiului de lucru să îi poată utiliza instrumentele fără a sincroniza datele respective în Twenty:
+
+```ts src/mcp-servers/github.ts
+import { defineMcpServer } from 'twenty-sdk/define';
+
+import { GITHUB_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+
+export default defineMcpServer({
+  universalIdentifier: '0b6c4f7e-3d5a-4a8e-9a0d-6f1e2c3b4a01',
+  name: 'github',
+  label: 'GitHub',
+  url: 'https://api.githubcopilot.com/mcp/',
+  connectionProvider: {
+    universalIdentifier: GITHUB_CONNECTION_PROVIDER_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+Puncte cheie:
+* `name` este în snake_case (litere mici, cifre și caractere de subliniere, începe cu o literă, maximum 32 de caractere) și este unic în spațiul de lucru. Acesta este prefixul numelor instrumentelor serverului.
+* `url` trebuie să fie un URL HTTP sau HTTPS.
+* `connectionProvider` (opțional) face referire la un [furnizor de conexiune](/ro/developers/extend/apps/logic/connections) declarat de aceeași aplicație. Apelurile trimit tokenul de acces al conexiunii respective ca token Bearer. Omiteți-l pentru un server public.
+* URL-ul nu se poate modifica într-o versiune ulterioară cât timp este asociat un furnizor de conexiune, astfel încât tokenurile să nu fie trimise niciodată către o altă gazdă.
+* Spațiile de lucru pot dezactiva serverul; o versiune ulterioară a aplicației păstrează această opțiune.
+* Necesită `"engines": { "twenty": ">=2.53.0" }`.
+
+</Accordion>
 <Accordion title="runAgent" description="Rulează un agent dintr-o funcție logică">
 
 `runAgent()` permite unei funcții logice să ruleze unul dintre agenții aplicației tale (cu abilitățile și instrumentele sale). Identifică agentul prin `universalIdentifier` pe care l-ai transmis

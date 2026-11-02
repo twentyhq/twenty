@@ -62,6 +62,10 @@ export class MessageParticipantWorkspaceMemberListener {
             workspaceMemberIds: [eventPayload.recordId],
           },
         },
+        {
+          workspaceId: payload.workspaceId,
+          isWorkspaceJob: true,
+        },
       );
     }
   }
@@ -87,6 +91,10 @@ export class MessageParticipantWorkspaceMemberListener {
               personEmails: [],
               workspaceMemberIds: [eventPayload.recordId],
             },
+          },
+          {
+            workspaceId: payload.workspaceId,
+            isWorkspaceJob: true,
           },
         );
       }

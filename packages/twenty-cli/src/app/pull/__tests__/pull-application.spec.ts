@@ -11,6 +11,7 @@ import { createHash } from 'node:crypto';
 import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { generateMessageId } from 'twenty-shared/i18n';
 
 import { collectSourceFingerprints } from '@/app/pull/collect-source-fingerprints';
@@ -1005,6 +1006,81 @@ export default defineField({
     expect(await read('src/application.config.ts')).toBe(localApplication);
   });
 
+  it('writes permission flags with the names the app SDK exports', async () => {
+    const exported = createExport();
+    const data = requireSuccess(
+      await pull({
+        ...exported,
+        manifest: {
+          ...exported.manifest,
+          roles: [
+            {
+              universalIdentifier: OTHER_IDENTIFIER,
+              label: 'Reader',
+              permissionFlagUniversalIdentifiers: [
+                SystemPermissionFlag.CONNECTED_ACCOUNTS,
+                SystemPermissionFlag.APPLICATIONS,
+              ],
+            },
+          ],
+        },
+      }),
+    );
+    const roleWrite = data.writes.find(
+      (write) => write.universalIdentifier === OTHER_IDENTIFIER,
+    );
+
+    expect(roleWrite).toBeDefined();
+    const role = await read(roleWrite?.relativePath ?? '');
+    expect(role).toContain('SystemPermissionFlag.USER_APPS');
+    expect(role).toContain('SystemPermissionFlag.WORKSPACE_APPS');
+  });
+
+  it('does not report a role file an older pull wrote with the former flag names', async () => {
+    const exported = createExport();
+    const exportWithRole = (label: string) => ({
+      ...exported,
+      manifest: {
+        ...exported.manifest,
+        roles: [
+          {
+            universalIdentifier: OTHER_IDENTIFIER,
+            label,
+            permissionFlagUniversalIdentifiers: [
+              SystemPermissionFlag.CONNECTED_ACCOUNTS,
+            ],
+          },
+        ],
+      },
+    });
+    const pulled = requireSuccess(await pull(exportWithRole('Reader')));
+    const rolePath =
+      pulled.writes.find(
+        (write) => write.universalIdentifier === OTHER_IDENTIFIER,
+      )?.relativePath ?? '';
+    await writeFile(
+      join(appPath, rolePath),
+      (await read(rolePath)).replace(
+        'SystemPermissionFlag.USER_APPS',
+        'SystemPermissionFlag.CONNECTED_ACCOUNTS',
+      ),
+    );
+    await writePullBase({
+      appPath,
+      manifest: parseAppExport({
+        value: exportWithRole('Reader'),
+        universalIdentifier: APPLICATION_IDENTIFIER,
+      }).manifest,
+      target: TARGET,
+      signal: new AbortController().signal,
+    });
+
+    const changed = requireSuccess(await pull(exportWithRole('Remote reader')));
+
+    expect(changed.overwrittenLocalChanges).toEqual([]);
+    expect(await read(rolePath)).toContain("label: 'Remote reader'");
+  });
+
   it('deletes a remotely removed base entity and preserves a local-only definition', async () => {
     requireSuccess(await pull());
     const local = (await read(OBJECT_PATH))
@@ -1110,8 +1186,10 @@ export default defineField({
       ]);
     },
   );
-  it('rolls back replaced and deleted source when the final base commit fails', async () => {
+  it('rolls back dependencies and source when the final base commit fails', async () => {
+    await writeFile(join(appPath, 'yarn.lock'), 'original-lock');
     requireSuccess(await pull());
+    const originalPackageJson = await read('package.json');
     const originalObject = await read(OBJECT_PATH);
     const originalApplication = await read('src/application.config.ts');
     const originalBase = await read(BASE_PATH);
@@ -1127,7 +1205,13 @@ export default defineField({
         await originalCopy(source, destination);
       },
     );
-    const exported = createExport({ includeObject: false });
+    const exported = {
+      ...createExport({ includeObject: false }),
+      files: [
+        { folder: 'dependencies', path: 'package.json', content: '{}' },
+        { folder: 'dependencies', path: 'yarn.lock', content: 'changed-lock' },
+      ],
+    };
     exported.manifest.application.displayName = 'Changed app';
     expect(await pull(exported)).toMatchObject({
       success: false,
@@ -1136,6 +1220,8 @@ export default defineField({
     expect(await read(OBJECT_PATH)).toBe(originalObject);
     expect(await read('src/application.config.ts')).toBe(originalApplication);
     expect(await read(BASE_PATH)).toBe(originalBase);
+    expect(await read('package.json')).toBe(originalPackageJson);
+    expect(await read('yarn.lock')).toBe('original-lock');
     expect(await readdir(join(appPath, '.twenty/cli'))).toEqual([
       'pull-base.json',
     ]);

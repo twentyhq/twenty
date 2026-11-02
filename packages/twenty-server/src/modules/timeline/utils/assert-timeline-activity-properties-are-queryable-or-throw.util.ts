@@ -4,7 +4,7 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
+} from 'src/engine/permissions/permissions.exception';
 
 // properties holds other objects' field values, so querying it reveals restricted fields
 export const assertTimelineActivityPropertiesAreQueryableOrThrow = ({

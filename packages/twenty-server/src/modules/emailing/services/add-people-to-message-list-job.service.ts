@@ -7,6 +7,7 @@ import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-a
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { type QueueJobScope } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { findInFlightQueueJobIdByPrefix } from 'src/engine/core-modules/message-queue/utils/find-in-flight-queue-job-id-by-prefix.util';
@@ -14,7 +15,7 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
+} from 'src/engine/permissions/permissions.exception';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { ADD_PEOPLE_TO_MESSAGE_LIST_JOB_START_DELAY_MS } from 'src/modules/emailing/constants/add-people-to-message-list-job-start-delay-ms.constant';
 import {
@@ -65,11 +66,20 @@ export class AddPeopleToMessageListJobService {
     return this.cacheLockService.withLock(
       () =>
         this.enqueueAddPeopleToMessageListJob({
-          workspaceId,
-          userWorkspaceId: authContext.userWorkspaceId,
-          applicationId: authContext.application?.id,
-          messageListId,
-          personFilter,
+          data: {
+            workspaceId,
+            userWorkspaceId: authContext.userWorkspaceId,
+            applicationId: authContext.application?.id,
+            messageListId,
+            personFilter,
+          },
+          scope: isDefined(authContext.application)
+            ? {
+                workspaceId,
+                applicationUniversalIdentifier:
+                  authContext.application.universalIdentifier,
+              }
+            : { workspaceId, isWorkspaceJob: true },
         }),
       buildAddPeopleToMessageListLockKey({ workspaceId, messageListId }),
     );
@@ -101,9 +111,13 @@ export class AddPeopleToMessageListJobService {
     }
   }
 
-  private async enqueueAddPeopleToMessageListJob(
-    data: AddPeopleToMessageListJobData,
-  ): Promise<{ jobId: string }> {
+  private async enqueueAddPeopleToMessageListJob({
+    data,
+    scope,
+  }: {
+    data: AddPeopleToMessageListJobData;
+    scope: QueueJobScope;
+  }): Promise<{ jobId: string }> {
     const jobIdPrefix = buildAddPeopleToMessageListJobId(data);
     const inFlightJobId = findInFlightQueueJobIdByPrefix({
       inFlightJobs: await this.campaignQueueService.getInFlightJobs(),
@@ -125,6 +139,7 @@ export class AddPeopleToMessageListJobService {
           id: jobIdPrefix,
           delay: ADD_PEOPLE_TO_MESSAGE_LIST_JOB_START_DELAY_MS,
           broadcastTo: { workspaceId: data.workspaceId },
+          ...scope,
         },
       );
 

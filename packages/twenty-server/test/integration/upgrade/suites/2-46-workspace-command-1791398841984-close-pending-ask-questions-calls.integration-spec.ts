@@ -211,11 +211,18 @@ describe('2-46 workspace command - close pending ask_questions calls (integratio
 
   it('resolves the wake-up of the agent run suspended on the closed call', async () => {
     expect(addJob).toHaveBeenCalledTimes(1);
-    expect(addJob).toHaveBeenCalledWith(RESUME_PENDING_WAKE_UP_JOB_NAME, {
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      wakeUpId,
-      answer: { result: {} },
-    });
+    expect(addJob).toHaveBeenCalledWith(
+      RESUME_PENDING_WAKE_UP_JOB_NAME,
+      {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        wakeUpId,
+        answer: { result: {} },
+      },
+      {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        isWorkspaceJob: true,
+      },
+    );
   });
 
   it('resolves the wake-up again on a rerun, as long as it was not claimed', async () => {
@@ -224,11 +231,18 @@ describe('2-46 workspace command - close pending ask_questions calls (integratio
     await runCommand();
 
     expect(addJob).toHaveBeenCalledTimes(1);
-    expect(addJob).toHaveBeenCalledWith(RESUME_PENDING_WAKE_UP_JOB_NAME, {
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      wakeUpId,
-      answer: { result: {} },
-    });
+    expect(addJob).toHaveBeenCalledWith(
+      RESUME_PENDING_WAKE_UP_JOB_NAME,
+      {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        wakeUpId,
+        answer: { result: {} },
+      },
+      {
+        workspaceId: SEED_APPLE_WORKSPACE_ID,
+        isWorkspaceJob: true,
+      },
+    );
     expect(await readThread(chatThread)).toEqual({
       pendingQuestionMessageId: null,
       turnStatus: 'completed',

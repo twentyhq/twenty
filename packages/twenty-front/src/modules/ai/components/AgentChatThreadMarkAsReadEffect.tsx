@@ -6,7 +6,10 @@ import { useUpdateAgentChatThreadInboxState } from '@/ai/hooks/useUpdateAgentCha
 import { agentChatDisplayedThreadState } from '@/ai/states/agentChatDisplayedThreadState';
 import { agentChatThreadOpenViewCountState } from '@/ai/states/agentChatThreadOpenViewCountState';
 import { agentChatThreadParticipantsState } from '@/ai/states/agentChatThreadParticipantsState';
-import { agentChatThreadVisitState } from '@/ai/states/agentChatThreadVisitState';
+import {
+  type AgentChatThreadVisit,
+  agentChatThreadVisitState,
+} from '@/ai/states/agentChatThreadVisitState';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { getAgentChatThreadInboxStatus } from '@/ai/utils/getAgentChatThreadInboxStatus';
 import { isAgentChatThreadSettledForMember } from '@/ai/utils/isAgentChatThreadSettledForMember';
@@ -106,29 +109,46 @@ export const AgentChatThreadMarkAsReadEffect = () => {
       lastActivityAt,
       participant,
     });
-    const visit = store.get(agentChatThreadVisitState.atom);
+    const storedVisit = store.get(agentChatThreadVisitState.atom);
 
     // Taken once per visit, before the read mark, so it sees where the member
     // left off
-    if (visit?.threadId !== threadId) {
-      store.set(agentChatThreadVisitState.atom, {
-        threadId,
-        isUnread,
-        lastReadAt: participant?.lastReadAt ?? null,
-        isKeptUnread: false,
-      });
+    const newVisit: AgentChatThreadVisit = {
+      threadId,
+      isUnread,
+      lastReadAt: participant?.lastReadAt ?? null,
+      isKeptUnread: false,
+    };
+    const visit = storedVisit?.threadId === threadId ? storedVisit : newVisit;
+
+    if (visit !== storedVisit) {
+      store.set(agentChatThreadVisitState.atom, visit);
     }
 
-    const isKeptUnread = visit?.threadId === threadId && visit.isKeptUnread;
+    const isReadRequested =
+      visit.readRequestedForActivityAt === lastActivityAt &&
+      visit.readRequestedForParticipantUpdatedAt === participant?.updatedAt;
 
     // Opening a chat the member does not participate in yet starts tracking
     // it for them, so later activity in it reads as unread
-    if ((isUnread || !isDefined(participant)) && !isKeptUnread) {
-      void updateAgentChatThreadInboxState({
-        threadIds: [threadId],
-        action: AgentChatInboxAction.READ,
-      });
+    if (
+      (!isUnread && isDefined(participant)) ||
+      visit.isKeptUnread ||
+      isReadRequested
+    ) {
+      return;
     }
+
+    store.set(agentChatThreadVisitState.atom, {
+      ...visit,
+      readRequestedForActivityAt: lastActivityAt,
+      readRequestedForParticipantUpdatedAt: participant?.updatedAt,
+    });
+
+    void updateAgentChatThreadInboxState({
+      threadIds: [threadId],
+      action: AgentChatInboxAction.READ,
+    });
   }, [
     isVisible,
     lastActivityAt,

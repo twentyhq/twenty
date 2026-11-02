@@ -44,12 +44,17 @@ export class WorkspaceDataExportStepService {
     delay,
     ...jobData
   }: WorkspaceDataExportJobData & { delay?: number }): Promise<void> {
-    const { exportId, cursor } = jobData;
+    const { workspaceId, exportId, cursor } = jobData;
 
     await this.messageQueueService.add(
       WORKSPACE_DATA_EXPORT_STEP_JOB_NAME,
       jobData,
-      { id: `${exportId}:${cursor.stepIndex}:${cursor.attempt}`, delay },
+      {
+        id: `${exportId}:${cursor.stepIndex}:${cursor.attempt}`,
+        delay,
+        workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 

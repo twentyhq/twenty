@@ -1,6 +1,5 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { HttpResponse, graphql } from 'msw';
-import { expect, within } from 'storybook/test';
 
 import {
   PageDecorator,
@@ -9,7 +8,6 @@ import {
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
 import { SettingsAccountsEmails } from '~/pages/settings/accounts/SettingsAccountsEmails';
-import { seedAccountGroupsStory } from '~/pages/settings/accounts/__stories__/mockedAccountGroups';
 
 const meta: Meta<PageDecoratorArgs> = {
   title: 'Pages/Settings/Accounts/SettingsAccountsEmails',
@@ -112,21 +110,5 @@ export const TwoConnectedAccounts: Story = {
         }),
       ],
     },
-  },
-};
-
-export const RedirectsToAppPreferencesWhenFlagIsOn: Story = {
-  args: {
-    additionalRoutes: ['/settings/accounts'],
-  },
-  beforeEach: seedAccountGroupsStory,
-  play: async ({ canvasElement }) => {
-    const canvas = within(canvasElement);
-
-    expect(
-      await canvas.findByText('Navigated to /settings/accounts', undefined, {
-        timeout: 3000,
-      }),
-    ).toBeVisible();
   },
 };

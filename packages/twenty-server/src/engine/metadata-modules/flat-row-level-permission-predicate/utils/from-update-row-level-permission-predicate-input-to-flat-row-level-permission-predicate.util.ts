@@ -19,12 +19,14 @@ export const fromUpdateRowLevelPermissionPredicateInputToFlatRowLevelPermissionP
     }): FlatRowLevelPermissionPredicate => {
     const {
       fieldMetadataUniversalIdentifier,
+      relationFieldMetadataUniversalIdentifier,
       rowLevelPermissionPredicateGroupUniversalIdentifier,
       workspaceMemberFieldMetadataUniversalIdentifier,
     } = resolveEntityRelationUniversalIdentifiers({
       metadataName: 'rowLevelPermissionPredicate',
       foreignKeyValues: {
         fieldMetadataId: input.fieldMetadataId,
+        relationFieldMetadataId: input.relationFieldMetadataId,
         rowLevelPermissionPredicateGroupId:
           input.rowLevelPermissionPredicateGroupId,
         workspaceMemberFieldMetadataId: input.workspaceMemberFieldMetadataId,
@@ -39,6 +41,8 @@ export const fromUpdateRowLevelPermissionPredicateInputToFlatRowLevelPermissionP
       ...existingPredicate,
       fieldMetadataId: input.fieldMetadataId,
       fieldMetadataUniversalIdentifier,
+      relationFieldMetadataId: input.relationFieldMetadataId ?? null,
+      relationFieldMetadataUniversalIdentifier,
       operand: input.operand,
       value: input.value ?? null,
       subFieldName: input.subFieldName ?? null,

@@ -323,8 +323,38 @@ const mockNamedAssistantMessage: ExtendedUIMessage = {
   parts: [{ type: 'text', text: 'The recorded sender remains visible.' }],
 };
 
+const mockLongUserMessage: ExtendedUIMessage = {
+  ...mockUserMessage,
+  id: 'msg-user-long',
+  parts: [
+    {
+      type: 'text',
+      text: `Help me set up my workspace for our sales team.
+
+1. Create a Deal Stage field on Opportunities with the values Lead, Qualified, Proposal, Negotiation, Won and Lost.
+2. Import the companies from the spreadsheet I attached and link each one to its account owner.
+3. Build a Pipeline view grouped by Deal Stage, sorted by close date, showing amount and owner.
+4. Add a dashboard with won revenue per month and the number of open deals per owner.
+5. Create a workflow that assigns a follow-up task to the owner when a deal has had no activity for seven days.
+6. Draft a short welcome email I can send to the team explaining the new pipeline.
+7. Add a Lost Reason select field on Opportunities and make it required when a deal moves to Lost.
+8. Create a weekly view of deals closing this month for the Monday sales meeting.
+9. Tag the companies that have no open opportunity so we can plan outreach.
+10. Set up a reminder task for each owner to update their deal amounts every Friday.
+11. Merge duplicate companies that share the same domain and keep the most recent owner.
+12. Create a Renewal Date field on Companies and a view of renewals coming up in the next 90 days.
+13. Build a workflow that notifies the account owner when a renewal is 30 days away and no opportunity exists yet.
+14. Add a dashboard chart with the conversion rate from Qualified to Won per month for the last two quarters.
+15. Import last year's closed deals from the second sheet so the dashboard has history from day one.
+
+Before changing anything, list what you plan to do and ask me to confirm. Keep field names in English and reuse existing fields when they already match. Follow the [pipeline guide](https://twenty.com/user-guide) for naming.`,
+    },
+  ],
+};
+
 const allMockMessages = [
   mockUserMessage,
+  mockLongUserMessage,
   mockAssistantWithCodeExecution,
   mockSimpleTextResponse,
   mockStreamingMessage,
@@ -449,6 +479,41 @@ export const ConversationWithCodeExecution: Story = {
 
 export const UserMessage: Story = {
   render: () => <AiChatMessage messageId={mockUserMessage.id} />,
+};
+
+export const LongUserMessage: Story = {
+  render: () => (
+    <StyledConversationContainer>
+      <AiChatMessage messageId={mockLongUserMessage.id} />
+      <AiChatMessage messageId={mockUserMessage.id} />
+    </StyledConversationContainer>
+  ),
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const showMoreButton = await canvas.findByRole('button', {
+      name: 'Show more',
+    });
+
+    await expect(
+      canvas.getAllByRole('button', { name: 'Show more' }),
+    ).toHaveLength(1);
+    await expect(showMoreButton).toHaveAttribute('aria-expanded', 'false');
+
+    await userEvent.tab();
+
+    await expect(
+      canvas.getByRole('link', { name: 'pipeline guide' }),
+    ).toHaveFocus();
+    await expect(
+      await canvas.findByRole('button', { name: 'Show less' }),
+    ).toHaveAttribute('aria-expanded', 'true');
+
+    await userEvent.click(canvas.getByRole('button', { name: 'Show less' }));
+
+    await expect(
+      await canvas.findByRole('button', { name: 'Show more' }),
+    ).toHaveAttribute('aria-expanded', 'false');
+  },
 };
 
 export const AssistantTextResponse: Story = {

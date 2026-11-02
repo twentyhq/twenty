@@ -38,6 +38,8 @@ export class WebhookSyncTriggerService {
           id: `messaging-message-webhook-sync:${workspaceId}:${messageChannelId}`,
           keepLastIfActive: true,
         },
+        workspaceId,
+        isWorkspaceJob: true,
       },
     );
   }
@@ -63,6 +65,8 @@ export class WebhookSyncTriggerService {
           id: `calendar-event-webhook-sync:${workspaceId}:${calendarChannelId}`,
           keepLastIfActive: true,
         },
+        workspaceId,
+        isWorkspaceJob: true,
       },
     );
   }

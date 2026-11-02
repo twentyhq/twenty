@@ -11,6 +11,8 @@ const READ: AgentChatInboxState = {
   archivedAt: null,
   snoozedUntil: null,
   isSubscribed: true,
+  lastMentionedAt: null,
+  mentionsResolvedAt: null,
 };
 const SNOOZED_UNSUBSCRIBED: AgentChatInboxState = {
   ...READ,
@@ -92,5 +94,54 @@ describe('applyAgentChatInboxAction', () => {
     expect(
       applyAgentChatInboxAction({ participant, action, now: NOW, ...options }),
     ).toEqual(expected);
+  });
+
+  it.each<AgentChatInboxAction>(['READ', 'ARCHIVE', 'UNSUBSCRIBE'])(
+    'resolves the recorded mention on %s',
+    (action) => {
+      expect(
+        applyAgentChatInboxAction({
+          participant: { ...READ, lastMentionedAt: EARLIER },
+          action,
+          now: NOW,
+        }),
+      ).toMatchObject({
+        lastMentionedAt: EARLIER,
+        mentionsResolvedAt: EARLIER,
+      });
+    },
+  );
+
+  it('keeps a later mention resolution when marking done', () => {
+    expect(
+      applyAgentChatInboxAction({
+        participant: {
+          ...READ,
+          lastMentionedAt: EARLIER,
+          mentionsResolvedAt: LATER,
+        },
+        action: 'ARCHIVE',
+        now: NOW,
+      }).mentionsResolvedAt,
+    ).toBe(LATER);
+  });
+
+  it.each<AgentChatInboxAction>([
+    'UNREAD',
+    'SNOOZE',
+    'MOVE_TO_INBOX',
+    'SUBSCRIBE',
+  ])('preserves unresolved mentions on %s', (action) => {
+    expect(
+      applyAgentChatInboxAction({
+        participant: { ...READ, lastMentionedAt: EARLIER },
+        action,
+        now: NOW,
+        snoozedUntil: LATER,
+      }),
+    ).toMatchObject({
+      lastMentionedAt: EARLIER,
+      mentionsResolvedAt: null,
+    });
   });
 });

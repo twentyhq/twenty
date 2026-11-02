@@ -1566,7 +1566,7 @@ div:has(> .sidebar-group a[href$='/user-guide/introduction']) + div {
   --page-banner-illustration: url('/images/user-guide/halftone/card-page-monitoring.svg');
 }
 
-#content-area:has([data-page-banner='card-page-marketplace-vetting']) {
+#content-area:has([data-page-banner='card-page-marketplace-review']) {
   --page-banner-illustration: url('/images/documentation/banner-icons-v2/permissions.svg');
 }
 

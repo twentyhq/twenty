@@ -44,7 +44,6 @@ export class LogicFunctionPrebuiltWarmUpService {
       await driver.installPrebuiltBundle({
         flatLogicFunction,
         flatApplication,
-        applicationUniversalIdentifier: flatApplication.universalIdentifier,
       });
     } catch (error) {
       if (

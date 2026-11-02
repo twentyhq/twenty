@@ -72,6 +72,18 @@ exports[`Sync application should fail on reserved variable names should refuse a
 }
 `;
 
+exports[`Sync application should fail on reserved variable names should refuse a manifest declaring a server variable named TWENTY_FUTURE_VARIABLE 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Variable names are reserved: TWENTY_FUTURE_VARIABLE",
+  "name": "UserInputError",
+}
+`;
+
 exports[`Sync application should fail on reserved variable names should refuse a manifest declaring an application variable named APPLICATION_ID 1`] = `
 {
   "extensions": {
@@ -140,6 +152,18 @@ exports[`Sync application should fail on reserved variable names should refuse a
     "userFriendlyMessage": "Invalid input provided.",
   },
   "message": "Variable names are reserved: TWENTY_FUNCTIONS_URL",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Sync application should fail on reserved variable names should refuse a manifest declaring an application variable named TWENTY_FUTURE_VARIABLE 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Variable names are reserved: TWENTY_FUTURE_VARIABLE",
   "name": "UserInputError",
 }
 `;

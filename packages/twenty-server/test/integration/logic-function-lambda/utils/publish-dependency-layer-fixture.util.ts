@@ -5,8 +5,9 @@ import { join } from 'path';
 
 import { DEPENDENCY_LAYER_FIXTURE } from 'test/integration/logic-function-lambda/constants/dependency-layer-fixture.constant';
 import { getWorkspaceCustomFlatApplication } from 'test/integration/logic-function-lambda/utils/get-workspace-custom-flat-application.util';
+import { isDefined } from 'twenty-shared/utils';
 
-import { getLambdaDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-deps-layer-name.util';
+import { getLambdaWorkspaceCustomSharedDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-workspace-custom-shared-deps-layer-name.util';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
@@ -19,7 +20,13 @@ export const publishDependencyLayerFixture = async ({
   resourceNamespace: string;
   workspaceId: string;
 }): Promise<void> => {
-  const flatApplication = await getWorkspaceCustomFlatApplication(workspaceId);
+  const { id, yarnLockChecksum } =
+    await getWorkspaceCustomFlatApplication(workspaceId);
+
+  if (!isDefined(yarnLockChecksum)) {
+    throw new Error(`Custom application ${id} has no yarn.lock checksum`);
+  }
+
   const buildDirectory = await fs.mkdtemp(join(tmpdir(), 'deps-layer-'));
   const packageDirectory = join(
     buildDirectory,
@@ -45,8 +52,8 @@ export const publishDependencyLayerFixture = async ({
     await createZipFile(join(buildDirectory, 'layer'), zipPath);
 
     await lambdaClient.publishLayerVersion({
-      LayerName: getLambdaDepsLayerName({
-        flatApplication,
+      LayerName: getLambdaWorkspaceCustomSharedDepsLayerName({
+        yarnLockChecksum,
         namespace: resourceNamespace,
       }),
       Content: { ZipFile: await fs.readFile(zipPath) },

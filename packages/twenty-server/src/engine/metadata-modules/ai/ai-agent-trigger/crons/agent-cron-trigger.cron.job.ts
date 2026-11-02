@@ -118,6 +118,11 @@ export class AgentCronTriggerCronJob {
           triggerId: trigger.id,
           payload: { type: 'CRON', firedAt: now.toISOString() },
         },
+        {
+          workspaceId,
+          applicationUniversalIdentifier:
+            flatAgent.applicationUniversalIdentifier,
+        },
       );
     }
   }

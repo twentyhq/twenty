@@ -111,6 +111,10 @@ export class FilesFieldDeletionListener {
           workspaceId,
           fileIds: Array.from(fileIds),
         },
+        {
+          workspaceId,
+          isWorkspaceJob: true,
+        },
       );
     }
   }

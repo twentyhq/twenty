@@ -45,7 +45,7 @@ export class InboundMailHandlerService {
         reference: notification.message.reference,
         envelopeRecipients: notification.recipients,
       },
-      { id: notification.dedupeKey },
+      { id: notification.dedupeKey, isSystemJob: true },
     );
   }
 

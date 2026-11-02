@@ -1,6 +1,6 @@
 import type * as esbuild from 'esbuild';
 
-import { isPlainObject } from 'twenty-shared/utils';
+import { isNonEmptyArray, isPlainObject } from 'twenty-shared/utils';
 
 import { createRequire } from 'node:module';
 import { join } from 'node:path';
@@ -16,6 +16,30 @@ const isPrimitive = (value: unknown): boolean =>
 export const isPlainDataExport = (value: unknown): boolean =>
   isPrimitive(value) ||
   (isPlainObject(value) && Object.values(value).every(isPrimitive));
+
+const serializePlainDataExport = (value: unknown): string => {
+  const json = JSON.stringify(value);
+
+  if (!isPlainObject(value)) {
+    return json;
+  }
+
+  const nonEnumerablePrimitiveNames = Object.getOwnPropertyNames(value).filter(
+    (name) =>
+      !Object.prototype.propertyIsEnumerable.call(value, name) &&
+      isPrimitive(value[name]),
+  );
+
+  if (!isNonEmptyArray(nonEnumerablePrimitiveNames)) {
+    return json;
+  }
+
+  const nonEnumerableDescriptors = Object.fromEntries(
+    nonEnumerablePrimitiveNames.map((name) => [name, { value: value[name] }]),
+  );
+
+  return `/* @__PURE__ */ Object.defineProperties(${json}, ${JSON.stringify(nonEnumerableDescriptors)})`;
+};
 
 const partitionDefineExports = (
   mod: Record<string, unknown>,
@@ -78,9 +102,9 @@ export const buildStubModuleSource = (
     exportLines.push(`export const ${name} = __defineFactoryStub;`);
   }
   for (const name of stubbedExports.plainData) {
-    const value = twentySdkDefine[name];
-
-    exportLines.push(`export const ${name} = ${JSON.stringify(value)};`);
+    exportLines.push(
+      `export const ${name} = ${serializePlainDataExport(twentySdkDefine[name])};`,
+    );
   }
   for (const name of stubbedExports.any) {
     exportLines.push(`export const ${name} = __anyStub;`);

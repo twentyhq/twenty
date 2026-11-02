@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { isDefined, normalizeAllowedIframeOrigin } from 'twenty-shared/utils';
+import { isDefined, normalizeIframeOrigin } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import { Section } from 'twenty-ui/components/layout';
 import { IconPlus, IconTrash } from 'twenty-ui/icon';
@@ -12,8 +12,8 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import {
-  GetWorkspaceIframeOriginsDocument,
-  UpdateWorkspaceAllowedIframeOriginsDocument,
+  GetWorkspaceAllowedEmbeddingOriginsDocument,
+  UpdateWorkspaceAllowedEmbeddingOriginsDocument,
 } from '~/generated-metadata/graphql';
 
 const StyledList = styled.div`
@@ -43,14 +43,16 @@ export const SettingsSecurityIframeOrigins = () => {
     loading: isLoadingPolicy,
     error: policyError,
     refetch,
-  } = useQuery(GetWorkspaceIframeOriginsDocument, {
+  } = useQuery(GetWorkspaceAllowedEmbeddingOriginsDocument, {
     fetchPolicy: 'network-only',
   });
   const [updateOrigins, { loading }] = useMutation(
-    UpdateWorkspaceAllowedIframeOriginsDocument,
+    UpdateWorkspaceAllowedEmbeddingOriginsDocument,
   );
-  const origins = data?.currentWorkspace.allowedIframeOrigins ?? [];
-  const isPolicyLoaded = isDefined(data?.currentWorkspace.allowedIframeOrigins);
+  const origins = data?.currentWorkspace.allowedEmbeddingOrigins ?? [];
+  const isPolicyLoaded = isDefined(
+    data?.currentWorkspace.allowedEmbeddingOrigins,
+  );
   const isDisabled = loading || isLoadingPolicy || !isPolicyLoaded;
 
   const saveOrigin = async (
@@ -65,7 +67,7 @@ export const SettingsSecurityIframeOrigins = () => {
       const { data } = await updateOrigins({
         variables: { input: { operation, origin } },
       });
-      return isDefined(data?.updateWorkspaceAllowedIframeOrigins);
+      return isDefined(data?.updateWorkspaceAllowedEmbeddingOrigins);
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
       return false;
@@ -73,7 +75,7 @@ export const SettingsSecurityIframeOrigins = () => {
   };
 
   const handleAddOrigin = async () => {
-    const origin = normalizeAllowedIframeOrigin(originInput.trim());
+    const origin = normalizeIframeOrigin(originInput.trim());
 
     if (!isDefined(origin)) {
       setError(

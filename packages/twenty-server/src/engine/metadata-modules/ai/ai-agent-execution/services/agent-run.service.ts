@@ -28,6 +28,7 @@ import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-
 import { fromApiKeyEntityToFlat } from 'src/engine/core-modules/api-key/utils/from-api-key-entity-to-flat.util';
 import { ApplicationLookupService } from 'src/engine/core-modules/application/application-lookup/application-lookup.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import {
@@ -44,7 +45,7 @@ import { RUN_AGENT_MAX_WAIT_MS } from 'src/engine/metadata-modules/ai/ai-agent-e
 import { AgentRunSettlementService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-settlement.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
-import { resolveApplicationRoleId } from 'src/engine/twenty-orm/utils/resolve-application-role-id.util';
+import { resolveApplicationRoleId } from 'src/engine/permissions/principal/utils/resolve-application-role-id.util';
 import { type AgentRunRoleIds } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-role-ids.type';
 import { type AgentRunCallerContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-context.type';
 import { type AgentRunCallerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-outcome.type';
@@ -196,8 +197,12 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     }
 
     if (
-      isDefined(callerApplication) &&
-      agent.applicationId !== callerApplication.id
+      !canCallerReachApplication({
+        callingApplication: callerApplication,
+        applicationId: agent.applicationId,
+        operation: 'trigger',
+        workspaceCustomApplicationId: workspace.workspaceCustomApplicationId,
+      })
     ) {
       throw new AiException(
         `Agent ${input.agentUniversalIdentifier} belongs to another application`,
@@ -225,9 +230,10 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
       application,
     });
 
+    // keyed by the caller, so an application never continues another one's conversation with a shared agent
     const threadId = isDefined(thread)
       ? buildAgentRunThreadId({
-          applicationId: application.id,
+          applicationId: callerApplication?.id ?? application.id,
           agentId: agent.id,
           threadKey: thread.key,
         })

@@ -1,4 +1,5 @@
 import { SettingsAppPreferencesConnectionsTable } from '@/settings/app-preferences/components/SettingsAppPreferencesConnectionsTable';
+import { SettingsApplicationConnectCard } from '@/settings/app-preferences/components/SettingsApplicationConnectCard';
 import { useMyPersonalConnectedAccounts } from '@/settings/app-preferences/hooks/useMyPersonalConnectedAccounts';
 import { type ApplicationWithPreferences } from '@/settings/app-preferences/types/ApplicationWithPreferences';
 import { getApplicationPreferencesGeneralPath } from '@/settings/app-preferences/utils/getApplicationPreferencesGeneralPath';
@@ -6,19 +7,12 @@ import { SettingsApplicationAddConnectionButton } from '@/settings/applications/
 import { SettingsApplicationConnectionProviderSection } from '@/settings/applications/components/SettingsApplicationConnectionProviderSection';
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { canStartConnectionProviderAuthorization } from '@/settings/applications/utils/canStartConnectionProviderAuthorization';
-import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
 
 const APP_CONNECTED_ACCOUNT_PROVIDERS: ReadonlySet<ConnectedAccountProvider> =
   new Set([ConnectedAccountProvider.APP]);
-
-const StyledEmptyState = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  font-size: ${themeCssVariables.font.size.md};
-`;
 
 type SettingsAppPreferencesConnectionsTabProps = {
   applicationId: string;
@@ -62,21 +56,15 @@ export const SettingsAppPreferencesConnectionsTab = ({
                 message={t`Your connections could not be loaded. Check your connection and try again.`}
                 onRetry={() => refetch().catch(() => undefined)}
               />
-            ) : (
+            ) : loading || isNonEmptyArray(providerConnections) ? (
               <>
-                {loading || isNonEmptyArray(providerConnections) ? (
-                  <SettingsAppPreferencesConnectionsTable
-                    applicationId={applicationId}
-                    providerName={provider.name}
-                    connections={providerConnections}
-                    canStartAuthorization={canStartAuthorization}
-                    isLoading={loading}
-                  />
-                ) : (
-                  canStartAuthorization && (
-                    <StyledEmptyState>{t`You have no ${provider.displayName} connection yet.`}</StyledEmptyState>
-                  )
-                )}
+                <SettingsAppPreferencesConnectionsTable
+                  applicationId={applicationId}
+                  providerName={provider.name}
+                  connections={providerConnections}
+                  canStartAuthorization={canStartAuthorization}
+                  isLoading={loading}
+                />
                 {canStartAuthorization && (
                   <SettingsApplicationAddConnectionButton
                     applicationId={applicationId}
@@ -87,6 +75,14 @@ export const SettingsAppPreferencesConnectionsTab = ({
                   />
                 )}
               </>
+            ) : (
+              canStartAuthorization && (
+                <SettingsApplicationConnectCard
+                  applicationId={applicationId}
+                  connectionProvider={provider}
+                  title={t`Connect with ${provider.displayName}`}
+                />
+              )
             )}
           </SettingsApplicationConnectionProviderSection>
         );

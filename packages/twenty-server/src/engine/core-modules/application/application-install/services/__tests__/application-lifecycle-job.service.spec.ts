@@ -77,6 +77,8 @@ describe('ApplicationLifecycleJobService', () => {
       {
         id: `upgrade-application.${WORKSPACE_ID}.${UNIVERSAL_IDENTIFIER}`,
         broadcastTo: { workspaceId: WORKSPACE_ID },
+        workspaceId: WORKSPACE_ID,
+        applicationUniversalIdentifier: UNIVERSAL_IDENTIFIER,
       },
     );
   });

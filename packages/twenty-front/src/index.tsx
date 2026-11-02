@@ -14,7 +14,7 @@ import 'twenty-ui/theme-light.css';
 import 'twenty-ui/theme-dark.css';
 import './index.css';
 // Salesfarce: remove with the theme
-import '@/salesfarce/styles/salesfarce.css';
+import { salesfarceLoadStyles } from '@/salesfarce/utils/salesfarceLoadStyles';
 
 const renderApp = () => {
   const root = ReactDOM.createRoot(
@@ -24,4 +24,7 @@ const renderApp = () => {
   root.render(<App />);
 };
 
-hydrateMetadataStore().then(renderApp, renderApp);
+// Salesfarce: on removal, restore hydrateMetadataStore().then(renderApp, renderApp)
+void Promise.allSettled([hydrateMetadataStore(), salesfarceLoadStyles()]).then(
+  renderApp,
+);

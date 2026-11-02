@@ -149,7 +149,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
 
   const {
     createJunctionRecordWithNestedTarget,
-    loading: isCreatingJunctionRecord,
+    isCreatePending: isCreatingJunctionRecord,
   } = useCreateJunctionRecordWithNestedTarget({
     sourceRecordId: recordId,
     sourceFieldName: fieldName,

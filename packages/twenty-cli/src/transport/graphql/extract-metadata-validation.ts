@@ -66,6 +66,10 @@ const collectDetails = ({
         details.push({
           metadataName,
           ...(isDefined(entityLabel) ? { entityLabel } : {}),
+          ...(isString(error.code) ? { code: error.code } : {}),
+          ...(isString(error.userFriendlyMessage)
+            ? { userFriendlyMessage: error.userFriendlyMessage }
+            : {}),
           message: error.message,
         });
 

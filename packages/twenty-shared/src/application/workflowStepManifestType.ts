@@ -2,8 +2,6 @@ import { z } from 'zod';
 
 import { isDefined } from '@/utils/validation/isDefined';
 
-import { agentResponseFormatSchema } from '@/workflow/schemas/agent-response-format-schema';
-
 import { workflowHttpRequestActionSettingsSchema } from '@/workflow/schemas/http-request-action-settings-schema';
 import { workflowClassifyActionSettingsSchema } from '@/workflow/schemas/classify-action-settings-schema';
 import { workflowIteratorActionSettingsSchema } from '@/workflow/schemas/iterator-action-settings-schema';
@@ -21,16 +19,23 @@ import { workflowFilterActionSettingsSchema } from '@/workflow/schemas/filter-ac
 import { workflowIfElseActionSettingsSchema } from '@/workflow/schemas/if-else-action-settings-schema';
 import { workflowSendEmailActionSettingsSchema } from '@/workflow/schemas/send-email-action-settings-schema';
 import { workflowCreateCalendarEventActionSettingsSchema } from '@/workflow/schemas/create-calendar-event-action-settings-schema';
+import { workflowAiAgentActionSettingsSchema } from '@/workflow/schemas/ai-agent-action-settings-schema';
+import { workflowSendChatMessageActionSettingsSchema } from '@/workflow/schemas/send-chat-message-action-settings-schema';
 import { recordFilterGroupSchema } from '@/workflow/schemas/record-filter-group-schema';
 import { recordFilterSchema } from '@/workflow/schemas/record-filter-schema';
 import { stepFilterSchema } from '@/workflow/schemas/step-filter-schema';
 import { workflowPickRecordStrategySchema } from '@/workflow/schemas/pick-record-action-settings-schema';
 
+export const workflowManifestPositionSchema = z.object({
+  x: z.number(),
+  y: z.number(),
+});
+
 const baseStepShape = {
   universalIdentifier: z.uuid(),
   name: z.string().min(1),
   nextStepIds: z.array(z.uuid()),
-  position: z.object({ x: z.number(), y: z.number() }).optional(),
+  position: workflowManifestPositionSchema.nullable().optional(),
   outputSchema: z.record(z.string(), z.unknown()).optional(),
   expectedOutputSchema: z.record(z.string(), z.unknown()).optional(),
   errorHandlingOptions:
@@ -244,12 +249,15 @@ const workflowStepManifestOptions = [
       .superRefine(refineConnectedAccountReference),
   ),
   stepSchema(
+    'SEND_CHAT_MESSAGE',
+    workflowSendChatMessageActionSettingsSchema.shape.input,
+  ),
+  stepSchema(
     'AI_AGENT',
-    z.strictObject({
-      agentUniversalIdentifier: z.uuid(),
-      prompt: z.string(),
-      responseFormat: agentResponseFormatSchema.optional(),
-    }),
+    workflowAiAgentActionSettingsSchema.shape.input
+      .omit({ agentId: true })
+      .extend({ agentUniversalIdentifier: z.uuid() })
+      .strict(),
   ),
 ] as const;
 

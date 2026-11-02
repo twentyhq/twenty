@@ -13,6 +13,7 @@ import { isTeamsConnectionListed } from 'src/features/transcripts/logic-function
 import { renewTeamsTranscriptSubscription } from 'src/features/transcripts/logic-functions/utils/renew-teams-transcript-subscription';
 import { unregisterTeamsTranscriptSubscription } from 'src/features/transcripts/logic-functions/utils/unregister-teams-transcript-subscription';
 import { isTeamsTranscriptImportEnabled } from 'src/features/transcripts/logic-functions/utils/is-teams-transcript-import-enabled';
+import { getConnectionAccessTokenOrThrow } from 'src/utils/get-connection-access-token-or-throw';
 
 const renewStoredSubscriptionOrUndefined = async ({
   accessToken,
@@ -69,7 +70,9 @@ export const registerTeamsTranscriptSubscription = async ({
     buildTeamsTranscriptsConnectionKvKey(connectedAccountId);
   const storedSubscription =
     await kv.get<TeamsTranscriptSubscription>(subscriptionKvKey);
-  const { accessToken } = await getConnection(connectedAccountId);
+  const accessToken = getConnectionAccessTokenOrThrow(
+    await getConnection(connectedAccountId),
+  );
 
   const renewedSubscription = isDefined(storedSubscription)
     ? await renewStoredSubscriptionOrUndefined({

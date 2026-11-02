@@ -76,4 +76,5 @@ export const MESSAGE_HTML_SANITIZE_OPTIONS = {
   allowedSchemes: ['http', 'https', 'mailto', 'tel'],
   disallowedTagsMode: 'discard',
   nonTextTags: TAGS_CARRYING_NO_BODY_TEXT,
+  nestingLimit: 256,
 } satisfies sanitizeHtml.IOptions;

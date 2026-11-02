@@ -127,6 +127,10 @@ export class CalendarEventListFetchCronJob {
               calendarChannelId,
               workspaceId,
             },
+            {
+              workspaceId,
+              isWorkspaceJob: true,
+            },
           );
         }
       } catch (error) {

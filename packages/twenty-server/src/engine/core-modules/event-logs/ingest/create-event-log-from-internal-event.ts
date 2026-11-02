@@ -95,6 +95,10 @@ export class CreateEventLogFromInternalEvent {
     await this.messageQueueService.add<CreateEventLogFromInternalEventData>(
       CreateEventLogFromInternalEvent.name,
       { ...batch, transientErrorRetryCount: transientErrorRetryCount + 1 },
+      {
+        workspaceId: batch.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 

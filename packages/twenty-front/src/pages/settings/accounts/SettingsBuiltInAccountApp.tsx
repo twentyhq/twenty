@@ -1,4 +1,5 @@
 import { type ConnectedAccount } from '@/accounts/types/ConnectedAccount';
+import { AppChip } from '@/applications/components/AppChip';
 import { SettingsAccountGroupsSection } from '@/settings/app-preferences/components/SettingsAccountGroupsSection';
 import { SettingsAccountsBlocklistSection } from '@/settings/accounts/components/SettingsAccountsBlocklistSection';
 import { SettingsAccountsCalendarChannelDetails } from '@/settings/accounts/components/SettingsAccountsCalendarChannelDetails';
@@ -9,6 +10,8 @@ import { useEnabledBuiltInAccountApps } from '@/settings/app-preferences/hooks/u
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
 import { getConnectedAccountSettingsChannels } from '@/settings/app-preferences/utils/getConnectedAccountSettingsChannels';
 import { getBuiltInAccountAppChannelTabsVisibility } from '@/settings/app-preferences/utils/getBuiltInAccountAppChannelTabsVisibility';
+import { getBuiltInAccountAppLogoUrl } from '@/settings/app-preferences/utils/getBuiltInAccountAppLogoUrl';
+import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
 import { SettingsAccountsMessageChannelsSSEEffect } from '@/settings/accounts/components/SettingsAccountsMessageChannelsSSEEffect';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
@@ -16,23 +19,19 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { Select } from '@/ui/input/components/Select';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { Section } from 'twenty-ui/components/layout';
 import { IconCalendarEvent, IconMail, IconSettings } from 'twenty-ui/icon';
-import { useTheme } from 'twenty-ui/theme';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 export const SettingsBuiltInAccountApp = () => {
   const { t } = useLingui();
-  const theme = useTheme();
-  const isAppPreferencesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
-  );
-  const { builtInAccountAppId } = useParams<{ builtInAccountAppId: string }>();
+  const { applicationId: builtInAccountAppId } = useParams<{
+    applicationId: string;
+  }>();
   const { enabledBuiltInAccountApps } = useEnabledBuiltInAccountApps();
   const app = enabledBuiltInAccountApps.find(
     (enabledApp) => enabledApp.id === builtInAccountAppId,
@@ -78,11 +77,14 @@ export const SettingsBuiltInAccountApp = () => {
     tabs.map((tab) => tab.id),
   );
 
-  if (!isAppPreferencesEnabled || !isDefined(app)) {
-    return <Navigate to={getSettingsPath(SettingsPath.Accounts)} replace />;
+  if (!isDefined(app)) {
+    return (
+      <Navigate to={getSettingsPath(SettingsPath.AppPreferences)} replace />
+    );
   }
 
   const appName = t(app.name);
+  const logoUrl = getBuiltInAccountAppLogoUrl(app);
 
   const getSelectedAccount = (
     accounts: ConnectedAccount[],
@@ -154,6 +156,14 @@ export const SettingsBuiltInAccountApp = () => {
 
     return (
       <>
+        <Section.Root>
+          <SettingsApplicationOverviewCard
+            logoUrl={logoUrl}
+            displayName={appName}
+            description={t(app.description)}
+            coverImageUrl={app.coverImage}
+          />
+        </Section.Root>
         <SettingsAccountGroupsSection builtInAccountApp={app} />
         <SettingsAccountsBlocklistSection />
       </>
@@ -163,7 +173,14 @@ export const SettingsBuiltInAccountApp = () => {
   return (
     <SettingsPageLayout
       title={appName}
-      icon={<app.Icon size={theme.icon.size.md} />}
+      icon={
+        <AppChip
+          logoUrl={logoUrl}
+          fallbackApplicationData={{ name: appName }}
+          size="md"
+          chipOnly
+        />
+      }
       links={[
         {
           children: t`User`,
@@ -171,7 +188,7 @@ export const SettingsBuiltInAccountApp = () => {
         },
         {
           children: t`Apps preferences`,
-          href: getSettingsPath(SettingsPath.Accounts),
+          href: getSettingsPath(SettingsPath.AppPreferences),
         },
         { children: appName },
       ]}

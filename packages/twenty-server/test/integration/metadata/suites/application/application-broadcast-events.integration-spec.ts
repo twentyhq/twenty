@@ -24,7 +24,6 @@ const APPLICATION_PAYLOAD_KEYS = [
 const APPLICATION_REGISTRATION_PAYLOAD_KEYS = [
   'id',
   'isListed',
-  'isVetted',
   'latestAvailableVersion',
   'name',
   'ownerWorkspaceId',

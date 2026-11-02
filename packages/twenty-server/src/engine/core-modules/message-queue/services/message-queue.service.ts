@@ -3,6 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import {
   type QueueCronJobOptions,
   type QueueJobOptions,
+  type QueueJobSettings,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import {
   type InFlightQueueJob,
@@ -35,7 +36,7 @@ export class MessageQueueService {
   add<T extends MessageQueueJobData>(
     jobName: string,
     data: T,
-    options?: QueueJobOptions,
+    options: QueueJobOptions,
   ): Promise<string | undefined> {
     return this.driver.add(this.queueName, jobName, data, options);
   }
@@ -43,7 +44,7 @@ export class MessageQueueService {
   bulkAdd<T extends MessageQueueJobData>(
     jobName: string,
     jobs: QueueJobToAdd<T>[],
-    options?: QueueJobOptions,
+    options?: QueueJobSettings,
   ): Promise<string[]> {
     return this.driver.bulkAdd(this.queueName, jobName, jobs, options);
   }

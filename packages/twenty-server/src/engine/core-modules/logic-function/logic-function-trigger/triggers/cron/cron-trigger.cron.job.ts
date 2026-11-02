@@ -19,8 +19,6 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { ThrottlerException } from 'src/engine/core-modules/throttler/throttler.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF } from 'src/engine/core-modules/logic-function/logic-function-trigger/constants/logic-function-queue-retry-backoff.constant';
-import { buildApplicationGroupKey } from 'src/engine/core-modules/message-queue/utils/build-application-group-key.util';
-import { buildWorkspaceGroupKey } from 'src/engine/core-modules/message-queue/utils/build-workspace-group-key.util';
 import { buildApplicationJobThrottledLogEntry } from 'src/engine/core-modules/logic-function/logic-function-trigger/utils/build-application-job-throttled-log-entry.util';
 import {
   LogicFunctionTriggerJob,
@@ -146,10 +144,8 @@ export class CronTriggerCronJob {
             {
               retryLimit: 10,
               backoff: LOGIC_FUNCTION_QUEUE_RETRY_BACKOFF,
-              groupKeys: [
-                buildWorkspaceGroupKey(activeWorkspace.id),
-                buildApplicationGroupKey(application.universalIdentifier),
-              ],
+              workspaceId: activeWorkspace.id,
+              applicationUniversalIdentifier: application.universalIdentifier,
             },
           );
         }

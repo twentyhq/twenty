@@ -17,6 +17,7 @@ export const USAGE_OPERATION_TYPE_LABELS: Record<
   [UsageOperationType.CALL_RECORDING]: msg`Call Recording`,
   [UsageOperationType.EMAIL_SEND]: msg`Email Send`,
   [UsageOperationType.MESSAGE_CAMPAIGN_SEND]: msg`Campaign Email Send`,
+  [UsageOperationType.APP_OPERATION]: msg`App Operation`,
   [UsageOperationType.API_REQUEST]: msg`API Request`,
   [UsageOperationType.WEBHOOK_CALL]: msg`Webhook Call`,
   [UsageOperationType.STORAGE_FILE]: msg`File Storage`,

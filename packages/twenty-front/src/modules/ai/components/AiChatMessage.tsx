@@ -14,6 +14,7 @@ import { AiChatMessageHeader } from '@/ai/components/AiChatMessageHeader';
 import { AiChatMessageReactionPicker } from '@/ai/components/AiChatMessageReactionPicker';
 import { AiChatMessageReactions } from '@/ai/components/AiChatMessageReactions';
 import { AiChatErrorRenderer } from '@/ai/components/AiChatErrorRenderer';
+import { AiChatUserMessageCollapsibleContent } from '@/ai/components/AiChatUserMessageCollapsibleContent';
 import { agentChatFirstUnreadMessageIdSelector } from '@/ai/states/selectors/agentChatFirstUnreadMessageIdSelector';
 import { agentChatIsMessageBeforeFirstUserMessageFamilySelector } from '@/ai/states/selectors/agentChatIsMessageBeforeFirstUserMessageFamilySelector';
 import { agentChatMessageFamilySelector } from '@/ai/states/selectors/agentChatMessageFamilySelector';
@@ -189,12 +190,14 @@ const StyledFilesContainer = styled.div`
 
 type AiChatUserMessageTextProps = {
   messageId: string;
+  text: string;
   children: ReactNode;
   isOtherMember: boolean;
 };
 
 const AiChatUserMessageText = ({
   messageId,
+  text,
   children,
   isOtherMember,
 }: AiChatUserMessageTextProps) => {
@@ -206,7 +209,9 @@ const AiChatUserMessageText = ({
       isOtherMember={isOtherMember}
       ref={sentMessageHandOffRef}
     >
-      {children}
+      <AiChatUserMessageCollapsibleContent text={text}>
+        {children}
+      </AiChatUserMessageCollapsibleContent>
     </StyledMessageText>
   );
 };
@@ -276,6 +281,8 @@ export const AiChatMessage = ({
     isDefined(error) && agentChatMessage.role === AGENT_MESSAGE_ROLE.ASSISTANT;
 
   const fileParts = agentChatMessage.parts.filter(isExtendedFileUIPart);
+  const messageText =
+    agentChatMessage.parts.find((part) => part.type === 'text')?.text ?? '';
   const messageContent = (
     <AiChatAssistantMessageRenderer
       isUserMessage={isUser}
@@ -329,6 +336,7 @@ export const AiChatMessage = ({
           {isUser ? (
             <AiChatUserMessageText
               messageId={messageId}
+              text={messageText}
               isOtherMember={isAiChatInboxEnabled && !isOwnMessage}
             >
               {messageContent}
@@ -365,12 +373,7 @@ export const AiChatMessage = ({
               {isAiChatInboxEnabled && !isLastMessageStreaming && (
                 <AiChatMessageReactionPicker messageId={messageId} />
               )}
-              <LightCopyIconButton
-                copyText={
-                  agentChatMessage.parts.find((part) => part.type === 'text')
-                    ?.text ?? ''
-                }
-              />
+              <LightCopyIconButton copyText={messageText} />
             </StyledMessageActions>
           </StyledMessageFooter>
         )}

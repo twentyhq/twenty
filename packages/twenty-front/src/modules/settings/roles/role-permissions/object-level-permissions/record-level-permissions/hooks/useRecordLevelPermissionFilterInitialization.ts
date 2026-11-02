@@ -43,7 +43,9 @@ export const useRecordLevelPermissionFilterInitialization = ({
   const initialFilters = useMemo(() => {
     const predicates = settingsDraftRole.rowLevelPermissionPredicates ?? [];
     const objectPredicates = predicates.filter(
-      (predicate) => predicate.objectMetadataId === objectMetadataItem.id,
+      (predicate) =>
+        predicate.objectMetadataId === objectMetadataItem.id &&
+        !isDefined(predicate.relationFieldMetadataId),
     );
 
     return objectPredicates

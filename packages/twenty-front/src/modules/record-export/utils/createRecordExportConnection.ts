@@ -1,6 +1,7 @@
 import { t } from '@lingui/core/macro';
 import { print } from 'graphql';
 import { createClient } from 'graphql-sse';
+import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import {
@@ -25,6 +26,7 @@ export const createRecordExportConnection = () => {
     const client = createClient({
       url: `${serverBaseUrl}/metadata`,
       credentials: 'include',
+      headers: { [SESSION_COOKIE_OPT_IN_HEADER_NAME]: '1' },
       retryAttempts: 0,
     });
 

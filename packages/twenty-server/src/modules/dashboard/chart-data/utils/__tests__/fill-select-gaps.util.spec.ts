@@ -342,3 +342,44 @@ describe('fillSelectGapsTwoDimensional', () => {
     });
   });
 });
+
+describe('fillSelectGaps with records that have no value', () => {
+  const selectOptions = [
+    { value: 'TODO', label: 'Todo', position: 0 },
+    { value: 'DONE', label: 'Done', position: 1 },
+  ];
+
+  it('should keep the null group after the filled options', () => {
+    const result = fillSelectGaps({
+      data: [
+        { groupByDimensionValues: ['TODO'], aggregateValue: 4 },
+        { groupByDimensionValues: [null], aggregateValue: 7 },
+      ],
+      selectOptions,
+    });
+
+    expect(result).toEqual([
+      { groupByDimensionValues: ['TODO'], aggregateValue: 4 },
+      { groupByDimensionValues: ['DONE'], aggregateValue: 0 },
+      { groupByDimensionValues: [null], aggregateValue: 7 },
+    ]);
+  });
+
+  it('should keep the null group for every secondary value', () => {
+    const result = fillSelectGapsTwoDimensional({
+      data: [
+        { groupByDimensionValues: ['TODO', 'X'], aggregateValue: 5 },
+        { groupByDimensionValues: [null, 'X'], aggregateValue: 2 },
+        { groupByDimensionValues: [null, 'Y'], aggregateValue: 1 },
+      ],
+      selectOptions,
+    });
+
+    expect(result).toEqual([
+      { groupByDimensionValues: ['TODO', 'X'], aggregateValue: 5 },
+      { groupByDimensionValues: ['DONE', 'X'], aggregateValue: 0 },
+      { groupByDimensionValues: [null, 'X'], aggregateValue: 2 },
+      { groupByDimensionValues: [null, 'Y'], aggregateValue: 1 },
+    ]);
+  });
+});

@@ -11,6 +11,7 @@ failure recovery. See the [README](../README.md) to build and start the CLI.
 - [Open](#open-the-workspace)
 - [Metadata](#inspect-the-data-model)
 - [Records](#read-records)
+- [Local development environment](#run-a-local-development-environment)
 - [App init](#create-an-app) and [add](#add-definitions-to-an-app)
 - [Build and typecheck](#build-and-check-an-app)
 - [Plan](#preview-app-changes), [apply](#apply-an-app) and [dev](#develop-an-app)
@@ -18,6 +19,68 @@ failure recovery. See the [README](../README.md) to build and start the CLI.
 - [Function execution](#execute-an-app-function) and [logs](#watch-app-logs)
 - [Expired browser sessions](#expired-browser-sessions)
 - [Output and exit codes](#output)
+
+## Run a local development environment
+
+```bash
+twenty local start
+twenty local status
+twenty auth login --url http://localhost:2020 --name local
+twenty local logs --no-follow
+twenty local stop
+```
+
+`local` runs the full Twenty development environment, including the web UI,
+API, worker and databases. Docker must be installed and running with a local
+socket context; remote Docker endpoints are rejected. These commands need
+neither an app directory nor a saved workspace connection. They do not sign in,
+change remotes or apply an app.
+
+`start [version]` creates an instance or starts the existing one, and waits up
+to five minutes for `/healthz`. For a new instance, version selection is:
+explicit version or image tag, the highest published version matching the nearest
+`package.json`'s `engines.twenty`, then `latest` when no range exists. A failed
+lookup or unmatched range is an error, never a fallback to another version.
+Versions such as `2.53` and `2.53.1` select `v2.53` and `v2.53.1`, respectively;
+`2.53` keeps the floating minor tag. Other image tags are used as given.
+New instances pull the selected image before creation, including when the tag
+is cached locally. Existing instances keep their image and port; use `upgrade` to change versions.
+Compatibility with `engines.twenty` uses the existing image's `APP_VERSION`.
+A missing, invalid or incompatible version warns without preventing startup.
+A readiness failure leaves the container and data in place for diagnosis.
+
+New instances bind to loopback on port `2020`. Use `--port <port>` when creating
+one. `--test` selects the separate test instance, default port `2021`; pass it
+to every command intended for that instance. Data and file storage use separate
+named volumes for each instance. Existing SDK development containers and their
+volumes are reused.
+
+```bash
+twenty local start 2.53.1 --test
+twenty local logs --test --lines 100 --no-follow
+twenty local upgrade 2.53.1 --test
+twenty local reset --test --yes
+```
+
+`status` reports `not-created`, `stopped`, `starting` or `healthy`; unavailable
+Docker is an error. `logs` follows by default; `--no-follow` prints recent logs
+and exits. It supports human or NDJSON output, with a terminal result or error;
+other local commands support human or JSON output. Ctrl+C cancels the CLI
+operation, without stopping the environment or deleting data.
+
+`stop` preserves the container and all data. `upgrade [version]` uses the same
+version selection as a new start. It pulls the image before stopping the old
+instance, then recreates it with the same ports, named volumes and user-provided
+environment overrides. The old container is kept until the replacement is created.
+If creation fails or is cancelled, the CLI restores the old container and its
+previous running state. If the image digest is unchanged, no restart occurs.
+Custom storage layouts are rejected. Data volumes survive a failed upgrade,
+but database migrations are not automatically rolled back.
+
+`reset` removes the selected container and its database, analytics and file
+volumes. It requires confirmation, or `--yes` in scripts. It does not affect
+other containers or saved remote credentials. Run `start` afterward for a fresh
+instance. This development environment is not a production deployment tool.
 
 ## Connections and authentication
 
@@ -416,10 +479,14 @@ The app must already be installed in the workspace; otherwise the command fails 
 ```bash
 twenty app pull --remote dev
 twenty app pull --path ./apps/billing --json
-twenty app pull --universal-identifier <uuid> --verbose
+twenty app pull --path ./workspace-app --yes --no-input
 ```
 
-`app pull` reads the app's definition and exports its workspace metadata into the existing project. It uses the selected connection and the server's `APPLICATIONS` permission; the server decides which apps this workspace can export. It does not register an app or change the workspace. When a project has no application definition, provide `--universal-identifier`. A project declaring a different app is refused before writing.
+Inside an app, `app pull` reads the identifier from the local application definition and pulls that application. Outside an app, it asks where to create a project for the selected workspace's custom application, then asks to create it, install its dependencies with Yarn, and pull. `--path` chooses an existing app or a new or empty destination; noninteractive creation requires both `--path` and `--yes`. It never overwrites an unrelated nonempty directory.
+
+New projects reuse the bundled initializer's package and configuration files without demo entities. Pull writes the custom application's definition. An existing SDK project without an application definition also pulls the custom application. A missing custom application is an error. There is no `--universal-identifier` option.
+
+Pull uses the selected connection and the server's `APPLICATIONS` permission. Creating a project here creates local files only; it does not register an application or change the workspace. Existing projects do not install dependencies automatically. If a new project's installation fails, the scaffold is kept so you can run `yarn install` there and retry pull.
 
 The project must have `twenty-sdk` installed, version `>=1.23.0`, with its public `twenty-sdk/define` and `twenty-sdk/front-component` exports. Pull also checks that the SDK provides the authoring APIs required by the generated files. Missing APIs fail with `SDK_SOURCE_UNSUPPORTED`; install a compatible version (2.50.0 or later). Pull does not require a project TypeScript compiler. Run `twenty app typecheck` afterwards to check the generated definitions against your installed SDK.
 
@@ -435,7 +502,7 @@ failures restore the previous files and baseline.
 
 Failures in reconciliation report `error.details.outcome`: `unchanged` after an acknowledged refusal, cancellation before writing or successful rollback; `unknown` if a worker stops without acknowledging completion or rollback fails; `pulled` if writes and baseline completed but temporary-file cleanup failed. An interrupted worker can leave files partially written; inspect the changes and retained `.twenty/cli/pull-backup-*` files before retrying. A failed rollback also reports `backupDirectory`. Ctrl+C exits 130 unless the worker acknowledges a completed commit, in which case pull returns its result.
 
-The current export contains metadata and translations, not application source assets or dependency files. Workflows are written as `defineWorkflow` files in `src/workflows`; a workflow changed in the workflow builder, or one using steps or references an application cannot declare, is reported as a coverage gap and its local file is kept. The workspace Custom application is published from the builder too, so its workflows are written from their active version, and apply publishes a changed definition as a new version. Skills and agents are written as `defineSkill` and `defineAgent` files in `src/skills` and `src/agents`; one the server cannot reproduce from a definition, such as an agent on more than one role, is reported as a coverage gap and its local file is kept. Logic-function/front-component code and unsupported metadata are not regenerated. An export with nonempty `files` is refused before writing. Package files, dependency pins and the installed generated client are left alone; pull never installs dependencies. Each export response is limited to 16 MiB. See the [pull implementation](../src/app/pull/README.md) for reconciliation and compatibility details.
+The current export contains metadata, translations and stored dependency files. Public assets and application source files are not exported yet. Workflows are written as `defineWorkflow` files in `src/workflows`; a workflow changed in the workflow builder, or one using steps or references an application cannot declare, is reported as a coverage gap and its local file is kept. The workspace Custom application is published from the builder too, so its workflows are written from their active version, and apply publishes a changed definition as a new version. Skills and agents are written as `defineSkill` and `defineAgent` files in `src/skills` and `src/agents`; one the server cannot reproduce from a definition, such as an agent on more than one role, is reported as a coverage gap and its local file is kept. Logic-function/front-component code and unsupported metadata are not regenerated. Pull restores `package.json` and `yarn.lock` from the application’s `dependencies` folder. If the exported package omits `twenty-sdk`, as the workspace Custom application does, pull keeps your local SDK dependency. Other exported files are refused before writing. Dependency files unchanged on the workspace keep local edits; changed remote files replace them. Missing remote files leave local files untouched. The installed generated client is left alone; pull never installs dependencies. Run `yarn install` after pulling dependency changes. Each export response is limited to 16 MiB. See the [pull implementation](../src/app/pull/README.md) for reconciliation and compatibility details.
 
 ## Install a registered app
 

@@ -20,11 +20,15 @@ export const useAccountsConfigurationCompletionPath = (
     (app) => app.provider === connectedAccount?.provider,
   );
 
-  if (isAppPreferencesEnabled && isDefined(builtInAccountApp)) {
-    return getSettingsPath(SettingsPath.BuiltInAccountApp, {
-      builtInAccountAppId: builtInAccountApp.id,
+  if (!isAppPreferencesEnabled) {
+    return getSettingsPath(SettingsPath.Accounts);
+  }
+
+  if (isDefined(builtInAccountApp)) {
+    return getSettingsPath(SettingsPath.AppPreferencesApp, {
+      applicationId: builtInAccountApp.id,
     });
   }
 
-  return getSettingsPath(SettingsPath.Accounts);
+  return getSettingsPath(SettingsPath.AppPreferences);
 };

@@ -49,4 +49,18 @@ describe('findReservedVariableNamesInApplicationManifest', () => {
       }),
     ).toEqual(['TWENTY_API_KEY']);
   });
+
+  it('should return names starting with TWENTY_ that Twenty does not inject yet', () => {
+    expect(
+      findReservedVariableNamesInApplicationManifest({
+        serverVariables: { TWENTY_SERVER_SETTING: { isSecret: true } },
+        applicationVariables: {
+          TWENTY_WORKSPACE_SETTING: {
+            universalIdentifier: 'application-variable-id',
+            isSecret: false,
+          },
+        },
+      }),
+    ).toEqual(['TWENTY_SERVER_SETTING', 'TWENTY_WORKSPACE_SETTING']);
+  });
 });

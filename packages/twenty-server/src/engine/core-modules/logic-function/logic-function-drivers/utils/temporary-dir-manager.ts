@@ -15,7 +15,7 @@ export class TemporaryDirManager {
   );
 
   async init() {
-    const sourceTemporaryDir = join(this.temporaryDir);
+    const sourceTemporaryDir = join(this.temporaryDir, 'source');
     const lambdaZipPath = join(this.temporaryDir, LAMBDA_ZIP_FILE_NAME);
 
     await fs.mkdir(sourceTemporaryDir, { recursive: true });

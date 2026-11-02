@@ -318,6 +318,7 @@
 
 .salesfarce [role='button'][aria-controls^='view-picker-']::after {
   align-items: center;
+  align-self: stretch;
   background: linear-gradient(#fefefe, #f0f0f0 60%);
   border: 1px solid #b5b5b5;
   border-bottom-color: #7f7f7f;
@@ -328,7 +329,6 @@
   display: flex;
   font-size: 11px;
   font-weight: 700;
-  height: 22px;
   padding: 0 6px;
 }
 
@@ -707,4 +707,175 @@
 :root.salesfarce :focus-visible:not(input, textarea, [contenteditable='true']) {
   outline: 1px dotted #000000 !important;
   outline-offset: 1px !important;
+}
+
+.salesfarce:has([data-page-surface='main'] .react-flow) {
+  --sf-object: #a55647;
+}
+
+.salesfarce [data-click-outside-id='workflow-diagram-step-node-base'] {
+  border-top: 3px solid var(--sf-object);
+  box-shadow: 0 1px 2px #00000026;
+}
+
+.salesfarce
+  [data-click-outside-id='workflow-diagram-step-node-base']
+  > div:has(> .tabler-icon) {
+  background: #ffffff;
+  border: 1px solid #dfdfdf;
+}
+
+.salesfarce
+  [data-click-outside-id='workflow-diagram-step-node-base']
+  [data-size='xs'][data-weight='semibold'] {
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.salesfarce
+  [data-click-outside-id='workflow-diagram-step-node-base']
+  div:has(> div > [data-size='xs'])
+  + div {
+  color: #015ba7;
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.salesfarce [data-table-header='true'] {
+  border-top: 3px solid var(--sf-object);
+}
+
+.salesfarce [role='switch'] {
+  background: #ffffff;
+  block-size: 12px;
+  border: 1px solid var(--t-border-color-secondary-inverted);
+  border-radius: 2px;
+  inline-size: 12px;
+}
+
+.salesfarce [role='switch'][data-checked] {
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2.5 6.2 L5 8.6 L9.6 3.4' fill='none' stroke='%23ffffff' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")
+    center / 10px no-repeat var(--t-color-blue);
+  border-color: var(--t-color-blue);
+}
+
+.salesfarce [role='switch'] > span {
+  display: none;
+}
+
+.salesfarce [data-align][data-color] div:has(> h2:first-child) {
+  background: var(--sf-object);
+  padding: 3px 6px;
+}
+
+.salesfarce [data-align][data-color] div > h2:first-child {
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.salesfarce
+  div:has(> div > div > .ProseMirror):has(
+    .tabler-icon-arrow-up,
+    .tabler-icon-player-stop
+  ) {
+  border-color: #c7ccce;
+  border-radius: 3px;
+  box-shadow: inset 0 1px 2px #0000001a;
+}
+
+.salesfarce
+  div:has(> div > div > .ProseMirror):has(
+    .tabler-icon-arrow-up,
+    .tabler-icon-player-stop
+  ):focus-within {
+  border-color: #7f9db9;
+  box-shadow: inset 0 1px 2px #0000001a;
+}
+
+.salesfarce
+  div:has(> div > div > .ProseMirror):has(
+    .tabler-icon-arrow-up,
+    .tabler-icon-player-stop
+  )
+  p.is-editor-empty:first-of-type::before {
+  content: 'What are you working on?';
+}
+
+.salesfarce
+  div:has(> div > div > .ProseMirror)
+  button:has(.tabler-icon-arrow-up) {
+  aspect-ratio: auto;
+  inline-size: auto;
+  padding-inline: 8px;
+}
+
+.salesfarce
+  div:has(> div > div > .ProseMirror)
+  button:has(.tabler-icon-arrow-up)
+  > span {
+  display: none;
+}
+
+.salesfarce
+  div:has(> div > div > .ProseMirror)
+  button:has(.tabler-icon-arrow-up)::after {
+  content: 'Share';
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.salesfarce
+  [data-testid='dialog-viewport']
+  > :is([role='dialog'], [role='alertdialog']) {
+  border: 1px solid #1468b6;
+  border-radius: 0;
+}
+
+.salesfarce
+  [data-testid='dialog-viewport']
+  > :is([role='dialog'], [role='alertdialog'])
+  > div
+  > h2:first-child {
+  background: linear-gradient(#60c2e2, #1797c0);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  margin-block-start: calc(-1 * var(--t-spacing-6));
+  margin-inline: calc(-1 * var(--t-spacing-6));
+  padding: 6px var(--t-spacing-3);
+  text-align: start;
+}
+
+.salesfarce
+  :is([data-shape='circle'], [data-shape='rounded-square'])[data-size] {
+  border-radius: 0;
+  box-shadow: 0 0 0 1px #b5b5b5;
+}
+
+.salesfarce [role='radio'] > span[aria-hidden]:first-child:not(:has(svg)) {
+  background: radial-gradient(circle at 35% 30%, #ffffff, #e3e3dc 70%, #c9c9c0);
+  block-size: 13px;
+  border: 1px solid #1c5180;
+  border-radius: 50%;
+  inline-size: 13px;
+  outline: none;
+  transform: none;
+}
+
+.salesfarce
+  [role='radio']:not([data-disabled]):hover
+  > span[aria-hidden]:first-child:not(:has(svg)) {
+  background: radial-gradient(circle at 35% 30%, #ffffff, #e3e3dc 70%, #c9c9c0);
+  box-shadow: inset 0 0 0 1px #f8b636;
+  outline: none;
+}
+
+.salesfarce
+  [role='radio']
+  > span[aria-hidden]:first-child:not(:has(svg))
+  > span {
+  background: radial-gradient(circle at 35% 30%, #a6f0a0, #21a121 60%, #127312);
+  block-size: 5px;
+  inline-size: 5px;
 }

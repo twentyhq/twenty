@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   getEnterprisePriceId,
@@ -9,12 +10,19 @@ import {
   resolveTrialPeriodDays,
   STRIPE_METADATA_KEY,
 } from '@/platform/enterprise';
+import { forwardToTwentyConnect } from '@/platform/enterprise/forward-to-twenty-connect';
 
 const DEFAULT_TRIAL_PERIOD_DAYS = 30;
 
 export const dynamic = 'force-dynamic';
 
 export async function POST(request: Request) {
+  const forwardedResponse = await forwardToTwentyConnect(request);
+
+  if (isDefined(forwardedResponse)) {
+    return forwardedResponse;
+  }
+
   if (!process.env.STRIPE_SECRET_KEY) {
     console.error(
       '[enterprise-checkout] 503 — STRIPE_SECRET_KEY is not configured',

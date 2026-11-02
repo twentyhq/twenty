@@ -164,6 +164,8 @@ export class DeferredWorkspaceMigrationActionRunnerService {
           retryLimit: DEFERRED_WORKSPACE_MIGRATION_ACTION_MAX_ATTEMPTS - 1,
           backoff: DEFERRED_WORKSPACE_MIGRATION_ACTION_RETRY_BACKOFF,
           priority: DEFERRED_WORKSPACE_MIGRATION_ACTION_JOB_PRIORITY,
+          workspaceId,
+          isWorkspaceJob: true,
         },
       );
     } catch (error) {

@@ -31,6 +31,7 @@ export class CreateRowLevelPermissionPredicateActionHandlerService extends Works
     const {
       roleId,
       fieldMetadataId,
+      relationFieldMetadataId,
       workspaceMemberFieldMetadataId,
       objectMetadataId,
       rowLevelPermissionPredicateGroupId,
@@ -51,6 +52,7 @@ export class CreateRowLevelPermissionPredicateActionHandlerService extends Works
         ...action.flatEntity,
         roleId,
         fieldMetadataId,
+        relationFieldMetadataId,
         workspaceMemberFieldMetadataId,
         objectMetadataId,
         rowLevelPermissionPredicateGroupId,

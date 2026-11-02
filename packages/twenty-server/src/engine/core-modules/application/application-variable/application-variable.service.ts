@@ -8,6 +8,7 @@ import {
   ApplicationVariableEntityExceptionCode,
 } from 'src/engine/core-modules/application/application-variable/application-variable.exception';
 import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/application/application-variable/constants/secret-application-variable-mask.constant';
+import { isReservedEnvVariableName } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/is-reserved-env-variable-name.util';
 import { type FlatApplicationVariableMaps } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable-maps.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
@@ -106,6 +107,7 @@ export class ApplicationVariableEntityService {
   ): Record<string, string> {
     return flatApplicationVariables
       .filter(({ scope }) => scope !== 'USER')
+      .filter(({ key }) => !isReservedEnvVariableName(key))
       .reduce<Record<string, string>>((acc, flatApplicationVariable) => {
         acc[flatApplicationVariable.key] = this.decryptValue(
           flatApplicationVariable,

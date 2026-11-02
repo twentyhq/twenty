@@ -25,6 +25,7 @@ import { WorkspaceFlatTimelineActivityTypeMapCacheService } from 'src/engine/met
 import { WorkspaceFlatAgentChatChannelMapCacheService } from 'src/engine/metadata-modules/flat-agent-chat-channel/services/workspace-flat-agent-chat-channel-map-cache.service';
 import { WorkspaceFlatAgentChatChannelRoleMapCacheService } from 'src/engine/metadata-modules/flat-agent-chat-channel-role/services/workspace-flat-agent-chat-channel-role-map-cache.service';
 import { WorkspaceFlatSettingsMenuItemMapCacheService } from 'src/engine/metadata-modules/flat-settings-menu-item/services/workspace-flat-settings-menu-item-map-cache.service';
+import { WorkspaceFlatRelatedRecordPathMapCacheService } from 'src/engine/metadata-modules/flat-related-record-path/services/workspace-flat-related-record-path-map-cache.service';
 import { WorkspaceFlatValidationRuleMapCacheService } from 'src/engine/metadata-modules/flat-validation-rule/services/workspace-flat-validation-rule-map-cache.service';
 import { WorkspaceFlatViewSortMapCacheService } from 'src/engine/metadata-modules/flat-view-sort/services/workspace-flat-view-sort-map-cache.service';
 import { WorkspaceFlatViewMapCacheService } from 'src/engine/metadata-modules/flat-view/services/workspace-flat-view-map-cache.service';
@@ -59,6 +60,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     WorkspaceFlatSettingsMenuItemMapCacheService,
     WorkspaceFlatAgentChatChannelMapCacheService,
     WorkspaceFlatAgentChatChannelRoleMapCacheService,
+    WorkspaceFlatRelatedRecordPathMapCacheService,
     WorkspaceFlatValidationRuleMapCacheService,
     WorkspaceFlatMcpServerMapCacheService,
   ],

@@ -165,7 +165,7 @@ export const buildWorkflowManifestInverseReferenceResolvers = (
         typeof agentId === 'string'
           ? agentUniversalIdentifierById.get(agentId)
           : undefined,
-      reason: 'workflow step on an agent of another application',
+      reason: 'workflow step on an agent the application does not export',
     });
 
   // Values that are not a shared account of the workspace (variables, member ids, private accounts) are kept as they are

@@ -10,7 +10,6 @@ const FIND_MARKETPLACE_APP_DETAIL_QUERY = `
       name
       sourcePackage
       latestAvailableVersion
-      isVetted
       author
       category
       logoUrl
@@ -26,7 +25,6 @@ type ApiMarketplaceAppDetail = {
   name: string;
   sourcePackage?: string | null;
   latestAvailableVersion?: string | null;
-  isVetted: boolean;
   author?: string | null;
   category?: string | null;
   logoUrl?: string | null;
@@ -69,7 +67,6 @@ export async function fetchMarketplaceAppDetailBySlug(
       category: detail.category ?? app.category,
       logoUrl: detail.logoUrl ?? app.logoUrl,
       sourcePackage: detail.sourcePackage ?? undefined,
-      isVetted: detail.isVetted,
       aboutDescription: detail.aboutDescription ?? undefined,
       screenshots: detail.galleryImages ?? [],
       websiteUrl: detail.websiteUrl ?? undefined,

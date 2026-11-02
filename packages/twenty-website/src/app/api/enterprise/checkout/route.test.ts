@@ -8,6 +8,10 @@ const SERVER_ID = 'server-1';
 const search = jest.fn();
 const createSession = jest.fn();
 
+jest.mock('@/platform/enterprise/forward-to-twenty-connect', () => ({
+  forwardToTwentyConnect: async () => null,
+}));
+
 jest.mock('@/platform/enterprise', () => ({
   ...jest.requireActual('@/platform/enterprise'),
   getStripeClient: () => ({

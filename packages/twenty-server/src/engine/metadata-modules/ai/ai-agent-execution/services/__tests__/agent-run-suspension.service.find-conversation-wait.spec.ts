@@ -17,6 +17,7 @@ const buildService = ({
     {} as never,
     {} as never,
     {} as never,
+    {} as never,
   );
 
 const buildThread = (pendingQuestionMessageId: string | null = null) => ({

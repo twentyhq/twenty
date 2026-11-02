@@ -19,7 +19,9 @@ const isPath = (value: unknown): value is PullDeletion =>
 
 const isWrite = (value: unknown): value is PullAppResult['writes'][number] =>
   isPlainObject(value) &&
-  (isPullEntityKind(value.kind) || value.kind === 'translation') &&
+  (isPullEntityKind(value.kind) ||
+    value.kind === 'translation' ||
+    value.kind === 'dependency') &&
   isBoolean(value.isRegeneration) &&
   isPath(value);
 

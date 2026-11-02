@@ -11,6 +11,7 @@ const WORKSPACE_ID = 'workspace-id';
 const WORKFLOW_RUN_ID = 'workflow-run-id';
 const STEP_ID = 'step-id';
 const WAIT_ID = 'wait-id';
+const APPLICATION_UNIVERSAL_IDENTIFIER = 'workflow-application-universal-id';
 
 const EVENT = {
   eventName: 'company.updated',
@@ -77,6 +78,12 @@ const buildService = ({
       ),
   };
   const messageQueueService = { add: jest.fn() };
+  const workflowRunJobScopeWorkspaceService = {
+    resolveForWorkflowRun: jest.fn().mockResolvedValue({
+      workspaceId: WORKSPACE_ID,
+      applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+    }),
+  };
 
   const registry = new PendingWakeUpOwnerHandlerRegistryService();
 
@@ -88,6 +95,7 @@ const buildService = ({
     {} as never,
     workflowExecutionContextService as never,
     {} as never,
+    workflowRunJobScopeWorkspaceService as never,
     messageQueueService as never,
   ).onModuleInit();
 
@@ -138,7 +146,12 @@ describe('WorkflowWaitingStepWorkspaceService as a wake-up owner', () => {
           },
         },
       },
-      expect.anything(),
+      {
+        id: WORKFLOW_RUN_ID,
+        doNotCheckDuplicatesBasedOnPrefix: true,
+        workspaceId: WORKSPACE_ID,
+        applicationUniversalIdentifier: APPLICATION_UNIVERSAL_IDENTIFIER,
+      },
     );
   });
 

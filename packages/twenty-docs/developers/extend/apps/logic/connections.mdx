@@ -508,7 +508,7 @@ Each connection has one of two scopes:
 The provider's `scope` decides which one its new connections get:
 
 - `scope: 'WORKSPACE'` (the default) — the app works with connections shared with the workspace. **Add connection** in the app's workspace settings creates a workspace-shared connection.
-- `scope: 'USER'` — each member connects their own account, creating personal connections. Members add, reconnect and remove them from the app's page under **Settings > User > Apps preferences**, which requires the `CONNECTED_ACCOUNTS` (User Apps) permission. The app's workspace settings have no **Add connection** button for a `USER` provider.
+- `scope: 'USER'` — each member connects their own account, creating personal connections. Members add, reconnect and remove them from the app's page under **Settings > User > Apps preferences**, which requires the User Apps permission. The app's workspace settings have no **Add connection** button for a `USER` provider.
 
 <Note>
   **Apps preferences** is not enabled in every workspace yet: where it is not,
@@ -520,7 +520,7 @@ A provider has exactly one scope. If your app needs both a shared credential and
 
 A connection always has its provider's scope, and a provider's scope is part of its identity: a later version cannot change the `scope` of an existing provider, and the upgrade is refused if it tries. To move a service from one scope to the other, declare a new provider with a new `universalIdentifier` and drop the old one. Upgrading then deletes the old provider and every connection made with it through the regular disconnect path (`onDisconnectLogicFunction`, token revocation, channel cleanup), and members connect again through the new provider.
 
-Adding or reconnecting a **Just for me** connection requires `CONNECTED_ACCOUNTS` permission, and adding or reconnecting a **Workspace shared** one requires `APPLICATIONS` permission.
+Adding or reconnecting a **Just for me** connection requires the User Apps permission, and adding or reconnecting a **Workspace shared** one requires the Workspace Apps permission.
 
 Use the right connection for each handler:
 

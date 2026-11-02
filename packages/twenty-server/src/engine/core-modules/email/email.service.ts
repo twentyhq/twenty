@@ -19,7 +19,7 @@ export class EmailService {
     await this.messageQueueService.add<SendMailOptions>(
       EmailSenderJob.name,
       sendMailOptions,
-      { retryLimit: 3, backoff: EMAIL_SEND_RETRY_BACKOFF },
+      { retryLimit: 3, backoff: EMAIL_SEND_RETRY_BACKOFF, isSystemJob: true },
     );
   }
 }

@@ -283,7 +283,7 @@ export const SettingsAdminApps = () => {
               >
                 <TableHeader>{t`Name`}</TableHeader>
                 <TableHeader>{t`Author`}</TableHeader>
-                <TableHeader align="right">{t`Vetted`}</TableHeader>
+                <TableHeader align="right">{t`Listed`}</TableHeader>
                 <TableHeader align="right">{t`Installs`}</TableHeader>
                 <TableHeader align="right">{t`Configured`}</TableHeader>
                 <TableHeader></TableHeader>
@@ -344,7 +344,7 @@ const SettingsAdminAppsTableRow = ({
       </StyledNameTableCell>
       <TableCell overflow="hidden">{registration.author ?? '—'}</TableCell>
       <TableCell align="right">
-        {registration.isVetted ? t`Yes` : t`No`}
+        {registration.isListed ? t`Yes` : t`No`}
       </TableCell>
       <TableCell align="right">{registration.installCount}</TableCell>
       <TableCell align="right">

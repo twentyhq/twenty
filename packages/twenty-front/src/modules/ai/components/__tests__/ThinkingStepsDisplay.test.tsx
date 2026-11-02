@@ -103,7 +103,6 @@ const createToolPart = ({
   }) as ThinkingStepPart;
 
 const renderThinkingStepsDisplay = ({
-  hasAssistantTextResponseStarted = false,
   isLastMessageStreaming,
   parts,
   isTrailingWhileStreaming = false,
@@ -111,7 +110,6 @@ const renderThinkingStepsDisplay = ({
 }: {
   parts: ThinkingStepPart[];
   isLastMessageStreaming: boolean;
-  hasAssistantTextResponseStarted?: boolean;
   isTrailingWhileStreaming?: boolean;
   workDurationMs?: number | null;
 }) => {
@@ -120,7 +118,6 @@ const renderThinkingStepsDisplay = ({
       <ThinkingStepsDisplay
         parts={parts}
         isLastMessageStreaming={isLastMessageStreaming}
-        hasAssistantTextResponseStarted={hasAssistantTextResponseStarted}
         isTrailingWhileStreaming={isTrailingWhileStreaming}
         workDurationMs={workDurationMs}
       />
@@ -129,7 +126,7 @@ const renderThinkingStepsDisplay = ({
 };
 
 describe('ThinkingStepsDisplay', () => {
-  it('should render expanded thinking rows with active loader while streaming', () => {
+  it('should show the running step as a single line while streaming', () => {
     renderThinkingStepsDisplay({
       isLastMessageStreaming: true,
       parts: [
@@ -141,64 +138,107 @@ describe('ThinkingStepsDisplay', () => {
       ],
     });
 
-    expect(screen.queryByRole('button', { name: /steps/i })).toBeNull();
+    expect(
+      screen.getByRole('button', { name: /Thinking.*2 steps/ }),
+    ).toHaveAttribute('aria-expanded', 'false');
+    expect(screen.queryByText('Searched the web for crm software')).toBeNull();
+    expect(screen.queryByText('Active reasoning content')).toBeNull();
+  });
+
+  it('should label the line with a tool step awaiting its output', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      parts: [createToolPart({ output: null, state: 'input-available' })],
+    });
+
+    expect(
+      screen.getByText('Searching the web for crm software'),
+    ).toBeInTheDocument();
+  });
+
+  it('should show thinking between steps', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      isTrailingWhileStreaming: true,
+      parts: [createToolPart()],
+    });
+
     expect(screen.getByText('Thinking')).toBeInTheDocument();
-    expect(screen.getByTestId('markdown-renderer')).toHaveTextContent(
-      'Active reasoning content',
+  });
+
+  it('should label the line with the running tool rather than thinking', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      isTrailingWhileStreaming: true,
+      parts: [createToolPart({ output: null, state: 'input-available' })],
+    });
+
+    expect(screen.queryByText('Thinking')).toBeNull();
+    expect(
+      screen.getByText('Searching the web for crm software'),
+    ).toBeInTheDocument();
+  });
+
+  it('should count the steps while the answer streams', () => {
+    renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      workDurationMs: 4_000,
+      parts: [createToolPart()],
+    });
+
+    expect(screen.getByRole('button', { name: '1 step' })).toBeInTheDocument();
+    expect(screen.queryByText('Thinking')).toBeNull();
+  });
+
+  it('should keep the same single line when the stream ends', () => {
+    const parts = [
+      createToolPart(),
+      createReasoningPart({
+        state: 'done',
+        text: 'Completed reasoning content',
+      }),
+    ];
+    const { rerender } = renderThinkingStepsDisplay({
+      isLastMessageStreaming: true,
+      parts,
+    });
+
+    const line = screen.getByRole('button', { name: '2 steps' });
+
+    rerender(
+      <ThemeProvider colorScheme="light">
+        <ThinkingStepsDisplay
+          parts={parts}
+          isLastMessageStreaming={false}
+          workDurationMs={83_000}
+        />
+      </ThemeProvider>,
     );
-    expect(
-      screen.getByText('Searched the web for crm software'),
-    ).toBeInTheDocument();
-    expect(document.querySelector('svg[viewBox="0 0 14 14"]')).not.toBeNull();
+
+    expect(screen.getByRole('button', { name: 'Worked for 1m 23s' })).toBe(
+      line,
+    );
+    expect(screen.queryByText('Thought')).toBeNull();
   });
 
-  it('should render the loading label for a tool step awaiting its output while streaming', () => {
+  it('should label the line with the latest reasoning title', () => {
     renderThinkingStepsDisplay({
       isLastMessageStreaming: true,
-      parts: [createToolPart({ output: null, state: 'input-available' })],
+      parts: [
+        createReasoningPart({
+          state: 'streaming',
+          text: '**Looking into the data**\n\nFirst pass.\n\n**Selecting tool fields**\n\nThe query',
+        }),
+      ],
     });
 
-    expect(
-      screen.getByText('Searching the web for crm software'),
-    ).toBeInTheDocument();
-  });
-
-  it('should append the pending thinking row after completed steps when requested', () => {
-    renderThinkingStepsDisplay({
-      isLastMessageStreaming: true,
-      isTrailingWhileStreaming: true,
-      parts: [createToolPart()],
-    });
-
-    expect(screen.getByText('Thinking')).toBeInTheDocument();
-  });
-
-  it('should not render a thinking row for completed steps by default', () => {
-    renderThinkingStepsDisplay({
-      isLastMessageStreaming: true,
-      parts: [createToolPart()],
-    });
-
+    expect(screen.getByText('Selecting tool fields')).toBeInTheDocument();
     expect(screen.queryByText('Thinking')).toBeNull();
-  });
-
-  it('should not append the pending thinking row while a tool step is still running', () => {
-    renderThinkingStepsDisplay({
-      isLastMessageStreaming: true,
-      isTrailingWhileStreaming: true,
-      parts: [createToolPart({ output: null, state: 'input-available' })],
-    });
-
-    expect(screen.queryByText('Thinking')).toBeNull();
-    expect(
-      screen.getByText('Searching the web for crm software'),
-    ).toBeInTheDocument();
   });
 
   it('should render done state collapsed by default', () => {
     renderThinkingStepsDisplay({
       isLastMessageStreaming: false,
-      hasAssistantTextResponseStarted: true,
       parts: [
         createToolPart(),
         createReasoningPart({
@@ -218,7 +258,6 @@ describe('ThinkingStepsDisplay', () => {
   it('should summarize done state with the work duration when known', () => {
     renderThinkingStepsDisplay({
       isLastMessageStreaming: false,
-      hasAssistantTextResponseStarted: true,
       workDurationMs: 83_000,
       parts: [createToolPart(), createReasoningPart()],
     });
@@ -229,48 +268,9 @@ describe('ThinkingStepsDisplay', () => {
     expect(screen.queryByText(/steps/i)).toBeNull();
   });
 
-  it('should keep done state expanded while streaming before answer text starts', () => {
-    renderThinkingStepsDisplay({
-      isLastMessageStreaming: true,
-      hasAssistantTextResponseStarted: false,
-      parts: [
-        createToolPart(),
-        createReasoningPart({
-          state: 'done',
-          text: 'Completed reasoning content',
-        }),
-      ],
-    });
-
-    expect(screen.queryByRole('button', { name: /steps/i })).toBeNull();
-    expect(screen.getByText('Thought')).toBeInTheDocument();
-    expect(screen.getByText('Completed reasoning content')).toBeInTheDocument();
-  });
-
-  it('should collapse done state once answer text starts while streaming', () => {
-    renderThinkingStepsDisplay({
-      isLastMessageStreaming: true,
-      hasAssistantTextResponseStarted: true,
-      parts: [
-        createToolPart(),
-        createReasoningPart({
-          state: 'done',
-          text: 'Completed reasoning content',
-        }),
-      ],
-    });
-
-    const summaryButton = screen.getByRole('button', { name: /2 steps/i });
-
-    expect(summaryButton).toHaveAttribute('aria-expanded', 'false');
-    expect(screen.queryByText('Thought')).toBeNull();
-    expect(screen.queryByText('Completed reasoning content')).toBeNull();
-  });
-
-  it('should render rows and full reasoning content after expanding done state', async () => {
+  it('should render rows, then reasoning content once its row is expanded', async () => {
     renderThinkingStepsDisplay({
       isLastMessageStreaming: false,
-      hasAssistantTextResponseStarted: true,
       parts: [
         createToolPart(),
         createReasoningPart({
@@ -285,7 +285,10 @@ describe('ThinkingStepsDisplay', () => {
     await userEvent.click(summaryButton);
 
     expect(summaryButton).toHaveAttribute('aria-expanded', 'true');
-    expect(screen.getByText('Thought')).toBeInTheDocument();
+    expect(screen.queryByText('Completed reasoning content')).toBeNull();
+
+    await userEvent.click(screen.getByRole('button', { name: 'Thought' }));
+
     expect(screen.getByText('Completed reasoning content')).toBeInTheDocument();
     expect(
       screen.getByText('Searched the web for crm software'),
@@ -295,7 +298,6 @@ describe('ThinkingStepsDisplay', () => {
   it('should toggle tool details and display output/input tabs', async () => {
     renderThinkingStepsDisplay({
       isLastMessageStreaming: false,
-      hasAssistantTextResponseStarted: true,
       parts: [
         createToolPart(),
         createReasoningPart({
@@ -334,7 +336,6 @@ describe('ThinkingStepsDisplay', () => {
   it('should show the records a tool step found when its row is expanded', async () => {
     renderThinkingStepsDisplay({
       isLastMessageStreaming: false,
-      hasAssistantTextResponseStarted: true,
       parts: [
         createToolPart({
           type: 'tool-find_many_companies',

@@ -1,0 +1,93 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Webhook role assignment should fail when creating a webhook through REST without a role 1`] = `
+{
+  "body": {
+    "code": "INVALID_WEBHOOK_INPUT",
+    "error": "Error",
+    "messages": [
+      "A role is required to create a webhook",
+    ],
+    "statusCode": 400,
+  },
+  "status": 400,
+}
+`;
+
+exports[`Webhook role assignment should fail when creating a webhook through REST without the ROLES permission 1`] = `
+{
+  "body": {
+    "code": "PERMISSION_DENIED",
+    "error": "Error",
+    "messages": [
+      "Entity performing the request does not have permission",
+    ],
+    "statusCode": 400,
+  },
+  "status": 400,
+}
+`;
+
+exports[`Webhook role assignment should fail when creating a webhook with an unknown role 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_WEBHOOK_INPUT",
+    "userFriendlyMessage": "The selected role does not exist.",
+  },
+  "message": "Role 20202020-0000-4000-8000-000000000000 not found",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Webhook role assignment should fail when creating a webhook without a role 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Expected non-nullable type "UUID!" not to be null.",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Webhook role assignment should fail when creating a webhook without the ROLES permission 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+  "name": "ForbiddenError",
+}
+`;
+
+exports[`Webhook role assignment should fail when editing a webhook through REST without the ROLES permission 1`] = `
+{
+  "body": {
+    "code": "PERMISSION_DENIED",
+    "error": "Error",
+    "messages": [
+      "Entity performing the request does not have permission",
+    ],
+    "statusCode": 400,
+  },
+  "status": 400,
+}
+`;
+
+exports[`Webhook role assignment should fail when editing a webhook without the ROLES permission 1`] = `
+{
+  "extensions": {
+    "code": "FORBIDDEN",
+    "subCode": "PERMISSION_DENIED",
+    "userFriendlyMessage": "User does not have permission.",
+  },
+  "message": "Entity performing the request does not have permission",
+  "name": "ForbiddenError",
+}
+`;

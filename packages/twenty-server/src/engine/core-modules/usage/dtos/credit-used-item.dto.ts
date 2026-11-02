@@ -16,6 +16,9 @@ export class CreditUsedItemDTO {
   @Field(() => String, { nullable: true })
   label?: string;
 
+  @Field(() => String, { nullable: true })
+  icon?: string;
+
   @Field(() => Float)
   creditsUsed: number;
 }

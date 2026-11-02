@@ -1,14 +1,14 @@
 import { PRIORITY_LIMIT, type RedisClient } from 'bullmq';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   FAIR_TICKET_OFFSET,
   URGENT_FAIR_PRIORITY,
 } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-priority.constant';
 import { FairTicketAllocator } from 'src/engine/core-modules/message-queue/drivers/fairness/fair-ticket-allocator';
-import { type QueueJobOptions } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
+import { type QueueJobScope } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { getDefaultGroupKeys } from 'src/engine/core-modules/message-queue/utils/get-default-group-keys.util';
+import { buildQueueJobGroupKeys } from 'src/engine/core-modules/message-queue/utils/build-queue-job-group-keys.util';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
 import { type TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -36,20 +36,22 @@ export class FairQueueScheduler {
 
   async computeJobOptions({
     queueName,
-    jobsData,
-    options,
+    scopes,
+    additionalGroupKeys,
+    delay,
     staticPriority,
   }: {
     queueName: MessageQueue;
-    jobsData: unknown[];
-    options?: Pick<QueueJobOptions, 'groupKeys' | 'delay'>;
+    scopes: QueueJobScope[];
+    additionalGroupKeys?: string[];
+    delay: number | undefined;
     staticPriority: number | undefined;
   }): Promise<FairJobOptions[]> {
-    const staticJobOptions: FairJobOptions[] = jobsData.map(() => ({
+    const staticJobOptions: FairJobOptions[] = scopes.map(() => ({
       priority: staticPriority,
     }));
 
-    if (!this.isFairnessEnabled() || (options?.delay ?? 0) > 0) {
+    if (!this.isFairnessEnabled() || (delay ?? 0) > 0) {
       return staticJobOptions;
     }
 
@@ -58,10 +60,8 @@ export class FairQueueScheduler {
       { groupKeys: string[]; jobIndexes: number[] }
     >();
 
-    jobsData.forEach((jobData, jobIndex) => {
-      const groupKeys = isNonEmptyArray(options?.groupKeys)
-        ? [...new Set(options.groupKeys)]
-        : getDefaultGroupKeys(jobData);
+    scopes.forEach((scope, jobIndex) => {
+      const groupKeys = buildQueueJobGroupKeys({ scope, additionalGroupKeys });
       const signature = JSON.stringify(groupKeys);
       const request = requestByGroupKeys.get(signature) ?? {
         groupKeys,

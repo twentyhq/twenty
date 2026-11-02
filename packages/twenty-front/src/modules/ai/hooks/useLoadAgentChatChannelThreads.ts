@@ -47,6 +47,7 @@ export const useLoadAgentChatChannelThreads = () => {
               channelId: channelView.channelId,
               status: channelView.channelStatus,
               assignment: channelView.assignment,
+              filter: channelView.filter,
               first: AGENT_CHAT_CHANNEL_THREADS_PAGE_SIZE,
               after: isFetchMore ? listBeforeRequest?.endCursor : null,
             },

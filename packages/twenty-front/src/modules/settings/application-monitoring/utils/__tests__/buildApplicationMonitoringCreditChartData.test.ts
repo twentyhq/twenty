@@ -1,7 +1,7 @@
 import { buildApplicationMonitoringCreditChartData } from '@/settings/application-monitoring/utils/buildApplicationMonitoringCreditChartData';
 
 describe('buildApplicationMonitoringCreditChartData', () => {
-  it('should split credits by operation type, declared ones included, largest total first, and fill the buckets without usage', () => {
+  it('should split credits by declared operation label, else by operation type, largest total first, and fill the buckets without usage', () => {
     expect(
       buildApplicationMonitoringCreditChartData({
         periodStart: '2026-10-16T08:00:00.000Z',
@@ -11,18 +11,21 @@ describe('buildApplicationMonitoringCreditChartData', () => {
           {
             bucketStart: '2026-10-17T00:00:00.000Z',
             operationType: 'CODE_EXECUTION',
+            operationLabel: null,
             creditsUsed: 2.5,
             __typename: 'ApplicationMonitoringCreditBucket',
           },
           {
             bucketStart: '2026-10-17T00:00:00.000Z',
-            operationType: 'sendSms',
+            operationType: 'APP_OPERATION',
+            operationLabel: 'SMS sent',
             creditsUsed: 4,
             __typename: 'ApplicationMonitoringCreditBucket',
           },
           {
             bucketStart: '2026-10-18T00:00:00.000Z',
             operationType: 'CODE_EXECUTION',
+            operationLabel: null,
             creditsUsed: 1,
             __typename: 'ApplicationMonitoringCreditBucket',
           },
@@ -30,28 +33,36 @@ describe('buildApplicationMonitoringCreditChartData', () => {
       }),
     ).toEqual({
       series: [
-        { key: 'operation:sendSms', operationType: 'sendSms' },
-        { key: 'operation:CODE_EXECUTION', operationType: 'CODE_EXECUTION' },
+        {
+          key: 'label:SMS sent',
+          operationType: 'APP_OPERATION',
+          operationLabel: 'SMS sent',
+        },
+        {
+          key: 'operation:CODE_EXECUTION',
+          operationType: 'CODE_EXECUTION',
+          operationLabel: null,
+        },
       ],
       data: [
         {
           bucketStart: '2026-10-16T00:00:00.000Z',
-          'operation:sendSms': 0,
+          'label:SMS sent': 0,
           'operation:CODE_EXECUTION': 0,
         },
         {
           bucketStart: '2026-10-17T00:00:00.000Z',
-          'operation:sendSms': 4,
+          'label:SMS sent': 4,
           'operation:CODE_EXECUTION': 2.5,
         },
         {
           bucketStart: '2026-10-18T00:00:00.000Z',
-          'operation:sendSms': 0,
+          'label:SMS sent': 0,
           'operation:CODE_EXECUTION': 1,
         },
         {
           bucketStart: '2026-10-19T00:00:00.000Z',
-          'operation:sendSms': 0,
+          'label:SMS sent': 0,
           'operation:CODE_EXECUTION': 0,
         },
       ],

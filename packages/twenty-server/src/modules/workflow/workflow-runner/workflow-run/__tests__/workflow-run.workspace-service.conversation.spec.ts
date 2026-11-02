@@ -19,7 +19,6 @@ describe('WorkflowRunWorkspaceService waiting steps', () => {
       {} as never,
       {} as never,
       { incrementCounterForEvent: jest.fn() } as never,
-      {} as never,
       { cancelRunWaits: jest.fn().mockResolvedValue(undefined) } as never,
       agentRunSuspensionService as never,
     );

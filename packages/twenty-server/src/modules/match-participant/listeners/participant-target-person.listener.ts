@@ -44,6 +44,10 @@ export class ParticipantTargetPersonListener {
     await this.messageQueueService.add<ReconcilePersonCompanyTargetsJobData>(
       ReconcilePersonCompanyTargetsJob.name,
       { workspaceId: payload.workspaceId, personIds },
+      {
+        workspaceId: payload.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 }

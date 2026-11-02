@@ -16,9 +16,13 @@ export const runCalendarChannelEventsImport = async (
     CalendarChannelSyncStage.CALENDAR_EVENTS_IMPORT_SCHEDULED,
   );
 
-  await enqueueJobAndDrain(
-    MessageQueue.calendarQueue,
-    CalendarEventsImportJob.name,
-    { workspaceId, calendarChannelId },
-  );
+  await enqueueJobAndDrain({
+    queue: MessageQueue.calendarQueue,
+    jobName: CalendarEventsImportJob.name,
+    data: { workspaceId, calendarChannelId },
+    scope: {
+      workspaceId,
+      isWorkspaceJob: true,
+    },
+  });
 };

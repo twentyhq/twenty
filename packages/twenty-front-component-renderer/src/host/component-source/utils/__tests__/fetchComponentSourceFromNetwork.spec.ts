@@ -59,6 +59,26 @@ describe('fetchComponentSourceFromNetwork', () => {
     });
   });
 
+  it('can load an app bundle without the user session', async () => {
+    const fetchMock = jest
+      .fn()
+      .mockResolvedValue(
+        createFakeResponse({ body: 'export const shared = true;' }),
+      );
+    globalThis.fetch = fetchMock;
+
+    await fetchComponentSourceFromNetwork({
+      url: COMPONENT_URL,
+      headers: { Authorization: 'Bearer app-token' },
+      credentials: 'omit',
+    });
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock).toHaveBeenCalledWith(CACHE_BUSTED_COMPONENT_URL, {
+      headers: { Authorization: 'Bearer app-token' },
+      credentials: 'omit',
+    });
+  });
+
   it('follows the JSON handoff and fetches the presigned URL header-less', async () => {
     const fetchMock = jest
       .fn()
@@ -85,6 +105,40 @@ describe('fetchComponentSourceFromNetwork', () => {
       credentials: 'same-origin',
     });
     expect(fetchMock).toHaveBeenNthCalledWith(2, PRESIGNED_URL, {
+      credentials: 'same-origin',
+    });
+  });
+
+  it('does not forward app authorization to a presigned handoff', async () => {
+    globalThis.fetch = jest
+      .fn()
+      .mockResolvedValueOnce(
+        createFakeResponse({
+          contentType: 'application/json',
+          json: { url: PRESIGNED_URL },
+        }),
+      )
+      .mockResolvedValueOnce(
+        createFakeResponse({ body: 'presigned bundle source' }),
+      );
+
+    await fetchComponentSourceFromNetwork({
+      url: COMPONENT_URL,
+      headers: { Authorization: 'Bearer token' },
+      credentials: 'omit',
+    });
+
+    expect(globalThis.fetch).toHaveBeenNthCalledWith(
+      1,
+      CACHE_BUSTED_COMPONENT_URL,
+      {
+        headers: {
+          Authorization: 'Bearer token',
+        },
+        credentials: 'omit',
+      },
+    );
+    expect(globalThis.fetch).toHaveBeenNthCalledWith(2, PRESIGNED_URL, {
       credentials: 'same-origin',
     });
   });

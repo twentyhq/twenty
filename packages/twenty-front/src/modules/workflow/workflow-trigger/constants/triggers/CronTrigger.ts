@@ -1,12 +1,12 @@
 import { type WorkflowTriggerType } from '@/workflow/types/Workflow';
-import { doNotTranslate } from 'twenty-shared/i18n';
+import { WORKFLOW_TRIGGER_DEFAULT_NAMES } from 'twenty-shared/workflow';
 
 export const CRON_TRIGGER: {
   defaultLabel: string;
   type: WorkflowTriggerType;
   icon: string;
 } = {
-  defaultLabel: doNotTranslate('On a schedule'),
+  defaultLabel: WORKFLOW_TRIGGER_DEFAULT_NAMES.CRON,
   type: 'CRON',
   icon: 'IconClock',
 };

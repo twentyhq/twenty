@@ -70,6 +70,10 @@
         "outDir": "dist"
       },
       {
+        "include": "engine/metadata-modules/ai/ai-front-component/constants/builder/**",
+        "outDir": "dist/assets"
+      },
+      {
         "include": "engine/core-modules/application/application-package/constants/workspace-custom-application-dependencies/**",
         "outDir": "dist/assets"
       },

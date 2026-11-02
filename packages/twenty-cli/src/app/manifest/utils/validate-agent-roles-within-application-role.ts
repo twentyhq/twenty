@@ -29,12 +29,21 @@ const OBJECT_ACTION_LABELS = {
   canDestroyObjectRecords: 'destroy',
 } as const;
 
-const SYSTEM_PERMISSION_FLAG_KEY_BY_UNIVERSAL_IDENTIFIER = Object.fromEntries(
-  Object.entries(SystemPermissionFlag).map(([key, universalIdentifier]) => [
-    universalIdentifier,
-    key,
-  ]),
-);
+const buildSystemPermissionFlagNameByUniversalIdentifier = (
+  systemPermissionFlag: Record<string, string>,
+): Map<string, string> => {
+  const nameByUniversalIdentifier = new Map<string, string>();
+
+  for (const [name, universalIdentifier] of Object.entries(
+    systemPermissionFlag,
+  )) {
+    if (!nameByUniversalIdentifier.has(universalIdentifier)) {
+      nameByUniversalIdentifier.set(universalIdentifier, name);
+    }
+  }
+
+  return nameByUniversalIdentifier;
+};
 
 const STANDARD_OBJECT_NAME_BY_UNIVERSAL_IDENTIFIER = Object.fromEntries(
   Object.entries(STANDARD_OBJECTS).map(([name, { universalIdentifier }]) => [
@@ -47,10 +56,12 @@ const describeGrant = ({
   grant,
   objects,
   permissionFlags,
+  systemPermissionFlagNameByUniversalIdentifier,
 }: {
   grant: RoleManifestGrant;
   objects: ObjectDescriptor[];
   permissionFlags: PermissionFlagDescriptor[];
+  systemPermissionFlagNameByUniversalIdentifier: Map<string, string>;
 }): string => {
   const describeObject = (objectUniversalIdentifier: string) =>
     objects.find(
@@ -73,9 +84,9 @@ const describeGrant = ({
             flag.universalIdentifier ===
             grant.permissionFlagUniversalIdentifier,
         )?.key ??
-        SYSTEM_PERMISSION_FLAG_KEY_BY_UNIVERSAL_IDENTIFIER[
-          grant.permissionFlagUniversalIdentifier
-        ] ??
+        systemPermissionFlagNameByUniversalIdentifier.get(
+          grant.permissionFlagUniversalIdentifier,
+        ) ??
         grant.permissionFlagUniversalIdentifier;
 
       return `permission flag ${flagKey}`;
@@ -121,19 +132,6 @@ const groupAgentNamesByRoleUniversalIdentifier = ({
   return agentNamesByRoleUniversalIdentifier;
 };
 
-const validateApplicationDefaultRoleIsDefined = ({
-  applicationRole,
-  defaultRoleUniversalIdentifier,
-}: {
-  applicationRole: RoleManifest | undefined;
-  defaultRoleUniversalIdentifier: string;
-}): string[] =>
-  isDefined(applicationRole)
-    ? []
-    : [
-        `Application default role "${defaultRoleUniversalIdentifier}" is not defined by this application.`,
-      ];
-
 const validateAgentRolesAreDefined = ({
   agentNamesByRoleUniversalIdentifier,
   roles,
@@ -159,12 +157,14 @@ const validateAgentRolesAreCoveredByApplicationRole = ({
   roles,
   objects,
   permissionFlags,
+  systemPermissionFlagNameByUniversalIdentifier,
 }: {
   agentNamesByRoleUniversalIdentifier: AgentNamesByRoleUniversalIdentifier;
   applicationRole: RoleManifest;
   roles: RoleManifest[];
   objects: ObjectDescriptor[];
   permissionFlags: PermissionFlagDescriptor[];
+  systemPermissionFlagNameByUniversalIdentifier: Map<string, string>;
 }): string[] => {
   const toolPermissionFlagUniversalIdentifiers = permissionFlags
     .filter((flag) => (flag.permissionType ?? 'tool') === 'tool')
@@ -191,7 +191,14 @@ const validateAgentRolesAreCoveredByApplicationRole = ({
       }
 
       const grantList = uncoveredGrants
-        .map((grant) => describeGrant({ grant, objects, permissionFlags }))
+        .map((grant) =>
+          describeGrant({
+            grant,
+            objects,
+            permissionFlags,
+            systemPermissionFlagNameByUniversalIdentifier,
+          }),
+        )
         .join(', ');
 
       return [
@@ -207,12 +214,14 @@ export const validateAgentRolesWithinApplicationRole = ({
   objects,
   permissionFlags,
   defaultRoleUniversalIdentifier,
+  systemPermissionFlag = SystemPermissionFlag,
 }: {
   agents: AgentManifest[];
   roles: RoleManifest[];
   objects: ObjectDescriptor[];
   permissionFlags: PermissionFlagDescriptor[];
   defaultRoleUniversalIdentifier: string;
+  systemPermissionFlag?: Record<string, string>;
 }): string[] => {
   const applicationRole = roles.find(
     (role) => role.universalIdentifier === defaultRoleUniversalIdentifier,
@@ -224,10 +233,6 @@ export const validateAgentRolesWithinApplicationRole = ({
     });
 
   return [
-    ...validateApplicationDefaultRoleIsDefined({
-      applicationRole,
-      defaultRoleUniversalIdentifier,
-    }),
     ...validateAgentRolesAreDefined({
       agentNamesByRoleUniversalIdentifier,
       roles,
@@ -239,6 +244,10 @@ export const validateAgentRolesWithinApplicationRole = ({
           roles,
           objects,
           permissionFlags,
+          systemPermissionFlagNameByUniversalIdentifier:
+            buildSystemPermissionFlagNameByUniversalIdentifier(
+              systemPermissionFlag,
+            ),
         })
       : []),
   ];

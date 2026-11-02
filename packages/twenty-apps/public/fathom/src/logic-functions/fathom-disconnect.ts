@@ -11,6 +11,7 @@ import { type FathomWebhookRegistration } from 'src/logic-functions/types/fathom
 import { createFathomClient } from 'src/logic-functions/utils/create-fathom-client.util';
 import { deleteStaleFathomWebhook } from 'src/logic-functions/utils/delete-stale-fathom-webhook.util';
 import { enqueueFathomJobsOrThrow } from 'src/logic-functions/utils/enqueue-fathom-jobs-or-throw.util';
+import { getConnectionAccessTokenOrThrow } from 'src/logic-functions/utils/get-connection-access-token-or-throw.util';
 import { getFathomConnectionClaimKey } from 'src/logic-functions/utils/get-fathom-connection-claim-key.util';
 import { getFathomWebhookRegistrationKey } from 'src/logic-functions/utils/get-fathom-webhook-registration-key.util';
 import { toErrorMessage } from 'src/logic-functions/utils/to-error-message.util';
@@ -45,7 +46,9 @@ export const fathomDisconnectHandler = async (
 
   try {
     await deleteStaleFathomWebhook({
-      fathomClient: createFathomClient(connection.accessToken),
+      fathomClient: createFathomClient(
+        getConnectionAccessTokenOrThrow(connection),
+      ),
       webhookId: registration.webhookId,
     });
   } catch (error) {

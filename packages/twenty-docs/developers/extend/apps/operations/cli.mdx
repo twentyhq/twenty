@@ -33,6 +33,7 @@ The examples below use `twenty`. Prefix them with `npx twenty@latest` if you did
 | `api`      | Send raw REST or GraphQL requests                           |
 | `open`     | Open the workspace in your browser                          |
 | `app`      | Create, build, sync, debug and uninstall apps               |
+| `local`    | Start, inspect, stop, upgrade and reset a local development environment |
 | `doctor`   | Diagnose the CLI, app SDK and workspace connection          |
 
 Every command that talks to a workspace accepts `--remote <name>` to target a saved connection other than the default one, and `--json` for structured output.
@@ -46,7 +47,7 @@ twenty auth login --url https://acme.twenty.com --use
 twenty auth status
 ```
 
-Use your workspace's address, or the server's address for a local setup: `http://localhost:2020` for the [local Docker server](/developers/extend/apps/getting-started/local-server), `http://localhost:3000` for a source checkout. You can copy the exact command from **Settings > Developers > CLI**. Browser sign-in needs Twenty 2.42 or later.
+Use your workspace's address, or the server's address for a local setup: `http://localhost:2020` for the [local development environment](/developers/extend/apps/getting-started/local-server), `http://localhost:3000` for a source checkout. You can copy the exact command from **Settings > Developers > CLI**. Browser sign-in needs Twenty 2.42 or later.
 
 Keep several connections by naming them:
 
@@ -110,7 +111,7 @@ Other app commands:
 | `app plan`                    | Preview the metadata changes an apply would make           |
 | `app apply`                   | Build, upload and sync the app                             |
 | `app generate-client`         | Regenerate the typed API client without syncing            |
-| `app pull`                    | Write the installed app's metadata back to local source    |
+| `app pull`                    | Restore metadata, translations and stored dependencies    |
 | `app translations extract`    | Extract translatable strings into `locales/` catalogs      |
 | `app publish`                 | Publish the app to npm or to a private Twenty registry     |
 | `app install`                 | Install an already registered app package in the workspace |

@@ -36,8 +36,9 @@ removes snapshots owned by the current build.
   shared with the other CLI app operations. The [dev session](../dev/README.md)
   observes the build's inputs and retains immutable copies for remote apply.
 - The define stub reads `twenty-sdk/define` from the app's installed SDK. Factories
-  become no-op validators, plain-data exports retain their values, and other
-  exports use proxy stubs. Runtime constants match the SDK the app uses.
+  become no-op validators, plain-data exports retain their values, including
+  non-enumerable properties, and other exports use proxy stubs. Runtime
+  constants match the SDK the app uses.
 - `sharp` is optional and resolved from the app. It is not a CLI dependency.
   When unavailable, cover generation warns and the build continues. Vite embeds
   the backdrop PNG as a data URI so it works in the standalone package.

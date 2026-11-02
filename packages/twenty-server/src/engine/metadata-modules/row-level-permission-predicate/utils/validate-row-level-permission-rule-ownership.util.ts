@@ -16,6 +16,34 @@ import {
 import { type FlatRowLevelPermissionPredicateGroup } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-group.type';
 import { type FlatRowLevelPermissionPredicate } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate.type';
 
+const getRuleFieldObjectMetadataIdOrThrow = ({
+  relationFieldMetadataId,
+  objectMetadataId,
+  flatFieldMetadataMaps,
+}: {
+  relationFieldMetadataId: string | null | undefined;
+  objectMetadataId: string;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+}): string => {
+  if (!isDefined(relationFieldMetadataId)) {
+    return objectMetadataId;
+  }
+
+  const relationTargetObjectMetadataId = findFlatEntityByIdInFlatEntityMaps({
+    flatEntityId: relationFieldMetadataId,
+    flatEntityMaps: flatFieldMetadataMaps,
+  })?.relationTargetObjectMetadataId;
+
+  if (!isDefined(relationTargetObjectMetadataId)) {
+    throw new RowLevelPermissionPredicateException(
+      'relationFieldMetadataId does not point to a relation field. A rule can only reach another object through a relation.',
+      RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
+    );
+  }
+
+  return relationTargetObjectMetadataId;
+};
+
 // Ids resolve workspace-wide downstream and migration validators only compare an update to its own row, so another
 // role's or object's ids would be silently rewritten and another object's field would build a never-matching filter
 export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
@@ -119,9 +147,15 @@ export const validateRowLevelPermissionRuleOwnershipOrThrow = ({
       );
     }
 
-    if (fieldMetadata.objectMetadataId !== objectMetadataId) {
+    const expectedFieldObjectMetadataId = getRuleFieldObjectMetadataIdOrThrow({
+      relationFieldMetadataId: predicate.relationFieldMetadataId,
+      objectMetadataId,
+      flatFieldMetadataMaps,
+    });
+
+    if (fieldMetadata.objectMetadataId !== expectedFieldObjectMetadataId) {
       throw new RowLevelPermissionPredicateException(
-        'Field belongs to another object and cannot be used in a rule on this object. Rules must filter on a field of the object they restrict.',
+        'Field belongs to another object and cannot be used in a rule on this object. Rules must filter on a field of the object they restrict, or of the object reached by their relation field.',
         RowLevelPermissionPredicateExceptionCode.INVALID_ROW_LEVEL_PERMISSION_PREDICATE_DATA,
       );
     }

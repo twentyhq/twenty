@@ -14,6 +14,7 @@ const READ = {
   snoozedUntil: null,
   isSubscribed: true,
   lastMentionedAt: null,
+  mentionsResolvedAt: null,
   updatedAt: LAST_ACTIVITY_AT,
 };
 
@@ -144,6 +145,7 @@ const THREADS: {
       ...READ,
       archivedAt: null,
       lastMentionedAt: '2026-10-01T09:00:00.000Z',
+      mentionsResolvedAt: null,
       __typename: 'AgentChatThreadParticipant',
     },
   },

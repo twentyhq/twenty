@@ -45,6 +45,8 @@ export class BillingWorkspaceMemberListener {
       { workspaceId: payload.workspaceId },
       {
         delay: UPDATE_SUBSCRIPTION_QUANTITY_JOB_DELAY_MS,
+        workspaceId: payload.workspaceId,
+        isWorkspaceJob: true,
       },
     );
   }

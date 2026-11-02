@@ -223,7 +223,7 @@ The `ci.yml` and `cd.yml` workflows reference reusable actions at `@main`, so ac
 
 ## Publishing to npm
 
-Publishing to npm makes your app eligible for the Twenty marketplace. After catalog sync and any required [server-route setup](#setting-up-server-routes), workspaces can browse, install, and upgrade it from the UI. Community apps appear when users turn off the **Vetted only** filter.
+Publishing to npm makes your app eligible for the Twenty marketplace. After catalog sync and any required [server-route setup](#setting-up-server-routes), workspaces can browse, install, and upgrade it from the UI once it passes the [marketplace review](/developers/extend/apps/operations/marketplace-review).
 
 ### Requirements
 
@@ -373,17 +373,13 @@ If you have trouble claiming your app, contact us on [Discord](https://discord.g
   This configuration is already managed for you on Twenty Cloud.
 </Accordion>
 
-## Marketplace visibility and vetting
+## Marketplace visibility and review
 
-Claiming establishes ownership; it does not grant a **Vetted** badge. The marketplace defaults to **Vetted only**. To find community apps, go to **Settings > Applications > Marketplace**, open the filter, and uncheck **Vetted only**. You can also share your app's direct install page using **My apps > your app > Distribution > Copy sharing link**.
+Every app listed in the marketplace has passed Twenty's security and quality review. A newly published app stays unlisted until it passes the [marketplace review](/developers/extend/apps/operations/marketplace-review); claiming establishes ownership but does not list it.
 
-The Vetted label currently applies to apps maintained by Twenty, for which the team can vouch for security and quality. Third-party apps can be published and installed without this label.
+An unlisted app can still be installed. In **Settings > Applications > Marketplace**, open the filter and turn on **Show unlisted apps**, or share the app's direct install page using **My apps > your app > Distribution > Copy sharing link**. Workspaces see a warning that the app has not been reviewed by Twenty.
 
-The proposed [third-party marketplace vetting checklist](/developers/extend/apps/operations/marketplace-vetting)
-is a work in progress. It describes version-specific review criteria and evidence,
-not an available certification program.
-
-If your app is still missing with **Vetted only** turned off, confirm catalog sync has completed, all required server variables are filled in, and any server-route setup is complete.
+If your app is listed but still missing from the marketplace, confirm catalog sync has completed, all required server variables are filled in, and any server-route setup is complete.
 
 ## Installing apps
 

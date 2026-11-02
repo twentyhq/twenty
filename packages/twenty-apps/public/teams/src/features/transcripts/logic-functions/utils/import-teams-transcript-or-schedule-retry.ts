@@ -10,6 +10,7 @@ import { GraphRequestError } from 'src/features/transcripts/logic-functions/type
 import { type TeamsTranscriptImportOutcome } from 'src/features/transcripts/logic-functions/types/teams-transcript-import-outcome.type';
 import { enqueueTeamsTranscriptImportRetryOrThrow } from 'src/features/transcripts/logic-functions/utils/enqueue-teams-transcript-import-retry-or-throw';
 import { syncTeamsTranscriptToCallRecordingOrThrow } from 'src/features/transcripts/logic-functions/utils/sync-teams-transcript-to-call-recording-or-throw';
+import { getConnectionAccessTokenOrThrow } from 'src/utils/get-connection-access-token-or-throw';
 import { toErrorMessage } from 'src/utils/to-error-message';
 
 type TeamsTranscriptSyncAttempt =
@@ -31,7 +32,9 @@ const attemptTeamsTranscriptSync = async ({
   transcriptId: string;
 }): Promise<TeamsTranscriptSyncAttempt> => {
   try {
-    const { accessToken } = await getConnection(connectedAccountId);
+    const accessToken = getConnectionAccessTokenOrThrow(
+      await getConnection(connectedAccountId),
+    );
     const syncResult = await syncTeamsTranscriptToCallRecordingOrThrow({
       accessToken,
       coreApiClient: new CoreApiClient({ runAs: 'application' }),

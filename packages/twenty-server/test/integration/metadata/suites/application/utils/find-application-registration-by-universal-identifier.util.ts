@@ -3,7 +3,7 @@ export type ApplicationRegistrationRow = {
   name: string;
   sourcePackage: string | null;
   latestAvailableVersion: string | null;
-  isVetted: boolean;
+  isListed: boolean;
   logoFileId: string | null;
 };
 
@@ -13,7 +13,7 @@ export const findApplicationRegistrationByUniversalIdentifier = async ({
   universalIdentifier: string;
 }): Promise<ApplicationRegistrationRow | null> => {
   const [row] = await globalThis.testDataSource.query(
-    `SELECT id, name, "sourcePackage", "latestAvailableVersion", "isVetted",
+    `SELECT id, name, "sourcePackage", "latestAvailableVersion", "isListed",
             "logoFileId"
      FROM core."applicationRegistration"
      WHERE "universalIdentifier" = $1`,

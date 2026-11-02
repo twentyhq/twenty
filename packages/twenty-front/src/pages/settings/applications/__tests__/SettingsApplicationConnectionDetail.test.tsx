@@ -194,7 +194,7 @@ describe('SettingsApplicationConnectionDetail', () => {
 
     renderDetailPage();
 
-    expect(screen.getByText('Reconnect needed')).toBeVisible();
+    expect(screen.getByText('Sync failed')).toBeVisible();
 
     fireEvent.click(screen.getByText('Reconnect'));
 

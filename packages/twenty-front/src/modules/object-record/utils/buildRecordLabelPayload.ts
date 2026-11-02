@@ -4,13 +4,11 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 type BuildRecordLabelPayloadArgs = {
-  id: string;
   searchInput?: string;
   objectMetadataItem: EnrichedObjectMetadataItem;
 };
 
 export const buildRecordLabelPayload = ({
-  id,
   searchInput,
   objectMetadataItem,
 }: BuildRecordLabelPayloadArgs): Record<string, unknown> => {
@@ -22,7 +20,7 @@ export const buildRecordLabelPayload = ({
     (labelIdentifierField.type !== FieldMetadataType.TEXT &&
       labelIdentifierField.type !== FieldMetadataType.FULL_NAME)
   ) {
-    return { id };
+    return {};
   }
 
   const fieldName = labelIdentifierField.name;
@@ -32,12 +30,11 @@ export const buildRecordLabelPayload = ({
     const hasMultipleWords = words.length > 1;
 
     return {
-      id,
       [fieldName]: hasMultipleWords
         ? { firstName: words[0], lastName: words.slice(1).join(' ') }
         : { firstName: searchInput ?? '', lastName: '' },
     };
   }
 
-  return { id, [fieldName]: searchInput ?? '' };
+  return { [fieldName]: searchInput ?? '' };
 };

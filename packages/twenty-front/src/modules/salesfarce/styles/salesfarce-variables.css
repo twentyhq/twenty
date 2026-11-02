@@ -1,4 +1,5 @@
-.salesfarce {
+.salesfarce,
+.salesfarce .light {
   --t-accent-primary: #8ccfee;
   --t-accent-secondary: #8ccfee;
   --t-accent-tertiary: #cfeef8;
@@ -164,6 +165,35 @@
   --t-color-blue11: #015ba7;
   --t-color-blue12: #0d3d6b;
   --t-color-red9: #cc0000;
+  --t-color-gray8: #8a8a8a;
+  --t-color-mauve8: #6b6b9a;
+  --t-color-slate8: #5a6f8f;
+  --t-color-sage8: #6b8a63;
+  --t-color-olive8: #8a8a4f;
+  --t-color-sand8: #9a8a72;
+  --t-color-tomato8: #d9532c;
+  --t-color-red8: #cc0000;
+  --t-color-ruby8: #c41e4a;
+  --t-color-crimson8: #b52a6e;
+  --t-color-pink8: #c2478f;
+  --t-color-plum8: #9b2fae;
+  --t-color-purple8: #7b3fb5;
+  --t-color-violet8: #56458c;
+  --t-color-iris8: #5c5cc7;
+  --t-color-cyan8: #2a8a96;
+  --t-color-turquoise8: #1f8a8a;
+  --t-color-sky8: #1797c0;
+  --t-color-jade8: #1a8a5a;
+  --t-color-green8: #339900;
+  --t-color-grass8: #5a8a00;
+  --t-color-mint8: #3a9a8a;
+  --t-color-lime8: #7a9a1e;
+  --t-color-bronze8: #a55647;
+  --t-color-gold8: #b7a752;
+  --t-color-brown8: #8c5a2b;
+  --t-color-orange8: #e39321;
+  --t-color-amber8: #f3a205;
+  --t-color-yellow8: #e5c130;
   --t-color-gray1: #ffffff;
   --t-color-gray2: #f8f8f8;
   --t-color-gray3: #ffffff;

@@ -93,9 +93,13 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   const objectMetadata = useSelectedObjectMetadata();
   ```
 
+- **`SystemPermissionFlag.USER_APPS` and `SystemPermissionFlag.WORKSPACE_APPS` in `twenty-sdk/define`.** The SDK names of the User Apps and Workspace Apps permission flags, with the same universal identifiers as `CONNECTED_ACCOUNTS` and `APPLICATIONS`. They are left out of `Object.keys`, `Object.values` and `Object.entries`, which list the same 26 names as before, so code that enumerates or filters the flags behaves as before. Only the SDK names change: the API keeps reporting these flags as `CONNECTED_ACCOUNTS` and `APPLICATIONS`, for example in `currentUserWorkspace.permissionFlags` and in command menu expressions.
+
 ### Deprecated
 
 - **`enqueueJob` in `twenty-sdk/logic-function`.** Use `enqueueJobs` with a one-element `payloads` list instead. `enqueueJob` keeps working for now and will be removed in a future major version.
+
+- **`SystemPermissionFlag.CONNECTED_ACCOUNTS` and `SystemPermissionFlag.APPLICATIONS` in `twenty-sdk/define`.** Use `USER_APPS` and `WORKSPACE_APPS` instead. The old names keep working and stay the ones `Object.keys` and `Object.entries` return. In logic functions and front components the new names resolve only when bundled with the `twenty` CLI 2.54 or later.
 
 ### Changed
 
@@ -113,6 +117,12 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
   ```
 
   `twenty build` now also emits a warning when `twenty-client-sdk` is still listed under `dependencies`.
+
+- **`defineRole` and `defineApplicationRole` keep each permission flag once in `permissionFlagUniversalIdentifiers`.** A flag listed twice, for example under its deprecated and new `SystemPermissionFlag` names, is sent once. Syncing a role with a repeated flag used to fail on the server.
+
+- **`twenty app pull` names permission flags after the app's installed `twenty-sdk`.** Role files get `SystemPermissionFlag.USER_APPS` and `SystemPermissionFlag.WORKSPACE_APPS` with `twenty-sdk` 2.54 or later, and `CONNECTED_ACCOUNTS` and `APPLICATIONS` with earlier versions. A flag the installed `SystemPermissionFlag` lacks is written as its universal identifier string.
+
+- **`twenty app build` and `twenty app dev` keep non-enumerable `twenty-sdk/define` constants in logic function and front component bundles,** so `SystemPermissionFlag.USER_APPS` and `WORKSPACE_APPS` resolve at runtime. Agent role errors also name system permission flags after the app's installed `twenty-sdk`.
 
 ## [2.8.0]
 

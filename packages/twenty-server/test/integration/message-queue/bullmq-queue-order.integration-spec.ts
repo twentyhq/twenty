@@ -29,7 +29,12 @@ describe('BullMQDriver queue ordering (integration)', () => {
 
     await withQueueOrderTestContext(async (driver) => {
       for (const job of jobs) {
-        await driver.add(job.queue, job.name, {}, { priority: job.priority });
+        await driver.add(
+          job.queue,
+          job.name,
+          {},
+          { isSystemJob: true, priority: job.priority },
+        );
       }
 
       try {
@@ -89,7 +94,12 @@ describe('BullMQDriver queue ordering (integration)', () => {
 
     await withQueueOrderTestContext(async (driver) => {
       for (const job of jobs) {
-        await driver.add(queue1, job.name, {}, { priority: job.priority });
+        await driver.add(
+          queue1,
+          job.name,
+          {},
+          { isSystemJob: true, priority: job.priority },
+        );
       }
       driver.work(
         queue1,

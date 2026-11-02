@@ -111,6 +111,10 @@ export class WorkflowCleanWorkflowRunsCronJob {
       await this.messageQueueService.add<WorkflowCleanWorkflowRunsJobData>(
         WorkflowCleanWorkflowRunsJob.name,
         { workspaceId },
+        {
+          workspaceId,
+          isWorkspaceJob: true,
+        },
       );
 
       return true;

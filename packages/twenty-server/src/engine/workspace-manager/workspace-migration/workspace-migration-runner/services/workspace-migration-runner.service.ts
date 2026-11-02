@@ -32,6 +32,8 @@ import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine
 import { DeferredWorkspaceMigrationActionRunnerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/services/deferred-workspace-migration-action-runner.service';
 import { type DeferredWorkspaceMigrationAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/deferred-workspace-migration-action.type';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event.type';
+import { getDerivedCacheTriggers } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-derived-cache-triggers.util';
+import { getFlatEntityMapsKeysToInvalidateForWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-flat-entity-maps-keys-to-invalidate-for-workspace-migration.util';
 import { getMetadataNamesToLoadForWorkspaceMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-metadata-names-to-load-for-workspace-migration.util';
 import { buildPreallocatedIdByUniversalIdentifierFromActions } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/build-preallocated-id-by-universal-identifier-from-actions.util';
 
@@ -61,32 +63,25 @@ export class WorkspaceMigrationRunnerService {
         ),
     ),
     hasMorphRelationFieldChanged = false,
+    hasRolesPermissionsChanged = getDerivedCacheTriggers(allFlatEntityMapsKeys)
+      .hasRolesPermissionsChanged,
+    hasWorkflowVersionsChanged = getDerivedCacheTriggers(allFlatEntityMapsKeys)
+      .hasWorkflowVersionsChanged,
+    hasApplicationVariablesChanged = getDerivedCacheTriggers(
+      allFlatEntityMapsKeys,
+    ).hasApplicationVariablesChanged,
   }: {
     allFlatEntityMapsKeys: (keyof AllFlatEntityMaps)[];
     workspaceId: string;
     hasSchemaMetadataChanged?: boolean;
     hasMorphRelationFieldChanged?: boolean;
+    hasRolesPermissionsChanged?: boolean;
+    hasWorkflowVersionsChanged?: boolean;
+    hasApplicationVariablesChanged?: boolean;
   }): Promise<void> {
     this.logger.perfTime(
       'Runner',
       `Cache invalidation ${allFlatEntityMapsKeys.join()}`,
-    );
-
-    const hasRolesPermissionsChanged = allFlatEntityMapsKeys.some(
-      (flatEntityMapsKey) =>
-        flatEntityMapsKey === 'flatRoleMaps' ||
-        flatEntityMapsKey === 'flatRoleTargetMaps' ||
-        flatEntityMapsKey === 'flatObjectPermissionMaps' ||
-        flatEntityMapsKey === 'flatFieldPermissionMaps' ||
-        flatEntityMapsKey === 'flatRolePermissionFlagMaps',
-    );
-
-    const hasWorkflowVersionsChanged = allFlatEntityMapsKeys.includes(
-      'flatWorkflowVersionMaps',
-    );
-
-    const hasApplicationVariablesChanged = allFlatEntityMapsKeys.includes(
-      'flatApplicationVariableMaps',
     );
 
     const cacheKeyNamesToInvalidate: WorkspaceCacheKeyName[] = [
@@ -285,6 +280,15 @@ export class WorkspaceMigrationRunnerService {
     const allFlatEntityMapsKeys = actionsMetadataAndRelatedMetadataNames.map(
       getMetadataFlatEntityMapsKey,
     );
+
+    const flatEntityMapsKeysToInvalidate =
+      getFlatEntityMapsKeysToInvalidateForWorkspaceMigration(actions);
+
+    const {
+      hasRolesPermissionsChanged,
+      hasWorkflowVersionsChanged,
+      hasApplicationVariablesChanged,
+    } = getDerivedCacheTriggers(allFlatEntityMapsKeys);
 
     const cachedAllFlatEntityMaps =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps<
@@ -516,10 +520,13 @@ export class WorkspaceMigrationRunnerService {
 
       try {
         await this.invalidateCache({
-          allFlatEntityMapsKeys,
+          allFlatEntityMapsKeys: flatEntityMapsKeysToInvalidate,
           workspaceId,
           hasSchemaMetadataChanged,
           hasMorphRelationFieldChanged,
+          hasRolesPermissionsChanged,
+          hasWorkflowVersionsChanged,
+          hasApplicationVariablesChanged,
         });
       } catch (cacheError) {
         this.logger.error(
@@ -547,10 +554,13 @@ export class WorkspaceMigrationRunnerService {
 
     try {
       await this.invalidateCache({
-        allFlatEntityMapsKeys,
+        allFlatEntityMapsKeys: flatEntityMapsKeysToInvalidate,
         workspaceId,
         hasSchemaMetadataChanged,
         hasMorphRelationFieldChanged,
+        hasRolesPermissionsChanged,
+        hasWorkflowVersionsChanged,
+        hasApplicationVariablesChanged,
       });
 
       this.recordRunPhaseMetric({
@@ -575,7 +585,7 @@ export class WorkspaceMigrationRunnerService {
       performance.now() - postCommitInvalidateStart;
 
     this.logger.perf(
-      `[install-perf] Runner post-commit invalidateCache took ${postCommitInvalidateMs.toFixed(1)}ms for ${allFlatEntityMapsKeys.length} flat-maps keys`,
+      `[install-perf] Runner post-commit invalidateCache took ${postCommitInvalidateMs.toFixed(1)}ms for ${flatEntityMapsKeysToInvalidate.length} flat-maps keys`,
       'Runner',
     );
 

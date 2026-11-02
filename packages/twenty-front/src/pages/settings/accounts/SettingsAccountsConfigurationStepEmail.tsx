@@ -2,6 +2,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
+import { useAccountsSettingsBreadcrumbLink } from '@/settings/app-preferences/hooks/useAccountsSettingsBreadcrumbLink';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsPath } from 'twenty-shared/types';
@@ -25,6 +26,9 @@ export const SettingsAccountsConfigurationStepEmail = ({
   onAddAccount,
 }: SettingsAccountsConfigurationStepEmailProps) => {
   const { t } = useLingui();
+  const accountsBreadcrumbLink = useAccountsSettingsBreadcrumbLink(
+    <Trans>Account</Trans>,
+  );
 
   return (
     <SettingsPageLayout
@@ -34,10 +38,7 @@ export const SettingsAccountsConfigurationStepEmail = ({
           children: <Trans>User</Trans>,
           href: getSettingsPath(SettingsPath.ProfilePage),
         },
-        {
-          children: <Trans>Account</Trans>,
-          href: getSettingsPath(SettingsPath.Accounts),
-        },
+        accountsBreadcrumbLink,
         {
           children: t`1. Email`,
         },

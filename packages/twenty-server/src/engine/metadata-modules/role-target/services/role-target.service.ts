@@ -50,6 +50,7 @@ export class RoleTargetService {
       flatApplicationMaps,
       flatRoleMaps,
       flatAgentMaps,
+      flatWebhookMaps,
     } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -59,6 +60,7 @@ export class RoleTargetService {
             'flatApplicationMaps',
             'flatRoleMaps',
             'flatAgentMaps',
+            'flatWebhookMaps',
           ],
         },
       );
@@ -84,6 +86,7 @@ export class RoleTargetService {
           flatRoleTargetMaps,
           flatRoleMaps,
           flatAgentMaps,
+          flatWebhookMaps,
           workspaceId,
           flatApplication: flatApplication ?? workspaceCustomFlatApplication,
         });

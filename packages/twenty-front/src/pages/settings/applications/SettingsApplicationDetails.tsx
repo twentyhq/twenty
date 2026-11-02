@@ -1,25 +1,16 @@
-import { AppChip } from '@/applications/components/AppChip';
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
 import { useRefetchOnApplicationOperation } from '@/applications/hooks/useRefetchOnApplicationOperation';
-import { useResolvedApplicationDescription } from '@/applications/hooks/useResolvedApplicationDescription';
-import { isTwentyStandardApplication } from '@/applications/utils/isTwentyStandardApplication';
-import { isWorkspaceCustomApplication } from '@/applications/utils/isWorkspaceCustomApplication';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { useInstalledBuiltInAccountApp } from '@/settings/applications/hooks/useInstalledBuiltInAccountApp';
 import { useUninstallApplication } from '@/settings/applications/hooks/useUninstallApplication';
-import { getDisplayedApplicationVariables } from '@/settings/applications/utils/getDisplayedApplicationVariables';
+import { getDisplayedWorkspaceApplicationVariables } from '@/settings/applications/utils/getDisplayedWorkspaceApplicationVariables';
 import { getSettingsMenuItemsForScope } from '@/settings/applications/utils/getSettingsMenuItemsForScope';
 import { APPLICATION_VARIABLES_TAB_ID } from '@/settings/applications/constants/ApplicationVariablesTabId';
 import { getApplicationConfigurationTabId } from '@/settings/applications/utils/getApplicationConfigurationTabId';
 import { hasApplicationVariablesTab } from '@/settings/applications/utils/hasApplicationVariablesTab';
-import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import type { SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
@@ -30,9 +21,7 @@ import {
   isDefined,
   isNonEmptyArray,
 } from 'twenty-shared/utils';
-import { InlineBanner } from 'twenty-ui/components/feedback';
 import {
-  IconAlertTriangle,
   IconApps,
   IconDeviceFloppy,
   IconSettings,
@@ -43,9 +32,7 @@ import { Button } from 'twenty-ui/primitives/input';
 import {
   ApplicationRegistrationSourceType,
   ApplicationVariableScope,
-  FindMarketplaceAppDetailDocument,
   FindOneApplicationDocument,
-  IsApplicationStoppedDocument,
   SettingsMenuItemScope,
   UpdateOneApplicationVariableDocument,
 } from '~/generated-metadata/graphql';
@@ -55,14 +42,14 @@ import { SettingsApplicationMissingConfigurationBanner } from '@/settings/applic
 import { SettingsApplicationLoadErrorBanner } from '@/settings/applications/components/SettingsApplicationLoadErrorBanner';
 import { SettingsApplicationNotFound } from '~/pages/settings/applications/components/SettingsApplicationNotFound';
 import { SettingsBuiltInAccountAppDetails } from '~/pages/settings/applications/SettingsBuiltInAccountAppDetails';
-import { CUSTOM_APPLICATION_ILLUSTRATIONS } from '@/settings/applications/constants/CustomApplicationIllustrations';
-import { STANDARD_APPLICATION_ILLUSTRATIONS } from '@/settings/applications/constants/StandardApplicationIllustrations';
 import { useApplicationHealthCheck } from '~/pages/settings/applications/hooks/useApplicationHealthCheck';
 import { useApplicationVariablesDraft } from '@/settings/applications/hooks/useApplicationVariablesDraft';
 import { SettingsApplicationCustomSettingsSection } from '@/settings/applications/components/SettingsApplicationCustomSettingsSection';
 import { SettingsApplicationDetailGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationDetailGeneralTab';
 import { SettingsApplicationDetailVariablesTab } from '@/settings/applications/components/SettingsApplicationDetailVariablesTab';
-import { getApplicationDescriptionSummary } from '@/settings/applications/utils/getApplicationDescriptionSummary';
+import { SettingsApplicationDetailPageLayout } from '@/settings/applications/components/SettingsApplicationDetailPageLayout';
+import { SettingsApplicationStoppedBanner } from '@/settings/applications/components/SettingsApplicationStoppedBanner';
+import { useApplicationOverview } from '@/settings/applications/hooks/useApplicationOverview';
 import { getApplicationHealthBanner } from '~/pages/settings/applications/utils/getApplicationHealthBanner';
 import { getApplicationLookupStatus } from '~/pages/settings/applications/utils/getApplicationLookupStatus';
 import { hasApplicationUpdate } from '@/settings/applications/utils/hasApplicationUpdate';
@@ -102,50 +89,17 @@ export const SettingsApplicationDetails = () => {
   const isNotFound = applicationLookupStatus === 'not-found';
   const isUnavailable = applicationLookupStatus === 'unavailable';
 
-  const { data: detailData } = useQuery(FindMarketplaceAppDetailDocument, {
-    variables: { universalIdentifier: application?.universalIdentifier ?? '' },
-    skip: !application?.universalIdentifier,
-  });
-
-  const { data: isApplicationStoppedData } = useQuery(
-    IsApplicationStoppedDocument,
-    {
-      variables: {
-        applicationUniversalIdentifier: application?.universalIdentifier ?? '',
-      },
-      skip: !application?.universalIdentifier,
-      // The kill switch is toggled server-side, a cached value would hide it.
-      fetchPolicy: 'network-only',
-    },
-  );
-
-  const isApplicationStopped =
-    isApplicationStoppedData?.isApplicationStopped === true;
-
-  const detail = detailData?.findMarketplaceAppDetail;
+  const {
+    marketplaceDetail: detail,
+    description,
+    coverImageUrl,
+  } = useApplicationOverview({ application });
 
   const isMarketplaceApplication =
     detail?.sourceType === ApplicationRegistrationSourceType.NPM;
 
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const isStandardApplication = isTwentyStandardApplication(application);
-  const isCustomApplication = isWorkspaceCustomApplication(
-    application,
-    currentWorkspace,
-  );
-
-  const resolvedDescription = useResolvedApplicationDescription(application);
-
   const displayName =
     detail?.name ?? application?.name ?? t`Application details`;
-  const description = detail?.description ?? resolvedDescription;
-
-  const getCoverImageUrl = () => {
-    if (detail?.galleryImages?.length) return detail.galleryImages[0];
-    if (isStandardApplication) return STANDARD_APPLICATION_ILLUSTRATIONS[0];
-    if (isCustomApplication) return CUSTOM_APPLICATION_ILLUSTRATIONS[0];
-    return undefined;
-  };
 
   const handleUpgradeCompleted = useCallback(() => {
     void refetch();
@@ -186,12 +140,10 @@ export const SettingsApplicationDetails = () => {
       onCompleted: handleUninstallCompleted,
     });
 
-  const displayedApplicationVariables = getDisplayedApplicationVariables(
-    (application?.applicationVariables ?? []).filter(
-      (applicationVariable) =>
-        applicationVariable.scope === ApplicationVariableScope.WORKSPACE,
-    ),
-  );
+  const displayedApplicationVariables =
+    getDisplayedWorkspaceApplicationVariables(
+      application?.applicationVariables ?? [],
+    );
 
   const [updateOneApplicationVariable] = useMutation(
     UpdateOneApplicationVariableDocument,
@@ -333,8 +285,8 @@ export const SettingsApplicationDetails = () => {
           <SettingsApplicationDetailGeneralTab
             application={application}
             displayName={displayName}
-            description={getApplicationDescriptionSummary(description)}
-            coverImageUrl={getCoverImageUrl()}
+            description={description}
+            coverImageUrl={coverImageUrl}
             marketplaceUniversalIdentifier={detail?.universalIdentifier}
             isMarketplaceApplication={isMarketplaceApplication}
             hasUpdate={hasUpdate}
@@ -382,21 +334,10 @@ export const SettingsApplicationDetails = () => {
 
   return (
     <CurrentApplicationContext.Provider value={application?.id ?? null}>
-      <SettingsPageLayout
-        title={displayName}
-        icon={
-          isDefined(application) ? (
-            <AppChip
-              applicationId={application.id}
-              logoUrl={application.logoUrl}
-              fallbackApplicationData={{
-                name: displayName,
-              }}
-              size="md"
-              chipOnly
-            />
-          ) : undefined
-        }
+      <SettingsApplicationDetailPageLayout
+        applicationId={application?.id}
+        logoUrl={application?.logoUrl}
+        displayName={displayName}
         links={[
           {
             children: t`Workspace`,
@@ -408,6 +349,9 @@ export const SettingsApplicationDetails = () => {
           },
           { children: displayName },
         ]}
+        tabs={tabs}
+        tabListComponentInstanceId={APPLICATION_DETAIL_ID}
+        tabListAriaLabel={t`Application details`}
         actionButton={
           activeTabId === APPLICATION_VARIABLES_TAB_ID ? (
             <Button
@@ -422,43 +366,27 @@ export const SettingsApplicationDetails = () => {
             >{t`Save settings`}</Button>
           ) : undefined
         }
-        secondaryBar={
-          isNotFound || isUnavailable || tabs.length <= 1 ? undefined : (
-            <SettingsTabBar
-              aria-label={t`Application details`}
-              tabs={tabs}
-              componentInstanceId={APPLICATION_DETAIL_ID}
-            />
-          )
-        }
       >
-        <SettingsPageContainer overflow="visible">
-          {isNonEmptyArray(missingRequiredApplicationVariables) &&
-            isDefined(goToConfigurationTab) && (
-              <SettingsApplicationMissingConfigurationBanner
-                missingApplicationVariables={
-                  missingRequiredApplicationVariables
-                }
-                onConfigure={goToConfigurationTab}
-              />
-            )}
-          {isDefined(healthBanner) && (
-            <SettingsApplicationHealthBanner
-              healthStatus={healthBanner.status}
-              title={healthBanner.title}
-              description={healthBanner.description}
-              action={healthBannerButton}
+        {isNonEmptyArray(missingRequiredApplicationVariables) &&
+          isDefined(goToConfigurationTab) && (
+            <SettingsApplicationMissingConfigurationBanner
+              missingApplicationVariables={missingRequiredApplicationVariables}
+              onConfigure={goToConfigurationTab}
             />
           )}
-          {isApplicationStopped && (
-            <InlineBanner
-              status="warning"
-              icon={<IconAlertTriangle aria-hidden="true" />}
-            >{t`We are currently encountering issues with this app, its behavior may be degraded while we work on a fix.`}</InlineBanner>
-          )}
-          {renderActiveTabContent()}
-        </SettingsPageContainer>
-      </SettingsPageLayout>
+        {isDefined(healthBanner) && (
+          <SettingsApplicationHealthBanner
+            healthStatus={healthBanner.status}
+            title={healthBanner.title}
+            description={healthBanner.description}
+            action={healthBannerButton}
+          />
+        )}
+        <SettingsApplicationStoppedBanner
+          applicationUniversalIdentifier={application?.universalIdentifier}
+        />
+        {renderActiveTabContent()}
+      </SettingsApplicationDetailPageLayout>
     </CurrentApplicationContext.Provider>
   );
 };

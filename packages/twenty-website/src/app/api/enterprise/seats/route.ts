@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   getEnterpriseConfigError,
@@ -6,6 +7,7 @@ import {
   isBillableSeatReporter,
   verifyEnterpriseKey,
 } from '@/platform/enterprise';
+import { forwardToTwentyConnect } from '@/platform/enterprise/forward-to-twenty-connect';
 
 export const dynamic = 'force-dynamic';
 
@@ -16,6 +18,12 @@ type InstanceMetadata = {
 };
 
 export async function POST(request: Request) {
+  const forwardedResponse = await forwardToTwentyConnect(request);
+
+  if (isDefined(forwardedResponse)) {
+    return forwardedResponse;
+  }
+
   const configError = getEnterpriseConfigError({
     route: 'enterprise-seats',
     feature: 'Enterprise seat management',

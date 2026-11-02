@@ -60,6 +60,8 @@ const validateWorkspaceUpdate = (
       isSystemBuild: false,
       applicationUniversalIdentifier:
         WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
+      workspaceCustomApplicationUniversalIdentifier:
+        WORKSPACE_CUSTOM_APPLICATION_UNIVERSAL_IDENTIFIER,
     },
     flatEntityUpdate,
     universalIdentifier: standardSkill.universalIdentifier,

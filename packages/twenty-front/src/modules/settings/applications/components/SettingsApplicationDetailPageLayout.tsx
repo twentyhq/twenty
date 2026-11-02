@@ -9,6 +9,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 type SettingsApplicationDetailPageLayoutProps = {
   applicationId?: string;
+  logoUrl?: string | null;
   displayName: string;
   links: BreadcrumbProps['links'];
   tabs: SingleTabProps[];
@@ -20,6 +21,7 @@ type SettingsApplicationDetailPageLayoutProps = {
 
 export const SettingsApplicationDetailPageLayout = ({
   applicationId,
+  logoUrl,
   displayName,
   links,
   tabs,
@@ -34,6 +36,7 @@ export const SettingsApplicationDetailPageLayout = ({
       isDefined(applicationId) ? (
         <AppChip
           applicationId={applicationId}
+          logoUrl={logoUrl}
           fallbackApplicationData={{ name: displayName }}
           size="md"
           chipOnly

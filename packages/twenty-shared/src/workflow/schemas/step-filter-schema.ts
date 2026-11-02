@@ -12,4 +12,5 @@ export const stepFilterSchema = z.object({
   positionInStepFilterGroup: z.number().optional(),
   fieldMetadataId: z.string().optional(),
   compositeFieldSubFieldName: z.string().optional(),
+  isFullRecord: z.boolean().optional(),
 });

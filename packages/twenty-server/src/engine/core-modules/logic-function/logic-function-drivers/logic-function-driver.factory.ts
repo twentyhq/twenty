@@ -6,6 +6,7 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { ApplicationDependencyFilesService } from 'src/engine/core-modules/application/application-package/application-dependency-files.service';
+import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -32,6 +33,7 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
     private readonly sdkClientArchiveService: SdkClientArchiveService,
     private readonly cacheLockService: CacheLockService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly coreEntityCacheService: CoreEntityCacheService,
     @InjectCacheStorage(CacheStorageNamespace.ModuleApplications)
     private readonly cacheStorageService: CacheStorageService,
   ) {
@@ -71,6 +73,7 @@ export class LogicFunctionDriverFactory extends DriverFactoryBase<LogicFunctionD
           cacheLockService: this.cacheLockService,
           cacheStorageService: this.cacheStorageService,
           workspaceCacheService: this.workspaceCacheService,
+          coreEntityCacheService: this.coreEntityCacheService,
           ...getLambdaConnectionOptions(this.twentyConfigService),
           sdkClientArchiveService: this.sdkClientArchiveService,
         });

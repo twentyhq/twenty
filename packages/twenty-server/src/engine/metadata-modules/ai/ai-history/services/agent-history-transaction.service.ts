@@ -25,6 +25,7 @@ export class AgentHistoryTransactionService {
               );
 
             return work({
+              executeRawQuery: transactionScope.executeRawQuery,
               insert: async (name, values) => {
                 await getRepository(name).insert(values);
               },

@@ -18,6 +18,7 @@ import { type Manifest } from 'twenty-shared/application';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { PULL_BASE_FILE_PATH } from '@/app/constants/pull-base-file-path.constant';
+import { createPullBaseWrite } from '@/app/pull/create-pull-base-write';
 import { readTargetBoundPullBase } from '@/app/pull/read-target-bound-pull-base';
 import { writePullBase } from '@/app/pull/write-pull-base';
 
@@ -126,6 +127,22 @@ describe('target-bound CLI pull base', () => {
     ).toMatchObject({ status: 'used', manifest: MANIFEST });
     expect(JSON.parse(await readFile(basePath, 'utf8'))).toEqual(BASE);
     expect((await stat(basePath)).mode & 0o777).toBe(0o600);
+  });
+
+  it('keeps remote dependency fingerprints separate from written source fingerprints', async () => {
+    await seed(
+      createPullBaseWrite({
+        manifest: MANIFEST,
+        target: TARGET,
+        sourceFingerprints: { 'package.json': 'a'.repeat(64) },
+        dependencyFingerprints: { 'package.json': 'b'.repeat(64) },
+      }).content,
+    );
+    expect(await read()).toMatchObject({
+      status: 'used',
+      sourceFingerprints: { 'package.json': 'a'.repeat(64) },
+      dependencyFingerprints: { 'package.json': 'b'.repeat(64) },
+    });
   });
 
   it('stores source fingerprints sorted by path and reads them back', async () => {
@@ -250,6 +267,14 @@ describe('target-bound CLI pull base', () => {
       JSON.stringify({
         ...BASE,
         unreconciledUniversalIdentifiers: ['invalid'],
+      }),
+      'unreadable',
+    ],
+    [
+      'invalid dependency fingerprint',
+      JSON.stringify({
+        ...BASE,
+        dependencyFingerprints: { 'package.json': 'invalid' },
       }),
       'unreadable',
     ],

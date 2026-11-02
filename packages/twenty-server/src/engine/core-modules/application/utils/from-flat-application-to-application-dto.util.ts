@@ -18,6 +18,7 @@ export const fromFlatApplicationToApplicationDto = ({
   version,
   settingsCustomTabFrontComponentId,
   healthCheckLogicFunctionId,
+  isUserHealthCheckEnabled,
 }: FlatApplication): ApplicationDTO => {
   return {
     canBeUninstalled,
@@ -38,5 +39,6 @@ export const fromFlatApplicationToApplicationDto = ({
     settingsCustomTabFrontComponentId:
       settingsCustomTabFrontComponentId ?? undefined,
     healthCheckLogicFunctionId: healthCheckLogicFunctionId ?? undefined,
+    runOnUserPreferences: isUserHealthCheckEnabled ?? false,
   };
 };

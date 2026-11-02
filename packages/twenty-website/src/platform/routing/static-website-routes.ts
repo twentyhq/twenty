@@ -14,12 +14,12 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
   },
   {
     changeFrequency: 'weekly',
-    description: msg`Extend Twenty with vetted apps — call recording, enrichment, Slack, Discord, Linear and more. Install any app on your open source CRM workspace in one click.`,
+    description: msg`Extend Twenty with apps — call recording, enrichment, Slack, Discord, Linear and more. Install any app on your open source CRM workspace in one click.`,
     id: 'apps',
     indexed: true,
     path: '/apps',
     priority: 0.8,
-    title: msg`Twenty Apps — Vetted Apps for the Open Source CRM`,
+    title: msg`Twenty Apps — Reviewed Apps for the Open Source CRM`,
   },
   {
     changeFrequency: 'monthly',
@@ -119,6 +119,15 @@ export const STATIC_WEBSITE_ROUTES: readonly WebsiteRoute[] = [
     path: '/partners/brief',
     priority: 0.3,
     title: msg`Submit a Client Brief — Twenty Partners`,
+  },
+  {
+    changeFrequency: 'monthly',
+    description: msg`Earn 20% of seat revenue for 12 months on every team you bring to Twenty Cloud. Apply to the affiliate program for creators, communities, consultants and tech partners.`,
+    id: 'affiliatePartners',
+    indexed: false,
+    path: '/affiliate-partners',
+    priority: 0.6,
+    title: msg`Twenty Affiliate Program — Earn 20% on Every Referral`,
   },
   {
     changeFrequency: 'monthly',

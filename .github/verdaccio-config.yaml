@@ -18,9 +18,6 @@ packages:
   'twenty-ui':
     access: $all
     publish: $all
-  'create-twenty-app':
-    access: $all
-    publish: $all
   '**':
     access: $all
     proxy: npmjs

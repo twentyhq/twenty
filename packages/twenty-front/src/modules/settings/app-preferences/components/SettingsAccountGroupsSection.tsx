@@ -1,15 +1,12 @@
 import { SettingsAccountGroupTableRow } from '@/settings/app-preferences/components/SettingsAccountGroupTableRow';
 import { SettingsAccountGroupsEmptyState } from '@/settings/app-preferences/components/SettingsAccountGroupsEmptyState';
-import { SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/app-preferences/constants/SettingsAccountGroupTableGridTemplateColumns';
-import { SETTINGS_BUILT_IN_ACCOUNT_APP_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS } from '@/settings/app-preferences/constants/SettingsBuiltInAccountAppAccountGroupTableGridTemplateColumns';
 import { useAddBuiltInAccount } from '@/settings/app-preferences/hooks/useAddBuiltInAccount';
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
 import { type BuiltInAccountApp } from '@/settings/app-preferences/types/BuiltInAccountApp';
 import { getBuiltInAccountAppsUsingAccount } from '@/settings/app-preferences/utils/getBuiltInAccountAppsUsingAccount';
+import { SettingsApplicationTableHeaderRow } from '@/settings/applications/components/SettingsApplicationTableHeaderRow';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { Table } from '@/ui/layout/table/components/Table';
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
@@ -49,22 +46,6 @@ export const SettingsAccountGroupsSection = ({
       )
     : allGroups;
 
-  const gridTemplateColumns = isDefined(builtInAccountApp)
-    ? SETTINGS_BUILT_IN_ACCOUNT_APP_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS
-    : SETTINGS_ACCOUNT_GROUP_TABLE_GRID_TEMPLATE_COLUMNS;
-
-  const tableHeaderRow = (
-    <TableRow gridTemplateColumns={gridTemplateColumns}>
-      <TableHeader>{t`Account`}</TableHeader>
-      {isDefined(builtInAccountApp) ? (
-        <TableHeader>{t`Permissions`}</TableHeader>
-      ) : (
-        <TableHeader align="right">{t`Used by`}</TableHeader>
-      )}
-      <TableHeader />
-    </TableRow>
-  );
-
   return (
     <Section.Root>
       <Section.Header
@@ -80,13 +61,20 @@ export const SettingsAccountGroupsSection = ({
       ) : (
         <>
           <Table>
-            {tableHeaderRow}
+            <SettingsApplicationTableHeaderRow
+              middleColumn="status"
+              nameLabel={t`Account`}
+              detailsLabel={
+                isDefined(builtInAccountApp) ? t`Permissions` : t`Used by`
+              }
+              detailsAlign={isDefined(builtInAccountApp) ? 'left' : 'right'}
+              shouldShowDetailsOnMobile
+            />
             <StyledTableRows>
               {groups.map((group) => (
                 <SettingsAccountGroupTableRow
                   key={group.id}
                   group={group}
-                  gridTemplateColumns={gridTemplateColumns}
                   builtInAccountApp={builtInAccountApp}
                 />
               ))}

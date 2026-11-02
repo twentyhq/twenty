@@ -72,7 +72,11 @@ describe('EntityEventsToDbListener', () => {
     expect(triggerQueueService.add).toHaveBeenCalledWith(
       CallAgentDatabaseEventTriggersJob.name,
       UPSERT_BATCH_EVENT,
-      { retryLimit: 3 },
+      {
+        retryLimit: 3,
+        workspaceId: UPSERT_BATCH_EVENT.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
     expect(otherQueueService.add).not.toHaveBeenCalled();
   });

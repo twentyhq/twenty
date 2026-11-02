@@ -83,12 +83,9 @@ export function AppsMarketplaceClient({ apps }: AppsMarketplaceClientProps) {
   }, [apps]);
 
   const visibleApps = useMemo(() => {
-    const matching =
-      activeCategory === ALL_CATEGORIES
-        ? apps
-        : apps.filter((app) => app.category === activeCategory);
-
-    return matching.toSorted((a, b) => Number(b.isVetted) - Number(a.isVetted));
+    return activeCategory === ALL_CATEGORIES
+      ? apps
+      : apps.filter((app) => app.category === activeCategory);
   }, [apps, activeCategory]);
 
   return (

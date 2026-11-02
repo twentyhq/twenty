@@ -15,6 +15,7 @@ import { completeFathomCallRecordingImport } from 'src/logic-functions/utils/com
 import { createFathomCoreApiClient } from 'src/logic-functions/utils/create-fathom-core-api-client.util';
 import { enqueueFathomMediaDownloadPoll } from 'src/logic-functions/utils/enqueue-fathom-media-download-poll.util';
 import { enqueueFathomMediaDownloadRequest } from 'src/logic-functions/utils/enqueue-fathom-media-download-request.util';
+import { getConnectionAccessTokenOrThrow } from 'src/logic-functions/utils/get-connection-access-token-or-throw.util';
 import { getFathomMediaFailureReasonForError } from 'src/logic-functions/utils/get-fathom-media-failure-reason-for-error.util';
 import { getFathomRetryAfterDelay } from 'src/logic-functions/utils/get-fathom-retry-after-delay.util';
 import { recordFathomMediaFailure } from 'src/logic-functions/utils/record-fathom-media-failure.util';
@@ -106,7 +107,7 @@ export const runFathomMediaImport = async (rawPayload: unknown) => {
     try {
       const connection = await getConnection(target.connectedAccountId);
       const fathomClient = new Fathom({
-        security: { bearerAuth: connection.accessToken },
+        security: { bearerAuth: getConnectionAccessTokenOrThrow(connection) },
         retryConfig: { strategy: 'none' },
       });
       let download: Pick<

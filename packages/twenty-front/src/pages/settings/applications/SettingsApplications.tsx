@@ -13,7 +13,7 @@ import { IconApps, IconShoppingBag, IconSparkle2 } from 'twenty-ui/icon';
 import coverDark from '~/pages/settings/applications/assets/cover-dark.png';
 import coverLight from '~/pages/settings/applications/assets/cover-light.png';
 import { SettingsApplicationsAvailableTab } from '~/pages/settings/applications/tabs/SettingsApplicationsAvailableTab';
-import { SettingsApplicationsInstalledTab } from '~/pages/settings/applications/tabs/SettingsApplicationsInstalledTab';
+import { SettingsApplicationsInstalledAppsSection } from '@/settings/applications/components/SettingsApplicationsInstalledAppsSection';
 
 const APPLICATIONS_TAB_LIST_ID = 'applications-tab-list';
 const APPLICATIONS_HERO_INSTANCE_ID_PREFIX = 'settings-applications-hero';
@@ -44,7 +44,7 @@ export const SettingsApplications = () => {
       case 'marketplace':
         return <SettingsApplicationsAvailableTab />;
       case 'installed':
-        return <SettingsApplicationsInstalledTab />;
+        return <SettingsApplicationsInstalledAppsSection />;
       default:
         return <SettingsApplicationsAvailableTab />;
     }

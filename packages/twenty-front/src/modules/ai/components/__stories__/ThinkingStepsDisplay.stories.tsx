@@ -24,7 +24,6 @@ const meta: Meta<typeof ThinkingStepsDisplay> = {
   },
   args: {
     isLastMessageStreaming: false,
-    hasAssistantTextResponseStarted: true,
     parts: [
       { type: 'reasoning', state: 'done', text: 'Reviewed the request.' },
     ],
@@ -50,9 +49,6 @@ export const SummaryDisclosure: Story = {
       expect(canvasElement.ownerDocument.getElementById(panelId)).toBeVisible();
       expect(canvas.getByText('Thought')).toBeVisible();
     });
-    await expect(
-      await canvas.findByText('Reviewed the request.'),
-    ).toBeVisible();
     await userEvent.keyboard(' ');
     await waitFor(() => {
       expect(toggle).toHaveAttribute('aria-expanded', 'false');
@@ -61,24 +57,23 @@ export const SummaryDisclosure: Story = {
   },
 };
 
-export const BeforeAnswer: Story = {
+export const WhileWorking: Story = {
   args: {
-    hasAssistantTextResponseStarted: false,
     isLastMessageStreaming: true,
+    isTrailingWhileStreaming: true,
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    expect(canvas.queryByRole('button', { name: '1 step' })).toBeNull();
-    expect(canvas.getByText('Thought')).toBeVisible();
-    await expect(
-      await canvas.findByText('Reviewed the request.'),
-    ).toBeVisible();
+    expect(canvas.getByRole('button', { name: 'Thinking' })).toHaveAttribute(
+      'aria-expanded',
+      'false',
+    );
+    expect(canvas.queryByText('Thought')).toBeNull();
   },
 };
 
 export const ToolDisclosure: Story = {
   args: {
-    hasAssistantTextResponseStarted: false,
     parts: [
       {
         type: 'dynamic-tool',
@@ -92,7 +87,8 @@ export const ToolDisclosure: Story = {
   },
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
-    const toggle = canvas.getByRole('button', { name: /inspect_tool/ });
+    await userEvent.click(canvas.getByRole('button', { name: '1 step' }));
+    const toggle = await canvas.findByRole('button', { name: /inspect_tool/ });
     expect(toggle).toHaveAttribute('aria-expanded', 'false');
     await userEvent.click(toggle);
     const panelId = toggle.getAttribute('aria-controls');

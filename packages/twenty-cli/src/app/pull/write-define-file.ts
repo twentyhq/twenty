@@ -7,7 +7,6 @@ import {
   DateDisplayFormat,
   FieldMetadataType,
   IndexType,
-  MetadataWritability,
   NavigationMenuItemType,
   NumberDataType,
   ObjectOpenRecordIn,
@@ -45,11 +44,6 @@ const buildFieldEnumBindings = (prefix: string[]): EnumBinding[] => [
     members: FieldMetadataType,
   },
   {
-    path: [...prefix, 'writability'],
-    symbol: 'MetadataWritability',
-    members: MetadataWritability,
-  },
-  {
     path: [...prefix, 'universalSettings', 'relationType'],
     symbol: 'RelationType',
     members: RelationType,
@@ -75,11 +69,6 @@ export const FIELD_ENUM_BINDINGS: EnumBinding[] = buildFieldEnumBindings([]);
 
 export const OBJECT_ENUM_BINDINGS: EnumBinding[] = [
   {
-    path: ['writability'],
-    symbol: 'MetadataWritability',
-    members: MetadataWritability,
-  },
-  {
     path: ['openRecordIn'],
     symbol: 'ObjectOpenRecordIn',
     members: ObjectOpenRecordIn,
@@ -91,7 +80,9 @@ export const INDEX_ENUM_BINDINGS: EnumBinding[] = [
   { path: ['indexType'], symbol: 'IndexType', members: IndexType },
 ];
 
-export const ROLE_ENUM_BINDINGS: EnumBinding[] = [
+export const buildRoleEnumBindings = (
+  systemPermissionFlag: Record<string, string>,
+): EnumBinding[] => [
   {
     path: ['rowLevelPermissionPredicateGroups', '[]', 'logicalOperator'],
     symbol: 'RowLevelPermissionPredicateGroupLogicalOperator',
@@ -105,9 +96,11 @@ export const ROLE_ENUM_BINDINGS: EnumBinding[] = [
   {
     path: ['permissionFlagUniversalIdentifiers', '[]'],
     symbol: 'SystemPermissionFlag',
-    members: SystemPermissionFlag,
+    members: systemPermissionFlag,
   },
 ];
+
+export const ROLE_ENUM_BINDINGS = buildRoleEnumBindings(SystemPermissionFlag);
 
 const buildAggregateOperationBinding = (path: string[]): EnumBinding => ({
   path,

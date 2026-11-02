@@ -51,6 +51,7 @@ describe('BullMQDriver retry backoff (integration)', () => {
         RETRY_BACKOFF_TEST_JOB_NAME,
         { marker: testJobMarker },
         {
+          isSystemJob: true,
           id: testJobMarker,
           delay: TEST_JOB_DELAY_MILLISECONDS,
           retryLimit: 3,

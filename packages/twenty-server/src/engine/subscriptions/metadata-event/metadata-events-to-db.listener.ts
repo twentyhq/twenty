@@ -54,6 +54,8 @@ export class MetadataEventsToDbListener {
       MetadataEventBatch<AllMetadataName, AllMetadataEventType>
     >(CallWebhookJobsForMetadataJob.name, metadataEventBatch, {
       retryLimit: 3,
+      workspaceId: metadataEventBatch.workspaceId,
+      isWorkspaceJob: true,
     });
 
     if (metadataEventBatch.events.length > 0) {

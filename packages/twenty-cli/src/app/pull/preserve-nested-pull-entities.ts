@@ -107,7 +107,8 @@ export const preserveNestedPullEntities = ({
     for (const change of changes) {
       if (
         skippedPaths.has(change.relativePath) ||
-        change.kind === 'translation'
+        change.kind === 'translation' ||
+        change.kind === 'dependency'
       ) {
         continue;
       }

@@ -16,6 +16,7 @@ export const FIND_ADMIN_APPLICATION_REGISTRATION_STATS = gql`
       totalCreditsUsed
       creditsUsedBreakdown {
         label
+        icon
         operation
         creditsUsed
       }
