@@ -4,7 +4,7 @@ import {
   type SetStateAction,
   useEffect,
 } from 'react';
-import { SettingsAiBehaviorSection } from '~/pages/settings/ai/components/SettingsAiBehaviorSection';
+import { type SettingsAiBehaviorSection } from '~/pages/settings/ai/components/SettingsAiBehaviorSection';
 
 type SettingsAiBehaviorMode = ComponentProps<
   typeof SettingsAiBehaviorSection
