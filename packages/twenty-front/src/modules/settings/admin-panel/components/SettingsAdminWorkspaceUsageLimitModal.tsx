@@ -39,20 +39,14 @@ const StyledActionSlot = styled.div`
   flex: 1;
 `;
 
-const parseIntegerAtLeast = ({
-  value,
-  minimum,
-}: {
-  value: string;
-  minimum: number;
-}): number | null => {
-  if (!isNonEmptyString(value.trim())) {
-    return null;
-  }
-
+const parseIntegerAtLeast = (value: string, minimum: number): number | null => {
   const parsed = Number(value);
 
-  return Number.isInteger(parsed) && parsed >= minimum ? parsed : null;
+  return isNonEmptyString(value.trim()) &&
+    Number.isInteger(parsed) &&
+    parsed >= minimum
+    ? parsed
+    : null;
 };
 
 export const SettingsAdminWorkspaceUsageLimitModal = ({
@@ -92,13 +86,10 @@ export const SettingsAdminWorkspaceUsageLimitModal = ({
       mutationOptions,
     );
 
-  const parsedLimitValue = parseIntegerAtLeast({
-    value: limitValue,
-    minimum: row.limitKind === 'quota' ? 0 : 1,
-  });
+  const parsedLimitValue = parseIntegerAtLeast(limitValue, 0);
   const hasBurstValue = isNonEmptyString(burstValue.trim());
   const parsedBurstValue = hasBurstValue
-    ? parseIntegerAtLeast({ value: burstValue, minimum: 1 })
+    ? parseIntegerAtLeast(burstValue, 1)
     : null;
   const isBurstAllowed = row.limitKind === 'speed';
   const isBusy = isCreating || isUpdating || isResetting;
