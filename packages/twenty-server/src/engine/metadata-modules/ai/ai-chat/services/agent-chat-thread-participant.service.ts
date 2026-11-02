@@ -129,13 +129,13 @@ const INBOX_ACTION_QUERIES: Record<
        "mentionsResolvedAt" = ${ALL_MENTIONS_RESOLVED_AT},
        "updatedAt" = ${NEXT_PARTICIPANT_UPDATED_AT}
      RETURNING *`,
-  // Filed at the settled activity, so activity that waited on the thread lock still comes after
+  // Filed at the settled activity, so activity that waited on the lock still comes after; NO KEY spares a reply's foreign key check
   [AgentChatInboxAction.ARCHIVE_IF_SETTLED]: ({
     participantTable,
     threadTable,
   }) =>
     `WITH locked_thread AS (
-       SELECT * FROM ${threadTable} WHERE id = $1 FOR UPDATE
+       SELECT * FROM ${threadTable} WHERE id = $1 FOR NO KEY UPDATE
      )
      UPDATE ${participantTable} AS participant
      SET "archivedAt" = thread."lastActivityAt" + interval '1 microsecond',
