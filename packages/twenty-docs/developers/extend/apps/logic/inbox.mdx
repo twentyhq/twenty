@@ -100,6 +100,7 @@ const { threadId } = await sendInboxMessage({
 - Your app's default role must reach the channel: it must be one of the channel's roles, or have access to all channels. Otherwise the call fails with `CHAT_CHANNEL_NOT_FOUND`.
 - Without `workspaceMemberIds`, the conversation has no owner and no member follows it: the channel's roles read it, and members join it from the channel. With recipients, the first one owns it, and must reach the channel too.
 - `channelId` only applies when the conversation is created. A send under a key your app used before adds the message to that conversation, wherever it is filed.
+- A conversation cannot be filed while the channel's roles are being changed or the channel is being deleted. The call then fails with `CHAT_CHANNEL_BUSY`: retry it after a moment with the same `idempotencyKey`.
 
 ## Mentioning members
 
