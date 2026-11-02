@@ -107,18 +107,14 @@ const findMainPrincipalRoleId = ({
   }
 };
 
-// TODO(@charlesBochet): an agent or application always needs a role; until then one without counts as the custom app
 const resolveLimitingPrincipal = ({
   limitingPrincipal,
   roleMaps,
 }: {
-  limitingPrincipal: PermissionsLimitingPrincipal | undefined;
+  limitingPrincipal: PermissionsLimitingPrincipal;
   roleMaps: PermissionsPrincipalRoleMaps;
 }): PermissionsLimitingPrincipalWithRole | undefined => {
-  if (
-    !isDefined(limitingPrincipal) ||
-    limitingPrincipal.type === 'deprecatedRoleOnly'
-  ) {
+  if (limitingPrincipal.type === 'deprecatedRoleOnly') {
     return limitingPrincipal;
   }
 
@@ -130,6 +126,7 @@ const resolveLimitingPrincipal = ({
     : undefined;
 };
 
+// TODO(@charlesBochet): an application always needs a role; until then one without counts as the custom app
 const resolveApplicationPrincipal = ({
   applicationPrincipal,
   mainPrincipal,
@@ -198,13 +195,20 @@ export const resolvePermissionsPrincipalsWithRoles = ({
     return undefined;
   }
 
+  const { limitingPrincipal } = principalsContext;
+  const limitingPrincipalWithRole = isDefined(limitingPrincipal)
+    ? resolveLimitingPrincipal({ limitingPrincipal, roleMaps })
+    : undefined;
+
+  // Dropping a limiting agent that lost its role would widen access, so deny instead
+  if (isDefined(limitingPrincipal) && !isDefined(limitingPrincipalWithRole)) {
+    return undefined;
+  }
+
   return {
     workspaceId: principalsContext.workspaceId,
     mainPrincipal,
-    limitingPrincipal: resolveLimitingPrincipal({
-      limitingPrincipal: principalsContext.limitingPrincipal,
-      roleMaps,
-    }),
+    limitingPrincipal: limitingPrincipalWithRole,
     applicationPrincipal,
   };
 };

@@ -214,6 +214,46 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
     ).toEqual({});
   });
 
+  it('should deny when the limiting agent has lost its role', () => {
+    const roleMaps = {
+      ...buildRoleMaps(),
+      apiKeyRoleMap: { 'api-key-id': 'default-role-id' },
+    };
+    const principals: PermissionsPrincipalsContext = {
+      workspaceId: 'workspace-id',
+      mainPrincipal: { type: 'apiKey', apiKeyId: 'api-key-id' },
+      applicationPrincipal: { type: 'customApplication' },
+    };
+
+    expect(
+      getObjectsPermissionsFromRolePermissionConfig({
+        principals: undefined,
+        rolesPermissions,
+        flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+        flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
+        workspaceId: 'workspace-id',
+        roleMaps,
+        rolePermissionConfig: { principals },
+      }),
+    ).toBe(defaultRolePermissions);
+    expect(
+      getObjectsPermissionsFromRolePermissionConfig({
+        principals: undefined,
+        rolesPermissions,
+        flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
+        flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
+        workspaceId: 'workspace-id',
+        roleMaps,
+        rolePermissionConfig: {
+          principals: {
+            ...principals,
+            limitingPrincipal: { type: 'agent', agentId: 'deleted-agent-id' },
+          },
+        },
+      }),
+    ).toEqual({});
+  });
+
   it('should deny when no actor restricts the call', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({

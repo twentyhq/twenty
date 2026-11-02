@@ -34,10 +34,15 @@ export const resolveObjectRecordsPermissions = ({
   shouldBypassPermissionChecks: boolean;
   permissionsPrincipal: PermissionsPrincipalsWithRolesContext | undefined;
 } => {
-  if (
-    isDefined(rolePermissionConfig) &&
-    'shouldBypassPermissionChecks' in rolePermissionConfig
-  ) {
+  if (!isDefined(rolePermissionConfig)) {
+    return {
+      objectRecordsPermissions: {},
+      shouldBypassPermissionChecks: false,
+      permissionsPrincipal: undefined,
+    };
+  }
+
+  if ('shouldBypassPermissionChecks' in rolePermissionConfig) {
     return {
       objectRecordsPermissions: {},
       shouldBypassPermissionChecks:
@@ -48,7 +53,7 @@ export const resolveObjectRecordsPermissions = ({
 
   const permissionsPrincipal = buildPermissionsPrincipalsWithRolesFromConfig({
     workspaceId: authContext.workspace.id,
-    rolePermissionConfig: rolePermissionConfig ?? { intersectionOf: {} },
+    rolePermissionConfig,
     principalsContext: getPermissionsPrincipalsFromAuthContext(authContext),
     roleMaps,
   });
