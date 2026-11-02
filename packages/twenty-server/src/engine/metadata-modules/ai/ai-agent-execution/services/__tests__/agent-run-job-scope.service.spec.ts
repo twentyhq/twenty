@@ -89,12 +89,23 @@ describe('AgentRunJobScopeService', () => {
       workspaceId: WORKSPACE_ID,
       applicationUniversalIdentifier: 'application-c',
     });
+  });
+
+  // like a deleted agent's, the run then fails resolving its persona
+  it('falls back to a workspace scope for an application that no longer exists', async () => {
     await expect(
       buildService().resolve({
         workspaceId: WORKSPACE_ID,
         spec: {
           agentId: null,
-          inlineConfig: { ...inlineConfig, applicationId: null },
+          inlineConfig: {
+            instructions: 'Summarize the record.',
+            modelId: 'model-id',
+            modelConfiguration: null,
+            scope: null,
+            promptCacheKey: 'workflow-step:step-id',
+            applicationId: 'deleted-application-id',
+          },
         },
       }),
     ).resolves.toEqual({ workspaceId: WORKSPACE_ID, isWorkspaceJob: true });

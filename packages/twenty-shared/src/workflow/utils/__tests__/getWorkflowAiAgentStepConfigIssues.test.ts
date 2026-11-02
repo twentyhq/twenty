@@ -57,4 +57,52 @@ describe('getWorkflowAiAgentStepConfigIssues', () => {
       }),
     ).toEqual([]);
   });
+
+  it('ignores blank instructions on a step running an agent', () => {
+    expect(
+      getWorkflowAiAgentStepConfigIssues({
+        stepKind: 'agent',
+        input: { instructions: '  ', modelId: '' },
+      }),
+    ).toEqual([]);
+  });
+
+  it.each([
+    {
+      repeated: 'an object',
+      scope: {
+        objectPermissions: [
+          { objectUniversalIdentifier: 'person', canReadObjectRecords: true },
+          { objectUniversalIdentifier: 'person', canReadObjectRecords: false },
+        ],
+      },
+    },
+    {
+      repeated: 'a field',
+      scope: {
+        fieldPermissions: [
+          {
+            objectUniversalIdentifier: 'person',
+            fieldUniversalIdentifier: 'person-email',
+            canReadFieldValue: true,
+          },
+          {
+            objectUniversalIdentifier: 'person',
+            fieldUniversalIdentifier: 'person-email',
+            canReadFieldValue: false,
+          },
+        ],
+      },
+    },
+  ])(
+    'refuses a step without an agent whose permissions repeat $repeated',
+    ({ scope }) => {
+      expect(
+        getWorkflowAiAgentStepConfigIssues({
+          stepKind: 'generate',
+          input: { instructions: 'Qualify', scope },
+        }),
+      ).toEqual(['GENERATE_STEP_SCOPE_HAS_REPEATED_ENTRIES']);
+    },
+  );
 });

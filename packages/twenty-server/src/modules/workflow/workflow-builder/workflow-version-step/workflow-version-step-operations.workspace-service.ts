@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { msg } from '@lingui/core/macro';
 import { AUTO_SELECT_WORKSPACE_DEFAULT_MODEL_ID } from 'twenty-shared/ai';
 import { inputSchemaToOutputSchema } from 'twenty-shared/logic-function';
@@ -930,7 +932,7 @@ export class WorkflowVersionStepOperationsWorkspaceService {
         const agentId = step.settings.input.agentId;
         const clonedStepId = v4();
 
-        if (!isDefined(agentId)) {
+        if (!isNonEmptyString(agentId)) {
           return {
             ...step,
             id: clonedStepId,

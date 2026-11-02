@@ -30,7 +30,7 @@ export const validateWorkflowAiAgentStep = ({
     issues.push({
       severity: 'error',
       code: 'AI_AGENT_CONFLICTING_CONFIG',
-      message: `Agent step "${stepLabel}": ${WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES[issueCode]}`,
+      message: `AI step "${stepLabel}": ${WORKFLOW_AI_AGENT_STEP_CONFIG_ISSUE_MESSAGES[issueCode]}`,
       stepId: step.id,
     });
   }
@@ -39,7 +39,7 @@ export const validateWorkflowAiAgentStep = ({
     issues.push({
       severity: 'error',
       code: 'AI_AGENT_MISSING_PROMPT',
-      message: `Agent step "${stepLabel}" has no prompt.`,
+      message: `AI step "${stepLabel}" has no prompt.`,
       stepId: step.id,
     });
   }
@@ -52,7 +52,7 @@ export const validateWorkflowAiAgentStep = ({
     issues.push({
       severity: 'warning',
       code: 'AI_AGENT_MISSING_OUTPUT_VARIABLE',
-      message: `Agent step "${stepLabel}" has no output variable defined. Downstream steps won't be able to reference its result.`,
+      message: `AI step "${stepLabel}" has no output variable defined. Downstream steps won't be able to reference its result.`,
       stepId: step.id,
     });
   }
