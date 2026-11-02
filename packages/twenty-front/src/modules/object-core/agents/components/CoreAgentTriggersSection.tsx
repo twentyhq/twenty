@@ -81,7 +81,7 @@ export const CoreAgentTriggersSection = ({
       <CoreAgentSectionBody>
         <CoreAgentSectionList
           items={items}
-          emptyMessage={t`This agent only runs when someone sends it a message.`}
+          emptyMessage={t`This agent only runs when a workflow or an app calls it.`}
         />
         {!isReadOnly && (
           <Button
