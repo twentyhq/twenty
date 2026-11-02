@@ -52,7 +52,10 @@ const findWorkspaceMemberRoleId = ({
   roleMaps,
 }: {
   workspaceMemberId: string;
-  roleMaps: PermissionsPrincipalRoleMaps;
+  roleMaps: Pick<
+    PermissionsPrincipalRoleMaps,
+    'flatWorkspaceMemberMaps' | 'userWorkspaceRoleMap'
+  >;
 }): string | undefined => {
   const userId =
     roleMaps.flatWorkspaceMemberMaps.byId[workspaceMemberId]?.userId;
