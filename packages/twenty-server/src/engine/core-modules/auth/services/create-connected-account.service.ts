@@ -51,9 +51,8 @@ export class CreateConnectedAccountService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceMemberRepo =
-        this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+        this.workspaceOrmManager.getSystemRepository<WorkspaceMemberWorkspaceEntity>(
           'workspaceMember',
-          { shouldBypassPermissionChecks: true },
         );
 
       const member = await workspaceMemberRepo.findOne({

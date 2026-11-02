@@ -16,6 +16,9 @@ interface BaseWorkspaceAuthContext {
 export interface ApiKeyWorkspaceAuthContext extends BaseWorkspaceAuthContext {
   type: 'apiKey';
   apiKey: NonNullable<RawAuthContext['apiKey']>;
+  // Set when the key runs an agent: the agent and its application narrow the key's roles
+  application?: NonNullable<RawAuthContext['application']>;
+  agentId?: string;
 }
 
 export interface UserWorkspaceAuthContext extends BaseWorkspaceAuthContext {

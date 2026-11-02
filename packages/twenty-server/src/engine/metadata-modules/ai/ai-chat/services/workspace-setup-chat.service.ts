@@ -274,9 +274,7 @@ export class WorkspaceSetupChatService {
       const workspaceMember =
         await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
           const workspaceMemberRepository =
-            this.workspaceOrmManager.getRepository('workspaceMember', {
-              shouldBypassPermissionChecks: true,
-            });
+            this.workspaceOrmManager.getSystemRepository('workspaceMember');
 
           return workspaceMemberRepository.findOne({ where: { userId } });
         }, buildSystemAuthContext(workspaceId));

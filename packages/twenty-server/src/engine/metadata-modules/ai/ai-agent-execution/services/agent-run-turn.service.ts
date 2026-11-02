@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { buildAgentRunAuthContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-auth-context.util';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import {
@@ -43,7 +44,6 @@ import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-age
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
 import { type AgentToolLoadingStrategy } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-tool-loading-strategy.type';
 import { assertAgentResponseFormatHasOutputFieldsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util';
-import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
 import { buildStrictAgentResponseSchema } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-strict-agent-response-schema.util';
 import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/provider-options.util';
 import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/replace-unsupported-file-parts.util';
@@ -345,7 +345,7 @@ export class AgentRunTurnService {
 
   private async buildAgentRegistryAccess({
     agent,
-    executionContext: { authContext, actorContext, agentRunRoleIds },
+    executionContext: { authContext, actorContext },
     additionalExcludedToolNames,
     toolLoadingStrategy,
   }: Pick<
@@ -367,13 +367,11 @@ export class AgentRunTurnService {
     const toolContext: ToolContext = {
       workspaceId: agent.workspaceId,
       agentId: agent.id,
-      authContext,
+      authContext: isDefined(authContext)
+        ? buildAgentRunAuthContext({ authContext, agentId: agent.id })
+        : undefined,
       application: getAuthContextApplication(authContext),
       actorContext,
-      rolePermissionConfig: buildAgentRolePermissionConfig({
-        agentRoleId,
-        agentRunRoleIds,
-      }),
       ...(isDefined(authContext) && isUserAuthContext(authContext)
         ? {
             userId: authContext.user.id,

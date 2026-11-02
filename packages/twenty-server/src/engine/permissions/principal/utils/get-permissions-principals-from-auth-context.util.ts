@@ -7,7 +7,6 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 import { buildPermissionsPrincipalsContext } from 'src/engine/permissions/principal/utils/build-permissions-principals-context.util';
 
-// TODO(@charlesBochet): agent runs do not always carry their agent yet, so their row-level checks can miss its role
 export const getPermissionsPrincipalsFromAuthContext = (
   authContext: WorkspaceAuthContext,
 ): PermissionsPrincipalsContext | undefined => {
@@ -26,8 +25,8 @@ export const getPermissionsPrincipalsFromAuthContext = (
       workspaceId: authContext.workspace.id,
       workspaceMemberId: undefined,
       apiKeyId: authContext.apiKey.id,
-      applicationId: undefined,
-      agentId: undefined,
+      applicationId: authContext.application?.id,
+      agentId: authContext.agentId,
     });
   }
 

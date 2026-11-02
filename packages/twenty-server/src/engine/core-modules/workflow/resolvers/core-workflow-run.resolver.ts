@@ -81,9 +81,8 @@ export class CoreWorkflowRunResolver {
     const workspaceMember =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workspaceMemberRepository =
-          this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+          this.workspaceOrmManager.getSystemRepository<WorkspaceMemberWorkspaceEntity>(
             'workspaceMember',
-            { shouldBypassPermissionChecks: true },
           );
 
         return workspaceMemberRepository.findOneOrFail({

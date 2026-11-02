@@ -1,4 +1,4 @@
-import { Injectable, type Type } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import {
@@ -8,7 +8,6 @@ import {
   isDefined,
   parseEmailDocument,
 } from 'twenty-shared/utils';
-import { type ObjectLiteral } from 'typeorm';
 import { v4 } from 'uuid';
 
 import {
@@ -21,7 +20,6 @@ import { CampaignVariableService } from 'src/modules/emailing/services/campaign-
 import { MessageCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-campaign.workspace-entity';
 import { collectCampaignVariableNamesOrThrow } from 'src/modules/emailing/utils/collect-campaign-variable-names-or-throw.util';
 import { collectCampaignVariableNamesFromStringOrThrow } from 'src/modules/emailing/utils/collect-campaign-variable-names-from-string-or-throw.util';
-import { buildEmailingRolePermissionConfig } from 'src/modules/emailing/utils/build-emailing-role-permission-config.util';
 
 export type SaveDraftCampaignArgs = {
   workspaceId: string;
@@ -50,19 +48,8 @@ export class MessageCampaignDraftService {
     private readonly campaignVariableService: CampaignVariableService,
   ) {}
 
-  private getRoleScopedRepository<T extends ObjectLiteral>(
-    entity: Type<T>,
-    roleId: string,
-  ) {
-    return this.workspaceOrmManager.getRepository(
-      entity,
-      buildEmailingRolePermissionConfig(roleId),
-    );
-  }
-
   async saveDraft({
     workspaceId,
-    userWorkspaceId,
     campaignId,
     name,
     subject,
@@ -90,15 +77,9 @@ export class MessageCampaignDraftService {
       );
     }
 
-    const roleId = await this.userRoleService.getRoleIdForUserWorkspace({
-      workspaceId,
-      userWorkspaceId,
-    });
-
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const campaignRepository = await this.getRoleScopedRepository(
+      const campaignRepository = await this.workspaceOrmManager.getRepository(
         MessageCampaignWorkspaceEntity,
-        roleId,
       );
 
       if (!isDefined(campaignId)) {

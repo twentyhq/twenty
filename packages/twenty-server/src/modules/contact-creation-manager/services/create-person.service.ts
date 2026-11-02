@@ -21,9 +21,8 @@ export class CreatePersonService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const personRepository = this.workspaceOrmManager.getRepository(
+      const personRepository = this.workspaceOrmManager.getSystemRepository(
         PersonWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
       );
 
       const lastPersonPosition =
@@ -51,11 +50,8 @@ export class CreatePersonService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const personRepository = this.workspaceOrmManager.getRepository(
+      const personRepository = this.workspaceOrmManager.getSystemRepository(
         PersonWorkspaceEntity,
-        {
-          shouldBypassPermissionChecks: true,
-        },
       );
 
       const restoredPeople = await personRepository.updateMany(
@@ -83,11 +79,8 @@ export class CreatePersonService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const personRepository = this.workspaceOrmManager.getRepository(
+      const personRepository = this.workspaceOrmManager.getSystemRepository(
         PersonWorkspaceEntity,
-        {
-          shouldBypassPermissionChecks: true,
-        },
       );
 
       const enrichedPeople = await personRepository.updateMany(

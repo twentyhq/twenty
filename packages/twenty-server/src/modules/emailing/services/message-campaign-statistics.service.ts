@@ -69,9 +69,8 @@ export class MessageCampaignStatisticsService {
     const groups = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const campaignDeliveryRepository =
-          this.workspaceOrmManager.getRepository(
+          this.workspaceOrmManager.getSystemRepository(
             CampaignDeliveryWorkspaceEntity,
-            { shouldBypassPermissionChecks: true },
             { shouldSkipEventEmission: true },
           );
         return campaignDeliveryRepository.executeRaw<CampaignCountGroup>(
@@ -133,9 +132,8 @@ export class MessageCampaignStatisticsService {
   }): Promise<void> {
     const campaignIds =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-        const campaignRepository = this.workspaceOrmManager.getRepository(
+        const campaignRepository = this.workspaceOrmManager.getSystemRepository(
           MessageCampaignWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
         );
 
         const campaigns = await campaignRepository.find({
@@ -168,9 +166,8 @@ export class MessageCampaignStatisticsService {
     counts: CampaignCounts;
   }): Promise<void> {
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const campaignRepository = this.workspaceOrmManager.getRepository(
+      const campaignRepository = this.workspaceOrmManager.getSystemRepository(
         MessageCampaignWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
       );
 
       const campaign = await campaignRepository.findOne({
@@ -228,9 +225,8 @@ export class MessageCampaignStatisticsService {
     deliveredCount: number;
   }): Promise<void> {
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const campaignRepository = this.workspaceOrmManager.getRepository(
+      const campaignRepository = this.workspaceOrmManager.getSystemRepository(
         MessageCampaignWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
       );
 
       const campaign = await campaignRepository.findOne({

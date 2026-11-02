@@ -161,13 +161,26 @@ export class RecordAccessPolicyService {
   async getObjectsPermissionsOrThrow(
     principals: PermissionsPrincipalsContext,
   ): Promise<ObjectsPermissions> {
-    const principal = await this.findPrincipalsWithRoles(principals);
+    const objectsPermissions = await this.findObjectsPermissions(principals);
 
-    if (!isDefined(principal)) {
+    if (!isDefined(objectsPermissions)) {
       throw new PermissionsException(
         PermissionsExceptionMessage.PERMISSION_DENIED,
         PermissionsExceptionCode.PERMISSION_DENIED,
       );
+    }
+
+    return objectsPermissions;
+  }
+
+  // undefined when the principals hold no role
+  async findObjectsPermissions(
+    principals: PermissionsPrincipalsContext,
+  ): Promise<ObjectsPermissions | undefined> {
+    const principal = await this.findPrincipalsWithRoles(principals);
+
+    if (!isDefined(principal)) {
+      return undefined;
     }
 
     return getPermissionsPrincipalObjectsPermissions({
@@ -337,20 +350,12 @@ export class RecordAccessPolicyService {
     work: (repository: WorkspaceRepository) => Promise<TResult>;
   }): Promise<TResult> {
     if (isDefined(transactionScope)) {
-      return work(
-        transactionScope.getRepository(objectNameSingular, {
-          shouldBypassPermissionChecks: true,
-        }),
-      );
+      return work(transactionScope.getSystemRepository(objectNameSingular));
     }
 
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
-        work(
-          this.workspaceOrmManager.getRepository(objectNameSingular, {
-            shouldBypassPermissionChecks: true,
-          }),
-        ),
+        work(this.workspaceOrmManager.getSystemRepository(objectNameSingular)),
       buildSystemAuthContext(workspaceId),
     );
   }

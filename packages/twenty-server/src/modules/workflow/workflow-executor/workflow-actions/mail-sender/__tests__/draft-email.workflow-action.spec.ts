@@ -78,7 +78,9 @@ describe('DraftEmailWorkflowAction', () => {
           provide: WorkspaceOrmManager,
           useValue: {
             executeInWorkspaceContext: jest.fn((callback) => callback()),
-            getRepository: jest.fn().mockReturnValue(workspaceMemberRepository),
+            getSystemRepository: jest
+              .fn()
+              .mockReturnValue(workspaceMemberRepository),
           },
         },
         {

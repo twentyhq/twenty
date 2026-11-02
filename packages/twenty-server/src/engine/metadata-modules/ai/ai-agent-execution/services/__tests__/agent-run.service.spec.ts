@@ -64,7 +64,6 @@ const buildService = (overrides: Record<string, unknown>) => {
     {} as never,
     {} as never,
     {} as never,
-    {} as never,
     applicationLookupService as never,
     agentRepository as never,
   );

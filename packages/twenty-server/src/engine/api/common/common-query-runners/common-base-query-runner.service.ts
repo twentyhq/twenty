@@ -72,7 +72,6 @@ import { RelationNestedQueries } from 'src/engine/twenty-orm/field-operations/re
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { type MutationKind } from 'src/engine/twenty-orm/sql/utils/build-mutation-statement.util';
 import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
-import { resolveRepositoryPermissionConfig } from 'src/engine/permissions/principal/utils/resolve-repository-permission-config.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { addTimelineActivityObjectColumnsToSelect } from 'src/modules/timeline/utils/add-timeline-activity-object-columns-to-select.util';
@@ -373,33 +372,18 @@ export abstract class CommonBaseQueryRunnerService<
   ): Promise<Omit<CommonExtendedQueryRunnerContext, 'commonQueryParser'>> {
     const context = getWorkspaceContext();
 
-    const rolePermissionConfig =
-      queryRunnerContext.rolePermissionConfig ??
-      resolveRepositoryPermissionConfig(context.authContext);
-
-    if (!rolePermissionConfig) {
-      throw new CommonQueryRunnerException(
-        'Invalid auth context',
-        CommonQueryRunnerExceptionCode.INVALID_AUTH_CONTEXT,
-        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
-      );
-    }
-
     const repository = isDefined(queryRunnerContext.transactionScope)
       ? queryRunnerContext.transactionScope.getRepository<ObjectRecord>(
           queryRunnerContext.flatObjectMetadata.nameSingular,
-          rolePermissionConfig,
         )
       : this.workspaceOrmManager.getRepository<ObjectRecord>(
           queryRunnerContext.flatObjectMetadata.nameSingular,
-          rolePermissionConfig,
           { useReplica: this.isReadOnly },
         );
 
     return {
       ...queryRunnerContext,
       authContext: context.authContext,
-      rolePermissionConfig,
       repository,
       featureFlagsMap: context.featureFlagsMap,
     };

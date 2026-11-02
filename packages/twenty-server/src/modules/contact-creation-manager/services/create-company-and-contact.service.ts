@@ -63,17 +63,14 @@ export class CreateCompanyAndPersonService {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const personRepository = this.workspaceOrmManager.getRepository(
+      const personRepository = this.workspaceOrmManager.getSystemRepository(
         PersonWorkspaceEntity,
-        {
-          shouldBypassPermissionChecks: true,
-        },
       );
 
-      const workspaceMemberRepository = this.workspaceOrmManager.getRepository(
-        WorkspaceMemberWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-      );
+      const workspaceMemberRepository =
+        this.workspaceOrmManager.getSystemRepository(
+          WorkspaceMemberWorkspaceEntity,
+        );
 
       const workspaceMembers = await workspaceMemberRepository.find();
 
@@ -194,9 +191,8 @@ export class CreateCompanyAndPersonService {
     const accountOwner =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
         const workspaceMemberRepository =
-          this.workspaceOrmManager.getRepository(
+          this.workspaceOrmManager.getSystemRepository(
             WorkspaceMemberWorkspaceEntity,
-            { shouldBypassPermissionChecks: true },
           );
 
         return workspaceMemberRepository.findOne({

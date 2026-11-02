@@ -32,11 +32,8 @@ import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/a
 import { type FlatObjectPermission } from 'src/engine/metadata-modules/flat-object-permission/types/flat-object-permission.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { buildDeprecatedPermissionsPrincipalsFromConfig } from 'src/engine/permissions/principal/utils/build-deprecated-permissions-principals-from-config.util';
 import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
-import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
-import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/permissions/role/utils/get-objects-permissions-from-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { RECORDS_TOOL_WIDGET_NAME, ToolCategory } from 'twenty-shared/ai';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -78,11 +75,9 @@ export class DatabaseToolProvider implements ToolProvider {
     const toolNames = options?.toolNames;
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
-    const { rolesPermissions, flatObjectPermissionMaps, flatApplicationMaps } =
+    const { flatObjectPermissionMaps } =
       await this.workspaceCacheService.getOrRecompute(context.workspaceId, [
-        'rolesPermissions',
         'flatObjectPermissionMaps',
-        'flatApplicationMaps',
       ]);
     const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
       await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -92,31 +87,18 @@ export class DatabaseToolProvider implements ToolProvider {
         },
       );
 
-    const principals =
-      (isDefined(context.authContext)
-        ? getPermissionsPrincipalsFromAuthContext(context.authContext)
-        : undefined) ??
-      buildDeprecatedPermissionsPrincipalsFromConfig({
-        workspaceId: context.workspaceId,
-        rolePermissionConfig: context.rolePermissionConfig,
-      });
+    const principals = isDefined(context.authContext)
+      ? getPermissionsPrincipalsFromAuthContext(context.authContext)
+      : undefined;
+    const objectPermissions = isDefined(principals)
+      ? await this.recordAccessPolicyService.findObjectsPermissions(principals)
+      : undefined;
 
-    const objectPermissions = getObjectsPermissionsFromRolePermissionConfig({
-      workspaceId: context.workspaceId,
-      rolesPermissions,
-      rolePermissionConfig: context.rolePermissionConfig,
-      principals,
-      roleMaps: buildPermissionsPrincipalRoleMaps({
-        userWorkspaceRoleMap: {},
-        apiKeyRoleMap: {},
-        flatRoleTargetByAgentIdMaps: {},
-        flatApplicationMaps,
-      }),
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    });
-
-    if (Object.keys(objectPermissions).length === 0 || !isDefined(principals)) {
+    if (
+      !isDefined(principals) ||
+      !isDefined(objectPermissions) ||
+      Object.keys(objectPermissions).length === 0
+    ) {
       return descriptors;
     }
 

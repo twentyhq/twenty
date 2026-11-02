@@ -1,7 +1,12 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { createUpdateWorkflowAgentTool } from 'src/modules/workflow/workflow-tools/tools/update-workflow-agent.tool';
 
 const AGENT_ID = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
 const WORKSPACE_ID = 'workspace-id';
+const AUTH_CONTEXT = {
+  type: 'user',
+  workspace: { id: WORKSPACE_ID },
+} as WorkspaceAuthContext;
 
 const buildAiAgentStep = (agentId: string, stepId = 'step-1') => ({
   id: stepId,
@@ -35,7 +40,7 @@ const buildTool = ({
     } as never,
     {
       workspaceId: WORKSPACE_ID,
-      rolePermissionConfig: { shouldBypassPermissionChecks: true },
+      authContext: AUTH_CONTEXT,
     },
   );
 

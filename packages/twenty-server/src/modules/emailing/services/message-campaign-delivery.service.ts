@@ -69,11 +69,9 @@ export class MessageCampaignDeliveryService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const isStillClaimable = await this.workspaceOrmManager
-        .getRepository(
-          CampaignDeliveryWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
-          { shouldSkipEventEmission: true },
-        )
+        .getSystemRepository(CampaignDeliveryWorkspaceEntity, {
+          shouldSkipEventEmission: true,
+        })
         .existsBy({
           id: data.messageId,
           state: In(CLAIMABLE_CAMPAIGN_DELIVERY_STATES),
@@ -109,9 +107,8 @@ export class MessageCampaignDeliveryService {
         return;
       }
 
-      const messageRepository = this.workspaceOrmManager.getRepository(
+      const messageRepository = this.workspaceOrmManager.getSystemRepository(
         MessageWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
         { shouldSkipEventEmission: true },
       );
 
@@ -191,11 +188,9 @@ export class MessageCampaignDeliveryService {
     messageId: string;
   }): Promise<void> {
     const { generatedMaps: failedDeliveries } = await this.workspaceOrmManager
-      .getRepository(
-        CampaignDeliveryWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-        { shouldSkipEventEmission: true },
-      )
+      .getSystemRepository(CampaignDeliveryWorkspaceEntity, {
+        shouldSkipEventEmission: true,
+      })
       .update(
         { id: messageId, state: In(CLAIMABLE_CAMPAIGN_DELIVERY_STATES) },
         {
@@ -225,9 +220,8 @@ export class MessageCampaignDeliveryService {
   }): Promise<SendContext | null> {
     const { campaignId, messageId, personId } = data;
 
-    const campaignRepository = this.workspaceOrmManager.getRepository(
+    const campaignRepository = this.workspaceOrmManager.getSystemRepository(
       MessageCampaignWorkspaceEntity,
-      { shouldBypassPermissionChecks: true },
     );
 
     const claimToken = await this.claimDeliveryForSending({
@@ -256,9 +250,8 @@ export class MessageCampaignDeliveryService {
       return null;
     }
 
-    const personRepository = this.workspaceOrmManager.getRepository(
+    const personRepository = this.workspaceOrmManager.getSystemRepository(
       PersonWorkspaceEntity,
-      { shouldBypassPermissionChecks: true },
     );
 
     return {
@@ -393,9 +386,8 @@ export class MessageCampaignDeliveryService {
     messageId: string;
     providerMessageId: string;
   }): Promise<void> {
-    const associationRepository = this.workspaceOrmManager.getRepository(
+    const associationRepository = this.workspaceOrmManager.getSystemRepository(
       MessageChannelMessageAssociationWorkspaceEntity,
-      { shouldBypassPermissionChecks: true },
       { shouldSkipEventEmission: true },
     );
 
@@ -481,11 +473,9 @@ export class MessageCampaignDeliveryService {
     const claimToken = v4();
 
     const { generatedMaps: claimedDeliveries } = await this.workspaceOrmManager
-      .getRepository(
-        CampaignDeliveryWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-        { shouldSkipEventEmission: true },
-      )
+      .getSystemRepository(CampaignDeliveryWorkspaceEntity, {
+        shouldSkipEventEmission: true,
+      })
       .update(
         { id: messageId, state: In(CLAIMABLE_CAMPAIGN_DELIVERY_STATES) },
         {
@@ -517,11 +507,9 @@ export class MessageCampaignDeliveryService {
     >;
   }): Promise<number> {
     const { generatedMaps: settledDeliveries } = await this.workspaceOrmManager
-      .getRepository(
-        CampaignDeliveryWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
-        { shouldSkipEventEmission: true },
-      )
+      .getSystemRepository(CampaignDeliveryWorkspaceEntity, {
+        shouldSkipEventEmission: true,
+      })
       .update(
         { id: messageId, claimToken },
         { ...update, claimToken: null, claimExpiresAt: null },

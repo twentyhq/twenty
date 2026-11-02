@@ -24,9 +24,8 @@ export class ShortLinkService {
     const linkHashes = links.map(hashShortLink);
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const repository = this.workspaceOrmManager.getRepository(
+      const repository = this.workspaceOrmManager.getSystemRepository(
         ShortLinkWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
         { shouldSkipEventEmission: true },
       );
 
@@ -61,9 +60,7 @@ export class ShortLinkService {
     return this.workspaceOrmManager.executeInWorkspaceContext(
       () =>
         this.workspaceOrmManager
-          .getRepository(ShortLinkWorkspaceEntity, {
-            shouldBypassPermissionChecks: true,
-          })
+          .getSystemRepository(ShortLinkWorkspaceEntity)
           .findOne({ where: { id: shortLinkId } }),
       buildSystemAuthContext(workspaceId),
     );

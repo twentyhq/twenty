@@ -22,7 +22,6 @@ import { z } from 'zod';
 import { buildActorMetadataFromAuthContext } from 'src/engine/core-modules/actor/utils/build-actor-metadata-from-auth-context.util';
 import { buildCreatedByFromApplication } from 'src/engine/core-modules/actor/utils/build-created-by-from-application.util';
 import { ApiKeyException } from 'src/engine/core-modules/api-key/exceptions/api-key.exception';
-import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { fromApiKeyEntityToFlat } from 'src/engine/core-modules/api-key/utils/from-api-key-entity-to-flat.util';
@@ -35,6 +34,7 @@ import {
   type ApplicationWorkspaceAuthContext,
   type UserWorkspaceAuthContext,
 } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import { buildAgentRunAuthContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-auth-context.util';
 import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
@@ -45,8 +45,6 @@ import { RUN_AGENT_MAX_WAIT_MS } from 'src/engine/metadata-modules/ai/ai-agent-e
 import { AgentRunSettlementService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-settlement.service';
 import { AgentRunSuspensionService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-suspension.service';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
-import { resolveApplicationRoleId } from 'src/engine/permissions/principal/utils/resolve-application-role-id.util';
-import { type AgentRunRoleIds } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-role-ids.type';
 import { type AgentRunCallerContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-context.type';
 import { type AgentRunCallerOutcome } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller-outcome.type';
 import { type AgentRunCaller } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-caller.type';
@@ -56,7 +54,6 @@ import { type OwnerWaitingState } from 'src/engine/core-modules/pending-wake-up/
 import { type AgentRunExecutionContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-run-execution-context.type';
 import { type RunAsWorkspaceMemberContext } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-as-workspace-member-context.type';
 import { type SettledAgentRun } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/settled-agent-run.type';
-import { buildAgentRolePermissionConfig } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-role-permission-config.util';
 import { buildAgentRunThreadId } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-agent-run-thread-id.util';
 import { resolveRunAgentMessagesOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/resolve-run-agent-messages-or-throw.util';
 import { AGENT_RUN_BASE_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-run-base-system-prompt.const';
@@ -113,7 +110,6 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     private readonly agentRunSettlementService: AgentRunSettlementService,
     private readonly agentRunSuspensionService: AgentRunSuspensionService,
     private readonly callerHandlerRegistry: AgentRunCallerHandlerRegistryService,
-    private readonly apiKeyRoleService: ApiKeyRoleService,
     private readonly apiKeyService: ApiKeyService,
     private readonly applicationLookupService: ApplicationLookupService,
     @InjectWorkspaceScopedRepository(AgentEntity)
@@ -485,39 +481,35 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
         })
       : undefined;
 
-    const { authContext, actorContext, callerRoleIds }: AgentRunCallerContext =
-      isDefined(runAsContext)
-        ? {
-            authContext: runAsContext.authContext,
-            actorContext: runAsContext.actorContext,
-            callerRoleIds: { userWorkspaceRoleId: runAsContext.roleId },
-          }
-        : await this.resolveCallerContext({
-            workspaceId,
-            ref,
-            agentAuthContext: agentContext.authContext,
-          });
+    const {
+      authContext: callerAuthContext,
+      actorContext,
+    }: AgentRunCallerContext = isDefined(runAsContext)
+      ? {
+          authContext: runAsContext.authContext,
+          actorContext: runAsContext.actorContext,
+        }
+      : await this.resolveCallerContext({
+          workspaceId,
+          ref,
+          agentAuthContext: agentContext.authContext,
+        });
+
+    const authContext = buildAgentRunAuthContext({
+      authContext: callerAuthContext,
+      agentId: ref.agentId,
+      application: agentContext.application,
+    });
 
     const memberWorkspaceMemberId = isUserAuthContext(authContext)
       ? authContext.workspaceMemberId
       : null;
-
-    // a run never exceeds the agent's application, whoever calls it
-    const agentRunRoleIds: AgentRunRoleIds = {
-      ...callerRoleIds,
-      ...resolveApplicationRoleId({ application: agentContext.application }),
-    };
 
     return {
       authContext,
       actorContext,
       userWorkspaceId:
         runAsContext?.authContext.userWorkspaceId ?? ref.requestUserWorkspaceId,
-      rolePermissionConfig: buildAgentRolePermissionConfig({
-        agentRoleId: agentContext.agentRoleId,
-        agentRunRoleIds,
-      }),
-      agentRunRoleIds,
       conversationActor: isDefined(memberWorkspaceMemberId)
         ? { type: 'user', workspaceMemberId: memberWorkspaceMemberId }
         : { type: 'application', applicationId: agentContext.application.id },
@@ -623,18 +615,14 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
     agentAuthContext: ApplicationWorkspaceAuthContext;
   }): Promise<AgentRunCallerContext> {
     if (isDefined(ref.callerWorkspaceMemberId)) {
-      const { authContext, actorContext, roleId } =
+      const { authContext, actorContext } =
         await this.agentActorContextService.buildRunAsWorkspaceMemberContext({
           workspaceMemberId: ref.callerWorkspaceMemberId,
           workspaceId,
           viaApplication: agentAuthContext.application,
         });
 
-      return {
-        authContext,
-        actorContext,
-        callerRoleIds: { userWorkspaceRoleId: roleId },
-      };
+      return { authContext, actorContext };
     }
 
     if (isDefined(ref.callerApiKeyId)) {
@@ -648,12 +636,6 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
           workspace: agentAuthContext.workspace,
           apiKey: fromApiKeyEntityToFlat(apiKey),
         }),
-        callerRoleIds: {
-          apiKeyRoleId: await this.apiKeyRoleService.getRoleIdForApiKeyId(
-            apiKey.id,
-            workspaceId,
-          ),
-        },
       };
     }
 

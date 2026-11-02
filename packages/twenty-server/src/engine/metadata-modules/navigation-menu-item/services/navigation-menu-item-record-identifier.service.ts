@@ -12,9 +12,7 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { RecordIdentifierDTO } from 'src/engine/metadata-modules/navigation-menu-item/dtos/record-identifier.dto';
 import { getMinimalSelectForRecordIdentifier } from 'src/engine/metadata-modules/navigation-menu-item/utils/get-minimal-select-for-record-identifier.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
-import { resolveRepositoryPermissionConfig } from 'src/engine/permissions/principal/utils/resolve-repository-permission-config.util';
 import { FileFolder } from 'twenty-shared/types';
 
 @Injectable()
@@ -68,18 +66,8 @@ export class NavigationMenuItemRecordIdentifierService {
 
     const record = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const context = getWorkspaceContext();
-        const rolePermissionConfig = resolveRepositoryPermissionConfig(
-          context.authContext,
-        );
-
-        if (!rolePermissionConfig) {
-          return null;
-        }
-
         const repository = this.workspaceOrmManager.getRepository(
           objectMetadata.nameSingular,
-          rolePermissionConfig,
         );
 
         const alias = objectMetadata.nameSingular;

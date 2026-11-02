@@ -20,11 +20,7 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
 import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
-import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
-import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/permissions/role/utils/get-objects-permissions-from-role-permission-config.util';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -45,18 +41,15 @@ export type CommonApiContext = {
 export class CommonApiContextBuilderService {
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly recordAccessPolicyService: RecordAccessPolicyService,
   ) {}
 
   async build({
     authContext,
     objectName,
-    rolePermissionConfig,
   }: {
     authContext: WorkspaceAuthContext;
     objectName: string;
-    rolePermissionConfig?: RolePermissionConfig;
   }): Promise<CommonApiContext> {
     const workspaceId = authContext.workspace.id;
 
@@ -103,12 +96,8 @@ export class CommonApiContextBuilderService {
       );
     }
 
-    const { objectsPermissions, principals } = await this.getPermissionsContext(
-      {
-        authContext,
-        rolePermissionConfig,
-      },
-    );
+    const { objectsPermissions, principals } =
+      await this.getPermissionsContext(authContext);
 
     const restrictedFields =
       objectsPermissions[flatObjectMetadata.id]?.restrictedFields ?? {};
@@ -130,7 +119,6 @@ export class CommonApiContextBuilderService {
         flatFieldMetadataMaps,
         flatIndexMaps,
         objectIdByNameSingular: idByNameSingular,
-        rolePermissionConfig,
       },
       selectedFields,
       flatObjectMetadata,
@@ -141,13 +129,9 @@ export class CommonApiContextBuilderService {
     };
   }
 
-  private async getPermissionsContext({
-    authContext,
-    rolePermissionConfig,
-  }: {
-    authContext: WorkspaceAuthContext;
-    rolePermissionConfig?: RolePermissionConfig;
-  }): Promise<{
+  private async getPermissionsContext(
+    authContext: WorkspaceAuthContext,
+  ): Promise<{
     objectsPermissions: ObjectsPermissions;
     principals: PermissionsPrincipalsContext;
   }> {
@@ -160,47 +144,11 @@ export class CommonApiContextBuilderService {
       );
     }
 
-    if (!isDefined(rolePermissionConfig)) {
-      return {
-        objectsPermissions:
-          await this.recordAccessPolicyService.getObjectsPermissionsOrThrow(
-            principals,
-          ),
-        principals,
-      };
-    }
-
-    // TODO(@charlesBochet): drop once tool contexts carry principals instead of role ids
-    const {
-      rolesPermissions,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-      flatApplicationMaps,
-    } = await this.workspaceCacheService.getOrRecompute(
-      authContext.workspace.id,
-      [
-        'rolesPermissions',
-        'flatObjectMetadataMaps',
-        'flatFieldMetadataMaps',
-        'flatApplicationMaps',
-      ],
-    );
-
     return {
-      objectsPermissions: getObjectsPermissionsFromRolePermissionConfig({
-        workspaceId: authContext.workspace.id,
-        rolesPermissions,
-        rolePermissionConfig,
-        principals,
-        roleMaps: buildPermissionsPrincipalRoleMaps({
-          userWorkspaceRoleMap: {},
-          apiKeyRoleMap: {},
-          flatRoleTargetByAgentIdMaps: {},
-          flatApplicationMaps,
-        }),
-        flatObjectMetadataMaps,
-        flatFieldMetadataMaps,
-      }),
+      objectsPermissions:
+        await this.recordAccessPolicyService.getObjectsPermissionsOrThrow(
+          principals,
+        ),
       principals,
     };
   }

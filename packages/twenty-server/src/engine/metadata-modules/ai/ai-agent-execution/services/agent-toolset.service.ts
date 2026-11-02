@@ -183,7 +183,6 @@ export class AgentToolsetService {
             userWorkspaceId,
             locale,
             excludeTools: new Set(excludedToolNames),
-            rolePermissionConfig: toolContext.rolePermissionConfig,
             authContext: toolContext.authContext,
             application: toolContext.application,
           },
@@ -221,7 +220,6 @@ export class AgentToolsetService {
           {
             userId,
             userWorkspaceId,
-            rolePermissionConfig: toolContext.rolePermissionConfig,
             authContext: toolContext.authContext,
             application: toolContext.application,
             categories: [...registryAccess.categories],

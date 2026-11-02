@@ -68,7 +68,7 @@ const setup = ({
 
   const workspaceOrmManager = {
     executeInWorkspaceContext: (fn: () => Promise<unknown>) => fn(),
-    getRepository: () => ({ count }),
+    getSystemRepository: () => ({ count }),
   } as unknown as WorkspaceOrmManager;
 
   const recompute = jest.fn();

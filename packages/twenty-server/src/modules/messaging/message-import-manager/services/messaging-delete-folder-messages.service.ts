@@ -40,15 +40,13 @@ export class MessagingDeleteFolderMessagesService {
     await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const messageFolderAssociationRepository =
-          this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
+          this.workspaceOrmManager.getSystemRepository<MessageChannelMessageAssociationMessageFolderWorkspaceEntity>(
             'messageChannelMessageAssociationMessageFolder',
-            { shouldBypassPermissionChecks: true },
           );
 
         const messageChannelMessageAssociationRepository =
-          this.workspaceOrmManager.getRepository<MessageChannelMessageAssociationWorkspaceEntity>(
+          this.workspaceOrmManager.getSystemRepository<MessageChannelMessageAssociationWorkspaceEntity>(
             'messageChannelMessageAssociation',
-            { shouldBypassPermissionChecks: true },
           );
 
         let hasMoreData = true;

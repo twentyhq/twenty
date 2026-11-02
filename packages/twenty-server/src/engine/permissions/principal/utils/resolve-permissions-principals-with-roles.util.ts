@@ -146,7 +146,7 @@ const resolveApplicationPrincipal = ({
     return undefined;
   }
 
-  const { applicationRoleId } = resolveApplicationRoleId({
+  const applicationRoleId = resolveApplicationRoleId({
     application: flatApplication,
     userRoleId:
       mainPrincipal.type === 'workspaceMember'

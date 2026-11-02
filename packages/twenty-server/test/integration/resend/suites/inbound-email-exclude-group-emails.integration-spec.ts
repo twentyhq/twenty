@@ -86,9 +86,7 @@ describe('Inbound email exclude group emails (integration)', () => {
     return workspaceOrmManager.executeInWorkspaceContext(
       () =>
         workspaceOrmManager
-          .getRepository<MessageWorkspaceEntity>('message', {
-            shouldBypassPermissionChecks: true,
-          })
+          .getSystemRepository<MessageWorkspaceEntity>('message')
           .createQueryBuilder('message')
           .where('message.headerMessageId = :headerMessageId', {
             headerMessageId,

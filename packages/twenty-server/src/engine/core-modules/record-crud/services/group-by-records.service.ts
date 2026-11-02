@@ -42,7 +42,6 @@ export class GroupByRecordsService {
       orderBy = 'DESC',
       filter,
       authContext,
-      rolePermissionConfig,
     } = params;
 
     try {
@@ -54,7 +53,6 @@ export class GroupByRecordsService {
       } = await this.commonApiContextBuilder.build({
         authContext,
         objectName,
-        rolePermissionConfig,
       });
 
       const availableAggregations =

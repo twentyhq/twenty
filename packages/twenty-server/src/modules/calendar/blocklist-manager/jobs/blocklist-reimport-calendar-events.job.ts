@@ -101,9 +101,8 @@ export class BlocklistReimportCalendarEventsJob {
     workspaceId: string;
   }): Promise<string | null> {
     const workspaceMemberRepository =
-      this.workspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+      this.workspaceOrmManager.getSystemRepository<WorkspaceMemberWorkspaceEntity>(
         'workspaceMember',
-        { shouldBypassPermissionChecks: true },
       );
 
     const workspaceMember = await workspaceMemberRepository.findOne({

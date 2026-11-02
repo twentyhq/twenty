@@ -45,9 +45,8 @@ export class MessageCampaignRecoveryService {
 
     const staleCampaigns =
       await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-        const campaignRepository = this.workspaceOrmManager.getRepository(
+        const campaignRepository = this.workspaceOrmManager.getSystemRepository(
           MessageCampaignWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
         );
 
         return campaignRepository.find({
@@ -97,9 +96,8 @@ export class MessageCampaignRecoveryService {
     staleSince: string;
   }): Promise<boolean> {
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageRepository = this.workspaceOrmManager.getRepository(
+      const messageRepository = this.workspaceOrmManager.getSystemRepository(
         MessageWorkspaceEntity,
-        { shouldBypassPermissionChecks: true },
       );
 
       return messageRepository.exists({

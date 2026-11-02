@@ -1,3 +1,4 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type ObjectPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -13,7 +14,6 @@ import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-obje
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const roleId = 'role-id';
@@ -53,7 +53,6 @@ type GenerateDescriptorsTestOptions = {
   explicitPermissionRows?: ExplicitPermissionRow[];
   composedObjectPermissions?: Partial<ObjectPermissions>;
   explicitPermissionRowsRoleId?: string;
-  rolePermissionConfig?: RolePermissionConfig;
   sharedOperationTypes?: OperationType[];
 };
 
@@ -164,6 +163,9 @@ describe('DatabaseToolProvider', () => {
       ...options?.composedObjectPermissions,
     };
     const recordAccessPolicyService = {
+      findObjectsPermissions: jest
+        .fn()
+        .mockResolvedValue(composedObjectPermissionsByObjectId),
       hasAccessToSomeRecords: jest.fn(
         async ({ operationType }: { operationType: OperationType }) => {
           const objectPermission =
@@ -188,9 +190,11 @@ describe('DatabaseToolProvider', () => {
     return (await provider.generateDescriptors(
       {
         workspaceId,
-        rolePermissionConfig: options?.rolePermissionConfig ?? {
-          intersectionOf: { agentRoleId: roleId },
-        },
+        authContext: {
+          type: 'apiKey',
+          workspace: { id: workspaceId },
+          apiKey: { id: 'api-key-id' },
+        } as WorkspaceAuthContext,
         explicitObjectGrantsRoleId: options?.explicitObjectGrantsRoleId,
       },
       { includeSchemas: false },
@@ -504,12 +508,6 @@ describe('DatabaseToolProvider', () => {
       const descriptorNames = await generateDescriptorNames([personObject], {
         explicitObjectGrantsRoleId: roleId,
         explicitPermissionRowsRoleId: userRoleId,
-        rolePermissionConfig: {
-          intersectionOf: {
-            agentRoleId: roleId,
-            userWorkspaceRoleId: userRoleId,
-          },
-        },
       });
 
       expect(descriptorNames).toEqual([]);

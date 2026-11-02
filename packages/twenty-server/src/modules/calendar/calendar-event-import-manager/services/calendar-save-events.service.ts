@@ -59,15 +59,13 @@ export class CalendarSaveEventsService {
     } = await this.workspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const calendarChannelEventAssociationRepository =
-          this.workspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+          this.workspaceOrmManager.getSystemRepository<CalendarChannelEventAssociationWorkspaceEntity>(
             'calendarChannelEventAssociation',
-            { shouldBypassPermissionChecks: true },
           );
 
         const calendarEventRepository =
-          this.workspaceOrmManager.getRepository<CalendarEventWorkspaceEntity>(
+          this.workspaceOrmManager.getSystemRepository<CalendarEventWorkspaceEntity>(
             'calendarEvent',
-            { shouldBypassPermissionChecks: true },
           );
 
         const existingAssociations =
@@ -224,15 +222,13 @@ export class CalendarSaveEventsService {
         await this.workspaceOrmManager.runInWorkspaceTransaction(
           async (transactionScope) => {
             const calendarEventRepository =
-              transactionScope.getRepository<CalendarEventWorkspaceEntity>(
+              transactionScope.getSystemRepository<CalendarEventWorkspaceEntity>(
                 'calendarEvent',
-                { shouldBypassPermissionChecks: true },
               );
 
             const associationRepository =
-              transactionScope.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+              transactionScope.getSystemRepository<CalendarChannelEventAssociationWorkspaceEntity>(
                 'calendarChannelEventAssociation',
-                { shouldBypassPermissionChecks: true },
               );
 
             if (saveOperations.calendarEventsToInsert.length > 0) {

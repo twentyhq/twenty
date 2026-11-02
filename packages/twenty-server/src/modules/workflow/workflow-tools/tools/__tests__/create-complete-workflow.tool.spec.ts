@@ -1,8 +1,13 @@
+import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { createCreateCompleteWorkflowTool } from 'src/modules/workflow/workflow-tools/tools/create-complete-workflow.tool';
 
 const CORE_WORKFLOW_ID = 'b3b8a4f0-0000-4000-8000-000000000001';
 const CORE_WORKFLOW_VERSION_ID = 'b3b8a4f0-0000-4000-8000-000000000002';
 const WORKSPACE_WORKFLOW_ID = 'b3b8a4f0-0000-4000-8000-000000000003';
+const AUTH_CONTEXT = {
+  type: 'user',
+  workspace: { id: 'workspace-id' },
+} as WorkspaceAuthContext;
 const STEP_ID = 'f47ac10b-58cc-4372-a567-0e02b2c3d479';
 
 const trigger = {
@@ -42,7 +47,7 @@ const buildTool = () => {
     {
       workspaceId: 'workspace-id',
       userWorkspaceId: 'user-workspace-id',
-      rolePermissionConfig: { shouldBypassPermissionChecks: true },
+      authContext: AUTH_CONTEXT,
     },
   );
 

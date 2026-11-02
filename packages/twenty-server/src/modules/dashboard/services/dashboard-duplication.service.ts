@@ -18,11 +18,9 @@ import {
   getWorkspaceContext,
   type ORMWorkspaceContext,
 } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
-import { type RepositoryPermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { isObjectOperationPermitted } from 'src/engine/permissions/role/utils/is-object-operation-permitted.util';
 import { resolveObjectRecordsPermissions } from 'src/engine/permissions/role/utils/resolve-object-records-permissions.util';
 import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
-import { resolveRepositoryPermissionConfig } from 'src/engine/permissions/principal/utils/resolve-repository-permission-config.util';
 import { DuplicatedDashboardDTO } from 'src/modules/dashboard/dtos/duplicated-dashboard.dto';
 import {
   DashboardException,
@@ -66,21 +64,10 @@ export class DashboardDuplicationService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceContext = getWorkspaceContext();
-      const rolePermissionConfig = resolveRepositoryPermissionConfig(
-        workspaceContext.authContext,
-      );
-
-      if (!isDefined(rolePermissionConfig)) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.PERMISSION_DENIED,
-          PermissionsExceptionCode.PERMISSION_DENIED,
-        );
-      }
 
       const dashboardRepository =
         this.workspaceOrmManager.getRepository<DashboardWorkspaceEntity>(
           'dashboard',
-          rolePermissionConfig,
         );
 
       const originalDashboard = await dashboardRepository.findOne({
@@ -111,7 +98,6 @@ export class DashboardDuplicationService {
       // The layout copy lives outside the dashboard insert, so refuse before creating it
       this.assertCanCreateDashboardOrThrow({
         workspaceContext,
-        rolePermissionConfig,
       });
 
       try {
@@ -151,14 +137,11 @@ export class DashboardDuplicationService {
 
   private assertCanCreateDashboardOrThrow({
     workspaceContext,
-    rolePermissionConfig,
   }: {
     workspaceContext: ORMWorkspaceContext;
-    rolePermissionConfig: RepositoryPermissionConfig;
   }): void {
     const { objectRecordsPermissions, shouldBypassPermissionChecks } =
       resolveObjectRecordsPermissions({
-        rolePermissionConfig,
         authContext: workspaceContext.authContext,
         roleMaps: buildPermissionsPrincipalRoleMaps(workspaceContext),
         objectPermissionsByRoleId: workspaceContext.permissionsPerRoleId,

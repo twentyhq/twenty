@@ -308,10 +308,10 @@ export class WorkflowDatabaseEventTriggerListener {
           continue;
         }
 
-        const relatedObjectRepository = this.workspaceOrmManager.getRepository(
-          relatedObjectMetadataNameSingular,
-          { shouldBypassPermissionChecks: true },
-        );
+        const relatedObjectRepository =
+          this.workspaceOrmManager.getSystemRepository(
+            relatedObjectMetadataNameSingular,
+          );
 
         const relatedRecords = await relatedObjectRepository.find({
           where: { id: In(joinRecordIds) },

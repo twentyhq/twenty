@@ -3,6 +3,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { MessageCampaignStatus } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { UserWorkspaceAuthContextService } from 'src/engine/core-modules/user-workspace/services/user-workspace-auth-context.service';
 import { withWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { CAMPAIGN_SEND_RETRY_BACKOFF } from 'src/engine/core-modules/emailing-domain/constants/campaign-send-retry-backoff.constant';
@@ -15,7 +16,6 @@ import { type SendScheduledCampaignJobData } from 'src/engine/core-modules/email
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { SEND_SCHEDULED_CAMPAIGN_JOB } from 'src/modules/emailing/constants/send-scheduled-campaign-job.constant';
 import { EmailBillingService } from 'src/modules/emailing/services/email-billing.service';
 import { MessageCampaignLifecycleService } from 'src/modules/emailing/services/message-campaign-lifecycle.service';
@@ -33,6 +33,7 @@ export class MessageCampaignScheduleService {
     private readonly messageCampaignService: MessageCampaignService,
     private readonly billingService: BillingService,
     private readonly emailBillingService: EmailBillingService,
+    private readonly userWorkspaceAuthContextService: UserWorkspaceAuthContextService,
   ) {}
 
   async sendNowOrScheduleOrThrow({
@@ -170,8 +171,12 @@ export class MessageCampaignScheduleService {
     userWorkspaceId,
     scheduledAt,
   }: SendScheduledCampaignJobData): Promise<void> {
+    // Runs as the member who scheduled it, so it only reaches the records they can
     await withWorkspaceAuthContext(
-      buildSystemAuthContext(workspaceId),
+      await this.userWorkspaceAuthContextService.resolve({
+        workspaceId,
+        userWorkspaceId,
+      }),
       async () => {
         const scheduledAtDate = new Date(scheduledAt);
 

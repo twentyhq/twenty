@@ -50,9 +50,8 @@ export class TimelineActivityTargetQueryService {
     const { junctionObjectNameSingular, junctionSourceJoinColumnName } =
       rule.targetShape;
 
-    const junctionRepository = this.workspaceOrmManager.getRepository(
+    const junctionRepository = this.workspaceOrmManager.getSystemRepository(
       junctionObjectNameSingular,
-      { shouldBypassPermissionChecks: true },
     );
 
     const junctionRows = await junctionRepository.find({
@@ -109,9 +108,8 @@ export class TimelineActivityTargetQueryService {
       return sourceRecordsByRecordId;
     }
 
-    const repository = this.workspaceOrmManager.getRepository(
+    const repository = this.workspaceOrmManager.getSystemRepository(
       rule.sourceFlatObjectMetadata.nameSingular,
-      { shouldBypassPermissionChecks: true },
     );
 
     const records = await repository.find({ where: { id: In(recordIds) } });

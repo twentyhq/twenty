@@ -238,7 +238,6 @@ describe('View tools', () => {
     const context: ToolProviderContext = {
       workspaceId,
       userWorkspaceId,
-      rolePermissionConfig: { shouldBypassPermissionChecks: true },
       actorContext: workspaceMemberId
         ? {
             source: FieldActorSource.MANUAL,

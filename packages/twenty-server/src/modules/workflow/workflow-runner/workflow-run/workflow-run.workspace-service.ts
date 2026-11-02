@@ -77,9 +77,8 @@ export class WorkflowRunWorkspaceService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowRunRepository =
-        this.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+        this.workspaceOrmManager.getSystemRepository<WorkflowRunWorkspaceEntity>(
           'workflowRun',
-          { shouldBypassPermissionChecks: true },
         );
       const position = await this.recordPositionService.buildRecordPosition({
         value: 'first',
@@ -503,9 +502,8 @@ export class WorkflowRunWorkspaceService {
 
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowRunRepository =
-        this.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+        this.workspaceOrmManager.getSystemRepository<WorkflowRunWorkspaceEntity>(
           'workflowRun',
-          { shouldBypassPermissionChecks: true },
         );
 
       return await workflowRunRepository.findOne({
@@ -527,9 +525,7 @@ export class WorkflowRunWorkspaceService {
       await this.workspaceOrmManager.executeInWorkspaceContext(
         async () =>
           this.workspaceOrmManager
-            .getRepository<WorkflowRunWorkspaceEntity>('workflowRun', {
-              shouldBypassPermissionChecks: true,
-            })
+            .getSystemRepository<WorkflowRunWorkspaceEntity>('workflowRun')
             .findOne({
               where: { id: workflowRunId },
               select: ['id', 'coreWorkflowId'],
@@ -548,9 +544,7 @@ export class WorkflowRunWorkspaceService {
       const workflowRun =
         await this.workspaceOrmManager.executeInWorkspaceContext(() =>
           this.workspaceOrmManager
-            .getRepositoryWithContextPermissions<WorkflowRunWorkspaceEntity>(
-              'workflowRun',
-            )
+            .getRepository<WorkflowRunWorkspaceEntity>('workflowRun')
             .findOne({ where: { id: workflowRunId }, select: { id: true } }),
         );
 
@@ -599,9 +593,8 @@ export class WorkflowRunWorkspaceService {
 
     await this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workflowRunRepository =
-        this.workspaceOrmManager.getRepository<WorkflowRunWorkspaceEntity>(
+        this.workspaceOrmManager.getSystemRepository<WorkflowRunWorkspaceEntity>(
           'workflowRun',
-          { shouldBypassPermissionChecks: true },
         );
 
       const workflowRunToUpdate = await workflowRunRepository.findOneBy({

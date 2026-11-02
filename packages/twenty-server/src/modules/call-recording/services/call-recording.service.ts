@@ -5,7 +5,6 @@ import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { resolveObjectRecordsPermissions } from 'src/engine/permissions/role/utils/resolve-object-records-permissions.util';
 import { buildPermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/utils/build-permissions-principal-role-maps.util';
-import { resolveRepositoryPermissionConfig } from 'src/engine/permissions/principal/utils/resolve-repository-permission-config.util';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -30,20 +29,9 @@ export class CallRecordingService {
   ): Promise<string | undefined> {
     return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
       const workspaceContext = getWorkspaceContext();
-      const rolePermissionConfig = resolveRepositoryPermissionConfig(
-        workspaceContext.authContext,
-      );
-
-      if (!isDefined(rolePermissionConfig)) {
-        throw new PermissionsException(
-          PermissionsExceptionMessage.PERMISSION_DENIED,
-          PermissionsExceptionCode.PERMISSION_DENIED,
-        );
-      }
 
       const { objectRecordsPermissions, shouldBypassPermissionChecks } =
         resolveObjectRecordsPermissions({
-          rolePermissionConfig,
           authContext: workspaceContext.authContext,
           roleMaps: buildPermissionsPrincipalRoleMaps(workspaceContext),
           objectPermissionsByRoleId: workspaceContext.permissionsPerRoleId,
@@ -68,7 +56,6 @@ export class CallRecordingService {
       const callRecordingRepository =
         this.workspaceOrmManager.getRepository<CallRecordingWorkspaceEntity>(
           'callRecording',
-          rolePermissionConfig,
         );
 
       const callRecordingsByCreation = await callRecordingRepository.find({

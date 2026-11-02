@@ -42,16 +42,10 @@ describe('ToolRegistryService', () => {
         buildToolRegistryService();
       const resolvedContext: ToolProviderContext = {
         workspaceId,
-        rolePermissionConfig: {
-          intersectionOf: { userWorkspaceRoleId: 'member-role-id' },
-        },
       };
 
       await toolRegistryService.getCatalog({
         workspaceId,
-        rolePermissionConfig: {
-          intersectionOf: { userWorkspaceRoleId: 'member-role-id' },
-        },
         explicitObjectGrantsRoleId: agentRoleId,
         resolveExecutionContext: async () => resolvedContext,
       });

@@ -268,14 +268,12 @@ export class AgentCallerConversationService {
     awaitedToolCall: AgentCallerAwaitedToolCall;
     summary: string;
   }) {
-    const { authContext, rolePermissionConfig, application } =
-      await this.callerHandlerRegistry
-        .getHandlerOrThrow(caller.type)
-        .buildExecutionContext({ workspaceId, caller });
+    const { authContext, application } = await this.callerHandlerRegistry
+      .getHandlerOrThrow(caller.type)
+      .buildExecutionContext({ workspaceId, caller });
 
     const toolContext = {
       workspaceId,
-      rolePermissionConfig,
       authContext,
       application,
     } satisfies ToolContext;
