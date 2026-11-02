@@ -72,6 +72,7 @@ type AgentRunnerResult = {
 type OpenedAgentRunTurn = {
   turnId: string;
   priorMessages: ExtendedUIMessage[];
+  canStoreResult: boolean;
 };
 
 @Injectable()
@@ -622,7 +623,7 @@ export class AgentRunnerService {
     input,
     suspension,
     stream,
-    openedTurn: { turnId, priorMessages },
+    openedTurn: { turnId, priorMessages, canStoreResult },
   }: {
     input: AgentRunnerRunInput;
     suspension: AgentRunSuspension | null;
@@ -631,8 +632,6 @@ export class AgentRunnerService {
   }): Promise<AgentRunnerResult> {
     const { workspaceId, spec, persona, prompt, executionContext } = input;
     const abortSignal = stream?.abortSignal;
-    const canStoreResult =
-      await this.conversationWriterService.canStoreTurnResult(workspaceId);
     const canPause = isDefined(stream);
 
     const startedAtMs = Date.now();
@@ -661,8 +660,7 @@ export class AgentRunnerService {
 
     // the toolset and prompt come from the spec alone, so a continued run gets those it paused with
     const {
-      streamed,
-      completion: { execution, wait },
+      completion: { execution, wait, isAborted },
       finish,
     } = await withDedicatedAiTrace(() =>
       this.turnStreamService.streamTurn({
@@ -685,12 +683,18 @@ export class AgentRunnerService {
                 execution.steps[execution.steps.length - 1]?.toolResults ?? [],
               )
             : undefined;
+          // a stop can also land while the structured output is asked for, after the stream ended. It is
+          // read once here, so the turn records the outcome its caller gets
+          const isAborted = streamed.isAborted || abortSignal?.aborted === true;
           const isCompleted =
-            !isDefined(execution.stopReason) && !execution.isPaused;
+            !isAborted &&
+            !isDefined(execution.stopReason) &&
+            !execution.isPaused;
 
           return {
             execution,
             wait,
+            isAborted,
             result:
               isCompleted && canStoreResult ? execution.result : undefined,
             modelId: execution.modelId,
@@ -723,19 +727,17 @@ export class AgentRunnerService {
 
     return {
       summary,
-      // a stop can also land while the structured output is asked for, after the stream ended
-      outcome:
-        streamed.isAborted || abortSignal?.aborted
-          ? { status: 'FAILED', error: 'The run was stopped' }
-          : await this.settleTurn({
-              input,
-              execution,
-              wait,
-              isAwaitingAnswer: finish?.isAwaitingAnswer ?? false,
-              summary,
-              suspension,
-              stream,
-            }),
+      outcome: isAborted
+        ? { status: 'FAILED', error: 'The run was stopped' }
+        : await this.settleTurn({
+            input,
+            execution,
+            wait,
+            isAwaitingAnswer: finish?.isAwaitingAnswer ?? false,
+            summary,
+            suspension,
+            stream,
+          }),
     };
   }
 
@@ -761,8 +763,13 @@ export class AgentRunnerService {
     >;
     suspension: AgentRunSuspension | null;
   }): Promise<OpenedAgentRunTurn> {
+    // read before the turn opens, so nothing fails between opening it and the stream finishing it
+    const canStoreResult =
+      await this.conversationWriterService.canStoreTurnResult(workspaceId);
+
     if (!isDefined(conversation)) {
       return {
+        canStoreResult,
         turnId: await this.conversationWriterService.insertTurn({
           workspaceId,
           id: oneShotTurnId,
@@ -813,6 +820,7 @@ export class AgentRunnerService {
 
     return {
       turnId,
+      canStoreResult,
       priorMessages: conversationMessages.filter(
         ({ id }) => !promptMessageIds.includes(id),
       ),

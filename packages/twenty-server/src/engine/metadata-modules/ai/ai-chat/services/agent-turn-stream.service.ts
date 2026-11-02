@@ -86,6 +86,8 @@ export type AgentTurnCompletion = {
   modelId: string;
   stopReason: StepDebitResult['stopReason'];
   isWaiting?: boolean;
+  // a stop the caller saw land after the stream ended, so the turn is recorded as stopped too
+  isAborted?: boolean;
   usage?: AgentTurnStreamUsage;
   // kept on a completed turn, so a retried job hands it back without running the model again
   result?: object;
@@ -296,7 +298,11 @@ export class AgentTurnStreamService {
       workspaceId,
       claim,
       turnId,
-      result: { ...streamed, usage: completion.usage ?? streamed.usage },
+      result: {
+        ...streamed,
+        isAborted: streamed.isAborted || completion.isAborted === true,
+        usage: completion.usage ?? streamed.usage,
+      },
       modelId: completion.modelId,
       stopReason: completion.stopReason,
       isWaiting: completion.isWaiting,

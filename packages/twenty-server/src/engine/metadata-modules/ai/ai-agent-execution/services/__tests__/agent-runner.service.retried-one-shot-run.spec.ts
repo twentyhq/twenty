@@ -24,12 +24,49 @@ const JOB_DATA = {
   },
 } as unknown as RunAgentJobData;
 
+const EXECUTION = {
+  result: { response: 'The lead is warm' },
+  usage: { inputTokens: 1, outputTokens: 1, totalTokens: 2 },
+  cacheCreationTokens: 0,
+  nativeWebSearchCallCount: 0,
+  stopReason: null,
+  isPaused: false,
+  steps: [],
+  modelId: 'model-id',
+  totalCostInDollars: 0,
+  creditsUsedMicro: 0,
+  structuredOutputSteps: [],
+};
+
+// runs the runner's completion as the stream service would once the model streamed its reply
+const streamTurnThroughCompletion = jest.fn(
+  async ({
+    completeTurn,
+  }: {
+    completeTurn: (streamed: object) => Promise<object>;
+  }) => {
+    const streamed = {
+      isAborted: false,
+      streamError: undefined,
+      usage: {},
+      started: { source: { modelConfig: {} } },
+    };
+
+    return {
+      streamed,
+      completion: await completeTurn(streamed),
+      finish: { isAwaitingAnswer: false },
+    };
+  },
+);
+
 const buildRunner = (
   recordedTurn: {
     status: AgentTurnStatus;
     error?: unknown;
     result?: object | null;
   } | null,
+  { canStoreTurnResult = jest.fn().mockResolvedValue(true) } = {},
 ) => {
   const handler = {
     getWaitingState: jest.fn().mockResolvedValue('WAITING'),
@@ -37,16 +74,18 @@ const buildRunner = (
   };
   const agentRunTurnService = {
     startTurn: jest.fn(),
-    completeTurn: jest.fn(),
+    completeTurn: jest.fn().mockResolvedValue(EXECUTION),
   };
   const conversationWriterService = {
-    insertTurn: jest.fn().mockRejectedValue(new Error('Database unavailable')),
-    canStoreTurnResult: jest.fn().mockResolvedValue(true),
+    insertTurn: jest.fn().mockResolvedValue('turn-id'),
+    canStoreTurnResult,
   };
   const agentRunSuspensionService = {
     deliverOutcome: jest.fn().mockResolvedValue(undefined),
   };
-  const turnStreamService = { streamTurn: jest.fn() };
+  const turnStreamService = {
+    streamTurn: jest.fn(streamTurnThroughCompletion),
+  };
   const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
   const turnRecorderService = {
     findTurn: jest.fn().mockResolvedValue(
@@ -98,6 +137,7 @@ const buildRunner = (
 const expectOutcomeDeliveredOnce = (
   deliverOutcome: jest.Mock,
   outcome: object,
+  summary: unknown = null,
 ) => {
   expect(deliverOutcome).toHaveBeenCalledTimes(1);
   expect(deliverOutcome).toHaveBeenCalledWith({
@@ -105,7 +145,7 @@ const expectOutcomeDeliveredOnce = (
     caller: CALLER,
     threadId: null,
     outcome,
-    summary: null,
+    summary,
   });
 };
 
@@ -188,14 +228,56 @@ describe('AgentRunnerService runStarted on a retried one-shot run', () => {
     });
   });
 
-  it('opens the turn of a run that has not started yet with the turn id of its job', async () => {
-    const { runner, conversationWriterService } = buildRunner(null);
+  it('runs a run that has not started yet in a turn with the turn id of its job, and keeps its result', async () => {
+    const {
+      runner,
+      agentRunTurnService,
+      conversationWriterService,
+      agentRunSuspensionService,
+      turnStreamService,
+    } = buildRunner(null);
 
     await runner.runStarted(JOB_DATA);
 
     expect(conversationWriterService.insertTurn).toHaveBeenCalledWith(
       expect.objectContaining({ id: 'turn-id', threadId: null }),
     );
+    expect(agentRunTurnService.completeTurn).toHaveBeenCalledTimes(1);
+    await expect(
+      turnStreamService.streamTurn.mock.results[0].value,
+    ).resolves.toMatchObject({
+      completion: { result: EXECUTION.result, isAborted: false },
+    });
+    expectOutcomeDeliveredOnce(
+      agentRunSuspensionService.deliverOutcome,
+      { status: 'COMPLETED', result: EXECUTION.result },
+      expect.objectContaining({ modelId: 'model-id' }),
+    );
+  });
+});
+
+describe('AgentRunnerService runStarted on a one-shot run whose result fence cannot be read', () => {
+  beforeEach(() => {
+    jest.spyOn(Logger.prototype, 'error').mockImplementation(() => undefined);
+  });
+
+  afterEach(() => jest.restoreAllMocks());
+
+  it('fails the run before opening a turn it could leave running', async () => {
+    const { runner, conversationWriterService, agentRunSuspensionService } =
+      buildRunner(null, {
+        canStoreTurnResult: jest
+          .fn()
+          .mockRejectedValue(new Error('Cache unavailable')),
+      });
+
+    await runner.runStarted(JOB_DATA);
+
+    expect(conversationWriterService.insertTurn).not.toHaveBeenCalled();
+    expectOutcomeDeliveredOnce(agentRunSuspensionService.deliverOutcome, {
+      status: 'FAILED',
+      error: 'Cache unavailable',
+    });
   });
 });
 
