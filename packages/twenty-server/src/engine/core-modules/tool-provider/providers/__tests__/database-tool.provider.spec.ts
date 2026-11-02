@@ -58,7 +58,16 @@ type GenerateDescriptorsTestOptions = {
 };
 
 const OBJECT_PERMISSION_BY_OPERATION_TYPE: Partial<
-  Record<OperationType, keyof ObjectPermissions>
+  Record<
+    OperationType,
+    keyof Pick<
+      ObjectPermissions,
+      | 'canReadObjectRecords'
+      | 'canUpdateObjectRecords'
+      | 'canSoftDeleteObjectRecords'
+      | 'canDestroyObjectRecords'
+    >
+  >
 > = {
   select: 'canReadObjectRecords',
   update: 'canUpdateObjectRecords',
@@ -162,8 +171,7 @@ describe('DatabaseToolProvider', () => {
 
           return (
             (options?.sharedOperationTypes ?? []).includes(operationType) ||
-            (isDefined(objectPermission) &&
-              objectPermissions[objectPermission] === true)
+            (isDefined(objectPermission) && objectPermissions[objectPermission])
           );
         },
       ),

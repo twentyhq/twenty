@@ -179,7 +179,7 @@ export class DatabaseToolProvider implements ToolProvider {
         >,
       ) =>
         !requireExplicitObjectGrants ||
-        explicitPermission?.[objectPermission] === true;
+        (explicitPermission?.[objectPermission] ?? false);
       const hasAccessToSomeRecords = async (operationType: OperationType) =>
         !isDefined(principal) ||
         (await this.recordAccessPolicyService.hasAccessToSomeRecords({

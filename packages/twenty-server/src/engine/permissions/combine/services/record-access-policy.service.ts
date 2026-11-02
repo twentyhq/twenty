@@ -33,6 +33,11 @@ import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/typ
 
 @Injectable()
 export class RecordAccessPolicyService {
+  private readonly metadataMapsByPrincipal = new WeakMap<
+    PermissionsPrincipal,
+    Promise<PermissionsMetadataMaps>
+  >();
+
   private readonly sharedAccessLevelsByPrincipal = new WeakMap<
     PermissionsPrincipal,
     Promise<Map<string, RecordShareAccessLevel[]>>
@@ -53,9 +58,7 @@ export class RecordAccessPolicyService {
   }: Omit<PermissionsObjectAccessRequest, 'metadataMaps'>): Promise<boolean> {
     const request = {
       principal,
-      metadataMaps: await this.loadPermissionsMetadataMaps(
-        principal.workspaceId,
-      ),
+      metadataMaps: await this.findPrincipalMetadataMaps(principal),
       flatObjectMetadata,
       operationType,
     };
@@ -107,22 +110,12 @@ export class RecordAccessPolicyService {
         operationType,
         hypotheticalRecordShareAccessLevel,
       });
-    const admittedRecordIds = isDefined(transactionScope)
-      ? await findAdmittedRecordIds(
-          transactionScope.getRepository(flatObjectMetadata.nameSingular, {
-            shouldBypassPermissionChecks: true,
-          }),
-        )
-      : await this.workspaceOrmManager.executeInWorkspaceContext(
-          () =>
-            findAdmittedRecordIds(
-              this.workspaceOrmManager.getRepository(
-                flatObjectMetadata.nameSingular,
-                { shouldBypassPermissionChecks: true },
-              ),
-            ),
-          buildSystemAuthContext(principal.workspaceId),
-        );
+    const admittedRecordIds = await this.withBypassingRepository({
+      workspaceId: principal.workspaceId,
+      objectNameSingular: flatObjectMetadata.nameSingular,
+      transactionScope,
+      work: findAdmittedRecordIds,
+    });
 
     return uniqueRecordIds.every((recordId) => admittedRecordIds.has(recordId));
   }
@@ -252,6 +245,55 @@ export class RecordAccessPolicyService {
           },
         }),
     };
+  }
+
+  private withBypassingRepository<TResult>({
+    workspaceId,
+    objectNameSingular,
+    transactionScope,
+    work,
+  }: {
+    workspaceId: string;
+    objectNameSingular: string;
+    transactionScope?: WorkspaceTransactionScope;
+    work: (repository: WorkspaceRepository) => Promise<TResult>;
+  }): Promise<TResult> {
+    if (isDefined(transactionScope)) {
+      return work(
+        transactionScope.getRepository(objectNameSingular, {
+          shouldBypassPermissionChecks: true,
+        }),
+      );
+    }
+
+    return this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        work(
+          this.workspaceOrmManager.getRepository(objectNameSingular, {
+            shouldBypassPermissionChecks: true,
+          }),
+        ),
+      buildSystemAuthContext(workspaceId),
+    );
+  }
+
+  // One metadata maps object per principal keeps its role permissions memoized
+  private findPrincipalMetadataMaps(
+    principal: PermissionsPrincipal,
+  ): Promise<PermissionsMetadataMaps> {
+    const cachedMetadataMaps = this.metadataMapsByPrincipal.get(principal);
+
+    if (isDefined(cachedMetadataMaps)) {
+      return cachedMetadataMaps;
+    }
+
+    const metadataMaps = this.loadPermissionsMetadataMaps(
+      principal.workspaceId,
+    );
+
+    this.metadataMapsByPrincipal.set(principal, metadataMaps);
+
+    return metadataMaps;
   }
 
   private findSharedAccessLevelsByObjectMetadataId(
