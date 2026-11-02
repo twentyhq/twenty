@@ -21,7 +21,6 @@ export class BillingLimitOverrideExpiryCronJob {
   private readonly logger = new Logger(BillingLimitOverrideExpiryCronJob.name);
 
   constructor(
-    // Expired overrides are swept across every workspace
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingArrangementEntity)
     private readonly billingArrangementRepository: Repository<BillingArrangementEntity>,
@@ -34,7 +33,6 @@ export class BillingLimitOverrideExpiryCronJob {
     BILLING_LIMIT_OVERRIDE_EXPIRY_CRON_PATTERN,
   )
   async handle(): Promise<void> {
-    // Only overrides whose limit still exists, so a failed deletion is retried on every run
     const expiredLimitOverrides = await this.billingArrangementRepository
       .createQueryBuilder('billingArrangement')
       .innerJoin(

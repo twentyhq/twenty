@@ -5,7 +5,6 @@ import { type FlatQuotaLimit } from 'src/engine/core-modules/usage-limit/types/f
 import { type QuotaLimitDefault } from 'src/engine/core-modules/usage-limit/types/quota-limit-default.type';
 import { doesUsageLimitRowSuppressDefault } from 'src/engine/core-modules/usage-limit/utils/does-usage-limit-row-suppress-default.util';
 
-// A row has no per-spender counters, so it lends its value to the default instead of replacing it
 export const applyPerSpenderDefaultOverrides = <TLimit extends FlatQuotaLimit>({
   quotaLimitDefaults,
   limits,
