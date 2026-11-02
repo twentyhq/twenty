@@ -207,7 +207,11 @@ describe('AgentRunnerService runStarted on a stalled job retried with its run id
         turnRecorderService,
         conversationReaderService,
       } = buildRunner(
-        { status: AgentTurnStatus.COMPLETED, error: null, result: storedResult },
+        {
+          status: AgentTurnStatus.COMPLETED,
+          error: null,
+          result: storedResult,
+        },
         { responseFormat },
       );
 
