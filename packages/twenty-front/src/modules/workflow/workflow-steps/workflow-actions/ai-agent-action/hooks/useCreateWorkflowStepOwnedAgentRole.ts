@@ -79,15 +79,25 @@ export const useCreateWorkflowStepOwnedAgentRole = ({
       });
     } catch (assignmentError) {
       // the assignment may have committed before the request failed, and deleting an assigned role moves its agent to the workspace default role
-      const { data } = await apolloClient.query({
-        query: FindOneAgentDocument,
-        variables: { id: updatableAgentId },
-        fetchPolicy: 'network-only',
-      });
+      let isRoleAssigned = false;
 
-      if (data?.findOneAgent.roleId !== roleId) {
-        await deleteRole({ variables: { roleId } });
+      try {
+        const { data } = await apolloClient.query({
+          query: FindOneAgentDocument,
+          variables: { id: updatableAgentId },
+          fetchPolicy: 'network-only',
+        });
 
+        isRoleAssigned = data?.findOneAgent.roleId === roleId;
+
+        if (!isRoleAssigned) {
+          await deleteRole({ variables: { roleId } });
+        }
+      } catch {
+        // a failed cleanup must not hide why the assignment failed
+      }
+
+      if (!isRoleAssigned) {
         throw assignmentError;
       }
     }

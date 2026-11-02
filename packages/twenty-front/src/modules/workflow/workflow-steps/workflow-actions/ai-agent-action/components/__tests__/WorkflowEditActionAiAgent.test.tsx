@@ -16,6 +16,7 @@ import {
   DeleteOneRoleDocument,
   FindOneAgentDocument,
 } from '~/generated-metadata/graphql';
+import { logError } from '~/utils/logError';
 
 const PUBLISHED_AGENT_ID = 'published-agent-id';
 const DRAFT_AGENT_ID = 'draft-agent-id';
@@ -366,6 +367,41 @@ describe('WorkflowEditActionAiAgent', () => {
     expect(mockEnqueueToast).toHaveBeenCalledWith(
       expect.objectContaining({ status: 'error' }),
     );
+  });
+
+  it('reports the assignment failure and keeps the role when the agent cannot be re-read', async () => {
+    const step = buildLegacyStep({ agentId: PUBLISHED_AGENT_ID });
+    const assignmentError = new Error('Assignment failed');
+
+    setFlowStep(step);
+    mockGetUpdatableWorkflowVersionStepOrThrow.mockResolvedValue(
+      buildLegacyStep({ agentId: DRAFT_AGENT_ID }),
+    );
+    mockAssignRoleToAgent.mockRejectedValue(assignmentError);
+    mockQueryAgent.mockRejectedValue(new Error('Network error'));
+
+    render(
+      <WorkflowEditActionAiAgent
+        action={step}
+        actionOptions={{ onActionUpdate: jest.fn() }}
+      />,
+      { wrapper: Wrapper },
+    );
+
+    await userEvent.click(
+      await screen.findByRole('tab', { name: 'Permissions' }),
+    );
+    await userEvent.click(await screen.findByText('Create role'));
+
+    await waitFor(() =>
+      expect(mockEnqueueToast).toHaveBeenCalledWith(
+        expect.objectContaining({ status: 'error' }),
+      ),
+    );
+
+    expect(logError).toHaveBeenCalledWith(assignmentError);
+    expect(mockDeleteRole).not.toHaveBeenCalled();
+    expect(mockNavigateSettings).not.toHaveBeenCalled();
   });
 
   it('keeps and opens the role when its assignment went through although the request failed', async () => {

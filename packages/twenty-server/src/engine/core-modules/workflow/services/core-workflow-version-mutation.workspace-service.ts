@@ -45,6 +45,7 @@ import {
 } from 'src/modules/workflow/workflow-builder/workflow-version-edge/utils/build-updated-source-step-for-edge.util';
 import { type WorkflowStepConnectionOptions } from 'src/modules/workflow/workflow-builder/workflow-version-step/types/workflow-step-connection-options.type';
 import { getNextStepIdsForStepTypeChange } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/get-next-step-ids-for-step-type-change.util';
+import { getWorkflowStepAfterRebuild } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/get-workflow-step-after-rebuild.util';
 import { insertStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/insert-step';
 import { isWorkflowStepRebuiltOnUpdate } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/is-workflow-step-rebuilt-on-update.util';
 import { removeStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/remove-step';
@@ -715,6 +716,12 @@ export class CoreWorkflowVersionMutationWorkspaceService {
     updatedStep: WorkflowAction;
     additionalCreatedSteps?: WorkflowAction[];
   }> {
+    // read before the creation side effects: only a failed write cleans them up
+    const previousAgentLabel =
+      await this.workflowVersionStepOperationsWorkspaceService.findStepAgentLabel(
+        { step: existingStep, workspaceId },
+      );
+
     const { builtStep, additionalCreatedSteps } =
       await this.workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep(
         {
@@ -726,14 +733,13 @@ export class CoreWorkflowVersionMutationWorkspaceService {
         },
       );
 
-    const stepAfterRebuild =
-      await this.workflowVersionStepOperationsWorkspaceService.getStepAfterRebuild(
-        { existingStep, builtStep, workspaceId },
-      );
-
     return {
       updatedStep: {
-        ...stepAfterRebuild,
+        ...getWorkflowStepAfterRebuild({
+          existingStep,
+          builtStep,
+          previousAgentLabel,
+        }),
         nextStepIds: getNextStepIdsForStepTypeChange({
           existingStep,
           builtStep,

@@ -61,9 +61,7 @@ const buildService = async ({
         name: 'Generate',
       }),
     }),
-    getStepAfterRebuild: jest
-      .fn()
-      .mockImplementation(async ({ builtStep }) => builtStep),
+    findStepAgentLabel: jest.fn().mockResolvedValue('Lead qualifier'),
     runWorkflowVersionStepDeletionSideEffects: jest.fn(),
   };
 
@@ -129,7 +127,7 @@ describe('CoreWorkflowVersionMutationWorkspaceService.updateStep', () => {
     expect(updatedStep).toMatchObject({
       name: 'Generate',
       nextStepIds: ['next-step-id'],
-      settings: { input: { instructions: '', prompt: '' } },
+      settings: { input: { instructions: '', prompt: 'Qualify' } },
     });
     expect(coreWorkflowVersionWriteService.writeContent).toHaveBeenCalledWith({
       workspaceId: WORKSPACE_ID,
@@ -141,6 +139,35 @@ describe('CoreWorkflowVersionMutationWorkspaceService.updateStep', () => {
     expect(
       workflowVersionStepOperationsWorkspaceService.runWorkflowVersionStepDeletionSideEffects,
     ).toHaveBeenCalledWith({ step: existingStep, workspaceId: WORKSPACE_ID });
+  });
+
+  it('creates nothing for the rebuilt step when its previous agent cannot be read', async () => {
+    const existingStep = buildAiAgentStep({
+      input: { agentId: 'hidden-agent-id', prompt: 'Qualify' },
+    });
+    const {
+      service,
+      coreWorkflowVersionWriteService,
+      workflowVersionStepOperationsWorkspaceService,
+    } = await buildService({ existingStep });
+
+    workflowVersionStepOperationsWorkspaceService.findStepAgentLabel.mockRejectedValue(
+      new Error('Cache unavailable'),
+    );
+
+    await expect(
+      service.updateStep({
+        workspaceId: WORKSPACE_ID,
+        userWorkspaceId: undefined,
+        coreWorkflowVersionId: CORE_WORKFLOW_VERSION_ID,
+        step: buildAiAgentStep({ input: { prompt: 'Qualify' } }),
+      }),
+    ).rejects.toThrow('Cache unavailable');
+
+    expect(
+      workflowVersionStepOperationsWorkspaceService.runStepCreationSideEffectsAndBuildStep,
+    ).not.toHaveBeenCalled();
+    expect(coreWorkflowVersionWriteService.writeContent).not.toHaveBeenCalled();
   });
 
   it('updates an AI step in place when its agent is unchanged', async () => {

@@ -48,7 +48,6 @@ import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/work
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
 import { WorkflowAiAgentStepAgentService } from 'src/modules/workflow/workflow-builder/workflow-version-step/services/workflow-ai-agent-step-agent.service';
-import { getWorkflowStepAfterRebuild } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/get-workflow-step-after-rebuild.util';
 import { type WorkflowExecutionContext } from 'src/modules/workflow/workflow-executor/types/workflow-execution-context.type';
 import { type BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
@@ -163,28 +162,23 @@ export class WorkflowVersionStepOperationsWorkspaceService {
     }
   }
 
-  async getStepAfterRebuild({
-    existingStep,
-    builtStep,
+  async findStepAgentLabel({
+    step,
     workspaceId,
   }: {
-    existingStep: WorkflowAction;
-    builtStep: WorkflowAction;
+    step: WorkflowAction;
     workspaceId: string;
-  }): Promise<WorkflowAction> {
-    const { agent: previousAgent } =
-      existingStep.type === WorkflowActionType.AI_AGENT
-        ? await this.workflowAiAgentStepAgentService.findStepAgent({
-            input: existingStep.settings.input,
-            workspaceId,
-          })
-        : { agent: null };
+  }): Promise<string | undefined> {
+    if (step.type !== WorkflowActionType.AI_AGENT) {
+      return undefined;
+    }
 
-    return getWorkflowStepAfterRebuild({
-      existingStep,
-      builtStep,
-      previousAgentLabel: previousAgent?.label,
+    const { agent } = await this.workflowAiAgentStepAgentService.findStepAgent({
+      input: step.settings.input,
+      workspaceId,
     });
+
+    return agent?.label;
   }
 
   private async findFirstActiveObjectMetadata(workspaceId: string) {
