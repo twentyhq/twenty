@@ -354,6 +354,7 @@ export interface Application {
     defaultRoleId?: Scalars['String']
     description?: Scalars['String']
     frontComponents: FrontComponent[]
+    grantedIframeMediaPermissions: IframeMediaPermission[]
     healthCheckLogicFunctionId?: Scalars['UUID']
     id: Scalars['UUID']
     isUninstallBlockedByOtherWorkspaceInstallations: Scalars['Boolean']
@@ -364,6 +365,7 @@ export interface Application {
     objects: Object[]
     packageJsonChecksum?: Scalars['String']
     packageJsonFileId?: Scalars['UUID']
+    requestedIframeMediaPermissions: IframeMediaPermission[]
     runOnUserPreferences: Scalars['Boolean']
     settingsCustomTabFrontComponentId?: Scalars['UUID']
     settingsMenuItems?: SettingsMenuItem[]
@@ -2306,6 +2308,7 @@ export interface Mutation {
     activateWorkspace: Workspace
     addAgentChatMessageReaction: AgentMessageReactionSummary[]
     addQueryToEventStream: Scalars['Boolean']
+    approveApplicationIframeMediaPermissions: Application
     assignAgentChatThread: Scalars['Boolean']
     assignRoleToAgent: Scalars['Boolean']
     assignRoleToApiKey: Scalars['Boolean']
@@ -4677,6 +4680,7 @@ export interface ApplicationGenqlSelection{
     defaultRoleId?: boolean | number
     description?: boolean | number
     frontComponents?: FrontComponentGenqlSelection
+    grantedIframeMediaPermissions?: IframeMediaPermissionGenqlSelection
     healthCheckLogicFunctionId?: boolean | number
     id?: boolean | number
     isUninstallBlockedByOtherWorkspaceInstallations?: boolean | number
@@ -4687,6 +4691,7 @@ export interface ApplicationGenqlSelection{
     objects?: ObjectGenqlSelection
     packageJsonChecksum?: boolean | number
     packageJsonFileId?: boolean | number
+    requestedIframeMediaPermissions?: IframeMediaPermissionGenqlSelection
     runOnUserPreferences?: boolean | number
     settingsCustomTabFrontComponentId?: boolean | number
     settingsMenuItems?: SettingsMenuItemGenqlSelection
@@ -6405,6 +6410,8 @@ export interface IframeMediaPermissionGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface IframeMediaPermissionInput {camera: Scalars['Boolean'],microphone: Scalars['Boolean'],origin: Scalars['String']}
+
 export interface ImapSmtpCaldavConnectionSuccessGenqlSelection{
     connectedAccountId?: boolean | number
     success?: boolean | number
@@ -6916,6 +6923,7 @@ export interface MutationGenqlSelection{
     activateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: ActivateWorkspaceInput} })
     addAgentChatMessageReaction?: (AgentMessageReactionSummaryGenqlSelection & { __args: {emoji: Scalars['String'], messageId: Scalars['UUID']} })
     addQueryToEventStream?: { __args: {input: AddQuerySubscriptionInput} }
+    approveApplicationIframeMediaPermissions?: (ApplicationGenqlSelection & { __args: {applicationId: Scalars['UUID'], approvedIframeMediaPermissions: IframeMediaPermissionInput[]} })
     assignAgentChatThread?: { __args: {assigneeWorkspaceMemberId?: (Scalars['UUID'] | null), threadId: Scalars['UUID']} }
     assignRoleToAgent?: { __args: {agentId: Scalars['UUID'], roleId: Scalars['UUID']} }
     assignRoleToApiKey?: { __args: {apiKeyId: Scalars['UUID'], roleId: Scalars['UUID']} }

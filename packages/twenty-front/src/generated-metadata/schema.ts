@@ -7,12 +7,19 @@ export type Scalars = {
   Boolean: { input: boolean; output: boolean; }
   Int: { input: number; output: number; }
   Float: { input: number; output: number; }
+  /** The `BigInt` scalar type represents non-fractional signed whole numeric values. */
   BigInt: { input: any; output: any; }
+  /** Cursor for paging through collections */
   ConnectionCursor: { input: any; output: any; }
+  /** A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format. */
   DateTime: { input: string; output: string; }
+  /** The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSON: { input: any; output: any; }
+  /** The `JSONObject` scalar type represents JSON objects as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf). */
   JSONObject: { input: any; output: any; }
+  /** A UUID scalar type */
   UUID: { input: string; output: string; }
+  /** The `Upload` scalar type represents a file upload. */
   Upload: { input: any; output: any; }
 };
 
@@ -494,6 +501,7 @@ export type Application = {
   defaultRoleId?: Maybe<Scalars['String']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   frontComponents: Array<FrontComponent>;
+  grantedIframeMediaPermissions: Array<IframeMediaPermission>;
   healthCheckLogicFunctionId?: Maybe<Scalars['UUID']['output']>;
   id: Scalars['UUID']['output'];
   isUninstallBlockedByOtherWorkspaceInstallations: Scalars['Boolean']['output'];
@@ -504,6 +512,7 @@ export type Application = {
   objects: Array<Object>;
   packageJsonChecksum?: Maybe<Scalars['String']['output']>;
   packageJsonFileId?: Maybe<Scalars['UUID']['output']>;
+  requestedIframeMediaPermissions: Array<IframeMediaPermission>;
   runOnUserPreferences: Scalars['Boolean']['output'];
   settingsCustomTabFrontComponentId?: Maybe<Scalars['UUID']['output']>;
   settingsMenuItems?: Maybe<Array<SettingsMenuItem>>;
@@ -2343,6 +2352,8 @@ export type EnqueueJobsInput = {
   delayMs?: InputMaybe<Scalars['Int']['input']>;
   jobs?: InputMaybe<Array<EnqueueJobItemInput>>;
   logicFunctionUniversalIdentifier: Scalars['String']['input'];
+  /** @deprecated Use jobs instead. */
+  payloads?: InputMaybe<Array<Scalars['JSON']['input']>>;
   retryLimit?: InputMaybe<Scalars['Int']['input']>;
 };
 
@@ -2874,6 +2885,12 @@ export type IframeMediaPermission = {
   origin: Scalars['String']['output'];
 };
 
+export type IframeMediaPermissionInput = {
+  camera: Scalars['Boolean']['input'];
+  microphone: Scalars['Boolean']['input'];
+  origin: Scalars['String']['input'];
+};
+
 export type ImapSmtpCaldavConnectionSuccess = {
   __typename?: 'ImapSmtpCaldavConnectionSuccess';
   connectedAccountId: Scalars['String']['output'];
@@ -2945,6 +2962,8 @@ export type IndexField = {
 export type IndexFilter = {
   and?: InputMaybe<Array<IndexFilter>>;
   id?: InputMaybe<UuidFilterComparison>;
+  /** @deprecated Derived from applicationId and removed in 2.54: compare applicationId with the workspace custom application instead. */
+  isCustom?: InputMaybe<BooleanFieldComparison>;
   or?: InputMaybe<Array<IndexFilter>>;
 };
 
@@ -3076,6 +3095,8 @@ export type ListAppConnectionsInput = {
   providerName?: InputMaybe<Scalars['String']['input']>;
   scope?: InputMaybe<ConnectedAccountScope>;
   userWorkspaceId?: InputMaybe<Scalars['String']['input']>;
+  /** @deprecated Use scope instead. */
+  visibility?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type ListAppMessageChannelsInput = {
@@ -3508,6 +3529,7 @@ export type Mutation = {
   activateWorkspace: Workspace;
   addAgentChatMessageReaction: Array<AgentMessageReactionSummary>;
   addQueryToEventStream: Scalars['Boolean']['output'];
+  approveApplicationIframeMediaPermissions: Application;
   assignAgentChatThread: Scalars['Boolean']['output'];
   assignRoleToAgent: Scalars['Boolean']['output'];
   assignRoleToApiKey: Scalars['Boolean']['output'];
@@ -3831,6 +3853,12 @@ export type MutationAddAgentChatMessageReactionArgs = {
 
 export type MutationAddQueryToEventStreamArgs = {
   input: AddQuerySubscriptionInput;
+};
+
+
+export type MutationApproveApplicationIframeMediaPermissionsArgs = {
+  applicationId: Scalars['UUID']['input'];
+  approvedIframeMediaPermissions: Array<IframeMediaPermissionInput>;
 };
 
 
@@ -5228,6 +5256,7 @@ export type MutationUpgradeApplicationArgs = {
 
 export type MutationUploadAppTarballArgs = {
   file: Scalars['Upload']['input'];
+  universalIdentifier?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -6841,6 +6870,10 @@ export type RunAgentInput = {
   additionalInstructions?: InputMaybe<Scalars['String']['input']>;
   agentUniversalIdentifier: Scalars['String']['input'];
   input?: InputMaybe<Array<RunAgentMessageInput>>;
+  /** @deprecated Use input instead. */
+  messages?: InputMaybe<Array<RunAgentMessageInput>>;
+  /** @deprecated Use input instead. */
+  prompt?: InputMaybe<Scalars['String']['input']>;
   responseFormat?: InputMaybe<Scalars['JSON']['input']>;
   runAsWorkspaceMemberId?: InputMaybe<Scalars['UUID']['input']>;
   thread?: InputMaybe<RunAgentThreadInput>;
@@ -7766,6 +7799,8 @@ export type UpdateViewFieldGroupInput = {
 };
 
 export type UpdateViewFieldGroupInputUpdates = {
+  /** @deprecated Ignored: view field groups are no longer soft-deleted. Use destroyViewFieldGroup instead. */
+  deletedAt?: InputMaybe<Scalars['String']['input']>;
   isVisible?: InputMaybe<Scalars['Boolean']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
   position?: InputMaybe<Scalars['Float']['input']>;

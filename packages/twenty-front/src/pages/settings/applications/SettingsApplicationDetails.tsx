@@ -306,6 +306,7 @@ export const SettingsApplicationDetails = () => {
             onUninstall={uninstall}
             isUninstalling={isUninstalling}
             uninstallProgress={uninstallProgress}
+            onRefetchApplication={refetch}
           />
         );
       case SETTINGS_VARIABLES_TAB_ID:

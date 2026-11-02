@@ -164,6 +164,8 @@ const buildApplicationHandlers = ({
           settingsCustomTabFrontComponentId: null,
           healthCheckLogicFunctionId: null,
           availablePackages: {},
+          requestedIframeMediaPermissions: [],
+          grantedIframeMediaPermissions: [],
           applicationVariables: [USER_VARIABLE, buildWorkspaceVariable()],
           agents: [],
           frontComponents: [],

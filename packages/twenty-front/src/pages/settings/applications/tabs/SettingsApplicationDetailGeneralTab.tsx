@@ -1,6 +1,7 @@
 import { formatQueueJobProgressLabel } from '@/queue-job/utils/formatQueueJobProgressLabel';
 import { SettingsApplicationOverviewCard } from '@/settings/applications/components/SettingsApplicationOverviewCard';
 import { SettingsApplicationUninstallButton } from '@/settings/applications/components/SettingsApplicationUninstallButton';
+import { SettingsApplicationIframeMediaPermissionsSection } from '@/settings/applications/components/SettingsApplicationIframeMediaPermissionsSection';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -30,6 +31,8 @@ type SettingsApplicationDetailGeneralTabProps = {
     | 'isUninstallBlockedByOtherWorkspaceInstallations'
     | 'applicationRegistration'
     | 'logicFunctions'
+    | 'requestedIframeMediaPermissions'
+    | 'grantedIframeMediaPermissions'
   >;
   displayName: string;
   description?: string;
@@ -44,6 +47,7 @@ type SettingsApplicationDetailGeneralTabProps = {
   onUninstall: () => void;
   isUninstalling: boolean;
   uninstallProgress?: number;
+  onRefetchApplication: () => Promise<unknown>;
 };
 
 export const SettingsApplicationDetailGeneralTab = ({
@@ -61,6 +65,7 @@ export const SettingsApplicationDetailGeneralTab = ({
   onUninstall,
   isUninstalling,
   uninstallProgress,
+  onRefetchApplication,
 }: SettingsApplicationDetailGeneralTabProps) => {
   const navigateSettings = useNavigateSettings();
 
@@ -152,6 +157,16 @@ export const SettingsApplicationDetailGeneralTab = ({
         <SettingsApplicationAutoUpdateSection
           applicationId={application.id}
           autoUpgrade={application.autoUpgrade}
+        />
+      )}
+      {canManageApplications && (
+        <SettingsApplicationIframeMediaPermissionsSection
+          key={application.id}
+          applicationId={application.id}
+          applicationName={displayName}
+          requestedPermissions={application.requestedIframeMediaPermissions}
+          grantedPermissions={application.grantedIframeMediaPermissions}
+          onRefetchApplication={onRefetchApplication}
         />
       )}
       {applicationHasHttpTriggeredFunctions(application) && (
