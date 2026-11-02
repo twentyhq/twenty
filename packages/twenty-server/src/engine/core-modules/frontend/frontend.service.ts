@@ -122,12 +122,17 @@ export class FrontendService {
             flatApplication?.grantedIframeMediaPermissions ?? [],
         ),
       ]);
-      const fittingPermissions =
-        fitIframeMediaPermissionsToPolicySizeLimit(permissions);
+      const fittingPermissions = fitIframeMediaPermissionsToPolicySizeLimit({
+        permissions,
+        reservedPermissions: workspaceIframeMediaPermissions,
+      });
+      const hasDroppedPermissions =
+        buildIframeMediaPermissionsPolicy(fittingPermissions) !==
+        buildIframeMediaPermissionsPolicy(permissions);
 
-      if (fittingPermissions.length < permissions.length) {
+      if (hasDroppedPermissions) {
         this.logger.warn(
-          `Dropped iframe media origins over the Permissions-Policy size limit for workspace ${workspace.id}`,
+          `Dropped iframe media permissions over the Permissions-Policy size limit for workspace ${workspace.id}`,
         );
       }
 
