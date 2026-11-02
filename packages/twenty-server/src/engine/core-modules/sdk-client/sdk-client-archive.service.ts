@@ -145,30 +145,31 @@ export class SdkClientArchiveService {
     const archiveBuffer = await this.downloadArchiveBufferOrGenerate(params);
     const { default: unzipper } = await import('unzipper');
     const directory = await unzipper.Open.buffer(archiveBuffer);
+    const archiveFiles = directory.files.map((file) => ({
+      file,
+      path: file.path.replace(/^\.\//, ''),
+    }));
     const files = await Promise.all(
-      directory.files
+      archiveFiles
         .filter(
-          (file) =>
-            /\.[cm]?ts$/.test(file.path) || file.path.endsWith('package.json'),
+          ({ path }) =>
+            /\.[cm]?ts$/.test(path) || path.endsWith('package.json'),
         )
         .map(
-          async (file) =>
+          async ({ file, path }) =>
             [
-              `/node_modules/twenty-client-sdk/${file.path.replace(/^\.\//, '')}`,
+              `/node_modules/twenty-client-sdk/${path}`,
               (await file.buffer()).toString(),
             ] as const,
         ),
     );
     const references = Object.fromEntries(files);
-    const core = directory.files.find(
-      (file) =>
-        file.path === 'dist/core.mjs' || file.path === './dist/core.mjs',
-    );
+    const core = archiveFiles.find(({ path }) => path === 'dist/core.mjs');
     if (
       !isDefined(checksum) ||
       !isDefined(core) ||
       createHash('sha256')
-        .update(await core.buffer())
+        .update(await core.file.buffer())
         .digest('hex') !== checksum
     ) {
       return references;
