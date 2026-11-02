@@ -12,7 +12,6 @@ import {
 import { type RunAgentMessage } from 'twenty-shared/application';
 import {
   type AgentResponseFormat,
-  type AiRunScope,
   type ExtendedUIMessage,
 } from 'twenty-shared/ai';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
@@ -20,7 +19,6 @@ import { type Repository } from 'typeorm';
 
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { getAuthContextApplication } from 'src/engine/core-modules/auth/utils/get-auth-context-application.util';
-import { type ExplicitObjectGrants } from 'src/engine/core-modules/tool-provider/interfaces/explicit-object-grants.type';
 import { type ToolContext } from 'src/engine/core-modules/tool-provider/types/tool-context.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { type UsageSpenders } from 'src/engine/core-modules/usage/types/usage-spenders.type';
@@ -31,6 +29,7 @@ import { AGENT_RUN_EXCLUDED_TOOL_NAMES } from 'src/engine/metadata-modules/ai/ai
 import { OPEN_ENDED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/open-ended-agent-registry-tool-categories.const';
 import { PRELOADED_AGENT_REGISTRY_TOOL_CATEGORIES } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/preloaded-agent-registry-tool-categories.const';
 import { endsOnPausingToolCall } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/ends-on-pausing-tool-call.util';
+import { AgentRunPersonaService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-run-persona.service';
 import { type AgentRegistryAccess } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-toolset.service';
 import {
   type AgentTurn,
@@ -44,7 +43,6 @@ import { type AgentToolLoadingStrategy } from 'src/engine/metadata-modules/ai/ai
 import { assertAgentResponseFormatHasOutputFieldsOrThrow } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/assert-agent-response-format-has-output-fields-or-throw.util';
 import { buildStrictAgentResponseSchema } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/build-strict-agent-response-schema.util';
 import { getCallLevelProviderOptions } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/provider-options.util';
-import { resolveAiRunPermissionScope } from 'src/engine/permissions/role/utils/resolve-ai-run-permission-scope.util';
 import { replaceUnsupportedFileParts } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/replace-unsupported-file-parts.util';
 import { STRUCTURED_OUTPUT_SYSTEM_PROMPT } from 'src/engine/metadata-modules/ai/ai-agent/constants/structured-output-system-prompt.const';
 import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
@@ -56,9 +54,6 @@ import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules
 import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
 import { type AgentTurnStreamSource } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-turn-stream.service';
 import { buildAiTelemetry } from 'src/engine/metadata-modules/ai/ai-models/utils/build-ai-telemetry.util';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { type PermissionScope } from 'src/engine/permissions/principal/types/permission-scope.type';
-import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import {
   AiException,
   AiExceptionCode,
@@ -104,7 +99,7 @@ export class AgentRunTurnService {
   constructor(
     private readonly agentTurnService: AgentTurnService,
     private readonly aiBillingService: AiBillingService,
-    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
+    private readonly agentRunPersonaService: AgentRunPersonaService,
     private readonly runAgentAttachmentService: RunAgentAttachmentService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
@@ -133,12 +128,12 @@ export class AgentRunTurnService {
 
     assertAgentResponseFormatHasOutputFieldsOrThrow(responseFormat);
 
-    const { userWorkspaceId, usageOperationType } = executionContext;
+    const { userWorkspaceId } = executionContext;
     const spenders = buildSpenders({ persona, executionContext });
 
     await this.aiBillingService.assertAiExecutionAllowed({
       workspaceId,
-      operationType: usageOperationType,
+      operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
       spenders,
     });
 
@@ -191,7 +186,7 @@ export class AgentRunTurnService {
       abortSignal,
       billing: {
         workspaceId,
-        operationType: usageOperationType,
+        operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
         webSearchOperationType: UsageOperationType.AI_WORKFLOW_WEB_SEARCH,
         spenders,
       },
@@ -249,7 +244,7 @@ export class AgentRunTurnService {
   > & {
     started: StartedAgentRunTurn;
   }): Promise<CompletedAgentRunTurn> {
-    const { userWorkspaceId, usageOperationType } = executionContext;
+    const { userWorkspaceId } = executionContext;
     const spenders = buildSpenders({ persona, executionContext });
     const [text, loopUsage, loopSteps] = await Promise.all([
       turn.stream.text,
@@ -305,7 +300,7 @@ export class AgentRunTurnService {
           ),
         },
         workspaceId,
-        operationType: usageOperationType,
+        operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
         spenders,
       });
 
@@ -358,13 +353,17 @@ export class AgentRunTurnService {
     | 'additionalExcludedToolNames'
     | 'toolLoadingStrategy'
   >): Promise<AgentRegistryAccess> {
-    const grants = await this.resolveRegistryGrants({
-      persona,
-      workspaceId,
-      agentRunRoleIds,
-    });
+    const rolePermissionConfig =
+      await this.agentRunPersonaService.resolveRolePermissionConfig({
+        workspaceId,
+        persona,
+        agentRunRoleIds,
+      });
 
-    if (!isDefined(grants)) {
+    if (
+      !isDefined(rolePermissionConfig) ||
+      !isDefined(persona.permissions.explicitObjectGrants)
+    ) {
       return { type: 'none' };
     }
 
@@ -374,7 +373,7 @@ export class AgentRunTurnService {
       authContext,
       application: getAuthContextApplication(authContext),
       actorContext,
-      rolePermissionConfig: grants.rolePermissionConfig,
+      rolePermissionConfig,
       ...(isDefined(authContext) && isUserAuthContext(authContext)
         ? {
             userId: authContext.user.id,
@@ -399,63 +398,9 @@ export class AgentRunTurnService {
       : {
           type: 'granted',
           toolContext,
-          explicitObjectGrants: grants.explicitObjectGrants,
+          explicitObjectGrants: persona.permissions.explicitObjectGrants,
           categories: PRELOADED_AGENT_REGISTRY_TOOL_CATEGORIES,
           excludedToolNames,
         };
-  }
-
-  private async resolveRegistryGrants({
-    persona: {
-      permissions: { agentRoleId, scope, explicitObjectGrants },
-    },
-    workspaceId,
-    agentRunRoleIds,
-  }: {
-    persona: Pick<ResolvedAgentRunPersona, 'permissions'>;
-    workspaceId: string;
-    agentRunRoleIds: AgentRunExecutionContext['agentRunRoleIds'];
-  }): Promise<{
-    rolePermissionConfig: RolePermissionConfig;
-    explicitObjectGrants: ExplicitObjectGrants;
-  } | null> {
-    if (!isDefined(explicitObjectGrants)) {
-      return null;
-    }
-
-    return {
-      rolePermissionConfig: {
-        intersectionOf: {
-          ...agentRunRoleIds,
-          ...(isDefined(agentRoleId) ? { agentRoleId } : {}),
-        },
-        ...(isDefined(scope)
-          ? { scope: await this.resolvePermissionScope({ workspaceId, scope }) }
-          : {}),
-      },
-      explicitObjectGrants,
-    };
-  }
-
-  private async resolvePermissionScope({
-    workspaceId,
-    scope,
-  }: {
-    workspaceId: string;
-    scope: AiRunScope;
-  }): Promise<PermissionScope> {
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
-      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps', 'flatFieldMetadataMaps'],
-        },
-      );
-
-    return resolveAiRunPermissionScope({
-      scope,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
-    });
   }
 }
