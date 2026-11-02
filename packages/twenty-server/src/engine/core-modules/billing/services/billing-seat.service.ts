@@ -52,6 +52,7 @@ export class BillingSeatService {
         return await workspaceMemberRepository.count();
       },
       authContext,
+      { lite: true },
     );
   }
 
