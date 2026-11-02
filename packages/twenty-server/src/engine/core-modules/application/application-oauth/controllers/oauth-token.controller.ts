@@ -49,8 +49,9 @@ export class OAuthTokenController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    if (await this.applyRateLimit({ clientId: body.client_id, req, res }))
+    if (await this.applyRateLimit({ clientId: body.client_id, req, res })) {
       return;
+    }
 
     let result: OAuthTokenResponse | OAuthErrorResponse;
 
@@ -109,8 +110,9 @@ export class OAuthTokenController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    if (await this.applyRateLimit({ clientId: body.client_id, req, res }))
+    if (await this.applyRateLimit({ clientId: body.client_id, req, res })) {
       return;
+    }
     this.setSecurityHeaders(res);
 
     await this.oauthService.revokeToken({
@@ -132,8 +134,9 @@ export class OAuthTokenController {
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ) {
-    if (await this.applyRateLimit({ clientId: body.client_id, req, res }))
+    if (await this.applyRateLimit({ clientId: body.client_id, req, res })) {
       return;
+    }
     this.setSecurityHeaders(res);
 
     if (!body.client_id) {

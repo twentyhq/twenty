@@ -55,6 +55,18 @@ describe('parseClientIdMetadataDocument', () => {
     });
   });
 
+  it.each(['https://', 'https:logo.png', 'http://claude.ai/logo.png'])(
+    'drops a logo_uri that is not a valid https URL: %s',
+    (logoUri) => {
+      expect(
+        parseClientIdMetadataDocument({
+          clientIdMetadataDocumentUrl: CLAUDE_CODE_DOCUMENT.client_id,
+          rawDocument: { ...CLAUDE_CODE_DOCUMENT, logo_uri: logoUri },
+        }),
+      ).toMatchObject({ document: { logoUri: null } });
+    },
+  );
+
   it('rejects a document served under another URL than its client_id', () => {
     expect(
       parseClientIdMetadataDocument({

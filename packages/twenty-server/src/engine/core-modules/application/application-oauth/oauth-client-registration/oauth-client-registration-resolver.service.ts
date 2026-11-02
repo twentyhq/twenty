@@ -17,6 +17,7 @@ import { type ResolvedOAuthClient } from 'src/engine/core-modules/application/ap
 import { toClientIdMetadataDocumentRegistrationFields } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/to-client-id-metadata-document-registration-fields.util';
 import { ALL_OAUTH_SCOPES } from 'src/engine/core-modules/application/application-oauth/constants/oauth-scopes';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT } from 'src/engine/core-modules/application/application-registration/constants/application-registration-without-manifest-select.constant';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { WellKnownOAuthClientRegistrationService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-registration.service';
 import { findWellKnownOAuthClientByClientIdMetadataDocument } from 'src/engine/core-modules/application/well-known-oauth-client/utils/find-well-known-oauth-client-by-client-id-metadata-document.util';
@@ -131,6 +132,10 @@ export class OAuthClientRegistrationResolverService {
   private findRegistrationByOAuthClientId(oAuthClientId: string) {
     return this.applicationRegistrationRepository.findOne({
       where: { oAuthClientId },
+      select: [
+        ...APPLICATION_REGISTRATION_WITHOUT_MANIFEST_SELECT,
+        'oAuthClientSecretHash',
+      ],
     });
   }
 

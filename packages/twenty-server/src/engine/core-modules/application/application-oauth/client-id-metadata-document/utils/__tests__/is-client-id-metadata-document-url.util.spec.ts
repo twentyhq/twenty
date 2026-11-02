@@ -21,6 +21,9 @@ describe('isClientIdMetadataDocumentUrl', () => {
     expect(isClientIdMetadataDocumentUrl('https://example.com/c#x')).toBe(
       false,
     );
+    expect(isClientIdMetadataDocumentUrl('https://example.com/client#')).toBe(
+      false,
+    );
     expect(
       isClientIdMetadataDocumentUrl('https://user:pass@example.com/client'),
     ).toBe(false);
