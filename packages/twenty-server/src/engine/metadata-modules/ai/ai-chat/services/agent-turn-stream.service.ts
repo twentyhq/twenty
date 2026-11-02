@@ -508,9 +508,13 @@ export class AgentTurnStreamService {
     }
 
     if (replyParts.length === 0) {
-      await finishTurn();
+      const isFinished = await finishTurn();
 
-      return { outcome, isAwaitingAnswer, threadBefore: null };
+      return {
+        outcome: isFinished ? outcome : resolveSupersededTurnOutcome(outcome),
+        isAwaitingAnswer,
+        threadBefore: null,
+      };
     }
 
     const threadBefore = await this.threadRepository.findOne(workspaceId, {
@@ -574,7 +578,15 @@ export class AgentTurnStreamService {
       );
     }
 
-    await finishTurn();
+    const isFinished = await finishTurn();
+
+    if (!isFinished) {
+      return {
+        outcome: resolveSupersededTurnOutcome(outcome),
+        isAwaitingAnswer,
+        threadBefore: null,
+      };
+    }
 
     return { outcome, isAwaitingAnswer, threadBefore };
   }

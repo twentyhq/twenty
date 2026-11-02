@@ -12,6 +12,14 @@ import { type MessageQueueService } from 'src/engine/core-modules/message-queue/
 import { type ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { getQueueToken } from 'src/engine/core-modules/message-queue/utils/get-queue-token.util';
 import { buildProposeToolCallPendingOutput } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/propose-tool-call.pausing-tool';
+import { StreamAgentChatJob } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat.job';
+import { type StreamAgentChatJobData } from 'src/engine/metadata-modules/ai/ai-chat/jobs/stream-agent-chat-job.types';
+import { type AgentChatActorService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-actor.service';
+import { type ChatExecutionService } from 'src/engine/metadata-modules/ai/ai-chat/services/chat-execution.service';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
+import { type AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
+import { getAgentHistoryRepositoryToken } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
+import { type AgentTurnWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-turn.workspace-entity';
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { type AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
 import { type AgentChatThreadParticipantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-thread-participant.service';
@@ -389,5 +397,61 @@ describe('Answering a chat tool call', () => {
     expect(JSON.stringify(lateAnswer.body.errors)).toContain(
       'TOOL_CALL_NOT_PENDING',
     );
+  });
+
+  it('leaves a turn stopped before it starts cancelled with no reply', async () => {
+    const response = await makeMetadataApiRequest({
+      query: parse(
+        `mutation Send($threadId: UUID!, $text: String!, $messageId: UUID!) {
+          sendChatMessage(threadId: $threadId, text: $text, messageId: $messageId) { queued streamId }
+        }`,
+      ),
+      variables: {
+        threadId,
+        text: 'Quote the Team plan',
+        messageId: randomUUID(),
+      },
+    });
+
+    expect(response.body.errors).toBeUndefined();
+
+    const { streamId } = response.body.data.sendChatMessage;
+    const jobData = enqueueStream.mock.calls
+      .map(([, data]) => data as StreamAgentChatJobData)
+      .find((data) => data.streamId === streamId);
+    const actorService = getAppProviderByClassName<AgentChatActorService>(
+      'AgentChatActorService',
+    );
+    const authorizeJob: AgentChatActorService['authorizeJob'] =
+      actorService.authorizeJob.bind(actorService);
+    const streamChat = jest.spyOn(
+      getAppProviderByClassName<ChatExecutionService>('ChatExecutionService'),
+      'streamChat',
+    );
+
+    spies.push(
+      jest
+        .spyOn(actorService, 'authorizeJob')
+        .mockImplementationOnce(async (args) => {
+          const authorization = await authorizeJob(args);
+
+          await stopStream();
+
+          return authorization;
+        }),
+      streamChat,
+    );
+
+    await (await global.app.resolve(StreamAgentChatJob)).handle(jobData!);
+
+    const turn = await global.app
+      .get<string, AgentHistoryRepository<AgentTurnWorkspaceEntity>>(
+        getAgentHistoryRepositoryToken('agentTurn'),
+        { strict: false },
+      )
+      .findOne(workspaceId, { where: { id: jobData!.existingTurnId } });
+
+    expect(streamChat).not.toHaveBeenCalled();
+    expect(turn?.status).toBe(AgentTurnStatus.CANCELLED);
   });
 });

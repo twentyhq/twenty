@@ -174,6 +174,11 @@ export class StreamAgentChatJob {
 
     // the stream was stopped while starting, and its turn already ended
     if (!isRunning) {
+      this.recordTurnOutcome(
+        { kind: 'cancelled', reason: 'superseded' },
+        turnModelId,
+      );
+
       return;
     }
 

@@ -67,7 +67,8 @@ export class AgentTurnRecorderService {
         const isDefaultCreator = `"createdBySource" = '${FieldActorSource.SYSTEM}' AND $3::boolean`;
 
         const runningTurns = await manager.query<{ id: string }[]>(
-          `UPDATE ${table('agentTurn')} SET
+          `WITH running_turn AS (
+           UPDATE ${table('agentTurn')} SET
            "status" = '${AgentTurnStatus.RUNNING}',
            "startedAt" = COALESCE("startedAt", now()),
            "endedAt" = NULL,
@@ -79,7 +80,9 @@ export class AgentTurnRecorderService {
            "createdBySource" = CASE WHEN ${isDefaultCreator} THEN $4 ELSE "createdBySource" END,
            "updatedAt" = now()
          WHERE id = $1${buildStreamClaimCondition({ table, streamClaim, firstParameterIndex: 8 })}
-         RETURNING id`,
+         RETURNING id
+         )
+         SELECT id FROM running_turn`,
           [
             turnId,
             modelId ?? null,
@@ -117,14 +120,17 @@ export class AgentTurnRecorderService {
       workspaceId,
       async ({ manager, table }) => {
         const finishedTurns = await manager.query<{ id: string }[]>(
-          `UPDATE ${table('agentTurn')} SET
+          `WITH finished_turn AS (
+           UPDATE ${table('agentTurn')} SET
            "status" = $2,
            "error" = $3::jsonb,
            "endedAt" = $4,
            "modelId" = COALESCE($5, "modelId"),
            "updatedAt" = now()
          WHERE id = $1${buildStreamClaimCondition({ table, streamClaim, firstParameterIndex: 6 })}
-         RETURNING id`,
+         RETURNING id
+         )
+         SELECT id FROM finished_turn`,
           [
             turnId,
             status,
