@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
+import { type LinkedinMessageAttachmentFile } from 'src/logic-functions/types/linkedin-message-attachment-file.type';
 import { type UnipileMessage } from 'src/unipile/types/unipile-message.type';
 import { type UnipileMessageAttachment } from 'src/unipile/types/unipile-message-attachment.type';
 import { UnipileRateLimitError } from 'src/unipile/utils/request-unipile.util';
@@ -15,6 +16,8 @@ vi.mock('src/unipile/utils/download-unipile-message-attachment.util', () => ({
 const { importLinkedinMessageAttachments } =
   await import('src/logic-functions/utils/import-linkedin-message-attachments.util');
 
+const MAX_SIZE_BYTES = 25 * 1024 * 1024;
+
 const buildMessage = (
   attachments: UnipileMessageAttachment[],
 ): UnipileMessage => ({
@@ -29,11 +32,22 @@ const buildMessage = (
   attachments,
 });
 
-const importAttachments = (attachments: UnipileMessageAttachment[]) =>
-  importLinkedinMessageAttachments({
+const importAttachments = async (
+  attachments: UnipileMessageAttachment[],
+  deadlineAtMs = Date.now() + 60_000,
+) => {
+  const files: LinkedinMessageAttachmentFile[] = [];
+  const importedCount = await importLinkedinMessageAttachments({
     unipileAccountId: 'acc_1',
     messages: [buildMessage(attachments)],
+    deadlineAtMs,
+    onAttachmentFile: async (file) => {
+      files.push(file);
+    },
   });
+
+  return { files, importedCount };
+};
 
 describe('importLinkedinMessageAttachments', () => {
   beforeEach(() => {
@@ -45,12 +59,17 @@ describe('importLinkedinMessageAttachments', () => {
   });
 
   it('downloads images, videos and audio', async () => {
-    const files = await importAttachments([
-      { id: 'img-1', type: 'img', mimetype: 'image/jpeg' },
-      { id: 'video-1', type: 'video', mimetype: 'video/mp4' },
-      { id: 'audio-1', type: 'audio', mimetype: 'audio/mpeg' },
-    ]);
+    const deadlineAtMs = Date.now() + 60_000;
+    const { files, importedCount } = await importAttachments(
+      [
+        { id: 'img-1', type: 'img', mimetype: 'image/jpeg' },
+        { id: 'video-1', type: 'video', mimetype: 'video/mp4' },
+        { id: 'audio-1', type: 'audio', mimetype: 'audio/mpeg' },
+      ],
+      deadlineAtMs,
+    );
 
+    expect(importedCount).toBe(3);
     expect(files.map(({ attachmentId }) => attachmentId)).toEqual([
       'img-1',
       'video-1',
@@ -61,7 +80,8 @@ describe('importLinkedinMessageAttachments', () => {
       chatId: 'chat-1',
       messageId: 'message-1',
       attachmentId: 'img-1',
-      maxSizeBytes: 25 * 1024 * 1024,
+      maxSizeBytes: MAX_SIZE_BYTES,
+      deadlineAtMs,
     });
     expect(files[0]).toMatchObject({
       messageExternalId: 'message-1',
@@ -71,7 +91,7 @@ describe('importLinkedinMessageAttachments', () => {
   });
 
   it('uses the inline content instead of downloading it', async () => {
-    const [file] = await importAttachments([
+    const { files } = await importAttachments([
       {
         id: 'img-1',
         type: 'img',
@@ -80,7 +100,7 @@ describe('importLinkedinMessageAttachments', () => {
       },
     ]);
 
-    expect(file?.content.toString()).toBe('inline');
+    expect(files[0]?.content.toString()).toBe('inline');
     expect(mocks.downloadUnipileMessageAttachment).not.toHaveBeenCalled();
   });
 
@@ -102,7 +122,7 @@ describe('importLinkedinMessageAttachments', () => {
           file_size: 500 * 1024 * 1024,
         },
       ]),
-    ).resolves.toEqual([]);
+    ).resolves.toEqual({ files: [], importedCount: 0 });
     expect(mocks.downloadUnipileMessageAttachment).not.toHaveBeenCalled();
   });
 
@@ -113,10 +133,10 @@ describe('importLinkedinMessageAttachments', () => {
           id: 'video-1',
           type: 'video',
           mimetype: 'video/mp4',
-          content: Buffer.alloc(25 * 1024 * 1024 + 1).toString('base64'),
+          content: Buffer.alloc(MAX_SIZE_BYTES + 1).toString('base64'),
         },
       ]),
-    ).resolves.toEqual([]);
+    ).resolves.toEqual({ files: [], importedCount: 0 });
   });
 
   it('drops a file that fails to download and keeps the others', async () => {
@@ -124,12 +144,22 @@ describe('importLinkedinMessageAttachments', () => {
       new Error('Unipile download message attachment failed (404)'),
     );
 
-    const files = await importAttachments([
+    const { files } = await importAttachments([
       { id: 'img-1', type: 'img', mimetype: 'image/png' },
       { id: 'img-2', type: 'img', mimetype: 'image/png' },
     ]);
 
     expect(files.map(({ attachmentId }) => attachmentId)).toEqual(['img-2']);
+  });
+
+  it('skips the remaining files once the deadline is reached', async () => {
+    await expect(
+      importAttachments(
+        [{ id: 'img-1', type: 'img', mimetype: 'image/png' }],
+        Date.now() - 1,
+      ),
+    ).resolves.toEqual({ files: [], importedCount: 0 });
+    expect(mocks.downloadUnipileMessageAttachment).not.toHaveBeenCalled();
   });
 
   it('lets a rate limit through so the import can pause', async () => {

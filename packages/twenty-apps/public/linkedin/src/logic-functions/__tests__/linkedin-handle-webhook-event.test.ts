@@ -163,6 +163,7 @@ describe('linkedinHandleWebhookEventHandler', () => {
       messageId: 'message-1',
       attachmentId: 'attachment-1',
       maxSizeBytes: 25 * 1024 * 1024,
+      deadlineAtMs: expect.any(Number),
     });
   });
 

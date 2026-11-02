@@ -17,20 +17,33 @@ const isImportableAttachment = (
   (!isDefined(attachment.file_size) ||
     attachment.file_size <= LINKEDIN_ATTACHMENT_MAX_SIZE_BYTES);
 
-// Rate limits propagate so a history import pauses and replays the page; other failures only drop the file
+// Rate limits propagate so a history import pauses and replays the page; other failures only drop the file.
+// Each file is handed over as soon as it is read, so a page never holds more than one in memory.
 export const importLinkedinMessageAttachments = async ({
   unipileAccountId,
   messages,
+  deadlineAtMs,
+  onAttachmentFile,
 }: {
   unipileAccountId: string;
   messages: UnipileMessage[];
-}): Promise<LinkedinMessageAttachmentFile[]> => {
-  const files: LinkedinMessageAttachmentFile[] = [];
+  deadlineAtMs: number;
+  onAttachmentFile: (file: LinkedinMessageAttachmentFile) => Promise<void>;
+}): Promise<number> => {
+  let importedCount = 0;
 
   for (const message of messages) {
     for (const attachment of (message.attachments ?? []).filter(
       isImportableAttachment,
     )) {
+      if (Date.now() >= deadlineAtMs) {
+        console.warn(
+          `[linkedin] chat ${message.chat_id}: attachment import reached the job deadline, remaining files skipped`,
+        );
+
+        return importedCount;
+      }
+
       try {
         const content = isNonEmptyString(attachment.content)
           ? Buffer.from(attachment.content, 'base64')
@@ -40,6 +53,7 @@ export const importLinkedinMessageAttachments = async ({
               messageId: message.id,
               attachmentId: attachment.id,
               maxSizeBytes: LINKEDIN_ATTACHMENT_MAX_SIZE_BYTES,
+              deadlineAtMs,
             });
 
         if (content.byteLength > LINKEDIN_ATTACHMENT_MAX_SIZE_BYTES) {
@@ -48,13 +62,15 @@ export const importLinkedinMessageAttachments = async ({
           );
         }
 
-        files.push({
+        await onAttachmentFile({
           messageExternalId: message.id,
           attachmentId: attachment.id,
           type: attachment.type,
           mimeType: attachment.mimetype,
           content,
         });
+
+        importedCount += 1;
       } catch (error) {
         if (error instanceof UnipileRateLimitError) {
           throw error;
@@ -67,5 +83,5 @@ export const importLinkedinMessageAttachments = async ({
     }
   }
 
-  return files;
+  return importedCount;
 };

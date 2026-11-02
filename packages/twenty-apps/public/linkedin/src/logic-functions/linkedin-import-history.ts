@@ -8,6 +8,7 @@ import {
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { LINKEDIN_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS } from 'src/constants/linkedin-attachment-deadline-margin-milliseconds.constant';
 import { LINKEDIN_IMPORT_HISTORY_TIMEOUT_SECONDS } from 'src/constants/linkedin-import-history-timeout-seconds.constant';
 import { LINKEDIN_IMPORT_HISTORY_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type LinkedinHistoryImportProgress } from 'src/logic-functions/types/linkedin-history-import-progress.type';
@@ -104,6 +105,10 @@ export const linkedinImportHistoryHandler = async (
   }
 
   const startedAt = Date.now();
+  const attachmentDeadlineAtMs =
+    startedAt +
+    LINKEDIN_IMPORT_HISTORY_TIMEOUT_SECONDS * 1000 -
+    LINKEDIN_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS;
   const jobId = getLinkedinImportHistoryJobId(payload);
   let importedConversationCount = startProgress.currentChunkImportedCount ?? 0;
   let processedChatCount = startProgress.currentChunkProcessedCount;
@@ -217,6 +222,7 @@ export const linkedinImportHistoryHandler = async (
       });
       const ingestResult = await ingestLinkedinMessages({
         unipileAccountId,
+        attachmentDeadlineAtMs,
         channel,
         settings,
         chat,

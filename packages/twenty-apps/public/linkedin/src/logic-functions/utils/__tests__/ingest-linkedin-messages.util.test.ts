@@ -36,6 +36,8 @@ vi.mock(
 const { ingestLinkedinMessages } =
   await import('src/logic-functions/utils/ingest-linkedin-messages.util');
 
+const DEADLINE_AT_MS = Date.parse('2026-10-29T08:00:00.000Z');
+
 const PRIYA = {
   id: 'ACoPRIYA',
   display_name: 'Priya Nair',
@@ -83,6 +85,7 @@ const ingest = ({
 } = {}) =>
   ingestLinkedinMessages({
     unipileAccountId: 'acc_1',
+    attachmentDeadlineAtMs: DEADLINE_AT_MS,
     channel: { id: 'channel-id', handle: 'https://www.linkedin.com/in/me' },
     settings,
     chat,
@@ -100,7 +103,7 @@ describe('ingestLinkedinMessages', () => {
     vi.clearAllMocks();
     mocks.matchLinkedinParticipantPersonId.mockResolvedValue(undefined);
     mocks.createLinkedinPerson.mockResolvedValue('created-id');
-    mocks.importLinkedinMessageAttachments.mockResolvedValue([]);
+    mocks.importLinkedinMessageAttachments.mockResolvedValue(0);
   });
 
   it('attaches the matched person to the participant', async () => {
@@ -189,6 +192,7 @@ describe('ingestLinkedinMessages', () => {
     ).resolves.toMatchObject({ ingestedMessageCount: 0 });
     expect(mocks.createLinkedinPerson).not.toHaveBeenCalled();
     expect(mocks.ingestMessages).not.toHaveBeenCalled();
+    expect(mocks.importLinkedinMessageAttachments).not.toHaveBeenCalled();
   });
 
   it('imports the attachments of the ingested messages', async () => {
@@ -199,15 +203,7 @@ describe('ingestLinkedinMessages', () => {
       ],
     };
 
-    mocks.importLinkedinMessageAttachments.mockResolvedValue([
-      {
-        messageExternalId: message.id,
-        attachmentId: 'attachment-1',
-        type: 'img',
-        mimeType: 'image/png',
-        content: Buffer.from('png'),
-      },
-    ]);
+    mocks.importLinkedinMessageAttachments.mockResolvedValue(1);
 
     await expect(ingest({ messages: [message] })).resolves.toMatchObject({
       ingestedMessageCount: 1,
@@ -218,14 +214,8 @@ describe('ingestLinkedinMessages', () => {
     ).toHaveBeenCalledExactlyOnceWith({
       unipileAccountId: 'acc_1',
       messages: [message],
+      deadlineAtMs: DEADLINE_AT_MS,
+      onAttachmentFile: expect.any(Function),
     });
-  });
-
-  it('imports no attachments from a skipped chat', async () => {
-    await ingest({
-      settings: { ...DEFAULT_LINKEDIN_SETTINGS, importPolicy: 'CONTACTS_ONLY' },
-    });
-
-    expect(mocks.importLinkedinMessageAttachments).not.toHaveBeenCalled();
   });
 });

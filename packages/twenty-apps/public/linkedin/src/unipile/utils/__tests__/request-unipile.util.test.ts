@@ -44,6 +44,17 @@ describe('requestUnipile', () => {
     expect(mocks.wait).not.toHaveBeenCalled();
   });
 
+  it('hands back a rate limit whose wait would end after the deadline', async () => {
+    const request = vi.fn().mockRejectedValue(RATE_LIMITED_ERROR);
+
+    await expect(
+      requestUnipile('download message attachment', request, {
+        deadlineAtMs: Date.now() + 10_000,
+      }),
+    ).rejects.toMatchObject({ name: 'UnipileRateLimitError' });
+    expect(mocks.wait).not.toHaveBeenCalled();
+  });
+
   it('gives up after 5 waits', async () => {
     const request = vi.fn().mockRejectedValue(RATE_LIMITED_ERROR);
 

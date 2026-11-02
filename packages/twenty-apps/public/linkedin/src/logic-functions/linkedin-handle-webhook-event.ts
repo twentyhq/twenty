@@ -5,6 +5,8 @@ import {
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { LINKEDIN_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS } from 'src/constants/linkedin-attachment-deadline-margin-milliseconds.constant';
+import { LINKEDIN_HANDLE_WEBHOOK_EVENT_TIMEOUT_SECONDS } from 'src/constants/linkedin-handle-webhook-event-timeout-seconds.constant';
 import { LINKEDIN_HANDLE_WEBHOOK_EVENT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { findLinkedinConnectionByUnipileAccountId } from 'src/logic-functions/utils/find-linkedin-connection-by-unipile-account-id.util';
 import { getLinkedinChatCounterparts } from 'src/logic-functions/utils/get-linkedin-chat-counterparts.util';
@@ -26,6 +28,10 @@ const ingestUnipileMessage = async ({
   unipileAccountId: string;
   message: UnipileMessage;
 }): Promise<LinkedinWebhookEventResult> => {
+  const attachmentDeadlineAtMs =
+    Date.now() +
+    LINKEDIN_HANDLE_WEBHOOK_EVENT_TIMEOUT_SECONDS * 1000 -
+    LINKEDIN_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS;
   const [channel] = await listMessageChannels({ connectedAccountId });
 
   if (!isDefined(channel)) {
@@ -49,6 +55,7 @@ const ingestUnipileMessage = async ({
 
   const { ingestedMessageCount } = await ingestLinkedinMessages({
     unipileAccountId,
+    attachmentDeadlineAtMs,
     channel,
     settings,
     chat,
@@ -109,6 +116,6 @@ export default defineLogicFunction({
   name: 'linkedin-handle-webhook-event',
   description:
     'Imports new LinkedIn messages into the connection message channel and flags connections LinkedIn signed out.',
-  timeoutSeconds: 30,
+  timeoutSeconds: LINKEDIN_HANDLE_WEBHOOK_EVENT_TIMEOUT_SECONDS,
   handler: linkedinHandleWebhookEventHandler,
 });

@@ -98,6 +98,7 @@ const resolvePersonIdByHandle = async ({
 
 export const ingestLinkedinMessages = async ({
   unipileAccountId,
+  attachmentDeadlineAtMs,
   channel,
   settings,
   chat,
@@ -105,6 +106,7 @@ export const ingestLinkedinMessages = async ({
   messages,
 }: {
   unipileAccountId: string;
+  attachmentDeadlineAtMs: number;
   channel: Pick<AppMessageChannel, 'id' | 'handle'>;
   settings: LinkedinSettings;
   chat: UnipileChat;
@@ -187,22 +189,27 @@ export const ingestLinkedinMessages = async ({
     });
   }
 
-  // Twenty has no message attachment input yet, so the imported files are not stored
-  const attachmentFiles = await importLinkedinMessageAttachments({
+  const importedAttachmentCount = await importLinkedinMessageAttachments({
     unipileAccountId,
     messages: ingestableMessages,
+    deadlineAtMs: attachmentDeadlineAtMs,
+    // Twenty has no message attachment input yet, so the imported files are not stored
+    onAttachmentFile: async ({
+      messageExternalId,
+      type,
+      mimeType,
+      content,
+    }) => {
+      console.log(
+        `[linkedin] message ${messageExternalId}: imported ${type} attachment (${mimeType}, ${content.byteLength}B), not stored yet`,
+      );
+    },
   });
-
-  if (attachmentFiles.length > 0) {
-    console.log(
-      `[linkedin] chat ${chat.id}: imported ${attachmentFiles.length} attachments (${attachmentFiles.map(({ type, mimeType, content }) => `${type} ${mimeType} ${content.byteLength}B`).join(', ')}), not stored yet`,
-    );
-  }
 
   return {
     ingestedMessageCount: ingestMessagesInput.length,
     matchedPersonCount,
     createdPersonCount,
-    importedAttachmentCount: attachmentFiles.length,
+    importedAttachmentCount,
   };
 };

@@ -30,6 +30,7 @@ const download = (maxSizeBytes: number) =>
     messageId: 'message-1',
     attachmentId: 'attachment-1',
     maxSizeBytes,
+    deadlineAtMs: Date.now() + 60_000,
   });
 
 describe('downloadUnipileMessageAttachment', () => {
@@ -44,6 +45,7 @@ describe('downloadUnipileMessageAttachment', () => {
     expect(mocks.getAttachment).toHaveBeenCalledWith(
       expect.objectContaining({
         parseAs: 'stream',
+        signal: expect.any(AbortSignal),
         path: {
           account_id: 'acc_1',
           chat_id: 'chat-1',
