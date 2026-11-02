@@ -1,3 +1,4 @@
+import { isDefined } from 'twenty-shared/utils';
 import {
   CommandMenuItemAvailabilityType,
   NavigationMenuItemType,
@@ -12,6 +13,7 @@ import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { type FlatAgent } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 import { type FlatSkill } from 'src/engine/metadata-modules/flat-skill/types/flat-skill.type';
+import { type FlatObjectPermission } from 'src/engine/metadata-modules/flat-object-permission/types/flat-object-permission.type';
 import { type FlatNavigationMenuItem } from 'src/engine/metadata-modules/flat-navigation-menu-item/types/flat-navigation-menu-item.type';
 import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layout/types/flat-page-layout.type';
 import { type FlatRole } from 'src/engine/metadata-modules/flat-role/types/flat-role.type';
@@ -307,6 +309,38 @@ describe('buildAllFlatEntityOperationRecordByMetadataNameFromFromTo', () => {
 
     expect(result.role?.flatEntityToDelete).toBeUndefined();
   });
+
+  it.each([
+    ['keeps', false],
+    ['deletes', true],
+  ])(
+    '%s the permissions of a role whose editability is %s',
+    (_, isEditable) => {
+      const objectPermission = {
+        ...SYNCABLE,
+        id: 'object-permission-id',
+        universalIdentifier: 'object-permission-universal-identifier',
+        roleUniversalIdentifier: ROLE.universalIdentifier,
+        objectMetadataUniversalIdentifier: 'object-universal-identifier',
+      } as FlatObjectPermission;
+
+      const result = inferDeletionOf((allFlatEntityMaps) => ({
+        ...withRole({ ...ROLE, isEditable })(allFlatEntityMaps),
+        flatObjectPermissionMaps: addFlatEntityToFlatEntityMapsOrThrow({
+          flatEntity: objectPermission,
+          flatEntityMaps: allFlatEntityMaps.flatObjectPermissionMaps,
+        }),
+      }));
+
+      expect(
+        isDefined(
+          result.objectPermission?.flatEntityToDelete?.[
+            objectPermission.universalIdentifier
+          ],
+        ),
+      ).toBe(isEditable);
+    },
+  );
 
   it('still deletes an editable role', () => {
     const result = inferDeletionOf(withRole(ROLE));
