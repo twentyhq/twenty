@@ -592,7 +592,7 @@ msgstr "{appDisplayName} şunları yapmak istiyor:"
 #. js-lingui-id: TVseJQ
 #: src/modules/settings/app-preferences/hooks/useAccountGroupApplicationSettingsTabs.ts
 msgid "{applicationName}: {settingsMenuItemTitle}"
-msgstr ""
+msgstr "{applicationName}: {settingsMenuItemTitle}"
 
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
@@ -4548,7 +4548,7 @@ msgstr "Yetkilendiriliyor..."
 #. js-lingui-id: R9Khdg
 #: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
 msgid "Auto"
-msgstr ""
+msgstr "Otomatik"
 
 #. js-lingui-id: KqBvMG
 #: src/pages/settings/applications/tabs/SettingsApplicationAutoUpdateSection.tsx
@@ -4772,7 +4772,7 @@ msgstr "BCC"
 #. js-lingui-id: tK9OCv
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Behavior"
-msgstr ""
+msgstr "Davranış"
 
 #. js-lingui-id: +MqoSu
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -6039,7 +6039,7 @@ msgstr "Otomatik olarak seçin"
 #. js-lingui-id: smH+1Z
 #: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
 msgid "Choose behavior"
-msgstr ""
+msgstr "Davranışı seçin"
 
 #. js-lingui-id: Qz73jD
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -6121,7 +6121,7 @@ msgstr "Bir e-posta adresine tıkladığınızda ne olacağını seçin"
 #. js-lingui-id: T3tKFK
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr ""
+msgstr "{AGENT_CHAT_ASSISTANT_NAME} öğesinin çalışma alanınızdaki konuşmalara ne zaman katılacağını seçin"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -13762,7 +13762,7 @@ msgstr "Küresel"
 #. js-lingui-id: BFSjnt
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Global inbox"
-msgstr ""
+msgstr "Genel gelen kutusu"
 
 #. js-lingui-id: lwDz5R
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -16673,7 +16673,7 @@ msgstr "Uygulamalar yükleniyor..."
 #. js-lingui-id: 3Zpgky
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Loading behavior settings..."
-msgstr ""
+msgstr "Davranış ayarları yükleniyor..."
 
 #. js-lingui-id: UDL15Z
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerRecentChats.tsx
@@ -18322,7 +18322,7 @@ msgstr "Asla sona ermez"
 #. js-lingui-id: cHEgp5
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr ""
+msgstr "Asla, {AGENT_CHAT_ASSISTANT_NAME} öğesini dışarıda tutar. Yalnızca bahsedildiğinde, etiketlendiğinde {AGENT_CHAT_ASSISTANT_NAME} öğesinden yanıt vermesini ister. Otomatik, {AGENT_CHAT_ASSISTANT_NAME} öğesinin ne zaman yanıt vereceğine karar vermesine izin verir. Yalnızca siz ve {AGENT_CHAT_ASSISTANT_NAME} öğesinin bulunduğu sohbetlerde her zaman yanıt verilir."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20270,7 +20270,7 @@ msgstr "Tek bir abonelik, bir üretim örneğini ve olası bir hazırlık veya t
 #. js-lingui-id: ghcoqW
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "One-to-one conversations between people"
-msgstr ""
+msgstr "Kişiler arasındaki bire bir konuşmalar"
 
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -20359,7 +20359,7 @@ msgstr "Yalnızca konu paylaşılır"
 #. js-lingui-id: gYj1mG
 #: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
 msgid "Only when mentioned"
-msgstr ""
+msgstr "Yalnızca bahsedildiğinde"
 
 #. js-lingui-id: anLgcW
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
@@ -20829,7 +20829,7 @@ msgstr "Diğer istemciler"
 #. js-lingui-id: Pquq4V
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Other inbox conversations"
-msgstr ""
+msgstr "Gelen kutusundaki diğer konuşmalar"
 
 #. js-lingui-id: ggOXu2
 #: src/modules/settings/data-model/objects/components/SettingsDataModelObjectSummary.tsx

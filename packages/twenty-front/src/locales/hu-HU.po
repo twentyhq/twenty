@@ -592,7 +592,7 @@ msgstr "A(z) {appDisplayName} a következőket szeretné:"
 #. js-lingui-id: TVseJQ
 #: src/modules/settings/app-preferences/hooks/useAccountGroupApplicationSettingsTabs.ts
 msgid "{applicationName}: {settingsMenuItemTitle}"
-msgstr ""
+msgstr "{applicationName}: {settingsMenuItemTitle}"
 
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
@@ -4548,7 +4548,7 @@ msgstr "Engedélyezés..."
 #. js-lingui-id: R9Khdg
 #: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
 msgid "Auto"
-msgstr ""
+msgstr "Automatikus"
 
 #. js-lingui-id: KqBvMG
 #: src/pages/settings/applications/tabs/SettingsApplicationAutoUpdateSection.tsx
@@ -4772,7 +4772,7 @@ msgstr "Titkos másolat"
 #. js-lingui-id: tK9OCv
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Behavior"
-msgstr ""
+msgstr "Viselkedés"
 
 #. js-lingui-id: +MqoSu
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -6039,7 +6039,7 @@ msgstr "Válasszon automatikusan"
 #. js-lingui-id: smH+1Z
 #: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
 msgid "Choose behavior"
-msgstr ""
+msgstr "Viselkedés kiválasztása"
 
 #. js-lingui-id: Qz73jD
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -6121,7 +6121,7 @@ msgstr "Válassza ki, mi történjen, amikor egy e-mail-címre kattint!"
 #. js-lingui-id: T3tKFK
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr ""
+msgstr "Válassza ki, hogy {AGENT_CHAT_ASSISTANT_NAME} mikor vegyen részt a munkaterületén zajló beszélgetésekben"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -13762,7 +13762,7 @@ msgstr "Globális"
 #. js-lingui-id: BFSjnt
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Global inbox"
-msgstr ""
+msgstr "Globális bejövő üzenetek"
 
 #. js-lingui-id: lwDz5R
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -16673,7 +16673,7 @@ msgstr "Az alkalmazások betöltődnek..."
 #. js-lingui-id: 3Zpgky
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Loading behavior settings..."
-msgstr ""
+msgstr "Viselkedési beállítások betöltése..."
 
 #. js-lingui-id: UDL15Z
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerRecentChats.tsx
@@ -18322,7 +18322,7 @@ msgstr "Sosem jár le"
 #. js-lingui-id: cHEgp5
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr ""
+msgstr "A Soha távol tartja {AGENT_CHAT_ASSISTANT_NAME} asszisztenst. A Csak említéskor arra kéri {AGENT_CHAT_ASSISTANT_NAME} asszisztenst, hogy címkézéskor válaszoljon. Az Automatikus lehetővé teszi, hogy {AGENT_CHAT_ASSISTANT_NAME} döntse el, mikor válaszoljon. Azokban a csevegésekben, amelyekben csak Ön és {AGENT_CHAT_ASSISTANT_NAME} vesz részt, mindig érkezik válasz."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20270,7 +20270,7 @@ msgstr "Egy előfizetés egy szervezeti kulcsot biztosít, amely egy éles péld
 #. js-lingui-id: ghcoqW
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "One-to-one conversations between people"
-msgstr ""
+msgstr "Két ember közötti beszélgetések"
 
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -20359,7 +20359,7 @@ msgstr "Csak a tárgy kerül megosztásra"
 #. js-lingui-id: gYj1mG
 #: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
 msgid "Only when mentioned"
-msgstr ""
+msgstr "Csak említéskor"
 
 #. js-lingui-id: anLgcW
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
@@ -20829,7 +20829,7 @@ msgstr "Egyéb kliensek"
 #. js-lingui-id: Pquq4V
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Other inbox conversations"
-msgstr ""
+msgstr "Egyéb bejövő üzenetekbeli beszélgetések"
 
 #. js-lingui-id: ggOXu2
 #: src/modules/settings/data-model/objects/components/SettingsDataModelObjectSummary.tsx

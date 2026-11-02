@@ -592,7 +592,7 @@ msgstr "{appDisplayName} vil gerne:"
 #. js-lingui-id: TVseJQ
 #: src/modules/settings/app-preferences/hooks/useAccountGroupApplicationSettingsTabs.ts
 msgid "{applicationName}: {settingsMenuItemTitle}"
-msgstr ""
+msgstr "{applicationName}: {settingsMenuItemTitle}"
 
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
@@ -4548,7 +4548,7 @@ msgstr "Autoriserer..."
 #. js-lingui-id: R9Khdg
 #: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
 msgid "Auto"
-msgstr ""
+msgstr "Auto"
 
 #. js-lingui-id: KqBvMG
 #: src/pages/settings/applications/tabs/SettingsApplicationAutoUpdateSection.tsx
@@ -4772,7 +4772,7 @@ msgstr "BCC"
 #. js-lingui-id: tK9OCv
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Behavior"
-msgstr ""
+msgstr "Adfærd"
 
 #. js-lingui-id: +MqoSu
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -6039,7 +6039,7 @@ msgstr "Vælg automatisk"
 #. js-lingui-id: smH+1Z
 #: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
 msgid "Choose behavior"
-msgstr ""
+msgstr "Vælg adfærd"
 
 #. js-lingui-id: Qz73jD
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -6121,7 +6121,7 @@ msgstr "Vælg, hvad der sker, når du klikker på en e-mailadresse"
 #. js-lingui-id: T3tKFK
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr ""
+msgstr "Vælg, hvornår {AGENT_CHAT_ASSISTANT_NAME} deltager i samtaler på tværs af dit arbejdsområde"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -13762,7 +13762,7 @@ msgstr "Globalt"
 #. js-lingui-id: BFSjnt
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Global inbox"
-msgstr ""
+msgstr "Global indbakke"
 
 #. js-lingui-id: lwDz5R
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -16673,7 +16673,7 @@ msgstr "Indlæser apps..."
 #. js-lingui-id: 3Zpgky
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Loading behavior settings..."
-msgstr ""
+msgstr "Indlæser adfærdsindstillinger..."
 
 #. js-lingui-id: UDL15Z
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerRecentChats.tsx
@@ -18322,7 +18322,7 @@ msgstr "Udløber aldrig"
 #. js-lingui-id: cHEgp5
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr ""
+msgstr "Aldrig holder {AGENT_CHAT_ASSISTANT_NAME} ude. Kun når nævnt beder {AGENT_CHAT_ASSISTANT_NAME} om at svare, når den tagges. Auto lader {AGENT_CHAT_ASSISTANT_NAME} afgøre, hvornår den skal svare. Chats kun med dig og {AGENT_CHAT_ASSISTANT_NAME} får altid svar."
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20270,7 +20270,7 @@ msgstr "Ét abonnement giver én organisationsnøgle, der driver én produktions
 #. js-lingui-id: ghcoqW
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "One-to-one conversations between people"
-msgstr ""
+msgstr "En-til-en-samtaler mellem personer"
 
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -20359,7 +20359,7 @@ msgstr "Kun emnet deles"
 #. js-lingui-id: gYj1mG
 #: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
 msgid "Only when mentioned"
-msgstr ""
+msgstr "Kun når nævnt"
 
 #. js-lingui-id: anLgcW
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
@@ -20829,7 +20829,7 @@ msgstr "Andre klienter"
 #. js-lingui-id: Pquq4V
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Other inbox conversations"
-msgstr ""
+msgstr "Andre samtaler i indbakken"
 
 #. js-lingui-id: ggOXu2
 #: src/modules/settings/data-model/objects/components/SettingsDataModelObjectSummary.tsx

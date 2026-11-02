@@ -592,7 +592,7 @@ msgstr "{appDisplayName} 请求执行以下操作："
 #. js-lingui-id: TVseJQ
 #: src/modules/settings/app-preferences/hooks/useAccountGroupApplicationSettingsTabs.ts
 msgid "{applicationName}: {settingsMenuItemTitle}"
-msgstr ""
+msgstr "{applicationName}：{settingsMenuItemTitle}"
 
 #. js-lingui-id: ST9xGf
 #: src/pages/settings/accounts/SettingsApplicationPreferencesDetail.tsx
@@ -4548,7 +4548,7 @@ msgstr "正在授权..."
 #. js-lingui-id: R9Khdg
 #: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
 msgid "Auto"
-msgstr ""
+msgstr "自动"
 
 #. js-lingui-id: KqBvMG
 #: src/pages/settings/applications/tabs/SettingsApplicationAutoUpdateSection.tsx
@@ -4772,7 +4772,7 @@ msgstr "密件抄送"
 #. js-lingui-id: tK9OCv
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Behavior"
-msgstr ""
+msgstr "行为"
 
 #. js-lingui-id: +MqoSu
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkspacesStatusSummaryCard.tsx
@@ -6039,7 +6039,7 @@ msgstr "自动选择"
 #. js-lingui-id: smH+1Z
 #: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
 msgid "Choose behavior"
-msgstr ""
+msgstr "选择行为"
 
 #. js-lingui-id: Qz73jD
 #: src/modules/settings/security/components/sso/SettingsSsoIdentitiesProvidersForm.tsx
@@ -6121,7 +6121,7 @@ msgstr "选择点击电子邮件地址时的操作"
 #. js-lingui-id: T3tKFK
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Choose when {AGENT_CHAT_ASSISTANT_NAME} participates in conversations across your workspace"
-msgstr ""
+msgstr "选择 {AGENT_CHAT_ASSISTANT_NAME} 何时参与整个工作区中的对话"
 
 #. js-lingui-id: GF9DB4
 #: src/modules/ai/components/AiChatSchedulingPreferences.tsx
@@ -13762,7 +13762,7 @@ msgstr "全局"
 #. js-lingui-id: BFSjnt
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Global inbox"
-msgstr ""
+msgstr "全局收件箱"
 
 #. js-lingui-id: lwDz5R
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
@@ -16673,7 +16673,7 @@ msgstr "加载应用中..."
 #. js-lingui-id: 3Zpgky
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Loading behavior settings..."
-msgstr ""
+msgstr "正在加载行为设置……"
 
 #. js-lingui-id: UDL15Z
 #: src/modules/side-panel/pages/search-ai-chats/components/SidePanelAiChatPickerRecentChats.tsx
@@ -18322,7 +18322,7 @@ msgstr "永不过期"
 #. js-lingui-id: cHEgp5
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Never keeps {AGENT_CHAT_ASSISTANT_NAME} out. Only when mentioned asks {AGENT_CHAT_ASSISTANT_NAME} to reply when tagged. Auto lets {AGENT_CHAT_ASSISTANT_NAME} decide when to reply. Chats with only you and {AGENT_CHAT_ASSISTANT_NAME} always get replies."
-msgstr ""
+msgstr "“从不”会让 {AGENT_CHAT_ASSISTANT_NAME} 不参与对话。“仅在被提及时”会在被标记时要求 {AGENT_CHAT_ASSISTANT_NAME} 回复。“自动”让 {AGENT_CHAT_ASSISTANT_NAME} 决定何时回复。只有您和 {AGENT_CHAT_ASSISTANT_NAME} 的聊天始终会收到回复。"
 
 #. js-lingui-id: ErO8dj
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
@@ -20270,7 +20270,7 @@ msgstr "一个订阅提供一个组织密钥，该密钥可支持一个生产实
 #. js-lingui-id: ghcoqW
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "One-to-one conversations between people"
-msgstr ""
+msgstr "人员之间的一对一对话"
 
 #. js-lingui-id: JzXn58
 #: src/pages/settings/applications/utils/getClaimErrorContent.ts
@@ -20359,7 +20359,7 @@ msgstr "仅共享主题"
 #. js-lingui-id: gYj1mG
 #: src/pages/settings/ai/components/SettingsAiBehaviorModeSelect.tsx
 msgid "Only when mentioned"
-msgstr ""
+msgstr "仅在被提及时"
 
 #. js-lingui-id: anLgcW
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
@@ -20829,7 +20829,7 @@ msgstr "其他客户端"
 #. js-lingui-id: Pquq4V
 #: src/pages/settings/ai/components/SettingsAiBehaviorSection.tsx
 msgid "Other inbox conversations"
-msgstr ""
+msgstr "其他收件箱对话"
 
 #. js-lingui-id: ggOXu2
 #: src/modules/settings/data-model/objects/components/SettingsDataModelObjectSummary.tsx

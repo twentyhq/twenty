@@ -6559,7 +6559,7 @@ msgstr "Ընթացքում"
 #. js-lingui-id: V5c2LO
 #: src/engine/core-modules/workspace/services/workspace.service.ts
 msgid "Inbox is not enabled for this workspace."
-msgstr ""
+msgstr "Մուտքայինը միացված չէ այս աշխատանքային տարածքի համար։"
 
 #. js-lingui-id: iffSt5
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util.ts
