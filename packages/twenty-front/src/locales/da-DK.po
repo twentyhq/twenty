@@ -700,12 +700,12 @@ msgstr "{days, plural, one {{days} dag} other {{days} dage}}"
 #. js-lingui-id: Irx6Dx
 #: src/modules/getting-started/components/GettingStartedSidebarTrialCountdown.tsx
 msgid "{daysLeft, plural, one {# day left} other {# days left}}"
-msgstr ""
+msgstr "{daysLeft, plural, one {# dag tilbage} other {# dage tilbage}}"
 
 #. js-lingui-id: omamQu
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "{daysLeft, plural, one {day left in your trial} other {days left in your trial}}"
-msgstr ""
+msgstr "{daysLeft, plural, one {dag tilbage i din prøveperiode} other {dage tilbage i din prøveperiode}}"
 
 #. js-lingui-id: 7o03+8
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -961,7 +961,7 @@ msgstr "{participantNames} skriver…"
 #. js-lingui-id: v5nX2L
 #: src/modules/getting-started/components/GettingStartedMailboxDoneDescription.tsx
 msgid "{peopleCount, plural, one {{formattedPeopleCount} person} other {{formattedPeopleCount} people}} and {companyCount, plural, one {{formattedCompanyCount} company} other {{formattedCompanyCount} companies}} in your workspace"
-msgstr ""
+msgstr "{peopleCount, plural, one {{formattedPeopleCount} person} other {{formattedPeopleCount} personer}} og {companyCount, plural, one {{formattedCompanyCount} virksomhed} other {{formattedCompanyCount} virksomheder}} i dit arbejdsområde"
 
 #. js-lingui-id: FaQB54
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
@@ -1018,12 +1018,12 @@ msgstr "{remainingDraftCount, plural, =0 {Ingen flere kladder efter denne} one {
 #. js-lingui-id: mqfjQO
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "{remainingStepCount, plural, one {Finish # step by {formattedTrialEnd}} other {Finish # steps by {formattedTrialEnd}}}"
-msgstr ""
+msgstr "{remainingStepCount, plural, one {Gennemfør # trin inden {formattedTrialEnd}} other {Gennemfør # trin inden {formattedTrialEnd}}}"
 
 #. js-lingui-id: yICp8R
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "{remainingStepCount, plural, one {Finish # step} other {Finish # steps}}"
-msgstr ""
+msgstr "{remainingStepCount, plural, one {Afslut # trin} other {Afslut # trin}}"
 
 #. js-lingui-id: r4MTJW
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
@@ -1567,7 +1567,7 @@ msgstr "90 dage"
 #. js-lingui-id: 81nnG3
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "A CSV or Excel export from any tool"
-msgstr ""
+msgstr "En CSV- eller Excel-eksport fra et hvilket som helst værktøj"
 
 #. js-lingui-id: 43TqJC
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -2222,7 +2222,7 @@ msgstr "Tilføj oplysninger til gæster"
 #. js-lingui-id: An/Fke
 #: src/modules/ai/components/DirectMessageMemberPicker.tsx
 msgid "Add DM"
-msgstr ""
+msgstr "Tilføj DM"
 
 #. js-lingui-id: 0+CYPj
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
@@ -3304,7 +3304,7 @@ msgstr "Alle kilder"
 #. js-lingui-id: wiGHxh
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "All steps done"
-msgstr ""
+msgstr "Alle trin er udført"
 
 #. js-lingui-id: p+lpde
 #: src/modules/activities/tasks/components/TaskGroupsContent.tsx
@@ -4671,7 +4671,7 @@ msgstr "Tilbage til indhold"
 #. js-lingui-id: +cSNzs
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "Back to current step"
-msgstr ""
+msgstr "Tilbage til det aktuelle trin"
 
 #. js-lingui-id: dGEega
 #: src/pages/ai-chat/AiChatInboxPage.tsx
@@ -7238,7 +7238,7 @@ msgstr "Fortsæt ved iterationsfejl"
 #. js-lingui-id: uxdS61
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 msgid "Continue setup"
-msgstr ""
+msgstr "Fortsæt opsætningen"
 
 #. js-lingui-id: RvVi9c
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
@@ -7571,7 +7571,7 @@ msgstr "Kunne ikke give medieadgang. Prøv igen."
 #. js-lingui-id: rLrhvg
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "Could not load Getting started."
-msgstr ""
+msgstr "Kunne ikke indlæse Kom i gang."
 
 #. js-lingui-id: Y5qCpF
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
@@ -9902,7 +9902,7 @@ msgstr "DMARC-politik"
 #. js-lingui-id: TdAWxF
 #: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
 msgid "DMs"
-msgstr ""
+msgstr "DM'er"
 
 #. js-lingui-id: naBq2D
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
@@ -12038,7 +12038,7 @@ msgstr "Eksportér ({percentageValue}%)"
 #. js-lingui-id: YkvQVd
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "Export a CSV from"
-msgstr ""
+msgstr "Eksporter en CSV fra"
 
 #. js-lingui-id: 2KAI4N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -13124,7 +13124,7 @@ msgstr "Fuldfør opsætning"
 #. js-lingui-id: 97Hg0Y
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "Finish your setup"
-msgstr ""
+msgstr "Fuldfør din opsætning"
 
 #. js-lingui-id: 4dQFvz
 #: src/modules/ai/constants/AiChatThreadReasons.ts
@@ -13366,7 +13366,7 @@ msgstr "Fandt tilknyttede konti"
 #. js-lingui-id: Vc8HGN
 #: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 msgid "Found in your emails"
-msgstr ""
+msgstr "Fundet i dine e-mails"
 
 #. js-lingui-id: 1hxId5
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -13703,17 +13703,17 @@ msgstr "Får kun denne post: deres rolle kan ikke få adgang til {objectLabelPlu
 #: src/pages/getting-started/GettingStartedPage.tsx
 #: src/pages/getting-started/GettingStartedPage.tsx
 msgid "Getting started"
-msgstr ""
+msgstr "Kom i gang"
 
 #. js-lingui-id: YRBB4k
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 msgid "Getting started progress"
-msgstr ""
+msgstr "Status for Kom i gang"
 
 #. js-lingui-id: dV3VgV
 #: src/modules/getting-started/components/GettingStartedStepStack.tsx
 msgid "Getting started steps"
-msgstr ""
+msgstr "Trin til Kom i gang"
 
 #. js-lingui-id: XXtAx5
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
@@ -14254,7 +14254,7 @@ msgstr "Skjul felter"
 #. js-lingui-id: 3CeQ1O
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 msgid "Hide for good"
-msgstr ""
+msgstr "Skjul permanent"
 
 #. js-lingui-id: CbeJV4
 #. placeholder {0}: groupValue ?? ''
@@ -14756,7 +14756,7 @@ msgstr "Importer eller tilføj MCP-konfigurationen fra JetBrains-indstillingerne
 #. js-lingui-id: e2aT+Z
 #: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
 msgid "Import the attached files into Twenty. Work out which records they contain, then create them and link them together."
-msgstr ""
+msgstr "Importér de vedhæftede filer til Twenty. Find ud af, hvilke poster de indeholder, opret dem derefter, og sammenkæd dem."
 
 #. js-lingui-id: vXTVX9
 #: src/pages/onboarding/ImportContacts.tsx
@@ -14802,7 +14802,7 @@ msgstr "Om {listName}"
 #. js-lingui-id: jS5U2e
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 msgid "In an hour"
-msgstr ""
+msgstr "Om en time"
 
 #. js-lingui-id: /LCAwL
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
@@ -15064,7 +15064,7 @@ msgstr "Installer {appDisplayName} i dit arbejdsområde"
 #. js-lingui-id: rQN3ie
 #: src/modules/getting-started/components/GettingStartedAppInstallButton.tsx
 msgid "Install {appLabel}"
-msgstr ""
+msgstr "Installer {appLabel}"
 
 #. js-lingui-id: sOOkDn
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
@@ -15691,7 +15691,7 @@ msgstr "Kanban-widget"
 #. js-lingui-id: uW9WOr
 #: src/modules/getting-started/hooks/useGettingStartedTrial.ts
 msgid "Keep {planLabel}"
-msgstr ""
+msgstr "Behold {planLabel}"
 
 #. js-lingui-id: LHkoee
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
@@ -15716,7 +15716,7 @@ msgstr "Fortsæt med at spore mine åbninger og klik"
 #. js-lingui-id: 9l8cs3
 #: src/modules/getting-started/hooks/useGettingStartedTrial.ts
 msgid "Keep your plan"
-msgstr ""
+msgstr "Behold din plan"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -16687,7 +16687,7 @@ msgstr "Indlæser jobs..."
 #. js-lingui-id: YyMToN
 #: src/modules/ai/components/DirectMessageMemberPicker.tsx
 msgid "Loading members"
-msgstr ""
+msgstr "Indlæser medlemmer"
 
 #. js-lingui-id: s1MstR
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -16750,7 +16750,7 @@ msgstr "Indlæser tråd"
 #. js-lingui-id: KOolcu
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "Loading your progress"
-msgstr ""
+msgstr "Indlæser din status"
 
 #. js-lingui-id: Z3FXyt
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
@@ -18214,7 +18214,7 @@ msgstr "Navn: {0}"
 #. js-lingui-id: fZT56Z
 #: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 msgid "name@{emailDomain}"
-msgstr ""
+msgstr "name@{emailDomain}"
 
 #. js-lingui-id: JxC/pi
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
@@ -19161,7 +19161,7 @@ msgstr "Ingen medlemmer er tildelt"
 #. js-lingui-id: FK5/sf
 #: src/modules/ai/components/DirectMessageMemberPicker.tsx
 msgid "No members found"
-msgstr ""
+msgstr "Ingen medlemmer fundet"
 
 #. js-lingui-id: /nLvVj
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
@@ -20230,7 +20230,7 @@ msgstr "Kun applikationer, der er udgivet på npm, kan overtages på denne måde
 #. js-lingui-id: dD26o4
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "Only CSV and Excel files are supported"
-msgstr ""
+msgstr "Kun CSV- og Excel-filer understøttes"
 
 #. js-lingui-id: zii2Qj
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
@@ -20393,7 +20393,7 @@ msgstr "Åbn Cursors MCP-installationsprogram med Twenty-fjernserverkonfiguratio
 #. js-lingui-id: JvSHIq
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 msgid "Open Getting started"
-msgstr ""
+msgstr "Åbn Kom i gang"
 
 #. js-lingui-id: pZZH4Q
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -20504,7 +20504,7 @@ msgstr "Åbn sidepanelet"
 #. js-lingui-id: Cq4Ta5
 #: src/modules/getting-started/components/GettingStartedWorkflowAction.tsx
 msgid "Open the workflow"
-msgstr ""
+msgstr "Åbn arbejdsgangen"
 
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -25100,7 +25100,7 @@ msgstr "Afsend e-mails via tilsluttede konti"
 #. js-lingui-id: lPcA5V
 #: src/modules/getting-started/components/GettingStartedPromptAction.tsx
 msgid "Send instructions"
-msgstr ""
+msgstr "Send instruktioner"
 
 #. js-lingui-id: 6nwEi6
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -25378,7 +25378,7 @@ msgstr "Opsæt følgende DNS-poster for {domain} i den Cloudflare-konto, der all
 #. js-lingui-id: uB2UEQ
 #: src/modules/getting-started/components/GettingStartedWorkflowAction.tsx
 msgid "Set up the workflow"
-msgstr ""
+msgstr "Opsæt arbejdsgangen"
 
 #. js-lingui-id: 9HNKkV
 #: src/modules/settings/applications/components/SettingsApplicationDetailVariablesTab.tsx
@@ -25652,7 +25652,7 @@ msgstr "Vis kun rækker med fejl"
 #. js-lingui-id: 9u2I/P
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
-msgstr ""
+msgstr "Vis siden Kom godt i gang og kortet i sidepanelet, og åbn den ved landing under prøveperioden."
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -25987,7 +25987,7 @@ msgstr "Udsættelse afsluttet {eventTime}"
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 msgid "Snooze Getting started"
-msgstr ""
+msgstr "Udsæt Kom i gang"
 
 #. js-lingui-id: VkkXmS
 #: src/modules/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker.tsx
@@ -26230,7 +26230,7 @@ msgstr "Delt visning"
 #. js-lingui-id: jAoGz1
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "Spreadsheet"
-msgstr ""
+msgstr "Regneark"
 
 #. js-lingui-id: vnS6Rf
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -27147,7 +27147,7 @@ msgstr "Teammedlem"
 #. js-lingui-id: IVUOhR
 #: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 msgid "Teammate email {emailNumber}"
-msgstr ""
+msgstr "E-mail til teammedlem {emailNumber}"
 
 #. js-lingui-id: GEkQWt
 #. placeholder {0}: index + 1
@@ -27164,7 +27164,7 @@ msgstr "Teammedlemmer"
 #. js-lingui-id: Dqvkhs
 #: src/modules/getting-started/components/GettingStartedMailboxAction.tsx
 msgid "Teammates see who you talk to, not what you write."
-msgstr ""
+msgstr "Teammedlemmer kan se, hvem du taler med, men ikke hvad du skriver."
 
 #. js-lingui-id: XpPpz7
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
@@ -29480,7 +29480,7 @@ msgstr "Indtil {snoozedUntilDay}"
 #. js-lingui-id: LRU2W5
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 msgid "Until the last 3 days"
-msgstr ""
+msgstr "Indtil de sidste 3 dage"
 
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AiChatThreadListItem.tsx
@@ -30111,7 +30111,7 @@ msgstr "Brug vores API eller tilføj din første {objectLabel} manuelt"
 #. js-lingui-id: zwL0lf
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "Use the import wizard instead"
-msgstr ""
+msgstr "Brug importguiden i stedet"
 
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -32088,12 +32088,12 @@ msgstr "Status for dit abonnement er: {statusLabel}"
 #. js-lingui-id: RMyx+h
 #: src/modules/getting-started/utils/getGettingStartedKeepPlanDescription.ts
 msgid "Your trial ends on {formattedTrialEnd}. Add a card now to keep your plan after that. You won't be charged before then."
-msgstr ""
+msgstr "Din prøveperiode slutter den {formattedTrialEnd}. Tilføj et kort nu for at beholde din plan derefter. Du bliver ikke opkrævet inden da."
 
 #. js-lingui-id: 0p2q58
 #: src/modules/getting-started/utils/getGettingStartedKeepPlanDescription.ts
 msgid "Your trial ends on {formattedTrialEnd}. Add a card now to stay on the {planLabel} plan after that. You won't be charged before then."
-msgstr ""
+msgstr "Din prøveperiode slutter den {formattedTrialEnd}. Tilføj et kort nu for at fortsætte med {planLabel}-planen derefter. Du bliver ikke opkrævet inden da."
 
 #. js-lingui-id: oC6WBs
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx

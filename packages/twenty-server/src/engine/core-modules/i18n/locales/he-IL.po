@@ -206,7 +206,7 @@ msgstr "לוח בקרה"
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
 msgid "A deal is won"
-msgstr ""
+msgstr "עסקה נסגרה בהצלחה"
 
 #. js-lingui-id: ixdsnM
 #: src/engine/core-modules/dns-manager/exceptions/dns-manager.exception.ts
@@ -789,7 +789,7 @@ msgstr "הוסף לרשימה"
 #. js-lingui-id: BBzZ81
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Add tools to your workspace."
-msgstr ""
+msgstr "הוסף כלים למרחב העבודה שלך."
 
 #. js-lingui-id: sGGJFX
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -1087,7 +1087,7 @@ msgstr "לסוכן לא יכולים להיות יותר מ-{maxTriggers} מפע
 #. js-lingui-id: KfRVdE
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "An agent drafts a follow-up for every deal about to close."
-msgstr ""
+msgstr "סוכן מנסח הודעת המשך לכל עסקה שעומדת להיסגר."
 
 #. js-lingui-id: gxdZLa
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
@@ -1097,7 +1097,7 @@ msgstr "לא ניתן לשנות שם של סוכן שהותקן על ידי י�
 #. js-lingui-id: 3tWubk
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "An agent shapes your objects and fields around how you work."
-msgstr ""
+msgstr "סוכן מתאים את האובייקטים והשדות שלך לאופן העבודה שלך."
 
 #. js-lingui-id: 4vJ4de
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -1335,7 +1335,7 @@ msgstr "גרש ונקודה"
 #. js-lingui-id: oABUXG
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "App installed"
-msgstr ""
+msgstr "היישום הותקן"
 
 #. js-lingui-id: 5nw74G
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -1982,12 +1982,12 @@ msgstr "הוחזר בתאריך"
 #. js-lingui-id: 7piJZ+
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Bring your companies, contacts and deals from any CRM export."
-msgstr ""
+msgstr "העבר את החברות, אנשי הקשר והעסקאות שלך מכל ייצוא CRM."
 
 #. js-lingui-id: YYQkoU
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Bring your team into Twenty."
-msgstr ""
+msgstr "צרף את הצוות שלך ל-Twenty."
 
 #. js-lingui-id: 8pSVh1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -3063,7 +3063,7 @@ msgstr "חברות"
 #. js-lingui-id: UcnBjr
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Companies and people fill in from your emails and meetings."
-msgstr ""
+msgstr "חברות ואנשים מתמלאים מהאימיילים והפגישות שלך."
 
 #. js-lingui-id: aNUhqB
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -3292,7 +3292,7 @@ msgstr "לא ניתן להתחבר עבור {connectFieldName} על {objectMetad
 #. js-lingui-id: eTJ1jL
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Connect your mailbox"
-msgstr ""
+msgstr "חבר את תיבת הדואר שלך"
 
 #. js-lingui-id: So2wV4
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -3661,7 +3661,7 @@ msgstr "צור {objectLabelSingular}"
 #. js-lingui-id: Y8ye8i
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
 msgid "Create a kickoff task"
-msgstr ""
+msgstr "צור משימת התנעה"
 
 #. js-lingui-id: fbe2ik
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
@@ -4865,7 +4865,7 @@ msgstr "שורת נושא של הדוא\"ל"
 #. js-lingui-id: 4VrNsb
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
 msgid "Email the account owner"
-msgstr ""
+msgstr "שלח אימייל לבעל החשבון"
 
 #. js-lingui-id: q87JH5
 #: src/engine/core-modules/user/user.exception.ts
@@ -5205,7 +5205,7 @@ msgstr "אירועים הקשורים לחבר בסביבת עבודה"
 #. js-lingui-id: idSfue
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Every Monday, draft a follow-up email for each deal closing in the next 30 days."
-msgstr ""
+msgstr "בכל יום שני, נסח אימייל המשך לכל עסקה שנסגרת ב-30 הימים הקרובים."
 
 #. js-lingui-id: fVkHAH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -5915,17 +5915,17 @@ msgstr "נתיב התיקייה אינו יכול להכיל סיומת קובץ
 #. js-lingui-id: 9J7Yxo
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Follow up on closing deals"
-msgstr ""
+msgstr "בצע מעקב אחר עסקאות לקראת סגירה"
 
 #. js-lingui-id: Y2RyNo
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Follow-up instructions"
-msgstr ""
+msgstr "הוראות המשך"
 
 #. js-lingui-id: xRdoZk
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Follow-up request sent"
-msgstr ""
+msgstr "בקשת המשך נשלחה"
 
 #. js-lingui-id: eWmJYU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -6314,7 +6314,7 @@ msgstr "גיבוב הקבוצה"
 #. js-lingui-id: cGqZJs
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Hand over won deals"
-msgstr ""
+msgstr "העבר עסקאות שנסגרו בהצלחה"
 
 #. js-lingui-id: M3UdIL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -6537,7 +6537,7 @@ msgstr "ייבוא {objectLabelPlural}"
 #. js-lingui-id: gQ9//i
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Import your data"
-msgstr ""
+msgstr "ייבוא הנתונים שלך"
 
 #. js-lingui-id: QPcp0k
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
@@ -6630,7 +6630,7 @@ msgstr "אסימוני קלט"
 #. js-lingui-id: 5u6qKW
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Install an app"
-msgstr ""
+msgstr "התקן יישום"
 
 #. js-lingui-id: VUEkq2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -7624,12 +7624,12 @@ msgstr "ההזמנה לא נמצאה"
 #. js-lingui-id: ZMCmkn
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Invitations sent"
-msgstr ""
+msgstr "הזמנות נשלחו"
 
 #. js-lingui-id: d+Y+rP
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Invite your team"
-msgstr ""
+msgstr "הזמן את צוותך"
 
 #. js-lingui-id: KJBRRe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -8248,12 +8248,12 @@ msgstr "פונקציה לוגית עם אותו מזהה אוניברסלי כב
 #. js-lingui-id: y5Ysbs
 #: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts
 msgid "Look at the data I imported and suggest the objects, fields and views I need to run my business. Ask me what I want to track before creating anything."
-msgstr ""
+msgstr "עיין בנתונים שייבאתי והצע את האובייקטים, השדות והתצוגות שאני צריך כדי לנהל את העסק שלי. שאל אותי מה אני רוצה לעקוב אחריו לפני יצירת דבר כלשהו."
 
 #. js-lingui-id: AgKpIa
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Mailbox connected"
-msgstr ""
+msgstr "תיבת הדואר חוברה"
 
 #. js-lingui-id: 07Jk6f
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -12382,12 +12382,12 @@ msgstr "נדרשת כותרת לפריט בתפריט ההגדרות"
 #. js-lingui-id: x4ZiTl
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Setup instructions"
-msgstr ""
+msgstr "הוראות הגדרה"
 
 #. js-lingui-id: gIoyTf
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Setup request sent"
-msgstr ""
+msgstr "בקשת ההגדרה נשלחה"
 
 #. js-lingui-id: AaiDcy
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -12742,7 +12742,7 @@ msgstr "גיליון אלקטרוני"
 #. js-lingui-id: 73/iLE
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Spreadsheet uploaded"
-msgstr ""
+msgstr "גיליון אלקטרוני הועלה"
 
 #. js-lingui-id: IP+RN5
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -12812,7 +12812,7 @@ msgstr "תחילת השבוע"
 #. js-lingui-id: wcXsug
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Start the handover when a deal is won."
-msgstr ""
+msgstr "התחל את ההעברה כאשר עסקה נסגרת."
 
 #. js-lingui-id: kg0Ky1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
@@ -13088,7 +13088,7 @@ msgstr "לא נמצאה לשונית לשכפול הווידג'ט."
 #. js-lingui-id: xRgQRi
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Tailor your workspace"
-msgstr ""
+msgstr "התאם אישית את סביבת העבודה שלך"
 
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -14863,7 +14863,7 @@ msgstr "הכותרת של פריט זה בתפריט ההגדרות שמורה."
 #. js-lingui-id: ukriVV
 #: src/engine/core-modules/getting-started/getting-started.exception.ts
 msgid "This step has no workflow."
-msgstr ""
+msgstr "לשלב זה אין זרימת עבודה."
 
 #. js-lingui-id: nFIPim
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -16726,7 +16726,7 @@ msgstr "נתקלנו בבעיה בחיבור לחשבון הדואר האלקט�
 #. js-lingui-id: b6WVV+
 #: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts
 msgid "We're {companyName}, a company in {industry}. Look at the data I imported and suggest the objects, fields and views we need to run our business. Ask me before creating anything."
-msgstr ""
+msgstr "אנחנו {companyName}, חברה בתחום {industry}. עיין בנתונים שייבאתי והצע את האובייקטים, השדות והתצוגות הדרושים לנו כדי לנהל את העסק שלנו. שאל אותי לפני יצירת דבר כלשהו."
 
 #. js-lingui-id: mnANRQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
@@ -17025,7 +17025,7 @@ msgstr "קשת זרימת עבודה לא נמצאה."
 #. js-lingui-id: 5ENQ3i
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Workflow enabled"
-msgstr ""
+msgstr "זרימת עבודה הופעלה"
 
 #. js-lingui-id: aJ2Uba
 #: src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service.ts

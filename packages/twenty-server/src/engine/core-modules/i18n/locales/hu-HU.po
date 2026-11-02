@@ -206,7 +206,7 @@ msgstr "Egy irányítópult"
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
 msgid "A deal is won"
-msgstr ""
+msgstr "Egy üzlet megnyerésekor"
 
 #. js-lingui-id: ixdsnM
 #: src/engine/core-modules/dns-manager/exceptions/dns-manager.exception.ts
@@ -789,7 +789,7 @@ msgstr "Hozzáadás a listához"
 #. js-lingui-id: BBzZ81
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Add tools to your workspace."
-msgstr ""
+msgstr "Adjon eszközöket a munkaterületéhez."
 
 #. js-lingui-id: sGGJFX
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -1087,7 +1087,7 @@ msgstr "Egy ügynöknek nem lehet több mint {maxTriggers} indítója"
 #. js-lingui-id: KfRVdE
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "An agent drafts a follow-up for every deal about to close."
-msgstr ""
+msgstr "Egy ügynök utókövetést készít minden hamarosan lezáruló üzlethez."
 
 #. js-lingui-id: gxdZLa
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
@@ -1097,7 +1097,7 @@ msgstr "Egy alkalmazás által telepített ügynök nem nevezhető át."
 #. js-lingui-id: 3tWubk
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "An agent shapes your objects and fields around how you work."
-msgstr ""
+msgstr "Egy ügynök az Ön munkamódszeréhez igazítja az objektumokat és mezőket."
 
 #. js-lingui-id: 4vJ4de
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -1335,7 +1335,7 @@ msgstr "Aposztróf és pont"
 #. js-lingui-id: oABUXG
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "App installed"
-msgstr ""
+msgstr "Alkalmazás telepítve"
 
 #. js-lingui-id: 5nw74G
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -1982,12 +1982,12 @@ msgstr "Visszapattanás időpontja"
 #. js-lingui-id: 7piJZ+
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Bring your companies, contacts and deals from any CRM export."
-msgstr ""
+msgstr "Hozza be vállalatait, kapcsolatait és üzleteit bármely CRM-exportból."
 
 #. js-lingui-id: YYQkoU
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Bring your team into Twenty."
-msgstr ""
+msgstr "Hozza be csapatát a Twentybe."
 
 #. js-lingui-id: 8pSVh1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -3063,7 +3063,7 @@ msgstr "Cégek"
 #. js-lingui-id: UcnBjr
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Companies and people fill in from your emails and meetings."
-msgstr ""
+msgstr "A vállalatok és személyek automatikusan kitöltődnek az e-mailjeiből és megbeszéléseiből."
 
 #. js-lingui-id: aNUhqB
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -3292,7 +3292,7 @@ msgstr "Nem megengedett az összekapcsolás a(z) {connectFieldName} mezőn a(z) 
 #. js-lingui-id: eTJ1jL
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Connect your mailbox"
-msgstr ""
+msgstr "Csatlakoztassa postafiókját"
 
 #. js-lingui-id: So2wV4
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -3661,7 +3661,7 @@ msgstr "{objectLabelSingular} létrehozása"
 #. js-lingui-id: Y8ye8i
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
 msgid "Create a kickoff task"
-msgstr ""
+msgstr "Indítófeladat létrehozása"
 
 #. js-lingui-id: fbe2ik
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
@@ -4865,7 +4865,7 @@ msgstr "E-mail tárgysor"
 #. js-lingui-id: 4VrNsb
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
 msgid "Email the account owner"
-msgstr ""
+msgstr "E-mail küldése az ügyfélfelelősnek"
 
 #. js-lingui-id: q87JH5
 #: src/engine/core-modules/user/user.exception.ts
@@ -5205,7 +5205,7 @@ msgstr "Munkaterületi taghoz kötődő események"
 #. js-lingui-id: idSfue
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Every Monday, draft a follow-up email for each deal closing in the next 30 days."
-msgstr ""
+msgstr "Minden hétfőn készítsen utókövető e-mailt minden, a következő 30 napban lezáruló üzlethez."
 
 #. js-lingui-id: fVkHAH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -5915,17 +5915,17 @@ msgstr "A mappa elérési útja nem tartalmazhat fájlkiterjesztést — fájlok
 #. js-lingui-id: 9J7Yxo
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Follow up on closing deals"
-msgstr ""
+msgstr "Lezáruló üzletek utókövetése"
 
 #. js-lingui-id: Y2RyNo
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Follow-up instructions"
-msgstr ""
+msgstr "Utókövetési utasítások"
 
 #. js-lingui-id: xRdoZk
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Follow-up request sent"
-msgstr ""
+msgstr "Utókövetési kérés elküldve"
 
 #. js-lingui-id: eWmJYU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -6314,7 +6314,7 @@ msgstr "Csoport hash-e"
 #. js-lingui-id: cGqZJs
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Hand over won deals"
-msgstr ""
+msgstr "Megnyert üzletek átadása"
 
 #. js-lingui-id: M3UdIL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -6537,7 +6537,7 @@ msgstr "{objectLabelPlural} importálása"
 #. js-lingui-id: gQ9//i
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Import your data"
-msgstr ""
+msgstr "Importálja az adatokat"
 
 #. js-lingui-id: QPcp0k
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
@@ -6630,7 +6630,7 @@ msgstr "Bemeneti tokenek"
 #. js-lingui-id: 5u6qKW
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Install an app"
-msgstr ""
+msgstr "Alkalmazás telepítése"
 
 #. js-lingui-id: VUEkq2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -7624,12 +7624,12 @@ msgstr "Meghívó nem található"
 #. js-lingui-id: ZMCmkn
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Invitations sent"
-msgstr ""
+msgstr "Meghívó elküldve"
 
 #. js-lingui-id: d+Y+rP
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Invite your team"
-msgstr ""
+msgstr "Hívja meg csapatát"
 
 #. js-lingui-id: KJBRRe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -8248,12 +8248,12 @@ msgstr "Ugyanazzal az univerzális azonosítóval rendelkező logikai függvény
 #. js-lingui-id: y5Ysbs
 #: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts
 msgid "Look at the data I imported and suggest the objects, fields and views I need to run my business. Ask me what I want to track before creating anything."
-msgstr ""
+msgstr "Tekintse meg az importált adatokat, és javasolja azokat az objektumokat, mezőket és nézeteket, amelyekre szükségem van a vállalkozásom működtetéséhez. Mielőtt bármit létrehozna, kérdezze meg, mit szeretnék nyomon követni."
 
 #. js-lingui-id: AgKpIa
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Mailbox connected"
-msgstr ""
+msgstr "Postafiók csatlakoztatva"
 
 #. js-lingui-id: 07Jk6f
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -12382,12 +12382,12 @@ msgstr "A beállítási menüelem címe kötelező"
 #. js-lingui-id: x4ZiTl
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Setup instructions"
-msgstr ""
+msgstr "Telepítési utasítások"
 
 #. js-lingui-id: gIoyTf
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Setup request sent"
-msgstr ""
+msgstr "Beállítási kérelem elküldve"
 
 #. js-lingui-id: AaiDcy
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -12742,7 +12742,7 @@ msgstr "Táblázat"
 #. js-lingui-id: 73/iLE
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Spreadsheet uploaded"
-msgstr ""
+msgstr "Táblázat feltöltve"
 
 #. js-lingui-id: IP+RN5
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -12812,7 +12812,7 @@ msgstr "A hét kezdete"
 #. js-lingui-id: wcXsug
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Start the handover when a deal is won."
-msgstr ""
+msgstr "Indítsa el az átadást, amikor egy üzlet megnyertté válik."
 
 #. js-lingui-id: kg0Ky1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
@@ -13088,7 +13088,7 @@ msgstr "Nem található lap a widget duplikálásához."
 #. js-lingui-id: xRgQRi
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Tailor your workspace"
-msgstr ""
+msgstr "Szabja testre a munkaterületét"
 
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -14863,7 +14863,7 @@ msgstr "Ennek a beállítási menüelemnek a címe fenntartott."
 #. js-lingui-id: ukriVV
 #: src/engine/core-modules/getting-started/getting-started.exception.ts
 msgid "This step has no workflow."
-msgstr ""
+msgstr "Ennek a lépésnek nincs munkafolyamata."
 
 #. js-lingui-id: nFIPim
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -16726,7 +16726,7 @@ msgstr "Problémába ütköztünk, amikor megpróbáltunk csatlakozni az e-mail 
 #. js-lingui-id: b6WVV+
 #: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts
 msgid "We're {companyName}, a company in {industry}. Look at the data I imported and suggest the objects, fields and views we need to run our business. Ask me before creating anything."
-msgstr ""
+msgstr "Mi vagyunk a {companyName}, egy {industry} iparágban működő vállalat. Nézd meg az általam importált adatokat, és javasold azokat az objektumokat, mezőket és nézeteket, amelyekre szükségünk van vállalkozásunk működtetéséhez. Mielőtt bármit létrehoznál, kérdezz meg."
 
 #. js-lingui-id: mnANRQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
@@ -17025,7 +17025,7 @@ msgstr "Munkafolyamat-él nem található."
 #. js-lingui-id: 5ENQ3i
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Workflow enabled"
-msgstr ""
+msgstr "Munkafolyamat engedélyezve"
 
 #. js-lingui-id: aJ2Uba
 #: src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service.ts

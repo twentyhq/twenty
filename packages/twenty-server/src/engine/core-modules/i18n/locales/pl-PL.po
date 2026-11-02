@@ -206,7 +206,7 @@ msgstr "Pulpit"
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
 msgid "A deal is won"
-msgstr ""
+msgstr "Transakcja została wygrana"
 
 #. js-lingui-id: ixdsnM
 #: src/engine/core-modules/dns-manager/exceptions/dns-manager.exception.ts
@@ -789,7 +789,7 @@ msgstr "Dodaj do listy"
 #. js-lingui-id: BBzZ81
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Add tools to your workspace."
-msgstr ""
+msgstr "Dodaj narzędzia do swojej przestrzeni roboczej."
 
 #. js-lingui-id: sGGJFX
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -1087,7 +1087,7 @@ msgstr "Agent nie może mieć więcej niż {maxTriggers} wyzwalaczy"
 #. js-lingui-id: KfRVdE
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "An agent drafts a follow-up for every deal about to close."
-msgstr ""
+msgstr "Agent przygotowuje wiadomość follow-up dla każdej transakcji, która ma zostać wkrótce zamknięta."
 
 #. js-lingui-id: gxdZLa
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
@@ -1097,7 +1097,7 @@ msgstr "Agent zainstalowany przez aplikację nie może zostać przemianowany."
 #. js-lingui-id: 3tWubk
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "An agent shapes your objects and fields around how you work."
-msgstr ""
+msgstr "Agent dostosowuje obiekty i pola do Twojego sposobu pracy."
 
 #. js-lingui-id: 4vJ4de
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -1335,7 +1335,7 @@ msgstr "Apostrof i kropka"
 #. js-lingui-id: oABUXG
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "App installed"
-msgstr ""
+msgstr "Aplikacja zainstalowana"
 
 #. js-lingui-id: 5nw74G
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -1982,12 +1982,12 @@ msgstr "Odrzucono o"
 #. js-lingui-id: 7piJZ+
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Bring your companies, contacts and deals from any CRM export."
-msgstr ""
+msgstr "Przenieś swoje firmy, kontakty i transakcje z dowolnego eksportu CRM."
 
 #. js-lingui-id: YYQkoU
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Bring your team into Twenty."
-msgstr ""
+msgstr "Dodaj swój zespół do Twenty."
 
 #. js-lingui-id: 8pSVh1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -3063,7 +3063,7 @@ msgstr "Firmy"
 #. js-lingui-id: UcnBjr
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Companies and people fill in from your emails and meetings."
-msgstr ""
+msgstr "Firmy i osoby są uzupełniane na podstawie Twoich e-maili i spotkań."
 
 #. js-lingui-id: aNUhqB
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -3292,7 +3292,7 @@ msgstr "Podłączenie nie jest dozwolone dla \"{connectFieldName}\" na \"{object
 #. js-lingui-id: eTJ1jL
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Connect your mailbox"
-msgstr ""
+msgstr "Podłącz swoją skrzynkę pocztową"
 
 #. js-lingui-id: So2wV4
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -3661,7 +3661,7 @@ msgstr "Utwórz {objectLabelSingular}"
 #. js-lingui-id: Y8ye8i
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
 msgid "Create a kickoff task"
-msgstr ""
+msgstr "Utwórz zadanie rozpoczynające"
 
 #. js-lingui-id: fbe2ik
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
@@ -4865,7 +4865,7 @@ msgstr "Temat wiadomości e-mail"
 #. js-lingui-id: 4VrNsb
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
 msgid "Email the account owner"
-msgstr ""
+msgstr "Wyślij e-mail do właściciela konta"
 
 #. js-lingui-id: q87JH5
 #: src/engine/core-modules/user/user.exception.ts
@@ -5205,7 +5205,7 @@ msgstr "Wydarzenia powiązane z członkiem obszaru roboczego"
 #. js-lingui-id: idSfue
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Every Monday, draft a follow-up email for each deal closing in the next 30 days."
-msgstr ""
+msgstr "W każdy poniedziałek przygotuj wiadomość e-mail follow-up dla każdej transakcji zamykanej w ciągu najbliższych 30 dni."
 
 #. js-lingui-id: fVkHAH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -5915,17 +5915,17 @@ msgstr "Ścieżka folderu nie może zawierać rozszerzenia pliku — dla ścież
 #. js-lingui-id: 9J7Yxo
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Follow up on closing deals"
-msgstr ""
+msgstr "Podejmij działania follow-up dotyczące zamykanych transakcji"
 
 #. js-lingui-id: Y2RyNo
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Follow-up instructions"
-msgstr ""
+msgstr "Instrukcje dotyczące follow-upu"
 
 #. js-lingui-id: xRdoZk
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Follow-up request sent"
-msgstr ""
+msgstr "Wysłano prośbę o follow-up"
 
 #. js-lingui-id: eWmJYU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -6314,7 +6314,7 @@ msgstr "Skrót grupy"
 #. js-lingui-id: cGqZJs
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Hand over won deals"
-msgstr ""
+msgstr "Przekaż wygrane transakcje"
 
 #. js-lingui-id: M3UdIL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -6537,7 +6537,7 @@ msgstr "Importuj {objectLabelPlural}"
 #. js-lingui-id: gQ9//i
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Import your data"
-msgstr ""
+msgstr "Importuj swoje dane"
 
 #. js-lingui-id: QPcp0k
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
@@ -6630,7 +6630,7 @@ msgstr "Tokeny wejściowe"
 #. js-lingui-id: 5u6qKW
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Install an app"
-msgstr ""
+msgstr "Zainstaluj aplikację"
 
 #. js-lingui-id: VUEkq2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -7624,12 +7624,12 @@ msgstr "Nie znaleziono zaproszenia"
 #. js-lingui-id: ZMCmkn
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Invitations sent"
-msgstr ""
+msgstr "Zaproszenia wysłane"
 
 #. js-lingui-id: d+Y+rP
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Invite your team"
-msgstr ""
+msgstr "Zaproś swój zespół"
 
 #. js-lingui-id: KJBRRe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -8248,12 +8248,12 @@ msgstr "Funkcja logiczna o tym samym uniwersalnym identyfikatorze już istnieje"
 #. js-lingui-id: y5Ysbs
 #: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts
 msgid "Look at the data I imported and suggest the objects, fields and views I need to run my business. Ask me what I want to track before creating anything."
-msgstr ""
+msgstr "Przeanalizuj zaimportowane przeze mnie dane i zaproponuj obiekty, pola oraz widoki potrzebne do prowadzenia mojej firmy. Zanim cokolwiek utworzysz, zapytaj mnie, co chcę śledzić."
 
 #. js-lingui-id: AgKpIa
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Mailbox connected"
-msgstr ""
+msgstr "Skrzynka pocztowa połączona"
 
 #. js-lingui-id: 07Jk6f
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -12382,12 +12382,12 @@ msgstr "Tytuł pozycji menu ustawień jest wymagany"
 #. js-lingui-id: x4ZiTl
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Setup instructions"
-msgstr ""
+msgstr "Instrukcje konfiguracji"
 
 #. js-lingui-id: gIoyTf
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Setup request sent"
-msgstr ""
+msgstr "Wysłano prośbę o konfigurację"
 
 #. js-lingui-id: AaiDcy
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -12742,7 +12742,7 @@ msgstr "Arkusz kalkulacyjny"
 #. js-lingui-id: 73/iLE
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Spreadsheet uploaded"
-msgstr ""
+msgstr "Arkusz kalkulacyjny przesłany"
 
 #. js-lingui-id: IP+RN5
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -12812,7 +12812,7 @@ msgstr "Początek tygodnia"
 #. js-lingui-id: wcXsug
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Start the handover when a deal is won."
-msgstr ""
+msgstr "Rozpocznij przekazanie, gdy transakcja zostanie wygrana."
 
 #. js-lingui-id: kg0Ky1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
@@ -13088,7 +13088,7 @@ msgstr "Nie znaleziono karty do duplikowania widżetu."
 #. js-lingui-id: xRgQRi
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Tailor your workspace"
-msgstr ""
+msgstr "Dostosuj swoją przestrzeń roboczą"
 
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -14863,7 +14863,7 @@ msgstr "Tytuł tej pozycji menu ustawień jest zastrzeżony."
 #. js-lingui-id: ukriVV
 #: src/engine/core-modules/getting-started/getting-started.exception.ts
 msgid "This step has no workflow."
-msgstr ""
+msgstr "Ten krok nie ma przepływu pracy."
 
 #. js-lingui-id: nFIPim
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -16726,7 +16726,7 @@ msgstr "Napotkaliśmy problem z połączeniem z twoim kontem email. Sprawdź swo
 #. js-lingui-id: b6WVV+
 #: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts
 msgid "We're {companyName}, a company in {industry}. Look at the data I imported and suggest the objects, fields and views we need to run our business. Ask me before creating anything."
-msgstr ""
+msgstr "Jesteśmy {companyName}, firmą z branży {industry}. Przeanalizuj zaimportowane przeze mnie dane i zaproponuj obiekty, pola oraz widoki potrzebne do prowadzenia naszej firmy. Zanim cokolwiek utworzysz, zapytaj mnie."
 
 #. js-lingui-id: mnANRQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
@@ -17025,7 +17025,7 @@ msgstr "Nie znaleziono krawędzi przepływu pracy."
 #. js-lingui-id: 5ENQ3i
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Workflow enabled"
-msgstr ""
+msgstr "Przepływ pracy włączony"
 
 #. js-lingui-id: aJ2Uba
 #: src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service.ts

@@ -700,12 +700,12 @@ msgstr "{days, plural, one {{days} päivä} other {{days} päivää}}"
 #. js-lingui-id: Irx6Dx
 #: src/modules/getting-started/components/GettingStartedSidebarTrialCountdown.tsx
 msgid "{daysLeft, plural, one {# day left} other {# days left}}"
-msgstr ""
+msgstr "{daysLeft, plural, one {# päivä jäljellä} other {# päivää jäljellä}}"
 
 #. js-lingui-id: omamQu
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "{daysLeft, plural, one {day left in your trial} other {days left in your trial}}"
-msgstr ""
+msgstr "{daysLeft, plural, one {päivä jäljellä kokeilussasi} other {päivää jäljellä kokeilussasi}}"
 
 #. js-lingui-id: 7o03+8
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -961,7 +961,7 @@ msgstr "{participantNames} kirjoittaa…"
 #. js-lingui-id: v5nX2L
 #: src/modules/getting-started/components/GettingStartedMailboxDoneDescription.tsx
 msgid "{peopleCount, plural, one {{formattedPeopleCount} person} other {{formattedPeopleCount} people}} and {companyCount, plural, one {{formattedCompanyCount} company} other {{formattedCompanyCount} companies}} in your workspace"
-msgstr ""
+msgstr "{peopleCount, plural, one {{formattedPeopleCount} henkilö} other {{formattedPeopleCount} henkilöä}} ja {companyCount, plural, one {{formattedCompanyCount} yritys} other {{formattedCompanyCount} yritystä}} työtilassasi"
 
 #. js-lingui-id: FaQB54
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
@@ -1018,12 +1018,12 @@ msgstr "{remainingDraftCount, plural, =0 {Ei enää luonnoksia tämän jälkeen}
 #. js-lingui-id: mqfjQO
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "{remainingStepCount, plural, one {Finish # step by {formattedTrialEnd}} other {Finish # steps by {formattedTrialEnd}}}"
-msgstr ""
+msgstr "{remainingStepCount, plural, one {Suorita # vaihe viimeistään {formattedTrialEnd}} other {Suorita # vaihetta viimeistään {formattedTrialEnd}}}"
 
 #. js-lingui-id: yICp8R
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "{remainingStepCount, plural, one {Finish # step} other {Finish # steps}}"
-msgstr ""
+msgstr "{remainingStepCount, plural, one {Viimeistele # vaihe} other {Viimeistele # vaihetta}}"
 
 #. js-lingui-id: r4MTJW
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
@@ -1567,7 +1567,7 @@ msgstr "90 päivää"
 #. js-lingui-id: 81nnG3
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "A CSV or Excel export from any tool"
-msgstr ""
+msgstr "CSV- tai Excel-vienti mistä tahansa työkalusta"
 
 #. js-lingui-id: 43TqJC
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -2222,7 +2222,7 @@ msgstr "Lisää tietoja vieraille"
 #. js-lingui-id: An/Fke
 #: src/modules/ai/components/DirectMessageMemberPicker.tsx
 msgid "Add DM"
-msgstr ""
+msgstr "Lisää yksityisviesti"
 
 #. js-lingui-id: 0+CYPj
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
@@ -3304,7 +3304,7 @@ msgstr "Kaikki lähteet"
 #. js-lingui-id: wiGHxh
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "All steps done"
-msgstr ""
+msgstr "Kaikki vaiheet suoritettu"
 
 #. js-lingui-id: p+lpde
 #: src/modules/activities/tasks/components/TaskGroupsContent.tsx
@@ -4671,7 +4671,7 @@ msgstr "Takaisin sisältöön"
 #. js-lingui-id: +cSNzs
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "Back to current step"
-msgstr ""
+msgstr "Takaisin nykyiseen vaiheeseen"
 
 #. js-lingui-id: dGEega
 #: src/pages/ai-chat/AiChatInboxPage.tsx
@@ -7238,7 +7238,7 @@ msgstr "Jatka iteraation epäonnistuessa"
 #. js-lingui-id: uxdS61
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 msgid "Continue setup"
-msgstr ""
+msgstr "Jatka määritystä"
 
 #. js-lingui-id: RvVi9c
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
@@ -7571,7 +7571,7 @@ msgstr "Mediakäyttöoikeutta ei voitu myöntää. Yritä uudelleen."
 #. js-lingui-id: rLrhvg
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "Could not load Getting started."
-msgstr ""
+msgstr "Aloittamista ei voitu ladata."
 
 #. js-lingui-id: Y5qCpF
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
@@ -9902,7 +9902,7 @@ msgstr "DMARC-käytäntö"
 #. js-lingui-id: TdAWxF
 #: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
 msgid "DMs"
-msgstr ""
+msgstr "Yksityisviestit"
 
 #. js-lingui-id: naBq2D
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
@@ -12038,7 +12038,7 @@ msgstr "Vie ({percentageValue} %)"
 #. js-lingui-id: YkvQVd
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "Export a CSV from"
-msgstr ""
+msgstr "Vie CSV-tiedosto kohteesta"
 
 #. js-lingui-id: 2KAI4N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -13124,7 +13124,7 @@ msgstr "Viimeistele määritys"
 #. js-lingui-id: 97Hg0Y
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "Finish your setup"
-msgstr ""
+msgstr "Viimeistele määritys"
 
 #. js-lingui-id: 4dQFvz
 #: src/modules/ai/constants/AiChatThreadReasons.ts
@@ -13366,7 +13366,7 @@ msgstr "Yhdistettyjä tilejä löytyi"
 #. js-lingui-id: Vc8HGN
 #: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 msgid "Found in your emails"
-msgstr ""
+msgstr "Löytyy sähköposteistasi"
 
 #. js-lingui-id: 1hxId5
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -13703,17 +13703,17 @@ msgstr "Saa vain tämän tietueen: hänen roolillaan ei ole pääsyä kohteisiin
 #: src/pages/getting-started/GettingStartedPage.tsx
 #: src/pages/getting-started/GettingStartedPage.tsx
 msgid "Getting started"
-msgstr ""
+msgstr "Aloittaminen"
 
 #. js-lingui-id: YRBB4k
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 msgid "Getting started progress"
-msgstr ""
+msgstr "Aloittamisen edistyminen"
 
 #. js-lingui-id: dV3VgV
 #: src/modules/getting-started/components/GettingStartedStepStack.tsx
 msgid "Getting started steps"
-msgstr ""
+msgstr "Aloittamisen vaiheet"
 
 #. js-lingui-id: XXtAx5
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
@@ -14254,7 +14254,7 @@ msgstr "Piilota kentät"
 #. js-lingui-id: 3CeQ1O
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 msgid "Hide for good"
-msgstr ""
+msgstr "Piilota pysyvästi"
 
 #. js-lingui-id: CbeJV4
 #. placeholder {0}: groupValue ?? ''
@@ -14756,7 +14756,7 @@ msgstr "Tuo tai lisää MCP-määritys JetBrainsin asetuksista."
 #. js-lingui-id: e2aT+Z
 #: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
 msgid "Import the attached files into Twenty. Work out which records they contain, then create them and link them together."
-msgstr ""
+msgstr "Tuo liitetyt tiedostot Twentyyn. Selvitä, mitä tietueita ne sisältävät, luo ne ja yhdistä ne toisiinsa."
 
 #. js-lingui-id: vXTVX9
 #: src/pages/onboarding/ImportContacts.tsx
@@ -14802,7 +14802,7 @@ msgstr "{listName} kuluttua"
 #. js-lingui-id: jS5U2e
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 msgid "In an hour"
-msgstr ""
+msgstr "Tunnin kuluttua"
 
 #. js-lingui-id: /LCAwL
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
@@ -15064,7 +15064,7 @@ msgstr "Asenna {appDisplayName} työtilaasi"
 #. js-lingui-id: rQN3ie
 #: src/modules/getting-started/components/GettingStartedAppInstallButton.tsx
 msgid "Install {appLabel}"
-msgstr ""
+msgstr "Asenna {appLabel}"
 
 #. js-lingui-id: sOOkDn
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
@@ -15691,7 +15691,7 @@ msgstr "Kanban-widget"
 #. js-lingui-id: uW9WOr
 #: src/modules/getting-started/hooks/useGettingStartedTrial.ts
 msgid "Keep {planLabel}"
-msgstr ""
+msgstr "Pidä {planLabel}"
 
 #. js-lingui-id: LHkoee
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
@@ -15716,7 +15716,7 @@ msgstr "Jatka avausteni ja napsautusteni seurantaa"
 #. js-lingui-id: 9l8cs3
 #: src/modules/getting-started/hooks/useGettingStartedTrial.ts
 msgid "Keep your plan"
-msgstr ""
+msgstr "Pidä tilauksesi"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -16687,7 +16687,7 @@ msgstr "Ladataan töitä..."
 #. js-lingui-id: YyMToN
 #: src/modules/ai/components/DirectMessageMemberPicker.tsx
 msgid "Loading members"
-msgstr ""
+msgstr "Ladataan jäseniä"
 
 #. js-lingui-id: s1MstR
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -16750,7 +16750,7 @@ msgstr "Ladataan ketjua"
 #. js-lingui-id: KOolcu
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "Loading your progress"
-msgstr ""
+msgstr "Ladataan edistymistäsi"
 
 #. js-lingui-id: Z3FXyt
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
@@ -18214,7 +18214,7 @@ msgstr "Nimi: {0}"
 #. js-lingui-id: fZT56Z
 #: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 msgid "name@{emailDomain}"
-msgstr ""
+msgstr "name@{emailDomain}"
 
 #. js-lingui-id: JxC/pi
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
@@ -19161,7 +19161,7 @@ msgstr "Ei jäseniä osoitettuna"
 #. js-lingui-id: FK5/sf
 #: src/modules/ai/components/DirectMessageMemberPicker.tsx
 msgid "No members found"
-msgstr ""
+msgstr "Jäseniä ei löytynyt"
 
 #. js-lingui-id: /nLvVj
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
@@ -20230,7 +20230,7 @@ msgstr "Vain npm:ään julkaistuja sovelluksia voidaan ottaa omistukseen tällä
 #. js-lingui-id: dD26o4
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "Only CSV and Excel files are supported"
-msgstr ""
+msgstr "Vain CSV- ja Excel-tiedostoja tuetaan"
 
 #. js-lingui-id: zii2Qj
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
@@ -20393,7 +20393,7 @@ msgstr "Avaa Cursorin MCP-asennusohjelma Twenty-etäpalvelimen määrityksellä.
 #. js-lingui-id: JvSHIq
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 msgid "Open Getting started"
-msgstr ""
+msgstr "Avaa Aloittaminen"
 
 #. js-lingui-id: pZZH4Q
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -20504,7 +20504,7 @@ msgstr "Avaa sivupaneeli"
 #. js-lingui-id: Cq4Ta5
 #: src/modules/getting-started/components/GettingStartedWorkflowAction.tsx
 msgid "Open the workflow"
-msgstr ""
+msgstr "Avaa työnkulku"
 
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -25100,7 +25100,7 @@ msgstr "Lähetä sähköposteja yhdistettyjen tilien kautta"
 #. js-lingui-id: lPcA5V
 #: src/modules/getting-started/components/GettingStartedPromptAction.tsx
 msgid "Send instructions"
-msgstr ""
+msgstr "Lähetä ohjeet"
 
 #. js-lingui-id: 6nwEi6
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -25378,7 +25378,7 @@ msgstr "Määritä seuraavat DNS-tietueet kohteelle {domain} selaimessani jo avo
 #. js-lingui-id: uB2UEQ
 #: src/modules/getting-started/components/GettingStartedWorkflowAction.tsx
 msgid "Set up the workflow"
-msgstr ""
+msgstr "Määritä työnkulku"
 
 #. js-lingui-id: 9HNKkV
 #: src/modules/settings/applications/components/SettingsApplicationDetailVariablesTab.tsx
@@ -25652,7 +25652,7 @@ msgstr "Näytä vain virheelliset rivit"
 #. js-lingui-id: 9u2I/P
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
-msgstr ""
+msgstr "Näytä Aloittaminen-sivu ja sivupalkkikortti ja avaa se aloitussivulla kokeilujakson aikana."
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -25987,7 +25987,7 @@ msgstr "Torkutus päättyi {eventTime}"
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 msgid "Snooze Getting started"
-msgstr ""
+msgstr "Torkuta Aloittaminen"
 
 #. js-lingui-id: VkkXmS
 #: src/modules/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker.tsx
@@ -26230,7 +26230,7 @@ msgstr "Jaettu näkymä"
 #. js-lingui-id: jAoGz1
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "Spreadsheet"
-msgstr ""
+msgstr "Laskentataulukko"
 
 #. js-lingui-id: vnS6Rf
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -27147,7 +27147,7 @@ msgstr "Tiimin jäsen"
 #. js-lingui-id: IVUOhR
 #: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 msgid "Teammate email {emailNumber}"
-msgstr ""
+msgstr "Tiimikaverin sähköposti {emailNumber}"
 
 #. js-lingui-id: GEkQWt
 #. placeholder {0}: index + 1
@@ -27164,7 +27164,7 @@ msgstr "Tiimikaverit"
 #. js-lingui-id: Dqvkhs
 #: src/modules/getting-started/components/GettingStartedMailboxAction.tsx
 msgid "Teammates see who you talk to, not what you write."
-msgstr ""
+msgstr "Tiimikaverit näkevät, kenen kanssa keskustelet, eivät sitä, mitä kirjoitat."
 
 #. js-lingui-id: XpPpz7
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
@@ -29478,7 +29478,7 @@ msgstr "Asti {snoozedUntilDay}"
 #. js-lingui-id: LRU2W5
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 msgid "Until the last 3 days"
-msgstr ""
+msgstr "Viimeisten 3 päivän ajan"
 
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AiChatThreadListItem.tsx
@@ -30109,7 +30109,7 @@ msgstr "Käytä APIamme tai lisää ensimmäinen {objectLabel} käsin"
 #. js-lingui-id: zwL0lf
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "Use the import wizard instead"
-msgstr ""
+msgstr "Käytä sen sijaan tuontitoimintoa"
 
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -32086,12 +32086,12 @@ msgstr "Tilauksesi tila on: {statusLabel}"
 #. js-lingui-id: RMyx+h
 #: src/modules/getting-started/utils/getGettingStartedKeepPlanDescription.ts
 msgid "Your trial ends on {formattedTrialEnd}. Add a card now to keep your plan after that. You won't be charged before then."
-msgstr ""
+msgstr "Kokeilujaksosi päättyy {formattedTrialEnd}. Lisää maksukortti nyt, jotta voit pitää tilauksesi sen jälkeen. Sinua ei veloiteta ennen sitä."
 
 #. js-lingui-id: 0p2q58
 #: src/modules/getting-started/utils/getGettingStartedKeepPlanDescription.ts
 msgid "Your trial ends on {formattedTrialEnd}. Add a card now to stay on the {planLabel} plan after that. You won't be charged before then."
-msgstr ""
+msgstr "Kokeilujaksosi päättyy {formattedTrialEnd}. Lisää maksukortti nyt, jotta voit jatkaa {planLabel}-tilauksella sen jälkeen. Sinua ei veloiteta ennen sitä."
 
 #. js-lingui-id: oC6WBs
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx

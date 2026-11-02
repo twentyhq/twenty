@@ -700,12 +700,12 @@ msgstr "{days, plural, one {{days} יום} two {{days} ימים} many {{days} י
 #. js-lingui-id: Irx6Dx
 #: src/modules/getting-started/components/GettingStartedSidebarTrialCountdown.tsx
 msgid "{daysLeft, plural, one {# day left} other {# days left}}"
-msgstr ""
+msgstr "{daysLeft, plural, one {נותר # יום} two {נותרו # ימים} other {נותרו # ימים}}"
 
 #. js-lingui-id: omamQu
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "{daysLeft, plural, one {day left in your trial} other {days left in your trial}}"
-msgstr ""
+msgstr "{daysLeft, plural, one {נותר יום אחד בתקופת הניסיון שלך} two {נותרו יומיים בתקופת הניסיון שלך} other {נותרו ימים בתקופת הניסיון שלך}}"
 
 #. js-lingui-id: 7o03+8
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -961,7 +961,7 @@ msgstr "{participantNames} מקליד/ה…"
 #. js-lingui-id: v5nX2L
 #: src/modules/getting-started/components/GettingStartedMailboxDoneDescription.tsx
 msgid "{peopleCount, plural, one {{formattedPeopleCount} person} other {{formattedPeopleCount} people}} and {companyCount, plural, one {{formattedCompanyCount} company} other {{formattedCompanyCount} companies}} in your workspace"
-msgstr ""
+msgstr "{peopleCount, plural, one {{formattedPeopleCount} אדם} two {{formattedPeopleCount} אנשים} other {{formattedPeopleCount} אנשים}} ו-{companyCount, plural, one {{formattedCompanyCount} חברה} two {{formattedCompanyCount} חברות} other {{formattedCompanyCount} חברות}} במרחב העבודה שלך"
 
 #. js-lingui-id: FaQB54
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
@@ -1018,12 +1018,12 @@ msgstr "{remainingDraftCount, plural, =0 {אין טיוטות נוספות אח�
 #. js-lingui-id: mqfjQO
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "{remainingStepCount, plural, one {Finish # step by {formattedTrialEnd}} other {Finish # steps by {formattedTrialEnd}}}"
-msgstr ""
+msgstr "{remainingStepCount, plural, one {השלם שלב אחד עד {formattedTrialEnd}} two {השלם שני שלבים עד {formattedTrialEnd}} other {השלם # שלבים עד {formattedTrialEnd}}}"
 
 #. js-lingui-id: yICp8R
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "{remainingStepCount, plural, one {Finish # step} other {Finish # steps}}"
-msgstr ""
+msgstr "{remainingStepCount, plural, one {סיים # שלב} two {סיים # שלבים} other {סיים # שלבים}}"
 
 #. js-lingui-id: r4MTJW
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
@@ -1567,7 +1567,7 @@ msgstr "90 ימים"
 #. js-lingui-id: 81nnG3
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "A CSV or Excel export from any tool"
-msgstr ""
+msgstr "ייצוא CSV או Excel מכל כלי"
 
 #. js-lingui-id: 43TqJC
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -2222,7 +2222,7 @@ msgstr "הוסף פרטים עבור האורחים"
 #. js-lingui-id: An/Fke
 #: src/modules/ai/components/DirectMessageMemberPicker.tsx
 msgid "Add DM"
-msgstr ""
+msgstr "הוסף הודעה ישירה"
 
 #. js-lingui-id: 0+CYPj
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
@@ -3304,7 +3304,7 @@ msgstr "כל המקורות"
 #. js-lingui-id: wiGHxh
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "All steps done"
-msgstr ""
+msgstr "כל השלבים הושלמו"
 
 #. js-lingui-id: p+lpde
 #: src/modules/activities/tasks/components/TaskGroupsContent.tsx
@@ -4671,7 +4671,7 @@ msgstr "חזרה לתוכן"
 #. js-lingui-id: +cSNzs
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "Back to current step"
-msgstr ""
+msgstr "חזרה לשלב הנוכחי"
 
 #. js-lingui-id: dGEega
 #: src/pages/ai-chat/AiChatInboxPage.tsx
@@ -7238,7 +7238,7 @@ msgstr "המשך בעת כשל באיטרציה"
 #. js-lingui-id: uxdS61
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 msgid "Continue setup"
-msgstr ""
+msgstr "המשך בהגדרה"
 
 #. js-lingui-id: RvVi9c
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
@@ -7571,7 +7571,7 @@ msgstr "לא ניתן היה להעניק גישה למדיה. נסה שוב."
 #. js-lingui-id: rLrhvg
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "Could not load Getting started."
-msgstr ""
+msgstr "לא ניתן לטעון את תחילת העבודה."
 
 #. js-lingui-id: Y5qCpF
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
@@ -9902,7 +9902,7 @@ msgstr "מדיניות DMARC"
 #. js-lingui-id: TdAWxF
 #: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
 msgid "DMs"
-msgstr ""
+msgstr "הודעות ישירות"
 
 #. js-lingui-id: naBq2D
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
@@ -12038,7 +12038,7 @@ msgstr "ייצוא ({percentageValue}%)"
 #. js-lingui-id: YkvQVd
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "Export a CSV from"
-msgstr ""
+msgstr "ייצוא CSV מ"
 
 #. js-lingui-id: 2KAI4N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -13124,7 +13124,7 @@ msgstr "סיום ההגדרה"
 #. js-lingui-id: 97Hg0Y
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "Finish your setup"
-msgstr ""
+msgstr "סיים את ההגדרה שלך"
 
 #. js-lingui-id: 4dQFvz
 #: src/modules/ai/constants/AiChatThreadReasons.ts
@@ -13366,7 +13366,7 @@ msgstr "נמצאו חשבונות מחוברים"
 #. js-lingui-id: Vc8HGN
 #: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 msgid "Found in your emails"
-msgstr ""
+msgstr "נמצא בהודעות הדוא\"ל שלך"
 
 #. js-lingui-id: 1hxId5
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -13703,17 +13703,17 @@ msgstr "מקבל רק את הרשומה הזו: לתפקיד שלו אין גי�
 #: src/pages/getting-started/GettingStartedPage.tsx
 #: src/pages/getting-started/GettingStartedPage.tsx
 msgid "Getting started"
-msgstr ""
+msgstr "תחילת העבודה"
 
 #. js-lingui-id: YRBB4k
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 msgid "Getting started progress"
-msgstr ""
+msgstr "התקדמות תחילת העבודה"
 
 #. js-lingui-id: dV3VgV
 #: src/modules/getting-started/components/GettingStartedStepStack.tsx
 msgid "Getting started steps"
-msgstr ""
+msgstr "שלבי תחילת העבודה"
 
 #. js-lingui-id: XXtAx5
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
@@ -14254,7 +14254,7 @@ msgstr "הסתר שדות"
 #. js-lingui-id: 3CeQ1O
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 msgid "Hide for good"
-msgstr ""
+msgstr "הסתר לצמיתות"
 
 #. js-lingui-id: CbeJV4
 #. placeholder {0}: groupValue ?? ''
@@ -14756,7 +14756,7 @@ msgstr "ייבא או הוסף את תצורת MCP מתוך ההגדרות של 
 #. js-lingui-id: e2aT+Z
 #: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
 msgid "Import the attached files into Twenty. Work out which records they contain, then create them and link them together."
-msgstr ""
+msgstr "ייבא את הקבצים המצורפים אל Twenty. זהה אילו רשומות הם מכילים, ולאחר מכן צור אותן וקשר ביניהן."
 
 #. js-lingui-id: vXTVX9
 #: src/pages/onboarding/ImportContacts.tsx
@@ -14802,7 +14802,7 @@ msgstr "בעוד {listName}"
 #. js-lingui-id: jS5U2e
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 msgid "In an hour"
-msgstr ""
+msgstr "בעוד שעה"
 
 #. js-lingui-id: /LCAwL
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
@@ -15064,7 +15064,7 @@ msgstr "התקן את {appDisplayName} בסביבת העבודה שלך"
 #. js-lingui-id: rQN3ie
 #: src/modules/getting-started/components/GettingStartedAppInstallButton.tsx
 msgid "Install {appLabel}"
-msgstr ""
+msgstr "התקן את {appLabel}"
 
 #. js-lingui-id: sOOkDn
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
@@ -15691,7 +15691,7 @@ msgstr "וידג'ט קנבן"
 #. js-lingui-id: uW9WOr
 #: src/modules/getting-started/hooks/useGettingStartedTrial.ts
 msgid "Keep {planLabel}"
-msgstr ""
+msgstr "שמור על {planLabel}"
 
 #. js-lingui-id: LHkoee
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
@@ -15716,7 +15716,7 @@ msgstr "המשך לעקוב אחר פתיחות ולחיצות שלי"
 #. js-lingui-id: 9l8cs3
 #: src/modules/getting-started/hooks/useGettingStartedTrial.ts
 msgid "Keep your plan"
-msgstr ""
+msgstr "שמור על התוכנית שלך"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -16687,7 +16687,7 @@ msgstr "טוען עבודות..."
 #. js-lingui-id: YyMToN
 #: src/modules/ai/components/DirectMessageMemberPicker.tsx
 msgid "Loading members"
-msgstr ""
+msgstr "טוען חברים"
 
 #. js-lingui-id: s1MstR
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -16750,7 +16750,7 @@ msgstr "טוען שרשור"
 #. js-lingui-id: KOolcu
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "Loading your progress"
-msgstr ""
+msgstr "טוען את ההתקדמות שלך"
 
 #. js-lingui-id: Z3FXyt
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
@@ -18214,7 +18214,7 @@ msgstr "שם: {0}"
 #. js-lingui-id: fZT56Z
 #: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 msgid "name@{emailDomain}"
-msgstr ""
+msgstr "name@{emailDomain}"
 
 #. js-lingui-id: JxC/pi
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
@@ -19161,7 +19161,7 @@ msgstr "אין חברים מוקצים"
 #. js-lingui-id: FK5/sf
 #: src/modules/ai/components/DirectMessageMemberPicker.tsx
 msgid "No members found"
-msgstr ""
+msgstr "לא נמצאו חברים"
 
 #. js-lingui-id: /nLvVj
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
@@ -20230,7 +20230,7 @@ msgstr "רק אפליקציות שפורסמו ל-npm ניתן לתבוע בדר
 #. js-lingui-id: dD26o4
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "Only CSV and Excel files are supported"
-msgstr ""
+msgstr "נתמכים רק קובצי CSV ו-Excel"
 
 #. js-lingui-id: zii2Qj
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
@@ -20393,7 +20393,7 @@ msgstr "פתח את מתקין ה-MCP של Cursor עם תצורת השרת המ�
 #. js-lingui-id: JvSHIq
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 msgid "Open Getting started"
-msgstr ""
+msgstr "פתח את תחילת העבודה"
 
 #. js-lingui-id: pZZH4Q
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -20504,7 +20504,7 @@ msgstr "פתח את חלונית הצד"
 #. js-lingui-id: Cq4Ta5
 #: src/modules/getting-started/components/GettingStartedWorkflowAction.tsx
 msgid "Open the workflow"
-msgstr ""
+msgstr "פתח את זרימת העבודה"
 
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -25100,7 +25100,7 @@ msgstr "שלח אימיילים דרך חשבונות מחוברים"
 #. js-lingui-id: lPcA5V
 #: src/modules/getting-started/components/GettingStartedPromptAction.tsx
 msgid "Send instructions"
-msgstr ""
+msgstr "שלח הוראות"
 
 #. js-lingui-id: 6nwEi6
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -25378,7 +25378,7 @@ msgstr "הגדר את רשומות ה-DNS הבאות עבור {domain} בחשב�
 #. js-lingui-id: uB2UEQ
 #: src/modules/getting-started/components/GettingStartedWorkflowAction.tsx
 msgid "Set up the workflow"
-msgstr ""
+msgstr "הגדר את זרימת העבודה"
 
 #. js-lingui-id: 9HNKkV
 #: src/modules/settings/applications/components/SettingsApplicationDetailVariablesTab.tsx
@@ -25652,7 +25652,7 @@ msgstr "הצג רק שורות עם שגיאות"
 #. js-lingui-id: 9u2I/P
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
-msgstr ""
+msgstr "הצג את דף תחילת העבודה ואת כרטיס סרגל הצד, ופתח אותו בעת הנחיתה במהלך תקופת הניסיון."
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -25987,7 +25987,7 @@ msgstr "ההשהיה הסתיימה {eventTime}"
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 msgid "Snooze Getting started"
-msgstr ""
+msgstr "השהה את תחילת העבודה"
 
 #. js-lingui-id: VkkXmS
 #: src/modules/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker.tsx
@@ -26230,7 +26230,7 @@ msgstr "תצוגה מפוצלת"
 #. js-lingui-id: jAoGz1
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "Spreadsheet"
-msgstr ""
+msgstr "גיליון אלקטרוני"
 
 #. js-lingui-id: vnS6Rf
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -27147,7 +27147,7 @@ msgstr "חבר צוות"
 #. js-lingui-id: IVUOhR
 #: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 msgid "Teammate email {emailNumber}"
-msgstr ""
+msgstr "כתובת הדוא\"ל של חבר/ת צוות {emailNumber}"
 
 #. js-lingui-id: GEkQWt
 #. placeholder {0}: index + 1
@@ -27164,7 +27164,7 @@ msgstr "חברי צוות"
 #. js-lingui-id: Dqvkhs
 #: src/modules/getting-started/components/GettingStartedMailboxAction.tsx
 msgid "Teammates see who you talk to, not what you write."
-msgstr ""
+msgstr "חברי הצוות רואים עם מי אתה מדבר, לא מה אתה כותב."
 
 #. js-lingui-id: XpPpz7
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
@@ -29478,7 +29478,7 @@ msgstr "עד {snoozedUntilDay}"
 #. js-lingui-id: LRU2W5
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 msgid "Until the last 3 days"
-msgstr ""
+msgstr "עד 3 הימים האחרונים"
 
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AiChatThreadListItem.tsx
@@ -30109,7 +30109,7 @@ msgstr "השתמש ב-API שלנו או הוסף את ה{objectLabel} הראשו
 #. js-lingui-id: zwL0lf
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "Use the import wizard instead"
-msgstr ""
+msgstr "השתמש באשף הייבוא במקום זאת"
 
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -32086,12 +32086,12 @@ msgstr "סטטוס המנוי שלך הוא: {statusLabel}"
 #. js-lingui-id: RMyx+h
 #: src/modules/getting-started/utils/getGettingStartedKeepPlanDescription.ts
 msgid "Your trial ends on {formattedTrialEnd}. Add a card now to keep your plan after that. You won't be charged before then."
-msgstr ""
+msgstr "תקופת הניסיון שלך מסתיימת ב-{formattedTrialEnd}. הוסף כרטיס עכשיו כדי לשמור על התוכנית שלך לאחר מכן. לא תחויב לפני כן."
 
 #. js-lingui-id: 0p2q58
 #: src/modules/getting-started/utils/getGettingStartedKeepPlanDescription.ts
 msgid "Your trial ends on {formattedTrialEnd}. Add a card now to stay on the {planLabel} plan after that. You won't be charged before then."
-msgstr ""
+msgstr "תקופת הניסיון שלך מסתיימת ב-{formattedTrialEnd}. הוסף כרטיס עכשיו כדי להישאר בתוכנית {planLabel} לאחר מכן. לא תחויב לפני כן."
 
 #. js-lingui-id: oC6WBs
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx

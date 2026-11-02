@@ -700,12 +700,12 @@ msgstr "{days, plural, one {{days} den} few {{days} dny} many {{days} dnů} othe
 #. js-lingui-id: Irx6Dx
 #: src/modules/getting-started/components/GettingStartedSidebarTrialCountdown.tsx
 msgid "{daysLeft, plural, one {# day left} other {# days left}}"
-msgstr ""
+msgstr "{daysLeft, plural, one {Zbývá # den} few {Zbývají # dny} many {Zbývá # dní} other {Zbývá # dne}}"
 
 #. js-lingui-id: omamQu
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "{daysLeft, plural, one {day left in your trial} other {days left in your trial}}"
-msgstr ""
+msgstr "{daysLeft, plural, one {den do konce zkušebního období} few {dny do konce zkušebního období} many {dne do konce zkušebního období} other {dní do konce zkušebního období}}"
 
 #. js-lingui-id: 7o03+8
 #: src/modules/settings/data-model/fields/forms/currency/components/SettingsDataModelFieldCurrencyForm.tsx
@@ -961,7 +961,7 @@ msgstr "{participantNames} píše…"
 #. js-lingui-id: v5nX2L
 #: src/modules/getting-started/components/GettingStartedMailboxDoneDescription.tsx
 msgid "{peopleCount, plural, one {{formattedPeopleCount} person} other {{formattedPeopleCount} people}} and {companyCount, plural, one {{formattedCompanyCount} company} other {{formattedCompanyCount} companies}} in your workspace"
-msgstr ""
+msgstr "{peopleCount, plural, one {{formattedPeopleCount} osoba} few {{formattedPeopleCount} osoby} many {{formattedPeopleCount} osoby} other {{formattedPeopleCount} osob}} a {companyCount, plural, one {{formattedCompanyCount} společnost} few {{formattedCompanyCount} společnosti} many {{formattedCompanyCount} společnosti} other {{formattedCompanyCount} společností}} ve vašem pracovním prostoru"
 
 #. js-lingui-id: FaQB54
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
@@ -1018,12 +1018,12 @@ msgstr "{remainingDraftCount, plural, =0 {Po tomto už žádné další koncepty
 #. js-lingui-id: mqfjQO
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "{remainingStepCount, plural, one {Finish # step by {formattedTrialEnd}} other {Finish # steps by {formattedTrialEnd}}}"
-msgstr ""
+msgstr "{remainingStepCount, plural, one {Dokončete # krok do {formattedTrialEnd}} few {Dokončete # kroky do {formattedTrialEnd}} many {Dokončete # kroku do {formattedTrialEnd}} other {Dokončete # kroků do {formattedTrialEnd}}}"
 
 #. js-lingui-id: yICp8R
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "{remainingStepCount, plural, one {Finish # step} other {Finish # steps}}"
-msgstr ""
+msgstr "{remainingStepCount, plural, one {Dokončete # krok} few {Dokončete # kroky} many {Dokončete # kroků} other {Dokončete # kroků}}"
 
 #. js-lingui-id: r4MTJW
 #: src/modules/log-console/hooks/useLogConsoleRetention.ts
@@ -1567,7 +1567,7 @@ msgstr "90 dní"
 #. js-lingui-id: 81nnG3
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "A CSV or Excel export from any tool"
-msgstr ""
+msgstr "Export CSV nebo Excel z libovolného nástroje"
 
 #. js-lingui-id: 43TqJC
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -2222,7 +2222,7 @@ msgstr "Přidat podrobnosti pro hosty"
 #. js-lingui-id: An/Fke
 #: src/modules/ai/components/DirectMessageMemberPicker.tsx
 msgid "Add DM"
-msgstr ""
+msgstr "Přidat DM"
 
 #. js-lingui-id: 0+CYPj
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
@@ -3304,7 +3304,7 @@ msgstr "Všechny zdroje"
 #. js-lingui-id: wiGHxh
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "All steps done"
-msgstr ""
+msgstr "Všechny kroky dokončeny"
 
 #. js-lingui-id: p+lpde
 #: src/modules/activities/tasks/components/TaskGroupsContent.tsx
@@ -4671,7 +4671,7 @@ msgstr "Zpět k obsahu"
 #. js-lingui-id: +cSNzs
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "Back to current step"
-msgstr ""
+msgstr "Zpět na aktuální krok"
 
 #. js-lingui-id: dGEega
 #: src/pages/ai-chat/AiChatInboxPage.tsx
@@ -7238,7 +7238,7 @@ msgstr "Pokračovat při selhání iterace"
 #. js-lingui-id: uxdS61
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 msgid "Continue setup"
-msgstr ""
+msgstr "Pokračovat v nastavení"
 
 #. js-lingui-id: RvVi9c
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
@@ -7571,7 +7571,7 @@ msgstr "Nepodařilo se udělit přístup k médiím. Zkuste to prosím znovu."
 #. js-lingui-id: rLrhvg
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "Could not load Getting started."
-msgstr ""
+msgstr "Nepodařilo se načíst Začínáme."
 
 #. js-lingui-id: Y5qCpF
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFrontComponentCard.tsx
@@ -9902,7 +9902,7 @@ msgstr "Zásady DMARC"
 #. js-lingui-id: TdAWxF
 #: src/modules/ai/components/NavigationDrawerDirectMessagesSection.tsx
 msgid "DMs"
-msgstr ""
+msgstr "DM"
 
 #. js-lingui-id: naBq2D
 #: src/modules/settings/emailing-domains/utils/buildEmailingDomainAiSetupPrompt.ts
@@ -12038,7 +12038,7 @@ msgstr "Export ({percentageValue}%)"
 #. js-lingui-id: YkvQVd
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "Export a CSV from"
-msgstr ""
+msgstr "Exportovat CSV z"
 
 #. js-lingui-id: 2KAI4N
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
@@ -13124,7 +13124,7 @@ msgstr "Dokončit nastavení"
 #. js-lingui-id: 97Hg0Y
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "Finish your setup"
-msgstr ""
+msgstr "Dokončete nastavení"
 
 #. js-lingui-id: 4dQFvz
 #: src/modules/ai/constants/AiChatThreadReasons.ts
@@ -13366,7 +13366,7 @@ msgstr "Nalezeny propojené účty"
 #. js-lingui-id: Vc8HGN
 #: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 msgid "Found in your emails"
-msgstr ""
+msgstr "Nalezeno ve vašich e-mailech"
 
 #. js-lingui-id: 1hxId5
 #: src/utils/cron-to-human/descriptors/getDayOfWeekDescription.ts
@@ -13703,17 +13703,17 @@ msgstr "Získá pouze tento záznam: jeho role nemá přístup k {objectLabelPlu
 #: src/pages/getting-started/GettingStartedPage.tsx
 #: src/pages/getting-started/GettingStartedPage.tsx
 msgid "Getting started"
-msgstr ""
+msgstr "Začínáme"
 
 #. js-lingui-id: YRBB4k
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 msgid "Getting started progress"
-msgstr ""
+msgstr "Průběh Začínáme"
 
 #. js-lingui-id: dV3VgV
 #: src/modules/getting-started/components/GettingStartedStepStack.tsx
 msgid "Getting started steps"
-msgstr ""
+msgstr "Kroky Začínáme"
 
 #. js-lingui-id: XXtAx5
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
@@ -14254,7 +14254,7 @@ msgstr "Skrýt pole"
 #. js-lingui-id: 3CeQ1O
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 msgid "Hide for good"
-msgstr ""
+msgstr "Skrýt natrvalo"
 
 #. js-lingui-id: CbeJV4
 #. placeholder {0}: groupValue ?? ''
@@ -14756,7 +14756,7 @@ msgstr "Naimportujte nebo přidejte konfiguraci MCP v nastavení JetBrains."
 #. js-lingui-id: e2aT+Z
 #: src/modules/getting-started/constants/GettingStartedImportPrompt.ts
 msgid "Import the attached files into Twenty. Work out which records they contain, then create them and link them together."
-msgstr ""
+msgstr "Importujte přiložené soubory do Twenty. Zjistěte, jaké záznamy obsahují, poté je vytvořte a propojte."
 
 #. js-lingui-id: vXTVX9
 #: src/pages/onboarding/ImportContacts.tsx
@@ -14802,7 +14802,7 @@ msgstr "Za {listName}"
 #. js-lingui-id: jS5U2e
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 msgid "In an hour"
-msgstr ""
+msgstr "Za hodinu"
 
 #. js-lingui-id: /LCAwL
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceDataExportSection.tsx
@@ -15064,7 +15064,7 @@ msgstr "Nainstalovat {appDisplayName} do vašeho pracovního prostoru"
 #. js-lingui-id: rQN3ie
 #: src/modules/getting-started/components/GettingStartedAppInstallButton.tsx
 msgid "Install {appLabel}"
-msgstr ""
+msgstr "Nainstalovat {appLabel}"
 
 #. js-lingui-id: sOOkDn
 #: src/modules/marketplace/constants/PermissionFlagSummaryConfigs.ts
@@ -15691,7 +15691,7 @@ msgstr "Kanbanový widget"
 #. js-lingui-id: uW9WOr
 #: src/modules/getting-started/hooks/useGettingStartedTrial.ts
 msgid "Keep {planLabel}"
-msgstr ""
+msgstr "Ponechat {planLabel}"
 
 #. js-lingui-id: LHkoee
 #: src/modules/side-panel/pages/workflow/step/settings/components/SidePanelWorkflowStepSettingsContent.tsx
@@ -15716,7 +15716,7 @@ msgstr "Pokračovat ve sledování mých otevření a kliknutí"
 #. js-lingui-id: 9l8cs3
 #: src/modules/getting-started/hooks/useGettingStartedTrial.ts
 msgid "Keep your plan"
-msgstr ""
+msgstr "Ponechat váš tarif"
 
 #. js-lingui-id: 7sMeHQ
 #: src/modules/workflow/workflow-steps/workflow-actions/http-request-action/components/KeyValuePairInput.tsx
@@ -16687,7 +16687,7 @@ msgstr "Načítám úlohy..."
 #. js-lingui-id: YyMToN
 #: src/modules/ai/components/DirectMessageMemberPicker.tsx
 msgid "Loading members"
-msgstr ""
+msgstr "Načítání členů"
 
 #. js-lingui-id: s1MstR
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerMetricsGraph.tsx
@@ -16750,7 +16750,7 @@ msgstr "Načítání vlákna"
 #. js-lingui-id: KOolcu
 #: src/modules/getting-started/components/GettingStartedPageContent.tsx
 msgid "Loading your progress"
-msgstr ""
+msgstr "Načítání vašeho postupu"
 
 #. js-lingui-id: Z3FXyt
 #: src/modules/activities/timeline-activities/rows/calendar/components/EventCardCalendarEvent.tsx
@@ -18214,7 +18214,7 @@ msgstr "Název: {0}"
 #. js-lingui-id: fZT56Z
 #: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 msgid "name@{emailDomain}"
-msgstr ""
+msgstr "jméno@{emailDomain}"
 
 #. js-lingui-id: JxC/pi
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
@@ -19161,7 +19161,7 @@ msgstr "Žádní členové přiřazeni"
 #. js-lingui-id: FK5/sf
 #: src/modules/ai/components/DirectMessageMemberPicker.tsx
 msgid "No members found"
-msgstr ""
+msgstr "Nenalezeni žádní členové"
 
 #. js-lingui-id: /nLvVj
 #: src/modules/side-panel/pages/assign-ai-chat/components/SidePanelAssignAiChatPage.tsx
@@ -20230,7 +20230,7 @@ msgstr "Tímto způsobem lze nárokovat pouze aplikace publikované na npm."
 #. js-lingui-id: dD26o4
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "Only CSV and Excel files are supported"
-msgstr ""
+msgstr "Podporovány jsou pouze soubory CSV a Excel"
 
 #. js-lingui-id: zii2Qj
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarVisibilitySettingsCard.tsx
@@ -20393,7 +20393,7 @@ msgstr "Otevřete instalační nástroj MCP v Cursor s předvyplněnou konfigura
 #. js-lingui-id: JvSHIq
 #: src/modules/getting-started/components/GettingStartedSidebarCard.tsx
 msgid "Open Getting started"
-msgstr ""
+msgstr "Otevřít Začínáme"
 
 #. js-lingui-id: pZZH4Q
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -20504,7 +20504,7 @@ msgstr "Otevřít postranní panel"
 #. js-lingui-id: Cq4Ta5
 #: src/modules/getting-started/components/GettingStartedWorkflowAction.tsx
 msgid "Open the workflow"
-msgstr ""
+msgstr "Otevřít pracovní postup"
 
 #. js-lingui-id: sBd/cl
 #: src/modules/settings/mcp/utils/buildMcpSetupCategories.tsx
@@ -25100,7 +25100,7 @@ msgstr "Odesílat e-maily prostřednictvím připojených účtů"
 #. js-lingui-id: lPcA5V
 #: src/modules/getting-started/components/GettingStartedPromptAction.tsx
 msgid "Send instructions"
-msgstr ""
+msgstr "Odeslat pokyny"
 
 #. js-lingui-id: 6nwEi6
 #: src/modules/activities/calendar/components/CalendarEventComposerFields.tsx
@@ -25378,7 +25378,7 @@ msgstr "Nastavte následující záznamy DNS pro {domain} v účtu Cloudflare, k
 #. js-lingui-id: uB2UEQ
 #: src/modules/getting-started/components/GettingStartedWorkflowAction.tsx
 msgid "Set up the workflow"
-msgstr ""
+msgstr "Nastavit pracovní postup"
 
 #. js-lingui-id: 9HNKkV
 #: src/modules/settings/applications/components/SettingsApplicationDetailVariablesTab.tsx
@@ -25652,7 +25652,7 @@ msgstr "Zobrazit pouze řádky s chybami"
 #. js-lingui-id: 9u2I/P
 #: src/modules/settings/admin-panel/constants/SettingsAdminFeatureFlagMetadata.ts
 msgid "Show the Getting started page and sidebar card, and open it on landing during the trial."
-msgstr ""
+msgstr "Zobrazit stránku Začínáme a kartu postranního panelu a otevřít ji při načtení během zkušebního období."
 
 #. js-lingui-id: P1iyUf
 #: src/pages/settings/applications/tabs/SettingsApplicationTimelineActivityTypeSettingsTab.tsx
@@ -25987,7 +25987,7 @@ msgstr "Odložení skončilo {eventTime}"
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 msgid "Snooze Getting started"
-msgstr ""
+msgstr "Odložit Začínáme"
 
 #. js-lingui-id: VkkXmS
 #: src/modules/side-panel/pages/snooze-ai-chat/components/SnoozeAiChatUntilDatePicker.tsx
@@ -26230,7 +26230,7 @@ msgstr "Rozdělené zobrazení"
 #. js-lingui-id: jAoGz1
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "Spreadsheet"
-msgstr ""
+msgstr "Tabulkový dokument"
 
 #. js-lingui-id: vnS6Rf
 #: src/modules/settings/billing/constants/SettingsBillingPlanComparisonRows.ts
@@ -27147,7 +27147,7 @@ msgstr "Člen týmu"
 #. js-lingui-id: IVUOhR
 #: src/modules/getting-started/components/GettingStartedInviteAction.tsx
 msgid "Teammate email {emailNumber}"
-msgstr ""
+msgstr "E-mail spolupracovníka {emailNumber}"
 
 #. js-lingui-id: GEkQWt
 #. placeholder {0}: index + 1
@@ -27164,7 +27164,7 @@ msgstr "Členové týmu"
 #. js-lingui-id: Dqvkhs
 #: src/modules/getting-started/components/GettingStartedMailboxAction.tsx
 msgid "Teammates see who you talk to, not what you write."
-msgstr ""
+msgstr "Spolupracovníci vidí, s kým mluvíte, ale ne co píšete."
 
 #. js-lingui-id: XpPpz7
 #: src/modules/ai/components/internal/AiChatToolCallApprovalFeedbackInput.tsx
@@ -29478,7 +29478,7 @@ msgstr "Do {snoozedUntilDay}"
 #. js-lingui-id: LRU2W5
 #: src/modules/getting-started/components/GettingStartedSnoozeMenu.tsx
 msgid "Until the last 3 days"
-msgstr ""
+msgstr "Na poslední 3 dny"
 
 #. js-lingui-id: wja8aL
 #: src/modules/ai/components/AiChatThreadListItem.tsx
@@ -30109,7 +30109,7 @@ msgstr "Použijte naše API nebo ručně přidejte první {objectLabel}"
 #. js-lingui-id: zwL0lf
 #: src/modules/getting-started/components/GettingStartedImportAction.tsx
 msgid "Use the import wizard instead"
-msgstr ""
+msgstr "Místo toho použít průvodce importem"
 
 #. js-lingui-id: z1f4Op
 #: src/modules/workflow/workflow-variables/utils/getWorkflowVariableSpecialItems.ts
@@ -32086,12 +32086,12 @@ msgstr "Stav vašeho předplatného je: {statusLabel}"
 #. js-lingui-id: RMyx+h
 #: src/modules/getting-started/utils/getGettingStartedKeepPlanDescription.ts
 msgid "Your trial ends on {formattedTrialEnd}. Add a card now to keep your plan after that. You won't be charged before then."
-msgstr ""
+msgstr "Vaše zkušební období končí {formattedTrialEnd}. Přidejte nyní kartu, abyste si poté ponechali svůj tarif. Do té doby vám nic nebude účtováno."
 
 #. js-lingui-id: 0p2q58
 #: src/modules/getting-started/utils/getGettingStartedKeepPlanDescription.ts
 msgid "Your trial ends on {formattedTrialEnd}. Add a card now to stay on the {planLabel} plan after that. You won't be charged before then."
-msgstr ""
+msgstr "Vaše zkušební období končí {formattedTrialEnd}. Přidejte nyní kartu, abyste po této době zůstali u tarifu {planLabel}. Do té doby vám nic nebude účtováno."
 
 #. js-lingui-id: oC6WBs
 #: src/modules/information-banner/components/billing/InformationBannerNoBillingSubscription.tsx

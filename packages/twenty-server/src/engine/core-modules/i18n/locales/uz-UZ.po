@@ -206,7 +206,7 @@ msgstr "Boshqaruv paneli (dashboard)"
 #. js-lingui-id: Fypv4q
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
 msgid "A deal is won"
-msgstr ""
+msgstr "Bitim yutildi"
 
 #. js-lingui-id: ixdsnM
 #: src/engine/core-modules/dns-manager/exceptions/dns-manager.exception.ts
@@ -789,7 +789,7 @@ msgstr "Ro‘yxatga qo‘shish"
 #. js-lingui-id: BBzZ81
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Add tools to your workspace."
-msgstr ""
+msgstr "Ish maydoningizga vositalarni qo‘shing."
 
 #. js-lingui-id: sGGJFX
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -1087,7 +1087,7 @@ msgstr "Agent {maxTriggers} tadan ortiq tetiklagichga ega bo‘la olmaydi"
 #. js-lingui-id: KfRVdE
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "An agent drafts a follow-up for every deal about to close."
-msgstr ""
+msgstr "Agent yakunlanish arafasidagi har bir bitim uchun keyingi xat qoralamasini tayyorlaydi."
 
 #. js-lingui-id: gxdZLa
 #: src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util.ts
@@ -1097,7 +1097,7 @@ msgstr "Ilova tomonidan o‘rnatilgan agent nomini o‘zgartirib bo‘lmaydi."
 #. js-lingui-id: 3tWubk
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "An agent shapes your objects and fields around how you work."
-msgstr ""
+msgstr "Agent obyektlaringiz va maydonlaringizni ishlash uslubingizga moslashtiradi."
 
 #. js-lingui-id: 4vJ4de
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-agent-triggers.util.ts
@@ -1335,7 +1335,7 @@ msgstr "Apostrof va nuqta"
 #. js-lingui-id: oABUXG
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "App installed"
-msgstr ""
+msgstr "Ilova o‘rnatildi"
 
 #. js-lingui-id: 5nw74G
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -1982,12 +1982,12 @@ msgstr "Qaytarilgan vaqt"
 #. js-lingui-id: 7piJZ+
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Bring your companies, contacts and deals from any CRM export."
-msgstr ""
+msgstr "Istalgan CRM eksportidan kompaniyalaringizni, kontaktlaringizni va bitimlaringizni olib keling."
 
 #. js-lingui-id: YYQkoU
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Bring your team into Twenty."
-msgstr ""
+msgstr "Jamoangizni Twenty’ga olib keling."
 
 #. js-lingui-id: 8pSVh1
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-front-component-validator.service.ts
@@ -3063,7 +3063,7 @@ msgstr "Kompaniyalar"
 #. js-lingui-id: UcnBjr
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Companies and people fill in from your emails and meetings."
-msgstr ""
+msgstr "Kompaniyalar va odamlar elektron pochta xabarlaringiz hamda uchrashuvlaringizdan avtomatik to‘ldiriladi."
 
 #. js-lingui-id: aNUhqB
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-target-flat-field-metadatas.util.ts
@@ -3292,7 +3292,7 @@ msgstr "{objectMetadataNameSingular} obyektida {connectFieldName} uchun \"connec
 #. js-lingui-id: eTJ1jL
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Connect your mailbox"
-msgstr ""
+msgstr "Pochta qutingizni ulang"
 
 #. js-lingui-id: So2wV4
 #: src/modules/calendar/calendar-event-creation-manager/services/calendar-event-composer.service.ts
@@ -3661,7 +3661,7 @@ msgstr "{objectLabelSingular} yaratish"
 #. js-lingui-id: Y8ye8i
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
 msgid "Create a kickoff task"
-msgstr ""
+msgstr "Boshlang‘ich vazifa yarating"
 
 #. js-lingui-id: fbe2ik
 #: src/engine/core-modules/tool-provider/constants/action-tool-label.constant.ts
@@ -4865,7 +4865,7 @@ msgstr "Elektron pochta xabari sarlavhasi"
 #. js-lingui-id: 4VrNsb
 #: src/engine/core-modules/getting-started/constants/getting-started-handover-workflow.constant.ts
 msgid "Email the account owner"
-msgstr ""
+msgstr "Hisob egasiga email yuboring"
 
 #. js-lingui-id: q87JH5
 #: src/engine/core-modules/user/user.exception.ts
@@ -5205,7 +5205,7 @@ msgstr "Ish maydoni a’zosi bilan bog‘langan hodisalar"
 #. js-lingui-id: idSfue
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Every Monday, draft a follow-up email for each deal closing in the next 30 days."
-msgstr ""
+msgstr "Har dushanba kuni kelgusi 30 kun ichida yakunlanadigan har bir bitim uchun keyingi email qoralamasini tayyorlang."
 
 #. js-lingui-id: fVkHAH
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-record-share-standard-flat-field-metadata.util.ts
@@ -5915,17 +5915,17 @@ msgstr "Jild yo‘lida fayl kengaytmasi bo‘lmasligi kerak — fayl yo‘llari 
 #. js-lingui-id: 9J7Yxo
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Follow up on closing deals"
-msgstr ""
+msgstr "Yakunlanayotgan bitimlarni kuzatib boring"
 
 #. js-lingui-id: Y2RyNo
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Follow-up instructions"
-msgstr ""
+msgstr "Keyingi xat bo‘yicha ko‘rsatmalar"
 
 #. js-lingui-id: xRdoZk
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Follow-up request sent"
-msgstr ""
+msgstr "Keyingi xat so‘rovi yuborildi"
 
 #. js-lingui-id: eWmJYU
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-metadata-validator.service.ts
@@ -6314,7 +6314,7 @@ msgstr "Guruh xeshi"
 #. js-lingui-id: cGqZJs
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Hand over won deals"
-msgstr ""
+msgstr "Yutilgan bitimlarni topshiring"
 
 #. js-lingui-id: M3UdIL
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-blocklist-standard-flat-field-metadata.util.ts
@@ -6537,7 +6537,7 @@ msgstr "{objectLabelPlural}ni import qilish"
 #. js-lingui-id: gQ9//i
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Import your data"
-msgstr ""
+msgstr "Ma’lumotlaringizni import qiling"
 
 #. js-lingui-id: QPcp0k
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-task-standard-flat-field-metadata.util.ts
@@ -6630,7 +6630,7 @@ msgstr "Kirish tokenlari"
 #. js-lingui-id: 5u6qKW
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Install an app"
-msgstr ""
+msgstr "Ilovani o‘rnating"
 
 #. js-lingui-id: VUEkq2
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-call-recording-standard-flat-field-metadata.util.ts
@@ -7624,12 +7624,12 @@ msgstr "Taklifnoma topilmadi"
 #. js-lingui-id: ZMCmkn
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Invitations sent"
-msgstr ""
+msgstr "Taklifnomalar yuborildi"
 
 #. js-lingui-id: d+Y+rP
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Invite your team"
-msgstr ""
+msgstr "Jamoangizni taklif qiling"
 
 #. js-lingui-id: KJBRRe
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-calendar-event-standard-flat-field-metadata.util.ts
@@ -8248,12 +8248,12 @@ msgstr "Xuddi shu universal identifikatorli mantiqiy funksiya allaqachon mavjud"
 #. js-lingui-id: y5Ysbs
 #: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts
 msgid "Look at the data I imported and suggest the objects, fields and views I need to run my business. Ask me what I want to track before creating anything."
-msgstr ""
+msgstr "Import qilgan ma’lumotlarimni ko‘rib chiqing va biznesimni yuritish uchun kerak bo‘ladigan obyektlar, maydonlar va ko‘rinishlarni taklif qiling. Biror narsa yaratishdan oldin mendan nimani kuzatmoqchi ekanimni so‘rang."
 
 #. js-lingui-id: AgKpIa
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Mailbox connected"
-msgstr ""
+msgstr "Pochta qutisi ulandi"
 
 #. js-lingui-id: 07Jk6f
 #: src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
@@ -12382,12 +12382,12 @@ msgstr "Sozlamalar menyusi elementi sarlavhasi talab qilinadi"
 #. js-lingui-id: x4ZiTl
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Setup instructions"
-msgstr ""
+msgstr "Sozlash ko‘rsatmalari"
 
 #. js-lingui-id: gIoyTf
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Setup request sent"
-msgstr ""
+msgstr "Sozlash so‘rovi yuborildi"
 
 #. js-lingui-id: AaiDcy
 #: src/engine/core-modules/server-route-trigger/exceptions/server-route-trigger.exception.ts
@@ -12742,7 +12742,7 @@ msgstr "Elektron jadval"
 #. js-lingui-id: 73/iLE
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Spreadsheet uploaded"
-msgstr ""
+msgstr "Elektron jadval yuklandi"
 
 #. js-lingui-id: IP+RN5
 #: src/engine/core-modules/sso/sso.exception.ts
@@ -12812,7 +12812,7 @@ msgstr "Haftaning boshlanishi"
 #. js-lingui-id: wcXsug
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Start the handover when a deal is won."
-msgstr ""
+msgstr "Bitim yutilganda topshirishni boshlang."
 
 #. js-lingui-id: kg0Ky1
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-agent-turn-standard-flat-field-metadata.util.ts
@@ -13088,7 +13088,7 @@ msgstr "Vidjetni nusxalash uchun ichki oyna (tab) topilmadi."
 #. js-lingui-id: xRgQRi
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Tailor your workspace"
-msgstr ""
+msgstr "Ish maydoningizni moslashtiring"
 
 #. js-lingui-id: RrUOKh
 #: src/engine/core-modules/application/application-registration/application-registration.exception.ts
@@ -14863,7 +14863,7 @@ msgstr "Bu sozlamalar menyusi elementi sarlavhasi band qilingan."
 #. js-lingui-id: ukriVV
 #: src/engine/core-modules/getting-started/getting-started.exception.ts
 msgid "This step has no workflow."
-msgstr ""
+msgstr "Bu qadamda ish jarayoni yo‘q."
 
 #. js-lingui-id: nFIPim
 #: src/engine/core-modules/workspace/workspace.exception.ts
@@ -16726,7 +16726,7 @@ msgstr "Elektron pochta hisobingizga ulanishda muammo yuz berdi. Iltimos, sozlam
 #. js-lingui-id: b6WVV+
 #: src/engine/core-modules/getting-started/utils/get-getting-started-data-model-prompt.util.ts
 msgid "We're {companyName}, a company in {industry}. Look at the data I imported and suggest the objects, fields and views we need to run our business. Ask me before creating anything."
-msgstr ""
+msgstr "Biz {companyName}, {industry} sohasidagi kompaniyamiz. Import qilgan ma’lumotlarimni ko‘rib chiqing va biznesimizni yuritish uchun kerak bo‘ladigan obyektlar, maydonlar va ko‘rinishlarni taklif qiling. Biror narsa yaratishdan oldin mendan so‘rang."
 
 #. js-lingui-id: mnANRQ
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-webhook-validator.service.ts
@@ -17025,7 +17025,7 @@ msgstr "Ish jarayonining qirrasi topilmadi."
 #. js-lingui-id: 5ENQ3i
 #: src/engine/core-modules/getting-started/constants/getting-started-step-content.constant.ts
 msgid "Workflow enabled"
-msgstr ""
+msgstr "Ish jarayoni yoqildi"
 
 #. js-lingui-id: aJ2Uba
 #: src/engine/core-modules/workflow/services/core-workflow-lifecycle.workspace-service.ts
