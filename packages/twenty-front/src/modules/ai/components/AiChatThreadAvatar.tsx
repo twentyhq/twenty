@@ -1,6 +1,6 @@
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Avatar, type AvatarSize } from 'twenty-ui/primitives/data-display';
 
 import { useAgentChatThreadMembers } from '@/ai/hooks/useAgentChatThreadMembers';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
@@ -10,9 +10,13 @@ import { WorkspaceMemberAvatarStack } from '@/workspace-member/components/Worksp
 
 type AiChatThreadAvatarProps = {
   thread: AgentChatThreadRecord;
+  size?: AvatarSize;
 };
 
-export const AiChatThreadAvatar = ({ thread }: AiChatThreadAvatarProps) => {
+export const AiChatThreadAvatar = ({
+  thread,
+  size = 'lg',
+}: AiChatThreadAvatarProps) => {
   const { t } = useLingui();
   const threadMembers = useAgentChatThreadMembers(thread);
 
@@ -27,7 +31,7 @@ export const AiChatThreadAvatar = ({ thread }: AiChatThreadAvatarProps) => {
         name={name}
         imageProps={{ alt: name }}
         colorSeed={onlyMember.id}
-        size="lg"
+        size={size}
         shape="circle"
       />
     );

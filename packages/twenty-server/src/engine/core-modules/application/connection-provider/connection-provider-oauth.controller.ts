@@ -1,19 +1,15 @@
 import { Controller, Get, Logger, Query, Res, UseGuards } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { type Response } from 'express';
-import { SOURCE_LOCALE } from 'twenty-shared/translations';
-import { ApiPath, SettingsPath } from 'twenty-shared/types';
-import {
-  getSettingsPath,
-  isDefined,
-  isSafeInternalPath,
-} from 'twenty-shared/utils';
+import { ApiPath } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { ConnectionProviderOAuthFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth-flow.service';
+import { ConnectionProviderCustomFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-custom-flow.service';
 import { ConnectionProviderExceptionCode } from 'src/engine/core-modules/application/connection-provider/connection-provider-exception-code.enum';
+import { ConnectionProviderFlowRedirectService } from 'src/engine/core-modules/application/connection-provider/connection-provider-flow-redirect.service';
+import { ConnectionProviderOAuthFlowService } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth-flow.service';
 import { ConnectionProviderException } from 'src/engine/core-modules/application/connection-provider/connection-provider.exception';
 import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
 import {
@@ -21,11 +17,6 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
-import { parseRelativeUrl } from 'src/engine/core-modules/domain/domain-server-config/utils/parse-relative-url.util';
-import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
-import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
-import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -39,11 +30,9 @@ export class ConnectionProviderOAuthController {
   constructor(
     private readonly oauthProviderService: ConnectionProviderService,
     private readonly oauthProviderFlowService: ConnectionProviderOAuthFlowService,
+    private readonly customFlowService: ConnectionProviderCustomFlowService,
+    private readonly flowRedirectService: ConnectionProviderFlowRedirectService,
     private readonly transientTokenService: TransientTokenService,
-    private readonly workspaceDomainsService: WorkspaceDomainsService,
-    private readonly guardRedirectService: GuardRedirectService,
-    private readonly twentyConfigService: TwentyConfigService,
-    private readonly i18nService: I18nService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(UserWorkspaceEntity)
@@ -118,16 +107,28 @@ export class ConnectionProviderOAuthController {
         );
       }
 
+      const authorizationArgs = {
+        connectionProvider: provider,
+        workspaceId,
+        userId,
+        userWorkspaceId: userWorkspace.id,
+        reconnectingConnectedAccountId: reconnectingConnectedAccountId ?? null,
+        redirectLocation: redirectLocation ?? null,
+      };
+
+      if (provider.type === 'custom') {
+        const { authorizationUrl } =
+          await this.customFlowService.startAuthorizationFlow(
+            authorizationArgs,
+          );
+
+        return res.redirect(authorizationUrl);
+      }
+
       const { authorizationUrl } =
-        await this.oauthProviderFlowService.startAuthorizationFlow({
-          connectionProvider: provider,
-          workspaceId,
-          userId,
-          userWorkspaceId: userWorkspace.id,
-          reconnectingConnectedAccountId:
-            reconnectingConnectedAccountId ?? null,
-          redirectLocation: redirectLocation ?? null,
-        });
+        await this.oauthProviderFlowService.startAuthorizationFlow(
+          authorizationArgs,
+        );
 
       return res.redirect(authorizationUrl);
     } catch (error) {
@@ -137,7 +138,7 @@ export class ConnectionProviderOAuthController {
         error instanceof Error ? error.stack : undefined,
       );
 
-      return this.redirectToError({
+      return this.flowRedirectService.redirectToError({
         res,
         error,
         workspace,
@@ -155,7 +156,7 @@ export class ConnectionProviderOAuthController {
     @Res() res: Response,
   ) {
     if (errorParam) {
-      return this.redirectToErrorFromState({
+      return this.flowRedirectService.redirectToErrorFromState({
         res,
         state,
         error: new Error(
@@ -165,7 +166,7 @@ export class ConnectionProviderOAuthController {
     }
 
     if (!code || !state) {
-      return this.redirectToErrorFromState({
+      return this.flowRedirectService.redirectToErrorFromState({
         res,
         state,
         error: new Error(
@@ -181,132 +182,18 @@ export class ConnectionProviderOAuthController {
           state,
         });
 
-      const workspace = await this.workspaceRepository.findOneBy({
-        id: workspaceId,
-      });
-
-      if (!workspace) {
-        throw new ConnectionProviderException(
-          `Workspace ${workspaceId} not found after OAuth callback`,
-          ConnectionProviderExceptionCode.PROVIDER_NOT_FOUND,
-        );
-      }
-
-      const hasRedirectLocation = isNonEmptyString(redirectLocation);
-
-      const { pathname, searchParams, hash } = this.parseRedirectLocation({
+      return await this.flowRedirectService.redirectToConnectedApplication({
+        res,
+        workspaceId,
+        applicationId,
         redirectLocation,
-        fallbackPathname: getSettingsPath(SettingsPath.ApplicationDetail, {
-          applicationId,
-        }),
       });
-
-      const url = this.workspaceDomainsService.buildWorkspaceURL({
-        workspace,
-        pathname,
-        searchParams,
-        hash,
-      });
-
-      // Frontend tab list reads the URL hash to pick the active tab.
-      if (!hasRedirectLocation) {
-        url.hash = 'settings';
-      }
-
-      return res.redirect(url.toString());
     } catch (error) {
-      return this.redirectToErrorFromState({ res, state, error });
+      return this.flowRedirectService.redirectToErrorFromState({
+        res,
+        state,
+        error,
+      });
     }
-  }
-
-  private async redirectToErrorFromState({
-    res,
-    state,
-    error,
-  }: {
-    res: Response;
-    state: string | undefined;
-    error: unknown;
-  }) {
-    const errorRedirectTarget = isNonEmptyString(state)
-      ? await this.oauthProviderFlowService.findErrorRedirectTargetFromState(
-          state,
-        )
-      : null;
-
-    const workspace = isDefined(errorRedirectTarget)
-      ? await this.workspaceRepository.findOneBy({
-          id: errorRedirectTarget.workspaceId,
-        })
-      : null;
-
-    return this.redirectToError({
-      res,
-      error,
-      workspace,
-      redirectLocation: errorRedirectTarget?.redirectLocation ?? null,
-    });
-  }
-
-  private parseRedirectLocation({
-    redirectLocation,
-    fallbackPathname,
-  }: {
-    redirectLocation: string | null | undefined;
-    fallbackPathname: string;
-  }) {
-    return parseRelativeUrl(
-      isDefined(redirectLocation) && isSafeInternalPath(redirectLocation)
-        ? redirectLocation
-        : fallbackPathname,
-    );
-  }
-
-  private redirectToError({
-    res,
-    error,
-    workspace,
-    redirectLocation,
-  }: {
-    res: Response;
-    error: unknown;
-    workspace: WorkspaceEntity | null;
-    redirectLocation: string | null;
-  }) {
-    const { pathname, searchParams, hash } = this.parseRedirectLocation({
-      redirectLocation,
-      fallbackPathname: getSettingsPath(SettingsPath.Accounts),
-    });
-
-    return res.redirect(
-      this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
-        error: error instanceof Error ? error : new Error(String(error)),
-        workspace: {
-          id: workspace?.id,
-          subdomain:
-            workspace?.subdomain ??
-            this.twentyConfigService.get('DEFAULT_SUBDOMAIN'),
-          customDomain: workspace?.customDomain ?? null,
-          isCustomDomainEnabled: workspace?.isCustomDomainEnabled ?? false,
-        },
-        pathname,
-        searchParams,
-        hash,
-        errorMessage: this.getTokenExchangeFailureMessage(error),
-      }),
-    );
-  }
-
-  private getTokenExchangeFailureMessage(error: unknown): string | undefined {
-    if (
-      !(error instanceof ConnectionProviderException) ||
-      error.code !== ConnectionProviderExceptionCode.TOKEN_EXCHANGE_FAILED
-    ) {
-      return undefined;
-    }
-
-    return this.i18nService
-      .getI18nInstance(SOURCE_LOCALE)
-      ._(error.userFriendlyMessage);
   }
 }

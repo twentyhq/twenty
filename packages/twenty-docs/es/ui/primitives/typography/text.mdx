@@ -1,0 +1,105 @@
+---
+title: Texto
+description: Compone la tipografía del tema con truncamiento de una sola línea o un número limitado de líneas.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import TextReference from '/snippets/ui/generated/typography/text.mdx';
+
+## Resumen
+
+`Text` proporciona tipografía y control de desbordamiento. De forma predeterminada, representa un `div`. Omite `size`, `weight` y `color` para seguir heredando la tipografía del entorno.
+
+<StoryEmbed storyId="ui-typography-text--display" title="Ejemplo de texto" height={90} />
+
+## "Uso"
+
+Asigne al texto un ancho restringido y, a continuación, establezca `truncate` para mostrar puntos suspensivos cuando se desborde:
+
+```tsx
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ContactName = () => (
+  <Text truncate style={{ maxWidth: 160 }}>
+    Alexandra Montgomery
+  </Text>
+);
+```
+
+## Elegir tipografía
+
+`size` utiliza la escala de tema existente. Cambia el tamaño de fuente, sin valores predeterminados de altura, familia de fuentes ni interlineado:
+
+| Tamaño | Valor del tema |
+| ------ | -------------- |
+| `xxs`  | `0.625rem`     |
+| `xs`   | `0.85rem`      |
+| `sm`   | `0.92rem`      |
+| `md`   | `1rem`         |
+| `lg`   | `1.23rem`      |
+| `xl`   | `1.54rem`      |
+| `xxl`  | `1.85rem`      |
+
+`weight` acepta `regular` (400), `medium` (500) o `semibold` (600). `color` acepta `primary`, `secondary`, `tertiary` o `light`. Cada prop omitida se hereda de forma independiente. El tamaño visual no cambia el elemento semántico.
+
+<StoryEmbed storyId="ui-typography-text--typography-catalog" title="Escala tipográfica de texto" height={410} />
+
+Para las leyendas, combina el tamaño pequeño, el grosor semibold y el color light:
+
+```tsx
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const Caption = () => (
+  <Text size="xs" weight="semibold" color="light">
+    Workspace
+  </Text>
+);
+```
+
+Usa el `style` nativo para colores en tiempo de ejecución y restricciones de diseño del elemento principal. Las clases del llamador y la composición de renderizado se aplican al mismo elemento de texto. Text no agrega valores predeterminados de tipografía cuando se omiten estas props.
+
+## Limitar el número de líneas
+
+<StoryEmbed storyId="ui-typography-text--catalog" title="Opciones de desbordamiento de texto" height={210} />
+
+Use `lineClamp` con un número entero positivo. Elija `truncate` o `lineClamp`; sus props son mutuamente excluyentes.
+
+```tsx
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const Summary = () => (
+  <Text lineClamp={2} style={{ maxWidth: 240 }}>
+    Follow up with the customer about their onboarding milestones and upcoming
+    renewal.
+  </Text>
+);
+```
+
+## Elija un elemento
+
+Use `render` cuando el texto necesite otro elemento semántico:
+
+```tsx
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const Description = () => (
+  <Text render={<p />}>Account description</Text>
+);
+```
+
+El truncamiento afecta a la presentación visual; no acorta el texto en el DOM. Proporcione una forma de leer el contenido completo cuando la parte visible sea insuficiente.
+
+## "Props"
+
+Los atributos nativos, los elementos secundarios, las referencias, los nombres de clase y los estilos se aplican al elemento de texto renderizado. `TextProps` se exporta desde `twenty-ui/primitives/typography`. El contenido de texto se renderiza sin cambios, incluidos los enlaces proporcionados por quien realiza la llamada.
+
+<TextReference />
+
+## Migración
+
+`color` ahora selecciona un color de tema semántico. Mueve los valores de color CSS arbitrarios de un atributo `color` nativo a `style={{ color: customColor }}`. Los estilos, las clases y la composición de renderizado existentes siguen aplicándose al elemento de texto.
+
+<PageBanner illustration="section-document-generator" />

@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Manifest sync should refuse moving a page layout tab to another page layout should keep the tab on its original page layout 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayoutTab": [
+        {
+          "errors": [
+            {
+              "code": "NON_UPDATABLE_PROPERTY_DIVERGENCE",
+              "message": "pageLayoutTab property "pageLayoutUniversalIdentifier" cannot be updated",
+              "userFriendlyMessage": "Property pageLayoutUniversalIdentifier cannot be updated",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayoutTab",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayoutTab",
+    "summary": {
+      "pageLayoutTab": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Property pageLayoutUniversalIdentifier cannot be updated",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;

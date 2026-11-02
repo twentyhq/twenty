@@ -57,7 +57,7 @@ export const findManyObjectMetadataWithIndexes = async ({
         indexMetadataList {
           name
           isUnique
-          isCustom
+          isSystemSideEffect
           indexType
           indexFieldMetadataList {
             id

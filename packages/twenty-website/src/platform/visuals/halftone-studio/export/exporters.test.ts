@@ -5,7 +5,10 @@ import type { HalftoneGeometrySpec } from '../engine/studio-settings-types';
 
 import { HALFTONE_EXPORT_NAMES } from './export-names';
 import { HALFTONE_EXPORT_PARSING } from './exporter-parsing';
-import type { ReactExportSettings } from './exporter-types';
+import type {
+  HalftoneMaterialExportImages,
+  ReactExportSettings,
+} from './exporter-types';
 import { HALFTONE_EXPORTERS } from './exporters';
 
 const DEFAULT_HALFTONE_SETTINGS = HALFTONE_STUDIO_DEFAULTS.settings;
@@ -16,6 +19,11 @@ const IMPORTED_GLB_SHAPE: HalftoneGeometrySpec = {
   kind: 'imported',
   loader: 'glb',
   filename: 'connect.glb',
+};
+
+const MATERIAL_EXPORT_IMAGES: HalftoneMaterialExportImages = {
+  environment: 'data:image/jpeg;base64,ZW52aXJvbm1lbnQ=',
+  textures: {},
 };
 
 const GENERIC_REACT_EXPORT_SETTINGS: ReactExportSettings = {
@@ -42,6 +50,7 @@ describe('halftone export naming', () => {
       DEFAULT_HALFTONE_SETTINGS,
       undefined,
       'hero export 2026',
+      { materialImages: MATERIAL_EXPORT_IMAGES },
     );
 
     expect(output).toContain('// @ts-nocheck');
@@ -56,6 +65,7 @@ describe('halftone export naming', () => {
       DEFAULT_HALFTONE_SETTINGS,
       undefined,
       'hero export 2026',
+      { materialImages: MATERIAL_EXPORT_IMAGES },
     );
 
     expect(output).toContain('<title>HeroExport2026</title>');
@@ -66,6 +76,7 @@ describe('halftone export naming', () => {
       DEFAULT_HALFTONE_SETTINGS,
       undefined,
       'legacy hover color preset',
+      { materialImages: MATERIAL_EXPORT_IMAGES },
     );
     const legacyOutput = output.replace(
       /("dashColor": "[^"]+"),\n(\s*)"hoverDashColor": "[^"]+"/,
@@ -90,6 +101,7 @@ describe('halftone export naming', () => {
       }),
       undefined,
       'dark tone preset',
+      { materialImages: MATERIAL_EXPORT_IMAGES },
     );
 
     const parsed = HALFTONE_EXPORT_PARSING.parsePreset(output);
@@ -102,11 +114,13 @@ describe('halftone export naming', () => {
       DEFAULT_HALFTONE_SETTINGS,
       undefined,
       'rotation baseline export',
+      { materialImages: MATERIAL_EXPORT_IMAGES },
     );
     const htmlOutput = await HALFTONE_EXPORTERS.generateStandaloneHtml(
       DEFAULT_HALFTONE_SETTINGS,
       undefined,
       'rotation baseline export',
+      { materialImages: MATERIAL_EXPORT_IMAGES },
     );
 
     expect(reactOutput).toContain('let baseRotationY = initialPose.rotationY;');
@@ -122,6 +136,7 @@ describe('halftone react export presets', () => {
       'PartnerConnect',
       {
         assetUrl: '/illustrations/generated/partner-connect.glb',
+        materialImages: MATERIAL_EXPORT_IMAGES,
         modelFilenameOverride: 'partner-connect.glb',
       },
     );
@@ -138,6 +153,32 @@ describe('halftone react export presets', () => {
       '// Suggested public asset destination: public/illustrations/generated/partner-connect.glb',
     );
     expect(output).not.toContain("createBuiltinGeometry('torusKnot')");
+  });
+
+  it('inlines only the images of the selected material texture', () => {
+    const output = HALFTONE_EXPORTERS.generateReactComponent(
+      normalizeHalftoneStudioSettings({
+        ...DEFAULT_HALFTONE_SETTINGS,
+        material: HALFTONE_STUDIO_DEFAULTS.metalMaterial,
+      }),
+      undefined,
+      'MetalExport',
+      {
+        materialImages: {
+          ...MATERIAL_EXPORT_IMAGES,
+          textures: {
+            dents: 'data:image/jpeg;base64,ZGVudHM=',
+            smudged: 'data:image/jpeg;base64,c211ZGdlZA==',
+            worn: 'data:image/jpeg;base64,d29ybg==',
+          },
+        },
+      },
+    );
+
+    expect(output).toContain(MATERIAL_EXPORT_IMAGES.environment);
+    expect(output).toContain('data:image/jpeg;base64,d29ybg==');
+    expect(output).toContain('data:image/jpeg;base64,ZGVudHM=');
+    expect(output).not.toContain('data:image/jpeg;base64,c211ZGdlZA==');
   });
 
   it('emits a Twenty-ready image export without model loaders', () => {
@@ -170,6 +211,7 @@ describe('halftone react export presets', () => {
       'PartnerConnect',
       {
         assetUrl: '/illustrations/generated/partner-connect.glb',
+        materialImages: MATERIAL_EXPORT_IMAGES,
         modelFilenameOverride: 'partner-connect.glb',
       },
     );
@@ -196,6 +238,7 @@ describe('halftone react export presets', () => {
       'PartnerConnect',
       {
         assetUrl: '/illustrations/generated/partner-connect.glb',
+        materialImages: MATERIAL_EXPORT_IMAGES,
         modelFilenameOverride: 'partner-connect.glb',
       },
     );
@@ -214,6 +257,7 @@ describe('halftone react export presets', () => {
       'PartnerConnect',
       {
         exportSettings: GENERIC_REACT_EXPORT_SETTINGS,
+        materialImages: MATERIAL_EXPORT_IMAGES,
         modelFilenameOverride: 'partner-connect.glb',
       },
     );

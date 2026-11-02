@@ -29,12 +29,13 @@
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "server-only": "^0.0.1",
     "stripe": "^20.3.1",
     "three": "^0.184.0",
     "twenty-shared": "workspace:*",
     "twenty-ui": "workspace:*",
-    "zod": "^4.1.11"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@babel/plugin-transform-export-namespace-from": "^7.24.6",

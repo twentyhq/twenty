@@ -3,8 +3,6 @@
 import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import * as crypto from 'crypto';
-
 import { isNonEmptyString } from '@sniptt/guards';
 import { ENTERPRISE_INSTANCE_TYPE } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
@@ -16,10 +14,6 @@ import {
   AppTokenType,
 } from 'src/engine/core-modules/app-token/app-token.entity';
 import {
-  ENTERPRISE_JWT_DEV_PUBLIC_KEY,
-  ENTERPRISE_JWT_PUBLIC_KEY,
-} from 'src/engine/core-modules/enterprise/constants/enterprise-public-key.constant';
-import {
   EnterpriseException,
   EnterpriseExceptionCode,
 } from 'src/engine/core-modules/enterprise/enterprise.exception';
@@ -30,7 +24,7 @@ import {
   type EnterpriseValidityPayload,
 } from 'src/engine/core-modules/enterprise/types/organization-key-payload.type';
 import { isValidityTokenReloadDue } from 'src/engine/core-modules/enterprise/utils/is-validity-token-reload-due.util';
-import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
+import { verifyEnterpriseJwt } from 'src/engine/core-modules/enterprise/utils/verify-enterprise-jwt.util';
 import {
   ConfigVariableException,
   ConfigVariableExceptionCode,
@@ -727,65 +721,12 @@ export class EnterprisePlanService implements OnModuleInit {
   }
 
   // Development and tests try both keys so production keys also work locally.
-  private getPublicKeysToTry(): string[] {
-    const nodeEnv = this.twentyConfigService.get('NODE_ENV');
-
-    if (
-      nodeEnv === NodeEnvironment.DEVELOPMENT ||
-      nodeEnv === NodeEnvironment.TEST
-    ) {
-      return [ENTERPRISE_JWT_PUBLIC_KEY, ENTERPRISE_JWT_DEV_PUBLIC_KEY];
-    }
-
-    return [ENTERPRISE_JWT_PUBLIC_KEY];
-  }
-
-  private verifyJwt<T extends Record<string, unknown>>(
+  private verifyJwt<TPayload extends Record<string, unknown>>(
     token: string,
-  ): T | null {
-    try {
-      const parts = token.split('.');
-
-      if (parts.length !== 3) {
-        return null;
-      }
-
-      const [encodedHeader, encodedPayload, signature] = parts;
-      const signingInput = `${encodedHeader}.${encodedPayload}`;
-
-      const signatureBuffer = Buffer.from(
-        signature.replace(/-/g, '+').replace(/_/g, '/') +
-          '='.repeat((4 - (signature.length % 4)) % 4),
-        'base64',
-      );
-
-      const publicKeys = this.getPublicKeysToTry();
-
-      for (const publicKey of publicKeys) {
-        const isValid = crypto.verify(
-          'sha256',
-          Buffer.from(signingInput),
-          {
-            key: publicKey,
-            padding: crypto.constants.RSA_PKCS1_PADDING,
-          },
-          signatureBuffer,
-        );
-
-        if (isValid) {
-          const payloadStr = Buffer.from(
-            encodedPayload.replace(/-/g, '+').replace(/_/g, '/') +
-              '='.repeat((4 - (encodedPayload.length % 4)) % 4),
-            'base64',
-          ).toString('utf-8');
-
-          return JSON.parse(payloadStr) as T;
-        }
-      }
-
-      return null;
-    } catch {
-      return null;
-    }
+  ): TPayload | null {
+    return verifyEnterpriseJwt<TPayload>({
+      token,
+      nodeEnvironment: this.twentyConfigService.get('NODE_ENV'),
+    });
   }
 }

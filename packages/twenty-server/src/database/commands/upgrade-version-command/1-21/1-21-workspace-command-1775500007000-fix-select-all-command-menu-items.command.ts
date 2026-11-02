@@ -111,6 +111,7 @@ export class FixSelectAllCommandMenuItemsCommand extends ProvisionedWorkspaceCom
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {
               flatEntityToCreate: [],

@@ -9,6 +9,7 @@ import { installHostFetchProxy } from '@/remote/worker/fetch-proxy/utils/install
 import { loadFrontComponentModule } from '@/remote/worker/module-loading/utils/loadFrontComponentModule';
 import { seedFrontComponentExecutionContext } from '@/remote/worker/environment/utils/seedFrontComponentExecutionContext';
 import { setWorkerEnvironmentVariablesFromRenderContext } from '@/remote/worker/environment/utils/setWorkerEnvironmentVariablesFromRenderContext';
+import { waitForScheduledReactCommit } from '@/remote/worker/rendering/utils/waitForScheduledReactCommit';
 import { type HostFetchFunction } from '@/types/HostFetchFunction';
 import { type HostToWorkerRenderContext } from '@/types/HostToWorkerRenderContext';
 
@@ -32,7 +33,8 @@ export const renderFrontComponent = async ({
 
   installHostFetchProxy(hostFetch, renderContext.hostFetchOrigins ?? []);
 
-  const renderContainer = attachRemoteRenderRootToWorkerDocument(connection);
+  const { renderContainer, flushPendingMutations } =
+    attachRemoteRenderRootToWorkerDocument(connection);
 
   setWorkerEnvironmentVariablesFromRenderContext(renderContext);
 
@@ -69,5 +71,8 @@ export const renderFrontComponent = async ({
     sharedDependenciesSource: renderContext.sharedDependenciesSource,
   });
 
-  componentModule.default(renderContainer);
+  await componentModule.default(renderContainer, renderContext.componentProps);
+
+  await waitForScheduledReactCommit();
+  flushPendingMutations();
 };

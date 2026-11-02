@@ -1,0 +1,199 @@
+---
+title: مربع الحوار
+description: اعرض مهمة مركزة فوق الصفحة الحالية.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import DialogReference from '/snippets/ui/generated/surfaces/dialog.mdx';
+
+## نظرة عامة
+
+استخدم `Dialog` للنماذج والتفاصيل والمهام الأخرى التي تُفتح فوق الصفحة. يدير التركيز والإغلاق باستخدام لوحة المفاتيح والنقرات خارجها والتمرير. استخدم [AlertDialog](/ar/ui/primitives/surfaces/alert-dialog) عندما يجب على المستخدم الاستجابة صراحةً لقرار ما.
+
+واجهة برمجة التطبيقات هذه مخصّصة لـ Twenty UI المستقل وتطبيق مضيف Twenty. يجب أن تستخدم المكونات الأمامية [`openCommandConfirmationModal`](/ar/developers/extend/apps/layout/front-components#host-communication-api) من SDK بدلًا من عرض `Dialog` أو `AlertDialog` مباشرةً. تُحظر أيضًا مربعات حوار المتصفح الأصلية والنوافذ المنبثقة في عارض المكونات الأمامية.
+
+<StoryEmbed storyId="ui-surfaces-dialog--display" title="مثال على Dialog" height={440} />
+
+## استخدام
+
+### الحالة غير المتحكم بها
+
+يتولى `Root` الظهور افتراضيًا. عيّن `defaultOpen` لحالته الأولية. تؤدي المشغلات وعناصر تحكم الإغلاق ومفتاح Escape والنقرات الخارجية إلى تحديث تلك الحالة.
+
+```tsx
+import { Button, Field, Input } from 'twenty-ui/primitives/input';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
+
+export const AccountDialog = () => (
+  <Dialog.Root defaultOpen={false}>
+    <Dialog.Trigger render={<Button>Edit account</Button>} />
+    <Dialog.Portal>
+      <Dialog.Backdrop />
+      <Dialog.Viewport>
+        <Dialog.Popup>
+          <Dialog.Header>
+            <Dialog.Title>Edit account</Dialog.Title>
+            <Dialog.Description>Update the account details.</Dialog.Description>
+          </Dialog.Header>
+          <Dialog.Body>
+            <Field.Root name="company">
+              <Field.Label>Company name</Field.Label>
+              <Input defaultValue="Acme" />
+            </Field.Root>
+          </Dialog.Body>
+          <Dialog.Footer>
+            <Dialog.Close render={<Button variant="outline">Close</Button>} />
+            <Dialog.Close render={<Button>Save</Button>} />
+          </Dialog.Footer>
+        </Dialog.Popup>
+      </Dialog.Viewport>
+    </Dialog.Portal>
+  </Dialog.Root>
+);
+```
+
+## البنية
+
+```text
+Dialog.Root
+├── Dialog.Trigger
+└── Dialog.Portal
+    ├── Dialog.Backdrop
+    └── Dialog.Viewport
+        └── Dialog.Popup
+            ├── Dialog.Header
+            │   ├── Dialog.Title
+            │   └── Dialog.Description
+            ├── Dialog.Body
+            └── Dialog.Footer
+                └── Dialog.Close
+```
+
+| الجزء                      | الهدف الأصلي وref                                                                      |
+| -------------------------- | -------------------------------------------------------------------------------------- |
+| `Root`                     | ينسق الظهور والسلوك النمطي. لا يعرض عقدة DOM ولا يقبل سمات أصلية أو DOM ref.           |
+| `المشغّل`                  | زر افتراضيًا. يفتح مربع الحوار ويوفّر هدفًا لاستعادة التركيز.                          |
+| `Portal`                   | عنصر div للبوابة. يدير حاوية الوجهة وما إذا كان المحتوى المغلق يبقى مركبًا.            |
+| `Backdrop`                 | عنصر div للخلفية أسفل النافذة المنبثقة. اختياري؛ احذفه عند عدم الحاجة إلى خلفية مرئية. |
+| `Viewport`                 | عنصر div للتموضع حول النافذة المنبثقة.                                                 |
+| `Popup`                    | عنصر div لمربع الحوار. يدير المحتوى والحجم وأهداف التركيز ودلالات مربع الحوار.         |
+| `العنوان`                  | عنصر `h2` افتراضيًا. يوفّر الاسم المتاح. وفّر `aria-label` على `Popup` عند حذفه.       |
+| `Description`              | فقرة افتراضيًا. يربط النص الداعم بمربع الحوار.                                         |
+| `Header`، `Body`، `Footer` | عناصر div اختيارية لترتيب العناوين والمحتوى والإجراءات.                                |
+| `إغلاق`                    | زر افتراضيًا. يوفر إجراء إغلاق مرئيًا، بما في ذلك لقارئات الشاشة اللمسية.              |
+
+جمّع `Portal` و`Backdrop` و`Viewport` و`Popup` صراحةً. يقبل كل جزء من DOM سماته الأصلية ومعالجاته و`className` و`style` وref وتركيب `render` الخاصة به. يستهدف ref العنصر المعروض لذلك الجزء. لا ينشئ `Popup` بوابة أو خلفية أو منفذ عرض.
+
+## الحالة المتحكم بها
+
+مرر `open` و`onOpenChange` عندما يتولى التطبيق الظهور. يتلقى رد الاتصال الحالة المطلوبة وتفاصيل حدث Base UI، بما فيها `reason` و`event` و`trigger` و`cancel()`. حدّث الحالة لقبول تغيير ما، أو استدعِ `eventDetails.cancel()` لرفضه. يعمل `onOpenChangeComplete` عند انتهاء حركة الفتح أو الإغلاق.
+
+```tsx
+import { useState } from 'react';
+import { Button, Field, Input } from 'twenty-ui/primitives/input';
+import { Dialog } from 'twenty-ui/primitives/surfaces';
+
+export const AccountDialog = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Dialog.Root open={open} onOpenChange={setOpen}>
+      <Dialog.Trigger render={<Button>Edit account</Button>} />
+      <Dialog.Portal>
+        <Dialog.Backdrop />
+        <Dialog.Viewport>
+          <Dialog.Popup>
+            <Dialog.Header>
+              <Dialog.Title>Edit account</Dialog.Title>
+              <Dialog.Description>
+                Update the account details.
+              </Dialog.Description>
+            </Dialog.Header>
+            <Dialog.Body>
+              <Field.Root name="company">
+                <Field.Label>Company name</Field.Label>
+                <Input defaultValue="Acme" />
+              </Field.Root>
+            </Dialog.Body>
+            <Dialog.Footer>
+              <Dialog.Close render={<Button variant="outline">Close</Button>} />
+              <Dialog.Close render={<Button>Save</Button>} />
+            </Dialog.Footer>
+          </Dialog.Popup>
+        </Dialog.Viewport>
+      </Dialog.Portal>
+    </Dialog.Root>
+  );
+};
+```
+
+بالنسبة إلى نموذج غير متزامن، أبقِ مربع الحوار مفتوحًا أثناء الإرسال. أغلقه بعد النجاح واعرض حالات الفشل داخل مربع الحوار.
+
+## التركيب
+
+يقبل `Trigger` و`Close` ‎`render` للتركيب مع `Button`، كما هو موضح أعلاه. يجب أن تقوم الأغلفة المخصصة [بتمرير الخصائص والمراجع الموفرة](/ar/ui/primitives/overview#custom-components). تحافظ أجزاء DOM على أسماء الفئات والأنماط وعقود `render` للاستدعاء الواعية بالحالة في Base UI. يحتفظ `Header` و`Body` و`Footer` بتخطيطها المنسق وتركيب div الأصلي.
+
+ضمّن `Dialog.Root` آخر داخل نافذة منبثقة لفتح مربع حوار ثانٍ. تؤدي إغلاق مربع الحوار المتداخل إلى إعادة التركيز إلى مشغله في الأصل.
+
+لفتح مربع حوار واحد من مشغلات خارج `Root`، أنشئ مقبضًا مرة واحدة باستخدام `Dialog.createHandle\<TPayload>()` ومرّره إلى `handle` في كلٍّ من `Root` و`Trigger`. تتوفر قيم `payload` الخاصة بـ Trigger في دالة العرض الخاصة بـ `Root`. يكشف `Dialog.Handle` والنوع العام `DialogHandle` عن عقد المقبض المثبت:
+
+| العضو                      | الغرض                                        |
+| -------------------------- | -------------------------------------------- |
+| `open(triggerId)`          | يفتح مع مشغل مطابق بوصفه المشغل النشط.       |
+| `open(null)`               | يفتح دون إقران مشغل.                         |
+| `openWithPayload(payload)` | يفتح بحمولة محددة النوع ومن دون مشغل مقترن.  |
+| `close()`                  | يطلب الإغلاق.                                |
+| `isOpen`                   | يقرأ ما إذا كان مربع الحوار المقترن مفتوحًا. |
+
+لا تسري الإجراءات الأمرية إلا أثناء تركيب Root المقترن. يكشف `actionsRef` الخاص بـ Root أيضًا عن `close()` و`unmount()` للتحكم الصريح في الانتقال. للتحكم في حركة إغلاق خارجية، استدعِ `eventDetails.preventUnmountOnClose()` في `onOpenChange`، ثم استدعِ إجراء `unmount()` عند انتهاء الحركة.
+
+يستخدم `Title` ‏`Heading` ويكون افتراضيًا `h2` بخط كبير ولون نص أساسي ومحاذاة مركزية وتباعد-4 أسفله. استخدم `level` لتغيير مستوى العنوان بصورة مستقلة عن `size`، أو `color` لتغيير لون نصه. تُمرر `className` و`style` والمراجع و`render` الأصلية إلى العنوان. أبقِ عنصر عنوان عند استخدام `render`. يكون `Description` في المنتصف مثل `Title`؛ بينما يُبقي AlertDialog كليهما بمحاذاة إلى اليسار.
+
+لا يحتوي `Popup` على حشوة. يوفر `Header` و`Body` و`Footer` المسافة البادئة، لذا يكون المحتوى الموضوع مباشرةً في `Popup` ملاصقًا لحوافه.
+
+## التركيز والتمرير والإغلاق
+
+يتحكم `Root.modal` في حدود التفاعل:
+
+| القيمة           | تركيز                    | تمرير الصفحة والتفاعل الخارجي              |
+| ---------------- | ------------------------ | ------------------------------------------ |
+| `true` (افتراضي) | محصور داخل مربع الحوار   | يُحظر تمرير الصفحة والتفاعل الخارجي.       |
+| `"trap-focus"`   | محصور داخل مربع الحوار   | يبقى تمرير الصفحة والتفاعل خارجها متاحين.  |
+| `خاطئ`           | يمكنه مغادرة مربع الحوار | يبقى تمرير الصفحة والتفاعل الخارجي متاحين. |
+
+احذف `Backdrop` عند عدم الحاجة إلى خلفية مرئية. لمربع حوار غير نمطي ينبغي أن يمرر منفذ عرضه أحداث المؤشر إلى الصفحة، استخدم `\<Dialog.Viewport data-backdrop-hidden="true">`؛ ويبقى Popup تفاعليًا. لا يؤدي حذف الخلفية المرئية وحده إلى تغيير `Root.modal`.
+
+عيّن `Popup.initialFocus` أو `Popup.finalFocus` إلى مرجع أو دالة استدعاء لاختيار أهداف التركيز؛ يعطّل `false` نقل التركيز التلقائي هذا. تتلقى ردود اتصال التركيز نوع التفاعل وتحتفظ بسلوك الإرجاع المنطقي والعنصر وnull وundefined الخاص بـ Base UI. يؤدي الإغلاق عادةً إلى استعادة التركيز إلى المشغل أو العنصر الذي كان مُركزًا عليه سابقًا.
+
+يمنع `Root.disablePointerDismissal` النقرات الخارجية من طلب الإغلاق. لمنع الإغلاق باستخدام Escape، ألغِ تغيير `escape-key` في `onOpenChange`. وفّر دائمًا طريقة مرئية لإغلاق مربع حوار نمطي.
+
+## الأحجام والبوابات
+
+يقبل `Popup.size` القيم `sm` و`compact` و`md` و`lg` و`xl` و`fullscreen`، وتكون قيمته الافتراضية `md`. يُمرّر المحتوى الطويل داخل النافذة المنبثقة. يُقيَّد العرض بمنفذ العرض.
+
+عيّن `Portal.container` لاختيار وجهة:
+
+| القيمة               | الدقة                                                                                              |
+| -------------------- | -------------------------------------------------------------------------------------------------- |
+| محذوف أو `undefined` | يستخدم أقرب حاوية نسق ذات نطاق. عند عدم وجود واحدة، يستخدم Base UI البوابة الأصل أو جسم المستند.   |
+| عنصر أو `ShadowRoot` | يستخدم تلك الوجهة الصريحة بدلًا من نطاق النسق.                                                     |
+| Ref                  | يحلّ Base UI عنصره الحالي. يعود ref الذي تكون قيمته الحالية null إلى البوابة الأصل أو جسم المستند. |
+| `null`               | ينتظر دون تركيب. وفّر وجهة في عرض لاحق للتركيب.                                                    |
+
+يحتفظ `Portal.keepMounted` بالمحتوى وحالة النموذج أثناء الإغلاق. يحمل `Viewport` و`Popup` اتجاه النص المقدّم إلى حاوية خارجية؛ وتكون لخصائص `dir` الصريحة الخاصة بهما الأولوية. من دون موفر اتجاه أو `dir` صريح، يرثان الاتجاه من الوجهة. راجع [إعداد النسق](/ar/ui/theming) و[DirectionProvider](/ar/ui/primitives/layout/direction-provider).
+
+خصّص `Backdrop` و`Viewport` عبر خصائصهما الخاصة. تُطبّق سماتهما الأصلية ومعالجاتهما وrefs و`render` على تلك العناصر بصورة مستقلة عن Popup. يبقي `forceRender` الخاص بـ Backdrop خلفية مربع الحوار المتداخل مرئية عند الحاجة. تبقى حالة الفتح والانتقال في Base UI متاحة للأنماط الواعية بالحالة وردود اتصال العرض.
+
+## الترحيل
+
+غلّف محتوى `Dialog.Popup` الحالي داخل `Dialog.Portal` و`Dialog.Viewport`، وأضف `Dialog.Backdrop` شقيقًا داخل Portal. انقل `container` و`keepMounted` من Popup إلى Portal. انقل خصائص `backdrop` السابقة إلى Backdrop؛ واستبدل `backdrop={false}` بحذف Backdrop. انقل `viewportProps` إلى Viewport، مع الاحتفاظ بـ `data-backdrop-hidden="true"` عندما يجب على منفذ العرض تمرير أحداث المؤشر الخارجية. أبقِ `size` و`initialFocus` و`finalFocus` وسمات النافذة المنبثقة الأصلية وrefs النافذة المنبثقة على Popup. تُزال خصائص تجميع Popup الموحّدة.
+
+يحتفظ Root وTrigger وClose وTitle وDescription وHeader وBody وFooter والمقابض الحالية بأدوارها. تُصدَّر خصائص الأجزاء العامة والحالة والإجراءات وأنواع تفاصيل الأحداث من `twenty-ui/primitives/surfaces`.
+
+## الإزاحة
+
+<DialogReference />
+
+<PageBanner illustration="layout" />

@@ -6,50 +6,158 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
   featureColumnLabel: msg`Name`,
   initialVisibleRowCount: 15,
   rows: [
+    { title: msg`Plan essentials`, type: 'category' },
     {
       featureLabel: msg`Price`,
       selfHostTiers: {
-        enterprise: { kind: 'text', text: msg`From $50k/year` },
-        organization: { kind: 'text', text: msg`$19/user` },
-        pro: { kind: 'text', text: msg`$0/user` },
+        enterprise: {
+          kind: 'metric',
+          prefix: msg`From`,
+          unit: msg`/year`,
+          value: msg`$50k`,
+        },
+        organization: {
+          kind: 'metric',
+          unit: msg`/user/month`,
+          value: msg`$19`,
+        },
+        pro: { kind: 'metric', unit: msg`/user/month`, value: msg`$0` },
       },
       tiers: {
-        enterprise: { kind: 'text', text: msg`From $50k/year` },
-        organization: { kind: 'text', text: msg`$19/user` },
-        pro: { kind: 'text', text: msg`$9/user` },
+        enterprise: {
+          kind: 'metric',
+          prefix: msg`From`,
+          unit: msg`/year`,
+          value: msg`$50k`,
+        },
+        organization: {
+          kind: 'metric',
+          unit: msg`/user/month`,
+          value: msg`$39`,
+        },
+        pro: { kind: 'metric', unit: msg`/user/month`, value: msg`$9` },
       },
       type: 'row',
     },
     {
-      featureLabel: msg`Seats limit`,
+      appliesTo: 'cloud',
+      featureLabel: msg`Personal AI usage`,
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Unlimited` },
+        enterprise: { kind: 'text', text: msg`Custom` },
+        organization: {
+          detail: msg`per member`,
+          kind: 'metric',
+          unit: msg`AI tasks/week`,
+          value: msg`≈ 500`,
+        },
+        pro: {
+          detail: msg`per member`,
+          kind: 'metric',
+          unit: msg`AI tasks/week`,
+          value: msg`≈ 100`,
+        },
+      },
+      tooltip: msg`Each member's own AI allowance, renewed every Monday. An AI task is one chat request, estimated with the default model; smarter models use more. When it runs out, chat continues on workspace credits unless an admin turns that off.`,
+      type: 'row',
+    },
+    {
+      appliesTo: 'cloud',
+      featureLabel: msg`Workspace credits`,
+      tiers: {
+        enterprise: { kind: 'text', text: msg`Custom` },
+        organization: {
+          detail: msg`≈ 40,000 workflow steps`,
+          kind: 'metric',
+          unit: msg`credits/user/month`,
+          value: msg`4`,
+        },
+        pro: {
+          detail: msg`≈ 10,000 workflow steps`,
+          kind: 'metric',
+          unit: msg`credit/user/month`,
+          value: msg`1`,
+        },
+      },
+      tooltip: msg`Monthly credits shared by the workspace for workflows, AI agents and apps. 1 credit covers 10,000 workflow steps.`,
+      type: 'row',
+    },
+    {
+      featureLabel: msg`Permissions`,
+      selfHostTiers: {
+        organization: {
+          kind: 'text',
+          suffix: msg`down to fields and rows`,
+          text: msg`Custom roles`,
+        },
+        pro: {
+          kind: 'text',
+          suffix: msg`down to fields`,
+          text: msg`Custom roles`,
+        },
+      },
+      tiers: {
+        organization: {
+          kind: 'text',
+          suffix: msg`down to fields and rows`,
+          text: msg`Custom roles`,
+        },
+        pro: { kind: 'text', text: msg`Admin & Member` },
+      },
+      type: 'row',
+    },
+    {
+      featureLabel: msg`SSO`,
+      tiers: {
+        enterprise: { kind: 'text', text: msg`SAML/OIDC + SCIM` },
+        organization: { kind: 'text', text: msg`SAML/OIDC` },
+        pro: { kind: 'text', text: msg`No` },
+      },
+      type: 'row',
+    },
+    {
+      featureLabel: msg`Support`,
+      selfHostTiers: {
+        enterprise: { kind: 'text', text: msg`Dedicated, with SLA` },
+        organization: { kind: 'text', text: msg`Priority` },
+        pro: { kind: 'text', text: msg`Community` },
+      },
+      tiers: {
+        enterprise: { kind: 'text', text: msg`Dedicated, with SLA` },
+        organization: { kind: 'text', text: msg`Priority` },
+        pro: { kind: 'text', text: msg`Email and chat` },
       },
       type: 'row',
     },
     { title: msg`Workspace`, type: 'category' },
     {
+      featureLabel: msg`Seats limit`,
+      tiers: {
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'unlimited' },
+      },
+      type: 'row',
+    },
+    {
       featureLabel: msg`Custom objects`,
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'unlimited' },
       },
       type: 'row',
     },
     {
       featureLabel: msg`Custom fields`,
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'unlimited' },
       },
       type: 'row',
     },
     {
       featureLabel: msg`Custom views`,
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'unlimited' },
       },
       type: 'row',
     },
@@ -64,16 +172,16 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
     {
       featureLabel: msg`Custom layout`,
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'unlimited' },
       },
       type: 'row',
     },
     {
       featureLabel: msg`Records`,
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'unlimited' },
       },
       type: 'row',
     },
@@ -97,8 +205,8 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
     {
       featureLabel: msg`Number of dashboards`,
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'unlimited' },
       },
       type: 'row',
     },
@@ -106,8 +214,8 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
     {
       featureLabel: msg`Internet accounts per user`,
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'unlimited' },
       },
       type: 'row',
     },
@@ -153,6 +261,25 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       },
       type: 'row',
     },
+    {
+      appliesTo: 'cloud',
+      featureLabel: msg`Extra credits`,
+      tiers: {
+        enterprise: { kind: 'text', text: msg`Custom` },
+        organization: {
+          detail: msg`$1 per credit, from $20/month`,
+          kind: 'text',
+          text: msg`Credit packs`,
+        },
+        pro: {
+          detail: msg`$1 per credit, from $20/month`,
+          kind: 'text',
+          text: msg`Credit packs`,
+        },
+      },
+      tooltip: msg`Add a credit pack to your monthly or yearly plan. Unused pack credits roll over, up to twice the pack.`,
+      type: 'row',
+    },
     { title: msg`Security`, type: 'category' },
     {
       featureLabel: msg`Two-factor authentication`,
@@ -164,40 +291,44 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
     },
     {
       featureLabel: msg`User roles`,
+      selfHostTiers: {
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'unlimited' },
+      },
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'text', text: msg`Admin & Member` },
       },
       type: 'row',
     },
     {
       featureLabel: msg`Read/Edit/Delete permissions`,
+      selfHostTiers: {
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'unlimited' },
+      },
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'dash' },
       },
       type: 'row',
     },
     {
       featureLabel: msg`Field-level permissions`,
+      selfHostTiers: {
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'unlimited' },
+      },
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'dash' },
       },
       type: 'row',
     },
     {
       featureLabel: msg`Row-level permissions`,
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'dash' },
-      },
-      type: 'row',
-    },
-    {
-      featureLabel: msg`SSO`,
-      tiers: {
-        organization: { kind: 'yes', label: msg`Yes` },
+        organization: { kind: 'unlimited' },
         pro: { kind: 'dash' },
       },
       type: 'row',
@@ -244,6 +375,15 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
     },
     {
       featureLabel: msg`Impersonate users`,
+      tiers: {
+        organization: { kind: 'yes', label: msg`Yes` },
+        pro: { kind: 'yes', label: msg`Yes` },
+      },
+      type: 'row',
+    },
+    {
+      appliesTo: 'cloud',
+      featureLabel: msg`Data Processing Agreement (DPA)`,
       tiers: {
         organization: { kind: 'yes', label: msg`Yes` },
         pro: { kind: 'yes', label: msg`Yes` },
@@ -320,8 +460,8 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
     {
       featureLabel: msg`Custom apps`,
       tiers: {
-        organization: { kind: 'text', text: msg`Unlimited` },
-        pro: { kind: 'text', text: msg`Unlimited` },
+        organization: { kind: 'unlimited' },
+        pro: { kind: 'unlimited' },
       },
       type: 'row',
     },
@@ -464,7 +604,7 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
       type: 'row',
     },
     {
-      featureLabel: msg`Security review & tailored DPA`,
+      featureLabel: msg`Security reviews & custom contracts`,
       tiers: {
         enterprise: { kind: 'yes', label: msg`Yes` },
         organization: { kind: 'dash' },
@@ -480,6 +620,7 @@ export const PLAN_TABLE_DATA: PlanTableDataType = {
   tierColumns: [
     { id: 'pro', label: { cloud: msg`Pro`, selfHost: msg`Pro` } },
     {
+      highlighted: true,
       id: 'organization',
       label: { cloud: msg`Organization`, selfHost: msg`Organization` },
     },

@@ -8,7 +8,7 @@ import { CardTitle } from "/snippets/card-title.mdx"
 
 ## What the logic layer covers
 
-A Twenty app's **logic layer** is the code that *runs* — server-side TypeScript handlers reacting to HTTP requests, cron schedules, and record changes; AI skills and agents that live inside the workspace; and OAuth connections that let your functions act on a user's behalf in third-party services.
+A Twenty app's **logic layer** is the code that *runs* — server-side TypeScript handlers reacting to HTTP requests, cron schedules, and record changes; AI skills and agents that live inside the workspace; connections (OAuth or a custom sign-in flow) that let your functions act on a user's behalf in third-party services; and messaging channels that bring an external inbox into Twenty.
 
 ```text
             ┌─ HTTP route      ──┐
@@ -49,6 +49,10 @@ A Twenty app's **logic layer** is the code that *runs* — server-side TypeScrip
     <CardTitle>Messaging Channels</CardTitle>
     Bring conversations from any provider into Twenty's Message and Message Thread records — threading and de-duplication included.
   </Card>
+  <Card href="/developers/extend/apps/logic/inbox" img="/images/user-guide/halftone/card-page-messaging-channels.svg">
+    <CardTitle>Inbox</CardTitle>
+    Post messages in members' inbox from logic functions and front components.
+  </Card>
   <Card href="/developers/extend/apps/logic/key-value-store" img="/images/user-guide/halftone/card-page-key-value-store.svg">
     <CardTitle>Key-Value Store</CardTitle>
     Persist state between logic function runs — caches, cursors, and cross-workspace claims.
@@ -80,7 +84,7 @@ Functions run sandboxed in isolated Node.js processes and access the workspace t
 <Note>
 **Install-time hooks** — code that runs before or after the install — share this runtime but use their own define functions and live under [Config → Install Hooks](/developers/extend/apps/config/install-hooks).
 
-The [**health check**](/developers/extend/apps/logic/logic-functions#health-check) shares it too. It declares no trigger: Twenty calls it on demand when the app's settings page opens.
+The [**health check**](/developers/extend/apps/logic/logic-functions#health-check) shares it too. An app declares one check with no trigger. By default, Twenty calls its zero-argument handler when workspace app settings open. Set `runOnUserPreferences: true` to run it on a member's Apps preferences page instead, with their required `userWorkspaceId`.
 </Note>
 
 <PageBanner illustration="section-apps-logic" />

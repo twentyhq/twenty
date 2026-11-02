@@ -1,7 +1,7 @@
 import styled from '@emotion/styled';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 import { SlackUserLinkTextInput } from 'src/front-components/components/SlackUserLinkTextInput';
 

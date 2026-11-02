@@ -4,7 +4,7 @@ import { join } from 'node:path';
 export const writeTestSourceSdk = async ({
   appPath,
   version = '9.9.9',
-  requiredNode = '^24.5.0',
+  requiredNode = '^24.5.0 || ^26.5.1',
   hasSourceExports = true,
 }: {
   appPath: string;

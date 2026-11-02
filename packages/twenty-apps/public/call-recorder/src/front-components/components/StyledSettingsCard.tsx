@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 // Mirrors twenty-ui's Card without its overflow: hidden, which would clip the
 // select menus that open inline below their rows. The rows paint their own

@@ -3,7 +3,13 @@ title: الترجمات
 description: قدّم تطبيقك بعدة لغات — ترجم تسميات ملف البيان وسلاسل واجهة المستخدم عبر كتالوج إعدادات محلية واحد.
 ---
 
-تُكتب تطبيقات Twenty باللغة **الإنجليزية**: السلاسل في شفرتك وملف البيان هي نص المصدر بالإنجليزية، و`en` هي الإعداد المحلي الذي تترجم منه، وأي إعداد محلي يُترك دون ترجمة يعود إليه افتراضيًا.
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## نظرة عامة
+
+تُكتب تطبيقات Twenty باللغة **الإنجليزية**: السلاسل في مصدرك وملف البيان
+هي نص المصدر الإنجليزي، و`en` هو الإعداد المحلي الذي تترجم *منه*، وأي
+إعداد محلي يُترك دون ترجمة يعود إليه افتراضيًا.
 
 يحتوي تطبيقك على نوعين من النصوص القابلة للترجمة، وكلاهما يمر عبر نفس
 كتالوج `locales/`:
@@ -41,7 +47,11 @@ const Card = ({ count, name }: { count: number; name: string }) => {
       <p>{t('Saved {count} cards', { count })}</p>
 
       {/* Resolve a lazily-declared descriptor */}
-      <ul>{STATUSES.map((s) => <li key={s.id}>{t(s.label)}</li>)}</ul>
+      <ul>
+        {STATUSES.map((s) => (
+          <li key={s.id}>{t(s.label)}</li>
+        ))}
+      </ul>
     </section>
   );
 };
@@ -62,7 +72,7 @@ const Card = ({ count, name }: { count: number; name: string }) => {
 ```tsx
 t({ message: 'Open', context: 'door' });
 t({ message: 'Open', context: 'window' });
-<Trans context="card-title">Untitled</Trans>
+<Trans context="card-title">Untitled</Trans>;
 ```
 
 تظهر السلاسل السياقية في كتالوجات اللغة المحلية كمجموعة مفهرسة حسب سياقها:
@@ -73,8 +83,8 @@ t({ message: 'Open', context: 'window' });
 شغِّل أمر الاستخراج من دليل تطبيقك:
 
 ```bash
-twenty dev:translations-extract                  # collect strings into locales/en.json
-twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
+twenty app translations extract                  # collect strings into locales/en.json
+twenty app translations extract --locale fr-FR   # also scaffold a target locale
 ```
 
 يقوم الاستخراج بجمع كل من تسميات ملف البيان (manifest labels) وسلاسل `t()`/`msg()`/`Trans`
@@ -102,17 +112,36 @@ twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
 
 ## كيفية التشغيل
 
-يقوم `twenty dev:build` بتجميع الكتالوجات وتقديم اللغة الصحيحة للمستخدم
-الحالي: يتم حل تسميات ملف البيان (manifest labels) على جانب الخادم، ويتم تضمين كتالوجات الواجهة الأمامية (front-component)
-داخل كل حزمة مكوّن. وقت التشغيل يقرأ المكوّن
+يقوم `twenty app build` بتجميع الكتالوجات وتقديم اللغة المناسبة للمستخدم
+الحالي: تُحل تسميات ملف البيان على جانب الخادم، وتُضمَّن كتالوجات
+المكوّنات الأمامية في كل حزمة مكوّن. وقت التشغيل يقرأ المكوّن
 اللغة (locale) من سياق التنفيذ الخاص به (لغة المضيف الحالية) ويحل كل سلسلة مقابل كتالوجه، مع الرجوع إلى المصدر عندما تكون الترجمة مفقودة. تغيير اللغة في المضيف يعيد تصيير سلاسل `Trans` و
 `useTranslate().t` مباشرة.
 
-تُصرَّف تسميات Manifest عند كل مزامنة — `twenty dev:build` و`twenty apply`
-وكذلك المراقبة المستمرة `twenty dev` — لذا يكفي تعديل ملف لغة
-والمزامنة لرؤية النص الجديد. تُضمَّن كتالوجات مكوّنات Front في
-كل حزمة مكوّنات وقت البناء، لذا فإن تغيير أحدها لا يزال يعني
-إعادة تشغيل `twenty dev:build` (وإعادة النشر).
+تُجمَّع تسميات ملف البيان عند كل مزامنة — سواء عبر `twenty app build` أو `twenty app apply`
+أو المراقبة المستمرة لـ `twenty app dev` — لذا يكفي تعديل ملف إعداد محلي
+ومزامنته لرؤية النص الجديد. تُضمَّن كتالوجات المكوّنات الأمامية في
+كل حزمة مكوّن أثناء الإنشاء، لذا فإن تغيير أحدها لا يزال يعني
+إعادة تشغيل `twenty app build` (وإعادة النشر).
+
+## سحب الترجمات
+
+يكتب `twenty app pull` الترجمات المنشورة للتطبيق مرة أخرى في
+`locales/`. يُفهرس الكتالوج المنشور حسب معرّف الرسالة، لذا يستعيد السحب
+الصيغة المقروءة فقط للسلاسل التي يمكنه رؤية مصدرها: تسميات
+البيانات الوصفية التي سحبها وسلاسل `t()`/`msg()`/`Trans` لمكونات الواجهة الأمامية
+الموجودة في المشروع. يُحتفظ بكل شيء آخر كما هو في
+`locales/compiled/\<locale>.json`، مفهرسًا حسب معرّف الرسالة. تدمج عملية البناء تلك
+الملفات في الكتالوج (يكون لإدخال في `locales/\<locale>.json` الأولوية على
+إدخال مُجمّع له المعرّف نفسه)، ويترك `twenty app translations extract` هذه الملفات دون تغيير،
+وتعيد كل عملية سحب كتابتها، لذا يتقلص حجمها كلما أُضيف المزيد من مصدر التطبيق
+إلى الشجرة. لا تعدّلها يدويًا؛ ترجم في `locales/\<locale>.json`.
+
+لا يحدد مشروع لا يحتوي على مجلد `locales/` أي شيء بشأن الترجمات، لذا فإن
+المزامنة منه تترك ما نشره التطبيق بالفعل دون تغيير. لإزالة
+الترجمات المنشورة عمدًا، احتفظ بالمجلد واحذف ملفات اللغة
+داخله: إن مجلد `locales/` الذي لا يُجمَّع إلى أي لغة هو إعلان
+صريح، وتُقلِّم المزامنة وفقًا لذلك.
 
 قد تمتد عناصر النص التابعة لـ `Trans` على عدة أسطر — يتم ضغط المسافات
 بنفس الطريقة التي يقوم JSX بضغطها، لذلك كلاهما يتم استخلاصه إلى المفتاح `Welcome back`:
@@ -124,3 +153,5 @@ twenty dev:translations-extract --locale fr-FR   # also scaffold a target locale
   back
 </Trans>
 ```
+
+<PageBanner illustration="card-page-translations" />

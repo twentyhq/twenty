@@ -1,0 +1,79 @@
+---
+title: Comandă rapidă.
+description: Afișați combinații de taste simultane și comenzi rapide secvențiale.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ShortcutReference from '/snippets/ui/generated/typography/shortcut.mdx';
+
+## Prezentare generală
+
+Importați `Shortcut` și `formatShortcut` din `twenty-ui/primitives/typography`. Ambele utilizează același model, aceleași simboluri și aceiași separatori. Înregistrați comenzi rapide în aplicația dvs. `Shortcut` doar formatează indiciul; nu înregistrează acțiuni de la tastatură. Atributele native, gestionarele de evenimente, stilurile, numele claselor și referințele vizează elementul său span exterior. `ShortcutProps` și `ShortcutFormatOptions` sunt tipuri publice.
+
+<StoryEmbed storyId="ui-typography-shortcut--display" title="Prezentări de comenzi rapide" height={90} />
+
+## Utilizare
+
+```tsx
+import { Shortcut } from 'twenty-ui/primitives/typography';
+
+export const SearchShortcut = () => <Shortcut shortcut={['Mod', 'K']} />;
+```
+
+## Combinații și secvențe
+
+```tsx
+import { Shortcut, formatShortcut } from 'twenty-ui/primitives/typography';
+
+export const ShortcutExamples = () => (
+  <>
+    <Shortcut shortcut={['Enter']} />
+    <Shortcut shortcut={['Mod', 'K']} />
+    <Shortcut shortcut={[['G'], ['P']]} sequenceJoinLabel="then" />
+    <Shortcut
+      shortcut={[
+        ['Mod', 'K'],
+        ['Mod', 'C'],
+      ]}
+      sequenceJoinLabel="then"
+    />
+  </>
+);
+
+const hint = formatShortcut({
+  shortcut: ['Mod', 'Enter'],
+});
+```
+
+O matrice plată reprezintă o combinație simultană: `['Mod', 'K']` înseamnă apăsați Mod și K împreună. O matrice imbricată reprezintă o secvență ordonată: `[['G'], ['P']]` înseamnă apăsați G, apoi P. Fiecare matrice imbricată este o combinație, astfel `[['Mod', 'K'], ['Mod', 'C']]` înseamnă apăsați Mod și K, apoi Mod și C. Utilizați o matrice cu un singur element pentru o singură tastă. Ambele forme de matrice pot fi readonly.
+
+`Mod` și `CommandOrControl` afișează Command pe macOS și iOS, iar Control în alte situații. Tastele explicite `Command`, `Control`, `Alt` și `Enter` au, de asemenea, etichete de afișare. Alte șiruri sunt afișate așa cum sunt furnizate. Detectarea dispozitivului este sigură fără variabile globale ale browserului; `platform` o suprascrie opțional cu `mac` sau `other`.
+
+Utilizați `sequenceJoinLabel` pentru textul de îmbinare localizat. `combinationSeparator` poate păstra o convenție a gazdei, cum ar fi `+`. Separatorul de text implicit este gol pe dispozitivele Apple și un spațiu în alte situații. `variant` selectează `keys`, `text` sau `button`. `visibility="desktop"` ascunde indiciul la lățimi ale ferestrei de vizualizare pentru mobil, în timp ce `always` rămâne vizibil.
+
+Simbolurile tastelor au denumiri accesibile și ușor de citit. Folosește `accessibleKeyLabels` pentru a localiza numele tastelor individuale în rezultatul cititorului de ecran. Furnizează `aria-label` sau `aria-labelledby` pentru un nume localizat pentru întreaga comandă rapidă sau `aria-hidden` pentru un indiciu decorativ. Butoanele își păstrează numele acțiunilor și își ascund indiciile decorative pe mobil. Rândurile din meniuri și liste își păstrează indiciile vizibile.
+
+## Aspect
+
+Folosește `keys` pentru taste individuale, `text` pentru un indiciu în linie sau `button` pentru indiciul compact din cadrul unei acțiuni. Aceste variante modifică doar prezentarea.
+
+<StoryEmbed storyId="ui-typography-shortcut--catalog" title="Variante de aspect ale scurtăturii" height={160} />
+
+## Migrare
+
+| Proprietatea anterioară                           | Înlocuire                                                   |
+| ------------------------------------------------- | ----------------------------------------------------------- |
+| Buton `hotkeys={['⌘', 'K']}`                      | `shortcut={['Mod', 'K']}`                                   |
+| `hotkeys` / `hotKeys` secvențiale pentru ListItem | `shortcut={[['G'], ['P']]}`                                 |
+| `hotkeysJoinLabel` / `hotKeysJoinLabel`           | `shortcutJoinLabel` pe părțile Button, ListItem și Dropdown |
+| Concatenare manuală a tastelor pentru tooltip     | `formatShortcut({ shortcut: ['Mod', 'Enter'] })`            |
+
+Matricile plate stocate care reprezintă apăsări succesive ale tastelor necesită imbricare înainte de a fi transmise către `shortcut`: `hotKeys.map((key) => [key])`. Matricile care reprezintă taste simultane pot fi transmise direct. Șirurile de taste rămân tokenuri literale, astfel încât `['Mod', '+']` conține o tastă plus și `['Space']` conține tasta Space; nu este necesară nicio analizare a șirului de comenzi rapide.
+
+## Proprietăți
+
+<ShortcutReference />
+
+<PageBanner illustration="card-page-command-menu" />

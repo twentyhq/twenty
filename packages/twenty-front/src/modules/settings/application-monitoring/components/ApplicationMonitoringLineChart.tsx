@@ -53,12 +53,14 @@ type ApplicationMonitoringLineChartProps<TSeriesKey extends string> = {
   data: ApplicationMonitoringChartDatum<TSeriesKey>[];
   series: { key: TSeriesKey; label: string; color: ThemeColor }[];
   axisLabel: string;
+  getTotalFormatOptions?: (total: number) => Intl.NumberFormatOptions;
 };
 
 export const ApplicationMonitoringLineChart = <TSeriesKey extends string>({
   data,
   series,
   axisLabel,
+  getTotalFormatOptions,
 }: ApplicationMonitoringLineChartProps<TSeriesKey>) => {
   const theme = useTheme();
   const { i18n } = useLingui();
@@ -74,6 +76,12 @@ export const ApplicationMonitoringLineChart = <TSeriesKey extends string>({
   const integerTickValues = values.every(Number.isInteger)
     ? getApplicationMonitoringChartIntegerTickValues(maxValue)
     : undefined;
+
+  const formatSeriesTotal = (key: TSeriesKey) => {
+    const total = data.reduce((sum, datum) => sum + datum[key], 0);
+
+    return i18n.number(total, getTotalFormatOptions?.(total));
+  };
 
   const formatBucketStart = (bucketIndex: number | string | Date) => {
     const bucketStart =
@@ -95,7 +103,7 @@ export const ApplicationMonitoringLineChart = <TSeriesKey extends string>({
         {series.map(({ key, label, color }) => (
           <StyledLegendItem key={key}>
             <StyledLegendDot color={theme.color[color]} />
-            {label}
+            {`${label} (${formatSeriesTotal(key)})`}
           </StyledLegendItem>
         ))}
       </StyledLegend>

@@ -3,7 +3,8 @@ title: Calendario & Email
 description: Sincronizza la tua email e il tuo calendario con Twenty.
 ---
 
-Twenty si collega ai tuoi strumenti esistenti così che il tuo CRM rimanga aggiornato senza inserimento manuale dei dati.
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Sincronizzazione email
 
@@ -35,11 +36,15 @@ Oltre a email e calendario, Twenty si collega a strumenti esterni tramite:
 
 Gli sviluppatori possono creare app complete su Twenty, aggiungendo UI personalizzata, logica lato server e integrazioni avanzate. Le app possono essere pubblicate per la community o mantenute private.
 
-<CardGroup cols={2}>
-  <Card title="Guida a Calendario & Email" icon="mail" href="/it/user-guide/calendar-emails/overview">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/it/user-guide/calendar-emails/overview" img="/images/documentation/banner-icons-v2/calendar-emails.svg">
+    <CardTitle>Guida a calendario ed email</CardTitle>
     Configura la sincronizzazione delle email e del calendario e risolvi eventuali problemi.
   </Card>
-  <Card title="API ed estensioni" icon="plug" href="/it/developers/extend/api">
+  <Card href="/it/developers/extend/api" img="/images/documentation/banner-icons-v2/dev-api.svg">
+    <CardTitle>API ed estensioni</CardTitle>
     Crea integrazioni personalizzate con l'API di Twenty.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="getting-started-calendar-email" />

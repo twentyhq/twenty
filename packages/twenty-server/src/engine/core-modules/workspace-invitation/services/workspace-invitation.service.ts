@@ -30,6 +30,8 @@ import {
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { GettingStartedStepActionKey } from 'src/engine/core-modules/getting-started/enums/getting-started-step-action-key.enum';
+import { GettingStartedService } from 'src/engine/core-modules/getting-started/services/getting-started.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { OnboardingService } from 'src/engine/core-modules/onboarding/onboarding.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
@@ -42,7 +44,7 @@ import {
   WorkspaceInvitationExceptionCode,
 } from 'src/engine/core-modules/workspace-invitation/workspace-invitation.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { RoleAssignmentValidationService } from 'src/engine/metadata-modules/role-assignment-validation/services/role-assignment-validation.service';
+import { RoleAssignmentValidationService } from 'src/engine/permissions/role-assignment/services/role-assignment-validation.service';
 import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -61,6 +63,7 @@ export class WorkspaceInvitationService {
     private readonly i18nService: I18nService,
     private readonly throttlerService: ThrottlerService,
     private readonly fileUrlService: FileUrlService,
+    private readonly gettingStartedService: GettingStartedService,
   ) {}
 
   async validatePersonalInvitation({
@@ -407,13 +410,23 @@ export class WorkspaceInvitationService {
       }
     }
 
+    const hasSentInvitations = invitationResults.some(
+      (invitationResult) => invitationResult.status === 'fulfilled',
+    );
+
     await this.onboardingService.completeOnboardingInviteTeamStep({
       userId: sender.userId,
       workspaceId: workspace.id,
-      hasSentInvitations: invitationResults.some(
-        (invitationResult) => invitationResult.status === 'fulfilled',
-      ),
+      hasSentInvitations,
     });
+
+    if (hasSentInvitations && this.twentyConfigService.isBillingEnabled()) {
+      await this.gettingStartedService.completeStep({
+        userId: sender.userId,
+        workspaceId: workspace.id,
+        stepActionKey: GettingStartedStepActionKey.INVITE_TEAM,
+      });
+    }
 
     const i18n = this.i18nService.getI18nInstance(sender.locale);
 

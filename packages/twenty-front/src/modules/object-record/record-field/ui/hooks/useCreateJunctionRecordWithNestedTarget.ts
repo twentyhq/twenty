@@ -13,6 +13,7 @@ import { findTargetFieldInfo } from '@/object-record/record-field/ui/utils/junct
 import { getSourceJoinColumnName } from '@/object-record/record-field/ui/utils/junction/getSourceJoinColumnName';
 import { type ValidJunctionConfig } from '@/object-record/record-field/ui/utils/junction/types/ValidJunctionConfig';
 import { upsertJunctionRecordInSourceRecordStore } from '@/object-record/record-field/ui/utils/junction/upsertJunctionRecordInSourceRecordStore';
+import { useRecordCreationForm } from '@/object-record/record-form/hooks/useRecordCreationForm';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { buildRecordLabelPayload } from '@/object-record/utils/buildRecordLabelPayload';
@@ -34,9 +35,10 @@ export const useCreateJunctionRecordWithNestedTarget = ({
   junctionConfig,
 }: UseCreateJunctionRecordWithNestedTargetArgs) => {
   const store = useStore();
-  const [loading, setLoading] = useState(false);
+  const [isCreatePending, setIsCreatePending] = useState(false);
   const { objectMetadataItems } = useObjectMetadataItems();
   const { enqueueToast } = useToast();
+  const { createRecordWithOptionalForm } = useRecordCreationForm();
   const { buildRecordInputFromRLSPredicates } =
     useBuildRecordInputFromRLSPredicates();
   const { createOneRecord: createJunctionRecord } = useCreateOneRecord({
@@ -82,25 +84,13 @@ export const useCreateJunctionRecordWithNestedTarget = ({
         return undefined;
       }
 
-      setLoading(true);
-
-      try {
-        const targetRecordId = v4();
+      const createRecord = async (draftRecord: Partial<ObjectRecord>) => {
         const targetRecordInput = {
           ...sanitizeRecordInput({
             objectMetadataItem: targetObjectMetadataItem,
-            recordInput: {
-              ...buildRecordInputFromRLSPredicates({
-                objectMetadataItem: targetObjectMetadataItem,
-              }),
-              ...buildRecordLabelPayload({
-                id: targetRecordId,
-                searchInput,
-                objectMetadataItem: targetObjectMetadataItem,
-              }),
-            },
+            recordInput: draftRecord,
           }),
-          id: targetRecordId,
+          id: v4(),
         };
 
         const createdJunctionRecord = await createJunctionRecord({
@@ -109,30 +99,48 @@ export const useCreateJunctionRecordWithNestedTarget = ({
           [targetFieldInfo.fieldName]: { create: targetRecordInput },
         });
 
-        const createdTargetRecord = createdJunctionRecord[
-          targetFieldInfo.fieldName
-        ] as ObjectRecord | undefined;
         const targetRecord = {
           ...targetRecordInput,
-          ...(createdTargetRecord ?? {}),
-          __typename:
-            createdTargetRecord?.__typename ??
-            getObjectTypename(targetObjectMetadataItem.nameSingular),
-        };
-        const junctionRecordForStore = {
-          ...createdJunctionRecord,
-          [targetFieldInfo.fieldName]: targetRecord,
+          __typename: getObjectTypename(targetObjectMetadataItem.nameSingular),
+          ...createdJunctionRecord[targetFieldInfo.fieldName],
         };
 
         upsertJunctionRecordInSourceRecordStore({
           store,
           sourceRecordId,
           sourceFieldName,
-          junctionRecord: junctionRecordForStore,
+          junctionRecord: {
+            ...createdJunctionRecord,
+            [targetFieldInfo.fieldName]: targetRecord,
+          },
         });
 
+        return targetRecord;
+      };
+
+      setIsCreatePending(true);
+
+      try {
+        const targetRecord = await createRecordWithOptionalForm({
+          objectMetadataItem: targetObjectMetadataItem,
+          initialDraftRecord: {
+            ...buildRecordInputFromRLSPredicates({
+              objectMetadataItem: targetObjectMetadataItem,
+            }),
+            ...buildRecordLabelPayload({
+              searchInput,
+              objectMetadataItem: targetObjectMetadataItem,
+            }),
+          },
+          createRecord,
+        });
+
+        if (!isDefined(targetRecord)) {
+          return undefined;
+        }
+
         return {
-          recordId: targetRecordId,
+          recordId: targetRecord.id,
           objectMetadataId: targetObjectMetadataItem.id,
           isSelected: true,
           isMatchingSearchFilter: true,
@@ -141,12 +149,13 @@ export const useCreateJunctionRecordWithNestedTarget = ({
         enqueueToast(getToastOptionsFromError({ error }));
         return undefined;
       } finally {
-        setLoading(false);
+        setIsCreatePending(false);
       }
     },
     [
       buildRecordInputFromRLSPredicates,
       createJunctionRecord,
+      createRecordWithOptionalForm,
       enqueueToast,
       junctionConfig,
       objectMetadataItems,
@@ -157,5 +166,5 @@ export const useCreateJunctionRecordWithNestedTarget = ({
     ],
   );
 
-  return { createJunctionRecordWithNestedTarget, loading };
+  return { createJunctionRecordWithNestedTarget, isCreatePending };
 };

@@ -107,7 +107,7 @@ describe('twenty app dev', () => {
       'ndjson',
       '--create',
       '--yes',
-      '--no-delete',
+      '--no-prune',
     ]);
 
     await vi.waitFor(() => expect(buildDevSnapshot).toHaveBeenCalledOnce());

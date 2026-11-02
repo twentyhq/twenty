@@ -63,6 +63,7 @@ export class AddWorkflowVisibilityCommandMenuItemsCommand extends ProvisionedWor
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {
               flatEntityToCreate: commandMenuItemsToCreate,

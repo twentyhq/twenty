@@ -86,7 +86,7 @@ export const Indent = Extension.create({
               ? {
                   'data-indent': indent,
                   style: doNotTranslate(
-                    `margin-left: calc(${indent} * var(--editor-list-indent))`,
+                    `--editor-indent: ${indent}; margin-left: calc(var(--editor-indent) * var(--editor-list-indent))`,
                   ),
                 }
               : {};

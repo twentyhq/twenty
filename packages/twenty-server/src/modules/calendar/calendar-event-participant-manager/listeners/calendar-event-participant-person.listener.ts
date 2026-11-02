@@ -55,6 +55,10 @@ export class CalendarEventParticipantPersonListener {
           workspaceMemberIds: [],
         },
       },
+      {
+        workspaceId: payload.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 
@@ -89,6 +93,10 @@ export class CalendarEventParticipantPersonListener {
           workspaceMemberIds: [],
         },
       },
+      {
+        workspaceId: payload.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 
@@ -114,6 +122,10 @@ export class CalendarEventParticipantPersonListener {
           personEmails,
           workspaceMemberIds: [],
         },
+      },
+      {
+        workspaceId: payload.workspaceId,
+        isWorkspaceJob: true,
       },
     );
   }

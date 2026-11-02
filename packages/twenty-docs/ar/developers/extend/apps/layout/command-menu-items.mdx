@@ -3,6 +3,10 @@ title: عناصر قائمة الأوامر
 description: اعرض مكوّنات الواجهة الأمامية كإجراءات سريعة ومدخلات في قائمة الأوامر (Cmd+K) باستخدام ‎defineCommandMenuItem‎.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## نظرة عامة
+
 يُعَدّ **عنصر قائمة الأوامر** الجسر بين المستخدم و[مكوّن الواجهة الأمامية](/ar/developers/extend/apps/layout/front-components). يسجّل هذا العنصر المكوّن في قائمة الأوامر في Twenty‏ (Cmd+K)، وبشكل اختياري، كزر إجراء سريع مُثبَّت في الزاوية العلوية اليمنى من الصفحة.
 
 ```ts src/command-menu-items/open-dashboard.command-menu-item.ts
@@ -31,6 +35,7 @@ export default defineCommandMenuItem({
 | `availabilityType`                      | لا    | يتحكّم في مكان ظهور الأمر: `'GLOBAL'` (متاح دائمًا)، و`'GLOBAL_OBJECT_CONTEXT'` (فقط في الصفحات ذات سياق الكائن — صفحات الفهرس والسجل)، و`'RECORD_SELECTION'` (فقط عند تحديد سجلات)، أو `'FALLBACK'` (يُعرَض عند عدم تطابق أي أوامر أخرى) |
 | `availabilityObjectUniversalIdentifier` | لا    | تقييد الأمر بصفحات نوع كائن معيّن (مثل سجلات Company فقط)                                                                                                                                                                                 |
 | `conditionalAvailabilityExpression`     | لا    | تعبير منطقي يتحكّم ديناميكيًا في الظهور (انظر أدناه)                                                                                                                                                                                      |
+| `conditionalPinnedExpression`           | لا    | تعبير منطقي يضيّق `isPinned`: يظهر الأمر كزر إجراء سريع فقط ما دام متحققًا، ويبقى في قائمة الأوامر بخلاف ذلك. نفس الصياغة والمتغيرات المستخدمة في `conditionalAvailabilityExpression`                                                     |
 
 ## أوامر بدون واجهة
 
@@ -115,3 +120,5 @@ export default defineCommandMenuItem({
 | `none(array, prop)`                 | `true` إذا كانت الخاصية تُقيَّم كقيمة زائفة في كل عنصر             |
 | `noneDefined(array, prop)`          | `true` إذا كانت الخاصية غير معرّفة في كل عنصر                      |
 | `noneEquals(array, prop, value)`    | `true` إذا لم تكن الخاصية تساوي القيمة في أي عنصر                  |
+
+<PageBanner illustration="card-page-command-menu" />

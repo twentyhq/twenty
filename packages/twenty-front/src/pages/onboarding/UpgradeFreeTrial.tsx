@@ -2,6 +2,7 @@ import { verifyEmailRedirectPathState } from '@/auth/states/verifyEmailRedirectP
 import { useAuth } from '@/auth/hooks/useAuth';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
 import { currentUserState } from '@/auth/states/currentUserState';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { OnboardingRewardMainButton } from '@/onboarding/components/OnboardingRewardMainButton';
@@ -18,6 +19,7 @@ import { useSetOnboardingUpgradeTrialFreeCredits } from '@/onboarding/hooks/useS
 import { isOnboardingCheckoutPendingState } from '@/onboarding/states/isOnboardingCheckoutPendingState';
 import { onboardingCreditsProgressSelector } from '@/onboarding/states/selectors/onboardingCreditsProgressSelector';
 import { formatOnboardingCredits } from '@/onboarding/utils/formatOnboardingCredits';
+import { BILLING_PLAN_LABELS } from '@/settings/billing/constants/BillingPlanLabels';
 import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/settings/billing/hooks/useBaseLicensedPriceByPlanKeyAndInterval';
 import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
 import { usePlans } from '@/settings/billing/hooks/usePlans';
@@ -40,7 +42,7 @@ import { themeCssVariables } from 'twenty-ui/theme';
 import {
   type Billing,
   type BillingPlanKey,
-  type SubscriptionInterval,
+  SubscriptionInterval,
 } from '~/generated-metadata/graphql';
 
 const StyledSubtitleEmphasis = styled.span`
@@ -116,10 +118,43 @@ const UpgradeFreeTrialSubmitButton = ({
   );
 };
 
+type UpgradeFreeTrialSubtitleProps = {
+  isTrialAvailable: boolean;
+  trialDuration?: number;
+};
+
+const UpgradeFreeTrialSubtitle = ({
+  isTrialAvailable,
+  trialDuration,
+}: UpgradeFreeTrialSubtitleProps) => {
+  if (!isTrialAvailable) {
+    return <Trans>Insert your billing details to subscribe.</Trans>;
+  }
+
+  if (isDefined(trialDuration)) {
+    return (
+      <Trans>
+        Insert your billing details to get a {trialDuration}-day{' '}
+        <StyledSubtitleEmphasis>free</StyledSubtitleEmphasis> trial and more AI
+        credits
+      </Trans>
+    );
+  }
+
+  return (
+    <Trans>
+      Insert your billing details to get a{' '}
+      <StyledSubtitleEmphasis>free</StyledSubtitleEmphasis> trial and more AI
+      credits
+    </Trans>
+  );
+};
+
 type UpgradeFreeTrialContentProps = {
   billing: Billing;
   planKey: BillingPlanKey;
   isPaymentAvailable: boolean;
+  isTrialAvailable: boolean;
   trialDuration?: number;
 };
 
@@ -127,6 +162,7 @@ const UpgradeFreeTrialContent = ({
   billing,
   planKey,
   isPaymentAvailable,
+  isTrialAvailable,
   trialDuration,
 }: UpgradeFreeTrialContentProps) => {
   const { t } = useLingui();
@@ -137,7 +173,7 @@ const UpgradeFreeTrialContent = ({
   const upgradeCreditsReward = useAtomStateValue(
     onboardingCreditsProgressSelector,
   ).rewardCreditsByStep.upgradeTrial;
-  const { numberFormat } = useNumberFormat();
+  const { numberFormat, formatNumber } = useNumberFormat();
   const formattedUpgradeCreditsReward = formatOnboardingCredits(
     upgradeCreditsReward,
     numberFormat,
@@ -197,7 +233,13 @@ const UpgradeFreeTrialContent = ({
     }
   };
 
-  const requirePaymentMethod = billingCheckoutSession.requirePaymentMethod;
+  const requirePaymentMethod =
+    billingCheckoutSession.requirePaymentMethod || !isTrialAvailable;
+  const priceDisplay = formatNumber(baseProductPrice.unitAmount / 100);
+  const chargedTodayNote =
+    billingCheckoutSession.interval === SubscriptionInterval.Year
+      ? t`You'll be charged $${priceDisplay} per user today, then every year.`
+      : t`You'll be charged $${priceDisplay} per user today, then every month.`;
   const hasTrialDurationTag = isDefined(trialDuration);
   const hasUpgradeCreditsTag = upgradeCreditsReward > 0;
 
@@ -211,8 +253,10 @@ const UpgradeFreeTrialContent = ({
           onValueChange={selectTrialPeriod}
         >
           <OnboardingPlanCard
-            title={t`Upgraded`}
-            titleSuffix={t`· FREE`}
+            title={
+              isTrialAvailable ? t`Upgraded` : t(BILLING_PLAN_LABELS[planKey])
+            }
+            titleSuffix={isTrialAvailable ? t`· FREE` : undefined}
             tags={
               hasTrialDurationTag || hasUpgradeCreditsTag ? (
                 <>
@@ -232,7 +276,11 @@ const UpgradeFreeTrialContent = ({
                 </>
               ) : undefined
             }
-            note={t`No charge will be made. You'll receive an email reminder 7 days before it ends.`}
+            note={
+              isTrialAvailable
+                ? t`No charge will be made. You'll receive an email reminder 7 days before it ends.`
+                : chargedTodayNote
+            }
             value={true}
           >
             {requirePaymentMethod &&
@@ -258,7 +306,7 @@ const UpgradeFreeTrialContent = ({
               ))}
           </OnboardingPlanCard>
 
-          {isDefined(withoutCreditCardTrialPeriod) && (
+          {isTrialAvailable && isDefined(withoutCreditCardTrialPeriod) && (
             <OnboardingPlanCard
               title={t`Basic`}
               titleSuffix={t`without credit card`}
@@ -313,6 +361,8 @@ export const UpgradeFreeTrial = ({ billing }: UpgradeFreeTrialProps) => {
     useBaseLicensedPriceByPlanKeyAndInterval();
 
   const billingCheckoutSession = useAtomStateValue(billingCheckoutSessionState);
+  const isTrialAvailable =
+    useAtomStateValue(currentWorkspaceState)?.isTrialAvailable ?? false;
   const { listPlans } = usePlans();
 
   const planKey = getCheckoutPlanKeyOrThrow({
@@ -338,29 +388,26 @@ export const UpgradeFreeTrial = ({ billing }: UpgradeFreeTrialProps) => {
   const withCreditCardTrialPeriod = billing.trialPeriods.find(
     (trialPeriod) => trialPeriod.isCreditCardRequired,
   );
-  const trialDuration = withCreditCardTrialPeriod?.duration;
+  const trialDuration = isTrialAvailable
+    ? withCreditCardTrialPeriod?.duration
+    : undefined;
 
   return (
     <StyledOnboardingStepPage>
       <StyledOnboardingStepHeading>
         <OnboardingStepAnimatedItem index={0}>
-          <StyledOnboardingStepTitle>{t`Upgrade your free trial`}</StyledOnboardingStepTitle>
+          <StyledOnboardingStepTitle>
+            {isTrialAvailable
+              ? t`Upgrade your free trial`
+              : t`Start your subscription`}
+          </StyledOnboardingStepTitle>
         </OnboardingStepAnimatedItem>
         <OnboardingStepAnimatedItem index={1}>
           <StyledOnboardingStepSubtitle>
-            {isDefined(trialDuration) ? (
-              <Trans>
-                Insert your billing details to get a {trialDuration}-day{' '}
-                <StyledSubtitleEmphasis>free</StyledSubtitleEmphasis> trial and
-                more AI credits
-              </Trans>
-            ) : (
-              <Trans>
-                Insert your billing details to get a{' '}
-                <StyledSubtitleEmphasis>free</StyledSubtitleEmphasis> trial and
-                more AI credits
-              </Trans>
-            )}
+            <UpgradeFreeTrialSubtitle
+              isTrialAvailable={isTrialAvailable}
+              trialDuration={trialDuration}
+            />
           </StyledOnboardingStepSubtitle>
         </OnboardingStepAnimatedItem>
       </StyledOnboardingStepHeading>
@@ -380,6 +427,7 @@ export const UpgradeFreeTrial = ({ billing }: UpgradeFreeTrialProps) => {
             billing={billing}
             planKey={planKey}
             isPaymentAvailable
+            isTrialAvailable={isTrialAvailable}
             trialDuration={trialDuration}
           />
         </Elements>
@@ -388,6 +436,7 @@ export const UpgradeFreeTrial = ({ billing }: UpgradeFreeTrialProps) => {
           billing={billing}
           planKey={planKey}
           isPaymentAvailable={false}
+          isTrialAvailable={isTrialAvailable}
           trialDuration={trialDuration}
         />
       )}

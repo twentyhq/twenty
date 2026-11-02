@@ -61,7 +61,9 @@ export const Default: Story = {};
 export const KeyboardReorder: Story = {
   play: async ({ canvasElement, args }) => {
     const canvas = within(canvasElement);
-    const firstItem = canvas.getByRole('button', { name: 'Draggable item 1' });
+    const firstItem = await canvas.findByRole('button', {
+      name: 'Draggable item 1',
+    });
 
     await userEvent.tab();
     await expect(firstItem).toHaveFocus();

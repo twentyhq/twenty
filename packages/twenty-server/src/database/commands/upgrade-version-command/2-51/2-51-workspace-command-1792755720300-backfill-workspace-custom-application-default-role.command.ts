@@ -19,8 +19,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @RegisteredWorkspaceCommand('2.51.0', 1792755720300)
 @Command({
   name: 'upgrade:2-51:backfill-workspace-custom-application-default-role',
-  description:
-    'Give the workspace custom application its own default role',
+  description: 'Give the workspace custom application its own default role',
 })
 export class BackfillWorkspaceCustomApplicationDefaultRoleCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -110,6 +109,7 @@ export class BackfillWorkspaceCustomApplicationDefaultRoleCommand extends Provis
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             role: {
               flatEntityToCreate: [flatRoleToCreate],

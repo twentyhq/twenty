@@ -3,6 +3,10 @@ title: Apuntar a metadatos del sistema
 description: Resuelve los identificadores universales deterministas de los metadatos de Twenty que se aprovisionan automáticamente en cada objeto, para que tu aplicación pueda hacer referencia a ellos sin codificarlos de forma rígida.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
 Cada objeto en Twenty incluye **metadatos de sistema** que tú nunca declaras directamente, como un conjunto de campos y una vista de lista principal con sus columnas. El servidor crea todo esto cuando se aprovisiona el objeto, y el conjunto crece a medida que Twenty lo hace.
 
 Como no lo declaras, no hay ninguna constante `universalIdentifier` que puedas importar. En su lugar, el servidor **deriva** cada identificador de forma determinista, y `twenty-sdk` expone la misma derivación para que tu manifiesto pueda resolver el valor exacto que usa el servidor.
@@ -64,7 +68,7 @@ export default defineView({
   universalIdentifier: '70f10d44-144a-4da8-8c6f-3ec2422138c0',
   name: 'All records',
   objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
-  icon: 'IconList',
+  icon: 'IconTable',
   position: 0,
   fields: [
     {
@@ -212,3 +216,5 @@ Recurre a los ayudantes anteriores cuando el objeto es uno que **tu aplicación*
   `getFieldUniversalIdentifier`. En los objetos que defines, haz referencia al campo
   `name` mediante el identificador que le diste en `defineObject()`.
 </Note>
+
+<PageBanner illustration="section-apps-data" />

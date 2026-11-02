@@ -6,6 +6,7 @@ import { type APP_LOCALES } from 'twenty-shared/translations';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { getWorkspaceAuthContext } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -16,9 +17,9 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { RequestLocale } from 'src/engine/decorators/locale/request-locale.decorator';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
-import { buildUserRoleIdsBySource } from 'src/engine/twenty-orm/utils/build-user-role-ids-by-source.util';
+import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
+import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
+import { buildUserRoleIdsBySource } from 'src/engine/permissions/principal/utils/build-user-role-ids-by-source.util';
 
 @ObjectType('ToolIndexEntry')
 export class ToolIndexEntryDTO {
@@ -91,6 +92,7 @@ export class ToolIndexResolver {
       userId: user?.id,
       userWorkspaceId,
       locale,
+      authContext: getWorkspaceAuthContext(),
       application,
     });
   }
@@ -119,6 +121,7 @@ export class ToolIndexResolver {
         rolePermissionConfig,
         userId: user?.id,
         userWorkspaceId,
+        authContext: getWorkspaceAuthContext(),
         application,
       },
     });

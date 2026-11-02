@@ -9,9 +9,9 @@ import {
 } from 'vitest';
 
 import { listConnections } from '@/sdk/logic-function/connections/list-connections';
-import { type AppConnection } from '@/sdk/logic-function/connections/types/app-connection.type';
+import { type AppConnectionWithoutVisibility } from '@/sdk/logic-function/connections/utils/with-legacy-connection-visibility.util';
 
-const sharedConnection: Omit<AppConnection, 'visibility'> = {
+const sharedConnection: AppConnectionWithoutVisibility = {
   id: 'shared',
   providerName: 'linear',
   name: 'Linear #1',
@@ -20,6 +20,7 @@ const sharedConnection: Omit<AppConnection, 'visibility'> = {
   scope: 'WORKSPACE',
   userWorkspaceId: 'uws-me',
   workspaceMemberId: 'wm-me',
+  providerType: 'oauth',
   accessToken: 'fresh',
   scopes: ['read'],
   authFailedAt: null,

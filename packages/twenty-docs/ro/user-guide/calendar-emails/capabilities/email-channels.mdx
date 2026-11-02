@@ -1,0 +1,161 @@
+---
+title: Canale de e-mail
+description: Oferiți echipei dvs. o singură adresă partajată, apoi adăugați răspunsuri și campanii atunci când aveți nevoie de ele.
+---
+
+Un canal de e-mail conectează o adresă partajată, cum ar fi `support@yourcompany.com`, la spațiul dvs. de lucru. Fiecare mesaj pe care îl primește este asociat cu persoanele și companiile potrivite, astfel încât întreaga echipă vede conversația completă.
+
+## Cum funcționează canalele de e-mail
+
+Configurați un canal în maximum trei etape. Etapa 1 vă oferă o căsuță de e-mail partajată. Etapele 2 și 3 sunt opționale și sunt necesare numai dacă doriți să trimiteți de pe domeniul canalului.
+
+| Etapa                     | Ce deblochează                         | Ce configurați                                          | Modificări DNS |
+| ------------------------- | -------------------------------------- | ------------------------------------------------------- | -------------- |
+| **1. Primiți e-mail**     | O căsuță de e-mail partajată în Twenty | O regulă de redirecționare la furnizorul dvs. de e-mail | Niciunul       |
+| **2. Răspunde**           | Răspunsuri de la adresa partajată      | Cinci înregistrări de autentificare                     | Da             |
+| **3. Trimiteți campanii** | Campanii de pe domeniul canalului      | Două înregistrări de dezabonare                         | Da             |
+
+Etapa 3 se bazează pe etapa 2. Etapa 1 este independentă: puteți trimite campanii dintr-un domeniu fără a-și redirecționa căsuța poștală către Twenty.
+
+## Înainte să începeţi
+
+Asigurați-vă că aveți:
+
+* **Setările spațiului de lucru** permit în Twenty.
+* Acces la setările de redirecționare de la furnizorul dvs. de e-mail, cum ar fi Microsoft 365 sau Google Workspace, pentru etapa 1.
+* Acces la furnizorul dvs. DNS, cum ar fi Cloudflare sau GoDaddy, pentru etapele 2 și 3.
+
+## Etapa 1: Primire e-mail
+
+Furnizorul dvs. de e-mail transmite o copie a fiecărui mesaj primit la o adresă privată pe care douăzeci o creează pentru canal.
+
+<Steps>
+  <Step title="Creaţi canalul">
+    Mergeţi la **Setări → Comunicare** şi faceţi clic pe **Adăugare canal de e-mail**. Introdu
+    adresa partajată și numele afișat pe care îl vede, apoi apasă **Salvează**.
+  </Step>
+  <Step title="Copiați adresa de redirecționare">
+    Douăzeci arată o **adresă de redirecționare** care se termină în `@inbound.twenty.com`. Click
+    **Copiază**.
+  </Step>
+  <Step title="Activați redirecționarea către furnizorul de e-mail">
+    Urmați ghidul pentru Microsoft
+    365,
+    Google
+    Workspace
+    sau orice alt
+    furnizor.
+  </Step>
+  <Step title="Trimite un e-mail de test">
+    Trimite un mesaj adresei partajate dintr-un cont extern. Apare în
+    Douăzeci în câteva minute.
+  </Step>
+</Steps>
+
+Inbox-ul tău partajat este gata. Dacă trebuie doar să citești și să urmărești conversațiile, te poți opri aici.
+
+## Etapa 2: Răspuns de la adresa partajată
+
+Gmail, Outlook și alți furnizori livrează e-mailul trimis în numele domeniului dvs numai după ce dovediți că îl dețineți. Faceți acest lucru prin adăugarea de înregistrări DNS.
+
+<Steps>
+  <Step title="Deschide domeniul de trimitere">
+    În **Setări → Comunicare**, deschideți canalul și derulați la domeniul \*\*Trimiți
+    \*\*.
+  </Step>
+  <Step title="Adăugați înregistrările de autentificare">
+    La furnizorul dvs. DNS, adăugați înregistrările listate sub **Domeniul
+    autentificare**: trei înregistrări `CNAME` care se termină în `. domainkey`, plus un
+    `MX` şi o înregistrare `TXT` pe `douăzeci - bounce`. Dacă douăzeci de ani sugerează și o înregistrare DMARC
+    adăugați-o și ei.
+  </Step>
+  <Step title="Verifică">
+    Click **Verificare verificare**. **Autentificare domeniu** se schimbă la
+    **Verificat** o dată ce douăzeci găsesc înregistrările, de obicei în decurs de o oră și la
+    maximum 48 ore.
+  </Step>
+</Steps>
+
+<img src="/images/user-guide/email-campaigns/sending-domain-records.png" style={{ width: '100%' }} />
+
+Echipa ta poate răspunde acum de la adresa partajată. Pentru instrucțiunile specifice furnizorului, vedeți [Configurați un domeniu de trimitere](/ro/user-guide/email-campaigns/how-tos/set-up-a-sending-domain).
+
+<Note>
+  Nu ai de gând să trimiți campanii? Sari peste etapa 3. Rubrica **Dezabonare**
+  rămâne **în așteptare**, care nu are niciun efect asupra răspunsurilor.
+</Note>
+
+## Etapa 3: Trimite campanii
+
+Fiecare campanie include un link de dezabonare. Twenty găzduiește pagina de dezabonare pe propriul domeniu, cum ar fi `links.yourcompany.com`, astfel încât destinatarii să vadă marca dvs., nu pe a noastră.
+
+<Steps>
+  <Step title="Adăugați înregistrările dezabonate">
+    În aceeași secțiune **Domeniu de expediere**, adăugați cele două înregistrări `CNAME` enumerate
+    la **Link de dezabonare**: una pe `links` și una pe
+    `_acme-challenge.links`.
+  </Step>
+  <Step title="Verifică">
+    Click **Verificare verificare**. **Unsubscrib link** la **Verificat**,
+    de obicei în decurs de o oră. Poate dura puțin mai mult decât etapa 2 deoarece
+    Douăzeci de asemenea eliberează un certificat de securitate pentru pagină.
+  </Step>
+</Steps>
+
+Douăzeci de persoane trimite o campanie doar după ce **Autentificare domeniu** și **Dezabonare link** arată **Verificat**.
+
+## Întrebări frecvente
+
+<AccordionGroup>
+  <Accordion title="Trebuie să schimb DNS pentru a folosi un inbox partajat?">
+    Nu. Etapa 1 are nevoie doar de o regulă de redirecționare la furnizorul de e-mail. Înregistrările DNS
+    sunt necesare doar pentru a fi trimise din domeniul canalului.
+  </Accordion>
+  <Accordion title="De ce rămâne legătura dezabonare în așteptare?">
+    Dacă nu ați adăugat dezabonarea înregistrărilor, acest lucru este așteptat și doar
+    blochează campanii. Dacă le-ați adăugat, verificați dacă ambele înregistrări `CNAME`
+    există și așteptați până la o oră. Pe Cloudflare, setați ambele înregistrări pe **DNS
+    doar**.
+  </Accordion>
+  <Accordion title="Pot trimite campanii fără redirecționarea căsuței poștale?">
+    Da. Campanii au nevoie doar de etapele 2 şi 3. Transmiterea este ceea ce aduce mesajul primit de la adresa
+    în Twenty.
+  </Accordion>
+  <Accordion title="Pot utiliza același domeniu în două spații de lucru?">
+    Nu. Un domeniu poate fi verificat doar într-un singur spațiu de lucru. Douăzeci vă spune dacă
+    este deja utilizat în altă parte.
+  </Accordion>
+</AccordionGroup>
+
+## Articole similare
+
+<CardGroup cols={2}>
+  <Card title="Înaintează o căsuță poștală partajată" icon="inbox" href="/ro/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-any-mail-provider">
+
+
+
+
+    Configurați redirecționarea pentru orice furnizor de e-mail.
+  </Card>
+  <Card title="Configurați un domeniu de trimitere" icon="globe" href="/ro/user-guide/email-campaigns/how-tos/set-up-a-sending-domain">
+
+
+
+
+    Adaugă și verifică fiecare înregistrare DNS, furnizor de către furnizor.
+  </Card>
+  <Card title="Campanii de e-mail" icon="paper-plane" href="/ro/user-guide/email-campaigns/overview">
+
+
+
+
+    Aflați ce campanii pot face pentru echipa dvs. de vânzări.
+  </Card>
+  <Card title="Trimite prima campanie" icon="envelope-open-text" href="/ro/user-guide/email-campaigns/how-tos/send-your-first-campaign">
+
+
+
+
+    Construiți o listă, scrieți e-mailul și trimiteți-o.
+  </Card>
+</CardGroup>

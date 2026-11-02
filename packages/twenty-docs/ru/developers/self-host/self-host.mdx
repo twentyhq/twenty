@@ -3,9 +3,9 @@ title: Самостоятельный хостинг
 description: Развертывайте и управляйте Twenty в собственной инфраструктуре.
 ---
 
-<Frame>
-  <img src="/images/user-guide/what-is-twenty/20.png" alt="ИИ" />
-</Frame>
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Обзор
 
@@ -19,8 +19,11 @@ Twenty можно развернуть в собственной инфраст�
 
 ## Начало работы
 
-<CardGroup cols={2}>
-  <Card title="Docker Compose" icon="brand-docker" href="/ru/developers/self-host/capabilities/docker-compose">
-    Быстрая настройка с Docker
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ru/developers/self-host/capabilities/docker-compose" img="/images/documentation/banner-icons-v2/dev-self-host.svg">
+    <CardTitle>Docker Написать</CardTitle>
+    Быстрая установка с Docker
   </Card>
 </CardGroup>
+
+<PageBanner illustration="card-page-self-host-guide" />

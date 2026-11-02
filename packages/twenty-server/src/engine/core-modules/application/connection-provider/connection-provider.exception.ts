@@ -43,6 +43,14 @@ const getConnectionProviderExceptionUserFriendlyMessage = (
       return msg`We could not identify the account you authorized. Please try again.`;
     case ConnectionProviderExceptionCode.RECONNECT_ACCOUNT_MISMATCH:
       return msg`You authorized a different account than the one this connection belongs to.`;
+    case ConnectionProviderExceptionCode.AUTHORIZE_LOGIC_FUNCTION_NOT_FOUND:
+      return msg`The logic function that starts the connection was not found.`;
+    case ConnectionProviderExceptionCode.AUTHORIZE_LOGIC_FUNCTION_FAILED:
+      return msg`We could not start the connection. Please try again.`;
+    case ConnectionProviderExceptionCode.CALLBACK_LOGIC_FUNCTION_NOT_FOUND:
+      return msg`The logic function that completes the connection was not found.`;
+    case ConnectionProviderExceptionCode.CALLBACK_LOGIC_FUNCTION_FAILED:
+      return msg`We could not complete the connection. Please try again.`;
     default:
       assertUnreachable(code);
   }

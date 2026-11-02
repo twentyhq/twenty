@@ -1,0 +1,47 @@
+---
+title: StackIcon
+description: O pictogramă de 16 px cu un element mai mic suprapus în colțul din dreapta jos.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import StackIconReference from '/snippets/ui/generated/components/data-display/stack-icon.mdx';
+
+## Prezentare generală
+
+Transmiteți pictograma principală prin slotul de nod `icon` și elementul suprapus prin `stackedIcon`. Containerul are 16 px lățime și înălțime; elementul suprapus este poziționat absolut la 8 px de la stânga și la 7 px de sus, astfel încât depășește colțul din dreapta jos. Un avatar pătrat de 12 px este dimensiunea prevăzută pentru sigla unei aplicații. Ambele noduri sunt decorative, așadar păstrați o etichetă vizibilă lângă pictogramă.
+
+Lăsați spațiu pentru depășirea elementului stivuit atunci când poziționați conținutul adiacent. Exemplul utilizează un spațiu de 12 px între containerul pictogramei și eticheta sa.
+
+<StoryEmbed storyId="ui-components-data-display-stackicon--display" title="Pictogramă de companie cu un logo stivuit" height={100} />
+
+## Utilizare
+
+```tsx
+import { StackIcon } from 'twenty-ui/components/data-display';
+import { IconBuildingSkyscraper } from 'twenty-ui/icon';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const CompanyFieldLabel = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+    <StackIcon
+      icon={<IconBuildingSkyscraper size={16} />}
+      stackedIcon={
+        <Avatar size="xs" shape="square" variant="outline" name="Stripe" />
+      }
+    />
+    <Text>Companies</Text>
+  </Text>
+);
+```
+
+Atributele native, evenimentele, `className`, `style` și `ref` vizează div-ul exterior. `render` înlocuiește acea țintă prin compoziția Base UI, păstrând ambele noduri de pictogramă.
+
+## Proprietăți
+
+<StackIconReference />
+
+<PageBanner illustration="section-ui-components" />

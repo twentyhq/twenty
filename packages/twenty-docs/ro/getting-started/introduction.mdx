@@ -1,8 +1,18 @@
 ---
-title: De ce Twenty
+title: Întâlnire douăzeci
+description: Vezi ce face 20 de ani diferit, configurează spațiul tău de lucru și învață conceptele din spatele lui.
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { LandingActions, LandingButton } from "/snippets/landing-actions.mdx"
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+<LandingActions>
+  <LandingButton href="/ro/getting-started/quickstart">Quickstart</LandingButton>
+  <LandingButton href="/ro/getting-started/key-features" outlined>Caracteristici cheie</LandingButton>
+</LandingActions>
+
+## De ce Twenty
 
 Ai tot ales între software ușor de pornit, dar imposibil de schimbat, și software flexibil, dar care necesită luni întregi pentru a fi configurat. Twenty este a treia opțiune: **un CRM gata de producție, pe care îl poți remodela pe parcurs.**
 
@@ -11,19 +21,19 @@ Ai tot ales între software ușor de pornit, dar imposibil de schimbat, și soft
 Twenty este o platformă pe care poți construi, nu un produs pe care îl configurezi.
 
 <CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
-  <Card img="/images/documentation/banner-icons-v2/ai.svg">
+  <Card href="/ro/getting-started/core-concepts/ai" img="/images/documentation/banner-icons-v2/ai.svg">
     <CardTitle>Creat pentru agenți</CardTitle>
     Agenții operează în interiorul modelului tău de date, cu permisiuni reale. Competențe, instrumente, MCP.
   </Card>
-  <Card img="/images/documentation/banner-icons-v2/dev-apps.svg">
+  <Card href="/ro/getting-started/core-concepts/apps" img="/images/documentation/banner-icons-v2/dev-apps.svg">
     <CardTitle>Extensibilitate securizată</CardTitle>
     Flexibilitatea instrumentelor cu vibe coding, pe fundații securizate.
   </Card>
-  <Card img="/images/documentation/banner-icons-v2/dev-api.svg">
+  <Card href="/ro/developers/introduction" img="/images/documentation/banner-icons-v2/dev-api.svg">
     <CardTitle>Stivă modernă</CardTitle>
     React, TypeScript. Echipa ta știe deja cum să extindă Twenty. Fără limbaje proprietare, fără blocaje de acces.
   </Card>
-  <Card img="/images/user-guide/halftone/no-lock-in.png">
+  <Card href="/ro/user-guide/data-migration/how-tos/export-your-data" img="/images/user-guide/halftone/no-lock-in.png">
     <CardTitle>Fără blocare</CardTitle>
     Nucleu open-source, poate fi autogăzduit, îți poți exporta datele oricând.
   </Card>
@@ -66,6 +76,15 @@ Twenty este o platformă pe care poți construi, nu un produs pe care îl config
   și briefinguri executive. Câștigăm cu echipele care au
   autoritatea de a-și alege propriile instrumente.
 
-<Card title="Pregătit să începi?" icon="rocket" href="/ro/getting-started/quickstart">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ro/getting-started/quickstart" img="/images/documentation/getting-started-icons-v1/quickstart.svg">
+  <CardTitle>Gata de a începe?</CardTitle>
   Configurează Twenty în mai puțin de 5 minute — în cloud sau autogăzduit.
 </Card>
+<Card href="https://discord.gg/cx5n4Jzs57" img="/images/user-guide/halftone/community-discord.svg">
+  <CardTitle>Discord</CardTitle>
+  pune întrebări și împărtășește ceea ce construiești cu cele douăzeci de comunități.
+</Card>
+</CardGroup>
+
+<PageBanner illustration="meet-twenty" />

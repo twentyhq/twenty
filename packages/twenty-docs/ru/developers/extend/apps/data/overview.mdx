@@ -3,6 +3,11 @@ title: Обзор
 description: Определяйте структуру данных, которые ваше приложение добавляет в рабочее пространство — объекты, поля и связи.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Что покрывает слой данных
+
 **Уровень данных** приложения Twenty — это данные, которые ваше приложение *добавляет* в рабочее пространство: новые типы записей, которые оно объявляет, столбцы, которые оно добавляет к существующим объектам, и то, как эти записи связываются друг с другом.
 
 ```text
@@ -24,17 +29,21 @@ description: Определяйте структуру данных, котор�
 
 ## В этом разделе
 
-<CardGroup cols={2}>
-  <Card title="Объекты" icon="table" href="/ru/developers/extend/apps/data/objects">
-    `defineObject` — объявляйте новые типы записей с их собственными полями.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ru/developers/extend/apps/data/objects" img="/images/user-guide/halftone/card-page-objects.svg">
+    <CardTitle>Объекты</CardTitle>
+    `defineObject` — объявляют новые типы записей своими собственными полями.
   </Card>
-  <Card title="Расширение объектов" icon="wand" href="/ru/developers/extend/apps/data/extending-objects">
-    `defineField` — добавляйте поля к стандартным объектам или объектам других приложений.
+  <Card href="/ru/developers/extend/apps/data/extending-objects" img="/images/user-guide/halftone/card-page-extending-objects.svg">
+    <CardTitle>Расширение объектов</CardTitle>
+    `defineField` — добавляйте поля к объектам стандартного или другого приложения.
   </Card>
-  <Card title="Связи" icon="sitemap" href="/ru/developers/extend/apps/data/relations">
+  <Card href="/ru/developers/extend/apps/data/relations" img="/images/user-guide/halftone/card-page-relations.svg">
+    <CardTitle>Связи</CardTitle>
     Двусторонние связи `MANY_TO_ONE` / `ONE_TO_MANY` между объектами.
   </Card>
-  <Card title="Типы действий на временной шкале" icon="history" href="/ru/developers/extend/apps/data/timeline-activity-types">
+  <Card href="/ru/developers/extend/apps/data/timeline-activity-types" img="/images/user-guide/halftone/card-page-timeline.svg">
+    <CardTitle>Типы действий на временной шкале</CardTitle>
     Определяйте автоматические события аудита и явные события приложения для временных шкал записей.
   </Card>
 </CardGroup>
@@ -48,8 +57,9 @@ description: Определяйте структуру данных, котор�
 | **Связь**                           | Двусторонняя связь между двумя объектами — обе стороны объявлены как поля                                                               | `defineField()` с `FieldType.RELATION` |
 | **Индекс**                          | Индекс базы данных для ускорения повторяющегося запроса к одному из ваших объектов                                                      | `defineIndex()`                        |
 | **Тип действия на временной шкале** | Автоматическое событие аудита или явное событие домена, отображаемое на временных шкалах записей                                        | `defineTimelineActivityType()`         |
+| **Путь к связанной записи**         | Цепочка из не более чем трех связей, по которым доступ к записи распространяется на связанные с ней записи                              | `defineRelatedRecordPath()`            |
 
-SDK обнаруживает их с помощью анализа AST во время сборки, поэтому организация файлов остается на ваше усмотрение — по соглашению используются `src/objects/`, `src/fields/`, `src/indexes/` и `src/timeline-activity-types/`. Стабильные UUID `universalIdentifier` связывают все воедино между развертываниями.
+CLI обнаруживает их с помощью анализа AST во время сборки, поэтому организация файлов остается на ваше усмотрение — по соглашению используются `src/objects/`, `src/fields/`, `src/indexes/`, `src/timeline-activity-types/` и `src/related-record-paths/`. Стабильные UUID `universalIdentifier` связывают все воедино между развертываниями.
 
 ## Индексы (необязательно)
 
@@ -95,6 +105,39 @@ defineIndex({
 
 Упорядочьте массив `fields` в том порядке, в котором Postgres должен его использовать — сначала самый левый столбец, как в телефонной книге. Индексы не бесплатны: при каждой записи в таблицу они обновляются. Добавляйте индекс только тогда, когда у вас есть запрос, которому он действительно нужен.
 
+## Пути к связанным записям (необязательно)
+
+<Warning>
+  Пути связанных записей находятся в предварительной версии: они синхронизируются с вашим приложением, но разрешения записей
+  пока их не используют. После включения им требуется
+  **тариф Organization или выше**, как и для
+  [безопасности на уровне строк](/ru/developers/extend/apps/config/roles#row-level-security).
+</Warning>
+
+Путь связанной записи начинается на объекте и проходит не более чем по трём полям связей, каждое из которых находится на объекте, достигнутом предыдущим полем. Разрешения записей используют эти пути для расширения доступа от записи к связанным с ней записям.
+
+* **Неотъемлемый** путь (`isInherent: true`) применяется всегда, когда начальная запись доступна для чтения, независимо от того, как был предоставлен этот доступ. Используйте его для записей, принадлежащих родительской записи, например для вложений карточки публикации.
+* **Обычный** путь применяется только тогда, когда доступ к начальной записи предоставляется непосредственно ролью, поэтому рабочие пространства выбирают, на какие из них полагаться.
+
+```ts src/related-record-paths/post-card-attachments.related-record-path.ts
+import { defineRelatedRecordPath } from 'twenty-sdk/define';
+
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+import { ATTACHMENTS_ON_POST_CARD_UNIVERSAL_IDENTIFIER } from '../fields/attachments-on-post-card.field';
+
+export default defineRelatedRecordPath({
+  universalIdentifier: 'c1b8f0d2-7e4a-4b6c-9a1d-3f5e2b7c8d90',
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  firstFieldMetadataUniversalIdentifier:
+    ATTACHMENTS_ON_POST_CARD_UNIVERSAL_IDENTIFIER,
+  isInherent: true,
+});
+```
+
+Добавьте `secondFieldMetadataUniversalIdentifier` и `thirdFieldMetadataUniversalIdentifier` для более длинных путей. Каждый переход должен быть активной связью на достигнутом к этому моменту объекте, путь не может посещать один и тот же объект дважды, и два пути не могут использовать одни и те же переходы.
+
 <Note>
 Ищете **Application Config** или **Roles & Permissions**? Они описывают само приложение, а не данные, которые оно добавляет, — их можно найти в разделе [Config](/ru/developers/extend/apps/config/overview). Ищете **Connections** (Linear, GitHub, Slack OAuth)? Они существуют для вызова *из* логических функций и находятся в разделе [Logic](/ru/developers/extend/apps/logic/connections).
 </Note>
+
+<PageBanner illustration="section-apps-data" />

@@ -107,6 +107,7 @@ export class AddWorkflowRunStepLogsFieldCommand extends ProvisionedWorkspaceComm
 
     try {
       await this.fieldMetadataService.createManyFields({
+        shouldDeferActions: false,
         createFieldInputs: [createFieldInput],
         workspaceId,
         ownerFlatApplication: twentyStandardFlatApplication,

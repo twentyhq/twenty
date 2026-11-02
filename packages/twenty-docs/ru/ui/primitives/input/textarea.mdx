@@ -1,0 +1,129 @@
+---
+title: Textarea
+description: Вводите несколько строк текста с возможностью автоматического изменения размера.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import TextareaReference from '/snippets/ui/generated/input/textarea.mdx';
+
+## Обзор
+
+Используйте `Textarea` для заметок, описаний и других многострочных значений. Он интегрируется с [Field](/ru/ui/primitives/input/field) для меток и валидации.
+
+<StoryEmbed storyId="ui-input-textarea--display" title="Пример Textarea" height={190} />
+
+## Использование
+
+### Неуправляемое состояние
+
+Используйте `defaultValue`, чтобы задать начальные заметки. Текстовая область управляет последующими изменениями.
+
+```tsx
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+
+export const NotesField = () => (
+  <Field.Root name="notes">
+    <Field.Label>Notes</Field.Label>
+    <Textarea rows={4} defaultValue="Follow up next week." />
+    <Field.Description>Add context for your team.</Field.Description>
+  </Field.Root>
+);
+```
+
+Доступны нативные атрибуты textarea, такие как `rows`, `maxLength`, `required` и `readOnly`. `size` принимает `sm` или `md`; значение по умолчанию — `md`.
+
+## Варианты внешнего вида
+
+Сравните два размера в состояниях по умолчанию, фокуса, ошибки и отключения. Автоматическое изменение размера показано отдельно ниже.
+
+<StoryEmbed storyId="ui-input-textarea--catalog" title="Варианты внешнего вида текстовой области" height={440} />
+
+## Простой вид
+
+Используйте `variant="plain"` для многострочного текста внутри существующей поверхности. Он удаляет заливку, границу, скруглённые углы и все внутренние отступы, сохраняя общее оформление текста, заполнителя и отключённого состояния. Синий контур соответствует нативному поведению браузера `:focus-visible`. Для текстовых элементов управления это может включать фокус указателя и автофокус, а также фокус с клавиатуры. Недопустимое состояние использует контур опасности без изменения макета.
+
+```tsx
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+
+export const InlineNotes = () => (
+  <Field.Root>
+    <Field.Label>Notes</Field.Label>
+    <Textarea variant="plain" autoResize rows={1} maxRows={6} />
+  </Field.Root>
+);
+```
+
+Родительский элемент задаёт интервалы. `rows`, `maxRows` и автоматическое изменение размера по-прежнему управляют высотой содержимого. Ограничение количества строк не учитывает внутренние отступы и границы в простом виде. Изменение `variant` при включённом автоматическом изменении размера измеряет новый макет.
+
+## Управляемое состояние
+
+Передайте `value` и обновляйте его с помощью `onValueChange`, чтобы управлять теми же заметками в состоянии React. Функция обратного вызова получает следующее строковое значение и сведения о событии; также доступен нативный `onChange`.
+
+```tsx
+import { useState } from 'react';
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+
+export const NotesField = () => {
+  const [notes, setNotes] = useState('Follow up next week.');
+
+  return (
+    <Field.Root name="notes">
+      <Field.Label>Notes</Field.Label>
+      <Textarea rows={4} value={notes} onValueChange={setNotes} />
+      <Field.Description>Add context for your team.</Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+## Автоматическое изменение размера
+
+Автоматическое изменение размера работает в любом режиме состояния. В этом примере также используется управляемое значение для подсчета символов.
+
+```tsx
+import { useState } from 'react';
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+
+export const DescriptionField = () => {
+  const [description, setDescription] = useState('');
+
+  return (
+    <Field.Root name="description">
+      <Field.Label>Description</Field.Label>
+      <Textarea
+        value={description}
+        onValueChange={setDescription}
+        autoResize
+        rows={2}
+        maxRows={6}
+        maxLength={500}
+      />
+      <Field.Description>
+        {description.length} of 500 characters
+      </Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+`autoResize` измеряет зафиксированное значение после управляемых обновлений и напрямую измеряет неуправляемые изменения. Отклонённые управляемые изменения не меняют высоту. Оно также обновляется после нативного сброса формы, изменений `rows`, `size`, `variant`, `maxRows` и доступной ширины. Используйте `maxRows`, чтобы ограничить рост и прокручивать более длинное содержимое.
+
+При включённом автоматическом изменении размера оно управляет встроенным `blockSize`. При выключении восстанавливается текущее значение `style.blockSize` или сбрасывается автоматический размер, если оно не задано. При выключенном автоматическом изменении размера высотой управляют `rows` и нативные стили. Изменение размера вручную отключено по умолчанию; задайте `style={{ resize: 'vertical' }}`, когда вызывающие стороны должны сами изменять размер элемента управления.
+
+## Нативный элемент управления и композиция рендеринга
+
+Нативные атрибуты и обработчики textarea, `className`, `style` и `ref` применяются к textarea. ref получает `HTMLTextAreaElement`. `render` принимает элемент textarea или обратный вызов, получающий нативные свойства textarea и состояние Field. Передайте предоставленные свойства и ref нативному textarea, чтобы метки, валидация, события и автоматическое измерение продолжали работать. Если требуется настроить обёртку, добавьте отдельный элемент макета.
+
+`onChange` получает событие изменения React для нативного textarea. `onValueChange(value, details)` сохраняет сигнатуру Base UI, включая нативные `event`, `reason`, `cancel` и `allowPropagation`. Нативное событие нацелено на textarea. Отмена details сохраняет политику валидации Base UI; она не отменяет нативное значение. Управляемые вызывающие стороны выбирают зафиксированное значение.
+
+Нативные `name`, `form`, `required`, `readOnly`, `disabled`, отправка и поведение сброса остаются доступными. Field предоставляет связь с меткой, описанием, именем и валидацией. Enter вставляет разрыв строки в textarea.
+
+## Свойства
+
+Справочник создается на основе публичных типов компонента. Нативные атрибуты, включая доступные имена и обработчики событий, также принимаются в частях, отрисовывающих элементы.
+
+<TextareaReference />
+
+<PageBanner illustration="page-cover-input" />

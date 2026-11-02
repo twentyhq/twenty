@@ -1,28 +1,68 @@
 ---
-title: Dezvoltatori
-description: Creați aplicații, utilizați API-ul, autogăzduiți sau contribuiți la baza de cod.
+title: Construiește pe douăzeci
+sidebarTitle: Dezvoltatori
+description: Construiți aplicații în TypeScript, conectați-vă uneltele prin API-uri și găzduiți pe dvs. douăzeci de persoane.
+hideFooterPagination: true
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { LandingActions, LandingButton } from "/snippets/landing-actions.mdx"
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-<CardGroup cols={3} className="documentation-card-group documentation-card-group--patterned">
+<LandingActions>
+  <LandingButton href="/ro/developers/extend/apps/getting-started/quick-start">Construiește prima ta aplicație</LandingButton>
+  <LandingButton href="https://github.com/twentyhq/twenty" outlined>Vezi pe GitHub</LandingButton>
+</LandingActions>
+
+## De ce să construim pe douăzeci
+
+Majoritatea CRM-urilor oferă dezvoltatorilor un API și câteva locuri în care să se conecteze. Douăzeci de ani vă oferă platforma în sine. Obiecte declare, funcţii de server, componente React şi agenţi AI în simplul TypeScript cu `twenty-sdk`, vezi fiecare schimbare de sincronizare cu un server local pe care îl salvezi și livrează cu CLI.
+
+* **Gestionați spațiul de lucru cu cod.** Obiecte, câmpuri, vizualizări și machete de pagini live ca fișiere TypeScript în depozit, versionate și revizuite ca orice altă modificare.
+* \*\*Același SDK ca și aplicațiile lui Twenty. \* Slack, Linear şi Granola sunt aplicaţii construite cu `twenty-sdk`, astfel încât să construiţi cu exact ceea ce foloseşte echipa lui Twenty.
+* **Conectați nucleul, nu sidebar.** Obiectele dvs. primesc aceleași mese și permisiuni ca persoanele și companiile. Aplicațiile tale pot aduce conversații în mesajele lui Twenty, pot scrie să înregistreze cronologii, și pot expune funcții fluxurilor de lucru și agenților AI.
+* **Niciun plafon.** Nucleul este open source și auto-hostabil. Când lipseşte un punct de prelungire, schimbaţi douăzeci în sine sau contribuiţi-l înapoi.
+* **Pentru a experimenta în siguranță.** Aplicațiile rulează sandboxed și ating doar datele pe care le permit rolul lor, indiferent dacă echipa ta sau un agent AI a scris codul.
+
+## Explorează documentele dezvoltatorului
+
+Pe lângă aplicaţii, documentele de dezvoltator acoperă API, găzduirea personală, contribuind la 22 de ani şi la biblioteca UI.
+
+<CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
   <Card href="/ro/developers/extend/apps/getting-started/quick-start" img="/images/documentation/banner-icons-v2/dev-apps.svg">
     <CardTitle>Aplicații</CardTitle>
-    Extindeți Twenty cu obiecte personalizate, logică pe partea de server, componente UI și agenți AI — toate sub formă de pachete TypeScript.
+    Construiește obiecte, logice, interfețe și agenți AI ca aplicații TypeScript, de la început rapid până la publicare.
   </Card>
 
   <Card href="/ro/developers/extend/api" img="/images/documentation/banner-icons-v2/dev-api.svg">
     <CardTitle>API</CardTitle>
-    API-uri REST și GraphQL, webhook-uri și OAuth.
+    Citește și scrie înregistrări prin REST și GraphQL, obține webhooks atunci când se schimbă înregistrările și conectează aplicații cu OAuth.
   </Card>
 
   <Card href="/ro/developers/self-host/capabilities/docker-compose" img="/images/documentation/banner-icons-v2/dev-self-host.svg">
-    <CardTitle>Autogăzduire</CardTitle>
-    Rulați Twenty pe propria infrastructură.
+    <CardTitle>Self-Gazst</CardTitle>
+    Rulează douăzeci de ani pe propria infrastructură cu Docker Compose, apoi securizează-l și actualizează-l.
   </Card>
 
   <Card href="/ro/developers/contribute/capabilities/local-setup" img="/images/documentation/banner-icons-v2/dev-contribute.svg">
-    <CardTitle>Contribuiți</CardTitle>
-    Configurați monorepo-ul local și trimiteți PR-uri.
+    <CardTitle>Contribuie</CardTitle>
+    Configurați monorepo-ul local și ajutați la îmbunătățirea nucleului open-source.
+  </Card>
+
+  <Card href="/ro/ui/getting-started" img="/images/user-guide/halftone/layout-window-v1.svg">
+    <CardTitle>Biblioteca UI</CardTitle>
+    Primitive, componente, pictograme și tokeni React open-source a Twenty's
+  </Card>
+
+  <Card href="https://github.com/twentyhq/twenty" img="/images/user-guide/halftone/community-github.svg">
+    <CardTitle>GitHub</CardTitle>
+    Caută codul sursă, raportează problemele și urmărește versiunile.
+  </Card>
+
+  <Card href="https://discord.gg/cx5n4Jzs57" img="/images/user-guide/halftone/community-discord.svg">
+    <CardTitle>Discord</CardTitle>
+    pune întrebări și împărtășește ceea ce construiești cu cele douăzeci de comunități.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="developers" />

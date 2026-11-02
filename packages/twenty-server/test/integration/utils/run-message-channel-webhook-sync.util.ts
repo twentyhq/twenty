@@ -17,9 +17,13 @@ export const runMessageChannelWebhookSync = async (
     startingStage,
   );
 
-  await enqueueJobAndDrain(
-    MessageQueue.connectedAccountSyncWebhookQueue,
-    MessagingMessageWebhookSyncJob.name,
-    { workspaceId, messageChannelId },
-  );
+  await enqueueJobAndDrain({
+    queue: MessageQueue.connectedAccountSyncWebhookQueue,
+    jobName: MessagingMessageWebhookSyncJob.name,
+    data: { workspaceId, messageChannelId },
+    scope: {
+      workspaceId,
+      isWorkspaceJob: true,
+    },
+  });
 };

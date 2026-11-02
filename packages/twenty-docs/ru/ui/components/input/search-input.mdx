@@ -1,0 +1,95 @@
+---
+title: SearchInput
+description: Управляемый текст поиска с необязательными действиями, например всплывающим окном фильтра.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SearchInputReference from '/snippets/ui/generated/components/input/search-input.mdx';
+
+## Обзор
+
+`SearchInput` предоставляет значок поиска и текстовое поле ввода. `onValueChange` получает новую строку; `onChange` получает нативное событие изменения React. Фильтрация, получение данных и устранение дребезга относятся к вашему приложению.
+
+<StoryEmbed storyId="ui-input-searchinput--display" title="Пример SearchInput" height={110} />
+
+## Использование
+
+```tsx
+import { useState } from 'react';
+import { SearchInput } from 'twenty-ui/components/input';
+
+export const RecordSearch = () => {
+  const [value, setValue] = useState('');
+
+  return (
+    <SearchInput
+      value={value}
+      onValueChange={setValue}
+      placeholder="Search..."
+    />
+  );
+};
+```
+
+Используйте `aria-label` или `aria-labelledby` для доступного имени.
+
+Нативные свойства input, `className`, `style` и `ref` применяются к самому полю ввода. Общий `InputGroup` отвечает за оформление поиска и фокуса. Обертка, которая размещает поле и его действия, не принимает свойств; поместите `SearchInput` в собственный контейнер, чтобы задать его размер или положение. Используйте `size="sm"` для компактного поля поиска.
+
+## Действия
+
+`actions` отображает элементы управления после поля поиска. Создайте всплывающее окно фильтра с [Dropdown](/ru/ui/components/navigation/dropdown), триггером которого является `IconButton`, и задайте этой кнопке доступное имя.
+
+```tsx
+import { useState } from 'react';
+import { IconButton, SearchInput } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+import { SettingsRow } from 'twenty-ui/components/settings';
+import { IconFilter } from 'twenty-ui/icon';
+
+export const FilteredPeopleSearch = () => {
+  const [search, setSearch] = useState('');
+  const [includeInactive, setIncludeInactive] = useState(false);
+
+  return (
+    <SearchInput
+      aria-label="Search people"
+      placeholder="Name or email"
+      value={search}
+      onValueChange={setSearch}
+      actions={
+        <Dropdown.Root type="panel">
+          <Dropdown.Trigger
+            render={
+              <IconButton aria-label="Filter people">
+                <IconFilter />
+              </IconButton>
+            }
+          />
+          <Dropdown.Content align="end">
+            <Dropdown.Section>
+              <SettingsRow
+                checked={includeInactive}
+                onCheckedChange={setIncludeInactive}
+              >
+                Include inactive people
+              </SettingsRow>
+            </Dropdown.Section>
+          </Dropdown.Content>
+        </Dropdown.Root>
+      }
+    />
+  );
+};
+```
+
+`disabled` отключает только текстовое поле; элементы управления действиями отключаются отдельно. При `size="sm"` также передайте `size="sm"` элементам управления действиями.
+
+<StoryEmbed storyId="ui-input-searchinput--with-filter" title="SearchInput со всплывающим окном фильтра" height={320} />
+
+## Свойства
+
+<SearchInputReference />
+
+<PageBanner illustration="page-cover-search" />

@@ -1,3 +1,4 @@
+import { type QueueJobScope } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import { type MessageQueueJobData } from 'src/engine/core-modules/message-queue/interfaces/message-queue-job.interface';
 
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -10,16 +11,22 @@ import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs
 // follow-up jobs the worker chains (imports, contact creation, ...) are also
 // done when this resolves. Failure-path suites rely on the job being allowed
 // to fail: they assert the resulting channel state afterwards.
-export const enqueueJobAndDrain = async <TData extends MessageQueueJobData>(
-  queue: MessageQueue,
-  jobName: string,
-  data: TData,
-): Promise<void> => {
+export const enqueueJobAndDrain = async <TData extends MessageQueueJobData>({
+  queue,
+  jobName,
+  data,
+  scope,
+}: {
+  queue: MessageQueue;
+  jobName: string;
+  data: TData;
+  scope: QueueJobScope;
+}): Promise<void> => {
   const messageQueueService = global.app.get<MessageQueueService>(
     getQueueToken(queue),
     { strict: false },
   );
 
-  await messageQueueService.add(jobName, data);
+  await messageQueueService.add(jobName, data, scope);
   await waitForAllJobsToFinish();
 };

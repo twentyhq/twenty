@@ -103,17 +103,6 @@ This means you never need to fetch child ids to edit a view — just pass the de
 
 VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELECT field), CALENDAR (requires calendarFieldName + calendarLayout).",
     "inputSchema": {
-      "$defs": {
-        "__schema0": {
-          "description": "Field name (e.g. "amount", "stage"). Resolved to a UUID server-side. Provide this or fieldMetadataId.",
-          "type": "string",
-        },
-        "__schema1": {
-          "description": "Field UUID. Alternative to fieldName; takes precedence when both are given.",
-          "format": "uuid",
-          "type": "string",
-        },
-      },
       "properties": {
         "calendarEndFieldName": {
           "description": "Optional end date field name for the calendar. It must match the type of calendarFieldName.",
@@ -137,10 +126,13 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           "items": {
             "properties": {
               "fieldMetadataId": {
-                "$ref": "#/$defs/__schema1",
+                "description": "Field UUID. Alternative to fieldName; takes precedence when both are given.",
+                "format": "uuid",
+                "type": "string",
               },
               "fieldName": {
-                "$ref": "#/$defs/__schema0",
+                "description": "Field name (e.g. "amount", "stage"). Resolved to a UUID server-side. Provide this or fieldMetadataId.",
+                "type": "string",
               },
               "isVisible": {
                 "default": true,
@@ -162,10 +154,13 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
           "items": {
             "properties": {
               "fieldMetadataId": {
-                "$ref": "#/$defs/__schema1",
+                "description": "Field UUID. Alternative to fieldName; takes precedence when both are given.",
+                "format": "uuid",
+                "type": "string",
               },
               "fieldName": {
-                "$ref": "#/$defs/__schema0",
+                "description": "Field name (e.g. "amount", "stage"). Resolved to a UUID server-side. Provide this or fieldMetadataId.",
+                "type": "string",
               },
               "operand": {
                 "description": "Filter operator. Must be valid for the field type (e.g. SELECT: IS, IS_NOT; CURRENCY: GREATER_THAN_OR_EQUAL, LESS_THAN_OR_EQUAL; TEXT: CONTAINS).",
@@ -286,10 +281,13 @@ VIEW TYPES: TABLE (default), LIST, KANBAN (requires mainGroupByFieldName, a SELE
                 "type": "string",
               },
               "fieldMetadataId": {
-                "$ref": "#/$defs/__schema1",
+                "description": "Field UUID. Alternative to fieldName; takes precedence when both are given.",
+                "format": "uuid",
+                "type": "string",
               },
               "fieldName": {
-                "$ref": "#/$defs/__schema0",
+                "description": "Field name (e.g. "amount", "stage"). Resolved to a UUID server-side. Provide this or fieldMetadataId.",
+                "type": "string",
               },
             },
             "type": "object",

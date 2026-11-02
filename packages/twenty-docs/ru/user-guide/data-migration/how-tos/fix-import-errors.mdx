@@ -3,6 +3,8 @@ title: Устранение ошибок импорта
 description: Полное руководство по устранению ошибок импорта CSV.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Обзор
 
 Импорт не работает? Это руководство поможет вам поэтапно выявлять и устранять распространённые ошибки импорта.
@@ -181,7 +183,7 @@ description: Полное руководство по устранению ош�
 
 1. Перейдите в **Настройки → Модель данных**
 2. Выберите объект и поле
-3. Включите **Расширенный режим** (переключатель внизу справа)
+3. Откройте меню **⋮** рядом с **Options** и выберите **Show API values**
 4. Используйте имя API (например, `OPTION_1`, а не "Option 1")
 
 ```
@@ -428,3 +430,5 @@ Too many records. Up to 10000 allowed
    * [Ограничения уникальности](/ru/user-guide/data-migration/capabilities/uniqueness-constraints)
    * [Импорт связей](/ru/user-guide/data-migration/capabilities/import-relations)
    * [Обработка ошибок](/ru/user-guide/data-migration/capabilities/error-handling)
+
+<PageBanner illustration="card-page-bug-requests" />

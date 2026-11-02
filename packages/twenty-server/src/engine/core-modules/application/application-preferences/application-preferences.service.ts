@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
+import { getHealthCheckLogicFunctionIdForUser } from 'src/engine/core-modules/application/application-health/utils/get-health-check-logic-function-id-for-user.util';
 import { type ApplicationPreferencesDTO } from 'src/engine/core-modules/application/application-preferences/dtos/application-preferences.dto';
 import { UserApplicationVariableValueService } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { ConnectionProviderService } from 'src/engine/core-modules/application/connection-provider/connection-provider.service';
 import { findFlatEntitiesByApplicationId } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entities-by-application-id.util';
 import { fromFlatSettingsMenuItemToSettingsMenuItemDto } from 'src/engine/metadata-modules/flat-settings-menu-item/utils/from-flat-settings-menu-item-to-settings-menu-item-dto.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -13,6 +15,7 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 export class ApplicationPreferencesService {
   constructor(
     private readonly applicationService: ApplicationService,
+    private readonly connectionProviderService: ConnectionProviderService,
     private readonly userApplicationVariableValueService: UserApplicationVariableValueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
@@ -32,30 +35,65 @@ export class ApplicationPreferencesService {
         ]),
       ]);
 
-    const myUserApplicationVariableValuesByApplicationId =
-      await this.userApplicationVariableValueService.findMyUserApplicationVariableValuesByApplicationId(
+    const applicationIds = installedFlatApplications.map(({ id }) => id);
+
+    const [
+      myUserApplicationVariableValuesByApplicationId,
+      connectionProviders,
+    ] = await Promise.all([
+      this.userApplicationVariableValueService.findMyUserApplicationVariableValuesByApplicationId(
         {
           workspaceId,
-          applicationIds: installedFlatApplications.map(({ id }) => id),
+          applicationIds,
           userWorkspaceId,
         },
-      );
+      ),
+      this.connectionProviderService.findManyDtosByApplications({
+        applicationIds,
+        workspaceId,
+        scope: 'USER',
+      }),
+    ]);
 
     return installedFlatApplications
-      .map(({ id: applicationId }): ApplicationPreferencesDTO => ({
-        applicationId,
-        settingsMenuItems: findFlatEntitiesByApplicationId({
-          flatEntityMaps: flatSettingsMenuItemMaps,
+      .map(
+        ({
+          id: applicationId,
+          healthCheckLogicFunctionId,
+          isUserHealthCheckEnabled,
+        }): ApplicationPreferencesDTO => ({
           applicationId,
-        })
-          .filter(({ scope }) => scope === 'USER')
-          .map(fromFlatSettingsMenuItemToSettingsMenuItemDto),
-        variables:
-          myUserApplicationVariableValuesByApplicationId[applicationId],
-      }))
+          settingsMenuItems: findFlatEntitiesByApplicationId({
+            flatEntityMaps: flatSettingsMenuItemMaps,
+            applicationId,
+          })
+            .filter(({ scope }) => scope === 'USER')
+            .map(fromFlatSettingsMenuItemToSettingsMenuItemDto),
+          variables:
+            myUserApplicationVariableValuesByApplicationId[applicationId],
+          connectionProviders: connectionProviders.filter(
+            (connectionProvider) =>
+              connectionProvider.applicationId === applicationId,
+          ),
+          hasUserHealthCheck: isDefined(
+            getHealthCheckLogicFunctionIdForUser({
+              healthCheckLogicFunctionId,
+              isUserHealthCheckEnabled,
+            }),
+          ),
+        }),
+      )
       .filter(
-        ({ settingsMenuItems, variables }) =>
-          isNonEmptyArray(settingsMenuItems) || isNonEmptyArray(variables),
+        ({
+          settingsMenuItems,
+          variables,
+          connectionProviders,
+          hasUserHealthCheck,
+        }) =>
+          isNonEmptyArray(settingsMenuItems) ||
+          isNonEmptyArray(variables) ||
+          isNonEmptyArray(connectionProviders) ||
+          hasUserHealthCheck,
       );
   }
 }

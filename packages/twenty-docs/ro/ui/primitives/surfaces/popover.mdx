@@ -1,0 +1,268 @@
+---
+title: Popover
+description: Afișați conținut contextual ancorat la un declanșator.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import PopoverReference from '/snippets/ui/generated/surfaces/popover.mdx';
+
+## Prezentare generală
+
+Utilizați `Popover` pentru informații contextuale sau controale simple. Compuneți separat portalul, wrapperul de poziționare și fereastra pop-up. Folosiți [Dropdown](/ro/ui/components/navigation/dropdown) pentru meniuri, selectoare și panouri cu navigare de nivel superior.
+
+<StoryEmbed storyId="ui-surfaces-popover--display" title="Exemplu Popover" height={280} />
+
+## Utilizare
+
+### Stare necontrolată
+
+Utilizați `defaultOpen` pentru a seta vizibilitatea inițială. Fereastra popover gestionează modificările ulterioare provenite de la declanșatorul său, controalele de închidere și interacțiunile de închidere.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const ContactDetailsPopover = () => (
+  <Popover.Root defaultOpen={false}>
+    <Popover.Trigger render={<Button>Show details</Button>} />
+    <Popover.Portal>
+      <Popover.Positioner align="start">
+        <Popover.Popup
+          style={{ boxSizing: 'border-box', width: 260, padding: 16, gap: 12 }}
+        >
+          <Popover.Title>Contact details</Popover.Title>
+          <Popover.Description>
+            Reach Alex at alex@example.com.
+          </Popover.Description>
+          <Popover.Close
+            style={{ alignSelf: 'flex-end' }}
+            render={<Button size="sm">Close</Button>}
+          />
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
+  </Popover.Root>
+);
+```
+
+`defaultOpen` are implicit valoarea `false`, astfel încât poate fi omis. Utilizați `Title` și `Description` pentru a identifica fereastra pop-up. Declanșatorul redă implicit un buton; `render` vă permite să furnizați un element compatibil.
+
+## Comparație de poziționare
+
+Comparați laturile acceptate cu și fără săgeată. Aceste exemple deschise păstrează fiecare fereastră pop-up lângă declanșatorul său pentru inspecție; utilizați exemplul Display pentru a încerca să deschideți și să închideți un popover.
+
+<StoryEmbed storyId="ui-surfaces-popover--catalog" title="Comparație de poziționare pentru popover" height={640} />
+
+## Anatomie
+
+Păstrați declanșatorul și fereastra pop-up în `Popover.Root`. Fereastra pop-up poate conține text, controale de formular și acțiuni.
+
+```text
+Popover.Root
+├── Popover.Trigger
+└── Popover.Portal
+    ├── Popover.Backdrop (optional)
+    └── Popover.Positioner
+        └── Popover.Popup
+            ├── Popover.Arrow (optional)
+            └── Popover.Viewport (optional)
+                ├── Popover.Title
+                ├── Popover.Description
+                └── Popover.Close
+```
+
+| Parte         | Scop și țintă nativă                                                                      |
+| ------------- | ----------------------------------------------------------------------------------------- |
+| `Root`        | Deține starea, declanșatoarele și interacțiunile. Nu redă niciun element DOM.             |
+| `Declanșator` | Deschide fereastra pop-up și îi furnizează ancora implicită. Vizează un buton.            |
+| `Portal`      | Alege destinația. Proprietățile native, gestionarele, `render` și ref vizează div-ul său. |
+| `Positioner`  | Deține ancorele, alinierea, decalajele și gestionarea coliziunilor. Vizează propriul div. |
+| `Popup`       | Redă conținutul și gestionează focalizarea. Vizează div-ul său.                           |
+| `Arrow`       | Săgeată opțională stilizată în Popup. Vizează div-ul său.                                 |
+| `Backdrop`    | Fundal opțional upstream în Portal. Vizează div-ul său.                                   |
+| `Viewport`    | Container de tranziție opțional pentru conținutul în schimbare. Vizează div-ul său.       |
+| `Titlu`       | Furnizează un nume accesibil vizibil. Vizează un h2.                                      |
+| `Description` | Asociază text explicativ. Vizează un paragraf.                                            |
+| `Închide`     | Solicită închiderea. Vizează un buton.                                                    |
+
+Toate părțile redate acceptă atributele native Base UI instalate, gestionarele, ref-urile și compunerea `render` de elemente/funcții. Componentele personalizate trebuie să redirecționeze proprietățile și ref-ul furnizate. Fiecare parte are un tip public `Popover\<Part>Props` și `Popover\<Part>State`. `PopoverRootProps` și `PopoverTriggerProps` păstrează genericele de payload. `PopoverHandle`, `PopoverRootActions`, `PopoverRootChangeEventDetails` și `PopoverRootChangeEventReason` sunt, de asemenea, exportate din `twenty-ui/primitives/surfaces`.
+
+## Stare controlată
+
+Transmiteți `open` și actualizați-l cu `onOpenChange` pentru a gestiona vizibilitatea aceleiași ferestre popover în starea React.
+
+```tsx
+import { useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const ContactDetailsPopover = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Popover.Root open={open} onOpenChange={setOpen}>
+      <Popover.Trigger render={<Button>Show details</Button>} />
+      <Popover.Portal>
+        <Popover.Positioner align="start">
+          <Popover.Popup
+            style={{
+              boxSizing: 'border-box',
+              width: 260,
+              padding: 16,
+              gap: 12,
+            }}
+          >
+            <Popover.Title>Contact details</Popover.Title>
+            <Popover.Description>
+              Reach Alex at alex@example.com.
+            </Popover.Description>
+            <Popover.Close
+              style={{ alignSelf: 'flex-end' }}
+              render={<Button size="sm">Close</Button>}
+            />
+          </Popover.Popup>
+        </Popover.Positioner>
+      </Popover.Portal>
+    </Popover.Root>
+  );
+};
+```
+
+`onOpenChange` primește următoarea valoare booleană și detaliile evenimentului, inclusiv modificările solicitate de declanșator, controalele de închidere, Escape și interacțiunea din exterior.
+
+## Combinare cu butoane
+
+Transmiteți un `Button` Twenty UI prin `render` pentru a-l utiliza ca declanșator sau control de închidere. Popoverul își păstrează starea deschisă, comportamentul tastaturii și gestionarea focalizării.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const ImportHelp = () => (
+  <Popover.Root>
+    <Popover.Trigger render={<Button variant="outline">Import help</Button>} />
+    <Popover.Portal>
+      <Popover.Positioner align="start">
+        <Popover.Popup
+          style={{ boxSizing: 'border-box', width: 260, padding: 16, gap: 12 }}
+        >
+          <Popover.Arrow />
+          <Popover.Title>Import a CSV file</Popover.Title>
+          <Popover.Description>
+            Use a header row to identify your columns.
+          </Popover.Description>
+          <Popover.Close
+            style={{ alignSelf: 'flex-end' }}
+            render={<Button size="sm">Got it</Button>}
+          />
+        </Popover.Popup>
+      </Popover.Positioner>
+    </Popover.Portal>
+  </Popover.Root>
+);
+```
+
+`render` combină comportamentul cu butonul furnizat. Componentele wrapper personalizate trebuie să [transmită mai departe props și ref furnizate](/ro/ui/primitives/overview#custom-components) pentru a păstra acel comportament.
+
+## Poziționare și focalizare
+
+`Positioner` are implicit `side="bottom"`, `align="center"` și `sideOffset={8}`. Acceptă contractul Base UI instalat complet, inclusiv ancore de element/ref/funcție/virtuale, decalaje funcționale, `positionMethod`, `collisionBoundary`, `collisionPadding`, `collisionAvoidance`, `arrowPadding`, `sticky` și `disableAnchorTracking`. DirectionProvider controlează poziționarea logică și furnizează direcția DOM. Un `dir` explicit poate suprascrie atributul nativ; folosiți furnizorul pentru a schimba plasarea logică a laturii.
+
+```tsx
+import { useRef } from 'react';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const AnchoredHelp = () => {
+  const anchor = useRef<HTMLDivElement>(null);
+
+  return (
+    <div ref={anchor}>
+      <Popover.Root>
+        <Popover.Trigger>Help</Popover.Trigger>
+        <Popover.Portal>
+          <Popover.Positioner
+            anchor={anchor}
+            side="inline-end"
+            align="start"
+            sideOffset={({ anchor }) => anchor.width / 2}
+            collisionBoundary="clipping-ancestors"
+            collisionAvoidance={{ side: 'flip', align: 'shift' }}
+            collisionPadding={8}
+            positionMethod="fixed"
+          >
+            <Popover.Popup aria-label="Help">
+              <Popover.Arrow />
+              Contextual help
+            </Popover.Popup>
+          </Popover.Positioner>
+        </Popover.Portal>
+      </Popover.Root>
+    </div>
+  );
+};
+```
+
+Escape închide fereastra pop-up și restabilește focalizarea pe declanșatorul său. Interacțiunea din exterior o închide implicit. `Popup.initialFocus` și `Popup.finalFocus` acceptă țintele de focalizare și callback-urile upstream. `Root.modal` păstrează modurile implicit nemodal, modal și de blocare a focalizării din Base UI pentru utilizare independentă.
+
+## Destinațiile portalului și tema
+
+Setați `container` și `keepMounted` în `Portal`:
+
+| Recipient                   | Rezoluție                                                                                                                                                                                                       |
+| --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Omis sau `undefined`        | Folosește cel mai apropiat container ThemeProvider cu scop delimitat. În absența acestuia, Base UI folosește portalul părinte sau corpul documentului.                                                          |
+| `null`                      | Așteaptă fără a reda conținutul portalului până când containerul se schimbă. Nu revine la temă sau la corpul documentului.                                                                                      |
+| Element, ShadowRoot sau ref | Transmite ținta furnizată neschimbată către Base UI. Un ref nerezolvat păstrează alternativa portalului părinte/corpului documentului din Base UI; folosiți null explicit atunci când este necesară așteptarea. |
+
+Destinația implicită cu scop delimitat își păstrează tokenurile CSS și schema de culori. O destinație explicită moștenește CSS-ul din scopul său DOM efectiv. Plasați-o în scopul temei intenționate sau furnizați acolo stilurile temei. Țintele ShadowRoot au nevoie de CSS-ul bibliotecii și de stilurile temei în acel arbore shadow. Contextul temei React și direcția de text furnizată rămân disponibile în portaluri. Acest API nu extinde destinațiile de portal permise ale rendererului.
+
+## Declanșatoare și payload-uri detașate
+
+`Popover.createHandle\<TPayload>()` conectează declanșatoarele detașate la o rădăcină și expune `open(triggerId)`, `close()` și `isOpen`. `Popover.Handle` este constructorul de handle upstream instalat. Funcția render a rădăcinii primește payload-ul activ. Apelați acțiunile imperative din gestionarele de evenimente sau efecte.
+
+```tsx
+import { useState } from 'react';
+import { Popover } from 'twenty-ui/primitives/surfaces';
+
+export const OwnerHelp = () => {
+  const [handle] = useState(() => Popover.createHandle<{ name: string }>());
+
+  return (
+    <>
+      <Popover.Trigger handle={handle} id="owner" payload={{ name: 'Alice' }}>
+        Owner
+      </Popover.Trigger>
+      <Popover.Root handle={handle}>
+        {({ payload }) => (
+          <Popover.Portal>
+            <Popover.Positioner align="start">
+              <Popover.Popup aria-label="Account owner">
+                {payload?.name}
+                <Popover.Close>Close</Popover.Close>
+              </Popover.Popup>
+            </Popover.Positioner>
+          </Popover.Portal>
+        )}
+      </Popover.Root>
+    </>
+  );
+};
+```
+
+`onOpenChange` păstrează `reason`, `event`, `trigger`, `cancel()` și `preventUnmountOnClose()`. Rădăcinile controlate păstrează `triggerId`; rădăcinile necontrolate păstrează `defaultTriggerId`. `actionsRef` expune acțiunile upstream de închidere/demontare.
+
+## Migrare
+
+Mutați `container` și `keepMounted` din Popup în Portal. Mutați proprietățile de plasare, ancoră și coliziune în Positioner. Înlocuiți `Popup.arrow` cu un copil explicit `Popover.Arrow`. Proprietățile native, gestionarele, proprietățile de focalizare și ref-ul Popup continuă să vizeze elementul de conținut. Dropdown.Content își păstrează asamblarea convenabilă existentă.
+
+În componentele front-end, folosiți compunerea nemodală în cadrul politicii existente pentru portaluri cu scop delimitat. Popoverele/dialogurile native ale browserului și modalitatea directă deținută de aplicație sunt interzise; folosiți API-ul de dialog al gazdei SDK pentru dialoguri. Lucrul privind capabilitățile rendererului pentru portal, geometrie, derulare și închidere rămâne separat de acest API primitiv.
+
+## Proprietăți
+
+Referința este generată din tipurile de componente publice. Atributele native, inclusiv numele accesibile și gestionarii de evenimente, sunt acceptate și pe părțile care redau elemente.
+
+<PopoverReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

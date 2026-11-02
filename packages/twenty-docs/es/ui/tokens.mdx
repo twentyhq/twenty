@@ -1,0 +1,21 @@
+---
+title: Tokens de diseño
+description: Explora las variables CSS generadas y los valores claros y oscuros utilizados por Twenty UI.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import TokenReference from '/snippets/ui/generated/tokens.mdx';
+
+## Resumen
+
+Esta referencia se genera a partir de las mismas definiciones de tokens que las hojas de estilo del tema de Twenty UI. Las rutas de los tokens corresponden a las entradas de `themeCssVariables` y `useTheme()`; los nombres de las variables CSS se pueden usar directamente en las hojas de estilo.
+
+* Prefiere tokens semánticos como `background.primary` y `font.color.primary` para las superficies y el texto de la aplicación.
+* Los tokens numéricos no tienen unidades en CSS. Multiplícalos por una longitud cuando sea necesario, por ejemplo `calc(var(--t-icon-size-md) * 1px)`. En un `ThemeProvider` montado con la hoja de estilo del tema cargada, `useTheme()` los resuelve como números de JavaScript; sin un proveedor devuelve las referencias de variables CSS.
+* Los valores que contienen `var(...)` o `calc(...)` son expresiones CSS, no medidas precalculadas.
+* Los valores siguientes son los valores de la hoja de estilo base. Las anulaciones del tema y el estilo squircle compatible pueden cambiar los valores calculados. El estilo squircle duplica los tokens de radio seleccionados; los tokens explícitos round y pill conservan sus radios base.
+
+<TokenReference />
+
+<PageBanner illustration="page-cover-palette" />

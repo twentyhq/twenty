@@ -17,6 +17,7 @@ import { DeleteManyRecordsService } from 'src/engine/core-modules/record-crud/se
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { GroupByRecordsService } from 'src/engine/core-modules/record-crud/services/group-by-records.service';
+import { MergeManyRecordsService } from 'src/engine/core-modules/record-crud/services/merge-many-records.service';
 import { UpdateManyRecordsService } from 'src/engine/core-modules/record-crud/services/update-many-records.service';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
 import { UpsertManyRecordsService } from 'src/engine/core-modules/record-crud/services/upsert-many-records.service';
@@ -51,6 +52,7 @@ export class ToolExecutorService {
     private readonly upsertManyRecordsService: UpsertManyRecordsService,
     private readonly deleteRecordService: DeleteRecordService,
     private readonly deleteManyRecordsService: DeleteManyRecordsService,
+    private readonly mergeManyRecordsService: MergeManyRecordsService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly recordFilesResolverService: RecordFilesResolverService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -268,6 +270,16 @@ export class ToolExecutorService {
         return this.deleteManyRecordsService.execute({
           objectName: ref.objectNameSingular,
           filter: args.filter as Record<string, unknown>,
+          authContext,
+          rolePermissionConfig: context.rolePermissionConfig,
+        });
+
+      case 'merge_many':
+        return this.mergeManyRecordsService.execute({
+          objectName: ref.objectNameSingular,
+          ids: args.ids as string[],
+          conflictPriorityIndex: args.conflictPriorityIndex as number,
+          dryRun: args.dryRun as boolean | undefined,
           authContext,
           rolePermissionConfig: context.rolePermissionConfig,
         });

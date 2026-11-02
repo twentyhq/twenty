@@ -13,6 +13,7 @@ import { fromRoleConfigToRoleManifest } from '@/app/manifest/utils/from-role-con
 import { extractFrontComponentSharedDependencies } from '@/app/manifest/utils/extract-front-component-shared-dependencies';
 import { validateConditionalAvailabilityUsage } from '@/app/manifest/utils/validate-conditional-availability-usage';
 import { validateAgentRolesWithinApplicationRole } from '@/app/manifest/utils/validate-agent-roles-within-application-role';
+import { resolveAppSystemPermissionFlag } from '@/app/project/resolve-app-system-permission-flag';
 import { validateViewFilterOperands } from '@/app/manifest/utils/validate-view-filter-operands';
 import { getEngineVersionRange } from '@/app/manifest/get-engine-version-range';
 import { type ApplicationConfig } from '@/app/manifest/types/application-config.type';
@@ -39,6 +40,9 @@ import {
   ASSETS_DIR,
   type CommandMenuItemManifest,
   type ConnectionProviderManifest,
+  type McpServerManifest,
+  type RelatedRecordPathManifest,
+  type MessagingProviderManifest,
   type FieldManifest,
   type FrontComponentManifest,
   type IndexManifest,
@@ -112,6 +116,9 @@ export const buildManifest = async (
   const agents: AgentManifest[] = [];
   const workflows: WorkflowManifest[] = [];
   const connectionProviders: ConnectionProviderManifest[] = [];
+  const messagingProviders: MessagingProviderManifest[] = [];
+  const mcpServers: McpServerManifest[] = [];
+  const relatedRecordPaths: RelatedRecordPathManifest[] = [];
   const logicFunctions: LogicFunctionManifest[] = [];
   const frontComponents: FrontComponentManifest[] = [];
   const publicAssets: AssetManifest[] = [];
@@ -144,6 +151,9 @@ export const buildManifest = async (
   const agentsFilePaths: string[] = [];
   const workflowsFilePaths: string[] = [];
   const connectionProvidersFilePaths: string[] = [];
+  const messagingProvidersFilePaths: string[] = [];
+  const mcpServersFilePaths: string[] = [];
+  const relatedRecordPathsFilePaths: string[] = [];
   const logicFunctionsFilePaths: string[] = [];
   const frontComponentsFilePaths: string[] = [];
   const publicAssetsFilePaths: string[] = [];
@@ -285,8 +295,49 @@ export const buildManifest = async (
         connectionProvidersFilePaths.push(relativePath);
         break;
       }
+      case 'messagingProviders': {
+        const extract =
+          await extractManifestFromFile<MessagingProviderManifest>({
+            appPath,
+            filePath,
+          });
+        messagingProviders.push(extract.config);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        messagingProvidersFilePaths.push(relativePath);
+        break;
+      }
+      case 'mcpServers': {
+        const extract = await extractManifestFromFile<McpServerManifest>({
+          appPath,
+          filePath,
+        });
+        mcpServers.push(extract.config);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        mcpServersFilePaths.push(relativePath);
+        break;
+      }
+      case 'relatedRecordPaths': {
+        const extract =
+          await extractManifestFromFile<RelatedRecordPathManifest>({
+            appPath,
+            filePath,
+          });
+        relatedRecordPaths.push(extract.config);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        relatedRecordPathsFilePaths.push(relativePath);
+        break;
+      }
       case 'logicFunctions': {
-        const extract = await extractManifestFromFile<LogicFunctionConfig>({
+        const extract = await extractManifestFromFile<
+          LogicFunctionConfig &
+            Pick<
+              HealthCheckLogicFunctionApplicationManifest,
+              'runOnUserPreferences'
+            >
+        >({
           appPath,
           filePath,
         });
@@ -303,8 +354,9 @@ export const buildManifest = async (
           );
         }
 
+        const { runOnUserPreferences, ...logicFunctionConfig } = extract.config;
         const config = await fromLogicFunctionConfigToLogicFunctionManifest({
-          logicFunctionConfig: extract.config,
+          logicFunctionConfig,
           sourceCode: fileContent,
           sourcePath: relativePath,
         });
@@ -345,6 +397,9 @@ export const buildManifest = async (
         if (targetFunctionName === 'defineHealthCheck') {
           healthCheckLogicFunctions.push({
             universalIdentifier: extract.config.universalIdentifier,
+            ...(isDefined(runOnUserPreferences)
+              ? { runOnUserPreferences }
+              : {}),
           });
         }
 
@@ -588,6 +643,8 @@ export const buildManifest = async (
     errors.push('Only one health check is allowed per application');
   }
 
+  const [healthCheckLogicFunction] = healthCheckLogicFunctions;
+
   if (settingsFrontComponentUniversalIdentifiers.length > 1) {
     errors.push('Only one settings front component is allowed per application');
   }
@@ -632,6 +689,7 @@ export const buildManifest = async (
         objects,
         permissionFlags,
         defaultRoleUniversalIdentifier: resolvedDefaultRoleUniversalIdentifier,
+        systemPermissionFlag: resolveAppSystemPermissionFlag(appPath),
       }),
     );
   }
@@ -653,7 +711,7 @@ export const buildManifest = async (
               resolvedDefaultRoleUniversalIdentifier,
             aboutDescription: readmeContent,
             yarnLockChecksum: null,
-            packageJsonChecksum: null,
+            packageJsonChecksum: '',
             requiredServerVersionRange: getEngineVersionRange(appPath),
             ...(postInstallLogicFunctions.length >= 1
               ? { postInstallLogicFunction: postInstallLogicFunctions[0] }
@@ -664,8 +722,8 @@ export const buildManifest = async (
             ...(uninstallLogicFunctions.length >= 1
               ? { uninstallLogicFunction: uninstallLogicFunctions[0] }
               : {}),
-            ...(healthCheckLogicFunctions.length >= 1
-              ? { healthCheckLogicFunction: healthCheckLogicFunctions[0] }
+            ...(isDefined(healthCheckLogicFunction)
+              ? { healthCheckLogicFunction }
               : {}),
             ...(settingsFrontComponentUniversalIdentifiers.length >= 1
               ? {
@@ -705,6 +763,8 @@ export const buildManifest = async (
         agents: agents.sort(byId),
         workflows: workflows.sort(byId),
         connectionProviders: connectionProviders.sort(byId),
+        messagingProviders: messagingProviders.sort(byId),
+        mcpServers: mcpServers.sort(byId),
         logicFunctions: logicFunctions.sort(byId),
         frontComponents: frontComponents.sort(byId),
         publicAssets: publicAssets.sort(byPath),
@@ -717,6 +777,7 @@ export const buildManifest = async (
         commandMenuItems: commandMenuItems.sort(byId),
         timelineActivityTypes: timelineActivityTypes.sort(byId),
         settingsMenuItems: settingsMenuItems.sort(byId),
+        relatedRecordPaths: relatedRecordPaths.sort(byId),
       };
 
   const entityFilePaths: EntityFilePaths = {
@@ -730,6 +791,9 @@ export const buildManifest = async (
     agents: agentsFilePaths,
     workflows: workflowsFilePaths,
     connectionProviders: connectionProvidersFilePaths,
+    messagingProviders: messagingProvidersFilePaths,
+    mcpServers: mcpServersFilePaths,
+    relatedRecordPaths: relatedRecordPathsFilePaths,
     logicFunctions: logicFunctionsFilePaths,
     frontComponents: frontComponentsFilePaths,
     publicAssets: publicAssetsFilePaths,

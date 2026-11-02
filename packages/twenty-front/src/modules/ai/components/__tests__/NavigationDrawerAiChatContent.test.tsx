@@ -12,7 +12,7 @@ import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-import { type AgentChatChannel } from '~/generated-metadata/graphql';
+import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
 import { messages } from '~/locales/generated/en';
 
 i18n.load({ [SOURCE_LOCALE]: messages });
@@ -177,7 +177,7 @@ describe('NavigationDrawerAiChatContent', () => {
         color: null,
         position: 1,
         roleIds: [],
-        isCustom: true,
+        applicationId: 'workspace-custom-application-id',
         isAccessible: true,
       },
     ]);
@@ -207,7 +207,7 @@ describe('NavigationDrawerAiChatContent', () => {
         color: null,
         position: 1,
         roleIds: [],
-        isCustom: true,
+        applicationId: 'workspace-custom-application-id',
         isAccessible: true,
       },
     ]);

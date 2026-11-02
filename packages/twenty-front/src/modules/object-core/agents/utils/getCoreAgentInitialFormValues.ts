@@ -22,7 +22,6 @@ export const getCoreAgentInitialFormValues = (
     modelId: agent.modelId,
     role: agent.roleId,
     prompt: agent.prompt,
-    isCustom: agent.isCustom,
     modelConfiguration: agent.modelConfiguration || {},
     triggers: parseAgentTriggers(agent.triggers ?? []),
   };

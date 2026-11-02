@@ -54,8 +54,8 @@ export const SettingsBillingLimitSpenderCell = ({
     if (isWorkspaceWide) {
       return (
         <Avatar
-          name={name}
-          colorSeed={getWorkspaceAvatarColorSeed(name)}
+          name={currentWorkspace?.displayName ?? ''}
+          colorSeed={getWorkspaceAvatarColorSeed(currentWorkspace?.displayName)}
           src={getAbsoluteImageUrl(
             currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO,
           )}

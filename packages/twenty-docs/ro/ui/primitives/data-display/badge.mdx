@@ -1,0 +1,139 @@
+---
+title: Insignă
+description: Afișați informații compacte în linie cu conținut furnizat de apelant.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import BadgeReference from '/snippets/ui/generated/data-display/badge.mdx';
+
+## Prezentare generală
+
+`Badge` afișează informații compacte în linie, inclusiv etichete scurte și numărători. Folosiți [Tag](/ro/ui/primitives/data-display/tag) pentru categorii, [Chip](/ro/ui/primitives/data-display/chip) pentru controale compacte sau [Status](/ro/ui/primitives/data-display/status) pentru o stare denumită cu un indicator.
+
+<StoryEmbed storyId="ui-data-display-badge--display" title="Exemplu de Badge" height={90} />
+
+## Utilizare
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+
+export const PreviewLabel = () => <Badge>Preview</Badge>;
+```
+
+Transmiteți text, numere sau noduri ca elemente copil. Badge afișează conținutul pe care îl furnizați și nu adaugă nicio formatare pentru numărare sau reguli de vizibilitate. Elementul implicit este un `span` neinteractiv.
+
+## Cu o pictogramă
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { IconPaperclip } from 'twenty-ui/icon';
+
+export const AttachmentLabel = () => (
+  <Badge>
+    <IconPaperclip size={12} aria-hidden />
+    Attachment
+  </Badge>
+);
+```
+
+Pictogramele sunt noduri copil obișnuite. Atribuiți pictogramelor decorative `aria-hidden` și păstrați o etichetă vizibilă pentru a explica conținutul.
+
+## Aspect
+
+<StoryEmbed storyId="ui-data-display-badge--catalog" title="Dimensiuni și forme ale ecusonului" height={200} />
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const BadgeAppearances = () => (
+  <Text style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+    <Badge size="sm" color="tertiary" shape="pill">
+      Preview
+    </Badge>
+    <Badge size="md" color="inherit">
+      In review
+    </Badge>
+    <Badge size="xs" color="primary" shape="circle">
+      3
+    </Badge>
+    <Badge size="xs" color="secondary" shape="circle">
+      12
+    </Badge>
+    <Badge color="accent">Last used</Badge>
+  </Text>
+);
+```
+
+`size` acceptă `xs`, `sm` sau `md`. `color` acceptă `tertiary`, `inherit`, `primary`, `secondary` sau `accent`. Stilul `accent` asociază o umplere accent-tertiary cu text accent11 în ambele teme. Tratamentul solid `primary` își păstrează umplerea albastră și textul pentru accent. `shape` acceptă `pill` sau `circle`. Valorile implicite sunt `sm`, `tertiary` și `pill`. Varianta circulară are o lățime fixă egală cu înălțimea sa. Utilizați `pill` pentru conținut mai lung, inclusiv pentru numărători abreviate.
+
+<StoryEmbed storyId="ui-data-display-badge--colors" title="Culorile textului ecusonului" height={140} />
+
+<StoryEmbed storyId="ui-data-display-badge--accent" title="Insigne cu accent discret în temele deschisă și închisă" height={140} />
+
+## Numărători și vizibilitate
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+
+type InboxButtonProps = {
+  count: number;
+};
+
+export const InboxButton = ({ count }: InboxButtonProps) => (
+  <Button aria-label={`Inbox, ${count} unread messages`}>
+    Inbox
+    {count > 0 && (
+      <Badge size="xs" color="primary" shape="pill" aria-hidden>
+        {count > 99 ? '99+' : count}
+      </Badge>
+    )}
+  </Button>
+);
+```
+
+Aplicația dvs. gestionează formatarea numerelor, abrevierile, limitarea, vizibilitatea valorii zero și etichetele traduse. Includeți semnificația completă în numele accesibil al controlului înconjurător atunci când numărătoarea sa compactă este decorativă. Un Badge independent poate utiliza atribute accesibile native, inclusiv `aria-label` sau `aria-labelledby`.
+
+## Compoziție nativă
+
+```tsx
+import { useRef } from 'react';
+import { Badge } from 'twenty-ui/primitives/data-display';
+
+export const BuildStatus = () => {
+  const badgeRef = useRef<HTMLSpanElement>(null);
+
+  return (
+    <Badge ref={badgeRef} title="Current build status" data-build="preview">
+      Preview
+    </Badge>
+  );
+};
+```
+
+Atributele native, gestionarii de evenimente, `className`, `style` și `ref` vizează elementul rădăcină efectiv. `render` acceptă un element sau un callback prin compoziția Base UI. Alegeți un element gazdă nativ adecvat pentru conținut interactiv:
+
+```tsx
+import { Badge } from 'twenty-ui/primitives/data-display';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const ReleaseLink = () => (
+  <Badge render={<Button href="#release-notes" size="sm" />}>
+    Release notes
+  </Badge>
+);
+```
+
+Componenta Button redată gestionează comportamentul de navigare și semantica linkului. Badge își păstrează valoarea implicită de prezentare și nu deduce interacțiunea din conținutul său.
+
+## Proprietăți
+
+Tipurile și valorile implicite sunt generate din tipul public `BadgeProps`. Sunt acceptate și atributele native și gestionarii de evenimente.
+
+<BadgeReference />
+
+<PageBanner illustration="page-cover-checkbox" />

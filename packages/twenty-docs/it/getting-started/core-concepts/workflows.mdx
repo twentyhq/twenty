@@ -3,7 +3,12 @@ title: Flussi di lavoro
 description: Automatizza i processi aziendali con il generatore visuale di workflow di Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Panoramica
 
 I workflow ti permettono di automatizzare attività ripetitive e collegare Twenty a strumenti esterni, senza scrivere codice (anche se puoi farlo se vuoi).
 
@@ -49,6 +54,11 @@ I workflow possono concatenare qualsiasi combinazione di:
 * Genera PDF o fatture dai dati dei record
 * Invia risposte automatiche alle email in arrivo che corrispondono a determinati criteri
 
-<Card title="Guida completa ai workflow" icon="arrow-right" href="/it/user-guide/workflows/overview">
-  Riferimento dettagliato su trigger, azioni, variabili e casi d’uso reali di automazione.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/it/user-guide/workflows/overview" img="/images/user-guide/halftone/workflows-belt-v1.svg">
+  Guida <CardTitle>Full Workflow</CardTitle>
+  Riferimento dettagliato su trigger, azioni, variabili e ricette di automazione del mondo reale.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="getting-started-workflows" />

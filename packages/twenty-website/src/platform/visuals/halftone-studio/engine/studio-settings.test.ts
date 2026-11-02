@@ -13,42 +13,62 @@ describe('halftone studio state defaults', () => {
     );
   });
 
-  it('fills missing nested fields from the selected solid surface defaults', () => {
-    const normalized = normalizeHalftoneStudioSettings(
-      JSON.parse(`{
-        "material": { "surface": "solid" },
-        "lighting": { "height": 4 },
-        "animation": { "hoverReturn": false }
-      }`) as HalftoneStudioSettingsOverrides,
-    );
+  it.each(['solid', 'glass', 'metal'] as const)(
+    'fills missing nested fields from the selected %s surface defaults',
+    (surface) => {
+      const normalized = normalizeHalftoneStudioSettings({
+        material: { surface },
+        lighting: { height: 4 },
+        animation: { hoverReturn: false },
+      });
 
-    expect(normalized.lighting).toEqual({
-      ...HALFTONE_STUDIO_DEFAULTS.solidLighting,
-      height: 4,
+      expect(normalized.material).toEqual(
+        HALFTONE_STUDIO_DEFAULTS.materialBySurface[surface],
+      );
+      expect(normalized.lighting).toEqual({
+        ...HALFTONE_STUDIO_DEFAULTS.lightingBySurface[surface],
+        height: 4,
+      });
+      expect(normalized.animation).toEqual({
+        ...HALFTONE_STUDIO_DEFAULTS.animationBySurface[surface],
+        hoverReturn: false,
+      });
+    },
+  );
+
+  it('resets environment power only for presets saved before environment rotation', () => {
+    const legacy = normalizeHalftoneStudioSettings({
+      material: { surface: 'solid', environmentPower: 5 },
     });
-    expect(normalized.animation).toEqual({
-      ...HALFTONE_STUDIO_DEFAULTS.solidAnimation,
-      hoverReturn: false,
+    const current = normalizeHalftoneStudioSettings({
+      material: {
+        surface: 'solid',
+        environmentPower: 2.2,
+        environmentRotation: 90,
+      },
     });
+
+    expect(legacy.material.environmentPower).toBe(
+      HALFTONE_STUDIO_DEFAULTS.solidMaterial.environmentPower,
+    );
+    expect(current.material.environmentPower).toBe(2.2);
+    expect(current.material.environmentRotation).toBe(90);
   });
 
-  it('fills missing nested fields from the selected glass surface defaults', () => {
-    const normalized = normalizeHalftoneStudioSettings(
-      JSON.parse(`{
-        "material": { "surface": "glass" },
-        "lighting": { "height": 4 },
-        "animation": { "hoverReturn": false }
-      }`) as HalftoneStudioSettingsOverrides,
+  it('falls back to the surface texture when a preset names an unknown one', () => {
+    const unknown = normalizeHalftoneStudioSettings(
+      JSON.parse(
+        '{ "material": { "surface": "metal", "texture": "frosted" } }',
+      ),
     );
+    const none = normalizeHalftoneStudioSettings({
+      material: { surface: 'metal', texture: 'none' },
+    });
 
-    expect(normalized.lighting).toEqual({
-      ...HALFTONE_STUDIO_DEFAULTS.glassLighting,
-      height: 4,
-    });
-    expect(normalized.animation).toEqual({
-      ...HALFTONE_STUDIO_DEFAULTS.glassAnimation,
-      hoverReturn: false,
-    });
+    expect(unknown.material.texture).toBe(
+      HALFTONE_STUDIO_DEFAULTS.metalMaterial.texture,
+    );
+    expect(none.material.texture).toBe('none');
   });
 
   it('backfills the hover dash color when older presets do not include it', () => {

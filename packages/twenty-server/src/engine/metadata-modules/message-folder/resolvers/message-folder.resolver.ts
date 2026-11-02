@@ -70,7 +70,7 @@ export class MessageFolderResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ): Promise<MessageFolderDTO> {
-    await this.messageFolderMetadataService.verifyOwnership({
+    await this.messageFolderMetadataService.verifyAdministrableByCaller({
       id: input.id,
       userWorkspaceId,
       workspaceId: workspace.id,
@@ -92,7 +92,7 @@ export class MessageFolderResolver {
   ): Promise<MessageFolderDTO[]> {
     await Promise.all(
       input.ids.map((id) =>
-        this.messageFolderMetadataService.verifyOwnership({
+        this.messageFolderMetadataService.verifyAdministrableByCaller({
           id,
           userWorkspaceId,
           workspaceId: workspace.id,

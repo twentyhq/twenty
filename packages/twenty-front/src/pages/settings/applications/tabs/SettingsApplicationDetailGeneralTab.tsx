@@ -18,7 +18,7 @@ import { SettingsApplicationAutoUpdateSection } from '~/pages/settings/applicati
 import { SettingsApplicationConnectionsSection } from '~/pages/settings/applications/tabs/SettingsApplicationConnectionsSection';
 import { SettingsApplicationFunctionDomainSection } from '~/pages/settings/applications/tabs/SettingsApplicationFunctionDomainSection';
 import { applicationHasHttpTriggeredFunctions } from '~/pages/settings/applications/utils/applicationHasHttpTriggeredFunctions';
-import { isUpgradableApplicationSourceType } from '~/pages/settings/applications/utils/isUpgradableApplicationSourceType';
+import { isUpgradableApplicationSourceType } from '@/settings/applications/utils/isUpgradableApplicationSourceType';
 
 type SettingsApplicationDetailGeneralTabProps = {
   application: Pick<

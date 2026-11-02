@@ -52,6 +52,6 @@ export const fromFlatApplicationToApplicationManifest = ({
         },
       }
     : {}),
-  packageJsonChecksum: flatApplication.packageJsonChecksum,
+  packageJsonChecksum: flatApplication.packageJsonChecksum ?? '',
   yarnLockChecksum: flatApplication.yarnLockChecksum,
 });

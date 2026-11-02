@@ -3,16 +3,23 @@ title: Elemente de meniu de navigare
 description: Adăugați intrări personalizate în bara laterală a spațiului de lucru — linkuri către vizualizări salvate sau URL-uri externe.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
 Un **element de meniu de navigare** este o intrare în bara laterală din stânga. Folosiți `defineNavigationMenuItem()` pentru a livra linkuri personalizate în bara laterală — de obicei unul pentru fiecare [vizualizare](/ro/developers/extend/apps/layout/views) pe care o livrați — sau pentru a indica către URL-uri externe.
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
-import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import {
+  defineNavigationMenuItem,
+  NavigationMenuItemType,
+} from 'twenty-sdk/define';
 import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
 
 export default defineNavigationMenuItem({
   universalIdentifier: '9327db91-afa1-41b6-bd9d-2b51a26efb4c',
   name: 'example-navigation-menu-item',
-  icon: 'IconList',
+  icon: 'IconCompass',
   color: 'blue',
   position: 0,
   type: NavigationMenuItemType.VIEW,
@@ -34,12 +41,16 @@ export default defineNavigationMenuItem({
 
 * `position` controlează ordonarea în bara laterală.
 
-* Enumul conține și `NavigationMenuItemType.RECORD`, utilizat intern pentru marcajele de favorite ale utilizatorului pentru înregistrări — nu poate fi folosit dintr-un manifest de aplicație (nu există niciun câmp pentru a face referire la o înregistrare).
+* Enumul conține și `NavigationMenuItemType.RECORD`, utilizat intern pentru favoritele de înregistrări create de utilizatori, și `NavigationMenuItemType.AGENT_CHAT_CHANNEL`, utilizat pentru canalele de chat fixate la favorite. Niciunul nu poate fi utilizat dintr-un manifest de aplicație (nu există niciun câmp pentru a face referire la o înregistrare sau la un canal).
 
 * `icon` și `color` sunt opționale și personalizează aspectul intrării.
 
 * `folderUniversalIdentifier` este de asemenea disponibil pe orice element pentru a-l îmbrica într-un părinte de tip `FOLDER`.
 
+* `twenty app pull` scrie elementele meniului de navigare înapoi ca fișiere `defineNavigationMenuItem()`. Un element pe care un membru al spațiului de lucru l-a adăugat la propria bară laterală și unul fixat la o înregistrare aparțin acelui spațiu de lucru, nu aplicației dvs., și sunt raportate în schimb; consultați [ce nu scrie pull](/ro/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source).
+
 <Note>
-**Capcană frecventă:** crearea unui obiect fără un element de meniu de navigare asociat face ca acel obiect să fie inaccesibil din bara laterală. Dacă nu este un obiect tehnic/intern, fiecare obiect personalizat ar trebui să aibă o intrare în bara laterală care să indice către acesta.
+  **Capcană frecventă:** crearea unui obiect fără un element de meniu de navigare asociat face ca acel obiect să fie inaccesibil din bara laterală. Dacă nu este un obiect tehnic/intern, fiecare obiect personalizat ar trebui să aibă o intrare în bara laterală care să indice către acesta.
 </Note>
+
+<PageBanner illustration="card-page-navigation" />

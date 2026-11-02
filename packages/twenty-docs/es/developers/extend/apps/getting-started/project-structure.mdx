@@ -3,7 +3,11 @@ title: Estructura del proyecto
 description: Qué hay dentro de una app de Twenty generada mediante scaffolding — archivos, carpetas y lo que hace cada uno.
 ---
 
-Una nueva app generada por `npx create-twenty-app` se ve así:
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
+Una nueva app generada por `twenty app init` se ve así:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -15,6 +19,8 @@ my-twenty-app/
       universal-identifiers.ts              # Auto-generated UUIDs and metadata
     front-components/
       main-page.tsx                         # Welcome page component
+    logic-functions/
+      health-check.ts                       # Reports whether the app can run
     navigation-menu-items/
       main-page.navigation-menu-item.ts     # Sidebar entry for the welcome page
     page-layouts/
@@ -29,6 +35,8 @@ my-twenty-app/
     publish.yml                             # Publish to npm on version tags (with provenance)
   public/
     logo.svg                                # Static assets
+  locales/
+    en.json                                 # Source catalog; add <locale>.json files next to it
   vitest.config.ts                          # Integration test runner config
   vitest.unit.config.ts                     # Unit test runner config
   tsconfig.json, tsconfig.spec.json
@@ -38,41 +46,47 @@ my-twenty-app/
 
 ## Archivos clave
 
-| Archivo / Carpeta                                                          | Propósito                                                                                                                             |
-| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| `src/application-config.ts`                                                | **Obligatorio.** El archivo de configuración principal de tu app.                                                                     |
-| `src/default-role.ts`                                                      | Rol predeterminado que controla a qué pueden acceder tus funciones lógicas.                                                           |
-| `src/constants/universal-identifiers.ts`                                   | UUIDs generados automáticamente y metadatos de la app (nombre para mostrar, descripción).                                             |
-| `src/front-components/`, `src/navigation-menu-items/`, `src/page-layouts/` | Una página de bienvenida inicial: un front component renderizado por un page layout independiente, accesible desde la barra lateral.  |
-| `src/__tests__/`                                                           | Una prueba unitaria más una prueba de integración (con su configuración global) que sincroniza la aplicación contra un servidor real. |
-| `public/`                                                                  | Recursos estáticos (imágenes, fuentes) servidos con tu app.                                                                           |
-| `AGENTS.md` / `CLAUDE.md`                                                  | Guía para agentes de IA para programación que trabajan en la aplicación.                                                              |
-| `CHANGELOG.md` / `SETUP.md`                                                | Registro de cambios destacados e instrucciones de configuración para el desarrollo local.                                             |
+| Archivo / Carpeta                                                          | Propósito                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/application-config.ts`                                                | **Obligatorio.** El archivo de configuración principal de tu app.                                                                                                                                                                                                                                                                                                                                                                                        |
+| `src/default-role.ts`                                                      | Rol predeterminado que controla a qué pueden acceder tus funciones lógicas.                                                                                                                                                                                                                                                                                                                                                                              |
+| `src/constants/universal-identifiers.ts`                                   | UUIDs generados automáticamente y metadatos de la app (nombre para mostrar, descripción).                                                                                                                                                                                                                                                                                                                                                                |
+| `src/front-components/`, `src/navigation-menu-items/`, `src/page-layouts/` | Una página de bienvenida inicial: un front component renderizado por un page layout independiente, accesible desde la barra lateral.                                                                                                                                                                                                                                                                                                                     |
+| `src/logic-functions/health-check.ts`                                      | Una [comprobación de estado](/es/developers/extend/apps/logic/logic-functions#health-check) inicial que informa `ok`. Complétala para mostrar problemas de configuración que solo tu aplicación puede detectar.                                                                                                                                                                                                                                             |
+| `src/__tests__/`                                                           | Una prueba unitaria más una prueba de integración (con su configuración global) que sincroniza la aplicación contra un servidor real.                                                                                                                                                                                                                                                                                                                    |
+| `public/`                                                                  | Recursos estáticos (imágenes, fuentes) servidos con tu app.                                                                                                                                                                                                                                                                                                                                                                                              |
+| `locales/`                                                                 | Catálogos de traducción. `en.json` es el catálogo fuente que completa `twenty app translations extract`; el conjunto de archivos aquí es lo que publica una sincronización, por lo que una carpeta vacía declara que no hay traducciones. `locales/compiled/` es escrito por `twenty app pull` para las entradas cuyas cadenas fuente aún no están en el árbol, también es publicado por una sincronización y no está pensado para editarse manualmente. |
+| `AGENTS.md` / `CLAUDE.md`                                                  | Guía para agentes de IA para programación que trabajan en la aplicación.                                                                                                                                                                                                                                                                                                                                                                                 |
+| `CHANGELOG.md` / `SETUP.md`                                                | Registro de cambios destacados e instrucciones de configuración para el desarrollo local.                                                                                                                                                                                                                                                                                                                                                                |
 
 <Note>
-**La organización de archivos depende de ti.** Las carpetas anteriores son convenciones: el SDK detecta entidades mediante análisis AST en llamadas a `export default defineEntity(...)`, sin importar dónde se encuentre el archivo.
+  **La organización de archivos depende de ti.** Las carpetas anteriores son convenciones — el
+  CLI detecta entidades mediante análisis AST en llamadas a `export default defineEntity(...)`
+  sin importar dónde se encuentre el archivo.
 </Note>
 
 ## Dependencias
 
-Ambos paquetes del SDK de Twenty pertenecen a `devDependencies`, no a `dependencies`:
+Los paquetes de SDK y UI de Twenty deben incluirse en `devDependencies`:
 
 ```json filename="package.json"
 {
   "dependencies": {},
   "devDependencies": {
-    "twenty-client-sdk": "2.20.0",
-    "twenty-sdk": "2.20.0",
-    "twenty-ui": "1.0.0-alpha.1"
+    "twenty-client-sdk": "2.40.0",
+    "twenty-sdk": "2.40.0",
+    "twenty-ui": "2.40.0"
   }
 }
 ```
 
-El generador fija `twenty-sdk` y `twenty-client-sdk` a su propia versión; mantén ambos sincronizados al actualizar.
+`twenty app init` fija `twenty-sdk`, `twenty-client-sdk` y `twenty-ui` a su propia versión. Mantén los tres sincronizados al actualizar.
 
-* **`twenty-sdk`** incluye el CLI `twenty` y las herramientas de build/scaffolding. Solo se ejecuta en el desarrollo y durante el build, y nunca lo importa el runtime de la app que publicas.
+* **`twenty-sdk`** proporciona definiciones de apps, asistentes de tiempo de ejecución e integración del renderizador. Usa el paquete **`twenty`** instalado por separado para los comandos de CLI y las herramientas de compilación/generación de estructura.
 * **`twenty-client-sdk`** *sí* es importado por el código de tu app (`CoreApiClient`, `MetadataApiClient`, `RestApiClient`), pero Twenty lo proporciona en tiempo de ejecución: las funciones lógicas lo obtienen de una capa SDK generada y los componentes de front lo resuelven desde módulos servidos por el servidor. Tu copia instalada solo se utiliza para la comprobación de tipos y el build en tiempo de despliegue, por lo que nunca necesita incluirse en el bundle desplegado.
 
-Mantener cualquiera de los paquetes bajo `dependencies` lo introduce en el bundle de runtime de la app instalada, donde es peso muerto. `twenty dev:build` emite una advertencia cuando cualquiera de ellos sigue listado bajo `dependencies`.
+Mantener cualquiera de los paquetes bajo `dependencies` lo introduce en el bundle de runtime de la app instalada, donde es peso muerto. `twenty app build` emite una advertencia cuando cualquiera de los dos sigue listado en `dependencies`.
 
 Añade las dependencias de runtime propias de tu app (las bibliotecas que tus funciones lógicas realmente importan en tiempo de ejecución) bajo `dependencies` como de costumbre. Mantén el árbol ligero: las `dependencies` se instalan en una capa de tiempo de ejecución con un límite de 250 MB sin comprimir, y una sincronización o instalación falla con un error de tamaño de dependencias si se supera ese límite — las bibliotecas de UI y las herramientas de desarrollo pertenecen a `devDependencies`.
+
+<PageBanner illustration="card-page-frontend-architecture" />

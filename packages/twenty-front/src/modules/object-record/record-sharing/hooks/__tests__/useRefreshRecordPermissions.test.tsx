@@ -15,6 +15,7 @@ jest.mock('@apollo/client/react', () => ({
 }));
 const target = { objectMetadataId: 'object', recordId: 'record' };
 const permissions = {
+  __typename: 'RecordPermissionsDTO' as const,
   canRead: true,
   canUpdate: true,
   canDelete: false,
@@ -23,7 +24,11 @@ const permissions = {
 const response = (canUpdate = true) => ({
   data: {
     recordPermissions: [
-      { ...target, permissions: { ...permissions, canUpdate } },
+      {
+        __typename: 'RecordPermissionsResult' as const,
+        ...target,
+        permissions: { ...permissions, canUpdate },
+      },
     ],
   },
 });

@@ -4,6 +4,7 @@ import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/creat
 export type MultipleRecordPickerPaginationState = {
   endCursor: string | null;
   hasNextPage: boolean;
+  searchFilter: string;
 };
 
 export const multipleRecordPickerPaginationState =
@@ -12,6 +13,7 @@ export const multipleRecordPickerPaginationState =
     defaultValue: {
       endCursor: null,
       hasNextPage: false,
+      searchFilter: '',
     },
     componentInstanceContext: MultipleRecordPickerComponentInstanceContext,
   });

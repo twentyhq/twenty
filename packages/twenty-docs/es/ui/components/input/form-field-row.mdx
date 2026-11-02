@@ -1,0 +1,68 @@
+---
+title: Fila de campo de formulario
+description: Alinea una etiqueta de campo, contenido y controles finales en una fila compartida.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import FormFieldRowReference from '/snippets/ui/generated/components/input/form-field-row.mdx';
+
+## Resumen
+
+`FormFieldRow` organiza una etiqueta de campo, un icono decorativo opcional, el contenido del campo y los controles finales. Úsalo para campos del compositor u otros grupos de campos alineados. Su aplicación es responsable de los valores de los campos, la validación, los permisos y la persistencia.
+
+<StoryEmbed storyId="ui-input-formfieldrow--display" title="Fila de campo de formulario" height={110} />
+
+## "Uso"
+
+```tsx
+import { useState } from 'react';
+import { FormFieldRow, LightButton } from 'twenty-ui/components/input';
+import { Input } from 'twenty-ui/primitives/input';
+
+export const SubjectField = () => {
+  const [subject, setSubject] = useState('Project update');
+
+  return (
+    <FormFieldRow
+      label="Subject"
+      hasDivider={false}
+      trailing={
+        <LightButton size="sm" onClick={() => setSubject('')}>
+          Clear
+        </LightButton>
+      }
+    >
+      <Input
+        variant="plain"
+        aria-label="Subject"
+        value={subject}
+        onValueChange={setSubject}
+      />
+    </FormFieldRow>
+  );
+};
+```
+
+## Diseño y etiquetas
+
+`labelWidth` tiene un valor predeterminado de 80 píxeles y acepta un ancho de CSS. Use el mismo valor en las filas del mismo nivel para alinear sus etiquetas. La columna de etiquetas está limitada al 40 % de la fila y el contenido puede ajustarse en diseños estrechos. `startIcon` es decorativo; quien realiza la llamada proporciona sus dimensiones. Establezca `hasDivider={false}` en una fila final cuando la superficie circundante proporcione su borde.
+
+La raíz es un grupo denominado por `label`. Proporcione `aria-label` o `aria-labelledby` cuando se omita la etiqueta visible y etiquete cada entrada anidada por separado. La fila no mueve el foco ni deshabilita los controles anidados. Esos controles conservan su propio comportamiento de teclado y estilo de foco.
+
+`contentPaddingInline` usa de forma predeterminada el token de tema `--t-spacing-2`, que equivale a 8 píxeles en el tema estándar, y acepta un valor CSS de relleno. Los valores numéricos usan píxeles. Establece `contentPaddingInline={0}` para alinear las fichas de destinatarios y un campo de entrada con la sangría de la fila cuando no hay una etiqueta visible.
+
+<StoryEmbed storyId="ui-input-formfieldrow--without-label" title="Fila de destinatarios sin una etiqueta visible" height={110} />
+
+## Eventos y personalización
+
+Los atributos nativos, los controladores de eventos, `className`, `style`, `ref` y `render` se aplican a la raíz del grupo. Reenvíe las props proporcionadas y ref al reemplazar la raíz mediante `render`. Un controlador `onClick` muestra un cursor de puntero. Quien realiza la llamada controla el comportamiento de hacer clic para enfocar y, cuando es necesario, protege los eventos de los controles anidados o portales. `isHoverable` habilita de forma independiente un fondo neutro al pasar el cursor.
+
+`trailingProps` aplica atributos nativos, controladores y ref al contenedor final existente. Su `className` se combina con la clase de diseño compartida. Use su controlador `onClick` para impedir que una acción final active un controlador de clic de fila. El contenedor existe solo cuando `trailing` tiene contenido renderizable.
+
+## Props
+
+<FormFieldRowReference />
+
+<PageBanner illustration="page-cover-input" />

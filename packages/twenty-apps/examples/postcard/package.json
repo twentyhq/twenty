@@ -36,6 +36,6 @@
     "twenty-client-sdk": "2.31.0",
     "twenty-sdk": "2.31.0",
     "typescript": "^5.9.3",
-    "vitest": "^4.0.0"
+    "vitest": "^4.1.12"
   }
 }

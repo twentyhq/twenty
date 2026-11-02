@@ -8,10 +8,8 @@ import { type AgentChatThreadListItem } from '@/ai/types/AgentChatThreadListItem
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import {
-  type AgentChatChannel,
-  PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { type AgentChatChannel } from '@/ai/types/AgentChatChannel';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const AI_CHAT_FAVORITES_NAVIGATION_SECTION_ID = 'AiChatFavorites';
 
@@ -57,6 +55,7 @@ export const NavigationDrawerAiChatFavoritesSection = ({
             ({ id }) => id !== channel.id,
           )}
           canManage={canManageChannels}
+          isExpandable={false}
         />
       ))}
       {threads.map((thread) => (

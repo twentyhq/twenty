@@ -1,13 +1,13 @@
 import gql from 'graphql-tag';
 import { isDefined } from 'twenty-shared/utils';
 
+import { TEST_APPLICATION_PACKAGE_JSON } from 'test/integration/metadata/suites/application/constants/test-application-package-json.constant';
 import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 export const setupApplicationForSync = async ({
   applicationUniversalIdentifier,
   name,
-  sourcePath,
   token,
 }: {
   applicationUniversalIdentifier: string;
@@ -74,16 +74,11 @@ export const setupApplicationForSync = async ({
     );
   }
 
-  const packageJson = JSON.stringify({
-    name: sourcePath,
-    version: '1.0.0',
-  });
-
   await uploadApplicationFile({
     applicationUniversalIdentifier,
     fileFolder: 'Dependencies',
     filePath: 'package.json',
-    fileBuffer: Buffer.from(packageJson),
+    fileBuffer: Buffer.from(TEST_APPLICATION_PACKAGE_JSON),
     filename: 'package.json',
     expectToFail: false,
     token,

@@ -10,7 +10,7 @@ import { FORM_FIELD_PLACEHOLDER_STYLES } from '@/ui/input/constants/FormFieldPla
 import { styled } from '@linaria/react';
 import { EditorContent } from '@tiptap/react';
 import { isDefined, TIPTAP_NODE_TYPES } from 'twenty-shared/utils';
-import { themeCssVariables } from 'twenty-ui/theme';
+import { themeCssVariables, useThemeColorScheme } from 'twenty-ui/theme';
 
 const StyledEditorContainer = styled.div<{
   readonly?: boolean;
@@ -56,7 +56,8 @@ const StyledEditorContainer = styled.div<{
     height: 100%;
     line-height: var(--editor-line-height);
     overflow-wrap: anywhere;
-    padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+    padding: var(--editor-padding);
+    white-space: pre-wrap;
 
     p.is-editor-empty:first-of-type:not([data-placeholder=''])::before {
       ${FORM_FIELD_PLACEHOLDER_STYLES}
@@ -120,15 +121,15 @@ const StyledEditorContainer = styled.div<{
     }
 
     h4 {
-      font-size: calc(var(--editor-font-size) * 1.15);
+      font-size: var(--editor-heading-4-font-size);
     }
 
     h5 {
-      font-size: var(--editor-font-size);
+      font-size: var(--editor-heading-5-font-size);
     }
 
     h6 {
-      font-size: calc(var(--editor-font-size) * 0.9);
+      font-size: var(--editor-heading-6-font-size);
     }
 
     .toggle-block {
@@ -143,16 +144,18 @@ const StyledEditorContainer = styled.div<{
       background: none;
       border: none;
       border-radius: ${themeCssVariables.border.radius.sm};
-      color: ${themeCssVariables.font.color.tertiary};
+      color: var(--editor-toggle-icon-color);
       cursor: pointer;
       display: inline-block;
       line-height: var(--editor-line-height);
       padding: 0;
 
       &::before {
-        border-bottom: ${themeCssVariables.spacing[1]} solid transparent;
-        border-left: ${themeCssVariables.spacing['1.5']} solid currentColor;
-        border-top: ${themeCssVariables.spacing[1]} solid transparent;
+        border-bottom: calc(var(--editor-toggle-icon-size) / 2) solid
+          transparent;
+        border-left: calc(var(--editor-toggle-icon-size) * 0.75) solid
+          currentColor;
+        border-top: calc(var(--editor-toggle-icon-size) / 2) solid transparent;
         content: '';
         display: inline-block;
         transition: transform
@@ -173,6 +176,14 @@ const StyledEditorContainer = styled.div<{
       > .toggle-block-content
       > :not(:first-child) {
       display: none;
+    }
+
+    .toggle-block[data-open='false'] > .toggle-block-content > :first-child {
+      margin-bottom: 0;
+    }
+
+    .toggle-block-content > p:first-child {
+      padding-block: max(0px, (var(--editor-toggle-row-height) - 1lh) / 2);
     }
 
     .toggle-block-add-button {
@@ -218,13 +229,51 @@ const StyledEditorContainer = styled.div<{
 
       & > :is(ul, ol) {
         --editor-parent-list-offset: var(--editor-list-item-offset);
+        margin-top: var(--editor-nested-list-spacing);
+      }
+
+      & :is(ul, ol) {
+        position: relative;
+
+        &::after {
+          border-left: 1px solid var(--editor-guide-color);
+          bottom: 0;
+          content: '';
+          left: calc(
+            ${themeCssVariables.spacing[1]} - var(--editor-list-indent)
+          );
+          position: absolute;
+          top: 0;
+        }
+      }
+    }
+
+    [data-indent] {
+      position: relative;
+
+      &::after {
+        background-image: repeating-linear-gradient(
+          to right,
+          transparent 0 ${themeCssVariables.spacing[1]},
+          var(--editor-guide-color) ${themeCssVariables.spacing[1]}
+            calc(${themeCssVariables.spacing[1]} + 1px),
+          transparent calc(${themeCssVariables.spacing[1]} + 1px)
+            var(--editor-list-indent)
+        );
+        bottom: 0;
+        content: '';
+        left: calc(-1 * var(--editor-indent) * var(--editor-list-indent));
+        position: absolute;
+        top: 0;
+        width: calc(var(--editor-indent) * var(--editor-list-indent));
       }
     }
 
     blockquote {
       border-left: var(--editor-quote-border-width) solid
         var(--editor-accent-color);
-      font-style: italic;
+      color: var(--editor-quote-color);
+      font-style: var(--editor-quote-font-style);
       margin: 0 0 var(--editor-block-spacing);
       padding-left: var(--editor-quote-indent);
     }
@@ -243,14 +292,16 @@ const StyledEditorContainer = styled.div<{
     }
 
     pre {
-      background-color: ${themeCssVariables.background.transparent.lighter};
+      background-color: var(--editor-code-block-background);
       border-radius: ${themeCssVariables.border.radius.md};
+      color: var(--editor-code-block-color);
       margin: 0 0 var(--editor-block-spacing);
       overflow-x: auto;
-      padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
+      padding: var(--editor-code-block-padding);
 
       code {
         background-color: transparent;
+        font-size: var(--editor-code-block-font-size);
         padding: 0;
       }
     }
@@ -269,6 +320,13 @@ const StyledEditorContainer = styled.div<{
           user-select: none;
         }
 
+        & > label > input {
+          height: var(--editor-task-checkbox-height);
+          margin: var(--editor-task-checkbox-margin);
+          vertical-align: var(--editor-task-checkbox-vertical-align);
+          width: var(--editor-task-checkbox-width);
+        }
+
         & > div {
           flex: 1 1 auto;
           min-width: 0;
@@ -276,11 +334,16 @@ const StyledEditorContainer = styled.div<{
 
         & > div > p {
           margin: 0;
+          min-height: var(--editor-task-checkbox-height);
+        }
+
+        & > div > :is(ul, ol) {
+          margin-top: var(--editor-nested-list-spacing);
         }
       }
 
       li[data-checked='true'] > div {
-        color: ${themeCssVariables.font.color.tertiary};
+        color: var(--editor-task-checked-color);
         text-decoration: line-through;
       }
     }
@@ -288,8 +351,7 @@ const StyledEditorContainer = styled.div<{
     .tableWrapper {
       margin: 0 0 var(--editor-block-spacing);
       overflow-x: auto;
-      padding: 0 ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[4]}
-        0;
+      padding: var(--editor-table-wrapper-padding);
     }
 
     table {
@@ -302,7 +364,7 @@ const StyledEditorContainer = styled.div<{
         border: 1px solid ${themeCssVariables.border.color.medium};
         box-sizing: border-box;
         min-width: 1em;
-        padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
+        padding: var(--editor-table-cell-padding);
         position: relative;
         vertical-align: top;
 
@@ -404,7 +466,14 @@ const StyledEditorContainer = styled.div<{
       border-bottom: none;
       border-left: none;
       border-right: none;
-      border-top: 1px solid ${themeCssVariables.border.color.medium};
+      border-top: 1px solid var(--editor-divider-color);
+      margin: var(--editor-divider-spacing) 0;
+
+      & + .block-divider {
+        margin-top: calc(
+          2 * var(--editor-divider-spacing) - var(--editor-block-spacing)
+        );
+      }
 
       &.ProseMirror-selectednode {
         box-shadow: 0 0 0 ${themeCssVariables.spacing[2]}
@@ -455,7 +524,7 @@ const StyledEditorContainer = styled.div<{
     }
 
     :is(h1, h2, h3, h4, h5, h6):first-child {
-      margin-top: 0;
+      margin-top: var(--editor-heading-first-spacing-top);
     }
 
     :is(
@@ -508,6 +577,7 @@ export const AdvancedTextEditor = ({
   minHeight,
   variant,
 }: AdvancedTextEditorProps) => {
+  const colorScheme = useThemeColorScheme();
   const hasTextBubbleMenu = TEXT_BUBBLE_MENU_EXTENSION_NAMES.some(
     (extensionName) => hasEditorExtension(editor, extensionName),
   );
@@ -526,7 +596,7 @@ export const AdvancedTextEditor = ({
     <StyledEditorContainer
       readonly={readonly}
       minHeight={minHeight}
-      style={getAdvancedTextEditorTypographyStyle(variant)}
+      style={getAdvancedTextEditorTypographyStyle(variant, colorScheme)}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
     >

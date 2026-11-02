@@ -3,6 +3,12 @@ title: 2. Generando documentos
 description: Una función lógica, expuesta como una herramienta de IA y una acción de flujo de trabajo.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Resumen
+
 Ahora el núcleo: una [función lógica](/es/developers/extend/apps/logic/logic-functions)
 que carga una plantilla y un registro, rellena los marcadores de posición y guarda un nuevo documento
 .
@@ -187,8 +193,9 @@ no puede codificar. Renderizar escrituras no latinas (chino, árabe, cirílico) 
 incrustar una fuente Unicode.
 </Note>
 
-A continuación, suba y almacene la referencia en el registro. `uploadFile` rutas bytes
-a tu campo de archivos propiedad de la aplicación; el `id` devuelto es lo que guardas:
+A continuación, suba y almacene la referencia en el registro. `uploadFile` envía los
+bytes directamente al almacenamiento de archivos y los adjunta al campo de archivos propiedad de tu aplicación;
+el `id` devuelto es lo que guardas:
 
 ```ts filename="src/logic-functions/handlers/generate-document-handler.ts"
 import { MetadataApiClient } from 'twenty-client-sdk/metadata';
@@ -198,12 +205,11 @@ const documentName = `${documentTemplate.name} — ${record.displayName}`;
 const bytes = await generateDocumentPdf(documentName, content);
 const fileName = 'proposal.pdf';
 
-const uploaded = await new MetadataApiClient().uploadFile(
-  Buffer.from(bytes),
-  fileName,
-  'application/pdf',
-  DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
-);
+const uploaded = await new MetadataApiClient().uploadFile({
+  fileBuffer: Buffer.from(bytes),
+  filename: fileName,
+  fieldMetadataUniversalIdentifier: DOCUMENT_FILE_FIELD_UNIVERSAL_IDENTIFIER,
+});
 
 await client.mutation({
   updateDocument: {
@@ -233,6 +239,11 @@ usa para grabaciones.
 **Después de este paso:** cada documento generado tiene un PDF real y descargable. Pero
 nada puede *llamar* al generador de la interfaz de usuario aún — para eso necesitamos una ruta HTTP.
 
-<Card title="Siguiente: rutas HTTP →" icon="world" href="/es/developers/extend/apps/tutorials/document-generator/http-routes">
-  Servir la función sobre HTTP y representar documentos como páginas web.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/es/developers/extend/apps/tutorials/document-generator/http-routes" img="/images/user-guide/halftone/card-page-tutorial-http.svg">
+  <CardTitle>Siguiente: rutas HTTP →</CardTitle>
+  Servir la función sobre HTTP y renderizar documentos como páginas web.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="card-page-tutorial-documents" />

@@ -8,6 +8,7 @@ import { type UpdateAgentInput } from 'src/engine/metadata-modules/ai/ai-agent/d
 import { fromCreateAgentInputToFlatAgent } from 'src/engine/metadata-modules/ai/ai-agent/utils/from-create-agent-input-to-flat-agent.util';
 import { fromUpdateAgentInputToFlatAgentToUpdate } from 'src/engine/metadata-modules/ai/ai-agent/utils/from-update-agent-input-to-flat-agent-to-update.util';
 import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
+import { resolveEffectiveAgent } from 'src/engine/metadata-modules/flat-agent/utils/resolve-effective-agent.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -46,7 +47,7 @@ export class AgentService {
         const roleId = flatRoleTargetByAgentIdMaps[flatAgent.id]?.roleId;
 
         return {
-          ...flatAgent,
+          ...resolveEffectiveAgent(flatAgent),
           roleId: roleId ?? null,
         };
       });
@@ -76,7 +77,7 @@ export class AgentService {
 
     const roleId = flatRoleTargetByAgentIdMaps[flatAgent.id]?.roleId;
 
-    return { ...flatAgent, roleId: roleId ?? null };
+    return { ...resolveEffectiveAgent(flatAgent), roleId: roleId ?? null };
   }
 
   async createOneAgent(
@@ -154,7 +155,7 @@ export class AgentService {
     });
 
     return {
-      ...createdAgent,
+      ...resolveEffectiveAgent(createdAgent),
       roleId: flatRoleTargetToCreate?.roleId ?? null,
     };
   }
@@ -190,6 +191,10 @@ export class AgentService {
       flatAgentMaps,
       flatRoleTargetByAgentIdMaps,
       flatRoleMaps,
+      callerApplicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
+      workspaceCustomApplicationUniversalIdentifier:
+        workspaceCustomFlatApplication.universalIdentifier,
     });
 
     const validateAndBuildResult =
@@ -244,7 +249,7 @@ export class AgentService {
       recomputedFlatRoleTargetByAgentIdMaps[flatAgentToUpdate.id];
 
     return {
-      ...updatedAgent,
+      ...resolveEffectiveAgent(updatedAgent),
       roleId: existingRoleTarget?.roleId ?? null,
     };
   }
@@ -343,7 +348,7 @@ export class AgentService {
     }
 
     return agentsToDelete.map((agent) => ({
-      ...agent,
+      ...resolveEffectiveAgent(agent),
       roleId: flatRoleTargetByAgentIdMaps[agent.id]?.roleId ?? null,
     }));
   }

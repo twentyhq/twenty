@@ -2,7 +2,6 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
@@ -16,7 +15,6 @@ import { ApplicationTargetArg } from 'src/engine/decorators/auth/application-tar
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { ApplicationTargetGuard } from 'src/engine/guards/application-target.guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 
 @UsePipes(ResolverValidationPipe)
@@ -43,7 +41,6 @@ export class ApplicationMonitoringResolver {
       oauthClient: false,
       application: false,
     }),
-    FeatureFlagGuard(FeatureFlagKey.IS_APPLICATION_MONITORING_ENABLED),
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
     ApplicationTargetGuard,
   )

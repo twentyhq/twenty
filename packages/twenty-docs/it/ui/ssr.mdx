@@ -1,0 +1,36 @@
+---
+title: Rendering lato server.
+description: Comprendi gli attuali vincoli di rendering lato server e l'inizializzazione del tema di Twenty UI.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
+Twenty non offre ancora una garanzia di rendering lato server per l'intero pacchetto. Verifica i punti di ingresso e i componenti specifici che utilizzi con la build server e il flusso di idratazione del tuo framework.
+
+## Carica il CSS tramite il tuo framework
+
+La libreria include fogli di stile precompilati. Importali dal punto di ingresso dell'applicazione o dal layout che il tuo framework consente di usare per caricare CSS globale. Un server che importa JavaScript senza un loader CSS non può caricare direttamente un'importazione di foglio di stile.
+
+I componenti che utilizzano API del browser, misurazioni del layout o effetti appartengono a un confine client quando il tuo framework distingue tra componenti server e client.
+
+## Inizializza il tema
+
+I fogli di stile del tema definiscono i relativi token in `.light` e `.dark`. Applica la classe iniziale nel documento sottoposto a rendering sul server, quindi inizializza `ThemeProvider` con lo stesso schema sul client:
+
+```html
+<html class="light"></html>
+```
+
+Ciò rende la tavolozza disponibile prima dell'idratazione. Determina lo schema iniziale in base alle informazioni disponibili a entrambi i rendering, ad esempio una preferenza salvata passata dal server.
+
+## Mantieni le misurazioni del browser sul client
+
+`ThemeProvider` risolve i valori utilizzando gli stili calcolati nel browser. Durante il rendering lato server, o senza supporto per gli stili calcolati, i valori del tema possono rimanere riferimenti a variabili CSS. Non presupporre che un token numerico restituito durante il rendering lato server sia già un numero JavaScript.
+
+Utilizza riferimenti a variabili CSS per gli stili e rimanda i calcoli che necessitano di dimensioni risolte finché il client non ha caricato il tema. Testa l'idratazione con gli stessi componenti, fogli di stile e schema iniziale che distribuisci.
+
+Il [renderer dei componenti front](/it/developers/extend/apps/layout/front-components#current-limitations) è una sandbox separata con le proprie limitazioni del DOM; il rendering riuscito nel browser non garantisce il supporto della sandbox.
+
+<PageBanner illustration="dev-self-host" />

@@ -1,20 +1,25 @@
 ---
 title: Permisos y acceso
+sidebarTitle: Resumen
 description: Administra roles, permisos y el control de acceso en tu espacio de trabajo.
 ---
 
-El sistema de permisos de Twenty te permite controlar quién puede acceder y modificar los datos en tu espacio de trabajo. Crea roles, asigna permisos y configura SSO para un acceso seguro.
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Qué incluye esta sección
 
-<CardGroup cols={2}>
-  <Card title="Permisos" icon="lock" href="/es/user-guide/permissions-access/capabilities/permissions">
-    Crea roles y configura permisos de objetos, campos y configuración.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/es/user-guide/permissions-access/capabilities/permissions" img="/images/documentation/banner-icons-v2/permissions.svg">
+    <CardTitle>Permisos</CardTitle>
+    Crear roles y configurar permisos de objeto, campo y configuración.
   </Card>
-  <Card title="Configuración de SSO" icon="key" href="/es/user-guide/permissions-access/capabilities/sso-configuration">
-    Configura el inicio de sesión único (SSO) con tu proveedor de identidad.
+  <Card href="/es/user-guide/permissions-access/capabilities/sso-configuration" img="/images/user-guide/halftone/card-page-sso.svg">
+    <CardTitle>Configuración SSO</CardTitle>
+    Configure un inicio de sesión único con su proveedor de identidad.
   </Card>
-  <Card title="Preguntas frecuentes" icon="help-circle" href="/es/user-guide/permissions-access/how-tos/permissions-faq">
+  <Card href="/es/user-guide/permissions-access/how-tos/permissions-faq" img="/images/user-guide/halftone/card-page-permissions-faq.svg">
+    <CardTitle>FAQ</CardTitle>
     Preguntas comunes sobre roles, permisos y SSO.
   </Card>
 </CardGroup>
@@ -32,3 +37,5 @@ El sistema de permisos de Twenty te permite controlar quién puede acceder y mod
 * [Crea un rol](/es/user-guide/permissions-access/capabilities/permissions#create-a-role)
 * [Configurar SSO](/es/user-guide/permissions-access/capabilities/sso-configuration)
 * [Administrar miembros del equipo](/es/user-guide/settings/capabilities/member-management)
+
+<PageBanner illustration="permissions" />

@@ -134,6 +134,7 @@ export class ProvisionAgentChatThreadTargetCommand extends ProvisionedWorkspaceC
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigrationFromTo(
         {
+          shouldDeferActions: false,
           workspaceId,
           dryRun,
           buildOptions: {
@@ -341,6 +342,7 @@ export class ProvisionAgentChatThreadTargetCommand extends ProvisionedWorkspaceC
       const result =
         await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
           {
+            shouldDeferActions: false,
             isSystemBuild: true,
             workspaceId,
             applicationUniversalIdentifier,

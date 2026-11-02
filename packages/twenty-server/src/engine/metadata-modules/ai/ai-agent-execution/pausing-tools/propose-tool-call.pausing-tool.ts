@@ -3,6 +3,7 @@ import isEqual from 'lodash.isequal';
 import {
   buildFallbackProposedToolCall,
   PROPOSED_TOOL_CALL_TEMPLATES,
+  isFrontComponentProposedToolCall,
   type ProposeToolCallToolInput,
   type ProposeToolCallToolResult,
   type ProposedToolCall,
@@ -132,6 +133,10 @@ const buildApprovedArguments = (
   proposal: ProposedToolCall,
   editedArguments: Record<string, unknown> | undefined,
 ): Record<string, unknown> => {
+  if (isFrontComponentProposedToolCall(proposal)) {
+    return proposal.arguments;
+  }
+
   const toolArguments = editedArguments ?? proposal.arguments;
 
   if (isDefined(proposal.recordId)) {

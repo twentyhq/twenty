@@ -1,4 +1,5 @@
 import { SettingsAccountsCalendarChannelDetails } from '@/settings/accounts/components/SettingsAccountsCalendarChannelDetails';
+import { SETTINGS_APP_PREFERENCES_TAB_IDS } from '@/settings/app-preferences/constants/SettingsAppPreferencesTabIds';
 import { SettingsConnectedAccountIcon } from '@/settings/accounts/components/SettingsConnectedAccountIcon';
 import { SETTINGS_ACCOUNT_GROUP_TAB_LIST_COMPONENT_ID } from '@/settings/app-preferences/constants/SettingsAccountGroupTabListComponentId';
 import { useMyAccountGroups } from '@/settings/app-preferences/hooks/useMyAccountGroups';
@@ -9,22 +10,17 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { Navigate, useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconCalendarEvent, IconMail } from 'twenty-ui/icon';
 import { useTheme } from 'twenty-ui/theme';
-import { FeatureFlagKey } from '~/generated-metadata/graphql';
 import { SettingsAppPreferencesSelectedMessageChannelDetails } from '~/pages/settings/accounts/SettingsAppPreferencesSelectedMessageChannelDetails';
 
 export const SettingsAccountDetail = () => {
   const { t } = useLingui();
   const theme = useTheme();
-  const isAppPreferencesEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_APP_PREFERENCES_ENABLED,
-  );
   const { connectedAccountId } = useParams<{ connectedAccountId: string }>();
   const { groups, loading } = useMyAccountGroups();
   const tabListComponentInstanceId = `${SETTINGS_ACCOUNT_GROUP_TAB_LIST_COMPONENT_ID}-${connectedAccountId}`;
@@ -49,8 +45,10 @@ export const SettingsAccountDetail = () => {
     tabs.map((tab) => tab.id),
   );
 
-  if (!isAppPreferencesEnabled || (!loading && tabs.length === 0)) {
-    return <Navigate to={getSettingsPath(SettingsPath.Accounts)} replace />;
+  if (!loading && tabs.length === 0) {
+    return (
+      <Navigate to={getSettingsPath(SettingsPath.AppPreferences)} replace />
+    );
   }
 
   if (!isDefined(builtInAccount)) {
@@ -91,8 +89,13 @@ export const SettingsAccountDetail = () => {
           href: getSettingsPath(SettingsPath.ProfilePage),
         },
         {
-          children: t`App preferences`,
-          href: getSettingsPath(SettingsPath.Accounts),
+          children: t`Apps preferences`,
+          href: getSettingsPath(
+            SettingsPath.AppPreferences,
+            undefined,
+            undefined,
+            SETTINGS_APP_PREFERENCES_TAB_IDS.ACCOUNTS,
+          ),
         },
         { children: builtInAccount.handle },
       ]}

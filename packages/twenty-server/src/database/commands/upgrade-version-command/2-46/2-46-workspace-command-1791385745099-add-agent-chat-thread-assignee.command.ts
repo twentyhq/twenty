@@ -115,7 +115,6 @@ export class AddAgentChatThreadAssigneeCommand extends ProvisionedWorkspaceComma
         now: new Date().toISOString(),
       });
 
-
     const operationCount =
       fieldsToCreate.length +
       indexesToCreate.length +
@@ -161,6 +160,7 @@ export class AddAgentChatThreadAssigneeCommand extends ProvisionedWorkspaceComma
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:
@@ -242,6 +242,7 @@ export class AddAgentChatThreadAssigneeCommand extends ProvisionedWorkspaceComma
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:

@@ -3,6 +3,10 @@ title: Часто задаваемые вопросы о рабочих проц
 description: Часто задаваемые вопросы о рабочих процессах в Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Общие вопросы
+
 <AccordionGroup>
 
   <Accordion title="Почему я не могу активировать рабочий процесс?">
@@ -39,20 +43,8 @@ description: Часто задаваемые вопросы о рабочих п
     См. [Триггеры рабочего процесса](/ru/user-guide/workflows/capabilities/workflow-triggers) для подробностей.
   </Accordion>
 
-  <Accordion title="Я не вижу узла If/Else. Что мне делать?">
-    Явный узел If/Else пока недоступен, но находится в нашем плане развития.
-
-    **Текущее решение**: Создайте несколько веток от вашего шага, каждая начинается с действия **Filter**:
-
-    ```
-    Step 1
-       │
-       ├── Branch A: Filter (condition = true) → Actions...
-       │
-       └── Branch B: Filter (condition = false) → Actions...
-    ```
-
-    Только ветка, в которой условие фильтра выполняется, будет выполнять последующие действия.
+  <Accordion title="Как добавить узел If/Else?">
+    Добавьте действие **If/else** из раздела **Flow** средства выбора действий, как и любое другое действие. Настройте условие в ветви **If**, при необходимости добавьте ветви **Else if** с собственными условиями и финальную ветвь **Else**, которая охватывает всё остальное — выполняется только первая подходящая ветвь.
 
     См. пошаговое руководство [Как использовать ветки](/ru/user-guide/workflows/capabilities/workflow-branches).
   </Accordion>
@@ -103,7 +95,7 @@ description: Часто задаваемые вопросы о рабочих п
     * Или введите `{{stepName.fieldName}}` напрямую
 
     **Примеры**:
-    * Данные триггера: `{{trigger.object.email}}`
+    * Данные триггера: `{{trigger.properties.after.name}}` для триггера записи, `{{trigger.payload.name}}` для ручного триггера выбранной записи
     * Результаты поиска: `{{searchRecords[0].name}}`
     * Вывод кода: `{{code.calculatedValue}}`
 
@@ -234,3 +226,5 @@ description: Часто задаваемые вопросы о рабочих п
   </Accordion>
 
 </AccordionGroup>
+
+<PageBanner illustration="card-page-billing-faq" />

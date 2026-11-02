@@ -3,6 +3,11 @@ title: Panoramica
 description: Definisci i dati che la tua app aggiunge a uno spazio di lavoro — oggetti, campi e relazioni.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Cosa copre il livello dati
+
 Il **data layer** di un'app Twenty è l'insieme dei dati che la tua app *aggiunge* a uno spazio di lavoro — i nuovi tipi di record che dichiara, le colonne che aggiunge agli oggetti esistenti e come questi record si collegano tra loro.
 
 ```text
@@ -24,18 +29,22 @@ Il **data layer** di un'app Twenty è l'insieme dei dati che la tua app *aggiung
 
 ## In questa sezione
 
-<CardGroup cols={2}>
-  <Card title="Oggetti" icon="table" href="/it/developers/extend/apps/data/objects">
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/it/developers/extend/apps/data/objects" img="/images/user-guide/halftone/card-page-objects.svg">
+    <CardTitle>Objects</CardTitle>
     `defineObject` — dichiara nuovi tipi di record con i propri campi.
   </Card>
-  <Card title="Estendere gli oggetti" icon="wand" href="/it/developers/extend/apps/data/extending-objects">
-    `defineField` — aggiunge campi agli oggetti standard o di altre app.
+  <Card href="/it/developers/extend/apps/data/extending-objects" img="/images/user-guide/halftone/card-page-extending-objects.svg">
+    <CardTitle>Estendere gli oggetti</CardTitle>
+    `defineField` — aggiungi campi agli oggetti standard o di altre applicazioni.
   </Card>
-  <Card title="Relazioni" icon="sitemap" href="/it/developers/extend/apps/data/relations">
-    Connessioni bidirezionali `MANY_TO_ONE` / `ONE_TO_MANY` tra oggetti.
+  <Card href="/it/developers/extend/apps/data/relations" img="/images/user-guide/halftone/card-page-relations.svg">
+    <CardTitle>Relations</CardTitle>
+    Bidirezionale `MANY_TO_ONE` / connessioni `ONE_TO_MANY` tra oggetti.
   </Card>
-  <Card title="Tipi di attività della timeline" icon="history" href="/it/developers/extend/apps/data/timeline-activity-types">
-    Definisci eventi di audit automatici ed eventi espliciti dell'app per le timeline dei record.
+  <Card href="/it/developers/extend/apps/data/timeline-activity-types" img="/images/user-guide/halftone/card-page-timeline.svg">
+    <CardTitle>Tipi di attività Timeline</CardTitle>
+    Definire gli eventi di audit automatico e gli eventi espliciti delle app per registrare le cronologie.
   </Card>
 </CardGroup>
 
@@ -48,8 +57,9 @@ Il **data layer** di un'app Twenty è l'insieme dei dati che la tua app *aggiung
 | **Relazione**                       | Un collegamento bidirezionale tra due oggetti — entrambi i lati sono dichiarati come campi                                              | `defineField()` con `FieldType.RELATION` |
 | **Indice**                          | Un indice di database per velocizzare una query ricorrente su uno dei tuoi oggetti                                                      | `defineIndex()`                          |
 | **Tipo di attività della timeline** | Un evento di audit automatico o un evento di dominio esplicito visualizzato nelle timeline dei record                                   | `defineTimelineActivityType()`           |
+| **Percorso del record correlato**   | Una catena di un massimo di tre relazioni attraverso la quale l'accesso a un record si estende ai record correlati                      | `defineRelatedRecordPath()`              |
 
-L'SDK rileva questi elementi tramite analisi AST in fase di build, quindi l'organizzazione dei file dipende da te — la convenzione è `src/objects/`, `src/fields/`, `src/indexes/` e `src/timeline-activity-types/`. Gli UUID `universalIdentifier` stabili collegano tutto tra le varie distribuzioni.
+La CLI rileva questi elementi tramite analisi AST in fase di build, quindi l'organizzazione dei file dipende da te — la convenzione è `src/objects/`, `src/fields/`, `src/indexes/`, `src/timeline-activity-types/` e `src/related-record-paths/`. Gli UUID `universalIdentifier` stabili collegano tutto tra le varie distribuzioni.
 
 ## Indici (facoltativi)
 
@@ -95,6 +105,36 @@ defineIndex({
 
 Ordina l'array `fields` nel modo in cui Postgres dovrebbe usarlo — la colonna più a sinistra per prima, come in un elenco telefonico. Gli indici non sono gratuiti: ogni scrittura sulla tabella li aggiorna. Aggiungine uno solo quando hai una query che ne ha bisogno.
 
+## Percorsi dei record correlati (opzionale)
+
+<Warning>
+  I percorsi di record correlati sono in anteprima: si sincronizzano con la tua app, ma le autorizzazioni dei record non li utilizzano ancora. Una volta applicati, richiedono il **piano Organization o superiore**, come la [sicurezza a livello di riga](/it/developers/extend/apps/config/roles#row-level-security).
+</Warning>
+
+Un percorso di record correlato inizia su un oggetto e segue fino a tre campi di relazione, ciascuno sull'oggetto raggiunto dal precedente. Le autorizzazioni dei record utilizzano questi percorsi per estendere l'accesso da un record ai relativi record correlati.
+
+* Un percorso **intrinseco** (`isInherent: true`) si applica ogni volta che il record iniziale è leggibile, indipendentemente da come sia stato concesso l'accesso. Usalo per i record che appartengono al relativo elemento padre, come gli allegati di una scheda di post.
+* Un percorso **normale** si applica solo quando l'accesso al record iniziale deriva direttamente da un ruolo, quindi gli spazi di lavoro scelgono su quali fare affidamento.
+
+```ts src/related-record-paths/post-card-attachments.related-record-path.ts
+import { defineRelatedRecordPath } from 'twenty-sdk/define';
+
+import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
+import { ATTACHMENTS_ON_POST_CARD_UNIVERSAL_IDENTIFIER } from '../fields/attachments-on-post-card.field';
+
+export default defineRelatedRecordPath({
+  universalIdentifier: 'c1b8f0d2-7e4a-4b6c-9a1d-3f5e2b7c8d90',
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  firstFieldMetadataUniversalIdentifier:
+    ATTACHMENTS_ON_POST_CARD_UNIVERSAL_IDENTIFIER,
+  isInherent: true,
+});
+```
+
+Aggiungi `secondFieldMetadataUniversalIdentifier` e `thirdFieldMetadataUniversalIdentifier` per percorsi più lunghi. Ogni passaggio deve essere una relazione attiva sull'oggetto raggiunto fino a quel momento, un percorso non può visitare lo stesso oggetto due volte e due percorsi non possono utilizzare gli stessi passaggi.
+
 <Note>
 Cerchi **Application Config** o **Roles & Permissions**? Quelli descrivono l'app in sé piuttosto che i dati che aggiunge — si trovano sotto [Config](/it/developers/extend/apps/config/overview). Cerchi **Connections** (Linear, GitHub, Slack OAuth)? Quelle esistono per essere chiamate *dalle* funzioni di logica e si trovano sotto [Logic](/it/developers/extend/apps/logic/connections).
 </Note>
+
+<PageBanner illustration="section-apps-data" />

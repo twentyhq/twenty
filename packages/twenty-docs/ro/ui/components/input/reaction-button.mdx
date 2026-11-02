@@ -1,0 +1,103 @@
+---
+title: Buton de reacție
+description: Comută o reacție emoji cu un număr și o stare apăsată controlată.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ReactionButtonReference from '/snippets/ui/generated/components/input/reaction-button.mdx';
+
+## Prezentare generală
+
+`ReactionButton` compune [Button](/ro/ui/primitives/input/button) într-o reacție emoji compactă cu un număr. Aplicația dvs. furnizează starea apăsată, numele accesibil și gestionarul de modificări.
+
+<StoryEmbed storyId="ui-components-reactionbutton--display" title="Reacție utilă controlată, cu o indicație contextuală și o acțiune de resetare" height={160} />
+
+## Utilizare
+
+```tsx
+import { useState } from 'react';
+import {
+  ReactionButton,
+  type ReactionButtonProps,
+} from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+export const ReactionButtonExample = ({
+  emoji = '👍',
+  disabled,
+  loading,
+}: Partial<Pick<ReactionButtonProps, 'emoji' | 'disabled' | 'loading'>>) => {
+  const [pressed, setPressed] = useState(false);
+  const count = pressed ? 3 : 2;
+
+  return (
+    <Text
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: themeCssVariables.spacing[2],
+      }}
+    >
+      <Text>Was this helpful?</Text>
+      <Text
+        render={<span />}
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: themeCssVariables.spacing[1],
+        }}
+      >
+        <Tooltip content={`${count} people found this helpful`}>
+          <ReactionButton
+            aria-label="Helpful"
+            emoji={emoji}
+            count={count}
+            pressed={pressed}
+            onPressedChange={setPressed}
+            disabled={disabled}
+            loading={loading}
+          />
+        </Tooltip>
+        <Button size="sm" variant="ghost" onClick={() => setPressed(false)}>
+          Reset
+        </Button>
+      </Text>
+    </Text>
+  );
+};
+```
+
+## Aspect
+
+Controlul are înălțimea de 24 px, cu colțuri rotunjite, un emoji de 16 px și un număr mic. Reacțiile apăsate folosesc suprafața și textul de accent ale temei. Reacțiile neapăsate folosesc o suprafață transparentă și text secundar.
+
+`count` acceptă un număr sau un șir formatat de apelant. Aplicația dvs. gestionează formatarea numerelor, abrevierea și dacă se afișează o reacție cu numărul zero.
+
+<StoryEmbed storyId="ui-components-reactionbutton--catalog" title="Selectarea reacțiilor, numerele și stările indisponibile" height={300} />
+
+## Gestionarea stării
+
+`pressed` este obligatoriu și este controlat de aplicația dvs. Activarea apelează `onPressedChange` cu următoarea valoare solicitată. Componenta continuă să afișeze valorile furnizate pentru `pressed` și `count` până când aplicația dvs. le actualizează.
+
+Setați `loading` cât timp o mutație este în așteptare pentru a afișa indicatorul de încărcare al Button și a preveni activarea repetată. Aceasta păstrează valoarea furnizată pentru `pressed` și marchează controlul ca ocupat. Utilizați `disabled` când reacția este indisponibilă. Selectarea, numerele, permisiunile, persistența și orice actualizări optimiste rămân în aplicație.
+
+`onClick` nativ se execută înaintea solicitării de modificare. Apelarea `event.preventDefault()` în acel gestionar anulează solicitarea. Alte atribute, gestionare, stiluri, nume de clase și referințe ale butonului nativ sunt transmise butonului. Controlul utilizează întotdeauna `type="button"`.
+
+## Accesibilitate și indicații contextuale
+
+Furnizați `aria-label` sau `aria-labelledby` cu un nume localizat al reacției. Emoji-ul și numărul sunt decorative și ascunse de tehnologia de asistență, așadar includeți informații despre număr sau participanți în numele ori descrierea furnizată, când este necesar. Păstrați numele reacției stabil pe măsură ce starea sa se modifică; `aria-pressed` comunică selectarea.
+
+Butonul nativ acceptă focalizarea cu Tab și activarea cu Enter sau Spațiu. Atât `disabled`, cât și `loading` împiedică activarea. Referința indică butonul nativ.
+
+Compuneți [Tooltip](/ro/ui/primitives/surfaces/tooltip) pentru detalii despre participanți la trecerea cu cursorul și la focalizarea de la tastatură, după cum se arată mai sus, sau transmiteți un `title` nativ. Conținutul indicației contextuale aparține apelantului și nu înlocuiește numele accesibil. Etichetele accesibile lungi nu măresc controlul vizibil.
+
+## Proprietăți
+
+<ReactionButtonReference />
+
+<PageBanner illustration="page-cover-emoji" />

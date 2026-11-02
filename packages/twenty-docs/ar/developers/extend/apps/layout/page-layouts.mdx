@@ -1,14 +1,19 @@
 ---
 title: تخطيطات الصفحات
-description: خصص صفحات تفاصيل السجل — الألسنة، وعناصر الواجهة (widgets)، وأماكن عرض مكوّنات الواجهة الأمامية (front components) — باستخدام `definePageLayout` و `definePageLayoutTab`.
+description: خصّص صفحات تفاصيل السجل — الألسنة، وعناصر الواجهة، وأماكن عرض مكوّنات الواجهة الأمامية — باستخدام definePageLayout وdefinePageLayoutTab وdefinePageLayoutWidget.
 ---
 
-يتحكم **تخطيط الصفحة** في كيفية ترتيب صفحة تفاصيل السجل: ما هي الألسنة التي تظهر وما عناصر الواجهة (widgets) التي تحتوي عليها. استخدم `definePageLayout()` للتصريح عن تخطيط لكائن تملكه، أو `definePageLayoutTab()` لإضافة لسان واحد إلى تخطيط موجود مسبقًا (سواء كان مِلكك أو تخطيط Twenty قياسيًا).
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-| حالة استخدام                                                   | كيان                  |
-| -------------------------------------------------------------- | --------------------- |
-| عرِّف التخطيط الكامل لصفحة سجل على كائن تملكه                  | `definePageLayout`    |
-| أضف لسانًا واحدًا إلى تخطيط موجود (لكائن تملكه أو تخطيط قياسي) | `definePageLayoutTab` |
+## نظرة عامة
+
+يتحكم **تخطيط الصفحة** في كيفية ترتيب صفحة تفاصيل السجل: ما هي الألسنة التي تظهر وما عناصر الواجهة (widgets) التي تحتوي عليها. استخدم `definePageLayout()` للتصريح عن تخطيط لكائن تملكه، و`definePageLayoutTab()` لإضافة لسان واحد إلى تخطيط موجود مسبقًا (سواء كان مِلكك أو تخطيط Twenty one قياسيًا)، أو `definePageLayoutWidget()` لإضافة عنصر واجهة واحد إلى لسان موجود مسبقًا.
+
+| حالة استخدام                                                                          | كيان                     |
+| ------------------------------------------------------------------------------------- | ------------------------ |
+| عرِّف التخطيط الكامل لصفحة سجل على كائن تملكه                                         | `definePageLayout`       |
+| أضف لسانًا واحدًا إلى تخطيط موجود (لكائن تملكه أو تخطيط قياسي)                        | `definePageLayoutTab`    |
+| أضف عنصر واجهة واحدًا إلى لسان موجود (لسان الصفحة الرئيسية لصفحة سجل، أو لسان عرّفته) | `definePageLayoutWidget` |
 
 ## definePageLayout
 
@@ -36,6 +41,7 @@ export default definePageLayout({
           universalIdentifier: 'aa4234e0-2e5f-4c02-a96a-573449e2351d',
           title: 'Hello World',
           type: 'FRONT_COMPONENT',
+          heightBehavior: 'TAB_VIEWPORT',
           configuration: {
             configurationType: 'FRONT_COMPONENT',
             frontComponentUniversalIdentifier:
@@ -50,17 +56,23 @@ export default definePageLayout({
 
 ### النقاط الرئيسية
 
-* `type` هو واحد من `'RECORD_INDEX'` أو `'RECORD_PAGE'` أو `'DASHBOARD'` أو `'STANDALONE_PAGE'`. استخدم `'RECORD_PAGE'` لتخصيص عرض التفاصيل لكائن محدّد.
+* `type` هو أحد `'RECORD_INDEX'` أو `'RECORD_PAGE'` أو `'DASHBOARD'` أو `'STANDALONE_PAGE'` أو `'RECORD_FORM'`. استخدم `'RECORD_PAGE'` لتخصيص عرض التفاصيل لكائن محدّد. يصف `'RECORD_FORM'` نموذج إنشاء كائن ويحتوي على عناصر واجهة `FORM_FIELD`، يعرض كل منها حقلاً واحداً. يوفر Twenty تخطيط `'RECORD_FORM'` واحداً لكل كائن مع عنصر واجهة واحد لكل حقل قابل للإنشاء، لذا نادراً ما تحتاج إلى تأليف واحد؛ وهو لا يعرض نماذج السجلات بعد.
 * `objectUniversalIdentifier` يحدّد الكائن الذي ينطبق عليه هذا التخطيط.
-* يُعرّف كل `tab` قسمًا من الصفحة يتضمن `title` و`position` و`layoutMode`: استخدم `VERTICAL_LIST` لصفحات السجلات والصفحات المستقلة، و`GRID` للوحات المعلومات، و`CANVAS` لعنصر واجهة واحد ينبغي أن يملأ إطار عرض علامة التبويب. تُرتّب علامة التبويب `VERTICAL_LIST` عناصر الواجهة عموديًا. تملأ عناصر الواجهة المضمنة التي تدير تمريرها بنفسها، مثل الجداول الزمنية والملفات والملاحظات والمهام وسير العمل، إطار عرض واحدًا؛ بينما تُعرض الحقول ومكونات الواجهة الأمامية والرسوم البيانية وغيرها من عناصر الواجهة ذات الحجم الملائم للمحتوى بارتفاع محتواها أو بالارتفاع المُعدّ لها. تُرتّب علامة التبويب `GRID` عناصر واجهتها دائمًا على شكل بطاقات ضمن شبكة من 12 عمودًا. لا تحتوي أداة `CANVAS` على موضع صريح؛ وإذا كانت علامة تبويب اللوحة تحتوي على عدة أدوات، فستُعرض عند ارتفاع محتواها بدلًا من ملء إطار العرض.
+* يُعرّف كل `tab` قسمًا من الصفحة مع `title` و`position` و`layoutMode`: استخدم `VERTICAL_LIST` لصفحات السجلات والصفحات المستقلة، و`GRID` للوحات المعلومات. تُرتّب علامة التبويب `VERTICAL_LIST` عناصر الواجهة عموديًا. تملأ الأدوات المضمنة التي تدير تمريرها الخاص، مثل المخططات الزمنية والملفات والملاحظات والمهام وسير العمل والمحادثات، إطار عرض واحدًا افتراضيًا؛ وتُعرض الحقول والمكونات الأمامية والرسوم البيانية وغيرها من الأدوات الملائمة للمحتوى بارتفاع محتواها أو بارتفاعها المُهيأ. تُرتّب علامة التبويب `GRID` عناصر واجهتها دائمًا على شكل بطاقات ضمن شبكة من 12 عمودًا.
+* ترث عناصر واجهة المستخدم في علامة تبويب `VERTICAL_LIST` وضع تخطيط علامة التبويب، ويأتي ترتيبها من المصفوفة `widgets`. لا تضبط `position`؛ اضبط `heightBehavior` الاختياري من المستوى الأعلى على `'TAB_VIEWPORT'` عندما يجب أن يشغل عنصر واجهة مستخدم منفذ عرض علامة تبويب كاملًا وأن يدير تمريره الخاص، أو على `'FIT_CONTENT'` لتجاوز الإعداد الافتراضي المضمّن للارتفاع الكامل. لا تقلل عناصر واجهة المستخدم السابقة ذلك الارتفاع. يُسمح بعنصر واجهة مستخدم نشط واحد فقط من `TAB_VIEWPORT` لكل علامة تبويب، ويجب أن يأتي بعد عناصر واجهة المستخدم الملائمة للمحتوى.
+* تستمر أدوات `GRID` في استخدام `position: { layoutMode: PageLayoutTabLayoutMode.GRID, row, column, rowSpan, columnSpan }`. تكون `heightBehavior` على المستوى الأعلى صالحة فقط لعلامات تبويب `VERTICAL_LIST`؛ ويُعد استخدامها مع `GRID` أو `CANVAS` خطأ في التحقق.
+* تظل علامات تبويب Canvas الحالية ومواضع الأدوات الصريحة مدعومة. تعرض SDK تحذيرات الإيقاف مع البدائل الموصى بها.
 * عيِّن `layoutMode` بشكل صريح. إغفاله يمنحك `VERTICAL_LIST` على `STANDALONE_PAGE` و`GRID` في كل مكان آخر، وهو أمر نادرًا ما تريده في صفحة سجل.
 * يمكن لكل `widget` داخل لسان أن يعرض [front component](/ar/developers/extend/apps/layout/front-components)، أو قائمة علاقات، أو أنواعًا أخرى من عناصر الواجهة (widgets) المدمجة.
-* يمكن لعنصر واجهة `FRONT_COMPONENT` تعيين `headerCommandMenuItemUniversalIdentifiers` إلى مصفوفة مرتبة من المعرّفات العامة لعناصر قائمة الأوامر من التطبيق نفسه. تظهر هذه الإجراءات كأزرار أيقونات في رأس بطاقة عنصر الواجهة وتحافظ على فحوصات الإتاحة والأذونات على مستوى الأمر. يجب أن تكون المعرّفات فريدة ويجب أن تُحل عند تثبيت التطبيق.
+* يمكن لأداة `FRONT_COMPONENT` تعيين `headerCommandMenuItemUniversalIdentifiers` إلى مصفوفة مرتبة من المعرّفات العامة لعناصر قائمة الأوامر من التطبيق نفسه. تظهر هذه الإجراءات كأزرار أيقونات في رأس بطاقة الأداة، وتحتفظ بفحوصات التوفر والأذونات على مستوى الأمر. يجب أن تكون المعرّفات فريدة، ويجب أن تُحل عند تثبيت التطبيق.
 * `position` على الألسنة يتحكّم في ترتيبها. استخدم قيمًا أعلى (مثل 50) لوضع الألسنة المخصّصة بعد الألسنة المدمجة.
+* يكتب `twenty app pull` تخطيطات الصفحات مرة أخرى مع علامات التبويب والأدوات الخاصة بها مضمنة. تُبلّغ عملية pull عن أداة لا يمكن للتصدير نقلها بعد، مثل أداة تعرض المكوّن الأمامي الخاص بتطبيقك أو أداة من النوع `VIEW` المتوقَّف، بدلاً من كتابتها؛ راجع [ما لا تكتبه عملية pull](/ar/developers/extend/apps/operations/sync-and-recovery#pulling-an-installed-app-back-to-source).
 
 ### عناصر واجهة الحقول
 
-عنصر واجهة `FIELD` يعرض حقلاً واحداً من السجل. لحقول العلاقات يمكنه أيضاً تضمين قائمة من السجلات ذات الصلة:
+يعرض عنصر واجهة `FIELD` حقلاً واحداً من السجل الحالي. بالنسبة إلى حقول العلاقات، يمكنه أيضاً تضمين عرض للسجلات المرتبطة بالسجل الحالي.
+
+لتضمين عرض غير مقيّد بالسجل الحالي، استخدم [عنصر واجهة جدول السجلات](#record-table-widgets).
 
 ```ts
 {
@@ -78,7 +90,33 @@ export default definePageLayout({
 
 * `fieldMetadataId` يأخذ المعرف العالمي لحقل على كائن المخطط.
 * `fieldDisplayMode` يكون واحداً من `'FIELD'`، `'CARD'`، `'EDITOR'`، `'VIEW'` أو `'TABLE'`. `TABLE` يضمّن عرضاً يسرد السجلات لحقل علاقة من نوع واحد إلى متعدد.
+* ينطبق `isUIEditable` على حقول العلاقات في وضع العرض `TABLE`. تكون قيمته الافتراضية `true`؛ اضبطها على `false` لمنع تحرير السجلات من الجدول المضمّن أو لوحة كانبان.
 * `nestedRelationFieldMetadataId` اختياري، ويأخذ المعرّف العالمي لحقل علاقة من نوع واحد‑إلى‑متعدد على الكائن الهدف للعلاقة، وذلك لسرد السجلات التي تبعد قفزتين في سلسلة العلاقات (مثل صفحة شركة تسرد الفرص الخاصة بأشخاص الشركة، أو صفحة شخص تسرد الفرص الخاصة بشركة الشخص). يمكن أن تكون القفزة الأولى حقل علاقة من نوع واحد‑إلى‑متعدد أو من نوع متعدد‑إلى‑واحد، بينما يجب أن تكون القفزة الثانية من نوع واحد‑إلى‑متعدد (علاقات الوصل غير مدعومة)، ويتطلب ذلك `fieldDisplayMode: 'TABLE'` — إذ يُعد الجمع بينه وبين أي نمط عرض آخر خطأ في التحقق من الصحة، نظرًا لأن الودجة المتداخلة يتم عرضها دائمًا كعرض مضمن.
+
+### عناصر واجهة جدول السجلات
+
+يضمّن عنصر واجهة `RECORD_TABLE` عرضاً محفوظاً في لوحة معلومات، أو صفحة سجل، أو صفحة مستقلة. يحدّد العرض المحفوظ السجلات والحقول والفلاتر وعمليات الفرز والتخطيط المعروضة في عنصر الواجهة.
+
+```ts
+{
+  universalIdentifier: 'd1d2d3d4-d5d6-4000-8000-000000000004',
+  title: 'Open opportunities',
+  type: 'RECORD_TABLE',
+  configuration: {
+    configurationType: 'RECORD_TABLE',
+    viewUniversalIdentifier: OPPORTUNITIES_VIEW_UNIVERSAL_IDENTIFIER,
+    recordLimit: 8,
+    isUIEditable: false,
+  },
+}
+```
+
+* يحدّد `viewUniversalIdentifier` العرض الذي سيتم عرضه.
+* `recordLimit` اختياري ويحدّد الحد الأقصى لعدد السجلات التي يعرضها عنصر الواجهة.
+* ينطبق `isUIEditable` على عروض الجدول وكانبان. يتيح تحرير خلايا الجدول أو تحرير بطاقات كانبان ونقلها وإنشاؤها. تكون قيمته الافتراضية `true` في تخطيطات `RECORD_PAGE` و`false` في التخطيطات الأخرى.
+* يتحكم `isUIEditable` في إجراءات واجهة المستخدم فقط. تظل أذونات السجلات سارية، وتبقى إعدادات العرض قابلة للتحرير فقط في محرر تخطيط الصفحة.
+
+يمكن لمسؤولي مساحة العمل تهيئة السلوك نفسه باستخدام **السماح بالتحرير** في محرري [عنصر واجهة لوحة المعلومات](/ar/user-guide/dashboards/capabilities/widgets#editing-records) و[صفحة السجل](/ar/user-guide/layout/capabilities/record-pages#editing-related-records).
 
 ## definePageLayoutTab
 
@@ -155,3 +193,74 @@ export default definePageLayoutTab({
 * `position` يتحكّم في الترتيب مقارنةً بعلامات التبويب الموجودة على التخطيط المستهدف. اختر قيمة تضع علامة التبويب الخاصة بك في الموضع الذي تريده بالنسبة إلى علامات التبويب المضمنة.
 
 * استخدم هذا بدلًا من `definePageLayout` عندما تريد فقط الإضافة إلى تخطيط موجود. استخدم `definePageLayout` عندما تملك التخطيط بالكامل.
+
+* يكتب `twenty app pull` علامة تبويب أضفتها إلى تخطيط صفحة لا تملكه مرة أخرى كملف `definePageLayoutTab()`، مع أدواته مضمنة، ضمن الحدود نفسها المطبقة على أدوات `definePageLayout()`.
+
+## definePageLayoutWidget
+
+استخدم هذا عندما تريد فقط **إضافة** عنصر واجهة إلى لسان موجود بالفعل — على سبيل المثال، مكوّن أمامي في لسان الصفحة الرئيسية لصفحة Company القياسية، أو مخطط في لسان الصفحة الرئيسية لصفحة سجل الكائن الخاص بك.
+
+```ts src/page-layout-widgets/example-home-widget.ts
+import {
+  definePageLayoutWidget,
+  PageLayoutTabLayoutMode,
+  PageLayoutWidgetVerticalListHeightBehavior,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
+} from 'twenty-sdk/define';
+import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
+
+export default definePageLayoutWidget({
+  universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000003',
+  pageLayoutTabUniversalIdentifier:
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.tabs.home
+      .universalIdentifier,
+  title: 'Hello World',
+  type: 'FRONT_COMPONENT',
+  position: {
+    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+    index: 1000,
+    heightBehavior: PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT,
+  },
+  configuration: {
+    configurationType: 'FRONT_COMPONENT',
+    frontComponentUniversalIdentifier:
+      HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+  },
+});
+```
+
+### النقاط الرئيسية
+
+* إن `pageLayoutTabUniversalIdentifier` **مطلوب** ويجب أن يشير إلى لسان موجود بالفعل وقت التثبيت: لسان Twenty قياسي (`STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.\<object>RecordPage.tabs.\<tab>.universalIdentifier`)، أو لسان من أحد تخطيطاتك الخاصة، أو لسان من صفحة السجل التي ينشئها Twenty لأحد كائناتك. للعلامات المُنشأة معرّفات حتمية، لذا يمكنك حسابها:
+
+  ```ts
+  import {
+    getSystemPageLayoutTabUniversalIdentifier,
+    getSystemRecordPageLayoutUniversalIdentifier,
+  } from 'twenty-sdk/define';
+
+  const EXAMPLE_HOME_TAB_UNIVERSAL_IDENTIFIER =
+    getSystemPageLayoutTabUniversalIdentifier({
+      objectMetadataApplicationUniversalIdentifier:
+        APPLICATION_UNIVERSAL_IDENTIFIER,
+      pageLayoutUniversalIdentifier:
+        getSystemRecordPageLayoutUniversalIdentifier({
+          objectMetadataApplicationUniversalIdentifier:
+            APPLICATION_UNIVERSAL_IDENTIFIER,
+          objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+        }),
+      title: 'Home',
+    });
+  ```
+
+* `position` **مطلوب**، لأن اللسان ليس جزءًا من البيان الخاص بك ولا يمكن استنتاج وضع تخطيطه. طابق وضع تخطيط اللسان: علامات تبويب صفحة السجل هي قوائم عمودية، لذا استخدم `{ layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST, index }` مع فهرس أعلى من عناصر الواجهة المضمنة (يوجد عنصر واجهة الحقول عند 0).
+
+* بالنسبة إلى قائمة عمودية، عيّن `position.heightBehavior` إلى `PageLayoutWidgetVerticalListHeightBehavior.TAB_VIEWPORT` لملء منفذ عرض علامة تبويب واحدة، أو إلى `PageLayoutWidgetVerticalListHeightBehavior.FIT_CONTENT` لاستخدام محتوى الأداة أو ارتفاعها المُكوَّن. استورد هذا التعداد من `twenty-sdk/define`، كما في المثال أعلاه. إذا تم حذفه، تحتفظ الأداة بقيمتها الافتراضية المضمنة. يمكن لأداة نشطة واحدة فقط لكل علامة تبويب ملء منفذ العرض، ويجب أن يضعها فهرسها بعد جميع الأدوات ذات ملاءمة المحتوى. لا تُدعم `heightBehavior` في مواضع `GRID` أو `CANVAS`.
+
+* يعمل `configuration` تمامًا مثل عنصر واجهة معرّف مضمنًا في `definePageLayout` أو `definePageLayoutTab`: إذ يشير إلى [المكوّنات الأمامية](/ar/developers/extend/apps/layout/front-components)، والعروض، والحقول، وما إلى ذلك.
+
+* استخدم هذا بدلًا من `definePageLayoutTab` عندما يكون اللسان موجودًا بالفعل وتريد فقط وضع عنصر واجهة واحد عليه. استخدم `definePageLayoutTab` عندما تريد لسانًا خاصًا بك.
+
+* يكتب `twenty app pull` أداة أضفتها إلى علامة تبويب لا تملكها مرة أخرى كملف `definePageLayoutWidget()`، ضمن الحدود نفسها المطبقة على أدوات `definePageLayout()`.
+
+<PageBanner illustration="card-page-page-layouts" />

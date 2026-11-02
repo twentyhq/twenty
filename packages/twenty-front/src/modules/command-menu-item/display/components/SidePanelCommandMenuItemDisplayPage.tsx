@@ -194,11 +194,11 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
       ...commandMenuItemsBySection[section].map((item) => item.id),
       ...getSectionExtraItemIds(section),
     ]),
-    ...(shouldDisplayFallbackItems
-      ? fallbackCommandMenuItems.map((item) => item.id)
-      : []),
     ...(shouldDisplayFallbackItems && shouldDisplayAskAiFallbackItem
       ? [COMMAND_MENU_ASK_AI_FALLBACK_ITEM_ID]
+      : []),
+    ...(shouldDisplayFallbackItems
+      ? fallbackCommandMenuItems.map((item) => item.id)
       : []),
   ];
 
@@ -263,12 +263,12 @@ export const SidePanelCommandMenuItemDisplayPage = () => {
           }
           Icon={IconLifebuoy}
         >
-          {fallbackCommandMenuItems.map((item) => (
-            <CommandMenuItemRenderer item={item} key={item.id} />
-          ))}
           {shouldDisplayAskAiFallbackItem && (
             <CommandMenuAskAiFallbackItem prompt={trimmedSidePanelSearch} />
           )}
+          {fallbackCommandMenuItems.map((item) => (
+            <CommandMenuItemRenderer item={item} key={item.id} />
+          ))}
         </CommandMenuItemSectionGroup>
       )}
     </SidePanelList>

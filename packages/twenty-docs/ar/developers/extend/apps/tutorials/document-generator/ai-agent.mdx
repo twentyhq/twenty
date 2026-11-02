@@ -3,7 +3,13 @@ title: 5. An AI agent
 description: السماح لوكيل بتوليد مستندات من محادثة، باستخدام أداتك.
 ---
 
-لأن `وثيقة توليد الطاقة` مكشوفة كـ **أداة**، يمكن لوكيل الذكاء الاصطناعي أن يطلق عليها.
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## نظرة عامة
+
+لأن `generate-document` مكشوفة كـ **أداة**، يمكن لوكيل الذكاء الاصطناعي أن يطلق عليها.
 دعونا نضيف وكيلا ومهارة حتى يمكن للمستخدمين أن يقولوا فقط *"إنشاء اقتراح لـ
 Jeffery Griffin"*.
 
@@ -74,6 +80,11 @@ export default defineAgent({
 **بعد هذه الخطوة:** التطبيق كامل الميزة ومفيد حقا. حان الوقت
 لإطلاقه.
 
-<Card title="التالي: النشر →" icon="rocket" href="/ar/developers/extend/apps/tutorials/document-generator/publishing">
-  إضافة بيانات التعريف للسوق والنشر.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ar/developers/extend/apps/tutorials/document-generator/publishing" img="/images/user-guide/halftone/card-page-publishing.svg">
+  <CardTitle>التالي: نشر →</CardTitle>
+  إضافة البيانات الوصفية للسوق والنشر.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="card-page-tutorial-agent" />

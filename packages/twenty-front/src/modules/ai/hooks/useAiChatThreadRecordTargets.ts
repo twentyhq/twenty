@@ -125,7 +125,7 @@ export const useAiChatThreadRecordTargets = ({
     openJunctionRelationPicker({
       recordPickerInstanceId,
       junctionRecords,
-      targetFields: junctionConfig.targetFields,
+      junctionConfig,
     });
   };
 

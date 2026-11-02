@@ -1,0 +1,65 @@
+---
+title: ProgressBar
+description: Afișați progresul măsurat sau nedeterminat cu o bară orizontală.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ProgressBarReference from '/snippets/ui/generated/feedback/progress-bar.mdx';
+
+## Prezentare generală
+
+`ProgressBar` oferă un aspect orizontal pentru [Progress](/ro/ui/primitives/feedback/progress). Păstrează contractul complet al rădăcinii, inclusiv atributele native, referințele, compunerea randării, formatarea, intervalele personalizate și progresul nedeterminat. Oferiți-i un `aria-label` care identifică operațiunea.
+
+<StoryEmbed storyId="ui-feedback-progressbar-progressbar--display" title="Exemplu ProgressBar" height={100} />
+
+## Utilizare
+
+```tsx
+import { ProgressBar } from 'twenty-ui/primitives/feedback';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type ImportProgressProps = { importedRecords: number | null };
+
+export const ImportProgress = ({ importedRecords }: ImportProgressProps) => (
+  <Text style={{ display: 'grid', gap: 8, width: 300 }}>
+    <Text>Importing records: {importedRecords ?? 'preparing'}</Text>
+    <ProgressBar
+      value={importedRecords}
+      max={1000}
+      aria-label="Importing records"
+    />
+  </Text>
+);
+```
+
+## Proprietatea asupra stării și intervalele
+
+`value` este obligatoriu și controlat de aplicație. Nu există un mod `defaultValue`. Componenta nu pornește o solicitare și nu avansează progresul de una singură. Transmiteți `null` când progresul este necunoscut. Valorile nefinite rămân, de asemenea, nedeterminate.
+
+`min` are implicit valoarea `0`, iar `max` are implicit valoarea `100`. Valorile finite sunt limitate la interval pentru valoarea semantică și umplerea normalizată. O valoare de `70` în intervalul de la `20` la `120` umple jumătate din bară și raportează `50%`, în timp ce `aria-valuenow` rămâne `70`.
+
+<StoryEmbed storyId="ui-feedback-progressbar-progressbar--custom-range" title="Un minim diferit de zero și un maxim personalizat" height={80} />
+
+Utilizați `aria-valuetext`, `getAriaValueText`, `locale` și `format` după cum este descris în [Progres](/ro/ui/primitives/feedback/progress). Utilizați părți Progress compuse când etichetele și valorile necesită propria lor dispunere vizibilă.
+
+Utilizați [Toast](/ro/ui/components/feedback/toast) pentru notificări cu numărătoare inversă pentru închidere și pauză la trecerea cursorului.
+
+## Aspect și compoziție
+
+`size` selectează o pistă de 6 px sau de 8 px. `barColor` și `backgroundColor` acceptă culori CSS, inclusiv variabile de temă. `withBorderRadius` rotunjește pista și indicatorul. `withMinimumFillWidth` păstrează o mică umplere cosmetică doar între minim și finalizare. Acest minim este de cel mult 12 px și jumătate din lățimea pistei, astfel încât o pistă îngustă distinge în continuare progresul incomplet de finalizare. Nu umple o bară goală și nu modifică valorile semantice.
+
+Atributele native, `className`, `style` și `ref` vizează rădăcina. `className` și `style` pot primi starea progresului. `render` poate înlocui rădăcina păstrându-i semantica. Progresul nedeterminat are propriul aspect fără a raporta un procent numeric. Preferințele pentru mișcare redusă dezactivează tranzițiile de umplere și mișcarea nedeterminată.
+
+Compuneți [părți Progress](/ro/ui/primitives/feedback/progress) pentru dispuneri personalizate sau animații ale funcționalităților. Temporizarea funcționalităților, creșterea la apariție, sclipirile, arcurile și apelurile inverse la finalizare aparțin compoziției aplicației.
+
+## Migrare
+
+Înlocuiți `ariaLabel` cu `aria-label` nativ. Proprietățile `withGrowIn`, `withGlint`, `withSpringFill` și `onGrowInComplete` sunt eliminate. Implementați aspectul, temporizarea și apelurile inverse la finalizare în compoziția unei aplicații folosind [părți Progress](/ro/ui/primitives/feedback/progress). `onAnimationEnd` nativ rămâne disponibil în rădăcină.
+
+## Proprietăți
+
+<ProgressBarReference />
+
+<PageBanner illustration="card-page-usage-limits" />

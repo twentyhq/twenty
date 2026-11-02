@@ -6,9 +6,10 @@ import {
   OBJECT_ENUM_BINDINGS,
   PAGE_LAYOUT_ENUM_BINDINGS,
   PAGE_LAYOUT_TAB_ENUM_BINDINGS,
-  ROLE_ENUM_BINDINGS,
   VIEW_ENUM_BINDINGS,
   VIEW_FIELD_ENUM_BINDINGS,
+  WORKFLOW_ENUM_BINDINGS,
+  buildRoleEnumBindings,
   type EnumBinding,
 } from '@/app/pull/write-define-file';
 import {
@@ -20,6 +21,7 @@ import {
 import { stripGraphqlTypename } from '@/app/pull/strip-graphql-typename';
 import { kebabCase } from '@/app/pull/kebab-case';
 import { type Manifest } from 'twenty-shared/application';
+import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { fromApplicationManifestToApplicationConfig } from '@/app/pull/from-application-manifest-to-application-config';
 import { fromRoleManifestToRoleConfig } from '@/app/pull/from-role-manifest-to-role-config';
 import { buildPullFieldFileName } from '@/app/pull/build-pull-field-file-name';
@@ -43,6 +45,10 @@ export const PULL_ENTITY_KINDS = [
   'pageLayoutTab',
   'navigationMenuItem',
   'pageLayoutWidget',
+  'workflow',
+  'skill',
+  'agent',
+  'relatedRecordPath',
 ] as const;
 
 export type PullEntityKind = (typeof PULL_ENTITY_KINDS)[number];
@@ -65,13 +71,15 @@ export type SkippedPullEntity = {
   reason: string;
 };
 
-export const buildPullEntities = (
-  manifest: Manifest,
-  sourceFileByUniversalIdentifier: ReadonlyMap<
-    string,
-    ScannedSourceFile
-  > = new Map(),
-): { entities: PullEntity[]; skipped: SkippedPullEntity[] } => {
+export const buildPullEntities = ({
+  manifest,
+  sourceFileByUniversalIdentifier = new Map(),
+  systemPermissionFlag = SystemPermissionFlag,
+}: {
+  manifest: Manifest;
+  sourceFileByUniversalIdentifier?: ReadonlyMap<string, ScannedSourceFile>;
+  systemPermissionFlag?: Record<string, string>;
+}): { entities: PullEntity[]; skipped: SkippedPullEntity[] } => {
   const applicationUniversalIdentifier =
     manifest.application.universalIdentifier;
   const entities: PullEntity[] = [];
@@ -224,7 +232,7 @@ export const buildPullEntities = (
         roleManifest,
         applicationUniversalIdentifier,
       }),
-      enumBindings: ROLE_ENUM_BINDINGS,
+      enumBindings: buildRoleEnumBindings(systemPermissionFlag),
       defaultFolder: 'src/roles',
       fileSuffix: '.role.ts',
       fileBaseName: toFileBaseName({
@@ -368,6 +376,74 @@ export const buildPullEntities = (
       parentName: isDefined(objectUniversalIdentifier)
         ? getObjectNameForPullFile({ objectUniversalIdentifier, manifest })
         : null,
+    });
+  }
+
+  for (const workflowManifest of manifest.workflows ?? []) {
+    entities.push({
+      kind: 'workflow',
+      universalIdentifier: workflowManifest.universalIdentifier,
+      definer: 'defineWorkflow',
+      config: workflowManifest,
+      enumBindings: WORKFLOW_ENUM_BINDINGS,
+      defaultFolder: 'src/workflows',
+      fileSuffix: '.workflow.ts',
+      fileBaseName: toFileBaseName({
+        segments: [workflowManifest.name],
+        universalIdentifier: workflowManifest.universalIdentifier,
+      }),
+      parentName: null,
+    });
+  }
+
+  for (const skillManifest of manifest.skills ?? []) {
+    entities.push({
+      kind: 'skill',
+      universalIdentifier: skillManifest.universalIdentifier,
+      definer: 'defineSkill',
+      config: skillManifest,
+      enumBindings: [],
+      defaultFolder: 'src/skills',
+      fileSuffix: '.skill.ts',
+      fileBaseName: toFileBaseName({
+        segments: [skillManifest.name],
+        universalIdentifier: skillManifest.universalIdentifier,
+      }),
+      parentName: null,
+    });
+  }
+
+  for (const relatedRecordPathManifest of manifest.relatedRecordPaths ?? []) {
+    entities.push({
+      kind: 'relatedRecordPath',
+      universalIdentifier: relatedRecordPathManifest.universalIdentifier,
+      definer: 'defineRelatedRecordPath',
+      config: relatedRecordPathManifest,
+      enumBindings: [],
+      defaultFolder: 'src/related-record-paths',
+      fileSuffix: '.related-record-path.ts',
+      fileBaseName: toFileBaseName({
+        segments: [],
+        universalIdentifier: relatedRecordPathManifest.universalIdentifier,
+      }),
+      parentName: null,
+    });
+  }
+
+  for (const agentManifest of manifest.agents ?? []) {
+    entities.push({
+      kind: 'agent',
+      universalIdentifier: agentManifest.universalIdentifier,
+      definer: 'defineAgent',
+      config: agentManifest,
+      enumBindings: [],
+      defaultFolder: 'src/agents',
+      fileSuffix: '.agent.ts',
+      fileBaseName: toFileBaseName({
+        segments: [agentManifest.name],
+        universalIdentifier: agentManifest.universalIdentifier,
+      }),
+      parentName: null,
     });
   }
 

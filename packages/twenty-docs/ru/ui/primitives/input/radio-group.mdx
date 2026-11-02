@@ -1,0 +1,142 @@
+---
+title: RadioGroup
+description: Управляйте одним выбранным вариантом среди набора переключателей.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import RadioGroupReference from '/snippets/ui/generated/input/radio-group.mdx';
+
+## Обзор
+
+`RadioGroup` координирует значение, навигацию с клавиатуры и отправку формы своих дочерних элементов [Radio](/ru/ui/primitives/input/radio).
+
+<StoryEmbed storyId="ui-input-radiogroup--display" title="Пример RadioGroup" height={110} />
+
+## Использование
+
+### Неконтролируемое состояние
+
+Используйте `defaultValue`, чтобы задать начальную частоту выставления счетов. Группа управляет последующими изменениями.
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const BillingFrequency = () => (
+  <RadioGroup
+    name="billingFrequency"
+    defaultValue="monthly"
+    aria-label="Billing frequency"
+  >
+    <Radio value="monthly">Monthly</Radio>
+    <Radio value="yearly">Yearly</Radio>
+  </RadioGroup>
+);
+```
+
+`name` группы определяет выбранное значение при отправке формы. Задайте группе доступное имя и добавьте метку каждому переключателю.
+
+### Горизонтальная компоновка
+
+По умолчанию группы используют вертикальный столбец. Установите `orientation="horizontal"` для строки. Свойство управляет визуальной компоновкой через `data-orientation`; оно не задаёт `aria-orientation` и не изменяет навигацию с помощью клавиатуры. Как горизонтальные, так и вертикальные клавиши со стрелками сохраняют существующее поведение Base UI, включая навигацию справа налево через [DirectionProvider](/ru/ui/primitives/layout/direction-provider).
+
+```tsx
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const HorizontalBillingFrequency = () => (
+  <RadioGroup
+    orientation="horizontal"
+    name="billingFrequency"
+    defaultValue="monthly"
+    aria-label="Billing frequency"
+  >
+    <Radio value="monthly">Monthly</Radio>
+    <Radio value="yearly">Yearly</Radio>
+  </RadioGroup>
+);
+```
+
+<StoryEmbed storyId="ui-input-radiogroup--horizontal" title="Горизонтальная RadioGroup" height={80} />
+
+Стандартный промежуток остается одинаковым в обоих направлениях.
+
+## Структура
+
+Поместите каждый `Radio` или `Radio.Root` внутрь группы и свяжите его с меткой. Используйте `Radio.Indicator` для создания пользовательского индикатора. `RadioGroup` и `Radio` экспортируются отдельно.
+
+```text
+fieldset
+├── legend
+└── RadioGroup
+    ├── label
+    │   └── Radio
+    └── label
+        └── Radio
+```
+
+| Часть                | Требование                         | Назначение                                                                              |
+| -------------------- | ---------------------------------- | --------------------------------------------------------------------------------------- |
+| `RadioGroup`         | Обязательно                        | Управляет выбором, навигацией с клавиатуры и интеграцией с формой.                      |
+| `Радио`              | По одному для каждого варианта     | Предоставляет варианту отдельное значение `value`.                                      |
+| `label`              | Рекомендуется для каждого варианта | Предоставляет видимое имя, по которому можно щелкнуть, для соответствующей радиокнопки. |
+| `fieldset`, `legend` | Необязательная группировка         | Группирует связанные элементы управления под видимым заголовком.                        |
+
+Задайте группе собственное доступное имя с помощью `aria-label` или `aria-labelledby`. В приведенных ниже примерах `aria-labelledby` связывает группу с легендой. Каждой радиокнопке также требуется собственное имя. Разместите свойства выбора в `RadioGroup`, а значения вариантов — в `Radio`.
+
+## Управляемое состояние
+
+Передайте `value` и обновляйте его с помощью `onValueChange`, чтобы управлять той же частотой выставления счетов в состоянии React. Выбор принадлежит группе, а не отдельным переключателям.
+
+```tsx
+import { useId, useState } from 'react';
+import { Radio, RadioGroup } from 'twenty-ui/primitives/input';
+
+export const BillingFrequency = () => {
+  const labelId = useId();
+  const [billingFrequency, setBillingFrequency] = useState('monthly');
+
+  return (
+    <fieldset>
+      <legend id={labelId}>Billing frequency</legend>
+      <RadioGroup
+        name="billingFrequency"
+        value={billingFrequency}
+        onValueChange={setBillingFrequency}
+        aria-labelledby={labelId}
+      >
+        <label>
+          <Radio value="monthly" />
+          Monthly
+        </label>
+        <label>
+          <Radio value="yearly" />
+          Yearly
+        </label>
+      </RadioGroup>
+    </fieldset>
+  );
+};
+```
+
+`onValueChange` получает следующее значение и сведения о событии. Универсальный тип значения выводится из свойств. Используйте `disabled` для группы, чтобы отключить все варианты, или для отдельного переключателя, чтобы отключить один вариант. Клавиши со стрелками перемещаются между доступными вариантами и выбирают их; Tab выводит из группы. Установленная версия Base UI поддерживает клавиши со стрелками как по горизонтали, так и по вертикали. RadioGroup добавляет свойство `orientation`, влияющее только на визуальное отображение, не изменяя этот контракт управления с клавиатуры.
+
+## Интеграция с нативными элементами и сведения о событиях
+
+`RadioGroup` по умолчанию отображает div. Нативные свойства и `ref` указывают на этот элемент; `render` компонует другой элемент и изменяет фактическую цель ref. `inputRef` указывает на представительный скрытый input дочернего переключателя, используя выбранный доступный вариант или доступный резервный вариант. Публичные типы включают обобщённые `RadioGroupProps`, `RadioGroupState`, `RadioGroupChangeEventReason` и `RadioGroupChangeEventDetails`.
+
+Обработчик обратного вызова получает исходные сведения о событии, включая нативный `event`, `reason`, `cancel()` и `allowPropagation()`. Отмените предлагаемое изменение перед обновлением управляемого состояния, если выбор должен быть отклонён.
+
+Сохраняйте `name`, `form`, `required`, `disabled` и `readOnly` в группе для существующего контракта формы Base UI. Выбранное значение отправляется под именем `name`; отключённые группы исключаются, а группы только для чтения сохраняют свой выбор. `form` поддерживает группу за пределами формы-владельца. Установленная версия не восстанавливает состояние группы автоматически при нативном сбросе формы. Сбрасывайте управляемое состояние из обработчика `onReset` формы, если этого требует ваш workflow.
+
+В изолированных фронтенд-компонентах поместите группу внутрь формы-владельца. Рендерер перенаправляет проверку `required` и блокирует явные ссылки `form`, которые иначе разрешаются в документе хоста.
+
+[SegmentedControl](/ru/ui/components/input/segmented-control) — это удобная предустановка, собранная из этих примитивов для краткого взаимоисключающего выбора. Она использует семантику переключателей и требует доступного имени группы. Вкладки и навигация по панелям вкладок — это отдельные элементы управления.
+
+## Свойства
+
+Справочная информация генерируется из публичных типов компонента. Собственные атрибуты, включая доступные имена и обработчики событий, также принимаются в частях, отображающих элементы.
+
+<RadioGroupReference />
+
+<PageBanner illustration="page-cover-switch" />

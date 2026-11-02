@@ -7,14 +7,14 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { useState } from 'react';
 import { enqueueSnackbar, useColorScheme } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
-import { Callout } from 'twenty-ui/feedback';
-import { Button } from 'twenty-ui/input';
-import { Section } from 'twenty-ui/layout';
-import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme-constants';
-import { H2Title } from 'twenty-ui/typography';
+import { Callout } from 'twenty-ui/components/feedback';
+import { Button } from 'twenty-ui/primitives/input';
+import { Section } from 'twenty-ui/components/layout';
+import { ThemeProvider, themeCssVariables } from 'twenty-ui/theme';
 
 import { SlackUserLinkForm } from 'src/front-components/components/SlackUserLinkForm';
 import { SlackUserLinksList } from 'src/front-components/components/SlackUserLinksList';
+import { SlackUserLinksSettingsSkeleton } from 'src/front-components/components/SlackUserLinksSettingsSkeleton';
 import { UnlinkedSlackUsersList } from 'src/front-components/components/UnlinkedSlackUsersList';
 import { useCanManageSlackUserLinks } from 'src/front-components/hooks/use-can-manage-slack-user-links';
 import { useMatchSlackUserLinks } from 'src/front-components/hooks/use-match-slack-user-links';
@@ -77,6 +77,7 @@ const SlackUserLinksSettingsContent = () => {
   const {
     slackUserLinks,
     isSlackUserLinksLoading,
+    hasLoadedSlackUserLinks,
     errorMessage,
     hasMoreSlackUserLinks,
     refetchSlackUserLinks,
@@ -87,9 +88,10 @@ const SlackUserLinksSettingsContent = () => {
     unlinkedSlackUsers,
     hasMoreUnlinkedSlackUsers,
     isUnlinkedSlackUsersLoading,
+    hasLoadedUnlinkedSlackUsers,
     unlinkedErrorMessage,
     refetchUnlinkedSlackUsers,
-  } = useUnlinkedSlackUsers({ isEnabled: canManage && isSlackConnected });
+  } = useUnlinkedSlackUsers({ isEnabled: canManage });
   const { matchSlackUserLinks, isMatching } = useMatchSlackUserLinks();
   const [matchSummary, setMatchSummary] = useState<string | undefined>(
     undefined,
@@ -174,14 +176,18 @@ const SlackUserLinksSettingsContent = () => {
     isDefined(connectionHealth) &&
     connectionHealth !== SLACK_CONNECTION_HEALTH.OK;
 
+  if (isConnectionStatusLoading || isPermissionLoading) {
+    return <SlackUserLinksSettingsSkeleton />;
+  }
+
   // A broken connection is reported by the app health banner, which stays
   // visible next to the connection itself; the tools below need a working one.
-  if (isConnectionStatusLoading || !isSlackConnected || isConnectionBroken) {
+  if (!isSlackConnected || isConnectionBroken) {
     return null;
   }
 
-  if (isPermissionLoading) {
-    return <StyledCenteredState>Loading Slack user links…</StyledCenteredState>;
+  if (!hasLoadedSlackUserLinks || (canManage && !hasLoadedUnlinkedSlackUsers)) {
+    return <SlackUserLinksSettingsSkeleton />;
   }
 
   const shouldWarnAboutRosterMatch =
@@ -191,21 +197,21 @@ const SlackUserLinksSettingsContent = () => {
     <StyledContainer>
       {!canManage && (
         <Callout
-          variant="warning"
+          status="warning"
           title="You need the roles permission"
           description="Only members with the roles permission can create or change Slack user links. You can review the existing links below."
         />
       )}
       {shouldWarnAboutRosterMatch && (
         <Callout
-          variant="warning"
+          status="warning"
           title="Email auto-link did not finish"
           description="The last automatic email match failed before linking everyone. Press Auto-link by email below to run it again."
         />
       )}
       {canManage && (
-        <Section>
-          <H2Title
+        <Section.Root>
+          <Section.Header
             title="Unlinked Slack users"
             description="Only Slack users linked to a workspace member can use the assistant. Pick a workspace member on a row to link them in place, or auto-link everyone whose Slack email matches a workspace member."
           />
@@ -228,17 +234,18 @@ const SlackUserLinksSettingsContent = () => {
             )}
             <Button
               type="button"
-              title={isMatching ? 'Auto-linking…' : 'Auto-link by email'}
-              size="small"
-              variant="secondary"
+              size="sm"
+              variant="outline"
               disabled={isMatching}
               onClick={handleMatchByEmail}
-            />
+            >
+              {isMatching ? 'Auto-linking…' : 'Auto-link by email'}
+            </Button>
           </StyledMatchAction>
-        </Section>
+        </Section.Root>
       )}
-      <Section>
-        <H2Title
+      <Section.Root>
+        <Section.Header
           title="Slack user links"
           description="Each link maps a Slack account to the workspace member whose permissions the assistant borrows."
         />
@@ -258,7 +265,7 @@ const SlackUserLinksSettingsContent = () => {
             resendingLinkId={resendingLinkId}
           />
         )}
-      </Section>
+      </Section.Root>
       {canManage &&
         (isManualFormOpen ? (
           <SlackUserLinkForm
@@ -269,11 +276,12 @@ const SlackUserLinksSettingsContent = () => {
           <StyledDisclosure>
             <Button
               type="button"
-              title="Link someone not listed above"
-              size="small"
-              variant="secondary"
+              size="sm"
+              variant="outline"
               onClick={() => setIsManualFormOpen(true)}
-            />
+            >
+              Link someone not listed above
+            </Button>
           </StyledDisclosure>
         ))}
     </StyledContainer>

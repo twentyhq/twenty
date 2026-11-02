@@ -1,17 +1,25 @@
 ---
 title: Facturare
+sidebarTitle: Prezentare generală
 description: Înțelegeți prețurile Twenty și gestionați-vă abonamentul.
 ---
 
-Twenty oferă planuri de preț flexibile care se potrivesc nevoilor echipei dvs. Gestionați-vă abonamentul, urmăriți creditele pentru fluxuri de lucru și accesați facturile, toate din **Setări → Facturare**.
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Ce conține această secțiune
 
-<CardGroup cols={2}>
-  <Card title="Planuri de preț" icon="tags" href="/ro/user-guide/billing/capabilities/pricing-plans">
-    Aflați despre planurile de preț ale Twenty și ce este inclus.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ro/user-guide/billing/capabilities/pricing-plans" img="/images/user-guide/halftone/card-page-pricing-plans.svg">
+    <CardTitle>Planurile de stabilire a prețurilor</CardTitle>
+    Află despre planurile de prețuri ale Twenty și despre ce este inclus.
   </Card>
-  <Card title="Întrebări frecvente" icon="help-circle" href="/ro/user-guide/billing/how-tos/billing-faq">
+  <Card href="/ro/user-guide/billing/capabilities/usage-limits" img="/images/user-guide/halftone/card-page-usage-limits.svg">
+    <CardTitle>Folosirea limitelor</CardTitle>
+    Decupați ceea ce spațiul de lucru, membrii, cheile API și aplicațiile pot cheltui.
+  </Card>
+  <Card href="/ro/user-guide/billing/how-tos/billing-faq" img="/images/user-guide/halftone/card-page-billing-faq.svg">
+    <CardTitle>Întrebări frecvente</CardTitle>
     Întrebări frecvente despre prețuri și facturare.
   </Card>
 </CardGroup>
@@ -37,3 +45,5 @@ Da! Găzduiți Twenty pe cont propriu și obțineți toate funcțiile Pro fără
 Mergeți la **Setări → Facturare** și faceți clic pe **Treceți la Organizație** sau **Treceți la Anual**.
 
 Pentru mai multe întrebări, consultați [Întrebările frecvente despre facturare](/ro/user-guide/billing/how-tos/billing-faq).
+
+<PageBanner illustration="billing" />

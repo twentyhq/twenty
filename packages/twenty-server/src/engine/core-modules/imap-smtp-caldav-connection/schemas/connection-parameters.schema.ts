@@ -3,9 +3,9 @@ import { plaintextStringSchema } from 'src/engine/core-modules/secret-encryption
 import { z } from 'zod';
 
 export const connectionParametersSchema = z.object({
-  host: z.string().min(1, 'Host is required'),
+  host: z.string().trim().min(1, 'Host is required'),
   port: z.int().positive('Port must be a positive number'),
-  username: z.string().optional(),
+  username: z.string().trim().optional(),
   password: plaintextStringSchema.min(1, 'Password is required'),
   connectionSecurity: z
     .nativeEnum(EmailConnectionSecurity)

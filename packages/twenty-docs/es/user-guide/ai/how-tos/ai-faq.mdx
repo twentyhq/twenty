@@ -3,6 +3,10 @@ title: Preguntas frecuentes sobre IA
 description: Preguntas frecuentes sobre las funciones de IA en Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Preguntas comunes
+
 <AccordionGroup>
 
   <Accordion title="¿Qué capacidades de IA están disponibles?">
@@ -21,7 +25,11 @@ description: Preguntas frecuentes sobre las funciones de IA en Twenty.
   </Accordion>
 
   <Accordion title="¿Puedo usar mis propios modelos de IA?">
-    En la nube, solo puedes usar modelos de IA proporcionados por Twenty. En tu instancia autohospedada, puedes usar tus propios modelos de IA después de obtener una licencia de Organización.
+    En la nube, los modelos se ejecutan en las propias cuentas de proveedores de Twenty: eliges cuáles usa tu espacio de trabajo en **Configuración → IA**, y no hay forma de conectar tu propia clave de API.
+
+    En una instancia autoalojada, los proveedores integrados (OpenAI, Anthropic, Google, Mistral, xAI) funcionan en todos los planes, incluido el gratuito. Configura la clave de API correspondiente (`OPENAI_API_KEY`, `ANTHROPIC_API_KEY`, `GOOGLE_API_KEY`, `MISTRAL_API_KEY`, `XAI_API_KEY`) en **Configuración → Panel de administración → Variables de configuración**, o en tu `.env`, seguido de un reinicio del servidor. Los modelos aparecerán entonces en **Configuración → Panel de administración → IA**.
+
+    Los proveedores personalizados (puntos de conexión personalizados, puertas de enlace privadas, modelos compatibles con OpenAI o locales, regiones adicionales), añadidos en **Configuración → Panel de administración → IA → Proveedores personalizados**, actualmente son gratuitos para un máximo de 25 puestos. Por encima de eso, se requiere un plan Organization. La sección IA del panel de administración indica en qué nivel se encuentra su instancia.
   </Accordion>
 
   <Accordion title="No veo un rol que asigné a un agente de IA, ¿dónde está?">
@@ -29,3 +37,5 @@ description: Preguntas frecuentes sobre las funciones de IA en Twenty.
   </Accordion>
 
 </AccordionGroup>
+
+<PageBanner illustration="card-page-billing-faq" />

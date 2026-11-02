@@ -43,7 +43,7 @@ import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { UsageAnalyticsModule } from 'src/engine/core-modules/usage/usage-analytics.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -102,6 +102,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     provideWorkspaceScopedRepository(BillingSubscriptionEntity),
   ],
   exports: [
+    BillingPortalWorkspaceService,
     BillingSubscriptionService,
     BillingCreditAllowanceService,
     BillingSubscriptionUpdateService,

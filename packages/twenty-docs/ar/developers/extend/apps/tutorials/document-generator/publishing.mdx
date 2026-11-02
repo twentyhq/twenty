@@ -3,7 +3,9 @@ title: 6. النشر
 description: إضافة بيانات التعريف للسوق ونشر التطبيق الخاص بك.
 ---
 
-تطبيقك يعمل. والخطوة الأخيرة هي وصف ذلك للسوق والنشر.
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## إضافة بيانات التعريف للسوق
 
@@ -30,8 +32,8 @@ export default defineApplication({
 ```
 
 <Tip>
-يتم الإعلان عن الدور الافتراضي مع 'defineApplicationRole()' في ملفه الخاص - أنت
-لا تتجاوز 'defaultRoleUniversalIdentifier' هنا بعد الآن.
+  تم الإعلان عن الدور الافتراضي مع 'defineApplicationRole()' في ملفه الخاص -
+  لم تعد تمر هنا \`defaultRoleUniversalIdentifier'.
 </Tip>
 
 أضف أيضا الكلمة المفتاحية `٢٢app` إلى `package.json` حتى يكون التطبيق قابلا للاكتشاف:
@@ -59,9 +61,9 @@ export default defineApplication({
 ```
 
 <Tip>
-الرصاص مع الدفع: اجعل أول لقطة للشاشة النتيجة النهائية (وثيقة
-تم إنشاؤها)، ثم اظهر كيف تم تشغيلها وكتابتها. استخدم التقاط
-عالي الدقة - إنها أول شيء يراه المستخدم.
+  الرصاص مع الفائز: اجعل أول لقطة للشاشة النتيجة النهائية (وثيقة تم إنشاؤها
+  )، ثم اظهر كيف تم تشغيلها وكتابتها. استخدم لقطات واضحة
+  وعالية الدقة — فهي أول ما يراه المستخدم.
 </Tip>
 
 إعطاء العلاج نفسه 'README.md' - إنها الصفحة الأولى على npm و GitHub.
@@ -76,7 +78,7 @@ export default defineApplication({
 yarn lint          # oxlint
 yarn typecheck     # tsgo
 yarn test:unit     # unit tests
-yarn twenty plan   # preview the metadata diff
+twenty app plan   # preview the metadata diff
 ```
 
 تعرض الخطة بالضبط ما سيتغيّر على الخادم من دون تطبيقه —
@@ -88,19 +90,15 @@ yarn twenty plan   # preview the metadata diff
 
 ```bash filename="Terminal"
 # Public app → npm (default)
-yarn twenty app:publish
+twenty app publish
 
 # Or deploy privately to a specific server's registry
-yarn twenty app:publish --private -r <remote>
+twenty app publish --private -r <remote>
 ```
 
-'app:publish' يبني وينشر إلى npm بشكل افتراضي؛ '--private' يرفع قاعدة
-tarball إلى السجل الخاص لخادم 20 بدلا من ذلك. لتظهر تطبيق منشور
-في سوق مثيل ما، قم بتفعيل مزامنة الكتالوج:
-
-```bash filename="Terminal"
-yarn twenty dev:catalog-sync -r <remote>
-```
+'20 تطبيق' ينشر وينشر إلى npm بشكل افتراضي؛ '--private' يرفع قاعدة
+إلى سجل خادم خاص بعشرين بدلا من ذلك. لإظهار تطبيق منشور
+في سوق حالة ما، انتظر مزامنة كتالوج السوق للخادم.
 
 التفاصيل الكاملة وقائمة التحقق من الإصدار:
 [Publishing](/ar/developers/extend/apps/operations/publishing).
@@ -116,21 +114,27 @@ yarn twenty dev:catalog-sync -r <remote>
 * \*\*البيانات الوصفية للسوق \*\* وتدفق النشر
 
 التطبيق النهائي هو في
-[`packages/XXapps/examples/document-Generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
+[`packages/twenty-apps/examples/document-generator`](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples/document-generator).
 
 ## من أين تذهب بعد
 
-<CardGroup cols={2}>
-  <Card title="مرجع البيانات" icon="database" href="/ar/developers/extend/apps/data/overview">
-    كل نوع من أنواع الحقول والعلاقة وخيارات الفهرس.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ar/developers/extend/apps/data/overview" img="/images/documentation/section-overview-icons-v1/apps-data.svg">
+    <CardTitle>مرجع البيانات</CardTitle>
+    كل نوع حقل وعلاقته وفهرسه.
   </Card>
-  <Card title="مرجع منطقي" icon="bolt" href="/ar/developers/extend/apps/logic/overview">
-    مشغلات أحداث Cron وقاعدة البيانات، ومتجر القيمة المفتاح، واتصالات OAuth.
+  <Card href="/ar/developers/extend/apps/logic/overview" img="/images/documentation/section-overview-icons-v1/apps-logic.svg">
+    <CardTitle>مرجع منطقي</CardTitle>
+    Cron و database-event مشغلات متجر القيمة المفتاحية، اتصالات OAuth.
   </Card>
-  <Card title="مرجع التخطيط" icon="layout-columns" href="/ar/developers/extend/apps/layout/overview">
-    مخططات الصفحة، ودويدات لوحة المعلومات، ومزيد من أسطح واجهة المستخدم.
+  <Card href="/ar/developers/extend/apps/layout/overview" img="/images/user-guide/halftone/layout-window-v1.svg">
+    <CardTitle>مرجع التخطيط</CardTitle>
+    مخططات الصفحة، ودويدجت لوحة المعلومات، ومزيد من أسطح واجهة المستخدم.
   </Card>
-  <Card title="العمليات" icon="rocket" href="/ar/developers/extend/apps/operations/overview">
-    () CLI، والاختبار، وعمليات الإزالة، وCI.
+  <Card href="/ar/developers/extend/apps/operations/overview" img="/images/documentation/section-overview-icons-v1/apps-operations.svg">
+    <CardTitle>العمليات</CardTitle>
+    CLI والاختبار البعيد وCI.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="card-page-tutorial-publishing" />

@@ -3,7 +3,8 @@ title: Aplicaciones
 description: "Amplía Twenty con código: objetos personalizados, lógica del lado del servidor, componentes de IU y agentes de IA, todo como paquetes de TypeScript."
 ---
 
-La mayoría de los CRM te dan un panel de configuración. Twenty te da una plataforma. Las aplicaciones son la forma en que los desarrolladores amplían Twenty más allá de lo que ofrece la IU: definen modelos de datos, lógica del lado del servidor, componentes de IU y capacidades de IA como código, y luego los implementan en uno o más espacios de trabajo.
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Por qué existen las aplicaciones
 
@@ -33,8 +34,13 @@ Todo se detecta mediante análisis de AST en tiempo de compilación; sin archivo
 
 ## La experiencia del desarrollador
 
-Escribes tu app como un proyecto de TypeScript en tu máquina. La CLI observa tus archivos fuente y los sincroniza en tiempo real con un servidor de Twenty en ejecución: edita un archivo y ve el cambio en la interfaz en cuestión de un segundo. El cliente de API tipado se regenera automáticamente cuando cambia el esquema. Cuando estés listo, `yarn twenty app:publish --private` envía la app a un servidor de producción, o `yarn twenty app:publish` publica tu app en npm y en el marketplace de Twenty.
+Escribes tu app como un proyecto de TypeScript en tu máquina. La CLI observa tus archivos fuente y los sincroniza en tiempo real con un servidor de Twenty en ejecución: edita un archivo y ve el cambio en la interfaz en cuestión de un segundo. El cliente de API tipado se regenera automáticamente cuando cambia el esquema. Cuando estés listo, `twenty app publish --private` envía la app a un servidor de producción, o `twenty app publish` publica tu app en npm y en el marketplace de Twenty.
 
-<Card title="Crea tu primera app" icon="arrow-right" href="/es/developers/extend/apps/getting-started/quick-start">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/es/developers/extend/apps/getting-started/quick-start" img="/images/documentation/banner-icons-v2/dev-apps.svg">
+  <CardTitle>Crea tu primera aplicación</CardTitle>
   Recorrido guiado en tres fases: generar el andamiaje, ejecutar un servidor local y sincronizar tus cambios.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="getting-started-apps" />

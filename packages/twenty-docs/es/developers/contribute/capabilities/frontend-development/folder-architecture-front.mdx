@@ -1,9 +1,12 @@
 ---
 title: Arquitectura de Carpetas
+description: Cómo se organiza el código del frontend.
 info: Una mirada detallada a nuestra arquitectura de carpetas
 ---
 
-En esta guía, explorarás los detalles de la estructura del directorio del proyecto y cómo contribuye a la organización y mantenibilidad de Twenty.
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
 
 Siguiendo esta convención de arquitectura de carpetas, es más fácil encontrar los archivos relacionados con funciones específicas y asegurar que la aplicación sea escalable y mantenible.
 
@@ -107,3 +110,5 @@ Puedes importar otro código de módulo desde cualquier módulo excepto desde la
 ### Interno
 
 Cada parte (hooks, estados, ...) de un módulo puede tener una carpeta `internal`, que contiene partes que se usan solo dentro del módulo.
+
+<PageBanner illustration="card-page-frontend-architecture" />

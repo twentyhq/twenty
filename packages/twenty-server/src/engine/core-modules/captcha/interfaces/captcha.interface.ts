@@ -14,4 +14,8 @@ export type CaptchaDriverOptions = {
   secretKey: string;
 };
 
-export type CaptchaValidateResult = { success: boolean; error?: string };
+export type CaptchaValidateResult = {
+  success: boolean;
+  error?: string;
+  score?: number;
+};

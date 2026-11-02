@@ -1,0 +1,158 @@
+---
+title: Selector de dată
+description: Partajați motorul de calendar existent în timp ce navigați prin luni independent de data selectată.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import DatePickerReference from '/snippets/ui/generated/components/input/date-picker.mdx';
+
+## Prezentare generală
+
+`DatePicker` partajează motorul de calendar `react-datepicker` utilizat de intrările de dată și dată-oră ale Twenty. Oferă valori care conțin doar data și control independent asupra datei selectate și a lunii vizualizate.
+
+<StoryEmbed storyId="ui-components-datepicker--display" title="Exemplu DatePicker" height={330} />
+
+## Utilizare
+
+```tsx
+import { useState } from 'react';
+import { DatePicker } from 'twenty-ui/components/input';
+
+export const ChooseDate = () => {
+  const [value, setValue] = useState<string | null>('2026-10-07');
+  const [viewedMonth, setViewedMonth] = useState('2026-10');
+
+  return (
+    <DatePicker
+      aria-label="Choose a date"
+      value={value}
+      onValueChange={setValue}
+      viewedMonth={viewedMonth}
+      onViewedMonthChange={setViewedMonth}
+      weekStart={1}
+      weekdayLabels={['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']}
+      locale="en-US"
+      previousMonthLabel="Previous month"
+      nextMonthLabel="Next month"
+      monthLabel="Month"
+      yearLabel="Year"
+    />
+  );
+};
+```
+
+## Selectare și navigare
+
+Schimbarea lunii sau a anului apelează `onViewedMonthChange` și lasă `value` neschimbat. Alegerea unei zile disponibile apelează `onValueChange` când data selectată se modifică.
+
+Folosește `onValueSelect` pentru a confirma o dată sau a închide un selector de produse. Acesta primește data canonică `YYYY-MM-DD` chiar și atunci când utilizatorul alege ziua deja selectată. Păstrează comportamentul de închidere în adaptorul aplicației.
+
+Actualizează fiecare prop controlat în callbackul corespunzător. Modificările prop-urilor nu selectează o dată de înlocuire. Antetul implicit oferă selectoare pentru lună și an, precum și butoane anterior și următor; selectorul său de an listează până la 100 de ani înainte și după anul vizualizat.
+
+## Valori de dată și localizare
+
+Transmite șiruri canonice de dată gregoriană fără oră: `YYYY-MM-DD` pentru `value` și limitele intervalului evidențiat, iar `YYYY-MM` pentru `viewedMonth`. Setează `value={null}` pentru nicio selecție. Aceste valori nu conțin oră sau fus orar. Anii acceptați sunt de la 0001 până la 9999.
+
+`locale` formatează antetul implicit lună/an și titlurile complete ale zilelor săptămânii atunci când sunt furnizate `weekdayLabels` personalizate. Etichetele zilelor și calendarul subiacent păstrează comportamentul existent de localizare al `react-datepicker`.
+
+`weekStart` setează prima coloană, folosind 0 pentru duminică până la 6 pentru sâmbătă. Folosește `weekdayLabels` pentru șapte etichete vizibile scurte în ordinea cu duminica prima, indiferent de `weekStart`. Motorul calendarului furnizează numele zilelor săptămânii când acest prop este omis.
+
+Afișarea zilei curente urmează comportamentul motorului calendarului bazat pe ceasul browserului. Adaptoarele de produs gestionează conversia fusului orar, datele inițiale de rezervă, preferințele membrilor și datele de programare.
+
+## Comportamentul existent al calendarului
+
+Redarea zilelor, marcajul de accesibilitate, navigarea prin date cu tastatura și gestionarea datelor indisponibile utilizează `react-datepicker`. Zilele vizibile din lunile învecinate rămân selectabile atunci când sunt disponibile.
+
+Setează `isDateUnavailable` pentru a împiedica selectarea datelor conform politicii aplicației tale. Callbackul primește un șir canonic `YYYY-MM-DD`. Setează `disabled` pentru a dezactiva selectarea datei și controalele implicite ale antetului.
+
+`isKeyboardNavigationDisabled` are implicit valoarea `false`. Adaptoarele existente pentru introducerea datelor de produs îl pot seta pentru a-și păstra comportamentul tastaturii. Controalele antetului își păstrează interacțiunea nativă prin tastatură.
+
+## Intervale evidențiate și vizualizări doar în citire
+
+Transmite `highlightedRange={{ start: '2026-10-05', end: '2026-10-11' }}` pentru a evidenția un interval de date inclusiv. Aplicația calculează intervalul; evidențierea nu selectează mai multe date și nu modifică `value`.
+
+Folosește `readOnly` pentru a afișa un interval calculat sau o dată selectată, permițând în același timp navigarea prin luni și ani. Folosește `isGridHidden` pentru un navigator doar pentru luni, care păstrează același antet.
+
+## Antete personalizate
+
+Folosește `renderHeader` pentru a compune un antet de produs existent cu intrări pentru dată, intrări pentru oră sau controale specifice aplicației. Argumentul său `DatePickerHeaderProps` oferă aceste valori și acțiuni:
+
+| Proprietate                                      | Scop                                                           |
+| ------------------------------------------------ | -------------------------------------------------------------- |
+| `viewedMonth`                                    | Luna curentă `YYYY-MM`.                                        |
+| `onPreviousMonth`, `onNextMonth`                 | Navighează la luna adiacentă.                                  |
+| `onMonthChange`                                  | Navighează la un număr de lună de la 1 la 12.                  |
+| `onYearChange`                                   | Navighează la anul furnizat.                                   |
+| `isPreviousMonthDisabled`, `isNextMonthDisabled` | Dacă fiecare acțiune pentru luna adiacentă este indisponibilă. |
+
+Aceste acțiuni ale antetului modifică luna vizualizată și lasă data selectată neschimbată.
+
+```tsx
+import { useState } from 'react';
+import { DatePicker } from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+import { themeCssVariables } from 'twenty-ui/theme';
+
+export const CalendarWithProductHeader = () => {
+  const [value, setValue] = useState<string | null>('2026-10-07');
+  const [viewedMonth, setViewedMonth] = useState('2026-10');
+
+  return (
+    <DatePicker
+      aria-label="Choose a date"
+      value={value}
+      onValueChange={setValue}
+      viewedMonth={viewedMonth}
+      onViewedMonthChange={setViewedMonth}
+      weekStart={1}
+      locale="en-US"
+      previousMonthLabel="Previous month"
+      nextMonthLabel="Next month"
+      monthLabel="Month"
+      yearLabel="Year"
+      renderHeader={({
+        viewedMonth: month,
+        onPreviousMonth,
+        onNextMonth,
+        isPreviousMonthDisabled,
+        isNextMonthDisabled,
+      }) => (
+        <Text
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: themeCssVariables.spacing[2],
+          }}
+        >
+          <Button size="sm" disabled={isPreviousMonthDisabled} onClick={onPreviousMonth}>
+            Previous month
+          </Button>
+          <Text>{month}</Text>
+          <Button size="sm" disabled={isNextMonthDisabled} onClick={onNextMonth}>
+            Next month
+          </Button>
+        </Text>
+      )}
+    />
+  );
+};
+```
+
+## Compoziție și adaptoare de produs
+
+Furnizează un nume de grup cu `aria-label` sau `aria-labelledby`. Atributele native, `className`, `style` și `ref` se aplică rădăcinii. Folosește `render` pentru a compune o rădăcină diferită, păstrând prop-urile furnizate și ref.
+
+Transmite `loadingFallback` pentru a păstra o suprafață de încărcare a produsului în timp ce se încarcă motorul calendarului. Rezerva implicită este un `Skeleton` cu înălțimea de 300 px.
+
+Pentru antetul implicit, `portalContainer` montează ferestrele pop-up ale selectoarelor într-un container furnizat de gazdă. `onNavigationOpenChange` primește `{ open, control }` pentru `month` sau `year`, cu `open: true` când începe deschiderea și `open: false` după finalizarea închiderii. Gazdele își pot păstra gestionarea ferestrelor pop-up și a focalizării până la închidere. Antetele personalizate gestionează propria integrare a ferestrelor pop-up.
+
+Păstrează în `twenty-front` antetele de produs, intrările de text, editarea orei, conversia fusului orar, acțiunile de ștergere și calculul filtrelor relative. Adaptoarele pentru dată, dată-oră și doar lună pot compune acest motor de calendar partajat cu `highlightedRange`, `readOnly` și `isGridHidden`, după necesități.
+
+## Proprietăți
+
+<DatePickerReference />
+
+<PageBanner illustration="calendar-emails" />

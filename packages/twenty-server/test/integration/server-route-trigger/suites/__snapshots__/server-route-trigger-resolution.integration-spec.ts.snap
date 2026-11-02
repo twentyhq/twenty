@@ -3,14 +3,14 @@
 exports[`ServerRouteTrigger resolver resolution (integration) by legacy universalIdentifier refuses to dispatch once a foreign workspace claims the same identifier 1`] = `
 {
   "body": {
-    "code": "LOGIC_FUNCTION_NOT_FOUND",
+    "code": "AMBIGUOUS_SERVER_ROUTE",
     "error": "Error",
     "messages": [
-      "Server resolver function 9e0f1a2b-3c4d-4e5f-8a6b-7c8d9e0f1a2b not found",
+      "Server route 9e0f1a2b-3c4d-4e5f-8a6b-7c8d9e0f1a2b is claimed by several application registrations",
     ],
-    "statusCode": 404,
+    "statusCode": 409,
   },
-  "status": 404,
+  "status": 409,
 }
 `;
 

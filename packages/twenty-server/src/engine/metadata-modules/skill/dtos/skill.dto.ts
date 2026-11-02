@@ -40,10 +40,6 @@ export class SkillDTO {
 
   @IsBoolean()
   @Field()
-  isCustom: boolean;
-
-  @IsBoolean()
-  @Field()
   isSystem: boolean;
 
   @IsBoolean()

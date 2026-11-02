@@ -125,3 +125,37 @@ exports[`CommandMenuItem update should fail when changing engineComponentKey to 
   "name": "GraphQLError",
 }
 `;
+
+exports[`CommandMenuItem update should fail when changing the page layout 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "commandMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "NON_UPDATABLE_PROPERTY_DIVERGENCE",
+              "message": "commandMenuItem property "pageLayoutUniversalIdentifier" cannot be updated",
+              "userFriendlyMessage": "Property pageLayoutUniversalIdentifier cannot be updated",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "commandMenuItem",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 commandMenuItem",
+    "summary": {
+      "commandMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Property pageLayoutUniversalIdentifier cannot be updated",
+  },
+  "message": "Multiple validation errors occurred while updating command menu item",
+  "name": "GraphQLError",
+}
+`;

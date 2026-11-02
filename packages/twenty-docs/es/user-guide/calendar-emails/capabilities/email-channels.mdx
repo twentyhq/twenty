@@ -1,0 +1,161 @@
+---
+title: Canales de correo electrónico
+description: Proporciona a tu equipo una dirección compartida y, cuando las necesites, añade respuestas y campañas.
+---
+
+Un canal de correo electrónico conecta una dirección compartida, como `support@yourcompany.com`, con tu espacio de trabajo. Cada mensaje que recibe se vincula con las personas y empresas adecuadas, para que todo tu equipo vea la conversación completa.
+
+## Cómo funcionan los canales de correo electrónico
+
+Configuras un canal en hasta tres etapas. La etapa 1 te proporciona una bandeja de entrada compartida. Las etapas 2 y 3 son opcionales y solo se necesitan si quieres enviar desde el dominio del canal.
+
+| Etapa                             | Lo que habilita                             | Lo que configuras                              | Cambios de DNS |
+| --------------------------------- | ------------------------------------------- | ---------------------------------------------- | -------------- |
+| **1. Recibir correo electrónico** | Una bandeja de entrada compartida en Twenty | Una regla de reenvío en tu proveedor de correo | Ninguno        |
+| **2. Responder**                  | Respuestas desde la dirección compartida    | Cinco registros de autenticación               | Sí             |
+| **3. Enviar campañas**            | Campañas desde el dominio del canal         | Dos registros de cancelación de suscripción    | Sí             |
+
+La etapa 3 se basa en la etapa 2. La fase 1 es independiente: puede enviar campañas desde un dominio sin remitir su bandeja de entrada a Veinte.
+
+## Antes de comenzar
+
+Asegúrate de tener:
+
+* El permiso **Configuración del espacio de trabajo** en Veinte.
+* Acceso a la configuración de reenvío en su proveedor de correo, como Microsoft 365 o Google Workspace, para el escenario 1.
+* Acceso a su proveedor de DNS, como Cloudflare o GoDaddy, para las etapas 2 y 3.
+
+## Etapa 1: Recibir email
+
+Su proveedor de correo reenvía una copia de cada mensaje entrante a una dirección privada que Veinte crea para el canal.
+
+<Steps>
+  <Step title="Crear el canal">
+    Ve a **Configuración → Comunicación** y haz clic en **Añadir canal de correo electrónico**. Introduzca
+    la dirección compartida y el nombre que la gente ve, a continuación, haga clic en **Guardar**.
+  </Step>
+  <Step title="Copiar la dirección de reenvío">
+    Veinte muestra una **dirección de reenvío** que termina en `@inbound.twenty.com`. Haga clic en
+    **Copiar**.
+  </Step>
+  <Step title="Activar el reenvío a su proveedor de correo">
+    Sigue la guía de Microsoft
+    365,
+    Google
+    Espacio de trabajo
+    o cualquier otro proveedor
+    .
+  </Step>
+  <Step title="Enviar un email de prueba">
+    Enviar un mensaje a la dirección compartida desde una cuenta externa. Aparece en
+    Veinte en un par de minutos.
+  </Step>
+</Steps>
+
+Tu bandeja de entrada compartida está lista. Si solo necesitas leer y rastrear conversaciones, puedes detenerte aquí.
+
+## Etapa 2: Responder desde la dirección compartida
+
+Gmail, Outlook y otros proveedores sólo entregan el correo enviado en nombre de su dominio una vez que usted demuestre que usted es dueño de él. Lo hace añadiendo registros DNS.
+
+<Steps>
+  <Step title="Abrir el dominio de envío">
+    En **Configuración → Comunicación**, abre el canal y desplázate hacia \*\*Enviando un dominio
+    \*\*.
+  </Step>
+  <Step title="Añadir registros de autenticación">
+    En tu proveedor DNS, añade los registros listados bajo **Dominio
+    autenticación**: tres registros `CNAME` que terminan en `. domainkey`, más un `MX` de
+    y un registro `TXT` en `twenty-bounce`. Si Veinte también sugiere un registro DMARC
+    , añádelo también.
+  </Step>
+  <Step title="Verificar">
+    Haga clic en **Verificar verificación**. **Autenticación de dominio** cambia a
+    **Verificada** una vez que Veinte encuentra los registros, generalmente en una hora y en
+    como máximo 48 horas.
+  </Step>
+</Steps>
+
+<img src="/images/user-guide/email-campaigns/sending-domain-records.png" style={{ width: '100%' }} />
+
+Tu equipo ahora puede responder desde la dirección compartida. Para instrucciones específicas del proveedor, vea [Configurar un dominio de envío](/es/user-guide/email-campaigns/how-tos/set-up-a-sending-domain).
+
+<Note>
+  ¿No tiene previsto enviar campañas? Saltar etapa 3. La fila
+  del **enlace de desuscripción** permanece **pendiente**, que no tiene ningún efecto en las respuestas.
+</Note>
+
+## Etapa 3: Enviar campañas
+
+Cada campaña incluye un enlace para darse de baja. Twenty aloja la página para cancelar la suscripción en tu propio dominio, como `links.yourcompany.com`, para que los destinatarios vean tu marca en lugar de la nuestra.
+
+<Steps>
+  <Step title="Añadir los registros de desuscripción">
+    En la misma sección **Dominio de envío**, agregue los dos registros `CNAME` enumerados
+    en **Enlace para cancelar la suscripción**: uno en `links` y otro en
+    `_acme-challenge.links`.
+  </Step>
+  <Step title="Verificar">
+    Haga clic en **Verificar verificación**. El **enlace de desuscripción** cambia a **Verificado**,
+    usualmente en una hora. Puede tardar un poco más de la etapa 2 porque
+    Veinte también emite un certificado de seguridad para la página.
+  </Step>
+</Steps>
+
+Veinte sólo envía una campaña una vez que **autenticación de dominio** y **enlace de desuscripción** muestran **Verificado**.
+
+## Preguntas frecuentes
+
+<AccordionGroup>
+  <Accordion title="¿Necesito cambiar el DNS para usar una bandeja de entrada compartida?">
+    No. La fase 1 sólo necesita una regla de reenvío en su proveedor de correo. Los registros DNS
+    sólo son necesarios para enviar desde el dominio del canal.
+  </Accordion>
+  <Accordion title="¿Por qué el enlace Darse de baja permanece pendiente?">
+    Si no has añadido los registros de cancelación de suscripción, es normal y solo
+    bloquea las campañas. Si los has añadido, comprueba que existen ambos registros `CNAME`
+    y espera hasta una hora. En Cloudflare, establece ambos registros a **DNS
+    solo**.
+  </Accordion>
+  <Accordion title="¿Puedo enviar campañas sin reenviar la bandeja de entrada?">
+    Sí. Las campañas sólo necesitan las etapas 2 y 3. Reenviar es lo que trae correo entrante
+    a veinte.
+  </Accordion>
+  <Accordion title="¿Puedo utilizar el mismo dominio en dos espacios de trabajo?">
+    No. Un dominio sólo puede ser verificado en un área de trabajo. Veinte te dice si
+    ya está en uso en otros lugares.
+  </Accordion>
+</AccordionGroup>
+
+## Artículos relacionados
+
+<CardGroup cols={2}>
+  <Card title="Reenviar una bandeja de entrada compartida" icon="inbox" href="/es/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-any-mail-provider">
+
+
+
+
+    Configurar reenvío para cualquier proveedor de correo.
+  </Card>
+  <Card title="Configurar un dominio de envío" icon="globe" href="/es/user-guide/email-campaigns/how-tos/set-up-a-sending-domain">
+
+
+
+
+    Añadir y verificar cada registro DNS, proveedor por proveedor.
+  </Card>
+  <Card title="Campaña de correo electrónico" icon="paper-plane" href="/es/user-guide/email-campaigns/overview">
+
+
+
+
+    Aprenda qué campañas pueden hacer para su equipo de ventas.
+  </Card>
+  <Card title="Envía tu primera campaña" icon="envelope-open-text" href="/es/user-guide/email-campaigns/how-tos/send-your-first-campaign">
+
+
+
+
+    Construye una lista, escribe el correo electrónico y envíala.
+  </Card>
+</CardGroup>

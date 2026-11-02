@@ -3,15 +3,23 @@ title: Servicios de Implementación
 description: Ya sea que necesites ayuda para comenzar o crear personalizaciones avanzadas, tenemos una solución.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
 ## Socios de Implementación
 
 Trabaja con socios certificados de Twenty para personalizaciones avanzadas, integraciones y soporte de implementación dedicado.
 
-<CardGroup cols={2}>
-  <Card title="Explorar socios certificados" icon="search" href="https://twenty.com/partners/list?ref=docs-implementation-services">
-    Encuentra un socio y contáctalo directamente: filtra por región, idioma y experiencia.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="https://twenty.com/partners/list?ref=docs-implementation-services" img="/images/user-guide/halftone/community-certified-partners.svg">
+    <CardTitle>Navegar socios certificados</CardTitle>
+    Encuentra un socio y contacta directamente — filtrar por región, idioma y experiencia.
   </Card>
-  <Card title="Deja que Twenty te asigne un socio" icon="mail" href="mailto:contact@twenty.com">
-    Cuéntanos qué necesitas y te conectaremos con el socio adecuado.
+  <Card href="mailto:contact@twenty.com" img="/images/user-guide/halftone/community-partner-matching.svg">
+    <CardTitle>Consigue la partida de Veinte</CardTitle>
+    Cuéntanos lo que necesitas y te conectaremos con el socio correcto.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="community-certified-partners" />

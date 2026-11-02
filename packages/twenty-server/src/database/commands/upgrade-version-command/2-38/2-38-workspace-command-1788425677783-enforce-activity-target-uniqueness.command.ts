@@ -211,6 +211,7 @@ export class EnforceActivityTargetUniquenessCommand extends ProvisionedWorkspace
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           applicationUniversalIdentifier:
             twentyStandardFlatApplication.universalIdentifier,

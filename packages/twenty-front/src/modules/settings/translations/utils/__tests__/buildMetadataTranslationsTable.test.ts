@@ -19,6 +19,8 @@ const buildTranslation = ({
   canonicalValue: value,
   value,
   provenance: MetadataTranslationProvenance.SHIPPED,
+  __typename: 'MetadataTranslation',
+  objectMetadataId: null,
 });
 
 const LOCALE_OPTIONS: LocaleOption[] = [

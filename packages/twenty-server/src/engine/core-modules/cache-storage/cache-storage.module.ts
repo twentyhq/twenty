@@ -1,5 +1,5 @@
 import { CACHE_MANAGER, Cache, CacheModule } from '@nestjs/cache-manager';
-import { Global, Inject, Module, type OnModuleDestroy } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import { cacheStorageModuleFactory } from 'src/engine/core-modules/cache-storage/cache-storage.module-factory';
@@ -37,14 +37,4 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
   ],
   exports: Object.values(CacheStorageNamespace),
 })
-export class CacheStorageModule implements OnModuleDestroy {
-  constructor(@Inject(CACHE_MANAGER) private cacheManager: Cache) {}
-
-  async onModuleDestroy() {
-    // oxlint-disable-next-line typescript/no-explicit-any
-    if ((this.cacheManager.store as any)?.name === 'redis') {
-      // oxlint-disable-next-line typescript/no-explicit-any
-      await (this.cacheManager.store as any).client.quit();
-    }
-  }
-}
+export class CacheStorageModule {}

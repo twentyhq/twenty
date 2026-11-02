@@ -100,21 +100,9 @@ export class ResendDriver implements EmailingDomainDriverInterface {
   }
 
   async cleanupDomain(input: EmailingDomainResourceInput): Promise<void> {
-    const domain = await this.findDomainByName(input.domain);
-
-    if (!isDefined(domain)) {
-      return;
-    }
-
-    await this.resendApiClientService.deleteDomain(domain.id).catch((error) => {
-      if (
-        error instanceof EmailingDomainDriverException &&
-        error.code === EmailingDomainDriverExceptionCode.NOT_FOUND
-      ) {
-        return;
-      }
-      throw error;
-    });
+    this.logger.log(
+      `Keeping Resend domain ${input.domain}: Resend domains are account-level and may be used by other applications`,
+    );
   }
 
   async sendEmail(

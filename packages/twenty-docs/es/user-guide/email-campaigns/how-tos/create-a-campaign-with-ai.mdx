@@ -1,0 +1,117 @@
+---
+title: Usa IA para campañas de ventas
+description: Usa IA y flujos de trabajo para crear listas de ventas específicas y redactar la campaña.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
+La IA es útil cuando tienes un objetivo de ventas, pero no quieres empezar con una lista en blanco o un correo electrónico en blanco. Dile lo que estás intentando hacer. Puede revisar tu CRM, crear una lista específica y redactar una campaña para esa lista. Revisas el trabajo, envías una prueba y luego decides si enviarlo.
+
+<Note>
+  La IA puede preparar una campaña, pero no puede enviarla. El envío siempre es tu
+  decisión.
+</Note>
+
+<Note>
+  Las campañas son de uno a muchos. La IA crea un borrador con un asunto y un cuerpo de correo electrónico
+  para la lista seleccionada; no redacta un borrador independiente para cada cliente potencial.
+</Note>
+
+## En qué puede ayudar la IA
+
+| Tarea                   | Ejemplo                                                                                                               |
+| ----------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| **Buscar personas**     | "Busca responsables de toma de decisiones en empresas de software de Alemania con un cargo de jefe o vicepresidente." |
+| **Crear una lista**     | "Crea una lista de oportunidades abiertas en el sector sanitario."                                                    |
+| **Redactar la campaña** | Redacta el asunto, el texto, la llamada a la acción y la personalización para la estrategia de ventas.                |
+| **Personalizar**        | Añade variables como `{{name.firstName}}` para que la campaña incluya ese valor cuando se envíe.                      |
+| **Mejorar un borrador** | "Haz que sea más directo", "Añade una CTA de demostración" o "Dame tres líneas de asunto."                            |
+
+La IA respeta tus permisos. Solo puede ver y modificar los registros a los que tu rol tiene acceso.
+
+## Combina la IA con flujos de trabajo
+
+La IA te ayuda a decidir qué decir y a quién decírselo. Los flujos de trabajo mantienen los datos y las listas preparados para la próxima campaña.
+
+Las listas y los miembros de lista son registros en Twenty. Un flujo de trabajo puede crearlos o actualizarlos a medida que cambia tu CRM. Esto te ofrece una forma repetible de crear segmentos de ventas en lugar de empezar desde cero cada vez.
+
+| Estrategia de ventas                   | Qué hace el flujo de trabajo                                                                             | Dónde ayuda la IA                                                |
+| -------------------------------------- | -------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| **Nuevos clientes potenciales de ICP** | Cuando un nuevo cliente potencial cumpla tus criterios, añádelo a una lista de prospección.              | Redacta una campaña para ese segmento.                           |
+| **Oportunidades estancadas**           | Busca acuerdos que hayan estado inactivos durante un tiempo determinado y crea una lista de seguimiento. | Redacta una campaña para la lista de seguimiento seleccionada.   |
+| **Expansión de cuentas**               | Añade contactos cuando una cuenta alcance una fecha de renovación, un cambio de plan u otro hito.        | Redacta una campaña para la lista de renovaciones o expansiones. |
+
+Los flujos de trabajo preparan o actualizan la lista. La IA puede investigar los datos del CRM y redactar una campaña para esa lista. Aun así, revisas la audiencia y eliges cuándo enviar.
+
+Consulta [Flujos de trabajo](/es/user-guide/workflows/overview) para crear la automatización detrás de una estrategia de ventas.
+
+## Parte 1: Abre la IA
+
+Pulsa `@` en cualquier lugar de Twenty, o pulsa `Cmd+K` (`Ctrl+K` en Windows) y elige **Preguntar a la IA**.
+
+## Parte 2: Crea tu audiencia
+
+Dile a la IA quién debe recibir el correo electrónico. Usa los campos de tu espacio de trabajo, como lo harías al hablar con un compañero de equipo.
+
+> Crea una lista llamada "Actualización de producto del cuarto trimestre" con todas las personas de empresas que tengan más de 50 empleados y pertenezcan al sector sanitario.
+
+La IA busca en tus registros, crea la lista y añade las personas que encuentra. Abre la lista y comprueba los miembros antes de enviarla.
+
+<Warning>
+  Añade solo a personas que hayan aceptado recibir tus correos electrónicos. Tu CRM puede incluir personas
+  con las que solo has intercambiado correos electrónicos. Consulta
+  [Prácticas recomendadas para campañas de correo electrónico](/es/user-guide/email-campaigns/how-tos/email-campaign-best-practices).
+</Warning>
+
+## Parte 3: Redacta la campaña
+
+Indica a la IA el objetivo, los puntos clave, el tono y la llamada a la acción que necesitas.
+
+> Redacta un seguimiento para personas con oportunidades abiertas en el sector sanitario. Mantén el asunto por debajo de 50 caracteres. Empieza con una introducción breve y cordial que salude a cada persona por su nombre, menciona tres motivos por los que el panel de informes puede ayudar a su equipo y termina con un botón "Reservar una demostración" que enlace a https://example.com/demo.
+
+La IA crea un borrador con un nombre, un asunto y un cuerpo de correo electrónico. Ábrelo desde **Campañas** para revisarlo en el editor.
+
+<img src="/images/user-guide/email-campaigns/ai-chat-campaign.png" style={{ width: '50%' }} />
+
+Para hacer cambios, sigue chateando. Abre primero la campaña para que la IA sepa a cuál te refieres:
+
+* "Haz que el tono sea más directo."
+* "Acorta la introducción a dos frases."
+* "Sustituye el texto del botón por Reservar una demostración."
+* "Sugiere otras tres líneas de asunto."
+
+Puedes editar el borrador tú mismo en cualquier momento.
+
+## Parte 4: Revisar y enviar
+
+<img src="/images/user-guide/email-campaigns/campaign-composer.png" style={{ width: '100%' }} />
+
+La IA redacta el borrador. Eliges el remitente, la audiencia y la hora de envío:
+
+1. Abre la pestaña **Correo electrónico** de la campaña.
+2. Elige la dirección **De**, la lista en **Para** y, opcionalmente, un **Tema de cancelación de suscripción**.
+3. Lee el correo electrónico. Comprueba los datos, los enlaces y los precios.
+4. Haz clic en **Prueba** y envíate una copia.
+5. Haz clic en **Enviar** y, a continuación, elige **Enviar ahora** o **Enviar más tarde**.
+
+Cada paso se explica detalladamente en [Envía tu primera campaña](/es/user-guide/email-campaigns/how-tos/send-your-first-campaign).
+
+## Consejos para buenas indicaciones
+
+* **Usa el nombre del campo.** "Personas en empresas del sector sanitario" es más claro que "clientes potenciales del sector sanitario".
+* **Dale los datos.** No conoce tu oferta, precio ni proceso de ventas a menos que se lo indiques o que la información esté en tu CRM.
+* **Dale una tarea.** Indica para quién es, qué quieres que hagan y por qué les importa.
+* **Pide opciones.** Prueba tres líneas de asunto o dos versiones del mismo mensaje para distintos segmentos.
+* **Comprueba el tamaño de la lista.** Pregunta "¿Cuántas personas hay en la lista de actualización de producto del cuarto trimestre?" antes de enviar.
+
+## Limitaciones
+
+* La IA solo puede editar campañas que aún estén en **Borrador**.
+* Los temas de cancelación de suscripción y la lista de cancelación de suscripción se gestionan en **Configuración**, no mediante la IA. Consulta [Gestionar las cancelaciones de suscripción y los temas](/es/user-guide/email-campaigns/how-tos/manage-unsubscribes-and-topics).
+* La IA puede equivocarse en los datos. Lee siempre el correo electrónico antes de enviarlo.
+
+Consulta [Chatbot de IA](/es/user-guide/ai/capabilities/ai-chatbot) para obtener más información sobre lo que la IA puede hacer en tu espacio de trabajo.
+
+<PageBanner illustration="card-page-ai-campaign" />

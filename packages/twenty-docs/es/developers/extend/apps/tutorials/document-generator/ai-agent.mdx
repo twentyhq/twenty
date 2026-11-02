@@ -3,6 +3,12 @@ title: 5. An AI agent
 description: Deja que un agente genere documentos de un chat, usando tu herramienta.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Resumen
+
 Debido a que `generate-document` está expuesto como una **herramienta**, un agente de IA puede llamarlo.
 Añadamos un agente y una habilidad para que los usuarios puedan decir *"generar una propuesta para
 Grifo de Jeffery"*.
@@ -75,6 +81,11 @@ menú de comandos, HTTP, paso de flujo de trabajo y ahora lenguaje natural.
 **Después de este paso:** la aplicación es completa y genuinamente útil. Es hora de
 enviarlo.
 
-<Card title="Siguiente: publicando →" icon="rocket" href="/es/developers/extend/apps/tutorials/document-generator/publishing">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/es/developers/extend/apps/tutorials/document-generator/publishing" img="/images/user-guide/halftone/card-page-publishing.svg">
+  <CardTitle>Siguiente: publicar →</CardTitle>
   Añadir metadatos de mercado y publicar.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="card-page-tutorial-agent" />

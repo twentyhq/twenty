@@ -80,6 +80,10 @@ export class MessagingRelaunchFailedMessageChannelsCronJob {
             workspaceId: messageChannel.workspaceId,
             messageChannelId: messageChannel.id,
           },
+          {
+            workspaceId: messageChannel.workspaceId,
+            isWorkspaceJob: true,
+          },
         );
       } catch (error) {
         this.exceptionHandlerService.captureExceptions([error], {

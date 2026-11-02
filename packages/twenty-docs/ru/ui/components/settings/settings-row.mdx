@@ -1,0 +1,189 @@
+---
+title: Строка настроек
+description: Строка переключателя с меткой, плоскими свойствами элемента управления и нативной композицией метки.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SettingsRowReference from '/snippets/ui/generated/components/settings/settings-row.mdx';
+
+## Обзор
+
+`SettingsRow` сочетает внешний вид [ListItem](/ru/ui/primitives/navigation/list-item) с [Switch](/ru/ui/primitives/input/switch). Он отображает нативную метку, связанную с его переключателем. Ваше приложение предоставляет содержимое строки и управляет любыми обновлениями настроек.
+
+<StoryEmbed storyId="ui-components-settingsrow--display" title="Пример строки настроек" height={110} />
+
+## Использование
+
+```tsx
+import { SettingsRow } from 'twenty-ui/components/settings';
+import { IconBell } from 'twenty-ui/icon';
+
+export const NotificationSetting = () => (
+  <SettingsRow startElement={<IconBell aria-hidden />}>
+    Notifications
+  </SettingsRow>
+);
+```
+
+## Визуальные параметры
+
+Сравните размеры переключателей и состояния «включено», «отключено» и «только для чтения».
+
+<StoryEmbed storyId="ui-components-settingsrow--catalog" title="Размеры и состояния строки настроек" height={520} />
+
+## Настройте переключатель
+
+Передавайте [пропсы Switch](/ru/ui/primitives/input/switch) напрямую в `SettingsRow`. Состояние выбора, сведения о событии, поведение при отключении и доступе только для чтения, размер, конфигурация нативной формы, обработчики, ссылки и композиция рендеринга настраивают переключатель. `children` задаёт видимую метку строки.
+
+Используйте `checked` и `onCheckedChange`, когда значение контролируется вашим приложением. Обработчик получает следующее состояние переключателя и сведения о событии Base UI. Нажатие на метку или переключатель вызывает его один раз. Вызовите `eventDetails.cancel()`, чтобы отклонить изменение, и не изменяйте контролируемое значение, когда изменение отменено.
+
+```tsx
+import { useState } from 'react';
+import { SettingsRow } from 'twenty-ui/components/settings';
+import { IconBell } from 'twenty-ui/icon';
+
+export const NotificationSetting = () => {
+  const [enabled, setEnabled] = useState(false);
+
+  return (
+    <SettingsRow
+      startElement={<IconBell aria-hidden />}
+      checked={enabled}
+      onCheckedChange={setEnabled}
+    >
+      Notifications
+    </SettingsRow>
+  );
+};
+```
+
+Используйте `defaultChecked` для неуправляемой настройки. Пользователи клавиатуры переводят фокус на переключатель и нажимают Пробел. `disabled` отключает элемент управления и применяет к строке отключённый внешний вид. `readOnly` предотвращает изменения, сохраняя возможность фокусировки на переключателе.
+
+```tsx
+import { SettingsRow } from 'twenty-ui/components/settings';
+
+export const WorkspaceSettings = () => (
+  <>
+    <SettingsRow disabled>Notifications</SettingsRow>
+    <SettingsRow readOnly defaultChecked>
+      Activity history
+    </SettingsRow>
+  </>
+);
+```
+
+## Содержимое строки и доступный текст
+
+`children`, `startElement` и `description` принимают узлы, принадлежащие вызывающему коду. Дочерние элементы задают доступное имя переключателя, а описание задаёт его доступное описание. Не добавляйте интерактивные элементы в содержимое метки. Используйте [ListItemButton](/ru/ui/components/navigation/list-item-button) для строк действий или создайте [ListItem](/ru/ui/primitives/navigation/list-item) со ссылкой для навигации.
+
+<StoryEmbed storyId="ui-components-settingsrow--with-description" title="Строка настроек с описанием" height={110} />
+
+```tsx
+import { SettingsRow } from 'twenty-ui/components/settings';
+
+export const WeeklyDigestSetting = () => (
+  <SettingsRow defaultChecked description="Sent every Monday" name="digest">
+    Weekly digest
+  </SettingsRow>
+);
+```
+
+Задайте `aria-label`, `aria-labelledby` или `aria-describedby`, чтобы указать собственный доступный текст для переключателя. Явный `aria-label` заменяет созданную связь имени; явные значения `aria-labelledby` и `aria-describedby` заменяют соответствующие созданные связи.
+
+## Нативные цели и композиция
+
+Обычные нативные пропсы настраивают элемент управления. Для настройки метки предусмотрены два явных имени:
+
+| Свойства                                                                             | Цель                            |
+| ------------------------------------------------------------------------------------ | ------------------------------- |
+| Нативные атрибуты, обработчики, `className`, `style`, `ref` и `render`               | Видимый корневой элемент Switch |
+| `inputRef`, `name`, `value`, `uncheckedValue`, `required` и `form`                   | Базовый нативный флажок Switch  |
+| `labelRef` и атрибуты, обработчики, классы и стили, передаваемые через `labelRender` | Внешняя нативная метка          |
+
+`htmlFor` метки управляется внутренне и следует за `id` либо за сгенерированным ID элемента управления, если ID не указан. В композиции Switch по умолчанию этот ID идентифицирует базовый флажок. При использовании `nativeButton` он идентифицирует видимую кнопку. В обоих случаях `ref` указывает на видимый корневой элемент.
+
+Используйте `labelRender` для настройки нативной метки строки. Сохраните элемент метки и передайте пропсы колбэка рендеринга своему элементу. Его `props.children` содержит всю строку, включая переключатель. Композиция элемента объединяет его классы и стили со значениями строки по умолчанию.
+
+```tsx
+import { useRef } from 'react';
+import { SettingsRow } from 'twenty-ui/components/settings';
+
+export const ComposedNotificationSetting = () => {
+  const labelRef = useRef<HTMLLabelElement>(null);
+  const controlRef = useRef<HTMLElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  return (
+    <SettingsRow
+      id="notification-control"
+      ref={controlRef}
+      inputRef={inputRef}
+      nativeButton
+      render={<button />}
+      labelRef={labelRef}
+      labelRender={<label id="notification-row" data-setting="notifications" />}
+    >
+      Notifications
+    </SettingsRow>
+  );
+};
+```
+
+`onClick` получает нажатия на элемент управления. Нативные обработчики, переданные через `labelRender`, получают события метки и всплывающие события элемента управления. Вызов `preventDefault()` при нажатии на метку предотвращает её нативную активацию элемента управления. Используйте `onCheckedChange` для обновления настроек вместо определения состояния по нажатию на метку.
+
+По умолчанию переключатель имеет `size="sm"`; используйте `"md"` для увеличенного переключателя. Высота строки остаётся прежней. `focused` применяет к строке выделенный внешний вид, не перемещая фокус клавиатуры. `className`, `style` и `render` принимают колбэки состояния Switch и настраивают элемент управления. Передавайте классы и стили метки через `labelRender`, чтобы настроить строку.
+
+## Рендерер компонента Front
+
+Внутри компонента Front используйте композицию с нативной кнопкой для переключателя, вложенного в метку строки:
+
+```tsx
+import { SettingsRow } from 'twenty-ui/components/settings';
+
+export const FrontComponentNotificationSetting = () => (
+  <SettingsRow nativeButton render={<button />}>
+    Notifications
+  </SettingsRow>
+);
+```
+
+Эта композиция активируется один раз при нажатии на метку или элемент управления. Асинхронный мост событий рендерера не может вовремя отменить активацию нативной метки хоста по умолчанию для элемента управления на основе span, что может привести к дублирующимся колбэкам изменения при прямом нажатии на элемент управления. Атрибуты валидации нативной формы, такие как `required`, также фильтруются текущим рендерером. Автономный `SettingsRow` сохраняет полный контракт формы Switch.
+
+## Формы и сброс
+
+`name`, `value` и `required` настраивают базовый флажок для отправки и валидации формы. Выбранный переключатель отправляет своё значение. Невыбранный переключатель не отправляет значение, если не указан `uncheckedValue`. Используйте `form`, чтобы связать ввод с формой за пределами родительского дерева строки.
+
+Для контролируемого сброса формы восстановите принадлежащее приложению выбранное значение в обработчике `onReset` формы. Base UI 1.8 не восстанавливает неконтролируемое состояние переключателя при нативном сбросе формы. `SettingsRow` сохраняет это поведение вышестоящего компонента.
+
+```tsx
+import { useState } from 'react';
+import { SettingsRow } from 'twenty-ui/components/settings';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const NotificationPreferences = () => {
+  const [enabled, setEnabled] = useState(true);
+
+  return (
+    <form onReset={() => setEnabled(true)}>
+      <SettingsRow
+        checked={enabled}
+        onCheckedChange={setEnabled}
+        name="notifications"
+        value="enabled"
+        uncheckedValue="disabled"
+      >
+        Notifications
+      </SettingsRow>
+      <Button type="reset">Reset</Button>
+    </form>
+  );
+};
+```
+
+## Свойства
+
+<SettingsRowReference />
+
+<PageBanner illustration="settings" />

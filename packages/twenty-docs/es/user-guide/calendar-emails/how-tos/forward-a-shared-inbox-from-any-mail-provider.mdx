@@ -1,0 +1,119 @@
+---
+title: Reenvía una bandeja de entrada compartida desde cualquier proveedor de correo electrónico
+description: Conecta una bandeja de entrada compartida a un canal de correo electrónico de Twenty, independientemente del proveedor de correo que utilices.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
+Twenty recibe correo de bandejas de entrada compartidas haciendo que tu proveedor envíe una copia de cada mensaje entrante a una dirección privada que Twenty genera para ti. Una vez configurado, la bandeja de entrada aparece en tu espacio de trabajo.
+
+El reenvío es la primera parte de un canal de correo electrónico. Para también responder o enviar campañas desde él, consulta [Canales de correo electrónico](/es/user-guide/calendar-emails/capabilities/email-channels).
+
+Microsoft 365 y Google Workspace tienen cada uno su propia guía:
+
+* [Microsoft 365](/es/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-microsoft-365)
+* [Google Workspace](/es/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-google-workspace)
+
+Esta página cubre todos los demás proveedores.
+
+## Parte 1: Crear el canal en Twenty
+
+1. Ve a **Ajustes → Comunicación**.
+2. Haz clic en **Agregar canal de correo electrónico**.
+
+<img src="/images/user-guide/emails/inbound-channels/03-twenty-add-email-channel.png" style={{ width: '100%' }} />
+
+3. En **Dirección de correo electrónico de origen**, escribe la dirección compartida en la que quieres recibir correo, por ejemplo, `contact@yourcompany.com`.
+4. En **Nombre para mostrar**, escribe el nombre que ven los destinatarios.
+5. Haz clic en **Guardar**.
+
+<img src="/images/user-guide/emails/inbound-channels/04-twenty-new-channel-form.png" style={{ width: '100%' }} />
+
+6. Twenty ahora muestra una **Dirección de reenvío**. Termina en `@inbound.twenty.com`. Haz clic en **Copiar**.
+
+<img src="/images/user-guide/emails/inbound-channels/05-twenty-forwarding-address.png" style={{ width: '100%' }} />
+
+<Note>
+  Cada canal tiene su propia dirección de reenvío. Nunca dirijas dos buzones de correo a la
+  misma, o su correo llegará al mismo lugar.
+</Note>
+
+## Parte 2: Elegir el tipo correcto de reenvío
+
+La mayoría de los proveedores ofrecen más de una forma de reenviar correo, y solo una funciona aquí.
+
+Twenty lee el encabezado `From` de cada mensaje que recibe para determinar quién lo escribió. Así es como un mensaje se vincula con la persona y la empresa correctas.
+
+* El **reenvío automático en el servidor de correo** mantiene al remitente original. Tu cliente sigue siendo el remitente, el mensaje se vincula con su registro y las respuestas se le envían de vuelta. Algunos proveedores lo llaman **Redirigir** y otros lo llaman **Reenvío**. Esta es la opción que debes usar.
+* El **reenvío como archivo adjunto**, o cualquier regla que redacte un mensaje nuevo, reemplaza al remitente por tu propia dirección. Entonces, todas las conversaciones parecen provenir de ti y ningún mensaje se asocia con un contacto.
+
+Usa la configuración de reenvío automático de tu cuenta de correo o de tu servidor de correo. No uses una regla que reenvíe el mensaje como un correo electrónico nuevo.
+
+<Warning>
+  Evita también las reglas que eliminen archivos adjuntos o conviertan los mensajes en texto sin formato.
+  Twenty almacena cada mensaje exactamente como llega.
+</Warning>
+
+Cuando exista la opción, elige la que **conserva una copia** en el buzón de correo original, para que tu equipo pueda seguir usando la bandeja de entrada como antes.
+
+## Parte 3: Buscar tu proveedor
+
+Sigue las instrucciones de tu proveedor y usa como destino la dirección de reenvío que copiaste en la Parte 1.
+
+| Proveedor                | Su guía                                                                                                                                                              |
+| ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Amazon SES               | [Reenviar correo electrónico entrante a un destino externo](https://aws.amazon.com/blogs/messaging-and-targeting/forward-incoming-email-to-an-external-destination/) |
+| Amazon WorkMail          | [Reglas de correo electrónico](https://docs.aws.amazon.com/workmail/latest/userguide/email-rules.html)                                                               |
+| Bluehost                 | [Crear reenviadores de cuentas y dominios](https://www.bluehost.com/help/article/create-account-and-domain-forwarders)                                               |
+| cPanel                   | [Reenviadores](https://docs.cpanel.net/cpanel/email/forwarders/)                                                                                                     |
+| DreamHost                | [Agregar una dirección de correo electrónico solo para reenvío](https://help.dreamhost.com/hc/en-us/articles/215724207-Add-a-forward-only-email-address)             |
+| Exchange (autohospedado) | [Configurar el reenvío de correo electrónico para un buzón](https://learn.microsoft.com/en-us/exchange/recipients/user-mailboxes/email-forwarding)                   |
+| GoDaddy                  | [Reenviar correo electrónico entrante a otra dirección](https://www.godaddy.com/help/forward-incoming-email-to-another-email-address-32282)                          |
+| iCloud Mail              | [Reenviar correo electrónico en iCloud.com](https://support.apple.com/en-us/102376)                                                                                  |
+| Namecheap                | [Configurar el reenvío de correo electrónico gratuito](https://www.namecheap.com/support/knowledgebase/article.aspx/308/2214/how-to-set-up-free-email-forwarding)    |
+| OVHcloud                 | [Redirección de correo electrónico](https://help.ovhcloud.com/csm/en-emails-redirection)                                                                             |
+| Rackspace                | [Configurar el reenvío de correo electrónico de Rackspace](https://docs.rackspace.com/docs/set-up-rackspace-email-forwarding)                                        |
+| Zoho Mail                | [Reenvío de correo electrónico](https://www.zoho.com/mail/help/email-forwarding.html)                                                                                |
+
+Si tu proveedor no aparece en la lista, aún puedes conectarlo. En casi todos los productos de correo, la configuración aparece con un nombre como **Reenvío**, **Redirigir**, **Reenviadores**, **Alias**, **Reglas** o **Filtros**, ya sea en la configuración del buzón de correo o en la configuración del dominio.
+
+## Parte 4: Probarlo
+
+Envía un correo electrónico desde una dirección externa (puede ser un Gmail personal) a `contact@yourcompany.com`. Debería aparecer en Twenty en uno o dos minutos.
+
+## Solución de Problemas
+
+<Accordion title="No llega nada">
+  Compara la dirección de reenvío carácter por carácter con la de Twenty.
+  Un solo carácter incorrecto significa que el correo no llega a ningún sitio y se descarta sin avisar.
+</Accordion>
+
+<Accordion title="El correo llega, pero todos los mensajes muestran tu propia dirección como remitente">
+  La regla está reconstruyendo el mensaje en lugar de reenviarlo, por lo que tu
+  dirección acaba en el encabezado `From`. Cambia a la configuración de
+  reenvío o redirección simple de tu proveedor y desactiva cualquier opción que reenvíe como
+  archivo adjunto.
+</Accordion>
+
+<Accordion title="El remitente recibe un mensaje de rebote que indica que no se permite el reenvío">
+  Tu proveedor bloquea el reenvío automático a dominios externos. Busca una configuración de
+  seguridad o antispam que permita el reenvío externo y actívala
+  solo para este buzón de correo.
+</Accordion>
+
+<Accordion title="El correo ya no aparece en la bandeja de entrada original">
+  La regla mueve los mensajes en lugar de copiarlos. Cámbiala para conservar una copia
+  o agrega una segunda regla que entregue los mensajes a la bandeja de entrada.
+</Accordion>
+
+<Accordion title="El canal recibe correo, pero no puede enviar">
+  La recepción y el envío son independientes. El envío requiere que tu dominio se
+  verifique en la sección **Dominio de envío** del canal, lo que significa añadir
+  allí los registros de **Autenticación de dominio** que Twenty indica. Consulta Canales de correo
+  electrónico para saber qué
+  registros necesita cada uso.
+</Accordion>
+
+<PageBanner illustration="page-cover-email" />

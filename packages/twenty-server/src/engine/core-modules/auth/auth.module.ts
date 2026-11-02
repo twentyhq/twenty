@@ -5,6 +5,8 @@ import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
+import { ConnectionProviderCustomController } from 'src/engine/core-modules/application/connection-provider/connection-provider-custom.controller';
+import { ConnectionProviderFlowRedirectService } from 'src/engine/core-modules/application/connection-provider/connection-provider-flow-redirect.service';
 import { ConnectionProviderOAuthController } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth.controller';
 import { ConnectionProviderModule } from 'src/engine/core-modules/application/connection-provider/connection-provider.module';
 import { ApplicationConnectionsModule } from 'src/engine/core-modules/application/connection-provider/connections/application-connections.module';
@@ -60,7 +62,7 @@ import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-chan
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { PermissionsModule } from 'src/engine/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { CalendarCommonModule } from 'src/modules/calendar/common/calendar-common.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
@@ -131,9 +133,11 @@ import { AuthService } from './services/auth.service';
     OAuthPropagatorController,
     SsoAuthController,
     ConnectionProviderOAuthController,
+    ConnectionProviderCustomController,
   ],
   providers: [
     SignInUpService,
+    ConnectionProviderFlowRedirectService,
     AuthService,
     SamlAuthStrategy,
     AuthResolver,

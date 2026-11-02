@@ -42,14 +42,14 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { RecordShareOwnershipTransferService } from 'src/engine/core-modules/record-share/services/record-share-ownership-transfer.service';
+} from 'src/engine/permissions/permissions.exception';
+import { RecordShareOwnershipTransferService } from 'src/engine/permissions/record-share/services/record-share-ownership-transfer.service';
 import { ConnectedAccountOwnershipTransferService } from 'src/engine/metadata-modules/connected-account/services/connected-account-ownership-transfer.service';
 import { detachAgentChatChannelThreadsFromWorkspaceMember } from 'src/engine/metadata-modules/ai/ai-chat/utils/detach-agent-chat-channel-threads-from-workspace-member.util';
 import { AgentChatThreadWorkspaceEntity } from 'src/engine/metadata-modules/ai/ai-history/standard-objects/agent-chat-thread.workspace-entity';
 import { AgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/agent-history-repository';
 import { InjectAgentHistoryRepository } from 'src/engine/metadata-modules/ai/ai-history/repositories/inject-agent-history-repository.decorator';
-import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { UserRoleService } from 'src/engine/permissions/role-assignment/user-role.service';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -592,6 +592,10 @@ export class UserService {
         workspace,
       );
 
+    await this.emailVerificationService.deleteExistingTokensAfterCooldownOrThrow(
+      { userId: user.id },
+    );
+
     await this.emailVerificationService.sendVerificationEmail({
       userId: user.id,
       email: normalizedEmail,
@@ -610,6 +614,7 @@ export class UserService {
       data,
       {
         retryLimit: 2,
+        isSystemJob: true,
       },
     );
   }

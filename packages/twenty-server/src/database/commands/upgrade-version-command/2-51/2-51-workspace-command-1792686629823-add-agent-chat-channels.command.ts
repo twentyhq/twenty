@@ -238,7 +238,7 @@ export class AddAgentChatChannelsCommand extends ProvisionedWorkspaceCommandRunn
   ): Promise<void> {
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
-        { ...args, isSystemBuild: true },
+        { shouldDeferActions: false, ...args, isSystemBuild: true },
       );
 
     if (result.status === 'fail') {

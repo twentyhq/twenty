@@ -10,6 +10,7 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { STANDARD_AGENT_CHAT_CHANNEL } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-agent-chat-channel.constant';
+import { TWENTY_STANDARD_APPLICATION } from 'src/engine/workspace-manager/twenty-standard-application/constants/twenty-standard-applications';
 
 const RUN_ON_WORKSPACE_ARGS = {
   workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -30,7 +31,8 @@ const ADDED_STATE = {
   hasThreadIndex: true,
   generalChannel: {
     name: 'General',
-    isCustom: false,
+    applicationUniversalIdentifier:
+      TWENTY_STANDARD_APPLICATION.universalIdentifier,
   },
 };
 
@@ -73,7 +75,8 @@ describe('2-51 workspace command - add agent chat channels (integration)', () =>
       generalChannel: isDefined(generalChannel)
         ? {
             name: generalChannel.name,
-            isCustom: generalChannel.isCustom,
+            applicationUniversalIdentifier:
+              generalChannel.applicationUniversalIdentifier,
           }
         : null,
     };

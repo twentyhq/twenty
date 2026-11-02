@@ -1,5 +1,7 @@
+import { msg } from '@lingui/core/macro';
 import { ViewType, ViewKey } from 'twenty-shared/types';
 
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import { INDEX_VIEW_NAME } from 'src/engine/metadata-modules/view/constants/index-view-name.constant';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 
@@ -12,6 +14,23 @@ export const computeStandardWorkspaceMemberViews = (
   args: Omit<CreateStandardViewArgs<'workspaceMember'>, 'context'>,
 ): Record<string, FlatView> => {
   return {
+    workspaceMemberRecordPageFields: createStandardViewFlatMetadata({
+      ...args,
+      objectName: 'workspaceMember',
+      context: {
+        viewName: 'workspaceMemberRecordPageFields',
+        name: i18nLabel(
+          msg({
+            message: `Workspace Member Record Page Fields`,
+            context: 'view.name',
+          }),
+        ),
+        type: ViewType.FIELDS_WIDGET,
+        key: null,
+        position: 0,
+        icon: 'IconListDetails',
+      },
+    }),
     allWorkspaceMembers: createStandardViewFlatMetadata({
       ...args,
       objectName: 'workspaceMember',

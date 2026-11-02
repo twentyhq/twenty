@@ -1,0 +1,84 @@
+---
+title: LightIconButton
+description: Предоставляет легковесные действия с иконками со стандартным или ненавязчивым акцентом.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import LightIconButtonReference from '/snippets/ui/generated/components/input/light-icon-button.mdx';
+
+## Обзор
+
+`LightIconButton` состоит из [IconButton](/ru/ui/components/input/icon-button) с прозрачной поверхностью и небольшим размером. Укажите доступное имя и декоративное содержимое иконки.
+
+<StoryEmbed storyId="ui-input-button-lighticonbutton--display" title="Легкая кнопка с иконкой" height={100} />
+
+## Использование
+
+```tsx
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconSearch } from 'twenty-ui/icon';
+
+export const SearchAction = () => (
+  <LightIconButton aria-label="Search">
+    <IconSearch />
+  </LightIconButton>
+);
+```
+
+Стандартный акцент использует вторичный нейтральный текст; ненавязчивый акцент использует третичный текст. Явно заданный внешний вид дочернего элемента имеет приоритет над значениями ButtonGroup, за которыми следуют значения по умолчанию компонента. Семантические цвета сохраняют собственную обработку контрастности. Маленькие элементы управления имеют размер 24px с иконкой 14px; средние элементы управления имеют размер 32px с иконкой 16px. Компактные элементы управления используют `size="xs"` и имеют размер 20px.
+
+## Визуальные параметры
+
+Сравните акцент для малого и среднего размеров, включая выбранное, загружаемое и отключенное состояния.
+
+<StoryEmbed storyId="ui-input-button-lighticonbutton--catalog" title="Акцент, размеры и состояния светлой кнопки со значком" height={410} />
+
+## Состояние и взаимодействие
+
+Button отвечает за активацию с клавиатуры, поведение при отключении и загрузке, refs, нативные атрибуты и композицию рендеринга. Нативное значение по умолчанию — `type="button"`. Используйте `aria-pressed` для переключателей и `aria-expanded` для раскрывающихся элементов. Приложение управляет этими состояниями и может задать `color="accent"`, чтобы выделить выбранное действие. Фокус с клавиатуры использует общее кольцо фокуса.
+
+Текст всплывающей подсказки необязателен и не заменяет доступное имя из `aria-label` или `aria-labelledby`. Задайте `href` для ссылки. Для маршрутизации, управляемой приложением, укажите `render`, `nativeButton={false}` и `role="link"`.
+
+## Обновление существующих элементов управления
+
+Импортируйте `LightIconButton` из `twenty-ui/components`. Замените `Icon={IconPlus}` на дочерние элементы `<IconPlus />`, `small`/`medium` на `sm`/`md`, `accent="tertiary"` на `emphasis="subtle"`, а `testId` на `data-testid`. Замените синтетические флаги `active` и `focus` семантическим состоянием и фактическим фокусом с клавиатуры.
+
+Замените `LightIconButtonGroup` на [ButtonGroup](/ru/ui/primitives/input/button-group), используя `attached={false}` и явные дочерние элементы. Задайте `disabled` для недоступных действий, включая действия без обработчика клика. Обертки и триггеры всплывающих подсказок могут оставаться вокруг каждого дочернего элемента.
+
+## Действия строки
+
+Используйте пассивный [ListItem](/ru/ui/primitives/navigation/list-item) со слотом `actions` для независимых элементов управления. Передайте один `LightIconButton` напрямую или используйте `ButtonGroup` для нескольких кнопок. Каждая кнопка имеет собственное доступное имя, обработчик клика и состояние отключения. Размещайте триггеры раскрывающихся списков непосредственно вокруг кнопки.
+
+```tsx
+import { LightIconButton } from 'twenty-ui/components/input';
+import { IconEyeOff, IconTrash } from 'twenty-ui/icon';
+import { ButtonGroup } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const RecordActions = () => (
+  <ListItem
+    actions={
+      <ButtonGroup attached={false}>
+        <LightIconButton aria-label="Hide record">
+          <IconEyeOff />
+        </LightIconButton>
+        <LightIconButton aria-label="Delete record" disabled>
+          <IconTrash />
+        </LightIconButton>
+      </ButtonGroup>
+    }
+  >
+    Record
+  </ListItem>
+);
+```
+
+Кнопка без обработчика `onClick` может оставаться включенной, когда ее взаимодействием управляет окружающий раскрывающийся список. Явно задайте `disabled` для недоступных кнопок. Размещайте независимые элементы управления рядом с активируемым [ListItemButton](/ru/ui/components/navigation/list-item-button), чтобы каждый из них сохранял собственные фокус и активацию.
+
+## Свойства
+
+<LightIconButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

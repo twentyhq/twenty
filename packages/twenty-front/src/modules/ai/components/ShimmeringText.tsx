@@ -17,6 +17,12 @@ const StyledShimmeringText = styled.div`
   background-repeat: no-repeat;
   background-size: 200% 100%;
 
+  @media (prefers-reduced-motion: reduce) {
+    -webkit-text-fill-color: currentColor;
+    animation: none;
+    background: none;
+  }
+
   @keyframes shimmer-wave {
     0% {
       background-position: 200% top;

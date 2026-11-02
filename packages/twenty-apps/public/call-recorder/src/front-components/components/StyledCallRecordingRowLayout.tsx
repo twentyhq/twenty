@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 export const StyledCallRecordingRowLayout = styled.div`
   align-items: center;

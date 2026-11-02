@@ -1,7 +1,9 @@
+import { StrictMode } from 'react';
 import { FormMultiRecordPicker } from '@/object-record/record-field/ui/form-types/components/FormMultiRecordPicker';
 import { styled } from '@linaria/react';
 import { type Meta, type StoryObj } from '@storybook/react-vite';
-import { expect, fn, userEvent, within } from 'storybook/test';
+import { expect, fn, userEvent, waitFor, within } from 'storybook/test';
+import { Button } from 'twenty-ui/primitives/input';
 import { ComponentDecorator } from 'twenty-ui/testing';
 import { ObjectMetadataItemsDecorator } from '~/testing/decorators/ObjectMetadataItemsDecorator';
 import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
@@ -133,5 +135,76 @@ export const Readonly: Story = {
     expect(variablePicker).not.toBeInTheDocument();
 
     expect(args.onChange).not.toHaveBeenCalled();
+  },
+};
+
+export const MultipleSelectionAndSessionReset: Story = {
+  decorators: [
+    (Story) => (
+      <StrictMode>
+        <Story />
+      </StrictMode>
+    ),
+  ],
+  args: {
+    label: 'Companies',
+    defaultValue: [],
+    objectNameSingular: 'company',
+    onChange: fn(),
+  },
+  render: (args) => (
+    <>
+      <FormMultiRecordPicker {...args} />
+      <Button variant="ghost">Outside record picker</Button>
+    </>
+  ),
+  play: async ({ canvasElement, args }) => {
+    const canvas = within(canvasElement);
+    const body = within(canvasElement.ownerDocument.body);
+    const trigger = await canvas.findByRole('button', { name: 'Companies' });
+
+    await userEvent.click(trigger);
+
+    const picker = await body.findByRole('dialog', { name: 'Companies' });
+    const options = await within(picker).findAllByRole('option');
+
+    await userEvent.click(options[0]);
+    await userEvent.click(options[1]);
+
+    expect(options[0]).toHaveAttribute('aria-selected', 'true');
+    expect(options[1]).toHaveAttribute('aria-selected', 'true');
+    expect(picker).toBeVisible();
+    expect(args.onChange).toHaveBeenCalledTimes(2);
+
+    const search = within(picker).getByRole('searchbox');
+
+    await userEvent.type(search, 'company');
+    await userEvent.keyboard('{Escape}');
+
+    await waitFor(() =>
+      expect(
+        body.queryByRole('dialog', { name: 'Companies' }),
+      ).not.toBeInTheDocument(),
+    );
+    await waitFor(() => expect(trigger).toHaveFocus());
+    await userEvent.keyboard('{Enter}');
+
+    const reopenedPicker = await body.findByRole('dialog', {
+      name: 'Companies',
+    });
+
+    expect(within(reopenedPicker).getByRole('searchbox')).toHaveValue('');
+    expect(
+      await within(reopenedPicker).findAllByRole('option', { selected: true }),
+    ).toHaveLength(2);
+
+    await userEvent.click(
+      canvas.getByRole('button', { name: 'Outside record picker' }),
+    );
+    await waitFor(() =>
+      expect(
+        body.queryByRole('dialog', { name: 'Companies' }),
+      ).not.toBeInTheDocument(),
+    );
   },
 };

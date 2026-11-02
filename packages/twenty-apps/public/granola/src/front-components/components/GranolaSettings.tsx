@@ -4,13 +4,13 @@ import styled from '@emotion/styled';
 import { useState } from 'react';
 import { enqueueSnackbar, t, useColorScheme } from 'twenty-sdk/front-component';
 import { isDefined } from 'twenty-sdk/utils';
-import { Info } from 'twenty-ui/feedback';
-import { THEME_DARK, THEME_LIGHT } from 'twenty-ui/theme';
+import { InlineBanner } from 'twenty-ui/components/feedback';
 import {
-  ThemeContext,
+  THEME_DARK,
+  THEME_LIGHT,
+  ThemeProvider,
   themeCssVariables,
-  type ThemeType,
-} from 'twenty-ui/theme-constants';
+} from 'twenty-ui/theme';
 
 import { GRANOLA_WEBHOOK_REGISTRATION_ROUTE_PATH } from 'src/constants/granola-webhook-registration-route-path';
 import { GRANOLA_WEBHOOK_REMOVAL_ROUTE_PATH } from 'src/constants/granola-webhook-removal-route-path';
@@ -197,27 +197,27 @@ export const GranolaSettings = () => {
     isConnectionExpected ||
     (isDefined(status) && status.isApiKeySet && !isSettingUpConnection);
 
-  // twenty-ui components read icon sizes off ThemeContext, and the context
-  // default resolves them to var() strings an SVG size attribute cannot use.
+  // Without an explicit theme, icon sizes resolve to var() strings SVG attributes cannot use.
   return (
-    <ThemeContext.Provider
-      value={{
-        theme: (colorScheme === 'dark'
-          ? THEME_DARK
-          : THEME_LIGHT) as unknown as ThemeType,
-        colorScheme,
-      }}
+    <ThemeProvider
+      colorScheme={colorScheme}
+      theme={colorScheme === 'dark' ? THEME_DARK : THEME_LIGHT}
     >
       <StyledContainer>
         <OnMountEffect onMount={loadConnectionStatus} />
         <GranolaConnectionSection>
           {state.step === 'unavailable' && (
-            <Info
-              accent="danger"
-              text={t('Could not load Granola settings.')}
-              buttonTitle={t('Retry')}
-              onClick={loadConnectionStatus}
-            />
+            <InlineBanner
+              layout="compact"
+              status="error"
+              action={
+                <InlineBanner.Action onClick={loadConnectionStatus}>
+                  {t('Retry')}
+                </InlineBanner.Action>
+              }
+            >
+              {t('Could not load Granola settings.')}
+            </InlineBanner>
           )}
           {state.step !== 'unavailable' && !showsConnectionCard && (
             <GranolaApiKeyForm
@@ -252,6 +252,6 @@ export const GranolaSettings = () => {
           />
         )}
       </StyledContainer>
-    </ThemeContext.Provider>
+    </ThemeProvider>
   );
 };

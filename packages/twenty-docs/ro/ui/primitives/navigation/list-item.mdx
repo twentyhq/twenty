@@ -1,0 +1,403 @@
+---
+title: ListItem
+description: Compuneți rânduri consecvente cu pictograme, descrieri, indicatori și acțiuni.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ListItemReference from '/snippets/ui/generated/navigation/list-item.mdx';
+
+## Prezentare generală
+
+`ListItem` oferă aspectul vizual partajat de rândurile din liste și meniuri. În mod implicit, redă un `div` pentru conținut pasiv. Utilizați [ListItemButton](/ro/ui/components/navigation/list-item-button) pentru rândurile de acțiuni obișnuite. Compuneți `ListItem` cu o ancoră pentru navigare sau cu un proprietar semantic personalizat atunci când este necesar. Folosește [Dropdown](/ro/ui/components/navigation/dropdown) sau [Select](/ro/ui/primitives/input/select) atunci când ai nevoie de un popup complet sau de un container de selecție.
+
+<StoryEmbed storyId="ui-navigation-listitem--display" title="Exemplu ListItem" height={100} />
+
+## Utilizare
+
+```tsx
+import { IconBell } from 'twenty-ui/icon';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const NotificationRow = () => (
+  <ListItem startIcon={<IconBell />}>Notifications</ListItem>
+);
+```
+
+## Anatomie
+
+`ListItem` expune sloturi de conținut prin proprietăți. Aceste sloturi aranjează conținutul într-un singur rând; nu sunt componente exportate separat.
+
+```text
+ListItem
+├── startIcon
+├── children
+├── description
+├── actions
+└── endIcon
+```
+
+| Slot                                  | Cerință                                    | Scop                                                                                                    |
+| ------------------------------------- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------- |
+| `children`                            | Necesar pentru o etichetă de rând vizibilă | Furnizează textul principal.                                                                            |
+| `startIcon`, `endIcon`                | Opțional                                   | Adăugați pictograme, avatare, metadate sau controale independente la oricare dintre capete.             |
+| `description`                         | Opțional                                   | Adaugă conținut suplimentar în linie, sub etichetă sau la final.                                        |
+| `acțiuni`                             | Opțional                                   | Adaugă conținut la final, cum ar fi o acțiune care poate primi focalizarea separat.                     |
+| `indicator`, `shortcut`, `hasSubmenu` | Opțional                                   | Configurează marcajele de selecție integrate, indicii pentru comenzi rapide și indicatorul de submeniu. |
+
+Rândul furnizează aspectul. `render` acceptă un element sau un callback care primește proprietăți native și stare vizuală. Distribuiți aceste proprietăți pe rădăcina efectivă atunci când utilizați un callback. Atributele native, gestionarii de evenimente, `className`, `style` și `ref` ajung la acea rădăcină. Pentru un rând cu butoane de acțiune independente, păstrează rândul neinteractiv, astfel încât acele butoane să rămână controale separate.
+
+## Rânduri pe mai multe linii
+
+Setați `descriptionPlacement="below"` pentru a plasa conținutul suplimentar sub etichetă. Titlul își păstrează comportamentul actual de trunchiere, iar conținutul suplimentar se rearanjează pe rânduri în funcție de lățimea disponibilă. Poziționarea implicită `inline` și poziționarea `end` își păstrează aspectul actual.
+
+<StoryEmbed storyId="ui-navigation-listitem-multiline--display" title="Exemplu ListItem pe mai multe linii" height={150} />
+
+```tsx
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const PlanningRow = () => (
+  <ListItem
+    descriptionPlacement="below"
+    startIcon={<Avatar name="Alex Morgan" size="md" imageProps={{ alt: '' }} />}
+    description="Review the proposed timeline and confirm the next steps with the team."
+    endIcon={
+      <Text render={<span />} size="sm" color="secondary">
+        09:48
+      </Text>
+    }
+  >
+    Quarterly planning
+  </ListItem>
+);
+```
+
+Pentru previzualizări mai scurte, transmiteți o componentă [Text](/ro/ui/primitives/typography/text) cu `truncate` sau `lineClamp` drept `description`. Conținutul personalizat își controlează propria dispunere și propriile etichete accesibile.
+
+### Stări vizuale independente
+
+Toată starea vizuală aparține apelantului. `active` identifică rândul deschis sau curent fără a-l selecta. `selected` reprezintă selectarea, iar `focused` reprezintă o evidențiere pentru navigarea cu tastatura fără a muta focalizarea DOM. `active` aplică fundalul rândului curent. Setați `selectionAppearance="accent"` pentru o umplere de accent pe rândurile selectate, independent de poziționarea descrierii. Aspectul implicit păstrează stilizarea existentă pentru selectare bazată pe indicator. `focused` aplică fundalul evidențiat partajat, inclusiv atunci când un apelant îl utilizează pentru evidențierea cu indicatorul. Conturul vizibil la focalizare urmează focalizarea reală de la tastatură pe rădăcină sau pe controalele acesteia.
+
+Aceste proprietăți nu adaugă stări accesibile. Furnizați `aria-current`, `aria-selected` sau starea `checked` a unui control proprietarului semantic corespunzător. Focalizarea reală de la tastatură păstrează și conturul nativ vizibil la focalizare.
+
+### Controale independente
+
+Păstrați rădăcina implicită `div` atunci când un rând conține o casetă de selectare reală sau butoane de acțiune independente. Utilizați `startIcon` pentru caseta de selectare și `actions` pentru butoane. `indicator` decorativ este inutil atunci când o casetă de selectare reală afișează deja selectarea.
+
+```tsx
+import { useState } from 'react';
+import { Button, Checkbox } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+type SelectablePlanningRowProps = {
+  active?: boolean;
+  disabled?: boolean;
+  onOpen: () => void;
+};
+
+export const SelectablePlanningRow = ({
+  active = false,
+  disabled = false,
+  onOpen,
+}: SelectablePlanningRowProps) => {
+  const [selected, setSelected] = useState(false);
+
+  return (
+    <ListItem
+      active={active}
+      selected={selected}
+      selectionAppearance="accent"
+      disabled={disabled}
+      descriptionPlacement="below"
+      description="Review the proposed timeline and confirm the next steps with the team."
+      startIcon={
+        <Checkbox
+          aria-label="Select quarterly planning"
+          checked={selected}
+          onCheckedChange={setSelected}
+          disabled={disabled}
+        />
+      }
+      actions={
+        <Button variant="ghost" size="sm" onClick={onOpen} disabled={disabled}>
+          Open
+        </Button>
+      }
+    >
+      Quarterly planning
+    </ListItem>
+  );
+};
+```
+
+Selectarea și deschiderea sunt interacțiuni separate. Aplicația controlează propagarea evenimentelor și orice politică privind activarea rândurilor sau tastatura. `ListItem.disabled` modifică doar aspectul; transmiteți `disabled` fiecărui control real pentru a preveni activarea acestuia.
+
+Comportamentul existent privind vizibilitatea acțiunilor se aplică rândurilor pe mai multe linii: `actionsVisibility="hover"` afișează acțiunile la trecerea cursorului sau la focalizarea în rând și le menține vizibile pe dispozitivele tactile. Setați-o la `always` pentru acțiuni persistente, inclusiv atunci când este deschis un pop-up controlat de apelant. La lățimi de rând de 480px sau mai puțin, acțiunile pe mai multe linii se mută pe propria linie și se încadrează după cum este necesar.
+
+## Rând de acțiune
+
+Utilizați [ListItemButton](/ro/ui/components/navigation/list-item-button) pentru a asocia stilizarea rândului cu interacțiunea nativă a unui buton. Transmiteți `disabled` o singură dată pentru a controla atât aspectul, cât și activarea.
+
+```tsx
+import { ListItemButton } from 'twenty-ui/components/navigation';
+import { IconCopy } from 'twenty-ui/icon';
+
+type DuplicateActionProps = {
+  onDuplicate: () => void;
+  disabled?: boolean;
+};
+
+export const DuplicateAction = ({
+  onDuplicate,
+  disabled = false,
+}: DuplicateActionProps) => (
+  <ListItemButton
+    disabled={disabled}
+    startIcon={<IconCopy />}
+    description="Create a copy"
+    onClick={onDuplicate}
+  >
+    Duplicate
+  </ListItemButton>
+);
+```
+
+Un proprietar de buton personalizat poate în continuare compune `ListItem` prin `render`. Acel proprietar furnizează focalizare nativă, activare cu Enter și Spațiu, precum și comportament dezactivat. `ListItem.disabled` furnizează doar stilul vizual corespunzător. `shortcut` afișează indicii; aplicația dvs. înregistrează comenzile rapide.
+
+<StoryEmbed storyId="ui-navigation-listitem--button-owner" title="Compoziție personalizată de buton" height={100} />
+
+## Navigare și linkuri explicite
+
+Transmiteți o ancoră prin `render` atunci când întregul rând navighează. Puneți atributele ancorei, inclusiv `href`, `target` și `rel`, pe acel element.
+
+```tsx
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const DocumentationLink = () => (
+  <ListItem render={<a href="https://twenty.com/developers" />}>
+    Typography documentation
+  </ListItem>
+);
+```
+
+<StoryEmbed storyId="ui-navigation-listitem--link-owner" title="Rând cu link" height={100} />
+
+Etichetele de tip șir rămân text, inclusiv șirurile cu aspect de URL. ListItem nu creează linkuri. Pentru a crea un link pentru o parte dintr-un rând neinteractiv, furnizați o ancoră drept conținut deținut de apelant. Păstrați acel rând ca `div` pentru a evita linkurile sau butoanele imbricate. Etichetele de tip șir își păstrează trunchierea și indicația pentru depășire; conținutul personalizat poate utiliza [OverflowingTextWithTooltip](/ro/ui/primitives/typography/overflowing-text-with-tooltip) cu o ancoră redată explicit.
+
+Linkurile nu au un atribut nativ `disabled`. Dacă o destinație nu este disponibilă, proprietarul linkului trebuie să furnizeze semantica, ordinea de tabulare și politica de navigare adecvate. Stilizarea sa doar cu `ListItem.disabled` nu împiedică navigarea.
+
+## Proprietar al elementului pop-up
+
+Folosește `Dropdown.ActionItem` sau `Dropdown.OptionItem` în containerul popupului acestora. Aceste părți compun deja aspectul ListItem și îi expun sloturile vizuale. Proprietarul pop-up furnizează roluri, focalizare, navigare cu tastatura, activare și comportament dezactivat.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+
+type RecordActionsProps = { onDuplicate: () => void };
+
+export const RecordActions = ({ onDuplicate }: RecordActionsProps) => (
+  <Dropdown.Root type="menu">
+    <Dropdown.Trigger render={<Button>Record actions</Button>} />
+    <Dropdown.Content>
+      <Dropdown.ActionItem onClick={onDuplicate}>
+        Duplicate record
+      </Dropdown.ActionItem>
+      <Dropdown.ActionItem disabled>Unavailable action</Dropdown.ActionItem>
+    </Dropdown.Content>
+  </Dropdown.Root>
+);
+```
+
+<StoryEmbed storyId="ui-components-dropdown--display" title="Containerul elementului Dropdown" height={420} />
+
+## Politica evenimentelor native
+
+ListItem redirecționează obiecte și gestionari de evenimente native. Clicurile se propagă în mod normal, inclusiv clicurile pe controalele de acțiune de la final. Plasați orice limită intenționată pe proprietarul interactiv sau pe gestionarul apelantului.
+
+```tsx
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+type OpenRecordProps = { onOpen: () => void };
+
+export const OpenRecord = ({ onOpen }: OpenRecordProps) => (
+  <ListItem
+    render={<button type="button" />}
+    onClick={(event) => {
+      event.stopPropagation();
+      onOpen();
+    }}
+  >
+    Open record
+  </ListItem>
+);
+```
+
+Apelantul deține, de asemenea, orice politică `preventDefault()`, cum ar fi prevenirea navigării unui link. Transmiterea lui `onClick` nu adaugă un rol, nu face un `div` utilizabil cu tastatura și nu modifică propagarea.
+
+## Glisare gestionată de aplicație și navigare în editor
+
+Compuneți rânduri reordonabile cu `ListItem` în interiorul gazdei de glisare a aplicației. Puneți atributele și listenerii de glisare ai gazdei pe mânerul acesteia și transmiteți mânerul sau priza prin `startIcon`. Păstrați controale independente de vizibilitate, editare și ștergere în `actions`. Gazda de glisare gestionează reordonarea cu indicatorul și tastatura, glisarea dezactivată și etichetele accesibile ale mânerului.
+
+Pentru sugestiile editorului, păstrați lista existentă a editorului și proprietarul opțiunii active. Redați fiecare `ListItem` cu `role="option"` și `aria-selected` și utilizați `focused` pentru aspectul rândului activ. Editorul gestionează navigarea cu săgețile și activarea cu Enter, în timp ce focalizarea rămâne în suprafața de editare. Preveniți modificările focalizării la apăsarea indicatorului atunci când editorul le necesită și gestionați selectarea cu indicatorul în handlerul de rând al aplicației.
+
+Pentru sugestiile dintr-o pagină Dropdown, utilizați `Dropdown.OptionItem` sau `Dropdown.ActionItem`, astfel încât pagina respectivă să gestioneze navigarea și activarea. Nu adăugați un al doilea handler pentru Enter sau Space la un proprietar care se activează deja de la tastatură.
+
+## Rând de setări
+
+Utilizează [SettingsRow](/ro/ui/components/settings/settings-row) pentru un rând de comutator etichetat. Compune `ListItem` și `Switch`, gestionează asocierea accesibilă dintre ele și utilizează starea dezactivată a comutatorului pentru aspectul rândului.
+
+## Indicator de selecție
+
+```tsx
+import { useState } from 'react';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const ShowArchivedToggle = () => {
+  const [selected, setSelected] = useState(false);
+
+  return (
+    <ListItem
+      render={<button type="button" aria-pressed={selected} />}
+      selected={selected}
+      indicator="check"
+      onClick={() => setSelected(!selected)}
+    >
+      Show archived records
+    </ListItem>
+  );
+};
+```
+
+`active`, `selected`, `focused` și `disabled` controlează independent stilizarea rândului. Acestea nu înregistrează acțiuni, nu mută focalizarea DOM, nu adaugă roluri sau stări accesibile și nu suprimă evenimente. Indicatorii `check` și `checkbox` sunt decorativi; utilizați un [Checkbox](/ro/ui/primitives/input/checkbox) real pentru un control de formular. Setați `aria-pressed`, `aria-selected` sau alte semantici de stare pe proprietarul care are nevoie de ele.
+
+## Rânduri de selectare.
+
+Selecția aparține părintelui. `ListItem` nu are o stare de selecție necontrolată: transmiteți `selected` și actualizați-o din `onClick`. Folosiți `indicator="check"` pentru o singură opțiune și `indicator="checkbox"` pentru opțiuni multiple. Ambii indicatori sunt decorativi; proprietarul interactiv gestionează activarea.
+
+Într-o casetă listă existentă, transmiteți `role="option"` și `aria-selected` și păstrați gestionarea focalizării și a tastelor săgeată în caseta listă. Pentru un widget de selecție complet, utilizați [Select](/ro/ui/primitives/input/select). Butoanele de selecție independente pot utiliza `aria-pressed`, ca în aceste exemple.
+
+### Selecție unică
+
+Plasați un [Avatar](/ro/ui/primitives/data-display/avatar) în `startIcon` pentru a identifica o înregistrare. Utilizați `description` pentru text de suport și `descriptionPlacement="end"` pentru o valoare la final.
+
+<StoryEmbed storyId="ui-navigation-listitem-picker--single-selection" title="Rânduri cu selecție unică" height={170} />
+
+```tsx
+import { useState } from 'react';
+import { Avatar } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const AssigneeButtons = () => {
+  const [assignee, setAssignee] = useState<string | null>(null);
+
+  return (
+    <div role="group" aria-label="Assignee">
+      {['Alex Morgan', 'Sam Taylor'].map((name) => (
+        <ListItem
+          key={name}
+          render={<button type="button" />}
+          aria-pressed={assignee === name}
+          selected={assignee === name}
+          indicator="check"
+          startIcon={<Avatar name={name} size="md" imageProps={{ alt: '' }} />}
+          onClick={() => setAssignee(name)}
+        >
+          {name}
+        </ListItem>
+      ))}
+    </div>
+  );
+};
+```
+
+### Selecție multiplă
+
+Compuneți [Tag](/ro/ui/primitives/data-display/tag) ca conținut al rândului pentru valori etichetate sau puneți [ColorSample](/ro/ui/primitives/data-display/color-sample) în `startIcon` pentru o alegere de culoare. Un rând poate conține și text simplu sau un avatar.
+
+<StoryEmbed storyId="ui-navigation-listitem-picker--multiple-selection" title="Rânduri cu selecție multiplă" height={170} />
+
+```tsx
+import { useState } from 'react';
+import { Tag } from 'twenty-ui/primitives/data-display';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+export const TeammateButtons = () => {
+  const [teammates, setTeammates] = useState<string[]>([]);
+
+  const toggleTeammate = (name: string) => {
+    setTeammates((current) =>
+      current.includes(name)
+        ? current.filter((teammate) => teammate !== name)
+        : [...current, name],
+    );
+  };
+
+  return (
+    <div role="group" aria-label="Teammates">
+      {['Alex Morgan', 'Sam Taylor'].map((name) => (
+        <ListItem
+          key={name}
+          render={<button type="button" />}
+          aria-pressed={teammates.includes(name)}
+          selected={teammates.includes(name)}
+          indicator="checkbox"
+          onClick={() => toggleTeammate(name)}
+        >
+          <Tag color="blue">{name}</Tag>
+        </ListItem>
+      ))}
+    </div>
+  );
+};
+```
+
+Indicatorul casetei de bifare nu este un control de formular și nu trimite o valoare. Utilizați [Checkbox](/ro/ui/primitives/input/checkbox) când aveți nevoie de participare la formular. Setați `disabled` nativ pe butonul redat pentru a preveni activarea și a-l elimina din ordinea de tabulare. Transmiteți, de asemenea, `ListItem.disabled` pentru aspectul său vizual.
+
+## Sloturi
+
+Utilizați `startIcon` și `endIcon` pentru pictograme sau conținut controlat de apelant, `description` pentru text de susținere, `actions` pentru conținut la final și `hasSubmenu` pentru un indicator de submeniu. `descriptionPlacement` acceptă `inline`, `end` sau `below`. `color="danger"` stilizează o acțiune distructivă. Evitați imbricarea controalelor interactive într-un rând redat ca buton.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { ListItem } from 'twenty-ui/primitives/navigation';
+
+type ContactRowProps = { onOpen: () => void };
+
+export const ContactRow = ({ onOpen }: ContactRowProps) => (
+  <ListItem
+    description="Account owner"
+    actions={
+      <Button
+        type="button"
+        aria-label="Open Alex Morgan's profile"
+        variant="ghost"
+        size="sm"
+        onClick={onOpen}
+      >
+        Open
+      </Button>
+    }
+  >
+    Alex Morgan
+  </ListItem>
+);
+```
+
+## Etichete
+
+Utilizați `shortcutJoinLabel` pentru a personaliza textul dintre pașii succesivi ai comenzilor rapide. Valoarea implicită este `then`; un șir gol elimină textul de îmbinare. Aceeași proprietate este disponibilă în părțile elementului `Dropdown`.
+
+## Proprietăți
+
+Referința este generată din tipurile publice ale componentei. Sunt acceptate atribute și gestionari `div` nativi, inclusiv nume accesibile și evenimente native. Puneți atributele specifice butonului sau ancorei pe elementul furnizat prin `render`. Atât `ref`, cât și referința elementului redat vizează rădăcina DOM efectivă.
+
+<ListItemReference />
+
+Transmiteți `shortcut={['Mod', 'Enter']}` pentru taste simultane sau `shortcut={[['G'], ['P']]}` pentru apăsări succesive. Consultați [Shortcut](/ro/ui/primitives/typography/shortcut) pentru combinații imbricate și formatorul de șiruri partajat.
+
+<PageBanner illustration="section-apps-data" />

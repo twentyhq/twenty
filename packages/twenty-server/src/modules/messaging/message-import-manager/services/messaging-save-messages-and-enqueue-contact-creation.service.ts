@@ -140,6 +140,10 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
                   participantsWithMessageId,
                   workspaceId,
                   transactionScope,
+                  {
+                    shouldMatchOnDisplayName:
+                      messageChannel.type !== MessageChannelType.APP,
+                  },
                 );
 
               const folderAssociations: MessageChannelMessageAssociationFolderAssociation[] =
@@ -199,6 +203,10 @@ export class MessagingSaveMessagesAndEnqueueContactCreationService {
           connectedAccount,
           contactsToCreate,
           source: FieldActorSource.EMAIL,
+        },
+        {
+          workspaceId,
+          isWorkspaceJob: true,
         },
       );
     }

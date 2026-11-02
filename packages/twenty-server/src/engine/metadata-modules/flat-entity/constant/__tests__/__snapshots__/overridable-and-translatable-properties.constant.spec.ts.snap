@@ -2,7 +2,16 @@
 
 exports[`registry-derived override property maps derives the overridable properties for every metadata entity 1`] = `
 {
-  "agent": [],
+  "agent": [
+    "label",
+    "icon",
+    "description",
+    "prompt",
+    "modelId",
+    "responseFormat",
+    "modelConfiguration",
+    "isActive",
+  ],
   "agentChatChannel": [],
   "agentChatChannelRole": [],
   "applicationVariable": [],
@@ -30,6 +39,8 @@ exports[`registry-derived override property maps derives the overridable propert
   "frontComponent": [],
   "index": [],
   "logicFunction": [],
+  "mcpServer": [],
+  "messagingProvider": [],
   "navigationMenuItem": [],
   "objectMetadata": [
     "openRecordIn",
@@ -58,6 +69,7 @@ exports[`registry-derived override property maps derives the overridable propert
     "isActive",
   ],
   "permissionFlag": [],
+  "relatedRecordPath": [],
   "role": [],
   "rolePermissionFlag": [],
   "roleTarget": [],
@@ -65,7 +77,13 @@ exports[`registry-derived override property maps derives the overridable propert
   "rowLevelPermissionPredicateGroup": [],
   "searchFieldMetadata": [],
   "settingsMenuItem": [],
-  "skill": [],
+  "skill": [
+    "label",
+    "icon",
+    "description",
+    "content",
+    "isActive",
+  ],
   "timelineActivityType": [
     "label",
     "icon",

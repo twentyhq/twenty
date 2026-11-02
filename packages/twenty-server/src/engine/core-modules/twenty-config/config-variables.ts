@@ -1030,6 +1030,15 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.BILLING_CONFIG,
     description:
+      'Email domains whose users keep the free trial on every workspace, however many trialing workspaces they are already in (twenty.com, acme.com). Exact domain match, subdomains not included',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  BILLING_TRIAL_LIMIT_EXEMPT_EMAIL_DOMAINS: string[] = [];
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.BILLING_CONFIG,
+    description:
       'Amount of credits for the free trial without credit card (in microCredits)',
     type: ConfigVariableType.NUMBER,
   })
@@ -1402,7 +1411,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGGING,
     description:
-      'Share of sampled server traces that are also profiled, between 0 and 1. Read before the config store is available, so it cannot be overridden from the database.',
+      'Share of server processes that profile their sampled traces, between 0 and 1. Read before the config store is available, so it cannot be overridden from the database.',
     type: ConfigVariableType.NUMBER,
     isEnvOnly: true,
   })
@@ -1607,6 +1616,15 @@ export class ConfigVariables {
   })
   @IsOptional()
   WORKER_EXCLUDED_QUEUES: string[] = [];
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Order the jobs of each queue by tenant virtual clocks (workspace and application group keys) so that a burst from one tenant does not delay the others. Off: jobs of a queue are processed in FIFO order.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_WORKER_FAIRNESS_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
@@ -2044,6 +2062,19 @@ export class ConfigVariables {
   CLOUDFLARE_DCV_DELEGATION_ID: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CLOUDFLARE_CONFIG,
+    description:
+      'Store the visitor location headers Cloudflare adds (cf-ipcountry, ' +
+      'cf-region, cf-ipcity) on user sessions. Only enable when every ' +
+      'request reaches the server through Cloudflare: otherwise clients ' +
+      'can forge them.',
+    type: ConfigVariableType.BOOLEAN,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  IS_CLOUDFLARE_GEOLOCATION_ENABLED = false;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     isSensitive: true,
     description: 'API key for OpenAI models (GPT, o-series)',
@@ -2302,6 +2333,24 @@ export class ConfigVariables {
   })
   @IsOptional()
   CAPTCHA_SECRET_KEY?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CAPTCHA_CONFIG,
+    description:
+      'Minimum Google reCAPTCHA v3 score, between 0 and 1, required to accept a request',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  CAPTCHA_MIN_SCORE = 0;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.CAPTCHA_CONFIG,
+    description: 'Require a valid captcha to create a new workspace',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_WORKSPACE_CREATION_CAPTCHA_ENABLED = false;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

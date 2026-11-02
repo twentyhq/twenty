@@ -21,4 +21,9 @@ export class SignUpInNewWorkspaceInput {
   @IsOptional()
   @Matches(PARTNER_PATTERN)
   partner?: string;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  captchaToken?: string;
 }

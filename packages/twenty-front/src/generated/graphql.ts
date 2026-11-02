@@ -1,1322 +1,311 @@
-import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
-export type Maybe<T> = T | null;
-export type InputMaybe<T> = Maybe<T>;
-export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
-export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
-export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
-export type MakeEmpty<T extends { [key: string]: unknown }, K extends keyof T> = { [_ in K]?: never };
+/** Internal type. DO NOT USE DIRECTLY. */
+type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+/** Internal type. DO NOT USE DIRECTLY. */
 export type Incremental<T> = T | { [P in keyof T]?: P extends ' $fragmentName' | '__typename' ? T[P] : never };
-/** All built-in and custom scalars, mapped to their actual values */
-export type Scalars = {
-  ID: { input: string; output: string; }
-  String: { input: string; output: string; }
-  Boolean: { input: boolean; output: boolean; }
-  Int: { input: number; output: number; }
-  Float: { input: number; output: number; }
-  DateTime: { input: string; output: string; }
-  JSON: { input: any; output: any; }
-  UUID: { input: any; output: any; }
-};
+import type * as Types from './schema';
 
-export type AnswerToolCallInput = {
-  modelId?: InputMaybe<Scalars['String']['input']>;
-  /** The answer, validated against what the tool call asked */
-  response: Scalars['JSON']['input'];
-  threadId: Scalars['UUID']['input'];
-  toolCallId: Scalars['String']['input'];
-};
+import { TypedDocumentNode as DocumentNode } from '@graphql-typed-document-node/core';
+export * from './schema';
+export type TimelineCalendarEventCallRecordingFragmentFragment = { __typename: 'TimelineCalendarEventCallRecording', id: any, status: Types.CallRecordingStatus, applicationId: any };
 
-export type AnswerToolCallResult = {
-  __typename?: 'AnswerToolCallResult';
-  streamId?: Maybe<Scalars['String']['output']>;
-};
+export type TimelineCalendarEventFragmentFragment = { __typename: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: Types.CalendarChannelVisibility, participants: Array<{ __typename: 'TimelineCalendarEventParticipant', personId: any, workspaceMemberId: any, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }>, callRecordings: Array<{ __typename: 'TimelineCalendarEventCallRecording', id: any, status: Types.CallRecordingStatus, applicationId: any }> };
 
-export enum CalendarChannelVisibility {
-  METADATA = 'METADATA',
-  SHARE_EVERYTHING = 'SHARE_EVERYTHING'
-}
+export type TimelineCalendarEventParticipantFragmentFragment = { __typename: 'TimelineCalendarEventParticipant', personId: any, workspaceMemberId: any, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
 
-/** Recording lifecycle status */
-export enum CallRecordingStatus {
-  COMPLETED = 'COMPLETED',
-  FAILED = 'FAILED',
-  JOINING = 'JOINING',
-  NOT_RECORDED = 'NOT_RECORDED',
-  PROCESSING = 'PROCESSING',
-  RECORDING = 'RECORDING',
-  SCHEDULED = 'SCHEDULED'
-}
-
-export type ComputeStepOutputSchemaInput = {
-  /** Core workflow version ID */
-  coreWorkflowVersionId?: InputMaybe<Scalars['UUID']['input']>;
-  /** Step JSON format */
-  step: Scalars['JSON']['input'];
-};
-
-export type ConnectedAccountHandleDto = {
-  __typename?: 'ConnectedAccountHandleDTO';
-  handle: Scalars['String']['output'];
-  handleAliases?: Maybe<Array<Scalars['String']['output']>>;
-  id: Scalars['UUID']['output'];
-  provider: Scalars['String']['output'];
-};
-
-export type CoreWorkflowConnection = {
-  __typename?: 'CoreWorkflowConnection';
-  edges: Array<CoreWorkflowEdge>;
-  pageInfo: CoreWorkflowPageInfo;
-  totalCount: Scalars['Int']['output'];
-};
-
-export type CoreWorkflowDto = {
-  __typename?: 'CoreWorkflowDTO';
-  applicationId?: Maybe<Scalars['UUID']['output']>;
-  canChangeVisibility: Scalars['Boolean']['output'];
-  createdAt: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  isSystem: Scalars['Boolean']['output'];
-  lastPublishedCoreWorkflowVersionId?: Maybe<Scalars['UUID']['output']>;
-  lastPublishedVersionId?: Maybe<Scalars['UUID']['output']>;
-  name?: Maybe<Scalars['String']['output']>;
-  statuses: Array<CoreWorkflowStatus>;
-  updatedAt: Scalars['String']['output'];
-  visibility: WorkflowVisibility;
-  workspaceWorkflowId?: Maybe<Scalars['UUID']['output']>;
-};
-
-export type CoreWorkflowEdge = {
-  __typename?: 'CoreWorkflowEdge';
-  cursor: Scalars['String']['output'];
-  node: CoreWorkflowDto;
-};
-
-export enum CoreWorkflowFilterFieldKey {
-  IS_SYSTEM = 'IS_SYSTEM',
-  NAME = 'NAME',
-  STATUSES = 'STATUSES',
-  UPDATED_AT = 'UPDATED_AT'
-}
-
-export type CoreWorkflowFilterInput = {
-  logicalOperator: CoreWorkflowFilterLogicalOperator;
-  rules: Array<CoreWorkflowFilterRuleInput>;
-};
-
-export enum CoreWorkflowFilterLogicalOperator {
-  AND = 'AND',
-  OR = 'OR'
-}
-
-export enum CoreWorkflowFilterOperand {
-  CONTAINS = 'CONTAINS',
-  DOES_NOT_CONTAIN = 'DOES_NOT_CONTAIN',
-  IS = 'IS',
-  IS_AFTER = 'IS_AFTER',
-  IS_BEFORE = 'IS_BEFORE',
-  IS_EMPTY = 'IS_EMPTY',
-  IS_IN_FUTURE = 'IS_IN_FUTURE',
-  IS_IN_PAST = 'IS_IN_PAST',
-  IS_NOT = 'IS_NOT',
-  IS_NOT_EMPTY = 'IS_NOT_EMPTY',
-  IS_RELATIVE = 'IS_RELATIVE',
-  IS_TODAY = 'IS_TODAY'
-}
-
-export type CoreWorkflowFilterRuleInput = {
-  fieldKey: CoreWorkflowFilterFieldKey;
-  operand: CoreWorkflowFilterOperand;
-  timezone?: InputMaybe<Scalars['String']['input']>;
-  value?: InputMaybe<Scalars['String']['input']>;
-};
-
-export enum CoreWorkflowOrderByDirection {
-  ASC = 'ASC',
-  DESC = 'DESC'
-}
-
-export enum CoreWorkflowOrderByField {
-  NAME = 'NAME',
-  UPDATED_AT = 'UPDATED_AT'
-}
-
-export type CoreWorkflowPageInfo = {
-  __typename?: 'CoreWorkflowPageInfo';
-  endCursor?: Maybe<Scalars['String']['output']>;
-  hasNextPage: Scalars['Boolean']['output'];
-};
-
-export enum CoreWorkflowStatus {
-  ACTIVE = 'ACTIVE',
-  DEACTIVATED = 'DEACTIVATED',
-  DRAFT = 'DRAFT'
-}
-
-export type CoreWorkflowVersionDto = {
-  __typename?: 'CoreWorkflowVersionDTO';
-  coreWorkflowId?: Maybe<Scalars['UUID']['output']>;
-  createdAt: Scalars['String']['output'];
-  id: Scalars['UUID']['output'];
-  label: Scalars['String']['output'];
-  status: CoreWorkflowVersionStatus;
-  steps?: Maybe<Scalars['JSON']['output']>;
-  trigger?: Maybe<Scalars['JSON']['output']>;
-  updatedAt: Scalars['String']['output'];
-  workspaceWorkflowId?: Maybe<Scalars['UUID']['output']>;
-  workspaceWorkflowVersionId?: Maybe<Scalars['UUID']['output']>;
-};
-
-export enum CoreWorkflowVersionStatus {
-  ACTIVE = 'ACTIVE',
-  ARCHIVED = 'ARCHIVED',
-  DEACTIVATED = 'DEACTIVATED',
-  DRAFT = 'DRAFT'
-}
-
-export type CoreWorkflowWithCurrentVersionDto = {
-  __typename?: 'CoreWorkflowWithCurrentVersionDTO';
-  currentVersion: CoreWorkflowVersionDto;
-  versions: Array<CoreWorkflowVersionDto>;
-  workflow: CoreWorkflowDto;
-};
-
-export type CoreWorkflowsWithCurrentVersionsInput = {
-  coreWorkflowIds: Array<Scalars['UUID']['input']>;
-};
-
-export type CreateCoreWorkflowInput = {
-  name?: InputMaybe<Scalars['String']['input']>;
-  visibility?: InputMaybe<WorkflowVisibility>;
-};
-
-export type CreateCoreWorkflowVersionEdgeInput = {
-  /** Core workflow version ID */
-  coreWorkflowVersionId: Scalars['UUID']['input'];
-  /** Workflow version source step ID */
-  source: Scalars['String']['input'];
-  /** Workflow version source step connection options */
-  sourceConnectionOptions?: InputMaybe<Scalars['JSON']['input']>;
-  /** Workflow version target step ID */
-  target: Scalars['String']['input'];
-};
-
-export type CreateCoreWorkflowVersionStepInput = {
-  /** Core workflow version ID */
-  coreWorkflowVersionId: Scalars['UUID']['input'];
-  /** Default settings for the step */
-  defaultSettings?: InputMaybe<Scalars['JSON']['input']>;
-  /** Step ID */
-  id?: InputMaybe<Scalars['String']['input']>;
-  /** Next step ID */
-  nextStepId?: InputMaybe<Scalars['UUID']['input']>;
-  /** Parent step connection options */
-  parentStepConnectionOptions?: InputMaybe<Scalars['JSON']['input']>;
-  /** Parent step ID */
-  parentStepId?: InputMaybe<Scalars['String']['input']>;
-  /** Step position */
-  position?: InputMaybe<WorkflowStepPositionInput>;
-  /** New step type */
-  stepType: Scalars['String']['input'];
-};
-
-export type CreateDraftFromCoreWorkflowVersionInput = {
-  /** Core workflow ID */
-  coreWorkflowId: Scalars['UUID']['input'];
-  /** Core workflow version ID to copy */
-  coreWorkflowVersionIdToCopy: Scalars['UUID']['input'];
-};
-
-export type DateTimeFilter = {
-  eq?: InputMaybe<Scalars['DateTime']['input']>;
-  gt?: InputMaybe<Scalars['DateTime']['input']>;
-  gte?: InputMaybe<Scalars['DateTime']['input']>;
-  in?: InputMaybe<Array<Scalars['DateTime']['input']>>;
-  is?: InputMaybe<FilterIs>;
-  lt?: InputMaybe<Scalars['DateTime']['input']>;
-  lte?: InputMaybe<Scalars['DateTime']['input']>;
-  neq?: InputMaybe<Scalars['DateTime']['input']>;
-};
-
-export type DeleteCoreWorkflowVersionEdgeInput = {
-  /** Core workflow version ID */
-  coreWorkflowVersionId: Scalars['UUID']['input'];
-  /** Workflow version source step ID */
-  source: Scalars['String']['input'];
-  /** Workflow version source step connection options */
-  sourceConnectionOptions?: InputMaybe<Scalars['JSON']['input']>;
-  /** Workflow version target step ID */
-  target: Scalars['String']['input'];
-};
-
-export type DeleteCoreWorkflowVersionStepInput = {
-  /** Core workflow version ID */
-  coreWorkflowVersionId: Scalars['UUID']['input'];
-  /** Step to delete ID */
-  stepId: Scalars['String']['input'];
-};
-
-export type DeleteCoreWorkflowsInput = {
-  coreWorkflowIds: Array<Scalars['UUID']['input']>;
-};
-
-export type DeletedCoreWorkflowDto = {
-  __typename?: 'DeletedCoreWorkflowDTO';
-  id: Scalars['UUID']['output'];
-  workspaceWorkflowId?: Maybe<Scalars['UUID']['output']>;
-};
-
-export type DiscardCoreWorkflowDraftInput = {
-  coreWorkflowVersionId: Scalars['UUID']['input'];
-};
-
-export type DpaAgreement = {
-  __typename?: 'DpaAgreement';
-  acceptedAt: Scalars['DateTime']['output'];
-  acceptedByEmail?: Maybe<Scalars['String']['output']>;
-  createdAt: Scalars['DateTime']['output'];
-  customerLegalEntityName?: Maybe<Scalars['String']['output']>;
-  downloadUrl?: Maybe<Scalars['String']['output']>;
-  id: Scalars['UUID']['output'];
-  processorEntity: Scalars['String']['output'];
-  region: DpaRegion;
-  signatoryName?: Maybe<Scalars['String']['output']>;
-  signatoryTitle?: Maybe<Scalars['String']['output']>;
-  signedFileId?: Maybe<Scalars['String']['output']>;
-  templateVersion: Scalars['String']['output'];
-  type: DpaAgreementType;
-  updatedAt: Scalars['DateTime']['output'];
-};
-
-export enum DpaAgreementType {
-  CLICK_THROUGH = 'CLICK_THROUGH',
-  SIGNED = 'SIGNED'
-}
-
-export type DpaDocument = {
-  __typename?: 'DpaDocument';
-  blocks: Array<DpaDocumentBlock>;
-  lastUpdatedLabel: Scalars['String']['output'];
-  notice?: Maybe<Scalars['String']['output']>;
-  processorEntity: Scalars['String']['output'];
-  region: DpaRegion;
-  sccSectionActive: Scalars['Boolean']['output'];
-  templateVersion: Scalars['String']['output'];
-  title: Scalars['String']['output'];
-};
-
-export type DpaDocumentBlock = {
-  __typename?: 'DpaDocumentBlock';
-  kind: DpaDocumentBlockKind;
-  label?: Maybe<Scalars['String']['output']>;
-  text: Scalars['String']['output'];
-  value?: Maybe<Scalars['String']['output']>;
-};
-
-export enum DpaDocumentBlockKind {
-  Heading = 'Heading',
-  Paragraph = 'Paragraph',
-  SignatureField = 'SignatureField'
-}
-
-export enum DpaRegion {
-  EU = 'EU',
-  US = 'US'
-}
-
-export type DuplicateCoreWorkflowInput = {
-  /** Core workflow ID to duplicate */
-  coreWorkflowIdToDuplicate: Scalars['UUID']['input'];
-  /** Core workflow version ID to copy */
-  coreWorkflowVersionIdToCopy: Scalars['UUID']['input'];
-};
-
-export type DuplicateCoreWorkflowVersionStepInput = {
-  /** Core workflow version ID */
-  coreWorkflowVersionId: Scalars['UUID']['input'];
-  stepId: Scalars['String']['input'];
-};
-
-export enum FilterIs {
-  NotNull = 'NotNull',
-  Null = 'Null'
-}
-
-export type GenerateSignedDpaInput = {
-  customerLegalEntityName: Scalars['String']['input'];
-  signatoryName: Scalars['String']['input'];
-  signatoryTitle: Scalars['String']['input'];
-};
-
-export type GenerateSignedDpaResult = {
-  __typename?: 'GenerateSignedDpaResult';
-  agreement: DpaAgreement;
-  downloadUrl: Scalars['String']['output'];
-};
-
-export type LinkMetadata = {
-  __typename?: 'LinkMetadata';
-  label: Scalars['String']['output'];
-  url: Scalars['String']['output'];
-};
-
-export type LinksMetadata = {
-  __typename?: 'LinksMetadata';
-  primaryLinkLabel: Scalars['String']['output'];
-  primaryLinkUrl: Scalars['String']['output'];
-  secondaryLinks?: Maybe<Array<LinkMetadata>>;
-};
-
-export enum MessageChannelVisibility {
-  METADATA = 'METADATA',
-  SHARE_EVERYTHING = 'SHARE_EVERYTHING',
-  SUBJECT = 'SUBJECT'
-}
-
-export type Mutation = {
-  __typename?: 'Mutation';
-  activateCoreWorkflowVersion: Scalars['Boolean']['output'];
-  answerToolCall: AnswerToolCallResult;
-  computeStepOutputSchema: Scalars['JSON']['output'];
-  createCoreWorkflow: CoreWorkflowDto;
-  createCoreWorkflowVersionEdge: WorkflowVersionStepChanges;
-  createCoreWorkflowVersionStep: WorkflowVersionStepChanges;
-  createDraftFromCoreWorkflowVersion: CoreWorkflowVersionDto;
-  deactivateCoreWorkflowVersion: Scalars['Boolean']['output'];
-  deleteCoreWorkflowVersionEdge: WorkflowVersionStepChanges;
-  deleteCoreWorkflowVersionStep: WorkflowVersionStepChanges;
-  deleteCoreWorkflows: Array<DeletedCoreWorkflowDto>;
-  discardCoreWorkflowDraft?: Maybe<CoreWorkflowDto>;
-  dismissMaintenanceModeBanner: Scalars['Boolean']['output'];
-  dismissReconnectAccountBanner: Scalars['Boolean']['output'];
-  duplicateCoreWorkflow: CoreWorkflowDto;
-  duplicateCoreWorkflowVersionStep: WorkflowVersionStepChanges;
-  generateSignedDpa: GenerateSignedDpaResult;
-  retryWorkflowRun: WorkflowRun;
-  runCoreWorkflowVersion: RunWorkflowVersion;
-  stopWorkflowRun: WorkflowRun;
-  submitFormStep: Scalars['Boolean']['output'];
-  testHttpRequest: TestHttpRequest;
-  updateCoreWorkflow?: Maybe<CoreWorkflowDto>;
-  updateCoreWorkflowVersionPositions: Scalars['Boolean']['output'];
-  updateCoreWorkflowVersionStep: WorkflowAction;
-  updateCoreWorkflowVersionTrigger: WorkflowVersionTrigger;
-  updateCoreWorkflowVisibility?: Maybe<CoreWorkflowDto>;
-  updateWorkflowRunStep: WorkflowAction;
-};
-
-
-export type MutationActivateCoreWorkflowVersionArgs = {
-  coreWorkflowVersionId: Scalars['UUID']['input'];
-};
-
-
-export type MutationAnswerToolCallArgs = {
-  input: AnswerToolCallInput;
-};
-
-
-export type MutationComputeStepOutputSchemaArgs = {
-  input: ComputeStepOutputSchemaInput;
-};
-
-
-export type MutationCreateCoreWorkflowArgs = {
-  input: CreateCoreWorkflowInput;
-};
-
-
-export type MutationCreateCoreWorkflowVersionEdgeArgs = {
-  input: CreateCoreWorkflowVersionEdgeInput;
-};
-
-
-export type MutationCreateCoreWorkflowVersionStepArgs = {
-  input: CreateCoreWorkflowVersionStepInput;
-};
-
-
-export type MutationCreateDraftFromCoreWorkflowVersionArgs = {
-  input: CreateDraftFromCoreWorkflowVersionInput;
-};
-
-
-export type MutationDeactivateCoreWorkflowVersionArgs = {
-  coreWorkflowVersionId: Scalars['UUID']['input'];
-};
-
-
-export type MutationDeleteCoreWorkflowVersionEdgeArgs = {
-  input: DeleteCoreWorkflowVersionEdgeInput;
-};
-
-
-export type MutationDeleteCoreWorkflowVersionStepArgs = {
-  input: DeleteCoreWorkflowVersionStepInput;
-};
-
-
-export type MutationDeleteCoreWorkflowsArgs = {
-  input: DeleteCoreWorkflowsInput;
-};
-
-
-export type MutationDiscardCoreWorkflowDraftArgs = {
-  input: DiscardCoreWorkflowDraftInput;
-};
-
-
-export type MutationDismissReconnectAccountBannerArgs = {
-  connectedAccountId: Scalars['UUID']['input'];
-};
-
-
-export type MutationDuplicateCoreWorkflowArgs = {
-  input: DuplicateCoreWorkflowInput;
-};
-
-
-export type MutationDuplicateCoreWorkflowVersionStepArgs = {
-  input: DuplicateCoreWorkflowVersionStepInput;
-};
-
-
-export type MutationGenerateSignedDpaArgs = {
-  input: GenerateSignedDpaInput;
-};
-
-
-export type MutationRetryWorkflowRunArgs = {
-  workflowRunId: Scalars['UUID']['input'];
-};
-
-
-export type MutationRunCoreWorkflowVersionArgs = {
-  input: RunCoreWorkflowVersionInput;
-};
-
-
-export type MutationStopWorkflowRunArgs = {
-  workflowRunId: Scalars['UUID']['input'];
-};
-
-
-export type MutationSubmitFormStepArgs = {
-  input: SubmitFormStepInput;
-};
-
-
-export type MutationTestHttpRequestArgs = {
-  input: TestHttpRequestInput;
-};
-
-
-export type MutationUpdateCoreWorkflowArgs = {
-  input: UpdateCoreWorkflowInput;
-};
-
-
-export type MutationUpdateCoreWorkflowVersionPositionsArgs = {
-  input: UpdateCoreWorkflowVersionPositionsInput;
-};
-
-
-export type MutationUpdateCoreWorkflowVersionStepArgs = {
-  input: UpdateCoreWorkflowVersionStepInput;
-};
-
-
-export type MutationUpdateCoreWorkflowVersionTriggerArgs = {
-  input: UpdateCoreWorkflowVersionTriggerInput;
-};
-
-
-export type MutationUpdateCoreWorkflowVisibilityArgs = {
-  input: UpdateCoreWorkflowVisibilityInput;
-};
-
-
-export type MutationUpdateWorkflowRunStepArgs = {
-  input: UpdateWorkflowRunStepInput;
-};
-
-export type ObjectRecordFilterInput = {
-  and?: InputMaybe<Array<ObjectRecordFilterInput>>;
-  createdAt?: InputMaybe<DateTimeFilter>;
-  deletedAt?: InputMaybe<DateTimeFilter>;
-  id?: InputMaybe<UuidFilter>;
-  not?: InputMaybe<ObjectRecordFilterInput>;
-  or?: InputMaybe<Array<ObjectRecordFilterInput>>;
-  updatedAt?: InputMaybe<DateTimeFilter>;
-};
-
-export type Query = {
-  __typename?: 'Query';
-  coreWorkflow?: Maybe<CoreWorkflowDto>;
-  coreWorkflowById?: Maybe<CoreWorkflowDto>;
-  coreWorkflowVersion?: Maybe<CoreWorkflowVersionDto>;
-  coreWorkflowVersionById?: Maybe<CoreWorkflowVersionDto>;
-  coreWorkflowVersions: Array<CoreWorkflowVersionDto>;
-  coreWorkflowVersionsByCoreWorkflowId: Array<CoreWorkflowVersionDto>;
-  coreWorkflows: CoreWorkflowConnection;
-  coreWorkflowsWithCurrentVersions: Array<CoreWorkflowWithCurrentVersionDto>;
-  dpaAgreements: Array<DpaAgreement>;
-  dpaPreview: DpaDocument;
-  /** @deprecated Use getTimelineCalendarEventsFromObjectRecord instead */
-  getTimelineCalendarEventsFromCompanyId: TimelineCalendarEventsWithTotal;
-  getTimelineCalendarEventsFromObjectRecord: TimelineCalendarEventsWithTotal;
-  /** @deprecated Use getTimelineCalendarEventsFromObjectRecord instead */
-  getTimelineCalendarEventsFromOpportunityId: TimelineCalendarEventsWithTotal;
-  /** @deprecated Use getTimelineCalendarEventsFromObjectRecord instead */
-  getTimelineCalendarEventsFromPersonId: TimelineCalendarEventsWithTotal;
-  /** @deprecated Use getTimelineThreadsFromObjectRecord instead */
-  getTimelineThreadsFromCompanyId: TimelineThreadsWithTotal;
-  getTimelineThreadsFromObjectRecord: TimelineThreadsWithTotal;
-  /** @deprecated Use getTimelineThreadsFromObjectRecord instead */
-  getTimelineThreadsFromOpportunityId: TimelineThreadsWithTotal;
-  /** @deprecated Use getTimelineThreadsFromObjectRecord instead */
-  getTimelineThreadsFromPersonId: TimelineThreadsWithTotal;
-  isMaintenanceModeBannerDismissed: Scalars['Boolean']['output'];
-  search: SearchResultConnection;
-  searchTimelineCalendarEvents: TimelineCalendarEventSearchResult;
-  searchTimelineThreads: TimelineThreadSearchResult;
-  workflowStepConnectedAccountHandle?: Maybe<ConnectedAccountHandleDto>;
-};
-
-
-export type QueryCoreWorkflowArgs = {
-  workspaceWorkflowId: Scalars['UUID']['input'];
-};
-
-
-export type QueryCoreWorkflowByIdArgs = {
-  coreWorkflowId: Scalars['UUID']['input'];
-};
-
-
-export type QueryCoreWorkflowVersionArgs = {
-  workspaceWorkflowVersionId: Scalars['UUID']['input'];
-};
-
-
-export type QueryCoreWorkflowVersionByIdArgs = {
-  coreWorkflowVersionId: Scalars['UUID']['input'];
-};
-
-
-export type QueryCoreWorkflowVersionsArgs = {
-  workspaceWorkflowId: Scalars['UUID']['input'];
-};
-
-
-export type QueryCoreWorkflowVersionsByCoreWorkflowIdArgs = {
-  coreWorkflowId: Scalars['UUID']['input'];
-};
-
-
-export type QueryCoreWorkflowsArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  filter?: InputMaybe<CoreWorkflowFilterInput>;
-  first?: InputMaybe<Scalars['Int']['input']>;
-  orderBy?: InputMaybe<CoreWorkflowOrderByField>;
-  orderByDirection?: InputMaybe<CoreWorkflowOrderByDirection>;
-};
-
-
-export type QueryCoreWorkflowsWithCurrentVersionsArgs = {
-  input: CoreWorkflowsWithCurrentVersionsInput;
-};
-
-
-export type QueryGetTimelineCalendarEventsFromCompanyIdArgs = {
-  companyId: Scalars['UUID']['input'];
-  page: Scalars['Int']['input'];
-  pageSize: Scalars['Int']['input'];
-};
-
-
-export type QueryGetTimelineCalendarEventsFromObjectRecordArgs = {
-  objectNameSingular: Scalars['String']['input'];
-  page: Scalars['Int']['input'];
-  pageSize: Scalars['Int']['input'];
-  recordId: Scalars['UUID']['input'];
-};
-
-
-export type QueryGetTimelineCalendarEventsFromOpportunityIdArgs = {
-  opportunityId: Scalars['UUID']['input'];
-  page: Scalars['Int']['input'];
-  pageSize: Scalars['Int']['input'];
-};
-
-
-export type QueryGetTimelineCalendarEventsFromPersonIdArgs = {
-  page: Scalars['Int']['input'];
-  pageSize: Scalars['Int']['input'];
-  personId: Scalars['UUID']['input'];
-};
-
-
-export type QueryGetTimelineThreadsFromCompanyIdArgs = {
-  companyId: Scalars['UUID']['input'];
-  page: Scalars['Int']['input'];
-  pageSize: Scalars['Int']['input'];
-};
-
-
-export type QueryGetTimelineThreadsFromObjectRecordArgs = {
-  objectNameSingular: Scalars['String']['input'];
-  page: Scalars['Int']['input'];
-  pageSize: Scalars['Int']['input'];
-  recordId: Scalars['UUID']['input'];
-};
-
-
-export type QueryGetTimelineThreadsFromOpportunityIdArgs = {
-  opportunityId: Scalars['UUID']['input'];
-  page: Scalars['Int']['input'];
-  pageSize: Scalars['Int']['input'];
-};
-
-
-export type QueryGetTimelineThreadsFromPersonIdArgs = {
-  page: Scalars['Int']['input'];
-  pageSize: Scalars['Int']['input'];
-  personId: Scalars['UUID']['input'];
-};
-
-
-export type QuerySearchArgs = {
-  after?: InputMaybe<Scalars['String']['input']>;
-  excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
-  filter?: InputMaybe<ObjectRecordFilterInput>;
-  includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']>>;
-  limit: Scalars['Int']['input'];
-  searchInput: Scalars['String']['input'];
-};
-
-
-export type QuerySearchTimelineCalendarEventsArgs = {
-  objectNameSingular: Scalars['String']['input'];
-  recordId: Scalars['UUID']['input'];
-  searchInput?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QuerySearchTimelineThreadsArgs = {
-  objectNameSingular: Scalars['String']['input'];
-  recordId: Scalars['UUID']['input'];
-  searchInput?: InputMaybe<Scalars['String']['input']>;
-};
-
-
-export type QueryWorkflowStepConnectedAccountHandleArgs = {
-  connectedAccountId: Scalars['UUID']['input'];
-};
-
-export type RunCoreWorkflowVersionInput = {
-  /** Core workflow version ID */
-  coreWorkflowVersionId: Scalars['UUID']['input'];
-  /** Execution result in JSON format */
-  payload?: InputMaybe<Scalars['JSON']['input']>;
-  /** Workflow run ID */
-  workflowRunId?: InputMaybe<Scalars['UUID']['input']>;
-};
-
-export type RunWorkflowVersion = {
-  __typename?: 'RunWorkflowVersion';
-  workflowRunId: Scalars['UUID']['output'];
-};
-
-export type SearchRecord = {
-  __typename?: 'SearchRecord';
-  imageUrl?: Maybe<Scalars['String']['output']>;
-  label: Scalars['String']['output'];
-  objectLabelSingular: Scalars['String']['output'];
-  objectNameSingular: Scalars['String']['output'];
-  recordId: Scalars['UUID']['output'];
-  tsRank: Scalars['Float']['output'];
-  tsRankCD: Scalars['Float']['output'];
-};
-
-export type SearchResultConnection = {
-  __typename?: 'SearchResultConnection';
-  edges: Array<SearchResultEdge>;
-  pageInfo: SearchResultPageInfo;
-};
-
-export type SearchResultEdge = {
-  __typename?: 'SearchResultEdge';
-  cursor: Scalars['String']['output'];
-  node: SearchRecord;
-};
-
-export type SearchResultPageInfo = {
-  __typename?: 'SearchResultPageInfo';
-  endCursor?: Maybe<Scalars['String']['output']>;
-  hasNextPage: Scalars['Boolean']['output'];
-};
-
-export type SubmitFormStepInput = {
-  /** Form values keyed by field name */
-  response: Scalars['JSON']['input'];
-  /** Form step ID */
-  stepId: Scalars['UUID']['input'];
-  /** Workflow run ID */
-  workflowRunId: Scalars['UUID']['input'];
-};
-
-export type TestHttpRequest = {
-  __typename?: 'TestHttpRequest';
-  /** Error information */
-  error?: Maybe<Scalars['JSON']['output']>;
-  /** Response headers */
-  headers?: Maybe<Scalars['JSON']['output']>;
-  /** Message describing the result */
-  message: Scalars['String']['output'];
-  /** Response data */
-  result?: Maybe<Scalars['JSON']['output']>;
-  /** HTTP status code */
-  status?: Maybe<Scalars['Float']['output']>;
-  /** HTTP status text */
-  statusText?: Maybe<Scalars['String']['output']>;
-  /** Whether the request was successful */
-  success: Scalars['Boolean']['output'];
-};
-
-export type TestHttpRequestInput = {
-  /** Request body */
-  body?: InputMaybe<Scalars['JSON']['input']>;
-  /** HTTP headers */
-  headers?: InputMaybe<Scalars['JSON']['input']>;
-  /** HTTP method */
-  method: Scalars['String']['input'];
-  /** URL to make the request to */
-  url: Scalars['String']['input'];
-};
-
-export type TimelineCalendarEvent = {
-  __typename?: 'TimelineCalendarEvent';
-  callRecordings: Array<TimelineCalendarEventCallRecording>;
-  conferenceLink: LinksMetadata;
-  conferenceSolution: Scalars['String']['output'];
-  description: Scalars['String']['output'];
-  endsAt: Scalars['DateTime']['output'];
-  id: Scalars['UUID']['output'];
-  isCanceled: Scalars['Boolean']['output'];
-  isFullDay: Scalars['Boolean']['output'];
-  location: Scalars['String']['output'];
-  participants: Array<TimelineCalendarEventParticipant>;
-  startsAt: Scalars['DateTime']['output'];
-  title: Scalars['String']['output'];
-  visibility: CalendarChannelVisibility;
-};
-
-export type TimelineCalendarEventCallRecording = {
-  __typename?: 'TimelineCalendarEventCallRecording';
-  applicationId?: Maybe<Scalars['UUID']['output']>;
-  id: Scalars['UUID']['output'];
-  status: CallRecordingStatus;
-};
-
-export type TimelineCalendarEventParticipant = {
-  __typename?: 'TimelineCalendarEventParticipant';
-  avatarUrl: Scalars['String']['output'];
-  displayName: Scalars['String']['output'];
-  firstName: Scalars['String']['output'];
-  handle: Scalars['String']['output'];
-  lastName: Scalars['String']['output'];
-  personId?: Maybe<Scalars['UUID']['output']>;
-  workspaceMemberId?: Maybe<Scalars['UUID']['output']>;
-};
-
-export type TimelineCalendarEventSearchResult = {
-  __typename?: 'TimelineCalendarEventSearchResult';
-  otherTimelineCalendarEvents: Array<TimelineCalendarEvent>;
-  recordTimelineCalendarEvents: Array<TimelineCalendarEvent>;
-};
-
-export type TimelineCalendarEventsWithTotal = {
-  __typename?: 'TimelineCalendarEventsWithTotal';
-  relatedPersonIds: Array<Scalars['UUID']['output']>;
-  timelineCalendarEvents: Array<TimelineCalendarEvent>;
-  totalNumberOfCalendarEvents: Scalars['Int']['output'];
-};
-
-export type TimelineThread = {
-  __typename?: 'TimelineThread';
-  firstParticipant: TimelineThreadParticipant;
-  id: Scalars['UUID']['output'];
-  lastMessageBody: Scalars['String']['output'];
-  lastMessageIsDraft: Scalars['Boolean']['output'];
-  lastMessageReceivedAt: Scalars['DateTime']['output'];
-  lastTwoParticipants: Array<TimelineThreadParticipant>;
-  numberOfMessagesInThread: Scalars['Float']['output'];
-  participantCount: Scalars['Float']['output'];
-  read: Scalars['Boolean']['output'];
-  subject: Scalars['String']['output'];
-  visibility: MessageChannelVisibility;
-};
-
-export type TimelineThreadParticipant = {
-  __typename?: 'TimelineThreadParticipant';
-  avatarUrl: Scalars['String']['output'];
-  displayName: Scalars['String']['output'];
-  firstName: Scalars['String']['output'];
-  handle: Scalars['String']['output'];
-  lastName: Scalars['String']['output'];
-  personId?: Maybe<Scalars['UUID']['output']>;
-  workspaceMemberId?: Maybe<Scalars['UUID']['output']>;
-};
-
-export type TimelineThreadSearchResult = {
-  __typename?: 'TimelineThreadSearchResult';
-  otherTimelineThreads: Array<TimelineThread>;
-  recordTimelineThreads: Array<TimelineThread>;
-};
-
-export type TimelineThreadsWithTotal = {
-  __typename?: 'TimelineThreadsWithTotal';
-  relatedPersonIds: Array<Scalars['UUID']['output']>;
-  timelineThreads: Array<TimelineThread>;
-  totalNumberOfThreads: Scalars['Int']['output'];
-};
-
-export type UuidFilter = {
-  eq?: InputMaybe<Scalars['UUID']['input']>;
-  gt?: InputMaybe<Scalars['UUID']['input']>;
-  gte?: InputMaybe<Scalars['UUID']['input']>;
-  in?: InputMaybe<Array<Scalars['UUID']['input']>>;
-  is?: InputMaybe<FilterIs>;
-  lt?: InputMaybe<Scalars['UUID']['input']>;
-  lte?: InputMaybe<Scalars['UUID']['input']>;
-  neq?: InputMaybe<Scalars['UUID']['input']>;
-};
-
-export type UpdateCoreWorkflowInput = {
-  coreWorkflowId: Scalars['UUID']['input'];
-  name: Scalars['String']['input'];
-};
-
-export type UpdateCoreWorkflowVersionPositionsInput = {
-  /** Core workflow version ID */
-  coreWorkflowVersionId: Scalars['UUID']['input'];
-  /** Workflow version updated positions */
-  positions: Array<WorkflowStepPositionUpdateInput>;
-};
-
-export type UpdateCoreWorkflowVersionStepInput = {
-  /** Core workflow version ID */
-  coreWorkflowVersionId: Scalars['UUID']['input'];
-  /** Step to update in JSON format */
-  step: Scalars['JSON']['input'];
-};
-
-export type UpdateCoreWorkflowVersionTriggerInput = {
-  /** Core workflow version ID */
-  coreWorkflowVersionId: Scalars['UUID']['input'];
-  /** Trigger to update in JSON format */
-  trigger: Scalars['JSON']['input'];
-};
-
-export type UpdateCoreWorkflowVisibilityInput = {
-  coreWorkflowId: Scalars['UUID']['input'];
-  visibility: WorkflowVisibility;
-};
-
-export type UpdateWorkflowRunStepInput = {
-  /** Step to update in JSON format */
-  step: Scalars['JSON']['input'];
-  /** Workflow run ID */
-  workflowRunId: Scalars['UUID']['input'];
-};
-
-export type WorkflowAction = {
-  __typename?: 'WorkflowAction';
-  id: Scalars['UUID']['output'];
-  name: Scalars['String']['output'];
-  nextStepIds?: Maybe<Array<Scalars['UUID']['output']>>;
-  position?: Maybe<WorkflowStepPosition>;
-  settings: Scalars['JSON']['output'];
-  type: WorkflowActionType;
-  valid: Scalars['Boolean']['output'];
-};
-
-export enum WorkflowActionType {
-  AI_AGENT = 'AI_AGENT',
-  CLASSIFY = 'CLASSIFY',
-  CODE = 'CODE',
-  CREATE_CALENDAR_EVENT = 'CREATE_CALENDAR_EVENT',
-  CREATE_RECORD = 'CREATE_RECORD',
-  DELAY = 'DELAY',
-  DELETE_RECORD = 'DELETE_RECORD',
-  DRAFT_EMAIL = 'DRAFT_EMAIL',
-  EMPTY = 'EMPTY',
-  FILTER = 'FILTER',
-  FIND_RECORDS = 'FIND_RECORDS',
-  FORM = 'FORM',
-  HTTP_REQUEST = 'HTTP_REQUEST',
-  IF_ELSE = 'IF_ELSE',
-  ITERATOR = 'ITERATOR',
-  LOGIC_FUNCTION = 'LOGIC_FUNCTION',
-  PICK_RECORD = 'PICK_RECORD',
-  SEND_CHAT_MESSAGE = 'SEND_CHAT_MESSAGE',
-  SEND_EMAIL = 'SEND_EMAIL',
-  UPDATE_RECORD = 'UPDATE_RECORD',
-  UPSERT_RECORD = 'UPSERT_RECORD',
-  WAIT_FOR_EVENT = 'WAIT_FOR_EVENT'
-}
-
-export type WorkflowRun = {
-  __typename?: 'WorkflowRun';
-  id: Scalars['UUID']['output'];
-  status: WorkflowRunStatusEnum;
-};
-
-/** Status of the workflow run */
-export enum WorkflowRunStatusEnum {
-  COMPLETED = 'COMPLETED',
-  ENQUEUED = 'ENQUEUED',
-  FAILED = 'FAILED',
-  NOT_STARTED = 'NOT_STARTED',
-  RUNNING = 'RUNNING',
-  STOPPED = 'STOPPED',
-  STOPPING = 'STOPPING'
-}
-
-export type WorkflowStepPosition = {
-  __typename?: 'WorkflowStepPosition';
-  x: Scalars['Float']['output'];
-  y: Scalars['Float']['output'];
-};
-
-export type WorkflowStepPositionInput = {
-  x: Scalars['Float']['input'];
-  y: Scalars['Float']['input'];
-};
-
-export type WorkflowStepPositionUpdateInput = {
-  /** Step or trigger ID */
-  id: Scalars['String']['input'];
-  /** Position of the step or trigger */
-  position: WorkflowStepPositionInput;
-};
-
-export type WorkflowVersionStepChanges = {
-  __typename?: 'WorkflowVersionStepChanges';
-  stepsDiff?: Maybe<Scalars['JSON']['output']>;
-  triggerDiff?: Maybe<Scalars['JSON']['output']>;
-};
-
-export type WorkflowVersionTrigger = {
-  __typename?: 'WorkflowVersionTrigger';
-  trigger?: Maybe<Scalars['JSON']['output']>;
-};
-
-export enum WorkflowVisibility {
-  PRIVATE = 'PRIVATE',
-  WORKSPACE = 'WORKSPACE'
-}
-
-export type TimelineCalendarEventCallRecordingFragmentFragment = { __typename?: 'TimelineCalendarEventCallRecording', id: any, status: CallRecordingStatus, applicationId?: any | null };
-
-export type TimelineCalendarEventFragmentFragment = { __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }>, callRecordings: Array<{ __typename?: 'TimelineCalendarEventCallRecording', id: any, status: CallRecordingStatus, applicationId?: any | null }> };
-
-export type TimelineCalendarEventParticipantFragmentFragment = { __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
-
-export type TimelineCalendarEventsWithTotalFragmentFragment = { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, relatedPersonIds: Array<any>, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }>, callRecordings: Array<{ __typename?: 'TimelineCalendarEventCallRecording', id: any, status: CallRecordingStatus, applicationId?: any | null }> }> };
+export type TimelineCalendarEventsWithTotalFragmentFragment = { __typename: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, relatedPersonIds: Array<any>, timelineCalendarEvents: Array<{ __typename: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: Types.CalendarChannelVisibility, participants: Array<{ __typename: 'TimelineCalendarEventParticipant', personId: any, workspaceMemberId: any, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }>, callRecordings: Array<{ __typename: 'TimelineCalendarEventCallRecording', id: any, status: Types.CallRecordingStatus, applicationId: any }> }> };
 
 export type GetTimelineCalendarEventsFromObjectRecordQueryVariables = Exact<{
-  objectNameSingular: Scalars['String']['input'];
-  recordId: Scalars['UUID']['input'];
-  page: Scalars['Int']['input'];
-  pageSize: Scalars['Int']['input'];
+  objectNameSingular: string;
+  recordId: any;
+  page: number;
+  pageSize: number;
 }>;
 
 
-export type GetTimelineCalendarEventsFromObjectRecordQuery = { __typename?: 'Query', getTimelineCalendarEventsFromObjectRecord: { __typename?: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, relatedPersonIds: Array<any>, timelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }>, callRecordings: Array<{ __typename?: 'TimelineCalendarEventCallRecording', id: any, status: CallRecordingStatus, applicationId?: any | null }> }> } };
+export type GetTimelineCalendarEventsFromObjectRecordQuery = { getTimelineCalendarEventsFromObjectRecord: { __typename: 'TimelineCalendarEventsWithTotal', totalNumberOfCalendarEvents: number, relatedPersonIds: Array<any>, timelineCalendarEvents: Array<{ __typename: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: Types.CalendarChannelVisibility, participants: Array<{ __typename: 'TimelineCalendarEventParticipant', personId: any, workspaceMemberId: any, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }>, callRecordings: Array<{ __typename: 'TimelineCalendarEventCallRecording', id: any, status: Types.CallRecordingStatus, applicationId: any }> }> } };
 
 export type SearchTimelineCalendarEventsQueryVariables = Exact<{
-  objectNameSingular: Scalars['String']['input'];
-  recordId: Scalars['UUID']['input'];
-  searchInput?: InputMaybe<Scalars['String']['input']>;
+  objectNameSingular: string;
+  recordId: any;
+  searchInput?: string | null | undefined;
 }>;
 
 
-export type SearchTimelineCalendarEventsQuery = { __typename?: 'Query', searchTimelineCalendarEvents: { __typename?: 'TimelineCalendarEventSearchResult', recordTimelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }>, callRecordings: Array<{ __typename?: 'TimelineCalendarEventCallRecording', id: any, status: CallRecordingStatus, applicationId?: any | null }> }>, otherTimelineCalendarEvents: Array<{ __typename?: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: CalendarChannelVisibility, participants: Array<{ __typename?: 'TimelineCalendarEventParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }>, callRecordings: Array<{ __typename?: 'TimelineCalendarEventCallRecording', id: any, status: CallRecordingStatus, applicationId?: any | null }> }> } };
+export type SearchTimelineCalendarEventsQuery = { searchTimelineCalendarEvents: { __typename: 'TimelineCalendarEventSearchResult', recordTimelineCalendarEvents: Array<{ __typename: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: Types.CalendarChannelVisibility, participants: Array<{ __typename: 'TimelineCalendarEventParticipant', personId: any, workspaceMemberId: any, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }>, callRecordings: Array<{ __typename: 'TimelineCalendarEventCallRecording', id: any, status: Types.CallRecordingStatus, applicationId: any }> }>, otherTimelineCalendarEvents: Array<{ __typename: 'TimelineCalendarEvent', id: any, title: string, description: string, location: string, startsAt: string, endsAt: string, isFullDay: boolean, visibility: Types.CalendarChannelVisibility, participants: Array<{ __typename: 'TimelineCalendarEventParticipant', personId: any, workspaceMemberId: any, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }>, callRecordings: Array<{ __typename: 'TimelineCalendarEventCallRecording', id: any, status: Types.CallRecordingStatus, applicationId: any }> }> } };
 
-export type ParticipantFragmentFragment = { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
+export type ParticipantFragmentFragment = { __typename: 'TimelineThreadParticipant', personId: any, workspaceMemberId: any, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string };
 
-export type TimelineThreadFragmentFragment = { __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, lastMessageIsDraft: boolean, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };
+export type TimelineThreadFragmentFragment = { __typename: 'TimelineThread', id: any, read: boolean, visibility: Types.MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, lastMessageIsDraft: boolean, firstParticipant: { __typename: 'TimelineThreadParticipant', personId: any, workspaceMemberId: any, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename: 'TimelineThreadParticipant', personId: any, workspaceMemberId: any, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> };
 
-export type TimelineThreadsWithTotalFragmentFragment = { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, relatedPersonIds: Array<any>, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, lastMessageIsDraft: boolean, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> };
+export type TimelineThreadsWithTotalFragmentFragment = { __typename: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, relatedPersonIds: Array<any>, timelineThreads: Array<{ __typename: 'TimelineThread', id: any, read: boolean, visibility: Types.MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, lastMessageIsDraft: boolean, firstParticipant: { __typename: 'TimelineThreadParticipant', personId: any, workspaceMemberId: any, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename: 'TimelineThreadParticipant', personId: any, workspaceMemberId: any, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> };
 
 export type GetTimelineThreadsFromObjectRecordQueryVariables = Exact<{
-  objectNameSingular: Scalars['String']['input'];
-  recordId: Scalars['UUID']['input'];
-  page: Scalars['Int']['input'];
-  pageSize: Scalars['Int']['input'];
+  objectNameSingular: string;
+  recordId: any;
+  page: number;
+  pageSize: number;
 }>;
 
 
-export type GetTimelineThreadsFromObjectRecordQuery = { __typename?: 'Query', getTimelineThreadsFromObjectRecord: { __typename?: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, relatedPersonIds: Array<any>, timelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, lastMessageIsDraft: boolean, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
+export type GetTimelineThreadsFromObjectRecordQuery = { getTimelineThreadsFromObjectRecord: { __typename: 'TimelineThreadsWithTotal', totalNumberOfThreads: number, relatedPersonIds: Array<any>, timelineThreads: Array<{ __typename: 'TimelineThread', id: any, read: boolean, visibility: Types.MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, lastMessageIsDraft: boolean, firstParticipant: { __typename: 'TimelineThreadParticipant', personId: any, workspaceMemberId: any, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename: 'TimelineThreadParticipant', personId: any, workspaceMemberId: any, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type SearchTimelineThreadsQueryVariables = Exact<{
-  objectNameSingular: Scalars['String']['input'];
-  recordId: Scalars['UUID']['input'];
-  searchInput?: InputMaybe<Scalars['String']['input']>;
+  objectNameSingular: string;
+  recordId: any;
+  searchInput?: string | null | undefined;
 }>;
 
 
-export type SearchTimelineThreadsQuery = { __typename?: 'Query', searchTimelineThreads: { __typename?: 'TimelineThreadSearchResult', recordTimelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, lastMessageIsDraft: boolean, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }>, otherTimelineThreads: Array<{ __typename?: 'TimelineThread', id: any, read: boolean, visibility: MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, lastMessageIsDraft: boolean, firstParticipant: { __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename?: 'TimelineThreadParticipant', personId?: any | null, workspaceMemberId?: any | null, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
+export type SearchTimelineThreadsQuery = { searchTimelineThreads: { __typename: 'TimelineThreadSearchResult', recordTimelineThreads: Array<{ __typename: 'TimelineThread', id: any, read: boolean, visibility: Types.MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, lastMessageIsDraft: boolean, firstParticipant: { __typename: 'TimelineThreadParticipant', personId: any, workspaceMemberId: any, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename: 'TimelineThreadParticipant', personId: any, workspaceMemberId: any, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }>, otherTimelineThreads: Array<{ __typename: 'TimelineThread', id: any, read: boolean, visibility: Types.MessageChannelVisibility, lastMessageReceivedAt: string, lastMessageBody: string, subject: string, numberOfMessagesInThread: number, participantCount: number, lastMessageIsDraft: boolean, firstParticipant: { __typename: 'TimelineThreadParticipant', personId: any, workspaceMemberId: any, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }, lastTwoParticipants: Array<{ __typename: 'TimelineThreadParticipant', personId: any, workspaceMemberId: any, firstName: string, lastName: string, displayName: string, avatarUrl: string, handle: string }> }> } };
 
 export type AnswerToolCallMutationVariables = Exact<{
-  input: AnswerToolCallInput;
+  input: Types.AnswerToolCallInput;
 }>;
 
 
-export type AnswerToolCallMutation = { __typename?: 'Mutation', answerToolCall: { __typename?: 'AnswerToolCallResult', streamId?: string | null } };
+export type AnswerToolCallMutation = { answerToolCall: { __typename: 'AnswerToolCallResult', streamId: string | null } };
 
 export type SearchQueryVariables = Exact<{
-  searchInput: Scalars['String']['input'];
-  limit: Scalars['Int']['input'];
-  after?: InputMaybe<Scalars['String']['input']>;
-  excludedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
-  includedObjectNameSingulars?: InputMaybe<Array<Scalars['String']['input']> | Scalars['String']['input']>;
-  filter?: InputMaybe<ObjectRecordFilterInput>;
+  searchInput: string;
+  limit: number;
+  after?: string | null | undefined;
+  excludedObjectNameSingulars?: Array<string> | string | null | undefined;
+  includedObjectNameSingulars?: Array<string> | string | null | undefined;
+  filter?: Types.ObjectRecordFilterInput | null | undefined;
 }>;
 
 
-export type SearchQuery = { __typename?: 'Query', search: { __typename?: 'SearchResultConnection', edges: Array<{ __typename?: 'SearchResultEdge', cursor: string, node: { __typename?: 'SearchRecord', recordId: any, objectNameSingular: string, objectLabelSingular: string, label: string, imageUrl?: string | null, tsRankCD: number, tsRank: number } }>, pageInfo: { __typename?: 'SearchResultPageInfo', hasNextPage: boolean, endCursor?: string | null } } };
+export type SearchQuery = { search: { __typename: 'SearchResultConnection', edges: Array<{ __typename: 'SearchResultEdge', cursor: string, node: { __typename: 'SearchRecord', recordId: any, objectNameSingular: string, objectLabelSingular: string, label: string, imageUrl: string | null, tsRankCD: number, tsRank: number } }>, pageInfo: { __typename: 'SearchResultPageInfo', hasNextPage: boolean, endCursor: string | null } } };
 
 export type ActivateCoreWorkflowVersionMutationVariables = Exact<{
-  coreWorkflowVersionId: Scalars['UUID']['input'];
+  coreWorkflowVersionId: any;
 }>;
 
 
-export type ActivateCoreWorkflowVersionMutation = { __typename?: 'Mutation', activateWorkflowVersion: boolean };
+export type ActivateCoreWorkflowVersionMutation = { activateWorkflowVersion: boolean };
 
 export type CreateCoreWorkflowMutationVariables = Exact<{
-  input: CreateCoreWorkflowInput;
+  input: Types.CreateCoreWorkflowInput;
 }>;
 
 
-export type CreateCoreWorkflowMutation = { __typename?: 'Mutation', createCoreWorkflow: { __typename?: 'CoreWorkflowDTO', id: any, name?: string | null, statuses: Array<CoreWorkflowStatus>, workspaceWorkflowId?: any | null, updatedAt: string } };
+export type CreateCoreWorkflowMutation = { createCoreWorkflow: { __typename: 'CoreWorkflowDTO', id: any, name: string | null, statuses: Array<Types.CoreWorkflowStatus>, workspaceWorkflowId: any, updatedAt: string } };
 
 export type CreateCoreWorkflowVersionEdgeMutationVariables = Exact<{
-  input: CreateCoreWorkflowVersionEdgeInput;
+  input: Types.CreateCoreWorkflowVersionEdgeInput;
 }>;
 
 
-export type CreateCoreWorkflowVersionEdgeMutation = { __typename?: 'Mutation', createWorkflowVersionEdge: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
+export type CreateCoreWorkflowVersionEdgeMutation = { createWorkflowVersionEdge: { __typename: 'WorkflowVersionStepChanges', triggerDiff: any, stepsDiff: any } };
 
 export type CreateCoreWorkflowVersionStepMutationVariables = Exact<{
-  input: CreateCoreWorkflowVersionStepInput;
+  input: Types.CreateCoreWorkflowVersionStepInput;
 }>;
 
 
-export type CreateCoreWorkflowVersionStepMutation = { __typename?: 'Mutation', createWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
+export type CreateCoreWorkflowVersionStepMutation = { createWorkflowVersionStep: { __typename: 'WorkflowVersionStepChanges', triggerDiff: any, stepsDiff: any } };
 
 export type CreateDraftFromCoreWorkflowVersionMutationVariables = Exact<{
-  input: CreateDraftFromCoreWorkflowVersionInput;
+  input: Types.CreateDraftFromCoreWorkflowVersionInput;
 }>;
 
 
-export type CreateDraftFromCoreWorkflowVersionMutation = { __typename?: 'Mutation', createDraftFromWorkflowVersion: { __typename?: 'CoreWorkflowVersionDTO', id: any, coreWorkflowId?: any | null, label: string, status: CoreWorkflowVersionStatus, trigger?: any | null, steps?: any | null, createdAt: string, updatedAt: string } };
+export type CreateDraftFromCoreWorkflowVersionMutation = { createDraftFromWorkflowVersion: { __typename: 'CoreWorkflowVersionDTO', id: any, coreWorkflowId: any, label: string, status: Types.CoreWorkflowVersionStatus, trigger: any, steps: any, createdAt: string, updatedAt: string } };
 
 export type DeactivateCoreWorkflowVersionMutationVariables = Exact<{
-  coreWorkflowVersionId: Scalars['UUID']['input'];
+  coreWorkflowVersionId: any;
 }>;
 
 
-export type DeactivateCoreWorkflowVersionMutation = { __typename?: 'Mutation', deactivateWorkflowVersion: boolean };
+export type DeactivateCoreWorkflowVersionMutation = { deactivateWorkflowVersion: boolean };
 
 export type DeleteCoreWorkflowVersionEdgeMutationVariables = Exact<{
-  input: DeleteCoreWorkflowVersionEdgeInput;
+  input: Types.DeleteCoreWorkflowVersionEdgeInput;
 }>;
 
 
-export type DeleteCoreWorkflowVersionEdgeMutation = { __typename?: 'Mutation', deleteWorkflowVersionEdge: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
+export type DeleteCoreWorkflowVersionEdgeMutation = { deleteWorkflowVersionEdge: { __typename: 'WorkflowVersionStepChanges', triggerDiff: any, stepsDiff: any } };
 
 export type DeleteCoreWorkflowVersionStepMutationVariables = Exact<{
-  input: DeleteCoreWorkflowVersionStepInput;
+  input: Types.DeleteCoreWorkflowVersionStepInput;
 }>;
 
 
-export type DeleteCoreWorkflowVersionStepMutation = { __typename?: 'Mutation', deleteWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
+export type DeleteCoreWorkflowVersionStepMutation = { deleteWorkflowVersionStep: { __typename: 'WorkflowVersionStepChanges', triggerDiff: any, stepsDiff: any } };
 
 export type DeleteCoreWorkflowsMutationVariables = Exact<{
-  input: DeleteCoreWorkflowsInput;
+  input: Types.DeleteCoreWorkflowsInput;
 }>;
 
 
-export type DeleteCoreWorkflowsMutation = { __typename?: 'Mutation', deleteCoreWorkflows: Array<{ __typename?: 'DeletedCoreWorkflowDTO', id: any, workspaceWorkflowId?: any | null }> };
+export type DeleteCoreWorkflowsMutation = { deleteCoreWorkflows: Array<{ __typename: 'DeletedCoreWorkflowDTO', id: any, workspaceWorkflowId: any }> };
 
 export type DiscardCoreWorkflowDraftMutationVariables = Exact<{
-  input: DiscardCoreWorkflowDraftInput;
+  input: Types.DiscardCoreWorkflowDraftInput;
 }>;
 
 
-export type DiscardCoreWorkflowDraftMutation = { __typename?: 'Mutation', discardCoreWorkflowDraft?: { __typename?: 'CoreWorkflowDTO', id: any, name?: string | null, statuses: Array<CoreWorkflowStatus>, lastPublishedVersionId?: any | null, workspaceWorkflowId?: any | null, updatedAt: string } | null };
+export type DiscardCoreWorkflowDraftMutation = { discardCoreWorkflowDraft: { __typename: 'CoreWorkflowDTO', id: any, name: string | null, statuses: Array<Types.CoreWorkflowStatus>, lastPublishedVersionId: any, workspaceWorkflowId: any, updatedAt: string } | null };
 
 export type DuplicateCoreWorkflowMutationVariables = Exact<{
-  input: DuplicateCoreWorkflowInput;
+  input: Types.DuplicateCoreWorkflowInput;
 }>;
 
 
-export type DuplicateCoreWorkflowMutation = { __typename?: 'Mutation', duplicateWorkflow: { __typename?: 'CoreWorkflowDTO', id: any } };
+export type DuplicateCoreWorkflowMutation = { duplicateWorkflow: { __typename: 'CoreWorkflowDTO', id: any } };
 
 export type DuplicateCoreWorkflowVersionStepMutationVariables = Exact<{
-  input: DuplicateCoreWorkflowVersionStepInput;
+  input: Types.DuplicateCoreWorkflowVersionStepInput;
 }>;
 
 
-export type DuplicateCoreWorkflowVersionStepMutation = { __typename?: 'Mutation', duplicateWorkflowVersionStep: { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null } };
+export type DuplicateCoreWorkflowVersionStepMutation = { duplicateWorkflowVersionStep: { __typename: 'WorkflowVersionStepChanges', triggerDiff: any, stepsDiff: any } };
 
 export type RunCoreWorkflowVersionMutationVariables = Exact<{
-  input: RunCoreWorkflowVersionInput;
+  input: Types.RunCoreWorkflowVersionInput;
 }>;
 
 
-export type RunCoreWorkflowVersionMutation = { __typename?: 'Mutation', runWorkflowVersion: { __typename?: 'RunWorkflowVersion', workflowRunId: any } };
+export type RunCoreWorkflowVersionMutation = { runWorkflowVersion: { __typename: 'RunWorkflowVersion', workflowRunId: any } };
 
 export type UpdateCoreWorkflowMutationVariables = Exact<{
-  input: UpdateCoreWorkflowInput;
+  input: Types.UpdateCoreWorkflowInput;
 }>;
 
 
-export type UpdateCoreWorkflowMutation = { __typename?: 'Mutation', updateCoreWorkflow?: { __typename?: 'CoreWorkflowDTO', id: any, name?: string | null, updatedAt: string } | null };
+export type UpdateCoreWorkflowMutation = { updateCoreWorkflow: { __typename: 'CoreWorkflowDTO', id: any, name: string | null, updatedAt: string } | null };
 
 export type UpdateCoreWorkflowVersionPositionsMutationVariables = Exact<{
-  input: UpdateCoreWorkflowVersionPositionsInput;
+  input: Types.UpdateCoreWorkflowVersionPositionsInput;
 }>;
 
 
-export type UpdateCoreWorkflowVersionPositionsMutation = { __typename?: 'Mutation', updateWorkflowVersionPositions: boolean };
+export type UpdateCoreWorkflowVersionPositionsMutation = { updateWorkflowVersionPositions: boolean };
 
 export type UpdateCoreWorkflowVersionStepMutationVariables = Exact<{
-  input: UpdateCoreWorkflowVersionStepInput;
+  input: Types.UpdateCoreWorkflowVersionStepInput;
 }>;
 
 
-export type UpdateCoreWorkflowVersionStepMutation = { __typename?: 'Mutation', updateWorkflowVersionStep: { __typename?: 'WorkflowAction', id: any, name: string, type: WorkflowActionType, settings: any, valid: boolean, nextStepIds?: Array<any> | null, position?: { __typename?: 'WorkflowStepPosition', x: number, y: number } | null } };
+export type UpdateCoreWorkflowVersionStepMutation = { updateWorkflowVersionStep: { __typename: 'WorkflowAction', id: any, name: string, type: Types.WorkflowActionType, settings: any, valid: boolean, nextStepIds: Array<any> | null, position: { __typename: 'WorkflowStepPosition', x: number, y: number } | null } };
 
 export type UpdateCoreWorkflowVersionTriggerMutationVariables = Exact<{
-  input: UpdateCoreWorkflowVersionTriggerInput;
+  input: Types.UpdateCoreWorkflowVersionTriggerInput;
 }>;
 
 
-export type UpdateCoreWorkflowVersionTriggerMutation = { __typename?: 'Mutation', updateWorkflowVersionTrigger: { __typename?: 'WorkflowVersionTrigger', trigger?: any | null } };
+export type UpdateCoreWorkflowVersionTriggerMutation = { updateWorkflowVersionTrigger: { __typename: 'WorkflowVersionTrigger', trigger: any } };
 
 export type UpdateCoreWorkflowVisibilityMutationVariables = Exact<{
-  input: UpdateCoreWorkflowVisibilityInput;
+  input: Types.UpdateCoreWorkflowVisibilityInput;
 }>;
 
 
-export type UpdateCoreWorkflowVisibilityMutation = { __typename?: 'Mutation', updateCoreWorkflowVisibility?: { __typename?: 'CoreWorkflowDTO', id: any, visibility: WorkflowVisibility, canChangeVisibility: boolean, updatedAt: string } | null };
+export type UpdateCoreWorkflowVisibilityMutation = { updateCoreWorkflowVisibility: { __typename: 'CoreWorkflowDTO', id: any, visibility: Types.WorkflowVisibility, canChangeVisibility: boolean, updatedAt: string } | null };
 
 export type GetCoreWorkflowQueryVariables = Exact<{
-  coreWorkflowId: Scalars['UUID']['input'];
+  coreWorkflowId: any;
 }>;
 
 
-export type GetCoreWorkflowQuery = { __typename?: 'Query', coreWorkflow?: { __typename?: 'CoreWorkflowDTO', id: any, name?: string | null, statuses: Array<CoreWorkflowStatus>, lastPublishedCoreWorkflowVersionId?: any | null, applicationId?: any | null, workspaceWorkflowId?: any | null, visibility: WorkflowVisibility, canChangeVisibility: boolean, createdAt: string, updatedAt: string } | null };
+export type GetCoreWorkflowQuery = { coreWorkflow: { __typename: 'CoreWorkflowDTO', id: any, name: string | null, statuses: Array<Types.CoreWorkflowStatus>, lastPublishedCoreWorkflowVersionId: any, applicationId: any, workspaceWorkflowId: any, visibility: Types.WorkflowVisibility, canChangeVisibility: boolean, createdAt: string, updatedAt: string } | null };
 
 export type GetCoreWorkflowLegacyMappingQueryVariables = Exact<{
-  workspaceWorkflowId: Scalars['UUID']['input'];
+  workspaceWorkflowId: any;
 }>;
 
 
-export type GetCoreWorkflowLegacyMappingQuery = { __typename?: 'Query', coreWorkflow?: { __typename?: 'CoreWorkflowDTO', id: any } | null };
+export type GetCoreWorkflowLegacyMappingQuery = { coreWorkflow: { __typename: 'CoreWorkflowDTO', id: any } | null };
 
 export type GetCoreWorkflowVersionLegacyMappingQueryVariables = Exact<{
-  workspaceWorkflowVersionId: Scalars['UUID']['input'];
+  workspaceWorkflowVersionId: any;
 }>;
 
 
-export type GetCoreWorkflowVersionLegacyMappingQuery = { __typename?: 'Query', coreWorkflowVersion?: { __typename?: 'CoreWorkflowVersionDTO', id: any, coreWorkflowId?: any | null, workspaceWorkflowVersionId?: any | null } | null };
+export type GetCoreWorkflowVersionLegacyMappingQuery = { coreWorkflowVersion: { __typename: 'CoreWorkflowVersionDTO', id: any, coreWorkflowId: any, workspaceWorkflowVersionId: any } | null };
 
 export type GetCoreWorkflowsQueryVariables = Exact<{
-  first?: InputMaybe<Scalars['Int']['input']>;
-  after?: InputMaybe<Scalars['String']['input']>;
-  orderBy?: InputMaybe<CoreWorkflowOrderByField>;
-  orderByDirection?: InputMaybe<CoreWorkflowOrderByDirection>;
-  filter?: InputMaybe<CoreWorkflowFilterInput>;
+  first?: number | null | undefined;
+  after?: string | null | undefined;
+  orderBy?: Types.CoreWorkflowOrderByField | null | undefined;
+  orderByDirection?: Types.CoreWorkflowOrderByDirection | null | undefined;
+  filter?: Types.CoreWorkflowFilterInput | null | undefined;
 }>;
 
 
-export type GetCoreWorkflowsQuery = { __typename?: 'Query', coreWorkflows: { __typename?: 'CoreWorkflowConnection', totalCount: number, edges: Array<{ __typename?: 'CoreWorkflowEdge', cursor: string, node: { __typename?: 'CoreWorkflowDTO', id: any, name?: string | null, statuses: Array<CoreWorkflowStatus>, workspaceWorkflowId?: any | null, isSystem: boolean, visibility: WorkflowVisibility, canChangeVisibility: boolean, updatedAt: string } }>, pageInfo: { __typename?: 'CoreWorkflowPageInfo', endCursor?: string | null, hasNextPage: boolean } } };
+export type GetCoreWorkflowsQuery = { coreWorkflows: { __typename: 'CoreWorkflowConnection', totalCount: number, edges: Array<{ __typename: 'CoreWorkflowEdge', cursor: string, node: { __typename: 'CoreWorkflowDTO', id: any, name: string | null, statuses: Array<Types.CoreWorkflowStatus>, workspaceWorkflowId: any, isSystem: boolean, visibility: Types.WorkflowVisibility, canChangeVisibility: boolean, updatedAt: string } }>, pageInfo: { __typename: 'CoreWorkflowPageInfo', endCursor: string | null, hasNextPage: boolean } } };
 
 export type GetCoreWorkflowsWithCurrentVersionsQueryVariables = Exact<{
-  input: CoreWorkflowsWithCurrentVersionsInput;
+  input: Types.CoreWorkflowsWithCurrentVersionsInput;
 }>;
 
 
-export type GetCoreWorkflowsWithCurrentVersionsQuery = { __typename?: 'Query', coreWorkflowsWithCurrentVersions: Array<{ __typename?: 'CoreWorkflowWithCurrentVersionDTO', workflow: { __typename?: 'CoreWorkflowDTO', id: any, name?: string | null, applicationId?: any | null, statuses: Array<CoreWorkflowStatus>, lastPublishedCoreWorkflowVersionId?: any | null }, versions: Array<{ __typename?: 'CoreWorkflowVersionDTO', id: any, coreWorkflowId?: any | null, label: string, status: CoreWorkflowVersionStatus, createdAt: string }>, currentVersion: { __typename?: 'CoreWorkflowVersionDTO', id: any, coreWorkflowId?: any | null, label: string, status: CoreWorkflowVersionStatus, trigger?: any | null, steps?: any | null, createdAt: string, updatedAt: string } }> };
+export type GetCoreWorkflowsWithCurrentVersionsQuery = { coreWorkflowsWithCurrentVersions: Array<{ __typename: 'CoreWorkflowWithCurrentVersionDTO', workflow: { __typename: 'CoreWorkflowDTO', id: any, name: string | null, applicationId: any, statuses: Array<Types.CoreWorkflowStatus>, lastPublishedCoreWorkflowVersionId: any }, versions: Array<{ __typename: 'CoreWorkflowVersionDTO', id: any, coreWorkflowId: any, label: string, status: Types.CoreWorkflowVersionStatus, createdAt: string }>, currentVersion: { __typename: 'CoreWorkflowVersionDTO', id: any, coreWorkflowId: any, label: string, status: Types.CoreWorkflowVersionStatus, trigger: any, steps: any, createdAt: string, updatedAt: string } }> };
 
 export type GetCoreWorkflowVersionQueryVariables = Exact<{
-  coreWorkflowVersionId: Scalars['UUID']['input'];
+  coreWorkflowVersionId: any;
 }>;
 
 
-export type GetCoreWorkflowVersionQuery = { __typename?: 'Query', coreWorkflowVersion?: { __typename?: 'CoreWorkflowVersionDTO', id: any, label: string, status: CoreWorkflowVersionStatus, workspaceWorkflowVersionId?: any | null, coreWorkflowId?: any | null, trigger?: any | null, steps?: any | null, createdAt: string, updatedAt: string } | null };
+export type GetCoreWorkflowVersionQuery = { coreWorkflowVersion: { __typename: 'CoreWorkflowVersionDTO', id: any, label: string, status: Types.CoreWorkflowVersionStatus, workspaceWorkflowVersionId: any, coreWorkflowId: any, trigger: any, steps: any, createdAt: string, updatedAt: string } | null };
 
 export type GetCoreWorkflowVersionsQueryVariables = Exact<{
-  coreWorkflowId: Scalars['UUID']['input'];
+  coreWorkflowId: any;
 }>;
 
 
-export type GetCoreWorkflowVersionsQuery = { __typename?: 'Query', coreWorkflowVersions: Array<{ __typename?: 'CoreWorkflowVersionDTO', id: any, label: string, status: CoreWorkflowVersionStatus, coreWorkflowId?: any | null, createdAt: string }> };
+export type GetCoreWorkflowVersionsQuery = { coreWorkflowVersions: Array<{ __typename: 'CoreWorkflowVersionDTO', id: any, label: string, status: Types.CoreWorkflowVersionStatus, coreWorkflowId: any, createdAt: string }> };
 
-export type WorkflowDiffFragmentFragment = { __typename?: 'WorkflowVersionStepChanges', triggerDiff?: any | null, stepsDiff?: any | null };
+export type WorkflowDiffFragmentFragment = { __typename: 'WorkflowVersionStepChanges', triggerDiff: any, stepsDiff: any };
 
 export type ComputeStepOutputSchemaMutationVariables = Exact<{
-  input: ComputeStepOutputSchemaInput;
+  input: Types.ComputeStepOutputSchemaInput;
 }>;
 
 
-export type ComputeStepOutputSchemaMutation = { __typename?: 'Mutation', computeStepOutputSchema: any };
+export type ComputeStepOutputSchemaMutation = { computeStepOutputSchema: any };
 
 export type RetryWorkflowRunMutationVariables = Exact<{
-  workflowRunId: Scalars['UUID']['input'];
+  workflowRunId: any;
 }>;
 
 
-export type RetryWorkflowRunMutation = { __typename?: 'Mutation', retryWorkflowRun: { __typename: 'WorkflowRun', id: any, status: WorkflowRunStatusEnum } };
+export type RetryWorkflowRunMutation = { retryWorkflowRun: { __typename: 'WorkflowRun', id: any, status: Types.WorkflowRunStatusEnum } };
 
 export type StopWorkflowRunMutationVariables = Exact<{
-  workflowRunId: Scalars['UUID']['input'];
+  workflowRunId: any;
 }>;
 
 
-export type StopWorkflowRunMutation = { __typename?: 'Mutation', stopWorkflowRun: { __typename: 'WorkflowRun', id: any, status: WorkflowRunStatusEnum } };
+export type StopWorkflowRunMutation = { stopWorkflowRun: { __typename: 'WorkflowRun', id: any, status: Types.WorkflowRunStatusEnum } };
 
 export type SubmitFormStepMutationVariables = Exact<{
-  input: SubmitFormStepInput;
+  input: Types.SubmitFormStepInput;
 }>;
 
 
-export type SubmitFormStepMutation = { __typename?: 'Mutation', submitFormStep: boolean };
+export type SubmitFormStepMutation = { submitFormStep: boolean };
 
 export type UpdateWorkflowRunStepMutationVariables = Exact<{
-  input: UpdateWorkflowRunStepInput;
+  input: Types.UpdateWorkflowRunStepInput;
 }>;
 
 
-export type UpdateWorkflowRunStepMutation = { __typename?: 'Mutation', updateWorkflowRunStep: { __typename?: 'WorkflowAction', id: any, name: string, type: WorkflowActionType, settings: any, valid: boolean, nextStepIds?: Array<any> | null, position?: { __typename?: 'WorkflowStepPosition', x: number, y: number } | null } };
+export type UpdateWorkflowRunStepMutation = { updateWorkflowRunStep: { __typename: 'WorkflowAction', id: any, name: string, type: Types.WorkflowActionType, settings: any, valid: boolean, nextStepIds: Array<any> | null, position: { __typename: 'WorkflowStepPosition', x: number, y: number } | null } };
 
 export type WorkflowStepConnectedAccountHandleQueryVariables = Exact<{
-  connectedAccountId: Scalars['UUID']['input'];
+  connectedAccountId: any;
 }>;
 
 
-export type WorkflowStepConnectedAccountHandleQuery = { __typename?: 'Query', workflowStepConnectedAccountHandle?: { __typename?: 'ConnectedAccountHandleDTO', id: any, handle: string, provider: string, handleAliases?: Array<string> | null } | null };
+export type WorkflowStepConnectedAccountHandleQuery = { workflowStepConnectedAccountHandle: { __typename: 'ConnectedAccountHandleDTO', id: any, handle: string, provider: string, handleAliases: Array<string> | null } | null };
 
 export type TestHttpRequestMutationVariables = Exact<{
-  input: TestHttpRequestInput;
+  input: Types.TestHttpRequestInput;
 }>;
 
 
-export type TestHttpRequestMutation = { __typename?: 'Mutation', testHttpRequest: { __typename?: 'TestHttpRequest', success: boolean, message: string, result?: any | null, error?: any | null, status?: number | null, statusText?: string | null, headers?: any | null } };
+export type TestHttpRequestMutation = { testHttpRequest: { __typename: 'TestHttpRequest', success: boolean, message: string, result: any, error: any, status: number | null, statusText: string | null, headers: any } };
 
 export const TimelineCalendarEventParticipantFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventParticipantFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEventParticipant"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"personId"}},{"kind":"Field","name":{"kind":"Name","value":"workspaceMemberId"}},{"kind":"Field","name":{"kind":"Name","value":"firstName"}},{"kind":"Field","name":{"kind":"Name","value":"lastName"}},{"kind":"Field","name":{"kind":"Name","value":"displayName"}},{"kind":"Field","name":{"kind":"Name","value":"avatarUrl"}},{"kind":"Field","name":{"kind":"Name","value":"handle"}}]}}]} as unknown as DocumentNode<TimelineCalendarEventParticipantFragmentFragment, unknown>;
 export const TimelineCalendarEventCallRecordingFragmentFragmentDoc = {"kind":"Document","definitions":[{"kind":"FragmentDefinition","name":{"kind":"Name","value":"TimelineCalendarEventCallRecordingFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"TimelineCalendarEventCallRecording"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"status"}},{"kind":"Field","name":{"kind":"Name","value":"applicationId"}}]}}]} as unknown as DocumentNode<TimelineCalendarEventCallRecordingFragmentFragment, unknown>;

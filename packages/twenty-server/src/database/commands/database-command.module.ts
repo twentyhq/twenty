@@ -13,6 +13,7 @@ import { ListOrphanedWorkspaceEntitiesCommand } from 'src/database/commands/list
 import { ConfirmationQuestion } from 'src/database/commands/questions/confirmation.question';
 import { RebuildApplicationDefaultDepsCommand } from 'src/database/commands/rebuild-application-default-deps.command';
 import { RunInstanceCommandsCommand } from 'src/database/commands/run-instance-commands.command';
+import { UpdateFeatureFlagCommand } from 'src/database/commands/update-feature-flag.command';
 import { UpgradeVersionCommandModule } from 'src/database/commands/upgrade-version-command/upgrade-version-command.module';
 import { WorkspaceExportModule } from 'src/database/commands/workspace-export/workspace-export.module';
 import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
@@ -126,6 +127,7 @@ import { AutomatedTriggerModule } from 'src/modules/workflow/workflow-trigger/au
     UpgradeStatusCommand,
     RebuildApplicationDefaultDepsCommand,
     InstallPreInstalledAppsCommand,
+    UpdateFeatureFlagCommand,
     provideWorkspaceScopedRepository(RoleEntity),
   ],
 })

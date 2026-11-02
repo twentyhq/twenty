@@ -3,9 +3,10 @@ title: الذكاء الاصطناعي
 description: كيف يستخدم Twenty الذكاء الاصطناعي لتحسين تجربة الـ CRM لديك.
 ---
 
-import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-يقوم Twenty بدمج الذكاء الاصطناعي مباشرة في نظام الـ CRM الخاص بك — ليس كحيلة دعائية، بل كأداة تعمل ضمن نموذج البيانات لديك ونظام الصلاحيات لديك.
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## روبوت محادثة بالذكاء الاصطناعي
 
@@ -28,6 +29,11 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 يحترم الذكاء الاصطناعي في Twenty نموذج الصلاحيات لديك. يمكن للوكلاء الوصول فقط إلى الكائنات والحقول التي يمتلك المستخدم (أو الدور) صلاحية عرضها. تظل البيانات الحساسة محمية حتى عندما يكون الذكاء الاصطناعي مُستخدمًا.
 
-<Card title="دليل الذكاء الاصطناعي الكامل" icon="arrow-right" href="/ar/user-guide/ai/overview">
-  مرجع تفصيلي حول روبوت المحادثة، والوكلاء، وضوابط الصلاحيات.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ar/user-guide/ai/overview" img="/images/documentation/banner-icons-v2/ai.svg">
+  <CardTitle>دليل AI الكامل</CardTitle>
+  مرجع مفصل على روبوت الدردشة والوكلاء والتحكم في الأذونات.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="getting-started-ai" />

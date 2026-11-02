@@ -73,6 +73,7 @@ describe('getOnboardingCreditsProgress', () => {
         onboardingStatus: OnboardingStatus.SYNC_EMAIL,
         isWorkspaceCreator: true,
         isPlanRequired: true,
+        isTrialAvailable: true,
         profileName: null,
         inviteTeamValidEmailsCount: 0,
       }),
@@ -109,6 +110,7 @@ describe('getOnboardingCreditsProgress', () => {
       onboardingStatus: OnboardingStatus.COMPLETED,
       isWorkspaceCreator: true,
       isPlanRequired: true,
+      isTrialAvailable: true,
       profileName: null,
       inviteTeamValidEmailsCount: 0,
     });
@@ -126,6 +128,7 @@ describe('getOnboardingCreditsProgress', () => {
       onboardingStatus: OnboardingStatus.PROFILE_CREATION,
       isWorkspaceCreator: true,
       isPlanRequired: false,
+      isTrialAvailable: true,
       profileName: null,
       inviteTeamValidEmailsCount: 0,
     });
@@ -142,6 +145,7 @@ describe('getOnboardingCreditsProgress', () => {
       onboardingStatus: OnboardingStatus.PROFILE_CREATION,
       isWorkspaceCreator: true,
       isPlanRequired: false,
+      isTrialAvailable: true,
       profileName: null,
       inviteTeamValidEmailsCount: 0,
     });
@@ -162,6 +166,7 @@ describe('getOnboardingCreditsProgress', () => {
         onboardingStatus: OnboardingStatus.SYNC_EMAIL,
         isWorkspaceCreator: true,
         isPlanRequired: true,
+        isTrialAvailable: true,
         profileName: null,
         inviteTeamValidEmailsCount: 0,
       }),
@@ -192,6 +197,7 @@ describe('getOnboardingCreditsProgress', () => {
       onboardingStatus: OnboardingStatus.PROFILE_CREATION,
       isWorkspaceCreator: true,
       isPlanRequired: false,
+      isTrialAvailable: true,
       profileName: null,
       inviteTeamValidEmailsCount: 0,
     });
@@ -208,6 +214,7 @@ describe('getOnboardingCreditsProgress', () => {
       onboardingStatus: OnboardingStatus.INVITE_TEAM,
       isWorkspaceCreator: true,
       isPlanRequired: false,
+      isTrialAvailable: true,
       profileName: null,
       inviteTeamValidEmailsCount: 0,
     });
@@ -229,6 +236,7 @@ describe('getOnboardingCreditsProgress', () => {
       onboardingStatus: OnboardingStatus.BOOK_CALL,
       isWorkspaceCreator: true,
       isPlanRequired: true,
+      isTrialAvailable: true,
       profileName: null,
       inviteTeamValidEmailsCount: 0,
     });
@@ -244,6 +252,7 @@ describe('getOnboardingCreditsProgress', () => {
       onboardingStatus: OnboardingStatus.PLAN_REQUIRED,
       isWorkspaceCreator: true,
       isPlanRequired: true,
+      isTrialAvailable: true,
       profileName: null,
       inviteTeamValidEmailsCount: 0,
     });
@@ -251,6 +260,22 @@ describe('getOnboardingCreditsProgress', () => {
     expect(progress.goalCredits).toBe(3);
     expect(progress.currentStep).toBe('upgradeTrial');
     expect(progress.currentStepCredits).toBe(0.5);
+  });
+
+  it('should leave out the upgrade reward when no trial is available', () => {
+    const progress = getOnboardingCreditsProgress({
+      onboardingFreeCredits: buildOnboardingFreeCredits({ importContacts: 2 }),
+      onboardingConfig,
+      onboardingStatus: OnboardingStatus.PLAN_REQUIRED,
+      isWorkspaceCreator: true,
+      isPlanRequired: true,
+      isTrialAvailable: false,
+      profileName: null,
+      inviteTeamValidEmailsCount: 0,
+    });
+
+    expect(progress.goalCredits).toBe(2.5);
+    expect(progress.currentStep).toBeNull();
   });
 
   it('should stop pointing at the upgrade once the trial is upgraded', () => {
@@ -263,6 +288,7 @@ describe('getOnboardingCreditsProgress', () => {
       onboardingStatus: OnboardingStatus.PLAN_REQUIRED,
       isWorkspaceCreator: true,
       isPlanRequired: true,
+      isTrialAvailable: true,
       profileName: null,
       inviteTeamValidEmailsCount: 0,
     });
@@ -281,6 +307,7 @@ describe('getOnboardingCreditsProgress', () => {
       onboardingStatus: OnboardingStatus.PLAN_REQUIRED,
       isWorkspaceCreator: true,
       isPlanRequired: true,
+      isTrialAvailable: true,
       profileName: null,
       inviteTeamValidEmailsCount: 0,
       upgradeTrialLostCredits: 0.5,
@@ -296,6 +323,7 @@ describe('getOnboardingCreditsProgress', () => {
       onboardingStatus: OnboardingStatus.PLAN_REQUIRED,
       isWorkspaceCreator: true,
       isPlanRequired: true,
+      isTrialAvailable: true,
       profileName: null,
       inviteTeamValidEmailsCount: 0,
       upgradeTrialLostCredits: 0.5,
@@ -312,6 +340,7 @@ describe('getOnboardingCreditsProgress', () => {
       onboardingStatus: OnboardingStatus.COMPLETED,
       isWorkspaceCreator: true,
       isPlanRequired: false,
+      isTrialAvailable: true,
       profileName: null,
       inviteTeamValidEmailsCount: 0,
     });
@@ -330,6 +359,7 @@ describe('getOnboardingCreditsProgress', () => {
       onboardingStatus: OnboardingStatus.COMPLETED,
       isWorkspaceCreator: true,
       isPlanRequired: false,
+      isTrialAvailable: true,
       profileName: null,
       inviteTeamValidEmailsCount: 0,
     });
@@ -349,6 +379,7 @@ describe('getOnboardingCreditsProgress', () => {
       onboardingStatus: OnboardingStatus.PLAN_REQUIRED,
       isWorkspaceCreator: true,
       isPlanRequired: true,
+      isTrialAvailable: true,
       profileName: null,
       inviteTeamValidEmailsCount: 0,
     });
@@ -368,6 +399,7 @@ describe('getOnboardingCreditsProgress', () => {
       onboardingStatus: OnboardingStatus.PROFILE_CREATION,
       isWorkspaceCreator: true,
       isPlanRequired: false,
+      isTrialAvailable: true,
       profileName: null,
       inviteTeamValidEmailsCount: 0,
     });
@@ -384,6 +416,7 @@ describe('getOnboardingCreditsProgress', () => {
       onboardingStatus: OnboardingStatus.SYNC_EMAIL,
       isWorkspaceCreator: false,
       isPlanRequired: false,
+      isTrialAvailable: true,
       profileName: null,
       inviteTeamValidEmailsCount: 0,
     });
@@ -402,6 +435,7 @@ describe('getOnboardingCreditsProgress', () => {
         onboardingStatus,
         isWorkspaceCreator,
         isPlanRequired: false,
+        isTrialAvailable: true,
         profileName,
         inviteTeamValidEmailsCount: 0,
       });
@@ -417,6 +451,7 @@ describe('getOnboardingCreditsProgress', () => {
       onboardingStatus: OnboardingStatus.INVITE_TEAM,
       isWorkspaceCreator: true,
       isPlanRequired: false,
+      isTrialAvailable: true,
       profileName: null,
       inviteTeamValidEmailsCount: 0,
     });
@@ -432,6 +467,7 @@ describe('getOnboardingCreditsProgress', () => {
         onboardingStatus: OnboardingStatus.INVITE_TEAM,
         isWorkspaceCreator: true,
         isPlanRequired: false,
+        isTrialAvailable: true,
         profileName: null,
         inviteTeamValidEmailsCount,
       }).inviteTeamButtonReward;

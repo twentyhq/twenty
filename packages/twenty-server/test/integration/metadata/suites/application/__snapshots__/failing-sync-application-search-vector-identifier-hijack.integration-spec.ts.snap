@@ -10,14 +10,13 @@ exports[`Sync application should reject hijacking the searchVector system field 
           "errors": [
             {
               "code": "FIELD_MUTATION_NOT_ALLOWED",
-              "message": "System fields only allow updating: universalSettings, isActive. Forbidden properties: description, icon, isUIEditable, writability",
+              "message": "System fields only allow updating: universalSettings, isActive. Forbidden properties: description, icon, isUIEditable, disabledFieldPermissionActions",
               "userFriendlyMessage": "System fields cannot be updated",
             },
             {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Field type TS_VECTOR must have SYSTEM writability",
-              "userFriendlyMessage": "Field type TS_VECTOR must have SYSTEM writability",
-              "value": "OPEN",
+              "code": "NON_UPDATABLE_PROPERTY_DIVERGENCE",
+              "message": "fieldMetadata property "isSystem" cannot be updated",
+              "userFriendlyMessage": "Property isSystem cannot be updated",
             },
           ],
           "flatEntityMinimalInformation": {
@@ -128,7 +127,7 @@ exports[`Sync application should reject hijacking the searchVector system field 
           "errors": [
             {
               "code": "FIELD_MUTATION_NOT_ALLOWED",
-              "message": "System fields only allow updating: universalSettings, isActive. Forbidden properties: description, icon, label, name, isUIEditable, writability",
+              "message": "System fields only allow updating: universalSettings, isActive. Forbidden properties: description, icon, label, name, isUIEditable, disabledFieldPermissionActions",
               "userFriendlyMessage": "System fields cannot be updated",
             },
             {
@@ -138,10 +137,14 @@ exports[`Sync application should reject hijacking the searchVector system field 
               "value": "stolenSearchVector",
             },
             {
-              "code": "INVALID_FIELD_INPUT",
-              "message": "Field type TS_VECTOR must have SYSTEM writability",
-              "userFriendlyMessage": "Field type TS_VECTOR must have SYSTEM writability",
-              "value": "OPEN",
+              "code": "NON_UPDATABLE_PROPERTY_DIVERGENCE",
+              "message": "fieldMetadata property "type" cannot be updated",
+              "userFriendlyMessage": "Property type cannot be updated",
+            },
+            {
+              "code": "NON_UPDATABLE_PROPERTY_DIVERGENCE",
+              "message": "fieldMetadata property "isSystem" cannot be updated",
+              "userFriendlyMessage": "Property isSystem cannot be updated",
             },
           ],
           "flatEntityMinimalInformation": {

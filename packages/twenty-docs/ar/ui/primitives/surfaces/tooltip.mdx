@@ -1,0 +1,167 @@
+---
+title: تلميح
+description: اعرض معلومات إضافية عند تمرير المؤشر فوق المُشغِّل أو عند التركيز عليه.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import TooltipReference from '/snippets/ui/generated/surfaces/tooltip.mdx';
+
+## نظرة عامة
+
+استخدم `Tooltip` لشرح مختصر لعنصر تحكم أو لنص مقتطع. أبقِ المعلومات الأساسية مرئية، وامنح عناصر التحكم اسمًا يمكن الوصول إليه، واستخدم [نافذة منبثقة](/ar/ui/primitives/surfaces/popover) عندما يحتوي المحتوى على روابط أو أزرار أو عناصر تحكم أخرى.
+
+<StoryEmbed storyId="ui-surfaces-tooltip--display" title="مثال على التلميح" height={180} />
+
+## استخدام
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const ExportHelp = () => (
+  <Tooltip content="Download the visible records as a CSV file" side="top">
+    <Text render={<span />}>
+      <Button>Export records</Button>
+    </Text>
+  </Tooltip>
+);
+```
+
+يقبل المكوّن الملائم عنصر مشغّل واحدًا بصفته `children`. تتلقى العناصر الأصلية سمات المشغّل ومعالجات الأحداث والمرجع مباشرةً. يجب أن تمرّر مكوّنات المشغّل المخصصة جميعها. يعمل عنصر الغلاف أيضًا مع مكوّن لا يمرّر كل خاصية للمشغّل.
+
+يفتح التمرير فوق العنصر تلميح الأدوات بعد `delay` مللي ثانية، وقيمته الافتراضية هي `600`. يفتحه التركيز عبر لوحة المفاتيح فورًا. القيمة الافتراضية لـ `closeDelay` هي `0`؛ ويبقي التمرير فوق النافذة المنبثقة مفتوحة ما لم يتم تعيين `disableHoverablePopup`. يؤدي مفتاح Escape إلى إغلاقه.
+
+## الحالة المتحكَّم بها
+
+استخدم `open` و`onOpenChange` معًا عندما يمتلك التطبيق التحكم في مستوى الظهور. استخدم `defaultOpen` فقط لتعيين مستوى الظهور الابتدائي لتلميح أدوات غير متحكَّم به.
+
+```tsx
+import { useState } from 'react';
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+
+export const ControlledExportHelp = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <Tooltip
+      content="Download the visible records as a CSV file"
+      open={open}
+      onOpenChange={setOpen}
+      delay={300}
+    >
+      <span>
+        <Button>Export records</Button>
+      </span>
+    </Tooltip>
+  );
+};
+```
+
+## المحتوى الغني والتركيب
+
+تقبل الصيغة المختصرة `description` و`startIcon` إلى جانب `content`. يُعرض محتوى العقدة المخصصة كما هو مقدَّم، ما لم يطلب الوصف أو الرمز تخطيط العنوان.
+
+```tsx
+import { IconInfoCircle } from 'twenty-ui/icon';
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+
+export const ExportDetails = () => (
+  <Tooltip
+    content="Export visible records"
+    description="Only records matching your current filters are included."
+    startIcon={<IconInfoCircle />}
+    arrow
+  >
+    <Button>Export records</Button>
+  </Tooltip>
+);
+```
+
+يعرض الاستخدام المركب كل جزء مثبت من Base UI والتخطيط الاختياري لـ `Tooltip.Body`. ركّب البوابة والتموضع والنافذة المنبثقة والسهم الاختياري صراحةً. يعرض Popup عناصره التابعة كما تم توفيرها؛ ويوفر Body تخطيط العنوان والوصف والأيقونة الزخرفية نفسه كما في الصيغة المختصرة.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+
+export const ComposedExportDetails = () => (
+  <Tooltip.Provider delay={300} closeDelay={100} timeout={400}>
+    <Tooltip.Root>
+      <Tooltip.Trigger render={<Button>Export records</Button>} />
+      <Tooltip.Portal>
+        <Tooltip.Positioner side="inline-end" sideOffset={10} arrowPadding={8}>
+          <Tooltip.Popup>
+            <Tooltip.Arrow />
+            <Tooltip.Viewport>
+              <Tooltip.Body description="Only records matching your current filters are included.">
+                Export visible records
+              </Tooltip.Body>
+            </Tooltip.Viewport>
+          </Tooltip.Popup>
+        </Tooltip.Positioner>
+      </Tooltip.Portal>
+    </Tooltip.Root>
+  </Tooltip.Provider>
+);
+```
+
+| الجزء        | هدف العنصر الأصلي والخصائص والمرجع                                                                                       |
+| ------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `Root`       | تنسيق الحالة والحمولة. لا توجد عقدة DOM أو خصائص أصلية أو مرجع DOM. يكشف `actionsRef` عن `close` و`unmount`.             |
+| `المزود`     | `delay` و`closeDelay` و`timeout` مشتركة. لا توجد عقدة DOM أو مرجع DOM.                                                   |
+| `المشغّل`    | زر افتراضيًا. تستهدف الخصائص الأصلية والمعالجات و`render` والمرجع عنصر المشغّل.                                          |
+| `Portal`     | عنصر div الخاص بالبوابة. القيمة الافتراضية هي حاوية النسق، ثم متن المستند.                                               |
+| `Positioner` | عنصر div الخاص بالتموضع. يتولى نقطة الإرساء والجانب المادي/المنطقي والإزاحات ومعالجة التصادم والتموضع اللاصق وحشو السهم. |
+| `Popup`      | عنصر div الخاص بالنافذة المنبثقة. يتولى المحتوى والخصائص الأصلية والأنماط و`render` والمرجع.                             |
+| `Body`       | عنصر div اختياري للمحتوى داخل Popup أو Viewport. تستهدف الخصائص الأصلية والأنماط و`render` والمرجع جذره.                 |
+| `Arrow`      | عنصر div الخاص بالسهم داخل Popup.                                                                                        |
+| `Viewport`   | عنصر div اختياري للانتقالات بين حمولات المشغّل.                                                                          |
+
+يقبل `Tooltip.Body` عناصر فرعية اختيارية للعنوان، وعُقدتي `description` و`startIcon`. تستخدم العناوين وزناً متوسطاً؛ وتستخدم الأوصاف لون التلميح الثانوي، وتحافظ على فواصل الأسطر وتلف النص الطويل. احذف العناصر الفرعية للعنوان للحصول على تلميح يحتوي على وصف فقط. الأيقونة زخرفية ولا تظهر إلا مع عنوان. لا يضيف Body دور Tooltip أو تنسيق Popup أو التحجيم أو التموضع. يظل محتوى Popup الاعتباطي مدعوماً. استورد `TooltipBodyProps` من `twenty-ui/primitives/surfaces` عند كتابة غلاف.
+
+يقبل كل جزء من DOM الخصائص الأصلية والمراجع وتركيب `render` باستخدام عنصر أو دالة رد نداء. تستهدف الخصائص الأصلية ذات المستوى الأعلى للصيغة المختصرة و`render` والمرجع Popup. استخدم `triggerProps` و`positionerProps` و`portalProps` لتخصيص الأهداف الأخرى؛ إذ تتجاوز هذه القيم الافتراضية للصيغة المختصرة. توفر العناصر التابعة عنصر العرض الافتراضي للمشغّل. يحافظ الشكلان على حالة Root المتحكَّم بها/غير المتحكَّم بها وتفاصيل حدث دالة رد النداء في Base UI، بما في ذلك الإلغاء والسبب والحدث الأصلي والمشغّل النشط.
+
+يربط `Tooltip.createHandle\<TPayload>()` المشغّلات المنفصلة بأي من الشكلين عبر `handle`. يمكن أن تكون العناصر التابعة لـ Root المركب أو `content` الخاص بالصيغة المختصرة دالة تستقبل الحمولة النشطة ذات النوع المحدد. يكشف `Tooltip.Handle` والنوع العام `TooltipHandle` عن عقد المقبض المثبّت. تدعم المقابض `open(triggerId)` و`close()` الإلزاميين أثناء تثبيت Root الخاص بها.
+
+## الترحيل
+
+استبدل `content={<Tooltip.Content description={description} startIcon={icon}>title</Tooltip.Content>}` بـ `content={title} description={description} startIcon={icon}`. في الاستخدام المركب، استخدم `Tooltip.Body` لتخطيط العنوان والوصف المشترك، أو أنشئ محتواك الخاص. تمت إزالة `Tooltip.Content` و`TooltipContentProps`.
+
+تُنقل خصائص تموضع Popup المركب الحالية إلى Positioner. ضعه داخل Portal، وانقل `container` و`keepMounted` إلى Portal، وأبقِ `maxWidth` على Popup، واستبدل `arrow` بعنصر Arrow فرعي. حافظ على التباعد السابق صراحةً باستخدام `sideOffset={10}` عند الحاجة. يحتفظ Positioner المركب بقيمة Base UI وهي `sideOffset={0}`. يحد كلا الشكلين Popup عند 300 بكسل افتراضيًا.
+
+## عناصر التحكم المعطلة
+
+لا يمكن للأزرار الأصلية المعطلة تلقي التركيز عبر لوحة المفاتيح. غلّف أحدها بمشغّل قابل للتركيز حتى يتمكن المستخدمون من معرفة سبب عدم توفر الإجراء.
+
+```tsx
+import { Button } from 'twenty-ui/primitives/input';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
+
+export const UnavailableExport = () => (
+  <Tooltip content="Select at least one record to export">
+    <span tabIndex={0} aria-label="Export records unavailable">
+      <Button disabled>Export records</Button>
+    </span>
+  </Tooltip>
+);
+```
+
+يؤدي تعيين `disabled` على الصيغة المختصرة أو Root إلى تعطيل تلميح الأدوات نفسه. يؤدي `disabled` الخاص بالمشغّل إلى تعطيل تفاعل تلميح الأدوات لذلك المشغّل. عطّل عنصر التحكم الأصلي من خلال خصائصه الخاصة أو عنصر العرض الخاص بـ Trigger.
+
+## الموضع والنص المتجاوز
+
+تكون القيم الافتراضية للاختصار هي `side="top"` و`align="center"` و`sideOffset={10}`. يبلغ الحد الأقصى لعرض كلٍّ من تلميحات الأدوات المختصرة والمركبة 300 بكسل، ويُقيَّد بالمساحة المتاحة بجانب المرساة. مرّر `maxWidth` إلى المختصر أو `Tooltip.Popup` لاختيار حد أقصى مختلف، بما في ذلك المعاينات الأعرض. تظل أنماط النوافذ المنبثقة الأصلية متاحة لتحديد حجم مخصص. يتكيف الموضع مع المساحة المتاحة. يُخفى تلميح الأدوات المفتوح عند تمرير نقطة إرسائه خارج نطاق العرض، بما في ذلك خارج حاوية تمرير. استخدم `arrow` لإضافة سهم و`container` لتجاوز وجهة البوابة الخاصة بالنسق؛ راجع [التنسيق](/ar/ui/theming).
+
+استخدم [OverflowingTextWithTooltip](/ar/ui/primitives/typography/overflowing-text-with-tooltip) عندما ينبغي لتسمية نصية إظهار قيمتها الكاملة فقط عند اقتطاعها. تظل خصائص `text` و`tooltipContent` و`tooltipPlace` الحالية متاحة.
+
+## الخصائص
+
+يُنشأ المرجع من أنواع المكوّنات العامة. تُقبل أيضًا سمات النافذة المنبثقة الأصلية ومعالجات الأحداث.
+
+<TooltipReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

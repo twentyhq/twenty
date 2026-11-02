@@ -1,10 +1,29 @@
 import {
   type ConnectionProviderManifest,
   DEFAULT_CONNECTION_PROVIDER_SCOPE,
+  type StoredCustomConnectionProviderConfig,
   type StoredOAuthConnectionProviderConfig,
 } from 'twenty-shared/application';
 
 import { type UniversalFlatConnectionProvider } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-connection-provider.type';
+
+const toStoredCustomConfig = (
+  connectionProviderManifest: ConnectionProviderManifest,
+): StoredCustomConnectionProviderConfig | null => {
+  if (connectionProviderManifest.type !== 'custom') {
+    return null;
+  }
+
+  const { authorizeLogicFunction, callbackLogicFunction } =
+    connectionProviderManifest.custom;
+
+  return {
+    authorizeLogicFunctionUniversalIdentifier:
+      authorizeLogicFunction.universalIdentifier,
+    callbackLogicFunctionUniversalIdentifier:
+      callbackLogicFunction.universalIdentifier,
+  };
+};
 
 export const fromConnectionProviderManifestToUniversalFlatConnectionProvider =
   ({
@@ -47,6 +66,7 @@ export const fromConnectionProviderManifestToUniversalFlatConnectionProvider =
       scope:
         connectionProviderManifest.scope ?? DEFAULT_CONNECTION_PROVIDER_SCOPE,
       oauthConfig,
+      customConfig: toStoredCustomConfig(connectionProviderManifest),
       identifyAccountLogicFunctionUniversalIdentifier:
         connectionProviderManifest.identifyAccountLogicFunction
           ?.universalIdentifier ?? null,

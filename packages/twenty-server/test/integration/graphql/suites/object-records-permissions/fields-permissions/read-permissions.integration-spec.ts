@@ -20,7 +20,7 @@ import { upsertFieldPermissions } from 'test/integration/graphql/utils/upsert-fi
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
-import { PermissionsExceptionMessage } from 'src/engine/metadata-modules/permissions/permissions.exception';
+import { PermissionsExceptionMessage } from 'src/engine/permissions/permissions.exception';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 
 const client = request(`http://localhost:${APP_PORT}`);
@@ -408,6 +408,7 @@ describe('Field permissions restrictions', () => {
       objectMetadataSingularName: 'company',
       objectMetadataPluralName: 'companies',
       gqlFields: COMPANY_GQL_FIELDS_WITH_PEOPLE_JOB_TITLE,
+      filter: { id: { eq: companyId } },
     });
     const response =
       await makeGraphqlApiRequestWithMemberRole(graphqlOperation);

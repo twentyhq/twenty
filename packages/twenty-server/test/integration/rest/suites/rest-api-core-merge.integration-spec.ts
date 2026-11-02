@@ -41,6 +41,32 @@ describe('Core REST API Merge endpoint', () => {
     }).expect(404);
   });
 
+  it('should reject a merge without a conflict priority index', async () => {
+    await makeRestApiRequest({
+      method: 'patch',
+      path: '/people/merge',
+      body: { ids: [TEST_PERSON_1_ID, TEST_PERSON_2_ID] },
+    })
+      .expect(400)
+      .expect((res) => {
+        expect(res.body.messages[0]).toBe(
+          "Invalid conflict priority 'undefined'. Valid options for 2 records: 0-1",
+        );
+      });
+  });
+
+  it('should reject a merge with a record id that is not a UUID', async () => {
+    await makeRestApiRequest({
+      method: 'patch',
+      path: '/people/merge',
+      body: { ids: [TEST_PERSON_1_ID, 'abc'], conflictPriorityIndex: 0 },
+    })
+      .expect(400)
+      .expect((res) => {
+        expect(res.body.messages[0]).toBe('Value "abc" is not a valid UUID');
+      });
+  });
+
   it('should not delete records on a dry run merge', async () => {
     await makeRestApiRequest({
       method: 'patch',

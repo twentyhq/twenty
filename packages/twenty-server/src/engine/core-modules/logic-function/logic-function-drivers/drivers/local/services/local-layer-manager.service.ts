@@ -17,11 +17,6 @@ import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic
 import { type SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
-type LayerAppContext = {
-  flatApplication: FlatApplication;
-  applicationUniversalIdentifier: string;
-};
-
 export class LocalLayerManagerService {
   constructor(
     private readonly cacheLockService: CacheLockService,
@@ -30,10 +25,7 @@ export class LocalLayerManagerService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  async ensureDepsLayer({
-    flatApplication,
-    applicationUniversalIdentifier,
-  }: LayerAppContext): Promise<void> {
+  async ensureDepsLayer(flatApplication: FlatApplication): Promise<void> {
     const depsLayerPath = getLocalDepsLayerPath(flatApplication);
     const depsReadySentinelPath = join(
       depsLayerPath,
@@ -55,7 +47,7 @@ export class LocalLayerManagerService {
         await fs.rm(depsLayerPath, { recursive: true, force: true });
 
         await this.logicFunctionResourceService.copyDependenciesInMemory({
-          applicationUniversalIdentifier,
+          applicationUniversalIdentifier: flatApplication.universalIdentifier,
           workspaceId: flatApplication.workspaceId,
           inMemoryFolderPath: depsLayerPath,
         });
@@ -71,13 +63,10 @@ export class LocalLayerManagerService {
     );
   }
 
-  async ensureSdkLayer({
-    flatApplication,
-    applicationUniversalIdentifier,
-  }: LayerAppContext): Promise<void> {
+  async ensureSdkLayer(flatApplication: FlatApplication): Promise<void> {
     const sdkLayerPath = getLocalSdkLayerPath({
       workspaceId: flatApplication.workspaceId,
-      applicationUniversalIdentifier,
+      applicationUniversalIdentifier: flatApplication.universalIdentifier,
     });
     const sdkNodeModulesPath = join(sdkLayerPath, 'node_modules');
     const sdkReadySentinelPath = join(sdkLayerPath, LAYER_BUILD_READY_SENTINEL);
@@ -89,7 +78,7 @@ export class LocalLayerManagerService {
       return;
     }
 
-    const lockKey = `local-driver-sdk-layer:${flatApplication.workspaceId}:${applicationUniversalIdentifier}`;
+    const lockKey = `local-driver-sdk-layer:${flatApplication.workspaceId}:${flatApplication.universalIdentifier}`;
 
     await this.cacheLockService.withLock(
       async () => {
@@ -113,7 +102,7 @@ export class LocalLayerManagerService {
         await this.sdkClientArchiveService.downloadAndExtractToPackage({
           workspaceId: flatApplication.workspaceId,
           applicationId: flatApplication.id,
-          applicationUniversalIdentifier,
+          applicationUniversalIdentifier: flatApplication.universalIdentifier,
           targetPackagePath: sdkPackagePath,
         });
 

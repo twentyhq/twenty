@@ -1,0 +1,335 @@
+---
+title: Protección de tu instancia
+description: Mantén Twenty fuera de la Internet pública y abre solo las pocas rutas que necesitan tus integraciones.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Resumen
+
+Tu CRM contiene tus clientes, tus oportunidades, tus correos electrónicos y tu calendario. Cuando se publica una corrección de seguridad en una versión de Twenty, la propia corrección indica a los atacantes dónde buscar, y todas las instancias que aún no se han actualizado son objetivos.
+
+Actualizar rápidamente es la verdadera solución, pero la mayoría de las instancias autoalojadas ejecutan versiones con cierto retraso. La mejor protección mientras se ponen al día es sencilla: **asegúrate de que nadie en internet pueda acceder a tu instancia.**
+
+Esta página muestra cómo hacerlo con Tailscale, Cloudflare o tu propio proxy inverso.
+
+## Privada de forma predeterminada
+
+Divide tu instancia en tres zonas:
+
+| Zona                            | Rutas                                                                    | Quién puede acceder                                                                                                                   |
+| ------------------------------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| **Privada**                     | Todo lo demás: la aplicación, `/graphql`, `/rest`, `/metadata`, archivos | Solo tu equipo                                                                                                                        |
+| **Public**                      | `/webhooks`, `/s`, `/emailing`                                           | Cualquiera. Estos son llamados por servicios que no pueden unirse a tu red.                                                           |
+| **Conectores de IA en la nube** | `/mcp`, `/oauth`, `/.well-known`                                         | Rangos de IP de Anthropic y OpenAI. Cualquiera de sus usuarios puede acceder a estas rutas, pero solo tu equipo puede iniciar sesión. |
+
+Cada ruta abarca todo lo que hay bajo ella. Abre las zonas pública y de IA en la nube solo si utilizas las funciones que hay detrás de ellas; consulta [Rutas públicas](#public-paths). De lo contrario, mantén privada toda la instancia. Los asistentes de IA que se ejecutan en los equipos de tu equipo, como Claude Code, no necesitan que se abra nada; consulta [Clientes de IA](#ai-clients-mcp).
+
+<Note>
+**A lo que renuncias:** las herramientas de automatización alojadas que llaman a la API de Twenty desde su propia nube (Zapier, Make, n8n Cloud) no pueden acceder a una instancia privada. Ejecútalas dentro de tu red (n8n autoalojado funciona bien) o utiliza [flujos de trabajo de Twenty](/es/user-guide/workflows/overview). No hagas públicos `/graphql` ni `/rest` para solucionar esto: la propia aplicación se ejecuta en esos endpoints, por lo que exponerlos expone todo.
+</Note>
+
+## Elige una configuración
+
+<CardGroup cols={3} className="documentation-card-group">
+  <Card href="#option-1-tailscale" img="/images/user-guide/halftone/community-tailscale.svg">
+    <CardTitle>escalas</CardTitle>
+    completamente privadas. La configuración más sencilla, ideal para equipos pequeños.
+  </Card>
+  <Card href="#option-2-cloudflare-tunnel-and-access" img="/images/user-guide/halftone/community-cloudflare.svg">
+    <CardTitle>Cloudflare</CardTitle>
+    Sin puertos abiertos, inicia sesión con tu proveedor de identidad, rutas públicas donde sea necesario.
+  </Card>
+  <Card href="#option-3-your-own-reverse-proxy" img="/images/user-guide/halftone/community-reverse-proxy.svg">
+    <CardTitle>invertir proxy</CardTitle>
+    Caddy o Nginx con listas permitidas de IP. Sin servicio de terceros.
+  </Card>
+</CardGroup>
+
+|                                                  | Tailscale                                   | Cloudflare                                                          | Proxy inverso                        |
+| ------------------------------------------------ | ------------------------------------------- | ------------------------------------------------------------------- | ------------------------------------ |
+| Cómo accede tu equipo                            | Aplicación de Tailscale en cada dispositivo | Inicio de sesión en el navegador mediante tu proveedor de identidad | Desde la red de la oficina o una VPN |
+| Puertos de entrada abiertos en el servidor       | Ninguno                                     | Ninguno                                                             | 443                                  |
+| Webhooks públicos                                | No                                          | Sí                                                                  | Sí                                   |
+| Clientes de IA locales (Claude Code, Codex)      | Sí                                          | Sí                                                                  | Sí                                   |
+| Conectores de IA en la nube (Claude.ai, ChatGPT) | No                                          | Sí                                                                  | Sí                                   |
+
+## Opción 1: Tailscale
+
+[Tailscale](https://tailscale.com) coloca tu servidor y los dispositivos de tu equipo en una red privada. Twenty obtiene una dirección HTTPS que solo funciona para las personas de esa red.
+
+<Steps>
+  <Step title="Vincula Twenty a localhost">
+    En `docker-compose.yml`, cambia la asignación de puertos de `server` para que solo se pueda acceder al contenedor desde el propio servidor:
+
+    ```yaml
+    services:
+      server:
+        ports:
+          - "127.0.0.1:3000:3000"
+    ```
+  </Step>
+  <Step title="Une el servidor a tu tailnet">
+    [Instala Tailscale](https://tailscale.com/download/linux) en el servidor y, a continuación:
+
+    ```bash
+    sudo tailscale up --hostname=twenty
+    ```
+  </Step>
+  <Step title="Sirve Twenty mediante HTTPS">
+    ```bash
+    sudo tailscale serve --bg 3000
+    ```
+
+    Ahora Twenty está en `https://twenty.\<your-tailnet>.ts.net`, con un certificado gestionado por Tailscale. Si el comando te lo solicita, habilita los certificados HTTPS para tu tailnet en la consola de administración.
+  </Step>
+  <Step title="Actualiza SERVER_URL">
+    ```ini
+    SERVER_URL=https://twenty.your-tailnet.ts.net
+    ```
+
+    A continuación, reinicia con `docker compose up -d`.
+  </Step>
+</Steps>
+
+Usa los [controles de acceso](https://tailscale.com/kb/1018/acls) de Tailscale para limitar el servidor a las personas que lo necesitan, no a toda tu tailnet.
+
+La conexión de cuentas de Google o Microsoft sigue funcionando: la redirección de OAuth se produce en el navegador de tu compañero de equipo, que está en la tailnet. Los correos electrónicos de invitación enlazan a la dirección de la tailnet, por lo que los nuevos compañeros de equipo deben unirse a la tailnet antes de aceptar.
+
+<Warning>
+Tailscale Funnel publica un puerto completo en Internet, no rutas individuales. No puedes usarlo para hacer público `/webhooks` mientras mantienes la aplicación privada. Si necesitas rutas públicas o conectores de IA, usa la opción 2 o 3.
+</Warning>
+
+## Opción 2: Cloudflare Tunnel y Access
+
+Un [Cloudflare Tunnel](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/) conecta tu servidor a Cloudflare mediante una conexión saliente, por lo que no hay puertos abiertos en el servidor. Después, [Cloudflare Access](https://developers.cloudflare.com/cloudflare-one/policies/access/) pide a tu equipo que inicie sesión con tu proveedor de identidad antes de que cualquier solicitud llegue a Twenty.
+
+<Steps>
+  <Step title="Protege el nombre de host con Access">
+    Hazlo antes de crear el túnel, para que nunca se pueda acceder al nombre de host sin iniciar sesión. Crea aplicaciones de Access autohospedadas. Access aplica la ruta más específica, por lo que las reglas de ruta siguientes prevalecen sobre la regla de nombre de host.
+
+    | Ruta en `crm.example.com`        | Acción de la política | Incluir                                                                                                                |
+    | -------------------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------- |
+    | `/` (todo el nombre de host)     | Permitir              | Tu equipo, por ejemplo, correos electrónicos que terminan en `@example.com`                                            |
+    | `/webhooks`, `/s`, `/emailing`   | Omitir                | Todos                                                                                                                  |
+    | `/mcp`, `/oauth`, `/.well-known` | Omitir                | Rangos de IP de conectores de IA en la nube de [clientes de IA](#ai-clients-mcp), además de las IP de tu oficina o VPN |
+
+    Crea una aplicación por ruta. Añade solo las reglas de omisión para las funciones que utilices.
+
+    Los clientes de IA locales como Claude Code no pueden completar un inicio de sesión en el navegador, por lo que dependen de las IP de la oficina o VPN de la última regla. Si tu equipo trabaja desde cualquier lugar, añade en su lugar una política Permitir para tu equipo a esa aplicación, habilita la autenticación WARP en Access y pídeles que ejecuten el cliente Cloudflare WARP.
+  </Step>
+  <Step title="Crea un túnel">
+    En el panel de Cloudflare Zero Trust, crea un túnel, elige **Docker** como entorno y copia el token. Añade un nombre de host público, `crm.example.com`, que apunte a `http://server:3000`.
+  </Step>
+  <Step title="Ejecuta cloudflared junto a Twenty">
+    Añade este servicio a `docker-compose.yml` y elimina la sección `ports` de `server`. cloudflared llega a Twenty a través de la red de Docker, por lo que el servidor no necesita publicar ningún puerto.
+
+    ```yaml
+    services:
+      cloudflared:
+        image: cloudflare/cloudflared:latest
+        command: tunnel --no-autoupdate run
+        environment:
+          TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
+        depends_on:
+          - server
+        restart: always
+    ```
+
+    Añade `CLOUDFLARE_TUNNEL_TOKEN` a tu `.env`.
+  </Step>
+  <Step title="Actualiza SERVER_URL">
+    ```ini
+    SERVER_URL=https://crm.example.com
+    ```
+
+    A continuación, reinicia con `docker compose up -d`.
+  </Step>
+</Steps>
+
+Si usas el WAF o la protección contra bots de Cloudflare, omite los desafíos en las rutas MCP y OAuth. Claude y ChatGPT no pueden resolver una página de desafío.
+
+## Opción 3: Tu propio proxy inverso
+
+Si ya ejecutas un proxy inverso, incluye en la lista de permitidos las direcciones IP de tu oficina o VPN para la aplicación y abre solo las rutas públicas. Primero vincula Twenty a localhost, como en la [opción 1](#option-1-tailscale), para que nada omita el proxy.
+
+<Tabs>
+  <Tab title="Caddy">
+    ```caddyfile
+    crm.example.com {
+      # Keep only the public paths you use
+      @public path /webhooks/* /s/* /emailing/*
+      handle @public {
+        reverse_proxy localhost:3000
+      }
+
+      @ai_clients {
+        path /mcp /mcp/* /oauth/* /.well-known/*
+        remote_ip 160.79.104.0/21 {$CHATGPT_CONNECTOR_IPS}
+      }
+      handle @ai_clients {
+        reverse_proxy localhost:3000
+      }
+
+      @team remote_ip 203.0.113.0/24
+      handle @team {
+        reverse_proxy localhost:3000
+      }
+
+      handle {
+        respond 403
+      }
+    }
+    ```
+  </Tab>
+  <Tab title="Nginx">
+    ```nginx
+    server {
+      listen 443 ssl;
+      server_name crm.example.com;
+      ssl_certificate /etc/ssl/crm.example.com/fullchain.pem;
+      ssl_certificate_key /etc/ssl/crm.example.com/privkey.pem;
+
+      proxy_set_header Host $host;
+      proxy_set_header X-Forwarded-Proto $scheme;
+      proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+      proxy_http_version 1.1;
+      proxy_set_header Connection "";
+      proxy_buffering off;
+
+      # Keep only the public paths you use
+      location ^~ /webhooks/ { proxy_pass http://127.0.0.1:3000; }
+      location ^~ /s/ { proxy_pass http://127.0.0.1:3000; }
+      location ^~ /emailing/ { proxy_pass http://127.0.0.1:3000; }
+
+      location ~ ^/(mcp|oauth|\.well-known)(/|$) {
+        allow 203.0.113.0/24;
+        allow 160.79.104.0/21;
+        # one allow line per ChatGPT connector range
+        deny all;
+        proxy_pass http://127.0.0.1:3000;
+      }
+
+      location / {
+        allow 203.0.113.0/24;
+        deny all;
+        proxy_pass http://127.0.0.1:3000;
+      }
+    }
+    ```
+
+    Los encabezados `Host` y `X-Forwarded-Proto` son obligatorios: Twenty genera sus URL de descubrimiento OAuth y MCP a partir de ellos y, sin ellos, anuncia `http://127.0.0.1:3000`. Las IP de tu equipo también aparecen en la ubicación MCP, por lo que los clientes de IA locales siguen funcionando. Caddy establece estos encabezados por sí solo.
+  </Tab>
+</Tabs>
+
+Sustituye `203.0.113.0/24` por las direcciones de tu oficina o VPN. `CHATGPT_CONNECTOR_IPS` contiene los rangos de OpenAI; consulta [clientes de IA](#ai-clients-mcp). Déjalo vacío si no utilizas ChatGPT. Si tu proxy está detrás de un balanceador de carga, realiza la coincidencia con la IP de cliente que reenvía (`client_ip` con `trusted_proxies` en Caddy, `set_real_ip_from` en Nginx), no con la dirección del balanceador de carga.
+
+## Rutas públicas
+
+Estas son las rutas a las que llaman los servicios externos a tu red. Abre solo las que necesites.
+
+| Ruta                                      | Llamado por                                   | Necesario cuando                                                                                               |
+| ----------------------------------------- | --------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| `/webhooks/workflows`                     | Cualquier servicio externo                    | Utilizas flujos de trabajo con un activador de **Webhook**                                                     |
+| `/s`, `/webhooks/server`                  | Cualquier servicio externo                    | Utilizas aplicaciones o funciones lógicas que exponen rutas HTTP                                               |
+| `/webhooks/google`, `/webhooks/microsoft` | Google y Microsoft                            | Activaste la sincronización push para buzones y calendarios (consulta más abajo)                               |
+| `/webhooks/messaging`                     | Amazon SES, Resend                            | Envías correo electrónico mediante SES o Resend y quieres eventos de entrega                                   |
+| `/emailing`                               | Personas que reciben tus correos electrónicos | Envías campañas de correo electrónico (enlaces para cancelar la suscripción, seguimiento de aperturas y clics) |
+| `/mcp`, `/oauth`, `/.well-known`          | Claude, ChatGPT                               | Añades Twenty como conector; consulta [clientes de IA](#ai-clients-mcp)                                        |
+
+De forma predeterminada, Twenty sondea los buzones y calendarios, por lo que Google y Microsoft nunca llaman a tu instancia. Solo lo hacen si estableces `IS_CONNECTED_ACCOUNT_WEBHOOK_SUBSCRIPTION_ENABLED=true`.
+
+Cómo se protege cada ruta pública:
+
+* Los **webhooks de flujos de trabajo** solo comprueban que existan el espacio de trabajo y el flujo de trabajo. Cualquiera que conozca la URL puede activar el flujo de trabajo, así que trata la URL como un secreto y valida la carga útil en el flujo de trabajo antes de actuar sobre ella.
+* Las **rutas de aplicaciones y funciones lógicas** son públicas, a menos que la ruta requiera autenticación (`isAuthRequired`). Para las rutas públicas, verifica quién realiza la llamada en tu propio código, por ejemplo, con la firma del servicio remitente.
+* Los **webhooks de Google, Microsoft, SES y Resend** son verificados por Twenty mediante la firma o el token del proveedor.
+* Los **enlaces de correo electrónico** solo pueden registrar una apertura, un clic o una cancelación de suscripción para el destinatario al que se enviaron.
+
+## Clientes de IA (MCP)
+
+Los asistentes de IA son una de las principales formas en que tu equipo usará Twenty, a través de su [servidor MCP](/es/user-guide/ai/capabilities/mcp). Lo que debes abrir depende de dónde se ejecute el asistente, no de qué asistente sea.
+
+### Clientes locales: nada que abrir
+
+Claude Code, Codex CLI, Cursor y otras herramientas que se ejecutan en tu computadora se conectan a Twenty desde esa computadora. Si está en tu tailnet o VPN, llegan a `/mcp` de la misma forma en que tu navegador llega a la aplicación. Esta es la configuración más segura, así que priorízala cuando puedas.
+
+Claude Desktop es la excepción: los conectores añadidos en **Configuración → Conectores** se ejecutan en la nube de Anthropic, incluso en la aplicación de escritorio. Para mantener la conexión local, añade Twenty como un servidor MCP local en `claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "twenty": {
+      "command": "npx",
+      "args": [
+        "mcp-remote",
+        "https://twenty.your-tailnet.ts.net/mcp"
+      ]
+    }
+  }
+}
+```
+
+### Conectores en la nube: abre con cuidado
+
+Claude (web, móvil y conectores en la aplicación de escritorio) y ChatGPT llaman a tu servidor desde la infraestructura de Anthropic y OpenAI, no desde tu dispositivo. No pueden acceder a una instancia privada, por lo que debes abrir `/mcp`, `/oauth` y `/.well-known` para sus rangos de IP.
+
+<Warning>
+Una lista de IP permitidas comprueba de qué red procede una solicitud, no quién la envió. Cualquiera con una cuenta de Claude o ChatGPT puede añadir tu URL como conector y enviar solicitudes a estas rutas.
+</Warning>
+
+Lo que los mantiene fuera es el inicio de sesión. Para obtener un token, un usuario debe iniciar sesión en la página `/authorize` de Twenty, que permanece en la zona privada. Alguien fuera de tu red puede iniciar el flujo de conexión, pero no puede finalizarlo, y `/mcp` rechaza todas las solicitudes sin un token válido.
+
+Lo que permanece expuesto es el código que se ejecuta antes del inicio de sesión: descubrimiento de OAuth, registro de clientes (`/oauth/register`) y el endpoint de token. La lista de permitidos reduce eso: los escáneres de todo Internet no pueden acceder directamente a estas rutas, y las solicitudes deben llegar a través de la infraestructura de Claude o ChatGPT. Por sí sola no hace que ese código sea seguro, por lo que las actualizaciones siguen siendo importantes.
+
+Si utilizas conectores en la nube:
+
+* Abre solo `/mcp`, `/oauth` y `/.well-known`. Nunca abras `/authorize` ni el resto de la aplicación.
+* Permite solo los proveedores que utilizas:
+  * **Anthropic:** `160.79.104.0/21`, de la [página de direcciones IP de Anthropic](https://platform.claude.com/docs/en/api/ip-addresses).
+  * **OpenAI:** la lista de [chatgpt-connectors.json](https://openai.com/chatgpt-connectors.json). OpenAI la describe como de máximo esfuerzo y cambia con el tiempo, así que actualízala de forma programada:
+
+    ```bash
+    curl -s https://openai.com/chatgpt-connectors.json | jq -r '.prefixes[].ipv4Prefix | select(.)'
+    ```
+* Actualiza rápidamente cuando las notas de la versión mencionen correcciones de MCP u OAuth.
+
+## Verifica tu configuración
+
+Prueba desde ambos lados de tu red después de cualquier cambio:
+
+| Prueba                                       | De               | Esperado                                                           |
+| -------------------------------------------- | ---------------- | ------------------------------------------------------------------ |
+| La aplicación, `/graphql` y `/authorize`     | Fuera de tu red  | Bloqueado o tu página de inicio de sesión de Access                |
+| Puerto `3000` en la IP pública del servidor  | Fuera de tu red  | Sin conexión                                                       |
+| La aplicación y un cliente de IA local       | Dentro de tu red | Ambos funcionan                                                    |
+| Una solicitud MCP sin token (a continuación) | Dentro de tu red | `401`, con una URL de descubrimiento en tu dirección HTTPS pública |
+| Un conector en la nube                       | Claude o ChatGPT | Puedes conectarte, iniciar sesión y llamar a una herramienta       |
+| Cada ruta pública que abriste                | El servicio real | Su evento de prueba se procesa correctamente                       |
+
+```bash
+curl -si -X POST https://crm.example.com/mcp | grep -i www-authenticate
+```
+
+El encabezado debe apuntar a `https://crm.example.com/.well-known/...`. Si muestra `http://` o `127.0.0.1`, tu proxy no está reenviando los encabezados `Host` y `X-Forwarded-Proto`.
+
+## Lista de verificación básica
+
+<Check>Postgres y Redis no se publican. El archivo predeterminado `docker-compose.yml` no los publica; mantenlo así si lo editas.</Check>
+<Check>Nada omite tu proxy o túnel. Con un proxy en el host, el puerto de Twenty está vinculado a `127.0.0.1`. Con cloudflared en Docker, el servicio `server` no publica ningún puerto. Docker escribe sus propias reglas de firewall, por lo que los puertos que publica omiten `ufw` y firewalls de host similares.</Check>
+<Check>Los secretos son largos y aleatorios, y sabes cómo [rotarlos](/es/developers/self-host/capabilities/key-rotation).</Check>
+<Check>Los miembros del espacio de trabajo usan SSO o autenticación de dos factores.</Check>
+<Check>Se realiza una copia de seguridad de la base de datos de forma programada y has probado una restauración.</Check>
+<Check>`TAG` está fijado a una versión y actualizas deliberadamente.</Check>
+
+## Mantente al día
+
+Nada de lo anterior sustituye las actualizaciones. Te da tiempo.
+
+* Sigue las versiones en [GitHub](https://github.com/twentyhq/twenty): **Ver → Personalizado → Versiones**.
+* Cuando una versión incluya una corrección de seguridad, actualiza tan pronto como lo indique su aviso: el mismo día para los problemas críticos. Sigue la [guía de actualización](/es/developers/self-host/capabilities/upgrade-guide).
+* Informa de vulnerabilidades a [security@twenty.com](mailto:security@twenty.com), no en incidencias públicas.
+
+<PageBanner illustration="community-reverse-proxy" />

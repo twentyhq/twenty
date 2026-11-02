@@ -22,6 +22,7 @@ export const useApplicationsWithPreferences = () => {
       currentWorkspace,
     }),
     loading,
+    hasLoadedApplicationsWithPreferences,
     hasApplicationsLoadError:
       isDefined(error) && !hasLoadedApplicationsWithPreferences,
     error,

@@ -39,7 +39,6 @@ describe('SkillResolver translatable fields', () => {
     label: SKILL_LABEL,
     description: SKILL_DESCRIPTION,
     content: 'Skill content',
-    isCustom: false,
     isSystem: false,
     isActive: true,
     workspaceId: WORKSPACE_ID,
@@ -103,7 +102,6 @@ describe('SkillResolver translatable fields', () => {
     const { resolver } = buildResolver();
     const skill = aSkill({
       applicationId: CUSTOM_APPLICATION_ID,
-      isCustom: true,
       label: 'Lead triage',
       description: 'Routes inbound leads to the right owner',
     });

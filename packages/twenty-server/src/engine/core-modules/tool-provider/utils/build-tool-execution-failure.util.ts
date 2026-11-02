@@ -1,4 +1,4 @@
-import { formatValidationErrors } from 'src/engine/core-modules/tool-provider/utils/format-validation-errors.util';
+import { formatValidationErrors } from 'src/engine/workspace-manager/workspace-migration/utils/format-validation-errors.util';
 import { isUserFacingToolExecutionError } from 'src/engine/core-modules/tool-provider/utils/is-user-facing-tool-execution-error.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { shouldCaptureException } from 'src/engine/utils/global-exception-handler.util';

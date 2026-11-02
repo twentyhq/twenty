@@ -140,7 +140,7 @@ export class BlocklistReimportMessagesJob {
     connectedAccountIds: string[] | null;
   }): Promise<string[]> {
     const where: FindOptionsWhere<MessageChannelEntity> = {
-      syncStage: Not(MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING),
+      syncStage: Not(MessageChannelSyncStage.PENDING_CONFIGURATION),
       workspaceId,
     };
 

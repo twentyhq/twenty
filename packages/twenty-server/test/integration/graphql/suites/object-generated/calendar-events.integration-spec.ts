@@ -25,9 +25,12 @@ describe('calendarEventsResolver (e2e)', () => {
 
     expect(edges.length).toEqual(QUERY_MAX_RECORDS);
 
-    const calendarEvent = edges[0].node;
+    const seededCalendarEvent = edges.find(
+      (edge: { node: { id: string } }) =>
+        edge.node.id === CALENDAR_EVENT_DATA_SEED_IDS.ID_1,
+    )?.node;
 
-    expect(calendarEvent).toMatchSnapshot({
+    expect(seededCalendarEvent).toMatchSnapshot({
       createdAt: expect.any(String),
       endsAt: expect.any(String),
       startsAt: expect.any(String),

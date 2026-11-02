@@ -65,6 +65,7 @@ export class SyncDiscardDraftWorkflowAvailabilityExpressionCommand extends Provi
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {
               flatEntityToCreate: [],

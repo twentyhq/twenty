@@ -1,0 +1,127 @@
+---
+title: Redirecționați o căsuță de e-mail partajată din Microsoft 365
+description: Trimiteți e-mailuri dintr-o căsuță poștală partajată Microsoft 365 într-un canal de e-mail Twenty.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
+Un canal de e-mail oferă spațiului dvs. de lucru o adresă partajată, precum `contact@yourcompany.com`. E-mailurile trimise la acea adresă trebuie să ajungă cumva în Twenty. Faceți acest lucru redirecționând căsuța poștală către adresa privată oferită de Twenty.
+
+Configurarea are două părți: creați canalul în Twenty, apoi direcționați Microsoft către acesta.
+
+## Partea 1: Creați canalul în Twenty
+
+1. Accesați **Setări → Comunicare**.
+2. Faceți clic pe **Adăugați canal de e-mail**.
+
+<img src="/images/user-guide/emails/inbound-channels/03-twenty-add-email-channel.png" style={{ width: '100%' }} />
+
+3. În **Adresa de e-mail sursă**, introduceți adresa partajată la care doriți să primiți e-mailuri, de exemplu `contact@yourcompany.com`.
+4. În **Nume afișat**, introduceți numele pe care îl văd destinatarii, de exemplu `Twenty Contact`.
+5. Faceți clic pe **Salvează**.
+
+<img src="/images/user-guide/emails/inbound-channels/04-twenty-new-channel-form.png" style={{ width: '100%' }} />
+
+6. Twenty afișează acum o **Adresă de redirecționare**. Aceasta arată astfel: `ch_2cd282d193b5@inbound.twenty.com`. Faceți clic pe **Copiați**.
+
+<img src="/images/user-guide/emails/inbound-channels/05-twenty-forwarding-address.png" style={{ width: '100%' }} />
+
+<Note>
+  Fiecare canal primește propria adresă de redirecționare. Nu direcționați niciodată două căsuțe poștale către
+  aceeași adresă, altfel e-mailurile lor vor ajunge în același loc.
+</Note>
+
+## Partea 2: Creați căsuța poștală partajată
+
+Omiteți această parte dacă `contact@yourcompany.com` există deja în Microsoft 365.
+
+1. Deschideți [centrul de administrare Exchange](https://admin.cloud.microsoft/exchange).
+2. Accesați **Destinatari → Căsuțe poștale**.
+3. Faceți clic pe **Adăugați o căsuță poștală partajată**.
+
+<img src="/images/user-guide/emails/inbound-channels/01-exchange-add-shared-mailbox.png" style={{ width: '100%' }} />
+
+4. Completați **Numele afișat**.
+5. Completați **Adresa de e-mail** și alegeți domeniul dvs.
+6. Faceți clic pe **Creare**. Este nevoie de un minut pentru a apărea în listă.
+
+<img src="/images/user-guide/emails/inbound-channels/02-exchange-shared-mailbox-form.png" style={{ width: '100%' }} />
+
+## Partea 3: Redirecționați căsuța poștală către Twenty
+
+1. În **Destinatari → Căsuțe poștale**, faceți clic pe căsuța poștală pentru a o deschide.
+2. Faceți clic pe **Redirecționare e-mail**.
+
+<img src="/images/user-guide/emails/inbound-channels/06-exchange-email-forwarding-link.png" style={{ width: '100%' }} />
+
+3. Activați **Redirecționați toate e-mailurile trimise către această căsuță poștală**.
+4. Alegeți **Redirecționați către o adresă de e-mail externă** și lipiți adresa de redirecționare copiată din Twenty.
+5. Bifați **Livrați mesajul atât la adresa de redirecționare, cât și la căsuța poștală**, astfel încât echipa dvs. să păstreze o copie în Outlook.
+6. Faceți clic pe **Salvează**.
+
+<img src="/images/user-guide/emails/inbound-channels/07-exchange-manage-forwarding.png" style={{ width: '100%' }} />
+
+<img src="/images/user-guide/emails/inbound-channels/08-exchange-forwarding-saved.png" style={{ width: '100%' }} />
+
+Microsoft spune că aplicarea modificărilor poate dura până la 5 minute.
+
+## Partea 4: Permiteți redirecționarea către adrese externe
+
+Acest pas este ușor de omis. Fără acesta, niciun e-mail nu ajunge în Twenty.
+
+În mod implicit, Microsoft 365 blochează redirecționarea automată către adrese din afara organizației dvs. E-mailul este respins, iar expeditorul inițial primește un mesaj de respingere care spune:
+
+```
+5.7.520 Access denied, Your organization does not allow external forwarding.
+```
+
+Pentru a permite acest lucru:
+
+1. Deschideți [portalul Microsoft Defender](https://security.microsoft.com).
+2. Accesați **E-mail și colaborare → Politici și reguli → Politici de amenințări → Anti-spam**.
+3. Deschideți **Politica de ieșire anti-spam** sau creați una nouă care se aplică numai căsuțelor poștale partajate.
+4. Faceți clic pe **Editați setările de protecție**.
+5. Setați **Reguli de redirecționare automată** la **Activat - Redirecționarea este activată**.
+6. Salvează.
+
+<Warning>
+  Activarea acestei opțiuni pentru întregul dvs. entitate găzduită permite oricărui cont compromis să redirecționeze
+  e-mailuri în exterior. Creați o politică limitată doar la căsuțele poștale partajate pe care le
+  conectați, în loc să editați politica implicită.
+</Warning>
+
+## Partea 5: Testați
+
+Trimiteți un e-mail de la o adresă externă (un cont Gmail personal funcționează) către `contact@yourcompany.com`. Ar trebui să apară în Twenty într-un minut sau două.
+
+## Depanare
+
+<Accordion title="Expeditorii primesc un mesaj de respingere 5.7.520">
+  Redirecționarea externă este încă blocată. Repetați Partea 4 și confirmați că politica pe care ați
+  editat-o se aplică acestei căsuțe poștale.
+</Accordion>
+
+<Accordion title="Nu ajunge nimic și nici nu există un mesaj de respingere">
+  Comparați caracter cu caracter adresa de redirecționare din Exchange cu
+  cea din Twenty. Un singur caracter greșit înseamnă că e-mailul nu este livrat nicăieri
+  util și este eliminat fără notificare.
+</Accordion>
+
+<Accordion title="E-mailurile nu mai apar în Outlook">
+  **Livrați mesajul atât la adresa de redirecționare, cât și la căsuța poștală** a rămas nebifată.
+  Bifați-o și salvați.
+</Accordion>
+
+<Accordion title="Canalul primește e-mailuri, dar nu poate trimite">
+  Primirea și trimiterea sunt separate. Trimiterea necesită ca domeniul dvs. să fie
+  verificat în secțiunea **Domeniu de trimitere** a canalului, ceea ce înseamnă adăugarea
+  acolo a înregistrărilor de **Autentificare a domeniului** listate de Twenty. Consultați Canale de
+  e-mail pentru a afla de ce
+  înregistrări are nevoie fiecare utilizare.
+</Accordion>
+
+Folosiți un alt furnizor? Consultați [Google Workspace](/ro/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-google-workspace) sau [orice alt furnizor de e-mail](/ro/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-any-mail-provider).
+
+<PageBanner illustration="page-cover-email" />

@@ -3,7 +3,10 @@ title: Aspect
 description: Cum să navigați, să răsfoiți și să vizualizați înregistrări în Twenty.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Aspectul principal
 
@@ -11,7 +14,9 @@ Centrul ecranului este locul unde se află înregistrările dvs. — persoane, c
 
 <img src="/images/user-guide/home/main-layout.png" style={{width:'100%'}} />
 
-## Bară de navigare
+<span id="navigation-bar" />
+
+## Bară laterală
 
 Bara laterală din stânga vă oferă:
 
@@ -23,6 +28,8 @@ Bara laterală din stânga vă oferă:
 * **Fluxuri de lucru** — creați automatizări
 
 Trageți elementele pentru a le reordona, creați dosare pentru a grupa obiecte înrudite, ascundeți ceea ce nu folosiți.
+
+Folosește butonul de restrângere din partea de sus a barei laterale sau alege **Restrânge bara laterală** din meniul de comenzi (`Cmd+K` pe Mac sau `Ctrl+K` pe Windows). Când este restrânsă, folosește **Extinde bara laterală** pentru a o afișa din nou.
 
 <img src="/images/user-guide/home/navigation-bar.png" style={{width:'100%'}} />
 
@@ -40,7 +47,7 @@ Apăsați `Cmd+K` (Mac) sau `Ctrl+K` (Windows) — sau faceți clic pe cele trei
 
 ## Căutare
 
-Accesibil prin Meniul de comenzi, din partea de sus a barei de navigare sau prin apăsarea tastei `/`. Căutarea funcționează pentru toate obiectele.
+Accesibil prin Meniul de comenzi, din partea de sus a barei laterale sau prin apăsarea tastei `/`. Căutarea funcționează pentru toate obiectele.
 
 <img src="/images/user-guide/home/search-bar.png" style={{width:'100%'}} />
 
@@ -66,8 +73,13 @@ Fiecare vizualizare își salvează propriile filtre, ordonarea și vizibilitate
 
 Când deschideți o înregistrare, pagina de detalii este construită din **file** și **widgeturi** configurabile. Adăugați, eliminați, reordonați și redimensionați widgeturile pe o grilă — câmpuri, înregistrări asociate, e-mailuri, cronologie, sarcini, note, fișiere, diagrame, iframe-uri și altele. Fiecare tip de obiect are propriul său aspect.
 
-<Card title="Ghid complet pentru Aspect" icon="arrow-right" href="/ro/user-guide/layout/overview">
-  Navigare, vizualizări, pagini de înregistrare — referințe detaliate și ghiduri practice.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ro/user-guide/layout/overview" img="/images/user-guide/halftone/layout-window-v1.svg">
+  <CardTitle>Ghid complet privind aspectul</CardTitle>
+  Bară laterală, vizualizări, pagini de înregistrare — referințe detaliate și ghiduri practice.
 </Card>
+</CardGroup>
 
 <VimeoEmbed videoId="1185511790" title="Aspect" />
+
+<PageBanner illustration="getting-started-layout" />

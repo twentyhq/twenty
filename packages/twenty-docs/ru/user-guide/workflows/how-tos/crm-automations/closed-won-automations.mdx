@@ -3,7 +3,7 @@ title: Автоматизации для стадии «Закрыта — вы�
 description: Автоматизируйте действия после выигрыша, когда возможность закрывается.
 ---
 
-Когда сделка закрывается, нужно сделать несколько вещей: обновить статус компании, уведомить участников команды, создать задачи по онбордингу. Автоматизируйте всё это одним рабочим процессом.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Проблема
 
@@ -37,47 +37,49 @@ description: Автоматизируйте действия после выиг
 ### Шаг 3: Добавьте фильтр по стадии
 
 1. Добавьте действие **Фильтр**
-2. Условие: `{{trigger.object.stage}}` равно «Закрыта выиграна»
+2. Условие: `{{trigger.properties.after.stage}}` равно «Закрыта выиграна»
 
 ### Шаг 4: Обновите тип компании
 
 1. Добавьте действие **Обновить запись**
 2. Настроить:
 
-| Поле                   | Значение                        |
-| ---------------------- | ------------------------------- |
-| **Объект**             | Компании                        |
-| **Запись**             | `{{trigger.object.company.id}}` |
-| **Тип**                | Клиент                          |
-| **Дата первой сделки** | `{{trigger.object.closedAt}}`   |
-| **Владелец аккаунта**  | `{{trigger.object.owner.id}}`   |
+| Поле                   | Значение                                 |
+| ---------------------- | ---------------------------------------- |
+| **Объект**             | Компании                                 |
+| **Запись**             | `{{trigger.properties.after.companyId}}` |
+| **Тип**                | Клиент                                   |
+| **Дата первой сделки** | `{{trigger.properties.after.closeDate}}` |
+| **Владелец аккаунта**  | `{{trigger.properties.after.ownerId}}`   |
+
+Назовите этот шаг "Update Company". Его результатом является обновленная компания, поэтому последующие шаги могут вставлять ее поля из средства выбора переменных, показанного ниже как `{{Update Company.name}}`. Выбирайте их в средстве выбора, а не вводите вручную: переменные ссылаются на ID шага, а не на его имя.
 
 ### Шаг 5: Создайте задачу по онбордингу
 
 1. Добавьте действие **Создать запись**
 2. Настроить:
 
-| Поле                      | Значение                                                                                             |
-| ------------------------- | ---------------------------------------------------------------------------------------------------- |
-| **Объект**                | Задачи                                                                                               |
-| **Заголовок**             | `Onboarding: {{trigger.object.name}}`                                                                |
-| **Исполнитель**           | Сотрудник команды Customer Success                                                                   |
-| **Срок исполнения**       | Через 3 дня                                                                                          |
-| **Приоритет**             | Высокий                                                                                              |
-| **Связанная компания**    | `{{trigger.object.company.id}}`                                                                      |
-| **Связанная возможность** | `{{trigger.object.id}}`                                                                              |
-| **Описание**              | `New customer onboarding for {{trigger.object.company.name}}. Deal value: {{trigger.object.amount}}` |
+| Поле                      | Значение                                               |
+| ------------------------- | ------------------------------------------------------ |
+| **Объект**                | Задачи                                                 |
+| **Заголовок**             | `Onboarding: {{trigger.properties.after.name}}`        |
+| **Исполнитель**           | Сотрудник команды Customer Success                     |
+| **Срок исполнения**       | Через 3 дня                                            |
+| **Приоритет**             | Высокий                                                |
+| **Связанная компания**    | `{{trigger.properties.after.companyId}}`               |
+| **Связанная возможность** | `{{trigger.properties.after.id}}`                      |
+| **Описание**              | `New customer onboarding for {{Update Company.name}}.` |
 
 ### Шаг 6: Уведомите команду Customer Success
 
 1. Добавьте действие **Send Email**
 2. Настроить:
 
-| Поле      | Значение                                           |
-| --------- | -------------------------------------------------- |
-| **Кому**  | customer-success@yourcompany.com                   |
-| **Тема**  | `🎉 New Customer: {{trigger.object.company.name}}` |
-| **Текст** | См. пример ниже                                    |
+| Поле      | Значение                                   |
+| --------- | ------------------------------------------ |
+| **Кому**  | customer-success@yourcompany.com           |
+| **Тема**  | `🎉 New Customer: {{Update Company.name}}` |
+| **Текст** | См. пример ниже                            |
 
 **Пример текста письма**:
 
@@ -86,11 +88,9 @@ Hi CS Team,
 
 We have a new customer!
 
-Company: {{trigger.object.company.name}}
-Deal: {{trigger.object.name}}
-Value: {{trigger.object.amount}}
-Sales Rep: {{trigger.object.owner.name}}
-Close Date: {{trigger.object.closedAt}}
+Company: {{Update Company.name}}
+Deal: {{trigger.properties.after.name}}
+Close Date: {{trigger.properties.after.closeDate}}
 
 An onboarding task has been created automatically.
 
@@ -99,14 +99,23 @@ Let's give them a great start!
 
 ### Шаг 7: Отправьте подтверждение менеджеру по продажам
 
-1. Добавьте ещё одно действие **Send Email**
-2. Настроить:
+1. Добавьте действие **Search Records** с именем "Find Owner", чтобы получить менеджера по продажам:
+
+| Поле       | Значение                                        |
+| ---------- | ----------------------------------------------- |
+| **Объект** | Участники рабочего пространства                 |
+| **Фильтр** | ID равен `{{trigger.properties.after.ownerId}}` |
+
+2. Добавьте ещё одно действие **Send Email**
+3. Настроить:
 
 | Поле      | Значение                                                                                   |
 | --------- | ------------------------------------------------------------------------------------------ |
-| **Кому**  | `{{trigger.object.owner.email}}`                                                           |
-| **Тема**  | `✅ Deal Closed: {{trigger.object.name}}`                                                   |
+| **Кому**  | `{{Find Owner.first.userEmail}}`                                                           |
+| **Тема**  | `✅ Deal Closed: {{trigger.properties.after.name}}`                                         |
 | **Текст** | Поздравляем! Ваша сделка обработана. Команда Customer Success уведомлена, онбординг начат. |
+
+Выберите значение **To** в средстве выбора переменных под шагом "Find Owner".
 
 ### Шаг 8: Протестируйте и активируйте
 
@@ -177,3 +186,5 @@ export const main = async (params) => {
 
 * [Действия рабочего процесса](/ru/user-guide/workflows/capabilities/workflow-actions)
 * [Отправка писем из рабочих процессов](/ru/user-guide/workflows/capabilities/send-emails-from-workflows)
+
+<PageBanner illustration="card-page-campaign-practices" />

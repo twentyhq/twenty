@@ -26,6 +26,7 @@ import {
 import { getFrontComponentWidgetAvailabilityWarnings } from '@/app/manifest/utils/get-front-component-widget-availability-warnings';
 import { getPageLayoutDeprecationWarnings } from '@/app/manifest/utils/get-page-layout-deprecation-warnings';
 import { getUnresolvedLabelIdentifierWarnings } from '@/app/manifest/utils/get-unresolved-label-identifier-warnings';
+import { validateSettingsMenuItemSlugs } from '@/app/manifest/utils/validate-settings-menu-item-slugs';
 import { validateTimelineActivityTypes } from '@/app/manifest/utils/validate-timeline-activity-types';
 
 const VALID_RELATION_TYPES: string[] = [
@@ -67,8 +68,12 @@ const findUniversalIdentifiers = (obj: object): string[] => {
       key === 'uninstallLogicFunction' ||
       key === 'healthCheckLogicFunction' ||
       key === 'identifyAccountLogicFunction' ||
+      key === 'authorizeLogicFunction' ||
+      key === 'callbackLogicFunction' ||
       key === 'onConnectLogicFunction' ||
       key === 'onDisconnectLogicFunction' ||
+      key === 'sendMessageLogicFunction' ||
+      key === 'connectionProvider' ||
       key === 'settingsFrontComponent' ||
       key === 'input' ||
       key === 'expectedBody' ||
@@ -327,6 +332,8 @@ export const manifestValidate = (manifest: Manifest) => {
   errors.push(...validateGraphWidgets(pageLayoutWidgets));
 
   errors.push(...validateTimelineActivityTypes(manifest));
+
+  errors.push(...validateSettingsMenuItemSlugs(manifest));
 
   return { errors, warnings, isValid: errors.length === 0 };
 };

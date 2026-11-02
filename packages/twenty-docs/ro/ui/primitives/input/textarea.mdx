@@ -1,0 +1,129 @@
+---
+title: Textarea
+description: Introduceți mai multe linii de text cu redimensionare automată opțională.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import TextareaReference from '/snippets/ui/generated/input/textarea.mdx';
+
+## Prezentare generală
+
+Utilizați `Textarea` pentru note, descrieri și alte valori pe mai multe linii. Se integrează cu [Câmp](/ro/ui/primitives/input/field) pentru etichete și validare.
+
+<StoryEmbed storyId="ui-input-textarea--display" title="Exemplu de Textarea" height={190} />
+
+## Utilizare
+
+### Stare necontrolată
+
+Utilizați `defaultValue` pentru a seta notițele inițiale. Zona de text gestionează modificările ulterioare.
+
+```tsx
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+
+export const NotesField = () => (
+  <Field.Root name="notes">
+    <Field.Label>Notes</Field.Label>
+    <Textarea rows={4} defaultValue="Follow up next week." />
+    <Field.Description>Add context for your team.</Field.Description>
+  </Field.Root>
+);
+```
+
+Sunt disponibile atribute native pentru zona de text, precum `rows`, `maxLength`, `required` și `readOnly`. `size` acceptă `sm` sau `md` și are valoarea implicită `md`.
+
+## Opțiuni vizuale
+
+Comparați cele două dimensiuni în stările implicită, focalizată, nevalidă și dezactivată. Redimensionarea automată este prezentată separat mai jos.
+
+<StoryEmbed storyId="ui-input-textarea--catalog" title="Opțiuni vizuale pentru zona de text" height={440} />
+
+## Aspect simplu
+
+Utilizați `variant="plain"` pentru text pe mai multe rânduri într-o suprafață existentă. Elimină umplerea, bordura, colțurile rotunjite și toată spațierea interioară, păstrând stilizarea comună pentru text, substituent și starea dezactivată. Conturul albastru urmează comportamentul nativ `:focus-visible` al browserului. Pentru controalele de text, aceasta poate include focalizarea cu indicatorul și focalizarea automată, precum și focalizarea cu tastatura. Starea nevalidă utilizează un contur de pericol fără a modifica aspectul.
+
+```tsx
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+
+export const InlineNotes = () => (
+  <Field.Root>
+    <Field.Label>Notes</Field.Label>
+    <Textarea variant="plain" autoResize rows={1} maxRows={6} />
+  </Field.Root>
+);
+```
+
+Elementul părinte furnizează spațierea. `rows`, `maxRows` și dimensionarea automată controlează în continuare înălțimea conținutului. Limita de rânduri exclude spațierea interioară și bordurile în aspectul simplu. Modificarea lui `variant` în timp ce dimensionarea automată este activată măsoară noul aspect.
+
+## Stare controlată
+
+Transmiteți `value` și actualizați-l cu `onValueChange` pentru a gestiona aceleași notițe în starea React. Funcția callback primește următoarea valoare de tip șir și detaliile evenimentului; este disponibil și `onChange` nativ.
+
+```tsx
+import { useState } from 'react';
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+
+export const NotesField = () => {
+  const [notes, setNotes] = useState('Follow up next week.');
+
+  return (
+    <Field.Root name="notes">
+      <Field.Label>Notes</Field.Label>
+      <Textarea rows={4} value={notes} onValueChange={setNotes} />
+      <Field.Description>Add context for your team.</Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+## Redimensionare automată
+
+Redimensionarea automată funcționează în oricare dintre modurile de stare. Acest exemplu utilizează, de asemenea, valoarea controlată pentru un număr de caractere.
+
+```tsx
+import { useState } from 'react';
+import { Field, Textarea } from 'twenty-ui/primitives/input';
+
+export const DescriptionField = () => {
+  const [description, setDescription] = useState('');
+
+  return (
+    <Field.Root name="description">
+      <Field.Label>Description</Field.Label>
+      <Textarea
+        value={description}
+        onValueChange={setDescription}
+        autoResize
+        rows={2}
+        maxRows={6}
+        maxLength={500}
+      />
+      <Field.Description>
+        {description.length} of 500 characters
+      </Field.Description>
+    </Field.Root>
+  );
+};
+```
+
+`autoResize` măsoară valoarea aplicată după actualizările controlate și măsoară direct modificările necontrolate. Modificările controlate respinse nu schimbă înălțimea. De asemenea, se actualizează după resetările native ale formularului, modificările pentru `rows`, `size`, `variant`, `maxRows` și lățimea disponibilă. Utilizează `maxRows` pentru a limita creșterea și a derula conținutul mai lung.
+
+Dimensionarea automată controlează `blockSize` inline cât timp este activată. Dezactivarea acesteia restaurează valoarea curentă `style.blockSize` sau elimină dimensiunea automată dacă nu este furnizată niciuna. Când dimensionarea automată este dezactivată, `rows` și stilurile native controlează înălțimea. Redimensionarea manuală este dezactivată implicit; setează `style={{ resize: 'vertical' }}` atunci când apelanții trebuie să redimensioneze ei înșiși controlul.
+
+## Control nativ și compunerea randării
+
+Atributele și gestionarii zonei de text native, `className`, `style` și `ref` vizează zona de text. Referința primește un `HTMLTextAreaElement`. `render` acceptă un element de zonă de text sau un callback care primește proprietățile native ale zonei de text și starea Field. Transmite proprietățile și referința furnizate către zona de text nativă, astfel încât etichetele, validarea, evenimentele și măsurarea automată să continue să funcționeze. Adaugă un element de aspect separat atunci când este necesară personalizarea învelișului.
+
+`onChange` primește un eveniment de modificare React pentru zona de text nativă. `onValueChange(value, details)` păstrează semnătura Base UI, inclusiv `event`, `reason`, `cancel` și `allowPropagation` native. Evenimentul nativ vizează zona de text. Anularea detaliilor păstrează politica de validare a Base UI; nu anulează valoarea nativă. Apelanții controlați aleg valoarea aplicată.
+
+`name`, `form`, `required`, `readOnly`, `disabled` native, comportamentul de trimitere și cel de resetare rămân disponibile. Field furnizează asocierea pentru etichetă, descriere, nume și validare. Enter inserează un salt de linie în zona de text.
+
+## Proprietăți
+
+Referința este generată din tipurile publice ale componentei. Atributele native, inclusiv numele accesibile și gestionarele de evenimente, sunt acceptate și pe părțile care redau elemente.
+
+<TextareaReference />
+
+<PageBanner illustration="page-cover-input" />

@@ -1,4 +1,8 @@
-import { FieldMetadataType, ViewFilterOperand } from 'twenty-shared/types';
+import {
+  ConnectedAccountProvider,
+  FieldMetadataType,
+  ViewFilterOperand,
+} from 'twenty-shared/types';
 import {
   workflowStepManifestSchema,
   type WorkflowStepManifest,
@@ -6,12 +10,14 @@ import {
 import { WorkflowActionType } from 'twenty-shared/workflow';
 
 import { fromWorkflowStepManifestToActionOrThrow } from 'src/engine/core-modules/application/application-manifest/converters/from-workflow-step-manifest-to-action-or-throw.util';
+import { type ConnectedAccountForWorkflowStepResolution } from 'src/engine/metadata-modules/connected-account/types/connected-account-for-workflow-step-resolution.type';
 
 const STEP_ID = '11111111-1111-4111-8111-111111111111';
 const REFERENCE_ID = '22222222-2222-4222-8222-222222222222';
 const FIELD_ID = '33333333-3333-4333-8333-333333333333';
 const LOCAL_ID = '44444444-4444-4444-8444-444444444444';
 const RECORD_FILTER_ID = '55555555-5555-4555-8555-555555555555';
+const SELECT_FIELD_ID = '66666666-6666-4666-8666-666666666666';
 const references = {
   logicFunctionIdByUniversalIdentifier: new Map([[REFERENCE_ID, LOCAL_ID]]),
   agentIdByUniversalIdentifier: new Map([[REFERENCE_ID, LOCAL_ID]]),
@@ -41,11 +47,26 @@ const references = {
         relationTargetObjectMetadataUniversalIdentifier: null,
       },
     ],
+    [
+      SELECT_FIELD_ID,
+      {
+        id: 'stage-id',
+        name: 'stage',
+        objectUniversalIdentifier: REFERENCE_ID,
+        type: FieldMetadataType.SELECT,
+        settings: null,
+        relationTargetObjectMetadataUniversalIdentifier: null,
+      },
+    ],
   ]),
 };
 const record = {
   objectUniversalIdentifier: REFERENCE_ID,
   objectRecord: { name: 'Company' },
+};
+const email = {
+  connectedAccountId: '{{trigger.accountId}}',
+  recipients: { to: 'test@example.com' },
 };
 const filters = { stepFilterGroups: [], stepFilters: [] };
 const inputs = {
@@ -88,6 +109,17 @@ const inputs = {
       fieldUniversalIdentifier: FIELD_ID,
     },
   },
+  SEND_EMAIL: email,
+  DRAFT_EMAIL: email,
+  CREATE_CALENDAR_EVENT: {
+    connectedAccountId: '{{trigger.accountId}}',
+    title: 'Meeting',
+    startsAt: '2026-10-01T10:00:00Z',
+    endsAt: '2026-10-01T11:00:00Z',
+    isFullDay: false,
+    sendInvitations: false,
+    addConferencing: false,
+  },
   FORM: [
     {
       id: FIELD_ID,
@@ -95,6 +127,13 @@ const inputs = {
       label: 'Company',
       type: 'RECORD',
       settings: { objectUniversalIdentifier: REFERENCE_ID },
+    },
+    {
+      id: SELECT_FIELD_ID,
+      name: 'stage',
+      label: 'Stage',
+      type: 'SELECT',
+      settings: { selectedFieldUniversalIdentifier: SELECT_FIELD_ID },
     },
   ],
   HTTP_REQUEST: {
@@ -105,6 +144,11 @@ const inputs = {
   AI_AGENT: {
     agentUniversalIdentifier: REFERENCE_ID,
     prompt: 'Summarize {{trigger.text}}',
+  },
+  SEND_CHAT_MESSAGE: {
+    workspaceMemberId: '{{trigger.assigneeId}}',
+    title: 'Approve',
+    text: '{{trigger.text}}',
   },
   CLASSIFY: { state: '{{trigger.text}}', questions: [] },
   FILTER: filters,
@@ -183,9 +227,6 @@ describe('application workflow actions', () => {
     Object.values(WorkflowActionType).filter(
       (type) =>
         type !== WorkflowActionType.CODE &&
-        type !== WorkflowActionType.SEND_EMAIL &&
-        type !== WorkflowActionType.DRAFT_EMAIL &&
-        type !== WorkflowActionType.CREATE_CALENDAR_EVENT &&
         type !== WorkflowActionType.SEND_CHAT_MESSAGE,
     ),
   )('converts %s to its runtime action', (type) => {
@@ -229,9 +270,45 @@ describe('application workflow actions', () => {
     ).toMatchObject({
       loadBalance: { objectNameSingular: 'company', fieldName: 'owner' },
     });
-    expect(convert(WorkflowActionType.FORM).settings.input).toMatchObject([
-      { settings: { objectName: 'company' } },
+    expect(convert(WorkflowActionType.FORM).settings.input).toEqual([
+      { ...inputs.FORM[0], settings: { objectName: 'company' } },
+      {
+        ...inputs.FORM[1],
+        settings: { selectType: 'EXISTING_FIELD', selectedFieldId: 'stage-id' },
+      },
     ]);
+  });
+
+  it('rejects a select form field whose source field is unavailable or of another type', () => {
+    const formStepWith = (formField: Record<string, unknown>) =>
+      workflowStepManifestSchema.parse({
+        universalIdentifier: STEP_ID,
+        name: 'Form',
+        type: WorkflowActionType.FORM,
+        input: [{ id: 'stage', name: 'stage', label: 'Stage', ...formField }],
+        nextStepIds: [],
+      });
+
+    expect(() =>
+      fromWorkflowStepManifestToActionOrThrow({
+        step: formStepWith({
+          type: 'SELECT',
+          settings: { selectedFieldUniversalIdentifier: RECORD_FILTER_ID },
+        }),
+        index: 0,
+        references,
+      }),
+    ).toThrow('missing field');
+    expect(() =>
+      fromWorkflowStepManifestToActionOrThrow({
+        step: formStepWith({
+          type: 'MULTI_SELECT',
+          settings: { selectedFieldUniversalIdentifier: SELECT_FIELD_ID },
+        }),
+        index: 0,
+        references,
+      }),
+    ).toThrow('must reference a MULTI_SELECT field');
   });
 
   it('accepts record filters declared without an id or a value', () => {
@@ -308,6 +385,155 @@ describe('application workflow actions', () => {
         },
       }),
     ).toThrow('does not belong');
+  });
+
+  describe('connected accounts', () => {
+    const GOOGLE_CALENDAR_EVENTS_SCOPE =
+      'https://www.googleapis.com/auth/calendar.events';
+    const connectedAccount = (
+      overrides: Partial<ConnectedAccountForWorkflowStepResolution>,
+    ): ConnectedAccountForWorkflowStepResolution => ({
+      id: 'account-id',
+      handle: 'sales@example.com',
+      provider: ConnectedAccountProvider.GOOGLE,
+      connectionParameters: null,
+      archivedAt: null,
+      scopes: [GOOGLE_CALENDAR_EVENTS_SCOPE],
+      scope: 'WORKSPACE',
+      calendarChannels: [{ isSyncEnabled: true }],
+      ...overrides,
+    });
+    const connectedAccounts = [
+      connectedAccount({ id: 'archived-id', archivedAt: new Date() }),
+      connectedAccount({
+        id: 'imap-id',
+        provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
+        connectionParameters: {
+          IMAP: { host: 'imap.example.com', port: 993 },
+        } as ConnectedAccountForWorkflowStepResolution['connectionParameters'],
+        scopes: null,
+        calendarChannels: [],
+      }),
+      connectedAccount({ id: 'google-id', handle: 'Sales@Example.com' }),
+    ];
+    const convertWithHandle = ({
+      type,
+      handle,
+      accounts = connectedAccounts,
+    }: {
+      type: 'SEND_EMAIL' | 'DRAFT_EMAIL' | 'CREATE_CALENDAR_EVENT';
+      handle: string;
+      accounts?: ConnectedAccountForWorkflowStepResolution[];
+    }) => {
+      const { connectedAccountId: _connectedAccountId, ...input } =
+        inputs[type];
+
+      return fromWorkflowStepManifestToActionOrThrow({
+        step: workflowStepManifestSchema.parse({
+          universalIdentifier: STEP_ID,
+          name: 'Reach out',
+          type,
+          input: { ...input, connectedAccountHandle: handle },
+          nextStepIds: [],
+        }),
+        index: 0,
+        references: { ...references, connectedAccounts: accounts },
+      }).settings.input;
+    };
+
+    it.each([
+      { type: 'SEND_EMAIL' as const, connectedAccountId: 'google-id' },
+      { type: 'DRAFT_EMAIL' as const, connectedAccountId: 'imap-id' },
+      {
+        type: 'CREATE_CALENDAR_EVENT' as const,
+        connectedAccountId: 'google-id',
+      },
+    ])(
+      'resolves a $type handle to the oldest active account able to run it',
+      ({ type, connectedAccountId }) => {
+        const input = convertWithHandle({ type, handle: 'sales@example.com' });
+
+        expect(input).toMatchObject({ connectedAccountId });
+        expect(input).not.toHaveProperty('connectedAccountHandle');
+      },
+    );
+
+    it.each([
+      {
+        case: 'calendar sync is disabled',
+        account: connectedAccount({
+          calendarChannels: [{ isSyncEnabled: false }],
+        }),
+      },
+      {
+        case: 'the calendar scope is missing',
+        account: connectedAccount({ scopes: [] }),
+      },
+    ])(
+      'does not create calendar events with an account whose $case',
+      ({ account }) => {
+        expect(() =>
+          convertWithHandle({
+            type: 'CREATE_CALENDAR_EVENT',
+            handle: 'sales@example.com',
+            accounts: [account],
+          }),
+        ).toThrow('can create calendar events');
+      },
+    );
+
+    it.each([
+      '{{trigger.properties.after.assigneeId}}',
+      '20202020-0687-4c41-b707-ed1bfca972a7',
+    ])('keeps the account value %s as declared', (connectedAccountId) => {
+      expect(
+        fromWorkflowStepManifestToActionOrThrow({
+          step: workflowStepManifestSchema.parse({
+            universalIdentifier: STEP_ID,
+            name: 'Reach out',
+            type: 'SEND_EMAIL',
+            input: { ...email, connectedAccountId },
+            nextStepIds: [],
+          }),
+          index: 0,
+          references: { ...references, connectedAccounts },
+        }).settings.input,
+      ).toMatchObject({ connectedAccountId });
+    });
+
+    it('fails on a handle no account of the workspace can send from', () => {
+      expect(() =>
+        convertWithHandle({
+          type: 'SEND_EMAIL',
+          handle: 'unknown@example.com',
+        }),
+      ).toThrow(
+        'Workflow step Reach out: no connected account unknown@example.com shared with this workspace can send email',
+      );
+    });
+
+    it('does not resolve a handle to an account private to a member', () => {
+      expect(() =>
+        convertWithHandle({
+          type: 'SEND_EMAIL',
+          handle: 'sales@example.com',
+          accounts: [connectedAccount({ scope: 'USER' })],
+        }),
+      ).toThrow('no connected account sales@example.com shared with');
+    });
+
+    it('resolves a handle to a shared account over an older private one', () => {
+      expect(
+        convertWithHandle({
+          type: 'SEND_EMAIL',
+          handle: 'sales@example.com',
+          accounts: [
+            connectedAccount({ id: 'private-id', scope: 'USER' }),
+            connectedAccount({ id: 'shared-id' }),
+          ],
+        }),
+      ).toMatchObject({ connectedAccountId: 'shared-id' });
+    });
   });
 
   it('preserves branches, loop entries, outputs and error handling', () => {

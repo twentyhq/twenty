@@ -3,6 +3,10 @@ title: Обращение к системным метаданным
 description: Определяйте детерминированные универсальные идентификаторы метаданных, которые Twenty автоматически подготавливает для каждого объекта, чтобы ваше приложение могло ссылаться на них без жёсткого кодирования.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Обзор
+
 Каждый объект в Twenty содержит **системные метаданные**, которые вы сами никогда не объявляете, например набор полей и основное представление списка с его столбцами. Сервер создаёт всё это при подготовке объекта, и этот набор растёт по мере развития Twenty.
 
 Поскольку вы это не объявляете, у вас нет константы `universalIdentifier`, которую можно импортировать. Вместо этого сервер **выводит** каждый идентификатор детерминированным образом, а `twenty-sdk` предоставляет тот же механизм вывода, чтобы ваш манифест мог получить точное значение, которое использует сервер.
@@ -64,7 +68,7 @@ export default defineView({
   universalIdentifier: '70f10d44-144a-4da8-8c6f-3ec2422138c0',
   name: 'All records',
   objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
-  icon: 'IconList',
+  icon: 'IconTable',
   position: 0,
   fields: [
     {
@@ -208,3 +212,5 @@ import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
   `getFieldUniversalIdentifier`. В определяемых вами объектах ссылайтесь на поле
   `name` по идентификатору, который вы задали ему в `defineObject()`.
 </Note>
+
+<PageBanner illustration="section-apps-data" />

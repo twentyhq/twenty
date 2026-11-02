@@ -1,11 +1,32 @@
 ---
-title: Ghid Utilizatori
-description: Bine ați venit în Ghidul utilizatorului Twenty, resursa dvs. pentru configurări avansate și bune practici.
+title: Maestru la douăzeci
+description: Ghiduri pas cu pas pentru a-ți modela datele, automatiza munca și rulează spațiul de lucru.
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { LandingActions, LandingButton } from "/snippets/landing-actions.mdx"
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-<CardGroup cols={3} className="documentation-card-group documentation-card-group--patterned">
+<LandingActions>
+  <LandingButton href="/ro/user-guide/data-model/overview">Modelează datele tale</LandingButton>
+  <LandingButton href="/ro/user-guide/data-migration/overview" outlined>Importă date</LandingButton>
+</LandingActions>
+
+## Fă douăzeci de potriviri echipei tale
+
+Douăzeci de persoane sunt construite să se schimbe cu afacerea dvs. Acest ghid vă arată cum să configurați spațiul de lucru și să-l modelați pe măsură ce faceți, din datele pe care le urmăriți către ecranele echipei dvs. funcționează zilnic.
+
+* **Configurați datele.** Model obiecte și câmpuri în jurul afacerii dvs., apoi aduceți înregistrările din fișierele CSV sau din alte CRM.
+* **Aduceți-vă conversațiile în.** Sincronizare e-mail și calendar astfel încât fiecare schimb de informații să ajungă în înregistrarea corectă și să ajungă la contactele cu campanii de e-mail.
+* **Organizarea lucrării.** Construiți vizualizările, conductele și înregistrați paginile pe care echipa le folosește în fiecare zi.
+* **Automatizează busywork.** Pașii repetitivi pentru fluxuri de lucru și sarcini în mai multe etape pentru agenții AI.
+* **Rămâneți în control.** Urmați numerele pe tablourile de bord, decideți cine ce vede cu roluri și gestionați facturarea și setările.
+
+## Explorează ghidul utilizatorului
+
+Fiecare secțiune acoperă o parte din Twenty, de la modelul de date la facturare și setări.
+
+<CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
   <Card href="/ro/user-guide/data-model/overview" img="/images/documentation/banner-icons-v2/data-model.svg">
     <CardTitle>Model de date</CardTitle>
     Personalizați modelul de date pentru a se potrivi proceselor dvs. de afaceri.
@@ -21,6 +42,11 @@ import { CardTitle } from "/snippets/card-title.mdx"
     Centralizați întâlnirile și e-mailurile echipei.
   </Card>
 
+  <Card href="/ro/user-guide/email-campaigns/overview" img="/images/documentation/section-overview-icons-v1/email-campaigns.svg">
+    <CardTitle>Campanii de e-mail</CardTitle>
+    Trimite campanii de e-mail construite pe datele dumneavoastră CRM.
+  </Card>
+
   <Card href="/ro/user-guide/workflows/overview" img="/images/user-guide/halftone/workflows-belt-v1.svg">
     <CardTitle>Fluxuri de lucru</CardTitle>
     Automatizați procesele și integrați cu instrumente externe.
@@ -32,8 +58,8 @@ import { CardTitle } from "/snippets/card-title.mdx"
   </Card>
 
   <Card href="/ro/user-guide/layout/overview" img="/images/user-guide/halftone/layout-window-v1.svg">
-    <CardTitle>Layout</CardTitle>
-    Navigare, vizualizări și personalizarea paginii înregistrării.
+    <CardTitle>Aspect</CardTitle>
+    Personalizarea barei laterale, a vizualizărilor și a paginii înregistrării.
   </Card>
 
   <Card href="/ro/user-guide/dashboards/overview" img="/images/documentation/banner-icons-v2/dashboards.svg">
@@ -56,4 +82,11 @@ import { CardTitle } from "/snippets/card-title.mdx"
     Configurați preferințele spațiului de lucru.
   </Card>
 
+  <Card href="https://discord.gg/cx5n4Jzs57" img="/images/user-guide/halftone/community-discord.svg">
+    <CardTitle>Discord</CardTitle>
+    pune întrebări și împărtășește ceea ce construiești cu cele douăzeci de comunități.
+  </Card>
+
 </CardGroup>
+
+<PageBanner illustration="user-guide" />

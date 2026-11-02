@@ -76,6 +76,8 @@ export class ApplicationMessageChannelsResolver {
       visibility: input.visibility,
       participantHandleFieldUniversalIdentifier:
         input.participantHandleFieldUniversalIdentifier,
+      messagingProviderUniversalIdentifier:
+        input.messagingProviderUniversalIdentifier,
     });
   }
 
@@ -95,6 +97,8 @@ export class ApplicationMessageChannelsResolver {
       displayName: input.displayName,
       visibility: input.visibility,
       isSyncEnabled: input.isSyncEnabled,
+      messagingProviderUniversalIdentifier:
+        input.messagingProviderUniversalIdentifier,
     });
   }
 

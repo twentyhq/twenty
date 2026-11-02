@@ -110,6 +110,7 @@
               "label": "Reference",
               "pages": [
                 "user-guide/calendar-emails/capabilities/mailbox",
+                "user-guide/calendar-emails/capabilities/email-channels",
                 "user-guide/calendar-emails/capabilities/calendar"
               ]
             },
@@ -455,6 +456,7 @@
                 "developers/extend/apps/logic/workflows",
                 "developers/extend/apps/logic/connections",
                 "developers/extend/apps/logic/messaging-channels",
+                "developers/extend/apps/logic/inbox",
                 "developers/extend/apps/logic/credits"
               ]
             },
@@ -480,7 +482,7 @@
                 "developers/extend/apps/operations/testing",
                 "developers/extend/apps/operations/translations",
                 "developers/extend/apps/operations/publishing",
-                "developers/extend/apps/operations/marketplace-vetting",
+                "developers/extend/apps/operations/marketplace-review",
                 "developers/extend/apps/operations/monitoring"
               ]
             }

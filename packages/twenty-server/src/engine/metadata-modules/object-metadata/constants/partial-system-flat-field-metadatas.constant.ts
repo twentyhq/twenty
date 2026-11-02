@@ -1,6 +1,7 @@
-import { FieldMetadataType, MetadataWritability } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
+import { PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS } from 'src/engine/workspace-manager/twenty-standard-application/constants/standard-disabled-field-permission-actions.constant';
 
 type PartialSystemFlatFieldMetadata<
   T extends FieldMetadataType = FieldMetadataType,
@@ -27,7 +28,7 @@ const PARTIAL_ID_FIELD = {
   isSystem: true,
   isSystemSideEffect: true,
   isUIEditable: false,
-  writability: MetadataWritability.OPEN,
+  disabledFieldPermissionActions: null,
   isLabelSyncedWithName: false,
   defaultValue: 'uuid',
   options: null,
@@ -61,7 +62,7 @@ const PARTIAL_CREATED_AT_FIELD = {
   isSystem: true,
   isSystemSideEffect: true,
   isUIEditable: false,
-  writability: MetadataWritability.OPEN,
+  disabledFieldPermissionActions: null,
   isLabelSyncedWithName: false,
   defaultValue: 'now',
   options: null,
@@ -95,7 +96,7 @@ const PARTIAL_UPDATED_AT_FIELD = {
   isSystem: true,
   isSystemSideEffect: true,
   isUIEditable: false,
-  writability: MetadataWritability.OPEN,
+  disabledFieldPermissionActions: null,
   isLabelSyncedWithName: false,
   defaultValue: 'now',
   options: null,
@@ -129,7 +130,7 @@ const PARTIAL_DELETED_AT_FIELD = {
   isSystem: true,
   isSystemSideEffect: true,
   isUIEditable: false,
-  writability: MetadataWritability.OPEN,
+  disabledFieldPermissionActions: null,
   isLabelSyncedWithName: false,
   defaultValue: null,
   options: null,
@@ -163,7 +164,7 @@ const PARTIAL_CREATED_BY_FIELD = {
   isSystem: true,
   isSystemSideEffect: true,
   isUIEditable: false,
-  writability: MetadataWritability.OPEN,
+  disabledFieldPermissionActions: null,
   isLabelSyncedWithName: false,
   defaultValue: { name: "''", source: "'MANUAL'" },
   options: null,
@@ -197,7 +198,7 @@ const PARTIAL_UPDATED_BY_FIELD = {
   isSystem: true,
   isSystemSideEffect: true,
   isUIEditable: false,
-  writability: MetadataWritability.OPEN,
+  disabledFieldPermissionActions: null,
   isLabelSyncedWithName: false,
   defaultValue: { name: "''", source: "'MANUAL'" },
   options: null,
@@ -231,7 +232,7 @@ const PARTIAL_POSITION_FIELD = {
   isSystem: true,
   isSystemSideEffect: true,
   isUIEditable: false,
-  writability: MetadataWritability.OPEN,
+  disabledFieldPermissionActions: null,
   isLabelSyncedWithName: false,
   defaultValue: 0,
   options: null,
@@ -265,7 +266,8 @@ const PARTIAL_SEARCH_VECTOR_FIELD = {
   isSystem: true,
   isSystemSideEffect: true,
   isUIEditable: false,
-  writability: MetadataWritability.SYSTEM,
+  disabledFieldPermissionActions:
+    PLATFORM_WRITTEN_DISABLED_FIELD_PERMISSION_ACTIONS,
   isLabelSyncedWithName: false,
   defaultValue: null,
   options: null,

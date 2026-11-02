@@ -32,3 +32,4 @@ export type { SyncAction } from './types/SyncAction';
 export { addCustomSuffixIfIsReserved } from './utils/add-custom-suffix-if-reserved.util';
 export { computeMetadataNameFromLabel } from './utils/compute-metadata-name-from-label.util';
 export { computeMetadataNamesFromLabelsOrThrow } from './utils/compute-metadata-names-from-labels-or-throw.util';
+export { isWorkspaceCustomIndex } from './utils/is-workspace-custom-index.util';

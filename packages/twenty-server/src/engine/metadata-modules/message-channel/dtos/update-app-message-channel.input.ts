@@ -36,4 +36,9 @@ export class UpdateAppMessageChannelInput {
   @IsOptional()
   @IsBoolean()
   isSyncEnabled?: boolean;
+
+  @Field(() => UUIDScalarType, { nullable: true })
+  @IsOptional()
+  @IsUUID()
+  messagingProviderUniversalIdentifier?: string | null;
 }

@@ -53,11 +53,11 @@ export class AgentDTO {
 
   @IsBoolean()
   @Field()
-  isCustom: boolean;
+  isSystem: boolean;
 
   @IsBoolean()
   @Field()
-  isSystem: boolean;
+  isActive: boolean;
 
   @HideField()
   workspaceId: string;

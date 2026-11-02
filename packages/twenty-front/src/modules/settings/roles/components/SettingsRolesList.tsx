@@ -1,13 +1,18 @@
 import { useInstalledApplications } from '@/applications/hooks/useInstalledApplications';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { OrganizationAdornment } from '@/settings/enterprise/components/OrganizationAdornment';
 import { SettingsRolesTableHeader } from '@/settings/roles/components/SettingsRolesTableHeader';
 import { SettingsRolesTableRow } from '@/settings/roles/components/SettingsRolesTableRow';
 import { useSettingsAllRoles } from '@/settings/roles/hooks/useSettingsAllRoles';
+import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownRoot } from '@/ui/layout/dropdown/components/DropdownRoot';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableFooter } from '@/ui/layout/table/components/TableFooter';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { checkIfBillingEntitlementIsEnabledOnWorkspace } from '@/workspace/utils/checkIfBillingEntitlementIsEnabledOnWorkspace';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
@@ -26,6 +31,7 @@ import {
 } from 'twenty-ui/icon';
 import { Button } from 'twenty-ui/primitives/input';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { BillingEntitlementKey } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { sortByAscString } from '~/utils/array/sortByAscString';
 
@@ -45,6 +51,12 @@ const StyledSearchInputContainer = styled.div`
   flex: 1;
 `;
 
+const StyledCreateRoleContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
 export const SettingsRolesList = () => {
   const navigateSettings = useNavigateSettings();
   const [searchTerm, setSearchTerm] = useState('');
@@ -54,6 +66,13 @@ export const SettingsRolesList = () => {
 
   const settingsAllRoles = useSettingsAllRoles();
   const installedApplications = useInstalledApplications();
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+
+  const hasCustomRolesEntitlement =
+    checkIfBillingEntitlementIsEnabledOnWorkspace(
+      BillingEntitlementKey.CUSTOM_ROLES,
+      currentWorkspace,
+    );
 
   const installedApplicationByDefaultRoleId = new Map(
     installedApplications
@@ -61,22 +80,24 @@ export const SettingsRolesList = () => {
       .map((application) => [application.defaultRoleId, application]),
   );
 
-  const sortedSettingsAllRoles = [...settingsAllRoles].sort((a, b) => {
-    const applicationNameA =
-      installedApplicationByDefaultRoleId.get(a.id)?.name ?? '';
-    const applicationNameB =
-      installedApplicationByDefaultRoleId.get(b.id)?.name ?? '';
+  // Admin is the standard application's default role but stays a member role
+  const isApplicationRole = (role: RoleWithPartialMembers) =>
+    !role.canBeAssignedToUsers &&
+    installedApplicationByDefaultRoleId.has(role.id);
 
-    return (
-      sortByAscString(applicationNameA, applicationNameB) ||
-      sortByAscString(a.label, b.label)
-    );
-  });
+  const getApplicationName = (role: RoleWithPartialMembers) =>
+    isApplicationRole(role)
+      ? (installedApplicationByDefaultRoleId.get(role.id)?.name ?? '')
+      : '';
+
+  const sortedSettingsAllRoles = [...settingsAllRoles].sort(
+    (a, b) =>
+      sortByAscString(getApplicationName(a), getApplicationName(b)) ||
+      sortByAscString(a.label, b.label),
+  );
 
   const filteredRoles = sortedSettingsAllRoles.filter((role) => {
-    const isApplicationRole = installedApplicationByDefaultRoleId.has(role.id);
-
-    const matchesType = isApplicationRole
+    const matchesType = isApplicationRole(role)
       ? showApplicationRoles
       : role.canBeAssignedToUsers ||
         (showAgentRoles && role.canBeAssignedToAgents) ||
@@ -156,12 +177,20 @@ export const SettingsRolesList = () => {
         </StyledTableRows>
       </Table>
       <TableFooter>
-        <Button
-          startIcon={<IconPlus />}
-          size="sm"
-          onClick={() => navigateSettings(SettingsPath.RoleCreate)}
-          variant="outline"
-        >{t`Create Role`}</Button>
+        <StyledCreateRoleContainer>
+          {!hasCustomRolesEntitlement && (
+            <OrganizationAdornment
+              tooltipContent={t`Upgrade to Organization to create custom roles`}
+            />
+          )}
+          <Button
+            startIcon={<IconPlus />}
+            size="sm"
+            onClick={() => navigateSettings(SettingsPath.RoleCreate)}
+            variant="outline"
+            disabled={!hasCustomRolesEntitlement}
+          >{t`Create Role`}</Button>
+        </StyledCreateRoleContainer>
       </TableFooter>
     </Section.Root>
   );

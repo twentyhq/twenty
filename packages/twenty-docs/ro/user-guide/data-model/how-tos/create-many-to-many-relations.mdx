@@ -3,14 +3,14 @@ title: Creați relații de tip mulți-la-mulți
 description: Conectați înregistrări în care multe elemente de pe ambele părți pot fi legate între ele folosind obiecte de legătură.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
 Relațiile mulți-la-mulți vă permit să conectați mai multe înregistrări pe ambele părți. De exemplu: multe Persoane pot lucra la multe Proiecte, iar fiecare Proiect poate avea multe Persoane.
 
-<Warning>
-**Funcție beta**: Relațiile prin obiecte de legătură sunt în prezent în versiune beta. Activați-le în **Settings → Community → Features** înainte de a urma acest ghid.
-</Warning>
-
 <Note>
-Această funcție necesită, de asemenea, ca **Advanced mode** să fie activat (comutator în stânga jos în Settings).
+Comutatorul **This is a relation to a Junction Object** apare pe un câmp de relație unu-la-mulți cu un singur obiect țintă, atunci când acea țintă pare a fi un obiect de joncțiune (propriile sale relații, ignorându-le pe cele de sistem, sunt toate de tip mulți-la-unu) și are o altă relație prin care se poate face referire.
 </Note>
 
 ## Când să utilizați relațiile mulți-la-mulți
@@ -40,11 +40,10 @@ Când activați comutatorul pentru relația de legătură, Twenty afișează în
 
 ## Cerințe
 
-1. **Activați Junction Relations în Beta Features**: Mergeți la **Settings → Community → Features** și activați **Junction Relations**
-2. **Activați Advanced mode**: Porniți **Advanced mode** în partea stângă jos a barei laterale Settings
-3. Planificați modelul de date:
-   * Ce două obiecte conectați?
-   * Cum ar trebui să se numească obiectul de legătură?
+Planificați modelul de date:
+
+* Ce două obiecte conectați?
+* Cum ar trebui să se numească obiectul de legătură?
 
 ## Pasul 1: Creați obiectul de legătură
 
@@ -173,3 +172,5 @@ Pentru a accesa aceste date, navigați direct la obiectul de legătură sau inte
 * [Câmpuri de relație](/ro/user-guide/data-model/capabilities/relation-fields) — explicații despre tipurile de relații
 * [Creați obiecte personalizate](/ro/user-guide/data-model/how-tos/create-custom-objects) — cum să creați obiecte
 * [Creați câmpuri de relație](/ro/user-guide/data-model/how-tos/create-relation-fields) — configurare de bază a relațiilor
+
+<PageBanner illustration="card-page-relations" />

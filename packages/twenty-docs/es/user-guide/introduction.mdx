@@ -1,11 +1,32 @@
 ---
-title: Guía de usuario
-description: Bienvenido a la Guía del usuario de Twenty, tu recurso para configuraciones avanzadas y mejores prácticas.
+title: Maestro Veinte
+description: Guías paso a paso para modelar sus datos, automatizar su trabajo y ejecutar su espacio de trabajo.
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { LandingActions, LandingButton } from "/snippets/landing-actions.mdx"
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-<CardGroup cols={3} className="documentation-card-group documentation-card-group--patterned">
+<LandingActions>
+  <LandingButton href="/es/user-guide/data-model/overview">Modele tus datos</LandingButton>
+  <LandingButton href="/es/user-guide/data-migration/overview" outlined>Importar datos</LandingButton>
+</LandingActions>
+
+## Haz que 20 se ajusten a tu equipo
+
+Veinte se construye para cambiar con su negocio. Esta guía te muestra cómo configurar tu área de trabajo y moldearla a medida que lo haces, de los datos que registras a las pantallas en las que tu equipo trabaja todos los días.
+
+* **Configura tus datos.** Objetos y campos de modelos alrededor de tu negocio, luego introduce tus registros desde archivos CSV u otro CRM.
+* **Entra tus conversaciones.** Sincroniza el correo electrónico y el calendario para que cada intercambio caiga en el registro correcto, y contacta con tus contactos con campañas de correo electrónico.
+* **Organiza el trabajo.** Construye las vistas, tuberías y registra las páginas que tu equipo usa todos los días.
+* **Automatiza el trabajo ocupado.** Maneja los pasos repetitivos a los flujos de trabajo y las tareas de varios pasos a los agentes de IA.
+* **Mantente en el control.** Sigue tus números en el tablero, decide quién ve qué con los roles, y gestiona la facturación y los ajustes.
+
+## Explora la guía de usuario
+
+Cada sección cubre una parte de la veinte, desde su modelo de datos hasta facturación y ajustes.
+
+<CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
   <Card href="/es/user-guide/data-model/overview" img="/images/documentation/banner-icons-v2/data-model.svg">
     <CardTitle>Modelo de datos</CardTitle>
     Personaliza tu modelo de datos para adaptarlo a tus procesos empresariales.
@@ -21,6 +42,11 @@ import { CardTitle } from "/snippets/card-title.mdx"
     Centraliza las reuniones y los correos electrónicos de tu equipo.
   </Card>
 
+  <Card href="/es/user-guide/email-campaigns/overview" img="/images/documentation/section-overview-icons-v1/email-campaigns.svg">
+    <CardTitle>Campañas de correo electrónico</CardTitle>
+    Envía campañas de correo electrónico basadas en los datos de tu CRM.
+  </Card>
+
   <Card href="/es/user-guide/workflows/overview" img="/images/user-guide/halftone/workflows-belt-v1.svg">
     <CardTitle>Flujos de trabajo</CardTitle>
     Automatiza procesos e intégrate con herramientas externas.
@@ -33,7 +59,7 @@ import { CardTitle } from "/snippets/card-title.mdx"
 
   <Card href="/es/user-guide/layout/overview" img="/images/user-guide/halftone/layout-window-v1.svg">
     <CardTitle>Diseño</CardTitle>
-    Navegación, vistas y personalización de la página de registro.
+    Barra lateral, vistas y personalización de la página de registro.
   </Card>
 
   <Card href="/es/user-guide/dashboards/overview" img="/images/documentation/banner-icons-v2/dashboards.svg">
@@ -56,4 +82,11 @@ import { CardTitle } from "/snippets/card-title.mdx"
     Configura las preferencias de tu espacio de trabajo.
   </Card>
 
+  <Card href="https://discord.gg/cx5n4Jzs57" img="/images/user-guide/halftone/community-discord.svg">
+    <CardTitle>Discord</CardTitle>
+    Haz preguntas y comparte lo que construyes con la comunidad Veinte
+  </Card>
+
 </CardGroup>
+
+<PageBanner illustration="user-guide" />

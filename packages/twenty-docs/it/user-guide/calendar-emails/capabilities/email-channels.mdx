@@ -1,0 +1,161 @@
+---
+title: Canali email
+description: Offri al tuo team un unico indirizzo condiviso, quindi aggiungi risposte e campagne quando ti servono.
+---
+
+Un canale email collega un indirizzo condiviso, ad esempio `support@yourcompany.com`, al tuo spazio di lavoro. Ogni messaggio ricevuto viene collegato alle persone e alle aziende giuste, così tutto il team può vedere l'intera conversazione.
+
+## Come funzionano i canali email
+
+Puoi configurare un canale in un massimo di tre fasi. La fase 1 ti offre una casella di posta condivisa. Le fasi 2 e 3 sono facoltative e necessarie solo se vuoi inviare dal dominio del canale.
+
+| Fase                  | Cosa sblocca                             | Cosa configuri                                        | Modifiche DNS |
+| --------------------- | ---------------------------------------- | ----------------------------------------------------- | ------------- |
+| **1. Ricevi email**   | Una casella di posta condivisa in Twenty | Una regola di inoltro presso il tuo provider di posta | Nessuno       |
+| **2. Rispondi**       | Risposte dall'indirizzo condiviso        | Cinque record di autenticazione                       | Sì            |
+| **3. Invia campagne** | Campagne dal dominio del canale          | Due record di annullamento dell'iscrizione            | Sì            |
+
+La fase 3 si basa sulla fase 2. La fase 1 è indipendente: puoi inviare campagne da un dominio senza inoltrare la relativa casella di posta a Twenty.
+
+## Prima di iniziare
+
+Assicurati di disporre di:
+
+* L'autorizzazione **Impostazioni dell'area di lavoro** in Twenty.
+* Accesso alle impostazioni di inoltro presso il tuo provider di posta, come Microsoft 365 o Google Workspace, per la fase 1.
+* Accesso al tuo provider DNS, come Cloudflare o GoDaddy, per le fasi 2 e 3.
+
+## Fase 1: Ricevi email
+
+Il tuo provider di posta inoltra una copia di ogni messaggio in arrivo a un indirizzo privato creato da Twenty per il canale.
+
+<Steps>
+  <Step title="Crea il canale">
+    Vai a **Impostazioni → Comunicazione** e fai clic su **Aggiungi canale email**. Inserisci
+    l'indirizzo condiviso e il nome visualizzato che le persone vedranno, quindi fai clic su **Salva**.
+  </Step>
+  <Step title="Copia l'indirizzo di inoltro">
+    Twenty mostra un **Indirizzo di inoltro** che termina con `@inbound.twenty.com`. Fai clic su
+    **Copia**.
+  </Step>
+  <Step title="Attiva l'inoltro presso il tuo provider di posta">
+    Segui la guida per Microsoft
+    365,
+    Google
+    Workspace
+    o qualsiasi altro
+    provider.
+  </Step>
+  <Step title="Invia un'email di prova">
+    Invia un messaggio all'indirizzo condiviso da un account esterno. Viene visualizzato in
+    Twenty entro pochi minuti.
+  </Step>
+</Steps>
+
+La tua casella di posta condivisa è pronta. Se ti serve solo leggere e monitorare le conversazioni, puoi fermarti qui.
+
+## Fase 2: Rispondi dall'indirizzo condiviso
+
+Gmail, Outlook e altri provider consegnano la posta inviata per conto del tuo dominio solo dopo che hai dimostrato di possederlo. Puoi farlo aggiungendo record DNS.
+
+<Steps>
+  <Step title="Apri il dominio di invio">
+    In **Impostazioni → Comunicazione**, apri il canale e scorri fino a **Dominio di
+    invio**.
+  </Step>
+  <Step title="Aggiungi i record di autenticazione">
+    Presso il tuo provider DNS, aggiungi i record elencati in **Autenticazione
+    dominio**: tre record `CNAME` che terminano con `._domainkey`, più un record
+    `MX` e uno `TXT` su `twenty-bounce`. Se Twenty suggerisce anche un record DMARC,
+    aggiungi anche quello.
+  </Step>
+  <Step title="Verifica">
+    Fai clic su **Verifica controllo**. **Autenticazione dominio** cambia in
+    **Verificato** quando Twenty trova i record, solitamente entro un'ora e al
+    massimo entro 48 ore.
+  </Step>
+</Steps>
+
+<img src="/images/user-guide/email-campaigns/sending-domain-records.png" style={{ width: '100%' }} />
+
+Il tuo team ora può rispondere dall'indirizzo condiviso. Per istruzioni specifiche per il provider, consulta [Configura un dominio di invio](/it/user-guide/email-campaigns/how-tos/set-up-a-sending-domain).
+
+<Note>
+  Non prevedi di inviare campagne? Salta la fase 3. La riga **Link di annullamento dell'iscrizione**
+  rimane **In attesa**, senza alcun effetto sulle risposte.
+</Note>
+
+## Fase 3: Invia campagne
+
+Ogni campagna include un link per annullare l'iscrizione. Twenty ospita la pagina di annullamento dell'iscrizione sul tuo dominio, ad esempio `links.yourcompany.com`, così i destinatari vedono il tuo brand anziché il nostro.
+
+<Steps>
+  <Step title="Aggiungi i record di annullamento dell'iscrizione">
+    Nella stessa sezione **Dominio di invio**, aggiungi i due record `CNAME` elencati
+    in **Link per annullare l'iscrizione**: uno su `links` e uno su
+    `_acme-challenge.links`.
+  </Step>
+  <Step title="Verifica">
+    Fai clic su **Verifica controllo**. **Link di annullamento dell'iscrizione** cambia in **Verificato**,
+    solitamente entro un'ora. Potrebbe richiedere un po' più di tempo rispetto alla fase 2 perché
+    Twenty emette anche un certificato di sicurezza per la pagina.
+  </Step>
+</Steps>
+
+Twenty invia una campagna solo quando sia **Autenticazione dominio** sia **Link di annullamento dell'iscrizione** mostrano **Verificato**.
+
+## Domande frequenti
+
+<AccordionGroup>
+  <Accordion title="Devo modificare il DNS per usare una casella di posta condivisa?">
+    No. La fase 1 richiede solo una regola di inoltro presso il tuo provider di posta. I record DNS
+    sono necessari solo per inviare dal dominio del canale.
+  </Accordion>
+  <Accordion title="Perché il link di annullamento dell'iscrizione rimane In attesa?">
+    Se non hai aggiunto i record di annullamento dell'iscrizione, è previsto e blocca solo
+    le campagne. Se li hai aggiunti, verifica che entrambi i record `CNAME`
+    esistano e attendi fino a un'ora. Su Cloudflare, imposta entrambi i record su **Solo
+    DNS**.
+  </Accordion>
+  <Accordion title="Posso inviare campagne senza inoltrare la casella di posta?">
+    Sì. Le campagne richiedono solo le fasi 2 e 3. L'inoltro è ciò che porta la posta in arrivo
+    in Twenty.
+  </Accordion>
+  <Accordion title="Posso usare lo stesso dominio in due aree di lavoro?">
+    No. Un dominio può essere verificato in una sola area di lavoro. Twenty ti avvisa se
+    è già in uso altrove.
+  </Accordion>
+</AccordionGroup>
+
+## Articoli correlati
+
+<CardGroup cols={2}>
+  <Card title="Inoltra una casella di posta condivisa" icon="inbox" href="/it/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-any-mail-provider">
+
+
+
+
+    Configura l'inoltro per qualsiasi provider di posta.
+  </Card>
+  <Card title="Configura un dominio di invio" icon="globe" href="/it/user-guide/email-campaigns/how-tos/set-up-a-sending-domain">
+
+
+
+
+    Aggiungi e verifica ogni record DNS, provider per provider.
+  </Card>
+  <Card title="Campagne email" icon="paper-plane" href="/it/user-guide/email-campaigns/overview">
+
+
+
+
+    Scopri cosa possono fare le campagne per il tuo team di vendita.
+  </Card>
+  <Card title="Invia la tua prima campagna" icon="envelope-open-text" href="/it/user-guide/email-campaigns/how-tos/send-your-first-campaign">
+
+
+
+
+    Crea un elenco, scrivi l'email e inviala.
+  </Card>
+</CardGroup>

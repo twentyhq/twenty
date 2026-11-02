@@ -43,7 +43,7 @@ type Assertions = [
       | 'isAuditLogged'
       | 'isLabelSyncedWithName'
       | 'isUIEditable'
-      | 'writability'
+      | 'disabledFieldPermissionActions'
       | 'isNullable'
       | 'universalSettings'
     >

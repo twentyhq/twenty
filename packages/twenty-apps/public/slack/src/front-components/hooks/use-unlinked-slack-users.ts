@@ -14,6 +14,7 @@ type UnlinkedSlackUsersState = {
   unlinkedSlackUsers: SlackResolvedUser[];
   hasMoreUnlinkedSlackUsers: boolean;
   isUnlinkedSlackUsersLoading: boolean;
+  hasLoadedUnlinkedSlackUsers: boolean;
   unlinkedErrorMessage: string | undefined;
   refetchUnlinkedSlackUsers: () => Promise<void>;
 };
@@ -30,6 +31,8 @@ export const useUnlinkedSlackUsers = ({
     useState(false);
   const [isUnlinkedSlackUsersLoading, setIsUnlinkedSlackUsersLoading] =
     useState(true);
+  const [hasLoadedUnlinkedSlackUsers, setHasLoadedUnlinkedSlackUsers] =
+    useState(false);
   const [unlinkedErrorMessage, setUnlinkedErrorMessage] = useState<
     string | undefined
   >(undefined);
@@ -71,6 +74,7 @@ export const useUnlinkedSlackUsers = ({
     } finally {
       if (fetchId === fetchIdRef.current) {
         setIsUnlinkedSlackUsersLoading(false);
+        setHasLoadedUnlinkedSlackUsers(true);
       }
     }
   }, []);
@@ -87,6 +91,7 @@ export const useUnlinkedSlackUsers = ({
     unlinkedSlackUsers,
     hasMoreUnlinkedSlackUsers,
     isUnlinkedSlackUsersLoading,
+    hasLoadedUnlinkedSlackUsers,
     unlinkedErrorMessage,
     refetchUnlinkedSlackUsers,
   };

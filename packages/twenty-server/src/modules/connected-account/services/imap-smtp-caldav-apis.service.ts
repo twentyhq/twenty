@@ -227,6 +227,10 @@ export class ImapSmtpCalDavApiService {
       await this.messageQueueService.add<MessagingMessageListFetchJobData>(
         MessagingMessageListFetchJob.name,
         { workspaceId, messageChannelId: existingMessageChannel.id },
+        {
+          workspaceId,
+          isWorkspaceJob: true,
+        },
       );
     }
 
@@ -244,6 +248,10 @@ export class ImapSmtpCalDavApiService {
       await this.calendarQueueService.add<CalendarEventListFetchJobData>(
         CalendarEventListFetchJob.name,
         { workspaceId, calendarChannelId: existingCalendarChannel.id },
+        {
+          workspaceId,
+          isWorkspaceJob: true,
+        },
       );
     }
 

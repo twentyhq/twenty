@@ -3,6 +3,12 @@ title: ١. نموذج البيانات
 description: وثائق نموذجية ونماذج ذات كائنات وحقول وعلاقة.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## نظرة عامة
+
 يحتاج تطبيقنا إلى عنصرين مخصصين: **قوالب وثيقة** (ما يجب كتابته) و
 **وثائق** (النتيجة المنشأة). دعونا نعرفهم.
 
@@ -10,15 +16,15 @@ description: وثائق نموذجية ونماذج ذات كائنات وحقو
 الصحيح لك:
 
 ```bash filename="Terminal"
-yarn twenty dev:add object
+twenty app add object
 ```
 
 نعرض أدناه الملفات المكتملة.
 
 <Note>
-كل `*_UNIVERSAL_IDENTIFIER` يعيش باستمرار في
-`src/constants/universal-Identiers.ts` ويتم استيراده حيثما استخدم. كتل الكود
-أسفل أغفل تلك الواردات للإيجاز، أبقيها في ملفاتك.
+  كل `*_UNIVERSAL_IDENTIFIER` يعيش باستمرار في
+  `src/constants/universal-Identiers.ts` ويتم استيراده حيثما استخدم. تتجاهل
+  المقتطفات أدناه عمليات الاستيراد تلك للاختصار — احتفظ بها في ملفاتك الخاصة.
 </Note>
 
 ## عنصر القالب
@@ -39,27 +45,54 @@ export default defineObject({
   labelIdentifierFieldMetadataUniversalIdentifier:
     TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [
-    { universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.TEXT, name: 'name', label: 'Name', icon: 'IconAbc' },
-    { universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.RICH_TEXT, name: 'body', label: 'Body', icon: 'IconFileText',
-      description: 'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.' },
-    { universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.SELECT, name: 'target', label: 'Target', icon: 'IconTarget',
+    {
+      universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.TEXT,
+      name: 'name',
+      label: 'Name',
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.RICH_TEXT,
+      name: 'body',
+      label: 'Body',
+      icon: 'IconFileText',
+      description:
+        'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.',
+    },
+    {
+      universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.SELECT,
+      name: 'target',
+      label: 'Target',
+      icon: 'IconTarget',
       defaultValue: `'PERSON'`,
       options: [
-        { id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
-          value: 'PERSON', label: 'Person', color: 'blue', position: 0 },
-        { id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
-          value: 'COMPANY', label: 'Company', color: 'green', position: 1 },
-      ] },
+        {
+          id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
+          value: 'PERSON',
+          label: 'Person',
+          color: 'blue',
+          position: 0,
+        },
+        {
+          id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
+          value: 'COMPANY',
+          label: 'Company',
+          color: 'green',
+          position: 1,
+        },
+      ],
+    },
   ],
 });
 ```
 
 <Warning>
-يجب أن يكون خيار `SELECT` **القيم** `UPER_CASE` (`PERSON`، وليس `person`)، و
-`defaultValue` مغلقاً في اقتباسات إضافية: ` `PERSON`". إن `label\` هو ما يراه المستخدمون.
+  يجب أن تكون **قيم** خيار `SELECT` بصيغة `UPPER_CASE` (`PERSON` وليس `person`)، وتكون قيمة
+  `defaultValue` محاطة بعلامات اقتباس إضافية: `` `'PERSON'` ``. إن `label`
+  هو ما يراه المستخدمون.
 </Warning>
 
 ## كائن المستند
@@ -74,7 +107,12 @@ export default defineObject({
 **ثنائية الاتجاه** - أنت تحدد كلا الجانبين، كل منهما في ملف الحقل الخاص به.
 
 ```ts filename="src/fields/document-template-relation.field.ts"
-import { defineField, FieldType, OnDeleteAction, RelationType } from 'twenty-sdk/define';
+import {
+  defineField,
+  FieldType,
+  OnDeleteAction,
+  RelationType,
+} from 'twenty-sdk/define';
 
 // The "many" side: each document belongs to one template.
 export default defineField({
@@ -101,15 +139,15 @@ export default defineField({
 
 ## مشاهدته في العشرين
 
-مع تشغيل 'yarn 20 inenty dev'، افتح **الإعدادات → البيانات النموذجية**. يظهر كلا العنصرين
+أثناء تشغيل `twenty app dev`، افتح **الإعدادات → نموذج البيانات**. يظهر كلا العنصرين
 ، وسم مع التطبيق الخاص بك.
 
 <Frame caption="كلا العنصرين المخصصين، مملوكين لتطبيق مولد المستندات.">
   <img src="/images/docs/developers/extends/apps/document-generator/01-data-model.png" alt="إعدادات نموذج البيانات التي تظهر قوالب المستندات والمستندات" />
 </Frame>
 
-قم بإنشاء قالب واحد لاختباره - اسمه *اقتراح المبيعات*، وقم بتعيين **الهدف** إلى
-*Person*، وقم بلصق جسم مع بعض العناصر النائبة:
+أنشئ قالبًا واحدًا للاختبار — سمّه *عرض مبيعات*، واضبط **الهدف** على
+*شخص*، والصق محتوى يتضمن بعض العناصر النائبة:
 
 ```text
 Dear {{name.firstName}} {{name.lastName}},
@@ -125,8 +163,13 @@ The Team
 </Frame>
 
 **بعد هذه الخطوة:** لديك كائنات 'documentTemplate' و 'document'، مرتبطة بـ
-علاقة، و قالب واحد لتوليد منها. وبعد ذلك، المنطق الذي يعبئه
+علاقة، و قالب واحد لتوليد منها. وبعد ذلك، المنطق الذي يعبئه.
 
-<Card title="التالي: توليد الوثائق →" icon="bolt" href="/ar/developers/extend/apps/tutorials/document-generator/generating-documents">
-  اكتب الدالة المنطقية التي تملأ القالب.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ar/developers/extend/apps/tutorials/document-generator/generating-documents" img="/images/user-guide/halftone/card-page-tutorial-documents.svg">
+  <CardTitle>التالي: إنشاء المستندات →</CardTitle>
+  كتابة الدالة المنطقية التي تملأ القالب.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="card-page-tutorial-data" />

@@ -10,6 +10,7 @@ import { getDropdownRows } from './getDropdownRows';
 import { getDropdownSearch } from './getDropdownSearch';
 import { getDropdownSearchTarget } from './getDropdownSearchTarget';
 import { getDropdownTrigger } from './getDropdownTrigger';
+import { getDropdownTabNavigation } from './getDropdownTabNavigation';
 import { getNextDropdownGridItem } from './getNextDropdownGridItem';
 import { getNextDropdownItem } from './getNextDropdownItem';
 import { useDropdownContext } from './useDropdownContext';
@@ -79,6 +80,47 @@ export const useDropdownKeyboardNavigation = () => {
     }
 
     if (type === 'panel') {
+      return;
+    }
+
+    const tabNavigation =
+      type === 'picker' && event.key === 'Tab'
+        ? getDropdownTabNavigation({
+            content,
+            target,
+            shiftKey: event.shiftKey,
+          })
+        : undefined;
+
+    if (isDefined(tabNavigation)) {
+      event.preventDefault();
+    }
+
+    if (isDefined(tabNavigation?.target)) {
+      tabNavigation.target.focus();
+      return;
+    }
+
+    const backwardTabTrigger =
+      isDefined(tabNavigation) && event.shiftKey
+        ? getDropdownTrigger(content)
+        : undefined;
+
+    if (isDefined(backwardTabTrigger)) {
+      backwardTabTrigger.focus();
+      return;
+    }
+
+    if (isDefined(tabNavigation) && event.shiftKey) {
+      closeTree(event.nativeEvent);
+      return;
+    }
+
+    if (isDefined(tabNavigation)) {
+      tabForwardOutOfTree({
+        ownerDocument: content.ownerDocument,
+        tabOutEvent: event.nativeEvent,
+      });
       return;
     }
 

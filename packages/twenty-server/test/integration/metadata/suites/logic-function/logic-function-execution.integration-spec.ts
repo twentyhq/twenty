@@ -27,6 +27,33 @@ const ERROR_FUNCTION_CODE = `export const main = async (params: { shouldFail: bo
   return { success: true };
 };`;
 
+const RUNTIME_FUNCTION_CODE = `import { execSync } from 'node:child_process';
+import { readFileSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+const attempt = (operation: () => unknown): string => {
+  try {
+    operation();
+
+    return 'allowed';
+  } catch (error) {
+    return error instanceof Error && 'code' in error
+      ? String(error.code)
+      : 'failed';
+  }
+};
+
+export const main = async (): Promise<object> => ({
+  hasServerVariables: 'PG_DATABASE_URL' in process.env,
+  hasApplicationId: 'APPLICATION_ID' in process.env,
+  writeTemporaryFile: attempt(() =>
+    writeFileSync(join(tmpdir(), 'file.txt'), 'content'),
+  ),
+  readServerFile: attempt(() => readFileSync('/etc/hosts')),
+  spawnProcess: attempt(() => execSync('true')),
+});`;
+
 describe('Logic Function Execution', () => {
   const createdFunctionIds: string[] = [];
 
@@ -151,6 +178,43 @@ describe('Logic Function Execution', () => {
     expect(data?.categories).toEqual(
       expect.arrayContaining(['fruit', 'vegetable']),
     );
+  });
+
+  it('should run with the function variables and its own temporary directory', async () => {
+    const { data: createData } = await createOneLogicFunction({
+      input: {
+        name: 'Runtime Test Function',
+        source: {
+          sourceHandlerCode: RUNTIME_FUNCTION_CODE,
+          handlerName: 'main',
+        },
+      },
+      expectToFail: false,
+    });
+
+    const functionId = createData?.createOneLogicFunction?.id;
+
+    expect(functionId).toBeDefined();
+    createdFunctionIds.push(functionId);
+
+    const { data: executeData } = await executeLogicFunction({
+      input: { id: functionId, payload: {} },
+      expectToFail: false,
+    });
+
+    const result = executeData?.executeOneLogicFunction;
+
+    if (result?.status !== LogicFunctionExecutionStatus.SUCCESS) {
+      throw new Error(JSON.stringify(result?.error, null, 2));
+    }
+
+    expect(result?.data).toEqual({
+      hasServerVariables: false,
+      hasApplicationId: true,
+      writeTemporaryFile: 'allowed',
+      readServerFile: 'ERR_ACCESS_DENIED',
+      spawnProcess: 'ERR_ACCESS_DENIED',
+    });
   });
 
   it('should create logic function without source', async () => {

@@ -2,6 +2,8 @@
 title: Comenzi rapide
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Introducere
 
 Atunci când aveți nevoie să ascultați o comandă rapidă, în mod normal ați folosi evenimentul `onKeyDown`.
@@ -176,3 +178,5 @@ export const currentHotkeyScopeState = createState<HotkeyScope>({
 Am făcut un wrapper subțire peste [react-hotkeys-hook](https://react-hotkeys-hook.vercel.app/docs/intro) care îl face mai performant și evită re-rendările inutile.
 
 De asemenea, creăm un atom Jotai pentru a gestiona starea domeniului comenzilor rapide și pentru a o face disponibilă oriunde în aplicație.
+
+<PageBanner illustration="card-page-command-menu" />

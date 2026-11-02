@@ -35,6 +35,7 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       activationStatus: WorkspaceActivationStatus.ACTIVE,
       hasValidSignedEnterpriseKey: false,
       hasValidEnterpriseValidityToken: false,
+      isTrialAvailable: true,
       metadataVersion: 1,
       isPublicInviteLinkEnabled: false,
       isCampaignClickTrackingEnabled: false,

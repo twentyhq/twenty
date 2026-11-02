@@ -1,0 +1,98 @@
+---
+title: Tematica
+description: Utilizați tokenurile de temă Twenty UI și limitați suprascrierile temei la o parte a aplicației dvs.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import ThemeProviderReference from '/snippets/ui/generated/theme/theme-provider.mdx';
+
+## Prezentare generală
+
+Componentele Twenty UI citesc proprietăți personalizate CSS publice prefixate cu `--t-`. Preferați tokenuri semantice precum `background.secondary` și `font.color.primary` atunci când stilizați propriile componente; aceste valori se adaptează la paleta activă.
+
+## Utilizați tokenuri în stiluri
+
+`themeCssVariables` mapează căile tokenurilor la referințe de variabile CSS. Utilizați-l pentru valori pe care CSS le rezolvă:
+
+```tsx
+import { themeCssVariables } from 'twenty-ui/theme';
+
+export const Summary = () => (
+  <section
+    style={{
+      background: themeCssVariables.background.secondary,
+      color: themeCssVariables.font.color.primary,
+      padding: themeCssVariables.spacing[4],
+      borderRadius: themeCssVariables.border.radius.md,
+    }}
+  >
+    Three tasks are due today.
+  </section>
+);
+```
+
+Echivalentul CSS utilizează variabilele direct:
+
+```css
+.summary {
+  background: var(--t-background-secondary);
+  color: var(--t-font-color-primary);
+  padding: var(--t-spacing-4);
+  border-radius: var(--t-border-radius-md);
+}
+```
+
+## Citiți valorile rezolvate
+
+`useTheme()` citește tokenurile calculate ale furnizorului activ. Utilizați-l atunci când o componentă așteaptă un număr JavaScript, cum ar fi dimensiunea unei pictograme. Furnizorul are nevoie ca foaia de stil a temei să fie încărcată în browser pentru a rezolva variabilele CSS.
+
+```tsx
+import { IconCheck } from 'twenty-ui/icon';
+import { useTheme } from 'twenty-ui/theme';
+
+export const CompleteIcon = () => {
+  const theme = useTheme();
+
+  return <IconCheck size={theme.icon.size.md} aria-hidden />;
+};
+```
+
+Fiecare intrare din `themeCssVariables` este un șir de referință CSS, inclusiv tokenurile numerice. Nu efectuați operații aritmetice asupra acelor șiruri. Pe server, valorile rezolvate din browser nu sunt disponibile; consultați [randarea pe server](/ro/ui/ssr).
+
+## Limitați domeniul unei suprascrieri
+
+Transmiteți `applyToRoot={false}` pentru a aplica o temă unui subarbore. Suprascrieți variabilele CSS publice folosind numele lor complet:
+
+```tsx
+import { type ReactNode } from 'react';
+import { ThemeProvider } from 'twenty-ui/theme';
+
+export const EmbeddedPanel = ({ children }: { children: ReactNode }) => (
+  <ThemeProvider
+    colorScheme="light"
+    applyToRoot={false}
+    overrides={{ '--t-background-secondary': '#f4f6ff' }}
+  >
+    {children}
+  </ThemeProvider>
+);
+```
+
+Un furnizor cu domeniu limitat adaugă un înveliș cu `display: contents`; acesta nu creează o casetă de aspect. De asemenea, furnizează un container pentru componentele care acceptă portaluri tematice. Portalurile create de alte biblioteci au nevoie de propria configurație de container.
+
+Variabilele prefixate cu `--tw-` sunt detalii private ale componentelor. Utilizați proprietăți publice și tokenuri `--t-` în loc să depindeți de acele variabile.
+
+Consultați [referința tokenurilor](/ro/ui/tokens) pentru numele disponibile și valorile paletei.
+
+## Valori explicite și scală
+
+Proprietatea `theme` furnizează valori JavaScript ale temei rezolvate, în loc să citească stilurile calculate. De asemenea, se propagă la furnizorii imbricați, cu excepția cazului în care aceștia furnizează o altă temă explicită. Aceasta modifică valorile citite de hook-uri; încărcați foaia de stiluri corespunzătoare și utilizați suprascrieri CSS pentru a stiliza componentele.
+
+`scale` scrie `--t-scale-user` în rădăcina documentului. Afectează numai interfețele al căror CSS utilizează acea variabilă și este ignorată de furnizorii cu domeniu de aplicare. `className` se aplică unui înveliș cu domeniu de aplicare; transmiterea sa singură nu creează un înveliș. `overrides` creează un domeniu de aplicare chiar și atunci când `applyToRoot` rămâne true.
+
+## Proprietățile ThemeProvider
+
+<ThemeProviderReference />
+
+<PageBanner illustration="page-cover-palette" />

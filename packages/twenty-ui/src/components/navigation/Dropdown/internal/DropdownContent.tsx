@@ -9,6 +9,7 @@ import { isDefined } from '@ui/utilities/utils/isDefined';
 import styles from '../Dropdown.module.scss';
 import { type DropdownContentProps } from '../types/DropdownContentProps';
 import { DropdownContext } from './DropdownContext';
+import { DropdownContentRenderer } from './DropdownContentRenderer';
 import { DropdownPageFocusEffect } from './DropdownPageFocusEffect';
 import { DropdownRowsEffect } from './DropdownRowsEffect';
 import { getDropdownFocusTarget } from './getDropdownFocusTarget';
@@ -30,6 +31,7 @@ export const DropdownContent = ({
   width = 200,
   className,
   style,
+  render,
   children,
   initialFocus,
   finalFocus,
@@ -81,6 +83,13 @@ export const DropdownContent = ({
           <Popover.Popup
             {...props}
             ref={mergedRef}
+            render={(popupProps, state) => (
+              <DropdownContentRenderer
+                props={popupProps}
+                state={state}
+                render={render}
+              />
+            )}
             role={type === 'menu' ? 'menu' : 'dialog'}
             aria-label={ariaLabel}
             aria-labelledby={ariaLabelledBy ?? defaultAriaLabelledBy}

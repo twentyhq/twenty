@@ -1,0 +1,65 @@
+---
+title: ProgressBar
+description: Muestra el progreso medido o indeterminado con una barra horizontal.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ProgressBarReference from '/snippets/ui/generated/feedback/progress-bar.mdx';
+
+## Resumen
+
+`ProgressBar` proporciona una apariencia horizontal para [Progreso](/es/ui/primitives/feedback/progress). Preserva el contrato completo del elemento raíz, incluidos los atributos nativos, las referencias, la composición de renderizado, el formato, los rangos personalizados y el progreso indeterminado. Asígnale un `aria-label` que identifique la operación.
+
+<StoryEmbed storyId="ui-feedback-progressbar-progressbar--display" title="Ejemplo de ProgressBar" height={100} />
+
+## "Uso"
+
+```tsx
+import { ProgressBar } from 'twenty-ui/primitives/feedback';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type ImportProgressProps = { importedRecords: number | null };
+
+export const ImportProgress = ({ importedRecords }: ImportProgressProps) => (
+  <Text style={{ display: 'grid', gap: 8, width: 300 }}>
+    <Text>Importing records: {importedRecords ?? 'preparing'}</Text>
+    <ProgressBar
+      value={importedRecords}
+      max={1000}
+      aria-label="Importing records"
+    />
+  </Text>
+);
+```
+
+## Propiedad del estado y rangos
+
+`value` es obligatorio y está controlado por la aplicación. No hay modo `defaultValue`. El componente no inicia una solicitud ni avanza el progreso por sí solo. Pasa `null` cuando se desconozca el progreso. Los valores no finitos también permanecen indeterminados.
+
+`min` toma de forma predeterminada el valor `0` y `max`, el valor `100`. Los valores finitos se limitan al rango para el valor semántico y el relleno normalizado. Un valor de `70` en el rango de `20` a `120` llena la mitad de la barra e indica `50%`, mientras que `aria-valuenow` se mantiene en `70`.
+
+<StoryEmbed storyId="ui-feedback-progressbar-progressbar--custom-range" title="Un mínimo distinto de cero y un máximo personalizado" height={80} />
+
+Usa `aria-valuetext`, `getAriaValueText`, `locale` y `format` como se describe en [Progreso](/es/ui/primitives/feedback/progress). Usa partes de Progress compuestas cuando las etiquetas y los valores necesiten su propio diseño visible.
+
+Usa [Toast](/es/ui/components/feedback/toast) para notificaciones con una cuenta regresiva de descarte y pausa al pasar el cursor.
+
+## Apariencia y composición
+
+`size` selecciona una pista de 6 px u 8 px. `barColor` y `backgroundColor` aceptan colores CSS, incluidas las variables de tema. `withBorderRadius` redondea la pista y el indicador. `withMinimumFillWidth` mantiene un pequeño relleno estético solo entre el mínimo y la finalización. Este mínimo es de como máximo 12 px y la mitad del ancho de la pista, por lo que una pista estrecha sigue distinguiendo el progreso incompleto de la finalización. No llena una barra vacía ni cambia los valores semánticos.
+
+Los atributos nativos, `className`, `style` y `ref` se dirigen a la raíz. `className` y `style` pueden recibir el estado del progreso. `render` puede reemplazar la raíz y conservar su semántica. El progreso indeterminado tiene su propia apariencia sin indicar un porcentaje numérico. Las preferencias de movimiento reducido desactivan las transiciones de relleno y el movimiento indeterminado.
+
+Compón [partes de Progress](/es/ui/primitives/feedback/progress) para diseños personalizados o animación específica. La temporización específica, la aparición gradual, los destellos, los resortes y las devoluciones de llamada de finalización pertenecen a la composición de la aplicación.
+
+## Migración
+
+Reemplaza `ariaLabel` por el atributo nativo `aria-label`. Se eliminan las props `withGrowIn`, `withGlint`, `withSpringFill` y `onGrowInComplete`. Implementa su apariencia, temporización y devoluciones de llamada de finalización en una composición de la aplicación mediante [partes de Progress](/es/ui/primitives/feedback/progress). El atributo nativo `onAnimationEnd` sigue disponible en la raíz.
+
+## "Props"
+
+<ProgressBarReference />
+
+<PageBanner illustration="card-page-usage-limits" />

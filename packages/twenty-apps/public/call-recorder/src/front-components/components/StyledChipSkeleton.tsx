@@ -1,6 +1,6 @@
 import { keyframes } from '@emotion/react';
 import styled from '@emotion/styled';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
 const shimmer = keyframes`
   from { transform: translateX(-100%); }

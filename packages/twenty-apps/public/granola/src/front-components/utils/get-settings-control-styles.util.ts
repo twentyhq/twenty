@@ -1,8 +1,6 @@
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme';
 
-// Mirrors the settings inputs twenty-front renders for application variables,
-// which cannot be imported here: twenty-ui ships no text, select or textarea
-// input, and front components cannot reach into twenty-front internals.
+// TODO @charlesBochet: Replace with twenty-ui Input and Select once verified in the front component sandbox.
 export const getSettingsControlStyles = () => `
   background-color: ${themeCssVariables.background.transparent.light};
   border: 1px solid ${themeCssVariables.border.color.medium};

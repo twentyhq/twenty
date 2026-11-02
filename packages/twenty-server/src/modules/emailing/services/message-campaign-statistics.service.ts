@@ -53,6 +53,8 @@ export class MessageCampaignStatisticsService {
           id: `campaign-stats-refresh:${workspaceId}:${campaignId}`,
           keepLastIfActive: true,
         },
+        workspaceId,
+        isWorkspaceJob: true,
       },
     );
   }

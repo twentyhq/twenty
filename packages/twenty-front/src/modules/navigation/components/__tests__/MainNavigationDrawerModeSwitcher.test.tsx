@@ -48,6 +48,7 @@ const buildOpenThreadsSummaryMock = (hasUnreadOpenThread: boolean) => ({
       agentChatOpenThreadsSummary: {
         __typename: 'AgentChatOpenThreadsSummary' as const,
         openThreadCount: 1,
+        unreadOpenThreadCount: hasUnreadOpenThread ? 1 : 0,
         needsInputThreadCount: 0,
         hasUnreadOpenThread,
         hasUnreadMentionThread: false,
@@ -193,7 +194,7 @@ describe('MainNavigationDrawerModeSwitcher', () => {
     renderModeSwitcher({ hasUnreadOpenThread: true });
 
     expect(
-      await screen.findByRole('button', { name: 'AI, unread' }),
+      await screen.findByRole('button', { name: 'AI, 1 unread' }),
     ).toBeInTheDocument();
   });
 

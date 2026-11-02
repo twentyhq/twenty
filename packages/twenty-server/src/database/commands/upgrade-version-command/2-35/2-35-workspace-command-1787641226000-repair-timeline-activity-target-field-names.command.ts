@@ -106,6 +106,7 @@ export class RepairTimelineActivityTargetFieldNamesCommand extends ProvisionedWo
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           workspaceId,
           applicationUniversalIdentifier:

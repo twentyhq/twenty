@@ -1,8 +1,18 @@
 ---
-title: Por qué Twenty
+title: Conoce a Veinte
+description: Vea lo que hace que Veinte sea diferente, configure su espacio de trabajo y aprenda los conceptos detrás de él.
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
+import { LandingActions, LandingButton } from "/snippets/landing-actions.mdx"
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+<LandingActions>
+  <LandingButton href="/es/getting-started/quickstart">Rickstart</LandingButton>
+  <LandingButton href="/es/getting-started/key-features" outlined>Funciones clave</LandingButton>
+</LandingActions>
+
+## Por qué Twenty
 
 Has estado eligiendo entre software que es fácil de empezar a usar pero imposible de cambiar, y software que es flexible pero tarda meses en configurarse. Twenty es la tercera opción: **un CRM listo para producción que puedes remodelar sobre la marcha.**
 
@@ -11,19 +21,19 @@ Has estado eligiendo entre software que es fácil de empezar a usar pero imposib
 Twenty es una plataforma sobre la que puedes construir, no un producto que configuras.
 
 <CardGroup cols={2} className="documentation-card-group documentation-card-group--patterned">
-  <Card img="/images/documentation/banner-icons-v2/ai.svg">
+  <Card href="/es/getting-started/core-concepts/ai" img="/images/documentation/banner-icons-v2/ai.svg">
     <CardTitle>Diseñado para agentes</CardTitle>
     Los agentes operan dentro de tu modelo de datos con permisos reales. Habilidades, herramientas, MCP.
   </Card>
-  <Card img="/images/documentation/banner-icons-v2/dev-apps.svg">
+  <Card href="/es/getting-started/core-concepts/apps" img="/images/documentation/banner-icons-v2/dev-apps.svg">
     <CardTitle>Extensibilidad segura</CardTitle>
     La flexibilidad de las herramientas 'vibe-coded', sobre cimientos seguros.
   </Card>
-  <Card img="/images/documentation/banner-icons-v2/dev-api.svg">
+  <Card href="/es/developers/introduction" img="/images/documentation/banner-icons-v2/dev-api.svg">
     <CardTitle>Pila moderna</CardTitle>
     React, TypeScript. Tu equipo ya sabe cómo ampliar Twenty. Sin lenguajes propietarios, sin barreras de acceso.
   </Card>
-  <Card img="/images/user-guide/halftone/no-lock-in.png">
+  <Card href="/es/user-guide/data-migration/how-tos/export-your-data" img="/images/user-guide/halftone/no-lock-in.png">
     <CardTitle>Sin bloqueo</CardTitle>
     Núcleo de código abierto, autoalojable, exporta tus datos en cualquier momento.
   </Card>
@@ -67,6 +77,15 @@ Twenty es una plataforma sobre la que puedes construir, no un producto que confi
   ni sesiones informativas ejecutivas. Ganamos con los equipos que tienen la
   autoridad para elegir sus propias herramientas.
 
-<Card title="¿Listo para empezar?" icon="rocket" href="/es/getting-started/quickstart">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/es/getting-started/quickstart" img="/images/documentation/getting-started-icons-v1/quickstart.svg">
+  ¿<CardTitle>listo para empezar?</CardTitle>
   Configura Twenty en menos de 5 minutos, en la nube o con alojamiento propio.
 </Card>
+<Card href="https://discord.gg/cx5n4Jzs57" img="/images/user-guide/halftone/community-discord.svg">
+  <CardTitle>Discord</CardTitle>
+  Haz preguntas y comparte lo que construyes con la comunidad Veinte
+</Card>
+</CardGroup>
+
+<PageBanner illustration="meet-twenty" />

@@ -147,6 +147,7 @@ export class AddAgentChatThreadParticipantObjectCommand extends ProvisionedWorks
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:
@@ -222,6 +223,7 @@ export class AddAgentChatThreadParticipantObjectCommand extends ProvisionedWorks
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           workspaceId,
           isSystemBuild: true,
           applicationUniversalIdentifier:

@@ -11,6 +11,7 @@ import { type ApiKeyRoleService } from 'src/engine/core-modules/api-key/services
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.service';
 import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
+import { SESSION_COOKIE_OPT_IN_HEADER_NAME } from 'twenty-shared/constants';
 import { type RecordExportDownloadTokenJwtPayload } from 'src/engine/core-modules/record-export/types/record-export-download-token-jwt-payload.type';
 import { type PendingFileCleanupCronJob } from 'src/engine/core-modules/file/file-upload/crons/jobs/pending-file-cleanup.cron.job';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
@@ -125,6 +126,7 @@ describe('record export lifecycle (integration)', () => {
       ? {
           Cookie: `${USER_SESSION_COOKIE_NAME}=${token}`,
           Origin: `http://localhost:${APP_PORT}`,
+          [SESSION_COOKIE_OPT_IN_HEADER_NAME]: '1',
         }
       : { Authorization: `Bearer ${token}` };
 
@@ -400,7 +402,7 @@ describe('record export lifecycle (integration)', () => {
       return rows.length === 0;
     });
     expect(response.headers['content-disposition']).toBe(
-      'attachment; filename="company.csv"',
+      'attachment; filename=company.csv',
     );
     expect(response.headers['cache-control']).toBe('private, no-store');
     expect(response.text.replace(/^\uFEFF/, '')).toBe(

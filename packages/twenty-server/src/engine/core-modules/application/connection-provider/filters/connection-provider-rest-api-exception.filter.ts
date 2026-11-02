@@ -23,6 +23,8 @@ const connectionProviderExceptionCodeToHttpStatus = (
     case ConnectionProviderExceptionCode.ON_CONNECT_LOGIC_FUNCTION_NOT_FOUND:
     case ConnectionProviderExceptionCode.ON_DISCONNECT_LOGIC_FUNCTION_NOT_FOUND:
     case ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_NOT_FOUND:
+    case ConnectionProviderExceptionCode.AUTHORIZE_LOGIC_FUNCTION_NOT_FOUND:
+    case ConnectionProviderExceptionCode.CALLBACK_LOGIC_FUNCTION_NOT_FOUND:
       return 404;
     case ConnectionProviderExceptionCode.FORBIDDEN:
       return 403;
@@ -37,6 +39,8 @@ const connectionProviderExceptionCodeToHttpStatus = (
     case ConnectionProviderExceptionCode.REFRESH_FAILED:
     case ConnectionProviderExceptionCode.ON_DISCONNECT_LOGIC_FUNCTION_FAILED:
     case ConnectionProviderExceptionCode.IDENTIFY_ACCOUNT_LOGIC_FUNCTION_FAILED:
+    case ConnectionProviderExceptionCode.AUTHORIZE_LOGIC_FUNCTION_FAILED:
+    case ConnectionProviderExceptionCode.CALLBACK_LOGIC_FUNCTION_FAILED:
       return 500;
     default:
       return assertUnreachable(code);

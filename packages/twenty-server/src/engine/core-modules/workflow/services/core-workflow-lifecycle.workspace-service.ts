@@ -670,6 +670,14 @@ export class CoreWorkflowLifecycleWorkspaceService {
         },
         workspaceId,
       );
+
+      // Deactivation hides an engine-managed command behind an override instead of deleting it
+      if (!existingCommandMenuItem.isActive) {
+        await this.commandMenuItemService.activate(
+          existingCommandMenuItem.id,
+          workspaceId,
+        );
+      }
     } else {
       await this.commandMenuItemService.create(
         {

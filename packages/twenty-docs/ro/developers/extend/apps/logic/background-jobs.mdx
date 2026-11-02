@@ -3,6 +3,10 @@ title: Sarcini în fundal
 description: Predă munca de durată sau supusă limitării ratei către lucrătorii Twenty, punând în coadă o altă execuție a unei funcții logice, în loc să rulezi totul inline.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
 O rulare a unei funcții de logică este limitată de `timeoutSeconds` (maximum 900 de secunde). Orice lucru care nu poate fi finalizat în acel interval — o resincronizare completă, un fan-out per înregistrare, un API de la o terță parte care aplică limitare de rată — trebuie împărțit în execuții mai mici.
 
 `enqueueJobs` face exact asta: le cere lucrătorilor Twenty să ruleze mai târziu una dintre funcțiile de logică ale aplicației tale, o dată pentru fiecare payload, fiecare rulare în propriul său proces, cu propriul său buget de timeout. Apelantul returnează imediat.
@@ -23,19 +27,69 @@ import { enqueueJobs } from 'twenty-sdk/logic-function';
 
 await enqueueJobs({
   logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
-  payloads: [{ page: 1 }],
+  jobs: [{ payload: { page: 1 } }],
 });
 ```
 
-Fiecare rulare primește payloadul său ca argument al handlerului, exact ca orice alt declanșator. Ținta trebuie să aparțină **aceleiași aplicații** ca apelantul — punerea în coadă a funcției altei aplicații este respinsă cu `Logic function not found` și nu se pune nimic în coadă. Un singur apel acceptă până la `200` payloaduri.
+Fiecare rulare primește payloadul său ca argument al handlerului, exact ca orice alt declanșator. Ținta trebuie să aparțină **aceleiași aplicații** ca apelantul — punerea în coadă a funcției altei aplicații este respinsă cu `Logic function not found` și nu se pune nimic în coadă. Un singur apel acceptă până la `200` joburi.
 
 <Note>
-`enqueueJobs` revine imediat ce joburile sunt acceptate, nu când au fost rulate. Nu întoarce rezultatele țintelor — fă ca fiecare țintă să scrie ce produce în [magazinul cheie-valoare](/ro/developers/extend/apps/logic/key-value-store) sau într-o înregistrare din spațiul de lucru dacă trebuie să le citești ulterior.
+`enqueueJobs` revine imediat ce joburile sunt acceptate, nu când au fost rulate. Nu întoarce rezultatele țintelor — fă ca fiecare țintă să scrie ce produce în [magazinul cheie-valoare](/ro/developers/extend/apps/logic/key-value-store) sau într-o înregistrare din spațiul de lucru dacă trebuie să le citești ulterior. Pentru a afla dacă o execuție s-a încheiat, interogați periodic [starea jobului](#poll-jobs).
 </Note>
 
 <Note>
-Ajutorul mai vechi `enqueueJob`, care pune în coadă un singur job per apel, este depreciat. Folosește în schimb `enqueueJobs` cu o listă `payloads` cu un element.
+Ajutorul mai vechi `enqueueJob`, care pune în coadă un singur job per apel, este depreciat. Folosiți în schimb `enqueueJobs` cu o listă `jobs` cu un singur element. Argumentul `payloads` este și el învechit — transmiteți în schimb `jobs`, care acceptă aceeași încărcătură utilă pentru fiecare execuție și vă permite să denumiți fiecare execuție.
 </Note>
+
+## Interogați periodic joburile
+
+`enqueueJobs` returnează câte un `jobId` pentru fiecare execuție pusă în coadă, în aceeași ordine ca lucrările pe care le-ai transmis. `getJobs` citește stadiul la care au ajuns acele execuții, într-un singur apel.
+
+```ts
+import { enqueueJobs, getJobs } from 'twenty-sdk/logic-function';
+
+const { jobIds } = await enqueueJobs({
+  logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+  jobs: [{ payload: { companyId: 'abc' } }],
+});
+
+const statuses = await getJobs(jobIds);
+```
+
+Un singur apel `getJobs` citește cel mult `200` de ID-uri, aceeași limită pe care `enqueueJobs` o aplică unui lot.
+
+Fiecare intrare conține ID-ul solicitat:
+
+| Câmp           | Ce conține                                                                                   |
+| -------------- | -------------------------------------------------------------------------------------------- |
+| `jobId`        | ID-ul interogat.                                                                             |
+| `state`        | `WAITING`, `PRIORITIZED`, `DELAYED`, `ACTIVE`, `WAITING_CHILDREN`, `COMPLETED` sau `FAILED`. |
+| `attemptsMade` | Încercările din coadă efectuate până acum, inclusiv cea curentă.                             |
+| `failedReason` | Mesajul de eroare al ultimei încercări eșuate sau, în caz contrar, `null`.                   |
+| `enqueuedAt`   | Momentul în care lucrarea a fost acceptată, în milisecunde epoch.                            |
+| `startedAt`    | Momentul în care un lucrător a preluat-o; `null` cât timp încă așteaptă.                     |
+| `finishedAt`   | Momentul în care s-a finalizat sau a eșuat; `null` cât timp încă rulează.                    |
+
+O lucrare care nu a fost încă preluată apare în mod normal ca `PRIORITIZED`, nu ca `WAITING`, deoarece lucrările aplicației sunt puse în coadă la o prioritate mică fixă. `COMPLETED` și `FAILED` sunt stările terminale. O buclă de interogare ar trebui, de asemenea, să renunțe singură după un număr limitat de încercări, în loc să aștepte la nesfârșit, deoarece o execuție poate fi citită doar cât timp coada o păstrează: 4 ore după finalizare, 7 zile după eșec și, în ambele cazuri, doar cele mai recente 1000 de lucrări în acea stare.
+
+`getJobs` returnează numai lucrările pe care încă le păstrează, astfel încât un ID care a fost eliminat — sau nu a existat niciodată — pur și simplu lipsește din rezultat, în loc să provoace o eroare pentru întregul lot. Compară ceea ce primești înapoi cu ceea ce ai solicitat pentru a le identifica și tratează un ID lipsă ca „nu mai este cunoscut”, ceea ce nu este același răspuns ca „nu a rulat niciodată”.
+
+Stările sunt limitate la spațiul de lucru din care se efectuează apelul, astfel încât un spațiu de lucru nu poate citi niciodată lucrarea altui spațiu de lucru.
+
+## Alege propriul ID al lucrării
+
+Transmite `jobs` în loc de `payloads` pentru a denumi tu însuți fiecare execuție. ID-ul pe care îl transmiți este cel pe care îl acceptă `getJobs`, astfel încât un apelant poate interoga o lucrare fără a fi nevoit să stocheze ceea ce a returnat `enqueueJobs`.
+
+```ts
+await enqueueJobs({
+  logicFunctionUniversalIdentifier: ENRICH_COMPANY,
+  jobs: [{ payload: { companyId: 'abc' }, jobId: 'enrich-abc' }],
+});
+```
+
+Un ID are cel mult 128 de caractere: litere, cifre, `_`, `.` sau `-`, iar două lucrări dintr-un singur apel nu pot avea același ID. Transmite fie `payloads`, fie `jobs`, niciodată ambele. Când omiți `jobId`, Twenty generează unul.
+
+Un `jobId` este, de asemenea, o cheie de idempotență: punerea în coadă a unui ID pe care coada îl păstrează încă este acceptată, dar **nu** pornește o a doua execuție, iar `getJobs` continuă să raporteze prima execuție. Astfel, reîncercarea punerii în coadă este sigură. Două avertismente: garanția durează numai cât timp lucrarea este păstrată, astfel încât același ID poate porni o execuție nouă după ce cea originală a fost eliminată, iar ID-urile sunt partajate de fiecare aplicație dintr-un spațiu de lucru, așa că adaugă un prefix ID-urilor tale dacă o coliziune ar conta.
 
 ## Opțiuni job
 
@@ -49,7 +103,7 @@ Opțiunile se aplică fiecărei rulări din lot.
 ```ts
 await enqueueJobs({
   logicFunctionUniversalIdentifier: '9f1c3d7e-51b8-4a29-8f0d-7c4e2a6b1d33',
-  payloads: [{ page: 1 }],
+  jobs: [{ payload: { page: 1 } }],
   retryLimit: 3,
   delayMs: 60_000,
 });
@@ -113,7 +167,7 @@ const handler = async (params: { cursor?: string }) => {
   if (nextCursor) {
     await enqueueJobs({
       logicFunctionUniversalIdentifier: SYNC_CONTACTS_PAGE,
-      payloads: [{ cursor: nextCursor }],
+      jobs: [{ payload: { cursor: nextCursor } }],
       delayMs: 2_000,
     });
   }
@@ -138,7 +192,7 @@ const companies = await listCompaniesToEnrich();
 
 await enqueueJobs({
   logicFunctionUniversalIdentifier: ENRICH_COMPANY,
-  payloads: companies.map((company) => ({ companyId: company.id })),
+  jobs: companies.map((company) => ({ payload: { companyId: company.id } })),
   retryLimit: 2,
 });
 ```
@@ -172,7 +226,7 @@ const handler = async (params: { offset?: number }) => {
   if (companies.length === CHUNK_SIZE) {
     await enqueueJobs({
       logicFunctionUniversalIdentifier: ENRICH_COMPANIES_BATCH,
-      payloads: [{ offset: offset + CHUNK_SIZE }],
+      jobs: [{ payload: { offset: offset + CHUNK_SIZE } }],
     });
   }
 
@@ -194,3 +248,5 @@ Ce îl face robust:
 * **Păstrează progresul înainte de a pune în coadă următoarea rulare**, astfel încât o verigă eșuată să repornească de la ultimul segment finalizat în loc de la început.
 * **Păstrează fiecare segment idempotent.** Reprocesarea unui segment după o reîncercare nu trebuie să ducă la scrieri duble — leagă scrierile de înregistrarea sau ID-ul extern pe care îl procesezi.
 * **Preferă un lanț segmentat în locul unei dispersări uriașe** atunci când munca lovește o terță parte cu limită de rată: un lanț cu `delayMs` își dozează singur ritmul, în timp ce mii de joburi puse în coadă deodată devin toate eligibile imediat.
+
+<PageBanner illustration="card-page-background-jobs" />

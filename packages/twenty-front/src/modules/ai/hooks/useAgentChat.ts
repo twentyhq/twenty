@@ -65,7 +65,9 @@ export const useAgentChat = () => {
   const apolloClient = useApolloClient();
   const { enqueueToast } = useToast();
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
-  const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl();
+  const { projectAiChatThreadToUrl } = useProjectAiChatThreadToUrl({
+    shouldPreserveClosedInbox: true,
+  });
   const { refreshAgentChatThreadPermissions } =
     useRefreshAgentChatThreadPermissions();
   const store = useStore();

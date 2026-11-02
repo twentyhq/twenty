@@ -1,0 +1,189 @@
+---
+title: SettingsRow
+description: Una fila de interruptor etiquetada con props de control plano y composición de etiqueta nativa.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import SettingsRowReference from '/snippets/ui/generated/components/settings/settings-row.mdx';
+
+## Resumen
+
+`SettingsRow` combina la apariencia de [ListItem](/es/ui/primitives/navigation/list-item) con [Switch](/es/ui/primitives/input/switch). Representa una etiqueta nativa asociada a su interruptor. Tu aplicación proporciona el contenido de la fila y gestiona las actualizaciones de preferencias.
+
+<StoryEmbed storyId="ui-components-settingsrow--display" title="Ejemplo de fila de configuración" height={110} />
+
+## "Uso"
+
+```tsx
+import { SettingsRow } from 'twenty-ui/components/settings';
+import { IconBell } from 'twenty-ui/icon';
+
+export const NotificationSetting = () => (
+  <SettingsRow startElement={<IconBell aria-hidden />}>
+    Notifications
+  </SettingsRow>
+);
+```
+
+## Opciones visuales
+
+Compara los tamaños de los interruptores y los estados activado, deshabilitado y de solo lectura.
+
+<StoryEmbed storyId="ui-components-settingsrow--catalog" title="Tamaños y estados de las filas de configuración" height={520} />
+
+## Configura el interruptor
+
+Pasa las [props de Switch](/es/ui/primitives/input/switch) directamente a `SettingsRow`. El estado marcado, los detalles del evento, el comportamiento deshabilitado y de solo lectura, el tamaño, la configuración de formulario nativo, los controladores, las refs y la composición de renderizado configuran el interruptor. `children` proporciona la etiqueta visible de la fila.
+
+Usa `checked` y `onCheckedChange` cuando tu aplicación gestione el valor. El controlador recibe el siguiente estado marcado y los detalles del evento de Base UI. Al hacer clic en la etiqueta o el interruptor, se invoca una vez. Llama a `eventDetails.cancel()` para rechazar un cambio y mantén tu valor controlado sin modificar cuando se cancele el cambio.
+
+```tsx
+import { useState } from 'react';
+import { SettingsRow } from 'twenty-ui/components/settings';
+import { IconBell } from 'twenty-ui/icon';
+
+export const NotificationSetting = () => {
+  const [enabled, setEnabled] = useState(false);
+
+  return (
+    <SettingsRow
+      startElement={<IconBell aria-hidden />}
+      checked={enabled}
+      onCheckedChange={setEnabled}
+    >
+      Notifications
+    </SettingsRow>
+  );
+};
+```
+
+Usa `defaultChecked` para una configuración no controlada. Los usuarios de teclado enfocan el interruptor y presionan la barra espaciadora. `disabled` deshabilita el control y aplica la apariencia deshabilitada de la fila. `readOnly` impide los cambios mientras mantiene el interruptor enfocable.
+
+```tsx
+import { SettingsRow } from 'twenty-ui/components/settings';
+
+export const WorkspaceSettings = () => (
+  <>
+    <SettingsRow disabled>Notifications</SettingsRow>
+    <SettingsRow readOnly defaultChecked>
+      Activity history
+    </SettingsRow>
+  </>
+);
+```
+
+## Contenido de la fila y texto accesible
+
+`children`, `startElement` y `description` aceptan nodos propiedad del autor de la llamada. Los elementos secundarios proporcionan el nombre accesible del interruptor, y la descripción proporciona su descripción accesible. Mantén no interactivo el contenido dentro de la etiqueta. Usa [ListItemButton](/es/ui/components/navigation/list-item-button) para filas de acciones o combina [ListItem](/es/ui/primitives/navigation/list-item) con un enlace para la navegación.
+
+<StoryEmbed storyId="ui-components-settingsrow--with-description" title="Fila de configuración con una descripción" height={110} />
+
+```tsx
+import { SettingsRow } from 'twenty-ui/components/settings';
+
+export const WeeklyDigestSetting = () => (
+  <SettingsRow defaultChecked description="Sent every Monday" name="digest">
+    Weekly digest
+  </SettingsRow>
+);
+```
+
+Establece `aria-label`, `aria-labelledby` o `aria-describedby` para proporcionar tu propio texto accesible para el interruptor. Un `aria-label` explícito reemplaza la asociación de nombre generada; los valores explícitos de `aria-labelledby` y `aria-describedby` reemplazan las asociaciones generadas correspondientes.
+
+## Destinos nativos y composición
+
+Las props nativas habituales configuran el control. La personalización de etiquetas tiene dos nombres explícitos:
+
+| "Props"                                                                                       | Destino                                                |
+| --------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| Atributos nativos, controladores, `className`, `style`, `ref` y `render`                      | La raíz visible de Switch                              |
+| `inputRef`, `name`, `value`, `uncheckedValue`, `required` y `form`                            | La casilla de verificación nativa subyacente de Switch |
+| `labelRef` y atributos, controladores, clases y estilos proporcionados mediante `labelRender` | La etiqueta nativa externa                             |
+
+El `htmlFor` de la etiqueta se gestiona internamente y sigue a `id`, o a un ID de control generado cuando no se proporciona ningún ID. Con la composición predeterminada de Switch, este ID identifica la casilla de verificación subyacente. Con `nativeButton`, identifica el botón visible. `ref` se dirige a la raíz visible en ambos casos.
+
+Usa `labelRender` para personalizar la etiqueta nativa de la fila. Conserva un elemento de etiqueta y reenvía las props de devolución de llamada de renderizado a tu elemento. Sus `props.children` contienen la fila completa, incluido el interruptor. La composición de elementos combina sus clases y estilos con los valores predeterminados de la fila.
+
+```tsx
+import { useRef } from 'react';
+import { SettingsRow } from 'twenty-ui/components/settings';
+
+export const ComposedNotificationSetting = () => {
+  const labelRef = useRef<HTMLLabelElement>(null);
+  const controlRef = useRef<HTMLElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  return (
+    <SettingsRow
+      id="notification-control"
+      ref={controlRef}
+      inputRef={inputRef}
+      nativeButton
+      render={<button />}
+      labelRef={labelRef}
+      labelRender={<label id="notification-row" data-setting="notifications" />}
+    >
+      Notifications
+    </SettingsRow>
+  );
+};
+```
+
+`onClick` recibe clics del control. Los controladores nativos proporcionados mediante `labelRender` reciben eventos de etiqueta y eventos de control propagados. Llamar a `preventDefault()` al hacer clic en una etiqueta impide su activación de control nativa. Usa `onCheckedChange` para las actualizaciones de preferencias, en lugar de inferir el estado a partir de un clic en una etiqueta.
+
+El interruptor usa de forma predeterminada `size="sm"`; usa `"md"` para un interruptor más grande. La altura de la fila se mantiene igual. `focused` aplica la apariencia resaltada de la fila sin mover el foco del teclado. `className`, `style` y `render` aceptan devoluciones de llamada de estado de Switch y personalizan el control. Proporciona clases y estilos de etiqueta mediante `labelRender` para personalizar la fila.
+
+## Renderizador de componentes de front-end
+
+Dentro de un componente de front-end, usa la composición de botón nativo para un interruptor anidado en la etiqueta de la fila:
+
+```tsx
+import { SettingsRow } from 'twenty-ui/components/settings';
+
+export const FrontComponentNotificationSetting = () => (
+  <SettingsRow nativeButton render={<button />}>
+    Notifications
+  </SettingsRow>
+);
+```
+
+Esta composición se activa una vez al hacer clic en la etiqueta o el control. El puente de eventos asíncrono del renderizador no puede cancelar a tiempo la activación predeterminada de la etiqueta del host para un control basado en span, lo que puede producir devoluciones de llamada de cambio duplicadas al hacer clic directamente en un control. Los atributos de validación de formularios nativos, como `required`, también se filtran mediante el renderizador actual. `SettingsRow` independiente conserva el contrato completo de formulario de Switch.
+
+## Formularios y restablecimiento
+
+`name`, `value` y `required` configuran la casilla de verificación subyacente para el envío y la validación de formularios. Un interruptor marcado envía su valor. Un interruptor sin marcar omite el valor, a menos que se proporcione `uncheckedValue`. Usa `form` para asociar la entrada con un formulario fuera del árbol principal de la fila.
+
+Para el restablecimiento de formulario controlado, restaura el valor marcado gestionado por la aplicación en el controlador `onReset` del formulario. Base UI 1.8 no restaura el estado del interruptor no controlado al restablecer un formulario nativo. `SettingsRow` conserva este comportamiento ascendente.
+
+```tsx
+import { useState } from 'react';
+import { SettingsRow } from 'twenty-ui/components/settings';
+import { Button } from 'twenty-ui/primitives/input';
+
+export const NotificationPreferences = () => {
+  const [enabled, setEnabled] = useState(true);
+
+  return (
+    <form onReset={() => setEnabled(true)}>
+      <SettingsRow
+        checked={enabled}
+        onCheckedChange={setEnabled}
+        name="notifications"
+        value="enabled"
+        uncheckedValue="disabled"
+      >
+        Notifications
+      </SettingsRow>
+      <Button type="reset">Reset</Button>
+    </form>
+  );
+};
+```
+
+## "Props"
+
+<SettingsRowReference />
+
+<PageBanner illustration="settings" />

@@ -393,7 +393,7 @@ const assertTestingGuidance = (fail) => {
   const requiredManageFragments = [
     'run tests for my Twenty app',
     'references/develop-app/tests.md',
-    'docker start twenty-app-dev-test',
+    'twenty local start --test',
     'TWENTY_API_URL=http://localhost:2021 yarn test',
     'Do not run integration tests against the dev instance on `http://localhost:2020`',
   ];
@@ -423,7 +423,7 @@ const assertTestingGuidance = (fail) => {
 
   const requiredCliFragments = [
     'Integration tests install and uninstall the app on their target server',
-    'docker start twenty-app-dev-test',
+    'twenty local start --test',
     'port `2021`',
     '../develop-app/tests.md',
   ];

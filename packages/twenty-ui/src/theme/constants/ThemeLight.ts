@@ -151,6 +151,7 @@ export const THEME_LIGHT = {
       md: '8px',
       smRound: '4px',
       mdRound: '8px',
+      lgRound: '12px',
       lg: '16px',
       xl: '20px',
       xxl: '40px',

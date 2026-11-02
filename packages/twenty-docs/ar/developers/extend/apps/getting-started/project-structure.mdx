@@ -3,7 +3,11 @@ title: هيكل المشروع
 description: ما الذي يوجد داخل تطبيق Twenty المُهيكل مسبقًا — الملفات والمجلدات، وما الذي يفعله كلٌّ منها.
 ---
 
-يبدو التطبيق الجديد الذي يتم إنشاؤه بواسطة `npx create-twenty-app` كما يلي:
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## نظرة عامة
+
+يبدو التطبيق الجديد الذي يتم إنشاؤه بواسطة `twenty app init` كما يلي:
 
 ```text filename="my-twenty-app/"
 my-twenty-app/
@@ -15,6 +19,8 @@ my-twenty-app/
       universal-identifiers.ts              # Auto-generated UUIDs and metadata
     front-components/
       main-page.tsx                         # Welcome page component
+    logic-functions/
+      health-check.ts                       # Reports whether the app can run
     navigation-menu-items/
       main-page.navigation-menu-item.ts     # Sidebar entry for the welcome page
     page-layouts/
@@ -29,6 +35,8 @@ my-twenty-app/
     publish.yml                             # Publish to npm on version tags (with provenance)
   public/
     logo.svg                                # Static assets
+  locales/
+    en.json                                 # Source catalog; add <locale>.json files next to it
   vitest.config.ts                          # Integration test runner config
   vitest.unit.config.ts                     # Unit test runner config
   tsconfig.json, tsconfig.spec.json
@@ -38,41 +46,47 @@ my-twenty-app/
 
 ## الملفات الرئيسية
 
-| ملف / مجلد                                                                 | الغرض                                                                                                        |
-| -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `src/application-config.ts`                                                | **مطلوب.** ملف الإعداد الرئيسي لتطبيقك.                                                                      |
-| `src/default-role.ts`                                                      | دور افتراضي يتحكّم بما يمكن لدوال المنطق الوصول إليه.                                                        |
-| `src/constants/universal-identifiers.ts`                                   | معرّفات UUID وبيانات تعريف يتم توليدها تلقائيًا (اسم العرض، الوصف).                                          |
-| `src/front-components/`, `src/navigation-menu-items/`, `src/page-layouts/` | صفحة ترحيب مبدئية: مكوّن واجهة أمامية يتم تقديمه بواسطة مخطط صفحة مستقل، يمكن الوصول إليه من الشريط الجانبي. |
-| `src/__tests__/`                                                           | اختبار وحدة بالإضافة إلى اختبار تكامل (مع إعداده العام) يقوم بمزامنة التطبيق مع خادم حقيقي.                  |
-| `public/`                                                                  | أصول ثابتة (صور، خطوط) تُقدَّم مع تطبيقك.                                                                    |
-| `AGENTS.md` / `CLAUDE.md`                                                  | إرشادات لوكلاء برمجة الذكاء الاصطناعي الذين يعملون على التطبيق.                                              |
-| `CHANGELOG.md` / `SETUP.md`                                                | سجل بأبرز التغييرات وتعليمات الإعداد للتطوير المحلي.                                                         |
+| ملف / مجلد                                                                 | الغرض                                                                                                                                                                                                                                                                                                                                                      |
+| -------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/application-config.ts`                                                | **مطلوب.** ملف الإعداد الرئيسي لتطبيقك.                                                                                                                                                                                                                                                                                                                    |
+| `src/default-role.ts`                                                      | دور افتراضي يتحكّم بما يمكن لدوال المنطق الوصول إليه.                                                                                                                                                                                                                                                                                                      |
+| `src/constants/universal-identifiers.ts`                                   | معرّفات UUID وبيانات تعريف يتم توليدها تلقائيًا (اسم العرض، الوصف).                                                                                                                                                                                                                                                                                        |
+| `src/front-components/`, `src/navigation-menu-items/`, `src/page-layouts/` | صفحة ترحيب مبدئية: مكوّن واجهة أمامية يتم تقديمه بواسطة مخطط صفحة مستقل، يمكن الوصول إليه من الشريط الجانبي.                                                                                                                                                                                                                                               |
+| `src/logic-functions/health-check.ts`                                      | [فحص صحة](/ar/developers/extend/apps/logic/logic-functions#health-check) مبدئي يُبلغ عن `ok`. املأه لإظهار مشكلات التهيئة التي لا يمكن اكتشافها إلا بواسطة تطبيقك.                                                                                                                                                                                            |
+| `src/__tests__/`                                                           | اختبار وحدة بالإضافة إلى اختبار تكامل (مع إعداده العام) يقوم بمزامنة التطبيق مع خادم حقيقي.                                                                                                                                                                                                                                                                |
+| `public/`                                                                  | أصول ثابتة (صور، خطوط) تُقدَّم مع تطبيقك.                                                                                                                                                                                                                                                                                                                  |
+| `locales/`                                                                 | كتالوجات الترجمة. يُعدّ `en.json` كتالوج المصدر الذي يملؤه `twenty app translations extract`؛ ومجموعة الملفات هنا هي ما تنشره المزامنة، لذا فإن المجلد الفارغ لا يعلن عن أي ترجمات. تتم كتابة `locales/compiled/` بواسطة `twenty app pull` للإدخالات التي لا تكون سلاسل مصدرها موجودة في الشجرة بعد، كما تنشره المزامنة أيضاً، وليس مخصصاً للتحرير اليدوي. |
+| `AGENTS.md` / `CLAUDE.md`                                                  | إرشادات لوكلاء برمجة الذكاء الاصطناعي الذين يعملون على التطبيق.                                                                                                                                                                                                                                                                                            |
+| `CHANGELOG.md` / `SETUP.md`                                                | سجل بأبرز التغييرات وتعليمات الإعداد للتطوير المحلي.                                                                                                                                                                                                                                                                                                       |
 
 <Note>
-**تنظيم الملفات متروك لك.** المجلدات المذكورة أعلاه هي أعراف متَّبعة — يكتشف SDK الكيانات عبر تحليل AST على استدعاءات `export default defineEntity(...)` بغض النظر عن مكان وجود الملف.
+  **تنظيم الملفات متروك لك.** المجلدات أعلاه هي اصطلاحات — تكتشف
+  واجهة سطر الأوامر الكيانات عبر تحليل AST لاستدعاءات `export default defineEntity(...)`
+  بغض النظر عن مكان وجود الملف.
 </Note>
 
 ## التبعيات
 
-ينبغي أن تكون حزمتا SDK الخاصتان بـ Twenty ضمن `devDependencies`، وليس ضمن `dependencies`:
+تنتمي حزم Twenty SDK وUI ضمن `devDependencies`:
 
 ```json filename="package.json"
 {
   "dependencies": {},
   "devDependencies": {
-    "twenty-client-sdk": "2.20.0",
-    "twenty-sdk": "2.20.0",
-    "twenty-ui": "1.0.0-alpha.1"
+    "twenty-client-sdk": "2.40.0",
+    "twenty-sdk": "2.40.0",
+    "twenty-ui": "2.40.0"
   }
 }
 ```
 
-تقوم أداة إنشاء الهيكل بتثبيت الحزمتين `twenty-sdk` و `twenty-client-sdk` على إصدارها الخاص — حافظ على تزامنهما عند الترقية.
+يثبّت `twenty app init` الحزم `twenty-sdk` و`twenty-client-sdk` و`twenty-ui` على إصداره الخاص. أبقِ الحزم الثلاث متزامنة عند الترقية.
 
-* توفّر **`twenty-sdk`** أداة `twenty` CLI وأدوات البناء/إنشاء الهياكل (scaffolding). يعمل فقط أثناء التطوير ووقت البناء، ولا يتم استيراده أبدًا في وقت تشغيل تطبيقك المنشور.
+* يوفّر **`twenty-sdk`** تعريفات التطبيقات، ومساعدات وقت التشغيل، والتكامل مع العارض. استخدم حزمة **`twenty`** المثبّتة بشكل منفصل لأوامر CLI وأدوات البناء وإنشاء الهياكل.
 * يتم استيراد **`twenty-client-sdk`** بواسطة كود تطبيقك (`CoreApiClient`، `MetadataApiClient`، `RestApiClient`)؛ لكن Twenty توفّره في وقت التشغيل — حيث تحصل عليه دوال المنطق من طبقة SDK مُولَّدة، وتحصل عليه مكوّنات الواجهة من وحدات يتم تقديمها من الخادم. يُستخدَم الإصدار المثبّت لديك فقط لفحص الأنواع (typechecking) ولبناء النشر (deploy-time build)، لذا لا يلزم أبدًا أن يتم تضمينه في حزمة النشر.
 
-الاحتفاظ بأي من الحزمتين ضمن `dependencies` يؤدي إلى سحبها داخل حزمة وقت تشغيل التطبيق المثبّت، حيث تكون عبئًا زائدًا بلا فائدة. يُطلق `twenty dev:build` تحذيرًا عندما تكون أيٌّ منهما ما تزال مدرجة ضمن `dependencies`.
+الاحتفاظ بأي من الحزمتين ضمن `dependencies` يؤدي إلى سحبها داخل حزمة وقت تشغيل التطبيق المثبّت، حيث تكون عبئًا زائدًا بلا فائدة. يُطلق `twenty app build` تحذيرًا عندما تكون أيٌّ منهما ما تزال مدرجة ضمن `dependencies`.
 
 أضِف تبعيات وقت التشغيل الخاصة بتطبيقك (المكتبات التي تستوردها دوال المنطق لديك فعلًا في وقت التشغيل) ضمن `dependencies` كالمعتاد. حافظ على الشجرة خفيفة: تُثبَّت `dependencies` في طبقة وقت التشغيل بحد أقصى 250MB بعد فك الضغط، وتفشل عملية المزامنة أو التثبيت بخطأ في حجم الاعتمادات عند تجاوز ذلك — تنتمي مكتبات واجهة المستخدم وأدوات التطوير إلى `devDependencies`.
+
+<PageBanner illustration="card-page-frontend-architecture" />

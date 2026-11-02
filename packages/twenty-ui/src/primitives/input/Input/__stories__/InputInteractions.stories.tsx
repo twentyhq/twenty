@@ -140,6 +140,7 @@ export const PlainAppearance: Story = {
         <Field.Error match>Choose another name</Field.Error>
       </Field.Root>
       <Input variant="plain" aria-label="Disabled name" disabled />
+      <Input variant="plain" hasFocusRing={false} aria-label="Header search" />
       <Input aria-label="Framed name" />
     </div>
   ),
@@ -151,6 +152,7 @@ export const PlainAppearance: Story = {
       name: 'Disabled name',
     });
     const framedInput = canvas.getByRole('textbox', { name: 'Framed name' });
+    const headerInput = canvas.getByRole('textbox', { name: 'Header search' });
 
     await expect(plainInput).toHaveAttribute('data-variant', 'plain');
     await expect(getComputedStyle(plainInput).borderWidth).toBe('0px');
@@ -164,6 +166,7 @@ export const PlainAppearance: Story = {
     await expect(plainInput).toHaveFocus();
     await expect(getComputedStyle(plainInput).outlineWidth).toBe('2px');
     await expect(getComputedStyle(plainInput).outlineStyle).toBe('solid');
+    const plainFocusOutlineColor = getComputedStyle(plainInput).outlineColor;
     await userEvent.type(plainInput, 'Alice');
     await expect(plainInput).toHaveValue('Alice');
 
@@ -177,5 +180,16 @@ export const PlainAppearance: Story = {
     );
     await expect(disabledInput).toBeDisabled();
     await expect(getComputedStyle(disabledInput).cursor).toBe('not-allowed');
+
+    await userEvent.tab();
+    await expect(invalidInput).toHaveFocus();
+    await expect(getComputedStyle(invalidInput).outlineColor).not.toBe(
+      plainFocusOutlineColor,
+    );
+    await userEvent.tab();
+    await expect(headerInput).toHaveFocus();
+    await expect(getComputedStyle(headerInput).outlineStyle).toBe('none');
+    await userEvent.type(headerInput, 'Chat');
+    await expect(headerInput).toHaveValue('Chat');
   },
 };

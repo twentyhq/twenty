@@ -28,6 +28,7 @@ export class ApplicationManifestApplyService {
     forceSdkClientGeneration = false,
     inferDeletionFromMissingEntities = true,
     persistVersion,
+    shouldDeferActions,
   }: {
     workspaceId: string;
     manifest: Manifest;
@@ -42,6 +43,7 @@ export class ApplicationManifestApplyService {
     // avoid regenerating on every save.
     forceSdkClientGeneration?: boolean;
     persistVersion?: boolean;
+    shouldDeferActions?: boolean;
   }): Promise<{
     workspaceMigration: WorkspaceMigration;
     hasSchemaMetadataChanged: boolean;
@@ -58,6 +60,7 @@ export class ApplicationManifestApplyService {
         applicationRegistrationId,
         inferDeletionFromMissingEntities,
         persistVersion,
+        shouldDeferActions,
       });
 
     if (forceSdkClientGeneration || isFirstApply || hasSchemaMetadataChanged) {

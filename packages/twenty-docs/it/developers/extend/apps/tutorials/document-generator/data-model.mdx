@@ -3,6 +3,12 @@ title: 1. Modello dati
 description: Modelli di documenti e modelli con oggetti, campi e una relazione.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Panoramica
+
 La nostra app ha bisogno di due oggetti personalizzati: **modelli di documenti** (cosa scrivere) e
 **documenti** (il risultato generato). Le definiamo.
 
@@ -10,15 +16,14 @@ Scaffold each entity file with the CLI — genera un UUID valido e la cartella
 giusta per te:
 
 ```bash filename="Terminal"
-yarn twenty dev:add object
+twenty app add object
 ```
 
 Di seguito mostriamo i file finiti.
 
 <Note>
-Ogni costante `*_UNIVERSAL_IDENTIFIER` vive in
-`src/constants/universal-identifiers.ts` ed è importata dove utilizzata. Gli snippet
-qui sotto omettono quelle importazioni per brevità — tenerli nei propri file.
+  Ogni costante `*_UNIVERSAL_IDENTIFIER` vive in
+  `src/constants/universal-identifiers.ts` ed è importata dove utilizzata. Gli snippet seguenti omettono tali importazioni per brevità: mantienile nei tuoi file.
 </Note>
 
 ## L'oggetto del modello
@@ -40,28 +45,52 @@ export default defineObject({
   labelIdentifierFieldMetadataUniversalIdentifier:
     TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
   fields: [
-    { universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.TEXT, name: 'name', label: 'Name', icon: 'IconAbc' },
-    { universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.RICH_TEXT, name: 'body', label: 'Body', icon: 'IconFileText',
-      description: 'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.' },
-    { universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
-      type: FieldType.SELECT, name: 'target', label: 'Target', icon: 'IconTarget',
+    {
+      universalIdentifier: TEMPLATE_NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.TEXT,
+      name: 'name',
+      label: 'Name',
+      icon: 'IconAbc',
+    },
+    {
+      universalIdentifier: TEMPLATE_BODY_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.RICH_TEXT,
+      name: 'body',
+      label: 'Body',
+      icon: 'IconFileText',
+      description:
+        'Use {{placeholders}} like {{name.firstName}} or {{jobTitle}}.',
+    },
+    {
+      universalIdentifier: TEMPLATE_TARGET_FIELD_UNIVERSAL_IDENTIFIER,
+      type: FieldType.SELECT,
+      name: 'target',
+      label: 'Target',
+      icon: 'IconTarget',
       defaultValue: `'PERSON'`,
       options: [
-        { id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
-          value: 'PERSON', label: 'Person', color: 'blue', position: 0 },
-        { id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
-          value: 'COMPANY', label: 'Company', color: 'green', position: 1 },
-      ] },
+        {
+          id: TEMPLATE_TARGET_OPTION_PERSON_UNIVERSAL_IDENTIFIER,
+          value: 'PERSON',
+          label: 'Person',
+          color: 'blue',
+          position: 0,
+        },
+        {
+          id: TEMPLATE_TARGET_OPTION_COMPANY_UNIVERSAL_IDENTIFIER,
+          value: 'COMPANY',
+          label: 'Company',
+          color: 'green',
+          position: 1,
+        },
+      ],
+    },
   ],
 });
 ```
 
 <Warning>
-L'opzione `SELECT` **values** deve essere `UPPER_CASE` (`PERSON`, non `person`), e il `defaultValue`
-è racchiuso in virgolette extra: `` `'PERSON'` ``. Il `label` è quello che vedono gli utenti
-.
+  I **valori** dell'opzione `SELECT` devono essere in `UPPER_CASE` (`PERSON`, non `person`) e il valore `defaultValue` è racchiuso tra virgolette aggiuntive: `` `'PERSON'` ``. L'`label` è ciò che vedono gli utenti.
 </Warning>
 
 ## L'oggetto del documento
@@ -76,7 +105,12 @@ Ogni documento deve riportare il modello da cui proveniva. Le relazioni sono
 **bidirezionali** — si definiscono entrambi i lati, ciascuno nel proprio file di campo.
 
 ```ts filename="src/fields/document-template-relation.field.ts"
-import { defineField, FieldType, OnDeleteAction, RelationType } from 'twenty-sdk/define';
+import {
+  defineField,
+  FieldType,
+  OnDeleteAction,
+  RelationType,
+} from 'twenty-sdk/define';
 
 // The "many" side: each document belongs to one template.
 export default defineField({
@@ -103,15 +137,14 @@ Vedi [Relations](/it/developers/extend/apps/data/relations) per il modello compl
 
 ## Vedere in venti
 
-Con `yarn venti dev` in esecuzione, apri **Impostazioni → Modello dati**. Entrambi gli oggetti
+Con `twenty app dev` in esecuzione, apri **Impostazioni → Modello dati**. Entrambi gli oggetti
 appariranno, etichettati con la tua app.
 
 <Frame caption="Entrambi gli oggetti personalizzati, di proprietà dell'app Generatore di documenti.">
   <img src="/images/docs/developers/extends/apps/document-generator/01-data-model.png" alt="Impostazioni del modello di dati che mostrano i modelli di documenti e documenti" />
 </Frame>
 
-Crea un modello da testare con — chiamalo *Proposta vendite*, imposta **Obiettivo** su
-*Persona*, e incolla un corpo con alcuni segnaposti:
+Crea un modello con cui eseguire i test: chiamalo *Proposta commerciale*, imposta **Destinazione** su *Persona* e incolla un corpo con alcuni segnaposto:
 
 ```text
 Dear {{name.firstName}} {{name.lastName}},
@@ -129,6 +162,11 @@ The Team
 **Dopo questo passaggio:** hai oggetti `documentTemplate` e `document`, collegati da
 una relazione e un modello da cui generare. Successivamente, la logica che lo riempie.
 
-<Card title="Successivo: generare documenti →" icon="bolt" href="/it/developers/extend/apps/tutorials/document-generator/generating-documents">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/it/developers/extend/apps/tutorials/document-generator/generating-documents" img="/images/user-guide/halftone/card-page-tutorial-documents.svg">
+  <CardTitle>Avanti: generare documenti →</CardTitle>
   Scrivi la funzione logica che riempie il modello.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="card-page-tutorial-data" />

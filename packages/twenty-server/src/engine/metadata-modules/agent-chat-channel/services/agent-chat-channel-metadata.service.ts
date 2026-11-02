@@ -121,7 +121,6 @@ export class AgentChatChannelMetadataService {
           icon,
           color,
           position: lastPosition + 1,
-          isCustom: true,
           channelRoleUniversalIdentifiers: [],
           navigationMenuItemUniversalIdentifiers: [],
           applicationUniversalIdentifier:

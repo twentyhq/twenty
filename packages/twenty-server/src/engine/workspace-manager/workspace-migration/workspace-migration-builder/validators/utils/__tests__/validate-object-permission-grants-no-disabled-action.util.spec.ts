@@ -1,0 +1,100 @@
+import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
+import { type UniversalFlatObjectPermission } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-permission.type';
+import { validateObjectPermissionGrantsNoDisabledAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-object-permission-grants-no-disabled-action.util';
+
+const OBJECT_UNIVERSAL_IDENTIFIER = 'invoice-universal-identifier';
+
+const buildObjectPermission = (
+  overrides: Partial<UniversalFlatObjectPermission>,
+): UniversalFlatObjectPermission => ({
+  universalIdentifier: 'object-permission-universal-identifier',
+  applicationUniversalIdentifier: 'application-universal-identifier',
+  roleUniversalIdentifier: 'role-universal-identifier',
+  objectMetadataUniversalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+  canReadObjectRecords: true,
+  canUpdateObjectRecords: null,
+  canSoftDeleteObjectRecords: null,
+  canDestroyObjectRecords: null,
+  createdAt: '2026-10-27T00:00:00.000Z',
+  updatedAt: '2026-10-27T00:00:00.000Z',
+  ...overrides,
+});
+
+const OWNING_APPLICATION_UNIVERSAL_IDENTIFIER = 'stripe-universal-identifier';
+
+const invoice = getFlatObjectMetadataMock({
+  universalIdentifier: OBJECT_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier: OWNING_APPLICATION_UNIVERSAL_IDENTIFIER,
+  disabledObjectPermissionActions: ['canDestroyObjectRecords'],
+});
+
+const OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
+  'stripe-default-role-universal-identifier';
+
+const owningApplicationDefaultRole = {
+  universalIdentifier: OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier: OWNING_APPLICATION_UNIVERSAL_IDENTIFIER,
+};
+
+const owningApplicationOtherRole = {
+  universalIdentifier: 'stripe-other-role-universal-identifier',
+  applicationUniversalIdentifier: OWNING_APPLICATION_UNIVERSAL_IDENTIFIER,
+};
+
+const otherApplicationDefaultRole = {
+  universalIdentifier: OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+  applicationUniversalIdentifier: 'workspace-custom-universal-identifier',
+};
+
+describe('validateObjectPermissionGrantsNoDisabledAction', () => {
+  it('should accept turning a disabled action off or leaving it unset', () => {
+    for (const canDestroyObjectRecords of [false, null]) {
+      expect(
+        validateObjectPermissionGrantsNoDisabledAction({
+          flatObjectPermission: buildObjectPermission({
+            canDestroyObjectRecords,
+          }),
+          flatObjectMetadata: invoice,
+          flatRole: owningApplicationOtherRole,
+          applicationDefaultRoleUniversalIdentifier:
+            OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+        }),
+      ).toEqual([]);
+    }
+  });
+
+  it('should let the owning application grant a disabled action to its default role', () => {
+    expect(
+      validateObjectPermissionGrantsNoDisabledAction({
+        flatObjectPermission: buildObjectPermission({
+          canDestroyObjectRecords: true,
+        }),
+        flatObjectMetadata: invoice,
+        flatRole: owningApplicationDefaultRole,
+        applicationDefaultRoleUniversalIdentifier:
+          OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+      }),
+    ).toEqual([]);
+  });
+
+  it('should reject a disabled action granted to a role that is not the owning application default role', () => {
+    for (const flatRole of [
+      owningApplicationOtherRole,
+      otherApplicationDefaultRole,
+    ]) {
+      expect(
+        validateObjectPermissionGrantsNoDisabledAction({
+          flatObjectPermission: buildObjectPermission({
+            canDestroyObjectRecords: true,
+          }),
+          flatObjectMetadata: invoice,
+          flatRole,
+          applicationDefaultRoleUniversalIdentifier:
+            OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
+        }),
+      ).toEqual([
+        expect.objectContaining({ value: 'canDestroyObjectRecords' }),
+      ]);
+    }
+  });
+});

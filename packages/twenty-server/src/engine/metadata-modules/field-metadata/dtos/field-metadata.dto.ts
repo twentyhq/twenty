@@ -22,8 +22,8 @@ import {
   type FieldMetadataSettings,
   FieldMetadataType,
   type FieldMetadataDefaultValue,
-  MetadataWritability,
 } from 'twenty-shared/types';
+import { type FieldPermissionAction } from 'twenty-shared/application';
 
 import { type AuthoredOverrides } from 'src/engine/metadata-modules/overrides/types/authored-overrides.type';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -92,10 +92,8 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
   @Field({ nullable: true })
   isUIEditable?: boolean;
 
-  @IsEnum(MetadataWritability)
-  @IsOptional()
-  @Field(() => MetadataWritability, { nullable: true })
-  writability?: MetadataWritability;
+  @Field(() => [String], { nullable: true })
+  disabledFieldPermissionActions?: FieldPermissionAction[] | null;
 
   // deprecated alias kept for one release so external API consumers do not break
   @IsBoolean()

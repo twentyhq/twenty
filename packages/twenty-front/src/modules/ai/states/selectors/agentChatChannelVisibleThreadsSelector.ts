@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { agentChatShownChannelThreadListSelector } from '@/ai/states/selectors/agentChatShownChannelThreadListSelector';
 import { agentChatShownChannelViewSelector } from '@/ai/states/selectors/agentChatShownChannelViewSelector';
+import { agentChatThreadInboxStatusFamilySelector } from '@/ai/states/selectors/agentChatThreadInboxStatusFamilySelector';
 import { agentChatThreadRecordFamilySelector } from '@/ai/states/selectors/agentChatThreadRecordFamilySelector';
 import { agentChatThreadsSelector } from '@/ai/states/selectors/agentChatThreadsSelector';
 import { type AgentChatThreadRecord } from '@/ai/types/AgentChatThreadRecord';
@@ -43,6 +44,8 @@ export const agentChatChannelVisibleThreadsSelector = createAtomSelector<
         thread,
         channelView,
         currentWorkspaceMemberId,
+        isMentioned: get(agentChatThreadInboxStatusFamilySelector, thread.id)
+          .isMentioned,
       }),
     );
 

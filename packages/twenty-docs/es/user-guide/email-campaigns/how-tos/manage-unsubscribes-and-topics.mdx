@@ -1,0 +1,112 @@
+---
+title: Gestionar cancelaciones de suscripción y temas
+description: Consulta quién se ha dado de baja y permite que las personas elijan qué actualizaciones reciben.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
+Cada campaña incluye un enlace para cancelar la suscripción. Twenty registra quién lo usa. Los temas proporcionan a las personas un poco más de control: pueden dejar de recibir tu boletín mientras siguen recibiendo actualizaciones de productos.
+
+## Cómo funciona la cancelación de suscripción
+
+Cada correo electrónico de campaña incluye:
+
+* Una línea en el pie de página: "¿No quieres recibir estos correos? Cancelar suscripción."
+* Los encabezados de cancelación de suscripción con un clic que Gmail, Yahoo y otras aplicaciones de correo electrónico usan para mostrar su propio botón **Cancelar suscripción**.
+
+El enlace abre una página para cancelar la suscripción en tu dominio, por ejemplo `links.yourcompany.com`:
+
+* **Sin temas públicos**: las personas ven un botón de **Cancelar suscripción**.
+* **Temas públicos**: las personas ven una casilla de verificación para cada tema. Pueden desmarcar temas y hacer clic en **Actualizar**, o hacer clic en **Cancelar todas las suscripciones**.
+
+La cancelación de suscripción entra en vigor de inmediato. Twenty omite a esa persona en campañas posteriores.
+
+<img src="/images/user-guide/email-campaigns/unsubscribe-page-preview.png" style={{ width: '100%' }} />
+
+<Note>
+  El botón para cancelar la suscripción en Gmail, Yahoo y otras aplicaciones de correo electrónico elimina a una persona
+  de todas tus campañas, no solo del tema del correo electrónico que recibió.
+</Note>
+
+## Parte 1: Crear temas
+
+Los temas son tipos de correo electrónico, como **Boletín**, **Actualizaciones de productos** o **Eventos**.
+
+1. Ve a **Ajustes → Comunicación**.
+2. En **Cancelar suscripción**, haz clic en **Gestionar cancelación de suscripción**.
+3. Abre la pestaña **Temas** y haz clic en **Añadir tema**.
+4. En **Nombre**, introduce el nombre que ven las personas, por ejemplo `Newsletter`.
+5. En **Descripción**, puedes explicar los correos electrónicos para tu equipo.
+6. Activa **Mostrado en la página de cancelación de suscripción** para mostrar el tema a los destinatarios.
+7. Haz clic en **Guardar**.
+
+| Visibilidad | Comportamiento                                                                                                            |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------- |
+| **Public**  | Las personas ven el tema en la página de cancelación de suscripción y pueden dejar de recibirlo por separado.             |
+| **Privada** | Las personas nunca lo ven. Úsalo para agrupar campañas para tu equipo. Aun así, respeta las cancelaciones de suscripción. |
+
+Los temas nuevos son privados hasta que actives **Mostrado en la página de cancelación de suscripción**.
+
+<img src="/images/user-guide/email-campaigns/new-topic-form.png" style={{ width: '100%' }} />
+
+## Parte 2: Usar un tema en una campaña
+
+En la pestaña **Correo electrónico** de la campaña, elige un tema en **Tema de cancelación de suscripción**. El campo aparece después de crear tu primer tema.
+
+Cuando se envía la campaña, Twenty omite:
+
+* Las personas que cancelaron la suscripción a este tema.
+* Las personas que cancelaron la suscripción a todo.
+
+Las personas que solo dejaron un tema diferente siguen recibiéndola.
+
+## Parte 3: Ver quién canceló la suscripción
+
+1. Ve a **Ajustes → Comunicación**.
+2. En **Cancelar suscripción**, haz clic en **Gestionar cancelación de suscripción**.
+3. Abre la pestaña **Usuarios dados de baja**.
+
+La lista muestra cada dirección que ya no recibe campañas:
+
+| Columna                             | Qué muestra                                                                                                                 |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| **Dirección de correo electrónico** | La dirección que Twenty omite.                                                                                              |
+| **Scope**                           | **Todos los correos electrónicos**, o el tema que dejaron.                                                                  |
+| **Motivo**                          | **Cancelación de suscripción**, **Rebote** (la dirección no existe) o **Queja** (marcaron el correo electrónico como spam). |
+| **Fecha**                           | Cuándo ocurrió.                                                                                                             |
+
+Usa la búsqueda y los filtros para encontrar una dirección, un motivo o un tema.
+
+<img src="/images/user-guide/email-campaigns/unsubscribers-tab.png" style={{ width: '100%' }} />
+
+<Warning>
+  Los rebotes y las quejas por spam son permanentes. Enviar de nuevo a esas direcciones
+  puede perjudicar la reputación de tu dominio, por lo que Twenty no lo permite.
+</Warning>
+
+## Vista previa de la página de cancelación de suscripción
+
+La pestaña **Página de cancelación de suscripción** muestra lo que ven las personas con tus temas públicos actuales. No se guarda nada en la vista previa.
+
+## Solución de Problemas
+
+<Accordion title="Los destinatarios solo ven un botón para cancelar la suscripción, no mis temas">
+  Solo los temas públicos aparecen en la página de cancelación de suscripción. Abre el tema y activa
+  **Mostrado en la página de cancelación de suscripción**.
+</Accordion>
+
+<Accordion title="Alguien canceló la suscripción a un tema, pero dejó de recibirlo todo">
+  Es posible que haya usado el botón para cancelar la suscripción en su aplicación de correo electrónico, que lo elimina
+  de todas las campañas. Solo el enlace del pie de página del correo electrónico les permite elegir
+  temas específicos.
+</Accordion>
+
+<Accordion title="Se omitió a una persona, pero quiere volver a recibir correos electrónicos">
+  Si tienes temas públicos, pueden abrir el enlace para cancelar la suscripción en un correo electrónico
+  de los últimos 30 días, marcar los temas que quieren y hacer clic en **Actualizar**.
+  Los rebotes y las quejas por spam no se pueden deshacer.
+</Accordion>
+
+<PageBanner illustration="section-email-campaigns" />

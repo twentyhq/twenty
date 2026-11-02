@@ -1,8 +1,11 @@
 ---
 title: Guida di stile
+description: Regole da seguire quando si scrive il codice per Venti.
 ---
 
-Questo documento include le regole da seguire quando si scrive codice.
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
 
 L'obiettivo qui è avere una base di codice coerente, facile da leggere e da mantenere.
 
@@ -288,3 +291,5 @@ Una regola di Oxlint, `typescript/consistent-type-imports`, impone lo standard c
 Tieni presente che questa regola affronta specificamente rari casi limite in cui si verificano import di tipo involontari. TypeScript stesso scoraggia questa pratica, come menzionato nelle [note di rilascio di TypeScript 3.8](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-3-8.html). Nella maggior parte delle situazioni, non si dovrebbe aver bisogno di usare importazioni di solo tipo.
 
 Per assicurarti che il tuo codice sia conforme a questa regola, assicurati di eseguire Oxlint come parte del tuo flusso di lavoro di sviluppo.
+
+<PageBanner illustration="card-page-campaign-practices" />

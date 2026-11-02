@@ -186,7 +186,6 @@ describe('buildMissingSystemRelationIndexes', () => {
     expect(universalFlatIndexMetadata).toMatchObject({
       indexType: IndexType.BTREE,
       indexWhereClause: null,
-      isCustom: true,
       isUnique: false,
       isSystemSideEffect: true,
       objectMetadataUniversalIdentifier:

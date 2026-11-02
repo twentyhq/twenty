@@ -3,6 +3,10 @@ title: Fare riferimento ai metadati di sistema
 description: Risolvi gli identificatori universali deterministici dei metadati che Twenty predispone automaticamente su ogni oggetto, così la tua app può farvi riferimento senza doverli codificare in modo statico.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
 Ogni oggetto in Twenty include **metadati di sistema** che non dichiari mai direttamente, come ad esempio un insieme di campi e una vista elenco principale con le sue colonne. Il server crea tutto questo quando l'oggetto viene predisposto e l'insieme cresce man mano che Twenty cresce.
 
 Poiché non lo dichiari, non esiste alcuna costante `universalIdentifier` da importare. Invece, il server **deriva** ogni identificatore in modo deterministico e `twenty-sdk` espone la stessa derivazione affinché il tuo manifest possa risolvere il valore esatto utilizzato dal server.
@@ -64,7 +68,7 @@ export default defineView({
   universalIdentifier: '70f10d44-144a-4da8-8c6f-3ec2422138c0',
   name: 'All records',
   objectUniversalIdentifier: MY_OBJECT_UNIVERSAL_IDENTIFIER,
-  icon: 'IconList',
+  icon: 'IconTable',
   position: 0,
   fields: [
     {
@@ -208,3 +212,5 @@ Usa gli helper sopra quando l’oggetto è uno che **la tua app** definisce con 
   `getFieldUniversalIdentifier`. Sugli oggetti che definisci tu, fai riferimento al campo
   `name` tramite l'identificatore che gli hai assegnato in `defineObject()`.
 </Note>
+
+<PageBanner illustration="section-apps-data" />

@@ -3,7 +3,7 @@ title: Créditos de Workflow
 description: Comprender el consumo y la gestión de los créditos de flujo de trabajo.
 ---
 
-Los créditos de workflow potencian tus automatizaciones en Twenty. Comprender cómo funcionan te ayuda a optimizar costos y gestionar de manera efectiva tu presupuesto de automatización.
+import { PageBanner } from "/snippets/page-banner.mdx"
 
 ## Asignación de créditos
 
@@ -40,7 +40,7 @@ Los créditos se consumen cuando se ejecutan los workflows, no cuando los creas.
   * Los prompts más complejos y las respuestas más largas usan más créditos
 
 * **Acciones de Delay**: consumo mínimo de créditos
-  * El nodo Delay consume **1 crédito** cuando se ejecuta
+  * El nodo Delay consume **0.0001 crédito ($0.0001)** cuando se ejecuta, lo mismo que un paso de flujo de trabajo estándar
   * **No se consumen créditos** durante el período de espera
   * Un retraso de 5 minutos cuesta lo mismo que un retraso de 5 días
 
@@ -73,3 +73,5 @@ Si necesitas más créditos adicionales a la asignación de tu plan:
 * **Procesamiento por lote**: Usa operaciones a granel e Iterador de forma eficiente para reducir las llamadas de acción individuales
 * **Optimización de disparadores manuales**: Para los disparadores manuales, elige la disponibilidad `Bulk` para procesar varios registros en una sola ejecución de un flujo de trabajo
 * Optimiza acciones de Código para eficiencia
+
+<PageBanner illustration="card-page-charging-credits" />

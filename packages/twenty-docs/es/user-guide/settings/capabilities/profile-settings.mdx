@@ -3,6 +3,8 @@ title: Ajustes del perfil
 description: Gestiona tu perfil personal y los ajustes de seguridad.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Información personal
 
 ### Nombre y correo electrónico
@@ -15,12 +17,22 @@ description: Gestiona tu perfil personal y los ajustes de seguridad.
 
 ### Autenticación de dos factores (2FA)
 
-Habilita 2FA para agregar una capa extra de seguridad a tu cuenta.
+Habilita 2FA para agregar una capa extra de seguridad a tu cuenta:
 
 1. Ve a **Ajustes → Perfil**
 2. Haz clic en **Aplicación de autenticación**
 3. Escanea el código QR con tu aplicación de autenticación
 4. Introduce el código de verificación para confirmar
+
+### Perdiste tu autenticador
+
+Si no puedes acceder a tu aplicación de autenticación, pide un código de recuperación a un administrador del espacio de trabajo. El código funciona una vez y caduca después de 1 hora de forma predeterminada. Luego:
+
+1. Inicia sesión con tu correo electrónico y contraseña
+2. En la pantalla de verificación, haz clic en **¿Perdiste el autenticador? Usa un código de recuperación**
+3. Introduce el código de recuperación y haz clic en **Continuar**
+
+Se elimina tu autenticador actual de ese espacio de trabajo y se cierran las demás sesiones. Configura de nuevo la autenticación de dos factores desde **Configuración → Perfil**.
 
 ### Gestión de contraseñas
 
@@ -41,3 +53,5 @@ Para eliminar tu cuenta:
 2. Desplázate hasta **Zona de peligro**
 3. Haz clic en **Eliminar cuenta**
 4. Confirma escribiendo tu dirección de correo electrónico
+
+<PageBanner illustration="page-cover-profile" />

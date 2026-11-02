@@ -1,8 +1,11 @@
 ---
 title: إعداد
+description: تكوين عشرون من لوحة المشرف أو مع متغيرات البيئة.
 ---
 
-# إدارة الإعدادات
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## نظرة عامة
 
 <Warning>
 **هل هي المرة الأولى التي تقوم فيها بالتثبيت؟** اتبع [دليل تثبيت Docker Compose](/ar/developers/self-host/capabilities/docker-compose) لتشغيل Twenty، ثم عد هنا للإعداد.
@@ -196,7 +199,7 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 
 * Microsoft Graph: Mail.ReadWrite
 * Microsoft Graph: Mail.Send
-* Microsoft Graph: Calendars.Read
+* Microsoft Graph: قراءة التقويمات وكتابتها (Calendars.ReadWrite)
 * Microsoft Graph: User.Read
 * Microsoft Graph: openid
 * Microsoft Graph: email
@@ -204,11 +207,11 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 * Microsoft Graph: offline_access
 
 <Note>
-"Mail.ReadWrite" و "Mail.Send" إلزاميان فقط إذا كنت ترغب في إرسال رسائل بريد إلكتروني باستخدام إجراءات سير العمل الخاصة بنا. يمكنك استخدام "Mail.Read" بدلاً من ذلك إذا كنت ترغب فقط في تلقي الرسائل الإلكترونية.
+كل هذه الأذونات مطلوبة، حتى إذا كنت تريد مزامنة رسائل البريد الإلكتروني وأحداث التقويم فقط. يطلب Twenty دائمًا "Mail.ReadWrite" و"Mail.Send" و"Calendars.ReadWrite" عندما يربط المستخدم حسابه، لذا فإن أذونات القراءة فقط مثل "Mail.Read" أو "Calendars.Read" غير كافية.
 </Note>
 
 <Note>
-"Calendars.ReadWrite" إلزامي إذا كنت تريد إنشاء أحداث تقويم باستخدام إجراءات سير العمل الخاصة بنا. إذا كنت تريد فقط مزامنة أحداث التقويم، فاستخدم "Calendars.Read".
+إذا كان المستأجر الخاص بك لا يسمح للمستخدمين العاديين بالموافقة على هذه الأذونات، فسيظهر لهم الخطأ AADSTS90094 عند ربط حسابهم. يمكن للمسؤول إصلاح ذلك بالنقر فوق "Grant admin consent for {your-tenant}" في صفحة "API permissions" الخاصة بتسجيل التطبيق.
 </Note>
 
 ### URIs لإعادة التوجيه المصرح بها
@@ -237,7 +240,7 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 
 ### تكوين النطاقات
 
-[انظر الشيفرة المصدرية ذات الصلة](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
+[انظر الشيفرة المصدرية ذات الصلة](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L11)
 
 * 'openid'
 * 'البريد الإلكتروني'
@@ -245,7 +248,8 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 * 'offline_access'
 * 'Mail.ReadWrite'
 * 'Mail.Send'
-* 'Calendars.Read'
+* 'Calendars.ReadWrite'
+* 'User.Read'
 
 ### إذا كان تطبيقك في وضع الاختبار
 
@@ -269,6 +273,20 @@ yarn command:prod cron:messaging:ongoing-stale
 yarn command:prod cron:calendar:ongoing-stale
 yarn command:prod cron:workflow:automated-cron-trigger
 ```
+
+## الاتصالات الصادرة إلى المضيفين الداخليين
+
+بشكل افتراضي، يرفض Twenty الاتصالات الصادرة إلى عناوين IP الخاصة/الداخلية (حماية SSRF). يشمل ذلك إجراءات سير عمل HTTP، وخطافات الويب، وموفري الهوية لـ SSO، واتصالات IMAP/SMTP/CalDAV. إذا كان موفر الهوية أو خادم البريد أو التقويم لديك يعمل على شبكة خاصة، فأدرج اسم مضيفه أو عنوان IP حرفيًا:
+
+```bash
+OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS=keycloak,mail.internal,192.168.1.10
+```
+
+تتم مطابقة الإدخالات بناءً على اسم المضيف فقط، من دون أحرف بدل: بالنسبة إلى مُصدر OIDC مثل `http://keycloak:8080/realms/twenty`، أدرج `keycloak`. تظل جميع العناوين الخاصة الأخرى محظورة، وحتى المضيف المسموح له لا يمكنه أبدًا الوصول إلى نطاق عناوين البيانات الوصفية للسحابة. عيّن المتغير إلى `*` لتعطيل الحماية بالكامل، وهذا مناسب فقط على الشبكات الموثوقة والمعزولة.
+
+`OUTBOUND_HTTP_SAFE_MODE_ENABLED` مهمل. أثناء تعيينه إلى `false`، تظل الحماية معطلة بالكامل ويتم تجاهل `OUTBOUND_HTTP_ALLOWED_INTERNAL_HOSTS`، لذا أزِله عند الترحيل إلى القائمة.
+
+لا تغطي هذه القائمة مرفقات ملفات الذكاء الاصطناعي: تصل الصور وملفات PDF إلى النموذج كروابط مُنشأة من `SERVER_URL`، يجلبها إما موفر الذكاء الاصطناعي أو AI SDK في العامل، الذي يرفض العناوين الخاصة. لكي تعمل المرفقات، يجب أن يكون `SERVER_URL` عامًا؛ عند استخدام `localhost` أو `SERVER_URL` خاص، تعمل محادثات ووكلاء الذكاء الاصطناعي مع النص فقط.
 
 ## تكوين البريد الإلكتروني
 
@@ -324,9 +342,100 @@ yarn command:prod cron:workflow:automated-cron-trigger
 افتراضياً، تقوم Twenty بتخزين الملفات المرفوعة على نظام الملفات المحلي. بالنسبة لعمليات النشر في بيئة الإنتاج، استخدم S3 أو خدمة متوافقة مع S3 (MinIO، DigitalOcean Spaces، إلخ) لضمان بقاء الملفات عبر إعادة تشغيل الحاويات وإتاحة التوسّع عبر مثيلات خوادم متعددة.
 </Warning>
 
-عيّن `STORAGE_TYPE=S_3` وقم بتهيئة متغيرات `STORAGE_S3_*` من خلال لوحة الإدارة أو `.env`. راجع [مرجع config-variables.ts](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) للاطلاع على القائمة الكاملة لمتغيرات S3.
+عيّن `STORAGE_TYPE=S_3` وقم بتهيئة متغيرات `STORAGE_S3_*` من خلال لوحة الإدارة أو `.env`.
 
-عند استخدام S3 مع الميزات المعتمدة على CORS (مثل تنزيل الملفات داخل المتصفح)، تأكد من أن حاويتك تسمح بأصل واجهة Twenty الأمامية ضمن تهيئة CORS الخاصة بها.
+| المتغيّر                              | مطلوب | الوصف                                                                                                                                                                                               |
+| ------------------------------------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `STORAGE_S3_REGION`                   | نعم   | منطقة الحاوية: منطقة AWS مثل `eu-west-3`، أو معرّف خاص بموفر الخدمة مثل `fr-par` لـ Scaleway.                                                                                                       |
+| `STORAGE_S3_NAME`                     | نعم   | اسم الحاوية.                                                                                                                                                                                        |
+| `STORAGE_S3_ACCESS_KEY_ID`            | لا    | مفتاح الوصول لمستخدم IAM. اتركه غير محدد لاستخدام سلسلة بيانات الاعتماد الافتراضية لـ AWS (راجع [بيانات الاعتماد](#credentials)).                                                                   |
+| `STORAGE_S3_SECRET_ACCESS_KEY`        | لا    | السر الخاص بمفتاح الوصول أعلاه. مطلوب عند تعيين `STORAGE_S3_ACCESS_KEY_ID`.                                                                                                                         |
+| `STORAGE_S3_ENDPOINT`                 | لا    | عنوان URL مخصص للواجهة النهائية. فقط للخدمات المتوافقة مع S3 مثل `http://minio:9000`، أو لواجهة VPC نهائية من AWS. اتركه غير محدد لخدمة AWS S3 الأصلية، حيث تستنتج SDK الواجهة النهائية من المنطقة. |
+| `STORAGE_S3_PRESIGNED_URL_ENABLED`    | لا    | عندما تكون القيمة `true`، تُعاد توجيه التنزيلات إلى عناوين URL موقعة مسبقًا، وتُحمّل المتصفحات الملفات مباشرةً إلى الحاوية بدلًا من مرورها عبر الخادم. القيمة الافتراضية هي `false`.                |
+| `STORAGE_S3_PRESIGNED_URL_BASE`       | لا    | واجهة نهائية عامة لاستخدامها في عناوين URL الموقعة مسبقًا عندما يكون `STORAGE_S3_ENDPOINT` عنوانًا داخليًا لا تستطيع المتصفحات الوصول إليه، مثل MinIO داخل Docker.                                  |
+| `STORAGE_S3_PRESIGNED_URL_EXPIRES_IN` | لا    | مدة صلاحية عناوين URL الموقعة مسبقًا بالثواني. القيمة الافتراضية هي `900`.                                                                                                                          |
+
+ملف `.env` بسيط لـ AWS S3 مع مستخدم IAM:
+
+```ini
+STORAGE_TYPE=S_3
+STORAGE_S3_REGION=eu-west-3
+STORAGE_S3_NAME=my-twenty-bucket
+STORAGE_S3_ACCESS_KEY_ID=AKIA...
+STORAGE_S3_SECRET_ACCESS_KEY=...
+```
+
+<Note>
+يُمرّر ملف Docker Compose المتغيرات `STORAGE_TYPE` و`STORAGE_S3_REGION` و`STORAGE_S3_NAME` و`STORAGE_S3_ENDPOINT` ومتغيرَي بيانات الاعتماد من `.env`. عيّن متغيرات عنوان URL الموقّع مسبقًا في لوحة الإدارة، أو أضفها إلى كتلة `environment` لخدمتَي `server` و`worker`.
+</Note>
+
+### بيانات الاعتماد
+
+عندما يكون `STORAGE_S3_ACCESS_KEY_ID` غير محدد، يحل الخادم بيانات الاعتماد عبر السلسلة الافتراضية لـ AWS SDK: متغيرا البيئة `AWS_ACCESS_KEY_ID` و`AWS_SECRET_ACCESS_KEY`، أو ملف بيانات اعتماد مشترك، أو دور مهمة ECS، أو دور حساب خدمة EKS ‏(IRSA)، أو ملف تعريف مثيل EC2.
+
+<Warning>
+**ملفات تعريف مثيلات EC2 وDocker:** تُقدَّم بيانات ملف تعريف المثيل من خلال خدمة بيانات تعريف المثيل، وتكون الحاوية الموجودة على شبكة الجسر الافتراضية لـ Docker على بُعد قفزة شبكة إضافية منها مقارنةً بالمضيف. مع حد القفزات الافتراضي لـ IMDSv2 البالغ 1، لا تتلقى الحاوية بيانات الاعتماد مطلقًا رغم أن AWS CLI يعمل على المضيف. ارفع الحد إلى 2 على المثيل، أو استخدم بيانات اعتماد ثابتة.
+</Warning>
+
+```bash
+aws ec2 modify-instance-metadata-options --instance-id i-0123456789abcdef0 --http-put-response-hop-limit 2
+```
+
+عندما لا يمكن العثور على بيانات اعتماد، يسجل الخادم `CredentialsProviderError: Could not load credentials from any providers` عند أول تحميل، بينما تعرض واجهة المستخدم خطأً عامًا فقط.
+
+### أذونات الحاوية
+
+يُكتب الملف المُحمّل أولًا إلى مسار معلّق، ثم يُتحقق منه، وبعد ذلك يُنسخ إلى مساره النهائي، ويُحذف الكائن المعلّق. لذلك تحتاج السياسة إلى أكثر من `s3:PutObject`:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::my-twenty-bucket"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject",
+        "s3:DeleteObject",
+        "s3:AbortMultipartUpload"
+      ],
+      "Resource": "arn:aws:s3:::my-twenty-bucket/*"
+    }
+  ]
+}
+```
+
+يُستخدم `s3:ListBucket` لحذف المجلدات، مثلًا عند حذف مساحة عمل. من دونه، يرد S3 على طلبات الكائنات المفقودة برفض الوصول بدلًا من عدم العثور عليها، لذلك لا يستطيع الخادم التمييز بين ملف مفقود ومشكلة أذونات.
+
+### الواجهة النهائية والعنونة
+
+يستخدم Twenty دائمًا عنونة بنمط المسار، لذا تذهب الطلبات إلى `https://endpoint/bucket/key`. بالنسبة إلى AWS S3 الأصلية، اترك `STORAGE_S3_ENDPOINT` غير محدد: تنشئ SDK العنوان `https://s3.{region}.amazonaws.com` من `STORAGE_S3_REGION`، ولهذا يظهر إدخال منطقة غير صحيح كخطأ DNS بدلًا من خطأ S3. عيّن الواجهة النهائية فقط للخدمات المتوافقة مع S3، أو عندما يصل الخادم إلى S3 عبر واجهة VPC نهائية.
+
+### مشاركة الموارد عبر المصادر (CORS)
+
+عندما تكون قيمة `STORAGE_S3_PRESIGNED_URL_ENABLED` هي `true`، تتواصل المتصفحات مع الحاوية مباشرةً. التنزيلات هي طلبات `GET`، والتحميلات هي طلبات `PUT` تحمل ترويسة `Content-Type`، مما يجعل المتصفح يرسل طلب تحقق مسبق أولًا. لذلك يجب أن تسمح سياسة CORS الخاصة بالحاوية بمصدر Twenty الخاص بك، وكلتا الطريقتين وتلك الترويسة:
+
+```json
+[
+  {
+    "AllowedOrigins": ["https://crm.example.com"],
+    "AllowedMethods": ["GET", "PUT"],
+    "AllowedHeaders": ["Content-Type"],
+    "MaxAgeSeconds": 3000
+  }
+]
+```
+
+من دون عناوين URL الموقعة مسبقًا، تمر كل حركة مرور الملفات عبر الخادم ولا تحتاج الحاوية إلى أي إعدادات CORS.
+
+### استكشاف الأخطاء وإصلاحها
+
+تصل إخفاقات التحميل إلى واجهة المستخدم كخطأ عام. يوجد خطأ S3 الأساسي في سجلات الخادم (`docker compose logs server`) وفي استجابة GraphQL الظاهرة في علامة تبويب الشبكة بالمتصفح.
 
 ## الوظائف المنطقية ومفسر الشيفرة
 
@@ -407,3 +516,5 @@ AUTH_COOKIE_ALLOWED_ORIGINS=https://app.example.com
 مع تمكين ميزة تعدد مساحات العمل، لا تُدرِج كل نطاق فرعي لكل مساحة عمل هنا.
 بدلًا من ذلك، قم بتوجيه مسارات واجهة برمجة التطبيقات (API) (`/graphql`، `/metadata`، `/rest`، `/auth/`،
 `/client-config`، `/file`) إلى الواجهة الخلفية على كل اسم مضيف لمساحة عمل، بحيث تبقى كل مساحة عمل من نفس المصدر (same-origin) — هكذا تعمل Twenty Cloud.
+
+<PageBanner illustration="dev-self-host" />

@@ -1,0 +1,77 @@
+---
+title: Встроенный баннер
+description: Встроенная обратная связь с содержимым узла, значками и действиями.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import InlineBannerReference from '/snippets/ui/generated/components/feedback/inline-banner.mdx';
+
+## Обзор
+
+`InlineBanner` объединяет [Баннер](/ru/ui/primitives/feedback/banner) со скруглённой встроенной компоновкой и декоративным значком информации. Он использует независимые контракты Banner для `status`, `variant`, `color`, `icon` и `action`. Его внешний вид по умолчанию — `soft`, а статус по умолчанию — `info`.
+
+<StoryEmbed storyId="ui-feedback-inlinebanner--display" title="Встроенный баннер с действием" height={130} />
+
+## Использование
+
+```tsx
+import { InlineBanner } from 'twenty-ui/components/feedback';
+
+export const ModelsBanner = ({ onConfigure }: { onConfigure: () => void }) => (
+  <InlineBanner
+    status="error"
+    action={
+      <InlineBanner.Action onClick={onConfigure}>
+        Configure models
+      </InlineBanner.Action>
+    }
+  >
+    No AI models are enabled.
+  </InlineBanner>
+);
+```
+
+Компоновка `standard` заполняет доступную ширину. Дочерние элементы в виде простых строк усекаются; при фокусе с клавиатуры, наведении указателя или касании полная строка отображается во всплывающей подсказке. Дочерние элементы в виде расширенных узлов отображаются напрямую, поэтому встроенные ссылки и элементы управления сохраняют собственную семантику. Если расширенный контент нужно усечь, задайте явные параметры типографики.
+
+Используйте `layout="compact"` для переноса контента, более плотных интервалов и максимальной ширины контента 512px. Добавьте `fullWidth`, чтобы снять это ограничение и заполнить доступную ширину родительского элемента, включая отступы и границы. По умолчанию установлено значение `false`, и это не изменяет стандартную компоновку, которая уже заполняет родительский элемент. У него нет нижнего внешнего отступа. Макет не зависит от оформления `solid` или `soft`. `embedded` удаляет нижний внешний отступ стандартного макета.
+
+```tsx
+import { InlineBanner } from 'twenty-ui/components/feedback';
+import { IconInfoCircle } from 'twenty-ui/icon';
+
+export const ConnectionBanner = () => (
+  <InlineBanner
+    layout="compact"
+    status="warning"
+    color="blue"
+    icon={<IconInfoCircle aria-hidden="true" />}
+    action={
+      <InlineBanner.Action href="/settings/accounts">
+        Connection settings
+      </InlineBanner.Action>
+    }
+  >
+    Connect your account to sync contacts.
+  </InlineBanner>
+);
+```
+
+<StoryEmbed storyId="ui-feedback-inlinebanner--compact-link" title="Компактный баннер со ссылкой назначения" height={120} />
+
+`InlineBanner.Action` предоставляет небольшую контурную кнопку, которая наследует отображаемый цвет баннера, включая явные переопределения палитры и сплошное оформление. Он поддерживает взаимодействия Button, ссылки, refs и пользовательский рендеринг. Слот `action` также принимает произвольные элементы управления.
+
+Корневой целевой элемент — `div`. Нативные props, `className`, `style` и `ref` применяются к этому корневому элементу; Base UI `render` может скомпоновать другой элемент и получает разрешённое состояние Banner. `action` принимает любой ReactNode, включая несколько элементов управления с их полными API Button или ссылок. `icon={null}` удаляет значок по умолчанию.
+
+Вызывающая сторона определяет, отображается ли баннер и следует ли объявлять об изменениях. При необходимости укажите `role="status"` и `aria-live="polite"` либо подходящую обёртку для динамической области. Status не назначает семантику динамической области. Задавайте имена элементам управления действиями и отмечайте декоративные пользовательские значки с помощью `aria-hidden`.
+
+## Миграция
+
+Замените `message` на `children`, `LeftIcon={Icon}` на `icon={<Icon />}`, а конфигурацию `button` — на узел `action`. Используйте `InlineBanner.Action`, чтобы стилизация действия соответствовала баннеру. Замените `variant="compact"` на `layout="compact"`; стандартный макет теперь используется по умолчанию. Используйте `status="error"` для обозначения ошибки или `color="red"` для переопределения палитры.
+
+## Свойства
+
+<InlineBannerReference />
+
+<PageBanner illustration="card-page-messaging-channels" />

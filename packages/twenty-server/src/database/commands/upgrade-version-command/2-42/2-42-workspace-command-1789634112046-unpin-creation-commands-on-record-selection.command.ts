@@ -56,6 +56,7 @@ export class UnpinCreationCommandsOnRecordSelectionCommand extends ProvisionedWo
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           workspaceId,
           applicationUniversalIdentifier:

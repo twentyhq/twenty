@@ -82,7 +82,9 @@ describe('useProjectAiChatThreadToUrl', () => {
       `/inbox/${AI_CHAT_NEW_THREAD_PATH_SEGMENT}`,
     );
 
-    const { result } = renderHook(() => useProjectAiChatThreadToUrl());
+    const { result } = renderHook(() =>
+      useProjectAiChatThreadToUrl({ shouldPreserveClosedInbox: true }),
+    );
 
     act(() => {
       result.current.projectAiChatThreadToUrl(THREAD_A);
@@ -150,5 +152,57 @@ describe('useProjectAiChatThreadToUrl', () => {
     });
 
     expect(navigateAppMock).not.toHaveBeenCalled();
+  });
+
+  it('preserves the closed inbox when an automatic projection finishes after closing', () => {
+    window.history.pushState(null, '', `/inbox/${THREAD_A}`);
+
+    const { result } = renderHook(() =>
+      useProjectAiChatThreadToUrl({ shouldPreserveClosedInbox: true }),
+    );
+
+    window.history.pushState(null, '', '/inbox');
+
+    act(() => {
+      result.current.projectAiChatThreadToUrl(THREAD_A);
+    });
+
+    expect(navigateAppMock).not.toHaveBeenCalled();
+  });
+
+  it('opens an explicitly selected chat from the closed inbox in a new history entry', () => {
+    window.history.pushState(null, '', '/inbox');
+
+    const { result } = renderHook(() => useProjectAiChatThreadToUrl());
+
+    act(() => {
+      result.current.projectAiChatThreadToUrl(THREAD_A);
+    });
+
+    expect(navigateAppMock).toHaveBeenCalledWith(
+      AppPath.AiChatInbox,
+      { threadId: THREAD_A },
+      undefined,
+      { replace: false, state: null },
+    );
+  });
+
+  it('opens a new chat from the closed inbox in a new history entry', () => {
+    window.history.pushState(null, '', '/inbox');
+
+    const { result } = renderHook(() => useProjectAiChatThreadToUrl());
+
+    act(() => {
+      result.current.projectAiChatThreadToUrl(
+        getDefaultStore().get(newAiChatThreadIdState.atom),
+      );
+    });
+
+    expect(navigateAppMock).toHaveBeenCalledWith(
+      AppPath.AiChatInbox,
+      { threadId: AI_CHAT_NEW_THREAD_PATH_SEGMENT },
+      undefined,
+      { replace: false, state: null },
+    );
   });
 });

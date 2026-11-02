@@ -103,14 +103,16 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
       name.startsWith('invoke_agent')
         ? 1
         : inheritOrSampleWith(tracesSampleRate),
-    profilesSampleRate: parseSampleRate({
+    profileSessionSampleRate: parseSampleRate({
       value: process.env.SENTRY_PROFILES_SAMPLE_RATE,
       fallback: 0.01,
     }),
+    profileLifecycle: 'trace',
+    // Sentry 11 streams spans by default; keep sending transactions so beforeSendTransaction still runs
+    traceLifecycle: 'static',
     maxValueLength: 8192,
-    sendDefaultPii: true,
     debug: process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT,
-    beforeSendSpan: (span) => {
+    beforeSendSpan: Sentry.withStaticSpan((span) => {
       const twentyContext = Sentry.getIsolationScope().getScopeData().contexts
         ?.twenty as
         | {
@@ -132,7 +134,7 @@ if (process.env.EXCEPTION_HANDLER_DRIVER === ExceptionHandlerDriver.SENTRY) {
       };
 
       return span;
-    },
+    }),
     beforeSendTransaction: (event) =>
       event.contexts?.trace?.op === 'gen_ai.invoke_agent'
         ? { ...event, spans: event.spans?.filter(({ op }) => op !== 'db') }

@@ -3,6 +3,12 @@ title: 5. An AI agent
 description: Пусть агент сгенерирует документы из чата, используя ваш инструмент.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Обзор
+
 Потому что `generate-document` выставляется как **инструмент**, агент ИИ может назвать его.
 Давайте добавим агента и навыка, чтобы пользователи могли просто сказать *"создать предложение для
 Джеффера Гриффина"*.
@@ -73,6 +79,11 @@ export default defineAgent({
 **После этого шага:** приложение является полноценным и действительно полезным. Пришло время
 отправить его.
 
-<Card title="Далее: публикация →" icon="rocket" href="/ru/developers/extend/apps/tutorials/document-generator/publishing">
-  Добавить метаданные торговой площадки и опубликовать.
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ru/developers/extend/apps/tutorials/document-generator/publishing" img="/images/user-guide/halftone/card-page-publishing.svg">
+  <CardTitle>Далее: публикация →</CardTitle>
+  Добавьте метаданные маркетплейса и опубликуйте.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="card-page-tutorial-agent" />

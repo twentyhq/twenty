@@ -13,6 +13,7 @@ const styleAttributeSchema = z
       .max(40),
     z.string().max(400),
   )
+  .meta({ id: 'emailStyleAttribute' })
   .optional();
 
 const markSchema = z.discriminatedUnion('type', [
@@ -41,21 +42,25 @@ const hardBreakNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.HARD_BREAK),
 });
 
-const inlineNodeSchema = z.discriminatedUnion('type', [
-  textNodeSchema,
-  variableTagNodeSchema,
-  hardBreakNodeSchema,
-]);
+const inlineNodeSchema = z
+  .discriminatedUnion('type', [
+    textNodeSchema,
+    variableTagNodeSchema,
+    hardBreakNodeSchema,
+  ])
+  .meta({ id: 'emailInlineNode' });
 
 const blockContentSchema = z.array(
   z.lazy((): z.ZodType<EmailDocumentNode> => blockNodeSchema),
 );
 
-const paragraphNodeSchema = z.looseObject({
-  type: z.literal(TIPTAP_NODE_TYPES.PARAGRAPH),
-  attrs: z.looseObject({ style: styleAttributeSchema.nullable() }).optional(),
-  content: z.array(inlineNodeSchema).optional(),
-});
+const paragraphNodeSchema = z
+  .looseObject({
+    type: z.literal(TIPTAP_NODE_TYPES.PARAGRAPH),
+    attrs: z.looseObject({ style: styleAttributeSchema.nullable() }).optional(),
+    content: z.array(inlineNodeSchema).optional(),
+  })
+  .meta({ id: 'emailParagraphNode' });
 
 const headingNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.HEADING),
@@ -66,11 +71,13 @@ const headingNodeSchema = z.looseObject({
   content: z.array(inlineNodeSchema).optional(),
 });
 
-const listItemNodeSchema = z.looseObject({
-  type: z.literal(TIPTAP_NODE_TYPES.LIST_ITEM),
-  attrs: z.looseObject({}).optional(),
-  content: blockContentSchema.min(1),
-});
+const listItemNodeSchema = z
+  .looseObject({
+    type: z.literal(TIPTAP_NODE_TYPES.LIST_ITEM),
+    attrs: z.looseObject({}).optional(),
+    content: blockContentSchema.min(1),
+  })
+  .meta({ id: 'emailListItemNode' });
 
 const bulletListNodeSchema = z.looseObject({
   type: z.literal(TIPTAP_NODE_TYPES.BULLET_LIST),
@@ -152,20 +159,22 @@ const htmlDocumentNodeSchema = z.looseObject({
   attrs: z.looseObject({ html: z.string() }),
 });
 
-const blockNodeSchema = z.discriminatedUnion('type', [
-  paragraphNodeSchema,
-  headingNodeSchema,
-  bulletListNodeSchema,
-  orderedListNodeSchema,
-  blockquoteNodeSchema,
-  imageNodeSchema,
-  sectionNodeSchema,
-  columnsNodeSchema,
-  buttonNodeSchema,
-  dividerNodeSchema,
-  htmlNodeSchema,
-  htmlDocumentNodeSchema,
-]);
+const blockNodeSchema = z
+  .discriminatedUnion('type', [
+    paragraphNodeSchema,
+    headingNodeSchema,
+    bulletListNodeSchema,
+    orderedListNodeSchema,
+    blockquoteNodeSchema,
+    imageNodeSchema,
+    sectionNodeSchema,
+    columnsNodeSchema,
+    buttonNodeSchema,
+    dividerNodeSchema,
+    htmlNodeSchema,
+    htmlDocumentNodeSchema,
+  ])
+  .meta({ id: 'emailBlockNode' });
 
 const canvasThemeAttributeSchema = z.looseObject({
   pageBackground: z.string().optional(),

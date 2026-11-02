@@ -1,0 +1,132 @@
+---
+title: Reenviar una bandeja de entrada compartida desde Google Workspace
+description: Envía correo desde un Grupo de Google a un canal de correo electrónico de Twenty.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Resumen
+
+Un canal de correo electrónico proporciona a tu espacio de trabajo una dirección compartida, como `sales@yourcompany.com`. El correo enviado a esa dirección debe llegar a Twenty de alguna manera.
+
+En Google Workspace, esa dirección casi siempre es un **Grupo de Google**. Lo conectas añadiendo la dirección privada de reenvío de Twenty como miembro del grupo. Cada mensaje que recibe el grupo se copia entonces en Twenty, y tu equipo sigue recibiéndolo como antes.
+
+<Note>
+  Esto solo se aplica al correo nuevo. Twenty no verá los mensajes que el grupo recibió
+  antes de configurar esto.
+</Note>
+
+## Antes de empezar
+
+Necesitas dos cosas:
+
+* **Acceso**: debes ser propietario del grupo o ser superadministrador o administrador de Grupos en Google Workspace.
+* **Un grupo que acepta direcciones externas**: la dirección de reenvío de Twenty es externa, por lo que el grupo debe aceptar miembros externos y correo de fuera de tu empresa. La parte 2 abarca ambas.
+
+## Parte 1: Crear el canal en Twenty
+
+1. Ve a **Configuración → Comunicación**.
+2. Haz clic en **Añadir canal de correo electrónico**.
+
+<img src="/images/user-guide/emails/inbound-channels/03-twenty-add-email-channel.png" style={{ width: '100%' }} />
+
+3. En **Dirección de correo electrónico de origen**, escribe la dirección del grupo, por ejemplo, `sales@yourcompany.com`.
+4. En **Nombre para mostrar**, escribe el nombre que ven los destinatarios.
+5. Haz clic en **Guardar**.
+
+<img src="/images/user-guide/emails/inbound-channels/04-twenty-new-channel-form.png" style={{ width: '100%' }} />
+
+6. Twenty ahora muestra una **Dirección de reenvío**. Tiene este aspecto: `ch_2cd282d193b5@inbound.twenty.com`. Haz clic en **Copiar**.
+
+<img src="/images/user-guide/emails/inbound-channels/05-twenty-forwarding-address.png" style={{ width: '100%' }} />
+
+<Note>
+  Cada canal obtiene su propia dirección de reenvío. Nunca dirijas dos grupos a la
+  misma, o su correo llegará al mismo lugar.
+</Note>
+
+## Parte 2: Comprobar la configuración del grupo
+
+Dos ajustes determinan si esto funciona. Configúralos correctamente antes de continuar.
+
+1. Abre [Grupos de Google](https://groups.google.com) y haz clic en tu grupo.
+2. Haz clic en **Configuración del grupo** en la barra lateral izquierda.
+3. Busca **Miembros externos** y activa **Permitir miembros externos**.
+
+<img src="/images/user-guide/emails/inbound-channels/google-03-allow-external-members.png" style={{ width: '100%' }} />
+
+Google desactiva esta opción para toda la organización de forma predeterminada, así que espera que esté bloqueada la primera vez. Si ves el aviso mostrado arriba, solo un administrador de Workspace puede desbloquearlo permitiendo que los propietarios de grupos añadan miembros externos en toda la organización. Pídeselo y luego vuelve aquí.
+
+4. Desplázate hasta **Quién puede publicar** y arrastra el control deslizante completamente a la derecha, hasta el globo terráqueo. Esa opción es **Cualquier persona en la Web**.
+
+<img src="/images/user-guide/emails/inbound-channels/google-04-who-can-post.png" style={{ width: '100%' }} />
+
+Sin esto, el correo de fuera de tu empresa nunca llega al grupo, por lo que tampoco llega a Twenty. Esto también está bloqueado en toda la organización de forma predeterminada y, de nuevo, solo un administrador puede cambiarlo.
+
+5. Haz clic en **Guardar cambios**.
+
+<Warning>
+  Si el grupo tiene la etiqueta de **Seguridad** de Google, detente aquí. Google no
+  permite cuentas que no sean de Google en un grupo de seguridad, y la etiqueta es permanente una vez
+  aplicada. Crea un grupo nuevo sin ella.
+</Warning>
+
+## Parte 3: Añadir Twenty al grupo
+
+1. Haz clic en **Miembros** en la barra lateral izquierda.
+2. Haz clic en **Añadir miembros**.
+
+<img src="/images/user-guide/emails/inbound-channels/google-02-members-add-button.png" style={{ width: '100%' }} />
+
+3. Pega la dirección de reenvío que copiaste de Twenty en **Miembros del grupo**.
+4. Deja **Suscripción** en **Cada correo electrónico**. Esto hace que Google envíe todos los mensajes.
+5. Deja marcada **Añadir miembros directamente** para que Google añada la dirección en lugar de enviar una invitación que no puede aceptarse.
+6. Haz clic en **Añadir miembros**.
+
+<img src="/images/user-guide/emails/inbound-channels/google-05-add-forwarding-address.png" style={{ width: '100%' }} />
+
+Esto completa la configuración. Twenty ahora es miembro del grupo como cualquier otro.
+
+## Si aún no tienes un grupo
+
+1. En [Grupos de Google](https://groups.google.com), haz clic en **Crear grupo**.
+2. Completa el **Nombre del grupo** y el prefijo de **Correo electrónico del grupo**.
+
+<img src="/images/user-guide/emails/inbound-channels/google-01-create-group.png" style={{ width: '100%' }} />
+
+3. Haz clic dos veces en **Siguiente** y luego en **Crear grupo**.
+4. Ahora sigue la parte 2 y la parte 3.
+
+## Parte 4: Probarlo
+
+Envía un correo electrónico desde una dirección externa (un Gmail personal funciona) a `sales@yourcompany.com`. Debería aparecer en Twenty en uno o dos minutos.
+
+## Solución de Problemas
+
+<Accordion title="Se produjo un error: 1 usuario está fuera de tu organización">
+  El grupo no acepta miembros externos. Vuelve a la parte 2, paso 3. Si el
+  ajuste está bloqueado, solo un administrador de Workspace puede desbloquearlo.
+
+  <img src="/images/user-guide/emails/inbound-channels/google-06-external-member-error.png" style={{ width: '100%' }} />
+</Accordion>
+
+<Accordion title="El grupo recibe correo, pero Twenty no">
+  Abre el miembro en el grupo y comprueba que su suscripción sea **Cada correo electrónico**, no
+  **Sin correo electrónico**, **Resumen** o **Resumido**.
+</Accordion>
+
+<Accordion title="Llegan los correos de los compañeros, pero no los de los clientes">
+  **Quién puede publicar** no está configurado como **Cualquier persona en la Web**. Consulta la parte 2, paso 4.
+</Accordion>
+
+<Accordion title="El canal recibe correo, pero no puede enviar">
+  La recepción y el envío son independientes. Enviar requiere que tu dominio sea verificado
+  bajo la sección **Enviar dominio** del canal, lo que significa agregar
+  la **autenticación de dominio** registra Veinte listas allí. Vea Email
+  Canales para el cual
+  registra cada uso necesita.
+</Accordion>
+
+¿Usas otro proveedor? Consulta [Microsoft 365](/es/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-microsoft-365) o [cualquier otro proveedor de correo](/es/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-any-mail-provider).
+
+<PageBanner illustration="page-cover-email" />

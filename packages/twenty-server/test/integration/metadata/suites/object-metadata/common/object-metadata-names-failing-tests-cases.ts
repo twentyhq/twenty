@@ -72,6 +72,30 @@ export const OBJECT_METADATA_NAMES_FAILING_TEST_CASES: EachTestingContext<Failin
       },
     },
     {
+      title: 'when nameSingular changes under camelCase',
+      context: {
+        input: { nameSingular: 'demandeGRU' },
+        expected: {
+          errorCode: 'METADATA_VALIDATION_FAILED',
+          objectValidationMessages: [
+            'Name is not valid: it must be camelCase, e.g. "demandeGru"',
+          ],
+        },
+      },
+    },
+    {
+      title: 'when namePlural changes under camelCase',
+      context: {
+        input: { namePlural: 'demandesGRU' },
+        expected: {
+          errorCode: 'METADATA_VALIDATION_FAILED',
+          objectValidationMessages: [
+            'Name is not valid: it must be camelCase, e.g. "demandesGru"',
+          ],
+        },
+      },
+    },
+    {
       title: 'when namePlural is an empty string',
       context: {
         input: { namePlural: '' },

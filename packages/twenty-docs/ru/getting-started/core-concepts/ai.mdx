@@ -3,9 +3,10 @@ title: ИИ
 description: Как Twenty использует ИИ, чтобы улучшить ваш опыт работы с CRM.
 ---
 
-import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { PageBanner } from "/snippets/page-banner.mdx"
 
-Twenty интегрирует ИИ напрямую в вашу CRM — не как маркетинговый трюк, а как инструмент, который работает в рамках вашей модели данных и системы разрешений.
+import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Чат-бот на базе ИИ
 
@@ -28,6 +29,11 @@ Twenty интегрирует ИИ напрямую в вашу CRM — не к�
 
 ИИ в Twenty соблюдает вашу модель разрешений. Агенты могут получать доступ только к объектам и полям, к просмотру которых у пользователя (или роли) есть разрешение. Конфиденциальные данные остаются защищенными, даже когда используется ИИ.
 
-<Card title="Полное руководство по ИИ" icon="arrow-right" href="/ru/user-guide/ai/overview">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/ru/user-guide/ai/overview" img="/images/documentation/banner-icons-v2/ai.svg">
+  <CardTitle>Полное руководство по ИИ</CardTitle>
   Подробная справка по чат-боту, агентам и настройкам разрешений.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="getting-started-ai" />

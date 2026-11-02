@@ -291,15 +291,16 @@ describe('Event Logs (integration)', () => {
     it('should expose the registration, version, source and error code of application logs', async () => {
       const response = await makeEventLogsQuery({
         table: 'APPLICATION_LOG',
-        first: 10,
+        first: 50,
       });
 
       expect(response.status).toBe(200);
       expect(response.body.errors).toBeUndefined();
 
+      // Apps that earlier suites ran log into the same workspace
       const errorRecord = response.body.data.eventLogs.records.find(
-        (record: { properties: { level: string } }) =>
-          record.properties.level === 'ERROR',
+        (record: { properties: { executionId: string } }) =>
+          record.properties.executionId === 'exec-1',
       );
 
       expect(errorRecord.properties).toMatchObject({

@@ -14,6 +14,7 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a crea
         "createdAt": "2024-01-01T00:00:00.000Z",
         "defaultValue": null,
         "description": "default flat field metadata description",
+        "disabledFieldPermissionActions": null,
         "fieldPermissionIds": [],
         "fieldPermissionUniversalIdentifiers": [],
         "icon": "icon",
@@ -56,7 +57,6 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a crea
         "viewSortIds": [],
         "viewSortUniversalIdentifiers": [],
         "workspaceId": "workspace-id-1",
-        "writability": "OPEN",
       },
     },
   },
@@ -86,6 +86,7 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a dele
         "createdAt": "2024-01-01T00:00:00.000Z",
         "defaultValue": null,
         "description": "default flat field metadata description",
+        "disabledFieldPermissionActions": null,
         "fieldPermissionIds": [],
         "fieldPermissionUniversalIdentifiers": [],
         "icon": "icon",
@@ -128,7 +129,6 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect a dele
         "viewSortIds": [],
         "viewSortUniversalIdentifiers": [],
         "workspaceId": "workspace-id-1",
-        "writability": "OPEN",
       },
     },
   },
@@ -149,6 +149,7 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect an upd
   "updatedFlatEntityMaps": {
     "byUniversalIdentifier": {
       "universal-identifier-1": {
+        "nonUpdatablePropertyDivergences": [],
         "update": {
           "isActive": true,
         },
@@ -172,6 +173,7 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect create
         "createdAt": "2024-01-01T00:00:00.000Z",
         "defaultValue": null,
         "description": "default flat field metadata description",
+        "disabledFieldPermissionActions": null,
         "fieldPermissionIds": [],
         "fieldPermissionUniversalIdentifiers": [],
         "icon": "icon",
@@ -214,7 +216,6 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect create
         "viewSortIds": [],
         "viewSortUniversalIdentifiers": [],
         "workspaceId": "workspace-id-1",
-        "writability": "OPEN",
       },
     },
   },
@@ -230,6 +231,7 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect create
         "createdAt": "2024-01-01T00:00:00.000Z",
         "defaultValue": null,
         "description": "default flat field metadata description",
+        "disabledFieldPermissionActions": null,
         "fieldPermissionIds": [],
         "fieldPermissionUniversalIdentifiers": [],
         "icon": "icon",
@@ -272,13 +274,13 @@ exports[`flatEntityDeletedCreatedUpdatedMatrixDispatcher It should detect create
         "viewSortIds": [],
         "viewSortUniversalIdentifiers": [],
         "workspaceId": "workspace-id-1",
-        "writability": "OPEN",
       },
     },
   },
   "updatedFlatEntityMaps": {
     "byUniversalIdentifier": {
       "universal-identifier-1": {
+        "nonUpdatablePropertyDivergences": [],
         "update": {
           "isActive": false,
         },

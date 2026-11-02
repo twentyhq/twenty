@@ -19,8 +19,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @RegisteredWorkspaceCommand('2.40.0', 1788794677636)
 @Command({
   name: 'upgrade:2-40:sync-record-share-object',
-  description:
-    'Create the recordShare standard object in existing workspaces',
+  description: 'Create the recordShare standard object in existing workspaces',
 })
 export class SyncRecordShareObjectCommand extends ProvisionedWorkspaceCommandRunner {
   constructor(
@@ -133,6 +132,7 @@ export class SyncRecordShareObjectCommand extends ProvisionedWorkspaceCommandRun
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           allFlatEntityOperationByMetadataName,
           workspaceId,
           isSystemBuild: true,

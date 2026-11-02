@@ -1,16 +1,13 @@
-import { type ObjectManifest } from 'twenty-shared/application';
 import {
-  MetadataReadability,
-  MetadataWritability,
-  ObjectSharingReach,
-} from 'twenty-shared/types';
+  type ObjectManifest,
+  type ObjectPermissionAction,
+} from 'twenty-shared/application';
 
 import { fromObjectManifestToUniversalFlatObjectMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-object-manifest-to-universal-flat-object-metadata.util';
 
 const APP_UID = '11111111-1111-1111-1111-111111111111';
 const OBJECT_UID = '22222222-2222-2222-2222-222222222222';
 const LABEL_IDENTIFIER_FIELD_UID = '33333333-3333-3333-3333-333333333333';
-const PARENT_FIELD_UID = '44444444-4444-4444-4444-444444444444';
 const NOW = '2026-05-15T10:00:00.000Z';
 
 const buildObjectManifest = (
@@ -66,100 +63,32 @@ describe('fromObjectManifestToUniversalFlatObjectMetadata', () => {
     });
   });
 
-  describe('writability', () => {
-    it('defaults to OPEN when omitted from the manifest', () => {
+  describe('disabledObjectPermissionActions', () => {
+    it.each<[ObjectPermissionAction[]]>([[[]], [['canDestroyObjectRecords']]])(
+      'keeps an explicit value %j',
+      (disabledObjectPermissionActions) => {
+        const result = fromObjectManifestToUniversalFlatObjectMetadata({
+          objectManifest: buildObjectManifest({
+            disabledObjectPermissionActions,
+          }),
+          applicationUniversalIdentifier: APP_UID,
+          now: NOW,
+        });
+
+        expect(result.disabledObjectPermissionActions).toEqual(
+          disabledObjectPermissionActions,
+        );
+      },
+    );
+
+    it('is null when omitted', () => {
       const result = fromObjectManifestToUniversalFlatObjectMetadata({
         objectManifest: buildObjectManifest({}),
         applicationUniversalIdentifier: APP_UID,
         now: NOW,
       });
 
-      expect(result.writability).toBe(MetadataWritability.OPEN);
-    });
-
-    it('carries the manifest value through', () => {
-      const result = fromObjectManifestToUniversalFlatObjectMetadata({
-        objectManifest: buildObjectManifest({
-          writability: MetadataWritability.APPLICATION,
-        }),
-        applicationUniversalIdentifier: APP_UID,
-        now: NOW,
-      });
-
-      expect(result.writability).toBe(MetadataWritability.APPLICATION);
-    });
-  });
-
-  describe('readability', () => {
-    it('defaults to OPEN when omitted from the manifest', () => {
-      const result = fromObjectManifestToUniversalFlatObjectMetadata({
-        objectManifest: buildObjectManifest({}),
-        applicationUniversalIdentifier: APP_UID,
-        now: NOW,
-      });
-
-      expect(result.readability).toBe(MetadataReadability.OPEN);
-    });
-
-    it('carries the manifest value through', () => {
-      const result = fromObjectManifestToUniversalFlatObjectMetadata({
-        objectManifest: buildObjectManifest({
-          readability: MetadataReadability.PRIVATE,
-        }),
-        applicationUniversalIdentifier: APP_UID,
-        now: NOW,
-      });
-
-      expect(result.readability).toBe(MetadataReadability.PRIVATE);
-    });
-
-    it('defaults the parent fields to null when omitted from the manifest', () => {
-      const result = fromObjectManifestToUniversalFlatObjectMetadata({
-        objectManifest: buildObjectManifest({}),
-        applicationUniversalIdentifier: APP_UID,
-        now: NOW,
-      });
-
-      expect(result.readabilityParentFieldUniversalIdentifiers).toBeNull();
-    });
-
-    it('carries the parent fields through', () => {
-      const result = fromObjectManifestToUniversalFlatObjectMetadata({
-        objectManifest: buildObjectManifest({
-          readability: MetadataReadability.INHERITED,
-          readabilityParentFieldUniversalIdentifiers: [PARENT_FIELD_UID],
-        }),
-        applicationUniversalIdentifier: APP_UID,
-        now: NOW,
-      });
-
-      expect(result.readabilityParentFieldUniversalIdentifiers).toEqual([
-        PARENT_FIELD_UID,
-      ]);
-    });
-  });
-
-  describe('sharingReach', () => {
-    it('defaults to WORKSPACE when omitted from the manifest', () => {
-      const result = fromObjectManifestToUniversalFlatObjectMetadata({
-        objectManifest: buildObjectManifest({}),
-        applicationUniversalIdentifier: APP_UID,
-        now: NOW,
-      });
-
-      expect(result.sharingReach).toBe(ObjectSharingReach.WORKSPACE);
-    });
-
-    it('carries the manifest value through', () => {
-      const result = fromObjectManifestToUniversalFlatObjectMetadata({
-        objectManifest: buildObjectManifest({
-          sharingReach: ObjectSharingReach.ROLE_ACCESS,
-        }),
-        applicationUniversalIdentifier: APP_UID,
-        now: NOW,
-      });
-
-      expect(result.sharingReach).toBe(ObjectSharingReach.ROLE_ACCESS);
+      expect(result.disabledObjectPermissionActions).toBeNull();
     });
   });
 

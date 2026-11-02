@@ -1,5 +1,3 @@
-import { type Milliseconds } from 'cache-manager';
-
 import { type CacheKey } from 'src/engine/twenty-orm/storage/types/cache-key.type';
 
 type AsyncFactoryCallback<T> = () => Promise<T | null>;
@@ -22,7 +20,7 @@ export class PromiseMemoizer<T> {
   private cache = new Map<CacheKey, PromiseMemoizerEntry<T>>();
   private ttlMs: number;
 
-  constructor(ttlMs: Milliseconds = ONE_HOUR_IN_MS) {
+  constructor(ttlMs: number = ONE_HOUR_IN_MS) {
     this.ttlMs = ttlMs;
   }
 

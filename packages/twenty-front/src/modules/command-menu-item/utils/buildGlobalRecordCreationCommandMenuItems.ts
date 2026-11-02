@@ -15,7 +15,6 @@ type BuildGlobalRecordCreationCommandMenuItemsParams = {
     | 'isUICreatable'
     | 'isUIEditable'
     | 'isRemote'
-    | 'writability'
   >[];
   objectPermissionsByObjectMetadataId: Record<
     string,
@@ -53,7 +52,7 @@ export const buildGlobalRecordCreationCommandMenuItems = ({
         ...createRecordCommand,
         id: `${createRecordCommand.id}-${objectMetadataItem.id}`,
         label: getLabel(objectLabelSingular),
-        icon: objectMetadataItem.icon,
+        icon: objectMetadataItem.icon ?? null,
         shortLabel: null,
         isPinned: false,
         hotKeys: null,

@@ -3,6 +3,12 @@ title: 4. Construyendo la interfaz de usuario
 description: Visualizaciones, navegación en la barra lateral, un comando y componentes frontales.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
+## Resumen
+
 Ahora mismo los objetos sólo son accesibles a través de Configuración. Vamos a dar a la aplicación una presencia
 real en la interfaz de usuario: vistas de lista, entradas de la barra lateral, un comando de
 **Generar documento**, un componente frontal de página de registro para **previsualizar** un documento
@@ -111,10 +117,7 @@ export default defineFrontComponent({
 ```
 
 <Warning>
-Estilo con variables CSS en línea (`var(--t-color-blue)`), no valores importados de
-`twenty-ui`. El SDK simula ese paquete durante la compilación, por lo que las importaciones a nivel de módulo de
-constantes de tema serían `undefined`. Ver el
-[componente completo](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/front-components/generate-document-form.front-component.tsx).
+  Lee `useTheme()` o `themeCssVariables` de `twenty-ui/theme` dentro del cuerpo del componente al aplicar estilos con los tokens de Twenty. La CLI simula `twenty-ui` durante la extracción del manifiesto, por lo que desreferenciar constantes de tema importadas en el ámbito del módulo puede provocar un error de compilación. Consulta [Tematización y tokens de tema](/es/developers/extend/apps/layout/front-components#theming-and-theme-tokens) y el [componente completo](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/front-components/generate-document-form.front-component.tsx).
 </Warning>
 
 ## Un comando para abrirlo
@@ -221,7 +224,10 @@ Montarlo con un [diseño de página](/es/developers/extend/apps/layout/page-layo
 `FRONT_COMPONENT` aloja el componente a todo lo ancho:
 
 ```ts filename="src/page-layouts/document-record.page-layout.ts"
-import { definePageLayout, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
+import {
+  definePageLayout,
+  PageLayoutTabLayoutMode,
+} from 'twenty-sdk/define';
 
 export default definePageLayout({
   universalIdentifier: DOCUMENT_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
@@ -238,6 +244,7 @@ export default definePageLayout({
       universalIdentifier: DOCUMENT_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIER,
       title: 'Document preview',
       type: 'FRONT_COMPONENT',
+      heightBehavior: 'TAB_VIEWPORT',
       configuration: {
         configurationType: 'FRONT_COMPONENT',
         frontComponentUniversalIdentifier: DOCUMENT_VIEWER_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
@@ -288,7 +295,7 @@ Un campo `RICH_TEXT` almacena tanto el bloque JSON del editor como una proyecci�
 de Markdown. La generación de pipeline lee que Markdown proyecta, así que
 marcadores de posición, el PDF, y la página web compartible siguen funcionando sin cambios —
 vea el
-completo [`template-record. age-layout.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/page-layouts/template-record.page-layout.ts).
+completo [`template-record.page-layout.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/examples/document-generator/src/page-layouts/template-record.page-layout.ts).
 Los widgets de `FIELD` también admiten otros modos de visualización y opciones, incluido
 listar registros de una relación anidada a dos saltos de distancia — consulta la
 [referencia del widget de campo](/es/developers/extend/apps/layout/page-layouts#field-widgets).
@@ -301,6 +308,11 @@ Ahora editores escriben plantillas en un editor de texto rich:
 **Después de este paso:** vista previa de documentos hermosamente y plantillas son editables
 en la aplicación. A continuación, deja que un agente de IA los genere a partir de un chat.
 
-<Card title="Siguiente: un agente de IA →" icon="robot" href="/es/developers/extend/apps/tutorials/document-generator/ai-agent">
+<CardGroup cols={2} className="documentation-card-group">
+<Card href="/es/developers/extend/apps/tutorials/document-generator/ai-agent" img="/images/user-guide/halftone/card-page-skills-agents.svg">
+  <CardTitle>Siguiente: un agente IA →</CardTitle>
   Añade un agente y una habilidad que llame a tu herramienta.
 </Card>
+</CardGroup>
+
+<PageBanner illustration="card-page-tutorial-ui" />

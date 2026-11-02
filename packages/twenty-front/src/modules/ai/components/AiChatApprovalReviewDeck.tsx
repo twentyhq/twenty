@@ -100,6 +100,9 @@ type AiChatApprovalReviewDeckProps = {
   onActiveIndexChange: (index: number) => void;
   onRequestApproval: (cardIds: string[]) => void;
   onDeny: (cardId: string) => void;
+  getApproveAllLabel?: (pendingCardCount: number) => string;
+  previousLabel?: string;
+  nextLabel?: string;
   disabled?: boolean;
 };
 
@@ -109,6 +112,9 @@ export const AiChatApprovalReviewDeck = ({
   onActiveIndexChange,
   onRequestApproval,
   onDeny,
+  getApproveAllLabel,
+  previousLabel,
+  nextLabel,
   disabled = false,
 }: AiChatApprovalReviewDeckProps) => {
   const { t } = useLingui();
@@ -123,7 +129,14 @@ export const AiChatApprovalReviewDeck = ({
   const hasSelectedItems = pendingCards.some((card) => card.selectedCount > 0);
   const isActiveCardPending = activeCard.status === 'pending';
   const canApproveActiveCard =
-    !disabled && isActiveCardPending && activeCard.selectedCount > 0;
+    !disabled &&
+    isActiveCardPending &&
+    !activeCard.isApprovalDisabled &&
+    activeCard.selectedCount > 0;
+  const canApproveAll =
+    !disabled &&
+    hasSelectedItems &&
+    pendingCards.every((card) => !card.isApprovalDisabled);
   const pendingCardCount = pendingCards.length;
   const nextTitles = cards
     .filter((card, index) => index > activeIndex && card.status === 'pending')
@@ -168,8 +181,8 @@ export const AiChatApprovalReviewDeck = ({
                 disabled={disabled}
                 onIndexChange={onActiveIndexChange}
                 positionText={`${activeIndex + 1}/${cards.length}`}
-                previousLabel={t`Previous approval`}
-                nextLabel={t`Next approval`}
+                previousLabel={previousLabel ?? t`Previous approval`}
+                nextLabel={nextLabel ?? t`Next approval`}
               />
             )}
           </StyledHeader>
@@ -196,16 +209,17 @@ export const AiChatApprovalReviewDeck = ({
                 disabled={disabled || !isActiveCardPending}
                 onClick={() => onDeny(activeCard.id)}
               >
-                {t`Deny`}
+                {activeCard.denyLabel ?? t`Deny`}
               </Button>
               {pendingCardCount > 1 && (
                 <Button
                   size="sm"
                   variant="outline"
-                  disabled={disabled || !hasSelectedItems}
+                  disabled={!canApproveAll}
                   onClick={() => onRequestApproval(pendingCardIds)}
                 >
-                  {t`Approve all ${pendingCardCount}`}
+                  {getApproveAllLabel?.(pendingCardCount) ??
+                    t`Approve all ${pendingCardCount}`}
                 </Button>
               )}
               <Button

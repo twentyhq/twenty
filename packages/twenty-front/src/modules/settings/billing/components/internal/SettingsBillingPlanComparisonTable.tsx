@@ -17,6 +17,7 @@ import {
 } from 'twenty-ui/components/input';
 import { Button } from 'twenty-ui/primitives/input';
 import { Tag } from 'twenty-ui/primitives/data-display';
+import { Tooltip } from 'twenty-ui/primitives/surfaces';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme';
 import { SubscriptionInterval } from '~/generated-metadata/graphql';
 
@@ -221,7 +222,13 @@ export const SettingsBillingPlanComparisonTable = ({
   }: Pick<SettingsBillingComparedPlan, 'isLegacy' | 'planKey'>) => (
     <>
       <StyledPlanName>{t(BILLING_PLAN_LABELS[planKey])}</StyledPlanName>
-      {isLegacy && <Tag color="gray">{t`Legacy`}</Tag>}
+      {isLegacy && (
+        <Tooltip
+          content={t`Early plan - You keep this price as long as you stay on it. It can't be picked again after you switch.`}
+        >
+          <Tag color="purple" truncate={false}>{t`Early`}</Tag>
+        </Tooltip>
+      )}
     </>
   );
 

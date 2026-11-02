@@ -3,20 +3,17 @@ title: Tipuri de activitate cronologică
 description: Definiți evenimentele de audit automat și evenimentele de aplicație explicite care se execută în calendarele înregistrării.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Prezentare generală
+
 Un tip de activitate cronologică definește vocabularul stabil pentru un eveniment afișat într-un calendar al înregistrării. Obiectele standard și obiectele din aplicație utilizează același contract: un tip are o etichetă și o pictogramă, poate declara opțional când este emis, și pot reda opțional prin una dintre [componentele frontale](/ro/developers/extend/apps/layout/front-components).
 
 <Note>
-  Tipurile de activitate sunt în beta şi vor apărea în curând în 20 2,34. API-ul
-  poate evolua în timp ce învățăm din cazurile de utilizare a dezvoltatorilor de aplicații.
+  Tipurile de activități din cronologie sunt în versiune beta, API-ul poate evolua pe măsură ce învățăm din cazurile de utilizare ale dezvoltatorilor de aplicații.
 </Note>
 
-Creați unul cu caseta de teme:
-
-```bash filename="Terminal"
-yarn twenty dev:add timelineActivityType
-```
-
-Sau definește direct:
+Definește un tip de activitate din cronologie cu `defineTimelineActivityType` din `twenty-sdk/define`:
 
 ```ts filename="src/timeline-activity-types/post-card-created.ts"
 import { defineTimelineActivityType } from 'twenty-sdk/define';
@@ -72,6 +69,8 @@ export default defineTimelineActivityType({
 ```
 
 Un `updated` prin eveniment este emis implicit pentru fiecare actualizare sursă. Setați `emit.through.triggerFieldUniversalIdentifiers` când numai modificările câmpurilor sursă selectate ar trebui să apară în termenele țintă.
+
+Unui eveniment `linked` i se atribuie o marcă temporală în momentul în care este scris. Când înregistrarea-sursă are propriul moment în timp, setați `emit.through.happensAtFieldUniversalIdentifier` la un câmp `DATE_TIME` sau `DATE` din obiectul-sursă: cronologia fixează în schimb evenimentul la valoarea acelui câmp și îl urmărește atunci când valoarea se modifică. Evenimentele standard de e-mail și calendar ale Twenty folosesc aceasta pentru a se fixa la `receivedAt` și `startsAt`.
 
 Omiteți `emit` pentru un eveniment de domeniu explicit pe care funcția logică îl creează. Astfel se evită realizarea atât a unui rând automat de audit, cât și a unui rând explicit pentru aceeași operațiune.
 
@@ -166,18 +165,21 @@ mutation ResetTimelineActivityType($id: UUID!) {
 
 ## Câmpuri de configurare
 
-| Câmp                                              | Obligatoriu | Descriere                                                                          |
-| ------------------------------------------------- | ----------- | ---------------------------------------------------------------------------------- |
-| `universalIdentifier`                             | Da          | UUID stabil pentru tipul de instalații și modernizări                              |
-| `name`                                            | Da          | Nume programatic local aplicației; trebuie să fie unic în cadrul aplicației        |
-| `label`                                           | Da          | Text orientat către utilizator utilizat de către dispozitivul de redare nativă     |
-| `icon`                                            | Nu          | Douăzeci de nume afișate alături de eveniment                                      |
-| `emit`                                            | Nu          | Declarație de emisii automată; omit pentru tipuri numai explicite                  |
-| `emit.on`                                         | Cu emit     | Acțiuni de audit care fac ca acest tip să fie redactat                             |
-| `emit.objectUniversalIdentifier`                  | Cu emit     | Obiect ale cărui înregistrări emit de acest tip                                    |
-| `emit.through.relationFieldUniversalIdentifier`   | Nu          | Relaţia directă sau de joncţiune utilizată pentru ventilator la termenele aferente |
-| `emit.through.triggerFieldUniversalIdentifiers`   | Nu          | Câmpurile sursă care pot declanșa un `updated` prin eveniment                      |
-| `frontComponentUniversalIdentifier`               | Nu          | Componentă frontală deținută de aplicație montată când rândul este extins          |
-| `replacesTimelineActivityTypeUniversalIdentifier` | Nu          | Tipul de emit existent înlocuit; necesită `emit`                                   |
+| Câmp                                              | Obligatoriu | Descriere                                                                                                                                |
+| ------------------------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                             | Da          | UUID stabil pentru tipul de instalații și modernizări                                                                                    |
+| `name`                                            | Da          | Nume programatic local aplicației; trebuie să fie unic în cadrul aplicației                                                              |
+| `label`                                           | Da          | Text orientat către utilizator utilizat de către dispozitivul de redare nativă                                                           |
+| `icon`                                            | Nu          | Douăzeci de nume afișate alături de eveniment                                                                                            |
+| `emit`                                            | Nu          | Declarație de emisii automată; omit pentru tipuri numai explicite                                                                        |
+| `emit.on`                                         | Cu emit     | Acțiuni de audit care fac ca acest tip să fie redactat                                                                                   |
+| `emit.objectUniversalIdentifier`                  | Cu emit     | Obiect ale cărui înregistrări emit de acest tip                                                                                          |
+| `emit.through.relationFieldUniversalIdentifier`   | Nu          | Relaţia directă sau de joncţiune utilizată pentru ventilator la termenele aferente                                                       |
+| `emit.through.triggerFieldUniversalIdentifiers`   | Nu          | Câmpurile sursă care pot declanșa un `updated` prin eveniment                                                                            |
+| `emit.through.happensAtFieldUniversalIdentifier`  | Nu          | Câmpul de dată sursă utilizat ca marcaj temporal `happensAt` al evenimentului pentru evenimentele `linked`, în locul momentului scrierii |
+| `frontComponentUniversalIdentifier`               | Nu          | Componentă frontală deținută de aplicație montată când rândul este extins                                                                |
+| `replacesTimelineActivityTypeUniversalIdentifier` | Nu          | Tipul de emit existent înlocuit; necesită `emit`                                                                                         |
 
 Douăzeci de instantanee transformă identitatea semantică și prezentarea durabilă atunci când un eveniment este creat. Rândurile istorice păstrează acțiunea originală și semnificația obiectului. În timp ce tipul este instalat, eticheta curentă tradusă, pictograma și componenta frontală redare live; după dezinstalare, instantaneul face rândul să fie lizibil. Rezoluția folosește identificatorul universal, astfel încât prezentarea supraviețuiește și reinstalării aplicației.
+
+<PageBanner illustration="card-page-timeline" />

@@ -29,7 +29,12 @@ export const useMyConnectedAccounts = ({
 } = {}) => {
   const apolloClient = useApolloClient();
 
-  const { data, loading: accountsLoading } = useQuery<{
+  const {
+    data,
+    loading: accountsLoading,
+    error,
+    refetch,
+  } = useQuery<{
     myConnectedAccounts: CoreConnectedAccount[];
   }>(GET_MY_CONNECTED_ACCOUNTS, {
     client: apolloClient,
@@ -62,5 +67,7 @@ export const useMyConnectedAccounts = ({
     accounts,
     loading:
       accountsLoading || messageChannelsLoading || calendarChannelsLoading,
+    error,
+    refetch,
   };
 };

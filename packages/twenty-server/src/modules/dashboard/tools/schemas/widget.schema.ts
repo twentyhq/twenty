@@ -162,7 +162,8 @@ export const chartFilterSchema = z
   })
   .describe(
     'Filter restricting which records are included in this chart. All filtered fields must belong to the widget object.',
-  );
+  )
+  .meta({ id: 'chartFilter' });
 
 const displayDataLabelSchema = z.boolean().optional();
 const displayLegendSchema = z.boolean().optional();

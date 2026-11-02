@@ -2,6 +2,8 @@
 title: Устранение неполадок
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 ## Устранение неполадок
 
 Если вы столкнулись с какой-либо проблемой при настройке окружения для разработки, обновлении вашего экземпляра или самостоятельном хостинге,
@@ -102,7 +104,7 @@ npx nx worker twenty-server
 
 В большинстве случаев это происходит из-за того, что ваш администратор не включил лицензию Microsoft 365 для вашего аккаунта. Проверьте [https://admin.microsoft.com/](https://admin.microsoft.com/Adminportal/Home).
 
-Если вы получили код ошибки `AADSTS50020`, это, вероятно, означает, что вы используете личную учетную запись Microsoft. Это пока не поддерживается. Подробнее [здесь](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist).
+Если вы получили код ошибки `AADSTS50020`, это, вероятно, означает, что вы используете личную учетную запись Microsoft. Это пока не поддерживается. Подробнее [здесь](https://learn.microsoft.com/fr-fr/troubleshoot/entra/entra-id/app-integration/error-code-aadsts50020-user-account-identity-provider-does-not-exist)
 
 #### При запуске `yarn`, предупреждения появятся в консоли
 
@@ -167,7 +169,7 @@ plugins: [
 
 Запустите `UPDATE core."user" SET "canAccessFullAdminPanel" = ПОЛУЧИТЬ ЧЕЕ email = 'you@yourdomain.com';` в контейнере базы данных, чтобы получить доступ к панели администратора.
 
-#### При запуске рабочего процесса выполнение завершается ошибкой: "Выполнение логической функции отключено. Установите LOGIC_FUNCTION_TYPE в значение LOCAL или LAMBDA, чтобы их включить.
+#### При запуске рабочего процесса выполнение завершается ошибкой: "Выполнение логической функции отключено. Установите LOGIC_FUNCTION_TYPE в значение LOCAL или LAMBDA, чтобы их включить
 
 В производственной среде логические функции по умолчанию отключены. Установите переменную окружения `LOGIC_FUNCTION_TYPE` в `LOCAL` или `LAMBDA`, чтобы их включить. Это можно настроить через переменные окружения или через переменные базы данных в панели администратора. См. [руководство по настройке логических функций](/ru/developers/self-host/capabilities/setup#logic-functions-available-drivers) для получения подробной информации.
 
@@ -252,3 +254,5 @@ add_header X-Accel-Buffering no always;
 * Поддержка сообщества:
 
   Обратитесь к [сообществу Twenty](https://github.com/twentyhq/twenty/issues) или [каналам поддержки](https://discord.gg/cx5n4Jzs57) за помощью.
+
+<PageBanner illustration="card-page-bug-requests" />

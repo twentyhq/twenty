@@ -151,6 +151,7 @@ export class ConfigureMessageCampaignCommandMenuCommand extends ProvisionedWorks
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunLegacyWorkspaceMigration(
         {
+          shouldDeferActions: false,
           isSystemBuild: true,
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {

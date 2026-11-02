@@ -14,6 +14,7 @@ const DEFAULT_FIND_APPLICATION_REGISTRATION_MONITORING_GQL_FIELDS = `
   creditsUsed
   creditUsage {
     bucketStart
+    operationType
     creditsUsed
   }
   activity {

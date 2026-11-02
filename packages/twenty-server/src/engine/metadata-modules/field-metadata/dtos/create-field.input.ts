@@ -19,7 +19,7 @@ export class CreateFieldInput extends OmitType(
     'applicationId',
     'morphId',
     'universalIdentifier',
-    'writability',
+    'disabledFieldPermissionActions',
   ] as const,
   InputType,
 ) {

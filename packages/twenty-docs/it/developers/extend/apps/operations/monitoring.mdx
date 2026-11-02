@@ -1,0 +1,77 @@
+---
+title: Monitoraggio
+description: "Monitora il comportamento della tua app in ogni spazio di lavoro in cui viene installata: errori, limiti di frequenza, crediti, installazioni e prestazioni delle funzioni."
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## Panoramica
+
+Una volta installata la tua app in altri spazi di lavoro, devi sapere quando smette di funzionare. Twenty registra ciò che accade alla tua app sulla piattaforma e lo mostra in due punti:
+
+* **La pagina di monitoraggio** della registrazione della tua app, per te in qualità di proprietario dell'app, aggregata per tutte le installazioni.
+* **I log dello spazio di lavoro**, per gli amministratori di ogni spazio di lavoro che ha installato la tua app, limitati al proprio spazio di lavoro.
+
+```text
+   your app runs in workspace A, B, C …
+              │
+              ▼
+   platform events (function runs, installs, rate limits, route failures)
+              │
+      ┌───────┴────────────────────────┐
+      ▼                                ▼
+   Monitoring page (app owner)      Logs (each workspace admin)
+   all installs, aggregated         one workspace, row by row
+```
+
+## Apri la pagina di monitoraggio
+
+Vai a **Impostazioni → Sviluppatori → App**, apri la tua app, quindi fai clic su **Visualizza monitoraggio** nella scheda **Generale**. Devi disporre dell'autorizzazione **Chiavi API e webhook** nello spazio di lavoro proprietario della registrazione dell'app.
+
+Scegli un periodo nell'intestazione: ultime 2 ore, 24 ore, 7 giorni, 30 giorni o 90 giorni. I dati vengono conservati per **90 giorni**. Senza il diritto **Log di audit**, sono visibili solo le ultime 2 ore.
+
+## Cosa mostra la pagina
+
+| Sezione                                             | Cosa indica                                                                                                                               |
+| --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| **Stato di salute**                                 | Dati principali per il periodo e un grafico degli errori nel tempo.                                                                       |
+| **Limiti di frequenza**                             | Richieste API inviate dalla tua app che sono state rifiutate e job di trigger ignorati perché è stato raggiunto il limite di accodamento. |
+| **Crediti utilizzati**                              | Crediti consumati dalla tua app nel tempo. Visualizzato solo sui server con fatturazione abilitata.                                       |
+| **Principali errori e avvisi**                      | I problemi più frequenti, raggruppati per codice di errore e funzione, con il numero di installazioni interessate.                        |
+| **Installazioni, aggiornamenti e disinstallazioni** | Esecuzioni del ciclo di vita nel tempo e quante di esse non sono riuscite.                                                                |
+| **Versioni**                                        | Esecuzioni e errori per versione dell'app, per individuare una versione difettosa.                                                        |
+| **Funzioni**                                        | Esecuzioni, errori e durata del 95° percentile per ogni funzione logica.                                                                  |
+
+I conteggi sono esatti: vengono conteggiati ogni richiesta rifiutata e ogni job ignorato, anche quando i log riportati di seguito conservano solo una riga al minuto.
+
+## Cosa viene registrato
+
+Ogni evento seguente viene conteggiato nella pagina di monitoraggio. Ciascuno scrive anche i log dell'app nello spazio di lavoro in cui si è verificato, con una **origine** che indica da dove proviene:
+
+| Fonte            | Registrato quando                                                                                                                                                                                                                                                                                                                                       |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `LOGIC_FUNCTION` | Una funzione logica scrive una riga di log o non riesce, da qualsiasi trigger. Le esecuzioni che non registrano nulla e riescono vengono conteggiate nella pagina di monitoraggio, ma non lasciano alcuna riga di log.                                                                                                                                  |
+| `INSTALL`        | La tua app viene installata, con l'esito degli hook di installazione.                                                                                                                                                                                                                                                                                   |
+| `UPGRADE`        | La tua app viene aggiornata a una nuova versione.                                                                                                                                                                                                                                                                                                       |
+| `UNINSTALL`      | La tua app viene disinstallata.                                                                                                                                                                                                                                                                                                                         |
+| `API_RATE_LIMIT` | Una richiesta della tua app all'API viene rifiutata dalla limitazione della frequenza.                                                                                                                                                                                                                                                                  |
+| `JOB_RATE_LIMIT` | I job di trigger per le tue funzioni logiche vengono ignorati perché è stato raggiunto il limite di accodamento dei job.                                                                                                                                                                                                                                |
+| `SERVER_ROUTE`   | Una richiesta a una delle tue [route HTTP](/it/developers/extend/apps/tutorials/document-generator/http-routes) viene rifiutata o non riesce al di fuori della tua funzione, ad esempio per un metodo errato, un'autenticazione non riuscita o un errore della piattaforma. Gli errori generati dalla tua funzione vengono registrati in `LOGIC_FUNCTION`. |
+
+Gli errori relativi ai limiti di frequenza e alle route del server possono ripetersi molte volte al secondo, quindi i log conservano **una riga al minuto** per ogni installazione, funzione e codice di errore. La pagina di monitoraggio conta comunque ogni occorrenza.
+
+## Log dello spazio di lavoro
+
+Gli amministratori di uno spazio di lavoro che ha installato la tua app vedono gli stessi eventi, solo per il proprio spazio di lavoro, in **Impostazioni → Generale → Log**. Possono filtrare per origine, ad esempio per elencare solo gli errori `INSTALL` o i limiti di frequenza. Indirizza qui i tuoi utenti quando segnalano un problema: il codice e il messaggio di errore indicano dove cercare.
+
+Per il tuo server di sviluppo, `twenty app logs` trasmette in streaming i log delle funzioni in tempo reale nel terminale. Vedi [CLI](/it/developers/extend/apps/operations/cli#watching-function-logs).
+
+## Interpretare i segnali
+
+* **Gli errori aumentano subito dopo una versione**: confronta le versioni nella tabella **Versioni**, quindi correggi e pubblica una versione successiva. Consulta [Pubblicazione](/it/developers/extend/apps/operations/publishing).
+* **Le richieste API sono soggette a limiti di frequenza**: la tua app chiama l'API troppo spesso. Raggruppa in batch le letture e le scritture ed evita di chiamare l'API in cicli stretti.
+* **I job sono soggetti a limiti di frequenza**: i trigger di eventi del database o cron si attivano più velocemente di quanto i job possano essere accodati. Restringi il trigger, ad esempio con `updatedFields` su un trigger `databaseEvent`, oppure esegui il lavoro in meno esecuzioni, ma più grandi. Vedi [Funzioni logiche](/it/developers/extend/apps/logic/logic-functions).
+* **Errori di installazione o aggiornamento**: controlla i tuoi [hook di installazione](/it/developers/extend/apps/config/install-hooks). Il messaggio di errore viene registrato con l'errore.
+* **Funzioni lente**: una durata elevata del 95° percentile indica una funzione che vale la pena profilare o suddividere.
+
+<PageBanner illustration="card-page-monitoring" />

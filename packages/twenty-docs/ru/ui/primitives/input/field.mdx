@@ -1,0 +1,141 @@
+---
+title: Поле
+description: Свяжите элемент управления формы с его меткой, описанием и обратной связью при валидации.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import FieldReference from '/snippets/ui/generated/input/field.mdx';
+
+## Обзор
+
+Используйте `Field`, чтобы сгруппировать один элемент управления с его доступной меткой и вспомогательным текстом. Такие компоненты, как [Input](/ru/ui/primitives/input/input), напрямую интегрируются с полем.
+
+<StoryEmbed storyId="ui-input-field--display" title="Пример поля" height={180} />
+
+## Использование
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+export const EmailField = () => (
+  <Field.Root name="email" validationMode="onBlur">
+    <Field.Label>Work email</Field.Label>
+    <Input type="email" required placeholder="you@example.com" />
+    <Field.Description>
+      We send account updates to this address.
+    </Field.Description>
+    <Field.Error match="valueMissing">Enter your email address.</Field.Error>
+    <Field.Error match="typeMismatch">Enter a valid email address.</Field.Error>
+  </Field.Root>
+);
+```
+
+`Field.Root` управляет именем элемента управления, состоянием отключения и валидностью. `Field.Label` и `Field.Description` связывают своё содержимое с элементом управления. Настройте время валидации с помощью `validationMode`; для пользовательской валидации используйте `validate`.
+
+## Анатомия
+
+Поместите один элемент управления и его вспомогательные части внутрь `Field.Root`. Это дерево показывает поле, созданное с помощью стилизованного компонента `Input`.
+
+```text
+Field.Root
+├── Field.Label
+├── Input
+├── Field.Description
+└── Field.Error
+```
+
+| Часть                                                 | Требование                        | Назначение                                                                                               |
+| ----------------------------------------------------- | --------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| `Root`                                                | Обязательно                       | Использует с элементом управления общее имя, состояние отключения и проверку.                            |
+| `Item`                                                | Необязательно для групп           | Связывает каждую радиокнопку или флажок с собственной меткой и описанием.                                |
+| `Label`                                               | Рекомендуется                     | Предоставляет видимую связанную метку. Доступное имя требуется всегда.                                   |
+| `Input` или другой интегрированный элемент управления | Обязательно                       | Получает пользовательский ввод и подключается к полю.                                                    |
+| `Control`                                             | Альтернативный элемент управления | Предоставляет нестилизованный элемент ввода, когда вы не используете интегрированный элемент управления. |
+| `Description`                                         | Необязательно                     | Добавляет постоянный вспомогательный текст, связанный с элементом управления.                            |
+| `Ошибка`                                              | Необязательно                     | Показывает обратную связь для соответствующего состояния валидации.                                      |
+| `Validity`                                            | Необязательно                     | Предоставляет валидность через функцию рендеринга children.                                              |
+
+`Input` и `Textarea` уже интегрированы с полем. Поместите их непосредственно внутрь `Root`; они сами обеспечивают поведение элемента управления. Составные элементы управления, такие как [Выбор](/ru/ui/primitives/input/select#compose-with-a-field), сохраняют собственный корневой элемент и части внутри поля.
+
+## Внешние ошибки
+
+Используйте `invalid`, когда ваше приложение управляет состоянием ошибки. Явный `match` делает сообщение об ошибке видимым.
+
+```tsx
+import { Field, Input } from 'twenty-ui/primitives/input';
+
+type UsernameFieldProps = { error?: string };
+
+export const UsernameField = ({ error }: UsernameFieldProps) => (
+  <Field.Root name="username" invalid={Boolean(error)}>
+    <Field.Label>Username</Field.Label>
+    <Input autoComplete="username" />
+    <Field.Error match={Boolean(error)}>{error}</Field.Error>
+  </Field.Root>
+);
+```
+
+Формулируйте сообщения об ошибках так, чтобы было понятно, что делать, и добавляйте видимую метку, даже если у элемента управления есть заполнитель.
+
+## Сгруппированные элементы управления
+
+Используйте `Field.Item` внутри группы переключателей или флажков, чтобы связать каждый вариант с собственной меткой и описанием. Размещайте метку группы за пределами элементов. Элемент можно отключить независимо; отключённый `Field.Root` отключает все элементы.
+
+<StoryEmbed storyId="ui-input-field--grouped-items" title="Элементы поля" height={220} />
+
+```tsx
+import { Field, Radio, RadioGroup } from 'twenty-ui/primitives/input';
+import { Text } from 'twenty-ui/primitives/typography';
+
+export const NotificationsField = () => (
+  <Field.Root name="notifications">
+    <Field.Label>Notifications</Field.Label>
+    <RadioGroup defaultValue="important" style={{ gap: 16, marginTop: 12 }}>
+      <Field.Item style={{ display: 'flex', alignItems: 'start', gap: 12 }}>
+        <Radio value="important" />
+        <Text>
+          <Field.Label>Important updates</Field.Label>
+          <Field.Description>
+            Only messages that need your attention
+          </Field.Description>
+        </Text>
+      </Field.Item>
+      <Field.Item style={{ display: 'flex', alignItems: 'start', gap: 12 }}>
+        <Radio value="all" />
+        <Text>
+          <Field.Label>All updates</Field.Label>
+          <Field.Description>Every change to your records</Field.Description>
+        </Text>
+      </Field.Item>
+      <Field.Item
+        disabled
+        style={{ display: 'flex', alignItems: 'start', gap: 12 }}
+      >
+        <Radio value="digest" />
+        <Text>
+          <Field.Label>Daily digest</Field.Label>
+          <Field.Description>Coming soon</Field.Description>
+        </Text>
+      </Field.Item>
+    </RadioGroup>
+  </Field.Root>
+);
+```
+
+## Нативная интеграция и типы
+
+Field сохраняет время выполнения валидации Base UI, пользовательскую валидацию, значения управляемых и неуправляемых элементов управления, а также сведения о событиях изменения значений. `Validity` предоставляет результат валидации через функцию дочерних элементов. Интегрированные элементы управления сохраняют своё нативное поведение в форме.
+
+`Root`, `Item`, `Label`, `Control`, `Description` и `Error` передают нативные props, refs и композицию `render`. Их элементами по умолчанию являются div, div, label, input, paragraph и div соответственно. `Validity` не отображает собственный элемент.
+
+Импортируйте `FieldRootProps`, `FieldItemProps`, `FieldLabelProps`, `FieldControlProps`, `FieldDescriptionProps`, `FieldErrorProps` и `FieldValidityProps` из `twenty-ui/primitives/input` для контрактов соответствующих вышестоящих частей.
+
+## Свойства
+
+Справочник генерируется на основе публичных типов компонентов. Нативные атрибуты, включая доступные имена и обработчики событий, также принимаются в частях, рендерящих элементы.
+
+<FieldReference />
+
+<PageBanner illustration="page-cover-input" />

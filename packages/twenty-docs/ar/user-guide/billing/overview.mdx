@@ -1,18 +1,26 @@
 ---
 title: الفوترة
+sidebarTitle: نظرة عامة
 description: تعرّف على تسعير Twenty وأدِر اشتراكك.
 ---
 
-تقدّم Twenty خطط تسعير مرنة لتلبية احتياجات فريقك. أدِر اشتراكك، وتتبع أرصدة سير العمل، واطّلع على الفواتير — وكل ذلك من **Settings → Billing**.
+import { PageBanner } from "/snippets/page-banner.mdx"
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## ما الذي يتضمنه هذا القسم
 
-<CardGroup cols={2}>
-  <Card title="خطط التسعير" icon="tags" href="/ar/user-guide/billing/capabilities/pricing-plans">
-    تعرّف على خطط تسعير Twenty وما تتضمنه.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ar/user-guide/billing/capabilities/pricing-plans" img="/images/user-guide/halftone/card-page-pricing-plans.svg">
+    <CardTitle>خطط الأسعار</CardTitle>
+    تعرّف على خطط أسعار Twenty وما تتضمنه.
   </Card>
-  <Card title="الأسئلة الشائعة" icon="help-circle" href="/ar/user-guide/billing/how-tos/billing-faq">
-    أسئلة شائعة حول التسعير والفوترة.
+  <Card href="/ar/user-guide/billing/capabilities/usage-limits" img="/images/user-guide/halftone/card-page-usage-limits.svg">
+    <CardTitle>حدود الاستخدام</CardTitle>
+    حدّد سقف ما يمكن أن تنفقه مساحة العمل والأعضاء ومفاتيح API والتطبيقات.
+  </Card>
+  <Card href="/ar/user-guide/billing/how-tos/billing-faq" img="/images/user-guide/halftone/card-page-billing-faq.svg">
+    <CardTitle>الأسئلة الشائعة</CardTitle>
+    الأسئلة الشائعة حول الأسعار والفوترة.
   </Card>
 </CardGroup>
 
@@ -37,3 +45,5 @@ description: تعرّف على تسعير Twenty وأدِر اشتراكك.
 انتقل إلى **Settings → Billing** ثم انقر **Switch to Organization** أو **Switch to Yearly**.
 
 لمزيد من الأسئلة، راجع [الأسئلة الشائعة حول الفوترة](/ar/user-guide/billing/how-tos/billing-faq).
+
+<PageBanner illustration="billing" />

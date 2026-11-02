@@ -36,6 +36,10 @@ export class NavigationMenuItemDeletionListener {
         workspaceId: payload.workspaceId,
         deletedRecordIds,
       },
+      {
+        workspaceId: payload.workspaceId,
+        isWorkspaceJob: true,
+      },
     );
   }
 }

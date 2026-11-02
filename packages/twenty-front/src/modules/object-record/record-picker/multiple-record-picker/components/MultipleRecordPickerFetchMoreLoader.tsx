@@ -1,4 +1,5 @@
 import { t } from '@lingui/core/macro';
+import { useDropdownPage } from 'twenty-ui/components/navigation';
 import { useMultipleRecordPickerPerformSearch } from '@/object-record/record-picker/multiple-record-picker/hooks/useMultipleRecordPickerPerformSearch';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
 
@@ -36,6 +37,7 @@ const StyledIntersectionObserver = styled.div`
 
 export const MultipleRecordPickerFetchMoreLoader = () => {
   const store = useStore();
+  const { isActive } = useDropdownPage();
   const [
     multipleRecordPickerIsFetchingMore,
     setMultipleRecordPickerIsFetchingMore,
@@ -52,11 +54,6 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
 
   const multipleRecordPickerIsLoading = useAtomComponentStateValue(
     multipleRecordPickerIsLoadingComponentState,
-    componentInstanceId,
-  );
-
-  const multipleRecordPickerSearchFilter = useAtomComponentStateValue(
-    multipleRecordPickerSearchFilterComponentState,
     componentInstanceId,
   );
 
@@ -77,25 +74,38 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
         instanceId: componentInstanceId,
       }),
     );
+    const currentSearchFilter = store.get(
+      multipleRecordPickerSearchFilterComponentState.atomFamily({
+        instanceId: componentInstanceId,
+      }),
+    );
+    const isNewSearchPending =
+      currentPaginationState.searchFilter !== currentSearchFilter;
 
-    if (multipleRecordPickerIsLoading || !currentPaginationState.hasNextPage) {
+    if (
+      !isActive ||
+      multipleRecordPickerIsLoading ||
+      isNewSearchPending ||
+      !currentPaginationState.hasNextPage
+    ) {
       return;
     }
 
     await performSearch({
       multipleRecordPickerInstanceId: componentInstanceId,
-      forceSearchFilter: multipleRecordPickerSearchFilter,
+      forceSearchFilter: currentPaginationState.searchFilter,
       loadMore: true,
     });
   }, [
     componentInstanceId,
+    isActive,
     performSearch,
-    multipleRecordPickerSearchFilter,
     multipleRecordPickerIsLoading,
     store,
   ]);
 
   const { ref } = useInView({
+    skip: !isActive,
     onChange: useCallback(
       async (inView: boolean) => {
         if (inView) {
@@ -111,6 +121,7 @@ export const MultipleRecordPickerFetchMoreLoader = () => {
   });
 
   if (
+    !isActive ||
     !paginationState.hasNextPage ||
     multipleRecordPickerShouldShowInitialLoading ||
     multipleRecordPickerShouldShowSkeleton ||

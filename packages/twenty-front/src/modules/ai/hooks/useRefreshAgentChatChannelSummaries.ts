@@ -26,10 +26,7 @@ export const useRefreshAgentChatChannelSummaries = () => {
     }
 
     const summariesByChannelId = Object.fromEntries(
-      summaries.map(({ channelId, openCount, hasUnreadOpen }) => [
-        channelId,
-        { openCount, hasUnreadOpen },
-      ]),
+      summaries.map(({ channelId, ...summary }) => [channelId, summary]),
     );
 
     // Most chat changes leave the counts as they were

@@ -3,15 +3,23 @@ title: Servicii de implementare
 description: Indiferent dacă ai nevoie de ajutor pentru a începe sau pentru a crea personalizări avansate, avem o soluție.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { CardTitle } from "/snippets/card-title.mdx"
+
 ## Parteneri de implementare
 
 Colaborați cu partenerii Twenty certificați pentru personalizări avansate, integrări și asistență dedicată pentru implementare.
 
-<CardGroup cols={2}>
-  <Card title="Răsfoiți partenerii certificați" icon="search" href="https://twenty.com/partners/list?ref=docs-implementation-services">
-    Găsiți un partener și contactați-l direct — filtrați după regiune, limbă și expertiză.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="https://twenty.com/partners/list?ref=docs-implementation-services" img="/images/user-guide/halftone/community-certified-partners.svg">
+    <CardTitle>Răsfoiește parteneri certificați</CardTitle>
+    Găsește un partener și accesează direct — filtrează după regiune, limbă și expertiză.
   </Card>
-  <Card title="Potriviți de Twenty" icon="mail" href="mailto:contact@twenty.com">
-    Spuneți-ne de ce aveți nevoie și vă vom pune în legătură cu partenerul potrivit.
+  <Card href="mailto:contact@twenty.com" img="/images/user-guide/halftone/community-partner-matching.svg">
+    <CardTitle>Primește corespondență cu 20</CardTitle>
+    Spune-ne ce ai nevoie și te vom conecta cu partenerul potrivit.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="community-certified-partners" />

@@ -1,0 +1,73 @@
+---
+title: LightButton
+description: Prezentați acțiuni ușoare cu accent standard sau subtil.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import LightButtonReference from '/snippets/ui/generated/components/input/light-button.mdx';
+
+## Prezentare generală
+
+Utilizați componenta partajată `LightButton` pentru o acțiune ușoară. Este compus din
+[Button](/ro/ui/primitives/input/button) cu o suprafață ghost, dimensiune mică, grosime
+normală a fontului și fără elevație.
+
+<StoryEmbed storyId="ui-components-lightbutton--display" title="Exemplu LightButton" height={100} />
+
+## Utilizare
+
+```tsx
+import { LightButton } from 'twenty-ui/components/input';
+
+export const FilterAction = () => <LightButton>Add filter</LightButton>;
+```
+
+## Opțiuni vizuale
+
+Comparați accentuarea standard și subtilă în stările obișnuite de acțiune.
+
+<StoryEmbed storyId="ui-components-lightbutton--catalog" title="Accentuarea și stările butonului light" height={230} />
+
+## Gestionarea stării
+
+`LightButton` utilizează modelul de stare al Button și nu adaugă nicio stare proprie. Aplicația ta furnizează `loading` și `disabled`; `emphasis` modifică doar aspectul. Consultați [exemplul de gestionare a stării pentru Button](/ro/ui/primitives/input/button#state-ownership) pentru gestionarea unei acțiuni asincrone. Nu există moduri de selecție controlate și necontrolate.
+
+## Accentuare și pictograme
+
+```tsx
+import { LightButton } from 'twenty-ui/components/input';
+import { IconPlus } from 'twenty-ui/icon';
+
+export const FilterActions = () => (
+  <LightButton emphasis="subtle" startIcon={<IconPlus />}>
+    Add filter
+  </LightButton>
+);
+```
+
+Valoarea implicită `emphasis="standard"` utilizează text neutru secundar.
+`emphasis="subtle"` utilizează text neutru terțiar pe suprafețe ghost, outline și soft
+. Culorile semantice și suprafețele solide își păstrează tratamentul de contrast.
+
+Suprascrieți `variant`, `color`, `size` sau `elevated` când este necesar.
+[ButtonGroup](/ro/ui/primitives/input/button-group) poate seta o dimensiune, o suprafață
+și o culoare comune. Aspectul explicit al elementului copil are prioritate față de grup, urmat de
+valorile implicite ale componentei. Accentul subtil nu înlocuiește culoarea semantică.
+
+## Interacțiune
+
+`LightButton` acceptă atributele native ale Button, referințe, handlere de evenimente, sloturi pentru pictograme
+, stările loading și disabled și compunerea de randare. Valoarea implicită nativă
+este `type="button"`. Setați `type="submit"` pentru trimitere sau utilizați `href` pentru un link.
+Furnizați `render` pentru a alege o rădăcină personalizată, inclusiv un link de router
+controlat de aplicație. Setați `nativeButton={false}` și `role="link"` pentru un renderer de navigare.
+Butoanele native personalizate mențin `nativeButton` la true.
+
+## Proprietăți
+
+<LightButtonReference />
+
+<PageBanner illustration="page-cover-pointer" />

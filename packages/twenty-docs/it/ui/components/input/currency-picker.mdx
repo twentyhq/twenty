@@ -1,0 +1,153 @@
+---
+title: CurrencyPicker
+description: Scegli una valuta con un selettore completo oppure componine le parti in un menu a discesa.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import CurrencyPickerReference from '/snippets/ui/generated/components/input/currency-picker.mdx';
+
+## Panoramica
+
+`CurrencyPicker` combina un trigger compatto per la valuta, opzioni ricercabili e un [menu a discesa](/it/ui/components/navigation/dropdown). Fornisci un catalogo di valute e usa un componente per la selezione ordinaria. Componi `Root`, `Trigger` e `Options` con Dropdown quando il popup richiede altri contenuti o pagine.
+
+<StoryEmbed storyId="ui-input-currencypicker--display" title="Selettore di valuta" height={420} />
+
+## Utilizzo
+
+Ogni valuta ha un `code` univoco, un `name` e proprietà `symbol` e `disabled` facoltative. Il codice è l'identificatore stabile della selezione. Il selettore non include un catalogo di valute né sceglie un valore predefinito dell'applicazione.
+
+```tsx
+import { CurrencyPicker } from 'twenty-ui/components/input';
+
+const CURRENCIES = [
+  { code: 'EUR', name: 'Euro', symbol: '€' },
+  { code: 'USD', name: 'US Dollar', symbol: '$' },
+];
+
+export const InvoiceCurrency = () => (
+  <CurrencyPicker
+    currencies={CURRENCIES}
+    defaultValue="USD"
+    aria-label="Invoice currency"
+    optionsProps={{
+      searchLabel: 'Search currencies',
+      emptyLabel: 'No currencies found',
+    }}
+    contentProps={{ width: 280 }}
+  />
+);
+```
+
+Usa `defaultValue` per la selezione non controllata. Per la selezione controllata, passa `value` e aggiornalo da `onValueChange`. Il callback riceve il codice successivo o `null` e i dettagli della selezione Dropdown contenenti `event`, `reason`, `trigger`, `cancel` e `isCanceled`. Chiama `details.cancel()` per mantenere la selezione corrente e lasciare aperto il popup. La selezione del codice corrente non emette un'altra modifica.
+
+`null` cancella la selezione. Una stringa vuota rimane un codice valido e non lo cancella. Un valore sconosciuto rimane invariato e appare come codice non elaborato nel trigger; non aggiunge un'opzione al catalogo. Un successivo aggiornamento controllato o una modifica del catalogo aggiorna il trigger e la riga selezionata.
+
+```tsx
+import { useState } from 'react';
+import { CurrencyPicker } from 'twenty-ui/components/input';
+import { Button } from 'twenty-ui/primitives/input';
+
+const CURRENCIES = [
+  { code: 'EUR', name: 'Euro' },
+  { code: 'USD', name: 'US Dollar' },
+];
+
+export const ClearableCurrency = () => {
+  const [value, setValue] = useState<string | null>('USD');
+
+  return (
+    <>
+      <CurrencyPicker
+        currencies={CURRENCIES}
+        value={value}
+        onValueChange={setValue}
+        aria-label="Invoice currency"
+        triggerProps={{ placeholder: 'Choose a currency' }}
+      />
+      <Button onClick={() => setValue(null)}>Clear currency</Button>
+    </>
+  );
+};
+```
+
+## Composizione avanzata
+
+`CurrencyPicker.Root` prepara il catalogo e gestisce la selezione per entrambe le parti. Non aggiunge alcun elemento DOM e deve trovarsi all'interno di `Dropdown.Root`. Mantieni `Trigger` e `Options` sotto la stessa radice del selettore, anche quando le opzioni risiedono in un'altra pagina del menu a discesa. I figli della funzione di rendering della radice espongono `value`, `selectedCurrency` e `disabled` per le etichette e i contenuti di supporto gestiti dal chiamante.
+
+```tsx
+import { CurrencyPicker } from 'twenty-ui/components/input';
+import { Dropdown } from 'twenty-ui/components/navigation';
+
+const CURRENCIES = [
+  { code: 'EUR', name: 'Euro' },
+  { code: 'USD', name: 'US Dollar' },
+];
+
+export const ComposedCurrency = () => (
+  <Dropdown.Root type="picker">
+    <CurrencyPicker.Root
+      currencies={CURRENCIES}
+      defaultValue="USD"
+      closeOnSelect={false}
+    >
+      {({ value }) => (
+        <>
+          <CurrencyPicker.Trigger
+            aria-label={`Invoice currency: ${value ?? 'none'}`}
+            placeholder="Choose a currency"
+          />
+          <Dropdown.Content aria-label="Invoice currency" width={280}>
+            <Dropdown.Title>Invoice currency</Dropdown.Title>
+            <CurrencyPicker.Options
+              searchLabel="Search currencies"
+              emptyLabel="No currencies found"
+            />
+          </Dropdown.Content>
+        </>
+      )}
+    </CurrencyPicker.Root>
+  </Dropdown.Root>
+);
+```
+
+Dropdown gestisce l'apertura, il posizionamento del popup, le pagine, la navigazione nella ricerca e lo stato attivo. Il selettore usa un gruppo di selezione Dropdown per i valori selezionati persistenti e la politica di chiusura. `Root.closeOnSelect` ha come valore predefinito `true`; usa `false` per lasciare aperto il popup dopo aver scelto una valuta. I tasti freccia, Home e Fine spostano lo stato attivo senza modificare il valore. Invio, Spazio o l'attivazione del puntatore selezionano un'opzione abilitata. Le valute disabilitate rimangono visibili e non possono essere selezionate.
+
+## Ricerca e ordinamento
+
+Le opzioni sono ricercabili per impostazione predefinita. La ricerca ignora gli spazi bianchi circostanti e trova corrispondenze tra codici, nomi, simboli e l'etichetta predefinita `Name (CODE)` senza distinzione tra maiuscole e minuscole, usando le stesse regole in ogni lingua del browser. `getSearchText` sulla radice sostituisce il testo ricercabile per ogni valuta. La personalizzazione della visualizzazione e il testo di ricerca sono indipendenti.
+
+I risultati mantengono l'ordine del catalogo. Imposta `selectedFirst` nella forma abbreviata o nella radice per spostare la valuta selezionata prima delle altre corrispondenze. Una query che la esclude rimuove anche la relativa riga. Un valore sconosciuto non crea un risultato selezionato. I risultati vuoti mostrano `emptyLabel` in una regione di stato.
+
+Imposta `Options.searchable={false}` per omettere il campo di ricerca. `Options.searchProps` si rivolge all'input di ricerca nativo, inclusi `ref`, `render`, gli attributi accessibili e `value` controllato o `defaultValue` non controllato. `searchProps.onValueChange` riceve la query. Nell'uso abbreviato, passa queste opzioni tramite `optionsProps`.
+
+Il campo di ricerca riceve lo stato attivo quando si apre un selettore ricercabile. Invio con una query non vuota attiva il primo risultato abilitato. Con una query vuota, sposta lo stato attivo su un'opzione prima di selezionarla. L'attivazione della ricerca durante la composizione IME e una nuova ricerca alla riapertura rimangono soggette ai contratti condivisi di ricerca e sessione di pagina di Dropdown.
+
+## Presentazione e destinazioni native
+
+Il trigger mostra il codice selezionato per impostazione predefinita. `renderValue` riceve `{ value, selectedCurrency, disabled }` per personalizzare tale visualizzazione senza cercare nuovamente la valuta. `Trigger.children` sostituisce la visualizzazione del valore e `Trigger.placeholder` fornisce la visualizzazione vuota. `getOptionLabel` personalizza il contenuto di ogni opzione, con l'etichetta predefinita `Name (CODE)`. I nomi delle valute, i simboli, le etichette e il contenuto delle opzioni sono di competenza del chiamante.
+
+Gli attributi del pulsante nativo della forma abbreviata, i gestori di eventi, `className`, `style`, `ref` e `render` si applicano al relativo trigger. `triggerProps` personalizza lo stesso pulsante. Usa `optionsProps` per il div wrapper delle opzioni e il relativo `searchProps` annidato per l'input. `contentProps` personalizza il popup di Dropdown. `open`, `defaultOpen` e `onOpenChange` coordinano lo stato di apertura della forma abbreviata.
+
+Nell'uso composto, gli attributi nativi, `ref` e `render` su `Trigger` si applicano al relativo pulsante, mentre quelli su `Options` si applicano al relativo div wrapper. `Options.listLabel` assegna un nome solo alla listbox di selezione interna. Inoltra le props e il ref forniti da un componente `render` personalizzato. Lo stile del wrapper non modifica la destinazione nativa dell'input.
+
+Imposta `disabled` nella forma abbreviata o nella radice per disabilitare apertura, ricerca e selezione. La prop `disabled` di una parte può inoltre disabilitare quella parte. La selezione è un valore del selettore; l'invio di moduli nativi, il ripristino, la convalida obbligatoria e l'integrazione con Field restano esterni a questa API.
+
+## Etichette e integrazione dell'applicazione
+
+`searchLabel` ha come valore predefinito `Search` e fornisce il segnaposto della ricerca e il nome accessibile. `emptyLabel` ha come valore predefinito `No results` e accetta contenuto. Fornisci dall'applicazione etichette sorgente localizzate, un nome accessibile per il trigger e qualsiasi segnaposto. Il contenuto Dropdown assume il nome del trigger, a meno che non sia denominato da un `Dropdown.Title` o da un'etichetta esplicita del contenuto. Per impostazione predefinita, la listbox di selezione assume il titolo Dropdown registrato o il nome del trigger. Imposta `Options.listLabel` per assegnare solo a quella listbox il proprio nome accessibile oppure passa `optionsProps.listLabel` nell'uso abbreviato. `aria-label` e `aria-labelledby` nativi su `Options` etichettano solo il relativo wrapper. Il trigger mantiene il proprio nome accessibile.
+
+L'applicazione gestisce la modifica dell'importo, l'archiviazione della valuta, la formattazione, il caricamento del catalogo e il relativo valore iniziale. Un adattatore deve mappare i codici valuta archiviati e il comportamento di cancellazione su `value` e `onValueChange`, preservando le regole di formattazione e fallback dell'applicazione. Mantieni nell'applicazione i nomi e le etichette delle valute tradotti.
+
+## Renderer del componente front-end
+
+I fixture sandbox di React e Preact coprono ricerca e selezione abbreviate e composte, controlli e opzioni disabilitati, ref dei trigger, cancellazione con null, aggiornamenti controllati esterni, riapertura e ripristino dello stato attivo con Esc. Verificano inoltre che la cancellazione di una query precedente e la digitazione di `$` preservino la query del simbolo.
+
+La visibilità, la geometria, lo scorrimento e la chiusura del popup dipendono dal supporto Dropdown e portale del renderer condiviso. Il selettore usa tale implementazione condivisa.
+
+## Props
+
+<CurrencyPickerReference />
+
+<PageBanner illustration="card-page-tutorial-http" />

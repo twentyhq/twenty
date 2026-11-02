@@ -256,6 +256,8 @@ export class ApplicationLifecycleJobService {
       (await this.workspaceQueueService.add<TData>(jobName, data, {
         id: jobIdPrefix,
         broadcastTo: { workspaceId },
+        workspaceId,
+        applicationUniversalIdentifier: universalIdentifier,
       })) ?? (await this.findInFlightJobId(jobIdPrefix));
 
     if (!isDefined(jobId)) {

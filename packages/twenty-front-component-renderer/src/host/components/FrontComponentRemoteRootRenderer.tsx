@@ -20,7 +20,16 @@ const PORTAL_LAYER_STYLE: CSSProperties = {
   contain: 'layout',
   zIndex: PORTAL_LAYER_Z_INDEX,
   pointerEvents: 'none',
-  clipPath: `inset(calc(-${FRONT_COMPONENT_PORTAL_MARGIN}px / var(--t-zoom, 1)))`,
+  overflow: 'clip',
+  boxSizing: 'content-box',
+  padding: `calc(${FRONT_COMPONENT_PORTAL_MARGIN}px / var(--t-zoom, 1))`,
+  margin: `calc(-${FRONT_COMPONENT_PORTAL_MARGIN}px / var(--t-zoom, 1))`,
+};
+
+const PORTAL_COORDINATE_STYLE: CSSProperties = {
+  contain: 'layout',
+  width: '100%',
+  height: '100%',
 };
 
 const PORTAL_CONTENT_STYLE: CSSProperties = {
@@ -49,8 +58,10 @@ export const FrontComponentRemoteRootRenderer = (
       {isNonEmptyArray(portalChildren) &&
         createPortal(
           <div ref={geometryTracker?.setPortalLayer} style={PORTAL_LAYER_STYLE}>
-            <div style={PORTAL_CONTENT_STYLE}>
-              {portalChildren.map((child) => renderRemoteNode(child, props))}
+            <div style={PORTAL_COORDINATE_STYLE}>
+              <div style={PORTAL_CONTENT_STYLE}>
+                {portalChildren.map((child) => renderRemoteNode(child, props))}
+              </div>
             </div>
           </div>,
           document.body,

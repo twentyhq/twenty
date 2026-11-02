@@ -14,6 +14,7 @@ import { ToastDecorator } from '~/testing/decorators/ToastDecorator';
 import { mockedApolloClient } from '~/testing/mockedApolloClient';
 
 const publicDomain = {
+  __typename: 'PublicDomain' as const,
   id: 'public-domain',
   domain: 'crm.example.com',
   createdAt: '2026-09-23T00:00:00.000Z',

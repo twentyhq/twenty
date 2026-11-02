@@ -1,5 +1,6 @@
 import { styled } from '@linaria/react';
 import { Plural, useLingui } from '@lingui/react/macro';
+import { type ReactNode } from 'react';
 import { Button } from 'twenty-ui/primitives/input';
 import { AlertDialog } from 'twenty-ui/primitives/surfaces';
 import { themeCssVariables } from 'twenty-ui/theme';
@@ -28,6 +29,7 @@ type AiChatApprovalConfirmationProps = {
   onConfirm: () => void;
   onCancel: () => void;
   disabled?: boolean;
+  selectionSummary?: ReactNode;
 };
 
 export const AiChatApprovalConfirmation = ({
@@ -35,6 +37,7 @@ export const AiChatApprovalConfirmation = ({
   onConfirm,
   onCancel,
   disabled = false,
+  selectionSummary,
 }: AiChatApprovalConfirmationProps) => {
   const { t } = useLingui();
   const cardCount = cards.length;
@@ -69,7 +72,8 @@ export const AiChatApprovalConfirmation = ({
                 />
               </AlertDialog.Title>
               <AlertDialog.Description>
-                {t`${selectedCount} records selected · ${skippedCount} records skipped`}
+                {selectionSummary ??
+                  t`${selectedCount} records selected · ${skippedCount} records skipped`}
               </AlertDialog.Description>
             </AlertDialog.Header>
             <AlertDialog.Body>

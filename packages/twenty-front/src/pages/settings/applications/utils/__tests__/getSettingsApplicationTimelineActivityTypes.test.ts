@@ -9,13 +9,19 @@ describe('getSettingsApplicationTimelineActivityTypes', () => {
         installedTimelineActivityTypes: [
           {
             applicationId: 'application-1',
-            emit: { on: 'created', objectUniversalIdentifier: 'object-1' },
+            emit: {
+              on: 'created',
+              objectUniversalIdentifier: 'object-1',
+              __typename: 'TimelineActivityTypeEmit',
+            },
             icon: 'IconPlus',
             id: 'type-1',
             isActive: false,
             label: 'Was created',
             name: 'record.created',
             universalIdentifier: 'universal-type-1',
+            __typename: 'TimelineActivityType',
+            frontComponentUniversalIdentifier: null,
           },
           {
             applicationId: 'application-2',
@@ -26,6 +32,8 @@ describe('getSettingsApplicationTimelineActivityTypes', () => {
             label: 'Was updated',
             name: 'record.updated',
             universalIdentifier: 'universal-type-2',
+            __typename: 'TimelineActivityType',
+            frontComponentUniversalIdentifier: null,
           },
         ],
         manifestTimelineActivityTypes: [],
@@ -33,7 +41,7 @@ describe('getSettingsApplicationTimelineActivityTypes', () => {
     ).toEqual([
       {
         action: 'created',
-        frontComponentUniversalIdentifier: undefined,
+        frontComponentUniversalIdentifier: null,
         icon: 'IconPlus',
         id: 'type-1',
         isActive: false,

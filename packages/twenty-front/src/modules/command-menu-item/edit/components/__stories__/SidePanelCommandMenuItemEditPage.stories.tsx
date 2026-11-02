@@ -43,6 +43,12 @@ const PINNED_COMMAND_MENU_ITEM: CommandMenuItemFieldsFragment = {
   availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
   availabilityObjectMetadataId: null,
   payload: null,
+  universalIdentifier: null,
+  applicationId: null,
+  coreWorkflowVersionId: null,
+  conditionalPinnedExpression: null,
+  navigationTargetObjectMetadataId: null,
+  pageLayoutId: null,
 };
 
 const OTHER_COMMAND_MENU_ITEM: CommandMenuItemFieldsFragment = {

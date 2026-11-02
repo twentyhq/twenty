@@ -27,6 +27,9 @@ export class MessagingMessageParticipantService {
     participants: ParticipantWithMessageId[],
     workspaceId: string,
     transactionScope: WorkspaceTransactionScope,
+    { shouldMatchOnDisplayName }: { shouldMatchOnDisplayName: boolean } = {
+      shouldMatchOnDisplayName: true,
+    },
   ): Promise<MessageParticipantWorkspaceEntity[]> {
     const authContext = buildSystemAuthContext(workspaceId);
 
@@ -51,14 +54,14 @@ export class MessagingMessageParticipantService {
           isDefined(participant.personId) ||
           isDefined(participant.workspaceMemberId);
 
-        // Caller-identified rows match on message, handle and role only: displayName can drift between deliveries
         const findExisting = (participant: ParticipantWithMessageId) =>
           existingParticipantsBasedOnMessageIds.find(
             (existingParticipant) =>
               existingParticipant.messageId === participant.messageId &&
               existingParticipant.handle === participant.handle &&
               existingParticipant.role === participant.role &&
-              (suppliesIdentity(participant) ||
+              (!shouldMatchOnDisplayName ||
+                suppliesIdentity(participant) ||
                 existingParticipant.displayName === participant.displayName),
           );
 
@@ -92,9 +95,14 @@ export class MessagingMessageParticipantService {
         // Without this a re-ingested participant would keep its original unlinked row forever
         const identityUpdates = participantsWithExisting.flatMap(
           ({ participant, existingParticipant }) => {
+            const shouldFillMissingDisplayName =
+              !shouldMatchOnDisplayName &&
+              !isNonEmptyString(existingParticipant?.displayName) &&
+              isNonEmptyString(participant.displayName);
+
             if (
               !isDefined(existingParticipant) ||
-              !suppliesIdentity(participant)
+              (!suppliesIdentity(participant) && !shouldFillMissingDisplayName)
             ) {
               return [];
             }

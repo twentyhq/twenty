@@ -14,6 +14,11 @@ const TOOL_PART: AdminChatThreadMessagePart = {
   toolInput: '"Saved input"',
   toolOutput: '"Saved output"',
   state: 'output-available',
+  __typename: 'AdminChatMessagePart',
+  textContent: null,
+  reasoningContent: null,
+  toolCallId: null,
+  errorMessage: null,
 };
 
 const meta: Meta<typeof SettingsAdminChatToolCallPart> = {

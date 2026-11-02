@@ -1,0 +1,119 @@
+---
+title: Chip
+description: Afișează conținut compact deținut de apelant, cu sloturi opționale la început și la sfârșit.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+
+import ChipReference from '/snippets/ui/generated/data-display/chip.mdx';
+
+## Prezentare generală
+
+Utilizați `Chip` pentru referințe compacte la persoane, înregistrări sau fișiere. Utilizați [Etichetă](/ro/ui/primitives/data-display/tag) pentru categorii colorate și [Stare](/ro/ui/primitives/data-display/status) pentru stările fluxului de lucru.
+
+<StoryEmbed storyId="ui-data-display-chip--display" title="Exemplu de Chip" height={90} />
+
+## Utilizare
+
+```tsx
+import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
+
+export const AssigneeChip = () => (
+  <Chip
+    variant="soft"
+    startElement={
+      <Avatar name="Jane" size="sm" shape="circle" imageProps={{ alt: '' }} />
+    }
+  >
+    Jane
+  </Chip>
+);
+```
+
+Elementele copil acceptă text sau noduri. `startElement` și `endElement` acceptă avatare, pictograme sau alt conținut. `endElementDivider` adaugă un separator înaintea conținutului de la final. Chipul implicit este un `div`; sloturile sale pot conține o acțiune separată, în timp ce chipul însuși rămâne prezentational.
+
+Chip nu inserează niciodată o etichetă. Furnizați, când este necesar, o alternativă tradusă din aplicația dvs. Omiteți elementele copil pentru conținut alcătuit în întregime din sloturi. Un chip interactiv doar cu o pictogramă are nevoie de un nume accesibil furnizat de apelant.
+
+## Aspect
+
+<StoryEmbed storyId="ui-data-display-chip--catalog" title="Variante și dimensiuni ale chipului" height={200} />
+
+`size` acceptă `sm` sau `md`, cu înălțimi totale de 20px și 24px. `variant` acceptă `ghost`, `soft`, `solid`, `plain` sau `outline`; `ghost` este valoarea implicită. Chipurile simple nu au umplere în starea de repaus sau padding la început. Jetoanele cu contur au o bordură pronunțată de 1px, un fundal mai deschis în starea de repaus și o umplere interioară inline de 8px pe fiecare parte, cu aceeași înălțime totală ca celelalte variante. Jetoanele plain și outline pe care se poate face clic folosesc fundalurile ghost la trecere și apăsare, cursorul indicator și conturul de focalizare. Utilizați `shape="round"` pentru o pastilă, `weight="medium"` pentru accentuare și `color="secondary"` pentru text secundar.
+
+## Butoane și linkuri
+
+```tsx
+import { Avatar, Chip } from 'twenty-ui/primitives/data-display';
+
+type AssigneeActionProps = {
+  onOpenAssignee: () => void;
+  disabled?: boolean;
+};
+
+export const AssigneeAction = ({
+  onOpenAssignee,
+  disabled,
+}: AssigneeActionProps) => (
+  <Chip
+    render={<button type="button" disabled={disabled} />}
+    onClick={onOpenAssignee}
+    aria-label="Open Jane's record"
+    startElement={
+      <Avatar name="Jane" size="sm" shape="circle" imageProps={{ alt: '' }} />
+    }
+  >
+    Jane
+  </Chip>
+);
+```
+
+Furnizarea `onClick` păstrează elementul `div` implicit. Utilizați `render` pentru a compune un buton nativ explicit, o ancoră, un link de router sau un alt element proprietar adecvat. Atributele native, handler-ele, stilurile și referința rădăcină ajung la acel element proprietar. Un buton nativ oferă activare de la tastatură și comportament dezactivat. Chip recunoaște starea nativă dezactivată și `aria-disabled` pentru aspect; `aria-disabled` singur nu împiedică activarea.
+
+`clickable` controlează aspectul la survolare și al indicatorului și, implicit, depinde de furnizarea lui `onClick`. Setați-l explicit pentru un link fără handler de clic. Nu imbricați butoane sau linkuri într-un chip care este el însuși interactiv.
+
+```tsx
+import { Chip } from 'twenty-ui/primitives/data-display';
+
+export const DocumentationChip = () => (
+  <Chip
+    variant="outline"
+    shape="round"
+    render={<a href="https://twenty.com/developers" />}
+    clickable
+  >
+    Documentation
+  </Chip>
+);
+```
+
+Textul URL rămâne text simplu. Linkurile intenționate aparțin conținutului apelantului sau compoziției explicite a rădăcinii.
+
+## Trunchiere și indicii informative
+
+```tsx
+import { Chip } from 'twenty-ui/primitives/data-display';
+
+export const FileChip = () => (
+  <Chip variant="soft" maxWidth={180} tooltipPlace="top">
+    Quarterly customer research.pdf
+  </Chip>
+);
+```
+
+`maxWidth` limitează lățimea chipului redat în pixeli, inclusiv spațierea interioară și orice bordură de contur. Aceeași limită se aplică cipului simplu cu spațiere interioară asimetrică. Conținutul este trunchiat implicit cu puncte de suspensie; `truncate={false}` îl lasă neconstrâns de trunchiere. Elementele copil de tip șir furnizează propriul text pentru indiciul informativ. Setați `tooltipContent` pentru text personalizat sau conținut de tip nod, `tooltipDelay` pentru întârzierea la deschidere și `isTooltipMultiline` pentru a păstra întreruperile de linie. `alwaysShowTooltip` activează, de asemenea, indiciul informativ atunci când conținutul încape. Aceste opțiuni urmează [OverflowingTextWithTooltip](/ro/ui/primitives/typography/overflowing-text-with-tooltip). Păstrați informațiile esențiale disponibile fără a vă baza pe trecerea cursorului.
+
+## Migrare
+
+Înlocuiți `emptyLabel` cu elemente copil de rezervă furnizate de apelant și înlocuiți `forceEmptyText` sau `isLabelHidden` cu elemente copil omise. Păstrați în aplicație alternativele traduse ale produsului. Înlocuiți `tooltipLabel` cu `tooltipContent`. Mutați `disabled` la elementul interactiv explicit și eliminați `nativeButton`. Adăugați un buton nativ sau un link prin `render` oriunde chipul se baza anterior pe `onClick` pentru a-și alege elementul.
+
+Înlocuiți suprascrierile spațierii interioare din partea inițială cu `variant="plain"`. Mențineți `clickable` activat pentru linkurile și butoanele native care necesită feedback la trecerea cursorului și la apăsare.
+
+## Proprietăți
+
+Tipurile și valorile implicite sunt generate din tipurile publice ale componentei. Sunt acceptate și atributele native, precum și gestionarele de evenimente.
+
+<ChipReference />
+
+<PageBanner illustration="page-cover-checkbox" />

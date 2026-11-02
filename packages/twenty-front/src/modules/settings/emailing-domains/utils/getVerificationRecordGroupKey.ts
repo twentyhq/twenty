@@ -11,7 +11,10 @@ export const getVerificationRecordGroupKey = ({
     return 'DMARC';
   }
 
-  if (recordName.endsWith(`unsubscribe.${domain}`)) {
+  if (
+    recordName.endsWith(`links.${domain}`) ||
+    recordName.endsWith(`unsubscribe.${domain}`)
+  ) {
     return 'UNSUBSCRIBE';
   }
 

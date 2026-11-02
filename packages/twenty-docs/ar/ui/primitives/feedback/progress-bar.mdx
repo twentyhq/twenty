@@ -1,0 +1,65 @@
+---
+title: ProgressBar
+description: اعرض تقدّمًا مقاسًا أو غير محدد بشريط أفقي.
+---
+
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+import { StoryEmbed } from '/snippets/ui/StoryEmbed.mdx';
+import ProgressBarReference from '/snippets/ui/generated/feedback/progress-bar.mdx';
+
+## نظرة عامة
+
+يوفر `ProgressBar` مظهرًا أفقيًا لـ [التقدم](/ar/ui/primitives/feedback/progress). يحافظ على العقد الكامل للجذر، بما في ذلك السمات الأصلية والمراجع وتركيب التصيير والتنسيق والنطاقات المخصصة والتقدم غير المحدد. أضف إليه `aria-label` يحدد العملية.
+
+<StoryEmbed storyId="ui-feedback-progressbar-progressbar--display" title="مثال على ProgressBar" height={100} />
+
+## استخدام
+
+```tsx
+import { ProgressBar } from 'twenty-ui/primitives/feedback';
+import { Text } from 'twenty-ui/primitives/typography';
+
+type ImportProgressProps = { importedRecords: number | null };
+
+export const ImportProgress = ({ importedRecords }: ImportProgressProps) => (
+  <Text style={{ display: 'grid', gap: 8, width: 300 }}>
+    <Text>Importing records: {importedRecords ?? 'preparing'}</Text>
+    <ProgressBar
+      value={importedRecords}
+      max={1000}
+      aria-label="Importing records"
+    />
+  </Text>
+);
+```
+
+## ملكية الحالة والنطاقات
+
+`value` مطلوب ويتحكم فيه التطبيق. لا يوجد وضع `defaultValue`. لا يبدأ المكوّن طلبًا ولا يقدّم التقدم من تلقاء نفسه. مرّر `null` عندما يكون التقدم غير معروف. تظل القيم غير المحدودة أيضًا غير محددة.
+
+القيمة الافتراضية لـ `min` هي `0`، والقيمة الافتراضية لـ `max` هي `100`. تُقيَّد القيم المحدودة ضمن النطاق للقيمة الدلالية والتعبئة المطبّعة. تملأ القيمة `70` ضمن النطاق من `20` إلى `120` نصف الشريط وتعرض `50%`، بينما يبقى `aria-valuenow` بقيمة `70`.
+
+<StoryEmbed storyId="ui-feedback-progressbar-progressbar--custom-range" title="حد أدنى غير صفري وحد أقصى مخصص" height={80} />
+
+استخدم `aria-valuetext` و`getAriaValueText` و`locale` و`format` كما هو موضح في [التقدم](/ar/ui/primitives/feedback/progress). استخدم أجزاء Progress المركّبة عندما تحتاج التسميات والقيم إلى تخطيط مرئي خاص بها.
+
+استخدم [Toast](/ar/ui/components/feedback/toast) للإشعارات التي تتضمن عدًّا تنازليًا للإغلاق وإيقافًا مؤقتًا عند التمرير.
+
+## المظهر والتركيب
+
+يختار `size` مسارًا بحجم 6px أو 8px. يقبل `barColor` و`backgroundColor` ألوان CSS، بما في ذلك متغيرات النسق. يجعل `withBorderRadius` المسار والمؤشر مستديرين. يحافظ `withMinimumFillWidth` على تعبئة جمالية صغيرة بين الحد الأدنى والإكمال فقط. لا يتجاوز هذا الحد الأدنى 12px ونصف عرض المسار، لذا يظل المسار الضيق يميّز التقدم غير المكتمل عن الإكمال. لا يملأ شريطًا فارغًا ولا يغيّر القيم الدلالية.
+
+تستهدف السمات الأصلية و`className` و`style` و`ref` العنصر الجذر. يمكن أن يتلقى `className` و`style` حالة التقدم. يمكن لـ `render` استبدال العنصر الجذر مع الحفاظ على دلالاته. للتقدم غير المحدد مظهره الخاص دون عرض نسبة مئوية رقمية. تعطّل تفضيلات تقليل الحركة انتقالات التعبئة والحركة غير المحددة.
+
+ركّب [أجزاء Progress](/ar/ui/primitives/feedback/progress) للتخطيطات المخصصة أو الرسوم المتحركة الخاصة بالميزات. تنتمي توقيتات الميزات، وتأثير الظهور التدريجي، واللمعان، والنوابض، واستدعاءات الإكمال إلى تركيب التطبيق.
+
+## الترحيل
+
+استبدل `ariaLabel` بـ `aria-label` الأصلي. تمت إزالة الخصائص `withGrowIn` و`withGlint` و`withSpringFill` و`onGrowInComplete`. نفّذ مظهرها وتوقيتها واستدعاءات الإكمال في تركيب التطبيق باستخدام [أجزاء Progress](/ar/ui/primitives/feedback/progress). يبقى `onAnimationEnd` الأصلي متاحًا على العنصر الجذر.
+
+## الخصائص
+
+<ProgressBarReference />
+
+<PageBanner illustration="card-page-usage-limits" />

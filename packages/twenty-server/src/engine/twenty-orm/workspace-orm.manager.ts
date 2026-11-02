@@ -2,8 +2,8 @@ import {
   PermissionsException,
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
-} from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
+} from 'src/engine/permissions/permissions.exception';
+import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
 import { isValidationRuleEnforcementEnabled } from 'src/engine/twenty-orm/utils/is-validation-rule-enforcement-enabled.util';
 import { Injectable, type Type } from '@nestjs/common';
 
@@ -24,11 +24,14 @@ import {
   withWorkspaceContext,
   getWorkspaceContext,
 } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
-import type { RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config.type';
+import type { RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { WorkspaceDataSourceService } from 'src/engine/twenty-orm/datasource/workspace-data-source.service';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { convertClassNameToObjectMetadataName } from 'src/engine/workspace-manager/utils/convert-class-to-object-metadata-name.util';
+import { hasWorkspaceMemberBoundPredicates } from 'src/engine/permissions/rls/utils/has-workspace-member-bound-predicates.util';
+import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
+import { type FlatRowLevelPermissionPredicateMaps } from 'src/engine/metadata-modules/row-level-permission-predicate/types/flat-row-level-permission-predicate-maps.type';
 
 @Injectable()
 export class WorkspaceOrmManager {
@@ -145,10 +148,10 @@ export class WorkspaceOrmManager {
       featureFlagsMap,
       billingEntitlements,
       rolesPermissions: permissionsPerRoleId,
-      roleIdsWithAllRecordsAccess,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
       flatRoleTargetByAgentIdMaps,
+      flatApplicationMaps,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -158,16 +161,22 @@ export class WorkspaceOrmManager {
       'featureFlagsMap',
       'billingEntitlements',
       'rolesPermissions',
-      'roleIdsWithAllRecordsAccess',
       'userWorkspaceRoleMap',
       'apiKeyRoleMap',
       'flatRoleTargetByAgentIdMaps',
+      'flatApplicationMaps',
       'flatRowLevelPermissionPredicateMaps',
       'flatRowLevelPermissionPredicateGroupMaps',
     ]);
 
     const { idByNameSingular: objectIdByNameSingular } =
       buildObjectIdByNameMaps(flatObjectMetadataMaps);
+
+    const flatWorkspaceMemberMaps =
+      await this.loadWorkspaceMemberMapsForRowLevelPermissions({
+        workspaceId,
+        flatRowLevelPermissionPredicateMaps,
+      });
 
     const flatValidationRuleMaps = isValidationRuleEnforcementEnabled({
       featureFlagsMap,
@@ -189,16 +198,38 @@ export class WorkspaceOrmManager {
       flatIndexMaps,
       flatRowLevelPermissionPredicateMaps,
       flatRowLevelPermissionPredicateGroupMaps,
+      flatWorkspaceMemberMaps,
       flatValidationRuleMaps,
       objectIdByNameSingular,
       featureFlagsMap,
       billingEntitlements,
       permissionsPerRoleId,
-      roleIdsWithAllRecordsAccess,
       userWorkspaceRoleMap,
       apiKeyRoleMap,
       flatRoleTargetByAgentIdMaps,
+      flatApplicationMaps,
     };
+  }
+
+  private async loadWorkspaceMemberMapsForRowLevelPermissions({
+    workspaceId,
+    flatRowLevelPermissionPredicateMaps,
+  }: {
+    workspaceId: string;
+    flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
+  }): Promise<FlatWorkspaceMemberMaps | undefined> {
+    if (
+      !hasWorkspaceMemberBoundPredicates(flatRowLevelPermissionPredicateMaps)
+    ) {
+      return undefined;
+    }
+
+    const { flatWorkspaceMemberMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatWorkspaceMemberMaps',
+      ]);
+
+    return flatWorkspaceMemberMaps;
   }
 
   private async loadLiteWorkspaceContext(
@@ -242,10 +273,10 @@ export class WorkspaceOrmManager {
       featureFlagsMap: {} as ORMWorkspaceContext['featureFlagsMap'],
       billingEntitlements,
       permissionsPerRoleId: {},
-      roleIdsWithAllRecordsAccess: [],
       userWorkspaceRoleMap: {},
       apiKeyRoleMap: {},
       flatRoleTargetByAgentIdMaps: {},
+      flatApplicationMaps: { byId: {}, idByUniversalIdentifier: {} },
     };
   }
 }

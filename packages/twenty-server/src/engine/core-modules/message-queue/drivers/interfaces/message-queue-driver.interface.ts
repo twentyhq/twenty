@@ -4,6 +4,8 @@ import {
   type QueueCronJobOptions,
   type QueueJobOptions,
   type QueueJobRecipient,
+  type QueueJobScope,
+  type QueueJobSettings,
 } from 'src/engine/core-modules/message-queue/drivers/interfaces/job-options.interface';
 import {
   type MessageQueueJob,
@@ -18,13 +20,13 @@ export interface MessageQueueDriver {
     queueName: MessageQueue,
     jobName: string,
     data: T,
-    options?: QueueJobOptions,
+    options: QueueJobOptions,
   ): Promise<string | undefined>;
   bulkAdd<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     jobName: string,
     jobs: QueueJobToAdd<T>[],
-    options?: QueueJobOptions,
+    options?: QueueJobSettings,
   ): Promise<string[]>;
   work<T extends MessageQueueJobData>(
     queueName: MessageQueue,
@@ -67,7 +69,7 @@ export interface MessageQueueDriver {
 export type QueueJobToAdd<T extends MessageQueueJobData> = {
   data: T;
   jobId?: string;
-};
+} & QueueJobScope;
 
 export type QueueJobDetails<T extends MessageQueueJobData> = {
   id: string;

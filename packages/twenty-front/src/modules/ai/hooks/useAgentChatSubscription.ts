@@ -6,6 +6,7 @@ import { agentChatLiveReactionRevisionsFamilyState } from '@/ai/states/agentChat
 import { agentChatFetchedMessagesFamilyState } from '@/ai/states/agentChatFetchedMessagesFamilyState';
 import { agentChatQueuedMessagesFamilyState } from '@/ai/states/agentChatQueuedMessagesFamilyState';
 import { useRefreshAgentChatThreads } from '@/ai/hooks/useRefreshAgentChatThreads';
+import { useRefreshAiChatUsage } from '@/ai/hooks/useRefreshAiChatUsage';
 import { isChatAccessDenied } from '@/ai/utils/isChatAccessDenied';
 import { useEffect, useState } from 'react';
 import { t } from '@lingui/core/macro';
@@ -40,6 +41,7 @@ import { createMidStreamAdapter } from '@/ai/utils/createMidStreamAdapter';
 import { createStreamChunkSequencer } from '@/ai/utils/createStreamChunkSequencer';
 import { getAgentChatMessageThreadTitle } from '@/ai/utils/getAgentChatMessageThreadTitle';
 import { upsertAgentChatMessage } from '@/ai/utils/upsertAgentChatMessage';
+import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
@@ -61,6 +63,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
   const { refreshAgentChatThreadPermissions } =
     useRefreshAgentChatThreadPermissions();
   const { refreshAgentChatThreads } = useRefreshAgentChatThreads();
+  const { refreshAiChatUsage } = useRefreshAiChatUsage();
   const { applyAgentChatThreadUpdate } = useApplyAgentChatThreadUpdate();
   const sseClient = useAtomStateValue(sseClientState);
   const [resubscribeNonce, setResubscribeNonce] = useState(0);
@@ -336,6 +339,16 @@ export const useAgentChatSubscription = (threadId: string | null) => {
           store.set(isStreamingAtom, false);
           break;
         }
+
+        case 'user-credits-exhausted': {
+          if (
+            event.workspaceMemberId ===
+            store.get(currentWorkspaceMemberState.atom)?.id
+          ) {
+            refreshAiChatUsage();
+          }
+          break;
+        }
       }
     };
 
@@ -484,6 +497,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     store,
     refreshAgentChatThreads,
     refreshAgentChatThreadPermissions,
+    refreshAiChatUsage,
     applyAgentChatThreadUpdate,
     currentUserWorkspace,
   ]);

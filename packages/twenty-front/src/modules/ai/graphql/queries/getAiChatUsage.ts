@@ -8,5 +8,10 @@ export const GET_AI_CHAT_USAGE = gql`
       periodEnd
       kind
     }
+    aiChatUserCreditsUsage {
+      limitValue
+      consumedValue
+      periodEnd
+    }
   }
 `;

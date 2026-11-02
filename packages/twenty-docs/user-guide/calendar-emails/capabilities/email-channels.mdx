@@ -1,0 +1,164 @@
+---
+title: Email Channels
+description: Give your team one shared address, then add replies and campaigns when you need them.
+---
+
+An email channel connects a shared address, such as `support@yourcompany.com`, to your workspace. Every message it receives is linked to the right people and companies, so your whole team sees the full conversation.
+
+## How email channels work
+
+You set up a channel in up to three stages. Stage 1 gives you a shared inbox. Stages 2 and 3 are optional and only needed if you want to send from the channel's domain.
+
+| Stage                 | What it unlocks                     | What you set up                         | DNS changes |
+| --------------------- | ----------------------------------- | --------------------------------------- | ----------- |
+| **1. Receive email**  | A shared inbox in Twenty            | A forwarding rule at your mail provider | None        |
+| **2. Reply**          | Replies from the shared address     | Five authentication records             | Yes         |
+| **3. Send campaigns** | Campaigns from the channel's domain | Two unsubscribe records                 | Yes         |
+
+Stage 3 builds on stage 2. Stage 1 is independent: you can send campaigns from a domain without forwarding its inbox to Twenty.
+
+## Before you begin
+
+Make sure you have:
+
+- The **Workspace settings** permission in Twenty.
+- Access to the forwarding settings at your mail provider, such as Microsoft 365 or Google Workspace, for stage 1.
+- Access to your DNS provider, such as Cloudflare or GoDaddy, for stages 2 and 3.
+
+## Stage 1: Receive email
+
+Your mail provider forwards a copy of every incoming message to a private address that Twenty creates for the channel.
+
+<Steps>
+  <Step title="Create the channel">
+    Go to **Settings → Communication** and click **Add email channel**. Enter
+    the shared address and the display name people see, then click **Save**.
+  </Step>
+  <Step title="Copy the forwarding address">
+    Twenty shows a **Forwarding address** ending in `@inbound.twenty.com`. Click
+    **Copy**.
+  </Step>
+  <Step title="Turn on forwarding at your mail provider">
+    Follow the guide for [Microsoft
+    365](/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-microsoft-365),
+    [Google
+    Workspace](/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-google-workspace)
+    or [any other
+    provider](/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-any-mail-provider).
+  </Step>
+  <Step title="Send a test email">
+    Send a message to the shared address from an outside account. It appears in
+    Twenty within a couple of minutes.
+  </Step>
+</Steps>
+
+Your shared inbox is ready. If you only need to read and track conversations, you can stop here.
+
+## Stage 2: Reply from the shared address
+
+Gmail, Outlook and other providers only deliver mail sent on behalf of your domain once you prove you own it. You do that by adding DNS records.
+
+<Steps>
+  <Step title="Open the sending domain">
+    In **Settings → Communication**, open the channel and scroll to **Sending
+    domain**.
+  </Step>
+  <Step title="Add the authentication records">
+    At your DNS provider, add the records listed under **Domain
+    authentication**: three `CNAME` records ending in `._domainkey`, plus an
+    `MX` and a `TXT` record on `twenty-bounce`. If Twenty also suggests a DMARC
+    record, add it too.
+  </Step>
+  <Step title="Verify">
+    Click **Check verification**. **Domain authentication** changes to
+    **Verified** once Twenty finds the records, usually within an hour and at
+    most 48 hours.
+  </Step>
+</Steps>
+
+<img
+  src="/images/user-guide/email-campaigns/sending-domain-records.png"
+  style={{ width: '100%' }}
+/>
+
+Your team can now reply from the shared address. For provider-specific instructions, see [Set up a sending domain](/user-guide/email-campaigns/how-tos/set-up-a-sending-domain).
+
+<Note>
+  Not planning to send campaigns? Skip stage 3. The **Unsubscribe link** row
+  stays **Pending**, which has no effect on replies.
+</Note>
+
+## Stage 3: Send campaigns
+
+Every campaign includes an unsubscribe link. Twenty hosts the unsubscribe page on your own domain, such as `links.yourcompany.com`, so recipients see your brand rather than ours.
+
+<Steps>
+  <Step title="Add the unsubscribe records">
+    In the same **Sending domain** section, add the two `CNAME` records listed
+    under **Unsubscribe link**: one on `links` and one on
+    `_acme-challenge.links`.
+  </Step>
+  <Step title="Verify">
+    Click **Check verification**. **Unsubscribe link** changes to **Verified**,
+    usually within an hour. It can take a little longer than stage 2 because
+    Twenty also issues a security certificate for the page.
+  </Step>
+</Steps>
+
+Twenty only sends a campaign once both **Domain authentication** and **Unsubscribe link** show **Verified**.
+
+## Frequently asked questions
+
+<AccordionGroup>
+  <Accordion title="Do I need to change DNS to use a shared inbox?">
+    No. Stage 1 only needs a forwarding rule at your mail provider. DNS records
+    are only needed to send from the channel's domain.
+  </Accordion>
+  <Accordion title="Why does the Unsubscribe link stay Pending?">
+    If you have not added the unsubscribe records, that is expected and only
+    blocks campaigns. If you have added them, check that both `CNAME` records
+    exist and wait up to an hour. On Cloudflare, set both records to **DNS
+    only**.
+  </Accordion>
+  <Accordion title="Can I send campaigns without forwarding the inbox?">
+    Yes. Campaigns only need stages 2 and 3. Forwarding is what brings incoming
+    mail into Twenty.
+  </Accordion>
+  <Accordion title="Can I use the same domain in two workspaces?">
+    No. A domain can be verified in one workspace only. Twenty tells you if it
+    is already in use elsewhere.
+  </Accordion>
+</AccordionGroup>
+
+## Related articles
+
+<CardGroup cols={2}>
+  <Card
+    title="Forward a shared inbox"
+    icon="inbox"
+    href="/user-guide/calendar-emails/how-tos/forward-a-shared-inbox-from-any-mail-provider"
+  >
+    Set up forwarding for any mail provider.
+  </Card>
+  <Card
+    title="Set up a sending domain"
+    icon="globe"
+    href="/user-guide/email-campaigns/how-tos/set-up-a-sending-domain"
+  >
+    Add and verify each DNS record, provider by provider.
+  </Card>
+  <Card
+    title="Email Campaigns"
+    icon="paper-plane"
+    href="/user-guide/email-campaigns/overview"
+  >
+    Learn what campaigns can do for your sales team.
+  </Card>
+  <Card
+    title="Send your first campaign"
+    icon="envelope-open-text"
+    href="/user-guide/email-campaigns/how-tos/send-your-first-campaign"
+  >
+    Build a list, write the email and send it.
+  </Card>
+</CardGroup>

@@ -1,8 +1,6 @@
 import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Query } from '@nestjs/graphql';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
-
 import { AdminResolver } from 'src/engine/api/graphql/graphql-config/decorators/admin-resolver.decorator';
 import { ApplicationMonitoringService } from 'src/engine/core-modules/application/application-monitoring/application-monitoring.service';
 import { AdminApplicationMonitoringDTO } from 'src/engine/core-modules/application/application-monitoring/dtos/admin-application-monitoring.dto';
@@ -13,7 +11,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { AdminPanelGuard } from 'src/engine/guards/admin-panel-guard';
 import { AuthPrincipalGuard } from 'src/engine/guards/auth-principal.guard';
-import { FeatureFlagGuard } from 'src/engine/guards/feature-flag.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 
 @UsePipes(ResolverValidationPipe)
@@ -41,10 +38,7 @@ export class AdminApplicationMonitoringResolver {
     private readonly applicationMonitoringService: ApplicationMonitoringService,
   ) {}
 
-  @UseGuards(
-    AdminPanelGuard,
-    FeatureFlagGuard(FeatureFlagKey.IS_APPLICATION_MONITORING_ENABLED),
-  )
+  @UseGuards(AdminPanelGuard)
   @Query(() => AdminApplicationMonitoringDTO)
   async findAdminApplicationRegistrationMonitoring(
     @Args('id') applicationRegistrationId: string,

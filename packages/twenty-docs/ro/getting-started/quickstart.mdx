@@ -3,7 +3,10 @@ title: Ghid de pornire rapidă
 description: Pune Twenty în funcțiune în mai puțin de 5 minute — în cloud sau autogăzduit.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
+import { CardTitle } from "/snippets/card-title.mdx"
 
 ## Înregistrare
 
@@ -56,17 +59,23 @@ Folosește meniul Comandă (`Cmd+K` / `Ctrl+K`) pentru a importa Persoane, Compa
 
 ## Pașii următori
 
-<CardGroup cols={2}>
-  <Card title="Învață structura interfeței" icon="layout-columns" href="/ro/getting-started/core-concepts/layout">
-    Navigare, vizualizări, meniul Comandă, panou lateral.
+<CardGroup cols={2} className="documentation-card-group">
+  <Card href="/ro/getting-started/core-concepts/layout" img="/images/user-guide/halftone/layout-window-v1.svg">
+    <CardTitle>Învață structura</CardTitle>
+    Bară laterală, vizualizări, meniu de comenzi, panou lateral.
   </Card>
-  <Card title="Creează fluxuri de lucru" icon="bolt" href="/ro/user-guide/workflows/overview">
+  <Card href="/ro/user-guide/workflows/overview" img="/images/user-guide/halftone/workflows-belt-v1.svg">
+    <CardTitle>Creează Workflows</CardTitle>
     Automatizează-ți procesele de afaceri.
   </Card>
-  <Card title="Creează vizualizări" icon="table" href="/ro/user-guide/layout/overview">
+  <Card href="/ro/user-guide/views-pipelines/overview" img="/images/documentation/section-overview-icons-v1/views-pipelines.svg">
+    <CardTitle>Creează vizualizări</CardTitle>
     Tabel, kanban, calendar — filtrează și sortează-ți datele.
   </Card>
-  <Card title="Explorează API-ul" icon="plug" href="/ro/developers/extend/api">
-    Schemă per tenant pentru REST și GraphQL.
+  <Card href="/ro/developers/extend/api" img="/images/documentation/banner-icons-v2/dev-api.svg">
+    <CardTitle>Explorează API-ul</CardTitle>
+    REST și GraphQL cu schemă per tenant.
   </Card>
 </CardGroup>
+
+<PageBanner illustration="getting-started-quickstart" />

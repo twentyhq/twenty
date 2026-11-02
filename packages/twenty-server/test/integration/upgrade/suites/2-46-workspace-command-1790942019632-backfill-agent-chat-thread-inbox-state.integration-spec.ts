@@ -5,6 +5,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { type AddAgentChatThreadParticipantObjectCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1790942019631-add-agent-chat-thread-participant-object.command';
 import { type BackfillAgentChatThreadInboxStateCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1790942019632-backfill-agent-chat-thread-inbox-state.command';
+import { type AddAgentChatThreadSubscriptionsCommand } from 'src/database/commands/upgrade-version-command/2-46/2-46-workspace-command-1791322315043-add-agent-chat-thread-subscriptions.command';
 import { type UpgradeCommandRegistryService } from 'src/engine/core-modules/upgrade/services/upgrade-command-registry.service';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
@@ -44,7 +45,9 @@ type StoredParticipant = {
 describe('2-46 workspace commands - agent chat thread inbox state (integration)', () => {
   let objectCommand: AddAgentChatThreadParticipantObjectCommand;
   let backfillCommand: BackfillAgentChatThreadInboxStateCommand;
+  let subscriptionsCommand: AddAgentChatThreadSubscriptionsCommand;
   let workspaceOrmManager: WorkspaceOrmManager;
+  let seededParticipantColumns: string[];
 
   const sharedThreadId = randomUUID();
   const emptyThreadId = randomUUID();
@@ -62,7 +65,8 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
   const runCommand = (
     command:
       | AddAgentChatThreadParticipantObjectCommand
-      | BackfillAgentChatThreadInboxStateCommand,
+      | BackfillAgentChatThreadInboxStateCommand
+      | AddAgentChatThreadSubscriptionsCommand,
     direction: 'up' | 'down',
   ) =>
     workspaceOrmManager.executeInWorkspaceContext(
@@ -143,6 +147,18 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
       [threadIds],
     );
 
+  const listParticipantColumns = async (): Promise<string[]> => {
+    const columns: { column_name: string }[] =
+      await global.testDataSource.query(
+        `SELECT column_name FROM information_schema.columns
+         WHERE table_schema = $1 AND table_name = 'agentChatThreadParticipant'
+         ORDER BY column_name`,
+        [SCHEMA],
+      );
+
+    return columns.map(({ column_name }) => column_name);
+  };
+
   const readOwnerShares = async () => {
     const rows: { principalId: string; workspaceMemberId: string }[] =
       await global.testDataSource.query(
@@ -165,9 +181,14 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
       getAppProviderByClassName<BackfillAgentChatThreadInboxStateCommand>(
         'BackfillAgentChatThreadInboxStateCommand',
       );
+    subscriptionsCommand =
+      getAppProviderByClassName<AddAgentChatThreadSubscriptionsCommand>(
+        'AddAgentChatThreadSubscriptionsCommand',
+      );
     workspaceOrmManager = getAppProviderByClassName<WorkspaceOrmManager>(
       'WorkspaceOrmManager',
     );
+    seededParticipantColumns = await listParticipantColumns();
 
     // 2.47 dropped the column the 2.46 commands still read
     await global.testDataSource.query(
@@ -258,6 +279,8 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
   afterAll(async () => {
     await runCommand(objectCommand, 'up');
     await runCommand(backfillCommand, 'up');
+    // The object's down dropped the subscription fields the suites that follow use
+    await runCommand(subscriptionsCommand, 'up');
     await global.testDataSource.query(
       `DELETE FROM ${SCHEMA}."recordShare" share
        USING ${SCHEMA}."agentChatThreadParticipant" participant
@@ -283,6 +306,7 @@ describe('2-46 workspace commands - agent chat thread inbox state (integration)'
     await global.testDataSource.query(
       `ALTER TABLE ${SCHEMA}."agentMessage" DROP COLUMN IF EXISTS "isHidden"`,
     );
+    expect(await listParticipantColumns()).toEqual(seededParticipantColumns);
   });
 
   it('registers both commands in order for 2.46.0', () => {

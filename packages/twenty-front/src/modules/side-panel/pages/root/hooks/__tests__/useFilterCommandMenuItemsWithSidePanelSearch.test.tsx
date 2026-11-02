@@ -19,6 +19,12 @@ const buildMockItem = (
   overrides: Partial<CommandMenuItemFieldsFragment>,
 ): CommandMenuItemFieldsFragment => ({
   __typename: 'CommandMenuItem',
+  universalIdentifier: null,
+  applicationId: null,
+  coreWorkflowVersionId: null,
+  conditionalPinnedExpression: null,
+  navigationTargetObjectMetadataId: null,
+  pageLayoutId: null,
   id: 'default-id',
   workflowVersionId: null,
   frontComponentId: null,

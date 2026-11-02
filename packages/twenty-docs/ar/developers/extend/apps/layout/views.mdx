@@ -3,6 +3,10 @@ title: العروض
 description: قم بتوفير عروض محفوظة مُعدّة مسبقًا — ترتيب الأعمدة، المرشّحات، المجموعات — للكائنات في تطبيقك.
 ---
 
+import { PageBanner } from "/snippets/page-banner.mdx"
+
+## نظرة عامة
+
 يُعد **العرض** تكوينًا محفوظًا لكيفية عرض سجلات كائن معيّن: ما هي الحقول التي تظهر، وترتيبها، وما إذا كانت مرئية، وأي عوامل تصفية أو مجموعات مُطبَّقة. استخدم `defineView()` لتضمين عروض مُهيّأة مسبقًا مع تطبيقك.
 
 يتلقى كل كيان (object) تلقائيًا عرض قائمة رئيسي خاص به (جدول "All ..." الذي يفتحه عنصر التنقل `OBJECT`) يتم توفيره من الخادم — بما في ذلك الكيانات التي ينشئها تطبيقك، مع عمود واحد لكل حقل يعرّفه تطبيقك. تكون العروض (views) التي تعرّفها باستخدام `defineView()` دائمًا عروضا **إضافية** فوق ذلك العرض الافتراضي.
@@ -16,7 +20,7 @@ export default defineView({
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
   name: 'All example items',
   objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
-  icon: 'IconList',
+  icon: 'IconTable',
   position: 0,
   fields: [
     {
@@ -48,6 +52,7 @@ export default defineView({
 | `sorts`                                                                                                     | `{ fieldMetadataUniversalIdentifier, direction: ViewSortDirection.ASC \| DESC }[]`          | ترتيب الفرز الافتراضي.                                                                                                                                                                          |
 | `isCompact`                                                                                                 | `boolean`                                                                                   | عرض الصفوف بشكل مضغوط.                                                                                                                                                                          |
 | `mainGroupByFieldMetadataUniversalIdentifier` + `shouldHideEmptyGroups`                                     | —                                                                                           | تجميع السجلات (مثل أعمدة كانبان) حسب حقل معيّن.                                                                                                                                                 |
+| `groupLoadLimit`                                                                                            | `8` (افتراضي)، `25`، `50`، `100`                                                            | عدد السجلات التي تُحمَّل لكل مجموعة قبل "تحميل المزيد"، في عروض الجدول والقائمة المُجمَّعة. تقوم لوحات كانبان بتقسيم الصفحات حسب حجمها الخاص وتتجاهله.                                          |
 | `kanbanAggregateOperation`, `kanbanAggregateOperationFieldMetadataUniversalIdentifier`, `kanbanColumnWidth` | `AggregateOperations.*`                                                                     | تجميعات وأحجام أعمدة كانبان.                                                                                                                                                                    |
 | `calendarLayout`, `calendarFieldMetadataUniversalIdentifier`, `calendarEndFieldMetadataUniversalIdentifier` | `ViewCalendarLayout.DAY` / `WEEK` / `MONTH`                                                 | عروض التقويم: التخطيط، حقل التاريخ الذي يحدد موضع السجلات، وحقل تاريخ انتهاء اختياري.                                                                                                           |
 
@@ -69,6 +74,16 @@ filters: [
   },
 ],
 ```
+
+ثلاث خصائص اختيارية تُحسّن عامل التصفية:
+
+| الخاصية                                                            | الوصف                                                                                                                                                                                                    |
+| ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `subFieldName`                                                     | يستهدف جزءًا واحدًا من حقل مركب، مثل `amountMicros` في حقل `CURRENCY` أو `primaryLinkUrl` في حقل `LINKS`.                                                                                                |
+| `relationTargetFieldMetadataUniversalIdentifier`                   | في عامل تصفية على حقل `RELATION`، يكون هذا هو حقل الكائن ذي الصلة الذي تُقارن القيمة به، كما يعيّنه عامل التصفية المتقدم عند اختيار حقل من السجل ذي الصلة. اتركه خارجًا للتصفية على السجل ذي الصلة نفسه. |
+| `viewFilterGroupUniversalIdentifier` + `positionInViewFilterGroup` | ضع عامل التصفية في إحدى `filterGroups` الخاصة بالعرض (لكل منها `logicalOperator` بقيمة `AND` أو `OR` أو `NOT`، و`parentViewFilterGroupUniversalIdentifier` اختياري) ورتّبه ضمن تلك المجموعة.             |
+
+يعيد `twenty app pull` كتابة العناصر الثلاثة تمامًا كما خزّنتها مساحة العمل.
 
 ### المعاملات المدعومة حسب نوع الحقل
 
@@ -110,3 +125,5 @@ filters: [
 ## كيفية ظهور العروض في واجهة المستخدم
 
 لا يمكن الوصول إلى العرض بمفرده من الشريط الجانبي. لجعله يظهر هناك، قم بربطه مع [عنصر قائمة تنقّل](/ar/developers/extend/apps/layout/navigation-menu-items) من النوع `VIEW` يشير إلى قيمة `universalIdentifier` الخاصة بالعرض. هذا هو النمط القياسي: يحصل كل كائن مخصص على عرض فهرس افتراضي يُنشأ تلقائيًا عند الإنشاء، لذا لا يلزمك سوى تضمين عنصر الشريط الجانبي الذي يفتحه.
+
+<PageBanner illustration="card-page-views" />

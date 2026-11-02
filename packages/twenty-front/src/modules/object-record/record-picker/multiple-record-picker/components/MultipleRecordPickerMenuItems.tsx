@@ -1,6 +1,5 @@
 import { RecordPickerInitialLoadingEmptyContainer } from '@/object-record/record-picker/components/RecordPickerInitialLoadingEmptyContainer';
 import { RecordPickerLoadingSkeletonList } from '@/object-record/record-picker/components/RecordPickerLoadingSkeletonList';
-import { RecordPickerNoRecordFoundMenuItem } from '@/object-record/record-picker/components/RecordPickerNoRecordFoundMenuItem';
 import { MultipleRecordPickerFetchMoreLoader } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerFetchMoreLoader';
 import { MultipleRecordPickerMenuItem } from '@/object-record/record-picker/multiple-record-picker/components/MultipleRecordPickerMenuItem';
 import { MultipleRecordPickerComponentInstanceContext } from '@/object-record/record-picker/multiple-record-picker/states/contexts/MultipleRecordPickerComponentInstanceContext';
@@ -8,108 +7,79 @@ import { multipleRecordPickerPickableMorphItemsComponentState } from '@/object-r
 import { multipleRecordPickerShouldShowInitialLoadingComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowInitialLoadingComponentState';
 import { multipleRecordPickerShouldShowSkeletonComponentState } from '@/object-record/record-picker/multiple-record-picker/states/multipleRecordPickerShouldShowSkeletonComponentState';
 import { multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector } from '@/object-record/record-picker/multiple-record-picker/states/selectors/multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector';
-import { getMultipleRecordPickerSelectableListId } from '@/object-record/record-picker/multiple-record-picker/utils/getMultipleRecordPickerSelectableListId';
+import { upsertMorphItem } from '@/object-record/record-picker/multiple-record-picker/utils/upsertMorphItem';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
-import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { SelectableList } from '@/ui/layout/selectable-list/components/SelectableList';
 import { useAvailableComponentInstanceIdOrThrow } from '@/ui/utilities/state/component-state/hooks/useAvailableComponentInstanceIdOrThrow';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
-import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
+import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useCallback } from 'react';
-import { useStore } from 'jotai';
+import { t } from '@lingui/core/macro';
+import { isNonEmptyArray } from 'twenty-shared/utils';
+import { Dropdown } from 'twenty-ui/components/navigation';
 
 type MultipleRecordPickerMenuItemsProps = {
   onChange?: (morphItem: RecordPickerPickableMorphItem) => void;
-  focusId: string;
 };
 
 export const MultipleRecordPickerMenuItems = ({
   onChange,
-  focusId,
 }: MultipleRecordPickerMenuItemsProps) => {
-  const store = useStore();
   const componentInstanceId = useAvailableComponentInstanceIdOrThrow(
     MultipleRecordPickerComponentInstanceContext,
   );
-
-  const selectableListComponentInstanceId =
-    getMultipleRecordPickerSelectableListId(componentInstanceId);
-
   const pickableRecordIds = useAtomComponentSelectorValue(
     multipleRecordPickerPickableRecordIdsMatchingSearchComponentSelector,
     componentInstanceId,
   );
-
-  const multipleRecordPickerPickableMorphItems =
-    useAtomComponentStateCallbackState(
-      multipleRecordPickerPickableMorphItemsComponentState,
-      componentInstanceId,
-    );
-
-  const handleChange = useCallback(
-    (morphItem: RecordPickerPickableMorphItem) => {
-      const previousMorphItems = store.get(
-        multipleRecordPickerPickableMorphItems,
-      );
-
-      const existingMorphItemIndex = previousMorphItems.findIndex(
-        (item) => item.recordId === morphItem.recordId,
-      );
-
-      const newMorphItems = [...previousMorphItems];
-
-      if (existingMorphItemIndex === -1) {
-        newMorphItems.push(morphItem);
-      } else {
-        newMorphItems[existingMorphItemIndex] = morphItem;
-      }
-
-      store.set(multipleRecordPickerPickableMorphItems, newMorphItems);
-    },
-    [multipleRecordPickerPickableMorphItems, store],
+  const [
+    multipleRecordPickerPickableMorphItems,
+    setMultipleRecordPickerPickableMorphItems,
+  ] = useAtomComponentState(
+    multipleRecordPickerPickableMorphItemsComponentState,
+    componentInstanceId,
   );
-
   const multipleRecordPickerShouldShowInitialLoading =
     useAtomComponentStateValue(
       multipleRecordPickerShouldShowInitialLoadingComponentState,
     );
-
   const multipleRecordPickerShouldShowSkeleton = useAtomComponentStateValue(
     multipleRecordPickerShouldShowSkeletonComponentState,
   );
+  const selectedRecordIds = multipleRecordPickerPickableMorphItems
+    .filter(({ isSelected }) => isSelected)
+    .map(({ recordId }) => recordId);
 
-  const searchHasNoResults = pickableRecordIds.length === 0;
+  const handleChange = (morphItem: RecordPickerPickableMorphItem) => {
+    setMultipleRecordPickerPickableMorphItems((previousMorphItems) =>
+      upsertMorphItem(previousMorphItems, morphItem),
+    );
+    onChange?.(morphItem);
+  };
 
   return (
-    <DropdownMenuItemsContainer isMultiSelect hasMaxHeight>
+    <Dropdown.Section scrollable>
       {multipleRecordPickerShouldShowInitialLoading ? (
         <RecordPickerInitialLoadingEmptyContainer />
       ) : multipleRecordPickerShouldShowSkeleton ? (
         <RecordPickerLoadingSkeletonList />
-      ) : searchHasNoResults ? (
-        <RecordPickerNoRecordFoundMenuItem />
+      ) : !isNonEmptyArray(pickableRecordIds) ? (
+        <Dropdown.Empty>{t`No records found`}</Dropdown.Empty>
       ) : (
-        <SelectableList
-          selectableListInstanceId={selectableListComponentInstanceId}
-          selectableItemIdArray={pickableRecordIds}
-          focusId={focusId}
+        <Dropdown.SelectionGroup
+          multiple
+          value={selectedRecordIds}
+          aria-label={t`Records`}
         >
-          {pickableRecordIds.map((recordId) => {
-            return (
-              <MultipleRecordPickerMenuItem
-                key={recordId}
-                recordId={recordId}
-                onChange={(morphItem) => {
-                  handleChange(morphItem);
-                  onChange?.(morphItem);
-                }}
-              />
-            );
-          })}
+          {pickableRecordIds.map((recordId) => (
+            <MultipleRecordPickerMenuItem
+              key={recordId}
+              recordId={recordId}
+              onChange={handleChange}
+            />
+          ))}
           <MultipleRecordPickerFetchMoreLoader />
-        </SelectableList>
+        </Dropdown.SelectionGroup>
       )}
-    </DropdownMenuItemsContainer>
+    </Dropdown.Section>
   );
 };

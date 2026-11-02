@@ -42,6 +42,58 @@ describe('defineAgent', () => {
     );
   });
 
+  it('should accept a modelConfiguration and isSystem', () => {
+    const result = defineAgent({
+      ...VALID_AGENT_CONFIG,
+      isSystem: true,
+      modelConfiguration: {
+        webSearch: { enabled: true, configuration: { maxResults: 5 } },
+        twitterSearch: { enabled: false },
+      },
+    });
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+    expect(result.config?.modelConfiguration?.webSearch?.enabled).toBe(true);
+    expect(result.config?.isSystem).toBe(true);
+  });
+
+  it('should error on an unknown or malformed modelConfiguration capability', () => {
+    const result = defineAgent({
+      ...VALID_AGENT_CONFIG,
+      modelConfiguration: {
+        // @ts-expect-error apps written in JavaScript can pass any shape
+        webSearch: { enabled: 'yes' },
+        // @ts-expect-error apps written in JavaScript can pass any shape
+        twitterSearch: { enabled: true, configuration: 'fast' },
+        websearch: { enabled: true },
+      },
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual([
+      `Agent 'sales-assistant' modelConfiguration.webSearch.enabled must be a boolean`,
+      `Agent 'sales-assistant' modelConfiguration.twitterSearch.configuration must be an object`,
+      `Agent 'sales-assistant' modelConfiguration.websearch is not supported, use one of: webSearch, twitterSearch`,
+    ]);
+  });
+
+  it('should error when modelConfiguration or isSystem have the wrong type', () => {
+    const result = defineAgent({
+      ...VALID_AGENT_CONFIG,
+      // @ts-expect-error apps written in JavaScript can pass any shape
+      modelConfiguration: [],
+      // @ts-expect-error apps written in JavaScript can pass any shape
+      isSystem: 'true',
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toEqual([
+      `Agent 'sales-assistant' isSystem must be a boolean`,
+      `Agent 'sales-assistant' modelConfiguration must be an object`,
+    ]);
+  });
+
   it('should accept triggers', () => {
     const result = defineAgent({
       ...VALID_AGENT_CONFIG,

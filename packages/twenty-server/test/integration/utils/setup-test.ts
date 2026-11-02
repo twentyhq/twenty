@@ -1,3 +1,6 @@
+import dns from 'node:dns';
+import net from 'node:net';
+
 import nodeFetch from 'node-fetch';
 import { type JestConfigWithTsJest } from 'ts-jest';
 import 'tsconfig-paths/register';
@@ -23,6 +26,12 @@ const deactivateSeededCreateCompanyWorkflowVersion = async () => {
 };
 
 export default async (_: unknown, projectConfig: JestConfigWithTsJest) => {
+  // Happy Eyeballs swaps the TCP handle under a connecting localhost socket and
+  // msw's passthrough keeps the stale one (mswjs/interceptors#753): read EINVAL.
+  // Resolving IPv4 first keeps localhost reachable without the fallback.
+  dns.setDefaultResultOrder('ipv4first');
+  net.setDefaultAutoSelectFamily(false);
+
   // node-fetch rides node:http, which msw patches; native undici fetch
   // escapes interception.
   globalThis.fetch = nodeFetch as unknown as typeof globalThis.fetch;

@@ -47,7 +47,7 @@ export type ApplicationManifest = SyncableEntityOptions & {
    * as `settingsFrontComponent`) instead. This property is ignored.
    */
   settingsCustomTabFrontComponentUniversalIdentifier?: string;
-  packageJsonChecksum: string | null;
+  packageJsonChecksum: string;
   yarnLockChecksum: string | null;
   requiredServerVersionRange?: string | null;
 };
