@@ -101,7 +101,7 @@ describe('RecordAccessPolicyService', () => {
     });
 
   describe('hasAccessToRecords', () => {
-    it('grants a role every operation it permits on an existing record', async () => {
+    it('grants a role reading and updating an existing record it permits', async () => {
       expect(
         await hasAccessToRecords({
           principal: adminPrincipal,

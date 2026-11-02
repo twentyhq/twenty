@@ -118,7 +118,10 @@ export class RecordSharePrincipalService {
     for (const [index, principal] of namedPrincipals.entries()) {
       const roleId = roleIds[index];
 
-      if (!isDefined(roleId)) {
+      if (
+        !isDefined(roleId) ||
+        !isDefined(metadataMaps.rolesPermissions[roleId])
+      ) {
         continue;
       }
 
