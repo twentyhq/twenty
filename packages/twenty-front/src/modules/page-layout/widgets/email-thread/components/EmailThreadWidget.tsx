@@ -1,42 +1,37 @@
-import { EmptyState } from '@/ui/feedback/empty-state/components/EmptyState';
 import { useCallback, useState } from 'react';
 
 import { CustomResolverFetchMoreLoader } from '@/activities/components/CustomResolverFetchMoreLoader';
-import { EmailLoader } from '@/activities/emails/components/EmailLoader';
 import { EmailThreadMessage } from '@/activities/emails/components/EmailThreadMessage';
-import { useEmailThread } from '@/activities/emails/hooks/useEmailThread';
 import { useReplyContext } from '@/activities/emails/hooks/useReplyContext';
 import { type EmailDraftPrefill } from '@/activities/emails/types/EmailDraftPrefill';
 import { type EmailThreadMessageWithSender } from '@/activities/emails/types/EmailThreadMessageWithSender';
 import { getEmailDraftPrefillFromMessage } from '@/activities/emails/utils/getEmailDraftPrefillFromMessage';
-import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { WidgetRelationsHeader } from '@/page-layout/widgets/components/WidgetRelationsHeader';
-import { ChatThreadWidgetContent } from '@/page-layout/widgets/email-thread/components/ChatThreadWidgetContent';
 import { EmailThreadComposer } from '@/page-layout/widgets/email-thread/components/EmailThreadComposer';
 import { EmailThreadIntermediaryMessages } from '@/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages';
-import { AnimatedPlaceholder } from '@/ui/feedback/empty-state/components/AnimatedPlaceholder/AnimatedPlaceholder';
 import {
   StyledWidgetContentContainer,
   StyledWidgetScrollContainer,
 } from '@/ui/layout/components/WidgetContentContainer';
 import { useTargetRecord } from '@/ui/layout/contexts/useTargetRecord';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
-import { t } from '@lingui/core/macro';
-import { isAppMessageHeaderMessageId, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 type EmailThreadWidgetProps = {
-  widget: PageLayoutWidget;
+  messages: EmailThreadMessageWithSender[];
+  lastMessage: EmailThreadMessageWithSender;
+  loading: boolean;
+  onFetchMoreMessages: () => void;
 };
 
 export const EmailThreadWidget = ({
-  widget: _widget,
+  messages,
+  lastMessage,
+  loading,
+  onFetchMoreMessages,
 }: EmailThreadWidgetProps) => {
   const targetRecord = useTargetRecord();
   const isInSidePanel = useWorkspaceSurface().type === 'side-panel';
-
-  const { thread, messages, fetchMoreMessages, threadLoading } = useEmailThread(
-    targetRecord.id,
-  );
 
   const replyContext = useReplyContext(targetRecord.id);
 
@@ -82,9 +77,8 @@ export const EmailThreadWidget = ({
   const intermediaryMessages = is5OrMoreMessages
     ? messages.slice(2, messagesCount - 1)
     : [];
-  const lastMessage = messages[messagesCount - 1];
 
-  const trailingDraft = lastMessage?.isDraft ? lastMessage : undefined;
+  const trailingDraft = lastMessage.isDraft ? lastMessage : undefined;
   const draftPrefill =
     clickedDraftPrefill ??
     (isDefined(trailingDraft)
@@ -93,46 +87,6 @@ export const EmailThreadWidget = ({
   const isComposerOpen =
     composerIntent === 'opened' ||
     (composerIntent === null && isDefined(trailingDraft));
-
-  if (threadLoading) {
-    return (
-      <StyledWidgetContentContainer>
-        <WidgetRelationsHeader />
-        <StyledWidgetScrollContainer>
-          <EmailLoader loadingText={t`Loading thread`} />
-        </StyledWidgetScrollContainer>
-      </StyledWidgetContentContainer>
-    );
-  }
-
-  if (!isDefined(thread) || !isDefined(lastMessage)) {
-    return (
-      <StyledWidgetContentContainer>
-        <WidgetRelationsHeader />
-        <StyledWidgetScrollContainer>
-          <EmptyState.Root>
-            <AnimatedPlaceholder type="emptyInbox" />
-            <EmptyState.Content>
-              <EmptyState.Title>{t`No messages to show`}</EmptyState.Title>
-              <EmptyState.Description>
-                {t`The messages in this thread are missing or incomplete.`}
-              </EmptyState.Description>
-            </EmptyState.Content>
-          </EmptyState.Root>
-        </StyledWidgetScrollContainer>
-      </StyledWidgetContentContainer>
-    );
-  }
-
-  if (isAppMessageHeaderMessageId(lastMessage.headerMessageId)) {
-    return (
-      <ChatThreadWidgetContent
-        messages={messages}
-        loading={threadLoading}
-        onFetchMoreMessages={fetchMoreMessages}
-      />
-    );
-  }
 
   return (
     <StyledWidgetContentContainer>
@@ -157,8 +111,8 @@ export const EmailThreadWidget = ({
           onDraftClick={handleDraftClick}
         />
         <CustomResolverFetchMoreLoader
-          loading={threadLoading}
-          onLastRowVisible={fetchMoreMessages}
+          loading={loading}
+          onLastRowVisible={onFetchMoreMessages}
         />
       </StyledWidgetScrollContainer>
       {canReply && (

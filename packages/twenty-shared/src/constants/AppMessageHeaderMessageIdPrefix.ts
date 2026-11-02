@@ -1,1 +1,0 @@
-export const APP_MESSAGE_HEADER_MESSAGE_ID_PREFIX = 'app:';
