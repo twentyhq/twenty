@@ -193,7 +193,7 @@ export const ingestLinkedinMessages = async ({
     unipileAccountId,
     messages: ingestableMessages,
     deadlineAtMs: attachmentDeadlineAtMs,
-    // Twenty has no message attachment input yet, so the imported files are not stored
+    // TODO(@martmull): store the files once ingestMessages accepts attachments
     onAttachmentFile: async ({
       messageExternalId,
       type,

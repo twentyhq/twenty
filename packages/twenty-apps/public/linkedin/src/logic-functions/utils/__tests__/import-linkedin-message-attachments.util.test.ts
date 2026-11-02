@@ -32,10 +32,13 @@ const buildMessage = (
   attachments,
 });
 
-const importAttachments = async (
-  attachments: UnipileMessageAttachment[],
+const importAttachments = async ({
+  attachments,
   deadlineAtMs = Date.now() + 60_000,
-) => {
+}: {
+  attachments: UnipileMessageAttachment[];
+  deadlineAtMs?: number;
+}) => {
   const files: LinkedinMessageAttachmentFile[] = [];
   const importedCount = await importLinkedinMessageAttachments({
     unipileAccountId: 'acc_1',
@@ -60,14 +63,14 @@ describe('importLinkedinMessageAttachments', () => {
 
   it('downloads images, videos and audio', async () => {
     const deadlineAtMs = Date.now() + 60_000;
-    const { files, importedCount } = await importAttachments(
-      [
+    const { files, importedCount } = await importAttachments({
+      attachments: [
         { id: 'img-1', type: 'img', mimetype: 'image/jpeg' },
         { id: 'video-1', type: 'video', mimetype: 'video/mp4' },
         { id: 'audio-1', type: 'audio', mimetype: 'audio/mpeg' },
       ],
       deadlineAtMs,
-    );
+    });
 
     expect(importedCount).toBe(3);
     expect(files.map(({ attachmentId }) => attachmentId)).toEqual([
@@ -91,14 +94,16 @@ describe('importLinkedinMessageAttachments', () => {
   });
 
   it('uses the inline content instead of downloading it', async () => {
-    const { files } = await importAttachments([
-      {
-        id: 'img-1',
-        type: 'img',
-        mimetype: 'image/png',
-        content: Buffer.from('inline').toString('base64'),
-      },
-    ]);
+    const { files } = await importAttachments({
+      attachments: [
+        {
+          id: 'img-1',
+          type: 'img',
+          mimetype: 'image/png',
+          content: Buffer.from('inline').toString('base64'),
+        },
+      ],
+    });
 
     expect(files[0]?.content.toString()).toBe('inline');
     expect(mocks.downloadUnipileMessageAttachment).not.toHaveBeenCalled();
@@ -106,36 +111,40 @@ describe('importLinkedinMessageAttachments', () => {
 
   it('skips other, unavailable and oversized attachments', async () => {
     await expect(
-      importAttachments([
-        { id: 'file-1', type: 'file', mimetype: 'application/pdf' },
-        { id: 'post-1', type: 'shared_content', mimetype: 'text/html' },
-        {
-          id: 'img-1',
-          type: 'img',
-          mimetype: 'image/png',
-          is_unavailable: true,
-        },
-        {
-          id: 'video-1',
-          type: 'video',
-          mimetype: 'video/mp4',
-          file_size: 500 * 1024 * 1024,
-        },
-      ]),
+      importAttachments({
+        attachments: [
+          { id: 'file-1', type: 'file', mimetype: 'application/pdf' },
+          { id: 'post-1', type: 'shared_content', mimetype: 'text/html' },
+          {
+            id: 'img-1',
+            type: 'img',
+            mimetype: 'image/png',
+            is_unavailable: true,
+          },
+          {
+            id: 'video-1',
+            type: 'video',
+            mimetype: 'video/mp4',
+            file_size: 500 * 1024 * 1024,
+          },
+        ],
+      }),
     ).resolves.toEqual({ files: [], importedCount: 0 });
     expect(mocks.downloadUnipileMessageAttachment).not.toHaveBeenCalled();
   });
 
   it('drops inline content over the size limit when no size was listed', async () => {
     await expect(
-      importAttachments([
-        {
-          id: 'video-1',
-          type: 'video',
-          mimetype: 'video/mp4',
-          content: Buffer.alloc(MAX_SIZE_BYTES + 1).toString('base64'),
-        },
-      ]),
+      importAttachments({
+        attachments: [
+          {
+            id: 'video-1',
+            type: 'video',
+            mimetype: 'video/mp4',
+            content: Buffer.alloc(MAX_SIZE_BYTES + 1).toString('base64'),
+          },
+        ],
+      }),
     ).resolves.toEqual({ files: [], importedCount: 0 });
   });
 
@@ -144,22 +153,40 @@ describe('importLinkedinMessageAttachments', () => {
       new Error('Unipile download message attachment failed (404)'),
     );
 
-    const { files } = await importAttachments([
-      { id: 'img-1', type: 'img', mimetype: 'image/png' },
-      { id: 'img-2', type: 'img', mimetype: 'image/png' },
-    ]);
+    const { files } = await importAttachments({
+      attachments: [
+        { id: 'img-1', type: 'img', mimetype: 'image/png' },
+        { id: 'img-2', type: 'img', mimetype: 'image/png' },
+      ],
+    });
 
     expect(files.map(({ attachmentId }) => attachmentId)).toEqual(['img-2']);
   });
 
   it('skips the remaining files once the deadline is reached', async () => {
-    await expect(
-      importAttachments(
-        [{ id: 'img-1', type: 'img', mimetype: 'image/png' }],
-        Date.now() - 1,
-      ),
-    ).resolves.toEqual({ files: [], importedCount: 0 });
-    expect(mocks.downloadUnipileMessageAttachment).not.toHaveBeenCalled();
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(Date.parse('2026-10-29T08:00:00.000Z'));
+    mocks.downloadUnipileMessageAttachment.mockImplementation(async () => {
+      vi.advanceTimersByTime(2_000);
+
+      return Buffer.from('downloaded');
+    });
+
+    try {
+      const { files, importedCount } = await importAttachments({
+        attachments: [
+          { id: 'img-1', type: 'img', mimetype: 'image/png' },
+          { id: 'img-2', type: 'img', mimetype: 'image/png' },
+        ],
+        deadlineAtMs: Date.now() + 1_000,
+      });
+
+      expect(importedCount).toBe(1);
+      expect(files.map(({ attachmentId }) => attachmentId)).toEqual(['img-1']);
+      expect(mocks.downloadUnipileMessageAttachment).toHaveBeenCalledOnce();
+    } finally {
+      vi.useRealTimers();
+    }
   });
 
   it('lets a rate limit through so the import can pause', async () => {
@@ -168,7 +195,9 @@ describe('importLinkedinMessageAttachments', () => {
     );
 
     await expect(
-      importAttachments([{ id: 'img-1', type: 'img', mimetype: 'image/png' }]),
+      importAttachments({
+        attachments: [{ id: 'img-1', type: 'img', mimetype: 'image/png' }],
+      }),
     ).rejects.toBeInstanceOf(UnipileRateLimitError);
   });
 });

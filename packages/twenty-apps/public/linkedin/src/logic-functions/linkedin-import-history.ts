@@ -85,6 +85,8 @@ export const linkedinImportHistoryHandler = async (
   payload: LinkedinImportHistoryJobPayload,
   context?: Pick<LogicFunctionExecutionContext, 'retryCount' | 'maxRetries'>,
 ): Promise<LinkedinImportHistoryResult> => {
+  const invokedAt = Date.now();
+
   if ((await getActiveLinkedinHistoryImportState(payload)) === null) {
     return { status: 'CANCELLED' };
   }
@@ -106,7 +108,7 @@ export const linkedinImportHistoryHandler = async (
 
   const startedAt = Date.now();
   const attachmentDeadlineAtMs =
-    startedAt +
+    invokedAt +
     LINKEDIN_IMPORT_HISTORY_TIMEOUT_SECONDS * 1000 -
     LINKEDIN_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS;
   const jobId = getLinkedinImportHistoryJobId(payload);

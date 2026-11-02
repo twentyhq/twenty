@@ -15,7 +15,13 @@ vi.mock('src/unipile/utils/get-unipile-request-options.util', () => ({
 const { downloadUnipileMessageAttachment } =
   await import('src/unipile/utils/download-unipile-message-attachment.util');
 
-const streamOf = (chunks: string[], onCancel?: () => void) =>
+const streamOf = ({
+  chunks,
+  onCancel,
+}: {
+  chunks: string[];
+  onCancel?: () => void;
+}) =>
   new ReadableStream<Uint8Array>({
     start(controller) {
       chunks.forEach((chunk) => controller.enqueue(Buffer.from(chunk)));
@@ -40,7 +46,9 @@ describe('downloadUnipileMessageAttachment', () => {
   });
 
   it('returns the downloaded file', async () => {
-    mocks.getAttachment.mockResolvedValue({ data: streamOf(['ab', 'cd']) });
+    mocks.getAttachment.mockResolvedValue({
+      data: streamOf({ chunks: ['ab', 'cd'] }),
+    });
 
     await expect(download(10)).resolves.toEqual(Buffer.from('abcd'));
     expect(mocks.getAttachment).toHaveBeenCalledWith(
@@ -61,7 +69,7 @@ describe('downloadUnipileMessageAttachment', () => {
     const onCancel = vi.fn();
 
     mocks.getAttachment.mockResolvedValue({
-      data: streamOf(['abc', 'def', 'ghi'], onCancel),
+      data: streamOf({ chunks: ['abc', 'def', 'ghi'], onCancel }),
     });
 
     await expect(download(4)).rejects.toThrow('larger than 4 bytes');
