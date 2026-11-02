@@ -11,7 +11,10 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { RecordIdentifierDTO } from 'src/engine/metadata-modules/navigation-menu-item/dtos/record-identifier.dto';
 import { getMinimalSelectForRecordIdentifier } from 'src/engine/metadata-modules/navigation-menu-item/utils/get-minimal-select-for-record-identifier.util';
-import { PermissionsException } from 'src/engine/permissions/permissions.exception';
+import {
+  PermissionsException,
+  PermissionsExceptionCode,
+} from 'src/engine/permissions/permissions.exception';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { formatResult } from 'src/engine/twenty-orm/utils/format-result.util';
 import { FileFolder } from 'twenty-shared/types';
@@ -97,7 +100,10 @@ export class NavigationMenuItemRecordIdentifierService {
         );
       }, resolvedAuthContext)
       .catch((error: unknown) => {
-        if (error instanceof PermissionsException) {
+        if (
+          error instanceof PermissionsException &&
+          error.code === PermissionsExceptionCode.PERMISSION_DENIED
+        ) {
           return null;
         }
 
