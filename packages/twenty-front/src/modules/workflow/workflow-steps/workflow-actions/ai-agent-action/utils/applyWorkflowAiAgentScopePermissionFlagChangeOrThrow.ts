@@ -3,14 +3,14 @@ import { PERMISSION_FLAG_UNIVERSAL_IDENTIFIER_BY_TYPE } from 'twenty-shared/cons
 import { doNotTranslate } from 'twenty-shared/i18n';
 import { CustomError, isDefined } from 'twenty-shared/utils';
 
-export const applyWorkflowAiAgentScopePermissionFlagChange = ({
+export const applyWorkflowAiAgentScopePermissionFlagChangeOrThrow = ({
   scope,
   permissionFlagKey,
-  value,
+  isGranted,
 }: {
   scope: AiRunScope | undefined;
   permissionFlagKey: string;
-  value: boolean;
+  isGranted: boolean;
 }): AiRunScope => {
   const universalIdentifier =
     PERMISSION_FLAG_UNIVERSAL_IDENTIFIER_BY_TYPE.get(permissionFlagKey);
@@ -31,7 +31,7 @@ export const applyWorkflowAiAgentScopePermissionFlagChange = ({
 
   return {
     ...scope,
-    permissionFlagUniversalIdentifiers: value
+    permissionFlagUniversalIdentifiers: isGranted
       ? [...otherUniversalIdentifiers, universalIdentifier]
       : otherUniversalIdentifiers,
   };

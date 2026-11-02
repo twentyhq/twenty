@@ -5,7 +5,7 @@ import { workflowAiAgentPermissionsIsSystemObjectsListOpenState } from '@/workfl
 import { workflowAiAgentPermissionsSelectedObjectIdState } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/states/workflowAiAgentPermissionsSelectedObjectIdState';
 import { type WorkflowAiAgentObjectPermissionChange } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentObjectPermissionChange';
 import { applyWorkflowAiAgentScopeObjectPermissionChange } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/applyWorkflowAiAgentScopeObjectPermissionChange';
-import { applyWorkflowAiAgentScopePermissionFlagChange } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/applyWorkflowAiAgentScopePermissionFlagChange';
+import { applyWorkflowAiAgentScopePermissionFlagChangeOrThrow } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/applyWorkflowAiAgentScopePermissionFlagChangeOrThrow';
 import { isUndefined } from '@sniptt/guards';
 import { type AiRunScope } from 'twenty-shared/ai';
 import { isDefined } from 'twenty-shared/utils';
@@ -38,7 +38,7 @@ export const useWorkflowAiAgentScopePermissionActions = ({
 
   const changeObjectPermission = (
     { objectMetadataId, permissionKey }: WorkflowAiAgentObjectPermissionChange,
-    value: boolean,
+    isGranted: boolean,
   ) => {
     const objectUniversalIdentifier = isDefined(objectMetadataId)
       ? objectMetadataItems.find((item) => item.id === objectMetadataId)
@@ -54,17 +54,20 @@ export const useWorkflowAiAgentScopePermissionActions = ({
         scope,
         objectUniversalIdentifier,
         permissionKey,
-        value,
+        isGranted,
       }),
     );
   };
 
-  const changePermissionFlag = (permissionFlagKey: string, value: boolean) =>
+  const changePermissionFlag = (
+    permissionFlagKey: string,
+    isGranted: boolean,
+  ) =>
     onScopeChange(
-      applyWorkflowAiAgentScopePermissionFlagChange({
+      applyWorkflowAiAgentScopePermissionFlagChangeOrThrow({
         scope,
         permissionFlagKey,
-        value,
+        isGranted,
       }),
     );
 

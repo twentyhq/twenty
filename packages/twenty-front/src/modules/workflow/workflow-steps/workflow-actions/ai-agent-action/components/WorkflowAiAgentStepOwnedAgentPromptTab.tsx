@@ -62,13 +62,13 @@ export const WorkflowAiAgentStepOwnedAgentPromptTab = ({
       },
     });
 
-    setWorkflowAiAgentActionAgent((currentWorkflowAiAgentActionAgent) =>
-      currentWorkflowAiAgentActionAgent
+    setWorkflowAiAgentActionAgent((previousAgent) =>
+      previousAgent
         ? {
-            ...currentWorkflowAiAgentActionAgent,
+            ...previousAgent,
             ...response.data?.updateOneAgent,
           }
-        : currentWorkflowAiAgentActionAgent,
+        : previousAgent,
     );
   };
 

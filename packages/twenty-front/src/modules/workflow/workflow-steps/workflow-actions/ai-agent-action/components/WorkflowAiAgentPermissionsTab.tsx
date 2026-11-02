@@ -1,5 +1,7 @@
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { useActionRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig';
+import { useSettingsRolePermissionFlagConfig } from '@/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { SidePanelSubPageNavigationHeader } from '@/side-panel/pages/common/components/SidePanelSubPageNavigationHeader';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -17,11 +19,11 @@ import { type WorkflowAiAgentObjectPermissionChange } from '@/workflow/workflow-
 import { type WorkflowAiAgentObjectPermission } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/types/WorkflowAiAgentObjectPermission';
 import { WorkflowAiAgentPermissionList } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowAiAgentPermissionList';
 import { CRUD_PERMISSIONS } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/constants/WorkflowAiAgentCrudPermissions';
+import { ListItem } from 'twenty-ui/primitives/navigation';
 import { themeCssVariables } from 'twenty-ui/theme';
 import { WorkflowAiAgentPermissionsCrudList } from './WorkflowAiAgentPermissionsCrudList';
 import { WorkflowAiAgentPermissionsFlagList } from './WorkflowAiAgentPermissionsFlagList';
 import { WorkflowAiAgentPermissionsObjectsList } from './WorkflowAiAgentPermissionsObjectsList';
-import { getFilteredPermissions } from './workflowAiAgentPermissions.utils';
 
 const StyledSearchInputContainer = styled.div`
   background-color: ${themeCssVariables.background.transparent.lighter};
@@ -59,6 +61,7 @@ type WorkflowAiAgentPermissionsTabProps = {
   readonly: boolean;
   objectPermissions: WorkflowAiAgentObjectPermission[];
   permissionFlagKeys: string[];
+  otherPermissionLabels?: string[];
   onAddPermission?: (change: WorkflowAiAgentObjectPermissionChange) => void;
   onDeletePermission?: (change: WorkflowAiAgentObjectPermissionChange) => void;
   onAddPermissionFlag?: (permissionFlagKey: string) => void;
@@ -69,6 +72,7 @@ export const WorkflowAiAgentPermissionsTab = ({
   readonly,
   objectPermissions,
   permissionFlagKeys,
+  otherPermissionLabels = [],
   onAddPermission,
   onDeletePermission,
   onAddPermissionFlag,
@@ -101,12 +105,15 @@ export const WorkflowAiAgentPermissionsTab = ({
   const [searchQuery, setSearchQuery] = useState('');
   const hasPermissions =
     permissionFlagKeys.length > 0 ||
+    otherPermissionLabels.length > 0 ||
     objectPermissions.some((objectPermission) =>
       CRUD_PERMISSIONS.some(({ key }) => objectPermission[key]),
     );
-  const actionPermissionsConfig = useActionRolePermissionFlagConfig({
+  const agentActionPermissionsConfig = useActionRolePermissionFlagConfig({
     assignmentCapabilities: { canBeAssignedToAgents: true },
   });
+  const actionPermissionsConfig = useActionRolePermissionFlagConfig();
+  const settingsPermissionsConfig = useSettingsRolePermissionFlagConfig();
 
   type ObjectMetadataListItem = (typeof objectMetadataItems)[number];
   const filteredObjects = filterBySearchQuery<ObjectMetadataListItem>({
@@ -121,14 +128,23 @@ export const WorkflowAiAgentPermissionsTab = ({
     getSearchableValues: (item) => [item.labelSingular, item.labelPlural],
   });
 
-  const {
-    filteredPermissions: filteredActionPermissions,
-    filteredEnabledPermissions: filteredEnabledActionPermissions,
-  } = getFilteredPermissions({
-    permissions: actionPermissionsConfig,
-    permissionFlagKeys,
-    searchQuery,
-  });
+  const filterPermissionsBySearchQuery = (
+    permissions: typeof actionPermissionsConfig,
+  ) =>
+    filterBySearchQuery({
+      items: permissions,
+      searchQuery,
+      getSearchableValues: (permission) => [permission.name],
+    });
+
+  const filterEnabledPermissions = (
+    permissions: typeof actionPermissionsConfig,
+  ) =>
+    filterPermissionsBySearchQuery(
+      permissions.filter((permission) =>
+        permissionFlagKeys.includes(permission.key),
+      ),
+    );
 
   const selectedObject = isDefined(workflowAiAgentPermissionsSelectedObjectId)
     ? allObjectMetadataItems.find(
@@ -234,7 +250,9 @@ export const WorkflowAiAgentPermissionsTab = ({
               />
               <WorkflowAiAgentPermissionsFlagList
                 title={t`Actions`}
-                permissions={filteredActionPermissions}
+                permissions={filterPermissionsBySearchQuery(
+                  agentActionPermissionsConfig,
+                )}
                 enabledPermissionFlagKeys={permissionFlagKeys}
                 readonly={readonly}
                 onAddPermissionFlag={onAddPermissionFlag}
@@ -252,12 +270,29 @@ export const WorkflowAiAgentPermissionsTab = ({
             />
             <WorkflowAiAgentPermissionsFlagList
               title={t`Actions`}
-              permissions={filteredEnabledActionPermissions}
+              permissions={filterEnabledPermissions(actionPermissionsConfig)}
               enabledPermissionFlagKeys={permissionFlagKeys}
               readonly={readonly}
-              showDeleteButton={!readonly}
+              shouldShowDeleteButton={!readonly}
               onDeletePermissionFlag={onDeletePermissionFlag}
             />
+            <WorkflowAiAgentPermissionsFlagList
+              title={t`Settings`}
+              permissions={filterEnabledPermissions(settingsPermissionsConfig)}
+              enabledPermissionFlagKeys={permissionFlagKeys}
+              readonly={readonly}
+              shouldShowDeleteButton={!readonly}
+              onDeletePermissionFlag={onDeletePermissionFlag}
+            />
+            {otherPermissionLabels.length > 0 && (
+              <SidePanelGroup heading={t`Other permissions`}>
+                {otherPermissionLabels.map((label) => (
+                  <ListItem key={label} disabled>
+                    {label}
+                  </ListItem>
+                ))}
+              </SidePanelGroup>
+            )}
           </>
         )}
       </StyledGroupsContainer>

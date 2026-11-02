@@ -4,16 +4,20 @@ import {
 } from 'twenty-shared/constants';
 
 import { applyWorkflowAiAgentScopeObjectPermissionChange } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/applyWorkflowAiAgentScopeObjectPermissionChange';
-import { applyWorkflowAiAgentScopePermissionFlagChange } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/applyWorkflowAiAgentScopePermissionFlagChange';
+import { applyWorkflowAiAgentScopePermissionFlagChangeOrThrow } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/applyWorkflowAiAgentScopePermissionFlagChangeOrThrow';
 import { getWorkflowAiAgentScopePermissions } from '@/workflow/workflow-steps/workflow-actions/ai-agent-action/utils/getWorkflowAiAgentScopePermissions';
 
 const objectMetadataItems = [
-  { id: 'person-id', universalIdentifier: 'person', isSystem: false },
-  { id: 'attachment-id', universalIdentifier: 'attachment', isSystem: true },
+  { id: 'person-id', universalIdentifier: 'person', labelPlural: 'People' },
+  {
+    id: 'company-id',
+    universalIdentifier: 'company',
+    labelPlural: 'Companies',
+  },
 ];
 
 describe('workflow AI agent scope', () => {
-  it('reads a scope as the permissions of all objects and of each known object', () => {
+  it('reads a scope as written, without inheriting from all objects', () => {
     expect(
       getWorkflowAiAgentScopePermissions({
         scope: {
@@ -23,7 +27,6 @@ describe('workflow AI agent scope', () => {
               objectUniversalIdentifier: 'person',
               canUpdateObjectRecords: true,
             },
-            { objectUniversalIdentifier: 'attachment' },
             {
               objectUniversalIdentifier: 'unknown',
               canReadObjectRecords: true,
@@ -31,6 +34,7 @@ describe('workflow AI agent scope', () => {
           ],
           permissionFlagUniversalIdentifiers: [
             SystemPermissionFlag.SEND_EMAIL_TOOL,
+            SystemPermissionFlag.WORKSPACE,
           ],
         },
         objectMetadataItems,
@@ -40,27 +44,58 @@ describe('workflow AI agent scope', () => {
         {
           objectMetadataId: null,
           canReadObjectRecords: true,
-          canUpdateObjectRecords: false,
-          canSoftDeleteObjectRecords: false,
-          canDestroyObjectRecords: false,
+          canUpdateObjectRecords: undefined,
+          canSoftDeleteObjectRecords: undefined,
+          canDestroyObjectRecords: undefined,
         },
         {
           objectMetadataId: 'person-id',
-          canReadObjectRecords: true,
+          objectUniversalIdentifier: 'person',
           canUpdateObjectRecords: true,
-          canSoftDeleteObjectRecords: false,
-          canDestroyObjectRecords: false,
-        },
-        {
-          objectMetadataId: 'attachment-id',
-          canReadObjectRecords: true,
-          canUpdateObjectRecords: true,
-          canSoftDeleteObjectRecords: true,
-          canDestroyObjectRecords: true,
         },
       ],
-      permissionFlagKeys: [PermissionFlagType.SEND_EMAIL_TOOL],
+      permissionFlagKeys: [
+        PermissionFlagType.SEND_EMAIL_TOOL,
+        PermissionFlagType.WORKSPACE,
+      ],
+      otherPermissionLabels: [],
     });
+  });
+
+  it('lists the grants the editor has no row for', () => {
+    expect(
+      getWorkflowAiAgentScopePermissions({
+        scope: {
+          canUpdateAllSettings: true,
+          canAccessAllTools: true,
+          canReadAllObjectRecords: true,
+          objectPermissions: [
+            {
+              objectUniversalIdentifier: 'company',
+              canReadObjectRecords: false,
+            },
+          ],
+          fieldPermissions: [
+            {
+              objectUniversalIdentifier: 'person',
+              fieldUniversalIdentifier: 'email',
+              canReadFieldValue: false,
+            },
+            {
+              objectUniversalIdentifier: 'person',
+              fieldUniversalIdentifier: 'phone',
+              canUpdateFieldValue: false,
+            },
+          ],
+        },
+        objectMetadataItems,
+      }).otherPermissionLabels,
+    ).toEqual([
+      'All settings',
+      'All tools',
+      'See Companies (denied)',
+      'Field permissions on People',
+    ]);
   });
 
   it('grants reading along with editing an object', () => {
@@ -69,7 +104,7 @@ describe('workflow AI agent scope', () => {
         scope: undefined,
         objectUniversalIdentifier: 'person',
         permissionKey: 'canUpdateObjectRecords',
-        value: true,
+        isGranted: true,
       }),
     ).toEqual({
       objectPermissions: [
@@ -82,10 +117,11 @@ describe('workflow AI agent scope', () => {
     });
   });
 
-  it('revokes every change when reading an object is revoked', () => {
+  it('removes an object grant instead of denying it, so all objects still apply', () => {
     expect(
       applyWorkflowAiAgentScopeObjectPermissionChange({
         scope: {
+          canReadAllObjectRecords: true,
           objectPermissions: [
             {
               objectUniversalIdentifier: 'person',
@@ -96,20 +132,54 @@ describe('workflow AI agent scope', () => {
         },
         objectUniversalIdentifier: 'person',
         permissionKey: 'canReadObjectRecords',
-        value: false,
-      }).objectPermissions,
-    ).toEqual([
-      {
-        objectUniversalIdentifier: 'person',
-        canReadObjectRecords: false,
-        canUpdateObjectRecords: false,
-        canSoftDeleteObjectRecords: false,
-        canDestroyObjectRecords: false,
-      },
-    ]);
+        isGranted: false,
+      }),
+    ).toEqual({ canReadAllObjectRecords: true, objectPermissions: [] });
   });
 
-  it('revokes every change on all objects when reading all objects is revoked', () => {
+  it('keeps the other grants of the scope when a grant is removed', () => {
+    const fieldPermissions = [
+      {
+        objectUniversalIdentifier: 'person',
+        fieldUniversalIdentifier: 'email',
+        canReadFieldValue: false,
+      },
+    ];
+
+    expect(
+      applyWorkflowAiAgentScopeObjectPermissionChange({
+        scope: {
+          canReadAllObjectRecords: true,
+          canUpdateAllObjectRecords: true,
+          canUpdateAllSettings: true,
+          fieldPermissions,
+          objectPermissions: [
+            {
+              objectUniversalIdentifier: 'company',
+              canUpdateObjectRecords: true,
+              canDestroyObjectRecords: false,
+            },
+          ],
+        },
+        objectUniversalIdentifier: 'company',
+        permissionKey: 'canUpdateObjectRecords',
+        isGranted: false,
+      }),
+    ).toEqual({
+      canReadAllObjectRecords: true,
+      canUpdateAllObjectRecords: true,
+      canUpdateAllSettings: true,
+      fieldPermissions,
+      objectPermissions: [
+        {
+          objectUniversalIdentifier: 'company',
+          canDestroyObjectRecords: false,
+        },
+      ],
+    });
+  });
+
+  it('removes every change on all objects when reading all objects is removed', () => {
     expect(
       applyWorkflowAiAgentScopeObjectPermissionChange({
         scope: {
@@ -119,44 +189,12 @@ describe('workflow AI agent scope', () => {
         },
         objectUniversalIdentifier: null,
         permissionKey: 'canReadObjectRecords',
-        value: false,
+        isGranted: false,
       }),
-    ).toEqual({
-      canReadAllObjectRecords: false,
-      canUpdateAllObjectRecords: false,
-      canSoftDeleteAllObjectRecords: false,
-      canDestroyAllObjectRecords: false,
-      permissionFlagUniversalIdentifiers: [],
-    });
+    ).toEqual({ permissionFlagUniversalIdentifiers: [] });
   });
 
-  it('keeps an object denied when all objects are granted', () => {
-    const { objectPermissions } = getWorkflowAiAgentScopePermissions({
-      scope: {
-        canReadAllObjectRecords: true,
-        canUpdateAllObjectRecords: true,
-        objectPermissions: [
-          {
-            objectUniversalIdentifier: 'person',
-            canReadObjectRecords: false,
-            canUpdateObjectRecords: false,
-          },
-        ],
-      },
-      objectMetadataItems,
-    });
-
-    expect(
-      objectPermissions.find(
-        (objectPermission) => objectPermission.objectMetadataId === 'person-id',
-      ),
-    ).toMatchObject({
-      canReadObjectRecords: false,
-      canUpdateObjectRecords: false,
-    });
-  });
-
-  it('keeps the flags it does not know when a flag is granted or revoked', () => {
+  it('keeps the flags it does not know when a flag is granted or removed', () => {
     const scope = {
       permissionFlagUniversalIdentifiers: [
         'flag-from-a-newer-server',
@@ -164,10 +202,10 @@ describe('workflow AI agent scope', () => {
       ],
     };
 
-    const grantedScope = applyWorkflowAiAgentScopePermissionFlagChange({
+    const grantedScope = applyWorkflowAiAgentScopePermissionFlagChangeOrThrow({
       scope,
       permissionFlagKey: PermissionFlagType.HTTP_REQUEST_TOOL,
-      value: true,
+      isGranted: true,
     });
 
     expect(grantedScope.permissionFlagUniversalIdentifiers).toEqual([
@@ -176,10 +214,10 @@ describe('workflow AI agent scope', () => {
       SystemPermissionFlag.HTTP_REQUEST_TOOL,
     ]);
     expect(
-      applyWorkflowAiAgentScopePermissionFlagChange({
+      applyWorkflowAiAgentScopePermissionFlagChangeOrThrow({
         scope: grantedScope,
         permissionFlagKey: PermissionFlagType.SEND_EMAIL_TOOL,
-        value: false,
+        isGranted: false,
       }).permissionFlagUniversalIdentifiers,
     ).toEqual([
       'flag-from-a-newer-server',

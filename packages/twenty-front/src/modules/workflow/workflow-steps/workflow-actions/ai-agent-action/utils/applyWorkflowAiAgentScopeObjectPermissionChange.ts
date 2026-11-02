@@ -1,65 +1,75 @@
 import { applyObjectPermissionChange } from '@/settings/roles/role-permissions/object-level-permissions/utils/applyObjectPermissionChange';
 import { type SettingsRoleObjectPermissionKey } from '@/settings/roles/role-permissions/objects-permissions/constants/SettingsRoleObjectPermissionIconConfig';
-import { type AiRunScope } from 'twenty-shared/ai';
+import {
+  type AiRunScope,
+  type AiRunScopeObjectPermission,
+} from 'twenty-shared/ai';
 import {
   OBJECT_PERMISSION_ACTIONS,
   ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION,
 } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 
+// removing drops the grant instead of denying it, so a broader grant still applies;
+// changing records needs reading them, so removing reading removes every change
 export const applyWorkflowAiAgentScopeObjectPermissionChange = ({
-  scope,
+  scope = {},
   objectUniversalIdentifier,
   permissionKey,
-  value,
+  isGranted,
 }: {
   scope: AiRunScope | undefined;
   objectUniversalIdentifier: string | null;
   permissionKey: SettingsRoleObjectPermissionKey;
-  value: boolean;
+  isGranted: boolean;
 }): AiRunScope => {
+  const removedActions =
+    permissionKey === 'canReadObjectRecords'
+      ? [...OBJECT_PERMISSION_ACTIONS]
+      : [permissionKey];
+
   if (!isDefined(objectUniversalIdentifier)) {
-    const allObjectsPermission = applyObjectPermissionChange({
-      objectPermission: Object.fromEntries(
-        OBJECT_PERMISSION_ACTIONS.map((action) => [
-          action,
-          scope?.[ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION[action]],
-        ]),
-      ),
-      permissionKey,
-      value,
-    });
+    if (!isGranted) {
+      return removePropertiesFromRecord(
+        scope,
+        removedActions.map(
+          (action) => ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION[action],
+        ),
+      );
+    }
 
     return {
       ...scope,
-      ...Object.fromEntries(
-        OBJECT_PERMISSION_ACTIONS.map((action) => [
-          ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION[action],
-          allObjectsPermission[action] ?? undefined,
-        ]),
-      ),
+      [ROLE_LEVEL_FLAG_BY_OBJECT_PERMISSION_ACTION[permissionKey]]: true,
+      canReadAllObjectRecords: true,
     };
   }
 
-  const objectPermissions = scope?.objectPermissions ?? [];
-  const existingObjectPermission = objectPermissions.find(
+  const otherObjectPermissions = (scope.objectPermissions ?? []).filter(
+    (objectPermission) =>
+      objectPermission.objectUniversalIdentifier !== objectUniversalIdentifier,
+  );
+  const existingObjectPermission = scope.objectPermissions?.find(
     (objectPermission) =>
       objectPermission.objectUniversalIdentifier === objectUniversalIdentifier,
+  ) ?? { objectUniversalIdentifier };
+
+  const changedObjectPermission: AiRunScopeObjectPermission = isGranted
+    ? applyObjectPermissionChange({
+        objectPermission: existingObjectPermission,
+        permissionKey,
+        value: true,
+      })
+    : removePropertiesFromRecord(existingObjectPermission, removedActions);
+
+  const hasRemainingPermission = OBJECT_PERMISSION_ACTIONS.some((action) =>
+    isDefined(changedObjectPermission[action]),
   );
 
   return {
     ...scope,
-    objectPermissions: [
-      ...objectPermissions.filter(
-        (objectPermission) => objectPermission !== existingObjectPermission,
-      ),
-      applyObjectPermissionChange({
-        objectPermission: existingObjectPermission ?? {
-          objectUniversalIdentifier,
-        },
-        permissionKey,
-        value,
-      }),
-    ],
+    objectPermissions: hasRemainingPermission
+      ? [...otherObjectPermissions, changedObjectPermission]
+      : otherObjectPermissions,
   };
 };

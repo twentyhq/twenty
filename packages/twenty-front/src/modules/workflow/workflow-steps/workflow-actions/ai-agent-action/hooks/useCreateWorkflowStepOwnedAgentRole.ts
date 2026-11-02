@@ -102,10 +102,10 @@ export const useCreateWorkflowStepOwnedAgentRole = ({
       }
     }
 
-    setWorkflowAiAgentActionAgent((currentAgent) =>
-      currentAgent?.id === updatableAgentId
-        ? { ...currentAgent, roleId }
-        : currentAgent,
+    setWorkflowAiAgentActionAgent((previousAgent) =>
+      previousAgent?.id === updatableAgentId
+        ? { ...previousAgent, roleId }
+        : previousAgent,
     );
 
     return roleId;

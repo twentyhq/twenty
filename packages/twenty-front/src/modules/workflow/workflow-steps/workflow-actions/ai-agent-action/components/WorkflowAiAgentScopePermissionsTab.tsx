@@ -16,7 +16,7 @@ export const WorkflowAiAgentScopePermissionsTab = ({
   onScopeChange,
 }: WorkflowAiAgentScopePermissionsTabProps) => {
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
-  const { objectPermissions, permissionFlagKeys } =
+  const { objectPermissions, permissionFlagKeys, otherPermissionLabels } =
     getWorkflowAiAgentScopePermissions({ scope, objectMetadataItems });
   const {
     onAddPermission,
@@ -30,6 +30,7 @@ export const WorkflowAiAgentScopePermissionsTab = ({
       readonly={readonly}
       objectPermissions={objectPermissions}
       permissionFlagKeys={permissionFlagKeys}
+      otherPermissionLabels={otherPermissionLabels}
       onAddPermission={onAddPermission}
       onDeletePermission={onDeletePermission}
       onAddPermissionFlag={onAddPermissionFlag}

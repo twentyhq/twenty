@@ -117,7 +117,7 @@ export const WorkflowAiAgentPermissionList = ({
           }}
           isEnabled={true}
           readonly={readonly}
-          showDeleteButton={!readonly && isDefined(onDeletePermission)}
+          shouldShowDeleteButton={!readonly && isDefined(onDeletePermission)}
           onDelete={() =>
             onDeletePermission?.({
               objectMetadataId: permission.objectMetadataId,

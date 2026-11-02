@@ -34,7 +34,7 @@ export const WorkflowAiAgentPermissionsCrudList = ({
             permission={permission}
             isEnabled={isEnabled}
             readonly={readonly}
-            showDeleteButton={false}
+            shouldShowDeleteButton={false}
             alwaysShowGranted={true}
             onAdd={() =>
               onAddPermission?.({
