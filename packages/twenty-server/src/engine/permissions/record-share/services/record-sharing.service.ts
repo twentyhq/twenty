@@ -38,18 +38,10 @@ import { DENIED_RECORD_PERMISSIONS } from 'src/engine/permissions/record-permiss
 import { type RecordPermissionsDTO } from 'src/engine/permissions/record-permissions/dtos/record-permissions.dto';
 import { type RecordTargetInput } from 'src/engine/permissions/record-permissions/dtos/record-target.input';
 import { RecordPermissionsService } from 'src/engine/permissions/record-permissions/services/record-permissions.service';
-import {
-  PermissionsException,
-  PermissionsExceptionCode,
-} from 'src/engine/permissions/permissions.exception';
-import { validateOperationIsPermittedOrThrow } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
 import { getRoleIdsFromRolePermissionConfig } from 'src/engine/permissions/principal/utils/get-role-ids-from-role-permission-config.util';
-import { buildPermissionsPrincipalsWithRolesFromConfig } from 'src/engine/permissions/principal/utils/build-permissions-principals-with-roles-from-config.util';
-import { getPermissionsPrincipalsFromAuthContext } from 'src/engine/permissions/principal/utils/get-permissions-principals-from-auth-context.util';
 import { resolvePrincipalIdsFromAuthContext } from 'src/engine/permissions/principal/utils/resolve-principal-ids-from-auth-context.util';
 import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
-import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -207,20 +199,10 @@ export class RecordSharingService {
           flatObjectMetadata.nameSingular,
           transactionScope,
         );
-      const canUpdateRecord = isDefined(args.transactionScope)
-        ? (
-            await this.getPermissions({
-              args,
-              sharingObject,
-            })
-          ).canUpdate
-        : (
-            await repository.findRecordIdsAllowedForOperation({
-              recordIds: [args.recordId],
-              operationType: 'update',
-              withDeleted: true,
-            })
-          ).length === 1;
+      const { canUpdate: canUpdateRecord } = await this.getPermissions({
+        args: { ...args, transactionScope },
+        sharingObject,
+      });
       if (
         !canUpdateRecord ||
         !repository.isObjectOperationPermittedByRole('update')
@@ -605,114 +587,17 @@ export class RecordSharingService {
     args: RecordSharingArgs;
     sharingObject: RecordSharingObject;
   }): Promise<RecordPermissionsDTO> {
-    const transactionScope = args.transactionScope;
-
-    if (isDefined(transactionScope)) {
-      return this.getPermissionsInTransaction({
-        ...args,
-        sharingObject,
-        transactionScope,
-      });
-    }
-
     const permissionsByRecordId =
       await this.recordPermissionsService.getPermissionsForRecords({
         authContext: args.authContext,
         flatObjectMetadata: sharingObject.flatObjectMetadata,
         recordIds: [args.recordId],
+        transactionScope: args.transactionScope,
       });
 
     return (
       permissionsByRecordId.get(args.recordId) ?? DENIED_RECORD_PERMISSIONS
     );
-  }
-
-  private async getPermissionsInTransaction({
-    authContext,
-    recordId,
-    sharingObject,
-    transactionScope,
-  }: RecordSharingArgs & {
-    sharingObject: RecordSharingObject;
-    transactionScope: WorkspaceTransactionScope;
-  }): Promise<RecordPermissionsDTO> {
-    return this.workspaceOrmManager.executeInWorkspaceContext(async () => {
-      const context = getWorkspaceContext();
-      const rolePermissionConfig = resolveRolePermissionConfig(context);
-
-      if (!isDefined(rolePermissionConfig)) {
-        return DENIED_RECORD_PERMISSIONS;
-      }
-
-      const principal = buildPermissionsPrincipalsWithRolesFromConfig({
-        workspaceId: transactionScope.workspaceId,
-        rolePermissionConfig,
-        principalsContext: getPermissionsPrincipalsFromAuthContext(authContext),
-      });
-
-      if (!isDefined(principal)) {
-        return DENIED_RECORD_PERMISSIONS;
-      }
-
-      const roleRepository =
-        this.workspaceOrmManager.getRepositoryWithContextPermissions(
-          sharingObject.flatObjectMetadata.nameSingular,
-          transactionScope,
-        );
-      const { internalContext } = roleRepository;
-
-      try {
-        validateOperationIsPermittedOrThrow({
-          entityName: sharingObject.flatObjectMetadata.nameSingular,
-          operationType: 'select',
-          objectsPermissions: roleRepository.objectRecordsPermissions,
-          flatObjectMetadataMaps: internalContext.flatObjectMetadataMaps,
-          flatFieldMetadataMaps: internalContext.flatFieldMetadataMaps,
-          objectIdByNameSingular: internalContext.objectIdByNameSingular,
-          selectedColumns: ['id'],
-          updatedColumns: [],
-        });
-      } catch (error) {
-        if (
-          error instanceof PermissionsException &&
-          error.code === PermissionsExceptionCode.PERMISSION_DENIED
-        ) {
-          return DENIED_RECORD_PERMISSIONS;
-        }
-
-        throw error;
-      }
-
-      const repository = transactionScope.getRepository(
-        sharingObject.flatObjectMetadata.nameSingular,
-        { shouldBypassPermissionChecks: true },
-        { shouldSkipEventEmission: true },
-      );
-      const operationTypes = [
-        'select',
-        'update',
-        'delete',
-        'soft-delete',
-      ] as const;
-      const [readableIds, updatableIds, deletableIds, softDeletableIds] =
-        await Promise.all(
-          operationTypes.map((operationType) =>
-            repository.findPrincipalAdmittedRecordIds({
-              principal,
-              recordIds: [recordId],
-              operationType,
-            }),
-          ),
-        );
-      const canRead = readableIds.has(recordId);
-
-      return {
-        canRead,
-        canUpdate: canRead && updatableIds.has(recordId),
-        canDelete: canRead && deletableIds.has(recordId),
-        canSoftDelete: canRead && softDeletableIds.has(recordId),
-      };
-    }, authContext);
   }
 
   private isUpdatePermittedByRole({
