@@ -43,7 +43,9 @@ export class AgentChatDirectMessageIdentityService {
   }): Promise<string> {
     const pair = normalizeAgentChatDirectMessagePairOrThrow(members);
 
-    await this.assertIdentityEnabledOrThrow(workspaceId);
+    await this.assertDirectMessageIdentityFeatureFlagEnabledOrThrow(
+      workspaceId,
+    );
 
     const existingThreadId = await this.findThreadId({ workspaceId, pair });
 
@@ -108,7 +110,7 @@ export class AgentChatDirectMessageIdentityService {
     );
   }
 
-  private async assertIdentityEnabledOrThrow(
+  private async assertDirectMessageIdentityFeatureFlagEnabledOrThrow(
     workspaceId: string,
   ): Promise<void> {
     const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
