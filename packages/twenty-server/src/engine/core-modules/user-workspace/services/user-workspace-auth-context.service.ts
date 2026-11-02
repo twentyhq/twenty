@@ -145,7 +145,7 @@ export class UserWorkspaceAuthContextService {
           'flatApplicationMaps',
         ]);
       application = flatApplicationMaps.byId[applicationId];
-      // OAuth-only applications have no role and act with the member's
+      // OAuth-only applications have no role and act with the member's role
       if (
         !isDefined(application) ||
         (!isDefined(application.defaultRoleId) &&

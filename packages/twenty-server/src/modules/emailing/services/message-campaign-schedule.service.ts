@@ -1,3 +1,4 @@
+import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { Injectable, Logger } from '@nestjs/common';
 
 import { MessageCampaignStatus } from 'twenty-shared/types';
@@ -171,72 +172,88 @@ export class MessageCampaignScheduleService {
     userWorkspaceId,
     scheduledAt,
   }: SendScheduledCampaignJobData): Promise<void> {
+    const schedulerAuthContext = await this.userWorkspaceAuthContextService
+      .resolve({ workspaceId, userWorkspaceId })
+      .catch(async (error) => {
+        if (!(error instanceof AuthException)) {
+          throw error;
+        }
+
+        await this.releaseUnsendableScheduledCampaign({
+          workspaceId,
+          campaignId,
+          scheduledAt: new Date(scheduledAt),
+          reason:
+            'the member who scheduled it can no longer act in the workspace',
+        });
+
+        return null;
+      });
+
+    if (!isDefined(schedulerAuthContext)) {
+      return;
+    }
+
     // Runs as the member who scheduled it, so it only reaches the records they can
-    await withWorkspaceAuthContext(
-      await this.userWorkspaceAuthContextService.resolve({
-        workspaceId,
-        userWorkspaceId,
-      }),
-      async () => {
-        const scheduledAtDate = new Date(scheduledAt);
+    await withWorkspaceAuthContext(schedulerAuthContext, async () => {
+      const scheduledAtDate = new Date(scheduledAt);
 
-        const isStillScheduledForThisTime =
-          await this.messageCampaignLifecycleService.isCampaignScheduledFor({
-            workspaceId,
-            campaignId,
-            scheduledAt: scheduledAtDate,
-          });
+      const isStillScheduledForThisTime =
+        await this.messageCampaignLifecycleService.isCampaignScheduledFor({
+          workspaceId,
+          campaignId,
+          scheduledAt: scheduledAtDate,
+        });
 
-        if (!isStillScheduledForThisTime) {
-          return;
-        }
+      if (!isStillScheduledForThisTime) {
+        return;
+      }
 
-        const prepared = await this.messageCampaignService
-          .prepareCampaignSendOrThrow({
-            workspaceId,
-            userWorkspaceId,
-            campaignId,
-          })
-          .catch(async (error) => {
-            if (!(error instanceof EmailingDomainException)) {
-              throw error;
-            }
+      const prepared = await this.messageCampaignService
+        .prepareCampaignSendOrThrow({
+          workspaceId,
+          userWorkspaceId,
+          campaignId,
+        })
+        .catch(async (error) => {
+          if (!(error instanceof EmailingDomainException)) {
+            throw error;
+          }
 
-            await this.releaseUnsendableScheduledCampaign({
-              workspaceId,
-              campaignId,
-              scheduledAt: scheduledAtDate,
-              reason: error.message,
-            });
-
-            return null;
-          });
-
-        if (!isDefined(prepared)) {
-          return;
-        }
-
-        if (prepared.sendableRecipients.length === 0) {
           await this.releaseUnsendableScheduledCampaign({
             workspaceId,
             campaignId,
             scheduledAt: scheduledAtDate,
-            reason: 'no recipient remains sendable',
+            reason: error.message,
           });
 
-          return;
-        }
-
-        await this.messageCampaignService.claimAndMaterializeOrThrow({
-          workspaceId,
-          userWorkspaceId,
-          campaignId,
-          prepared,
-          from: MessageCampaignStatus.SCHEDULED,
-          fromScheduledAt: scheduledAtDate,
+          return null;
         });
-      },
-    );
+
+      if (!isDefined(prepared)) {
+        return;
+      }
+
+      if (prepared.sendableRecipients.length === 0) {
+        await this.releaseUnsendableScheduledCampaign({
+          workspaceId,
+          campaignId,
+          scheduledAt: scheduledAtDate,
+          reason: 'no recipient remains sendable',
+        });
+
+        return;
+      }
+
+      await this.messageCampaignService.claimAndMaterializeOrThrow({
+        workspaceId,
+        userWorkspaceId,
+        campaignId,
+        prepared,
+        from: MessageCampaignStatus.SCHEDULED,
+        fromScheduledAt: scheduledAtDate,
+      });
+    });
   }
 
   private async releaseUnsendableScheduledCampaign({
