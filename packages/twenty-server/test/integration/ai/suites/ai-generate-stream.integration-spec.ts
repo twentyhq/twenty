@@ -131,8 +131,8 @@ describe('ai.generate runs followed by their application (integration)', () => {
         type: 'run-finished',
       });
 
-      // one server connection receives both channels in publish order, so a keepalive the other
-      // stream gets after the run ended comes after anything the run published
+      // the server's one Redis subscriber relays both channels in publish order, so a keepalive the
+      // other stream gets after the run ended comes after anything the run published
       const otherEventCountAtRunEnd = otherStream.events.length;
 
       await waitForOrThrow(

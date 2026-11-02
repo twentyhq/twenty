@@ -83,8 +83,8 @@ export const followAgentRunEventsOrThrow = async ({
           if (isDefined(result.errors)) {
             errors.push(
               ...result.errors.map(
-                (error: { extensions?: { code?: string } }) =>
-                  error.extensions?.code,
+                (error: { extensions?: { code?: string }; message?: string }) =>
+                  error.extensions?.code ?? error.message,
               ),
             );
           } else {

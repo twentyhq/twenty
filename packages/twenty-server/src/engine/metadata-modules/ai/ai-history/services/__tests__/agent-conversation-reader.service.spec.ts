@@ -258,7 +258,7 @@ describe('AgentConversationReaderService', () => {
     ]);
   });
 
-  it('reads back the turns an application ran as a member, and the continuations of its own run', async () => {
+  it('reads back the turns an application ran as a member', async () => {
     const [, assistantMessage] = buildTurn({
       turnId: 'turn-2',
       senderWorkspaceMemberId: null,

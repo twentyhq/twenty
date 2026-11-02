@@ -473,8 +473,8 @@ A scope only narrows: it grants nothing the caller doesn't already have.
 
 To show the reply while it is written, pass `onChunk`. The call still resolves
 to the same result, once the last chunk was handed to `onChunk`. If the
-stream's end never arrives, it stops waiting for more chunks 5 s after the
-result and still hands over every chunk received by then:
+stream's end never arrives, it stops waiting once the result is in and 5 s
+pass without a new chunk, and still hands over every chunk received by then:
 
 ```ts
 const abortController = new AbortController();

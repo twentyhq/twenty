@@ -1,5 +1,7 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
+import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
+import { AgentTurnStatus } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-turn-status.enum';
 import { AgentConversationWriterService } from 'src/engine/metadata-modules/ai/ai-history/services/agent-conversation-writer.service';
 
 const AGENT_TURN_FIELDS = STANDARD_OBJECTS.agentTurn.fields;
@@ -7,12 +9,14 @@ const AGENT_TURN_FIELDS = STANDARD_OBJECTS.agentTurn.fields;
 const buildWriter = ({
   isThreadNullable,
   hasResultField,
+  turnRepository = {},
 }: {
   isThreadNullable: boolean;
   hasResultField: boolean;
+  turnRepository?: Record<string, unknown>;
 }) =>
   new AgentConversationWriterService(
-    {} as never,
+    turnRepository as never,
     {} as never,
     {
       getOrRecompute: jest.fn().mockResolvedValue({
@@ -62,4 +66,22 @@ describe('AgentConversationWriterService upgrade fences', () => {
       ).resolves.toBe(expected);
     },
   );
+
+  it('refuses a turn without a thread before inserting anything while the upgrade runs', async () => {
+    const turnRepository = { insert: jest.fn() };
+
+    await expect(
+      buildWriter({
+        isThreadNullable: false,
+        hasResultField: false,
+        turnRepository,
+      }).insertTurn({
+        workspaceId: 'workspace-id',
+        threadId: null,
+        agentId: null,
+        status: AgentTurnStatus.RUNNING,
+      }),
+    ).rejects.toMatchObject({ code: AiExceptionCode.CHAT_UPGRADE_IN_PROGRESS });
+    expect(turnRepository.insert).not.toHaveBeenCalled();
+  });
 });
