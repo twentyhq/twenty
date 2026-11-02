@@ -329,7 +329,7 @@ export class AgentInboxService {
     }
 
     if (!isDefined(existingThread) && isDefined(channelId)) {
-      await this.channelAccessService.assertChannelOpenToRole({
+      await this.channelAccessService.assertChannelOpenToRoleOrThrow({
         workspaceId,
         channelId,
         roleId: senderDetails.roleId,

@@ -56,7 +56,7 @@ export class AgentChatChannelAccessService {
     return channel;
   }
 
-  async assertChannelOpenToRole({
+  async assertChannelOpenToRoleOrThrow({
     workspaceId,
     channelId,
     roleId,
