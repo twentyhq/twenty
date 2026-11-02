@@ -199,3 +199,43 @@ export const WithLongAppName: Story = {
     );
   },
 };
+
+export const WhenTheClientLookupFails: Story = {
+  args: {
+    searchParams: {
+      client_id: 'https://client.example.com/oauth/metadata.json',
+      redirect_uri: MOCKED_REDIRECT_URL,
+    },
+  },
+  parameters: {
+    msw: {
+      handlers: [
+        graphql.query(
+          getOperationName(FindApplicationRegistrationByClientIdDocument) ?? '',
+          () =>
+            HttpResponse.json({
+              data: null,
+              errors: [
+                {
+                  message: 'Limit reached (60 tokens per 3600000 ms)',
+                  extensions: { code: 'LIMIT_REACHED' },
+                },
+              ],
+            }),
+        ),
+        ...buildHandlers(null),
+      ],
+    },
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    await canvas.findByText(
+      'Unable to load application details. Please try again later.',
+      undefined,
+      { timeout: 5000 },
+    );
+    expect(
+      canvas.queryByText(`Navigated to ${AppPath.NotFound}`),
+    ).not.toBeInTheDocument();
+  },
+};

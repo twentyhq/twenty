@@ -4,6 +4,7 @@ import { isAxiosError } from 'axios';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CLIENT_ID_METADATA_DOCUMENT_LIMITS } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/constants/client-id-metadata-document-limits.constant';
+import { CLIENT_ID_METADATA_DOCUMENT_TRANSIENT_CLIENT_ERROR_STATUS_CODES } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/constants/client-id-metadata-document-transient-client-error-status-codes.constant';
 import { type CachedClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/cached-client-id-metadata-document.type';
 import { type ClientIdMetadataDocumentFetchResult } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/client-id-metadata-document-fetch-result.type';
 import { type ClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/client-id-metadata-document.type';
@@ -13,8 +14,6 @@ import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decora
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
-
-const TRANSIENT_CLIENT_ERROR_STATUS_CODES = [408, 425, 429];
 
 @Injectable()
 export class ClientIdMetadataDocumentService {
@@ -109,7 +108,9 @@ export class ClientIdMetadataDocumentService {
         isAxiosError(error) &&
         isDefined(error.response) &&
         error.response.status < 500 &&
-        !TRANSIENT_CLIENT_ERROR_STATUS_CODES.includes(error.response.status);
+        !CLIENT_ID_METADATA_DOCUMENT_TRANSIENT_CLIENT_ERROR_STATUS_CODES.includes(
+          error.response.status,
+        );
 
       return { status: isWithdrawn ? 'invalid' : 'unreachable' };
     }

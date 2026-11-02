@@ -36,7 +36,7 @@ export class WellKnownOAuthClientInstallService {
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
-  // Mirrors Installed apps, which folds rows only with app preferences on, and folds per-connection installs into the seeded one, never the reverse
+  // Mirrors Installed apps, which with app preferences on folds a client's installs into its seeded install, or into a per-connection one while there is none
   async findFoldedInstallUniversalIdentifiers({
     workspaceId,
     universalIdentifier,
@@ -79,19 +79,38 @@ export class WellKnownOAuthClientInstallService {
       },
     );
 
-    return oAuthOnlyInstalls
+    const wellKnownOAuthClientInstalls = oAuthOnlyInstalls.filter(
+      (oAuthOnlyInstall) =>
+        getWellKnownOAuthClientOfRegistration(
+          oAuthOnlyInstall.applicationRegistration,
+        ) === wellKnownOAuthClient,
+    );
+
+    const seededInstall = wellKnownOAuthClientInstalls.find(
+      (wellKnownOAuthClientInstall) =>
+        isDefined(
+          findWellKnownOAuthClientByUniversalIdentifier(
+            wellKnownOAuthClientInstall.universalIdentifier,
+          ),
+        ),
+    );
+
+    if (
+      isDefined(seededInstall) &&
+      seededInstall.universalIdentifier !== universalIdentifier
+    ) {
+      return [];
+    }
+
+    return wellKnownOAuthClientInstalls
       .filter(
-        (oAuthOnlyInstall) =>
-          oAuthOnlyInstall.universalIdentifier !== universalIdentifier &&
-          !isDefined(
-            findWellKnownOAuthClientByUniversalIdentifier(
-              oAuthOnlyInstall.universalIdentifier,
-            ),
-          ) &&
-          getWellKnownOAuthClientOfRegistration(
-            oAuthOnlyInstall.applicationRegistration,
-          ) === wellKnownOAuthClient,
+        (wellKnownOAuthClientInstall) =>
+          wellKnownOAuthClientInstall.universalIdentifier !==
+          universalIdentifier,
       )
-      .map((oAuthOnlyInstall) => oAuthOnlyInstall.universalIdentifier);
+      .map(
+        (wellKnownOAuthClientInstall) =>
+          wellKnownOAuthClientInstall.universalIdentifier,
+      );
   }
 }

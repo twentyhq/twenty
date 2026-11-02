@@ -188,7 +188,7 @@ export const Authorize = () => {
   const shouldRedirectToNotFound =
     !isDefined(clientId) ||
     !isDefined(redirectUrl) ||
-    (!loading && !isDefined(applicationRegistration));
+    (!loading && !isDefined(queryError) && !isDefined(applicationRegistration));
 
   useEffect(() => {
     if (shouldRedirectToNotFound) {

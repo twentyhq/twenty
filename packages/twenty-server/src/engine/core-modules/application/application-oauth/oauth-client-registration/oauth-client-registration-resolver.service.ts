@@ -6,6 +6,10 @@ import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
+import {
+  CLIENT_ID_METADATA_DOCUMENT_FETCH_RATE_LIMIT_MAX,
+  CLIENT_ID_METADATA_DOCUMENT_FETCH_RATE_LIMIT_WINDOW_MS,
+} from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/constants/client-id-metadata-document-fetch-rate-limit.constant';
 import { ClientIdMetadataDocumentService } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/services/client-id-metadata-document.service';
 import { type ClientIdMetadataDocument } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/types/client-id-metadata-document.type';
 import { isClientIdMetadataDocumentUrl } from 'src/engine/core-modules/application/application-oauth/client-id-metadata-document/utils/is-client-id-metadata-document-url.util';
@@ -16,6 +20,7 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { WellKnownOAuthClientRegistrationService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-registration.service';
 import { findWellKnownOAuthClientByClientIdMetadataDocument } from 'src/engine/core-modules/application/well-known-oauth-client/utils/find-well-known-oauth-client-by-client-id-metadata-document.util';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 
 // A client_id is a registered id or a Client ID Metadata Document URL, which maps to one registration per URL, not per connection
 @Injectable()
@@ -25,7 +30,31 @@ export class OAuthClientRegistrationResolverService {
     private readonly applicationRegistrationRepository: Repository<ApplicationRegistrationEntity>,
     private readonly clientIdMetadataDocumentService: ClientIdMetadataDocumentService,
     private readonly wellKnownOAuthClientRegistrationService: WellKnownOAuthClientRegistrationService,
+    private readonly throttlerService: ThrottlerService,
   ) {}
+
+  // The public OAuth endpoints let anyone make the server fetch a URL, so those fetches are rationed per IP
+  async throttleClientIdMetadataDocumentFetchOrThrow({
+    clientId,
+    requestIp,
+  }: {
+    clientId: string;
+    requestIp: string | undefined;
+  }): Promise<void> {
+    if (
+      !isClientIdMetadataDocumentUrl(clientId) ||
+      !(await this.clientIdMetadataDocumentService.isFetchDue(clientId))
+    ) {
+      return;
+    }
+
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      `oauth-client-metadata-document-fetch:${requestIp}`,
+      1,
+      CLIENT_ID_METADATA_DOCUMENT_FETCH_RATE_LIMIT_MAX,
+      CLIENT_ID_METADATA_DOCUMENT_FETCH_RATE_LIMIT_WINDOW_MS,
+    );
+  }
 
   async findByClientId(
     clientId: string,

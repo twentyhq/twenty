@@ -168,7 +168,7 @@ describe('WellKnownOAuthClientInstallService', () => {
     ).resolves.toEqual([OTHER_LEGACY_CLAUDE_INSTALL.universalIdentifier]);
   });
 
-  it('never folds the shared install into a per-connection install', async () => {
+  it('finds nothing for a per-connection install while the shared install exists', async () => {
     installs = [
       SHARED_CLAUDE_INSTALL,
       LEGACY_CLAUDE_INSTALL,
@@ -179,7 +179,7 @@ describe('WellKnownOAuthClientInstallService', () => {
       findFoldedInstallUniversalIdentifiers(
         LEGACY_CLAUDE_INSTALL.universalIdentifier,
       ),
-    ).resolves.toEqual([OTHER_LEGACY_CLAUDE_INSTALL.universalIdentifier]);
+    ).resolves.toEqual([]);
   });
 
   it('finds nothing while app preferences are off, since Installed apps then lists every install', async () => {

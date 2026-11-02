@@ -11,6 +11,7 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { WellKnownOAuthClient } from 'src/engine/core-modules/application/well-known-oauth-client/enums/well-known-oauth-client.enum';
 import { WellKnownOAuthClientRegistrationService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-registration.service';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 
 const CLAUDE_CODE_DOCUMENT = {
   clientId: 'https://claude.ai/oauth/claude-code-client-metadata',
@@ -22,6 +23,8 @@ const CLAUDE_CODE_DOCUMENT = {
 describe('OAuthClientRegistrationResolverService', () => {
   let service: OAuthClientRegistrationResolverService;
   let findDocument: jest.Mock;
+  let isFetchDue: jest.Mock;
+  let tokenBucketThrottleOrThrow: jest.Mock;
   let findOrCreateRegistration: jest.Mock;
   let insertedValues: jest.Mock;
   let applicationRegistrationRepository: {
@@ -32,6 +35,8 @@ describe('OAuthClientRegistrationResolverService', () => {
 
   beforeEach(async () => {
     findDocument = jest.fn();
+    isFetchDue = jest.fn();
+    tokenBucketThrottleOrThrow = jest.fn();
     findOrCreateRegistration = jest.fn();
     insertedValues = jest.fn();
 
@@ -62,11 +67,15 @@ describe('OAuthClientRegistrationResolverService', () => {
         },
         {
           provide: ClientIdMetadataDocumentService,
-          useValue: { findDocument },
+          useValue: { findDocument, isFetchDue },
         },
         {
           provide: WellKnownOAuthClientRegistrationService,
           useValue: { findOrCreateRegistration },
+        },
+        {
+          provide: ThrottlerService,
+          useValue: { tokenBucketThrottleOrThrow },
         },
       ],
     }).compile();
@@ -235,5 +244,42 @@ describe('OAuthClientRegistrationResolverService', () => {
     await expect(
       service.findOrRegisterByClientId(CLAUDE_CODE_DOCUMENT.clientId),
     ).resolves.toBeNull();
+  });
+
+  describe('throttleClientIdMetadataDocumentFetchOrThrow', () => {
+    const throttle = (clientId: string) =>
+      service.throttleClientIdMetadataDocumentFetchOrThrow({
+        clientId,
+        requestIp: '203.0.113.7',
+      });
+
+    it('spends from the IP fetch allowance when the document is due a fetch', async () => {
+      isFetchDue.mockResolvedValue(true);
+
+      await throttle(CLAUDE_CODE_DOCUMENT.clientId);
+
+      expect(isFetchDue).toHaveBeenCalledWith(CLAUDE_CODE_DOCUMENT.clientId);
+      expect(tokenBucketThrottleOrThrow).toHaveBeenCalledWith(
+        'oauth-client-metadata-document-fetch:203.0.113.7',
+        1,
+        expect.any(Number),
+        expect.any(Number),
+      );
+    });
+
+    it('leaves the allowance alone while the cached document is fresh', async () => {
+      isFetchDue.mockResolvedValue(false);
+
+      await throttle(CLAUDE_CODE_DOCUMENT.clientId);
+
+      expect(tokenBucketThrottleOrThrow).not.toHaveBeenCalled();
+    });
+
+    it('leaves the allowance alone for a registered client id', async () => {
+      await throttle('3f1c2a9e-6f1b-4f0e-9d7e-2b3c4d5e6f70');
+
+      expect(isFetchDue).not.toHaveBeenCalled();
+      expect(tokenBucketThrottleOrThrow).not.toHaveBeenCalled();
+    });
   });
 });

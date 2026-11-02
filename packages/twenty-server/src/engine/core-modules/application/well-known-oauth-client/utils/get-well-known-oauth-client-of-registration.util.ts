@@ -33,7 +33,7 @@ export const getWellKnownOAuthClientOfRegistration = (
     return seededWellKnownOAuthClient.client;
   }
 
-  // Only dynamic registration issues UUID client ids; a metadata document's callbacks change whenever its host edits it
+  // Among unowned OAuth-only registrations only DCR ones have UUID client ids; metadata document ones use their URL, and its host can change their callbacks
   if (
     registration.sourceType !== ApplicationRegistrationSourceType.OAUTH_ONLY ||
     isDefined(registration.ownerWorkspaceId) ||

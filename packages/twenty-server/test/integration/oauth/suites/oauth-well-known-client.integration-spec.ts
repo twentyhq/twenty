@@ -152,6 +152,9 @@ describe('OAuth well-known clients (integration)', () => {
     chatGptClientId = chatGptRegistration.body.client_id;
   });
 
+  // Tests spend several token requests, and the token endpoint admits 60 a minute per IP
+  beforeEach(() => clearTokenBuckets('oauth:*'));
+
   afterAll(async () => {
     // Other suites insert catalog rows directly and expect the cached catalog to be rebuilt from them
     await getAppProviderByClassName<CoreEntityCacheService>(
@@ -432,11 +435,8 @@ describe('OAuth well-known clients (integration)', () => {
           null,
         );
 
-      beforeAll(clearFetchRateLimit);
-      afterAll(clearFetchRateLimit);
-
-      it('should rate limit the lookups that fetch a document, not the cached or registered ones', async () => {
-        const firstDocumentUrl = buildUnreachableDocumentUrl();
+      const exhaustFetchRateLimitWithLookups = async (): Promise<string> => {
+        const cachedDocumentUrl = buildUnreachableDocumentUrl();
 
         for (
           let lookup = 0;
@@ -444,7 +444,7 @@ describe('OAuth well-known clients (integration)', () => {
           lookup++
         ) {
           const response = await lookUp(
-            lookup === 0 ? firstDocumentUrl : buildUnreachableDocumentUrl(),
+            lookup === 0 ? cachedDocumentUrl : buildUnreachableDocumentUrl(),
           );
 
           expect(response.body.errors).toBeUndefined();
@@ -453,13 +453,22 @@ describe('OAuth well-known clients (integration)', () => {
           ).toBeNull();
         }
 
+        return cachedDocumentUrl;
+      };
+
+      beforeEach(clearFetchRateLimit);
+      afterAll(clearFetchRateLimit);
+
+      it('should rate limit the lookups that fetch a document, not the cached or registered ones', async () => {
+        const cachedDocumentUrl = await exhaustFetchRateLimitWithLookups();
+
         const throttledResponse = await lookUp(buildUnreachableDocumentUrl());
 
         expect(throttledResponse.body.errors?.[0]?.extensions?.subCode).toBe(
           'LIMIT_REACHED',
         );
 
-        const cachedResponse = await lookUp(firstDocumentUrl);
+        const cachedResponse = await lookUp(cachedDocumentUrl);
 
         expect(cachedResponse.body.errors).toBeUndefined();
 
@@ -470,6 +479,49 @@ describe('OAuth well-known clients (integration)', () => {
           registeredClientResponse.body.data
             .findApplicationRegistrationByClientId,
         ).toEqual({ name: 'Claude', wellKnownOAuthClient: 'CLAUDE' });
+      });
+
+      it('should spend the same fetch allowance on the token, revoke and introspect endpoints', async () => {
+        const cachedDocumentUrl = await exhaustFetchRateLimitWithLookups();
+
+        const throttledResponses = await Promise.all([
+          request(baseUrl).post('/oauth/token').send({
+            grant_type: 'refresh_token',
+            refresh_token: 'not-a-refresh-token',
+            client_id: buildUnreachableDocumentUrl(),
+          }),
+          request(baseUrl).post('/oauth/revoke').send({
+            token: 'not-a-token',
+            client_id: buildUnreachableDocumentUrl(),
+          }),
+          request(baseUrl).post('/oauth/introspect').send({
+            token: 'not-a-token',
+            client_id: buildUnreachableDocumentUrl(),
+          }),
+        ]);
+
+        for (const throttledResponse of throttledResponses) {
+          expect(throttledResponse.status).toBe(429);
+          expect(throttledResponse.body.error).toBe('rate_limit_exceeded');
+        }
+
+        const cachedDocumentResponse = await refresh({
+          clientId: cachedDocumentUrl,
+          refreshToken: 'not-a-refresh-token',
+        });
+
+        expect(cachedDocumentResponse.status).toBe(401);
+        expect(cachedDocumentResponse.body.error).toBe('invalid_client');
+
+        const registeredClientResponse = await exchangeCode({
+          clientId: claudeClientId,
+          code: await authorizeAsMember({
+            clientId: claudeClientId,
+            token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+          }),
+        });
+
+        expect(registeredClientResponse.status).toBe(200);
       });
     });
   });
@@ -496,12 +548,8 @@ describe('OAuth well-known clients (integration)', () => {
         connection: redisConnection,
       });
 
-      // Installed apps only folds a client's installs into one row with app preferences on
       await setAppPreferencesEnabled(true);
     });
-
-    // Each test spends several token requests, and the token endpoint admits 60 a minute per IP
-    beforeEach(() => clearTokenBuckets('oauth:*'));
 
     afterAll(async () => {
       await setAppPreferencesEnabled(false);
@@ -674,9 +722,14 @@ describe('OAuth well-known clients (integration)', () => {
       await expectBothMembersDisconnected(connections);
     });
 
-    it('should leave the shared Claude install connected when an older per-connection one is uninstalled', async () => {
+    it('should only uninstall an older per-connection Claude install while the shared one exists', async () => {
       const { legacyClaudeClientId, legacyRefreshToken, sharedRefreshToken } =
         await connectLegacyAndSharedClaudeMembers();
+      const otherLegacyClaudeClientId = await registerLegacyClaudeClient();
+      const otherLegacyRefreshToken = await connect({
+        clientId: otherLegacyClaudeClientId,
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
       const [legacyInstall] = await findInstalls(legacyClaudeClientId);
 
       const { errors } = await uninstallApplication({
@@ -684,17 +737,28 @@ describe('OAuth well-known clients (integration)', () => {
       });
 
       expect(errors).toBeUndefined();
+      expect(await isInstalled(legacyClaudeClientId)).toBe(false);
+      expect(await isInstalled(otherLegacyClaudeClientId)).toBe(true);
       expect(await isInstalled(claudeClientId)).toBe(true);
 
-      const [legacyRefresh, sharedRefresh] = await Promise.all([
-        refresh({
-          clientId: legacyClaudeClientId,
-          refreshToken: legacyRefreshToken,
-        }),
-        refresh({ clientId: claudeClientId, refreshToken: sharedRefreshToken }),
-      ]);
+      const [legacyRefresh, otherLegacyRefresh, sharedRefresh] =
+        await Promise.all([
+          refresh({
+            clientId: legacyClaudeClientId,
+            refreshToken: legacyRefreshToken,
+          }),
+          refresh({
+            clientId: otherLegacyClaudeClientId,
+            refreshToken: otherLegacyRefreshToken,
+          }),
+          refresh({
+            clientId: claudeClientId,
+            refreshToken: sharedRefreshToken,
+          }),
+        ]);
 
       expect(legacyRefresh.body.error).toBe('invalid_grant');
+      expect(otherLegacyRefresh.status).toBe(200);
       expect(sharedRefresh.status).toBe(200);
     });
 
