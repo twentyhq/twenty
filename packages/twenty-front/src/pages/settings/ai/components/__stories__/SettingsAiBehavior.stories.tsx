@@ -26,13 +26,13 @@ export const IndependentSelection: Story = {
     const canvas = within(canvasElement);
     const directMessages = canvas.getByRole('combobox', { name: 'DMs' });
     const inbox = canvas.getByRole('combobox', { name: 'Global inbox' });
-    const document = within(canvasElement.ownerDocument.body);
+    const bodyQueries = within(canvasElement.ownerDocument.body);
 
     expect(canvas.getByRole('status')).toBeEmptyDOMElement();
     expect(directMessages).toHaveTextContent('Only when mentioned');
     expect(inbox).toHaveTextContent('Auto');
     await userEvent.click(directMessages);
-    const directMessageOptions = await document.findByRole('listbox', {
+    const directMessageOptions = await bodyQueries.findByRole('listbox', {
       name: 'DMs',
     });
 
@@ -46,7 +46,7 @@ export const IndependentSelection: Story = {
     expect(inbox).toHaveTextContent('Auto');
 
     await userEvent.click(inbox);
-    const inboxOptions = await document.findByRole('listbox', {
+    const inboxOptions = await bodyQueries.findByRole('listbox', {
       name: 'Global inbox',
     });
 
@@ -63,7 +63,7 @@ export const IndependentSelection: Story = {
     await waitFor(() => expect(inbox).toHaveFocus());
 
     await userEvent.click(directMessages);
-    await document.findByRole('listbox');
+    await bodyQueries.findByRole('listbox');
     await userEvent.keyboard('{ArrowDown}{Escape}');
     await waitFor(() => expect(directMessages).toHaveFocus());
     expect(args.onDirectMessageModeChange).toHaveBeenCalledOnce();
