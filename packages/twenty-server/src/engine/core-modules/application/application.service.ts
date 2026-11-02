@@ -28,7 +28,9 @@ import {
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { WORKSPACE_CUSTOM_APPLICATION_NAME } from 'src/engine/core-modules/application/constants/workspace-custom-application.constant';
+import { type ApplicationCallerOperation } from 'src/engine/core-modules/application/types/application-caller-operation.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { findActiveFlatApplicationById } from 'src/engine/core-modules/application/utils/find-active-flat-application-by-id.util';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/services/file-storage.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -186,6 +188,31 @@ export class ApplicationService {
       ]);
 
     return findActiveFlatApplicationById(flatApplicationMaps, applicationId);
+  }
+
+  async findReadableInstalledFlatApplication({
+    applicationId,
+    workspaceId,
+    workspaceCustomApplicationId,
+    callingApplication,
+  }: {
+    applicationId: string;
+    workspaceId: string;
+    workspaceCustomApplicationId: string;
+    callingApplication: ApplicationCallerOperation['callingApplication'];
+  }): Promise<FlatApplication | undefined> {
+    if (
+      !canCallerReachApplication({
+        applicationId,
+        callingApplication,
+        operation: 'read',
+        workspaceCustomApplicationId,
+      })
+    ) {
+      return undefined;
+    }
+
+    return this.findInstalledFlatApplication({ applicationId, workspaceId });
   }
 
   async findManyInstalledFlatApplications(

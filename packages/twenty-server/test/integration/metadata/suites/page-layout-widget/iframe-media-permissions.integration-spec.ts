@@ -4,6 +4,7 @@ import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/
 import { findOneApplication } from 'test/integration/metadata/suites/application/utils/find-one-application.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+import { uploadApplicationFile } from 'test/integration/metadata/suites/application/utils/upload-application-file.util';
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { type Manifest } from 'twenty-shared/application';
@@ -21,6 +22,8 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 const OWNER_APPLICATION_UNIVERSAL_IDENTIFIER = uuidv4();
 const OTHER_APPLICATION_UNIVERSAL_IDENTIFIER = uuidv4();
 const WIDGET_UNIVERSAL_IDENTIFIER = uuidv4();
+const FRONT_COMPONENT_UNIVERSAL_IDENTIFIER = uuidv4();
+const COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER = uuidv4();
 const OWNER_APPLICATION_NAME = 'Widget Phone';
 const ORIGIN = 'https://phone.example.com';
 const MICROPHONE_PERMISSION = {
@@ -39,11 +42,15 @@ const createApplication = async ({
   name,
   permissions,
   widgets,
+  frontComponents = [],
+  commandMenuItems = [],
 }: {
   applicationUniversalIdentifier: string;
   name: string;
   permissions: IframeMediaPermission[];
   widgets: Manifest['pageLayoutWidgets'];
+  frontComponents?: Manifest['frontComponents'];
+  commandMenuItems?: Manifest['commandMenuItems'];
 }): Promise<string> => {
   await setupApplicationForSync({
     applicationUniversalIdentifier,
@@ -52,10 +59,24 @@ const createApplication = async ({
     sourcePath: `iframe-widget-${applicationUniversalIdentifier}`,
   });
 
+  jest.useRealTimers();
+
   const manifest = buildBaseManifest({
     appId: applicationUniversalIdentifier,
     roleId: uuidv4(),
   });
+
+  for (const frontComponent of frontComponents) {
+    await uploadApplicationFile({
+      applicationUniversalIdentifier,
+      fileFolder: 'BuiltFrontComponent',
+      filePath: frontComponent.builtComponentPath,
+      fileBuffer: Buffer.from('built phone component'),
+      filename: 'Phone.mjs',
+      contentType: 'application/javascript',
+      expectToFail: false,
+    });
+  }
 
   await syncApplication({
     manifest: {
@@ -66,6 +87,8 @@ const createApplication = async ({
         requestedIframeMediaPermissions: permissions,
       },
       pageLayoutWidgets: widgets,
+      frontComponents,
+      commandMenuItems,
     },
     expectToFail: false,
   });
@@ -79,8 +102,9 @@ const createApplication = async ({
   return data.findOneApplication.id;
 };
 
-describe('Iframe widget application media permissions', () => {
+describe('Iframe application media permissions', () => {
   let widgetId: string;
+  let commandMenuItemId: string;
   let ownerApplicationToken: string;
   let otherApplicationToken: string;
 
@@ -89,6 +113,24 @@ describe('Iframe widget application media permissions', () => {
       applicationUniversalIdentifier: OWNER_APPLICATION_UNIVERSAL_IDENTIFIER,
       name: OWNER_APPLICATION_NAME,
       permissions: [MICROPHONE_PERMISSION],
+      frontComponents: [
+        {
+          universalIdentifier: FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+          name: 'Phone',
+          componentName: 'Phone',
+          sourceComponentPath: 'src/front-components/Phone.tsx',
+          builtComponentPath: 'src/front-components/Phone.mjs',
+          builtComponentChecksum: 'phone-component-checksum',
+        },
+      ],
+      commandMenuItems: [
+        {
+          universalIdentifier: COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER,
+          label: 'Open Phone',
+          frontComponentUniversalIdentifier:
+            FRONT_COMPONENT_UNIVERSAL_IDENTIFIER,
+        },
+      ],
       widgets: [
         {
           universalIdentifier: WIDGET_UNIVERSAL_IDENTIFIER,
@@ -120,6 +162,17 @@ describe('Iframe widget application media permissions', () => {
 
     assertIsDefinedOrThrow(widget);
     widgetId = widget.id;
+
+    const [commandMenuItem] = await globalThis.testDataSource.query<
+      { id: string }[]
+    >(
+      `SELECT id FROM core."commandMenuItem"
+       WHERE "universalIdentifier" = $1 AND "workspaceId" = $2`,
+      [COMMAND_MENU_ITEM_UNIVERSAL_IDENTIFIER, SEED_APPLE_WORKSPACE_ID],
+    );
+
+    assertIsDefinedOrThrow(commandMenuItem);
+    commandMenuItemId = commandMenuItem.id;
 
     const ownerTokenPair = await generateApplicationTokenPair({
       workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -165,6 +218,27 @@ describe('Iframe widget application media permissions', () => {
       token,
     );
 
+  const readFrontComponentPermissions = (token: string) =>
+    makeMetadataApiRequest(
+      {
+        query: gql`
+          query GetCommandFrontComponentApplicationPermissions($id: UUID!) {
+            commandMenuItem(id: $id) {
+              frontComponent {
+                applicationGrantedIframeMediaPermissions {
+                  origin
+                  microphone
+                  camera
+                }
+              }
+            }
+          }
+        `,
+        variables: { id: commandMenuItemId },
+      },
+      token,
+    );
+
   it('lets ordinary workspace members read the owning app grants', async () => {
     const response = await readWidgetPermissions(
       APPLE_JONY_MEMBER_ACCESS_TOKEN,
@@ -173,6 +247,15 @@ describe('Iframe widget application media permissions', () => {
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.getPageLayoutWidget).toEqual({
       applicationName: OWNER_APPLICATION_NAME,
+      applicationGrantedIframeMediaPermissions: [MICROPHONE_PERMISSION],
+    });
+
+    const commandResponse = await readFrontComponentPermissions(
+      APPLE_JONY_MEMBER_ACCESS_TOKEN,
+    );
+
+    expect(commandResponse.body.errors).toBeUndefined();
+    expect(commandResponse.body.data.commandMenuItem.frontComponent).toEqual({
       applicationGrantedIframeMediaPermissions: [MICROPHONE_PERMISSION],
     });
   });
@@ -185,6 +268,15 @@ describe('Iframe widget application media permissions', () => {
       applicationName: OWNER_APPLICATION_NAME,
       applicationGrantedIframeMediaPermissions: [MICROPHONE_PERMISSION],
     });
+
+    const commandResponse = await readFrontComponentPermissions(
+      ownerApplicationToken,
+    );
+
+    expect(commandResponse.body.errors).toBeUndefined();
+    expect(commandResponse.body.data.commandMenuItem.frontComponent).toEqual({
+      applicationGrantedIframeMediaPermissions: [MICROPHONE_PERMISSION],
+    });
   });
 
   it('omits owner details and grants for an unrelated application principal', async () => {
@@ -193,6 +285,15 @@ describe('Iframe widget application media permissions', () => {
     expect(response.body.errors).toBeUndefined();
     expect(response.body.data.getPageLayoutWidget).toEqual({
       applicationName: null,
+      applicationGrantedIframeMediaPermissions: [],
+    });
+
+    const commandResponse = await readFrontComponentPermissions(
+      otherApplicationToken,
+    );
+
+    expect(commandResponse.body.errors).toBeUndefined();
+    expect(commandResponse.body.data.commandMenuItem.frontComponent).toEqual({
       applicationGrantedIframeMediaPermissions: [],
     });
   });

@@ -19,6 +19,7 @@ import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorato
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { UserApplicationVariableValueService } from 'src/engine/core-modules/application/application-variable/user-application-variable-value.service';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -73,6 +74,7 @@ export class FrontComponentResolver {
     private readonly applicationVariableService: ApplicationVariableEntityService,
     private readonly userApplicationVariableValueService: UserApplicationVariableValueService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly applicationService: ApplicationService,
   ) {}
 
   @ResolveField(() => String, { nullable: true })
@@ -123,17 +125,20 @@ export class FrontComponentResolver {
   @ResolveField(() => [IframeMediaPermissionDTO], { nullable: true })
   async applicationGrantedIframeMediaPermissions(
     @Parent() frontComponent: FrontComponentDTO,
-    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthWorkspace()
+    { id: workspaceId, workspaceCustomApplicationId }: WorkspaceEntity,
+    @AuthApplication({ allowUndefined: true })
+    callingApplication: FlatApplication | undefined,
   ): Promise<IframeMediaPermission[]> {
-    const { flatApplicationMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspace.id, [
-        'flatApplicationMaps',
-      ]);
+    const application =
+      await this.applicationService.findReadableInstalledFlatApplication({
+        applicationId: frontComponent.applicationId,
+        workspaceId,
+        workspaceCustomApplicationId,
+        callingApplication,
+      });
 
-    return (
-      flatApplicationMaps.byId[frontComponent.applicationId]
-        ?.grantedIframeMediaPermissions ?? []
-    );
+    return application?.grantedIframeMediaPermissions ?? [];
   }
 
   @Query(() => [FrontComponentDTO])

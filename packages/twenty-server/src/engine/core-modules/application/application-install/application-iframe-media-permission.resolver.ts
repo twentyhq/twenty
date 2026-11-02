@@ -14,7 +14,6 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { ApplicationDTO } from 'src/engine/core-modules/application/dtos/application.dto';
 import { IframeMediaPermissionInput } from 'src/engine/core-modules/application/dtos/iframe-media-permission.input';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { toIframeMediaPermissions } from 'src/engine/core-modules/application/utils/to-iframe-media-permissions.util';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -56,12 +55,13 @@ export class ApplicationIframeMediaPermissionResolver {
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
   ): Promise<IframeMediaPermission[]> {
-    const readableApplication = await this.findReadableApplication({
-      applicationId: application.id,
-      workspaceId,
-      workspaceCustomApplicationId,
-      callingApplication,
-    });
+    const readableApplication =
+      await this.applicationService.findReadableInstalledFlatApplication({
+        applicationId: application.id,
+        workspaceId,
+        workspaceCustomApplicationId,
+        callingApplication,
+      });
 
     if (!isDefined(readableApplication)) {
       return [];
@@ -83,12 +83,13 @@ export class ApplicationIframeMediaPermissionResolver {
     @AuthApplication({ allowUndefined: true })
     callingApplication: FlatApplication | undefined,
   ): Promise<IframeMediaPermission[]> {
-    const readableApplication = await this.findReadableApplication({
-      applicationId: application.id,
-      workspaceId,
-      workspaceCustomApplicationId,
-      callingApplication,
-    });
+    const readableApplication =
+      await this.applicationService.findReadableInstalledFlatApplication({
+        applicationId: application.id,
+        workspaceId,
+        workspaceCustomApplicationId,
+        callingApplication,
+      });
 
     return toIframeMediaPermissions(
       readableApplication?.grantedIframeMediaPermissions,
@@ -109,34 +110,6 @@ export class ApplicationIframeMediaPermissionResolver {
       applicationId,
       workspaceId,
       approvedIframeMediaPermissions,
-    });
-  }
-
-  private async findReadableApplication({
-    applicationId,
-    workspaceId,
-    workspaceCustomApplicationId,
-    callingApplication,
-  }: {
-    applicationId: string;
-    workspaceId: string;
-    workspaceCustomApplicationId: string;
-    callingApplication: FlatApplication | undefined;
-  }): Promise<FlatApplication | undefined> {
-    if (
-      !canCallerReachApplication({
-        applicationId,
-        callingApplication,
-        operation: 'read',
-        workspaceCustomApplicationId,
-      })
-    ) {
-      return undefined;
-    }
-
-    return this.applicationService.findInstalledFlatApplication({
-      applicationId,
-      workspaceId,
     });
   }
 }

@@ -5,7 +5,6 @@ import { isDefined, isPlainObject } from 'twenty-shared/utils';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type ApplicationCallerOperation } from 'src/engine/core-modules/application/types/application-caller-operation.type';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { canCallerReachApplication } from 'src/engine/core-modules/application/utils/can-caller-reach-application.util';
 import { transformRichTextValue } from 'src/engine/core-modules/record-transformer/utils/transform-rich-text.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -66,20 +65,11 @@ export class PageLayoutWidgetService {
   }): Promise<
     Pick<FlatApplication, 'name' | 'grantedIframeMediaPermissions'> | undefined
   > {
-    const canReadApplication = canCallerReachApplication({
-      applicationId,
-      callingApplication,
-      operation: 'read',
-      workspaceCustomApplicationId,
-    });
-
-    if (!canReadApplication) {
-      return undefined;
-    }
-
-    return this.applicationService.findInstalledFlatApplication({
+    return this.applicationService.findReadableInstalledFlatApplication({
       applicationId,
       workspaceId,
+      workspaceCustomApplicationId,
+      callingApplication,
     });
   }
 
