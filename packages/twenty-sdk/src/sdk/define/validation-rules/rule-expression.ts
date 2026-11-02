@@ -26,7 +26,7 @@ const isRuleExpression = (
   operand: RuleExpressionOperand,
 ): operand is RuleExpression => typeof operand === 'object';
 
-const toLiteral = (value: string | number | boolean): string => {
+const toLiteralOrThrow = (value: string | number | boolean): string => {
   if (typeof value === 'number' && !Number.isFinite(value)) {
     throw new Error(`A rule expression can't compare with ${value}`);
   }
@@ -36,7 +36,7 @@ const toLiteral = (value: string | number | boolean): string => {
 
 const toSource = (operand: RuleExpressionOperand): string => {
   if (!isRuleExpression(operand)) {
-    return toLiteral(operand);
+    return toLiteralOrThrow(operand);
   }
 
   return operand.isCompound ? `(${operand.source})` : operand.source;
@@ -94,5 +94,7 @@ export const ruleExpression = {
     value: RuleExpressionOperand,
     list: readonly (string | number | boolean)[],
   ) =>
-    buildCompound(`${toSource(value)} in [${list.map(toLiteral).join(', ')}]`),
+    buildCompound(
+      `${toSource(value)} in [${list.map(toLiteralOrThrow).join(', ')}]`,
+    ),
 };

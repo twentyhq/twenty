@@ -31,6 +31,11 @@ const {
 
 const COMPILATION_FIELDS = [
   {
+    name: 'name',
+    type: FieldMetadataType.TEXT,
+    universalIdentifier: 'name',
+  },
+  {
     name: 'amount',
     type: FieldMetadataType.NUMBER,
     universalIdentifier: 'amount',
@@ -60,23 +65,7 @@ describe('ruleExpression', () => {
     expect(
       compileValidationRuleExpression({
         expression: source,
-        fields: [
-          {
-            name: 'amount',
-            type: FieldMetadataType.NUMBER,
-            universalIdentifier: 'amount',
-          },
-          {
-            name: 'name',
-            type: FieldMetadataType.TEXT,
-            universalIdentifier: 'name',
-          },
-          {
-            name: 'stage',
-            type: FieldMetadataType.TEXT,
-            universalIdentifier: 'stage',
-          },
-        ],
+        fields: COMPILATION_FIELDS,
       }),
     ).toMatchObject({ isValid: true });
   });
