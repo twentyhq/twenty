@@ -623,7 +623,7 @@ describe('Addressing channels and existing conversations as an application', () 
     return delivery;
   };
 
-  const createChannel = async (roleIds: string[]): Promise<string> => {
+  const createChannelOrThrow = async (roleIds: string[]): Promise<string> => {
     const response = await makeMetadataApiRequest({
       query: CREATE_CHANNEL,
       variables: { input: { name: `Inbox channel ${uuidv4()}`, roleIds } },
@@ -774,7 +774,10 @@ describe('Addressing channels and existing conversations as an application', () 
   });
 
   it('files a conversation with no owner in a channel its role reaches, granted to the channel roles', async () => {
-    const channelId = await createChannel([applicationRoleId, adminRoleId]);
+    const channelId = await createChannelOrThrow([
+      applicationRoleId,
+      adminRoleId,
+    ]);
     const delivery = await sendOrThrow({
       channelId,
       threadKey: `escalation-${uuidv4()}`,
@@ -815,7 +818,10 @@ describe('Addressing channels and existing conversations as an application', () 
   });
 
   it('files a conversation owned by its first recipient in the channel', async () => {
-    const channelId = await createChannel([applicationRoleId, adminRoleId]);
+    const channelId = await createChannelOrThrow([
+      applicationRoleId,
+      adminRoleId,
+    ]);
     const delivery = await sendOrThrow({
       channelId,
       workspaceMemberIds: [WORKSPACE_MEMBER_DATA_SEED_IDS.JANE],
@@ -841,7 +847,7 @@ describe('Addressing channels and existing conversations as an application', () 
   });
 
   it('refuses a channel its role does not reach, leaving nothing behind', async () => {
-    const channelId = await createChannel([adminRoleId]);
+    const channelId = await createChannelOrThrow([adminRoleId]);
     const threadKey = `escalation-${uuidv4()}`;
     const response = await sendInboxMessage({
       channelId,
