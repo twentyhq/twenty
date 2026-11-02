@@ -410,12 +410,12 @@ export class AgentRunnerService {
       return null;
     }
 
-    return {
-      response: await this.conversationReaderService.findReplyText({
-        workspaceId,
-        turnId: turn.id,
-      }),
-    };
+    const response = await this.conversationReaderService.findReplyText({
+      workspaceId,
+      turnId: turn.id,
+    });
+
+    return isDefined(response) ? { response } : null;
   }
 
   // Picks a suspended run up where it paused once its wake-up resolved, holding its conversation.

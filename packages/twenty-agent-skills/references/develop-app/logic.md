@@ -94,9 +94,10 @@ let maxCatchupSeq: number | undefined;
 for await (const event of streamConversation({ ...conversation, signal })) {
   if (event.type === 'keepalive' && maxCatchupSeq === undefined) {
     const { messages, streamCatchup } = await listConversationMessages(conversation);
+    showMessages(messages);
     maxCatchupSeq = streamCatchup.maxSeq;
   }
-  if (event.type === 'stream-chunk' && (event.seq ?? 0) > (maxCatchupSeq ?? 0)) console.log(event.chunk);
+  if (event.type === 'stream-chunk' && (event.seq ?? 0) > (maxCatchupSeq ?? 0)) showChunk(event.chunk);
 }
 ```
 

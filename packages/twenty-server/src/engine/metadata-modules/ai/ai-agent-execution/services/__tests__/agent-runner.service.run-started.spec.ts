@@ -236,6 +236,20 @@ describe('AgentRunnerService runStarted on a stalled job retried with its run id
     },
   );
 
+  it('fails a run whose completed turn left no reply to read its result from', async () => {
+    const { runner, agentRunSuspensionService, conversationReaderService } =
+      buildRunner({ status: AgentTurnStatus.COMPLETED, error: null });
+
+    conversationReaderService.findReplyText.mockResolvedValue(null);
+
+    await runner.runStarted(JOB_DATA);
+
+    expectFailureDeliveredOnce({
+      deliverOutcome: agentRunSuspensionService.deliverOutcome,
+      error: AGENT_RUN_RESULT_LOST_ERROR,
+    });
+  });
+
   it('fails a run whose completed turn had a structured result from before results were kept', async () => {
     const { runner, agentRunSuspensionService } = buildRunner(
       { status: AgentTurnStatus.COMPLETED, error: null },

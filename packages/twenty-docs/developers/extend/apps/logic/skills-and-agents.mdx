@@ -360,6 +360,7 @@ for await (const event of streamConversation({
     const { messages, streamCatchup } =
       await listConversationMessages(conversation);
 
+    showMessages(messages);
     maxCatchupSeq = streamCatchup.maxSeq;
   }
 
@@ -368,6 +369,7 @@ for await (const event of streamConversation({
     (event.seq ?? 0) > (maxCatchupSeq ?? 0)
   ) {
     // an AI SDK UIMessageChunk, such as { type: 'text-delta', delta }
+    showChunk(event.chunk);
   }
 
   // the reply's save, or why it stopped, such as credits-exhausted

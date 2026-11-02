@@ -78,13 +78,18 @@ export class AgentConversationReaderService {
   }: {
     workspaceId: string;
     turnId: string;
-  }): Promise<string> {
+  }): Promise<string | null> {
     const reply = await this.messageRepository.findOne(workspaceId, {
       where: { turnId, role: AgentMessageRole.ASSISTANT },
       order: { createdAt: 'DESC' },
       relations: ['parts'],
     });
-    const parts = mapDBPartsToUIMessageParts(reply?.parts ?? []);
+
+    if (!isDefined(reply)) {
+      return null;
+    }
+
+    const parts = mapDBPartsToUIMessageParts(reply.parts ?? []);
     const lastStepStart = parts
       .map(({ type }) => type)
       .lastIndexOf('step-start');
