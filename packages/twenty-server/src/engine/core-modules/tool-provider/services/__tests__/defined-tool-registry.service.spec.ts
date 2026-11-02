@@ -12,6 +12,7 @@ import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/
 import { DefinedToolRegistryService } from 'src/engine/core-modules/tool-provider/services/defined-tool-registry.service';
 import { type ToolExecuteArgs } from 'src/engine/core-modules/tool-provider/types/tool-execute-args.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
 import { type PermissionsService } from 'src/engine/permissions/permissions.service';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
@@ -164,9 +165,12 @@ const buildDefinedToolRegistryService = ({
       getProviders: () =>
         tools.map((tool) => ({ instance: tool, metatype: tool.constructor })),
     } as unknown as DiscoveryService,
-    {
-      hasPermissionFlag: jest.fn().mockResolvedValue(isGranted),
-    } as unknown as PermissionsService,
+    new AccessPolicyService(
+      {
+        hasPermissionFlag: jest.fn().mockResolvedValue(isGranted),
+      } as unknown as PermissionsService,
+      featureFlagService as unknown as FeatureFlagService,
+    ),
     featureFlagService as unknown as FeatureFlagService,
   );
 

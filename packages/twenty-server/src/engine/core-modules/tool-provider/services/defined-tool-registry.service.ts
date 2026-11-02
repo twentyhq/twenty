@@ -20,9 +20,8 @@ import { buildToolNotAvailableOutput } from 'src/engine/core-modules/tool-provid
 import { isSnakeCaseToolName } from 'src/engine/core-modules/tool-provider/utils/is-snake-case-tool-name.util';
 import { humanizeToolName } from 'src/engine/core-modules/tool-provider/utils/tool-set-to-descriptors.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { type AuthPrincipalVariant } from 'src/engine/guards/types/auth-principal-variant.type';
-import { findAccessPolicyRefusal } from 'src/engine/guards/utils/find-access-policy-refusal.util';
+import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
 
 // Tools are built for agents, and an agent's own role already narrows what its
 // caller is granted, so being an agent never closes a tool on its own
@@ -39,7 +38,7 @@ export class DefinedToolRegistryService implements OnModuleInit {
 
   constructor(
     private readonly discoveryService: DiscoveryService,
-    private readonly permissionsService: PermissionsService,
+    private readonly accessPolicyService: AccessPolicyService,
     private readonly featureFlagService: FeatureFlagService,
   ) {}
 
@@ -163,34 +162,19 @@ export class DefinedToolRegistryService implements OnModuleInit {
     },
     context,
     featureFlagsMap,
-    grantedByPermissionFlag = new Map(),
+    grantedByPermissionFlag,
   }: {
     definedTool: DefinedTool;
     context: ToolProviderContext;
     featureFlagsMap: FeatureFlagMap;
     grantedByPermissionFlag?: Map<PermissionFlagType, Promise<boolean>>;
   }): Promise<boolean> {
-    const refusal = await findAccessPolicyRefusal({
+    const refusal = await this.accessPolicyService.findCallerRefusal({
       accessPolicy,
       authPrincipalVariant: withoutAgent(context.authPrincipalVariant),
-      isFeatureFlagEnabled: (featureFlag) =>
-        featureFlagsMap[featureFlag] === true,
-      isPermissionFlagGranted: (permissionFlag) => {
-        const cachedGrant = grantedByPermissionFlag.get(permissionFlag);
-
-        if (isDefined(cachedGrant)) {
-          return cachedGrant;
-        }
-
-        const grant = this.permissionsService.hasPermissionFlag({
-          authContext: context.authContext,
-          setting: permissionFlag,
-        });
-
-        grantedByPermissionFlag.set(permissionFlag, grant);
-
-        return grant;
-      },
+      authContext: context.authContext,
+      featureFlagsMap,
+      grantedByPermissionFlag,
     });
 
     return !isDefined(refusal);

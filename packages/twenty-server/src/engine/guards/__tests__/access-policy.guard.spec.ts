@@ -10,6 +10,7 @@ import { type FeatureFlagService } from 'src/engine/core-modules/feature-flag/se
 import { AccessPolicyGuard } from 'src/engine/guards/access-policy.guard';
 import { AuthPrincipalRefusedException } from 'src/engine/guards/exceptions/auth-principal-refused.exception';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
+import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
 import {
   PermissionsException,
   PermissionsExceptionCode,
@@ -74,8 +75,10 @@ const buildGuard = ({
 
   return {
     guard: new Guard(
-      featureFlagService as unknown as FeatureFlagService,
-      permissionsService as unknown as PermissionsService,
+      new AccessPolicyService(
+        permissionsService as unknown as PermissionsService,
+        featureFlagService as unknown as FeatureFlagService,
+      ),
     ),
     permissionsService,
   };

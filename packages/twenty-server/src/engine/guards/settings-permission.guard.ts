@@ -12,8 +12,7 @@ import { type PermissionFlagType } from 'twenty-shared/constants';
 
 import { SETTINGS_PERMISSION_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/settings-permission-guard-config-key.constant';
 import { buildPermissionFlagDeniedException } from 'src/engine/guards/utils/build-permission-flag-denied-exception.util';
-import { isSettingsPermissionGranted } from 'src/engine/guards/utils/is-settings-permission-granted.util';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
 
 export const SettingsPermissionGuard = (
   requiredPermissions: PermissionFlagType | PermissionFlagType[],
@@ -25,15 +24,14 @@ export const SettingsPermissionGuard = (
   @Injectable()
   @SetMetadata(SETTINGS_PERMISSION_GUARD_CONFIG_KEY, requiredPermissionFlags)
   class SettingsPermissionMixin implements CanActivate {
-    constructor(private readonly permissionsService: PermissionsService) {}
+    constructor(private readonly accessPolicyService: AccessPolicyService) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
       const request = GqlExecutionContext.create(context).getContext().req;
 
       for (const permissionFlag of requiredPermissionFlags) {
         if (
-          !(await isSettingsPermissionGranted({
-            permissionsService: this.permissionsService,
+          !(await this.accessPolicyService.isSettingsPermissionGranted({
             request,
             permissionFlag,
           }))

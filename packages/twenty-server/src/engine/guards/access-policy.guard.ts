@@ -10,16 +10,12 @@ import {
 
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { ACCESS_POLICY_GUARD_CONFIG_KEY } from 'src/engine/guards/constants/access-policy-guard-config-key.constant';
 import { AuthPrincipalRefusedException } from 'src/engine/guards/exceptions/auth-principal-refused.exception';
 import { type AccessPolicy } from 'src/engine/guards/types/access-policy.type';
 import { buildPermissionFlagDeniedException } from 'src/engine/guards/utils/build-permission-flag-denied-exception.util';
-import { classifyAuthPrincipal } from 'src/engine/guards/utils/classify-auth-principal.util';
-import { findAccessPolicyRefusal } from 'src/engine/guards/utils/find-access-policy-refusal.util';
 import { getRequestOrThrowWhenUnauthenticated } from 'src/engine/guards/utils/get-request-or-throw-when-unauthenticated.util';
-import { isSettingsPermissionGranted } from 'src/engine/guards/utils/is-settings-permission-granted.util';
-import { PermissionsService } from 'src/engine/permissions/permissions.service';
+import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
 
 export const AccessPolicyGuard = (
   accessPolicy: AccessPolicy,
@@ -27,10 +23,7 @@ export const AccessPolicyGuard = (
   @Injectable()
   @SetMetadata(ACCESS_POLICY_GUARD_CONFIG_KEY, accessPolicy)
   class AccessPolicyMixin implements CanActivate {
-    constructor(
-      private readonly featureFlagService: FeatureFlagService,
-      private readonly permissionsService: PermissionsService,
-    ) {}
+    constructor(private readonly accessPolicyService: AccessPolicyService) {}
 
     async canActivate(context: ExecutionContext): Promise<boolean> {
       const request = getRequestOrThrowWhenUnauthenticated(context);
@@ -39,20 +32,9 @@ export const AccessPolicyGuard = (
         throw new AuthPrincipalRefusedException();
       }
 
-      const { workspace } = request;
-
-      const refusal = await findAccessPolicyRefusal({
+      const refusal = await this.accessPolicyService.findRequestRefusal({
         accessPolicy,
-        authPrincipalVariant: classifyAuthPrincipal(request),
-        isFeatureFlagEnabled: (featureFlag) =>
-          isDefined(workspace) &&
-          this.featureFlagService.isFeatureEnabled(featureFlag, workspace.id),
-        isPermissionFlagGranted: (permissionFlag) =>
-          isSettingsPermissionGranted({
-            permissionsService: this.permissionsService,
-            request,
-            permissionFlag,
-          }),
+        request,
       });
 
       if (!isDefined(refusal)) {

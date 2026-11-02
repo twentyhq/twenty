@@ -17,6 +17,7 @@ import { ManageableAgentService } from 'src/engine/metadata-modules/ai/ai-agent/
 import { UpdateAgentTool } from 'src/engine/metadata-modules/ai/ai-agent/tools/update-agent.tool';
 import { type AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
+import { AccessPolicyService } from 'src/engine/permissions/access-policy/access-policy.service';
 import { type PermissionsService } from 'src/engine/permissions/permissions.service';
 import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
@@ -131,7 +132,10 @@ const buildAgentTools = (options?: {
       getProviders: () =>
         tools.map((tool) => ({ instance: tool, metatype: tool.constructor })),
     } as unknown as DiscoveryService,
-    permissionsService as unknown as PermissionsService,
+    new AccessPolicyService(
+      permissionsService as unknown as PermissionsService,
+      featureFlagService as unknown as FeatureFlagService,
+    ),
     featureFlagService as unknown as FeatureFlagService,
   );
 
