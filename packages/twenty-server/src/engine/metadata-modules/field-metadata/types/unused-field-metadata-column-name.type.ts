@@ -1,0 +1,1 @@
+export type UnusedFieldMetadataColumnName = 'writability';

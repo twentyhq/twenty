@@ -36,12 +36,18 @@ export const executeFrontComponentBuilderRequest = async ({
         exportNamesBySpecifier: new Map(Object.entries(manifest.exports)),
       },
     });
-    const { compiledSource, checksum, sharedDependenciesChecksum } = built;
+    const {
+      compiledSource,
+      checksum,
+      sharedDependenciesChecksum,
+      hasSdkClientImport,
+    } = built;
     const result = {
       success: true as const,
       builtCode: compiledSource,
       checksum,
       sharedDependenciesChecksum,
+      hasSdkClientImport,
     };
     return checkResponseSizeOrThrow(result);
   } catch (error) {

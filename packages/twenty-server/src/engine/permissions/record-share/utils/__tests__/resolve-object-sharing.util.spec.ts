@@ -1,69 +1,47 @@
 /* @license Enterprise */
 
-import {
-  FeatureFlagKey,
-  MetadataReadability,
-  RecordShareAccessLevel,
-} from 'twenty-shared/types';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { resolveObjectSharing } from 'src/engine/permissions/record-share/utils/resolve-object-sharing.util';
 
 const OBJECT = {
-  readability: MetadataReadability.OPEN,
-  isSystem: false,
+  universalIdentifier: 'custom-object',
   disabledObjectPermissionActions: null,
 };
-const OPEN_BY_DEFAULT = {
-  isShareable: true,
-  isShareRequired: false,
-  defaultGeneralAccessLevel: RecordShareAccessLevel.READ_WRITE,
-};
-const ROLE_ONLY = {
-  isShareable: false,
-  isShareRequired: false,
-  defaultGeneralAccessLevel: null,
-};
-const PRIVATE = {
-  isShareable: true,
-  isShareRequired: true,
-  defaultGeneralAccessLevel: RecordShareAccessLevel.NONE,
+const CHAT_THREAD = {
+  ...OBJECT,
+  universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
 };
 const RECORD_SHARING = {
   [FeatureFlagKey.IS_RECORD_LEVEL_SHARING_ENABLED]: true,
 };
 
 describe('resolveObjectSharing', () => {
-  it('should open records by default and let grants view or edit beyond the role', () => {
+  it('should make records shareable beyond the role once record sharing is enabled', () => {
     expect(
       resolveObjectSharing({
         flatObjectMetadata: OBJECT,
         featureFlagsMap: RECORD_SHARING,
       }),
     ).toEqual({
-      ...OPEN_BY_DEFAULT,
+      isShareable: true,
+      isPrivateByDefault: false,
       canShareBeyondRole: true,
       operationTypesGrantedBeyondRole: ['select', 'update'],
     });
   });
 
-  it.each([
-    { isSystem: false, featureFlagsMap: {} },
-    { isSystem: true, featureFlagsMap: RECORD_SHARING },
-  ])(
-    'should keep records role-only for %o',
-    ({ isSystem, featureFlagsMap }) => {
-      expect(
-        resolveObjectSharing({
-          flatObjectMetadata: { ...OBJECT, isSystem },
-          featureFlagsMap,
-        }),
-      ).toEqual({
-        ...ROLE_ONLY,
-        canShareBeyondRole: false,
-        operationTypesGrantedBeyondRole: [],
-      });
-    },
-  );
+  it('should keep records unshareable while record sharing is disabled', () => {
+    expect(
+      resolveObjectSharing({ flatObjectMetadata: OBJECT, featureFlagsMap: {} }),
+    ).toEqual({
+      isShareable: false,
+      isPrivateByDefault: false,
+      canShareBeyondRole: false,
+      operationTypesGrantedBeyondRole: [],
+    });
+  });
 
   it('should not grant beyond the role an operation the object disables', () => {
     expect(
@@ -96,41 +74,17 @@ describe('resolveObjectSharing', () => {
   });
 
   it.each([
-    { isSystem: false, featureFlagsMap: {} },
-    { isSystem: true, featureFlagsMap: RECORD_SHARING },
+    { featureFlagsMap: {}, isShareable: false },
+    { featureFlagsMap: RECORD_SHARING, isShareable: true },
   ])(
-    'should keep private records private for %o',
-    ({ isSystem, featureFlagsMap }) => {
+    'should create chat threads private and share them only with record sharing ($isShareable)',
+    ({ featureFlagsMap, isShareable }) => {
       expect(
         resolveObjectSharing({
-          flatObjectMetadata: {
-            ...OBJECT,
-            readability: MetadataReadability.PRIVATE,
-            isSystem,
-          },
+          flatObjectMetadata: CHAT_THREAD,
           featureFlagsMap,
         }),
-      ).toEqual({
-        ...PRIVATE,
-        canShareBeyondRole: false,
-        operationTypesGrantedBeyondRole: [],
-      });
+      ).toMatchObject({ isShareable, isPrivateByDefault: true });
     },
   );
-
-  it('should let a grant on a private object view or edit beyond the role', () => {
-    expect(
-      resolveObjectSharing({
-        flatObjectMetadata: {
-          ...OBJECT,
-          readability: MetadataReadability.PRIVATE,
-        },
-        featureFlagsMap: RECORD_SHARING,
-      }),
-    ).toEqual({
-      ...PRIVATE,
-      canShareBeyondRole: true,
-      operationTypesGrantedBeyondRole: ['select', 'update'],
-    });
-  });
 });

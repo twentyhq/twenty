@@ -14,11 +14,9 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
-import { type WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { submitFormStep } from 'test/integration/graphql/suites/workflow/utils/submit-form-step.util';
-import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
 
 const schema = getWorkspaceSchemaName(SEED_APPLE_WORKSPACE_ID);
 const DELAY_DURATION_SECONDS = 20;
@@ -160,13 +158,6 @@ describe('Parallel branch leaf resume workflow (e2e)', () => {
         JSON.stringify(state),
       ],
     );
-    // A direct insert skips the run's grants, leaving it unreadable through the record API.
-    await getAppProviderByClassName<WorkflowRunRecordShareService>(
-      'WorkflowRunRecordShareService',
-    ).syncRuns({
-      workspaceId: SEED_APPLE_WORKSPACE_ID,
-      workflowRunIds: [createdWorkflowRunId],
-    });
 
     await (
       await global.workflowTestServices.runJob()

@@ -28,7 +28,6 @@ import { getWorkflowCommandMenuItemLabel } from 'src/modules/workflow/workflow-t
 import { CoreWorkflowListService } from 'src/engine/core-modules/workflow/services/core-workflow-list.service';
 import { CoreWorkflowVersionWriteService } from 'src/engine/core-modules/workflow/services/core-workflow-version-write.service';
 import { CoreWorkflowAccessService } from 'src/engine/core-modules/workflow/services/core-workflow-access.service';
-import { WorkflowRunRecordShareService } from 'src/engine/core-modules/workflow/services/workflow-run-record-share.service';
 import { WorkflowCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-core-sync.service';
 import { WorkflowVersionCoreSyncService } from 'src/engine/core-modules/workflow/services/workflow-version-core-sync.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -72,7 +71,6 @@ export class CoreWorkflowMutationWorkspaceService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
-    private readonly workflowRunRecordShareService: WorkflowRunRecordShareService,
   ) {}
 
   private async runCoreWorkflowMigration({
@@ -726,20 +724,14 @@ export class CoreWorkflowMutationWorkspaceService {
 
     // ownership is checked in the UPDATE's WHERE, not a prior read, so two concurrent claims of an ownerless workflow cannot both win;
     // a workspace-visible workflow is already editable by every member, so claiming one grants no new access
-    const claimResult =
-      await this.workflowRunRecordShareService.updateAccessThenSyncRuns({
-        workspaceId,
-        coreWorkflowId,
-        updateAccess: () =>
-          this.coreWorkflowRepository.update(
-            workspaceId,
-            {
-              id: coreWorkflowId,
-              createdByUserWorkspaceId: Or(IsNull(), Equal(userWorkspaceId)),
-            },
-            { visibility, createdByUserWorkspaceId: userWorkspaceId },
-          ),
-      });
+    const claimResult = await this.coreWorkflowRepository.update(
+      workspaceId,
+      {
+        id: coreWorkflowId,
+        createdByUserWorkspaceId: Or(IsNull(), Equal(userWorkspaceId)),
+      },
+      { visibility, createdByUserWorkspaceId: userWorkspaceId },
+    );
 
     if (claimResult.affected === 0) {
       const coreWorkflowExists = await this.coreWorkflowRepository.exists(

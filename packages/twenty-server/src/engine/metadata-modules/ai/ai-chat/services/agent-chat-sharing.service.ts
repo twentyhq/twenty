@@ -1,4 +1,9 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  buildPrivateRecordInsertSql,
+  type PrivateRecordInsertSql,
+} from 'src/engine/permissions/private-record/utils/build-private-record-insert-sql.util';
+import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/utils/is-private-record-enabled.util';
 import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { randomUUID } from 'node:crypto';
@@ -47,11 +52,6 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { isPermissionFlagGrantedToFlatRole } from 'src/engine/metadata-modules/flat-role/utils/is-permission-flag-granted-to-flat-role.util';
 import { PermissionsService } from 'src/engine/permissions/permissions.service';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
-import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
-import {
-  type RowAccessPolicy,
-  type RowAccessPolicySubject,
-} from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -245,10 +245,7 @@ export class AgentChatSharingService {
     };
     const sharing = await this.recordSharingService.getSharing(recordTarget);
 
-    if (
-      sharing.canManageSharing &&
-      !EDIT_ACCESS_LEVELS.includes(sharing.generalAccessLevel)
-    ) {
+    if (sharing.canManageSharing) {
       for (const memberId of chatMemberIds) {
         const memberShare = sharing.shares.find(
           ({ principalId }) => principalId === memberId,
@@ -339,7 +336,7 @@ export class AgentChatSharingService {
         'agentChatThread',
         { shouldBypassPermissionChecks: true },
       );
-      const policiesBySubjectId = new Map(
+      const subjectsById = new Map(
         members.flatMap((member) => {
           const roleId = roleIdByMemberId.get(member.id);
 
@@ -347,31 +344,48 @@ export class AgentChatSharingService {
             return [];
           }
 
-          const policy = this.buildParticipantReplyPolicy({
-            repository,
-            canManageSharing: shouldConsiderNewShares && canManageSharing,
-            subject: buildWorkspaceMemberRowAccessPolicySubject({
-              ...permissionMaps,
-              roleId,
-              owningApplicationId: undefined,
-              workspaceMemberId: member.id,
-              workspaceMember: member,
-            }),
+          const subject = buildWorkspaceMemberRowAccessPolicySubject({
+            ...permissionMaps,
+            roleId,
+            owningApplicationId: undefined,
+            workspaceMemberId: member.id,
+            workspaceMember: member,
           });
 
-          return [[member.id, policy] as const];
+          return isDefined(subject.objectsPermissions)
+            ? [[member.id, subject] as const]
+            : [];
         }),
       );
-      const admittedMemberIds =
-        await repository.findSubjectIdsAdmittedByRowAccessPolicies({
+      const admittedMemberIds = await repository.findSubjectIdsAdmittedToRecord(
+        {
           recordId: threadId,
-          policiesBySubjectId,
-        });
+          subjectsById,
+          operationTypes: [...AGENT_CHAT_REPLY_OPERATION_TYPES],
+          hypotheticalRecordShareAccessLevel:
+            shouldConsiderNewShares && canManageSharing
+              ? RecordShareAccessLevel.READ_WRITE
+              : undefined,
+        },
+      );
 
       return candidateMemberIds.filter((memberId) =>
         admittedMemberIds.has(memberId),
       );
     }, authContext);
+  }
+
+  async getPrivateRecordInsertSql(
+    workspaceId: string,
+  ): Promise<PrivateRecordInsertSql> {
+    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
+      workspaceId,
+      ['featureFlagsMap'],
+    );
+
+    return buildPrivateRecordInsertSql({
+      isPrivateRecordEnabled: isPrivateRecordEnabled(featureFlagsMap),
+    });
   }
 
   async createThread(args: {
@@ -394,6 +408,8 @@ export class AgentChatSharingService {
       authContext,
       updatedColumns: isDefined(args.title) ? ['title'] : [],
     });
+    const { privateColumn, privateValue } =
+      await this.getPrivateRecordInsertSql(args.workspaceId);
 
     return this.threadRepository.query(
       args.workspaceId,
@@ -411,8 +427,8 @@ export class AgentChatSharingService {
           channelIds: [args.channelId],
         });
         const records = await manager.query<AgentChatThreadWorkspaceEntity[]>(
-          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId"${isDefined(args.channelId) ? ', "channelId"' : ''})
-           VALUES ($1, $2, $3${isDefined(args.channelId) ? ', $4' : ''}) RETURNING *`,
+          `INSERT INTO ${table('agentChatThread')} (id, title, "workspaceMemberId"${privateColumn}${isDefined(args.channelId) ? ', "channelId"' : ''})
+           VALUES ($1, $2, $3${privateValue}${isDefined(args.channelId) ? ', $4' : ''}) RETURNING *`,
           [
             args.id ?? randomUUID(),
             args.title ?? null,
@@ -494,6 +510,8 @@ export class AgentChatSharingService {
 
     const participantObjectMetadataId =
       await this.getParticipantObjectMetadataId(args.workspaceId);
+    const { privateColumn, privateValue } =
+      await this.getPrivateRecordInsertSql(args.workspaceId);
 
     return this.threadRepository.query(
       args.workspaceId,
@@ -536,8 +554,8 @@ export class AgentChatSharingService {
         }
         await manager.query(
           `WITH participant AS (
-             INSERT INTO ${getAgentChatThreadParticipantTable(args.workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt", "isSubscribed")
-             VALUES ($1, $2, clock_timestamp(), false)
+             INSERT INTO ${getAgentChatThreadParticipantTable(args.workspaceId)} ("threadId", "workspaceMemberId"${privateColumn}, "lastReadAt", "isSubscribed")
+             VALUES ($1, $2${privateValue}, clock_timestamp(), false)
              ON CONFLICT ("threadId", "workspaceMemberId") DO NOTHING
              RETURNING id, "workspaceMemberId"
            ), owner_share AS (
@@ -580,6 +598,9 @@ export class AgentChatSharingService {
     isArchived?: boolean;
     isSubscribed?: boolean;
   }): Promise<AgentChatThreadWorkspaceEntity[]> {
+    const { privateColumn, privateValue } =
+      await this.getPrivateRecordInsertSql(workspaceId);
+
     return manager.query<AgentChatThreadWorkspaceEntity[]>(
       `WITH thread AS (
          UPDATE ${table('agentChatThread')}
@@ -587,8 +608,8 @@ export class AgentChatSharingService {
          WHERE id = ANY($1::uuid[]) AND "lastActivityAt" IS NULL
          RETURNING *
        ), participant AS (
-         INSERT INTO ${getAgentChatThreadParticipantTable(workspaceId)} ("threadId", "workspaceMemberId", "lastReadAt", "archivedAt", "isSubscribed")
-         SELECT thread.id, $2, thread."lastActivityAt", CASE WHEN $4::boolean THEN clock_timestamp() END, $5::boolean
+         INSERT INTO ${getAgentChatThreadParticipantTable(workspaceId)} ("threadId", "workspaceMemberId"${privateColumn}, "lastReadAt", "archivedAt", "isSubscribed")
+         SELECT thread.id, $2${privateValue}, thread."lastActivityAt", CASE WHEN $4::boolean THEN clock_timestamp() END, $5::boolean
          FROM thread
          ON CONFLICT ("threadId", "workspaceMemberId") DO NOTHING
          RETURNING id, "workspaceMemberId"
@@ -807,42 +828,6 @@ export class AgentChatSharingService {
           : [],
       ),
     );
-  }
-
-  private buildParticipantReplyPolicy({
-    repository,
-    subject,
-    canManageSharing,
-  }: {
-    repository: WorkspaceRepository;
-    subject: RowAccessPolicySubject;
-    canManageSharing: boolean;
-  }): RowAccessPolicy {
-    if (!isDefined(subject.objectsPermissions)) {
-      return { kind: 'denied' };
-    }
-
-    const policies = AGENT_CHAT_REPLY_OPERATION_TYPES.map((operationType) =>
-      repository.buildRowAccessPolicy({
-        subject,
-        operationType,
-        hypotheticalRecordShareAccessLevel: canManageSharing
-          ? RecordShareAccessLevel.READ_WRITE
-          : undefined,
-      }),
-    );
-
-    if (policies.some(({ kind }) => kind === 'denied')) {
-      return { kind: 'denied' };
-    }
-
-    const operands = policies.flatMap((policy) =>
-      policy.kind === 'gated' ? [policy.expression] : [],
-    );
-
-    return isNonEmptyArray(operands)
-      ? { kind: 'gated', expression: { kind: 'and', operands } }
-      : { kind: 'open' };
   }
 
   private async canManageThreadSharing({

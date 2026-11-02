@@ -45,15 +45,14 @@ export class RecordSharingResolver {
   }
 
   @Mutation(() => RecordSharingDTO)
-  setRecordGeneralAccess(
+  setRecordPrivate(
     @Args('target') target: RecordTargetInput,
-    @Args('accessLevel', { type: () => RecordShareAccessLevel })
-    accessLevel: RecordShareAccessLevel,
+    @Args('isPrivate', { type: () => Boolean }) isPrivate: boolean,
   ) {
     return this.handleRecordShareException(() =>
-      this.sharingService.setGeneralAccess({
+      this.sharingService.setPrivate({
         ...target,
-        accessLevel,
+        isPrivate,
         authContext: this.getUserContext(),
       }),
     );

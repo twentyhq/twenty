@@ -159,24 +159,21 @@ export class RecordSharePrincipalService {
           shouldBypassPermissionChecks: true,
         })
         .findOne({ where: { id: principal.principalId } });
-      const policy = repository.buildRowAccessPolicy({
-        subject: buildWorkspaceMemberRowAccessPolicySubject({
-          roleId,
-          owningApplicationId: undefined,
-          rolesPermissions,
-          flatRowLevelPermissionPredicateMaps,
-          flatRowLevelPermissionPredicateGroupMaps,
-          flatFieldMetadataMaps,
-          flatObjectMetadataMaps,
-          workspaceMemberId: principal.principalId,
-          workspaceMember: workspaceMember ?? undefined,
-        }),
-        operationType: 'select',
-      });
       const reachableRecordIds =
-        await repository.findRecordIdsAdmittedByRowAccessPolicy({
+        await repository.findRecordIdsAdmittedForSubject({
           recordIds,
-          policy,
+          subject: buildWorkspaceMemberRowAccessPolicySubject({
+            roleId,
+            owningApplicationId: undefined,
+            rolesPermissions,
+            flatRowLevelPermissionPredicateMaps,
+            flatRowLevelPermissionPredicateGroupMaps,
+            flatFieldMetadataMaps,
+            flatObjectMetadataMaps,
+            workspaceMemberId: principal.principalId,
+            workspaceMember: workspaceMember ?? undefined,
+          }),
+          operationType: 'select',
         });
       const unreachableRecordId = recordIds.find(
         (recordId) => !reachableRecordIds.has(recordId),

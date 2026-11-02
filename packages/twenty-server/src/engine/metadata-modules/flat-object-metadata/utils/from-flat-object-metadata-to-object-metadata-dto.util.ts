@@ -1,5 +1,3 @@
-import { ObjectSharingReach } from 'twenty-shared/types';
-
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 import { resolveEffectiveFlatEntityProperty } from 'src/engine/metadata-modules/overrides/utils/resolve-effective-flat-entity-property.util';
@@ -22,11 +20,7 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
     isRemote,
     isSearchable,
     openRecordIn,
-    readability,
-    readabilityParentFieldUniversalIdentifiers,
     disabledObjectPermissionActions,
-    sharingReach,
-    writability,
     isSystem,
     isAuditLogged,
     isUIEditable,
@@ -53,13 +47,7 @@ export const fromFlatObjectMetadataToObjectMetadataDto = (
     isRemote,
     isSearchable,
     openRecordIn,
-    readability,
-    readabilityParentFieldUniversalIdentifiers,
     disabledObjectPermissionActions,
-    // Metadata cached before the column existed lacks it until recomputed,
-    // and the access policy treats that as staying within the role
-    sharingReach: sharingReach ?? ObjectSharingReach.WORKSPACE,
-    writability,
     isSystem,
     isAuditLogged,
     isUIEditable,

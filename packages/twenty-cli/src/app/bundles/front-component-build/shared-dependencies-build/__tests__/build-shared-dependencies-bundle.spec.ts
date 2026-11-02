@@ -1,6 +1,6 @@
 import { it, expect, vi } from 'vitest';
 import { createHash } from 'crypto';
-import { mkdtemp, mkdir, readFile, rm, writeFile } from 'fs/promises';
+import { mkdtemp, mkdir, readFile, rm, symlink, writeFile } from 'fs/promises';
 import { tmpdir } from 'os';
 import { join } from 'path';
 import { build, transform } from 'esbuild';
@@ -12,9 +12,12 @@ import {
   FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER,
 } from 'twenty-shared/application';
 import {
+  createSharedDependenciesShimPlugin,
   getSharedDependenciesShimSource,
   type SharedDependenciesBuildManifest,
 } from 'twenty-shared/front-component-build';
+
+import { MINIMAL_APP_PATH } from '@/app/__tests__/utils/fixture-paths';
 
 import { buildSharedDependenciesBundle } from '@/app/bundles/front-component-build/shared-dependencies-build/build-shared-dependencies-bundle';
 
@@ -109,3 +112,87 @@ it('ships the export map needed to compile another component against the uploade
     await rm(appPath, { recursive: true, force: true });
   }
 });
+
+it('keeps React DOM and Twenty UI available when rebuilding a workspace app with a sparse shared dependency declaration', async () => {
+  const appPath = await mkdtemp(
+    join(tmpdir(), 'workspace-shared-dependencies-'),
+  );
+  try {
+    await symlink(
+      join(MINIMAL_APP_PATH, '../../../../node_modules'),
+      join(appPath, 'node_modules'),
+    );
+    await writeFile(
+      join(appPath, 'package.json'),
+      JSON.stringify({
+        dependencies: { react: '19.2.0' },
+        devDependencies: { 'react-dom': '19.2.0', 'twenty-ui': '2.50.0' },
+        frontComponentSharedDependencies: ['react'],
+      }),
+    );
+    const context = await buildSharedDependenciesBundle({
+      appPath,
+      outputDir: 'output',
+      sharedDependencies: {
+        dependencies: ['react'],
+        builtPath: 'shared.mjs',
+        builtChecksum: null,
+      },
+      onFileBuilt: vi.fn(),
+    });
+    const manifest: SharedDependenciesBuildManifest = JSON.parse(
+      await readFile(join(appPath, 'output/shared.mjs.json'), 'utf8'),
+    );
+    expect(manifest.exports['react-dom'].namedExports).toContain(
+      'createPortal',
+    );
+    expect(manifest.exports['react-dom/client'].namedExports).toContain(
+      'createRoot',
+    );
+    expect(
+      manifest.exports['twenty-ui/primitives/input'].namedExports,
+    ).toContain('Button');
+    expect(manifest.exports['react/jsx-runtime'].namedExports).toContain('jsx');
+    const component = await build({
+      stdin: {
+        contents: `export { createPortal } from 'react-dom';
+export { createRoot } from 'react-dom/client';
+export { Button } from 'twenty-ui/primitives/input';`,
+      },
+      bundle: true,
+      write: false,
+      format: 'esm',
+      external: [FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER],
+      plugins: [
+        createSharedDependenciesShimPlugin({
+          getSharedDependenciesBuildContext: () => context,
+        }),
+      ],
+    });
+    const linked = await build({
+      stdin: {
+        contents: component.outputFiles[0].text,
+        resolveDir: appPath,
+      },
+      alias: {
+        [FRONT_COMPONENT_SHARED_DEPENDENCIES_IMPORT_SPECIFIER]: join(
+          appPath,
+          'output/shared.mjs',
+        ),
+      },
+      bundle: true,
+      write: false,
+      format: 'cjs',
+    });
+    const module: { exports: Record<string, unknown> } = { exports: {} };
+    runInNewContext(linked.outputFiles[0].text, {
+      module,
+      exports: module.exports,
+    });
+    expect(module.exports.createPortal).toBeTypeOf('function');
+    expect(module.exports.createRoot).toBeTypeOf('function');
+    expect(module.exports.Button).toBeDefined();
+  } finally {
+    await rm(appPath, { recursive: true, force: true });
+  }
+}, 30_000);

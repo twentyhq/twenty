@@ -1,3 +1,4 @@
+import { FrontComponentToolProvider } from 'src/engine/core-modules/tool-provider/providers/front-component-tool.provider';
 import { Module } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -66,6 +67,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     provideWorkspaceScopedRepository(FileEntity),
     ActionToolProvider,
     DashboardToolProvider,
+    FrontComponentToolProvider,
     DatabaseToolProvider,
     LogicFunctionToolProvider,
     WorkflowToolProvider,
@@ -77,12 +79,14 @@ import { ToolRegistryService } from './services/tool-registry.service';
         logicFunctionProvider: LogicFunctionToolProvider,
         workflowProvider: WorkflowToolProvider,
         dashboardProvider: DashboardToolProvider,
+        frontComponentProvider: FrontComponentToolProvider,
       ) => [
         actionProvider,
         databaseProvider,
         logicFunctionProvider,
         workflowProvider,
         dashboardProvider,
+        frontComponentProvider,
       ],
       inject: [
         ActionToolProvider,
@@ -90,6 +94,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         LogicFunctionToolProvider,
         WorkflowToolProvider,
         DashboardToolProvider,
+        FrontComponentToolProvider,
       ],
     },
     ToolRegistryService,

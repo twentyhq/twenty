@@ -2,7 +2,6 @@ import { type FieldManifest } from 'twenty-shared/application';
 import { isDefined, isFieldMetadataSelectKind } from 'twenty-shared/utils';
 import {
   FieldMetadataType,
-  MetadataWritability,
   type RelationAndMorphRelationFieldMetadataType,
 } from 'twenty-shared/types';
 
@@ -87,24 +86,6 @@ const resolveManifestFieldOptions = (
     : fieldManifest.options;
 };
 
-// TODO: remove once published app manifests declare disabledFieldPermissionActions
-const resolveManifestFieldDisabledFieldPermissionActions = (
-  fieldManifest: FieldManifest,
-): UniversalFlatFieldMetadata['disabledFieldPermissionActions'] => {
-  if (isDefined(fieldManifest.disabledFieldPermissionActions)) {
-    return fieldManifest.disabledFieldPermissionActions;
-  }
-
-  if (
-    fieldManifest.writability === MetadataWritability.APPLICATION ||
-    fieldManifest.writability === MetadataWritability.SYSTEM
-  ) {
-    return ['canUpdateFieldValue'];
-  }
-
-  return null;
-};
-
 export const fromFieldManifestToUniversalFlatFieldMetadata = ({
   fieldManifest,
   applicationUniversalIdentifier,
@@ -150,9 +131,8 @@ export const fromFieldManifestToUniversalFlatFieldMetadata = ({
     isSystem: false,
     isSystemSideEffect: false,
     isUIEditable: fieldManifest.isUIEditable ?? true,
-    writability: fieldManifest.writability ?? MetadataWritability.OPEN,
     disabledFieldPermissionActions:
-      resolveManifestFieldDisabledFieldPermissionActions(fieldManifest),
+      fieldManifest.disabledFieldPermissionActions ?? null,
     isNullable: fieldManifest.isNullable ?? true,
     isUnique: fieldManifest.isUnique ?? false,
     isSearchable: resolveManifestFieldIsSearchable({

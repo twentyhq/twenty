@@ -110,6 +110,7 @@ I relativi input corrispondono ai passaggi del [generatore di workflow](/it/user
 * Gli operandi di filtro accettano valori `ViewFilterOperand`, esportati da `twenty-sdk/define`. Gli operatori del gruppo di filtri accettano valori stringa come `'AND'` o `'OR'`.
 * I campi del modulo di tipo `RECORD` denominano il proprio oggetto con `settings.objectUniversalIdentifier`. I campi di tipo `SELECT` e `MULTI_SELECT` offrono le opzioni di un campo esistente dello stesso tipo, denominato con `settings.selectedFieldUniversalIdentifier`.
 * Per eseguire il tuo codice, usa un passaggio `LOGIC_FUNCTION`. Il passaggio Code del builder non è disponibile.
+* I passaggi `AI_AGENT` eseguono uno degli agenti della tua app, denominato con `agentUniversalIdentifier`, e adottano le impostazioni del passaggio del builder: `prompt`, `responseFormat`, `humanInputInstructions`, `conversation` e `workspaceMemberId` per il membro con cui si svolge la conversazione dell'agente.
 * I passaggi email e calendario vengono eseguiti solo se il ruolo della tua app dispone del flag di autorizzazione corrispondente: `SystemPermissionFlag.SEND_EMAIL_TOOL` per `SEND_EMAIL` e `DRAFT_EMAIL`, `SystemPermissionFlag.CREATE_CALENDAR_EVENT_TOOL` per `CREATE_CALENDAR_EVENT`. Il workspace lo concede installando l'app e il passaggio può quindi usare qualsiasi account connesso nel workspace, come un workflow creato nell'app.
 * Gli ID degli account connessi sono locali a ogni spazio di lavoro, quindi non codificarne uno in modo fisso. Specifica l'account in uno dei due modi seguenti:
 

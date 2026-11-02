@@ -1,5 +1,4 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
-import { MetadataReadability } from 'twenty-shared/types';
 import { workspaceAuthContextStorage } from 'src/engine/core-modules/auth/storage/workspace-auth-context.storage';
 import { RecordPermissionsResolver } from 'src/engine/permissions/record-permissions/record-permissions.resolver';
 
@@ -14,7 +13,6 @@ const buildResolver = () => {
   const objectMetadata = {
     id: 'object',
     universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
-    readability: MetadataReadability.PRIVATE,
   };
   const recordPermissionsService = {
     getPermissionsForRecords: jest
@@ -33,7 +31,6 @@ const buildResolver = () => {
           second: {
             id: 'secondObject',
             universalIdentifier: 'second',
-            readability: MetadataReadability.OPEN,
           },
         },
       },
@@ -100,19 +97,6 @@ describe('Generic record permissions query', () => {
     expect(
       recordPermissionsService.getPermissionsForRecords,
     ).not.toHaveBeenCalled();
-  });
-
-  it('uses the common policy even for SYSTEM chat metadata', async () => {
-    const { query, recordPermissionsService, objectMetadata } = buildResolver();
-    objectMetadata.readability = MetadataReadability.SYSTEM;
-    recordPermissionsService.getPermissionsForRecords.mockResolvedValue(
-      new Map(),
-    );
-    const target = { objectMetadataId: 'object', recordId: 'record' };
-    expect(await query([target])).toEqual([{ ...target, permissions: denied }]);
-    expect(
-      recordPermissionsService.getPermissionsForRecords,
-    ).toHaveBeenCalledTimes(1);
   });
 
   it('rejects oversized batches before reading metadata', async () => {

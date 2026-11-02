@@ -5,6 +5,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { AiAgentModule } from 'src/engine/metadata-modules/ai/ai-agent/ai-agent.module';
 import { AiAgentRunsModule } from 'src/engine/metadata-modules/ai/ai-agent-runs/ai-agent-runs.module';
 import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.module';
+import { AiFrontComponentModule } from 'src/engine/metadata-modules/ai/ai-front-component/ai-front-component.module';
 import { AiGenerateTextModule } from 'src/engine/metadata-modules/ai/ai-generate-text/ai-generate-text.module';
 import { AiWorkspaceStatsModule } from 'src/engine/metadata-modules/ai/ai-workspace-stats/ai-workspace-stats.module';
 import { ApplicationConnectionsModule } from 'src/engine/core-modules/application/connection-provider/connections/application-connections.module';
@@ -62,6 +63,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     AiAgentModule,
     AiAgentRunsModule,
     AiChatModule,
+    AiFrontComponentModule,
     AiGenerateTextModule,
     AiWorkspaceStatsModule,
     ApplicationConnectionsModule,

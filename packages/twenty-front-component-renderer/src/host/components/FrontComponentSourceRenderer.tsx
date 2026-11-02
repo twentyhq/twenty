@@ -1,5 +1,7 @@
 import { useMemo } from 'react';
 
+import { createMockSdkClientSources } from '@/host/component-source/utils/createMockSdkClientSources';
+
 import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
 import { FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP } from '@/host/thread/constants/FrontComponentHostCommunicationApiNoop';
 
@@ -7,7 +9,7 @@ type FrontComponentSourceRendererProps = {
   componentId: string;
   componentSource: string;
   sharedDependenciesSource?: string;
-  data: Record<string, unknown>;
+  mockQueryResult: Record<string, unknown>;
   colorScheme: 'light' | 'dark';
   onReady?: () => void;
   onError: (error?: Error) => void;
@@ -17,11 +19,15 @@ export const FrontComponentSourceRenderer = ({
   componentId,
   componentSource,
   sharedDependenciesSource,
-  data,
+  mockQueryResult,
   colorScheme,
   onReady,
   onError,
 }: FrontComponentSourceRendererProps) => {
+  const sdkClientSources = useMemo(
+    () => createMockSdkClientSources(mockQueryResult),
+    [mockQueryResult],
+  );
   const executionContext = useMemo(
     () => ({
       frontComponentId: componentId,
@@ -39,7 +45,7 @@ export const FrontComponentSourceRenderer = ({
       componentUrl={`about:blank#${componentId}`}
       componentSource={componentSource}
       sharedDependenciesSource={sharedDependenciesSource}
-      componentProps={data}
+      sdkClientSources={sdkClientSources}
       executionContext={executionContext}
       frontComponentHostCommunicationApi={
         FRONT_COMPONENT_HOST_COMMUNICATION_API_NOOP

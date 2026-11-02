@@ -20,6 +20,11 @@ Workflows created at runtime through the workspace API are a `Workflow` plus at 
 - `position: null` means no position. `outputSchema: {}` means an empty schema; omit `outputSchema` to derive it.
 - `twenty app pull` on the workspace Custom application writes builder workflows in this form, keeping the builder's trigger name, positions and output schemas.
 
+## AI Agent Steps
+
+- `AI_AGENT` runs one of the app's agents, named with `agentUniversalIdentifier`, and takes the step's `prompt`, `responseFormat`, `humanInputInstructions`, `conversation` and `workspaceMemberId` (the member the agent's conversation is with).
+- A step can only name an agent the app exports: `twenty app pull` reports a workflow on any other agent as unsupported.
+
 ## Email and Calendar Steps
 
 - `SEND_EMAIL`, `DRAFT_EMAIL` and `CREATE_CALENDAR_EVENT` name their account with exactly one of `connectedAccountId` or `connectedAccountHandle`.
