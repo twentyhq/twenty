@@ -1,5 +1,7 @@
 import { GETTING_STARTED_AUTO_ADVANCE_DELAY_MS } from '@/getting-started/constants/GettingStartedAutoAdvanceDelayMs';
 import { useSelectGettingStartedStep } from '@/getting-started/hooks/useSelectGettingStartedStep';
+import { gettingStartedJustCompletedStepState } from '@/getting-started/states/gettingStartedJustCompletedStepState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { useEffect, useEffectEvent } from 'react';
 
 import { type GettingStartedStepActionKey } from '~/generated-metadata/graphql';
@@ -14,6 +16,9 @@ export const GettingStartedAutoAdvanceEffect = ({
   nextStepActionKey,
 }: GettingStartedAutoAdvanceEffectProps) => {
   const { selectGettingStartedStep } = useSelectGettingStartedStep();
+  const setGettingStartedJustCompletedStep = useSetAtomState(
+    gettingStartedJustCompletedStepState,
+  );
   const advance = useEffectEvent(() =>
     selectGettingStartedStep(nextStepActionKey),
   );
@@ -26,6 +31,11 @@ export const GettingStartedAutoAdvanceEffect = ({
 
     return () => clearTimeout(timeoutId);
   }, [completedStepActionKey]);
+
+  useEffect(
+    () => () => setGettingStartedJustCompletedStep(null),
+    [setGettingStartedJustCompletedStep],
+  );
 
   return null;
 };

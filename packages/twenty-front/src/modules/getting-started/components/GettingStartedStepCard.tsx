@@ -3,7 +3,8 @@ import { GettingStartedStepAction } from '@/getting-started/components/GettingSt
 import { GETTING_STARTED_CUSTOM_STEP_DONE_DESCRIPTIONS } from '@/getting-started/constants/GettingStartedCustomStepDoneDescriptions';
 import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
-import { IconCircleCheck, useIcons } from 'twenty-ui/icon';
+import { IconCircleCheck } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Heading } from 'twenty-ui/primitives/typography';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { parseThemeColor } from 'twenty-ui/utilities';

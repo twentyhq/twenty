@@ -1,5 +1,6 @@
 import { GettingStartedStepCard } from '@/getting-started/components/GettingStartedStepCard';
 import { GETTING_STARTED_STACKED_STEP_COLOR_BY_DEPTH } from '@/getting-started/constants/GettingStartedStackedStepColorByDepth';
+import { GETTING_STARTED_STEP_TICKS_MIN_CONTAINER_WIDTH } from '@/getting-started/constants/GettingStartedStepTicksMinContainerWidth';
 import { useSelectGettingStartedStep } from '@/getting-started/hooks/useSelectGettingStartedStep';
 import { gettingStartedJustCompletedStepState } from '@/getting-started/states/gettingStartedJustCompletedStepState';
 import { EASE_OUT } from '@/ui/theme/constants/EaseOut';
@@ -7,7 +8,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { themeCssVariables, useTheme } from 'twenty-ui/theme';
 import { parseThemeColor } from 'twenty-ui/utilities';
 
@@ -32,7 +33,7 @@ const StyledSteps = styled.nav`
   top: 50%;
   transform: translateY(-50%);
 
-  @container getting-started-scroll (max-width: 840px) {
+  @container getting-started-scroll (max-width: ${GETTING_STARTED_STEP_TICKS_MIN_CONTAINER_WIDTH}px) {
     display: none;
   }
 `;

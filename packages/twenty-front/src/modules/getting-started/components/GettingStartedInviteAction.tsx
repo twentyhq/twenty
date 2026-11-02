@@ -72,16 +72,21 @@ export const GettingStartedInviteAction = () => {
 
   const hasInvalidEmail = emails.some(isInvalidEmail);
 
-  const updateEmail = ({ index, email }: { index: number; email: string }) => {
-    const nextEmails = emails.map((currentEmail, emailIndex) =>
-      emailIndex === index ? email : currentEmail,
-    );
+  const saveDraftEmails = (nextEmails: string[]) => {
+    const lastFilledEmailIndex = nextEmails.findLastIndex(isNonEmptyString);
 
-    setDraftEmails(nextEmails.at(-1) === '' ? nextEmails : [...nextEmails, '']);
+    setDraftEmails([...nextEmails.slice(0, lastFilledEmailIndex + 1), '']);
   };
 
+  const updateEmail = ({ index, email }: { index: number; email: string }) =>
+    saveDraftEmails(
+      emails.map((currentEmail, emailIndex) =>
+        emailIndex === index ? email : currentEmail,
+      ),
+    );
+
   const removeEmail = (index: number) =>
-    setDraftEmails(emails.filter((_, emailIndex) => emailIndex !== index));
+    saveDraftEmails(emails.filter((_, emailIndex) => emailIndex !== index));
 
   const sendInvitations = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -136,6 +141,7 @@ export const GettingStartedInviteAction = () => {
         <StyledEmailInputs>
           {emails.map((email, index) => {
             const emailNumber = index + 1;
+            const isLastInput = index === emails.length - 1;
 
             return (
               <TextInput
@@ -147,9 +153,9 @@ export const GettingStartedInviteAction = () => {
                 aria-label={t`Teammate email ${emailNumber}`}
                 placeholder={emailPlaceholder}
                 onChange={(text) => updateEmail({ index, email: text })}
-                RightIcon={isNonEmptyString(email) ? IconX : undefined}
+                RightIcon={isLastInput ? undefined : IconX}
                 onRightIconClick={
-                  isNonEmptyString(email) ? () => removeEmail(index) : undefined
+                  isLastInput ? undefined : () => removeEmail(index)
                 }
                 fullWidth
               />

@@ -73,7 +73,7 @@ export const GettingStartedAppsAction = () => {
       {featuredApps.map((featuredApp) => (
         <StyledRow key={featuredApp.id}>
           <Avatar
-            src={getAbsoluteImageUrl(featuredApp.logoUrl || null) ?? null}
+            src={getAbsoluteImageUrl(featuredApp.logoUrl) ?? null}
             name={featuredApp.name}
             colorSeed={featuredApp.name}
             size="lg"
