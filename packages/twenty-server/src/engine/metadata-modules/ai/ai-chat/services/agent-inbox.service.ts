@@ -137,17 +137,10 @@ export class AgentInboxService {
       };
     }
 
-    const awaitingToolCall = await buildAwaitingToolCall?.({
-      threadId,
-      toolCallId,
-    });
-    const toolCallPart = isDefined(awaitingToolCall)
-      ? {
-          part: buildToolPart({ ...awaitingToolCall, toolCallId }),
-          isAwaitingAnswer: true,
-        }
-      : isDefined(input.toolCall)
-        ? await buildInboxMessageToolCallPart({
+    const requestedToolCallPart =
+      isDefined(buildAwaitingToolCall) || !isDefined(input.toolCall)
+        ? undefined
+        : await buildInboxMessageToolCallPart({
             toolCall: input.toolCall,
             toolCallId,
             resolveProposal,
@@ -157,8 +150,7 @@ export class AgentInboxService {
                 applicationId: senderDetails.applicationId,
                 logicFunctionUniversalIdentifier,
               }),
-          })
-        : undefined;
+          });
 
     await this.assertRecordTargetsAreReadableOrThrow({
       workspaceId,
@@ -178,6 +170,17 @@ export class AgentInboxService {
     ) {
       throwAgentChatThreadNotFound();
     }
+
+    const awaitingToolCall = await buildAwaitingToolCall?.({
+      threadId,
+      toolCallId,
+    });
+    const toolCallPart = isDefined(awaitingToolCall)
+      ? {
+          part: buildToolPart({ ...awaitingToolCall, toolCallId }),
+          isAwaitingAnswer: true,
+        }
+      : requestedToolCallPart;
 
     await this.attachRecordTargets({
       workspaceId,
@@ -261,7 +264,10 @@ export class AgentInboxService {
   }: {
     workspaceId: string;
     sender: AgentInboxSender;
-    input: NormalizedSendInboxMessageInput;
+    input: Pick<
+      NormalizedSendInboxMessageInput,
+      'addressing' | 'workspaceMemberIds'
+    >;
   }): Promise<OpenedThread> {
     const { addressing } = input;
 
