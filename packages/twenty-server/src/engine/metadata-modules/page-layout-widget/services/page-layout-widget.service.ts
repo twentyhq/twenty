@@ -77,12 +77,10 @@ export class PageLayoutWidgetService {
       return undefined;
     }
 
-    const applications =
-      await this.applicationService.findManyInstalledFlatApplications(
-        workspaceId,
-      );
-
-    return applications.find((application) => application.id === applicationId);
+    return this.applicationService.findInstalledFlatApplication({
+      applicationId,
+      workspaceId,
+    });
   }
 
   private async getFlatPageLayoutWidgetMaps(
