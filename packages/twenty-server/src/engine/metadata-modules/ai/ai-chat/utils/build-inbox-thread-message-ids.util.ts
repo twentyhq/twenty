@@ -10,9 +10,7 @@ type InboxThreadMessageIds = {
   openingMessageId: null;
 };
 
-// Scoped to the sender, so two senders using the same idempotency key in a
-// conversation neither opened write two messages instead of one. Neither
-// opened it, so no opener is written
+// Scoped to the sender, so two senders reusing an idempotency key write separate messages
 export const buildInboxThreadMessageIds = ({
   threadId,
   senderScope,

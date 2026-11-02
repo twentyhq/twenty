@@ -38,7 +38,7 @@ const { threadId } = await sendInboxMessage({
 Key points:
 
 - `workspaceMemberIds` lists the members who receive the conversation. The first member of a new conversation owns it, and the others follow it as participants. A later send under the same key that lists new members adds them; members it leaves out keep the conversation. Recipients find the conversation unread in their inbox, with no obligation to answer: [mention](#mentioning-members) the members you need something from.
-- `threadKey` picks the conversation for this app, shared by every member it is sent to. A new key starts a conversation titled `title`; a key you used before adds the message to that conversation. To write in a conversation your app did not open, pass its [`threadId`](#replying-in-an-existing-conversation) instead.
+- `threadKey` picks the conversation for this app, shared by every member it is sent to. A new key starts a conversation titled `title`; a key you used before adds the message to that conversation. `title` is required with `threadKey`, even for a known key (`INVALID_INBOX_MESSAGE_INPUT` otherwise). To write in a conversation your app did not open, pass its [`threadId`](#replying-in-an-existing-conversation) instead.
 - `channelId` (optional, with `threadKey`) files a new conversation in a channel: see [posting in a channel](#posting-in-a-channel). A conversation that exists stays where it is.
 - `idempotencyKey` identifies the message within the conversation. Sending again with the same keys writes nothing new, so retries and concurrent runs never duplicate a message.
 - `text` is markdown, and can carry [mentions and record references](#mentions-and-record-references).
@@ -98,7 +98,7 @@ const { threadId } = await sendInboxMessage({
 ```
 
 - Your app's default role must reach the channel: it must be one of the channel's roles, or have access to all channels. Otherwise the call fails with `CHAT_CHANNEL_NOT_FOUND`.
-- Without `workspaceMemberIds`, the conversation has no owner and no member follows it: the channel's roles read it, and members join it from the channel. With recipients, the first one owns it, and must reach the channel too.
+- Without `workspaceMemberIds` or `mentionedWorkspaceMemberIds`, the conversation has no owner and no member follows it: the channel's roles read it, and members join it from the channel. With recipients, the first one owns it, and must reach the channel too.
 - `channelId` only applies when the conversation is created. A send under a key your app used before adds the message to that conversation, wherever it is filed.
 - A conversation cannot be filed while the channel's roles are being changed or the channel is being deleted. The call then fails with `CHAT_CHANNEL_BUSY`: retry it after a moment with the same `idempotencyKey`.
 

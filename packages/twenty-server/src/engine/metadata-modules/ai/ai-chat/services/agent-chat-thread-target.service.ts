@@ -53,6 +53,26 @@ export class AgentChatThreadTargetService {
     });
   }
 
+  async assertRecordTargetIsReadableOrThrow({
+    workspaceId,
+    objectNameSingular,
+    recordId,
+    authContext,
+  }: RecordReference & {
+    workspaceId: string;
+    authContext: WorkspaceAuthContext;
+  }): Promise<void> {
+    await this.resolveJoinColumnNameOrThrow({
+      workspaceId,
+      objectNameSingular,
+    });
+    await this.workspaceOrmManager.executeInWorkspaceContext(
+      () =>
+        this.assertRecordIsReadableOrThrow({ objectNameSingular, recordId }),
+      authContext,
+    );
+  }
+
   async detachThreadFromRecord(args: ThreadRecordLinkArgs): Promise<void> {
     await this.writeLinkToReadableRecord({
       ...args,

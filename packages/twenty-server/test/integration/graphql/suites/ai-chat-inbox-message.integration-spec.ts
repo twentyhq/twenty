@@ -15,7 +15,12 @@ import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/m
 import { destroyAgentChatThread } from 'test/integration/utils/destroy-agent-chat-thread.util';
 import { generateApplicationTokenPair } from 'test/integration/utils/generate-application-token-pair.util';
 import { getAppProviderByClassName } from 'test/integration/utils/get-app-provider-by-class-name.util';
+import {
+  type SendInboxMessageInput,
+  type SendInboxMessageResult,
+} from 'twenty-shared/application';
 import { SystemPermissionFlag } from 'twenty-shared/constants';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
 
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -119,7 +124,7 @@ describe('Sending an inbox message as an application', () => {
   let application: ApplicationWithResources;
   let applicationToken: string;
   let threadId: string;
-  let firstDelivery: Record<string, unknown>;
+  let firstDelivery: SendInboxMessageResult;
   let enqueueStream: jest.SpyInstance;
   const spies: jest.SpyInstance[] = [];
 
@@ -190,14 +195,14 @@ describe('Sending an inbox message as an application', () => {
 
     const response = await sendInboxMessage(applicationToken);
 
-    if (response.body.errors !== undefined) {
+    if (isDefined(response.body.errors)) {
       throw new Error(
         `Could not send the inbox message: ${JSON.stringify(response.body.errors)}`,
       );
     }
 
     firstDelivery = response.body.data.sendInboxMessage;
-    threadId = firstDelivery.threadId as string;
+    threadId = firstDelivery.threadId;
   });
 
   afterAll(async () => {
@@ -349,7 +354,7 @@ describe('Sending an inbox message as an application', () => {
       ),
     );
     const sentResponses = responses.filter(
-      (response) => response.body.errors === undefined,
+      (response) => !isDefined(response.body.errors),
     );
     const concurrentThreadId =
       sentResponses[0]?.body.data.sendInboxMessage.threadId;
@@ -358,7 +363,7 @@ describe('Sending an inbox message as an application', () => {
       expect(sentResponses).toHaveLength(1);
       expect(
         JSON.stringify(
-          responses.find((response) => response.body.errors !== undefined)?.body
+          responses.find((response) => isDefined(response.body.errors))?.body
             .errors,
         ),
       ).toContain('THREAD_AWAITING_ANSWER');
@@ -593,27 +598,23 @@ describe('Addressing channels and existing conversations as an application', () 
 
   const senderKey = () => `application:${application.id}`;
 
-  const sendInboxMessage = (input: Record<string, unknown>) =>
+  const sendInboxMessage = (input: SendInboxMessageInput) =>
     makeMetadataApiRequest(
       { query: SEND_INBOX_MESSAGE, variables: { input } },
       applicationToken,
     );
 
-  const sendOrThrow = async (input: Record<string, unknown>) => {
+  const sendOrThrow = async (input: SendInboxMessageInput) => {
     const response = await sendInboxMessage(input);
 
-    if (response.body.errors !== undefined) {
+    if (isDefined(response.body.errors)) {
       throw new Error(
         `Could not send the inbox message: ${JSON.stringify(response.body.errors)}`,
       );
     }
 
-    const delivery = response.body.data.sendInboxMessage as {
-      threadId: string;
-      messageId: string;
-      isNewThread: boolean;
-      isDismissed: boolean;
-    };
+    const delivery: SendInboxMessageResult =
+      response.body.data.sendInboxMessage;
 
     if (!threadIds.includes(delivery.threadId)) {
       threadIds.push(delivery.threadId);
@@ -628,13 +629,13 @@ describe('Addressing channels and existing conversations as an application', () 
       variables: { input: { name: `Inbox channel ${uuidv4()}`, roleIds } },
     });
 
-    if (response.body.errors !== undefined) {
+    if (isDefined(response.body.errors)) {
       throw new Error(
         `Could not create the channel: ${JSON.stringify(response.body.errors)}`,
       );
     }
 
-    const channelId = response.body.data.createAgentChatChannel.id as string;
+    const channelId: string = response.body.data.createAgentChatChannel.id;
 
     channelIds.push(channelId);
 
@@ -676,13 +677,19 @@ describe('Addressing channels and existing conversations as an application', () 
       )
     ).map(({ principalId }: { principalId: string }) => principalId);
 
-  const readParticipant = async (id: string, workspaceMemberId: string) =>
+  const readParticipant = async ({
+    threadId,
+    workspaceMemberId,
+  }: {
+    threadId: string;
+    workspaceMemberId: string;
+  }) =>
     (
       await global.testDataSource.query(
         `SELECT "isSubscribed", "lastReadAt", "lastMentionedAt"
          FROM "${schema}"."agentChatThreadParticipant"
          WHERE "threadId" = $1 AND "workspaceMemberId" = $2`,
-        [id, workspaceMemberId],
+        [threadId, workspaceMemberId],
       )
     )[0];
 
@@ -826,10 +833,10 @@ describe('Addressing channels and existing conversations as an application', () 
       applicationRoleId,
     );
     expect(
-      await readParticipant(
-        delivery.threadId,
-        WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-      ),
+      await readParticipant({
+        threadId: delivery.threadId,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      }),
     ).toMatchObject({ isSubscribed: true });
   });
 
@@ -943,14 +950,14 @@ describe('Addressing channels and existing conversations as an application', () 
       title: 'Review the quote',
       text: 'Can you review this quote?',
     });
-    const jane = await readParticipant(
-      reviewThreadId,
-      WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-    );
-    const tim = await readParticipant(
-      reviewThreadId,
-      WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
-    );
+    const jane = await readParticipant({
+      threadId: reviewThreadId,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+    });
+    const tim = await readParticipant({
+      threadId: reviewThreadId,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+    });
 
     expect(jane).toMatchObject({
       isSubscribed: true,
@@ -973,23 +980,26 @@ describe('Addressing channels and existing conversations as an application', () 
 
     await sendOrThrow(mention);
 
-    const mentionedTim = await readParticipant(
-      reviewThreadId,
-      WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
-    );
+    const mentionedTim = await readParticipant({
+      threadId: reviewThreadId,
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+    });
 
     expect(mentionedTim.lastMentionedAt).not.toBeNull();
 
     await sendOrThrow(mention);
 
     expect(
-      await readParticipant(reviewThreadId, WORKSPACE_MEMBER_DATA_SEED_IDS.TIM),
+      await readParticipant({
+        threadId: reviewThreadId,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.TIM,
+      }),
     ).toEqual(mentionedTim);
     expect(
-      await readParticipant(
-        reviewThreadId,
-        WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
-      ),
+      await readParticipant({
+        threadId: reviewThreadId,
+        workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
+      }),
     ).toEqual(jane);
   });
 

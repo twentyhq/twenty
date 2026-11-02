@@ -1,6 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type SendInboxMessageInput } from 'twenty-shared/application';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type NormalizedSendInboxMessageInput } from 'src/engine/metadata-modules/ai/ai-chat/types/normalized-send-inbox-message-input.type';
 import {
@@ -8,9 +8,8 @@ import {
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 
-const throwInvalidInput = (message: string): never => {
-  throw new AiException(message, AiExceptionCode.INVALID_INBOX_MESSAGE_INPUT);
-};
+const buildInvalidInboxMessageInputException = (message: string) =>
+  new AiException(message, AiExceptionCode.INVALID_INBOX_MESSAGE_INPUT);
 
 const uniqueIds = (ids: string[] | null | undefined): string[] => [
   ...new Set(ids ?? []),
@@ -56,13 +55,13 @@ export const normalizeSendInboxMessageInput = ({
   };
 
   if (isDefined(threadId) && isDefined(threadKey)) {
-    return throwInvalidInput(
+    throw buildInvalidInboxMessageInputException(
       'Address the message with either threadKey or threadId, not both',
     );
   }
 
   if (isDefined(threadId) && isDefined(channelId)) {
-    return throwInvalidInput(
+    throw buildInvalidInboxMessageInputException(
       'channelId only applies with threadKey, when the conversation is created',
     );
   }
@@ -72,17 +71,19 @@ export const normalizeSendInboxMessageInput = ({
   }
 
   if (!isDefined(threadKey)) {
-    return throwInvalidInput('Address the message with threadKey or threadId');
+    throw buildInvalidInboxMessageInputException(
+      'Address the message with threadKey or threadId',
+    );
   }
 
   if (!isNonEmptyString(title)) {
-    return throwInvalidInput(
+    throw buildInvalidInboxMessageInputException(
       'title is required with threadKey, for the conversation it may create',
     );
   }
 
-  if (!isDefined(channelId) && recipients.length === 0) {
-    return throwInvalidInput(
+  if (!isDefined(channelId) && !isNonEmptyArray(recipients)) {
+    throw buildInvalidInboxMessageInputException(
       'The message needs a recipient, a mentioned member, a channel or an existing conversation',
     );
   }

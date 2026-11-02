@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { type ExtendedUIMessagePart } from 'twenty-shared/ai';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { AgentMessageRole } from 'src/engine/metadata-modules/ai/ai-history/enums/agent-message-role.enum';
 import { AgentChatChannelAccessService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-access.service';
@@ -14,9 +14,8 @@ import { type AgentInboxDelivery } from 'src/engine/metadata-modules/ai/ai-chat/
 import { type AgentInboxSender } from 'src/engine/metadata-modules/ai/ai-chat/types/agent-inbox-sender.type';
 import { type NormalizedSendInboxMessageInput } from 'src/engine/metadata-modules/ai/ai-chat/types/normalized-send-inbox-message-input.type';
 import { resolveEmailToolCallProposal } from 'src/engine/metadata-modules/ai/ai-agent-execution/pausing-tools/utils/resolve-email-tool-call-proposal.util';
-import { buildInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-ids.util';
 import { buildInboxThreadId } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-thread-id.util';
-import { buildInboxThreadMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-thread-message-ids.util';
+import { buildSendInboxMessageIds } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-send-inbox-message-ids.util';
 import { buildInboxMessageToolCallPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-inbox-message-tool-call-part.util';
 import { buildToolPart } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-tool-part.util';
 import { type ResolveInboxProposal } from 'src/engine/metadata-modules/ai/ai-chat/types/resolve-inbox-proposal.type';
@@ -66,10 +65,7 @@ export class AgentInboxService {
     private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
-  // Every record has an id derived from the keys: the thread key picks the
-  // conversation, and the idempotency key the message in it, so a retry or a
-  // concurrent send completes the same message instead of writing another.
-  // A message is written with its parts at once, so one that exists is done.
+  // Ids derive from the keys, so a retry or a concurrent send completes the same message instead of writing another
   async sendMessage({
     workspaceId,
     sender,
@@ -82,7 +78,6 @@ export class AgentInboxService {
     workspaceId: string;
     sender: AgentInboxSender;
     input: NormalizedSendInboxMessageInput;
-    // the caller's own access, checked for a conversation the sender did not open and for the records to attach
     authContext?: AgentInboxCallerAuthContext;
     // without a resolver, only emails can be proposed: they need no tool of the sender's
     resolveProposal?: ResolveInboxProposal;
@@ -98,20 +93,13 @@ export class AgentInboxService {
     }>;
   }): Promise<AgentInboxDelivery> {
     const senderDetails = getAgentInboxSenderDetails(sender);
-    const { addressing, idempotencyKey } = input;
-    const ids =
-      'threadKey' in addressing
-        ? buildInboxMessageIds({
-            senderKey: senderDetails.key,
-            threadKey: addressing.threadKey,
-            idempotencyKey,
-          })
-        : buildInboxThreadMessageIds({
-            threadId: addressing.threadId,
-            senderScope: senderDetails.key,
-            idempotencyKey,
-          });
-    const { threadId, turnId, messageId, toolCallId, openingMessageId } = ids;
+    const { addressing } = input;
+    const { threadId, turnId, messageId, toolCallId, openingMessageId } =
+      buildSendInboxMessageIds({
+        addressing,
+        senderKey: senderDetails.key,
+        idempotencyKey: input.idempotencyKey,
+      });
 
     if ('threadId' in addressing) {
       await this.inboxAccessService.assertThreadIsWritableOrThrow({
@@ -134,26 +122,8 @@ export class AgentInboxService {
       };
     }
 
-    // opened on every send, so members a later send lists join the
-    // conversation, even when the message it repeats was already written
-    const openThread = (): Promise<OpenedThread> =>
-      'threadKey' in addressing
-        ? this.openThread({
-            workspaceId,
-            sender,
-            workspaceMemberIds: input.workspaceMemberIds,
-            threadKey: addressing.threadKey,
-            title: addressing.title,
-            channelId: addressing.channelId,
-          })
-        : this.joinThread({
-            workspaceId,
-            threadId: addressing.threadId,
-            workspaceMemberIds: input.workspaceMemberIds,
-          });
-
     if (await this.messageExists({ workspaceId, id: messageId })) {
-      await openThread();
+      await this.openOrJoinThread({ workspaceId, sender, input });
 
       return {
         threadId,
@@ -190,7 +160,24 @@ export class AgentInboxService {
           })
         : undefined;
 
-    const { thread, isCreated } = await openThread();
+    await this.assertRecordTargetsAreReadableOrThrow({
+      workspaceId,
+      recordTargets: input.recordTargets,
+      authContext,
+    });
+
+    const { thread, isCreated } = await this.openOrJoinThread({
+      workspaceId,
+      sender,
+      input,
+    });
+
+    if (
+      isNonEmptyArray(input.mentionedWorkspaceMemberIds) &&
+      !isDefined(thread.workspaceMemberId)
+    ) {
+      throwAgentChatThreadNotFound();
+    }
 
     await this.attachRecordTargets({
       workspaceId,
@@ -266,12 +253,37 @@ export class AgentInboxService {
     };
   }
 
-  // The thread key picks the sender's conversation: the first member to
-  // receive it owns it, and every member listed then or later follows it. A
-  // conversation opened with no member belongs to no inbox: filed in a
-  // channel, the channel's roles read it, otherwise only the server does. One
-  // a member deleted is returned as it is, and the caller decides whether to
-  // write to it.
+  // Opened on every send, so members a later send lists join even when the message already exists
+  private async openOrJoinThread({
+    workspaceId,
+    sender,
+    input,
+  }: {
+    workspaceId: string;
+    sender: AgentInboxSender;
+    input: NormalizedSendInboxMessageInput;
+  }): Promise<OpenedThread> {
+    const { addressing } = input;
+
+    if ('threadKey' in addressing) {
+      return this.openThread({
+        workspaceId,
+        sender,
+        workspaceMemberIds: input.workspaceMemberIds,
+        threadKey: addressing.threadKey,
+        title: addressing.title,
+        channelId: addressing.channelId,
+      });
+    }
+
+    return this.joinThread({
+      workspaceId,
+      threadId: addressing.threadId,
+      workspaceMemberIds: input.workspaceMemberIds,
+    });
+  }
+
+  // The first member to receive the keyed conversation owns it; with no member, only channel roles or the server read it
   async openThread({
     workspaceId,
     sender,
@@ -340,8 +352,7 @@ export class AgentInboxService {
     return openedThread;
   }
 
-  // Joined as it is: the caller's access to it was checked, and the sender did
-  // not open it
+  // The caller's access to it was checked, and the sender did not open it
   private async joinThread({
     workspaceId,
     threadId,
@@ -477,9 +488,7 @@ export class AgentInboxService {
     }
   }
 
-  // Mentioned once the message is written, so a message sent again creates no
-  // new obligation. The mentioned members were delivered first, as the owner
-  // shares the conversation
+  // Mentioned once the message is written, so a message sent again creates no new obligation
   private async mentionParticipants({
     workspaceId,
     thread,
@@ -502,8 +511,24 @@ export class AgentInboxService {
     });
   }
 
-  // Attached under the caller's access before the message is written, so a
-  // record the caller cannot read fails the send
+  private async assertRecordTargetsAreReadableOrThrow({
+    workspaceId,
+    recordTargets,
+    authContext,
+  }: {
+    workspaceId: string;
+    recordTargets: NormalizedSendInboxMessageInput['recordTargets'];
+    authContext: AgentInboxCallerAuthContext | undefined;
+  }): Promise<void> {
+    for (const recordTarget of recordTargets) {
+      await this.threadTargetService.assertRecordTargetIsReadableOrThrow({
+        workspaceId,
+        authContext: authContext ?? throwAgentChatThreadNotFound(),
+        ...recordTarget,
+      });
+    }
+  }
+
   private async attachRecordTargets({
     workspaceId,
     threadId,
@@ -561,9 +586,7 @@ export class AgentInboxService {
     );
   }
 
-  // The opener is a system message naming the sender, and holds no text from
-  // it. Only the conversation the sender keyed gets one: an existing
-  // conversation was started by someone else.
+  // Only the conversation the sender keyed gets an opener: an existing one was started by someone else
   private async ensureOpener({
     workspaceId,
     threadId,
