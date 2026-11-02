@@ -256,8 +256,8 @@ describe('Records shared beyond the role that can access their object', () => {
 
     const buildJonyPrincipal = () => ({
       workspaceId,
-      intersectionOf: { userWorkspaceRoleId: memberRoleId },
-      workspaceMember: { id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY },
+      roleIds: [memberRoleId],
+      workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
     });
 
     expect(
@@ -520,10 +520,8 @@ describe('Records shared beyond the role that can access their object', () => {
         })
         .resolveAdmittedRecordIds({
           workspaceId: workspaceId,
-          intersectionOf: { userWorkspaceRoleId: memberRoleId },
-          workspaceMember: {
-            id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
-          },
+          roleIds: [memberRoleId],
+          workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
         });
     };
 

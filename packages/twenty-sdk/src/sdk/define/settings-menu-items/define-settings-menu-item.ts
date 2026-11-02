@@ -1,7 +1,10 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import {
+  isReservedSettingsMenuItemSlug,
   isReservedSettingsMenuItemTitle,
+  isValidSettingsMenuItemSlug,
   SETTINGS_MENU_ITEM_SCOPES,
+  SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -47,6 +50,22 @@ export const defineSettingsMenuItem: DefineEntity<SettingsMenuItemConfig> = (
   ) {
     errors.push(
       `SettingsMenuItem scope must be one of ${SETTINGS_MENU_ITEM_SCOPES.join(', ')}`,
+    );
+  }
+
+  if (isDefined(config.slug) && !isValidSettingsMenuItemSlug(config.slug)) {
+    errors.push(
+      `SettingsMenuItem slug "${config.slug}" must be lowercase kebab-case (letters, digits and single hyphens) and at most ${SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH} characters`,
+    );
+  }
+
+  if (
+    isDefined(config.slug) &&
+    isValidSettingsMenuItemSlug(config.slug) &&
+    isReservedSettingsMenuItemSlug(config.slug)
+  ) {
+    errors.push(
+      `SettingsMenuItem slug "${config.slug}" is reserved: it is a built-in settings tab or shaped like a UUID`,
     );
   }
 

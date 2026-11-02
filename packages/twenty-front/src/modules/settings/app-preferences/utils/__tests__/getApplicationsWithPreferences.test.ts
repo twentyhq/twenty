@@ -42,6 +42,7 @@ const buildSettingsMenuItem = ({
   icon: null,
   position,
   scope,
+  slug: null,
 });
 
 const buildVariable = ({

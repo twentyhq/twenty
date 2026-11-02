@@ -61,6 +61,11 @@ export class SettingsMenuItemDTO {
   @Field(() => SettingsMenuItemScopeEnum)
   scope: SettingsMenuItemScope;
 
+  @IsString()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  slug?: string | null;
+
   @IsUUID()
   @Field(() => UUIDScalarType)
   universalIdentifier: string;

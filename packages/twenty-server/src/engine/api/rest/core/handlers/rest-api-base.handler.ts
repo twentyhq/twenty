@@ -146,7 +146,10 @@ export abstract class RestApiBaseHandler {
       principal: buildPermissionsPrincipal({
         workspaceId: authContext.workspace.id,
         rolePermissionConfig,
-        authContext,
+        workspaceMemberId: isUserAuthContext(authContext)
+          ? authContext.workspaceMemberId
+          : undefined,
+        flatApplicationMaps,
       }),
       objectsPermissions: getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
