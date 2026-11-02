@@ -11,6 +11,7 @@ import {
   createValidationRule,
   deleteValidationRule,
   findValidationRules,
+  findValidationRulesReadingField,
   updateValidationRule,
 } from 'test/integration/metadata/suites/validation-rule/utils/validation-rule-api.util';
 import { jestExpectToBeDefined } from 'test/utils/jest-expect-to-be-defined.util.test';
@@ -175,6 +176,10 @@ describe('Validation rules should follow the fields they read', () => {
     const standardFieldRuleId = response.body.data.createValidationRule.id;
 
     try {
+      expect(await findValidationRulesReadingField(standardFieldId)).toEqual([
+        expect.objectContaining({ name: 'Company has employees' }),
+      ]);
+
       await updateOneFieldMetadata({
         expectToFail: false,
         input: {
@@ -191,6 +196,9 @@ describe('Validation rules should follow the fields they read', () => {
       expect(
         validationRules.find(({ id }) => id === standardFieldRuleId),
       ).toMatchObject({ isActive: false });
+      expect(await findValidationRulesReadingField(standardFieldId)).toEqual(
+        [],
+      );
 
       const enableResponse = await updateValidationRule(standardFieldRuleId, {
         isActive: true,
@@ -209,6 +217,40 @@ describe('Validation rules should follow the fields they read', () => {
         gqlFields: 'id',
       });
       await deleteValidationRule(standardFieldRuleId);
+    }
+  }, 60000);
+
+  it('should find a rule on another object reading the field through a relation', async () => {
+    const rows: { fieldId: string; personObjectId: string }[] =
+      await globalThis.testDataSource.query(
+        `SELECT field.id AS "fieldId", person.id AS "personObjectId"
+         FROM core."fieldMetadata" field
+         JOIN core."objectMetadata" company ON company.id = field."objectMetadataId"
+         JOIN core."objectMetadata" person ON person."workspaceId" = company."workspaceId"
+         WHERE company."universalIdentifier" = $1
+           AND person."universalIdentifier" = $2
+           AND company."workspaceId" = $3
+           AND field.name = 'employees'`,
+        [
+          STANDARD_OBJECTS.company.universalIdentifier,
+          STANDARD_OBJECTS.person.universalIdentifier,
+          SEED_APPLE_WORKSPACE_ID,
+        ],
+      );
+    const { fieldId, personObjectId } = rows[0];
+    const response = await createValidationRule({
+      objectMetadataId: personObjectId,
+      name: 'Person company has employees',
+      expression: 'company.employees > 0',
+      message: 'Add employees',
+    });
+
+    try {
+      expect(await findValidationRulesReadingField(fieldId)).toEqual([
+        expect.objectContaining({ name: 'Person company has employees' }),
+      ]);
+    } finally {
+      await deleteValidationRule(response.body.data.createValidationRule.id);
     }
   }, 60000);
 

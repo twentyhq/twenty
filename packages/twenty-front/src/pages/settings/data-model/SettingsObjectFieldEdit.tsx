@@ -26,8 +26,7 @@ import { useDialog } from '@/ui/layout/dialog/hooks/useDialog';
 import { useWorkspaceSurface } from '@/ui/layout/hooks/useWorkspaceSurface';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useValidationRules } from '@/validation-rules/hooks/useValidationRules';
-import { getActiveValidationRulesReadingField } from '@/validation-rules/utils/getActiveValidationRulesReadingField';
+import { useValidationRulesReadingField } from '@/validation-rules/hooks/useValidationRulesReadingField';
 import { getFieldRemovalValidationRulesWarning } from '@/validation-rules/utils/getFieldRemovalValidationRulesWarning';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { styled } from '@linaria/react';
@@ -119,17 +118,12 @@ export const SettingsObjectFieldEdit = () => {
       fieldMetadataItem.name === newNameDuringSave,
   );
 
-  // The page can be open in the main area and the side panel at once
   const deactivateFieldModalId = `${DEACTIVATE_FIELD_MODAL_ID}-${workspaceSurface.type}`;
 
-  const { validationRules, loading: isLoadingValidationRules } =
-    useValidationRules({
-      objectMetadataId: objectMetadataItem?.id ?? '',
+  const { validationRulesReadingField, loading: isLoadingValidationRules } =
+    useValidationRulesReadingField({
+      fieldMetadataId: fieldMetadataItem?.id ?? '',
     });
-  const validationRulesReadingField = getActiveValidationRulesReadingField({
-    validationRules,
-    fieldName: fieldMetadataItem?.name ?? '',
-  });
   const validationRulesWarning = isNonEmptyArray(validationRulesReadingField)
     ? getFieldRemovalValidationRulesWarning(validationRulesReadingField)
     : undefined;

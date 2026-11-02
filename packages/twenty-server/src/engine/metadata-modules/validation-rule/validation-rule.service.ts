@@ -18,6 +18,7 @@ import { type CreateValidationRuleInput } from 'src/engine/metadata-modules/vali
 import { type UpdateValidationRuleInput } from 'src/engine/metadata-modules/validation-rule/dtos/update-validation-rule.input';
 import { type ValidationRuleDTO } from 'src/engine/metadata-modules/validation-rule/dtos/validation-rule.dto';
 import { compileValidationRuleExpressionOrThrow } from 'src/engine/metadata-modules/validation-rule/utils/compile-validation-rule-expression-or-throw.util';
+import { findActiveFlatValidationRulesReadingField } from 'src/engine/metadata-modules/validation-rule/utils/find-active-flat-validation-rules-reading-field.util';
 import { computeValidationRuleBindings } from 'src/engine/metadata-modules/validation-rule/utils/compute-validation-rule-bindings.util';
 import {
   ValidationRuleException,
@@ -170,6 +171,34 @@ export class ValidationRuleService {
           left.id.localeCompare(right.id),
       )
       .map(fromFlatValidationRuleToValidationRuleDto);
+  }
+
+  async findActiveReadingField({
+    fieldMetadataId,
+    workspaceId,
+  }: {
+    fieldMetadataId: string;
+    workspaceId: string;
+  }): Promise<ValidationRuleDTO[]> {
+    if (!(await this.hasValidationRulesEntitlement(workspaceId))) {
+      return [];
+    }
+
+    const { flatValidationRuleMaps, flatFieldMetadataMaps } =
+      await this.getFlatMaps(workspaceId);
+    const flatFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: fieldMetadataId,
+      flatEntityMaps: flatFieldMetadataMaps,
+    });
+
+    if (!isDefined(flatFieldMetadata)) {
+      return [];
+    }
+
+    return findActiveFlatValidationRulesReadingField({
+      fieldUniversalIdentifier: flatFieldMetadata.universalIdentifier,
+      flatValidationRuleMaps,
+    }).map(fromFlatValidationRuleToValidationRuleDto);
   }
 
   async validateExpressionOrThrow({
