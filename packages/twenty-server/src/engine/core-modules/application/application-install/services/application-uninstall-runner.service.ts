@@ -41,15 +41,15 @@ export class ApplicationUninstallRunnerService {
     workspaceId: string;
     updateProgress?: MessageQueueJobProgressContext['updateProgress'];
   }): Promise<void> {
-    // A well-known client's install folds in its older per-connection installs; uninstalling them first leaves the target to retry on failure
-    const otherInstallUniversalIdentifiers =
-      await this.wellKnownOAuthClientInstallService.findOtherInstallUniversalIdentifiers(
+    // The installs folded into the target's row go first, so a failure leaves the target to retry
+    const foldedInstallUniversalIdentifiers =
+      await this.wellKnownOAuthClientInstallService.findFoldedInstallUniversalIdentifiers(
         { workspaceId, universalIdentifier },
       );
 
-    for (const otherInstallUniversalIdentifier of otherInstallUniversalIdentifiers) {
+    for (const foldedInstallUniversalIdentifier of foldedInstallUniversalIdentifiers) {
       await this.uninstallOneApplication({
-        universalIdentifier: otherInstallUniversalIdentifier,
+        universalIdentifier: foldedInstallUniversalIdentifier,
         workspaceId,
         shouldSkipIfNotInstalled: true,
       });

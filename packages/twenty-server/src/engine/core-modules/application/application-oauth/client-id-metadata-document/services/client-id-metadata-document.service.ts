@@ -14,6 +14,8 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 
+const TRANSIENT_CLIENT_ERROR_STATUS_CODES = [408, 425, 429];
+
 @Injectable()
 export class ClientIdMetadataDocumentService {
   private readonly logger = new Logger(ClientIdMetadataDocumentService.name);
@@ -32,11 +34,7 @@ export class ClientIdMetadataDocumentService {
         clientIdMetadataDocumentUrl,
       );
 
-    if (
-      isDefined(cachedEntry) &&
-      Date.now() - cachedEntry.checkedAt <
-        CLIENT_ID_METADATA_DOCUMENT_LIMITS.refreshAfterMs
-    ) {
+    if (isDefined(cachedEntry) && this.isFresh(cachedEntry)) {
       return cachedEntry.document;
     }
 
@@ -55,6 +53,21 @@ export class ClientIdMetadataDocumentService {
     );
 
     return entry.document;
+  }
+
+  async isFetchDue(clientIdMetadataDocumentUrl: string): Promise<boolean> {
+    const cachedEntry =
+      await this.cacheStorage.get<CachedClientIdMetadataDocument>(
+        clientIdMetadataDocumentUrl,
+      );
+
+    return !isDefined(cachedEntry) || !this.isFresh(cachedEntry);
+  }
+
+  private isFresh({ checkedAt }: CachedClientIdMetadataDocument): boolean {
+    return (
+      Date.now() - checkedAt < CLIENT_ID_METADATA_DOCUMENT_LIMITS.refreshAfterMs
+    );
   }
 
   private async fetchDocument(
@@ -91,11 +104,12 @@ export class ClientIdMetadataDocumentService {
         `Failed to fetch client ID metadata document ${clientIdMetadataDocumentUrl}: ${error instanceof Error ? error.message : String(error)}`,
       );
 
-      // A 4xx means the client withdrew the document; only outages fall back to the cached copy
+      // A 4xx means the client withdrew the document; outages, timeouts and rate limits fall back to the cached copy
       const isWithdrawn =
         isAxiosError(error) &&
         isDefined(error.response) &&
-        error.response.status < 500;
+        error.response.status < 500 &&
+        !TRANSIENT_CLIENT_ERROR_STATUS_CODES.includes(error.response.status);
 
       return { status: isWithdrawn ? 'invalid' : 'unreachable' };
     }

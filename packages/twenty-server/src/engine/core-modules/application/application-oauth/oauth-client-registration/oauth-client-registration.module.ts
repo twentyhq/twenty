@@ -7,12 +7,14 @@ import { OAuthClientResolver } from 'src/engine/core-modules/application/applica
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { WellKnownOAuthClientModule } from 'src/engine/core-modules/application/well-known-oauth-client/well-known-oauth-client.module';
+import { ThrottlerModule } from 'src/engine/core-modules/throttler/throttler.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([ApplicationRegistrationEntity]),
     ApplicationRegistrationModule,
     ClientIdMetadataDocumentModule,
+    ThrottlerModule,
     WellKnownOAuthClientModule,
   ],
   providers: [OAuthClientRegistrationResolverService, OAuthClientResolver],

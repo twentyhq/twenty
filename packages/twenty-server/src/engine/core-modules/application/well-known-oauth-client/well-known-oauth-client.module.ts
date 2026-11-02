@@ -6,6 +6,7 @@ import { ApplicationRegistrationEntity } from 'src/engine/core-modules/applicati
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { WellKnownOAuthClientInstallService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-install.service';
 import { WellKnownOAuthClientRegistrationService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-registration.service';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
@@ -15,6 +16,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
       ApplicationEntity,
     ]),
     ApplicationRegistrationSeedingModule,
+    FeatureFlagModule,
   ],
   providers: [
     WellKnownOAuthClientInstallService,

@@ -1,4 +1,4 @@
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isValidUuid } from 'twenty-shared/utils';
 
 import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
@@ -14,6 +14,7 @@ export const getWellKnownOAuthClientOfRegistration = (
         | 'universalIdentifier'
         | 'sourceType'
         | 'ownerWorkspaceId'
+        | 'oAuthClientId'
         | 'oAuthRedirectUris'
       >
     | null
@@ -32,9 +33,11 @@ export const getWellKnownOAuthClientOfRegistration = (
     return seededWellKnownOAuthClient.client;
   }
 
+  // Only dynamic registration issues UUID client ids; a metadata document's callbacks change whenever its host edits it
   if (
     registration.sourceType !== ApplicationRegistrationSourceType.OAUTH_ONLY ||
-    isDefined(registration.ownerWorkspaceId)
+    isDefined(registration.ownerWorkspaceId) ||
+    !isValidUuid(registration.oAuthClientId)
   ) {
     return null;
   }

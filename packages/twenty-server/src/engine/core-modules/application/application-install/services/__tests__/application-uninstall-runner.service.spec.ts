@@ -69,7 +69,7 @@ describe('ApplicationUninstallRunnerService', () => {
   } as unknown as EventLogEmitterService;
 
   const wellKnownOAuthClientInstallService = {
-    findOtherInstallUniversalIdentifiers: jest.fn(),
+    findFoldedInstallUniversalIdentifiers: jest.fn(),
   } as unknown as WellKnownOAuthClientInstallService;
 
   const service = new ApplicationUninstallRunnerService(
@@ -88,13 +88,13 @@ describe('ApplicationUninstallRunnerService', () => {
       workspaceId: WORKSPACE_ID,
     });
 
-  const mockOtherInstallUniversalIdentifiers = (
+  const mockFoldedInstallUniversalIdentifiers = (
     universalIdentifiers: string[],
   ) =>
     jest
       .spyOn(
         wellKnownOAuthClientInstallService,
-        'findOtherInstallUniversalIdentifiers',
+        'findFoldedInstallUniversalIdentifiers',
       )
       .mockResolvedValue(universalIdentifiers);
 
@@ -114,8 +114,8 @@ describe('ApplicationUninstallRunnerService', () => {
     uninstalledUniversalIdentifiers = [];
   });
 
-  it('uninstalls the other installs of a well-known client first, then the target', async () => {
-    mockOtherInstallUniversalIdentifiers([
+  it('uninstalls the installs folded into the target first, then the target', async () => {
+    mockFoldedInstallUniversalIdentifiers([
       LEGACY_UNIVERSAL_IDENTIFIER,
       OTHER_LEGACY_UNIVERSAL_IDENTIFIER,
     ]);
@@ -128,7 +128,7 @@ describe('ApplicationUninstallRunnerService', () => {
       TARGET_UNIVERSAL_IDENTIFIER,
     ]);
     expect(
-      wellKnownOAuthClientInstallService.findOtherInstallUniversalIdentifiers,
+      wellKnownOAuthClientInstallService.findFoldedInstallUniversalIdentifiers,
     ).toHaveBeenCalledTimes(1);
     expect(
       findMetricUniversalIdentifiers(MetricsKeys.AppUninstallSucceeded),
@@ -138,8 +138,8 @@ describe('ApplicationUninstallRunnerService', () => {
     ).toHaveBeenCalledTimes(3);
   });
 
-  it('only uninstalls the target when it is not a well-known client', async () => {
-    mockOtherInstallUniversalIdentifiers([]);
+  it('only uninstalls the target when nothing is folded into it', async () => {
+    mockFoldedInstallUniversalIdentifiers([]);
 
     await uninstallTarget();
 
@@ -148,8 +148,8 @@ describe('ApplicationUninstallRunnerService', () => {
     ]);
   });
 
-  it('skips an other install a concurrent run already uninstalled', async () => {
-    mockOtherInstallUniversalIdentifiers([
+  it('skips a folded install a concurrent run already uninstalled', async () => {
+    mockFoldedInstallUniversalIdentifiers([
       LEGACY_UNIVERSAL_IDENTIFIER,
       OTHER_LEGACY_UNIVERSAL_IDENTIFIER,
     ]);
@@ -166,8 +166,8 @@ describe('ApplicationUninstallRunnerService', () => {
     ).toEqual([]);
   });
 
-  it('skips an other install a concurrent run uninstalled while this run waited for its lock', async () => {
-    mockOtherInstallUniversalIdentifiers([LEGACY_UNIVERSAL_IDENTIFIER]);
+  it('skips a folded install a concurrent run uninstalled while this run waited for its lock', async () => {
+    mockFoldedInstallUniversalIdentifiers([LEGACY_UNIVERSAL_IDENTIFIER]);
     jest
       .spyOn(cacheLockService, 'withLock')
       .mockImplementationOnce(async (callback) => {
@@ -186,8 +186,8 @@ describe('ApplicationUninstallRunnerService', () => {
     ).toEqual([]);
   });
 
-  it('leaves the target installed when an other install fails to uninstall', async () => {
-    mockOtherInstallUniversalIdentifiers([LEGACY_UNIVERSAL_IDENTIFIER]);
+  it('leaves the target installed when a folded install fails to uninstall', async () => {
+    mockFoldedInstallUniversalIdentifiers([LEGACY_UNIVERSAL_IDENTIFIER]);
     const error = new Error('Uninstallation failed');
 
     jest
@@ -205,7 +205,7 @@ describe('ApplicationUninstallRunnerService', () => {
   });
 
   it('still fails when the target itself is not installed', async () => {
-    mockOtherInstallUniversalIdentifiers([]);
+    mockFoldedInstallUniversalIdentifiers([]);
     installedUniversalIdentifiers.delete(TARGET_UNIVERSAL_IDENTIFIER);
 
     await expect(uninstallTarget()).rejects.toMatchObject({

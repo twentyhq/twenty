@@ -207,6 +207,7 @@ export class ApplicationAuthorizationService {
         'applicationRegistration.universalIdentifier',
         'applicationRegistration.sourceType',
         'applicationRegistration.ownerWorkspaceId',
+        'applicationRegistration.oAuthClientId',
         'applicationRegistration.oAuthRedirectUris',
       ])
       .where('applicationAuthorization.workspaceId = :workspaceId', {

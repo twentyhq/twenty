@@ -1,10 +1,13 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
+import { FeatureFlagKey } from 'twenty-shared/types';
+import { v4 } from 'uuid';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { WellKnownOAuthClientInstallService } from 'src/engine/core-modules/application/well-known-oauth-client/services/well-known-oauth-client-install.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
 const WORKSPACE_ID = 'workspace-id';
@@ -18,6 +21,7 @@ type TestInstall = {
     universalIdentifier: string;
     sourceType: ApplicationRegistrationSourceType;
     ownerWorkspaceId: string | null;
+    oAuthClientId: string;
     oAuthRedirectUris: string[];
   };
 };
@@ -34,6 +38,7 @@ const buildOAuthOnlyInstall = ({
     universalIdentifier,
     sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
     ownerWorkspaceId: null,
+    oAuthClientId: v4(),
     oAuthRedirectUris,
   },
 });
@@ -68,6 +73,7 @@ const NPM_INSTALL: TestInstall = {
     universalIdentifier: 'npm-app',
     sourceType: ApplicationRegistrationSourceType.NPM,
     ownerWorkspaceId: null,
+    oAuthClientId: v4(),
     oAuthRedirectUris: [CLAUDE_CALLBACK],
   },
 };
@@ -75,9 +81,11 @@ const NPM_INSTALL: TestInstall = {
 describe('WellKnownOAuthClientInstallService', () => {
   let service: WellKnownOAuthClientInstallService;
   let installs: TestInstall[];
+  let isAppPreferencesEnabled: boolean;
 
   beforeEach(async () => {
     installs = [];
+    isAppPreferencesEnabled = true;
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -112,14 +120,22 @@ describe('WellKnownOAuthClientInstallService', () => {
               ),
           },
         },
+        {
+          provide: FeatureFlagService,
+          useValue: {
+            isFeatureEnabled: async (key: FeatureFlagKey) =>
+              key === FeatureFlagKey.IS_APP_PREFERENCES_ENABLED &&
+              isAppPreferencesEnabled,
+          },
+        },
       ],
     }).compile();
 
     service = module.get(WellKnownOAuthClientInstallService);
   });
 
-  const findOtherInstallUniversalIdentifiers = (universalIdentifier: string) =>
-    service.findOtherInstallUniversalIdentifiers({
+  const findFoldedInstallUniversalIdentifiers = (universalIdentifier: string) =>
+    service.findFoldedInstallUniversalIdentifiers({
       workspaceId: WORKSPACE_ID,
       universalIdentifier,
     });
@@ -133,7 +149,7 @@ describe('WellKnownOAuthClientInstallService', () => {
     ];
 
     await expect(
-      findOtherInstallUniversalIdentifiers(
+      findFoldedInstallUniversalIdentifiers(
         SHARED_CLAUDE_INSTALL.universalIdentifier,
       ),
     ).resolves.toEqual([
@@ -146,10 +162,44 @@ describe('WellKnownOAuthClientInstallService', () => {
     installs = [LEGACY_CLAUDE_INSTALL, OTHER_LEGACY_CLAUDE_INSTALL];
 
     await expect(
-      findOtherInstallUniversalIdentifiers(
+      findFoldedInstallUniversalIdentifiers(
         LEGACY_CLAUDE_INSTALL.universalIdentifier,
       ),
     ).resolves.toEqual([OTHER_LEGACY_CLAUDE_INSTALL.universalIdentifier]);
+  });
+
+  it('never folds the shared install into a per-connection install', async () => {
+    installs = [
+      SHARED_CLAUDE_INSTALL,
+      LEGACY_CLAUDE_INSTALL,
+      OTHER_LEGACY_CLAUDE_INSTALL,
+    ];
+
+    await expect(
+      findFoldedInstallUniversalIdentifiers(
+        LEGACY_CLAUDE_INSTALL.universalIdentifier,
+      ),
+    ).resolves.toEqual([OTHER_LEGACY_CLAUDE_INSTALL.universalIdentifier]);
+  });
+
+  it('finds nothing while app preferences are off, since Installed apps then lists every install', async () => {
+    isAppPreferencesEnabled = false;
+    installs = [
+      SHARED_CLAUDE_INSTALL,
+      LEGACY_CLAUDE_INSTALL,
+      OTHER_LEGACY_CLAUDE_INSTALL,
+    ];
+
+    await expect(
+      findFoldedInstallUniversalIdentifiers(
+        SHARED_CLAUDE_INSTALL.universalIdentifier,
+      ),
+    ).resolves.toEqual([]);
+    await expect(
+      findFoldedInstallUniversalIdentifiers(
+        LEGACY_CLAUDE_INSTALL.universalIdentifier,
+      ),
+    ).resolves.toEqual([]);
   });
 
   it.each([CUSTOM_OAUTH_INSTALL, NPM_INSTALL])(
@@ -158,7 +208,7 @@ describe('WellKnownOAuthClientInstallService', () => {
       installs = [install, SHARED_CLAUDE_INSTALL, LEGACY_CLAUDE_INSTALL];
 
       await expect(
-        findOtherInstallUniversalIdentifiers(install.universalIdentifier),
+        findFoldedInstallUniversalIdentifiers(install.universalIdentifier),
       ).resolves.toEqual([]);
     },
   );
@@ -172,7 +222,7 @@ describe('WellKnownOAuthClientInstallService', () => {
     ];
 
     await expect(
-      findOtherInstallUniversalIdentifiers(
+      findFoldedInstallUniversalIdentifiers(
         SHARED_CHATGPT_INSTALL.universalIdentifier,
       ),
     ).resolves.toEqual([LEGACY_CHATGPT_INSTALL.universalIdentifier]);
@@ -182,7 +232,7 @@ describe('WellKnownOAuthClientInstallService', () => {
     installs = [LEGACY_CLAUDE_INSTALL];
 
     await expect(
-      findOtherInstallUniversalIdentifiers(
+      findFoldedInstallUniversalIdentifiers(
         SHARED_CLAUDE_INSTALL.universalIdentifier,
       ),
     ).resolves.toEqual([]);

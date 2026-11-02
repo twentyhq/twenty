@@ -96,6 +96,16 @@ describe('ClientIdMetadataDocumentService', () => {
     expect(httpGet).toHaveBeenCalledTimes(1);
   });
 
+  it('tells when a lookup would fetch rather than serve the cache', async () => {
+    await expect(service.isFetchDue(DOCUMENT_URL)).resolves.toBe(true);
+
+    await service.findDocument(DOCUMENT_URL);
+    await expect(service.isFetchDue(DOCUMENT_URL)).resolves.toBe(false);
+
+    moveClockPastRefresh();
+    await expect(service.isFetchDue(DOCUMENT_URL)).resolves.toBe(true);
+  });
+
   it('keeps serving the last document while its host is unreachable', async () => {
     await service.findDocument(DOCUMENT_URL);
     moveClockPastRefresh();
@@ -130,6 +140,24 @@ describe('ClientIdMetadataDocumentService', () => {
 
     await expect(service.findDocument(DOCUMENT_URL)).resolves.toBeNull();
   });
+
+  it.each([408, 425, 429])(
+    'keeps serving the last document while its host answers %i',
+    async (status) => {
+      await service.findDocument(DOCUMENT_URL);
+      moveClockPastRefresh();
+      httpGet.mockRejectedValueOnce(
+        Object.assign(new Error('Try again later'), {
+          isAxiosError: true,
+          response: { status },
+        }),
+      );
+
+      await expect(service.findDocument(DOCUMENT_URL)).resolves.toMatchObject({
+        clientName: 'Claude',
+      });
+    },
+  );
 
   describe('while its host is unreachable', () => {
     const START = 1_700_000_000_000;

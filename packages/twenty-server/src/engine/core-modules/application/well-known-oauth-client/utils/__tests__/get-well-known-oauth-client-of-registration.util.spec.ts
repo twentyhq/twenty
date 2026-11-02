@@ -14,6 +14,7 @@ const buildRegistration = (
   universalIdentifier: '7f6f5a4e-0000-4000-8000-000000000001',
   sourceType: ApplicationRegistrationSourceType.OAUTH_ONLY,
   ownerWorkspaceId: null,
+  oAuthClientId: '7f6f5a4e-0000-4000-8000-000000000003',
   oAuthRedirectUris: [CLAUDE_CALLBACK],
   ...overrides,
 });
@@ -25,6 +26,7 @@ describe('getWellKnownOAuthClientOfRegistration', () => {
         buildRegistration({
           universalIdentifier:
             WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CHATGPT,
+          oAuthClientId: 'https://chatgpt.com/oauth/client-metadata.json',
           oAuthRedirectUris: [],
         }),
       ),
@@ -35,6 +37,16 @@ describe('getWellKnownOAuthClientOfRegistration', () => {
     expect(getWellKnownOAuthClientOfRegistration(buildRegistration())).toBe(
       WellKnownOAuthClient.CLAUDE,
     );
+  });
+
+  it('does not trust callbacks on a registration from a client ID metadata document', () => {
+    expect(
+      getWellKnownOAuthClientOfRegistration(
+        buildRegistration({
+          oAuthClientId: 'https://attacker.example/oauth/client-metadata.json',
+        }),
+      ),
+    ).toBeNull();
   });
 
   it('does not trust callbacks on a workspace-owned registration', () => {

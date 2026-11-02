@@ -168,7 +168,7 @@ describe('OAuthDiscoveryController', () => {
       expect(metadata).not.toHaveProperty('registration_endpoint');
     });
 
-    it('accepts Client ID Metadata Documents from public clients', async () => {
+    it('advertises CIMD support and public client auth methods', async () => {
       const metadata = await controller.getAuthorizationServerMetadata(
         buildMockRequest('workspace.twenty.com'),
       );
