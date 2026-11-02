@@ -4,7 +4,7 @@ import { getCoreAgentLink } from '@/object-core/agents/utils/getCoreAgentLink';
 import { FormFieldInputContainer } from '@/ui/input/components/FormFieldInputContainer';
 import { LinkChip } from '@/ui/navigation/link/components/LinkChip/LinkChip';
 import { useLingui } from '@lingui/react/macro';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 import { Field } from 'twenty-ui/primitives/input';
 import { useTheme } from 'twenty-ui/theme';
 

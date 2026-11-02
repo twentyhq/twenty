@@ -3,7 +3,7 @@ import { type FlatAgent } from '@/metadata-store/types/FlatAgent';
 import { ListItemIconContainer } from '@/ui/navigation/list-item/components/ListItemIconContainer';
 import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
 import { ListItemButton } from 'twenty-ui/components/navigation';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 
 type AgentMenuItemProps = {
   agent: Pick<FlatAgent, 'label' | 'icon'>;
