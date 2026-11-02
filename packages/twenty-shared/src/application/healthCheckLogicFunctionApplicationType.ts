@@ -1,3 +1,6 @@
 import type { SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 
-export type HealthCheckLogicFunctionApplicationManifest = SyncableEntityOptions;
+export type HealthCheckLogicFunctionApplicationManifest =
+  SyncableEntityOptions & {
+    runOnUserPreferences?: boolean;
+  };

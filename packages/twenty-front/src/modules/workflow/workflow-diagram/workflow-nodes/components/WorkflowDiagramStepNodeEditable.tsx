@@ -14,7 +14,7 @@ import { useDeleteStep } from '@/workflow/workflow-steps/hooks/useDeleteStep';
 import { useDuplicateStep } from '@/workflow/workflow-steps/hooks/useDuplicateStep';
 import { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/icon';
+import { useIcons } from 'twenty-ui/icon/provider';
 
 export const WorkflowDiagramStepNodeEditable = ({
   id,

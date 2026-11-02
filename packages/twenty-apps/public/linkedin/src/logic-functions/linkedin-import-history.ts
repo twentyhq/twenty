@@ -8,6 +8,7 @@ import {
 } from 'twenty-sdk/logic-function';
 import { isDefined } from 'twenty-sdk/utils';
 
+import { LINKEDIN_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS } from 'src/constants/linkedin-attachment-deadline-margin-milliseconds.constant';
 import { LINKEDIN_IMPORT_HISTORY_TIMEOUT_SECONDS } from 'src/constants/linkedin-import-history-timeout-seconds.constant';
 import { LINKEDIN_IMPORT_HISTORY_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 import { type LinkedinHistoryImportProgress } from 'src/logic-functions/types/linkedin-history-import-progress.type';
@@ -43,6 +44,7 @@ type LinkedinImportHistoryTotals = {
   messageCount: number;
   matchedPersonCount: number;
   createdPersonCount: number;
+  attachmentCount: number;
   skippedChatCounts: Record<
     NonNullable<LinkedinIngestResult['skippedReason']>,
     number
@@ -83,6 +85,8 @@ export const linkedinImportHistoryHandler = async (
   payload: LinkedinImportHistoryJobPayload,
   context?: Pick<LogicFunctionExecutionContext, 'retryCount' | 'maxRetries'>,
 ): Promise<LinkedinImportHistoryResult> => {
+  const invokedAt = Date.now();
+
   if ((await getActiveLinkedinHistoryImportState(payload)) === null) {
     return { status: 'CANCELLED' };
   }
@@ -103,6 +107,10 @@ export const linkedinImportHistoryHandler = async (
   }
 
   const startedAt = Date.now();
+  const attachmentDeadlineAtMs =
+    invokedAt +
+    LINKEDIN_IMPORT_HISTORY_TIMEOUT_SECONDS * 1000 -
+    LINKEDIN_ATTACHMENT_DEADLINE_MARGIN_MILLISECONDS;
   const jobId = getLinkedinImportHistoryJobId(payload);
   let importedConversationCount = startProgress.currentChunkImportedCount ?? 0;
   let processedChatCount = startProgress.currentChunkProcessedCount;
@@ -112,6 +120,7 @@ export const linkedinImportHistoryHandler = async (
     messageCount: 0,
     matchedPersonCount: 0,
     createdPersonCount: 0,
+    attachmentCount: 0,
     skippedChatCounts: { GROUP_CHATS_OFF: 0, NO_MESSAGES: 0, NO_CONTACT: 0 },
   };
 
@@ -214,6 +223,8 @@ export const linkedinImportHistoryHandler = async (
         cursor: chatCursor,
       });
       const ingestResult = await ingestLinkedinMessages({
+        unipileAccountId,
+        attachmentDeadlineAtMs,
         channel,
         settings,
         chat,
@@ -224,6 +235,7 @@ export const linkedinImportHistoryHandler = async (
       totals.messageCount += ingestResult.ingestedMessageCount;
       totals.matchedPersonCount += ingestResult.matchedPersonCount;
       totals.createdPersonCount += ingestResult.createdPersonCount;
+      totals.attachmentCount += ingestResult.importedAttachmentCount;
       isChatImported ||= ingestResult.ingestedMessageCount > 0;
 
       if (isDefined(ingestResult.skippedReason) && !isDefined(chatCursor)) {
@@ -315,7 +327,7 @@ export const linkedinImportHistoryHandler = async (
     `[linkedin] history run ${runId} chunk ${chunkIndex}: ` +
       `${chats.length} chats (last messages ${chats[0]?.last_message_timestamp ?? '-'} to ${chats[chats.length - 1]?.last_message_timestamp ?? '-'}), ` +
       `${importedConversationCount} conversations imported, ${totals.messageCount} messages, ` +
-      `${totals.matchedPersonCount} people matched, ${totals.createdPersonCount} people created, ` +
+      `${totals.matchedPersonCount} people matched, ${totals.createdPersonCount} people created, ${totals.attachmentCount} attachments, ` +
       `skipped ${totals.skippedChatCounts.NO_CONTACT} without contact, ${totals.skippedChatCounts.GROUP_CHATS_OFF} group chats, ${totals.skippedChatCounts.NO_MESSAGES} without messages, ` +
       `in ${Math.round((Date.now() - startedAt) / 1000)}s`,
   );

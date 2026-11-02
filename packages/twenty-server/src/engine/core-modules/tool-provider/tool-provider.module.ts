@@ -1,3 +1,4 @@
+import { FrontComponentToolProvider } from 'src/engine/core-modules/tool-provider/providers/front-component-tool.provider';
 import { Module } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -23,6 +24,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { NavigationMenuItemToolsModule } from 'src/engine/metadata-modules/navigation-menu-item/tools/navigation-menu-item-tools.module';
 import { MetadataToolsModule } from 'src/engine/metadata-modules/object-metadata/tools/metadata-tools.module';
 import { PermissionsModule } from 'src/engine/permissions/permissions.module';
+import { RecordShareModule } from 'src/engine/permissions/record-share/record-share.module';
 import { RoleToolsModule } from 'src/engine/metadata-modules/role/tools/role-tools.module';
 import { UserRoleModule } from 'src/engine/permissions/role-assignment/user-role.module';
 import { ViewToolsModule } from 'src/engine/metadata-modules/view/tools/view-tools.module';
@@ -46,6 +48,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     FeatureFlagModule,
     FilesFieldModule,
     PermissionsModule,
+    RecordShareModule,
     ViewToolsModule,
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
@@ -66,6 +69,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
     provideWorkspaceScopedRepository(FileEntity),
     ActionToolProvider,
     DashboardToolProvider,
+    FrontComponentToolProvider,
     DatabaseToolProvider,
     LogicFunctionToolProvider,
     WorkflowToolProvider,
@@ -77,12 +81,14 @@ import { ToolRegistryService } from './services/tool-registry.service';
         logicFunctionProvider: LogicFunctionToolProvider,
         workflowProvider: WorkflowToolProvider,
         dashboardProvider: DashboardToolProvider,
+        frontComponentProvider: FrontComponentToolProvider,
       ) => [
         actionProvider,
         databaseProvider,
         logicFunctionProvider,
         workflowProvider,
         dashboardProvider,
+        frontComponentProvider,
       ],
       inject: [
         ActionToolProvider,
@@ -90,6 +96,7 @@ import { ToolRegistryService } from './services/tool-registry.service';
         LogicFunctionToolProvider,
         WorkflowToolProvider,
         DashboardToolProvider,
+        FrontComponentToolProvider,
       ],
     },
     ToolRegistryService,

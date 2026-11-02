@@ -437,6 +437,13 @@ describe('buildEffectiveSelectedFields', () => {
         flatFieldMetadataMaps: relationFieldMaps,
         flatObjectMetadata: investorLeadObjectMetadata,
         objectsPermissions,
+        readableObjectMetadataIds: new Set(
+          Object.entries(objectsPermissions)
+            .filter(
+              ([, objectPermissions]) => objectPermissions.canReadObjectRecords,
+            )
+            .map(([objectMetadataId]) => objectMetadataId),
+        ),
         depth: 1,
         onlyUseLabelIdentifierFieldsInRelations: true,
       });

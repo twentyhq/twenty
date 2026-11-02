@@ -19,6 +19,8 @@ const getCategoryLabel = (category: ToolCategory): string => {
       return 'Metadata Tools (schema management)';
     case ToolCategory.VIEW:
       return 'View Tools (manage views, fields, filters, and sorts)';
+    case ToolCategory.FRONT_COMPONENT:
+      return 'Frontend Components (preview and save Workspace components)';
     case ToolCategory.DASHBOARD:
       return 'Dashboard Tools (create/manage dashboards)';
     case ToolCategory.LOGIC_FUNCTION:

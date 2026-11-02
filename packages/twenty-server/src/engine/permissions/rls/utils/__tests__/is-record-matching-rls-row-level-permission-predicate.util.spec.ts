@@ -1,10 +1,7 @@
 import {
   FieldMetadataType,
-  MetadataReadability,
-  MetadataWritability,
   ObjectOpenRecordIn,
   type ObjectRecord,
-  ObjectSharingReach,
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
 
@@ -51,11 +48,7 @@ describe('isRecordMatchingRLSRowLevelPermissionPredicate', () => {
     overrides: null,
     isUIEditable: true,
     isUICreatable: true,
-    writability: MetadataWritability.OPEN,
-    readability: MetadataReadability.OPEN,
-    readabilityParentFieldUniversalIdentifiers: null,
     disabledObjectPermissionActions: null,
-    sharingReach: ObjectSharingReach.WORKSPACE,
     openRecordIn: ObjectOpenRecordIn.USER_CHOICE,
     labelIdentifierFieldMetadataId: null,
     imageIdentifierFieldMetadataId: null,
