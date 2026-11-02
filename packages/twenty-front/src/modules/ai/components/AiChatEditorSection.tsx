@@ -21,6 +21,7 @@ import { AiChatDictationButton } from '@/ai/dictation/components/AiChatDictation
 import { AiChatDictationEffect } from '@/ai/dictation/components/AiChatDictationEffect';
 import { AiChatDictationHint } from '@/ai/dictation/components/AiChatDictationHint';
 import { AiChatComposerActionsRow } from '@/ai/components/internal/AiChatComposerActionsRow';
+import { AiChatContextUsageButton } from '@/ai/components/internal/AiChatContextUsageButton';
 import { AiChatEditorFocusEffect } from '@/ai/components/internal/AiChatEditorFocusEffect';
 import { AiChatSentMessageHandOffEffect } from '@/ai/components/internal/AiChatSentMessageHandOffEffect';
 import { SendMessageButton } from '@/ai/components/internal/SendMessageButton';
@@ -183,6 +184,7 @@ const EditableAiChatEditorSection = () => {
           <>
             <AiChatAddMenu editor={editor} />
             <AiChatDictationButton />
+            <AiChatContextUsageButton />
           </>
         }
         modelTierDropdownId="ai-chat-model-tier-dropdown"

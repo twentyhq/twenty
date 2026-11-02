@@ -31,9 +31,8 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-database-crud-tool-flat-objects.util';
 import { type FlatObjectPermission } from 'src/engine/metadata-modules/flat-object-permission/types/flat-object-permission.type';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
 import { getObjectsPermissionsFromRolePermissionConfig } from 'src/engine/permissions/role/utils/get-objects-permissions-from-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -103,7 +102,11 @@ export class DatabaseToolProvider implements ToolProvider {
       return descriptors;
     }
 
-    const principal = buildToolPermissionsPrincipal(context);
+    const principal = buildPermissionsPrincipal({
+      workspaceId: context.workspaceId,
+      rolePermissionConfig: context.rolePermissionConfig,
+      authContext: context.authContext,
+    });
 
     const { explicitObjectGrantsRoleId } = context;
     const requireExplicitObjectGrants = isDefined(explicitObjectGrantsRoleId);
@@ -576,25 +579,3 @@ export class DatabaseToolProvider implements ToolProvider {
     );
   }
 }
-
-const buildToolPermissionsPrincipal = ({
-  workspaceId,
-  rolePermissionConfig,
-  authContext,
-}: Pick<
-  ToolProviderContext,
-  'workspaceId' | 'rolePermissionConfig' | 'authContext'
->): PermissionsPrincipal | undefined => {
-  if (!('intersectionOf' in rolePermissionConfig)) {
-    return undefined;
-  }
-
-  return {
-    workspaceId,
-    intersectionOf: rolePermissionConfig.intersectionOf,
-    workspaceMember:
-      isDefined(authContext) && isUserAuthContext(authContext)
-        ? authContext.workspaceMember
-        : undefined,
-  };
-};

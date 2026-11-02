@@ -10,6 +10,7 @@ import { uninstallApplication } from 'test/integration/metadata/suites/applicati
 import { makeMetadataApiRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { waitForAllJobsToFinish } from 'test/integration/utils/wait-for-all-jobs-to-finish.util';
+import { TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS } from 'twenty-shared/application';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { base64UrlEncode } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
@@ -24,7 +25,6 @@ import { TOKEN_BUCKET_THROTTLE_KEY_PREFIX } from 'src/engine/core-modules/thrott
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-users.util';
 import { MARKETPLACE_CATALOG_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-marketplace/constants/marketplace-apps-cache.constant';
-import { TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS } from 'src/engine/core-modules/application/application-marketplace/constants/twenty-public-app-universal-identifiers.constant';
 import { APPLICATION_OAUTH_IDENTITIES_CACHE_ENTITY_ID } from 'src/engine/core-modules/application/application-oauth-identity/constants/application-oauth-identities-cache-entity-id.constant';
 
 const CLAUDE_CALLBACK = 'https://claude.ai/api/mcp/auth_callback';
@@ -33,7 +33,8 @@ const CHATGPT_CONNECTION_CALLBACK =
   'https://chatgpt.com/connector/oauth/integration-test';
 const CHATGPT_PLATFORM_CALLBACK =
   'https://chatgpt.com/connector_platform_oauth_redirect';
-const CLAUDE_UNIVERSAL_IDENTIFIER = TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.CLAUDE;
+const CLAUDE_UNIVERSAL_IDENTIFIER =
+  TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.CLAUDE;
 const CHATGPT_UNIVERSAL_IDENTIFIER =
   TWENTY_PUBLIC_APP_UNIVERSAL_IDENTIFIERS.CHATGPT;
 const OAUTH_IDENTITY_APP_UNIVERSAL_IDENTIFIERS = [
@@ -398,8 +399,7 @@ describe('OAuth identity apps (integration)', () => {
           }
         `,
         variables: {
-          universalIdentifier:
-            CLAUDE_UNIVERSAL_IDENTIFIER,
+          universalIdentifier: CLAUDE_UNIVERSAL_IDENTIFIER,
         },
       });
 
@@ -437,10 +437,7 @@ describe('OAuth identity apps (integration)', () => {
         `SELECT application.id, application."sourceType" FROM core."application" application
          JOIN core."applicationRegistration" registration ON registration.id = application."applicationRegistrationId"
          WHERE registration."universalIdentifier" = $1 AND application."workspaceId" = $2 AND application."deletedAt" IS NULL`,
-        [
-          CLAUDE_UNIVERSAL_IDENTIFIER,
-          SEED_APPLE_WORKSPACE_ID,
-        ],
+        [CLAUDE_UNIVERSAL_IDENTIFIER, SEED_APPLE_WORKSPACE_ID],
       );
 
       // An OAuth-only install acts with each member's permissions
@@ -478,8 +475,7 @@ describe('OAuth identity apps (integration)', () => {
 
         const claudeApplication = response.body.data.findManyApplications.find(
           ({ universalIdentifier }: { universalIdentifier: string }) =>
-            universalIdentifier ===
-            CLAUDE_UNIVERSAL_IDENTIFIER,
+            universalIdentifier === CLAUDE_UNIVERSAL_IDENTIFIER,
         );
 
         expect(claudeApplication.logoUrl).toBe(logoUrl);
@@ -837,8 +833,14 @@ describe('OAuth identity apps (integration)', () => {
       expect(response.body.errors).toBeUndefined();
       expect(response.body.data.workspaceApplicationAuthorizations).toEqual(
         expect.arrayContaining([
-          { applicationId: legacyInstall.id, oAuthIdentityUniversalIdentifier: CLAUDE_UNIVERSAL_IDENTIFIER },
-          { applicationId: sharedInstall.id, oAuthIdentityUniversalIdentifier: CLAUDE_UNIVERSAL_IDENTIFIER },
+          {
+            applicationId: legacyInstall.id,
+            oAuthIdentityUniversalIdentifier: CLAUDE_UNIVERSAL_IDENTIFIER,
+          },
+          {
+            applicationId: sharedInstall.id,
+            oAuthIdentityUniversalIdentifier: CLAUDE_UNIVERSAL_IDENTIFIER,
+          },
         ]),
       );
     });
@@ -889,8 +891,7 @@ describe('OAuth identity apps (integration)', () => {
       const connections = await connectLegacyAndSharedClaudeMembers();
 
       const { errors } = await uninstallApplication({
-        universalIdentifier:
-          CLAUDE_UNIVERSAL_IDENTIFIER,
+        universalIdentifier: CLAUDE_UNIVERSAL_IDENTIFIER,
       });
 
       expect(errors).toBeUndefined();
@@ -907,8 +908,7 @@ describe('OAuth identity apps (integration)', () => {
         const triggerClaudeUninstall = () =>
           triggerUninstallApplication({
             input: {
-              universalIdentifier:
-                CLAUDE_UNIVERSAL_IDENTIFIER,
+              universalIdentifier: CLAUDE_UNIVERSAL_IDENTIFIER,
             },
           });
 
@@ -981,8 +981,7 @@ describe('OAuth identity apps (integration)', () => {
           await connectLegacyAndSharedClaudeMembers();
 
         const { errors } = await uninstallApplication({
-          universalIdentifier:
-            CLAUDE_UNIVERSAL_IDENTIFIER,
+          universalIdentifier: CLAUDE_UNIVERSAL_IDENTIFIER,
         });
 
         expect(errors).toBeUndefined();
