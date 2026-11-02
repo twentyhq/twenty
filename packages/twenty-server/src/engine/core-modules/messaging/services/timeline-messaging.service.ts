@@ -537,8 +537,6 @@ export class TimelineMessagingService {
       const threadChannelByThreadId: Record<string, TimelineThreadChannelDTO> =
         {};
 
-      // A thread synced by several accounts has one row per channel; sorting
-      // makes the exposed channel stable across requests
       const sortedThreadChannelRows = [...threadChannelRows].sort(
         (rowA, rowB) =>
           (rowA.messageChannelId ?? '').localeCompare(

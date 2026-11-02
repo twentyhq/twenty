@@ -12,7 +12,6 @@ export class TimelineThreadChannelDTO {
   @Field()
   provider: string;
 
-  // Set when the channel is synced by an installed app (LinkedIn, WhatsApp...)
   @Field(() => UUIDScalarType, { nullable: true })
   applicationId: string | null;
 }
