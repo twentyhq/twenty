@@ -100,6 +100,15 @@ const findCallerRoleId = async (roleTargetId: string): Promise<string> => {
   return roleId;
 };
 
+const findAgentRoleId = async (agentId: string): Promise<string | null> => {
+  const [roleTarget] = await globalThis.testDataSource.query(
+    `SELECT "roleId" FROM core."roleTarget" WHERE "agentId" = $1`,
+    [agentId],
+  );
+
+  return roleTarget?.roleId ?? null;
+};
+
 const findApplicationDefaultRoleId = async (
   applicationId: string,
 ): Promise<string> => {
@@ -506,7 +515,7 @@ describe('agent runs that wait (integration)', () => {
           [callerRoleSource]: await findCallerRoleId(roleTargetId),
           applicationRoleId:
             await findApplicationDefaultRoleId(agentApplicationId),
-          agentRoleId: expect.any(String),
+          agentRoleId: await findAgentRoleId(agentId),
         },
       };
 

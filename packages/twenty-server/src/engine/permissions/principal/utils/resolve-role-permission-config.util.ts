@@ -4,7 +4,10 @@ import { isApiKeyAuthContext } from 'src/engine/core-modules/auth/guards/is-api-
 import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is-application-auth-context.guard';
 import { isSystemAuthContext } from 'src/engine/core-modules/auth/guards/is-system-auth-context.guard';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
+import {
+  type UserWorkspaceAuthContext,
+  type WorkspaceAuthContext,
+} from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type FlatRoleTargetByAgentIdMaps } from 'src/engine/metadata-modules/flat-agent/types/flat-role-target-by-agent-id-maps.type';
 import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
 import {
@@ -15,6 +18,26 @@ import { buildAgentRoleIdsBySource } from 'src/engine/permissions/principal/util
 import { buildUserRoleIdsBySource } from 'src/engine/permissions/principal/utils/build-user-role-ids-by-source.util';
 import { resolveApplicationRoleId } from 'src/engine/permissions/principal/utils/resolve-application-role-id.util';
 import { isDenyingRoleIdsBySource } from 'src/engine/permissions/principal/utils/is-denying-role-ids-by-source.util';
+
+const resolveUserAndApplicationRoleIds = ({
+  authContext,
+  userRoleId,
+}: {
+  authContext: UserWorkspaceAuthContext;
+  userRoleId: string | undefined;
+}): RoleIdsBySource => {
+  if (isDefined(authContext.application)) {
+    return buildUserRoleIdsBySource({
+      userRoleId,
+      application: authContext.application,
+    });
+  }
+
+  return {
+    userWorkspaceRoleId: userRoleId ?? null,
+    ...resolveApplicationRoleId({ application: authContext.viaApplication }),
+  };
+};
 
 export const resolveRoleIdsBySourceFromAuthContext = ({
   authContext,
@@ -28,20 +51,11 @@ export const resolveRoleIdsBySourceFromAuthContext = ({
   flatRoleTargetByAgentIdMaps: FlatRoleTargetByAgentIdMaps;
 }): RoleIdsBySource => {
   if (isUserAuthContext(authContext)) {
-    const userRoleId = userWorkspaceRoleMap[authContext.userWorkspaceId];
-
     return {
-      ...(isDefined(authContext.application)
-        ? buildUserRoleIdsBySource({
-            userRoleId,
-            application: authContext.application,
-          })
-        : {
-            userWorkspaceRoleId: userRoleId ?? null,
-            ...resolveApplicationRoleId({
-              application: authContext.viaApplication,
-            }),
-          }),
+      ...resolveUserAndApplicationRoleIds({
+        authContext,
+        userRoleId: userWorkspaceRoleMap[authContext.userWorkspaceId],
+      }),
       ...buildAgentRoleIdsBySource({
         agentId: authContext.agentId,
         flatRoleTargetByAgentIdMaps,

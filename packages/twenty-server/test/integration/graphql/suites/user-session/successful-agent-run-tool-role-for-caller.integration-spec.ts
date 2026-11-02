@@ -19,6 +19,7 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 
 type GlobalTestContext = {
   agentUniversalIdentifier: string;
+  agentRoleId: string | null;
   applicationRoleId: string;
   applicationToken: string;
   janeApplicationToken: string;
@@ -98,6 +99,11 @@ describe('Agent run tools should be limited to the caller role', () => {
         [application.id],
       );
 
+    const [agentRoleTarget] = await globalThis.testDataSource.query(
+      `SELECT "roleId" FROM core."roleTarget" WHERE "agentId" = $1`,
+      [application.agentId],
+    );
+
     const [applicationTokenPair, janeApplicationTokenPair] = await Promise.all([
       generateApplicationTokenPair({
         workspaceId: SEED_APPLE_WORKSPACE_ID,
@@ -110,6 +116,7 @@ describe('Agent run tools should be limited to the caller role', () => {
 
     globalTestContext = {
       agentUniversalIdentifier,
+      agentRoleId: agentRoleTarget?.roleId ?? null,
       applicationRoleId,
       applicationToken: applicationTokenPair.applicationAccessToken.token,
       janeApplicationToken:
@@ -142,7 +149,7 @@ describe('Agent run tools should be limited to the caller role', () => {
             context.roleTargetId,
           ),
           applicationRoleId: globalTestContext.applicationRoleId,
-          agentRoleId: expect.any(String),
+          agentRoleId: globalTestContext.agentRoleId,
         },
       });
     },
@@ -157,7 +164,7 @@ describe('Agent run tools should be limited to the caller role', () => {
     expect(executionContext.rolePermissionConfig).toEqual({
       intersectionOf: {
         applicationRoleId: globalTestContext.applicationRoleId,
-        agentRoleId: expect.any(String),
+        agentRoleId: globalTestContext.agentRoleId,
       },
     });
   });
