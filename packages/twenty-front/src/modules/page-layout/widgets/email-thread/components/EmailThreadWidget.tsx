@@ -125,7 +125,13 @@ export const EmailThreadWidget = ({
   }
 
   if (isAppMessageHeaderMessageId(lastMessage.headerMessageId)) {
-    return <ChatThreadWidgetContent messages={messages} />;
+    return (
+      <ChatThreadWidgetContent
+        messages={messages}
+        loading={threadLoading}
+        onFetchMoreMessages={fetchMoreMessages}
+      />
+    );
   }
 
   return (

@@ -2,9 +2,11 @@ import { styled } from '@linaria/react';
 import Linkify from 'linkify-react';
 
 import { ParticipantChip } from '@/activities/components/ParticipantChip';
+import { EmailThreadNotShared } from '@/activities/emails/components/EmailThreadNotShared';
 import { type ChatMessageGroup } from '@/activities/emails/types/ChatMessageGroup';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isFieldValueRestricted } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme';
+import { MessageChannelVisibility } from '~/generated/graphql';
 import { beautifyExactDateTime } from '~/utils/date-utils';
 
 const StyledGroup = styled.div<{ isOutgoing: boolean }>`
@@ -71,13 +73,20 @@ export const ChatThreadMessageGroup = ({
           )}
         </StyledSenderRow>
       )}
-      {group.messages.map((message) => (
-        <StyledBubble key={message.id} isOutgoing={group.isOutgoing}>
-          <Linkify options={{ target: '_blank', rel: 'noopener noreferrer' }}>
-            {message.text}
-          </Linkify>
-        </StyledBubble>
-      ))}
+      {group.messages.map((message) =>
+        isFieldValueRestricted(message.text) ? (
+          <EmailThreadNotShared
+            key={message.id}
+            visibility={MessageChannelVisibility.METADATA}
+          />
+        ) : (
+          <StyledBubble key={message.id} isOutgoing={group.isOutgoing}>
+            <Linkify options={{ target: '_blank', rel: 'noopener noreferrer' }}>
+              {message.text}
+            </Linkify>
+          </StyledBubble>
+        ),
+      )}
     </StyledGroup>
   );
 };
