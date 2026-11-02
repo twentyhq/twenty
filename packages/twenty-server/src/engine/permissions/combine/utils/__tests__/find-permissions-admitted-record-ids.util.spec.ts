@@ -1,7 +1,6 @@
 /* @license Enterprise */
 
 import { EVERYONE_PRINCIPAL_ID } from 'twenty-shared/constants';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   FeatureFlagKey,
   FieldMetadataType,
@@ -58,10 +57,6 @@ const flatFieldMetadataMaps = [statusField, createdByField].reduce(
   emptyFlatFieldMetadataMaps,
 );
 
-const chatFlatObjectMetadata = {
-  ...flatObjectMetadata,
-  universalIdentifier: STANDARD_OBJECTS.agentChatThread.universalIdentifier,
-};
 const records: RowAccessRecord[] = [
   { id: 'active-shared', status: 'active', deletedAt: null },
   { id: 'active-private', status: 'active', deletedAt: null },
@@ -138,12 +133,10 @@ const findAdmitted = ({
   principal,
   featureFlagKeys = [FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED],
   context = buildContext(),
-  object = flatObjectMetadata,
 }: {
   principal: PermissionsPrincipal;
   featureFlagKeys?: FeatureFlagKey[];
   context?: RowAccessEvaluationContext;
-  object?: typeof flatObjectMetadata;
 }) =>
   findPermissionsAdmittedRecordIds({
     principal,
@@ -160,7 +153,7 @@ const findAdmitted = ({
         featureFlagKeys.map((featureFlagKey) => [featureFlagKey, true]),
       ),
     },
-    flatObjectMetadata: object,
+    flatObjectMetadata,
     operationType: 'select',
     records,
     context,
@@ -231,33 +224,5 @@ describe('findPermissionsAdmittedRecordIds', () => {
       objectMetadataId: flatObjectMetadata.id,
       recordIds: ['archived-shared'],
     });
-  });
-
-  // TODO(@charlesBochet): remove with isRecordAccessHeldToShares after 2.55
-  it('admits chats only through shares naming the member until private records are enabled', async () => {
-    const context = buildContext();
-
-    expect(
-      await findAdmitted({
-        principal: memberPrincipal,
-        featureFlagKeys: [],
-        context,
-        object: chatFlatObjectMetadata,
-      }),
-    ).toEqual(new Set(['active-shared', 'archived-shared']));
-    expect(context.findPrivateRecordStates).not.toHaveBeenCalled();
-  });
-
-  // TODO(@charlesBochet): remove with isRecordAccessHeldToShares after 2.55
-  it('holds chat shares to the role filter until private records are enabled', async () => {
-    filterByStatus('active');
-
-    expect(
-      await findAdmitted({
-        principal: memberPrincipal,
-        featureFlagKeys: [],
-        object: chatFlatObjectMetadata,
-      }),
-    ).toEqual(new Set(['active-shared']));
   });
 });

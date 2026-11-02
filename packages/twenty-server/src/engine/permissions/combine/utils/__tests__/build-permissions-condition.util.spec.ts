@@ -19,7 +19,6 @@ import {
   type SqlCondition,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { buildPermissionsCondition } from 'src/engine/permissions/combine/utils/build-permissions-condition.util';
-import { buildPermissionsShareCondition } from 'src/engine/permissions/record-share/utils/build-permissions-share-condition.util';
 import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/rls/utils/render-row-level-permission-filter-to-sql.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
@@ -240,59 +239,6 @@ describe('buildPermissionsCondition', () => {
         tableAlias: 'company',
         flatObjectMetadata: buildObject({ id: 'company' }),
         operationType: 'select',
-      }),
-    ).toEqual({ kind: 'open' });
-  });
-
-  // TODO(@charlesBochet): remove with isRecordAccessHeldToShares after 2.55
-  it('keeps chats to their shares until private records are enabled', () => {
-    const sql = gatedSql({
-      principal: readEverything,
-      flatObjectMetadata: person,
-    });
-
-    const shareSql =
-      buildPermissionsShareCondition({
-        principal: readEverything,
-        metadataMaps,
-        tableAlias: person.nameSingular,
-        flatObjectMetadata: person,
-        operationType: 'select',
-        recordShareTableExpression: '"workspace"."recordShare"',
-      })?.sql ?? '';
-    const withoutParameterSuffixes = (conditionSql: string) =>
-      conditionSql.replace(/_[0-9a-f]{10}\b/g, '');
-
-    expect(withoutParameterSuffixes(sql)).toBe(
-      withoutParameterSuffixes(shareSql),
-    );
-    expect(sql).not.toContain('_isPrivate');
-  });
-
-  // TODO(@charlesBochet): remove with isRecordAccessHeldToShares after 2.55
-  it('holds chat shares to the role filter until private records are enabled', () => {
-    (resolveRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue(
-      NOTE_FILTER,
-    );
-    const sql = gatedSql({
-      principal: readEverything,
-      flatObjectMetadata: person,
-    });
-
-    expect(sql).toContain('"person"."title" = :restricted');
-    expect(sql).toContain('"workspace"."recordShare"');
-    expect(sql).not.toContain(' OR ');
-  });
-
-  // TODO(@charlesBochet): remove with isRecordAccessHeldToShares after 2.55
-  it('leaves chats open to inserts by their role until private records are enabled', () => {
-    expect(
-      buildConditionOutcome({
-        principal: readEverything,
-        metadataMaps,
-        tableAlias: person.nameSingular,
-        flatObjectMetadata: person,
-        operationType: 'insert',
       }),
     ).toEqual({ kind: 'open' });
   });
