@@ -1,5 +1,7 @@
 import { Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { AGENT_RUN_RESULT_LOST_ERROR } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-result-lost-error.constant';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
 import { type RunAgentJobData } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/run-agent-job-data.type';
@@ -38,7 +40,6 @@ const EXECUTION = {
   structuredOutputSteps: [],
 };
 
-// runs the runner's completion as the stream service would once the model streamed its reply
 const streamTurnThroughCompletion = jest.fn(
   async ({
     completeTurn,
@@ -89,14 +90,14 @@ const buildRunner = (
   const messageQueueService = { add: jest.fn().mockResolvedValue(undefined) };
   const turnRecorderService = {
     findTurn: jest.fn().mockResolvedValue(
-      recordedTurn === null
-        ? null
-        : {
+      isDefined(recordedTurn)
+        ? {
             id: 'turn-id',
             error: null,
             result: null,
             ...recordedTurn,
-          },
+          }
+        : null,
     ),
     finish: jest.fn().mockResolvedValue(true),
   };
