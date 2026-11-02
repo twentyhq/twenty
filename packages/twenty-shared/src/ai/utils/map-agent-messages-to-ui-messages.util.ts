@@ -5,7 +5,6 @@ import {
 } from '@/ai/utils/map-agent-message-part-to-ui-message-part.util';
 import { isDefined } from '@/utils/validation/isDefined';
 
-// a message as the chat history query returns it
 export type AgentMessageRow = {
   id: string;
   threadId: string;
