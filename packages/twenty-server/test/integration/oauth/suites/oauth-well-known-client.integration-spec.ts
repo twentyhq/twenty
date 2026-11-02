@@ -337,6 +337,73 @@ describe('OAuth well-known clients (integration)', () => {
         wellKnownOAuthClient: 'CLAUDE',
       });
     });
+
+    it('should keep ChatGPT and Claude out of the public marketplace that the authenticated catalog lists them in', async () => {
+      const wellKnownOAuthClientUniversalIdentifiers = [
+        WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CHATGPT,
+        WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
+      ];
+
+      const authenticatedResponse = await makeMetadataApiRequest({
+        query: gql`
+          query FindManyMarketplaceApps {
+            findManyMarketplaceApps {
+              id
+            }
+          }
+        `,
+      });
+      const publicResponse = await makeMetadataApiRequest(
+        {
+          query: gql`
+            query PublicMarketplaceApps {
+              publicMarketplaceApps {
+                id
+              }
+            }
+          `,
+        },
+        null,
+      );
+
+      const authenticatedAppIds =
+        authenticatedResponse.body.data.findManyMarketplaceApps.map(
+          (app: { id: string }) => app.id,
+        );
+      const publicAppIds = publicResponse.body.data.publicMarketplaceApps.map(
+        (app: { id: string }) => app.id,
+      );
+
+      expect(authenticatedAppIds).toEqual(
+        expect.arrayContaining(wellKnownOAuthClientUniversalIdentifiers),
+      );
+      for (const universalIdentifier of wellKnownOAuthClientUniversalIdentifiers) {
+        expect(publicAppIds).not.toContain(universalIdentifier);
+      }
+    });
+
+    it('should not show Claude on the public marketplace detail page', async () => {
+      const response = await makeMetadataApiRequest(
+        {
+          query: gql`
+            query PublicMarketplaceAppDetail($universalIdentifier: String!) {
+              publicMarketplaceAppDetail(
+                universalIdentifier: $universalIdentifier
+              ) {
+                name
+              }
+            }
+          `,
+          variables: {
+            universalIdentifier:
+              WELL_KNOWN_OAUTH_CLIENT_UNIVERSAL_IDENTIFIERS.CLAUDE,
+          },
+        },
+        null,
+      );
+
+      expect(response.body.errors?.[0]?.extensions?.code).toBe('NOT_FOUND');
+    });
   });
 
   describe('Shared installation', () => {
