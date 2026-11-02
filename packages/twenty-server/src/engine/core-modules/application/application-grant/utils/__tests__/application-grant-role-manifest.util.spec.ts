@@ -1,4 +1,5 @@
 import {
+  buildGrantRoleManifestFromObjectAccess,
   computeGrantMissingLockedPermissions,
   materializeRoleManifestObjectPermissions,
   type RoleManifest,
@@ -8,7 +9,6 @@ import {
   addRoleManifestGrants,
   removeRoleManifestGrants,
 } from 'src/engine/core-modules/application/application-grant/utils/apply-role-manifest-grants.util';
-import { buildInstallGrantRoleManifest } from 'src/engine/core-modules/application/application-grant/utils/build-install-grant-role-manifest.util';
 import {
   computeGrantNarrowedPermissions,
   computeGrantPendingPermissions,
@@ -49,15 +49,11 @@ describe('application grant role manifest', () => {
   });
 
   it('narrows the "all objects" switch to the picked objects and keeps required rows', () => {
-    const grant = buildInstallGrantRoleManifest({
-      requestedRoleManifest: buildRequest(),
-      customizedGrantRoleManifest: {
-        ...buildRequest(),
-        canReadAllObjectRecords: false,
-        objectPermissions: [
-          ...(buildRequest().objectPermissions ?? []),
-          { objectUniversalIdentifier: PERSON, canReadObjectRecords: true },
-        ],
+    const grant = buildGrantRoleManifestFromObjectAccess({
+      approvedRoleManifest: buildRequest(),
+      objectAccess: {
+        chosenObjectUniversalIdentifiers: [PERSON],
+        addedObjects: [],
       },
     });
 
@@ -80,22 +76,6 @@ describe('application grant role manifest', () => {
         grantRoleManifest: grant,
       }),
     ).toEqual([]);
-  });
-
-  it('keeps the requested flags when a customized grant tries to change them', () => {
-    const grant = buildInstallGrantRoleManifest({
-      requestedRoleManifest: buildRequest(),
-      customizedGrantRoleManifest: {
-        ...buildRequest(),
-        canUpdateAllSettings: true,
-        permissionFlagUniversalIdentifiers: [],
-      },
-    });
-
-    expect(grant.canUpdateAllSettings).toBeUndefined();
-    expect(grant.permissionFlagUniversalIdentifiers).toEqual([
-      'upload-file-flag',
-    ]);
   });
 
   it('rejects a grant that drops a required row', () => {

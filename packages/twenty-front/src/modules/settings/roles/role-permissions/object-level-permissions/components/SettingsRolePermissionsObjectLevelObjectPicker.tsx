@@ -1,6 +1,4 @@
 /* oxlint-disable twenty/no-navigate-prefer-link */
-import { isDefined } from 'twenty-shared/utils';
-import { ApplicationGrantEditorContext } from '@/settings/applications/grant/contexts/ApplicationGrantEditorContext';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { useGetIsMetadataItemCustom } from '@/object-metadata/hooks/useGetIsMetadataItemCustom';
 import { SettingsCard } from '@/settings/components/SettingsCard';
@@ -9,8 +7,8 @@ import { useObjectMetadataItemsThatCanHavePermission } from '@/settings/roles/ro
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useContext, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
 import { Section } from 'twenty-ui/components/layout';
 import { IconSearch } from 'twenty-ui/icon';
@@ -60,8 +58,6 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
   const getIsMetadataItemCustom = useGetIsMetadataItemCustom();
   const [searchParams] = useSearchParams();
   const fromAgentId = searchParams.get('fromAgent');
-  const applicationGrantEditor = useContext(ApplicationGrantEditorContext);
-  const navigateToPath = useNavigate();
   const [searchFilter, setSearchFilter] = useState('');
 
   const { objectMetadataItemsThatCanHavePermission } =
@@ -72,11 +68,6 @@ export const SettingsRolePermissionsObjectLevelObjectPicker = ({
   };
 
   const handleSelectObjectMetadata = (objectMetadataId: string) => {
-    if (isDefined(applicationGrantEditor)) {
-      navigateToPath(applicationGrantEditor.getObjectPath(objectMetadataId));
-      return;
-    }
-
     navigate(
       SettingsPath.RoleObjectLevel,
       { roleId, objectMetadataId },

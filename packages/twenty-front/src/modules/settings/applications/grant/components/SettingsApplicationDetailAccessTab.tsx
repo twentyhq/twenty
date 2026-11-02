@@ -1,41 +1,38 @@
 import { getToastOptionsFromError } from '@/error-handler/utils/getToastOptionsFromError';
-import { SettingsApplicationGrantPermissionFlags } from '@/settings/applications/grant/components/SettingsApplicationGrantPermissionFlags';
-import { SettingsApplicationGrantRestrictionsBanner } from '@/settings/applications/grant/components/SettingsApplicationGrantRestrictionsBanner';
-import { hasGrantRestrictions } from '@/settings/applications/grant/utils/hasGrantRestrictions';
+import { SettingsApplicationGrantObjectAccessList } from '@/settings/applications/grant/components/SettingsApplicationGrantObjectAccessList';
 import { SettingsApplicationGrantPendingCard } from '@/settings/applications/grant/components/SettingsApplicationGrantPendingCard';
-import { ApplicationGrantEditorContext } from '@/settings/applications/grant/contexts/ApplicationGrantEditorContext';
-import { getLockedActionsByObjectMetadataId } from '@/settings/applications/grant/utils/getLockedActionsByObjectMetadataId';
-import { buildApplicationAccessEditorContextValue } from '@/settings/applications/grant/utils/buildApplicationAccessEditorContextValue';
+import { SettingsApplicationGrantPermissionFlags } from '@/settings/applications/grant/components/SettingsApplicationGrantPermissionFlags';
+import { type ApplicationGrantObjectAccessValue } from '@/settings/applications/grant/types/ApplicationGrantObjectAccessValue';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
-import { SettingsRolePermissionsObjectLevelSection } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelSection';
-import { SettingsRolePermissionsObjectsSection } from '@/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection';
-import { SettingsRoleDraftSyncEffect } from '@/settings/roles/role/components/SettingsRoleDraftSyncEffect';
-import { useSaveDraftRoleToDB } from '@/settings/roles/role/hooks/useSaveDraftRoleToDB';
-import { getRoleDirtyFields } from '@/settings/roles/role/utils/getRoleDirtyFields';
-import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { settingsPersistedRoleFamilyState } from '@/settings/roles/states/settingsPersistedRoleFamilyState';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
-import { useApolloClient, useQuery } from '@apollo/client/react';
+import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
+import {
+  OBJECT_PERMISSION_ACTIONS,
+  type ObjectPermissionAction,
+} from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
+import { Section } from 'twenty-ui/components/layout';
 import { themeCssVariables } from 'twenty-ui/theme';
 
 import {
   GetApplicationGrantDocument,
   type GetApplicationGrantQuery,
-  GetRolesDocument,
+  UpdateApplicationGrantObjectAccessDocument,
 } from '~/generated-metadata/graphql';
+import { getOperationName } from '~/utils/getOperationName';
+import { isDeeplyEqual } from '~/utils/isDeeplyEqual';
 
 type SettingsApplicationDetailAccessTabProps = {
   applicationId: string;
-  applicationName: string;
 };
+
+type ApplicationGrant = GetApplicationGrantQuery['applicationGrant'];
 
 const StyledContainer = styled.div`
   display: flex;
@@ -53,124 +50,84 @@ const StyledIntro = styled.div`
   font-size: ${themeCssVariables.font.size.md};
 `;
 
-type ApplicationGrant = GetApplicationGrantQuery['applicationGrant'];
+const toObjectAccessValue = (
+  objectAccess: NonNullable<ApplicationGrant['objectAccess']>,
+): ApplicationGrantObjectAccessValue => ({
+  chosenObjectMetadataIds: objectAccess.chosenObjectMetadataIds ?? null,
+  addedObjects: objectAccess.addedObjects.map(
+    ({ objectMetadataId, accessLevel }) => ({
+      objectMetadataId,
+      accessLevel:
+        accessLevel as ApplicationGrantObjectAccessValue['addedObjects'][number]['accessLevel'],
+    }),
+  ),
+});
 
-const SettingsApplicationGrantEditor = ({
+const SettingsApplicationGrantObjectAccessEditor = ({
   applicationId,
-  applicationName,
   applicationGrant,
-  grantRoleId,
+  savedObjectAccess,
 }: {
   applicationId: string;
-  applicationName: string;
   applicationGrant: ApplicationGrant;
-  grantRoleId: string;
+  savedObjectAccess: ApplicationGrantObjectAccessValue;
 }) => {
   const { enqueueToast } = useToast();
-  const [isSaving, setIsSaving] = useState(false);
-
-  const settingsDraftRole = useAtomFamilyStateValue(
-    settingsDraftRoleFamilyState,
-    grantRoleId,
+  const [objectAccess, setObjectAccess] = useState(savedObjectAccess);
+  const [updateObjectAccess, { loading }] = useMutation(
+    UpdateApplicationGrantObjectAccessDocument,
   );
-  const setSettingsDraftRole = useSetAtomFamilyState(
-    settingsDraftRoleFamilyState,
-    grantRoleId,
-  );
-  const settingsPersistedRole = useAtomFamilyStateValue(
-    settingsPersistedRoleFamilyState,
-    grantRoleId,
-  );
-  const setSettingsPersistedRole = useSetAtomFamilyState(
-    settingsPersistedRoleFamilyState,
-    grantRoleId,
-  );
-  const apolloClient = useApolloClient();
 
-  const { saveDraftRoleToDB } = useSaveDraftRoleToDB({
-    roleId: grantRoleId,
-    isCreateMode: false,
-    grantedApplicationId: applicationId,
-  });
-
-  const isDirty =
-    Object.keys(getRoleDirtyFields(settingsDraftRole, settingsPersistedRole))
-      .length > 0;
-
-  const hasRestrictions =
-    isDefined(settingsPersistedRole) &&
-    hasGrantRestrictions(settingsPersistedRole);
-
-  const editorContextValue = useMemo(
-    () =>
-      buildApplicationAccessEditorContextValue({
-        applicationId,
-        applicationName,
-        lockedActionsByObjectMetadataId: getLockedActionsByObjectMetadataId(
-          applicationGrant.lockedObjectPermissions,
-        ),
-      }),
-    [applicationId, applicationName, applicationGrant.lockedObjectPermissions],
-  );
+  const isDirty = !isDeeplyEqual(objectAccess, savedObjectAccess);
 
   const handleSave = async () => {
-    setIsSaving(true);
-
     try {
-      await saveDraftRoleToDB();
-
-      // The server normalizes what it stores, so the draft is reset from the saved role
-      const { data } = await apolloClient.query({
-        query: GetRolesDocument,
-        fetchPolicy: 'network-only',
+      await updateObjectAccess({
+        variables: { input: { applicationId, objectAccess } },
+        refetchQueries: [
+          getOperationName(GET_ROLES) ?? '',
+          getOperationName(GetApplicationGrantDocument) ?? '',
+        ],
+        awaitRefetchQueries: true,
       });
-      const savedRole = data?.getRoles.find((role) => role.id === grantRoleId);
-
-      if (isDefined(savedRole)) {
-        setSettingsPersistedRole(savedRole);
-        setSettingsDraftRole(savedRole);
-      }
-
       enqueueToast({ status: 'success', children: t`Access saved` });
     } catch (error) {
       enqueueToast(getToastOptionsFromError({ error }));
-    } finally {
-      setIsSaving(false);
-    }
-  };
-
-  const handleCancel = () => {
-    if (isDefined(settingsPersistedRole)) {
-      setSettingsDraftRole(settingsPersistedRole);
     }
   };
 
   return (
-    <ApplicationGrantEditorContext.Provider value={editorContextValue}>
-      <SettingsRoleDraftSyncEffect roleId={grantRoleId} />
-      {isDirty && (
-        <StyledActions>
-          <SaveAndCancelButtons
-            onSave={handleSave}
-            onCancel={handleCancel}
-            isLoading={isSaving}
-          />
-        </StyledActions>
-      )}
-      {hasRestrictions && <SettingsApplicationGrantRestrictionsBanner />}
-      <SettingsRolePermissionsObjectsSection roleId={grantRoleId} isEditable />
-      <SettingsRolePermissionsObjectLevelSection
-        roleId={grantRoleId}
-        isEditable
+    <Section.Root>
+      <Section.Header
+        title={t`Access to your records`}
+        description={t`Locked objects are required by the app. You can choose which objects "all objects" covers, and add objects.`}
+        actions={
+          isDirty && (
+            <StyledActions>
+              <SaveAndCancelButtons
+                onSave={handleSave}
+                onCancel={() => setObjectAccess(savedObjectAccess)}
+                isLoading={loading}
+              />
+            </StyledActions>
+          )
+        }
       />
-      <SettingsApplicationGrantPermissionFlags grantRoleId={grantRoleId} />
-    </ApplicationGrantEditorContext.Provider>
+      <SettingsApplicationGrantObjectAccessList
+        requestedAllObjectsActions={applicationGrant.requestedAllObjectsActions.filter(
+          (action): action is ObjectPermissionAction =>
+            (OBJECT_PERMISSION_ACTIONS as readonly string[]).includes(action),
+        )}
+        lockedObjectPermissions={applicationGrant.lockedObjectPermissions}
+        value={objectAccess}
+        onChange={setObjectAccess}
+      />
+    </Section.Root>
   );
 };
 
 export const SettingsApplicationDetailAccessTab = ({
   applicationId,
-  applicationName,
 }: SettingsApplicationDetailAccessTabProps) => {
   const { data, loading } = useQuery(GetApplicationGrantDocument, {
     variables: { applicationId },
@@ -179,21 +136,23 @@ export const SettingsApplicationDetailAccessTab = ({
 
   const applicationGrant = data?.applicationGrant;
   const grantRoleId = applicationGrant?.grantRoleId;
-
-  const settingsPersistedRole = useAtomFamilyStateValue(
-    settingsPersistedRoleFamilyState,
-    grantRoleId ?? '',
-  );
+  const objectAccess = applicationGrant?.objectAccess;
 
   if (loading && !isDefined(applicationGrant)) {
     return <SettingsSectionSkeletonLoader />;
   }
 
-  if (!isDefined(applicationGrant) || !isDefined(grantRoleId)) {
+  if (
+    !isDefined(applicationGrant) ||
+    !isDefined(grantRoleId) ||
+    !isDefined(objectAccess)
+  ) {
     return (
       <StyledIntro>{t`This app has no granted role, so it has no access to your data.`}</StyledIntro>
     );
   }
+
+  const savedObjectAccess = toObjectAccessValue(objectAccess);
 
   return (
     <StyledContainer>
@@ -202,19 +161,14 @@ export const SettingsApplicationDetailAccessTab = ({
         applicationId={applicationId}
         applicationGrant={applicationGrant}
       />
-      <StyledIntro>
-        {t`The app runs with this role. Locked objects are required by the app; you can add objects, hide fields and filter records.`}
-      </StyledIntro>
-      {isDefined(settingsPersistedRole) ? (
-        <SettingsApplicationGrantEditor
-          applicationId={applicationId}
-          applicationName={applicationName}
-          applicationGrant={applicationGrant}
-          grantRoleId={grantRoleId}
-        />
-      ) : (
-        <SettingsSectionSkeletonLoader />
-      )}
+      <SettingsApplicationGrantObjectAccessEditor
+        // Remounts with the saved access after a save or an approval
+        key={JSON.stringify(savedObjectAccess)}
+        applicationId={applicationId}
+        applicationGrant={applicationGrant}
+        savedObjectAccess={savedObjectAccess}
+      />
+      <SettingsApplicationGrantPermissionFlags grantRoleId={grantRoleId} />
     </StyledContainer>
   );
 };

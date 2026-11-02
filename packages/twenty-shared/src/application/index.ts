@@ -299,6 +299,12 @@ export {
 export { getOwnObjectPermissions } from './utils/getOwnObjectPermissions';
 export { getRoleManifestGrantsNotCoveredBy } from './utils/getRoleManifestGrantsNotCoveredBy';
 export { getRowLevelRestrictionSignature } from './utils/getRowLevelRestrictionSignature';
+export type { GrantObjectAccess } from './utils/grantObjectAccess';
+export {
+  getRequestedAllObjectsActions,
+  buildGrantRoleManifestFromObjectAccess,
+  getGrantObjectAccess,
+} from './utils/grantObjectAccess';
 export { isConnectionProviderScope } from './utils/isConnectionProviderScope';
 export { isFrontComponentWidgetPageLayoutType } from './utils/isFrontComponentWidgetPageLayoutType';
 export {
@@ -307,6 +313,12 @@ export {
 } from './utils/isReservedSettingsMenuItemTitle';
 export { isValidUniversalIdentifier } from './utils/isValidUniversalIdentifier';
 export { materializeRoleManifestObjectPermissions } from './utils/materializeRoleManifestObjectPermissions';
+export type { GrantAccessLevel } from './utils/recordShareAccessLevelObjectPermissions';
+export {
+  OBJECT_PERMISSION_ACTIONS_BY_ACCESS_LEVEL,
+  GRANT_ACCESS_LEVELS,
+  getAccessLevelFromObjectPermissionActions,
+} from './utils/recordShareAccessLevelObjectPermissions';
 export type {
   ViewManifestFilterValue,
   ViewFieldManifest,

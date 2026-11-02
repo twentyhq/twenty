@@ -1,8 +1,14 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator';
-import GraphQLJSON from 'graphql-type-json';
-import { type RoleManifest } from 'twenty-shared/application';
+import { Type } from 'class-transformer';
+import {
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  ValidateNested,
+} from 'class-validator';
+
+import { ApplicationGrantObjectAccessInput } from 'src/engine/core-modules/application/application-grant/dtos/application-grant-object-access.input';
 
 @InputType('TriggerInstallApplicationInput')
 export class TriggerInstallApplicationInput {
@@ -11,9 +17,10 @@ export class TriggerInstallApplicationInput {
   @Field()
   universalIdentifier: string;
 
-  // The grant the admin customized at install; omitted, the grant is exactly what the app requests
+  // Omitted, the grant is exactly what the app requests
   @IsOptional()
-  @IsObject()
-  @Field(() => GraphQLJSON, { nullable: true })
-  grantRoleManifest?: RoleManifest;
+  @ValidateNested()
+  @Type(() => ApplicationGrantObjectAccessInput)
+  @Field(() => ApplicationGrantObjectAccessInput, { nullable: true })
+  grantObjectAccess?: ApplicationGrantObjectAccessInput;
 }

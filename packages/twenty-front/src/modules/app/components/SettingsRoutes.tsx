@@ -1,13 +1,3 @@
-import {
-  APPLICATION_ACCESS_ADD_OBJECT_ROUTE_PATH,
-  APPLICATION_ACCESS_OBJECT_ROUTE_PATH,
-} from '@/settings/applications/grant/utils/getApplicationAccessPath';
-import {
-  APPLICATION_INSTALL_ADD_OBJECT_ROUTE_PATH,
-  APPLICATION_INSTALL_CUSTOMIZE_ROUTE_PATH,
-  APPLICATION_INSTALL_OBJECT_ROUTE_PATH,
-  APPLICATION_INSTALL_ROUTE_PATH,
-} from '@/settings/applications/grant/utils/getApplicationInstallPath';
 import { lazy, Suspense } from 'react';
 import {
   createRoutesFromElements,
@@ -308,54 +298,6 @@ const SettingsApplications = lazy(() =>
   import('~/pages/settings/applications/SettingsApplications').then(
     (module) => ({
       default: module.SettingsApplications,
-    }),
-  ),
-);
-
-const SettingsApplicationAccessObject = lazy(() =>
-  import('~/pages/settings/applications/SettingsApplicationAccessObject').then(
-    (module) => ({
-      default: module.SettingsApplicationAccessObject,
-    }),
-  ),
-);
-
-const SettingsApplicationAccessAddObject = lazy(() =>
-  import('~/pages/settings/applications/SettingsApplicationAccessAddObject').then(
-    (module) => ({
-      default: module.SettingsApplicationAccessAddObject,
-    }),
-  ),
-);
-
-const SettingsApplicationInstall = lazy(() =>
-  import('~/pages/settings/applications/SettingsApplicationInstall').then(
-    (module) => ({
-      default: module.SettingsApplicationInstall,
-    }),
-  ),
-);
-
-const SettingsApplicationInstallCustomize = lazy(() =>
-  import('~/pages/settings/applications/SettingsApplicationInstallCustomize').then(
-    (module) => ({
-      default: module.SettingsApplicationInstallCustomize,
-    }),
-  ),
-);
-
-const SettingsApplicationInstallAddObject = lazy(() =>
-  import('~/pages/settings/applications/SettingsApplicationInstallAddObject').then(
-    (module) => ({
-      default: module.SettingsApplicationInstallAddObject,
-    }),
-  ),
-);
-
-const SettingsApplicationInstallObject = lazy(() =>
-  import('~/pages/settings/applications/SettingsApplicationInstallObject').then(
-    (module) => ({
-      default: module.SettingsApplicationInstallObject,
     }),
   ),
 );
@@ -1271,36 +1213,12 @@ const createSettingsRouteElements = ({
         element={<SettingsApplicationDetails />}
       />
       <Route
-        path={APPLICATION_ACCESS_OBJECT_ROUTE_PATH}
-        element={<SettingsApplicationAccessObject />}
-      />
-      <Route
-        path={APPLICATION_ACCESS_ADD_OBJECT_ROUTE_PATH}
-        element={<SettingsApplicationAccessAddObject />}
-      />
-      <Route
         path={SettingsPath.ApplicationConnectionDetail}
         element={<SettingsApplicationConnectionDetail />}
       />
       <Route
         path={SettingsPath.AvailableApplicationDetail}
         element={<SettingsAvailableApplicationDetails />}
-      />
-      <Route
-        path={APPLICATION_INSTALL_ROUTE_PATH}
-        element={<SettingsApplicationInstall />}
-      />
-      <Route
-        path={APPLICATION_INSTALL_CUSTOMIZE_ROUTE_PATH}
-        element={<SettingsApplicationInstallCustomize />}
-      />
-      <Route
-        path={APPLICATION_INSTALL_ADD_OBJECT_ROUTE_PATH}
-        element={<SettingsApplicationInstallAddObject />}
-      />
-      <Route
-        path={APPLICATION_INSTALL_OBJECT_ROUTE_PATH}
-        element={<SettingsApplicationInstallObject />}
       />
       <Route
         path={SettingsPath.ApplicationLogicFunctionDetail}

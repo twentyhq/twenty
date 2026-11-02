@@ -21,5 +21,12 @@ export const APPLICATION_GRANT_FRAGMENT = gql`
       objectMetadataId
       permissionFlagUniversalIdentifier
     }
+    objectAccess {
+      chosenObjectMetadataIds
+      addedObjects {
+        objectMetadataId
+        accessLevel
+      }
+    }
   }
 `;

@@ -1,3 +1,4 @@
+import { type ApplicationGrantObjectAccessValue } from '@/settings/applications/grant/types/ApplicationGrantObjectAccessValue';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { useTrackedQueueJob } from '@/queue-job/hooks/useTrackedQueueJob';
 import { type TrackedJobStatus } from '@/queue-job/types/TrackedJobStatus';
@@ -7,7 +8,6 @@ import { useLazyQuery, useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useCallback } from 'react';
-import { type RoleManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { useToast } from 'twenty-ui/components/feedback';
 import {
@@ -141,9 +141,9 @@ export const useInstallMarketplaceApp = ({
     fetchJobStatus: fetchInstallJobStatus,
   });
 
-  // Without a grant role manifest, the grant is exactly what the app requests
+  // Without object access choices, the grant is exactly what the app requests
   const install = async (
-    grantRoleManifest?: RoleManifest,
+    grantObjectAccess?: ApplicationGrantObjectAccessValue,
   ): Promise<boolean> => {
     if (!isDefined(universalIdentifier)) {
       return false;
@@ -151,7 +151,7 @@ export const useInstallMarketplaceApp = ({
 
     try {
       const { data } = await triggerInstallApplication({
-        variables: { input: { universalIdentifier, grantRoleManifest } },
+        variables: { input: { universalIdentifier, grantObjectAccess } },
       });
 
       const jobId = data?.triggerInstallApplication.jobId;

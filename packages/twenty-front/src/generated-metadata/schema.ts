@@ -636,9 +636,21 @@ export type ApplicationGrant = {
   applicationVersion?: Maybe<Scalars['String']['output']>;
   grantRoleId?: Maybe<Scalars['UUID']['output']>;
   lockedObjectPermissions: Array<ApplicationGrantLockedObjectPermission>;
+  objectAccess?: Maybe<ApplicationGrantObjectAccess>;
   pendingPermissions: Array<ApplicationGrantPermission>;
   requestedAllObjectsActions: Array<Scalars['String']['output']>;
   requestedRoleId?: Maybe<Scalars['UUID']['output']>;
+};
+
+export type ApplicationGrantAddedObject = {
+  __typename?: 'ApplicationGrantAddedObject';
+  accessLevel: RecordShareAccessLevel;
+  objectMetadataId: Scalars['UUID']['output'];
+};
+
+export type ApplicationGrantAddedObjectInput = {
+  accessLevel: RecordShareAccessLevel;
+  objectMetadataId: Scalars['UUID']['input'];
 };
 
 export type ApplicationGrantLockedObjectPermission = {
@@ -650,12 +662,15 @@ export type ApplicationGrantLockedObjectPermission = {
   objectMetadataId: Scalars['UUID']['output'];
 };
 
-export type ApplicationGrantObjectPermissionInput = {
-  canDestroyObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canReadObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canSoftDeleteObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canUpdateObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  objectMetadataId: Scalars['UUID']['input'];
+export type ApplicationGrantObjectAccess = {
+  __typename?: 'ApplicationGrantObjectAccess';
+  addedObjects: Array<ApplicationGrantAddedObject>;
+  chosenObjectMetadataIds?: Maybe<Array<Scalars['UUID']['output']>>;
+};
+
+export type ApplicationGrantObjectAccessInput = {
+  addedObjects: Array<ApplicationGrantAddedObjectInput>;
+  chosenObjectMetadataIds?: InputMaybe<Array<Scalars['UUID']['input']>>;
 };
 
 export type ApplicationGrantPermission = {
@@ -3747,8 +3762,6 @@ export type Mutation = {
   uploadWorkspaceLogo: FileWithSignedUrl;
   /** @deprecated Use createFileUpload with the CorePicture folder and completeWorkspaceMemberProfilePictureUpload, which send the picture straight to file storage. */
   uploadWorkspaceMemberProfilePicture: FileWithSignedUrl;
-  upsertApplicationGrantFieldPermissions: Array<FieldPermission>;
-  upsertApplicationGrantRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult;
   upsertFieldPermissions: Array<FieldPermission>;
   upsertFieldsWidget: View;
   upsertObjectPermissions: Array<ObjectPermission>;
@@ -5198,18 +5211,6 @@ export type MutationUploadWorkspaceLogoArgs = {
 
 export type MutationUploadWorkspaceMemberProfilePictureArgs = {
   file: Scalars['Upload']['input'];
-};
-
-
-export type MutationUpsertApplicationGrantFieldPermissionsArgs = {
-  applicationId: Scalars['UUID']['input'];
-  upsertFieldPermissionsInput: UpsertFieldPermissionsInput;
-};
-
-
-export type MutationUpsertApplicationGrantRowLevelPermissionPredicatesArgs = {
-  applicationId: Scalars['UUID']['input'];
-  input: UpsertRowLevelPermissionPredicatesInput;
 };
 
 
@@ -7233,7 +7234,7 @@ export type TriggerAddPeopleToMessageListJobResult = {
 };
 
 export type TriggerInstallApplicationInput = {
-  grantRoleManifest?: InputMaybe<Scalars['JSON']['input']>;
+  grantObjectAccess?: InputMaybe<ApplicationGrantObjectAccessInput>;
   universalIdentifier: Scalars['String']['input'];
 };
 
@@ -7383,11 +7384,7 @@ export type UpdateAppMessageChannelInput = {
 
 export type UpdateApplicationGrantObjectAccessInput = {
   applicationId: Scalars['UUID']['input'];
-  canDestroyAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canReadAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canSoftDeleteAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  canUpdateAllObjectRecords?: InputMaybe<Scalars['Boolean']['input']>;
-  objectPermissions: Array<ApplicationGrantObjectPermissionInput>;
+  objectAccess: ApplicationGrantObjectAccessInput;
 };
 
 export type UpdateApplicationInput = {

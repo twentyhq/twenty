@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { type RoleManifest } from 'twenty-shared/application';
+import { buildGrantRoleManifestFromObjectAccess } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
@@ -17,7 +17,9 @@ import {
   type TriggerUninstallApplicationJobData,
 } from 'src/engine/core-modules/application/application-install/jobs/trigger-uninstall-application.job';
 import { assertGrantKeepsLockedRequirement } from 'src/engine/core-modules/application/application-grant/utils/assert-grant-keeps-locked-requirement.util';
-import { buildInstallGrantRoleManifest } from 'src/engine/core-modules/application/application-grant/utils/build-install-grant-role-manifest.util';
+import { type ApplicationGrantObjectAccessInput } from 'src/engine/core-modules/application/application-grant/dtos/application-grant-object-access.input';
+import { fromObjectAccessInputToGrantObjectAccess } from 'src/engine/core-modules/application/application-grant/utils/from-object-access-input-to-grant-object-access.util';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import {
   findRequestedRoleManifest,
   normalizeConfinedApplicationManifest,
@@ -90,14 +92,15 @@ export class ApplicationLifecycleJobService {
     private readonly cacheLockService: CacheLockService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly workspaceQueueService: MessageQueueService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
 
   async triggerInstallApplication({
     universalIdentifier,
     workspaceId,
-    grantRoleManifest,
+    grantObjectAccess: grantObjectAccessInput,
   }: LifecycleJobTarget & {
-    grantRoleManifest?: RoleManifest;
+    grantObjectAccess?: ApplicationGrantObjectAccessInput;
   }): Promise<{ jobId: string }> {
     const registration =
       await this.marketplaceQueryService.findRegistrationByUniversalIdentifier(
@@ -110,13 +113,24 @@ export class ApplicationLifecycleJobService {
         )
       : undefined;
 
+    const grantObjectAccess = isDefined(grantObjectAccessInput)
+      ? fromObjectAccessInputToGrantObjectAccess({
+          objectAccess: grantObjectAccessInput,
+          flatObjectMetadataMaps: (
+            await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+              { workspaceId, flatMapsKeys: ['flatObjectMetadataMaps'] },
+            )
+          ).flatObjectMetadataMaps,
+        })
+      : undefined;
+
     // Checked before the job runs, so a rejected grant installs nothing
-    if (isDefined(grantRoleManifest) && isDefined(requestedRoleManifest)) {
+    if (isDefined(grantObjectAccess) && isDefined(requestedRoleManifest)) {
       assertGrantKeepsLockedRequirement({
         approvedRoleManifest: requestedRoleManifest,
-        grantRoleManifest: buildInstallGrantRoleManifest({
-          requestedRoleManifest,
-          customizedGrantRoleManifest: grantRoleManifest,
+        grantRoleManifest: buildGrantRoleManifestFromObjectAccess({
+          approvedRoleManifest: requestedRoleManifest,
+          objectAccess: grantObjectAccess,
         }),
       });
     }
@@ -127,7 +141,7 @@ export class ApplicationLifecycleJobService {
       data: {
         applicationRegistrationId: registration.id,
         workspaceId,
-        grantRoleManifest,
+        grantObjectAccess,
       },
       universalIdentifier,
       workspaceId,

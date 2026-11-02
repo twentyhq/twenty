@@ -1,7 +1,3 @@
-import { IconLock } from 'twenty-ui/icon';
-import { t } from '@lingui/core/macro';
-import { ApplicationGrantEditorContext } from '@/settings/applications/grant/contexts/ApplicationGrantEditorContext';
-import { useContext } from 'react';
 import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { SettingsRolePermissionsObjectLevelOverrideCellContainer } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelOverrideCellContainer';
@@ -13,7 +9,7 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { OverflowingTextWithTooltip } from 'twenty-ui/primitives/typography';
 import { useTheme, themeCssVariables } from 'twenty-ui/theme';
 
@@ -43,18 +39,9 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
     objectMetadataId: objectMetadataItem.id,
   });
 
-  const applicationGrantEditor = useContext(ApplicationGrantEditorContext);
-
-  const navigationUrl = isDefined(applicationGrantEditor)
-    ? applicationGrantEditor.getObjectPath(objectMetadataItem.id)
-    : fromAgentId
-      ? `${navigationPath}?fromAgent=${fromAgentId}`
-      : navigationPath;
-
-  const isLocked =
-    applicationGrantEditor?.lockedActionsByObjectMetadataId.has(
-      objectMetadataItem.id,
-    ) ?? false;
+  const navigationUrl = fromAgentId
+    ? `${navigationPath}?fromAgent=${fromAgentId}`
+    : navigationPath;
 
   return (
     <TableRow
@@ -73,13 +60,6 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
         <StyledNameLabel title={objectLabelPlural}>
           <OverflowingTextWithTooltip text={objectLabelPlural} />
         </StyledNameLabel>
-        {isLocked && (
-          <IconLock
-            size={theme.icon.size.sm}
-            color={themeCssVariables.font.color.tertiary}
-            aria-label={t`Required by the app`}
-          />
-        )}
       </TableCell>
       <TableCell>
         <SettingsRolePermissionsObjectLevelOverrideCellContainer
@@ -110,7 +90,6 @@ export const SettingsRolePermissionsObjectLevelTableRow = ({
           objectMetadataId={objectMetadataItem.id}
           objectPermissionDetailUrl={navigationUrl}
           isEditable={isEditable}
-          isRemovable={!isLocked}
         />
       </TableCell>
     </TableRow>

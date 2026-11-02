@@ -321,7 +321,6 @@ export const SettingsApplicationDetails = () => {
         return (
           <SettingsApplicationDetailAccessTab
             applicationId={application.id}
-            applicationName={displayName}
           />
         );
       case APPLICATION_VARIABLES_TAB_ID:

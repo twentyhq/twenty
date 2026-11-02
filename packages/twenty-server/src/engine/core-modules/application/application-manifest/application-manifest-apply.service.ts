@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { type Manifest, type RoleManifest } from 'twenty-shared/application';
+import { type Manifest, type GrantObjectAccess } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ApplicationGrantService } from 'src/engine/core-modules/application/application-grant/services/application-grant.service';
@@ -31,7 +31,7 @@ export class ApplicationManifestApplyService {
     inferDeletionFromMissingEntities = true,
     persistVersion,
     shouldDeferActions,
-    grantRoleManifest,
+    grantObjectAccess,
     version,
   }: {
     workspaceId: string;
@@ -48,7 +48,7 @@ export class ApplicationManifestApplyService {
     forceSdkClientGeneration?: boolean;
     persistVersion?: boolean;
     shouldDeferActions?: boolean;
-    grantRoleManifest?: RoleManifest;
+    grantObjectAccess?: GrantObjectAccess;
     // Version of the package being applied, labels the permissions it may leave pending
     version?: string;
   }): Promise<{
@@ -74,7 +74,7 @@ export class ApplicationManifestApplyService {
       workspaceId,
       applicationId: application.id,
       manifest,
-      installGrantRoleManifest: grantRoleManifest,
+      installObjectAccess: grantObjectAccess,
       requestVersion: version,
     });
 

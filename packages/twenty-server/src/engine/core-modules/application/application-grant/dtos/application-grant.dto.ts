@@ -1,5 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql';
 
+import { RecordShareAccessLevel } from 'twenty-shared/types';
+
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
 @ObjectType('ApplicationGrantPermission')
@@ -38,6 +40,24 @@ export class ApplicationGrantLockedObjectPermissionDTO {
   canDestroyObjectRecords: boolean;
 }
 
+@ObjectType('ApplicationGrantAddedObject')
+export class ApplicationGrantAddedObjectDTO {
+  @Field(() => UUIDScalarType)
+  objectMetadataId: string;
+
+  @Field(() => RecordShareAccessLevel)
+  accessLevel: RecordShareAccessLevel;
+}
+
+@ObjectType('ApplicationGrantObjectAccess')
+export class ApplicationGrantObjectAccessDTO {
+  @Field(() => [UUIDScalarType], { nullable: true })
+  chosenObjectMetadataIds: string[] | null;
+
+  @Field(() => [ApplicationGrantAddedObjectDTO])
+  addedObjects: ApplicationGrantAddedObjectDTO[];
+}
+
 @ObjectType('ApplicationGrant')
 export class ApplicationGrantDTO {
   @Field(() => UUIDScalarType)
@@ -60,4 +80,7 @@ export class ApplicationGrantDTO {
 
   @Field(() => [ApplicationGrantPermissionDTO])
   pendingPermissions: ApplicationGrantPermissionDTO[];
+
+  @Field(() => ApplicationGrantObjectAccessDTO, { nullable: true })
+  objectAccess: ApplicationGrantObjectAccessDTO | null;
 }

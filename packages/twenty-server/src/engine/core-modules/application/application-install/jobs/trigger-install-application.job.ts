@@ -1,4 +1,4 @@
-import { type RoleManifest } from 'twenty-shared/application';
+import { type GrantObjectAccess } from 'twenty-shared/application';
 
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
 import { toApplicationLifecycleJobError } from 'src/engine/core-modules/application/application-install/utils/to-application-lifecycle-job-error.util';
@@ -10,7 +10,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 export type TriggerInstallApplicationJobData = {
   applicationRegistrationId: string;
   workspaceId: string;
-  grantRoleManifest?: RoleManifest;
+  grantObjectAccess?: GrantObjectAccess;
 };
 
 @Processor(MessageQueue.workspaceQueue)
@@ -29,7 +29,7 @@ export class TriggerInstallApplicationJob {
         appRegistrationId: data.applicationRegistrationId,
         workspaceId: data.workspaceId,
         hasUserApprovedCapabilities: true,
-        grantRoleManifest: data.grantRoleManifest,
+        grantObjectAccess: data.grantObjectAccess,
         updateProgress,
       });
     } catch (error) {

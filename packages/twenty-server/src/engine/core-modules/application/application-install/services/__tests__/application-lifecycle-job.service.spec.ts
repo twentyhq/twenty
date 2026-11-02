@@ -1,3 +1,4 @@
+import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { ApplicationLifecycleJobService } from 'src/engine/core-modules/application/application-install/services/application-lifecycle-job.service';
 import type { MarketplaceQueryService } from 'src/engine/core-modules/application/application-marketplace/marketplace-query.service';
 import { TriggerUpgradeApplicationJob } from 'src/engine/core-modules/application/application-upgrade/jobs/trigger-upgrade-application.job';
@@ -38,6 +39,7 @@ describe('ApplicationLifecycleJobService', () => {
     marketplaceQueryService,
     cacheLockService,
     workspaceQueueService,
+    {} as WorkspaceManyOrAllFlatEntityMapsCacheService,
   );
 
   const triggerUpgrade = () =>

@@ -218,14 +218,14 @@ export class ApplicationInstallResolver {
       idKey: 'universalIdentifier',
       requireApplicationRegistrationOwnership: false,
     })
-    { universalIdentifier, grantRoleManifest }: TriggerInstallApplicationInput,
+    { universalIdentifier, grantObjectAccess }: TriggerInstallApplicationInput,
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId({ allowUndefined: true }) userWorkspaceId?: string,
     @AuthApiKey() apiKey?: ApiKeyEntity,
   ): Promise<TriggerInstallApplicationResultDTO> {
     // A customized grant edits a role, like every other grant edit
     if (
-      isDefined(grantRoleManifest) &&
+      isDefined(grantObjectAccess) &&
       !(await this.permissionsService.userHasWorkspaceSettingPermission({
         userWorkspaceId,
         workspaceId: workspace.id,
@@ -244,7 +244,7 @@ export class ApplicationInstallResolver {
     return this.applicationLifecycleJobService.triggerInstallApplication({
       universalIdentifier,
       workspaceId: workspace.id,
-      grantRoleManifest,
+      grantObjectAccess,
     });
   }
 

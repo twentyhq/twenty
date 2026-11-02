@@ -1,8 +1,4 @@
-import {
-  type UpsertRowLevelPermissionPredicatesInput,
-  useUpsertRowLevelPermissionPredicatesMutation,
-} from '@/settings/roles/graphql/hooks/useUpsertRowLevelPermissionPredicatesMutation';
-import { GET_APPLICATION_GRANT } from '@/settings/applications/grant/graphql/getApplicationGrantQuery';
+import { useUpsertRowLevelPermissionPredicatesMutation } from '@/settings/roles/graphql/hooks/useUpsertRowLevelPermissionPredicatesMutation';
 import { GET_ROLES } from '@/settings/roles/graphql/queries/getRolesQuery';
 import { useUpdateAgentRole } from '@/settings/roles/hooks/useUpdateAgentRole';
 import { useUpdateApiKeyRole } from '@/settings/roles/hooks/useUpdateApiKeyRole';
@@ -20,10 +16,7 @@ import {
   type RowLevelPermissionPredicateOperand,
   type Role,
   CreateOneRoleDocument,
-  UpdateApplicationGrantObjectAccessDocument,
   UpdateOneRoleDocument,
-  UpsertApplicationGrantFieldPermissionsDocument,
-  UpsertApplicationGrantRowLevelPermissionPredicatesDocument,
   UpsertFieldPermissionsDocument,
   UpsertObjectPermissionsDocument,
   UpsertPermissionFlagsDocument,
@@ -50,27 +43,11 @@ export const useSaveDraftRoleToDB = ({
   roleId,
   isCreateMode,
   onSuccess,
-  grantedApplicationId,
 }: {
   roleId: string;
   isCreateMode: boolean;
   onSuccess?: (savedRoleId: string) => void | Promise<void>;
-  // An application grant is saved through the grant API, which keeps the app's required access
-  grantedApplicationId?: string;
 }) => {
-  const [updateApplicationGrantObjectAccess] = useMutation(
-    UpdateApplicationGrantObjectAccessDocument,
-  );
-  const [upsertApplicationGrantFieldPermissions] = useMutation(
-    UpsertApplicationGrantFieldPermissionsDocument,
-  );
-  const [upsertApplicationGrantRowLevelPermissionPredicates] = useMutation(
-    UpsertApplicationGrantRowLevelPermissionPredicatesDocument,
-  );
-  const grantRefetchQueries = [
-    getOperationName(GET_ROLES) ?? '',
-    getOperationName(GET_APPLICATION_GRANT) ?? '',
-  ];
   const [createRole] = useMutation(CreateOneRoleDocument);
   const [updateRole] = useMutation(UpdateOneRoleDocument);
   const [upsertPermissionFlags] = useMutation(UpsertPermissionFlagsDocument);
@@ -190,73 +167,7 @@ export const useSaveDraftRoleToDB = ({
     return createdRoleId;
   };
 
-  const updateApplicationGrant = async (applicationId: string) => {
-    if (
-      ROLE_BASIC_KEYS.some((key) => key in dirtyFields) ||
-      isDefined(dirtyFields.objectPermissions)
-    ) {
-      await updateApplicationGrantObjectAccess({
-        variables: {
-          input: {
-            applicationId,
-            canReadAllObjectRecords: settingsDraftRole.canReadAllObjectRecords,
-            canUpdateAllObjectRecords:
-              settingsDraftRole.canUpdateAllObjectRecords,
-            canSoftDeleteAllObjectRecords:
-              settingsDraftRole.canSoftDeleteAllObjectRecords,
-            canDestroyAllObjectRecords:
-              settingsDraftRole.canDestroyAllObjectRecords,
-            objectPermissions:
-              settingsDraftRole.objectPermissions?.map((objectPermission) => ({
-                objectMetadataId: objectPermission.objectMetadataId,
-                canReadObjectRecords: objectPermission.canReadObjectRecords,
-                canUpdateObjectRecords: objectPermission.canUpdateObjectRecords,
-                canSoftDeleteObjectRecords:
-                  objectPermission.canSoftDeleteObjectRecords,
-                canDestroyObjectRecords:
-                  objectPermission.canDestroyObjectRecords,
-              })) ?? [],
-          },
-        },
-        refetchQueries: grantRefetchQueries,
-      });
-    }
-
-    if (isNonEmptyArray(fieldPermissionsToUpsert) === true) {
-      await upsertApplicationGrantFieldPermissions({
-        variables: {
-          applicationId,
-          upsertFieldPermissionsInput: {
-            roleId,
-            fieldPermissions: fieldPermissionsToUpsert.map(
-              (fieldPermission) => ({
-                objectMetadataId: fieldPermission.objectMetadataId,
-                fieldMetadataId: fieldPermission.fieldMetadataId,
-                canReadFieldValue: fieldPermission.canReadFieldValue,
-                canUpdateFieldValue: fieldPermission.canUpdateFieldValue,
-              }),
-            ),
-          },
-        },
-        refetchQueries: grantRefetchQueries,
-      });
-    }
-
-    if (
-      isDefined(dirtyFields.rowLevelPermissionPredicates) ||
-      isDefined(dirtyFields.rowLevelPermissionPredicateGroups)
-    ) {
-      await upsertRowLevelPermissionPredicatesForRole(roleId);
-    }
-
-    return roleId;
-  };
-
   const updateExistingRole = async () => {
-    if (isDefined(grantedApplicationId)) {
-      return updateApplicationGrant(grantedApplicationId);
-    }
-
     if (isDefined(dirtyFields.permissionFlags)) {
       await upsertPermissionFlags({
         variables: {
@@ -419,29 +330,7 @@ export const useSaveDraftRoleToDB = ({
         objectUsedGroupIds.has(group.id),
       );
 
-      const upsertPredicates = async ({
-        variables,
-      }: {
-        variables: { input: UpsertRowLevelPermissionPredicatesInput };
-        refetchQueries: string[];
-        awaitRefetchQueries: boolean;
-      }) =>
-        isDefined(grantedApplicationId)
-          ? upsertApplicationGrantRowLevelPermissionPredicates({
-              variables: {
-                applicationId: grantedApplicationId,
-                input: variables.input,
-              },
-              refetchQueries: grantRefetchQueries,
-              awaitRefetchQueries: true,
-            })
-          : upsertRowLevelPermissionPredicates({
-              variables,
-              refetchQueries: [getOperationName(GET_ROLES) ?? ''],
-              awaitRefetchQueries: true,
-            });
-
-      await upsertPredicates({
+      await upsertRowLevelPermissionPredicates({
         variables: {
           input: {
             roleId: targetRoleId,

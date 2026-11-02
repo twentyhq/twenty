@@ -7,7 +7,7 @@ import { isAbsolute, relative, resolve } from 'path';
 import {
   type ApplicationCapability,
   Manifest,
-  type RoleManifest,
+  type GrantObjectAccess,
 } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -102,7 +102,7 @@ export class ApplicationInstallService {
     workspaceId: string;
     skipWorkspaceCompatibilityCheck?: boolean;
     hasUserApprovedCapabilities?: boolean;
-    grantRoleManifest?: RoleManifest;
+    grantObjectAccess?: GrantObjectAccess;
     updateProgress?: MessageQueueJobProgressContext['updateProgress'];
     shouldDeferActions?: boolean;
   }): Promise<boolean> {
@@ -153,7 +153,7 @@ export class ApplicationInstallService {
             skipWorkspaceCompatibilityCheck:
               params.skipWorkspaceCompatibilityCheck,
             hasUserApprovedCapabilities: params.hasUserApprovedCapabilities,
-            grantRoleManifest: params.grantRoleManifest,
+            grantObjectAccess: params.grantObjectAccess,
             shouldDeferActions: params.shouldDeferActions,
           },
           progressReporter,
@@ -173,7 +173,7 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
-      grantRoleManifest?: RoleManifest;
+      grantObjectAccess?: GrantObjectAccess;
       shouldDeferActions?: boolean;
     },
     progressReporter: ApplicationLifecycleProgressReporter<ApplicationInstallStep>,
@@ -275,7 +275,7 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
-      grantRoleManifest?: RoleManifest;
+      grantObjectAccess?: GrantObjectAccess;
       shouldDeferActions?: boolean;
     };
     resolvedPackage: ResolvedPackage;
@@ -362,7 +362,7 @@ export class ApplicationInstallService {
       workspaceId: string;
       skipWorkspaceCompatibilityCheck?: boolean;
       hasUserApprovedCapabilities?: boolean;
-      grantRoleManifest?: RoleManifest;
+      grantObjectAccess?: GrantObjectAccess;
       shouldDeferActions?: boolean;
     };
     resolvedPackage: ResolvedPackage;
@@ -529,7 +529,7 @@ export class ApplicationInstallService {
           forceSdkClientGeneration: true,
           persistVersion: false,
           shouldDeferActions: params.shouldDeferActions,
-          grantRoleManifest: params.grantRoleManifest,
+          grantObjectAccess: params.grantObjectAccess,
           version: newVersion,
         });
 
