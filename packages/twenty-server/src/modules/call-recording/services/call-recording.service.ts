@@ -48,7 +48,9 @@ export class CallRecordingService {
       const { objectRecordsPermissions, shouldBypassPermissionChecks } =
         resolveObjectRecordsPermissions({
           rolePermissionConfig,
-          principals: getPermissionsPrincipalsFromAuthContext(workspaceContext.authContext),
+          principals: getPermissionsPrincipalsFromAuthContext(
+            workspaceContext.authContext,
+          ),
           objectPermissionsByRoleId: workspaceContext.permissionsPerRoleId,
           flatObjectMetadataMaps: workspaceContext.flatObjectMetadataMaps,
           flatFieldMetadataMaps: workspaceContext.flatFieldMetadataMaps,
