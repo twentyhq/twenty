@@ -42,6 +42,7 @@ describe('View tools', () => {
   const mockWorkspaceId = 'workspace-id';
   const mockUserWorkspaceId = 'user-workspace-id';
   const mockViewId = 'c1f4b2a0-7d3e-4a8b-9c1d-2e3f4a5b6c7d';
+  const mockOtherUsersViewId = 'b8c1d9e7-4f0a-4b2c-9d3e-0f1a2b3c4d5e';
   const mockViewSortId = 'a7b0c8d6-3e9f-4a1b-8c2d-9e0f1a2b3c4d';
   const mockObjectMetadataId = 'object-metadata-id';
   const mockObjectNameSingular = 'company';
@@ -1044,10 +1045,19 @@ describe('View tools', () => {
           direction: ViewSortDirection.DESC,
         });
 
+        expect(viewService.findById).toHaveBeenCalledTimes(1);
         expect(viewService.findById).toHaveBeenCalledWith(
           mockViewId,
           mockWorkspaceId,
         );
+        expect(viewSortService.updateOne).toHaveBeenCalledTimes(1);
+        expect(viewSortService.updateOne).toHaveBeenCalledWith({
+          updateViewSortInput: {
+            id: mockViewSortId,
+            update: { direction: ViewSortDirection.DESC },
+          },
+          workspaceId: mockWorkspaceId,
+        });
         expect(result).toMatchObject({ direction: ViewSortDirection.DESC });
       });
 
@@ -1072,12 +1082,17 @@ describe('View tools', () => {
         expect(viewSortService.updateOne).not.toHaveBeenCalled();
       });
 
-      it('should reject adding sorts to another users unlisted view', async () => {
-        viewService.findById.mockResolvedValue({
-          ...mockView,
-          visibility: ViewVisibility.UNLISTED,
-          createdByUserWorkspaceId: 'other-user-workspace-id',
-        } as any);
+      it('should add no sort when one of the views is another users unlisted view', async () => {
+        viewService.findById.mockImplementation(async (viewId) =>
+          viewId === mockViewId
+            ? (mockView as any)
+            : ({
+                ...mockView,
+                id: mockOtherUsersViewId,
+                visibility: ViewVisibility.UNLISTED,
+                createdByUserWorkspaceId: 'other-user-workspace-id',
+              } as any),
+        );
 
         const tools = buildViewTools({
           workspaceId: mockWorkspaceId,
@@ -1088,6 +1103,10 @@ describe('View tools', () => {
           tools.create_many_view_sorts.execute({
             sorts: [
               { viewId: mockViewId, fieldMetadataId: mockNameFieldMetadataId },
+              {
+                viewId: mockOtherUsersViewId,
+                fieldMetadataId: mockNameFieldMetadataId,
+              },
             ],
           }),
         ).rejects.toThrow('You can only update your own unlisted views');
