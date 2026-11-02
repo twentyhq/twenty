@@ -37,16 +37,19 @@ const OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
 const owningApplicationDefaultRole = {
   universalIdentifier: OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   applicationUniversalIdentifier: OWNING_APPLICATION_UNIVERSAL_IDENTIFIER,
+  canBeAssignedToApplications: false,
 };
 
 const owningApplicationOtherRole = {
   universalIdentifier: 'stripe-other-role-universal-identifier',
   applicationUniversalIdentifier: OWNING_APPLICATION_UNIVERSAL_IDENTIFIER,
+  canBeAssignedToApplications: false,
 };
 
 const otherApplicationDefaultRole = {
   universalIdentifier: OWNING_APPLICATION_DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   applicationUniversalIdentifier: 'workspace-custom-universal-identifier',
+  canBeAssignedToApplications: false,
 };
 
 describe('validateFieldPermissionGrantsNoDisabledAction', () => {
@@ -81,5 +84,23 @@ describe('validateFieldPermissionGrantsNoDisabledAction', () => {
         }),
       ).toEqual([expect.objectContaining({ value: 'canUpdateFieldValue' })]);
     }
+  });
+
+  it('should let an application grant keep the disabled actions it copies', () => {
+    expect(
+      validateFieldPermissionGrantsNoDisabledAction({
+        flatFieldPermission: buildFieldPermission({
+          canUpdateFieldValue: true,
+        }),
+        flatFieldMetadata: amount,
+        flatRole: {
+          universalIdentifier: 'grant-role-universal-identifier',
+          applicationUniversalIdentifier:
+            'workspace-custom-universal-identifier',
+          canBeAssignedToApplications: true,
+        },
+        applicationDefaultRoleUniversalIdentifier: undefined,
+      }),
+    ).toEqual([]);
   });
 });
