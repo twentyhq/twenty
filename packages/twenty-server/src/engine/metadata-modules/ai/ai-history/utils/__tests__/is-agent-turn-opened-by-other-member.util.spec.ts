@@ -1,6 +1,6 @@
 import { FieldActorSource } from 'twenty-shared/types';
 
-import { isAgentTurnOpenedByOtherMember } from 'src/engine/metadata-modules/ai/ai-chat/utils/is-agent-turn-opened-by-other-member.util';
+import { isAgentTurnOpenedByOtherMember } from 'src/engine/metadata-modules/ai/ai-history/utils/is-agent-turn-opened-by-other-member.util';
 
 const RUN_AS_JONY_BY_APPLICATION = {
   source: FieldActorSource.AGENT,

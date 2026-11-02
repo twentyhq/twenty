@@ -220,7 +220,7 @@ describe('AgentRunnerService runStarted on a stalled job retried with its run id
       expect(turnRecorderService.findTurn).toHaveBeenCalledWith({
         workspaceId: 'workspace-id',
         turnId: 'run-id',
-        withResult: true,
+        shouldSelectResult: true,
       });
       expect(agentRunConversationService.openTurn).not.toHaveBeenCalled();
       expect(conversationReaderService.findReplyText).not.toHaveBeenCalled();

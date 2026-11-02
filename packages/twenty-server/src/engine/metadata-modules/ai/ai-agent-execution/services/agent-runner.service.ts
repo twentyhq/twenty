@@ -269,7 +269,7 @@ export class AgentRunnerService {
           ? await this.turnRecorderService.findTurn({
               workspaceId,
               turnId: retriedTurnId,
-              withResult:
+              shouldSelectResult:
                 await this.conversationWriterService.canStoreTurnResult(
                   workspaceId,
                 ),
@@ -877,7 +877,7 @@ export class AgentRunnerService {
       await this.conversationReaderService.loadMessages({
         workspaceId,
         threadId,
-        actor: executionContext.conversationActor,
+        viewer: executionContext.conversationViewer,
       });
 
     return {

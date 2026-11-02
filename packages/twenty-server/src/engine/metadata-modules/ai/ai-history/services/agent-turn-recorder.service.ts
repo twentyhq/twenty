@@ -290,17 +290,17 @@ export class AgentTurnRecorderService {
   async findTurn({
     workspaceId,
     turnId,
-    withResult,
+    shouldSelectResult,
   }: {
     workspaceId: string;
     turnId: string;
-    withResult: boolean;
+    shouldSelectResult: boolean;
   }): Promise<
     | (Pick<AgentTurnWorkspaceEntity, 'id' | 'status' | 'error'> &
         Partial<Pick<AgentTurnWorkspaceEntity, 'result'>>)
     | null
   > {
-    const select: (keyof AgentTurnWorkspaceEntity)[] = withResult
+    const select: (keyof AgentTurnWorkspaceEntity)[] = shouldSelectResult
       ? ['id', 'status', 'error', 'result']
       : ['id', 'status', 'error'];
 

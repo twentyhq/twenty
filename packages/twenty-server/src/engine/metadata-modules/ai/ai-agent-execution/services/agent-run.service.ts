@@ -145,13 +145,6 @@ export class AgentRunService implements AgentRunCallerHandler, OnModuleInit {
 
     const thread = input.thread ?? null;
 
-    if (isDefined(thread) && !isDefined(callerApplication)) {
-      throw new AiException(
-        'Continuing a conversation requires an application access token',
-        AiExceptionCode.RUN_AGENT_NOT_ALLOWED,
-      );
-    }
-
     if (
       isDefined(thread) &&
       messages.some((message) => message.role !== 'user')
