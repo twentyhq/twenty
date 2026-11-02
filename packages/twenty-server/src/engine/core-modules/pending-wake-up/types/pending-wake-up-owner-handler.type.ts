@@ -14,13 +14,14 @@ export type PendingWakeUpOwnerHandler<TOwner = unknown> = {
     wakeUp: PendingWakeUpEntity,
   ): Promise<PendingWakeUpOwnerState<TOwner>>;
 
+  // null when the owner may read no record, so no event wakes it up
   getReadPermissions(input: {
     wakeUp: PendingWakeUpEntity;
     owner: TOwner;
   }): Promise<{
     authContext: WorkspaceAuthContext;
     rolePermissionConfig: RolePermissionConfig;
-  }>;
+  } | null>;
 
   // the handler claims the wake-up once it takes the outcome, so the outcome is taken once
   resolve(input: {
