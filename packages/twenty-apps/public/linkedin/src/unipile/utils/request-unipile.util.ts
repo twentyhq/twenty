@@ -1,4 +1,5 @@
 import { isNumber, isObject, isString } from '@sniptt/guards';
+import { isDefined } from 'twenty-sdk/utils';
 
 import { wait } from 'src/utils/wait.util';
 
@@ -68,6 +69,7 @@ const getRateLimitWaitSeconds = (error: UnipileRequestError): number => {
 export const requestUnipile = async <TResult>(
   requestName: string,
   request: () => Promise<TResult>,
+  { deadlineAtMs }: { deadlineAtMs?: number } = {},
 ): Promise<TResult> => {
   for (let waitCount = 0; ; waitCount++) {
     try {
@@ -86,7 +88,9 @@ export const requestUnipile = async <TResult>(
 
       if (
         waitCount >= UNIPILE_RATE_LIMIT_MAX_WAITS ||
-        waitSeconds > UNIPILE_RATE_LIMIT_MAX_WAIT_SECONDS
+        waitSeconds > UNIPILE_RATE_LIMIT_MAX_WAIT_SECONDS ||
+        (isDefined(deadlineAtMs) &&
+          Date.now() + waitSeconds * 1000 > deadlineAtMs)
       ) {
         throw new UnipileRateLimitError(requestError.message, waitSeconds);
       }

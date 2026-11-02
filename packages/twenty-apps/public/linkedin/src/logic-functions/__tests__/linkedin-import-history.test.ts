@@ -92,12 +92,14 @@ const IMPORTED = {
   ingestedMessageCount: 12,
   matchedPersonCount: 1,
   createdPersonCount: 1,
+  importedAttachmentCount: 2,
 };
 
 const SKIPPED = {
   ingestedMessageCount: 0,
   matchedPersonCount: 0,
   createdPersonCount: 0,
+  importedAttachmentCount: 0,
   skippedReason: 'NO_CONTACT',
 };
 
@@ -140,6 +142,9 @@ describe('linkedinImportHistoryHandler', () => {
       accountId: 'acc_1',
       chatId: 'chat-2',
     });
+    expect(mocks.ingestLinkedinMessages).toHaveBeenCalledWith(
+      expect.objectContaining({ unipileAccountId: 'acc_1' }),
+    );
     expect(mocks.kvStore.get(PROGRESS_KEY)).toEqual({
       completedChunkCount: 3,
       completedConversationCount: 42,
@@ -148,7 +153,7 @@ describe('linkedinImportHistoryHandler', () => {
     });
     expect(console.log).toHaveBeenCalledWith(
       expect.stringMatching(
-        /chunk 2: 2 chats .*1 conversations imported, 12 messages, 1 people matched, 1 people created, skipped 1 without contact/,
+        /chunk 2: 2 chats .*1 conversations imported, 12 messages, 1 people matched, 1 people created, 2 attachments, skipped 1 without contact/,
       ),
     );
   });
@@ -386,6 +391,7 @@ describe('linkedinImportHistoryHandler', () => {
       ingestedMessageCount: 3,
       matchedPersonCount: 1,
       createdPersonCount: 0,
+      importedAttachmentCount: 0,
     });
 
     await linkedinImportHistoryHandler({ ...PAYLOAD, resumeIndex: 1 });
