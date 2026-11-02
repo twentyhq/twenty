@@ -10,12 +10,14 @@ import { msg } from '@lingui/core/macro';
 import chunk from 'lodash.chunk';
 import { setTimeout } from 'node:timers/promises';
 import { isAiModelTier, type AiModelTier } from 'twenty-shared/ai';
-import { type IframeMediaPermission } from 'twenty-shared/types';
+import {
+  FeatureFlagKey,
+  type IframeMediaPermission,
+} from 'twenty-shared/types';
 import {
   MAX_ALLOWED_IFRAME_ORIGINS,
   PermissionFlagType,
 } from 'twenty-shared/constants';
-import { FeatureFlagKey } from 'twenty-shared/types';
 import {
   assertIsDefinedOrThrow,
   isAutoSelectModelId,
