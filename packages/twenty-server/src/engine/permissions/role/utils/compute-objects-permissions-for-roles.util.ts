@@ -10,7 +10,7 @@ import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/typ
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principal/types/application-default-role-maps.type';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 import { getPermissionsPrincipalActingApplicationId } from 'src/engine/permissions/principal/utils/get-permissions-principal-acting-application-id.util';
 import { getPermissionsPrincipalRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-role-ids.util';
 import { computePermissionIntersection } from 'src/engine/permissions/role/utils/compute-permission-intersection.util';
@@ -24,8 +24,8 @@ export const computeObjectsPermissionsForRoles = ({
   flatApplicationMaps,
 }: {
   principal: Pick<
-    PermissionsPrincipal,
-    'main' | 'limitingRoleId' | 'appRoleId'
+    PermissionsPrincipalsContext,
+    'mainPrincipal' | 'limiting' | 'app'
   >;
   rolesPermissions: ObjectsPermissionsByRoleId;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
@@ -43,6 +43,10 @@ export const computeObjectsPermissionsForRoles = ({
     flatApplicationMaps,
   });
 
+  const actingApplicationRoleId = isDefined(actingApplicationId)
+    ? flatApplicationMaps.byId[actingApplicationId]?.defaultRoleId
+    : undefined;
+
   const permissionsPerRole = roleIds.map((roleId) => {
     const rolePermissions = rolesPermissions[roleId];
 
@@ -52,7 +56,9 @@ export const computeObjectsPermissionsForRoles = ({
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
           actingApplicationId:
-            roleId === principal.appRoleId ? actingApplicationId : undefined,
+            roleId === actingApplicationRoleId
+              ? actingApplicationId
+              : undefined,
         })
       : undefined;
   });

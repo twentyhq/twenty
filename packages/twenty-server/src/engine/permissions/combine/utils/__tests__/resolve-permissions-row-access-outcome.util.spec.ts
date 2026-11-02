@@ -10,9 +10,8 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { COMPANY_FLAT_OBJECT_MOCK } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/company-flat-object.mock';
 import { type PermissionsRowAccessRequest } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { resolvePermissionsRowAccessOutcome } from 'src/engine/permissions/combine/utils/resolve-permissions-row-access-outcome.util';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
-import { WORKSPACE_APP_ROLE_ID } from 'src/engine/permissions/principal/constants/workspace-app-role-id.constant';
 
 const APPLICATION_ID = 'application-id';
 const APPLICATION_ROLE_ID = 'application-role';
@@ -34,16 +33,16 @@ const readOnlyPermissions: ObjectPermissions = {
   rowLevelPermissionPredicateGroups: [],
 };
 
-const readOnlyPrincipal: PermissionsPrincipal = {
+const readOnlyPrincipal: PermissionsPrincipalsContext = {
   workspaceId: 'workspace-id',
-  main: { roleId: READ_ONLY_ROLE_ID },
-  appRoleId: WORKSPACE_APP_ROLE_ID,
+  mainPrincipal: { roleId: READ_ONLY_ROLE_ID, isDeprecatedRoleOnly: true },
+  app: { isCustomApp: true },
 };
 
-const owningApplicationPrincipal: PermissionsPrincipal = {
+const owningApplicationPrincipal: PermissionsPrincipalsContext = {
   workspaceId: 'workspace-id',
-  main: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
-  appRoleId: APPLICATION_ROLE_ID,
+  mainPrincipal: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
+  app: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
 };
 
 const resolveOutcome = ({
@@ -53,7 +52,7 @@ const resolveOutcome = ({
   disabledObjectPermissionActions = [],
   hypotheticalRecordShareAccessLevel,
 }: {
-  principal?: PermissionsPrincipal;
+  principal?: PermissionsPrincipalsContext;
   operationType?: OperationType;
   featureFlagKeys?: FeatureFlagKey[];
   disabledObjectPermissionActions?: typeof flatObjectMetadata.disabledObjectPermissionActions;
@@ -104,8 +103,8 @@ describe('resolvePermissionsRowAccessOutcome', () => {
       resolveOutcome({
         principal: {
           ...readOnlyPrincipal,
-          main: { roleId: 'missing-role' },
-          appRoleId: WORKSPACE_APP_ROLE_ID,
+          mainPrincipal: { roleId: 'missing-role', isDeprecatedRoleOnly: true },
+          app: { isCustomApp: true },
         },
       }),
     ).toBe(false);

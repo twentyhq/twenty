@@ -2,10 +2,8 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { WORKSPACE_APP_ROLE_ID } from 'src/engine/permissions/principal/constants/workspace-app-role-id.constant';
 import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principal/types/application-default-role-maps.type';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
-import { getPermissionsPrincipalRoleIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-role-ids.util';
+import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 
 // TODO(@charlesBochet): members hold Admin, the Standard app's default role (#28667); simplify once they no longer do
 export const getPermissionsPrincipalActingApplicationId = ({
@@ -13,33 +11,32 @@ export const getPermissionsPrincipalActingApplicationId = ({
   flatApplicationMaps,
 }: {
   principal: Pick<
-    PermissionsPrincipal,
-    'main' | 'limitingRoleId' | 'appRoleId'
+    PermissionsPrincipalsContext,
+    'mainPrincipal' | 'limiting' | 'app'
   >;
   flatApplicationMaps: ApplicationDefaultRoleMaps;
 }): string | undefined => {
-  const { main, appRoleId } = principal;
+  const { mainPrincipal, limiting, app } = principal;
+
+  if ('applicationId' in mainPrincipal) {
+    return mainPrincipal.applicationId;
+  }
 
   if (
-    !isDefined(appRoleId) ||
-    appRoleId === WORKSPACE_APP_ROLE_ID ||
-    appRoleId === principal.limitingRoleId ||
-    getPermissionsPrincipalRoleIds(principal).length === 0
+    !('roleId' in app) ||
+    app.roleId === mainPrincipal.roleId ||
+    app.roleId === limiting?.roleId
   ) {
     return undefined;
   }
 
-  if ('applicationId' in main) {
-    return main.applicationId;
-  }
-
-  if (appRoleId === main.roleId) {
-    return undefined;
+  if ('applicationId' in app) {
+    return app.applicationId;
   }
 
   return Object.values(flatApplicationMaps.byId).find(
     (flatApplication) =>
-      flatApplication?.defaultRoleId === appRoleId &&
+      flatApplication?.defaultRoleId === app.roleId &&
       !isDefined(flatApplication.deletedAt),
   )?.id;
 };

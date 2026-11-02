@@ -2,6 +2,7 @@ import {
   type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
 } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
@@ -10,19 +11,19 @@ import { type RolePermissionConfig } from 'src/engine/permissions/principal/type
 import { computeObjectsPermissionsForRoles } from 'src/engine/permissions/role/utils/compute-objects-permissions-for-roles.util';
 import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principal/types/application-default-role-maps.type';
 import { buildPermissionsPrincipalRoles } from 'src/engine/permissions/principal/utils/build-permissions-principal-roles.util';
-import { type PermissionsPrincipalMainActor } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type PermissionsPrincipalActors } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 
 export const getObjectsPermissionsFromRolePermissionConfig = ({
   rolesPermissions,
   rolePermissionConfig,
-  mainActor,
+  actors,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   flatApplicationMaps,
 }: {
   rolesPermissions: ObjectsPermissionsByRoleId;
   rolePermissionConfig: RolePermissionConfig;
-  mainActor: PermissionsPrincipalMainActor | undefined;
+  actors: PermissionsPrincipalActors;
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<OrmFlatFieldMetadata>;
   flatApplicationMaps: ApplicationDefaultRoleMaps;
@@ -31,11 +32,17 @@ export const getObjectsPermissionsFromRolePermissionConfig = ({
     return {};
   }
 
+  const principalRoles = buildPermissionsPrincipalRoles({
+    roleIdsBySource: rolePermissionConfig.intersectionOf,
+    actors,
+  });
+
+  if (!isDefined(principalRoles)) {
+    return {};
+  }
+
   return computeObjectsPermissionsForRoles({
-    principal: buildPermissionsPrincipalRoles({
-      roleIdsBySource: rolePermissionConfig.intersectionOf,
-      mainActor,
-    }),
+    principal: principalRoles,
     rolesPermissions,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,

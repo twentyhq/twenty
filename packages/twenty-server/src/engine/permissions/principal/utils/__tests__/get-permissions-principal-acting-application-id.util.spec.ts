@@ -1,4 +1,3 @@
-import { WORKSPACE_APP_ROLE_ID } from 'src/engine/permissions/principal/constants/workspace-app-role-id.constant';
 import { type ApplicationDefaultRoleMaps } from 'src/engine/permissions/principal/types/application-default-role-maps.type';
 import { getPermissionsPrincipalActingApplicationId } from 'src/engine/permissions/principal/utils/get-permissions-principal-acting-application-id.util';
 
@@ -16,12 +15,12 @@ const flatApplicationMaps: ApplicationDefaultRoleMaps = {
 };
 
 describe('getPermissionsPrincipalActingApplicationId', () => {
-  it('resolves the application a member acts through from its role', () => {
+  it('returns the application a member acts through', () => {
     expect(
       getPermissionsPrincipalActingApplicationId({
         principal: {
-          main: { roleId: 'user-role', workspaceMemberId: 'member-1' },
-          appRoleId: APPLICATION_ROLE_ID,
+          mainPrincipal: { roleId: 'user-role', workspaceMemberId: 'member-1' },
+          app: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
         },
         flatApplicationMaps,
       }),
@@ -32,32 +31,50 @@ describe('getPermissionsPrincipalActingApplicationId', () => {
     expect(
       getPermissionsPrincipalActingApplicationId({
         principal: {
-          main: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
-          appRoleId: APPLICATION_ROLE_ID,
+          mainPrincipal: {
+            roleId: APPLICATION_ROLE_ID,
+            applicationId: APPLICATION_ID,
+          },
+          app: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
         },
         flatApplicationMaps,
       }),
     ).toBe(APPLICATION_ID);
   });
 
-  it('ignores an app role a member also holds', () => {
+  it('looks up the application of a deprecated role-only app', () => {
     expect(
       getPermissionsPrincipalActingApplicationId({
         principal: {
-          main: { roleId: APPLICATION_ROLE_ID, workspaceMemberId: 'member-1' },
-          appRoleId: APPLICATION_ROLE_ID,
+          mainPrincipal: { roleId: 'user-role', isDeprecatedRoleOnly: true },
+          app: { roleId: APPLICATION_ROLE_ID, isDeprecatedRoleOnly: true },
+        },
+        flatApplicationMaps,
+      }),
+    ).toBe(APPLICATION_ID);
+  });
+
+  it('ignores an app role the member also holds', () => {
+    expect(
+      getPermissionsPrincipalActingApplicationId({
+        principal: {
+          mainPrincipal: {
+            roleId: APPLICATION_ROLE_ID,
+            workspaceMemberId: 'member-1',
+          },
+          app: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
         },
         flatApplicationMaps,
       }),
     ).toBeUndefined();
   });
 
-  it('ignores the workspace app', () => {
+  it('ignores the custom app', () => {
     expect(
       getPermissionsPrincipalActingApplicationId({
         principal: {
-          main: { roleId: 'user-role', workspaceMemberId: 'member-1' },
-          appRoleId: WORKSPACE_APP_ROLE_ID,
+          mainPrincipal: { roleId: 'user-role', workspaceMemberId: 'member-1' },
+          app: { isCustomApp: true },
         },
         flatApplicationMaps,
       }),

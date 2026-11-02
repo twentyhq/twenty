@@ -29,7 +29,7 @@ import { WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-
 import { type WorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
 import { buildWorkspaceTableShape } from 'src/engine/twenty-orm/table-shape/utils/build-workspace-table-shape.util';
 import { resolveObjectRecordsPermissions } from 'src/engine/permissions/role/utils/resolve-object-records-permissions.util';
-import { getPermissionsPrincipalMainActor } from 'src/engine/permissions/principal/utils/get-permissions-principal-main-actor.util';
+import { getPermissionsPrincipalActors } from 'src/engine/permissions/principal/utils/get-permissions-principal-actors.util';
 
 const tableShapeCache = new WeakMap<
   FlatEntityMaps<OrmFlatFieldMetadata>,
@@ -212,7 +212,7 @@ export class WorkspaceDataSource {
     const { objectRecordsPermissions, shouldBypassPermissionChecks } =
       resolveObjectRecordsPermissions({
         rolePermissionConfig: repositoryRolePermissionConfig,
-        mainActor: getPermissionsPrincipalMainActor(this.authContext),
+        actors: getPermissionsPrincipalActors(this.authContext),
         objectPermissionsByRoleId: this.objectPermissionsByRoleId,
         flatObjectMetadataMaps: this.internalContext.flatObjectMetadataMaps,
         flatFieldMetadataMaps: this.internalContext.flatFieldMetadataMaps,

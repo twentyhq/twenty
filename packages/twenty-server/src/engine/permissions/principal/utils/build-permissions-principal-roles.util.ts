@@ -2,11 +2,13 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { WORKSPACE_APP_ROLE_ID } from 'src/engine/permissions/principal/constants/workspace-app-role-id.constant';
 import {
-  type PermissionsPrincipal,
-  type PermissionsPrincipalMainActor,
-} from 'src/engine/permissions/principal/types/permissions-principal.type';
+  type PermissionsPrincipalsContext,
+  type PermissionsPrincipalActors,
+  type PermissionsPrincipalApp,
+  type PermissionsPrincipalLimiting,
+  type PermissionsPrincipalMain,
+} from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 import { type RoleIdsBySource } from 'src/engine/permissions/principal/types/role-permission-config.type';
 
 const ACTORLESS_MAIN_ROLE_SOURCES: (keyof RoleIdsBySource)[] = [
@@ -21,7 +23,7 @@ const getMainRoleSource = ({
   mainActor,
   roleIdsBySource,
 }: {
-  mainActor: PermissionsPrincipalMainActor | undefined;
+  mainActor: PermissionsPrincipalActors['main'];
   roleIdsBySource: RoleIdsBySource;
 }): keyof RoleIdsBySource | undefined => {
   if (!isDefined(mainActor)) {
@@ -49,16 +51,55 @@ const getMainRoleSource = ({
   return 'webhookRoleId';
 };
 
-// A source left over once the actor, agent and app are placed would lose its restriction, so it denies
+// TODO(@charlesBochet): an agent or application always needs a role; until then one without counts as the custom app
+const buildLimiting = ({
+  agentRoleId,
+  agentId,
+}: {
+  agentRoleId: string | null | undefined;
+  agentId: string | undefined;
+}): PermissionsPrincipalLimiting | undefined => {
+  if (!isDefined(agentRoleId)) {
+    return undefined;
+  }
+
+  return isDefined(agentId)
+    ? { roleId: agentRoleId, agentId }
+    : { roleId: agentRoleId, isDeprecatedRoleOnly: true };
+};
+
+const buildApp = ({
+  applicationRoleId,
+  applicationId,
+}: {
+  applicationRoleId: string | null | undefined;
+  applicationId: string | undefined;
+}): PermissionsPrincipalApp => {
+  if (!isDefined(applicationRoleId)) {
+    return { isCustomApp: true };
+  }
+
+  return isDefined(applicationId)
+    ? { roleId: applicationRoleId, applicationId }
+    : { roleId: applicationRoleId, isDeprecatedRoleOnly: true };
+};
+
+// undefined denies everything: the main actor has no role, or a source cannot be placed without losing its restriction
 export const buildPermissionsPrincipalRoles = ({
   roleIdsBySource,
-  mainActor,
+  actors,
 }: {
   roleIdsBySource: RoleIdsBySource;
-  mainActor: PermissionsPrincipalMainActor | undefined;
-}): Omit<PermissionsPrincipal, 'workspaceId'> => {
-  const mainRoleSource = getMainRoleSource({ mainActor, roleIdsBySource });
-  const { agentRoleId, applicationRoleId } = roleIdsBySource;
+  actors: PermissionsPrincipalActors;
+}): Omit<PermissionsPrincipalsContext, 'workspaceId'> | undefined => {
+  const mainRoleSource = getMainRoleSource({
+    mainActor: actors.main,
+    roleIdsBySource,
+  });
+
+  if (!isDefined(mainRoleSource)) {
+    return undefined;
+  }
 
   const hasUnplacedSource = Object.entries(roleIdsBySource).some(
     ([source, roleId]) =>
@@ -67,19 +108,28 @@ export const buildPermissionsPrincipalRoles = ({
       source !== 'agentRoleId' &&
       source !== 'applicationRoleId',
   );
+  const mainRoleId = roleIdsBySource[mainRoleSource];
 
-  const mainRoleId = hasUnplacedSource
-    ? null
-    : isDefined(mainRoleSource)
-      ? (roleIdsBySource[mainRoleSource] ?? null)
-      : null;
+  if (hasUnplacedSource || !isDefined(mainRoleId)) {
+    return undefined;
+  }
+
+  const mainPrincipal: PermissionsPrincipalMain = isDefined(actors.main)
+    ? { ...actors.main, roleId: mainRoleId }
+    : { roleId: mainRoleId, isDeprecatedRoleOnly: true };
 
   return {
-    main: { ...mainActor, roleId: mainRoleId },
-    limitingRoleId: mainRoleSource === 'agentRoleId' ? undefined : agentRoleId,
-    appRoleId:
-      applicationRoleId === undefined
-        ? WORKSPACE_APP_ROLE_ID
-        : applicationRoleId,
+    mainPrincipal,
+    limiting:
+      mainRoleSource === 'agentRoleId'
+        ? undefined
+        : buildLimiting({
+            agentRoleId: roleIdsBySource.agentRoleId,
+            agentId: actors.agentId,
+          }),
+    app: buildApp({
+      applicationRoleId: roleIdsBySource.applicationRoleId,
+      applicationId: actors.applicationId,
+    }),
   };
 };

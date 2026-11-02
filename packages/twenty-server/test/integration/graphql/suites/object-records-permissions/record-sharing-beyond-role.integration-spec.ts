@@ -34,7 +34,7 @@ import { type WorkspaceCacheService } from 'src/engine/workspace-cache/services/
 import { type RecordShareStorageService } from 'src/engine/permissions/record-share/services/record-share-storage.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
-import { WORKSPACE_APP_ROLE_ID } from 'src/engine/permissions/principal/constants/workspace-app-role-id.constant';
+import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 
 const OBJECT_NAME = 'beyondRoleRecord';
 const OBJECT_PLURAL = 'beyondRoleRecords';
@@ -255,13 +255,13 @@ describe('Records shared beyond the role that can access their object', () => {
       throw new Error('The object under test is not cached');
     }
 
-    const buildJonyPrincipal = () => ({
+    const buildJonyPrincipal = (): PermissionsPrincipalsContext => ({
       workspaceId,
-      main: {
+      mainPrincipal: {
         roleId: memberRoleId,
         workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
       },
-      appRoleId: WORKSPACE_APP_ROLE_ID,
+      app: { isCustomApp: true },
     });
 
     expect(
@@ -524,11 +524,11 @@ describe('Records shared beyond the role that can access their object', () => {
         })
         .resolveAdmittedRecordIds({
           workspaceId: workspaceId,
-          main: {
+          mainPrincipal: {
             roleId: memberRoleId,
             workspaceMemberId: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
           },
-          appRoleId: WORKSPACE_APP_ROLE_ID,
+          app: { isCustomApp: true },
         });
     };
 

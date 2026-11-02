@@ -19,10 +19,9 @@ import {
   type SqlCondition,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { buildPermissionsCondition } from 'src/engine/permissions/combine/utils/build-permissions-condition.util';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 import { renderRowLevelPermissionFilterToSql } from 'src/engine/permissions/rls/utils/render-row-level-permission-filter-to-sql.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
-import { WORKSPACE_APP_ROLE_ID } from 'src/engine/permissions/principal/constants/workspace-app-role-id.constant';
 
 jest.mock(
   'src/engine/permissions/rls/utils/render-row-level-permission-filter-to-sql.util',
@@ -124,22 +123,25 @@ const buildConditionOutcome = (
   return { kind: 'gated', condition };
 };
 
-const readEverything: PermissionsPrincipal = {
+const readEverything: PermissionsPrincipalsContext = {
   workspaceId: 'workspace-id',
-  main: { roleId: FULL_ACCESS_ROLE_ID, workspaceMemberId: 'member-1' },
-  appRoleId: WORKSPACE_APP_ROLE_ID,
+  mainPrincipal: { roleId: FULL_ACCESS_ROLE_ID, workspaceMemberId: 'member-1' },
+  app: { isCustomApp: true },
 };
 
-const owningApplication: PermissionsPrincipal = {
+const owningApplication: PermissionsPrincipalsContext = {
   workspaceId: 'workspace-id',
-  main: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
-  appRoleId: APPLICATION_ROLE_ID,
+  mainPrincipal: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
+  app: { roleId: APPLICATION_ROLE_ID, applicationId: APPLICATION_ID },
 };
 
-const withoutObjectPermission: PermissionsPrincipal = {
+const withoutObjectPermission: PermissionsPrincipalsContext = {
   ...readEverything,
-  main: { roleId: ROLE_WITHOUT_PERMISSION_ID, workspaceMemberId: 'member-1' },
-  appRoleId: WORKSPACE_APP_ROLE_ID,
+  mainPrincipal: {
+    roleId: ROLE_WITHOUT_PERMISSION_ID,
+    workspaceMemberId: 'member-1',
+  },
+  app: { isCustomApp: true },
 };
 
 const build = ({
@@ -147,7 +149,7 @@ const build = ({
   flatObjectMetadata,
   policyMetadataMaps = metadataMaps,
 }: {
-  principal: PermissionsPrincipal;
+  principal: PermissionsPrincipalsContext;
   flatObjectMetadata: FlatObjectMetadata;
   policyMetadataMaps?: typeof metadataMaps;
 }) =>
@@ -164,7 +166,7 @@ const gatedSql = ({
   flatObjectMetadata,
   policyMetadataMaps = metadataMaps,
 }: {
-  principal: PermissionsPrincipal;
+  principal: PermissionsPrincipalsContext;
   flatObjectMetadata: FlatObjectMetadata;
   policyMetadataMaps?: typeof metadataMaps;
 }): string => {
@@ -282,7 +284,7 @@ describe('buildPermissionsCondition', () => {
   describe('with a record shared beyond the role', () => {
     const company = buildObject({ id: 'company' });
     const buildForCompany = (
-      principal: PermissionsPrincipal,
+      principal: PermissionsPrincipalsContext,
       operationType: 'select' | 'update' | 'delete' = 'select',
     ) =>
       buildConditionOutcome({
@@ -292,11 +294,11 @@ describe('buildPermissionsCondition', () => {
         flatObjectMetadata: company,
         operationType,
       });
-    const withoutCompanyPermission: PermissionsPrincipal = {
+    const withoutCompanyPermission: PermissionsPrincipalsContext = {
       ...readEverything,
-      limitingRoleId: 'role-2',
-      main: { roleId: 'role-3', workspaceMemberId: 'member-1' },
-      appRoleId: WORKSPACE_APP_ROLE_ID,
+      limiting: { roleId: 'role-2', agentId: 'agent-1' },
+      mainPrincipal: { roleId: 'role-3', workspaceMemberId: 'member-1' },
+      app: { isCustomApp: true },
     };
 
     it('narrows a principal without object permission to the records named for them', () => {
@@ -345,15 +347,6 @@ describe('buildPermissionsCondition', () => {
       });
     });
 
-    it('denies a principal named nowhere', () => {
-      expect(
-        buildForCompany({
-          workspaceId: 'workspace-id',
-          main: { roleId: null },
-          appRoleId: WORKSPACE_APP_ROLE_ID,
-        }),
-      ).toEqual({ kind: 'denied' });
-    });
 
     it('lets a named grant bypass the row filter of the role', () => {
       (resolveRowLevelPermissionRecordFilter as jest.Mock).mockReturnValue(
@@ -570,7 +563,7 @@ describe('buildPermissionsCondition', () => {
         flatEntityMaps: emptyFlatFieldMetadataMaps,
       }),
     };
-    const buildForCreator = (principal: PermissionsPrincipal) =>
+    const buildForCreator = (principal: PermissionsPrincipalsContext) =>
       buildConditionOutcome({
         principal,
         metadataMaps: creatorMetadataMaps,

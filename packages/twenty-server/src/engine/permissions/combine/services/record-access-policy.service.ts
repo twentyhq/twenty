@@ -15,7 +15,7 @@ import {
   type PermissionsMetadataMaps,
   type PermissionsObjectAccessRequest,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 import { getPermissionsPrincipalShareKeys } from 'src/engine/permissions/principal/utils/get-permissions-principal-share-keys.util';
 import { resolvePermissionsShareGrant } from 'src/engine/permissions/record-share/utils/resolve-permissions-share-grant.util';
 import { isObjectOperationDeniedToPrincipal } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principal.util';
@@ -35,12 +35,12 @@ import { type WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/typ
 @Injectable()
 export class RecordAccessPolicyService {
   private readonly metadataMapsByPrincipal = new WeakMap<
-    PermissionsPrincipal,
+    PermissionsPrincipalsContext,
     Promise<PermissionsMetadataMaps>
   >();
 
   private readonly sharedAccessLevelsByPrincipal = new WeakMap<
-    PermissionsPrincipal,
+    PermissionsPrincipalsContext,
     Promise<Map<string, RecordShareAccessLevel[]>>
   >();
 
@@ -300,7 +300,7 @@ export class RecordAccessPolicyService {
   }
 
   private findPrincipalMetadataMaps(
-    principal: PermissionsPrincipal,
+    principal: PermissionsPrincipalsContext,
   ): Promise<PermissionsMetadataMaps> {
     const cachedMetadataMaps = this.metadataMapsByPrincipal.get(principal);
 
@@ -318,7 +318,7 @@ export class RecordAccessPolicyService {
   }
 
   private findSharedAccessLevelsByObjectMetadataId(
-    principal: PermissionsPrincipal,
+    principal: PermissionsPrincipalsContext,
   ): Promise<Map<string, RecordShareAccessLevel[]>> {
     const cachedSharedAccessLevels =
       this.sharedAccessLevelsByPrincipal.get(principal);

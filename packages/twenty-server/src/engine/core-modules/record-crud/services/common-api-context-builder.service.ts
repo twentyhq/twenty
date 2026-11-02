@@ -18,8 +18,8 @@ import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { buildObjectIdByNameMaps } from 'src/engine/metadata-modules/flat-object-metadata/utils/build-object-id-by-name-maps.util';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
-import { getPermissionsPrincipalMainActor } from 'src/engine/permissions/principal/utils/get-permissions-principal-main-actor.util';
+import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import { getPermissionsPrincipalActors } from 'src/engine/permissions/principal/utils/get-permissions-principal-actors.util';
 import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { resolveRolePermissionConfig } from 'src/engine/permissions/principal/utils/resolve-role-permission-config.util';
@@ -33,7 +33,7 @@ export type CommonApiContext = {
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
   objectsPermissions: ObjectsPermissions;
-  principal: PermissionsPrincipal | undefined;
+  principal: PermissionsPrincipalsContext | undefined;
 };
 
 @Injectable()
@@ -141,7 +141,7 @@ export class CommonApiContextBuilderService {
     rolePermissionConfig?: RolePermissionConfig;
   }): Promise<{
     objectsPermissions: ObjectsPermissions;
-    principal: PermissionsPrincipal | undefined;
+    principal: PermissionsPrincipalsContext | undefined;
   }> {
     const {
       rolesPermissions,
@@ -184,7 +184,7 @@ export class CommonApiContextBuilderService {
       objectsPermissions: getObjectsPermissionsFromRolePermissionConfig({
         rolesPermissions,
         rolePermissionConfig: resolvedRolePermissionConfig,
-        mainActor: getPermissionsPrincipalMainActor(authContext),
+        actors: getPermissionsPrincipalActors(authContext),
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatApplicationMaps,
@@ -192,7 +192,7 @@ export class CommonApiContextBuilderService {
       principal: buildPermissionsPrincipal({
         workspaceId: authContext.workspace.id,
         rolePermissionConfig: resolvedRolePermissionConfig,
-        mainActor: getPermissionsPrincipalMainActor(authContext),
+        actors: getPermissionsPrincipalActors(authContext),
       }),
     };
   }

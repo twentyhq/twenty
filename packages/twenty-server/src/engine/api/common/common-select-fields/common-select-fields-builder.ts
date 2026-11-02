@@ -18,7 +18,7 @@ import { findManyFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metada
 import { type OrmFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/orm-flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 
 @Injectable()
 export class CommonSelectFieldsBuilder {
@@ -32,7 +32,7 @@ export class CommonSelectFieldsBuilder {
     objectsPermissions,
     flatObjectMetadataMaps,
   }: {
-    principal: PermissionsPrincipal | undefined;
+    principal: PermissionsPrincipalsContext | undefined;
     objectsPermissions: ObjectsPermissions;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
   }): Promise<Set<string>> {

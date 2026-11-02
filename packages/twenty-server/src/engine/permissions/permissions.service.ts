@@ -31,7 +31,6 @@ import {
 import { buildAgentRoleIdsBySource } from 'src/engine/permissions/principal/utils/build-agent-role-ids-by-source.util';
 import { buildUserRoleIdsBySource } from 'src/engine/permissions/principal/utils/build-user-role-ids-by-source.util';
 import { getRoleIdsToIntersect } from 'src/engine/permissions/principal/utils/get-role-ids-to-intersect.util';
-import { WORKSPACE_APP_ROLE_ID } from 'src/engine/permissions/principal/constants/workspace-app-role-id.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -87,8 +86,8 @@ export class PermissionsService {
       permissionFlags,
       objectsPermissions: computeObjectsPermissionsForRoles({
         principal: {
-          main: { roleId: flatRole.id },
-          appRoleId: WORKSPACE_APP_ROLE_ID,
+          mainPrincipal: { roleId: flatRole.id, isDeprecatedRoleOnly: true },
+          app: { isCustomApp: true },
         },
         rolesPermissions,
         flatObjectMetadataMaps,

@@ -9,7 +9,6 @@ import { type PermissionsObjectAccessRequest } from 'src/engine/permissions/comb
 import { hasAccessToAllRecords } from 'src/engine/permissions/combine/utils/has-access-to-all-records.util';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
 import { type OperationType } from 'src/engine/permissions/role/utils/validate-operation-is-permitted-or-throw.util';
-import { WORKSPACE_APP_ROLE_ID } from 'src/engine/permissions/principal/constants/workspace-app-role-id.constant';
 
 jest.mock(
   'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util',
@@ -54,10 +53,16 @@ const hasAccess = ({
       workspaceId: 'workspace-id',
       ...(isDefined(APPLICATION_ID_BY_ROLE_ID[roleId])
         ? {
-            main: { roleId, applicationId: APPLICATION_ID_BY_ROLE_ID[roleId] },
-            appRoleId: roleId,
+            mainPrincipal: {
+              roleId,
+              applicationId: APPLICATION_ID_BY_ROLE_ID[roleId],
+            },
+            app: { roleId, applicationId: APPLICATION_ID_BY_ROLE_ID[roleId] },
           }
-        : { main: { roleId }, appRoleId: WORKSPACE_APP_ROLE_ID }),
+        : {
+            mainPrincipal: { roleId, workspaceMemberId: 'member-1' },
+            app: { isCustomApp: true },
+          }),
     },
     metadataMaps: {
       flatFieldMetadataMaps: createEmptyFlatEntityMaps(),

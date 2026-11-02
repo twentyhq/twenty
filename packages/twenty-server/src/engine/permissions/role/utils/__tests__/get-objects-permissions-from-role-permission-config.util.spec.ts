@@ -14,7 +14,13 @@ import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type RoleIdsBySource } from 'src/engine/permissions/principal/types/role-permission-config.type';
-import { type PermissionsPrincipalMainActor } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type PermissionsPrincipalActors } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+
+const NO_ACTORS: PermissionsPrincipalActors = {
+  main: undefined,
+  agentId: undefined,
+  applicationId: undefined,
+};
 
 const OBJECT_ID = 'object-1';
 
@@ -59,7 +65,7 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
   it('should resolve a single role unchanged', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
-        mainActor: undefined,
+        actors: NO_ACTORS,
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
@@ -74,7 +80,7 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
   it('should resolve a role held by several sources as that role alone', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
-        mainActor: undefined,
+        actors: NO_ACTORS,
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
@@ -92,7 +98,7 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
   it('should intersect every role when several are provided', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
-        mainActor: undefined,
+        actors: NO_ACTORS,
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
@@ -110,7 +116,7 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
   it('should not grant a permission that only one of the roles allows', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
-        mainActor: undefined,
+        actors: NO_ACTORS,
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
@@ -128,7 +134,7 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
   it('should deny when one of the intersected roles is missing from the cache', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
-        mainActor: undefined,
+        actors: NO_ACTORS,
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
@@ -146,7 +152,7 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
   it('should return empty permissions when bypassing checks', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
-        mainActor: undefined,
+        actors: NO_ACTORS,
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
@@ -159,7 +165,7 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
   it('should return empty permissions when the role is missing from the cache', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
-        mainActor: undefined,
+        actors: NO_ACTORS,
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
@@ -171,18 +177,18 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
     ).toEqual({});
   });
 
-  it('should deny when an actor takes part without a role', () => {
+  it('should deny when the main actor has no role', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
-        mainActor: undefined,
+        actors: NO_ACTORS,
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
         flatApplicationMaps: EMPTY_APPLICATION_DEFAULT_ROLE_MAPS,
         rolePermissionConfig: {
           intersectionOf: {
-            agentRoleId: null,
-            userWorkspaceRoleId: 'agent-role-id',
+            agentRoleId: 'agent-role-id',
+            userWorkspaceRoleId: null,
           },
         },
       }),
@@ -192,7 +198,7 @@ describe('getObjectsPermissionsFromRolePermissionConfig', () => {
   it('should deny when no actor restricts the call', () => {
     expect(
       getObjectsPermissionsFromRolePermissionConfig({
-        mainActor: undefined,
+        actors: NO_ACTORS,
         rolesPermissions,
         flatObjectMetadataMaps: EMPTY_FLAT_OBJECT_METADATA_MAPS,
         flatFieldMetadataMaps: EMPTY_FLAT_FIELD_METADATA_MAPS,
@@ -267,31 +273,47 @@ const disabledActionRolesPermissions = Object.fromEntries(
 describe('getObjectsPermissionsFromRolePermissionConfig disabled actions', () => {
   it.each<{
     actor: string;
-    mainActor: PermissionsPrincipalMainActor;
+    actors: PermissionsPrincipalActors;
     intersectionOf: RoleIdsBySource;
     canDestroy: boolean;
   }>([
     {
       actor: 'the owning application',
-      mainActor: { applicationId: 'owning-application-id' },
+      actors: {
+        main: { applicationId: 'owning-application-id' },
+        agentId: undefined,
+        applicationId: 'owning-application-id',
+      },
       intersectionOf: { applicationRoleId: 'owning-application-role-id' },
       canDestroy: true,
     },
     {
       actor: 'another application',
-      mainActor: { applicationId: 'other-application-id' },
+      actors: {
+        main: { applicationId: 'other-application-id' },
+        agentId: undefined,
+        applicationId: 'other-application-id',
+      },
       intersectionOf: { applicationRoleId: 'other-application-role-id' },
       canDestroy: false,
     },
     {
       actor: 'a user',
-      mainActor: { workspaceMemberId: 'member-id' },
+      actors: {
+        main: { workspaceMemberId: 'member-id' },
+        agentId: undefined,
+        applicationId: undefined,
+      },
       intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
       canDestroy: false,
     },
     {
       actor: 'a user through the owning application',
-      mainActor: { workspaceMemberId: 'member-id' },
+      actors: {
+        main: { workspaceMemberId: 'member-id' },
+        agentId: undefined,
+        applicationId: 'owning-application-id',
+      },
       intersectionOf: {
         userWorkspaceRoleId: 'user-role-id',
         applicationRoleId: 'owning-application-role-id',
@@ -300,25 +322,41 @@ describe('getObjectsPermissionsFromRolePermissionConfig disabled actions', () =>
     },
     {
       actor: "a user holding the owning application's default role",
-      mainActor: { workspaceMemberId: 'member-id' },
+      actors: {
+        main: { workspaceMemberId: 'member-id' },
+        agentId: undefined,
+        applicationId: undefined,
+      },
       intersectionOf: { userWorkspaceRoleId: 'owning-application-role-id' },
       canDestroy: false,
     },
     {
       actor: "an API key holding the owning application's default role",
-      mainActor: { apiKeyId: 'api-key-id' },
+      actors: {
+        main: { apiKeyId: 'api-key-id' },
+        agentId: undefined,
+        applicationId: undefined,
+      },
       intersectionOf: { apiKeyRoleId: 'owning-application-role-id' },
       canDestroy: false,
     },
     {
       actor: "an agent holding the owning application's default role",
-      mainActor: { agentId: 'agent-id' },
+      actors: {
+        main: { agentId: 'agent-id' },
+        agentId: undefined,
+        applicationId: undefined,
+      },
       intersectionOf: { agentRoleId: 'owning-application-role-id' },
       canDestroy: false,
     },
     {
       actor: 'the owning application with a user holding its default role',
-      mainActor: { workspaceMemberId: 'member-id' },
+      actors: {
+        main: { workspaceMemberId: 'member-id' },
+        agentId: undefined,
+        applicationId: 'owning-application-id',
+      },
       intersectionOf: {
         userWorkspaceRoleId: 'owning-application-role-id',
         applicationRoleId: 'owning-application-role-id',
@@ -327,10 +365,10 @@ describe('getObjectsPermissionsFromRolePermissionConfig disabled actions', () =>
     },
   ])(
     'disabled actions allowed for $actor: $canDestroy',
-    ({ mainActor, intersectionOf, canDestroy }) => {
+    ({ actors, intersectionOf, canDestroy }) => {
       const invoicePermissions = getObjectsPermissionsFromRolePermissionConfig({
         rolePermissionConfig: { intersectionOf },
-        mainActor,
+        actors,
         rolesPermissions: disabledActionRolesPermissions,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
@@ -407,7 +445,7 @@ describe('getObjectsPermissionsFromRolePermissionConfig disabled actions', () =>
     }
 
     const objectsPermissions = getObjectsPermissionsFromRolePermissionConfig({
-      mainActor: undefined,
+      actors: NO_ACTORS,
       rolePermissionConfig: {
         intersectionOf: { userWorkspaceRoleId: 'user-role-id' },
       },

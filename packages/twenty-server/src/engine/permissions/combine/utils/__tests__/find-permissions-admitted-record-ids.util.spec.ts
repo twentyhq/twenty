@@ -18,11 +18,10 @@ import {
   type RowAccessRecord,
 } from 'src/engine/permissions/combine/types/row-access-policy.type';
 import { findPermissionsAdmittedRecordIds } from 'src/engine/permissions/combine/utils/find-permissions-admitted-record-ids.util';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
 import { type PrivateRecordState } from 'src/engine/permissions/private-record/types/private-record-state.type';
 import { type RecordShareGrant } from 'src/engine/permissions/record-share/types/record-share-grant.type';
-import { WORKSPACE_APP_ROLE_ID } from 'src/engine/permissions/principal/constants/workspace-app-role-id.constant';
 
 jest.mock(
   'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util',
@@ -100,22 +99,22 @@ const fullAccess = {
   rowLevelPermissionPredicateGroups: [],
 };
 
-const rolePrincipal: PermissionsPrincipal = {
+const rolePrincipal: PermissionsPrincipalsContext = {
   workspaceId: 'workspace-id',
-  main: { roleId: MEMBER_ROLE_ID },
-  appRoleId: WORKSPACE_APP_ROLE_ID,
+  mainPrincipal: { roleId: MEMBER_ROLE_ID, isDeprecatedRoleOnly: true },
+  app: { isCustomApp: true },
 };
 
-const memberPrincipal: PermissionsPrincipal = {
+const memberPrincipal: PermissionsPrincipalsContext = {
   ...rolePrincipal,
-  main: { roleId: MEMBER_ROLE_ID, workspaceMemberId: MEMBER_ID },
-  appRoleId: WORKSPACE_APP_ROLE_ID,
+  mainPrincipal: { roleId: MEMBER_ROLE_ID, workspaceMemberId: MEMBER_ID },
+  app: { isCustomApp: true },
 };
 
-const deniedPrincipal: PermissionsPrincipal = {
+const deniedPrincipal: PermissionsPrincipalsContext = {
   ...memberPrincipal,
-  main: { roleId: 'missing-role', workspaceMemberId: MEMBER_ID },
-  appRoleId: WORKSPACE_APP_ROLE_ID,
+  mainPrincipal: { roleId: 'missing-role', workspaceMemberId: MEMBER_ID },
+  app: { isCustomApp: true },
 };
 
 const filterByStatus = (status: string) =>
@@ -138,7 +137,7 @@ const findAdmitted = ({
   featureFlagKeys = [FeatureFlagKey.IS_PRIVATE_RECORD_ENABLED],
   context = buildContext(),
 }: {
-  principal: PermissionsPrincipal;
+  principal: PermissionsPrincipalsContext;
   featureFlagKeys?: FeatureFlagKey[];
   context?: RowAccessEvaluationContext;
 }) =>

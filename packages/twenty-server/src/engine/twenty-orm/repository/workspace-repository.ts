@@ -54,7 +54,7 @@ import {
   getUpdateEventRecords,
   mergeRecordsWithUpdateValues,
 } from 'src/engine/twenty-orm/utils/merge-records-with-update-values.util';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { resolveRowLevelPermissionRecordFilter } from 'src/engine/permissions/rls/utils/resolve-row-level-permission-record-filter.util';
 import { validateRLSPredicatesForRecords } from 'src/engine/permissions/rls/utils/validate-rls-predicates-for-records.util';
@@ -108,7 +108,7 @@ import {
   type WorkspaceRelationShape,
   type WorkspaceTableShape,
 } from 'src/engine/twenty-orm/table-shape/types/workspace-table-shape.type';
-import { getPermissionsPrincipalMainActor } from 'src/engine/permissions/principal/utils/get-permissions-principal-main-actor.util';
+import { getPermissionsPrincipalActors } from 'src/engine/permissions/principal/utils/get-permissions-principal-actors.util';
 import { buildPermissionsPrincipal } from 'src/engine/permissions/principal/utils/build-permissions-principal.util';
 
 const ALWAYS_FALSE_CONDITION = '1=0';
@@ -161,7 +161,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
 
   private _filesFieldSync?: FilesFieldSync;
 
-  private permissionsPrincipal?: PermissionsPrincipal;
+  private permissionsPrincipal?: PermissionsPrincipalsContext;
 
   private permissionsMetadataMaps?: PermissionsMetadataMaps;
 
@@ -2183,7 +2183,7 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     operationType,
     hypotheticalRecordShareAccessLevel,
   }: {
-    principal: PermissionsPrincipal;
+    principal: PermissionsPrincipalsContext;
     recordIds: string[];
     operationType: OperationType;
     hypotheticalRecordShareAccessLevel?: RecordShareAccessLevel;
@@ -2291,16 +2291,21 @@ export class WorkspaceRepository<TEntity extends ObjectLiteral = ObjectRecord> {
     });
   }
 
-  private resolvePermissionsPrincipal(): PermissionsPrincipal {
-    return (this.permissionsPrincipal ??= buildPermissionsPrincipal({
+  private resolvePermissionsPrincipal(): PermissionsPrincipalsContext {
+    this.permissionsPrincipal ??= buildPermissionsPrincipal({
       workspaceId: this.options.internalContext.workspaceId,
       rolePermissionConfig: this.options.rolePermissionConfig,
-      mainActor: getPermissionsPrincipalMainActor(this.options.authContext),
-    }) ?? {
-      workspaceId: this.options.internalContext.workspaceId,
-      main: { roleId: null },
-      appRoleId: null,
+      actors: getPermissionsPrincipalActors(this.options.authContext),
     });
+
+    if (!isDefined(this.permissionsPrincipal)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.PERMISSION_DENIED,
+        PermissionsExceptionCode.PERMISSION_DENIED,
+      );
+    }
+
+    return this.permissionsPrincipal;
   }
 
   private resolvePermissionsMetadataMaps(): PermissionsMetadataMaps {

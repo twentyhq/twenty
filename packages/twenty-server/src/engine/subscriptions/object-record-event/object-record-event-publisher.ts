@@ -48,9 +48,9 @@ import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/permi
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
 import {
-  type PermissionsPrincipal,
-  type PermissionsPrincipalMainActor,
-} from 'src/engine/permissions/principal/types/permissions-principal.type';
+  type PermissionsPrincipalsContext,
+  type PermissionsPrincipalActors,
+} from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 import { buildUserRoleIdsBySource } from 'src/engine/permissions/principal/utils/build-user-role-ids-by-source.util';
 import { getRoleIdsToIntersect } from 'src/engine/permissions/principal/utils/get-role-ids-to-intersect.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -209,15 +209,16 @@ export class ObjectRecordEventPublisher {
       }),
     };
 
-    const principal: PermissionsPrincipal = buildPermissionsPrincipal({
+    const principal = buildPermissionsPrincipal({
       workspaceId: workspaceEventBatch.workspaceId,
       rolePermissionConfig,
-      mainActor: this.resolveSubscriberMainActor(subscriberAuthContext),
-    }) ?? {
-      workspaceId: workspaceEventBatch.workspaceId,
-      main: { roleId: null },
-      appRoleId: null,
-    };
+      actors: this.resolveSubscriberActors(subscriberAuthContext),
+    });
+
+    if (!isDefined(principal)) {
+      return;
+    }
+
     const admittedRecordIds =
       await eventRecordAccessGate.resolveAdmittedRecordIds(principal);
 
@@ -323,7 +324,7 @@ export class ObjectRecordEventPublisher {
     events: ObjectRecordEvent[];
     workspaceId: string;
     rolePermissionConfig: RolePermissionConfig;
-    principal: PermissionsPrincipal;
+    principal: PermissionsPrincipalsContext;
     objectsPermissions: ObjectsPermissions;
   }) {
     const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
@@ -359,10 +360,13 @@ export class ObjectRecordEventPublisher {
         await this.commonSelectFieldsBuilder.findReadableObjectMetadataIds({
           principal: {
             ...principal,
-            main:
-              'workspaceMemberId' in principal.main
-                ? { roleId: principal.main.roleId }
-                : principal.main,
+            mainPrincipal:
+              'workspaceMemberId' in principal.mainPrincipal
+                ? {
+                    roleId: principal.mainPrincipal.roleId,
+                    isDeprecatedRoleOnly: true,
+                  }
+                : principal.mainPrincipal,
           },
           objectsPermissions,
           flatObjectMetadataMaps,
@@ -490,22 +494,21 @@ export class ObjectRecordEventPublisher {
   }
 
   // A stream created before the member id was stored only carries the user id
-  private resolveSubscriberMainActor(
+  private resolveSubscriberActors(
     subscriberAuthContext: SerializableAuthContext,
-  ): PermissionsPrincipalMainActor | undefined {
-    if (isDefined(subscriberAuthContext.workspaceMemberId)) {
-      return { workspaceMemberId: subscriberAuthContext.workspaceMemberId };
-    }
+  ): PermissionsPrincipalActors {
+    const { workspaceMemberId, apiKeyId, applicationId } =
+      subscriberAuthContext;
 
-    if (isDefined(subscriberAuthContext.apiKeyId)) {
-      return { apiKeyId: subscriberAuthContext.apiKeyId };
-    }
+    const main = isDefined(workspaceMemberId)
+      ? { workspaceMemberId }
+      : isDefined(apiKeyId)
+        ? { apiKeyId }
+        : isDefined(applicationId)
+          ? { applicationId }
+          : undefined;
 
-    if (isDefined(subscriberAuthContext.applicationId)) {
-      return { applicationId: subscriberAuthContext.applicationId };
-    }
-
-    return undefined;
+    return { main, agentId: undefined, applicationId };
   }
 
   private resolveSubscriberWorkspaceMemberId({

@@ -2,27 +2,20 @@
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { WORKSPACE_APP_ROLE_ID } from 'src/engine/permissions/principal/constants/workspace-app-role-id.constant';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 
 // The limiting role comes first: the intersection keeps the first role's row-level predicates
 export const getPermissionsPrincipalRoleIds = (
   principal: Pick<
-    PermissionsPrincipal,
-    'main' | 'limitingRoleId' | 'appRoleId'
+    PermissionsPrincipalsContext,
+    'mainPrincipal' | 'limiting' | 'app'
   >,
-): string[] => {
-  const slotRoleIds = [
-    principal.limitingRoleId,
-    principal.main.roleId,
-    principal.appRoleId === WORKSPACE_APP_ROLE_ID
-      ? undefined
-      : principal.appRoleId,
-  ];
-
-  if (slotRoleIds.includes(null)) {
-    return [];
-  }
-
-  return [...new Set(slotRoleIds.filter(isDefined))];
-};
+): string[] => [
+  ...new Set(
+    [
+      principal.limiting?.roleId,
+      principal.mainPrincipal.roleId,
+      'roleId' in principal.app ? principal.app.roleId : undefined,
+    ].filter(isDefined),
+  ),
+];

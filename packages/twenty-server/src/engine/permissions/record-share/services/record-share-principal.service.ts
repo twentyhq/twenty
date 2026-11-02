@@ -7,7 +7,7 @@ import { RecordSharePrincipalType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { RecordAccessPolicyService } from 'src/engine/permissions/combine/services/record-access-policy.service';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 import { isRolePermittingOperation } from 'src/engine/permissions/role/utils/is-role-permitting-operation.util';
 import {
   RecordShareException,
@@ -16,7 +16,6 @@ import {
 import { type RecordShareInput } from 'src/engine/permissions/record-share/types/record-share-input.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { type WorkspaceTransactionScope } from 'src/engine/twenty-orm/types/workspace-transaction-scope.type';
-import { WORKSPACE_APP_ROLE_ID } from 'src/engine/permissions/principal/constants/workspace-app-role-id.constant';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type RecordSharePrincipal = Pick<
@@ -125,10 +124,10 @@ export class RecordSharePrincipalService {
         continue;
       }
 
-      const rolePrincipal: PermissionsPrincipal = {
+      const rolePrincipal: PermissionsPrincipalsContext = {
         workspaceId,
-        main: { roleId },
-        appRoleId: WORKSPACE_APP_ROLE_ID,
+        mainPrincipal: { roleId, isDeprecatedRoleOnly: true },
+        app: { isCustomApp: true },
       };
 
       if (
@@ -157,8 +156,8 @@ export class RecordSharePrincipalService {
       const hasGrant = await this.recordAccessPolicyService.hasAccessToRecords({
         principal: {
           workspaceId,
-          main: { roleId, workspaceMemberId: principal.principalId },
-          appRoleId: WORKSPACE_APP_ROLE_ID,
+          mainPrincipal: { roleId, workspaceMemberId: principal.principalId },
+          app: { isCustomApp: true },
         },
         flatObjectMetadata,
         operationType: 'select',

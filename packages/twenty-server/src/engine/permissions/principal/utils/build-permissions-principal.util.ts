@@ -1,28 +1,32 @@
 /* @license Enterprise */
 
 import {
-  type PermissionsPrincipal,
-  type PermissionsPrincipalMainActor,
-} from 'src/engine/permissions/principal/types/permissions-principal.type';
+  type PermissionsPrincipalsContext,
+  type PermissionsPrincipalActors,
+} from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 import { type RolePermissionConfig } from 'src/engine/permissions/principal/types/role-permission-config.type';
 import { buildPermissionsPrincipalRoles } from 'src/engine/permissions/principal/utils/build-permissions-principal-roles.util';
 
-// undefined when the config bypasses permission checks
+// undefined when the config bypasses permission checks or denies everything
 export const buildPermissionsPrincipal = ({
   workspaceId,
   rolePermissionConfig,
-  mainActor,
+  actors,
 }: {
   workspaceId: string;
   rolePermissionConfig: RolePermissionConfig;
-  mainActor: PermissionsPrincipalMainActor | undefined;
-}): PermissionsPrincipal | undefined =>
-  'intersectionOf' in rolePermissionConfig
-    ? {
-        workspaceId,
-        ...buildPermissionsPrincipalRoles({
-          roleIdsBySource: rolePermissionConfig.intersectionOf,
-          mainActor,
-        }),
-      }
-    : undefined;
+  actors: PermissionsPrincipalActors;
+}): PermissionsPrincipalsContext | undefined => {
+  if (!('intersectionOf' in rolePermissionConfig)) {
+    return undefined;
+  }
+
+  const principalRoles = buildPermissionsPrincipalRoles({
+    roleIdsBySource: rolePermissionConfig.intersectionOf,
+    actors,
+  });
+
+  return principalRoles === undefined
+    ? undefined
+    : { workspaceId, ...principalRoles };
+};

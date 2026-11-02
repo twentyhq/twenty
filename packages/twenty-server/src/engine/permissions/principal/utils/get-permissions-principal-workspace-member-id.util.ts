@@ -1,10 +1,10 @@
 /* @license Enterprise */
 
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 
 export const getPermissionsPrincipalWorkspaceMemberId = (
-  principal: Pick<PermissionsPrincipal, 'main'>,
+  principal: Pick<PermissionsPrincipalsContext, 'mainPrincipal'>,
 ): string | undefined =>
-  'workspaceMemberId' in principal.main
-    ? principal.main.workspaceMemberId
+  'workspaceMemberId' in principal.mainPrincipal
+    ? principal.mainPrincipal.workspaceMemberId
     : undefined;
