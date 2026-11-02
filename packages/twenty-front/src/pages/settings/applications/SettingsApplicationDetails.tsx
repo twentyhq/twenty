@@ -5,7 +5,6 @@ import { useInstalledBuiltInAccountApp } from '@/settings/applications/hooks/use
 import { useUninstallApplication } from '@/settings/applications/hooks/useUninstallApplication';
 import { getDisplayedWorkspaceApplicationVariables } from '@/settings/applications/utils/getDisplayedWorkspaceApplicationVariables';
 import { getSettingsMenuItemsForScope } from '@/settings/applications/utils/getSettingsMenuItemsForScope';
-import { APPLICATION_VARIABLES_TAB_ID } from '@/settings/applications/constants/ApplicationVariablesTabId';
 import { getApplicationConfigurationTabId } from '@/settings/applications/utils/getApplicationConfigurationTabId';
 import { getSettingsMenuItemLegacyTabIdRedirect } from '@/settings/applications/utils/getSettingsMenuItemLegacyTabIdRedirect';
 import { getSettingsMenuItemTabId } from '@/settings/applications/utils/getSettingsMenuItemTabId';
@@ -22,7 +21,10 @@ import {
   useNavigate,
   useParams,
 } from 'react-router-dom';
-import { SETTINGS_GENERAL_TAB_ID } from 'twenty-shared/application';
+import {
+  SETTINGS_GENERAL_TAB_ID,
+  SETTINGS_VARIABLES_TAB_ID,
+} from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import {
   getSettingsPath,
@@ -202,7 +204,7 @@ export const SettingsApplicationDetails = () => {
     ...(hasVariablesTab
       ? [
           {
-            id: APPLICATION_VARIABLES_TAB_ID,
+            id: SETTINGS_VARIABLES_TAB_ID,
             title: t`Variables`,
             Icon: IconVariable,
           },
@@ -306,7 +308,7 @@ export const SettingsApplicationDetails = () => {
             uninstallProgress={uninstallProgress}
           />
         );
-      case APPLICATION_VARIABLES_TAB_ID:
+      case SETTINGS_VARIABLES_TAB_ID:
         return (
           <SettingsApplicationDetailVariablesTab
             applicationVariables={draftApplicationVariables}
@@ -371,7 +373,7 @@ export const SettingsApplicationDetails = () => {
         tabListComponentInstanceId={APPLICATION_DETAIL_ID}
         tabListAriaLabel={t`Application details`}
         actionButton={
-          activeTabId === APPLICATION_VARIABLES_TAB_ID ? (
+          activeTabId === SETTINGS_VARIABLES_TAB_ID ? (
             <Button
               startIcon={<IconDeviceFloppy />}
               variant="solid"

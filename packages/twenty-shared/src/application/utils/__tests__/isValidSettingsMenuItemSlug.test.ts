@@ -1,7 +1,5 @@
-import {
-  isValidSettingsMenuItemSlug,
-  SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH,
-} from '@/application/utils/isValidSettingsMenuItemSlug';
+import { SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH } from '@/application/constants/SettingsMenuItemSlugMaxLength';
+import { isValidSettingsMenuItemSlug } from '@/application/utils/isValidSettingsMenuItemSlug';
 
 describe('isValidSettingsMenuItemSlug', () => {
   it.each(['sync', 'sync-settings', 'v2', 'a-1-b'])(

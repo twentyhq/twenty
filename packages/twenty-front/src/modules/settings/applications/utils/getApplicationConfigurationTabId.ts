@@ -1,4 +1,4 @@
-import { APPLICATION_VARIABLES_TAB_ID } from '@/settings/applications/constants/ApplicationVariablesTabId';
+import { SETTINGS_VARIABLES_TAB_ID } from 'twenty-shared/application';
 import { getSettingsMenuItemTabId } from '@/settings/applications/utils/getSettingsMenuItemTabId';
 import { isDefined } from 'twenty-shared/utils';
 import { type SettingsMenuItem } from '~/generated-metadata/graphql';
@@ -11,7 +11,7 @@ export const getApplicationConfigurationTabId = ({
   settingsMenuItems: Pick<SettingsMenuItem, 'universalIdentifier' | 'slug'>[];
 }): string | undefined => {
   if (hasVariablesTab) {
-    return APPLICATION_VARIABLES_TAB_ID;
+    return SETTINGS_VARIABLES_TAB_ID;
   }
 
   const firstSettingsMenuItem = settingsMenuItems.at(0);

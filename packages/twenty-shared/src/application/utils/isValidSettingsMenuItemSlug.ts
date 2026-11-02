@@ -1,4 +1,4 @@
-export const SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH = 64;
+import { SETTINGS_MENU_ITEM_SLUG_MAX_LENGTH } from '@/application/constants/SettingsMenuItemSlugMaxLength';
 
 const SETTINGS_MENU_ITEM_SLUG_PATTERN = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
