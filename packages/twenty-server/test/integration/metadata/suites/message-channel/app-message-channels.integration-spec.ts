@@ -50,6 +50,16 @@ const CREATE_CHANNEL_MUTATION = gql`
   }
 `;
 
+const GET_MESSAGE_THREAD_CHANNEL_QUERY = gql`
+  query GetMessageThreadChannel($messageThreadId: UUID!) {
+    getMessageThreadChannel(messageThreadId: $messageThreadId) {
+      type
+      provider
+      applicationId
+    }
+  }
+`;
+
 const GET_TIMELINE_THREADS_QUERY = gql`
   query GetTimelineThreadsFromObjectRecord(
     $objectNameSingular: String!
@@ -859,6 +869,20 @@ describe('app message channels API (e2e)', () => {
             },
           },
         ]);
+
+        const threadChannelResponse = await makeGraphqlApiRequest({
+          query: GET_MESSAGE_THREAD_CHANNEL_QUERY,
+          variables: { messageThreadId },
+        });
+
+        expect(threadChannelResponse.body.errors).toBeUndefined();
+        expect(threadChannelResponse.body.data.getMessageThreadChannel).toEqual(
+          {
+            type: MessageChannelType.APP,
+            provider: ConnectedAccountProvider.APP,
+            applicationId: owningApplicationDbId,
+          },
+        );
       } finally {
         await makeGraphqlApiRequest(
           destroyOneOperationFactory({
