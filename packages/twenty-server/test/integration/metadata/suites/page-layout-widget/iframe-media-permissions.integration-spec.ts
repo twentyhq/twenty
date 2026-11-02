@@ -78,6 +78,8 @@ const createApplication = async ({
     });
   }
 
+  jest.useFakeTimers();
+
   await syncApplication({
     manifest: {
       ...manifest,
