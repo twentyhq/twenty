@@ -21,6 +21,14 @@ const CHATGPT_CONNECTION_CALLBACK =
   'https://chatgpt.com/connector/oauth/integration-test';
 const CHATGPT_PLATFORM_CALLBACK =
   'https://chatgpt.com/connector_platform_oauth_redirect';
+const DOCUMENT_CLIENT_CALLBACK =
+  'https://example.com/oauth/integration-test-callback';
+const DOCUMENT_CLIENT_DOCUMENT = {
+  clientId: 'https://example.com/oauth/integration-test-client.json',
+  clientName: 'Document Client',
+  logoUri: 'https://example.com/logo.png',
+  redirectUris: [DOCUMENT_CLIENT_CALLBACK],
+};
 const CHATGPT_DOCUMENT = {
   clientId: 'https://chatgpt.com/oauth/integration-test-client.json',
   clientName: 'ChatGPT',
@@ -64,6 +72,7 @@ const findApplicationRegistrationByClientIdQuery = gql`
   query FindApplicationRegistrationByClientId($clientId: String!) {
     findApplicationRegistrationByClientId(clientId: $clientId) {
       name
+      logoUrl
     }
   }
 `;
@@ -189,6 +198,7 @@ describe('OAuth well-known clients (integration)', () => {
           CLAUDE_CALLBACK,
           CHATGPT_CONNECTION_CALLBACK,
           CHATGPT_PLATFORM_CALLBACK,
+          DOCUMENT_CLIENT_CALLBACK,
         ],
       ],
     );
@@ -410,7 +420,7 @@ describe('OAuth well-known clients (integration)', () => {
       expect(
         registeredClientResponse.body.data
           .findApplicationRegistrationByClientId,
-      ).toEqual({ name: 'Claude' });
+      ).toMatchObject({ name: 'Claude' });
     });
 
     it('should spend the same fetch allowance on the token, revoke and introspect endpoints', async () => {
@@ -454,6 +464,81 @@ describe('OAuth well-known clients (integration)', () => {
       });
 
       expect(registeredClientResponse.status).toBe(200);
+    });
+
+    it('should spend the same fetch allowance when a signed-in user authorizes', async () => {
+      await exhaustFetchRateLimitWithLookups();
+
+      const throttledResponse = await requestAuthorization({
+        clientId: buildUnreachableDocumentUrl(),
+        token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+      });
+
+      expect(throttledResponse.body.errors?.[0]?.extensions?.subCode).toBe(
+        'LIMIT_REACHED',
+      );
+    });
+
+    describe('of a registered document client', () => {
+      let findDocumentSpy: jest.SpyInstance;
+      let isFetchDueSpy: jest.SpyInstance;
+
+      beforeEach(() => {
+        const clientIdMetadataDocumentService =
+          getAppProviderByClassName<ClientIdMetadataDocumentService>(
+            'ClientIdMetadataDocumentService',
+          );
+
+        findDocumentSpy = jest
+          .spyOn(clientIdMetadataDocumentService, 'findDocument')
+          .mockResolvedValue(DOCUMENT_CLIENT_DOCUMENT);
+        isFetchDueSpy = jest
+          .spyOn(clientIdMetadataDocumentService, 'isFetchDue')
+          .mockResolvedValue(false);
+      });
+
+      afterEach(() => {
+        findDocumentSpy.mockRestore();
+        isFetchDueSpy.mockRestore();
+      });
+
+      it('should show the name and logo of the latest document before the user authorizes again', async () => {
+        createdRegistrationClientIds.push(DOCUMENT_CLIENT_DOCUMENT.clientId);
+
+        const code = await authorizeAsMember({
+          clientId: DOCUMENT_CLIENT_DOCUMENT.clientId,
+          token: APPLE_JANE_ADMIN_ACCESS_TOKEN,
+          redirectUrl: DOCUMENT_CLIENT_CALLBACK,
+        });
+
+        expect(code).toBeTruthy();
+
+        findDocumentSpy.mockResolvedValue({
+          ...DOCUMENT_CLIENT_DOCUMENT,
+          clientName: 'Document Client (renamed)',
+          logoUri: 'https://example.com/new-logo.png',
+        });
+
+        const response = await lookUp(DOCUMENT_CLIENT_DOCUMENT.clientId);
+
+        expect(response.body.errors).toBeUndefined();
+        expect(
+          response.body.data.findApplicationRegistrationByClientId,
+        ).toEqual({
+          name: 'Document Client (renamed)',
+          logoUrl: 'https://example.com/new-logo.png',
+        });
+
+        const [storedRegistration] = await dataSource.query(
+          `SELECT name, logo FROM core."applicationRegistration" WHERE "oAuthClientId" = $1 AND "deletedAt" IS NULL`,
+          [DOCUMENT_CLIENT_DOCUMENT.clientId],
+        );
+
+        expect(storedRegistration).toEqual({
+          name: 'Document Client',
+          logo: 'https://example.com/logo.png',
+        });
+      });
     });
   });
 });
