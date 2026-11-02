@@ -1,41 +1,44 @@
 /* @license Enterprise */
 
 import { type PermissionsRowAccessRequest } from 'src/engine/permissions/combine/types/row-access-policy.type';
+import { isPermissionsPrincipalOwningObject } from 'src/engine/permissions/principal/utils/is-permissions-principal-owning-object.util';
 import { hasHypotheticalRecordShare } from 'src/engine/permissions/record-share/utils/has-hypothetical-record-share.util';
 import { isOperationGrantedBeyondRole } from 'src/engine/permissions/record-share/utils/is-operation-granted-beyond-role.util';
+import { isObjectOperationDeniedToPrincipal } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principal.util';
 import { isObjectOperationDisabled } from 'src/engine/permissions/role/utils/is-object-operation-disabled.util';
-import { isRolePermittingOperation } from 'src/engine/permissions/role/utils/is-role-permitting-operation.util';
 
 export const resolvePermissionsRowAccessOutcome = (
   request: PermissionsRowAccessRequest,
 ): boolean | undefined => {
-  const { subject, environment, flatObjectMetadata, operationType } = request;
-
-  if (subject.isSystemContext) {
-    return true;
-  }
+  const { principal, metadataMaps, flatObjectMetadata, operationType } =
+    request;
 
   if (
     isObjectOperationDisabled({
       objectMetadata: flatObjectMetadata,
       operationType,
     }) &&
-    !subject.isOwningApplication(flatObjectMetadata)
+    !isPermissionsPrincipalOwningObject({
+      principal,
+      flatApplicationMaps: metadataMaps.flatApplicationMaps,
+      flatObjectMetadata,
+    })
   ) {
     return false;
   }
 
-  const isGrantedBeyondRole = isOperationGrantedBeyondRole({
-    flatObjectMetadata,
-    featureFlagsMap: environment.featureFlagsMap,
-    operationType,
-  });
-
-  if (!isRolePermittingOperation(request) && !isGrantedBeyondRole) {
+  if (isObjectOperationDeniedToPrincipal(request)) {
     return false;
   }
 
-  if (isGrantedBeyondRole && hasHypotheticalRecordShare(request)) {
+  if (
+    isOperationGrantedBeyondRole({
+      flatObjectMetadata,
+      featureFlagsMap: metadataMaps.featureFlagsMap,
+      operationType,
+    }) &&
+    hasHypotheticalRecordShare(request)
+  ) {
     return true;
   }
 

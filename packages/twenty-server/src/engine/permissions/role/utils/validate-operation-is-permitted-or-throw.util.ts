@@ -1,7 +1,6 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import isEmpty from 'lodash.isempty';
 import {
-  type FeatureFlagKey,
   type ObjectsPermissions,
   type RestrictedFieldsPermissions,
 } from 'twenty-shared/types';
@@ -17,8 +16,6 @@ import {
   PermissionsExceptionCode,
   PermissionsExceptionMessage,
 } from 'src/engine/permissions/permissions.exception';
-import { isObjectOperationPermitted } from 'src/engine/permissions/role/utils/is-object-operation-permitted.util';
-import { isOperationGrantedBeyondRole } from 'src/engine/permissions/record-share/utils/is-operation-granted-beyond-role.util';
 import { getColumnNameToFieldMetadataIdMap } from 'src/engine/twenty-orm/utils/get-column-name-to-field-metadata-id.util';
 
 export type OperationType =
@@ -38,7 +35,6 @@ type ValidateOperationIsPermittedOrThrowArgs = {
   objectIdByNameSingular: Record<string, string>;
   selectedColumns: string[];
   updatedColumns: string[];
-  featureFlagsMap?: Partial<Record<FeatureFlagKey, boolean>>;
 };
 
 export const validateOperationIsPermittedOrThrow = ({
@@ -50,7 +46,6 @@ export const validateOperationIsPermittedOrThrow = ({
   objectIdByNameSingular,
   selectedColumns,
   updatedColumns,
-  featureFlagsMap = {},
 }: ValidateOperationIsPermittedOrThrowArgs) => {
   const objectMetadataIdForEntity = objectIdByNameSingular[entityName];
 
@@ -79,27 +74,6 @@ export const validateOperationIsPermittedOrThrow = ({
   );
 
   const permissionsForEntity = objectsPermissions[objectMetadataIdForEntity];
-
-  // Records shared by name stay reachable without the object permission; the
-  // row access policy then narrows the query to those records
-  if (
-    (!isDefined(permissionsForEntity) ||
-      !isObjectOperationPermitted({
-        objectMetadata,
-        operationType,
-        objectsPermissions,
-      })) &&
-    !isOperationGrantedBeyondRole({
-      flatObjectMetadata: objectMetadata,
-      featureFlagsMap,
-      operationType,
-    })
-  ) {
-    throw new PermissionsException(
-      PermissionsExceptionMessage.PERMISSION_DENIED,
-      PermissionsExceptionCode.PERMISSION_DENIED,
-    );
-  }
 
   const restrictedFields = permissionsForEntity?.restrictedFields ?? {};
 
