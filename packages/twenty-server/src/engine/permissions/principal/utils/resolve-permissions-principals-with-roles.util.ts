@@ -9,7 +9,6 @@ import {
   type PermissionsMainPrincipal,
   type PermissionsPrincipalsContext,
 } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
-import { type PermissionsPrincipalRoleMaps } from 'src/engine/permissions/principal/types/permissions-principal-role-maps.type';
 import {
   type PermissionsApplicationPrincipalWithRole,
   type PermissionsLimitingPrincipalWithRole,
@@ -17,6 +16,36 @@ import {
   type PermissionsPrincipalsWithRolesContext,
 } from 'src/engine/permissions/principal/types/permissions-principals-with-roles-context.type';
 import { resolveApplicationRoleId } from 'src/engine/permissions/principal/utils/resolve-application-role-id.util';
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type FlatWorkspaceMember } from 'src/engine/core-modules/user/types/flat-workspace-member.type';
+import { type FlatWorkspaceMemberMaps } from 'src/engine/core-modules/user/types/flat-workspace-member-maps.type';
+import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
+import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type UserWorkspaceRoleMap } from 'src/engine/metadata-modules/role-target/types/user-workspace-role-map.type';
+
+type PermissionsPrincipalRoleMaps = {
+  flatWorkspaceMemberMaps: {
+    byId: Partial<Record<string, Pick<FlatWorkspaceMember, 'userId'>>>;
+    userWorkspaceIdByUserId: FlatWorkspaceMemberMaps['userWorkspaceIdByUserId'];
+  };
+  userWorkspaceRoleMap: UserWorkspaceRoleMap;
+  apiKeyRoleMap: Record<string, string>;
+  flatRoleTargetByAgentIdMaps: Partial<
+    Record<string, Pick<FlatRoleTarget, 'roleId'>>
+  >;
+  flatApplicationMaps: {
+    byId: Partial<
+      Record<
+        string,
+        Pick<
+          FlatApplication,
+          'id' | 'defaultRoleId' | 'sourceType' | 'deletedAt'
+        >
+      >
+    >;
+  };
+  flatRoleTargetMaps?: AllFlatEntityMaps['flatRoleTargetMaps'];
+};
 
 const findMainPrincipalRoleId = ({
   mainPrincipal,
@@ -127,7 +156,6 @@ const resolveApplicationPrincipal = ({
     : { isCustomApp: true };
 };
 
-// undefined denies everything: the main principal has no role, or the application is gone
 export const resolvePermissionsPrincipalsWithRoles = ({
   principalsContext,
   roleMaps,
