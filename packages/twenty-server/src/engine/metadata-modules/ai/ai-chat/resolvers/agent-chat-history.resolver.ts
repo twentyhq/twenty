@@ -151,7 +151,7 @@ export class AgentChatHistoryResolver {
         chunks,
       }),
       maxSeq,
-      error: turnError
+      error: isDefined(turnError)
         ? { code: turnError.code, message: turnError.message }
         : null,
     };

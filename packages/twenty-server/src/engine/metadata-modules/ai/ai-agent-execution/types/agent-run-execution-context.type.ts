@@ -13,6 +13,5 @@ export type AgentRunExecutionContext = {
   userWorkspaceId: string | null;
   // narrows the agent's own role, such as to the application a run belongs to
   agentRunRoleIds?: AgentRunRoleIds;
-  // who the continued conversation is read for, as the history reads it for them
   conversationViewer?: AgentConversationViewer;
 };

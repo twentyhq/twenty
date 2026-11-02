@@ -2,8 +2,8 @@ import { type ReasoningUIPart } from 'ai';
 
 import { type ExtendedFileUIPart } from '@/ai/types/DataMessagePart';
 import { type ExtendedUIMessagePart } from '@/ai/types/ExtendedUIMessagePart';
+import { isDefined } from '@/utils/validation/isDefined';
 
-// a part as the chat history query returns it
 export type AgentMessagePartRow = {
   type: string;
   orderIndex: number;
@@ -90,10 +90,10 @@ export const mapAgentMessagePartToUIMessagePart = (
         output: part.toolOutput,
         errorText: part.errorMessage ?? '',
         state: part.state,
-        ...(part.providerExecuted != null && {
+        ...(isDefined(part.providerExecuted) && {
           providerExecuted: part.providerExecuted,
         }),
-        ...(part.providerMetadata != null && {
+        ...(isDefined(part.providerMetadata) && {
           callProviderMetadata: part.providerMetadata,
         }),
       } as ExtendedUIMessagePart;

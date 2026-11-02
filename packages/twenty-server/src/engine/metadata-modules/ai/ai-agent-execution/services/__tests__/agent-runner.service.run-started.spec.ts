@@ -1,5 +1,7 @@
 import { Logger } from '@nestjs/common';
 
+import { isDefined } from 'twenty-shared/utils';
+
 import { AGENT_RUN_STOPPED_ERROR } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-stopped-error.constant';
 import { AGENT_RUN_RESULT_LOST_ERROR } from 'src/engine/metadata-modules/ai/ai-agent-execution/constants/agent-run-result-lost-error.constant';
 import { AgentRunnerService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-runner.service';
@@ -43,7 +45,7 @@ const buildRunner = (
     findTurn: jest
       .fn()
       .mockResolvedValue(
-        recordedTurn === null ? null : { id: 'run-id', ...recordedTurn },
+        isDefined(recordedTurn) ? { id: 'run-id', ...recordedTurn } : null,
       ),
     finish: jest.fn().mockResolvedValue(true),
   };
