@@ -3,11 +3,12 @@ import {
   buildPrivateRecordInsertSql,
   type PrivateRecordInsertSql,
 } from 'src/engine/permissions/private-record/utils/build-private-record-insert-sql.util';
+import { IS_PRIVATE_COLUMN_NAME } from 'src/engine/permissions/private-record/constants/is-private-column-name.constant';
 import { isPrivateRecordEnabled } from 'src/engine/permissions/private-record/utils/is-private-record-enabled.util';
+import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { AgentChatChannelGrantService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat-channel-grant.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { randomUUID } from 'node:crypto';
-import { buildAgentChatUnownedChannelThreadInsertQuery } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-unowned-channel-thread-insert-query.util';
 import { buildAgentChatThreadParticipantOwnerShareInsert } from 'src/engine/metadata-modules/ai/ai-chat/utils/build-agent-chat-thread-participant-owner-share-insert.util';
 import { hasAgentChatThreadChannelField } from 'src/engine/metadata-modules/ai/ai-chat/utils/has-agent-chat-thread-channel-field.util';
 import { getAgentChatThreadParticipantTable } from 'src/engine/metadata-modules/ai/ai-chat/utils/get-agent-chat-thread-participant-table.util';
@@ -471,44 +472,52 @@ export class AgentChatSharingService {
     channelId: string;
   }): Promise<AgentChatThreadWorkspaceEntity> {
     const objectMetadata = await this.getThreadObjectMetadata(workspaceId);
-    const privateRecordInsertSql =
-      await this.getPrivateRecordInsertSql(workspaceId);
-
-    return this.threadRepository.query(
+    const { featureFlagsMap } = await this.workspaceCacheService.getOrRecompute(
       workspaceId,
-      async ({ manager, table }) => {
-        await lockAgentChatChannelForThreadWriteOrThrow({
-          manager,
-          workspaceId,
-          channelId,
-        });
-        await acquireAgentChatChannelGrantLocksForThreadWriteOrThrow({
-          manager,
-          workspaceId,
-          channelIds: [channelId],
-        });
-        const [record] = await manager.query<AgentChatThreadWorkspaceEntity[]>(
-          buildAgentChatUnownedChannelThreadInsertQuery({
-            threadTable: table('agentChatThread'),
-            ...privateRecordInsertSql,
-          }),
-          [id, title, channelId],
-        );
-        await this.recordShareStorageService.deleteByRecordIdsInTransaction({
-          workspaceId,
-          objectMetadataId: objectMetadata.id,
-          recordIds: [record.id],
-          manager,
-        });
-        await this.channelGrantService.rewriteThreadGrantsInTransaction({
-          manager,
-          workspaceId,
-          threadIds: [record.id],
-          affectedChannelIds: [channelId],
-        });
-        return record;
-      },
+      ['featureFlagsMap'],
     );
+    const isPrivate = isPrivateRecordEnabled(featureFlagsMap);
+
+    return this.threadRepository.query(workspaceId, async ({ manager }) => {
+      await lockAgentChatChannelForThreadWriteOrThrow({
+        manager,
+        workspaceId,
+        channelId,
+      });
+      await acquireAgentChatChannelGrantLocksForThreadWriteOrThrow({
+        manager,
+        workspaceId,
+        channelIds: [channelId],
+      });
+      const {
+        raw: [record],
+      }: { raw: AgentChatThreadWorkspaceEntity[] } = await manager
+        .createQueryBuilder()
+        .insert()
+        .into(`${getWorkspaceSchemaName(workspaceId)}.agentChatThread`)
+        .values({
+          id,
+          title,
+          channelId,
+          lastActivityAt: new Date().toISOString(),
+          ...(isPrivate ? { [IS_PRIVATE_COLUMN_NAME]: true } : {}),
+        })
+        .returning('*')
+        .execute();
+      await this.recordShareStorageService.deleteByRecordIdsInTransaction({
+        workspaceId,
+        objectMetadataId: objectMetadata.id,
+        recordIds: [record.id],
+        manager,
+      });
+      await this.channelGrantService.rewriteThreadGrantsInTransaction({
+        manager,
+        workspaceId,
+        threadIds: [record.id],
+        affectedChannelIds: [channelId],
+      });
+      return record;
+    });
   }
 
   private validateThreadCreationIsPermitted({
