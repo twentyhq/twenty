@@ -8,6 +8,7 @@ const mocks = vi.hoisted(() => ({
   ingestMessages: vi.fn(),
   matchLinkedinParticipantPersonId: vi.fn(),
   createLinkedinPerson: vi.fn(),
+  importLinkedinMessageAttachments: vi.fn(),
 }));
 
 vi.mock('twenty-sdk/logic-function', () => ({
@@ -25,8 +26,17 @@ vi.mock('src/logic-functions/utils/create-linkedin-person.util', () => ({
   createLinkedinPerson: mocks.createLinkedinPerson,
 }));
 
+vi.mock(
+  'src/logic-functions/utils/import-linkedin-message-attachments.util',
+  () => ({
+    importLinkedinMessageAttachments: mocks.importLinkedinMessageAttachments,
+  }),
+);
+
 const { ingestLinkedinMessages } =
   await import('src/logic-functions/utils/ingest-linkedin-messages.util');
+
+const DEADLINE_AT_MS = Date.parse('2026-10-29T08:00:00.000Z');
 
 const PRIYA = {
   id: 'ACoPRIYA',
@@ -74,6 +84,8 @@ const ingest = ({
   chat?: typeof ONE_TO_ONE_CHAT | typeof GROUP_CHAT;
 } = {}) =>
   ingestLinkedinMessages({
+    unipileAccountId: 'acc_1',
+    attachmentDeadlineAtMs: DEADLINE_AT_MS,
     channel: { id: 'channel-id', handle: 'https://www.linkedin.com/in/me' },
     settings,
     chat,
@@ -91,6 +103,7 @@ describe('ingestLinkedinMessages', () => {
     vi.clearAllMocks();
     mocks.matchLinkedinParticipantPersonId.mockResolvedValue(undefined);
     mocks.createLinkedinPerson.mockResolvedValue('created-id');
+    mocks.importLinkedinMessageAttachments.mockResolvedValue(0);
   });
 
   it('attaches the matched person to the participant', async () => {
@@ -179,5 +192,30 @@ describe('ingestLinkedinMessages', () => {
     ).resolves.toMatchObject({ ingestedMessageCount: 0 });
     expect(mocks.createLinkedinPerson).not.toHaveBeenCalled();
     expect(mocks.ingestMessages).not.toHaveBeenCalled();
+    expect(mocks.importLinkedinMessageAttachments).not.toHaveBeenCalled();
+  });
+
+  it('imports the attachments of the ingested messages', async () => {
+    const message = {
+      ...buildMessage(true),
+      attachments: [
+        { id: 'attachment-1', type: 'img' as const, mimetype: 'image/png' },
+      ],
+    };
+
+    mocks.importLinkedinMessageAttachments.mockResolvedValue(1);
+
+    await expect(ingest({ messages: [message] })).resolves.toMatchObject({
+      ingestedMessageCount: 1,
+      importedAttachmentCount: 1,
+    });
+    expect(
+      mocks.importLinkedinMessageAttachments,
+    ).toHaveBeenCalledExactlyOnceWith({
+      unipileAccountId: 'acc_1',
+      messages: [message],
+      deadlineAtMs: DEADLINE_AT_MS,
+      onAttachmentFile: expect.any(Function),
+    });
   });
 });

@@ -47,12 +47,13 @@ import { computePermissionIntersection } from 'src/engine/permissions/role/utils
 import { isRecordMatchingRLSRowLevelPermissionPredicate } from 'src/engine/permissions/rls/utils/is-record-matching-rls-row-level-permission-predicate.util';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { WorkspaceOrmManager } from 'src/engine/twenty-orm/workspace-orm.manager';
-import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
+import { type PermissionsPrincipalsContext } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
 import { buildUserRoleIdsBySource } from 'src/engine/permissions/principal/utils/build-user-role-ids-by-source.util';
 import { getRoleIdsToIntersect } from 'src/engine/permissions/principal/utils/get-role-ids-to-intersect.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/parse-event-name';
+import { buildPermissionsPrincipalsContext } from 'src/engine/permissions/principal/utils/build-permissions-principals-context.util';
 
 type StreamPermissionsContext = {
   flatRowLevelPermissionPredicateMaps: FlatRowLevelPermissionPredicateMaps;
@@ -123,7 +124,6 @@ export class ObjectRecordEventPublisher {
         streamData,
         workspaceEventBatch: eventBatch,
         permissionsContext,
-        flatWorkspaceMemberMaps,
         workspaceMemberIdByUserId,
         eventRecordAccessGate,
       });
@@ -150,7 +150,6 @@ export class ObjectRecordEventPublisher {
     streamData,
     workspaceEventBatch,
     permissionsContext,
-    flatWorkspaceMemberMaps,
     workspaceMemberIdByUserId,
     eventRecordAccessGate,
   }: {
@@ -158,7 +157,6 @@ export class ObjectRecordEventPublisher {
     streamData: EventStreamData;
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>;
     permissionsContext: StreamPermissionsContext;
-    flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps;
     workspaceMemberIdByUserId: Map<string, string>;
     eventRecordAccessGate: EventRecordAccessGate;
   }): Promise<void> {
@@ -208,15 +206,20 @@ export class ObjectRecordEventPublisher {
       }),
     };
 
-    const principal: PermissionsPrincipal = {
+    const principals = buildPermissionsPrincipalsContext({
       workspaceId: workspaceEventBatch.workspaceId,
-      intersectionOf: rolePermissionConfig.intersectionOf,
-      workspaceMember: isDefined(subscriberAuthContext.workspaceMemberId)
-        ? flatWorkspaceMemberMaps.byId[subscriberAuthContext.workspaceMemberId]
-        : undefined,
-    };
+      workspaceMemberId: subscriberAuthContext.workspaceMemberId,
+      apiKeyId: subscriberAuthContext.apiKeyId,
+      applicationId: subscriberAuthContext.applicationId,
+      agentId: undefined,
+    });
+
+    if (!isDefined(principals)) {
+      return;
+    }
+
     const admittedRecordIds =
-      await eventRecordAccessGate.resolveAdmittedRecordIds(principal);
+      await eventRecordAccessGate.resolveAdmittedRecordIds(principals);
 
     if (admittedRecordIds.size === 0) {
       return;
@@ -281,7 +284,7 @@ export class ObjectRecordEventPublisher {
           streamData,
           workspaceId: workspaceEventBatch.workspaceId,
           rolePermissionConfig,
-          principal,
+          principals,
           objectsPermissions,
         });
       } catch (error) {
@@ -312,7 +315,7 @@ export class ObjectRecordEventPublisher {
     events,
     workspaceId,
     rolePermissionConfig,
-    principal,
+    principals,
     objectsPermissions,
   }: {
     streamData: EventStreamData;
@@ -320,7 +323,7 @@ export class ObjectRecordEventPublisher {
     events: ObjectRecordEvent[];
     workspaceId: string;
     rolePermissionConfig: RolePermissionConfig;
-    principal: PermissionsPrincipal;
+    principals: PermissionsPrincipalsContext;
     objectsPermissions: ObjectsPermissions;
   }) {
     const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
@@ -354,8 +357,7 @@ export class ObjectRecordEventPublisher {
     const { selectedFields } = this.commonSelectFieldsBuilder.buildFromDepth({
       readableObjectMetadataIds:
         await this.commonSelectFieldsBuilder.findReadableObjectMetadataIds({
-          principal: { ...principal, workspaceMember: undefined },
-          objectsPermissions,
+          principals,
           flatObjectMetadataMaps,
         }),
       depth: 1,

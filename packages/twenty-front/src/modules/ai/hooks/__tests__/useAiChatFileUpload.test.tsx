@@ -54,7 +54,9 @@ describe('useAiChatFileUpload', () => {
     });
     const file = new File(['brief'], 'brief.pdf');
 
-    let upload: Promise<void> = Promise.resolve();
+    let upload: ReturnType<typeof result.current.uploadFiles> = Promise.resolve(
+      [],
+    );
 
     act(() => {
       upload = result.current.uploadFiles([file]);

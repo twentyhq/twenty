@@ -95,7 +95,8 @@ export class CallWebhookJobsJob {
         admittedRecordIdsByRoleId.get(webhookRoleId) ??
         eventRecordAccessGate.resolveAdmittedRecordIds({
           workspaceId: workspaceEventBatch.workspaceId,
-          intersectionOf: { webhookRoleId },
+          mainPrincipal: { webhookId: webhook.id },
+          applicationPrincipal: { isCustomApp: true },
         });
 
       admittedRecordIdsByRoleId.set(webhookRoleId, admittedRecordIds);
