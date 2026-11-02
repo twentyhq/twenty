@@ -40,26 +40,18 @@ export const downloadUnipileMessageAttachment = async ({
     throw new Error('Unipile returned no attachment content');
   }
 
-  // Streamed so a file Unipile listed without a size is stopped at the limit instead of buffered whole
-  const reader: ReadableStreamDefaultReader<Uint8Array> = data.getReader();
   const chunks: Uint8Array[] = [];
   let sizeBytes = 0;
 
-  for (;;) {
-    const { done, value } = await reader.read();
-
-    if (done) {
-      return Buffer.concat(chunks);
-    }
-
-    sizeBytes += value.byteLength;
+  for await (const chunk of data) {
+    sizeBytes += chunk.byteLength;
 
     if (sizeBytes > maxSizeBytes) {
-      await reader.cancel();
-
       throw new Error(`Attachment is larger than ${maxSizeBytes} bytes`);
     }
 
-    chunks.push(value);
+    chunks.push(chunk);
   }
+
+  return Buffer.concat(chunks);
 };

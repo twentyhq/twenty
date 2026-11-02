@@ -4,6 +4,5 @@ export type UnipileMessageAttachment = {
   mimetype: string;
   file_size?: number;
   is_unavailable?: boolean;
-  // Base64 file, when Unipile sends it inline instead of behind a download
   content?: string;
 };

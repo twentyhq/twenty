@@ -17,8 +17,6 @@ const isImportableAttachment = (
   (!isDefined(attachment.file_size) ||
     attachment.file_size <= LINKEDIN_ATTACHMENT_MAX_SIZE_BYTES);
 
-// Rate limits propagate so a history import pauses and replays the page; other failures only drop the file.
-// Each file is handed over as soon as it is read, so a page never holds more than one in memory.
 export const importLinkedinMessageAttachments = async ({
   unipileAccountId,
   messages,

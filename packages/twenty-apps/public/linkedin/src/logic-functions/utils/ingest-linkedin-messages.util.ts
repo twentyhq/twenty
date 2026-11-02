@@ -193,7 +193,6 @@ export const ingestLinkedinMessages = async ({
     unipileAccountId,
     messages: ingestableMessages,
     deadlineAtMs: attachmentDeadlineAtMs,
-    // TODO(@martmull): store the files once ingestMessages accepts attachments
     onAttachmentFile: async ({
       messageExternalId,
       type,
