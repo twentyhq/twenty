@@ -4,7 +4,7 @@ import { clsx } from 'clsx';
 import { IconHelp, IconX } from '@ui/icon/components/TablerIcons';
 import { Button } from '@ui/primitives/input/Button/Button';
 import { FEEDBACK_STATUS_COLORS } from '@ui/primitives/feedback/internal/constants/FeedbackStatusColors';
-import { themeCssVariables } from '@ui/theme';
+import { THEME_COMMON } from '@ui/theme/constants/ThemeCommon';
 import { isRenderableSlot } from '@ui/utilities/internal/isRenderableSlot';
 import { isDefined } from '@ui/utilities/utils/isDefined';
 
@@ -19,7 +19,7 @@ export const CalloutComponent = ({
   title,
   description,
   fullWidth = false,
-  icon = <IconHelp size={themeCssVariables.icon.size.md} aria-hidden="true" />,
+  icon = <IconHelp size={THEME_COMMON.icon.size.md} aria-hidden="true" />,
   action,
   closeLabel = doNotTranslate('Close'),
   onDismiss,
