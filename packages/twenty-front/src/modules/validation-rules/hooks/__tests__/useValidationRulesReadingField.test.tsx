@@ -10,10 +10,7 @@ import {
 } from '@/ui/utilities/state/jotai/jotaiStore';
 import { useValidationRulesReadingField } from '@/validation-rules/hooks/useValidationRulesReadingField';
 import { type ValidationRule } from '@/validation-rules/types/ValidationRule';
-import {
-  FeatureFlagKey,
-  FindValidationRulesReadingFieldDocument,
-} from '~/generated-metadata/graphql';
+import { FindValidationRulesReadingFieldDocument } from '~/generated-metadata/graphql';
 import { mockCurrentWorkspace } from '~/testing/mock-data/users';
 
 const FIELD_METADATA_ID = '20202020-0000-4000-8000-000000000001';
@@ -30,21 +27,9 @@ const VALIDATION_RULE: ValidationRule = {
   isActive: true,
 };
 
-const renderUseValidationRulesReadingField = ({
-  isRecordCreationFormEnabled,
-}: {
-  isRecordCreationFormEnabled: boolean;
-}) => {
+const renderUseValidationRulesReadingField = () => {
   resetJotaiStore();
-  jotaiStore.set(currentWorkspaceState.atom, {
-    ...mockCurrentWorkspace,
-    featureFlags: [
-      {
-        key: FeatureFlagKey.IS_RECORD_CREATION_FORM_ENABLED,
-        value: isRecordCreationFormEnabled,
-      },
-    ],
-  });
+  jotaiStore.set(currentWorkspaceState.atom, mockCurrentWorkspace);
 
   const mocks = [
     {
@@ -78,9 +63,7 @@ const renderUseValidationRulesReadingField = ({
 
 describe('useValidationRulesReadingField', () => {
   it('should be loading, then return the rules reading the field', async () => {
-    const { result } = renderUseValidationRulesReadingField({
-      isRecordCreationFormEnabled: true,
-    });
+    const { result } = renderUseValidationRulesReadingField();
 
     expect(result.current.loading).toBe(true);
 
@@ -91,14 +74,5 @@ describe('useValidationRulesReadingField', () => {
     );
     expect(result.current.loading).toBe(false);
     expect(result.current.hasFailedToLoad).toBe(false);
-  });
-
-  it('should not load anything when the feature is off', () => {
-    const { result } = renderUseValidationRulesReadingField({
-      isRecordCreationFormEnabled: false,
-    });
-
-    expect(result.current.loading).toBe(false);
-    expect(result.current.validationRulesReadingField).toEqual([]);
   });
 });
