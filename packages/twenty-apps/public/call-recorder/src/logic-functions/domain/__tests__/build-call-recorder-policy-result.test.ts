@@ -16,6 +16,7 @@ const buildCalendarEventInput = (
   iCalUid: 'ical-uid-1',
   conferenceLinkUrl: 'https://meet.google.com/customer-sync',
   callRecorderPreference: undefined,
+  participantWorkspaceMemberIds: [],
   ...overrides,
 });
 

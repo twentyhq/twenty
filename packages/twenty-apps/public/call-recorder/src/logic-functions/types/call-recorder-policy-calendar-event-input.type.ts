@@ -7,4 +7,5 @@ export type CallRecorderPolicyCalendarEventInput = {
   iCalUid: string | undefined;
   conferenceLinkUrl: string | undefined;
   callRecorderPreference: string | undefined;
+  participantWorkspaceMemberIds: string[];
 };

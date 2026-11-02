@@ -31,6 +31,7 @@ type RecordsQuery = {
       };
     };
   };
+  calendarEventParticipants?: { __args: { filter: Record<string, unknown> } };
   callRecordings?: { __args: { filter: Record<string, unknown> } };
 };
 
@@ -94,6 +95,10 @@ describe('reconcileUpcomingCalendarEventsHandler', () => {
 
       if (query.callRecordings !== undefined) {
         return { callRecordings: buildConnection([]) };
+      }
+
+      if (query.calendarEventParticipants !== undefined) {
+        return { calendarEventParticipants: buildConnection([]) };
       }
 
       throw new Error(`Unhandled query: ${JSON.stringify(query)}`);

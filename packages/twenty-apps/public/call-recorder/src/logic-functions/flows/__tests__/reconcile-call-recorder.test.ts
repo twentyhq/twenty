@@ -102,21 +102,30 @@ const matchesCallRecordingFilter = (
     );
   });
 
+type CalendarEventParticipantNode = {
+  calendarEventId: string;
+  workspaceMemberId: string | null;
+};
+
 type FakeCoreApiClientFixture = {
   calendarEvents: CalendarEventNode[];
+  calendarEventParticipants?: CalendarEventParticipantNode[];
   callRecordings?: CallRecordingNode[];
 };
 
 class FakeCoreApiClient {
   calendarEvents: CalendarEventNode[];
+  calendarEventParticipants: CalendarEventParticipantNode[];
   callRecordings: CallRecordingNode[];
   mutations: Array<{ name: string; args: unknown }> = [];
 
   constructor({
     calendarEvents,
+    calendarEventParticipants = [],
     callRecordings = [],
   }: FakeCoreApiClientFixture) {
     this.calendarEvents = calendarEvents;
+    this.calendarEventParticipants = calendarEventParticipants;
     this.callRecordings = callRecordings;
   }
 
@@ -125,6 +134,20 @@ class FakeCoreApiClient {
       return {
         calendarEvents: buildConnection(
           this.filterCalendarEvents(query.calendarEvents.__args.filter),
+        ),
+      };
+    }
+
+    if (query.calendarEventParticipants !== undefined) {
+      const filter = query.calendarEventParticipants.__args.filter;
+
+      return {
+        calendarEventParticipants: buildConnection(
+          this.calendarEventParticipants.filter(
+            (participant) =>
+              filter.calendarEventId.in.includes(participant.calendarEventId) &&
+              participant.workspaceMemberId !== null,
+          ),
         ),
       };
     }

@@ -7,6 +7,7 @@ import {
   fetchAllNodes,
   type ConnectionPage,
 } from 'src/logic-functions/data/fetch-all-nodes.util';
+import { fetchCalendarEventParticipantWorkspaceMemberIds } from 'src/logic-functions/data/fetch-calendar-event-participant-workspace-member-ids.util';
 import { resolveConferenceLinkUrl } from 'src/logic-functions/domain/resolve-conference-link-url.util';
 import { stripRestrictedFieldValue } from 'src/logic-functions/data/strip-restricted-field-value.util';
 
@@ -65,6 +66,12 @@ export const fetchCalendarEventsByFilter = async (
     },
   );
 
+  const participantWorkspaceMemberIdsByCalendarEventId =
+    await fetchCalendarEventParticipantWorkspaceMemberIds(
+      client,
+      calendarEventNodes.map((calendarEvent) => calendarEvent.id),
+    );
+
   return calendarEventNodes.map((calendarEvent) => ({
     id: calendarEvent.id,
     title: stripRestrictedFieldValue(calendarEvent.title ?? undefined),
@@ -82,5 +89,8 @@ export const fetchCalendarEventsByFilter = async (
     callRecorderPreference: isString(calendarEvent.callRecorderPreference)
       ? calendarEvent.callRecorderPreference
       : undefined,
+    participantWorkspaceMemberIds:
+      participantWorkspaceMemberIdsByCalendarEventId.get(calendarEvent.id) ??
+      [],
   }));
 };

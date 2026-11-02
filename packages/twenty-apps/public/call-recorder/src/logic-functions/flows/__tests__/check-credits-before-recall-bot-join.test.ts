@@ -76,6 +76,10 @@ class FakeCoreApiClient {
       };
     }
 
+    if (query.calendarEventParticipants !== undefined) {
+      return { calendarEventParticipants: buildConnection([]) };
+    }
+
     throw new Error(`Unhandled query: ${JSON.stringify(query)}`);
   }
 

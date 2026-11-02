@@ -102,6 +102,10 @@ const stubPendingCallRecordingQueries = ({
       };
     }
 
+    if (query.calendarEventParticipants !== undefined) {
+      return { calendarEventParticipants: buildConnection([]) };
+    }
+
     throw new Error(`Unhandled query: ${JSON.stringify(query)}`);
   });
 };
@@ -327,6 +331,9 @@ describe('scheduleRecallBotOnCallRecordingUpdateHandler', () => {
           },
         },
       ]),
+    }));
+    queryMock.mockImplementationOnce(async () => ({
+      calendarEventParticipants: buildConnection([]),
     }));
 
     const result =
