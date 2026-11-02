@@ -1,5 +1,7 @@
 /* @license Enterprise */
 
+import { isDefined } from 'twenty-shared/utils';
+
 import {
   type PermissionsPrincipalsContext,
   type PermissionsPrincipalActors,
@@ -26,7 +28,9 @@ export const buildPermissionsPrincipal = ({
     actors,
   });
 
-  return principalRoles === undefined
-    ? undefined
-    : { workspaceId, ...principalRoles };
+  if (!isDefined(principalRoles)) {
+    return undefined;
+  }
+
+  return { workspaceId, ...principalRoles };
 };

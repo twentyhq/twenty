@@ -7,44 +7,46 @@ import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type PermissionsPrincipalActors } from 'src/engine/permissions/principal/types/permissions-principals-context.type';
+import { getPermissionsPrincipalActorsFromIds } from 'src/engine/permissions/principal/utils/get-permissions-principal-actors-from-ids.util';
 
-const NO_PERMISSIONS_PRINCIPAL_ACTORS: PermissionsPrincipalActors = {
-  main: undefined,
-  agentId: undefined,
+const NO_ACTOR_IDS = {
+  workspaceMemberId: undefined,
+  apiKeyId: undefined,
   applicationId: undefined,
+  agentId: undefined,
 };
 
 export const getPermissionsPrincipalActors = (
   authContext: WorkspaceAuthContext | undefined,
 ): PermissionsPrincipalActors => {
   if (!isDefined(authContext)) {
-    return NO_PERMISSIONS_PRINCIPAL_ACTORS;
+    return getPermissionsPrincipalActorsFromIds(NO_ACTOR_IDS);
   }
 
   if (isUserAuthContext(authContext)) {
-    return {
-      main: { workspaceMemberId: authContext.workspaceMemberId },
-      agentId: authContext.agentId,
+    return getPermissionsPrincipalActorsFromIds({
+      ...NO_ACTOR_IDS,
+      workspaceMemberId: authContext.workspaceMemberId,
       applicationId: (authContext.application ?? authContext.viaApplication)
         ?.id,
-    };
+      agentId: authContext.agentId,
+    });
   }
 
   if (isApiKeyAuthContext(authContext)) {
-    return {
-      main: { apiKeyId: authContext.apiKey.id },
-      agentId: undefined,
-      applicationId: undefined,
-    };
+    return getPermissionsPrincipalActorsFromIds({
+      ...NO_ACTOR_IDS,
+      apiKeyId: authContext.apiKey.id,
+    });
   }
 
   if (isApplicationAuthContext(authContext)) {
-    return {
-      main: { applicationId: authContext.application.id },
-      agentId: authContext.agentId,
+    return getPermissionsPrincipalActorsFromIds({
+      ...NO_ACTOR_IDS,
       applicationId: authContext.application.id,
-    };
+      agentId: authContext.agentId,
+    });
   }
 
-  return NO_PERMISSIONS_PRINCIPAL_ACTORS;
+  return getPermissionsPrincipalActorsFromIds(NO_ACTOR_IDS);
 };
