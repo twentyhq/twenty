@@ -30,7 +30,6 @@ export type AgentMessagePartRow = {
   providerMetadata?: Record<string, unknown> | null;
 };
 
-// keep in sync with packages/twenty-server/src/engine/metadata-modules/ai/ai-history/utils/map-db-parts-to-ui-message-parts.util.ts
 export const mapAgentMessagePartToUIMessagePart = (
   part: AgentMessagePartRow,
 ): ExtendedUIMessagePart | null => {
@@ -44,13 +43,13 @@ export const mapAgentMessagePartToUIMessagePart = (
       return {
         type: 'reasoning',
         text: part.reasoningContent ?? '',
-        state: part.state as ReasoningUIPart['state'],
+        state: (part.state ?? 'done') as ReasoningUIPart['state'],
         providerMetadata,
       };
     case 'file':
       return {
         type: 'file',
-        mediaType: part.fileMediaType ?? '',
+        mediaType: part.fileMediaType ?? 'application/octet-stream',
         filename: part.fileFilename ?? '',
         url: part.fileUrl ?? '',
         fileId: part.fileId ?? '',
@@ -78,14 +77,18 @@ export const mapAgentMessagePartToUIMessagePart = (
       const isStaticToolPart = part.type.startsWith('tool-');
       const isDynamicToolPart = part.type === 'dynamic-tool';
 
-      if (!isStaticToolPart && !isDynamicToolPart) {
+      // a tool part without its call id cannot be replayed to the model
+      if (
+        (!isStaticToolPart && !isDynamicToolPart) ||
+        !isDefined(part.toolCallId)
+      ) {
         return null;
       }
 
       return {
         type: part.type as `tool-${string}` | 'dynamic-tool',
         ...(isDynamicToolPart && { toolName: part.toolName ?? '' }),
-        toolCallId: part.toolCallId ?? '',
+        toolCallId: part.toolCallId,
         input: part.toolInput ?? {},
         output: part.toolOutput,
         errorText: part.errorMessage ?? '',
