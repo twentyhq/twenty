@@ -75,7 +75,6 @@ export const ChatThreadWidgetContent = ({
           messageThreadId={messageThreadId}
           messageChannelId={replyChannel.messageChannel.id}
           channelName={replyChannel.connectionProvider.displayName}
-          applicationId={replyChannel.connectedAccount.applicationId ?? null}
           recipientName={recipientName}
           isDisconnected={isDisconnected}
           onMessageSent={onMessageSent}
