@@ -1,7 +1,7 @@
 /* @license Enterprise */
 
 export type WorkspaceCreditAllowanceWindow = {
-  amountMicro: number;
+  creditAllowanceMicro: number;
   startsAtMs: number;
   endsAtMs: number | null;
 };
