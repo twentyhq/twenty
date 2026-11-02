@@ -18,6 +18,7 @@ import {
 import { type PermissionsPrincipal } from 'src/engine/permissions/principal/types/permissions-principal.type';
 import { getPermissionsPrincipalShareKeys } from 'src/engine/permissions/principal/utils/get-permissions-principal-share-keys.util';
 import { resolvePermissionsShareGrant } from 'src/engine/permissions/record-share/utils/resolve-permissions-share-grant.util';
+import { isObjectOperationDeniedToPrincipal } from 'src/engine/permissions/role/utils/is-object-operation-denied-to-principal.util';
 import { isObjectOperationDisabledToPrincipal } from 'src/engine/permissions/role/utils/is-object-operation-disabled-to-principal.util';
 import { isRolePermittingOperation } from 'src/engine/permissions/role/utils/is-role-permitting-operation.util';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace-repository';
@@ -59,7 +60,10 @@ export class RecordAccessPolicyService {
       operationType,
     };
 
-    if (isObjectOperationDisabledToPrincipal(request)) {
+    if (
+      isObjectOperationDisabledToPrincipal(request) ||
+      isObjectOperationDeniedToPrincipal(request)
+    ) {
       return false;
     }
 
