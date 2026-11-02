@@ -504,7 +504,7 @@ export class AgentInboxService {
     thread: AgentChatThreadWorkspaceEntity;
     workspaceMemberIds: string[];
   }): Promise<void> {
-    if (workspaceMemberIds.length === 0) {
+    if (!isNonEmptyArray(workspaceMemberIds)) {
       return;
     }
 
