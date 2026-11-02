@@ -822,50 +822,52 @@ describe('app message channels API (e2e)', () => {
         }),
       );
 
-      const ingestResponse = await ingest({
-        messageChannelId: channel.id,
-        messages: [
-          buildMessage({
-            externalId: 'msg-1',
-            threadExternalId: `thread-${uuidv4()}`,
-            senderHandle: 'candidate@linkedin.test',
-            personId,
-          }),
-        ],
-      });
+      try {
+        const ingestResponse = await ingest({
+          messageChannelId: channel.id,
+          messages: [
+            buildMessage({
+              externalId: 'msg-1',
+              threadExternalId: `thread-${uuidv4()}`,
+              senderHandle: 'candidate@linkedin.test',
+              personId,
+            }),
+          ],
+        });
 
-      expect(ingestResponse.body.errors).toBeUndefined();
+        expect(ingestResponse.body.errors).toBeUndefined();
 
-      const [{ messageThreadId }] =
-        ingestResponse.body.data.ingestAppMessages.messages;
+        const [{ messageThreadId }] =
+          ingestResponse.body.data.ingestAppMessages.messages;
 
-      const timelineResponse = await makeGraphqlApiRequest({
-        query: GET_TIMELINE_THREADS_QUERY,
-        variables: { objectNameSingular: 'person', recordId: personId },
-      });
+        const timelineResponse = await makeGraphqlApiRequest({
+          query: GET_TIMELINE_THREADS_QUERY,
+          variables: { objectNameSingular: 'person', recordId: personId },
+        });
 
-      await makeGraphqlApiRequest(
-        destroyOneOperationFactory({
-          objectMetadataSingularName: 'person',
-          gqlFields: 'id',
-          recordId: personId,
-        }),
-      );
-
-      expect(timelineResponse.body.errors).toBeUndefined();
-      expect(
-        timelineResponse.body.data.getTimelineThreadsFromObjectRecord
-          .timelineThreads,
-      ).toEqual([
-        {
-          id: messageThreadId,
-          channel: {
-            type: MessageChannelType.APP,
-            provider: ConnectedAccountProvider.APP,
-            applicationId: owningApplicationDbId,
+        expect(timelineResponse.body.errors).toBeUndefined();
+        expect(
+          timelineResponse.body.data.getTimelineThreadsFromObjectRecord
+            .timelineThreads,
+        ).toEqual([
+          {
+            id: messageThreadId,
+            channel: {
+              type: MessageChannelType.APP,
+              provider: ConnectedAccountProvider.APP,
+              applicationId: owningApplicationDbId,
+            },
           },
-        },
-      ]);
+        ]);
+      } finally {
+        await makeGraphqlApiRequest(
+          destroyOneOperationFactory({
+            objectMetadataSingularName: 'person',
+            gqlFields: 'id',
+            recordId: personId,
+          }),
+        );
+      }
     });
 
     it('returns the same ids when a provider redelivers the same message', async () => {
